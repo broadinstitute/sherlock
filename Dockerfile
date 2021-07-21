@@ -7,9 +7,9 @@ ENV CGO_ENABLED=0
 ENV GO111MODULE=on
 ENV GOBIN=/bin
 COPY . .
-RUN go test ./... && go build -o /bin/ ./cmd/...
+RUN go test ./... && go build -o /bin/sherlock ./cmd/CLI/...
 
 FROM alpine:${ALPINE_VERSION} as runtime
-ENV APP_NAME=helloWorld
+ENV APP_NAME=sherlock
 COPY --from=build /bin/${APP_NAME} /bin/${APP_NAME}
 ENTRYPOINT [ "sh", "-c", "/bin/${APP_NAME}" ]
