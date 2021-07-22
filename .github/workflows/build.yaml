@@ -26,8 +26,11 @@ env:
   GOOGLE_PROJECT: dsp-artifact-registry
   # Name of the app-specific Docker repository configured in GOOGLE_PROJECT
   REPOSITORY_NAME: ${{ github.event.repository.name }}
-  # Name of the image to make in REPOSITORY_NAME
-  IMAGE_NAME: ${{ github.event.repository.name }}
+  # Sherlock contains two binaries, one for the centralized server 
+  # and one for a CLI client to issue requests from build pipelines
+  # They use separate images which are built and versioned together in the same repo
+  CLI_IMAGE_NAME: cli
+  SERVER_IMAGE_NAME: server
   # Region-specific Google Docker repository where GOOGLE_PROJECT/REPOSITORY_NAME can be found
   GOOGLE_DOCKER_REPOSITORY: us-central1-docker.pkg.dev
 jobs:
@@ -58,19 +61,30 @@ jobs:
       - name: Explicitly auth Docker for Artifact Registry
         run: gcloud auth configure-docker $GOOGLE_DOCKER_REPOSITORY --quiet
 
-      - name: Construct docker image name and tag
+      - name: Construct docker images name and tag
         id: image-name
         run: |
           DOCKER_TAG=${{ steps.tag.outputs.tag }}
-          echo ::set-output name=name::${GOOGLE_DOCKER_REPOSITORY}/${GOOGLE_PROJECT}/${REPOSITORY_NAME}/${IMAGE_NAME}:${DOCKER_TAG}
+          echo ::set-output cli-name=name::${GOOGLE_DOCKER_REPOSITORY}/${GOOGLE_PROJECT}/${REPOSITORY_NAME}/${CLI_IMAGE_NAME}:${DOCKER_TAG}
+          echo ::set-output server-name=name::${GOOGLE_DOCKER_REPOSITORY}/${GOOGLE_PROJECT}/${REPOSITORY_NAME}/${SERVER_IMAGE_NAME}:${DOCKER_TAG}
       - name: Build image
-        run: "docker build -t ${{ steps.image-name.outputs.name }} ."
+        run: | 
+          docker build -t ${{ steps.image-name.outputs.cli-name }} -f build/cli/Dockerfile .
+          docker build -t ${{ steps.image-name.outputs.server-name }} -f build/server/Dockerfile .
 
-      - name: Run Trivy vulnerability scanner
+      - name: Run Trivy vulnerability scanner on CLI
         # From https://github.com/broadinstitute/dsp-appsec-trivy-action
         uses: broadinstitute/dsp-appsec-trivy-action@v1
         with:
-          image: ${{ steps.image-name.outputs.name }}
+          image: ${{ steps.image-name.outputs.cli-name }}
+
+      - name: Run Trivy vulnerability scanner on server
+        # From https://github.com/broadinstitute/dsp-appsec-trivy-action
+        uses: broadinstitute/dsp-appsec-trivy-action@v1
+        with:
+          image: ${{ steps.image-name.outputs.server-name }}
 
       - name: Push image
-        run: "docker push ${{ steps.image-name.outputs.name }}"
+        run: | 
+          docker push ${{ steps.image-name.outputs.cli-name }}
+          docker push ${{ steps.image-name.outputs.server-name }}
