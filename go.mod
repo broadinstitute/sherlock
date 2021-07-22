@@ -1,3 +1,3 @@
-module github.com/broadinstitute/golang-project-template
+module github.com/broadinstitute/sherlock
 
 go 1.15
