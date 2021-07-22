@@ -65,8 +65,8 @@ jobs:
         id: image-name
         run: |
           DOCKER_TAG=${{ steps.tag.outputs.tag }}
-          echo ::set-output cli-name=name::${GOOGLE_DOCKER_REPOSITORY}/${GOOGLE_PROJECT}/${REPOSITORY_NAME}/${CLI_IMAGE_NAME}:${DOCKER_TAG}
-          echo ::set-output server-name=name::${GOOGLE_DOCKER_REPOSITORY}/${GOOGLE_PROJECT}/${REPOSITORY_NAME}/${SERVER_IMAGE_NAME}:${DOCKER_TAG}
+          echo ::set-output name=cli-name::${GOOGLE_DOCKER_REPOSITORY}/${GOOGLE_PROJECT}/${REPOSITORY_NAME}/${CLI_IMAGE_NAME}:${DOCKER_TAG}
+          echo ::set-output name=server-name::${GOOGLE_DOCKER_REPOSITORY}/${GOOGLE_PROJECT}/${REPOSITORY_NAME}/${SERVER_IMAGE_NAME}:${DOCKER_TAG}
       - name: Build image
         run: | 
           docker build -t ${{ steps.image-name.outputs.cli-name }} -f build/cli/Dockerfile .
