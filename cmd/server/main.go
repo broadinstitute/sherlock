@@ -34,11 +34,15 @@ func main() {
 	http.HandleFunc("/", handler)
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Println("Listening on port 8080")
+
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "Hello sherlock!")
 }
+
+const changelogLocation = "file://db/migrations"
 
 func applyMigrations() error {
 	// check for environment flag whether to run migrations on app start up or not
@@ -49,7 +53,7 @@ func applyMigrations() error {
 
 	log.Println("Executing database migration")
 	m, err := migrate.New(
-		"file://db/migrations",
+		changelogLocation,
 		os.Getenv("POSTGRESQL_URL"),
 	)
 	if err != nil {

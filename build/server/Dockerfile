@@ -14,4 +14,6 @@ ENV APP_NAME=sherlock
 COPY --from=build /bin/${APP_NAME} /bin/${APP_NAME}
 # Copy Database migration changelogs into final image
 COPY --from=build /build/db/migrations/ /db/migrations
+# The sleep is a quick fix to ensure the postgres container has time
+# to start when running locally via docker-compose
 ENTRYPOINT [ "sh", "-c", "sleep 2 && ./bin/${APP_NAME}" ]
