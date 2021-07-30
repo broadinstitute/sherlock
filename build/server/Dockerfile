@@ -12,4 +12,8 @@ RUN go test ./... && go build -o /bin/sherlock ./cmd/server/...
 FROM alpine:${ALPINE_VERSION} as runtime
 ENV APP_NAME=sherlock
 COPY --from=build /bin/${APP_NAME} /bin/${APP_NAME}
-ENTRYPOINT [ "sh", "-c", "/bin/${APP_NAME}" ]
+# Copy Database migration changelogs into final image
+COPY --from=build /build/db/migrations/ /db/migrations
+# The sleep is a quick fix to ensure the postgres container has time
+# to start when running locally via docker-compose
+ENTRYPOINT [ "sh", "-c", "sleep 10 && ./bin/${APP_NAME}" ]

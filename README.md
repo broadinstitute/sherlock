@@ -1,24 +1,21 @@
+# Sherlock
 
-# golang-project-template
+[![codecov](https://codecov.io/gh/broadinstitute/sherlock/branch/main/graph/badge.svg?token=kk4gi8Wa3a)](https://codecov.io/gh/broadinstitute/sherlock)  [![Go Report Card](https://goreportcard.com/badge/github.com/broadinstitute/sherlock)](https://goreportcard.com/report/github.com/broadinstitute/sherlock)  ![latest build](https://github.com/broadinstitute/sherlock/actions/workflows/build.yaml/badge.svg?branch=main)
 
-A Repo containing a standard layout and configuration for golang projects.
+Sherlock is a devops built and maintained service which serves will maintain a historical record of deployments to all Terra services across all environments. 
+Additionally it will extract delivery metadata from updates to this historical deployment log. In the future it will also act as the control layer for preview environments.
+The eventual replacement for fiabs. 
 
-The project layout defined in this repo is a simplified version of [https://github.com/golang-standards/project-layout](https://github.com/golang-standards/project-layout)
-with some additional ci/cd setup added in. Some of the patterns defined in that example are overkill for dsp-devops' current needs, however this can easily be updated if needs change.
+## Warning
+This tool is currently in a POC state and under active development. Frequent and potentially breaking changes are to be expected at the moment.
 
-The basic structure provided in this repo is intended to serve as a starting point when starting a new go project and to avoid boilerplate.
 
-## Usage
+## Developing Locally
 
-Click the `use this template` button in the top right to create a new repo with the desired owner and name using the files and folder structure defined here. Make sure to check the `include all branches` option in order to include the `gh-pages` branch so that code coverage html reports work properly.
+Sherlock consists of 3 core components. a CLI client, a web server, and a postgres database. To facilitate local development this repo provides utilities to easily spin
+up a local development environment consisting of the webserver and the database. The cli client can then be used with this local server and db over `localhost`.
+Under the hood this process uses docker-compose to build a sherlock server image with your local changes and then spin it up and connect it to a postgres13 container.
+When running the server locally database changelogs will automatically be applied the server on start up so that the database is setup and ready to go.
 
-Most of the CI/CD worflows included here are intended to be generic with two exceptions.
-
-1. [this line in the dockerfile](https://github.com/broadinstitute/golang-project-template/blob/142d0dc810fa4f3afa68e0a5d37aac03f0c3796f/Dockerfile#L13) which will need to be updated to match the actual name of any executable(s).
-
-## Additional Steps
-
-1. After creating a new repo from the template. Github secrets referenced in the ci/cd jobs need to be created. This can be done automatically using terraform.
-   [Instructions here](ttps://docs.google.com/document/d/1JbjV4xjAlSOuZY-2bInatl4av3M-y_LmHQkLYyISYns/edit?usp=sharing). [Example for ci in this repo](https://github.com/broadinstitute/terraform-ap-deployments/blob/master/github/tfvars/broadinstitute-golang-project-template.tfvars)
-
-2. Create an a new image repository in `dsp-artifact-registry` for the ci/cd pipeline to push images to. This can also be done automatically via terraform. [Here is the example for this repo](https://github.com/broadinstitute/terraform-ap-deployments/blob/91715091d935e5f0727d108b371322e8dce19094/dsp-artifact-registry/tfvars/dsp-artifact-registry.tfvars#L11). A similar entry for the new repo just needs to be added to that file
+Spinning up the local environment is as simple as running `make local-up`
+Additionally `make local-stop` will stop all the containers and `make local-down` where tear down your local environment completely.
