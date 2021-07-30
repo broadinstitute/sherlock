@@ -14,6 +14,8 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+const changelogLocation = "file://db/migrations"
+
 func main() {
 	db, err := sqlx.Connect("pgx", os.Getenv("POSTGRESQL_URL"))
 	if err != nil {
@@ -41,8 +43,6 @@ func main() {
 func handler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "Hello sherlock!")
 }
-
-const changelogLocation = "file://db/migrations"
 
 func applyMigrations() error {
 	// check for environment flag whether to run migrations on app start up or not

@@ -17,5 +17,5 @@ up a local development environment consisting of the webserver and the database.
 Under the hood this process uses docker-compose to build a sherlock server image with your local changes and then spin it up and connect it to a postgres13 container.
 When running the server locally database changelogs will automatically be applied the server on start up so that the database is setup and ready to go.
 
-Spinnging up the local environment is as simple as running `make local-up`
+Spinning up the local environment is as simple as running `make local-up`
 Additionally `make local-stop` will stop all the containers and `make local-down` where tear down your local environment completely.
