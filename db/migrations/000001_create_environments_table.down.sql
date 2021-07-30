@@ -1,1 +1,1 @@
-DROP TABLE IF EXSISTS environments;
+DROP TABLE IF EXISTS environments;
