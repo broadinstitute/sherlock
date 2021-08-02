@@ -1,0 +1,34 @@
+version: '3'
+
+networks: 
+  sherlock-local-dev:
+    driver: bridge
+
+services: 
+  sherlock:
+    build:
+      context: ../../../
+      dockerfile: build/server/Dockerfile.test
+    ports:
+      - "8080:8080"
+    environment: 
+      POSTGRESQL_URL: "postgres://sherlock:password@postgres:5432/sherlock?sslmode=disable"
+      SHERLOCK_INIT_DB: "true"
+    depends_on:
+      - database
+    networks: 
+      - sherlock-local-dev
+
+  database:
+    container_name: postgres
+    image: postgres:13
+    ports:
+      - "5432:5432"
+    expose: 
+      - "5432"
+    environment:
+      POSTGRES_USER: sherlock
+      POSTGRES_PASSWORD: password
+    restart: on-failure
+    networks: 
+      - sherlock-local-dev
