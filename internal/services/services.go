@@ -14,8 +14,8 @@ type Service struct {
 	CreatedAt string `json:"created_at,omitempty" db:"created_at"`
 }
 
-// ListServices uses the underlying datastore to retrieve all services
-func ListServices(store *sqlx.DB) ([]Service, error) {
+// ListAll uses the underlying datastore to retrieve all services
+func ListAll(store *sqlx.DB) ([]Service, error) {
 	services := make([]Service, 0)
 
 	if err := store.Select(&services, selectAll); err != nil {
