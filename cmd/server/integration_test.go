@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 	"net/http/httptest"
@@ -8,7 +9,9 @@ import (
 	"testing"
 
 	"github.com/broadinstitute/sherlock/internal/db"
+	"github.com/broadinstitute/sherlock/internal/services"
 	"github.com/broadinstitute/sherlock/internal/sherlock"
+	"github.com/google/go-cmp/cmp"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -44,13 +47,17 @@ func Test_getServicesIntegration(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
+
+	// ensure db cleanup will always run at end of test
 	defer func() {
 		if err := db.Truncate(app.DB); err != nil {
 			t.Errorf("error truncating db in test run: %v", err)
 		}
 	}()
 
-	_, err := db.SeedServices(app.DB)
+	// seed test db with sample data. seeded data is also returned
+	// for ease of testing
+	expectedServices, err := db.SeedServices(app.DB)
 	if err != nil {
 		t.Fatalf("error seeding services: %v", err)
 	}
@@ -60,12 +67,22 @@ func Test_getServicesIntegration(t *testing.T) {
 		t.Errorf("error creating request: %v", err)
 	}
 
-	responseWriter := httptest.NewRecorder()
+	response := httptest.NewRecorder()
 
-	app.ServeHTTP(responseWriter, req)
+	app.ServeHTTP(response, req)
 
 	// verify status code is 200
-	if responseWriter.Code != http.StatusOK {
-		t.Errorf("Expected status code %d, got %d", http.StatusOK, responseWriter.Code)
+	if response.Code != http.StatusOK {
+		t.Errorf("Expected status code %d, got %d", http.StatusOK, response.Code)
+	}
+
+	services := make([]services.Service, 0)
+	if err := json.NewDecoder(response.Body).Decode(&services); err != nil {
+		t.Errorf("error decoding response body: %v", err)
+	}
+
+	// pretty prints a diff of 2 arbitrary structs
+	if diff := cmp.Diff(expectedServices, services); diff != "" {
+		t.Errorf("unexpected difference in response body:\n%v", diff)
 	}
 }

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 	"os"
 
@@ -30,6 +29,9 @@ func main() {
 	if err := db.ApplyMigrations("db/migrations"); err != nil {
 		log.Println(err)
 	}
+	// if _, err := db.SeedServices(dbConn); err != nil {
+	// 	log.Println(err)
+	// }
 
 	log.Println("starting sherlock server")
 	app := sherlock.New(dbConn)
@@ -37,8 +39,4 @@ func main() {
 	log.Println("Listening on port 8080")
 	log.Fatal(http.ListenAndServe(":8080", app))
 
-}
-
-func handler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "Hello sherlock!")
 }

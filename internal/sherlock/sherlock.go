@@ -15,13 +15,14 @@ type Application struct {
 
 // New Returns a new instance of the core Application application
 func New(db *sqlx.DB) *Application {
-	router := mux.NewRouter()
-	router.HandleFunc("/services", getServices).Methods(http.MethodGet)
-
-	return &Application{
-		DB:      db,
-		Handler: router,
+	app := &Application{
+		DB: db,
 	}
+	router := mux.NewRouter()
+	router.HandleFunc("/services", app.getServices).Methods(http.MethodGet)
+	app.Handler = router
+
+	return app
 }
 
 // ServeHTTP implments the http.Handler interface for a Sherlock application instance

@@ -25,7 +25,7 @@ func SeedServices(db *sqlx.DB) ([]services.Service, error) {
 		},
 	}
 
-	statement, err := db.Prepare("INSERT INTO services (name, repo_url) VALUES ($1, $2) RETURNING id;")
+	statement, err := db.Prepare("INSERT INTO services (name, repo_url) VALUES ($1, $2) RETURNING id, created_at;")
 	if err != nil {
 		return nil, fmt.Errorf("error preparing statement %v", err)
 	}
@@ -34,7 +34,7 @@ func SeedServices(db *sqlx.DB) ([]services.Service, error) {
 	for i, service := range services {
 		row := statement.QueryRow(service.Name, service.RepoURL)
 
-		if err = row.Scan(&services[i].ID); err != nil {
+		if err = row.Scan(&services[i].ID, &services[i].CreatedAt); err != nil {
 			return nil, fmt.Errorf("error seeding data %v", err)
 		}
 
