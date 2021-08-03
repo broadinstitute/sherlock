@@ -1,4 +1,4 @@
-name: Run Unit Tests
+name: Run Unit and Integration Tests
 on:
   push:
     branches:
@@ -38,13 +38,16 @@ jobs:
       uses: actions/setup-go@v2
       with:
         go-version: 1.16
-    - name: run all tests
-      run: go test -v -coverprofile=cover.out -covermode=count ./...
-      env:
-        SHERLOCK_INIT_DB: "true"
-        POSTGRESQL_URL: "postgres://sherlock:password@localhost:5432/sherlock?sslmode=disable"
-    - name: Upload Coverage Report
+    - name: run unit tests
+      run: go test -v -short -coverprofile=cover.out -covermode=count ./...
+    - name: upload unit test coverage report
       uses: codecov/codecov-action@v1
       with:
         files: ./cover.out
         flags: unittests
+    - name: run integration tests
+      run: go test -v -run Integration ./...
+      env:
+        SHERLOCK_INIT_DB: "true"
+        POSTGRESQL_URL: "postgres://sherlock:password@localhost:5432/sherlock?sslmode=disable"
+    
