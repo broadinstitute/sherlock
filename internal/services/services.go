@@ -3,7 +3,7 @@ package services
 import (
 	"fmt"
 
-	"github.com/jmoiron/sqlx"
+	"github.com/broadinstitute/sherlock/internal/db"
 )
 
 // Service is the data structure representing an indvidual applicaiton
@@ -15,7 +15,7 @@ type Service struct {
 }
 
 // ListAll uses the underlying datastore to retrieve all services
-func ListAll(store *sqlx.DB) ([]Service, error) {
+func ListAll(store db.Selector) ([]Service, error) {
 	services := make([]Service, 0)
 
 	if err := store.Select(&services, selectAll); err != nil {

@@ -10,10 +10,12 @@ import (
 	"github.com/broadinstitute/sherlock/internal/db"
 	"github.com/broadinstitute/sherlock/internal/services"
 	"github.com/broadinstitute/sherlock/internal/sherlock"
+	"github.com/broadinstitute/sherlock/internal/tools"
 	"github.com/google/go-cmp/cmp"
 	"github.com/jmoiron/sqlx"
 )
 
+// expopses a common sherlock instance that can be shared in integration tests
 var app *sherlock.Application
 
 // This integration test patter is taken from https://www.ardanlabs.com/blog/2019/10/integration-testing-in-go-set-up-and-writing-tests.html
@@ -27,14 +29,14 @@ func Test_sherlockServerIntegration(t *testing.T) {
 	t.Run("GET /services integration test", func(t *testing.T) {
 		// ensure db cleanup will always run at end of test
 		defer func() {
-			if err := db.Truncate(app.DB); err != nil {
+			if err := tools.Truncate(app.DB); err != nil {
 				t.Errorf("error truncating db in test run: %v", err)
 			}
 		}()
 
 		// seed test db with sample data. seeded data is also returned
 		// for ease of testing
-		expectedServices, err := db.SeedServices(app.DB)
+		expectedServices, err := tools.SeedServices(app.DB)
 		if err != nil {
 			t.Fatalf("error seeding services: %v", err)
 		}
@@ -53,6 +55,7 @@ func Test_sherlockServerIntegration(t *testing.T) {
 			t.Errorf("Expected status code %d, got %d", http.StatusOK, response.Code)
 		}
 
+		// decode the resonse body into a slice of Services
 		services := make([]services.Service, 0)
 		if err := json.NewDecoder(response.Body).Decode(&services); err != nil {
 			t.Errorf("error decoding response body: %v", err)
