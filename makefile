@@ -13,3 +13,6 @@ integration-test:
 	
 integration-down:
 	docker-compose -f build/local/server/docker-compose.test.yaml down --volumes
+
+unit-test:
+	go test -v -short ./...

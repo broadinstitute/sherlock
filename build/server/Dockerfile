@@ -7,7 +7,7 @@ ENV CGO_ENABLED=0
 ENV GO111MODULE=on
 ENV GOBIN=/bin
 COPY . .
-RUN go build -o /bin/sherlock ./cmd/server/...
+RUN go test -short ./... && go build -o /bin/sherlock ./cmd/server/...
 
 FROM alpine:${ALPINE_VERSION} as runtime
 ENV APP_NAME=sherlock
