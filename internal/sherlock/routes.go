@@ -16,10 +16,12 @@ func (a *Application) getServices(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 	}
 
-	// TODO handle error returned by encode
+	// TODO handle possible errors better
 	if err := json.NewEncoder(w).Encode(services); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("Unable to retrieve services"))
+		if _, err := w.Write([]byte("Unable to retrieve services")); err != nil {
+			log.Println("unable to send error reponse to client")
+		}
 		return
 	}
 	w.WriteHeader(http.StatusOK)
