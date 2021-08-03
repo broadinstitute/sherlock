@@ -70,7 +70,6 @@ func Test_sherlockServerIntegration(t *testing.T) {
 }
 
 func integrationSetup(t *testing.T) {
-	t.Helper()
 	// skip integration tests if go test is invoked with -short flag
 	if testing.Short() {
 		t.Skip("skipping integration test")
