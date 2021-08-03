@@ -1,4 +1,4 @@
-package main
+package sherlock_test
 
 import (
 	"encoding/json"
@@ -12,6 +12,7 @@ import (
 	"github.com/broadinstitute/sherlock/internal/sherlock"
 	"github.com/broadinstitute/sherlock/internal/tools"
 	"github.com/google/go-cmp/cmp"
+	_ "github.com/jackc/pgx/v4/stdlib"
 	"github.com/jmoiron/sqlx"
 )
 

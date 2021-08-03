@@ -5,7 +5,6 @@ import (
 
 	"github.com/broadinstitute/sherlock/internal/db"
 	"github.com/gorilla/mux"
-	"github.com/jmoiron/sqlx"
 )
 
 // Application is the core application type containing a router and db connection
@@ -15,7 +14,7 @@ type Application struct {
 }
 
 // New Returns a new instance of the core Application application
-func New(db *sqlx.DB) *Application {
+func New(db db.Querier) *Application {
 	app := &Application{
 		DB: db,
 	}
