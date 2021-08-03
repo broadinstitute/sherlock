@@ -10,7 +10,6 @@ import (
 
 func (a *Application) getServices(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
 
 	services, err := services.ListAll(a.DB)
 	if err != nil {
@@ -18,5 +17,10 @@ func (a *Application) getServices(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// TODO handle error returned by encode
-	json.NewEncoder(w).Encode(services)
+	if err := json.NewEncoder(w).Encode(services); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Unable to retrieve services"))
+		return
+	}
+	w.WriteHeader(http.StatusOK)
 }
