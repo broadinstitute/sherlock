@@ -3,13 +3,14 @@ package sherlock
 import (
 	"net/http"
 
+	"github.com/broadinstitute/sherlock/internal/db"
 	"github.com/gorilla/mux"
 	"github.com/jmoiron/sqlx"
 )
 
 // Application is the core application type containing a router and db connection
 type Application struct {
-	DB      *sqlx.DB
+	DB      db.Querier
 	Handler http.Handler
 }
 

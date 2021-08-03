@@ -3,13 +3,13 @@ package tools
 import (
 	"fmt"
 
+	"github.com/broadinstitute/sherlock/internal/db"
 	"github.com/broadinstitute/sherlock/internal/services"
-	"github.com/jmoiron/sqlx"
 )
 
 // SeedServices is a test utility that will populate a database with a predetermined list of "services"
 // to be used for running integration tests against a real database
-func SeedServices(db *sqlx.DB) ([]services.Service, error) {
+func SeedServices(db db.Preparer) ([]services.Service, error) {
 	services := []services.Service{
 		{
 			Name:    "cromwell",
@@ -43,7 +43,7 @@ func SeedServices(db *sqlx.DB) ([]services.Service, error) {
 }
 
 // Truncate cleans up tables after integration tests
-func Truncate(db *sqlx.DB) error {
+func Truncate(db db.Executor) error {
 	statement := "TRUNCATE TABLE services, builds, environments, service_instances, deploys"
 
 	if _, err := db.Exec(statement); err != nil {
