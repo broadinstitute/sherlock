@@ -16,7 +16,7 @@ type Service struct {
 
 // ListAll uses the underlying datastore to retrieve all services
 func ListAll(store db.Selector) ([]Service, error) {
-	services := make([]Service, 0)
+	services := []Service{}
 
 	if err := store.Select(&services, selectAll); err != nil {
 		return nil, fmt.Errorf("error selecting all services: %v", err)
