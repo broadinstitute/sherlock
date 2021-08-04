@@ -55,7 +55,7 @@ func TestListAllServices(t *testing.T) {
 	for _, testCase := range cases {
 		t.Run(testCase.name, func(t *testing.T) {
 			expectedServices := testCase.services
-			gotServices, err := ListAll(&MockServiceStore{services: expectedServices})
+			gotServices, err := ListAll(&mockServiceStore{services: expectedServices})
 			if err != nil {
 				t.Errorf("recieved unexpected error %v\n", err)
 			}
@@ -65,18 +65,26 @@ func TestListAllServices(t *testing.T) {
 			}
 		})
 	}
+
+	t.Run("test failure mode on ListAll", func(t *testing.T) {
+		_, err := ListAll(&failingServiceStore{})
+
+		if err == nil {
+			t.Errorf("expected to receive an error but didn't")
+		}
+	})
 }
 
 // MockServiceStore is an abstraction
 // intended to represent the ability to select services
 // from a database for use in unit testing
-type MockServiceStore struct {
+type mockServiceStore struct {
 	services []Service
 }
 
 // Select implements the db.Selector interface to support using a mock database with the
 // service listing
-func (m *MockServiceStore) Select(dest interface{}, query string, args ...interface{}) error {
+func (m *mockServiceStore) Select(dest interface{}, query string, args ...interface{}) error {
 	if query == selectAll {
 		switch d := dest.(type) {
 		case *[]Service:
@@ -90,4 +98,12 @@ func (m *MockServiceStore) Select(dest interface{}, query string, args ...interf
 		return fmt.Errorf("invalid query: %s", query)
 	}
 	return nil
+}
+
+// failing service store and its associated method are intended to unit test the failure mode
+// of operations interacting with services in some data store
+type failingServiceStore struct{}
+
+func (f *failingServiceStore) Select(dest interface{}, query string, args ...interface{}) error {
+	return fmt.Errorf("Always fails")
 }
