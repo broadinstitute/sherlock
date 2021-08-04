@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 )
 
@@ -15,15 +16,15 @@ func TestGetServicesFailures(t *testing.T) {
 	response := httptest.NewRecorder()
 	app.ServeHTTP(response, req)
 
-	expectedBody := "unable to retrieve services"
 	expectedCode := http.StatusInternalServerError
 
 	if response.Code != expectedCode {
 		t.Errorf("Expected status code %d, got %d", expectedCode, response.Code)
 	}
 
-	if response.Body.String() != expectedBody {
-		t.Errorf("Expected response body %q, got %q", expectedBody, response.Body)
+	body := response.Body.String()
+	if !strings.HasPrefix(body, "error") {
+		t.Errorf("Expected body to contain an error message and didn't receive one. got %s\n", body)
 	}
 }
 
