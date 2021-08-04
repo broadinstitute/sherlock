@@ -13,16 +13,20 @@ func (a *Application) getServices(w http.ResponseWriter, r *http.Request) {
 
 	services, err := services.ListAll(a.DB)
 	if err != nil {
-		log.Println(err)
+		respondWithError(w, http.StatusInternalServerError, "unable to retrieve services")
+		return
 	}
 
-	// TODO handle possible errors better
 	if err := json.NewEncoder(w).Encode(services); err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		if _, err := w.Write([]byte("Unable to retrieve services")); err != nil {
-			log.Println("unable to send error reponse to client")
-		}
+		respondWithError(w, http.StatusInternalServerError, "error encoding services in response")
 		return
 	}
 	w.WriteHeader(http.StatusOK)
+}
+
+func respondWithError(w http.ResponseWriter, statusCode int, message string) {
+	w.WriteHeader(statusCode)
+	if _, err := w.Write([]byte(message)); err != nil {
+		log.Printf("unable to send error response to client %v\n", message)
+	}
 }
