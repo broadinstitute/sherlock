@@ -18,6 +18,7 @@ func New(db db.Querier) *Application {
 	app := &Application{
 		DB: db,
 	}
+	// TODO customize the gin engine more to our specific needs
 	router := gin.Default()
 	router.GET("/services", app.getServices)
 	app.Handler = router

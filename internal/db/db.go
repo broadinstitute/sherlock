@@ -3,15 +3,20 @@
 package db
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"os"
 
 	"github.com/golang-migrate/migrate/v4"
-	// indirect import to set the database driver to use when applying migrations
-	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	"github.com/golang-migrate/migrate/v4/database/postgres"
+
+	// indirect import used to set proper migration data source
 	_ "github.com/golang-migrate/migrate/v4/source/file"
+	_ "github.com/jackc/pgx/v4/stdlib"
 )
+
+const databaseName string = "sherlock"
 
 // ApplyMigrations is a utility function intended for use in integration tests and
 // local development where changelogs can be applied to a local postgres instance
@@ -29,9 +34,21 @@ func ApplyMigrations(changeLogPath string) error {
 	changelogLocation := fmt.Sprintf("file://%s", changeLogPath)
 
 	log.Println("Executing database migration")
-	m, err := migrate.New(
+	// The below code is to ensure migrations run using the same
+	// postgres driver (pgx) that gorm uses. golang-migrate uses
+	// a different postgres driver by default
+	db, err := sql.Open("pgx", os.Getenv("POSTGRESQL_URL"))
+	if err != nil {
+		return err
+	}
+	driver, err := postgres.WithInstance(db, &postgres.Config{})
+	if err != nil {
+		return err
+	}
+	m, err := migrate.NewWithDatabaseInstance(
 		changelogLocation,
-		os.Getenv("POSTGRESQL_URL"),
+		databaseName,
+		driver,
 	)
 	if err != nil {
 		return err
