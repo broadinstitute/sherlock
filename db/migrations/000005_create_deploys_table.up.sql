@@ -3,6 +3,5 @@ CREATE TABLE IF NOT EXISTS deploys(
     service_instance_id integer REFERENCES service_instances (id),
     deployed_at TIMESTAMP WITH TIME ZONE,
     created_at TIMESTAMP WITH TIME ZONE default now(),
-    deleted_at TIMESTAMP WITH TIME ZONE default now(),
     updated_at TIMESTAMP WITH TIME ZONE default now()
 );

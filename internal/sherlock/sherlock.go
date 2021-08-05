@@ -3,18 +3,18 @@ package sherlock
 import (
 	"net/http"
 
-	"github.com/broadinstitute/sherlock/internal/db"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 // Application is the core application type containing a router and db connection
 type Application struct {
-	DB      db.Querier
+	DB      *gorm.DB
 	Handler http.Handler
 }
 
 // New Returns a new instance of the core Application application
-func New(db db.Querier) *Application {
+func New(db *gorm.DB) *Application {
 	app := &Application{
 		DB: db,
 	}

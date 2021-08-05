@@ -3,13 +3,13 @@ package tools
 import (
 	"fmt"
 
-	"github.com/broadinstitute/sherlock/internal/db"
 	"github.com/broadinstitute/sherlock/internal/services"
+	"gorm.io/gorm"
 )
 
 // SeedServices is a test utility that will populate a database with a predetermined list of "services"
 // to be used for running integration tests against a real database
-func SeedServices(db db.Preparer) ([]services.Service, error) {
+func SeedServices(db *gorm.DB) ([]services.Service, error) {
 	services := []services.Service{
 		{
 			Name:    "cromwell",
@@ -25,30 +25,22 @@ func SeedServices(db db.Preparer) ([]services.Service, error) {
 		},
 	}
 
-	statement, err := db.Prepare("INSERT INTO services (name, repo_url) VALUES ($1, $2) RETURNING id, created_at;")
-	if err != nil {
-		return nil, fmt.Errorf("error preparing statement %v", err)
-	}
-	defer statement.Close()
-
-	for i, service := range services {
-		row := statement.QueryRow(service.Name, service.RepoURL)
-
-		if err = row.Scan(&services[i].ID, &services[i].CreatedAt); err != nil {
-			return nil, fmt.Errorf("error seeding data %v", err)
-		}
-
+	db.Create(&services)
+	db.Find(&services)
+	if db.Error != nil {
+		return nil, db.Error
 	}
 	return services, nil
 }
 
 // Truncate cleans up tables after integration tests
-func Truncate(db db.Executor) error {
-	statement := "TRUNCATE TABLE services, builds, environments, service_instances, deploys"
-
-	if _, err := db.Exec(statement); err != nil {
-		return fmt.Errorf("error truncating test db %v", err)
+func Truncate(db *gorm.DB) error {
+	// gorm doesn't seem to support truncate operations which are essential to cleaning up after
+	// integration tests (and the only use case of this function so doing it with raw sql)
+	truncateStatement := "TRUNCATE TABLE services, builds, environments, service_instances, deploys"
+	db.Exec(truncateStatement)
+	if db.Error != nil {
+		return fmt.Errorf("error truncating tables: %v", db.Error)
 	}
-
 	return nil
 }

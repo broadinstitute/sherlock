@@ -9,19 +9,18 @@ import (
 	"github.com/broadinstitute/sherlock/internal/db"
 	"github.com/broadinstitute/sherlock/internal/sherlock"
 	"github.com/broadinstitute/sherlock/internal/tools"
-	_ "github.com/golang-migrate/migrate/v4/database/postgres"
-	_ "github.com/golang-migrate/migrate/v4/source/file"
 	_ "github.com/jackc/pgx/v4/stdlib"
-	"github.com/jmoiron/sqlx"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 func main() {
-	dbConn, err := sqlx.Connect("pgx", os.Getenv("POSTGRESQL_URL"))
+	dsn := "host=postgres user=sherlock password=password dbname=sherlock port=5432 sslmode=disable"
+	dbConn, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("Unable to connect to database: %v\n", err)
 		os.Exit(1)
 	}
-	defer dbConn.Close()
 
 	log.Println("Successfully connected to database")
 

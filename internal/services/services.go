@@ -2,24 +2,27 @@ package services
 
 import (
 	"fmt"
+	"time"
 
-	"github.com/broadinstitute/sherlock/internal/db"
+	"gorm.io/gorm"
 )
 
 // Service is the data structure representing an indvidual applicaiton
 type Service struct {
-	ID        int    `json:"id,omitempty" db:"id"`
-	Name      string `json:"name" db:"name"`
-	RepoURL   string `json:"repo_url" db:"repo_url"`
-	CreatedAt string `json:"created_at,omitempty" db:"created_at"`
+	ID        int       `json:"id,omitempty"`
+	Name      string    `json:"name"`
+	RepoURL   string    `json:"repo_url"`
+	CreatedAt time.Time `json:"created_at,omitempty"`
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
 }
 
 // ListAll uses the underlying datastore to retrieve all services
-func ListAll(store db.Selector) ([]Service, error) {
+func ListAll(store *gorm.DB) ([]Service, error) {
 	services := []Service{}
 
-	if err := store.Select(&services, selectAll); err != nil {
-		return nil, fmt.Errorf("error selecting all services: %v", err)
+	store.Find(&services)
+	if store.Error != nil {
+		return nil, fmt.Errorf("Error retriving services: %v", store.Error)
 	}
 
 	return services, nil

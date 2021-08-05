@@ -2,6 +2,7 @@ package sherlock_test
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -12,9 +13,25 @@ import (
 	"github.com/broadinstitute/sherlock/internal/sherlock"
 	"github.com/broadinstitute/sherlock/internal/tools"
 	"github.com/google/go-cmp/cmp"
-	_ "github.com/jackc/pgx/v4/stdlib"
-	"github.com/jmoiron/sqlx"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
+
+// import (
+// 	"encoding/json"
+// 	"net/http"
+// 	"net/http/httptest"
+// 	"os"
+// 	"testing"
+
+// 	"github.com/broadinstitute/sherlock/internal/db"
+// 	"github.com/broadinstitute/sherlock/internal/services"
+// 	"github.com/broadinstitute/sherlock/internal/sherlock"
+// 	"github.com/broadinstitute/sherlock/internal/tools"
+// 	"github.com/google/go-cmp/cmp"
+// 	_ "github.com/jackc/pgx/v4/stdlib"
+// 	"github.com/jmoiron/sqlx"
+// )
 
 // expopses a common sherlock instance that can be shared in integration tests
 var app *sherlock.Application
@@ -24,8 +41,6 @@ var app *sherlock.Application
 func Test_sherlockServerIntegration(t *testing.T) {
 	// performs integration setup when -short flag is not supplied to go test
 	integrationSetup(t)
-	// ensure db connection is closed at end of integration tests
-	defer app.DB.Close()
 
 	t.Run("GET /services integration test", func(t *testing.T) {
 		// ensure db cleanup will always run at end of test
@@ -77,10 +92,12 @@ func integrationSetup(t *testing.T) {
 
 	// The following steps initialize the database for use in the
 	// sherlock server integration test suite
-
-	dbConn, err := sqlx.Connect("pgx", os.Getenv("POSTGRESQL_URL"))
+	// TODO pull this from config with viper
+	dsn := "host=postgres user=sherlock password=password dbname=sherlock port=5432 sslmode=disable"
+	dbConn, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		t.Fatalf("Unable to connect to database: %v\n", err)
+		log.Fatalf("Unable to connect to database: %v\n", err)
+		os.Exit(1)
 	}
 
 	// when running tests workdir is the package directory ie cmd/server
