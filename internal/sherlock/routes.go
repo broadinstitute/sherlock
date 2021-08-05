@@ -1,28 +1,21 @@
 package sherlock
 
 import (
-	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 
 	"github.com/broadinstitute/sherlock/internal/services"
+	"github.com/gin-gonic/gin"
 )
 
-func (a *Application) getServices(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+func (a *Application) getServices(c *gin.Context) {
 
 	services, err := services.ListAll(a.DB)
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("error retrieving services from datastore: %v\n", err))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-
-	if err := json.NewEncoder(w).Encode(services); err != nil {
-		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("error encoding services into response: %v\n", err))
-		return
-	}
-	w.WriteHeader(http.StatusOK)
+	c.JSON(http.StatusOK, services)
 }
 
 // helper to write errors back to the client

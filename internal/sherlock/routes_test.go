@@ -23,7 +23,7 @@ func TestGetServicesFailures(t *testing.T) {
 	}
 
 	body := response.Body.String()
-	if !strings.HasPrefix(body, "error") {
+	if !strings.Contains(body, "error") {
 		t.Errorf("Expected body to contain an error message and didn't receive one. got %s\n", body)
 	}
 }

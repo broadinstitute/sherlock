@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/broadinstitute/sherlock/internal/db"
-	"github.com/gorilla/mux"
+	"github.com/gin-gonic/gin"
 )
 
 // Application is the core application type containing a router and db connection
@@ -18,8 +18,8 @@ func New(db db.Querier) *Application {
 	app := &Application{
 		DB: db,
 	}
-	router := mux.NewRouter()
-	router.HandleFunc("/services", app.getServices).Methods(http.MethodGet)
+	router := gin.Default()
+	router.GET("/services", app.getServices)
 	app.Handler = router
 
 	return app
