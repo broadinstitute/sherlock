@@ -30,12 +30,14 @@ func main() {
 		log.Println(err)
 	}
 
-	if _, err := tools.SeedServices(dbConn); err != nil {
+	repository := db.NewRepository(dbConn)
+	app := sherlock.New(repository)
+
+	if _, err := tools.SeedServices(app.Repository); err != nil {
 		log.Println(err)
 	}
 
 	log.Println("starting sherlock server")
-	app := sherlock.New(dbConn)
 
 	log.Println("Listening on port 8080")
 	log.Fatal(http.ListenAndServe(":8080", app))

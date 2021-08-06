@@ -1,15 +1,13 @@
 package tools
 
 import (
-	"fmt"
-
+	"github.com/broadinstitute/sherlock/internal/db"
 	"github.com/broadinstitute/sherlock/internal/services"
-	"gorm.io/gorm"
 )
 
 // SeedServices is a test utility that will populate a database with a predetermined list of "services"
 // to be used for running integration tests against a real database
-func SeedServices(db *gorm.DB) ([]services.Service, error) {
+func SeedServices(repository *db.Repository) ([]services.Service, error) {
 	services := []services.Service{
 		{
 			Name:    "cromwell",
@@ -25,22 +23,20 @@ func SeedServices(db *gorm.DB) ([]services.Service, error) {
 		},
 	}
 
-	db.Create(&services)
-	db.Find(&services)
-	if db.Error != nil {
-		return nil, db.Error
+	err := repository.DB.Create(&services).Error
+	if err != nil {
+		return nil, err
 	}
-	return services, nil
+	err = repository.DB.Find(&services).Error
+	return services, err
 }
 
 // Truncate cleans up tables after integration tests
-func Truncate(db *gorm.DB) error {
+func Truncate(repository *db.Repository) error {
 	// gorm doesn't seem to support truncate operations which are essential to cleaning up after
 	// integration tests (and the only use case of this function so doing it with raw sql)
 	truncateStatement := "TRUNCATE TABLE services, builds, environments, service_instances, deploys"
-	db.Exec(truncateStatement)
-	if db.Error != nil {
-		return fmt.Errorf("error truncating tables: %v", db.Error)
-	}
-	return nil
+	err := repository.DB.Exec(truncateStatement).Error
+
+	return err
 }

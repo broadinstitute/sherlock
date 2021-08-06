@@ -3,6 +3,7 @@ module github.com/broadinstitute/sherlock
 go 1.16
 
 require (
+	github.com/DATA-DOG/go-sqlmock v1.5.0 // indirect
 	github.com/gin-gonic/gin v1.7.3
 	github.com/go-playground/validator/v10 v10.8.0 // indirect
 	github.com/golang-migrate/migrate/v4 v4.14.1

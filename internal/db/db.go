@@ -10,6 +10,7 @@ import (
 
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
+	"gorm.io/gorm"
 
 	// indirect import used to set proper migration data source
 	_ "github.com/golang-migrate/migrate/v4/source/file"
@@ -17,6 +18,18 @@ import (
 )
 
 const databaseName string = "sherlock"
+
+// Repository is a wrapper around a connection to a data base
+//  that can support mocking database connections in tests
+type Repository struct {
+	DB *gorm.DB
+}
+
+// NewRepository takes a gorm db connection and returns it
+// wrapped in a repository struct
+func NewRepository(db *gorm.DB) *Repository {
+	return &Repository{DB: db}
+}
 
 // ApplyMigrations is a utility function intended for use in integration tests and
 // local development where changelogs can be applied to a local postgres instance

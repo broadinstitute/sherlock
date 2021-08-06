@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"gorm.io/gorm"
+	"github.com/broadinstitute/sherlock/internal/db"
 )
 
 // Service is the data structure representing an indvidual applicaiton
@@ -17,12 +17,12 @@ type Service struct {
 }
 
 // ListAll uses the underlying datastore to retrieve all services
-func ListAll(store *gorm.DB) ([]Service, error) {
+func ListAll(repository *db.Repository) ([]Service, error) {
 	services := []Service{}
 
-	store.Find(&services)
-	if store.Error != nil {
-		return nil, fmt.Errorf("Error retriving services: %v", store.Error)
+	err := repository.DB.Find(&services).Error
+	if err != nil {
+		return nil, fmt.Errorf("Error retriving services: %v", repository.DB.Error)
 	}
 
 	return services, nil

@@ -1,14 +1,22 @@
 package sherlock
 
 import (
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
+
+	"github.com/broadinstitute/sherlock/internal/db"
 )
 
 func TestGetServicesFailures(t *testing.T) {
-	app := New(&mockDB{})
+	// setup a mock db that will always fail to verify failure mode behavior
+	repository, mock := db.SetupMockRepository(t, true)
+	app := New(repository)
+
+	// ensure mock db will error out
+	mock.ExpectQuery(".*").WillReturnError(fmt.Errorf("unable to select all services"))
 	req, _ := http.NewRequest(http.MethodGet, "/services", nil)
 
 	response := httptest.NewRecorder()
