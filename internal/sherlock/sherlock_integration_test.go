@@ -17,22 +17,6 @@ import (
 	"gorm.io/gorm"
 )
 
-// import (
-// 	"encoding/json"
-// 	"net/http"
-// 	"net/http/httptest"
-// 	"os"
-// 	"testing"
-
-// 	"github.com/broadinstitute/sherlock/internal/db"
-// 	"github.com/broadinstitute/sherlock/internal/services"
-// 	"github.com/broadinstitute/sherlock/internal/sherlock"
-// 	"github.com/broadinstitute/sherlock/internal/tools"
-// 	"github.com/google/go-cmp/cmp"
-// 	_ "github.com/jackc/pgx/v4/stdlib"
-// 	"github.com/jmoiron/sqlx"
-// )
-
 // expopses a common sherlock instance that can be shared in integration tests
 var app *sherlock.Application
 
