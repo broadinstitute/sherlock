@@ -15,7 +15,7 @@ func TestGetServicesFailures(t *testing.T) {
 	repository, mock := db.SetupMockRepository(t, true)
 	app := New(repository)
 
-	// ensure mock db will error out
+	// ensure mock db will error out on any query
 	mock.ExpectQuery(".*").WillReturnError(fmt.Errorf("unable to select all services"))
 	req, _ := http.NewRequest(http.MethodGet, "/services", nil)
 

@@ -93,7 +93,7 @@ func integrationSetup(t *testing.T) {
 	// The following steps initialize the database for use in the
 	// sherlock server integration test suite
 	// TODO pull this from config with viper
-	dsn := "host=postgres user=sherlock password=password dbname=sherlock port=5432 sslmode=disable"
+	dsn := "host=localhost user=sherlock password=password dbname=sherlock port=5432 sslmode=disable"
 	dbConn, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("Unable to connect to database: %v\n", err)
