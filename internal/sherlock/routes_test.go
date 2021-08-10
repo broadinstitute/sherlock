@@ -11,9 +11,11 @@ import (
 )
 
 func TestGetServicesFailures(t *testing.T) {
-	// setup a mock db that will always fail to verify failure mode behavior
+	// setup an app instance with mock db that will always fail to verify failure mode behavior
 	repository, mock := db.SetupMockRepository(t, true)
-	app := New(repository)
+	app := &Application{}
+	app = buildRouter(app)
+	app.Repository = repository
 
 	// ensure mock db will error out on any query
 	mock.ExpectQuery(".*").WillReturnError(fmt.Errorf("unable to select all services"))

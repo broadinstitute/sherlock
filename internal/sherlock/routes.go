@@ -7,6 +7,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// helper function to take an existing sherlock instance
+// then build and attach a gin routeer to it.
+func buildRouter(app *Application) *Application {
+	router := gin.Default()
+	router.GET("/services", app.getServices)
+	app.Handler = router
+	return app
+}
+
 func (a *Application) getServices(c *gin.Context) {
 
 	services, err := services.ListAll(a.Repository)

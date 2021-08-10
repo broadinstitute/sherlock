@@ -10,6 +10,8 @@ import (
 
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
+	"github.com/spf13/viper"
+	gormpg "gorm.io/driver/postgres"
 	"gorm.io/gorm"
 
 	// indirect import used to set proper migration data source
@@ -73,4 +75,21 @@ func ApplyMigrations(changeLogPath string) error {
 
 	log.Println("database migration complete")
 	return nil
+}
+
+func Connect(config *viper.Viper) (*gorm.DB, error) {
+	dsn := fmt.Sprintf(
+		"host=%s user=%s password=%s dbname=%s port=%s sslmode=%s",
+		config.GetString("dbhost"),
+		config.GetString("dbuser"),
+		config.GetString("dbpassword"),
+		config.GetString("dbname"),
+		config.GetString("dbport"),
+		config.GetString("dbssl"),
+	)
+	dbConn, err := gorm.Open(gormpg.Open(dsn), &gorm.Config{})
+	if err != nil {
+		return nil, fmt.Errorf("error connecting to database: %v", err)
+	}
+	return dbConn, nil
 }

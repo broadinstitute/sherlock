@@ -12,6 +12,7 @@ require (
 	github.com/jackc/pgx/v4 v4.13.0
 	github.com/json-iterator/go v1.1.11 // indirect
 	github.com/mattn/go-isatty v0.0.13 // indirect
+	github.com/spf13/viper v1.8.1 // indirect
 	github.com/ugorji/go v1.2.6 // indirect
 	google.golang.org/protobuf v1.27.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect

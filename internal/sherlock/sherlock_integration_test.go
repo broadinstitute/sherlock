@@ -2,10 +2,8 @@ package sherlock_test
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"testing"
 
 	"github.com/broadinstitute/sherlock/internal/db"
@@ -13,8 +11,6 @@ import (
 	"github.com/broadinstitute/sherlock/internal/sherlock"
 	"github.com/broadinstitute/sherlock/internal/tools"
 	"github.com/google/go-cmp/cmp"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
 )
 
 // expopses a common sherlock instance that can be shared in integration tests
@@ -77,12 +73,6 @@ func integrationSetup(t *testing.T) {
 	// The following steps initialize the database for use in the
 	// sherlock server integration test suite
 	// TODO pull this from config with viper
-	dsn := "host=localhost user=sherlock password=password dbname=sherlock port=5432 sslmode=disable"
-	dbConn, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-	if err != nil {
-		log.Fatalf("Unable to connect to database: %v\n", err)
-		os.Exit(1)
-	}
 
 	// when running tests workdir is the package directory ie cmd/server
 	// so a relative path to changelogs is needed.
@@ -91,6 +81,5 @@ func integrationSetup(t *testing.T) {
 		t.Fatalf("error migrating database: %v", err)
 	}
 
-	repository := db.NewRepository(dbConn)
-	app = sherlock.New(repository)
+	app = sherlock.New()
 }
