@@ -42,7 +42,6 @@ jobs:
       run: go test -v -coverprofile=cover.out -covermode=count ./...
       env:
         SHERLOCK_INIT_DB: "true"
-        POSTGRESQL_URL: "postgres://sherlock:password@localhost:5432/sherlock?sslmode=disable"
         SHERLOCK_DBPASSWORD: "password"
         SHERLOCK_DBHOST: "localhost"
     - name: upload unit test coverage report

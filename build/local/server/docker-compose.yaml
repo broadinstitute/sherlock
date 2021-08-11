@@ -12,7 +12,6 @@ services:
     ports:
       - "8080:8080"
     environment: 
-      POSTGRESQL_URL: "postgres://sherlock:password@postgres:5432/sherlock?sslmode=disable"
       SHERLOCK_INIT_DB: "true"
       SHERLOCK_DBPASSWORD: "password"
     depends_on:
