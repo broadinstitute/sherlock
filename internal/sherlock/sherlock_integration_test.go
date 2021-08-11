@@ -16,7 +16,7 @@ import (
 // expopses a common sherlock instance that can be shared in integration tests
 var app *sherlock.Application
 
-// This integration test patter is taken from https://www.ardanlabs.com/blog/2019/10/integration-testing-in-go-set-up-and-writing-tests.html
+// This integration test pattern is taken from https://www.ardanlabs.com/blog/2019/10/integration-testing-in-go-set-up-and-writing-tests.html
 
 func Test_sherlockServerIntegration(t *testing.T) {
 	// performs integration setup when -short flag is not supplied to go test

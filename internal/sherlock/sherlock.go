@@ -21,7 +21,7 @@ type Application struct {
 	Handler    http.Handler
 }
 
-// New Returns a new instance of the core sherlock application
+// New returns a new instance of the core sherlock application
 func New() *Application {
 	dbConn, err := db.Connect(Config)
 	if err != nil {
