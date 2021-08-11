@@ -10,7 +10,7 @@ import (
 )
 
 // SetupMockRepository is a test utility function that can be used to
-// supply a stub postgres backend that can in turn be used for simulating
+// supply a stub postgres backend that can in turn be used for simulating queries
 func SetupMockRepository(t *testing.T, useRegexQueryMatcher bool) (*Repository, sqlmock.Sqlmock) {
 	t.Helper()
 	var (

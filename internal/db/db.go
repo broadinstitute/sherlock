@@ -36,7 +36,7 @@ func NewRepository(db *gorm.DB) *Repository {
 // ApplyMigrations is a utility function intended for use in integration tests and
 // local development where changelogs can be applied to a local postgres instance
 // during startup
-func ApplyMigrations(changeLogPath string) error {
+func ApplyMigrations(changeLogPath string, config *viper.Viper) error {
 	// check for environment flag whether to run migrations on app start up or not
 	if _, ok := os.LookupEnv("SHERLOCK_INIT_DB"); !ok {
 		log.Println("skipping database migration on startup, starting server...")
@@ -47,12 +47,21 @@ func ApplyMigrations(changeLogPath string) error {
 	// directly out of env
 
 	changelogLocation := fmt.Sprintf("file://%s", changeLogPath)
+	dbURL := fmt.Sprintf(
+		"postgres://%s:%s@%s:%s/%s?sslmode=%s",
+		config.GetString("dbuser"),
+		config.GetString("dbpassword"),
+		config.GetString("dbhost"),
+		config.GetString("dbport"),
+		config.GetString("dbname"),
+		config.GetString("dbssl"),
+	)
 
 	log.Println("Executing database migration")
 	// The below code is to ensure migrations run using the same
 	// postgres driver (pgx) that gorm uses. golang-migrate uses
 	// a different postgres driver by default
-	db, err := sql.Open("pgx", os.Getenv("POSTGRESQL_URL"))
+	db, err := sql.Open("pgx", dbURL)
 	if err != nil {
 		return err
 	}

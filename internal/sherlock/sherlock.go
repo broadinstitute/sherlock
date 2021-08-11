@@ -8,19 +8,22 @@ import (
 	"github.com/spf13/viper"
 )
 
+// package level variable holding a viper instance that will manage sherlock's config
 var (
-	config = viper.New()
+	Config = viper.New()
 )
 
 // Application is the core application type containing a router and db connection
+// repository is a wrapper type so we can define our own methods on the type holding the
+// DB connection pool
 type Application struct {
 	Repository *db.Repository
 	Handler    http.Handler
 }
 
-// New Returns a new instance of the core Application application
+// New Returns a new instance of the core sherlock application
 func New() *Application {
-	dbConn, err := db.Connect(config)
+	dbConn, err := db.Connect(Config)
 	if err != nil {
 		log.Fatalf("error connecting to database: %v", err)
 	}
@@ -29,7 +32,8 @@ func New() *Application {
 	app := &Application{
 		Repository: repository,
 	}
-	// TODO customize the gin engine more to our specific needs
+
+	// initialize the gin router and store it in our app struct
 	app = buildRouter(app)
 
 	return app
@@ -41,16 +45,18 @@ func (a *Application) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 // initialize sherlock configuration via viper
+// this is guaranteed to run after package variable declarations
+// but before any other code in this package is executed
 func init() {
 	// viper will auto parse ENV VARS prefixed with SHERLOCK
 	// into config
-	config.SetEnvPrefix("sherlock")
+	Config.SetEnvPrefix("sherlock")
 
-	config.SetDefault("dbhost", "postgres")
-	config.SetDefault("dbuser", "sherlock")
-	config.SetDefault("dbname", "sherlock")
-	config.SetDefault("dbport", "5432")
-	config.SetDefault("dbssl", "disable")
+	Config.SetDefault("dbhost", "postgres")
+	Config.SetDefault("dbuser", "sherlock")
+	Config.SetDefault("dbname", "sherlock")
+	Config.SetDefault("dbport", "5432")
+	Config.SetDefault("dbssl", "disable")
 
-	config.AutomaticEnv()
+	Config.AutomaticEnv()
 }

@@ -77,7 +77,7 @@ func integrationSetup(t *testing.T) {
 	// when running tests workdir is the package directory ie cmd/server
 	// so a relative path to changelogs is needed.
 	// TODO cleaner method to supply path to changelogs and run migration in tests
-	if err := db.ApplyMigrations("../../db/migrations"); err != nil {
+	if err := db.ApplyMigrations("../../db/migrations", sherlock.Config); err != nil {
 		t.Fatalf("error migrating database: %v", err)
 	}
 

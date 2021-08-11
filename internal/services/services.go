@@ -22,7 +22,7 @@ func ListAll(repository *db.Repository) ([]Service, error) {
 
 	err := repository.DB.Find(&services).Error
 	if err != nil {
-		return nil, fmt.Errorf("Error retriving services: %v", repository.DB.Error)
+		return nil, fmt.Errorf("Error retriving services: %v", err)
 	}
 
 	return services, nil
