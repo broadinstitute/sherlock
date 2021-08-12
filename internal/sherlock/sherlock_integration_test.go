@@ -13,7 +13,7 @@ import (
 	"github.com/google/go-cmp/cmp"
 )
 
-// expopses a common sherlock instance that can be shared in integration tests
+// exposes a common sherlock instance that can be shared in integration tests
 var app *sherlock.Application
 
 // This integration test pattern is taken from https://www.ardanlabs.com/blog/2019/10/integration-testing-in-go-set-up-and-writing-tests.html
