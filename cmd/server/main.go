@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"os"
 
 	"log"
 
@@ -16,6 +17,7 @@ func main() {
 	// a no changes migration is treated as an error..
 	if err := db.ApplyMigrations("db/migrations", sherlock.Config); err != nil {
 		log.Println(err)
+		os.Exit(1)
 	}
 
 	app := sherlock.New()
