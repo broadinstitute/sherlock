@@ -12,7 +12,7 @@ services:
     ports:
       - "8080:8080"
     environment: 
-      SHERLOCK_INIT_DB: "true"
+      SHERLOCK_DBINIT: "true"
       SHERLOCK_DBPASSWORD: "password"
     depends_on:
       - database

@@ -6,7 +6,6 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-	"os"
 
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
@@ -38,7 +37,7 @@ func NewRepository(db *gorm.DB) *Repository {
 // during startup
 func ApplyMigrations(changeLogPath string, config *viper.Viper) error {
 	// check for environment flag whether to run migrations on app start up or not
-	if _, ok := os.LookupEnv("SHERLOCK_INIT_DB"); !ok {
+	if dbInit := config.GetBool("dbinit"); !dbInit {
 		log.Println("skipping database migration on startup, starting server...")
 		return nil
 	}

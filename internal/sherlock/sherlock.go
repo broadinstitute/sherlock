@@ -57,6 +57,7 @@ func init() {
 	Config.SetDefault("dbname", "sherlock")
 	Config.SetDefault("dbport", "5432")
 	Config.SetDefault("dbssl", "disable")
+	Config.SetDefault("dbinit", false)
 
 	Config.AutomaticEnv()
 }
