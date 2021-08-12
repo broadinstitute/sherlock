@@ -41,7 +41,7 @@ jobs:
     - name: run all tests
       run: go test -v -coverprofile=cover.out -covermode=count ./...
       env:
-        SHERLOCK_INIT_DB: "true"
+        SHERLOCK_DBINIT: "true"
         SHERLOCK_DBPASSWORD: "password"
         SHERLOCK_DBHOST: "localhost"
     - name: upload unit test coverage report
