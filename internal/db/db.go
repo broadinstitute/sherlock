@@ -80,16 +80,6 @@ func ApplyMigrations(changeLogPath string, config *viper.Viper) error {
 // Connect is a utility function that accepts a viper instance containing
 // database configs and returns a gorm database connection
 func Connect(config *viper.Viper) (*gorm.DB, error) {
-	// dbConnectionInfo := fmt.Sprintf(
-	// 	"host=%s user=%s password=%s dbname=%s port=%s sslmode=%s",
-	// 	config.GetString("dbhost"),
-	// 	config.GetString("dbuser"),
-	// 	config.GetString("dbpassword"),
-	// 	config.GetString("dbname"),
-	// 	config.GetString("dbport"),
-	// 	config.GetString("dbssl"),
-	// )
-	// dbConn, err := gorm.Open(gormpg.Open(dbConnectionInfo), &gorm.Config{})
 	dbURL := buildDBConnectionString(config)
 	dbConn, err := sql.Open("pgx", dbURL)
 	if err != nil {
