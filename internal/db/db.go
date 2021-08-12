@@ -46,15 +46,7 @@ func ApplyMigrations(changeLogPath string, config *viper.Viper) error {
 	// directly out of env
 
 	changelogLocation := fmt.Sprintf("file://%s", changeLogPath)
-	dbURL := fmt.Sprintf(
-		"postgres://%s:%s@%s:%s/%s?sslmode=%s",
-		config.GetString("dbuser"),
-		config.GetString("dbpassword"),
-		config.GetString("dbhost"),
-		config.GetString("dbport"),
-		config.GetString("dbname"),
-		config.GetString("dbssl"),
-	)
+	dbURL := buildDBConnectionString(config)
 
 	log.Println("Executing database migration")
 	// The below code is to ensure migrations run using the same
@@ -88,18 +80,39 @@ func ApplyMigrations(changeLogPath string, config *viper.Viper) error {
 // Connect is a utility function that accepts a viper instance containing
 // database configs and returns a gorm database connection
 func Connect(config *viper.Viper) (*gorm.DB, error) {
-	dbConnectionInfo := fmt.Sprintf(
-		"host=%s user=%s password=%s dbname=%s port=%s sslmode=%s",
-		config.GetString("dbhost"),
-		config.GetString("dbuser"),
-		config.GetString("dbpassword"),
-		config.GetString("dbname"),
-		config.GetString("dbport"),
-		config.GetString("dbssl"),
-	)
-	dbConn, err := gorm.Open(gormpg.Open(dbConnectionInfo), &gorm.Config{})
+	// dbConnectionInfo := fmt.Sprintf(
+	// 	"host=%s user=%s password=%s dbname=%s port=%s sslmode=%s",
+	// 	config.GetString("dbhost"),
+	// 	config.GetString("dbuser"),
+	// 	config.GetString("dbpassword"),
+	// 	config.GetString("dbname"),
+	// 	config.GetString("dbport"),
+	// 	config.GetString("dbssl"),
+	// )
+	// dbConn, err := gorm.Open(gormpg.Open(dbConnectionInfo), &gorm.Config{})
+	dbURL := buildDBConnectionString(config)
+	dbConn, err := sql.Open("pgx", dbURL)
 	if err != nil {
 		return nil, fmt.Errorf("error connecting to database: %v", err)
 	}
-	return dbConn, nil
+
+	gormDB, err := gorm.Open(gormpg.New(gormpg.Config{
+		Conn: dbConn,
+	}))
+	if err != nil {
+		return nil, fmt.Errorf("error connecting to database: %v", err)
+	}
+	return gormDB, nil
+}
+
+func buildDBConnectionString(config *viper.Viper) string {
+	return fmt.Sprintf(
+		"postgres://%s:%s@%s:%s/%s?sslmode=%s",
+		config.GetString("dbuser"),
+		config.GetString("dbpassword"),
+		config.GetString("dbhost"),
+		config.GetString("dbport"),
+		config.GetString("dbname"),
+		config.GetString("dbssl"),
+	)
 }
