@@ -25,14 +25,14 @@ func Test_sherlockServerIntegration(t *testing.T) {
 	t.Run("GET /services integration test", func(t *testing.T) {
 		// ensure db cleanup will always run at end of test
 		defer func() {
-			if err := tools.Truncate(app.Repository); err != nil {
+			if err := tools.Truncate(app.DB); err != nil {
 				t.Errorf("error truncating db in test run: %v", err)
 			}
 		}()
 
 		// seed test db with sample data. seeded data is also returned
 		// for ease of testing
-		expectedServices, err := tools.SeedServices(app.Repository)
+		expectedServices, err := tools.SeedServices(app.DB)
 		if err != nil {
 			t.Fatalf("error seeding services: %v", err)
 		}

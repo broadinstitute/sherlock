@@ -22,7 +22,7 @@ func main() {
 
 	app := sherlock.New()
 
-	if _, err := tools.SeedServices(app.Repository); err != nil {
+	if _, err := tools.SeedServices(app.DB); err != nil {
 		log.Println(err)
 	}
 

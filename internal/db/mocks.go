@@ -9,9 +9,9 @@ import (
 	"gorm.io/gorm"
 )
 
-// SetupMockRepository is a test utility function that can be used to
+// NewMockServiceModel is a test utility function that can be used to
 // supply a stub postgres backend that can in turn be used for simulating queries
-func SetupMockRepository(t *testing.T, useRegexQueryMatcher bool) (*Repository, sqlmock.Sqlmock) {
+func NewMockServiceModel(t *testing.T, useRegexQueryMatcher bool) (*ServiceModel, sqlmock.Sqlmock) {
 	t.Helper()
 	var (
 		stubDB *sql.DB
@@ -38,6 +38,6 @@ func SetupMockRepository(t *testing.T, useRegexQueryMatcher bool) (*Repository, 
 		t.Fatalf("err using gorm with stub db: %v", err)
 	}
 
-	stubRepository := NewRepository(gdb)
-	return stubRepository, mock
+	mockServiceModel := NewServiceModel(gdb)
+	return mockServiceModel, mock
 }

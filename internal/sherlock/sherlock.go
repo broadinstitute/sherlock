@@ -5,7 +5,9 @@ import (
 	"net/http"
 
 	"github.com/broadinstitute/sherlock/internal/db"
+	"github.com/broadinstitute/sherlock/internal/services"
 	"github.com/spf13/viper"
+	"gorm.io/gorm"
 )
 
 // package level variable holding a viper instance that will manage sherlock's config
@@ -17,8 +19,11 @@ var (
 // repository is a wrapper type so we can define our own methods on the type holding the
 // DB connection pool
 type Application struct {
-	Repository *db.Repository
-	Handler    http.Handler
+	ServiceModel services.ServiceModel
+	Handler      http.Handler
+	// Used to pass the dbConn to testing setup helpers
+	// without needing to instantiate a full model instance
+	DB *gorm.DB
 }
 
 // New returns a new instance of the core sherlock application
@@ -28,15 +33,19 @@ func New() *Application {
 		log.Fatalf("error connecting to database: %v", err)
 	}
 
-	repository := db.NewRepository(dbConn)
 	app := &Application{
-		Repository: repository,
+		DB: dbConn,
 	}
 
+	app.registerModels()
 	// initialize the gin router and store it in our app struct
-	app = buildRouter(app)
+	app.buildRouter()
 
 	return app
+}
+
+func (a *Application) registerModels() {
+	a.ServiceModel = db.NewServiceModel(a.DB)
 }
 
 // ServeHTTP implments the http.Handler interface for a Sherlock application instance

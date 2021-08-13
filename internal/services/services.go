@@ -1,10 +1,11 @@
+// Package services defines data structure representing
+// a service instance and methods for interacting with them
+// it is left to concrete implementations in package db or others to
+// implement these interfaces
 package services
 
 import (
-	"fmt"
 	"time"
-
-	"github.com/broadinstitute/sherlock/internal/db"
 )
 
 // Service is the data structure representing an indvidual applicaiton
@@ -16,14 +17,7 @@ type Service struct {
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 }
 
-// ListAll uses the underlying datastore to retrieve all services
-func ListAll(repository *db.Repository) ([]Service, error) {
-	services := []Service{}
-
-	err := repository.DB.Find(&services).Error
-	if err != nil {
-		return nil, fmt.Errorf("Error retriving services: %v", err)
-	}
-
-	return services, nil
+// ServiceModel is the  interface used to model operations relating to services in the backend datastore
+type ServiceModel interface {
+	ListAll() ([]Service, error)
 }

@@ -3,7 +3,6 @@ package sherlock
 import (
 	"net/http"
 
-	"github.com/broadinstitute/sherlock/internal/services"
 	"github.com/gin-gonic/gin"
 )
 
@@ -11,16 +10,15 @@ import (
 // then build and attach a gin router to it.
 // this decouples building the router from instanting a sherlock Application
 // which makes testing easier
-func buildRouter(app *Application) *Application {
+func (a *Application) buildRouter() {
 	router := gin.Default()
-	router.GET("/services", app.getServices)
-	app.Handler = router
-	return app
+	router.GET("/services", a.getServices)
+	a.Handler = router
 }
 
 func (a *Application) getServices(c *gin.Context) {
 
-	services, err := services.ListAll(a.Repository)
+	services, err := a.ServiceModel.ListAll()
 	if err != nil {
 		// send error response to client
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

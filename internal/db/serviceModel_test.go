@@ -1,11 +1,11 @@
-package services
+package db
 
 import (
 	"testing"
 	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/broadinstitute/sherlock/internal/db"
+	"github.com/broadinstitute/sherlock/internal/services"
 	"github.com/google/go-cmp/cmp"
 )
 
@@ -18,19 +18,19 @@ var serviceColumns []string = []string{"id", "name", "repo_url", "created_at", "
 
 func TestListAllServices(t *testing.T) {
 	// Set up stub db
-	repository, mock := db.SetupMockRepository(t, false)
+	model, mock := NewMockServiceModel(t, false)
 
 	cases := []struct {
 		name     string
-		services []Service
+		services []services.Service
 	}{
 		{
 			name:     "no existing services",
-			services: []Service{},
+			services: []services.Service{},
 		},
 		{
 			name: "one existing service",
-			services: []Service{
+			services: []services.Service{
 				{
 					ID:        1,
 					Name:      "cromwell",
@@ -42,7 +42,7 @@ func TestListAllServices(t *testing.T) {
 		},
 		{
 			name: "multiple existing services",
-			services: []Service{
+			services: []services.Service{
 				{
 					ID:        1,
 					Name:      "cromwell",
@@ -72,7 +72,7 @@ func TestListAllServices(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			populateStubData(t, mock, testCase.services)
 
-			services, err := ListAll(repository)
+			services, err := model.ListAll()
 			if err != nil {
 				t.Errorf("received unexpected error listing servies: %v", err)
 			}
@@ -91,7 +91,7 @@ func TestListAllServices(t *testing.T) {
 
 }
 
-func populateStubData(t *testing.T, mock sqlmock.Sqlmock, expectedData []Service) {
+func populateStubData(t *testing.T, mock sqlmock.Sqlmock, expectedData []services.Service) {
 	t.Helper()
 
 	// setup expected table schema in stub
