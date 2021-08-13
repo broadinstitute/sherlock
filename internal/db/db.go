@@ -18,20 +18,6 @@ import (
 	_ "github.com/jackc/pgx/v4/stdlib"
 )
 
-const databaseName string = "sherlock"
-
-// Repository is a wrapper around a connection to a data base
-//  that can support mocking database connections in tests
-type Repository struct {
-	DB *gorm.DB
-}
-
-// NewRepository takes a gorm db connection and returns it
-// wrapped in a repository struct
-func NewRepository(db *gorm.DB) *Repository {
-	return &Repository{DB: db}
-}
-
 // ApplyMigrations is a utility function intended for use in integration tests and
 // local development where changelogs can be applied to a local postgres instance
 // during startup
@@ -62,7 +48,7 @@ func ApplyMigrations(changeLogPath string, config *viper.Viper) error {
 	}
 	migrationPlan, err := migrate.NewWithDatabaseInstance(
 		changelogLocation,
-		databaseName,
+		config.GetString("dbname"),
 		driver,
 	)
 	if err != nil {
