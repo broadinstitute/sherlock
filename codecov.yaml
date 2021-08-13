@@ -1,0 +1,3 @@
+ignore:
+  # This file is 100% covered by unit and integration tests but for some reason codecov thinks it isn't
+  - "internal/db/db.go"
