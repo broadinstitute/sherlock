@@ -91,13 +91,24 @@ func Test_sherlockServerIntegration(t *testing.T) {
 
 		app.ServeHTTP(response, req)
 
-		if response.Code != http.StatusOK {
-			t.Errorf("Expected status code %d, got %d", http.StatusOK, response.Code)
+		if response.Code != http.StatusCreated {
+			t.Errorf("Expected status code %d, got %d", http.StatusCreated, response.Code)
 		}
 
-		if response.Body.String() == "" {
-			t.Errorf("expected response body to not be empty")
+		var savedService services.Service
+		if err := json.NewDecoder(response.Body).Decode(&savedService); err != nil {
+			t.Errorf("error decoding response body: %v", err)
 		}
+
+		// use a GET /services request to verify the new entity was persisted
+		req, err = http.NewRequest(http.MethodGet, "/services", nil)
+		if err != nil {
+			t.Errorf("error creating get /services request: %v", err)
+		}
+
+		response = httptest.NewRecorder()
+
+		app.ServeHTTP(response, req)
 	})
 }
 

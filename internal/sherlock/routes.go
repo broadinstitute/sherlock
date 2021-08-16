@@ -1,7 +1,6 @@
 package sherlock
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/broadinstitute/sherlock/internal/services"
@@ -32,10 +31,20 @@ func (a *Application) getServices(c *gin.Context) {
 
 func (a *Application) createService(c *gin.Context) {
 	var newService services.Service
+
+	// decode the post request body into a Service struct
 	if err := c.BindJSON(&newService); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+
+	// the create method returns a service struct with the newly saved entity including fields
+	// updated internally by the database such as ID
 	savedService, err := a.ServiceModel.Create(&newService)
-	fmt.Printf("result: %v, err: %v", savedService, err)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusCreated, savedService)
 }
