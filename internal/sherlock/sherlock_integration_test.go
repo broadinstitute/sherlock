@@ -1,6 +1,7 @@
 package sherlock_test
 
 import (
+	"bytes"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -60,6 +61,42 @@ func Test_sherlockServerIntegration(t *testing.T) {
 		// pretty prints a diff of 2 arbitrary structs
 		if diff := cmp.Diff(expectedServices, services); diff != "" {
 			t.Errorf("unexpected difference in response body:\n%v", diff)
+		}
+	})
+
+	t.Run("POST /services integration test", func(t *testing.T) {
+		defer func() {
+			if err := tools.Truncate(app.DB); err != nil {
+				t.Errorf("error truncating db in test run: %v", err)
+			}
+		}()
+
+		// declare a new service to be included in an http post request body
+		newService := &services.Service{
+			Name:    "agora",
+			RepoURL: "https://github.com/broadinstitute/agora",
+		}
+
+		payload := new(bytes.Buffer)
+		if err := json.NewEncoder(payload).Encode(newService); err != nil {
+			t.Errorf("error encoding post payload: %v", err)
+		}
+
+		req, err := http.NewRequest(http.MethodPost, "/services", payload)
+		if err != nil {
+			t.Errorf("error generating test request: %v", err)
+		}
+
+		response := httptest.NewRecorder()
+
+		app.ServeHTTP(response, req)
+
+		if response.Code != http.StatusOK {
+			t.Errorf("Expected status code %d, got %d", http.StatusOK, response.Code)
+		}
+
+		if response.Body.String() == "" {
+			t.Errorf("expected response body to not be empty")
 		}
 	})
 }

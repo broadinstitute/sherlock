@@ -20,4 +20,5 @@ type Service struct {
 // ServiceModel is the  interface used to model operations relating to services in the backend datastore
 type ServiceModel interface {
 	ListAll() ([]Service, error)
+	Create(*Service) (*Service, error)
 }

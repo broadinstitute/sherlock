@@ -24,6 +24,13 @@ func (s *ServiceModel) ListAll() ([]services.Service, error) {
 	return services, nil
 }
 
+func (s *ServiceModel) Create(newService *services.Service) (*services.Service, error) {
+	if err := s.DB.Create(newService).Error; err != nil {
+		return nil, fmt.Errorf("error saving service to database: %v", err)
+	}
+	return newService, nil
+}
+
 func NewServiceModel(dbConn *gorm.DB) *ServiceModel {
 	return &ServiceModel{DB: dbConn}
 }

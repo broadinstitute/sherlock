@@ -1,8 +1,10 @@
 package sherlock
 
 import (
+	"fmt"
 	"net/http"
 
+	"github.com/broadinstitute/sherlock/internal/services"
 	"github.com/gin-gonic/gin"
 )
 
@@ -13,6 +15,7 @@ import (
 func (a *Application) buildRouter() {
 	router := gin.Default()
 	router.GET("/services", a.getServices)
+	router.POST("/services", a.createService)
 	a.Handler = router
 }
 
@@ -25,4 +28,14 @@ func (a *Application) getServices(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, services)
+}
+
+func (a *Application) createService(c *gin.Context) {
+	var newService services.Service
+	if err := c.BindJSON(&newService); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	savedService, err := a.ServiceModel.Create(&newService)
+	fmt.Printf("result: %v, err: %v", savedService, err)
 }
