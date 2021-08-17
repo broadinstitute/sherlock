@@ -109,6 +109,23 @@ func Test_sherlockServerIntegration(t *testing.T) {
 		response = httptest.NewRecorder()
 
 		app.ServeHTTP(response, req)
+
+		// decode the resonse body into a slice of Services
+		services := make([]services.Service, 0)
+		if err := json.NewDecoder(response.Body).Decode(&services); err != nil {
+			t.Errorf("error decoding response body: %v", err)
+		}
+
+		// make sure the response from listing services only contains one entry
+		if len(services) != 1 {
+			t.Error("received an unexpected number of results when listing all services")
+		}
+
+		// verify the service returned from the list endpoint is the same as that
+		// returned in the post request response
+		if diff := cmp.Diff(savedService, services[0]); diff != "" {
+			t.Errorf("unexpected difference in response body:\n%v", diff)
+		}
 	})
 }
 

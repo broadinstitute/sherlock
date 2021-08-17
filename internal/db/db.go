@@ -6,6 +6,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
@@ -72,9 +73,16 @@ func Connect(config *viper.Viper) (*gorm.DB, error) {
 		return nil, fmt.Errorf("error connecting to database: %v", err)
 	}
 
-	gormDB, err := gorm.Open(gormpg.New(gormpg.Config{
-		Conn: dbConn,
-	}))
+	gormDB, err := gorm.Open(
+		gormpg.New(gormpg.Config{
+			Conn: dbConn,
+		}),
+		&gorm.Config{
+			NowFunc: func() time.Time {
+				return time.Now().Round(time.Millisecond)
+			},
+		},
+	)
 	if err != nil {
 		return nil, fmt.Errorf("error connecting to database: %v", err)
 	}
