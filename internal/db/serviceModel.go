@@ -13,6 +13,8 @@ type ServiceModel struct {
 	DB *gorm.DB
 }
 
+// ListAll retrieves all service entities from a postgres database and
+// returns them as a slice
 func (s *ServiceModel) ListAll() ([]services.Service, error) {
 	services := []services.Service{}
 

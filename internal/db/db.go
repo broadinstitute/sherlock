@@ -77,6 +77,10 @@ func Connect(config *viper.Viper) (*gorm.DB, error) {
 		gormpg.New(gormpg.Config{
 			Conn: dbConn,
 		}),
+		// This is to account for the fact that go and postgres have different
+		// time stamp precision which causes issues in testing.
+		// This is a fix to have gorm round down timestamps to postgres' millisecond
+		// precision
 		&gorm.Config{
 			NowFunc: func() time.Time {
 				return time.Now().Round(time.Millisecond)
