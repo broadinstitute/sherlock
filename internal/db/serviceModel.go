@@ -26,6 +26,8 @@ func (s *ServiceModel) ListAll() ([]services.Service, error) {
 	return services, nil
 }
 
+// Create will persist the service defined by newservice to a postgres database.
+// It will return the service as stored in postgres for ease of testing if successful
 func (s *ServiceModel) Create(newService *services.Service) (*services.Service, error) {
 	if err := s.DB.Create(newService).Error; err != nil {
 		return nil, fmt.Errorf("error saving service to database: %v", err)
@@ -33,6 +35,8 @@ func (s *ServiceModel) Create(newService *services.Service) (*services.Service, 
 	return newService, nil
 }
 
+// NewServiceModel constructs an object that can perform
+// crud operations on service entities stored in a postgres database
 func NewServiceModel(dbConn *gorm.DB) *ServiceModel {
 	return &ServiceModel{DB: dbConn}
 }
