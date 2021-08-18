@@ -47,7 +47,9 @@ func TestPostServiceFailure(t *testing.T) {
 	app.ServiceModel = model
 
 	// simulate an error persisting service to db
+	mock.ExpectBegin()
 	mock.ExpectQuery(".*").WillReturnError(fmt.Errorf("unable to create service"))
+	mock.ExpectRollback()
 
 	newService := &services.Service{
 		Name:    "agora",
