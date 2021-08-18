@@ -39,7 +39,7 @@ func TestGetServicesFailures(t *testing.T) {
 	}
 }
 
-func TestPostServiceFailure(t *testing.T) {
+func TestPostServiceDBFailure(t *testing.T) {
 	// setup an app instance with mock db that will always fail to verify failure mode behavior
 	model, mock := db.NewMockServiceModel(t, true)
 	app := &Application{}

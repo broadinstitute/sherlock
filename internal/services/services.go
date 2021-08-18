@@ -11,8 +11,8 @@ import (
 // Service is the data structure representing an indvidual applicaiton
 type Service struct {
 	ID        int       `json:"id,omitempty"`
-	Name      string    `json:"name"`
-	RepoURL   string    `json:"repo_url"`
+	Name      string    `json:"name" binding:"required"`
+	RepoURL   string    `json:"repo_url" binding:"required"`
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 }
