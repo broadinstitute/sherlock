@@ -80,3 +80,48 @@ func TestPostServiceDBFailure(t *testing.T) {
 		t.Errorf("Expected body to contain an error message and didn't receive one. got %s\n", body)
 	}
 }
+
+func TestPostServiceInvalidData(t *testing.T) {
+	model, _ := db.NewMockServiceModel(t, true)
+	app := &Application{}
+	app.buildRouter()
+	app.ServiceModel = model
+
+	cases := []struct {
+		title string
+		body  string
+	}{
+		{
+			title: "missing service name",
+			body:  `{"repo_url":"https://test.com"}`,
+		},
+		{
+			title: "missing repo url",
+			body:  `{"name":"test-application"}`,
+		},
+		{
+			title: "empty service name",
+			body:  `{"name":"","repo_url":"https://test.com"}`,
+		},
+		{
+			title: "empty repo url",
+			body:  `{"name":"test-service","repo_url":""}`,
+		},
+	}
+
+	for _, testCase := range cases {
+		t.Run(testCase.title, func(t *testing.T) {
+			req, err := http.NewRequest(http.MethodPost, "/services", bytes.NewBufferString(testCase.body))
+			if err != nil {
+				t.Errorf("error generating test request: %v", err)
+			}
+
+			response := httptest.NewRecorder()
+			app.ServeHTTP(response, req)
+
+			if response.Code != http.StatusBadRequest {
+				t.Errorf("expected response code %d, got %d", http.StatusBadRequest, response.Code)
+			}
+		})
+	}
+}
