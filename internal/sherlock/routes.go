@@ -13,8 +13,14 @@ import (
 // which makes testing easier
 func (a *Application) buildRouter() {
 	router := gin.Default()
-	router.GET("/services", a.getServices)
-	router.POST("/services", a.createService)
+
+	// /services routes
+	services := router.Group("/services")
+	// The empty strings here mean these handlers process requests to /services path
+	// the group feature is nice for organization as the more endpoints are added
+	services.GET("", a.getServices)
+	services.POST("", a.createService)
+
 	a.Handler = router
 }
 
