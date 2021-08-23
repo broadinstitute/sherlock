@@ -19,6 +19,7 @@ func (a *Application) buildRouter() {
 	// The empty strings here mean these handlers process requests to /services path
 	// the group feature is nice for organization as the more endpoints are added
 	services.GET("", a.getServices)
+	services.GET("/:id", a.getServiceByID)
 	services.POST("", a.createService)
 
 	a.Handler = router
@@ -33,6 +34,10 @@ func (a *Application) getServices(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, services)
+}
+
+func (a *Application) getServiceByID(c *gin.Context) {
+	c.JSON(http.StatusOK, services.Service{})
 }
 
 func (a *Application) createService(c *gin.Context) {

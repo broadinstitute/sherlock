@@ -127,6 +127,32 @@ func Test_sherlockServerIntegration(t *testing.T) {
 			t.Errorf("unexpected difference in response body:\n%v", diff)
 		}
 	})
+	t.Run("GET /services by ID", func(t *testing.T) {
+		defer func() {
+			if err := tools.Truncate(app.DB); err != nil {
+				t.Errorf("error truncating db in test run: %v", err)
+			}
+		}()
+
+		_, err := tools.SeedServices(app.DB)
+		if err != nil {
+			t.Fatalf("error seeding services: %v", err)
+		}
+
+		// request to retrive service with id 1
+		req, err := http.NewRequest(http.MethodGet, "/services/1", nil)
+		if err != nil {
+			t.Errorf("error creating request: %v", err)
+		}
+
+		response := httptest.NewRecorder()
+
+		app.ServeHTTP(response, req)
+
+		if response.Code != http.StatusOK {
+			t.Errorf("expected response code %d, got %d", http.StatusOK, response.Code)
+		}
+	})
 }
 
 func integrationSetup(t *testing.T) {
