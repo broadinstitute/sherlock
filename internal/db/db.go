@@ -6,6 +6,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
@@ -72,9 +73,20 @@ func Connect(config *viper.Viper) (*gorm.DB, error) {
 		return nil, fmt.Errorf("error connecting to database: %v", err)
 	}
 
-	gormDB, err := gorm.Open(gormpg.New(gormpg.Config{
-		Conn: dbConn,
-	}))
+	gormDB, err := gorm.Open(
+		gormpg.New(gormpg.Config{
+			Conn: dbConn,
+		}),
+		// This is to account for the fact that go and postgres have different
+		// time stamp precision which causes issues in testing.
+		// This is a fix to have gorm round down timestamps to postgres' millisecond
+		// precision
+		&gorm.Config{
+			NowFunc: func() time.Time {
+				return time.Now().Round(time.Millisecond)
+			},
+		},
+	)
 	if err != nil {
 		return nil, fmt.Errorf("error connecting to database: %v", err)
 	}

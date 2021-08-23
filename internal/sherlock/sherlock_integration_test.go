@@ -1,6 +1,7 @@
 package sherlock_test
 
 import (
+	"bytes"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -59,6 +60,70 @@ func Test_sherlockServerIntegration(t *testing.T) {
 
 		// pretty prints a diff of 2 arbitrary structs
 		if diff := cmp.Diff(expectedServices, services); diff != "" {
+			t.Errorf("unexpected difference in response body:\n%v", diff)
+		}
+	})
+
+	t.Run("POST /services integration test", func(t *testing.T) {
+		defer func() {
+			if err := tools.Truncate(app.DB); err != nil {
+				t.Errorf("error truncating db in test run: %v", err)
+			}
+		}()
+
+		// declare a new service to be included in an http post request body
+		newService := &services.Service{
+			Name:    "agora",
+			RepoURL: "https://github.com/broadinstitute/agora",
+		}
+
+		payload := new(bytes.Buffer)
+		if err := json.NewEncoder(payload).Encode(newService); err != nil {
+			t.Errorf("error encoding post payload: %v", err)
+		}
+
+		req, err := http.NewRequest(http.MethodPost, "/services", payload)
+		if err != nil {
+			t.Errorf("error generating test request: %v", err)
+		}
+
+		response := httptest.NewRecorder()
+
+		app.ServeHTTP(response, req)
+
+		if response.Code != http.StatusCreated {
+			t.Errorf("Expected status code %d, got %d", http.StatusCreated, response.Code)
+		}
+
+		var savedService services.Service
+		if err := json.NewDecoder(response.Body).Decode(&savedService); err != nil {
+			t.Errorf("error decoding response body: %v", err)
+		}
+
+		// use a GET /services request to verify the new entity was persisted
+		req, err = http.NewRequest(http.MethodGet, "/services", nil)
+		if err != nil {
+			t.Errorf("error creating get /services request: %v", err)
+		}
+
+		response = httptest.NewRecorder()
+
+		app.ServeHTTP(response, req)
+
+		// decode the resonse body into a slice of Services
+		services := make([]services.Service, 0)
+		if err := json.NewDecoder(response.Body).Decode(&services); err != nil {
+			t.Errorf("error decoding response body: %v", err)
+		}
+
+		// make sure the response from listing services only contains one entry
+		if len(services) != 1 {
+			t.Error("received an unexpected number of results when listing all services")
+		}
+
+		// verify the service returned from the list endpoint is the same as that
+		// returned in the post request response
+		if diff := cmp.Diff(savedService, services[0]); diff != "" {
 			t.Errorf("unexpected difference in response body:\n%v", diff)
 		}
 	})
