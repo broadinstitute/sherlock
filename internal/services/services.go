@@ -21,4 +21,5 @@ type Service struct {
 type ServiceModel interface {
 	ListAll() ([]Service, error)
 	Create(*Service) (*Service, error)
+	Get(string) (*Service, error)
 }

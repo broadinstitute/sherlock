@@ -5,6 +5,7 @@ import (
 
 	"github.com/broadinstitute/sherlock/internal/services"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 // helper function to take an existing sherlock application instance
@@ -37,7 +38,19 @@ func (a *Application) getServices(c *gin.Context) {
 }
 
 func (a *Application) getServiceByID(c *gin.Context) {
-	c.JSON(http.StatusOK, services.Service{})
+	id := c.Param("id")
+	service, err := a.ServiceModel.Get(id)
+	if err != nil {
+		// return 404 if service is not found, return 500 if some other error
+		switch err {
+		case gorm.ErrRecordNotFound:
+			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		default:
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		}
+	}
+
+	c.JSON(http.StatusOK, service)
 }
 
 func (a *Application) createService(c *gin.Context) {

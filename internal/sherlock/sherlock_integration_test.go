@@ -3,6 +3,7 @@ package sherlock_test
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -134,13 +135,12 @@ func Test_sherlockServerIntegration(t *testing.T) {
 			}
 		}()
 
-		_, err := tools.SeedServices(app.DB)
+		expectedServices, err := tools.SeedServices(app.DB)
 		if err != nil {
 			t.Fatalf("error seeding services: %v", err)
 		}
 
-		// request to retrive service with id 1
-		req, err := http.NewRequest(http.MethodGet, "/services/1", nil)
+		req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("/services/%d", expectedServices[0].ID), nil)
 		if err != nil {
 			t.Errorf("error creating request: %v", err)
 		}
@@ -151,6 +151,29 @@ func Test_sherlockServerIntegration(t *testing.T) {
 
 		if response.Code != http.StatusOK {
 			t.Errorf("expected response code %d, got %d", http.StatusOK, response.Code)
+		}
+
+		var gotService services.Service
+		if err := json.NewDecoder(response.Body).Decode(&gotService); err != nil {
+			t.Errorf("error decoding reponse body %v", err)
+		}
+
+		if diff := cmp.Diff(gotService, expectedServices[0]); diff != "" {
+			t.Errorf("received unexpected response %v\n", diff)
+		}
+
+		// Make sure we get 404 for nonexistent service
+		req, err = http.NewRequest(http.MethodGet, fmt.Sprintf("/services/%d", 10000), nil)
+		if err != nil {
+			t.Errorf("error creating request: %v", err)
+		}
+
+		response = httptest.NewRecorder()
+
+		app.ServeHTTP(response, req)
+
+		if response.Code != http.StatusNotFound {
+			t.Errorf("Expected to receive code %d for non-existent service, got %d", http.StatusNotFound, response.Code)
 		}
 	})
 }
