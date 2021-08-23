@@ -116,6 +116,10 @@ func TestCreateService(t *testing.T) {
 	}
 }
 
+func TestGetServiceByID(t *testing.T) {
+	model, mock := NewMockServiceModel(t, true)
+}
+
 func populateStubData(t *testing.T, mock sqlmock.Sqlmock, expectedData []services.Service) {
 	t.Helper()
 
