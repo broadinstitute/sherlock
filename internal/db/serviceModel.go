@@ -35,6 +35,17 @@ func (s *ServiceModel) Create(newService *services.Service) (*services.Service, 
 	return newService, nil
 }
 
+// Get is used to retrieve a specific service entity from a postgres database using
+// id (primary key) as the lookup mechanism
+func (s *ServiceModel) Get(id string) (*services.Service, error) {
+	service := &services.Service{}
+
+	if err := s.DB.First(service, id).Error; err != nil {
+		return nil, err
+	}
+	return service, nil
+}
+
 // NewServiceModel constructs an object that can perform
 // crud operations on service entities stored in a postgres database
 func NewServiceModel(dbConn *gorm.DB) *ServiceModel {
