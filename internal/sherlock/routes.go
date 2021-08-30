@@ -23,6 +23,9 @@ func (a *Application) buildRouter() {
 	services.GET("/:id", a.getServiceByID)
 	services.POST("", a.createService)
 
+	builds := router.Group("/builds")
+	builds.GET("", a.getBuilds)
+
 	a.Handler = router
 }
 
@@ -71,4 +74,14 @@ func (a *Application) createService(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, savedService)
+}
+
+func (a *Application) getBuilds(c *gin.Context) {
+	builds, err := a.BuildModel.ListAll()
+	if err != nil {
+		// send error response to client
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, builds)
 }

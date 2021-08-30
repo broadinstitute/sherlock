@@ -22,7 +22,12 @@ func main() {
 
 	app := sherlock.New()
 
+	// populate data
 	if _, err := tools.SeedServices(app.DB); err != nil {
+		log.Println(err)
+	}
+
+	if _, err := tools.SeedBuilds(app.DB); err != nil {
 		log.Println(err)
 	}
 

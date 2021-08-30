@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/broadinstitute/sherlock/internal/builds"
 	"github.com/broadinstitute/sherlock/internal/db"
 	"github.com/broadinstitute/sherlock/internal/services"
 	"github.com/spf13/viper"
@@ -20,6 +21,7 @@ var (
 // DB connection pool
 type Application struct {
 	ServiceModel services.ServiceModel
+	BuildModel   builds.BuildModel
 	Handler      http.Handler
 	// Used to pass the dbConn to testing setup helpers
 	// without needing to instantiate a full model instance
@@ -46,6 +48,7 @@ func New() *Application {
 
 func (a *Application) registerModels() {
 	a.ServiceModel = db.NewServiceModel(a.DB)
+	a.BuildModel = db.NewBuildModel(a.DB)
 }
 
 // ServeHTTP implments the http.Handler interface for a Sherlock application instance

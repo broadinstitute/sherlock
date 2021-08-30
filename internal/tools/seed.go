@@ -1,6 +1,7 @@
 package tools
 
 import (
+	"github.com/broadinstitute/sherlock/internal/builds"
 	"github.com/broadinstitute/sherlock/internal/services"
 	"gorm.io/gorm"
 )
@@ -29,6 +30,53 @@ func SeedServices(db *gorm.DB) ([]services.Service, error) {
 	}
 	err = db.Find(&services).Error
 	return services, err
+}
+
+func SeedBuilds(db *gorm.DB) ([]builds.Build, error) {
+	builds := []builds.Build{
+		{
+			VersionString: "0.1.0",
+			CommitSha:     "k2jh34",
+			BuildURL:      "https://build.1.log",
+			ServiceID:     1,
+		},
+		{
+			VersionString: "0.2.0",
+			CommitSha:     "lk2j344",
+			BuildURL:      "https://build.2.log",
+			ServiceID:     1,
+		},
+		{
+			VersionString: "0.1.0",
+			CommitSha:     "k2jh34",
+			BuildURL:      "https://build.1.log",
+			ServiceID:     2,
+		},
+		{
+			VersionString: "1.1.0",
+			CommitSha:     "lk23j4",
+			BuildURL:      "https://build.3.log",
+			ServiceID:     3,
+		},
+		{
+			VersionString: "1.1.1",
+			CommitSha:     "asdfbvf",
+			BuildURL:      "https://build.3.log",
+			ServiceID:     3,
+		},
+		{
+			VersionString: "1.2.0",
+			CommitSha:     "6a5s4df",
+			BuildURL:      "https://build.3.log",
+			ServiceID:     3,
+		},
+	}
+	err := db.Create(&builds).Error
+	if err != nil {
+		return nil, err
+	}
+	err = db.Find(&builds).Error
+	return builds, err
 }
 
 // Truncate cleans up tables after integration tests
