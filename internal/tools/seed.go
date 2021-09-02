@@ -1,6 +1,8 @@
 package tools
 
 import (
+	"fmt"
+
 	"github.com/broadinstitute/sherlock/internal/builds"
 	"github.com/broadinstitute/sherlock/internal/services"
 	"gorm.io/gorm"
@@ -33,49 +35,55 @@ func SeedServices(db *gorm.DB) ([]services.Service, error) {
 }
 
 func SeedBuilds(db *gorm.DB) ([]builds.Build, error) {
+	// get existing services to make sure ids are valid.
+	var services []services.Service
+	if err := db.Find(&services).Error; err != nil {
+		return nil, fmt.Errorf("error retrieving existing services to reference in seeded builds: %v", err)
+	}
 	builds := []builds.Build{
 		{
 			VersionString: "0.1.0",
 			CommitSha:     "k2jh34",
 			BuildURL:      "https://build.1.log",
-			ServiceID:     1,
+			ServiceID:     services[0].ID,
 		},
 		{
 			VersionString: "0.2.0",
 			CommitSha:     "lk2j344",
 			BuildURL:      "https://build.2.log",
-			ServiceID:     1,
+			ServiceID:     services[0].ID,
 		},
 		{
 			VersionString: "0.1.0",
 			CommitSha:     "k2jh34",
 			BuildURL:      "https://build.1.log",
-			ServiceID:     2,
+			ServiceID:     services[1].ID,
 		},
 		{
 			VersionString: "1.1.0",
 			CommitSha:     "lk23j4",
 			BuildURL:      "https://build.3.log",
-			ServiceID:     3,
+			ServiceID:     services[2].ID,
 		},
 		{
 			VersionString: "1.1.1",
 			CommitSha:     "asdfbvf",
 			BuildURL:      "https://build.3.log",
-			ServiceID:     3,
+			ServiceID:     services[2].ID,
 		},
 		{
 			VersionString: "1.2.0",
 			CommitSha:     "6a5s4df",
 			BuildURL:      "https://build.3.log",
-			ServiceID:     3,
+			ServiceID:     services[2].ID,
 		},
 	}
+
 	err := db.Create(&builds).Error
 	if err != nil {
 		return nil, err
 	}
-	err = db.Find(&builds).Error
+	err = db.Preload("Service").Find(&builds).Error
 	return builds, err
 }
 

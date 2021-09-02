@@ -8,6 +8,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/broadinstitute/sherlock/internal/builds"
 	"github.com/broadinstitute/sherlock/internal/db"
 	"github.com/broadinstitute/sherlock/internal/services"
 	"github.com/broadinstitute/sherlock/internal/sherlock"
@@ -174,6 +175,45 @@ func Test_sherlockServerIntegration(t *testing.T) {
 
 		if response.Code != http.StatusNotFound {
 			t.Errorf("Expected to receive code %d for non-existent service, got %d", http.StatusNotFound, response.Code)
+		}
+	})
+	t.Run("GET /builds", func(t *testing.T) {
+		defer func() {
+			if err := tools.Truncate(app.DB); err != nil {
+				t.Errorf("error truncating db in test run: %v", err)
+			}
+		}()
+
+		_, err := tools.SeedServices(app.DB)
+		if err != nil {
+			t.Fatalf("error seeding services: %v", err)
+		}
+
+		expectedBuilds, err := tools.SeedBuilds(app.DB)
+		if err != nil {
+			t.Fatalf("error seeding builds: %v", err)
+		}
+
+		req, err := http.NewRequest(http.MethodGet, "/builds", nil)
+		if err != nil {
+			t.Errorf("error generating test request: %v", err)
+		}
+
+		response := httptest.NewRecorder()
+
+		app.ServeHTTP(response, req)
+
+		if response.Code != http.StatusOK {
+			t.Errorf("expected response code %d, got %d", http.StatusOK, response.Code)
+		}
+
+		builds := make([]builds.Build, 0)
+		if err := json.NewDecoder(response.Body).Decode(&builds); err != nil {
+			t.Errorf("error decoding response body: %v", err)
+		}
+
+		if diff := cmp.Diff(expectedBuilds, builds); diff != "" {
+			t.Errorf("unexpected difference in response body:\n%v", diff)
 		}
 	})
 }
