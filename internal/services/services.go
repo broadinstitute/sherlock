@@ -4,22 +4,27 @@
 // implement these interfaces
 package services
 
-import (
-	"time"
-)
+import "gorm.io/gorm"
 
-// Service is the data structure representing an indvidual applicaiton
-type Service struct {
-	ID        int       `json:"id,omitempty"`
-	Name      string    `json:"name" binding:"required"`
-	RepoURL   string    `json:"repo_url" binding:"required"`
-	CreatedAt time.Time `json:"created_at,omitempty"`
-	UpdatedAt time.Time `json:"updated_at,omitempty"`
+// // Service is the data structure representing an indvidual applicaiton
+// type Service struct {
+// 	ID        int       `json:"id,omitempty"`
+// 	Name      string    `json:"name" binding:"required"`
+// 	RepoURL   string    `json:"repo_url" binding:"required"`
+// 	CreatedAt time.Time `json:"created_at,omitempty"`
+// 	UpdatedAt time.Time `json:"updated_at,omitempty"`
+// }
+
+// ServiceController is the  interface used to model operations relating to services in the backend datastore
+type ServiceController struct {
+	store serviceStore
 }
 
-// ServiceModel is the  interface used to model operations relating to services in the backend datastore
-type ServiceModel interface {
-	ListAll() ([]Service, error)
-	Create(*Service) (*Service, error)
-	Get(string) (*Service, error)
+// NewController accepts a gorm DB connection and returns a new instance
+// of the service controller
+func NewController(dbConn *gorm.DB) *ServiceController {
+	serviceStore := newServiceStore(dbConn)
+	return &ServiceController{
+		store: serviceStore,
+	}
 }

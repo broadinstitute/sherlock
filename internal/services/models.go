@@ -13,8 +13,9 @@ type dataStore struct {
 	*gorm.DB
 }
 
-// Service is the data structure representing an indvidual applicaiton
-type serviceModel struct {
+// Service is the data structure representing an used to model a service entity
+// in databases
+type Service struct {
 	ID        int
 	Name      string
 	RepoURL   string
@@ -22,10 +23,15 @@ type serviceModel struct {
 	UpdatedAt time.Time
 }
 
-type serviceRepository interface {
+// serviceStore is the interface type used
+type serviceStore interface {
 	ListAll() ([]Service, error)
-	Create(*Service) (*Service, error)
-	Get(string) (*Service, error)
+	CreateNew(*Service) (*Service, error)
+	GetByID(string) (*Service, error)
+}
+
+func newServiceStore(db *gorm.DB) dataStore {
+	return dataStore{db}
 }
 
 // ListAll retrieves all service entities from a postgres database and
@@ -52,7 +58,7 @@ func (db dataStore) CreateNew(newService *Service) (*Service, error) {
 
 // Get is used to retrieve a specific service entity from a postgres database using
 // id (primary key) as the lookup mechanism
-func (db dataStore) Get(id string) (*Service, error) {
+func (db dataStore) GetByID(id string) (*Service, error) {
 	service := &Service{}
 
 	if err := db.First(service, id).Error; err != nil {

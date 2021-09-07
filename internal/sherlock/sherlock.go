@@ -19,8 +19,8 @@ var (
 // repository is a wrapper type so we can define our own methods on the type holding the
 // DB connection pool
 type Application struct {
-	ServiceModel services.ServiceModel
-	Handler      http.Handler
+	Services *services.ServiceController
+	Handler  http.Handler
 	// Used to pass the dbConn to testing setup helpers
 	// without needing to instantiate a full model instance
 	DB *gorm.DB
@@ -37,15 +37,15 @@ func New() *Application {
 		DB: dbConn,
 	}
 
-	app.registerModels()
+	app.registerControllers()
 	// initialize the gin router and store it in our app struct
 	app.buildRouter()
 
 	return app
 }
 
-func (a *Application) registerModels() {
-	a.ServiceModel = db.NewServiceModel(a.DB)
+func (a *Application) registerControllers() {
+	a.Services = services.NewController(a.DB)
 }
 
 // ServeHTTP implments the http.Handler interface for a Sherlock application instance
