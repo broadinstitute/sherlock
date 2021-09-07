@@ -7,6 +7,9 @@ import (
 	"gorm.io/gorm"
 )
 
+// ErrServiceNotFound is the error to represent a failed lookup of a service entity
+var ErrServiceNotFound = gorm.ErrRecordNotFound
+
 // dataStore is a wrapper around a gorm postgres client
 // which can be used to implement the serviceRepository interface
 type dataStore struct {

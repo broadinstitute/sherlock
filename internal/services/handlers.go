@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
 func (sc *ServiceController) RegisterHandlers(routerGroup *gin.RouterGroup) {
@@ -30,7 +29,7 @@ func (sc *ServiceController) getServiceByID(c *gin.Context) {
 	if err != nil {
 		// return 404 if service is not found, return 500 if some other error
 		switch err {
-		case gorm.ErrRecordNotFound:
+		case ErrServiceNotFound:
 			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		default:
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
