@@ -15,7 +15,7 @@ func (sc *ServiceController) RegisterHandlers(routerGroup *gin.RouterGroup) {
 
 func (sc *ServiceController) getServices(c *gin.Context) {
 
-	services, err := sc.store.ListAll()
+	services, err := sc.store.listAll()
 	if err != nil {
 		// send error response to client
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -26,7 +26,7 @@ func (sc *ServiceController) getServices(c *gin.Context) {
 
 func (sc *ServiceController) getServiceByID(c *gin.Context) {
 	id := c.Param("id")
-	service, err := sc.store.GetByID(id)
+	service, err := sc.store.getByID(id)
 	if err != nil {
 		// return 404 if service is not found, return 500 if some other error
 		switch err {
@@ -51,7 +51,7 @@ func (sc *ServiceController) createService(c *gin.Context) {
 
 	// the create method returns a service struct with the newly saved entity including fields
 	// updated internally by the database such as ID
-	savedService, err := sc.store.CreateNew(&newService)
+	savedService, err := sc.store.createNew(&newService)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

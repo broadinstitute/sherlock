@@ -25,9 +25,9 @@ type Service struct {
 
 // serviceStore is the interface type used
 type serviceStore interface {
-	ListAll() ([]Service, error)
-	CreateNew(*Service) (*Service, error)
-	GetByID(string) (*Service, error)
+	listAll() ([]Service, error)
+	createNew(*Service) (*Service, error)
+	getByID(string) (*Service, error)
 }
 
 func newServiceStore(db *gorm.DB) dataStore {
@@ -36,7 +36,7 @@ func newServiceStore(db *gorm.DB) dataStore {
 
 // ListAll retrieves all service entities from a postgres database and
 // returns them as a slice
-func (db dataStore) ListAll() ([]Service, error) {
+func (db dataStore) listAll() ([]Service, error) {
 	services := []Service{}
 
 	err := db.Find(&services).Error
@@ -49,7 +49,7 @@ func (db dataStore) ListAll() ([]Service, error) {
 
 // Create will persist the service defined by newservice to a postgres database.
 // It will return the service as stored in postgres for ease of testing if successful
-func (db dataStore) CreateNew(newService *Service) (*Service, error) {
+func (db dataStore) createNew(newService *Service) (*Service, error) {
 	if err := db.Create(newService).Error; err != nil {
 		return nil, fmt.Errorf("error saving service to database: %v", err)
 	}
@@ -58,7 +58,7 @@ func (db dataStore) CreateNew(newService *Service) (*Service, error) {
 
 // Get is used to retrieve a specific service entity from a postgres database using
 // id (primary key) as the lookup mechanism
-func (db dataStore) GetByID(id string) (*Service, error) {
+func (db dataStore) getByID(id string) (*Service, error) {
 	service := &Service{}
 
 	if err := db.First(service, id).Error; err != nil {
