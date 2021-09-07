@@ -39,6 +39,8 @@ func Test_sherlockServerIntegration(t *testing.T) {
 			t.Fatalf("error seeding services: %v", err)
 		}
 
+		expectedServicesResponse := &services.Response{Services: expectedServices}
+
 		req, err := http.NewRequest(http.MethodGet, "/services", nil)
 		if err != nil {
 			t.Errorf("error creating request: %v", err)
@@ -54,13 +56,13 @@ func Test_sherlockServerIntegration(t *testing.T) {
 		}
 
 		// decode the resonse body into a slice of Services
-		services := make([]services.Service, 0)
-		if err := json.NewDecoder(response.Body).Decode(&services); err != nil {
+		servicesResponse := &services.Response{}
+		if err := json.NewDecoder(response.Body).Decode(servicesResponse); err != nil {
 			t.Errorf("error decoding response body: %v", err)
 		}
 
 		// pretty prints a diff of 2 arbitrary structs
-		if diff := cmp.Diff(expectedServices, services); diff != "" {
+		if diff := cmp.Diff(expectedServicesResponse, servicesResponse); diff != "" {
 			t.Errorf("unexpected difference in response body:\n%v", diff)
 		}
 	})
@@ -73,7 +75,7 @@ func Test_sherlockServerIntegration(t *testing.T) {
 		}()
 
 		// declare a new service to be included in an http post request body
-		newService := &services.Service{
+		newService := &services.CreateRequest{
 			Name:    "agora",
 			RepoURL: "https://github.com/broadinstitute/agora",
 		}
@@ -96,8 +98,8 @@ func Test_sherlockServerIntegration(t *testing.T) {
 			t.Errorf("Expected status code %d, got %d", http.StatusCreated, response.Code)
 		}
 
-		var savedService services.Service
-		if err := json.NewDecoder(response.Body).Decode(&savedService); err != nil {
+		var savedServiceResponse services.Response
+		if err := json.NewDecoder(response.Body).Decode(&savedServiceResponse); err != nil {
 			t.Errorf("error decoding response body: %v", err)
 		}
 
@@ -112,19 +114,14 @@ func Test_sherlockServerIntegration(t *testing.T) {
 		app.ServeHTTP(response, req)
 
 		// decode the resonse body into a slice of Services
-		services := make([]services.Service, 0)
-		if err := json.NewDecoder(response.Body).Decode(&services); err != nil {
+		service := services.Response{}
+		if err := json.NewDecoder(response.Body).Decode(&service); err != nil {
 			t.Errorf("error decoding response body: %v", err)
-		}
-
-		// make sure the response from listing services only contains one entry
-		if len(services) != 1 {
-			t.Error("received an unexpected number of results when listing all services")
 		}
 
 		// verify the service returned from the list endpoint is the same as that
 		// returned in the post request response
-		if diff := cmp.Diff(savedService, services[0]); diff != "" {
+		if diff := cmp.Diff(savedServiceResponse, service); diff != "" {
 			t.Errorf("unexpected difference in response body:\n%v", diff)
 		}
 	})
@@ -139,6 +136,7 @@ func Test_sherlockServerIntegration(t *testing.T) {
 		if err != nil {
 			t.Fatalf("error seeding services: %v", err)
 		}
+		expectedServicesResponse := &services.Response{Services: []*services.Service{expectedServices[0]}}
 
 		req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("/services/%d", expectedServices[0].ID), nil)
 		if err != nil {
@@ -153,12 +151,12 @@ func Test_sherlockServerIntegration(t *testing.T) {
 			t.Errorf("expected response code %d, got %d", http.StatusOK, response.Code)
 		}
 
-		var gotService services.Service
+		var gotService services.Response
 		if err := json.NewDecoder(response.Body).Decode(&gotService); err != nil {
 			t.Errorf("error decoding reponse body %v", err)
 		}
 
-		if diff := cmp.Diff(gotService, expectedServices[0]); diff != "" {
+		if diff := cmp.Diff(&gotService, expectedServicesResponse); diff != "" {
 			t.Errorf("received unexpected response %v\n", diff)
 		}
 

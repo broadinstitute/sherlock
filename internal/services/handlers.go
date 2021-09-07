@@ -6,6 +6,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// RegisterHandlers accepts a gin router  and will attach handlers for working with
+// Service entities to it
 func (sc *ServiceController) RegisterHandlers(routerGroup *gin.RouterGroup) {
 	routerGroup.GET("", sc.getServices)
 	routerGroup.GET("/:id", sc.getServiceByID)
@@ -20,7 +22,7 @@ func (sc *ServiceController) getServices(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, services)
+	c.JSON(http.StatusOK, Response{Services: services})
 }
 
 func (sc *ServiceController) getServiceByID(c *gin.Context) {
@@ -30,21 +32,23 @@ func (sc *ServiceController) getServiceByID(c *gin.Context) {
 		// return 404 if service is not found, return 500 if some other error
 		switch err {
 		case ErrServiceNotFound:
-			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+			c.JSON(http.StatusNotFound, Response{Error: err.Error()})
+			return
 		default:
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			c.JSON(http.StatusInternalServerError, Response{Error: err.Error()})
+			return
 		}
 	}
 
-	c.JSON(http.StatusOK, service)
+	c.JSON(http.StatusOK, Response{Services: []*Service{service}})
 }
 
 func (sc *ServiceController) createService(c *gin.Context) {
-	var newService Service
+	var newService CreateRequest
 
 	// decode the post request body into a Service struct
 	if err := c.BindJSON(&newService); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
 		return
 	}
 
@@ -52,9 +56,9 @@ func (sc *ServiceController) createService(c *gin.Context) {
 	// updated internally by the database such as ID
 	savedService, err := sc.store.createNew(&newService)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, Response{Error: err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusCreated, savedService)
+	c.JSON(http.StatusCreated, Response{Services: []*Service{savedService}})
 }
