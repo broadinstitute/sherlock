@@ -35,7 +35,7 @@ func (cr *CreateRequest) service() *Service {
 	}
 }
 
-// Response is a type that allows all data returned from the /service apis to share a consistent structure
+// Response is a type that allows all data returned from the /service api group to share a consistent structure
 type Response struct {
 	Services []*Service `json:"services"`
 	Error    string     `json:"error,omitempty"`
