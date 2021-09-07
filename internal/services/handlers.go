@@ -19,7 +19,7 @@ func (sc *ServiceController) getServices(c *gin.Context) {
 	services, err := sc.store.listAll()
 	if err != nil {
 		// send error response to client
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, Response{Error: err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, Response{Services: services})
@@ -54,7 +54,7 @@ func (sc *ServiceController) createService(c *gin.Context) {
 
 	// the create method returns a service struct with the newly saved entity including fields
 	// updated internally by the database such as ID
-	savedService, err := sc.store.createNew(&newService)
+	savedService, err := sc.store.createNew(newService)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, Response{Error: err.Error()})
 		return
