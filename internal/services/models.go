@@ -16,8 +16,7 @@ type dataStore struct {
 	*gorm.DB
 }
 
-// Service is the data structure representing an used to model a service entity
-// in databases
+// Service is the data structure that models a service entity persisted to a dataabase via gorm
 type Service struct {
 	ID        int
 	Name      string
@@ -26,7 +25,8 @@ type Service struct {
 	UpdatedAt time.Time
 }
 
-// serviceStore is the interface type used
+// serviceStore is the interface type that defines the methods required for implementing the persistence layer
+// for services entities
 type serviceStore interface {
 	listAll() ([]*Service, error)
 	createNew(CreateServiceRequest) (*Service, error)
