@@ -204,6 +204,61 @@ func TestCreateService(t *testing.T) {
 				RepoURL: "https://test.repo",
 			},
 		},
+		{
+			name:          "missing service name",
+			expectedError: ErrBadCreateRequest,
+			expectedCode:  http.StatusBadRequest,
+			createRequest: CreateServiceRequest{
+				RepoURL: "https://tester.repo",
+			},
+			expectedService: nil,
+		},
+		{
+			name:          "missing repo url",
+			expectedError: ErrBadCreateRequest,
+			expectedCode:  http.StatusBadRequest,
+			createRequest: CreateServiceRequest{
+				Name: "tester",
+			},
+			expectedService: nil,
+		},
+		{
+			name:            "empty create request",
+			expectedError:   ErrBadCreateRequest,
+			expectedCode:    http.StatusBadRequest,
+			createRequest:   CreateServiceRequest{},
+			expectedService: nil,
+		},
+		{
+			name:          "empty service name",
+			expectedError: ErrBadCreateRequest,
+			expectedCode:  http.StatusBadRequest,
+			createRequest: CreateServiceRequest{
+				Name:    "",
+				RepoURL: "https://tester.repo",
+			},
+			expectedService: nil,
+		},
+		{
+			name:          "empty repo url",
+			expectedError: ErrBadCreateRequest,
+			expectedCode:  http.StatusBadRequest,
+			createRequest: CreateServiceRequest{
+				Name:    "tester",
+				RepoURL: "",
+			},
+			expectedService: nil,
+		},
+		{
+			name:          "internal error",
+			expectedError: errors.New("some internal error"),
+			expectedCode:  http.StatusInternalServerError,
+			createRequest: CreateServiceRequest{
+				Name:    "tester",
+				RepoURL: "https://tester.repo",
+			},
+			expectedService: nil,
+		},
 	}
 
 	for _, testCase := range testCases {
@@ -229,7 +284,11 @@ func TestCreateService(t *testing.T) {
 			c.Request = req
 
 			controller.createService(c)
-			mockStore.AssertCalled(t, "createNew", testCase.createRequest)
+			if testCase.expectedError == ErrBadCreateRequest {
+				mockStore.AssertNotCalled(t, "createNew")
+			} else {
+				mockStore.AssertCalled(t, "createNew", testCase.createRequest)
+			}
 
 			assert.Equal(t, testCase.expectedCode, response.Code)
 

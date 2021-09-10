@@ -1,10 +1,14 @@
 package services
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
+
+// ErrBadCreateRequest is an error type used when a create servie request fails validation checks
+var ErrBadCreateRequest error = errors.New("error invalid create service request. service name and repo url are required")
 
 // RegisterHandlers accepts a gin router  and will attach handlers for working with
 // Service entities to it
@@ -48,7 +52,7 @@ func (sc *ServiceController) createService(c *gin.Context) {
 
 	// decode the post request body into a Service struct
 	if err := c.BindJSON(&newService); err != nil {
-		c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
+		c.JSON(http.StatusBadRequest, Response{Error: ErrBadCreateRequest.Error()})
 		return
 	}
 
