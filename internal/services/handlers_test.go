@@ -1,6 +1,7 @@
 package services
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"net/http"
@@ -159,6 +160,76 @@ func TestGetServiceByID(t *testing.T) {
 
 			controller.getServiceByID(c)
 			mockStore.AssertCalled(t, "getByID", testCase.id)
+
+			assert.Equal(t, testCase.expectedCode, response.Code)
+
+			var gotResponse Response
+			if err := json.NewDecoder(response.Body).Decode(&gotResponse); err != nil {
+				t.Fatalf("error decoding response body: %v\n", err)
+			}
+
+			var expectedResponse Response
+			if testCase.expectedError != nil {
+				expectedResponse = Response{Error: testCase.expectedError.Error()}
+			} else {
+				expectedResponse = Response{Services: []*Service{testCase.expectedService}}
+			}
+
+			if diff := cmp.Diff(gotResponse, expectedResponse); diff != "" {
+				t.Errorf("unexpected difference in response body: \n%v\n", diff)
+			}
+		})
+	}
+}
+
+func TestCreateService(t *testing.T) {
+	testCases := []struct {
+		name            string
+		expectedError   error
+		expectedCode    int
+		expectedService *Service
+		createRequest   CreateServiceRequest
+	}{
+		{
+			name:          "successful create",
+			expectedError: nil,
+			expectedCode:  http.StatusCreated,
+			createRequest: CreateServiceRequest{
+				Name:    "tester",
+				RepoURL: "https://test.repo",
+			},
+			expectedService: &Service{
+				ID:      1,
+				Name:    "tester",
+				RepoURL: "https://test.repo",
+			},
+		},
+	}
+
+	for _, testCase := range testCases {
+		t.Run(testCase.name, func(t *testing.T) {
+			mockStore := new(mockServiceStore)
+			mockStore.On("createNew", testCase.createRequest).Return(testCase.expectedService, testCase.expectedError)
+			controller := ServiceController{store: mockStore}
+
+			response := httptest.NewRecorder()
+
+			gin.SetMode(gin.TestMode)
+			c, _ := gin.CreateTestContext(response)
+
+			reqBody := new(bytes.Buffer)
+			if err := json.NewEncoder(reqBody).Encode(testCase.createRequest); err != nil {
+				t.Fatalf("error encoding create service request body: %v", err)
+			}
+
+			req, err := http.NewRequest(http.MethodPost, "/services", reqBody)
+			if err != nil {
+				t.Errorf("error building create service request: %v", err)
+			}
+			c.Request = req
+
+			controller.createService(c)
+			mockStore.AssertCalled(t, "createNew", testCase.createRequest)
 
 			assert.Equal(t, testCase.expectedCode, response.Code)
 
