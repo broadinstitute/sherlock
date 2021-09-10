@@ -199,7 +199,6 @@ func TestCreateService(t *testing.T) {
 				RepoURL: "https://test.repo",
 			},
 			expectedService: &Service{
-				ID:      1,
 				Name:    "tester",
 				RepoURL: "https://test.repo",
 			},
@@ -318,8 +317,9 @@ func (m *mockServiceStore) listAll() ([]*Service, error) {
 }
 
 func (m *mockServiceStore) createNew(newService CreateServiceRequest) (*Service, error) {
+	retService := newService.service()
 	retVal := m.Called(newService)
-	return retVal.Get(0).(*Service), retVal.Error(1)
+	return retService, retVal.Error(1)
 }
 
 func (m *mockServiceStore) getByID(id string) (*Service, error) {
