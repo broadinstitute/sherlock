@@ -21,12 +21,14 @@ func TestListServicesHandler(t *testing.T) {
 	testCases := []struct {
 		name             string
 		expectedServices []*Service
+		expectedError    error
 		expectedCode     int
 	}{
 		{
 			name:             "no existing services",
 			expectedServices: []*Service{},
 			expectedCode:     http.StatusOK,
+			expectedError:    nil,
 		},
 		{
 			name: "one existing service",
@@ -36,7 +38,8 @@ func TestListServicesHandler(t *testing.T) {
 					RepoURL: "http://test.repo",
 				},
 			},
-			expectedCode: http.StatusOK,
+			expectedCode:  http.StatusOK,
+			expectedError: nil,
 		},
 		{
 			name: "multiple existing services",
@@ -54,14 +57,21 @@ func TestListServicesHandler(t *testing.T) {
 					RepoURL: "https://github.com/DataBiosphere/terra-workspace-manager",
 				},
 			},
-			expectedCode: http.StatusOK,
+			expectedCode:  http.StatusOK,
+			expectedError: nil,
+		},
+		{
+			name:             "internal error",
+			expectedServices: []*Service{},
+			expectedCode:     http.StatusInternalServerError,
+			expectedError:    errors.New("some internal error"),
 		},
 	}
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
 			// setup mock
 			mockStore := new(mockServiceStore)
-			mockStore.On("listAll").Return(testCase.expectedServices, nil)
+			mockStore.On("listAll").Return(testCase.expectedServices, testCase.expectedError)
 			controller := ServiceController{store: mockStore}
 
 			// setup response recorder and request response := httptest.NewRecorder()
@@ -79,26 +89,16 @@ func TestListServicesHandler(t *testing.T) {
 				t.Fatalf("error decoding response body: %v\n", err)
 			}
 
-			expectedResponse := Response{Services: testCase.expectedServices}
+			var expectedResponse Response
+			if testCase.expectedError != nil {
+				expectedResponse = Response{Error: testCase.expectedError.Error()}
+			} else {
+				expectedResponse = Response{Services: testCase.expectedServices}
+			}
 
 			if diff := cmp.Diff(gotResponse, expectedResponse); diff != "" {
 				t.Errorf("unexpected difference in response body: \n%v\n", diff)
 			}
-		})
-
-		t.Run("handles internal error listing services", func(t *testing.T) {
-			// setup mock
-			mockStore := new(mockServiceStore)
-			mockStore.On("listAll").Return([]*Service{}, errors.New("some internal error"))
-			controller := ServiceController{store: mockStore}
-
-			response := httptest.NewRecorder()
-			gin.SetMode(gin.TestMode)
-			c, _ := gin.CreateTestContext(response)
-
-			controller.getServices(c)
-			mockStore.AssertCalled(t, "listAll")
-			assert.Equal(t, http.StatusInternalServerError, response.Code)
 		})
 	}
 }
