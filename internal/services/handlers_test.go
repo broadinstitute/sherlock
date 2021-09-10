@@ -2,6 +2,7 @@ package services
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -83,6 +84,21 @@ func TestListServicesHandler(t *testing.T) {
 			if diff := cmp.Diff(gotResponse, expectedResponse); diff != "" {
 				t.Errorf("unexpected difference in response body: \n%v\n", diff)
 			}
+		})
+
+		t.Run("handles internal error listing services", func(t *testing.T) {
+			// setup mock
+			mockStore := new(mockServiceStore)
+			mockStore.On("listAll").Return([]*Service{}, errors.New("some internal error"))
+			controller := ServiceController{store: mockStore}
+
+			response := httptest.NewRecorder()
+			gin.SetMode(gin.TestMode)
+			c, _ := gin.CreateTestContext(response)
+
+			controller.getServices(c)
+			mockStore.AssertCalled(t, "listAll")
+			assert.Equal(t, http.StatusInternalServerError, response.Code)
 		})
 	}
 }
