@@ -21,14 +21,14 @@ func NewController(dbConn *gorm.DB) *ServiceController {
 }
 
 // CreateRequest is a type used to represent the information required to register a new service in sherlock
-type CreateRequest struct {
+type CreateServiceRequest struct {
 	Name    string `json:"name" binding:"required"`
 	RepoURL string `json:"repo_url" binding:"required"`
 }
 
 // creates a service entity object to be persisted with the database from a
 // request to create a service
-func (cr *CreateRequest) service() *Service {
+func (cr *CreateServiceRequest) service() *Service {
 	return &Service{
 		Name:    cr.Name,
 		RepoURL: cr.RepoURL,

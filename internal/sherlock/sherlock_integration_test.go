@@ -75,7 +75,7 @@ func Test_sherlockServerIntegration(t *testing.T) {
 		}()
 
 		// declare a new service to be included in an http post request body
-		newService := &services.CreateRequest{
+		newService := &services.CreateServiceRequest{
 			Name:    "agora",
 			RepoURL: "https://github.com/broadinstitute/agora",
 		}

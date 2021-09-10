@@ -44,7 +44,7 @@ func (sc *ServiceController) getServiceByID(c *gin.Context) {
 }
 
 func (sc *ServiceController) createService(c *gin.Context) {
-	var newService CreateRequest
+	var newService CreateServiceRequest
 
 	// decode the post request body into a Service struct
 	if err := c.BindJSON(&newService); err != nil {
