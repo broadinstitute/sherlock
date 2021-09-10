@@ -17,7 +17,7 @@ type mockServiceStore struct {
 	mock.Mock
 }
 
-func TestListServicesHandler(t *testing.T) {
+func TestListServices(t *testing.T) {
 	testCases := []struct {
 		name             string
 		expectedServices []*Service
@@ -94,6 +94,84 @@ func TestListServicesHandler(t *testing.T) {
 				expectedResponse = Response{Error: testCase.expectedError.Error()}
 			} else {
 				expectedResponse = Response{Services: testCase.expectedServices}
+			}
+
+			if diff := cmp.Diff(gotResponse, expectedResponse); diff != "" {
+				t.Errorf("unexpected difference in response body: \n%v\n", diff)
+			}
+		})
+	}
+}
+
+func TestGetServiceByID(t *testing.T) {
+	testCases := []struct {
+		name            string
+		id              string
+		expectedService *Service
+		expectedError   error
+		expectedCode    int
+	}{
+		{
+			name: "successful get by id",
+			expectedService: &Service{
+				Name:    "tester",
+				RepoURL: "https://test.repo",
+				ID:      1,
+			},
+			expectedError: nil,
+			expectedCode:  http.StatusOK,
+			id:            "1",
+		},
+		{
+			name:            "id not found",
+			expectedService: nil,
+			expectedCode:    http.StatusNotFound,
+			expectedError:   ErrServiceNotFound,
+			id:              "1",
+		},
+		{
+			name:            "internal error",
+			expectedService: nil,
+			expectedCode:    http.StatusInternalServerError,
+			expectedError:   errors.New("some internal error"),
+			id:              "2",
+		},
+	}
+
+	for _, testCase := range testCases {
+		t.Run(testCase.name, func(t *testing.T) {
+			// setup mock
+
+			mockStore := new(mockServiceStore)
+			mockStore.On("getByID", testCase.id).Return(testCase.expectedService, testCase.expectedError)
+			controller := ServiceController{store: mockStore}
+
+			response := httptest.NewRecorder()
+
+			gin.SetMode(gin.TestMode)
+			c, _ := gin.CreateTestContext(response)
+			c.Params = []gin.Param{
+				{
+					Key:   "id",
+					Value: testCase.id,
+				},
+			}
+
+			controller.getServiceByID(c)
+			mockStore.AssertCalled(t, "getByID", testCase.id)
+
+			assert.Equal(t, testCase.expectedCode, response.Code)
+
+			var gotResponse Response
+			if err := json.NewDecoder(response.Body).Decode(&gotResponse); err != nil {
+				t.Fatalf("error decoding response body: %v\n", err)
+			}
+
+			var expectedResponse Response
+			if testCase.expectedError != nil {
+				expectedResponse = Response{Error: testCase.expectedError.Error()}
+			} else {
+				expectedResponse = Response{Services: []*Service{testCase.expectedService}}
 			}
 
 			if diff := cmp.Diff(gotResponse, expectedResponse); diff != "" {
