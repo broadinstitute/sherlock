@@ -4,22 +4,39 @@
 // implement these interfaces
 package services
 
-import (
-	"time"
-)
+import "gorm.io/gorm"
 
-// Service is the data structure representing an indvidual applicaiton
-type Service struct {
-	ID        int       `json:"id,omitempty"`
-	Name      string    `json:"name" binding:"required"`
-	RepoURL   string    `json:"repo_url" binding:"required"`
-	CreatedAt time.Time `json:"created_at,omitempty"`
-	UpdatedAt time.Time `json:"updated_at,omitempty"`
+// ServiceController is the management layer for CRUD operations for service entities
+type ServiceController struct {
+	store serviceStore
 }
 
-// ServiceModel is the  interface used to model operations relating to services in the backend datastore
-type ServiceModel interface {
-	ListAll() ([]Service, error)
-	Create(*Service) (*Service, error)
-	Get(string) (*Service, error)
+// NewController accepts a gorm DB connection and returns a new instance
+// of the service controller
+func NewController(dbConn *gorm.DB) *ServiceController {
+	serviceStore := newServiceStore(dbConn)
+	return &ServiceController{
+		store: serviceStore,
+	}
+}
+
+// CreateServiceRequest is a type used to represent the information required to register a new service in sherlock
+type CreateServiceRequest struct {
+	Name    string `json:"name" binding:"required"`
+	RepoURL string `json:"repo_url" binding:"required"`
+}
+
+// creates a service entity object to be persisted with the database from a
+// request to create a service
+func (cr *CreateServiceRequest) service() *Service {
+	return &Service{
+		Name:    cr.Name,
+		RepoURL: cr.RepoURL,
+	}
+}
+
+// Response is a type that allows all data returned from the /service api group to share a consistent structure
+type Response struct {
+	Services []*Service `json:"services"`
+	Error    string     `json:"error,omitempty"`
 }

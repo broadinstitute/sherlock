@@ -7,8 +7,8 @@ import (
 
 // SeedServices is a test utility that will populate a database with a predetermined list of "services"
 // to be used for running integration tests against a real database
-func SeedServices(db *gorm.DB) ([]services.Service, error) {
-	services := []services.Service{
+func SeedServices(db *gorm.DB) ([]*services.Service, error) {
+	services := []*services.Service{
 		{
 			Name:    "cromwell",
 			RepoURL: "https://github.com/broadinstitute/cromwell",

@@ -1,0 +1,22 @@
+coverage:
+  status:
+    project:
+      default:
+        # Codecov switched to informational mode so that it never fails PRs based on coverage.
+        #
+        #   Some Go patterns (`return err`, namely) are very hard to test "up the stack", to
+        #   the point that using thoroughly-tested functions more frequently decreases
+        #   coverage at the call-site. Since coverage is unattainable with some frequency,
+        #   we have to treat this data as merely informational.
+        #
+        #   See https://broadinstitute.slack.com/archives/CADU7L0SZ/p1625682491235200 for
+        #   discussion on this decision likely being temporary.
+        informational: true
+    patch:
+      default:
+        informational: true
+ignore:
+  # This file is 100% covered by unit and integration tests but for some reason codecov thinks it isn't
+  - "internal/db/db.go"
+  # This file is also covered by the integration tests which require a real postgres connection. However codecov isn't smart enough to figure that out
+  - "internal/services/models.go"
