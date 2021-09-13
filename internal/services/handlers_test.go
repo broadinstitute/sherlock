@@ -11,12 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/go-cmp/cmp"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
 )
-
-type mockServiceStore struct {
-	mock.Mock
-}
 
 func TestListServices(t *testing.T) {
 	testCases := []struct {
@@ -71,7 +66,7 @@ func TestListServices(t *testing.T) {
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
 			// setup mock
-			mockStore := new(mockServiceStore)
+			mockStore := new(MockServiceStore)
 			mockStore.On("ListAll").Return(testCase.expectedServices, testCase.expectedError)
 			controller := ServiceController{Store: mockStore}
 
@@ -143,7 +138,7 @@ func TestGetServiceByName(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			// setup mock
 
-			mockStore := new(mockServiceStore)
+			mockStore := new(MockServiceStore)
 			mockStore.On("GetByName", testCase.serviceName).Return(testCase.expectedService, testCase.expectedError)
 			controller := ServiceController{Store: mockStore}
 
@@ -262,7 +257,7 @@ func TestCreateService(t *testing.T) {
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
-			mockStore := new(mockServiceStore)
+			mockStore := new(MockServiceStore)
 			mockStore.On("CreateNew", testCase.createRequest).Return(testCase.expectedService, testCase.expectedError)
 			controller := ServiceController{Store: mockStore}
 
@@ -308,21 +303,4 @@ func TestCreateService(t *testing.T) {
 			}
 		})
 	}
-}
-
-// this is boilerplate code for the testify mock library
-func (m *mockServiceStore) ListAll() ([]*Service, error) {
-	retVal := m.Called()
-	return retVal.Get(0).([]*Service), retVal.Error(1)
-}
-
-func (m *mockServiceStore) CreateNew(newService CreateServiceRequest) (*Service, error) {
-	retService := newService.service()
-	retVal := m.Called(newService)
-	return retService, retVal.Error(1)
-}
-
-func (m *mockServiceStore) GetByName(name string) (*Service, error) {
-	retVal := m.Called(name)
-	return retVal.Get(0).(*Service), retVal.Error(1)
 }

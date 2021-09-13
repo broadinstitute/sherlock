@@ -1,6 +1,7 @@
 package builds
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"net/http"
@@ -146,8 +147,90 @@ func TestListBuilds(t *testing.T) {
 	}
 }
 
-// below is boilerplate code for the testify/mock library
+func TestCreateBuild(t *testing.T) {
+	testCases := []struct {
+		name          string
+		expectedError error
+		expectedCode  int
+		createRequest CreateBuildRequest
+	}{
+		{
+			name:          "build for existing service",
+			expectedError: nil,
+			expectedCode:  http.StatusCreated,
+			createRequest: CreateBuildRequest{
+				VersionString: "gcr.io/broad/cromwell:1.0.0",
+				CommitSha:     "lk23j44",
+				ServiceName:   "cromwell",
+				ServiceRepo:   "github.com/broadinstitute/cromwell",
+				BuildURL:      "https://jenkins.job/123",
+				BuiltAt:       time.Now(),
+			},
+		},
+	}
 
+	for _, testCase := range testCases {
+		t.Run(testCase.name, func(t *testing.T) {
+
+			existingService := services.Service{
+				ID:      1,
+				Name:    testCase.createRequest.ServiceName,
+				RepoURL: testCase.createRequest.ServiceRepo,
+			}
+
+			expectedBuild := &Build{
+				VersionString: testCase.createRequest.VersionString,
+				CommitSha:     testCase.createRequest.CommitSha,
+				BuildURL:      testCase.createRequest.BuildURL,
+				BuiltAt:       testCase.createRequest.BuiltAt,
+				ServiceID:     existingService.ID,
+				Service:       existingService,
+			}
+
+			mockBuildStore := new(mockBuildStore)
+			mockBuildStore.On("createNew", mock.Anything).Return(expectedBuild, testCase.expectedError)
+			mockServiceStore := new(services.MockServiceStore)
+			mockServiceStore.On("GetByName", existingService.Name).Return(&existingService, nil)
+			mockServiceController := services.ServiceController{Store: mockServiceStore}
+
+			controller := BuildController{
+				store:    mockBuildStore,
+				services: &mockServiceController,
+			}
+
+			response := httptest.NewRecorder()
+			gin.SetMode(gin.TestMode)
+			c, _ := gin.CreateTestContext(response)
+
+			reqBody := new(bytes.Buffer)
+			if err := json.NewEncoder(reqBody).Encode(testCase.createRequest); err != nil {
+				t.Fatalf("error parsing request body: %v", err)
+			}
+
+			req, err := http.NewRequest(http.MethodPost, "/builds", reqBody)
+			if err != nil {
+				t.Fatalf("error generating test request: %v", err)
+			}
+			c.Request = req
+
+			controller.createBuild(c)
+			assert.Equal(t, testCase.expectedCode, response.Code)
+
+			var gotResponse Response
+			if err := json.NewDecoder(response.Body).Decode(&gotResponse); err != nil {
+				t.Fatalf("error decoding response body: %v", err)
+			}
+
+			expectedResponse := Response{Builds: []Build{*expectedBuild}}
+
+			if diff := cmp.Diff(gotResponse, expectedResponse); diff != "" {
+				t.Errorf("unexpected difference in response body:\n%v\n", diff)
+			}
+		})
+	}
+}
+
+// below is boilerplate code for the testify/mock library
 type mockBuildStore struct {
 	mock.Mock
 }
