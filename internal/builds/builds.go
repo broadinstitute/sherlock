@@ -1,6 +1,10 @@
 package builds
 
-import "gorm.io/gorm"
+import (
+	"time"
+
+	"gorm.io/gorm"
+)
 
 // BuildController is the management layer that processes requests
 // to the /builds api group
@@ -22,4 +26,13 @@ func NewController(dbConn *gorm.DB) *BuildController {
 type Response struct {
 	Builds []Build `json:"builds"`
 	Error  string  `json:"error,omitempty"`
+}
+
+// CreateBuildRequest is the type used to validate a request for a new build
+type CreateBuildRequest struct {
+	VersionString string    `json:"version_string" binding:"required"`
+	CommitSha     string    `json:"commit_sha" binding:"required"`
+	BuildURL      string    `json:"build_url"`
+	BuiltAt       time.Time `json:"built_at"`
+	ServiceName   string    `json:"service_name" binding:"required"`
 }
