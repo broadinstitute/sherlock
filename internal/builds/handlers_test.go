@@ -186,6 +186,7 @@ func TestCreateBuild(t *testing.T) {
 				ServiceID:     existingService.ID,
 				Service:       existingService,
 			}
+			// TODO try to simplify or DRY some of this logic
 
 			mockBuildStore := new(mockBuildStore)
 			mockBuildStore.On("createNew", mock.Anything).Return(expectedBuild, testCase.expectedError)
