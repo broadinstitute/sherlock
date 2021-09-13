@@ -72,7 +72,7 @@ func TestListServices(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			// setup mock
 			mockStore := new(mockServiceStore)
-			mockStore.On("listAll").Return(testCase.expectedServices, testCase.expectedError)
+			mockStore.On("ListAll").Return(testCase.expectedServices, testCase.expectedError)
 			controller := ServiceController{Store: mockStore}
 
 			// setup response recorder and request response := httptest.NewRecorder()
@@ -82,7 +82,7 @@ func TestListServices(t *testing.T) {
 
 			controller.getServices(c)
 
-			mockStore.AssertCalled(t, "listAll")
+			mockStore.AssertCalled(t, "ListAll")
 			assert.Equal(t, testCase.expectedCode, response.Code)
 
 			var gotResponse Response
@@ -144,7 +144,7 @@ func TestGetServiceByName(t *testing.T) {
 			// setup mock
 
 			mockStore := new(mockServiceStore)
-			mockStore.On("getByName", testCase.serviceName).Return(testCase.expectedService, testCase.expectedError)
+			mockStore.On("GetByName", testCase.serviceName).Return(testCase.expectedService, testCase.expectedError)
 			controller := ServiceController{Store: mockStore}
 
 			response := httptest.NewRecorder()
@@ -159,7 +159,7 @@ func TestGetServiceByName(t *testing.T) {
 			}
 
 			controller.getServiceByName(c)
-			mockStore.AssertCalled(t, "getByName", testCase.serviceName)
+			mockStore.AssertCalled(t, "GetByName", testCase.serviceName)
 
 			assert.Equal(t, testCase.expectedCode, response.Code)
 
@@ -263,7 +263,7 @@ func TestCreateService(t *testing.T) {
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
 			mockStore := new(mockServiceStore)
-			mockStore.On("createNew", testCase.createRequest).Return(testCase.expectedService, testCase.expectedError)
+			mockStore.On("CreateNew", testCase.createRequest).Return(testCase.expectedService, testCase.expectedError)
 			controller := ServiceController{Store: mockStore}
 
 			response := httptest.NewRecorder()
@@ -284,9 +284,9 @@ func TestCreateService(t *testing.T) {
 
 			controller.createService(c)
 			if testCase.expectedError == ErrBadCreateRequest {
-				mockStore.AssertNotCalled(t, "createNew")
+				mockStore.AssertNotCalled(t, "CreateNew")
 			} else {
-				mockStore.AssertCalled(t, "createNew", testCase.createRequest)
+				mockStore.AssertCalled(t, "CreateNew", testCase.createRequest)
 			}
 
 			assert.Equal(t, testCase.expectedCode, response.Code)
