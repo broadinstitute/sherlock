@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/broadinstitute/sherlock/internal/builds"
 	"github.com/broadinstitute/sherlock/internal/db"
@@ -217,6 +218,99 @@ func Test_sherlockServerIntegration(t *testing.T) {
 		if diff := cmp.Diff(expectedBuildsResponse, result); diff != "" {
 			t.Errorf("unexpected difference in response body:\n%v", diff)
 		}
+	})
+	t.Run("POST /builds with pre-existing service", func(t *testing.T) {
+		defer func() {
+			if err := tools.Truncate(app.DB); err != nil {
+				t.Errorf("error truncatingdb in test run : %v", err)
+			}
+		}()
+
+		_, err := tools.SeedServices(app.DB)
+		if err != nil {
+			t.Fatalf("error seeding services: %v", err)
+		}
+
+		// create build for service prexisting in sherlock's db
+		newBuildRequest := builds.CreateBuildRequest{
+			VersionString: "gcr.io/broad/cromwell:1.0.1",
+			CommitSha:     "as2l3k",
+			BuildURL:      "https://jenkins.job/23",
+			BuiltAt:       time.Now(),
+			ServiceName:   "cromwell",
+			ServiceRepo:   "github.com/broadinstitute/cromwell",
+		}
+
+		payload := new(bytes.Buffer)
+		if err := json.NewEncoder(payload).Encode(newBuildRequest); err != nil {
+			t.Errorf("error encoding post payload: %v", err)
+		}
+
+		req, err := http.NewRequest(http.MethodPost, "/builds", payload)
+		if err != nil {
+			t.Fatalf("error constructing POST /builds request: %v", err)
+		}
+
+		response := httptest.NewRecorder()
+
+		app.ServeHTTP(response, req)
+
+		assert.Equal(t, http.StatusCreated, response.Code)
+		var result builds.Response
+		if err := json.NewDecoder(response.Body).Decode(&result); err != nil {
+			t.Errorf("error decoding response body: %v", err)
+		}
+
+		assert.Equal(t, 1, len(result.Builds))
+		assert.Empty(t, result.Error)
+		assert.Equal(t, newBuildRequest.VersionString, result.Builds[0].VersionString)
+	})
+	t.Run("POST /builds with new service", func(t *testing.T) {
+		defer func() {
+			if err := tools.Truncate(app.DB); err != nil {
+				t.Errorf("error truncatingdb in test run : %v", err)
+			}
+		}()
+
+		_, err := tools.SeedServices(app.DB)
+		if err != nil {
+			t.Fatalf("error seeding services: %v", err)
+		}
+
+		// create build for service prexisting in sherlock's db
+		newBuildRequest := builds.CreateBuildRequest{
+			VersionString: "gcr.io/broad/thurloe:0.0.1",
+			CommitSha:     "lwkjfw3",
+			BuildURL:      "https://jenkins.job/234",
+			BuiltAt:       time.Now(),
+			ServiceName:   "thurloe",
+			ServiceRepo:   "github.com/broadinstitute/thurloe",
+		}
+
+		payload := new(bytes.Buffer)
+		if err := json.NewEncoder(payload).Encode(newBuildRequest); err != nil {
+			t.Errorf("error encoding post payload: %v", err)
+		}
+
+		req, err := http.NewRequest(http.MethodPost, "/builds", payload)
+		if err != nil {
+			t.Fatalf("error constructing POST /builds request: %v", err)
+		}
+
+		response := httptest.NewRecorder()
+
+		app.ServeHTTP(response, req)
+
+		assert.Equal(t, http.StatusCreated, response.Code)
+		var result builds.Response
+		if err := json.NewDecoder(response.Body).Decode(&result); err != nil {
+			t.Errorf("error decoding response body: %v", err)
+		}
+
+		assert.Equal(t, 1, len(result.Builds))
+		assert.Empty(t, result.Error)
+		assert.Equal(t, newBuildRequest.VersionString, result.Builds[0].VersionString)
+		assert.Equal(t, newBuildRequest.ServiceName, result.Builds[0].Service.Name)
 	})
 }
 
