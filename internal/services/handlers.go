@@ -14,7 +14,7 @@ var ErrBadCreateRequest error = errors.New("error invalid create service request
 // Service entities to it
 func (sc *ServiceController) RegisterHandlers(routerGroup *gin.RouterGroup) {
 	routerGroup.GET("", sc.getServices)
-	routerGroup.GET("/:id", sc.getServiceByID)
+	routerGroup.GET("/:name", sc.getServiceByName)
 	routerGroup.POST("", sc.createService)
 }
 
@@ -29,9 +29,9 @@ func (sc *ServiceController) getServices(c *gin.Context) {
 	c.JSON(http.StatusOK, Response{Services: services})
 }
 
-func (sc *ServiceController) getServiceByID(c *gin.Context) {
-	id := c.Param("id")
-	service, err := sc.store.getByID(id)
+func (sc *ServiceController) getServiceByName(c *gin.Context) {
+	name := c.Param("name")
+	service, err := sc.store.getByName(name)
 	if err != nil {
 		// return 404 if service is not found, return 500 if some other error
 		switch err {

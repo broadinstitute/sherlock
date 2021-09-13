@@ -104,13 +104,13 @@ func TestListServices(t *testing.T) {
 	}
 }
 
-func TestGetServiceByID(t *testing.T) {
+func TestGetServiceByName(t *testing.T) {
 	testCases := []struct {
 		name            string
-		id              string
 		expectedService *Service
 		expectedError   error
 		expectedCode    int
+		serviceName     string
 	}{
 		{
 			name: "successful get by id",
@@ -121,21 +121,21 @@ func TestGetServiceByID(t *testing.T) {
 			},
 			expectedError: nil,
 			expectedCode:  http.StatusOK,
-			id:            "1",
+			serviceName:   "tester",
 		},
 		{
 			name:            "id not found",
 			expectedService: nil,
 			expectedCode:    http.StatusNotFound,
 			expectedError:   ErrServiceNotFound,
-			id:              "1",
+			serviceName:     "blah",
 		},
 		{
 			name:            "internal error",
 			expectedService: nil,
 			expectedCode:    http.StatusInternalServerError,
 			expectedError:   errors.New("some internal error"),
-			id:              "2",
+			serviceName:     "test-service",
 		},
 	}
 
@@ -144,7 +144,7 @@ func TestGetServiceByID(t *testing.T) {
 			// setup mock
 
 			mockStore := new(mockServiceStore)
-			mockStore.On("getByID", testCase.id).Return(testCase.expectedService, testCase.expectedError)
+			mockStore.On("getByName", testCase.serviceName).Return(testCase.expectedService, testCase.expectedError)
 			controller := ServiceController{store: mockStore}
 
 			response := httptest.NewRecorder()
@@ -153,13 +153,13 @@ func TestGetServiceByID(t *testing.T) {
 			c, _ := gin.CreateTestContext(response)
 			c.Params = []gin.Param{
 				{
-					Key:   "id",
-					Value: testCase.id,
+					Key:   "name",
+					Value: testCase.serviceName,
 				},
 			}
 
-			controller.getServiceByID(c)
-			mockStore.AssertCalled(t, "getByID", testCase.id)
+			controller.getServiceByName(c)
+			mockStore.AssertCalled(t, "getByName", testCase.serviceName)
 
 			assert.Equal(t, testCase.expectedCode, response.Code)
 
@@ -322,7 +322,7 @@ func (m *mockServiceStore) createNew(newService CreateServiceRequest) (*Service,
 	return retService, retVal.Error(1)
 }
 
-func (m *mockServiceStore) getByID(id string) (*Service, error) {
-	retVal := m.Called(id)
+func (m *mockServiceStore) getByName(name string) (*Service, error) {
+	retVal := m.Called(name)
 	return retVal.Get(0).(*Service), retVal.Error(1)
 }

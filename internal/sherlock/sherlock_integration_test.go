@@ -142,7 +142,7 @@ func Test_sherlockServerIntegration(t *testing.T) {
 		}
 		expectedServicesResponse := &services.Response{Services: []*services.Service{expectedServices[0]}}
 
-		req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("/services/%d", expectedServices[0].ID), nil)
+		req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("/services/%s", expectedServices[0].Name), nil)
 		if err != nil {
 			t.Errorf("error creating request: %v", err)
 		}
@@ -165,7 +165,7 @@ func Test_sherlockServerIntegration(t *testing.T) {
 		}
 
 		// Make sure we get 404 for nonexistent service
-		req, err = http.NewRequest(http.MethodGet, fmt.Sprintf("/services/%d", 10000), nil)
+		req, err = http.NewRequest(http.MethodGet, fmt.Sprintf("/services/%s", "non-existent"), nil)
 		if err != nil {
 			t.Errorf("error creating request: %v", err)
 		}
