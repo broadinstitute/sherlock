@@ -73,7 +73,7 @@ func TestListServices(t *testing.T) {
 			// setup mock
 			mockStore := new(mockServiceStore)
 			mockStore.On("listAll").Return(testCase.expectedServices, testCase.expectedError)
-			controller := ServiceController{store: mockStore}
+			controller := ServiceController{Store: mockStore}
 
 			// setup response recorder and request response := httptest.NewRecorder()
 			response := httptest.NewRecorder()
@@ -145,7 +145,7 @@ func TestGetServiceByName(t *testing.T) {
 
 			mockStore := new(mockServiceStore)
 			mockStore.On("getByName", testCase.serviceName).Return(testCase.expectedService, testCase.expectedError)
-			controller := ServiceController{store: mockStore}
+			controller := ServiceController{Store: mockStore}
 
 			response := httptest.NewRecorder()
 
@@ -264,7 +264,7 @@ func TestCreateService(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			mockStore := new(mockServiceStore)
 			mockStore.On("createNew", testCase.createRequest).Return(testCase.expectedService, testCase.expectedError)
-			controller := ServiceController{store: mockStore}
+			controller := ServiceController{Store: mockStore}
 
 			response := httptest.NewRecorder()
 
@@ -311,18 +311,18 @@ func TestCreateService(t *testing.T) {
 }
 
 // this is boilerplate code for the testify mock library
-func (m *mockServiceStore) listAll() ([]*Service, error) {
+func (m *mockServiceStore) ListAll() ([]*Service, error) {
 	retVal := m.Called()
 	return retVal.Get(0).([]*Service), retVal.Error(1)
 }
 
-func (m *mockServiceStore) createNew(newService CreateServiceRequest) (*Service, error) {
+func (m *mockServiceStore) CreateNew(newService CreateServiceRequest) (*Service, error) {
 	retService := newService.service()
 	retVal := m.Called(newService)
 	return retService, retVal.Error(1)
 }
 
-func (m *mockServiceStore) getByName(name string) (*Service, error) {
+func (m *mockServiceStore) GetByName(name string) (*Service, error) {
 	retVal := m.Called(name)
 	return retVal.Get(0).(*Service), retVal.Error(1)
 }

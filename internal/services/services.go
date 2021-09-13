@@ -8,7 +8,7 @@ import "gorm.io/gorm"
 
 // ServiceController is the management layer for CRUD operations for service entities
 type ServiceController struct {
-	store serviceStore
+	Store serviceStore
 }
 
 // NewController accepts a gorm DB connection and returns a new instance
@@ -16,7 +16,7 @@ type ServiceController struct {
 func NewController(dbConn *gorm.DB) *ServiceController {
 	serviceStore := newServiceStore(dbConn)
 	return &ServiceController{
-		store: serviceStore,
+		Store: serviceStore,
 	}
 }
 
