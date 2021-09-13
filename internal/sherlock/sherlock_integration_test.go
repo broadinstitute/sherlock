@@ -8,11 +8,14 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/broadinstitute/sherlock/internal/builds"
 	"github.com/broadinstitute/sherlock/internal/db"
 	"github.com/broadinstitute/sherlock/internal/services"
 	"github.com/broadinstitute/sherlock/internal/sherlock"
 	"github.com/broadinstitute/sherlock/internal/tools"
+	"github.com/gin-gonic/gin"
 	"github.com/google/go-cmp/cmp"
+	"github.com/stretchr/testify/assert"
 )
 
 // exposes a common sherlock instance that can be shared in integration tests
@@ -23,6 +26,7 @@ var app *sherlock.Application
 func Test_sherlockServerIntegration(t *testing.T) {
 	// performs integration setup when -short flag is not supplied to go test
 	integrationSetup(t)
+	gin.SetMode(gin.TestMode)
 
 	t.Run("GET /services integration test", func(t *testing.T) {
 		// ensure db cleanup will always run at end of test
@@ -172,6 +176,46 @@ func Test_sherlockServerIntegration(t *testing.T) {
 
 		if response.Code != http.StatusNotFound {
 			t.Errorf("Expected to receive code %d for non-existent service, got %d", http.StatusNotFound, response.Code)
+		}
+	})
+
+	t.Run("GET /builds", func(t *testing.T) {
+		defer func() {
+			if err := tools.Truncate(app.DB); err != nil {
+				t.Errorf("error truncatingdb in test run : %v", err)
+			}
+		}()
+
+		_, err := tools.SeedServices(app.DB)
+		if err != nil {
+			t.Fatalf("error seeding services: %v", err)
+		}
+
+		expectedBuilds, err := tools.SeedBuilds(app.DB)
+		if err != nil {
+			t.Fatalf("error seeding builds: %v", err)
+		}
+
+		expectedBuildsResponse := &builds.Response{Builds: expectedBuilds}
+
+		req, err := http.NewRequest(http.MethodGet, "/builds", nil)
+		if err != nil {
+			t.Errorf("error generating test GET /builds request: %v", err)
+		}
+
+		response := httptest.NewRecorder()
+
+		app.ServeHTTP(response, req)
+
+		assert.Equal(t, http.StatusOK, response.Code)
+
+		result := &builds.Response{}
+		if err := json.NewDecoder(response.Body).Decode(result); err != nil {
+			t.Errorf("error decoding response body: %v", err)
+		}
+
+		if diff := cmp.Diff(expectedBuildsResponse, result); diff != "" {
+			t.Errorf("unexpected difference in response body:\n%v", diff)
 		}
 	})
 }
