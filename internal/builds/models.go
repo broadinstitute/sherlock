@@ -27,7 +27,7 @@ type Build struct {
 
 type buildStore interface {
 	listAll() ([]Build, error)
-	createNew(CreateBuildRequest) (Build, error)
+	createNew(*Build) (*Build, error)
 }
 
 func newBuildStore(dbConn *gorm.DB) dataStore {
@@ -44,6 +44,7 @@ func (db dataStore) listAll() ([]Build, error) {
 	return builds, nil
 }
 
-func (db dataStore) createNew(newBuild CreateBuildRequest) (Build, error) {
-	return Build{}, nil
+func (db dataStore) createNew(newBuild *Build) (*Build, error) {
+	err := db.Create(newBuild).Error
+	return newBuild, err
 }

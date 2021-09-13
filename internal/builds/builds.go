@@ -45,7 +45,7 @@ type CreateBuildRequest struct {
 	ServiceRepo   string    `json:"service_repo"`
 }
 
-func (bc *BuildController) validateNewBuild(newBuild CreateBuildRequest) (*Build, error) {
+func (bc *BuildController) validateAndCreateNewBuild(newBuild CreateBuildRequest) (*Build, error) {
 	var serviceID int
 	serviceID, ok := bc.doesServiceExist(newBuild.ServiceName)
 	if !ok {
@@ -55,13 +55,15 @@ func (bc *BuildController) validateNewBuild(newBuild CreateBuildRequest) (*Build
 			return nil, err
 		}
 	}
-	return &Build{
+	build := &Build{
 		VersionString: newBuild.VersionString,
 		CommitSha:     newBuild.CommitSha,
 		BuildURL:      newBuild.BuildURL,
 		BuiltAt:       newBuild.BuiltAt,
 		ServiceID:     serviceID,
-	}, nil
+	}
+
+	return bc.store.createNew(build)
 }
 
 func (bc *BuildController) doesServiceExist(name string) (id int, ok bool) {

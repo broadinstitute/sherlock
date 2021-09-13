@@ -157,7 +157,7 @@ func (m *mockBuildStore) listAll() ([]Build, error) {
 	return retVal.Get(0).([]Build), retVal.Error(1)
 }
 
-func (m *mockBuildStore) createNew(newBuild CreateBuildRequest) (Build, error) {
+func (m *mockBuildStore) createNew(newBuild *Build) (*Build, error) {
 	retval := m.Called(newBuild)
-	return retval.Get(0).(Build), retval.Error(1)
+	return retval.Get(0).(*Build), retval.Error(1)
 }
