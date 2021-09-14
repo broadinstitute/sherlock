@@ -15,7 +15,7 @@ const duplicateVersionStringErrorCheck string = `duplicate key value violates un
 // ErrBuildNotFound is returned when a specific build look up fails
 var (
 	ErrBuildNotFound          error = gorm.ErrRecordNotFound
-	ErrDuplicateVersionString       = errors.New("field version_string for builds must be unique")
+	ErrDuplicateVersionString error = errors.New("field version_string for builds must be unique")
 )
 
 type dataStore struct {

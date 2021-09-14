@@ -45,6 +45,10 @@ func (bc *BuildController) createBuild(c *gin.Context) {
 	// and then associate it with the build
 	build, err := bc.CreateNew(newBuild)
 	if err != nil {
+		if errors.Is(err, ErrDuplicateVersionString) {
+			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
+			return
+		}
 		c.JSON(http.StatusInternalServerError, Response{Error: err.Error()})
 		return
 	}

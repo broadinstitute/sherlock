@@ -374,6 +374,58 @@ func Test_sherlockServerIntegration(t *testing.T) {
 			t.Errorf("unexpected difference in reponse body:\n%v", diff)
 		}
 	})
+
+	t.Run("POST /builds with non-unique version string", func(t *testing.T) {
+		defer func() {
+			if err := tools.Truncate(app.DB); err != nil {
+				t.Errorf("error truncatingdb in test run : %v", err)
+			}
+		}()
+
+		_, err := tools.SeedServices(app.DB)
+		if err != nil {
+			t.Fatalf("error seeding services: %v", err)
+		}
+		_, err = tools.SeedBuilds(app.DB)
+		if err != nil {
+			t.Fatalf("error seeding builds: %v", err)
+		}
+
+		// create build for service prexisting in sherlock's db
+		newBuildRequest := builds.CreateBuildRequest{
+			VersionString: "gcr.io/workspacemanager:1.1.1",
+			CommitSha:     "lwkjfw3",
+			BuildURL:      "https://jenkins.job/234",
+			BuiltAt:       time.Now(),
+			ServiceName:   "workspacemanager",
+			ServiceRepo:   "github.com/broadinstitute/thurloe",
+		}
+
+		payload := new(bytes.Buffer)
+		if err := json.NewEncoder(payload).Encode(newBuildRequest); err != nil {
+			t.Errorf("error encoding post payload: %v", err)
+		}
+
+		req, err := http.NewRequest(http.MethodPost, "/builds", payload)
+		if err != nil {
+			t.Fatalf("error constructing POST /builds request: %v", err)
+		}
+
+		response := httptest.NewRecorder()
+
+		app.ServeHTTP(response, req)
+
+		assert.Equal(t, http.StatusBadRequest, response.Code)
+		var result builds.Response
+		if err := json.NewDecoder(response.Body).Decode(&result); err != nil {
+			t.Errorf("error decoding response body: %v", err)
+		}
+		expectedResponse := builds.Response{Error: builds.ErrDuplicateVersionString.Error()}
+
+		if diff := cmp.Diff(expectedResponse, result); diff != "" {
+			t.Errorf("unexpected difference in response body:\n%v", diff)
+		}
+	})
 }
 
 func integrationSetup(t *testing.T) {

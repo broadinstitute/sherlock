@@ -237,6 +237,20 @@ func TestCreateBuild(t *testing.T) {
 			},
 			simulateServiceCreation: false,
 		},
+		{
+			name:          "non-unique version string",
+			expectedError: ErrDuplicateVersionString,
+			expectedCode:  http.StatusBadRequest,
+			createRequest: CreateBuildRequest{
+				VersionString: "gcr.io/broad/cromwell:1.0.0",
+				CommitSha:     "lk23j44",
+				ServiceName:   "cromwell",
+				ServiceRepo:   "github.com/broadinstitute/cromwell",
+				BuildURL:      "https://jenkins.job/123",
+				BuiltAt:       time.Now(),
+			},
+			simulateServiceCreation: false,
+		},
 	}
 
 	for _, testCase := range testCases {
