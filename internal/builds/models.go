@@ -1,15 +1,22 @@
 package builds
 
 import (
+	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/broadinstitute/sherlock/internal/services"
 	"gorm.io/gorm"
 )
 
+const duplicateVersionStringErrorCheck string = `duplicate key value violates unique constraint "builds_version_string_key" (SQLSTATE 23505)`
+
 // ErrBuildNotFound is returned when a specific build look up fails
-var ErrBuildNotFound error = gorm.ErrRecordNotFound
+var (
+	ErrBuildNotFound          error = gorm.ErrRecordNotFound
+	ErrDuplicateVersionString       = errors.New("field version_string for builds must be unique")
+)
 
 type dataStore struct {
 	*gorm.DB
@@ -51,6 +58,10 @@ func (db dataStore) listAll() ([]Build, error) {
 func (db dataStore) createNew(newBuild *Build) (*Build, error) {
 	err := db.Create(newBuild).Error
 	if err != nil {
+		// check for error due to duplicate VersionString field
+		if strings.Contains(err.Error(), duplicateVersionStringErrorCheck) {
+			return nil, ErrDuplicateVersionString
+		}
 		return nil, fmt.Errorf("error persisting new build: %v", err)
 	}
 	// retrieve the same build record back from DB so it can be returned with associations updated

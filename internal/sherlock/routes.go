@@ -10,14 +10,18 @@ import (
 // which makes testing easier
 func (a *Application) buildRouter() {
 	router := gin.Default()
+	api := router.Group("api/v1")
 
-	// /services routes
-	servicesGroup := router.Group("/services")
-	a.Services.RegisterHandlers(servicesGroup)
+	// register handlers for both /* and /api/v1/*
+	for _, group := range []*gin.RouterGroup{&router.RouterGroup, api} {
+		// /services routes
+		servicesGroup := group.Group("/services")
+		a.Services.RegisterHandlers(servicesGroup)
 
-	// /builds routes
-	buildsGroup := router.Group("/builds")
-	a.Builds.RegisterHandlers(buildsGroup)
+		// /builds routes
+		buildsGroup := group.Group("/builds")
+		a.Builds.RegisterHandlers(buildsGroup)
+	}
 
 	a.Handler = router
 }
