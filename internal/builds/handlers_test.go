@@ -325,6 +325,11 @@ func (m *mockBuildStore) createNew(newBuild *Build) (*Build, error) {
 	return retval.Get(0).(*Build), retval.Error(1)
 }
 
+func (m *mockBuildStore) getByID(id int) (*Build, error) {
+	retVal := m.Called(id)
+	return retVal.Get(0).(*Build), retVal.Error(1)
+}
+
 func addBuildRequestToContext(t *testing.T, c *gin.Context, bodyData CreateBuildRequest) {
 	t.Helper()
 

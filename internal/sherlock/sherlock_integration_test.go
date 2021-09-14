@@ -312,6 +312,46 @@ func Test_sherlockServerIntegration(t *testing.T) {
 		assert.Equal(t, newBuildRequest.VersionString, result.Builds[0].VersionString)
 		assert.Equal(t, newBuildRequest.ServiceName, result.Builds[0].Service.Name)
 	})
+
+	t.Run("GET /builds by id", func(t *testing.T) {
+		defer func() {
+			if err := tools.Truncate(app.DB); err != nil {
+				t.Errorf("error truncatingdb in test run : %v", err)
+			}
+		}()
+
+		_, err := tools.SeedServices(app.DB)
+		if err != nil {
+			t.Fatalf("error seeding services: %v", err)
+		}
+
+		expectedBuilds, err := tools.SeedBuilds(app.DB)
+		if err != nil {
+			t.Fatalf("error seeding builds: %v", err)
+		}
+
+		expectedBuildResponse := builds.Response{Builds: []builds.Build{expectedBuilds[0]}}
+
+		req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("/builds/%d", expectedBuilds[0].ID), nil)
+		if err != nil {
+			t.Errorf("error generating test GET /builds request: %v", err)
+		}
+
+		response := httptest.NewRecorder()
+
+		app.ServeHTTP(response, req)
+
+		assert.Equal(t, http.StatusOK, response.Code)
+
+		result := builds.Response{}
+		if err := json.NewDecoder(response.Body).Decode(&result); err != nil {
+			t.Errorf("error decoding response body: %v", err)
+		}
+
+		if diff := cmp.Diff(expectedBuildResponse, result); diff != "" {
+			t.Errorf("unexpected difference in response body:\n%v", diff)
+		}
+	})
 }
 
 func integrationSetup(t *testing.T) {

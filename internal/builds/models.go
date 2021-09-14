@@ -8,6 +8,9 @@ import (
 	"gorm.io/gorm"
 )
 
+// ErrBuildNotFound is returned when a specific build look up fails
+var ErrBuildNotFound error = gorm.ErrRecordNotFound
+
 type dataStore struct {
 	*gorm.DB
 }
@@ -28,6 +31,7 @@ type Build struct {
 type buildStore interface {
 	listAll() ([]Build, error)
 	createNew(*Build) (*Build, error)
+	getByID(int) (*Build, error)
 }
 
 func newBuildStore(dbConn *gorm.DB) dataStore {
@@ -54,4 +58,13 @@ func (db dataStore) createNew(newBuild *Build) (*Build, error) {
 	// even though those associations will be modeled properly in the db
 	err = db.Preload("Service").First(newBuild, newBuild.ID).Error
 	return newBuild, err
+}
+
+func (db dataStore) getByID(id int) (*Build, error) {
+	build := &Build{}
+
+	if err := db.Preload("Service").First(build, id).Error; err != nil {
+		return nil, err
+	}
+	return build, nil
 }
