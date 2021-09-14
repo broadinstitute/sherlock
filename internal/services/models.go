@@ -8,7 +8,9 @@ import (
 )
 
 // ErrServiceNotFound is the error to represent a failed lookup of a service entity
-var ErrServiceNotFound = gorm.ErrRecordNotFound
+var (
+	ErrServiceNotFound = gorm.ErrRecordNotFound
+)
 
 // dataStore is a wrapper around a gorm postgres client
 // which can be used to implement the serviceRepository interface
@@ -30,7 +32,7 @@ type Service struct {
 type serviceStore interface {
 	listAll() ([]*Service, error)
 	createNew(CreateServiceRequest) (*Service, error)
-	getByID(string) (*Service, error)
+	getByName(string) (*Service, error)
 }
 
 func newServiceStore(db *gorm.DB) dataStore {
@@ -60,13 +62,15 @@ func (db dataStore) createNew(newServiceReq CreateServiceRequest) (*Service, err
 	return newService, nil
 }
 
-// Get is used to retrieve a specific service entity from a postgres database using
-// id (primary key) as the lookup mechanism
-func (db dataStore) getByID(id string) (*Service, error) {
+// getByName retrives a service entity from persistence layer. It returns an ErrRecordNotFound
+// if the requested name does not exist. This effectively equivalent to get service by id
+// as the name field is indexed and enforced to be unique
+func (db dataStore) getByName(name string) (*Service, error) {
 	service := &Service{}
 
-	if err := db.First(service, id).Error; err != nil {
+	if err := db.Where(&Service{Name: name}).First(service).Error; err != nil {
 		return nil, err
 	}
+
 	return service, nil
 }

@@ -11,12 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/go-cmp/cmp"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
 )
-
-type mockServiceStore struct {
-	mock.Mock
-}
 
 func TestListServices(t *testing.T) {
 	testCases := []struct {
@@ -71,7 +66,7 @@ func TestListServices(t *testing.T) {
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
 			// setup mock
-			mockStore := new(mockServiceStore)
+			mockStore := new(MockServiceStore)
 			mockStore.On("listAll").Return(testCase.expectedServices, testCase.expectedError)
 			controller := ServiceController{store: mockStore}
 
@@ -104,16 +99,16 @@ func TestListServices(t *testing.T) {
 	}
 }
 
-func TestGetServiceByID(t *testing.T) {
+func TestGetServiceByName(t *testing.T) {
 	testCases := []struct {
 		name            string
-		id              string
 		expectedService *Service
 		expectedError   error
 		expectedCode    int
+		serviceName     string
 	}{
 		{
-			name: "successful get by id",
+			name: "successful get by name",
 			expectedService: &Service{
 				Name:    "tester",
 				RepoURL: "https://test.repo",
@@ -121,21 +116,21 @@ func TestGetServiceByID(t *testing.T) {
 			},
 			expectedError: nil,
 			expectedCode:  http.StatusOK,
-			id:            "1",
+			serviceName:   "tester",
 		},
 		{
-			name:            "id not found",
+			name:            "name not found",
 			expectedService: nil,
 			expectedCode:    http.StatusNotFound,
 			expectedError:   ErrServiceNotFound,
-			id:              "1",
+			serviceName:     "blah",
 		},
 		{
 			name:            "internal error",
 			expectedService: nil,
 			expectedCode:    http.StatusInternalServerError,
 			expectedError:   errors.New("some internal error"),
-			id:              "2",
+			serviceName:     "test-service",
 		},
 	}
 
@@ -143,8 +138,8 @@ func TestGetServiceByID(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			// setup mock
 
-			mockStore := new(mockServiceStore)
-			mockStore.On("getByID", testCase.id).Return(testCase.expectedService, testCase.expectedError)
+			mockStore := new(MockServiceStore)
+			mockStore.On("getByName", testCase.serviceName).Return(testCase.expectedService, testCase.expectedError)
 			controller := ServiceController{store: mockStore}
 
 			response := httptest.NewRecorder()
@@ -153,13 +148,13 @@ func TestGetServiceByID(t *testing.T) {
 			c, _ := gin.CreateTestContext(response)
 			c.Params = []gin.Param{
 				{
-					Key:   "id",
-					Value: testCase.id,
+					Key:   "name",
+					Value: testCase.serviceName,
 				},
 			}
 
-			controller.getServiceByID(c)
-			mockStore.AssertCalled(t, "getByID", testCase.id)
+			controller.getServiceByName(c)
+			mockStore.AssertCalled(t, "getByName", testCase.serviceName)
 
 			assert.Equal(t, testCase.expectedCode, response.Code)
 
@@ -262,7 +257,7 @@ func TestCreateService(t *testing.T) {
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
-			mockStore := new(mockServiceStore)
+			mockStore := new(MockServiceStore)
 			mockStore.On("createNew", testCase.createRequest).Return(testCase.expectedService, testCase.expectedError)
 			controller := ServiceController{store: mockStore}
 
@@ -308,21 +303,4 @@ func TestCreateService(t *testing.T) {
 			}
 		})
 	}
-}
-
-// this is boilerplate code for the testify mock library
-func (m *mockServiceStore) listAll() ([]*Service, error) {
-	retVal := m.Called()
-	return retVal.Get(0).([]*Service), retVal.Error(1)
-}
-
-func (m *mockServiceStore) createNew(newService CreateServiceRequest) (*Service, error) {
-	retService := newService.service()
-	retVal := m.Called(newService)
-	return retService, retVal.Error(1)
-}
-
-func (m *mockServiceStore) getByID(id string) (*Service, error) {
-	retVal := m.Called(id)
-	return retVal.Get(0).(*Service), retVal.Error(1)
 }
