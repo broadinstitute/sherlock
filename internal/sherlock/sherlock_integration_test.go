@@ -351,6 +351,28 @@ func Test_sherlockServerIntegration(t *testing.T) {
 		if diff := cmp.Diff(expectedBuildResponse, result); diff != "" {
 			t.Errorf("unexpected difference in response body:\n%v", diff)
 		}
+
+		// make sure a 404 is returned for a non-existent build id
+		req, err = http.NewRequest(http.MethodGet, fmt.Sprintf("/builds/%d", 100000), nil)
+		if err != nil {
+			t.Errorf("error generating test GET /builds request: %v", err)
+		}
+
+		response = httptest.NewRecorder()
+
+		app.ServeHTTP(response, req)
+
+		assert.Equal(t, http.StatusNotFound, response.Code)
+		expectedResponse := builds.Response{Error: builds.ErrBuildNotFound.Error()}
+
+		result = builds.Response{}
+		if err := json.NewDecoder(response.Body).Decode(&result); err != nil {
+			t.Errorf("error decoding response body: %v", err)
+		}
+
+		if diff := cmp.Diff(expectedResponse, result); diff != "" {
+			t.Errorf("unexpected difference in reponse body:\n%v", diff)
+		}
 	})
 }
 
