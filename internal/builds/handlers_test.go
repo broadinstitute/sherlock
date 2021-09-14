@@ -149,10 +149,11 @@ func TestListBuilds(t *testing.T) {
 
 func TestCreateBuild(t *testing.T) {
 	testCases := []struct {
-		name          string
-		expectedError error
-		expectedCode  int
-		createRequest CreateBuildRequest
+		name                    string
+		expectedError           error
+		expectedCode            int
+		createRequest           CreateBuildRequest
+		simulateServiceCreation bool
 	}{
 		{
 			name:          "build for existing service",
@@ -166,13 +167,28 @@ func TestCreateBuild(t *testing.T) {
 				BuildURL:      "https://jenkins.job/123",
 				BuiltAt:       time.Now(),
 			},
+			simulateServiceCreation: false,
+		},
+		{
+			name:          "build for new service",
+			expectedError: nil,
+			expectedCode:  http.StatusCreated,
+			createRequest: CreateBuildRequest{
+				VersionString: "gcr.io/broad/workspacemanager:0.1.0",
+				CommitSha:     "k3l42j",
+				ServiceName:   "workspacemanager",
+				ServiceRepo:   "github.com/databiosphere/workspacemanager",
+				BuildURL:      "https://github.com/workspacemanager/actions/2",
+				BuiltAt:       time.Now(),
+			},
+			simulateServiceCreation: true,
 		},
 	}
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
 
-			existingService := services.Service{
+			service := services.Service{
 				ID:      1,
 				Name:    testCase.createRequest.ServiceName,
 				RepoURL: testCase.createRequest.ServiceRepo,
@@ -183,15 +199,22 @@ func TestCreateBuild(t *testing.T) {
 				CommitSha:     testCase.createRequest.CommitSha,
 				BuildURL:      testCase.createRequest.BuildURL,
 				BuiltAt:       testCase.createRequest.BuiltAt,
-				ServiceID:     existingService.ID,
-				Service:       existingService,
+				ServiceID:     service.ID,
+				Service:       service,
 			}
 			// TODO try to simplify or DRY some of this logic
 
 			mockBuildStore := new(mockBuildStore)
 			mockBuildStore.On("createNew", mock.Anything).Return(expectedBuild, testCase.expectedError)
 			mockServiceStore := new(services.MockServiceStore)
-			mockServiceStore.On("GetByName", existingService.Name).Return(&existingService, nil)
+
+			if testCase.simulateServiceCreation {
+				mockServiceStore.On("GetByName", service.Name).Return(&services.Service{}, services.ErrServiceNotFound)
+				mockServiceStore.On("CreateNew", mock.Anything).Return(&service, nil)
+			} else {
+				mockServiceStore.On("GetByName", service.Name).Return(&service, nil)
+			}
+
 			mockServiceController := services.ServiceController{Store: mockServiceStore}
 
 			controller := BuildController{
@@ -216,6 +239,13 @@ func TestCreateBuild(t *testing.T) {
 
 			controller.createBuild(c)
 			assert.Equal(t, testCase.expectedCode, response.Code)
+			mockServiceStore.AssertCalled(t, "GetByName", testCase.createRequest.ServiceName)
+
+			// ensure the create service method on the mock store is called in
+			// case where a new service needs to be created
+			if testCase.simulateServiceCreation {
+				mockServiceStore.AssertCalled(t, "CreateNew", mock.Anything)
+			}
 
 			var gotResponse Response
 			if err := json.NewDecoder(response.Body).Decode(&gotResponse); err != nil {
