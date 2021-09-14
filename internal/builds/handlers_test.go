@@ -6,6 +6,7 @@ import (
 	"errors"
 	"net/http"
 	"net/http/httptest"
+	"strconv"
 	"testing"
 	"time"
 
@@ -303,6 +304,91 @@ func TestCreateBuild(t *testing.T) {
 				expectedResponse = Response{Error: testCase.expectedError.Error()}
 			} else {
 				expectedResponse = Response{Builds: []Build{*expectedBuild}}
+			}
+
+			validateResponse(t, response, expectedResponse)
+		})
+	}
+}
+
+func TestGetBuildByID(t *testing.T) {
+	testCases := []struct {
+		name          string
+		buildID       string
+		expectedBuild Build
+		expectedError error
+		expectedCode  int
+	}{
+		{
+			name:    "successfully get build by id",
+			buildID: "1",
+			expectedBuild: Build{
+				ID:            1,
+				VersionString: "imagerepo.io/test:0.1.0",
+				CommitSha:     "f2f2f23",
+				BuildURL:      "https://build.job.out/blah",
+				BuiltAt:       time.Now(),
+				ServiceID:     1,
+				Service: services.Service{
+					ID:      1,
+					Name:    "tester",
+					RepoURL: "https://tester.repo",
+				},
+			},
+			expectedCode:  http.StatusOK,
+			expectedError: nil,
+		},
+		{
+			name:          "non-existent build id",
+			buildID:       "100",
+			expectedBuild: Build{},
+			expectedCode:  http.StatusNotFound,
+			expectedError: ErrBuildNotFound,
+		},
+		{
+			name:          "invalid id param",
+			buildID:       "abc",
+			expectedBuild: Build{},
+			expectedCode:  http.StatusBadRequest,
+			expectedError: ErrInvalidBuildID,
+		},
+	}
+
+	for _, testCase := range testCases {
+		t.Run(testCase.name, func(t *testing.T) {
+			mockStore := new(mockBuildStore)
+			buildID, err := strconv.Atoi(testCase.buildID)
+			mockStore.On("getByID", buildID).Return(&testCase.expectedBuild, testCase.expectedError)
+
+			controller := BuildController{store: mockStore}
+
+			response := httptest.NewRecorder()
+			gin.SetMode(gin.TestMode)
+			c, _ := gin.CreateTestContext(response)
+
+			// gin stores url params including numeric ids as strings
+			c.Params = append(c.Params, gin.Param{
+				Key:   "id",
+				Value: testCase.buildID,
+			})
+
+			controller.getByID(c)
+
+			// err will have a value when id param cannot be successfully parsed as an int and thus is invalid
+			// so getByID method should not be called
+			if err != nil {
+				mockStore.AssertNotCalled(t, "getByID")
+			} else {
+				mockStore.AssertCalled(t, "getByID", buildID)
+			}
+
+			assert.Equal(t, testCase.expectedCode, response.Code)
+
+			var expectedResponse Response
+			if testCase.expectedError != nil {
+				expectedResponse = Response{Error: testCase.expectedError.Error()}
+			} else {
+				expectedResponse = Response{Builds: []Build{testCase.expectedBuild}}
 			}
 
 			validateResponse(t, response, expectedResponse)

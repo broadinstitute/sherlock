@@ -4,7 +4,11 @@
 // implement these interfaces
 package services
 
-import "gorm.io/gorm"
+import (
+	"errors"
+
+	"gorm.io/gorm"
+)
 
 // ServiceController is the management layer for CRUD operations for service entities
 type ServiceController struct {
@@ -18,6 +22,16 @@ func NewController(dbConn *gorm.DB) *ServiceController {
 	return &ServiceController{
 		Store: serviceStore,
 	}
+}
+
+// DoesServiceExist is a helper method to check if a service with the given name
+// already exists in sherlock's data storage
+func (sc *ServiceController) DoesServiceExist(name string) (id int, ok bool) {
+	svc, err := sc.Store.GetByName(name)
+	if errors.Is(err, ErrServiceNotFound) {
+		return 0, false
+	}
+	return svc.ID, true
 }
 
 // CreateServiceRequest is a type used to represent the information required to register a new service in sherlock

@@ -1,7 +1,6 @@
 package builds
 
 import (
-	"errors"
 	"fmt"
 	"time"
 
@@ -47,7 +46,8 @@ type CreateBuildRequest struct {
 
 func (bc *BuildController) validateAndCreateNewBuild(newBuild CreateBuildRequest) (*Build, error) {
 	var serviceID int
-	serviceID, ok := bc.doesServiceExist(newBuild.ServiceName)
+	serviceID, ok := bc.services.DoesServiceExist(newBuild.ServiceName)
+	// handle case where service doesn't exist already
 	if !ok {
 		var err error
 		serviceID, err = bc.createNewServiceFromBuildRequest(newBuild.ServiceName, newBuild.ServiceRepo)
@@ -66,14 +66,7 @@ func (bc *BuildController) validateAndCreateNewBuild(newBuild CreateBuildRequest
 	return bc.store.createNew(build)
 }
 
-func (bc *BuildController) doesServiceExist(name string) (id int, ok bool) {
-	svc, err := bc.services.Store.GetByName(name)
-	if errors.Is(err, services.ErrServiceNotFound) {
-		return 0, false
-	}
-	return svc.ID, true
-}
-
+// when receiving a new build for a service sherlock isn't aware of, create that service
 func (bc *BuildController) createNewServiceFromBuildRequest(name, repoURL string) (int, error) {
 	newServiceRequest := services.CreateServiceRequest{
 		Name:    name,
