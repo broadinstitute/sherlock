@@ -63,7 +63,7 @@ func (bc *BuildController) validateAndCreateNewBuild(newBuild CreateBuildRequest
 		ServiceID:     serviceID,
 	}
 
-	return bc.store.createNew(build)
+	return bc.CreateNew(build)
 }
 
 // when receiving a new build for a service sherlock isn't aware of, create that service
@@ -77,4 +77,21 @@ func (bc *BuildController) createNewServiceFromBuildRequest(name, repoURL string
 		return 0, fmt.Errorf("error creating new service from build request: %v", err)
 	}
 	return newService.ID, nil
+}
+
+// ListAll is the public API on the build controller for listing out all builds
+func (bc *BuildController) ListAll() ([]Build, error) {
+	return bc.store.listAll()
+}
+
+// CreateNew is the Public API on the build controller for saving a new build entity
+// to persistent storage
+func (bc *BuildController) CreateNew(build *Build) (*Build, error) {
+	return bc.store.createNew(build)
+}
+
+// GetByID is the public api on the build controller for performing a lookup of
+// a build entity by ID
+func (bc *BuildController) GetByID(id int) (*Build, error) {
+	return bc.store.getByID(id)
 }

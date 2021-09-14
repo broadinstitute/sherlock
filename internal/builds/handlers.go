@@ -23,7 +23,7 @@ func (bc *BuildController) RegisterHandlers(routerGroup *gin.RouterGroup) {
 }
 
 func (bc *BuildController) getBuilds(c *gin.Context) {
-	builds, err := bc.store.listAll()
+	builds, err := bc.ListAll()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, Response{Error: err.Error()})
 		return
@@ -60,7 +60,7 @@ func (bc *BuildController) getByID(c *gin.Context) {
 		return
 	}
 
-	build, err := bc.store.getByID(id)
+	build, err := bc.GetByID(id)
 	if err != nil {
 		switch err {
 		case ErrBuildNotFound:
