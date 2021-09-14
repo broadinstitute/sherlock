@@ -58,7 +58,7 @@ func (sc *ServiceController) createService(c *gin.Context) {
 
 	// the create method returns a service struct with the newly saved entity including fields
 	// updated internally by the database such as ID
-	savedService, err := sc.Store.CreateNew(newService)
+	savedService, err := sc.CreateNew(newService)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, Response{Error: err.Error()})

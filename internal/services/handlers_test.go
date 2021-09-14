@@ -258,7 +258,7 @@ func TestCreateService(t *testing.T) {
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
 			mockStore := new(MockServiceStore)
-			mockStore.On("CreateNew", testCase.createRequest).Return(testCase.expectedService, testCase.expectedError)
+			mockStore.On("createNew", testCase.createRequest).Return(testCase.expectedService, testCase.expectedError)
 			controller := ServiceController{Store: mockStore}
 
 			response := httptest.NewRecorder()
@@ -279,9 +279,9 @@ func TestCreateService(t *testing.T) {
 
 			controller.createService(c)
 			if testCase.expectedError == ErrBadCreateRequest {
-				mockStore.AssertNotCalled(t, "CreateNew")
+				mockStore.AssertNotCalled(t, "createNew")
 			} else {
-				mockStore.AssertCalled(t, "CreateNew", testCase.createRequest)
+				mockStore.AssertCalled(t, "createNew", testCase.createRequest)
 			}
 
 			assert.Equal(t, testCase.expectedCode, response.Code)

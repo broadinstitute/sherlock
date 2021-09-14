@@ -12,7 +12,7 @@ func (m *MockServiceStore) ListAll() ([]*Service, error) {
 	return retVal.Get(0).([]*Service), retVal.Error(1)
 }
 
-func (m *MockServiceStore) CreateNew(newService CreateServiceRequest) (*Service, error) {
+func (m *MockServiceStore) createNew(newService CreateServiceRequest) (*Service, error) {
 	retService := newService.service()
 	retVal := m.Called(newService)
 	return retService, retVal.Error(1)

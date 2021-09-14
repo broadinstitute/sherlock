@@ -34,6 +34,12 @@ func (sc *ServiceController) DoesServiceExist(name string) (id int, ok bool) {
 	return svc.ID, true
 }
 
+// CreateNew is the public api on the serviceController for persisting a new service entity to
+// the data store
+func (sc *ServiceController) CreateNew(newService CreateServiceRequest) (*Service, error) {
+	return sc.Store.createNew(newService)
+}
+
 // CreateServiceRequest is a type used to represent the information required to register a new service in sherlock
 type CreateServiceRequest struct {
 	Name    string `json:"name" binding:"required"`

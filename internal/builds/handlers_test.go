@@ -265,7 +265,7 @@ func TestCreateBuild(t *testing.T) {
 			// set up behavior for the serviceStore mock
 			if testCase.simulateServiceCreation {
 				mockServiceStore.On("GetByName", service.Name).Return(&services.Service{}, services.ErrServiceNotFound)
-				mockServiceStore.On("CreateNew", mock.Anything).Return(&service, nil)
+				mockServiceStore.On("createNew", mock.Anything).Return(&service, nil)
 			} else {
 				mockServiceStore.On("GetByName", service.Name).Return(&service, nil)
 			}
@@ -296,7 +296,7 @@ func TestCreateBuild(t *testing.T) {
 			// ensure the create service method on the mock store is called in
 			// case where a new service needs to be created
 			if testCase.simulateServiceCreation {
-				mockServiceStore.AssertCalled(t, "CreateNew", mock.Anything)
+				mockServiceStore.AssertCalled(t, "createNew", mock.Anything)
 			}
 
 			var expectedResponse Response

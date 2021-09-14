@@ -72,7 +72,7 @@ func (bc *BuildController) createNewServiceFromBuildRequest(name, repoURL string
 		Name:    name,
 		RepoURL: repoURL,
 	}
-	newService, err := bc.services.Store.CreateNew(newServiceRequest)
+	newService, err := bc.services.CreateNew(newServiceRequest)
 	if err != nil {
 		return 0, fmt.Errorf("error creating new service from build request: %v", err)
 	}

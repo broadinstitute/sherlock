@@ -29,7 +29,7 @@ type Service struct {
 // for services entities
 type serviceStore interface {
 	ListAll() ([]*Service, error)
-	CreateNew(CreateServiceRequest) (*Service, error)
+	createNew(CreateServiceRequest) (*Service, error)
 	GetByName(string) (*Service, error)
 }
 
@@ -52,7 +52,7 @@ func (db dataStore) ListAll() ([]*Service, error) {
 
 // Create will persist the service defined by newservice to a postgres database.
 // It will return the service as stored in postgres for ease of testing if successful
-func (db dataStore) CreateNew(newServiceReq CreateServiceRequest) (*Service, error) {
+func (db dataStore) createNew(newServiceReq CreateServiceRequest) (*Service, error) {
 	newService := newServiceReq.service()
 	if err := db.Create(newService).Error; err != nil {
 		return nil, fmt.Errorf("error saving service to database: %v", err)
