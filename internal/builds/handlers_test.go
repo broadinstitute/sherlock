@@ -264,17 +264,17 @@ func TestCreateBuild(t *testing.T) {
 
 			// set up behavior for the serviceStore mock
 			if testCase.simulateServiceCreation {
-				mockServiceStore.On("GetByName", service.Name).Return(&services.Service{}, services.ErrServiceNotFound)
+				mockServiceStore.On("getByName", service.Name).Return(&services.Service{}, services.ErrServiceNotFound)
 				mockServiceStore.On("createNew", mock.Anything).Return(&service, nil)
 			} else {
-				mockServiceStore.On("GetByName", service.Name).Return(&service, nil)
+				mockServiceStore.On("getByName", service.Name).Return(&service, nil)
 			}
 
-			mockServiceController := services.ServiceController{Store: mockServiceStore}
+			mockServiceController := services.NewMockController(mockServiceStore)
 
 			controller := BuildController{
 				store:    mockBuildStore,
-				services: &mockServiceController,
+				services: mockServiceController,
 			}
 
 			response := httptest.NewRecorder()
@@ -287,10 +287,10 @@ func TestCreateBuild(t *testing.T) {
 			assert.Equal(t, testCase.expectedCode, response.Code)
 
 			if testCase.expectedError == ErrBadCreateRequest {
-				mockServiceStore.AssertNotCalled(t, "GetByName")
+				mockServiceStore.AssertNotCalled(t, "getByName")
 				mockBuildStore.AssertNotCalled(t, "createNew")
 			} else {
-				mockServiceStore.AssertCalled(t, "GetByName", testCase.createRequest.ServiceName)
+				mockServiceStore.AssertCalled(t, "getByName", testCase.createRequest.ServiceName)
 			}
 
 			// ensure the create service method on the mock store is called in

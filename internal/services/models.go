@@ -28,9 +28,9 @@ type Service struct {
 // serviceStore is the interface type that defines the methods required for implementing the persistence layer
 // for services entities
 type serviceStore interface {
-	ListAll() ([]*Service, error)
+	listAll() ([]*Service, error)
 	createNew(CreateServiceRequest) (*Service, error)
-	GetByName(string) (*Service, error)
+	getByName(string) (*Service, error)
 }
 
 func newServiceStore(db *gorm.DB) dataStore {
@@ -39,7 +39,7 @@ func newServiceStore(db *gorm.DB) dataStore {
 
 // ListAll retrieves all service entities from a postgres database and
 // returns them as a slice
-func (db dataStore) ListAll() ([]*Service, error) {
+func (db dataStore) listAll() ([]*Service, error) {
 	services := []*Service{}
 
 	err := db.Find(&services).Error
@@ -63,7 +63,7 @@ func (db dataStore) createNew(newServiceReq CreateServiceRequest) (*Service, err
 // getByName retrives a service entity from persistence layer. It returns an ErrRecordNotFound
 // if the requested name does not exist. This effectively equivalent to get service by id
 // as the name field is indexed and enforced to be unique
-func (db dataStore) GetByName(name string) (*Service, error) {
+func (db dataStore) getByName(name string) (*Service, error) {
 	service := &Service{}
 
 	if err := db.Where(&Service{Name: name}).First(service).Error; err != nil {

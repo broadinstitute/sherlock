@@ -19,7 +19,7 @@ func (sc *ServiceController) RegisterHandlers(routerGroup *gin.RouterGroup) {
 }
 
 func (sc *ServiceController) getServices(c *gin.Context) {
-	services, err := sc.Store.ListAll()
+	services, err := sc.ListAll()
 
 	if err != nil {
 		// send error response to client
@@ -31,7 +31,7 @@ func (sc *ServiceController) getServices(c *gin.Context) {
 
 func (sc *ServiceController) getServiceByName(c *gin.Context) {
 	name := c.Param("name")
-	service, err := sc.Store.GetByName(name)
+	service, err := sc.GetByName(name)
 	if err != nil {
 		// return 404 if service is not found, return 500 if some other error
 		switch err {

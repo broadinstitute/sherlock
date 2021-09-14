@@ -67,8 +67,8 @@ func TestListServices(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			// setup mock
 			mockStore := new(MockServiceStore)
-			mockStore.On("ListAll").Return(testCase.expectedServices, testCase.expectedError)
-			controller := ServiceController{Store: mockStore}
+			mockStore.On("listAll").Return(testCase.expectedServices, testCase.expectedError)
+			controller := ServiceController{store: mockStore}
 
 			// setup response recorder and request response := httptest.NewRecorder()
 			response := httptest.NewRecorder()
@@ -77,7 +77,7 @@ func TestListServices(t *testing.T) {
 
 			controller.getServices(c)
 
-			mockStore.AssertCalled(t, "ListAll")
+			mockStore.AssertCalled(t, "listAll")
 			assert.Equal(t, testCase.expectedCode, response.Code)
 
 			var gotResponse Response
@@ -108,7 +108,7 @@ func TestGetServiceByName(t *testing.T) {
 		serviceName     string
 	}{
 		{
-			name: "successful get by id",
+			name: "successful get by name",
 			expectedService: &Service{
 				Name:    "tester",
 				RepoURL: "https://test.repo",
@@ -119,7 +119,7 @@ func TestGetServiceByName(t *testing.T) {
 			serviceName:   "tester",
 		},
 		{
-			name:            "id not found",
+			name:            "name not found",
 			expectedService: nil,
 			expectedCode:    http.StatusNotFound,
 			expectedError:   ErrServiceNotFound,
@@ -139,8 +139,8 @@ func TestGetServiceByName(t *testing.T) {
 			// setup mock
 
 			mockStore := new(MockServiceStore)
-			mockStore.On("GetByName", testCase.serviceName).Return(testCase.expectedService, testCase.expectedError)
-			controller := ServiceController{Store: mockStore}
+			mockStore.On("getByName", testCase.serviceName).Return(testCase.expectedService, testCase.expectedError)
+			controller := ServiceController{store: mockStore}
 
 			response := httptest.NewRecorder()
 
@@ -154,7 +154,7 @@ func TestGetServiceByName(t *testing.T) {
 			}
 
 			controller.getServiceByName(c)
-			mockStore.AssertCalled(t, "GetByName", testCase.serviceName)
+			mockStore.AssertCalled(t, "getByName", testCase.serviceName)
 
 			assert.Equal(t, testCase.expectedCode, response.Code)
 
@@ -259,7 +259,7 @@ func TestCreateService(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			mockStore := new(MockServiceStore)
 			mockStore.On("createNew", testCase.createRequest).Return(testCase.expectedService, testCase.expectedError)
-			controller := ServiceController{Store: mockStore}
+			controller := ServiceController{store: mockStore}
 
 			response := httptest.NewRecorder()
 
