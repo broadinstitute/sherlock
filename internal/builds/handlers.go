@@ -43,7 +43,7 @@ func (bc *BuildController) createBuild(c *gin.Context) {
 	// validate and create new build will ensure that the service id associated
 	// with the build is valid. If it doesn't exist it will create a new service entity
 	// and then associate it with the build
-	build, err := bc.validateAndCreateNewBuild(newBuild)
+	build, err := bc.CreateNew(newBuild)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, Response{Error: err.Error()})
 		return
