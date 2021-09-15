@@ -18,7 +18,6 @@ func Test_VersionCommand(t *testing.T) {
 	expected := fmt.Sprintf(versionFormatString, version.BuildVersion)
 
 	assert.Equal(t, expected, got)
-
 }
 
 func executeCommand(root *cobra.Command, args ...string) (string, error) {
