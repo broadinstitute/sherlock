@@ -1,6 +1,8 @@
 package main
 
 import (
+	"os"
+
 	"github.com/broadinstitute/sherlock/internal/cli"
 	"github.com/broadinstitute/sherlock/internal/version"
 )
@@ -11,5 +13,7 @@ var BuildVersion string = "development"
 
 func main() {
 	version.BuildVersion = BuildVersion
-	cli.Execute()
+	if err := cli.Execute(); err != nil {
+		os.Exit(1)
+	}
 }
