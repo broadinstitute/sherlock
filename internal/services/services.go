@@ -42,17 +42,17 @@ func (sc *ServiceController) CreateNew(newService CreateServiceRequest) (Service
 		return ServiceResponse{}, err
 	}
 	result := ServiceSerializer{*resultService}
-	return result.Response(), err
+	return result.Response(), nil
 }
 
 // ListAll is the public api for listing out all services tracked by sherlock
 func (sc *ServiceController) ListAll() ([]ServiceResponse, error) {
 	resultServices, err := sc.store.listAll()
 	if err != nil {
-		return []ServiceResponse{}, nil
+		return []ServiceResponse{}, err
 	}
 	result := ServicesSerializer{Services: resultServices}
-	return result.Response(), err
+	return result.Response(), nil
 }
 
 // GetByName is the public API for looking up a service from the data store by name
@@ -62,7 +62,7 @@ func (sc *ServiceController) GetByName(name string) (ServiceResponse, error) {
 		return ServiceResponse{}, err
 	}
 	result := ServiceSerializer{*resultService}
-	return result.Response(), err
+	return result.Response(), nil
 }
 
 // CreateServiceRequest is a type used to represent the information required to register a new service in sherlock

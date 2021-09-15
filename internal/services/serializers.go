@@ -14,6 +14,7 @@ type ServiceSerializer struct {
 	Service
 }
 
+// Response takes a Service Model entity and transforms it into a ServiceResponse
 func (ss *ServiceSerializer) Response() ServiceResponse {
 	return ServiceResponse{
 		ID:      ss.ID,
