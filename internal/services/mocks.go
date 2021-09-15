@@ -7,9 +7,9 @@ type MockServiceStore struct {
 }
 
 // this is boilerplate code for the testify mock library
-func (m *MockServiceStore) listAll() ([]*Service, error) {
+func (m *MockServiceStore) listAll() ([]Service, error) {
 	retVal := m.Called()
-	return retVal.Get(0).([]*Service), retVal.Error(1)
+	return retVal.Get(0).([]Service), retVal.Error(1)
 }
 
 func (m *MockServiceStore) createNew(newService CreateServiceRequest) (*Service, error) {

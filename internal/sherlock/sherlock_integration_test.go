@@ -44,7 +44,8 @@ func Test_sherlockServerIntegration(t *testing.T) {
 			t.Fatalf("error seeding services: %v", err)
 		}
 
-		expectedServicesResponse := &services.Response{Services: expectedServices}
+		expectationSerializer := services.ServicesSerializer{Services: expectedServices}
+		expectedServicesResponse := &services.Response{Services: expectationSerializer.Response()}
 
 		req, err := http.NewRequest(http.MethodGet, "/services", nil)
 		if err != nil {
@@ -141,7 +142,9 @@ func Test_sherlockServerIntegration(t *testing.T) {
 		if err != nil {
 			t.Fatalf("error seeding services: %v", err)
 		}
-		expectedServicesResponse := &services.Response{Services: []*services.Service{expectedServices[0]}}
+
+		expectationSerializer := services.ServicesSerializer{Services: []services.Service{expectedServices[0]}}
+		expectedServicesResponse := &services.Response{Services: expectationSerializer.Response()}
 
 		req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("/services/%s", expectedServices[0].Name), nil)
 		if err != nil {

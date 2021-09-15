@@ -30,7 +30,7 @@ type Service struct {
 // serviceStore is the interface type that defines the methods required for implementing the persistence layer
 // for services entities
 type serviceStore interface {
-	listAll() ([]*Service, error)
+	listAll() ([]Service, error)
 	createNew(CreateServiceRequest) (*Service, error)
 	getByName(string) (*Service, error)
 }
@@ -41,12 +41,12 @@ func newServiceStore(db *gorm.DB) dataStore {
 
 // ListAll retrieves all service entities from a postgres database and
 // returns them as a slice
-func (db dataStore) listAll() ([]*Service, error) {
-	services := []*Service{}
+func (db dataStore) listAll() ([]Service, error) {
+	services := []Service{}
 
 	err := db.Find(&services).Error
 	if err != nil {
-		return []*Service{}, fmt.Errorf("Error retriving services: %v", err)
+		return []Service{}, fmt.Errorf("Error retriving services: %v", err)
 	}
 
 	return services, nil
@@ -69,7 +69,7 @@ func (db dataStore) getByName(name string) (*Service, error) {
 	service := &Service{}
 
 	if err := db.Where(&Service{Name: name}).First(service).Error; err != nil {
-		return nil, err
+		return &Service{}, err
 	}
 
 	return service, nil

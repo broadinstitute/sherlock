@@ -44,7 +44,7 @@ func (sc *ServiceController) getServiceByName(c *gin.Context) {
 		}
 	}
 
-	c.JSON(http.StatusOK, Response{Services: []*Service{service}})
+	c.JSON(http.StatusOK, Response{Services: []ServiceResponse{service}})
 }
 
 func (sc *ServiceController) createService(c *gin.Context) {
@@ -65,5 +65,5 @@ func (sc *ServiceController) createService(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, Response{Services: []*Service{savedService}})
+	c.JSON(http.StatusCreated, Response{Services: []ServiceResponse{savedService}})
 }
