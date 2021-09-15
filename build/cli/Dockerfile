@@ -13,4 +13,4 @@ RUN go test -short ./... && go build -ldflags="-X 'main.BuildVersion=${SHERLOCK_
 FROM alpine:${ALPINE_VERSION} as runtime
 ENV APP_NAME=sherlock
 COPY --from=build /bin/${APP_NAME} /bin/${APP_NAME}
-ENTRYPOINT [ "sh", "-c", "/bin/${APP_NAME}" ]
+ENTRYPOINT ["/bin/${APP_NAME}"]
