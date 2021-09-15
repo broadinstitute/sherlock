@@ -28,12 +28,6 @@ func NewController(dbConn *gorm.DB) *BuildController {
 	}
 }
 
-// Response is a type that allows all data returned from the /builds api group to share a consistent structure
-type Response struct {
-	Builds []Build `json:"builds"`
-	Error  string  `json:"error,omitempty"`
-}
-
 // CreateBuildRequest is the type used to validate a request for a new build
 type CreateBuildRequest struct {
 	VersionString string    `json:"version_string" binding:"required"`
@@ -80,18 +74,33 @@ func (bc *BuildController) createNewServiceFromBuildRequest(name, repoURL string
 }
 
 // ListAll is the public API on the build controller for listing out all builds
-func (bc *BuildController) ListAll() ([]Build, error) {
-	return bc.store.listAll()
+func (bc *BuildController) ListAll() ([]BuildResponse, error) {
+	builds, err := bc.store.listAll()
+	if err != nil {
+		return []BuildResponse{}, err
+	}
+	serializer := BuildsSerializer{Builds: builds}
+	return serializer.Response(), nil
 }
 
 // CreateNew is the Public API on the build controller for saving a new build entity
 // to persistent storage
-func (bc *BuildController) CreateNew(newBuild CreateBuildRequest) (*Build, error) {
-	return bc.validateAndCreateNewBuild(newBuild)
+func (bc *BuildController) CreateNew(newBuild CreateBuildRequest) (BuildResponse, error) {
+	result, err := bc.validateAndCreateNewBuild(newBuild)
+	if err != nil {
+		return BuildResponse{}, err
+	}
+	serializer := BuildSerializer{*result}
+	return serializer.Response(), nil
 }
 
 // GetByID is the public api on the build controller for performing a lookup of
 // a build entity by ID
-func (bc *BuildController) GetByID(id int) (*Build, error) {
-	return bc.store.getByID(id)
+func (bc *BuildController) GetByID(id int) (BuildResponse, error) {
+	build, err := bc.store.getByID(id)
+	if err != nil {
+		return BuildResponse{}, err
+	}
+	serializer := BuildSerializer{*build}
+	return serializer.Response(), nil
 }

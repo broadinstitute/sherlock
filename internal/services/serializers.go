@@ -8,11 +8,13 @@ type ServiceResponse struct {
 	RepoURL string `json:"repo_url"`
 }
 
+// ServiceSerializer is used to serializer a single Service model
+// to a used to generate responses from the /services api group
 type ServiceSerializer struct {
 	Service
 }
 
-func (ss *ServiceSerializer) response() ServiceResponse {
+func (ss *ServiceSerializer) Response() ServiceResponse {
 	return ServiceResponse{
 		ID:      ss.ID,
 		Name:    ss.Name,
@@ -20,6 +22,8 @@ func (ss *ServiceSerializer) response() ServiceResponse {
 	}
 }
 
+// ServicesSerializer is used to serialize a ServiceModel
+// entity to a a format used in http response bodies
 type ServicesSerializer struct {
 	Services []Service
 }
@@ -29,7 +33,7 @@ func (ss *ServicesSerializer) Response() []ServiceResponse {
 	services := []ServiceResponse{}
 	for _, service := range ss.Services {
 		serializer := ServiceSerializer{service}
-		services = append(services, serializer.response())
+		services = append(services, serializer.Response())
 	}
 	return services
 }

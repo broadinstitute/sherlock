@@ -53,7 +53,7 @@ func (bc *BuildController) createBuild(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, Response{Builds: []Build{*build}})
+	c.JSON(http.StatusCreated, Response{Builds: []BuildResponse{build}})
 }
 
 func (bc *BuildController) getByID(c *gin.Context) {
@@ -76,5 +76,5 @@ func (bc *BuildController) getByID(c *gin.Context) {
 		}
 	}
 
-	c.JSON(http.StatusOK, Response{Builds: []Build{*build}})
+	c.JSON(http.StatusOK, Response{Builds: []BuildResponse{build}})
 }

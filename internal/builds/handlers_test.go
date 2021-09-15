@@ -138,7 +138,8 @@ func TestListBuilds(t *testing.T) {
 			if testCase.expectedError != nil {
 				expectedResponse = Response{Error: testCase.expectedError.Error()}
 			} else {
-				expectedResponse = Response{Builds: testCase.expectedBuilds}
+				expectationSerializer := BuildsSerializer{Builds: testCase.expectedBuilds}
+				expectedResponse = Response{Builds: expectationSerializer.Response()}
 			}
 
 			if diff := cmp.Diff(gotResponse, expectedResponse); diff != "" {
@@ -317,7 +318,8 @@ func TestCreateBuild(t *testing.T) {
 			if testCase.expectedError != nil {
 				expectedResponse = Response{Error: testCase.expectedError.Error()}
 			} else {
-				expectedResponse = Response{Builds: []Build{*expectedBuild}}
+				expectationSerializer := BuildSerializer{*expectedBuild}
+				expectedResponse = Response{Builds: []BuildResponse{expectationSerializer.Response()}}
 			}
 
 			validateResponse(t, response, expectedResponse)
@@ -402,7 +404,8 @@ func TestGetBuildByID(t *testing.T) {
 			if testCase.expectedError != nil {
 				expectedResponse = Response{Error: testCase.expectedError.Error()}
 			} else {
-				expectedResponse = Response{Builds: []Build{testCase.expectedBuild}}
+				expectationSerializer := BuildSerializer{testCase.expectedBuild}
+				expectedResponse = Response{Builds: []BuildResponse{expectationSerializer.Response()}}
 			}
 
 			validateResponse(t, response, expectedResponse)

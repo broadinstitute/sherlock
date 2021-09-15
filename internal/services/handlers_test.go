@@ -91,6 +91,7 @@ func TestListServices(t *testing.T) {
 			if testCase.expectedError != nil {
 				expectedResponse = Response{Error: testCase.expectedError.Error()}
 			} else {
+				// Serialize the expected service entity to a Service Response type
 				expectationSerializer := ServicesSerializer{testCase.expectedServices}
 				expectedServices := expectationSerializer.Response()
 				expectedResponse = Response{Services: expectedServices}
@@ -172,7 +173,7 @@ func TestGetServiceByName(t *testing.T) {
 				expectedResponse = Response{Error: testCase.expectedError.Error()}
 			} else {
 				expectationSerializer := ServiceSerializer{*testCase.expectedService}
-				expectedService := expectationSerializer.response()
+				expectedService := expectationSerializer.Response()
 				expectedResponse = Response{Services: []ServiceResponse{expectedService}}
 			}
 
@@ -302,7 +303,7 @@ func TestCreateService(t *testing.T) {
 				expectedResponse = Response{Error: testCase.expectedError.Error()}
 			} else {
 				expectationSerializer := ServiceSerializer{*testCase.expectedService}
-				expectedService := expectationSerializer.response()
+				expectedService := expectationSerializer.Response()
 				expectedResponse = Response{Services: []ServiceResponse{expectedService}}
 			}
 

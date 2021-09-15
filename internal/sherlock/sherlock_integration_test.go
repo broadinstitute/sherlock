@@ -200,7 +200,8 @@ func Test_sherlockServerIntegration(t *testing.T) {
 			t.Fatalf("error seeding builds: %v", err)
 		}
 
-		expectedBuildsResponse := &builds.Response{Builds: expectedBuilds}
+		expectedBuildsSerializer := builds.BuildsSerializer{Builds: expectedBuilds}
+		expectedBuildsResponse := &builds.Response{Builds: expectedBuildsSerializer.Response()}
 
 		req, err := http.NewRequest(http.MethodGet, "/builds", nil)
 		if err != nil {
@@ -333,7 +334,8 @@ func Test_sherlockServerIntegration(t *testing.T) {
 			t.Fatalf("error seeding builds: %v", err)
 		}
 
-		expectedBuildResponse := builds.Response{Builds: []builds.Build{expectedBuilds[0]}}
+		expectedBuildsSerializer := builds.BuildSerializer{expectedBuilds[0]}
+		expectedBuildResponse := builds.Response{Builds: []builds.BuildResponse{expectedBuildsSerializer.Response()}}
 
 		req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("/builds/%d", expectedBuilds[0].ID), nil)
 		if err != nil {
