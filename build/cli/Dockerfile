@@ -11,6 +11,5 @@ COPY . .
 RUN go test -short ./... && go build -ldflags="-X 'main.BuildVersion=${SHERLOCK_BUILD_VERSION}'" -o /bin/sherlock ./cmd/cli/...
 
 FROM alpine:${ALPINE_VERSION} as runtime
-ENV APP_NAME=sherlock
-COPY --from=build /bin/${APP_NAME} /bin/${APP_NAME}
-ENTRYPOINT ["/bin/${APP_NAME}"]
+COPY --from=build /bin/sherlock /bin/sherlock
+ENTRYPOINT ["/bin/sherlock"]
