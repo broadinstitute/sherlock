@@ -41,7 +41,6 @@ func (sc *ServiceController) CreateNew(newService CreateServiceRequest) (Service
 	if err != nil {
 		return ServiceResponse{}, err
 	}
-
 	result := ServiceSerializer{*resultService}
 	return result.Response(), err
 }
@@ -49,6 +48,9 @@ func (sc *ServiceController) CreateNew(newService CreateServiceRequest) (Service
 // ListAll is the public api for listing out all services tracked by sherlock
 func (sc *ServiceController) ListAll() ([]ServiceResponse, error) {
 	resultServices, err := sc.store.listAll()
+	if err != nil {
+		return []ServiceResponse{}, nil
+	}
 	result := ServicesSerializer{Services: resultServices}
 	return result.Response(), err
 }
