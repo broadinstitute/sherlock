@@ -69,7 +69,7 @@ jobs:
           echo ::set-output name=server-name::${GOOGLE_DOCKER_REPOSITORY}/${GOOGLE_PROJECT}/${REPOSITORY_NAME}/${SERVER_IMAGE_NAME}:${DOCKER_TAG}
       - name: Build image
         run: | 
-          docker build -t ${{ steps.image-name.outputs.cli-name }} -f build/cli/Dockerfile .
+          docker build --build-arg SHERLOCK_BUILD_VERSION=${{ steps.tag.outputs.tag }} -t ${{ steps.image-name.outputs.cli-name }} -f build/cli/Dockerfile .
           docker build -t ${{ steps.image-name.outputs.server-name }} -f build/server/Dockerfile .
 
       - name: Run Trivy vulnerability scanner on CLI
