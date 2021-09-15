@@ -11,15 +11,15 @@ type ServiceResponse struct {
 // ServiceSerializer is used to serializer a single Service model
 // to a used to generate responses from the /services api group
 type ServiceSerializer struct {
-	Service
+	Service Service
 }
 
 // Response takes a Service Model entity and transforms it into a ServiceResponse
 func (ss *ServiceSerializer) Response() ServiceResponse {
 	return ServiceResponse{
-		ID:      ss.ID,
-		Name:    ss.Name,
-		RepoURL: ss.RepoURL,
+		ID:      ss.Service.ID,
+		Name:    ss.Service.Name,
+		RepoURL: ss.Service.RepoURL,
 	}
 }
 

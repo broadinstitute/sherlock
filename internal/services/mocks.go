@@ -2,6 +2,8 @@ package services
 
 import "github.com/stretchr/testify/mock"
 
+// MockServiceStore is used for mocking underlying database operations for
+// services in unit tests
 type MockServiceStore struct {
 	mock.Mock
 }

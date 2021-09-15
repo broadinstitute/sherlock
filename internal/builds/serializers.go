@@ -25,18 +25,18 @@ type BuildResponse struct {
 
 // BuildSerializer takes a Build model entity and translates it into a response
 type BuildSerializer struct {
-	Build
+	Build Build
 }
 
 // Response method performs the serialization from a Build entity to Build Response
 func (bs *BuildSerializer) Response() BuildResponse {
-	service := services.ServiceSerializer{bs.Service}
+	service := services.ServiceSerializer{Service: bs.Build.Service}
 	return BuildResponse{
-		ID:            bs.ID,
-		VersionString: bs.VersionString,
-		CommitSha:     bs.CommitSha,
-		BuildURL:      bs.BuildURL,
-		BuiltAt:       bs.BuiltAt,
+		ID:            bs.Build.ID,
+		VersionString: bs.Build.VersionString,
+		CommitSha:     bs.Build.CommitSha,
+		BuildURL:      bs.Build.BuildURL,
+		BuiltAt:       bs.Build.BuiltAt,
 		Service:       service.Response(),
 	}
 }
