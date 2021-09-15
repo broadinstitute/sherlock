@@ -1,8 +1,10 @@
-// Package services defines data structure representing
-// a service instance and methods for interacting with them
-// it is left to concrete implementations in package db or others to
-// implement these interfaces
+// Package services defines the control plane for sherlock's
+// service entities and api routes for interating with those control
+// plane methods
 package services
+
+// builds.go contains the "business" logic for operations relating to service entities.
+// This could eventually be moved to it's own sub-folder if it becomes unwieldy
 
 import (
 	"errors"

@@ -1,5 +1,11 @@
 package services
 
+// serializers.go contains logic for building
+// http responses from the builds data base model while avoiding
+// dependencies on the database model in the route handling logic directly.
+// This is an essentially an abstraction layer to give use more control over
+// what is returned from api endpoints
+
 // ServiceResponse is the type used to serialize Service data that is returned
 // to clients of the sherlock api
 type ServiceResponse struct {

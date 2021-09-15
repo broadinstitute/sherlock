@@ -1,4 +1,9 @@
+// Package builds contains the definitions for a control plan for sherlock's
+// build management systems. It also defines api routes for that control plane
 package builds
+
+// builds.go contains the "business" logic for operations relating to build entities.
+// Thhis could eventually be moved to it's own sub-folder if it becomes unwieldy
 
 import (
 	"fmt"
