@@ -1,5 +1,8 @@
 package services
 
+// handlers.go contains all the logic for parsing requests and sending responses for
+// the /builds api group. No business logic or database logic should be present in this file.
+
 import (
 	"errors"
 	"net/http"
@@ -44,7 +47,7 @@ func (sc *ServiceController) getServiceByName(c *gin.Context) {
 		}
 	}
 
-	c.JSON(http.StatusOK, Response{Services: []*Service{service}})
+	c.JSON(http.StatusOK, Response{Services: []ServiceResponse{service}})
 }
 
 func (sc *ServiceController) createService(c *gin.Context) {
@@ -65,5 +68,5 @@ func (sc *ServiceController) createService(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, Response{Services: []*Service{savedService}})
+	c.JSON(http.StatusCreated, Response{Services: []ServiceResponse{savedService}})
 }

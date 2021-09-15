@@ -1,8 +1,10 @@
-// Package services defines data structure representing
-// a service instance and methods for interacting with them
-// it is left to concrete implementations in package db or others to
-// implement these interfaces
+// Package services defines the control plane for sherlock's
+// service entities and api routes for interating with those control
+// plane methods
 package services
+
+// builds.go contains the "business" logic for operations relating to service entities.
+// This could eventually be moved to it's own sub-folder if it becomes unwieldy
 
 import (
 	"errors"
@@ -36,18 +38,33 @@ func (sc *ServiceController) DoesServiceExist(name string) (id int, ok bool) {
 
 // CreateNew is the public api on the serviceController for persisting a new service entity to
 // the data store
-func (sc *ServiceController) CreateNew(newService CreateServiceRequest) (*Service, error) {
-	return sc.store.createNew(newService)
+func (sc *ServiceController) CreateNew(newService CreateServiceRequest) (ServiceResponse, error) {
+	resultService, err := sc.store.createNew(newService)
+	if err != nil {
+		return ServiceResponse{}, err
+	}
+	result := ServiceSerializer{*resultService}
+	return result.Response(), nil
 }
 
 // ListAll is the public api for listing out all services tracked by sherlock
-func (sc *ServiceController) ListAll() ([]*Service, error) {
-	return sc.store.listAll()
+func (sc *ServiceController) ListAll() ([]ServiceResponse, error) {
+	resultServices, err := sc.store.listAll()
+	if err != nil {
+		return []ServiceResponse{}, err
+	}
+	result := ServicesSerializer{Services: resultServices}
+	return result.Response(), nil
 }
 
 // GetByName is the public API for looking up a service from the data store by name
-func (sc *ServiceController) GetByName(name string) (*Service, error) {
-	return sc.store.getByName(name)
+func (sc *ServiceController) GetByName(name string) (ServiceResponse, error) {
+	resultService, err := sc.store.getByName(name)
+	if err != nil {
+		return ServiceResponse{}, err
+	}
+	result := ServiceSerializer{*resultService}
+	return result.Response(), nil
 }
 
 // CreateServiceRequest is a type used to represent the information required to register a new service in sherlock
@@ -63,10 +80,4 @@ func (cr *CreateServiceRequest) service() *Service {
 		Name:    cr.Name,
 		RepoURL: cr.RepoURL,
 	}
-}
-
-// Response is a type that allows all data returned from the /service api group to share a consistent structure
-type Response struct {
-	Services []*Service `json:"services"`
-	Error    string     `json:"error,omitempty"`
 }

@@ -16,19 +16,19 @@ import (
 func TestListServices(t *testing.T) {
 	testCases := []struct {
 		name             string
-		expectedServices []*Service
+		expectedServices []Service
 		expectedError    error
 		expectedCode     int
 	}{
 		{
 			name:             "no existing services",
-			expectedServices: []*Service{},
+			expectedServices: []Service{},
 			expectedCode:     http.StatusOK,
 			expectedError:    nil,
 		},
 		{
 			name: "one existing service",
-			expectedServices: []*Service{
+			expectedServices: []Service{
 				{
 					Name:    "test",
 					RepoURL: "http://test.repo",
@@ -39,7 +39,7 @@ func TestListServices(t *testing.T) {
 		},
 		{
 			name: "multiple existing services",
-			expectedServices: []*Service{
+			expectedServices: []Service{
 				{
 					Name:    "cromwell",
 					RepoURL: "https://github.com/broadinstitute/cromwell",
@@ -58,7 +58,7 @@ func TestListServices(t *testing.T) {
 		},
 		{
 			name:             "internal error",
-			expectedServices: []*Service{},
+			expectedServices: []Service{},
 			expectedCode:     http.StatusInternalServerError,
 			expectedError:    errors.New("some internal error"),
 		},
@@ -85,11 +85,16 @@ func TestListServices(t *testing.T) {
 				t.Fatalf("error decoding response body: %v\n", err)
 			}
 
+			// serialize the expectations using to get expected json response data
+
 			var expectedResponse Response
 			if testCase.expectedError != nil {
 				expectedResponse = Response{Error: testCase.expectedError.Error()}
 			} else {
-				expectedResponse = Response{Services: testCase.expectedServices}
+				// Serialize the expected service entity to a Service Response type
+				expectationSerializer := ServicesSerializer{testCase.expectedServices}
+				expectedServices := expectationSerializer.Response()
+				expectedResponse = Response{Services: expectedServices}
 			}
 
 			if diff := cmp.Diff(gotResponse, expectedResponse); diff != "" {
@@ -167,7 +172,9 @@ func TestGetServiceByName(t *testing.T) {
 			if testCase.expectedError != nil {
 				expectedResponse = Response{Error: testCase.expectedError.Error()}
 			} else {
-				expectedResponse = Response{Services: []*Service{testCase.expectedService}}
+				expectationSerializer := ServiceSerializer{*testCase.expectedService}
+				expectedService := expectationSerializer.Response()
+				expectedResponse = Response{Services: []ServiceResponse{expectedService}}
 			}
 
 			if diff := cmp.Diff(gotResponse, expectedResponse); diff != "" {
@@ -295,7 +302,9 @@ func TestCreateService(t *testing.T) {
 			if testCase.expectedError != nil {
 				expectedResponse = Response{Error: testCase.expectedError.Error()}
 			} else {
-				expectedResponse = Response{Services: []*Service{testCase.expectedService}}
+				expectationSerializer := ServiceSerializer{*testCase.expectedService}
+				expectedService := expectationSerializer.Response()
+				expectedResponse = Response{Services: []ServiceResponse{expectedService}}
 			}
 
 			if diff := cmp.Diff(gotResponse, expectedResponse); diff != "" {
