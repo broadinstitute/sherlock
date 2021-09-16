@@ -12,21 +12,37 @@ import (
 )
 
 func Test_createBuildCommand(t *testing.T) {
-	// testCases := []struct {
-	// 	name        string
-	// 	cliArgs     []string
-	// 	expectError bool
-	// }{}
-
-	cmd := rootCmd
+	testCases := []struct {
+		name        string
+		cliArgs     []string
+		expectError bool
+	}{
+		{
+			name: "successful create",
+			cliArgs: []string{
+				"builds",
+				"create",
+				"test-service",
+				"--version-string",
+				"gcr.io./broad/test-service:1.0.0",
+				"--commit-sha",
+				"l2kj34",
+			},
+			expectError: false,
+		},
+	}
 
 	// set up a mock server of the sherlock api
 	testServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		json.NewEncoder(w).Encode(&builds.Response{})
+		json.NewEncoder(w).Encode(&builds.Response{
+			Builds: []builds.BuildResponse{
+				{},
+			},
+		})
 	}))
 
 	sherlockServerURL = testServer.URL
-	output, err := executeCommand(cmd, "builds", "create", "testService", "--version-string", "blah", "--commit-sha", "alsoblah")
+	output, err := executeCommand(rootCmd, "builds", "create", "testService", "--version-string", "blah", "--commit-sha", "alsoblah")
 	outputBytes := bytes.NewBufferString(output)
 	assert.NoError(t, err)
 
