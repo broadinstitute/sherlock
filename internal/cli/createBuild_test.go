@@ -18,10 +18,7 @@ func Test_createBuildCommand(t *testing.T) {
 	// 	expectError bool
 	// }{}
 
-	// set up command tree
 	cmd := rootCmd
-	cmd.AddCommand(buildCmd)
-	buildCmd.AddCommand(createBuildCmd)
 
 	// set up a mock server of the sherlock api
 	testServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
