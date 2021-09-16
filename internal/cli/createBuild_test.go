@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"bytes"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -11,6 +12,12 @@ import (
 )
 
 func Test_createBuildCommand(t *testing.T) {
+	testCases := []struct {
+		name        string
+		cliArgs     []string
+		expectError bool
+	}{}
+
 	// set up command tree
 	cmd := rootCmd
 	cmd.AddCommand(buildCmd)
@@ -22,6 +29,14 @@ func Test_createBuildCommand(t *testing.T) {
 	}))
 
 	sherlockServerURL = testServer.URL
-	_, err := executeCommand(cmd, "builds", "create", "testService", "--version-string", "blah", "--commit-sha", "alsoblah")
+	output, err := executeCommand(cmd, "builds", "create", "testService", "--version-string", "blah", "--commit-sha", "alsoblah")
+	outputBytes := bytes.NewBufferString(output)
 	assert.NoError(t, err)
+
+	// parse the output back into a builds.Response so that we can examine it
+	var cliResponse builds.Response
+	if err := json.NewDecoder(outputBytes).Decode(&cliResponse); err != nil {
+		t.Errorf("error decoding cli output: %v", err)
+	}
+
 }

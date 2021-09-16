@@ -83,5 +83,13 @@ func createBuild(cmd *cobra.Command, args []string) error {
 	if result.Error != "" {
 		return fmt.Errorf("ERROR: %v, Code: %d", result.Error, resp.StatusCode())
 	}
+
+	// pretty print the sherlock api response
+	var prettyResult bytes.Buffer
+	if err := json.Indent(&prettyResult, resp.Body(), "", "  "); err != nil {
+		return fmt.Errorf("error pretty formatting response body: %v", err)
+	}
+
+	fmt.Fprint(cmd.OutOrStdout(), prettyResult.String())
 	return nil
 }
