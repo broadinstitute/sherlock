@@ -6,6 +6,7 @@ import (
 
 	"github.com/broadinstitute/sherlock/internal/builds"
 	"github.com/broadinstitute/sherlock/internal/db"
+	"github.com/broadinstitute/sherlock/internal/environments"
 	"github.com/broadinstitute/sherlock/internal/services"
 	"github.com/spf13/viper"
 	"gorm.io/gorm"
@@ -20,9 +21,10 @@ var (
 // repository is a wrapper type so we can define our own methods on the type holding the
 // DB connection pool
 type Application struct {
-	Services *services.ServiceController
-	Builds   *builds.BuildController
-	Handler  http.Handler
+	Services     *services.ServiceController
+	Builds       *builds.BuildController
+	Environments *environments.EnvironmentController
+	Handler      http.Handler
 	// Used to pass the dbConn to testing setup helpers
 	// without needing to instantiate a full model instance
 	DB *gorm.DB
@@ -49,6 +51,7 @@ func New() *Application {
 func (a *Application) registerControllers() {
 	a.Services = services.NewController(a.DB)
 	a.Builds = builds.NewController(a.DB)
+	a.Environments = environments.NewController(a.DB)
 }
 
 // ServeHTTP implments the http.Handler interface for a Sherlock application instance
