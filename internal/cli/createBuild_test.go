@@ -12,11 +12,11 @@ import (
 )
 
 func Test_createBuildCommand(t *testing.T) {
-	testCases := []struct {
-		name        string
-		cliArgs     []string
-		expectError bool
-	}{}
+	// testCases := []struct {
+	// 	name        string
+	// 	cliArgs     []string
+	// 	expectError bool
+	// }{}
 
 	// set up command tree
 	cmd := rootCmd
@@ -38,5 +38,4 @@ func Test_createBuildCommand(t *testing.T) {
 	if err := json.NewDecoder(outputBytes).Decode(&cliResponse); err != nil {
 		t.Errorf("error decoding cli output: %v", err)
 	}
-
 }
