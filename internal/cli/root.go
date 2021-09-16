@@ -36,7 +36,7 @@ func init() {
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.sherlock.yaml")
 	rootCmd.PersistentFlags().Bool("viper", true, "use Viper for configuration")
-	rootCmd.PersistentFlags().StringVar(&sherlockServerURL, "addr", "localhost:8080", "Address of the sherlock server")
+	rootCmd.PersistentFlags().StringVar(&sherlockServerURL, "addr", "http://localhost:8080", "Address of the sherlock server")
 
 	err := viper.BindPFlags(rootCmd.PersistentFlags())
 	cobra.CheckErr(err)
