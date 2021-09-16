@@ -7,13 +7,17 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const versionFormatString string = "sherlock version: %s\n"
+const (
+	versionFormatString     string = "sherlock version: %s\n"
+	shortVersionDescription string = "Get Sherlock's recorded build version"
+	longVersionDescription  string = `Get Sherlock's internal BuildVersion, usually set via LDFlags during
+	compilation.`
+)
 
 var versionCmd = &cobra.Command{
 	Use:   "version",
-	Short: "Get Sherlock's recorded build version",
-	Long: `Get Sherlock's internal BuildVersion, usually set via LDFlags during
-compilation.'`,
+	Short: shortVersionDescription,
+	Long:  longVersionDescription,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Fprintf(cmd.OutOrStdout(), versionFormatString, version.BuildVersion)
 	},
