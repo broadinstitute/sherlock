@@ -64,5 +64,4 @@ func initConfig() {
 			cobra.CheckErr(err)
 		}
 	}
-	fmt.Println(viper.Get("addr"))
 }
