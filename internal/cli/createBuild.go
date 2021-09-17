@@ -49,7 +49,7 @@ func init() {
 	_ = createBuildCmd.MarkFlagRequired("commit-sha")
 
 	createBuildCmd.Flags().StringVar(&buildURL, "build-url", "", buildURLHelpText)
-	createBuildCmd.Flags().StringVar(&serviceRepo, "repo", "", repoHelpText)
+	createBuildCmd.Flags().StringVar(&serviceRepo, "repo-url", "", repoHelpText)
 
 	buildCmd.AddCommand(createBuildCmd)
 }
