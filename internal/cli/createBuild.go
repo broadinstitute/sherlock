@@ -65,31 +65,39 @@ func createBuild(cmd *cobra.Command, args []string) error {
 		ServiceRepo:   serviceRepo,
 	}
 
+	result, rawResponseBody, err := dispatchCreateBuildRequest(newBuild)
+	if err != nil {
+		return fmt.Errorf("ERROR: %V", err)
+	}
+
+	// check for errors returned in response
+	if result.Error != "" {
+		return fmt.Errorf("ERROR: %v", result.Error)
+	}
+
+	// pretty print the sherlock api response
+	var prettyResult bytes.Buffer
+	if err := json.Indent(&prettyResult, rawResponseBody, "", "  "); err != nil {
+		return fmt.Errorf("error pretty formatting response body: %v", err)
+	}
+
+	fmt.Fprint(cmd.OutOrStdout(), prettyResult.String())
+	return nil
+}
+
+func dispatchCreateBuildRequest(newBuild builds.CreateBuildRequest) (*builds.Response, []byte, error) {
 	client := resty.New()
 	resp, err := client.R().
 		SetHeader("Content-Type", "application/json").
 		SetBody(newBuild).
 		Post(fmt.Sprintf("%s/builds", sherlockServerURL))
 	if err != nil {
-		return fmt.Errorf("ERROR sending post /builds request: %v", err)
+		return nil, []byte{}, fmt.Errorf("ERROR sending post /builds request: %v", err)
 	}
 	var result builds.Response
 	responseBodyBytes := bytes.NewBuffer(resp.Body())
 	if err := json.NewDecoder(responseBodyBytes).Decode(&result); err != nil {
-		return fmt.Errorf("error parsing create build response %v. Status code: %d", err, resp.StatusCode())
+		return nil, []byte{}, fmt.Errorf("error parsing create build response %v. Status code: %d", err, resp.StatusCode())
 	}
-
-	// check for errors returned in response body
-	if result.Error != "" {
-		return fmt.Errorf("ERROR: %v, Code: %d", result.Error, resp.StatusCode())
-	}
-
-	// pretty print the sherlock api response
-	var prettyResult bytes.Buffer
-	if err := json.Indent(&prettyResult, resp.Body(), "", "  "); err != nil {
-		return fmt.Errorf("error pretty formatting response body: %v", err)
-	}
-
-	fmt.Fprint(cmd.OutOrStdout(), prettyResult.String())
-	return nil
+	return &result, resp.Body(), nil
 }
