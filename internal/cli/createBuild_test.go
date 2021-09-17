@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -65,6 +66,22 @@ func Test_createBuildCommand(t *testing.T) {
 				})
 			},
 			expectError: errors.New("some error from sherlock server"),
+		},
+		{
+			name: "unparseable response",
+			cliArgs: []string{
+				"builds",
+				"create",
+				"test-service",
+				"--version-string",
+				"gcr.io./broad/test-service:1.0.0",
+				"--commit-sha",
+				"l2kj34",
+			},
+			mockServerResponse: func(w http.ResponseWriter, r *http.Request) {
+				fmt.Fprint(w, "invalid response")
+			},
+			expectError: errors.New("error parsing create build response"),
 		},
 	}
 
