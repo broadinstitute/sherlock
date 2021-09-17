@@ -43,10 +43,10 @@ var (
 
 func init() {
 	createBuildCmd.Flags().StringVar(&versionString, "version-string", "", versionStringHelpText)
-	createBuildCmd.MarkFlagRequired("version-string")
+	_ = createBuildCmd.MarkFlagRequired("version-string")
 
 	createBuildCmd.Flags().StringVar(&commitSha, "commit-sha", "", commitShaHelpText)
-	createBuildCmd.MarkFlagRequired("commit-sha")
+	_ = createBuildCmd.MarkFlagRequired("commit-sha")
 
 	createBuildCmd.Flags().StringVar(&buildURL, "build-url", "", buildURLHelpText)
 	createBuildCmd.Flags().StringVar(&serviceRepo, "repo", "", repoHelpText)

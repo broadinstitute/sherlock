@@ -32,7 +32,7 @@ func Test_createBuildCommand(t *testing.T) {
 				"l2kj34",
 			},
 			mockServerResponse: func(w http.ResponseWriter, r *http.Request) {
-				json.NewEncoder(w).Encode(&builds.Response{
+				_ = json.NewEncoder(w).Encode(&builds.Response{
 					Builds: []builds.BuildResponse{
 						{
 							ID:            1,
@@ -60,7 +60,7 @@ func Test_createBuildCommand(t *testing.T) {
 				"l2kj34",
 			},
 			mockServerResponse: func(w http.ResponseWriter, r *http.Request) {
-				json.NewEncoder(w).Encode(&builds.Response{
+				_ = json.NewEncoder(w).Encode(&builds.Response{
 					Error: "some error from sherlock server",
 				})
 			},
