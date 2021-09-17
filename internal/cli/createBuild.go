@@ -16,7 +16,7 @@ const (
 	versionStringHelpText string = "unique identifier for this build. should be a full image repository path and tag"
 	commitShaHelpText     string = "git commit sha associated with a particular build"
 	buildURLHelpText      string = "url for the job run that created this build ie a jenkins job or github action log url OPTIONAL"
-	repoHelpText          string = "url for the repo containing code for the service peing build OPTIONAL"
+	repoHelpText          string = "url for the repo containing code for the service being build OPTIONAL"
 )
 
 var (
@@ -29,7 +29,7 @@ var (
 	createBuildCmd = &cobra.Command{
 		Use:   "create",
 		Short: "create a new build",
-		Long:  `creates a new build entity in sherlock.`,
+		Long:  `creates a new build of service which will be tracked by sherlock.`,
 
 		Args: func(cmd *cobra.Command, args []string) error {
 			if len(args) != 1 {
