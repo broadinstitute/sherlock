@@ -22,7 +22,7 @@ The primary purposes of this CLI tool are:
 
 1. To report build and deployment events from ci/cd pipelines.
 2. To quickly query deployment history of particular services or environments
-3. To request on demand previewenvironments`,
+3. To request on demand preview environments`,
 	}
 )
 
