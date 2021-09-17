@@ -6,8 +6,10 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/broadinstitute/sherlock/internal/builds"
+	"github.com/broadinstitute/sherlock/internal/services"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -38,7 +40,16 @@ func Test_createBuildCommand(t *testing.T) {
 			testServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				json.NewEncoder(w).Encode(&builds.Response{
 					Builds: []builds.BuildResponse{
-						{},
+						{
+							ID:            1,
+							VersionString: testCase.cliArgs[4],
+							CommitSha:     testCase.cliArgs[6],
+							BuiltAt:       time.Now(),
+							Service: services.ServiceResponse{
+								ID:   1,
+								Name: testCase.cliArgs[2],
+							},
+						},
 					},
 				})
 			}))
@@ -58,6 +69,10 @@ func Test_createBuildCommand(t *testing.T) {
 			if err := json.NewDecoder(outputBytes).Decode(&cliResponse); err != nil {
 				t.Errorf("error decoding cli output: %v", err)
 			}
+
+			assert.Equal(t, cliResponse.Builds[0].VersionString, testCase.cliArgs[4])
+			assert.Equal(t, cliResponse.Builds[0].CommitSha, testCase.cliArgs[6])
+			assert.Equal(t, cliResponse.Builds[0].Service.Name, testCase.cliArgs[2])
 		})
 	}
 
