@@ -94,6 +94,7 @@ func dispatchCreateBuildRequest(newBuild builds.CreateBuildRequest) (*builds.Res
 	if err != nil {
 		return nil, []byte{}, fmt.Errorf("ERROR sending post /builds request: %v", err)
 	}
+
 	var result builds.Response
 	responseBodyBytes := bytes.NewBuffer(resp.Body())
 	if err := json.NewDecoder(responseBodyBytes).Decode(&result); err != nil {
