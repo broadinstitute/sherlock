@@ -6,21 +6,14 @@ import (
 	"log"
 	"testing"
 
-<<<<<<< HEAD
 	"github.com/broadinstitute/sherlock/internal/db"
 	"github.com/broadinstitute/sherlock/internal/tools"
 	"github.com/golang-migrate/migrate/v4"
-=======
-	//"github.com/broadinstitute/sherlock/internal/sherlock"
-	"github.com/broadinstitute/sherlock/internal/db"
-	"github.com/broadinstitute/sherlock/internal/tools"
->>>>>>> 21fc629 (added new gorm model for environment, added new EnvironmentController, added new environment test POC, added environment to sherlock.go)
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/gorm"
 )
 
-<<<<<<< HEAD
 func TestIntegrationCreateEnvironments(t *testing.T) {
 
 	// skip integration tests if go test is invoked with -short flag
@@ -30,9 +23,6 @@ func TestIntegrationCreateEnvironments(t *testing.T) {
 
 	runMigrations(t)
 
-=======
-func TestCreateEnvironments(t *testing.T) {
->>>>>>> 21fc629 (added new gorm model for environment, added new EnvironmentController, added new environment test POC, added environment to sherlock.go)
 	testCases := []struct {
 		name                string
 		request             CreateEnvironmentRequest
@@ -51,10 +41,7 @@ func TestCreateEnvironments(t *testing.T) {
 		},
 	}
 
-<<<<<<< HEAD
 	// Testing Code
-=======
->>>>>>> 21fc629 (added new gorm model for environment, added new EnvironmentController, added new environment test POC, added environment to sherlock.go)
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
 			testApp := initTestApp()
@@ -66,7 +53,6 @@ func TestCreateEnvironments(t *testing.T) {
 	}
 }
 
-<<<<<<< HEAD
 //
 // Test Environment Setup
 //
@@ -74,14 +60,10 @@ func TestCreateEnvironments(t *testing.T) {
 // TODO: this is technically all integration testing-related and could be shared
 // and moved into a testing package
 
-=======
-// Test Environment Setup
->>>>>>> 21fc629 (added new gorm model for environment, added new EnvironmentController, added new environment test POC, added environment to sherlock.go)
 var (
 	Config = viper.New()
 )
 
-<<<<<<< HEAD
 // we need to check that the db is in a sane state and run migrations if it's not
 func runMigrations(t *testing.T) {
 	// The following steps initialize the database for use in the
@@ -99,8 +81,6 @@ func runMigrations(t *testing.T) {
 }
 
 // only load the Controller we care about
-=======
->>>>>>> 21fc629 (added new gorm model for environment, added new EnvironmentController, added new environment test POC, added environment to sherlock.go)
 type TestApplication struct {
 	Environments *EnvironmentController
 	DB           *gorm.DB
@@ -119,18 +99,11 @@ func initTestApp() *TestApplication {
 
 	app.registerControllers()
 
-<<<<<<< HEAD
 	// nuke the DB in case it's dirty
 
 	if err := tools.Truncate(dbConn); err != nil {
 		log.Fatalf("error truncating database: %v", err)
 	}
-=======
-	// initialize the gin router and store it in our app struct
-	//app.buildRouter()
-
-	tools.Truncate(dbConn)
->>>>>>> 21fc629 (added new gorm model for environment, added new EnvironmentController, added new environment test POC, added environment to sherlock.go)
 
 	return app
 }
@@ -146,11 +119,7 @@ func init() {
 	Config.SetEnvPrefix("sherlock")
 
 	// TODO: this is supposed to be postgres, but POC
-<<<<<<< HEAD
 	Config.SetDefault("dbhost", "postgres")
-=======
-	Config.SetDefault("dbhost", "localhost")
->>>>>>> 21fc629 (added new gorm model for environment, added new EnvironmentController, added new environment test POC, added environment to sherlock.go)
 	Config.SetDefault("dbuser", "sherlock")
 	Config.SetDefault("dbname", "sherlock")
 	Config.SetDefault("dbport", "5432")
