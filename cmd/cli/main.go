@@ -1,14 +1,19 @@
 package main
 
 import (
-	"fmt"
+	"os"
+
+	"github.com/broadinstitute/sherlock/internal/cli"
+	"github.com/broadinstitute/sherlock/internal/version"
 )
 
-func main() {
-	fmt.Println(hello())
-}
+// BuildVersion is intended for use with Go's LDFlags compiler option, to
+// set this value at compile time
+var BuildVersion string = "development"
 
-// demo function
-func hello() string {
-	return "Hello, World!"
+func main() {
+	version.BuildVersion = BuildVersion
+	if err := cli.Execute(); err != nil {
+		os.Exit(1)
+	}
 }
