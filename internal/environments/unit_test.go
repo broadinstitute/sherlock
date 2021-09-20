@@ -102,6 +102,8 @@ func decodeResponseBody(t *testing.T, body io.Reader) Response {
 }
 
 func responseMeetsExpectations(t *testing.T, expectedEnvironments []Environment, expectedError error, got Response) {
+	t.Helper()
+
 	var expectedResponse Response
 	if expectedError != nil {
 		expectedResponse = Response{Error: expectedError.Error()}
