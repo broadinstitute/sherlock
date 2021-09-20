@@ -30,6 +30,10 @@ func main() {
 		log.Println(err)
 	}
 
+	if _, err := tools.SeedEnvironments(app.DB); err != nil {
+		log.Println(err)
+	}
+
 	log.Println("starting sherlock server")
 
 	log.Println("Listening on port 8080")

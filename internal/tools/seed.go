@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/broadinstitute/sherlock/internal/builds"
+	"github.com/broadinstitute/sherlock/internal/environments"
 	"github.com/broadinstitute/sherlock/internal/services"
 	"gorm.io/gorm"
 )
@@ -34,6 +35,33 @@ func SeedServices(db *gorm.DB) ([]services.Service, error) {
 
 	err = db.Find(&services).Error
 	return services, err
+}
+
+func SeedEnvironments(db *gorm.DB) ([]environments.Environment, error) {
+	seededEnvironments := []environments.Environment{
+		{
+			Name: "dev",
+		},
+		{
+			Name: "perf",
+		},
+		{
+			Name: "alpha",
+		},
+		{
+			Name: "staging",
+		},
+		{
+			Name: "prod",
+		},
+	}
+
+	if err := db.Create(&seededEnvironments).Error; err != nil {
+		return []environments.Environment{}, err
+	}
+
+	err := db.Find(&seededEnvironments).Error
+	return seededEnvironments, err
 }
 
 // SeedBuilds is a testing utility used in integration tests

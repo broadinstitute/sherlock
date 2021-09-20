@@ -38,22 +38,37 @@ func (environmentController EnvironmentController) DoesEnvironmentExist(name str
 
 // CreateNew is the public api on the environmentController for persisting a new service entity to
 // the data store
-func (environmentController *EnvironmentController) CreateNew(newEnvironment CreateEnvironmentRequest) (Environment, error) {
-	return environmentController.store.createNew(newEnvironment)
+func (environmentController *EnvironmentController) CreateNew(newEnvironment CreateEnvironmentRequest) (EnvironmentResponse, error) {
+	resultEnvironment, err := environmentController.store.createNew(newEnvironment)
+	if err != nil {
+		return EnvironmentResponse{}, err
+	}
+	result := environmentSerializer{environment: resultEnvironment}
+	return result.Response(), nil
 }
 
 // ListAll is the public api for listing out all environments tracked by sherlock
-func (environmentController *EnvironmentController) ListAll() ([]Environment, error) {
-	return environmentController.store.listAll()
+func (environmentController *EnvironmentController) ListAll() ([]EnvironmentResponse, error) {
+	environments, err := environmentController.store.listAll()
+	if err != nil {
+		return []EnvironmentResponse{}, err
+	}
+	result := EnvironmentsSerializer{environments}
+	return result.Response(), nil
 }
 
 // GetByName is the public API for looking up a environment from the data store by name
-func (environmentController *EnvironmentController) GetByName(name string) (Environment, error) {
-	return environmentController.store.getByName(name)
+func (environmentController *EnvironmentController) GetByName(name string) (EnvironmentResponse, error) {
+	environment, err := environmentController.store.getByName(name)
+	if err != nil {
+		return EnvironmentResponse{}, err
+	}
+	result := environmentSerializer{environment}
+	return result.Response(), nil
 }
 
 // Response is a type that allows all data returned from the /environment api group to share a consistent structure
 type Response struct {
-	Environments []Environment `json:"environments"`
-	Error        string        `json:"error,omitempty"`
+	Environments []EnvironmentResponse `json:"environments"`
+	Error        string                `json:"error,omitempty"`
 }
