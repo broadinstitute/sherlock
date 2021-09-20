@@ -3,6 +3,7 @@ package environments
 import (
 	"encoding/json"
 	"errors"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -60,35 +61,56 @@ func TestListAllEnvironments(t *testing.T) {
 	}
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
-			mockStore := new(MockEnvironmentStore)
-			mockStore.On("listAll").Return(testCase.expectedEnvironments, testCase.expectedError)
-			controller := NewMockController(mockStore)
+			controller, mock := setupMockController("listAll", testCase.expectedEnvironments, testCase.expectedError)
 
-			response := httptest.NewRecorder()
-			gin.SetMode(gin.TestMode)
-			c, _ := gin.CreateTestContext(response)
+			context, response := setupTestContext()
 
-			controller.getEnvironments(c)
+			controller.getEnvironments(context)
 
-			mockStore.AssertCalled(t, "listAll")
+			mock.AssertCalled(t, "listAll")
 			assert.Equal(t, testCase.expectedCode, response.Code)
 
-			var gotResponse Response
-			if err := json.NewDecoder(response.Body).Decode(&gotResponse); err != nil {
-				t.Fatalf("error decoding listAll response body: %v", err)
-			}
+			gotResponse := decodeResponseBody(t, response.Body)
 
-			var expectedResponse Response
-			if testCase.expectedError != nil {
-				expectedResponse = Response{Error: testCase.expectedError.Error()}
-			} else {
-				expectationSerializer := EnvironmentsSerializer{testCase.expectedEnvironments}
-				expectedResponse = Response{Environments: expectationSerializer.Response()}
-			}
-
-			if diff := cmp.Diff(gotResponse, expectedResponse); diff != "" {
-				t.Errorf("unexpected difference in response body: \n%v\n", diff)
-			}
+			responseMeetsExpectations(t, testCase.expectedEnvironments, testCase.expectedError, gotResponse)
 		})
+	}
+}
+
+func setupTestContext() (*gin.Context, *httptest.ResponseRecorder) {
+	response := httptest.NewRecorder()
+	gin.SetMode(gin.TestMode)
+	c, _ := gin.CreateTestContext(response)
+
+	return c, response
+}
+
+func setupMockController(methodName string, expectedEnvironments []Environment, expectedError error) (*EnvironmentController, *MockEnvironmentStore) {
+	mockStore := new(MockEnvironmentStore)
+	mockStore.On(methodName).Return(expectedEnvironments, expectedError)
+	return NewMockController(mockStore), mockStore
+}
+
+func decodeResponseBody(t *testing.T, body io.Reader) Response {
+	t.Helper()
+
+	var response Response
+	if err := json.NewDecoder(body).Decode(&response); err != nil {
+		t.Fatalf("error decoding listAll response body: %v", err)
+	}
+	return response
+}
+
+func responseMeetsExpectations(t *testing.T, expectedEnvironments []Environment, expectedError error, got Response) {
+	var expectedResponse Response
+	if expectedError != nil {
+		expectedResponse = Response{Error: expectedError.Error()}
+	} else {
+		expectationSerializer := EnvironmentsSerializer{expectedEnvironments}
+		expectedResponse = Response{Environments: expectationSerializer.Response()}
+	}
+
+	if diff := cmp.Diff(got, expectedResponse); diff != "" {
+		t.Errorf("unexpected difference in response body: \n%v\n", diff)
 	}
 }
