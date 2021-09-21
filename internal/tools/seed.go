@@ -2,6 +2,7 @@ package tools
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/broadinstitute/sherlock/internal/builds"
 	"github.com/broadinstitute/sherlock/internal/services"
@@ -39,6 +40,9 @@ func SeedServices(db *gorm.DB) ([]services.Service, error) {
 // to populate a postgres DB with fake Build entities
 func SeedBuilds(db *gorm.DB) ([]builds.Build, error) {
 	// get existing services to make sure ids are valid.
+
+	// used to verify we can explicity set BuiltAt rather than just defaulting to current time
+	sixHoursAgo := time.Now().Add(-6 * time.Hour)
 	var services []services.Service
 	if err := db.Find(&services).Error; err != nil {
 		return nil, fmt.Errorf("error retrieving existing services to reference in seeded builds: %v", err)
@@ -78,6 +82,7 @@ func SeedBuilds(db *gorm.DB) ([]builds.Build, error) {
 			VersionString: "gcr.io/workspacemanager:1.2.0",
 			CommitSha:     "6a5s4df",
 			BuildURL:      "https://build.3.log",
+			BuiltAt:       sixHoursAgo,
 			ServiceID:     services[2].ID,
 		},
 	}
