@@ -15,6 +15,7 @@ import (
 	"github.com/broadinstitute/sherlock/internal/sherlock"
 	"github.com/broadinstitute/sherlock/internal/tools"
 	"github.com/gin-gonic/gin"
+	"github.com/golang-migrate/migrate/v4"
 	"github.com/google/go-cmp/cmp"
 	"github.com/stretchr/testify/assert"
 )

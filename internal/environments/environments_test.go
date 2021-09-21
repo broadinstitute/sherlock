@@ -6,15 +6,23 @@ import (
 	"log"
 	"testing"
 
-	//"github.com/broadinstitute/sherlock/internal/sherlock"
 	"github.com/broadinstitute/sherlock/internal/db"
 	"github.com/broadinstitute/sherlock/internal/tools"
+	"github.com/golang-migrate/migrate/v4"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/gorm"
 )
 
-func TestCreateEnvironments(t *testing.T) {
+func TestIntegrationCreateEnvironments(t *testing.T) {
+
+	// skip integration tests if go test is invoked with -short flag
+	if testing.Short() {
+		t.Skip("skipping integration test")
+	}
+
+	runMigrations(t)
+
 	testCases := []struct {
 		name                string
 		request             CreateEnvironmentRequest
@@ -33,6 +41,7 @@ func TestCreateEnvironments(t *testing.T) {
 		},
 	}
 
+	// Testing Code
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
 			testApp := initTestApp()
@@ -44,11 +53,34 @@ func TestCreateEnvironments(t *testing.T) {
 	}
 }
 
+//
 // Test Environment Setup
+//
+
+// TODO: this is technically all integration testing-related and could be shared
+// and moved into a testing package
+
 var (
 	Config = viper.New()
 )
 
+// we need to check that the db is in a sane state and run migrations if it's not
+func runMigrations(t *testing.T) {
+	// The following steps initialize the database for use in the
+	// sherlock server integration test suite
+	// TODO pull this from config with viper
+
+	// when running tests workdir is the package directory ie cmd/server
+	// so a relative path to changelogs is needed.
+	// TODO cleaner method to supply path to changelogs and run migration in tests
+	if err := db.ApplyMigrations("../../db/migrations", Config); err == migrate.ErrNoChange {
+		t.Log("no migration to apply, continuing...")
+	} else if err != nil {
+		t.Fatalf("error migrating database: %v", err)
+	}
+}
+
+// only load the Controller we care about
 type TestApplication struct {
 	Environments *EnvironmentController
 	DB           *gorm.DB
@@ -67,9 +99,7 @@ func initTestApp() *TestApplication {
 
 	app.registerControllers()
 
-	// initialize the gin router and store it in our app struct
-	//app.buildRouter()
-
+	// nuke the DB in case it's dirty
 	tools.Truncate(dbConn)
 
 	return app
@@ -86,7 +116,7 @@ func init() {
 	Config.SetEnvPrefix("sherlock")
 
 	// TODO: this is supposed to be postgres, but POC
-	Config.SetDefault("dbhost", "localhost")
+	Config.SetDefault("dbhost", "postgres")
 	Config.SetDefault("dbuser", "sherlock")
 	Config.SetDefault("dbname", "sherlock")
 	Config.SetDefault("dbport", "5432")

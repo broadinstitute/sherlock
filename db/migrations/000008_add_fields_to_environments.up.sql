@@ -2,8 +2,6 @@ ALTER TABLE environments
 ADD COLUMN destroyed_at timestamp WITH TIME ZONE,
 ADD COLUMN is_permanent boolean,
 ADD COLUMN requester text,
-ADD COLUMN namespace text,
-ADD COLUMN customization jsonb,
 ADD COLUMN cluster_id integer REFERENCES clusters (id),
 ADD COLUMN allocation_pool_id integer REFERENCES allocation_pools (id);
 

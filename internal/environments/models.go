@@ -1,5 +1,5 @@
 // db-level managemenet for Environment Struct
-// APIs should not interact with this Environment and should instead use EnvironmentController, thus all methods should be private
+// APIs should not interact with this file and should instead use EnvironmentController, thus all methods should be private
 // all gorm related method should live in this file.
 
 package environments
@@ -27,12 +27,6 @@ type Environment struct {
 	Name        string
 	IsPermanent bool
 	Requester   string
-	Namespace   string
-	//Customization    postgres.Jsonb
-	//ClusterID int
-	//Cluster          Cluster
-	//AllocationPoolID int
-	//AllocationPool   AllocationPool
 	DestroyedAt time.Time
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
@@ -64,7 +58,9 @@ func (createEnvironmentRequest CreateEnvironmentRequest) environmentReq() Enviro
 	}
 }
 
+//
 // db methods
+//
 
 // Returns ALL Environments in the db
 func (db dataStore) listAll() ([]Environment, error) {
@@ -72,13 +68,13 @@ func (db dataStore) listAll() ([]Environment, error) {
 
 	err := db.Find(&environments).Error
 	if err != nil {
-		return []Environment{}, fmt.Errorf("error retreiving environments: %v", err)
+		return []Environment{}, fmt.Errorf("error retreiving environmentspoop: %v", err)
 	}
 
 	return environments, nil
 }
 
-// Saves an Environment object to the db, returns the object if successful, nil otherwise
+// Saves an Environment object to the db and returns an Environment +/- err, if any.
 func (db dataStore) createNew(newEnvironmentReq CreateEnvironmentRequest) (Environment, error) {
 	newEnvironment := newEnvironmentReq.environmentReq()
 
@@ -88,8 +84,7 @@ func (db dataStore) createNew(newEnvironmentReq CreateEnvironmentRequest) (Envir
 	return newEnvironment, nil
 }
 
-// Get is used to retrieve a specific environment entity from a postgres database using
-// id (primary key) as the lookup mechanism
+// get an Environment by id column (primary key)
 func (db dataStore) getByID(id int) (Environment, error) {
 	environment := Environment{}
 
@@ -99,7 +94,7 @@ func (db dataStore) getByID(id int) (Environment, error) {
 	return environment, nil
 }
 
-// get a Environment by name or err otherwise
+// get an Environment by name column
 func (db dataStore) getByName(name string) (Environment, error) {
 	environment := Environment{}
 

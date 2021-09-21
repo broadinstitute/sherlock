@@ -15,7 +15,6 @@ import (
 // EnvironmentController is the management layer for environments
 type EnvironmentController struct {
 	store environmentStore
-	// store jobRequestStore // TODO: placeholder for other store environment controller can touch
 }
 
 // NewController accepts a gorm DB connection and returns a new instance
