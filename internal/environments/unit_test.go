@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/go-cmp/cmp"
@@ -61,7 +62,7 @@ func TestListAllEnvironments(t *testing.T) {
 	}
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
-			controller, mock := setupMockController("listAll", testCase.expectedEnvironments, testCase.expectedError)
+			controller, mock := setupMockController(testCase.expectedEnvironments, testCase.expectedError, "listAll")
 
 			context, response := setupTestContext()
 
@@ -70,13 +71,74 @@ func TestListAllEnvironments(t *testing.T) {
 			mock.AssertCalled(t, "listAll")
 			assert.Equal(t, testCase.expectedCode, response.Code)
 
-			gotResponse := decodeResponseBody(t, response.Body)
-
-			responseMeetsExpectations(t, testCase.expectedEnvironments, testCase.expectedError, gotResponse)
+			responseMeetsExpectations(t, testCase.expectedEnvironments, testCase.expectedError, response.Body)
 		})
 	}
 }
 
+func TestGetEnvironmentByName(t *testing.T) {
+	testCases := []struct {
+		name                 string
+		expectedEnvironments []Environment
+		expectedError        error
+		expectedCode         int
+		environmentName      string
+	}{
+		{
+			name: "successfully get exitsting environment",
+			expectedEnvironments: []Environment{
+				{
+					Name:      "test",
+					ID:        1,
+					CreatedAt: time.Now(),
+				},
+			},
+			expectedError:   nil,
+			expectedCode:    http.StatusOK,
+			environmentName: "test",
+		},
+		{
+			name:                 "non-existent environment",
+			expectedEnvironments: []Environment{},
+			expectedError:        ErrEnvironmentNotFound,
+			expectedCode:         http.StatusNotFound,
+			environmentName:      "fake",
+		},
+		{
+			name:                 "internal server error",
+			expectedEnvironments: []Environment{},
+			expectedError:        errors.New("some internal error"),
+			expectedCode:         http.StatusInternalServerError,
+			environmentName:      "testing",
+		},
+	}
+
+	for _, testCase := range testCases {
+		t.Run(testCase.name, func(t *testing.T) {
+			controller, mock := setupMockController(
+				testCase.expectedEnvironments,
+				testCase.expectedError, "getByName",
+				testCase.environmentName,
+			)
+
+			context, response := setupTestContext()
+			context.Params = append(context.Params, gin.Param{
+				Key:   "name",
+				Value: testCase.environmentName,
+			})
+
+			controller.getEnvironmentByName(context)
+
+			mock.AssertCalled(t, "getByName", testCase.environmentName)
+			assert.Equal(t, testCase.expectedCode, response.Code)
+
+			responseMeetsExpectations(t, testCase.expectedEnvironments, testCase.expectedError, response.Body)
+		})
+	}
+}
+
+// setupTestContext creates a gin.Context for use in setting up test request
+// and a ResponseRecorder to inspect response contents
 func setupTestContext() (*gin.Context, *httptest.ResponseRecorder) {
 	response := httptest.NewRecorder()
 	gin.SetMode(gin.TestMode)
@@ -85,12 +147,22 @@ func setupTestContext() (*gin.Context, *httptest.ResponseRecorder) {
 	return c, response
 }
 
-func setupMockController(methodName string, expectedEnvironments []Environment, expectedError error) (*EnvironmentController, *MockEnvironmentStore) {
+// setupMockController return an EnvironmentController with the internal store mocked with the desired behavior passed as expectedEnvironments and expectedError
+func setupMockController(expectedEnvironments []Environment, expectedError error, methodName string, methodArgs ...interface{}) (*EnvironmentController, *MockEnvironmentStore) {
 	mockStore := new(MockEnvironmentStore)
-	mockStore.On(methodName).Return(expectedEnvironments, expectedError)
+	if methodName == "listAll" {
+		mockStore.On(methodName, methodArgs...).Return(expectedEnvironments, expectedError)
+	} else {
+		if len(expectedEnvironments) < 1 {
+			mockStore.On(methodName, methodArgs...).Return(Environment{}, expectedError)
+		} else {
+			mockStore.On(methodName, methodArgs...).Return(expectedEnvironments[0], expectedError)
+		}
+	}
 	return NewMockController(mockStore), mockStore
 }
 
+// accepts an io.Reader type and attempts to json decode it into an environments.Response
 func decodeResponseBody(t *testing.T, body io.Reader) Response {
 	t.Helper()
 
@@ -101,8 +173,12 @@ func decodeResponseBody(t *testing.T, body io.Reader) Response {
 	return response
 }
 
-func responseMeetsExpectations(t *testing.T, expectedEnvironments []Environment, expectedError error, got Response) {
+// responseMeetes Expectations takes a list of Expected Environment structs and an http response body
+// It then decodes the response body and checks that it matches the epected result
+func responseMeetsExpectations(t *testing.T, expectedEnvironments []Environment, expectedError error, gotBody io.Reader) {
 	t.Helper()
+
+	gotResponse := decodeResponseBody(t, gotBody)
 
 	var expectedResponse Response
 	if expectedError != nil {
@@ -112,7 +188,7 @@ func responseMeetsExpectations(t *testing.T, expectedEnvironments []Environment,
 		expectedResponse = Response{Environments: expectationSerializer.Response()}
 	}
 
-	if diff := cmp.Diff(got, expectedResponse); diff != "" {
+	if diff := cmp.Diff(gotResponse, expectedResponse); diff != "" {
 		t.Errorf("unexpected difference in response body: \n%v\n", diff)
 	}
 }
