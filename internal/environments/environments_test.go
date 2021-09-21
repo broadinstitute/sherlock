@@ -100,7 +100,10 @@ func initTestApp() *TestApplication {
 	app.registerControllers()
 
 	// nuke the DB in case it's dirty
-	tools.Truncate(dbConn)
+
+	if err := tools.Truncate(dbConn); err != nil {
+		log.Fatalf("error truncating database: %v", err)
+	}
 
 	return app
 }
