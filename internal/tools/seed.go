@@ -2,6 +2,7 @@ package tools
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/broadinstitute/sherlock/internal/builds"
 	"github.com/broadinstitute/sherlock/internal/services"
@@ -78,6 +79,7 @@ func SeedBuilds(db *gorm.DB) ([]builds.Build, error) {
 			VersionString: "gcr.io/workspacemanager:1.2.0",
 			CommitSha:     "6a5s4df",
 			BuildURL:      "https://build.3.log",
+			BuiltAt:       time.Now().Add(-6 * time.Hour),
 			ServiceID:     services[2].ID,
 		},
 	}

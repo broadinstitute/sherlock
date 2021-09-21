@@ -32,7 +32,7 @@ type Build struct {
 	VersionString string
 	CommitSha     string
 	BuildURL      string
-	BuiltAt       time.Time
+	BuiltAt       time.Time `gorm:"autoCreateTime"`
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
 	ServiceID     int
