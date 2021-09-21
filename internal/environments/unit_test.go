@@ -1,6 +1,7 @@
 package environments
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"io"
@@ -137,6 +138,78 @@ func TestGetEnvironmentByName(t *testing.T) {
 	}
 }
 
+func TestCreateEnvironment(t *testing.T) {
+	testCases := []struct {
+		name                 string
+		expectedError        error
+		expectedCode         int
+		expectedEnvironments []Environment
+		createRequest        CreateEnvironmentRequest
+	}{
+		{
+			name:          "successful create env",
+			expectedError: nil,
+			expectedCode:  http.StatusCreated,
+			expectedEnvironments: []Environment{
+				{
+					ID:        0,
+					Name:      "test",
+					CreatedAt: time.Now(),
+				},
+			},
+			createRequest: CreateEnvironmentRequest{
+				Name: "test",
+			},
+		},
+		{
+			name:                 "empty create request",
+			expectedError:        ErrBadCreateRequest,
+			expectedCode:         http.StatusBadRequest,
+			expectedEnvironments: []Environment{},
+			createRequest:        CreateEnvironmentRequest{},
+		},
+		{
+			name:                 "empty environment name",
+			expectedError:        ErrBadCreateRequest,
+			expectedCode:         http.StatusBadRequest,
+			expectedEnvironments: []Environment{},
+			createRequest: CreateEnvironmentRequest{
+				Name: "",
+			},
+		},
+		{
+			name:                 "internal error",
+			expectedError:        errors.New("some internal error"),
+			expectedCode:         http.StatusInternalServerError,
+			expectedEnvironments: []Environment{},
+			createRequest: CreateEnvironmentRequest{
+				Name: "test",
+			},
+		},
+	}
+
+	for _, testCase := range testCases {
+		t.Run(testCase.name, func(t *testing.T) {
+			controller, mock := setupMockController(testCase.expectedEnvironments, testCase.expectedError, "createNew", testCase.createRequest)
+
+			context, response := setupTestContext()
+
+			buildCreateEnvironmentRequest(t, context, testCase.createRequest)
+			controller.createEnvironment(context)
+
+			if testCase.expectedError == ErrBadCreateRequest {
+				mock.AssertNotCalled(t, "createNew")
+			} else {
+				mock.AssertCalled(t, "createNew", testCase.createRequest)
+			}
+
+			assert.Equal(t, testCase.expectedCode, response.Code)
+
+			responseMeetsExpectations(t, testCase.expectedEnvironments, testCase.expectedError, response.Body)
+		})
+	}
+}
+
 // setupTestContext creates a gin.Context for use in setting up test request
 // and a ResponseRecorder to inspect response contents
 func setupTestContext() (*gin.Context, *httptest.ResponseRecorder) {
@@ -160,6 +233,22 @@ func setupMockController(expectedEnvironments []Environment, expectedError error
 		}
 	}
 	return NewMockController(mockStore), mockStore
+}
+
+func buildCreateEnvironmentRequest(t *testing.T, c *gin.Context, createRequest CreateEnvironmentRequest) {
+	t.Helper()
+
+	reqBody := new(bytes.Buffer)
+	if err := json.NewEncoder(reqBody).Encode(createRequest); err != nil {
+		t.Fatalf("error building create environment request body: %v", err)
+	}
+
+	req, err := http.NewRequest(http.MethodPost, "/environments", reqBody)
+	if err != nil {
+		t.Fatalf("error building create environment request: %v", err)
+	}
+
+	c.Request = req
 }
 
 // accepts an io.Reader type and attempts to json decode it into an environments.Response

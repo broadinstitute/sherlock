@@ -1,10 +1,14 @@
 package environments
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
+
+// ErrBadCreateRequest is an error type used when a create servie request fails validation checks
+var ErrBadCreateRequest error = errors.New("error invalid create environment request. environment name is required")
 
 // RegisterHandlers accepts a routergroup and will attach all the handlers for
 // working with environment entities to it
@@ -45,7 +49,7 @@ func (ec *EnvironmentController) createEnvironment(c *gin.Context) {
 	var newEnvironment CreateEnvironmentRequest
 
 	if err := c.BindJSON(&newEnvironment); err != nil {
-		c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
+		c.JSON(http.StatusBadRequest, Response{Error: ErrBadCreateRequest.Error()})
 		return
 	}
 
