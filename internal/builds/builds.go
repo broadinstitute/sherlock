@@ -43,7 +43,7 @@ type CreateBuildRequest struct {
 	ServiceRepo   string    `json:"service_repo"`
 }
 
-func (bc *BuildController) validateAndCreateNewBuild(newBuild CreateBuildRequest) (*Build, error) {
+func (bc *BuildController) validateAndCreateNewBuild(newBuild CreateBuildRequest) (Build, error) {
 	var serviceID int
 	serviceID, ok := bc.services.DoesServiceExist(newBuild.ServiceName)
 	// handle case where service doesn't exist already
@@ -51,10 +51,10 @@ func (bc *BuildController) validateAndCreateNewBuild(newBuild CreateBuildRequest
 		var err error
 		serviceID, err = bc.createNewServiceFromBuildRequest(newBuild.ServiceName, newBuild.ServiceRepo)
 		if err != nil {
-			return nil, err
+			return Build{}, err
 		}
 	}
-	build := &Build{
+	build := Build{
 		VersionString: newBuild.VersionString,
 		CommitSha:     newBuild.CommitSha,
 		BuildURL:      newBuild.BuildURL,
@@ -79,33 +79,27 @@ func (bc *BuildController) createNewServiceFromBuildRequest(name, repoURL string
 }
 
 // ListAll is the public API on the build controller for listing out all builds
-func (bc *BuildController) ListAll() ([]BuildResponse, error) {
-	builds, err := bc.store.listAll()
-	if err != nil {
-		return []BuildResponse{}, err
-	}
-	serializer := BuildsSerializer{Builds: builds}
-	return serializer.Response(), nil
+func (bc *BuildController) ListAll() ([]Build, error) {
+	return bc.store.listAll()
+
 }
 
 // CreateNew is the Public API on the build controller for saving a new build entity
 // to persistent storage
-func (bc *BuildController) CreateNew(newBuild CreateBuildRequest) (BuildResponse, error) {
-	result, err := bc.validateAndCreateNewBuild(newBuild)
-	if err != nil {
-		return BuildResponse{}, err
-	}
-	serializer := BuildSerializer{*result}
-	return serializer.Response(), nil
+func (bc *BuildController) CreateNew(newBuild CreateBuildRequest) (Build, error) {
+	return bc.validateAndCreateNewBuild(newBuild)
 }
 
 // GetByID is the public api on the build controller for performing a lookup of
 // a build entity by ID
-func (bc *BuildController) GetByID(id int) (BuildResponse, error) {
-	build, err := bc.store.getByID(id)
-	if err != nil {
-		return BuildResponse{}, err
-	}
-	serializer := BuildSerializer{*build}
-	return serializer.Response(), nil
+func (bc *BuildController) GetByID(id int) (Build, error) {
+	return bc.store.getByID(id)
+}
+
+func (bc *BuildController) serialize(builds ...Build) []BuildResponse {
+	var buildsList []Build
+	buildsList = append(buildsList, builds...)
+
+	serializer := BuildsSerializer{Builds: buildsList}
+	return serializer.Response()
 }
