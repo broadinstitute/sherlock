@@ -6,9 +6,11 @@ import (
 
 	"log"
 
+	"github.com/broadinstitute/sherlock/internal/builds"
 	"github.com/broadinstitute/sherlock/internal/db"
+	"github.com/broadinstitute/sherlock/internal/environments"
+	"github.com/broadinstitute/sherlock/internal/services"
 	"github.com/broadinstitute/sherlock/internal/sherlock"
-	"github.com/broadinstitute/sherlock/internal/tools"
 )
 
 func main() {
@@ -22,15 +24,15 @@ func main() {
 
 	app := sherlock.New()
 
-	if _, err := tools.SeedServices(app.DB); err != nil {
+	if _, err := services.Seed(app.DB); err != nil {
 		log.Println(err)
 	}
 
-	if _, err := tools.SeedBuilds(app.DB); err != nil {
+	if _, err := builds.Seed(app.DB); err != nil {
 		log.Println(err)
 	}
 
-	if _, err := tools.SeedEnvironments(app.DB); err != nil {
+	if _, err := environments.Seed(app.DB); err != nil {
 		log.Println(err)
 	}
 

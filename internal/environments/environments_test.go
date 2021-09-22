@@ -8,6 +8,7 @@ import (
 
 	"github.com/broadinstitute/sherlock/internal/db"
 	"github.com/broadinstitute/sherlock/internal/tools"
+
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
