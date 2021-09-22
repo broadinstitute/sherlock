@@ -98,7 +98,7 @@ func (db dataStore) getByID(id int) (Environment, error) {
 func (db dataStore) getByName(name string) (Environment, error) {
 	environment := Environment{}
 
-	if err := db.First(environment, name).Error; err != nil {
+	if err := db.Where(&Environment{Name: name}).First(&environment).Error; err != nil {
 		return environment, err
 	}
 	return environment, nil
