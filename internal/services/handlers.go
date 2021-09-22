@@ -29,7 +29,7 @@ func (sc *ServiceController) getServices(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, Response{Error: err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, Response{Services: services})
+	c.JSON(http.StatusOK, Response{Services: sc.serialize(services...)})
 }
 
 func (sc *ServiceController) getServiceByName(c *gin.Context) {
@@ -47,7 +47,7 @@ func (sc *ServiceController) getServiceByName(c *gin.Context) {
 		}
 	}
 
-	c.JSON(http.StatusOK, Response{Services: []ServiceResponse{service}})
+	c.JSON(http.StatusOK, Response{Services: sc.serialize(service)})
 }
 
 func (sc *ServiceController) createService(c *gin.Context) {
@@ -68,5 +68,5 @@ func (sc *ServiceController) createService(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, Response{Services: []ServiceResponse{savedService}})
+	c.JSON(http.StatusCreated, Response{Services: sc.serialize(savedService)})
 }

@@ -8,7 +8,7 @@ import (
 	"gorm.io/gorm"
 )
 
-// SeedBuilds is a testing utility used in integration tests
+// Seed is a testing utility used in integration tests
 // to populate a postgres DB with fake Build entities
 func Seed(db *gorm.DB) ([]Build, error) {
 	// get existing services to make sure ids are valid.
