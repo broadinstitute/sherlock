@@ -22,3 +22,5 @@ ignore:
   - "internal/services/models.go"
   # This file is also covered by the integration tests which require a real postgres connection. However codecov isn't smart enough to figure that out
   - "internal/builds/models.go"
+  
+  - "internal/*/seed.go"
