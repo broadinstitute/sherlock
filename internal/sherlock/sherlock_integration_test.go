@@ -40,7 +40,7 @@ func Test_sherlockServerIntegration(t *testing.T) {
 
 		// seed test db with sample data. seeded data is also returned
 		// for ease of testing
-		expectedServices, err := tools.SeedServices(app.DB)
+		expectedServices, err := services.Seed(app.DB)
 		if err != nil {
 			t.Fatalf("error seeding services: %v", err)
 		}
@@ -139,7 +139,7 @@ func Test_sherlockServerIntegration(t *testing.T) {
 			}
 		}()
 
-		expectedServices, err := tools.SeedServices(app.DB)
+		expectedServices, err := services.Seed(app.DB)
 		if err != nil {
 			t.Fatalf("error seeding services: %v", err)
 		}
@@ -191,12 +191,12 @@ func Test_sherlockServerIntegration(t *testing.T) {
 			}
 		}()
 
-		_, err := tools.SeedServices(app.DB)
+		_, err := services.Seed(app.DB)
 		if err != nil {
 			t.Fatalf("error seeding services: %v", err)
 		}
 
-		expectedBuilds, err := tools.SeedBuilds(app.DB)
+		expectedBuilds, err := builds.Seed(app.DB)
 		if err != nil {
 			t.Fatalf("error seeding builds: %v", err)
 		}
@@ -231,7 +231,7 @@ func Test_sherlockServerIntegration(t *testing.T) {
 			}
 		}()
 
-		_, err := tools.SeedServices(app.DB)
+		_, err := services.Seed(app.DB)
 		if err != nil {
 			t.Fatalf("error seeding services: %v", err)
 		}
@@ -277,7 +277,7 @@ func Test_sherlockServerIntegration(t *testing.T) {
 			}
 		}()
 
-		_, err := tools.SeedServices(app.DB)
+		_, err := services.Seed(app.DB)
 		if err != nil {
 			t.Fatalf("error seeding services: %v", err)
 		}
@@ -325,12 +325,12 @@ func Test_sherlockServerIntegration(t *testing.T) {
 			}
 		}()
 
-		_, err := tools.SeedServices(app.DB)
+		_, err := services.Seed(app.DB)
 		if err != nil {
 			t.Fatalf("error seeding services: %v", err)
 		}
 
-		expectedBuilds, err := tools.SeedBuilds(app.DB)
+		expectedBuilds, err := builds.Seed(app.DB)
 		if err != nil {
 			t.Fatalf("error seeding builds: %v", err)
 		}
@@ -388,11 +388,11 @@ func Test_sherlockServerIntegration(t *testing.T) {
 			}
 		}()
 
-		_, err := tools.SeedServices(app.DB)
+		_, err := services.Seed(app.DB)
 		if err != nil {
 			t.Fatalf("error seeding services: %v", err)
 		}
-		_, err = tools.SeedBuilds(app.DB)
+		_, err = builds.Seed(app.DB)
 		if err != nil {
 			t.Fatalf("error seeding builds: %v", err)
 		}

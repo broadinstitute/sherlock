@@ -38,33 +38,26 @@ func (sc *ServiceController) DoesServiceExist(name string) (id int, ok bool) {
 
 // CreateNew is the public api on the serviceController for persisting a new service entity to
 // the data store
-func (sc *ServiceController) CreateNew(newService CreateServiceRequest) (ServiceResponse, error) {
-	resultService, err := sc.store.createNew(newService)
-	if err != nil {
-		return ServiceResponse{}, err
-	}
-	result := ServiceSerializer{*resultService}
-	return result.Response(), nil
+func (sc *ServiceController) CreateNew(newService CreateServiceRequest) (Service, error) {
+	return sc.store.createNew(newService)
 }
 
 // ListAll is the public api for listing out all services tracked by sherlock
-func (sc *ServiceController) ListAll() ([]ServiceResponse, error) {
-	resultServices, err := sc.store.listAll()
-	if err != nil {
-		return []ServiceResponse{}, err
-	}
-	result := ServicesSerializer{Services: resultServices}
-	return result.Response(), nil
+func (sc *ServiceController) ListAll() ([]Service, error) {
+	return sc.store.listAll()
 }
 
 // GetByName is the public API for looking up a service from the data store by name
-func (sc *ServiceController) GetByName(name string) (ServiceResponse, error) {
-	resultService, err := sc.store.getByName(name)
-	if err != nil {
-		return ServiceResponse{}, err
-	}
-	result := ServiceSerializer{*resultService}
-	return result.Response(), nil
+func (sc *ServiceController) GetByName(name string) (Service, error) {
+	return sc.store.getByName(name)
+}
+
+func (sc *ServiceController) serialize(services ...Service) []ServiceResponse {
+	var serviceList []Service
+	serviceList = append(serviceList, services...)
+
+	serializer := ServicesSerializer{Services: serviceList}
+	return serializer.Response()
 }
 
 // CreateServiceRequest is a type used to represent the information required to register a new service in sherlock
@@ -75,8 +68,8 @@ type CreateServiceRequest struct {
 
 // creates a service entity object to be persisted with the database from a
 // request to create a service
-func (cr *CreateServiceRequest) service() *Service {
-	return &Service{
+func (cr *CreateServiceRequest) service() Service {
+	return Service{
 		Name:    cr.Name,
 		RepoURL: cr.RepoURL,
 	}

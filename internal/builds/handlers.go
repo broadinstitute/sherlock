@@ -31,7 +31,7 @@ func (bc *BuildController) getBuilds(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, Response{Error: err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, Response{Builds: builds})
+	c.JSON(http.StatusOK, Response{Builds: bc.serialize(builds...)})
 }
 
 func (bc *BuildController) createBuild(c *gin.Context) {
@@ -56,7 +56,7 @@ func (bc *BuildController) createBuild(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, Response{Builds: []BuildResponse{build}})
+	c.JSON(http.StatusCreated, Response{Builds: bc.serialize(build)})
 }
 
 func (bc *BuildController) getByID(c *gin.Context) {
@@ -79,5 +79,5 @@ func (bc *BuildController) getByID(c *gin.Context) {
 		}
 	}
 
-	c.JSON(http.StatusOK, Response{Builds: []BuildResponse{build}})
+	c.JSON(http.StatusOK, Response{Builds: bc.serialize(build)})
 }

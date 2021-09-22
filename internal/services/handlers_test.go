@@ -107,14 +107,14 @@ func TestListServices(t *testing.T) {
 func TestGetServiceByName(t *testing.T) {
 	testCases := []struct {
 		name            string
-		expectedService *Service
+		expectedService Service
 		expectedError   error
 		expectedCode    int
 		serviceName     string
 	}{
 		{
 			name: "successful get by name",
-			expectedService: &Service{
+			expectedService: Service{
 				Name:    "tester",
 				RepoURL: "https://test.repo",
 				ID:      1,
@@ -125,14 +125,14 @@ func TestGetServiceByName(t *testing.T) {
 		},
 		{
 			name:            "name not found",
-			expectedService: nil,
+			expectedService: Service{},
 			expectedCode:    http.StatusNotFound,
 			expectedError:   ErrServiceNotFound,
 			serviceName:     "blah",
 		},
 		{
 			name:            "internal error",
-			expectedService: nil,
+			expectedService: Service{},
 			expectedCode:    http.StatusInternalServerError,
 			expectedError:   errors.New("some internal error"),
 			serviceName:     "test-service",
@@ -172,7 +172,7 @@ func TestGetServiceByName(t *testing.T) {
 			if testCase.expectedError != nil {
 				expectedResponse = Response{Error: testCase.expectedError.Error()}
 			} else {
-				expectationSerializer := ServiceSerializer{*testCase.expectedService}
+				expectationSerializer := ServiceSerializer{testCase.expectedService}
 				expectedService := expectationSerializer.Response()
 				expectedResponse = Response{Services: []ServiceResponse{expectedService}}
 			}
@@ -189,7 +189,7 @@ func TestCreateService(t *testing.T) {
 		name            string
 		expectedError   error
 		expectedCode    int
-		expectedService *Service
+		expectedService Service
 		createRequest   CreateServiceRequest
 	}{
 		{
@@ -200,7 +200,7 @@ func TestCreateService(t *testing.T) {
 				Name:    "tester",
 				RepoURL: "https://test.repo",
 			},
-			expectedService: &Service{
+			expectedService: Service{
 				Name:    "tester",
 				RepoURL: "https://test.repo",
 			},
@@ -212,7 +212,7 @@ func TestCreateService(t *testing.T) {
 			createRequest: CreateServiceRequest{
 				RepoURL: "https://tester.repo",
 			},
-			expectedService: nil,
+			expectedService: Service{},
 		},
 		{
 			name:          "missing repo url",
@@ -221,14 +221,14 @@ func TestCreateService(t *testing.T) {
 			createRequest: CreateServiceRequest{
 				Name: "tester",
 			},
-			expectedService: nil,
+			expectedService: Service{},
 		},
 		{
 			name:            "empty create request",
 			expectedError:   ErrBadCreateRequest,
 			expectedCode:    http.StatusBadRequest,
 			createRequest:   CreateServiceRequest{},
-			expectedService: nil,
+			expectedService: Service{},
 		},
 		{
 			name:          "empty service name",
@@ -238,7 +238,7 @@ func TestCreateService(t *testing.T) {
 				Name:    "",
 				RepoURL: "https://tester.repo",
 			},
-			expectedService: nil,
+			expectedService: Service{},
 		},
 		{
 			name:          "empty repo url",
@@ -248,7 +248,7 @@ func TestCreateService(t *testing.T) {
 				Name:    "tester",
 				RepoURL: "",
 			},
-			expectedService: nil,
+			expectedService: Service{},
 		},
 		{
 			name:          "internal error",
@@ -258,7 +258,7 @@ func TestCreateService(t *testing.T) {
 				Name:    "tester",
 				RepoURL: "https://tester.repo",
 			},
-			expectedService: nil,
+			expectedService: Service{},
 		},
 	}
 
@@ -302,7 +302,7 @@ func TestCreateService(t *testing.T) {
 			if testCase.expectedError != nil {
 				expectedResponse = Response{Error: testCase.expectedError.Error()}
 			} else {
-				expectationSerializer := ServiceSerializer{*testCase.expectedService}
+				expectationSerializer := ServiceSerializer{testCase.expectedService}
 				expectedService := expectationSerializer.Response()
 				expectedResponse = Response{Services: []ServiceResponse{expectedService}}
 			}

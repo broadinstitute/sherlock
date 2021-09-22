@@ -40,20 +40,32 @@ func (environmentController EnvironmentController) DoesEnvironmentExist(name str
 // the data store
 func (environmentController *EnvironmentController) CreateNew(newEnvironment CreateEnvironmentRequest) (Environment, error) {
 	return environmentController.store.createNew(newEnvironment)
+
 }
 
 // ListAll is the public api for listing out all environments tracked by sherlock
 func (environmentController *EnvironmentController) ListAll() ([]Environment, error) {
 	return environmentController.store.listAll()
+
 }
 
 // GetByName is the public API for looking up a environment from the data store by name
 func (environmentController *EnvironmentController) GetByName(name string) (Environment, error) {
 	return environmentController.store.getByName(name)
+
+}
+
+func (environmentController *EnvironmentController) serialize(environments ...Environment) []EnvironmentResponse {
+	// collect arguments into a slice to be serialized into a single response
+	var environmentList []Environment
+	environmentList = append(environmentList, environments...)
+
+	serializer := EnvironmentsSerializer{Environments: environmentList}
+	return serializer.Response()
 }
 
 // Response is a type that allows all data returned from the /environment api group to share a consistent structure
 type Response struct {
-	Environments []Environment `json:"environments"`
-	Error        string        `json:"error,omitempty"`
+	Environments []EnvironmentResponse `json:"environments"`
+	Error        string                `json:"error,omitempty"`
 }

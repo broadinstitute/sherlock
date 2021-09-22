@@ -263,7 +263,7 @@ func TestCreateBuild(t *testing.T) {
 				RepoURL: testCase.createRequest.ServiceRepo,
 			}
 
-			expectedBuild := &Build{
+			expectedBuild := Build{
 				VersionString: testCase.createRequest.VersionString,
 				CommitSha:     testCase.createRequest.CommitSha,
 				BuildURL:      testCase.createRequest.BuildURL,
@@ -279,10 +279,10 @@ func TestCreateBuild(t *testing.T) {
 
 			// set up behavior for the serviceStore mock
 			if testCase.simulateServiceCreation {
-				mockServiceStore.On("getByName", service.Name).Return(&services.Service{}, services.ErrServiceNotFound)
-				mockServiceStore.On("createNew", mock.Anything).Return(&service, nil)
+				mockServiceStore.On("getByName", service.Name).Return(services.Service{}, services.ErrServiceNotFound)
+				mockServiceStore.On("createNew", mock.Anything).Return(service, nil)
 			} else {
-				mockServiceStore.On("getByName", service.Name).Return(&service, nil)
+				mockServiceStore.On("getByName", service.Name).Return(service, nil)
 			}
 
 			mockServiceController := services.NewMockController(mockServiceStore)
@@ -318,7 +318,7 @@ func TestCreateBuild(t *testing.T) {
 			if testCase.expectedError != nil {
 				expectedResponse = Response{Error: testCase.expectedError.Error()}
 			} else {
-				expectationSerializer := BuildSerializer{*expectedBuild}
+				expectationSerializer := BuildSerializer{expectedBuild}
 				expectedResponse = Response{Builds: []BuildResponse{expectationSerializer.Response()}}
 			}
 
@@ -374,7 +374,7 @@ func TestGetBuildByID(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			mockStore := new(mockBuildStore)
 			buildID, err := strconv.Atoi(testCase.buildID)
-			mockStore.On("getByID", buildID).Return(&testCase.expectedBuild, testCase.expectedError)
+			mockStore.On("getByID", buildID).Return(testCase.expectedBuild, testCase.expectedError)
 
 			controller := BuildController{store: mockStore}
 
@@ -423,14 +423,14 @@ func (m *mockBuildStore) listAll() ([]Build, error) {
 	return retVal.Get(0).([]Build), retVal.Error(1)
 }
 
-func (m *mockBuildStore) createNew(newBuild *Build) (*Build, error) {
+func (m *mockBuildStore) createNew(newBuild Build) (Build, error) {
 	retval := m.Called(newBuild)
-	return retval.Get(0).(*Build), retval.Error(1)
+	return retval.Get(0).(Build), retval.Error(1)
 }
 
-func (m *mockBuildStore) getByID(id int) (*Build, error) {
+func (m *mockBuildStore) getByID(id int) (Build, error) {
 	retVal := m.Called(id)
-	return retVal.Get(0).(*Build), retVal.Error(1)
+	return retVal.Get(0).(Build), retVal.Error(1)
 }
 
 func addBuildRequestToContext(t *testing.T, c *gin.Context, bodyData CreateBuildRequest) {

@@ -21,6 +21,10 @@ func (a *Application) buildRouter() {
 		// /builds routes
 		buildsGroup := group.Group("/builds")
 		a.Builds.RegisterHandlers(buildsGroup)
+
+		// environments routes
+		environmentsGroup := group.Group("/environments")
+		a.Environments.RegisterHandlers(environmentsGroup)
 	}
 
 	a.Handler = router

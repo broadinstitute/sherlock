@@ -14,15 +14,15 @@ func (m *MockServiceStore) listAll() ([]Service, error) {
 	return retVal.Get(0).([]Service), retVal.Error(1)
 }
 
-func (m *MockServiceStore) createNew(newService CreateServiceRequest) (*Service, error) {
+func (m *MockServiceStore) createNew(newService CreateServiceRequest) (Service, error) {
 	retService := newService.service()
 	retVal := m.Called(newService)
 	return retService, retVal.Error(1)
 }
 
-func (m *MockServiceStore) getByName(name string) (*Service, error) {
+func (m *MockServiceStore) getByName(name string) (Service, error) {
 	retVal := m.Called(name)
-	return retVal.Get(0).(*Service), retVal.Error(1)
+	return retVal.Get(0).(Service), retVal.Error(1)
 }
 
 // NewMockController returns a service controller that will use a customizable mock
