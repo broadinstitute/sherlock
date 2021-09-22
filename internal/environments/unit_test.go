@@ -1,3 +1,6 @@
+// unit_test.go contains a number of test which verify environmment controller behavior
+// without requiring an actual postgres instance to connect to
+
 package environments
 
 import (
