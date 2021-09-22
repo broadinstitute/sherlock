@@ -1,5 +1,7 @@
 // Package db contains a variety of utility functions and test helpers for
-// working with Sherlock's database
+// working with Sherlock's database. While we are using Gorm for everyday
+// application-level sql operations, we are opting for golang-migrate in order
+// to provide more robust and reversible sql migrations.
 package db
 
 import (

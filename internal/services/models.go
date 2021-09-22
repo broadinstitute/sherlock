@@ -22,7 +22,7 @@ type dataStore struct {
 	*gorm.DB
 }
 
-// Service is the data structure that models a service entity persisted to a dataabase via gorm
+// Service is the data structure that models a service entity persisted to a database via gorm
 type Service struct {
 	ID        int
 	Name      string
