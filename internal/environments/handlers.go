@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// ErrBadCreateRequest is an error type used when a create service request fails validation checks
+// ErrBadCreateRequest is an error type used when a create environment request fails validation checks
 var ErrBadCreateRequest error = errors.New("error invalid create environment request. environment name is required")
 
 // RegisterHandlers accepts a routergroup and will attach all the handlers for
