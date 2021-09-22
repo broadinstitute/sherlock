@@ -23,10 +23,13 @@ type dataStore struct {
 
 // Environment is the data structure that models a persisted to a database via gorm
 type Environment struct {
-	ID        int
-	Name      string
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	ID          int
+	Name        string
+	IsPermanent bool
+	Requester   string
+	DestroyedAt time.Time
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }
 
 // environmentStore is the interface defining allowed db actions for Environment
