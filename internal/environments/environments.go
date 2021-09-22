@@ -58,9 +58,7 @@ func (environmentController *EnvironmentController) GetByName(name string) (Envi
 func (environmentController *EnvironmentController) serialize(environments ...Environment) []EnvironmentResponse {
 	// collect arguments into a slice to be serialized into a single response
 	var environmentList []Environment
-	for _, envionment := range environments {
-		environmentList = append(environmentList, envionment)
-	}
+	environmentList = append(environmentList, environments...)
 
 	serializer := EnvironmentsSerializer{Environments: environmentList}
 	return serializer.Response()
