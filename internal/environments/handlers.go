@@ -24,7 +24,8 @@ func (ec *EnvironmentController) getEnvironments(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, Response{Error: err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, Response{Environments: environments})
+
+	c.JSON(http.StatusOK, Response{Environments: ec.Serialize(environments...)})
 }
 
 func (ec *EnvironmentController) getEnvironmentByName(c *gin.Context) {
@@ -42,7 +43,7 @@ func (ec *EnvironmentController) getEnvironmentByName(c *gin.Context) {
 		}
 	}
 
-	c.JSON(http.StatusOK, Response{Environments: []EnvironmentResponse{environment}})
+	c.JSON(http.StatusOK, Response{Environments: ec.Serialize(environment)})
 }
 
 func (ec *EnvironmentController) createEnvironment(c *gin.Context) {
@@ -60,5 +61,5 @@ func (ec *EnvironmentController) createEnvironment(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, Response{Environments: []EnvironmentResponse{savedEnvironment}})
+	c.JSON(http.StatusCreated, Response{Environments: ec.Serialize(savedEnvironment)})
 }
