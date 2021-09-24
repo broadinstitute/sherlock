@@ -1,5 +1,10 @@
 package deploys
 
+// ServiceInstance is a datastructure representing an association
+// between an environment and a service. They are an internal mechanism
+// that is used to build the association between a build, service, and environment
+// at a specific point in time which is needed to represent a deploy
+
 import "gorm.io/gorm"
 
 // ServiceInstanceController is the type used to manage logic related to working with

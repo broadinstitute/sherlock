@@ -12,7 +12,7 @@ import (
 	"github.com/broadinstitute/sherlock/internal/builds"
 	"github.com/broadinstitute/sherlock/internal/db"
 	"github.com/broadinstitute/sherlock/internal/services"
-	"github.com/broadinstitute/sherlock/internal/tools"
+	"github.com/broadinstitute/sherlock/internal/testutils"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/google/go-cmp/cmp"
@@ -32,7 +32,7 @@ func Test_sherlockServerIntegration(t *testing.T) {
 	t.Run("GET /services integration test", func(t *testing.T) {
 		// ensure db cleanup will always run at end of test
 		defer func() {
-			if err := tools.Truncate(app.DB); err != nil {
+			if err := testutils.Truncate(app.DB); err != nil {
 				t.Errorf("error truncating db in test run: %v", err)
 			}
 		}()
@@ -75,7 +75,7 @@ func Test_sherlockServerIntegration(t *testing.T) {
 
 	t.Run("POST /services integration test", func(t *testing.T) {
 		defer func() {
-			if err := tools.Truncate(app.DB); err != nil {
+			if err := testutils.Truncate(app.DB); err != nil {
 				t.Errorf("error truncating db in test run: %v", err)
 			}
 		}()
@@ -133,7 +133,7 @@ func Test_sherlockServerIntegration(t *testing.T) {
 	})
 	t.Run("GET /services by ID", func(t *testing.T) {
 		defer func() {
-			if err := tools.Truncate(app.DB); err != nil {
+			if err := testutils.Truncate(app.DB); err != nil {
 				t.Errorf("error truncating db in test run: %v", err)
 			}
 		}()
@@ -185,7 +185,7 @@ func Test_sherlockServerIntegration(t *testing.T) {
 
 	t.Run("GET /builds", func(t *testing.T) {
 		defer func() {
-			if err := tools.Truncate(app.DB); err != nil {
+			if err := testutils.Truncate(app.DB); err != nil {
 				t.Errorf("error truncatingdb in test run : %v", err)
 			}
 		}()
@@ -225,7 +225,7 @@ func Test_sherlockServerIntegration(t *testing.T) {
 	})
 	t.Run("POST /builds with pre-existing service", func(t *testing.T) {
 		defer func() {
-			if err := tools.Truncate(app.DB); err != nil {
+			if err := testutils.Truncate(app.DB); err != nil {
 				t.Errorf("error truncatingdb in test run : %v", err)
 			}
 		}()
@@ -271,7 +271,7 @@ func Test_sherlockServerIntegration(t *testing.T) {
 	})
 	t.Run("POST /builds with new service", func(t *testing.T) {
 		defer func() {
-			if err := tools.Truncate(app.DB); err != nil {
+			if err := testutils.Truncate(app.DB); err != nil {
 				t.Errorf("error truncatingdb in test run : %v", err)
 			}
 		}()
@@ -319,7 +319,7 @@ func Test_sherlockServerIntegration(t *testing.T) {
 
 	t.Run("GET /builds by id", func(t *testing.T) {
 		defer func() {
-			if err := tools.Truncate(app.DB); err != nil {
+			if err := testutils.Truncate(app.DB); err != nil {
 				t.Errorf("error truncatingdb in test run : %v", err)
 			}
 		}()
@@ -382,7 +382,7 @@ func Test_sherlockServerIntegration(t *testing.T) {
 
 	t.Run("POST /builds with non-unique version string", func(t *testing.T) {
 		defer func() {
-			if err := tools.Truncate(app.DB); err != nil {
+			if err := testutils.Truncate(app.DB); err != nil {
 				t.Errorf("error truncatingdb in test run : %v", err)
 			}
 		}()
