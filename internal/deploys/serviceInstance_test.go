@@ -1,8 +1,6 @@
 package deploys
 
 import (
-	"encoding/json"
-	"net/http"
 	"testing"
 
 	"github.com/broadinstitute/sherlock/internal/environments"
@@ -28,26 +26,6 @@ func Test_Integration_ListServiceInstances(t *testing.T) {
 
 		assert.ElementsMatch(t, expectedServiceInstances, serviceInstances)
 	})
-
-	t.Run("test get /service_instances handler", func(t *testing.T) {
-		defer testutils.Cleanup(t)
-
-		app := initTestApp(t)
-		expectedServiceInstances := app.seedServiceInstanceControllerTestData(t)
-		context, response := testutils.SetupTestContext()
-
-		app.serviceInstances.getServiceInstances(context)
-		assert.Equal(t, http.StatusOK, response.Code, "expected response code : %d", http.StatusOK)
-
-		expectedServiceInstanceResponse := app.serviceInstances.Serialize(expectedServiceInstances...)
-
-		var gotResponse []ServiceInstanceResponse
-		err := json.NewDecoder(response.Body).Decode(&gotResponse)
-		assert.NoError(t, err, "unexpected error decoding response body")
-
-		assert.ElementsMatch(t, expectedServiceInstanceResponse, gotResponse, "expectation and response didn't contain same elements")
-	})
-
 }
 
 type testApplication struct {
