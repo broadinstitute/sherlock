@@ -2,7 +2,6 @@ package deploys
 
 import (
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/broadinstitute/sherlock/internal/environments"
@@ -39,7 +38,6 @@ func (db dataStore) listAll() ([]ServiceInstance, error) {
 
 	err := db.Preload("Service").Preload("Environment").Find(&serviceInstances).Error
 	if err != nil {
-		log.Println(err)
 		return []ServiceInstance{}, fmt.Errorf("error listing service instances: %v", err)
 	}
 
