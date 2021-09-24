@@ -1,4 +1,4 @@
-package sherlock_test
+package sherlock
 
 import (
 	"bytes"
@@ -12,7 +12,6 @@ import (
 	"github.com/broadinstitute/sherlock/internal/builds"
 	"github.com/broadinstitute/sherlock/internal/db"
 	"github.com/broadinstitute/sherlock/internal/services"
-	"github.com/broadinstitute/sherlock/internal/sherlock"
 	"github.com/broadinstitute/sherlock/internal/tools"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-migrate/migrate/v4"
@@ -21,7 +20,7 @@ import (
 )
 
 // exposes a common sherlock instance that can be shared in integration tests
-var app *sherlock.Application
+var app *Application
 
 // This integration test pattern is taken from https://www.ardanlabs.com/blog/2019/10/integration-testing-in-go-set-up-and-writing-tests.html
 
@@ -447,11 +446,11 @@ func integrationSetup(t *testing.T) {
 	// when running tests workdir is the package directory ie cmd/server
 	// so a relative path to changelogs is needed.
 	// TODO cleaner method to supply path to changelogs and run migration in tests
-	if err := db.ApplyMigrations("../../db/migrations", sherlock.Config); err == migrate.ErrNoChange {
+	if err := db.ApplyMigrations("../../db/migrations", Config); err == migrate.ErrNoChange {
 		t.Log("no migration to apply, continuing...")
 	} else if err != nil {
 		t.Fatalf("error migrating database: %v", err)
 	}
 
-	app = sherlock.New()
+	app = New()
 }
