@@ -25,6 +25,9 @@ func Test_Integration_ListServiceInstances(t *testing.T) {
 		assert.NoError(t, err)
 
 		assert.ElementsMatch(t, expectedServiceInstances, serviceInstances)
+
+		// check serialzied responses
+		assert.ElementsMatch(t, app.serviceInstances.Serialize(expectedServiceInstances...), app.serviceInstances.Serialize(serviceInstances...))
 	})
 }
 
