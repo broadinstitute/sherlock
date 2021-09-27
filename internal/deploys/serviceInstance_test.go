@@ -66,8 +66,9 @@ type testApplication struct {
 }
 
 func (app *testApplication) seedServiceInstanceControllerTestData(t *testing.T) []ServiceInstance {
+	// start with a clean db
+	testutils.Cleanup(t, app.db)
 	// seed db with data needed to construct service instances
-
 	_, err := services.Seed(app.db)
 	assert.NoError(t, err)
 
@@ -81,6 +82,7 @@ func (app *testApplication) seedServiceInstanceControllerTestData(t *testing.T) 
 }
 
 func (app *testApplication) seedServicesAndEnvironments(t *testing.T) {
+	testutils.Cleanup(t, app.db)
 
 	_, err := services.Seed(app.db)
 	assert.NoError(t, err)
