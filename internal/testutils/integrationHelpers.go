@@ -16,7 +16,6 @@ import (
 // db contains a utility for retrieving a gorm.DB connection on demand for use in test setup
 
 var (
-	dbConn *gorm.DB
 	config = viper.New()
 )
 
@@ -38,6 +37,9 @@ func initConfig() {
 // all migrations in /db/migrations to that database and will fail similarly if an error is encountered
 func ConnectAndMigrate(t *testing.T) *gorm.DB {
 	t.Helper()
+
+	// setup config for db connection
+	initConfig()
 
 	dbConn, err := db.Connect(config)
 	if err != nil {
@@ -64,16 +66,8 @@ func Truncate(db *gorm.DB) error {
 
 // Cleanup is intended to be deferred with each test run so that we can
 // ensure each case starts with a clean database
-func Cleanup(t *testing.T) {
+func Cleanup(t *testing.T, dbConn *gorm.DB) {
 	if err := Truncate(dbConn); err != nil {
 		t.Fatalf("error cleaning db after test run: %v", err)
 	}
-}
-
-func init() {
-	initConfig()
-	db, _ := db.Connect(config)
-	// this is used so that the cleanup helper can be called from
-	// tests with out needing to pass a gorm connection around everywhere
-	dbConn = db
 }

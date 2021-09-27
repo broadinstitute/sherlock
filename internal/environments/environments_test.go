@@ -7,6 +7,7 @@ import (
 
 	"github.com/broadinstitute/sherlock/internal/testutils"
 	"github.com/stretchr/testify/assert"
+	"gorm.io/gorm"
 )
 
 func TestIntegrationCreateEnvironments(t *testing.T) {
@@ -37,9 +38,9 @@ func TestIntegrationCreateEnvironments(t *testing.T) {
 	// Testing Code
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
-			defer testutils.Cleanup(t)
-
 			testApp := initTestApp(t)
+			defer testutils.Cleanup(t, testApp.db)
+
 			newEnvironment, err := testApp.Environments.CreateNew(testCase.request)
 
 			assert.Equal(t, testCase.expectedEnvironment.Name, newEnvironment.Name)
@@ -55,12 +56,14 @@ func TestIntegrationCreateEnvironments(t *testing.T) {
 // only load the Controller we care about
 type TestApplication struct {
 	Environments *EnvironmentController
+	db           *gorm.DB
 }
 
 func initTestApp(t *testing.T) *TestApplication {
 	dbConn := testutils.ConnectAndMigrate(t)
 	app := &TestApplication{
 		Environments: NewController(dbConn),
+		db:           dbConn,
 	}
 
 	return app

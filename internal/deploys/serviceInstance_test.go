@@ -1,6 +1,7 @@
 package deploys
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/broadinstitute/sherlock/internal/environments"
@@ -16,9 +17,9 @@ func Test_Integration_ListServiceInstances(t *testing.T) {
 	}
 
 	t.Run("test ListAll controller method directlty", func(t *testing.T) {
-		defer testutils.Cleanup(t)
-
 		app := initTestApp(t)
+		defer testutils.Cleanup(t, app.db)
+
 		expectedServiceInstances := app.seedServiceInstanceControllerTestData(t)
 
 		serviceInstances, err := app.serviceInstances.ListAll()
@@ -29,6 +30,13 @@ func Test_Integration_ListServiceInstances(t *testing.T) {
 		// check serialzied responses
 		assert.ElementsMatch(t, app.serviceInstances.Serialize(expectedServiceInstances...), app.serviceInstances.Serialize(serviceInstances...))
 	})
+}
+
+func Test_ListServiceInstancesError(t *testing.T) {
+	targetError := errors.New("some internal error")
+	controller := setupMockController(t, []ServiceInstance{}, targetError, "listAll")
+	_, err := controller.ListAll()
+	assert.ErrorIs(t, err, targetError, "expected an internal error from DB layer, received some other error")
 }
 
 type testApplication struct {
@@ -56,4 +64,15 @@ func initTestApp(t *testing.T) *testApplication {
 		serviceInstances: NewServiceInstanceController(dbConn),
 		db:               dbConn,
 	}
+}
+
+func setupMockController(
+	t *testing.T,
+	expectedServiceInstances []ServiceInstance,
+	expectedError error, methodName string) *ServiceInstanceController {
+
+	t.Helper()
+	mockStore := &mockServiceInstanceStore{}
+	mockStore.On(methodName).Return(expectedServiceInstances, expectedError)
+	return NewMockController(mockStore)
 }
