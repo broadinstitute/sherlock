@@ -8,6 +8,7 @@ import (
 
 	"github.com/broadinstitute/sherlock/internal/builds"
 	"github.com/broadinstitute/sherlock/internal/db"
+	"github.com/broadinstitute/sherlock/internal/deploys"
 	"github.com/broadinstitute/sherlock/internal/environments"
 	"github.com/broadinstitute/sherlock/internal/services"
 	"github.com/broadinstitute/sherlock/internal/sherlock"
@@ -33,6 +34,10 @@ func main() {
 	}
 
 	if _, err := environments.Seed(app.DB); err != nil {
+		log.Println(err)
+	}
+
+	if _, err := deploys.SeedServiceInstances(app.DB); err != nil {
 		log.Println(err)
 	}
 

@@ -7,14 +7,14 @@ type EnvironmentResponse struct {
 	Name string `json:"name"`
 }
 
-type environmentSerializer struct {
-	environment Environment
+type EnvironmentSerializer struct {
+	Environment Environment
 }
 
-func (es *environmentSerializer) Response() EnvironmentResponse {
+func (es *EnvironmentSerializer) Response() EnvironmentResponse {
 	return EnvironmentResponse{
-		Name: es.environment.Name,
-		ID:   es.environment.ID,
+		Name: es.Environment.Name,
+		ID:   es.Environment.ID,
 	}
 }
 
@@ -29,7 +29,7 @@ type EnvironmentsSerializer struct {
 func (es *EnvironmentsSerializer) Response() []EnvironmentResponse {
 	environments := []EnvironmentResponse{}
 	for _, environment := range es.Environments {
-		serializer := environmentSerializer{environment}
+		serializer := EnvironmentSerializer{environment}
 		environments = append(environments, serializer.Response())
 	}
 	return environments

@@ -25,7 +25,7 @@ func (a *Application) buildRouter() {
 		// environments routes
 		environmentsGroup := group.Group("/environments")
 		a.Environments.RegisterHandlers(environmentsGroup)
-	}
 
+	}
 	a.Handler = router
 }

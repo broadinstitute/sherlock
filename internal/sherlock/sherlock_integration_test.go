@@ -1,4 +1,4 @@
-package sherlock_test
+package sherlock
 
 import (
 	"bytes"
@@ -12,8 +12,7 @@ import (
 	"github.com/broadinstitute/sherlock/internal/builds"
 	"github.com/broadinstitute/sherlock/internal/db"
 	"github.com/broadinstitute/sherlock/internal/services"
-	"github.com/broadinstitute/sherlock/internal/sherlock"
-	"github.com/broadinstitute/sherlock/internal/tools"
+	"github.com/broadinstitute/sherlock/internal/testutils"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/google/go-cmp/cmp"
@@ -21,7 +20,7 @@ import (
 )
 
 // exposes a common sherlock instance that can be shared in integration tests
-var app *sherlock.Application
+var app *Application
 
 // This integration test pattern is taken from https://www.ardanlabs.com/blog/2019/10/integration-testing-in-go-set-up-and-writing-tests.html
 
@@ -33,7 +32,7 @@ func Test_sherlockServerIntegration(t *testing.T) {
 	t.Run("GET /services integration test", func(t *testing.T) {
 		// ensure db cleanup will always run at end of test
 		defer func() {
-			if err := tools.Truncate(app.DB); err != nil {
+			if err := testutils.Truncate(app.DB); err != nil {
 				t.Errorf("error truncating db in test run: %v", err)
 			}
 		}()
@@ -76,7 +75,7 @@ func Test_sherlockServerIntegration(t *testing.T) {
 
 	t.Run("POST /services integration test", func(t *testing.T) {
 		defer func() {
-			if err := tools.Truncate(app.DB); err != nil {
+			if err := testutils.Truncate(app.DB); err != nil {
 				t.Errorf("error truncating db in test run: %v", err)
 			}
 		}()
@@ -134,7 +133,7 @@ func Test_sherlockServerIntegration(t *testing.T) {
 	})
 	t.Run("GET /services by ID", func(t *testing.T) {
 		defer func() {
-			if err := tools.Truncate(app.DB); err != nil {
+			if err := testutils.Truncate(app.DB); err != nil {
 				t.Errorf("error truncating db in test run: %v", err)
 			}
 		}()
@@ -186,7 +185,7 @@ func Test_sherlockServerIntegration(t *testing.T) {
 
 	t.Run("GET /builds", func(t *testing.T) {
 		defer func() {
-			if err := tools.Truncate(app.DB); err != nil {
+			if err := testutils.Truncate(app.DB); err != nil {
 				t.Errorf("error truncatingdb in test run : %v", err)
 			}
 		}()
@@ -226,7 +225,7 @@ func Test_sherlockServerIntegration(t *testing.T) {
 	})
 	t.Run("POST /builds with pre-existing service", func(t *testing.T) {
 		defer func() {
-			if err := tools.Truncate(app.DB); err != nil {
+			if err := testutils.Truncate(app.DB); err != nil {
 				t.Errorf("error truncatingdb in test run : %v", err)
 			}
 		}()
@@ -272,7 +271,7 @@ func Test_sherlockServerIntegration(t *testing.T) {
 	})
 	t.Run("POST /builds with new service", func(t *testing.T) {
 		defer func() {
-			if err := tools.Truncate(app.DB); err != nil {
+			if err := testutils.Truncate(app.DB); err != nil {
 				t.Errorf("error truncatingdb in test run : %v", err)
 			}
 		}()
@@ -320,7 +319,7 @@ func Test_sherlockServerIntegration(t *testing.T) {
 
 	t.Run("GET /builds by id", func(t *testing.T) {
 		defer func() {
-			if err := tools.Truncate(app.DB); err != nil {
+			if err := testutils.Truncate(app.DB); err != nil {
 				t.Errorf("error truncatingdb in test run : %v", err)
 			}
 		}()
@@ -383,7 +382,7 @@ func Test_sherlockServerIntegration(t *testing.T) {
 
 	t.Run("POST /builds with non-unique version string", func(t *testing.T) {
 		defer func() {
-			if err := tools.Truncate(app.DB); err != nil {
+			if err := testutils.Truncate(app.DB); err != nil {
 				t.Errorf("error truncatingdb in test run : %v", err)
 			}
 		}()
@@ -447,11 +446,11 @@ func integrationSetup(t *testing.T) {
 	// when running tests workdir is the package directory ie cmd/server
 	// so a relative path to changelogs is needed.
 	// TODO cleaner method to supply path to changelogs and run migration in tests
-	if err := db.ApplyMigrations("../../db/migrations", sherlock.Config); err == migrate.ErrNoChange {
+	if err := db.ApplyMigrations("../../db/migrations", Config); err == migrate.ErrNoChange {
 		t.Log("no migration to apply, continuing...")
 	} else if err != nil {
 		t.Fatalf("error migrating database: %v", err)
 	}
 
-	app = sherlock.New()
+	app = New()
 }

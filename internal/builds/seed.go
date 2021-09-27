@@ -17,7 +17,7 @@ func Seed(db *gorm.DB) ([]Build, error) {
 	sixHoursAgo := time.Now().Add(-6 * time.Hour)
 	var services []services.Service
 	if err := db.Find(&services).Error; err != nil {
-		return nil, fmt.Errorf("error retrieving existing services to reference in seeded builds: %v", err)
+		return []Build{}, fmt.Errorf("error retrieving existing services to reference in seeded builds: %v", err)
 	}
 	builds := []Build{
 		{
