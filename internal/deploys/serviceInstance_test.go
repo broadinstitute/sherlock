@@ -8,6 +8,7 @@ import (
 	"github.com/broadinstitute/sherlock/internal/services"
 	"github.com/broadinstitute/sherlock/internal/testutils"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"
 )
 
@@ -15,10 +16,10 @@ func Test_Integration_ListServiceInstances(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
+	app := initTestApp(t)
+	defer testutils.Cleanup(t, app.db)
 
 	t.Run("test ListAll controller method directlty", func(t *testing.T) {
-		app := initTestApp(t)
-		defer testutils.Cleanup(t, app.db)
 
 		expectedServiceInstances := app.seedServiceInstanceControllerTestData(t)
 
@@ -43,18 +44,18 @@ func Test_Integration_CreateServiceInstance(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
+	app := initTestApp(t)
+	defer testutils.Cleanup(t, app.db)
 
 	t.Run("successful create new service instance with pre-existing service and environment", func(t *testing.T) {
-		app := initTestApp(t)
-		defer testutils.Cleanup(t, app.db)
 
 		app.seedServicesAndEnvironments(t)
 
 		result, err := app.serviceInstances.CreateNew("cromwell", "dev")
 		assert.NoError(t, err)
 
-		assert.Equal(t, result.Environment.Name, "dev")
-		assert.Equal(t, result.Service.Name, "cromwell")
+		assert.Equal(t, "dev", result.Environment.Name)
+		assert.Equal(t, "cromwell", result.Service.Name)
 	})
 }
 
@@ -66,28 +67,24 @@ type testApplication struct {
 }
 
 func (app *testApplication) seedServiceInstanceControllerTestData(t *testing.T) []ServiceInstance {
-	// start with a clean db
-	testutils.Cleanup(t, app.db)
 	// seed db with data needed to construct service instances
 	_, err := services.Seed(app.db)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	_, err = environments.Seed(app.db)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	expectedServiceInstances, err := SeedServiceInstances(app.db)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	return expectedServiceInstances
 }
 
 func (app *testApplication) seedServicesAndEnvironments(t *testing.T) {
-	testutils.Cleanup(t, app.db)
-
 	_, err := services.Seed(app.db)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	_, err = environments.Seed(app.db)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 }
 
 func initTestApp(t *testing.T) *testApplication {

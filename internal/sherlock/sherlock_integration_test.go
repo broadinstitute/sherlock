@@ -28,6 +28,7 @@ func Test_sherlockServerIntegration(t *testing.T) {
 	// performs integration setup when -short flag is not supplied to go test
 	integrationSetup(t)
 	gin.SetMode(gin.TestMode)
+	defer testutils.Cleanup(t, app.DB)
 
 	t.Run("GET /services integration test", func(t *testing.T) {
 		// ensure db cleanup will always run at end of test
@@ -453,4 +454,5 @@ func integrationSetup(t *testing.T) {
 	}
 
 	app = New()
+	// ensure the db is clean
 }
