@@ -39,29 +39,61 @@ func Test_ListServiceInstancesError(t *testing.T) {
 	assert.ErrorIs(t, err, targetError, "expected an internal error from DB layer, received some other error")
 }
 
+func Test_Integration_CreateServiceInstance(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping integration test")
+	}
+
+	t.Run("successful create new service instance with pre-existing service and environment", func(t *testing.T) {
+		app := initTestApp(t)
+		defer testutils.Cleanup(t, app.db)
+
+		app.seedServicesAndEnvironments(t)
+
+		result, err := app.serviceInstances.CreateNew("cromwell", "dev")
+		assert.NoError(t, err)
+
+		assert.Equal(t, result.Environment.Name, "dev")
+		assert.Equal(t, result.Service.Name, "cromwell")
+	})
+}
+
 type testApplication struct {
 	serviceInstances *ServiceInstanceController
+	services         *services.ServiceController
+	environments     *environments.EnvironmentController
 	db               *gorm.DB
 }
 
 func (app *testApplication) seedServiceInstanceControllerTestData(t *testing.T) []ServiceInstance {
 	// seed db with data needed to construct service instances
-	t.Helper()
 
 	_, err := services.Seed(app.db)
 	assert.NoError(t, err)
+
 	_, err = environments.Seed(app.db)
 	assert.NoError(t, err)
+
 	expectedServiceInstances, err := SeedServiceInstances(app.db)
 	assert.NoError(t, err)
 
 	return expectedServiceInstances
 }
 
+func (app *testApplication) seedServicesAndEnvironments(t *testing.T) {
+
+	_, err := services.Seed(app.db)
+	assert.NoError(t, err)
+	_, err = environments.Seed(app.db)
+	assert.NoError(t, err)
+}
+
 func initTestApp(t *testing.T) *testApplication {
 	dbConn := testutils.ConnectAndMigrate(t)
 	return &testApplication{
 		serviceInstances: NewServiceInstanceController(dbConn),
+		services:         services.NewController(dbConn),
+		environments:     environments.NewController(dbConn),
 		db:               dbConn,
 	}
 }

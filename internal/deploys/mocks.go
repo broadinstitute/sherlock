@@ -13,6 +13,11 @@ func (m *mockServiceInstanceStore) listAll() ([]ServiceInstance, error) {
 	return retVal.Get(0).([]ServiceInstance), retVal.Error(1)
 }
 
+func (m *mockServiceInstanceStore) createNew(newServiceInstance ServiceInstance) (ServiceInstance, error) {
+	retVal := m.Called()
+	return retVal.Get(0).(ServiceInstance), retVal.Error(1)
+}
+
 // NewMockController returns an EnvironmentController instance with the provided mock
 // of the storage layer for use in unit tests
 func NewMockController(mockStore *mockServiceInstanceStore) *ServiceInstanceController {

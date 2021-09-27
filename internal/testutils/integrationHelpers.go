@@ -36,8 +36,6 @@ func initConfig() {
 // It will cause the test to fail fatally if an error is encountered. It will then attempt to apply
 // all migrations in /db/migrations to that database and will fail similarly if an error is encountered
 func ConnectAndMigrate(t *testing.T) *gorm.DB {
-	t.Helper()
-
 	// setup config for db connection
 	initConfig()
 
@@ -67,6 +65,7 @@ func Truncate(db *gorm.DB) error {
 // Cleanup is intended to be deferred with each test run so that we can
 // ensure each case starts with a clean database
 func Cleanup(t *testing.T, dbConn *gorm.DB) {
+	t.Log("cleaning db after test run")
 	if err := Truncate(dbConn); err != nil {
 		t.Fatalf("error cleaning db after test run: %v", err)
 	}

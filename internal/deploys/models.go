@@ -27,6 +27,7 @@ type ServiceInstance struct {
 
 type serviceInstanceStore interface {
 	listAll() ([]ServiceInstance, error)
+	createNew(ServiceInstance) (ServiceInstance, error)
 }
 
 func newServiceInstanceStore(dbConn *gorm.DB) dataStore {
@@ -42,4 +43,19 @@ func (db dataStore) listAll() ([]ServiceInstance, error) {
 	}
 
 	return serviceInstances, nil
+}
+
+func (db dataStore) createNew(newServiceInstance ServiceInstance) (ServiceInstance, error) {
+	err := db.Create(&newServiceInstance).Error
+	if err != nil {
+		return ServiceInstance{}, fmt.Errorf("error persisting service instance: %v", err)
+	}
+
+	// retrieve the same service instance record back from the db but now with all the
+	// associations populated.
+	err = db.Preload("Service").
+		Preload("Environment").
+		First(&newServiceInstance, newServiceInstance.ID).Error
+
+	return newServiceInstance, err
 }
