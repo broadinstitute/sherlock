@@ -5,8 +5,6 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/broadinstitute/sherlock/internal/environments"
-	"github.com/broadinstitute/sherlock/internal/services"
 	"github.com/broadinstitute/sherlock/internal/testutils"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
@@ -76,8 +74,6 @@ func (suite *ServiceInstancesIntegrationSuite) TestCreateServiceInstance() {
 
 type testApplication struct {
 	serviceInstances *ServiceInstanceController
-	services         *services.ServiceController
-	environments     *environments.EnvironmentController
 	db               *gorm.DB
 }
 
