@@ -1,40 +1,56 @@
 package deploys
 
 import (
+	"context"
 	"errors"
-	"fmt"
 	"testing"
 
 	"github.com/broadinstitute/sherlock/internal/environments"
 	"github.com/broadinstitute/sherlock/internal/services"
 	"github.com/broadinstitute/sherlock/internal/testutils"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/suite"
 	"gorm.io/gorm"
 )
 
-func Test_Integration_ListServiceInstances(t *testing.T) {
+func TestRunListServiceInstancesIntegrationSuite(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
-	app := initTestApp(t)
+	suite.Run(t, new(ListServiceInstancesIntegrationSuite))
+}
 
-	expectedServiceInstances, err := SeedServiceInstances(t, app.db)
+type ListServiceInstancesIntegrationSuite struct {
+	suite.Suite
+	app                      *testApplication
+	expectedServiceInstances []ServiceInstance
+	ctx                      context.Context
+}
 
-	require.NoError(t, err, "unable to seed test service instance data, failing")
+func (suite *ListServiceInstancesIntegrationSuite) SetupSuite() {
+	// connect to the the db and create a test application instance to be used in the suite
+	t := suite.T()
 
-	t.Run("test ListAll controller method directlty", func(t *testing.T) {
+	suite.ctx = context.Background()
+	app := initTestApp(suite.ctx, t)
+	suite.app = app
+	suite.expectedServiceInstances = SeedServiceInstances(t, suite.app.db)
+}
 
-		serviceInstances, err := app.serviceInstances.ListAll()
-		assert.NoError(t, err)
+func (suite *ListServiceInstancesIntegrationSuite) TearDownSuite() {
+	testutils.Cleanup(suite.T(), suite.app.db)
+}
 
-		assert.ElementsMatch(t, expectedServiceInstances, serviceInstances)
+func (suite *ListServiceInstancesIntegrationSuite) Test_Integration_ListServiceInstances() {
+	assert := suite.Assert()
 
-		fmt.Printf("%#v\n", expectedServiceInstances)
+	serviceInstances, err := suite.app.serviceInstances.ListAll()
+	assert.NoError(err)
 
-		// check serialzied responses
-		assert.ElementsMatch(t, app.serviceInstances.Serialize(expectedServiceInstances...), app.serviceInstances.Serialize(serviceInstances...))
-	})
+	assert.ElementsMatch(suite.expectedServiceInstances, serviceInstances)
+
+	// check serialzied responses
+	assert.ElementsMatch(suite.app.serviceInstances.Serialize(suite.expectedServiceInstances...), suite.app.serviceInstances.Serialize(serviceInstances...))
 }
 
 func Test_ListServiceInstancesError(t *testing.T) {
@@ -70,8 +86,9 @@ type testApplication struct {
 	db               *gorm.DB
 }
 
-func initTestApp(t *testing.T) *testApplication {
+func initTestApp(ctx context.Context, t *testing.T) *testApplication {
 	dbConn := testutils.ConnectAndMigrate(t)
+	dbConn = dbConn.WithContext(ctx)
 	return &testApplication{
 		serviceInstances: NewServiceInstanceController(dbConn),
 		services:         services.NewController(dbConn),

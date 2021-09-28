@@ -55,9 +55,8 @@ var (
 
 // SeedServiceInstances is used to populate the database with Service Instance entities
 // solely intended for use in testing
-func SeedServiceInstances(t *testing.T, db *gorm.DB) ([]ServiceInstance, error) {
+func SeedServiceInstances(t *testing.T, db *gorm.DB) []ServiceInstance {
 	var serviceInstances []ServiceInstance
-	// perform all the seeding operations in a transaction to avoid odd race conditions
 	err := db.Transaction(func(tx *gorm.DB) error {
 		err := tx.Transaction(func(tx2 *gorm.DB) error {
 			if err := tx2.Create(&servicesToSeed).Error; err != nil {
@@ -88,14 +87,8 @@ func SeedServiceInstances(t *testing.T, db *gorm.DB) ([]ServiceInstance, error) 
 		return nil
 	})
 
+	err = db.Preload("Service").Preload("Environment").Find(&serviceInstances).Error
 	require.NoError(t, err)
 
-	err = db.Preload("Service").Preload("Environment").Find(&serviceInstances).Error
-	t.Cleanup(func() {
-		db.Delete(&serviceInstances)
-		db.Delete(&environmentsToSeed)
-		db.Delete(&servicesToSeed)
-	})
-
-	return serviceInstances, err
+	return serviceInstances
 }

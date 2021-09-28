@@ -35,7 +35,7 @@ func newServiceInstanceStore(dbConn *gorm.DB) dataStore {
 }
 
 func (db dataStore) listAll() ([]ServiceInstance, error) {
-	serviceInstances := make([]ServiceInstance, 0)
+	serviceInstances := []ServiceInstance{}
 
 	err := db.Preload("Service").Preload("Environment").Find(&serviceInstances).Error
 	if err != nil {
