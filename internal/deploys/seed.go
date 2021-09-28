@@ -91,6 +91,7 @@ func SeedServiceInstances(t *testing.T, db *gorm.DB) []ServiceInstance {
 
 		return nil
 	})
+	require.NoError(t, err)
 
 	// load all the data just seeded to compare against it in tests
 	err = db.Preload("Service").Preload("Environment").Find(&serviceInstances).Error

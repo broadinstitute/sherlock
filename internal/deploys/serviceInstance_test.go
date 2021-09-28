@@ -13,7 +13,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func TestRunListServiceInstancesIntegrationSuite(t *testing.T) {
+func TestRunServiceInstancesIntegrationSuite(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
