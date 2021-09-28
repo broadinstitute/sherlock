@@ -55,47 +55,10 @@ var (
 
 // SeedServiceInstances is used to populate the database with Service Instance entities
 // solely intended for use in testing
-func SeedServiceInstances(t *testing.T, db *gorm.DB) []ServiceInstance {
-	var serviceInstances []ServiceInstance
-
-	// use a tranaction to populate service instance test data is it
-	// is a complex operation requiring multiple associations
-	err := db.Transaction(func(tx *gorm.DB) error {
-		// use a nested transaction for populating services and environments to
-		// guarantee they exist before trying to reference them in service instances
-		err := tx.Transaction(func(tx2 *gorm.DB) error {
-			if err := tx2.Create(&servicesToSeed).Error; err != nil {
-				return err
-			}
-
-			if err := tx2.Create(&environmentsToSeed).Error; err != nil {
-				return err
-			}
-
-			return nil
-		})
-		require.NoError(t, err)
-
-		for _, service := range servicesToSeed {
-			for _, environment := range environmentsToSeed {
-				serviceInstances = append(serviceInstances, ServiceInstance{
-					ServiceID:     service.ID,
-					EnvironmentID: environment.ID,
-				})
-			}
-		}
-
-		if err := tx.Create(&serviceInstances).Error; err != nil {
-			return err
-		}
-
-		return nil
-	})
+func SeedServicesAndEnvironments(t *testing.T, db *gorm.DB) {
+	err := db.Create(&servicesToSeed).Error
 	require.NoError(t, err)
 
-	// load all the data just seeded to compare against it in tests
-	err = db.Preload("Service").Preload("Environment").Find(&serviceInstances).Error
+	err = db.Create(&environmentsToSeed).Error
 	require.NoError(t, err)
-
-	return serviceInstances
 }

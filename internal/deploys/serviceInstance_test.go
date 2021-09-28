@@ -3,7 +3,6 @@ package deploys
 import (
 	"context"
 	"errors"
-	"fmt"
 	"testing"
 
 	"github.com/broadinstitute/sherlock/internal/environments"
@@ -35,29 +34,36 @@ func (suite *ServiceInstancesIntegrationSuite) SetupSuite() {
 	suite.ctx = context.Background()
 	app := initTestApp(suite.ctx, t)
 	suite.app = app
-	suite.expectedServiceInstances = SeedServiceInstances(t, suite.app.db)
 }
 
 func (suite *ServiceInstancesIntegrationSuite) TearDownSuite() {
 	testutils.Cleanup(suite.T(), suite.app.db)
 }
 
-func (suite *ServiceInstancesIntegrationSuite) TestListServiceInstances() {
-	assert := suite.Assert()
-
-	serviceInstances, err := suite.app.serviceInstances.ListAll()
-
-	fmt.Println(serviceInstances)
-	assert.NoError(err)
-
-	assert.ElementsMatch(suite.expectedServiceInstances, serviceInstances)
-
-	// check serialzied responses
-	serializedExpectations := suite.app.serviceInstances.Serialize(suite.expectedServiceInstances...)
-	serializedResult := suite.app.serviceInstances.Serialize(serviceInstances...)
-
-	assert.ElementsMatch(serializedExpectations, serializedResult)
+func (suite *ServiceInstancesIntegrationSuite) SetupTest() {
+	SeedServicesAndEnvironments(suite.T(), suite.app.db)
 }
+
+func (suite *ServiceInstancesIntegrationSuite) TearDownTest() {
+	testutils.Cleanup(suite.T(), suite.app.db)
+}
+
+// func (suite *ServiceInstancesIntegrationSuite) TestListServiceInstances() {
+// 	assert := suite.Assert()
+
+// 	serviceInstances, err := suite.app.serviceInstances.ListAll()
+
+// 	fmt.Println(serviceInstances)
+// 	assert.NoError(err)
+
+// 	assert.ElementsMatch(suite.expectedServiceInstances, serviceInstances)
+
+// 	// check serialzied responses
+// 	serializedExpectations := suite.app.serviceInstances.Serialize(suite.expectedServiceInstances...)
+// 	serializedResult := suite.app.serviceInstances.Serialize(serviceInstances...)
+
+// 	assert.ElementsMatch(serializedExpectations, serializedResult)
+// }
 
 func Test_ListServiceInstancesError(t *testing.T) {
 	targetError := errors.New("some internal error")
