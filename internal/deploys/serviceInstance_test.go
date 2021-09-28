@@ -3,6 +3,7 @@ package deploys
 import (
 	"context"
 	"errors"
+	"fmt"
 	"testing"
 
 	"github.com/broadinstitute/sherlock/internal/environments"
@@ -45,6 +46,8 @@ func (suite *ServiceInstancesIntegrationSuite) TestListServiceInstances() {
 	assert := suite.Assert()
 
 	serviceInstances, err := suite.app.serviceInstances.ListAll()
+
+	fmt.Println(serviceInstances)
 	assert.NoError(err)
 
 	assert.ElementsMatch(suite.expectedServiceInstances, serviceInstances)
