@@ -3,6 +3,7 @@ package deploys
 import (
 	"context"
 	"errors"
+	"fmt"
 	"testing"
 
 	"github.com/broadinstitute/sherlock/internal/testutils"
@@ -32,6 +33,10 @@ func (suite *ServiceInstancesIntegrationSuite) SetupSuite() {
 	app := initTestApp(suite.ctx, t)
 	suite.app = app
 	SeedServicesAndEnvironments(suite.T(), suite.app.db)
+
+	blah, _ := app.serviceInstances.services.ListAll()
+
+	fmt.Println(blah)
 }
 
 func (suite *ServiceInstancesIntegrationSuite) TearDownSuite() {
