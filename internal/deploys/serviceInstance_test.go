@@ -17,17 +17,17 @@ func TestRunListServiceInstancesIntegrationSuite(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
-	suite.Run(t, new(ListServiceInstancesIntegrationSuite))
+	suite.Run(t, new(ServiceInstancesIntegrationSuite))
 }
 
-type ListServiceInstancesIntegrationSuite struct {
+type ServiceInstancesIntegrationSuite struct {
 	suite.Suite
 	app                      *testApplication
 	expectedServiceInstances []ServiceInstance
 	ctx                      context.Context
 }
 
-func (suite *ListServiceInstancesIntegrationSuite) SetupSuite() {
+func (suite *ServiceInstancesIntegrationSuite) SetupSuite() {
 	// connect to the the db and create a test application instance to be used in the suite
 	t := suite.T()
 
@@ -37,11 +37,11 @@ func (suite *ListServiceInstancesIntegrationSuite) SetupSuite() {
 	suite.expectedServiceInstances = SeedServiceInstances(t, suite.app.db)
 }
 
-func (suite *ListServiceInstancesIntegrationSuite) TearDownSuite() {
+func (suite *ServiceInstancesIntegrationSuite) TearDownSuite() {
 	testutils.Cleanup(suite.T(), suite.app.db)
 }
 
-func (suite *ListServiceInstancesIntegrationSuite) Test_Integration_ListServiceInstances() {
+func (suite *ServiceInstancesIntegrationSuite) TestListServiceInstances() {
 	assert := suite.Assert()
 
 	serviceInstances, err := suite.app.serviceInstances.ListAll()
@@ -50,7 +50,10 @@ func (suite *ListServiceInstancesIntegrationSuite) Test_Integration_ListServiceI
 	assert.ElementsMatch(suite.expectedServiceInstances, serviceInstances)
 
 	// check serialzied responses
-	assert.ElementsMatch(suite.app.serviceInstances.Serialize(suite.expectedServiceInstances...), suite.app.serviceInstances.Serialize(serviceInstances...))
+	serializedExpectations := suite.app.serviceInstances.Serialize(suite.expectedServiceInstances...)
+	serializedResult := suite.app.serviceInstances.Serialize(serviceInstances...)
+
+	assert.ElementsMatch(serializedExpectations, serializedResult)
 }
 
 func Test_ListServiceInstancesError(t *testing.T) {
@@ -60,24 +63,18 @@ func Test_ListServiceInstancesError(t *testing.T) {
 	assert.ErrorIs(t, err, targetError, "expected an internal error from DB layer, received some other error")
 }
 
-// func Test_Integration_CreateServiceInstance(t *testing.T) {
-// 	if testing.Short() {
-// 		t.Skip("skipping integration test")
-// 	}
-// 	app := initTestApp(t)
-// 	defer testutils.Cleanup(t, app.db)
+func (suite *ServiceInstancesIntegrationSuite) TestCreateServiceInstance() {
+	assert := suite.Assert()
 
-// 	t.Run("successful create new service instance with pre-existing service and environment", func(t *testing.T) {
+	result, err := suite.app.serviceInstances.CreateNew("buffer", "dev")
+	assert.NoError(err)
 
-// 		app.seedServicesAndEnvironments(t)
+	assert.Equal("dev", result.Environment.Name)
+	assert.Equal("buffer", result.Service.Name)
 
-// 		result, err := app.serviceInstances.CreateNew("cromwell", "dev")
-// 		assert.NoError(t, err)
-
-// 		assert.Equal(t, "dev", result.Environment.Name)
-// 		assert.Equal(t, "cromwell", result.Service.Name)
-// 	})
-// }
+	// cleanup the extra record
+	suite.app.db.Delete(&result)
+}
 
 type testApplication struct {
 	serviceInstances *ServiceInstanceController
@@ -88,6 +85,10 @@ type testApplication struct {
 
 func initTestApp(ctx context.Context, t *testing.T) *testApplication {
 	dbConn := testutils.ConnectAndMigrate(t)
+	// This is to associate a specific context with all db operations performed in this
+	// test suite. This creates a gorm session which is useful for grouping db transactions associated
+	// with this test suite and keeping them isolated from other db operations
+	// https://gorm.io/docs/context.html#Continuous-session-mode
 	dbConn = dbConn.WithContext(ctx)
 	return &testApplication{
 		serviceInstances: NewServiceInstanceController(dbConn),

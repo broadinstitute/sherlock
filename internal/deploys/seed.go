@@ -57,7 +57,12 @@ var (
 // solely intended for use in testing
 func SeedServiceInstances(t *testing.T, db *gorm.DB) []ServiceInstance {
 	var serviceInstances []ServiceInstance
+
+	// use a tranaction to populate service instance test data is it
+	// is a complex operation requiring multiple associations
 	err := db.Transaction(func(tx *gorm.DB) error {
+		// use a nested transaction for populating services and environments to
+		// guarantee they exist before trying to reference them in service instances
 		err := tx.Transaction(func(tx2 *gorm.DB) error {
 			if err := tx2.Create(&servicesToSeed).Error; err != nil {
 				return err
@@ -87,6 +92,7 @@ func SeedServiceInstances(t *testing.T, db *gorm.DB) []ServiceInstance {
 		return nil
 	})
 
+	// load all the data just seeded to compare against it in tests
 	err = db.Preload("Service").Preload("Environment").Find(&serviceInstances).Error
 	require.NoError(t, err)
 
