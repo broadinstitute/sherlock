@@ -59,7 +59,8 @@ func initTestApp(t *testing.T) *TestApplication {
 		Environments: NewController(dbConn),
 		db:           dbConn,
 	}
-	testutils.Truncate(app.db)
+
+	testutils.BeforeIntegrationSubTestCleanup(t, app.db)
 
 	return app
 }
@@ -136,7 +137,8 @@ func (suite *EnvironmentTestSuite) TestIntegrationCreateEnvironments() {
 
 			// create all non-final environments as setup
 			for _, request := range testCase.requests[:len(testCase.requests)-1] {
-				suite.testApp.Environments.CreateNew(request)
+				_, err := suite.testApp.Environments.CreateNew(request)
+				assert.Equal(suite.T(), nil, err)
 			}
 
 			// create and test the last environment
@@ -151,7 +153,8 @@ func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentGetByName() {
 	suite.Run("GetByName gets an environment by name", func() {
 		testutils.BeforeIntegrationSubTestCleanup(suite.T(), suite.testApp.db)
 
-		suite.testApp.Environments.CreateNew(suite.goodEnvironmentRequest)
+		_, err := suite.testApp.Environments.CreateNew(suite.goodEnvironmentRequest)
+		assert.Equal(suite.T(), nil, err)
 
 		foundEnvironment, err := suite.testApp.Environments.GetByName(suite.goodEnvironmentRequest.Name)
 
@@ -163,7 +166,8 @@ func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentGetByName() {
 	suite.Run("GetByName returns error if not found", func() {
 		testutils.BeforeIntegrationSubTestCleanup(suite.T(), suite.testApp.db)
 
-		suite.testApp.Environments.CreateNew(suite.goodEnvironmentRequest)
+		_, err := suite.testApp.Environments.CreateNew(suite.goodEnvironmentRequest)
+		assert.Equal(suite.T(), nil, err)
 
 		foundEnvironment, err := suite.testApp.Environments.GetByName("this-doesnt-exist")
 
@@ -185,7 +189,8 @@ func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentListAll() {
 	suite.Run("ListAll returns one Environment", func() {
 		testutils.BeforeIntegrationSubTestCleanup(suite.T(), suite.testApp.db)
 
-		suite.testApp.Environments.CreateNew(suite.goodEnvironmentRequest)
+		_, err := suite.testApp.Environments.CreateNew(suite.goodEnvironmentRequest)
+		assert.Equal(suite.T(), nil, err)
 
 		foundEnvironments, err := suite.testApp.Environments.ListAll()
 
@@ -197,8 +202,10 @@ func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentListAll() {
 	suite.Run("ListAll returns many Environments", func() {
 		testutils.BeforeIntegrationSubTestCleanup(suite.T(), suite.testApp.db)
 
-		suite.testApp.Environments.CreateNew(suite.goodEnvironmentRequest)
-		suite.testApp.Environments.CreateNew(suite.anotherEnvironmentRequest)
+		_, err := suite.testApp.Environments.CreateNew(suite.goodEnvironmentRequest)
+		assert.Equal(suite.T(), nil, err)
+		_, err = suite.testApp.Environments.CreateNew(suite.anotherEnvironmentRequest)
+		assert.Equal(suite.T(), nil, err)
 
 		foundEnvironments, err := suite.testApp.Environments.ListAll()
 
@@ -222,7 +229,8 @@ func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentDoesEnvironmentExis
 	suite.Run("EnvironmentDoesExist returns false when not exists", func() {
 		testutils.BeforeIntegrationSubTestCleanup(suite.T(), suite.testApp.db)
 
-		suite.testApp.Environments.CreateNew(suite.goodEnvironmentRequest)
+		_, err := suite.testApp.Environments.CreateNew(suite.goodEnvironmentRequest)
+		assert.Equal(suite.T(), nil, err)
 
 		environmentID, doesEnvironmentExist := suite.testApp.Environments.DoesEnvironmentExist("no-environment-here")
 
