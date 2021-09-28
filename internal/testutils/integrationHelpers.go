@@ -15,6 +15,10 @@ import (
 
 // db contains a utility for retrieving a gorm.DB connection on demand for use in test setup
 
+//
+// Test Initialization Methods
+//
+
 var (
 	config = viper.New()
 )
@@ -54,6 +58,10 @@ func ConnectAndMigrate(t *testing.T) *gorm.DB {
 	return dbConn
 }
 
+//
+// Helper Methods
+//
+
 // Truncate cleans up tables after integration tests
 func Truncate(db *gorm.DB) error {
 	// gorm doesn't seem to support truncate operations which are essential to cleaning up after
@@ -69,5 +77,12 @@ func Truncate(db *gorm.DB) error {
 func Cleanup(t *testing.T, dbConn *gorm.DB) {
 	if err := Truncate(dbConn); err != nil {
 		t.Fatalf("error cleaning db after test run: %v", err)
+	}
+}
+
+// Cleanup intended to be called in between subtests
+func BeforeIntegrationSubTestCleanup(t *testing.T, dbConn *gorm.DB) {
+	if err := Truncate(dbConn); err != nil {
+		t.Fatalf("error cleaning db before subtest run: %v", err)
 	}
 }

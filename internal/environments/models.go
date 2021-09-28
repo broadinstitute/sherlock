@@ -23,7 +23,7 @@ type dataStore struct {
 
 // Environment is the data structure that models a persisted to a database via gorm
 type Environment struct {
-	ID          int    `gorm:"primaryKey`
+	ID          int    `gorm:"primaryKey"`
 	Name        string `gorm:"not null;default:null"`
 	IsPermanent bool
 	Requester   string
