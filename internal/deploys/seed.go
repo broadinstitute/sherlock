@@ -1,6 +1,7 @@
 package deploys
 
 import (
+	"fmt"
 	"testing"
 	"time"
 
@@ -53,12 +54,12 @@ var (
 	}
 )
 
-// SeedServiceInstances is used to populate the database with Service Instance entities
-// solely intended for use in testing
 func SeedServicesAndEnvironments(t *testing.T, db *gorm.DB) {
+	fmt.Println("seeding is happening")
 	err := db.Create(&servicesToSeed).Error
 	require.NoError(t, err)
 
 	err = db.Create(&environmentsToSeed).Error
 	require.NoError(t, err)
+	fmt.Println("seeding complete")
 }

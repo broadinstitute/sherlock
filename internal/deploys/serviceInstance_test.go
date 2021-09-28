@@ -22,9 +22,8 @@ func TestRunServiceInstancesIntegrationSuite(t *testing.T) {
 
 type ServiceInstancesIntegrationSuite struct {
 	suite.Suite
-	app                      *testApplication
-	expectedServiceInstances []ServiceInstance
-	ctx                      context.Context
+	app *testApplication
+	ctx context.Context
 }
 
 func (suite *ServiceInstancesIntegrationSuite) SetupSuite() {
