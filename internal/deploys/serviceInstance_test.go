@@ -3,6 +3,7 @@ package deploys
 import (
 	"context"
 	"errors"
+	"fmt"
 	"testing"
 
 	"github.com/broadinstitute/sherlock/internal/environments"
@@ -80,8 +81,7 @@ func (suite *ServiceInstancesIntegrationSuite) TestCreateServiceInstance() {
 	assert.Equal("dev", result.Environment.Name)
 	assert.Equal("buffer", result.Service.Name)
 
-	// cleanup the extra record
-	suite.app.db.Delete(&result)
+	fmt.Println(result)
 }
 
 type testApplication struct {
