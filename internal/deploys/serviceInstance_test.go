@@ -3,7 +3,6 @@ package deploys
 import (
 	"context"
 	"errors"
-	"fmt"
 	"testing"
 
 	"github.com/broadinstitute/sherlock/internal/environments"
@@ -34,17 +33,10 @@ func (suite *ServiceInstancesIntegrationSuite) SetupSuite() {
 	suite.ctx = context.Background()
 	app := initTestApp(suite.ctx, t)
 	suite.app = app
-}
-
-func (suite *ServiceInstancesIntegrationSuite) TearDownSuite() {
-	testutils.Cleanup(suite.T(), suite.app.db)
-}
-
-func (suite *ServiceInstancesIntegrationSuite) SetupTest() {
 	SeedServicesAndEnvironments(suite.T(), suite.app.db)
 }
 
-func (suite *ServiceInstancesIntegrationSuite) TearDownTest() {
+func (suite *ServiceInstancesIntegrationSuite) TearDownSuite() {
 	testutils.Cleanup(suite.T(), suite.app.db)
 }
 
@@ -80,8 +72,6 @@ func (suite *ServiceInstancesIntegrationSuite) TestCreateServiceInstance() {
 
 	assert.Equal("dev", result.Environment.Name)
 	assert.Equal("buffer", result.Service.Name)
-
-	fmt.Println(result)
 }
 
 type testApplication struct {
@@ -100,8 +90,6 @@ func initTestApp(ctx context.Context, t *testing.T) *testApplication {
 	dbConn = dbConn.WithContext(ctx)
 	return &testApplication{
 		serviceInstances: NewServiceInstanceController(dbConn),
-		services:         services.NewController(dbConn),
-		environments:     environments.NewController(dbConn),
 		db:               dbConn,
 	}
 }
