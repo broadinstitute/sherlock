@@ -52,6 +52,24 @@ func (sc *ServiceController) GetByName(name string) (Service, error) {
 	return sc.store.getByName(name)
 }
 
+// FindOrCreate is intended to be called from the deploy and build controllers. It is used to check if
+// a service exists already and create it if not
+func (sc *ServiceController) FindOrCreate(name string) (Service, error) {
+	service, err := sc.GetByName(name)
+	if err != nil {
+		// create the service if not found
+		newService := CreateServiceRequest{
+			Name: name,
+		}
+
+		service, err = sc.CreateNew(newService)
+		if err != nil {
+			return Service{}, err
+		}
+	}
+	return service, nil
+}
+
 func (sc *ServiceController) serialize(services ...Service) []ServiceResponse {
 	var serviceList []Service
 	serviceList = append(serviceList, services...)

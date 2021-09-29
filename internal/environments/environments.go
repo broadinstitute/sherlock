@@ -55,6 +55,22 @@ func (environmentController *EnvironmentController) GetByName(name string) (Envi
 
 }
 
+func (environmentController *EnvironmentController) FindOrCreate(name string) (Environment, error) {
+	environment, err := environmentController.GetByName(name)
+	if err != nil {
+		// create the environment if not found
+		newEnvironment := CreateEnvironmentRequest{
+			Name: name,
+		}
+
+		environment, err = environmentController.CreateNew(newEnvironment)
+		if err != nil {
+			return Environment{}, err
+		}
+	}
+	return environment, nil
+}
+
 func (environmentController *EnvironmentController) serialize(environments ...Environment) []EnvironmentResponse {
 	// collect arguments into a slice to be serialized into a single response
 	var environmentList []Environment

@@ -38,7 +38,12 @@ func (suite *ServiceInstancesIntegrationSuite) TearDownSuite() {
 	testutils.Cleanup(suite.T(), suite.app.db)
 }
 
+// clean the db before and after each test
 func (suite *ServiceInstancesIntegrationSuite) TearDownTest() {
+	testutils.Cleanup(suite.T(), suite.app.db)
+}
+
+func (suite *ServiceInstancesIntegrationSuite) SetupTest() {
 	testutils.Cleanup(suite.T(), suite.app.db)
 }
 

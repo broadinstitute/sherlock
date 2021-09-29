@@ -69,35 +69,20 @@ func (sic *ServiceInstanceController) CreateNew(serviceName, environmentName str
 
 func (sic *ServiceInstanceController) validateCreateRequest(newServiceInstance CreateServiceInstanceRequest) (ServiceInstance, error) {
 	// make sure the service entity already exists and retrieve its id
-	serviceID, ok := sic.services.DoesServiceExist(newServiceInstance.ServiceName)
-	if !ok {
-		// attempt to create the service if it doesn't exist already
-		newServiceReq := services.CreateServiceRequest{
-			Name: newServiceInstance.ServiceName,
-		}
-		newService, err := sic.services.CreateNew(newServiceReq)
-		if err != nil {
-			return ServiceInstance{}, err
-		}
-		serviceID = newService.ID
+	service, err := sic.services.FindOrCreate(newServiceInstance.ServiceName)
+	if err != nil {
+		return ServiceInstance{}, err
 	}
 
-	// make sure the environment entity already exists and retrieve its id
-	environmentID, ok := sic.environments.DoesEnvironmentExist(newServiceInstance.EnvironmentName)
-	if !ok {
-		newEnvironmentReq := environments.CreateEnvironmentRequest{
-			Name: newServiceInstance.EnvironmentName,
-		}
-		newEnvironment, err := sic.environments.CreateNew(newEnvironmentReq)
-		if err != nil {
-			return ServiceInstance{}, err
-		}
-		environmentID = newEnvironment.ID
+	// make sure the environment exists in the db, if not create it
+	environment, err := sic.environments.FindOrCreate(newServiceInstance.EnvironmentName)
+	if err != nil {
+		return ServiceInstance{}, err
 	}
 
 	return ServiceInstance{
-		ServiceID:     serviceID,
-		EnvironmentID: environmentID,
+		ServiceID:     service.ID,
+		EnvironmentID: environment.ID,
 	}, nil
 }
 
