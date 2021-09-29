@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/broadinstitute/sherlock/internal/environments"
 	"gorm.io/gorm"
 )
 
@@ -27,6 +28,8 @@ type Cluster struct {
 	GoogleProject string `gorm:"unique"`
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
+	EnvironmentID int
+	Environments  []environments.Environment
 }
 
 // clusterStore is the interface defining allowed db actions for Cluster
