@@ -3,7 +3,6 @@ package deploys
 import (
 	"context"
 	"errors"
-	"fmt"
 	"testing"
 
 	"github.com/broadinstitute/sherlock/internal/environments"
@@ -75,7 +74,7 @@ func (suite *ServiceInstancesIntegrationSuite) TestCreateServiceInstance() {
 	createdService, err := suite.app.serviceInstances.services.CreateNew(testService)
 	assert.NoError(err)
 
-	suite.waitForServiceToExist(createdService.Name)
+	// suite.waitForServiceToExist(createdService.Name)
 
 	testEnv := environments.CreateEnvironmentRequest{
 		Name: "dev",
@@ -83,9 +82,7 @@ func (suite *ServiceInstancesIntegrationSuite) TestCreateServiceInstance() {
 	createdEnv, err := suite.app.serviceInstances.environments.CreateNew(testEnv)
 	assert.NoError(err)
 
-	suite.waitForEnvironmentToExist(createdEnv.Name)
-
-	fmt.Println(createdService, createdEnv)
+	// suite.waitForEnvironmentToExist(createdEnv.Name)
 
 	result, err := suite.app.serviceInstances.CreateNew(createdService.Name, createdEnv.Name)
 	assert.NoError(err)
@@ -101,11 +98,6 @@ type testApplication struct {
 
 func initTestApp(ctx context.Context, t *testing.T) *testApplication {
 	dbConn := testutils.ConnectAndMigrate(t)
-	// This is to associate a specific context with all db operations performed in this
-	// test suite. This creates a gorm session which is useful for grouping db transactions associated
-	// with this test suite and keeping them isolated from other db operations
-	// https://gorm.io/docs/context.html#Continuous-session-mode
-	// dbConn = dbConn.WithContext(ctx)
 	return &testApplication{
 		serviceInstances: NewServiceInstanceController(dbConn),
 		db:               dbConn,
