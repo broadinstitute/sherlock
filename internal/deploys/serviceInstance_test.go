@@ -8,7 +8,6 @@ import (
 	"github.com/broadinstitute/sherlock/internal/environments"
 	"github.com/broadinstitute/sherlock/internal/services"
 	"github.com/broadinstitute/sherlock/internal/testutils"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"gorm.io/gorm"
 )
@@ -71,11 +70,11 @@ func (suite *ServiceInstancesIntegrationSuite) TestListServiceInstances() {
 
 }
 
-func Test_ListServiceInstancesError(t *testing.T) {
+func (suite *ServiceInstancesIntegrationSuite) TestListServiceInstancesError() {
 	targetError := errors.New("some internal error")
-	controller := setupMockController(t, []ServiceInstance{}, targetError, "listAll")
+	controller := setupMockController(suite.T(), []ServiceInstance{}, targetError, "listAll")
 	_, err := controller.ListAll()
-	assert.ErrorIs(t, err, targetError, "expected an internal error from DB layer, received some other error")
+	suite.Assert().ErrorIs(err, targetError, "expected an internal error from DB layer, received some other error")
 }
 
 func (suite *ServiceInstancesIntegrationSuite) TestCreateServiceInstance() {
