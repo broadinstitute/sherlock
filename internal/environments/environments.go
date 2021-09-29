@@ -71,6 +71,7 @@ func (environmentController *EnvironmentController) FindOrCreate(name string) (E
 	return environment, nil
 }
 
+// Takes an GORM Environment object and returns a JSON for environment
 func (environmentController *EnvironmentController) serialize(environments ...Environment) []EnvironmentResponse {
 	// collect arguments into a slice to be serialized into a single response
 	var environmentList []Environment
