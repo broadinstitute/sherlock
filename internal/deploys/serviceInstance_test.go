@@ -79,6 +79,7 @@ func (suite *ServiceInstancesIntegrationSuite) TestCreateServiceInstance() {
 		Name: "dev",
 	}
 	createdEnv, err := suite.app.serviceInstances.environments.CreateNew(testEnv)
+	require.NoError(err)
 
 	result, err := suite.app.serviceInstances.CreateNew(createdService.Name, createdEnv.Name)
 	assert.NoError(err)
