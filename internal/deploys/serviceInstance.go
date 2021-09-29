@@ -6,17 +6,11 @@ package deploys
 // at a specific point in time which is needed to represent a deploy
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/broadinstitute/sherlock/internal/environments"
 	"github.com/broadinstitute/sherlock/internal/services"
 	"gorm.io/gorm"
-)
-
-var (
-	errServiceDoesNotExist     = errors.New("unable to process Service instance create request. service does not exist")
-	errEnvironmentDoesNotExist = errors.New("unable to process Service instance create request. environment does not exist")
 )
 
 // ServiceInstanceController is the type used to manage logic related to working with
