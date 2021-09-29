@@ -38,6 +38,10 @@ func (suite *ServiceInstancesIntegrationSuite) TearDownSuite() {
 	testutils.Cleanup(suite.T(), suite.app.db)
 }
 
+func (suite *ServiceInstancesIntegrationSuite) TearDownTest() {
+	testutils.Cleanup(suite.T(), suite.app.db)
+}
+
 func (suite *ServiceInstancesIntegrationSuite) TestListServiceInstances() {
 	assert := suite.Assert()
 
@@ -65,8 +69,12 @@ func (suite *ServiceInstancesIntegrationSuite) TestListServiceInstances() {
 		assert.NoError(err)
 	}
 
-	_, err := suite.app.serviceInstances.ListAll()
+	serviceInstances, err := suite.app.serviceInstances.ListAll()
 	assert.NoError(err)
+
+	for _, serviceInstance := range serviceInstances {
+		assert.Equal(serviceInstance.Service.Name, "rawls")
+	}
 
 }
 
