@@ -98,7 +98,7 @@ func initTestApp(ctx context.Context, t *testing.T) *testApplication {
 	// test suite. This creates a gorm session which is useful for grouping db transactions associated
 	// with this test suite and keeping them isolated from other db operations
 	// https://gorm.io/docs/context.html#Continuous-session-mode
-	dbConn = dbConn.WithContext(ctx)
+	// dbConn = dbConn.WithContext(ctx)
 	return &testApplication{
 		serviceInstances: NewServiceInstanceController(dbConn),
 		db:               dbConn,
