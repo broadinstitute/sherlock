@@ -124,6 +124,7 @@ func setupMockController(
 }
 
 func (suite *ServiceInstancesIntegrationSuite) waitForServiceToExist(name string) {
+	fmt.Println("waiting for service to exist")
 	var ok bool
 	for _, ok = suite.app.serviceInstances.services.DoesServiceExist(name); !ok; {
 	}
