@@ -72,19 +72,19 @@ func (suite *ServiceInstancesIntegrationSuite) TestCreateServiceInstance() {
 		Name:    "buffer",
 		RepoURL: "https://github.com/databiosphere/buffer",
 	}
-	_, err := suite.app.serviceInstances.services.CreateNew(testService)
+	createdService, err := suite.app.serviceInstances.services.CreateNew(testService)
 	require.NoError(err)
 
 	testEnv := environments.CreateEnvironmentRequest{
 		Name: "dev",
 	}
-	_, err = suite.app.serviceInstances.environments.CreateNew(testEnv)
+	createdEnv, err := suite.app.serviceInstances.environments.CreateNew(testEnv)
 
-	result, err := suite.app.serviceInstances.CreateNew(testService.Name, testEnv.Name)
+	result, err := suite.app.serviceInstances.CreateNew(createdService.Name, createdEnv.Name)
 	assert.NoError(err)
 
-	assert.Equal("dev", result.Environment.Name)
-	assert.Equal("buffer", result.Service.Name)
+	assert.Equal(testEnv.Name, result.Environment.Name)
+	assert.Equal(testService.Name, result.Service.Name)
 }
 
 type testApplication struct {
