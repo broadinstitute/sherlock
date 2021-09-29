@@ -3,9 +3,10 @@ package deploys
 import (
 	"context"
 	"errors"
-	"fmt"
 	"testing"
 
+	"github.com/broadinstitute/sherlock/internal/environments"
+	"github.com/broadinstitute/sherlock/internal/services"
 	"github.com/broadinstitute/sherlock/internal/testutils"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
@@ -32,11 +33,6 @@ func (suite *ServiceInstancesIntegrationSuite) SetupSuite() {
 	suite.ctx = context.Background()
 	app := initTestApp(suite.ctx, t)
 	suite.app = app
-	SeedServicesAndEnvironments(suite.T(), suite.app.db)
-
-	blah, _ := app.serviceInstances.services.ListAll()
-
-	fmt.Println(blah)
 }
 
 func (suite *ServiceInstancesIntegrationSuite) TearDownSuite() {
@@ -69,8 +65,22 @@ func Test_ListServiceInstancesError(t *testing.T) {
 
 func (suite *ServiceInstancesIntegrationSuite) TestCreateServiceInstance() {
 	assert := suite.Assert()
+	require := suite.Require()
 
-	result, err := suite.app.serviceInstances.CreateNew("buffer", "dev")
+	// make a service entity
+	testService := services.CreateServiceRequest{
+		Name:    "buffer",
+		RepoURL: "https://github.com/databiosphere/buffer",
+	}
+	_, err := suite.app.serviceInstances.services.CreateNew(testService)
+	require.NoError(err)
+
+	testEnv := environments.CreateEnvironmentRequest{
+		Name: "dev",
+	}
+	_, err = suite.app.serviceInstances.environments.CreateNew(testEnv)
+
+	result, err := suite.app.serviceInstances.CreateNew(testService.Name, testEnv.Name)
 	assert.NoError(err)
 
 	assert.Equal("dev", result.Environment.Name)
