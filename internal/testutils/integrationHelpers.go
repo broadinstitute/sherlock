@@ -72,17 +72,10 @@ func Truncate(db *gorm.DB) error {
 	return err
 }
 
-// Cleanup is intended to be deferred with each test run so that we can
+// Cleanup can be run immediately, or deferred with each test run so that we can
 // ensure each case starts with a clean database
 func Cleanup(t *testing.T, dbConn *gorm.DB) {
 	if err := Truncate(dbConn); err != nil {
 		t.Fatalf("error cleaning db after test run: %v", err)
-	}
-}
-
-// Cleanup intended to be called in between subtests
-func BeforeIntegrationSubTestCleanup(t *testing.T, dbConn *gorm.DB) {
-	if err := Truncate(dbConn); err != nil {
-		t.Fatalf("error cleaning db before subtest run: %v", err)
 	}
 }
