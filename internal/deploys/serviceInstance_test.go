@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"testing"
-	"time"
 
 	"github.com/broadinstitute/sherlock/internal/environments"
 	"github.com/broadinstitute/sherlock/internal/services"
@@ -81,9 +80,6 @@ func (suite *ServiceInstancesIntegrationSuite) TestCreateServiceInstance() {
 	}
 	createdEnv, err := suite.app.serviceInstances.environments.CreateNew(testEnv)
 	require.NoError(err)
-
-	// hacky sleep take this out
-	time.Sleep(10 * time.Second)
 
 	result, err := suite.app.serviceInstances.CreateNew(createdService.Name, createdEnv.Name)
 	assert.NoError(err)
