@@ -65,7 +65,6 @@ func Test_ListServiceInstancesError(t *testing.T) {
 
 func (suite *ServiceInstancesIntegrationSuite) TestCreateServiceInstance() {
 	assert := suite.Assert()
-	require := suite.Require()
 
 	// make a service entity
 	testService := services.CreateServiceRequest{
@@ -73,13 +72,13 @@ func (suite *ServiceInstancesIntegrationSuite) TestCreateServiceInstance() {
 		RepoURL: "https://github.com/databiosphere/buffer",
 	}
 	createdService, err := suite.app.serviceInstances.services.CreateNew(testService)
-	require.NoError(err)
+	assert.NoError(err)
 
 	testEnv := environments.CreateEnvironmentRequest{
 		Name: "dev",
 	}
 	createdEnv, err := suite.app.serviceInstances.environments.CreateNew(testEnv)
-	require.NoError(err)
+	assert.NoError(err)
 
 	result, err := suite.app.serviceInstances.CreateNew(createdService.Name, createdEnv.Name)
 	assert.NoError(err)
