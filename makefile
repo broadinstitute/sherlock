@@ -16,3 +16,7 @@ integration-down:
 
 unit-test:
 	go test -v -short -race ./...
+
+tests-with-coverage:
+	docker-compose -f build/local/server/docker-compose.test.yaml up --build --abort-on-container-exit
+	docker-compose -f build/local/server/docker-compose.test.yaml down --volumes

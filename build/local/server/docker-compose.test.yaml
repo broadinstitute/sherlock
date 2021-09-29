@@ -18,6 +18,8 @@ services:
       - database
     networks: 
       - sherlock-local-dev
+    volumes:
+      - $PWD:/build
 
   database:
     container_name: postgres
