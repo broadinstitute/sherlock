@@ -124,13 +124,14 @@ func setupMockController(
 }
 
 func (suite *ServiceInstancesIntegrationSuite) waitForServiceToExist(name string) {
-	fmt.Println("waiting for service to exist")
+	suite.T().Logf("waiting for service: %v to exist", name)
 	var ok bool
 	for _, ok = suite.app.serviceInstances.services.DoesServiceExist(name); !ok; {
 	}
 }
 
 func (suite *ServiceInstancesIntegrationSuite) waitForEnvironmentToExist(name string) {
+	suite.T().Logf("waiting for environment: %v to exist", name)
 	var ok bool
 	for _, ok = suite.app.serviceInstances.environments.DoesEnvironmentExist(name); !ok; {
 	}
