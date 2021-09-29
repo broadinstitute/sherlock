@@ -75,11 +75,15 @@ func (suite *ServiceInstancesIntegrationSuite) TestCreateServiceInstance() {
 	createdService, err := suite.app.serviceInstances.services.CreateNew(testService)
 	assert.NoError(err)
 
+	suite.waitForServiceToExist(createdService.Name)
+
 	testEnv := environments.CreateEnvironmentRequest{
 		Name: "dev",
 	}
 	createdEnv, err := suite.app.serviceInstances.environments.CreateNew(testEnv)
 	assert.NoError(err)
+
+	suite.waitForEnvironmentToExist(createdEnv.Name)
 
 	fmt.Println(createdService, createdEnv)
 
@@ -117,4 +121,16 @@ func setupMockController(
 	mockStore := &mockServiceInstanceStore{}
 	mockStore.On(methodName).Return(expectedServiceInstances, expectedError)
 	return NewMockController(mockStore)
+}
+
+func (suite *ServiceInstancesIntegrationSuite) waitForServiceToExist(name string) {
+	var ok bool
+	for _, ok = suite.app.serviceInstances.services.DoesServiceExist(name); !ok; {
+	}
+}
+
+func (suite *ServiceInstancesIntegrationSuite) waitForEnvironmentToExist(name string) {
+	var ok bool
+	for _, ok = suite.app.serviceInstances.environments.DoesEnvironmentExist(name); !ok; {
+	}
 }
