@@ -39,22 +39,37 @@ func (suite *ServiceInstancesIntegrationSuite) TearDownSuite() {
 	testutils.Cleanup(suite.T(), suite.app.db)
 }
 
-// func (suite *ServiceInstancesIntegrationSuite) TestListServiceInstances() {
-// 	assert := suite.Assert()
+func (suite *ServiceInstancesIntegrationSuite) TestListServiceInstances() {
+	assert := suite.Assert()
 
-// 	serviceInstances, err := suite.app.serviceInstances.ListAll()
+	existingServiceInstances := []struct {
+		serviceName     string
+		environmentName string
+	}{
+		{
+			serviceName:     "rawls",
+			environmentName: "dev",
+		},
+		{
+			serviceName:     "rawls",
+			environmentName: "alpha",
+		},
+		{
+			serviceName:     "rawls",
+			environmentName: "prod",
+		},
+	}
 
-// 	fmt.Println(serviceInstances)
-// 	assert.NoError(err)
+	// populate some service instances to list
+	for _, serviceInstance := range existingServiceInstances {
+		_, err := suite.app.serviceInstances.CreateNew(serviceInstance.serviceName, serviceInstance.environmentName)
+		assert.NoError(err)
+	}
 
-// 	assert.ElementsMatch(suite.expectedServiceInstances, serviceInstances)
+	_, err := suite.app.serviceInstances.ListAll()
+	assert.NoError(err)
 
-// 	// check serialzied responses
-// 	serializedExpectations := suite.app.serviceInstances.Serialize(suite.expectedServiceInstances...)
-// 	serializedResult := suite.app.serviceInstances.Serialize(serviceInstances...)
-
-// 	assert.ElementsMatch(serializedExpectations, serializedResult)
-// }
+}
 
 func Test_ListServiceInstancesError(t *testing.T) {
 	targetError := errors.New("some internal error")
