@@ -112,6 +112,13 @@ func (suite *ServiceInstancesIntegrationSuite) TestCreateServiceInstance() {
 
 	assert.Equal(testEnv.Name, result.Environment.Name)
 	assert.Equal(testService.Name, result.Service.Name)
+
+	// check serialized result
+	serializedResult := suite.app.serviceInstances.Serialize(result)
+
+	assert.Equal(serializedResult[0].Environment.Name, testEnv.Name)
+	assert.Equal(serializedResult[0].Service.Name, testService.Name)
+	assert.Equal(serializedResult[0].Service.RepoURL, testService.RepoURL)
 }
 
 type testApplication struct {
