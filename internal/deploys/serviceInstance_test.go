@@ -3,6 +3,7 @@ package deploys
 import (
 	"context"
 	"errors"
+	"fmt"
 	"testing"
 
 	"github.com/broadinstitute/sherlock/internal/environments"
@@ -79,6 +80,8 @@ func (suite *ServiceInstancesIntegrationSuite) TestCreateServiceInstance() {
 	}
 	createdEnv, err := suite.app.serviceInstances.environments.CreateNew(testEnv)
 	assert.NoError(err)
+
+	fmt.Println(createdService, createdEnv)
 
 	result, err := suite.app.serviceInstances.CreateNew(createdService.Name, createdEnv.Name)
 	assert.NoError(err)
