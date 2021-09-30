@@ -11,26 +11,26 @@ import (
 	"gorm.io/gorm"
 )
 
-func Test_Integration_ListServiceInstances(t *testing.T) {
-	if testing.Short() {
-		t.Skip("skipping integration test")
-	}
+// func Test_Integration_ListServiceInstances(t *testing.T) {
+// 	if testing.Short() {
+// 		t.Skip("skipping integration test")
+// 	}
 
-	t.Run("test ListAll controller method directlty", func(t *testing.T) {
-		app := initTestApp(t)
-		defer testutils.Cleanup(t, app.db)
+// 	t.Run("test ListAll controller method directlty", func(t *testing.T) {
+// 		app := initTestApp(t)
+// 		defer testutils.Cleanup(t, app.db)
 
-		expectedServiceInstances := app.seedServiceInstanceControllerTestData(t)
+// 		expectedServiceInstances := app.seedServiceInstanceControllerTestData(t)
 
-		serviceInstances, err := app.serviceInstances.ListAll()
-		assert.NoError(t, err)
+// 		serviceInstances, err := app.serviceInstances.ListAll()
+// 		assert.NoError(t, err)
 
-		assert.ElementsMatch(t, expectedServiceInstances, serviceInstances)
+// 		assert.ElementsMatch(t, expectedServiceInstances, serviceInstances)
 
-		// check serialzied responses
-		assert.ElementsMatch(t, app.serviceInstances.Serialize(expectedServiceInstances...), app.serviceInstances.Serialize(serviceInstances...))
-	})
-}
+// 		// check serialzied responses
+// 		assert.ElementsMatch(t, app.serviceInstances.Serialize(expectedServiceInstances...), app.serviceInstances.Serialize(serviceInstances...))
+// 	})
+// }
 
 func Test_ListServiceInstancesError(t *testing.T) {
 	targetError := errors.New("some internal error")
