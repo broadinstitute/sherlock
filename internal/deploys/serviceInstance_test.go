@@ -4,11 +4,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/broadinstitute/sherlock/internal/environments"
-	"github.com/broadinstitute/sherlock/internal/services"
-	"github.com/broadinstitute/sherlock/internal/testutils"
 	"github.com/stretchr/testify/assert"
-	"gorm.io/gorm"
 )
 
 // func Test_Integration_ListServiceInstances(t *testing.T) {
@@ -39,32 +35,32 @@ func Test_ListServiceInstancesError(t *testing.T) {
 	assert.ErrorIs(t, err, targetError, "expected an internal error from DB layer, received some other error")
 }
 
-type testApplication struct {
-	serviceInstances *ServiceInstanceController
-	db               *gorm.DB
-}
+// type testApplication struct {
+// 	serviceInstances *ServiceInstanceController
+// 	db               *gorm.DB
+// }
 
-func (app *testApplication) seedServiceInstanceControllerTestData(t *testing.T) []ServiceInstance {
-	// seed db with data needed to construct service instances
-	t.Helper()
+// func (app *testApplication) seedServiceInstanceControllerTestData(t *testing.T) []ServiceInstance {
+// 	// seed db with data needed to construct service instances
+// 	t.Helper()
 
-	_, err := services.Seed(app.db)
-	assert.NoError(t, err)
-	_, err = environments.Seed(app.db)
-	assert.NoError(t, err)
-	expectedServiceInstances, err := SeedServiceInstances(app.db)
-	assert.NoError(t, err)
+// 	_, err := services.Seed(app.db)
+// 	assert.NoError(t, err)
+// 	_, err = environments.Seed(app.db)
+// 	assert.NoError(t, err)
+// 	expectedServiceInstances, err := SeedServiceInstances(app.db)
+// 	assert.NoError(t, err)
 
-	return expectedServiceInstances
-}
+// 	return expectedServiceInstances
+// }
 
-func initTestApp(t *testing.T) *testApplication {
-	dbConn := testutils.ConnectAndMigrate(t)
-	return &testApplication{
-		serviceInstances: NewServiceInstanceController(dbConn),
-		db:               dbConn,
-	}
-}
+// func initTestApp(t *testing.T) *testApplication {
+// 	dbConn := testutils.ConnectAndMigrate(t)
+// 	return &testApplication{
+// 		serviceInstances: NewServiceInstanceController(dbConn),
+// 		db:               dbConn,
+// 	}
+// }
 
 func setupMockController(
 	t *testing.T,
