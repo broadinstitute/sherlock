@@ -15,12 +15,5 @@ coverage:
     patch:
       default:
         informational: true
-ignore:
-  # This file is 100% covered by unit and integration tests but for some reason codecov thinks it isn't
-  - "internal/db/db.go"
-  # This file is also covered by the integration tests which require a real postgres connection. However codecov isn't smart enough to figure that out
-  - "internal/services/models.go"
-  # This file is also covered by the integration tests which require a real postgres connection. However codecov isn't smart enough to figure that out
-  - "internal/builds/models.go"
-  
+ignore:  
   - "internal/**/seed.go"
