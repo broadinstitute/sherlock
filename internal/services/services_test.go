@@ -83,7 +83,7 @@ func (suite *ServicesIntegrationTestSuite) TestListServices() {
 
 		services, err := suite.app.services.ListAll()
 
-		suite.Assert().Equal(len(services), 1)
+		suite.Assert().Equal(1, len(services))
 		suite.Assert().Equal(services[0].Name, newService.Name)
 		suite.Assert().NoError(err)
 	})
