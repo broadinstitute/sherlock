@@ -40,6 +40,16 @@ func (suite *BuildsIntegrationTestSuite) TestCreateBuild() {
 
 		suite.Assert().Equal(newBuild.VersionString, build.VersionString)
 	})
+
+	suite.Run("fails with empty create request", func() {
+		testutils.Cleanup(suite.T(), suite.app.db)
+
+		newBuild := CreateBuildRequest{}
+
+		_, err := suite.app.builds.CreateNew(newBuild)
+
+		suite.Require().Error(err)
+	})
 }
 
 type testApplication struct {
