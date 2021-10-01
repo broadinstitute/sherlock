@@ -40,7 +40,7 @@ func initTestApp(t *testing.T) *testApplication {
 	}
 }
 
-func (suite *ServiceInstanceIntegrationTestSuite) TestListServiceInstancesError(t *testing.T) {
+func (suite *ServiceInstanceIntegrationTestSuite) TestListServiceInstancesError() {
 	targetError := errors.New("some internal error")
 	controller := setupMockController(t, []ServiceInstance{}, targetError, "listAll")
 	_, err := controller.ListAll()
