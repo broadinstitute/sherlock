@@ -102,7 +102,7 @@ func (suite *ServicesIntegrationTestSuite) TestListServices() {
 		services, err := suite.app.services.ListAll()
 		suite.Require().NoError(err)
 
-		suite.Assert().Greater(len(services), 1)
+		suite.Assert().Equal(len(services), 3)
 	})
 }
 
@@ -123,8 +123,8 @@ func (suite *ServicesIntegrationTestSuite) TestGetByName() {
 
 		suite.Assert().Equal(createdService, result)
 
-		id, ok := suite.app.services.DoesServiceExist(newService.Name)
-		suite.Assert().True(ok)
+		id, doesExist := suite.app.services.DoesServiceExist(newService.Name)
+		suite.Assert().True(doesExist)
 		suite.Assert().Equal(createdService.ID, id)
 	})
 

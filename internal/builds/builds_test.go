@@ -11,7 +11,8 @@ import (
 
 type BuildsIntegrationTestSuite struct {
 	suite.Suite
-	app *testApplication
+	app                    *testApplication
+	goodCreateBuildRequest CreateBuildRequest
 }
 
 func TestBuildsIntegrationSuite(t *testing.T) {
@@ -25,20 +26,22 @@ func (suite *BuildsIntegrationTestSuite) SetupSuite() {
 	suite.app = initTestApp(suite.T())
 	// ensure the db is clean before running suite
 	testutils.Cleanup(suite.T(), suite.app.db)
+	suite.goodCreateBuildRequest = CreateBuildRequest{
+		VersionString: "docker.io/broad/rawls:12.3.",
+		CommitSha:     "asdfewrf",
+		BuildURL:      "https://jenkins.job/1",
+		BuiltAt:       time.Now(),
+		ServiceName:   "rawls",
+		ServiceRepo:   "github.com/broadinstitute/rawls",
+	}
+
 }
 
 func (suite *BuildsIntegrationTestSuite) TestCreateBuild() {
 	suite.Run("creates a new build", func() {
 		testutils.Cleanup(suite.T(), suite.app.db)
 
-		newBuild := CreateBuildRequest{
-			VersionString: "docker.io/broad/rawls:12.3.",
-			CommitSha:     "asdfewrf",
-			BuildURL:      "https://jenkins.job/1",
-			BuiltAt:       time.Now(),
-			ServiceName:   "rawls",
-			ServiceRepo:   "github.com/broadinstitute/rawls",
-		}
+		newBuild := suite.goodCreateBuildRequest
 
 		build, err := suite.app.builds.CreateNew(newBuild)
 		suite.Assert().NoError(err)
@@ -55,6 +58,18 @@ func (suite *BuildsIntegrationTestSuite) TestCreateBuild() {
 
 		suite.Require().Error(err)
 	})
+
+	suite.Run("fails on non-unique version string", func() {
+		testutils.Cleanup(suite.T(), suite.app.db)
+
+		// create a valid build
+		_, err := suite.app.builds.CreateNew(suite.goodCreateBuildRequest)
+		suite.Assert().NoError(err)
+
+		// try to create another build with the same version string
+		_, err = suite.app.builds.CreateNew(suite.goodCreateBuildRequest)
+		suite.Assert().Error(err)
+	})
 }
 
 func (suite *BuildsIntegrationTestSuite) TestGetByID() {
@@ -69,14 +84,7 @@ func (suite *BuildsIntegrationTestSuite) TestGetByID() {
 	suite.Run("retrives an existing build", func() {
 		testutils.Cleanup(suite.T(), suite.app.db)
 
-		newBuild := CreateBuildRequest{
-			VersionString: "docker.io/broad/rawls:12.3.",
-			CommitSha:     "asdfewrf",
-			BuildURL:      "https://jenkins.job/1",
-			BuiltAt:       time.Now(),
-			ServiceName:   "rawls",
-			ServiceRepo:   "github.com/broadinstitute/rawls",
-		}
+		newBuild := suite.goodCreateBuildRequest
 		build, err := suite.app.builds.CreateNew(newBuild)
 		suite.Require().NoError(err)
 
