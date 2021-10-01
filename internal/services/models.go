@@ -26,7 +26,7 @@ type dataStore struct {
 type Service struct {
 	ID        int    `gorm:"primaryKey" faker:"unique"`
 	Name      string `gorm:"not null;default:null"`
-	RepoURL   string `gorm:"not null;default:null"`
+	RepoURL   string
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }

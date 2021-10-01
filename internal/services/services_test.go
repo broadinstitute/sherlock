@@ -45,9 +45,6 @@ func (suite *ServicesIntegrationTestSuite) TestCreateService() {
 		testCases := []CreateServiceRequest{
 			{},
 			{
-				Name: "blah",
-			},
-			{
 				RepoURL: "blah",
 			},
 		}

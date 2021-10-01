@@ -41,7 +41,7 @@ func (suite *BuildsIntegrationTestSuite) TestCreateBuild() {
 		}
 
 		build, err := suite.app.builds.CreateNew(newBuild)
-		suite.Require().NoError(err)
+		suite.Assert().NoError(err)
 
 		suite.Assert().Equal(newBuild.VersionString, build.VersionString)
 	})
