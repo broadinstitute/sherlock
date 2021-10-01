@@ -42,7 +42,7 @@ func initTestApp(t *testing.T) *testApplication {
 
 func (suite *ServiceInstanceIntegrationTestSuite) TestListServiceInstancesError() {
 	targetError := errors.New("some internal error")
-	controller := setupMockController(t, []ServiceInstance{}, targetError, "listAll")
+	controller := setupMockController(suite.T(), []ServiceInstance{}, targetError, "listAll")
 	_, err := controller.ListAll()
 	suite.Assert().ErrorIs(err, targetError, "expected an internal error from DB layer, received some other error")
 }
