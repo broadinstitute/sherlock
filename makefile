@@ -26,3 +26,7 @@ tests-with-coverage:
 	go test -v -race -coverprofile=cover.out -covermode=atomic ./...
 	docker stop test-postgres
 	docker rm test-postgres
+
+pg-down:
+	docker stop test-postgres
+	docker rm test-postgres
