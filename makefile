@@ -14,6 +14,12 @@ integration-test:
 integration-down:
 	docker-compose -f build/local/server/docker-compose.test.yaml down --volumes
 
+integration-local:
+	docker run --name test-postgres -e POSTGRES_PASSWORD=password -e POSTGRES_USER=sherlock -d -p 5432:5432 postgres:13
+	go test -v -race ./...
+	docker stop test-postgres
+	docker rm test-postgres
+
 unit-test:
 	go test -v -short -race ./...
 

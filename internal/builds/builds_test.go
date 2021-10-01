@@ -57,6 +57,37 @@ func (suite *BuildsIntegrationTestSuite) TestCreateBuild() {
 	})
 }
 
+func (suite *BuildsIntegrationTestSuite) TestGetByID() {
+	suite.Run("fails with non-existent id", func() {
+		testutils.Cleanup(suite.T(), suite.app.db)
+
+		_, err := suite.app.builds.GetByID(23)
+		suite.Require().ErrorIs(err, ErrBuildNotFound)
+
+	})
+
+	suite.Run("retrives an existing build", func() {
+		testutils.Cleanup(suite.T(), suite.app.db)
+
+		newBuild := CreateBuildRequest{
+			VersionString: "docker.io/broad/rawls:12.3.",
+			CommitSha:     "asdfewrf",
+			BuildURL:      "https://jenkins.job/1",
+			BuiltAt:       time.Now(),
+			ServiceName:   "rawls",
+			ServiceRepo:   "github.com/broadinstitute/rawls",
+		}
+		build, err := suite.app.builds.CreateNew(newBuild)
+		suite.Require().NoError(err)
+
+		result, err := suite.app.builds.GetByID(build.ID)
+		suite.Assert().NoError(err)
+
+		suite.Assert().Equal(result.Service.Name, newBuild.ServiceName)
+		suite.Assert().Equal(result.VersionString, newBuild.VersionString)
+	})
+}
+
 type testApplication struct {
 	builds *BuildController
 	db     *gorm.DB
