@@ -12,7 +12,7 @@ integration-test:
 	export SHERLOCK_DBHOST="localhost"
 	export SHERLOCK_DBPASSWORD="password"
 	docker run --name test-postgres -e POSTGRES_PASSWORD=password -e POSTGRES_USER=sherlock -d -p 5432:5432 postgres:13
-	go test -v -race -coverprofile=cover.out -covermode=atomic ./...
+	go test -v -race ./...
 	docker stop test-postgres
 	docker rm test-postgres
 
@@ -20,5 +20,9 @@ unit-test:
 	go test -v -short -race ./...
 
 tests-with-coverage:
-	docker-compose -f build/local/server/docker-compose.test.yaml up --build --abort-on-container-exit
-	docker-compose -f build/local/server/docker-compose.test.yaml down --volumes
+	export SHERLOCK_DBHOST="localhost"
+	export SHERLOCK_DBPASSWORD="password"
+	docker run --name test-postgres -e POSTGRES_PASSWORD=password -e POSTGRES_USER=sherlock -d -p 5432:5432 postgres:13
+	go test -v -race -coverprofile=cover.out -covermode=atomic ./...
+	docker stop test-postgres
+	docker rm test-postgres
