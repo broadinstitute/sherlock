@@ -2,9 +2,9 @@ package builds
 
 import (
 	"testing"
+	"time"
 
 	"github.com/broadinstitute/sherlock/internal/testutils"
-	"github.com/bxcodec/faker/v3"
 	"github.com/stretchr/testify/suite"
 	"gorm.io/gorm"
 )
@@ -31,9 +31,14 @@ func (suite *BuildsIntegrationTestSuite) TestCreateBuild() {
 	suite.Run("creates a new build", func() {
 		testutils.Cleanup(suite.T(), suite.app.db)
 
-		newBuild := CreateBuildRequest{}
-		err := faker.FakeData(&newBuild)
-		suite.Require().NoError(err)
+		newBuild := CreateBuildRequest{
+			VersionString: "docker.io/broad/rawls:12.3.",
+			CommitSha:     "asdfewrf",
+			BuildURL:      "https://jenkins.job/1",
+			BuiltAt:       time.Now(),
+			ServiceName:   "rawls",
+			ServiceRepo:   "github.com/broadinstitute/rawls",
+		}
 
 		build, err := suite.app.builds.CreateNew(newBuild)
 		suite.Require().NoError(err)

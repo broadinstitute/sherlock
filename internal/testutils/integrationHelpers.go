@@ -66,8 +66,19 @@ func ConnectAndMigrate(t *testing.T) *gorm.DB {
 func Truncate(db *gorm.DB) error {
 	// gorm doesn't seem to support truncate operations which are essential to cleaning up after
 	// integration tests (and the only use case of this function so doing it with raw sql)
-	truncateStatement := "TRUNCATE TABLE services, builds, environments, service_instances, deploys, clusters, allocation_pools"
-	err := db.Exec(truncateStatement).Error
+	testDeleteStatement := `
+	BEGIN;
+		DELETE FROM deploys;
+		DELETE FROM service_instances;
+		DELETE FROM builds;
+		DELETE FROM services;
+		DELETE FROM environments;
+		DELETE FROM clusters;
+		DELETE FROM allocation_pools;
+	COMMIT;`
+
+	// truncateStatement := "TRUNCATE TABLE services, builds, environments, service_instances, deploys, clusters, allocation_pools"
+	err := db.Exec(testDeleteStatement).Error
 
 	return err
 }
