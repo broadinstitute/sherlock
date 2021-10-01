@@ -4,66 +4,47 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/broadinstitute/sherlock/internal/environments"
-	"github.com/broadinstitute/sherlock/internal/services"
 	"github.com/broadinstitute/sherlock/internal/testutils"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/suite"
 	"gorm.io/gorm"
 )
 
-func Test_Integration_ListServiceInstances(t *testing.T) {
+type ServiceInstanceIntegrationTestSuite struct {
+	suite.Suite
+	app *testApplication
+}
+
+func TestServiceInstanceIntegrationSuite(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
-
-	t.Run("test ListAll controller method directlty", func(t *testing.T) {
-		app := initTestApp(t)
-		defer testutils.Cleanup(t, app.db)
-
-		expectedServiceInstances := app.seedServiceInstanceControllerTestData(t)
-
-		serviceInstances, err := app.serviceInstances.ListAll()
-		assert.NoError(t, err)
-
-		assert.ElementsMatch(t, expectedServiceInstances, serviceInstances)
-
-		// check serialzied responses
-		assert.ElementsMatch(t, app.serviceInstances.Serialize(expectedServiceInstances...), app.serviceInstances.Serialize(serviceInstances...))
-	})
+	suite.Run(t, new(ServiceInstanceIntegrationTestSuite))
 }
 
-func Test_ListServiceInstancesError(t *testing.T) {
-	targetError := errors.New("some internal error")
-	controller := setupMockController(t, []ServiceInstance{}, targetError, "listAll")
-	_, err := controller.ListAll()
-	assert.ErrorIs(t, err, targetError, "expected an internal error from DB layer, received some other error")
+func (suite *ServiceInstanceIntegrationTestSuite) SetupSuite() {
+	suite.app = initTestApp(suite.T())
+	// ensure the db is clean before running suite
+	testutils.Cleanup(suite.T(), suite.app.db)
 }
 
 type testApplication struct {
-	serviceInstances *ServiceInstanceController
-	db               *gorm.DB
-}
-
-func (app *testApplication) seedServiceInstanceControllerTestData(t *testing.T) []ServiceInstance {
-	// seed db with data needed to construct service instances
-	t.Helper()
-
-	_, err := services.Seed(app.db)
-	assert.NoError(t, err)
-	_, err = environments.Seed(app.db)
-	assert.NoError(t, err)
-	expectedServiceInstances, err := SeedServiceInstances(app.db)
-	assert.NoError(t, err)
-
-	return expectedServiceInstances
+	builds *ServiceInstanceController
+	db     *gorm.DB
 }
 
 func initTestApp(t *testing.T) *testApplication {
 	dbConn := testutils.ConnectAndMigrate(t)
 	return &testApplication{
-		serviceInstances: NewServiceInstanceController(dbConn),
-		db:               dbConn,
+		builds: NewServiceInstanceController(dbConn),
+		db:     dbConn,
 	}
+}
+
+func (suite *ServiceInstanceIntegrationTestSuite) TestListServiceInstancesError() {
+	targetError := errors.New("some internal error")
+	controller := setupMockController(suite.T(), []ServiceInstance{}, targetError, "listAll")
+	_, err := controller.ListAll()
+	suite.Assert().ErrorIs(err, targetError, "expected an internal error from DB layer, received some other error")
 }
 
 func setupMockController(

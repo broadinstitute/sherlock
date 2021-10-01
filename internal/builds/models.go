@@ -36,7 +36,7 @@ type Build struct {
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
 	ServiceID     int
-	Service       services.Service
+	Service       services.Service `gorm:"foreignKey:ServiceID;references:ID"`
 }
 
 type buildStore interface {

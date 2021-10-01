@@ -24,8 +24,8 @@ type dataStore struct {
 
 // Service is the data structure that models a service entity persisted to a database via gorm
 type Service struct {
-	ID        int
-	Name      string
+	ID        int    `gorm:"primaryKey" faker:"unique"`
+	Name      string `gorm:"not null;default:null"`
 	RepoURL   string
 	CreatedAt time.Time
 	UpdatedAt time.Time
