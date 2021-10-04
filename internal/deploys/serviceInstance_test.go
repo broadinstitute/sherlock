@@ -2,6 +2,7 @@ package deploys
 
 import (
 	"errors"
+	"fmt"
 	"testing"
 
 	"github.com/broadinstitute/sherlock/internal/environments"
@@ -124,9 +125,45 @@ func (suite *ServiceInstanceIntegrationTestSuite) TestCreateServiceInstance() {
 		_, err = suite.app.serviceInstances.CreateNew(newServiceInstanceReq)
 		suite.Require().NoError(err)
 
+		// trying to create the same service instance again should error
 		_, err = suite.app.serviceInstances.CreateNew(newServiceInstanceReq)
 		suite.Assert().Error(err)
+	})
+}
 
+func (suite *ServiceInstanceIntegrationTestSuite) TestGetByEnvironmentAndServiceName() {
+	suite.Run("returns an existing service instance", func() {
+		testutils.Cleanup(suite.T(), suite.app.db)
+
+		// prepoulate an environment
+		preExistingEnv, err := suite.app.serviceInstances.environments.CreateNew(suite.goodEnvironmentReq)
+		suite.Require().NoError(err)
+
+		// pre-populate an existing service
+		preExistingService, err := suite.app.serviceInstances.services.CreateNew(suite.goodServiceReq)
+		suite.Require().NoError(err)
+
+		// attempt to create a service instance from the above
+		newServiceInstanceReq := CreateServiceInstanceRequest{
+			EnvironmentName: preExistingEnv.Name,
+			ServiceName:     preExistingService.Name,
+		}
+
+		existingServiceInstance, err := suite.app.serviceInstances.CreateNew(newServiceInstanceReq)
+		suite.Require().NoError(err)
+
+		result, err := suite.app.serviceInstances.GetByEnvironmentAndServiceName(preExistingEnv.Name, preExistingService.Name)
+		suite.Require().NoError(err)
+
+		suite.Assert().Equal(existingServiceInstance.Environment.Name, result.Environment.Name)
+		fmt.Printf("%#v\n", result)
+	})
+
+	suite.Run("it returns error not found for non-existent record", func() {
+		testutils.Cleanup(suite.T(), suite.app.db)
+
+		_, err := suite.app.serviceInstances.GetByEnvironmentAndServiceName("non-existent-env", "non-existent-service")
+		suite.Assert().ErrorIs(err, ErrServiceInstanceNotFound)
 	})
 }
 

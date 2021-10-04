@@ -9,6 +9,12 @@ import (
 	"gorm.io/gorm"
 )
 
+var (
+	// ErrServiceNotFound is a wrapper around gorms failed lookup error specifically
+	// for failure to find a service instance
+	ErrServiceInstanceNotFound = gorm.ErrRecordNotFound
+)
+
 type dataStore struct {
 	*gorm.DB
 }
@@ -28,6 +34,7 @@ type ServiceInstance struct {
 type serviceInstanceStore interface {
 	listAll() ([]ServiceInstance, error)
 	createNew(environmentID int, serviceID int) (ServiceInstance, error)
+	getByEnvironmentAndServiceName(environmentName, serviceName string) (ServiceInstance, error)
 }
 
 func newServiceInstanceStore(dbConn *gorm.DB) dataStore {
@@ -51,6 +58,22 @@ func (db dataStore) createNew(environmentID, serviceID int) (ServiceInstance, er
 		First(&newServiceInstance, newServiceInstance.ID).Error
 
 	return newServiceInstance, err
+}
+
+func (db dataStore) getByEnvironmentAndServiceName(environmentName, serviceName string) (ServiceInstance, error) {
+	var serviceInstance ServiceInstance
+
+	queryStruct := ServiceInstance{
+		Environment: environments.Environment{
+			Name: environmentName,
+		},
+		Service: services.Service{
+			Name: serviceName,
+		},
+	}
+
+	err := db.Preload("Service").Preload("Environment").Where(&queryStruct).First(&serviceInstance).Error
+	return serviceInstance, err
 }
 
 func (db dataStore) listAll() ([]ServiceInstance, error) {
