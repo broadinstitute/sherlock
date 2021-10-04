@@ -6,8 +6,6 @@ package deploys
 // at a specific point in time which is needed to represent a deploy
 
 import (
-	"fmt"
-
 	"github.com/broadinstitute/sherlock/internal/environments"
 	"github.com/broadinstitute/sherlock/internal/services"
 	"gorm.io/gorm"
@@ -54,9 +52,9 @@ func (sic *ServiceInstanceController) CreateNew(newServiceInstance CreateService
 	}
 
 	// check if the service already exists
-	serviceID, doesExist := sic.services.DoesServiceExist(newServiceInstance.ServiceName)
-	if !doesExist {
-		return ServiceInstance{}, fmt.Errorf("service: %s does not exist", newServiceInstance.ServiceName)
+	serviceID, err := sic.services.FindOrCreate(newServiceInstance.ServiceName)
+	if err != nil {
+		return ServiceInstance{}, err
 	}
 
 	return sic.store.createNew(environmentID, serviceID)

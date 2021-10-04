@@ -87,7 +87,7 @@ func (suite *ServiceInstanceIntegrationTestSuite) TestCreateServiceInstance() {
 		suite.Assert().Equal(preExistingEnv.Name, result.Environment.Name)
 	})
 
-	suite.Run("creates an environment if it doesn't already exist", func() {
+	suite.Run("creates an environment if not exists", func() {
 		testutils.Cleanup(suite.T(), suite.app.db)
 
 		// pre-poulate an existing service
@@ -103,6 +103,24 @@ func (suite *ServiceInstanceIntegrationTestSuite) TestCreateServiceInstance() {
 		suite.Require().NoError(err)
 
 		suite.Assert().Equal(newServiceInstanceReq.EnvironmentName, result.Environment.Name)
+	})
+
+	suite.Run("creates a service if not exists", func() {
+		testutils.Cleanup(suite.T(), suite.app.db)
+
+		// pre-populate an existing environment
+		preExistingEnv, err := suite.app.serviceInstances.environments.CreateNew(suite.goodEnvironmentReq)
+		suite.Require().NoError(err)
+
+		newServiceInstanceReq := CreateServiceInstanceRequest{
+			EnvironmentName: preExistingEnv.Name,
+			ServiceName:     "does-not-exist",
+		}
+
+		result, err := suite.app.serviceInstances.CreateNew(newServiceInstanceReq)
+		suite.Require().NoError(err)
+
+		suite.Assert().Equal(newServiceInstanceReq.ServiceName, result.Service.Name)
 	})
 
 	suite.Run("cannot create the same service instance twice", func() {
