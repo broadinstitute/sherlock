@@ -8,6 +8,7 @@ package environments
 
 import (
 	"errors"
+	"fmt"
 
 	"gorm.io/gorm"
 )
@@ -53,6 +54,22 @@ func (environmentController *EnvironmentController) ListAll() ([]Environment, er
 func (environmentController *EnvironmentController) GetByName(name string) (Environment, error) {
 	return environmentController.store.getByName(name)
 
+}
+
+// FindOrCreate will attempt to look an environment by name and return its ID if successful
+// if unsuccessful it will create a new environment from the provider name and return that id
+func (environmentController *EnvironmentController) FindOrCreate(name string) (int, error) {
+	environmentID, exists := environmentController.DoesEnvironmentExist(name)
+
+	if !exists {
+		newEnvironment := CreateEnvironmentRequest{Name: name}
+		createdEnvironment, err := environmentController.CreateNew(newEnvironment)
+		if err != nil {
+			return 0, fmt.Errorf("error creating environment %s: %v", name, err)
+		}
+		environmentID = createdEnvironment.ID
+	}
+	return environmentID, nil
 }
 
 // Takes an GORM Environment object and returns a JSON for environment

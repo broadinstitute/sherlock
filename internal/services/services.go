@@ -8,6 +8,7 @@ package services
 
 import (
 	"errors"
+	"fmt"
 
 	"gorm.io/gorm"
 )
@@ -50,6 +51,23 @@ func (sc *ServiceController) ListAll() ([]Service, error) {
 // GetByName is the public API for looking up a service from the data store by name
 func (sc *ServiceController) GetByName(name string) (Service, error) {
 	return sc.store.getByName(name)
+}
+
+// FindOrCreate will attempt to look an environment by name and return its ID if successful
+// if unsuccessful it will create a new environment from the provider name and return that id
+func (sc *ServiceController) FindOrCreate(name string) (int, error) {
+	serviceID, exists := sc.DoesServiceExist(name)
+
+	if !exists {
+		// then make the new service
+		newService := CreateServiceRequest{Name: name}
+		createdService, err := sc.CreateNew(newService)
+		if err != nil {
+			return 0, fmt.Errorf("error creating service %s: %v", name, err)
+		}
+		serviceID = createdService.ID
+	}
+	return serviceID, nil
 }
 
 func (sc *ServiceController) serialize(services ...Service) []ServiceResponse {
