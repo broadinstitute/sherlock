@@ -56,6 +56,8 @@ func (environmentController *EnvironmentController) GetByName(name string) (Envi
 
 }
 
+// FindOrCreate will attempt to look an environment by name and return its ID if successful
+// if unsuccessful it will create a new environment from the provider name and return that id
 func (environmentController *EnvironmentController) FindOrCreate(name string) (int, error) {
 	environmentID, exists := environmentController.DoesEnvironmentExist(name)
 
@@ -65,7 +67,7 @@ func (environmentController *EnvironmentController) FindOrCreate(name string) (i
 		if err != nil {
 			return 0, fmt.Errorf("error creating environment %s: %v", name, err)
 		}
-		return createdEnvironment.ID, nil
+		environmentID = createdEnvironment.ID
 	}
 	return environmentID, nil
 }

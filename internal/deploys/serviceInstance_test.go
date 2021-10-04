@@ -85,6 +85,49 @@ func (suite *ServiceInstanceIntegrationTestSuite) TestCreateServiceInstance() {
 		suite.Assert().Equal(preExistingService.Name, result.Service.Name)
 		suite.Assert().Equal(preExistingEnv.Name, result.Environment.Name)
 	})
+
+	suite.Run("creates an environment if it doesn't already exist", func() {
+		testutils.Cleanup(suite.T(), suite.app.db)
+
+		// pre-poulate an existing service
+		preExistingService, err := suite.app.serviceInstances.services.CreateNew(suite.goodServiceReq)
+		suite.Require().NoError(err)
+
+		newServiceInstanceReq := CreateServiceInstanceRequest{
+			EnvironmentName: "does-not-exist",
+			ServiceName:     preExistingService.Name,
+		}
+
+		result, err := suite.app.serviceInstances.CreateNew(newServiceInstanceReq)
+		suite.Require().NoError(err)
+
+		suite.Assert().Equal(newServiceInstanceReq.EnvironmentName, result.Environment.Name)
+	})
+
+	suite.Run("cannot create the same service instance twice", func() {
+		testutils.Cleanup(suite.T(), suite.app.db)
+
+		// prepoulate an environment
+		preExistingEnv, err := suite.app.serviceInstances.environments.CreateNew(suite.goodEnvironmentReq)
+		suite.Require().NoError(err)
+
+		// pre-populate an existing service
+		preExistingService, err := suite.app.serviceInstances.services.CreateNew(suite.goodServiceReq)
+		suite.Require().NoError(err)
+
+		// attempt to create a service instance from the above
+		newServiceInstanceReq := CreateServiceInstanceRequest{
+			EnvironmentName: preExistingEnv.Name,
+			ServiceName:     preExistingService.Name,
+		}
+
+		_, err = suite.app.serviceInstances.CreateNew(newServiceInstanceReq)
+		suite.Require().NoError(err)
+
+		_, err = suite.app.serviceInstances.CreateNew(newServiceInstanceReq)
+		suite.Assert().Error(err)
+
+	})
 }
 
 func setupMockController(
