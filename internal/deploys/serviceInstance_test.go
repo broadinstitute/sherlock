@@ -83,6 +83,7 @@ func (suite *ServiceInstanceIntegrationTestSuite) TestCreateServiceInstance() {
 		suite.Require().NoError(err)
 
 		suite.Assert().Equal(preExistingService.Name, result.Service.Name)
+		suite.Assert().Equal(preExistingEnv.Name, result.Environment.Name)
 	})
 }
 

@@ -46,9 +46,9 @@ func (sic *ServiceInstanceController) ListAll() ([]ServiceInstance, error) {
 
 func (sic *ServiceInstanceController) CreateNew(newServiceInstance CreateServiceInstanceRequest) (ServiceInstance, error) {
 	// check if the environment already exists
-	environmentID, doesExist := sic.environments.DoesEnvironmentExist(newServiceInstance.EnvironmentName)
-	if !doesExist {
-		return ServiceInstance{}, fmt.Errorf("environment: %s does not exist", newServiceInstance.EnvironmentName)
+	environmentID, err := sic.environments.FindOrCreate(newServiceInstance.EnvironmentName)
+	if err != nil {
+		return ServiceInstance{}, err
 	}
 
 	// check if the service already exists
