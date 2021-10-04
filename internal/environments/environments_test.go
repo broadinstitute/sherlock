@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/broadinstitute/sherlock/internal/testutils"
+	"github.com/bxcodec/faker/v3"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"gorm.io/gorm"
@@ -282,5 +283,29 @@ func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentSerialize() {
 
 		assert.Equal(suite.T(), 1, len(environmentResponses))
 		assert.IsType(suite.T(), EnvironmentResponse{}, environmentResponses[0])
+	})
+}
+
+func (suite *EnvironmentTestSuite) TestFindOrCreate() {
+	suite.Run("retrieves an environment that already exists", func() {
+		testutils.Cleanup(suite.T(), suite.testApp.db)
+
+		existingEnvironment, err := suite.testApp.Environments.CreateNew(suite.goodEnvironmentRequest)
+		suite.Require().NoError(err)
+
+		foundEnvironmentID, err := suite.testApp.Environments.FindOrCreate(suite.goodEnvironmentRequest.Name)
+		suite.Require().NoError(err)
+
+		suite.Assert().Equal(existingEnvironment.ID, foundEnvironmentID)
+	})
+
+	suite.Run("creates a new environment that doesn't exist already", func() {
+		testutils.Cleanup(suite.T(), suite.testApp.db)
+
+		newEnvironmentID, err := suite.testApp.Environments.FindOrCreate(faker.Word())
+		suite.Assert().NoError(err)
+
+		// assert the env was created by verifying it has a non-zero id
+		suite.Assert().NotEqual(0, newEnvironmentID)
 	})
 }

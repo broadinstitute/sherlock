@@ -63,6 +63,7 @@ func (db dataStore) createNew(environmentID, serviceID int) (ServiceInstance, er
 func (db dataStore) getByEnvironmentAndServiceName(environmentName, serviceName string) (ServiceInstance, error) {
 	var serviceInstance ServiceInstance
 
+	// using gorms struct query features to set the WHERE clause
 	queryStruct := ServiceInstance{
 		Environment: environments.Environment{
 			Name: environmentName,

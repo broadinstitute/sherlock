@@ -139,6 +139,34 @@ func (suite *ServicesIntegrationTestSuite) TestGetByName() {
 	})
 }
 
+func (suite *ServicesIntegrationTestSuite) TestFindOrCreate() {
+	suite.Run("retrieves an existing service", func() {
+		testutils.Cleanup(suite.T(), suite.app.db)
+
+		newService := CreateServiceRequest{}
+
+		// populate the create request with dummy data
+		err := faker.FakeData(&newService)
+		suite.Require().NoError(err)
+
+		existingService, err := suite.app.services.CreateNew(newService)
+		suite.Require().NoError(err)
+
+		foundServiceID, err := suite.app.services.FindOrCreate(newService.Name)
+		suite.Assert().NoError(err)
+		suite.Assert().Equal(existingService.ID, foundServiceID)
+	})
+
+	suite.Run("creates service if not exists", func() {
+		testutils.Cleanup(suite.T(), suite.app.db)
+
+		newServiceID, err := suite.app.services.FindOrCreate(faker.Word())
+		suite.Assert().NoError(err)
+		// assert the service was actually created by verifying its ID is non-zero
+		suite.Assert().NotEqual(0, newServiceID)
+	})
+}
+
 func TestServicesIntegrationSuite(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
