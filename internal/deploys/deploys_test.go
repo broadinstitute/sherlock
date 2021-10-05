@@ -149,6 +149,7 @@ func (suite *DeployIntegrationTestSuite) TestGetDeploysByServiceAndEnvironment()
 		suite.Require().NoError(err)
 
 		result, err := suite.app.deploys.GetDeploysByEnvironmentAndService(newDeployReq.EnvironmentName, newDeployReq.ServiceName)
+		suite.Assert().NoError(err)
 
 		// expect to get one deploy back
 		suite.Assert().Equal(1, len(result))
