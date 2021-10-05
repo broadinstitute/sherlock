@@ -109,4 +109,19 @@ func (suite *DeployIntegrationTestSuite) TestCreateDeploy() {
 		suite.Assert().Equal(newDeployReq.EnvironmentName, result.ServiceInstance.Environment.Name)
 		suite.Assert().Equal(newDeployReq.ServiceName, result.ServiceInstance.Service.Name)
 	})
+
+	// there should never be a situation where sherlock tries to register a deploy
+	// of a build that doesn't already exist, so this should error
+	suite.Run("fails if build doesn't exist", func() {
+		testutils.Cleanup(suite.T(), suite.app.db)
+
+		newDeployReq := CreateDeployRequest{
+			EnvironmentName:    faker.Word(),
+			ServiceName:        faker.Word(),
+			BuildVersionString: faker.URL(),
+		}
+
+		_, err := suite.app.deploys.CreateNew(newDeployReq)
+		suite.Assert().ErrorIs(err, builds.ErrBuildNotFound)
+	})
 }

@@ -8,9 +8,9 @@ import (
 )
 
 var (
-	// ErrBuildNotFound is returned by the create deploy methhod when trying to create
-	// a deploy of a build that doesn't already exist
-	ErrBuildNotFound = errors.New("unable to create deploy, build does not exist")
+	// ErrServiceMismatch is an error returned when creating a deploy where the build and service instance
+	// reference different service entities.
+	ErrServiceMismatch = errors.New("service referenced by build and service instance do not match")
 )
 
 // DeployController is a type used to contain all the top level functionality for managing
