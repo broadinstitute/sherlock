@@ -53,7 +53,7 @@ type CreateEnvironmentRequest struct {
 
 // creates a environment entity object to be persisted with the database from a
 // request to create a environment
-func (createEnvironmentRequest CreateEnvironmentRequest) environmentReq() Environment {
+func (createEnvironmentRequest CreateEnvironmentRequest) EnvironmentReq() Environment {
 	return Environment{
 		Name: createEnvironmentRequest.Name,
 	}
@@ -77,7 +77,7 @@ func (db dataStore) listAll() ([]Environment, error) {
 
 // Saves an Environment object to the db, returns the object if successful, nil otherwise
 func (db dataStore) createNew(newEnvironmentReq CreateEnvironmentRequest) (Environment, error) {
-	newEnvironment := newEnvironmentReq.environmentReq()
+	newEnvironment := newEnvironmentReq.EnvironmentReq()
 
 	if err := db.Create(&newEnvironment).Error; err != nil {
 		return newEnvironment, fmt.Errorf("error saving to database: %v", err)

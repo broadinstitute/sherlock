@@ -14,7 +14,7 @@ func (m *MockEnvironmentStore) listAll() ([]Environment, error) {
 }
 
 func (m *MockEnvironmentStore) createNew(newEnvironment CreateEnvironmentRequest) (Environment, error) {
-	retEnv := newEnvironment.environmentReq()
+	retEnv := newEnvironment.EnvironmentReq()
 	retVal := m.Called(newEnvironment)
 	return retEnv, retVal.Error(1)
 }

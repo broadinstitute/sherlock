@@ -116,15 +116,16 @@ func (suite *ClusterTestSuite) TestIntegrationCreateClusters() {
 		assert.Equal(suite.T(), expectedError, err)
 	})
 
-	suite.Run("screate a cluster with a new embedded environment", func() {
+	suite.Run("create a cluster with a new embedded environment", func() {
 		testutils.Cleanup(suite.T(), suite.testApp.db)
 
-		suite.goodClusterRequest.clusterReq().Environments = []environments.Environment{suite.goodEnvironmentRequest}
+		suite.goodClusterRequest.Environments = []environments.Environment{suite.goodEnvironmentRequest.EnvironmentReq()}
 
 		newCluster, err := suite.testApp.Clusters.CreateNew(suite.goodClusterRequest)
 		assert.NoError(suite.T(), err)
 
 		assert.Equal(suite.T(), suite.goodClusterRequest.Name, newCluster.Name)
+		assert.Equal(suite.T(), suite.goodClusterRequest.Environments[0].Name, suite.goodEnvironmentRequest.Name)
 	})
 }
 
@@ -144,7 +145,7 @@ func (suite *ClusterTestSuite) TestAddByEnvironmentID() {
 
 		assert.Equal(suite.T(), newCluster.ID, *updatedEnvironment.ClusterID)
 		require.NotEmpty(suite.T(), updatedCluster.Environments)
-		assert.Equal(suite.T(), updatedEnvironment.ID, updatedCluster.Environments[0].ID)
+		assert.Equal(suite.T(), updatedEnvironment.ID, (updatedCluster.Environments)[0].ID)
 	})
 
 	suite.Run("reassigns environment to different cluster", func() {
@@ -164,7 +165,7 @@ func (suite *ClusterTestSuite) TestAddByEnvironmentID() {
 		updatedCluster, _ := suite.testApp.Clusters.AddEnvironmentByID(anotherCluster, newEnvironment.ID)
 		updatedEnvironment, _ = suite.testApp.Environments.GetByName(newEnvironment.Name)
 		assert.Equal(suite.T(), anotherCluster.ID, *updatedEnvironment.ClusterID)
-		assert.Equal(suite.T(), updatedEnvironment.ID, updatedCluster.Environments[0].ID)
+		assert.Equal(suite.T(), updatedEnvironment.ID, (updatedCluster.Environments)[0].ID)
 	})
 }
 

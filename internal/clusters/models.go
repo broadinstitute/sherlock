@@ -47,14 +47,16 @@ func newClusterStore(dbconn *gorm.DB) dataStore {
 
 // CreateClusterRequest struct defines the data required to create a new cluster in db
 type CreateClusterRequest struct {
-	Name string `json:"name" binding:"required"`
+	Name         string `json:"name" binding:"required"`
+	Environments []environments.Environment
 }
 
 // creates a cluster entity object to be persisted with the database from a
-// request to create a cluster
-func (createClusterRequest CreateClusterRequest) clusterReq() Cluster {
+// request to create a cluster.
+func (createClusterRequest CreateClusterRequest) ClusterReq() Cluster {
 	return Cluster{
-		Name: createClusterRequest.Name,
+		Name:         createClusterRequest.Name,
+		Environments: createClusterRequest.Environments,
 	}
 }
 
@@ -76,7 +78,7 @@ func (db dataStore) listAll() ([]Cluster, error) {
 
 // Saves an Cluster object to the db, returns the object if successful, nil otherwise
 func (db dataStore) createNew(newClusterReq CreateClusterRequest) (Cluster, error) {
-	newCluster := newClusterReq.clusterReq()
+	newCluster := newClusterReq.ClusterReq()
 
 	if err := db.Create(&newCluster).Error; err != nil {
 		return newCluster, fmt.Errorf("error saving to database: %v", err)
@@ -107,11 +109,9 @@ func (db dataStore) getByName(name string) (Cluster, error) {
 
 // Take an existing environment and add it to the cluster.
 func (db dataStore) addEnvironmentByID(cluster Cluster, environmentID int) (Cluster, error) {
-	//Environments := environments.NewController(db)
-	//addEnvironment := Environments.GetByID(environmentID)
 	environment := environments.Environment{}
-	//environment = db.Find(&environment, environmentID)
 
+	//get the existing environment to add
 	if err := db.Where(&environments.Environment{ID: environmentID}).First(&environment).Error; err != nil {
 		return cluster, err
 	}
