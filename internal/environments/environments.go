@@ -53,7 +53,11 @@ func (environmentController *EnvironmentController) ListAll() ([]Environment, er
 // GetByName is the public API for looking up a environment from the data store by name
 func (environmentController *EnvironmentController) GetByName(name string) (Environment, error) {
 	return environmentController.store.getByName(name)
+}
 
+// GetByName is the public API for looking up a environment from the data store by name
+func (environmentController *EnvironmentController) GetByID(ID int) (Environment, error) {
+	return environmentController.store.getByID(ID)
 }
 
 // FindOrCreate will attempt to look an environment by name and return its ID if successful

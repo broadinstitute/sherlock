@@ -28,7 +28,6 @@ type Cluster struct {
 	GoogleProject string `gorm:"unique"`
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
-	EnvironmentID int
 	Environments  []environments.Environment
 }
 
@@ -38,6 +37,7 @@ type clusterStore interface {
 	createNew(CreateClusterRequest) (Cluster, error)
 	getByID(int) (Cluster, error)
 	getByName(string) (Cluster, error)
+	addEnvironmentByID(Cluster, int) (Cluster, error)
 }
 
 // creates a db connection via gorm
@@ -99,8 +99,26 @@ func (db dataStore) getByID(id int) (Cluster, error) {
 func (db dataStore) getByName(name string) (Cluster, error) {
 	cluster := Cluster{}
 
-	if err := db.Where(&Cluster{Name: name}).First(&cluster).Error; err != nil {
+	if err := db.Preload("Environments").Where(&Cluster{Name: name}).First(&cluster).Error; err != nil {
+		return Cluster{}, err
+	}
+	return cluster, nil
+}
+
+// Take an existing environment and add it to the cluster.
+func (db dataStore) addEnvironmentByID(cluster Cluster, environmentID int) (Cluster, error) {
+	//Environments := environments.NewController(db)
+	//addEnvironment := Environments.GetByID(environmentID)
+	environment := environments.Environment{}
+	//environment = db.Find(&environment, environmentID)
+
+	if err := db.Where(&environments.Environment{ID: environmentID}).First(&environment).Error; err != nil {
 		return cluster, err
 	}
+
+	if err := db.Model(&cluster).Association("Environments").Append(&environment); err != nil {
+		return cluster, err
+	}
+
 	return cluster, nil
 }

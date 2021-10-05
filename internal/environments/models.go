@@ -30,6 +30,7 @@ type Environment struct {
 	DestroyedAt time.Time
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
+	ClusterID   *int `gorm:"default:null"`
 }
 
 // environmentStore is the interface defining allowed db actions for Environment

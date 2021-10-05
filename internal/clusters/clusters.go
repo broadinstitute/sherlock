@@ -54,3 +54,8 @@ func (clusterController *ClusterController) GetByName(name string) (Cluster, err
 	return clusterController.store.getByName(name)
 
 }
+
+// AddEnvironmentByID takes a ClusterObject and associates an existing environment to it.
+func (clusterController *ClusterController) AddEnvironmentByID(currentCluster Cluster, environmentID int) (Cluster, error) {
+	return clusterController.store.addEnvironmentByID(currentCluster, environmentID)
+}
