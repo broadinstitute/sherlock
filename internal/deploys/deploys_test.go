@@ -59,7 +59,7 @@ func (suite *DeployIntegrationTestSuite) TestCreateDeploy() {
 			EnvironmentName: faker.Word(),
 			ServiceName:     existingBuildReq.ServiceName,
 		}
-		existingServiceInstance, err := suite.app.deploys.serviceInsances.CreateNew(existingServiceInstanceReq)
+		existingServiceInstance, err := suite.app.deploys.serviceInstances.CreateNew(existingServiceInstanceReq)
 		suite.Require().NoError(err)
 
 		// actually create the deploy
@@ -123,5 +123,71 @@ func (suite *DeployIntegrationTestSuite) TestCreateDeploy() {
 
 		_, err := suite.app.deploys.CreateNew(newDeployReq)
 		suite.Assert().ErrorIs(err, builds.ErrBuildNotFound)
+	})
+}
+
+func (suite *DeployIntegrationTestSuite) TestGetDeploysByServiceAndEnvironment() {
+	suite.Run("returns a single deploy", func() {
+		testutils.Cleanup(suite.T(), suite.app.db)
+
+		// populate a build to deploy
+		existingBuildReq := builds.CreateBuildRequest{
+			VersionString: faker.URL(),
+			CommitSha:     faker.UUIDDigit(),
+			ServiceName:   faker.Word(),
+		}
+		existingBuild, err := suite.app.deploys.builds.CreateNew(existingBuildReq)
+		suite.Require().NoError(err)
+
+		newDeployReq := CreateDeployRequest{
+			EnvironmentName:    faker.Word(),
+			ServiceName:        existingBuildReq.ServiceName,
+			BuildVersionString: existingBuild.VersionString,
+		}
+
+		_, err = suite.app.deploys.CreateNew(newDeployReq)
+		suite.Require().NoError(err)
+
+		result, err := suite.app.deploys.GetDeploysByEnvironmentAndService(newDeployReq.EnvironmentName, newDeployReq.ServiceName)
+
+		// expect to get one deploy back
+		suite.Assert().Equal(1, len(result))
+	})
+
+	suite.Run("returns multiple deploys", func() {
+		testutils.Cleanup(suite.T(), suite.app.db)
+
+		// populate multiple deploys to search for
+		serviceName := faker.Word()
+		environmentName := faker.Word()
+		for i := 0; i < 5; i++ {
+
+			existingBuildReq := builds.CreateBuildRequest{
+				VersionString: faker.URL(),
+				CommitSha:     faker.UUIDDigit(),
+				ServiceName:   serviceName,
+			}
+			existingBuild, err := suite.app.deploys.builds.CreateNew(existingBuildReq)
+			suite.Require().NoError(err)
+
+			newDeployReq := CreateDeployRequest{
+				EnvironmentName:    environmentName,
+				ServiceName:        existingBuildReq.ServiceName,
+				BuildVersionString: existingBuild.VersionString,
+			}
+
+			_, err = suite.app.deploys.CreateNew(newDeployReq)
+			suite.Require().NoError(err)
+		}
+
+		result, err := suite.app.deploys.GetDeploysByEnvironmentAndService(serviceName, environmentName)
+		suite.Assert().NoError(err)
+		suite.Assert().Equal(5, len(result))
+
+		// make sure all the results are from the same service instance
+		for _, deploy := range result {
+			suite.Assert().Equal(serviceName, deploy.ServiceInstance.Service.Name)
+			suite.Assert().Equal(environmentName, deploy.ServiceInstance.Environment.Name)
+		}
 	})
 }

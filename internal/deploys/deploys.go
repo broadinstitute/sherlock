@@ -16,18 +16,18 @@ var (
 // DeployController is a type used to contain all the top level functionality for managing
 // Deploy entities.
 type DeployController struct {
-	store           deployStore
-	serviceInsances *ServiceInstanceController
-	builds          *builds.BuildController
+	store            deployStore
+	serviceInstances *ServiceInstanceController
+	builds           *builds.BuildController
 }
 
 // NewDeployController accepts a gorm db connection and returns
 // a controller struct used for the management of deploy entities
 func NewDeployController(dbConn *gorm.DB) *DeployController {
 	return &DeployController{
-		store:           newDeployStore(dbConn),
-		serviceInsances: NewServiceInstanceController(dbConn),
-		builds:          builds.NewController(dbConn),
+		store:            newDeployStore(dbConn),
+		serviceInstances: NewServiceInstanceController(dbConn),
+		builds:           builds.NewController(dbConn),
 	}
 }
 
@@ -43,7 +43,7 @@ type CreateDeployRequest struct {
 // version string
 func (dc *DeployController) CreateNew(newDeployRequest CreateDeployRequest) (Deploy, error) {
 	// look up the service instance associated with this deploy
-	serviceInstanceID, err := dc.serviceInsances.FindOrCreate(newDeployRequest.EnvironmentName, newDeployRequest.ServiceName)
+	serviceInstanceID, err := dc.serviceInstances.FindOrCreate(newDeployRequest.EnvironmentName, newDeployRequest.ServiceName)
 	if err != nil {
 		return Deploy{}, err
 	}
@@ -56,4 +56,15 @@ func (dc *DeployController) CreateNew(newDeployRequest CreateDeployRequest) (Dep
 	}
 
 	return dc.store.createDeploy(build.ID, serviceInstanceID)
+}
+
+// GetDeploysByEnvironmentAndService will retrieve the deploy history for a given service instance with the associated names
+func (dc *DeployController) GetDeploysByEnvironmentAndService(environmentName, serviceName string) ([]Deploy, error) {
+	// look up the service instance for the provided service and environment names
+	serviceInstance, err := dc.serviceInstances.GetByEnvironmentAndServiceName(environmentName, serviceName)
+	if err != nil {
+		return []Deploy{}, err
+	}
+
+	return dc.store.getDeploysByServiceInstance(serviceInstance.ID)
 }

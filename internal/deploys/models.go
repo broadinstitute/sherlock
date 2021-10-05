@@ -103,6 +103,7 @@ type Deploy struct {
 
 type deployStore interface {
 	createDeploy(buildID, serviceInstanceID int) (Deploy, error)
+	getDeploysByServiceInstance(serviceInstanceID int) ([]Deploy, error)
 }
 
 func newDeployStore(dbConn *gorm.DB) dataStore {
@@ -129,4 +130,19 @@ func (db dataStore) createDeploy(buildID, serviceInstanceID int) (Deploy, error)
 		First(&newDeploy, newDeploy.ID).Error
 
 	return newDeploy, err
+}
+
+func (db dataStore) getDeploysByServiceInstance(serviceInstanceID int) ([]Deploy, error) {
+	var deploys []Deploy
+
+	err := db.Preload("ServiceInstance").
+		Preload("ServiceInstance.Service").
+		Preload("ServiceInstance.Environment").
+		Preload("Build").
+		Preload("Build.Service").
+		Where(&Deploy{ServiceInstanceID: serviceInstanceID}).
+		Find(&deploys).
+		Error
+
+	return deploys, err
 }
