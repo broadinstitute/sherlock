@@ -22,6 +22,7 @@ type EnvironmentTestSuite struct {
 	goodEnvironmentRequest    CreateEnvironmentRequest
 	anotherEnvironmentRequest CreateEnvironmentRequest
 	badEnvironmentRequest     CreateEnvironmentRequest
+	notFoundID                int
 }
 
 // Test entry point
@@ -43,6 +44,7 @@ func (suite *EnvironmentTestSuite) SetupTest() {
 		Name: faker.UUIDHyphenated(),
 	}
 	suite.badEnvironmentRequest = CreateEnvironmentRequest{}
+	suite.notFoundID = 1234567890 //unsure of a way to guarantee not-found-ness
 }
 
 func (suite *EnvironmentTestSuite) TearDownTest() {
@@ -185,6 +187,33 @@ func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentGetByName() {
 		foundEnvironment, err := suite.testApp.Environments.GetByName("this-doesnt-exist")
 
 		assert.Equal(suite.T(), foundEnvironment.Name, "")
+		assert.Equal(suite.T(), errors.New("record not found"), err)
+	})
+}
+
+func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentGetByID() {
+	suite.Run("GetByID gets an environment by name", func() {
+		testutils.Cleanup(suite.T(), suite.testApp.db)
+
+		newEnvironment, err := suite.testApp.Environments.CreateNew(suite.goodEnvironmentRequest)
+		assert.NoError(suite.T(), err)
+
+		foundEnvironment, err := suite.testApp.Environments.GetByID(newEnvironment.ID)
+
+		assert.Equal(suite.T(), foundEnvironment.ID, newEnvironment.ID)
+
+		assert.NoError(suite.T(), err)
+	})
+
+	suite.Run("GetByID returns error if not found", func() {
+		testutils.Cleanup(suite.T(), suite.testApp.db)
+
+		_, err := suite.testApp.Environments.CreateNew(suite.goodEnvironmentRequest)
+		assert.NoError(suite.T(), err)
+
+		foundEnvironment, err := suite.testApp.Environments.GetByID(suite.notFoundID)
+
+		assert.Equal(suite.T(), foundEnvironment.ID, 0)
 		assert.Equal(suite.T(), errors.New("record not found"), err)
 	})
 }

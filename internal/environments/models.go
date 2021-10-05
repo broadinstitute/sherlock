@@ -16,21 +16,22 @@ import (
 var ErrEnvironmentNotFound = gorm.ErrRecordNotFound
 
 // dataStore is a wrapper around a gorm postgres client
-// which can be used to implement the environmentRepository interface
+// which can be used to implement the environmentStore interface
 type dataStore struct {
 	*gorm.DB
 }
 
 // Environment is the data structure that models a persisted to a database via gorm
 type Environment struct {
-	ID          int    `gorm:"primaryKey"`
-	Name        string `gorm:"not null;default:null"`
-	IsPermanent bool
-	Requester   string
-	DestroyedAt time.Time
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
-	ClusterID   *int `gorm:"default:null"`
+	ID               int    `gorm:"primaryKey"`
+	Name             string `gorm:"not null;default:null"`
+	IsPermanent      bool
+	Requester        string
+	DestroyedAt      time.Time
+	CreatedAt        time.Time
+	UpdatedAt        time.Time
+	ClusterID        *int `gorm:"default:null"`
+	AllocationPoolID *int `gorm:"default:null"`
 }
 
 // environmentStore is the interface defining allowed db actions for Environment
@@ -90,7 +91,7 @@ func (db dataStore) createNew(newEnvironmentReq CreateEnvironmentRequest) (Envir
 func (db dataStore) getByID(id int) (Environment, error) {
 	environment := Environment{}
 
-	if err := db.First(environment, id).Error; err != nil {
+	if err := db.First(&environment, id).Error; err != nil {
 		return environment, err
 	}
 	return environment, nil

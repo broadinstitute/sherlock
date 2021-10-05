@@ -55,6 +55,12 @@ func (clusterController *ClusterController) GetByName(name string) (Cluster, err
 
 }
 
+// GetByID is the public API for looking up a cluster from the data store by name
+func (clusterController *ClusterController) GetByID(id int) (Cluster, error) {
+	return clusterController.store.getByID(id)
+
+}
+
 // AddEnvironmentByID takes a ClusterObject and associates an existing environment to it.
 func (clusterController *ClusterController) AddEnvironmentByID(currentCluster Cluster, environmentID int) (Cluster, error) {
 	return clusterController.store.addEnvironmentByID(currentCluster, environmentID)

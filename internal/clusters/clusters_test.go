@@ -24,6 +24,7 @@ type ClusterTestSuite struct {
 	goodEnvironmentRequest environments.CreateEnvironmentRequest
 	anotherClusterRequest  CreateClusterRequest
 	badClusterRequest      CreateClusterRequest
+	notFoundID             int
 }
 
 // Test entry point
@@ -48,6 +49,7 @@ func (suite *ClusterTestSuite) SetupTest() {
 		Name: "terra-microprod",
 	}
 	suite.badClusterRequest = CreateClusterRequest{}
+	suite.notFoundID = 1234567890 //unsure of a way to guarantee not-found-ness
 }
 
 //
@@ -192,6 +194,33 @@ func (suite *ClusterTestSuite) TestIntegrationClusterGetByName() {
 		foundCluster, err := suite.testApp.Clusters.GetByName("this-doesnt-exist")
 
 		assert.Equal(suite.T(), foundCluster.Name, "")
+		assert.Equal(suite.T(), errors.New("record not found"), err)
+	})
+}
+
+func (suite *ClusterTestSuite) TestIntegrationClusterGetByID() {
+	suite.Run("GetByID gets an allocationPool by ID", func() {
+		testutils.Cleanup(suite.T(), suite.testApp.db)
+
+		newCluster, err := suite.testApp.Clusters.CreateNew(suite.goodClusterRequest)
+		assert.NoError(suite.T(), err)
+
+		foundCluster, err := suite.testApp.Clusters.GetByID(newCluster.ID)
+
+		assert.Equal(suite.T(), foundCluster.ID, newCluster.ID)
+
+		assert.NoError(suite.T(), err)
+	})
+
+	suite.Run("GetByName returns error if not found", func() {
+		testutils.Cleanup(suite.T(), suite.testApp.db)
+
+		_, err := suite.testApp.Clusters.CreateNew(suite.goodClusterRequest)
+		assert.NoError(suite.T(), err)
+
+		foundCluster, err := suite.testApp.Clusters.GetByID(suite.notFoundID)
+
+		assert.Equal(suite.T(), foundCluster.ID, 0)
 		assert.Equal(suite.T(), errors.New("record not found"), err)
 	})
 }

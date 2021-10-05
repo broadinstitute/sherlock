@@ -91,7 +91,7 @@ func (db dataStore) createNew(newClusterReq CreateClusterRequest) (Cluster, erro
 func (db dataStore) getByID(id int) (Cluster, error) {
 	cluster := Cluster{}
 
-	if err := db.First(cluster, id).Error; err != nil {
+	if err := db.First(&cluster, id).Error; err != nil {
 		return cluster, err
 	}
 	return cluster, nil

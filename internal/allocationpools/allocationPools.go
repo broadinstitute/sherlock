@@ -52,5 +52,14 @@ func (allocationPoolController *AllocationPoolController) ListAll() ([]Allocatio
 // GetByName is the public API for looking up a allocationPool from the data store by name
 func (allocationPoolController *AllocationPoolController) GetByName(name string) (AllocationPool, error) {
 	return allocationPoolController.store.getByName(name)
+}
 
+// GetByID is the public API for looking up a allocationPool from the data store by name
+func (allocationPoolController *AllocationPoolController) GetByID(id int) (AllocationPool, error) {
+	return allocationPoolController.store.getByID(id)
+}
+
+// AddEnvironmentByID takes a AllocationPoolObject and associates an existing environment to it.
+func (allocationPoolController *AllocationPoolController) AddEnvironmentByID(currentAllocationPool AllocationPool, environmentID int) (AllocationPool, error) {
+	return allocationPoolController.store.addEnvironmentByID(currentAllocationPool, environmentID)
 }
