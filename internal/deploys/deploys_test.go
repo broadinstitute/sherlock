@@ -79,4 +79,34 @@ func (suite *DeployIntegrationTestSuite) TestCreateDeploy() {
 		suite.Assert().Equal(existingBuildReq.VersionString, result.Build.VersionString)
 		suite.Assert().Equal(existingServiceInstanceReq.EnvironmentName, result.ServiceInstance.Environment.Name)
 	})
+
+	suite.Run("creates service instance if not exists", func() {
+		testutils.Cleanup(suite.T(), suite.app.db)
+
+		// populate a build to deploy
+		existingBuildReq := builds.CreateBuildRequest{
+			VersionString: faker.URL(),
+			CommitSha:     faker.UUIDDigit(),
+			ServiceName:   faker.Word(),
+		}
+		existingBuild, err := suite.app.deploys.builds.CreateNew(existingBuildReq)
+		suite.Require().NoError(err)
+
+		newDeployReq := CreateDeployRequest{
+			EnvironmentName:    faker.Word(),
+			ServiceName:        existingBuildReq.ServiceName,
+			BuildVersionString: existingBuild.VersionString,
+		}
+
+		result, err := suite.app.deploys.CreateNew(newDeployReq)
+		suite.Assert().NoError(err)
+
+		// assert the deploy contains expected info from the pre-existing service instance and build
+		suite.Assert().Equal(existingBuildReq.ServiceName, result.Build.Service.Name)
+		// make sure both build and service instance reference the same service
+		suite.Assert().Equal(result.Build.Service.ID, result.ServiceInstance.Service.ID)
+		suite.Assert().Equal(existingBuildReq.VersionString, result.Build.VersionString)
+		suite.Assert().Equal(newDeployReq.EnvironmentName, result.ServiceInstance.Environment.Name)
+		suite.Assert().Equal(newDeployReq.ServiceName, result.ServiceInstance.Service.Name)
+	})
 }

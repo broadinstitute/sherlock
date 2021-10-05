@@ -43,8 +43,7 @@ type CreateDeployRequest struct {
 // version string
 func (dc *DeployController) CreateNew(newDeployRequest CreateDeployRequest) (Deploy, error) {
 	// look up the service instance associated with this deploy
-	serviceInstance, err := dc.serviceInsances.GetByEnvironmentAndServiceName(newDeployRequest.EnvironmentName, newDeployRequest.ServiceName)
-	// for now just error if it doesn't exist
+	serviceInstanceID, err := dc.serviceInsances.FindOrCreate(newDeployRequest.EnvironmentName, newDeployRequest.ServiceName)
 	if err != nil {
 		return Deploy{}, err
 	}
@@ -56,5 +55,5 @@ func (dc *DeployController) CreateNew(newDeployRequest CreateDeployRequest) (Dep
 		return Deploy{}, err
 	}
 
-	return dc.store.createDeploy(build.ID, serviceInstance.ID)
+	return dc.store.createDeploy(build.ID, serviceInstanceID)
 }
