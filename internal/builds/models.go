@@ -43,6 +43,7 @@ type buildStore interface {
 	listAll() ([]Build, error)
 	createNew(Build) (Build, error)
 	getByID(int) (Build, error)
+	getByVersionString(string) (Build, error)
 }
 
 func newBuildStore(dbConn *gorm.DB) dataStore {
@@ -81,5 +82,15 @@ func (db dataStore) getByID(id int) (Build, error) {
 	if err := db.Preload("Service").First(&build, id).Error; err != nil {
 		return Build{}, err
 	}
+	return build, nil
+}
+
+func (db dataStore) getByVersionString(versionString string) (Build, error) {
+	build := Build{}
+
+	if err := db.Preload("Service").Where(&Build{VersionString: versionString}).First(&build).Error; err != nil {
+		return Build{}, err
+	}
+
 	return build, nil
 }

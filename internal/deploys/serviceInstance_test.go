@@ -2,7 +2,6 @@ package deploys
 
 import (
 	"errors"
-	"fmt"
 	"testing"
 
 	"github.com/broadinstitute/sherlock/internal/environments"
@@ -174,7 +173,6 @@ func (suite *ServiceInstanceIntegrationTestSuite) TestGetByEnvironmentAndService
 		suite.Require().NoError(err)
 
 		suite.Assert().Equal(existingServiceInstance.Environment.Name, result.Environment.Name)
-		fmt.Printf("%#v\n", result)
 	})
 
 	suite.Run("it returns error not found for non-existent record", func() {

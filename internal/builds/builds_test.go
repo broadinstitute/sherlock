@@ -96,6 +96,29 @@ func (suite *BuildsIntegrationTestSuite) TestGetByID() {
 	})
 }
 
+func (suite *BuildsIntegrationTestSuite) TestGetByVersionString() {
+	suite.Run("successful looks up existing build by version string", func() {
+		testutils.Cleanup(suite.T(), suite.app.db)
+
+		// create a build instance to look up
+		existingBuild, err := suite.app.builds.CreateNew(suite.goodCreateBuildRequest)
+		suite.Require().NoError(err)
+
+		result, err := suite.app.builds.GetByVersionString(suite.goodCreateBuildRequest.VersionString)
+		suite.Assert().NoError(err)
+
+		// make sure the id's match
+		suite.Assert().Equal(existingBuild.ID, result.ID)
+	})
+
+	suite.Run("errors not found for non-existent version string", func() {
+		testutils.Cleanup(suite.T(), suite.app.db)
+
+		_, err := suite.app.builds.GetByVersionString("does-not-exist")
+		suite.Assert().ErrorIs(err, ErrBuildNotFound)
+	})
+}
+
 type testApplication struct {
 	builds *BuildController
 	db     *gorm.DB

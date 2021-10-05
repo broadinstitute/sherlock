@@ -96,6 +96,12 @@ func (bc *BuildController) GetByID(id int) (Build, error) {
 	return bc.store.getByID(id)
 }
 
+// GetByVersionString will perform a look up of a build entity using it's unique version string
+// ie image repo + tag
+func (bc *BuildController) GetByVersionString(versionString string) (Build, error) {
+	return bc.store.getByVersionString(versionString)
+}
+
 func (bc *BuildController) serialize(builds ...Build) []BuildResponse {
 	var buildsList []Build
 	buildsList = append(buildsList, builds...)
