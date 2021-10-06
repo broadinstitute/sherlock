@@ -88,7 +88,7 @@ func (db dataStore) getByID(id int) (Build, error) {
 func (db dataStore) getByVersionString(versionString string) (Build, error) {
 	build := Build{}
 
-	if err := db.Preload("Service").Where(&Build{VersionString: versionString}).First(&build).Error; err != nil {
+	if err := db.Preload("Service").Where(&Build{VersionString: versionString}).Find(&build).Error; err != nil {
 		return Build{}, err
 	}
 

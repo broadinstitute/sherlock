@@ -102,7 +102,7 @@ func (suite *ServicesIntegrationTestSuite) TestListServices() {
 		services, err := suite.app.services.ListAll()
 		suite.Require().NoError(err)
 
-		suite.Assert().Equal(len(services), 3)
+		suite.Assert().Equal(3, len(services))
 	})
 }
 

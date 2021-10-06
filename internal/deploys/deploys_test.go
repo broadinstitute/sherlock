@@ -35,19 +35,9 @@ func TestDeployIntegrationSuite(t *testing.T) {
 	suite.Run(t, new(DeployIntegrationTestSuite))
 }
 
-func (suite *DeployIntegrationTestSuite) SetupSuite() {
-	suite.app = initTestDeployController(suite.T())
-	// ensure we start the suite with a clean db
-	testutils.Cleanup(suite.T(), suite.app.db)
-}
-
 func (suite *DeployIntegrationTestSuite) BeforeTest(suiteName, testName string) {
 	// start a new db transaction for each test
-	suite.app.db = suite.app.db.Begin()
-}
-
-func (suite *DeployIntegrationTestSuite) AfterTest(suiteName, testName string) {
-	suite.app.db = suite.app.db.Rollback()
+	suite.app = initTestDeployController(suite.T())
 }
 
 func (suite *DeployIntegrationTestSuite) TestCreateDeploy() {

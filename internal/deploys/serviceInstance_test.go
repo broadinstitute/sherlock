@@ -27,10 +27,6 @@ func TestServiceInstanceIntegrationSuite(t *testing.T) {
 }
 
 func (suite *ServiceInstanceIntegrationTestSuite) SetupSuite() {
-	suite.app = initTestApp(suite.T())
-	// ensure the db is clean before running suite
-	testutils.Cleanup(suite.T(), suite.app.db)
-
 	suite.goodEnvironmentReq = environments.CreateEnvironmentRequest{
 		Name: faker.Word(),
 	}
@@ -39,6 +35,11 @@ func (suite *ServiceInstanceIntegrationTestSuite) SetupSuite() {
 		Name:    faker.Word(),
 		RepoURL: faker.URL(),
 	}
+}
+
+func (suite *ServiceInstanceIntegrationTestSuite) BeforeTest(suiteName, testName string) {
+	// start a new db transaction for each test
+	suite.app = initTestApp(suite.T())
 }
 
 type testApplication struct {
