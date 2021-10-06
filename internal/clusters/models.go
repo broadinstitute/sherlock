@@ -81,7 +81,7 @@ func (db dataStore) createNew(newClusterReq CreateClusterRequest) (Cluster, erro
 	newCluster := newClusterReq.ClusterReq()
 
 	if err := db.Create(&newCluster).Error; err != nil {
-		return newCluster, fmt.Errorf("error saving to database: %v", err)
+		return Cluster{}, fmt.Errorf("error saving to database: %v", err)
 	}
 	return newCluster, nil
 }
@@ -92,7 +92,7 @@ func (db dataStore) getByID(id int) (Cluster, error) {
 	cluster := Cluster{}
 
 	if err := db.First(&cluster, id).Error; err != nil {
-		return cluster, err
+		return Cluster{}, err
 	}
 	return cluster, nil
 }
@@ -113,11 +113,11 @@ func (db dataStore) addEnvironmentByID(cluster Cluster, environmentID int) (Clus
 
 	//get the existing environment to add
 	if err := db.Where(&environments.Environment{ID: environmentID}).First(&environment).Error; err != nil {
-		return cluster, err
+		return Cluster{}, err
 	}
 
 	if err := db.Model(&cluster).Association("Environments").Append(&environment); err != nil {
-		return cluster, err
+		return Cluster{}, err
 	}
 
 	return cluster, nil

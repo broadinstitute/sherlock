@@ -81,7 +81,7 @@ func (db dataStore) createNew(newEnvironmentReq CreateEnvironmentRequest) (Envir
 	newEnvironment := newEnvironmentReq.EnvironmentReq()
 
 	if err := db.Create(&newEnvironment).Error; err != nil {
-		return newEnvironment, fmt.Errorf("error saving to database: %v", err)
+		return Environment{}, fmt.Errorf("error saving to database: %v", err)
 	}
 	return newEnvironment, nil
 }
@@ -92,7 +92,7 @@ func (db dataStore) getByID(id int) (Environment, error) {
 	environment := Environment{}
 
 	if err := db.First(&environment, id).Error; err != nil {
-		return environment, err
+		return Environment{}, err
 	}
 	return environment, nil
 }
@@ -102,7 +102,7 @@ func (db dataStore) getByName(name string) (Environment, error) {
 	environment := Environment{}
 
 	if err := db.Where(&Environment{Name: name}).First(&environment).Error; err != nil {
-		return environment, err
+		return Environment{}, err
 	}
 	return environment, nil
 }

@@ -79,7 +79,7 @@ func (db dataStore) createNew(newAllocationPoolReq CreateAllocationPoolRequest) 
 	newAllocationPool := newAllocationPoolReq.allocationPoolReq()
 
 	if err := db.Create(&newAllocationPool).Error; err != nil {
-		return newAllocationPool, fmt.Errorf("error saving to database: %v", err)
+		return AllocationPool{}, fmt.Errorf("error saving to database: %v", err)
 	}
 	return newAllocationPool, nil
 }
@@ -90,7 +90,7 @@ func (db dataStore) getByID(id int) (AllocationPool, error) {
 	allocationPool := AllocationPool{}
 
 	if err := db.First(&allocationPool, id).Error; err != nil {
-		return allocationPool, err
+		return AllocationPool{}, err
 	}
 	return allocationPool, nil
 }
@@ -100,7 +100,7 @@ func (db dataStore) getByName(name string) (AllocationPool, error) {
 	allocationPool := AllocationPool{}
 
 	if err := db.Where(&AllocationPool{Name: name}).First(&allocationPool).Error; err != nil {
-		return allocationPool, err
+		return AllocationPool{}, err
 	}
 	return allocationPool, nil
 }
@@ -111,11 +111,11 @@ func (db dataStore) addEnvironmentByID(allocationPool AllocationPool, environmen
 
 	//get the existing environment to add
 	if err := db.Where(&environments.Environment{ID: environmentID}).First(&environment).Error; err != nil {
-		return allocationPool, err
+		return AllocationPool{}, err
 	}
 
 	if err := db.Model(&allocationPool).Association("Environments").Append(&environment); err != nil {
-		return allocationPool, err
+		return AllocationPool{}, err
 	}
 
 	return allocationPool, nil
