@@ -41,9 +41,17 @@ func (suite *DeployIntegrationTestSuite) SetupSuite() {
 	testutils.Cleanup(suite.T(), suite.app.db)
 }
 
+func (suite *DeployIntegrationTestSuite) BeforeTest(suiteName, testName string) {
+	// start a new db transaction for each test
+	suite.app.db = suite.app.db.Begin()
+}
+
+func (suite *DeployIntegrationTestSuite) AfterTest(suiteName, testName string) {
+	suite.app.db = suite.app.db.Rollback()
+}
+
 func (suite *DeployIntegrationTestSuite) TestCreateDeploy() {
 	suite.Run("creates deploy from pre-existing service instance and build", func() {
-		testutils.Cleanup(suite.T(), suite.app.db)
 
 		// populate a build to deploy
 		existingBuildReq := builds.CreateBuildRequest{
@@ -81,19 +89,18 @@ func (suite *DeployIntegrationTestSuite) TestCreateDeploy() {
 	})
 
 	suite.Run("creates service instance if not exists", func() {
-		testutils.Cleanup(suite.T(), suite.app.db)
 
 		// populate a build to deploy
 		existingBuildReq := builds.CreateBuildRequest{
 			VersionString: faker.URL(),
 			CommitSha:     faker.UUIDDigit(),
-			ServiceName:   faker.Word(),
+			ServiceName:   "rawls",
 		}
 		existingBuild, err := suite.app.deploys.builds.CreateNew(existingBuildReq)
 		suite.Require().NoError(err)
 
 		newDeployReq := CreateDeployRequest{
-			EnvironmentName:    faker.Word(),
+			EnvironmentName:    "terra-prod",
 			ServiceName:        existingBuildReq.ServiceName,
 			BuildVersionString: existingBuild.VersionString,
 		}
@@ -113,7 +120,6 @@ func (suite *DeployIntegrationTestSuite) TestCreateDeploy() {
 	// there should never be a situation where sherlock tries to register a deploy
 	// of a build that doesn't already exist, so this should error
 	suite.Run("fails if build doesn't exist", func() {
-		testutils.Cleanup(suite.T(), suite.app.db)
 
 		newDeployReq := CreateDeployRequest{
 			EnvironmentName:    faker.Word(),
@@ -128,7 +134,6 @@ func (suite *DeployIntegrationTestSuite) TestCreateDeploy() {
 
 func (suite *DeployIntegrationTestSuite) TestGetDeploysByServiceAndEnvironment() {
 	suite.Run("returns a single deploy", func() {
-		testutils.Cleanup(suite.T(), suite.app.db)
 
 		// populate a build to deploy
 		existingBuildReq := builds.CreateBuildRequest{
@@ -156,7 +161,6 @@ func (suite *DeployIntegrationTestSuite) TestGetDeploysByServiceAndEnvironment()
 	})
 
 	suite.Run("returns multiple deploys", func() {
-		testutils.Cleanup(suite.T(), suite.app.db)
 
 		// populate multiple deploys to search for
 		serviceName := faker.Word()
@@ -181,7 +185,7 @@ func (suite *DeployIntegrationTestSuite) TestGetDeploysByServiceAndEnvironment()
 			suite.Require().NoError(err)
 		}
 
-		result, err := suite.app.deploys.GetDeploysByEnvironmentAndService(serviceName, environmentName)
+		result, err := suite.app.deploys.GetDeploysByEnvironmentAndService(environmentName, serviceName)
 		suite.Assert().NoError(err)
 		suite.Assert().Equal(5, len(result))
 

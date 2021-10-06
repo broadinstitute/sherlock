@@ -35,7 +35,7 @@ type ServiceInstance struct {
 type serviceInstanceStore interface {
 	listAll() ([]ServiceInstance, error)
 	createNew(environmentID int, serviceID int) (ServiceInstance, error)
-	getByEnvironmentAndServiceName(environmentName, serviceName string) (ServiceInstance, error)
+	getByEnvironmentAndServiceID(environmentID, serviceID int) (ServiceInstance, error)
 }
 
 func newServiceInstanceStore(dbConn *gorm.DB) dataStore {
@@ -61,20 +61,10 @@ func (db dataStore) createNew(environmentID, serviceID int) (ServiceInstance, er
 	return newServiceInstance, err
 }
 
-func (db dataStore) getByEnvironmentAndServiceName(environmentName, serviceName string) (ServiceInstance, error) {
+func (db dataStore) getByEnvironmentAndServiceID(environmentID, serviceID int) (ServiceInstance, error) {
 	var serviceInstance ServiceInstance
 
-	// using gorms struct query features to set the WHERE clause
-	queryStruct := ServiceInstance{
-		Environment: environments.Environment{
-			Name: environmentName,
-		},
-		Service: services.Service{
-			Name: serviceName,
-		},
-	}
-
-	err := db.Preload("Service").Preload("Environment").Where(&queryStruct).First(&serviceInstance).Error
+	err := db.Preload("Service").Preload("Environment").Where(&ServiceInstance{ServiceID: serviceID, EnvironmentID: environmentID}).Find(&serviceInstance).Error
 	return serviceInstance, err
 }
 

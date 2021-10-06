@@ -18,8 +18,8 @@ func (m *mockServiceInstanceStore) createNew(serviceID, environmentID int) (Serv
 	return retVal.Get(0).(ServiceInstance), retVal.Error(1)
 }
 
-func (m *mockServiceInstanceStore) getByEnvironmentAndServiceName(environmentName, serviceName string) (ServiceInstance, error) {
-	retVal := m.Called(environmentName, serviceName)
+func (m *mockServiceInstanceStore) getByEnvironmentAndServiceID(environmentID, serviceID int) (ServiceInstance, error) {
+	retVal := m.Called(environmentID, serviceID)
 	return retVal.Get(0).(ServiceInstance), retVal.Error(1)
 }
 

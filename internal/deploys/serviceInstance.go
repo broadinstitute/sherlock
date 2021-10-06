@@ -65,7 +65,19 @@ func (sic *ServiceInstanceController) CreateNew(newServiceInstance CreateService
 // GetByEnvironmentAndServiceName accepts environment and service names as strings and will return the Service_Instance entity
 // representing the association between them if it exists
 func (sic *ServiceInstanceController) GetByEnvironmentAndServiceName(environmentName, serviceName string) (ServiceInstance, error) {
-	return sic.store.getByEnvironmentAndServiceName(environmentName, serviceName)
+	// retrieve the service id if exists
+	serviceID, exists := sic.services.DoesServiceExist(serviceName)
+	if !exists {
+		return ServiceInstance{}, ErrServiceInstanceNotFound
+	}
+
+	// retrieve environmentID if exists
+	environmentID, exists := sic.environments.DoesEnvironmentExist(environmentName)
+	if !exists {
+		return ServiceInstance{}, ErrServiceInstanceNotFound
+	}
+
+	return sic.store.getByEnvironmentAndServiceID(environmentID, serviceID)
 }
 
 // FindOrCreate will check if a service instance with the given name and environment already exists
