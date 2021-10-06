@@ -34,7 +34,7 @@ func (suite *BuildsIntegrationTestSuite) SetupSuite() {
 
 }
 
-func (suite *BuildsIntegrationTestSuite) BeforeTest(suiteName, testName string) {
+func (suite *BuildsIntegrationTestSuite) SetupTest() {
 	// start a new db transaction for each test
 	suite.app = initTestApp(suite.T())
 }
