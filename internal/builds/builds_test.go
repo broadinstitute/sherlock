@@ -1,11 +1,11 @@
 package builds
 
 import (
-	"fmt"
 	"testing"
 	"time"
 
 	"github.com/broadinstitute/sherlock/internal/testutils"
+	"github.com/bxcodec/faker/v3"
 	"github.com/stretchr/testify/suite"
 	"gorm.io/gorm"
 )
@@ -26,11 +26,11 @@ func TestBuildsIntegrationSuite(t *testing.T) {
 func (suite *BuildsIntegrationTestSuite) SetupTest() {
 	// start a new db transaction for each test
 	suite.goodCreateBuildRequest = CreateBuildRequest{
-		VersionString: "docker.io/broad/rawls:12.3.",
-		CommitSha:     "asdfewrf",
-		BuildURL:      "https://jenkins.job/1",
+		VersionString: faker.URL(),
+		CommitSha:     faker.UUIDDigit(),
+		BuildURL:      faker.URL(),
 		BuiltAt:       time.Now(),
-		ServiceName:   "rawls",
+		ServiceName:   faker.UUIDHyphenated(),
 		ServiceRepo:   "github.com/broadinstitute/rawls",
 	}
 	suite.app = initTestApp(suite.T())
@@ -113,7 +113,6 @@ func (suite *BuildsIntegrationTestSuite) TestGetByVersionString() {
 
 		// make sure the id's match
 		suite.Assert().Equal(existingBuild.ID, result.ID)
-		fmt.Println(result)
 	})
 
 	suite.Run("errors not found for non-existent version string", func() {

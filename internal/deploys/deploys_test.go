@@ -75,12 +75,9 @@ func (suite *DeployIntegrationTestSuite) TestCreateDeploy() {
 		result, err := suite.app.deploys.CreateNew(newDeployReq)
 		suite.Assert().NoError(err)
 
-		// assert the deploy contains expected info from the pre-existing service instance and build
-		suite.Assert().Equal(existingBuildReq.ServiceName, result.Build.Service.Name)
 		// make sure both build and service instance reference the same service
-		suite.Assert().Equal(result.Build.Service.ID, result.ServiceInstance.Service.ID)
-		suite.Assert().Equal(existingBuildReq.VersionString, result.Build.VersionString)
-		suite.Assert().Equal(existingServiceInstanceReq.EnvironmentName, result.ServiceInstance.Environment.Name)
+		suite.Assert().Equal(existingBuild.ID, result.BuildID)
+		suite.Assert().Equal(existingServiceInstance.ID, result.ServiceInstanceID)
 	})
 
 	suite.Run("creates service instance if not exists", func() {
@@ -104,13 +101,9 @@ func (suite *DeployIntegrationTestSuite) TestCreateDeploy() {
 		result, err := suite.app.deploys.CreateNew(newDeployReq)
 		suite.Assert().NoError(err)
 
-		// assert the deploy contains expected info from the pre-existing service instance and build
-		suite.Assert().Equal(existingBuildReq.ServiceName, result.Build.Service.Name)
 		// make sure both build and service instance reference the same service
-		suite.Assert().Equal(result.Build.Service.ID, result.ServiceInstance.Service.ID)
-		suite.Assert().Equal(existingBuildReq.VersionString, result.Build.VersionString)
-		suite.Assert().Equal(newDeployReq.EnvironmentName, result.ServiceInstance.Environment.Name)
-		suite.Assert().Equal(newDeployReq.ServiceName, result.ServiceInstance.Service.Name)
+		suite.Assert().Equal(existingBuild.ID, result.BuildID)
+		suite.Assert().NotEqual(0, result.ServiceInstanceID)
 	})
 
 	// there should never be a situation where sherlock tries to register a deploy

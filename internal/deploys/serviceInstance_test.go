@@ -83,8 +83,8 @@ func (suite *ServiceInstanceIntegrationTestSuite) TestCreateServiceInstance() {
 		result, err := suite.app.serviceInstances.CreateNew(newServiceInstanceReq)
 		suite.Require().NoError(err)
 
-		suite.Assert().Equal(preExistingService.Name, result.Service.Name)
-		suite.Assert().Equal(preExistingEnv.Name, result.Environment.Name)
+		suite.Assert().Equal(preExistingService.ID, result.ServiceID)
+		suite.Assert().Equal(preExistingEnv.ID, result.EnvironmentID)
 	})
 
 	suite.Run("creates an environment if not exists", func() {
@@ -102,7 +102,7 @@ func (suite *ServiceInstanceIntegrationTestSuite) TestCreateServiceInstance() {
 		result, err := suite.app.serviceInstances.CreateNew(newServiceInstanceReq)
 		suite.Require().NoError(err)
 
-		suite.Assert().Equal(newServiceInstanceReq.EnvironmentName, result.Environment.Name)
+		suite.Assert().NotEqual(0, result.EnvironmentID)
 	})
 
 	suite.Run("creates a service if not exists", func() {
@@ -120,7 +120,7 @@ func (suite *ServiceInstanceIntegrationTestSuite) TestCreateServiceInstance() {
 		result, err := suite.app.serviceInstances.CreateNew(newServiceInstanceReq)
 		suite.Require().NoError(err)
 
-		suite.Assert().Equal(newServiceInstanceReq.ServiceName, result.Service.Name)
+		suite.Assert().NotEqual(0, result.ServiceID)
 	})
 
 	suite.Run("cannot create the same service instance twice", func() {
@@ -173,7 +173,7 @@ func (suite *ServiceInstanceIntegrationTestSuite) TestGetByEnvironmentAndService
 		result, err := suite.app.serviceInstances.GetByEnvironmentAndServiceName(preExistingEnv.Name, preExistingService.Name)
 		suite.Require().NoError(err)
 
-		suite.Assert().Equal(existingServiceInstance.Environment.Name, result.Environment.Name)
+		suite.Assert().Equal(existingServiceInstance.EnvironmentID, result.EnvironmentID)
 	})
 
 	suite.Run("it returns error not found for non-existent record", func() {

@@ -52,19 +52,13 @@ func (db dataStore) createNew(environmentID, serviceID int) (ServiceInstance, er
 		return ServiceInstance{}, fmt.Errorf("error persisting service instance: %v", err)
 	}
 
-	// retrieve the same service instance record back from the db but now with all the
-	// associations populated.
-	err := db.Preload("Service").
-		Preload("Environment").
-		First(&newServiceInstance, newServiceInstance.ID).Error
-
-	return newServiceInstance, err
+	return newServiceInstance, nil
 }
 
 func (db dataStore) getByEnvironmentAndServiceID(environmentID, serviceID int) (ServiceInstance, error) {
 	var serviceInstance ServiceInstance
 
-	err := db.Preload("Service").Preload("Environment").Where(&ServiceInstance{ServiceID: serviceID, EnvironmentID: environmentID}).Find(&serviceInstance).Error
+	err := db.Preload("Service").Preload("Environment").First(&serviceInstance, &ServiceInstance{ServiceID: serviceID, EnvironmentID: environmentID}).Error
 	return serviceInstance, err
 }
 
@@ -110,16 +104,7 @@ func (db dataStore) createDeploy(buildID, serviceInstanceID int) (Deploy, error)
 		return Deploy{}, err
 	}
 
-	// retrieve the same deploy record back from the db but now with all the
-	// associations populated.
-	err := db.Preload("ServiceInstance").
-		Preload("ServiceInstance.Service").
-		Preload("ServiceInstance.Environment").
-		Preload("Build").
-		Preload("Build.Service").
-		First(&newDeploy, newDeploy.ID).Error
-
-	return newDeploy, err
+	return newDeploy, nil
 }
 
 func (db dataStore) getDeploysByServiceInstance(serviceInstanceID int) ([]Deploy, error) {
@@ -130,8 +115,7 @@ func (db dataStore) getDeploysByServiceInstance(serviceInstanceID int) ([]Deploy
 		Preload("ServiceInstance.Environment").
 		Preload("Build").
 		Preload("Build.Service").
-		Where(&Deploy{ServiceInstanceID: serviceInstanceID}).
-		Find(&deploys).
+		Find(&deploys, &Deploy{ServiceInstanceID: serviceInstanceID}).
 		Error
 
 	return deploys, err
