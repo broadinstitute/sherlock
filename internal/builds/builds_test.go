@@ -51,22 +51,23 @@ func (suite *BuildsIntegrationTestSuite) TestCreateBuild() {
 
 		suite.Assert().Equal(newBuild.VersionString, build.VersionString)
 	})
+}
 
-	suite.Run("fails with empty create request", func() {
+func (suite *BuildsIntegrationTestSuite) TestCreateBuildEmptyRequest() {
+	newBuild := CreateBuildRequest{}
 
-		newBuild := CreateBuildRequest{}
+	_, err := suite.app.builds.CreateNew(newBuild)
 
-		_, err := suite.app.builds.CreateNew(newBuild)
+	suite.Require().Error(err)
+}
 
-		suite.Require().Error(err)
-	})
+func (suite *BuildsIntegrationTestSuite) TestCreateNonUniqueVersion() {
+	// create a valid build
+	_, err := suite.app.builds.CreateNew(suite.goodCreateBuildRequest)
+	suite.Require().NoError(err)
 
-	suite.Run("fails on non-unique version string", func() {
-
-		// create a valid build
-		_, err := suite.app.builds.CreateNew(suite.goodCreateBuildRequest)
-		suite.Assert().ErrorIs(err, ErrDuplicateVersionString)
-	})
+	_, err = suite.app.builds.CreateNew(suite.goodCreateBuildRequest)
+	suite.Assert().ErrorIs(err, ErrDuplicateVersionString)
 }
 
 func (suite *BuildsIntegrationTestSuite) TestGetByID() {
@@ -119,8 +120,9 @@ type testApplication struct {
 
 func initTestApp(t *testing.T) *testApplication {
 	dbConn := testutils.ConnectAndMigrate(t)
+	dbConn = dbConn.Begin(&sql.TxOptions{Isolation: sql.LevelSerializable})
 	return &testApplication{
 		builds: NewController(dbConn),
-		db:     dbConn.Begin(&sql.TxOptions{Isolation: sql.LevelSerializable}),
+		db:     dbConn,
 	}
 }

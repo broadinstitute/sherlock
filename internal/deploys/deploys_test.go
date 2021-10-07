@@ -23,9 +23,10 @@ type testDeployController struct {
 
 func initTestDeployController(t *testing.T) *testDeployController {
 	dbConn := testutils.ConnectAndMigrate(t)
+	dbConn.Begin(&sql.TxOptions{Isolation: sql.LevelSerializable})
 	return &testDeployController{
 		deploys: NewDeployController(dbConn),
-		db:      dbConn.Begin(&sql.TxOptions{Isolation: sql.LevelSerializable}),
+		db:      dbConn,
 	}
 }
 

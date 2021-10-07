@@ -34,7 +34,7 @@ func (suite *ServiceInstanceIntegrationTestSuite) SetupTest() {
 	}
 
 	suite.goodServiceReq = services.CreateServiceRequest{
-		Name:    faker.Word(),
+		Name:    faker.UUIDHyphenated(),
 		RepoURL: faker.URL(),
 	}
 }
@@ -50,9 +50,10 @@ type testApplication struct {
 
 func initTestApp(t *testing.T) *testApplication {
 	dbConn := testutils.ConnectAndMigrate(t)
+	dbConn = dbConn.Begin(&sql.TxOptions{Isolation: sql.LevelSerializable})
 	return &testApplication{
 		serviceInstances: NewServiceInstanceController(dbConn),
-		db:               dbConn.Begin(&sql.TxOptions{Isolation: sql.LevelSerializable}),
+		db:               dbConn,
 	}
 }
 
