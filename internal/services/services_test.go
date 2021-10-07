@@ -71,7 +71,7 @@ func (suite *ServicesIntegrationTestSuite) TestListServices() {
 		suite.Assert().NoError(err)
 	})
 
-	suite.Run("ListAll returns one Environment", func() {
+	suite.Run("ListAll returns one service", func() {
 		testutils.Cleanup(suite.T(), suite.app.db)
 
 		newService := CreateServiceRequest{
@@ -89,7 +89,7 @@ func (suite *ServicesIntegrationTestSuite) TestListServices() {
 		suite.Assert().NoError(err)
 	})
 
-	suite.Run("ListAll returns multiple environments", func() {
+	suite.Run("ListAll returns multiple services", func() {
 		testutils.Cleanup(suite.T(), suite.app.db)
 
 		// populate multiple services
@@ -188,6 +188,6 @@ func initTestApp(t *testing.T) *testApplication {
 	dbConn := testutils.ConnectAndMigrate(t)
 	return &testApplication{
 		services: NewController(dbConn),
-		db:       dbConn.Begin(&sql.TxOptions{Isolation: sql.LevelRepeatableRead}),
+		db:       dbConn.Begin(&sql.TxOptions{Isolation: sql.LevelSerializable}),
 	}
 }

@@ -25,7 +25,7 @@ func initTestDeployController(t *testing.T) *testDeployController {
 	dbConn := testutils.ConnectAndMigrate(t)
 	return &testDeployController{
 		deploys: NewDeployController(dbConn),
-		db:      dbConn.Begin(&sql.TxOptions{Isolation: sql.LevelRepeatableRead}),
+		db:      dbConn.Begin(&sql.TxOptions{Isolation: sql.LevelSerializable}),
 	}
 }
 
@@ -59,7 +59,7 @@ func (suite *DeployIntegrationTestSuite) TestCreateDeploy() {
 
 		// populate a service instance to deploy to
 		existingServiceInstanceReq := CreateServiceInstanceRequest{
-			EnvironmentName: faker.Word(),
+			EnvironmentName: faker.UUIDHyphenated(),
 			ServiceName:     existingBuildReq.ServiceName,
 		}
 		existingServiceInstance, err := suite.app.deploys.serviceInstances.CreateNew(existingServiceInstanceReq)

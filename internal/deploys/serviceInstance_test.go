@@ -52,7 +52,7 @@ func initTestApp(t *testing.T) *testApplication {
 	dbConn := testutils.ConnectAndMigrate(t)
 	return &testApplication{
 		serviceInstances: NewServiceInstanceController(dbConn),
-		db:               dbConn.Begin(&sql.TxOptions{Isolation: sql.LevelRepeatableRead}),
+		db:               dbConn.Begin(&sql.TxOptions{Isolation: sql.LevelSerializable}),
 	}
 }
 
