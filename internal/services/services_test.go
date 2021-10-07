@@ -154,7 +154,7 @@ func (suite *ServicesIntegrationTestSuite) TestFindOrCreate() {
 
 	suite.Run("creates service if not exists", func() {
 
-		newServiceID, err := suite.app.services.FindOrCreate(faker.Word())
+		newServiceID, err := suite.app.services.FindOrCreate(faker.UUIDHyphenated())
 		suite.Assert().NoError(err)
 		// assert the service was actually created by verifying its ID is non-zero
 		suite.Assert().NotEqual(0, newServiceID)
