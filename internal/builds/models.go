@@ -29,7 +29,7 @@ type dataStore struct {
 // Build is the structure used to represent a build entity in sherlock's db persistence layer
 type Build struct {
 	ID            int
-	VersionString string
+	VersionString string `gorm:"not null;default:null"`
 	CommitSha     string
 	BuildURL      string
 	BuiltAt       time.Time `gorm:"autoCreateTime"`
@@ -88,7 +88,7 @@ func (db dataStore) getByID(id int) (Build, error) {
 func (db dataStore) getByVersionString(versionString string) (Build, error) {
 	build := Build{}
 
-	if err := db.Preload("Service").Where(&Build{VersionString: versionString}).Find(&build).Error; err != nil {
+	if err := db.Preload("Service").First(&build, &Build{VersionString: versionString}).Error; err != nil {
 		return Build{}, err
 	}
 

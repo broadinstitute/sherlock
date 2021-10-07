@@ -1,6 +1,7 @@
 package builds
 
 import (
+	"fmt"
 	"testing"
 	"time"
 
@@ -111,6 +112,7 @@ func (suite *BuildsIntegrationTestSuite) TestGetByVersionString() {
 
 		// make sure the id's match
 		suite.Assert().Equal(existingBuild.ID, result.ID)
+		fmt.Println(result)
 	})
 
 	suite.Run("errors not found for non-existent version string", func() {
