@@ -29,7 +29,7 @@ func TestServiceInstanceIntegrationSuite(t *testing.T) {
 func (suite *ServiceInstanceIntegrationTestSuite) SetupTest() {
 	suite.app = initTestApp(suite.T())
 	suite.goodEnvironmentReq = environments.CreateEnvironmentRequest{
-		Name: faker.Word(),
+		Name: faker.UUIDHyphenated(),
 	}
 
 	suite.goodServiceReq = services.CreateServiceRequest{
@@ -38,8 +38,8 @@ func (suite *ServiceInstanceIntegrationTestSuite) SetupTest() {
 	}
 }
 
-func (suite *ServiceInstanceIntegrationTestSuite) TearDownSuite() {
-	testutils.Cleanup(suite.T(), suite.app.db)
+func (suite *ServiceInstanceIntegrationTestSuite) TearDownTest() {
+	suite.app.db.Rollback()
 }
 
 type testApplication struct {
@@ -51,7 +51,7 @@ func initTestApp(t *testing.T) *testApplication {
 	dbConn := testutils.ConnectAndMigrate(t)
 	return &testApplication{
 		serviceInstances: NewServiceInstanceController(dbConn),
-		db:               dbConn,
+		db:               dbConn.Begin(),
 	}
 }
 
@@ -63,16 +63,16 @@ func (suite *ServiceInstanceIntegrationTestSuite) TestListServiceInstancesError(
 }
 
 func (suite *ServiceInstanceIntegrationTestSuite) TestCreateServiceInstance() {
+	// pretest setup
+	// prepoulate an environment
+	preExistingEnv, err := suite.app.serviceInstances.environments.CreateNew(suite.goodEnvironmentReq)
+	suite.Require().NoError(err)
+
+	// pre-populate an existing service
+	preExistingService, err := suite.app.serviceInstances.services.CreateNew(suite.goodServiceReq)
+	suite.Require().NoError(err)
+
 	suite.Run("creates association between existing service and environment", func() {
-		testutils.Cleanup(suite.T(), suite.app.db)
-
-		// prepoulate an environment
-		preExistingEnv, err := suite.app.serviceInstances.environments.CreateNew(suite.goodEnvironmentReq)
-		suite.Require().NoError(err)
-
-		// pre-populate an existing service
-		preExistingService, err := suite.app.serviceInstances.services.CreateNew(suite.goodServiceReq)
-		suite.Require().NoError(err)
 
 		// attempt to create a service instance from the above
 		newServiceInstanceReq := CreateServiceInstanceRequest{
@@ -88,11 +88,6 @@ func (suite *ServiceInstanceIntegrationTestSuite) TestCreateServiceInstance() {
 	})
 
 	suite.Run("creates an environment if not exists", func() {
-		testutils.Cleanup(suite.T(), suite.app.db)
-
-		// pre-poulate an existing service
-		preExistingService, err := suite.app.serviceInstances.services.CreateNew(suite.goodServiceReq)
-		suite.Require().NoError(err)
 
 		newServiceInstanceReq := CreateServiceInstanceRequest{
 			EnvironmentName: "does-not-exist",
@@ -106,11 +101,6 @@ func (suite *ServiceInstanceIntegrationTestSuite) TestCreateServiceInstance() {
 	})
 
 	suite.Run("creates a service if not exists", func() {
-		testutils.Cleanup(suite.T(), suite.app.db)
-
-		// pre-populate an existing environment
-		preExistingEnv, err := suite.app.serviceInstances.environments.CreateNew(suite.goodEnvironmentReq)
-		suite.Require().NoError(err)
 
 		newServiceInstanceReq := CreateServiceInstanceRequest{
 			EnvironmentName: preExistingEnv.Name,
@@ -124,24 +114,12 @@ func (suite *ServiceInstanceIntegrationTestSuite) TestCreateServiceInstance() {
 	})
 
 	suite.Run("cannot create the same service instance twice", func() {
-		testutils.Cleanup(suite.T(), suite.app.db)
-
-		// prepoulate an environment
-		preExistingEnv, err := suite.app.serviceInstances.environments.CreateNew(suite.goodEnvironmentReq)
-		suite.Require().NoError(err)
-
-		// pre-populate an existing service
-		preExistingService, err := suite.app.serviceInstances.services.CreateNew(suite.goodServiceReq)
-		suite.Require().NoError(err)
 
 		// attempt to create a service instance from the above
 		newServiceInstanceReq := CreateServiceInstanceRequest{
 			EnvironmentName: preExistingEnv.Name,
 			ServiceName:     preExistingService.Name,
 		}
-
-		_, err = suite.app.serviceInstances.CreateNew(newServiceInstanceReq)
-		suite.Require().NoError(err)
 
 		// trying to create the same service instance again should error
 		_, err = suite.app.serviceInstances.CreateNew(newServiceInstanceReq)
@@ -151,7 +129,6 @@ func (suite *ServiceInstanceIntegrationTestSuite) TestCreateServiceInstance() {
 
 func (suite *ServiceInstanceIntegrationTestSuite) TestGetByEnvironmentAndServiceName() {
 	suite.Run("returns an existing service instance", func() {
-		testutils.Cleanup(suite.T(), suite.app.db)
 
 		// prepoulate an environment
 		preExistingEnv, err := suite.app.serviceInstances.environments.CreateNew(suite.goodEnvironmentReq)
@@ -177,7 +154,6 @@ func (suite *ServiceInstanceIntegrationTestSuite) TestGetByEnvironmentAndService
 	})
 
 	suite.Run("it returns error not found for non-existent record", func() {
-		testutils.Cleanup(suite.T(), suite.app.db)
 
 		_, err := suite.app.serviceInstances.GetByEnvironmentAndServiceName("non-existent-env", "non-existent-service")
 		suite.Assert().ErrorIs(err, ErrServiceInstanceNotFound)

@@ -36,14 +36,12 @@ func (suite *BuildsIntegrationTestSuite) SetupTest() {
 	suite.app = initTestApp(suite.T())
 }
 
-func (suite *BuildsIntegrationTestSuite) TearDownSuite() {
-	// ensure we clean the db at the very end
-	testutils.Cleanup(suite.T(), suite.app.db)
+func (suite *BuildsIntegrationTestSuite) TearDownTest() {
+	suite.app.db.Rollback()
 }
 
 func (suite *BuildsIntegrationTestSuite) TestCreateBuild() {
 	suite.Run("creates a new build", func() {
-		testutils.Cleanup(suite.T(), suite.app.db)
 
 		newBuild := suite.goodCreateBuildRequest
 
@@ -54,7 +52,6 @@ func (suite *BuildsIntegrationTestSuite) TestCreateBuild() {
 	})
 
 	suite.Run("fails with empty create request", func() {
-		testutils.Cleanup(suite.T(), suite.app.db)
 
 		newBuild := CreateBuildRequest{}
 
@@ -64,21 +61,15 @@ func (suite *BuildsIntegrationTestSuite) TestCreateBuild() {
 	})
 
 	suite.Run("fails on non-unique version string", func() {
-		testutils.Cleanup(suite.T(), suite.app.db)
 
 		// create a valid build
 		_, err := suite.app.builds.CreateNew(suite.goodCreateBuildRequest)
-		suite.Assert().NoError(err)
-
-		// try to create another build with the same version string
-		_, err = suite.app.builds.CreateNew(suite.goodCreateBuildRequest)
-		suite.Assert().Error(err)
+		suite.Assert().ErrorIs(err, ErrDuplicateVersionString)
 	})
 }
 
 func (suite *BuildsIntegrationTestSuite) TestGetByID() {
 	suite.Run("fails with non-existent id", func() {
-		testutils.Cleanup(suite.T(), suite.app.db)
 
 		_, err := suite.app.builds.GetByID(23)
 		suite.Require().ErrorIs(err, ErrBuildNotFound)
@@ -86,7 +77,6 @@ func (suite *BuildsIntegrationTestSuite) TestGetByID() {
 	})
 
 	suite.Run("retrives an existing build", func() {
-		testutils.Cleanup(suite.T(), suite.app.db)
 
 		newBuild := suite.goodCreateBuildRequest
 		build, err := suite.app.builds.CreateNew(newBuild)
@@ -102,7 +92,6 @@ func (suite *BuildsIntegrationTestSuite) TestGetByID() {
 
 func (suite *BuildsIntegrationTestSuite) TestGetByVersionString() {
 	suite.Run("successful looks up existing build by version string", func() {
-		testutils.Cleanup(suite.T(), suite.app.db)
 
 		// create a build instance to look up
 		existingBuild, err := suite.app.builds.CreateNew(suite.goodCreateBuildRequest)
@@ -116,7 +105,6 @@ func (suite *BuildsIntegrationTestSuite) TestGetByVersionString() {
 	})
 
 	suite.Run("errors not found for non-existent version string", func() {
-		testutils.Cleanup(suite.T(), suite.app.db)
 
 		_, err := suite.app.builds.GetByVersionString("does-not-exist")
 		suite.Assert().ErrorIs(err, ErrBuildNotFound)
@@ -132,6 +120,6 @@ func initTestApp(t *testing.T) *testApplication {
 	dbConn := testutils.ConnectAndMigrate(t)
 	return &testApplication{
 		builds: NewController(dbConn),
-		db:     dbConn,
+		db:     dbConn.Begin(),
 	}
 }
