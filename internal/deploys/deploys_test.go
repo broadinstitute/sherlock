@@ -1,6 +1,7 @@
 package deploys
 
 import (
+	"database/sql"
 	"testing"
 
 	"github.com/broadinstitute/sherlock/internal/builds"
@@ -24,7 +25,7 @@ func initTestDeployController(t *testing.T) *testDeployController {
 	dbConn := testutils.ConnectAndMigrate(t)
 	return &testDeployController{
 		deploys: NewDeployController(dbConn),
-		db:      dbConn.Begin(),
+		db:      dbConn.Begin(&sql.TxOptions{Isolation: sql.LevelRepeatableRead}),
 	}
 }
 

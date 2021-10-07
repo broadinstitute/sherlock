@@ -1,6 +1,7 @@
 package builds
 
 import (
+	"database/sql"
 	"testing"
 	"time"
 
@@ -120,6 +121,6 @@ func initTestApp(t *testing.T) *testApplication {
 	dbConn := testutils.ConnectAndMigrate(t)
 	return &testApplication{
 		builds: NewController(dbConn),
-		db:     dbConn.Begin(),
+		db:     dbConn.Begin(&sql.TxOptions{Isolation: sql.LevelRepeatableRead}),
 	}
 }

@@ -1,6 +1,7 @@
 package services
 
 import (
+	"database/sql"
 	"testing"
 
 	"github.com/broadinstitute/sherlock/internal/testutils"
@@ -18,9 +19,9 @@ func (suite *ServicesIntegrationTestSuite) SetupTest() {
 	suite.app = initTestApp(suite.T())
 }
 
-func (suite *ServicesIntegrationTestSuite) TearDownSuite() {
+func (suite *ServicesIntegrationTestSuite) TearDownTest() {
 	// ensure we clean the db at end of suite
-	testutils.Cleanup(suite.T(), suite.app.db)
+	suite.app.db.Rollback()
 }
 
 func (suite *ServicesIntegrationTestSuite) TestCreateService() {
@@ -187,6 +188,6 @@ func initTestApp(t *testing.T) *testApplication {
 	dbConn := testutils.ConnectAndMigrate(t)
 	return &testApplication{
 		services: NewController(dbConn),
-		db:       dbConn,
+		db:       dbConn.Begin(&sql.TxOptions{Isolation: sql.LevelRepeatableRead}),
 	}
 }

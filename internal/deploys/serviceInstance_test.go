@@ -1,6 +1,7 @@
 package deploys
 
 import (
+	"database/sql"
 	"errors"
 	"testing"
 
@@ -51,7 +52,7 @@ func initTestApp(t *testing.T) *testApplication {
 	dbConn := testutils.ConnectAndMigrate(t)
 	return &testApplication{
 		serviceInstances: NewServiceInstanceController(dbConn),
-		db:               dbConn.Begin(),
+		db:               dbConn.Begin(&sql.TxOptions{Isolation: sql.LevelRepeatableRead}),
 	}
 }
 
