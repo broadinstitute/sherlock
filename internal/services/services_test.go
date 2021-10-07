@@ -14,9 +14,12 @@ type ServicesIntegrationTestSuite struct {
 	app *testApplication
 }
 
-func (suite *ServicesIntegrationTestSuite) SetupSuite() {
+func (suite *ServicesIntegrationTestSuite) SetupTest() {
 	suite.app = initTestApp(suite.T())
-	// ensure the db is clean before running suite
+}
+
+func (suite *ServicesIntegrationTestSuite) TearDownSuite() {
+	// ensure we clean the db at end of suite
 	testutils.Cleanup(suite.T(), suite.app.db)
 }
 

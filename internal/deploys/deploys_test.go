@@ -35,14 +35,19 @@ func TestDeployIntegrationSuite(t *testing.T) {
 	suite.Run(t, new(DeployIntegrationTestSuite))
 }
 
-func (suite *DeployIntegrationTestSuite) BeforeTest(suiteName, testName string) {
+func (suite *DeployIntegrationTestSuite) SetupTest() {
 	// start a new db transaction for each test
 	suite.app = initTestDeployController(suite.T())
 }
 
+func (suite *DeployIntegrationTestSuite) TearDownSuite() {
+	// make sure to clean db at the end
+	testutils.Cleanup(suite.T(), suite.app.db)
+}
+
 func (suite *DeployIntegrationTestSuite) TestCreateDeploy() {
 	suite.Run("creates deploy from pre-existing service instance and build", func() {
-
+		testutils.Cleanup(suite.T(), suite.app.db)
 		// populate a build to deploy
 		existingBuildReq := builds.CreateBuildRequest{
 			VersionString: faker.URL(),
@@ -79,6 +84,7 @@ func (suite *DeployIntegrationTestSuite) TestCreateDeploy() {
 	})
 
 	suite.Run("creates service instance if not exists", func() {
+		testutils.Cleanup(suite.T(), suite.app.db)
 
 		// populate a build to deploy
 		existingBuildReq := builds.CreateBuildRequest{
@@ -110,6 +116,7 @@ func (suite *DeployIntegrationTestSuite) TestCreateDeploy() {
 	// there should never be a situation where sherlock tries to register a deploy
 	// of a build that doesn't already exist, so this should error
 	suite.Run("fails if build doesn't exist", func() {
+		testutils.Cleanup(suite.T(), suite.app.db)
 
 		newDeployReq := CreateDeployRequest{
 			EnvironmentName:    faker.Word(),
@@ -124,6 +131,7 @@ func (suite *DeployIntegrationTestSuite) TestCreateDeploy() {
 
 func (suite *DeployIntegrationTestSuite) TestGetDeploysByServiceAndEnvironment() {
 	suite.Run("returns a single deploy", func() {
+		testutils.Cleanup(suite.T(), suite.app.db)
 
 		// populate a build to deploy
 		existingBuildReq := builds.CreateBuildRequest{
@@ -151,6 +159,7 @@ func (suite *DeployIntegrationTestSuite) TestGetDeploysByServiceAndEnvironment()
 	})
 
 	suite.Run("returns multiple deploys", func() {
+		testutils.Cleanup(suite.T(), suite.app.db)
 
 		// populate multiple deploys to search for
 		serviceName := faker.Word()

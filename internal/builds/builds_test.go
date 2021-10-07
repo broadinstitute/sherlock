@@ -23,7 +23,8 @@ func TestBuildsIntegrationSuite(t *testing.T) {
 	suite.Run(t, new(BuildsIntegrationTestSuite))
 }
 
-func (suite *BuildsIntegrationTestSuite) SetupSuite() {
+func (suite *BuildsIntegrationTestSuite) SetupTest() {
+	// start a new db transaction for each test
 	suite.goodCreateBuildRequest = CreateBuildRequest{
 		VersionString: "docker.io/broad/rawls:12.3.",
 		CommitSha:     "asdfewrf",
@@ -32,12 +33,12 @@ func (suite *BuildsIntegrationTestSuite) SetupSuite() {
 		ServiceName:   "rawls",
 		ServiceRepo:   "github.com/broadinstitute/rawls",
 	}
-
+	suite.app = initTestApp(suite.T())
 }
 
-func (suite *BuildsIntegrationTestSuite) SetupTest() {
-	// start a new db transaction for each test
-	suite.app = initTestApp(suite.T())
+func (suite *BuildsIntegrationTestSuite) TearDownSuite() {
+	// ensure we clean the db at the very end
+	testutils.Cleanup(suite.T(), suite.app.db)
 }
 
 func (suite *BuildsIntegrationTestSuite) TestCreateBuild() {
