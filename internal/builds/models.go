@@ -67,7 +67,7 @@ func (db dataStore) createNew(newBuild Build) (Build, error) {
 		if strings.Contains(err.Error(), duplicateVersionStringErrorCheck) {
 			return Build{}, ErrDuplicateVersionString
 		}
-		return Build{}, fmt.Errorf("error persisting new build: %v", err)
+		return Build{}, ErrBadCreateRequest
 	}
 	// retrieve the same build record back from DB so it can be returned with associations updated
 	// gorm will not update the associations in the input struct when performing create operations,

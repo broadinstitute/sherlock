@@ -46,7 +46,7 @@ func (bc *BuildController) validateAndCreateNewBuild(newBuild CreateBuildRequest
 	var serviceID int
 	serviceID, err := bc.services.FindOrCreate(newBuild.ServiceName)
 	if err != nil {
-		return Build{}, err
+		return Build{}, ErrBadCreateRequest
 	}
 	build := Build{
 		VersionString: newBuild.VersionString,

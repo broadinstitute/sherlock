@@ -58,7 +58,7 @@ func (suite *BuildsIntegrationTestSuite) TestCreateBuildEmptyRequest() {
 
 	_, err := suite.app.builds.CreateNew(newBuild)
 
-	suite.Require().Error(err)
+	suite.Assert().ErrorIs(err, ErrBadCreateRequest)
 }
 
 func (suite *BuildsIntegrationTestSuite) TestCreateNonUniqueVersion() {
