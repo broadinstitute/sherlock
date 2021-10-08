@@ -64,7 +64,7 @@ func (suite *ServicesIntegrationTestSuite) TestListServices() {
 
 		services, err := suite.app.services.ListAll()
 
-		suite.Assert().GreaterOrEqual(len(services), 0)
+		suite.Assert().Equal(len(services), 0)
 		suite.Assert().NoError(err)
 	})
 
@@ -80,7 +80,8 @@ func (suite *ServicesIntegrationTestSuite) TestListServices() {
 
 		services, err := suite.app.services.ListAll()
 
-		suite.Assert().GreaterOrEqual(len(services), 1)
+		suite.Assert().Equal(len(services), 1)
+		suite.Assert().Equal(newService.Name, services[0].Name)
 		suite.Assert().NoError(err)
 	})
 
@@ -100,7 +101,7 @@ func (suite *ServicesIntegrationTestSuite) TestListServices() {
 		services, err := suite.app.services.ListAll()
 		suite.Require().NoError(err)
 
-		suite.Assert().GreaterOrEqual(len(services), 4)
+		suite.Assert().Equal(len(services), 4)
 	})
 }
 

@@ -194,7 +194,7 @@ func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentListAll() {
 
 		foundEnvironments, err := suite.testApp.Environments.ListAll()
 
-		assert.GreaterOrEqual(suite.T(), len(foundEnvironments), 0)
+		assert.Equal(suite.T(), len(foundEnvironments), 0)
 		assert.NoError(suite.T(), err)
 	})
 
@@ -205,7 +205,8 @@ func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentListAll() {
 
 		foundEnvironments, err := suite.testApp.Environments.ListAll()
 
-		assert.GreaterOrEqual(suite.T(), len(foundEnvironments), 1)
+		assert.Equal(suite.T(), len(foundEnvironments), 1)
+		assert.Equal(suite.T(), foundEnvironments[0].Name, suite.goodEnvironmentRequest.Name)
 		assert.NoError(suite.T(), err)
 	})
 
@@ -222,7 +223,7 @@ func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentListAll() {
 
 		foundEnvironments, err := suite.testApp.Environments.ListAll()
 
-		assert.GreaterOrEqual(suite.T(), len(foundEnvironments), 3)
+		assert.Equal(suite.T(), len(foundEnvironments), 3)
 		assert.NoError(suite.T(), err)
 	})
 }
