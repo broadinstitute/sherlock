@@ -1,7 +1,6 @@
 package builds
 
 import (
-	"database/sql"
 	"testing"
 	"time"
 
@@ -37,6 +36,8 @@ func (suite *BuildsIntegrationTestSuite) SetupTest() {
 }
 
 func (suite *BuildsIntegrationTestSuite) TearDownTest() {
+	// each test runs in its own isolated transaction
+	// this ensures we cleanup after each test as it completes
 	suite.app.db.Rollback()
 }
 
@@ -119,7 +120,10 @@ type testApplication struct {
 
 func initTestApp(t *testing.T) *testApplication {
 	dbConn := testutils.ConnectAndMigrate(t)
-	dbConn = dbConn.Begin(&sql.TxOptions{Isolation: sql.LevelSerializable})
+	// ensures each test will run in it's own isolated transaction
+	// The transaction will be rolled back after each test
+	// regardless of pass or fail
+	dbConn = dbConn.Begin()
 	return &testApplication{
 		builds: NewController(dbConn),
 		db:     dbConn,

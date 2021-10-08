@@ -1,7 +1,6 @@
 package deploys
 
 import (
-	"database/sql"
 	"errors"
 	"testing"
 
@@ -40,6 +39,8 @@ func (suite *ServiceInstanceIntegrationTestSuite) SetupTest() {
 }
 
 func (suite *ServiceInstanceIntegrationTestSuite) TearDownTest() {
+	// each test runs in its own isolated transaction
+	// this ensures we cleanup after each test as it completes
 	suite.app.db.Rollback()
 }
 
@@ -50,7 +51,10 @@ type testApplication struct {
 
 func initTestApp(t *testing.T) *testApplication {
 	dbConn := testutils.ConnectAndMigrate(t)
-	dbConn = dbConn.Begin(&sql.TxOptions{Isolation: sql.LevelSerializable})
+	// ensures each test will run in it's own isolated transaction
+	// The transaction will be rolled back after each test
+	// regardless of pass or fail
+	dbConn = dbConn.Begin()
 	return &testApplication{
 		serviceInstances: NewServiceInstanceController(dbConn),
 		db:               dbConn,

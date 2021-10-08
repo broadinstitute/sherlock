@@ -3,7 +3,6 @@
 package environments
 
 import (
-	"database/sql"
 	"errors"
 	"testing"
 
@@ -47,6 +46,8 @@ func (suite *EnvironmentTestSuite) SetupTest() {
 }
 
 func (suite *EnvironmentTestSuite) TearDownTest() {
+	// each test runs in its own isolated transaction
+	// this ensures we cleanup after each test as it completes
 	suite.testApp.db.Rollback()
 }
 
@@ -63,7 +64,10 @@ type TestApplication struct {
 // connect to DB and create the Application
 func initTestApp(t *testing.T) *TestApplication {
 	dbConn := testutils.ConnectAndMigrate(t)
-	dbConn = dbConn.Begin(&sql.TxOptions{Isolation: sql.LevelSerializable})
+	// ensures each test will run in it's own isolated transaction
+	// The transaction will be rolled back after each test
+	// regardless of pass or fail
+	dbConn = dbConn.Begin()
 	return &TestApplication{
 		Environments: NewController(dbConn),
 		db:           dbConn,

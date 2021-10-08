@@ -1,7 +1,6 @@
 package deploys
 
 import (
-	"database/sql"
 	"testing"
 
 	"github.com/broadinstitute/sherlock/internal/builds"
@@ -23,7 +22,10 @@ type testDeployController struct {
 
 func initTestDeployController(t *testing.T) *testDeployController {
 	dbConn := testutils.ConnectAndMigrate(t)
-	dbConn.Begin(&sql.TxOptions{Isolation: sql.LevelSerializable})
+	// ensures each test will run in it's own isolated transaction
+	// The transaction will be rolled back after each test
+	// regardless of pass or fail
+	dbConn = dbConn.Begin()
 	return &testDeployController{
 		deploys: NewDeployController(dbConn),
 		db:      dbConn,
@@ -43,7 +45,8 @@ func (suite *DeployIntegrationTestSuite) SetupTest() {
 }
 
 func (suite *DeployIntegrationTestSuite) TearDownTest() {
-	// make sure to clean db at the end
+	// each test runs in its own isolated transaction
+	// this ensures we cleanup after each test as it completes
 	suite.app.db.Rollback()
 }
 
