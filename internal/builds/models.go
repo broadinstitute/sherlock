@@ -29,7 +29,7 @@ type dataStore struct {
 // Build is the structure used to represent a build entity in sherlock's db persistence layer
 type Build struct {
 	ID            int
-	VersionString string
+	VersionString string `gorm:"not null;default:null"`
 	CommitSha     string
 	BuildURL      string
 	BuiltAt       time.Time `gorm:"autoCreateTime"`
@@ -43,6 +43,7 @@ type buildStore interface {
 	listAll() ([]Build, error)
 	createNew(Build) (Build, error)
 	getByID(int) (Build, error)
+	getByVersionString(string) (Build, error)
 }
 
 func newBuildStore(dbConn *gorm.DB) dataStore {
@@ -66,7 +67,7 @@ func (db dataStore) createNew(newBuild Build) (Build, error) {
 		if strings.Contains(err.Error(), duplicateVersionStringErrorCheck) {
 			return Build{}, ErrDuplicateVersionString
 		}
-		return Build{}, fmt.Errorf("error persisting new build: %v", err)
+		return Build{}, ErrBadCreateRequest
 	}
 	// retrieve the same build record back from DB so it can be returned with associations updated
 	// gorm will not update the associations in the input struct when performing create operations,
@@ -81,5 +82,15 @@ func (db dataStore) getByID(id int) (Build, error) {
 	if err := db.Preload("Service").First(&build, id).Error; err != nil {
 		return Build{}, err
 	}
+	return build, nil
+}
+
+func (db dataStore) getByVersionString(versionString string) (Build, error) {
+	build := Build{}
+
+	if err := db.Preload("Service").First(&build, &Build{VersionString: versionString}).Error; err != nil {
+		return Build{}, err
+	}
+
 	return build, nil
 }

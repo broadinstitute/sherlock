@@ -6,7 +6,6 @@ package builds
 // Thhis could eventually be moved to it's own sub-folder if it becomes unwieldy
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/broadinstitute/sherlock/internal/services"
@@ -45,14 +44,9 @@ type CreateBuildRequest struct {
 
 func (bc *BuildController) validateAndCreateNewBuild(newBuild CreateBuildRequest) (Build, error) {
 	var serviceID int
-	serviceID, ok := bc.services.DoesServiceExist(newBuild.ServiceName)
-	// handle case where service doesn't exist already
-	if !ok {
-		var err error
-		serviceID, err = bc.createNewServiceFromBuildRequest(newBuild.ServiceName, newBuild.ServiceRepo)
-		if err != nil {
-			return Build{}, err
-		}
+	serviceID, err := bc.services.FindOrCreate(newBuild.ServiceName)
+	if err != nil {
+		return Build{}, ErrBadCreateRequest
 	}
 	build := Build{
 		VersionString: newBuild.VersionString,
@@ -63,19 +57,6 @@ func (bc *BuildController) validateAndCreateNewBuild(newBuild CreateBuildRequest
 	}
 
 	return bc.store.createNew(build)
-}
-
-// when receiving a new build for a service sherlock isn't aware of, create that service
-func (bc *BuildController) createNewServiceFromBuildRequest(name, repoURL string) (int, error) {
-	newServiceRequest := services.CreateServiceRequest{
-		Name:    name,
-		RepoURL: repoURL,
-	}
-	newService, err := bc.services.CreateNew(newServiceRequest)
-	if err != nil {
-		return 0, fmt.Errorf("error creating new service from build request: %v", err)
-	}
-	return newService.ID, nil
 }
 
 // ListAll is the public API on the build controller for listing out all builds
@@ -94,6 +75,12 @@ func (bc *BuildController) CreateNew(newBuild CreateBuildRequest) (Build, error)
 // a build entity by ID
 func (bc *BuildController) GetByID(id int) (Build, error) {
 	return bc.store.getByID(id)
+}
+
+// GetByVersionString will perform a look up of a build entity using it's unique version string
+// ie image repo + tag
+func (bc *BuildController) GetByVersionString(versionString string) (Build, error) {
+	return bc.store.getByVersionString(versionString)
 }
 
 func (bc *BuildController) serialize(builds ...Build) []BuildResponse {

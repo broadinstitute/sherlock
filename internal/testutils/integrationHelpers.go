@@ -84,6 +84,6 @@ func Truncate(db *gorm.DB) error {
 // ensure each case starts with a clean database
 func Cleanup(t *testing.T, dbConn *gorm.DB) {
 	if err := Truncate(dbConn); err != nil {
-		t.Fatalf("error cleaning db after test run: %v", err)
+		t.Logf("error cleaning db after test run: %v", err)
 	}
 }

@@ -37,12 +37,18 @@ func TestIntegrationEnvironmentsSuite(t *testing.T) {
 func (suite *EnvironmentTestSuite) SetupTest() {
 	suite.testApp = initTestApp(suite.T())
 	suite.goodEnvironmentRequest = CreateEnvironmentRequest{
-		Name: "terra-juyang-opera-fish",
+		Name: faker.UUIDHyphenated(),
 	}
 	suite.anotherEnvironmentRequest = CreateEnvironmentRequest{
-		Name: "terra-mflinn-prime-sawfly",
+		Name: faker.UUIDHyphenated(),
 	}
 	suite.badEnvironmentRequest = CreateEnvironmentRequest{}
+}
+
+func (suite *EnvironmentTestSuite) TearDownTest() {
+	// each test runs in its own isolated transaction
+	// this ensures we cleanup after each test as it completes
+	suite.testApp.db.Rollback()
 }
 
 //
@@ -58,14 +64,14 @@ type TestApplication struct {
 // connect to DB and create the Application
 func initTestApp(t *testing.T) *TestApplication {
 	dbConn := testutils.ConnectAndMigrate(t)
-	app := &TestApplication{
+	// ensures each test will run in it's own isolated transaction
+	// The transaction will be rolled back after each test
+	// regardless of pass or fail
+	dbConn = dbConn.Begin()
+	return &TestApplication{
 		Environments: NewController(dbConn),
 		db:           dbConn,
 	}
-
-	testutils.Cleanup(t, app.db)
-
-	return app
 }
 
 //
@@ -135,26 +141,28 @@ func (suite *EnvironmentTestSuite) TestIntegrationCreateEnvironments() {
 
 	// Testing Code
 	for _, testCase := range testCases {
+		// creating a temporary test app instance with its own transaction for each
+		// testcase so they don't step on eachother
+		tempApp := initTestApp(suite.T())
 		suite.Run(testCase.name, func() {
-			testutils.Cleanup(suite.T(), suite.testApp.db)
 
 			// create all non-final environments as setup
 			for _, request := range testCase.requests[:len(testCase.requests)-1] {
-				_, err := suite.testApp.Environments.CreateNew(request)
+				_, err := tempApp.Environments.CreateNew(request)
 				assert.NoError(suite.T(), err)
 			}
 
 			// create and test the last environment
-			newEnvironment, err := suite.testApp.Environments.CreateNew(testCase.requests[len(testCase.requests)-1])
+			newEnvironment, err := tempApp.Environments.CreateNew(testCase.requests[len(testCase.requests)-1])
 			assert.Equal(suite.T(), testCase.expectedEnvironment.Name, newEnvironment.Name)
 			assert.Equal(suite.T(), testCase.expectedError, err)
 		})
+		tempApp.db.Rollback()
 	}
 }
 
 func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentGetByName() {
 	suite.Run("GetByName gets an environment by name", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.db)
 
 		_, err := suite.testApp.Environments.CreateNew(suite.goodEnvironmentRequest)
 		assert.NoError(suite.T(), err)
@@ -167,9 +175,11 @@ func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentGetByName() {
 	})
 
 	suite.Run("GetByName returns error if not found", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.db)
+		var envRequest CreateEnvironmentRequest
+		err := faker.FakeData(&envRequest)
+		suite.Require().NoError(err)
 
-		_, err := suite.testApp.Environments.CreateNew(suite.goodEnvironmentRequest)
+		_, err = suite.testApp.Environments.CreateNew(envRequest)
 		assert.NoError(suite.T(), err)
 
 		foundEnvironment, err := suite.testApp.Environments.GetByName("this-doesnt-exist")
@@ -181,7 +191,6 @@ func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentGetByName() {
 
 func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentListAll() {
 	suite.Run("ListAll returns nothing", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.db)
 
 		foundEnvironments, err := suite.testApp.Environments.ListAll()
 
@@ -190,7 +199,6 @@ func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentListAll() {
 	})
 
 	suite.Run("ListAll returns one Environment", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.db)
 
 		_, err := suite.testApp.Environments.CreateNew(suite.goodEnvironmentRequest)
 		assert.NoError(suite.T(), err)
@@ -203,23 +211,25 @@ func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentListAll() {
 	})
 
 	suite.Run("ListAll returns many Environments", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.db)
 
-		_, err := suite.testApp.Environments.CreateNew(suite.goodEnvironmentRequest)
+		var randomEnvRequest CreateEnvironmentRequest
+		err := faker.FakeData(&randomEnvRequest)
+		suite.Require().NoError(err)
+
+		_, err = suite.testApp.Environments.CreateNew(randomEnvRequest)
 		assert.NoError(suite.T(), err)
 		_, err = suite.testApp.Environments.CreateNew(suite.anotherEnvironmentRequest)
 		assert.NoError(suite.T(), err)
 
 		foundEnvironments, err := suite.testApp.Environments.ListAll()
 
-		assert.Equal(suite.T(), len(foundEnvironments), 2)
+		assert.Equal(suite.T(), len(foundEnvironments), 3)
 		assert.NoError(suite.T(), err)
 	})
 }
 
 func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentDoesEnvironmentExist() {
 	suite.Run("EnvironmentDoesExist returns true when exists", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.db)
 
 		newEnvironment, _ := suite.testApp.Environments.CreateNew(suite.goodEnvironmentRequest)
 
@@ -230,9 +240,8 @@ func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentDoesEnvironmentExis
 	})
 
 	suite.Run("EnvironmentDoesExist returns false when not exists", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.db)
 
-		_, err := suite.testApp.Environments.CreateNew(suite.goodEnvironmentRequest)
+		_, err := suite.testApp.Environments.CreateNew(suite.anotherEnvironmentRequest)
 		assert.NoError(suite.T(), err)
 
 		environmentID, doesEnvironmentExist := suite.testApp.Environments.DoesEnvironmentExist("no-environment-here")
@@ -246,7 +255,6 @@ func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentDoesEnvironmentExis
 // to expecting the correct response types.
 func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentSerialize() {
 	suite.Run("Serialize returns JSON one environment", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.db)
 
 		newEnvironment, _ := suite.testApp.Environments.CreateNew(suite.goodEnvironmentRequest)
 
@@ -258,7 +266,6 @@ func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentSerialize() {
 	})
 
 	suite.Run("Serialize returns JSON for many environments", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.db)
 
 		var environments []Environment
 		var newEnvironment Environment
@@ -276,7 +283,6 @@ func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentSerialize() {
 	})
 
 	suite.Run("Serialize returns empty environment for bad environments", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.db)
 
 		newEnvironment, _ := suite.testApp.Environments.CreateNew(suite.badEnvironmentRequest)
 		environmentResponses := suite.testApp.Environments.serialize(newEnvironment)
@@ -288,7 +294,6 @@ func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentSerialize() {
 
 func (suite *EnvironmentTestSuite) TestFindOrCreate() {
 	suite.Run("retrieves an environment that already exists", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.db)
 
 		existingEnvironment, err := suite.testApp.Environments.CreateNew(suite.goodEnvironmentRequest)
 		suite.Require().NoError(err)
@@ -300,7 +305,6 @@ func (suite *EnvironmentTestSuite) TestFindOrCreate() {
 	})
 
 	suite.Run("creates a new environment that doesn't exist already", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.db)
 
 		newEnvironmentID, err := suite.testApp.Environments.FindOrCreate(faker.Word())
 		suite.Assert().NoError(err)

@@ -4,13 +4,14 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/broadinstitute/sherlock/internal/builds"
 	"github.com/broadinstitute/sherlock/internal/environments"
 	"github.com/broadinstitute/sherlock/internal/services"
 	"gorm.io/gorm"
 )
 
 var (
-	// ErrServiceNotFound is a wrapper around gorms failed lookup error specifically
+	// ErrServiceInstanceNotFound is a wrapper around gorms failed lookup error specifically
 	// for failure to find a service instance
 	ErrServiceInstanceNotFound = gorm.ErrRecordNotFound
 )
@@ -34,7 +35,7 @@ type ServiceInstance struct {
 type serviceInstanceStore interface {
 	listAll() ([]ServiceInstance, error)
 	createNew(environmentID int, serviceID int) (ServiceInstance, error)
-	getByEnvironmentAndServiceName(environmentName, serviceName string) (ServiceInstance, error)
+	getByEnvironmentAndServiceID(environmentID, serviceID int) (ServiceInstance, error)
 }
 
 func newServiceInstanceStore(dbConn *gorm.DB) dataStore {
@@ -51,29 +52,13 @@ func (db dataStore) createNew(environmentID, serviceID int) (ServiceInstance, er
 		return ServiceInstance{}, fmt.Errorf("error persisting service instance: %v", err)
 	}
 
-	// retrieve the same service instance record back from the db but now with all the
-	// associations populated.
-	err := db.Preload("Service").
-		Preload("Environment").
-		First(&newServiceInstance, newServiceInstance.ID).Error
-
-	return newServiceInstance, err
+	return newServiceInstance, nil
 }
 
-func (db dataStore) getByEnvironmentAndServiceName(environmentName, serviceName string) (ServiceInstance, error) {
+func (db dataStore) getByEnvironmentAndServiceID(environmentID, serviceID int) (ServiceInstance, error) {
 	var serviceInstance ServiceInstance
 
-	// using gorms struct query features to set the WHERE clause
-	queryStruct := ServiceInstance{
-		Environment: environments.Environment{
-			Name: environmentName,
-		},
-		Service: services.Service{
-			Name: serviceName,
-		},
-	}
-
-	err := db.Preload("Service").Preload("Environment").Where(&queryStruct).First(&serviceInstance).Error
+	err := db.Preload("Service").Preload("Environment").First(&serviceInstance, &ServiceInstance{ServiceID: serviceID, EnvironmentID: environmentID}).Error
 	return serviceInstance, err
 }
 
@@ -86,4 +71,53 @@ func (db dataStore) listAll() ([]ServiceInstance, error) {
 	}
 
 	return serviceInstances, nil
+}
+
+// Deploy is the type  defining the database model for a deployment. It is an association
+// between a service instance and a build
+type Deploy struct {
+	ID                int
+	ServiceInstanceID int
+	ServiceInstance   ServiceInstance `gorm:"foreignKey:ServiceInstanceID;references:ID"`
+	BuildID           int
+	Build             builds.Build `gorm:"foreignKey:BuildID;references:ID"`
+	CreatedAt         time.Time
+	UpdatedAt         time.Time
+}
+
+type deployStore interface {
+	createDeploy(buildID, serviceInstanceID int) (Deploy, error)
+	getDeploysByServiceInstance(serviceInstanceID int) ([]Deploy, error)
+}
+
+func newDeployStore(dbConn *gorm.DB) dataStore {
+	return dataStore{dbConn}
+}
+
+func (db dataStore) createDeploy(buildID, serviceInstanceID int) (Deploy, error) {
+	newDeploy := Deploy{
+		ServiceInstanceID: serviceInstanceID,
+		BuildID:           buildID,
+	}
+
+	if err := db.Create(&newDeploy).Error; err != nil {
+		return Deploy{}, err
+	}
+
+	return newDeploy, nil
+}
+
+func (db dataStore) getDeploysByServiceInstance(serviceInstanceID int) ([]Deploy, error) {
+	var deploys []Deploy
+
+	// TODO: If we ever hit DB bottlenecks this is a likely suspect
+	err := db.Preload("ServiceInstance").
+		Preload("ServiceInstance.Service").
+		Preload("ServiceInstance.Environment").
+		Preload("Build").
+		Preload("Build.Service").
+		Find(&deploys, &Deploy{ServiceInstanceID: serviceInstanceID}).
+		Error
+
+	return deploys, err
 }

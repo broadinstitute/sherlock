@@ -21,8 +21,11 @@ tests-with-coverage:
 	docker run --name test-postgres -e POSTGRES_PASSWORD=password -e POSTGRES_USER=sherlock -d -p 5432:5432 postgres:13
 	export SHERLOCK_DBHOST="localhost" && export SHERLOCK_DBPASSWORD="password" && go test -v -race -coverprofile=cover.out -covermode=atomic ./...
 	docker stop test-postgres
-	docker rm test-postgres
+	docker rm -f -v test-postgres
+
+make pg-up:
+	docker run --name test-postgres -e POSTGRES_PASSWORD=password -e POSTGRES_USER=sherlock -d -p 5432:5432 postgres:13
 
 pg-down:
 	docker stop test-postgres
-	docker rm test-postgres
+	docker rm -f -v test-postgres

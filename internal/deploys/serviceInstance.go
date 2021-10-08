@@ -6,6 +6,8 @@ package deploys
 // at a specific point in time which is needed to represent a deploy
 
 import (
+	"errors"
+
 	"github.com/broadinstitute/sherlock/internal/environments"
 	"github.com/broadinstitute/sherlock/internal/services"
 	"gorm.io/gorm"
@@ -63,7 +65,46 @@ func (sic *ServiceInstanceController) CreateNew(newServiceInstance CreateService
 // GetByEnvironmentAndServiceName accepts environment and service names as strings and will return the Service_Instance entity
 // representing the association between them if it exists
 func (sic *ServiceInstanceController) GetByEnvironmentAndServiceName(environmentName, serviceName string) (ServiceInstance, error) {
-	return sic.store.getByEnvironmentAndServiceName(environmentName, serviceName)
+	// retrieve the service id if exists
+	serviceID, exists := sic.services.DoesServiceExist(serviceName)
+	if !exists {
+		return ServiceInstance{}, ErrServiceInstanceNotFound
+	}
+
+	// retrieve environmentID if exists
+	environmentID, exists := sic.environments.DoesEnvironmentExist(environmentName)
+	if !exists {
+		return ServiceInstance{}, ErrServiceInstanceNotFound
+	}
+
+	return sic.store.getByEnvironmentAndServiceID(environmentID, serviceID)
+}
+
+// FindOrCreate will check if a service instance with the given name and environment already exists
+// if so it returns the id. If not it will create it and then return the id
+func (sic *ServiceInstanceController) FindOrCreate(environmentName, serviceName string) (int, error) {
+	// attempt to look up the serviceInstance
+	serviceInstance, err := sic.GetByEnvironmentAndServiceName(environmentName, serviceName)
+
+	// if it doesn't exist create
+	if err != nil {
+		if errors.Is(err, ErrServiceInstanceNotFound) {
+			newServiceInstanceReq := CreateServiceInstanceRequest{
+				EnvironmentName: environmentName,
+				ServiceName:     serviceName,
+			}
+
+			serviceInstance, err = sic.CreateNew(newServiceInstanceReq)
+			if err != nil {
+				// got some error trying to create the service instance
+				return 0, err
+			}
+		} else {
+			// got some other error
+			return 0, err
+		}
+	}
+	return serviceInstance.ID, nil
 }
 
 // Serialize takes a variable number of service instance entities and serializes them into types suitable for use in

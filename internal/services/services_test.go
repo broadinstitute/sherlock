@@ -14,15 +14,18 @@ type ServicesIntegrationTestSuite struct {
 	app *testApplication
 }
 
-func (suite *ServicesIntegrationTestSuite) SetupSuite() {
+func (suite *ServicesIntegrationTestSuite) SetupTest() {
 	suite.app = initTestApp(suite.T())
-	// ensure the db is clean before running suite
-	testutils.Cleanup(suite.T(), suite.app.db)
+}
+
+func (suite *ServicesIntegrationTestSuite) TearDownTest() {
+	// each test runs in its own isolated transaction
+	// this ensures we cleanup after each test as it completes
+	suite.app.db.Rollback()
 }
 
 func (suite *ServicesIntegrationTestSuite) TestCreateService() {
 	suite.Run("Creates a service from valid request", func() {
-		testutils.Cleanup(suite.T(), suite.app.db)
 
 		newService := CreateServiceRequest{}
 
@@ -41,7 +44,6 @@ func (suite *ServicesIntegrationTestSuite) TestCreateService() {
 	})
 
 	suite.Run("Fails to create service when missing required fields", func() {
-		testutils.Cleanup(suite.T(), suite.app.db)
 		testCases := []CreateServiceRequest{
 			{},
 			{
@@ -59,7 +61,6 @@ func (suite *ServicesIntegrationTestSuite) TestCreateService() {
 func (suite *ServicesIntegrationTestSuite) TestListServices() {
 	// make some create service requests and populated them with fake data
 	suite.Run("ListAll returns nothing", func() {
-		testutils.Cleanup(suite.T(), suite.app.db)
 
 		services, err := suite.app.services.ListAll()
 
@@ -67,8 +68,7 @@ func (suite *ServicesIntegrationTestSuite) TestListServices() {
 		suite.Assert().NoError(err)
 	})
 
-	suite.Run("ListAll returns one Environment", func() {
-		testutils.Cleanup(suite.T(), suite.app.db)
+	suite.Run("ListAll returns one service", func() {
 
 		newService := CreateServiceRequest{
 			Name:    faker.Name(),
@@ -80,13 +80,12 @@ func (suite *ServicesIntegrationTestSuite) TestListServices() {
 
 		services, err := suite.app.services.ListAll()
 
-		suite.Assert().Equal(1, len(services))
-		suite.Assert().Equal(services[0].Name, newService.Name)
+		suite.Assert().Equal(len(services), 1)
+		suite.Assert().Equal(newService.Name, services[0].Name)
 		suite.Assert().NoError(err)
 	})
 
-	suite.Run("ListAll returns multiple environments", func() {
-		testutils.Cleanup(suite.T(), suite.app.db)
+	suite.Run("ListAll returns multiple services", func() {
 
 		// populate multiple services
 		for i := 0; i < 3; i++ {
@@ -102,13 +101,12 @@ func (suite *ServicesIntegrationTestSuite) TestListServices() {
 		services, err := suite.app.services.ListAll()
 		suite.Require().NoError(err)
 
-		suite.Assert().Equal(len(services), 3)
+		suite.Assert().Equal(len(services), 4)
 	})
 }
 
 func (suite *ServicesIntegrationTestSuite) TestGetByName() {
 	suite.Run("retrieves an existing service", func() {
-		testutils.Cleanup(suite.T(), suite.app.db)
 
 		newService := CreateServiceRequest{
 			Name:    faker.Name(),
@@ -129,7 +127,6 @@ func (suite *ServicesIntegrationTestSuite) TestGetByName() {
 	})
 
 	suite.Run("errors on non-existent service", func() {
-		testutils.Cleanup(suite.T(), suite.app.db)
 
 		_, err := suite.app.services.GetByName("tester")
 		suite.Assert().ErrorIs(err, ErrServiceNotFound)
@@ -141,7 +138,6 @@ func (suite *ServicesIntegrationTestSuite) TestGetByName() {
 
 func (suite *ServicesIntegrationTestSuite) TestFindOrCreate() {
 	suite.Run("retrieves an existing service", func() {
-		testutils.Cleanup(suite.T(), suite.app.db)
 
 		newService := CreateServiceRequest{}
 
@@ -158,9 +154,8 @@ func (suite *ServicesIntegrationTestSuite) TestFindOrCreate() {
 	})
 
 	suite.Run("creates service if not exists", func() {
-		testutils.Cleanup(suite.T(), suite.app.db)
 
-		newServiceID, err := suite.app.services.FindOrCreate(faker.Word())
+		newServiceID, err := suite.app.services.FindOrCreate(faker.UUIDHyphenated())
 		suite.Assert().NoError(err)
 		// assert the service was actually created by verifying its ID is non-zero
 		suite.Assert().NotEqual(0, newServiceID)
@@ -182,6 +177,10 @@ type testApplication struct {
 
 func initTestApp(t *testing.T) *testApplication {
 	dbConn := testutils.ConnectAndMigrate(t)
+	// ensures each test will run in it's own isolated transaction
+	// The transaction will be rolled back after each test
+	// regardless of pass or fail
+	dbConn = dbConn.Begin()
 	return &testApplication{
 		services: NewController(dbConn),
 		db:       dbConn,

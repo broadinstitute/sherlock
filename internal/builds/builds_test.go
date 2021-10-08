@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/broadinstitute/sherlock/internal/testutils"
+	"github.com/bxcodec/faker/v3"
 	"github.com/stretchr/testify/suite"
 	"gorm.io/gorm"
 )
@@ -22,24 +23,26 @@ func TestBuildsIntegrationSuite(t *testing.T) {
 	suite.Run(t, new(BuildsIntegrationTestSuite))
 }
 
-func (suite *BuildsIntegrationTestSuite) SetupSuite() {
-	suite.app = initTestApp(suite.T())
-	// ensure the db is clean before running suite
-	testutils.Cleanup(suite.T(), suite.app.db)
+func (suite *BuildsIntegrationTestSuite) SetupTest() {
 	suite.goodCreateBuildRequest = CreateBuildRequest{
-		VersionString: "docker.io/broad/rawls:12.3.",
-		CommitSha:     "asdfewrf",
-		BuildURL:      "https://jenkins.job/1",
+		VersionString: faker.URL(),
+		CommitSha:     faker.UUIDDigit(),
+		BuildURL:      faker.URL(),
 		BuiltAt:       time.Now(),
-		ServiceName:   "rawls",
+		ServiceName:   faker.UUIDHyphenated(),
 		ServiceRepo:   "github.com/broadinstitute/rawls",
 	}
+	suite.app = initTestApp(suite.T())
+}
 
+func (suite *BuildsIntegrationTestSuite) TearDownTest() {
+	// each test runs in its own isolated transaction
+	// this ensures we cleanup after each test as it completes
+	suite.app.db.Rollback()
 }
 
 func (suite *BuildsIntegrationTestSuite) TestCreateBuild() {
 	suite.Run("creates a new build", func() {
-		testutils.Cleanup(suite.T(), suite.app.db)
 
 		newBuild := suite.goodCreateBuildRequest
 
@@ -48,33 +51,27 @@ func (suite *BuildsIntegrationTestSuite) TestCreateBuild() {
 
 		suite.Assert().Equal(newBuild.VersionString, build.VersionString)
 	})
+}
 
-	suite.Run("fails with empty create request", func() {
-		testutils.Cleanup(suite.T(), suite.app.db)
+func (suite *BuildsIntegrationTestSuite) TestCreateBuildEmptyRequest() {
+	newBuild := CreateBuildRequest{}
 
-		newBuild := CreateBuildRequest{}
+	_, err := suite.app.builds.CreateNew(newBuild)
 
-		_, err := suite.app.builds.CreateNew(newBuild)
+	suite.Assert().ErrorIs(err, ErrBadCreateRequest)
+}
 
-		suite.Require().Error(err)
-	})
+func (suite *BuildsIntegrationTestSuite) TestCreateNonUniqueVersion() {
+	// create a valid build
+	_, err := suite.app.builds.CreateNew(suite.goodCreateBuildRequest)
+	suite.Require().NoError(err)
 
-	suite.Run("fails on non-unique version string", func() {
-		testutils.Cleanup(suite.T(), suite.app.db)
-
-		// create a valid build
-		_, err := suite.app.builds.CreateNew(suite.goodCreateBuildRequest)
-		suite.Assert().NoError(err)
-
-		// try to create another build with the same version string
-		_, err = suite.app.builds.CreateNew(suite.goodCreateBuildRequest)
-		suite.Assert().Error(err)
-	})
+	_, err = suite.app.builds.CreateNew(suite.goodCreateBuildRequest)
+	suite.Assert().ErrorIs(err, ErrDuplicateVersionString)
 }
 
 func (suite *BuildsIntegrationTestSuite) TestGetByID() {
 	suite.Run("fails with non-existent id", func() {
-		testutils.Cleanup(suite.T(), suite.app.db)
 
 		_, err := suite.app.builds.GetByID(23)
 		suite.Require().ErrorIs(err, ErrBuildNotFound)
@@ -82,7 +79,6 @@ func (suite *BuildsIntegrationTestSuite) TestGetByID() {
 	})
 
 	suite.Run("retrives an existing build", func() {
-		testutils.Cleanup(suite.T(), suite.app.db)
 
 		newBuild := suite.goodCreateBuildRequest
 		build, err := suite.app.builds.CreateNew(newBuild)
@@ -96,6 +92,27 @@ func (suite *BuildsIntegrationTestSuite) TestGetByID() {
 	})
 }
 
+func (suite *BuildsIntegrationTestSuite) TestGetByVersionString() {
+	suite.Run("successful looks up existing build by version string", func() {
+
+		// create a build instance to look up
+		existingBuild, err := suite.app.builds.CreateNew(suite.goodCreateBuildRequest)
+		suite.Require().NoError(err)
+
+		result, err := suite.app.builds.GetByVersionString(suite.goodCreateBuildRequest.VersionString)
+		suite.Assert().NoError(err)
+
+		// make sure the ids match
+		suite.Assert().Equal(existingBuild.ID, result.ID)
+	})
+
+	suite.Run("errors not found for non-existent version string", func() {
+
+		_, err := suite.app.builds.GetByVersionString("does-not-exist")
+		suite.Assert().ErrorIs(err, ErrBuildNotFound)
+	})
+}
+
 type testApplication struct {
 	builds *BuildController
 	db     *gorm.DB
@@ -103,6 +120,10 @@ type testApplication struct {
 
 func initTestApp(t *testing.T) *testApplication {
 	dbConn := testutils.ConnectAndMigrate(t)
+	// ensures each test will run in it's own isolated transaction
+	// The transaction will be rolled back after each test
+	// regardless of pass or fail
+	dbConn = dbConn.Begin()
 	return &testApplication{
 		builds: NewController(dbConn),
 		db:     dbConn,
