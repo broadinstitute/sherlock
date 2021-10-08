@@ -25,7 +25,6 @@ func TestBuildsIntegrationSuite(t *testing.T) {
 }
 
 func (suite *BuildsIntegrationTestSuite) SetupTest() {
-	// start a new db transaction for each test
 	suite.goodCreateBuildRequest = CreateBuildRequest{
 		VersionString: faker.URL(),
 		CommitSha:     faker.UUIDDigit(),
@@ -102,7 +101,7 @@ func (suite *BuildsIntegrationTestSuite) TestGetByVersionString() {
 		result, err := suite.app.builds.GetByVersionString(suite.goodCreateBuildRequest.VersionString)
 		suite.Assert().NoError(err)
 
-		// make sure the id's match
+		// make sure the ids match
 		suite.Assert().Equal(existingBuild.ID, result.ID)
 	})
 
