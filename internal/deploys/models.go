@@ -110,6 +110,7 @@ func (db dataStore) createDeploy(buildID, serviceInstanceID int) (Deploy, error)
 func (db dataStore) getDeploysByServiceInstance(serviceInstanceID int) ([]Deploy, error) {
 	var deploys []Deploy
 
+	// TODO: If we ever hit DB bottlenecks this is a likely suspect
 	err := db.Preload("ServiceInstance").
 		Preload("ServiceInstance.Service").
 		Preload("ServiceInstance.Environment").
