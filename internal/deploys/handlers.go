@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/broadinstitute/sherlock/internal/metrics"
 	"github.com/gin-gonic/gin"
 )
 
@@ -70,6 +71,11 @@ func (dc *DeployController) createDeploy(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, Response{Error: err.Error()})
 		return
 	}
+
+	metrics.RecordDeployFrequency(c, environment, service)
+	// calculate lead time
+	leadTime := deploy.calculateLeadTimeHours()
+	metrics.RecordLeadTime(c, leadTime, environment, service)
 
 	c.JSON(http.StatusCreated, Response{Deploys: dc.Serialize(deploy)})
 }

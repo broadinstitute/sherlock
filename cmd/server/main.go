@@ -24,6 +24,7 @@ func main() {
 	}
 
 	app := sherlock.New()
+	defer app.ShutdownStackdriver()
 
 	if _, err := services.Seed(app.DB); err != nil {
 		log.Println(err)

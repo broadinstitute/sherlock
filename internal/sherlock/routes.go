@@ -1,6 +1,7 @@
 package sherlock
 
 import (
+	"github.com/broadinstitute/sherlock/internal/metrics"
 	"github.com/gin-gonic/gin"
 )
 
@@ -29,6 +30,10 @@ func (a *Application) buildRouter() {
 		// deploys routes
 		deploysGroup := group.Group("/deploys")
 		a.Deploys.RegisterHandlers(deploysGroup)
+
+		// metrics routes
+		metricsGroup := group.Group("/metrics")
+		metrics.RegisterPrometheusMetricsHandler(metricsGroup)
 
 	}
 	a.Handler = router

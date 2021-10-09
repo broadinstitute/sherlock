@@ -78,3 +78,7 @@ func (dc *DeployController) Serialize(deploy ...Deploy) []DeployResponse {
 	serializer := DeploysSerializer{deployList}
 	return serializer.Response()
 }
+
+func (deploy *Deploy) calculateLeadTimeHours() float64 {
+	return deploy.CreatedAt.Sub(deploy.Build.BuiltAt).Hours()
+}

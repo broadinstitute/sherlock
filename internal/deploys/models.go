@@ -104,7 +104,16 @@ func (db dataStore) createDeploy(buildID, serviceInstanceID int) (Deploy, error)
 		return Deploy{}, err
 	}
 
-	return newDeploy, nil
+	// retrieve the same Deploy record back from the db with all the
+	// associations populated
+	err := db.Preload("ServiceInstance").
+		Preload("ServiceInstance.Service").
+		Preload("ServiceInstance.Environment").
+		Preload("Build").
+		First(&newDeploy).
+		Error
+
+	return newDeploy, err
 }
 
 func (db dataStore) getDeploysByServiceInstance(serviceInstanceID int) ([]Deploy, error) {
