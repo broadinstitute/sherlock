@@ -2,6 +2,7 @@ package metrics
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"time"
 
@@ -65,6 +66,7 @@ func RegisterPrometheusMetricsHandler(metricsGroup *gin.RouterGroup) {
 	metricsGroup.GET("", gin.WrapH(prometheusExporter))
 }
 
+// RegisterStackdriverExporter will
 func RegisterStackdriverExporter() (*stackdriver.Exporter, error) {
 	sdExporter, err := stackdriver.NewExporter(stackdriver.Options{
 		ProjectID:         "dsp-tools-k8s",
@@ -74,7 +76,9 @@ func RegisterStackdriverExporter() (*stackdriver.Exporter, error) {
 	if err != nil {
 		return nil, err
 	}
-	sdExporter.StartMetricsExporter()
+	if err := sdExporter.StartMetricsExporter(); err != nil {
+		return nil, fmt.Errorf("error starting stackdriver metrics exporter: %v", err)
+	}
 	return sdExporter, nil
 }
 
