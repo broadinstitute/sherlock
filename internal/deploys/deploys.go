@@ -63,7 +63,7 @@ func (dc *DeployController) GetDeploysByEnvironmentAndService(environmentName, s
 	// look up the service instance for the provided service and environment names
 	serviceInstance, err := dc.serviceInstances.GetByEnvironmentAndServiceName(environmentName, serviceName)
 	if err != nil {
-		return []Deploy{}, err
+		return []Deploy{}, ErrServiceInstanceNotFound
 	}
 
 	return dc.store.getDeploysByServiceInstance(serviceInstance.ID)

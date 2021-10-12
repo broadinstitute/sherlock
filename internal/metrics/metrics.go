@@ -89,6 +89,8 @@ func RecordDeployFrequency(ctx context.Context, environmentName, serviceName str
 	stats.Record(metricsCtx, MDeployCounter.M(1))
 }
 
+// RecordLeadTime will extract tags from the context and then write a lead time data point to the appropriate
+// time series
 func RecordLeadTime(ctx context.Context, leadTimeHours float64, environmentName, serviceName string) {
 	metricsCtx, _ := tag.New(ctx, tag.Insert(KeyEnvironment, environmentName), tag.Insert(KeyService, serviceName))
 	stats.Record(metricsCtx, MLeadTimeToEnv.M(leadTimeHours))
