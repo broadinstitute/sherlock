@@ -52,7 +52,16 @@ func (dc *DeployController) CreateNew(newDeployRequest CreateDeployRequest) (Dep
 	build, err := dc.builds.GetByVersionString(newDeployRequest.BuildVersionString)
 	// for now just error if not exists
 	if err != nil {
-		return Deploy{}, err
+		// create the build if not exists
+		newBuild := builds.CreateBuildRequest{
+			VersionString: newDeployRequest.BuildVersionString,
+			ServiceName:   newDeployRequest.ServiceName,
+		}
+
+		build, err = dc.builds.CreateNew(newBuild)
+		if err != nil {
+			return Deploy{}, err
+		}
 	}
 
 	return dc.store.createDeploy(build.ID, serviceInstanceID)

@@ -69,7 +69,7 @@ func (suite *DeployIntegrationTestSuite) TestCreateDeployHandler() {
 		suite.Assert().Equal(http.StatusCreated, response.Code)
 	})
 
-	suite.Run("fails on non-existent build", func() {
+	suite.Run("creates build on non-existent build", func() {
 		ctx, response := testutils.SetupTestContext()
 		deployReq := CreateDeployRequestBody{
 			VersionString: "does-not-exist",
@@ -84,7 +84,7 @@ func (suite *DeployIntegrationTestSuite) TestCreateDeployHandler() {
 		ctx.Request = req
 
 		suite.app.deploys.createDeploy(ctx)
-		suite.Assert().Equal(http.StatusInternalServerError, response.Code)
+		suite.Assert().Equal(http.StatusCreated, response.Code)
 	})
 }
 
