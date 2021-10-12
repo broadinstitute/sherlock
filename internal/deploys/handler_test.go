@@ -32,6 +32,7 @@ func (suite *DeployIntegrationTestSuite) TestCreateDeployHandler() {
 	err = faker.FakeData(&otherPreExistingBuildReq)
 	suite.Require().NoError(err)
 	otherPreExistingBuild, err := suite.app.deploys.builds.CreateNew(otherPreExistingBuildReq)
+	suite.Require().NoError(err)
 
 	suite.Run("creates deploy from existing service instance and build", func() {
 		ctx, response := testutils.SetupTestContext()
