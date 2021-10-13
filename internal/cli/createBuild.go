@@ -67,7 +67,7 @@ func createBuild(cmd *cobra.Command, args []string) error {
 
 	result, rawResponseBody, err := dispatchCreateBuildRequest(newBuild)
 	if err != nil {
-		return fmt.Errorf("ERROR: %V", err)
+		return fmt.Errorf("ERROR: %v", err)
 	}
 
 	// check for errors returned in response
