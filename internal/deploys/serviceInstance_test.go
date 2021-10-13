@@ -79,25 +79,9 @@ func (suite *ServiceInstanceIntegrationTestSuite) TestListServiceInstancesError(
 }
 
 func (suite *ServiceInstanceIntegrationTestSuite) TestCreateServiceInstance() {
-	// pretest setup
-	// prepoulate an environment
-	preExistingEnv, err := suite.app.serviceInstances.environments.CreateNew(suite.goodEnvironmentReq)
-	suite.Require().NoError(err)
-
-	// pre-populate an existing service
-	preExistingService, err := suite.app.serviceInstances.services.CreateNew(suite.goodServiceReq)
-	suite.Require().NoError(err)
-
 	suite.Run("creates association between existing service, environment, and cluster", func() {
 		testutils.Cleanup(suite.T(), suite.app.db)
-
-		// pre-populate an environment
-		preExistingEnv, err := suite.app.serviceInstances.environments.CreateNew(suite.goodEnvironmentReq)
-		suite.Require().NoError(err)
-
-		// pre-populate an existing cluster
-		preExistingCluster, err := suite.app.clusterInstances.CreateNew(suite.goodClusterReq)
-		suite.Require().NoError(err)
+		preExistingCluster, preExistingService, preExistingEnv := suite.preProvisionDependentObjects(true, true, true)
 
 		// attempt to create a service instance from the above
 		newServiceInstanceRequest := CreateServiceInstanceRequest{
@@ -116,10 +100,8 @@ func (suite *ServiceInstanceIntegrationTestSuite) TestCreateServiceInstance() {
 	})
 
 	suite.Run("creates an environment if not exists", func() {
-
-		// pre-populate an existing cluster
-		preExistingCluster, err := suite.app.clusterInstances.CreateNew(suite.goodClusterReq)
-		suite.Require().NoError(err)
+		testutils.Cleanup(suite.T(), suite.app.db)
+		preExistingCluster, preExistingService, _ := suite.preProvisionDependentObjects(true, true, false)
 
 		newServiceInstanceReq := CreateServiceInstanceRequest{
 			EnvironmentName: "does-not-exist",
@@ -134,10 +116,8 @@ func (suite *ServiceInstanceIntegrationTestSuite) TestCreateServiceInstance() {
 	})
 
 	suite.Run("creates a service if not exists", func() {
-
-		// pre-populate an existing cluster
-		preExistingCluster, err := suite.app.clusterInstances.CreateNew(suite.goodClusterReq)
-		suite.Require().NoError(err)
+		testutils.Cleanup(suite.T(), suite.app.db)
+		preExistingCluster, _, preExistingEnv := suite.preProvisionDependentObjects(true, false, true)
 
 		newServiceInstanceReq := CreateServiceInstanceRequest{
 			EnvironmentName: preExistingEnv.Name,
@@ -152,10 +132,8 @@ func (suite *ServiceInstanceIntegrationTestSuite) TestCreateServiceInstance() {
 	})
 
 	suite.Run("cannot create the same service instance twice", func() {
-
-		// pre-populate an existing cluster
-		preExistingCluster, err := suite.app.clusterInstances.CreateNew(suite.goodClusterReq)
-		suite.Require().NoError(err)
+		testutils.Cleanup(suite.T(), suite.app.db)
+		preExistingCluster, preExistingService, preExistingEnv := suite.preProvisionDependentObjects(true, true, true)
 
 		// attempt to create a service instance from the above
 		newServiceInstanceReq := CreateServiceInstanceRequest{
@@ -163,6 +141,9 @@ func (suite *ServiceInstanceIntegrationTestSuite) TestCreateServiceInstance() {
 			ServiceName:     preExistingService.Name,
 			ClusterName:     preExistingCluster.Name,
 		}
+
+		_, err := suite.app.serviceInstances.CreateNew(newServiceInstanceReq)
+		suite.Require().NoError(err)
 
 		// trying to create the same service instance again should error
 		_, err = suite.app.serviceInstances.CreateNew(newServiceInstanceReq)
@@ -172,18 +153,8 @@ func (suite *ServiceInstanceIntegrationTestSuite) TestCreateServiceInstance() {
 
 func (suite *ServiceInstanceIntegrationTestSuite) TestGetByEnvironmentAndServiceName() {
 	suite.Run("returns an existing service instance", func() {
-
-		// prepoulate an environment
-		preExistingEnv, err := suite.app.serviceInstances.environments.CreateNew(suite.goodEnvironmentReq)
-		suite.Require().NoError(err)
-
-		// pre-populate an existing service
-		preExistingService, err := suite.app.serviceInstances.services.CreateNew(suite.goodServiceReq)
-		suite.Require().NoError(err)
-
-		// pre-populate an existing cluster
-		preExistingCluster, err := suite.app.clusterInstances.CreateNew(suite.goodClusterReq)
-		suite.Require().NoError(err)
+		testutils.Cleanup(suite.T(), suite.app.db)
+		preExistingCluster, preExistingService, preExistingEnv := suite.preProvisionDependentObjects(true, true, true)
 
 		// attempt to create a service instance from the above
 		newServiceInstanceReq := CreateServiceInstanceRequest{
@@ -208,6 +179,10 @@ func (suite *ServiceInstanceIntegrationTestSuite) TestGetByEnvironmentAndService
 	})
 }
 
+//
+// Helper Methods
+//
+
 func setupMockController(
 	t *testing.T,
 	expectedServiceInstances []ServiceInstance,
@@ -217,4 +192,30 @@ func setupMockController(
 	mockStore := &mockServiceInstanceStore{}
 	mockStore.On(methodName).Return(expectedServiceInstances, expectedError)
 	return NewMockController(mockStore)
+}
+
+// helper method on suite to pre-provision all the required objects for ServiceInstance to exist,
+// takes a bool for each of Cluster/Service/Environment on whether to create the object or not.
+func (suite *ServiceInstanceIntegrationTestSuite) preProvisionDependentObjects(makeCluster, makeService, makeEnv bool) (models.Cluster, services.Service, environments.Environment) {
+	var preExistingEnv environments.Environment
+	var preExistingService services.Service
+	var preExistingCluster models.Cluster
+	var err error
+
+	if makeEnv {
+		preExistingEnv, err = suite.app.serviceInstances.environments.CreateNew(suite.goodEnvironmentReq)
+		suite.Require().NoError(err)
+	}
+
+	if makeService {
+		preExistingService, err = suite.app.serviceInstances.services.CreateNew(suite.goodServiceReq)
+		suite.Require().NoError(err)
+	}
+
+	if makeCluster {
+		preExistingCluster, err = suite.app.clusterInstances.CreateNew(suite.goodClusterReq)
+		suite.Require().NoError(err)
+	}
+
+	return preExistingCluster, preExistingService, preExistingEnv
 }
