@@ -52,7 +52,16 @@ func (dc *DeployController) CreateNew(newDeployRequest CreateDeployRequest) (Dep
 	build, err := dc.builds.GetByVersionString(newDeployRequest.BuildVersionString)
 	// for now just error if not exists
 	if err != nil {
-		return Deploy{}, err
+		// create the build if not exists
+		newBuild := builds.CreateBuildRequest{
+			VersionString: newDeployRequest.BuildVersionString,
+			ServiceName:   newDeployRequest.ServiceName,
+		}
+
+		build, err = dc.builds.CreateNew(newBuild)
+		if err != nil {
+			return Deploy{}, err
+		}
 	}
 
 	return dc.store.createDeploy(build.ID, serviceInstanceID)
@@ -63,8 +72,22 @@ func (dc *DeployController) GetDeploysByEnvironmentAndService(environmentName, s
 	// look up the service instance for the provided service and environment names
 	serviceInstance, err := dc.serviceInstances.GetByEnvironmentAndServiceName(environmentName, serviceName)
 	if err != nil {
-		return []Deploy{}, err
+		return []Deploy{}, ErrServiceInstanceNotFound
 	}
 
 	return dc.store.getDeploysByServiceInstance(serviceInstance.ID)
+}
+
+// Serialize takes a variable number of deploy entities and serializes them into types suitable for use in
+// client responses
+func (dc *DeployController) Serialize(deploy ...Deploy) []DeployResponse {
+	var deployList []Deploy
+	deployList = append(deployList, deploy...)
+
+	serializer := DeploysSerializer{deployList}
+	return serializer.Response()
+}
+
+func (deploy *Deploy) calculateLeadTimeHours() float64 {
+	return deploy.CreatedAt.Sub(deploy.Build.BuiltAt).Hours()
 }

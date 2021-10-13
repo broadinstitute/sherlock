@@ -4,10 +4,12 @@ import (
 	"log"
 	"net/http"
 
+	"contrib.go.opencensus.io/exporter/stackdriver"
 	"github.com/broadinstitute/sherlock/internal/builds"
 	"github.com/broadinstitute/sherlock/internal/db"
 	"github.com/broadinstitute/sherlock/internal/deploys"
 	"github.com/broadinstitute/sherlock/internal/environments"
+	"github.com/broadinstitute/sherlock/internal/metrics"
 	"github.com/broadinstitute/sherlock/internal/services"
 	"github.com/spf13/viper"
 	"gorm.io/gorm"
@@ -22,14 +24,16 @@ var (
 // repository is a wrapper type so we can define our own methods on the type holding the
 // DB connection pool
 type Application struct {
-	Services         *services.ServiceController
-	Builds           *builds.BuildController
-	Environments     *environments.EnvironmentController
-	ServiceInstances *deploys.ServiceInstanceController
-	Handler          http.Handler
+	Services     *services.ServiceController
+	Builds       *builds.BuildController
+	Environments *environments.EnvironmentController
+	Deploys      *deploys.DeployController
+
+	Handler http.Handler
 	// Used to pass the dbConn to testing setup helpers
 	// without needing to instantiate a full model instance
-	DB *gorm.DB
+	DB          *gorm.DB
+	Stackdriver *stackdriver.Exporter
 }
 
 // New returns a new instance of the core sherlock application
@@ -47,6 +51,13 @@ func New() *Application {
 	// initialize the gin router and store it in our app struct
 	app.buildRouter()
 
+	// start up stackdriver exporter and save it to the application struct
+	sd, err := metrics.RegisterStackdriverExporter()
+	if err != nil {
+		log.Printf("error starting stackdriver exporter: %v", err)
+	}
+	app.Stackdriver = sd
+
 	return app
 }
 
@@ -54,12 +65,20 @@ func (a *Application) registerControllers() {
 	a.Services = services.NewController(a.DB)
 	a.Builds = builds.NewController(a.DB)
 	a.Environments = environments.NewController(a.DB)
-	a.ServiceInstances = deploys.NewServiceInstanceController(a.DB)
+	a.Deploys = deploys.NewDeployController(a.DB)
 }
 
 // ServeHTTP implments the http.Handler interface for a Sherlock application instance
 func (a *Application) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	a.Handler.ServeHTTP(w, r)
+}
+
+// ShutdownStackdriver is used to flush the metrics buffer
+// and shutdown the exporter before sherlock itself closes
+func (a *Application) ShutdownStackdriver() {
+	log.Println("shutting down stackdriver metrics exporter")
+	a.Stackdriver.Flush()
+	a.Stackdriver.StopMetricsExporter()
 }
 
 // initialize sherlock configuration via viper
@@ -75,7 +94,7 @@ func init() {
 	Config.SetDefault("dbname", "sherlock")
 	Config.SetDefault("dbport", "5432")
 	Config.SetDefault("dbssl", "disable")
-	Config.SetDefault("dbinit", false)
+	Config.SetDefault("dbinit", true)
 
 	Config.AutomaticEnv()
 }
