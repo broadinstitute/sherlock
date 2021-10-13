@@ -119,8 +119,14 @@ func (suite *DeployIntegrationTestSuite) TestCreateDeploy() {
 			BuildVersionString: faker.URL(),
 		}
 
-		_, err := suite.app.deploys.CreateNew(newDeployReq)
+		deploy, err := suite.app.deploys.CreateNew(newDeployReq)
 		suite.Assert().NoError(err)
+
+		suite.Assert().Equal(newDeployReq.EnvironmentName, deploy.ServiceInstance.Environment.Name)
+		suite.Assert().Equal(newDeployReq.ServiceName, deploy.ServiceInstance.Service.Name)
+		suite.Assert().NotZero(deploy.ID)
+		// make sure the build was created
+		suite.Assert().NotZero(deploy.Build.ID)
 	})
 }
 
