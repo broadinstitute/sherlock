@@ -34,7 +34,7 @@ var (
 )
 
 func init() {
-	createDeployCmd.Flags().StringVar(&deployEnvironmentName, "enivronment", "", deployEnvironmentNameHelpText)
+	createDeployCmd.Flags().StringVar(&deployEnvironmentName, "environment", "", deployEnvironmentNameHelpText)
 	_ = createDeployCmd.MarkFlagRequired("environment")
 
 	createDeployCmd.Flags().StringVar(&deployServiceName, "service", "", deployServiceNameHelpText)
@@ -72,7 +72,7 @@ func createDeploy(cmd *cobra.Command, args []string) error {
 }
 func dispatchCreateDeployRequest(newDeploy deploys.CreateDeployRequestBody, environment, service string) (*deploys.Response, []byte, error) {
 	client := resty.New()
-	urlPath := fmt.Sprintf("%s/%s/%s", sherlockServerURL, environment, service)
+	urlPath := fmt.Sprintf("%s/deploys/%s/%s", sherlockServerURL, environment, service)
 	resp, err := client.R().
 		SetHeader("Content-Type", "application/json").
 		SetBody(newDeploy).
