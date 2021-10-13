@@ -60,7 +60,7 @@ func (sis *ServiceInstancesSerializer) Response() []ServiceInstanceResponse {
 }
 
 // DeployResponse is the type used for generating api responses
-// containging information about deploy(s)
+// containing information about deploy(s)
 type DeployResponse struct {
 	ID              int                     `json:"id"`
 	ServiceInstance ServiceInstanceResponse `json:"service_instance"`
