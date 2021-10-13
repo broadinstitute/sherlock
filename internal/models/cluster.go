@@ -2,13 +2,12 @@
 // APIs should not interact with this file and should user ClusterController instead
 // all gorm related methods should live in this file.
 
-package clusters
+package models
 
 import (
 	"fmt"
 	"time"
 
-	"github.com/broadinstitute/sherlock/internal/environments"
 	"gorm.io/gorm"
 )
 
@@ -28,35 +27,31 @@ type Cluster struct {
 	GoogleProject string `gorm:"unique"`
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
-	Environments  []environments.Environment
 }
 
 // clusterStore is the interface defining allowed db actions for Cluster
-type clusterStore interface {
-	listAll() ([]Cluster, error)
-	createNew(CreateClusterRequest) (Cluster, error)
-	getByID(int) (Cluster, error)
-	getByName(string) (Cluster, error)
-	addEnvironmentByID(Cluster, int) (Cluster, error)
+type ClusterStore interface {
+	ListAll() ([]Cluster, error)
+	CreateNew(CreateClusterRequest) (Cluster, error)
+	GetByID(int) (Cluster, error)
+	GetByName(string) (Cluster, error)
 }
 
 // creates a db connection via gorm
-func newClusterStore(dbconn *gorm.DB) dataStore {
+func NewClusterStore(dbconn *gorm.DB) dataStore {
 	return dataStore{dbconn}
 }
 
 // CreateClusterRequest struct defines the data required to create a new cluster in db
 type CreateClusterRequest struct {
-	Name         string `json:"name" binding:"required"`
-	Environments []environments.Environment
+	Name string `json:"name" binding:"required"`
 }
 
 // creates a cluster entity object to be persisted with the database from a
 // request to create a cluster.
 func (createClusterRequest CreateClusterRequest) ClusterReq() Cluster {
 	return Cluster{
-		Name:         createClusterRequest.Name,
-		Environments: createClusterRequest.Environments,
+		Name: createClusterRequest.Name,
 	}
 }
 
@@ -65,7 +60,7 @@ func (createClusterRequest CreateClusterRequest) ClusterReq() Cluster {
 //
 
 // Returns ALL Clusters in the db
-func (db dataStore) listAll() ([]Cluster, error) {
+func (db dataStore) ListAll() ([]Cluster, error) {
 	clusters := []Cluster{}
 
 	err := db.Find(&clusters).Error
@@ -77,7 +72,7 @@ func (db dataStore) listAll() ([]Cluster, error) {
 }
 
 // Saves an Cluster object to the db, returns the object if successful, nil otherwise
-func (db dataStore) createNew(newClusterReq CreateClusterRequest) (Cluster, error) {
+func (db dataStore) CreateNew(newClusterReq CreateClusterRequest) (Cluster, error) {
 	newCluster := newClusterReq.ClusterReq()
 
 	if err := db.Create(&newCluster).Error; err != nil {
@@ -88,7 +83,7 @@ func (db dataStore) createNew(newClusterReq CreateClusterRequest) (Cluster, erro
 
 // Get is used to retrieve a specific cluster entity from a postgres database using
 // id (primary key) as the lookup mechanism
-func (db dataStore) getByID(id int) (Cluster, error) {
+func (db dataStore) GetByID(id int) (Cluster, error) {
 	cluster := Cluster{}
 
 	if err := db.First(&cluster, id).Error; err != nil {
@@ -98,27 +93,11 @@ func (db dataStore) getByID(id int) (Cluster, error) {
 }
 
 // get an Cluster by name column
-func (db dataStore) getByName(name string) (Cluster, error) {
+func (db dataStore) GetByName(name string) (Cluster, error) {
 	cluster := Cluster{}
 
-	if err := db.Preload("Environments").Where(&Cluster{Name: name}).First(&cluster).Error; err != nil {
+	if err := db.Where(&Cluster{Name: name}).First(&cluster).Error; err != nil {
 		return Cluster{}, err
 	}
-	return cluster, nil
-}
-
-// Take an existing environment and add it to the cluster.
-func (db dataStore) addEnvironmentByID(cluster Cluster, environmentID int) (Cluster, error) {
-	environment := environments.Environment{}
-
-	//get the existing environment to add
-	if err := db.Where(&environments.Environment{ID: environmentID}).First(&environment).Error; err != nil {
-		return Cluster{}, err
-	}
-
-	if err := db.Model(&cluster).Association("Environments").Append(&environment); err != nil {
-		return Cluster{}, err
-	}
-
 	return cluster, nil
 }

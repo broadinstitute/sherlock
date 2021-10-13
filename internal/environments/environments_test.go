@@ -121,7 +121,7 @@ func (suite *EnvironmentTestSuite) TestIntegrationCreateEnvironments() {
 			},
 			expectedError: errors.New("error saving to database: ERROR: duplicate key value violates unique constraint \"environments_name_key\" (SQLSTATE 23505)"),
 			expectedEnvironment: Environment{
-				Name: "terra-juyang-opera-fish",
+				Name: "",
 			},
 		},
 		{

@@ -8,6 +8,7 @@ package deploys
 import (
 	"errors"
 
+	"github.com/broadinstitute/sherlock/internal/controllers"
 	"github.com/broadinstitute/sherlock/internal/environments"
 	"github.com/broadinstitute/sherlock/internal/services"
 	"gorm.io/gorm"
@@ -19,6 +20,7 @@ type ServiceInstanceController struct {
 	store        serviceInstanceStore
 	services     *services.ServiceController
 	environments *environments.EnvironmentController
+	clusters     *controllers.ClusterController
 }
 
 // CreateServiceInstanceRequest is a type containing the name of an environment and service
@@ -26,6 +28,7 @@ type ServiceInstanceController struct {
 type CreateServiceInstanceRequest struct {
 	EnvironmentName string
 	ServiceName     string
+	ClusterName     string
 }
 
 // NewServiceInstanceController expects a gorm.DB connection and will provision
@@ -36,6 +39,7 @@ func NewServiceInstanceController(dbConn *gorm.DB) *ServiceInstanceController {
 		store:        store,
 		services:     services.NewController(dbConn),
 		environments: environments.NewController(dbConn),
+		clusters:     controllers.NewClusterController(dbConn),
 	}
 }
 
@@ -47,6 +51,14 @@ func (sic *ServiceInstanceController) ListAll() ([]ServiceInstance, error) {
 // CreateNew accepts the name of an environment and a service. It will perform find or create operations for both
 // and their create an association between them
 func (sic *ServiceInstanceController) CreateNew(newServiceInstance CreateServiceInstanceRequest) (ServiceInstance, error) {
+	// technically that can create orphaned objects as you could create an environment and then never attach it b/c something later failed.
+
+	// check if the service already exists
+	clusterID, err := sic.clusters.FindOrCreate(newServiceInstance.ClusterName)
+	if err != nil {
+		return ServiceInstance{}, err
+	}
+
 	// check if the environment already exists
 	environmentID, err := sic.environments.FindOrCreate(newServiceInstance.EnvironmentName)
 	if err != nil {
@@ -59,7 +71,7 @@ func (sic *ServiceInstanceController) CreateNew(newServiceInstance CreateService
 		return ServiceInstance{}, err
 	}
 
-	return sic.store.createNew(environmentID, serviceID)
+	return sic.store.createNew(clusterID, environmentID, serviceID)
 }
 
 // GetByEnvironmentAndServiceName accepts environment and service names as strings and will return the Service_Instance entity

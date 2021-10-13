@@ -6,6 +6,7 @@ import (
 
 	"github.com/broadinstitute/sherlock/internal/builds"
 	"github.com/broadinstitute/sherlock/internal/environments"
+	"github.com/broadinstitute/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/internal/services"
 	"gorm.io/gorm"
 )
@@ -28,13 +29,16 @@ type ServiceInstance struct {
 	Service       services.Service `gorm:"foreignKey:ServiceID;references:ID"`
 	EnvironmentID int
 	Environment   environments.Environment `gorm:"foreignKey:EnvironmentID;references:ID"`
+	ClusterID     int                      `gorm:"default:null"`
+	Cluster       models.Cluster           `gorm:"foreignKey:ClusterID;references:ID"`
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
 }
 
 type serviceInstanceStore interface {
 	listAll() ([]ServiceInstance, error)
-	createNew(environmentID int, serviceID int) (ServiceInstance, error)
+	createNew(clusterID, environmentID, serviceID int) (ServiceInstance, error)
+	getByEnvironmentAndServiceName(environmentName, serviceName string) (ServiceInstance, error)
 	getByEnvironmentAndServiceID(environmentID, serviceID int) (ServiceInstance, error)
 }
 
@@ -42,10 +46,11 @@ func newServiceInstanceStore(dbConn *gorm.DB) dataStore {
 	return dataStore{dbConn}
 }
 
-func (db dataStore) createNew(environmentID, serviceID int) (ServiceInstance, error) {
+func (db dataStore) createNew(clusterID, environmentID, serviceID int) (ServiceInstance, error) {
 	newServiceInstance := ServiceInstance{
 		ServiceID:     serviceID,
 		EnvironmentID: environmentID,
+		ClusterID:     clusterID,
 	}
 
 	if err := db.Create(&newServiceInstance).Error; err != nil {

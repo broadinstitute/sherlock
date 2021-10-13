@@ -114,7 +114,7 @@ func (suite *AllocationPoolTestSuite) TestIntegrationCreateAllocationPools() {
 		assert.NoError(suite.T(), err)
 		newAllocationPool, err := suite.testApp.AllocationPools.CreateNew(suite.goodAllocationPoolRequest)
 
-		assert.Equal(suite.T(), suite.goodAllocationPoolRequest.Name, newAllocationPool.Name)
+		assert.Empty(suite.T(), newAllocationPool.Name)
 		assert.Equal(suite.T(), expectedError, err)
 	})
 

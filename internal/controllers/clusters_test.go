@@ -1,15 +1,14 @@
 // Tests for the ClusterController
 
-package clusters
+package controllers
 
 import (
 	"errors"
 	"testing"
 
-	"github.com/broadinstitute/sherlock/internal/environments"
+	"github.com/broadinstitute/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/internal/testutils"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 	"gorm.io/gorm"
 )
@@ -19,12 +18,11 @@ import (
 // returns the current testing context
 type ClusterTestSuite struct {
 	suite.Suite
-	testApp                *TestApplication
-	goodClusterRequest     CreateClusterRequest
-	goodEnvironmentRequest environments.CreateEnvironmentRequest
-	anotherClusterRequest  CreateClusterRequest
-	badClusterRequest      CreateClusterRequest
-	notFoundID             int
+	testApp               *TestApplication
+	goodClusterRequest    models.CreateClusterRequest
+	anotherClusterRequest models.CreateClusterRequest
+	badClusterRequest     models.CreateClusterRequest
+	notFoundID            int
 }
 
 // Test entry point
@@ -39,16 +37,13 @@ func TestIntegrationClustersSuite(t *testing.T) {
 // between-test initialization
 func (suite *ClusterTestSuite) SetupTest() {
 	suite.testApp = initTestApp(suite.T())
-	suite.goodClusterRequest = CreateClusterRequest{
+	suite.goodClusterRequest = models.CreateClusterRequest{
 		Name: "terra-prod",
 	}
-	suite.goodEnvironmentRequest = environments.CreateEnvironmentRequest{
-		Name: "terra-juyang-prime-sawfly",
-	}
-	suite.anotherClusterRequest = CreateClusterRequest{
+	suite.anotherClusterRequest = models.CreateClusterRequest{
 		Name: "terra-microprod",
 	}
-	suite.badClusterRequest = CreateClusterRequest{}
+	suite.badClusterRequest = models.CreateClusterRequest{}
 	suite.notFoundID = 1234567890 //unsure of a way to guarantee not-found-ness
 }
 
@@ -58,18 +53,16 @@ func (suite *ClusterTestSuite) SetupTest() {
 
 // only load the Controller we care about
 type TestApplication struct {
-	Clusters     *ClusterController
-	Environments *environments.EnvironmentController
-	db           *gorm.DB
+	Clusters *ClusterController
+	db       *gorm.DB
 }
 
 // connect to DB and create the Application
 func initTestApp(t *testing.T) *TestApplication {
 	dbConn := testutils.ConnectAndMigrate(t)
 	app := &TestApplication{
-		Clusters:     NewController(dbConn),
-		Environments: environments.NewController(dbConn),
-		db:           dbConn,
+		Clusters: NewClusterController(dbConn),
+		db:       dbConn,
 	}
 
 	testutils.Cleanup(t, app.db)
@@ -114,60 +107,8 @@ func (suite *ClusterTestSuite) TestIntegrationCreateClusters() {
 		assert.NoError(suite.T(), err)
 		newCluster, err := suite.testApp.Clusters.CreateNew(suite.goodClusterRequest)
 
-		assert.Equal(suite.T(), suite.goodClusterRequest.Name, newCluster.Name)
+		assert.Equal(suite.T(), "", newCluster.Name)
 		assert.Equal(suite.T(), expectedError, err)
-	})
-
-	suite.Run("create a cluster with a new embedded environment", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.db)
-
-		suite.goodClusterRequest.Environments = []environments.Environment{suite.goodEnvironmentRequest.EnvironmentReq()}
-
-		newCluster, err := suite.testApp.Clusters.CreateNew(suite.goodClusterRequest)
-		assert.NoError(suite.T(), err)
-
-		assert.Equal(suite.T(), suite.goodClusterRequest.Name, newCluster.Name)
-		assert.Equal(suite.T(), suite.goodClusterRequest.Environments[0].Name, suite.goodEnvironmentRequest.Name)
-	})
-}
-
-func (suite *ClusterTestSuite) TestAddByEnvironmentID() {
-	suite.Run("creates a clusters and environments seperately and then joins", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.db)
-
-		newCluster, _ := suite.testApp.Clusters.CreateNew(suite.goodClusterRequest)
-		newEnvironment, _ := suite.testApp.Environments.CreateNew(suite.goodEnvironmentRequest)
-
-		// add the environment to the cluster
-		updatedCluster, err := suite.testApp.Clusters.AddEnvironmentByID(newCluster, newEnvironment.ID)
-		assert.NoError(suite.T(), err)
-
-		// update the objects from the db
-		updatedEnvironment, _ := suite.testApp.Environments.GetByName(newEnvironment.Name)
-
-		assert.Equal(suite.T(), newCluster.ID, *updatedEnvironment.ClusterID)
-		require.NotEmpty(suite.T(), updatedCluster.Environments)
-		assert.Equal(suite.T(), updatedEnvironment.ID, (updatedCluster.Environments)[0].ID)
-	})
-
-	suite.Run("reassigns environment to different cluster", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.db)
-
-		newCluster, _ := suite.testApp.Clusters.CreateNew(suite.goodClusterRequest)
-		anotherCluster, _ := suite.testApp.Clusters.CreateNew(suite.anotherClusterRequest)
-		newEnvironment, _ := suite.testApp.Environments.CreateNew(suite.goodEnvironmentRequest)
-
-		// add the environment to the cluster
-		_, err := suite.testApp.Clusters.AddEnvironmentByID(newCluster, newEnvironment.ID)
-		assert.NoError(suite.T(), err)
-		updatedEnvironment, _ := suite.testApp.Environments.GetByName(newEnvironment.Name)
-		assert.Equal(suite.T(), newCluster.ID, *updatedEnvironment.ClusterID)
-
-		// change to a new cluster
-		updatedCluster, _ := suite.testApp.Clusters.AddEnvironmentByID(anotherCluster, newEnvironment.ID)
-		updatedEnvironment, _ = suite.testApp.Environments.GetByName(newEnvironment.Name)
-		assert.Equal(suite.T(), anotherCluster.ID, *updatedEnvironment.ClusterID)
-		assert.Equal(suite.T(), updatedEnvironment.ID, (updatedCluster.Environments)[0].ID)
 	})
 }
 

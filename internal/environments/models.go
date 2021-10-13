@@ -30,7 +30,6 @@ type Environment struct {
 	DestroyedAt      time.Time
 	CreatedAt        time.Time
 	UpdatedAt        time.Time
-	ClusterID        *int `gorm:"default:null"`
 	AllocationPoolID *int `gorm:"default:null"`
 }
 
