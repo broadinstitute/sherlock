@@ -35,7 +35,7 @@ func init() {
 	cobra.OnInitialize(initConfig)
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.sherlock.yaml")
-	rootCmd.PersistentFlags().StringVar(&sherlockServerURL, "sherlock-url", "http://localhost:8080", "Address of the sherlock server")
+	rootCmd.PersistentFlags().StringVar(&sherlockServerURL, "sherlock-url", "https://sherlock.dsp-devops.broadinstitute.org", "Address of the sherlock server")
 
 	err := viper.BindPFlags(rootCmd.PersistentFlags())
 	cobra.CheckErr(err)
