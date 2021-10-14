@@ -70,6 +70,7 @@ func createDeploy(cmd *cobra.Command, args []string) error {
 	fmt.Fprint(cmd.OutOrStdout(), prettyResult.String())
 	return nil
 }
+
 func dispatchCreateDeployRequest(newDeploy deploys.CreateDeployRequestBody, environment, service string) (*deploys.Response, []byte, error) {
 	client := resty.New()
 	urlPath := fmt.Sprintf("%s/deploys/%s/%s", sherlockServerURL, environment, service)
