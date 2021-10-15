@@ -26,7 +26,7 @@ var (
 func initConfig() {
 	config.SetEnvPrefix("sherlock")
 
-	config.SetDefault("dbhost", "postgres")
+	config.SetDefault("dbhost", "localhost")
 	config.SetDefault("dbuser", "sherlock")
 	config.SetDefault("dbname", "sherlock")
 	config.SetDefault("dbport", "5432")
