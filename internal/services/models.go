@@ -51,7 +51,7 @@ func (db dataStore) listAll() ([]Service, error) {
 
 	err := db.Find(&services).Error
 	if err != nil {
-		return []Service{}, fmt.Errorf("Error retriving services: %v", err)
+		return []Service{}, fmt.Errorf("error retriving services: %v", err)
 	}
 
 	return services, nil

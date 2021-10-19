@@ -81,12 +81,14 @@ func (db dataStore) Reload(serviceInstance ServiceInstance, reloadCluster bool, 
 
 func (db dataStore) getByEnvironmentAndServiceID(environmentID, serviceID int) (ServiceInstance, error) {
 	var serviceInstance ServiceInstance
-	var serviceInstances []ServiceInstance
 
-	// This will return the first ServiceInstance period if given 2 nulls! TODO: move this to `Where` as this doesn't work atm.
-
-	db.Find(&serviceInstances)
-	err := db.Preload("Service").Preload("Environment").Preload("Cluster").First(&serviceInstance, &ServiceInstance{ServiceID: serviceID, EnvironmentID: environmentID}).Error
+	err := db.
+		Preload("Service").
+		Preload("Environment").
+		Preload("Cluster").
+		Where("service_id = ? AND environment_id = ?", serviceID, environmentID).
+		First(&serviceInstance).
+		Error
 	return serviceInstance, err
 }
 
