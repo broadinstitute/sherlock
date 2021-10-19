@@ -53,8 +53,17 @@ func (sic *ServiceInstanceController) ListAll() ([]ServiceInstance, error) {
 func (sic *ServiceInstanceController) CreateNew(newServiceInstance CreateServiceInstanceRequest) (ServiceInstance, error) {
 	// technically that can create orphaned objects as you could create an environment and then never attach it b/c something later failed.
 
+	// if no cluster name is given, assume it's the same as the environment name.
+	// TODO: this is a hack for now in order to not break currently incoming requests.
+	var clusterName string
+	if newServiceInstance.ClusterName == "" {
+		clusterName = newServiceInstance.EnvironmentName
+	} else {
+		clusterName = newServiceInstance.ClusterName
+	}
+
 	// check if the service already exists
-	clusterID, err := sic.clusters.FindOrCreate(newServiceInstance.ClusterName)
+	clusterID, err := sic.clusters.FindOrCreate(clusterName)
 	if err != nil {
 		return ServiceInstance{}, err
 	}
@@ -72,6 +81,11 @@ func (sic *ServiceInstanceController) CreateNew(newServiceInstance CreateService
 	}
 
 	return sic.store.createNew(clusterID, environmentID, serviceID)
+}
+
+// Reload reloads a serviceInstance from the DB, optionally loading related Cluster/Environment/Service objects along with it.
+func (sic *ServiceInstanceController) Reload(serviceInstance ServiceInstance, reloadCluster bool, reloadEnvironment bool, reloadService bool) (ServiceInstance, error) {
+	return sic.store.Reload(serviceInstance, reloadCluster, reloadEnvironment, reloadService)
 }
 
 // GetByEnvironmentAndServiceName accepts environment and service names as strings and will return the Service_Instance entity

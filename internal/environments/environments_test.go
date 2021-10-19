@@ -220,14 +220,16 @@ func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentGetByID() {
 
 func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentListAll() {
 	suite.Run("ListAll returns nothing", func() {
+		testutils.Cleanup(suite.T(), suite.testApp.db)
 
 		foundEnvironments, err := suite.testApp.Environments.ListAll()
 
-		assert.Equal(suite.T(), len(foundEnvironments), 0)
+		assert.Equal(suite.T(), 0, len(foundEnvironments))
 		assert.NoError(suite.T(), err)
 	})
 
 	suite.Run("ListAll returns one Environment", func() {
+		testutils.Cleanup(suite.T(), suite.testApp.db)
 
 		_, err := suite.testApp.Environments.CreateNew(suite.goodEnvironmentRequest)
 		assert.NoError(suite.T(), err)
@@ -235,15 +237,18 @@ func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentListAll() {
 		foundEnvironments, err := suite.testApp.Environments.ListAll()
 
 		assert.Equal(suite.T(), len(foundEnvironments), 1)
-		assert.Equal(suite.T(), foundEnvironments[0].Name, suite.goodEnvironmentRequest.Name)
+		assert.Equal(suite.T(), suite.goodEnvironmentRequest.Name, foundEnvironments[0].Name)
 		assert.NoError(suite.T(), err)
 	})
 
 	suite.Run("ListAll returns many Environments", func() {
+		testutils.Cleanup(suite.T(), suite.testApp.db)
 
 		var randomEnvRequest CreateEnvironmentRequest
 		err := faker.FakeData(&randomEnvRequest)
 		suite.Require().NoError(err)
+
+		startingEnvironments, _ := suite.testApp.Environments.ListAll()
 
 		_, err = suite.testApp.Environments.CreateNew(randomEnvRequest)
 		assert.NoError(suite.T(), err)
@@ -252,7 +257,7 @@ func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentListAll() {
 
 		foundEnvironments, err := suite.testApp.Environments.ListAll()
 
-		assert.Equal(suite.T(), len(foundEnvironments), 3)
+		assert.Equal(suite.T(), len(startingEnvironments)+2, len(foundEnvironments))
 		assert.NoError(suite.T(), err)
 	})
 }

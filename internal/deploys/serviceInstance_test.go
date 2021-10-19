@@ -1,7 +1,6 @@
 package deploys
 
 import (
-	"encoding/json"
 	"errors"
 	"testing"
 
@@ -89,14 +88,12 @@ func (suite *ServiceInstanceIntegrationTestSuite) TestCreateServiceInstance() {
 			ServiceName:     preExistingService.Name,
 			ClusterName:     preExistingCluster.Name,
 		}
-		requestJson, _ := json.Marshal(newServiceInstanceRequest)
-		suite.T().Log(string(requestJson))
 		result, err := suite.app.serviceInstances.CreateNew(newServiceInstanceRequest)
 		suite.Require().NoError(err)
 
 		suite.Assert().Equal(preExistingService.ID, result.ServiceID)
 		suite.Assert().Equal(preExistingEnv.ID, result.EnvironmentID)
-		suite.Assert().Equal(preExistingCluster.ID, result.Cluster.ID)
+		suite.Assert().Equal(preExistingCluster.ID, result.ClusterID)
 	})
 
 	suite.Run("creates an environment if not exists", func() {
@@ -175,6 +172,11 @@ func (suite *ServiceInstanceIntegrationTestSuite) TestGetByEnvironmentAndService
 	suite.Run("it returns error not found for non-existent record", func() {
 
 		_, err := suite.app.serviceInstances.GetByEnvironmentAndServiceName("non-existent-env", "non-existent-service")
+		suite.Assert().ErrorIs(err, ErrServiceInstanceNotFound)
+	})
+
+	suite.Run("it returns error not found for non-existent record", func() {
+		_, err := suite.app.serviceInstances.GetByEnvironmentAndServiceName("", "")
 		suite.Assert().ErrorIs(err, ErrServiceInstanceNotFound)
 	})
 }

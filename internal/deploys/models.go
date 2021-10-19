@@ -38,8 +38,8 @@ type ServiceInstance struct {
 type serviceInstanceStore interface {
 	listAll() ([]ServiceInstance, error)
 	createNew(clusterID, environmentID, serviceID int) (ServiceInstance, error)
-	getByEnvironmentAndServiceName(environmentName, serviceName string) (ServiceInstance, error)
 	getByEnvironmentAndServiceID(environmentID, serviceID int) (ServiceInstance, error)
+	Reload(serviceInstance ServiceInstance, reloadCluster bool, reloadEnvironment bool, reloadService bool) (ServiceInstance, error)
 }
 
 func newServiceInstanceStore(dbConn *gorm.DB) dataStore {
@@ -57,13 +57,36 @@ func (db dataStore) createNew(clusterID, environmentID, serviceID int) (ServiceI
 		return ServiceInstance{}, fmt.Errorf("error persisting service instance: %v", err)
 	}
 
+	db.Preload("Service").Preload("Environment").Preload("Cluster").First(&newServiceInstance)
+
 	return newServiceInstance, nil
+}
+
+// reload a ServiceInstance from database, optionally grab linked data objects.
+func (db dataStore) Reload(serviceInstance ServiceInstance, reloadCluster bool, reloadEnvironment bool, reloadService bool) (ServiceInstance, error) {
+	if reloadCluster {
+		db.Preload("Cluster").Find(&serviceInstance)
+	}
+
+	if reloadEnvironment {
+		db.Preload("Environment").Find(&serviceInstance)
+	}
+
+	if reloadService {
+		db.Preload("Service").Find(&serviceInstance)
+	}
+
+	return serviceInstance, nil
 }
 
 func (db dataStore) getByEnvironmentAndServiceID(environmentID, serviceID int) (ServiceInstance, error) {
 	var serviceInstance ServiceInstance
+	var serviceInstances []ServiceInstance
 
-	err := db.Preload("Service").Preload("Environment").First(&serviceInstance, &ServiceInstance{ServiceID: serviceID, EnvironmentID: environmentID}).Error
+	// This will return the first ServiceInstance period if given 2 nulls! TODO: move this to `Where` as this doesn't work atm.
+
+	db.Find(&serviceInstances)
+	err := db.Preload("Service").Preload("Environment").Preload("Cluster").First(&serviceInstance, &ServiceInstance{ServiceID: serviceID, EnvironmentID: environmentID}).Error
 	return serviceInstance, err
 }
 
