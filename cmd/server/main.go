@@ -12,15 +12,19 @@ import (
 	"github.com/broadinstitute/sherlock/internal/environments"
 	"github.com/broadinstitute/sherlock/internal/services"
 	"github.com/broadinstitute/sherlock/internal/sherlock"
+	"github.com/golang-migrate/migrate/v4"
 )
 
 func main() {
 
-	// just logging error rather than failing here as
-	// a no changes migration is treated as an error..
 	if err := db.ApplyMigrations("db/migrations", sherlock.Config); err != nil {
-		log.Println(err)
-		os.Exit(1)
+		// don't fail if there are no changes to apply
+		if err == migrate.ErrNoChange {
+			log.Println("no migration to apply, continuing...")
+		} else {
+			log.Println(err)
+			os.Exit(1)
+		}
 	}
 
 	app := sherlock.New()
