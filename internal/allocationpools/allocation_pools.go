@@ -28,7 +28,7 @@ func NewController(dbConn *gorm.DB) *AllocationPoolController {
 
 // DoesAllocationPoolExist is a helper method to check if a allocationPool with the given name
 // already exists in sherlock's data storage
-func (allocationPoolController AllocationPoolController) DoesAllocationPoolExist(name string) (id int, ok bool) {
+func (allocationPoolController AllocationPoolController) DoesAllocationPoolExist(name string) (int, bool) {
 	allocationPool, err := allocationPoolController.GetByName(name)
 	if errors.Is(err, ErrAllocationPoolNotFound) {
 		return 0, false
