@@ -22,6 +22,7 @@ type EnvironmentTestSuite struct {
 	goodEnvironmentRequest    CreateEnvironmentRequest
 	anotherEnvironmentRequest CreateEnvironmentRequest
 	badEnvironmentRequest     CreateEnvironmentRequest
+	notFoundID                int
 }
 
 // Test entry point
@@ -43,6 +44,7 @@ func (suite *EnvironmentTestSuite) SetupTest() {
 		Name: faker.UUIDHyphenated(),
 	}
 	suite.badEnvironmentRequest = CreateEnvironmentRequest{}
+	suite.notFoundID = 1234567890 //unsure of a way to guarantee not-found-ness
 }
 
 func (suite *EnvironmentTestSuite) TearDownTest() {
@@ -119,7 +121,7 @@ func (suite *EnvironmentTestSuite) TestIntegrationCreateEnvironments() {
 			},
 			expectedError: errors.New("error saving to database: ERROR: duplicate key value violates unique constraint \"environments_name_key\" (SQLSTATE 23505)"),
 			expectedEnvironment: Environment{
-				Name: "terra-juyang-opera-fish",
+				Name: "",
 			},
 		},
 		{
@@ -189,16 +191,45 @@ func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentGetByName() {
 	})
 }
 
+func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentGetByID() {
+	suite.Run("GetByID gets an environment by name", func() {
+		testutils.Cleanup(suite.T(), suite.testApp.db)
+
+		newEnvironment, err := suite.testApp.Environments.CreateNew(suite.goodEnvironmentRequest)
+		assert.NoError(suite.T(), err)
+
+		foundEnvironment, err := suite.testApp.Environments.GetByID(newEnvironment.ID)
+
+		assert.Equal(suite.T(), foundEnvironment.ID, newEnvironment.ID)
+
+		assert.NoError(suite.T(), err)
+	})
+
+	suite.Run("GetByID returns error if not found", func() {
+		testutils.Cleanup(suite.T(), suite.testApp.db)
+
+		_, err := suite.testApp.Environments.CreateNew(suite.goodEnvironmentRequest)
+		assert.NoError(suite.T(), err)
+
+		foundEnvironment, err := suite.testApp.Environments.GetByID(suite.notFoundID)
+
+		assert.Equal(suite.T(), foundEnvironment.ID, 0)
+		assert.Equal(suite.T(), errors.New("record not found"), err)
+	})
+}
+
 func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentListAll() {
 	suite.Run("ListAll returns nothing", func() {
+		testutils.Cleanup(suite.T(), suite.testApp.db)
 
 		foundEnvironments, err := suite.testApp.Environments.ListAll()
 
-		assert.Equal(suite.T(), len(foundEnvironments), 0)
+		assert.Equal(suite.T(), 0, len(foundEnvironments))
 		assert.NoError(suite.T(), err)
 	})
 
 	suite.Run("ListAll returns one Environment", func() {
+		testutils.Cleanup(suite.T(), suite.testApp.db)
 
 		_, err := suite.testApp.Environments.CreateNew(suite.goodEnvironmentRequest)
 		assert.NoError(suite.T(), err)
@@ -206,15 +237,18 @@ func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentListAll() {
 		foundEnvironments, err := suite.testApp.Environments.ListAll()
 
 		assert.Equal(suite.T(), len(foundEnvironments), 1)
-		assert.Equal(suite.T(), foundEnvironments[0].Name, suite.goodEnvironmentRequest.Name)
+		assert.Equal(suite.T(), suite.goodEnvironmentRequest.Name, foundEnvironments[0].Name)
 		assert.NoError(suite.T(), err)
 	})
 
 	suite.Run("ListAll returns many Environments", func() {
+		testutils.Cleanup(suite.T(), suite.testApp.db)
 
 		var randomEnvRequest CreateEnvironmentRequest
 		err := faker.FakeData(&randomEnvRequest)
 		suite.Require().NoError(err)
+
+		startingEnvironments, _ := suite.testApp.Environments.ListAll()
 
 		_, err = suite.testApp.Environments.CreateNew(randomEnvRequest)
 		assert.NoError(suite.T(), err)
@@ -223,7 +257,7 @@ func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentListAll() {
 
 		foundEnvironments, err := suite.testApp.Environments.ListAll()
 
-		assert.Equal(suite.T(), len(foundEnvironments), 3)
+		assert.Equal(suite.T(), len(startingEnvironments)+2, len(foundEnvironments))
 		assert.NoError(suite.T(), err)
 	})
 }

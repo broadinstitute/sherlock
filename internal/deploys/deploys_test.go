@@ -51,6 +51,45 @@ func (suite *DeployIntegrationTestSuite) TearDownTest() {
 }
 
 func (suite *DeployIntegrationTestSuite) TestCreateDeploy() {
+	suite.Run("fails to create deploy if missing reference data", func() {
+		testutils.Cleanup(suite.T(), suite.app.db)
+
+		// populate a build to deploy
+		existingBuildReq := builds.CreateBuildRequest{
+			VersionString: faker.URL(),
+			CommitSha:     faker.UUIDDigit(),
+			ServiceName:   faker.Word(),
+		}
+		existingBuild, err := suite.app.deploys.builds.CreateNew(existingBuildReq)
+		suite.Require().NoError(err)
+
+		// populate a service instance to deploy to
+		existingServiceInstanceReq := CreateServiceInstanceRequest{
+			EnvironmentName: faker.UUIDHyphenated(),
+			ServiceName:     existingBuildReq.ServiceName,
+		}
+		_, err = suite.app.deploys.serviceInstances.CreateNew(existingServiceInstanceReq)
+		suite.Require().NoError(err)
+
+		// actually create the deploy
+		newDeployReq := CreateDeployRequest{
+			EnvironmentName:    "",
+			ServiceName:        "",
+			BuildVersionString: existingBuild.VersionString,
+		}
+
+		// get the current buildcount before attempting to make a new deploy
+		buildCount := suite.app.db.Find(&[]builds.Build{}).RowsAffected
+
+		newDeploy, err := suite.app.deploys.CreateNew(newDeployReq)
+		suite.Require().Error(err)
+
+		// make sure we didn't create any new objects and everything returned is zero-valued
+		suite.Assert().Equal(0, newDeploy.BuildID)
+		suite.Assert().Equal(0, newDeploy.ServiceInstanceID)
+		suite.Assert().Equal(buildCount, suite.app.db.Find(&[]builds.Build{}).RowsAffected)
+	})
+
 	suite.Run("creates deploy from pre-existing service instance and build", func() {
 		// populate a build to deploy
 		existingBuildReq := builds.CreateBuildRequest{
@@ -69,6 +108,10 @@ func (suite *DeployIntegrationTestSuite) TestCreateDeploy() {
 		existingServiceInstance, err := suite.app.deploys.serviceInstances.CreateNew(existingServiceInstanceReq)
 		suite.Require().NoError(err)
 
+		// Reload the ServiceInstance so it has the appropriate related objects populated to reference
+		existingServiceInstance, err = suite.app.deploys.serviceInstances.Reload(existingServiceInstance, true, true, true)
+		suite.Require().NoError(err)
+
 		// actually create the deploy
 		newDeployReq := CreateDeployRequest{
 			EnvironmentName:    existingServiceInstance.Environment.Name,
@@ -76,12 +119,13 @@ func (suite *DeployIntegrationTestSuite) TestCreateDeploy() {
 			BuildVersionString: existingBuild.VersionString,
 		}
 
-		result, err := suite.app.deploys.CreateNew(newDeployReq)
+		newDeploy, err := suite.app.deploys.CreateNew(newDeployReq)
 		suite.Assert().NoError(err)
 
-		// make sure both build and service instance reference the same service
-		suite.Assert().Equal(existingBuild.ID, result.BuildID)
-		suite.Assert().Equal(existingServiceInstance.ID, result.ServiceInstanceID)
+		// i think it's not finding the build versionstring and making a new one.
+		// make sure both build and service instance reference the same object
+		suite.Assert().Equal(existingBuild.ID, newDeploy.BuildID)
+		suite.Assert().Equal(existingServiceInstance.ID, newDeploy.ServiceInstanceID)
 	})
 
 	suite.Run("creates service instance if not exists", func() {

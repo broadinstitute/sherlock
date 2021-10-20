@@ -16,20 +16,21 @@ import (
 var ErrEnvironmentNotFound = gorm.ErrRecordNotFound
 
 // dataStore is a wrapper around a gorm postgres client
-// which can be used to implement the environmentRepository interface
+// which can be used to implement the environmentStore interface
 type dataStore struct {
 	*gorm.DB
 }
 
 // Environment is the data structure that models a persisted to a database via gorm
 type Environment struct {
-	ID          int    `gorm:"primaryKey"`
-	Name        string `gorm:"not null;default:null"`
-	IsPermanent bool
-	Requester   string
-	DestroyedAt time.Time
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
+	ID               int    `gorm:"primaryKey"`
+	Name             string `gorm:"not null;default:null"`
+	IsPermanent      bool
+	Requester        string
+	DestroyedAt      time.Time
+	CreatedAt        time.Time
+	UpdatedAt        time.Time
+	AllocationPoolID *int `gorm:"default:null"`
 }
 
 // environmentStore is the interface defining allowed db actions for Environment
@@ -52,7 +53,7 @@ type CreateEnvironmentRequest struct {
 
 // creates a environment entity object to be persisted with the database from a
 // request to create a environment
-func (createEnvironmentRequest CreateEnvironmentRequest) environmentReq() Environment {
+func (createEnvironmentRequest CreateEnvironmentRequest) EnvironmentReq() Environment {
 	return Environment{
 		Name: createEnvironmentRequest.Name,
 	}
@@ -76,10 +77,10 @@ func (db dataStore) listAll() ([]Environment, error) {
 
 // Saves an Environment object to the db, returns the object if successful, nil otherwise
 func (db dataStore) createNew(newEnvironmentReq CreateEnvironmentRequest) (Environment, error) {
-	newEnvironment := newEnvironmentReq.environmentReq()
+	newEnvironment := newEnvironmentReq.EnvironmentReq()
 
 	if err := db.Create(&newEnvironment).Error; err != nil {
-		return newEnvironment, fmt.Errorf("error saving to database: %v", err)
+		return Environment{}, fmt.Errorf("error saving to database: %v", err)
 	}
 	return newEnvironment, nil
 }
@@ -89,8 +90,8 @@ func (db dataStore) createNew(newEnvironmentReq CreateEnvironmentRequest) (Envir
 func (db dataStore) getByID(id int) (Environment, error) {
 	environment := Environment{}
 
-	if err := db.First(environment, id).Error; err != nil {
-		return environment, err
+	if err := db.First(&environment, id).Error; err != nil {
+		return Environment{}, err
 	}
 	return environment, nil
 }
@@ -100,7 +101,7 @@ func (db dataStore) getByName(name string) (Environment, error) {
 	environment := Environment{}
 
 	if err := db.Where(&Environment{Name: name}).First(&environment).Error; err != nil {
-		return environment, err
+		return Environment{}, err
 	}
 	return environment, nil
 }

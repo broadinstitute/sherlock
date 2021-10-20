@@ -26,6 +26,7 @@ func (suite *ServicesIntegrationTestSuite) TearDownTest() {
 
 func (suite *ServicesIntegrationTestSuite) TestCreateService() {
 	suite.Run("Creates a service from valid request", func() {
+		testutils.Cleanup(suite.T(), suite.app.db)
 
 		newService := CreateServiceRequest{}
 
@@ -44,6 +45,7 @@ func (suite *ServicesIntegrationTestSuite) TestCreateService() {
 	})
 
 	suite.Run("Fails to create service when missing required fields", func() {
+		testutils.Cleanup(suite.T(), suite.app.db)
 		testCases := []CreateServiceRequest{
 			{},
 			{
@@ -56,11 +58,25 @@ func (suite *ServicesIntegrationTestSuite) TestCreateService() {
 			suite.Assert().Error(err, "expected service creation to fail with error")
 		}
 	})
+
+	suite.Run("Fails to create service with empty name", func() {
+		testutils.Cleanup(suite.T(), suite.app.db)
+
+		newServiceRequest := CreateServiceRequest{
+			Name:    "",
+			RepoURL: faker.URL(),
+		}
+
+		newService, err := suite.app.services.CreateNew(newServiceRequest)
+		suite.Assert().Error(err, "expected service creation to fail with error")
+		suite.Assert().Equal(Service{}, newService)
+	})
 }
 
 func (suite *ServicesIntegrationTestSuite) TestListServices() {
 	// make some create service requests and populated them with fake data
 	suite.Run("ListAll returns nothing", func() {
+		testutils.Cleanup(suite.T(), suite.app.db)
 
 		services, err := suite.app.services.ListAll()
 
@@ -69,6 +85,7 @@ func (suite *ServicesIntegrationTestSuite) TestListServices() {
 	})
 
 	suite.Run("ListAll returns one service", func() {
+		testutils.Cleanup(suite.T(), suite.app.db)
 
 		newService := CreateServiceRequest{
 			Name:    faker.Name(),
@@ -80,12 +97,17 @@ func (suite *ServicesIntegrationTestSuite) TestListServices() {
 
 		services, err := suite.app.services.ListAll()
 
-		suite.Assert().Equal(len(services), 1)
-		suite.Assert().Equal(newService.Name, services[0].Name)
+		suite.Assert().Equal(1, len(services))
+		suite.Assert().Equal(services[0].Name, newService.Name)
 		suite.Assert().NoError(err)
 	})
 
 	suite.Run("ListAll returns multiple services", func() {
+		testutils.Cleanup(suite.T(), suite.app.db)
+
+		services, err := suite.app.services.ListAll()
+		suite.Require().NoError(err)
+		numServices := len(services)
 
 		// populate multiple services
 		for i := 0; i < 3; i++ {
@@ -94,19 +116,21 @@ func (suite *ServicesIntegrationTestSuite) TestListServices() {
 				RepoURL: faker.URL(),
 			}
 
+			suite.T().Log(newService.Name)
 			_, err := suite.app.services.CreateNew(newService)
 			suite.Assert().NoError(err)
 		}
 
-		services, err := suite.app.services.ListAll()
+		services, err = suite.app.services.ListAll()
 		suite.Require().NoError(err)
 
-		suite.Assert().Equal(len(services), 4)
+		suite.Assert().Equal(numServices+3, len(services))
 	})
 }
 
 func (suite *ServicesIntegrationTestSuite) TestGetByName() {
 	suite.Run("retrieves an existing service", func() {
+		testutils.Cleanup(suite.T(), suite.app.db)
 
 		newService := CreateServiceRequest{
 			Name:    faker.Name(),
@@ -127,6 +151,7 @@ func (suite *ServicesIntegrationTestSuite) TestGetByName() {
 	})
 
 	suite.Run("errors on non-existent service", func() {
+		testutils.Cleanup(suite.T(), suite.app.db)
 
 		_, err := suite.app.services.GetByName("tester")
 		suite.Assert().ErrorIs(err, ErrServiceNotFound)
@@ -138,6 +163,7 @@ func (suite *ServicesIntegrationTestSuite) TestGetByName() {
 
 func (suite *ServicesIntegrationTestSuite) TestFindOrCreate() {
 	suite.Run("retrieves an existing service", func() {
+		testutils.Cleanup(suite.T(), suite.app.db)
 
 		newService := CreateServiceRequest{}
 
@@ -154,6 +180,7 @@ func (suite *ServicesIntegrationTestSuite) TestFindOrCreate() {
 	})
 
 	suite.Run("creates service if not exists", func() {
+		testutils.Cleanup(suite.T(), suite.app.db)
 
 		newServiceID, err := suite.app.services.FindOrCreate(faker.UUIDHyphenated())
 		suite.Assert().NoError(err)

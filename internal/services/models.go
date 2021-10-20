@@ -5,6 +5,7 @@ package services
 // logic related to interacting with build entities in sherlock's db
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
@@ -50,7 +51,7 @@ func (db dataStore) listAll() ([]Service, error) {
 
 	err := db.Find(&services).Error
 	if err != nil {
-		return []Service{}, fmt.Errorf("Error retriving services: %v", err)
+		return []Service{}, fmt.Errorf("error retriving services: %v", err)
 	}
 
 	return services, nil
@@ -60,6 +61,11 @@ func (db dataStore) listAll() ([]Service, error) {
 // It will return the service as stored in postgres for ease of testing if successful
 func (db dataStore) createNew(newServiceReq CreateServiceRequest) (Service, error) {
 	newService := newServiceReq.service()
+
+	if err := validateNotEmpty(newServiceReq.Name); err != nil {
+		return Service{}, fmt.Errorf("error saving service to database: %v", err)
+	}
+
 	if err := db.Create(&newService).Error; err != nil {
 		return Service{}, fmt.Errorf("error saving service to database: %v", err)
 	}
@@ -72,9 +78,20 @@ func (db dataStore) createNew(newServiceReq CreateServiceRequest) (Service, erro
 func (db dataStore) getByName(name string) (Service, error) {
 	service := Service{}
 
-	if err := db.Where(&Service{Name: name}).First(&service).Error; err != nil {
+	if err := db.Where("name = ?", name).First(&service).Error; err != nil {
 		return Service{}, err
 	}
 
 	return service, nil
+}
+
+// validates that a string is not empty, important for any situation where go will default "",
+// which technically passes a NULL database check but is not wanted behavior
+func validateNotEmpty(stringToValidate string) error {
+	if stringToValidate == "" {
+		err := errors.New("database field cannot be empty")
+		return err
+	}
+
+	return nil
 }

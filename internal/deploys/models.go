@@ -6,6 +6,7 @@ import (
 
 	"github.com/broadinstitute/sherlock/internal/builds"
 	"github.com/broadinstitute/sherlock/internal/environments"
+	"github.com/broadinstitute/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/internal/services"
 	"gorm.io/gorm"
 )
@@ -28,37 +29,66 @@ type ServiceInstance struct {
 	Service       services.Service `gorm:"foreignKey:ServiceID;references:ID"`
 	EnvironmentID int
 	Environment   environments.Environment `gorm:"foreignKey:EnvironmentID;references:ID"`
+	ClusterID     int                      `gorm:"default:null"`
+	Cluster       models.Cluster           `gorm:"foreignKey:ClusterID;references:ID"`
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
 }
 
 type serviceInstanceStore interface {
 	listAll() ([]ServiceInstance, error)
-	createNew(environmentID int, serviceID int) (ServiceInstance, error)
+	createNew(clusterID, environmentID, serviceID int) (ServiceInstance, error)
 	getByEnvironmentAndServiceID(environmentID, serviceID int) (ServiceInstance, error)
+	Reload(serviceInstance ServiceInstance, reloadCluster bool, reloadEnvironment bool, reloadService bool) (ServiceInstance, error)
 }
 
 func newServiceInstanceStore(dbConn *gorm.DB) dataStore {
 	return dataStore{dbConn}
 }
 
-func (db dataStore) createNew(environmentID, serviceID int) (ServiceInstance, error) {
+func (db dataStore) createNew(clusterID, environmentID, serviceID int) (ServiceInstance, error) {
 	newServiceInstance := ServiceInstance{
 		ServiceID:     serviceID,
 		EnvironmentID: environmentID,
+		ClusterID:     clusterID,
 	}
 
 	if err := db.Create(&newServiceInstance).Error; err != nil {
 		return ServiceInstance{}, fmt.Errorf("error persisting service instance: %v", err)
 	}
 
+	db.Preload("Service").Preload("Environment").Preload("Cluster").First(&newServiceInstance)
+
 	return newServiceInstance, nil
+}
+
+// reload a ServiceInstance from database, optionally grab linked data objects.
+func (db dataStore) Reload(serviceInstance ServiceInstance, reloadCluster bool, reloadEnvironment bool, reloadService bool) (ServiceInstance, error) {
+	if reloadCluster {
+		db.Preload("Cluster").Find(&serviceInstance)
+	}
+
+	if reloadEnvironment {
+		db.Preload("Environment").Find(&serviceInstance)
+	}
+
+	if reloadService {
+		db.Preload("Service").Find(&serviceInstance)
+	}
+
+	return serviceInstance, nil
 }
 
 func (db dataStore) getByEnvironmentAndServiceID(environmentID, serviceID int) (ServiceInstance, error) {
 	var serviceInstance ServiceInstance
 
-	err := db.Preload("Service").Preload("Environment").First(&serviceInstance, &ServiceInstance{ServiceID: serviceID, EnvironmentID: environmentID}).Error
+	err := db.
+		Preload("Service").
+		Preload("Environment").
+		Preload("Cluster").
+		Where("service_id = ? AND environment_id = ?", serviceID, environmentID).
+		First(&serviceInstance).
+		Error
 	return serviceInstance, err
 }
 
