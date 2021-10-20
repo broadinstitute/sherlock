@@ -53,10 +53,11 @@ func (suite *ServiceInstanceIntegrationTestSuite) TearDownTest() {
 
 type testApplication struct {
 	serviceInstances *ServiceInstanceController
-	clusterInstances *controllers.ClusterController
+	clusterInstances *controllers.Cluster
 	db               *gorm.DB
 }
 
+// Runs before every test (but not sub-test)
 func initTestApp(t *testing.T) *testApplication {
 	dbConn := testutils.ConnectAndMigrate(t)
 	// ensures each test will run in it's own isolated transaction

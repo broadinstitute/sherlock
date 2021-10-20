@@ -47,25 +47,34 @@ func (suite *ClusterTestSuite) SetupTest() {
 	suite.notFoundID = 1234567890 //unsure of a way to guarantee not-found-ness
 }
 
+func (suite *ClusterTestSuite) TearDownTest() {
+	// each test runs in its own isolated transaction
+	// this ensures we cleanup after each test as it completes
+	suite.testApp.db.Rollback()
+}
+
 //
 // Test Cluster Setup
 //
 
 // only load the Controller we care about
 type TestApplication struct {
-	Clusters *ClusterController
+	Clusters *Cluster
 	db       *gorm.DB
 }
 
 // connect to DB and create the Application
 func initTestApp(t *testing.T) *TestApplication {
 	dbConn := testutils.ConnectAndMigrate(t)
+
+	// ensures each test will run in it's own isolated transaction
+	// The transaction will be rolled back after each test
+	// regardless of pass or fail
+	dbConn = dbConn.Begin()
 	app := &TestApplication{
 		Clusters: NewClusterController(dbConn),
 		db:       dbConn,
 	}
-
-	testutils.Cleanup(t, app.db)
 
 	return app
 }

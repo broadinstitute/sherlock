@@ -23,7 +23,6 @@ func (m *mockServiceInstanceStore) getByEnvironmentAndServiceID(environmentID, s
 	return retVal.Get(0).(ServiceInstance), retVal.Error(1)
 }
 
-// no idea what this does, just added it cuz I messed w/ the store.
 func (m *mockServiceInstanceStore) Reload(serviceInstance ServiceInstance, reloadCluster bool, reloadEnvironment bool, reloadService bool) (ServiceInstance, error) {
 	retVal := m.Called(serviceInstance, reloadCluster, reloadEnvironment, reloadService)
 	return retVal.Get(0).(ServiceInstance), retVal.Error(1)

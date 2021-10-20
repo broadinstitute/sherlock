@@ -26,13 +26,13 @@ var (
 // repository is a wrapper type so we can define our own methods on the type holding the
 // DB connection pool
 type Application struct {
-	AllocationPools  *allocationpools.AllocationPoolController
-	Services         *services.ServiceController
-	Clusters         *controllers.ClusterController
-	Builds           *builds.BuildController
-	Environments     *environments.EnvironmentController
-	Deploys *deploys.DeployController
-	Handler          http.Handler
+	AllocationPools *allocationpools.AllocationPoolController
+	Services        *services.ServiceController
+	Clusters        *controllers.Cluster
+	Builds          *builds.BuildController
+	Environments    *environments.EnvironmentController
+	Deploys         *deploys.DeployController
+	Handler         http.Handler
 	// Used to pass the dbConn to testing setup helpers
 	// without needing to instantiate a full model instance
 	DB          *gorm.DB

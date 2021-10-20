@@ -20,7 +20,7 @@ type ServiceInstanceController struct {
 	store        serviceInstanceStore
 	services     *services.ServiceController
 	environments *environments.EnvironmentController
-	clusters     *controllers.ClusterController
+	clusters     *controllers.Cluster
 }
 
 // CreateServiceInstanceRequest is a type containing the name of an environment and service
