@@ -9,9 +9,11 @@ import (
 )
 
 var (
-	cfgFile           string
-	sherlockServerURL string
-	rootCmd           = &cobra.Command{
+	cfgFile               string
+	sherlockServerURL     string
+	clientCredentials     string
+	useServiceAccountAuth bool
+	rootCmd               = &cobra.Command{
 		Use:   "sherlock",
 		Short: "sherlock tracks and manages Terra's environments",
 		Long: `Sherlock is an inventory and tracking service for Terra's
@@ -36,6 +38,8 @@ func init() {
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.sherlock.yaml")
 	rootCmd.PersistentFlags().StringVar(&sherlockServerURL, "sherlock-url", "https://sherlock.dsp-devops.broadinstitute.org", "Address of the sherlock server")
+	rootCmd.PersistentFlags().StringVar(&clientCredentials, "credentials-file", "/app/sherlock/client-sa.json", "Path to the file containing service account credentials for auth in automated workflows")
+	rootCmd.PersistentFlags().BoolVar(&useServiceAccountAuth, "use-sa-auth", false, "Whether or not to use service account credentials for oauth")
 
 	err := viper.BindPFlags(rootCmd.PersistentFlags())
 	cobra.CheckErr(err)

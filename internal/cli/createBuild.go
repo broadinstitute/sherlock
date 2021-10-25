@@ -2,14 +2,18 @@ package cli
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/broadinstitute/sherlock/internal/builds"
 	"github.com/go-resty/resty/v2"
 	"github.com/spf13/cobra"
+	"google.golang.org/api/idtoken"
+	"google.golang.org/api/option"
 )
 
 const (
@@ -86,9 +90,22 @@ func createBuild(cmd *cobra.Command, args []string) error {
 }
 
 func dispatchCreateBuildRequest(newBuild builds.CreateBuildRequest) (*builds.Response, []byte, error) {
+	var (
+		req *resty.Request
+		err error
+	)
+
 	client := resty.New()
-	resp, err := client.R().
-		SetHeader("Content-Type", "application/json").
+	req = client.R()
+	// set authorization headers when running cli via automated workflows
+	if useServiceAccountAuth {
+		req, err = setAuthHeader(req)
+		if err != nil {
+			return nil, []byte{}, fmt.Errorf("error setting auth header: %v", err)
+		}
+	}
+
+	resp, err := req.SetHeader("Content-Type", "application/json").
 		SetBody(newBuild).
 		Post(fmt.Sprintf("%s/builds", sherlockServerURL))
 	if err != nil {
@@ -101,4 +118,19 @@ func dispatchCreateBuildRequest(newBuild builds.CreateBuildRequest) (*builds.Res
 		return nil, []byte{}, fmt.Errorf("error parsing create build response %v. Status code: %d", err, resp.StatusCode())
 	}
 	return &result, resp.Body(), nil
+}
+
+func setAuthHeader(req *resty.Request) (*resty.Request, error) {
+	ctx := context.Background()
+	audience := os.Getenv("SHERLOCK_OAUTH_AUDIENCE")
+	tokenGenerator, err := idtoken.NewTokenSource(ctx, audience, option.WithCredentialsFile(clientCredentials))
+	if err != nil {
+		return nil, fmt.Errorf("error creating token generator: %v", err)
+	}
+	token, err := tokenGenerator.Token()
+	if err != nil {
+		return nil, fmt.Errorf("error generating oidc token: %v", err)
+	}
+
+	return req.SetAuthToken(token.AccessToken), nil
 }

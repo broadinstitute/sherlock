@@ -72,9 +72,22 @@ func createDeploy(cmd *cobra.Command, args []string) error {
 }
 
 func dispatchCreateDeployRequest(newDeploy deploys.CreateDeployRequestBody, environment, service string) (*deploys.Response, []byte, error) {
+	var (
+		req *resty.Request
+		err error
+	)
+
 	client := resty.New()
 	urlPath := fmt.Sprintf("%s/deploys/%s/%s", sherlockServerURL, environment, service)
-	resp, err := client.R().
+	req = client.R()
+	// set authorization headers when running cli via automated workflows
+	if useServiceAccountAuth {
+		req, err = setAuthHeader(req)
+		if err != nil {
+			return nil, []byte{}, fmt.Errorf("error setting auth header: %v", err)
+		}
+	}
+	resp, err := req.
 		SetHeader("Content-Type", "application/json").
 		SetBody(newDeploy).
 		Post(urlPath)
