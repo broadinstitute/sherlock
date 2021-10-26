@@ -24,7 +24,7 @@ type dataStore struct {
 type Cluster struct {
 	ID            int    `gorm:"primaryKey;uniqueIndex"`
 	Name          string `gorm:"not null;default:null"`
-	GoogleProject string `gorm:"unique"`
+	GoogleProject string
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
 }
