@@ -52,6 +52,12 @@ func (suite *AllocationPoolTestSuite) SetupTest() {
 	suite.notFoundID = 1234567890 //unsure of a way to guarantee not-found-ness
 }
 
+func (suite *AllocationPoolTestSuite) TearDownTest() {
+	// each test runs in its own isolated transaction
+	// this ensures we cleanup after each test as it completes
+	suite.testApp.db.Rollback()
+}
+
 //
 // Test AllocationPool Setup
 //
@@ -66,13 +72,16 @@ type TestApplication struct {
 // connect to DB and create the Application
 func initTestApp(t *testing.T) *TestApplication {
 	dbConn := testutils.ConnectAndMigrate(t)
+
+	// ensures each test will run in it's own isolated transaction
+	// The transaction will be rolled back after each test
+	// regardless of pass or fail
+	dbConn = dbConn.Begin()
 	app := &TestApplication{
 		AllocationPools: NewController(dbConn),
 		Environments:    environments.NewController(dbConn),
 		db:              dbConn,
 	}
-
-	testutils.Cleanup(t, app.db)
 
 	return app
 }
@@ -141,13 +150,13 @@ func (suite *AllocationPoolTestSuite) TestIntegrationCreateAllocationPools() {
 }
 
 func (suite *AllocationPoolTestSuite) TestAddByEnvironmentID() {
-	suite.Run("creates a clusters and environments seperately and then joins", func() {
+	suite.Run("creates an allocationPool and environment seperately and then joins", func() {
 		testutils.Cleanup(suite.T(), suite.testApp.db)
 
 		newAllocationPool, _ := suite.testApp.AllocationPools.CreateNew(suite.goodAllocationPoolRequest)
 		newEnvironment, _ := suite.testApp.Environments.CreateNew(suite.goodEnvironmentRequest)
 
-		// add the environment to the cluster
+		// add the environment to the allocation pool
 		updatedAllocationPool, err := suite.testApp.AllocationPools.AddEnvironmentByID(newAllocationPool, newEnvironment.ID)
 		assert.NoError(suite.T(), err)
 
