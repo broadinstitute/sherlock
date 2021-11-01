@@ -110,7 +110,7 @@ func (db dataStore) addEnvironmentByID(allocationPool AllocationPool, environmen
 	environment := environments.Environment{}
 
 	//get the existing environment to add
-	if err := db.Where(&environments.Environment{ID: environmentID}).First(&environment).Error; err != nil {
+	if err := db.Where("id = ?", environmentID).First(&environment).Error; err != nil {
 		return AllocationPool{}, err
 	}
 
