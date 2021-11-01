@@ -79,6 +79,16 @@ func (dc *DeployController) GetDeploysByEnvironmentAndService(environmentName, s
 	return dc.store.getDeploysByServiceInstance(serviceInstance.ID)
 }
 
+// GetMostRecentDeploy will look up the most recent ie currently active deploy for a given service instance
+func (dc *DeployController) GetMostRecentDeploy(environmentName, serviceName string) (Deploy, error) {
+	serviceInstance, err := dc.serviceInstances.GetByEnvironmentAndServiceName(environmentName, serviceName)
+	if err != nil {
+		return Deploy{}, ErrServiceInstanceNotFound
+	}
+
+	return dc.store.getMostRecentDeployByServiceInstance(serviceInstance.ID)
+}
+
 // Serialize takes a variable number of deploy entities and serializes them into types suitable for use in
 // client responses
 func (dc *DeployController) Serialize(deploy ...Deploy) []DeployResponse {

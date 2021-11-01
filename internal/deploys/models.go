@@ -15,6 +15,9 @@ var (
 	// ErrServiceInstanceNotFound is a wrapper around gorms failed lookup error specifically
 	// for failure to find a service instance
 	ErrServiceInstanceNotFound = gorm.ErrRecordNotFound
+	// ErrDeployNotFound is a wrapper around gorms failed lookup error specifically
+	// for failure to find a service instance
+	ErrDeployNotFound = gorm.ErrRecordNotFound
 )
 
 type dataStore struct {
@@ -118,6 +121,7 @@ type Deploy struct {
 type deployStore interface {
 	createDeploy(buildID, serviceInstanceID int) (Deploy, error)
 	getDeploysByServiceInstance(serviceInstanceID int) ([]Deploy, error)
+	getMostRecentDeployByServiceInstance(serviceInstanceID int) (Deploy, error)
 }
 
 func newDeployStore(dbConn *gorm.DB) dataStore {
@@ -159,4 +163,15 @@ func (db dataStore) getDeploysByServiceInstance(serviceInstanceID int) ([]Deploy
 		Error
 
 	return deploys, err
+}
+
+func (db dataStore) getMostRecentDeployByServiceInstance(serviceInstanceID int) (Deploy, error) {
+	var mostRecentDeploy Deploy
+
+	err := db.Preload("Build").
+		Order("created_at DESC").
+		First(&mostRecentDeploy).
+		Error
+
+	return mostRecentDeploy, err
 }
