@@ -62,6 +62,19 @@ func (dc *DeployController) createDeploy(c *gin.Context) {
 		BuildVersionString: deployRequestBody.VersionString,
 	}
 
+	// flag used to track if this deploy event is a no-op redeploy in which case lead time shouldn't change
+	shouldUpdateLeadTime := true
+	// look up the current active deployment for the give service instance
+	currentDeploy, err := dc.GetMostRecentDeploy(newDeployRequest.EnvironmentName, newDeployRequest.ServiceName)
+	if err != nil && err != ErrDeployNotFound {
+		c.JSON(http.StatusInternalServerError, Response{Error: err.Error()})
+	}
+
+	// if doing a redeploy of the current build, don't update leadtime
+	if currentDeploy.Build.VersionString == newDeployRequest.BuildVersionString {
+		shouldUpdateLeadTime = false
+	}
+
 	deploy, err := dc.CreateNew(newDeployRequest)
 	if err != nil {
 		if errors.Is(err, ErrServiceMismatch) {
@@ -74,8 +87,10 @@ func (dc *DeployController) createDeploy(c *gin.Context) {
 
 	metrics.RecordDeployFrequency(c, environment, service)
 	// calculate lead time
-	leadTime := deploy.calculateLeadTimeHours()
-	metrics.RecordLeadTime(c, leadTime, environment, service)
+	if shouldUpdateLeadTime {
+		leadTime := deploy.calculateLeadTimeHours()
+		metrics.RecordLeadTime(c, leadTime, environment, service)
+	}
 
 	c.JSON(http.StatusCreated, Response{Deploys: dc.Serialize(deploy)})
 }
