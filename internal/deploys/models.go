@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/broadinstitute/sherlock/internal/builds"
-	"github.com/broadinstitute/sherlock/internal/environments"
 	"github.com/broadinstitute/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/internal/services"
 	"gorm.io/gorm"
@@ -31,9 +30,9 @@ type ServiceInstance struct {
 	ServiceID     int
 	Service       services.Service `gorm:"foreignKey:ServiceID;references:ID"`
 	EnvironmentID int
-	Environment   environments.Environment `gorm:"foreignKey:EnvironmentID;references:ID"`
-	ClusterID     int                      `gorm:"default:null"`
-	Cluster       models.Cluster           `gorm:"foreignKey:ClusterID;references:ID"`
+	Environment   models.Environment `gorm:"foreignKey:EnvironmentID;references:ID"`
+	ClusterID     int                `gorm:"default:null"`
+	Cluster       models.Cluster     `gorm:"foreignKey:ClusterID;references:ID"`
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
 }

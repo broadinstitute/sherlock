@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/broadinstitute/sherlock/internal/environments"
+	"github.com/broadinstitute/sherlock/internal/models"
 	"gorm.io/gorm"
 )
 
@@ -27,7 +27,7 @@ type AllocationPool struct {
 	Name         string `gorm:"not null;default:null"`
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
-	Environments []environments.Environment
+	Environments []models.Environment
 }
 
 // allocationPoolStore is the interface defining allowed db actions for AllocationPool
@@ -47,7 +47,7 @@ func newAllocationPoolStore(dbconn *gorm.DB) dataStore {
 // CreateAllocationPoolRequest struct defines the data required to create a new allocationPool in db
 type CreateAllocationPoolRequest struct {
 	Name         string `json:"name" binding:"required"`
-	Environments []environments.Environment
+	Environments []models.Environment
 }
 
 // creates a allocationPool entity object to be persisted with the database from a
@@ -107,7 +107,7 @@ func (db dataStore) getByName(name string) (AllocationPool, error) {
 
 // Take an existing environment and add it to the allocationPool.
 func (db dataStore) addEnvironmentByID(allocationPool AllocationPool, environmentID int) (AllocationPool, error) {
-	environment := environments.Environment{}
+	environment := models.Environment{}
 
 	//get the existing environment to add
 	if err := db.Where("id = ?", environmentID).First(&environment).Error; err != nil {

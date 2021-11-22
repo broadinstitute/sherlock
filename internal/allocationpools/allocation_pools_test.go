@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/broadinstitute/sherlock/internal/environments"
+	"github.com/broadinstitute/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/internal/testutils"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -21,7 +22,7 @@ type AllocationPoolTestSuite struct {
 	suite.Suite
 	testApp                      *TestApplication
 	goodAllocationPoolRequest    CreateAllocationPoolRequest
-	goodEnvironmentRequest       environments.CreateEnvironmentRequest
+	goodEnvironmentRequest       models.CreateEnvironmentRequest
 	anotherAllocationPoolRequest CreateAllocationPoolRequest
 	badAllocationPoolRequest     CreateAllocationPoolRequest
 	notFoundID                   int
@@ -42,7 +43,7 @@ func (suite *AllocationPoolTestSuite) SetupTest() {
 	suite.goodAllocationPoolRequest = CreateAllocationPoolRequest{
 		Name: "swatomation 1.0",
 	}
-	suite.goodEnvironmentRequest = environments.CreateEnvironmentRequest{
+	suite.goodEnvironmentRequest = models.CreateEnvironmentRequest{
 		Name: "terra-juyang-prime-sawfly",
 	}
 	suite.anotherAllocationPoolRequest = CreateAllocationPoolRequest{
@@ -139,7 +140,7 @@ func (suite *AllocationPoolTestSuite) TestIntegrationCreateAllocationPools() {
 	suite.Run("create a cluster with a new embedded environment", func() {
 		testutils.Cleanup(suite.T(), suite.testApp.db)
 
-		suite.goodAllocationPoolRequest.Environments = []environments.Environment{suite.goodEnvironmentRequest.EnvironmentReq()}
+		suite.goodAllocationPoolRequest.Environments = []models.Environment{suite.goodEnvironmentRequest.EnvironmentReq()}
 
 		newAllocationPool, err := suite.testApp.AllocationPools.CreateNew(suite.goodAllocationPoolRequest)
 		assert.NoError(suite.T(), err)

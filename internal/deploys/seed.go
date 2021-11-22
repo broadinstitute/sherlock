@@ -3,7 +3,7 @@ package deploys
 import (
 	"fmt"
 
-	"github.com/broadinstitute/sherlock/internal/environments"
+	"github.com/broadinstitute/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/internal/services"
 	"gorm.io/gorm"
 )
@@ -13,7 +13,7 @@ import (
 func SeedServiceInstances(db *gorm.DB) ([]ServiceInstance, error) {
 	var (
 		services     []services.Service
-		environments []environments.Environment
+		environments []models.Environment
 	)
 
 	if err := db.Find(&services).Error; err != nil {

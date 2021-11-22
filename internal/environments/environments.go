@@ -10,18 +10,19 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/broadinstitute/sherlock/internal/models"
 	"gorm.io/gorm"
 )
 
 // EnvironmentController is the management layer for environments
 type EnvironmentController struct {
-	store environmentStore
+	store models.EnvironmentStore
 }
 
 // NewController accepts a gorm DB connection and returns a new instance
 // of the environment controller
 func NewController(dbConn *gorm.DB) *EnvironmentController {
-	environmentStore := newEnvironmentStore(dbConn)
+	environmentStore := models.NewEnvironmentStore(dbConn)
 	return &EnvironmentController{
 		store: environmentStore,
 	}
@@ -31,7 +32,7 @@ func NewController(dbConn *gorm.DB) *EnvironmentController {
 // already exists in sherlock's data storage
 func (environmentController EnvironmentController) DoesEnvironmentExist(name string) (id int, ok bool) {
 	environment, err := environmentController.GetByName(name)
-	if errors.Is(err, ErrEnvironmentNotFound) {
+	if errors.Is(err, models.ErrEnvironmentNotFound) {
 		return 0, false
 	}
 	return environment.ID, true
@@ -39,25 +40,25 @@ func (environmentController EnvironmentController) DoesEnvironmentExist(name str
 
 // CreateNew is the public api on the environmentController for persisting a new service entity to
 // the data store
-func (environmentController *EnvironmentController) CreateNew(newEnvironment CreateEnvironmentRequest) (Environment, error) {
-	return environmentController.store.createNew(newEnvironment)
+func (environmentController *EnvironmentController) CreateNew(newEnvironment models.CreateEnvironmentRequest) (models.Environment, error) {
+	return environmentController.store.CreateNew(newEnvironment)
 
 }
 
 // ListAll is the public api for listing out all environments tracked by sherlock
-func (environmentController *EnvironmentController) ListAll() ([]Environment, error) {
-	return environmentController.store.listAll()
+func (environmentController *EnvironmentController) ListAll() ([]models.Environment, error) {
+	return environmentController.store.ListAll()
 
 }
 
 // GetByName is the public API for looking up a environment from the data store by name
-func (environmentController *EnvironmentController) GetByName(name string) (Environment, error) {
-	return environmentController.store.getByName(name)
+func (environmentController *EnvironmentController) GetByName(name string) (models.Environment, error) {
+	return environmentController.store.GetByName(name)
 }
 
 // GetByName is the public API for looking up a environment from the data store by name
-func (environmentController *EnvironmentController) GetByID(ID int) (Environment, error) {
-	return environmentController.store.getByID(ID)
+func (environmentController *EnvironmentController) GetByID(ID int) (models.Environment, error) {
+	return environmentController.store.GetByID(ID)
 }
 
 // FindOrCreate will attempt to look an environment by name and return its ID if successful
@@ -66,7 +67,7 @@ func (environmentController *EnvironmentController) FindOrCreate(name string) (i
 	environmentID, exists := environmentController.DoesEnvironmentExist(name)
 
 	if !exists {
-		newEnvironment := CreateEnvironmentRequest{Name: name}
+		newEnvironment := models.CreateEnvironmentRequest{Name: name}
 		createdEnvironment, err := environmentController.CreateNew(newEnvironment)
 		if err != nil {
 			return 0, fmt.Errorf("error creating environment %s: %v", name, err)
@@ -77,9 +78,9 @@ func (environmentController *EnvironmentController) FindOrCreate(name string) (i
 }
 
 // Takes an GORM Environment object and returns a JSON for environment
-func (environmentController *EnvironmentController) serialize(environments ...Environment) []EnvironmentResponse {
+func (environmentController *EnvironmentController) serialize(environments ...models.Environment) []EnvironmentResponse {
 	// collect arguments into a slice to be serialized into a single response
-	var environmentList []Environment
+	var environmentList []models.Environment
 	environmentList = append(environmentList, environments...)
 
 	serializer := EnvironmentsSerializer{Environments: environmentList}
