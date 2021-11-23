@@ -19,7 +19,7 @@ unit-test:
 
 tests-with-coverage:
 	docker run --name test-postgres -e POSTGRES_PASSWORD=password -e POSTGRES_USER=sherlock -d -p 5432:5432 postgres:13
-	export SHERLOCK_DBPASSWORD="password" && go test -p 1 -v -race -coverpkg ./... -coverprofile=cover.out -covermode=atomic ./...
+	export SHERLOCK_DBPASSWORD="password" && go test -p 1 -v -race -coverpkg=./... -coverprofile=cover.out -covermode=atomic ./...
 	docker stop test-postgres
 	docker rm -f -v test-postgres
 
