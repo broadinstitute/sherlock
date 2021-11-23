@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/broadinstitute/sherlock/internal/builds"
+	"github.com/broadinstitute/sherlock/internal/models"
 	"gorm.io/gorm"
 )
 
@@ -16,7 +17,7 @@ var (
 // DeployController is a type used to contain all the top level functionality for managing
 // Deploy entities.
 type DeployController struct {
-	store            deployStore
+	store            models.DeployStore
 	serviceInstances *ServiceInstanceController
 	builds           *builds.BuildController
 }
@@ -25,7 +26,7 @@ type DeployController struct {
 // a controller struct used for the management of deploy entities
 func NewDeployController(dbConn *gorm.DB) *DeployController {
 	return &DeployController{
-		store:            newDeployStore(dbConn),
+		store:            models.NewDeployStore(dbConn),
 		serviceInstances: NewServiceInstanceController(dbConn),
 		builds:           builds.NewController(dbConn),
 	}
@@ -41,12 +42,12 @@ type CreateDeployRequest struct {
 
 // CreateNew is used to create a new deploy based on a service name, environment name and build
 // version string
-func (dc *DeployController) CreateNew(newDeployRequest CreateDeployRequest) (Deploy, error) {
+func (dc *DeployController) CreateNew(newDeployRequest CreateDeployRequest) (models.Deploy, error) {
 	// look up the service instance associated with this deploy
 	serviceInstanceID, err := dc.serviceInstances.FindOrCreate(newDeployRequest.EnvironmentName, newDeployRequest.ServiceName)
 
 	if err != nil {
-		return Deploy{}, err
+		return models.Deploy{}, err
 	}
 
 	// look up the build based on provided version string
@@ -61,44 +62,40 @@ func (dc *DeployController) CreateNew(newDeployRequest CreateDeployRequest) (Dep
 
 		build, err = dc.builds.CreateNew(newBuild)
 		if err != nil {
-			return Deploy{}, err
+			return models.Deploy{}, err
 		}
 	}
 
-	return dc.store.createDeploy(build.ID, serviceInstanceID)
+	return dc.store.CreateDeploy(build.ID, serviceInstanceID)
 }
 
 // GetDeploysByEnvironmentAndService will retrieve the deploy history for a given service instance with the associated names
-func (dc *DeployController) GetDeploysByEnvironmentAndService(environmentName, serviceName string) ([]Deploy, error) {
+func (dc *DeployController) GetDeploysByEnvironmentAndService(environmentName, serviceName string) ([]models.Deploy, error) {
 	// look up the service instance for the provided service and environment names
 	serviceInstance, err := dc.serviceInstances.GetByEnvironmentAndServiceName(environmentName, serviceName)
 	if err != nil {
-		return []Deploy{}, ErrServiceInstanceNotFound
+		return []models.Deploy{}, models.ErrServiceInstanceNotFound
 	}
 
-	return dc.store.getDeploysByServiceInstance(serviceInstance.ID)
+	return dc.store.GetDeploysByServiceInstance(serviceInstance.ID)
 }
 
 // GetMostRecentDeploy will look up the most recent ie currently active deploy for a given service instance
-func (dc *DeployController) GetMostRecentDeploy(environmentName, serviceName string) (Deploy, error) {
+func (dc *DeployController) GetMostRecentDeploy(environmentName, serviceName string) (models.Deploy, error) {
 	serviceInstance, err := dc.serviceInstances.GetByEnvironmentAndServiceName(environmentName, serviceName)
 	if err != nil {
-		return Deploy{}, ErrServiceInstanceNotFound
+		return models.Deploy{}, models.ErrServiceInstanceNotFound
 	}
 
-	return dc.store.getMostRecentDeployByServiceInstance(serviceInstance.ID)
+	return dc.store.GetMostRecentDeployByServiceInstance(serviceInstance.ID)
 }
 
 // Serialize takes a variable number of deploy entities and serializes them into types suitable for use in
 // client responses
-func (dc *DeployController) Serialize(deploy ...Deploy) []DeployResponse {
-	var deployList []Deploy
+func (dc *DeployController) Serialize(deploy ...models.Deploy) []DeployResponse {
+	var deployList []models.Deploy
 	deployList = append(deployList, deploy...)
 
 	serializer := DeploysSerializer{deployList}
 	return serializer.Response()
-}
-
-func (deploy *Deploy) calculateLeadTimeHours() float64 {
-	return deploy.CreatedAt.Sub(deploy.Build.BuiltAt).Hours()
 }

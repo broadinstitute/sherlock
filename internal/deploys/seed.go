@@ -9,7 +9,7 @@ import (
 
 // SeedServiceInstances is used to populate the database with Service Instance entities
 // solely intended for use in testing
-func SeedServiceInstances(db *gorm.DB) ([]ServiceInstance, error) {
+func SeedServiceInstances(db *gorm.DB) ([]models.ServiceInstance, error) {
 	var (
 		services     []models.Service
 		environments []models.Environment
@@ -23,10 +23,10 @@ func SeedServiceInstances(db *gorm.DB) ([]ServiceInstance, error) {
 		return nil, fmt.Errorf("error retrieving existing environments: %v", err)
 	}
 
-	var serviceInstances []ServiceInstance
+	var serviceInstances []models.ServiceInstance
 	for _, service := range services {
 		for _, environment := range environments {
-			serviceInstances = append(serviceInstances, ServiceInstance{
+			serviceInstances = append(serviceInstances, models.ServiceInstance{
 				ServiceID:     service.ID,
 				EnvironmentID: environment.ID,
 			})
@@ -34,7 +34,7 @@ func SeedServiceInstances(db *gorm.DB) ([]ServiceInstance, error) {
 	}
 
 	if err := db.Create(&serviceInstances).Error; err != nil {
-		return []ServiceInstance{}, err
+		return []models.ServiceInstance{}, err
 	}
 
 	err := db.Preload("Service").Preload("Environment").Find(&serviceInstances).Error

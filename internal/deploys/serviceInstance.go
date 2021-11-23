@@ -10,6 +10,7 @@ import (
 
 	"github.com/broadinstitute/sherlock/internal/controllers"
 	"github.com/broadinstitute/sherlock/internal/environments"
+	"github.com/broadinstitute/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/internal/services"
 	"gorm.io/gorm"
 )
@@ -17,7 +18,7 @@ import (
 // ServiceInstanceController is the type used to manage logic related to working with
 // ServiceInstance entities
 type ServiceInstanceController struct {
-	store        serviceInstanceStore
+	store        models.ServiceInstanceStore
 	services     *services.ServiceController
 	environments *environments.EnvironmentController
 	clusters     *controllers.Cluster
@@ -34,7 +35,7 @@ type CreateServiceInstanceRequest struct {
 // NewServiceInstanceController expects a gorm.DB connection and will provision
 // a new controller instance
 func NewServiceInstanceController(dbConn *gorm.DB) *ServiceInstanceController {
-	store := newServiceInstanceStore(dbConn)
+	store := models.NewServiceInstanceStore(dbConn)
 	return &ServiceInstanceController{
 		store:        store,
 		services:     services.NewController(dbConn),
@@ -44,13 +45,13 @@ func NewServiceInstanceController(dbConn *gorm.DB) *ServiceInstanceController {
 }
 
 // ListAll retrieves all service_instance entities from the backing data store
-func (sic *ServiceInstanceController) ListAll() ([]ServiceInstance, error) {
-	return sic.store.listAll()
+func (sic *ServiceInstanceController) ListAll() ([]models.ServiceInstance, error) {
+	return sic.store.ListAll()
 }
 
 // CreateNew accepts the name of an environment and a service. It will perform find or create operations for both
 // and their create an association between them
-func (sic *ServiceInstanceController) CreateNew(newServiceInstance CreateServiceInstanceRequest) (ServiceInstance, error) {
+func (sic *ServiceInstanceController) CreateNew(newServiceInstance CreateServiceInstanceRequest) (models.ServiceInstance, error) {
 	// technically that can create orphaned objects as you could create an environment and then never attach it b/c something later failed.
 
 	// if no cluster name is given, assume it's the same as the environment name.
@@ -65,45 +66,45 @@ func (sic *ServiceInstanceController) CreateNew(newServiceInstance CreateService
 	// check if the service already exists
 	clusterID, err := sic.clusters.FindOrCreate(clusterName)
 	if err != nil {
-		return ServiceInstance{}, err
+		return models.ServiceInstance{}, err
 	}
 
 	// check if the environment already exists
 	environmentID, err := sic.environments.FindOrCreate(newServiceInstance.EnvironmentName)
 	if err != nil {
-		return ServiceInstance{}, err
+		return models.ServiceInstance{}, err
 	}
 
 	// check if the service already exists
 	serviceID, err := sic.services.FindOrCreate(newServiceInstance.ServiceName)
 	if err != nil {
-		return ServiceInstance{}, err
+		return models.ServiceInstance{}, err
 	}
 
-	return sic.store.createNew(clusterID, environmentID, serviceID)
+	return sic.store.CreateNew(clusterID, environmentID, serviceID)
 }
 
 // Reload reloads a serviceInstance from the DB, optionally loading related Cluster/Environment/Service objects along with it.
-func (sic *ServiceInstanceController) Reload(serviceInstance ServiceInstance, reloadCluster bool, reloadEnvironment bool, reloadService bool) (ServiceInstance, error) {
+func (sic *ServiceInstanceController) Reload(serviceInstance models.ServiceInstance, reloadCluster bool, reloadEnvironment bool, reloadService bool) (models.ServiceInstance, error) {
 	return sic.store.Reload(serviceInstance, reloadCluster, reloadEnvironment, reloadService)
 }
 
 // GetByEnvironmentAndServiceName accepts environment and service names as strings and will return the Service_Instance entity
 // representing the association between them if it exists
-func (sic *ServiceInstanceController) GetByEnvironmentAndServiceName(environmentName, serviceName string) (ServiceInstance, error) {
+func (sic *ServiceInstanceController) GetByEnvironmentAndServiceName(environmentName, serviceName string) (models.ServiceInstance, error) {
 	// retrieve the service id if exists
 	serviceID, exists := sic.services.DoesServiceExist(serviceName)
 	if !exists {
-		return ServiceInstance{}, ErrServiceInstanceNotFound
+		return models.ServiceInstance{}, models.ErrServiceInstanceNotFound
 	}
 
 	// retrieve environmentID if exists
 	environmentID, exists := sic.environments.DoesEnvironmentExist(environmentName)
 	if !exists {
-		return ServiceInstance{}, ErrServiceInstanceNotFound
+		return models.ServiceInstance{}, models.ErrServiceInstanceNotFound
 	}
 
-	return sic.store.getByEnvironmentAndServiceID(environmentID, serviceID)
+	return sic.store.GetByEnvironmentAndServiceID(environmentID, serviceID)
 }
 
 // FindOrCreate will check if a service instance with the given name and environment already exists
@@ -114,7 +115,7 @@ func (sic *ServiceInstanceController) FindOrCreate(environmentName, serviceName 
 
 	// if it doesn't exist create
 	if err != nil {
-		if errors.Is(err, ErrServiceInstanceNotFound) {
+		if errors.Is(err, models.ErrServiceInstanceNotFound) {
 			newServiceInstanceReq := CreateServiceInstanceRequest{
 				EnvironmentName: environmentName,
 				ServiceName:     serviceName,
@@ -135,8 +136,8 @@ func (sic *ServiceInstanceController) FindOrCreate(environmentName, serviceName 
 
 // Serialize takes a variable number of service instance entities and serializes them into types suitable for use in
 // client responses
-func (sic *ServiceInstanceController) Serialize(serviceInstances ...ServiceInstance) []ServiceInstanceResponse {
-	var serviceInstancesList []ServiceInstance
+func (sic *ServiceInstanceController) Serialize(serviceInstances ...models.ServiceInstance) []ServiceInstanceResponse {
+	var serviceInstancesList []models.ServiceInstance
 	serviceInstancesList = append(serviceInstancesList, serviceInstances...)
 
 	serializer := ServiceInstancesSerializer{serviceInstancesList}

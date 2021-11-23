@@ -71,7 +71,7 @@ func initTestApp(t *testing.T) *testApplication {
 
 func (suite *ServiceInstanceIntegrationTestSuite) TestListServiceInstancesError() {
 	targetError := errors.New("some internal error")
-	controller := setupMockController(suite.T(), []ServiceInstance{}, targetError, "listAll")
+	controller := setupMockController(suite.T(), []models.ServiceInstance{}, targetError, "ListAll")
 	_, err := controller.ListAll()
 	suite.Assert().ErrorIs(err, targetError, "expected an internal error from DB layer, received some other error")
 }
@@ -171,12 +171,12 @@ func (suite *ServiceInstanceIntegrationTestSuite) TestGetByEnvironmentAndService
 	suite.Run("it returns error not found for non-existent record", func() {
 
 		_, err := suite.app.serviceInstances.GetByEnvironmentAndServiceName("non-existent-env", "non-existent-service")
-		suite.Assert().ErrorIs(err, ErrServiceInstanceNotFound)
+		suite.Assert().ErrorIs(err, models.ErrServiceInstanceNotFound)
 	})
 
 	suite.Run("it returns error not found for non-existent record", func() {
 		_, err := suite.app.serviceInstances.GetByEnvironmentAndServiceName("", "")
-		suite.Assert().ErrorIs(err, ErrServiceInstanceNotFound)
+		suite.Assert().ErrorIs(err, models.ErrServiceInstanceNotFound)
 	})
 }
 
@@ -186,7 +186,7 @@ func (suite *ServiceInstanceIntegrationTestSuite) TestGetByEnvironmentAndService
 
 func setupMockController(
 	t *testing.T,
-	expectedServiceInstances []ServiceInstance,
+	expectedServiceInstances []models.ServiceInstance,
 	expectedError error, methodName string) *ServiceInstanceController {
 
 	t.Helper()
