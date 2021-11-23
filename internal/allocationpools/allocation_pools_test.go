@@ -21,10 +21,10 @@ import (
 type AllocationPoolTestSuite struct {
 	suite.Suite
 	testApp                      *TestApplication
-	goodAllocationPoolRequest    CreateAllocationPoolRequest
+	goodAllocationPoolRequest    models.CreateAllocationPoolRequest
 	goodEnvironmentRequest       models.CreateEnvironmentRequest
-	anotherAllocationPoolRequest CreateAllocationPoolRequest
-	badAllocationPoolRequest     CreateAllocationPoolRequest
+	anotherAllocationPoolRequest models.CreateAllocationPoolRequest
+	badAllocationPoolRequest     models.CreateAllocationPoolRequest
 	notFoundID                   int
 }
 
@@ -40,16 +40,16 @@ func TestIntegrationAllocationPoolsSuite(t *testing.T) {
 // between-test initialization
 func (suite *AllocationPoolTestSuite) SetupTest() {
 	suite.testApp = initTestApp(suite.T())
-	suite.goodAllocationPoolRequest = CreateAllocationPoolRequest{
+	suite.goodAllocationPoolRequest = models.CreateAllocationPoolRequest{
 		Name: "swatomation 1.0",
 	}
 	suite.goodEnvironmentRequest = models.CreateEnvironmentRequest{
 		Name: "terra-juyang-prime-sawfly",
 	}
-	suite.anotherAllocationPoolRequest = CreateAllocationPoolRequest{
+	suite.anotherAllocationPoolRequest = models.CreateAllocationPoolRequest{
 		Name: "new swatomation-FiaB",
 	}
-	suite.badAllocationPoolRequest = CreateAllocationPoolRequest{}
+	suite.badAllocationPoolRequest = models.CreateAllocationPoolRequest{}
 	suite.notFoundID = 1234567890 //unsure of a way to guarantee not-found-ness
 }
 
