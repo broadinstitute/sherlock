@@ -14,9 +14,9 @@ import (
 // ErrClusterNotFound is the error to represent a failed lookup of a cluster db record
 var ErrClusterNotFound = gorm.ErrRecordNotFound
 
-// dataStore is a wrapper around a gorm postgres client
-// which can be used to implement the clusterRepository interface
-type dataStore struct {
+// clusterStore is a wrapper around a gorm postgres client
+// which can be used as an implementor of the ClusterStore interface
+type clusterStore struct {
 	*gorm.DB
 }
 
@@ -38,8 +38,8 @@ type ClusterStore interface {
 }
 
 // creates a db connection via gorm
-func NewClusterStore(dbconn *gorm.DB) dataStore {
-	return dataStore{dbconn}
+func NewClusterStore(dbconn *gorm.DB) clusterStore {
+	return clusterStore{dbconn}
 }
 
 // CreateClusterRequest struct defines the data required to create a new cluster in db
@@ -60,7 +60,7 @@ func (createClusterRequest CreateClusterRequest) ClusterReq() Cluster {
 //
 
 // Returns ALL Clusters in the db
-func (db dataStore) ListAll() ([]Cluster, error) {
+func (db clusterStore) ListAll() ([]Cluster, error) {
 	clusters := []Cluster{}
 
 	err := db.Find(&clusters).Error
@@ -72,7 +72,7 @@ func (db dataStore) ListAll() ([]Cluster, error) {
 }
 
 // Saves an Cluster object to the db, returns the object if successful, nil otherwise
-func (db dataStore) CreateNew(newClusterReq CreateClusterRequest) (Cluster, error) {
+func (db clusterStore) CreateNew(newClusterReq CreateClusterRequest) (Cluster, error) {
 	newCluster := newClusterReq.ClusterReq()
 
 	if err := db.Create(&newCluster).Error; err != nil {
@@ -83,7 +83,7 @@ func (db dataStore) CreateNew(newClusterReq CreateClusterRequest) (Cluster, erro
 
 // Get is used to retrieve a specific cluster entity from a postgres database using
 // id (primary key) as the lookup mechanism
-func (db dataStore) GetByID(id int) (Cluster, error) {
+func (db clusterStore) GetByID(id int) (Cluster, error) {
 	cluster := Cluster{}
 
 	if err := db.First(&cluster, id).Error; err != nil {
@@ -93,7 +93,7 @@ func (db dataStore) GetByID(id int) (Cluster, error) {
 }
 
 // get an Cluster by name column
-func (db dataStore) GetByName(name string) (Cluster, error) {
+func (db clusterStore) GetByName(name string) (Cluster, error) {
 	cluster := Cluster{}
 
 	if err := db.Where(&Cluster{Name: name}).First(&cluster).Error; err != nil {
