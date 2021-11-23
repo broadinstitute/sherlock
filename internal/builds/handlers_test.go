@@ -10,6 +10,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/broadinstitute/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/internal/services"
 	"github.com/gin-gonic/gin"
 	"github.com/google/go-cmp/cmp"
@@ -39,7 +40,7 @@ func TestListBuilds(t *testing.T) {
 					BuildURL:      "https://build.job.out/blah",
 					BuiltAt:       time.Now(),
 					ServiceID:     1,
-					Service: services.Service{
+					Service: models.Service{
 						ID:      1,
 						Name:    "tester",
 						RepoURL: "https://tester.repo",
@@ -58,7 +59,7 @@ func TestListBuilds(t *testing.T) {
 					BuildURL:      "https://build.job.out/blah",
 					BuiltAt:       time.Now(),
 					ServiceID:     1,
-					Service: services.Service{
+					Service: models.Service{
 						ID:      1,
 						Name:    "tester",
 						RepoURL: "https://tester.repo",
@@ -70,7 +71,7 @@ func TestListBuilds(t *testing.T) {
 					BuildURL:      "https://build.job.out/blah",
 					BuiltAt:       time.Now(),
 					ServiceID:     1,
-					Service: services.Service{
+					Service: models.Service{
 						ID:      1,
 						Name:    "tester",
 						RepoURL: "https://tester.repo",
@@ -82,7 +83,7 @@ func TestListBuilds(t *testing.T) {
 					BuildURL:      "https://build.job.out/234",
 					BuiltAt:       time.Now(),
 					ServiceID:     2,
-					Service: services.Service{
+					Service: models.Service{
 						ID:      2,
 						Name:    "dummyServcie",
 						RepoURL: "https://dummy.repo",
@@ -94,7 +95,7 @@ func TestListBuilds(t *testing.T) {
 					BuildURL:      "https://build.job.out/2345",
 					BuiltAt:       time.Now(),
 					ServiceID:     3,
-					Service: services.Service{
+					Service: models.Service{
 						ID:      3,
 						Name:    "cromwell",
 						RepoURL: "https://cromwell.repo",
@@ -257,7 +258,7 @@ func TestCreateBuild(t *testing.T) {
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
 
-			service := services.Service{
+			service := models.Service{
 				ID:      1,
 				Name:    testCase.createRequest.ServiceName,
 				RepoURL: testCase.createRequest.ServiceRepo,
@@ -279,10 +280,10 @@ func TestCreateBuild(t *testing.T) {
 
 			// set up behavior for the serviceStore mock
 			if testCase.simulateServiceCreation {
-				mockServiceStore.On("getByName", service.Name).Return(services.Service{}, services.ErrServiceNotFound)
-				mockServiceStore.On("createNew", mock.Anything).Return(service, nil)
+				mockServiceStore.On("GetByName", service.Name).Return(models.Service{}, models.ErrServiceNotFound)
+				mockServiceStore.On("CreateNew", mock.Anything).Return(service, nil)
 			} else {
-				mockServiceStore.On("getByName", service.Name).Return(service, nil)
+				mockServiceStore.On("GetByName", service.Name).Return(service, nil)
 			}
 
 			mockServiceController := services.NewMockController(mockServiceStore)
@@ -302,16 +303,16 @@ func TestCreateBuild(t *testing.T) {
 			assert.Equal(t, testCase.expectedCode, response.Code)
 
 			if testCase.expectedError == ErrBadCreateRequest {
-				mockServiceStore.AssertNotCalled(t, "getByName")
+				mockServiceStore.AssertNotCalled(t, "GetByName")
 				mockBuildStore.AssertNotCalled(t, "createNew")
 			} else {
-				mockServiceStore.AssertCalled(t, "getByName", testCase.createRequest.ServiceName)
+				mockServiceStore.AssertCalled(t, "GetByName", testCase.createRequest.ServiceName)
 			}
 
 			// ensure the create service method on the mock store is called in
 			// case where a new service needs to be created
 			if testCase.simulateServiceCreation {
-				mockServiceStore.AssertCalled(t, "createNew", mock.Anything)
+				mockServiceStore.AssertCalled(t, "CreateNew", mock.Anything)
 			}
 
 			var expectedResponse Response
@@ -345,7 +346,7 @@ func TestGetBuildByID(t *testing.T) {
 				BuildURL:      "https://build.job.out/blah",
 				BuiltAt:       time.Now(),
 				ServiceID:     1,
-				Service: services.Service{
+				Service: models.Service{
 					ID:      1,
 					Name:    "tester",
 					RepoURL: "https://tester.repo",

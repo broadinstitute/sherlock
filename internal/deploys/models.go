@@ -6,7 +6,6 @@ import (
 
 	"github.com/broadinstitute/sherlock/internal/builds"
 	"github.com/broadinstitute/sherlock/internal/models"
-	"github.com/broadinstitute/sherlock/internal/services"
 	"gorm.io/gorm"
 )
 
@@ -28,7 +27,7 @@ type dataStore struct {
 type ServiceInstance struct {
 	ID            int
 	ServiceID     int
-	Service       services.Service `gorm:"foreignKey:ServiceID;references:ID"`
+	Service       models.Service `gorm:"foreignKey:ServiceID;references:ID"`
 	EnvironmentID int
 	Environment   models.Environment `gorm:"foreignKey:EnvironmentID;references:ID"`
 	ClusterID     int                `gorm:"default:null"`

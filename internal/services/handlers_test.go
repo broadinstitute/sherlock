@@ -8,6 +8,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/broadinstitute/sherlock/internal/models"
 	"github.com/gin-gonic/gin"
 	"github.com/google/go-cmp/cmp"
 	"github.com/stretchr/testify/assert"
@@ -16,19 +17,19 @@ import (
 func TestListServices(t *testing.T) {
 	testCases := []struct {
 		name             string
-		expectedServices []Service
+		expectedServices []models.Service
 		expectedError    error
 		expectedCode     int
 	}{
 		{
 			name:             "no existing services",
-			expectedServices: []Service{},
+			expectedServices: []models.Service{},
 			expectedCode:     http.StatusOK,
 			expectedError:    nil,
 		},
 		{
 			name: "one existing service",
-			expectedServices: []Service{
+			expectedServices: []models.Service{
 				{
 					Name:    "test",
 					RepoURL: "http://test.repo",
@@ -39,7 +40,7 @@ func TestListServices(t *testing.T) {
 		},
 		{
 			name: "multiple existing services",
-			expectedServices: []Service{
+			expectedServices: []models.Service{
 				{
 					Name:    "cromwell",
 					RepoURL: "https://github.com/broadinstitute/cromwell",
@@ -58,7 +59,7 @@ func TestListServices(t *testing.T) {
 		},
 		{
 			name:             "internal error",
-			expectedServices: []Service{},
+			expectedServices: []models.Service{},
 			expectedCode:     http.StatusInternalServerError,
 			expectedError:    errors.New("some internal error"),
 		},
@@ -67,7 +68,7 @@ func TestListServices(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			// setup mock
 			mockStore := new(MockServiceStore)
-			mockStore.On("listAll").Return(testCase.expectedServices, testCase.expectedError)
+			mockStore.On("ListAll").Return(testCase.expectedServices, testCase.expectedError)
 			controller := ServiceController{store: mockStore}
 
 			// setup response recorder and request response := httptest.NewRecorder()
@@ -77,7 +78,7 @@ func TestListServices(t *testing.T) {
 
 			controller.getServices(c)
 
-			mockStore.AssertCalled(t, "listAll")
+			mockStore.AssertCalled(t, "ListAll")
 			assert.Equal(t, testCase.expectedCode, response.Code)
 
 			var gotResponse Response
@@ -107,14 +108,14 @@ func TestListServices(t *testing.T) {
 func TestGetServiceByName(t *testing.T) {
 	testCases := []struct {
 		name            string
-		expectedService Service
+		expectedService models.Service
 		expectedError   error
 		expectedCode    int
 		serviceName     string
 	}{
 		{
 			name: "successful get by name",
-			expectedService: Service{
+			expectedService: models.Service{
 				Name:    "tester",
 				RepoURL: "https://test.repo",
 				ID:      1,
@@ -125,14 +126,14 @@ func TestGetServiceByName(t *testing.T) {
 		},
 		{
 			name:            "name not found",
-			expectedService: Service{},
+			expectedService: models.Service{},
 			expectedCode:    http.StatusNotFound,
-			expectedError:   ErrServiceNotFound,
+			expectedError:   models.ErrServiceNotFound,
 			serviceName:     "blah",
 		},
 		{
 			name:            "internal error",
-			expectedService: Service{},
+			expectedService: models.Service{},
 			expectedCode:    http.StatusInternalServerError,
 			expectedError:   errors.New("some internal error"),
 			serviceName:     "test-service",
@@ -144,7 +145,7 @@ func TestGetServiceByName(t *testing.T) {
 			// setup mock
 
 			mockStore := new(MockServiceStore)
-			mockStore.On("getByName", testCase.serviceName).Return(testCase.expectedService, testCase.expectedError)
+			mockStore.On("GetByName", testCase.serviceName).Return(testCase.expectedService, testCase.expectedError)
 			controller := ServiceController{store: mockStore}
 
 			response := httptest.NewRecorder()
@@ -159,7 +160,7 @@ func TestGetServiceByName(t *testing.T) {
 			}
 
 			controller.getServiceByName(c)
-			mockStore.AssertCalled(t, "getByName", testCase.serviceName)
+			mockStore.AssertCalled(t, "GetByName", testCase.serviceName)
 
 			assert.Equal(t, testCase.expectedCode, response.Code)
 
@@ -189,18 +190,18 @@ func TestCreateService(t *testing.T) {
 		name            string
 		expectedError   error
 		expectedCode    int
-		expectedService Service
-		createRequest   CreateServiceRequest
+		expectedService models.Service
+		createRequest   models.CreateServiceRequest
 	}{
 		{
 			name:          "successful create",
 			expectedError: nil,
 			expectedCode:  http.StatusCreated,
-			createRequest: CreateServiceRequest{
+			createRequest: models.CreateServiceRequest{
 				Name:    "tester",
 				RepoURL: "https://test.repo",
 			},
-			expectedService: Service{
+			expectedService: models.Service{
 				Name:    "tester",
 				RepoURL: "https://test.repo",
 			},
@@ -209,63 +210,63 @@ func TestCreateService(t *testing.T) {
 			name:          "missing service name",
 			expectedError: ErrBadCreateRequest,
 			expectedCode:  http.StatusBadRequest,
-			createRequest: CreateServiceRequest{
+			createRequest: models.CreateServiceRequest{
 				RepoURL: "https://tester.repo",
 			},
-			expectedService: Service{},
+			expectedService: models.Service{},
 		},
 		{
 			name:          "missing repo url",
 			expectedError: ErrBadCreateRequest,
 			expectedCode:  http.StatusBadRequest,
-			createRequest: CreateServiceRequest{
+			createRequest: models.CreateServiceRequest{
 				Name: "tester",
 			},
-			expectedService: Service{},
+			expectedService: models.Service{},
 		},
 		{
 			name:            "empty create request",
 			expectedError:   ErrBadCreateRequest,
 			expectedCode:    http.StatusBadRequest,
-			createRequest:   CreateServiceRequest{},
-			expectedService: Service{},
+			createRequest:   models.CreateServiceRequest{},
+			expectedService: models.Service{},
 		},
 		{
 			name:          "empty service name",
 			expectedError: ErrBadCreateRequest,
 			expectedCode:  http.StatusBadRequest,
-			createRequest: CreateServiceRequest{
+			createRequest: models.CreateServiceRequest{
 				Name:    "",
 				RepoURL: "https://tester.repo",
 			},
-			expectedService: Service{},
+			expectedService: models.Service{},
 		},
 		{
 			name:          "empty repo url",
 			expectedError: ErrBadCreateRequest,
 			expectedCode:  http.StatusBadRequest,
-			createRequest: CreateServiceRequest{
+			createRequest: models.CreateServiceRequest{
 				Name:    "tester",
 				RepoURL: "",
 			},
-			expectedService: Service{},
+			expectedService: models.Service{},
 		},
 		{
 			name:          "internal error",
 			expectedError: errors.New("some internal error"),
 			expectedCode:  http.StatusInternalServerError,
-			createRequest: CreateServiceRequest{
+			createRequest: models.CreateServiceRequest{
 				Name:    "tester",
 				RepoURL: "https://tester.repo",
 			},
-			expectedService: Service{},
+			expectedService: models.Service{},
 		},
 	}
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
 			mockStore := new(MockServiceStore)
-			mockStore.On("createNew", testCase.createRequest).Return(testCase.expectedService, testCase.expectedError)
+			mockStore.On("CreateNew", testCase.createRequest).Return(testCase.expectedService, testCase.expectedError)
 			controller := ServiceController{store: mockStore}
 
 			response := httptest.NewRecorder()
@@ -286,9 +287,9 @@ func TestCreateService(t *testing.T) {
 
 			controller.createService(c)
 			if testCase.expectedError == ErrBadCreateRequest {
-				mockStore.AssertNotCalled(t, "createNew")
+				mockStore.AssertNotCalled(t, "CreateNew")
 			} else {
-				mockStore.AssertCalled(t, "createNew", testCase.createRequest)
+				mockStore.AssertCalled(t, "CreateNew", testCase.createRequest)
 			}
 
 			assert.Equal(t, testCase.expectedCode, response.Code)

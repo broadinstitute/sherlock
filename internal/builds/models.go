@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/broadinstitute/sherlock/internal/services"
+	"github.com/broadinstitute/sherlock/internal/models"
 	"gorm.io/gorm"
 )
 
@@ -36,7 +36,7 @@ type Build struct {
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
 	ServiceID     int
-	Service       services.Service `gorm:"foreignKey:ServiceID;references:ID"`
+	Service       models.Service `gorm:"foreignKey:ServiceID;references:ID"`
 }
 
 type buildStore interface {

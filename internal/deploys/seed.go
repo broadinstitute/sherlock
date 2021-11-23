@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/broadinstitute/sherlock/internal/models"
-	"github.com/broadinstitute/sherlock/internal/services"
 	"gorm.io/gorm"
 )
 
@@ -12,7 +11,7 @@ import (
 // solely intended for use in testing
 func SeedServiceInstances(db *gorm.DB) ([]ServiceInstance, error) {
 	var (
-		services     []services.Service
+		services     []models.Service
 		environments []models.Environment
 	)
 

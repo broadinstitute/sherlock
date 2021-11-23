@@ -3,6 +3,7 @@ package services
 import (
 	"testing"
 
+	"github.com/broadinstitute/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/internal/testutils"
 	"github.com/bxcodec/faker/v3"
 	"github.com/stretchr/testify/suite"
@@ -28,7 +29,7 @@ func (suite *ServicesIntegrationTestSuite) TestCreateService() {
 	suite.Run("Creates a service from valid request", func() {
 		testutils.Cleanup(suite.T(), suite.app.db)
 
-		newService := CreateServiceRequest{}
+		newService := models.CreateServiceRequest{}
 
 		// populate the create request with dummy data
 		err := faker.FakeData(&newService)
@@ -46,7 +47,7 @@ func (suite *ServicesIntegrationTestSuite) TestCreateService() {
 
 	suite.Run("Fails to create service when missing required fields", func() {
 		testutils.Cleanup(suite.T(), suite.app.db)
-		testCases := []CreateServiceRequest{
+		testCases := []models.CreateServiceRequest{
 			{},
 			{
 				RepoURL: "blah",
@@ -62,14 +63,14 @@ func (suite *ServicesIntegrationTestSuite) TestCreateService() {
 	suite.Run("Fails to create service with empty name", func() {
 		testutils.Cleanup(suite.T(), suite.app.db)
 
-		newServiceRequest := CreateServiceRequest{
+		newServiceRequest := models.CreateServiceRequest{
 			Name:    "",
 			RepoURL: faker.URL(),
 		}
 
 		newService, err := suite.app.services.CreateNew(newServiceRequest)
 		suite.Assert().Error(err, "expected service creation to fail with error")
-		suite.Assert().Equal(Service{}, newService)
+		suite.Assert().Equal(models.Service{}, newService)
 	})
 }
 
@@ -87,7 +88,7 @@ func (suite *ServicesIntegrationTestSuite) TestListServices() {
 	suite.Run("ListAll returns one service", func() {
 		testutils.Cleanup(suite.T(), suite.app.db)
 
-		newService := CreateServiceRequest{
+		newService := models.CreateServiceRequest{
 			Name:    faker.Name(),
 			RepoURL: faker.URL(),
 		}
@@ -111,7 +112,7 @@ func (suite *ServicesIntegrationTestSuite) TestListServices() {
 
 		// populate multiple services
 		for i := 0; i < 3; i++ {
-			newService := CreateServiceRequest{
+			newService := models.CreateServiceRequest{
 				Name:    faker.Name(),
 				RepoURL: faker.URL(),
 			}
@@ -132,7 +133,7 @@ func (suite *ServicesIntegrationTestSuite) TestGetByName() {
 	suite.Run("retrieves an existing service", func() {
 		testutils.Cleanup(suite.T(), suite.app.db)
 
-		newService := CreateServiceRequest{
+		newService := models.CreateServiceRequest{
 			Name:    faker.Name(),
 			RepoURL: faker.URL(),
 		}
@@ -154,7 +155,7 @@ func (suite *ServicesIntegrationTestSuite) TestGetByName() {
 		testutils.Cleanup(suite.T(), suite.app.db)
 
 		_, err := suite.app.services.GetByName("tester")
-		suite.Assert().ErrorIs(err, ErrServiceNotFound)
+		suite.Assert().ErrorIs(err, models.ErrServiceNotFound)
 
 		_, ok := suite.app.services.DoesServiceExist("tester")
 		suite.Assert().False(ok)
@@ -165,7 +166,7 @@ func (suite *ServicesIntegrationTestSuite) TestFindOrCreate() {
 	suite.Run("retrieves an existing service", func() {
 		testutils.Cleanup(suite.T(), suite.app.db)
 
-		newService := CreateServiceRequest{}
+		newService := models.CreateServiceRequest{}
 
 		// populate the create request with dummy data
 		err := faker.FakeData(&newService)

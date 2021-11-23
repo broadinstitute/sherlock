@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/broadinstitute/sherlock/internal/services"
+	"github.com/broadinstitute/sherlock/internal/models"
 	"gorm.io/gorm"
 )
 
@@ -15,7 +15,7 @@ func Seed(db *gorm.DB) ([]Build, error) {
 
 	// used to verify we can explicity set BuiltAt rather than just defaulting to current time
 	sixHoursAgo := time.Now().Add(-6 * time.Hour)
-	var services []services.Service
+	var services []models.Service
 	if err := db.Find(&services).Error; err != nil {
 		return []Build{}, fmt.Errorf("error retrieving existing services to reference in seeded builds: %v", err)
 	}

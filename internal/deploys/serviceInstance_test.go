@@ -6,7 +6,6 @@ import (
 
 	"github.com/broadinstitute/sherlock/internal/controllers"
 	"github.com/broadinstitute/sherlock/internal/models"
-	"github.com/broadinstitute/sherlock/internal/services"
 	"github.com/broadinstitute/sherlock/internal/testutils"
 	"github.com/bxcodec/faker/v3"
 	"github.com/stretchr/testify/suite"
@@ -17,7 +16,7 @@ type ServiceInstanceIntegrationTestSuite struct {
 	suite.Suite
 	app                *testApplication
 	goodEnvironmentReq models.CreateEnvironmentRequest
-	goodServiceReq     services.CreateServiceRequest
+	goodServiceReq     models.CreateServiceRequest
 	goodClusterReq     models.CreateClusterRequest
 }
 
@@ -34,7 +33,7 @@ func (suite *ServiceInstanceIntegrationTestSuite) SetupTest() {
 		Name: faker.UUIDHyphenated(),
 	}
 
-	suite.goodServiceReq = services.CreateServiceRequest{
+	suite.goodServiceReq = models.CreateServiceRequest{
 		Name:    faker.UUIDHyphenated(),
 		RepoURL: faker.URL(),
 	}
@@ -198,9 +197,9 @@ func setupMockController(
 
 // helper method on suite to pre-provision all the required objects for ServiceInstance to exist,
 // takes a bool for each of Cluster/Service/Environment on whether to create the object or not.
-func (suite *ServiceInstanceIntegrationTestSuite) preProvisionDependentObjects(makeCluster, makeService, makeEnv bool) (models.Cluster, services.Service, models.Environment) {
+func (suite *ServiceInstanceIntegrationTestSuite) preProvisionDependentObjects(makeCluster, makeService, makeEnv bool) (models.Cluster, models.Service, models.Environment) {
 	var preExistingEnv models.Environment
-	var preExistingService services.Service
+	var preExistingService models.Service
 	var preExistingCluster models.Cluster
 	var err error
 
