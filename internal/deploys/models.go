@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/broadinstitute/sherlock/internal/builds"
 	"github.com/broadinstitute/sherlock/internal/models"
 	"gorm.io/gorm"
 )
@@ -111,7 +110,7 @@ type Deploy struct {
 	ServiceInstanceID int
 	ServiceInstance   ServiceInstance `gorm:"foreignKey:ServiceInstanceID;references:ID"`
 	BuildID           int
-	Build             builds.Build `gorm:"foreignKey:BuildID;references:ID"`
+	Build             models.Build `gorm:"foreignKey:BuildID;references:ID"`
 	CreatedAt         time.Time
 	UpdatedAt         time.Time
 }

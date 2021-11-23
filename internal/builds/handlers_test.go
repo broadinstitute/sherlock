@@ -21,19 +21,19 @@ import (
 func TestListBuilds(t *testing.T) {
 	testCases := []struct {
 		name           string
-		expectedBuilds []Build
+		expectedBuilds []models.Build
 		expectedError  error
 		expectedCode   int
 	}{
 		{
 			name:           "no existing builds",
-			expectedBuilds: []Build{},
+			expectedBuilds: []models.Build{},
 			expectedCode:   http.StatusOK,
 			expectedError:  nil,
 		},
 		{
 			name: "one existing build",
-			expectedBuilds: []Build{
+			expectedBuilds: []models.Build{
 				{
 					VersionString: "imagerepo.io/test:0.1.0",
 					CommitSha:     "f2f2f23",
@@ -52,7 +52,7 @@ func TestListBuilds(t *testing.T) {
 		},
 		{
 			name: "multiple builds and services",
-			expectedBuilds: []Build{
+			expectedBuilds: []models.Build{
 				{
 					VersionString: "imagerepo.io/test:0.1.0",
 					CommitSha:     "f2f2f23",
@@ -107,7 +107,7 @@ func TestListBuilds(t *testing.T) {
 		},
 		{
 			name:           "internal error",
-			expectedBuilds: []Build{},
+			expectedBuilds: []models.Build{},
 			expectedError:  errors.New("some internal error"),
 			expectedCode:   http.StatusInternalServerError,
 		},
@@ -117,7 +117,7 @@ func TestListBuilds(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			// setup mock store
 			mockStore := new(mockBuildStore)
-			mockStore.On("listAll").Return(testCase.expectedBuilds, testCase.expectedError)
+			mockStore.On("ListAll").Return(testCase.expectedBuilds, testCase.expectedError)
 
 			controller := BuildController{store: mockStore}
 
@@ -127,7 +127,7 @@ func TestListBuilds(t *testing.T) {
 
 			controller.getBuilds(c)
 
-			mockStore.AssertCalled(t, "listAll")
+			mockStore.AssertCalled(t, "ListAll")
 			assert.Equal(t, testCase.expectedCode, response.Code)
 
 			var gotResponse Response
@@ -188,7 +188,7 @@ func TestCreateBuild(t *testing.T) {
 		},
 		{
 			name:          "missing version string",
-			expectedError: ErrBadCreateRequest,
+			expectedError: models.ErrBadCreateRequest,
 			expectedCode:  http.StatusBadRequest,
 			createRequest: CreateBuildRequest{
 				CommitSha:   "k2j34",
@@ -199,7 +199,7 @@ func TestCreateBuild(t *testing.T) {
 		},
 		{
 			name:          "missing commit sha",
-			expectedError: ErrBadCreateRequest,
+			expectedError: models.ErrBadCreateRequest,
 			expectedCode:  http.StatusBadRequest,
 			createRequest: CreateBuildRequest{
 				VersionString: "docker.io/asdf/lskdf:1.0.1",
@@ -210,7 +210,7 @@ func TestCreateBuild(t *testing.T) {
 		},
 		{
 			name:          "missing service name",
-			expectedError: ErrBadCreateRequest,
+			expectedError: models.ErrBadCreateRequest,
 			expectedCode:  http.StatusBadRequest,
 			createRequest: CreateBuildRequest{
 				VersionString: "docker.io/asdf/lskdf:1.0.1",
@@ -221,7 +221,7 @@ func TestCreateBuild(t *testing.T) {
 		},
 		{
 			name:          "empty create request",
-			expectedError: ErrBadCreateRequest,
+			expectedError: models.ErrBadCreateRequest,
 			expectedCode:  http.StatusBadRequest,
 			createRequest: CreateBuildRequest{},
 		},
@@ -241,7 +241,7 @@ func TestCreateBuild(t *testing.T) {
 		},
 		{
 			name:          "non-unique version string",
-			expectedError: ErrDuplicateVersionString,
+			expectedError: models.ErrDuplicateVersionString,
 			expectedCode:  http.StatusBadRequest,
 			createRequest: CreateBuildRequest{
 				VersionString: "gcr.io/broad/cromwell:1.0.0",
@@ -264,7 +264,7 @@ func TestCreateBuild(t *testing.T) {
 				RepoURL: testCase.createRequest.ServiceRepo,
 			}
 
-			expectedBuild := Build{
+			expectedBuild := models.Build{
 				VersionString: testCase.createRequest.VersionString,
 				CommitSha:     testCase.createRequest.CommitSha,
 				BuildURL:      testCase.createRequest.BuildURL,
@@ -275,7 +275,7 @@ func TestCreateBuild(t *testing.T) {
 			// TODO try to simplify or DRY some of this logic
 
 			mockBuildStore := new(mockBuildStore)
-			mockBuildStore.On("createNew", mock.Anything).Return(expectedBuild, testCase.expectedError)
+			mockBuildStore.On("CreateNew", mock.Anything).Return(expectedBuild, testCase.expectedError)
 			mockServiceStore := new(services.MockServiceStore)
 
 			// set up behavior for the serviceStore mock
@@ -302,9 +302,9 @@ func TestCreateBuild(t *testing.T) {
 			controller.createBuild(c)
 			assert.Equal(t, testCase.expectedCode, response.Code)
 
-			if testCase.expectedError == ErrBadCreateRequest {
+			if testCase.expectedError == models.ErrBadCreateRequest {
 				mockServiceStore.AssertNotCalled(t, "GetByName")
-				mockBuildStore.AssertNotCalled(t, "createNew")
+				mockBuildStore.AssertNotCalled(t, "CreateNew")
 			} else {
 				mockServiceStore.AssertCalled(t, "GetByName", testCase.createRequest.ServiceName)
 			}
@@ -332,14 +332,14 @@ func TestGetBuildByID(t *testing.T) {
 	testCases := []struct {
 		name          string
 		buildID       string
-		expectedBuild Build
+		expectedBuild models.Build
 		expectedError error
 		expectedCode  int
 	}{
 		{
 			name:    "successfully get build by id",
 			buildID: "1",
-			expectedBuild: Build{
+			expectedBuild: models.Build{
 				ID:            1,
 				VersionString: "imagerepo.io/test:0.1.0",
 				CommitSha:     "f2f2f23",
@@ -358,14 +358,14 @@ func TestGetBuildByID(t *testing.T) {
 		{
 			name:          "non-existent build id",
 			buildID:       "100",
-			expectedBuild: Build{},
+			expectedBuild: models.Build{},
 			expectedCode:  http.StatusNotFound,
-			expectedError: ErrBuildNotFound,
+			expectedError: models.ErrBuildNotFound,
 		},
 		{
 			name:          "invalid id param",
 			buildID:       "abc",
-			expectedBuild: Build{},
+			expectedBuild: models.Build{},
 			expectedCode:  http.StatusBadRequest,
 			expectedError: ErrInvalidBuildID,
 		},
@@ -375,7 +375,7 @@ func TestGetBuildByID(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			mockStore := new(mockBuildStore)
 			buildID, err := strconv.Atoi(testCase.buildID)
-			mockStore.On("getByID", buildID).Return(testCase.expectedBuild, testCase.expectedError)
+			mockStore.On("GetByID", buildID).Return(testCase.expectedBuild, testCase.expectedError)
 
 			controller := BuildController{store: mockStore}
 
@@ -394,9 +394,9 @@ func TestGetBuildByID(t *testing.T) {
 			// err will have a value when id param cannot be successfully parsed as an int and thus is invalid
 			// so getByID method should not be called
 			if err != nil {
-				mockStore.AssertNotCalled(t, "getByID")
+				mockStore.AssertNotCalled(t, "GetByID")
 			} else {
-				mockStore.AssertCalled(t, "getByID", buildID)
+				mockStore.AssertCalled(t, "GetByID", buildID)
 			}
 
 			assert.Equal(t, testCase.expectedCode, response.Code)
@@ -419,24 +419,24 @@ type mockBuildStore struct {
 	mock.Mock
 }
 
-func (m *mockBuildStore) listAll() ([]Build, error) {
+func (m *mockBuildStore) ListAll() ([]models.Build, error) {
 	retVal := m.Called()
-	return retVal.Get(0).([]Build), retVal.Error(1)
+	return retVal.Get(0).([]models.Build), retVal.Error(1)
 }
 
-func (m *mockBuildStore) createNew(newBuild Build) (Build, error) {
+func (m *mockBuildStore) CreateNew(newBuild models.Build) (models.Build, error) {
 	retval := m.Called(newBuild)
-	return retval.Get(0).(Build), retval.Error(1)
+	return retval.Get(0).(models.Build), retval.Error(1)
 }
 
-func (m *mockBuildStore) getByID(id int) (Build, error) {
+func (m *mockBuildStore) GetByID(id int) (models.Build, error) {
 	retVal := m.Called(id)
-	return retVal.Get(0).(Build), retVal.Error(1)
+	return retVal.Get(0).(models.Build), retVal.Error(1)
 }
 
-func (m *mockBuildStore) getByVersionString(versionString string) (Build, error) {
+func (m *mockBuildStore) GetByVersionString(versionString string) (models.Build, error) {
 	retVal := m.Called(versionString)
-	return retVal.Get(0).(Build), retVal.Error(1)
+	return retVal.Get(0).(models.Build), retVal.Error(1)
 }
 
 func addBuildRequestToContext(t *testing.T, c *gin.Context, bodyData CreateBuildRequest) {
