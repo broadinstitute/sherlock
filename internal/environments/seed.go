@@ -1,11 +1,14 @@
 package environments
 
-import "gorm.io/gorm"
+import (
+	"github.com/broadinstitute/sherlock/internal/models"
+	"gorm.io/gorm"
+)
 
 // Seed takes a gorm DB connection and will seed a db
 // with some fake environment data for use in integration testing
-func Seed(db *gorm.DB) ([]Environment, error) {
-	seededEnvironments := []Environment{
+func Seed(db *gorm.DB) ([]models.Environment, error) {
+	seededEnvironments := []models.Environment{
 		{
 			Name: "dev",
 		},
@@ -24,7 +27,7 @@ func Seed(db *gorm.DB) ([]Environment, error) {
 	}
 
 	if err := db.Create(&seededEnvironments).Error; err != nil {
-		return []Environment{}, err
+		return []models.Environment{}, err
 	}
 
 	err := db.Find(&seededEnvironments).Error

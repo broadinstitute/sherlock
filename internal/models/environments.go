@@ -2,7 +2,7 @@
 // APIs should not interact with this Environment and should instead use EnvironmentController, thus all methods should be private
 // all gorm related method should live in this file.
 
-package environments
+package models
 
 import (
 	"fmt"
@@ -15,9 +15,9 @@ import (
 // ErrEnvironmentNotFound is the error to represent a failed lookup of a environment db record
 var ErrEnvironmentNotFound = gorm.ErrRecordNotFound
 
-// dataStore is a wrapper around a gorm postgres client
-// which can be used to implement the environmentStore interface
-type dataStore struct {
+// environmentStore is a wrapper around a gorm postgres client
+// which can be used to implement the EnvironmentStore interface
+type environmentStore struct {
 	*gorm.DB
 }
 
@@ -34,16 +34,16 @@ type Environment struct {
 }
 
 // environmentStore is the interface defining allowed db actions for Environment
-type environmentStore interface {
-	listAll() ([]Environment, error)
-	createNew(CreateEnvironmentRequest) (Environment, error)
-	getByID(int) (Environment, error)
-	getByName(string) (Environment, error)
+type EnvironmentStore interface {
+	ListAll() ([]Environment, error)
+	CreateNew(CreateEnvironmentRequest) (Environment, error)
+	GetByID(int) (Environment, error)
+	GetByName(string) (Environment, error)
 }
 
-// creates a db connection via gorm
-func newEnvironmentStore(dbconn *gorm.DB) dataStore {
-	return dataStore{dbconn}
+//
+func NewEnvironmentStore(dbconn *gorm.DB) environmentStore {
+	return environmentStore{dbconn}
 }
 
 // CreateEnvironmentRequest struct defines the data required to create a new environment in db
@@ -64,7 +64,7 @@ func (createEnvironmentRequest CreateEnvironmentRequest) EnvironmentReq() Enviro
 //
 
 // Returns ALL Environments in the db
-func (db dataStore) listAll() ([]Environment, error) {
+func (db environmentStore) ListAll() ([]Environment, error) {
 	environments := []Environment{}
 
 	err := db.Find(&environments).Error
@@ -76,7 +76,7 @@ func (db dataStore) listAll() ([]Environment, error) {
 }
 
 // Saves an Environment object to the db, returns the object if successful, nil otherwise
-func (db dataStore) createNew(newEnvironmentReq CreateEnvironmentRequest) (Environment, error) {
+func (db environmentStore) CreateNew(newEnvironmentReq CreateEnvironmentRequest) (Environment, error) {
 	newEnvironment := newEnvironmentReq.EnvironmentReq()
 
 	if err := db.Create(&newEnvironment).Error; err != nil {
@@ -87,7 +87,7 @@ func (db dataStore) createNew(newEnvironmentReq CreateEnvironmentRequest) (Envir
 
 // Get is used to retrieve a specific environment entity from a postgres database using
 // id (primary key) as the lookup mechanism
-func (db dataStore) getByID(id int) (Environment, error) {
+func (db environmentStore) GetByID(id int) (Environment, error) {
 	environment := Environment{}
 
 	if err := db.First(&environment, id).Error; err != nil {
@@ -97,7 +97,7 @@ func (db dataStore) getByID(id int) (Environment, error) {
 }
 
 // get an Environment by name column
-func (db dataStore) getByName(name string) (Environment, error) {
+func (db environmentStore) GetByName(name string) (Environment, error) {
 	environment := Environment{}
 
 	if err := db.Where(&Environment{Name: name}).First(&environment).Error; err != nil {

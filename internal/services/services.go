@@ -10,18 +10,19 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/broadinstitute/sherlock/internal/models"
 	"gorm.io/gorm"
 )
 
 // ServiceController is the management layer for CRUD operations for service entities
 type ServiceController struct {
-	store serviceStore
+	store models.ServiceStore
 }
 
 // NewController accepts a gorm DB connection and returns a new instance
 // of the service controller
 func NewController(dbConn *gorm.DB) *ServiceController {
-	serviceStore := newServiceStore(dbConn)
+	serviceStore := models.NewServiceStore(dbConn)
 	return &ServiceController{
 		store: serviceStore,
 	}
@@ -31,7 +32,7 @@ func NewController(dbConn *gorm.DB) *ServiceController {
 // already exists in sherlock's data storage
 func (sc *ServiceController) DoesServiceExist(name string) (id int, ok bool) {
 	svc, err := sc.GetByName(name)
-	if errors.Is(err, ErrServiceNotFound) {
+	if errors.Is(err, models.ErrServiceNotFound) {
 		return 0, false
 	}
 	return svc.ID, true
@@ -39,18 +40,18 @@ func (sc *ServiceController) DoesServiceExist(name string) (id int, ok bool) {
 
 // CreateNew is the public api on the serviceController for persisting a new service entity to
 // the data store
-func (sc *ServiceController) CreateNew(newService CreateServiceRequest) (Service, error) {
-	return sc.store.createNew(newService)
+func (sc *ServiceController) CreateNew(newService models.CreateServiceRequest) (models.Service, error) {
+	return sc.store.CreateNew(newService)
 }
 
 // ListAll is the public api for listing out all services tracked by sherlock
-func (sc *ServiceController) ListAll() ([]Service, error) {
-	return sc.store.listAll()
+func (sc *ServiceController) ListAll() ([]models.Service, error) {
+	return sc.store.ListAll()
 }
 
 // GetByName is the public API for looking up a service from the data store by name
-func (sc *ServiceController) GetByName(name string) (Service, error) {
-	return sc.store.getByName(name)
+func (sc *ServiceController) GetByName(name string) (models.Service, error) {
+	return sc.store.GetByName(name)
 }
 
 // FindOrCreate will attempt to look an environment by name and return its ID if successful
@@ -60,7 +61,7 @@ func (sc *ServiceController) FindOrCreate(name string) (int, error) {
 
 	if !exists {
 		// then make the new service
-		newService := CreateServiceRequest{Name: name}
+		newService := models.CreateServiceRequest{Name: name}
 		createdService, err := sc.CreateNew(newService)
 		if err != nil {
 			return 0, fmt.Errorf("error creating service %s: %v", name, err)
@@ -70,25 +71,10 @@ func (sc *ServiceController) FindOrCreate(name string) (int, error) {
 	return serviceID, nil
 }
 
-func (sc *ServiceController) serialize(services ...Service) []ServiceResponse {
-	var serviceList []Service
+func (sc *ServiceController) serialize(services ...models.Service) []ServiceResponse {
+	var serviceList []models.Service
 	serviceList = append(serviceList, services...)
 
 	serializer := ServicesSerializer{Services: serviceList}
 	return serializer.Response()
-}
-
-// CreateServiceRequest is a type used to represent the information required to register a new service in sherlock
-type CreateServiceRequest struct {
-	Name    string `json:"name" binding:"required"`
-	RepoURL string `json:"repo_url" binding:"required"`
-}
-
-// creates a service entity object to be persisted with the database from a
-// request to create a service
-func (cr *CreateServiceRequest) service() Service {
-	return Service{
-		Name:    cr.Name,
-		RepoURL: cr.RepoURL,
-	}
 }

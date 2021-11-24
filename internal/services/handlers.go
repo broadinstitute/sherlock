@@ -7,6 +7,7 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/broadinstitute/sherlock/internal/models"
 	"github.com/gin-gonic/gin"
 )
 
@@ -38,7 +39,7 @@ func (sc *ServiceController) getServiceByName(c *gin.Context) {
 	if err != nil {
 		// return 404 if service is not found, return 500 if some other error
 		switch err {
-		case ErrServiceNotFound:
+		case models.ErrServiceNotFound:
 			c.JSON(http.StatusNotFound, Response{Error: err.Error()})
 			return
 		default:
@@ -51,7 +52,7 @@ func (sc *ServiceController) getServiceByName(c *gin.Context) {
 }
 
 func (sc *ServiceController) createService(c *gin.Context) {
-	var newService CreateServiceRequest
+	var newService models.CreateServiceRequest
 
 	// decode the post request body into a Service struct
 	if err := c.BindJSON(&newService); err != nil {

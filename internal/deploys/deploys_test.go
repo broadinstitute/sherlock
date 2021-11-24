@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/broadinstitute/sherlock/internal/builds"
+	"github.com/broadinstitute/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/internal/testutils"
 	"github.com/bxcodec/faker/v3"
 	"github.com/stretchr/testify/suite"
@@ -79,7 +80,7 @@ func (suite *DeployIntegrationTestSuite) TestCreateDeploy() {
 		}
 
 		// get the current buildcount before attempting to make a new deploy
-		buildCount := suite.app.db.Find(&[]builds.Build{}).RowsAffected
+		buildCount := suite.app.db.Find(&[]models.Build{}).RowsAffected
 
 		newDeploy, err := suite.app.deploys.CreateNew(newDeployReq)
 		suite.Require().Error(err)
@@ -87,7 +88,7 @@ func (suite *DeployIntegrationTestSuite) TestCreateDeploy() {
 		// make sure we didn't create any new objects and everything returned is zero-valued
 		suite.Assert().Equal(0, newDeploy.BuildID)
 		suite.Assert().Equal(0, newDeploy.ServiceInstanceID)
-		suite.Assert().Equal(buildCount, suite.app.db.Find(&[]builds.Build{}).RowsAffected)
+		suite.Assert().Equal(buildCount, suite.app.db.Find(&[]models.Build{}).RowsAffected)
 	})
 
 	suite.Run("creates deploy from pre-existing service instance and build", func() {

@@ -1,5 +1,7 @@
 package environments
 
+import "github.com/broadinstitute/sherlock/internal/models"
+
 // EnvironmentResponse is the type that environment
 // entities are serialized to and used in responses to clients
 type EnvironmentResponse struct {
@@ -8,7 +10,7 @@ type EnvironmentResponse struct {
 }
 
 type EnvironmentSerializer struct {
-	Environment Environment
+	Environment models.Environment
 }
 
 func (es *EnvironmentSerializer) Response() EnvironmentResponse {
@@ -21,7 +23,7 @@ func (es *EnvironmentSerializer) Response() EnvironmentResponse {
 // EnvironmentsSerializer is used to convert a list of environment model types
 // to a Respopnse type used to send environment info to clients
 type EnvironmentsSerializer struct {
-	Environments []Environment
+	Environments []models.Environment
 }
 
 // Response is a function that Serializers a slice of Environment models

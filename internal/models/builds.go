@@ -1,4 +1,4 @@
-package builds
+package models
 
 // models.go contains the type for modeling build entities in sherlocks database
 // and methods for interacting with the persistence layer. It should only contain
@@ -10,7 +10,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/broadinstitute/sherlock/internal/services"
 	"gorm.io/gorm"
 )
 
@@ -20,9 +19,11 @@ const duplicateVersionStringErrorCheck string = `duplicate key value violates un
 var (
 	ErrBuildNotFound          error = gorm.ErrRecordNotFound
 	ErrDuplicateVersionString error = errors.New("field version_string for builds must be unique")
+	// ErrBadCreateRequest is an error type used when a create servie request fails validation checks
+	ErrBadCreateRequest error = errors.New("error invalid create build request")
 )
 
-type dataStore struct {
+type buildStore struct {
 	*gorm.DB
 }
 
@@ -36,21 +37,21 @@ type Build struct {
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
 	ServiceID     int
-	Service       services.Service `gorm:"foreignKey:ServiceID;references:ID"`
+	Service       Service `gorm:"foreignKey:ServiceID;references:ID"`
 }
 
-type buildStore interface {
-	listAll() ([]Build, error)
-	createNew(Build) (Build, error)
-	getByID(int) (Build, error)
-	getByVersionString(string) (Build, error)
+type BuildStore interface {
+	ListAll() ([]Build, error)
+	CreateNew(Build) (Build, error)
+	GetByID(int) (Build, error)
+	GetByVersionString(string) (Build, error)
 }
 
-func newBuildStore(dbConn *gorm.DB) dataStore {
-	return dataStore{dbConn}
+func NewBuildStore(dbConn *gorm.DB) buildStore {
+	return buildStore{dbConn}
 }
 
-func (db dataStore) listAll() ([]Build, error) {
+func (db buildStore) ListAll() ([]Build, error) {
 	builds := make([]Build, 0)
 
 	if err := db.Preload("Service").Find(&builds).Error; err != nil {
@@ -60,7 +61,7 @@ func (db dataStore) listAll() ([]Build, error) {
 	return builds, nil
 }
 
-func (db dataStore) createNew(newBuild Build) (Build, error) {
+func (db buildStore) CreateNew(newBuild Build) (Build, error) {
 	err := db.Create(&newBuild).Error
 	if err != nil {
 		// check for error due to duplicate VersionString field
@@ -76,7 +77,7 @@ func (db dataStore) createNew(newBuild Build) (Build, error) {
 	return newBuild, err
 }
 
-func (db dataStore) getByID(id int) (Build, error) {
+func (db buildStore) GetByID(id int) (Build, error) {
 	build := Build{}
 
 	if err := db.Preload("Service").First(&build, id).Error; err != nil {
@@ -85,7 +86,7 @@ func (db dataStore) getByID(id int) (Build, error) {
 	return build, nil
 }
 
-func (db dataStore) getByVersionString(versionString string) (Build, error) {
+func (db buildStore) GetByVersionString(versionString string) (Build, error) {
 	build := Build{}
 
 	if err := db.Preload("Service").First(&build, &Build{VersionString: versionString}).Error; err != nil {

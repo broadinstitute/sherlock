@@ -1,8 +1,4 @@
-package services
-
-// models.go contains the type for modeling build entities in sherlocks database
-// and methods for interacting with the persistence layer. It should only contain
-// logic related to interacting with build entities in sherlock's db
+package models
 
 import (
 	"errors"
@@ -19,7 +15,7 @@ var (
 
 // dataStore is a wrapper around a gorm postgres client
 // which can be used to implement the serviceRepository interface
-type dataStore struct {
+type serviceStore struct {
 	*gorm.DB
 }
 
@@ -34,19 +30,34 @@ type Service struct {
 
 // serviceStore is the interface type that defines the methods required for implementing the persistence layer
 // for services entities
-type serviceStore interface {
-	listAll() ([]Service, error)
-	createNew(CreateServiceRequest) (Service, error)
-	getByName(string) (Service, error)
+type ServiceStore interface {
+	ListAll() ([]Service, error)
+	CreateNew(CreateServiceRequest) (Service, error)
+	GetByName(string) (Service, error)
 }
 
-func newServiceStore(db *gorm.DB) dataStore {
-	return dataStore{db}
+func NewServiceStore(db *gorm.DB) serviceStore {
+	return serviceStore{db}
+}
+
+// CreateServiceRequest is a type used to represent the information required to register a new service in sherlock
+type CreateServiceRequest struct {
+	Name    string `json:"name" binding:"required"`
+	RepoURL string `json:"repo_url" binding:"required"`
+}
+
+// creates a service entity object to be persisted with the database from a
+// request to create a service
+func (cr CreateServiceRequest) Service() Service {
+	return Service{
+		Name:    cr.Name,
+		RepoURL: cr.RepoURL,
+	}
 }
 
 // ListAll retrieves all service entities from a postgres database and
 // returns them as a slice
-func (db dataStore) listAll() ([]Service, error) {
+func (db serviceStore) ListAll() ([]Service, error) {
 	services := []Service{}
 
 	err := db.Find(&services).Error
@@ -59,8 +70,8 @@ func (db dataStore) listAll() ([]Service, error) {
 
 // Create will persist the service defined by newservice to a postgres database.
 // It will return the service as stored in postgres for ease of testing if successful
-func (db dataStore) createNew(newServiceReq CreateServiceRequest) (Service, error) {
-	newService := newServiceReq.service()
+func (db serviceStore) CreateNew(newServiceReq CreateServiceRequest) (Service, error) {
+	newService := newServiceReq.Service()
 
 	if err := validateNotEmpty(newServiceReq.Name); err != nil {
 		return Service{}, fmt.Errorf("error saving service to database: %v", err)
@@ -75,7 +86,7 @@ func (db dataStore) createNew(newServiceReq CreateServiceRequest) (Service, erro
 // getByName retrives a service entity from persistence layer. It returns an ErrRecordNotFound
 // if the requested name does not exist. This effectively equivalent to get service by id
 // as the name field is indexed and enforced to be unique
-func (db dataStore) getByName(name string) (Service, error) {
+func (db serviceStore) GetByName(name string) (Service, error) {
 	service := Service{}
 
 	if err := db.Where("name = ?", name).First(&service).Error; err != nil {

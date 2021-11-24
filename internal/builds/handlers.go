@@ -8,11 +8,9 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/broadinstitute/sherlock/internal/models"
 	"github.com/gin-gonic/gin"
 )
-
-// ErrBadCreateRequest is an error type used when a create servie request fails validation checks
-var ErrBadCreateRequest error = errors.New("error invalid create build request")
 
 // ErrInvalidBuildID is returned when the getByID method receives an id param that can't be converted to int
 var ErrInvalidBuildID error = errors.New("unable to lookup build, received invalid id parameter")
@@ -39,7 +37,7 @@ func (bc *BuildController) createBuild(c *gin.Context) {
 
 	// decode the post request body into a Service struct
 	if err := c.BindJSON(&newBuild); err != nil {
-		c.JSON(http.StatusBadRequest, Response{Error: ErrBadCreateRequest.Error()})
+		c.JSON(http.StatusBadRequest, Response{Error: models.ErrBadCreateRequest.Error()})
 		return
 	}
 
@@ -48,7 +46,7 @@ func (bc *BuildController) createBuild(c *gin.Context) {
 	// and then associate it with the build
 	build, err := bc.CreateNew(newBuild)
 	if err != nil {
-		if errors.Is(err, ErrDuplicateVersionString) {
+		if errors.Is(err, models.ErrDuplicateVersionString) {
 			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
 			return
 		}
@@ -70,7 +68,7 @@ func (bc *BuildController) getByID(c *gin.Context) {
 	build, err := bc.GetByID(id)
 	if err != nil {
 		switch err {
-		case ErrBuildNotFound:
+		case models.ErrBuildNotFound:
 			c.JSON(http.StatusNotFound, Response{Error: err.Error()})
 			return
 		default:

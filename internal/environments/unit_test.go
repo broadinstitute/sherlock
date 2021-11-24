@@ -13,6 +13,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/broadinstitute/sherlock/internal/models"
 	"github.com/gin-gonic/gin"
 	"github.com/google/go-cmp/cmp"
 	"github.com/stretchr/testify/assert"
@@ -21,19 +22,19 @@ import (
 func TestListAllEnvironments(t *testing.T) {
 	testCases := []struct {
 		name                 string
-		expectedEnvironments []Environment
+		expectedEnvironments []models.Environment
 		expectedError        error
 		expectedCode         int
 	}{
 		{
 			name:                 "no existing environments",
-			expectedEnvironments: []Environment{},
+			expectedEnvironments: []models.Environment{},
 			expectedCode:         http.StatusOK,
 			expectedError:        nil,
 		},
 		{
 			name: "one existing Environment",
-			expectedEnvironments: []Environment{
+			expectedEnvironments: []models.Environment{
 				{
 					Name: "test",
 				},
@@ -43,7 +44,7 @@ func TestListAllEnvironments(t *testing.T) {
 		},
 		{
 			name: "multiple existing Environments",
-			expectedEnvironments: []Environment{
+			expectedEnvironments: []models.Environment{
 				{
 					Name: "dev",
 				},
@@ -59,20 +60,20 @@ func TestListAllEnvironments(t *testing.T) {
 		},
 		{
 			name:                 "internal error",
-			expectedEnvironments: []Environment{},
+			expectedEnvironments: []models.Environment{},
 			expectedCode:         http.StatusInternalServerError,
 			expectedError:        errors.New("some internal error"),
 		},
 	}
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
-			controller, mock := setupMockController(testCase.expectedEnvironments, testCase.expectedError, "listAll")
+			controller, mock := setupMockController(testCase.expectedEnvironments, testCase.expectedError, "ListAll")
 
 			context, response := setupTestContext()
 
 			controller.getEnvironments(context)
 
-			mock.AssertCalled(t, "listAll")
+			mock.AssertCalled(t, "ListAll")
 			assert.Equal(t, testCase.expectedCode, response.Code)
 
 			responseMeetsExpectations(t, testCase.expectedEnvironments, testCase.expectedError, response.Body)
@@ -83,14 +84,14 @@ func TestListAllEnvironments(t *testing.T) {
 func TestGetEnvironmentByName(t *testing.T) {
 	testCases := []struct {
 		name                 string
-		expectedEnvironments []Environment
+		expectedEnvironments []models.Environment
 		expectedError        error
 		expectedCode         int
 		environmentName      string
 	}{
 		{
 			name: "successfully get exitsting environment",
-			expectedEnvironments: []Environment{
+			expectedEnvironments: []models.Environment{
 				{
 					Name:      "test",
 					ID:        1,
@@ -103,14 +104,14 @@ func TestGetEnvironmentByName(t *testing.T) {
 		},
 		{
 			name:                 "non-existent environment",
-			expectedEnvironments: []Environment{},
-			expectedError:        ErrEnvironmentNotFound,
+			expectedEnvironments: []models.Environment{},
+			expectedError:        models.ErrEnvironmentNotFound,
 			expectedCode:         http.StatusNotFound,
 			environmentName:      "fake",
 		},
 		{
 			name:                 "internal server error",
-			expectedEnvironments: []Environment{},
+			expectedEnvironments: []models.Environment{},
 			expectedError:        errors.New("some internal error"),
 			expectedCode:         http.StatusInternalServerError,
 			environmentName:      "testing",
@@ -121,7 +122,7 @@ func TestGetEnvironmentByName(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			controller, mock := setupMockController(
 				testCase.expectedEnvironments,
-				testCase.expectedError, "getByName",
+				testCase.expectedError, "GetByName",
 				testCase.environmentName,
 			)
 
@@ -133,7 +134,7 @@ func TestGetEnvironmentByName(t *testing.T) {
 
 			controller.getEnvironmentByName(context)
 
-			mock.AssertCalled(t, "getByName", testCase.environmentName)
+			mock.AssertCalled(t, "GetByName", testCase.environmentName)
 			assert.Equal(t, testCase.expectedCode, response.Code)
 
 			responseMeetsExpectations(t, testCase.expectedEnvironments, testCase.expectedError, response.Body)
@@ -146,21 +147,21 @@ func TestCreateEnvironment(t *testing.T) {
 		name                 string
 		expectedError        error
 		expectedCode         int
-		expectedEnvironments []Environment
-		createRequest        CreateEnvironmentRequest
+		expectedEnvironments []models.Environment
+		createRequest        models.CreateEnvironmentRequest
 	}{
 		{
 			name:          "successful create env",
 			expectedError: nil,
 			expectedCode:  http.StatusCreated,
-			expectedEnvironments: []Environment{
+			expectedEnvironments: []models.Environment{
 				{
 					ID:        0,
 					Name:      "test",
 					CreatedAt: time.Now(),
 				},
 			},
-			createRequest: CreateEnvironmentRequest{
+			createRequest: models.CreateEnvironmentRequest{
 				Name: "test",
 			},
 		},
@@ -168,15 +169,15 @@ func TestCreateEnvironment(t *testing.T) {
 			name:                 "empty create request",
 			expectedError:        ErrBadCreateRequest,
 			expectedCode:         http.StatusBadRequest,
-			expectedEnvironments: []Environment{},
-			createRequest:        CreateEnvironmentRequest{},
+			expectedEnvironments: []models.Environment{},
+			createRequest:        models.CreateEnvironmentRequest{},
 		},
 		{
 			name:                 "empty environment name",
 			expectedError:        ErrBadCreateRequest,
 			expectedCode:         http.StatusBadRequest,
-			expectedEnvironments: []Environment{},
-			createRequest: CreateEnvironmentRequest{
+			expectedEnvironments: []models.Environment{},
+			createRequest: models.CreateEnvironmentRequest{
 				Name: "",
 			},
 		},
@@ -184,8 +185,8 @@ func TestCreateEnvironment(t *testing.T) {
 			name:                 "internal error",
 			expectedError:        errors.New("some internal error"),
 			expectedCode:         http.StatusInternalServerError,
-			expectedEnvironments: []Environment{},
-			createRequest: CreateEnvironmentRequest{
+			expectedEnvironments: []models.Environment{},
+			createRequest: models.CreateEnvironmentRequest{
 				Name: "test",
 			},
 		},
@@ -193,7 +194,7 @@ func TestCreateEnvironment(t *testing.T) {
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
-			controller, mock := setupMockController(testCase.expectedEnvironments, testCase.expectedError, "createNew", testCase.createRequest)
+			controller, mock := setupMockController(testCase.expectedEnvironments, testCase.expectedError, "CreateNew", testCase.createRequest)
 
 			context, response := setupTestContext()
 
@@ -201,9 +202,9 @@ func TestCreateEnvironment(t *testing.T) {
 			controller.createEnvironment(context)
 
 			if testCase.expectedError == ErrBadCreateRequest {
-				mock.AssertNotCalled(t, "createNew")
+				mock.AssertNotCalled(t, "CreateNew")
 			} else {
-				mock.AssertCalled(t, "createNew", testCase.createRequest)
+				mock.AssertCalled(t, "CreateNew", testCase.createRequest)
 			}
 
 			assert.Equal(t, testCase.expectedCode, response.Code)
@@ -224,13 +225,13 @@ func setupTestContext() (*gin.Context, *httptest.ResponseRecorder) {
 }
 
 // setupMockController return an EnvironmentController with the internal store mocked with the desired behavior passed as expectedEnvironments and expectedError
-func setupMockController(expectedEnvironments []Environment, expectedError error, methodName string, methodArgs ...interface{}) (*EnvironmentController, *MockEnvironmentStore) {
+func setupMockController(expectedEnvironments []models.Environment, expectedError error, methodName string, methodArgs ...interface{}) (*EnvironmentController, *MockEnvironmentStore) {
 	mockStore := new(MockEnvironmentStore)
-	if methodName == "listAll" {
+	if methodName == "ListAll" {
 		mockStore.On(methodName, methodArgs...).Return(expectedEnvironments, expectedError)
 	} else {
 		if len(expectedEnvironments) < 1 {
-			mockStore.On(methodName, methodArgs...).Return(Environment{}, expectedError)
+			mockStore.On(methodName, methodArgs...).Return(models.Environment{}, expectedError)
 		} else {
 			mockStore.On(methodName, methodArgs...).Return(expectedEnvironments[0], expectedError)
 		}
@@ -238,7 +239,7 @@ func setupMockController(expectedEnvironments []Environment, expectedError error
 	return NewMockController(mockStore), mockStore
 }
 
-func buildCreateEnvironmentRequest(t *testing.T, c *gin.Context, createRequest CreateEnvironmentRequest) {
+func buildCreateEnvironmentRequest(t *testing.T, c *gin.Context, createRequest models.CreateEnvironmentRequest) {
 	t.Helper()
 
 	reqBody := new(bytes.Buffer)
@@ -267,7 +268,7 @@ func decodeResponseBody(t *testing.T, body io.Reader) Response {
 
 // responseMeetes Expectations takes a list of Expected Environment structs and an http response body
 // It then decodes the response body and checks that it matches the epected result
-func responseMeetsExpectations(t *testing.T, expectedEnvironments []Environment, expectedError error, gotBody io.Reader) {
+func responseMeetsExpectations(t *testing.T, expectedEnvironments []models.Environment, expectedError error, gotBody io.Reader) {
 	t.Helper()
 
 	gotResponse := decodeResponseBody(t, gotBody)

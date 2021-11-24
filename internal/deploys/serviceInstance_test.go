@@ -5,9 +5,7 @@ import (
 	"testing"
 
 	"github.com/broadinstitute/sherlock/internal/controllers"
-	"github.com/broadinstitute/sherlock/internal/environments"
 	"github.com/broadinstitute/sherlock/internal/models"
-	"github.com/broadinstitute/sherlock/internal/services"
 	"github.com/broadinstitute/sherlock/internal/testutils"
 	"github.com/bxcodec/faker/v3"
 	"github.com/stretchr/testify/suite"
@@ -17,8 +15,8 @@ import (
 type ServiceInstanceIntegrationTestSuite struct {
 	suite.Suite
 	app                *testApplication
-	goodEnvironmentReq environments.CreateEnvironmentRequest
-	goodServiceReq     services.CreateServiceRequest
+	goodEnvironmentReq models.CreateEnvironmentRequest
+	goodServiceReq     models.CreateServiceRequest
 	goodClusterReq     models.CreateClusterRequest
 }
 
@@ -31,11 +29,11 @@ func TestServiceInstanceIntegrationSuite(t *testing.T) {
 
 func (suite *ServiceInstanceIntegrationTestSuite) SetupTest() {
 	suite.app = initTestApp(suite.T())
-	suite.goodEnvironmentReq = environments.CreateEnvironmentRequest{
+	suite.goodEnvironmentReq = models.CreateEnvironmentRequest{
 		Name: faker.UUIDHyphenated(),
 	}
 
-	suite.goodServiceReq = services.CreateServiceRequest{
+	suite.goodServiceReq = models.CreateServiceRequest{
 		Name:    faker.UUIDHyphenated(),
 		RepoURL: faker.URL(),
 	}
@@ -73,7 +71,7 @@ func initTestApp(t *testing.T) *testApplication {
 
 func (suite *ServiceInstanceIntegrationTestSuite) TestListServiceInstancesError() {
 	targetError := errors.New("some internal error")
-	controller := setupMockController(suite.T(), []ServiceInstance{}, targetError, "listAll")
+	controller := setupMockController(suite.T(), []models.ServiceInstance{}, targetError, "ListAll")
 	_, err := controller.ListAll()
 	suite.Assert().ErrorIs(err, targetError, "expected an internal error from DB layer, received some other error")
 }
@@ -173,12 +171,12 @@ func (suite *ServiceInstanceIntegrationTestSuite) TestGetByEnvironmentAndService
 	suite.Run("it returns error not found for non-existent record", func() {
 
 		_, err := suite.app.serviceInstances.GetByEnvironmentAndServiceName("non-existent-env", "non-existent-service")
-		suite.Assert().ErrorIs(err, ErrServiceInstanceNotFound)
+		suite.Assert().ErrorIs(err, models.ErrServiceInstanceNotFound)
 	})
 
 	suite.Run("it returns error not found for non-existent record", func() {
 		_, err := suite.app.serviceInstances.GetByEnvironmentAndServiceName("", "")
-		suite.Assert().ErrorIs(err, ErrServiceInstanceNotFound)
+		suite.Assert().ErrorIs(err, models.ErrServiceInstanceNotFound)
 	})
 }
 
@@ -188,7 +186,7 @@ func (suite *ServiceInstanceIntegrationTestSuite) TestGetByEnvironmentAndService
 
 func setupMockController(
 	t *testing.T,
-	expectedServiceInstances []ServiceInstance,
+	expectedServiceInstances []models.ServiceInstance,
 	expectedError error, methodName string) *ServiceInstanceController {
 
 	t.Helper()
@@ -199,9 +197,9 @@ func setupMockController(
 
 // helper method on suite to pre-provision all the required objects for ServiceInstance to exist,
 // takes a bool for each of Cluster/Service/Environment on whether to create the object or not.
-func (suite *ServiceInstanceIntegrationTestSuite) preProvisionDependentObjects(makeCluster, makeService, makeEnv bool) (models.Cluster, services.Service, environments.Environment) {
-	var preExistingEnv environments.Environment
-	var preExistingService services.Service
+func (suite *ServiceInstanceIntegrationTestSuite) preProvisionDependentObjects(makeCluster, makeService, makeEnv bool) (models.Cluster, models.Service, models.Environment) {
+	var preExistingEnv models.Environment
+	var preExistingService models.Service
 	var preExistingCluster models.Cluster
 	var err error
 
