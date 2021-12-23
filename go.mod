@@ -3,7 +3,6 @@ module github.com/broadinstitute/sherlock
 go 1.16
 
 require (
-	cloud.google.com/go v0.97.0 // indirect
 	cloud.google.com/go/monitoring v1.0.0 // indirect
 	cloud.google.com/go/trace v1.0.0 // indirect
 	contrib.go.opencensus.io/exporter/prometheus v0.4.0
@@ -28,11 +27,8 @@ require (
 	github.com/ugorji/go v1.2.6 // indirect
 	go.opencensus.io v0.23.0
 	golang.org/x/net v0.0.0-20211008194852-3b03d305991f // indirect
-	golang.org/x/oauth2 v0.0.0-20211005180243-6b3c2da341f1 // indirect
-	golang.org/x/sys v0.0.0-20211007075335-d3039528d8ac // indirect
 	golang.org/x/text v0.3.7 // indirect
-	google.golang.org/api v0.59.0 // indirect
-	google.golang.org/genproto v0.0.0-20211008145708-270636b82663 // indirect
+	google.golang.org/api v0.59.0
 	google.golang.org/grpc v1.41.0 // indirect
 	gorm.io/driver/postgres v1.1.0
 	gorm.io/gorm v1.21.12
