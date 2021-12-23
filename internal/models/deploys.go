@@ -79,7 +79,7 @@ func (db deployStore) GetMostRecentDeployByServiceInstance(serviceInstanceID int
 
 	err := db.Preload("Build").
 		Order("created_at DESC").
-		First(&mostRecentDeploy).
+		First(&mostRecentDeploy, &Deploy{ServiceInstanceID: serviceInstanceID}).
 		Error
 
 	return mostRecentDeploy, err
