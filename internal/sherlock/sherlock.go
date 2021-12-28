@@ -101,11 +101,17 @@ func (a *Application) initializeMetrics() error {
 	ctx := context.Background()
 	for _, serviceInstance := range serviceInstances {
 		metrics.RecordDeployFrequency(ctx, serviceInstance.Environment.Name, serviceInstance.Service.Name)
+		// initialize leadtime by finding most recent deploy, calculating it's lead time and update the metric
 		mostRecentDeploy, err := a.Deploys.GetMostRecentDeploy(serviceInstance.Environment.Name, serviceInstance.Service.Name)
 		if err != nil {
 			return err
 		}
-		metrics.RecordLeadTime(ctx, mostRecentDeploy.CalculateLeadTimeHours(), serviceInstance.Environment.Name, serviceInstance.Service.Name)
+		metrics.RecordLeadTime(
+			ctx,
+			mostRecentDeploy.CalculateLeadTimeHours(),
+			serviceInstance.Environment.Name,
+			serviceInstance.Service.Name,
+		)
 	}
 	return nil
 }
