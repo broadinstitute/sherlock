@@ -1,6 +1,7 @@
 package sherlock
 
 import (
+	"context"
 	"log"
 	"net/http"
 
@@ -60,6 +61,9 @@ func New() *Application {
 		log.Printf("error starting stackdriver exporter: %v", err)
 	}
 	app.Stackdriver = sd
+	if err := app.initializeMetrics(); err != nil {
+		log.Printf("error initializing metrics: %v", err)
+	}
 
 	return app
 }
@@ -84,6 +88,26 @@ func (a *Application) ShutdownStackdriver() {
 	log.Println("shutting down stackdriver metrics exporter")
 	a.Stackdriver.Flush()
 	a.Stackdriver.StopMetricsExporter()
+}
+
+func (a *Application) initializeMetrics() error {
+	// retrieve all service instances and initalize the deploy frequency metric for each one
+	serviceInstances, err := a.Deploys.ListServiceInstances()
+	if err != nil {
+		return err
+	}
+
+	// metrics library requires a context
+	ctx := context.Background()
+	for _, serviceInstance := range serviceInstances {
+		metrics.RecordDeployFrequency(ctx, serviceInstance.Environment.Name, serviceInstance.Service.Name)
+		mostRecentDeploy, err := a.Deploys.GetMostRecentDeploy(serviceInstance.Environment.Name, serviceInstance.Service.Name)
+		if err != nil {
+			return err
+		}
+		metrics.RecordLeadTime(ctx, mostRecentDeploy.CalculateLeadTimeHours(), serviceInstance.Environment.Name, serviceInstance.Service.Name)
+	}
+	return nil
 }
 
 // initialize sherlock configuration via viper
