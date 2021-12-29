@@ -90,6 +90,11 @@ func (a *Application) ShutdownStackdriver() {
 	a.Stackdriver.StopMetricsExporter()
 }
 
+// initializeMetrics is used to ensure the prometheus endpoint will restore time series
+// for each service instance being tracked by sherlock.
+// It performs a lookup of each service instance and initializes its deploy counter.
+// To initialize lead time it looks up the most recent deploy for a given service instance
+// and sets the associated metric to the lead time of that deploy
 func (a *Application) initializeMetrics() error {
 	// retrieve all service instances and initalize the deploy frequency metric for each one
 	serviceInstances, err := a.Deploys.ListServiceInstances()
