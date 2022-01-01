@@ -90,6 +90,10 @@ func (dc *DeployController) GetMostRecentDeploy(environmentName, serviceName str
 	return dc.store.GetMostRecentDeployByServiceInstance(serviceInstance.ID)
 }
 
+func (dc *DeployController) ListServiceInstances() ([]models.ServiceInstance, error) {
+	return dc.serviceInstances.ListAll()
+}
+
 // Serialize takes a variable number of deploy entities and serializes them into types suitable for use in
 // client responses
 func (dc *DeployController) Serialize(deploy ...models.Deploy) []DeployResponse {
