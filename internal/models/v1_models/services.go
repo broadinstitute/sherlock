@@ -1,4 +1,4 @@
-package models
+package v1_models
 
 import (
 	"errors"
@@ -19,7 +19,7 @@ type serviceStore struct {
 	*gorm.DB
 }
 
-// Service is the data structure that models a service entity persisted to a database via gorm
+// Service is the data structure that v1_models a service entity persisted to a database via gorm
 type Service struct {
 	ID        int    `gorm:"primaryKey" faker:"unique"`
 	Name      string `gorm:"not null;default:null"`

@@ -9,20 +9,20 @@ package environments
 import (
 	"errors"
 	"fmt"
+	"github.com/broadinstitute/sherlock/internal/models/v1_models"
 
-	"github.com/broadinstitute/sherlock/internal/models"
 	"gorm.io/gorm"
 )
 
 // EnvironmentController is the management layer for environments
 type EnvironmentController struct {
-	store models.EnvironmentStore
+	store v1_models.EnvironmentStore
 }
 
 // NewController accepts a gorm DB connection and returns a new instance
 // of the environment controller
 func NewController(dbConn *gorm.DB) *EnvironmentController {
-	environmentStore := models.NewEnvironmentStore(dbConn)
+	environmentStore := v1_models.NewEnvironmentStore(dbConn)
 	return &EnvironmentController{
 		store: environmentStore,
 	}
@@ -32,7 +32,7 @@ func NewController(dbConn *gorm.DB) *EnvironmentController {
 // already exists in sherlock's data storage
 func (environmentController EnvironmentController) DoesEnvironmentExist(name string) (id int, ok bool) {
 	environment, err := environmentController.GetByName(name)
-	if errors.Is(err, models.ErrEnvironmentNotFound) {
+	if errors.Is(err, v1_models.ErrEnvironmentNotFound) {
 		return 0, false
 	}
 	return environment.ID, true
@@ -40,24 +40,24 @@ func (environmentController EnvironmentController) DoesEnvironmentExist(name str
 
 // CreateNew is the public api on the environmentController for persisting a new service entity to
 // the data store
-func (environmentController *EnvironmentController) CreateNew(newEnvironment models.CreateEnvironmentRequest) (models.Environment, error) {
+func (environmentController *EnvironmentController) CreateNew(newEnvironment v1_models.CreateEnvironmentRequest) (v1_models.Environment, error) {
 	return environmentController.store.CreateNew(newEnvironment)
 
 }
 
 // ListAll is the public api for listing out all environments tracked by sherlock
-func (environmentController *EnvironmentController) ListAll() ([]models.Environment, error) {
+func (environmentController *EnvironmentController) ListAll() ([]v1_models.Environment, error) {
 	return environmentController.store.ListAll()
 
 }
 
 // GetByName is the public API for looking up a environment from the data store by name
-func (environmentController *EnvironmentController) GetByName(name string) (models.Environment, error) {
+func (environmentController *EnvironmentController) GetByName(name string) (v1_models.Environment, error) {
 	return environmentController.store.GetByName(name)
 }
 
 // GetByName is the public API for looking up a environment from the data store by name
-func (environmentController *EnvironmentController) GetByID(ID int) (models.Environment, error) {
+func (environmentController *EnvironmentController) GetByID(ID int) (v1_models.Environment, error) {
 	return environmentController.store.GetByID(ID)
 }
 
@@ -67,7 +67,7 @@ func (environmentController *EnvironmentController) FindOrCreate(name string) (i
 	environmentID, exists := environmentController.DoesEnvironmentExist(name)
 
 	if !exists {
-		newEnvironment := models.CreateEnvironmentRequest{Name: name}
+		newEnvironment := v1_models.CreateEnvironmentRequest{Name: name}
 		createdEnvironment, err := environmentController.CreateNew(newEnvironment)
 		if err != nil {
 			return 0, fmt.Errorf("error creating environment %s: %v", name, err)
@@ -78,9 +78,9 @@ func (environmentController *EnvironmentController) FindOrCreate(name string) (i
 }
 
 // Takes an GORM Environment object and returns a JSON for environment
-func (environmentController *EnvironmentController) serialize(environments ...models.Environment) []EnvironmentResponse {
+func (environmentController *EnvironmentController) serialize(environments ...v1_models.Environment) []EnvironmentResponse {
 	// collect arguments into a slice to be serialized into a single response
-	var environmentList []models.Environment
+	var environmentList []v1_models.Environment
 	environmentList = append(environmentList, environments...)
 
 	serializer := EnvironmentsSerializer{Environments: environmentList}

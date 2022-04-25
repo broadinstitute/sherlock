@@ -4,13 +4,13 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	v1_models2 "github.com/broadinstitute/sherlock/internal/models/v1_models"
 	"net/http"
 	"net/http/httptest"
 	"strconv"
 	"testing"
 	"time"
 
-	"github.com/broadinstitute/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/internal/services"
 	"github.com/gin-gonic/gin"
 	"github.com/google/go-cmp/cmp"
@@ -21,26 +21,26 @@ import (
 func TestListBuilds(t *testing.T) {
 	testCases := []struct {
 		name           string
-		expectedBuilds []models.Build
+		expectedBuilds []v1_models2.Build
 		expectedError  error
 		expectedCode   int
 	}{
 		{
 			name:           "no existing builds",
-			expectedBuilds: []models.Build{},
+			expectedBuilds: []v1_models2.Build{},
 			expectedCode:   http.StatusOK,
 			expectedError:  nil,
 		},
 		{
 			name: "one existing build",
-			expectedBuilds: []models.Build{
+			expectedBuilds: []v1_models2.Build{
 				{
 					VersionString: "imagerepo.io/test:0.1.0",
 					CommitSha:     "f2f2f23",
 					BuildURL:      "https://build.job.out/blah",
 					BuiltAt:       time.Now(),
 					ServiceID:     1,
-					Service: models.Service{
+					Service: v1_models2.Service{
 						ID:      1,
 						Name:    "tester",
 						RepoURL: "https://tester.repo",
@@ -52,14 +52,14 @@ func TestListBuilds(t *testing.T) {
 		},
 		{
 			name: "multiple builds and services",
-			expectedBuilds: []models.Build{
+			expectedBuilds: []v1_models2.Build{
 				{
 					VersionString: "imagerepo.io/test:0.1.0",
 					CommitSha:     "f2f2f23",
 					BuildURL:      "https://build.job.out/blah",
 					BuiltAt:       time.Now(),
 					ServiceID:     1,
-					Service: models.Service{
+					Service: v1_models2.Service{
 						ID:      1,
 						Name:    "tester",
 						RepoURL: "https://tester.repo",
@@ -71,7 +71,7 @@ func TestListBuilds(t *testing.T) {
 					BuildURL:      "https://build.job.out/blah",
 					BuiltAt:       time.Now(),
 					ServiceID:     1,
-					Service: models.Service{
+					Service: v1_models2.Service{
 						ID:      1,
 						Name:    "tester",
 						RepoURL: "https://tester.repo",
@@ -83,7 +83,7 @@ func TestListBuilds(t *testing.T) {
 					BuildURL:      "https://build.job.out/234",
 					BuiltAt:       time.Now(),
 					ServiceID:     2,
-					Service: models.Service{
+					Service: v1_models2.Service{
 						ID:      2,
 						Name:    "dummyServcie",
 						RepoURL: "https://dummy.repo",
@@ -95,7 +95,7 @@ func TestListBuilds(t *testing.T) {
 					BuildURL:      "https://build.job.out/2345",
 					BuiltAt:       time.Now(),
 					ServiceID:     3,
-					Service: models.Service{
+					Service: v1_models2.Service{
 						ID:      3,
 						Name:    "cromwell",
 						RepoURL: "https://cromwell.repo",
@@ -107,7 +107,7 @@ func TestListBuilds(t *testing.T) {
 		},
 		{
 			name:           "internal error",
-			expectedBuilds: []models.Build{},
+			expectedBuilds: []v1_models2.Build{},
 			expectedError:  errors.New("some internal error"),
 			expectedCode:   http.StatusInternalServerError,
 		},
@@ -188,7 +188,7 @@ func TestCreateBuild(t *testing.T) {
 		},
 		{
 			name:          "missing version string",
-			expectedError: models.ErrBadCreateRequest,
+			expectedError: v1_models2.ErrBadCreateRequest,
 			expectedCode:  http.StatusBadRequest,
 			createRequest: CreateBuildRequest{
 				CommitSha:   "k2j34",
@@ -199,7 +199,7 @@ func TestCreateBuild(t *testing.T) {
 		},
 		{
 			name:          "missing commit sha",
-			expectedError: models.ErrBadCreateRequest,
+			expectedError: v1_models2.ErrBadCreateRequest,
 			expectedCode:  http.StatusBadRequest,
 			createRequest: CreateBuildRequest{
 				VersionString: "docker.io/asdf/lskdf:1.0.1",
@@ -210,7 +210,7 @@ func TestCreateBuild(t *testing.T) {
 		},
 		{
 			name:          "missing service name",
-			expectedError: models.ErrBadCreateRequest,
+			expectedError: v1_models2.ErrBadCreateRequest,
 			expectedCode:  http.StatusBadRequest,
 			createRequest: CreateBuildRequest{
 				VersionString: "docker.io/asdf/lskdf:1.0.1",
@@ -221,7 +221,7 @@ func TestCreateBuild(t *testing.T) {
 		},
 		{
 			name:          "empty create request",
-			expectedError: models.ErrBadCreateRequest,
+			expectedError: v1_models2.ErrBadCreateRequest,
 			expectedCode:  http.StatusBadRequest,
 			createRequest: CreateBuildRequest{},
 		},
@@ -241,7 +241,7 @@ func TestCreateBuild(t *testing.T) {
 		},
 		{
 			name:          "non-unique version string",
-			expectedError: models.ErrDuplicateVersionString,
+			expectedError: v1_models2.ErrDuplicateVersionString,
 			expectedCode:  http.StatusBadRequest,
 			createRequest: CreateBuildRequest{
 				VersionString: "gcr.io/broad/cromwell:1.0.0",
@@ -258,13 +258,13 @@ func TestCreateBuild(t *testing.T) {
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
 
-			service := models.Service{
+			service := v1_models2.Service{
 				ID:      1,
 				Name:    testCase.createRequest.ServiceName,
 				RepoURL: testCase.createRequest.ServiceRepo,
 			}
 
-			expectedBuild := models.Build{
+			expectedBuild := v1_models2.Build{
 				VersionString: testCase.createRequest.VersionString,
 				CommitSha:     testCase.createRequest.CommitSha,
 				BuildURL:      testCase.createRequest.BuildURL,
@@ -280,7 +280,7 @@ func TestCreateBuild(t *testing.T) {
 
 			// set up behavior for the serviceStore mock
 			if testCase.simulateServiceCreation {
-				mockServiceStore.On("GetByName", service.Name).Return(models.Service{}, models.ErrServiceNotFound)
+				mockServiceStore.On("GetByName", service.Name).Return(v1_models2.Service{}, v1_models2.ErrServiceNotFound)
 				mockServiceStore.On("CreateNew", mock.Anything).Return(service, nil)
 			} else {
 				mockServiceStore.On("GetByName", service.Name).Return(service, nil)
@@ -302,7 +302,7 @@ func TestCreateBuild(t *testing.T) {
 			controller.createBuild(c)
 			assert.Equal(t, testCase.expectedCode, response.Code)
 
-			if testCase.expectedError == models.ErrBadCreateRequest {
+			if testCase.expectedError == v1_models2.ErrBadCreateRequest {
 				mockServiceStore.AssertNotCalled(t, "GetByName")
 				mockBuildStore.AssertNotCalled(t, "CreateNew")
 			} else {
@@ -332,21 +332,21 @@ func TestGetBuildByID(t *testing.T) {
 	testCases := []struct {
 		name          string
 		buildID       string
-		expectedBuild models.Build
+		expectedBuild v1_models2.Build
 		expectedError error
 		expectedCode  int
 	}{
 		{
 			name:    "successfully get build by id",
 			buildID: "1",
-			expectedBuild: models.Build{
+			expectedBuild: v1_models2.Build{
 				ID:            1,
 				VersionString: "imagerepo.io/test:0.1.0",
 				CommitSha:     "f2f2f23",
 				BuildURL:      "https://build.job.out/blah",
 				BuiltAt:       time.Now(),
 				ServiceID:     1,
-				Service: models.Service{
+				Service: v1_models2.Service{
 					ID:      1,
 					Name:    "tester",
 					RepoURL: "https://tester.repo",
@@ -358,14 +358,14 @@ func TestGetBuildByID(t *testing.T) {
 		{
 			name:          "non-existent build id",
 			buildID:       "100",
-			expectedBuild: models.Build{},
+			expectedBuild: v1_models2.Build{},
 			expectedCode:  http.StatusNotFound,
-			expectedError: models.ErrBuildNotFound,
+			expectedError: v1_models2.ErrBuildNotFound,
 		},
 		{
 			name:          "invalid id param",
 			buildID:       "abc",
-			expectedBuild: models.Build{},
+			expectedBuild: v1_models2.Build{},
 			expectedCode:  http.StatusBadRequest,
 			expectedError: ErrInvalidBuildID,
 		},
@@ -419,24 +419,24 @@ type mockBuildStore struct {
 	mock.Mock
 }
 
-func (m *mockBuildStore) ListAll() ([]models.Build, error) {
+func (m *mockBuildStore) ListAll() ([]v1_models2.Build, error) {
 	retVal := m.Called()
-	return retVal.Get(0).([]models.Build), retVal.Error(1)
+	return retVal.Get(0).([]v1_models2.Build), retVal.Error(1)
 }
 
-func (m *mockBuildStore) CreateNew(newBuild models.Build) (models.Build, error) {
+func (m *mockBuildStore) CreateNew(newBuild v1_models2.Build) (v1_models2.Build, error) {
 	retval := m.Called(newBuild)
-	return retval.Get(0).(models.Build), retval.Error(1)
+	return retval.Get(0).(v1_models2.Build), retval.Error(1)
 }
 
-func (m *mockBuildStore) GetByID(id int) (models.Build, error) {
+func (m *mockBuildStore) GetByID(id int) (v1_models2.Build, error) {
 	retVal := m.Called(id)
-	return retVal.Get(0).(models.Build), retVal.Error(1)
+	return retVal.Get(0).(v1_models2.Build), retVal.Error(1)
 }
 
-func (m *mockBuildStore) GetByVersionString(versionString string) (models.Build, error) {
+func (m *mockBuildStore) GetByVersionString(versionString string) (v1_models2.Build, error) {
 	retVal := m.Called(versionString)
-	return retVal.Get(0).(models.Build), retVal.Error(1)
+	return retVal.Get(0).(v1_models2.Build), retVal.Error(1)
 }
 
 func addBuildRequestToContext(t *testing.T, c *gin.Context, bodyData CreateBuildRequest) {

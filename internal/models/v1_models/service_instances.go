@@ -1,4 +1,4 @@
-package models
+package v1_models
 
 import (
 	"fmt"

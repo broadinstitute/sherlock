@@ -1,7 +1,7 @@
 package services
 
 import (
-	"github.com/broadinstitute/sherlock/internal/models"
+	"github.com/broadinstitute/sherlock/internal/models/v1_models"
 	"github.com/stretchr/testify/mock"
 )
 
@@ -12,20 +12,20 @@ type MockServiceStore struct {
 }
 
 // this is boilerplate code for the testify mock library
-func (m *MockServiceStore) ListAll() ([]models.Service, error) {
+func (m *MockServiceStore) ListAll() ([]v1_models.Service, error) {
 	retVal := m.Called()
-	return retVal.Get(0).([]models.Service), retVal.Error(1)
+	return retVal.Get(0).([]v1_models.Service), retVal.Error(1)
 }
 
-func (m *MockServiceStore) CreateNew(newService models.CreateServiceRequest) (models.Service, error) {
+func (m *MockServiceStore) CreateNew(newService v1_models.CreateServiceRequest) (v1_models.Service, error) {
 	retService := newService.Service()
 	retVal := m.Called(newService)
 	return retService, retVal.Error(1)
 }
 
-func (m *MockServiceStore) GetByName(name string) (models.Service, error) {
+func (m *MockServiceStore) GetByName(name string) (v1_models.Service, error) {
 	retVal := m.Called(name)
-	return retVal.Get(0).(models.Service), retVal.Error(1)
+	return retVal.Get(0).(v1_models.Service), retVal.Error(1)
 }
 
 // NewMockController returns a service controller that will use a customizable mock

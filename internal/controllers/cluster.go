@@ -5,21 +5,21 @@ package controllers
 import (
 	"errors"
 	"fmt"
+	"github.com/broadinstitute/sherlock/internal/models/v1_models"
 
-	"github.com/broadinstitute/sherlock/internal/models"
 	"gorm.io/gorm"
 )
 
 // Cluster is the management layer for clusters
 type Cluster struct {
-	store models.ClusterStore
+	store v1_models.ClusterStore
 	// other derived data
 }
 
 // NewController accepts a gorm DB connection and returns a new instance
 // of the cluster controller
 func NewClusterController(dbConn *gorm.DB) *Cluster {
-	clusterStore := models.NewClusterStore(dbConn)
+	clusterStore := v1_models.NewClusterStore(dbConn)
 	return &Cluster{
 		store: clusterStore,
 	}
@@ -29,7 +29,7 @@ func NewClusterController(dbConn *gorm.DB) *Cluster {
 // already exists in sherlock's data storage
 func (clusterController Cluster) DoesClusterExist(name string) (id int, ok bool) {
 	cluster, err := clusterController.GetByName(name)
-	if errors.Is(err, models.ErrClusterNotFound) {
+	if errors.Is(err, v1_models.ErrClusterNotFound) {
 		return 0, false
 	}
 	return cluster.ID, true
@@ -37,22 +37,22 @@ func (clusterController Cluster) DoesClusterExist(name string) (id int, ok bool)
 
 // CreateNew is the public api on the clusterController for persisting a new service entity to
 // the data store
-func (clusterController *Cluster) CreateNew(newCluster models.CreateClusterRequest) (models.Cluster, error) {
+func (clusterController *Cluster) CreateNew(newCluster v1_models.CreateClusterRequest) (v1_models.Cluster, error) {
 	return clusterController.store.CreateNew(newCluster)
 }
 
 // ListAll is the public api for listing out all clusters tracked by sherlock
-func (clusterController *Cluster) ListAll() ([]models.Cluster, error) {
+func (clusterController *Cluster) ListAll() ([]v1_models.Cluster, error) {
 	return clusterController.store.ListAll()
 }
 
 // GetByName is the public API for looking up a cluster from the data store by name
-func (clusterController *Cluster) GetByName(name string) (models.Cluster, error) {
+func (clusterController *Cluster) GetByName(name string) (v1_models.Cluster, error) {
 	return clusterController.store.GetByName(name)
 }
 
 // GetByID is the public API for looking up a cluster from the data store by name
-func (clusterController *Cluster) GetByID(id int) (models.Cluster, error) {
+func (clusterController *Cluster) GetByID(id int) (v1_models.Cluster, error) {
 	return clusterController.store.GetByID(id)
 }
 
@@ -62,7 +62,7 @@ func (clusterController *Cluster) FindOrCreate(name string) (int, error) {
 	clusterID, exists := clusterController.DoesClusterExist(name)
 
 	if !exists {
-		newCluster := models.CreateClusterRequest{Name: name}
+		newCluster := v1_models.CreateClusterRequest{Name: name}
 		createdCluster, err := clusterController.CreateNew(newCluster)
 		if err != nil {
 			return 0, fmt.Errorf("error creating cluster %s: %v", name, err)

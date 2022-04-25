@@ -4,9 +4,9 @@ package controllers
 
 import (
 	"errors"
+	"github.com/broadinstitute/sherlock/internal/models/v1_models"
 	"testing"
 
-	"github.com/broadinstitute/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/internal/testutils"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
@@ -19,9 +19,9 @@ import (
 type ClusterTestSuite struct {
 	suite.Suite
 	testApp               *TestApplication
-	goodClusterRequest    models.CreateClusterRequest
-	anotherClusterRequest models.CreateClusterRequest
-	badClusterRequest     models.CreateClusterRequest
+	goodClusterRequest    v1_models.CreateClusterRequest
+	anotherClusterRequest v1_models.CreateClusterRequest
+	badClusterRequest     v1_models.CreateClusterRequest
 	notFoundID            int
 }
 
@@ -37,13 +37,13 @@ func TestIntegrationClustersSuite(t *testing.T) {
 // between-test initialization
 func (suite *ClusterTestSuite) SetupTest() {
 	suite.testApp = initTestApp(suite.T())
-	suite.goodClusterRequest = models.CreateClusterRequest{
+	suite.goodClusterRequest = v1_models.CreateClusterRequest{
 		Name: "terra-prod",
 	}
-	suite.anotherClusterRequest = models.CreateClusterRequest{
+	suite.anotherClusterRequest = v1_models.CreateClusterRequest{
 		Name: "terra-microprod",
 	}
-	suite.badClusterRequest = models.CreateClusterRequest{}
+	suite.badClusterRequest = v1_models.CreateClusterRequest{}
 	suite.notFoundID = 1234567890 //unsure of a way to guarantee not-found-ness
 }
 

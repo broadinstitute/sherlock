@@ -1,7 +1,7 @@
 package deploys
 
 import (
-	"github.com/broadinstitute/sherlock/internal/models"
+	"github.com/broadinstitute/sherlock/internal/models/v1_models"
 	"github.com/stretchr/testify/mock"
 )
 
@@ -11,24 +11,24 @@ type mockServiceInstanceStore struct {
 	mock.Mock
 }
 
-func (m *mockServiceInstanceStore) ListAll() ([]models.ServiceInstance, error) {
+func (m *mockServiceInstanceStore) ListAll() ([]v1_models.ServiceInstance, error) {
 	retVal := m.Called()
-	return retVal.Get(0).([]models.ServiceInstance), retVal.Error(1)
+	return retVal.Get(0).([]v1_models.ServiceInstance), retVal.Error(1)
 }
 
-func (m *mockServiceInstanceStore) CreateNew(clusterID, serviceID, environmentID int) (models.ServiceInstance, error) {
+func (m *mockServiceInstanceStore) CreateNew(clusterID, serviceID, environmentID int) (v1_models.ServiceInstance, error) {
 	retVal := m.Called(clusterID, serviceID, environmentID)
-	return retVal.Get(0).(models.ServiceInstance), retVal.Error(1)
+	return retVal.Get(0).(v1_models.ServiceInstance), retVal.Error(1)
 }
 
-func (m *mockServiceInstanceStore) GetByEnvironmentAndServiceID(environmentID, serviceID int) (models.ServiceInstance, error) {
+func (m *mockServiceInstanceStore) GetByEnvironmentAndServiceID(environmentID, serviceID int) (v1_models.ServiceInstance, error) {
 	retVal := m.Called(environmentID, serviceID)
-	return retVal.Get(0).(models.ServiceInstance), retVal.Error(1)
+	return retVal.Get(0).(v1_models.ServiceInstance), retVal.Error(1)
 }
 
-func (m *mockServiceInstanceStore) Reload(serviceInstance models.ServiceInstance, reloadCluster bool, reloadEnvironment bool, reloadService bool) (models.ServiceInstance, error) {
+func (m *mockServiceInstanceStore) Reload(serviceInstance v1_models.ServiceInstance, reloadCluster bool, reloadEnvironment bool, reloadService bool) (v1_models.ServiceInstance, error) {
 	retVal := m.Called(serviceInstance, reloadCluster, reloadEnvironment, reloadService)
-	return retVal.Get(0).(models.ServiceInstance), retVal.Error(1)
+	return retVal.Get(0).(v1_models.ServiceInstance), retVal.Error(1)
 }
 
 // NewMockController returns an EnvironmentController instance with the provided mock
