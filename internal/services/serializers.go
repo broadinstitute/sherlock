@@ -1,8 +1,6 @@
 package services
 
-import (
-	"github.com/broadinstitute/sherlock/internal/models/v1_models"
-)
+import "github.com/broadinstitute/sherlock/internal/models"
 
 // serializers.go contains logic for building
 // http responses from the builds data base model while avoiding
@@ -21,7 +19,7 @@ type ServiceResponse struct {
 // ServiceSerializer is used to serializer a single Service model
 // to a used to generate responses from the /services api group
 type ServiceSerializer struct {
-	Service v1_models.Service
+	Service models.Service
 }
 
 // Response takes a Service Model entity and transforms it into a ServiceResponse
@@ -36,10 +34,10 @@ func (ss *ServiceSerializer) Response() ServiceResponse {
 // ServicesSerializer is used to serialize a ServiceModel
 // entity to a a format used in http response bodies
 type ServicesSerializer struct {
-	Services []v1_models.Service
+	Services []models.Service
 }
 
-// Response serializes Service v1_models into Service Responses
+// Response serializes Service models into Service Responses
 func (ss *ServicesSerializer) Response() []ServiceResponse {
 	services := []ServiceResponse{}
 	for _, service := range ss.Services {

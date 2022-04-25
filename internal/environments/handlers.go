@@ -2,9 +2,9 @@ package environments
 
 import (
 	"errors"
-	"github.com/broadinstitute/sherlock/internal/models/v1_models"
 	"net/http"
 
+	"github.com/broadinstitute/sherlock/internal/models"
 	"github.com/gin-gonic/gin"
 )
 
@@ -35,7 +35,7 @@ func (ec *EnvironmentController) getEnvironmentByName(c *gin.Context) {
 	environment, err := ec.GetByName(name)
 	if err != nil {
 		switch err {
-		case v1_models.ErrEnvironmentNotFound:
+		case models.ErrEnvironmentNotFound:
 			c.JSON(http.StatusNotFound, Response{Error: err.Error()})
 			return
 		default:
@@ -48,7 +48,7 @@ func (ec *EnvironmentController) getEnvironmentByName(c *gin.Context) {
 }
 
 func (ec *EnvironmentController) createEnvironment(c *gin.Context) {
-	var newEnvironment v1_models.CreateEnvironmentRequest
+	var newEnvironment models.CreateEnvironmentRequest
 
 	if err := c.BindJSON(&newEnvironment); err != nil {
 		c.JSON(http.StatusBadRequest, Response{Error: ErrBadCreateRequest.Error()})

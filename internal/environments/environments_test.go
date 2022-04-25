@@ -4,9 +4,9 @@ package environments
 
 import (
 	"errors"
-	"github.com/broadinstitute/sherlock/internal/models/v1_models"
 	"testing"
 
+	"github.com/broadinstitute/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/internal/testutils"
 	"github.com/bxcodec/faker/v3"
 	"github.com/stretchr/testify/assert"
@@ -20,9 +20,9 @@ import (
 type EnvironmentTestSuite struct {
 	suite.Suite
 	testApp                   *TestApplication
-	goodEnvironmentRequest    v1_models.CreateEnvironmentRequest
-	anotherEnvironmentRequest v1_models.CreateEnvironmentRequest
-	badEnvironmentRequest     v1_models.CreateEnvironmentRequest
+	goodEnvironmentRequest    models.CreateEnvironmentRequest
+	anotherEnvironmentRequest models.CreateEnvironmentRequest
+	badEnvironmentRequest     models.CreateEnvironmentRequest
 	notFoundID                int
 }
 
@@ -38,13 +38,13 @@ func TestIntegrationEnvironmentsSuite(t *testing.T) {
 // between-test initialization
 func (suite *EnvironmentTestSuite) SetupTest() {
 	suite.testApp = initTestApp(suite.T())
-	suite.goodEnvironmentRequest = v1_models.CreateEnvironmentRequest{
+	suite.goodEnvironmentRequest = models.CreateEnvironmentRequest{
 		Name: faker.UUIDHyphenated(),
 	}
-	suite.anotherEnvironmentRequest = v1_models.CreateEnvironmentRequest{
+	suite.anotherEnvironmentRequest = models.CreateEnvironmentRequest{
 		Name: faker.UUIDHyphenated(),
 	}
-	suite.badEnvironmentRequest = v1_models.CreateEnvironmentRequest{}
+	suite.badEnvironmentRequest = models.CreateEnvironmentRequest{}
 	suite.notFoundID = 1234567890 //unsure of a way to guarantee not-found-ness
 }
 
@@ -84,35 +84,35 @@ func initTestApp(t *testing.T) *TestApplication {
 func (suite *EnvironmentTestSuite) TestIntegrationCreateEnvironments() {
 	testCases := []struct {
 		name                string
-		requests            []v1_models.CreateEnvironmentRequest
+		requests            []models.CreateEnvironmentRequest
 		expectedError       error
-		expectedEnvironment v1_models.Environment
+		expectedEnvironment models.Environment
 	}{
 		{
 			name: "creates a valid environment",
-			requests: []v1_models.CreateEnvironmentRequest{
+			requests: []models.CreateEnvironmentRequest{
 				{
 					Name: "terra-juyang-opera-fish",
 				},
 			},
 			expectedError: nil,
-			expectedEnvironment: v1_models.Environment{
+			expectedEnvironment: models.Environment{
 				Name: "terra-juyang-opera-fish",
 			},
 		},
 		{
 			name: "fails to create an environment with no name",
-			requests: []v1_models.CreateEnvironmentRequest{
+			requests: []models.CreateEnvironmentRequest{
 				{},
 			},
 			expectedError: errors.New("error saving to database: ERROR: null value in column \"name\" of relation \"environments\" violates not-null constraint (SQLSTATE 23502)"),
-			expectedEnvironment: v1_models.Environment{
+			expectedEnvironment: models.Environment{
 				Name: "",
 			},
 		},
 		{
 			name: "fails to create an environment with duplicate name",
-			requests: []v1_models.CreateEnvironmentRequest{
+			requests: []models.CreateEnvironmentRequest{
 				{
 					Name: "terra-juyang-opera-fish",
 				},
@@ -121,13 +121,13 @@ func (suite *EnvironmentTestSuite) TestIntegrationCreateEnvironments() {
 				},
 			},
 			expectedError: errors.New("error saving to database: ERROR: duplicate key value violates unique constraint \"environments_name_key\" (SQLSTATE 23505)"),
-			expectedEnvironment: v1_models.Environment{
+			expectedEnvironment: models.Environment{
 				Name: "",
 			},
 		},
 		{
 			name: "creates environments with unique names",
-			requests: []v1_models.CreateEnvironmentRequest{
+			requests: []models.CreateEnvironmentRequest{
 				{
 					Name: "terra-juyang-opera-fish",
 				},
@@ -136,7 +136,7 @@ func (suite *EnvironmentTestSuite) TestIntegrationCreateEnvironments() {
 				},
 			},
 			expectedError: nil,
-			expectedEnvironment: v1_models.Environment{
+			expectedEnvironment: models.Environment{
 				Name: "terra-juyang-maggot-sawfly",
 			},
 		},
@@ -178,7 +178,7 @@ func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentGetByName() {
 	})
 
 	suite.Run("GetByName returns error if not found", func() {
-		var envRequest v1_models.CreateEnvironmentRequest
+		var envRequest models.CreateEnvironmentRequest
 		err := faker.FakeData(&envRequest)
 		suite.Require().NoError(err)
 
@@ -245,7 +245,7 @@ func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentListAll() {
 	suite.Run("ListAll returns many Environments", func() {
 		testutils.Cleanup(suite.T(), suite.testApp.db)
 
-		var randomEnvRequest v1_models.CreateEnvironmentRequest
+		var randomEnvRequest models.CreateEnvironmentRequest
 		err := faker.FakeData(&randomEnvRequest)
 		suite.Require().NoError(err)
 
@@ -302,8 +302,8 @@ func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentSerialize() {
 
 	suite.Run("Serialize returns JSON for many environments", func() {
 
-		var environments []v1_models.Environment
-		var newEnvironment v1_models.Environment
+		var environments []models.Environment
+		var newEnvironment models.Environment
 
 		newEnvironment, _ = suite.testApp.Environments.CreateNew(suite.goodEnvironmentRequest)
 		environments = append(environments, newEnvironment)

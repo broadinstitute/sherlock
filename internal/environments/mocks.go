@@ -1,7 +1,7 @@
 package environments
 
 import (
-	"github.com/broadinstitute/sherlock/internal/models/v1_models"
+	"github.com/broadinstitute/sherlock/internal/models"
 	"github.com/stretchr/testify/mock"
 )
 
@@ -11,25 +11,25 @@ type MockEnvironmentStore struct {
 	mock.Mock
 }
 
-func (m *MockEnvironmentStore) ListAll() ([]v1_models.Environment, error) {
+func (m *MockEnvironmentStore) ListAll() ([]models.Environment, error) {
 	retVal := m.Called()
-	return retVal.Get(0).([]v1_models.Environment), retVal.Error(1)
+	return retVal.Get(0).([]models.Environment), retVal.Error(1)
 }
 
-func (m *MockEnvironmentStore) CreateNew(newEnvironment v1_models.CreateEnvironmentRequest) (v1_models.Environment, error) {
+func (m *MockEnvironmentStore) CreateNew(newEnvironment models.CreateEnvironmentRequest) (models.Environment, error) {
 	retEnv := newEnvironment.EnvironmentReq()
 	retVal := m.Called(newEnvironment)
 	return retEnv, retVal.Error(1)
 }
 
-func (m *MockEnvironmentStore) GetByID(id int) (v1_models.Environment, error) {
+func (m *MockEnvironmentStore) GetByID(id int) (models.Environment, error) {
 	retVal := m.Called(id)
-	return retVal.Get(0).(v1_models.Environment), retVal.Error(1)
+	return retVal.Get(0).(models.Environment), retVal.Error(1)
 }
 
-func (m *MockEnvironmentStore) GetByName(name string) (v1_models.Environment, error) {
+func (m *MockEnvironmentStore) GetByName(name string) (models.Environment, error) {
 	retVal := m.Called(name)
-	return retVal.Get(0).(v1_models.Environment), retVal.Error(1)
+	return retVal.Get(0).(models.Environment), retVal.Error(1)
 }
 
 // NewMockController returns an EnvironmentController instance with the provided mock

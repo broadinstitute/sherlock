@@ -7,9 +7,9 @@ package builds
 // what is returned from api endpoints
 
 import (
-	"github.com/broadinstitute/sherlock/internal/models/v1_models"
 	"time"
 
+	"github.com/broadinstitute/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/internal/services"
 )
 
@@ -32,7 +32,7 @@ type BuildResponse struct {
 
 // BuildSerializer takes a Build model entity and translates it into a response
 type BuildSerializer struct {
-	Build v1_models.Build
+	Build models.Build
 }
 
 // Response method performs the serialization from a Build entity to Build Response
@@ -50,7 +50,7 @@ func (bs *BuildSerializer) Response() BuildResponse {
 
 // BuildsSerializer is used to transform a slice of builds into the Response type
 type BuildsSerializer struct {
-	Builds []v1_models.Build
+	Builds []models.Build
 }
 
 // Response transforms a list of build model entities into BuildResponse's

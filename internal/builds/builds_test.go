@@ -1,10 +1,10 @@
 package builds
 
 import (
-	"github.com/broadinstitute/sherlock/internal/models/v1_models"
 	"testing"
 	"time"
 
+	"github.com/broadinstitute/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/internal/testutils"
 	"github.com/bxcodec/faker/v3"
 	"github.com/stretchr/testify/suite"
@@ -59,7 +59,7 @@ func (suite *BuildsIntegrationTestSuite) TestCreateBuildEmptyRequest() {
 
 	_, err := suite.app.builds.CreateNew(newBuild)
 
-	suite.Assert().ErrorIs(err, v1_models.ErrBadCreateRequest)
+	suite.Assert().ErrorIs(err, models.ErrBadCreateRequest)
 }
 
 func (suite *BuildsIntegrationTestSuite) TestCreateNonUniqueVersion() {
@@ -68,14 +68,14 @@ func (suite *BuildsIntegrationTestSuite) TestCreateNonUniqueVersion() {
 	suite.Require().NoError(err)
 
 	_, err = suite.app.builds.CreateNew(suite.goodCreateBuildRequest)
-	suite.Assert().ErrorIs(err, v1_models.ErrDuplicateVersionString)
+	suite.Assert().ErrorIs(err, models.ErrDuplicateVersionString)
 }
 
 func (suite *BuildsIntegrationTestSuite) TestGetByID() {
 	suite.Run("fails with non-existent id", func() {
 
 		_, err := suite.app.builds.GetByID(23)
-		suite.Require().ErrorIs(err, v1_models.ErrBuildNotFound)
+		suite.Require().ErrorIs(err, models.ErrBuildNotFound)
 
 	})
 
@@ -110,7 +110,7 @@ func (suite *BuildsIntegrationTestSuite) TestGetByVersionString() {
 	suite.Run("errors not found for non-existent version string", func() {
 
 		_, err := suite.app.builds.GetByVersionString("does-not-exist")
-		suite.Assert().ErrorIs(err, v1_models.ErrBuildNotFound)
+		suite.Assert().ErrorIs(err, models.ErrBuildNotFound)
 	})
 }
 

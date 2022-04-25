@@ -4,10 +4,10 @@ package allocationpools
 
 import (
 	"errors"
-	v1_models2 "github.com/broadinstitute/sherlock/internal/models/v1_models"
 	"testing"
 
 	"github.com/broadinstitute/sherlock/internal/environments"
+	"github.com/broadinstitute/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/internal/testutils"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -21,10 +21,10 @@ import (
 type AllocationPoolTestSuite struct {
 	suite.Suite
 	testApp                      *TestApplication
-	goodAllocationPoolRequest    v1_models2.CreateAllocationPoolRequest
-	goodEnvironmentRequest       v1_models2.CreateEnvironmentRequest
-	anotherAllocationPoolRequest v1_models2.CreateAllocationPoolRequest
-	badAllocationPoolRequest     v1_models2.CreateAllocationPoolRequest
+	goodAllocationPoolRequest    models.CreateAllocationPoolRequest
+	goodEnvironmentRequest       models.CreateEnvironmentRequest
+	anotherAllocationPoolRequest models.CreateAllocationPoolRequest
+	badAllocationPoolRequest     models.CreateAllocationPoolRequest
 	notFoundID                   int
 }
 
@@ -40,16 +40,16 @@ func TestIntegrationAllocationPoolsSuite(t *testing.T) {
 // between-test initialization
 func (suite *AllocationPoolTestSuite) SetupTest() {
 	suite.testApp = initTestApp(suite.T())
-	suite.goodAllocationPoolRequest = v1_models2.CreateAllocationPoolRequest{
+	suite.goodAllocationPoolRequest = models.CreateAllocationPoolRequest{
 		Name: "swatomation 1.0",
 	}
-	suite.goodEnvironmentRequest = v1_models2.CreateEnvironmentRequest{
+	suite.goodEnvironmentRequest = models.CreateEnvironmentRequest{
 		Name: "terra-juyang-prime-sawfly",
 	}
-	suite.anotherAllocationPoolRequest = v1_models2.CreateAllocationPoolRequest{
+	suite.anotherAllocationPoolRequest = models.CreateAllocationPoolRequest{
 		Name: "new swatomation-FiaB",
 	}
-	suite.badAllocationPoolRequest = v1_models2.CreateAllocationPoolRequest{}
+	suite.badAllocationPoolRequest = models.CreateAllocationPoolRequest{}
 	suite.notFoundID = 1234567890 //unsure of a way to guarantee not-found-ness
 }
 
@@ -140,7 +140,7 @@ func (suite *AllocationPoolTestSuite) TestIntegrationCreateAllocationPools() {
 	suite.Run("create a cluster with a new embedded environment", func() {
 		testutils.Cleanup(suite.T(), suite.testApp.db)
 
-		suite.goodAllocationPoolRequest.Environments = []v1_models2.Environment{suite.goodEnvironmentRequest.EnvironmentReq()}
+		suite.goodAllocationPoolRequest.Environments = []models.Environment{suite.goodEnvironmentRequest.EnvironmentReq()}
 
 		newAllocationPool, err := suite.testApp.AllocationPools.CreateNew(suite.goodAllocationPoolRequest)
 		assert.NoError(suite.T(), err)

@@ -1,6 +1,6 @@
-package v1_models
+package models
 
-// v1_models.go contains the type for modeling build entities in sherlocks database
+// models.go contains the type for modeling build entities in sherlocks database
 // and methods for interacting with the persistence layer. It should only contain
 // logic related to interacting with build entities in sherlock's db
 

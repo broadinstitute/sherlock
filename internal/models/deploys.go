@@ -1,4 +1,4 @@
-package v1_models
+package models
 
 import (
 	"time"

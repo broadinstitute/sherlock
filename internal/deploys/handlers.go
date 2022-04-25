@@ -2,10 +2,10 @@ package deploys
 
 import (
 	"errors"
-	v1_models2 "github.com/broadinstitute/sherlock/internal/models/v1_models"
 	"net/http"
 
 	"github.com/broadinstitute/sherlock/internal/metrics"
+	"github.com/broadinstitute/sherlock/internal/models"
 	"github.com/gin-gonic/gin"
 )
 
@@ -26,7 +26,7 @@ func (dc *DeployController) getDeploysByEnvironmentAndService(c *gin.Context) {
 	deploys, err := dc.GetDeploysByEnvironmentAndService(environment, service)
 	if err != nil {
 		switch err {
-		case v1_models2.ErrServiceInstanceNotFound:
+		case models.ErrServiceInstanceNotFound:
 			c.JSON(http.StatusNotFound, Response{Error: err.Error()})
 			return
 		default:
@@ -67,7 +67,7 @@ func (dc *DeployController) createDeploy(c *gin.Context) {
 	shouldUpdateLeadTime := true
 	// look up the current active deployment for the give service instance
 	currentDeploy, err := dc.GetMostRecentDeploy(newDeployRequest.EnvironmentName, newDeployRequest.ServiceName)
-	if err != nil && err != v1_models2.ErrDeployNotFound {
+	if err != nil && err != models.ErrDeployNotFound {
 		c.JSON(http.StatusInternalServerError, Response{Error: err.Error()})
 	}
 
