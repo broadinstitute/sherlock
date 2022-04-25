@@ -5,10 +5,10 @@ package builds
 
 import (
 	"errors"
+	"github.com/broadinstitute/sherlock/internal/models/v1_models"
 	"net/http"
 	"strconv"
 
-	"github.com/broadinstitute/sherlock/internal/models"
 	"github.com/gin-gonic/gin"
 )
 
@@ -37,7 +37,7 @@ func (bc *BuildController) createBuild(c *gin.Context) {
 
 	// decode the post request body into a Service struct
 	if err := c.BindJSON(&newBuild); err != nil {
-		c.JSON(http.StatusBadRequest, Response{Error: models.ErrBadCreateRequest.Error()})
+		c.JSON(http.StatusBadRequest, Response{Error: v1_models.ErrBadCreateRequest.Error()})
 		return
 	}
 
@@ -46,7 +46,7 @@ func (bc *BuildController) createBuild(c *gin.Context) {
 	// and then associate it with the build
 	build, err := bc.CreateNew(newBuild)
 	if err != nil {
-		if errors.Is(err, models.ErrDuplicateVersionString) {
+		if errors.Is(err, v1_models.ErrDuplicateVersionString) {
 			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
 			return
 		}
@@ -68,7 +68,7 @@ func (bc *BuildController) getByID(c *gin.Context) {
 	build, err := bc.GetByID(id)
 	if err != nil {
 		switch err {
-		case models.ErrBuildNotFound:
+		case v1_models.ErrBuildNotFound:
 			c.JSON(http.StatusNotFound, Response{Error: err.Error()})
 			return
 		default:

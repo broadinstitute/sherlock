@@ -9,20 +9,20 @@ package services
 import (
 	"errors"
 	"fmt"
+	"github.com/broadinstitute/sherlock/internal/models/v1_models"
 
-	"github.com/broadinstitute/sherlock/internal/models"
 	"gorm.io/gorm"
 )
 
 // ServiceController is the management layer for CRUD operations for service entities
 type ServiceController struct {
-	store models.ServiceStore
+	store v1_models.ServiceStore
 }
 
 // NewController accepts a gorm DB connection and returns a new instance
 // of the service controller
 func NewController(dbConn *gorm.DB) *ServiceController {
-	serviceStore := models.NewServiceStore(dbConn)
+	serviceStore := v1_models.NewServiceStore(dbConn)
 	return &ServiceController{
 		store: serviceStore,
 	}
@@ -32,7 +32,7 @@ func NewController(dbConn *gorm.DB) *ServiceController {
 // already exists in sherlock's data storage
 func (sc *ServiceController) DoesServiceExist(name string) (id int, ok bool) {
 	svc, err := sc.GetByName(name)
-	if errors.Is(err, models.ErrServiceNotFound) {
+	if errors.Is(err, v1_models.ErrServiceNotFound) {
 		return 0, false
 	}
 	return svc.ID, true
@@ -40,17 +40,17 @@ func (sc *ServiceController) DoesServiceExist(name string) (id int, ok bool) {
 
 // CreateNew is the public api on the serviceController for persisting a new service entity to
 // the data store
-func (sc *ServiceController) CreateNew(newService models.CreateServiceRequest) (models.Service, error) {
+func (sc *ServiceController) CreateNew(newService v1_models.CreateServiceRequest) (v1_models.Service, error) {
 	return sc.store.CreateNew(newService)
 }
 
 // ListAll is the public api for listing out all services tracked by sherlock
-func (sc *ServiceController) ListAll() ([]models.Service, error) {
+func (sc *ServiceController) ListAll() ([]v1_models.Service, error) {
 	return sc.store.ListAll()
 }
 
 // GetByName is the public API for looking up a service from the data store by name
-func (sc *ServiceController) GetByName(name string) (models.Service, error) {
+func (sc *ServiceController) GetByName(name string) (v1_models.Service, error) {
 	return sc.store.GetByName(name)
 }
 
@@ -61,7 +61,7 @@ func (sc *ServiceController) FindOrCreate(name string) (int, error) {
 
 	if !exists {
 		// then make the new service
-		newService := models.CreateServiceRequest{Name: name}
+		newService := v1_models.CreateServiceRequest{Name: name}
 		createdService, err := sc.CreateNew(newService)
 		if err != nil {
 			return 0, fmt.Errorf("error creating service %s: %v", name, err)
@@ -71,8 +71,8 @@ func (sc *ServiceController) FindOrCreate(name string) (int, error) {
 	return serviceID, nil
 }
 
-func (sc *ServiceController) serialize(services ...models.Service) []ServiceResponse {
-	var serviceList []models.Service
+func (sc *ServiceController) serialize(services ...v1_models.Service) []ServiceResponse {
+	var serviceList []v1_models.Service
 	serviceList = append(serviceList, services...)
 
 	serializer := ServicesSerializer{Services: serviceList}

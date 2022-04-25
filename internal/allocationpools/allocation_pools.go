@@ -8,20 +8,20 @@ package allocationpools
 
 import (
 	"errors"
+	"github.com/broadinstitute/sherlock/internal/models/v1_models"
 
-	"github.com/broadinstitute/sherlock/internal/models"
 	"gorm.io/gorm"
 )
 
 // AllocationPoolController is the management layer for allocationPools
 type AllocationPoolController struct {
-	store models.AllocationPoolStore
+	store v1_models.AllocationPoolStore
 }
 
 // NewController accepts a gorm DB connection and returns a new instance
 // of the allocationPool controller
 func NewController(dbConn *gorm.DB) *AllocationPoolController {
-	allocationPoolStore := models.NewAllocationPoolStore(dbConn)
+	allocationPoolStore := v1_models.NewAllocationPoolStore(dbConn)
 	return &AllocationPoolController{
 		store: allocationPoolStore,
 	}
@@ -31,7 +31,7 @@ func NewController(dbConn *gorm.DB) *AllocationPoolController {
 // already exists in sherlock's data storage
 func (allocationPoolController AllocationPoolController) DoesAllocationPoolExist(name string) (int, bool) {
 	allocationPool, err := allocationPoolController.GetByName(name)
-	if errors.Is(err, models.ErrAllocationPoolNotFound) {
+	if errors.Is(err, v1_models.ErrAllocationPoolNotFound) {
 		return 0, false
 	}
 	return allocationPool.ID, true
@@ -39,28 +39,28 @@ func (allocationPoolController AllocationPoolController) DoesAllocationPoolExist
 
 // CreateNew is the public api on the allocationPoolController for persisting a new service entity to
 // the data store
-func (allocationPoolController *AllocationPoolController) CreateNew(newAllocationPool models.CreateAllocationPoolRequest) (models.AllocationPool, error) {
+func (allocationPoolController *AllocationPoolController) CreateNew(newAllocationPool v1_models.CreateAllocationPoolRequest) (v1_models.AllocationPool, error) {
 	return allocationPoolController.store.CreateNew(newAllocationPool)
 
 }
 
 // ListAll is the public api for listing out all allocationPools tracked by sherlock
-func (allocationPoolController *AllocationPoolController) ListAll() ([]models.AllocationPool, error) {
+func (allocationPoolController *AllocationPoolController) ListAll() ([]v1_models.AllocationPool, error) {
 	return allocationPoolController.store.ListAll()
 
 }
 
 // GetByName is the public API for looking up a allocationPool from the data store by name
-func (allocationPoolController *AllocationPoolController) GetByName(name string) (models.AllocationPool, error) {
+func (allocationPoolController *AllocationPoolController) GetByName(name string) (v1_models.AllocationPool, error) {
 	return allocationPoolController.store.GetByName(name)
 }
 
 // GetByID is the public API for looking up a allocationPool from the data store by name
-func (allocationPoolController *AllocationPoolController) GetByID(id int) (models.AllocationPool, error) {
+func (allocationPoolController *AllocationPoolController) GetByID(id int) (v1_models.AllocationPool, error) {
 	return allocationPoolController.store.GetByID(id)
 }
 
 // AddEnvironmentByID takes a AllocationPoolObject and associates an existing environment to it.
-func (allocationPoolController *AllocationPoolController) AddEnvironmentByID(currentAllocationPool models.AllocationPool, environmentID int) (models.AllocationPool, error) {
+func (allocationPoolController *AllocationPoolController) AddEnvironmentByID(currentAllocationPool v1_models.AllocationPool, environmentID int) (v1_models.AllocationPool, error) {
 	return allocationPoolController.store.AddEnvironmentByID(currentAllocationPool, environmentID)
 }
