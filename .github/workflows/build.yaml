@@ -52,11 +52,14 @@ jobs:
           WITH_V: true
 
       - name: Auth to GCP
-        uses: google-github-actions/setup-gcloud@master
+        uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{ secrets.GCP_PUBLISH_KEY_B64 }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0
         with:
           version: '345.0.0'
-          service_account_email: ${{ secrets.GCP_PUBLISH_EMAIL }}
-          service_account_key: ${{ secrets.GCP_PUBLISH_KEY_B64 }}
 
       - name: Explicitly auth Docker for Artifact Registry
         run: gcloud auth configure-docker $GOOGLE_DOCKER_REPOSITORY --quiet
