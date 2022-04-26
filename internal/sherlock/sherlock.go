@@ -7,7 +7,6 @@ import (
 	"net/http"
 
 	"contrib.go.opencensus.io/exporter/stackdriver"
-	"github.com/broadinstitute/sherlock/internal/builds"
 	"github.com/broadinstitute/sherlock/internal/db"
 	"github.com/broadinstitute/sherlock/internal/deploys"
 	"github.com/broadinstitute/sherlock/internal/environments"
@@ -29,7 +28,7 @@ type Application struct {
 	AllocationPools *v1controllers.AllocationPoolController
 	Services        *services.ServiceController
 	Clusters        *v1controllers.ClusterController
-	Builds          *builds.BuildController
+	Builds          *v1controllers.BuildController
 	Environments    *environments.EnvironmentController
 	Deploys         *deploys.DeployController
 	Handler         http.Handler
@@ -70,7 +69,7 @@ func New() *Application {
 func (a *Application) registerControllers() {
 	a.AllocationPools = v1controllers.NewAllocationPoolController(a.DB)
 	a.Services = services.NewController(a.DB)
-	a.Builds = builds.NewController(a.DB)
+	a.Builds = v1controllers.NewBuildController(a.DB)
 	a.Clusters = v1controllers.NewClusterController(a.DB)
 	a.Environments = environments.NewController(a.DB)
 	a.Deploys = deploys.NewDeployController(a.DB)

@@ -2,9 +2,9 @@ package deploys
 
 import (
 	"github.com/broadinstitute/sherlock/internal/models/v1models"
+	"github.com/broadinstitute/sherlock/internal/serializers/v1serializers"
 	"time"
 
-	"github.com/broadinstitute/sherlock/internal/builds"
 	"github.com/broadinstitute/sherlock/internal/environments"
 	"github.com/broadinstitute/sherlock/internal/services"
 )
@@ -63,10 +63,10 @@ func (sis *ServiceInstancesSerializer) Response() []ServiceInstanceResponse {
 // DeployResponse is the type used for generating api responses
 // containing information about deploy(s)
 type DeployResponse struct {
-	ID              int                     `json:"id"`
-	ServiceInstance ServiceInstanceResponse `json:"service_instance"`
-	Build           builds.BuildResponse    `json:"build"`
-	CreatedAt       time.Time               `json:"deployed_at"`
+	ID              int                         `json:"id"`
+	ServiceInstance ServiceInstanceResponse     `json:"service_instance"`
+	Build           v1serializers.BuildResponse `json:"build"`
+	CreatedAt       time.Time                   `json:"deployed_at"`
 }
 
 type deploySerializer struct {
@@ -75,7 +75,7 @@ type deploySerializer struct {
 
 func (ds *deploySerializer) Response() DeployResponse {
 	serviceInstance := ServiceInstanceSerializer{serviceInstance: ds.deploy.ServiceInstance}
-	build := builds.BuildSerializer{Build: ds.deploy.Build}
+	build := v1serializers.BuildSerializer{Build: ds.deploy.Build}
 	return DeployResponse{
 		ID:              ds.deploy.ID,
 		ServiceInstance: serviceInstance.Response(),

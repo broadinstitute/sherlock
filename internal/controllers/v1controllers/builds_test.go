@@ -1,4 +1,4 @@
-package builds
+package v1controllers
 
 import (
 	"github.com/broadinstitute/sherlock/internal/models/v1models"
@@ -8,7 +8,6 @@ import (
 	"github.com/broadinstitute/sherlock/internal/testutils"
 	"github.com/bxcodec/faker/v3"
 	"github.com/stretchr/testify/suite"
-	"gorm.io/gorm"
 )
 
 type BuildsIntegrationTestSuite struct {
@@ -114,11 +113,6 @@ func (suite *BuildsIntegrationTestSuite) TestGetByVersionString() {
 	})
 }
 
-type testApplication struct {
-	builds *BuildController
-	db     *gorm.DB
-}
-
 func initTestApp(t *testing.T) *testApplication {
 	dbConn := testutils.ConnectAndMigrate(t)
 	// ensures each test will run in it's own isolated transaction
@@ -126,7 +120,7 @@ func initTestApp(t *testing.T) *testApplication {
 	// regardless of pass or fail
 	dbConn = dbConn.Begin()
 	return &testApplication{
-		builds: NewController(dbConn),
+		builds: NewBuildController(dbConn),
 		db:     dbConn,
 	}
 }

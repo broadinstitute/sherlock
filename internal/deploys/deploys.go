@@ -2,9 +2,9 @@ package deploys
 
 import (
 	"errors"
+	"github.com/broadinstitute/sherlock/internal/controllers/v1controllers"
 	"github.com/broadinstitute/sherlock/internal/models/v1models"
 
-	"github.com/broadinstitute/sherlock/internal/builds"
 	"gorm.io/gorm"
 )
 
@@ -19,7 +19,7 @@ var (
 type DeployController struct {
 	store            v1models.DeployStore
 	serviceInstances *ServiceInstanceController
-	builds           *builds.BuildController
+	builds           *v1controllers.BuildController
 }
 
 // NewDeployController accepts a gorm db connection and returns
@@ -28,7 +28,7 @@ func NewDeployController(dbConn *gorm.DB) *DeployController {
 	return &DeployController{
 		store:            v1models.NewDeployStore(dbConn),
 		serviceInstances: NewServiceInstanceController(dbConn),
-		builds:           builds.NewController(dbConn),
+		builds:           v1controllers.NewBuildController(dbConn),
 	}
 }
 
@@ -55,7 +55,7 @@ func (dc *DeployController) CreateNew(newDeployRequest CreateDeployRequest) (v1m
 	// for now just error if not exists
 	if err != nil {
 		// create the build if not exists
-		newBuild := builds.CreateBuildRequest{
+		newBuild := v1controllers.CreateBuildRequest{
 			VersionString: newDeployRequest.BuildVersionString,
 			ServiceName:   newDeployRequest.ServiceName,
 		}

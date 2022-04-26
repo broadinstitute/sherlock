@@ -1,6 +1,6 @@
-package builds
+package v1serializers
 
-// serializers.go contains logic for building
+// builds_serializers.go contains logic for building
 // http responses from the builds data base model while avoiding
 // dependencies on the database model in the route handling logic directly.
 // This is an essentially an abstraction layer to give use more control over
@@ -13,8 +13,8 @@ import (
 	"github.com/broadinstitute/sherlock/internal/services"
 )
 
-// Response is a type that allows all data returned from the /builds api group to share a consistent structure
-type Response struct {
+// BuildsResponse is a type that allows all data returned from the /builds api group to share a consistent structure
+type BuildsResponse struct {
 	Builds []BuildResponse `json:"builds"`
 	Error  string          `json:"error,omitempty"`
 }
@@ -35,7 +35,7 @@ type BuildSerializer struct {
 	Build v1models.Build
 }
 
-// Response method performs the serialization from a Build entity to Build Response
+// Response method performs the serialization from a Build entity to Build BuildsResponse
 func (bs *BuildSerializer) Response() BuildResponse {
 	service := services.ServiceSerializer{Service: bs.Build.Service}
 	return BuildResponse{
@@ -48,7 +48,7 @@ func (bs *BuildSerializer) Response() BuildResponse {
 	}
 }
 
-// BuildsSerializer is used to transform a slice of builds into the Response type
+// BuildsSerializer is used to transform a slice of builds into the BuildsResponse type
 type BuildsSerializer struct {
 	Builds []v1models.Build
 }

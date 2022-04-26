@@ -5,12 +5,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/broadinstitute/sherlock/internal/serializers/v1serializers"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 	"time"
 
-	"github.com/broadinstitute/sherlock/internal/builds"
 	"github.com/broadinstitute/sherlock/internal/deploys"
 	"github.com/broadinstitute/sherlock/internal/environments"
 	"github.com/broadinstitute/sherlock/internal/services"
@@ -51,7 +51,7 @@ func Test_createDeployCommand(t *testing.T) {
 									Name: "dev",
 								},
 							},
-							Build: builds.BuildResponse{
+							Build: v1serializers.BuildResponse{
 								ID:            1,
 								VersionString: "docker.io/my-repo/my-app:1.0.0",
 								BuiltAt:       time.Now(),
@@ -78,7 +78,7 @@ func Test_createDeployCommand(t *testing.T) {
 				"test-service",
 			},
 			mockServerResponse: func(w http.ResponseWriter, r *http.Request) {
-				_ = json.NewEncoder(w).Encode(&builds.Response{
+				_ = json.NewEncoder(w).Encode(&v1serializers.BuildsResponse{
 					Error: "some error from sherlock server",
 				})
 			},
@@ -112,7 +112,7 @@ func Test_createDeployCommand(t *testing.T) {
 			outputBytes := bytes.NewBufferString(output)
 
 			if testCase.expectError == nil {
-				// parse the output back into a builds.Response so that we can examine it
+				// parse the output back into a builds.BuildsResponse so that we can examine it
 				var cliResponse deploys.Response
 				if err := json.NewDecoder(outputBytes).Decode(&cliResponse); err != nil {
 					t.Errorf("error decoding cli output: %v", err)

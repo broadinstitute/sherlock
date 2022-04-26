@@ -6,10 +6,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/broadinstitute/sherlock/internal/controllers/v1controllers"
+	"github.com/broadinstitute/sherlock/internal/serializers/v1serializers"
 	"os"
 	"time"
 
-	"github.com/broadinstitute/sherlock/internal/builds"
 	"github.com/go-resty/resty/v2"
 	"github.com/spf13/cobra"
 	"google.golang.org/api/idtoken"
@@ -60,7 +61,7 @@ func init() {
 
 func createBuild(cmd *cobra.Command, args []string) error {
 	serviceName := args[0]
-	newBuild := builds.CreateBuildRequest{
+	newBuild := v1controllers.CreateBuildRequest{
 		VersionString: versionString,
 		CommitSha:     commitSha,
 		ServiceName:   serviceName,
@@ -89,7 +90,7 @@ func createBuild(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func dispatchCreateBuildRequest(newBuild builds.CreateBuildRequest) (*builds.Response, []byte, error) {
+func dispatchCreateBuildRequest(newBuild v1controllers.CreateBuildRequest) (*v1serializers.BuildsResponse, []byte, error) {
 	var (
 		req *resty.Request
 		err error
@@ -112,7 +113,7 @@ func dispatchCreateBuildRequest(newBuild builds.CreateBuildRequest) (*builds.Res
 		return nil, []byte{}, fmt.Errorf("ERROR sending post /builds request: %v", err)
 	}
 
-	var result builds.Response
+	var result v1serializers.BuildsResponse
 	responseBodyBytes := bytes.NewBuffer(resp.Body())
 	if err := json.NewDecoder(responseBodyBytes).Decode(&result); err != nil {
 		return nil, []byte{}, fmt.Errorf("error parsing create build response %v. Status code: %d", err, resp.StatusCode())

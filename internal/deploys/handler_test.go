@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/broadinstitute/sherlock/internal/controllers/v1controllers"
 	"net/http"
 
-	"github.com/broadinstitute/sherlock/internal/builds"
 	"github.com/broadinstitute/sherlock/internal/testutils"
 	"github.com/bxcodec/faker/v3"
 	"github.com/gin-gonic/gin"
@@ -21,7 +21,7 @@ func (suite *DeployIntegrationTestSuite) TestCreateDeployHandler() {
 	suite.Require().NoError(err)
 
 	// make a build associated with the service from the service instance above
-	var preExistingBuildFromServiceReq builds.CreateBuildRequest
+	var preExistingBuildFromServiceReq v1controllers.CreateBuildRequest
 	err = faker.FakeData(&preExistingBuildFromServiceReq)
 	suite.Require().NoError(err)
 	preExistingBuildFromServiceReq.ServiceName = preExistingServiceInstance.Service.Name
@@ -29,7 +29,7 @@ func (suite *DeployIntegrationTestSuite) TestCreateDeployHandler() {
 	suite.Require().NoError(err)
 
 	// make a build unassociated with any service instance
-	var otherPreExistingBuildReq builds.CreateBuildRequest
+	var otherPreExistingBuildReq v1controllers.CreateBuildRequest
 	err = faker.FakeData(&otherPreExistingBuildReq)
 	suite.Require().NoError(err)
 	otherPreExistingBuild, err := suite.app.deploys.builds.CreateNew(otherPreExistingBuildReq)
@@ -150,7 +150,7 @@ func (suite *DeployIntegrationTestSuite) TestGetDeploysHandler() {
 	// create some deploys to query against
 	for i := 0; i < 2; i++ {
 		// make a build associated with the service from the service instance above
-		var preExistingBuildFromServiceReq builds.CreateBuildRequest
+		var preExistingBuildFromServiceReq v1controllers.CreateBuildRequest
 		err = faker.FakeData(&preExistingBuildFromServiceReq)
 		suite.Require().NoError(err)
 		preExistingBuildFromServiceReq.ServiceName = preExistingServiceInstance.Service.Name

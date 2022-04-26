@@ -11,6 +11,7 @@ import (
 // or unneeded fields for testing
 type testApplication struct {
 	allocationPools *AllocationPoolController
+	builds          *BuildController
 	clusters        *ClusterController
 	environments    *environments.EnvironmentController
 	db              *gorm.DB

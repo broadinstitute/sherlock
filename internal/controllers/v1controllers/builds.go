@@ -1,12 +1,13 @@
 // Package builds contains the definitions for a control plan for sherlock's
 // build management systems. It also defines api routes for that control plane
-package builds
+package v1controllers
 
 // builds.go contains the "business" logic for operations relating to build entities.
 // Thhis could eventually be moved to it's own sub-folder if it becomes unwieldy
 
 import (
 	"github.com/broadinstitute/sherlock/internal/models/v1models"
+	"github.com/broadinstitute/sherlock/internal/serializers/v1serializers"
 	"time"
 
 	"github.com/broadinstitute/sherlock/internal/services"
@@ -16,20 +17,20 @@ import (
 // BuildController is the management layer that processes requests
 // to the /builds api group
 type BuildController struct {
-	store v1models.BuildStore
+	Store v1models.BuildStore
 	// this is needed so that we can automatically create a new service entity
 	// if a build is reported for a service not tracked by sherlock
-	services *services.ServiceController
+	Services *services.ServiceController
 }
 
-// NewController returns an instance of the controller struct for
+// NewBuildController returns an instance of the controller struct for
 // interacting with build entities. It embeds a buildStore interface for
 // operations on the build persistence layer
-func NewController(dbConn *gorm.DB) *BuildController {
+func NewBuildController(dbConn *gorm.DB) *BuildController {
 	buildStore := v1models.NewBuildStore(dbConn)
 	return &BuildController{
-		store:    buildStore,
-		services: services.NewController(dbConn),
+		Store:    buildStore,
+		Services: services.NewController(dbConn),
 	}
 }
 
@@ -45,7 +46,7 @@ type CreateBuildRequest struct {
 
 func (bc *BuildController) validateAndCreateNewBuild(newBuild CreateBuildRequest) (v1models.Build, error) {
 	var serviceID int
-	serviceID, err := bc.services.FindOrCreate(newBuild.ServiceName)
+	serviceID, err := bc.Services.FindOrCreate(newBuild.ServiceName)
 	if err != nil {
 		return v1models.Build{}, v1models.ErrBadCreateRequest
 	}
@@ -57,12 +58,12 @@ func (bc *BuildController) validateAndCreateNewBuild(newBuild CreateBuildRequest
 		ServiceID:     serviceID,
 	}
 
-	return bc.store.CreateNew(build)
+	return bc.Store.CreateNew(build)
 }
 
 // ListAll is the public API on the build controller for listing out all builds
 func (bc *BuildController) ListAll() ([]v1models.Build, error) {
-	return bc.store.ListAll()
+	return bc.Store.ListAll()
 
 }
 
@@ -75,19 +76,19 @@ func (bc *BuildController) CreateNew(newBuild CreateBuildRequest) (v1models.Buil
 // GetByID is the public api on the build controller for performing a lookup of
 // a build entity by ID
 func (bc *BuildController) GetByID(id int) (v1models.Build, error) {
-	return bc.store.GetByID(id)
+	return bc.Store.GetByID(id)
 }
 
 // GetByVersionString will perform a look up of a build entity using it's unique version string
 // ie image repo + tag
 func (bc *BuildController) GetByVersionString(versionString string) (v1models.Build, error) {
-	return bc.store.GetByVersionString(versionString)
+	return bc.Store.GetByVersionString(versionString)
 }
 
-func (bc *BuildController) serialize(builds ...v1models.Build) []BuildResponse {
+func (bc *BuildController) Serialize(builds ...v1models.Build) []v1serializers.BuildResponse {
 	var buildsList []v1models.Build
 	buildsList = append(buildsList, builds...)
 
-	serializer := BuildsSerializer{Builds: buildsList}
+	serializer := v1serializers.BuildsSerializer{Builds: buildsList}
 	return serializer.Response()
 }

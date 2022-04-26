@@ -1,8 +1,7 @@
-package builds
+package v1models
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/internal/models/v1models"
 	"time"
 
 	"gorm.io/gorm"
@@ -10,16 +9,16 @@ import (
 
 // Seed is a testing utility used in integration tests
 // to populate a postgres DB with fake Build entities
-func Seed(db *gorm.DB) ([]v1models.Build, error) {
+func Seed(db *gorm.DB) ([]Build, error) {
 	// get existing services to make sure ids are valid.
 
 	// used to verify we can explicity set BuiltAt rather than just defaulting to current time
 	sixHoursAgo := time.Now().Add(-6 * time.Hour)
-	var services []v1models.Service
+	var services []Service
 	if err := db.Find(&services).Error; err != nil {
-		return []v1models.Build{}, fmt.Errorf("error retrieving existing services to reference in seeded builds: %v", err)
+		return []Build{}, fmt.Errorf("error retrieving existing services to reference in seeded builds: %v", err)
 	}
-	builds := []v1models.Build{
+	builds := []Build{
 		{
 			VersionString: "gcr.io/cromwell:0.1.0",
 			CommitSha:     "k2jh34",

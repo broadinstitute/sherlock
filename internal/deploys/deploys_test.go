@@ -1,10 +1,10 @@
 package deploys
 
 import (
+	"github.com/broadinstitute/sherlock/internal/controllers/v1controllers"
 	"github.com/broadinstitute/sherlock/internal/models/v1models"
 	"testing"
 
-	"github.com/broadinstitute/sherlock/internal/builds"
 	"github.com/broadinstitute/sherlock/internal/testutils"
 	"github.com/bxcodec/faker/v3"
 	"github.com/stretchr/testify/suite"
@@ -56,7 +56,7 @@ func (suite *DeployIntegrationTestSuite) TestCreateDeploy() {
 		testutils.Cleanup(suite.T(), suite.app.db)
 
 		// populate a build to deploy
-		existingBuildReq := builds.CreateBuildRequest{
+		existingBuildReq := v1controllers.CreateBuildRequest{
 			VersionString: faker.URL(),
 			CommitSha:     faker.UUIDDigit(),
 			ServiceName:   faker.Word(),
@@ -93,7 +93,7 @@ func (suite *DeployIntegrationTestSuite) TestCreateDeploy() {
 
 	suite.Run("creates deploy from pre-existing service instance and build", func() {
 		// populate a build to deploy
-		existingBuildReq := builds.CreateBuildRequest{
+		existingBuildReq := v1controllers.CreateBuildRequest{
 			VersionString: faker.URL(),
 			CommitSha:     faker.UUIDDigit(),
 			ServiceName:   faker.Word(),
@@ -132,7 +132,7 @@ func (suite *DeployIntegrationTestSuite) TestCreateDeploy() {
 	suite.Run("creates service instance if not exists", func() {
 
 		// populate a build to deploy
-		existingBuildReq := builds.CreateBuildRequest{
+		existingBuildReq := v1controllers.CreateBuildRequest{
 			VersionString: faker.URL(),
 			CommitSha:     faker.UUIDDigit(),
 			ServiceName:   "rawls",
@@ -179,7 +179,7 @@ func (suite *DeployIntegrationTestSuite) TestGetDeploysByServiceAndEnvironment()
 	suite.Run("returns a single deploy", func() {
 
 		// populate a build to deploy
-		existingBuildReq := builds.CreateBuildRequest{
+		existingBuildReq := v1controllers.CreateBuildRequest{
 			VersionString: faker.URL(),
 			CommitSha:     faker.UUIDDigit(),
 			ServiceName:   faker.Word(),
@@ -210,7 +210,7 @@ func (suite *DeployIntegrationTestSuite) TestGetDeploysByServiceAndEnvironment()
 		environmentName := faker.Word()
 		for i := 0; i < 5; i++ {
 
-			existingBuildReq := builds.CreateBuildRequest{
+			existingBuildReq := v1controllers.CreateBuildRequest{
 				VersionString: faker.URL(),
 				CommitSha:     faker.UUIDDigit(),
 				ServiceName:   serviceName,

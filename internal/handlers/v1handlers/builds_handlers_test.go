@@ -1,10 +1,12 @@
-package builds
+package v1handlers
 
 import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"github.com/broadinstitute/sherlock/internal/controllers/v1controllers"
 	"github.com/broadinstitute/sherlock/internal/models/v1models"
+	"github.com/broadinstitute/sherlock/internal/serializers/v1serializers"
 	"net/http"
 	"net/http/httptest"
 	"strconv"
@@ -119,28 +121,28 @@ func TestListBuilds(t *testing.T) {
 			mockStore := new(mockBuildStore)
 			mockStore.On("ListAll").Return(testCase.expectedBuilds, testCase.expectedError)
 
-			controller := BuildController{store: mockStore}
+			controller := v1controllers.BuildController{Store: mockStore}
 
 			response := httptest.NewRecorder()
 			gin.SetMode(gin.TestMode)
 			c, _ := gin.CreateTestContext(response)
 
-			controller.getBuilds(c)
+			getBuilds(&controller)(c)
 
 			mockStore.AssertCalled(t, "ListAll")
 			assert.Equal(t, testCase.expectedCode, response.Code)
 
-			var gotResponse Response
+			var gotResponse v1serializers.BuildsResponse
 			if err := json.NewDecoder(response.Body).Decode(&gotResponse); err != nil {
 				t.Fatalf("error decoding response body: %v\n", err)
 			}
 
-			var expectedResponse Response
+			var expectedResponse v1serializers.BuildsResponse
 			if testCase.expectedError != nil {
-				expectedResponse = Response{Error: testCase.expectedError.Error()}
+				expectedResponse = v1serializers.BuildsResponse{Error: testCase.expectedError.Error()}
 			} else {
-				expectationSerializer := BuildsSerializer{Builds: testCase.expectedBuilds}
-				expectedResponse = Response{Builds: expectationSerializer.Response()}
+				expectationSerializer := v1serializers.BuildsSerializer{Builds: testCase.expectedBuilds}
+				expectedResponse = v1serializers.BuildsResponse{Builds: expectationSerializer.Response()}
 			}
 
 			if diff := cmp.Diff(gotResponse, expectedResponse); diff != "" {
@@ -155,14 +157,14 @@ func TestCreateBuild(t *testing.T) {
 		name                    string
 		expectedError           error
 		expectedCode            int
-		createRequest           CreateBuildRequest
+		createRequest           v1controllers.CreateBuildRequest
 		simulateServiceCreation bool
 	}{
 		{
 			name:          "build for existing service",
 			expectedError: nil,
 			expectedCode:  http.StatusCreated,
-			createRequest: CreateBuildRequest{
+			createRequest: v1controllers.CreateBuildRequest{
 				VersionString: "gcr.io/broad/cromwell:1.0.0",
 				CommitSha:     "lk23j44",
 				ServiceName:   "cromwell",
@@ -176,7 +178,7 @@ func TestCreateBuild(t *testing.T) {
 			name:          "build for new service",
 			expectedError: nil,
 			expectedCode:  http.StatusCreated,
-			createRequest: CreateBuildRequest{
+			createRequest: v1controllers.CreateBuildRequest{
 				VersionString: "gcr.io/broad/workspacemanager:0.1.0",
 				CommitSha:     "k3l42j",
 				ServiceName:   "workspacemanager",
@@ -190,7 +192,7 @@ func TestCreateBuild(t *testing.T) {
 			name:          "missing version string",
 			expectedError: v1models.ErrBadCreateRequest,
 			expectedCode:  http.StatusBadRequest,
-			createRequest: CreateBuildRequest{
+			createRequest: v1controllers.CreateBuildRequest{
 				CommitSha:   "k2j34",
 				ServiceName: "leonardo",
 				ServiceRepo: "github.com/databiosphere/leonardo",
@@ -201,7 +203,7 @@ func TestCreateBuild(t *testing.T) {
 			name:          "missing commit sha",
 			expectedError: v1models.ErrBadCreateRequest,
 			expectedCode:  http.StatusBadRequest,
-			createRequest: CreateBuildRequest{
+			createRequest: v1controllers.CreateBuildRequest{
 				VersionString: "docker.io/asdf/lskdf:1.0.1",
 				ServiceName:   "leonardo",
 				ServiceRepo:   "github.com/databiosphere/leonardo",
@@ -212,7 +214,7 @@ func TestCreateBuild(t *testing.T) {
 			name:          "missing service name",
 			expectedError: v1models.ErrBadCreateRequest,
 			expectedCode:  http.StatusBadRequest,
-			createRequest: CreateBuildRequest{
+			createRequest: v1controllers.CreateBuildRequest{
 				VersionString: "docker.io/asdf/lskdf:1.0.1",
 				CommitSha:     "k234lj2",
 				ServiceRepo:   "github.com/databiosphere/leonardo",
@@ -223,13 +225,13 @@ func TestCreateBuild(t *testing.T) {
 			name:          "empty create request",
 			expectedError: v1models.ErrBadCreateRequest,
 			expectedCode:  http.StatusBadRequest,
-			createRequest: CreateBuildRequest{},
+			createRequest: v1controllers.CreateBuildRequest{},
 		},
 		{
 			name:          "internal error",
 			expectedError: errors.New("some internal error"),
 			expectedCode:  http.StatusInternalServerError,
-			createRequest: CreateBuildRequest{
+			createRequest: v1controllers.CreateBuildRequest{
 				VersionString: "gcr.io/broad/cromwell:1.0.0",
 				CommitSha:     "lk23j44",
 				ServiceName:   "cromwell",
@@ -243,7 +245,7 @@ func TestCreateBuild(t *testing.T) {
 			name:          "non-unique version string",
 			expectedError: v1models.ErrDuplicateVersionString,
 			expectedCode:  http.StatusBadRequest,
-			createRequest: CreateBuildRequest{
+			createRequest: v1controllers.CreateBuildRequest{
 				VersionString: "gcr.io/broad/cromwell:1.0.0",
 				CommitSha:     "lk23j44",
 				ServiceName:   "cromwell",
@@ -288,9 +290,9 @@ func TestCreateBuild(t *testing.T) {
 
 			mockServiceController := services.NewMockController(mockServiceStore)
 
-			controller := BuildController{
-				store:    mockBuildStore,
-				services: mockServiceController,
+			controller := v1controllers.BuildController{
+				Store:    mockBuildStore,
+				Services: mockServiceController,
 			}
 
 			response := httptest.NewRecorder()
@@ -299,7 +301,7 @@ func TestCreateBuild(t *testing.T) {
 
 			addBuildRequestToContext(t, c, testCase.createRequest)
 
-			controller.createBuild(c)
+			createBuild(&controller)(c)
 			assert.Equal(t, testCase.expectedCode, response.Code)
 
 			if testCase.expectedError == v1models.ErrBadCreateRequest {
@@ -315,12 +317,12 @@ func TestCreateBuild(t *testing.T) {
 				mockServiceStore.AssertCalled(t, "CreateNew", mock.Anything)
 			}
 
-			var expectedResponse Response
+			var expectedResponse v1serializers.BuildsResponse
 			if testCase.expectedError != nil {
-				expectedResponse = Response{Error: testCase.expectedError.Error()}
+				expectedResponse = v1serializers.BuildsResponse{Error: testCase.expectedError.Error()}
 			} else {
-				expectationSerializer := BuildSerializer{expectedBuild}
-				expectedResponse = Response{Builds: []BuildResponse{expectationSerializer.Response()}}
+				expectationSerializer := v1serializers.BuildSerializer{expectedBuild}
+				expectedResponse = v1serializers.BuildsResponse{Builds: []v1serializers.BuildResponse{expectationSerializer.Response()}}
 			}
 
 			validateResponse(t, response, expectedResponse)
@@ -377,7 +379,7 @@ func TestGetBuildByID(t *testing.T) {
 			buildID, err := strconv.Atoi(testCase.buildID)
 			mockStore.On("GetByID", buildID).Return(testCase.expectedBuild, testCase.expectedError)
 
-			controller := BuildController{store: mockStore}
+			controller := v1controllers.BuildController{Store: mockStore}
 
 			response := httptest.NewRecorder()
 			gin.SetMode(gin.TestMode)
@@ -389,7 +391,7 @@ func TestGetBuildByID(t *testing.T) {
 				Value: testCase.buildID,
 			})
 
-			controller.getByID(c)
+			getByID(&controller)(c)
 
 			// err will have a value when id param cannot be successfully parsed as an int and thus is invalid
 			// so getByID method should not be called
@@ -401,12 +403,12 @@ func TestGetBuildByID(t *testing.T) {
 
 			assert.Equal(t, testCase.expectedCode, response.Code)
 
-			var expectedResponse Response
+			var expectedResponse v1serializers.BuildsResponse
 			if testCase.expectedError != nil {
-				expectedResponse = Response{Error: testCase.expectedError.Error()}
+				expectedResponse = v1serializers.BuildsResponse{Error: testCase.expectedError.Error()}
 			} else {
-				expectationSerializer := BuildSerializer{testCase.expectedBuild}
-				expectedResponse = Response{Builds: []BuildResponse{expectationSerializer.Response()}}
+				expectationSerializer := v1serializers.BuildSerializer{testCase.expectedBuild}
+				expectedResponse = v1serializers.BuildsResponse{Builds: []v1serializers.BuildResponse{expectationSerializer.Response()}}
 			}
 
 			validateResponse(t, response, expectedResponse)
@@ -439,7 +441,7 @@ func (m *mockBuildStore) GetByVersionString(versionString string) (v1models.Buil
 	return retVal.Get(0).(v1models.Build), retVal.Error(1)
 }
 
-func addBuildRequestToContext(t *testing.T, c *gin.Context, bodyData CreateBuildRequest) {
+func addBuildRequestToContext(t *testing.T, c *gin.Context, bodyData v1controllers.CreateBuildRequest) {
 	t.Helper()
 
 	reqBody := new(bytes.Buffer)
@@ -454,10 +456,10 @@ func addBuildRequestToContext(t *testing.T, c *gin.Context, bodyData CreateBuild
 	c.Request = req
 }
 
-func validateResponse(t *testing.T, response *httptest.ResponseRecorder, expectedResponse Response) {
+func validateResponse(t *testing.T, response *httptest.ResponseRecorder, expectedResponse v1serializers.BuildsResponse) {
 	t.Helper()
 
-	var gotResponse Response
+	var gotResponse v1serializers.BuildsResponse
 	if err := json.NewDecoder(response.Body).Decode(&gotResponse); err != nil {
 		t.Fatalf("error decoding response body: %v", err)
 	}

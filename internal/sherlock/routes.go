@@ -1,6 +1,7 @@
 package sherlock
 
 import (
+	"github.com/broadinstitute/sherlock/internal/handlers/v1handlers"
 	"github.com/broadinstitute/sherlock/internal/metrics"
 	"github.com/gin-gonic/gin"
 )
@@ -21,7 +22,7 @@ func (a *Application) buildRouter() {
 
 		// /builds routes
 		buildsGroup := group.Group("/builds")
-		a.Builds.RegisterHandlers(buildsGroup)
+		v1handlers.RegisterBuildHandlers(buildsGroup, a.Builds)
 
 		// environments routes
 		environmentsGroup := group.Group("/environments")
