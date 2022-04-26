@@ -73,7 +73,7 @@ jobs:
       - name: Build image
         run: | 
           docker build --build-arg SHERLOCK_BUILD_VERSION=${{ steps.tag.outputs.tag }} -t ${{ steps.image-name.outputs.cli-name }} -f build/cli/Dockerfile .
-          docker build -t ${{ steps.image-name.outputs.server-name }} -f build/server/Dockerfile .
+          docker build --build-arg SHERLOCK_BUILD_VERSION=${{ steps.tag.outputs.tag }} -t ${{ steps.image-name.outputs.server-name }} -f build/server/Dockerfile .
 
       - name: Run Trivy vulnerability scanner on CLI
         # From https://github.com/broadinstitute/dsp-appsec-trivy-action
