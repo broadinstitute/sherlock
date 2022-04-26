@@ -9,7 +9,7 @@ ENV CGO_ENABLED=0
 ENV GO111MODULE=on
 ENV GOBIN=/bin
 COPY . .
-RUN go test -short ./... && go build -ldflags="-X 'main.BuildVersion=${SHERLOCK_BUILD_VERSION}'" -o /bin/sherlock ./cmd/cli/...
+RUN go test -short ./... && go build -buildvcs=false -ldflags="-X 'main.BuildVersion=${SHERLOCK_BUILD_VERSION}'" -o /bin/sherlock ./cmd/cli/...
 
 FROM alpine:${ALPINE_VERSION} as runtime
 COPY --from=build /bin/sherlock /bin/sherlock
