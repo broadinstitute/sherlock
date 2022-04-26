@@ -51,7 +51,7 @@ func (suite *ServiceInstanceIntegrationTestSuite) TearDownTest() {
 
 type testApplication struct {
 	serviceInstances *ServiceInstanceController
-	clusterInstances *v1controllers.Cluster
+	clusterInstances *v1controllers.ClusterController
 	db               *gorm.DB
 }
 

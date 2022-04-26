@@ -29,7 +29,7 @@ var (
 type Application struct {
 	AllocationPools *allocationpools.AllocationPoolController
 	Services        *services.ServiceController
-	Clusters        *v1controllers.Cluster
+	Clusters        *v1controllers.ClusterController
 	Builds          *builds.BuildController
 	Environments    *environments.EnvironmentController
 	Deploys         *deploys.DeployController

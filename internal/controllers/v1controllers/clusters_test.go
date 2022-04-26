@@ -54,12 +54,12 @@ func (suite *ClusterTestSuite) TearDownTest() {
 }
 
 //
-// Test Cluster Setup
+// Test ClusterController Setup
 //
 
 // only load the Controller we care about
 type TestApplication struct {
-	Clusters *Cluster
+	Clusters *ClusterController
 	db       *gorm.DB
 }
 
