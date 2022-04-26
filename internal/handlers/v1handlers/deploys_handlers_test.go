@@ -34,7 +34,7 @@ func initTestDeployController(t *testing.T) *v1controllers.TestApplication {
 	}
 }
 
-func TestDeployIntegrationSuite(t *testing.T) {
+func TestDeployHandlerSuite(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
