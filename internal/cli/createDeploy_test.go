@@ -109,7 +109,7 @@ func Test_createDeployCommand(t *testing.T) {
 			outputBytes := bytes.NewBufferString(output)
 
 			if testCase.expectError == nil {
-				// parse the output back into a builds.BuildsResponse so that we can examine it
+				// parse the output back into a v1serializers.DeploysResponse so that we can examine it
 				var cliResponse v1serializers.DeploysResponse
 				if err := json.NewDecoder(outputBytes).Decode(&cliResponse); err != nil {
 					t.Errorf("error decoding cli output: %v", err)

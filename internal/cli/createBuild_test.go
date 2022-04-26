@@ -94,7 +94,7 @@ func Test_createBuildCommand(t *testing.T) {
 			outputBytes := bytes.NewBufferString(output)
 
 			if testCase.expectError == nil {
-				// parse the output back into a BuildsResponse so that we can examine it
+				// parse the output back into a v1serializers.BuildsResponse so that we can examine it
 				var cliResponse v1serializers.BuildsResponse
 				if err := json.NewDecoder(outputBytes).Decode(&cliResponse); err != nil {
 					t.Errorf("error decoding cli output: %v", err)
