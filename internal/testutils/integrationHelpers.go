@@ -5,6 +5,7 @@ package testutils
 // on the top level package sherlock
 
 import (
+	"path/filepath"
 	"testing"
 
 	"github.com/broadinstitute/sherlock/internal/db"
@@ -49,7 +50,7 @@ func ConnectAndMigrate(t *testing.T) *gorm.DB {
 	if err != nil {
 		t.Fatalf("error retrieving db connection for testing: %v", err)
 	}
-	if err := db.ApplyMigrations("../../db/migrations", config); err == migrate.ErrNoChange {
+	if err := db.ApplyMigrations(filepath.Join(ProjectRootFilePath, "db/migrations"), config); err == migrate.ErrNoChange {
 		t.Log("no migration to apply, continuing...")
 	} else if err != nil {
 		t.Fatalf("error migrating database: %v", err)
