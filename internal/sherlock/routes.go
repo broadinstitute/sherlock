@@ -24,15 +24,15 @@ func (a *Application) buildRouter() {
 		buildsGroup := group.Group("/builds")
 		v1handlers.RegisterBuildHandlers(buildsGroup, a.Builds)
 
-		// environments routes
+		// /environments routes
 		environmentsGroup := group.Group("/environments")
 		v1handlers.RegisterEnvironmentHandlers(environmentsGroup, a.Environments)
 
-		// deploys routes
+		// /deploys routes
 		deploysGroup := group.Group("/deploys")
 		v1handlers.RegisterDeployHandlers(deploysGroup, a.Deploys)
 
-		// metrics routes
+		// /metrics route
 		metricsGroup := group.Group("/metrics")
 		metrics.RegisterPrometheusMetricsHandler(metricsGroup)
 
