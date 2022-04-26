@@ -17,11 +17,11 @@ var ErrBadDeployCreateRequest error = errors.New("error invalid create deploy re
 // RegisterDeployHandlers accepts a gin router group and attaches handlers for working
 // with deploy entities
 func RegisterDeployHandlers(routerGroup *gin.RouterGroup, dc *v1controllers.DeployController) {
-	routerGroup.GET("/:environment/:service", GetDeploysByEnvironmentAndService(dc))
+	routerGroup.GET("/:environment/:service", getDeploysByEnvironmentAndService(dc))
 	routerGroup.POST("/:environment/:service", createDeploy(dc))
 }
 
-func GetDeploysByEnvironmentAndService(dc *v1controllers.DeployController) func(c *gin.Context) {
+func getDeploysByEnvironmentAndService(dc *v1controllers.DeployController) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		environment := c.Param("environment")
 		service := c.Param("service")

@@ -220,7 +220,7 @@ func (suite *DeployHandlersTestSuite) TestGetDeploysHandler() {
 			Value: preExistingServiceInstance.Service.Name,
 		})
 
-		GetDeploysByEnvironmentAndService(suite.app.Deploys)(ctx)
+		getDeploysByEnvironmentAndService(suite.app.Deploys)(ctx)
 		suite.Assert().Equal(http.StatusOK, response.Code)
 
 		// check the response
@@ -246,7 +246,7 @@ func (suite *DeployHandlersTestSuite) TestGetDeploysHandler() {
 			Value: "fake-service",
 		})
 
-		GetDeploysByEnvironmentAndService(suite.app.Deploys)(ctx)
+		getDeploysByEnvironmentAndService(suite.app.Deploys)(ctx)
 		suite.Assert().Equal(http.StatusNotFound, response.Code)
 	})
 }
