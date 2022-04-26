@@ -13,10 +13,15 @@ import (
 // which makes testing easier
 func (a *Application) buildRouter() {
 	router := gin.Default()
-	api := router.Group("api/v1")
+
+	// register basic non-API handlers just on /*
+	router.Handle("GET", "/version", func(c *gin.Context) {
+		c.String(200, "%s", version.BuildVersion)
+	})
 
 	// register handlers for both /* and /api/v1/*
-	for _, group := range []*gin.RouterGroup{&router.RouterGroup, api} {
+	v1api := router.Group("api/v1")
+	for _, group := range []*gin.RouterGroup{&router.RouterGroup, v1api} {
 		// /services routes
 		servicesGroup := group.Group("/services")
 		v1handlers.RegisterServiceHandlers(servicesGroup, a.Services)
@@ -36,12 +41,7 @@ func (a *Application) buildRouter() {
 		// /metrics route
 		metricsGroup := group.Group("/metrics")
 		metrics.RegisterPrometheusMetricsHandler(metricsGroup)
-
 	}
 
-	v2api := router.Group("api/v2")
-	v2api.Handle("GET", "/version", func(c *gin.Context) {
-		c.String(200, "%s", version.BuildVersion)
-	})
 	a.Handler = router
 }
