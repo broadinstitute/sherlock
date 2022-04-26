@@ -2,6 +2,7 @@ package sherlock
 
 import (
 	"github.com/broadinstitute/sherlock/internal/metrics"
+	"github.com/broadinstitute/sherlock/internal/version"
 	"github.com/gin-gonic/gin"
 )
 
@@ -36,5 +37,10 @@ func (a *Application) buildRouter() {
 		metrics.RegisterPrometheusMetricsHandler(metricsGroup)
 
 	}
+
+	v2api := router.Group("api/v2")
+	v2api.Handle("GET", "/version", func(c *gin.Context) {
+		c.String(200, "%s", version.BuildVersion)
+	})
 	a.Handler = router
 }
