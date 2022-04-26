@@ -2,18 +2,13 @@ package sherlock
 
 import (
 	"context"
+	"github.com/broadinstitute/sherlock/internal/controllers/v1controllers"
 	"log"
 	"net/http"
 
 	"contrib.go.opencensus.io/exporter/stackdriver"
-	"github.com/broadinstitute/sherlock/internal/allocationpools"
-	"github.com/broadinstitute/sherlock/internal/builds"
-	"github.com/broadinstitute/sherlock/internal/controllers"
 	"github.com/broadinstitute/sherlock/internal/db"
-	"github.com/broadinstitute/sherlock/internal/deploys"
-	"github.com/broadinstitute/sherlock/internal/environments"
 	"github.com/broadinstitute/sherlock/internal/metrics"
-	"github.com/broadinstitute/sherlock/internal/services"
 	"github.com/spf13/viper"
 	"gorm.io/gorm"
 )
@@ -27,12 +22,12 @@ var (
 // repository is a wrapper type so we can define our own methods on the type holding the
 // DB connection pool
 type Application struct {
-	AllocationPools *allocationpools.AllocationPoolController
-	Services        *services.ServiceController
-	Clusters        *controllers.Cluster
-	Builds          *builds.BuildController
-	Environments    *environments.EnvironmentController
-	Deploys         *deploys.DeployController
+	AllocationPools *v1controllers.AllocationPoolController
+	Services        *v1controllers.ServiceController
+	Clusters        *v1controllers.ClusterController
+	Builds          *v1controllers.BuildController
+	Environments    *v1controllers.EnvironmentController
+	Deploys         *v1controllers.DeployController
 	Handler         http.Handler
 	// Used to pass the dbConn to testing setup helpers
 	// without needing to instantiate a full model instance
@@ -69,12 +64,12 @@ func New() *Application {
 }
 
 func (a *Application) registerControllers() {
-	a.AllocationPools = allocationpools.NewController(a.DB)
-	a.Services = services.NewController(a.DB)
-	a.Builds = builds.NewController(a.DB)
-	a.Clusters = controllers.NewClusterController(a.DB)
-	a.Environments = environments.NewController(a.DB)
-	a.Deploys = deploys.NewDeployController(a.DB)
+	a.AllocationPools = v1controllers.NewAllocationPoolController(a.DB)
+	a.Services = v1controllers.NewServiceController(a.DB)
+	a.Builds = v1controllers.NewBuildController(a.DB)
+	a.Clusters = v1controllers.NewClusterController(a.DB)
+	a.Environments = v1controllers.NewEnvironmentController(a.DB)
+	a.Deploys = v1controllers.NewDeployController(a.DB)
 }
 
 // ServeHTTP implments the http.Handler interface for a Sherlock application instance

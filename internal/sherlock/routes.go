@@ -1,6 +1,7 @@
 package sherlock
 
 import (
+	"github.com/broadinstitute/sherlock/internal/handlers/v1handlers"
 	"github.com/broadinstitute/sherlock/internal/metrics"
 	"github.com/broadinstitute/sherlock/internal/version"
 	"github.com/gin-gonic/gin"
@@ -18,21 +19,21 @@ func (a *Application) buildRouter() {
 	for _, group := range []*gin.RouterGroup{&router.RouterGroup, api} {
 		// /services routes
 		servicesGroup := group.Group("/services")
-		a.Services.RegisterHandlers(servicesGroup)
+		v1handlers.RegisterServiceHandlers(servicesGroup, a.Services)
 
 		// /builds routes
 		buildsGroup := group.Group("/builds")
-		a.Builds.RegisterHandlers(buildsGroup)
+		v1handlers.RegisterBuildHandlers(buildsGroup, a.Builds)
 
-		// environments routes
+		// /environments routes
 		environmentsGroup := group.Group("/environments")
-		a.Environments.RegisterHandlers(environmentsGroup)
+		v1handlers.RegisterEnvironmentHandlers(environmentsGroup, a.Environments)
 
-		// deploys routes
+		// /deploys routes
 		deploysGroup := group.Group("/deploys")
-		a.Deploys.RegisterHandlers(deploysGroup)
+		v1handlers.RegisterDeployHandlers(deploysGroup, a.Deploys)
 
-		// metrics routes
+		// /metrics route
 		metricsGroup := group.Group("/metrics")
 		metrics.RegisterPrometheusMetricsHandler(metricsGroup)
 
