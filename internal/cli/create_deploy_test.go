@@ -24,7 +24,7 @@ func Test_createDeployCommand(t *testing.T) {
 		{
 			name: "successful create",
 			cliArgs: []string{
-				"v1mocks",
+				"deploys",
 				"create",
 				"docker.io/my-repo/my-app:1.0.0",
 				"--environment",
@@ -66,7 +66,7 @@ func Test_createDeployCommand(t *testing.T) {
 		{
 			name: "error from server",
 			cliArgs: []string{
-				"v1mocks",
+				"deploys",
 				"create",
 				"gcr.io./broad/test-service:1.0.0",
 				"--environment",
@@ -84,7 +84,7 @@ func Test_createDeployCommand(t *testing.T) {
 		{
 			name: "unparseable response",
 			cliArgs: []string{
-				"v1mocks",
+				"deploys",
 				"create",
 				"gcr.io./broad/test-service:1.0.0",
 				"--environment",
@@ -105,7 +105,7 @@ func Test_createDeployCommand(t *testing.T) {
 			testServer := httptest.NewServer(testCase.mockServerResponse)
 
 			sherlockServerURL = testServer.URL
-			output, _ := executeCommand(rootCmd, "v1mocks", "create", testCase.cliArgs[2], "--environment", testCase.cliArgs[4], "--service", testCase.cliArgs[6])
+			output, _ := executeCommand(rootCmd, "deploys", "create", testCase.cliArgs[2], "--environment", testCase.cliArgs[4], "--service", testCase.cliArgs[6])
 			outputBytes := bytes.NewBufferString(output)
 
 			if testCase.expectError == nil {

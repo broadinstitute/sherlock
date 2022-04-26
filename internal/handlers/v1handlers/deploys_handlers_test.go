@@ -187,7 +187,7 @@ func (suite *DeployHandlersTestSuite) TestGetDeploysHandler() {
 	preExistingServiceInstance, err := suite.app.Deploys.ServiceInstances.CreateNew(preExistingServiceInstanceReq)
 	suite.Require().NoError(err)
 
-	// create some v1mocks to query against
+	// create some deploys to query against
 	for i := 0; i < 2; i++ {
 		// make a build associated with the service from the service instance above
 		var preExistingBuildFromServiceReq v1controllers.CreateBuildRequest
