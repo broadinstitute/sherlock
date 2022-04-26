@@ -1,9 +1,9 @@
-package deploys
+package v1controllers
 
 import (
 	"errors"
-	"github.com/broadinstitute/sherlock/internal/controllers/v1controllers"
 	"github.com/broadinstitute/sherlock/internal/models/v1models"
+	"github.com/broadinstitute/sherlock/internal/serializers/v1serializers"
 
 	"gorm.io/gorm"
 )
@@ -18,8 +18,8 @@ var (
 // Deploy entities.
 type DeployController struct {
 	store            v1models.DeployStore
-	serviceInstances *ServiceInstanceController
-	builds           *v1controllers.BuildController
+	ServiceInstances *ServiceInstanceController
+	Builds           *BuildController
 }
 
 // NewDeployController accepts a gorm db connection and returns
@@ -27,8 +27,8 @@ type DeployController struct {
 func NewDeployController(dbConn *gorm.DB) *DeployController {
 	return &DeployController{
 		store:            v1models.NewDeployStore(dbConn),
-		serviceInstances: NewServiceInstanceController(dbConn),
-		builds:           v1controllers.NewBuildController(dbConn),
+		ServiceInstances: NewServiceInstanceController(dbConn),
+		Builds:           NewBuildController(dbConn),
 	}
 }
 
@@ -44,23 +44,23 @@ type CreateDeployRequest struct {
 // version string
 func (dc *DeployController) CreateNew(newDeployRequest CreateDeployRequest) (v1models.Deploy, error) {
 	// look up the service instance associated with this deploy
-	serviceInstanceID, err := dc.serviceInstances.FindOrCreate(newDeployRequest.EnvironmentName, newDeployRequest.ServiceName)
+	serviceInstanceID, err := dc.ServiceInstances.FindOrCreate(newDeployRequest.EnvironmentName, newDeployRequest.ServiceName)
 
 	if err != nil {
 		return v1models.Deploy{}, err
 	}
 
 	// look up the build based on provided version string
-	build, err := dc.builds.GetByVersionString(newDeployRequest.BuildVersionString)
+	build, err := dc.Builds.GetByVersionString(newDeployRequest.BuildVersionString)
 	// for now just error if not exists
 	if err != nil {
 		// create the build if not exists
-		newBuild := v1controllers.CreateBuildRequest{
+		newBuild := CreateBuildRequest{
 			VersionString: newDeployRequest.BuildVersionString,
 			ServiceName:   newDeployRequest.ServiceName,
 		}
 
-		build, err = dc.builds.CreateNew(newBuild)
+		build, err = dc.Builds.CreateNew(newBuild)
 		if err != nil {
 			return v1models.Deploy{}, err
 		}
@@ -72,7 +72,7 @@ func (dc *DeployController) CreateNew(newDeployRequest CreateDeployRequest) (v1m
 // GetDeploysByEnvironmentAndService will retrieve the deploy history for a given service instance with the associated names
 func (dc *DeployController) GetDeploysByEnvironmentAndService(environmentName, serviceName string) ([]v1models.Deploy, error) {
 	// look up the service instance for the provided service and environment names
-	serviceInstance, err := dc.serviceInstances.GetByEnvironmentAndServiceName(environmentName, serviceName)
+	serviceInstance, err := dc.ServiceInstances.GetByEnvironmentAndServiceName(environmentName, serviceName)
 	if err != nil {
 		return []v1models.Deploy{}, v1models.ErrServiceInstanceNotFound
 	}
@@ -82,7 +82,7 @@ func (dc *DeployController) GetDeploysByEnvironmentAndService(environmentName, s
 
 // GetMostRecentDeploy will look up the most recent ie currently active deploy for a given service instance
 func (dc *DeployController) GetMostRecentDeploy(environmentName, serviceName string) (v1models.Deploy, error) {
-	serviceInstance, err := dc.serviceInstances.GetByEnvironmentAndServiceName(environmentName, serviceName)
+	serviceInstance, err := dc.ServiceInstances.GetByEnvironmentAndServiceName(environmentName, serviceName)
 	if err != nil {
 		return v1models.Deploy{}, v1models.ErrServiceInstanceNotFound
 	}
@@ -91,15 +91,15 @@ func (dc *DeployController) GetMostRecentDeploy(environmentName, serviceName str
 }
 
 func (dc *DeployController) ListServiceInstances() ([]v1models.ServiceInstance, error) {
-	return dc.serviceInstances.ListAll()
+	return dc.ServiceInstances.ListAll()
 }
 
 // Serialize takes a variable number of deploy entities and serializes them into types suitable for use in
 // client responses
-func (dc *DeployController) Serialize(deploy ...v1models.Deploy) []DeployResponse {
+func (dc *DeployController) Serialize(deploy ...v1models.Deploy) []v1serializers.DeployResponse {
 	var deployList []v1models.Deploy
 	deployList = append(deployList, deploy...)
 
-	serializer := DeploysSerializer{deployList}
+	serializer := v1serializers.DeploysSerializer{deployList}
 	return serializer.Response()
 }

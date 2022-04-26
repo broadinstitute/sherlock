@@ -10,7 +10,7 @@ import (
 	"gorm.io/gorm"
 )
 
-// ClusterController is the management layer for clusters
+// ClusterController is the management layer for Clusters
 type ClusterController struct {
 	store v1models.ClusterStore
 	// other derived data
@@ -41,7 +41,7 @@ func (clusterController *ClusterController) CreateNew(newCluster v1models.Create
 	return clusterController.store.CreateNew(newCluster)
 }
 
-// ListAll is the public api for listing out all clusters tracked by sherlock
+// ListAll is the public api for listing out all Clusters tracked by sherlock
 func (clusterController *ClusterController) ListAll() ([]v1models.Cluster, error) {
 	return clusterController.store.ListAll()
 }

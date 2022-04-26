@@ -30,7 +30,7 @@ func (a *Application) buildRouter() {
 
 		// deploys routes
 		deploysGroup := group.Group("/deploys")
-		a.Deploys.RegisterHandlers(deploysGroup)
+		v1handlers.RegisterDeployHandlers(deploysGroup, a.Deploys)
 
 		// metrics routes
 		metricsGroup := group.Group("/metrics")

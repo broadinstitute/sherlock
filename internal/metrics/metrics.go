@@ -16,7 +16,7 @@ import (
 
 var (
 	// MDeployCounter Counts/groups deployments to a particular service/environment
-	MDeployCounter = stats.Int64("sherlock/deploy_frequency", "count of deploy events for various services and environments", "deploys")
+	MDeployCounter = stats.Int64("sherlock/deploy_frequency", "count of deploy events for various services and environments", "v1mocks")
 	// MLeadTimeToEnv tracks time elapsed between an image being built, and when it is deployed to an environment
 	MLeadTimeToEnv = stats.Float64("sherlock/lead_time_to_env", "time elapsed between build and deploy to an environment", "h")
 

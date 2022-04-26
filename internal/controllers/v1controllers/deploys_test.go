@@ -1,35 +1,28 @@
-package deploys
+package v1controllers
 
 import (
-	"github.com/broadinstitute/sherlock/internal/controllers/v1controllers"
 	"github.com/broadinstitute/sherlock/internal/models/v1models"
 	"testing"
 
 	"github.com/broadinstitute/sherlock/internal/testutils"
 	"github.com/bxcodec/faker/v3"
 	"github.com/stretchr/testify/suite"
-	"gorm.io/gorm"
 )
 
 type DeployIntegrationTestSuite struct {
 	suite.Suite
-	app *testDeployController
+	app *TestApplication
 }
 
-type testDeployController struct {
-	deploys *DeployController
-	db      *gorm.DB
-}
-
-func initTestDeployController(t *testing.T) *testDeployController {
+func initTestDeployController(t *testing.T) *TestApplication {
 	dbConn := testutils.ConnectAndMigrate(t)
 	// ensures each test will run in it's own isolated transaction
 	// The transaction will be rolled back after each test
 	// regardless of pass or fail
 	dbConn = dbConn.Begin()
-	return &testDeployController{
-		deploys: NewDeployController(dbConn),
-		db:      dbConn,
+	return &TestApplication{
+		Deploys: NewDeployController(dbConn),
+		DB:      dbConn,
 	}
 }
 
@@ -48,20 +41,20 @@ func (suite *DeployIntegrationTestSuite) SetupTest() {
 func (suite *DeployIntegrationTestSuite) TearDownTest() {
 	// each test runs in its own isolated transaction
 	// this ensures we cleanup after each test as it completes
-	suite.app.db.Rollback()
+	suite.app.DB.Rollback()
 }
 
 func (suite *DeployIntegrationTestSuite) TestCreateDeploy() {
 	suite.Run("fails to create deploy if missing reference data", func() {
-		testutils.Cleanup(suite.T(), suite.app.db)
+		testutils.Cleanup(suite.T(), suite.app.DB)
 
 		// populate a build to deploy
-		existingBuildReq := v1controllers.CreateBuildRequest{
+		existingBuildReq := CreateBuildRequest{
 			VersionString: faker.URL(),
 			CommitSha:     faker.UUIDDigit(),
 			ServiceName:   faker.Word(),
 		}
-		existingBuild, err := suite.app.deploys.builds.CreateNew(existingBuildReq)
+		existingBuild, err := suite.app.Deploys.Builds.CreateNew(existingBuildReq)
 		suite.Require().NoError(err)
 
 		// populate a service instance to deploy to
@@ -69,7 +62,7 @@ func (suite *DeployIntegrationTestSuite) TestCreateDeploy() {
 			EnvironmentName: faker.UUIDHyphenated(),
 			ServiceName:     existingBuildReq.ServiceName,
 		}
-		_, err = suite.app.deploys.serviceInstances.CreateNew(existingServiceInstanceReq)
+		_, err = suite.app.Deploys.ServiceInstances.CreateNew(existingServiceInstanceReq)
 		suite.Require().NoError(err)
 
 		// actually create the deploy
@@ -80,25 +73,25 @@ func (suite *DeployIntegrationTestSuite) TestCreateDeploy() {
 		}
 
 		// get the current buildcount before attempting to make a new deploy
-		buildCount := suite.app.db.Find(&[]v1models.Build{}).RowsAffected
+		buildCount := suite.app.DB.Find(&[]v1models.Build{}).RowsAffected
 
-		newDeploy, err := suite.app.deploys.CreateNew(newDeployReq)
+		newDeploy, err := suite.app.Deploys.CreateNew(newDeployReq)
 		suite.Require().Error(err)
 
 		// make sure we didn't create any new objects and everything returned is zero-valued
 		suite.Assert().Equal(0, newDeploy.BuildID)
 		suite.Assert().Equal(0, newDeploy.ServiceInstanceID)
-		suite.Assert().Equal(buildCount, suite.app.db.Find(&[]v1models.Build{}).RowsAffected)
+		suite.Assert().Equal(buildCount, suite.app.DB.Find(&[]v1models.Build{}).RowsAffected)
 	})
 
 	suite.Run("creates deploy from pre-existing service instance and build", func() {
 		// populate a build to deploy
-		existingBuildReq := v1controllers.CreateBuildRequest{
+		existingBuildReq := CreateBuildRequest{
 			VersionString: faker.URL(),
 			CommitSha:     faker.UUIDDigit(),
 			ServiceName:   faker.Word(),
 		}
-		existingBuild, err := suite.app.deploys.builds.CreateNew(existingBuildReq)
+		existingBuild, err := suite.app.Deploys.Builds.CreateNew(existingBuildReq)
 		suite.Require().NoError(err)
 
 		// populate a service instance to deploy to
@@ -106,11 +99,11 @@ func (suite *DeployIntegrationTestSuite) TestCreateDeploy() {
 			EnvironmentName: faker.UUIDHyphenated(),
 			ServiceName:     existingBuildReq.ServiceName,
 		}
-		existingServiceInstance, err := suite.app.deploys.serviceInstances.CreateNew(existingServiceInstanceReq)
+		existingServiceInstance, err := suite.app.Deploys.ServiceInstances.CreateNew(existingServiceInstanceReq)
 		suite.Require().NoError(err)
 
 		// Reload the ServiceInstance so it has the appropriate related objects populated to reference
-		existingServiceInstance, err = suite.app.deploys.serviceInstances.Reload(existingServiceInstance, true, true, true)
+		existingServiceInstance, err = suite.app.Deploys.ServiceInstances.Reload(existingServiceInstance, true, true, true)
 		suite.Require().NoError(err)
 
 		// actually create the deploy
@@ -120,7 +113,7 @@ func (suite *DeployIntegrationTestSuite) TestCreateDeploy() {
 			BuildVersionString: existingBuild.VersionString,
 		}
 
-		newDeploy, err := suite.app.deploys.CreateNew(newDeployReq)
+		newDeploy, err := suite.app.Deploys.CreateNew(newDeployReq)
 		suite.Assert().NoError(err)
 
 		// i think it's not finding the build versionstring and making a new one.
@@ -132,12 +125,12 @@ func (suite *DeployIntegrationTestSuite) TestCreateDeploy() {
 	suite.Run("creates service instance if not exists", func() {
 
 		// populate a build to deploy
-		existingBuildReq := v1controllers.CreateBuildRequest{
+		existingBuildReq := CreateBuildRequest{
 			VersionString: faker.URL(),
 			CommitSha:     faker.UUIDDigit(),
 			ServiceName:   "rawls",
 		}
-		existingBuild, err := suite.app.deploys.builds.CreateNew(existingBuildReq)
+		existingBuild, err := suite.app.Deploys.Builds.CreateNew(existingBuildReq)
 		suite.Require().NoError(err)
 
 		newDeployReq := CreateDeployRequest{
@@ -146,7 +139,7 @@ func (suite *DeployIntegrationTestSuite) TestCreateDeploy() {
 			BuildVersionString: existingBuild.VersionString,
 		}
 
-		result, err := suite.app.deploys.CreateNew(newDeployReq)
+		result, err := suite.app.Deploys.CreateNew(newDeployReq)
 		suite.Assert().NoError(err)
 
 		// make sure both build and service instance reference the same service
@@ -164,7 +157,7 @@ func (suite *DeployIntegrationTestSuite) TestCreateDeploy() {
 			BuildVersionString: faker.URL(),
 		}
 
-		deploy, err := suite.app.deploys.CreateNew(newDeployReq)
+		deploy, err := suite.app.Deploys.CreateNew(newDeployReq)
 		suite.Assert().NoError(err)
 
 		suite.Assert().Equal(newDeployReq.EnvironmentName, deploy.ServiceInstance.Environment.Name)
@@ -179,12 +172,12 @@ func (suite *DeployIntegrationTestSuite) TestGetDeploysByServiceAndEnvironment()
 	suite.Run("returns a single deploy", func() {
 
 		// populate a build to deploy
-		existingBuildReq := v1controllers.CreateBuildRequest{
+		existingBuildReq := CreateBuildRequest{
 			VersionString: faker.URL(),
 			CommitSha:     faker.UUIDDigit(),
 			ServiceName:   faker.Word(),
 		}
-		existingBuild, err := suite.app.deploys.builds.CreateNew(existingBuildReq)
+		existingBuild, err := suite.app.Deploys.Builds.CreateNew(existingBuildReq)
 		suite.Require().NoError(err)
 
 		newDeployReq := CreateDeployRequest{
@@ -193,10 +186,10 @@ func (suite *DeployIntegrationTestSuite) TestGetDeploysByServiceAndEnvironment()
 			BuildVersionString: existingBuild.VersionString,
 		}
 
-		_, err = suite.app.deploys.CreateNew(newDeployReq)
+		_, err = suite.app.Deploys.CreateNew(newDeployReq)
 		suite.Require().NoError(err)
 
-		result, err := suite.app.deploys.GetDeploysByEnvironmentAndService(newDeployReq.EnvironmentName, newDeployReq.ServiceName)
+		result, err := suite.app.Deploys.GetDeploysByEnvironmentAndService(newDeployReq.EnvironmentName, newDeployReq.ServiceName)
 		suite.Assert().NoError(err)
 
 		// expect to get one deploy back
@@ -210,12 +203,12 @@ func (suite *DeployIntegrationTestSuite) TestGetDeploysByServiceAndEnvironment()
 		environmentName := faker.Word()
 		for i := 0; i < 5; i++ {
 
-			existingBuildReq := v1controllers.CreateBuildRequest{
+			existingBuildReq := CreateBuildRequest{
 				VersionString: faker.URL(),
 				CommitSha:     faker.UUIDDigit(),
 				ServiceName:   serviceName,
 			}
-			existingBuild, err := suite.app.deploys.builds.CreateNew(existingBuildReq)
+			existingBuild, err := suite.app.Deploys.Builds.CreateNew(existingBuildReq)
 			suite.Require().NoError(err)
 
 			newDeployReq := CreateDeployRequest{
@@ -224,11 +217,11 @@ func (suite *DeployIntegrationTestSuite) TestGetDeploysByServiceAndEnvironment()
 				BuildVersionString: existingBuild.VersionString,
 			}
 
-			_, err = suite.app.deploys.CreateNew(newDeployReq)
+			_, err = suite.app.Deploys.CreateNew(newDeployReq)
 			suite.Require().NoError(err)
 		}
 
-		result, err := suite.app.deploys.GetDeploysByEnvironmentAndService(environmentName, serviceName)
+		result, err := suite.app.Deploys.GetDeploysByEnvironmentAndService(environmentName, serviceName)
 		suite.Assert().NoError(err)
 		suite.Assert().Equal(5, len(result))
 

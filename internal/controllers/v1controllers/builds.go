@@ -1,8 +1,8 @@
-// Package builds contains the definitions for a control plan for sherlock's
+// Package Builds contains the definitions for a control plan for sherlock's
 // build management systems. It also defines api routes for that control plane
 package v1controllers
 
-// builds.go contains the "business" logic for operations relating to build entities.
+// Builds.go contains the "business" logic for operations relating to build entities.
 // Thhis could eventually be moved to it's own sub-folder if it becomes unwieldy
 
 import (
@@ -15,7 +15,7 @@ import (
 )
 
 // BuildController is the management layer that processes requests
-// to the /builds api group
+// to the /Builds api group
 type BuildController struct {
 	Store v1models.BuildStore
 	// this is needed so that we can automatically create a new service entity
@@ -61,7 +61,7 @@ func (bc *BuildController) validateAndCreateNewBuild(newBuild CreateBuildRequest
 	return bc.Store.CreateNew(build)
 }
 
-// ListAll is the public API on the build controller for listing out all builds
+// ListAll is the public API on the build controller for listing out all Builds
 func (bc *BuildController) ListAll() ([]v1models.Build, error) {
 	return bc.Store.ListAll()
 

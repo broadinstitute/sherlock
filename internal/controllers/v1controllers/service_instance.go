@@ -1,4 +1,4 @@
-package deploys
+package v1controllers
 
 // ServiceInstance is a datastructure representing an association
 // between an environment and a service. They are an internal mechanism
@@ -7,8 +7,8 @@ package deploys
 
 import (
 	"errors"
-	"github.com/broadinstitute/sherlock/internal/controllers/v1controllers"
 	"github.com/broadinstitute/sherlock/internal/models/v1models"
+	"github.com/broadinstitute/sherlock/internal/serializers/v1serializers"
 
 	"github.com/broadinstitute/sherlock/internal/environments"
 	"github.com/broadinstitute/sherlock/internal/services"
@@ -21,7 +21,7 @@ type ServiceInstanceController struct {
 	store        v1models.ServiceInstanceStore
 	services     *services.ServiceController
 	environments *environments.EnvironmentController
-	clusters     *v1controllers.ClusterController
+	clusters     *ClusterController
 }
 
 // CreateServiceInstanceRequest is a type containing the name of an environment and service
@@ -40,7 +40,7 @@ func NewServiceInstanceController(dbConn *gorm.DB) *ServiceInstanceController {
 		store:        store,
 		services:     services.NewController(dbConn),
 		environments: environments.NewController(dbConn),
-		clusters:     v1controllers.NewClusterController(dbConn),
+		clusters:     NewClusterController(dbConn),
 	}
 }
 
@@ -136,10 +136,10 @@ func (sic *ServiceInstanceController) FindOrCreate(environmentName, serviceName 
 
 // Serialize takes a variable number of service instance entities and serializes them into types suitable for use in
 // client responses
-func (sic *ServiceInstanceController) Serialize(serviceInstances ...v1models.ServiceInstance) []ServiceInstanceResponse {
+func (sic *ServiceInstanceController) Serialize(serviceInstances ...v1models.ServiceInstance) []v1serializers.ServiceInstanceResponse {
 	var serviceInstancesList []v1models.ServiceInstance
 	serviceInstancesList = append(serviceInstancesList, serviceInstances...)
 
-	serializer := ServiceInstancesSerializer{serviceInstancesList}
+	serializer := v1serializers.ServiceInstancesSerializer{serviceInstancesList}
 	return serializer.Response()
 }

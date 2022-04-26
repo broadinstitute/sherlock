@@ -1,16 +1,15 @@
-package deploys
+package v1serializers
 
 import (
 	"github.com/broadinstitute/sherlock/internal/models/v1models"
-	"github.com/broadinstitute/sherlock/internal/serializers/v1serializers"
 	"time"
 
 	"github.com/broadinstitute/sherlock/internal/environments"
 	"github.com/broadinstitute/sherlock/internal/services"
 )
 
-// Response is a type that allows all data returned from the /builds api group to share a consistent structure
-type Response struct {
+// DeploysResponse is a type that allows all data returned from the /builds api group to share a consistent structure
+type DeploysResponse struct {
 	Deploys []DeployResponse `json:"deploys"`
 	Error   string           `json:"error,omitempty"`
 }
@@ -30,7 +29,7 @@ type ServiceInstanceSerializer struct {
 	serviceInstance v1models.ServiceInstance
 }
 
-// Response consumes a ServiceInstanceSerializer and generated a response type
+// DeploysResponse consumes a ServiceInstanceSerializer and generated a response type
 func (sis *ServiceInstanceSerializer) Response() ServiceInstanceResponse {
 	service := services.ServiceSerializer{Service: sis.serviceInstance.Service}
 	environment := environments.EnvironmentSerializer{Environment: sis.serviceInstance.Environment}
@@ -49,7 +48,7 @@ type ServiceInstancesSerializer struct {
 	ServiceInstances []v1models.ServiceInstance
 }
 
-// Response Will generate a slice of Service Instance Response from
+// DeploysResponse Will generate a slice of Service Instance DeploysResponse from
 // ServiceInstancesSerializer
 func (sis *ServiceInstancesSerializer) Response() []ServiceInstanceResponse {
 	serviceInstances := []ServiceInstanceResponse{}
@@ -63,10 +62,10 @@ func (sis *ServiceInstancesSerializer) Response() []ServiceInstanceResponse {
 // DeployResponse is the type used for generating api responses
 // containing information about deploy(s)
 type DeployResponse struct {
-	ID              int                         `json:"id"`
-	ServiceInstance ServiceInstanceResponse     `json:"service_instance"`
-	Build           v1serializers.BuildResponse `json:"build"`
-	CreatedAt       time.Time                   `json:"deployed_at"`
+	ID              int                     `json:"id"`
+	ServiceInstance ServiceInstanceResponse `json:"service_instance"`
+	Build           BuildResponse           `json:"build"`
+	CreatedAt       time.Time               `json:"deployed_at"`
 }
 
 type deploySerializer struct {
@@ -75,7 +74,7 @@ type deploySerializer struct {
 
 func (ds *deploySerializer) Response() DeployResponse {
 	serviceInstance := ServiceInstanceSerializer{serviceInstance: ds.deploy.ServiceInstance}
-	build := v1serializers.BuildSerializer{Build: ds.deploy.Build}
+	build := BuildSerializer{Build: ds.deploy.Build}
 	return DeployResponse{
 		ID:              ds.deploy.ID,
 		ServiceInstance: serviceInstance.Response(),
@@ -87,14 +86,14 @@ func (ds *deploySerializer) Response() DeployResponse {
 // DeploysSerializer is used to transform a slice of Deploy v1models into
 // into deploy responses and can supply additional data to attach to the response
 type DeploysSerializer struct {
-	deploys []v1models.Deploy
+	Deploys []v1models.Deploy
 }
 
-// Response is used to seralize a slice of deploy database v1models
+// DeploysResponse is used to seralize a slice of deploy database v1models
 // into a slice of deploy api responses
 func (ds *DeploysSerializer) Response() []DeployResponse {
 	deploys := []DeployResponse{}
-	for _, Deploy := range ds.deploys {
+	for _, Deploy := range ds.Deploys {
 		serializer := deploySerializer{Deploy}
 		deploys = append(deploys, serializer.Response())
 	}

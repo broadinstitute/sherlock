@@ -12,7 +12,7 @@ import (
 
 type BuildsIntegrationTestSuite struct {
 	suite.Suite
-	app                    *testApplication
+	app                    *TestApplication
 	goodCreateBuildRequest CreateBuildRequest
 }
 
@@ -32,13 +32,13 @@ func (suite *BuildsIntegrationTestSuite) SetupTest() {
 		ServiceName:   faker.UUIDHyphenated(),
 		ServiceRepo:   "github.com/broadinstitute/rawls",
 	}
-	suite.app = initTestApp(suite.T())
+	suite.app = initTestBuildApp(suite.T())
 }
 
 func (suite *BuildsIntegrationTestSuite) TearDownTest() {
 	// each test runs in its own isolated transaction
 	// this ensures we cleanup after each test as it completes
-	suite.app.db.Rollback()
+	suite.app.DB.Rollback()
 }
 
 func (suite *BuildsIntegrationTestSuite) TestCreateBuild() {
@@ -46,7 +46,7 @@ func (suite *BuildsIntegrationTestSuite) TestCreateBuild() {
 
 		newBuild := suite.goodCreateBuildRequest
 
-		build, err := suite.app.builds.CreateNew(newBuild)
+		build, err := suite.app.Builds.CreateNew(newBuild)
 		suite.Assert().NoError(err)
 
 		suite.Assert().Equal(newBuild.VersionString, build.VersionString)
@@ -56,24 +56,24 @@ func (suite *BuildsIntegrationTestSuite) TestCreateBuild() {
 func (suite *BuildsIntegrationTestSuite) TestCreateBuildEmptyRequest() {
 	newBuild := CreateBuildRequest{}
 
-	_, err := suite.app.builds.CreateNew(newBuild)
+	_, err := suite.app.Builds.CreateNew(newBuild)
 
 	suite.Assert().ErrorIs(err, v1models.ErrBadCreateRequest)
 }
 
 func (suite *BuildsIntegrationTestSuite) TestCreateNonUniqueVersion() {
 	// create a valid build
-	_, err := suite.app.builds.CreateNew(suite.goodCreateBuildRequest)
+	_, err := suite.app.Builds.CreateNew(suite.goodCreateBuildRequest)
 	suite.Require().NoError(err)
 
-	_, err = suite.app.builds.CreateNew(suite.goodCreateBuildRequest)
+	_, err = suite.app.Builds.CreateNew(suite.goodCreateBuildRequest)
 	suite.Assert().ErrorIs(err, v1models.ErrDuplicateVersionString)
 }
 
 func (suite *BuildsIntegrationTestSuite) TestGetByID() {
 	suite.Run("fails with non-existent id", func() {
 
-		_, err := suite.app.builds.GetByID(23)
+		_, err := suite.app.Builds.GetByID(23)
 		suite.Require().ErrorIs(err, v1models.ErrBuildNotFound)
 
 	})
@@ -81,10 +81,10 @@ func (suite *BuildsIntegrationTestSuite) TestGetByID() {
 	suite.Run("retrives an existing build", func() {
 
 		newBuild := suite.goodCreateBuildRequest
-		build, err := suite.app.builds.CreateNew(newBuild)
+		build, err := suite.app.Builds.CreateNew(newBuild)
 		suite.Require().NoError(err)
 
-		result, err := suite.app.builds.GetByID(build.ID)
+		result, err := suite.app.Builds.GetByID(build.ID)
 		suite.Assert().NoError(err)
 
 		suite.Assert().Equal(result.Service.Name, newBuild.ServiceName)
@@ -96,10 +96,10 @@ func (suite *BuildsIntegrationTestSuite) TestGetByVersionString() {
 	suite.Run("successful looks up existing build by version string", func() {
 
 		// create a build instance to look up
-		existingBuild, err := suite.app.builds.CreateNew(suite.goodCreateBuildRequest)
+		existingBuild, err := suite.app.Builds.CreateNew(suite.goodCreateBuildRequest)
 		suite.Require().NoError(err)
 
-		result, err := suite.app.builds.GetByVersionString(suite.goodCreateBuildRequest.VersionString)
+		result, err := suite.app.Builds.GetByVersionString(suite.goodCreateBuildRequest.VersionString)
 		suite.Assert().NoError(err)
 
 		// make sure the ids match
@@ -108,19 +108,19 @@ func (suite *BuildsIntegrationTestSuite) TestGetByVersionString() {
 
 	suite.Run("errors not found for non-existent version string", func() {
 
-		_, err := suite.app.builds.GetByVersionString("does-not-exist")
+		_, err := suite.app.Builds.GetByVersionString("does-not-exist")
 		suite.Assert().ErrorIs(err, v1models.ErrBuildNotFound)
 	})
 }
 
-func initTestApp(t *testing.T) *testApplication {
+func initTestBuildApp(t *testing.T) *TestApplication {
 	dbConn := testutils.ConnectAndMigrate(t)
 	// ensures each test will run in it's own isolated transaction
 	// The transaction will be rolled back after each test
 	// regardless of pass or fail
 	dbConn = dbConn.Begin()
-	return &testApplication{
-		builds: NewBuildController(dbConn),
-		db:     dbConn,
+	return &TestApplication{
+		Builds: NewBuildController(dbConn),
+		DB:     dbConn,
 	}
 }

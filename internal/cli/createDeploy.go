@@ -4,8 +4,9 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/broadinstitute/sherlock/internal/handlers/v1handlers"
+	"github.com/broadinstitute/sherlock/internal/serializers/v1serializers"
 
-	"github.com/broadinstitute/sherlock/internal/deploys"
 	"github.com/go-resty/resty/v2"
 	"github.com/spf13/cobra"
 )
@@ -47,7 +48,7 @@ func createDeploy(cmd *cobra.Command, args []string) error {
 	// version string ie docker image url and tag is passed as first
 	// positional arg
 	versionString := args[0]
-	newDeployRequest := deploys.CreateDeployRequestBody{
+	newDeployRequest := v1handlers.CreateDeployRequestBody{
 		VersionString: versionString,
 	}
 
@@ -71,14 +72,14 @@ func createDeploy(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func dispatchCreateDeployRequest(newDeploy deploys.CreateDeployRequestBody, environment, service string) (*deploys.Response, []byte, error) {
+func dispatchCreateDeployRequest(newDeploy v1handlers.CreateDeployRequestBody, environment, service string) (*v1serializers.DeploysResponse, []byte, error) {
 	var (
 		req *resty.Request
 		err error
 	)
 
 	client := resty.New()
-	urlPath := fmt.Sprintf("%s/deploys/%s/%s", sherlockServerURL, environment, service)
+	urlPath := fmt.Sprintf("%s/v1mocks/%s/%s", sherlockServerURL, environment, service)
 	req = client.R()
 	// set authorization headers when running cli via automated workflows
 	if useServiceAccountAuth {
@@ -95,7 +96,7 @@ func dispatchCreateDeployRequest(newDeploy deploys.CreateDeployRequestBody, envi
 		return nil, []byte{}, fmt.Errorf("ERROR sending POST deploy request: %v", err)
 	}
 
-	var result deploys.Response
+	var result v1serializers.DeploysResponse
 	responseBodyBytes := bytes.NewBuffer(resp.Body())
 	if err := json.NewDecoder(responseBodyBytes).Decode(&result); err != nil {
 		return nil, []byte{}, fmt.Errorf("error parsing create deploy response: %v", err)

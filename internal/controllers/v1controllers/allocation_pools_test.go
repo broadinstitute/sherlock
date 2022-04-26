@@ -19,7 +19,7 @@ import (
 // returns the current testing context
 type AllocationPoolTestSuite struct {
 	suite.Suite
-	testApp                      *testApplication
+	testApp                      *TestApplication
 	goodAllocationPoolRequest    v1models.CreateAllocationPoolRequest
 	goodEnvironmentRequest       v1models.CreateEnvironmentRequest
 	anotherAllocationPoolRequest v1models.CreateAllocationPoolRequest
@@ -55,7 +55,7 @@ func (suite *AllocationPoolTestSuite) SetupTest() {
 func (suite *AllocationPoolTestSuite) TearDownTest() {
 	// each test runs in its own isolated transaction
 	// this ensures we cleanup after each test as it completes
-	suite.testApp.db.Rollback()
+	suite.testApp.DB.Rollback()
 }
 
 //
@@ -63,17 +63,17 @@ func (suite *AllocationPoolTestSuite) TearDownTest() {
 //
 
 // connect to DB and create the Application
-func initTestAllocationPoolsApp(t *testing.T) *testApplication {
+func initTestAllocationPoolsApp(t *testing.T) *TestApplication {
 	dbConn := testutils.ConnectAndMigrate(t)
 
 	// ensures each test will run in it's own isolated transaction
 	// The transaction will be rolled back after each test
 	// regardless of pass or fail
 	dbConn = dbConn.Begin()
-	app := &testApplication{
-		allocationPools: NewAllocationPoolController(dbConn),
-		environments:    environments.NewController(dbConn),
-		db:              dbConn,
+	app := &TestApplication{
+		AllocationPools: NewAllocationPoolController(dbConn),
+		Environments:    environments.NewController(dbConn),
+		DB:              dbConn,
 	}
 
 	return app
@@ -85,9 +85,9 @@ func initTestAllocationPoolsApp(t *testing.T) *testApplication {
 
 func (suite *AllocationPoolTestSuite) TestIntegrationCreateAllocationPools() {
 	suite.Run("creates a valid allocationPool", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.db)
+		testutils.Cleanup(suite.T(), suite.testApp.DB)
 
-		newAllocationPool, err := suite.testApp.allocationPools.CreateNew(suite.goodAllocationPoolRequest)
+		newAllocationPool, err := suite.testApp.AllocationPools.CreateNew(suite.goodAllocationPoolRequest)
 		assert.NoError(suite.T(), err)
 
 		assert.Equal(suite.T(), suite.goodAllocationPoolRequest.Name, newAllocationPool.Name)
@@ -95,46 +95,46 @@ func (suite *AllocationPoolTestSuite) TestIntegrationCreateAllocationPools() {
 	})
 
 	suite.Run("fails to create a allocationPool with no name", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.db)
+		testutils.Cleanup(suite.T(), suite.testApp.DB)
 
 		expectedError := errors.New("error saving to database: ERROR: null value in column \"name\" of relation \"allocation_pools\" violates not-null constraint (SQLSTATE 23502)")
 		namelessAllocationPoolRequest := suite.goodAllocationPoolRequest
 		namelessAllocationPoolRequest.Name = ""
 
-		newAllocationPool, err := suite.testApp.allocationPools.CreateNew(namelessAllocationPoolRequest)
+		newAllocationPool, err := suite.testApp.AllocationPools.CreateNew(namelessAllocationPoolRequest)
 
 		assert.Equal(suite.T(), "", newAllocationPool.Name)
 		assert.Equal(suite.T(), expectedError, err)
 	})
 
 	suite.Run("fails to create a allocationPool with duplicate name", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.db)
+		testutils.Cleanup(suite.T(), suite.testApp.DB)
 
 		expectedError := errors.New("error saving to database: ERROR: duplicate key value violates unique constraint \"allocation_pools_name_key\" (SQLSTATE 23505)")
 
-		_, err := suite.testApp.allocationPools.CreateNew(suite.goodAllocationPoolRequest)
+		_, err := suite.testApp.AllocationPools.CreateNew(suite.goodAllocationPoolRequest)
 		assert.NoError(suite.T(), err)
-		newAllocationPool, err := suite.testApp.allocationPools.CreateNew(suite.goodAllocationPoolRequest)
+		newAllocationPool, err := suite.testApp.AllocationPools.CreateNew(suite.goodAllocationPoolRequest)
 
 		assert.Empty(suite.T(), newAllocationPool.Name)
 		assert.Equal(suite.T(), expectedError, err)
 	})
 
 	suite.Run("fails to create a allocationPool with duplicate name", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.db)
+		testutils.Cleanup(suite.T(), suite.testApp.DB)
 
-		_, err := suite.testApp.allocationPools.CreateNew(suite.goodAllocationPoolRequest)
+		_, err := suite.testApp.AllocationPools.CreateNew(suite.goodAllocationPoolRequest)
 		assert.NoError(suite.T(), err)
-		_, err = suite.testApp.allocationPools.CreateNew(suite.anotherAllocationPoolRequest)
+		_, err = suite.testApp.AllocationPools.CreateNew(suite.anotherAllocationPoolRequest)
 		assert.NoError(suite.T(), err)
 	})
 
 	suite.Run("create a cluster with a new embedded environment", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.db)
+		testutils.Cleanup(suite.T(), suite.testApp.DB)
 
 		suite.goodAllocationPoolRequest.Environments = []v1models.Environment{suite.goodEnvironmentRequest.EnvironmentReq()}
 
-		newAllocationPool, err := suite.testApp.allocationPools.CreateNew(suite.goodAllocationPoolRequest)
+		newAllocationPool, err := suite.testApp.AllocationPools.CreateNew(suite.goodAllocationPoolRequest)
 		assert.NoError(suite.T(), err)
 
 		assert.Equal(suite.T(), suite.goodAllocationPoolRequest.Name, newAllocationPool.Name)
@@ -144,17 +144,17 @@ func (suite *AllocationPoolTestSuite) TestIntegrationCreateAllocationPools() {
 
 func (suite *AllocationPoolTestSuite) TestAddByEnvironmentID() {
 	suite.Run("creates an allocationPool and environment seperately and then joins", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.db)
+		testutils.Cleanup(suite.T(), suite.testApp.DB)
 
-		newAllocationPool, _ := suite.testApp.allocationPools.CreateNew(suite.goodAllocationPoolRequest)
-		newEnvironment, _ := suite.testApp.environments.CreateNew(suite.goodEnvironmentRequest)
+		newAllocationPool, _ := suite.testApp.AllocationPools.CreateNew(suite.goodAllocationPoolRequest)
+		newEnvironment, _ := suite.testApp.Environments.CreateNew(suite.goodEnvironmentRequest)
 
 		// add the environment to the allocation pool
-		updatedAllocationPool, err := suite.testApp.allocationPools.AddEnvironmentByID(newAllocationPool, newEnvironment.ID)
+		updatedAllocationPool, err := suite.testApp.AllocationPools.AddEnvironmentByID(newAllocationPool, newEnvironment.ID)
 		assert.NoError(suite.T(), err)
 
 		// update the objects from the db
-		updatedEnvironment, _ := suite.testApp.environments.GetByName(newEnvironment.Name)
+		updatedEnvironment, _ := suite.testApp.Environments.GetByName(newEnvironment.Name)
 
 		assert.Equal(suite.T(), newAllocationPool.ID, *updatedEnvironment.AllocationPoolID)
 		require.NotEmpty(suite.T(), updatedAllocationPool.Environments)
@@ -162,21 +162,21 @@ func (suite *AllocationPoolTestSuite) TestAddByEnvironmentID() {
 	})
 
 	suite.Run("reassigns environment to different allocation pool", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.db)
+		testutils.Cleanup(suite.T(), suite.testApp.DB)
 
-		newAllocationPool, _ := suite.testApp.allocationPools.CreateNew(suite.goodAllocationPoolRequest)
-		anotherAllocationPool, _ := suite.testApp.allocationPools.CreateNew(suite.anotherAllocationPoolRequest)
-		newEnvironment, _ := suite.testApp.environments.CreateNew(suite.goodEnvironmentRequest)
+		newAllocationPool, _ := suite.testApp.AllocationPools.CreateNew(suite.goodAllocationPoolRequest)
+		anotherAllocationPool, _ := suite.testApp.AllocationPools.CreateNew(suite.anotherAllocationPoolRequest)
+		newEnvironment, _ := suite.testApp.Environments.CreateNew(suite.goodEnvironmentRequest)
 
 		// add the environment to the cluster
-		_, err := suite.testApp.allocationPools.AddEnvironmentByID(newAllocationPool, newEnvironment.ID)
+		_, err := suite.testApp.AllocationPools.AddEnvironmentByID(newAllocationPool, newEnvironment.ID)
 		assert.NoError(suite.T(), err)
-		updatedEnvironment, _ := suite.testApp.environments.GetByName(newEnvironment.Name)
+		updatedEnvironment, _ := suite.testApp.Environments.GetByName(newEnvironment.Name)
 		assert.Equal(suite.T(), newAllocationPool.ID, *updatedEnvironment.AllocationPoolID)
 
 		// change to a new cluster
-		updatedAllocationPool, _ := suite.testApp.allocationPools.AddEnvironmentByID(anotherAllocationPool, newEnvironment.ID)
-		updatedEnvironment, _ = suite.testApp.environments.GetByName(newEnvironment.Name)
+		updatedAllocationPool, _ := suite.testApp.AllocationPools.AddEnvironmentByID(anotherAllocationPool, newEnvironment.ID)
+		updatedEnvironment, _ = suite.testApp.Environments.GetByName(newEnvironment.Name)
 		assert.Equal(suite.T(), anotherAllocationPool.ID, *updatedEnvironment.AllocationPoolID)
 		assert.Equal(suite.T(), updatedEnvironment.ID, (updatedAllocationPool.Environments)[0].ID)
 	})
@@ -184,12 +184,12 @@ func (suite *AllocationPoolTestSuite) TestAddByEnvironmentID() {
 
 func (suite *AllocationPoolTestSuite) TestIntegrationAllocationPoolGetByName() {
 	suite.Run("GetByName gets an allocationPool by name", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.db)
+		testutils.Cleanup(suite.T(), suite.testApp.DB)
 
-		_, err := suite.testApp.allocationPools.CreateNew(suite.goodAllocationPoolRequest)
+		_, err := suite.testApp.AllocationPools.CreateNew(suite.goodAllocationPoolRequest)
 		assert.NoError(suite.T(), err)
 
-		foundAllocationPool, err := suite.testApp.allocationPools.GetByName(suite.goodAllocationPoolRequest.Name)
+		foundAllocationPool, err := suite.testApp.AllocationPools.GetByName(suite.goodAllocationPoolRequest.Name)
 
 		assert.Equal(suite.T(), foundAllocationPool.Name, suite.goodAllocationPoolRequest.Name)
 
@@ -197,12 +197,12 @@ func (suite *AllocationPoolTestSuite) TestIntegrationAllocationPoolGetByName() {
 	})
 
 	suite.Run("GetByName returns error if not found", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.db)
+		testutils.Cleanup(suite.T(), suite.testApp.DB)
 
-		_, err := suite.testApp.allocationPools.CreateNew(suite.goodAllocationPoolRequest)
+		_, err := suite.testApp.AllocationPools.CreateNew(suite.goodAllocationPoolRequest)
 		assert.NoError(suite.T(), err)
 
-		foundAllocationPool, err := suite.testApp.allocationPools.GetByName("this-doesnt-exist")
+		foundAllocationPool, err := suite.testApp.AllocationPools.GetByName("this-doesnt-exist")
 
 		assert.Equal(suite.T(), foundAllocationPool.Name, "")
 		assert.Equal(suite.T(), errors.New("record not found"), err)
@@ -211,12 +211,12 @@ func (suite *AllocationPoolTestSuite) TestIntegrationAllocationPoolGetByName() {
 
 func (suite *AllocationPoolTestSuite) TestIntegrationAllocationPoolGetByID() {
 	suite.Run("GetByID gets an allocationPool by ID", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.db)
+		testutils.Cleanup(suite.T(), suite.testApp.DB)
 
-		newAllocationPool, err := suite.testApp.allocationPools.CreateNew(suite.goodAllocationPoolRequest)
+		newAllocationPool, err := suite.testApp.AllocationPools.CreateNew(suite.goodAllocationPoolRequest)
 		assert.NoError(suite.T(), err)
 
-		foundAllocationPool, err := suite.testApp.allocationPools.GetByID(newAllocationPool.ID)
+		foundAllocationPool, err := suite.testApp.AllocationPools.GetByID(newAllocationPool.ID)
 
 		assert.Equal(suite.T(), foundAllocationPool.ID, newAllocationPool.ID)
 
@@ -224,12 +224,12 @@ func (suite *AllocationPoolTestSuite) TestIntegrationAllocationPoolGetByID() {
 	})
 
 	suite.Run("GetByName returns error if not found", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.db)
+		testutils.Cleanup(suite.T(), suite.testApp.DB)
 
-		_, err := suite.testApp.allocationPools.CreateNew(suite.goodAllocationPoolRequest)
+		_, err := suite.testApp.AllocationPools.CreateNew(suite.goodAllocationPoolRequest)
 		assert.NoError(suite.T(), err)
 
-		foundAllocationPool, err := suite.testApp.allocationPools.GetByID(suite.notFoundID)
+		foundAllocationPool, err := suite.testApp.AllocationPools.GetByID(suite.notFoundID)
 
 		assert.Equal(suite.T(), foundAllocationPool.ID, 0)
 		assert.Equal(suite.T(), errors.New("record not found"), err)
@@ -238,21 +238,21 @@ func (suite *AllocationPoolTestSuite) TestIntegrationAllocationPoolGetByID() {
 
 func (suite *AllocationPoolTestSuite) TestIntegrationAllocationPoolListAll() {
 	suite.Run("ListAll returns nothing", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.db)
+		testutils.Cleanup(suite.T(), suite.testApp.DB)
 
-		foundAllocationPools, err := suite.testApp.allocationPools.ListAll()
+		foundAllocationPools, err := suite.testApp.AllocationPools.ListAll()
 
 		assert.Equal(suite.T(), len(foundAllocationPools), 0)
 		assert.NoError(suite.T(), err)
 	})
 
 	suite.Run("ListAll returns one AllocationPool", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.db)
+		testutils.Cleanup(suite.T(), suite.testApp.DB)
 
-		_, err := suite.testApp.allocationPools.CreateNew(suite.goodAllocationPoolRequest)
+		_, err := suite.testApp.AllocationPools.CreateNew(suite.goodAllocationPoolRequest)
 		assert.NoError(suite.T(), err)
 
-		foundAllocationPools, err := suite.testApp.allocationPools.ListAll()
+		foundAllocationPools, err := suite.testApp.AllocationPools.ListAll()
 
 		assert.Equal(suite.T(), len(foundAllocationPools), 1)
 		assert.Equal(suite.T(), foundAllocationPools[0].Name, suite.goodAllocationPoolRequest.Name)
@@ -260,14 +260,14 @@ func (suite *AllocationPoolTestSuite) TestIntegrationAllocationPoolListAll() {
 	})
 
 	suite.Run("ListAll returns many AllocationPools", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.db)
+		testutils.Cleanup(suite.T(), suite.testApp.DB)
 
-		_, err := suite.testApp.allocationPools.CreateNew(suite.goodAllocationPoolRequest)
+		_, err := suite.testApp.AllocationPools.CreateNew(suite.goodAllocationPoolRequest)
 		assert.NoError(suite.T(), err)
-		_, err = suite.testApp.allocationPools.CreateNew(suite.anotherAllocationPoolRequest)
+		_, err = suite.testApp.AllocationPools.CreateNew(suite.anotherAllocationPoolRequest)
 		assert.NoError(suite.T(), err)
 
-		foundAllocationPools, err := suite.testApp.allocationPools.ListAll()
+		foundAllocationPools, err := suite.testApp.AllocationPools.ListAll()
 
 		assert.Equal(suite.T(), len(foundAllocationPools), 2)
 		assert.NoError(suite.T(), err)
@@ -276,23 +276,23 @@ func (suite *AllocationPoolTestSuite) TestIntegrationAllocationPoolListAll() {
 
 func (suite *AllocationPoolTestSuite) TestIntegrationAllocationPoolDoesAllocationPoolExist() {
 	suite.Run("AllocationPoolDoesExist returns true when exists", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.db)
+		testutils.Cleanup(suite.T(), suite.testApp.DB)
 
-		newAllocationPool, _ := suite.testApp.allocationPools.CreateNew(suite.goodAllocationPoolRequest)
+		newAllocationPool, _ := suite.testApp.AllocationPools.CreateNew(suite.goodAllocationPoolRequest)
 
-		allocationPoolID, doesAllocationPoolExist := suite.testApp.allocationPools.DoesAllocationPoolExist(suite.goodAllocationPoolRequest.Name)
+		allocationPoolID, doesAllocationPoolExist := suite.testApp.AllocationPools.DoesAllocationPoolExist(suite.goodAllocationPoolRequest.Name)
 
 		assert.Equal(suite.T(), allocationPoolID, newAllocationPool.ID)
 		assert.Equal(suite.T(), doesAllocationPoolExist, true)
 	})
 
 	suite.Run("AllocationPoolDoesExist returns false when not exists", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.db)
+		testutils.Cleanup(suite.T(), suite.testApp.DB)
 
-		_, err := suite.testApp.allocationPools.CreateNew(suite.goodAllocationPoolRequest)
+		_, err := suite.testApp.AllocationPools.CreateNew(suite.goodAllocationPoolRequest)
 		assert.NoError(suite.T(), err)
 
-		allocationPoolID, doesAllocationPoolExist := suite.testApp.allocationPools.DoesAllocationPoolExist("no-allocationPool-here")
+		allocationPoolID, doesAllocationPoolExist := suite.testApp.AllocationPools.DoesAllocationPoolExist("no-allocationPool-here")
 
 		assert.Equal(suite.T(), allocationPoolID, 0)
 		assert.Equal(suite.T(), doesAllocationPoolExist, false)

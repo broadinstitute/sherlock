@@ -1,9 +1,5 @@
 // AllocationPoolController, public interface for AllocationPool objects
 
-// Package allocationPools defines data structure representing
-// a allocationPool instance and methods for interacting with them
-// it is left to concrete implementations in package db or others to
-// implement these interfaces
 package v1controllers
 
 import (
@@ -13,7 +9,7 @@ import (
 	"gorm.io/gorm"
 )
 
-// AllocationPoolController is the management layer for allocationPools
+// AllocationPoolController is the management layer for AllocationPools
 type AllocationPoolController struct {
 	store v1models.AllocationPoolStore
 }
@@ -44,7 +40,7 @@ func (allocationPoolController *AllocationPoolController) CreateNew(newAllocatio
 
 }
 
-// ListAll is the public api for listing out all allocationPools tracked by sherlock
+// ListAll is the public api for listing out all AllocationPools tracked by sherlock
 func (allocationPoolController *AllocationPoolController) ListAll() ([]v1models.AllocationPool, error) {
 	return allocationPoolController.store.ListAll()
 

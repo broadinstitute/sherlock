@@ -1,18 +1,16 @@
-package deploys
+package v1models
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/internal/models/v1models"
-
 	"gorm.io/gorm"
 )
 
 // SeedServiceInstances is used to populate the database with Service Instance entities
 // solely intended for use in testing
-func SeedServiceInstances(db *gorm.DB) ([]v1models.ServiceInstance, error) {
+func SeedServiceInstances(db *gorm.DB) ([]ServiceInstance, error) {
 	var (
-		services     []v1models.Service
-		environments []v1models.Environment
+		services     []Service
+		environments []Environment
 	)
 
 	if err := db.Find(&services).Error; err != nil {
@@ -23,10 +21,10 @@ func SeedServiceInstances(db *gorm.DB) ([]v1models.ServiceInstance, error) {
 		return nil, fmt.Errorf("error retrieving existing environments: %v", err)
 	}
 
-	var serviceInstances []v1models.ServiceInstance
+	var serviceInstances []ServiceInstance
 	for _, service := range services {
 		for _, environment := range environments {
-			serviceInstances = append(serviceInstances, v1models.ServiceInstance{
+			serviceInstances = append(serviceInstances, ServiceInstance{
 				ServiceID:     service.ID,
 				EnvironmentID: environment.ID,
 			})
@@ -34,7 +32,7 @@ func SeedServiceInstances(db *gorm.DB) ([]v1models.ServiceInstance, error) {
 	}
 
 	if err := db.Create(&serviceInstances).Error; err != nil {
-		return []v1models.ServiceInstance{}, err
+		return []ServiceInstance{}, err
 	}
 
 	err := db.Preload("Service").Preload("Environment").Find(&serviceInstances).Error

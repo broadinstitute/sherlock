@@ -7,12 +7,15 @@ import (
 	"gorm.io/gorm"
 )
 
-// testApplication is a simplified sherlock.Application that avoids circular dependencies
-// or unneeded fields for testing
-type testApplication struct {
-	allocationPools *AllocationPoolController
-	builds          *BuildController
-	clusters        *ClusterController
-	environments    *environments.EnvironmentController
-	db              *gorm.DB
+// TestApplication is a simplified sherlock.Application that avoids circular dependencies
+// or unneeded fields for testing. Fields exported for the benefit of tests coupled to
+// the v1controllers package.
+type TestApplication struct {
+	AllocationPools  *AllocationPoolController
+	Builds           *BuildController
+	Clusters         *ClusterController
+	Deploys          *DeployController
+	Environments     *environments.EnvironmentController
+	ServiceInstances *ServiceInstanceController
+	DB               *gorm.DB
 }

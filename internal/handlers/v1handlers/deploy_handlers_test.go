@@ -1,23 +1,63 @@
-package deploys
+package v1handlers
 
 import (
 	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/broadinstitute/sherlock/internal/controllers/v1controllers"
+	"github.com/broadinstitute/sherlock/internal/serializers/v1serializers"
+	"github.com/stretchr/testify/suite"
 	"net/http"
+	"testing"
 
 	"github.com/broadinstitute/sherlock/internal/testutils"
 	"github.com/bxcodec/faker/v3"
 	"github.com/gin-gonic/gin"
 )
 
-func (suite *DeployIntegrationTestSuite) TestCreateDeployHandler() {
+// DeployHandlersTestSuite is a re-packaged copy of deploys_test.go's v1controllers.DeployIntegrationTestSuite,
+// which cannot have tests added to it in this package because of Go's same-package restriction on method receivers.
+type DeployHandlersTestSuite struct {
+	suite.Suite
+	app *v1controllers.TestApplication
+}
+
+func initTestDeployController(t *testing.T) *v1controllers.TestApplication {
+	dbConn := testutils.ConnectAndMigrate(t)
+	// ensures each test will run in it's own isolated transaction
+	// The transaction will be rolled back after each test
+	// regardless of pass or fail
+	dbConn = dbConn.Begin()
+	return &v1controllers.TestApplication{
+		Deploys: v1controllers.NewDeployController(dbConn),
+		DB:      dbConn,
+	}
+}
+
+func TestDeployIntegrationSuite(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping integration test")
+	}
+	suite.Run(t, new(DeployHandlersTestSuite))
+}
+
+func (suite *DeployHandlersTestSuite) SetupTest() {
+	// start a new db transaction for each test
+	suite.app = initTestDeployController(suite.T())
+}
+
+func (suite *DeployHandlersTestSuite) TearDownTest() {
+	// each test runs in its own isolated transaction
+	// this ensures we cleanup after each test as it completes
+	suite.app.DB.Rollback()
+}
+
+func (suite *DeployHandlersTestSuite) TestCreateDeployHandler() {
 	// setup a service instance and some builds
-	var preExistingServiceInstanceReq CreateServiceInstanceRequest
+	var preExistingServiceInstanceReq v1controllers.CreateServiceInstanceRequest
 	err := faker.FakeData(&preExistingServiceInstanceReq)
 	suite.Require().NoError(err)
-	preExistingServiceInstance, err := suite.app.deploys.serviceInstances.CreateNew(preExistingServiceInstanceReq)
+	preExistingServiceInstance, err := suite.app.Deploys.ServiceInstances.CreateNew(preExistingServiceInstanceReq)
 	suite.Require().NoError(err)
 
 	// make a build associated with the service from the service instance above
@@ -25,14 +65,14 @@ func (suite *DeployIntegrationTestSuite) TestCreateDeployHandler() {
 	err = faker.FakeData(&preExistingBuildFromServiceReq)
 	suite.Require().NoError(err)
 	preExistingBuildFromServiceReq.ServiceName = preExistingServiceInstance.Service.Name
-	preExistingBuildFromService, err := suite.app.deploys.builds.CreateNew(preExistingBuildFromServiceReq)
+	preExistingBuildFromService, err := suite.app.Deploys.Builds.CreateNew(preExistingBuildFromServiceReq)
 	suite.Require().NoError(err)
 
 	// make a build unassociated with any service instance
 	var otherPreExistingBuildReq v1controllers.CreateBuildRequest
 	err = faker.FakeData(&otherPreExistingBuildReq)
 	suite.Require().NoError(err)
-	otherPreExistingBuild, err := suite.app.deploys.builds.CreateNew(otherPreExistingBuildReq)
+	otherPreExistingBuild, err := suite.app.Deploys.Builds.CreateNew(otherPreExistingBuildReq)
 	suite.Require().NoError(err)
 
 	suite.Run("creates deploy from existing service instance and build", func() {
@@ -56,11 +96,11 @@ func (suite *DeployIntegrationTestSuite) TestCreateDeployHandler() {
 			Value: preExistingServiceInstanceReq.ServiceName,
 		})
 
-		suite.app.deploys.createDeploy(ctx)
+		createDeploy(suite.app.Deploys)(ctx)
 		suite.Assert().Equal(http.StatusCreated, response.Code)
 
 		// check the response
-		var responseBody Response
+		var responseBody v1serializers.DeploysResponse
 		err = json.NewDecoder(response.Body).Decode(&responseBody)
 		suite.Assert().NoError(err)
 
@@ -90,11 +130,11 @@ func (suite *DeployIntegrationTestSuite) TestCreateDeployHandler() {
 			Value: "non-existent-service",
 		})
 
-		suite.app.deploys.createDeploy(ctx)
+		createDeploy(suite.app.Deploys)(ctx)
 		suite.Assert().Equal(http.StatusCreated, response.Code)
 
 		// check the response
-		var responseBody Response
+		var responseBody v1serializers.DeploysResponse
 		err = json.NewDecoder(response.Body).Decode(&responseBody)
 		suite.Assert().NoError(err)
 
@@ -124,11 +164,11 @@ func (suite *DeployIntegrationTestSuite) TestCreateDeployHandler() {
 			Value: preExistingServiceInstanceReq.ServiceName,
 		})
 
-		suite.app.deploys.createDeploy(ctx)
+		createDeploy(suite.app.Deploys)(ctx)
 		suite.Assert().Equal(http.StatusCreated, response.Code)
 
 		// check the response
-		var responseBody Response
+		var responseBody v1serializers.DeploysResponse
 		err = json.NewDecoder(response.Body).Decode(&responseBody)
 		suite.Assert().NoError(err)
 
@@ -138,31 +178,31 @@ func (suite *DeployIntegrationTestSuite) TestCreateDeployHandler() {
 	})
 }
 
-func (suite *DeployIntegrationTestSuite) TestGetDeploysHandler() {
+func (suite *DeployHandlersTestSuite) TestGetDeploysHandler() {
 	// prepopulate the db with some builds to query
 	// setup a service instance and some builds
-	var preExistingServiceInstanceReq CreateServiceInstanceRequest
+	var preExistingServiceInstanceReq v1controllers.CreateServiceInstanceRequest
 	err := faker.FakeData(&preExistingServiceInstanceReq)
 	suite.Require().NoError(err)
-	preExistingServiceInstance, err := suite.app.deploys.serviceInstances.CreateNew(preExistingServiceInstanceReq)
+	preExistingServiceInstance, err := suite.app.Deploys.ServiceInstances.CreateNew(preExistingServiceInstanceReq)
 	suite.Require().NoError(err)
 
-	// create some deploys to query against
+	// create some v1mocks to query against
 	for i := 0; i < 2; i++ {
 		// make a build associated with the service from the service instance above
 		var preExistingBuildFromServiceReq v1controllers.CreateBuildRequest
 		err = faker.FakeData(&preExistingBuildFromServiceReq)
 		suite.Require().NoError(err)
 		preExistingBuildFromServiceReq.ServiceName = preExistingServiceInstance.Service.Name
-		preExistingBuildFromService, err := suite.app.deploys.builds.CreateNew(preExistingBuildFromServiceReq)
+		preExistingBuildFromService, err := suite.app.Deploys.Builds.CreateNew(preExistingBuildFromServiceReq)
 		suite.Require().NoError(err)
 
-		deployReq := CreateDeployRequest{
+		deployReq := v1controllers.CreateDeployRequest{
 			EnvironmentName:    preExistingServiceInstance.Environment.Name,
 			ServiceName:        preExistingServiceInstance.Service.Name,
 			BuildVersionString: preExistingBuildFromService.VersionString,
 		}
-		_, err = suite.app.deploys.CreateNew(deployReq)
+		_, err = suite.app.Deploys.CreateNew(deployReq)
 		suite.Require().NoError(err)
 	}
 
@@ -180,11 +220,11 @@ func (suite *DeployIntegrationTestSuite) TestGetDeploysHandler() {
 			Value: preExistingServiceInstance.Service.Name,
 		})
 
-		suite.app.deploys.getDeploysByEnvironmentAndService(ctx)
+		GetDeploysByEnvironmentAndService(suite.app.Deploys)(ctx)
 		suite.Assert().Equal(http.StatusOK, response.Code)
 
 		// check the response
-		var responseBody Response
+		var responseBody v1serializers.DeploysResponse
 		err = json.NewDecoder(response.Body).Decode(&responseBody)
 		suite.Assert().NoError(err)
 
@@ -206,7 +246,7 @@ func (suite *DeployIntegrationTestSuite) TestGetDeploysHandler() {
 			Value: "fake-service",
 		})
 
-		suite.app.deploys.getDeploysByEnvironmentAndService(ctx)
+		GetDeploysByEnvironmentAndService(suite.app.Deploys)(ctx)
 		suite.Assert().Equal(http.StatusNotFound, response.Code)
 	})
 }

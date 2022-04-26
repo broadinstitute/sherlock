@@ -11,7 +11,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/broadinstitute/sherlock/internal/deploys"
 	"github.com/broadinstitute/sherlock/internal/environments"
 	"github.com/broadinstitute/sherlock/internal/services"
 	"github.com/stretchr/testify/assert"
@@ -27,7 +26,7 @@ func Test_createDeployCommand(t *testing.T) {
 		{
 			name: "successful create",
 			cliArgs: []string{
-				"deploys",
+				"v1mocks",
 				"create",
 				"docker.io/my-repo/my-app:1.0.0",
 				"--environment",
@@ -36,11 +35,11 @@ func Test_createDeployCommand(t *testing.T) {
 				"my-app",
 			},
 			mockServerResponse: func(w http.ResponseWriter, r *http.Request) {
-				_ = json.NewEncoder(w).Encode(&deploys.Response{
-					Deploys: []deploys.DeployResponse{
+				_ = json.NewEncoder(w).Encode(&v1serializers.DeploysResponse{
+					Deploys: []v1serializers.DeployResponse{
 						{
 							ID: 1,
-							ServiceInstance: deploys.ServiceInstanceResponse{
+							ServiceInstance: v1serializers.ServiceInstanceResponse{
 								ID: 1,
 								Service: services.ServiceResponse{
 									ID:   1,
@@ -69,7 +68,7 @@ func Test_createDeployCommand(t *testing.T) {
 		{
 			name: "error from server",
 			cliArgs: []string{
-				"deploys",
+				"v1mocks",
 				"create",
 				"gcr.io./broad/test-service:1.0.0",
 				"--environment",
@@ -87,7 +86,7 @@ func Test_createDeployCommand(t *testing.T) {
 		{
 			name: "unparseable response",
 			cliArgs: []string{
-				"deploys",
+				"v1mocks",
 				"create",
 				"gcr.io./broad/test-service:1.0.0",
 				"--environment",
@@ -108,12 +107,12 @@ func Test_createDeployCommand(t *testing.T) {
 			testServer := httptest.NewServer(testCase.mockServerResponse)
 
 			sherlockServerURL = testServer.URL
-			output, _ := executeCommand(rootCmd, "deploys", "create", testCase.cliArgs[2], "--environment", testCase.cliArgs[4], "--service", testCase.cliArgs[6])
+			output, _ := executeCommand(rootCmd, "v1mocks", "create", testCase.cliArgs[2], "--environment", testCase.cliArgs[4], "--service", testCase.cliArgs[6])
 			outputBytes := bytes.NewBufferString(output)
 
 			if testCase.expectError == nil {
 				// parse the output back into a builds.BuildsResponse so that we can examine it
-				var cliResponse deploys.Response
+				var cliResponse v1serializers.DeploysResponse
 				if err := json.NewDecoder(outputBytes).Decode(&cliResponse); err != nil {
 					t.Errorf("error decoding cli output: %v", err)
 				}
