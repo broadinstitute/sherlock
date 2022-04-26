@@ -10,7 +10,6 @@ import (
 	"github.com/broadinstitute/sherlock/internal/testutils"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
-	"gorm.io/gorm"
 )
 
 // Define the suite, and absorb the built-in basic suite
@@ -36,7 +35,7 @@ func TestIntegrationClustersSuite(t *testing.T) {
 
 // between-test initialization
 func (suite *ClusterTestSuite) SetupTest() {
-	suite.testApp = initTestApp(suite.T())
+	suite.testApp = initTestClusterApp(suite.T())
 	suite.goodClusterRequest = v1models.CreateClusterRequest{
 		Name: "terra-prod",
 	}
@@ -57,14 +56,8 @@ func (suite *ClusterTestSuite) TearDownTest() {
 // Test ClusterController Setup
 //
 
-// only load the Controller we care about
-type TestApplication struct {
-	Clusters *ClusterController
-	db       *gorm.DB
-}
-
 // connect to DB and create the Application
-func initTestApp(t *testing.T) *TestApplication {
+func initTestClusterApp(t *testing.T) *TestApplication {
 	dbConn := testutils.ConnectAndMigrate(t)
 
 	// ensures each test will run in it's own isolated transaction
