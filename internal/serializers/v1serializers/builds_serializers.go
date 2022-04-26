@@ -9,8 +9,6 @@ package v1serializers
 import (
 	"github.com/broadinstitute/sherlock/internal/models/v1models"
 	"time"
-
-	"github.com/broadinstitute/sherlock/internal/services"
 )
 
 // BuildsResponse is a type that allows all data returned from the /builds api group to share a consistent structure
@@ -22,12 +20,12 @@ type BuildsResponse struct {
 // BuildResponse is the type used to ensure that response bodies from the /builds api group have a consistent
 // structure
 type BuildResponse struct {
-	ID            int                      `json:"id"`
-	VersionString string                   `json:"version_string"`
-	CommitSha     string                   `json:"commit_sha"`
-	BuildURL      string                   `json:"build_url,omitempty"`
-	BuiltAt       time.Time                `json:"built_at,omitempty"`
-	Service       services.ServiceResponse `json:"service"`
+	ID            int             `json:"id"`
+	VersionString string          `json:"version_string"`
+	CommitSha     string          `json:"commit_sha"`
+	BuildURL      string          `json:"build_url,omitempty"`
+	BuiltAt       time.Time       `json:"built_at,omitempty"`
+	Service       ServiceResponse `json:"service"`
 }
 
 // BuildSerializer takes a Build model entity and translates it into a response
@@ -37,7 +35,7 @@ type BuildSerializer struct {
 
 // Response method performs the serialization from a Build entity to Build BuildsResponse
 func (bs *BuildSerializer) Response() BuildResponse {
-	service := services.ServiceSerializer{Service: bs.Build.Service}
+	service := ServiceSerializer{Service: bs.Build.Service}
 	return BuildResponse{
 		ID:            bs.Build.ID,
 		VersionString: bs.Build.VersionString,

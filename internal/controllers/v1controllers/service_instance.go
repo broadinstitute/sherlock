@@ -10,7 +10,6 @@ import (
 	"github.com/broadinstitute/sherlock/internal/models/v1models"
 	"github.com/broadinstitute/sherlock/internal/serializers/v1serializers"
 
-	"github.com/broadinstitute/sherlock/internal/services"
 	"gorm.io/gorm"
 )
 
@@ -18,7 +17,7 @@ import (
 // ServiceInstance entities
 type ServiceInstanceController struct {
 	store        v1models.ServiceInstanceStore
-	services     *services.ServiceController
+	services     *ServiceController
 	environments *EnvironmentController
 	clusters     *ClusterController
 }
@@ -37,7 +36,7 @@ func NewServiceInstanceController(dbConn *gorm.DB) *ServiceInstanceController {
 	store := v1models.NewServiceInstanceStore(dbConn)
 	return &ServiceInstanceController{
 		store:        store,
-		services:     services.NewController(dbConn),
+		services:     NewServiceController(dbConn),
 		environments: NewEnvironmentController(dbConn),
 		clusters:     NewClusterController(dbConn),
 	}

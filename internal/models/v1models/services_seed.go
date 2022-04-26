@@ -1,14 +1,13 @@
-package services
+package v1models
 
 import (
-	"github.com/broadinstitute/sherlock/internal/models/v1models"
 	"gorm.io/gorm"
 )
 
-// Seed is a test utility that will populate a database with a predetermined list of "services"
+// SeedServices is a test utility that will populate a database with a predetermined list of "services"
 // to be used for running integration tests against a real database
-func Seed(db *gorm.DB) ([]v1models.Service, error) {
-	services := []v1models.Service{
+func SeedServices(db *gorm.DB) ([]Service, error) {
+	services := []Service{
 		{
 			Name:    "cromwell",
 			RepoURL: "https://github.com/broadinstitute/cromwell",

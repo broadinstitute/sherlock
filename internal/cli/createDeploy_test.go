@@ -11,7 +11,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/broadinstitute/sherlock/internal/services"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -40,7 +39,7 @@ func Test_createDeployCommand(t *testing.T) {
 							ID: 1,
 							ServiceInstance: v1serializers.ServiceInstanceResponse{
 								ID: 1,
-								Service: services.ServiceResponse{
+								Service: v1serializers.ServiceResponse{
 									ID:   1,
 									Name: "my-app",
 								},
@@ -53,7 +52,7 @@ func Test_createDeployCommand(t *testing.T) {
 								ID:            1,
 								VersionString: "docker.io/my-repo/my-app:1.0.0",
 								BuiltAt:       time.Now(),
-								Service: services.ServiceResponse{
+								Service: v1serializers.ServiceResponse{
 									ID:   1,
 									Name: "my-app",
 								},

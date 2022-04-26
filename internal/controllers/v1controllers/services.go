@@ -1,30 +1,27 @@
-// Package services defines the control plane for sherlock's
-// service entities and api routes for interating with those control
-// plane methods
-package services
+package v1controllers
 
-// builds.go contains the "business" logic for operations relating to service entities.
-// This could eventually be moved to it's own sub-folder if it becomes unwieldy
+// services.go contains the "business" logic for operations relating to service entities.
+// This could eventually be moved to its own sub-folder if it becomes unwieldy
 
 import (
 	"errors"
 	"fmt"
 	"github.com/broadinstitute/sherlock/internal/models/v1models"
-
+	"github.com/broadinstitute/sherlock/internal/serializers/v1serializers"
 	"gorm.io/gorm"
 )
 
 // ServiceController is the management layer for CRUD operations for service entities
 type ServiceController struct {
-	store v1models.ServiceStore
+	Store v1models.ServiceStore
 }
 
-// NewController accepts a gorm DB connection and returns a new instance
+// NewServiceController accepts a gorm DB connection and returns a new instance
 // of the service controller
-func NewController(dbConn *gorm.DB) *ServiceController {
+func NewServiceController(dbConn *gorm.DB) *ServiceController {
 	serviceStore := v1models.NewServiceStore(dbConn)
 	return &ServiceController{
-		store: serviceStore,
+		Store: serviceStore,
 	}
 }
 
@@ -41,17 +38,17 @@ func (sc *ServiceController) DoesServiceExist(name string) (id int, ok bool) {
 // CreateNew is the public api on the serviceController for persisting a new service entity to
 // the data store
 func (sc *ServiceController) CreateNew(newService v1models.CreateServiceRequest) (v1models.Service, error) {
-	return sc.store.CreateNew(newService)
+	return sc.Store.CreateNew(newService)
 }
 
 // ListAll is the public api for listing out all services tracked by sherlock
 func (sc *ServiceController) ListAll() ([]v1models.Service, error) {
-	return sc.store.ListAll()
+	return sc.Store.ListAll()
 }
 
 // GetByName is the public API for looking up a service from the data store by name
 func (sc *ServiceController) GetByName(name string) (v1models.Service, error) {
-	return sc.store.GetByName(name)
+	return sc.Store.GetByName(name)
 }
 
 // FindOrCreate will attempt to look an environment by name and return its ID if successful
@@ -71,10 +68,10 @@ func (sc *ServiceController) FindOrCreate(name string) (int, error) {
 	return serviceID, nil
 }
 
-func (sc *ServiceController) serialize(services ...v1models.Service) []ServiceResponse {
+func (sc *ServiceController) Serialize(services ...v1models.Service) []v1serializers.ServiceResponse {
 	var serviceList []v1models.Service
 	serviceList = append(serviceList, services...)
 
-	serializer := ServicesSerializer{Services: serviceList}
+	serializer := v1serializers.ServicesSerializer{Services: serviceList}
 	return serializer.Response()
 }

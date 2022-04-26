@@ -1,4 +1,4 @@
-package services
+package v1controllers
 
 import (
 	"github.com/broadinstitute/sherlock/internal/models/v1models"
@@ -28,8 +28,8 @@ func (m *MockServiceStore) GetByName(name string) (v1models.Service, error) {
 	return retVal.Get(0).(v1models.Service), retVal.Error(1)
 }
 
-// NewMockController returns a service controller that will use a customizable mock
+// NewServiceMockController returns a service controller that will use a customizable mock
 // store for use in tests in other packages
-func NewMockController(mockStore *MockServiceStore) *ServiceController {
-	return &ServiceController{store: mockStore}
+func NewServiceMockController(mockStore *MockServiceStore) *ServiceController {
+	return &ServiceController{Store: mockStore}
 }

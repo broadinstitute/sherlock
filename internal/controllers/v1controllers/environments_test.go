@@ -37,7 +37,7 @@ func TestIntegrationEnvironmentsSuite(t *testing.T) {
 
 // between-test initialization
 func (suite *EnvironmentTestSuite) SetupTest() {
-	suite.testApp = initTestApp(suite.T())
+	suite.testApp = initEnvironmentsTestApp(suite.T())
 	suite.goodEnvironmentRequest = v1models.CreateEnvironmentRequest{
 		Name: faker.UUIDHyphenated(),
 	}
@@ -59,7 +59,7 @@ func (suite *EnvironmentTestSuite) TearDownTest() {
 //
 
 // connect to DB and create the Application
-func initTestApp(t *testing.T) *TestApplication {
+func initEnvironmentsTestApp(t *testing.T) *TestApplication {
 	dbConn := testutils.ConnectAndMigrate(t)
 	// ensures each test will run in it's own isolated transaction
 	// The transaction will be rolled back after each test
@@ -140,7 +140,7 @@ func (suite *EnvironmentTestSuite) TestIntegrationCreateEnvironments() {
 	for _, testCase := range testCases {
 		// creating a temporary test app instance with its own transaction for each
 		// testcase so they don't step on eachother
-		tempApp := initTestApp(suite.T())
+		tempApp := initEnvironmentsTestApp(suite.T())
 		suite.Run(testCase.name, func() {
 
 			// create all non-final environments as setup

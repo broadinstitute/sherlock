@@ -9,7 +9,6 @@ import (
 	"contrib.go.opencensus.io/exporter/stackdriver"
 	"github.com/broadinstitute/sherlock/internal/db"
 	"github.com/broadinstitute/sherlock/internal/metrics"
-	"github.com/broadinstitute/sherlock/internal/services"
 	"github.com/spf13/viper"
 	"gorm.io/gorm"
 )
@@ -24,7 +23,7 @@ var (
 // DB connection pool
 type Application struct {
 	AllocationPools *v1controllers.AllocationPoolController
-	Services        *services.ServiceController
+	Services        *v1controllers.ServiceController
 	Clusters        *v1controllers.ClusterController
 	Builds          *v1controllers.BuildController
 	Environments    *v1controllers.EnvironmentController
@@ -66,7 +65,7 @@ func New() *Application {
 
 func (a *Application) registerControllers() {
 	a.AllocationPools = v1controllers.NewAllocationPoolController(a.DB)
-	a.Services = services.NewController(a.DB)
+	a.Services = v1controllers.NewServiceController(a.DB)
 	a.Builds = v1controllers.NewBuildController(a.DB)
 	a.Clusters = v1controllers.NewClusterController(a.DB)
 	a.Environments = v1controllers.NewEnvironmentController(a.DB)

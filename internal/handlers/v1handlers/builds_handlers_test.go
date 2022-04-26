@@ -13,7 +13,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/broadinstitute/sherlock/internal/services"
 	"github.com/gin-gonic/gin"
 	"github.com/google/go-cmp/cmp"
 	"github.com/stretchr/testify/assert"
@@ -278,7 +277,7 @@ func TestCreateBuild(t *testing.T) {
 
 			mockBuildStore := new(mockBuildStore)
 			mockBuildStore.On("CreateNew", mock.Anything).Return(expectedBuild, testCase.expectedError)
-			mockServiceStore := new(services.MockServiceStore)
+			mockServiceStore := new(v1controllers.MockServiceStore)
 
 			// set up behavior for the serviceStore mock
 			if testCase.simulateServiceCreation {
@@ -288,7 +287,7 @@ func TestCreateBuild(t *testing.T) {
 				mockServiceStore.On("GetByName", service.Name).Return(service, nil)
 			}
 
-			mockServiceController := services.NewMockController(mockServiceStore)
+			mockServiceController := v1controllers.NewServiceMockController(mockServiceStore)
 
 			controller := v1controllers.BuildController{
 				Store:    mockBuildStore,

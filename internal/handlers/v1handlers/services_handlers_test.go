@@ -1,10 +1,12 @@
-package services
+package v1handlers
 
 import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"github.com/broadinstitute/sherlock/internal/controllers/v1controllers"
 	"github.com/broadinstitute/sherlock/internal/models/v1models"
+	"github.com/broadinstitute/sherlock/internal/serializers/v1serializers"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -67,35 +69,35 @@ func TestListServices(t *testing.T) {
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
 			// setup mock
-			mockStore := new(MockServiceStore)
+			mockStore := new(v1controllers.MockServiceStore)
 			mockStore.On("ListAll").Return(testCase.expectedServices, testCase.expectedError)
-			controller := ServiceController{store: mockStore}
+			controller := v1controllers.ServiceController{Store: mockStore}
 
 			// setup response recorder and request response := httptest.NewRecorder()
 			response := httptest.NewRecorder()
 			gin.SetMode(gin.TestMode)
 			c, _ := gin.CreateTestContext(response)
 
-			controller.getServices(c)
+			getServices(&controller)(c)
 
 			mockStore.AssertCalled(t, "ListAll")
 			assert.Equal(t, testCase.expectedCode, response.Code)
 
-			var gotResponse Response
+			var gotResponse v1serializers.Response
 			if err := json.NewDecoder(response.Body).Decode(&gotResponse); err != nil {
 				t.Fatalf("error decoding response body: %v\n", err)
 			}
 
 			// serialize the expectations using to get expected json response data
 
-			var expectedResponse Response
+			var expectedResponse v1serializers.Response
 			if testCase.expectedError != nil {
-				expectedResponse = Response{Error: testCase.expectedError.Error()}
+				expectedResponse = v1serializers.Response{Error: testCase.expectedError.Error()}
 			} else {
 				// Serialize the expected service entity to a Service Response type
-				expectationSerializer := ServicesSerializer{testCase.expectedServices}
+				expectationSerializer := v1serializers.ServicesSerializer{testCase.expectedServices}
 				expectedServices := expectationSerializer.Response()
-				expectedResponse = Response{Services: expectedServices}
+				expectedResponse = v1serializers.Response{Services: expectedServices}
 			}
 
 			if diff := cmp.Diff(gotResponse, expectedResponse); diff != "" {
@@ -144,9 +146,9 @@ func TestGetServiceByName(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			// setup mock
 
-			mockStore := new(MockServiceStore)
+			mockStore := new(v1controllers.MockServiceStore)
 			mockStore.On("GetByName", testCase.serviceName).Return(testCase.expectedService, testCase.expectedError)
-			controller := ServiceController{store: mockStore}
+			controller := v1controllers.ServiceController{Store: mockStore}
 
 			response := httptest.NewRecorder()
 
@@ -159,23 +161,23 @@ func TestGetServiceByName(t *testing.T) {
 				},
 			}
 
-			controller.getServiceByName(c)
+			getServiceByName(&controller)(c)
 			mockStore.AssertCalled(t, "GetByName", testCase.serviceName)
 
 			assert.Equal(t, testCase.expectedCode, response.Code)
 
-			var gotResponse Response
+			var gotResponse v1serializers.Response
 			if err := json.NewDecoder(response.Body).Decode(&gotResponse); err != nil {
 				t.Fatalf("error decoding response body: %v\n", err)
 			}
 
-			var expectedResponse Response
+			var expectedResponse v1serializers.Response
 			if testCase.expectedError != nil {
-				expectedResponse = Response{Error: testCase.expectedError.Error()}
+				expectedResponse = v1serializers.Response{Error: testCase.expectedError.Error()}
 			} else {
-				expectationSerializer := ServiceSerializer{testCase.expectedService}
+				expectationSerializer := v1serializers.ServiceSerializer{testCase.expectedService}
 				expectedService := expectationSerializer.Response()
-				expectedResponse = Response{Services: []ServiceResponse{expectedService}}
+				expectedResponse = v1serializers.Response{Services: []v1serializers.ServiceResponse{expectedService}}
 			}
 
 			if diff := cmp.Diff(gotResponse, expectedResponse); diff != "" {
@@ -208,7 +210,7 @@ func TestCreateService(t *testing.T) {
 		},
 		{
 			name:          "missing service name",
-			expectedError: ErrBadCreateRequest,
+			expectedError: ErrBadServiceCreateRequest,
 			expectedCode:  http.StatusBadRequest,
 			createRequest: v1models.CreateServiceRequest{
 				RepoURL: "https://tester.repo",
@@ -217,7 +219,7 @@ func TestCreateService(t *testing.T) {
 		},
 		{
 			name:          "missing repo url",
-			expectedError: ErrBadCreateRequest,
+			expectedError: ErrBadServiceCreateRequest,
 			expectedCode:  http.StatusBadRequest,
 			createRequest: v1models.CreateServiceRequest{
 				Name: "tester",
@@ -226,14 +228,14 @@ func TestCreateService(t *testing.T) {
 		},
 		{
 			name:            "empty create request",
-			expectedError:   ErrBadCreateRequest,
+			expectedError:   ErrBadServiceCreateRequest,
 			expectedCode:    http.StatusBadRequest,
 			createRequest:   v1models.CreateServiceRequest{},
 			expectedService: v1models.Service{},
 		},
 		{
 			name:          "empty service name",
-			expectedError: ErrBadCreateRequest,
+			expectedError: ErrBadServiceCreateRequest,
 			expectedCode:  http.StatusBadRequest,
 			createRequest: v1models.CreateServiceRequest{
 				Name:    "",
@@ -243,7 +245,7 @@ func TestCreateService(t *testing.T) {
 		},
 		{
 			name:          "empty repo url",
-			expectedError: ErrBadCreateRequest,
+			expectedError: ErrBadServiceCreateRequest,
 			expectedCode:  http.StatusBadRequest,
 			createRequest: v1models.CreateServiceRequest{
 				Name:    "tester",
@@ -265,9 +267,9 @@ func TestCreateService(t *testing.T) {
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
-			mockStore := new(MockServiceStore)
+			mockStore := new(v1controllers.MockServiceStore)
 			mockStore.On("CreateNew", testCase.createRequest).Return(testCase.expectedService, testCase.expectedError)
-			controller := ServiceController{store: mockStore}
+			controller := v1controllers.ServiceController{Store: mockStore}
 
 			response := httptest.NewRecorder()
 
@@ -285,8 +287,8 @@ func TestCreateService(t *testing.T) {
 			}
 			c.Request = req
 
-			controller.createService(c)
-			if testCase.expectedError == ErrBadCreateRequest {
+			createService(&controller)(c)
+			if testCase.expectedError == ErrBadServiceCreateRequest {
 				mockStore.AssertNotCalled(t, "CreateNew")
 			} else {
 				mockStore.AssertCalled(t, "CreateNew", testCase.createRequest)
@@ -294,18 +296,18 @@ func TestCreateService(t *testing.T) {
 
 			assert.Equal(t, testCase.expectedCode, response.Code)
 
-			var gotResponse Response
+			var gotResponse v1serializers.Response
 			if err := json.NewDecoder(response.Body).Decode(&gotResponse); err != nil {
 				t.Fatalf("error decoding response body: %v\n", err)
 			}
 
-			var expectedResponse Response
+			var expectedResponse v1serializers.Response
 			if testCase.expectedError != nil {
-				expectedResponse = Response{Error: testCase.expectedError.Error()}
+				expectedResponse = v1serializers.Response{Error: testCase.expectedError.Error()}
 			} else {
-				expectationSerializer := ServiceSerializer{testCase.expectedService}
+				expectationSerializer := v1serializers.ServiceSerializer{testCase.expectedService}
 				expectedService := expectationSerializer.Response()
-				expectedResponse = Response{Services: []ServiceResponse{expectedService}}
+				expectedResponse = v1serializers.Response{Services: []v1serializers.ServiceResponse{expectedService}}
 			}
 
 			if diff := cmp.Diff(gotResponse, expectedResponse); diff != "" {

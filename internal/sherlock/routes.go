@@ -18,7 +18,7 @@ func (a *Application) buildRouter() {
 	for _, group := range []*gin.RouterGroup{&router.RouterGroup, api} {
 		// /services routes
 		servicesGroup := group.Group("/services")
-		a.Services.RegisterHandlers(servicesGroup)
+		v1handlers.RegisterServiceHandlers(servicesGroup, a.Services)
 
 		// /builds routes
 		buildsGroup := group.Group("/builds")

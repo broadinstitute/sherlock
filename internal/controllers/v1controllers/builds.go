@@ -8,7 +8,6 @@ import (
 	"github.com/broadinstitute/sherlock/internal/serializers/v1serializers"
 	"time"
 
-	"github.com/broadinstitute/sherlock/internal/services"
 	"gorm.io/gorm"
 )
 
@@ -18,7 +17,7 @@ type BuildController struct {
 	Store v1models.BuildStore
 	// this is needed so that we can automatically create a new service entity
 	// if a build is reported for a service not tracked by sherlock
-	Services *services.ServiceController
+	Services *ServiceController
 }
 
 // NewBuildController returns an instance of the controller struct for
@@ -28,7 +27,7 @@ func NewBuildController(dbConn *gorm.DB) *BuildController {
 	buildStore := v1models.NewBuildStore(dbConn)
 	return &BuildController{
 		Store:    buildStore,
-		Services: services.NewController(dbConn),
+		Services: NewServiceController(dbConn),
 	}
 }
 

@@ -10,7 +10,6 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/broadinstitute/sherlock/internal/services"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -39,7 +38,7 @@ func Test_createBuildCommand(t *testing.T) {
 							ID:            1,
 							VersionString: "gcr.io./broad/test-service:1.0.0",
 							CommitSha:     "l2kj34",
-							Service: services.ServiceResponse{
+							Service: v1serializers.ServiceResponse{
 								ID:   1,
 								Name: "test-service",
 							},

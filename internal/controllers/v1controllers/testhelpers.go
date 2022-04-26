@@ -16,5 +16,6 @@ type TestApplication struct {
 	Deploys          *DeployController
 	Environments     *EnvironmentController
 	ServiceInstances *ServiceInstanceController
+	Services         *ServiceController
 	DB               *gorm.DB
 }
