@@ -2,13 +2,13 @@ package sherlock
 
 import (
 	"context"
+	"github.com/broadinstitute/sherlock/internal/controllers/v1controllers"
 	"log"
 	"net/http"
 
 	"contrib.go.opencensus.io/exporter/stackdriver"
 	"github.com/broadinstitute/sherlock/internal/allocationpools"
 	"github.com/broadinstitute/sherlock/internal/builds"
-	"github.com/broadinstitute/sherlock/internal/controllers"
 	"github.com/broadinstitute/sherlock/internal/db"
 	"github.com/broadinstitute/sherlock/internal/deploys"
 	"github.com/broadinstitute/sherlock/internal/environments"
@@ -29,7 +29,7 @@ var (
 type Application struct {
 	AllocationPools *allocationpools.AllocationPoolController
 	Services        *services.ServiceController
-	Clusters        *controllers.Cluster
+	Clusters        *v1controllers.Cluster
 	Builds          *builds.BuildController
 	Environments    *environments.EnvironmentController
 	Deploys         *deploys.DeployController
@@ -72,7 +72,7 @@ func (a *Application) registerControllers() {
 	a.AllocationPools = allocationpools.NewController(a.DB)
 	a.Services = services.NewController(a.DB)
 	a.Builds = builds.NewController(a.DB)
-	a.Clusters = controllers.NewClusterController(a.DB)
+	a.Clusters = v1controllers.NewClusterController(a.DB)
 	a.Environments = environments.NewController(a.DB)
 	a.Deploys = deploys.NewDeployController(a.DB)
 }

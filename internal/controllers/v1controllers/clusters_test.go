@@ -1,6 +1,6 @@
 // Tests for the ClusterController
 
-package controllers
+package v1controllers
 
 import (
 	"errors"

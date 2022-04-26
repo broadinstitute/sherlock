@@ -1,6 +1,6 @@
 // ClusterController, public interface for Cluster objects
 
-package controllers
+package v1controllers
 
 import (
 	"errors"

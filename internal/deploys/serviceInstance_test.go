@@ -2,10 +2,10 @@ package deploys
 
 import (
 	"errors"
+	"github.com/broadinstitute/sherlock/internal/controllers/v1controllers"
 	"github.com/broadinstitute/sherlock/internal/models/v1models"
 	"testing"
 
-	"github.com/broadinstitute/sherlock/internal/controllers"
 	"github.com/broadinstitute/sherlock/internal/testutils"
 	"github.com/bxcodec/faker/v3"
 	"github.com/stretchr/testify/suite"
@@ -51,7 +51,7 @@ func (suite *ServiceInstanceIntegrationTestSuite) TearDownTest() {
 
 type testApplication struct {
 	serviceInstances *ServiceInstanceController
-	clusterInstances *controllers.Cluster
+	clusterInstances *v1controllers.Cluster
 	db               *gorm.DB
 }
 
@@ -64,7 +64,7 @@ func initTestApp(t *testing.T) *testApplication {
 	dbConn = dbConn.Begin()
 	return &testApplication{
 		serviceInstances: NewServiceInstanceController(dbConn),
-		clusterInstances: controllers.NewClusterController(dbConn),
+		clusterInstances: v1controllers.NewClusterController(dbConn),
 		db:               dbConn,
 	}
 }

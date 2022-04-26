@@ -7,9 +7,9 @@ package deploys
 
 import (
 	"errors"
+	"github.com/broadinstitute/sherlock/internal/controllers/v1controllers"
 	"github.com/broadinstitute/sherlock/internal/models/v1models"
 
-	"github.com/broadinstitute/sherlock/internal/controllers"
 	"github.com/broadinstitute/sherlock/internal/environments"
 	"github.com/broadinstitute/sherlock/internal/services"
 	"gorm.io/gorm"
@@ -21,7 +21,7 @@ type ServiceInstanceController struct {
 	store        v1models.ServiceInstanceStore
 	services     *services.ServiceController
 	environments *environments.EnvironmentController
-	clusters     *controllers.Cluster
+	clusters     *v1controllers.Cluster
 }
 
 // CreateServiceInstanceRequest is a type containing the name of an environment and service
@@ -40,7 +40,7 @@ func NewServiceInstanceController(dbConn *gorm.DB) *ServiceInstanceController {
 		store:        store,
 		services:     services.NewController(dbConn),
 		environments: environments.NewController(dbConn),
-		clusters:     controllers.NewClusterController(dbConn),
+		clusters:     v1controllers.NewClusterController(dbConn),
 	}
 }
 
