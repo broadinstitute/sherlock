@@ -18,9 +18,9 @@ type AllocationPoolController struct {
 	store v1models.AllocationPoolStore
 }
 
-// NewController accepts a gorm DB connection and returns a new instance
+// NewAllocationPoolController accepts a gorm DB connection and returns a new instance
 // of the allocationPool controller
-func NewController(dbConn *gorm.DB) *AllocationPoolController {
+func NewAllocationPoolController(dbConn *gorm.DB) *AllocationPoolController {
 	allocationPoolStore := v1models.NewAllocationPoolStore(dbConn)
 	return &AllocationPoolController{
 		store: allocationPoolStore,

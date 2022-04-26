@@ -68,7 +68,7 @@ func New() *Application {
 }
 
 func (a *Application) registerControllers() {
-	a.AllocationPools = v1controllers.NewController(a.DB)
+	a.AllocationPools = v1controllers.NewAllocationPoolController(a.DB)
 	a.Services = services.NewController(a.DB)
 	a.Builds = builds.NewController(a.DB)
 	a.Clusters = v1controllers.NewClusterController(a.DB)

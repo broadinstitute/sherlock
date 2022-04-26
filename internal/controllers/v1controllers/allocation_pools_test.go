@@ -71,7 +71,7 @@ func initTestAllocationPoolsApp(t *testing.T) *testApplication {
 	// regardless of pass or fail
 	dbConn = dbConn.Begin()
 	app := &testApplication{
-		AllocationPools: NewController(dbConn),
+		AllocationPools: NewAllocationPoolController(dbConn),
 		Environments:    environments.NewController(dbConn),
 		db:              dbConn,
 	}
