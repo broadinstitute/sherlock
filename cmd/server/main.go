@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/broadinstitute/sherlock/internal/version"
 	"net/http"
 	"os"
 
@@ -11,7 +12,12 @@ import (
 	"github.com/golang-migrate/migrate/v4"
 )
 
+// BuildVersion is intended for use with Go's LDFlags compiler option, to
+// set this value at compile time
+var BuildVersion string = "development"
+
 func main() {
+	version.BuildVersion = BuildVersion
 
 	if err := db.ApplyMigrations("db/migrations", sherlock.Config); err != nil {
 		// don't fail if there are no changes to apply
