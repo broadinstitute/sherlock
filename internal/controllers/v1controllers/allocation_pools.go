@@ -4,7 +4,7 @@
 // a allocationPool instance and methods for interacting with them
 // it is left to concrete implementations in package db or others to
 // implement these interfaces
-package allocationpools
+package v1controllers
 
 import (
 	"errors"

@@ -2,9 +2,16 @@
 
 package v1controllers
 
-import "gorm.io/gorm"
+import (
+	"github.com/broadinstitute/sherlock/internal/environments"
+	"gorm.io/gorm"
+)
 
-type TestApplication struct {
-	Clusters *ClusterController
-	db       *gorm.DB
+// testApplication is a simplified sherlock.Application that avoids circular dependencies
+// or unneeded fields for testing
+type testApplication struct {
+	AllocationPools *AllocationPoolController
+	Clusters        *ClusterController
+	Environments    *environments.EnvironmentController
+	db              *gorm.DB
 }

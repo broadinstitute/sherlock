@@ -17,7 +17,7 @@ import (
 // returns the current testing context
 type ClusterTestSuite struct {
 	suite.Suite
-	testApp               *TestApplication
+	testApp               *testApplication
 	goodClusterRequest    v1models.CreateClusterRequest
 	anotherClusterRequest v1models.CreateClusterRequest
 	badClusterRequest     v1models.CreateClusterRequest
@@ -57,14 +57,14 @@ func (suite *ClusterTestSuite) TearDownTest() {
 //
 
 // connect to DB and create the Application
-func initTestClusterApp(t *testing.T) *TestApplication {
+func initTestClusterApp(t *testing.T) *testApplication {
 	dbConn := testutils.ConnectAndMigrate(t)
 
 	// ensures each test will run in it's own isolated transaction
 	// The transaction will be rolled back after each test
 	// regardless of pass or fail
 	dbConn = dbConn.Begin()
-	app := &TestApplication{
+	app := &testApplication{
 		Clusters: NewClusterController(dbConn),
 		db:       dbConn,
 	}

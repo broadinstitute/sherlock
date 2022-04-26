@@ -1,6 +1,6 @@
 // Tests for the AllocationPoolController
 
-package allocationpools
+package v1controllers
 
 import (
 	"errors"
@@ -12,7 +12,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
-	"gorm.io/gorm"
 )
 
 // Define the suite, and absorb the built-in basic suite
@@ -20,7 +19,7 @@ import (
 // returns the current testing context
 type AllocationPoolTestSuite struct {
 	suite.Suite
-	testApp                      *TestApplication
+	testApp                      *testApplication
 	goodAllocationPoolRequest    v1models.CreateAllocationPoolRequest
 	goodEnvironmentRequest       v1models.CreateEnvironmentRequest
 	anotherAllocationPoolRequest v1models.CreateAllocationPoolRequest
@@ -39,7 +38,7 @@ func TestIntegrationAllocationPoolsSuite(t *testing.T) {
 
 // between-test initialization
 func (suite *AllocationPoolTestSuite) SetupTest() {
-	suite.testApp = initTestApp(suite.T())
+	suite.testApp = initTestAllocationPoolsApp(suite.T())
 	suite.goodAllocationPoolRequest = v1models.CreateAllocationPoolRequest{
 		Name: "swatomation 1.0",
 	}
@@ -63,22 +62,15 @@ func (suite *AllocationPoolTestSuite) TearDownTest() {
 // Test AllocationPool Setup
 //
 
-// only load the Controller we care about
-type TestApplication struct {
-	AllocationPools *AllocationPoolController
-	Environments    *environments.EnvironmentController
-	db              *gorm.DB
-}
-
 // connect to DB and create the Application
-func initTestApp(t *testing.T) *TestApplication {
+func initTestAllocationPoolsApp(t *testing.T) *testApplication {
 	dbConn := testutils.ConnectAndMigrate(t)
 
 	// ensures each test will run in it's own isolated transaction
 	// The transaction will be rolled back after each test
 	// regardless of pass or fail
 	dbConn = dbConn.Begin()
-	app := &TestApplication{
+	app := &testApplication{
 		AllocationPools: NewController(dbConn),
 		Environments:    environments.NewController(dbConn),
 		db:              dbConn,

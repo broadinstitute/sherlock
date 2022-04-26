@@ -7,7 +7,6 @@ import (
 	"net/http"
 
 	"contrib.go.opencensus.io/exporter/stackdriver"
-	"github.com/broadinstitute/sherlock/internal/allocationpools"
 	"github.com/broadinstitute/sherlock/internal/builds"
 	"github.com/broadinstitute/sherlock/internal/db"
 	"github.com/broadinstitute/sherlock/internal/deploys"
@@ -27,7 +26,7 @@ var (
 // repository is a wrapper type so we can define our own methods on the type holding the
 // DB connection pool
 type Application struct {
-	AllocationPools *allocationpools.AllocationPoolController
+	AllocationPools *v1controllers.AllocationPoolController
 	Services        *services.ServiceController
 	Clusters        *v1controllers.ClusterController
 	Builds          *builds.BuildController
@@ -69,7 +68,7 @@ func New() *Application {
 }
 
 func (a *Application) registerControllers() {
-	a.AllocationPools = allocationpools.NewController(a.DB)
+	a.AllocationPools = v1controllers.NewController(a.DB)
 	a.Services = services.NewController(a.DB)
 	a.Builds = builds.NewController(a.DB)
 	a.Clusters = v1controllers.NewClusterController(a.DB)
