@@ -42,6 +42,5 @@ func (a *Application) buildRouter() {
 		metricsGroup := group.Group("/metrics")
 		metrics.RegisterPrometheusMetricsHandler(metricsGroup)
 	}
-
 	a.Handler = router
 }
