@@ -1,5 +1,3 @@
-// Package Builds contains the definitions for a control plan for sherlock's
-// build management systems. It also defines api routes for that control plane
 package v1controllers
 
 // Builds.go contains the "business" logic for operations relating to build entities.

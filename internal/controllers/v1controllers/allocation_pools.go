@@ -1,5 +1,3 @@
-// AllocationPoolController, public interface for AllocationPool objects
-
 package v1controllers
 
 import (

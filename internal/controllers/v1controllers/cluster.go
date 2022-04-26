@@ -1,5 +1,3 @@
-// ClusterController, public interface for Cluster objects
-
 package v1controllers
 
 import (
