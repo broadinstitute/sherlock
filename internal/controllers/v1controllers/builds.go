@@ -1,7 +1,7 @@
 package v1controllers
 
 // Builds.go contains the "business" logic for operations relating to build entities.
-// Thhis could eventually be moved to it's own sub-folder if it becomes unwieldy
+// This could eventually be moved to it's own sub-folder if it becomes unwieldy
 
 import (
 	"github.com/broadinstitute/sherlock/internal/models/v1models"

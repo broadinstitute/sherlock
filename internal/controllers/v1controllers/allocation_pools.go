@@ -1,5 +1,8 @@
 package v1controllers
 
+// allocation_pools.go defines pools of environments, where environments can be
+// checked out as being in-use or released back into the pool
+
 import (
 	"errors"
 	"github.com/broadinstitute/sherlock/internal/models/v1models"
