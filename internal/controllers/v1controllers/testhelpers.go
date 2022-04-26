@@ -10,8 +10,8 @@ import (
 // testApplication is a simplified sherlock.Application that avoids circular dependencies
 // or unneeded fields for testing
 type testApplication struct {
-	AllocationPools *AllocationPoolController
-	Clusters        *ClusterController
-	Environments    *environments.EnvironmentController
+	allocationPools *AllocationPoolController
+	clusters        *ClusterController
+	environments    *environments.EnvironmentController
 	db              *gorm.DB
 }

@@ -65,7 +65,7 @@ func initTestClusterApp(t *testing.T) *testApplication {
 	// regardless of pass or fail
 	dbConn = dbConn.Begin()
 	app := &testApplication{
-		Clusters: NewClusterController(dbConn),
+		clusters: NewClusterController(dbConn),
 		db:       dbConn,
 	}
 
@@ -80,7 +80,7 @@ func (suite *ClusterTestSuite) TestIntegrationCreateClusters() {
 	suite.Run("creates a valid cluster", func() {
 		testutils.Cleanup(suite.T(), suite.testApp.db)
 
-		newCluster, err := suite.testApp.Clusters.CreateNew(suite.goodClusterRequest)
+		newCluster, err := suite.testApp.clusters.CreateNew(suite.goodClusterRequest)
 		assert.NoError(suite.T(), err)
 
 		assert.Equal(suite.T(), suite.goodClusterRequest.Name, newCluster.Name)
@@ -94,7 +94,7 @@ func (suite *ClusterTestSuite) TestIntegrationCreateClusters() {
 		namelessClusterRequest := suite.goodClusterRequest
 		namelessClusterRequest.Name = ""
 
-		newCluster, err := suite.testApp.Clusters.CreateNew(namelessClusterRequest)
+		newCluster, err := suite.testApp.clusters.CreateNew(namelessClusterRequest)
 
 		assert.Equal(suite.T(), "", newCluster.Name)
 		assert.Equal(suite.T(), expectedError, err)
@@ -105,9 +105,9 @@ func (suite *ClusterTestSuite) TestIntegrationCreateClusters() {
 
 		expectedError := errors.New("error saving to database: ERROR: duplicate key value violates unique constraint \"clusters_name_key\" (SQLSTATE 23505)")
 
-		_, err := suite.testApp.Clusters.CreateNew(suite.goodClusterRequest)
+		_, err := suite.testApp.clusters.CreateNew(suite.goodClusterRequest)
 		assert.NoError(suite.T(), err)
-		newCluster, err := suite.testApp.Clusters.CreateNew(suite.goodClusterRequest)
+		newCluster, err := suite.testApp.clusters.CreateNew(suite.goodClusterRequest)
 
 		assert.Equal(suite.T(), "", newCluster.Name)
 		assert.Equal(suite.T(), expectedError, err)
@@ -118,10 +118,10 @@ func (suite *ClusterTestSuite) TestIntegrationClusterGetByName() {
 	suite.Run("GetByName gets an cluster by name", func() {
 		testutils.Cleanup(suite.T(), suite.testApp.db)
 
-		_, err := suite.testApp.Clusters.CreateNew(suite.goodClusterRequest)
+		_, err := suite.testApp.clusters.CreateNew(suite.goodClusterRequest)
 		assert.NoError(suite.T(), err)
 
-		foundCluster, err := suite.testApp.Clusters.GetByName(suite.goodClusterRequest.Name)
+		foundCluster, err := suite.testApp.clusters.GetByName(suite.goodClusterRequest.Name)
 
 		assert.Equal(suite.T(), suite.goodClusterRequest.Name, foundCluster.Name)
 
@@ -131,10 +131,10 @@ func (suite *ClusterTestSuite) TestIntegrationClusterGetByName() {
 	suite.Run("GetByName returns error if not found", func() {
 		testutils.Cleanup(suite.T(), suite.testApp.db)
 
-		_, err := suite.testApp.Clusters.CreateNew(suite.goodClusterRequest)
+		_, err := suite.testApp.clusters.CreateNew(suite.goodClusterRequest)
 		assert.NoError(suite.T(), err)
 
-		foundCluster, err := suite.testApp.Clusters.GetByName("this-doesnt-exist")
+		foundCluster, err := suite.testApp.clusters.GetByName("this-doesnt-exist")
 
 		assert.Equal(suite.T(), foundCluster.Name, "")
 		assert.Equal(suite.T(), errors.New("record not found"), err)
@@ -145,10 +145,10 @@ func (suite *ClusterTestSuite) TestIntegrationClusterGetByID() {
 	suite.Run("GetByID gets an allocationPool by ID", func() {
 		testutils.Cleanup(suite.T(), suite.testApp.db)
 
-		newCluster, err := suite.testApp.Clusters.CreateNew(suite.goodClusterRequest)
+		newCluster, err := suite.testApp.clusters.CreateNew(suite.goodClusterRequest)
 		assert.NoError(suite.T(), err)
 
-		foundCluster, err := suite.testApp.Clusters.GetByID(newCluster.ID)
+		foundCluster, err := suite.testApp.clusters.GetByID(newCluster.ID)
 
 		assert.Equal(suite.T(), foundCluster.ID, newCluster.ID)
 
@@ -158,10 +158,10 @@ func (suite *ClusterTestSuite) TestIntegrationClusterGetByID() {
 	suite.Run("GetByName returns error if not found", func() {
 		testutils.Cleanup(suite.T(), suite.testApp.db)
 
-		_, err := suite.testApp.Clusters.CreateNew(suite.goodClusterRequest)
+		_, err := suite.testApp.clusters.CreateNew(suite.goodClusterRequest)
 		assert.NoError(suite.T(), err)
 
-		foundCluster, err := suite.testApp.Clusters.GetByID(suite.notFoundID)
+		foundCluster, err := suite.testApp.clusters.GetByID(suite.notFoundID)
 
 		assert.Equal(suite.T(), foundCluster.ID, 0)
 		assert.Equal(suite.T(), errors.New("record not found"), err)
@@ -172,7 +172,7 @@ func (suite *ClusterTestSuite) TestIntegrationClusterListAll() {
 	suite.Run("ListAll returns nothing", func() {
 		testutils.Cleanup(suite.T(), suite.testApp.db)
 
-		foundClusters, err := suite.testApp.Clusters.ListAll()
+		foundClusters, err := suite.testApp.clusters.ListAll()
 
 		assert.Equal(suite.T(), len(foundClusters), 0)
 		assert.NoError(suite.T(), err)
@@ -181,10 +181,10 @@ func (suite *ClusterTestSuite) TestIntegrationClusterListAll() {
 	suite.Run("ListAll returns one Cluster", func() {
 		testutils.Cleanup(suite.T(), suite.testApp.db)
 
-		_, err := suite.testApp.Clusters.CreateNew(suite.goodClusterRequest)
+		_, err := suite.testApp.clusters.CreateNew(suite.goodClusterRequest)
 		assert.NoError(suite.T(), err)
 
-		foundClusters, err := suite.testApp.Clusters.ListAll()
+		foundClusters, err := suite.testApp.clusters.ListAll()
 
 		assert.Equal(suite.T(), len(foundClusters), 1)
 		assert.Equal(suite.T(), foundClusters[0].Name, suite.goodClusterRequest.Name)
@@ -194,12 +194,12 @@ func (suite *ClusterTestSuite) TestIntegrationClusterListAll() {
 	suite.Run("ListAll returns many Clusters", func() {
 		testutils.Cleanup(suite.T(), suite.testApp.db)
 
-		_, err := suite.testApp.Clusters.CreateNew(suite.goodClusterRequest)
+		_, err := suite.testApp.clusters.CreateNew(suite.goodClusterRequest)
 		assert.NoError(suite.T(), err)
-		_, err = suite.testApp.Clusters.CreateNew(suite.anotherClusterRequest)
+		_, err = suite.testApp.clusters.CreateNew(suite.anotherClusterRequest)
 		assert.NoError(suite.T(), err)
 
-		foundClusters, err := suite.testApp.Clusters.ListAll()
+		foundClusters, err := suite.testApp.clusters.ListAll()
 
 		assert.Equal(suite.T(), len(foundClusters), 2)
 		assert.NoError(suite.T(), err)
@@ -210,9 +210,9 @@ func (suite *ClusterTestSuite) TestIntegrationClusterDoesClusterExist() {
 	suite.Run("ClusterDoesExist returns true when exists", func() {
 		testutils.Cleanup(suite.T(), suite.testApp.db)
 
-		newCluster, _ := suite.testApp.Clusters.CreateNew(suite.goodClusterRequest)
+		newCluster, _ := suite.testApp.clusters.CreateNew(suite.goodClusterRequest)
 
-		clusterID, doesClusterExist := suite.testApp.Clusters.DoesClusterExist(suite.goodClusterRequest.Name)
+		clusterID, doesClusterExist := suite.testApp.clusters.DoesClusterExist(suite.goodClusterRequest.Name)
 
 		assert.Equal(suite.T(), clusterID, newCluster.ID)
 		assert.Equal(suite.T(), doesClusterExist, true)
@@ -221,10 +221,10 @@ func (suite *ClusterTestSuite) TestIntegrationClusterDoesClusterExist() {
 	suite.Run("ClusterDoesExist returns false when not exists", func() {
 		testutils.Cleanup(suite.T(), suite.testApp.db)
 
-		_, err := suite.testApp.Clusters.CreateNew(suite.goodClusterRequest)
+		_, err := suite.testApp.clusters.CreateNew(suite.goodClusterRequest)
 		assert.NoError(suite.T(), err)
 
-		clusterID, doesClusterExist := suite.testApp.Clusters.DoesClusterExist("no-cluster-here")
+		clusterID, doesClusterExist := suite.testApp.clusters.DoesClusterExist("no-cluster-here")
 
 		assert.Equal(suite.T(), clusterID, 0)
 		assert.Equal(suite.T(), doesClusterExist, false)
