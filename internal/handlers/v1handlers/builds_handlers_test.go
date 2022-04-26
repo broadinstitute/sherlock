@@ -320,7 +320,7 @@ func TestCreateBuild(t *testing.T) {
 			if testCase.expectedError != nil {
 				expectedResponse = v1serializers.BuildsResponse{Error: testCase.expectedError.Error()}
 			} else {
-				expectationSerializer := v1serializers.BuildSerializer{expectedBuild}
+				expectationSerializer := v1serializers.BuildSerializer{Build: expectedBuild}
 				expectedResponse = v1serializers.BuildsResponse{Builds: []v1serializers.BuildResponse{expectationSerializer.Response()}}
 			}
 
@@ -406,7 +406,7 @@ func TestGetBuildByID(t *testing.T) {
 			if testCase.expectedError != nil {
 				expectedResponse = v1serializers.BuildsResponse{Error: testCase.expectedError.Error()}
 			} else {
-				expectationSerializer := v1serializers.BuildSerializer{testCase.expectedBuild}
+				expectationSerializer := v1serializers.BuildSerializer{Build: testCase.expectedBuild}
 				expectedResponse = v1serializers.BuildsResponse{Builds: []v1serializers.BuildResponse{expectationSerializer.Response()}}
 			}
 

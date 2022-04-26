@@ -279,7 +279,7 @@ func responseMeetsExpectations(t *testing.T, expectedEnvironments []v1models.Env
 	if expectedError != nil {
 		expectedResponse = v1controllers.Response{Error: expectedError.Error()}
 	} else {
-		expectationSerializer := v1serializers.EnvironmentsSerializer{expectedEnvironments}
+		expectationSerializer := v1serializers.EnvironmentsSerializer{Environments: expectedEnvironments}
 		expectedResponse = v1controllers.Response{Environments: expectationSerializer.Response()}
 	}
 

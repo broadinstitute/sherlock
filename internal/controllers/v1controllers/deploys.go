@@ -100,6 +100,6 @@ func (dc *DeployController) Serialize(deploy ...v1models.Deploy) []v1serializers
 	var deployList []v1models.Deploy
 	deployList = append(deployList, deploy...)
 
-	serializer := v1serializers.DeploysSerializer{deployList}
+	serializer := v1serializers.DeploysSerializer{Deploys: deployList}
 	return serializer.Response()
 }

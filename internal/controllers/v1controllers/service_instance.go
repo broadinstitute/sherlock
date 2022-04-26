@@ -138,6 +138,6 @@ func (sic *ServiceInstanceController) Serialize(serviceInstances ...v1models.Ser
 	var serviceInstancesList []v1models.ServiceInstance
 	serviceInstancesList = append(serviceInstancesList, serviceInstances...)
 
-	serializer := v1serializers.ServiceInstancesSerializer{serviceInstancesList}
+	serializer := v1serializers.ServiceInstancesSerializer{ServiceInstances: serviceInstancesList}
 	return serializer.Response()
 }

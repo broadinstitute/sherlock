@@ -95,7 +95,7 @@ func TestListServices(t *testing.T) {
 				expectedResponse = v1serializers.Response{Error: testCase.expectedError.Error()}
 			} else {
 				// Serialize the expected service entity to a Service Response type
-				expectationSerializer := v1serializers.ServicesSerializer{testCase.expectedServices}
+				expectationSerializer := v1serializers.ServicesSerializer{Services: testCase.expectedServices}
 				expectedServices := expectationSerializer.Response()
 				expectedResponse = v1serializers.Response{Services: expectedServices}
 			}
@@ -175,7 +175,7 @@ func TestGetServiceByName(t *testing.T) {
 			if testCase.expectedError != nil {
 				expectedResponse = v1serializers.Response{Error: testCase.expectedError.Error()}
 			} else {
-				expectationSerializer := v1serializers.ServiceSerializer{testCase.expectedService}
+				expectationSerializer := v1serializers.ServiceSerializer{Service: testCase.expectedService}
 				expectedService := expectationSerializer.Response()
 				expectedResponse = v1serializers.Response{Services: []v1serializers.ServiceResponse{expectedService}}
 			}
@@ -305,7 +305,7 @@ func TestCreateService(t *testing.T) {
 			if testCase.expectedError != nil {
 				expectedResponse = v1serializers.Response{Error: testCase.expectedError.Error()}
 			} else {
-				expectationSerializer := v1serializers.ServiceSerializer{testCase.expectedService}
+				expectationSerializer := v1serializers.ServiceSerializer{Service: testCase.expectedService}
 				expectedService := expectationSerializer.Response()
 				expectedResponse = v1serializers.Response{Services: []v1serializers.ServiceResponse{expectedService}}
 			}
