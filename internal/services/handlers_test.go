@@ -4,11 +4,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"github.com/broadinstitute/sherlock/internal/models/v1models"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
-	"github.com/broadinstitute/sherlock/internal/models"
 	"github.com/gin-gonic/gin"
 	"github.com/google/go-cmp/cmp"
 	"github.com/stretchr/testify/assert"
@@ -17,19 +17,19 @@ import (
 func TestListServices(t *testing.T) {
 	testCases := []struct {
 		name             string
-		expectedServices []models.Service
+		expectedServices []v1models.Service
 		expectedError    error
 		expectedCode     int
 	}{
 		{
 			name:             "no existing services",
-			expectedServices: []models.Service{},
+			expectedServices: []v1models.Service{},
 			expectedCode:     http.StatusOK,
 			expectedError:    nil,
 		},
 		{
 			name: "one existing service",
-			expectedServices: []models.Service{
+			expectedServices: []v1models.Service{
 				{
 					Name:    "test",
 					RepoURL: "http://test.repo",
@@ -40,7 +40,7 @@ func TestListServices(t *testing.T) {
 		},
 		{
 			name: "multiple existing services",
-			expectedServices: []models.Service{
+			expectedServices: []v1models.Service{
 				{
 					Name:    "cromwell",
 					RepoURL: "https://github.com/broadinstitute/cromwell",
@@ -59,7 +59,7 @@ func TestListServices(t *testing.T) {
 		},
 		{
 			name:             "internal error",
-			expectedServices: []models.Service{},
+			expectedServices: []v1models.Service{},
 			expectedCode:     http.StatusInternalServerError,
 			expectedError:    errors.New("some internal error"),
 		},
@@ -108,14 +108,14 @@ func TestListServices(t *testing.T) {
 func TestGetServiceByName(t *testing.T) {
 	testCases := []struct {
 		name            string
-		expectedService models.Service
+		expectedService v1models.Service
 		expectedError   error
 		expectedCode    int
 		serviceName     string
 	}{
 		{
 			name: "successful get by name",
-			expectedService: models.Service{
+			expectedService: v1models.Service{
 				Name:    "tester",
 				RepoURL: "https://test.repo",
 				ID:      1,
@@ -126,14 +126,14 @@ func TestGetServiceByName(t *testing.T) {
 		},
 		{
 			name:            "name not found",
-			expectedService: models.Service{},
+			expectedService: v1models.Service{},
 			expectedCode:    http.StatusNotFound,
-			expectedError:   models.ErrServiceNotFound,
+			expectedError:   v1models.ErrServiceNotFound,
 			serviceName:     "blah",
 		},
 		{
 			name:            "internal error",
-			expectedService: models.Service{},
+			expectedService: v1models.Service{},
 			expectedCode:    http.StatusInternalServerError,
 			expectedError:   errors.New("some internal error"),
 			serviceName:     "test-service",
@@ -190,18 +190,18 @@ func TestCreateService(t *testing.T) {
 		name            string
 		expectedError   error
 		expectedCode    int
-		expectedService models.Service
-		createRequest   models.CreateServiceRequest
+		expectedService v1models.Service
+		createRequest   v1models.CreateServiceRequest
 	}{
 		{
 			name:          "successful create",
 			expectedError: nil,
 			expectedCode:  http.StatusCreated,
-			createRequest: models.CreateServiceRequest{
+			createRequest: v1models.CreateServiceRequest{
 				Name:    "tester",
 				RepoURL: "https://test.repo",
 			},
-			expectedService: models.Service{
+			expectedService: v1models.Service{
 				Name:    "tester",
 				RepoURL: "https://test.repo",
 			},
@@ -210,56 +210,56 @@ func TestCreateService(t *testing.T) {
 			name:          "missing service name",
 			expectedError: ErrBadCreateRequest,
 			expectedCode:  http.StatusBadRequest,
-			createRequest: models.CreateServiceRequest{
+			createRequest: v1models.CreateServiceRequest{
 				RepoURL: "https://tester.repo",
 			},
-			expectedService: models.Service{},
+			expectedService: v1models.Service{},
 		},
 		{
 			name:          "missing repo url",
 			expectedError: ErrBadCreateRequest,
 			expectedCode:  http.StatusBadRequest,
-			createRequest: models.CreateServiceRequest{
+			createRequest: v1models.CreateServiceRequest{
 				Name: "tester",
 			},
-			expectedService: models.Service{},
+			expectedService: v1models.Service{},
 		},
 		{
 			name:            "empty create request",
 			expectedError:   ErrBadCreateRequest,
 			expectedCode:    http.StatusBadRequest,
-			createRequest:   models.CreateServiceRequest{},
-			expectedService: models.Service{},
+			createRequest:   v1models.CreateServiceRequest{},
+			expectedService: v1models.Service{},
 		},
 		{
 			name:          "empty service name",
 			expectedError: ErrBadCreateRequest,
 			expectedCode:  http.StatusBadRequest,
-			createRequest: models.CreateServiceRequest{
+			createRequest: v1models.CreateServiceRequest{
 				Name:    "",
 				RepoURL: "https://tester.repo",
 			},
-			expectedService: models.Service{},
+			expectedService: v1models.Service{},
 		},
 		{
 			name:          "empty repo url",
 			expectedError: ErrBadCreateRequest,
 			expectedCode:  http.StatusBadRequest,
-			createRequest: models.CreateServiceRequest{
+			createRequest: v1models.CreateServiceRequest{
 				Name:    "tester",
 				RepoURL: "",
 			},
-			expectedService: models.Service{},
+			expectedService: v1models.Service{},
 		},
 		{
 			name:          "internal error",
 			expectedError: errors.New("some internal error"),
 			expectedCode:  http.StatusInternalServerError,
-			createRequest: models.CreateServiceRequest{
+			createRequest: v1models.CreateServiceRequest{
 				Name:    "tester",
 				RepoURL: "https://tester.repo",
 			},
-			expectedService: models.Service{},
+			expectedService: v1models.Service{},
 		},
 	}
 

@@ -2,10 +2,10 @@ package deploys
 
 import (
 	"errors"
+	"github.com/broadinstitute/sherlock/internal/models/v1models"
 	"testing"
 
 	"github.com/broadinstitute/sherlock/internal/controllers"
-	"github.com/broadinstitute/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/internal/testutils"
 	"github.com/bxcodec/faker/v3"
 	"github.com/stretchr/testify/suite"
@@ -15,9 +15,9 @@ import (
 type ServiceInstanceIntegrationTestSuite struct {
 	suite.Suite
 	app                *testApplication
-	goodEnvironmentReq models.CreateEnvironmentRequest
-	goodServiceReq     models.CreateServiceRequest
-	goodClusterReq     models.CreateClusterRequest
+	goodEnvironmentReq v1models.CreateEnvironmentRequest
+	goodServiceReq     v1models.CreateServiceRequest
+	goodClusterReq     v1models.CreateClusterRequest
 }
 
 func TestServiceInstanceIntegrationSuite(t *testing.T) {
@@ -29,16 +29,16 @@ func TestServiceInstanceIntegrationSuite(t *testing.T) {
 
 func (suite *ServiceInstanceIntegrationTestSuite) SetupTest() {
 	suite.app = initTestApp(suite.T())
-	suite.goodEnvironmentReq = models.CreateEnvironmentRequest{
+	suite.goodEnvironmentReq = v1models.CreateEnvironmentRequest{
 		Name: faker.UUIDHyphenated(),
 	}
 
-	suite.goodServiceReq = models.CreateServiceRequest{
+	suite.goodServiceReq = v1models.CreateServiceRequest{
 		Name:    faker.UUIDHyphenated(),
 		RepoURL: faker.URL(),
 	}
 
-	suite.goodClusterReq = models.CreateClusterRequest{
+	suite.goodClusterReq = v1models.CreateClusterRequest{
 		Name: faker.Word(),
 	}
 }
@@ -71,7 +71,7 @@ func initTestApp(t *testing.T) *testApplication {
 
 func (suite *ServiceInstanceIntegrationTestSuite) TestListServiceInstancesError() {
 	targetError := errors.New("some internal error")
-	controller := setupMockController(suite.T(), []models.ServiceInstance{}, targetError, "ListAll")
+	controller := setupMockController(suite.T(), []v1models.ServiceInstance{}, targetError, "ListAll")
 	_, err := controller.ListAll()
 	suite.Assert().ErrorIs(err, targetError, "expected an internal error from DB layer, received some other error")
 }
@@ -171,12 +171,12 @@ func (suite *ServiceInstanceIntegrationTestSuite) TestGetByEnvironmentAndService
 	suite.Run("it returns error not found for non-existent record", func() {
 
 		_, err := suite.app.serviceInstances.GetByEnvironmentAndServiceName("non-existent-env", "non-existent-service")
-		suite.Assert().ErrorIs(err, models.ErrServiceInstanceNotFound)
+		suite.Assert().ErrorIs(err, v1models.ErrServiceInstanceNotFound)
 	})
 
 	suite.Run("it returns error not found for non-existent record", func() {
 		_, err := suite.app.serviceInstances.GetByEnvironmentAndServiceName("", "")
-		suite.Assert().ErrorIs(err, models.ErrServiceInstanceNotFound)
+		suite.Assert().ErrorIs(err, v1models.ErrServiceInstanceNotFound)
 	})
 }
 
@@ -186,7 +186,7 @@ func (suite *ServiceInstanceIntegrationTestSuite) TestGetByEnvironmentAndService
 
 func setupMockController(
 	t *testing.T,
-	expectedServiceInstances []models.ServiceInstance,
+	expectedServiceInstances []v1models.ServiceInstance,
 	expectedError error, methodName string) *ServiceInstanceController {
 
 	t.Helper()
@@ -197,10 +197,10 @@ func setupMockController(
 
 // helper method on suite to pre-provision all the required objects for ServiceInstance to exist,
 // takes a bool for each of Cluster/Service/Environment on whether to create the object or not.
-func (suite *ServiceInstanceIntegrationTestSuite) preProvisionDependentObjects(makeCluster, makeService, makeEnv bool) (models.Cluster, models.Service, models.Environment) {
-	var preExistingEnv models.Environment
-	var preExistingService models.Service
-	var preExistingCluster models.Cluster
+func (suite *ServiceInstanceIntegrationTestSuite) preProvisionDependentObjects(makeCluster, makeService, makeEnv bool) (v1models.Cluster, v1models.Service, v1models.Environment) {
+	var preExistingEnv v1models.Environment
+	var preExistingService v1models.Service
+	var preExistingCluster v1models.Cluster
 	var err error
 
 	if makeEnv {

@@ -1,11 +1,11 @@
 package deploys
 
 import (
+	"github.com/broadinstitute/sherlock/internal/models/v1models"
 	"time"
 
 	"github.com/broadinstitute/sherlock/internal/builds"
 	"github.com/broadinstitute/sherlock/internal/environments"
-	"github.com/broadinstitute/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/internal/services"
 )
 
@@ -27,7 +27,7 @@ type ServiceInstanceResponse struct {
 // ServiceInstanceSerializer is an intermediate type used to
 // convert a Service instance into its response type
 type ServiceInstanceSerializer struct {
-	serviceInstance models.ServiceInstance
+	serviceInstance v1models.ServiceInstance
 }
 
 // Response consumes a ServiceInstanceSerializer and generated a response type
@@ -46,7 +46,7 @@ func (sis *ServiceInstanceSerializer) Response() ServiceInstanceResponse {
 // ServiceInstanceSerializer that supports serialization of
 // mulitple ServiceInstance entities
 type ServiceInstancesSerializer struct {
-	ServiceInstances []models.ServiceInstance
+	ServiceInstances []v1models.ServiceInstance
 }
 
 // Response Will generate a slice of Service Instance Response from
@@ -70,7 +70,7 @@ type DeployResponse struct {
 }
 
 type deploySerializer struct {
-	deploy models.Deploy
+	deploy v1models.Deploy
 }
 
 func (ds *deploySerializer) Response() DeployResponse {
@@ -84,13 +84,13 @@ func (ds *deploySerializer) Response() DeployResponse {
 	}
 }
 
-// DeploysSerializer is used to transform a slice of Deploy models into
+// DeploysSerializer is used to transform a slice of Deploy v1models into
 // into deploy responses and can supply additional data to attach to the response
 type DeploysSerializer struct {
-	deploys []models.Deploy
+	deploys []v1models.Deploy
 }
 
-// Response is used to seralize a slice of deploy database models
+// Response is used to seralize a slice of deploy database v1models
 // into a slice of deploy api responses
 func (ds *DeploysSerializer) Response() []DeployResponse {
 	deploys := []DeployResponse{}
