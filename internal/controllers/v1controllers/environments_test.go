@@ -1,17 +1,17 @@
 // Tests for the EnvironmentController
 
-package environments
+package v1controllers
 
 import (
 	"errors"
 	"github.com/broadinstitute/sherlock/internal/models/v1models"
+	"github.com/broadinstitute/sherlock/internal/serializers/v1serializers"
 	"testing"
 
 	"github.com/broadinstitute/sherlock/internal/testutils"
 	"github.com/bxcodec/faker/v3"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
-	"gorm.io/gorm"
 )
 
 // Define the suite, and absorb the built-in basic suite
@@ -51,18 +51,12 @@ func (suite *EnvironmentTestSuite) SetupTest() {
 func (suite *EnvironmentTestSuite) TearDownTest() {
 	// each test runs in its own isolated transaction
 	// this ensures we cleanup after each test as it completes
-	suite.testApp.db.Rollback()
+	suite.testApp.DB.Rollback()
 }
 
 //
 // Test Environment Setup
 //
-
-// only load the Controller we care about
-type TestApplication struct {
-	Environments *EnvironmentController
-	db           *gorm.DB
-}
 
 // connect to DB and create the Application
 func initTestApp(t *testing.T) *TestApplication {
@@ -72,8 +66,8 @@ func initTestApp(t *testing.T) *TestApplication {
 	// regardless of pass or fail
 	dbConn = dbConn.Begin()
 	return &TestApplication{
-		Environments: NewController(dbConn),
-		db:           dbConn,
+		Environments: NewEnvironmentController(dbConn),
+		DB:           dbConn,
 	}
 }
 
@@ -160,7 +154,7 @@ func (suite *EnvironmentTestSuite) TestIntegrationCreateEnvironments() {
 			assert.Equal(suite.T(), testCase.expectedEnvironment.Name, newEnvironment.Name)
 			assert.Equal(suite.T(), testCase.expectedError, err)
 		})
-		tempApp.db.Rollback()
+		tempApp.DB.Rollback()
 	}
 }
 
@@ -194,7 +188,7 @@ func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentGetByName() {
 
 func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentGetByID() {
 	suite.Run("GetByID gets an environment by name", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.db)
+		testutils.Cleanup(suite.T(), suite.testApp.DB)
 
 		newEnvironment, err := suite.testApp.Environments.CreateNew(suite.goodEnvironmentRequest)
 		assert.NoError(suite.T(), err)
@@ -207,7 +201,7 @@ func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentGetByID() {
 	})
 
 	suite.Run("GetByID returns error if not found", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.db)
+		testutils.Cleanup(suite.T(), suite.testApp.DB)
 
 		_, err := suite.testApp.Environments.CreateNew(suite.goodEnvironmentRequest)
 		assert.NoError(suite.T(), err)
@@ -221,7 +215,7 @@ func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentGetByID() {
 
 func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentListAll() {
 	suite.Run("ListAll returns nothing", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.db)
+		testutils.Cleanup(suite.T(), suite.testApp.DB)
 
 		foundEnvironments, err := suite.testApp.Environments.ListAll()
 
@@ -230,7 +224,7 @@ func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentListAll() {
 	})
 
 	suite.Run("ListAll returns one Environment", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.db)
+		testutils.Cleanup(suite.T(), suite.testApp.DB)
 
 		_, err := suite.testApp.Environments.CreateNew(suite.goodEnvironmentRequest)
 		assert.NoError(suite.T(), err)
@@ -243,7 +237,7 @@ func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentListAll() {
 	})
 
 	suite.Run("ListAll returns many Environments", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.db)
+		testutils.Cleanup(suite.T(), suite.testApp.DB)
 
 		var randomEnvRequest v1models.CreateEnvironmentRequest
 		err := faker.FakeData(&randomEnvRequest)
@@ -293,11 +287,11 @@ func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentSerialize() {
 
 		newEnvironment, _ := suite.testApp.Environments.CreateNew(suite.goodEnvironmentRequest)
 
-		environmentResponses := suite.testApp.Environments.serialize(newEnvironment)
+		environmentResponses := suite.testApp.Environments.Serialize(newEnvironment)
 
 		// check that we get expected number of elements in the slice + correct object type
 		assert.Equal(suite.T(), 1, len(environmentResponses))
-		assert.IsType(suite.T(), EnvironmentResponse{}, environmentResponses[0])
+		assert.IsType(suite.T(), v1serializers.EnvironmentResponse{}, environmentResponses[0])
 	})
 
 	suite.Run("Serialize returns JSON for many environments", func() {
@@ -310,20 +304,20 @@ func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentSerialize() {
 		newEnvironment, _ = suite.testApp.Environments.CreateNew(suite.anotherEnvironmentRequest)
 		environments = append(environments, newEnvironment)
 
-		environmentResponses := suite.testApp.Environments.serialize(environments...)
+		environmentResponses := suite.testApp.Environments.Serialize(environments...)
 
 		// check that we get expected number of elements in the slice + correct object type
 		assert.Equal(suite.T(), 2, len(environmentResponses))
-		assert.IsType(suite.T(), EnvironmentResponse{}, environmentResponses[0])
+		assert.IsType(suite.T(), v1serializers.EnvironmentResponse{}, environmentResponses[0])
 	})
 
 	suite.Run("Serialize returns empty environment for bad environments", func() {
 
 		newEnvironment, _ := suite.testApp.Environments.CreateNew(suite.badEnvironmentRequest)
-		environmentResponses := suite.testApp.Environments.serialize(newEnvironment)
+		environmentResponses := suite.testApp.Environments.Serialize(newEnvironment)
 
 		assert.Equal(suite.T(), 1, len(environmentResponses))
-		assert.IsType(suite.T(), EnvironmentResponse{}, environmentResponses[0])
+		assert.IsType(suite.T(), v1serializers.EnvironmentResponse{}, environmentResponses[0])
 	})
 }
 

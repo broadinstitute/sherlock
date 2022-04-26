@@ -31,9 +31,9 @@ func (m *MockServiceInstanceStore) Reload(serviceInstance v1models.ServiceInstan
 	return retVal.Get(0).(v1models.ServiceInstance), retVal.Error(1)
 }
 
-// NewMockController returns an EnvironmentController instance with the provided mock
+// NewServiceInstanceMockController returns an EnvironmentController instance with the provided mock
 // of the storage layer for use in unit tests
-func NewMockController(mockStore *MockServiceInstanceStore) *ServiceInstanceController {
+func NewServiceInstanceMockController(mockStore *MockServiceInstanceStore) *ServiceInstanceController {
 	return &ServiceInstanceController{
 		store: mockStore,
 	}

@@ -1,13 +1,15 @@
-// unit_test.go contains a number of test which verify environmment controller behavior
+// environments_handlers_test.go contains a number of test which verify environmment controller behavior
 // without requiring an actual postgres instance to connect to
 
-package environments
+package v1handlers
 
 import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"github.com/broadinstitute/sherlock/internal/controllers/v1controllers"
 	"github.com/broadinstitute/sherlock/internal/models/v1models"
+	"github.com/broadinstitute/sherlock/internal/serializers/v1serializers"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -71,7 +73,7 @@ func TestListAllEnvironments(t *testing.T) {
 
 			context, response := setupTestContext()
 
-			controller.getEnvironments(context)
+			getEnvironments(controller)(context)
 
 			mock.AssertCalled(t, "ListAll")
 			assert.Equal(t, testCase.expectedCode, response.Code)
@@ -132,7 +134,7 @@ func TestGetEnvironmentByName(t *testing.T) {
 				Value: testCase.environmentName,
 			})
 
-			controller.getEnvironmentByName(context)
+			getEnvironmentByName(controller)(context)
 
 			mock.AssertCalled(t, "GetByName", testCase.environmentName)
 			assert.Equal(t, testCase.expectedCode, response.Code)
@@ -167,14 +169,14 @@ func TestCreateEnvironment(t *testing.T) {
 		},
 		{
 			name:                 "empty create request",
-			expectedError:        ErrBadCreateRequest,
+			expectedError:        ErrBadEnvironmentCreateRequest,
 			expectedCode:         http.StatusBadRequest,
 			expectedEnvironments: []v1models.Environment{},
 			createRequest:        v1models.CreateEnvironmentRequest{},
 		},
 		{
 			name:                 "empty environment name",
-			expectedError:        ErrBadCreateRequest,
+			expectedError:        ErrBadEnvironmentCreateRequest,
 			expectedCode:         http.StatusBadRequest,
 			expectedEnvironments: []v1models.Environment{},
 			createRequest: v1models.CreateEnvironmentRequest{
@@ -199,9 +201,9 @@ func TestCreateEnvironment(t *testing.T) {
 			context, response := setupTestContext()
 
 			buildCreateEnvironmentRequest(t, context, testCase.createRequest)
-			controller.createEnvironment(context)
+			createEnvironment(controller)(context)
 
-			if testCase.expectedError == ErrBadCreateRequest {
+			if testCase.expectedError == ErrBadEnvironmentCreateRequest {
 				mock.AssertNotCalled(t, "CreateNew")
 			} else {
 				mock.AssertCalled(t, "CreateNew", testCase.createRequest)
@@ -225,8 +227,8 @@ func setupTestContext() (*gin.Context, *httptest.ResponseRecorder) {
 }
 
 // setupMockController return an EnvironmentController with the internal store mocked with the desired behavior passed as expectedEnvironments and expectedError
-func setupMockController(expectedEnvironments []v1models.Environment, expectedError error, methodName string, methodArgs ...interface{}) (*EnvironmentController, *MockEnvironmentStore) {
-	mockStore := new(MockEnvironmentStore)
+func setupMockController(expectedEnvironments []v1models.Environment, expectedError error, methodName string, methodArgs ...interface{}) (*v1controllers.EnvironmentController, *v1controllers.MockEnvironmentStore) {
+	mockStore := new(v1controllers.MockEnvironmentStore)
 	if methodName == "ListAll" {
 		mockStore.On(methodName, methodArgs...).Return(expectedEnvironments, expectedError)
 	} else {
@@ -236,7 +238,7 @@ func setupMockController(expectedEnvironments []v1models.Environment, expectedEr
 			mockStore.On(methodName, methodArgs...).Return(expectedEnvironments[0], expectedError)
 		}
 	}
-	return NewMockController(mockStore), mockStore
+	return v1controllers.NewEnvironmentMockController(mockStore), mockStore
 }
 
 func buildCreateEnvironmentRequest(t *testing.T, c *gin.Context, createRequest v1models.CreateEnvironmentRequest) {
@@ -256,10 +258,10 @@ func buildCreateEnvironmentRequest(t *testing.T, c *gin.Context, createRequest v
 }
 
 // accepts an io.Reader type and attempts to json decode it into an environments.Response
-func decodeResponseBody(t *testing.T, body io.Reader) Response {
+func decodeResponseBody(t *testing.T, body io.Reader) v1controllers.Response {
 	t.Helper()
 
-	var response Response
+	var response v1controllers.Response
 	if err := json.NewDecoder(body).Decode(&response); err != nil {
 		t.Fatalf("error decoding listAll response body: %v", err)
 	}
@@ -273,12 +275,12 @@ func responseMeetsExpectations(t *testing.T, expectedEnvironments []v1models.Env
 
 	gotResponse := decodeResponseBody(t, gotBody)
 
-	var expectedResponse Response
+	var expectedResponse v1controllers.Response
 	if expectedError != nil {
-		expectedResponse = Response{Error: expectedError.Error()}
+		expectedResponse = v1controllers.Response{Error: expectedError.Error()}
 	} else {
-		expectationSerializer := EnvironmentsSerializer{expectedEnvironments}
-		expectedResponse = Response{Environments: expectationSerializer.Response()}
+		expectationSerializer := v1serializers.EnvironmentsSerializer{expectedEnvironments}
+		expectedResponse = v1controllers.Response{Environments: expectationSerializer.Response()}
 	}
 
 	if diff := cmp.Diff(gotResponse, expectedResponse); diff != "" {

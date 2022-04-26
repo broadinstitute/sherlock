@@ -8,7 +8,6 @@ import (
 
 	"contrib.go.opencensus.io/exporter/stackdriver"
 	"github.com/broadinstitute/sherlock/internal/db"
-	"github.com/broadinstitute/sherlock/internal/environments"
 	"github.com/broadinstitute/sherlock/internal/metrics"
 	"github.com/broadinstitute/sherlock/internal/services"
 	"github.com/spf13/viper"
@@ -28,7 +27,7 @@ type Application struct {
 	Services        *services.ServiceController
 	Clusters        *v1controllers.ClusterController
 	Builds          *v1controllers.BuildController
-	Environments    *environments.EnvironmentController
+	Environments    *v1controllers.EnvironmentController
 	Deploys         *v1controllers.DeployController
 	Handler         http.Handler
 	// Used to pass the dbConn to testing setup helpers
@@ -70,7 +69,7 @@ func (a *Application) registerControllers() {
 	a.Services = services.NewController(a.DB)
 	a.Builds = v1controllers.NewBuildController(a.DB)
 	a.Clusters = v1controllers.NewClusterController(a.DB)
-	a.Environments = environments.NewController(a.DB)
+	a.Environments = v1controllers.NewEnvironmentController(a.DB)
 	a.Deploys = v1controllers.NewDeployController(a.DB)
 }
 

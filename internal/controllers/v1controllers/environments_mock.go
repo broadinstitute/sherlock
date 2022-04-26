@@ -1,4 +1,4 @@
-package environments
+package v1controllers
 
 import (
 	"github.com/broadinstitute/sherlock/internal/models/v1models"
@@ -32,9 +32,9 @@ func (m *MockEnvironmentStore) GetByName(name string) (v1models.Environment, err
 	return retVal.Get(0).(v1models.Environment), retVal.Error(1)
 }
 
-// NewMockController returns an EnvironmentController instance with the provided mock
+// NewEnvironmentMockController returns an EnvironmentController instance with the provided mock
 // of the storage layer for use in unit tests
-func NewMockController(mockStore *MockEnvironmentStore) *EnvironmentController {
+func NewEnvironmentMockController(mockStore *MockEnvironmentStore) *EnvironmentController {
 	return &EnvironmentController{
 		store: mockStore,
 	}

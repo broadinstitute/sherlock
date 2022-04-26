@@ -4,12 +4,13 @@
 // a environment instance and methods for interacting with them
 // it is left to concrete implementations in package db or others to
 // implement these interfaces
-package environments
+package v1controllers
 
 import (
 	"errors"
 	"fmt"
 	"github.com/broadinstitute/sherlock/internal/models/v1models"
+	"github.com/broadinstitute/sherlock/internal/serializers/v1serializers"
 
 	"gorm.io/gorm"
 )
@@ -19,9 +20,9 @@ type EnvironmentController struct {
 	store v1models.EnvironmentStore
 }
 
-// NewController accepts a gorm DB connection and returns a new instance
+// NewEnvironmentController accepts a gorm DB connection and returns a new instance
 // of the environment controller
-func NewController(dbConn *gorm.DB) *EnvironmentController {
+func NewEnvironmentController(dbConn *gorm.DB) *EnvironmentController {
 	environmentStore := v1models.NewEnvironmentStore(dbConn)
 	return &EnvironmentController{
 		store: environmentStore,
@@ -78,17 +79,17 @@ func (environmentController *EnvironmentController) FindOrCreate(name string) (i
 }
 
 // Takes an GORM Environment object and returns a JSON for environment
-func (environmentController *EnvironmentController) serialize(environments ...v1models.Environment) []EnvironmentResponse {
+func (environmentController *EnvironmentController) Serialize(environments ...v1models.Environment) []v1serializers.EnvironmentResponse {
 	// collect arguments into a slice to be serialized into a single response
 	var environmentList []v1models.Environment
 	environmentList = append(environmentList, environments...)
 
-	serializer := EnvironmentsSerializer{Environments: environmentList}
+	serializer := v1serializers.EnvironmentsSerializer{Environments: environmentList}
 	return serializer.Response()
 }
 
 // Response is a type that allows all data returned from the /environment api group to share a consistent structure
 type Response struct {
-	Environments []EnvironmentResponse `json:"environments"`
-	Error        string                `json:"error,omitempty"`
+	Environments []v1serializers.EnvironmentResponse `json:"environments"`
+	Error        string                              `json:"error,omitempty"`
 }

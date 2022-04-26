@@ -26,7 +26,7 @@ func (a *Application) buildRouter() {
 
 		// environments routes
 		environmentsGroup := group.Group("/environments")
-		a.Environments.RegisterHandlers(environmentsGroup)
+		v1handlers.RegisterEnvironmentHandlers(environmentsGroup, a.Environments)
 
 		// deploys routes
 		deploysGroup := group.Group("/deploys")

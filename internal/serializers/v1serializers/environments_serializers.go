@@ -1,4 +1,4 @@
-package environments
+package v1serializers
 
 import (
 	"github.com/broadinstitute/sherlock/internal/models/v1models"

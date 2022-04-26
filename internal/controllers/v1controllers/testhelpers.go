@@ -3,7 +3,6 @@
 package v1controllers
 
 import (
-	"github.com/broadinstitute/sherlock/internal/environments"
 	"gorm.io/gorm"
 )
 
@@ -15,7 +14,7 @@ type TestApplication struct {
 	Builds           *BuildController
 	Clusters         *ClusterController
 	Deploys          *DeployController
-	Environments     *environments.EnvironmentController
+	Environments     *EnvironmentController
 	ServiceInstances *ServiceInstanceController
 	DB               *gorm.DB
 }

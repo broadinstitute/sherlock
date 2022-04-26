@@ -4,7 +4,6 @@ import (
 	"github.com/broadinstitute/sherlock/internal/models/v1models"
 	"time"
 
-	"github.com/broadinstitute/sherlock/internal/environments"
 	"github.com/broadinstitute/sherlock/internal/services"
 )
 
@@ -18,9 +17,9 @@ type DeploysResponse struct {
 // about a ServiceInstance entity in response to clients. Its purpose
 // is to decouple responses from the database model
 type ServiceInstanceResponse struct {
-	ID          int                              `json:"id"`
-	Service     services.ServiceResponse         `json:"service"`
-	Environment environments.EnvironmentResponse `json:"environment"`
+	ID          int                      `json:"id"`
+	Service     services.ServiceResponse `json:"service"`
+	Environment EnvironmentResponse      `json:"environment"`
 }
 
 // ServiceInstanceSerializer is an intermediate type used to
@@ -32,7 +31,7 @@ type ServiceInstanceSerializer struct {
 // DeploysResponse consumes a ServiceInstanceSerializer and generated a response type
 func (sis *ServiceInstanceSerializer) Response() ServiceInstanceResponse {
 	service := services.ServiceSerializer{Service: sis.serviceInstance.Service}
-	environment := environments.EnvironmentSerializer{Environment: sis.serviceInstance.Environment}
+	environment := EnvironmentSerializer{Environment: sis.serviceInstance.Environment}
 
 	return ServiceInstanceResponse{
 		ID:          sis.serviceInstance.ID,

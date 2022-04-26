@@ -1,6 +1,6 @@
 package services
 
-// handlers.go contains all the logic for parsing requests and sending responses for
+// environments_handlers.go contains all the logic for parsing requests and sending responses for
 // the /builds api group. No business logic or database logic should be present in this file.
 
 import (

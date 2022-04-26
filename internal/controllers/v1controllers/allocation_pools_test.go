@@ -7,7 +7,6 @@ import (
 	"github.com/broadinstitute/sherlock/internal/models/v1models"
 	"testing"
 
-	"github.com/broadinstitute/sherlock/internal/environments"
 	"github.com/broadinstitute/sherlock/internal/testutils"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -72,7 +71,7 @@ func initTestAllocationPoolsApp(t *testing.T) *TestApplication {
 	dbConn = dbConn.Begin()
 	app := &TestApplication{
 		AllocationPools: NewAllocationPoolController(dbConn),
-		Environments:    environments.NewController(dbConn),
+		Environments:    NewEnvironmentController(dbConn),
 		DB:              dbConn,
 	}
 

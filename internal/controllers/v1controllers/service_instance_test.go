@@ -184,7 +184,7 @@ func setupMockController(
 	t.Helper()
 	mockStore := &MockServiceInstanceStore{}
 	mockStore.On(methodName).Return(expectedServiceInstances, expectedError)
-	return NewMockController(mockStore)
+	return NewServiceInstanceMockController(mockStore)
 }
 
 // helper method on suite to pre-provision all the required objects for ServiceInstance to exist,

@@ -11,7 +11,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/broadinstitute/sherlock/internal/environments"
 	"github.com/broadinstitute/sherlock/internal/services"
 	"github.com/stretchr/testify/assert"
 )
@@ -45,7 +44,7 @@ func Test_createDeployCommand(t *testing.T) {
 									ID:   1,
 									Name: "my-app",
 								},
-								Environment: environments.EnvironmentResponse{
+								Environment: v1serializers.EnvironmentResponse{
 									ID:   1,
 									Name: "dev",
 								},

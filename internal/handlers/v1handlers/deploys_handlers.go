@@ -11,8 +11,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// ErrBadCreateRequest is an error type used when a create service request fails validation checks
-var ErrBadCreateRequest error = errors.New("error invalid create deploy request")
+// ErrBadDeployCreateRequest is an error type used when a create service request fails validation checks
+var ErrBadDeployCreateRequest error = errors.New("error invalid create deploy request")
 
 // RegisterDeployHandlers accepts a gin router group and attaches handlers for working
 // with deploy entities
@@ -57,7 +57,7 @@ func createDeploy(dc *v1controllers.DeployController) func(c *gin.Context) {
 
 		var deployRequestBody CreateDeployRequestBody
 		if err := c.BindJSON(&deployRequestBody); err != nil {
-			c.JSON(http.StatusBadRequest, v1serializers.DeploysResponse{Error: ErrBadCreateRequest.Error()})
+			c.JSON(http.StatusBadRequest, v1serializers.DeploysResponse{Error: ErrBadDeployCreateRequest.Error()})
 			return
 		}
 
