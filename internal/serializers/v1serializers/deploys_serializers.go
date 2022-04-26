@@ -80,13 +80,13 @@ func (ds *deploySerializer) Response() DeployResponse {
 	}
 }
 
-// DeploysSerializer is used to transform a slice of Deploy v1models into
+// DeploysSerializer is used to transform a slice of Deploy models into
 // into deploy responses and can supply additional data to attach to the response
 type DeploysSerializer struct {
 	Deploys []v1models.Deploy
 }
 
-// DeploysResponse is used to seralize a slice of deploy database v1models
+// DeploysResponse is used to seralize a slice of deploy database models
 // into a slice of deploy api responses
 func (ds *DeploysSerializer) Response() []DeployResponse {
 	deploys := []DeployResponse{}

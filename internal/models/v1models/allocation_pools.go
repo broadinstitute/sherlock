@@ -20,7 +20,7 @@ type allocationPoolStore struct {
 	*gorm.DB
 }
 
-// AllocationPool is the data structure that v1models a persisted to a database via gorm
+// AllocationPool is the data structure that models a persisted to a database via gorm
 type AllocationPool struct {
 	ID           int    `gorm:"primaryKey;uniqueIndex"`
 	Name         string `gorm:"not null;default:null"`

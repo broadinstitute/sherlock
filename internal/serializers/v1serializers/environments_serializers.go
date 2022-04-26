@@ -28,7 +28,7 @@ type EnvironmentsSerializer struct {
 	Environments []v1models.Environment
 }
 
-// Response is a function that Serializers a slice of Environment v1models
+// Response is a function that Serializers a slice of Environment models
 // to responses suitable for sending to clients
 func (es *EnvironmentsSerializer) Response() []EnvironmentResponse {
 	environments := []EnvironmentResponse{}

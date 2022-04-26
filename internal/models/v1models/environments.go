@@ -21,7 +21,7 @@ type environmentStore struct {
 	*gorm.DB
 }
 
-// Environment is the data structure that v1models a persisted to a database via gorm
+// Environment is the data structure that models a persisted to a database via gorm
 type Environment struct {
 	ID               int    `gorm:"primaryKey"`
 	Name             string `gorm:"not null;default:null"`

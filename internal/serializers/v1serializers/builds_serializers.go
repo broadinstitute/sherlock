@@ -33,7 +33,7 @@ type BuildSerializer struct {
 	Build v1models.Build
 }
 
-// Response method performs the serialization from a Build entity to Build BuildsResponse
+// Response method performs the serialization from a Build entity to BuildsResponse
 func (bs *BuildSerializer) Response() BuildResponse {
 	service := ServiceSerializer{Service: bs.Build.Service}
 	return BuildResponse{

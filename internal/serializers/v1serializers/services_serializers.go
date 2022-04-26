@@ -39,7 +39,7 @@ type ServicesSerializer struct {
 	Services []v1models.Service
 }
 
-// Response serializes Service v1models into Service Responses
+// Response serializes Service models into Service Responses
 func (ss *ServicesSerializer) Response() []ServiceResponse {
 	services := []ServiceResponse{}
 	for _, service := range ss.Services {

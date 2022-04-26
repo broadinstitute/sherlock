@@ -20,7 +20,7 @@ type clusterStore struct {
 	*gorm.DB
 }
 
-// Cluster is the data structure that v1models a persisted to a database via gorm
+// Cluster is the data structure that models a persisted to a database via gorm
 type Cluster struct {
 	ID            int    `gorm:"primaryKey;uniqueIndex"`
 	Name          string `gorm:"not null;default:null"`
