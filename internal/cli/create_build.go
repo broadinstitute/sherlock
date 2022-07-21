@@ -108,9 +108,9 @@ func dispatchCreateBuildRequest(newBuild v1controllers.CreateBuildRequest) (*v1s
 
 	resp, err := req.SetHeader("Content-Type", "application/json").
 		SetBody(newBuild).
-		Post(fmt.Sprintf("%s/builds", sherlockServerURL))
+		Post(fmt.Sprintf("%s/api/v1/builds", sherlockServerURL))
 	if err != nil {
-		return nil, []byte{}, fmt.Errorf("ERROR sending post /builds request: %v", err)
+		return nil, []byte{}, fmt.Errorf("ERROR sending post /api/v1/builds request: %v", err)
 	}
 
 	var result v1serializers.BuildsResponse

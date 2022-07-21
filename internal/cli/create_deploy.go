@@ -79,7 +79,7 @@ func dispatchCreateDeployRequest(newDeploy v1handlers.CreateDeployRequestBody, e
 	)
 
 	client := resty.New()
-	urlPath := fmt.Sprintf("%s/deploys/%s/%s", sherlockServerURL, environment, service)
+	urlPath := fmt.Sprintf("%s/api/v1/deploys/%s/%s", sherlockServerURL, environment, service)
 	req = client.R()
 	// set authorization headers when running cli via automated workflows
 	if useServiceAccountAuth {
