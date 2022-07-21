@@ -1,15 +1,16 @@
 package main
 
 import (
+	"github.com/broadinstitute/sherlock/internal/db"
 	"github.com/broadinstitute/sherlock/internal/version"
-	"net/http"
+	"github.com/fvbock/endless"
+	"github.com/golang-migrate/migrate/v4"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
+	stdlog "log"
 	"os"
 
-	"log"
-
-	"github.com/broadinstitute/sherlock/internal/db"
 	"github.com/broadinstitute/sherlock/internal/sherlock"
-	"github.com/golang-migrate/migrate/v4"
 )
 
 // BuildVersion is intended for use with Go's LDFlags compiler option, to
@@ -18,13 +19,15 @@ var BuildVersion string = "development"
 
 func main() {
 	version.BuildVersion = BuildVersion
+	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr}).With().Timestamp().Logger()
+	stdlog.SetOutput(log.Logger)
 
 	if err := db.ApplyMigrations("db/migrations", sherlock.Config); err != nil {
 		// don't fail if there are no changes to apply
 		if err == migrate.ErrNoChange {
-			log.Println("no migration to apply, continuing...")
+			log.Info().Msg("no migration to apply, continuing...")
 		} else {
-			log.Println(err)
+			log.Fatal().Msgf("%v", err)
 			os.Exit(1)
 		}
 	}
@@ -32,9 +35,8 @@ func main() {
 	app := sherlock.New()
 	defer app.ShutdownStackdriver()
 
-	log.Println("starting sherlock server")
-
-	log.Println("Listening on port 8080")
-	log.Fatal(http.ListenAndServe(":8080", app))
-
+	log.Info().Msg("starting sherlock server on :8080")
+	if err := endless.ListenAndServe(":8080", app); err != nil {
+		log.Fatal().Msgf("%v", err)
+	}
 }

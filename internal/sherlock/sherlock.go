@@ -2,15 +2,16 @@ package sherlock
 
 import (
 	"context"
-	"github.com/broadinstitute/sherlock/internal/controllers/v1controllers"
-	"log"
-	"net/http"
-
 	"contrib.go.opencensus.io/exporter/stackdriver"
+	"github.com/broadinstitute/sherlock/internal/controllers/v1controllers"
+	"github.com/broadinstitute/sherlock/internal/controllers/v2controllers"
 	"github.com/broadinstitute/sherlock/internal/db"
 	"github.com/broadinstitute/sherlock/internal/metrics"
+	"github.com/broadinstitute/sherlock/internal/models/v2models"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
 	"gorm.io/gorm"
+	"net/http"
 )
 
 // package level variable holding a viper instance that will manage sherlock's config
@@ -22,13 +23,24 @@ var (
 // repository is a wrapper type so we can define our own methods on the type holding the
 // DB connection pool
 type Application struct {
+	// V1
 	AllocationPools *v1controllers.AllocationPoolController
 	Services        *v1controllers.ServiceController
 	Clusters        *v1controllers.ClusterController
 	Builds          *v1controllers.BuildController
 	Environments    *v1controllers.EnvironmentController
 	Deploys         *v1controllers.DeployController
-	Handler         http.Handler
+
+	// V2
+	V2Clusters           *v2controllers.ClusterController
+	V2Environments       *v2controllers.EnvironmentController
+	V2Charts             *v2controllers.ChartController
+	V2ChartVersions      *v2controllers.ChartVersionController
+	V2AppVersions        *v2controllers.AppVersionController
+	V2ChartReleases      *v2controllers.ChartReleaseController
+	V2ChartDeployRecords *v2controllers.ChartDeployRecordController
+
+	Handler http.Handler
 	// Used to pass the dbConn to testing setup helpers
 	// without needing to instantiate a full model instance
 	DB          *gorm.DB
@@ -39,7 +51,8 @@ type Application struct {
 func New() *Application {
 	dbConn, err := db.Connect(Config)
 	if err != nil {
-		log.Fatalf("error connecting to database: %v", err)
+		log.Fatal().Msgf("error connecting to database: %v", err)
+		return nil
 	}
 
 	app := &Application{
@@ -53,11 +66,11 @@ func New() *Application {
 	// start up stackdriver exporter and save it to the application struct
 	sd, err := metrics.RegisterStackdriverExporter()
 	if err != nil {
-		log.Printf("error starting stackdriver exporter: %v", err)
+		log.Error().Msgf("error starting stackdriver exporter: %v", err)
 	}
 	app.Stackdriver = sd
 	if err := app.initializeMetrics(); err != nil {
-		log.Printf("error initializing metrics: %v", err)
+		log.Error().Msgf("error initializing metrics: %v", err)
 	}
 
 	return app
@@ -70,6 +83,15 @@ func (a *Application) registerControllers() {
 	a.Clusters = v1controllers.NewClusterController(a.DB)
 	a.Environments = v1controllers.NewEnvironmentController(a.DB)
 	a.Deploys = v1controllers.NewDeployController(a.DB)
+
+	storeSet := v2models.NewStoreSet(a.DB)
+	a.V2Clusters = v2controllers.NewClusterController(storeSet)
+	a.V2Environments = v2controllers.NewEnvironmentController(storeSet)
+	a.V2Charts = v2controllers.NewChartController(storeSet)
+	a.V2ChartVersions = v2controllers.NewChartVersionController(storeSet)
+	a.V2AppVersions = v2controllers.NewAppVersionController(storeSet)
+	a.V2ChartReleases = v2controllers.NewChartReleaseController(storeSet)
+	a.V2ChartDeployRecords = v2controllers.NewChartDeployRecordController(storeSet)
 }
 
 // ServeHTTP implments the http.Handler interface for a Sherlock application instance
@@ -80,7 +102,7 @@ func (a *Application) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 // ShutdownStackdriver is used to flush the metrics buffer
 // and shutdown the exporter before sherlock itself closes
 func (a *Application) ShutdownStackdriver() {
-	log.Println("shutting down stackdriver metrics exporter")
+	log.Info().Msg("shutting down stackdriver metrics exporter")
 	a.Stackdriver.Flush()
 	a.Stackdriver.StopMetricsExporter()
 }
