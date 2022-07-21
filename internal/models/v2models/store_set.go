@@ -13,6 +13,10 @@ type StoreSet struct {
 }
 
 func NewStoreSet(db *gorm.DB) StoreSet {
+	err := db.AutoMigrate(&Cluster{}, &Environment{}, &Chart{}, &ChartVersion{}, &AppVersion{}, &ChartRelease{}, &ChartDeployRecord{})
+	if err != nil {
+		panic(err)
+	}
 	return StoreSet{
 		ClusterStore:           newClusterStore(db),
 		EnvironmentStore:       newEnvironmentStore(db),
