@@ -16,7 +16,7 @@ type Cluster struct {
 // @description  The subset of Cluster fields that can be set upon creation
 type CreatableCluster struct {
 	Name              string `json:"name" validate:"required"`
-	Provider          string `json:"provider" enums:"google,azure" validate:"required"`
+	Provider          string `json:"provider" enums:"google,azure" default:"google"`
 	GoogleProject     string `json:"googleProject"`
 	AzureSubscription string `json:"azureSubscription"`
 	EditableCluster
@@ -38,16 +38,14 @@ func (e EditableCluster) toCreatable() CreatableCluster {
 	return CreatableCluster{EditableCluster: e}
 }
 
-type ClusterController = MutableModelController[v2models.Cluster, Cluster, CreatableCluster, EditableCluster]
+type ClusterController = ModelController[v2models.Cluster, Cluster, CreatableCluster, EditableCluster]
 
 func NewClusterController(stores v2models.StoreSet) *ClusterController {
 	return &ClusterController{
-		ImmutableModelController[v2models.Cluster, Cluster, CreatableCluster]{
-			primaryStore:    stores.ClusterStore,
-			allStores:       stores,
-			modelToReadable: modelClusterToCluster,
-			readableToModel: clusterToModelCluster,
-		},
+		primaryStore:    stores.ClusterStore,
+		allStores:       stores,
+		modelToReadable: modelClusterToCluster,
+		readableToModel: clusterToModelCluster,
 	}
 }
 

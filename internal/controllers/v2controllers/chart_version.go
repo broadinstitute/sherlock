@@ -14,13 +14,20 @@ type ChartVersion struct {
 type CreatableChartVersion struct {
 	Chart        string
 	ChartVersion string
+	EditableChartVersion
 }
+
+type EditableChartVersion struct{}
 
 func (c CreatableChartVersion) toReadable() ChartVersion {
 	return ChartVersion{CreatableChartVersion: c}
 }
 
-type ChartVersionController = ImmutableModelController[v2models.ChartVersion, ChartVersion, CreatableChartVersion]
+func (e EditableChartVersion) toCreatable() CreatableChartVersion {
+	return CreatableChartVersion{EditableChartVersion: e}
+}
+
+type ChartVersionController = ModelController[v2models.ChartVersion, ChartVersion, CreatableChartVersion, EditableChartVersion]
 
 func NewChartVersionController(stores v2models.StoreSet) *ChartVersionController {
 	return &ChartVersionController{

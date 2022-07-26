@@ -29,16 +29,14 @@ func (e EditableChart) toCreatable() CreatableChart {
 	return CreatableChart{EditableChart: e}
 }
 
-type ChartController = MutableModelController[v2models.Chart, Chart, CreatableChart, EditableChart]
+type ChartController = ModelController[v2models.Chart, Chart, CreatableChart, EditableChart]
 
 func NewChartController(stores v2models.StoreSet) *ChartController {
 	return &ChartController{
-		ImmutableModelController[v2models.Chart, Chart, CreatableChart]{
-			primaryStore:    stores.ChartStore,
-			allStores:       stores,
-			modelToReadable: modelChartToChart,
-			readableToModel: chartToModelChart,
-		},
+		primaryStore:    stores.ChartStore,
+		allStores:       stores,
+		modelToReadable: modelChartToChart,
+		readableToModel: chartToModelChart,
 	}
 }
 

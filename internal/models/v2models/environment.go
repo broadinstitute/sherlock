@@ -10,7 +10,7 @@ import (
 type Environment struct {
 	gorm.Model
 	Base                  string
-	Lifecycle             string
+	Lifecycle             string `gorm:"not null; default:null"`
 	Name                  string `gorm:"not null; default:null; unique"`
 	TemplateEnvironment   *Environment
 	TemplateEnvironmentID *uint
@@ -32,6 +32,7 @@ func newEnvironmentStore(db *gorm.DB) Store[Environment] {
 		db:                   db,
 		selectorToQueryModel: environmentSelectorToQuery,
 		modelToSelectors:     environmentToSelectors,
+		validateModel:        validateEnvironment,
 	}
 }
 
@@ -67,4 +68,40 @@ func environmentToSelectors(environment Environment) []string {
 
 func environmentRequiresSuitability(environment Environment) bool {
 	return environment.RequiresSuitability == nil || *environment.RequiresSuitability
+}
+
+func validateEnvironment(environment Environment) error {
+	if environment.Name == "" {
+		return fmt.Errorf("a %T must have a non-empty name", environment)
+	}
+	switch environment.Lifecycle {
+	case "template":
+		if environment.TemplateEnvironmentID != nil {
+			return fmt.Errorf("a template %T cannot itself have a template", environment)
+		}
+	case "dynamic":
+		if environment.TemplateEnvironmentID == nil {
+			return fmt.Errorf("a dynamic %T must have a template", environment)
+		}
+		fallthrough
+	case "static":
+		if environment.Base == "" {
+			return fmt.Errorf("a non-template %T must have a base", environment)
+		}
+		if environment.DefaultClusterID == nil {
+			return fmt.Errorf("a non-template %T must have a default cluster", environment)
+		}
+		if environment.DefaultNamespace == nil || *environment.DefaultNamespace == "" {
+			return fmt.Errorf("a non-template %T must have a default namespace", environment)
+		}
+		if environment.Owner == nil || *environment.Owner == "" {
+			return fmt.Errorf("a non-template %T must have an owner", environment)
+		}
+		if environment.RequiresSuitability == nil {
+			return fmt.Errorf("a non-template %T must set whether it requires suitability or not", environment)
+		}
+	default:
+		return fmt.Errorf("a %T must have a lifecycle of either 'template', 'static', or 'dynamic'", environment)
+	}
+	return nil
 }

@@ -26,7 +26,7 @@ func RegisterChartHandlers(routerGroup *gin.RouterGroup, controller *v2controlle
 // @failure      400,403,404,407,409,500  {object}  errors.ErrorResponse
 // @router       /api/v2/charts/create [post]
 func createChart(controller *v2controllers.ChartController) func(ctx *gin.Context) {
-	return handleCreate(&controller.ImmutableModelController)
+	return handleCreate(controller)
 }
 
 // getChart godoc
@@ -39,7 +39,7 @@ func createChart(controller *v2controllers.ChartController) func(ctx *gin.Contex
 // @failure      400,403,404,407,409,500  {object}  errors.ErrorResponse
 // @router       /api/v2/charts/get/{selector} [get]
 func getChart(controller *v2controllers.ChartController) func(ctx *gin.Context) {
-	return handleGet(&controller.ImmutableModelController)
+	return handleGet(controller)
 }
 
 // editChart godoc
@@ -80,7 +80,7 @@ func deleteChart(controller *v2controllers.ChartController) func(ctx *gin.Contex
 // @failure      400,403,404,407,409,500  {object}  errors.ErrorResponse
 // @router       /api/v2/charts/selectors/{selector} [get]
 func listChartSelectors(controller *v2controllers.ChartController) func(ctx *gin.Context) {
-	return handleSelectorList(&controller.ImmutableModelController)
+	return handleSelectorList(controller)
 }
 
 // listChart godoc
@@ -93,7 +93,7 @@ func listChartSelectors(controller *v2controllers.ChartController) func(ctx *gin
 // @failure      400,403,404,407,409,500  {object}  errors.ErrorResponse
 // @router       /api/v2/charts/list [get]
 func listChart(controller *v2controllers.ChartController) func(ctx *gin.Context) {
-	return handleList(&controller.ImmutableModelController)
+	return handleList(controller)
 }
 
 // listChartWithFilter godoc
@@ -108,5 +108,5 @@ func listChart(controller *v2controllers.ChartController) func(ctx *gin.Context)
 // @failure      400,403,404,407,409,500  {object}  errors.ErrorResponse
 // @router       /api/v2/charts/list [post]
 func listChartWithFilter(controller *v2controllers.ChartController) func(ctx *gin.Context) {
-	return handleListWithFilter(&controller.ImmutableModelController)
+	return handleListWithFilter(controller)
 }

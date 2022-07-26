@@ -26,7 +26,7 @@ func RegisterEnvironmentHandlers(routerGroup *gin.RouterGroup, controller *v2con
 // @failure      400,403,404,407,409,500  {object}  errors.ErrorResponse
 // @router       /api/v2/environments/create [post]
 func createEnvironment(controller *v2controllers.EnvironmentController) func(ctx *gin.Context) {
-	return handleCreate(&controller.ImmutableModelController)
+	return handleCreate(controller)
 }
 
 // getEnvironment godoc
@@ -39,7 +39,7 @@ func createEnvironment(controller *v2controllers.EnvironmentController) func(ctx
 // @failure      400,403,404,407,409,500  {object}  errors.ErrorResponse
 // @router       /api/v2/environments/get/{selector} [get]
 func getEnvironment(controller *v2controllers.EnvironmentController) func(ctx *gin.Context) {
-	return handleGet(&controller.ImmutableModelController)
+	return handleGet(controller)
 }
 
 // editEnvironment godoc
@@ -80,7 +80,7 @@ func deleteEnvironment(controller *v2controllers.EnvironmentController) func(ctx
 // @failure      400,403,404,407,409,500  {object}  errors.ErrorResponse
 // @router       /api/v2/environments/selectors/{selector} [get]
 func listEnvironmentSelectors(controller *v2controllers.EnvironmentController) func(ctx *gin.Context) {
-	return handleSelectorList(&controller.ImmutableModelController)
+	return handleSelectorList(controller)
 }
 
 // listEnvironment godoc
@@ -93,7 +93,7 @@ func listEnvironmentSelectors(controller *v2controllers.EnvironmentController) f
 // @failure      400,403,404,407,409,500  {object}  errors.ErrorResponse
 // @router       /api/v2/environments/list [get]
 func listEnvironment(controller *v2controllers.EnvironmentController) func(ctx *gin.Context) {
-	return handleList(&controller.ImmutableModelController)
+	return handleList(controller)
 }
 
 // listEnvironmentWithFilter godoc
@@ -108,5 +108,5 @@ func listEnvironment(controller *v2controllers.EnvironmentController) func(ctx *
 // @failure      400,403,404,407,409,500  {object}  errors.ErrorResponse
 // @router       /api/v2/environments/list [post]
 func listEnvironmentWithFilter(controller *v2controllers.EnvironmentController) func(ctx *gin.Context) {
-	return handleListWithFilter(&controller.ImmutableModelController)
+	return handleListWithFilter(controller)
 }

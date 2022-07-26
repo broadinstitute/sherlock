@@ -21,7 +21,7 @@ func logger() gin.HandlerFunc {
 		identity := "client not identified"
 		if value, exists := ctx.Get(auth.ContextUserKey); exists {
 			if user, ok := value.(auth.User); ok {
-				identity = user.Email
+				identity = user.AuthenticatedEmail
 			}
 		}
 		var event *zerolog.Event

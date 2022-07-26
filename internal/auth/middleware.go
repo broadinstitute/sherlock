@@ -30,25 +30,32 @@ func IdentityAwareProxyAuthentication() gin.HandlerFunc {
 			ctx.JSON(errors.ErrorToApiResponse(fmt.Errorf("(%s) IAP JWT seemed to pass validation but lacked an email claim", errors.ProxyAuthenticationRequired)))
 		}
 
-		// TODO(Jack): lol actually code a suitability check here
 		ctx.Set(ContextUserKey, User{
-			Email:    email,
-			Suitable: true,
+			AuthenticatedEmail: email,
+			suitabilityInfo:    getUserSuitabilityInfo(email),
 		})
+
 		ctx.Next()
 	}
 }
 
 func DummyAuthentication() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		suitable := true
+		suitability := &suitabilityInfo{
+			acceptedWorkspaceTos: true,
+			enrolledIn2fa:        true,
+			suspended:            false,
+			archived:             false,
+			suspensionReason:     "",
+		}
 		if ctx.GetHeader("Suitable") == "false" {
-			suitable = false
+			suitability = nil
 		}
 		ctx.Set(ContextUserKey, User{
-			Email:    "fake@firecloud.org",
-			Suitable: suitable,
+			AuthenticatedEmail: "fake@broadinstitute.org",
+			suitabilityInfo:    suitability,
 		})
+
 		ctx.Next()
 	}
 }

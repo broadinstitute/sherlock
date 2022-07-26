@@ -43,16 +43,14 @@ func (e EditableChartRelease) toCreatable() CreatableChartRelease {
 	return CreatableChartRelease{EditableChartRelease: e}
 }
 
-type ChartReleaseController = MutableModelController[v2models.ChartRelease, ChartRelease, CreatableChartRelease, EditableChartRelease]
+type ChartReleaseController = ModelController[v2models.ChartRelease, ChartRelease, CreatableChartRelease, EditableChartRelease]
 
 func NewChartReleaseController(stores v2models.StoreSet) *ChartReleaseController {
 	return &ChartReleaseController{
-		ImmutableModelController[v2models.ChartRelease, ChartRelease, CreatableChartRelease]{
-			primaryStore:    stores.ChartReleaseStore,
-			allStores:       stores,
-			modelToReadable: modelChartReleaseToChartRelease,
-			readableToModel: chartReleaseToModelChartRelease,
-		},
+		primaryStore:    stores.ChartReleaseStore,
+		allStores:       stores,
+		modelToReadable: modelChartReleaseToChartRelease,
+		readableToModel: chartReleaseToModelChartRelease,
 	}
 }
 

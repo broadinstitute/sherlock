@@ -16,13 +16,20 @@ type CreatableChartDeployRecord struct {
 	ExactChartVersion string
 	ExactAppVersion   string
 	HelmfileRef       string
+	EditableChartDeployRecord
 }
+
+type EditableChartDeployRecord struct{}
 
 func (c CreatableChartDeployRecord) toReadable() ChartDeployRecord {
 	return ChartDeployRecord{CreatableChartDeployRecord: c}
 }
 
-type ChartDeployRecordController = ImmutableModelController[v2models.ChartDeployRecord, ChartDeployRecord, CreatableChartDeployRecord]
+func (e EditableChartDeployRecord) toCreatable() CreatableChartDeployRecord {
+	return CreatableChartDeployRecord{EditableChartDeployRecord: e}
+}
+
+type ChartDeployRecordController = ModelController[v2models.ChartDeployRecord, ChartDeployRecord, CreatableChartDeployRecord, EditableChartDeployRecord]
 
 func NewChartDeployRecordController(stores v2models.StoreSet) *ChartDeployRecordController {
 	return &ChartDeployRecordController{

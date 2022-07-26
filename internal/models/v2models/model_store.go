@@ -2,6 +2,7 @@ package v2models
 
 import (
 	"fmt"
+	"github.com/broadinstitute/sherlock/internal/auth"
 	"github.com/broadinstitute/sherlock/internal/errors"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
@@ -38,7 +39,7 @@ type Store[M Model] struct {
 	validateModel func(model M) error
 }
 
-func (s Store[M]) Create(model M, userSuitable bool) (M, error) {
+func (s Store[M]) Create(model M, user auth.User) (M, error) {
 	if s.validateModel != nil {
 		if err := s.validateModel(model); err != nil {
 			return model, fmt.Errorf("creation validation error: (%s) new %T: %v", errors.BadRequest, model, err)
@@ -73,8 +74,10 @@ func (s Store[M]) Create(model M, userSuitable bool) (M, error) {
 			if err != nil {
 				return fmt.Errorf("(%s) unexpected creation error: mid-transaction validation on %T failed: %v", errors.InternalServerError, model, err)
 			}
-			if s.modelRequiresSuitability(result) && !userSuitable {
-				return fmt.Errorf("create error: (%s) user is not suitable but suitability is required to create this %T", errors.Forbidden, model)
+			if s.modelRequiresSuitability(result) {
+				if err = user.SuitableOrError(); err != nil {
+					return fmt.Errorf("create error: (%s) suitability is required to create this %T: %v", errors.Forbidden, model, err)
+				}
 			}
 		}
 		return nil
@@ -119,13 +122,15 @@ func (s Store[M]) Get(selector string) (M, error) {
 	return ret, nil
 }
 
-func (s Store[M]) Edit(selector string, editsToMake M, userSuitable bool) (M, error) {
+func (s Store[M]) Edit(selector string, editsToMake M, user auth.User) (M, error) {
 	toEdit, err := s.Get(selector)
 	if err != nil {
 		return toEdit, fmt.Errorf("edit error handling %T selector %s: %v", toEdit, selector, err)
 	}
-	if s.modelRequiresSuitability != nil && s.modelRequiresSuitability(toEdit) && !userSuitable {
-		return toEdit, fmt.Errorf("edit error: (%s) user is not suitable but suitability is required to edit %T %s", errors.Forbidden, toEdit, selector)
+	if s.modelRequiresSuitability != nil && s.modelRequiresSuitability(toEdit) {
+		if err = user.SuitableOrError(); err != nil {
+			return toEdit, fmt.Errorf("edit error: (%s) suitability is required to edit %T %s: %v", errors.Forbidden, toEdit, selector, err)
+		}
 	}
 	err = s.db.Transaction(func(tx *gorm.DB) error {
 		if err = tx.Model(&toEdit).Updates(&editsToMake).Error; err != nil {
@@ -143,8 +148,10 @@ func (s Store[M]) Edit(selector string, editsToMake M, userSuitable bool) (M, er
 			}
 			// We check suitability *again* to prevent a user from editing an entry in a way that makes it require
 			// suitability in the future, if they aren't themselves suitable.
-			if s.modelRequiresSuitability != nil && s.modelRequiresSuitability(result) && !userSuitable {
-				return fmt.Errorf("edit error: (%s) user is not suitable but suitability is required to edit the %T in this way", errors.Forbidden, toEdit)
+			if s.modelRequiresSuitability != nil && s.modelRequiresSuitability(result) {
+				if err = user.SuitableOrError(); err != nil {
+					return fmt.Errorf("edit error: (%s) suitability is required to edit %T %s in this way: %v", errors.Forbidden, toEdit, selector, err)
+				}
 			}
 		}
 		return nil
@@ -152,13 +159,15 @@ func (s Store[M]) Edit(selector string, editsToMake M, userSuitable bool) (M, er
 	return toEdit, err
 }
 
-func (s Store[M]) Delete(selector string, userSuitable bool) (M, error) {
+func (s Store[M]) Delete(selector string, user auth.User) (M, error) {
 	toDelete, err := s.Get(selector)
 	if err != nil {
 		return toDelete, fmt.Errorf("delete error handling %T selector %s: %v", toDelete, selector, err)
 	}
-	if s.modelRequiresSuitability != nil && s.modelRequiresSuitability(toDelete) && !userSuitable {
-		return toDelete, fmt.Errorf("delete error: (%s) user is not suitable but suitability is required to delete %T %s", errors.Forbidden, toDelete, selector)
+	if s.modelRequiresSuitability != nil && s.modelRequiresSuitability(toDelete) {
+		if err = user.SuitableOrError(); err != nil {
+			return toDelete, fmt.Errorf("delete error: (%s) suitability is required to delete %T %s: %v", errors.Forbidden, toDelete, selector, err)
+		}
 	}
 	if err = s.db.Delete(&toDelete).Error; err != nil {
 		return toDelete, fmt.Errorf("delete error deleting %T matched by selector %s: %v", toDelete, selector, err)

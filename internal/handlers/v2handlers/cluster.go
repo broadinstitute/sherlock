@@ -26,7 +26,7 @@ func RegisterClusterHandlers(routerGroup *gin.RouterGroup, controller *v2control
 // @failure      400,403,404,407,409,500  {object}  errors.ErrorResponse
 // @router       /api/v2/clusters/create [post]
 func createCluster(controller *v2controllers.ClusterController) func(ctx *gin.Context) {
-	return handleCreate(&controller.ImmutableModelController)
+	return handleCreate(controller)
 }
 
 // getCluster godoc
@@ -39,7 +39,7 @@ func createCluster(controller *v2controllers.ClusterController) func(ctx *gin.Co
 // @failure      400,403,404,407,409,500  {object}  errors.ErrorResponse
 // @router       /api/v2/clusters/get/{selector} [get]
 func getCluster(controller *v2controllers.ClusterController) func(ctx *gin.Context) {
-	return handleGet(&controller.ImmutableModelController)
+	return handleGet(controller)
 }
 
 // editCluster godoc
@@ -80,7 +80,7 @@ func deleteCluster(controller *v2controllers.ClusterController) func(ctx *gin.Co
 // @failure      400,403,404,407,409,500  {object}  errors.ErrorResponse
 // @router       /api/v2/clusters/selectors/{selector} [get]
 func listClusterSelectors(controller *v2controllers.ClusterController) func(ctx *gin.Context) {
-	return handleSelectorList(&controller.ImmutableModelController)
+	return handleSelectorList(controller)
 }
 
 // listCluster godoc
@@ -93,7 +93,7 @@ func listClusterSelectors(controller *v2controllers.ClusterController) func(ctx 
 // @failure      400,403,404,407,409,500  {object}  errors.ErrorResponse
 // @router       /api/v2/clusters/list [get]
 func listCluster(controller *v2controllers.ClusterController) func(ctx *gin.Context) {
-	return handleList(&controller.ImmutableModelController)
+	return handleList(controller)
 }
 
 // listClusterWithFilter godoc
@@ -108,5 +108,5 @@ func listCluster(controller *v2controllers.ClusterController) func(ctx *gin.Cont
 // @failure      400,403,404,407,409,500  {object}  errors.ErrorResponse
 // @router       /api/v2/clusters/list [post]
 func listClusterWithFilter(controller *v2controllers.ClusterController) func(ctx *gin.Context) {
-	return handleListWithFilter(&controller.ImmutableModelController)
+	return handleListWithFilter(controller)
 }

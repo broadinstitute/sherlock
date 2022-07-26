@@ -16,13 +16,20 @@ type CreatableAppVersion struct {
 	AppVersion string
 	GitCommit  string
 	GitBranch  string
+	EditableAppVersion
 }
+
+type EditableAppVersion struct{}
 
 func (c CreatableAppVersion) toReadable() AppVersion {
 	return AppVersion{CreatableAppVersion: c}
 }
 
-type AppVersionController = ImmutableModelController[v2models.AppVersion, AppVersion, CreatableAppVersion]
+func (e EditableAppVersion) toCreatable() CreatableAppVersion {
+	return CreatableAppVersion{EditableAppVersion: e}
+}
+
+type AppVersionController = ModelController[v2models.AppVersion, AppVersion, CreatableAppVersion, EditableAppVersion]
 
 func NewAppVersionController(stores v2models.StoreSet) *AppVersionController {
 	return &AppVersionController{

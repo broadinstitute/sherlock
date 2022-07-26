@@ -17,7 +17,7 @@ type AppVersion struct {
 }
 
 func (c AppVersion) TableName() string {
-	return "v2_chart_versions"
+	return "v2_app_versions"
 }
 
 func newAppVersionStore(db *gorm.DB) Store[AppVersion] {

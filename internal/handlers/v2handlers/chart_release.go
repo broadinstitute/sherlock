@@ -26,7 +26,7 @@ func RegisterChartReleaseHandlers(routerGroup *gin.RouterGroup, controller *v2co
 // @failure      400,403,404,407,409,500  {object}  errors.ErrorResponse
 // @router       /api/v2/chart-releases/create [post]
 func createChartRelease(controller *v2controllers.ChartReleaseController) func(ctx *gin.Context) {
-	return handleCreate(&controller.ImmutableModelController)
+	return handleCreate(controller)
 }
 
 // getChartRelease godoc
@@ -39,7 +39,7 @@ func createChartRelease(controller *v2controllers.ChartReleaseController) func(c
 // @failure      400,403,404,407,409,500  {object}  errors.ErrorResponse
 // @router       /api/v2/chart-releases/get/{selector} [get]
 func getChartRelease(controller *v2controllers.ChartReleaseController) func(ctx *gin.Context) {
-	return handleGet(&controller.ImmutableModelController)
+	return handleGet(controller)
 }
 
 // editChartRelease godoc
@@ -80,7 +80,7 @@ func deleteChartRelease(controller *v2controllers.ChartReleaseController) func(c
 // @failure      400,403,404,407,409,500  {object}  errors.ErrorResponse
 // @router       /api/v2/chart-releases/selectors/{selector} [get]
 func listChartReleaseSelectors(controller *v2controllers.ChartReleaseController) func(ctx *gin.Context) {
-	return handleSelectorList(&controller.ImmutableModelController)
+	return handleSelectorList(controller)
 }
 
 // listChartRelease godoc
@@ -93,7 +93,7 @@ func listChartReleaseSelectors(controller *v2controllers.ChartReleaseController)
 // @failure      400,403,404,407,409,500  {object}  errors.ErrorResponse
 // @router       /api/v2/chart-releases/list [get]
 func listChartRelease(controller *v2controllers.ChartReleaseController) func(ctx *gin.Context) {
-	return handleList(&controller.ImmutableModelController)
+	return handleList(controller)
 }
 
 // listChartReleaseWithFilter godoc
@@ -108,5 +108,5 @@ func listChartRelease(controller *v2controllers.ChartReleaseController) func(ctx
 // @failure      400,403,404,407,409,500  {object}  errors.ErrorResponse
 // @router       /api/v2/chart-releases/list [post]
 func listChartReleaseWithFilter(controller *v2controllers.ChartReleaseController) func(ctx *gin.Context) {
-	return handleListWithFilter(&controller.ImmutableModelController)
+	return handleListWithFilter(controller)
 }
