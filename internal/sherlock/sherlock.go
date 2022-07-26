@@ -3,15 +3,18 @@ package sherlock
 import (
 	"context"
 	"contrib.go.opencensus.io/exporter/stackdriver"
+	"github.com/broadinstitute/sherlock/internal/auth"
 	"github.com/broadinstitute/sherlock/internal/controllers/v1controllers"
 	"github.com/broadinstitute/sherlock/internal/controllers/v2controllers"
 	"github.com/broadinstitute/sherlock/internal/db"
 	"github.com/broadinstitute/sherlock/internal/metrics"
 	"github.com/broadinstitute/sherlock/internal/models/v2models"
+	"github.com/broadinstitute/sherlock/internal/version"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
 	"gorm.io/gorm"
 	"net/http"
+	"time"
 )
 
 // package level variable holding a viper instance that will manage sherlock's config
@@ -43,8 +46,9 @@ type Application struct {
 	Handler http.Handler
 	// Used to pass the dbConn to testing setup helpers
 	// without needing to instantiate a full model instance
-	DB          *gorm.DB
-	Stackdriver *stackdriver.Exporter
+	DB                         *gorm.DB
+	Stackdriver                *stackdriver.Exporter
+	ShutdownSuitabilityCaching *context.CancelFunc
 }
 
 // New returns a new instance of the core sherlock application
@@ -57,6 +61,16 @@ func New() *Application {
 
 	app := &Application{
 		DB: dbConn,
+	}
+
+	if version.BuildVersion != version.DevelopmentVersionString {
+		if err := auth.CacheSuitableUsers(context.Background()); err != nil {
+			log.Fatal().Msgf("unable to query suitable users: %v", err)
+			return nil
+		}
+		ctx, cancelFunc := context.WithCancel(context.Background())
+		app.ShutdownSuitabilityCaching = &cancelFunc
+		go auth.KeepCacheUpdated(ctx, 5*time.Minute)
 	}
 
 	app.registerControllers()

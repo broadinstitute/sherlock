@@ -33,7 +33,14 @@ func main() {
 	}
 
 	app := sherlock.New()
+	if app == nil {
+		os.Exit(1)
+	}
+
 	defer app.ShutdownStackdriver()
+	if app.ShutdownSuitabilityCaching != nil {
+		defer (*app.ShutdownSuitabilityCaching)()
+	}
 
 	log.Info().Msg("starting sherlock server on :8080")
 	if err := endless.ListenAndServe(":8080", app); err != nil {
