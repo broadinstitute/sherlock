@@ -3028,7 +3028,7 @@ const docTemplate = `{
         },
         "/user": {
             "get": {
-                "description": "Get Sherlock's understanding of the calling user based on IAP and Google Groups.",
+                "description": "Get Sherlock's understanding of the calling user based on IAP and the Firecloud.org Google Workspace organization.",
                 "produces": [
                     "application/json"
                 ],
@@ -3040,7 +3040,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/auth.User"
+                            "$ref": "#/definitions/misc.UserResponse"
                         }
                     },
                     "407": {
@@ -3080,14 +3080,51 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "auth.User": {
+        "auth.FirecloudAccount": {
             "type": "object",
             "properties": {
+                "acceptedTerms": {
+                    "type": "boolean"
+                },
+                "archived": {
+                    "type": "boolean"
+                },
                 "email": {
                     "type": "string"
                 },
-                "suitable": {
+                "enrolledIn2Fa": {
                     "type": "boolean"
+                },
+                "groups": {
+                    "$ref": "#/definitions/auth.FirecloudGroupMembership"
+                },
+                "suspended": {
+                    "type": "boolean"
+                },
+                "suspensionReason": {
+                    "type": "string"
+                }
+            }
+        },
+        "auth.FirecloudGroupMembership": {
+            "type": "object",
+            "properties": {
+                "fc-admins": {
+                    "type": "boolean"
+                },
+                "firecloud-project-owners": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "auth.User": {
+            "type": "object",
+            "properties": {
+                "authenticatedEmail": {
+                    "type": "string"
+                },
+                "matchedFirecloudAccount": {
+                    "$ref": "#/definitions/auth.FirecloudAccount"
                 }
             }
         },
@@ -3101,6 +3138,20 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "misc.UserResponse": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "rawInfo": {
+                    "$ref": "#/definitions/auth.User"
+                },
+                "suitability": {
                     "type": "string"
                 }
             }
@@ -3291,6 +3342,11 @@ const docTemplate = `{
         "v2controllers.Cluster": {
             "description": "The full set of Cluster fields that can be read or used for filtering queries",
             "type": "object",
+            "required": [
+                "address",
+                "base",
+                "name"
+            ],
             "properties": {
                 "address": {
                     "type": "string"
@@ -3314,7 +3370,12 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "provider": {
-                    "type": "string"
+                    "type": "string",
+                    "default": "google",
+                    "enum": [
+                        "google",
+                        "azure"
+                    ]
                 },
                 "requiresSuitability": {
                     "type": "boolean",
@@ -3440,6 +3501,11 @@ const docTemplate = `{
         "v2controllers.CreatableCluster": {
             "description": "The subset of Cluster fields that can be set upon creation",
             "type": "object",
+            "required": [
+                "address",
+                "base",
+                "name"
+            ],
             "properties": {
                 "address": {
                     "type": "string"
@@ -3457,7 +3523,12 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "provider": {
-                    "type": "string"
+                    "type": "string",
+                    "default": "google",
+                    "enum": [
+                        "google",
+                        "azure"
+                    ]
                 },
                 "requiresSuitability": {
                     "type": "boolean",
@@ -3478,7 +3549,8 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "lifecycle": {
-                    "type": "string"
+                    "type": "string",
+                    "default": "dynamic"
                 },
                 "name": {
                     "type": "string"
@@ -3487,7 +3559,8 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "requiresSuitability": {
-                    "type": "boolean"
+                    "type": "boolean",
+                    "default": false
                 },
                 "templateEnvironment": {
                     "type": "string"
@@ -3549,6 +3622,10 @@ const docTemplate = `{
         "v2controllers.EditableCluster": {
             "description": "The subset of Cluster fields that can be edited after creation",
             "type": "object",
+            "required": [
+                "address",
+                "base"
+            ],
             "properties": {
                 "address": {
                     "type": "string"
@@ -3575,7 +3652,8 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "requiresSuitability": {
-                    "type": "boolean"
+                    "type": "boolean",
+                    "default": false
                 }
             }
         },
@@ -3601,7 +3679,8 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "lifecycle": {
-                    "type": "string"
+                    "type": "string",
+                    "default": "dynamic"
                 },
                 "name": {
                     "type": "string"
@@ -3610,7 +3689,8 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "requiresSuitability": {
-                    "type": "boolean"
+                    "type": "boolean",
+                    "default": false
                 },
                 "templateEnvironment": {
                     "type": "string"

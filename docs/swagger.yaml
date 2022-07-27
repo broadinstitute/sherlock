@@ -1,12 +1,36 @@
 consumes:
 - application/json
 definitions:
-  auth.User:
+  auth.FirecloudAccount:
     properties:
+      acceptedTerms:
+        type: boolean
+      archived:
+        type: boolean
       email:
         type: string
-      suitable:
+      enrolledIn2Fa:
         type: boolean
+      groups:
+        $ref: '#/definitions/auth.FirecloudGroupMembership'
+      suspended:
+        type: boolean
+      suspensionReason:
+        type: string
+    type: object
+  auth.FirecloudGroupMembership:
+    properties:
+      fc-admins:
+        type: boolean
+      firecloud-project-owners:
+        type: boolean
+    type: object
+  auth.User:
+    properties:
+      authenticatedEmail:
+        type: string
+      matchedFirecloudAccount:
+        $ref: '#/definitions/auth.FirecloudAccount'
     type: object
   errors.ErrorResponse:
     properties:
@@ -15,6 +39,15 @@ definitions:
       toBlame:
         type: string
       type:
+        type: string
+    type: object
+  misc.UserResponse:
+    properties:
+      email:
+        type: string
+      rawInfo:
+        $ref: '#/definitions/auth.User'
+      suitability:
         type: string
     type: object
   misc.VersionResponse:
@@ -156,12 +189,20 @@ definitions:
       name:
         type: string
       provider:
+        default: google
+        enum:
+        - google
+        - azure
         type: string
       requiresSuitability:
         default: false
         type: boolean
       updatedAt:
         type: string
+    required:
+    - address
+    - base
+    - name
     type: object
   v2controllers.CreatableAppVersion:
     properties:
@@ -250,10 +291,18 @@ definitions:
       name:
         type: string
       provider:
+        default: google
+        enum:
+        - google
+        - azure
         type: string
       requiresSuitability:
         default: false
         type: boolean
+    required:
+    - address
+    - base
+    - name
     type: object
   v2controllers.CreatableEnvironment:
     properties:
@@ -264,12 +313,14 @@ definitions:
       defaultNamespace:
         type: string
       lifecycle:
+        default: dynamic
         type: string
       name:
         type: string
       owner:
         type: string
       requiresSuitability:
+        default: false
         type: boolean
       templateEnvironment:
         type: string
@@ -318,6 +369,9 @@ definitions:
       requiresSuitability:
         default: false
         type: boolean
+    required:
+    - address
+    - base
     type: object
   v2controllers.EditableEnvironment:
     properties:
@@ -328,6 +382,7 @@ definitions:
       owner:
         type: string
       requiresSuitability:
+        default: false
         type: boolean
     type: object
   v2controllers.Environment:
@@ -345,12 +400,14 @@ definitions:
       id:
         type: integer
       lifecycle:
+        default: dynamic
         type: string
       name:
         type: string
       owner:
         type: string
       requiresSuitability:
+        default: false
         type: boolean
       templateEnvironment:
         type: string
@@ -2413,14 +2470,14 @@ paths:
   /user:
     get:
       description: Get Sherlock's understanding of the calling user based on IAP and
-        Google Groups.
+        the Firecloud.org Google Workspace organization.
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/auth.User'
+            $ref: '#/definitions/misc.UserResponse'
         "407":
           description: Proxy Authentication Required
           schema:

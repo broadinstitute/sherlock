@@ -42,10 +42,10 @@ type ModelController[M v2models.Model, R Readable, C Creatable[R], E Editable[R,
 	// to set defaults before creation that are dynamic based on other existing data or the calling user.
 	//
 	// (Implementation note:
-	setDynamicDefaults func(readable *R, stores v2models.StoreSet, user auth.User) error
+	setDynamicDefaults func(readable *R, stores v2models.StoreSet, user *auth.User) error
 }
 
-func (c ModelController[M, R, C, E]) Create(creatable C, user auth.User) (R, error) {
+func (c ModelController[M, R, C, E]) Create(creatable C, user *auth.User) (R, error) {
 	readable := creatable.toReadable()
 	// Handle dynamic defaults, like making an environment from a template
 	if c.setDynamicDefaults != nil {
@@ -87,7 +87,7 @@ func (c ModelController[M, R, C, E]) GetOtherValidSelectors(selector string) ([]
 	return c.primaryStore.GetOtherValidSelectors(selector)
 }
 
-func (c ModelController[M, R, C, E]) Edit(selector string, editable E, user auth.User) (R, error) {
+func (c ModelController[M, R, C, E]) Edit(selector string, editable E, user *auth.User) (R, error) {
 	readable := editable.toCreatable().toReadable()
 	model, err := c.readableToModel(readable, c.allStores)
 	if err != nil {
@@ -97,7 +97,7 @@ func (c ModelController[M, R, C, E]) Edit(selector string, editable E, user auth
 	return *c.modelToReadable(result), err
 }
 
-func (c ModelController[M, R, C, E]) Delete(selector string, user auth.User) (R, error) {
+func (c ModelController[M, R, C, E]) Delete(selector string, user *auth.User) (R, error) {
 	result, err := c.primaryStore.Delete(selector, user)
 	return *c.modelToReadable(result), err
 }

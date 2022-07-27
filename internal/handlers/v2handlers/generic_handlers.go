@@ -25,7 +25,7 @@ func handleCreate[M v2models.Model, R v2controllers.Readable, C v2controllers.Cr
 			ctx.JSON(errors.ErrorToApiResponse(fmt.Errorf("(%s) authentication middleware not present", errors.InternalServerError)))
 			return
 		}
-		user, ok := userValue.(auth.User)
+		user, ok := userValue.(*auth.User)
 		if !ok {
 			ctx.JSON(errors.ErrorToApiResponse(fmt.Errorf("(%s) authentication middleware misconfigured: suitability represented as %T", errors.InternalServerError, userValue)))
 		}
@@ -61,7 +61,7 @@ func handleEdit[M v2models.Model, R v2controllers.Readable, C v2controllers.Crea
 			ctx.JSON(errors.ErrorToApiResponse(fmt.Errorf("(%s) authentication middleware not present", errors.InternalServerError)))
 			return
 		}
-		user, ok := userValue.(auth.User)
+		user, ok := userValue.(*auth.User)
 		if !ok {
 			ctx.JSON(errors.ErrorToApiResponse(fmt.Errorf("(%s) authentication middleware misconfigured: suitability represented as %T", errors.InternalServerError, userValue)))
 		}
@@ -86,7 +86,7 @@ func handleDelete[M v2models.Model, R v2controllers.Readable, C v2controllers.Cr
 			ctx.JSON(errors.ErrorToApiResponse(fmt.Errorf("(%s) authentication middleware not present", errors.InternalServerError)))
 			return
 		}
-		user, ok := userValue.(auth.User)
+		user, ok := userValue.(*auth.User)
 		if !ok {
 			ctx.JSON(errors.ErrorToApiResponse(fmt.Errorf("(%s) authentication middleware misconfigured: suitability represented as %T", errors.InternalServerError, userValue)))
 		}

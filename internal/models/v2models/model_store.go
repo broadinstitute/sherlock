@@ -39,7 +39,7 @@ type Store[M Model] struct {
 	validateModel func(model M) error
 }
 
-func (s Store[M]) Create(model M, user auth.User) (M, error) {
+func (s Store[M]) Create(model M, user *auth.User) (M, error) {
 	if s.validateModel != nil {
 		if err := s.validateModel(model); err != nil {
 			return model, fmt.Errorf("creation validation error: (%s) new %T: %v", errors.BadRequest, model, err)
@@ -122,7 +122,7 @@ func (s Store[M]) Get(selector string) (M, error) {
 	return ret, nil
 }
 
-func (s Store[M]) Edit(selector string, editsToMake M, user auth.User) (M, error) {
+func (s Store[M]) Edit(selector string, editsToMake M, user *auth.User) (M, error) {
 	toEdit, err := s.Get(selector)
 	if err != nil {
 		return toEdit, fmt.Errorf("edit error handling %T selector %s: %v", toEdit, selector, err)
@@ -159,7 +159,7 @@ func (s Store[M]) Edit(selector string, editsToMake M, user auth.User) (M, error
 	return toEdit, err
 }
 
-func (s Store[M]) Delete(selector string, user auth.User) (M, error) {
+func (s Store[M]) Delete(selector string, user *auth.User) (M, error) {
 	toDelete, err := s.Get(selector)
 	if err != nil {
 		return toDelete, fmt.Errorf("delete error handling %T selector %s: %v", toDelete, selector, err)

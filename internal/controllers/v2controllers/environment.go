@@ -126,7 +126,7 @@ func environmentToModelEnvironment(environment Environment, stores v2models.Stor
 // setEnvironmentDynamicDefaults doesn't need to worry about validation, nor does it need to worry about any
 // static defaults defined in struct tags. The model handles validation, and the caller will handle struct tags
 // after this function runs.
-func setEnvironmentDynamicDefaults(environment *Environment, stores v2models.StoreSet, user auth.User) error {
+func setEnvironmentDynamicDefaults(environment *Environment, stores v2models.StoreSet, user *auth.User) error {
 	if environment.TemplateEnvironment != "" {
 		templateEnvironment, err := stores.EnvironmentStore.Get(environment.TemplateEnvironment)
 		if err != nil {
