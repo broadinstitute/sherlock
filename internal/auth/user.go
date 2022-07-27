@@ -1,65 +1,138 @@
 package auth
 
 import (
+	"context"
 	"fmt"
+	"github.com/rs/zerolog/log"
+	admin "google.golang.org/api/admin/directory/v1"
+	"google.golang.org/api/option"
 	"strings"
 )
 
 type User struct {
-	AuthenticatedEmail string
-	suitabilityInfo    *suitabilityInfo
+	AuthenticatedEmail      string            `json:"authenticatedEmail"`
+	MatchedFirecloudAccount *FirecloudAccount `json:"matchedFirecloudAccount,omitempty"`
 }
 
-type suitabilityInfo struct {
-	acceptedWorkspaceTos bool
-	enrolledIn2fa        bool
-	suspended            bool
-	archived             bool
-	suspensionReason     string
+type FirecloudAccount struct {
+	Email            string                    `json:"email"`
+	AcceptedTerms    bool                      `json:"acceptedTerms"`
+	EnrolledIn2fa    bool                      `json:"enrolledIn2Fa"`
+	Suspended        bool                      `json:"suspended"`
+	Archived         bool                      `json:"archived"`
+	SuspensionReason string                    `json:"suspensionReason,omitempty"`
+	Groups           *FirecloudGroupMembership `json:"groups"`
 }
 
-func (u *User) UsernameSlug() string {
+func (f *FirecloudAccount) parseWorkspaceUser(user *admin.User) {
+	f.Email = user.PrimaryEmail
+	f.AcceptedTerms = user.AgreedToTerms
+	f.EnrolledIn2fa = user.IsEnrolledIn2Sv
+	f.Suspended = user.Suspended
+	f.Archived = user.Archived
+	f.SuspensionReason = user.SuspensionReason
+}
+
+type FirecloudGroupMembership struct {
+	FcAdmins               bool `json:"fc-admins"`
+	FirecloudProjectOwners bool `json:"firecloud-project-owners"`
+}
+
+func (u *User) Username() string {
 	return strings.Split(u.AuthenticatedEmail, "@")[0]
 }
 
-func (u *User) EvaluateSuitability() bool {
-	return u.suitabilityInfo != nil && u.suitabilityInfo.acceptedWorkspaceTos && u.suitabilityInfo.enrolledIn2fa && !u.suitabilityInfo.suspended && !u.suitabilityInfo.archived
+func (u *User) isKnownSuitable() bool {
+	return u.MatchedFirecloudAccount != nil &&
+		u.MatchedFirecloudAccount.AcceptedTerms &&
+		u.MatchedFirecloudAccount.EnrolledIn2fa &&
+		!u.MatchedFirecloudAccount.Suspended &&
+		!u.MatchedFirecloudAccount.Archived &&
+		u.MatchedFirecloudAccount.Groups.FcAdmins &&
+		u.MatchedFirecloudAccount.Groups.FirecloudProjectOwners
 }
 
-func (u *User) DescribeSuitability() string {
-	if u.suitabilityInfo == nil {
-		return fmt.Sprintf("user %s did not have a matching suitable Firecloud account", u.UsernameSlug())
+func (u *User) describeSuitability() string {
+	if u.MatchedFirecloudAccount == nil {
+		return fmt.Sprintf("%s is not known suitable as a matching Firecloud account wasn't found", u.Username())
 	} else {
-		problems := []string{}
-		if !u.suitabilityInfo.acceptedWorkspaceTos {
-			problems = append(problems, "user has no accepted the Google Workspace Terms of Service")
+		var problems []string
+		if !u.MatchedFirecloudAccount.AcceptedTerms {
+			problems = append(problems, "user hasn't accepted Google Workspace terms")
 		}
-		if !u.suitabilityInfo.enrolledIn2fa {
-			problems = append(problems, "user has not enrolled in two-factor authentication")
+		if !u.MatchedFirecloudAccount.EnrolledIn2fa {
+			problems = append(problems, "user hasn't enrolled in two-factor authentication")
 		}
-		if u.suitabilityInfo.suspended {
-			if u.suitabilityInfo.suspensionReason == "" {
-				problems = append(problems, "user's account is suspended (no reason given)")
+		if u.MatchedFirecloudAccount.Suspended {
+			if u.MatchedFirecloudAccount.SuspensionReason == "" {
+				problems = append(problems, "user is currently suspended (no reason given)")
 			} else {
-				problems = append(problems, fmt.Sprintf("user's account is suspended (%s)", u.suitabilityInfo.suspensionReason))
+				problems = append(problems, fmt.Sprintf("user is currently suspended (%s)", u.MatchedFirecloudAccount.SuspensionReason))
 			}
 		}
-		if u.suitabilityInfo.archived {
-			problems = append(problems, "user's account is archived")
+		if u.MatchedFirecloudAccount.Archived {
+			problems = append(problems, "user is currently archived")
+		}
+
+		if !u.MatchedFirecloudAccount.Groups.FcAdmins {
+			problems = append(problems, fmt.Sprintf("user is not in the %s group", firecloudGroups.FcAdmins))
+		}
+		if !u.MatchedFirecloudAccount.Groups.FirecloudProjectOwners {
+			problems = append(problems, fmt.Sprintf("user is not in the %s group", firecloudGroups.FirecloudProjectOwners))
 		}
 
 		if len(problems) > 0 {
-			return fmt.Sprintf("user's %s@firecloud.org account has problems preventing them from being currently suitable: %s", u.UsernameSlug(), strings.Join(problems, ", "))
+			return fmt.Sprintf("%s may be suitable but the matching Firecloud account has issues: %s", u.Username(), strings.Join(problems, ", "))
 		} else {
-			return fmt.Sprintf("%s@firecloud.org is suitable", u.UsernameSlug())
+			return fmt.Sprintf("%s is known suitable", u.Username())
 		}
 	}
 }
 
 func (u *User) SuitableOrError() error {
-	if u.EvaluateSuitability() {
+	if u.isKnownSuitable() {
 		return nil
 	} else {
-		return fmt.Errorf("user was not suitable: %s", u.DescribeSuitability())
+		log.Debug().Msgf("AUTH | %s might not be suitable, refreshing before denying", u.AuthenticatedEmail)
+		adminService, err := admin.NewService(context.Background(), option.WithScopes(admin.AdminDirectoryUserReadonlyScope, admin.AdminDirectoryGroupMemberReadonlyScope))
+		if err != nil {
+			return fmt.Errorf("%s [Sherlock also failed to authenticate to Google to refresh this info: %v]", u.describeSuitability(), err)
+		}
+
+		var email string
+		if u.MatchedFirecloudAccount == nil {
+			email = emailToFirecloudEmail(u.AuthenticatedEmail)
+			u.MatchedFirecloudAccount = &FirecloudAccount{}
+		} else {
+			email = u.MatchedFirecloudAccount.Email
+		}
+
+		workspaceUser, err := adminService.Users.Get(email).Do()
+		if err != nil {
+			return fmt.Errorf("%s [Sherlock also failed to get refreshed user info from Google Workspace: %v]", u.describeSuitability(), err)
+		}
+		u.MatchedFirecloudAccount.parseWorkspaceUser(workspaceUser)
+
+		if u.MatchedFirecloudAccount.Groups == nil {
+			u.MatchedFirecloudAccount.Groups = &FirecloudGroupMembership{}
+		}
+
+		fcAdminsMembership, err := adminService.Members.HasMember(firecloudGroups.FcAdmins, email).Do()
+		if err != nil {
+			return fmt.Errorf("%s [Sherlock also failed to refresh user's membership in %s: %v", u.describeSuitability(), firecloudGroups.FcAdmins, email)
+		}
+		u.MatchedFirecloudAccount.Groups.FcAdmins = fcAdminsMembership.IsMember
+
+		firecloudProjectOwnersMembership, err := adminService.Members.HasMember(firecloudGroups.FirecloudProjectOwners, email).Do()
+		if err != nil {
+			return fmt.Errorf("%s [Sherlock also failed to refresh user's membership in %s: %v", u.describeSuitability(), firecloudGroups.FirecloudProjectOwners, email)
+		}
+		u.MatchedFirecloudAccount.Groups.FirecloudProjectOwners = firecloudProjectOwnersMembership.IsMember
+
+		if u.isKnownSuitable() {
+			return nil
+		} else {
+			return fmt.Errorf("%s", u.describeSuitability())
+		}
 	}
 }

@@ -35,6 +35,7 @@ func (a *Application) buildRouter() {
 	authMiddleware := auth.IdentityAwareProxyAuthentication
 
 	docs.SwaggerInfo.Version = version.BuildVersion
+	// TODO: maybe we should detect this better
 	if version.BuildVersion == version.DevelopmentVersionString {
 		// if a dev build, allow http on Swagger page for localhost usage
 		docs.SwaggerInfo.Schemes = []string{"http", "https"}

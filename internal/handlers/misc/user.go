@@ -9,13 +9,14 @@ import (
 )
 
 type UserResponse struct {
-	Email    string `json:"email"`
-	Suitable string `json:"suitable"`
+	Email       string     `json:"email"`
+	Suitability string     `json:"suitability"`
+	RawInfo     *auth.User `json:"rawInfo"`
 }
 
 // UserHandler godoc
 // @summary      Get information about the calling user
-// @description  Get Sherlock's understanding of the calling user based on IAP and the Firecloud.org Google Workspace.
+// @description  Get Sherlock's understanding of the calling user based on IAP and the Firecloud.org Google Workspace organization.
 // @tags         Misc
 // @produce      json
 // @success      200      {object}  misc.UserResponse
@@ -27,12 +28,21 @@ func UserHandler(ctx *gin.Context) {
 		ctx.JSON(errors.ErrorToApiResponse(fmt.Errorf("(%s) authentication middleware not present", errors.InternalServerError)))
 		return
 	}
-	user, ok := userValue.(auth.User)
+	user, ok := userValue.(*auth.User)
 	if !ok {
 		ctx.JSON(errors.ErrorToApiResponse(fmt.Errorf("(%s) authentication middleware misconfigured: suitability represented as %T", errors.InternalServerError, userValue)))
 	}
+
+	var suitabilityDescription string
+	if nonsuitableErr := user.SuitableOrError(); nonsuitableErr != nil {
+		suitabilityDescription = nonsuitableErr.Error()
+	} else {
+		suitabilityDescription = "user is suitable"
+	}
+
 	ctx.JSON(http.StatusOK, UserResponse{
-		Email:    user.AuthenticatedEmail,
-		Suitable: user.DescribeSuitability(),
+		Email:       user.AuthenticatedEmail,
+		Suitability: suitabilityDescription,
+		RawInfo:     user,
 	})
 }

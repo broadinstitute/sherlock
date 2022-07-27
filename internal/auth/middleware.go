@@ -30,9 +30,9 @@ func IdentityAwareProxyAuthentication() gin.HandlerFunc {
 			ctx.JSON(errors.ErrorToApiResponse(fmt.Errorf("(%s) IAP JWT seemed to pass validation but lacked an email claim", errors.ProxyAuthenticationRequired)))
 		}
 
-		ctx.Set(ContextUserKey, User{
-			AuthenticatedEmail: email,
-			suitabilityInfo:    getUserSuitabilityInfo(email),
+		ctx.Set(ContextUserKey, &User{
+			AuthenticatedEmail:      email,
+			MatchedFirecloudAccount: cachedFirecloudAccounts[emailToFirecloudEmail(email)],
 		})
 
 		ctx.Next()
@@ -41,19 +41,26 @@ func IdentityAwareProxyAuthentication() gin.HandlerFunc {
 
 func DummyAuthentication() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		suitability := &suitabilityInfo{
-			acceptedWorkspaceTos: true,
-			enrolledIn2fa:        true,
-			suspended:            false,
-			archived:             false,
-			suspensionReason:     "",
-		}
+		var firecloudAccount *FirecloudAccount
 		if ctx.GetHeader("Suitable") == "false" {
-			suitability = nil
+			firecloudAccount = nil
+		} else {
+			firecloudAccount = &FirecloudAccount{
+				Email:            "fake@broadinstitute.org",
+				AcceptedTerms:    true,
+				EnrolledIn2fa:    true,
+				Suspended:        false,
+				Archived:         false,
+				SuspensionReason: "",
+				Groups: &FirecloudGroupMembership{
+					FcAdmins:               true,
+					FirecloudProjectOwners: true,
+				},
+			}
 		}
-		ctx.Set(ContextUserKey, User{
-			AuthenticatedEmail: "fake@broadinstitute.org",
-			suitabilityInfo:    suitability,
+		ctx.Set(ContextUserKey, &User{
+			AuthenticatedEmail:      "fake@broadinstitute.org",
+			MatchedFirecloudAccount: firecloudAccount,
 		})
 
 		ctx.Next()

@@ -46,9 +46,9 @@ type Application struct {
 	Handler http.Handler
 	// Used to pass the dbConn to testing setup helpers
 	// without needing to instantiate a full model instance
-	DB                         *gorm.DB
-	Stackdriver                *stackdriver.Exporter
-	ShutdownSuitabilityCaching *context.CancelFunc
+	DB               *gorm.DB
+	Stackdriver      *stackdriver.Exporter
+	contextsToCancel []context.CancelFunc
 }
 
 // New returns a new instance of the core sherlock application
@@ -63,13 +63,14 @@ func New() *Application {
 		DB: dbConn,
 	}
 
+	// TODO: maybe we should detect this better
 	if version.BuildVersion != version.DevelopmentVersionString {
-		if err := auth.CacheSuitableUsers(context.Background()); err != nil {
+		if err := auth.CacheFirecloudAccounts(context.Background()); err != nil {
 			log.Fatal().Msgf("unable to query suitable users: %v", err)
 			return nil
 		}
 		ctx, cancelFunc := context.WithCancel(context.Background())
-		app.ShutdownSuitabilityCaching = &cancelFunc
+		app.contextsToCancel = append(app.contextsToCancel, cancelFunc)
 		go auth.KeepCacheUpdated(ctx, 5*time.Minute)
 	}
 
@@ -119,6 +120,12 @@ func (a *Application) ShutdownStackdriver() {
 	log.Info().Msg("shutting down stackdriver metrics exporter")
 	a.Stackdriver.Flush()
 	a.Stackdriver.StopMetricsExporter()
+}
+
+func (a *Application) CancelContexts() {
+	for _, cancelFunc := range a.contextsToCancel {
+		cancelFunc()
+	}
 }
 
 // initializeMetrics is used to ensure the prometheus endpoint will restore time series
