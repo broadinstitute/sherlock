@@ -8,21 +8,21 @@ import (
 	"net/http"
 )
 
-type UserResponse struct {
+type MyUserResponse struct {
 	Email       string     `json:"email"`
 	Suitability string     `json:"suitability"`
 	RawInfo     *auth.User `json:"rawInfo"`
 }
 
-// UserHandler godoc
+// MyUserHandler godoc
 // @summary      Get information about the calling user
 // @description  Get Sherlock's understanding of the calling user based on IAP and the Firecloud.org Google Workspace organization.
 // @tags         Misc
 // @produce      json
-// @success      200      {object}  misc.UserResponse
+// @success      200      {object}  misc.MyUserResponse
 // @failure      407,500  {object}  errors.ErrorResponse
-// @router       /user [get]
-func UserHandler(ctx *gin.Context) {
+// @router       /my-user [get]
+func MyUserHandler(ctx *gin.Context) {
 	userValue, exists := ctx.Get(auth.ContextUserKey)
 	if !exists {
 		ctx.JSON(errors.ErrorToApiResponse(fmt.Errorf("(%s) authentication middleware not present", errors.InternalServerError)))
@@ -40,7 +40,7 @@ func UserHandler(ctx *gin.Context) {
 		suitabilityDescription = "user is suitable"
 	}
 
-	ctx.JSON(http.StatusOK, UserResponse{
+	ctx.JSON(http.StatusOK, MyUserResponse{
 		Email:       user.AuthenticatedEmail,
 		Suitability: suitabilityDescription,
 		RawInfo:     user,

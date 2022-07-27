@@ -75,6 +75,7 @@ func CacheFirecloudAccounts(ctx context.Context) error {
 		return fmt.Errorf("failed to update %s members from Google Workspace: %v", firecloudGroups.FirecloudProjectOwners, err)
 	}
 
+	log.Debug().Msgf("AUTH | firecloud account cache updated, now contains %d accounts", len(newCache))
 	cachedFirecloudAccounts = newCache
 	lastCacheTime = time.Now()
 	return nil

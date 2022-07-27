@@ -51,7 +51,7 @@ func (a *Application) buildRouter() {
 	router.GET("/version", misc.VersionHandler)
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	router.GET("", func(c *gin.Context) { c.Redirect(http.StatusMovedPermanently, "/swagger/index.html") })
-	router.GET("/user", authMiddleware(), misc.UserHandler)
+	router.GET("/my-user", authMiddleware(), misc.MyUserHandler)
 
 	// register v1 API handlers on both /* and /api/v1/*
 	v1api := router.Group("api/v1")

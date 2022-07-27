@@ -46,12 +46,12 @@ func DummyAuthentication() gin.HandlerFunc {
 			firecloudAccount = nil
 		} else {
 			firecloudAccount = &FirecloudAccount{
-				Email:            "fake@broadinstitute.org",
-				AcceptedTerms:    true,
-				EnrolledIn2fa:    true,
-				Suspended:        false,
-				Archived:         false,
-				SuspensionReason: "",
+				Email:               "fake@broadinstitute.org",
+				AcceptedGoogleTerms: true,
+				EnrolledIn2fa:       true,
+				Suspended:           false,
+				Archived:            false,
+				SuspensionReason:    "",
 				Groups: &FirecloudGroupMembership{
 					FcAdmins:               true,
 					FirecloudProjectOwners: true,

@@ -15,18 +15,18 @@ type User struct {
 }
 
 type FirecloudAccount struct {
-	Email            string                    `json:"email"`
-	AcceptedTerms    bool                      `json:"acceptedTerms"`
-	EnrolledIn2fa    bool                      `json:"enrolledIn2Fa"`
-	Suspended        bool                      `json:"suspended"`
-	Archived         bool                      `json:"archived"`
-	SuspensionReason string                    `json:"suspensionReason,omitempty"`
-	Groups           *FirecloudGroupMembership `json:"groups"`
+	Email               string                    `json:"email"`
+	AcceptedGoogleTerms bool                      `json:"acceptedGoogleTerms"`
+	EnrolledIn2fa       bool                      `json:"enrolledIn2Fa"`
+	Suspended           bool                      `json:"suspended"`
+	Archived            bool                      `json:"archived"`
+	SuspensionReason    string                    `json:"suspensionReason,omitempty"`
+	Groups              *FirecloudGroupMembership `json:"groups"`
 }
 
 func (f *FirecloudAccount) parseWorkspaceUser(user *admin.User) {
 	f.Email = user.PrimaryEmail
-	f.AcceptedTerms = user.AgreedToTerms
+	f.AcceptedGoogleTerms = user.AgreedToTerms
 	f.EnrolledIn2fa = user.IsEnrolledIn2Sv
 	f.Suspended = user.Suspended
 	f.Archived = user.Archived
@@ -44,7 +44,7 @@ func (u *User) Username() string {
 
 func (u *User) isKnownSuitable() bool {
 	return u.MatchedFirecloudAccount != nil &&
-		u.MatchedFirecloudAccount.AcceptedTerms &&
+		u.MatchedFirecloudAccount.AcceptedGoogleTerms &&
 		u.MatchedFirecloudAccount.EnrolledIn2fa &&
 		!u.MatchedFirecloudAccount.Suspended &&
 		!u.MatchedFirecloudAccount.Archived &&
@@ -57,8 +57,8 @@ func (u *User) describeSuitability() string {
 		return fmt.Sprintf("%s is not known suitable as a matching Firecloud account wasn't found", u.Username())
 	} else {
 		var problems []string
-		if !u.MatchedFirecloudAccount.AcceptedTerms {
-			problems = append(problems, "user hasn't accepted Google Workspace terms")
+		if !u.MatchedFirecloudAccount.AcceptedGoogleTerms {
+			problems = append(problems, "user hasn't accepted Google Workspace terms (suggesting they've never logged in)")
 		}
 		if !u.MatchedFirecloudAccount.EnrolledIn2fa {
 			problems = append(problems, "user hasn't enrolled in two-factor authentication")

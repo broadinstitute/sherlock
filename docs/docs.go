@@ -3026,7 +3026,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/user": {
+        "/my-user": {
             "get": {
                 "description": "Get Sherlock's understanding of the calling user based on IAP and the Firecloud.org Google Workspace organization.",
                 "produces": [
@@ -3040,7 +3040,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/misc.UserResponse"
+                            "$ref": "#/definitions/misc.MyUserResponse"
                         }
                     },
                     "407": {
@@ -3083,7 +3083,7 @@ const docTemplate = `{
         "auth.FirecloudAccount": {
             "type": "object",
             "properties": {
-                "acceptedTerms": {
+                "acceptedGoogleTerms": {
                     "type": "boolean"
                 },
                 "archived": {
@@ -3142,7 +3142,7 @@ const docTemplate = `{
                 }
             }
         },
-        "misc.UserResponse": {
+        "misc.MyUserResponse": {
             "type": "object",
             "properties": {
                 "email": {

@@ -3,7 +3,7 @@ consumes:
 definitions:
   auth.FirecloudAccount:
     properties:
-      acceptedTerms:
+      acceptedGoogleTerms:
         type: boolean
       archived:
         type: boolean
@@ -41,7 +41,7 @@ definitions:
       type:
         type: string
     type: object
-  misc.UserResponse:
+  misc.MyUserResponse:
     properties:
       email:
         type: string
@@ -2467,7 +2467,7 @@ paths:
       summary: List Environment selectors
       tags:
       - Environments
-  /user:
+  /my-user:
     get:
       description: Get Sherlock's understanding of the calling user based on IAP and
         the Firecloud.org Google Workspace organization.
@@ -2477,7 +2477,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/misc.UserResponse'
+            $ref: '#/definitions/misc.MyUserResponse'
         "407":
           description: Proxy Authentication Required
           schema:

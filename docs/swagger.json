@@ -3020,7 +3020,7 @@
                 }
             }
         },
-        "/user": {
+        "/my-user": {
             "get": {
                 "description": "Get Sherlock's understanding of the calling user based on IAP and the Firecloud.org Google Workspace organization.",
                 "produces": [
@@ -3034,7 +3034,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/misc.UserResponse"
+                            "$ref": "#/definitions/misc.MyUserResponse"
                         }
                     },
                     "407": {
@@ -3077,7 +3077,7 @@
         "auth.FirecloudAccount": {
             "type": "object",
             "properties": {
-                "acceptedTerms": {
+                "acceptedGoogleTerms": {
                     "type": "boolean"
                 },
                 "archived": {
@@ -3136,7 +3136,7 @@
                 }
             }
         },
-        "misc.UserResponse": {
+        "misc.MyUserResponse": {
             "type": "object",
             "properties": {
                 "email": {
