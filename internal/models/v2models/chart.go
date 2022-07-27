@@ -25,6 +25,7 @@ func newChartStore(db *gorm.DB) Store[Chart] {
 		db:                   db,
 		selectorToQueryModel: chartSelectorToQuery,
 		modelToSelectors:     chartToSelectors,
+		validateModel:        validateChart,
 	}
 }
 
@@ -56,4 +57,14 @@ func chartToSelectors(chart Chart) []string {
 		selectors = append(selectors, fmt.Sprintf("%d", chart.ID))
 	}
 	return selectors
+}
+
+func validateChart(chart Chart) error {
+	if chart.Name == "" {
+		return fmt.Errorf("a %T must have a non-empty name", chart)
+	}
+	if chart.ChartRepo == nil || *chart.ChartRepo == "" {
+		return fmt.Errorf("a %T must have a non-empty chart repo", chart)
+	}
+	return nil
 }

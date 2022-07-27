@@ -25,6 +25,7 @@ func newAppVersionStore(db *gorm.DB) Store[AppVersion] {
 		db:                   db,
 		selectorToQueryModel: appVersionSelectorToQuery,
 		modelToSelectors:     appVersionToSelectors,
+		validateModel:        validateAppVersion,
 	}
 }
 
@@ -47,4 +48,14 @@ func appVersionToSelectors(appVersion AppVersion) []string {
 		selectors = append(selectors, fmt.Sprintf("%d", appVersion.ID))
 	}
 	return selectors
+}
+
+func validateAppVersion(appVersion AppVersion) error {
+	if appVersion.ChartID == 0 {
+		return fmt.Errorf("an %T must have an associated chart", appVersion)
+	}
+	if appVersion.AppVersion == "" {
+		return fmt.Errorf("an %T must have a non-empty app version", appVersion)
+	}
+	return nil
 }

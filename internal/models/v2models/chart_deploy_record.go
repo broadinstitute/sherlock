@@ -26,6 +26,7 @@ func newChartDeployRecordStore(db *gorm.DB) Store[ChartDeployRecord] {
 		selectorToQueryModel:     chartDeployRecordSelectorToQuery,
 		modelToSelectors:         chartDeployRecordToSelectors,
 		modelRequiresSuitability: chartDeployRecordRequiresSuitability,
+		validateModel:            validateChartDeployRecord,
 	}
 }
 
@@ -52,4 +53,17 @@ func chartDeployRecordToSelectors(chartDeployRecord ChartDeployRecord) []string 
 
 func chartDeployRecordRequiresSuitability(chartDeployRecord ChartDeployRecord) bool {
 	return chartReleaseRequiresSuitability(chartDeployRecord.ChartRelease)
+}
+
+func validateChartDeployRecord(chartDeployRecord ChartDeployRecord) error {
+	if chartDeployRecord.ChartReleaseID == 0 {
+		return fmt.Errorf("a %T must have an associated chart release", chartDeployRecord)
+	}
+	if chartDeployRecord.ExactChartVersion == "" {
+		return fmt.Errorf("a %T must have a non-empty chart version", chartDeployRecord)
+	}
+	if chartDeployRecord.ExactAppVersion == "" {
+		return fmt.Errorf("a %T must have a non-empty app version", chartDeployRecord)
+	}
+	return nil
 }

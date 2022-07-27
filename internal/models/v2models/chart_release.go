@@ -41,6 +41,7 @@ func newChartReleaseStore(db *gorm.DB) Store[ChartRelease] {
 		selectorToQueryModel:     chartReleaseSelectorToQuery,
 		modelToSelectors:         chartReleaseToSelectors,
 		modelRequiresSuitability: chartReleaseRequiresSuitability,
+		validateModel:            validateChartRelease,
 	}
 }
 
@@ -177,4 +178,45 @@ func chartReleaseToSelectors(chartRelease ChartRelease) []string {
 
 func chartReleaseRequiresSuitability(chartRelease ChartRelease) bool {
 	return chartRelease.Cluster == nil || clusterRequiresSuitability(*chartRelease.Cluster) || (chartRelease.Environment == nil || environmentRequiresSuitability(*chartRelease.Environment))
+}
+
+func validateChartRelease(chartRelease ChartRelease) error {
+	if chartRelease.ChartID == 0 {
+		return fmt.Errorf("a %T must have an associated chart", chartRelease)
+	}
+	if (chartRelease.ClusterID == nil || *chartRelease.ClusterID == 0) && (chartRelease.EnvironmentID == nil || *chartRelease.EnvironmentID == 0) {
+		return fmt.Errorf("a %T must have either an associated environment or an associated cluster", chartRelease)
+	}
+	if chartRelease.Name == "" {
+		return fmt.Errorf("a %T must have a non-empty Name", chartRelease)
+	}
+
+	if chartRelease.HelmfileRef == nil || *chartRelease.HelmfileRef == "" {
+		return fmt.Errorf("a %T must have a non-empty HelmfileRef", chartRelease)
+	}
+
+	if chartRelease.TargetAppVersionUse != nil {
+		if *chartRelease.TargetAppVersionUse == "branch" && (chartRelease.TargetAppVersionBranch == nil || *chartRelease.TargetAppVersionBranch == "") {
+			return fmt.Errorf("a %T must have a non-empty TargetAppVersionBranch if TargetAppVersionUse is set to 'branch'", chartRelease)
+		} else if *chartRelease.TargetAppVersionUse == "commit" && (chartRelease.TargetAppVersionCommit == nil || *chartRelease.TargetAppVersionCommit == "") {
+			return fmt.Errorf("a %T must have a non-empty TargetAppVersionCommit if TargetAppVersionUse is set to 'commit'", chartRelease)
+		} else if *chartRelease.TargetAppVersionUse == "exact" && (chartRelease.TargetAppVersionExact == nil || *chartRelease.TargetAppVersionExact == "") {
+			return fmt.Errorf("a %T must have a non-empty TargetAppVersionExact if TargetAppVersionUse is set to 'exact'", chartRelease)
+		} else if *chartRelease.TargetChartVersionUse != "branch" && *chartRelease.TargetChartVersionUse != "commit" && *chartRelease.TargetChartVersionUse != "exact" && *chartRelease.TargetChartVersionUse != "" {
+			return fmt.Errorf("a %T must have a TargetAppVersionUse of 'branch', 'commit', 'exact', or none at all (empty string '' is equivalent to none)", chartRelease)
+		}
+	}
+
+	if chartRelease.TargetChartVersionUse == nil || (*chartRelease.TargetChartVersionUse != "latest" && *chartRelease.TargetChartVersionUse != "exact") {
+		return fmt.Errorf("a %T must have a TargetChartVersionUse of either 'latest' or 'exact'", chartRelease)
+	}
+	if *chartRelease.TargetChartVersionUse != "exact" && (chartRelease.TargetChartVersionExact == nil || *chartRelease.TargetChartVersionExact == "") {
+		return fmt.Errorf("a %T must have a non-empty TargetChartVersionExact if TargetChartVersionUse is set to 'exact'", chartRelease)
+	}
+
+	if chartRelease.ThelmaMode != nil && *chartRelease.ThelmaMode == "" {
+		return fmt.Errorf("a %T cannot have a ThelmaMode specifically set to be empty, it can be omitted or non-empty", chartRelease)
+	}
+
+	return nil
 }
