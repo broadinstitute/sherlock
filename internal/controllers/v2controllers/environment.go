@@ -12,6 +12,7 @@ type Environment struct {
 	ReadableBaseType
 	TemplateEnvironmentInfo *Environment `json:"templateEnvironmentInfo,omitempty" swaggertype:"object" json:"templateEnvironmentInfo,omitempty"` // Single-layer recursive; provides info of the template environment if this environment has one
 	DefaultClusterInfo      *Cluster     `json:"defaultClusterInfo,omitempty"`
+	ValuesName              string       `json:"valuesName"`
 	CreatableEnvironment
 }
 
@@ -20,7 +21,6 @@ type CreatableEnvironment struct {
 	Lifecycle           string `json:"lifecycle" default:"dynamic"`
 	Name                string `json:"name"`
 	TemplateEnvironment string `json:"templateEnvironment"`
-	ValuesName          string `json:"valuesName"`
 	EditableEnvironment
 }
 
@@ -72,12 +72,12 @@ func modelEnvironmentToEnvironment(model v2models.Environment) *Environment {
 		},
 		TemplateEnvironmentInfo: templateEnvironment,
 		DefaultClusterInfo:      defaultCluster,
+		ValuesName:              model.ValuesName,
 		CreatableEnvironment: CreatableEnvironment{
 			Base:                model.Base,
 			Lifecycle:           model.Lifecycle,
 			Name:                model.Name,
 			TemplateEnvironment: templateEnvironmentName,
-			ValuesName:          model.ValuesName,
 			EditableEnvironment: EditableEnvironment{
 				DefaultCluster:      &defaultClusterName,
 				DefaultNamespace:    model.DefaultNamespace,
@@ -132,11 +132,10 @@ func setEnvironmentDynamicDefaults(environment *Environment, stores v2models.Sto
 		if err != nil {
 			return err
 		}
+		// If there's a template, the valuesName to use is the name of the template
+		environment.ValuesName = templateEnvironment.Name
 		if environment.Base == "" {
 			environment.Base = templateEnvironment.Base
-		}
-		if environment.ValuesName == "" {
-			environment.ValuesName = templateEnvironment.ValuesName
 		}
 		if environment.DefaultCluster == nil && templateEnvironment.DefaultClusterID != nil {
 			id := strconv.FormatUint(uint64(*templateEnvironment.DefaultClusterID), 10)
@@ -148,6 +147,9 @@ func setEnvironmentDynamicDefaults(environment *Environment, stores v2models.Sto
 		if environment.RequiresSuitability == nil {
 			environment.RequiresSuitability = templateEnvironment.RequiresSuitability
 		}
+	} else {
+		// If there's no template, the valuesName to use is the name of this environment
+		environment.ValuesName = environment.Name
 	}
 	if defaults.CanUpdate(environment.Owner) {
 		environment.Owner = &user.AuthenticatedEmail
