@@ -324,8 +324,6 @@ definitions:
         type: boolean
       templateEnvironment:
         type: string
-      valuesName:
-        type: string
     type: object
   v2controllers.EditableChart:
     properties:
@@ -431,7 +429,71 @@ info:
   title: Sherlock
   version: development
 paths:
-  /api/v2/app-versions/create:
+  /api/v2/app-versions:
+    get:
+      description: List existing AppVersion entries, ordered by most recently updated.
+      parameters:
+      - in: query
+        name: appVersion
+        type: string
+      - in: query
+        name: chart
+        type: string
+      - in: query
+        name: createdAt
+        type: string
+      - in: query
+        name: gitBranch
+        type: string
+      - in: query
+        name: gitCommit
+        type: string
+      - in: query
+        name: id
+        type: integer
+      - in: query
+        name: updatedAt
+        type: string
+      - description: An optional limit to the number of entries returned
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/v2controllers.AppVersion'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: List AppVersion entries
+      tags:
+      - AppVersions
     post:
       consumes:
       - application/json
@@ -478,7 +540,7 @@ paths:
       summary: Create a new AppVersion entry
       tags:
       - AppVersions
-  /api/v2/app-versions/get/{selector}:
+  /api/v2/app-versions/{selector}:
     get:
       description: Get an existing AppVersion entry via one its "selector"--its numeric
         ID.
@@ -522,114 +584,36 @@ paths:
       summary: Get a AppVersion entry
       tags:
       - AppVersions
-  /api/v2/app-versions/list:
+  /api/v2/chart-deploy-records:
     get:
-      description: List existing AppVersion entries, ordered by most recently updated.
+      description: List existing ChartDeployRecord entries, ordered by most recently
+        updated.
       parameters:
-      - description: An optional limit to the number of entries returned
-        in: query
-        name: limit
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/v2controllers.AppVersion'
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "407":
-          description: Proxy Authentication Required
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "409":
-          description: Conflict
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-      summary: List AppVersion entries
-      tags:
-      - AppVersions
-    post:
-      consumes:
-      - application/json
-      description: List existing AppVersion entries, ordered by most recently updated.
-        Entries will be filtered to only return ones matching the provided non-empty
-        fields in the body.
-      parameters:
-      - description: An optional limit to the number of entries returned
-        in: query
-        name: limit
-        type: integer
-      - description: The fields and values to filter on (omit a field to not filter
-          based on it)
-        in: body
-        name: app-version
-        required: true
-        schema:
-          $ref: '#/definitions/v2controllers.AppVersion'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/v2controllers.AppVersion'
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "407":
-          description: Proxy Authentication Required
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "409":
-          description: Conflict
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-      summary: List AppVersion entries with field filters
-      tags:
-      - AppVersions
-  /api/v2/app-versions/selectors/{selector}:
-    get:
-      description: Validate a given AppVersion selector and provide any other selectors
-        that would match the same AppVersion.
-      parameters:
-      - description: The selector of the AppVersion to list other selectors for
-        in: path
-        name: selector
-        required: true
+      - in: query
+        name: chartRelease
         type: string
+      - in: query
+        name: createdAt
+        type: string
+      - in: query
+        name: exactAppVersion
+        type: string
+      - in: query
+        name: exactChartVersion
+        type: string
+      - in: query
+        name: helmfileRef
+        type: string
+      - in: query
+        name: id
+        type: integer
+      - in: query
+        name: updatedAt
+        type: string
+      - description: An optional limit to the number of entries returned
+        in: query
+        name: limit
+        type: integer
       produces:
       - application/json
       responses:
@@ -637,7 +621,7 @@ paths:
           description: OK
           schema:
             items:
-              type: string
+              $ref: '#/definitions/v2controllers.ChartDeployRecord'
             type: array
         "400":
           description: Bad Request
@@ -663,10 +647,9 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/errors.ErrorResponse'
-      summary: List AppVersion selectors
+      summary: List ChartDeployRecord entries
       tags:
-      - AppVersions
-  /api/v2/chart-deploy-records/create:
+      - ChartDeployRecords
     post:
       consumes:
       - application/json
@@ -713,7 +696,7 @@ paths:
       summary: Create a new ChartDeployRecord entry
       tags:
       - ChartDeployRecords
-  /api/v2/chart-deploy-records/get/{selector}:
+  /api/v2/chart-deploy-records/{selector}:
     get:
       description: Get an existing ChartDeployRecord entry via one its "selector"--its
         numeric ID.
@@ -757,116 +740,68 @@ paths:
       summary: Get a ChartDeployRecord entry
       tags:
       - ChartDeployRecords
-  /api/v2/chart-deploy-records/list:
+  /api/v2/chart-releases:
     get:
-      description: List existing ChartDeployRecord entries, ordered by most recently
-        updated.
+      description: List existing ChartRelease entries, ordered by most recently updated.
       parameters:
-      - description: An optional limit to the number of entries returned
-        in: query
-        name: limit
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/v2controllers.ChartDeployRecord'
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "407":
-          description: Proxy Authentication Required
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "409":
-          description: Conflict
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-      summary: List ChartDeployRecord entries
-      tags:
-      - ChartDeployRecords
-    post:
-      consumes:
-      - application/json
-      description: List existing ChartDeployRecord entries, ordered by most recently
-        updated. Entries will be filtered to only return ones matching the provided
-        non-empty fields in the body.
-      parameters:
-      - description: An optional limit to the number of entries returned
-        in: query
-        name: limit
-        type: integer
-      - description: The fields and values to filter on (omit a field to not filter
-          based on it)
-        in: body
-        name: chart-deploy-record
-        required: true
-        schema:
-          $ref: '#/definitions/v2controllers.ChartDeployRecord'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/v2controllers.ChartDeployRecord'
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "407":
-          description: Proxy Authentication Required
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "409":
-          description: Conflict
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-      summary: List ChartDeployRecord entries with field filters
-      tags:
-      - ChartDeployRecords
-  /api/v2/chart-deploy-records/selectors/{selector}:
-    get:
-      description: Validate a given ChartDeployRecord selector and provide any other
-        selectors that would match the same ChartDeployRecord.
-      parameters:
-      - description: The selector of the ChartDeployRecord to list other selectors
-          for
-        in: path
-        name: selector
-        required: true
+      - in: query
+        name: chart
         type: string
+      - in: query
+        name: cluster
+        type: string
+      - in: query
+        name: createdAt
+        type: string
+      - in: query
+        name: currentAppVersionExact
+        type: string
+      - in: query
+        name: currentChartVersionExact
+        type: string
+      - in: query
+        name: environment
+        type: string
+      - in: query
+        name: helmfileRef
+        type: string
+      - in: query
+        name: id
+        type: integer
+      - in: query
+        name: name
+        type: string
+      - in: query
+        name: namespace
+        type: string
+      - in: query
+        name: targetAppVersionBranch
+        type: string
+      - in: query
+        name: targetAppVersionCommit
+        type: string
+      - in: query
+        name: targetAppVersionExact
+        type: string
+      - in: query
+        name: targetAppVersionUse
+        type: string
+      - in: query
+        name: targetChartVersionExact
+        type: string
+      - in: query
+        name: targetChartVersionUse
+        type: string
+      - in: query
+        name: thelmaMode
+        type: string
+      - in: query
+        name: updatedAt
+        type: string
+      - description: An optional limit to the number of entries returned
+        in: query
+        name: limit
+        type: integer
       produces:
       - application/json
       responses:
@@ -874,7 +809,7 @@ paths:
           description: OK
           schema:
             items:
-              type: string
+              $ref: '#/definitions/v2controllers.ChartRelease'
             type: array
         "400":
           description: Bad Request
@@ -900,10 +835,9 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/errors.ErrorResponse'
-      summary: List ChartDeployRecord selectors
+      summary: List ChartRelease entries
       tags:
-      - ChartDeployRecords
-  /api/v2/chart-releases/create:
+      - ChartReleases
     post:
       consumes:
       - application/json
@@ -950,7 +884,7 @@ paths:
       summary: Create a new ChartRelease entry
       tags:
       - ChartReleases
-  /api/v2/chart-releases/delete/{selector}:
+  /api/v2/chart-releases/{selector}:
     delete:
       description: 'Delete an existing ChartRelease entry via one of its "selectors":
         name, numeric ID, environment/chart, or cluster/namespace/chart.'
@@ -994,7 +928,49 @@ paths:
       summary: Delete a ChartRelease entry
       tags:
       - ChartReleases
-  /api/v2/chart-releases/edit/{selector}:
+    get:
+      description: 'Get an existing ChartRelease entry via one of its "selectors":
+        name, numeric ID, environment/chart, or cluster/namespace/chart.'
+      parameters:
+      - description: 'The ChartRelease to get''s selector: name or numeric ID'
+        in: path
+        name: selector
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v2controllers.ChartRelease'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Get a ChartRelease entry
+      tags:
+      - ChartReleases
     patch:
       consumes:
       - application/json
@@ -1048,54 +1024,25 @@ paths:
       summary: Edit a ChartRelease entry
       tags:
       - ChartReleases
-  /api/v2/chart-releases/get/{selector}:
+  /api/v2/chart-versions:
     get:
-      description: 'Get an existing ChartRelease entry via one of its "selectors":
-        name, numeric ID, environment/chart, or cluster/namespace/chart.'
+      description: List existing ChartVersion entries, ordered by most recently updated.
       parameters:
-      - description: 'The ChartRelease to get''s selector: name or numeric ID'
-        in: path
-        name: selector
-        required: true
+      - in: query
+        name: chart
         type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/v2controllers.ChartRelease'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "407":
-          description: Proxy Authentication Required
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "409":
-          description: Conflict
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-      summary: Get a ChartRelease entry
-      tags:
-      - ChartReleases
-  /api/v2/chart-releases/list:
-    get:
-      description: List existing ChartRelease entries, ordered by most recently updated.
-      parameters:
+      - in: query
+        name: chartVersion
+        type: string
+      - in: query
+        name: createdAt
+        type: string
+      - in: query
+        name: id
+        type: integer
+      - in: query
+        name: updatedAt
+        type: string
       - description: An optional limit to the number of entries returned
         in: query
         name: limit
@@ -1107,7 +1054,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/v2controllers.ChartRelease'
+              $ref: '#/definitions/v2controllers.ChartVersion'
             type: array
         "400":
           description: Bad Request
@@ -1133,110 +1080,9 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/errors.ErrorResponse'
-      summary: List ChartRelease entries
+      summary: List ChartVersion entries
       tags:
-      - ChartReleases
-    post:
-      consumes:
-      - application/json
-      description: List existing ChartRelease entries, ordered by most recently updated.
-        Entries will be filtered to only return ones matching the provided non-empty
-        fields in the body.
-      parameters:
-      - description: An optional limit to the number of entries returned
-        in: query
-        name: limit
-        type: integer
-      - description: The fields and values to filter on (omit a field to not filter
-          based on it)
-        in: body
-        name: chart-release
-        required: true
-        schema:
-          $ref: '#/definitions/v2controllers.ChartRelease'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/v2controllers.ChartRelease'
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "407":
-          description: Proxy Authentication Required
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "409":
-          description: Conflict
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-      summary: List ChartRelease entries with field filters
-      tags:
-      - ChartReleases
-  /api/v2/chart-releases/selectors/{selector}:
-    get:
-      description: Validate a given ChartRelease selector and provide any other selectors
-        that would match the same ChartRelease.
-      parameters:
-      - description: The selector of the ChartRelease to list other selectors for
-        in: path
-        name: selector
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              type: string
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "407":
-          description: Proxy Authentication Required
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "409":
-          description: Conflict
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-      summary: List ChartRelease selectors
-      tags:
-      - ChartReleases
-  /api/v2/chart-versions/create:
+      - ChartVersions
     post:
       consumes:
       - application/json
@@ -1283,7 +1129,7 @@ paths:
       summary: Create a new ChartVersion entry
       tags:
       - ChartVersions
-  /api/v2/chart-versions/get/{selector}:
+  /api/v2/chart-versions/{selector}:
     get:
       description: Get an existing ChartVersion entry via one its "selector"--its
         numeric ID.
@@ -1327,114 +1173,35 @@ paths:
       summary: Get a ChartVersion entry
       tags:
       - ChartVersions
-  /api/v2/chart-versions/list:
+  /api/v2/charts:
     get:
-      description: List existing ChartVersion entries, ordered by most recently updated.
+      description: List existing Chart entries, ordered by most recently updated.
       parameters:
-      - description: An optional limit to the number of entries returned
-        in: query
-        name: limit
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/v2controllers.ChartVersion'
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "407":
-          description: Proxy Authentication Required
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "409":
-          description: Conflict
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-      summary: List ChartVersion entries
-      tags:
-      - ChartVersions
-    post:
-      consumes:
-      - application/json
-      description: List existing ChartVersion entries, ordered by most recently updated.
-        Entries will be filtered to only return ones matching the provided non-empty
-        fields in the body.
-      parameters:
-      - description: An optional limit to the number of entries returned
-        in: query
-        name: limit
-        type: integer
-      - description: The fields and values to filter on (omit a field to not filter
-          based on it)
-        in: body
-        name: chart-version
-        required: true
-        schema:
-          $ref: '#/definitions/v2controllers.ChartVersion'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/v2controllers.ChartVersion'
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "407":
-          description: Proxy Authentication Required
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "409":
-          description: Conflict
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-      summary: List ChartVersion entries with field filters
-      tags:
-      - ChartVersions
-  /api/v2/chart-versions/selectors/{selector}:
-    get:
-      description: Validate a given ChartVersion selector and provide any other selectors
-        that would match the same ChartVersion.
-      parameters:
-      - description: The selector of the ChartVersion to list other selectors for
-        in: path
-        name: selector
-        required: true
+      - in: query
+        name: appImageGitMainBranch
         type: string
+      - in: query
+        name: appImageGitRepo
+        type: string
+      - in: query
+        name: chartRepo
+        type: string
+      - in: query
+        name: createdAt
+        type: string
+      - in: query
+        name: id
+        type: integer
+      - in: query
+        name: name
+        type: string
+      - in: query
+        name: updatedAt
+        type: string
+      - description: An optional limit to the number of entries returned
+        in: query
+        name: limit
+        type: integer
       produces:
       - application/json
       responses:
@@ -1442,7 +1209,7 @@ paths:
           description: OK
           schema:
             items:
-              type: string
+              $ref: '#/definitions/v2controllers.Chart'
             type: array
         "400":
           description: Bad Request
@@ -1468,10 +1235,9 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/errors.ErrorResponse'
-      summary: List ChartVersion selectors
+      summary: List Chart entries
       tags:
-      - ChartVersions
-  /api/v2/charts/create:
+      - Charts
     post:
       consumes:
       - application/json
@@ -1518,7 +1284,7 @@ paths:
       summary: Create a new Chart entry
       tags:
       - Charts
-  /api/v2/charts/delete/{selector}:
+  /api/v2/charts/{selector}:
     delete:
       description: 'Delete an existing Chart entry via one of its "selectors": name
         or numeric ID.'
@@ -1562,7 +1328,49 @@ paths:
       summary: Delete a Chart entry
       tags:
       - Charts
-  /api/v2/charts/edit/{selector}:
+    get:
+      description: 'Get an existing Chart entry via one of its "selectors": name or
+        numeric ID.'
+      parameters:
+      - description: 'The Chart to get''s selector: name or numeric ID'
+        in: path
+        name: selector
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v2controllers.Chart'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Get a Chart entry
+      tags:
+      - Charts
     patch:
       consumes:
       - application/json
@@ -1615,54 +1423,48 @@ paths:
       summary: Edit a Chart entry
       tags:
       - Charts
-  /api/v2/charts/get/{selector}:
+  /api/v2/clusters:
     get:
-      description: 'Get an existing Chart entry via one of its "selectors": name or
-        numeric ID.'
+      description: List existing Cluster entries, ordered by most recently updated.
       parameters:
-      - description: 'The Chart to get''s selector: name or numeric ID'
-        in: path
-        name: selector
+      - in: query
+        name: address
         required: true
         type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/v2controllers.Chart'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "407":
-          description: Proxy Authentication Required
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "409":
-          description: Conflict
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-      summary: Get a Chart entry
-      tags:
-      - Charts
-  /api/v2/charts/list:
-    get:
-      description: List existing Chart entries, ordered by most recently updated.
-      parameters:
+      - in: query
+        name: azureSubscription
+        type: string
+      - in: query
+        name: base
+        required: true
+        type: string
+      - in: query
+        name: createdAt
+        type: string
+      - in: query
+        name: googleProject
+        type: string
+      - in: query
+        name: id
+        type: integer
+      - in: query
+        name: name
+        required: true
+        type: string
+      - default: google
+        enum:
+        - google
+        - azure
+        in: query
+        name: provider
+        type: string
+      - default: false
+        in: query
+        name: requiresSuitability
+        type: boolean
+      - in: query
+        name: updatedAt
+        type: string
       - description: An optional limit to the number of entries returned
         in: query
         name: limit
@@ -1674,7 +1476,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/v2controllers.Chart'
+              $ref: '#/definitions/v2controllers.Cluster'
             type: array
         "400":
           description: Bad Request
@@ -1700,110 +1502,9 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/errors.ErrorResponse'
-      summary: List Chart entries
+      summary: List Cluster entries
       tags:
-      - Charts
-    post:
-      consumes:
-      - application/json
-      description: List existing Chart entries, ordered by most recently updated.
-        Entries will be filtered to only return ones matching the provided non-empty
-        fields in the body.
-      parameters:
-      - description: An optional limit to the number of entries returned
-        in: query
-        name: limit
-        type: integer
-      - description: The fields and values to filter on (omit a field to not filter
-          based on it)
-        in: body
-        name: chart
-        required: true
-        schema:
-          $ref: '#/definitions/v2controllers.Chart'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/v2controllers.Chart'
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "407":
-          description: Proxy Authentication Required
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "409":
-          description: Conflict
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-      summary: List Chart entries with field filters
-      tags:
-      - Charts
-  /api/v2/charts/selectors/{selector}:
-    get:
-      description: Validate a given Chart selector and provide any other selectors
-        that would match the same Chart.
-      parameters:
-      - description: The selector of the Chart to list other selectors for
-        in: path
-        name: selector
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              type: string
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "407":
-          description: Proxy Authentication Required
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "409":
-          description: Conflict
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-      summary: List Chart selectors
-      tags:
-      - Charts
-  /api/v2/clusters/create:
+      - Clusters
     post:
       consumes:
       - application/json
@@ -1850,7 +1551,7 @@ paths:
       summary: Create a new Cluster entry
       tags:
       - Clusters
-  /api/v2/clusters/delete/{selector}:
+  /api/v2/clusters/{selector}:
     delete:
       description: 'Delete an existing Cluster entry via one of its "selectors": name
         or numeric ID.'
@@ -1894,7 +1595,49 @@ paths:
       summary: Delete a Cluster entry
       tags:
       - Clusters
-  /api/v2/clusters/edit/{selector}:
+    get:
+      description: 'Get an existing Cluster entry via one of its "selectors": name
+        or numeric ID.'
+      parameters:
+      - description: 'The Cluster to get''s selector: name or numeric ID'
+        in: path
+        name: selector
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v2controllers.Cluster'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Get a Cluster entry
+      tags:
+      - Clusters
     patch:
       consumes:
       - application/json
@@ -1947,54 +1690,48 @@ paths:
       summary: Edit a Cluster entry
       tags:
       - Clusters
-  /api/v2/clusters/get/{selector}:
+  /api/v2/environments:
     get:
-      description: 'Get an existing Cluster entry via one of its "selectors": name
-        or numeric ID.'
+      description: List existing Environment entries, ordered by most recently updated.
       parameters:
-      - description: 'The Cluster to get''s selector: name or numeric ID'
-        in: path
-        name: selector
-        required: true
+      - in: query
+        name: base
         type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/v2controllers.Cluster'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "407":
-          description: Proxy Authentication Required
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "409":
-          description: Conflict
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-      summary: Get a Cluster entry
-      tags:
-      - Clusters
-  /api/v2/clusters/list:
-    get:
-      description: List existing Cluster entries, ordered by most recently updated.
-      parameters:
+      - in: query
+        name: createdAt
+        type: string
+      - in: query
+        name: defaultCluster
+        type: string
+      - in: query
+        name: defaultNamespace
+        type: string
+      - in: query
+        name: id
+        type: integer
+      - default: dynamic
+        in: query
+        name: lifecycle
+        type: string
+      - in: query
+        name: name
+        type: string
+      - in: query
+        name: owner
+        type: string
+      - default: false
+        in: query
+        name: requiresSuitability
+        type: boolean
+      - in: query
+        name: templateEnvironment
+        type: string
+      - in: query
+        name: updatedAt
+        type: string
+      - in: query
+        name: valuesName
+        type: string
       - description: An optional limit to the number of entries returned
         in: query
         name: limit
@@ -2006,7 +1743,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/v2controllers.Cluster'
+              $ref: '#/definitions/v2controllers.Environment'
             type: array
         "400":
           description: Bad Request
@@ -2032,110 +1769,9 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/errors.ErrorResponse'
-      summary: List Cluster entries
+      summary: List Environment entries
       tags:
-      - Clusters
-    post:
-      consumes:
-      - application/json
-      description: List existing Cluster entries, ordered by most recently updated.
-        Entries will be filtered to only return ones matching the provided non-empty
-        fields in the body.
-      parameters:
-      - description: An optional limit to the number of entries returned
-        in: query
-        name: limit
-        type: integer
-      - description: The fields and values to filter on (omit a field to not filter
-          based on it)
-        in: body
-        name: cluster
-        required: true
-        schema:
-          $ref: '#/definitions/v2controllers.Cluster'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/v2controllers.Cluster'
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "407":
-          description: Proxy Authentication Required
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "409":
-          description: Conflict
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-      summary: List Cluster entries with field filters
-      tags:
-      - Clusters
-  /api/v2/clusters/selectors/{selector}:
-    get:
-      description: Validate a given Cluster selector and provide any other selectors
-        that would match the same Cluster.
-      parameters:
-      - description: The selector of the Cluster to list other selectors for
-        in: path
-        name: selector
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              type: string
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "407":
-          description: Proxy Authentication Required
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "409":
-          description: Conflict
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-      summary: List Cluster selectors
-      tags:
-      - Clusters
-  /api/v2/environments/create:
+      - Environments
     post:
       consumes:
       - application/json
@@ -2182,7 +1818,7 @@ paths:
       summary: Create a new Environment entry
       tags:
       - Environments
-  /api/v2/environments/delete/{selector}:
+  /api/v2/environments/{selector}:
     delete:
       description: 'Delete an existing Environment entry via one of its "selectors":
         name or numeric ID.'
@@ -2226,7 +1862,49 @@ paths:
       summary: Delete a Environment entry
       tags:
       - Environments
-  /api/v2/environments/edit/{selector}:
+    get:
+      description: 'Get an existing Environment entry via one of its "selectors":
+        name or numeric ID.'
+      parameters:
+      - description: 'The Environment to get''s selector: name or numeric ID'
+        in: path
+        name: selector
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v2controllers.Environment'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Get a Environment entry
+      tags:
+      - Environments
     patch:
       consumes:
       - application/json
@@ -2279,12 +1957,12 @@ paths:
       summary: Edit a Environment entry
       tags:
       - Environments
-  /api/v2/environments/get/{selector}:
+  /api/v2/selectors/app-versions/{selector}:
     get:
-      description: 'Get an existing Environment entry via one of its "selectors":
-        name or numeric ID.'
+      description: Validate a given AppVersion selector and provide any other selectors
+        that would match the same AppVersion.
       parameters:
-      - description: 'The Environment to get''s selector: name or numeric ID'
+      - description: The selector of the AppVersion to list other selectors for
         in: path
         name: selector
         required: true
@@ -2295,7 +1973,9 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/v2controllers.Environment'
+            items:
+              type: string
+            type: array
         "400":
           description: Bad Request
           schema:
@@ -2320,71 +2000,20 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/errors.ErrorResponse'
-      summary: Get a Environment entry
+      summary: List AppVersion selectors
       tags:
-      - Environments
-  /api/v2/environments/list:
+      - AppVersions
+  /api/v2/selectors/chart-deploy-records/{selector}:
     get:
-      description: List existing Environment entries, ordered by most recently updated.
+      description: Validate a given ChartDeployRecord selector and provide any other
+        selectors that would match the same ChartDeployRecord.
       parameters:
-      - description: An optional limit to the number of entries returned
-        in: query
-        name: limit
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/v2controllers.Environment'
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "407":
-          description: Proxy Authentication Required
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "409":
-          description: Conflict
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-      summary: List Environment entries
-      tags:
-      - Environments
-    post:
-      consumes:
-      - application/json
-      description: List existing Environment entries, ordered by most recently updated.
-        Entries will be filtered to only return ones matching the provided non-empty
-        fields in the body.
-      parameters:
-      - description: An optional limit to the number of entries returned
-        in: query
-        name: limit
-        type: integer
-      - description: The fields and values to filter on (omit a field to not filter
-          based on it)
-        in: body
-        name: environment
+      - description: The selector of the ChartDeployRecord to list other selectors
+          for
+        in: path
+        name: selector
         required: true
-        schema:
-          $ref: '#/definitions/v2controllers.Environment'
+        type: string
       produces:
       - application/json
       responses:
@@ -2392,7 +2021,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/v2controllers.Environment'
+              type: string
             type: array
         "400":
           description: Bad Request
@@ -2418,10 +2047,194 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/errors.ErrorResponse'
-      summary: List Environment entries with field filters
+      summary: List ChartDeployRecord selectors
       tags:
-      - Environments
-  /api/v2/environments/selectors/{selector}:
+      - ChartDeployRecords
+  /api/v2/selectors/chart-releases/{selector}:
+    get:
+      description: Validate a given ChartRelease selector and provide any other selectors
+        that would match the same ChartRelease.
+      parameters:
+      - description: The selector of the ChartRelease to list other selectors for
+        in: path
+        name: selector
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: string
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: List ChartRelease selectors
+      tags:
+      - ChartReleases
+  /api/v2/selectors/chart-versions/{selector}:
+    get:
+      description: Validate a given ChartVersion selector and provide any other selectors
+        that would match the same ChartVersion.
+      parameters:
+      - description: The selector of the ChartVersion to list other selectors for
+        in: path
+        name: selector
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: string
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: List ChartVersion selectors
+      tags:
+      - ChartVersions
+  /api/v2/selectors/charts/{selector}:
+    get:
+      description: Validate a given Chart selector and provide any other selectors
+        that would match the same Chart.
+      parameters:
+      - description: The selector of the Chart to list other selectors for
+        in: path
+        name: selector
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: string
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: List Chart selectors
+      tags:
+      - Charts
+  /api/v2/selectors/clusters/{selector}:
+    get:
+      description: Validate a given Cluster selector and provide any other selectors
+        that would match the same Cluster.
+      parameters:
+      - description: The selector of the Cluster to list other selectors for
+        in: path
+        name: selector
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: string
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: List Cluster selectors
+      tags:
+      - Clusters
+  /api/v2/selectors/environments/{selector}:
     get:
       description: Validate a given Environment selector and provide any other selectors
         that would match the same Environment.

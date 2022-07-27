@@ -80,13 +80,13 @@ func (a *Application) buildRouter() {
 	// register v2 API handlers on /api/v2/*
 	v2api := router.Group("api/v2")
 	v2api.Use(authMiddleware())
-	v2handlers.RegisterClusterHandlers(v2api.Group("/clusters"), a.V2Clusters)
-	v2handlers.RegisterEnvironmentHandlers(v2api.Group("/environments"), a.V2Environments)
-	v2handlers.RegisterChartHandlers(v2api.Group("/charts"), a.V2Charts)
-	v2handlers.RegisterChartVersionHandlers(v2api.Group("/chart-versions"), a.V2ChartVersions)
-	v2handlers.RegisterAppVersionHandlers(v2api.Group("/app-versions"), a.V2AppVersions)
-	v2handlers.RegisterChartReleaseHandlers(v2api.Group("/chart-releases"), a.V2ChartReleases)
-	v2handlers.RegisterChartDeployRecordHandlers(v2api.Group("/chart-deploy-records"), a.V2ChartDeployRecords)
+	v2handlers.RegisterClusterHandlers(v2api, a.V2Clusters)
+	v2handlers.RegisterEnvironmentHandlers(v2api, a.V2Environments)
+	v2handlers.RegisterChartHandlers(v2api, a.V2Charts)
+	v2handlers.RegisterChartVersionHandlers(v2api, a.V2ChartVersions)
+	v2handlers.RegisterAppVersionHandlers(v2api, a.V2AppVersions)
+	v2handlers.RegisterChartReleaseHandlers(v2api, a.V2ChartReleases)
+	v2handlers.RegisterChartDeployRecordHandlers(v2api, a.V2ChartDeployRecords)
 
 	a.Handler = router
 }

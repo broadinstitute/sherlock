@@ -7,15 +7,15 @@ import (
 
 type AppVersion struct {
 	ReadableBaseType
-	ChartInfo *Chart
+	ChartInfo Chart `json:"chartInfo" form:"chartInfo"`
 	CreatableAppVersion
 }
 
 type CreatableAppVersion struct {
-	Chart      string
-	AppVersion string
-	GitCommit  string
-	GitBranch  string
+	Chart      string `json:"chart" form:"chart"`
+	AppVersion string `json:"appVersion" form:"appVersion"`
+	GitCommit  string `json:"gitCommit" form:"gitCommit"`
+	GitBranch  string `json:"gitBranch" form:"gitBranch"`
 	EditableAppVersion
 }
 
@@ -48,7 +48,7 @@ func modelAppVersionToAppVersion(model v2models.AppVersion) *AppVersion {
 			CreatedAt: model.CreatedAt,
 			UpdatedAt: model.UpdatedAt,
 		},
-		ChartInfo: chart,
+		ChartInfo: *chart,
 		CreatableAppVersion: CreatableAppVersion{
 			Chart:      chart.Name,
 			AppVersion: model.AppVersion,
@@ -59,9 +59,13 @@ func modelAppVersionToAppVersion(model v2models.AppVersion) *AppVersion {
 }
 
 func appVersionToModelAppVersion(appVersion AppVersion, stores v2models.StoreSet) (v2models.AppVersion, error) {
-	chart, err := stores.ChartStore.Get(appVersion.Chart)
-	if err != nil {
-		return v2models.AppVersion{}, err
+	var chartID uint
+	if appVersion.Chart != "" {
+		chart, err := stores.ChartStore.Get(appVersion.Chart)
+		if err != nil {
+			return v2models.AppVersion{}, err
+		}
+		chartID = chart.ID
 	}
 	return v2models.AppVersion{
 		Model: gorm.Model{
@@ -69,7 +73,7 @@ func appVersionToModelAppVersion(appVersion AppVersion, stores v2models.StoreSet
 			CreatedAt: appVersion.CreatedAt,
 			UpdatedAt: appVersion.UpdatedAt,
 		},
-		ChartID:    chart.ID,
+		ChartID:    chartID,
 		AppVersion: appVersion.AppVersion,
 		GitCommit:  appVersion.GitCommit,
 		GitBranch:  appVersion.GitBranch,

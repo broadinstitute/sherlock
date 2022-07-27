@@ -7,13 +7,13 @@ import (
 
 type ChartVersion struct {
 	ReadableBaseType
-	ChartInfo *Chart
+	ChartInfo Chart `json:"chartInfo" form:"chartInfo"`
 	CreatableChartVersion
 }
 
 type CreatableChartVersion struct {
-	Chart        string
-	ChartVersion string
+	Chart        string `json:"chart" form:"chart"`
+	ChartVersion string `json:"chartVersion" form:"chartVersion"`
 	EditableChartVersion
 }
 
@@ -46,7 +46,7 @@ func modelChartVersionToChartVersion(model v2models.ChartVersion) *ChartVersion 
 			CreatedAt: model.CreatedAt,
 			UpdatedAt: model.UpdatedAt,
 		},
-		ChartInfo: chart,
+		ChartInfo: *chart,
 		CreatableChartVersion: CreatableChartVersion{
 			Chart:        chart.Name,
 			ChartVersion: model.ChartVersion,
@@ -55,9 +55,13 @@ func modelChartVersionToChartVersion(model v2models.ChartVersion) *ChartVersion 
 }
 
 func chartVersionToModelChartVersion(chartVersion ChartVersion, stores v2models.StoreSet) (v2models.ChartVersion, error) {
-	chart, err := stores.ChartStore.Get(chartVersion.Chart)
-	if err != nil {
-		return v2models.ChartVersion{}, err
+	var chartID uint
+	if chartVersion.Chart != "" {
+		chart, err := stores.ChartStore.Get(chartVersion.Chart)
+		if err != nil {
+			return v2models.ChartVersion{}, err
+		}
+		chartID = chart.ID
 	}
 	return v2models.ChartVersion{
 		Model: gorm.Model{
@@ -65,7 +69,7 @@ func chartVersionToModelChartVersion(chartVersion ChartVersion, stores v2models.
 			CreatedAt: chartVersion.CreatedAt,
 			UpdatedAt: chartVersion.UpdatedAt,
 		},
-		ChartID:      chart.ID,
+		ChartID:      chartID,
 		ChartVersion: chartVersion.ChartVersion,
 	}, nil
 }

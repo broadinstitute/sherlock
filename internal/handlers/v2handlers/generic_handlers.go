@@ -7,6 +7,7 @@ import (
 	"github.com/broadinstitute/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/internal/models/v2models"
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog/log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -40,6 +41,30 @@ func handleCreate[M v2models.Model, R v2controllers.Readable, C v2controllers.Cr
 			return
 		}
 		ctx.JSON(http.StatusCreated, result)
+	}
+}
+
+func handleList[M v2models.Model, R v2controllers.Readable, C v2controllers.Creatable[R], E v2controllers.Editable[R, C]](controller *v2controllers.ModelController[M, R, C, E]) func(ctx *gin.Context) {
+	return func(ctx *gin.Context) {
+		var filter R
+		if err := ctx.ShouldBindQuery(&filter); err != nil {
+			ctx.JSON(errors.ErrorToApiResponse(fmt.Errorf("(%s) error parsing a filtering %T from the query parameters: %v", errors.BadRequest, filter, err)))
+			return
+		} else {
+			log.Debug().Msgf("parsing query params to %T: '%s' => %+v", filter, ctx.Request.URL.RawQuery, filter)
+		}
+		limitString := ctx.DefaultQuery("limit", "0")
+		limit, err := strconv.Atoi(limitString)
+		if err != nil {
+			ctx.JSON(errors.ErrorToApiResponse(err))
+			return
+		}
+		result, err := controller.ListAllMatching(filter, limit)
+		if err != nil {
+			ctx.JSON(errors.ErrorToApiResponse(err))
+			return
+		}
+		ctx.JSON(http.StatusOK, result)
 	}
 }
 
@@ -91,46 +116,6 @@ func handleDelete[M v2models.Model, R v2controllers.Readable, C v2controllers.Cr
 			ctx.JSON(errors.ErrorToApiResponse(fmt.Errorf("(%s) authentication middleware misconfigured: suitability represented as %T", errors.InternalServerError, userValue)))
 		}
 		result, err := controller.Delete(formatSelector(ctx.Param("selector")), user)
-		if err != nil {
-			ctx.JSON(errors.ErrorToApiResponse(err))
-			return
-		}
-		ctx.JSON(http.StatusOK, result)
-	}
-}
-
-func handleList[M v2models.Model, R v2controllers.Readable, C v2controllers.Creatable[R], E v2controllers.Editable[R, C]](controller *v2controllers.ModelController[M, R, C, E]) func(ctx *gin.Context) {
-	return func(ctx *gin.Context) {
-		var emptyFilter R
-		limitString := ctx.DefaultQuery("limit", "0")
-		limit, err := strconv.Atoi(limitString)
-		if err != nil {
-			ctx.JSON(errors.ErrorToApiResponse(err))
-			return
-		}
-		result, err := controller.ListAllMatching(emptyFilter, limit)
-		if err != nil {
-			ctx.JSON(errors.ErrorToApiResponse(err))
-			return
-		}
-		ctx.JSON(http.StatusOK, result)
-	}
-}
-
-func handleListWithFilter[M v2models.Model, R v2controllers.Readable, C v2controllers.Creatable[R], E v2controllers.Editable[R, C]](controller *v2controllers.ModelController[M, R, C, E]) func(ctx *gin.Context) {
-	return func(ctx *gin.Context) {
-		var filter R
-		if err := ctx.ShouldBindJSON(&filter); err != nil {
-			ctx.JSON(errors.ErrorToApiResponse(fmt.Errorf("(%s) JSON error parsing to %T: %v", errors.BadRequest, filter, err)))
-			return
-		}
-		limitString := ctx.DefaultQuery("limit", "0")
-		limit, err := strconv.Atoi(limitString)
-		if err != nil {
-			ctx.JSON(errors.ErrorToApiResponse(err))
-			return
-		}
-		result, err := controller.ListAllMatching(filter, limit)
 		if err != nil {
 			ctx.JSON(errors.ErrorToApiResponse(err))
 			return

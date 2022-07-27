@@ -11,14 +11,14 @@ type Chart struct {
 }
 
 type CreatableChart struct {
-	Name string
+	Name string `json:"name" form:"name"`
 	EditableChart
 }
 
 type EditableChart struct {
-	ChartRepo             *string
-	AppImageGitRepo       *string
-	AppImageGitMainBranch *string
+	ChartRepo             *string `json:"chartRepo" form:"chartRepo"`
+	AppImageGitRepo       *string `json:"appImageGitRepo" form:"appImageGitRepo"`
+	AppImageGitMainBranch *string `json:"appImageGitMainBranch" form:"appImageGitMainBranch"`
 }
 
 func (c CreatableChart) toReadable() Chart {

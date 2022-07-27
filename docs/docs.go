@@ -29,7 +29,107 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/v2/app-versions/create": {
+        "/api/v2/app-versions": {
+            "get": {
+                "description": "List existing AppVersion entries, ordered by most recently updated.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AppVersions"
+                ],
+                "summary": "List AppVersion entries",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "appVersion",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "chart",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "createdAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "gitBranch",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "gitCommit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "updatedAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "An optional limit to the number of entries returned",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/v2controllers.AppVersion"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            },
             "post": {
                 "description": "Create a new AppVersion entry. Note that fields are immutable after creation.",
                 "consumes": [
@@ -99,7 +199,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v2/app-versions/get/{selector}": {
+        "/api/v2/app-versions/{selector}": {
             "get": {
                 "description": "Get an existing AppVersion entry via one its \"selector\"--its numeric ID.",
                 "produces": [
@@ -164,17 +264,52 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v2/app-versions/list": {
+        "/api/v2/chart-deploy-records": {
             "get": {
-                "description": "List existing AppVersion entries, ordered by most recently updated.",
+                "description": "List existing ChartDeployRecord entries, ordered by most recently updated.",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "AppVersions"
+                    "ChartDeployRecords"
                 ],
-                "summary": "List AppVersion entries",
+                "summary": "List ChartDeployRecord entries",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "name": "chartRelease",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "createdAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "exactAppVersion",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "exactChartVersion",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "helmfileRef",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "updatedAt",
+                        "in": "query"
+                    },
                     {
                         "type": "integer",
                         "description": "An optional limit to the number of entries returned",
@@ -188,7 +323,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/v2controllers.AppVersion"
+                                "$ref": "#/definitions/v2controllers.ChartDeployRecord"
                             }
                         }
                     },
@@ -230,153 +365,6 @@ const docTemplate = `{
                     }
                 }
             },
-            "post": {
-                "description": "List existing AppVersion entries, ordered by most recently updated. Entries will be filtered to only return ones matching the provided non-empty fields in the body.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "AppVersions"
-                ],
-                "summary": "List AppVersion entries with field filters",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "An optional limit to the number of entries returned",
-                        "name": "limit",
-                        "in": "query"
-                    },
-                    {
-                        "description": "The fields and values to filter on (omit a field to not filter based on it)",
-                        "name": "app-version",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/v2controllers.AppVersion"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/v2controllers.AppVersion"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "407": {
-                        "description": "Proxy Authentication Required",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "409": {
-                        "description": "Conflict",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v2/app-versions/selectors/{selector}": {
-            "get": {
-                "description": "Validate a given AppVersion selector and provide any other selectors that would match the same AppVersion.",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "AppVersions"
-                ],
-                "summary": "List AppVersion selectors",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "The selector of the AppVersion to list other selectors for",
-                        "name": "selector",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "407": {
-                        "description": "Proxy Authentication Required",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "409": {
-                        "description": "Conflict",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v2/chart-deploy-records/create": {
             "post": {
                 "description": "Create a new ChartDeployRecord entry. Note that fields are immutable after creation.",
                 "consumes": [
@@ -446,7 +434,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v2/chart-deploy-records/get/{selector}": {
+        "/api/v2/chart-deploy-records/{selector}": {
             "get": {
                 "description": "Get an existing ChartDeployRecord entry via one its \"selector\"--its numeric ID.",
                 "produces": [
@@ -511,17 +499,107 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v2/chart-deploy-records/list": {
+        "/api/v2/chart-releases": {
             "get": {
-                "description": "List existing ChartDeployRecord entries, ordered by most recently updated.",
+                "description": "List existing ChartRelease entries, ordered by most recently updated.",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "ChartDeployRecords"
+                    "ChartReleases"
                 ],
-                "summary": "List ChartDeployRecord entries",
+                "summary": "List ChartRelease entries",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "name": "chart",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "cluster",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "createdAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "currentAppVersionExact",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "currentChartVersionExact",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "environment",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "helmfileRef",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "namespace",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "targetAppVersionBranch",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "targetAppVersionCommit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "targetAppVersionExact",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "targetAppVersionUse",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "targetChartVersionExact",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "targetChartVersionUse",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "thelmaMode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "updatedAt",
+                        "in": "query"
+                    },
                     {
                         "type": "integer",
                         "description": "An optional limit to the number of entries returned",
@@ -535,7 +613,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/v2controllers.ChartDeployRecord"
+                                "$ref": "#/definitions/v2controllers.ChartRelease"
                             }
                         }
                     },
@@ -577,153 +655,6 @@ const docTemplate = `{
                     }
                 }
             },
-            "post": {
-                "description": "List existing ChartDeployRecord entries, ordered by most recently updated. Entries will be filtered to only return ones matching the provided non-empty fields in the body.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "ChartDeployRecords"
-                ],
-                "summary": "List ChartDeployRecord entries with field filters",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "An optional limit to the number of entries returned",
-                        "name": "limit",
-                        "in": "query"
-                    },
-                    {
-                        "description": "The fields and values to filter on (omit a field to not filter based on it)",
-                        "name": "chart-deploy-record",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/v2controllers.ChartDeployRecord"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/v2controllers.ChartDeployRecord"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "407": {
-                        "description": "Proxy Authentication Required",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "409": {
-                        "description": "Conflict",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v2/chart-deploy-records/selectors/{selector}": {
-            "get": {
-                "description": "Validate a given ChartDeployRecord selector and provide any other selectors that would match the same ChartDeployRecord.",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "ChartDeployRecords"
-                ],
-                "summary": "List ChartDeployRecord selectors",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "The selector of the ChartDeployRecord to list other selectors for",
-                        "name": "selector",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "407": {
-                        "description": "Proxy Authentication Required",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "409": {
-                        "description": "Conflict",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v2/chart-releases/create": {
             "post": {
                 "description": "Create a new ChartRelease entry. Note that some fields are immutable after creation; /edit lists mutable fields.",
                 "consumes": [
@@ -793,7 +724,70 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v2/chart-releases/delete/{selector}": {
+        "/api/v2/chart-releases/{selector}": {
+            "get": {
+                "description": "Get an existing ChartRelease entry via one of its \"selectors\": name, numeric ID, environment/chart, or cluster/namespace/chart.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ChartReleases"
+                ],
+                "summary": "Get a ChartRelease entry",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The ChartRelease to get's selector: name or numeric ID",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.ChartRelease"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            },
             "delete": {
                 "description": "Delete an existing ChartRelease entry via one of its \"selectors\": name, numeric ID, environment/chart, or cluster/namespace/chart.",
                 "produces": [
@@ -856,9 +850,7 @@ const docTemplate = `{
                         }
                     }
                 }
-            }
-        },
-        "/api/v2/chart-releases/edit/{selector}": {
+            },
             "patch": {
                 "description": "Edit an existing ChartRelease entry via one of its \"selectors\": name, numeric ID, environment/chart, or cluster/namespace/chart. Note that only mutable fields are available here, immutable fields can only be set using /create.",
                 "consumes": [
@@ -935,82 +927,42 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v2/chart-releases/get/{selector}": {
+        "/api/v2/chart-versions": {
             "get": {
-                "description": "Get an existing ChartRelease entry via one of its \"selectors\": name, numeric ID, environment/chart, or cluster/namespace/chart.",
+                "description": "List existing ChartVersion entries, ordered by most recently updated.",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "ChartReleases"
+                    "ChartVersions"
                 ],
-                "summary": "Get a ChartRelease entry",
+                "summary": "List ChartVersion entries",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "The ChartRelease to get's selector: name or numeric ID",
-                        "name": "selector",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/v2controllers.ChartRelease"
-                        }
+                        "name": "chart",
+                        "in": "query"
                     },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
+                    {
+                        "type": "string",
+                        "name": "chartVersion",
+                        "in": "query"
                     },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
+                    {
+                        "type": "string",
+                        "name": "createdAt",
+                        "in": "query"
                     },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
+                    {
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query"
                     },
-                    "407": {
-                        "description": "Proxy Authentication Required",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
+                    {
+                        "type": "string",
+                        "name": "updatedAt",
+                        "in": "query"
                     },
-                    "409": {
-                        "description": "Conflict",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v2/chart-releases/list": {
-            "get": {
-                "description": "List existing ChartRelease entries, ordered by most recently updated.",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "ChartReleases"
-                ],
-                "summary": "List ChartRelease entries",
-                "parameters": [
                     {
                         "type": "integer",
                         "description": "An optional limit to the number of entries returned",
@@ -1024,7 +976,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/v2controllers.ChartRelease"
+                                "$ref": "#/definitions/v2controllers.ChartVersion"
                             }
                         }
                     },
@@ -1066,153 +1018,6 @@ const docTemplate = `{
                     }
                 }
             },
-            "post": {
-                "description": "List existing ChartRelease entries, ordered by most recently updated. Entries will be filtered to only return ones matching the provided non-empty fields in the body.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "ChartReleases"
-                ],
-                "summary": "List ChartRelease entries with field filters",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "An optional limit to the number of entries returned",
-                        "name": "limit",
-                        "in": "query"
-                    },
-                    {
-                        "description": "The fields and values to filter on (omit a field to not filter based on it)",
-                        "name": "chart-release",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/v2controllers.ChartRelease"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/v2controllers.ChartRelease"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "407": {
-                        "description": "Proxy Authentication Required",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "409": {
-                        "description": "Conflict",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v2/chart-releases/selectors/{selector}": {
-            "get": {
-                "description": "Validate a given ChartRelease selector and provide any other selectors that would match the same ChartRelease.",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "ChartReleases"
-                ],
-                "summary": "List ChartRelease selectors",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "The selector of the ChartRelease to list other selectors for",
-                        "name": "selector",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "407": {
-                        "description": "Proxy Authentication Required",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "409": {
-                        "description": "Conflict",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v2/chart-versions/create": {
             "post": {
                 "description": "Create a new ChartVersion entry. Note that fields are immutable after creation.",
                 "consumes": [
@@ -1282,7 +1087,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v2/chart-versions/get/{selector}": {
+        "/api/v2/chart-versions/{selector}": {
             "get": {
                 "description": "Get an existing ChartVersion entry via one its \"selector\"--its numeric ID.",
                 "produces": [
@@ -1347,17 +1152,52 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v2/chart-versions/list": {
+        "/api/v2/charts": {
             "get": {
-                "description": "List existing ChartVersion entries, ordered by most recently updated.",
+                "description": "List existing Chart entries, ordered by most recently updated.",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "ChartVersions"
+                    "Charts"
                 ],
-                "summary": "List ChartVersion entries",
+                "summary": "List Chart entries",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "name": "appImageGitMainBranch",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "appImageGitRepo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "chartRepo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "createdAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "updatedAt",
+                        "in": "query"
+                    },
                     {
                         "type": "integer",
                         "description": "An optional limit to the number of entries returned",
@@ -1371,7 +1211,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/v2controllers.ChartVersion"
+                                "$ref": "#/definitions/v2controllers.Chart"
                             }
                         }
                     },
@@ -1413,153 +1253,6 @@ const docTemplate = `{
                     }
                 }
             },
-            "post": {
-                "description": "List existing ChartVersion entries, ordered by most recently updated. Entries will be filtered to only return ones matching the provided non-empty fields in the body.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "ChartVersions"
-                ],
-                "summary": "List ChartVersion entries with field filters",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "An optional limit to the number of entries returned",
-                        "name": "limit",
-                        "in": "query"
-                    },
-                    {
-                        "description": "The fields and values to filter on (omit a field to not filter based on it)",
-                        "name": "chart-version",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/v2controllers.ChartVersion"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/v2controllers.ChartVersion"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "407": {
-                        "description": "Proxy Authentication Required",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "409": {
-                        "description": "Conflict",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v2/chart-versions/selectors/{selector}": {
-            "get": {
-                "description": "Validate a given ChartVersion selector and provide any other selectors that would match the same ChartVersion.",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "ChartVersions"
-                ],
-                "summary": "List ChartVersion selectors",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "The selector of the ChartVersion to list other selectors for",
-                        "name": "selector",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "407": {
-                        "description": "Proxy Authentication Required",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "409": {
-                        "description": "Conflict",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v2/charts/create": {
             "post": {
                 "description": "Create a new Chart entry. Note that some fields are immutable after creation; /edit lists mutable fields.",
                 "consumes": [
@@ -1629,7 +1322,70 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v2/charts/delete/{selector}": {
+        "/api/v2/charts/{selector}": {
+            "get": {
+                "description": "Get an existing Chart entry via one of its \"selectors\": name or numeric ID.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Charts"
+                ],
+                "summary": "Get a Chart entry",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The Chart to get's selector: name or numeric ID",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.Chart"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            },
             "delete": {
                 "description": "Delete an existing Chart entry via one of its \"selectors\": name or numeric ID.",
                 "produces": [
@@ -1692,9 +1448,7 @@ const docTemplate = `{
                         }
                     }
                 }
-            }
-        },
-        "/api/v2/charts/edit/{selector}": {
+            },
             "patch": {
                 "description": "Edit an existing Chart entry via one of its \"selectors\": name or numeric ID. Note that only mutable fields are available here, immutable fields can only be set using /create.",
                 "consumes": [
@@ -1771,82 +1525,76 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v2/charts/get/{selector}": {
+        "/api/v2/clusters": {
             "get": {
-                "description": "Get an existing Chart entry via one of its \"selectors\": name or numeric ID.",
+                "description": "List existing Cluster entries, ordered by most recently updated.",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "Charts"
+                    "Clusters"
                 ],
-                "summary": "Get a Chart entry",
+                "summary": "List Cluster entries",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "The Chart to get's selector: name or numeric ID",
-                        "name": "selector",
-                        "in": "path",
+                        "name": "address",
+                        "in": "query",
                         "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/v2controllers.Chart"
-                        }
                     },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
+                    {
+                        "type": "string",
+                        "name": "azureSubscription",
+                        "in": "query"
                     },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
+                    {
+                        "type": "string",
+                        "name": "base",
+                        "in": "query",
+                        "required": true
                     },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
+                    {
+                        "type": "string",
+                        "name": "createdAt",
+                        "in": "query"
                     },
-                    "407": {
-                        "description": "Proxy Authentication Required",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
+                    {
+                        "type": "string",
+                        "name": "googleProject",
+                        "in": "query"
                     },
-                    "409": {
-                        "description": "Conflict",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
+                    {
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query"
                     },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v2/charts/list": {
-            "get": {
-                "description": "List existing Chart entries, ordered by most recently updated.",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Charts"
-                ],
-                "summary": "List Chart entries",
-                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "name",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "google",
+                            "azure"
+                        ],
+                        "type": "string",
+                        "default": "google",
+                        "name": "provider",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "default": false,
+                        "name": "requiresSuitability",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "updatedAt",
+                        "in": "query"
+                    },
                     {
                         "type": "integer",
                         "description": "An optional limit to the number of entries returned",
@@ -1860,7 +1608,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/v2controllers.Chart"
+                                "$ref": "#/definitions/v2controllers.Cluster"
                             }
                         }
                     },
@@ -1902,153 +1650,6 @@ const docTemplate = `{
                     }
                 }
             },
-            "post": {
-                "description": "List existing Chart entries, ordered by most recently updated. Entries will be filtered to only return ones matching the provided non-empty fields in the body.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Charts"
-                ],
-                "summary": "List Chart entries with field filters",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "An optional limit to the number of entries returned",
-                        "name": "limit",
-                        "in": "query"
-                    },
-                    {
-                        "description": "The fields and values to filter on (omit a field to not filter based on it)",
-                        "name": "chart",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/v2controllers.Chart"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/v2controllers.Chart"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "407": {
-                        "description": "Proxy Authentication Required",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "409": {
-                        "description": "Conflict",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v2/charts/selectors/{selector}": {
-            "get": {
-                "description": "Validate a given Chart selector and provide any other selectors that would match the same Chart.",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Charts"
-                ],
-                "summary": "List Chart selectors",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "The selector of the Chart to list other selectors for",
-                        "name": "selector",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "407": {
-                        "description": "Proxy Authentication Required",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "409": {
-                        "description": "Conflict",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v2/clusters/create": {
             "post": {
                 "description": "Create a new Cluster entry. Note that some fields are immutable after creation; /edit lists mutable fields.",
                 "consumes": [
@@ -2118,7 +1719,70 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v2/clusters/delete/{selector}": {
+        "/api/v2/clusters/{selector}": {
+            "get": {
+                "description": "Get an existing Cluster entry via one of its \"selectors\": name or numeric ID.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Clusters"
+                ],
+                "summary": "Get a Cluster entry",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The Cluster to get's selector: name or numeric ID",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.Cluster"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            },
             "delete": {
                 "description": "Delete an existing Cluster entry via one of its \"selectors\": name or numeric ID.",
                 "produces": [
@@ -2181,9 +1845,7 @@ const docTemplate = `{
                         }
                     }
                 }
-            }
-        },
-        "/api/v2/clusters/edit/{selector}": {
+            },
             "patch": {
                 "description": "Edit an existing Cluster entry via one of its \"selectors\": name or numeric ID. Note that only mutable fields are available here, immutable fields can only be set using /create.",
                 "consumes": [
@@ -2260,82 +1922,79 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v2/clusters/get/{selector}": {
+        "/api/v2/environments": {
             "get": {
-                "description": "Get an existing Cluster entry via one of its \"selectors\": name or numeric ID.",
+                "description": "List existing Environment entries, ordered by most recently updated.",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "Clusters"
+                    "Environments"
                 ],
-                "summary": "Get a Cluster entry",
+                "summary": "List Environment entries",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "The Cluster to get's selector: name or numeric ID",
-                        "name": "selector",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/v2controllers.Cluster"
-                        }
+                        "name": "base",
+                        "in": "query"
                     },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
+                    {
+                        "type": "string",
+                        "name": "createdAt",
+                        "in": "query"
                     },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
+                    {
+                        "type": "string",
+                        "name": "defaultCluster",
+                        "in": "query"
                     },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
+                    {
+                        "type": "string",
+                        "name": "defaultNamespace",
+                        "in": "query"
                     },
-                    "407": {
-                        "description": "Proxy Authentication Required",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
+                    {
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query"
                     },
-                    "409": {
-                        "description": "Conflict",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
+                    {
+                        "type": "string",
+                        "default": "dynamic",
+                        "name": "lifecycle",
+                        "in": "query"
                     },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v2/clusters/list": {
-            "get": {
-                "description": "List existing Cluster entries, ordered by most recently updated.",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Clusters"
-                ],
-                "summary": "List Cluster entries",
-                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "owner",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "default": false,
+                        "name": "requiresSuitability",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "templateEnvironment",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "updatedAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "valuesName",
+                        "in": "query"
+                    },
                     {
                         "type": "integer",
                         "description": "An optional limit to the number of entries returned",
@@ -2349,7 +2008,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/v2controllers.Cluster"
+                                "$ref": "#/definitions/v2controllers.Environment"
                             }
                         }
                     },
@@ -2391,153 +2050,6 @@ const docTemplate = `{
                     }
                 }
             },
-            "post": {
-                "description": "List existing Cluster entries, ordered by most recently updated. Entries will be filtered to only return ones matching the provided non-empty fields in the body.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Clusters"
-                ],
-                "summary": "List Cluster entries with field filters",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "An optional limit to the number of entries returned",
-                        "name": "limit",
-                        "in": "query"
-                    },
-                    {
-                        "description": "The fields and values to filter on (omit a field to not filter based on it)",
-                        "name": "cluster",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/v2controllers.Cluster"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/v2controllers.Cluster"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "407": {
-                        "description": "Proxy Authentication Required",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "409": {
-                        "description": "Conflict",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v2/clusters/selectors/{selector}": {
-            "get": {
-                "description": "Validate a given Cluster selector and provide any other selectors that would match the same Cluster.",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Clusters"
-                ],
-                "summary": "List Cluster selectors",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "The selector of the Cluster to list other selectors for",
-                        "name": "selector",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "407": {
-                        "description": "Proxy Authentication Required",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "409": {
-                        "description": "Conflict",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v2/environments/create": {
             "post": {
                 "description": "Create a new Environment entry. Note that some fields are immutable after creation; /edit lists mutable fields.",
                 "consumes": [
@@ -2607,7 +2119,70 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v2/environments/delete/{selector}": {
+        "/api/v2/environments/{selector}": {
+            "get": {
+                "description": "Get an existing Environment entry via one of its \"selectors\": name or numeric ID.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Environments"
+                ],
+                "summary": "Get a Environment entry",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The Environment to get's selector: name or numeric ID",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.Environment"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            },
             "delete": {
                 "description": "Delete an existing Environment entry via one of its \"selectors\": name or numeric ID.",
                 "produces": [
@@ -2670,9 +2245,7 @@ const docTemplate = `{
                         }
                     }
                 }
-            }
-        },
-        "/api/v2/environments/edit/{selector}": {
+            },
             "patch": {
                 "description": "Edit an existing Environment entry via one of its \"selectors\": name or numeric ID. Note that only mutable fields are available here, immutable fields can only be set using /create.",
                 "consumes": [
@@ -2749,20 +2322,20 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v2/environments/get/{selector}": {
+        "/api/v2/selectors/app-versions/{selector}": {
             "get": {
-                "description": "Get an existing Environment entry via one of its \"selectors\": name or numeric ID.",
+                "description": "Validate a given AppVersion selector and provide any other selectors that would match the same AppVersion.",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "Environments"
+                    "AppVersions"
                 ],
-                "summary": "Get a Environment entry",
+                "summary": "List AppVersion selectors",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "The Environment to get's selector: name or numeric ID",
+                        "description": "The selector of the AppVersion to list other selectors for",
                         "name": "selector",
                         "in": "path",
                         "required": true
@@ -2772,7 +2345,10 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v2controllers.Environment"
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
                         }
                     },
                     "400": {
@@ -2814,22 +2390,23 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v2/environments/list": {
+        "/api/v2/selectors/chart-deploy-records/{selector}": {
             "get": {
-                "description": "List existing Environment entries, ordered by most recently updated.",
+                "description": "Validate a given ChartDeployRecord selector and provide any other selectors that would match the same ChartDeployRecord.",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "Environments"
+                    "ChartDeployRecords"
                 ],
-                "summary": "List Environment entries",
+                "summary": "List ChartDeployRecord selectors",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "An optional limit to the number of entries returned",
-                        "name": "limit",
-                        "in": "query"
+                        "type": "string",
+                        "description": "The selector of the ChartDeployRecord to list other selectors for",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -2838,84 +2415,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/v2controllers.Environment"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "407": {
-                        "description": "Proxy Authentication Required",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "409": {
-                        "description": "Conflict",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "description": "List existing Environment entries, ordered by most recently updated. Entries will be filtered to only return ones matching the provided non-empty fields in the body.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Environments"
-                ],
-                "summary": "List Environment entries with field filters",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "An optional limit to the number of entries returned",
-                        "name": "limit",
-                        "in": "query"
-                    },
-                    {
-                        "description": "The fields and values to filter on (omit a field to not filter based on it)",
-                        "name": "environment",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/v2controllers.Environment"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/v2controllers.Environment"
+                                "type": "string"
                             }
                         }
                     },
@@ -2958,7 +2458,279 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v2/environments/selectors/{selector}": {
+        "/api/v2/selectors/chart-releases/{selector}": {
+            "get": {
+                "description": "Validate a given ChartRelease selector and provide any other selectors that would match the same ChartRelease.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ChartReleases"
+                ],
+                "summary": "List ChartRelease selectors",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The selector of the ChartRelease to list other selectors for",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v2/selectors/chart-versions/{selector}": {
+            "get": {
+                "description": "Validate a given ChartVersion selector and provide any other selectors that would match the same ChartVersion.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ChartVersions"
+                ],
+                "summary": "List ChartVersion selectors",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The selector of the ChartVersion to list other selectors for",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v2/selectors/charts/{selector}": {
+            "get": {
+                "description": "Validate a given Chart selector and provide any other selectors that would match the same Chart.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Charts"
+                ],
+                "summary": "List Chart selectors",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The selector of the Chart to list other selectors for",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v2/selectors/clusters/{selector}": {
+            "get": {
+                "description": "Validate a given Cluster selector and provide any other selectors that would match the same Cluster.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Clusters"
+                ],
+                "summary": "List Cluster selectors",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The selector of the Cluster to list other selectors for",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v2/selectors/environments/{selector}": {
             "get": {
                 "description": "Validate a given Environment selector and provide any other selectors that would match the same Environment.",
                 "produces": [
@@ -3563,9 +3335,6 @@ const docTemplate = `{
                     "default": false
                 },
                 "templateEnvironment": {
-                    "type": "string"
-                },
-                "valuesName": {
                     "type": "string"
                 }
             }

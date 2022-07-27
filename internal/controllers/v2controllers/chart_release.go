@@ -7,32 +7,32 @@ import (
 
 type ChartRelease struct {
 	ReadableBaseType
-	ChartInfo       Chart
-	ClusterInfo     *Cluster
-	EnvironmentInfo *Environment
+	ChartInfo       Chart        `json:"chartInfo" form:"chartInfo"`
+	ClusterInfo     *Cluster     `json:"clusterInfo,omitempty" form:"clusterInfo"`
+	EnvironmentInfo *Environment `json:"environmentInfo,omitempty" form:"environmentInfo"`
 	CreatableChartRelease
 }
 
 type CreatableChartRelease struct {
-	Chart       string
-	Cluster     string
-	Environment string
-	Name        string
-	Namespace   string
+	Chart       string `json:"chart" form:"chart"`
+	Cluster     string `json:"cluster" form:"cluster"`
+	Environment string `json:"environment" form:"environment"`
+	Name        string `json:"name" form:"name"`
+	Namespace   string `json:"namespace" form:"namespace"`
 	EditableChartRelease
 }
 
 type EditableChartRelease struct {
-	CurrentAppVersionExact   *string
-	CurrentChartVersionExact *string
-	HelmfileRef              *string
-	TargetAppVersionBranch   *string
-	TargetAppVersionCommit   *string
-	TargetAppVersionExact    *string
-	TargetAppVersionUse      *string
-	TargetChartVersionExact  *string
-	TargetChartVersionUse    *string
-	ThelmaMode               *string
+	CurrentAppVersionExact   *string `json:"currentAppVersionExact" form:"currentAppVersionExact"`
+	CurrentChartVersionExact *string `json:"currentChartVersionExact" form:"currentChartVersionExact"`
+	HelmfileRef              *string `json:"helmfileRef" form:"helmfileRef"`
+	TargetAppVersionBranch   *string `json:"targetAppVersionBranch" form:"targetAppVersionBranch"`
+	TargetAppVersionCommit   *string `json:"targetAppVersionCommit" form:"targetAppVersionCommit"`
+	TargetAppVersionExact    *string `json:"targetAppVersionExact" form:"targetAppVersionExact"`
+	TargetAppVersionUse      *string `json:"targetAppVersionUse" form:"targetAppVersionUse"`
+	TargetChartVersionExact  *string `json:"targetChartVersionExact" form:"targetChartVersionExact"`
+	TargetChartVersionUse    *string `json:"targetChartVersionUse" form:"targetChartVersionUse"`
+	ThelmaMode               *string `json:"thelmaMode,omitempty" form:"thelmaMode"`
 }
 
 func (c CreatableChartRelease) toReadable() ChartRelease {
@@ -100,9 +100,13 @@ func modelChartReleaseToChartRelease(model v2models.ChartRelease) *ChartRelease 
 }
 
 func chartReleaseToModelChartRelease(chartRelease ChartRelease, stores v2models.StoreSet) (v2models.ChartRelease, error) {
-	chart, err := stores.ChartStore.Get(chartRelease.Chart)
-	if err != nil {
-		return v2models.ChartRelease{}, err
+	var chartID uint
+	if chartRelease.Chart != "" {
+		chart, err := stores.ChartStore.Get(chartRelease.Chart)
+		if err != nil {
+			return v2models.ChartRelease{}, err
+		}
+		chartID = chart.ID
 	}
 	var environmentID *uint
 	if chartRelease.Environment != "" {
@@ -126,7 +130,7 @@ func chartReleaseToModelChartRelease(chartRelease ChartRelease, stores v2models.
 			CreatedAt: chartRelease.CreatedAt,
 			UpdatedAt: chartRelease.UpdatedAt,
 		},
-		ChartID:                  chart.ID,
+		ChartID:                  chartID,
 		ClusterID:                clusterID,
 		EnvironmentID:            environmentID,
 		Name:                     chartRelease.Name,

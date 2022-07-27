@@ -6,13 +6,12 @@ import (
 )
 
 func RegisterClusterHandlers(routerGroup *gin.RouterGroup, controller *v2controllers.ClusterController) {
-	routerGroup.POST("/create", createCluster(controller))
-	routerGroup.GET("/get/*selector", getCluster(controller))
-	routerGroup.PATCH("/edit/*selector", editCluster(controller))
-	routerGroup.DELETE("/delete/*selector", deleteCluster(controller))
-	routerGroup.GET("/selectors/*selector", listClusterSelectors(controller))
-	routerGroup.GET("/list", listCluster(controller))
-	routerGroup.POST("/list", listClusterWithFilter(controller))
+	routerGroup.POST("/clusters", createCluster(controller))
+	routerGroup.GET("/clusters", listCluster(controller))
+	routerGroup.GET("/clusters/*selector", getCluster(controller))
+	routerGroup.PATCH("/clusters/*selector", editCluster(controller))
+	routerGroup.DELETE("/clusters/*selector", deleteCluster(controller))
+	routerGroup.GET("/selectors/clusters/*selector", listClusterSelectors(controller))
 }
 
 // createCluster godoc
@@ -24,9 +23,23 @@ func RegisterClusterHandlers(routerGroup *gin.RouterGroup, controller *v2control
 // @param        cluster                  body      v2controllers.CreatableCluster  true  "The Cluster to create"
 // @success      200                      {object}  v2controllers.Cluster
 // @failure      400,403,404,407,409,500  {object}  errors.ErrorResponse
-// @router       /api/v2/clusters/create [post]
+// @router       /api/v2/clusters [post]
 func createCluster(controller *v2controllers.ClusterController) func(ctx *gin.Context) {
 	return handleCreate(controller)
+}
+
+// listCluster godoc
+// @summary      List Cluster entries
+// @description  List existing Cluster entries, ordered by most recently updated.
+// @tags         Clusters
+// @produce      json
+// @param        filter                   query     v2controllers.Cluster  false  "Optional filters to apply to the returned entries"
+// @param        limit                    query     int                    false  "An optional limit to the number of entries returned"
+// @success      200                      {array}   v2controllers.Cluster
+// @failure      400,403,404,407,409,500  {object}  errors.ErrorResponse
+// @router       /api/v2/clusters [get]
+func listCluster(controller *v2controllers.ClusterController) func(ctx *gin.Context) {
+	return handleList(controller)
 }
 
 // getCluster godoc
@@ -37,7 +50,7 @@ func createCluster(controller *v2controllers.ClusterController) func(ctx *gin.Co
 // @param        selector                 path      string  true  "The Cluster to get's selector: name or numeric ID"
 // @success      200                      {object}  v2controllers.Cluster
 // @failure      400,403,404,407,409,500  {object}  errors.ErrorResponse
-// @router       /api/v2/clusters/get/{selector} [get]
+// @router       /api/v2/clusters/{selector} [get]
 func getCluster(controller *v2controllers.ClusterController) func(ctx *gin.Context) {
 	return handleGet(controller)
 }
@@ -52,7 +65,7 @@ func getCluster(controller *v2controllers.ClusterController) func(ctx *gin.Conte
 // @param        cluster                  body      v2controllers.EditableCluster  true  "The edits to make to the Cluster"
 // @success      200                      {object}  v2controllers.Cluster
 // @failure      400,403,404,407,409,500  {object}  errors.ErrorResponse
-// @router       /api/v2/clusters/edit/{selector} [patch]
+// @router       /api/v2/clusters/{selector} [patch]
 func editCluster(controller *v2controllers.ClusterController) func(ctx *gin.Context) {
 	return handleEdit(controller)
 }
@@ -65,7 +78,7 @@ func editCluster(controller *v2controllers.ClusterController) func(ctx *gin.Cont
 // @param        selector                 path      string  true  "The Cluster to delete's selector: name or numeric ID"
 // @success      200                      {object}  v2controllers.Cluster
 // @failure      400,403,404,407,409,500  {object}  errors.ErrorResponse
-// @router       /api/v2/clusters/delete/{selector} [delete]
+// @router       /api/v2/clusters/{selector} [delete]
 func deleteCluster(controller *v2controllers.ClusterController) func(ctx *gin.Context) {
 	return handleDelete(controller)
 }
@@ -78,35 +91,7 @@ func deleteCluster(controller *v2controllers.ClusterController) func(ctx *gin.Co
 // @param        selector                 path      string  true  "The selector of the Cluster to list other selectors for"
 // @success      200                      {array}   string
 // @failure      400,403,404,407,409,500  {object}  errors.ErrorResponse
-// @router       /api/v2/clusters/selectors/{selector} [get]
+// @router       /api/v2/selectors/clusters/{selector} [get]
 func listClusterSelectors(controller *v2controllers.ClusterController) func(ctx *gin.Context) {
 	return handleSelectorList(controller)
-}
-
-// listCluster godoc
-// @summary      List Cluster entries
-// @description  List existing Cluster entries, ordered by most recently updated.
-// @tags         Clusters
-// @produce      json
-// @param        limit                    query     int  false  "An optional limit to the number of entries returned"
-// @success      200                      {array}   v2controllers.Cluster
-// @failure      400,403,404,407,409,500  {object}  errors.ErrorResponse
-// @router       /api/v2/clusters/list [get]
-func listCluster(controller *v2controllers.ClusterController) func(ctx *gin.Context) {
-	return handleList(controller)
-}
-
-// listClusterWithFilter godoc
-// @summary      List Cluster entries with field filters
-// @description  List existing Cluster entries, ordered by most recently updated. Entries will be filtered to only return ones matching the provided non-empty fields in the body.
-// @tags         Clusters
-// @accept       json
-// @produce      json
-// @param        limit                    query     int                    false  "An optional limit to the number of entries returned"
-// @param        cluster                  body      v2controllers.Cluster  true   "The fields and values to filter on (omit a field to not filter based on it)"
-// @success      200                      {array}   v2controllers.Cluster
-// @failure      400,403,404,407,409,500  {object}  errors.ErrorResponse
-// @router       /api/v2/clusters/list [post]
-func listClusterWithFilter(controller *v2controllers.ClusterController) func(ctx *gin.Context) {
-	return handleListWithFilter(controller)
 }

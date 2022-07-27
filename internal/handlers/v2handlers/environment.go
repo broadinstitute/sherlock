@@ -6,13 +6,12 @@ import (
 )
 
 func RegisterEnvironmentHandlers(routerGroup *gin.RouterGroup, controller *v2controllers.EnvironmentController) {
-	routerGroup.POST("/create", createEnvironment(controller))
-	routerGroup.GET("/get/*selector", getEnvironment(controller))
-	routerGroup.PATCH("/edit/*selector", editEnvironment(controller))
-	routerGroup.DELETE("/delete/*selector", deleteEnvironment(controller))
-	routerGroup.GET("/selectors/*selector", listEnvironmentSelectors(controller))
-	routerGroup.GET("/list", listEnvironment(controller))
-	routerGroup.POST("/list", listEnvironmentWithFilter(controller))
+	routerGroup.POST("/environments", createEnvironment(controller))
+	routerGroup.GET("/environments", listEnvironment(controller))
+	routerGroup.GET("/environments/*selector", getEnvironment(controller))
+	routerGroup.PATCH("/environments/*selector", editEnvironment(controller))
+	routerGroup.DELETE("/environments/*selector", deleteEnvironment(controller))
+	routerGroup.GET("/selectors/environments/*selector", listEnvironmentSelectors(controller))
 }
 
 // createEnvironment godoc
@@ -24,9 +23,23 @@ func RegisterEnvironmentHandlers(routerGroup *gin.RouterGroup, controller *v2con
 // @param        environment              body      v2controllers.CreatableEnvironment  true  "The Environment to create"
 // @success      200                      {object}  v2controllers.Environment
 // @failure      400,403,404,407,409,500  {object}  errors.ErrorResponse
-// @router       /api/v2/environments/create [post]
+// @router       /api/v2/environments [post]
 func createEnvironment(controller *v2controllers.EnvironmentController) func(ctx *gin.Context) {
 	return handleCreate(controller)
+}
+
+// listEnvironment godoc
+// @summary      List Environment entries
+// @description  List existing Environment entries, ordered by most recently updated.
+// @tags         Environments
+// @produce      json
+// @param        filter                   query     v2controllers.Environment  false  "Optional filters to apply to the returned entries"
+// @param        limit                    query     int                        false  "An optional limit to the number of entries returned"
+// @success      200                      {array}   v2controllers.Environment
+// @failure      400,403,404,407,409,500  {object}  errors.ErrorResponse
+// @router       /api/v2/environments [get]
+func listEnvironment(controller *v2controllers.EnvironmentController) func(ctx *gin.Context) {
+	return handleList(controller)
 }
 
 // getEnvironment godoc
@@ -37,7 +50,7 @@ func createEnvironment(controller *v2controllers.EnvironmentController) func(ctx
 // @param        selector                 path      string  true  "The Environment to get's selector: name or numeric ID"
 // @success      200                      {object}  v2controllers.Environment
 // @failure      400,403,404,407,409,500  {object}  errors.ErrorResponse
-// @router       /api/v2/environments/get/{selector} [get]
+// @router       /api/v2/environments/{selector} [get]
 func getEnvironment(controller *v2controllers.EnvironmentController) func(ctx *gin.Context) {
 	return handleGet(controller)
 }
@@ -52,7 +65,7 @@ func getEnvironment(controller *v2controllers.EnvironmentController) func(ctx *g
 // @param        environment              body      v2controllers.EditableEnvironment  true  "The edits to make to the Environment"
 // @success      200                      {object}  v2controllers.Environment
 // @failure      400,403,404,407,409,500  {object}  errors.ErrorResponse
-// @router       /api/v2/environments/edit/{selector} [patch]
+// @router       /api/v2/environments/{selector} [patch]
 func editEnvironment(controller *v2controllers.EnvironmentController) func(ctx *gin.Context) {
 	return handleEdit(controller)
 }
@@ -65,7 +78,7 @@ func editEnvironment(controller *v2controllers.EnvironmentController) func(ctx *
 // @param        selector                 path      string  true  "The Environment to delete's selector: name or numeric ID"
 // @success      200                      {object}  v2controllers.Environment
 // @failure      400,403,404,407,409,500  {object}  errors.ErrorResponse
-// @router       /api/v2/environments/delete/{selector} [delete]
+// @router       /api/v2/environments/{selector} [delete]
 func deleteEnvironment(controller *v2controllers.EnvironmentController) func(ctx *gin.Context) {
 	return handleDelete(controller)
 }
@@ -78,35 +91,7 @@ func deleteEnvironment(controller *v2controllers.EnvironmentController) func(ctx
 // @param        selector                 path      string  true  "The selector of the Environment to list other selectors for"
 // @success      200                      {array}   string
 // @failure      400,403,404,407,409,500  {object}  errors.ErrorResponse
-// @router       /api/v2/environments/selectors/{selector} [get]
+// @router       /api/v2/selectors/environments/{selector} [get]
 func listEnvironmentSelectors(controller *v2controllers.EnvironmentController) func(ctx *gin.Context) {
 	return handleSelectorList(controller)
-}
-
-// listEnvironment godoc
-// @summary      List Environment entries
-// @description  List existing Environment entries, ordered by most recently updated.
-// @tags         Environments
-// @produce      json
-// @param        limit                    query     int  false  "An optional limit to the number of entries returned"
-// @success      200                      {array}   v2controllers.Environment
-// @failure      400,403,404,407,409,500  {object}  errors.ErrorResponse
-// @router       /api/v2/environments/list [get]
-func listEnvironment(controller *v2controllers.EnvironmentController) func(ctx *gin.Context) {
-	return handleList(controller)
-}
-
-// listEnvironmentWithFilter godoc
-// @summary      List Environment entries with field filters
-// @description  List existing Environment entries, ordered by most recently updated. Entries will be filtered to only return ones matching the provided non-empty fields in the body.
-// @tags         Environments
-// @accept       json
-// @produce      json
-// @param        limit                    query     int                        false  "An optional limit to the number of entries returned"
-// @param        environment              body      v2controllers.Environment  true   "The fields and values to filter on (omit a field to not filter based on it)"
-// @success      200                      {array}   v2controllers.Environment
-// @failure      400,403,404,407,409,500  {object}  errors.ErrorResponse
-// @router       /api/v2/environments/list [post]
-func listEnvironmentWithFilter(controller *v2controllers.EnvironmentController) func(ctx *gin.Context) {
-	return handleListWithFilter(controller)
 }

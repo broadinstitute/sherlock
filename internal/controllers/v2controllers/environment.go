@@ -10,25 +10,25 @@ import (
 
 type Environment struct {
 	ReadableBaseType
-	TemplateEnvironmentInfo *Environment `json:"templateEnvironmentInfo,omitempty" swaggertype:"object" json:"templateEnvironmentInfo,omitempty"` // Single-layer recursive; provides info of the template environment if this environment has one
-	DefaultClusterInfo      *Cluster     `json:"defaultClusterInfo,omitempty"`
-	ValuesName              string       `json:"valuesName"`
+	TemplateEnvironmentInfo *Environment `json:"templateEnvironmentInfo,omitempty" swaggertype:"object" form:"templateEnvironmentInfo"` // Single-layer recursive; provides info of the template environment if this environment has one
+	DefaultClusterInfo      *Cluster     `json:"defaultClusterInfo,omitempty" form:"defaultClusterInfo"`
+	ValuesName              string       `json:"valuesName" form:"valuesName"`
 	CreatableEnvironment
 }
 
 type CreatableEnvironment struct {
-	Base                string `json:"base"`
-	Lifecycle           string `json:"lifecycle" default:"dynamic"`
-	Name                string `json:"name"`
-	TemplateEnvironment string `json:"templateEnvironment"`
+	Base                string `json:"base" form:"base"`
+	Lifecycle           string `json:"lifecycle" default:"dynamic" form:"lifecycle"`
+	Name                string `json:"name" form:"name"`
+	TemplateEnvironment string `json:"templateEnvironment" form:"templateEnvironment"`
 	EditableEnvironment
 }
 
 type EditableEnvironment struct {
-	DefaultCluster      *string `json:"defaultCluster"`
-	DefaultNamespace    *string `json:"defaultNamespace"`
-	Owner               *string `json:"owner"`
-	RequiresSuitability *bool   `json:"requiresSuitability" default:"false"`
+	DefaultCluster      *string `json:"defaultCluster" form:"defaultCluster"`
+	DefaultNamespace    *string `json:"defaultNamespace" form:"defaultNamespace"`
+	Owner               *string `json:"owner" form:"owner"`
+	RequiresSuitability *bool   `json:"requiresSuitability" default:"false" form:"requiresSuitability"`
 }
 
 func (c CreatableEnvironment) toReadable() Environment {

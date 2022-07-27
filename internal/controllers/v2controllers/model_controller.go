@@ -10,9 +10,9 @@ import (
 )
 
 type ReadableBaseType struct {
-	ID        uint      `json:"id"`
-	CreatedAt time.Time `json:"createdAt"`
-	UpdatedAt time.Time `json:"updatedAt"`
+	ID        uint      `json:"id" form:"id"`
+	CreatedAt time.Time `json:"createdAt" form:"createdAt"`
+	UpdatedAt time.Time `json:"updatedAt" form:"updatedAt"`
 }
 
 type Readable interface {
@@ -65,10 +65,10 @@ func (c ModelController[M, R, C, E]) Create(creatable C, user *auth.User) (R, er
 	return *c.modelToReadable(result), err
 }
 
-func (c ModelController[M, R, C, E]) ListAllMatching(query R, limit int) ([]R, error) {
-	model, err := c.readableToModel(query, c.allStores)
+func (c ModelController[M, R, C, E]) ListAllMatching(filter R, limit int) ([]R, error) {
+	model, err := c.readableToModel(filter, c.allStores)
 	if err != nil {
-		return []R{}, err
+		return []R{}, fmt.Errorf("error parsing filter to a %T that can be queried against the database: %v", model, err)
 	}
 	results, err := c.primaryStore.ListAllMatching(model, limit)
 	var readables []R

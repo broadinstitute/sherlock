@@ -6,11 +6,10 @@ import (
 )
 
 func RegisterChartVersionHandlers(routerGroup *gin.RouterGroup, controller *v2controllers.ChartVersionController) {
-	routerGroup.POST("/create", createChartVersion(controller))
-	routerGroup.GET("/get/*selector", getChartVersion(controller))
-	routerGroup.GET("/selectors/*selector", listChartVersionSelectors(controller))
-	routerGroup.GET("/list", listChartVersion(controller))
-	routerGroup.POST("/list", listChartVersionWithFilter(controller))
+	routerGroup.POST("/chart-versions", createChartVersion(controller))
+	routerGroup.GET("/chart-versions", listChartVersion(controller))
+	routerGroup.GET("/chart-versions/*selector", getChartVersion(controller))
+	routerGroup.GET("/selectors/chart-versions/*selector", listChartVersionSelectors(controller))
 }
 
 // createChartVersion godoc
@@ -22,9 +21,23 @@ func RegisterChartVersionHandlers(routerGroup *gin.RouterGroup, controller *v2co
 // @param        chart-version            body      v2controllers.CreatableChartVersion  true  "The ChartVersion to create"
 // @success      200                      {object}  v2controllers.ChartVersion
 // @failure      400,403,404,407,409,500  {object}  errors.ErrorResponse
-// @router       /api/v2/chart-versions/create [post]
+// @router       /api/v2/chart-versions [post]
 func createChartVersion(controller *v2controllers.ChartVersionController) func(ctx *gin.Context) {
 	return handleCreate(controller)
+}
+
+// listChartVersion godoc
+// @summary      List ChartVersion entries
+// @description  List existing ChartVersion entries, ordered by most recently updated.
+// @tags         ChartVersions
+// @produce      json
+// @param        filter                   query     v2controllers.ChartVersion  false  "Optional filters to apply to the returned entries"
+// @param        limit                    query     int                         false  "An optional limit to the number of entries returned"
+// @success      200                      {array}   v2controllers.ChartVersion
+// @failure      400,403,404,407,409,500  {object}  errors.ErrorResponse
+// @router       /api/v2/chart-versions [get]
+func listChartVersion(controller *v2controllers.ChartVersionController) func(ctx *gin.Context) {
+	return handleList(controller)
 }
 
 // getChartVersion godoc
@@ -35,7 +48,7 @@ func createChartVersion(controller *v2controllers.ChartVersionController) func(c
 // @param        selector                 path      string  true  "The ChartVersion to get's selector: name or numeric ID"
 // @success      200                      {object}  v2controllers.ChartVersion
 // @failure      400,403,404,407,409,500  {object}  errors.ErrorResponse
-// @router       /api/v2/chart-versions/get/{selector} [get]
+// @router       /api/v2/chart-versions/{selector} [get]
 func getChartVersion(controller *v2controllers.ChartVersionController) func(ctx *gin.Context) {
 	return handleGet(controller)
 }
@@ -48,35 +61,7 @@ func getChartVersion(controller *v2controllers.ChartVersionController) func(ctx 
 // @param        selector                 path      string  true  "The selector of the ChartVersion to list other selectors for"
 // @success      200                      {array}   string
 // @failure      400,403,404,407,409,500  {object}  errors.ErrorResponse
-// @router       /api/v2/chart-versions/selectors/{selector} [get]
+// @router       /api/v2/selectors/chart-versions/{selector} [get]
 func listChartVersionSelectors(controller *v2controllers.ChartVersionController) func(ctx *gin.Context) {
 	return handleSelectorList(controller)
-}
-
-// listChartVersion godoc
-// @summary      List ChartVersion entries
-// @description  List existing ChartVersion entries, ordered by most recently updated.
-// @tags         ChartVersions
-// @produce      json
-// @param        limit                    query     int  false  "An optional limit to the number of entries returned"
-// @success      200                      {array}   v2controllers.ChartVersion
-// @failure      400,403,404,407,409,500  {object}  errors.ErrorResponse
-// @router       /api/v2/chart-versions/list [get]
-func listChartVersion(controller *v2controllers.ChartVersionController) func(ctx *gin.Context) {
-	return handleList(controller)
-}
-
-// listChartVersionWithFilter godoc
-// @summary      List ChartVersion entries with field filters
-// @description  List existing ChartVersion entries, ordered by most recently updated. Entries will be filtered to only return ones matching the provided non-empty fields in the body.
-// @tags         ChartVersions
-// @accept       json
-// @produce      json
-// @param        limit                    query     int                         false  "An optional limit to the number of entries returned"
-// @param        chart-version            body      v2controllers.ChartVersion  true   "The fields and values to filter on (omit a field to not filter based on it)"
-// @success      200                      {array}   v2controllers.ChartVersion
-// @failure      400,403,404,407,409,500  {object}  errors.ErrorResponse
-// @router       /api/v2/chart-versions/list [post]
-func listChartVersionWithFilter(controller *v2controllers.ChartVersionController) func(ctx *gin.Context) {
-	return handleListWithFilter(controller)
 }

@@ -6,11 +6,10 @@ import (
 )
 
 func RegisterChartDeployRecordHandlers(routerGroup *gin.RouterGroup, controller *v2controllers.ChartDeployRecordController) {
-	routerGroup.POST("/create", createChartDeployRecord(controller))
-	routerGroup.GET("/get/*selector", getChartDeployRecord(controller))
-	routerGroup.GET("/selectors/*selector", listChartDeployRecordSelectors(controller))
-	routerGroup.GET("/list", listChartDeployRecord(controller))
-	routerGroup.POST("/list", listChartDeployRecordWithFilter(controller))
+	routerGroup.POST("/chart-deploy-records", createChartDeployRecord(controller))
+	routerGroup.GET("/chart-deploy-records", listChartDeployRecord(controller))
+	routerGroup.GET("/chart-deploy-records/*selector", getChartDeployRecord(controller))
+	routerGroup.GET("/selectors/chart-deploy-records/*selector", listChartDeployRecordSelectors(controller))
 }
 
 // createChartDeployRecord godoc
@@ -22,9 +21,23 @@ func RegisterChartDeployRecordHandlers(routerGroup *gin.RouterGroup, controller 
 // @param        chart-deploy-record      body      v2controllers.CreatableChartDeployRecord  true  "The ChartDeployRecord to create"
 // @success      200                      {object}  v2controllers.ChartDeployRecord
 // @failure      400,403,404,407,409,500  {object}  errors.ErrorResponse
-// @router       /api/v2/chart-deploy-records/create [post]
+// @router       /api/v2/chart-deploy-records [post]
 func createChartDeployRecord(controller *v2controllers.ChartDeployRecordController) func(ctx *gin.Context) {
 	return handleCreate(controller)
+}
+
+// listChartDeployRecord godoc
+// @summary      List ChartDeployRecord entries
+// @description  List existing ChartDeployRecord entries, ordered by most recently updated.
+// @tags         ChartDeployRecords
+// @produce      json
+// @param        filter                   query     v2controllers.ChartDeployRecord  false  "Optional filters to apply to the returned entries"
+// @param        limit                    query     int                              false  "An optional limit to the number of entries returned"
+// @success      200                      {array}   v2controllers.ChartDeployRecord
+// @failure      400,403,404,407,409,500  {object}  errors.ErrorResponse
+// @router       /api/v2/chart-deploy-records [get]
+func listChartDeployRecord(controller *v2controllers.ChartDeployRecordController) func(ctx *gin.Context) {
+	return handleList(controller)
 }
 
 // getChartDeployRecord godoc
@@ -35,7 +48,7 @@ func createChartDeployRecord(controller *v2controllers.ChartDeployRecordControll
 // @param        selector                 path      string  true  "The ChartDeployRecord to get's selector: name or numeric ID"
 // @success      200                      {object}  v2controllers.ChartDeployRecord
 // @failure      400,403,404,407,409,500  {object}  errors.ErrorResponse
-// @router       /api/v2/chart-deploy-records/get/{selector} [get]
+// @router       /api/v2/chart-deploy-records/{selector} [get]
 func getChartDeployRecord(controller *v2controllers.ChartDeployRecordController) func(ctx *gin.Context) {
 	return handleGet(controller)
 }
@@ -48,35 +61,7 @@ func getChartDeployRecord(controller *v2controllers.ChartDeployRecordController)
 // @param        selector                 path      string  true  "The selector of the ChartDeployRecord to list other selectors for"
 // @success      200                      {array}   string
 // @failure      400,403,404,407,409,500  {object}  errors.ErrorResponse
-// @router       /api/v2/chart-deploy-records/selectors/{selector} [get]
+// @router       /api/v2/selectors/chart-deploy-records/{selector} [get]
 func listChartDeployRecordSelectors(controller *v2controllers.ChartDeployRecordController) func(ctx *gin.Context) {
 	return handleSelectorList(controller)
-}
-
-// listChartDeployRecord godoc
-// @summary      List ChartDeployRecord entries
-// @description  List existing ChartDeployRecord entries, ordered by most recently updated.
-// @tags         ChartDeployRecords
-// @produce      json
-// @param        limit                    query     int  false  "An optional limit to the number of entries returned"
-// @success      200                      {array}   v2controllers.ChartDeployRecord
-// @failure      400,403,404,407,409,500  {object}  errors.ErrorResponse
-// @router       /api/v2/chart-deploy-records/list [get]
-func listChartDeployRecord(controller *v2controllers.ChartDeployRecordController) func(ctx *gin.Context) {
-	return handleList(controller)
-}
-
-// listChartDeployRecordWithFilter godoc
-// @summary      List ChartDeployRecord entries with field filters
-// @description  List existing ChartDeployRecord entries, ordered by most recently updated. Entries will be filtered to only return ones matching the provided non-empty fields in the body.
-// @tags         ChartDeployRecords
-// @accept       json
-// @produce      json
-// @param        limit                    query     int                              false  "An optional limit to the number of entries returned"
-// @param        chart-deploy-record      body      v2controllers.ChartDeployRecord  true   "The fields and values to filter on (omit a field to not filter based on it)"
-// @success      200                      {array}   v2controllers.ChartDeployRecord
-// @failure      400,403,404,407,409,500  {object}  errors.ErrorResponse
-// @router       /api/v2/chart-deploy-records/list [post]
-func listChartDeployRecordWithFilter(controller *v2controllers.ChartDeployRecordController) func(ctx *gin.Context) {
-	return handleListWithFilter(controller)
 }

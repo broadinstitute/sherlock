@@ -6,13 +6,12 @@ import (
 )
 
 func RegisterChartReleaseHandlers(routerGroup *gin.RouterGroup, controller *v2controllers.ChartReleaseController) {
-	routerGroup.POST("/create", createChartRelease(controller))
-	routerGroup.GET("/get/*selector", getChartRelease(controller))
-	routerGroup.PATCH("/edit/*selector", editChartRelease(controller))
-	routerGroup.DELETE("/delete/*selector", deleteChartRelease(controller))
-	routerGroup.GET("/selectors/*selector", listChartReleaseSelectors(controller))
-	routerGroup.GET("/list", listChartRelease(controller))
-	routerGroup.POST("/list", listChartReleaseWithFilter(controller))
+	routerGroup.POST("/chart-releases", createChartRelease(controller))
+	routerGroup.GET("/chart-releases", listChartRelease(controller))
+	routerGroup.GET("/chart-releases/*selector", getChartRelease(controller))
+	routerGroup.PATCH("/chart-releases/*selector", editChartRelease(controller))
+	routerGroup.DELETE("/chart-releases/*selector", deleteChartRelease(controller))
+	routerGroup.GET("/selectors/chart-releases/*selector", listChartReleaseSelectors(controller))
 }
 
 // createChartRelease godoc
@@ -24,9 +23,23 @@ func RegisterChartReleaseHandlers(routerGroup *gin.RouterGroup, controller *v2co
 // @param        chart-release            body      v2controllers.CreatableChartRelease  true  "The ChartRelease to create"
 // @success      200                      {object}  v2controllers.ChartRelease
 // @failure      400,403,404,407,409,500  {object}  errors.ErrorResponse
-// @router       /api/v2/chart-releases/create [post]
+// @router       /api/v2/chart-releases [post]
 func createChartRelease(controller *v2controllers.ChartReleaseController) func(ctx *gin.Context) {
 	return handleCreate(controller)
+}
+
+// listChartRelease godoc
+// @summary      List ChartRelease entries
+// @description  List existing ChartRelease entries, ordered by most recently updated.
+// @tags         ChartReleases
+// @produce      json
+// @param        filter                   query     v2controllers.ChartRelease  false  "Optional filters to apply to the returned entries"
+// @param        limit                    query     int                         false  "An optional limit to the number of entries returned"
+// @success      200                      {array}   v2controllers.ChartRelease
+// @failure      400,403,404,407,409,500  {object}  errors.ErrorResponse
+// @router       /api/v2/chart-releases [get]
+func listChartRelease(controller *v2controllers.ChartReleaseController) func(ctx *gin.Context) {
+	return handleList(controller)
 }
 
 // getChartRelease godoc
@@ -37,7 +50,7 @@ func createChartRelease(controller *v2controllers.ChartReleaseController) func(c
 // @param        selector                 path      string  true  "The ChartRelease to get's selector: name or numeric ID"
 // @success      200                      {object}  v2controllers.ChartRelease
 // @failure      400,403,404,407,409,500  {object}  errors.ErrorResponse
-// @router       /api/v2/chart-releases/get/{selector} [get]
+// @router       /api/v2/chart-releases/{selector} [get]
 func getChartRelease(controller *v2controllers.ChartReleaseController) func(ctx *gin.Context) {
 	return handleGet(controller)
 }
@@ -52,7 +65,7 @@ func getChartRelease(controller *v2controllers.ChartReleaseController) func(ctx 
 // @param        chart-release            body      v2controllers.EditableChartRelease  true  "The edits to make to the ChartRelease"
 // @success      200                      {object}  v2controllers.ChartRelease
 // @failure      400,403,404,407,409,500  {object}  errors.ErrorResponse
-// @router       /api/v2/chart-releases/edit/{selector} [patch]
+// @router       /api/v2/chart-releases/{selector} [patch]
 func editChartRelease(controller *v2controllers.ChartReleaseController) func(ctx *gin.Context) {
 	return handleEdit(controller)
 }
@@ -65,7 +78,7 @@ func editChartRelease(controller *v2controllers.ChartReleaseController) func(ctx
 // @param        selector                 path      string  true  "The ChartRelease to delete's selector: name or numeric ID"
 // @success      200                      {object}  v2controllers.ChartRelease
 // @failure      400,403,404,407,409,500  {object}  errors.ErrorResponse
-// @router       /api/v2/chart-releases/delete/{selector} [delete]
+// @router       /api/v2/chart-releases/{selector} [delete]
 func deleteChartRelease(controller *v2controllers.ChartReleaseController) func(ctx *gin.Context) {
 	return handleDelete(controller)
 }
@@ -78,35 +91,7 @@ func deleteChartRelease(controller *v2controllers.ChartReleaseController) func(c
 // @param        selector                 path      string  true  "The selector of the ChartRelease to list other selectors for"
 // @success      200                      {array}   string
 // @failure      400,403,404,407,409,500  {object}  errors.ErrorResponse
-// @router       /api/v2/chart-releases/selectors/{selector} [get]
+// @router       /api/v2/selectors/chart-releases/{selector} [get]
 func listChartReleaseSelectors(controller *v2controllers.ChartReleaseController) func(ctx *gin.Context) {
 	return handleSelectorList(controller)
-}
-
-// listChartRelease godoc
-// @summary      List ChartRelease entries
-// @description  List existing ChartRelease entries, ordered by most recently updated.
-// @tags         ChartReleases
-// @produce      json
-// @param        limit                    query     int  false  "An optional limit to the number of entries returned"
-// @success      200                      {array}   v2controllers.ChartRelease
-// @failure      400,403,404,407,409,500  {object}  errors.ErrorResponse
-// @router       /api/v2/chart-releases/list [get]
-func listChartRelease(controller *v2controllers.ChartReleaseController) func(ctx *gin.Context) {
-	return handleList(controller)
-}
-
-// listChartReleaseWithFilter godoc
-// @summary      List ChartRelease entries with field filters
-// @description  List existing ChartRelease entries, ordered by most recently updated. Entries will be filtered to only return ones matching the provided non-empty fields in the body.
-// @tags         ChartReleases
-// @accept       json
-// @produce      json
-// @param        limit                    query     int                         false  "An optional limit to the number of entries returned"
-// @param        chart-release            body      v2controllers.ChartRelease  true   "The fields and values to filter on (omit a field to not filter based on it)"
-// @success      200                      {array}   v2controllers.ChartRelease
-// @failure      400,403,404,407,409,500  {object}  errors.ErrorResponse
-// @router       /api/v2/chart-releases/list [post]
-func listChartReleaseWithFilter(controller *v2controllers.ChartReleaseController) func(ctx *gin.Context) {
-	return handleListWithFilter(controller)
 }
