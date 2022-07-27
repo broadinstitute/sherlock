@@ -71,7 +71,7 @@ func New() *Application {
 		}
 		ctx, cancelFunc := context.WithCancel(context.Background())
 		app.contextsToCancel = append(app.contextsToCancel, cancelFunc)
-		go auth.KeepCacheUpdated(ctx, 5*time.Minute)
+		go auth.KeepCacheUpdated(ctx, 15*time.Minute)
 	}
 
 	app.registerControllers()
