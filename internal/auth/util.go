@@ -2,6 +2,8 @@ package auth
 
 import "strings"
 
+const firecloudDomain = "firecloud.org"
+
 var firecloudGroups = struct {
 	FcAdmins               string
 	FirecloudProjectOwners string

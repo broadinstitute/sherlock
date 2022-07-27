@@ -19,7 +19,7 @@ func CacheFirecloudAccounts(ctx context.Context) error {
 	}
 
 	newCache := make(map[string]*FirecloudAccount)
-	err = adminService.Users.List().Pages(ctx, func(workspaceUsers *admin.Users) error {
+	err = adminService.Users.List().Domain(firecloudDomain).Pages(ctx, func(workspaceUsers *admin.Users) error {
 		if workspaceUsers == nil {
 			log.Warn().Msg("CacheFirecloudAccounts got a nil user page from Google?")
 		} else {
