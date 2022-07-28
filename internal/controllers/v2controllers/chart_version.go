@@ -12,8 +12,8 @@ type ChartVersion struct {
 }
 
 type CreatableChartVersion struct {
-	Chart        string `json:"chart" form:"chart"`
-	ChartVersion string `json:"chartVersion" form:"chartVersion"`
+	Chart        string `json:"chart" form:"chart"`               // Required when creating
+	ChartVersion string `json:"chartVersion" form:"chartVersion"` // Required when creating
 	EditableChartVersion
 }
 

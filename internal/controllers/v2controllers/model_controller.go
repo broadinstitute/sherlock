@@ -50,7 +50,7 @@ func (c ModelController[M, R, C, E]) Create(creatable C, user *auth.User) (R, er
 	// Handle dynamic defaults, like making an environment from a template
 	if c.setDynamicDefaults != nil {
 		if err := c.setDynamicDefaults(&readable, c.allStores, user); err != nil {
-			return readable, fmt.Errorf("(%s) error setting dynamic default values for %T: %v", errors.InternalServerError, readable, err)
+			return readable, fmt.Errorf("error setting dynamic default values for %T: %v", readable, err)
 		}
 	}
 	// Handle static struct default tags, which both swaggo/swag and this creasty/defaults.Set function respect

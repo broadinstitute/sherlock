@@ -11,12 +11,12 @@ type Chart struct {
 }
 
 type CreatableChart struct {
-	Name string `json:"name" form:"name"`
+	Name string `json:"name" form:"name"` // Required when creating
 	EditableChart
 }
 
 type EditableChart struct {
-	ChartRepo             *string `json:"chartRepo" form:"chartRepo"`
+	ChartRepo             *string `json:"chartRepo" form:"chartRepo" default:"terra-helm"`
 	AppImageGitRepo       *string `json:"appImageGitRepo" form:"appImageGitRepo"`
 	AppImageGitMainBranch *string `json:"appImageGitMainBranch" form:"appImageGitMainBranch"`
 }

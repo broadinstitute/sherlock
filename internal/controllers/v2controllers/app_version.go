@@ -12,8 +12,8 @@ type AppVersion struct {
 }
 
 type CreatableAppVersion struct {
-	Chart      string `json:"chart" form:"chart"`
-	AppVersion string `json:"appVersion" form:"appVersion"`
+	Chart      string `json:"chart" form:"chart"`           // Required when creating
+	AppVersion string `json:"appVersion" form:"appVersion"` // Required when creating
 	GitCommit  string `json:"gitCommit" form:"gitCommit"`
 	GitBranch  string `json:"gitBranch" form:"gitBranch"`
 	EditableAppVersion

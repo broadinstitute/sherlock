@@ -12,10 +12,10 @@ type ChartDeployRecord struct {
 }
 
 type CreatableChartDeployRecord struct {
-	ChartRelease      string `json:"chartRelease" form:"chartRelease"`
-	ExactChartVersion string `json:"exactChartVersion" form:"exactChartVersion"`
-	ExactAppVersion   string `json:"exactAppVersion" form:"exactAppVersion"`
-	HelmfileRef       string `json:"helmfileRef" form:"helmfileRef"`
+	ChartRelease      string `json:"chartRelease" form:"chartRelease"`           // Required when creating
+	ExactChartVersion string `json:"exactChartVersion" form:"exactChartVersion"` // Required when creating
+	ExactAppVersion   string `json:"exactAppVersion" form:"exactAppVersion"`     // Required when creating
+	HelmfileRef       string `json:"helmfileRef" form:"helmfileRef"`             // Required when creating
 	EditableChartDeployRecord
 }
 

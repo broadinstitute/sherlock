@@ -15,19 +15,19 @@ type Cluster struct {
 // CreatableCluster
 // @description  The subset of Cluster fields that can be set upon creation
 type CreatableCluster struct {
-	Name              string `json:"name" validate:"required" form:"name"`
-	Provider          string `json:"provider" enums:"google,azure" default:"google" form:"provider"`
-	GoogleProject     string `json:"googleProject" form:"googleProject"`
-	AzureSubscription string `json:"azureSubscription" form:"azureSubscription"`
+	Name              string `json:"name" validate:"required" form:"name"` // Required when creating
+	Provider          string `json:"provider" form:"provider" enums:"google,azure" default:"google"`
+	GoogleProject     string `json:"googleProject" form:"googleProject"`         // Required when creating if provider is 'google'
+	AzureSubscription string `json:"azureSubscription" form:"azureSubscription"` // Required when creating if providers is 'azure'
 	EditableCluster
 }
 
 // EditableCluster
 // @description  The subset of Cluster fields that can be edited after creation
 type EditableCluster struct {
-	Base                *string `json:"base" validate:"required" form:"base"`
-	Address             *string `json:"address" validate:"required" form:"address"`
-	RequiresSuitability *bool   `json:"requiresSuitability" default:"false" form:"requiresSuitability"`
+	Base                *string `json:"base"  form:"base"`      // Required when creating
+	Address             *string `json:"address" form:"address"` // Required when creating
+	RequiresSuitability *bool   `json:"requiresSuitability" form:"requiresSuitability" default:"false"`
 }
 
 func (c CreatableCluster) toReadable() Cluster {

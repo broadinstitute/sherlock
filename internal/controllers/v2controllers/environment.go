@@ -1,11 +1,15 @@
 package v2controllers
 
 import (
+	"fmt"
 	"github.com/broadinstitute/sherlock/internal/auth"
 	"github.com/broadinstitute/sherlock/internal/models/v2models"
 	"github.com/creasty/defaults"
+	"github.com/dustinkirkland/golang-petname"
 	"gorm.io/gorm"
+	"math/rand"
 	"strconv"
+	"time"
 )
 
 type Environment struct {
@@ -17,17 +21,17 @@ type Environment struct {
 }
 
 type CreatableEnvironment struct {
-	Base                string `json:"base" form:"base"`
-	Lifecycle           string `json:"lifecycle" default:"dynamic" form:"lifecycle"`
-	Name                string `json:"name" form:"name"`
-	TemplateEnvironment string `json:"templateEnvironment" form:"templateEnvironment"`
+	Base                string `json:"base" form:"base"` // Required when creating
+	Lifecycle           string `json:"lifecycle" form:"lifecycle" default:"dynamic"`
+	Name                string `json:"name" form:"name"`                               // When creating, will be calculated if dynamic, required otherwise
+	TemplateEnvironment string `json:"templateEnvironment" form:"templateEnvironment"` // Required for dynamic environments
 	EditableEnvironment
 }
 
 type EditableEnvironment struct {
 	DefaultCluster      *string `json:"defaultCluster" form:"defaultCluster"`
 	DefaultNamespace    *string `json:"defaultNamespace" form:"defaultNamespace"`
-	Owner               *string `json:"owner" form:"owner"`
+	Owner               *string `json:"owner" form:"owner"` // When creating, will be set to your email
 	RequiresSuitability *bool   `json:"requiresSuitability" default:"false" form:"requiresSuitability"`
 }
 
@@ -141,11 +145,15 @@ func setEnvironmentDynamicDefaults(environment *Environment, stores v2models.Sto
 			id := strconv.FormatUint(uint64(*templateEnvironment.DefaultClusterID), 10)
 			environment.DefaultCluster = &id
 		}
-		if environment.DefaultNamespace == nil {
-			environment.DefaultNamespace = templateEnvironment.DefaultNamespace
-		}
 		if environment.RequiresSuitability == nil {
 			environment.RequiresSuitability = templateEnvironment.RequiresSuitability
+		}
+		if environment.Name == "" {
+			rand.Seed(time.Now().UnixNano())
+			environment.Name = fmt.Sprintf("%s-%s-%s", user.Username(), templateEnvironment.Name, petname.Generate(2, "-"))
+		}
+		if environment.DefaultNamespace == nil {
+			environment.DefaultNamespace = &environment.Name
 		}
 	} else {
 		// If there's no template, the valuesName to use is the name of this environment

@@ -1,6 +1,8 @@
 package v2controllers
 
 import (
+	"fmt"
+	"github.com/broadinstitute/sherlock/internal/auth"
 	"github.com/broadinstitute/sherlock/internal/models/v2models"
 	"gorm.io/gorm"
 )
@@ -14,24 +16,24 @@ type ChartRelease struct {
 }
 
 type CreatableChartRelease struct {
-	Chart       string `json:"chart" form:"chart"`
-	Cluster     string `json:"cluster" form:"cluster"`
-	Environment string `json:"environment" form:"environment"`
-	Name        string `json:"name" form:"name"`
-	Namespace   string `json:"namespace" form:"namespace"`
+	Chart       string `json:"chart" form:"chart"`             // Required when creating
+	Cluster     string `json:"cluster" form:"cluster"`         // When creating, will default the environment's default cluster, if provided. Either this or environment must be provided.
+	Environment string `json:"environment" form:"environment"` // Either this or cluster must be provided.
+	Name        string `json:"name" form:"name"`               // When creating, will be calculated if left empty
+	Namespace   string `json:"namespace" form:"namespace"`     // When creating, will default to the environment's default namespace, if provided
 	EditableChartRelease
 }
 
 type EditableChartRelease struct {
 	CurrentAppVersionExact   *string `json:"currentAppVersionExact" form:"currentAppVersionExact"`
 	CurrentChartVersionExact *string `json:"currentChartVersionExact" form:"currentChartVersionExact"`
-	HelmfileRef              *string `json:"helmfileRef" form:"helmfileRef"`
-	TargetAppVersionBranch   *string `json:"targetAppVersionBranch" form:"targetAppVersionBranch"`
+	HelmfileRef              *string `json:"helmfileRef" form:"helmfileRef" default:"HEAD"`
+	TargetAppVersionBranch   *string `json:"targetAppVersionBranch" form:"targetAppVersionBranch"` // When creating, will default to the app's main branch if it has one recorded
 	TargetAppVersionCommit   *string `json:"targetAppVersionCommit" form:"targetAppVersionCommit"`
 	TargetAppVersionExact    *string `json:"targetAppVersionExact" form:"targetAppVersionExact"`
-	TargetAppVersionUse      *string `json:"targetAppVersionUse" form:"targetAppVersionUse"`
+	TargetAppVersionUse      *string `json:"targetAppVersionUse" form:"targetAppVersionUse" enums:"branch,commit,exact"` // When creating, will default to referencing any provided target app version field (exact, then commit, then branch)
 	TargetChartVersionExact  *string `json:"targetChartVersionExact" form:"targetChartVersionExact"`
-	TargetChartVersionUse    *string `json:"targetChartVersionUse" form:"targetChartVersionUse"`
+	TargetChartVersionUse    *string `json:"targetChartVersionUse" form:"targetChartVersionUse" default:"latest" enums:"latest,exact"`
 	ThelmaMode               *string `json:"thelmaMode,omitempty" form:"thelmaMode"`
 }
 
@@ -47,10 +49,11 @@ type ChartReleaseController = ModelController[v2models.ChartRelease, ChartReleas
 
 func NewChartReleaseController(stores v2models.StoreSet) *ChartReleaseController {
 	return &ChartReleaseController{
-		primaryStore:    stores.ChartReleaseStore,
-		allStores:       stores,
-		modelToReadable: modelChartReleaseToChartRelease,
-		readableToModel: chartReleaseToModelChartRelease,
+		primaryStore:       stores.ChartReleaseStore,
+		allStores:          stores,
+		modelToReadable:    modelChartReleaseToChartRelease,
+		readableToModel:    chartReleaseToModelChartRelease,
+		setDynamicDefaults: setChartReleaseDynamicDefaults,
 	}
 }
 
@@ -146,4 +149,59 @@ func chartReleaseToModelChartRelease(chartRelease ChartRelease, stores v2models.
 		TargetChartVersionUse:    chartRelease.TargetChartVersionUse,
 		ThelmaMode:               chartRelease.ThelmaMode,
 	}, nil
+}
+
+func setChartReleaseDynamicDefaults(chartRelease *ChartRelease, stores v2models.StoreSet, user *auth.User) error {
+	chart, err := stores.ChartStore.Get(chartRelease.Chart)
+	if err != nil {
+		return err
+	}
+	if chart.AppImageGitMainBranch != nil && *chart.AppImageGitMainBranch != "" {
+		if chartRelease.TargetAppVersionBranch == nil {
+			chartRelease.TargetAppVersionBranch = chart.AppImageGitMainBranch
+		}
+	}
+
+	if chartRelease.TargetAppVersionUse == nil {
+		var temp string
+		if chartRelease.TargetAppVersionExact != nil {
+			temp = "exact"
+		} else if chartRelease.TargetAppVersionCommit != nil {
+			temp = "commit"
+		} else if chartRelease.TargetAppVersionBranch != nil {
+			temp = "branch"
+		}
+		if temp != "" {
+			chartRelease.TargetAppVersionUse = &temp
+		}
+	}
+
+	if chartRelease.Environment != "" {
+		environment, err := stores.EnvironmentStore.Get(chartRelease.Environment)
+		if err != nil {
+			return err
+		}
+		if chartRelease.Name == "" {
+			chartRelease.Name = fmt.Sprintf("%s-%s", chart.Name, environment.Name)
+		}
+		if chartRelease.Cluster == "" && environment.DefaultCluster != nil {
+			chartRelease.Cluster = environment.DefaultCluster.Name
+		}
+		if chartRelease.Namespace == "" && environment.DefaultNamespace != nil {
+			chartRelease.Namespace = *environment.DefaultNamespace
+		}
+	}
+
+	if chartRelease.Cluster != "" && chartRelease.Name == "" {
+		cluster, err := stores.ClusterStore.Get(chartRelease.Cluster)
+		if err != nil {
+			return err
+		}
+		if chartRelease.Namespace == "" || chartRelease.Namespace == cluster.Name {
+			chartRelease.Name = fmt.Sprintf("%s-%s", chart.Name, cluster.Name)
+		} else {
+			chartRelease.Name = fmt.Sprintf("%s-%s-%s", chart.Name, chartRelease.Name, cluster.Name)
+		}
+	}
+	return nil
 }

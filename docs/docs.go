@@ -42,11 +42,13 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
+                        "description": "Required when creating",
                         "name": "appVersion",
                         "in": "query"
                     },
                     {
                         "type": "string",
+                        "description": "Required when creating",
                         "name": "chart",
                         "in": "query"
                     },
@@ -277,6 +279,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
+                        "description": "Required when creating",
                         "name": "chartRelease",
                         "in": "query"
                     },
@@ -287,16 +290,19 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "Required when creating",
                         "name": "exactAppVersion",
                         "in": "query"
                     },
                     {
                         "type": "string",
+                        "description": "Required when creating",
                         "name": "exactChartVersion",
                         "in": "query"
                     },
                     {
                         "type": "string",
+                        "description": "Required when creating",
                         "name": "helmfileRef",
                         "in": "query"
                     },
@@ -512,11 +518,13 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
+                        "description": "Required when creating",
                         "name": "chart",
                         "in": "query"
                     },
                     {
                         "type": "string",
+                        "description": "When creating, will default the environment's default cluster, if provided. Either this or environment must be provided.",
                         "name": "cluster",
                         "in": "query"
                     },
@@ -537,11 +545,13 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "Either this or cluster must be provided.",
                         "name": "environment",
                         "in": "query"
                     },
                     {
                         "type": "string",
+                        "default": "HEAD",
                         "name": "helmfileRef",
                         "in": "query"
                     },
@@ -552,16 +562,19 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "When creating, will be calculated if left empty",
                         "name": "name",
                         "in": "query"
                     },
                     {
                         "type": "string",
+                        "description": "When creating, will default to the environment's default namespace, if provided",
                         "name": "namespace",
                         "in": "query"
                     },
                     {
                         "type": "string",
+                        "description": "When creating, will default to the app's main branch if it has one recorded",
                         "name": "targetAppVersionBranch",
                         "in": "query"
                     },
@@ -576,7 +589,13 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "enum": [
+                            "branch",
+                            "commit",
+                            "exact"
+                        ],
                         "type": "string",
+                        "description": "When creating, will default to referencing any provided target app version field (exact, then commit, then branch)",
                         "name": "targetAppVersionUse",
                         "in": "query"
                     },
@@ -586,7 +605,12 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "enum": [
+                            "latest",
+                            "exact"
+                        ],
                         "type": "string",
+                        "default": "latest",
                         "name": "targetChartVersionUse",
                         "in": "query"
                     },
@@ -940,11 +964,13 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
+                        "description": "Required when creating",
                         "name": "chart",
                         "in": "query"
                     },
                     {
                         "type": "string",
+                        "description": "Required when creating",
                         "name": "chartVersion",
                         "in": "query"
                     },
@@ -1175,6 +1201,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "default": "terra-helm",
                         "name": "chartRepo",
                         "in": "query"
                     },
@@ -1190,6 +1217,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "Required when creating",
                         "name": "name",
                         "in": "query"
                     },
@@ -1538,20 +1566,21 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
+                        "description": "Required when creating",
                         "name": "address",
-                        "in": "query",
-                        "required": true
+                        "in": "query"
                     },
                     {
                         "type": "string",
+                        "description": "Required when creating if providers is 'azure'",
                         "name": "azureSubscription",
                         "in": "query"
                     },
                     {
                         "type": "string",
+                        "description": "Required when creating",
                         "name": "base",
-                        "in": "query",
-                        "required": true
+                        "in": "query"
                     },
                     {
                         "type": "string",
@@ -1560,6 +1589,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "Required when creating if provider is 'google'",
                         "name": "googleProject",
                         "in": "query"
                     },
@@ -1570,6 +1600,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "Required when creating",
                         "name": "name",
                         "in": "query",
                         "required": true
@@ -1935,6 +1966,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
+                        "description": "Required when creating",
                         "name": "base",
                         "in": "query"
                     },
@@ -1966,11 +1998,13 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "When creating, will be calculated if dynamic, required otherwise",
                         "name": "name",
                         "in": "query"
                     },
                     {
                         "type": "string",
+                        "description": "When creating, will be set to your email",
                         "name": "owner",
                         "in": "query"
                     },
@@ -1982,6 +2016,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "Required for dynamic environments",
                         "name": "templateEnvironment",
                         "in": "query"
                     },
@@ -2940,9 +2975,11 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "appVersion": {
+                    "description": "Required when creating",
                     "type": "string"
                 },
                 "chart": {
+                    "description": "Required when creating",
                     "type": "string"
                 },
                 "chartInfo": {
@@ -2975,7 +3012,8 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "chartRepo": {
-                    "type": "string"
+                    "type": "string",
+                    "default": "terra-helm"
                 },
                 "createdAt": {
                     "type": "string"
@@ -2984,6 +3022,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "name": {
+                    "description": "Required when creating",
                     "type": "string"
                 },
                 "updatedAt": {
@@ -2995,6 +3034,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "chartRelease": {
+                    "description": "Required when creating",
                     "type": "string"
                 },
                 "chartReleaseInfo": {
@@ -3004,12 +3044,15 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "exactAppVersion": {
+                    "description": "Required when creating",
                     "type": "string"
                 },
                 "exactChartVersion": {
+                    "description": "Required when creating",
                     "type": "string"
                 },
                 "helmfileRef": {
+                    "description": "Required when creating",
                     "type": "string"
                 },
                 "id": {
@@ -3024,12 +3067,14 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "chart": {
+                    "description": "Required when creating",
                     "type": "string"
                 },
                 "chartInfo": {
                     "$ref": "#/definitions/v2controllers.Chart"
                 },
                 "cluster": {
+                    "description": "When creating, will default the environment's default cluster, if provided. Either this or environment must be provided.",
                     "type": "string"
                 },
                 "clusterInfo": {
@@ -3045,24 +3090,29 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "environment": {
+                    "description": "Either this or cluster must be provided.",
                     "type": "string"
                 },
                 "environmentInfo": {
                     "$ref": "#/definitions/v2controllers.Environment"
                 },
                 "helmfileRef": {
-                    "type": "string"
+                    "type": "string",
+                    "default": "HEAD"
                 },
                 "id": {
                     "type": "integer"
                 },
                 "name": {
+                    "description": "When creating, will be calculated if left empty",
                     "type": "string"
                 },
                 "namespace": {
+                    "description": "When creating, will default to the environment's default namespace, if provided",
                     "type": "string"
                 },
                 "targetAppVersionBranch": {
+                    "description": "When creating, will default to the app's main branch if it has one recorded",
                     "type": "string"
                 },
                 "targetAppVersionCommit": {
@@ -3072,13 +3122,24 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "targetAppVersionUse": {
-                    "type": "string"
+                    "description": "When creating, will default to referencing any provided target app version field (exact, then commit, then branch)",
+                    "type": "string",
+                    "enum": [
+                        "branch",
+                        "commit",
+                        "exact"
+                    ]
                 },
                 "targetChartVersionExact": {
                     "type": "string"
                 },
                 "targetChartVersionUse": {
-                    "type": "string"
+                    "type": "string",
+                    "default": "latest",
+                    "enum": [
+                        "latest",
+                        "exact"
+                    ]
                 },
                 "thelmaMode": {
                     "type": "string"
@@ -3092,12 +3153,14 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "chart": {
+                    "description": "Required when creating",
                     "type": "string"
                 },
                 "chartInfo": {
                     "$ref": "#/definitions/v2controllers.Chart"
                 },
                 "chartVersion": {
+                    "description": "Required when creating",
                     "type": "string"
                 },
                 "createdAt": {
@@ -3115,30 +3178,33 @@ const docTemplate = `{
             "description": "The full set of Cluster fields that can be read or used for filtering queries",
             "type": "object",
             "required": [
-                "address",
-                "base",
                 "name"
             ],
             "properties": {
                 "address": {
+                    "description": "Required when creating",
                     "type": "string"
                 },
                 "azureSubscription": {
+                    "description": "Required when creating if providers is 'azure'",
                     "type": "string"
                 },
                 "base": {
+                    "description": "Required when creating",
                     "type": "string"
                 },
                 "createdAt": {
                     "type": "string"
                 },
                 "googleProject": {
+                    "description": "Required when creating if provider is 'google'",
                     "type": "string"
                 },
                 "id": {
                     "type": "integer"
                 },
                 "name": {
+                    "description": "Required when creating",
                     "type": "string"
                 },
                 "provider": {
@@ -3162,9 +3228,11 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "appVersion": {
+                    "description": "Required when creating",
                     "type": "string"
                 },
                 "chart": {
+                    "description": "Required when creating",
                     "type": "string"
                 },
                 "gitBranch": {
@@ -3185,9 +3253,11 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "chartRepo": {
-                    "type": "string"
+                    "type": "string",
+                    "default": "terra-helm"
                 },
                 "name": {
+                    "description": "Required when creating",
                     "type": "string"
                 }
             }
@@ -3196,15 +3266,19 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "chartRelease": {
+                    "description": "Required when creating",
                     "type": "string"
                 },
                 "exactAppVersion": {
+                    "description": "Required when creating",
                     "type": "string"
                 },
                 "exactChartVersion": {
+                    "description": "Required when creating",
                     "type": "string"
                 },
                 "helmfileRef": {
+                    "description": "Required when creating",
                     "type": "string"
                 }
             }
@@ -3213,9 +3287,11 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "chart": {
+                    "description": "Required when creating",
                     "type": "string"
                 },
                 "cluster": {
+                    "description": "When creating, will default the environment's default cluster, if provided. Either this or environment must be provided.",
                     "type": "string"
                 },
                 "currentAppVersionExact": {
@@ -3225,18 +3301,23 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "environment": {
+                    "description": "Either this or cluster must be provided.",
                     "type": "string"
                 },
                 "helmfileRef": {
-                    "type": "string"
+                    "type": "string",
+                    "default": "HEAD"
                 },
                 "name": {
+                    "description": "When creating, will be calculated if left empty",
                     "type": "string"
                 },
                 "namespace": {
+                    "description": "When creating, will default to the environment's default namespace, if provided",
                     "type": "string"
                 },
                 "targetAppVersionBranch": {
+                    "description": "When creating, will default to the app's main branch if it has one recorded",
                     "type": "string"
                 },
                 "targetAppVersionCommit": {
@@ -3246,13 +3327,24 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "targetAppVersionUse": {
-                    "type": "string"
+                    "description": "When creating, will default to referencing any provided target app version field (exact, then commit, then branch)",
+                    "type": "string",
+                    "enum": [
+                        "branch",
+                        "commit",
+                        "exact"
+                    ]
                 },
                 "targetChartVersionExact": {
                     "type": "string"
                 },
                 "targetChartVersionUse": {
-                    "type": "string"
+                    "type": "string",
+                    "default": "latest",
+                    "enum": [
+                        "latest",
+                        "exact"
+                    ]
                 },
                 "thelmaMode": {
                     "type": "string"
@@ -3263,9 +3355,11 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "chart": {
+                    "description": "Required when creating",
                     "type": "string"
                 },
                 "chartVersion": {
+                    "description": "Required when creating",
                     "type": "string"
                 }
             }
@@ -3274,24 +3368,27 @@ const docTemplate = `{
             "description": "The subset of Cluster fields that can be set upon creation",
             "type": "object",
             "required": [
-                "address",
-                "base",
                 "name"
             ],
             "properties": {
                 "address": {
+                    "description": "Required when creating",
                     "type": "string"
                 },
                 "azureSubscription": {
+                    "description": "Required when creating if providers is 'azure'",
                     "type": "string"
                 },
                 "base": {
+                    "description": "Required when creating",
                     "type": "string"
                 },
                 "googleProject": {
+                    "description": "Required when creating if provider is 'google'",
                     "type": "string"
                 },
                 "name": {
+                    "description": "Required when creating",
                     "type": "string"
                 },
                 "provider": {
@@ -3312,6 +3409,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "base": {
+                    "description": "Required when creating",
                     "type": "string"
                 },
                 "defaultCluster": {
@@ -3325,9 +3423,11 @@ const docTemplate = `{
                     "default": "dynamic"
                 },
                 "name": {
+                    "description": "When creating, will be calculated if dynamic, required otherwise",
                     "type": "string"
                 },
                 "owner": {
+                    "description": "When creating, will be set to your email",
                     "type": "string"
                 },
                 "requiresSuitability": {
@@ -3335,6 +3435,7 @@ const docTemplate = `{
                     "default": false
                 },
                 "templateEnvironment": {
+                    "description": "Required for dynamic environments",
                     "type": "string"
                 }
             }
@@ -3349,7 +3450,8 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "chartRepo": {
-                    "type": "string"
+                    "type": "string",
+                    "default": "terra-helm"
                 }
             }
         },
@@ -3363,9 +3465,11 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "helmfileRef": {
-                    "type": "string"
+                    "type": "string",
+                    "default": "HEAD"
                 },
                 "targetAppVersionBranch": {
+                    "description": "When creating, will default to the app's main branch if it has one recorded",
                     "type": "string"
                 },
                 "targetAppVersionCommit": {
@@ -3375,13 +3479,24 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "targetAppVersionUse": {
-                    "type": "string"
+                    "description": "When creating, will default to referencing any provided target app version field (exact, then commit, then branch)",
+                    "type": "string",
+                    "enum": [
+                        "branch",
+                        "commit",
+                        "exact"
+                    ]
                 },
                 "targetChartVersionExact": {
                     "type": "string"
                 },
                 "targetChartVersionUse": {
-                    "type": "string"
+                    "type": "string",
+                    "default": "latest",
+                    "enum": [
+                        "latest",
+                        "exact"
+                    ]
                 },
                 "thelmaMode": {
                     "type": "string"
@@ -3391,15 +3506,13 @@ const docTemplate = `{
         "v2controllers.EditableCluster": {
             "description": "The subset of Cluster fields that can be edited after creation",
             "type": "object",
-            "required": [
-                "address",
-                "base"
-            ],
             "properties": {
                 "address": {
+                    "description": "Required when creating",
                     "type": "string"
                 },
                 "base": {
+                    "description": "Required when creating",
                     "type": "string"
                 },
                 "requiresSuitability": {
@@ -3418,6 +3531,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "owner": {
+                    "description": "When creating, will be set to your email",
                     "type": "string"
                 },
                 "requiresSuitability": {
@@ -3430,6 +3544,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "base": {
+                    "description": "Required when creating",
                     "type": "string"
                 },
                 "createdAt": {
@@ -3452,9 +3567,11 @@ const docTemplate = `{
                     "default": "dynamic"
                 },
                 "name": {
+                    "description": "When creating, will be calculated if dynamic, required otherwise",
                     "type": "string"
                 },
                 "owner": {
+                    "description": "When creating, will be set to your email",
                     "type": "string"
                 },
                 "requiresSuitability": {
@@ -3462,6 +3579,7 @@ const docTemplate = `{
                     "default": false
                 },
                 "templateEnvironment": {
+                    "description": "Required for dynamic environments",
                     "type": "string"
                 },
                 "templateEnvironmentInfo": {

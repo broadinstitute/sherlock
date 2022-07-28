@@ -58,8 +58,10 @@ definitions:
   v2controllers.AppVersion:
     properties:
       appVersion:
+        description: Required when creating
         type: string
       chart:
+        description: Required when creating
         type: string
       chartInfo:
         $ref: '#/definitions/v2controllers.Chart'
@@ -81,12 +83,14 @@ definitions:
       appImageGitRepo:
         type: string
       chartRepo:
+        default: terra-helm
         type: string
       createdAt:
         type: string
       id:
         type: integer
       name:
+        description: Required when creating
         type: string
       updatedAt:
         type: string
@@ -94,16 +98,20 @@ definitions:
   v2controllers.ChartDeployRecord:
     properties:
       chartRelease:
+        description: Required when creating
         type: string
       chartReleaseInfo:
         $ref: '#/definitions/v2controllers.ChartRelease'
       createdAt:
         type: string
       exactAppVersion:
+        description: Required when creating
         type: string
       exactChartVersion:
+        description: Required when creating
         type: string
       helmfileRef:
+        description: Required when creating
         type: string
       id:
         type: integer
@@ -113,10 +121,13 @@ definitions:
   v2controllers.ChartRelease:
     properties:
       chart:
+        description: Required when creating
         type: string
       chartInfo:
         $ref: '#/definitions/v2controllers.Chart'
       cluster:
+        description: When creating, will default the environment's default cluster,
+          if provided. Either this or environment must be provided.
         type: string
       clusterInfo:
         $ref: '#/definitions/v2controllers.Cluster'
@@ -127,28 +138,45 @@ definitions:
       currentChartVersionExact:
         type: string
       environment:
+        description: Either this or cluster must be provided.
         type: string
       environmentInfo:
         $ref: '#/definitions/v2controllers.Environment'
       helmfileRef:
+        default: HEAD
         type: string
       id:
         type: integer
       name:
+        description: When creating, will be calculated if left empty
         type: string
       namespace:
+        description: When creating, will default to the environment's default namespace,
+          if provided
         type: string
       targetAppVersionBranch:
+        description: When creating, will default to the app's main branch if it has
+          one recorded
         type: string
       targetAppVersionCommit:
         type: string
       targetAppVersionExact:
         type: string
       targetAppVersionUse:
+        description: When creating, will default to referencing any provided target
+          app version field (exact, then commit, then branch)
+        enum:
+        - branch
+        - commit
+        - exact
         type: string
       targetChartVersionExact:
         type: string
       targetChartVersionUse:
+        default: latest
+        enum:
+        - latest
+        - exact
         type: string
       thelmaMode:
         type: string
@@ -158,10 +186,12 @@ definitions:
   v2controllers.ChartVersion:
     properties:
       chart:
+        description: Required when creating
         type: string
       chartInfo:
         $ref: '#/definitions/v2controllers.Chart'
       chartVersion:
+        description: Required when creating
         type: string
       createdAt:
         type: string
@@ -175,18 +205,23 @@ definitions:
       queries
     properties:
       address:
+        description: Required when creating
         type: string
       azureSubscription:
+        description: Required when creating if providers is 'azure'
         type: string
       base:
+        description: Required when creating
         type: string
       createdAt:
         type: string
       googleProject:
+        description: Required when creating if provider is 'google'
         type: string
       id:
         type: integer
       name:
+        description: Required when creating
         type: string
       provider:
         default: google
@@ -200,15 +235,15 @@ definitions:
       updatedAt:
         type: string
     required:
-    - address
-    - base
     - name
     type: object
   v2controllers.CreatableAppVersion:
     properties:
       appVersion:
+        description: Required when creating
         type: string
       chart:
+        description: Required when creating
         type: string
       gitBranch:
         type: string
@@ -222,50 +257,76 @@ definitions:
       appImageGitRepo:
         type: string
       chartRepo:
+        default: terra-helm
         type: string
       name:
+        description: Required when creating
         type: string
     type: object
   v2controllers.CreatableChartDeployRecord:
     properties:
       chartRelease:
+        description: Required when creating
         type: string
       exactAppVersion:
+        description: Required when creating
         type: string
       exactChartVersion:
+        description: Required when creating
         type: string
       helmfileRef:
+        description: Required when creating
         type: string
     type: object
   v2controllers.CreatableChartRelease:
     properties:
       chart:
+        description: Required when creating
         type: string
       cluster:
+        description: When creating, will default the environment's default cluster,
+          if provided. Either this or environment must be provided.
         type: string
       currentAppVersionExact:
         type: string
       currentChartVersionExact:
         type: string
       environment:
+        description: Either this or cluster must be provided.
         type: string
       helmfileRef:
+        default: HEAD
         type: string
       name:
+        description: When creating, will be calculated if left empty
         type: string
       namespace:
+        description: When creating, will default to the environment's default namespace,
+          if provided
         type: string
       targetAppVersionBranch:
+        description: When creating, will default to the app's main branch if it has
+          one recorded
         type: string
       targetAppVersionCommit:
         type: string
       targetAppVersionExact:
         type: string
       targetAppVersionUse:
+        description: When creating, will default to referencing any provided target
+          app version field (exact, then commit, then branch)
+        enum:
+        - branch
+        - commit
+        - exact
         type: string
       targetChartVersionExact:
         type: string
       targetChartVersionUse:
+        default: latest
+        enum:
+        - latest
+        - exact
         type: string
       thelmaMode:
         type: string
@@ -273,22 +334,29 @@ definitions:
   v2controllers.CreatableChartVersion:
     properties:
       chart:
+        description: Required when creating
         type: string
       chartVersion:
+        description: Required when creating
         type: string
     type: object
   v2controllers.CreatableCluster:
     description: The subset of Cluster fields that can be set upon creation
     properties:
       address:
+        description: Required when creating
         type: string
       azureSubscription:
+        description: Required when creating if providers is 'azure'
         type: string
       base:
+        description: Required when creating
         type: string
       googleProject:
+        description: Required when creating if provider is 'google'
         type: string
       name:
+        description: Required when creating
         type: string
       provider:
         default: google
@@ -300,13 +368,12 @@ definitions:
         default: false
         type: boolean
     required:
-    - address
-    - base
     - name
     type: object
   v2controllers.CreatableEnvironment:
     properties:
       base:
+        description: Required when creating
         type: string
       defaultCluster:
         type: string
@@ -316,13 +383,16 @@ definitions:
         default: dynamic
         type: string
       name:
+        description: When creating, will be calculated if dynamic, required otherwise
         type: string
       owner:
+        description: When creating, will be set to your email
         type: string
       requiresSuitability:
         default: false
         type: boolean
       templateEnvironment:
+        description: Required for dynamic environments
         type: string
     type: object
   v2controllers.EditableChart:
@@ -332,6 +402,7 @@ definitions:
       appImageGitRepo:
         type: string
       chartRepo:
+        default: terra-helm
         type: string
     type: object
   v2controllers.EditableChartRelease:
@@ -341,18 +412,31 @@ definitions:
       currentChartVersionExact:
         type: string
       helmfileRef:
+        default: HEAD
         type: string
       targetAppVersionBranch:
+        description: When creating, will default to the app's main branch if it has
+          one recorded
         type: string
       targetAppVersionCommit:
         type: string
       targetAppVersionExact:
         type: string
       targetAppVersionUse:
+        description: When creating, will default to referencing any provided target
+          app version field (exact, then commit, then branch)
+        enum:
+        - branch
+        - commit
+        - exact
         type: string
       targetChartVersionExact:
         type: string
       targetChartVersionUse:
+        default: latest
+        enum:
+        - latest
+        - exact
         type: string
       thelmaMode:
         type: string
@@ -361,15 +445,14 @@ definitions:
     description: The subset of Cluster fields that can be edited after creation
     properties:
       address:
+        description: Required when creating
         type: string
       base:
+        description: Required when creating
         type: string
       requiresSuitability:
         default: false
         type: boolean
-    required:
-    - address
-    - base
     type: object
   v2controllers.EditableEnvironment:
     properties:
@@ -378,6 +461,7 @@ definitions:
       defaultNamespace:
         type: string
       owner:
+        description: When creating, will be set to your email
         type: string
       requiresSuitability:
         default: false
@@ -386,6 +470,7 @@ definitions:
   v2controllers.Environment:
     properties:
       base:
+        description: Required when creating
         type: string
       createdAt:
         type: string
@@ -401,13 +486,16 @@ definitions:
         default: dynamic
         type: string
       name:
+        description: When creating, will be calculated if dynamic, required otherwise
         type: string
       owner:
+        description: When creating, will be set to your email
         type: string
       requiresSuitability:
         default: false
         type: boolean
       templateEnvironment:
+        description: Required for dynamic environments
         type: string
       templateEnvironmentInfo:
         description: Single-layer recursive; provides info of the template environment
@@ -433,10 +521,12 @@ paths:
     get:
       description: List existing AppVersion entries, ordered by most recently updated.
       parameters:
-      - in: query
+      - description: Required when creating
+        in: query
         name: appVersion
         type: string
-      - in: query
+      - description: Required when creating
+        in: query
         name: chart
         type: string
       - in: query
@@ -589,19 +679,23 @@ paths:
       description: List existing ChartDeployRecord entries, ordered by most recently
         updated.
       parameters:
-      - in: query
+      - description: Required when creating
+        in: query
         name: chartRelease
         type: string
       - in: query
         name: createdAt
         type: string
-      - in: query
+      - description: Required when creating
+        in: query
         name: exactAppVersion
         type: string
-      - in: query
+      - description: Required when creating
+        in: query
         name: exactChartVersion
         type: string
-      - in: query
+      - description: Required when creating
+        in: query
         name: helmfileRef
         type: string
       - in: query
@@ -744,10 +838,13 @@ paths:
     get:
       description: List existing ChartRelease entries, ordered by most recently updated.
       parameters:
-      - in: query
+      - description: Required when creating
+        in: query
         name: chart
         type: string
-      - in: query
+      - description: When creating, will default the environment's default cluster,
+          if provided. Either this or environment must be provided.
+        in: query
         name: cluster
         type: string
       - in: query
@@ -759,22 +856,29 @@ paths:
       - in: query
         name: currentChartVersionExact
         type: string
-      - in: query
+      - description: Either this or cluster must be provided.
+        in: query
         name: environment
         type: string
-      - in: query
+      - default: HEAD
+        in: query
         name: helmfileRef
         type: string
       - in: query
         name: id
         type: integer
-      - in: query
+      - description: When creating, will be calculated if left empty
+        in: query
         name: name
         type: string
-      - in: query
+      - description: When creating, will default to the environment's default namespace,
+          if provided
+        in: query
         name: namespace
         type: string
-      - in: query
+      - description: When creating, will default to the app's main branch if it has
+          one recorded
+        in: query
         name: targetAppVersionBranch
         type: string
       - in: query
@@ -783,13 +887,23 @@ paths:
       - in: query
         name: targetAppVersionExact
         type: string
-      - in: query
+      - description: When creating, will default to referencing any provided target
+          app version field (exact, then commit, then branch)
+        enum:
+        - branch
+        - commit
+        - exact
+        in: query
         name: targetAppVersionUse
         type: string
       - in: query
         name: targetChartVersionExact
         type: string
-      - in: query
+      - default: latest
+        enum:
+        - latest
+        - exact
+        in: query
         name: targetChartVersionUse
         type: string
       - in: query
@@ -1028,10 +1142,12 @@ paths:
     get:
       description: List existing ChartVersion entries, ordered by most recently updated.
       parameters:
-      - in: query
+      - description: Required when creating
+        in: query
         name: chart
         type: string
-      - in: query
+      - description: Required when creating
+        in: query
         name: chartVersion
         type: string
       - in: query
@@ -1183,7 +1299,8 @@ paths:
       - in: query
         name: appImageGitRepo
         type: string
-      - in: query
+      - default: terra-helm
+        in: query
         name: chartRepo
         type: string
       - in: query
@@ -1192,7 +1309,8 @@ paths:
       - in: query
         name: id
         type: integer
-      - in: query
+      - description: Required when creating
+        in: query
         name: name
         type: string
       - in: query
@@ -1427,27 +1545,30 @@ paths:
     get:
       description: List existing Cluster entries, ordered by most recently updated.
       parameters:
-      - in: query
+      - description: Required when creating
+        in: query
         name: address
-        required: true
         type: string
-      - in: query
+      - description: Required when creating if providers is 'azure'
+        in: query
         name: azureSubscription
         type: string
-      - in: query
+      - description: Required when creating
+        in: query
         name: base
-        required: true
         type: string
       - in: query
         name: createdAt
         type: string
-      - in: query
+      - description: Required when creating if provider is 'google'
+        in: query
         name: googleProject
         type: string
       - in: query
         name: id
         type: integer
-      - in: query
+      - description: Required when creating
+        in: query
         name: name
         required: true
         type: string
@@ -1694,7 +1815,8 @@ paths:
     get:
       description: List existing Environment entries, ordered by most recently updated.
       parameters:
-      - in: query
+      - description: Required when creating
+        in: query
         name: base
         type: string
       - in: query
@@ -1713,17 +1835,20 @@ paths:
         in: query
         name: lifecycle
         type: string
-      - in: query
+      - description: When creating, will be calculated if dynamic, required otherwise
+        in: query
         name: name
         type: string
-      - in: query
+      - description: When creating, will be set to your email
+        in: query
         name: owner
         type: string
       - default: false
         in: query
         name: requiresSuitability
         type: boolean
-      - in: query
+      - description: Required for dynamic environments
+        in: query
         name: templateEnvironment
         type: string
       - in: query
