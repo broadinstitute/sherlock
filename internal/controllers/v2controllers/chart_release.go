@@ -12,6 +12,7 @@ type ChartRelease struct {
 	ChartInfo       Chart        `json:"chartInfo" form:"chartInfo"`
 	ClusterInfo     *Cluster     `json:"clusterInfo,omitempty" form:"clusterInfo"`
 	EnvironmentInfo *Environment `json:"environmentInfo,omitempty" form:"environmentInfo"`
+	DestinationType string       `json:"destinationType" form:"destinationType" enum:"environment,cluster"` // Calculated field
 	CreatableChartRelease
 }
 
@@ -80,6 +81,7 @@ func modelChartReleaseToChartRelease(model v2models.ChartRelease) *ChartRelease 
 		ChartInfo:       *chart,
 		ClusterInfo:     cluster,
 		EnvironmentInfo: environment,
+		DestinationType: model.DestinationType,
 		CreatableChartRelease: CreatableChartRelease{
 			Chart:       chart.Name,
 			Cluster:     clusterName,
@@ -136,6 +138,7 @@ func chartReleaseToModelChartRelease(chartRelease ChartRelease, stores v2models.
 		ChartID:                  chartID,
 		ClusterID:                clusterID,
 		EnvironmentID:            environmentID,
+		DestinationType:          chartRelease.DestinationType,
 		Name:                     chartRelease.Name,
 		Namespace:                chartRelease.Namespace,
 		CurrentAppVersionExact:   chartRelease.CurrentAppVersionExact,
@@ -190,17 +193,25 @@ func setChartReleaseDynamicDefaults(chartRelease *ChartRelease, stores v2models.
 		if chartRelease.Namespace == "" && environment.DefaultNamespace != nil {
 			chartRelease.Namespace = *environment.DefaultNamespace
 		}
+		if chartRelease.DestinationType == "" {
+			chartRelease.DestinationType = "environment"
+		}
 	}
 
-	if chartRelease.Cluster != "" && chartRelease.Name == "" {
+	if chartRelease.Cluster != "" {
 		cluster, err := stores.ClusterStore.Get(chartRelease.Cluster)
 		if err != nil {
 			return err
 		}
-		if chartRelease.Namespace == "" || chartRelease.Namespace == cluster.Name {
-			chartRelease.Name = fmt.Sprintf("%s-%s", chart.Name, cluster.Name)
-		} else {
-			chartRelease.Name = fmt.Sprintf("%s-%s-%s", chart.Name, chartRelease.Name, cluster.Name)
+		if chartRelease.Name == "" {
+			if chartRelease.Namespace == "" || chartRelease.Namespace == cluster.Name {
+				chartRelease.Name = fmt.Sprintf("%s-%s", chart.Name, cluster.Name)
+			} else {
+				chartRelease.Name = fmt.Sprintf("%s-%s-%s", chart.Name, chartRelease.Name, cluster.Name)
+			}
+		}
+		if chartRelease.DestinationType == "" {
+			chartRelease.DestinationType = "cluster"
 		}
 	}
 	return nil

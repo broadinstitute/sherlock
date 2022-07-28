@@ -545,6 +545,12 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "Calculated field",
+                        "name": "destinationType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "Either this or cluster must be provided.",
                         "name": "environment",
                         "in": "query"
@@ -3087,6 +3093,10 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "currentChartVersionExact": {
+                    "type": "string"
+                },
+                "destinationType": {
+                    "description": "Calculated field",
                     "type": "string"
                 },
                 "environment": {

@@ -10,14 +10,15 @@ import (
 
 type ChartRelease struct {
 	gorm.Model
-	Chart         Chart
-	ChartID       uint
-	Cluster       *Cluster
-	ClusterID     *uint
-	Environment   *Environment
-	EnvironmentID *uint
-	Name          string `gorm:"not null; default:null; unique"`
-	Namespace     string
+	Chart           Chart
+	ChartID         uint
+	Cluster         *Cluster
+	ClusterID       *uint
+	DestinationType string
+	Environment     *Environment
+	EnvironmentID   *uint
+	Name            string `gorm:"not null; default:null; unique"`
+	Namespace       string
 	// Mutable
 	CurrentAppVersionExact   *string
 	CurrentChartVersionExact *string
@@ -189,6 +190,9 @@ func validateChartRelease(chartRelease ChartRelease) error {
 	}
 	if chartRelease.Name == "" {
 		return fmt.Errorf("a %T must have a non-empty Name", chartRelease)
+	}
+	if chartRelease.DestinationType == "" {
+		return fmt.Errorf("(%s) calculated field for %T destination type was empty, this should be impossible if environment or cluster are provided", errors.InternalServerError, chartRelease)
 	}
 
 	if chartRelease.HelmfileRef == nil || *chartRelease.HelmfileRef == "" {

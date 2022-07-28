@@ -137,6 +137,9 @@ definitions:
         type: string
       currentChartVersionExact:
         type: string
+      destinationType:
+        description: Calculated field
+        type: string
       environment:
         description: Either this or cluster must be provided.
         type: string
@@ -855,6 +858,10 @@ paths:
         type: string
       - in: query
         name: currentChartVersionExact
+        type: string
+      - description: Calculated field
+        in: query
+        name: destinationType
         type: string
       - description: Either this or cluster must be provided.
         in: query
