@@ -1,3 +1,13 @@
+### Readable, Creatable, Editable?
+ModelController requires three types to work with a model type:
+- Readable, the set of all fields visible through the API
+- Creatable, the set of all fields that can be set upon creation through the API
+- Editable, the set of all fields that can be mutated through the API
+
+Go's struct nesting means we can have the Readable contain the Creatable type, and the Creatable contain the Editable type.
+
+For naming, for a model type called `v2models.X`, the three types would be `X`, `CreatableX`, and `EditableX`. These types will be picked up by Swaggo and Gin.
+
 ### Wow, what a lot of struct tags:
 #### Do use:
 - `json` controls the field name when parsing to/from json (always add)

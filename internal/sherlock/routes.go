@@ -35,12 +35,13 @@ func (a *Application) buildRouter() {
 	authMiddleware := auth.IdentityAwareProxyAuthentication
 
 	docs.SwaggerInfo.Version = version.BuildVersion
-	// TODO: maybe we should detect this better
-	if version.BuildVersion == version.DevelopmentVersionString {
+	if Config.GetBool("devmode") {
 		// if a dev build, allow http on Swagger page for localhost usage
 		docs.SwaggerInfo.Schemes = []string{"http", "https"}
-		// if a dev build, skip IAP
 		authMiddleware = auth.DummyAuthentication
+		gin.SetMode(gin.DebugMode)
+	} else {
+		gin.SetMode(gin.ReleaseMode)
 	}
 
 	router := gin.New()

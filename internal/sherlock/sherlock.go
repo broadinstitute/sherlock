@@ -9,7 +9,6 @@ import (
 	"github.com/broadinstitute/sherlock/internal/db"
 	"github.com/broadinstitute/sherlock/internal/metrics"
 	"github.com/broadinstitute/sherlock/internal/models/v2models"
-	"github.com/broadinstitute/sherlock/internal/version"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
 	"gorm.io/gorm"
@@ -63,8 +62,7 @@ func New() *Application {
 		DB: dbConn,
 	}
 
-	// TODO: maybe we should detect this better
-	if version.BuildVersion != version.DevelopmentVersionString {
+	if !Config.GetBool("devmode") {
 		if err := auth.CacheFirecloudAccounts(context.Background()); err != nil {
 			log.Fatal().Msgf("unable to query suitable users: %v", err)
 			return nil
@@ -173,6 +171,7 @@ func init() {
 	Config.SetDefault("dbport", "5432")
 	Config.SetDefault("dbssl", "disable")
 	Config.SetDefault("dbinit", true)
+	Config.SetDefault("devmode", true)
 
 	Config.AutomaticEnv()
 }
