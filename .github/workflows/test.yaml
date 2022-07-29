@@ -27,9 +27,9 @@ jobs:
     - name: run all tests
       run: make tests-with-coverage
       env:
-        SHERLOCK_DBINIT: "true"
-        SHERLOCK_DBPASSWORD: "password"
-        SHERLOCK_DBHOST: "localhost"
+        SHERLOCK_DB_INIT: "true"
+        SHERLOCK_DB_PASSWORD: "password"
+        SHERLOCK_DB_HOST: "localhost"
     - name: upload unit test coverage report
       uses: codecov/codecov-action@v1
       with:

@@ -35,7 +35,7 @@ func (a *Application) buildRouter() {
 	authMiddleware := auth.IdentityAwareProxyAuthentication
 
 	docs.SwaggerInfo.Version = version.BuildVersion
-	if Config.GetBool("devmode") {
+	if Config.String("mode") == "debug" {
 		// if a dev build, allow http on Swagger page for localhost usage
 		docs.SwaggerInfo.Schemes = []string{"http", "https"}
 		authMiddleware = auth.DummyAuthentication

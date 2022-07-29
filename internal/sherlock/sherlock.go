@@ -9,16 +9,22 @@ import (
 	"github.com/broadinstitute/sherlock/internal/db"
 	"github.com/broadinstitute/sherlock/internal/metrics"
 	"github.com/broadinstitute/sherlock/internal/models/v2models"
+	"github.com/knadh/koanf"
+	"github.com/knadh/koanf/parsers/yaml"
+	"github.com/knadh/koanf/providers/confmap"
+	"github.com/knadh/koanf/providers/env"
+	"github.com/knadh/koanf/providers/file"
 	"github.com/rs/zerolog/log"
-	"github.com/spf13/viper"
 	"gorm.io/gorm"
 	"net/http"
+	"strings"
 	"time"
 )
 
-// package level variable holding a viper instance that will manage sherlock's config
 var (
-	Config = viper.New()
+	// Config holds Sherlock's global configuration, from defaults, '/etc/sherlock.yaml',
+	// and SHERLOCK_ environment variables
+	Config = koanf.New(".")
 )
 
 // Application is the core application type containing a router and db connection
@@ -62,7 +68,11 @@ func New() *Application {
 		DB: dbConn,
 	}
 
-	if !Config.GetBool("devmode") {
+	if Config.String("mode") != "debug" {
+		if Config.String("mode") != "release" {
+			log.Warn().Msgf("mode was not 'debug' but wasn't 'release' either, enabling authentication layer anyway")
+		}
+
 		if err := auth.CacheFirecloudAccounts(context.Background()); err != nil {
 			log.Fatal().Msgf("unable to query suitable users: %v", err)
 			return nil
@@ -161,17 +171,20 @@ func (a *Application) initializeMetrics() error {
 // this is guaranteed to run after package variable declarations
 // but before any other code in this package is executed
 func init() {
-	// viper will auto parse ENV VARS prefixed with SHERLOCK
-	// into config
-	Config.SetEnvPrefix("sherlock")
+	_ = Config.Load(confmap.Provider(map[string]interface{}{
+		"db.host": "localhost",
+		"db.user": "sherlock",
+		"db.name": "sherlock",
+		"db.port": "5432",
+		"db.ssl":  "disable",
+		"db.init": true,
+		"mode":    "debug",
+	}, "."), nil)
 
-	Config.SetDefault("dbhost", "localhost")
-	Config.SetDefault("dbuser", "sherlock")
-	Config.SetDefault("dbname", "sherlock")
-	Config.SetDefault("dbport", "5432")
-	Config.SetDefault("dbssl", "disable")
-	Config.SetDefault("dbinit", true)
-	Config.SetDefault("devmode", true)
+	_ = Config.Load(file.Provider("/etc/sherlock.yaml"), yaml.Parser())
 
-	Config.AutomaticEnv()
+	_ = Config.Load(env.Provider("SHERLOCK_", ".", func(s string) string {
+		return strings.Replace(strings.ToLower(
+			strings.TrimPrefix(s, "SHERLOCK_")), "_", ".", -1)
+	}), nil)
 }

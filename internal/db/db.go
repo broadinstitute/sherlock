@@ -7,12 +7,12 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	"github.com/knadh/koanf"
 	"log"
 	"time"
 
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
-	"github.com/spf13/viper"
 	gormpg "gorm.io/driver/postgres"
 	"gorm.io/gorm"
 
@@ -24,9 +24,9 @@ import (
 // ApplyMigrations is a utility function intended for use in integration tests and
 // local development where changelogs can be applied to a local postgres instance
 // during startup
-func ApplyMigrations(changeLogPath string, config *viper.Viper) error {
+func ApplyMigrations(changeLogPath string, config *koanf.Koanf) error {
 	// check for environment flag whether to run migrations on app start up or not
-	if dbInit := config.GetBool("dbinit"); !dbInit {
+	if dbInit := config.Bool("db.init"); !dbInit {
 		log.Println("skipping database migration on startup, starting server...")
 		return nil
 	}
@@ -51,7 +51,7 @@ func ApplyMigrations(changeLogPath string, config *viper.Viper) error {
 	}
 	migrationPlan, err := migrate.NewWithDatabaseInstance(
 		changelogLocation,
-		config.GetString("dbname"),
+		config.String("db.name"),
 		driver,
 	)
 	if err != nil {
@@ -68,7 +68,7 @@ func ApplyMigrations(changeLogPath string, config *viper.Viper) error {
 
 // Connect is a utility function that accepts a viper instance containing
 // database configs and returns a gorm database connection
-func Connect(config *viper.Viper) (*gorm.DB, error) {
+func Connect(config *koanf.Koanf) (*gorm.DB, error) {
 	dbURL := buildDBConnectionString(config)
 	dbConn, err := sql.Open("pgx", dbURL)
 	if err != nil {
@@ -95,14 +95,14 @@ func Connect(config *viper.Viper) (*gorm.DB, error) {
 	return gormDB, nil
 }
 
-func buildDBConnectionString(config *viper.Viper) string {
+func buildDBConnectionString(config *koanf.Koanf) string {
 	return fmt.Sprintf(
 		"postgres://%s:%s@%s:%s/%s?sslmode=%s",
-		config.GetString("dbuser"),
-		config.GetString("dbpassword"),
-		config.GetString("dbhost"),
-		config.GetString("dbport"),
-		config.GetString("dbname"),
-		config.GetString("dbssl"),
+		config.String("db.user"),
+		config.String("db.password"),
+		config.String("db.host"),
+		config.String("db.port"),
+		config.String("db.name"),
+		config.String("db.ssl"),
 	)
 }

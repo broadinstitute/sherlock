@@ -5,12 +5,15 @@ package testutils
 // on the top level package sherlock
 
 import (
+	"github.com/knadh/koanf"
+	"github.com/knadh/koanf/providers/confmap"
+	"github.com/knadh/koanf/providers/env"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/broadinstitute/sherlock/internal/db"
 	"github.com/golang-migrate/migrate/v4"
-	"github.com/spf13/viper"
 	"gorm.io/gorm"
 )
 
@@ -21,20 +24,24 @@ import (
 //
 
 var (
-	config = viper.New()
+	config = koanf.New(".")
 )
 
 func initConfig() {
-	config.SetEnvPrefix("sherlock")
+	_ = config.Load(confmap.Provider(map[string]interface{}{
+		"db.host": "localhost",
+		"db.user": "sherlock",
+		"db.name": "sherlock",
+		"db.port": "5432",
+		"db.ssl":  "disable",
+		"db.init": true,
+		"mode":    "debug",
+	}, "."), nil)
 
-	config.SetDefault("dbhost", "localhost")
-	config.SetDefault("dbuser", "sherlock")
-	config.SetDefault("dbname", "sherlock")
-	config.SetDefault("dbport", "5432")
-	config.SetDefault("dbssl", "disable")
-	config.SetDefault("dbinit", true)
-
-	config.AutomaticEnv()
+	_ = config.Load(env.Provider("SHERLOCK_", ".", func(s string) string {
+		return strings.Replace(strings.ToLower(
+			strings.TrimPrefix(s, "SHERLOCK_")), "_", ".", -1)
+	}), nil)
 }
 
 // ConnectAndMigrate will parse config to attempt to establish a connection to the test database
