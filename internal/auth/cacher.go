@@ -3,6 +3,7 @@ package auth
 import (
 	"context"
 	"fmt"
+	"github.com/broadinstitute/sherlock/internal/config"
 	"github.com/rs/zerolog/log"
 	admin "google.golang.org/api/admin/directory/v1"
 	"google.golang.org/api/option"
@@ -19,7 +20,7 @@ func CacheFirecloudAccounts(ctx context.Context) error {
 	}
 
 	newCache := make(map[string]*FirecloudAccount)
-	err = adminService.Users.List().Domain(firecloudDomain).Pages(ctx, func(workspaceUsers *admin.Users) error {
+	err = adminService.Users.List().Domain(config.Config.String("auth.firecloud.domain")).Pages(ctx, func(workspaceUsers *admin.Users) error {
 		if workspaceUsers == nil {
 			log.Warn().Msg("CacheFirecloudAccounts got a nil user page from Google?")
 		} else {
@@ -39,13 +40,13 @@ func CacheFirecloudAccounts(ctx context.Context) error {
 		return fmt.Errorf("failed to update users from Google Workspace: %v", err)
 	}
 
-	err = adminService.Members.List(firecloudGroups.FcAdmins).Pages(ctx, func(members *admin.Members) error {
+	err = adminService.Members.List(config.Config.String("auth.firecloud.groups.fcAdmins")).Pages(ctx, func(members *admin.Members) error {
 		if members == nil {
-			log.Warn().Msgf("CacheFirecloudAccounts got a nil %s member page from Google?", firecloudGroups.FcAdmins)
+			log.Warn().Msgf("CacheFirecloudAccounts got a nil %s member page from Google?", config.Config.String("auth.firecloud.groups.fcAdmins"))
 		} else {
 			for _, member := range members.Members {
 				if member == nil {
-					log.Warn().Msgf("CacheFirecloudAccounts got a nil %s member from Google?", firecloudGroups.FcAdmins)
+					log.Warn().Msgf("CacheFirecloudAccounts got a nil %s member from Google?", config.Config.String("auth.firecloud.groups.fcAdmins"))
 				} else if fcAccount, exists := newCache[member.Email]; exists {
 					fcAccount.Groups.FcAdmins = true
 				}
@@ -54,16 +55,16 @@ func CacheFirecloudAccounts(ctx context.Context) error {
 		return nil
 	})
 	if err != nil {
-		return fmt.Errorf("failed to update %s members from Google Workspace: %v", firecloudGroups.FcAdmins, err)
+		return fmt.Errorf("failed to update %s members from Google Workspace: %v", config.Config.String("auth.firecloud.groups.fcAdmins"), err)
 	}
 
-	err = adminService.Members.List(firecloudGroups.FirecloudProjectOwners).Pages(ctx, func(members *admin.Members) error {
+	err = adminService.Members.List(config.Config.String("auth.firecloud.groups.firecloudProjectOwners")).Pages(ctx, func(members *admin.Members) error {
 		if members == nil {
-			log.Warn().Msgf("CacheFirecloudAccounts got a nil %s member page from Google?", firecloudGroups.FirecloudProjectOwners)
+			log.Warn().Msgf("CacheFirecloudAccounts got a nil %s member page from Google?", config.Config.String("auth.firecloud.groups.firecloudProjectOwners"))
 		} else {
 			for _, member := range members.Members {
 				if member == nil {
-					log.Warn().Msgf("CacheFirecloudAccounts got a nil %s member from Google?", firecloudGroups.FirecloudProjectOwners)
+					log.Warn().Msgf("CacheFirecloudAccounts got a nil %s member from Google?", config.Config.String("auth.firecloud.groups.firecloudProjectOwners"))
 				} else if fcAccount, exists := newCache[member.Email]; exists {
 					fcAccount.Groups.FirecloudProjectOwners = true
 				}
@@ -72,7 +73,7 @@ func CacheFirecloudAccounts(ctx context.Context) error {
 		return nil
 	})
 	if err != nil {
-		return fmt.Errorf("failed to update %s members from Google Workspace: %v", firecloudGroups.FirecloudProjectOwners, err)
+		return fmt.Errorf("failed to update %s members from Google Workspace: %v", config.Config.String("auth.firecloud.groups.firecloudProjectOwners"), err)
 	}
 
 	log.Debug().Msgf("AUTH | firecloud account cache updated, now contains %d accounts", len(newCache))

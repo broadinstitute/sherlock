@@ -3,6 +3,7 @@ package auth
 import (
 	"context"
 	"fmt"
+	"github.com/broadinstitute/sherlock/internal/config"
 	"github.com/rs/zerolog/log"
 	admin "google.golang.org/api/admin/directory/v1"
 	"google.golang.org/api/option"
@@ -75,10 +76,10 @@ func (u *User) describeSuitability() string {
 		}
 
 		if !u.MatchedFirecloudAccount.Groups.FcAdmins {
-			problems = append(problems, fmt.Sprintf("user is not in the %s group", firecloudGroups.FcAdmins))
+			problems = append(problems, fmt.Sprintf("user is not in the %s group", config.Config.String("auth.firecloud.groups.fcAdmins")))
 		}
 		if !u.MatchedFirecloudAccount.Groups.FirecloudProjectOwners {
-			problems = append(problems, fmt.Sprintf("user is not in the %s group", firecloudGroups.FirecloudProjectOwners))
+			problems = append(problems, fmt.Sprintf("user is not in the %s group", config.Config.String("auth.firecloud.groups.firecloudProjectOwners")))
 		}
 
 		if len(problems) > 0 {
@@ -117,15 +118,15 @@ func (u *User) SuitableOrError() error {
 			u.MatchedFirecloudAccount.Groups = &FirecloudGroupMembership{}
 		}
 
-		fcAdminsMembership, err := adminService.Members.HasMember(firecloudGroups.FcAdmins, email).Do()
+		fcAdminsMembership, err := adminService.Members.HasMember(config.Config.String("auth.firecloud.groups.fcAdmins"), email).Do()
 		if err != nil {
-			return fmt.Errorf("%s [Sherlock also failed to refresh user's membership in %s: %v", u.describeSuitability(), firecloudGroups.FcAdmins, email)
+			return fmt.Errorf("%s [Sherlock also failed to refresh user's membership in %s: %v", u.describeSuitability(), config.Config.String("auth.firecloud.groups.fcAdmins"), email)
 		}
 		u.MatchedFirecloudAccount.Groups.FcAdmins = fcAdminsMembership.IsMember
 
-		firecloudProjectOwnersMembership, err := adminService.Members.HasMember(firecloudGroups.FirecloudProjectOwners, email).Do()
+		firecloudProjectOwnersMembership, err := adminService.Members.HasMember(config.Config.String("auth.firecloud.groups.firecloudProjectOwners"), email).Do()
 		if err != nil {
-			return fmt.Errorf("%s [Sherlock also failed to refresh user's membership in %s: %v", u.describeSuitability(), firecloudGroups.FirecloudProjectOwners, email)
+			return fmt.Errorf("%s [Sherlock also failed to refresh user's membership in %s: %v", u.describeSuitability(), config.Config.String("auth.firecloud.groups.firecloudProjectOwners"), email)
 		}
 		u.MatchedFirecloudAccount.Groups.FirecloudProjectOwners = firecloudProjectOwnersMembership.IsMember
 

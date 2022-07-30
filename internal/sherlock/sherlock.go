@@ -4,27 +4,16 @@ import (
 	"context"
 	"contrib.go.opencensus.io/exporter/stackdriver"
 	"github.com/broadinstitute/sherlock/internal/auth"
+	"github.com/broadinstitute/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/internal/controllers/v1controllers"
 	"github.com/broadinstitute/sherlock/internal/controllers/v2controllers"
 	"github.com/broadinstitute/sherlock/internal/db"
 	"github.com/broadinstitute/sherlock/internal/metrics"
 	"github.com/broadinstitute/sherlock/internal/models/v2models"
-	"github.com/knadh/koanf"
-	"github.com/knadh/koanf/parsers/yaml"
-	"github.com/knadh/koanf/providers/confmap"
-	"github.com/knadh/koanf/providers/env"
-	"github.com/knadh/koanf/providers/file"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
 	"net/http"
-	"strings"
 	"time"
-)
-
-var (
-	// Config holds Sherlock's global configuration, from defaults, '/etc/sherlock.yaml',
-	// and SHERLOCK_ environment variables
-	Config = koanf.New(".")
 )
 
 // Application is the core application type containing a router and db connection
@@ -58,7 +47,7 @@ type Application struct {
 
 // New returns a new instance of the core sherlock application
 func New() *Application {
-	dbConn, err := db.Connect(Config)
+	dbConn, err := db.Connect(config.Config)
 	if err != nil {
 		log.Fatal().Msgf("error connecting to database: %v", err)
 		return nil
@@ -68,8 +57,8 @@ func New() *Application {
 		DB: dbConn,
 	}
 
-	if Config.String("mode") != "debug" {
-		if Config.String("mode") != "release" {
+	if config.Config.String("mode") != "debug" {
+		if config.Config.String("mode") != "release" {
 			log.Warn().Msgf("mode was not 'debug' but wasn't 'release' either, enabling authentication layer anyway")
 		}
 
@@ -165,26 +154,4 @@ func (a *Application) initializeMetrics() error {
 		)
 	}
 	return nil
-}
-
-// initialize sherlock configuration via viper
-// this is guaranteed to run after package variable declarations
-// but before any other code in this package is executed
-func init() {
-	_ = Config.Load(confmap.Provider(map[string]interface{}{
-		"db.host": "localhost",
-		"db.user": "sherlock",
-		"db.name": "sherlock",
-		"db.port": "5432",
-		"db.ssl":  "disable",
-		"db.init": true,
-		"mode":    "debug",
-	}, "."), nil)
-
-	_ = Config.Load(file.Provider("/etc/sherlock.yaml"), yaml.Parser())
-
-	_ = Config.Load(env.Provider("SHERLOCK_", ".", func(s string) string {
-		return strings.Replace(strings.ToLower(
-			strings.TrimPrefix(s, "SHERLOCK_")), "_", ".", -1)
-	}), nil)
 }

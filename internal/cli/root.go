@@ -1,14 +1,21 @@
 package cli
 
 import (
-	"fmt"
+	"github.com/knadh/koanf"
+	"github.com/knadh/koanf/parsers/yaml"
+	"github.com/knadh/koanf/providers/env"
+	"github.com/knadh/koanf/providers/file"
+	"github.com/knadh/koanf/providers/posflag"
+	"github.com/rs/zerolog/log"
 	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var (
+	config                = koanf.New(".")
 	cfgFile               string
 	sherlockServerURL     string
 	clientCredentials     string
@@ -41,30 +48,24 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&clientCredentials, "credentials-file", "/app/sherlock/client-sa.json", "Path to the file containing service account credentials for auth in automated workflows")
 	rootCmd.PersistentFlags().BoolVar(&useServiceAccountAuth, "use-sa-auth", false, "Whether or not to use service account credentials for oauth")
 
-	err := viper.BindPFlags(rootCmd.PersistentFlags())
+	err := config.Load(posflag.Provider(rootCmd.PersistentFlags(), ".", config), nil)
 	cobra.CheckErr(err)
 }
 
 func initConfig() {
-	if cfgFile != "" {
-		viper.SetConfigFile(cfgFile)
-	} else {
-		// find home dir
+	if cfgFile == "" {
 		home, err := os.UserHomeDir()
 		cobra.CheckErr(err)
-
-		viper.AddConfigPath(home)
-		viper.SetConfigType("yaml")
-		viper.SetConfigName(".sherlock")
+		cfgFile = filepath.Clean(filepath.Join(home, ".sherlock.yaml"))
+	}
+	if err := config.Load(file.Provider(cfgFile), yaml.Parser()); err != nil {
+		log.Info().Msgf("not using a configuration file, looked at '%s': %v", cfgFile, err)
 	}
 
-	viper.AutomaticEnv()
-
-	if err := viper.ReadInConfig(); err != nil {
-		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
-			fmt.Printf("not using a configuration file: %v\n", err)
-		} else {
-			cobra.CheckErr(err)
-		}
+	if err := config.Load(env.Provider("SHERLOCK_", ".", func(s string) string {
+		return strings.Replace(strings.ToLower(
+			strings.TrimPrefix(s, "SHERLOCK_")), "_", "-", -1)
+	}), nil); err != nil {
+		log.Fatal().Msgf("failed to load config from environment: %v", err)
 	}
 }

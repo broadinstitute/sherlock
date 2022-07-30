@@ -1,0 +1,16 @@
+mode: debug
+
+db:
+  host: localhost
+  user: sherlock
+  name: sherlock
+  port: 5432
+  ssl: disable
+  init: true
+
+auth:
+  firecloud:
+    domain: firecloud.org
+    groups:
+      fcAdmins: fc-admins@firecloud.org
+      firecloudProjectOwners: firecloud-project-owners@firecloud.org

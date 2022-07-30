@@ -8,7 +8,7 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/knadh/koanf"
-	"log"
+	"github.com/rs/zerolog/log"
 	"time"
 
 	"github.com/golang-migrate/migrate/v4"
@@ -27,17 +27,14 @@ import (
 func ApplyMigrations(changeLogPath string, config *koanf.Koanf) error {
 	// check for environment flag whether to run migrations on app start up or not
 	if dbInit := config.Bool("db.init"); !dbInit {
-		log.Println("skipping database migration on startup, starting server...")
+		log.Info().Msg("skipping database migration on startup, starting server...")
 		return nil
 	}
-
-	// TODO use viper to handle the db config rather than pulling it
-	// directly out of env
 
 	changelogLocation := fmt.Sprintf("file://%s", changeLogPath)
 	dbURL := buildDBConnectionString(config)
 
-	log.Println("Executing database migration")
+	log.Info().Msg("executing database migration")
 	// The below code is to ensure migrations run using the same
 	// postgres driver (pgx) that gorm uses. golang-migrate uses
 	// a different postgres driver by default
@@ -62,7 +59,7 @@ func ApplyMigrations(changeLogPath string, config *koanf.Koanf) error {
 		return err
 	}
 
-	log.Println("database migration complete")
+	log.Info().Msg("database migration complete")
 	return nil
 }
 

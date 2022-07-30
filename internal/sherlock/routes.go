@@ -3,6 +3,7 @@ package sherlock
 import (
 	"github.com/broadinstitute/sherlock/docs"
 	"github.com/broadinstitute/sherlock/internal/auth"
+	"github.com/broadinstitute/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/internal/handlers/misc"
 	"github.com/broadinstitute/sherlock/internal/handlers/v1handlers"
 	"github.com/broadinstitute/sherlock/internal/handlers/v2handlers"
@@ -35,7 +36,7 @@ func (a *Application) buildRouter() {
 	authMiddleware := auth.IdentityAwareProxyAuthentication
 
 	docs.SwaggerInfo.Version = version.BuildVersion
-	if Config.String("mode") == "debug" {
+	if config.Config.String("mode") == "debug" {
 		// if a dev build, allow http on Swagger page for localhost usage
 		docs.SwaggerInfo.Schemes = []string{"http", "https"}
 		authMiddleware = auth.DummyAuthentication
