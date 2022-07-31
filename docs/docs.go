@@ -616,7 +616,7 @@ const docTemplate = `{
                             "exact"
                         ],
                         "type": "string",
-                        "default": "latest",
+                        "description": "When creating, will default to latest unless an exact target chart version is provided",
                         "name": "targetChartVersionUse",
                         "in": "query"
                     },
@@ -3144,8 +3144,8 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "targetChartVersionUse": {
+                    "description": "When creating, will default to latest unless an exact target chart version is provided",
                     "type": "string",
-                    "default": "latest",
                     "enum": [
                         "latest",
                         "exact"
@@ -3349,8 +3349,8 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "targetChartVersionUse": {
+                    "description": "When creating, will default to latest unless an exact target chart version is provided",
                     "type": "string",
-                    "default": "latest",
                     "enum": [
                         "latest",
                         "exact"
@@ -3501,8 +3501,8 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "targetChartVersionUse": {
+                    "description": "When creating, will default to latest unless an exact target chart version is provided",
                     "type": "string",
-                    "default": "latest",
                     "enum": [
                         "latest",
                         "exact"

@@ -34,7 +34,7 @@ type EditableChartRelease struct {
 	TargetAppVersionExact    *string `json:"targetAppVersionExact" form:"targetAppVersionExact"`
 	TargetAppVersionUse      *string `json:"targetAppVersionUse" form:"targetAppVersionUse" enums:"branch,commit,exact"` // When creating, will default to referencing any provided target app version field (exact, then commit, then branch)
 	TargetChartVersionExact  *string `json:"targetChartVersionExact" form:"targetChartVersionExact"`
-	TargetChartVersionUse    *string `json:"targetChartVersionUse" form:"targetChartVersionUse" default:"latest" enums:"latest,exact"`
+	TargetChartVersionUse    *string `json:"targetChartVersionUse" form:"targetChartVersionUse" enums:"latest,exact"` // When creating, will default to latest unless an exact target chart version is provided
 	ThelmaMode               *string `json:"thelmaMode,omitempty" form:"thelmaMode"`
 }
 
@@ -177,6 +177,14 @@ func setChartReleaseDynamicDefaults(chartRelease *ChartRelease, stores v2models.
 		if temp != "" {
 			chartRelease.TargetAppVersionUse = &temp
 		}
+	}
+
+	if chartRelease.TargetChartVersionUse == nil {
+		temp := "latest"
+		if chartRelease.TargetChartVersionExact != nil {
+			temp = "exact"
+		}
+		chartRelease.TargetChartVersionUse = &temp
 	}
 
 	if chartRelease.Environment != "" {

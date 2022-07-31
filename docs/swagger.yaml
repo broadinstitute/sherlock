@@ -176,7 +176,8 @@ definitions:
       targetChartVersionExact:
         type: string
       targetChartVersionUse:
-        default: latest
+        description: When creating, will default to latest unless an exact target
+          chart version is provided
         enum:
         - latest
         - exact
@@ -326,7 +327,8 @@ definitions:
       targetChartVersionExact:
         type: string
       targetChartVersionUse:
-        default: latest
+        description: When creating, will default to latest unless an exact target
+          chart version is provided
         enum:
         - latest
         - exact
@@ -436,7 +438,8 @@ definitions:
       targetChartVersionExact:
         type: string
       targetChartVersionUse:
-        default: latest
+        description: When creating, will default to latest unless an exact target
+          chart version is provided
         enum:
         - latest
         - exact
@@ -906,7 +909,8 @@ paths:
       - in: query
         name: targetChartVersionExact
         type: string
-      - default: latest
+      - description: When creating, will default to latest unless an exact target
+          chart version is provided
         enum:
         - latest
         - exact
