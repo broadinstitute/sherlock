@@ -19,8 +19,6 @@ import (
 var BuildVersion string = "development"
 
 func main() {
-	config.InitConfig()
-
 	if err := db.ApplyMigrations("db/migrations", config.Config); err != nil {
 		// don't fail if there are no changes to apply
 		if err == migrate.ErrNoChange {

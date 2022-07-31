@@ -19,10 +19,8 @@ func logger() gin.HandlerFunc {
 			path = path + "?" + ctx.Request.URL.RawQuery
 		}
 		identity := "client not identified"
-		if value, exists := ctx.Get(auth.ContextUserKey); exists {
-			if user, ok := value.(auth.User); ok {
-				identity = user.AuthenticatedEmail
-			}
+		if user, err := auth.ExtractUserFromContext(ctx); err != nil {
+			identity = user.AuthenticatedEmail
 		}
 		var event *zerolog.Event
 		switch code := ctx.Writer.Status(); {

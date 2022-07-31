@@ -9,6 +9,9 @@ db:
   init: true
 
 auth:
+  updateIntervalMinutes: 15
+  broadinstitute:
+    domain: broadinstitute.org
   firecloud:
     domain: firecloud.org
     groups:

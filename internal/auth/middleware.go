@@ -7,9 +7,9 @@ import (
 	"google.golang.org/api/idtoken"
 )
 
-const ContextUserKey = "UserSuitable"
+const contextUserKey = "SherlockUser"
 
-func IdentityAwareProxyAuthentication() gin.HandlerFunc {
+func IapUserMiddleware() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		iapJWT := ctx.GetHeader("X-Goog-IAP-JWT-Assertion")
 		if iapJWT == "" {
@@ -30,7 +30,7 @@ func IdentityAwareProxyAuthentication() gin.HandlerFunc {
 			ctx.JSON(errors.ErrorToApiResponse(fmt.Errorf("(%s) IAP JWT seemed to pass validation but lacked an email claim", errors.ProxyAuthenticationRequired)))
 		}
 
-		ctx.Set(ContextUserKey, &User{
+		ctx.Set(contextUserKey, &User{
 			AuthenticatedEmail:      email,
 			MatchedFirecloudAccount: cachedFirecloudAccounts[emailToFirecloudEmail(email)],
 		})
@@ -39,7 +39,7 @@ func IdentityAwareProxyAuthentication() gin.HandlerFunc {
 	}
 }
 
-func DummyAuthentication() gin.HandlerFunc {
+func FakeUserMiddleware() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var firecloudAccount *FirecloudAccount
 		if ctx.GetHeader("Suitable") == "false" {
@@ -58,11 +58,25 @@ func DummyAuthentication() gin.HandlerFunc {
 				},
 			}
 		}
-		ctx.Set(ContextUserKey, &User{
+		ctx.Set(contextUserKey, &User{
 			AuthenticatedEmail:      "fake@broadinstitute.org",
 			MatchedFirecloudAccount: firecloudAccount,
 		})
 
 		ctx.Next()
 	}
+}
+
+// ExtractUserFromContext is the counterpart to the middlewares provided by this package:
+// handlers can call it to extract a User from the context.
+func ExtractUserFromContext(ctx *gin.Context) (*User, error) {
+	userValue, exists := ctx.Get(contextUserKey)
+	if !exists {
+		return nil, fmt.Errorf("(%s) authentication middleware not present", errors.InternalServerError)
+	}
+	user, ok := userValue.(*User)
+	if !ok {
+		return nil, fmt.Errorf("(%s) authentication middleware misconfigured: suitability represented as %T", errors.InternalServerError, userValue)
+	}
+	return user, nil
 }

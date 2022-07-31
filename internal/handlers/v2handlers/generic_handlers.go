@@ -21,14 +21,10 @@ func formatSelector(selector string) string {
 
 func handleCreate[M v2models.Model, R v2controllers.Readable, C v2controllers.Creatable[R], E v2controllers.Editable[R, C]](controller *v2controllers.ModelController[M, R, C, E]) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
-		userValue, exists := ctx.Get(auth.ContextUserKey)
-		if !exists {
-			ctx.JSON(errors.ErrorToApiResponse(fmt.Errorf("(%s) authentication middleware not present", errors.InternalServerError)))
+		user, err := auth.ExtractUserFromContext(ctx)
+		if err != nil {
+			ctx.JSON(errors.ErrorToApiResponse(err))
 			return
-		}
-		user, ok := userValue.(*auth.User)
-		if !ok {
-			ctx.JSON(errors.ErrorToApiResponse(fmt.Errorf("(%s) authentication middleware misconfigured: suitability represented as %T", errors.InternalServerError, userValue)))
 		}
 		var creatable C
 		if err := ctx.ShouldBindJSON(&creatable); err != nil {
@@ -81,14 +77,10 @@ func handleGet[M v2models.Model, R v2controllers.Readable, C v2controllers.Creat
 
 func handleEdit[M v2models.Model, R v2controllers.Readable, C v2controllers.Creatable[R], E v2controllers.Editable[R, C]](controller *v2controllers.ModelController[M, R, C, E]) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
-		userValue, exists := ctx.Get(auth.ContextUserKey)
-		if !exists {
-			ctx.JSON(errors.ErrorToApiResponse(fmt.Errorf("(%s) authentication middleware not present", errors.InternalServerError)))
+		user, err := auth.ExtractUserFromContext(ctx)
+		if err != nil {
+			ctx.JSON(errors.ErrorToApiResponse(err))
 			return
-		}
-		user, ok := userValue.(*auth.User)
-		if !ok {
-			ctx.JSON(errors.ErrorToApiResponse(fmt.Errorf("(%s) authentication middleware misconfigured: suitability represented as %T", errors.InternalServerError, userValue)))
 		}
 		var editable E
 		if err := ctx.ShouldBindJSON(&editable); err != nil {
@@ -106,14 +98,10 @@ func handleEdit[M v2models.Model, R v2controllers.Readable, C v2controllers.Crea
 
 func handleDelete[M v2models.Model, R v2controllers.Readable, C v2controllers.Creatable[R], E v2controllers.Editable[R, C]](controller *v2controllers.ModelController[M, R, C, E]) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
-		userValue, exists := ctx.Get(auth.ContextUserKey)
-		if !exists {
-			ctx.JSON(errors.ErrorToApiResponse(fmt.Errorf("(%s) authentication middleware not present", errors.InternalServerError)))
+		user, err := auth.ExtractUserFromContext(ctx)
+		if err != nil {
+			ctx.JSON(errors.ErrorToApiResponse(err))
 			return
-		}
-		user, ok := userValue.(*auth.User)
-		if !ok {
-			ctx.JSON(errors.ErrorToApiResponse(fmt.Errorf("(%s) authentication middleware misconfigured: suitability represented as %T", errors.InternalServerError, userValue)))
 		}
 		result, err := controller.Delete(formatSelector(ctx.Param("selector")), user)
 		if err != nil {

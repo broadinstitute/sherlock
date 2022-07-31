@@ -1,7 +1,6 @@
 package misc
 
 import (
-	"fmt"
 	"github.com/broadinstitute/sherlock/internal/auth"
 	"github.com/broadinstitute/sherlock/internal/errors"
 	"github.com/gin-gonic/gin"
@@ -23,14 +22,10 @@ type MyUserResponse struct {
 // @failure      407,500  {object}  errors.ErrorResponse
 // @router       /my-user [get]
 func MyUserHandler(ctx *gin.Context) {
-	userValue, exists := ctx.Get(auth.ContextUserKey)
-	if !exists {
-		ctx.JSON(errors.ErrorToApiResponse(fmt.Errorf("(%s) authentication middleware not present", errors.InternalServerError)))
+	user, err := auth.ExtractUserFromContext(ctx)
+	if err != nil {
+		ctx.JSON(errors.ErrorToApiResponse(err))
 		return
-	}
-	user, ok := userValue.(*auth.User)
-	if !ok {
-		ctx.JSON(errors.ErrorToApiResponse(fmt.Errorf("(%s) authentication middleware misconfigured: suitability represented as %T", errors.InternalServerError, userValue)))
 	}
 
 	var suitabilityDescription string

@@ -33,13 +33,13 @@ import (
 // so that Application instances can be more easily tested without the complexity
 // of running a full server.
 func (a *Application) buildRouter() {
-	authMiddleware := auth.IdentityAwareProxyAuthentication
+	authMiddleware := auth.IapUserMiddleware
 
 	docs.SwaggerInfo.Version = version.BuildVersion
-	if config.Config.String("mode") == "debug" {
+	if config.Config.MustString("mode") == "debug" {
 		// if a dev build, allow http on Swagger page for localhost usage
 		docs.SwaggerInfo.Schemes = []string{"http", "https"}
-		authMiddleware = auth.DummyAuthentication
+		authMiddleware = auth.FakeUserMiddleware
 		gin.SetMode(gin.DebugMode)
 	} else {
 		gin.SetMode(gin.ReleaseMode)

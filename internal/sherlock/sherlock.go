@@ -57,8 +57,8 @@ func New() *Application {
 		DB: dbConn,
 	}
 
-	if config.Config.String("mode") != "debug" {
-		if config.Config.String("mode") != "release" {
+	if config.Config.MustString("mode") != "debug" {
+		if config.Config.MustString("mode") != "release" {
 			log.Warn().Msgf("mode was not 'debug' but wasn't 'release' either, enabling authentication layer anyway")
 		}
 
@@ -68,7 +68,7 @@ func New() *Application {
 		}
 		ctx, cancelFunc := context.WithCancel(context.Background())
 		app.contextsToCancel = append(app.contextsToCancel, cancelFunc)
-		go auth.KeepCacheUpdated(ctx, 15*time.Minute)
+		go auth.KeepCacheUpdated(ctx, time.Duration(config.Config.MustInt("auth.updateIntervalMinutes"))*time.Minute)
 	}
 
 	app.registerControllers()
