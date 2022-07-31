@@ -4,8 +4,9 @@ package version
 // value for BuildVersion. It's separate so that we
 // can easily determine elsewhere in whether the
 // current build is a dev build or not.
-var DevelopmentVersionString string = "development"
+const DevelopmentVersionString = "development"
 
 // BuildVersion is used to embed Sherlock's semver in the
-// binary using compiler flags
-var BuildVersion string = DevelopmentVersionString
+// binary using compiler flags. We mutate this value from
+// the application entrypoint.
+var BuildVersion = DevelopmentVersionString
