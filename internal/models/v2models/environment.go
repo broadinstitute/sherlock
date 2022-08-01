@@ -67,6 +67,7 @@ func environmentToSelectors(environment Environment) []string {
 }
 
 func environmentRequiresSuitability(environment Environment) bool {
+	// RequiresSuitability is a required field and shouldn't ever actually be stored as nil, but if it is we fail-safe
 	return environment.RequiresSuitability == nil || *environment.RequiresSuitability
 }
 

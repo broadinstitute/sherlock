@@ -64,6 +64,7 @@ func clusterToSelectors(cluster Cluster) []string {
 }
 
 func clusterRequiresSuitability(cluster Cluster) bool {
+	// RequiresSuitability is a required field and shouldn't ever actually be stored as nil, but if it is we fail-safe
 	return cluster.RequiresSuitability == nil || *cluster.RequiresSuitability
 }
 
