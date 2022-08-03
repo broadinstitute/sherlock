@@ -52,7 +52,7 @@ func handleList[M v2models.Model, R v2controllers.Readable, C v2controllers.Crea
 		limitString := ctx.DefaultQuery("limit", "0")
 		limit, err := strconv.Atoi(limitString)
 		if err != nil {
-			ctx.JSON(errors.ErrorToApiResponse(err))
+			ctx.JSON(errors.ErrorToApiResponse(fmt.Errorf("(%s) error parsing limit parameter: %v", errors.BadRequest, err)))
 			return
 		}
 		result, err := controller.ListAllMatching(filter, limit)
