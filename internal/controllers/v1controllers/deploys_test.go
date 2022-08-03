@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-type DeployIntegrationTestSuite struct {
+type DeployFunctionalTestSuite struct {
 	suite.Suite
 	app *TestApplication
 }
@@ -26,25 +26,25 @@ func initTestDeployController(t *testing.T) *TestApplication {
 	}
 }
 
-func TestDeployIntegrationSuite(t *testing.T) {
+func TestDeployFunctionalSuite(t *testing.T) {
 	if testing.Short() {
-		t.Skip("skipping integration test")
+		t.Skip("skipping functional test")
 	}
-	suite.Run(t, new(DeployIntegrationTestSuite))
+	suite.Run(t, new(DeployFunctionalTestSuite))
 }
 
-func (suite *DeployIntegrationTestSuite) SetupTest() {
+func (suite *DeployFunctionalTestSuite) SetupTest() {
 	// start a new db transaction for each test
 	suite.app = initTestDeployController(suite.T())
 }
 
-func (suite *DeployIntegrationTestSuite) TearDownTest() {
+func (suite *DeployFunctionalTestSuite) TearDownTest() {
 	// each test runs in its own isolated transaction
 	// this ensures we cleanup after each test as it completes
 	suite.app.DB.Rollback()
 }
 
-func (suite *DeployIntegrationTestSuite) TestCreateDeploy() {
+func (suite *DeployFunctionalTestSuite) TestCreateDeploy() {
 	suite.Run("fails to create deploy if missing reference data", func() {
 		testutils.Cleanup(suite.T(), suite.app.DB)
 
@@ -168,7 +168,7 @@ func (suite *DeployIntegrationTestSuite) TestCreateDeploy() {
 	})
 }
 
-func (suite *DeployIntegrationTestSuite) TestGetDeploysByServiceAndEnvironment() {
+func (suite *DeployFunctionalTestSuite) TestGetDeploysByServiceAndEnvironment() {
 	suite.Run("returns a single deploy", func() {
 
 		// populate a build to deploy

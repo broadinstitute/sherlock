@@ -24,5 +24,5 @@ Briefly:
 - `db` is for direct database work--namely migrations
 - `metrics` is for v1 right now; it exposes the acclerate metrics Sherlock's v1 was originally built for
 - `sherlock` defines the top-level application instance and configures Gin
-- `testutils` includes helpers for running integration tests within Go itself
+- `testutils` includes helpers for running functional tests within Go itself
 - `version` records and embeds Sherlock's own version at build-time

@@ -9,22 +9,22 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-type ServicesIntegrationTestSuite struct {
+type ServicesFunctionalTestSuite struct {
 	suite.Suite
 	app *TestApplication
 }
 
-func (suite *ServicesIntegrationTestSuite) SetupTest() {
+func (suite *ServicesFunctionalTestSuite) SetupTest() {
 	suite.app = initServicesTestApp(suite.T())
 }
 
-func (suite *ServicesIntegrationTestSuite) TearDownTest() {
+func (suite *ServicesFunctionalTestSuite) TearDownTest() {
 	// each test runs in its own isolated transaction
 	// this ensures we cleanup after each test as it completes
 	suite.app.DB.Rollback()
 }
 
-func (suite *ServicesIntegrationTestSuite) TestCreateService() {
+func (suite *ServicesFunctionalTestSuite) TestCreateService() {
 	suite.Run("Creates a service from valid request", func() {
 		testutils.Cleanup(suite.T(), suite.app.DB)
 
@@ -73,7 +73,7 @@ func (suite *ServicesIntegrationTestSuite) TestCreateService() {
 	})
 }
 
-func (suite *ServicesIntegrationTestSuite) TestListServices() {
+func (suite *ServicesFunctionalTestSuite) TestListServices() {
 	// make some create service requests and populated them with fake data
 	suite.Run("ListAll returns nothing", func() {
 		testutils.Cleanup(suite.T(), suite.app.DB)
@@ -128,7 +128,7 @@ func (suite *ServicesIntegrationTestSuite) TestListServices() {
 	})
 }
 
-func (suite *ServicesIntegrationTestSuite) TestGetByName() {
+func (suite *ServicesFunctionalTestSuite) TestGetByName() {
 	suite.Run("retrieves an existing service", func() {
 		testutils.Cleanup(suite.T(), suite.app.DB)
 
@@ -161,7 +161,7 @@ func (suite *ServicesIntegrationTestSuite) TestGetByName() {
 	})
 }
 
-func (suite *ServicesIntegrationTestSuite) TestFindOrCreate() {
+func (suite *ServicesFunctionalTestSuite) TestFindOrCreate() {
 	suite.Run("retrieves an existing service", func() {
 		testutils.Cleanup(suite.T(), suite.app.DB)
 
@@ -189,11 +189,11 @@ func (suite *ServicesIntegrationTestSuite) TestFindOrCreate() {
 	})
 }
 
-func TestServicesIntegrationSuite(t *testing.T) {
+func TestServicesFunctionalSuite(t *testing.T) {
 	if testing.Short() {
-		t.Skip("skipping integration test")
+		t.Skip("skipping functional test")
 	}
-	suite.Run(t, new(ServicesIntegrationTestSuite))
+	suite.Run(t, new(ServicesFunctionalTestSuite))
 
 }
 

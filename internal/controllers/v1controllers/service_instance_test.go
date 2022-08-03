@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-type ServiceInstanceIntegrationTestSuite struct {
+type ServiceInstanceFunctionalTestSuite struct {
 	suite.Suite
 	app                *TestApplication
 	goodEnvironmentReq v1models.CreateEnvironmentRequest
@@ -18,14 +18,14 @@ type ServiceInstanceIntegrationTestSuite struct {
 	goodClusterReq     v1models.CreateClusterRequest
 }
 
-func TestServiceInstanceIntegrationSuite(t *testing.T) {
+func TestServiceInstanceFunctionalSuite(t *testing.T) {
 	if testing.Short() {
-		t.Skip("skipping integration test")
+		t.Skip("skipping functional test")
 	}
-	suite.Run(t, new(ServiceInstanceIntegrationTestSuite))
+	suite.Run(t, new(ServiceInstanceFunctionalTestSuite))
 }
 
-func (suite *ServiceInstanceIntegrationTestSuite) SetupTest() {
+func (suite *ServiceInstanceFunctionalTestSuite) SetupTest() {
 	suite.app = initTestServiceInstanceApp(suite.T())
 	suite.goodEnvironmentReq = v1models.CreateEnvironmentRequest{
 		Name: faker.UUIDHyphenated(),
@@ -41,7 +41,7 @@ func (suite *ServiceInstanceIntegrationTestSuite) SetupTest() {
 	}
 }
 
-func (suite *ServiceInstanceIntegrationTestSuite) TearDownTest() {
+func (suite *ServiceInstanceFunctionalTestSuite) TearDownTest() {
 	// each test runs in its own isolated transaction
 	// this ensures we cleanup after each test as it completes
 	suite.app.DB.Rollback()
@@ -61,14 +61,14 @@ func initTestServiceInstanceApp(t *testing.T) *TestApplication {
 	}
 }
 
-func (suite *ServiceInstanceIntegrationTestSuite) TestListServiceInstancesError() {
+func (suite *ServiceInstanceFunctionalTestSuite) TestListServiceInstancesError() {
 	targetError := errors.New("some internal error")
 	controller := setupMockController(suite.T(), []v1models.ServiceInstance{}, targetError, "ListAll")
 	_, err := controller.ListAll()
 	suite.Assert().ErrorIs(err, targetError, "expected an internal error from DB layer, received some other error")
 }
 
-func (suite *ServiceInstanceIntegrationTestSuite) TestCreateServiceInstance() {
+func (suite *ServiceInstanceFunctionalTestSuite) TestCreateServiceInstance() {
 	suite.Run("creates association between existing service, environment, and cluster", func() {
 		testutils.Cleanup(suite.T(), suite.app.DB)
 		preExistingCluster, preExistingService, preExistingEnv := suite.preProvisionDependentObjects(true, true, true)
@@ -139,7 +139,7 @@ func (suite *ServiceInstanceIntegrationTestSuite) TestCreateServiceInstance() {
 	})
 }
 
-func (suite *ServiceInstanceIntegrationTestSuite) TestGetByEnvironmentAndServiceName() {
+func (suite *ServiceInstanceFunctionalTestSuite) TestGetByEnvironmentAndServiceName() {
 	suite.Run("returns an existing service instance", func() {
 		testutils.Cleanup(suite.T(), suite.app.DB)
 		preExistingCluster, preExistingService, preExistingEnv := suite.preProvisionDependentObjects(true, true, true)
@@ -189,7 +189,7 @@ func setupMockController(
 
 // helper method on suite to pre-provision all the required objects for ServiceInstance to exist,
 // takes a bool for each of Cluster/Service/Environment on whether to create the object or not.
-func (suite *ServiceInstanceIntegrationTestSuite) preProvisionDependentObjects(makeCluster, makeService, makeEnv bool) (v1models.Cluster, v1models.Service, v1models.Environment) {
+func (suite *ServiceInstanceFunctionalTestSuite) preProvisionDependentObjects(makeCluster, makeService, makeEnv bool) (v1models.Cluster, v1models.Service, v1models.Environment) {
 	var preExistingEnv v1models.Environment
 	var preExistingService v1models.Service
 	var preExistingCluster v1models.Cluster

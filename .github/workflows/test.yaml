@@ -1,4 +1,4 @@
-name: Run Unit and Integration Tests
+name: Run Unit and Functional Tests
 on:
   push:
     branches:
@@ -14,7 +14,7 @@ on:
 
 jobs:
   # This job will only run unit tests and coverage report is generated based on them.
-  # Integration tests are handled in a separate job
+  # Functional tests are handled in a separate job
   test:
     runs-on: ubuntu-latest
     steps:

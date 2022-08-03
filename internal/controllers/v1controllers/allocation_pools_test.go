@@ -27,10 +27,10 @@ type AllocationPoolTestSuite struct {
 }
 
 // Test entry point
-func TestIntegrationAllocationPoolsSuite(t *testing.T) {
-	// skip integration tests if go test is invoked with -short flag
+func TestFunctionalAllocationPoolsSuite(t *testing.T) {
+	// skip functional tests if go test is invoked with -short flag
 	if testing.Short() {
-		t.Skip("skipping integration test")
+		t.Skip("skipping functional test")
 	}
 	suite.Run(t, new(AllocationPoolTestSuite))
 }
@@ -82,7 +82,7 @@ func initTestAllocationPoolsApp(t *testing.T) *TestApplication {
 // The Actual Tests
 //
 
-func (suite *AllocationPoolTestSuite) TestIntegrationCreateAllocationPools() {
+func (suite *AllocationPoolTestSuite) TestFunctionalCreateAllocationPools() {
 	suite.Run("creates a valid allocationPool", func() {
 		testutils.Cleanup(suite.T(), suite.testApp.DB)
 
@@ -181,7 +181,7 @@ func (suite *AllocationPoolTestSuite) TestAddByEnvironmentID() {
 	})
 }
 
-func (suite *AllocationPoolTestSuite) TestIntegrationAllocationPoolGetByName() {
+func (suite *AllocationPoolTestSuite) TestFunctionalAllocationPoolGetByName() {
 	suite.Run("GetByName gets an allocationPool by name", func() {
 		testutils.Cleanup(suite.T(), suite.testApp.DB)
 
@@ -208,7 +208,7 @@ func (suite *AllocationPoolTestSuite) TestIntegrationAllocationPoolGetByName() {
 	})
 }
 
-func (suite *AllocationPoolTestSuite) TestIntegrationAllocationPoolGetByID() {
+func (suite *AllocationPoolTestSuite) TestFunctionalAllocationPoolGetByID() {
 	suite.Run("GetByID gets an allocationPool by ID", func() {
 		testutils.Cleanup(suite.T(), suite.testApp.DB)
 
@@ -235,7 +235,7 @@ func (suite *AllocationPoolTestSuite) TestIntegrationAllocationPoolGetByID() {
 	})
 }
 
-func (suite *AllocationPoolTestSuite) TestIntegrationAllocationPoolListAll() {
+func (suite *AllocationPoolTestSuite) TestFunctionalAllocationPoolListAll() {
 	suite.Run("ListAll returns nothing", func() {
 		testutils.Cleanup(suite.T(), suite.testApp.DB)
 
@@ -273,7 +273,7 @@ func (suite *AllocationPoolTestSuite) TestIntegrationAllocationPoolListAll() {
 	})
 }
 
-func (suite *AllocationPoolTestSuite) TestIntegrationAllocationPoolDoesAllocationPoolExist() {
+func (suite *AllocationPoolTestSuite) TestFunctionalAllocationPoolDoesAllocationPoolExist() {
 	suite.Run("AllocationPoolDoesExist returns true when exists", func() {
 		testutils.Cleanup(suite.T(), suite.testApp.DB)
 

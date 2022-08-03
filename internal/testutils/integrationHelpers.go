@@ -1,7 +1,7 @@
 package testutils
 
 // db.go contains a variety of methods for helping connect to and setup a database for use in
-// integration tests. It also facilitates the running of integration tests without dependencies
+// functional tests. It also facilitates the running of functional tests without dependencies
 // on the top level package sherlock
 
 import (
@@ -70,10 +70,10 @@ func ConnectAndMigrate(t *testing.T) *gorm.DB {
 // Helper Methods
 //
 
-// Truncate cleans up tables after integration tests
+// Truncate cleans up tables after functional tests
 func Truncate(db *gorm.DB) error {
 	// gorm doesn't seem to support truncate operations which are essential to cleaning up after
-	// integration tests (and the only use case of this function so doing it with raw sql)
+	// functional tests (and the only use case of this function so doing it with raw sql)
 	deleteStatement := `
 	BEGIN;
 		DELETE FROM deploys;

@@ -21,7 +21,7 @@ import (
 	_ "github.com/jackc/pgx/v4/stdlib"
 )
 
-// ApplyMigrations is a utility function intended for use in integration tests and
+// ApplyMigrations is a utility function intended for use in functional tests and
 // local development where changelogs can be applied to a local postgres instance
 // during startup
 func ApplyMigrations(changeLogPath string, config *koanf.Koanf) error {

@@ -5,7 +5,7 @@ import (
 )
 
 // SeedServices is a test utility that will populate a database with a predetermined list of "services"
-// to be used for running integration tests against a real database
+// to be used for running functional tests against a real database
 func SeedServices(db *gorm.DB) ([]Service, error) {
 	services := []Service{
 		{

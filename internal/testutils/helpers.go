@@ -10,7 +10,7 @@ import (
 )
 
 // helpers.go contains general purpose resuable helper functions that
-// can be helpful for unit and integration tests
+// can be helpful for unit and functional tests
 
 // ProjectRootFilePath is a Golang-native mechanism to get the root of the package structure
 // on the filesystem. With this, tests can introspect files (e.g. database changelogs) without
