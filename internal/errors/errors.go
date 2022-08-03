@@ -33,6 +33,7 @@ func ErrorToApiResponse(err error) (int, ErrorResponse) {
 	}
 	return code, response
 }
+
 func convert(err error) (int, ErrorResponse) {
 	errorString := err.Error()
 	// Even though InternalServerError is the catch-all, we want it to take precedence
