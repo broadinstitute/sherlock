@@ -30,6 +30,9 @@ func newAppVersionStore(db *gorm.DB) Store[AppVersion] {
 }
 
 func appVersionSelectorToQuery(_ *gorm.DB, selector string) (AppVersion, error) {
+	if len(selector) == 0 {
+		return AppVersion{}, fmt.Errorf("(%s) app version selector cannot be empty", errors.BadRequest)
+	}
 	var query AppVersion
 	if isNumeric(selector) { // ID
 		id, err := strconv.Atoi(selector)

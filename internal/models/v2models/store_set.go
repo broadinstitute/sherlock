@@ -13,6 +13,7 @@ type StoreSet struct {
 }
 
 func NewStoreSet(db *gorm.DB) StoreSet {
+	// TODO this is Jack's hack to not write SQL while iterating on the database
 	err := db.AutoMigrate(&Cluster{}, &Environment{}, &Chart{}, &ChartVersion{}, &AppVersion{}, &ChartRelease{}, &ChartDeployRecord{})
 	if err != nil {
 		panic(err)

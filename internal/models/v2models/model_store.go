@@ -30,10 +30,12 @@ type Store[M Model] struct {
 	modelToSelectors func(model M) []string
 	// modelRequiresSuitability lets a particular type flag that the given model (which will always come from the
 	// database) requires suitability for any mutations. If no function is provided, the model type is assumed
-	// to have no suitability restrictions.
-	modelRequiresSuitability func(model M) bool
+	// to have no suitability restrictions. To support hopping from association to association and to fail-safe,
+	// the db reference should be used to load associations if they're used.
+	modelRequiresSuitability func(db *gorm.DB, model M) bool
 	// validateModel lets a type enforce restrictions upon data entry. Associated data will not be present but foreign
-	// keys themselves can be checked.
+	// keys themselves can be checked. There's no need to validate the grammar of selectors, that can be checked
+	// automatically.
 	// Note that this function has no mechanism to query the database to check the value of a foreign key--this is by
 	// design, as setting foreign keys is done by the controller and a non-zero value will be a valid one. This function
 	// should only worry about the presence of a foreign key, if an association is required.
@@ -75,7 +77,7 @@ func (s Store[M]) Create(model M, user *auth.User) (M, error) {
 		if err != nil {
 			return fmt.Errorf("(%s) unexpected creation error: mid-transaction validation on %T failed: %v", errors.InternalServerError, model, err)
 		}
-		if s.modelRequiresSuitability != nil && s.modelRequiresSuitability(result) {
+		if s.modelRequiresSuitability != nil && s.modelRequiresSuitability(s.db, result) {
 			if err = user.SuitableOrError(); err != nil {
 				return fmt.Errorf("create error: (%s) suitability is required to create this %T: %v", errors.Forbidden, model, err)
 			}
@@ -128,7 +130,7 @@ func (s Store[M]) Edit(selector string, editsToMake M, user *auth.User) (M, erro
 	if err != nil {
 		return toEdit, fmt.Errorf("edit error handling %T selector %s: %v", toEdit, selector, err)
 	}
-	if s.modelRequiresSuitability != nil && s.modelRequiresSuitability(toEdit) {
+	if s.modelRequiresSuitability != nil && s.modelRequiresSuitability(s.db, toEdit) {
 		if err = user.SuitableOrError(); err != nil {
 			return toEdit, fmt.Errorf("edit error: (%s) suitability is required to edit %T %s: %v", errors.Forbidden, toEdit, selector, err)
 		}
@@ -149,7 +151,7 @@ func (s Store[M]) Edit(selector string, editsToMake M, user *auth.User) (M, erro
 		}
 		// We check suitability *again* to prevent a user from editing an entry in a way that makes it require
 		// suitability in the future, if they aren't themselves suitable.
-		if s.modelRequiresSuitability != nil && s.modelRequiresSuitability(result) {
+		if s.modelRequiresSuitability != nil && s.modelRequiresSuitability(s.db, result) {
 			if err = user.SuitableOrError(); err != nil {
 				return fmt.Errorf("edit error: (%s) suitability is required to edit %T %s in this way: %v", errors.Forbidden, toEdit, selector, err)
 			}
@@ -165,7 +167,7 @@ func (s Store[M]) Delete(selector string, user *auth.User) (M, error) {
 	if err != nil {
 		return toDelete, fmt.Errorf("delete error handling %T selector %s: %v", toDelete, selector, err)
 	}
-	if s.modelRequiresSuitability != nil && s.modelRequiresSuitability(toDelete) {
+	if s.modelRequiresSuitability != nil && s.modelRequiresSuitability(s.db, toDelete) {
 		if err = user.SuitableOrError(); err != nil {
 			return toDelete, fmt.Errorf("delete error: (%s) suitability is required to delete %T %s: %v", errors.Forbidden, toDelete, selector, err)
 		}

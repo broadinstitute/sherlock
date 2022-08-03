@@ -23,10 +23,14 @@ func newChartVersionStore(db *gorm.DB) Store[ChartVersion] {
 		db:                   db,
 		selectorToQueryModel: chartVersionSelectorToQuery,
 		modelToSelectors:     chartVersionToSelectors,
+		validateModel:        validateChartVersion,
 	}
 }
 
 func chartVersionSelectorToQuery(_ *gorm.DB, selector string) (ChartVersion, error) {
+	if len(selector) == 0 {
+		return ChartVersion{}, fmt.Errorf("(%s) chart version selector cannot be empty", errors.BadRequest)
+	}
 	var query ChartVersion
 	if isNumeric(selector) { // ID
 		id, err := strconv.Atoi(selector)
@@ -45,4 +49,14 @@ func chartVersionToSelectors(chartVersion ChartVersion) []string {
 		selectors = append(selectors, fmt.Sprintf("%d", chartVersion.ID))
 	}
 	return selectors
+}
+
+func validateChartVersion(chartVersion ChartVersion) error {
+	if chartVersion.ChartID == 0 {
+		return fmt.Errorf("an %T must have an associated chart", chartVersion)
+	}
+	if chartVersion.ChartVersion == "" {
+		return fmt.Errorf("an %T must have a non-empty chart version", chartVersion)
+	}
+	return nil
 }

@@ -34,6 +34,9 @@ func newClusterStore(db *gorm.DB) Store[Cluster] {
 }
 
 func clusterSelectorToQuery(_ *gorm.DB, selector string) (Cluster, error) {
+	if len(selector) == 0 {
+		return Cluster{}, fmt.Errorf("(%s) cluster selector cannot be empty", errors.BadRequest)
+	}
 	var query Cluster
 	if isNumeric(selector) { // ID
 		id, err := strconv.Atoi(selector)
@@ -63,7 +66,7 @@ func clusterToSelectors(cluster Cluster) []string {
 	return selectors
 }
 
-func clusterRequiresSuitability(cluster Cluster) bool {
+func clusterRequiresSuitability(_ *gorm.DB, cluster Cluster) bool {
 	// RequiresSuitability is a required field and shouldn't ever actually be stored as nil, but if it is we fail-safe
 	return cluster.RequiresSuitability == nil || *cluster.RequiresSuitability
 }

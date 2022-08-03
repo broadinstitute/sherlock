@@ -30,6 +30,9 @@ func newChartStore(db *gorm.DB) Store[Chart] {
 }
 
 func chartSelectorToQuery(_ *gorm.DB, selector string) (Chart, error) {
+	if len(selector) == 0 {
+		return Chart{}, fmt.Errorf("(%s) chart selector cannot be empty", errors.BadRequest)
+	}
 	var query Chart
 	if isNumeric(selector) { // ID
 		id, err := strconv.Atoi(selector)

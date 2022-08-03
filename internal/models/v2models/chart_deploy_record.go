@@ -13,7 +13,7 @@ type ChartDeployRecord struct {
 	ChartReleaseID    uint   `gorm:"not null; default:null"`
 	ExactChartVersion string `gorm:"not null; default:null"`
 	ExactAppVersion   string `gorm:"not null; default:null"`
-	HelmfileRef       string
+	HelmfileRef       string `gorm:"not null; default:null"`
 }
 
 func (c ChartDeployRecord) TableName() string {
@@ -31,6 +31,9 @@ func newChartDeployRecordStore(db *gorm.DB) Store[ChartDeployRecord] {
 }
 
 func chartDeployRecordSelectorToQuery(_ *gorm.DB, selector string) (ChartDeployRecord, error) {
+	if len(selector) == 0 {
+		return ChartDeployRecord{}, fmt.Errorf("(%s) chart deploy record selector cannot be empty", errors.BadRequest)
+	}
 	var query ChartDeployRecord
 	if isNumeric(selector) { // ID
 		id, err := strconv.Atoi(selector)
@@ -51,8 +54,12 @@ func chartDeployRecordToSelectors(chartDeployRecord ChartDeployRecord) []string 
 	return selectors
 }
 
-func chartDeployRecordRequiresSuitability(chartDeployRecord ChartDeployRecord) bool {
-	return chartReleaseRequiresSuitability(chartDeployRecord.ChartRelease)
+func chartDeployRecordRequiresSuitability(db *gorm.DB, chartDeployRecord ChartDeployRecord) bool {
+	chartRelease, err := getFromQuery(db, chartDeployRecord.ChartRelease)
+	if err != nil {
+		return true
+	}
+	return chartReleaseRequiresSuitability(db, chartRelease)
 }
 
 func validateChartDeployRecord(chartDeployRecord ChartDeployRecord) error {
@@ -64,6 +71,9 @@ func validateChartDeployRecord(chartDeployRecord ChartDeployRecord) error {
 	}
 	if chartDeployRecord.ExactAppVersion == "" {
 		return fmt.Errorf("a %T must have a non-empty app version", chartDeployRecord)
+	}
+	if chartDeployRecord.HelmfileRef == "" {
+		return fmt.Errorf("a %T must have a non-empty terra-helmfile ref", chartDeployRecord)
 	}
 	return nil
 }

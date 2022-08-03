@@ -6,6 +6,55 @@ import (
 	"testing"
 )
 
+func Test_clusterSelectorToQuery(t *testing.T) {
+	type args struct {
+		db       *gorm.DB
+		selector string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    Cluster
+		wantErr bool
+	}{
+		{
+			name:    "empty",
+			args:    args{selector: ""},
+			wantErr: true,
+		},
+		{
+			name:    "invalid",
+			args:    args{selector: "something obviously invalid!"},
+			wantErr: true,
+		},
+		{
+			name: "valid id",
+			args: args{selector: "123"},
+			want: Cluster{Model: gorm.Model{ID: 123}},
+		},
+		{
+			name:    "invalid id",
+			args:    args{selector: testutils.StringNumberTooBigForInt},
+			wantErr: true,
+		},
+		{
+			name: "valid name",
+			args: args{selector: "foo-bar-2"},
+			want: Cluster{Name: "foo-bar-2"},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := clusterSelectorToQuery(tt.args.db, tt.args.selector)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("clusterSelectorToQuery() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			testutils.AssertNoDiff(t, tt.want, got)
+		})
+	}
+}
+
 func Test_clusterToSelectors(t *testing.T) {
 	type args struct {
 		cluster Cluster
@@ -55,6 +104,7 @@ func Test_clusterRequiresSuitability(t *testing.T) {
 	tru := true
 	fal := false
 	type args struct {
+		db      *gorm.DB
 		cluster Cluster
 	}
 	tests := []struct {
@@ -80,7 +130,7 @@ func Test_clusterRequiresSuitability(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := clusterRequiresSuitability(tt.args.cluster)
+			got := clusterRequiresSuitability(tt.args.db, tt.args.cluster)
 			testutils.AssertNoDiff(t, tt.want, got)
 		})
 	}

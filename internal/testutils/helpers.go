@@ -21,6 +21,10 @@ var (
 	ProjectRootFilePath = filepath.Join(filepath.Dir(b), "../..")
 )
 
+const (
+	StringNumberTooBigForInt = "9999999999999999999999999999"
+)
+
 func SetupTestContext() (*gin.Context, *httptest.ResponseRecorder) {
 	response := httptest.NewRecorder()
 	gin.SetMode(gin.TestMode)

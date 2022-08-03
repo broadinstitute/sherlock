@@ -47,6 +47,9 @@ func newChartReleaseStore(db *gorm.DB) Store[ChartRelease] {
 }
 
 func chartReleaseSelectorToQuery(db *gorm.DB, selector string) (ChartRelease, error) {
+	if len(selector) == 0 {
+		return ChartRelease{}, fmt.Errorf("(%s) chart release selector cannot be empty", errors.BadRequest)
+	}
 	var ret ChartRelease
 	if isNumeric(selector) { // ID
 		id, err := strconv.Atoi(selector)
@@ -143,6 +146,10 @@ func chartReleaseToSelectors(chartRelease ChartRelease) []string {
 	var selectors []string
 	if (chartRelease.Environment != nil || chartRelease.EnvironmentID != nil) || ((chartRelease.Cluster != nil || chartRelease.ClusterID != nil) && chartRelease.Namespace != "") {
 		chartSelectors := chartToSelectors(chartRelease.Chart)
+		if len(chartSelectors) == 0 && chartRelease.ChartID != 0 {
+			// Chart not filled so chartToSelectors gives nothing, but we have the chart ID and it is a selector anyway
+			chartSelectors = []string{fmt.Sprintf("%d", chartRelease.ChartID)}
+		}
 		if chartRelease.Environment != nil {
 			for _, environmentSelector := range environmentToSelectors(*chartRelease.Environment) {
 				for _, chartSelector := range chartSelectors {
@@ -177,22 +184,49 @@ func chartReleaseToSelectors(chartRelease ChartRelease) []string {
 	return selectors
 }
 
-func chartReleaseRequiresSuitability(chartRelease ChartRelease) bool {
-	return chartRelease.Cluster == nil || clusterRequiresSuitability(*chartRelease.Cluster) || (chartRelease.Environment == nil || environmentRequiresSuitability(*chartRelease.Environment))
+func chartReleaseRequiresSuitability(db *gorm.DB, chartRelease ChartRelease) bool {
+	clusterRequires := true
+	if chartRelease.Cluster != nil {
+		cluster, err := getFromQuery(db, *chartRelease.Cluster)
+		if err != nil {
+			return true
+		}
+		clusterRequires = clusterRequiresSuitability(db, cluster)
+	}
+	environmentRequires := true
+	if chartRelease.Environment != nil {
+		environment, err := getFromQuery(db, *chartRelease.Environment)
+		if err != nil {
+			return true
+		}
+		environmentRequires = environmentRequiresSuitability(db, environment)
+	}
+	return clusterRequires || environmentRequires
 }
 
 func validateChartRelease(chartRelease ChartRelease) error {
-	if chartRelease.ChartID == 0 {
-		return fmt.Errorf("a %T must have an associated chart", chartRelease)
-	}
-	if (chartRelease.ClusterID == nil || *chartRelease.ClusterID == 0) && (chartRelease.EnvironmentID == nil || *chartRelease.EnvironmentID == 0) {
-		return fmt.Errorf("a %T must have either an associated environment or an associated cluster", chartRelease)
-	}
 	if chartRelease.Name == "" {
 		return fmt.Errorf("a %T must have a non-empty Name", chartRelease)
 	}
-	if chartRelease.DestinationType == "" {
-		return fmt.Errorf("(%s) calculated field for %T destination type was empty, this should be impossible if environment or cluster are provided", errors.InternalServerError, chartRelease)
+	if chartRelease.ChartID == 0 {
+		return fmt.Errorf("a %T must have an associated chart", chartRelease)
+	}
+	if chartRelease.EnvironmentID != nil {
+		if chartRelease.DestinationType != "environment" {
+			return fmt.Errorf("(%s) calculated field for %T destination should be 'environment' if an environment is present", errors.InternalServerError, chartRelease)
+		}
+	} else if chartRelease.ClusterID != nil {
+		if chartRelease.DestinationType != "cluster" {
+			return fmt.Errorf("(%s) calculated field for %T destination should be 'cluster' if a cluster and no environment is present", errors.InternalServerError, chartRelease)
+		}
+	} else {
+		return fmt.Errorf("a %T must have either an associated environment or an associated cluster", chartRelease)
+	}
+
+	if chartRelease.ClusterID != nil && chartRelease.Namespace == "" {
+		return fmt.Errorf("a %T that has a cluster must have a namespace", chartRelease)
+	} else if chartRelease.ClusterID == nil && chartRelease.Namespace != "" {
+		return fmt.Errorf("a %T that doesn't have a cluster must not have a namespace", chartRelease)
 	}
 
 	if chartRelease.HelmfileRef == nil || *chartRelease.HelmfileRef == "" {
@@ -206,7 +240,7 @@ func validateChartRelease(chartRelease ChartRelease) error {
 			return fmt.Errorf("a %T must have a non-empty TargetAppVersionCommit if TargetAppVersionUse is set to 'commit'", chartRelease)
 		} else if *chartRelease.TargetAppVersionUse == "exact" && (chartRelease.TargetAppVersionExact == nil || *chartRelease.TargetAppVersionExact == "") {
 			return fmt.Errorf("a %T must have a non-empty TargetAppVersionExact if TargetAppVersionUse is set to 'exact'", chartRelease)
-		} else if *chartRelease.TargetChartVersionUse != "branch" && *chartRelease.TargetChartVersionUse != "commit" && *chartRelease.TargetChartVersionUse != "exact" && *chartRelease.TargetChartVersionUse != "" {
+		} else if *chartRelease.TargetAppVersionUse != "branch" && *chartRelease.TargetAppVersionUse != "commit" && *chartRelease.TargetAppVersionUse != "exact" && *chartRelease.TargetAppVersionUse != "" {
 			return fmt.Errorf("a %T must have a TargetAppVersionUse of 'branch', 'commit', 'exact', or none at all (empty string '' is equivalent to none)", chartRelease)
 		}
 	}
@@ -214,7 +248,7 @@ func validateChartRelease(chartRelease ChartRelease) error {
 	if chartRelease.TargetChartVersionUse == nil || (*chartRelease.TargetChartVersionUse != "latest" && *chartRelease.TargetChartVersionUse != "exact") {
 		return fmt.Errorf("a %T must have a TargetChartVersionUse of either 'latest' or 'exact'", chartRelease)
 	}
-	if *chartRelease.TargetChartVersionUse != "exact" && (chartRelease.TargetChartVersionExact == nil || *chartRelease.TargetChartVersionExact == "") {
+	if *chartRelease.TargetChartVersionUse == "exact" && (chartRelease.TargetChartVersionExact == nil || *chartRelease.TargetChartVersionExact == "") {
 		return fmt.Errorf("a %T must have a non-empty TargetChartVersionExact if TargetChartVersionUse is set to 'exact'", chartRelease)
 	}
 

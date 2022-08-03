@@ -37,6 +37,9 @@ func newEnvironmentStore(db *gorm.DB) Store[Environment] {
 }
 
 func environmentSelectorToQuery(_ *gorm.DB, selector string) (Environment, error) {
+	if len(selector) == 0 {
+		return Environment{}, fmt.Errorf("(%s) environment selector cannot be empty", errors.BadRequest)
+	}
 	var query Environment
 	if isNumeric(selector) { // ID
 		id, err := strconv.Atoi(selector)
@@ -66,7 +69,7 @@ func environmentToSelectors(environment Environment) []string {
 	return selectors
 }
 
-func environmentRequiresSuitability(environment Environment) bool {
+func environmentRequiresSuitability(_ *gorm.DB, environment Environment) bool {
 	// RequiresSuitability is a required field and shouldn't ever actually be stored as nil, but if it is we fail-safe
 	return environment.RequiresSuitability == nil || *environment.RequiresSuitability
 }
