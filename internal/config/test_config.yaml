@@ -1,0 +1,12 @@
+# Note that this file and any TEST_SHERLOCK_ environment variables are overlaid on top of all Sherlock config,
+# including default_config.yaml. In other words, that config is still present, it can just be overridden here.
+
+mode: debug
+
+db:
+  host: localhost
+  user: sherlock
+  name: sherlock
+  port: 5432
+  ssl: disable
+  init: true

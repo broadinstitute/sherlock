@@ -1,4 +1,5 @@
 mode: debug
+logLevel: debug
 
 db:
   host: localhost
@@ -7,6 +8,12 @@ db:
   port: 5432
   ssl: disable
   init: true
+
+  # autoMigrate will have Gorm align the database schema with its understanding of model structs post-init.
+  # It should not be enabled in merged code but can be useful for development, to iterate before adding
+  # SQL migration files.
+  autoMigrateV1: false
+  autoMigrateV2: true
 
 auth:
   updateIntervalMinutes: 15

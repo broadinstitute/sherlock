@@ -7,7 +7,6 @@ import (
 	"github.com/broadinstitute/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/internal/controllers/v1controllers"
 	"github.com/broadinstitute/sherlock/internal/controllers/v2controllers"
-	"github.com/broadinstitute/sherlock/internal/db"
 	"github.com/broadinstitute/sherlock/internal/metrics"
 	"github.com/broadinstitute/sherlock/internal/models/v2models"
 	"github.com/rs/zerolog/log"
@@ -46,15 +45,9 @@ type Application struct {
 }
 
 // New returns a new instance of the core sherlock application
-func New() *Application {
-	dbConn, err := db.Connect(config.Config)
-	if err != nil {
-		log.Fatal().Msgf("error connecting to database: %v", err)
-		return nil
-	}
-
+func New(db *gorm.DB) *Application {
 	app := &Application{
-		DB: dbConn,
+		DB: db,
 	}
 
 	if config.Config.MustString("mode") != "debug" {

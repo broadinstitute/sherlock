@@ -1,17 +1,11 @@
 package main
 
 import (
-	"github.com/broadinstitute/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/internal/db"
+	"github.com/broadinstitute/sherlock/internal/sherlock"
 	"github.com/broadinstitute/sherlock/internal/version"
 	"github.com/fvbock/endless"
-	"github.com/golang-migrate/migrate/v4"
-	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
-	stdlog "log"
-	"os"
-
-	"github.com/broadinstitute/sherlock/internal/sherlock"
 )
 
 // BuildVersion is intended for use with Go's LDFlags compiler option, to
@@ -19,17 +13,14 @@ import (
 var BuildVersion string = "development"
 
 func main() {
-	if err := db.ApplyMigrations("db/migrations", config.Config); err != nil {
-		// don't fail if there are no changes to apply
-		if err == migrate.ErrNoChange {
-			log.Info().Msg("no migration to apply, continuing...")
-		} else {
-			log.Fatal().Msgf("%v", err)
-			return
-		}
+	go func() { _ = endless.ListenAndServe(":8081", livenessHandler{}) }()
+
+	dbConn, err := db.Connect()
+	if err != nil {
+		log.Fatal().Msgf("%v", err)
 	}
 
-	app := sherlock.New()
+	app := sherlock.New(dbConn)
 	if app == nil {
 		log.Fatal().Msg("failed to create an application instance")
 		return
@@ -46,6 +37,4 @@ func main() {
 
 func init() {
 	version.BuildVersion = BuildVersion
-	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr}).With().Timestamp().Logger()
-	stdlog.SetOutput(log.Logger)
 }

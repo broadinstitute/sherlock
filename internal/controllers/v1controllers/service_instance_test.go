@@ -2,10 +2,11 @@ package v1controllers
 
 import (
 	"errors"
+	"github.com/broadinstitute/sherlock/internal/config"
+	"github.com/broadinstitute/sherlock/internal/db"
 	"github.com/broadinstitute/sherlock/internal/models/v1models"
 	"testing"
 
-	"github.com/broadinstitute/sherlock/internal/testutils"
 	"github.com/bxcodec/faker/v3"
 	"github.com/stretchr/testify/suite"
 )
@@ -49,7 +50,8 @@ func (suite *ServiceInstanceFunctionalTestSuite) TearDownTest() {
 
 // Runs before every test (but not sub-test)
 func initTestServiceInstanceApp(t *testing.T) *TestApplication {
-	dbConn := testutils.ConnectAndMigrate(t)
+	config.LoadTestConfig(t)
+	dbConn := db.ConnectFromTest(t)
 	// ensures each test will run in it's own isolated transaction
 	// The transaction will be rolled back after each test
 	// regardless of pass or fail
@@ -70,7 +72,7 @@ func (suite *ServiceInstanceFunctionalTestSuite) TestListServiceInstancesError()
 
 func (suite *ServiceInstanceFunctionalTestSuite) TestCreateServiceInstance() {
 	suite.Run("creates association between existing service, environment, and cluster", func() {
-		testutils.Cleanup(suite.T(), suite.app.DB)
+		db.Truncate(suite.T(), suite.app.DB)
 		preExistingCluster, preExistingService, preExistingEnv := suite.preProvisionDependentObjects(true, true, true)
 
 		// attempt to create a service instance from the above
@@ -88,7 +90,7 @@ func (suite *ServiceInstanceFunctionalTestSuite) TestCreateServiceInstance() {
 	})
 
 	suite.Run("creates an environment if not exists", func() {
-		testutils.Cleanup(suite.T(), suite.app.DB)
+		db.Truncate(suite.T(), suite.app.DB)
 		preExistingCluster, preExistingService, _ := suite.preProvisionDependentObjects(true, true, false)
 
 		newServiceInstanceReq := CreateServiceInstanceRequest{
@@ -104,7 +106,7 @@ func (suite *ServiceInstanceFunctionalTestSuite) TestCreateServiceInstance() {
 	})
 
 	suite.Run("creates a service if not exists", func() {
-		testutils.Cleanup(suite.T(), suite.app.DB)
+		db.Truncate(suite.T(), suite.app.DB)
 		preExistingCluster, _, preExistingEnv := suite.preProvisionDependentObjects(true, false, true)
 
 		newServiceInstanceReq := CreateServiceInstanceRequest{
@@ -120,7 +122,7 @@ func (suite *ServiceInstanceFunctionalTestSuite) TestCreateServiceInstance() {
 	})
 
 	suite.Run("cannot create the same service instance twice", func() {
-		testutils.Cleanup(suite.T(), suite.app.DB)
+		db.Truncate(suite.T(), suite.app.DB)
 		preExistingCluster, preExistingService, preExistingEnv := suite.preProvisionDependentObjects(true, true, true)
 
 		// attempt to create a service instance from the above
@@ -141,7 +143,7 @@ func (suite *ServiceInstanceFunctionalTestSuite) TestCreateServiceInstance() {
 
 func (suite *ServiceInstanceFunctionalTestSuite) TestGetByEnvironmentAndServiceName() {
 	suite.Run("returns an existing service instance", func() {
-		testutils.Cleanup(suite.T(), suite.app.DB)
+		db.Truncate(suite.T(), suite.app.DB)
 		preExistingCluster, preExistingService, preExistingEnv := suite.preProvisionDependentObjects(true, true, true)
 
 		// attempt to create a service instance from the above

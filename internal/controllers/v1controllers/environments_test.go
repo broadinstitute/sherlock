@@ -4,11 +4,11 @@ package v1controllers
 
 import (
 	"errors"
+	"github.com/broadinstitute/sherlock/internal/db"
 	"github.com/broadinstitute/sherlock/internal/models/v1models"
 	"github.com/broadinstitute/sherlock/internal/serializers/v1serializers"
 	"testing"
 
-	"github.com/broadinstitute/sherlock/internal/testutils"
 	"github.com/bxcodec/faker/v3"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
@@ -60,7 +60,7 @@ func (suite *EnvironmentTestSuite) TearDownTest() {
 
 // connect to DB and create the Application
 func initEnvironmentsTestApp(t *testing.T) *TestApplication {
-	dbConn := testutils.ConnectAndMigrate(t)
+	dbConn := db.ConnectFromTest(t)
 	// ensures each test will run in it's own isolated transaction
 	// The transaction will be rolled back after each test
 	// regardless of pass or fail
@@ -188,7 +188,7 @@ func (suite *EnvironmentTestSuite) TestFunctionalEnvironmentGetByName() {
 
 func (suite *EnvironmentTestSuite) TestFunctionalEnvironmentGetByID() {
 	suite.Run("GetByID gets an environment by name", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.DB)
+		db.Truncate(suite.T(), suite.testApp.DB)
 
 		newEnvironment, err := suite.testApp.Environments.CreateNew(suite.goodEnvironmentRequest)
 		assert.NoError(suite.T(), err)
@@ -201,7 +201,7 @@ func (suite *EnvironmentTestSuite) TestFunctionalEnvironmentGetByID() {
 	})
 
 	suite.Run("GetByID returns error if not found", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.DB)
+		db.Truncate(suite.T(), suite.testApp.DB)
 
 		_, err := suite.testApp.Environments.CreateNew(suite.goodEnvironmentRequest)
 		assert.NoError(suite.T(), err)
@@ -215,7 +215,7 @@ func (suite *EnvironmentTestSuite) TestFunctionalEnvironmentGetByID() {
 
 func (suite *EnvironmentTestSuite) TestFunctionalEnvironmentListAll() {
 	suite.Run("ListAll returns nothing", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.DB)
+		db.Truncate(suite.T(), suite.testApp.DB)
 
 		foundEnvironments, err := suite.testApp.Environments.ListAll()
 
@@ -224,7 +224,7 @@ func (suite *EnvironmentTestSuite) TestFunctionalEnvironmentListAll() {
 	})
 
 	suite.Run("ListAll returns one Environment", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.DB)
+		db.Truncate(suite.T(), suite.testApp.DB)
 
 		_, err := suite.testApp.Environments.CreateNew(suite.goodEnvironmentRequest)
 		assert.NoError(suite.T(), err)
@@ -237,7 +237,7 @@ func (suite *EnvironmentTestSuite) TestFunctionalEnvironmentListAll() {
 	})
 
 	suite.Run("ListAll returns many Environments", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.DB)
+		db.Truncate(suite.T(), suite.testApp.DB)
 
 		var randomEnvRequest v1models.CreateEnvironmentRequest
 		err := faker.FakeData(&randomEnvRequest)

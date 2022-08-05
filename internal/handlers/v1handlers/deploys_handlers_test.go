@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/broadinstitute/sherlock/internal/controllers/v1controllers"
+	"github.com/broadinstitute/sherlock/internal/db"
 	"github.com/broadinstitute/sherlock/internal/serializers/v1serializers"
 	"github.com/stretchr/testify/suite"
 	"net/http"
@@ -23,7 +24,7 @@ type DeployHandlersTestSuite struct {
 }
 
 func initTestDeployController(t *testing.T) *v1controllers.TestApplication {
-	dbConn := testutils.ConnectAndMigrate(t)
+	dbConn := db.ConnectFromTest(t)
 	// ensures each test will run in it's own isolated transaction
 	// The transaction will be rolled back after each test
 	// regardless of pass or fail

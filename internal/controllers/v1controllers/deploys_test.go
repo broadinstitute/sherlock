@@ -1,10 +1,11 @@
 package v1controllers
 
 import (
+	"github.com/broadinstitute/sherlock/internal/config"
+	"github.com/broadinstitute/sherlock/internal/db"
 	"github.com/broadinstitute/sherlock/internal/models/v1models"
 	"testing"
 
-	"github.com/broadinstitute/sherlock/internal/testutils"
 	"github.com/bxcodec/faker/v3"
 	"github.com/stretchr/testify/suite"
 )
@@ -15,7 +16,8 @@ type DeployFunctionalTestSuite struct {
 }
 
 func initTestDeployController(t *testing.T) *TestApplication {
-	dbConn := testutils.ConnectAndMigrate(t)
+	config.LoadTestConfig(t)
+	dbConn := db.ConnectFromTest(t)
 	// ensures each test will run in it's own isolated transaction
 	// The transaction will be rolled back after each test
 	// regardless of pass or fail
@@ -46,7 +48,7 @@ func (suite *DeployFunctionalTestSuite) TearDownTest() {
 
 func (suite *DeployFunctionalTestSuite) TestCreateDeploy() {
 	suite.Run("fails to create deploy if missing reference data", func() {
-		testutils.Cleanup(suite.T(), suite.app.DB)
+		db.Truncate(suite.T(), suite.app.DB)
 
 		// populate a build to deploy
 		existingBuildReq := CreateBuildRequest{
