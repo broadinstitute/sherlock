@@ -46,13 +46,7 @@ func init() {
 		return
 	}
 
-	if logLevel := Config.String("logLevel"); logLevel != "" {
-		if parsedLevel, err := zerolog.ParseLevel(logLevel); err != nil {
-			log.Warn().Msgf("log level '%s' couldn't be parsed by zerolog", logLevel)
-		} else {
-			zerolog.SetGlobalLevel(parsedLevel)
-		}
-	}
+	setLogLevel()
 }
 
 // LoadTestConfig is an extra at-test-time-only configuration loading step. This package's init function will have
@@ -71,5 +65,17 @@ func LoadTestConfig(t *testing.T) {
 	}), nil); err != nil {
 		t.Fatalf("failed to load test configuration environment variables: %v", err)
 		return
+	}
+
+	setLogLevel()
+}
+
+func setLogLevel() {
+	if logLevel := Config.String("logLevel"); logLevel != "" {
+		if parsedLevel, err := zerolog.ParseLevel(logLevel); err != nil {
+			log.Warn().Msgf("log level '%s' couldn't be parsed by zerolog", logLevel)
+		} else {
+			zerolog.SetGlobalLevel(parsedLevel)
+		}
 	}
 }

@@ -3,6 +3,8 @@
 
 mode: debug
 
+logLevel: warn
+
 db:
   host: localhost
   user: sherlock
