@@ -20,8 +20,8 @@ func (c ChartDeployRecord) TableName() string {
 	return "v2_chart_deploy_records"
 }
 
-func newChartDeployRecordStore(db *gorm.DB) Store[ChartDeployRecord] {
-	return Store[ChartDeployRecord]{
+func newChartDeployRecordStore(db *gorm.DB) *Store[ChartDeployRecord] {
+	return &Store[ChartDeployRecord]{
 		db:                       db,
 		selectorToQueryModel:     chartDeployRecordSelectorToQuery,
 		modelToSelectors:         chartDeployRecordToSelectors,

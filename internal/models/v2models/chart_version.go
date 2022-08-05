@@ -18,8 +18,8 @@ func (c ChartVersion) TableName() string {
 	return "v2_chart_versions"
 }
 
-func newChartVersionStore(db *gorm.DB) Store[ChartVersion] {
-	return Store[ChartVersion]{
+func newChartVersionStore(db *gorm.DB) *Store[ChartVersion] {
+	return &Store[ChartVersion]{
 		db:                   db,
 		selectorToQueryModel: chartVersionSelectorToQuery,
 		modelToSelectors:     chartVersionToSelectors,

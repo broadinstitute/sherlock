@@ -31,7 +31,7 @@ func (e EditableChartDeployRecord) toCreatable() CreatableChartDeployRecord {
 
 type ChartDeployRecordController = ModelController[v2models.ChartDeployRecord, ChartDeployRecord, CreatableChartDeployRecord, EditableChartDeployRecord]
 
-func NewChartDeployRecordController(stores v2models.StoreSet) *ChartDeployRecordController {
+func newChartDeployRecordController(stores *v2models.StoreSet) *ChartDeployRecordController {
 	return &ChartDeployRecordController{
 		primaryStore:    stores.ChartDeployRecordStore,
 		allStores:       stores,
@@ -58,7 +58,7 @@ func modelChartDeployRecordToChartDeployRecord(model v2models.ChartDeployRecord)
 	}
 }
 
-func chartDeployRecordToModelChartDeployRecord(chartDeployRecord ChartDeployRecord, stores v2models.StoreSet) (v2models.ChartDeployRecord, error) {
+func chartDeployRecordToModelChartDeployRecord(chartDeployRecord ChartDeployRecord, stores *v2models.StoreSet) (v2models.ChartDeployRecord, error) {
 	var chartReleaseID uint
 	if chartDeployRecord.ChartRelease != "" {
 		chartRelease, err := stores.ChartReleaseStore.Get(chartDeployRecord.ChartRelease)

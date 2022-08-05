@@ -29,7 +29,7 @@ func (e EditableChartVersion) toCreatable() CreatableChartVersion {
 
 type ChartVersionController = ModelController[v2models.ChartVersion, ChartVersion, CreatableChartVersion, EditableChartVersion]
 
-func NewChartVersionController(stores v2models.StoreSet) *ChartVersionController {
+func newChartVersionController(stores *v2models.StoreSet) *ChartVersionController {
 	return &ChartVersionController{
 		primaryStore:    stores.ChartVersionStore,
 		allStores:       stores,
@@ -54,7 +54,7 @@ func modelChartVersionToChartVersion(model v2models.ChartVersion) *ChartVersion 
 	}
 }
 
-func chartVersionToModelChartVersion(chartVersion ChartVersion, stores v2models.StoreSet) (v2models.ChartVersion, error) {
+func chartVersionToModelChartVersion(chartVersion ChartVersion, stores *v2models.StoreSet) (v2models.ChartVersion, error) {
 	var chartID uint
 	if chartVersion.Chart != "" {
 		chart, err := stores.ChartStore.Get(chartVersion.Chart)

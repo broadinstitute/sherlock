@@ -28,13 +28,7 @@ type Application struct {
 	Deploys         *v1controllers.DeployController
 
 	// V2
-	V2Clusters           *v2controllers.ClusterController
-	V2Environments       *v2controllers.EnvironmentController
-	V2Charts             *v2controllers.ChartController
-	V2ChartVersions      *v2controllers.ChartVersionController
-	V2AppVersions        *v2controllers.AppVersionController
-	V2ChartReleases      *v2controllers.ChartReleaseController
-	V2ChartDeployRecords *v2controllers.ChartDeployRecordController
+	v2controllers *v2controllers.ControllerSet
 
 	Handler http.Handler
 	// Used to pass the dbConn to testing setup helpers
@@ -89,14 +83,7 @@ func (a *Application) registerControllers() {
 	a.Environments = v1controllers.NewEnvironmentController(a.DB)
 	a.Deploys = v1controllers.NewDeployController(a.DB)
 
-	storeSet := v2models.NewStoreSet(a.DB)
-	a.V2Clusters = v2controllers.NewClusterController(storeSet)
-	a.V2Environments = v2controllers.NewEnvironmentController(storeSet)
-	a.V2Charts = v2controllers.NewChartController(storeSet)
-	a.V2ChartVersions = v2controllers.NewChartVersionController(storeSet)
-	a.V2AppVersions = v2controllers.NewAppVersionController(storeSet)
-	a.V2ChartReleases = v2controllers.NewChartReleaseController(storeSet)
-	a.V2ChartDeployRecords = v2controllers.NewChartDeployRecordController(storeSet)
+	a.v2controllers = v2controllers.NewControllerSet(v2models.NewStoreSet(a.DB))
 }
 
 // ServeHTTP implments the http.Handler interface for a Sherlock application instance

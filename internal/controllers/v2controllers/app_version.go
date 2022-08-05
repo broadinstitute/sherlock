@@ -31,7 +31,7 @@ func (e EditableAppVersion) toCreatable() CreatableAppVersion {
 
 type AppVersionController = ModelController[v2models.AppVersion, AppVersion, CreatableAppVersion, EditableAppVersion]
 
-func NewAppVersionController(stores v2models.StoreSet) *AppVersionController {
+func newAppVersionController(stores *v2models.StoreSet) *AppVersionController {
 	return &AppVersionController{
 		primaryStore:    stores.AppVersionStore,
 		allStores:       stores,
@@ -58,7 +58,7 @@ func modelAppVersionToAppVersion(model v2models.AppVersion) *AppVersion {
 	}
 }
 
-func appVersionToModelAppVersion(appVersion AppVersion, stores v2models.StoreSet) (v2models.AppVersion, error) {
+func appVersionToModelAppVersion(appVersion AppVersion, stores *v2models.StoreSet) (v2models.AppVersion, error) {
 	var chartID uint
 	if appVersion.Chart != "" {
 		chart, err := stores.ChartStore.Get(appVersion.Chart)

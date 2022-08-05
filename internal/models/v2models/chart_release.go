@@ -36,8 +36,8 @@ func (c ChartRelease) TableName() string {
 	return "v2_chart_releases"
 }
 
-func newChartReleaseStore(db *gorm.DB) Store[ChartRelease] {
-	return Store[ChartRelease]{
+func newChartReleaseStore(db *gorm.DB) *Store[ChartRelease] {
+	return &Store[ChartRelease]{
 		db:                       db,
 		selectorToQueryModel:     chartReleaseSelectorToQuery,
 		modelToSelectors:         chartReleaseToSelectors,

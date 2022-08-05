@@ -48,7 +48,7 @@ func (e EditableChartRelease) toCreatable() CreatableChartRelease {
 
 type ChartReleaseController = ModelController[v2models.ChartRelease, ChartRelease, CreatableChartRelease, EditableChartRelease]
 
-func NewChartReleaseController(stores v2models.StoreSet) *ChartReleaseController {
+func newChartReleaseController(stores *v2models.StoreSet) *ChartReleaseController {
 	return &ChartReleaseController{
 		primaryStore:       stores.ChartReleaseStore,
 		allStores:          stores,
@@ -104,7 +104,7 @@ func modelChartReleaseToChartRelease(model v2models.ChartRelease) *ChartRelease 
 	}
 }
 
-func chartReleaseToModelChartRelease(chartRelease ChartRelease, stores v2models.StoreSet) (v2models.ChartRelease, error) {
+func chartReleaseToModelChartRelease(chartRelease ChartRelease, stores *v2models.StoreSet) (v2models.ChartRelease, error) {
 	var chartID uint
 	if chartRelease.Chart != "" {
 		chart, err := stores.ChartStore.Get(chartRelease.Chart)
@@ -154,7 +154,7 @@ func chartReleaseToModelChartRelease(chartRelease ChartRelease, stores v2models.
 	}, nil
 }
 
-func setChartReleaseDynamicDefaults(chartRelease *ChartRelease, stores v2models.StoreSet, user *auth.User) error {
+func setChartReleaseDynamicDefaults(chartRelease *ChartRelease, stores *v2models.StoreSet, user *auth.User) error {
 	chart, err := stores.ChartStore.Get(chartRelease.Chart)
 	if err != nil {
 		return err

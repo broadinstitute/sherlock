@@ -20,8 +20,8 @@ func (c Chart) TableName() string {
 	return "v2_charts"
 }
 
-func newChartStore(db *gorm.DB) Store[Chart] {
-	return Store[Chart]{
+func newChartStore(db *gorm.DB) *Store[Chart] {
+	return &Store[Chart]{
 		db:                   db,
 		selectorToQueryModel: chartSelectorToQuery,
 		modelToSelectors:     chartToSelectors,

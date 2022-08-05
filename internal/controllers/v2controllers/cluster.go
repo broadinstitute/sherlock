@@ -40,7 +40,7 @@ func (e EditableCluster) toCreatable() CreatableCluster {
 
 type ClusterController = ModelController[v2models.Cluster, Cluster, CreatableCluster, EditableCluster]
 
-func NewClusterController(stores v2models.StoreSet) *ClusterController {
+func newClusterController(stores *v2models.StoreSet) *ClusterController {
 	return &ClusterController{
 		primaryStore:    stores.ClusterStore,
 		allStores:       stores,
@@ -70,7 +70,7 @@ func modelClusterToCluster(model v2models.Cluster) *Cluster {
 	}
 }
 
-func clusterToModelCluster(cluster Cluster, _ v2models.StoreSet) (v2models.Cluster, error) {
+func clusterToModelCluster(cluster Cluster, _ *v2models.StoreSet) (v2models.Cluster, error) {
 	return v2models.Cluster{
 		Model: gorm.Model{
 			ID:        cluster.ID,

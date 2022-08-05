@@ -27,10 +27,10 @@ type Editable[R Readable, C Creatable[R]] interface {
 }
 
 type ModelController[M v2models.Model, R Readable, C Creatable[R], E Editable[R, C]] struct {
-	primaryStore    v2models.Store[M]
-	allStores       v2models.StoreSet
+	primaryStore    *v2models.Store[M]
+	allStores       *v2models.StoreSet
 	modelToReadable func(model M) *R
-	readableToModel func(readable R, stores v2models.StoreSet) (M, error)
+	readableToModel func(readable R, stores *v2models.StoreSet) (M, error)
 
 	// setDynamicDefaults is an optional function to set context-dynamic defaults during creation.
 	//
@@ -42,7 +42,7 @@ type ModelController[M v2models.Model, R Readable, C Creatable[R], E Editable[R,
 	// to set defaults before creation that are dynamic based on other existing data or the calling user.
 	//
 	// (Implementation note:
-	setDynamicDefaults func(readable *R, stores v2models.StoreSet, user *auth.User) error
+	setDynamicDefaults func(readable *R, stores *v2models.StoreSet, user *auth.User) error
 }
 
 func (c ModelController[M, R, C, E]) Create(creatable C, user *auth.User) (R, error) {

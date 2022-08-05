@@ -27,8 +27,8 @@ func (e Environment) TableName() string {
 	return "v2_environments"
 }
 
-func newEnvironmentStore(db *gorm.DB) Store[Environment] {
-	return Store[Environment]{
+func newEnvironmentStore(db *gorm.DB) *Store[Environment] {
+	return &Store[Environment]{
 		db:                   db,
 		selectorToQueryModel: environmentSelectorToQuery,
 		modelToSelectors:     environmentToSelectors,

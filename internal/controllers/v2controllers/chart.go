@@ -31,7 +31,7 @@ func (e EditableChart) toCreatable() CreatableChart {
 
 type ChartController = ModelController[v2models.Chart, Chart, CreatableChart, EditableChart]
 
-func NewChartController(stores v2models.StoreSet) *ChartController {
+func newChartController(stores *v2models.StoreSet) *ChartController {
 	return &ChartController{
 		primaryStore:    stores.ChartStore,
 		allStores:       stores,
@@ -58,7 +58,7 @@ func modelChartToChart(model v2models.Chart) *Chart {
 	}
 }
 
-func chartToModelChart(chart Chart, _ v2models.StoreSet) (v2models.Chart, error) {
+func chartToModelChart(chart Chart, _ *v2models.StoreSet) (v2models.Chart, error) {
 	return v2models.Chart{
 		Model: gorm.Model{
 			ID:        chart.ID,

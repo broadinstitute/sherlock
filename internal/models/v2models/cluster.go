@@ -23,8 +23,8 @@ func (c Cluster) TableName() string {
 	return "v2_clusters"
 }
 
-func newClusterStore(db *gorm.DB) Store[Cluster] {
-	return Store[Cluster]{
+func newClusterStore(db *gorm.DB) *Store[Cluster] {
+	return &Store[Cluster]{
 		db:                       db,
 		selectorToQueryModel:     clusterSelectorToQuery,
 		modelToSelectors:         clusterToSelectors,

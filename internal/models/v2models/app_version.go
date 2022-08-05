@@ -20,8 +20,8 @@ func (c AppVersion) TableName() string {
 	return "v2_app_versions"
 }
 
-func newAppVersionStore(db *gorm.DB) Store[AppVersion] {
-	return Store[AppVersion]{
+func newAppVersionStore(db *gorm.DB) *Store[AppVersion] {
+	return &Store[AppVersion]{
 		db:                   db,
 		selectorToQueryModel: appVersionSelectorToQuery,
 		modelToSelectors:     appVersionToSelectors,
