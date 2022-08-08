@@ -126,7 +126,7 @@ func (u *User) SuitableOrError() error {
 		var email string
 		if u.MatchedFirecloudAccount == nil {
 			email = emailToFirecloudEmail(u.AuthenticatedEmail)
-			u.MatchedFirecloudAccount = &FirecloudAccount{Groups: &FirecloudGroupMembership{}}
+			u.MatchedFirecloudAccount = &FirecloudAccount{}
 		} else {
 			email = u.MatchedFirecloudAccount.Email
 		}
