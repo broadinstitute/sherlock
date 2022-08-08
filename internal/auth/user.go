@@ -136,7 +136,7 @@ func (u *User) SuitableOrError() error {
 				// Google returns "this user doesn't exist" as a 403 error, which is perhaps a bit unhelpful.
 				// We'll know if our auth is good based on the cache process, though, so we just swallow it
 				// here to provide good user output for 99.99% of cases
-				return fmt.Errorf("%s [Sherlock refreshed this info just now and couldn't fetch a user under '%s'", u.describeSuitability(), email)
+				return fmt.Errorf("%s [Sherlock refreshed this info just now and couldn't fetch a user under '%s']", u.describeSuitability(), email)
 			} else {
 				return fmt.Errorf("%s [Sherlock got an unexpected error refreshing this info: %v]", u.describeSuitability(), err)
 			}
