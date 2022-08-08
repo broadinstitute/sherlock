@@ -91,11 +91,15 @@ func (u *User) describeSuitability() string {
 			problems = append(problems, "user is currently archived")
 		}
 
-		if !u.MatchedFirecloudAccount.Groups.FcAdmins {
-			problems = append(problems, fmt.Sprintf("user is not in the %s group", config.Config.MustString("auth.firecloud.groups.fcAdmins")))
-		}
-		if !u.MatchedFirecloudAccount.Groups.FirecloudProjectOwners {
-			problems = append(problems, fmt.Sprintf("user is not in the %s group", config.Config.MustString("auth.firecloud.groups.firecloudProjectOwners")))
+		if u.MatchedFirecloudAccount.Groups == nil {
+			problems = append(problems, "user has no reported group information")
+		} else {
+			if !u.MatchedFirecloudAccount.Groups.FcAdmins {
+				problems = append(problems, fmt.Sprintf("user is not in the %s group", config.Config.MustString("auth.firecloud.groups.fcAdmins")))
+			}
+			if !u.MatchedFirecloudAccount.Groups.FirecloudProjectOwners {
+				problems = append(problems, fmt.Sprintf("user is not in the %s group", config.Config.MustString("auth.firecloud.groups.firecloudProjectOwners")))
+			}
 		}
 
 		if len(problems) > 0 {
@@ -122,7 +126,7 @@ func (u *User) SuitableOrError() error {
 		var email string
 		if u.MatchedFirecloudAccount == nil {
 			email = emailToFirecloudEmail(u.AuthenticatedEmail)
-			u.MatchedFirecloudAccount = &FirecloudAccount{}
+			u.MatchedFirecloudAccount = &FirecloudAccount{Groups: &FirecloudGroupMembership{}}
 		} else {
 			email = u.MatchedFirecloudAccount.Email
 		}
