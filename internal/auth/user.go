@@ -126,7 +126,6 @@ func (u *User) SuitableOrError() error {
 		var email string
 		if u.MatchedFirecloudAccount == nil {
 			email = emailToFirecloudEmail(u.AuthenticatedEmail)
-			u.MatchedFirecloudAccount = &FirecloudAccount{}
 		} else {
 			email = u.MatchedFirecloudAccount.Email
 		}
@@ -134,6 +133,10 @@ func (u *User) SuitableOrError() error {
 		workspaceUser, err := adminService.Users.Get(email).Do()
 		if err != nil {
 			return fmt.Errorf("%s [Sherlock also failed to get refreshed user info from Google Workspace: %v]", u.describeSuitability(), err)
+		}
+
+		if u.MatchedFirecloudAccount == nil {
+			u.MatchedFirecloudAccount = &FirecloudAccount{}
 		}
 		u.MatchedFirecloudAccount.parseWorkspaceUser(workspaceUser)
 
