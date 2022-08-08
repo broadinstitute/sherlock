@@ -1,5 +1,9 @@
 mode: debug
-logLevel: debug
+
+log:
+  timestamp: true
+  caller: false
+  level: debug
 
 db:
   host: localhost

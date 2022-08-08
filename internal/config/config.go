@@ -67,21 +67,42 @@ func LoadTestConfig(t *testing.T) {
 	configureLogging()
 }
 
+// configureLogging is abstracted init-like logic for updating global logging configuration.
+// It accepts arbitrary messages to log at the info level once the logger is set up, in case
+// there's messages about the loaded configuration.
 func configureLogging(infoMessages ...string) {
+	var logBuilder zerolog.Context
 	if Config.String("mode") == "debug" {
-		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr}).With().Timestamp().Logger()
+		// Colored text for CLI
+		logBuilder = log.Output(zerolog.ConsoleWriter{Out: os.Stderr}).With()
 	} else {
-		log.Logger = zerolog.New(os.Stderr).With().Timestamp().Logger()
+		// JSON for GCP
+		logBuilder = zerolog.New(os.Stderr).With()
+		zerolog.TimeFieldFormat = zerolog.TimeFormatUnixMs
 	}
+	if Config.Bool("log.timestamp") {
+		logBuilder = logBuilder.Timestamp()
+	}
+	if Config.Bool("log.caller") {
+		logBuilder = logBuilder.Caller()
+	}
+	log.Logger = logBuilder.Logger()
+
+	// Some other packages (looking at you, fvbock/endless) take it upon themselves to send
+	// log messages using Go's built-in logging. We can at least format those messages
+	// correctly by redirecting that into zerolog, though it won't have proper leveling
+	// information
 	stdlog.SetOutput(log.Logger)
-	for _, m := range infoMessages {
-		log.Info().Msg(m)
-	}
-	if logLevel := Config.String("logLevel"); logLevel != "" {
+
+	if logLevel := Config.String("log.level"); logLevel != "" {
 		if parsedLevel, err := zerolog.ParseLevel(logLevel); err != nil {
 			log.Warn().Msgf("log level '%s' couldn't be parsed by zerolog", logLevel)
 		} else {
 			zerolog.SetGlobalLevel(parsedLevel)
 		}
+	}
+
+	for _, m := range infoMessages {
+		log.Info().Msg(m)
 	}
 }
