@@ -49,10 +49,10 @@ func New(db *gorm.DB) *Application {
 			log.Warn().Msgf("mode was not 'debug' but wasn't 'release' either, enabling authentication layer anyway")
 		}
 
-		if err := auth.CacheFirecloudAccounts(context.Background()); err != nil {
-			log.Fatal().Msgf("unable to query suitable users: %v", err)
-			return nil
-		}
+		//if err := auth.CacheFirecloudAccounts(context.Background()); err != nil {
+		//	log.Fatal().Msgf("unable to query suitable users: %v", err)
+		//	return nil
+		//}
 		ctx, cancelFunc := context.WithCancel(context.Background())
 		app.contextsToCancel = append(app.contextsToCancel, cancelFunc)
 		go auth.KeepCacheUpdated(ctx, time.Duration(config.Config.MustInt("auth.updateIntervalMinutes"))*time.Minute)
