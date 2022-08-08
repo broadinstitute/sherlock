@@ -237,3 +237,41 @@ func TestUser_checkSuitability(t *testing.T) {
 		})
 	}
 }
+
+func TestUser_AlphaNumericHyphenatedUsername(t *testing.T) {
+	type fields struct {
+		AuthenticatedEmail      string
+		MatchedFirecloudAccount *FirecloudAccount
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   string
+	}{
+		{
+			name:   "normal BI username",
+			fields: fields{AuthenticatedEmail: "someone@broadinstitute.org"},
+			want:   "someone",
+		},
+		{
+			name:   "with separators",
+			fields: fields{AuthenticatedEmail: "someone.else-blah_blah@somewhere.info"},
+			want:   "someone-else-blah-blah",
+		},
+		{
+			name:   "strips invalid",
+			fields: fields{AuthenticatedEmail: "1a bc?de.23"},
+			want:   "1abcde-23",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			u := &User{
+				AuthenticatedEmail:      tt.fields.AuthenticatedEmail,
+				MatchedFirecloudAccount: tt.fields.MatchedFirecloudAccount,
+			}
+			got := u.AlphaNumericHyphenatedUsername()
+			testutils.AssertNoDiff(t, tt.want, got)
+		})
+	}
+}

@@ -42,6 +42,11 @@ func Test_environmentSelectorToQuery(t *testing.T) {
 			args: args{selector: "foo-bar-2"},
 			want: Environment{Name: "foo-bar-2"},
 		},
+		{
+			name:    "invalid name",
+			args:    args{selector: "foooooooooooooooooooooooooooooooo"},
+			wantErr: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

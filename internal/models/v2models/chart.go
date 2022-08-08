@@ -42,9 +42,11 @@ func chartSelectorToQuery(_ *gorm.DB, selector string) (Chart, error) {
 		query.ID = uint(id)
 		return query, nil
 	} else if isAlphaNumericWithHyphens(selector) &&
-		len(selector) > 0 && len(selector) <= 24 &&
 		isStartingWithLetter(selector) &&
 		isEndingWithAlphaNumeric(selector) { // Name
+		if len(selector) > 24 {
+			return Chart{}, fmt.Errorf("(%s) %T name is too long, was %d characters and the maximum is 32", errors.BadRequest, Chart{}, len(selector))
+		}
 		query.Name = selector
 		return query, nil
 	}

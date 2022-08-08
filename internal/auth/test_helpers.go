@@ -25,5 +25,6 @@ func GenerateUser(t *testing.T, suitable bool) *User {
 				FirecloudProjectOwners: true,
 			},
 		},
+		offline: true,
 	}
 }

@@ -9,6 +9,7 @@ import (
 	"gorm.io/gorm"
 	"math/rand"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -150,7 +151,15 @@ func setEnvironmentDynamicDefaults(environment *Environment, stores *v2models.St
 		}
 		if environment.Name == "" {
 			rand.Seed(time.Now().UnixNano())
-			environment.Name = fmt.Sprintf("%s-%s-%s", user.Username(), templateEnvironment.Name, petname.Generate(2, "-"))
+			for suffixLength := 3; suffixLength >= 1; suffixLength-- {
+				environment.Name = fmt.Sprintf("%s-%s-%s", user.AlphaNumericHyphenatedUsername(), templateEnvironment.Name, petname.Generate(suffixLength, "-"))
+				if len(environment.Name) <= 32 {
+					break
+				}
+			}
+			if len(environment.Name) > 32 {
+				environment.Name = strings.TrimSuffix(environment.Name[0:31], "-")
+			}
 		}
 		if environment.DefaultNamespace == nil {
 			environment.DefaultNamespace = &environment.Name

@@ -22,23 +22,23 @@ func TestClusterControllerSuite(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping functional test")
 	}
-	suite.Run(t, new(ClusterControllerSuite))
+	suite.Run(t, new(clusterControllerSuite))
 }
 
-type ClusterControllerSuite struct {
+type clusterControllerSuite struct {
 	suite.Suite
 	*ControllerSet
 	db *gorm.DB
 }
 
-func (suite *ClusterControllerSuite) SetupTest() {
+func (suite *clusterControllerSuite) SetupTest() {
 	config.LoadTestConfig(suite.T())
 	suite.db = db.ConnectFromTest(suite.T())
 	suite.db.Begin()
 	suite.ControllerSet = NewControllerSet(v2models.NewStoreSet(suite.db))
 }
 
-func (suite *ClusterControllerSuite) TearDownTest() {
+func (suite *clusterControllerSuite) TearDownTest() {
 	suite.db.Rollback()
 }
 
@@ -47,7 +47,7 @@ func (suite *ClusterControllerSuite) TearDownTest() {
 //
 
 var (
-	terraDev = CreatableCluster{
+	terraDevCluster = CreatableCluster{
 		Name:          "terra-dev",
 		GoogleProject: "broad-dsde-dev",
 		EditableCluster: EditableCluster{
@@ -55,7 +55,7 @@ var (
 			Address: testutils.PointerTo("192.168.0.1"),
 		},
 	}
-	terraProd = CreatableCluster{
+	terraProdCluster = CreatableCluster{
 		Name:          "terra-prod",
 		GoogleProject: "broad-dsde-prod",
 		EditableCluster: EditableCluster{
@@ -64,7 +64,7 @@ var (
 			RequiresSuitability: testutils.PointerTo(true),
 		},
 	}
-	terraDevBees = CreatableCluster{
+	terraDevBeesCluster = CreatableCluster{
 		Name:          "terra-dev-bees",
 		GoogleProject: "broad-dsde-dev",
 		EditableCluster: EditableCluster{
@@ -72,7 +72,15 @@ var (
 			Address: testutils.PointerTo("192.168.1.1"),
 		},
 	}
-	terraDevAzure = CreatableCluster{
+	terraQaBeesCluster = CreatableCluster{
+		Name:          "terra-qa-bees",
+		GoogleProject: "broad-dsde-qa",
+		EditableCluster: EditableCluster{
+			Base:    testutils.PointerTo("bee-cluster"),
+			Address: testutils.PointerTo("192.168.1.2"),
+		},
+	}
+	terraDevAzureCluster = CreatableCluster{
 		Name:              "terra-dev-azure",
 		Provider:          "azure",
 		AzureSubscription: "some-uuid",
@@ -81,7 +89,7 @@ var (
 			Address: testutils.PointerTo("192.168.2.1"),
 		},
 	}
-	clusterSeedList = []CreatableCluster{terraDev, terraProd, terraDevBees}
+	clusterSeedList = []CreatableCluster{terraDevCluster, terraProdCluster, terraDevBeesCluster, terraQaBeesCluster}
 )
 
 func (controllerSet *ControllerSet) seedClusters(t *testing.T) {
@@ -96,13 +104,13 @@ func (controllerSet *ControllerSet) seedClusters(t *testing.T) {
 // Controller tests
 //
 
-func (suite *ClusterControllerSuite) TestClusterCreate() {
+func (suite *clusterControllerSuite) TestClusterCreate() {
 	suite.Run("can create a new cluster", func() {
 		db.Truncate(suite.T(), suite.db)
 
-		cluster, err := suite.ClusterController.Create(terraDev, auth.GenerateUser(suite.T(), false))
+		cluster, err := suite.ClusterController.Create(terraDevCluster, auth.GenerateUser(suite.T(), false))
 		assert.NoError(suite.T(), err)
-		assert.Equal(suite.T(), terraDev.Name, cluster.Name)
+		assert.Equal(suite.T(), terraDevCluster.Name, cluster.Name)
 		assert.True(suite.T(), cluster.ID > 0)
 		suite.Run("default provider google", func() {
 			assert.Equal(suite.T(), "google", cluster.Provider)
@@ -114,20 +122,20 @@ func (suite *ClusterControllerSuite) TestClusterCreate() {
 	suite.Run("can create a new azure cluster", func() {
 		db.Truncate(suite.T(), suite.db)
 
-		cluster, err := suite.ClusterController.Create(terraDevAzure, auth.GenerateUser(suite.T(), false))
+		cluster, err := suite.ClusterController.Create(terraDevAzureCluster, auth.GenerateUser(suite.T(), false))
 		assert.NoError(suite.T(), err)
-		assert.Equal(suite.T(), terraDevAzure.Name, cluster.Name)
+		assert.Equal(suite.T(), terraDevAzureCluster.Name, cluster.Name)
 		assert.True(suite.T(), cluster.ID > 0)
-		assert.Equal(suite.T(), terraDevAzure.AzureSubscription, cluster.AzureSubscription)
-		assert.Equal(suite.T(), terraDevAzure.Provider, cluster.Provider)
+		assert.Equal(suite.T(), terraDevAzureCluster.AzureSubscription, cluster.AzureSubscription)
+		assert.Equal(suite.T(), terraDevAzureCluster.Provider, cluster.Provider)
 	})
 	suite.Run("won't create duplicates", func() {
 		db.Truncate(suite.T(), suite.db)
 
-		cluster, err := suite.ClusterController.Create(terraDev, auth.GenerateUser(suite.T(), false))
+		cluster, err := suite.ClusterController.Create(terraDevCluster, auth.GenerateUser(suite.T(), false))
 		assert.NoError(suite.T(), err)
 		assert.True(suite.T(), cluster.ID > 0)
-		_, err = suite.ClusterController.Create(terraDev, auth.GenerateUser(suite.T(), false))
+		_, err = suite.ClusterController.Create(terraDevCluster, auth.GenerateUser(suite.T(), false))
 		assert.ErrorContains(suite.T(), err, errors.Conflict)
 	})
 	suite.Run("validates incoming entries", func() {
@@ -140,20 +148,20 @@ func (suite *ClusterControllerSuite) TestClusterCreate() {
 		db.Truncate(suite.T(), suite.db)
 
 		suite.Run("blocks suitable creation for non-suitable", func() {
-			_, err := suite.ClusterController.Create(terraProd, auth.GenerateUser(suite.T(), false))
+			_, err := suite.ClusterController.Create(terraProdCluster, auth.GenerateUser(suite.T(), false))
 			assert.ErrorContains(suite.T(), err, errors.Forbidden)
 		})
 		suite.Run("allows suitable creation for suitable", func() {
-			cluster, err := suite.ClusterController.Create(terraProd, auth.GenerateUser(suite.T(), true))
+			cluster, err := suite.ClusterController.Create(terraProdCluster, auth.GenerateUser(suite.T(), true))
 			assert.NoError(suite.T(), err)
 			assert.True(suite.T(), cluster.ID > 0)
 		})
 	})
 }
 
-func (suite *ClusterControllerSuite) TestClusterListAllMatching() {
+func (suite *clusterControllerSuite) TestClusterListAllMatching() {
 	db.Truncate(suite.T(), suite.db)
-	suite.ControllerSet.seedClusters(suite.T())
+	suite.seedClusters(suite.T())
 
 	suite.Run("lists all clusters", func() {
 		matching, err := suite.ClusterController.ListAllMatching(Cluster{}, 0)
@@ -173,10 +181,10 @@ func (suite *ClusterControllerSuite) TestClusterListAllMatching() {
 		assert.Equal(suite.T(), limit, len(matching))
 	})
 	suite.Run("filters exactly", func() {
-		matching, err := suite.ClusterController.ListAllMatching(Cluster{CreatableCluster: terraDev}, 0)
+		matching, err := suite.ClusterController.ListAllMatching(Cluster{CreatableCluster: terraDevCluster}, 0)
 		assert.NoError(suite.T(), err)
 		assert.Equal(suite.T(), 1, len(matching))
-		assert.Equal(suite.T(), terraDev.Name, matching[0].Name)
+		assert.Equal(suite.T(), terraDevCluster.Name, matching[0].Name)
 	})
 	suite.Run("filters multiple", func() {
 		matching, err := suite.ClusterController.ListAllMatching(
@@ -189,17 +197,17 @@ func (suite *ClusterControllerSuite) TestClusterListAllMatching() {
 	})
 }
 
-func (suite *ClusterControllerSuite) TestClusterGet() {
+func (suite *clusterControllerSuite) TestClusterGet() {
 	db.Truncate(suite.T(), suite.db)
-	suite.ControllerSet.seedClusters(suite.T())
+	suite.seedClusters(suite.T())
 
 	suite.Run("successfully", func() {
-		byName, err := suite.ClusterController.Get(terraDev.Name)
+		byName, err := suite.ClusterController.Get(terraDevCluster.Name)
 		assert.NoError(suite.T(), err)
 		assert.True(suite.T(), byName.ID > 0)
 		byID, err := suite.ClusterController.Get(fmt.Sprintf("%d", byName.ID))
 		assert.NoError(suite.T(), err)
-		assert.Equal(suite.T(), terraDev.Name, byID.Name)
+		assert.Equal(suite.T(), terraDevCluster.Name, byID.Name)
 	})
 	suite.Run("unsuccessfully for non-present", func() {
 		_, err := suite.ClusterController.Get("foobar")
@@ -211,15 +219,15 @@ func (suite *ClusterControllerSuite) TestClusterGet() {
 	})
 }
 
-func (suite *ClusterControllerSuite) TestClusterGetOtherValidSelectors() {
+func (suite *clusterControllerSuite) TestClusterGetOtherValidSelectors() {
 	db.Truncate(suite.T(), suite.db)
-	suite.ControllerSet.seedClusters(suite.T())
+	suite.seedClusters(suite.T())
 
 	suite.Run("successfully", func() {
-		selectors, err := suite.ClusterController.GetOtherValidSelectors(terraDev.Name)
+		selectors, err := suite.ClusterController.GetOtherValidSelectors(terraDevCluster.Name)
 		assert.NoError(suite.T(), err)
 		assert.Equal(suite.T(), 2, len(selectors))
-		assert.Equal(suite.T(), terraDev.Name, selectors[0])
+		assert.Equal(suite.T(), terraDevCluster.Name, selectors[0])
 	})
 	suite.Run("unsuccessfully for not found", func() {
 		_, err := suite.ClusterController.GetOtherValidSelectors("foobar")
@@ -231,94 +239,94 @@ func (suite *ClusterControllerSuite) TestClusterGetOtherValidSelectors() {
 	})
 }
 
-func (suite *ClusterControllerSuite) TestClusterEdit() {
+func (suite *clusterControllerSuite) TestClusterEdit() {
 	suite.Run("successfully", func() {
 		db.Truncate(suite.T(), suite.db)
-		suite.ControllerSet.seedClusters(suite.T())
+		suite.seedClusters(suite.T())
 
-		before, err := suite.ClusterController.Get(terraDev.Name)
+		before, err := suite.ClusterController.Get(terraDevCluster.Name)
 		assert.NoError(suite.T(), err)
-		assert.Equal(suite.T(), terraDev.Base, before.Base)
+		assert.Equal(suite.T(), terraDevCluster.Base, before.Base)
 		newBase := testutils.PointerTo("new")
-		edited, err := suite.ClusterController.Edit(terraDev.Name, EditableCluster{Base: newBase}, auth.GenerateUser(suite.T(), false))
+		edited, err := suite.ClusterController.Edit(terraDevCluster.Name, EditableCluster{Base: newBase}, auth.GenerateUser(suite.T(), false))
 		assert.NoError(suite.T(), err)
 		assert.Equal(suite.T(), newBase, edited.Base)
-		after, err := suite.ClusterController.Get(terraDev.Name)
+		after, err := suite.ClusterController.Get(terraDevCluster.Name)
 		assert.NoError(suite.T(), err)
 		assert.Equal(suite.T(), newBase, after.Base)
 	})
-	suite.Run("edit to suitable environment", func() {
+	suite.Run("edit to suitable cluster", func() {
 		db.Truncate(suite.T(), suite.db)
-		suite.ControllerSet.seedClusters(suite.T())
+		suite.seedClusters(suite.T())
 		newBase := testutils.PointerTo("new")
 
 		suite.Run("unsuccessfully if not suitable", func() {
-			_, err := suite.ClusterController.Edit(terraProd.Name, EditableCluster{Base: newBase}, auth.GenerateUser(suite.T(), false))
+			_, err := suite.ClusterController.Edit(terraProdCluster.Name, EditableCluster{Base: newBase}, auth.GenerateUser(suite.T(), false))
 			assert.ErrorContains(suite.T(), err, errors.Forbidden)
-			notEdited, err := suite.ClusterController.Get(terraProd.Name)
+			notEdited, err := suite.ClusterController.Get(terraProdCluster.Name)
 			assert.NoError(suite.T(), err)
-			assert.Equal(suite.T(), terraProd.Base, notEdited.Base)
+			assert.Equal(suite.T(), terraProdCluster.Base, notEdited.Base)
 		})
 		suite.Run("successfully if suitable", func() {
-			edited, err := suite.ClusterController.Edit(terraProd.Name, EditableCluster{Base: newBase}, auth.GenerateUser(suite.T(), true))
+			edited, err := suite.ClusterController.Edit(terraProdCluster.Name, EditableCluster{Base: newBase}, auth.GenerateUser(suite.T(), true))
 			assert.NoError(suite.T(), err)
 			assert.Equal(suite.T(), newBase, edited.Base)
 		})
 	})
-	suite.Run("edit that would make environment suitable", func() {
+	suite.Run("edit that would make cluster suitable", func() {
 		db.Truncate(suite.T(), suite.db)
-		suite.ControllerSet.seedClusters(suite.T())
+		suite.seedClusters(suite.T())
 
 		suite.Run("unsuccessfully if not suitable", func() {
-			_, err := suite.ClusterController.Edit(terraDev.Name, EditableCluster{RequiresSuitability: testutils.PointerTo(true)}, auth.GenerateUser(suite.T(), false))
+			_, err := suite.ClusterController.Edit(terraDevCluster.Name, EditableCluster{RequiresSuitability: testutils.PointerTo(true)}, auth.GenerateUser(suite.T(), false))
 			assert.ErrorContains(suite.T(), err, errors.Forbidden)
-			notEdited, err := suite.ClusterController.Get(terraDev.Name)
+			notEdited, err := suite.ClusterController.Get(terraDevCluster.Name)
 			assert.NoError(suite.T(), err)
 			assert.False(suite.T(), *notEdited.RequiresSuitability)
 		})
 		suite.Run("successfully if suitable", func() {
-			edited, err := suite.ClusterController.Edit(terraDev.Name, EditableCluster{RequiresSuitability: testutils.PointerTo(true)}, auth.GenerateUser(suite.T(), true))
+			edited, err := suite.ClusterController.Edit(terraDevCluster.Name, EditableCluster{RequiresSuitability: testutils.PointerTo(true)}, auth.GenerateUser(suite.T(), true))
 			assert.NoError(suite.T(), err)
 			assert.True(suite.T(), *edited.RequiresSuitability)
 		})
 	})
 	suite.Run("unsuccessfully if invalid", func() {
 		db.Truncate(suite.T(), suite.db)
-		suite.ControllerSet.seedClusters(suite.T())
+		suite.seedClusters(suite.T())
 
-		_, err := suite.ClusterController.Edit(terraDev.Name, EditableCluster{Base: testutils.PointerTo("")}, auth.GenerateUser(suite.T(), false))
+		_, err := suite.ClusterController.Edit(terraDevCluster.Name, EditableCluster{Base: testutils.PointerTo("")}, auth.GenerateUser(suite.T(), false))
 		assert.ErrorContains(suite.T(), err, errors.BadRequest)
 	})
 }
 
-func (suite *ClusterControllerSuite) TestClusterDelete() {
+func (suite *clusterControllerSuite) TestClusterDelete() {
 	suite.Run("successfully", func() {
 		db.Truncate(suite.T(), suite.db)
-		suite.ControllerSet.seedClusters(suite.T())
+		suite.seedClusters(suite.T())
 
-		deleted, err := suite.ClusterController.Delete(terraDev.Name, auth.GenerateUser(suite.T(), false))
+		deleted, err := suite.ClusterController.Delete(terraDevCluster.Name, auth.GenerateUser(suite.T(), false))
 		assert.NoError(suite.T(), err)
-		assert.Equal(suite.T(), terraDev.Name, deleted.Name)
-		_, err = suite.ClusterController.Get(terraDev.Name)
+		assert.Equal(suite.T(), terraDevCluster.Name, deleted.Name)
+		_, err = suite.ClusterController.Get(terraDevCluster.Name)
 		assert.ErrorContains(suite.T(), err, errors.NotFound)
 		suite.Run("sql constraints ignore soft deletion", func() {
-			_, err = suite.ClusterController.Create(terraDev, auth.GenerateUser(suite.T(), false))
+			_, err = suite.ClusterController.Create(terraDevCluster, auth.GenerateUser(suite.T(), false))
 			assert.ErrorContains(suite.T(), err, errors.BadRequest)
 			assert.ErrorContains(suite.T(), err, "Contact DevOps")
 		})
 	})
 	suite.Run("delete suitable environment", func() {
 		db.Truncate(suite.T(), suite.db)
-		suite.ControllerSet.seedClusters(suite.T())
+		suite.seedClusters(suite.T())
 
 		suite.Run("unsuccessfully if not suitable", func() {
-			_, err := suite.ClusterController.Delete(terraProd.Name, auth.GenerateUser(suite.T(), false))
+			_, err := suite.ClusterController.Delete(terraProdCluster.Name, auth.GenerateUser(suite.T(), false))
 			assert.ErrorContains(suite.T(), err, errors.Forbidden)
 		})
 		suite.Run("successfully if suitable", func() {
-			deleted, err := suite.ClusterController.Delete(terraProd.Name, auth.GenerateUser(suite.T(), true))
+			deleted, err := suite.ClusterController.Delete(terraProdCluster.Name, auth.GenerateUser(suite.T(), true))
 			assert.NoError(suite.T(), err)
-			assert.Equal(suite.T(), terraProd.Name, deleted.Name)
+			assert.Equal(suite.T(), terraProdCluster.Name, deleted.Name)
 		})
 	})
 }

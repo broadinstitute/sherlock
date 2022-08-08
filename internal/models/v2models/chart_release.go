@@ -121,7 +121,6 @@ func chartReleaseSelectorToQuery(db *gorm.DB, selector string) (ChartRelease, er
 
 		return ret, nil
 	} else if isAlphaNumericWithHyphens(selector) &&
-		len(selector) > 0 &&
 		isStartingWithLetter(selector) &&
 		isEndingWithAlphaNumeric(selector) { // name
 		ret.Name = selector

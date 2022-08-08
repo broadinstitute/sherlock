@@ -29,10 +29,11 @@ func (e Environment) TableName() string {
 
 func newEnvironmentStore(db *gorm.DB) *Store[Environment] {
 	return &Store[Environment]{
-		db:                   db,
-		selectorToQueryModel: environmentSelectorToQuery,
-		modelToSelectors:     environmentToSelectors,
-		validateModel:        validateEnvironment,
+		db:                       db,
+		selectorToQueryModel:     environmentSelectorToQuery,
+		modelToSelectors:         environmentToSelectors,
+		modelRequiresSuitability: environmentRequiresSuitability,
+		validateModel:            validateEnvironment,
 	}
 }
 
@@ -49,9 +50,11 @@ func environmentSelectorToQuery(_ *gorm.DB, selector string) (Environment, error
 		query.ID = uint(id)
 		return query, nil
 	} else if isAlphaNumericWithHyphens(selector) &&
-		len(selector) > 0 && len(selector) <= 32 &&
 		isStartingWithLetter(selector) &&
 		isEndingWithAlphaNumeric(selector) { // Name
+		if len(selector) > 32 {
+			return Environment{}, fmt.Errorf("(%s) %T name is too long, was %d characters and the maximum is 32", errors.BadRequest, Environment{}, len(selector))
+		}
 		query.Name = selector
 		return query, nil
 	}

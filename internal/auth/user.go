@@ -8,11 +8,15 @@ import (
 	admin "google.golang.org/api/admin/directory/v1"
 	"google.golang.org/api/option"
 	"strings"
+	"unicode"
 )
 
 type User struct {
 	AuthenticatedEmail      string            `json:"authenticatedEmail"`
 	MatchedFirecloudAccount *FirecloudAccount `json:"matchedFirecloudAccount,omitempty"`
+	// offline is an internal field that can be set to skip the automatic "try to refresh
+	// before denying" behavior, which would always fail during tests.
+	offline bool
 }
 
 type FirecloudAccount struct {
@@ -41,6 +45,18 @@ type FirecloudGroupMembership struct {
 
 func (u *User) Username() string {
 	return strings.Split(u.AuthenticatedEmail, "@")[0]
+}
+
+func (u *User) AlphaNumericHyphenatedUsername() string {
+	var ret []rune
+	for _, r := range u.Username() {
+		if unicode.IsDigit(r) || unicode.IsLetter(r) {
+			ret = append(ret, r)
+		} else if r == '.' || r == '-' || r == '_' {
+			ret = append(ret, '-')
+		}
+	}
+	return string(ret)
 }
 
 func (u *User) isKnownSuitable() bool {
@@ -93,6 +109,9 @@ func (u *User) describeSuitability() string {
 func (u *User) SuitableOrError() error {
 	if u.isKnownSuitable() {
 		return nil
+	} else if u.offline {
+		log.Debug().Msgf("AUTH | %s is not suitable and is marked as OFFLINE internally, denying without refresh", u.AuthenticatedEmail)
+		return fmt.Errorf("%s", u.describeSuitability())
 	} else {
 		log.Debug().Msgf("AUTH | %s might not be suitable, refreshing before denying", u.AuthenticatedEmail)
 		adminService, err := admin.NewService(context.Background(), option.WithScopes(admin.AdminDirectoryUserReadonlyScope, admin.AdminDirectoryGroupMemberReadonlyScope))

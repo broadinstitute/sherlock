@@ -46,9 +46,11 @@ func clusterSelectorToQuery(_ *gorm.DB, selector string) (Cluster, error) {
 		query.ID = uint(id)
 		return query, nil
 	} else if isAlphaNumericWithHyphens(selector) &&
-		len(selector) > 0 && len(selector) <= 32 &&
 		isStartingWithLetter(selector) &&
 		isEndingWithAlphaNumeric(selector) { // Name
+		if len(selector) > 32 {
+			return Cluster{}, fmt.Errorf("(%s) %T name is too long, was %d characters and the maximum is 32", errors.BadRequest, Cluster{}, len(selector))
+		}
 		query.Name = selector
 		return query, nil
 	}
