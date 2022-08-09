@@ -17,7 +17,7 @@ db:
   # It should not be enabled in merged code but can be useful for development, to iterate before adding
   # SQL migration files.
   autoMigrateV1: false
-  autoMigrateV2: true
+  autoMigrateV2: false
 
 auth:
   updateIntervalMinutes: 15

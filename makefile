@@ -7,7 +7,7 @@ local-stop:
 local-down:
 	docker-compose -f build/local/server/docker-compose.yaml down --volumes
 
-# not sure if this is good make style but it works for now
+# We bump the max connections because I (Jack) was sloppy with database connections but not quantity of tests
 functional-test:
 	docker run --name test-postgres -e POSTGRES_PASSWORD=password -e POSTGRES_USER=sherlock -d -p 5432:5432 postgres:13 -c max_connections=200
 	export SHERLOCK_DB_PASSWORD="password" && go test -p 1 -v -race ./...
