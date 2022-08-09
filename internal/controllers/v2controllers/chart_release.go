@@ -25,6 +25,12 @@ type CreatableChartRelease struct {
 	EditableChartRelease
 }
 
+// EditableChartRelease
+// There's indeed some grouped fields here. Trying to nest them in an object or something will quickly make Swaggo
+// upset. There's four things to worry about: Gin's json parsing, Swaggo's json tag parsing, Gin's form parsing for
+// query params, and Swaggo's apparent parsing of json tags (instead of form ones) for query params. The query param
+// part only shows up on the list method; all the times Jack tried to add nesting, something broke.
+// https://broadinstitute.slack.com/archives/CQ6SL4N5T/p1660059822037769
 type EditableChartRelease struct {
 	CurrentAppVersionExact   *string `json:"currentAppVersionExact" form:"currentAppVersionExact"`
 	CurrentChartVersionExact *string `json:"currentChartVersionExact" form:"currentChartVersionExact"`
@@ -154,15 +160,13 @@ func chartReleaseToModelChartRelease(chartRelease ChartRelease, stores *v2models
 	}, nil
 }
 
-func setChartReleaseDynamicDefaults(chartRelease *ChartRelease, stores *v2models.StoreSet, user *auth.User) error {
+func setChartReleaseDynamicDefaults(chartRelease *ChartRelease, stores *v2models.StoreSet, _ *auth.User) error {
 	chart, err := stores.ChartStore.Get(chartRelease.Chart)
 	if err != nil {
 		return err
 	}
-	if chart.AppImageGitMainBranch != nil && *chart.AppImageGitMainBranch != "" {
-		if chartRelease.TargetAppVersionBranch == nil {
-			chartRelease.TargetAppVersionBranch = chart.AppImageGitMainBranch
-		}
+	if chart.AppImageGitMainBranch != nil && *chart.AppImageGitMainBranch != "" && chartRelease.TargetAppVersionBranch == nil {
+		chartRelease.TargetAppVersionBranch = chart.AppImageGitMainBranch
 	}
 
 	if chartRelease.TargetAppVersionUse == nil {
@@ -215,7 +219,7 @@ func setChartReleaseDynamicDefaults(chartRelease *ChartRelease, stores *v2models
 			if chartRelease.Namespace == "" || chartRelease.Namespace == cluster.Name {
 				chartRelease.Name = fmt.Sprintf("%s-%s", chart.Name, cluster.Name)
 			} else {
-				chartRelease.Name = fmt.Sprintf("%s-%s-%s", chart.Name, chartRelease.Name, cluster.Name)
+				chartRelease.Name = fmt.Sprintf("%s-%s-%s", chart.Name, chartRelease.Namespace, cluster.Name)
 			}
 		}
 		if chartRelease.DestinationType == "" {

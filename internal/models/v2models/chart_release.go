@@ -184,7 +184,7 @@ func chartReleaseToSelectors(chartRelease ChartRelease) []string {
 }
 
 func chartReleaseRequiresSuitability(db *gorm.DB, chartRelease ChartRelease) bool {
-	clusterRequires := true
+	clusterRequires := false
 	if chartRelease.Cluster != nil {
 		cluster, err := getFromQuery(db, *chartRelease.Cluster)
 		if err != nil {
@@ -192,7 +192,7 @@ func chartReleaseRequiresSuitability(db *gorm.DB, chartRelease ChartRelease) boo
 		}
 		clusterRequires = clusterRequiresSuitability(db, cluster)
 	}
-	environmentRequires := true
+	environmentRequires := false
 	if chartRelease.Environment != nil {
 		environment, err := getFromQuery(db, *chartRelease.Environment)
 		if err != nil {

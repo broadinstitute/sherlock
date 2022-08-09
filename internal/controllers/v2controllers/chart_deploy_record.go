@@ -65,7 +65,7 @@ func chartDeployRecordToModelChartDeployRecord(chartDeployRecord ChartDeployReco
 		if err != nil {
 			return v2models.ChartDeployRecord{}, err
 		}
-		chartReleaseID = chartRelease.ChartID
+		chartReleaseID = chartRelease.ID
 	}
 	return v2models.ChartDeployRecord{
 		Model: gorm.Model{

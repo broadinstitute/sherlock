@@ -63,7 +63,6 @@ var (
 		Lifecycle: "static",
 		EditableEnvironment: EditableEnvironment{
 			DefaultCluster:      &terraProdCluster.Name,
-			DefaultNamespace:    testutils.PointerTo("terra-prod"),
 			Owner:               testutils.PointerTo("dsp-devops@broadinstitute.org"),
 			RequiresSuitability: testutils.PointerTo(true),
 		},
@@ -108,6 +107,9 @@ func (suite *environmentControllerSuite) TestEnvironmentCreate() {
 			assert.True(suite.T(), env.ID > 0)
 			suite.Run("default non-suitable", func() {
 				assert.False(suite.T(), *env.RequiresSuitability)
+			})
+			suite.Run("default the default namespace to environment name", func() {
+				assert.Equal(suite.T(), terraDevEnvironment.Name, *env.DefaultNamespace)
 			})
 		})
 		suite.Run("template", func() {
@@ -310,7 +312,7 @@ func (suite *environmentControllerSuite) TestEnvironmentEdit() {
 			assert.ErrorContains(suite.T(), err, errors.Forbidden)
 			notEdited, err := suite.EnvironmentController.Get(terraProdEnvironment.Name)
 			assert.NoError(suite.T(), err)
-			assert.Equal(suite.T(), terraProdEnvironment.DefaultNamespace, notEdited.DefaultNamespace)
+			assert.NotEqual(suite.T(), newNamespace, notEdited.DefaultNamespace)
 		})
 		suite.Run("successfully if suitable", func() {
 			edited, err := suite.EnvironmentController.Edit(terraProdEnvironment.Name, EditableEnvironment{DefaultNamespace: newNamespace}, auth.GenerateUser(suite.T(), true))

@@ -161,12 +161,12 @@ func setEnvironmentDynamicDefaults(environment *Environment, stores *v2models.St
 				environment.Name = strings.TrimSuffix(environment.Name[0:31], "-")
 			}
 		}
-		if environment.DefaultNamespace == nil {
-			environment.DefaultNamespace = &environment.Name
-		}
 	} else {
 		// If there's no template, the valuesName to use is the name of this environment
 		environment.ValuesName = environment.Name
+	}
+	if environment.DefaultNamespace == nil {
+		environment.DefaultNamespace = &environment.Name
 	}
 	if defaults.CanUpdate(environment.Owner) {
 		environment.Owner = &user.AuthenticatedEmail
