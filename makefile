@@ -29,3 +29,8 @@ make pg-up:
 pg-down:
 	docker stop test-postgres
 	docker rm -f -v test-postgres
+
+# To install swag, `go install github.com/swaggo/swag/cmd/swag@latest`
+generate-swagger:
+	swag fmt -d ./ -g internal/sherlock/routes.go
+	swag init -d ./ -g internal/sherlock/routes.go
