@@ -19,10 +19,12 @@ type CreatableChartVersion struct {
 
 type EditableChartVersion struct{}
 
+//nolint:unused
 func (c CreatableChartVersion) toReadable() ChartVersion {
 	return ChartVersion{CreatableChartVersion: c}
 }
 
+//nolint:unused
 func (e EditableChartVersion) toCreatable() CreatableChartVersion {
 	return CreatableChartVersion{EditableChartVersion: e}
 }

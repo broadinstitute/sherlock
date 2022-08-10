@@ -6,7 +6,7 @@ package v2models
 import "unicode"
 
 func isNumeric(selector string) bool {
-	for _, r := range []rune(selector) {
+	for _, r := range selector {
 		if !unicode.IsDigit(r) {
 			return false
 		}

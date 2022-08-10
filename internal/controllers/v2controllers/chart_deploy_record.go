@@ -21,10 +21,12 @@ type CreatableChartDeployRecord struct {
 
 type EditableChartDeployRecord struct{}
 
+//nolint:unused
 func (c CreatableChartDeployRecord) toReadable() ChartDeployRecord {
 	return ChartDeployRecord{CreatableChartDeployRecord: c}
 }
 
+//nolint:unused
 func (e EditableChartDeployRecord) toCreatable() CreatableChartDeployRecord {
 	return CreatableChartDeployRecord{EditableChartDeployRecord: e}
 }

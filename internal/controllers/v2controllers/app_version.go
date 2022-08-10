@@ -21,10 +21,12 @@ type CreatableAppVersion struct {
 
 type EditableAppVersion struct{}
 
+//nolint:unused
 func (c CreatableAppVersion) toReadable() AppVersion {
 	return AppVersion{CreatableAppVersion: c}
 }
 
+//nolint:unused
 func (e EditableAppVersion) toCreatable() CreatableAppVersion {
 	return CreatableAppVersion{EditableAppVersion: e}
 }

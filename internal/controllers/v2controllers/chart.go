@@ -21,10 +21,12 @@ type EditableChart struct {
 	AppImageGitMainBranch *string `json:"appImageGitMainBranch" form:"appImageGitMainBranch"`
 }
 
+//nolint:unused
 func (c CreatableChart) toReadable() Chart {
 	return Chart{CreatableChart: c}
 }
 
+//nolint:unused
 func (e EditableChart) toCreatable() CreatableChart {
 	return CreatableChart{EditableChart: e}
 }

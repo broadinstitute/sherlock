@@ -60,5 +60,4 @@ func Truncate(t *testing.T, db *gorm.DB) {
 	if err := db.Exec(strings.Join(statements, ";\n")).Error; err != nil {
 		t.Errorf("failed to clean/truncate database: %v", err)
 	}
-	return
 }

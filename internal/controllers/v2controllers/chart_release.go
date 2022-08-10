@@ -44,10 +44,12 @@ type EditableChartRelease struct {
 	ThelmaMode               *string `json:"thelmaMode,omitempty" form:"thelmaMode"`
 }
 
+//nolint:unused
 func (c CreatableChartRelease) toReadable() ChartRelease {
 	return ChartRelease{CreatableChartRelease: c}
 }
 
+//nolint:unused
 func (e EditableChartRelease) toCreatable() CreatableChartRelease {
 	return CreatableChartRelease{EditableChartRelease: e}
 }

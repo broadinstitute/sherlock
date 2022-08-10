@@ -36,10 +36,12 @@ type EditableEnvironment struct {
 	RequiresSuitability *bool   `json:"requiresSuitability" default:"false" form:"requiresSuitability"`
 }
 
+//nolint:unused
 func (c CreatableEnvironment) toReadable() Environment {
 	return Environment{CreatableEnvironment: c}
 }
 
+//nolint:unused
 func (e EditableEnvironment) toCreatable() CreatableEnvironment {
 	return CreatableEnvironment{EditableEnvironment: e}
 }

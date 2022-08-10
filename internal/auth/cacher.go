@@ -86,7 +86,7 @@ func KeepCacheUpdated(ctx context.Context, interval time.Duration) {
 	for {
 		time.Sleep(interval)
 		if err := CacheFirecloudAccounts(ctx); err != nil {
-			log.Warn().Err(err).Msgf("failed to update suitability cache, now %s stale", time.Now().Sub(lastCacheTime).String())
+			log.Warn().Err(err).Msgf("failed to update suitability cache, now %s stale", time.Since(lastCacheTime).String())
 		}
 	}
 }

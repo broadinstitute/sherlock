@@ -30,10 +30,12 @@ type EditableCluster struct {
 	RequiresSuitability *bool   `json:"requiresSuitability" form:"requiresSuitability" default:"false"`
 }
 
+//nolint:unused
 func (c CreatableCluster) toReadable() Cluster {
 	return Cluster{CreatableCluster: c}
 }
 
+//nolint:unused
 func (e EditableCluster) toCreatable() CreatableCluster {
 	return CreatableCluster{EditableCluster: e}
 }
