@@ -1,3 +1,4 @@
+# debug can be either 'debug' or 'release', defaults to 'release' behavior if another value is provided
 mode: debug
 
 log:
