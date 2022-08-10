@@ -2972,6 +2972,15 @@ const docTemplate = `{
         "misc.VersionResponse": {
             "type": "object",
             "properties": {
+                "buildInfo": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "goVersion": {
+                    "type": "string"
+                },
                 "version": {
                     "type": "string"
                 }

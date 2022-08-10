@@ -7,7 +7,9 @@ import (
 )
 
 type VersionResponse struct {
-	Version string `json:"version"`
+	Version   string            `json:"version"`
+	GoVersion string            `json:"goVersion,omitempty"`
+	BuildInfo map[string]string `json:"buildInfo,omitempty"`
 }
 
 // VersionHandler godoc
@@ -18,5 +20,13 @@ type VersionResponse struct {
 // @success      200  {object}  misc.VersionResponse
 // @router       /version [get]
 func VersionHandler(ctx *gin.Context) {
-	ctx.JSON(http.StatusOK, VersionResponse{Version: version.BuildVersion})
+	response := &VersionResponse{Version: version.BuildVersion}
+	if buildInfo := version.BuildInfo(); buildInfo != nil {
+		response.GoVersion = buildInfo.GoVersion
+		response.BuildInfo = make(map[string]string)
+		for _, buildSetting := range buildInfo.Settings {
+			response.BuildInfo[buildSetting.Key] = buildSetting.Value
+		}
+	}
+	ctx.JSON(http.StatusOK, response)
 }

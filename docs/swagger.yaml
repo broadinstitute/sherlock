@@ -52,6 +52,12 @@ definitions:
     type: object
   misc.VersionResponse:
     properties:
+      buildInfo:
+        additionalProperties:
+          type: string
+        type: object
+      goVersion:
+        type: string
       version:
         type: string
     type: object
