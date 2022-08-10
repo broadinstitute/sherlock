@@ -66,7 +66,7 @@ func (suite *AllocationPoolTestSuite) TearDownTest() {
 // connect to DB and create the Application
 func initTestAllocationPoolsApp(t *testing.T) *TestApplication {
 	config.LoadTestConfig(t)
-	dbConn := db.ConnectFromTest(t)
+	dbConn := db.ConnectAndConfigureFromTest(t)
 
 	// ensures each test will run in it's own isolated transaction
 	// The transaction will be rolled back after each test

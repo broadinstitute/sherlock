@@ -13,14 +13,20 @@ import (
 var BuildVersion string = "development"
 
 func main() {
-	go func() { _ = endless.ListenAndServe(":8081", livenessHandler{}) }()
-
-	dbConn, err := db.Connect()
+	sqlDB, err := db.Connect()
 	if err != nil {
 		log.Fatal().Msgf("%v", err)
 	}
 
-	app := sherlock.New(dbConn)
+	// Spin up the liveness check once we've got a good database connection
+	go func() { _ = endless.ListenAndServe(":8081", livenessHandler{}) }()
+
+	gormDB, err := db.Configure(sqlDB)
+	if err != nil {
+		log.Fatal().Msgf("%v", err)
+	}
+
+	app := sherlock.New(gormDB)
 	if app == nil {
 		log.Fatal().Msg("failed to create an application instance")
 		return

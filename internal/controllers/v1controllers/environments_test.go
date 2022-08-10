@@ -60,7 +60,7 @@ func (suite *EnvironmentTestSuite) TearDownTest() {
 
 // connect to DB and create the Application
 func initEnvironmentsTestApp(t *testing.T) *TestApplication {
-	dbConn := db.ConnectFromTest(t)
+	dbConn := db.ConnectAndConfigureFromTest(t)
 	// ensures each test will run in it's own isolated transaction
 	// The transaction will be rolled back after each test
 	// regardless of pass or fail

@@ -54,6 +54,28 @@ func dbConnectionString() string {
 	)
 }
 
+func Connect() (*sql.DB, error) {
+	sqlDB, err := sql.Open("pgx", dbConnectionString())
+	if err != nil {
+		return nil, fmt.Errorf("error building SQL connection: %v", err)
+	}
+	initialAttempts := config.Config.Int("db.retryConnection.times") + 1
+	for attemptsRemaining := initialAttempts; attemptsRemaining >= 0; attemptsRemaining-- {
+		if err = sqlDB.Ping(); err == nil {
+			return sqlDB, nil
+		} else if attemptsRemaining > 0 {
+			interval := config.Config.String("db.retryConnection.interval")
+			if duration, durationErr := time.ParseDuration(interval); durationErr == nil {
+				log.Debug().Msgf("will attempt database connection %d more times in %s", attemptsRemaining-1, interval)
+				time.Sleep(duration)
+			} else {
+				log.Warn().Msgf("while retrying database connection, couldn't parse sleep interval duration %s: %v", interval, durationErr)
+			}
+		}
+	}
+	return nil, fmt.Errorf("unable to connect to the database after %d attempts: %v", initialAttempts, err)
+}
+
 func applyMigrations(db *sql.DB) error {
 	if !config.Config.Bool("db.init") {
 		log.Info().Msg("skipping database migrations")
@@ -126,12 +148,8 @@ func applyAutoMigrations(db *gorm.DB) error {
 	return nil
 }
 
-func Connect() (*gorm.DB, error) {
-	sqlDB, err := sql.Open("pgx", dbConnectionString())
-	if err != nil {
-		return nil, fmt.Errorf("error building SQL connection: %v", err)
-	}
-	if err = applyMigrations(sqlDB); err != nil {
+func Configure(sqlDB *sql.DB) (*gorm.DB, error) {
+	if err := applyMigrations(sqlDB); err != nil {
 		return nil, fmt.Errorf("error migrating database: %v", err)
 	}
 	gormDB, err := openGorm(sqlDB)

@@ -1,0 +1,37 @@
+# debug can be either 'debug' or 'release', defaults to 'release' behavior if another value is provided
+mode: debug
+
+log:
+  timestamp: true
+  caller: false
+  level: debug
+
+db:
+  host: localhost
+  user: sherlock
+  name: sherlock
+  port: 5432
+  ssl: disable
+  init: true
+
+  # retryConnection is helpful especially for local testing, in case the Postgres container hasn't come up yet.
+  # The liveness check won't activate until a connection is established, so this is safe to ship.
+  retryConnection:
+    times: 10
+    interval: 1s
+
+  # autoMigrate will have Gorm align the database schema with its understanding of model structs post-init.
+  # It should not be enabled in merged code but can be useful for development, to iterate before adding
+  # SQL migration files.
+  autoMigrateV1: false
+  autoMigrateV2: false
+
+auth:
+  updateIntervalMinutes: 15
+  broadinstitute:
+    domain: broadinstitute.org
+  firecloud:
+    domain: firecloud.org
+    groups:
+      fcAdmins: fc-admins@firecloud.org
+      firecloudProjectOwners: firecloud-project-owners@firecloud.org

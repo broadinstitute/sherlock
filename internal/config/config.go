@@ -1,8 +1,8 @@
 package config
 
 import (
-	"embed"
 	"fmt"
+	embeddedFiles "github.com/broadinstitute/sherlock/config"
 	"github.com/knadh/koanf"
 	"github.com/knadh/koanf/parsers/yaml"
 	"github.com/knadh/koanf/providers/env"
@@ -16,17 +16,12 @@ import (
 	"testing"
 )
 
-var (
-	// Config holds Sherlock's global configuration
-	Config = koanf.New(".")
-
-	//go:embed default_config.yaml test_config.yaml
-	embeddedFiles embed.FS
-)
+// Config holds Sherlock's global configuration
+var Config = koanf.New(".")
 
 func init() {
 	var infoMessages []string
-	if err := Config.Load(fs.Provider(embeddedFiles, "default_config.yaml"), yaml.Parser()); err != nil {
+	if err := Config.Load(fs.Provider(embeddedFiles.EmbeddedFiles, "default_config.yaml"), yaml.Parser()); err != nil {
 		panic(fmt.Sprintf("failed to load default_config.yaml, panicking due to likely embedding issue: %v", err))
 	}
 
@@ -51,7 +46,7 @@ func init() {
 // apply while testing. This function loads this package's test_config.yaml and any TEST_SHERLOCK_* environment
 // variables on top of whatever configuration currently exists.
 func LoadTestConfig(t *testing.T) {
-	if err := Config.Load(fs.Provider(embeddedFiles, "test_config.yaml"), yaml.Parser()); err != nil {
+	if err := Config.Load(fs.Provider(embeddedFiles.EmbeddedFiles, "test_config.yaml"), yaml.Parser()); err != nil {
 		t.Fatalf("failed to load test configuration file test_config.yaml: %v", err)
 		return
 	}

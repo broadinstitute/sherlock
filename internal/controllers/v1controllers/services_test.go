@@ -200,7 +200,7 @@ func TestServicesFunctionalSuite(t *testing.T) {
 
 func initServicesTestApp(t *testing.T) *TestApplication {
 	config.LoadTestConfig(t)
-	dbConn := db.ConnectFromTest(t)
+	dbConn := db.ConnectAndConfigureFromTest(t)
 	// ensures each test will run in its own isolated transaction
 	// The transaction will be rolled back after each test
 	// regardless of pass or fail

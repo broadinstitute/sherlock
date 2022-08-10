@@ -32,7 +32,7 @@ type chartDeployRecordControllerSuite struct {
 
 func (suite *chartDeployRecordControllerSuite) SetupTest() {
 	config.LoadTestConfig(suite.T())
-	suite.db = db.ConnectFromTest(suite.T())
+	suite.db = db.ConnectAndConfigureFromTest(suite.T())
 	suite.db.Begin()
 	suite.ControllerSet = NewControllerSet(v2models.NewStoreSet(suite.db))
 }

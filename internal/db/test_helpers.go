@@ -8,15 +8,19 @@ import (
 	"testing"
 )
 
-// ConnectFromTest is like Connect but accepts a testing.T in exchange for never returning an error--the
-// test will be failed if there is one.
-func ConnectFromTest(t *testing.T) *gorm.DB {
-	db, err := Connect()
+// ConnectAndConfigureFromTest is like Connect and Configure but accepts a testing.T in exchange for never returning an
+// error--the test will be failed instead if there is one.
+func ConnectAndConfigureFromTest(t *testing.T) *gorm.DB {
+	sqlDB, err := Connect()
 	if err != nil {
 		t.Errorf("failed to connect to database during test: %v", err)
 		return nil
 	}
-	return db
+	gormDB, err := Configure(sqlDB)
+	if err != nil {
+		t.Errorf("failed to configure database during test: %v", err)
+	}
+	return gormDB
 }
 
 // Truncate cleans up tables, intended for usage with functional tests. It will refuse to run if
