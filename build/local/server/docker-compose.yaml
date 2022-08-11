@@ -11,6 +11,7 @@ services:
       dockerfile: build/server/Dockerfile
     ports:
       - "8080:8080"
+      - "8081:8081"
     environment: 
       SHERLOCK_DB_INIT: "true"
       SHERLOCK_DB_PASSWORD: "password"

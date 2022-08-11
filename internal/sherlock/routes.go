@@ -49,11 +49,14 @@ func (a *Application) buildRouter() {
 	router.Use(gin.Recovery())
 	router.Use(logger())
 
-	// register generic handlers just on /*
-	router.GET("/version", misc.VersionHandler)
+	// swagger
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	router.GET("", func(c *gin.Context) { c.Redirect(http.StatusMovedPermanently, "/swagger/index.html") })
+
+	// register generic handlers just on /*
+	router.GET("/version", misc.VersionHandler)
 	router.GET("/my-user", authMiddleware(), misc.MyUserHandler)
+	router.GET("/status", misc.StatusHandler)
 
 	// register v1 API handlers on both /* and /api/v1/*
 	v1api := router.Group("api/v1")

@@ -7,6 +7,6 @@ import (
 
 type livenessHandler struct{}
 
-func (h livenessHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	_, _ = fmt.Fprintf(w, "OK")
+func (h livenessHandler) ServeHTTP(w http.ResponseWriter, _ *http.Request) {
+	_, _ = fmt.Fprintf(w, "OK\n")
 }

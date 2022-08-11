@@ -19,6 +19,7 @@ func main() {
 	}
 
 	// Spin up the liveness check once we've got a good database connection
+	log.Info().Msg("starting liveness endpoint on :8081")
 	go func() { _ = endless.ListenAndServe(":8081", livenessHandler{}) }()
 
 	gormDB, err := db.Configure(sqlDB)

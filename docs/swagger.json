@@ -2865,6 +2865,26 @@
                 }
             }
         },
+        "/status": {
+            "get": {
+                "description": "Get Sherlock's current status. Right now, this endpoint always returned OK (if the server is online).\nThis endpoint is acceptable to use for a readiness check.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Misc"
+                ],
+                "summary": "Get Sherlock's current status",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/misc.StatusResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/version": {
             "get": {
                 "description": "Get the build version of this Sherlock instance.",
@@ -2960,6 +2980,14 @@
                 },
                 "suitability": {
                     "type": "string"
+                }
+            }
+        },
+        "misc.StatusResponse": {
+            "type": "object",
+            "properties": {
+                "ok": {
+                    "type": "boolean"
                 }
             }
         },

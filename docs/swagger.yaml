@@ -50,6 +50,11 @@ definitions:
       suitability:
         type: string
     type: object
+  misc.StatusResponse:
+    properties:
+      ok:
+        type: boolean
+    type: object
   misc.VersionResponse:
     properties:
       buildInfo:
@@ -2442,6 +2447,21 @@ paths:
           schema:
             $ref: '#/definitions/errors.ErrorResponse'
       summary: Get information about the calling user
+      tags:
+      - Misc
+  /status:
+    get:
+      description: |-
+        Get Sherlock's current status. Right now, this endpoint always returned OK (if the server is online).
+        This endpoint is acceptable to use for a readiness check.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/misc.StatusResponse'
+      summary: Get Sherlock's current status
       tags:
       - Misc
   /version:
