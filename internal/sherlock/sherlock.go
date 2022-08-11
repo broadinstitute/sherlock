@@ -46,7 +46,7 @@ func New(db *gorm.DB) *Application {
 
 	if config.Config.MustString("mode") != "debug" {
 		if config.Config.MustString("mode") != "release" {
-			log.Warn().Msgf("mode was not 'debug' but wasn't 'release' either, enabling authentication layer anyway")
+			log.Warn().Msgf("mode was not 'debug' but wasn't 'release' either, enabling full authentication layer anyway")
 		}
 
 		if err := auth.CacheFirecloudAccounts(context.Background()); err != nil {
@@ -57,6 +57,7 @@ func New(db *gorm.DB) *Application {
 		app.contextsToCancel = append(app.contextsToCancel, cancelFunc)
 		go auth.KeepCacheUpdated(ctx, time.Duration(config.Config.MustInt("auth.updateIntervalMinutes"))*time.Minute)
 	}
+	auth.CacheExtraPermissions()
 
 	app.registerControllers()
 	// initialize the gin router and store it in our app struct

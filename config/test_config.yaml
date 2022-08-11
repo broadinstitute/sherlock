@@ -14,5 +14,11 @@ db:
   port: 5432
   ssl: disable
   init: true
-  retryConnection:
-    times: 0
+
+auth:
+  # These are for testing our handling of this config; tests run fully off-line
+  extraPermissions:
+    - email: has-extra-permissions-suitable@example.com
+      suitable: true
+    - email: has-extra-permissions-non-suitable@example.com
+      suitable: false

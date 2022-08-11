@@ -33,6 +33,7 @@ func IapUserMiddleware() gin.HandlerFunc {
 		ctx.Set(contextUserKey, &User{
 			AuthenticatedEmail:      email,
 			MatchedFirecloudAccount: cachedFirecloudAccounts[emailToFirecloudEmail(email)],
+			MatchedExtraPermissions: cachedExtraPermissions[email],
 		})
 
 		ctx.Next()
@@ -40,13 +41,14 @@ func IapUserMiddleware() gin.HandlerFunc {
 }
 
 func FakeUserMiddleware() gin.HandlerFunc {
+	email := "fake@broadinstitute.org"
 	return func(ctx *gin.Context) {
 		var firecloudAccount *FirecloudAccount
 		if ctx.GetHeader("Suitable") == "false" {
 			firecloudAccount = nil
 		} else {
 			firecloudAccount = &FirecloudAccount{
-				Email:               "fake@broadinstitute.org",
+				Email:               email,
 				AcceptedGoogleTerms: true,
 				EnrolledIn2fa:       true,
 				Suspended:           false,
@@ -59,8 +61,9 @@ func FakeUserMiddleware() gin.HandlerFunc {
 			}
 		}
 		ctx.Set(contextUserKey, &User{
-			AuthenticatedEmail:      "fake@broadinstitute.org",
+			AuthenticatedEmail:      email,
 			MatchedFirecloudAccount: firecloudAccount,
+			MatchedExtraPermissions: cachedExtraPermissions[email],
 		})
 
 		ctx.Next()

@@ -10,6 +10,7 @@ import (
 	"time"
 )
 
+// cachedFirecloudAccounts associates firecloud.org email addresses to FirecloudAccount info
 var cachedFirecloudAccounts map[string]*FirecloudAccount
 var lastCacheTime time.Time
 

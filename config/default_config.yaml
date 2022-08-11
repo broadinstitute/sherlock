@@ -35,3 +35,11 @@ auth:
     groups:
       fcAdmins: fc-admins@firecloud.org
       firecloudProjectOwners: firecloud-project-owners@firecloud.org
+
+  # extraPermissions can be used to grant an exact email address access to "suitable" actions inside Sherlock,
+  # regardless of that email correlating to a Firecloud account. This functionality should only be used for
+  # service accounts, and the justification for this functionality existing is that adding a service account
+  # here is better than actually giving the service account any actual permissions inside the Firecloud org.
+  extraPermissions:
+    #- email: example@dsp-tools-k8s.iam.gserviceaccount.com
+    #  suitable: false

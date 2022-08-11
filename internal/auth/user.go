@@ -14,7 +14,8 @@ import (
 type User struct {
 	AuthenticatedEmail      string            `json:"authenticatedEmail"`
 	MatchedFirecloudAccount *FirecloudAccount `json:"matchedFirecloudAccount,omitempty"`
-	// offline is an internal field that can be set to skip the automatic "try to refresh
+	MatchedExtraPermissions *ExtraPermissions `json:"matchedExtraPermissions,omitempty"`
+	// offline is an internal field that can be set to skip any automatic "try to refresh
 	// before denying" behavior, which would always fail during tests.
 	offline bool
 }
@@ -43,6 +44,10 @@ type FirecloudGroupMembership struct {
 	FirecloudProjectOwners bool `json:"firecloud-project-owners"`
 }
 
+type ExtraPermissions struct {
+	Suitable bool `json:"suitable"`
+}
+
 func (u *User) Username() string {
 	return strings.Split(u.AuthenticatedEmail, "@")[0]
 }
@@ -60,17 +65,20 @@ func (u *User) AlphaNumericHyphenatedUsername() string {
 }
 
 func (u *User) isKnownSuitable() bool {
-	return u.MatchedFirecloudAccount != nil &&
+	return (u.MatchedFirecloudAccount != nil &&
 		u.MatchedFirecloudAccount.AcceptedGoogleTerms &&
 		u.MatchedFirecloudAccount.EnrolledIn2fa &&
 		!u.MatchedFirecloudAccount.Suspended &&
 		!u.MatchedFirecloudAccount.Archived &&
 		u.MatchedFirecloudAccount.Groups.FcAdmins &&
-		u.MatchedFirecloudAccount.Groups.FirecloudProjectOwners
+		u.MatchedFirecloudAccount.Groups.FirecloudProjectOwners) ||
+		(u.MatchedExtraPermissions != nil && u.MatchedExtraPermissions.Suitable)
 }
 
 func (u *User) describeSuitability() string {
-	if u.MatchedFirecloudAccount == nil {
+	if u.MatchedExtraPermissions != nil && u.MatchedExtraPermissions.Suitable {
+		return fmt.Sprintf("%s is known suitable via extra Sherlock-only permissions", u.AuthenticatedEmail)
+	} else if u.MatchedFirecloudAccount == nil {
 		return fmt.Sprintf("%s is not known suitable as a matching Firecloud account wasn't found", u.Username())
 	} else {
 		var problems []string
