@@ -155,7 +155,7 @@ create table if not exists v2_chart_deploy_records
         constraint fk_v2_chart_deploy_records_chart_release
             references v2_chart_releases,
     exact_chart_version text                                                               not null,
-    exact_app_version   text                                                               not null,
+    exact_app_version   text,
     helmfile_ref        text                                                               not null
 );
 
