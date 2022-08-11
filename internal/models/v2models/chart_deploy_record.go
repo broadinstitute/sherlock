@@ -12,7 +12,7 @@ type ChartDeployRecord struct {
 	ChartRelease      ChartRelease
 	ChartReleaseID    uint   `gorm:"not null; default:null"`
 	ExactChartVersion string `gorm:"not null; default:null"`
-	ExactAppVersion   string `gorm:"not null; default:null"`
+	ExactAppVersion   string
 	HelmfileRef       string `gorm:"not null; default:null"`
 }
 
@@ -68,9 +68,6 @@ func validateChartDeployRecord(chartDeployRecord ChartDeployRecord) error {
 	}
 	if chartDeployRecord.ExactChartVersion == "" {
 		return fmt.Errorf("a %T must have a non-empty chart version", chartDeployRecord)
-	}
-	if chartDeployRecord.ExactAppVersion == "" {
-		return fmt.Errorf("a %T must have a non-empty app version", chartDeployRecord)
 	}
 	if chartDeployRecord.HelmfileRef == "" {
 		return fmt.Errorf("a %T must have a non-empty terra-helmfile ref", chartDeployRecord)

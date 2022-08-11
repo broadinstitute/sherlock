@@ -1,6 +1,7 @@
 package v2controllers
 
 import (
+	"github.com/broadinstitute/sherlock/internal/auth"
 	"github.com/broadinstitute/sherlock/internal/models/v2models"
 	"gorm.io/gorm"
 )
@@ -13,9 +14,9 @@ type ChartDeployRecord struct {
 
 type CreatableChartDeployRecord struct {
 	ChartRelease      string `json:"chartRelease" form:"chartRelease"`           // Required when creating
-	ExactChartVersion string `json:"exactChartVersion" form:"exactChartVersion"` // Required when creating
-	ExactAppVersion   string `json:"exactAppVersion" form:"exactAppVersion"`     // Required when creating
-	HelmfileRef       string `json:"helmfileRef" form:"helmfileRef"`             // Required when creating
+	ExactChartVersion string `json:"exactChartVersion" form:"exactChartVersion"` // When creating, will default to the value currently held by the chart release
+	ExactAppVersion   string `json:"exactAppVersion" form:"exactAppVersion"`     // When creating, will default to the value currently held by the chart release
+	HelmfileRef       string `json:"helmfileRef" form:"helmfileRef"`             // When creating, will default to the value currently held by the chart release
 	EditableChartDeployRecord
 }
 
@@ -35,10 +36,11 @@ type ChartDeployRecordController = ModelController[v2models.ChartDeployRecord, C
 
 func newChartDeployRecordController(stores *v2models.StoreSet) *ChartDeployRecordController {
 	return &ChartDeployRecordController{
-		primaryStore:    stores.ChartDeployRecordStore,
-		allStores:       stores,
-		modelToReadable: modelChartDeployRecordToChartDeployRecord,
-		readableToModel: chartDeployRecordToModelChartDeployRecord,
+		primaryStore:       stores.ChartDeployRecordStore,
+		allStores:          stores,
+		modelToReadable:    modelChartDeployRecordToChartDeployRecord,
+		readableToModel:    chartDeployRecordToModelChartDeployRecord,
+		setDynamicDefaults: setChartDeployRecordDynamicDefaults,
 	}
 }
 
@@ -81,4 +83,21 @@ func chartDeployRecordToModelChartDeployRecord(chartDeployRecord ChartDeployReco
 		ExactAppVersion:   chartDeployRecord.ExactAppVersion,
 		HelmfileRef:       chartDeployRecord.HelmfileRef,
 	}, nil
+}
+
+func setChartDeployRecordDynamicDefaults(chartDeployRecord *ChartDeployRecord, stores *v2models.StoreSet, _ *auth.User) error {
+	chartRelease, err := stores.ChartReleaseStore.Get(chartDeployRecord.ChartRelease)
+	if err != nil {
+		return err
+	}
+	if chartDeployRecord.ExactChartVersion == "" && chartRelease.CurrentChartVersionExact != nil {
+		chartDeployRecord.ExactChartVersion = *chartRelease.CurrentChartVersionExact
+	}
+	if chartDeployRecord.ExactAppVersion == "" && chartRelease.CurrentAppVersionExact != nil {
+		chartDeployRecord.ExactAppVersion = *chartRelease.CurrentAppVersionExact
+	}
+	if chartDeployRecord.HelmfileRef == "" && chartRelease.HelmfileRef != nil {
+		chartDeployRecord.HelmfileRef = *chartRelease.HelmfileRef
+	}
+	return nil
 }

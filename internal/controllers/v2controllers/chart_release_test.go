@@ -56,6 +56,10 @@ var (
 		Chart:       datarepoChart.Name,
 		Environment: terraDevEnvironment.Name,
 		Cluster:     datarepoDevCluster.Name,
+		EditableChartRelease: EditableChartRelease{
+			CurrentAppVersionExact:   testutils.PointerTo("a1b2c3d4"),
+			CurrentChartVersionExact: testutils.PointerTo("1.2.3"),
+		},
 	}
 	yaleDevChartRelease = CreatableChartRelease{
 		Chart:       yaleChart.Name,

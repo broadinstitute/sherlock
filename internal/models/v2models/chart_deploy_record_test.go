@@ -106,15 +106,6 @@ func Test_validateChartDeployRecord(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			name: "no app version",
-			args: args{chartDeployRecord: ChartDeployRecord{
-				ChartReleaseID:    123,
-				ExactChartVersion: "1.2.3",
-				HelmfileRef:       "a1b2c3d4",
-			}},
-			wantErr: true,
-		},
-		{
 			name: "no helmfile ref",
 			args: args{chartDeployRecord: ChartDeployRecord{
 				ChartReleaseID:    123,
@@ -129,6 +120,15 @@ func Test_validateChartDeployRecord(t *testing.T) {
 				ChartReleaseID:    123,
 				ExactChartVersion: "1.2.3",
 				ExactAppVersion:   "4.5.6",
+				HelmfileRef:       "a1b2c3d4",
+			}},
+			wantErr: false,
+		},
+		{
+			name: "valid with no app version",
+			args: args{chartDeployRecord: ChartDeployRecord{
+				ChartReleaseID:    123,
+				ExactChartVersion: "1.2.3",
 				HelmfileRef:       "a1b2c3d4",
 			}},
 			wantErr: false,

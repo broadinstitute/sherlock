@@ -104,6 +104,15 @@ func (suite *chartDeployRecordControllerSuite) TestChartDeployRecordCreate() {
 			assert.Equal(suite.T(), datarepoDev1ChartDeployRecord.ExactAppVersion, secondChartDeployRecord.ExactAppVersion)
 			assert.True(suite.T(), secondChartDeployRecord.ID > 0)
 		})
+		suite.Run("will pull defaults from chart release", func() {
+			thirdChartDeployRecord, err := suite.ChartDeployRecordController.Create(CreatableChartDeployRecord{
+				ChartRelease: datarepoDevChartRelease.Name,
+			}, auth.GenerateUser(suite.T(), false))
+			assert.NoError(suite.T(), err)
+			assert.Equal(suite.T(), *datarepoDevChartRelease.CurrentChartVersionExact, thirdChartDeployRecord.ExactChartVersion)
+			assert.Equal(suite.T(), *datarepoDevChartRelease.CurrentAppVersionExact, thirdChartDeployRecord.ExactAppVersion)
+			assert.Equal(suite.T(), "HEAD", thirdChartDeployRecord.HelmfileRef)
+		})
 	})
 	suite.Run("validates incoming entries", func() {
 		db.Truncate(suite.T(), suite.db)
