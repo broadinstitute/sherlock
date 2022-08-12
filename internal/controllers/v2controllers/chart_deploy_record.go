@@ -125,11 +125,11 @@ func postCreateChartDeployRecord(chartDeployRecord ChartDeployRecord, stores *v2
 		} else if len(deploysOfThisAppVersion) > 1 {
 			log.Debug().Msgf("skipping recording lead-time metric: this ChartDeployRecord is a re-deploy, app version previously deployed at %s", deploysOfThisAppVersion[1].CreatedAt.Format(time.RFC1123))
 		} else {
-			chart, err := stores.ChartStore.Get(chartDeployRecord.ChartReleaseInfo.Chart)
+			chartRelease, err := stores.ChartReleaseStore.Get(chartDeployRecord.ChartRelease)
 			if err != nil {
-				log.Error().Msgf("error recording lead-time metric: couldn't get Chart of ChartDeployRecord: %v", err)
+				log.Error().Msgf("error recording lead-time metric: couldn't get ChartRelease of ChartDeployRecord: %v", err)
 			}
-			appVersionQuery := v2models.AppVersion{AppVersion: chartDeployRecord.ExactAppVersion, ChartID: chart.ID}
+			appVersionQuery := v2models.AppVersion{AppVersion: chartDeployRecord.ExactAppVersion, ChartID: chartRelease.ChartID}
 			matchingAppVersions, err := stores.AppVersionStore.ListAllMatching(
 				appVersionQuery, 1)
 			if err != nil {
