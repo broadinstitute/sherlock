@@ -1,6 +1,11 @@
 consumes:
 - application/json
 definitions:
+  auth.ExtraPermissions:
+    properties:
+      suitable:
+        type: boolean
+    type: object
   auth.FirecloudAccount:
     properties:
       acceptedGoogleTerms:
@@ -29,6 +34,8 @@ definitions:
     properties:
       authenticatedEmail:
         type: string
+      matchedExtraPermissions:
+        $ref: '#/definitions/auth.ExtraPermissions'
       matchedFirecloudAccount:
         $ref: '#/definitions/auth.FirecloudAccount'
     type: object
@@ -116,13 +123,16 @@ definitions:
       createdAt:
         type: string
       exactAppVersion:
-        description: Required when creating
+        description: When creating, will default to the value currently held by the
+          chart release
         type: string
       exactChartVersion:
-        description: Required when creating
+        description: When creating, will default to the value currently held by the
+          chart release
         type: string
       helmfileRef:
-        description: Required when creating
+        description: When creating, will default to the value currently held by the
+          chart release
         type: string
       id:
         type: integer
@@ -284,13 +294,16 @@ definitions:
         description: Required when creating
         type: string
       exactAppVersion:
-        description: Required when creating
+        description: When creating, will default to the value currently held by the
+          chart release
         type: string
       exactChartVersion:
-        description: Required when creating
+        description: When creating, will default to the value currently held by the
+          chart release
         type: string
       helmfileRef:
-        description: Required when creating
+        description: When creating, will default to the value currently held by the
+          chart release
         type: string
     type: object
   v2controllers.CreatableChartRelease:
@@ -391,6 +404,11 @@ definitions:
       base:
         description: Required when creating
         type: string
+      chartReleasesFromTemplate:
+        default: true
+        description: Upon creation of a dynamic environment, if this is true the template's
+          chart releases will be copied to the new environment
+        type: boolean
       defaultCluster:
         type: string
       defaultNamespace:
@@ -489,6 +507,11 @@ definitions:
       base:
         description: Required when creating
         type: string
+      chartReleasesFromTemplate:
+        default: true
+        description: Upon creation of a dynamic environment, if this is true the template's
+          chart releases will be copied to the new environment
+        type: boolean
       createdAt:
         type: string
       defaultCluster:
@@ -703,15 +726,18 @@ paths:
       - in: query
         name: createdAt
         type: string
-      - description: Required when creating
+      - description: When creating, will default to the value currently held by the
+          chart release
         in: query
         name: exactAppVersion
         type: string
-      - description: Required when creating
+      - description: When creating, will default to the value currently held by the
+          chart release
         in: query
         name: exactChartVersion
         type: string
-      - description: Required when creating
+      - description: When creating, will default to the value currently held by the
+          chart release
         in: query
         name: helmfileRef
         type: string
@@ -1841,6 +1867,12 @@ paths:
         in: query
         name: base
         type: string
+      - default: true
+        description: Upon creation of a dynamic environment, if this is true the template's
+          chart releases will be copied to the new environment
+        in: query
+        name: chartReleasesFromTemplate
+        type: boolean
       - in: query
         name: createdAt
         type: string
@@ -1922,8 +1954,9 @@ paths:
     post:
       consumes:
       - application/json
-      description: Create a new Environment entry. Note that some fields are immutable
-        after creation; /edit lists mutable fields.
+      description: |-
+        Create a new Environment entry. Note that some fields are immutable after creation; /edit lists mutable fields.
+        Creating a dynamic environment based on a template will also copy ChartReleases from the template.
       parameters:
       - description: The Environment to create
         in: body

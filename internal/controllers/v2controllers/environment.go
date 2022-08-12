@@ -22,10 +22,11 @@ type Environment struct {
 }
 
 type CreatableEnvironment struct {
-	Base                string `json:"base" form:"base"` // Required when creating
-	Lifecycle           string `json:"lifecycle" form:"lifecycle" default:"dynamic"`
-	Name                string `json:"name" form:"name"`                               // When creating, will be calculated if dynamic, required otherwise
-	TemplateEnvironment string `json:"templateEnvironment" form:"templateEnvironment"` // Required for dynamic environments
+	Base                      string `json:"base" form:"base"`                                                          // Required when creating
+	ChartReleasesFromTemplate *bool  `json:"chartReleasesFromTemplate" form:"chartReleasesFromTemplate" default:"true"` // Upon creation of a dynamic environment, if this is true the template's chart releases will be copied to the new environment
+	Lifecycle                 string `json:"lifecycle" form:"lifecycle" default:"dynamic"`
+	Name                      string `json:"name" form:"name"`                               // When creating, will be calculated if dynamic, required otherwise
+	TemplateEnvironment       string `json:"templateEnvironment" form:"templateEnvironment"` // Required for dynamic environments
 	EditableEnvironment
 }
 
@@ -81,10 +82,11 @@ func modelEnvironmentToEnvironment(model v2models.Environment) *Environment {
 		DefaultClusterInfo:      defaultCluster,
 		ValuesName:              model.ValuesName,
 		CreatableEnvironment: CreatableEnvironment{
-			Base:                model.Base,
-			Lifecycle:           model.Lifecycle,
-			Name:                model.Name,
-			TemplateEnvironment: templateEnvironmentName,
+			Base:                      model.Base,
+			ChartReleasesFromTemplate: model.ChartReleasesFromTemplate,
+			Lifecycle:                 model.Lifecycle,
+			Name:                      model.Name,
+			TemplateEnvironment:       templateEnvironmentName,
 			EditableEnvironment: EditableEnvironment{
 				DefaultCluster:      &defaultClusterName,
 				DefaultNamespace:    model.DefaultNamespace,
@@ -118,15 +120,16 @@ func environmentToModelEnvironment(environment Environment, stores *v2models.Sto
 			CreatedAt: environment.CreatedAt,
 			UpdatedAt: environment.UpdatedAt,
 		},
-		Base:                  environment.Base,
-		Lifecycle:             environment.Lifecycle,
-		Name:                  environment.Name,
-		TemplateEnvironmentID: templateEnvironmentID,
-		ValuesName:            environment.ValuesName,
-		DefaultClusterID:      defaultClusterID,
-		DefaultNamespace:      environment.DefaultNamespace,
-		Owner:                 environment.Owner,
-		RequiresSuitability:   environment.RequiresSuitability,
+		Base:                      environment.Base,
+		ChartReleasesFromTemplate: environment.ChartReleasesFromTemplate,
+		Lifecycle:                 environment.Lifecycle,
+		Name:                      environment.Name,
+		TemplateEnvironmentID:     templateEnvironmentID,
+		ValuesName:                environment.ValuesName,
+		DefaultClusterID:          defaultClusterID,
+		DefaultNamespace:          environment.DefaultNamespace,
+		Owner:                     environment.Owner,
+		RequiresSuitability:       environment.RequiresSuitability,
 	}, nil
 }
 

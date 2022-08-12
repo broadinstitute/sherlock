@@ -290,19 +290,19 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "Required when creating",
+                        "description": "When creating, will default to the value currently held by the chart release",
                         "name": "exactAppVersion",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "Required when creating",
+                        "description": "When creating, will default to the value currently held by the chart release",
                         "name": "exactChartVersion",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "Required when creating",
+                        "description": "When creating, will default to the value currently held by the chart release",
                         "name": "helmfileRef",
                         "in": "query"
                     },
@@ -1977,6 +1977,13 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "boolean",
+                        "default": true,
+                        "description": "Upon creation of a dynamic environment, if this is true the template's chart releases will be copied to the new environment",
+                        "name": "chartReleasesFromTemplate",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "name": "createdAt",
                         "in": "query"
@@ -2092,7 +2099,7 @@ const docTemplate = `{
                 }
             },
             "post": {
-                "description": "Create a new Environment entry. Note that some fields are immutable after creation; /edit lists mutable fields.",
+                "description": "Create a new Environment entry. Note that some fields are immutable after creation; /edit lists mutable fields.\nCreating a dynamic environment based on a template will also copy ChartReleases from the template.",
                 "consumes": [
                     "application/json"
                 ],
@@ -2913,6 +2920,14 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "auth.ExtraPermissions": {
+            "type": "object",
+            "properties": {
+                "suitable": {
+                    "type": "boolean"
+                }
+            }
+        },
         "auth.FirecloudAccount": {
             "type": "object",
             "properties": {
@@ -2955,6 +2970,9 @@ const docTemplate = `{
             "properties": {
                 "authenticatedEmail": {
                     "type": "string"
+                },
+                "matchedExtraPermissions": {
+                    "$ref": "#/definitions/auth.ExtraPermissions"
                 },
                 "matchedFirecloudAccount": {
                     "$ref": "#/definitions/auth.FirecloudAccount"
@@ -3087,15 +3105,15 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "exactAppVersion": {
-                    "description": "Required when creating",
+                    "description": "When creating, will default to the value currently held by the chart release",
                     "type": "string"
                 },
                 "exactChartVersion": {
-                    "description": "Required when creating",
+                    "description": "When creating, will default to the value currently held by the chart release",
                     "type": "string"
                 },
                 "helmfileRef": {
-                    "description": "Required when creating",
+                    "description": "When creating, will default to the value currently held by the chart release",
                     "type": "string"
                 },
                 "id": {
@@ -3317,15 +3335,15 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "exactAppVersion": {
-                    "description": "Required when creating",
+                    "description": "When creating, will default to the value currently held by the chart release",
                     "type": "string"
                 },
                 "exactChartVersion": {
-                    "description": "Required when creating",
+                    "description": "When creating, will default to the value currently held by the chart release",
                     "type": "string"
                 },
                 "helmfileRef": {
-                    "description": "Required when creating",
+                    "description": "When creating, will default to the value currently held by the chart release",
                     "type": "string"
                 }
             }
@@ -3458,6 +3476,11 @@ const docTemplate = `{
                 "base": {
                     "description": "Required when creating",
                     "type": "string"
+                },
+                "chartReleasesFromTemplate": {
+                    "description": "Upon creation of a dynamic environment, if this is true the template's chart releases will be copied to the new environment",
+                    "type": "boolean",
+                    "default": true
                 },
                 "defaultCluster": {
                     "type": "string"
@@ -3593,6 +3616,11 @@ const docTemplate = `{
                 "base": {
                     "description": "Required when creating",
                     "type": "string"
+                },
+                "chartReleasesFromTemplate": {
+                    "description": "Upon creation of a dynamic environment, if this is true the template's chart releases will be copied to the new environment",
+                    "type": "boolean",
+                    "default": true
                 },
                 "createdAt": {
                     "type": "string"

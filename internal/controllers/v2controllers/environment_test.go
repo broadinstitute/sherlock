@@ -199,6 +199,38 @@ func (suite *environmentControllerSuite) TestEnvironmentCreate() {
 		assert.True(suite.T(), *env2.RequiresSuitability)
 		assert.False(suite.T(), *env1.RequiresSuitability)
 	})
+	suite.Run("copies template chart releases", func() {
+		db.Truncate(suite.T(), suite.db)
+		suite.seedClusters(suite.T())
+		suite.seedEnvironments(suite.T())
+		suite.seedCharts(suite.T())
+		suite.seedChartReleases(suite.T())
+
+		swatReleases, err := suite.ChartReleaseController.ListAllMatching(
+			ChartRelease{CreatableChartRelease: CreatableChartRelease{Environment: swatomationEnvironment.Name}}, 0)
+		assert.NoError(suite.T(), err)
+		assert.True(suite.T(), len(swatReleases) > 0)
+
+		environment, err := suite.EnvironmentController.Create(CreatableEnvironment{TemplateEnvironment: swatomationEnvironment.Name}, auth.GenerateUser(suite.T(), false))
+		assert.NoError(suite.T(), err)
+
+		environmentReleases, err := suite.ChartReleaseController.ListAllMatching(
+			ChartRelease{CreatableChartRelease: CreatableChartRelease{Environment: environment.Name}}, 0)
+		assert.NoError(suite.T(), err)
+
+		for _, swatRelease := range swatReleases {
+			found := false
+			for _, envRelease := range environmentReleases {
+				if swatRelease.Chart == envRelease.Chart {
+					found = true
+					// The template gets this field set based on the Chart's app main branch, dynamic should copy
+					assert.Equal(suite.T(), swatRelease.TargetAppVersionBranch, envRelease.TargetAppVersionBranch)
+					assert.True(suite.T(), envRelease.ID > 0)
+				}
+			}
+			assert.True(suite.T(), found)
+		}
+	})
 }
 
 func (suite *environmentControllerSuite) TestEnvironmentListAllMatching() {

@@ -34,25 +34,26 @@ create index if not exists idx_v2_clusters_deleted_at
 
 create table if not exists v2_environments
 (
-    id                      bigint default nextval('v2_environments_id_seq'::regclass) not null
+    id                           bigint default nextval('v2_environments_id_seq'::regclass) not null
         primary key,
-    created_at              timestamp with time zone,
-    updated_at              timestamp with time zone,
-    deleted_at              timestamp with time zone,
-    base                    text,
-    lifecycle               text                                                       not null,
-    name                    text                                                       not null
+    created_at                   timestamp with time zone,
+    updated_at                   timestamp with time zone,
+    deleted_at                   timestamp with time zone,
+    base                         text,
+    chart_releases_from_template boolean,
+    lifecycle                    text                                                       not null,
+    name                         text                                                       not null
         unique,
-    template_environment_id bigint
+    template_environment_id      bigint
         constraint fk_v2_environments_template_environment
             references v2_environments,
-    values_name             text,
-    default_cluster_id      bigint
+    values_name                  text,
+    default_cluster_id           bigint
         constraint fk_v2_environments_default_cluster
             references v2_clusters,
-    default_namespace       text,
-    owner                   text                                                       not null,
-    requires_suitability    boolean
+    default_namespace            text,
+    owner                        text                                                       not null,
+    requires_suitability         boolean
 );
 
 create index if not exists idx_v2_environments_deleted_at

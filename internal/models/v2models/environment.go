@@ -2,6 +2,7 @@ package v2models
 
 import (
 	"fmt"
+	"github.com/broadinstitute/sherlock/internal/auth"
 	"github.com/broadinstitute/sherlock/internal/errors"
 	"gorm.io/gorm"
 	"strconv"
@@ -9,12 +10,13 @@ import (
 
 type Environment struct {
 	gorm.Model
-	Base                  string
-	Lifecycle             string `gorm:"not null; default:null"`
-	Name                  string `gorm:"not null; default:null; unique"`
-	TemplateEnvironment   *Environment
-	TemplateEnvironmentID *uint
-	ValuesName            string
+	Base                      string
+	Lifecycle                 string `gorm:"not null; default:null"`
+	Name                      string `gorm:"not null; default:null; unique"`
+	TemplateEnvironment       *Environment
+	TemplateEnvironmentID     *uint
+	ValuesName                string
+	ChartReleasesFromTemplate *bool
 	// Mutable
 	DefaultCluster      *Cluster
 	DefaultClusterID    *uint
@@ -34,6 +36,7 @@ func newEnvironmentStore(db *gorm.DB) *Store[Environment] {
 		modelToSelectors:         environmentToSelectors,
 		modelRequiresSuitability: environmentRequiresSuitability,
 		validateModel:            validateEnvironment,
+		postCreate:               postCreateEnvironment,
 	}
 }
 
@@ -109,6 +112,46 @@ func validateEnvironment(environment Environment) error {
 		}
 	default:
 		return fmt.Errorf("a %T must have a lifecycle of either 'template', 'static', or 'dynamic'", environment)
+	}
+	return nil
+}
+
+func postCreateEnvironment(db *gorm.DB, environment Environment, user *auth.User) error {
+	if environment.Lifecycle == "dynamic" &&
+		environment.ChartReleasesFromTemplate != nil &&
+		*environment.ChartReleasesFromTemplate &&
+		environment.TemplateEnvironmentID != nil {
+		storeSet := NewStoreSet(db)
+		// This is a dynamic environment that is getting created right now, let's copy the chart releases from the template too
+		chartReleases, err := storeSet.ChartReleaseStore.ListAllMatching(
+			ChartRelease{EnvironmentID: environment.TemplateEnvironmentID}, 0)
+		if err != nil {
+			return fmt.Errorf("wasn't able to list chart releases of template %s: %v", environment.TemplateEnvironment.Name, err)
+		}
+		for _, chartRelease := range chartReleases {
+			_, err := storeSet.ChartReleaseStore.Create(
+				ChartRelease{
+					ChartID:                  chartRelease.ChartID,
+					ClusterID:                environment.DefaultClusterID,
+					DestinationType:          "environment",
+					EnvironmentID:            &environment.ID,
+					Name:                     fmt.Sprintf("%s-%s", chartRelease.Chart.Name, environment.Name),
+					Namespace:                *environment.DefaultNamespace,
+					CurrentAppVersionExact:   chartRelease.CurrentAppVersionExact,
+					CurrentChartVersionExact: chartRelease.CurrentChartVersionExact,
+					HelmfileRef:              chartRelease.HelmfileRef,
+					TargetAppVersionBranch:   chartRelease.TargetAppVersionBranch,
+					TargetAppVersionCommit:   chartRelease.TargetAppVersionCommit,
+					TargetAppVersionExact:    chartRelease.TargetAppVersionExact,
+					TargetAppVersionUse:      chartRelease.TargetAppVersionUse,
+					TargetChartVersionExact:  chartRelease.TargetChartVersionExact,
+					TargetChartVersionUse:    chartRelease.TargetChartVersionUse,
+					ThelmaMode:               chartRelease.ThelmaMode,
+				}, user)
+			if err != nil {
+				return fmt.Errorf("wasn't able to copy template's release of the %s chart: %v", chartRelease.Chart.Name, err)
+			}
+		}
 	}
 	return nil
 }

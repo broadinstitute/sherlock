@@ -15,6 +15,8 @@ type Model interface {
 }
 
 type Store[M Model] struct {
+	// Required:
+
 	db *gorm.DB
 	// selectorToQueryModel is meant to turn an arbitrary selector (possibly user-provided) into a database query.
 	// The function is given a reference to the current stores so it can resolve indirect selectors, like those of
@@ -28,6 +30,9 @@ type Store[M Model] struct {
 	// its input. This is exposed to users so they can get aliases for a given selector for an existing model entry,
 	// but it is also used by Create to do a uniqueness check across all selectors for a given input.
 	modelToSelectors func(model M) []string
+
+	// Optional:
+
 	// modelRequiresSuitability lets a particular type flag that the given model (which will always come from the
 	// database) requires suitability for any mutations. If no function is provided, the model type is assumed
 	// to have no suitability restrictions. To support hopping from association to association and to fail-safe,
@@ -40,6 +45,11 @@ type Store[M Model] struct {
 	// design, as setting foreign keys is done by the controller and a non-zero value will be a valid one. This function
 	// should only worry about the presence of a foreign key, if an association is required.
 	validateModel func(model M) error
+	// postCreate lets a type run perform additional actions once the model has been created but before the database
+	// transaction finishes. Errors returned by this function will roll back the entire transaction.
+	// It is acceptable for this function to build a StoreSet using the provided db, so long as the StoreSet isn't
+	// persisted in any way--the db given may actually be a transaction reference.
+	postCreate func(db *gorm.DB, model M, user *auth.User) error
 }
 
 func (s Store[M]) Create(model M, user *auth.User) (M, error) {
@@ -77,9 +87,19 @@ func (s Store[M]) Create(model M, user *auth.User) (M, error) {
 		if err != nil {
 			return fmt.Errorf("(%s) unexpected creation error: mid-transaction validation on %T failed: %v", errors.InternalServerError, model, err)
 		}
+		// Use s.db instead of tx here because tx is dirty and user-modified. Determination of suitability should
+		// never be recursive, so this is safer.
+		// (Why do we check suitability here rather than before adding at all? Adding and then querying lets us load
+		// associations, and while suitability isn't recursive, it can be associative. Ex: a chart release's suitability
+		// is defined in terms of the environment and cluster's suitability)
 		if s.modelRequiresSuitability != nil && s.modelRequiresSuitability(s.db, result) {
 			if err = user.SuitableOrError(); err != nil {
-				return fmt.Errorf("create error: (%s) suitability is required to create this %T: %v", errors.Forbidden, model, err)
+				return fmt.Errorf("creation error: (%s) suitability is required to create this %T: %v", errors.Forbidden, model, err)
+			}
+		}
+		if s.postCreate != nil {
+			if err = s.postCreate(tx, result, user); err != nil {
+				return fmt.Errorf("post-create error: the %T itself was valid but an error occured running post-creation actions so creation was rolled back: %v", model, err)
 			}
 		}
 		ret = result

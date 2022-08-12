@@ -17,6 +17,7 @@ func RegisterEnvironmentHandlers(routerGroup *gin.RouterGroup, controller *v2con
 // createEnvironment godoc
 // @summary      Create a new Environment entry
 // @description  Create a new Environment entry. Note that some fields are immutable after creation; /edit lists mutable fields.
+// @description  Creating a dynamic environment based on a template will also copy ChartReleases from the template.
 // @tags         Environments
 // @accept       json
 // @produce      json
