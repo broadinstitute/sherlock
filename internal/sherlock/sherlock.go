@@ -112,27 +112,69 @@ func (a *Application) CancelContexts() {
 // To initialize lead time it looks up the most recent deploy for a given service instance
 // and sets the associated metric to the lead time of that deploy
 func (a *Application) initializeMetrics() error {
-	// retrieve all service instances and initalize the deploy frequency metric for each one
-	serviceInstances, err := a.Deploys.ListServiceInstances()
-	if err != nil {
-		return err
-	}
-
-	// metrics library requires a context
 	ctx := context.Background()
-	for _, serviceInstance := range serviceInstances {
-		metrics.RecordDeployFrequency(ctx, serviceInstance.Environment.Name, serviceInstance.Service.Name)
-		// initialize leadtime by finding most recent deploy, calculating it's lead time and update the metric
-		mostRecentDeploy, err := a.Deploys.GetMostRecentDeploy(serviceInstance.Environment.Name, serviceInstance.Service.Name)
+
+	if config.Config.String("metrics.accelerate.fromAPI") == "v2" {
+		staticEnvironments, err := a.v2controllers.EnvironmentController.ListAllMatching(
+			v2controllers.Environment{CreatableEnvironment: v2controllers.CreatableEnvironment{Lifecycle: "static"}}, 0)
 		if err != nil {
 			return err
 		}
-		metrics.RecordLeadTime(
-			ctx,
-			mostRecentDeploy.CalculateLeadTimeHours(),
-			serviceInstance.Environment.Name,
-			serviceInstance.Service.Name,
-		)
+		for _, staticEnvironment := range staticEnvironments {
+			chartReleases, err := a.v2controllers.ChartReleaseController.ListAllMatching(
+				v2controllers.ChartRelease{CreatableChartRelease: v2controllers.CreatableChartRelease{Environment: staticEnvironment.Name}}, 0)
+			if err != nil {
+				return err
+			}
+			for _, chartRelease := range chartReleases {
+				metrics.RecordDeployFrequency(ctx, chartRelease.Environment, chartRelease.Chart)
+
+				mostRecentDeploy, err := a.v2controllers.ChartDeployRecordController.ListAllMatching(
+					v2controllers.ChartDeployRecord{CreatableChartDeployRecord: v2controllers.CreatableChartDeployRecord{ChartRelease: chartRelease.Name}}, 1)
+				if err != nil {
+					return err
+				} else if len(mostRecentDeploy) == 0 {
+					break
+				}
+
+				mostRecentMatchingAppVersion, err := a.v2controllers.AppVersionController.ListAllMatching(
+					v2controllers.AppVersion{CreatableAppVersion: v2controllers.CreatableAppVersion{Chart: chartRelease.Chart, AppVersion: mostRecentDeploy[0].ExactAppVersion}}, 1)
+				if err != nil {
+					return err
+				} else if len(mostRecentMatchingAppVersion) == 0 {
+					break
+				}
+
+				metrics.RecordLeadTime(
+					ctx,
+					mostRecentDeploy[0].CreatedAt.Sub(mostRecentMatchingAppVersion[0].CreatedAt).Hours(),
+					chartRelease.Environment,
+					chartRelease.Chart)
+			}
+		}
+		return nil
+	} else {
+		// retrieve all service instances and initalize the deploy frequency metric for each one
+		serviceInstances, err := a.Deploys.ListServiceInstances()
+		if err != nil {
+			return err
+		}
+
+		// metrics library requires a context
+		for _, serviceInstance := range serviceInstances {
+			metrics.RecordDeployFrequency(ctx, serviceInstance.Environment.Name, serviceInstance.Service.Name)
+			// initialize leadtime by finding most recent deploy, calculating it's lead time and update the metric
+			mostRecentDeploy, err := a.Deploys.GetMostRecentDeploy(serviceInstance.Environment.Name, serviceInstance.Service.Name)
+			if err != nil {
+				return err
+			}
+			metrics.RecordLeadTime(
+				ctx,
+				mostRecentDeploy.CalculateLeadTimeHours(),
+				serviceInstance.Environment.Name,
+				serviceInstance.Service.Name,
+			)
+		}
+		return nil
 	}
-	return nil
 }

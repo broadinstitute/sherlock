@@ -26,6 +26,10 @@ db:
   autoMigrateV1: false
   autoMigrateV2: false
 
+metrics:
+  accelerate:
+    fromAPI: v1
+
 auth:
   updateIntervalMinutes: 15
   broadinstitute:

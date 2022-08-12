@@ -1,9 +1,14 @@
 package v2controllers
 
 import (
+	"context"
 	"github.com/broadinstitute/sherlock/internal/auth"
+	"github.com/broadinstitute/sherlock/internal/config"
+	"github.com/broadinstitute/sherlock/internal/metrics"
 	"github.com/broadinstitute/sherlock/internal/models/v2models"
+	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
+	"time"
 )
 
 type ChartDeployRecord struct {
@@ -41,6 +46,7 @@ func newChartDeployRecordController(stores *v2models.StoreSet) *ChartDeployRecor
 		modelToReadable:    modelChartDeployRecordToChartDeployRecord,
 		readableToModel:    chartDeployRecordToModelChartDeployRecord,
 		setDynamicDefaults: setChartDeployRecordDynamicDefaults,
+		postCreate:         postCreateChartDeployRecord,
 	}
 }
 
@@ -100,4 +106,42 @@ func setChartDeployRecordDynamicDefaults(chartDeployRecord *ChartDeployRecord, s
 		chartDeployRecord.HelmfileRef = *chartRelease.HelmfileRef
 	}
 	return nil
+}
+
+func postCreateChartDeployRecord(chartDeployRecord ChartDeployRecord, stores *v2models.StoreSet, _ *auth.User) {
+	if config.Config.String("metrics.accelerate.fromAPI") == "v2" && chartDeployRecord.ExactAppVersion != "" {
+		ctx := context.Background()
+		metrics.RecordDeployFrequency(ctx,
+			chartDeployRecord.ChartReleaseInfo.Environment,
+			chartDeployRecord.ChartReleaseInfo.Chart)
+
+		chartDeployRecordQuery := v2models.ChartDeployRecord{ExactAppVersion: chartDeployRecord.ExactAppVersion, ChartReleaseID: chartDeployRecord.ChartReleaseInfo.ID}
+		deploysOfThisAppVersion, err := stores.ChartDeployRecordStore.ListAllMatching(
+			chartDeployRecordQuery, 2)
+		if err != nil {
+			log.Error().Msgf("error recording lead-time metric: couldn't determine if this is a re-deploy: %v", err)
+		} else if len(deploysOfThisAppVersion) == 0 {
+			log.Warn().Msgf("skipping recording lead-time metric: this ChartDeployRecord %v was not returned in query %v", chartDeployRecord, chartDeployRecordQuery)
+		} else if len(deploysOfThisAppVersion) > 1 {
+			log.Debug().Msgf("skipping recording lead-time metric: this ChartDeployRecord is a re-deploy, app version previously deployed at %s", deploysOfThisAppVersion[1].CreatedAt.Format(time.RFC1123))
+		} else {
+			chart, err := stores.ChartStore.Get(chartDeployRecord.ChartReleaseInfo.Chart)
+			if err != nil {
+				log.Error().Msgf("error recording lead-time metric: couldn't get Chart of ChartDeployRecord: %v", err)
+			}
+			appVersionQuery := v2models.AppVersion{AppVersion: chartDeployRecord.ExactAppVersion, ChartID: chart.ID}
+			matchingAppVersions, err := stores.AppVersionStore.ListAllMatching(
+				appVersionQuery, 1)
+			if err != nil {
+				log.Error().Msgf("error recording lead-time metric: couldn't query matching app versions: %v", err)
+			} else if len(matchingAppVersions) == 0 {
+				log.Debug().Msgf("skipping recording lead-time metric: no matching app versions returned by query %v", appVersionQuery)
+			} else {
+				metrics.RecordLeadTime(ctx,
+					chartDeployRecord.CreatedAt.Sub(matchingAppVersions[0].CreatedAt).Hours(),
+					chartDeployRecord.ChartReleaseInfo.Environment,
+					chartDeployRecord.ChartReleaseInfo.Chart)
+			}
+		}
+	}
 }

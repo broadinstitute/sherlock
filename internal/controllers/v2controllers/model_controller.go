@@ -83,6 +83,11 @@ type ModelController[M v2models.Model, R Readable, C Creatable[R], E Editable[R,
 	// creasty/defaults. It shouldn't worry about handling those `default` struct tags--it can be provided to allow a
 	// type to set defaults before creation that are dynamic based on other existing data or the calling user.
 	setDynamicDefaults func(readable *R, stores *v2models.StoreSet, user *auth.User) error
+
+	// postCreate is an optional function that will run only after a successful creation. It may not return errors,
+	// since the creation itself has already succeeded. The readable is copied by value; it shouldn't be edited since
+	// edits wouldn't be reflected in the database.
+	postCreate func(created R, stores *v2models.StoreSet, user *auth.User)
 }
 
 func (c ModelController[M, R, C, E]) Create(creatable C, user *auth.User) (R, error) {
@@ -102,7 +107,12 @@ func (c ModelController[M, R, C, E]) Create(creatable C, user *auth.User) (R, er
 		return readable, err
 	}
 	result, err := c.primaryStore.Create(model, user)
-	return *c.modelToReadable(result), err
+	toReturn := *c.modelToReadable(result)
+	// If there's not been an error and we have a postCreate function, run it
+	if err == nil && c.postCreate != nil {
+		c.postCreate(toReturn, c.allStores, user)
+	}
+	return toReturn, err
 }
 
 func (c ModelController[M, R, C, E]) ListAllMatching(filter R, limit int) ([]R, error) {
