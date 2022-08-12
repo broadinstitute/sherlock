@@ -4,10 +4,11 @@ package v1controllers
 
 import (
 	"errors"
+	"github.com/broadinstitute/sherlock/internal/config"
+	"github.com/broadinstitute/sherlock/internal/db"
 	"github.com/broadinstitute/sherlock/internal/models/v1models"
 	"testing"
 
-	"github.com/broadinstitute/sherlock/internal/testutils"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
@@ -25,10 +26,10 @@ type ClusterTestSuite struct {
 }
 
 // Test entry point
-func TestIntegrationClustersSuite(t *testing.T) {
-	// skip integration tests if go test is invoked with -short flag
+func TestFunctionalClustersSuite(t *testing.T) {
+	// skip functional tests if go test is invoked with -short flag
 	if testing.Short() {
-		t.Skip("skipping integration test")
+		t.Skip("skipping functional test")
 	}
 	suite.Run(t, new(ClusterTestSuite))
 }
@@ -58,7 +59,8 @@ func (suite *ClusterTestSuite) TearDownTest() {
 
 // connect to DB and create the Application
 func initTestClusterApp(t *testing.T) *TestApplication {
-	dbConn := testutils.ConnectAndMigrate(t)
+	config.LoadTestConfig(t)
+	dbConn := db.ConnectAndConfigureFromTest(t)
 
 	// ensures each test will run in it's own isolated transaction
 	// The transaction will be rolled back after each test
@@ -76,9 +78,9 @@ func initTestClusterApp(t *testing.T) *TestApplication {
 // The Actual Tests
 //
 
-func (suite *ClusterTestSuite) TestIntegrationCreateClusters() {
+func (suite *ClusterTestSuite) TestFunctionalCreateClusters() {
 	suite.Run("creates a valid cluster", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.DB)
+		db.Truncate(suite.T(), suite.testApp.DB)
 
 		newCluster, err := suite.testApp.Clusters.CreateNew(suite.goodClusterRequest)
 		assert.NoError(suite.T(), err)
@@ -88,7 +90,7 @@ func (suite *ClusterTestSuite) TestIntegrationCreateClusters() {
 	})
 
 	suite.Run("fails to create a cluster with no name", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.DB)
+		db.Truncate(suite.T(), suite.testApp.DB)
 
 		expectedError := errors.New("error saving to database: ERROR: null value in column \"name\" of relation \"clusters\" violates not-null constraint (SQLSTATE 23502)")
 		namelessClusterRequest := suite.goodClusterRequest
@@ -101,7 +103,7 @@ func (suite *ClusterTestSuite) TestIntegrationCreateClusters() {
 	})
 
 	suite.Run("fails to create a cluster with duplicate name", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.DB)
+		db.Truncate(suite.T(), suite.testApp.DB)
 
 		expectedError := errors.New("error saving to database: ERROR: duplicate key value violates unique constraint \"clusters_name_key\" (SQLSTATE 23505)")
 
@@ -114,9 +116,9 @@ func (suite *ClusterTestSuite) TestIntegrationCreateClusters() {
 	})
 }
 
-func (suite *ClusterTestSuite) TestIntegrationClusterGetByName() {
+func (suite *ClusterTestSuite) TestFunctionalClusterGetByName() {
 	suite.Run("GetByName gets an cluster by name", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.DB)
+		db.Truncate(suite.T(), suite.testApp.DB)
 
 		_, err := suite.testApp.Clusters.CreateNew(suite.goodClusterRequest)
 		assert.NoError(suite.T(), err)
@@ -129,7 +131,7 @@ func (suite *ClusterTestSuite) TestIntegrationClusterGetByName() {
 	})
 
 	suite.Run("GetByName returns error if not found", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.DB)
+		db.Truncate(suite.T(), suite.testApp.DB)
 
 		_, err := suite.testApp.Clusters.CreateNew(suite.goodClusterRequest)
 		assert.NoError(suite.T(), err)
@@ -141,9 +143,9 @@ func (suite *ClusterTestSuite) TestIntegrationClusterGetByName() {
 	})
 }
 
-func (suite *ClusterTestSuite) TestIntegrationClusterGetByID() {
+func (suite *ClusterTestSuite) TestFunctionalClusterGetByID() {
 	suite.Run("GetByID gets an allocationPool by ID", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.DB)
+		db.Truncate(suite.T(), suite.testApp.DB)
 
 		newCluster, err := suite.testApp.Clusters.CreateNew(suite.goodClusterRequest)
 		assert.NoError(suite.T(), err)
@@ -156,7 +158,7 @@ func (suite *ClusterTestSuite) TestIntegrationClusterGetByID() {
 	})
 
 	suite.Run("GetByName returns error if not found", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.DB)
+		db.Truncate(suite.T(), suite.testApp.DB)
 
 		_, err := suite.testApp.Clusters.CreateNew(suite.goodClusterRequest)
 		assert.NoError(suite.T(), err)
@@ -168,9 +170,9 @@ func (suite *ClusterTestSuite) TestIntegrationClusterGetByID() {
 	})
 }
 
-func (suite *ClusterTestSuite) TestIntegrationClusterListAll() {
+func (suite *ClusterTestSuite) TestFunctionalClusterListAll() {
 	suite.Run("ListAll returns nothing", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.DB)
+		db.Truncate(suite.T(), suite.testApp.DB)
 
 		foundClusters, err := suite.testApp.Clusters.ListAll()
 
@@ -179,7 +181,7 @@ func (suite *ClusterTestSuite) TestIntegrationClusterListAll() {
 	})
 
 	suite.Run("ListAll returns one Cluster", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.DB)
+		db.Truncate(suite.T(), suite.testApp.DB)
 
 		_, err := suite.testApp.Clusters.CreateNew(suite.goodClusterRequest)
 		assert.NoError(suite.T(), err)
@@ -192,7 +194,7 @@ func (suite *ClusterTestSuite) TestIntegrationClusterListAll() {
 	})
 
 	suite.Run("ListAll returns many Clusters", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.DB)
+		db.Truncate(suite.T(), suite.testApp.DB)
 
 		_, err := suite.testApp.Clusters.CreateNew(suite.goodClusterRequest)
 		assert.NoError(suite.T(), err)
@@ -206,9 +208,9 @@ func (suite *ClusterTestSuite) TestIntegrationClusterListAll() {
 	})
 }
 
-func (suite *ClusterTestSuite) TestIntegrationClusterDoesClusterExist() {
+func (suite *ClusterTestSuite) TestFunctionalClusterDoesClusterExist() {
 	suite.Run("ClusterDoesExist returns true when exists", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.DB)
+		db.Truncate(suite.T(), suite.testApp.DB)
 
 		newCluster, _ := suite.testApp.Clusters.CreateNew(suite.goodClusterRequest)
 
@@ -219,7 +221,7 @@ func (suite *ClusterTestSuite) TestIntegrationClusterDoesClusterExist() {
 	})
 
 	suite.Run("ClusterDoesExist returns false when not exists", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.DB)
+		db.Truncate(suite.T(), suite.testApp.DB)
 
 		_, err := suite.testApp.Clusters.CreateNew(suite.goodClusterRequest)
 		assert.NoError(suite.T(), err)

@@ -1,15 +1,11 @@
 package main
 
 import (
-	"github.com/broadinstitute/sherlock/internal/version"
-	"net/http"
-	"os"
-
-	"log"
-
 	"github.com/broadinstitute/sherlock/internal/db"
 	"github.com/broadinstitute/sherlock/internal/sherlock"
-	"github.com/golang-migrate/migrate/v4"
+	"github.com/broadinstitute/sherlock/internal/version"
+	"github.com/fvbock/endless"
+	"github.com/rs/zerolog/log"
 )
 
 // BuildVersion is intended for use with Go's LDFlags compiler option, to
@@ -17,24 +13,35 @@ import (
 var BuildVersion string = "development"
 
 func main() {
-	version.BuildVersion = BuildVersion
-
-	if err := db.ApplyMigrations("db/migrations", sherlock.Config); err != nil {
-		// don't fail if there are no changes to apply
-		if err == migrate.ErrNoChange {
-			log.Println("no migration to apply, continuing...")
-		} else {
-			log.Println(err)
-			os.Exit(1)
-		}
+	sqlDB, err := db.Connect()
+	if err != nil {
+		log.Fatal().Msgf("%v", err)
 	}
 
-	app := sherlock.New()
+	// Spin up the liveness check once we've got a good database connection
+	log.Info().Msg("starting liveness endpoint on :8081")
+	go func() { _ = endless.ListenAndServe(":8081", livenessHandler{}) }()
+
+	gormDB, err := db.Configure(sqlDB)
+	if err != nil {
+		log.Fatal().Msgf("%v", err)
+	}
+
+	app := sherlock.New(gormDB)
+	if app == nil {
+		log.Fatal().Msg("failed to create an application instance")
+		return
+	}
+
 	defer app.ShutdownStackdriver()
+	defer app.CancelContexts()
 
-	log.Println("starting sherlock server")
+	log.Info().Msg("starting sherlock server on :8080")
+	if err := endless.ListenAndServe(":8080", app); err != nil {
+		log.Warn().Msgf("%v", err)
+	}
+}
 
-	log.Println("Listening on port 8080")
-	log.Fatal(http.ListenAndServe(":8080", app))
-
+func init() {
+	version.BuildVersion = BuildVersion
 }

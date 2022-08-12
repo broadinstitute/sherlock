@@ -4,7 +4,9 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/broadinstitute/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/internal/controllers/v1controllers"
+	"github.com/broadinstitute/sherlock/internal/db"
 	"github.com/broadinstitute/sherlock/internal/serializers/v1serializers"
 	"github.com/stretchr/testify/suite"
 	"net/http"
@@ -15,7 +17,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// DeployHandlersTestSuite is a re-packaged copy of deploys_test.go's v1controllers.DeployIntegrationTestSuite,
+// DeployHandlersTestSuite is a re-packaged copy of deploys_test.go's v1controllers.DeployFunctionalTestSuite,
 // which cannot have tests added to it in this package because of Go's same-package restriction on method receivers.
 type DeployHandlersTestSuite struct {
 	suite.Suite
@@ -23,7 +25,8 @@ type DeployHandlersTestSuite struct {
 }
 
 func initTestDeployController(t *testing.T) *v1controllers.TestApplication {
-	dbConn := testutils.ConnectAndMigrate(t)
+	config.LoadTestConfig(t)
+	dbConn := db.ConnectAndConfigureFromTest(t)
 	// ensures each test will run in it's own isolated transaction
 	// The transaction will be rolled back after each test
 	// regardless of pass or fail
@@ -36,7 +39,7 @@ func initTestDeployController(t *testing.T) *v1controllers.TestApplication {
 
 func TestDeployHandlerSuite(t *testing.T) {
 	if testing.Short() {
-		t.Skip("skipping integration test")
+		t.Skip("skipping functional test")
 	}
 	suite.Run(t, new(DeployHandlersTestSuite))
 }

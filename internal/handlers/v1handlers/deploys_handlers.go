@@ -2,6 +2,7 @@ package v1handlers
 
 import (
 	"errors"
+	"github.com/broadinstitute/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/internal/controllers/v1controllers"
 	"github.com/broadinstitute/sherlock/internal/models/v1models"
 	"github.com/broadinstitute/sherlock/internal/serializers/v1serializers"
@@ -91,11 +92,13 @@ func createDeploy(dc *v1controllers.DeployController) func(c *gin.Context) {
 			return
 		}
 
-		metrics.RecordDeployFrequency(c, environment, service)
-		// calculate lead time
-		if shouldUpdateLeadTime {
-			leadTime := deploy.CalculateLeadTimeHours()
-			metrics.RecordLeadTime(c, leadTime, environment, service)
+		if config.Config.String("metrics.accelerate.fromAPI") != "v2" {
+			metrics.RecordDeployFrequency(c, environment, service)
+			// calculate lead time
+			if shouldUpdateLeadTime {
+				leadTime := deploy.CalculateLeadTimeHours()
+				metrics.RecordLeadTime(c, leadTime, environment, service)
+			}
 		}
 
 		c.JSON(http.StatusCreated, v1serializers.DeploysResponse{Deploys: dc.Serialize(deploy)})

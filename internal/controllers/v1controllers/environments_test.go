@@ -4,11 +4,11 @@ package v1controllers
 
 import (
 	"errors"
+	"github.com/broadinstitute/sherlock/internal/db"
 	"github.com/broadinstitute/sherlock/internal/models/v1models"
 	"github.com/broadinstitute/sherlock/internal/serializers/v1serializers"
 	"testing"
 
-	"github.com/broadinstitute/sherlock/internal/testutils"
 	"github.com/bxcodec/faker/v3"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
@@ -27,10 +27,10 @@ type EnvironmentTestSuite struct {
 }
 
 // Test entry point
-func TestIntegrationEnvironmentsSuite(t *testing.T) {
-	// skip integration tests if go test is invoked with -short flag
+func TestFunctionalEnvironmentsSuite(t *testing.T) {
+	// skip functional tests if go test is invoked with -short flag
 	if testing.Short() {
-		t.Skip("skipping integration test")
+		t.Skip("skipping functional test")
 	}
 	suite.Run(t, new(EnvironmentTestSuite))
 }
@@ -60,7 +60,7 @@ func (suite *EnvironmentTestSuite) TearDownTest() {
 
 // connect to DB and create the Application
 func initEnvironmentsTestApp(t *testing.T) *TestApplication {
-	dbConn := testutils.ConnectAndMigrate(t)
+	dbConn := db.ConnectAndConfigureFromTest(t)
 	// ensures each test will run in it's own isolated transaction
 	// The transaction will be rolled back after each test
 	// regardless of pass or fail
@@ -75,7 +75,7 @@ func initEnvironmentsTestApp(t *testing.T) *TestApplication {
 // The Actual Tests
 //
 
-func (suite *EnvironmentTestSuite) TestIntegrationCreateEnvironments() {
+func (suite *EnvironmentTestSuite) TestFunctionalCreateEnvironments() {
 	testCases := []struct {
 		name                string
 		requests            []v1models.CreateEnvironmentRequest
@@ -158,7 +158,7 @@ func (suite *EnvironmentTestSuite) TestIntegrationCreateEnvironments() {
 	}
 }
 
-func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentGetByName() {
+func (suite *EnvironmentTestSuite) TestFunctionalEnvironmentGetByName() {
 	suite.Run("GetByName gets an environment by name", func() {
 
 		_, err := suite.testApp.Environments.CreateNew(suite.goodEnvironmentRequest)
@@ -186,9 +186,9 @@ func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentGetByName() {
 	})
 }
 
-func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentGetByID() {
+func (suite *EnvironmentTestSuite) TestFunctionalEnvironmentGetByID() {
 	suite.Run("GetByID gets an environment by name", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.DB)
+		db.Truncate(suite.T(), suite.testApp.DB)
 
 		newEnvironment, err := suite.testApp.Environments.CreateNew(suite.goodEnvironmentRequest)
 		assert.NoError(suite.T(), err)
@@ -201,7 +201,7 @@ func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentGetByID() {
 	})
 
 	suite.Run("GetByID returns error if not found", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.DB)
+		db.Truncate(suite.T(), suite.testApp.DB)
 
 		_, err := suite.testApp.Environments.CreateNew(suite.goodEnvironmentRequest)
 		assert.NoError(suite.T(), err)
@@ -213,9 +213,9 @@ func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentGetByID() {
 	})
 }
 
-func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentListAll() {
+func (suite *EnvironmentTestSuite) TestFunctionalEnvironmentListAll() {
 	suite.Run("ListAll returns nothing", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.DB)
+		db.Truncate(suite.T(), suite.testApp.DB)
 
 		foundEnvironments, err := suite.testApp.Environments.ListAll()
 
@@ -224,7 +224,7 @@ func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentListAll() {
 	})
 
 	suite.Run("ListAll returns one Environment", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.DB)
+		db.Truncate(suite.T(), suite.testApp.DB)
 
 		_, err := suite.testApp.Environments.CreateNew(suite.goodEnvironmentRequest)
 		assert.NoError(suite.T(), err)
@@ -237,7 +237,7 @@ func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentListAll() {
 	})
 
 	suite.Run("ListAll returns many Environments", func() {
-		testutils.Cleanup(suite.T(), suite.testApp.DB)
+		db.Truncate(suite.T(), suite.testApp.DB)
 
 		var randomEnvRequest v1models.CreateEnvironmentRequest
 		err := faker.FakeData(&randomEnvRequest)
@@ -257,7 +257,7 @@ func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentListAll() {
 	})
 }
 
-func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentDoesEnvironmentExist() {
+func (suite *EnvironmentTestSuite) TestFunctionalEnvironmentDoesEnvironmentExist() {
 	suite.Run("EnvironmentDoesExist returns true when exists", func() {
 
 		newEnvironment, _ := suite.testApp.Environments.CreateNew(suite.goodEnvironmentRequest)
@@ -282,7 +282,7 @@ func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentDoesEnvironmentExis
 
 // Note: Since serialize is it's own file and rather big, we're limiting tests here
 // to expecting the correct response types.
-func (suite *EnvironmentTestSuite) TestIntegrationEnvironmentSerialize() {
+func (suite *EnvironmentTestSuite) TestFunctionalEnvironmentSerialize() {
 	suite.Run("Serialize returns JSON one environment", func() {
 
 		newEnvironment, _ := suite.testApp.Environments.CreateNew(suite.goodEnvironmentRequest)

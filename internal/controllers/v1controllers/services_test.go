@@ -1,32 +1,33 @@
 package v1controllers
 
 import (
+	"github.com/broadinstitute/sherlock/internal/config"
+	"github.com/broadinstitute/sherlock/internal/db"
 	"github.com/broadinstitute/sherlock/internal/models/v1models"
 	"testing"
 
-	"github.com/broadinstitute/sherlock/internal/testutils"
 	"github.com/bxcodec/faker/v3"
 	"github.com/stretchr/testify/suite"
 )
 
-type ServicesIntegrationTestSuite struct {
+type ServicesFunctionalTestSuite struct {
 	suite.Suite
 	app *TestApplication
 }
 
-func (suite *ServicesIntegrationTestSuite) SetupTest() {
+func (suite *ServicesFunctionalTestSuite) SetupTest() {
 	suite.app = initServicesTestApp(suite.T())
 }
 
-func (suite *ServicesIntegrationTestSuite) TearDownTest() {
+func (suite *ServicesFunctionalTestSuite) TearDownTest() {
 	// each test runs in its own isolated transaction
 	// this ensures we cleanup after each test as it completes
 	suite.app.DB.Rollback()
 }
 
-func (suite *ServicesIntegrationTestSuite) TestCreateService() {
+func (suite *ServicesFunctionalTestSuite) TestCreateService() {
 	suite.Run("Creates a service from valid request", func() {
-		testutils.Cleanup(suite.T(), suite.app.DB)
+		db.Truncate(suite.T(), suite.app.DB)
 
 		newService := v1models.CreateServiceRequest{}
 
@@ -45,7 +46,7 @@ func (suite *ServicesIntegrationTestSuite) TestCreateService() {
 	})
 
 	suite.Run("Fails to create service when missing required fields", func() {
-		testutils.Cleanup(suite.T(), suite.app.DB)
+		db.Truncate(suite.T(), suite.app.DB)
 		testCases := []v1models.CreateServiceRequest{
 			{},
 			{
@@ -60,7 +61,7 @@ func (suite *ServicesIntegrationTestSuite) TestCreateService() {
 	})
 
 	suite.Run("Fails to create service with empty name", func() {
-		testutils.Cleanup(suite.T(), suite.app.DB)
+		db.Truncate(suite.T(), suite.app.DB)
 
 		newServiceRequest := v1models.CreateServiceRequest{
 			Name:    "",
@@ -73,10 +74,10 @@ func (suite *ServicesIntegrationTestSuite) TestCreateService() {
 	})
 }
 
-func (suite *ServicesIntegrationTestSuite) TestListServices() {
+func (suite *ServicesFunctionalTestSuite) TestListServices() {
 	// make some create service requests and populated them with fake data
 	suite.Run("ListAll returns nothing", func() {
-		testutils.Cleanup(suite.T(), suite.app.DB)
+		db.Truncate(suite.T(), suite.app.DB)
 
 		services, err := suite.app.Services.ListAll()
 
@@ -85,7 +86,7 @@ func (suite *ServicesIntegrationTestSuite) TestListServices() {
 	})
 
 	suite.Run("ListAll returns one service", func() {
-		testutils.Cleanup(suite.T(), suite.app.DB)
+		db.Truncate(suite.T(), suite.app.DB)
 
 		newService := v1models.CreateServiceRequest{
 			Name:    faker.Name(),
@@ -103,7 +104,7 @@ func (suite *ServicesIntegrationTestSuite) TestListServices() {
 	})
 
 	suite.Run("ListAll returns multiple services", func() {
-		testutils.Cleanup(suite.T(), suite.app.DB)
+		db.Truncate(suite.T(), suite.app.DB)
 
 		services, err := suite.app.Services.ListAll()
 		suite.Require().NoError(err)
@@ -128,9 +129,9 @@ func (suite *ServicesIntegrationTestSuite) TestListServices() {
 	})
 }
 
-func (suite *ServicesIntegrationTestSuite) TestGetByName() {
+func (suite *ServicesFunctionalTestSuite) TestGetByName() {
 	suite.Run("retrieves an existing service", func() {
-		testutils.Cleanup(suite.T(), suite.app.DB)
+		db.Truncate(suite.T(), suite.app.DB)
 
 		newService := v1models.CreateServiceRequest{
 			Name:    faker.Name(),
@@ -151,7 +152,7 @@ func (suite *ServicesIntegrationTestSuite) TestGetByName() {
 	})
 
 	suite.Run("errors on non-existent service", func() {
-		testutils.Cleanup(suite.T(), suite.app.DB)
+		db.Truncate(suite.T(), suite.app.DB)
 
 		_, err := suite.app.Services.GetByName("tester")
 		suite.Assert().ErrorIs(err, v1models.ErrServiceNotFound)
@@ -161,9 +162,9 @@ func (suite *ServicesIntegrationTestSuite) TestGetByName() {
 	})
 }
 
-func (suite *ServicesIntegrationTestSuite) TestFindOrCreate() {
+func (suite *ServicesFunctionalTestSuite) TestFindOrCreate() {
 	suite.Run("retrieves an existing service", func() {
-		testutils.Cleanup(suite.T(), suite.app.DB)
+		db.Truncate(suite.T(), suite.app.DB)
 
 		newService := v1models.CreateServiceRequest{}
 
@@ -180,7 +181,7 @@ func (suite *ServicesIntegrationTestSuite) TestFindOrCreate() {
 	})
 
 	suite.Run("creates service if not exists", func() {
-		testutils.Cleanup(suite.T(), suite.app.DB)
+		db.Truncate(suite.T(), suite.app.DB)
 
 		newServiceID, err := suite.app.Services.FindOrCreate(faker.UUIDHyphenated())
 		suite.Assert().NoError(err)
@@ -189,16 +190,17 @@ func (suite *ServicesIntegrationTestSuite) TestFindOrCreate() {
 	})
 }
 
-func TestServicesIntegrationSuite(t *testing.T) {
+func TestServicesFunctionalSuite(t *testing.T) {
 	if testing.Short() {
-		t.Skip("skipping integration test")
+		t.Skip("skipping functional test")
 	}
-	suite.Run(t, new(ServicesIntegrationTestSuite))
+	suite.Run(t, new(ServicesFunctionalTestSuite))
 
 }
 
 func initServicesTestApp(t *testing.T) *TestApplication {
-	dbConn := testutils.ConnectAndMigrate(t)
+	config.LoadTestConfig(t)
+	dbConn := db.ConnectAndConfigureFromTest(t)
 	// ensures each test will run in its own isolated transaction
 	// The transaction will be rolled back after each test
 	// regardless of pass or fail

@@ -1,25 +1,64 @@
 package sherlock
 
 import (
+	"github.com/broadinstitute/sherlock/docs"
+	"github.com/broadinstitute/sherlock/internal/auth"
+	"github.com/broadinstitute/sherlock/internal/config"
+	"github.com/broadinstitute/sherlock/internal/handlers/misc"
 	"github.com/broadinstitute/sherlock/internal/handlers/v1handlers"
+	"github.com/broadinstitute/sherlock/internal/handlers/v2handlers"
 	"github.com/broadinstitute/sherlock/internal/metrics"
 	"github.com/broadinstitute/sherlock/internal/version"
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+	"net/http"
 )
 
-// helper function to take an existing sherlock application instance
-// then build and attach a gin router to it.
-// this decouples building the router from instanting a sherlock Application
-// which makes testing easier
+// @title        Sherlock
+// @description  The Data Science Platform's source-of-truth service
+// @version      development
+// @schemes      https
+// @accept       json
+// @produce      json
+
+// @contact.name   DSP DevOps
+// @contact.email  dsp-devops@broadinstitute.org
+
+// @license.name  BSD-3-Clause
+// @license.url   https://github.com/broadinstitute/sherlock/blob/main/LICENSE.txt
+
+// buildRouter attaches a Gin router with API, Swagger, and other endpoints to
+// an existing Application instance. This exists outside of Application itself
+// so that Application instances can be more easily tested without the complexity
+// of running a full server.
 func (a *Application) buildRouter() {
-	router := gin.Default()
+	authMiddleware := auth.IapUserMiddleware
 
-	// register basic non-API handlers just on /*
-	router.Handle("GET", "/version", func(c *gin.Context) {
-		c.String(200, "%s", version.BuildVersion)
-	})
+	docs.SwaggerInfo.Version = version.BuildVersion
+	if config.Config.MustString("mode") == "debug" {
+		// if a dev build, allow http on Swagger page for localhost usage
+		docs.SwaggerInfo.Schemes = []string{"http", "https"}
+		authMiddleware = auth.FakeUserMiddleware
+		gin.SetMode(gin.DebugMode)
+	} else {
+		gin.SetMode(gin.ReleaseMode)
+	}
 
-	// register handlers for both /* and /api/v1/*
+	router := gin.New()
+	router.Use(gin.Recovery())
+	router.Use(logger())
+
+	// swagger
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	router.GET("", func(c *gin.Context) { c.Redirect(http.StatusMovedPermanently, "/swagger/index.html") })
+
+	// register generic handlers just on /*
+	router.GET("/version", misc.VersionHandler)
+	router.GET("/my-user", authMiddleware(), misc.MyUserHandler)
+	router.GET("/status", misc.StatusHandler)
+
+	// register v1 API handlers on both /* and /api/v1/*
 	v1api := router.Group("api/v1")
 	for _, group := range []*gin.RouterGroup{&router.RouterGroup, v1api} {
 		// /services routes
@@ -42,5 +81,17 @@ func (a *Application) buildRouter() {
 		metricsGroup := group.Group("/metrics")
 		metrics.RegisterPrometheusMetricsHandler(metricsGroup)
 	}
+
+	// register v2 API handlers on /api/v2/*
+	v2api := router.Group("api/v2")
+	v2api.Use(authMiddleware())
+	v2handlers.RegisterClusterHandlers(v2api, a.v2controllers.ClusterController)
+	v2handlers.RegisterEnvironmentHandlers(v2api, a.v2controllers.EnvironmentController)
+	v2handlers.RegisterChartHandlers(v2api, a.v2controllers.ChartController)
+	v2handlers.RegisterChartVersionHandlers(v2api, a.v2controllers.ChartVersionController)
+	v2handlers.RegisterAppVersionHandlers(v2api, a.v2controllers.AppVersionController)
+	v2handlers.RegisterChartReleaseHandlers(v2api, a.v2controllers.ChartReleaseController)
+	v2handlers.RegisterChartDeployRecordHandlers(v2api, a.v2controllers.ChartDeployRecordController)
+
 	a.Handler = router
 }

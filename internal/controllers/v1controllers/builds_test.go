@@ -1,29 +1,30 @@
 package v1controllers
 
 import (
+	"github.com/broadinstitute/sherlock/internal/config"
+	"github.com/broadinstitute/sherlock/internal/db"
 	"github.com/broadinstitute/sherlock/internal/models/v1models"
 	"testing"
 	"time"
 
-	"github.com/broadinstitute/sherlock/internal/testutils"
 	"github.com/bxcodec/faker/v3"
 	"github.com/stretchr/testify/suite"
 )
 
-type BuildsIntegrationTestSuite struct {
+type BuildsFunctionalTestSuite struct {
 	suite.Suite
 	app                    *TestApplication
 	goodCreateBuildRequest CreateBuildRequest
 }
 
-func TestBuildsIntegrationSuite(t *testing.T) {
+func TestBuildsFunctionalSuite(t *testing.T) {
 	if testing.Short() {
-		t.Skip("skipping integration test")
+		t.Skip("skipping functional test")
 	}
-	suite.Run(t, new(BuildsIntegrationTestSuite))
+	suite.Run(t, new(BuildsFunctionalTestSuite))
 }
 
-func (suite *BuildsIntegrationTestSuite) SetupTest() {
+func (suite *BuildsFunctionalTestSuite) SetupTest() {
 	suite.goodCreateBuildRequest = CreateBuildRequest{
 		VersionString: faker.URL(),
 		CommitSha:     faker.UUIDDigit(),
@@ -35,13 +36,13 @@ func (suite *BuildsIntegrationTestSuite) SetupTest() {
 	suite.app = initTestBuildApp(suite.T())
 }
 
-func (suite *BuildsIntegrationTestSuite) TearDownTest() {
+func (suite *BuildsFunctionalTestSuite) TearDownTest() {
 	// each test runs in its own isolated transaction
 	// this ensures we cleanup after each test as it completes
 	suite.app.DB.Rollback()
 }
 
-func (suite *BuildsIntegrationTestSuite) TestCreateBuild() {
+func (suite *BuildsFunctionalTestSuite) TestCreateBuild() {
 	suite.Run("creates a new build", func() {
 
 		newBuild := suite.goodCreateBuildRequest
@@ -53,7 +54,7 @@ func (suite *BuildsIntegrationTestSuite) TestCreateBuild() {
 	})
 }
 
-func (suite *BuildsIntegrationTestSuite) TestCreateBuildEmptyRequest() {
+func (suite *BuildsFunctionalTestSuite) TestCreateBuildEmptyRequest() {
 	newBuild := CreateBuildRequest{}
 
 	_, err := suite.app.Builds.CreateNew(newBuild)
@@ -61,7 +62,7 @@ func (suite *BuildsIntegrationTestSuite) TestCreateBuildEmptyRequest() {
 	suite.Assert().ErrorIs(err, v1models.ErrBadCreateRequest)
 }
 
-func (suite *BuildsIntegrationTestSuite) TestCreateNonUniqueVersion() {
+func (suite *BuildsFunctionalTestSuite) TestCreateNonUniqueVersion() {
 	// create a valid build
 	_, err := suite.app.Builds.CreateNew(suite.goodCreateBuildRequest)
 	suite.Require().NoError(err)
@@ -70,7 +71,7 @@ func (suite *BuildsIntegrationTestSuite) TestCreateNonUniqueVersion() {
 	suite.Assert().ErrorIs(err, v1models.ErrDuplicateVersionString)
 }
 
-func (suite *BuildsIntegrationTestSuite) TestGetByID() {
+func (suite *BuildsFunctionalTestSuite) TestGetByID() {
 	suite.Run("fails with non-existent id", func() {
 
 		_, err := suite.app.Builds.GetByID(23)
@@ -92,7 +93,7 @@ func (suite *BuildsIntegrationTestSuite) TestGetByID() {
 	})
 }
 
-func (suite *BuildsIntegrationTestSuite) TestGetByVersionString() {
+func (suite *BuildsFunctionalTestSuite) TestGetByVersionString() {
 	suite.Run("successful looks up existing build by version string", func() {
 
 		// create a build instance to look up
@@ -114,7 +115,8 @@ func (suite *BuildsIntegrationTestSuite) TestGetByVersionString() {
 }
 
 func initTestBuildApp(t *testing.T) *TestApplication {
-	dbConn := testutils.ConnectAndMigrate(t)
+	config.LoadTestConfig(t)
+	dbConn := db.ConnectAndConfigureFromTest(t)
 	// ensures each test will run in it's own isolated transaction
 	// The transaction will be rolled back after each test
 	// regardless of pass or fail

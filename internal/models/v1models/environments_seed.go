@@ -5,7 +5,7 @@ import (
 )
 
 // SeedEnvironments takes a gorm DB connection and will seed a db
-// with some fake environment data for use in integration testing
+// with some fake environment data for use in functional testing
 func SeedEnvironments(db *gorm.DB) ([]Environment, error) {
 	seededEnvironments := []Environment{
 		{
