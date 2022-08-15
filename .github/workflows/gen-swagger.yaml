@@ -1,28 +1,27 @@
 name: generate-swagger-spec
 on:
-  push:
-    branches:
-      - main
-    paths-ignore:
-    - 'README.md'
-    - '.github/**'
-    - 'docs/**'
   pull_request:
     branches:
       - main
     paths-ignore:
       - 'README.md'
       - 'docs/**'
+    types:
+      - closed
+concurrency: commits-to-mainline
+
 jobs:
   gen-swagger:
     name: generate-swagger-spec
     runs-on: ubuntu-latest
     steps:
       - name: Checkout current code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           token: ${{ secrets.BROADBOT_TOKEN }}
           fetch-depth: 0
+          ref: main
+
       - name: Set up Go
         uses: actions/setup-go@v3
         with:
@@ -42,12 +41,8 @@ jobs:
           git add docs/
           git commit --allow-empty --message "[gen-swagger] update swagger spec"
           git status
-      # This is just for testing, delete before merging
-      - name: Extract branch name
-        shell: bash
-        id: extract-branch
-        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
-      - name: push with retry
-        uses: ./.github/actions/push-with-retry
-        with:
-          branch: DDO-2264
+      # Disabled for testing
+      # - name: push with retry
+      #   uses: ./.github/actions/push-with-retry
+      #   with:
+      #     branch: DDO-2264
