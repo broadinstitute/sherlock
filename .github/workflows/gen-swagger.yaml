@@ -40,4 +40,4 @@ jobs:
       - name: push with retry
         uses: ./.github/actions/push-with-retry
         with:
-          branch: ${{ .steps.extract-branch.outputs.branch}}
+          branch: ${{ steps.extract-branch.outputs.branch}}
