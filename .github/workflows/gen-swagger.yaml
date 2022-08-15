@@ -31,7 +31,7 @@ jobs:
         shell: bash
         run: |
           git config --global user.name 'broadbot'
-          git config --global user.email 'dsp-devops@broadinstitute.org'
+          git config --global user.email 'broadbot@broadinstitute.org'
       - name: Add and commit swagger spec
         shell: bash
         run: |
