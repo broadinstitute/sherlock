@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout current code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
         with:
           token: ${{ secrets.BROADBOT_TOKEN }}
       - name: Set up Go
@@ -36,6 +36,7 @@ jobs:
           git config --global user.name 'broadbot'
           git config --global user.email 'dsp-devops@broadinstitute.org'
       - name: Add and commit swagger spec
+        shell: bash
         run: |
           git add docs/ && \
           git commit --allow-empty --message "[gen-swagger] update swagger spec"
