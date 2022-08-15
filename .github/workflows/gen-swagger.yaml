@@ -1,0 +1,43 @@
+name: generate-swagger-spec
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+    - 'README.md'
+    - '.github/**'
+    - 'docs/**'
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+      - 'README.md'
+      - 'docs/**'
+jobs:
+  gen-swagger:
+    name: generate-swagger-spec
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout current code
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.BROADBOT_TOKEN }}
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version-file: 'go.mod'
+      - name: Install swaggo
+        run: go install github.com/swaggo/swag/cmd/swag@latest
+      - name: Generate swagger spec
+        run: make generate-swagger
+      - name: Add and commit swagger spec
+        run: git add docs/ && git commit --allow-empty --message "[gen-swagger] update swagger spec"
+      # This is just for testing, delete before merging
+      - name: Extract branch name
+        shell: bash
+        id: extract-branch
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+      - name: push with retry
+        uses: ./.github/actions/push-with-retry
+        with:
+          branch: ${{ .steps.extract-branch.outputs.branch}}

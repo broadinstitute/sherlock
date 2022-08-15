@@ -1,0 +1,58 @@
+
+name: push-with-retry
+description: |
+  Commits & pushes changes to current branch, with retry.
+inputs:
+  tags:
+    description: Whether to push with --tags
+    default: false
+  branch:
+    description: Branch to push
+    default: main
+  remote:
+    description: Remote to push to
+    default: origin
+  max-tries:
+    description: Number of times to try to push
+    default: 10
+  sleep-seconds:
+    description: How long to sleep between retries
+    default: 5
+
+runs:
+  using: composite
+  steps:
+    - id: git-push-with-retry
+      shell: bash
+      run: |
+        set -exo pipefail
+        WITH_TAGS="${{ inputs.tags }}"
+        MAX_TRIES="${{ inputs.max-tries }}"
+        SLEEP_SECONDS="${{ inputs.sleep-seconds }}"
+        #
+        # Arguments to pass to git push command
+        #
+        BRANCH="${{ inputs.branch }}"
+        REMOTE="${{ inputs.remote }}"
+        PUSH_ARGS=""
+        if [[ "${WITH_TAGS}" == "true" ]]; then
+          PUSH_ARGS="${PUSH_ARGS} --tags"
+        fi
+        #
+        # Attempt to push the commit, pulling with --rebase and retrying if it fails.
+        # (This is to work around "the remote contains work that you do not have locally" push failures)
+        #
+        while [[ $TRIES -lt $MAX_TRIES ]]; do
+          TRIES=$(( $TRIES + 1 ))
+          git pull --rebase
+          if git push --atomic "${REMOTE}" "${BRANCH}" $PUSH_ARGS; then
+            echo "Git push succeeded on attempt ${TRIES}, exiting"
+            exit 0
+          else
+            # Retry with a pull, in case repository was updated in the meantime
+            echo "Git push failed on attempt ${TRIES}, will retry in ${SLEEP_SECONDS} seconds"
+            sleep $SLEEP_SECONDS
+          fi
+        done
+        echo "Push failed after ${MAX_TRIES} tries" >&2
+        exit 1
