@@ -15,18 +15,18 @@ import (
 	"net/http"
 )
 
-// @title        Sherlock
-// @description  The Data Science Platform's source-of-truth service
-// @version      development
-// @schemes      https
-// @accept       json
-// @produce      json
+// @title       Sherlock
+// @description The Data Science Platform's source-of-truth service
+// @version     development
+// @schemes     https
+// @accept      json
+// @produce     json
 
-// @contact.name   DSP DevOps
-// @contact.email  dsp-devops@broadinstitute.org
+// @contact.name  DSP DevOps
+// @contact.email dsp-devops@broadinstitute.org
 
-// @license.name  BSD-3-Clause
-// @license.url   https://github.com/broadinstitute/sherlock/blob/main/LICENSE.txt
+// @license.name BSD-3-Clause
+// @license.url  https://github.com/broadinstitute/sherlock/blob/main/LICENSE.txt
 
 // buildRouter attaches a Gin router with API, Swagger, and other endpoints to
 // an existing Application instance. This exists outside of Application itself
