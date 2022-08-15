@@ -3,9 +3,6 @@ on:
   pull_request:
     branches:
       - main
-    paths-ignore:
-      - 'README.md'
-      - 'docs/**'
     types:
       - closed
 concurrency: commits-to-mainline
@@ -38,11 +35,7 @@ jobs:
       - name: Add and commit swagger spec
         shell: bash
         run: |
-          git add docs/
+          git add .
           git commit --allow-empty --message "[gen-swagger] update swagger spec"
-          git status
-      # Disabled for testing
-      # - name: push with retry
-      #   uses: ./.github/actions/push-with-retry
-      #   with:
-      #     branch: DDO-2264
+      - name: Push to main with retry
+        uses: ./.github/actions/push-with-retry
