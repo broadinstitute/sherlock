@@ -39,7 +39,8 @@ jobs:
         shell: bash
         run: |
           git add docs/ && \
-          git commit --allow-empty --message "[gen-swagger] update swagger spec"
+          git commit --allow-empty --message "[gen-swagger] update swagger spec" && \
+          git status
       # This is just for testing, delete before merging
       - name: Extract branch name
         shell: bash
