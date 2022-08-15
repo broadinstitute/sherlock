@@ -44,7 +44,7 @@ runs:
         #
         while [[ $TRIES -lt $MAX_TRIES ]]; do
           TRIES=$(( $TRIES + 1 ))
-          git pull --rebase
+          git pull --rebase "${REMOTE}" "${BRANCH}"
           if git push --atomic "${REMOTE}" "${BRANCH}" $PUSH_ARGS; then
             echo "Git push succeeded on attempt ${TRIES}, exiting"
             exit 0
