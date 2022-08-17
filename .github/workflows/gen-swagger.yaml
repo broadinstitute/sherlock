@@ -25,10 +25,18 @@ jobs:
           go-version-file: 'go.mod'
       - name: Install swaggo
         run: go install github.com/swaggo/swag/cmd/swag@latest
+      - name: Install go-swagger
+        shell: bash
+        run: |
+          apt update
+          apt install -y apt-transport-https gnupg curl
+          curl -1sLf 'https://dl.cloudsmith.io/public/go-swagger/go-swagger/gpg.2F8CB673971B5C9E.key' | apt-key add -
+          curl -1sLf 'https://dl.cloudsmith.io/public/go-swagger/go-swagger/config.deb.txt?distro=debian&codename=any-version' > /etc/apt/sources.list.d/go-swagger-go-swagger.list
+          apt update 
+          apt install swagger
       - name: Generate swagger spec
         run: make generate-swagger
       - name: Generate Go Client Lib
-        container: quay.io/go-swaggeer/swagger
         run: |
           swagger generate client -f docs/swagger.json -A sherlock --default-scheme=https -m clients/go/client/models -c clients/go/client
       # - name: Set up Git
