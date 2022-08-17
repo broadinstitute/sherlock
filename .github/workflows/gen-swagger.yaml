@@ -7,6 +7,9 @@ on:
     #   - closed
 # concurrency: commits-to-mainline
 
+env:
+  SWAGGER_CMD: docker run --rm -it  --user $(id -u):$(id -g) -e GOPATH=/go -v $(go env GOPATH):/go -v $HOME:$HOME -w $(pwd) quay.io/goswagger/swagger
+
 jobs:
   gen-swagger:
     name: generate-swagger-spec
@@ -28,8 +31,7 @@ jobs:
       - name: Install go-swagger
         shell: bash
         run: |
-          alias swagger='docker run --rm -it  --user $(id -u):$(id -g) -e GOPATH=/go -v $(go env GOPATH):/go -v $HOME:$HOME -w $(pwd) quay.io/goswagger/swagger'
-          swagger version
+          ${SWAGGER_CMD} version
       - name: Generate swagger spec
         run: make generate-swagger
       - name: Generate Go Client Lib
