@@ -21,7 +21,7 @@ func RegisterChartHandlers(routerGroup *gin.RouterGroup, controller *v2controlle
 // @accept      json
 // @produce     json
 // @param       chart                   body     v2controllers.CreatableChart true "The Chart to create"
-// @success     200                     {object} v2controllers.Chart
+// @success     201                     {object} v2controllers.Chart
 // @failure     400,403,404,407,409,500 {object} errors.ErrorResponse
 // @router      /api/v2/charts [post]
 func createChart(controller *v2controllers.ChartController) func(ctx *gin.Context) {

@@ -1,4 +1,4 @@
-name: generate-swagger-spec
+name: generate-swagger-spec-and-client-libs
 on:
   pull_request:
     branches:
@@ -7,9 +7,12 @@ on:
       - closed
 concurrency: commits-to-mainline
 
+env:
+  GO_SWAGGER_VERSION: v0.29.0
+
 jobs:
   gen-swagger:
-    name: generate-swagger-spec
+    name: generate-swagger-spec-and-client-libs
     runs-on: ubuntu-latest
     steps:
       - name: Checkout current code
@@ -27,6 +30,14 @@ jobs:
         run: go install github.com/swaggo/swag/cmd/swag@latest
       - name: Generate swagger spec
         run: make generate-swagger
+      - name: Generate Go Client Lib
+        # Running this tool via docker because go-swagger's local install procedures are a huge pain to perform from within a github action
+        run: |
+          docker run --rm -e GOPATH=/go \
+            -v $(go env GOPATH):/go \
+            -v $HOME:$HOME -w "$(pwd)" \
+            quay.io/goswagger/swagger:${GO_SWAGGER_VERSION} \
+            generate client -f docs/swagger.json -A sherlock --default-scheme=https -m clients/go/client/models -c clients/go/client
       - name: Set up Git
         shell: bash
         run: |
@@ -36,6 +47,6 @@ jobs:
         shell: bash
         run: |
           git add .
-          git commit --allow-empty --message "[gen-swagger] update swagger spec"
+          git commit --allow-empty --message "[gen-swagger-and-clients] update swagger spec"
       - name: Push to main with retry
         uses: ./.github/actions/push-with-retry
