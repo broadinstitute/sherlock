@@ -8,7 +8,7 @@ on:
 # concurrency: commits-to-mainline
 
 env:
-  SWAGGER_CMD: "docker run --rm -e GOPATH=/go -v $(go env GOPATH):/go -v $HOME:$HOME -w $(pwd) quay.io/goswagger/swagger"
+  GO_SWAGGER_VERSION: v0.29.0
 
 jobs:
   gen-swagger:
@@ -42,7 +42,7 @@ jobs:
           docker run --rm -e GOPATH=/go \
             -v $(go env GOPATH):/go \
             -v $HOME:$HOME -w "$(pwd)" \
-            quay.io/goswagger/swagger \
+            quay.io/goswagger/swagger:${GO_SWAGGER_VERSION} \
             generate client -f docs/swagger.json -A sherlock --default-scheme=https -m clients/go/client/models -c clients/go/client
       # - name: Set up Git
       #   shell: bash
