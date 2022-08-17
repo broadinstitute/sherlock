@@ -19,7 +19,7 @@ func RegisterChartVersionHandlers(routerGroup *gin.RouterGroup, controller *v2co
 // @accept      json
 // @produce     json
 // @param       chart-version           body     v2controllers.CreatableChartVersion true "The ChartVersion to create"
-// @success     200                     {object} v2controllers.ChartVersion
+// @success     201                     {object} v2controllers.ChartVersion
 // @failure     400,403,404,407,409,500 {object} errors.ErrorResponse
 // @router      /api/v2/chart-versions [post]
 func createChartVersion(controller *v2controllers.ChartVersionController) func(ctx *gin.Context) {

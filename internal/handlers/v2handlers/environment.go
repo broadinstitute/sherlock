@@ -22,7 +22,7 @@ func RegisterEnvironmentHandlers(routerGroup *gin.RouterGroup, controller *v2con
 // @accept      json
 // @produce     json
 // @param       environment             body     v2controllers.CreatableEnvironment true "The Environment to create"
-// @success     200                     {object} v2controllers.Environment
+// @success     201                     {object} v2controllers.Environment
 // @failure     400,403,404,407,409,500 {object} errors.ErrorResponse
 // @router      /api/v2/environments [post]
 func createEnvironment(controller *v2controllers.EnvironmentController) func(ctx *gin.Context) {
