@@ -31,7 +31,10 @@ jobs:
       - name: Install go-swagger
         shell: bash
         run: |
-          "${SWAGGER_CMD}" version
+          docker run --rm -e GOPATH=/go \
+            -v$(go env GOPATH):/go \
+            -v $HOME:$HOME -w $(pwd)\ 
+            quay.io/goswagger/swagger version
       - name: Generate swagger spec
         run: make generate-swagger
       - name: Generate Go Client Lib
