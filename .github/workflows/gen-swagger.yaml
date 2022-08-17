@@ -1,10 +1,10 @@
 name: generate-swagger-spec
 on:
   pull_request:
-    branches:
-      - main
-    types:
-      - closed
+    # branches:
+    #   - main
+    # types:
+    #   - closed
 concurrency: commits-to-mainline
 
 jobs:
@@ -27,15 +27,19 @@ jobs:
         run: go install github.com/swaggo/swag/cmd/swag@latest
       - name: Generate swagger spec
         run: make generate-swagger
-      - name: Set up Git
-        shell: bash
+      - name: Generate Go Client Lib
+        container: quay.io/go-swaggeer/swagger
         run: |
-          git config --global user.name 'broadbot'
-          git config --global user.email 'broadbot@broadinstitute.org'
-      - name: Add and commit swagger spec
-        shell: bash
-        run: |
-          git add .
-          git commit --allow-empty --message "[gen-swagger] update swagger spec"
-      - name: Push to main with retry
-        uses: ./.github/actions/push-with-retry
+          swagger generate client -f docs/swagger.json -A sherlock --default-scheme=https -m clients/go/client/models -c clients/go/client
+      # - name: Set up Git
+      #   shell: bash
+      #   run: |
+      #     git config --global user.name 'broadbot'
+      #     git config --global user.email 'broadbot@broadinstitute.org'
+      # - name: Add and commit swagger spec
+      #   shell: bash
+      #   run: |
+      #     git add .
+      #     git commit --allow-empty --message "[gen-swagger] update swagger spec"
+      # - name: Push to main with retry
+      #   uses: ./.github/actions/push-with-retry
