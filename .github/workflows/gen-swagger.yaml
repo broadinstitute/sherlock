@@ -28,12 +28,12 @@ jobs:
       - name: Install go-swagger
         shell: bash
         run: |
-          apt update
-          apt install -y apt-transport-https gnupg curl
+          sudo apt update
+          sudo apt install -y apt-transport-https gnupg curl
           curl -1sLf 'https://dl.cloudsmith.io/public/go-swagger/go-swagger/gpg.2F8CB673971B5C9E.key' | apt-key add -
           curl -1sLf 'https://dl.cloudsmith.io/public/go-swagger/go-swagger/config.deb.txt?distro=debian&codename=any-version' > /etc/apt/sources.list.d/go-swagger-go-swagger.list
-          apt update 
-          apt install swagger
+          sudo apt update 
+          sudo apt install swagger
       - name: Generate swagger spec
         run: make generate-swagger
       - name: Generate Go Client Lib
