@@ -23,8 +23,8 @@ type PostAPIV2ChartReleasesReader struct {
 // ReadResponse reads a server response into the received o.
 func (o *PostAPIV2ChartReleasesReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
 	switch response.Code() {
-	case 200:
-		result := NewPostAPIV2ChartReleasesOK()
+	case 201:
+		result := NewPostAPIV2ChartReleasesCreated()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
@@ -70,27 +70,27 @@ func (o *PostAPIV2ChartReleasesReader) ReadResponse(response runtime.ClientRespo
 	}
 }
 
-// NewPostAPIV2ChartReleasesOK creates a PostAPIV2ChartReleasesOK with default headers values
-func NewPostAPIV2ChartReleasesOK() *PostAPIV2ChartReleasesOK {
-	return &PostAPIV2ChartReleasesOK{}
+// NewPostAPIV2ChartReleasesCreated creates a PostAPIV2ChartReleasesCreated with default headers values
+func NewPostAPIV2ChartReleasesCreated() *PostAPIV2ChartReleasesCreated {
+	return &PostAPIV2ChartReleasesCreated{}
 }
 
-/* PostAPIV2ChartReleasesOK describes a response with status code 200, with default header values.
+/* PostAPIV2ChartReleasesCreated describes a response with status code 201, with default header values.
 
-OK
+Created
 */
-type PostAPIV2ChartReleasesOK struct {
+type PostAPIV2ChartReleasesCreated struct {
 	Payload *models.V2controllersChartRelease
 }
 
-func (o *PostAPIV2ChartReleasesOK) Error() string {
-	return fmt.Sprintf("[POST /api/v2/chart-releases][%d] postApiV2ChartReleasesOK  %+v", 200, o.Payload)
+func (o *PostAPIV2ChartReleasesCreated) Error() string {
+	return fmt.Sprintf("[POST /api/v2/chart-releases][%d] postApiV2ChartReleasesCreated  %+v", 201, o.Payload)
 }
-func (o *PostAPIV2ChartReleasesOK) GetPayload() *models.V2controllersChartRelease {
+func (o *PostAPIV2ChartReleasesCreated) GetPayload() *models.V2controllersChartRelease {
 	return o.Payload
 }
 
-func (o *PostAPIV2ChartReleasesOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *PostAPIV2ChartReleasesCreated) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	o.Payload = new(models.V2controllersChartRelease)
 

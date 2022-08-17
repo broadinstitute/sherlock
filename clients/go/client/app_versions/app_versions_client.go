@@ -36,7 +36,7 @@ type ClientService interface {
 
 	GetAPIV2SelectorsAppVersionsSelector(params *GetAPIV2SelectorsAppVersionsSelectorParams, opts ...ClientOption) (*GetAPIV2SelectorsAppVersionsSelectorOK, error)
 
-	PostAPIV2AppVersions(params *PostAPIV2AppVersionsParams, opts ...ClientOption) (*PostAPIV2AppVersionsOK, error)
+	PostAPIV2AppVersions(params *PostAPIV2AppVersionsParams, opts ...ClientOption) (*PostAPIV2AppVersionsCreated, error)
 
 	SetTransport(transport runtime.ClientTransport)
 }
@@ -166,7 +166,7 @@ func (a *Client) GetAPIV2SelectorsAppVersionsSelector(params *GetAPIV2SelectorsA
 
   Create a new AppVersion entry. Note that fields are immutable after creation.
 */
-func (a *Client) PostAPIV2AppVersions(params *PostAPIV2AppVersionsParams, opts ...ClientOption) (*PostAPIV2AppVersionsOK, error) {
+func (a *Client) PostAPIV2AppVersions(params *PostAPIV2AppVersionsParams, opts ...ClientOption) (*PostAPIV2AppVersionsCreated, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewPostAPIV2AppVersionsParams()
@@ -191,7 +191,7 @@ func (a *Client) PostAPIV2AppVersions(params *PostAPIV2AppVersionsParams, opts .
 	if err != nil {
 		return nil, err
 	}
-	success, ok := result.(*PostAPIV2AppVersionsOK)
+	success, ok := result.(*PostAPIV2AppVersionsCreated)
 	if ok {
 		return success, nil
 	}

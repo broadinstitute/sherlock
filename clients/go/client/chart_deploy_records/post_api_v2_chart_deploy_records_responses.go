@@ -23,8 +23,8 @@ type PostAPIV2ChartDeployRecordsReader struct {
 // ReadResponse reads a server response into the received o.
 func (o *PostAPIV2ChartDeployRecordsReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
 	switch response.Code() {
-	case 200:
-		result := NewPostAPIV2ChartDeployRecordsOK()
+	case 201:
+		result := NewPostAPIV2ChartDeployRecordsCreated()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
@@ -70,27 +70,27 @@ func (o *PostAPIV2ChartDeployRecordsReader) ReadResponse(response runtime.Client
 	}
 }
 
-// NewPostAPIV2ChartDeployRecordsOK creates a PostAPIV2ChartDeployRecordsOK with default headers values
-func NewPostAPIV2ChartDeployRecordsOK() *PostAPIV2ChartDeployRecordsOK {
-	return &PostAPIV2ChartDeployRecordsOK{}
+// NewPostAPIV2ChartDeployRecordsCreated creates a PostAPIV2ChartDeployRecordsCreated with default headers values
+func NewPostAPIV2ChartDeployRecordsCreated() *PostAPIV2ChartDeployRecordsCreated {
+	return &PostAPIV2ChartDeployRecordsCreated{}
 }
 
-/* PostAPIV2ChartDeployRecordsOK describes a response with status code 200, with default header values.
+/* PostAPIV2ChartDeployRecordsCreated describes a response with status code 201, with default header values.
 
-OK
+Created
 */
-type PostAPIV2ChartDeployRecordsOK struct {
+type PostAPIV2ChartDeployRecordsCreated struct {
 	Payload *models.V2controllersChartDeployRecord
 }
 
-func (o *PostAPIV2ChartDeployRecordsOK) Error() string {
-	return fmt.Sprintf("[POST /api/v2/chart-deploy-records][%d] postApiV2ChartDeployRecordsOK  %+v", 200, o.Payload)
+func (o *PostAPIV2ChartDeployRecordsCreated) Error() string {
+	return fmt.Sprintf("[POST /api/v2/chart-deploy-records][%d] postApiV2ChartDeployRecordsCreated  %+v", 201, o.Payload)
 }
-func (o *PostAPIV2ChartDeployRecordsOK) GetPayload() *models.V2controllersChartDeployRecord {
+func (o *PostAPIV2ChartDeployRecordsCreated) GetPayload() *models.V2controllersChartDeployRecord {
 	return o.Payload
 }
 
-func (o *PostAPIV2ChartDeployRecordsOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *PostAPIV2ChartDeployRecordsCreated) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	o.Payload = new(models.V2controllersChartDeployRecord)
 

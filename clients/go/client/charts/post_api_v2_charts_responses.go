@@ -23,8 +23,8 @@ type PostAPIV2ChartsReader struct {
 // ReadResponse reads a server response into the received o.
 func (o *PostAPIV2ChartsReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
 	switch response.Code() {
-	case 200:
-		result := NewPostAPIV2ChartsOK()
+	case 201:
+		result := NewPostAPIV2ChartsCreated()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
@@ -70,27 +70,27 @@ func (o *PostAPIV2ChartsReader) ReadResponse(response runtime.ClientResponse, co
 	}
 }
 
-// NewPostAPIV2ChartsOK creates a PostAPIV2ChartsOK with default headers values
-func NewPostAPIV2ChartsOK() *PostAPIV2ChartsOK {
-	return &PostAPIV2ChartsOK{}
+// NewPostAPIV2ChartsCreated creates a PostAPIV2ChartsCreated with default headers values
+func NewPostAPIV2ChartsCreated() *PostAPIV2ChartsCreated {
+	return &PostAPIV2ChartsCreated{}
 }
 
-/* PostAPIV2ChartsOK describes a response with status code 200, with default header values.
+/* PostAPIV2ChartsCreated describes a response with status code 201, with default header values.
 
-OK
+Created
 */
-type PostAPIV2ChartsOK struct {
+type PostAPIV2ChartsCreated struct {
 	Payload *models.V2controllersChart
 }
 
-func (o *PostAPIV2ChartsOK) Error() string {
-	return fmt.Sprintf("[POST /api/v2/charts][%d] postApiV2ChartsOK  %+v", 200, o.Payload)
+func (o *PostAPIV2ChartsCreated) Error() string {
+	return fmt.Sprintf("[POST /api/v2/charts][%d] postApiV2ChartsCreated  %+v", 201, o.Payload)
 }
-func (o *PostAPIV2ChartsOK) GetPayload() *models.V2controllersChart {
+func (o *PostAPIV2ChartsCreated) GetPayload() *models.V2controllersChart {
 	return o.Payload
 }
 
-func (o *PostAPIV2ChartsOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *PostAPIV2ChartsCreated) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	o.Payload = new(models.V2controllersChart)
 

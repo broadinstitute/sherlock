@@ -40,7 +40,7 @@ type ClientService interface {
 
 	PatchAPIV2EnvironmentsSelector(params *PatchAPIV2EnvironmentsSelectorParams, opts ...ClientOption) (*PatchAPIV2EnvironmentsSelectorOK, error)
 
-	PostAPIV2Environments(params *PostAPIV2EnvironmentsParams, opts ...ClientOption) (*PostAPIV2EnvironmentsOK, error)
+	PostAPIV2Environments(params *PostAPIV2EnvironmentsParams, opts ...ClientOption) (*PostAPIV2EnvironmentsCreated, error)
 
 	SetTransport(transport runtime.ClientTransport)
 }
@@ -251,7 +251,7 @@ func (a *Client) PatchAPIV2EnvironmentsSelector(params *PatchAPIV2EnvironmentsSe
   Create a new Environment entry. Note that some fields are immutable after creation; /edit lists mutable fields.
 Creating a dynamic environment based on a template will also copy ChartReleases from the template.
 */
-func (a *Client) PostAPIV2Environments(params *PostAPIV2EnvironmentsParams, opts ...ClientOption) (*PostAPIV2EnvironmentsOK, error) {
+func (a *Client) PostAPIV2Environments(params *PostAPIV2EnvironmentsParams, opts ...ClientOption) (*PostAPIV2EnvironmentsCreated, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewPostAPIV2EnvironmentsParams()
@@ -276,7 +276,7 @@ func (a *Client) PostAPIV2Environments(params *PostAPIV2EnvironmentsParams, opts
 	if err != nil {
 		return nil, err
 	}
-	success, ok := result.(*PostAPIV2EnvironmentsOK)
+	success, ok := result.(*PostAPIV2EnvironmentsCreated)
 	if ok {
 		return success, nil
 	}

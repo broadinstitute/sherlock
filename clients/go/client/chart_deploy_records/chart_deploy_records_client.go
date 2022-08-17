@@ -36,7 +36,7 @@ type ClientService interface {
 
 	GetAPIV2SelectorsChartDeployRecordsSelector(params *GetAPIV2SelectorsChartDeployRecordsSelectorParams, opts ...ClientOption) (*GetAPIV2SelectorsChartDeployRecordsSelectorOK, error)
 
-	PostAPIV2ChartDeployRecords(params *PostAPIV2ChartDeployRecordsParams, opts ...ClientOption) (*PostAPIV2ChartDeployRecordsOK, error)
+	PostAPIV2ChartDeployRecords(params *PostAPIV2ChartDeployRecordsParams, opts ...ClientOption) (*PostAPIV2ChartDeployRecordsCreated, error)
 
 	SetTransport(transport runtime.ClientTransport)
 }
@@ -166,7 +166,7 @@ func (a *Client) GetAPIV2SelectorsChartDeployRecordsSelector(params *GetAPIV2Sel
 
   Create a new ChartDeployRecord entry. Note that fields are immutable after creation.
 */
-func (a *Client) PostAPIV2ChartDeployRecords(params *PostAPIV2ChartDeployRecordsParams, opts ...ClientOption) (*PostAPIV2ChartDeployRecordsOK, error) {
+func (a *Client) PostAPIV2ChartDeployRecords(params *PostAPIV2ChartDeployRecordsParams, opts ...ClientOption) (*PostAPIV2ChartDeployRecordsCreated, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewPostAPIV2ChartDeployRecordsParams()
@@ -191,7 +191,7 @@ func (a *Client) PostAPIV2ChartDeployRecords(params *PostAPIV2ChartDeployRecords
 	if err != nil {
 		return nil, err
 	}
-	success, ok := result.(*PostAPIV2ChartDeployRecordsOK)
+	success, ok := result.(*PostAPIV2ChartDeployRecordsCreated)
 	if ok {
 		return success, nil
 	}

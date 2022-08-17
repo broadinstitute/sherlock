@@ -40,7 +40,7 @@ type ClientService interface {
 
 	PatchAPIV2ClustersSelector(params *PatchAPIV2ClustersSelectorParams, opts ...ClientOption) (*PatchAPIV2ClustersSelectorOK, error)
 
-	PostAPIV2Clusters(params *PostAPIV2ClustersParams, opts ...ClientOption) (*PostAPIV2ClustersOK, error)
+	PostAPIV2Clusters(params *PostAPIV2ClustersParams, opts ...ClientOption) (*PostAPIV2ClustersCreated, error)
 
 	SetTransport(transport runtime.ClientTransport)
 }
@@ -250,7 +250,7 @@ func (a *Client) PatchAPIV2ClustersSelector(params *PatchAPIV2ClustersSelectorPa
 
   Create a new Cluster entry. Note that some fields are immutable after creation; /edit lists mutable fields.
 */
-func (a *Client) PostAPIV2Clusters(params *PostAPIV2ClustersParams, opts ...ClientOption) (*PostAPIV2ClustersOK, error) {
+func (a *Client) PostAPIV2Clusters(params *PostAPIV2ClustersParams, opts ...ClientOption) (*PostAPIV2ClustersCreated, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewPostAPIV2ClustersParams()
@@ -275,7 +275,7 @@ func (a *Client) PostAPIV2Clusters(params *PostAPIV2ClustersParams, opts ...Clie
 	if err != nil {
 		return nil, err
 	}
-	success, ok := result.(*PostAPIV2ClustersOK)
+	success, ok := result.(*PostAPIV2ClustersCreated)
 	if ok {
 		return success, nil
 	}

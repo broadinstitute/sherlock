@@ -40,7 +40,7 @@ type ClientService interface {
 
 	PatchAPIV2ChartReleasesSelector(params *PatchAPIV2ChartReleasesSelectorParams, opts ...ClientOption) (*PatchAPIV2ChartReleasesSelectorOK, error)
 
-	PostAPIV2ChartReleases(params *PostAPIV2ChartReleasesParams, opts ...ClientOption) (*PostAPIV2ChartReleasesOK, error)
+	PostAPIV2ChartReleases(params *PostAPIV2ChartReleasesParams, opts ...ClientOption) (*PostAPIV2ChartReleasesCreated, error)
 
 	SetTransport(transport runtime.ClientTransport)
 }
@@ -250,7 +250,7 @@ func (a *Client) PatchAPIV2ChartReleasesSelector(params *PatchAPIV2ChartReleases
 
   Create a new ChartRelease entry. Note that some fields are immutable after creation; /edit lists mutable fields.
 */
-func (a *Client) PostAPIV2ChartReleases(params *PostAPIV2ChartReleasesParams, opts ...ClientOption) (*PostAPIV2ChartReleasesOK, error) {
+func (a *Client) PostAPIV2ChartReleases(params *PostAPIV2ChartReleasesParams, opts ...ClientOption) (*PostAPIV2ChartReleasesCreated, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewPostAPIV2ChartReleasesParams()
@@ -275,7 +275,7 @@ func (a *Client) PostAPIV2ChartReleases(params *PostAPIV2ChartReleasesParams, op
 	if err != nil {
 		return nil, err
 	}
-	success, ok := result.(*PostAPIV2ChartReleasesOK)
+	success, ok := result.(*PostAPIV2ChartReleasesCreated)
 	if ok {
 		return success, nil
 	}

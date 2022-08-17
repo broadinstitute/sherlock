@@ -23,8 +23,8 @@ type PostAPIV2ClustersReader struct {
 // ReadResponse reads a server response into the received o.
 func (o *PostAPIV2ClustersReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
 	switch response.Code() {
-	case 200:
-		result := NewPostAPIV2ClustersOK()
+	case 201:
+		result := NewPostAPIV2ClustersCreated()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
@@ -70,27 +70,27 @@ func (o *PostAPIV2ClustersReader) ReadResponse(response runtime.ClientResponse, 
 	}
 }
 
-// NewPostAPIV2ClustersOK creates a PostAPIV2ClustersOK with default headers values
-func NewPostAPIV2ClustersOK() *PostAPIV2ClustersOK {
-	return &PostAPIV2ClustersOK{}
+// NewPostAPIV2ClustersCreated creates a PostAPIV2ClustersCreated with default headers values
+func NewPostAPIV2ClustersCreated() *PostAPIV2ClustersCreated {
+	return &PostAPIV2ClustersCreated{}
 }
 
-/* PostAPIV2ClustersOK describes a response with status code 200, with default header values.
+/* PostAPIV2ClustersCreated describes a response with status code 201, with default header values.
 
-OK
+Created
 */
-type PostAPIV2ClustersOK struct {
+type PostAPIV2ClustersCreated struct {
 	Payload *models.V2controllersCluster
 }
 
-func (o *PostAPIV2ClustersOK) Error() string {
-	return fmt.Sprintf("[POST /api/v2/clusters][%d] postApiV2ClustersOK  %+v", 200, o.Payload)
+func (o *PostAPIV2ClustersCreated) Error() string {
+	return fmt.Sprintf("[POST /api/v2/clusters][%d] postApiV2ClustersCreated  %+v", 201, o.Payload)
 }
-func (o *PostAPIV2ClustersOK) GetPayload() *models.V2controllersCluster {
+func (o *PostAPIV2ClustersCreated) GetPayload() *models.V2controllersCluster {
 	return o.Payload
 }
 
-func (o *PostAPIV2ClustersOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *PostAPIV2ClustersCreated) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	o.Payload = new(models.V2controllersCluster)
 

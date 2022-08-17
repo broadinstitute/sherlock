@@ -36,7 +36,7 @@ type ClientService interface {
 
 	GetAPIV2SelectorsChartVersionsSelector(params *GetAPIV2SelectorsChartVersionsSelectorParams, opts ...ClientOption) (*GetAPIV2SelectorsChartVersionsSelectorOK, error)
 
-	PostAPIV2ChartVersions(params *PostAPIV2ChartVersionsParams, opts ...ClientOption) (*PostAPIV2ChartVersionsOK, error)
+	PostAPIV2ChartVersions(params *PostAPIV2ChartVersionsParams, opts ...ClientOption) (*PostAPIV2ChartVersionsCreated, error)
 
 	SetTransport(transport runtime.ClientTransport)
 }
@@ -166,7 +166,7 @@ func (a *Client) GetAPIV2SelectorsChartVersionsSelector(params *GetAPIV2Selector
 
   Create a new ChartVersion entry. Note that fields are immutable after creation.
 */
-func (a *Client) PostAPIV2ChartVersions(params *PostAPIV2ChartVersionsParams, opts ...ClientOption) (*PostAPIV2ChartVersionsOK, error) {
+func (a *Client) PostAPIV2ChartVersions(params *PostAPIV2ChartVersionsParams, opts ...ClientOption) (*PostAPIV2ChartVersionsCreated, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewPostAPIV2ChartVersionsParams()
@@ -191,7 +191,7 @@ func (a *Client) PostAPIV2ChartVersions(params *PostAPIV2ChartVersionsParams, op
 	if err != nil {
 		return nil, err
 	}
-	success, ok := result.(*PostAPIV2ChartVersionsOK)
+	success, ok := result.(*PostAPIV2ChartVersionsCreated)
 	if ok {
 		return success, nil
 	}

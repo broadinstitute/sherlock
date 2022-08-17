@@ -23,8 +23,8 @@ type PostAPIV2AppVersionsReader struct {
 // ReadResponse reads a server response into the received o.
 func (o *PostAPIV2AppVersionsReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
 	switch response.Code() {
-	case 200:
-		result := NewPostAPIV2AppVersionsOK()
+	case 201:
+		result := NewPostAPIV2AppVersionsCreated()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
@@ -70,27 +70,27 @@ func (o *PostAPIV2AppVersionsReader) ReadResponse(response runtime.ClientRespons
 	}
 }
 
-// NewPostAPIV2AppVersionsOK creates a PostAPIV2AppVersionsOK with default headers values
-func NewPostAPIV2AppVersionsOK() *PostAPIV2AppVersionsOK {
-	return &PostAPIV2AppVersionsOK{}
+// NewPostAPIV2AppVersionsCreated creates a PostAPIV2AppVersionsCreated with default headers values
+func NewPostAPIV2AppVersionsCreated() *PostAPIV2AppVersionsCreated {
+	return &PostAPIV2AppVersionsCreated{}
 }
 
-/* PostAPIV2AppVersionsOK describes a response with status code 200, with default header values.
+/* PostAPIV2AppVersionsCreated describes a response with status code 201, with default header values.
 
-OK
+Created
 */
-type PostAPIV2AppVersionsOK struct {
+type PostAPIV2AppVersionsCreated struct {
 	Payload *models.V2controllersAppVersion
 }
 
-func (o *PostAPIV2AppVersionsOK) Error() string {
-	return fmt.Sprintf("[POST /api/v2/app-versions][%d] postApiV2AppVersionsOK  %+v", 200, o.Payload)
+func (o *PostAPIV2AppVersionsCreated) Error() string {
+	return fmt.Sprintf("[POST /api/v2/app-versions][%d] postApiV2AppVersionsCreated  %+v", 201, o.Payload)
 }
-func (o *PostAPIV2AppVersionsOK) GetPayload() *models.V2controllersAppVersion {
+func (o *PostAPIV2AppVersionsCreated) GetPayload() *models.V2controllersAppVersion {
 	return o.Payload
 }
 
-func (o *PostAPIV2AppVersionsOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *PostAPIV2AppVersionsCreated) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	o.Payload = new(models.V2controllersAppVersion)
 
