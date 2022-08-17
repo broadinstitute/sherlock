@@ -5,7 +5,7 @@ on:
     #   - main
     # types:
     #   - closed
-concurrency: commits-to-mainline
+# concurrency: commits-to-mainline
 
 jobs:
   gen-swagger:
