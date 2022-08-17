@@ -8,7 +8,7 @@ on:
 # concurrency: commits-to-mainline
 
 env:
-  SWAGGER_CMD: 'docker run --rm -it -e GOPATH=/go -v $(go env GOPATH):/go -v $HOME:$HOME -w $(pwd) quay.io/goswagger/swagger'
+  SWAGGER_CMD: 'docker run --rm -e GOPATH=/go -v $(go env GOPATH):/go -v $HOME:$HOME -w $(pwd) quay.io/goswagger/swagger'
 
 jobs:
   gen-swagger:
