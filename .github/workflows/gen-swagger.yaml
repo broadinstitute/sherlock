@@ -5,6 +5,8 @@ on:
       - main
     types:
       - closed
+    paths-ignore:
+      - 'README.md'
 concurrency: commits-to-mainline
 
 env:
