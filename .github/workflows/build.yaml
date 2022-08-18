@@ -19,6 +19,8 @@ on:
       - main
     paths-ignore:
       - 'README.md'
+      - 'docs/**'
+      - 'clients/**'
 env:
   GOOGLE_PROJECT: dsp-artifact-registry
   # Name of the app-specific Docker repository configured in GOOGLE_PROJECT
