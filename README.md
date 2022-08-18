@@ -1,6 +1,6 @@
 # Sherlock
 
-[![codecov](https://codecov.io/gh/broadinstitute/sherlock/branch/main/graph/badge.svg?token=kk4gi8Wa3a)](https://codecov.io/gh/broadinstitute/sherlock)  [![Go Report Card](https://goreportcard.com/badge/github.com/broadinstitute/sherlock)](https://goreportcard.com/report/github.com/broadinstitute/sherlock)  ![latest build](https://github.com/broadinstitute/sherlock/actions/workflows/build.yaml/badge.svg?branch=main)
+[![codecov](https://codecov.io/gh/broadinstitute/sherlock/branch/main/graph/badge.svg?token=kk4gi8Wa3a)](https://codecov.io/gh/broadinstitute/sherlock)  [![Go Report Card](https://goreportcard.com/badge/github.com/broadinstitute/sherlock)](https://goreportcard.com/report/github.com/broadinstitute/sherlock)  ![latest build](https://github.com/broadinstitute/sherlock/actions/workflows/build.yaml/badge.svg?branch=main)[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=broadinstitute_sherlock&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=broadinstitute_sherlock)
 
 Sherlock is a devops built and maintained service which serves will maintain a historical record of deployments to all Terra services across all environments. 
 Additionally it will extract delivery metadata from updates to this historical deployment log. In the future it will also act as the control layer for preview environments.
