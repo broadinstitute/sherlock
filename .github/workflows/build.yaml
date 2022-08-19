@@ -32,15 +32,25 @@ env:
   SERVER_IMAGE_NAME: server
   # Region-specific Google Docker repository where GOOGLE_PROJECT/REPOSITORY_NAME can be found
   GOOGLE_DOCKER_REPOSITORY: us-central1-docker.pkg.dev
+  GO_SWAGGER_VERSION: v0.29.0
 jobs:
   tag-publish-job:
     runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
     steps:
+
+      # Git config
       - name: Checkout current code
         uses: actions/checkout@v2
         with:
           token: ${{ secrets.BROADBOT_TOKEN }}
-
+      - name: Set up Git
+        shell: bash
+        run: |
+          git config --global user.name 'broadbot'
+          git config --global user.email 'broadbot@broadinstitute.org'
       - name: Bump the tag to a new version
         uses: databiosphere/github-actions/actions/bumper@bumper-0.0.6
         id: tag
@@ -50,83 +60,47 @@ jobs:
           RELEASE_BRANCHES: main
           WITH_V: true
 
-      - name: Auth to GCP
-        uses: google-github-actions/auth@v0
-        with:
-          credentials_json: ${{ secrets.GCP_PUBLISH_KEY_B64 }}
-
-      - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v0
-        with:
-          version: '345.0.0'
-
-      - name: Explicitly auth Docker for Artifact Registry
-        run: gcloud auth configure-docker $GOOGLE_DOCKER_REPOSITORY --quiet
-
-      - name: Construct docker images name and tag
-        id: image-name
-        run: |
-          DOCKER_TAG=${{ steps.tag.outputs.tag }}
-          echo ::set-output name=cli-name::${GOOGLE_DOCKER_REPOSITORY}/${GOOGLE_PROJECT}/${REPOSITORY_NAME}/${CLI_IMAGE_NAME}:${DOCKER_TAG}
-          echo ::set-output name=server-name::${GOOGLE_DOCKER_REPOSITORY}/${GOOGLE_PROJECT}/${REPOSITORY_NAME}/${SERVER_IMAGE_NAME}:${DOCKER_TAG}
-      - name: Build image
-        run: | 
-          docker build --build-arg SHERLOCK_BUILD_VERSION=${{ steps.tag.outputs.tag }} -t ${{ steps.image-name.outputs.cli-name }} -f build/cli/Dockerfile .
-          docker build --build-arg SHERLOCK_BUILD_VERSION=${{ steps.tag.outputs.tag }} -t ${{ steps.image-name.outputs.server-name }} -f build/server/Dockerfile .
-
-      - name: Run Trivy vulnerability scanner on CLI
-        # From https://github.com/broadinstitute/dsp-appsec-trivy-action
-        uses: broadinstitute/dsp-appsec-trivy-action@v1
-        with:
-          image: ${{ steps.image-name.outputs.cli-name }}
-
-      - name: Run Trivy vulnerability scanner on server
-        # From https://github.com/broadinstitute/dsp-appsec-trivy-action
-        uses: broadinstitute/dsp-appsec-trivy-action@v1
-        with:
-          image: ${{ steps.image-name.outputs.server-name }}
-
-      - name: Push image
-        run: | 
-          docker push ${{ steps.image-name.outputs.cli-name }}
-          docker push ${{ steps.image-name.outputs.server-name }}
-
-  gen-swagger:
-    needs:
-      - tag-publish-job
-    runs-on: ubuntu-latest
-    permissions:
-      contents: 'read'
-      id-token: 'write'
-
-    env:
-      GO_SWAGGER_VERSION: v0.29.0
-
-    steps:
-      - name: Checkout current code
-        uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.BROADBOT_TOKEN }}
-          fetch-depth: 0
-          ref: main
-
+      # GCP config
       - name: Auth to GCP
         id: 'auth'
         uses: google-github-actions/auth@v0
         with:
           workload_identity_provider: 'projects/1038484894585/locations/global/workloadIdentityPools/github-wi-pool/providers/github-wi-provider'
           service_account: 'dsp-artifact-registry-push@dsp-artifact-registry.iam.gserviceaccount.com'
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0
+        with:
+          version: '345.0.0'
+      - name: Explicitly auth Docker for Artifact Registry
+        run: gcloud auth configure-docker $GOOGLE_DOCKER_REPOSITORY --quiet
 
+      # Go config
       - name: Set up Go
         uses: actions/setup-go@v3
         with:
           go-version-file: 'go.mod'
+
+      # Node config
+      - name: Setup Node/NPM
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      # Docker tag generation
+      - name: Construct docker images name and tag
+        id: image-name
+        run: |
+          DOCKER_TAG=${{ steps.tag.outputs.tag }}
+          echo ::set-output name=cli-name::${GOOGLE_DOCKER_REPOSITORY}/${GOOGLE_PROJECT}/${REPOSITORY_NAME}/${CLI_IMAGE_NAME}:${DOCKER_TAG}
+          echo ::set-output name=server-name::${GOOGLE_DOCKER_REPOSITORY}/${GOOGLE_PROJECT}/${REPOSITORY_NAME}/${SERVER_IMAGE_NAME}:${DOCKER_TAG}
+
+      # Swagger file generation
       - name: Install swaggo
         run: go install github.com/swaggo/swag/cmd/swag@latest
       - name: Generate swagger spec
         run: make generate-swagger
 
-
+      # Go client generation
       - name: Generate Go Client Lib
         # Running this tool via docker because go-swagger's local install procedures are a huge pain to perform from within a github action
         run: |
@@ -136,7 +110,7 @@ jobs:
             quay.io/goswagger/swagger:${GO_SWAGGER_VERSION} \
             generate client -f docs/swagger.json -A sherlock --default-scheme=https -m clients/go/client/models -c clients/go/client
 
-
+      # Typescript client generation
       - name: Generate Typescript (swagger-codegen) Client Lib
         run: |
           docker run --rm -v "${PWD}:/local" openapitools/openapi-generator-cli generate \
@@ -148,31 +122,49 @@ jobs:
             --additional-properties=disallowAdditionalPropertiesIfNotPresent=false \
             --additional-properties=supportsES6=true \
             --additional-properties=npmName=@sherlock-js-client/sherlock \
-            --additional-properties=npmVersion=$(git tag --points-at HEAD)
-      - name: Setup Node/NPM
-        uses: actions/setup-node@v3
+            --additional-properties=npmVersion=${DOCKER_TAG}
+
+      # Build images
+      - name: Build image
+        run: | 
+          docker build --build-arg SHERLOCK_BUILD_VERSION=${{ steps.tag.outputs.tag }} -t ${{ steps.image-name.outputs.cli-name }} -f build/cli/Dockerfile .
+          docker build --build-arg SHERLOCK_BUILD_VERSION=${{ steps.tag.outputs.tag }} -t ${{ steps.image-name.outputs.server-name }} -f build/server/Dockerfile .
+
+      # Publish images
+      - name: Run Trivy vulnerability scanner on CLI
+        # From https://github.com/broadinstitute/dsp-appsec-trivy-action
+        uses: broadinstitute/dsp-appsec-trivy-action@v1
         with:
-          node-version: 16
-      - name: Install and build
+          image: ${{ steps.image-name.outputs.cli-name }}
+      - name: Run Trivy vulnerability scanner on server
+        # From https://github.com/broadinstitute/dsp-appsec-trivy-action
+        uses: broadinstitute/dsp-appsec-trivy-action@v1
+        with:
+          image: ${{ steps.image-name.outputs.server-name }}
+      - name: Push image
+        run: | 
+          docker push ${{ steps.image-name.outputs.cli-name }}
+          docker push ${{ steps.image-name.outputs.server-name }}
+
+      # Build typescript client
+      - name: Build typescript client
         working-directory: clients/typescript-fetch
         run: |
           npm install --save-dev
           npm run build
-      - name: Authenticate and publish
+
+      # Publish typescript client
+      - name: Publish typescript client
         working-directory: clients/typescript-fetch
         run: |
           npx google-artifactregistry-auth --yes
           npm publish
 
-      - name: Set up Git
-        shell: bash
-        run: |
-          git config --global user.name 'broadbot'
-          git config --global user.email 'broadbot@broadinstitute.org'
+      # Commit generated files back
       - name: Add and commit swagger spec
         shell: bash
         run: |
           git add .
-          git commit --allow-empty --message "[gen-swagger-and-clients] update swagger spec"
+          git commit --allow-empty --message "[tag-publish-job] update swagger spec and clients"
       - name: Push to main with retry
         uses: ./.github/actions/push-with-retry
