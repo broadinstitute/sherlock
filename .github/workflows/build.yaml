@@ -126,7 +126,7 @@ jobs:
 
       # Build images
       - name: Build image
-        run: | 
+        run: |
           docker build --build-arg SHERLOCK_BUILD_VERSION=${{ steps.tag.outputs.tag }} -t ${{ steps.image-name.outputs.cli-name }} -f build/cli/Dockerfile .
           docker build --build-arg SHERLOCK_BUILD_VERSION=${{ steps.tag.outputs.tag }} -t ${{ steps.image-name.outputs.server-name }} -f build/server/Dockerfile .
 
@@ -142,7 +142,7 @@ jobs:
         with:
           image: ${{ steps.image-name.outputs.server-name }}
       - name: Push image
-        run: | 
+        run: |
           docker push ${{ steps.image-name.outputs.cli-name }}
           docker push ${{ steps.image-name.outputs.server-name }}
 

@@ -1,11 +1,11 @@
 {
   "name": "@sherlock-js-client/sherlock",
-  "version": "development",
+  "version": "v0.0.42",
   "description": "OpenAPI client for @sherlock-js-client/sherlock",
   "author": "OpenAPI-Generator",
   "repository": {
     "type": "git",
-    "url": "https://github.com/GIT_USER_ID/GIT_REPO_ID.git"
+    "url": "https://github.com/broadinstitute/sherlock.git"
   },
   "main": "./dist/index.js",
   "typings": "./dist/index.d.ts",
