@@ -40,6 +40,25 @@ jobs:
             -v $HOME:$HOME -w "$(pwd)" \
             quay.io/goswagger/swagger:${GO_SWAGGER_VERSION} \
             generate client -f docs/swagger.json -A sherlock --default-scheme=https -m clients/go/client/models -c clients/go/client
+      - name: Generate Typescript Client Lib
+        run: |
+          docker run --rm -v "${PWD}:/local" openapitools/openapi-generator-cli generate \
+            -i /local/docs/swagger.json \
+            -g typescript-fetch \
+            -o /local/clients/typescript-fetch \
+            --additional-properties=disallowAdditionalPropertiesIfNotPresent=false \
+            --additional-properties=supportsES6=true \
+            --additional-properties=npmName=sherlock \
+            --additional-properties=npmVersion=$(git tag --points-at HEAD)
+      - name: Generate Go (openapi-generator) Client Lib
+        run: |
+          docker run --rm -v "${PWD}:/local" openapitools/openapi-generator-cli generate \
+            -i /local/docs/swagger.json \
+            -g go \
+            -o /local/clients/go-openapi-generator \
+            --additional-properties=disallowAdditionalPropertiesIfNotPresent=false \
+            --additional-properties=packageName=sherlock \
+            --additional-properties=packageVersion=$(git tag --points-at HEAD)
       - name: Set up Git
         shell: bash
         run: |
