@@ -46,7 +46,7 @@ jobs:
             -o /local/clients/typescript-fetch \
             --additional-properties=disallowAdditionalPropertiesIfNotPresent=false \
             --additional-properties=supportsES6=true \
-            --additional-properties=npmName=sherlock-client \
+            --additional-properties=npmName=sherlock \
             --additional-properties=npmVersion=$(git tag --points-at HEAD)
       - name: Generate Go (openapi-generator) Client Lib
         run: |
@@ -55,7 +55,7 @@ jobs:
             -g go \
             -o /local/clients/go-openapi-generator \
             --additional-properties=disallowAdditionalPropertiesIfNotPresent=false \
-            --additional-properties=packageName=sherlockclient \
+            --additional-properties=packageName=sherlock \
             --additional-properties=packageVersion=$(git tag --points-at HEAD)
       - name: Set up Git
         shell: bash
