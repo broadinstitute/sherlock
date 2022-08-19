@@ -20,4 +20,4 @@
 gha-creds-*.json
 
 # Client stuff
-clients/typescript/node_modules
+clients/typescript-fetch/node_modules
