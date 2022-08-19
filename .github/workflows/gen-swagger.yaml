@@ -73,12 +73,12 @@ jobs:
         with:
           node-version: 16
       - name: Install and build
-        working-directory: clients/typescript
+        working-directory: clients/typescript-fetch
         run: |
           npm install --save-dev
           npm run build
       - name: Authenticate and publish
-        working-directory: clients/typescript
+        working-directory: clients/typescript-fetch
         run: |
           npx google-artifactregistry-auth --yes
           npm publish
