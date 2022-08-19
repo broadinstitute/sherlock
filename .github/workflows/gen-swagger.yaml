@@ -70,6 +70,7 @@ jobs:
         working-directory: clients/typescript
         run: |
           npm install --save-dev
+          npm install --save-dev @types/jest
           npm run build
       - name: Authenticate and publish
         working-directory: clients/typescript
