@@ -16,6 +16,10 @@ jobs:
   gen-swagger:
     name: generate-swagger-spec-and-client-libs
     runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
     steps:
       - name: Checkout current code
         uses: actions/checkout@v3
