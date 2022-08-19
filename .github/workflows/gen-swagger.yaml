@@ -69,7 +69,7 @@ jobs:
       - name: Install and build
         working-directory: clients/typescript
         run: |
-          npm ci
+          npm install
           npm run build
       - name: Authenticate and publish
         working-directory: clients/typescript
