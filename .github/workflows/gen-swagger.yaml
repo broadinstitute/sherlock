@@ -24,6 +24,13 @@ jobs:
           fetch-depth: 0
           ref: main
 
+      - name: Auth to GCP
+        id: 'auth'
+        uses: google-github-actions/auth@v0
+        with:
+          workload_identity_provider: 'projects/1038484894585/locations/global/workloadIdentityPools/github-wi-pool/providers/github-wi-provider'
+          service_account: 'dsp-artifact-registry-push@dsp-artifact-registry.iam.gserviceaccount.com'
+
       - name: Set up Go
         uses: actions/setup-go@v3
         with:
@@ -32,6 +39,8 @@ jobs:
         run: go install github.com/swaggo/swag/cmd/swag@latest
       - name: Generate swagger spec
         run: make generate-swagger
+
+
       - name: Generate Go Client Lib
         # Running this tool via docker because go-swagger's local install procedures are a huge pain to perform from within a github action
         run: |
@@ -40,39 +49,30 @@ jobs:
             -v $HOME:$HOME -w "$(pwd)" \
             quay.io/goswagger/swagger:${GO_SWAGGER_VERSION} \
             generate client -f docs/swagger.json -A sherlock --default-scheme=https -m clients/go/client/models -c clients/go/client
-      - name: Generate Typescript (openapi-generator) Client Lib
-        run: |
-          docker run --rm -v "${PWD}:/local" openapitools/openapi-generator-cli generate \
-            -i /local/docs/swagger.json \
-            -g typescript-fetch \
-            -o /local/clients/typescript-fetch-openapi-generator \
-            --additional-properties=disallowAdditionalPropertiesIfNotPresent=false \
-            --additional-properties=supportsES6=true \
-            --additional-properties=npmName=sherlock \
-            --additional-properties=npmVersion=$(git tag --points-at HEAD)
-      - name: Generate Go (openapi-generator) Client Lib
-        run: |
-          docker run --rm -v "${PWD}:/local" openapitools/openapi-generator-cli generate \
-            -i /local/docs/swagger.json \
-            -g go \
-            -o /local/clients/go-openapi-generator \
-            --additional-properties=disallowAdditionalPropertiesIfNotPresent=false \
-            --additional-properties=packageName=sherlock \
-            --additional-properties=packageVersion=$(git tag --points-at HEAD)
+          
+
       - name: Generate Typescript (swagger-codegen) Client Lib
         run: |
           docker run --rm -v "${PWD}:/local" swaggerapi/swagger-codegen-cli generate \
             -i /local/docs/swagger.json \
             -l typescript-fetch \
-            -o /local/clients/typescript-fetch-swagger-codegen \
-            --additional-properties=supportsES6=true,npmName=sherlock,npmVersion=$(git tag --points-at HEAD)
-      - name: Generate Go (swagger-codegen) Client Lib
+            -o /local/clients/typescript \
+            --additional-properties=supportsES6=true,npmName=@sherlock-js-client/sherlock,npmVersion=$(git tag --points-at HEAD)
+      - name: Setup Node/NPM
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: Install and build
+        working-directory: clients/typescript
         run: |
-          docker run --rm -v "${PWD}:/local" swaggerapi/swagger-codegen-cli generate \
-            -i /local/docs/swagger.json \
-            -l go \
-            -o /local/clients/go-swagger-codegen \
-            --additional-properties=packageName=sherlock,packageVersion=$(git tag --points-at HEAD)
+          npm ci
+          npm run build
+      - name: Authenticate and publish
+        working-directory: clients/typescript
+        run: |
+          npx google-artifactregistry-auth --yes
+          npm publish
+
       - name: Set up Git
         shell: bash
         run: |
