@@ -57,11 +57,17 @@ jobs:
 
       - name: Generate Typescript (swagger-codegen) Client Lib
         run: |
-          docker run --rm -v "${PWD}:/local" swaggerapi/swagger-codegen-cli generate \
+          docker run --rm -v "${PWD}:/local" openapitools/openapi-generator-cli generate \
             -i /local/docs/swagger.json \
-            -l typescript-fetch \
-            -o /local/clients/typescript \
-            --additional-properties=supportsES6=true,npmName=@sherlock-js-client/sherlock,npmVersion=$(git tag --points-at HEAD)
+            -g typescript-fetch \
+            -o /local/clients/typescript-fetch \
+            -s /local/clients/.npmrc \
+            --git-user-id broadinstitute \
+            --git-repo-id sherlock \
+            --additional-properties=disallowAdditionalPropertiesIfNotPresent=false \
+            --additional-properties=supportsES6=true \
+            --additional-properties=npmName=@sherlock-js-client/sherlock \
+            --additional-properties=npmVersion=$(git tag --points-at HEAD)
       - name: Setup Node/NPM
         uses: actions/setup-node@v3
         with:
