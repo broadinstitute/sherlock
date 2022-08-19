@@ -61,7 +61,6 @@ jobs:
             -i /local/docs/swagger.json \
             -g typescript-fetch \
             -o /local/clients/typescript-fetch \
-            -s /local/clients/.npmrc \
             --git-user-id broadinstitute \
             --git-repo-id sherlock \
             --additional-properties=disallowAdditionalPropertiesIfNotPresent=false \
