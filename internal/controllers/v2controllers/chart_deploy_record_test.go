@@ -178,6 +178,13 @@ func (suite *chartDeployRecordControllerSuite) TestChartDeployRecordListAllMatch
 			assert.Equal(suite.T(), datarepoDevChartRelease.Name, chartDeployRecord.ChartRelease)
 		}
 	})
+	suite.Run("none is an empty list, not null", func() {
+		matching, err := suite.ChartDeployRecordController.ListAllMatching(
+			ChartDeployRecord{CreatableChartDeployRecord: CreatableChartDeployRecord{ExactChartVersion: "blah"}}, 0)
+		assert.NoError(suite.T(), err)
+		assert.NotNil(suite.T(), matching)
+		assert.Empty(suite.T(), matching)
+	})
 }
 
 func (suite *chartDeployRecordControllerSuite) TestChartDeployRecordGet() {

@@ -212,6 +212,13 @@ func (suite *clusterControllerSuite) TestClusterListAllMatching() {
 			assert.Equal(suite.T(), testutils.PointerTo("terra"), cluster.Base)
 		}
 	})
+	suite.Run("none is an empty list, not null", func() {
+		matching, err := suite.ClusterController.ListAllMatching(
+			Cluster{CreatableCluster: CreatableCluster{Name: "blah"}}, 0)
+		assert.NoError(suite.T(), err)
+		assert.NotNil(suite.T(), matching)
+		assert.Empty(suite.T(), matching)
+	})
 }
 
 func (suite *clusterControllerSuite) TestClusterGet() {

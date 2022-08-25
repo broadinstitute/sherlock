@@ -158,6 +158,13 @@ func (suite *appVersionControllerSuite) TestAppVersionListAllMatching() {
 			assert.Equal(suite.T(), "leonardo", appVersion.Chart)
 		}
 	})
+	suite.Run("none is an empty list, not null", func() {
+		matching, err := suite.AppVersionController.ListAllMatching(
+			AppVersion{CreatableAppVersion: CreatableAppVersion{AppVersion: "blah"}}, 0)
+		assert.NoError(suite.T(), err)
+		assert.NotNil(suite.T(), matching)
+		assert.Empty(suite.T(), matching)
+	})
 }
 
 func (suite *appVersionControllerSuite) TestAppVersionGet() {

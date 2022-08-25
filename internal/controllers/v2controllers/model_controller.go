@@ -111,7 +111,7 @@ func (c ModelController[M, R, C, E]) ListAllMatching(filter R, limit int) ([]R, 
 		return []R{}, fmt.Errorf("error parsing filter to a %T that can be queried against the database: %v", model, err)
 	}
 	results, err := c.primaryStore.ListAllMatching(model, limit)
-	var readables []R
+	readables := make([]R, 0)
 	for _, result := range results {
 		readables = append(readables, *c.modelToReadable(result))
 	}

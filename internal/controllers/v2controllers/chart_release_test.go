@@ -358,6 +358,13 @@ func (suite *chartReleaseControllerSuite) TestChartReleaseListAllMatching() {
 			assert.Equal(suite.T(), terraDevCluster.Name, chartRelease.Cluster)
 		}
 	})
+	suite.Run("none is an empty list, not null", func() {
+		matching, err := suite.ChartReleaseController.ListAllMatching(
+			ChartRelease{CreatableChartRelease: CreatableChartRelease{Name: "blah"}}, 0)
+		assert.NoError(suite.T(), err)
+		assert.NotNil(suite.T(), matching)
+		assert.Empty(suite.T(), matching)
+	})
 }
 
 func (suite *chartReleaseControllerSuite) TestChartReleaseGet() {

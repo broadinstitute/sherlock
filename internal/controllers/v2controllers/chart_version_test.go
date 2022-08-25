@@ -146,6 +146,13 @@ func (suite *chartVersionControllerSuite) TestChartVersionListAllMatching() {
 			assert.Equal(suite.T(), "leonardo", chartVersion.Chart)
 		}
 	})
+	suite.Run("none is an empty list, not null", func() {
+		matching, err := suite.ChartVersionController.ListAllMatching(
+			ChartVersion{CreatableChartVersion: CreatableChartVersion{ChartVersion: "blah"}}, 0)
+		assert.NoError(suite.T(), err)
+		assert.NotNil(suite.T(), matching)
+		assert.Empty(suite.T(), matching)
+	})
 }
 
 func (suite *chartVersionControllerSuite) TestChartVersionGet() {
