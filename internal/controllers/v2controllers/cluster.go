@@ -15,7 +15,7 @@ type Cluster struct {
 // CreatableCluster
 // @description The subset of Cluster fields that can be set upon creation
 type CreatableCluster struct {
-	Name              string `json:"name" validate:"required" form:"name"` // Required when creating
+	Name              string `json:"name" form:"name"` // Required when creating
 	Provider          string `json:"provider" form:"provider" enums:"google,azure" default:"google"`
 	GoogleProject     string `json:"googleProject" form:"googleProject"`         // Required when creating if provider is 'google'
 	AzureSubscription string `json:"azureSubscription" form:"azureSubscription"` // Required when creating if providers is 'azure'
