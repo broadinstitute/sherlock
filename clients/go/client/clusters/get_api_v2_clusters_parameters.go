@@ -100,7 +100,7 @@ type GetAPIV2ClustersParams struct {
 
 	   Required when creating
 	*/
-	Name string
+	Name *string
 
 	// Provider.
 	//
@@ -258,13 +258,13 @@ func (o *GetAPIV2ClustersParams) SetLimit(limit *int64) {
 }
 
 // WithName adds the name to the get API v2 clusters params
-func (o *GetAPIV2ClustersParams) WithName(name string) *GetAPIV2ClustersParams {
+func (o *GetAPIV2ClustersParams) WithName(name *string) *GetAPIV2ClustersParams {
 	o.SetName(name)
 	return o
 }
 
 // SetName adds the name to the get API v2 clusters params
-func (o *GetAPIV2ClustersParams) SetName(name string) {
+func (o *GetAPIV2ClustersParams) SetName(name *string) {
 	o.Name = name
 }
 
@@ -428,13 +428,20 @@ func (o *GetAPIV2ClustersParams) WriteToRequest(r runtime.ClientRequest, reg str
 		}
 	}
 
-	// query param name
-	qrName := o.Name
-	qName := qrName
-	if qName != "" {
+	if o.Name != nil {
 
-		if err := r.SetQueryParam("name", qName); err != nil {
-			return err
+		// query param name
+		var qrName string
+
+		if o.Name != nil {
+			qrName = *o.Name
+		}
+		qName := qrName
+		if qName != "" {
+
+			if err := r.SetQueryParam("name", qName); err != nil {
+				return err
+			}
 		}
 	}
 

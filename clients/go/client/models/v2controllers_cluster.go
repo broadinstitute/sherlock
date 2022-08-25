@@ -39,8 +39,7 @@ type V2controllersCluster struct {
 	ID int64 `json:"id,omitempty"`
 
 	// Required when creating
-	// Required: true
-	Name *string `json:"name"`
+	Name string `json:"name,omitempty"`
 
 	// provider
 	// Enum: [google azure]
@@ -57,10 +56,6 @@ type V2controllersCluster struct {
 func (m *V2controllersCluster) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateName(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.validateProvider(formats); err != nil {
 		res = append(res, err)
 	}
@@ -68,15 +63,6 @@ func (m *V2controllersCluster) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *V2controllersCluster) validateName(formats strfmt.Registry) error {
-
-	if err := validate.Required("name", "body", m.Name); err != nil {
-		return err
-	}
-
 	return nil
 }
 

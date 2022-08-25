@@ -259,8 +259,6 @@ definitions:
         type: boolean
       updatedAt:
         type: string
-    required:
-    - name
     type: object
   v2controllers.CreatableAppVersion:
     properties:
@@ -396,8 +394,6 @@ definitions:
       requiresSuitability:
         default: false
         type: boolean
-    required:
-    - name
     type: object
   v2controllers.CreatableEnvironment:
     properties:
@@ -1618,7 +1614,6 @@ paths:
       - description: Required when creating
         in: query
         name: name
-        required: true
         type: string
       - default: google
         enum:

@@ -1608,8 +1608,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Required when creating",
                         "name": "name",
-                        "in": "query",
-                        "required": true
+                        "in": "query"
                     },
                     {
                         "enum": [
@@ -3242,9 +3241,6 @@ const docTemplate = `{
         "v2controllers.Cluster": {
             "description": "The full set of Cluster fields that can be read or used for filtering queries",
             "type": "object",
-            "required": [
-                "name"
-            ],
             "properties": {
                 "address": {
                     "description": "Required when creating",
@@ -3432,9 +3428,6 @@ const docTemplate = `{
         "v2controllers.CreatableCluster": {
             "description": "The subset of Cluster fields that can be set upon creation",
             "type": "object",
-            "required": [
-                "name"
-            ],
             "properties": {
                 "address": {
                     "description": "Required when creating",

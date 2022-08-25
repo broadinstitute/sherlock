@@ -48,7 +48,7 @@ export interface V2controllersCreatableCluster {
      * @type {string}
      * @memberof V2controllersCreatableCluster
      */
-    name: string;
+    name?: string;
     /**
      * 
      * @type {string}
@@ -79,7 +79,6 @@ export type V2controllersCreatableClusterProviderEnum = typeof V2controllersCrea
  */
 export function instanceOfV2controllersCreatableCluster(value: object): boolean {
     let isInstance = true;
-    isInstance = isInstance && "name" in value;
 
     return isInstance;
 }
@@ -98,7 +97,7 @@ export function V2controllersCreatableClusterFromJSONTyped(json: any, ignoreDisc
         'azureSubscription': !exists(json, 'azureSubscription') ? undefined : json['azureSubscription'],
         'base': !exists(json, 'base') ? undefined : json['base'],
         'googleProject': !exists(json, 'googleProject') ? undefined : json['googleProject'],
-        'name': json['name'],
+        'name': !exists(json, 'name') ? undefined : json['name'],
         'provider': !exists(json, 'provider') ? undefined : json['provider'],
         'requiresSuitability': !exists(json, 'requiresSuitability') ? undefined : json['requiresSuitability'],
     };

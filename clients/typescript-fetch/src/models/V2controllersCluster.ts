@@ -60,7 +60,7 @@ export interface V2controllersCluster {
      * @type {string}
      * @memberof V2controllersCluster
      */
-    name: string;
+    name?: string;
     /**
      * 
      * @type {string}
@@ -97,7 +97,6 @@ export type V2controllersClusterProviderEnum = typeof V2controllersClusterProvid
  */
 export function instanceOfV2controllersCluster(value: object): boolean {
     let isInstance = true;
-    isInstance = isInstance && "name" in value;
 
     return isInstance;
 }
@@ -118,7 +117,7 @@ export function V2controllersClusterFromJSONTyped(json: any, ignoreDiscriminator
         'createdAt': !exists(json, 'createdAt') ? undefined : json['createdAt'],
         'googleProject': !exists(json, 'googleProject') ? undefined : json['googleProject'],
         'id': !exists(json, 'id') ? undefined : json['id'],
-        'name': json['name'],
+        'name': !exists(json, 'name') ? undefined : json['name'],
         'provider': !exists(json, 'provider') ? undefined : json['provider'],
         'requiresSuitability': !exists(json, 'requiresSuitability') ? undefined : json['requiresSuitability'],
         'updatedAt': !exists(json, 'updatedAt') ? undefined : json['updatedAt'],

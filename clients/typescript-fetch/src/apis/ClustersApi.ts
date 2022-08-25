@@ -32,13 +32,13 @@ import {
 } from '../models';
 
 export interface ApiV2ClustersGetRequest {
-    name: string;
     address?: string;
     azureSubscription?: string;
     base?: string;
     createdAt?: string;
     googleProject?: string;
     id?: number;
+    name?: string;
     provider?: ApiV2ClustersGetProviderEnum;
     requiresSuitability?: boolean;
     updatedAt?: string;
@@ -76,10 +76,6 @@ export class ClustersApi extends runtime.BaseAPI {
      * List Cluster entries
      */
     async apiV2ClustersGetRaw(requestParameters: ApiV2ClustersGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<V2controllersCluster>>> {
-        if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling apiV2ClustersGet.');
-        }
-
         const queryParameters: any = {};
 
         if (requestParameters.address !== undefined) {
@@ -142,7 +138,7 @@ export class ClustersApi extends runtime.BaseAPI {
      * List existing Cluster entries, ordered by most recently updated.
      * List Cluster entries
      */
-    async apiV2ClustersGet(requestParameters: ApiV2ClustersGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<V2controllersCluster>> {
+    async apiV2ClustersGet(requestParameters: ApiV2ClustersGetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<V2controllersCluster>> {
         const response = await this.apiV2ClustersGetRaw(requestParameters, initOverrides);
         return await response.value();
     }
