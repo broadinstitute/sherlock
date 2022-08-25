@@ -270,6 +270,13 @@ func (suite *environmentControllerSuite) TestEnvironmentListAllMatching() {
 			assert.Equal(suite.T(), "live", environment.Base)
 		}
 	})
+	suite.Run("none is an empty list, not null", func() {
+		matching, err := suite.EnvironmentController.ListAllMatching(
+			Environment{CreatableEnvironment: CreatableEnvironment{Name: "blah"}}, 0)
+		assert.NoError(suite.T(), err)
+		assert.NotNil(suite.T(), matching)
+		assert.Empty(suite.T(), matching)
+	})
 }
 
 func (suite *environmentControllerSuite) TestEnvironmentGet() {

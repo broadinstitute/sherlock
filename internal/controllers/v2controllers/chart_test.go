@@ -174,6 +174,13 @@ func (suite *chartControllerSuite) TestChartListAllMatching() {
 			assert.Equal(suite.T(), testutils.PointerTo("terra-helm"), chart.ChartRepo)
 		}
 	})
+	suite.Run("none is an empty list, not null", func() {
+		matching, err := suite.ChartController.ListAllMatching(
+			Chart{CreatableChart: CreatableChart{Name: "blah"}}, 0)
+		assert.NoError(suite.T(), err)
+		assert.NotNil(suite.T(), matching)
+		assert.Empty(suite.T(), matching)
+	})
 }
 
 func (suite *chartControllerSuite) TestChartGet() {
