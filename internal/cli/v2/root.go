@@ -3,12 +3,13 @@ package v2
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
 
 var (
-	app     *SherlockClient
+	app     *sherlockClient
 	RootCmd = &cobra.Command{
 		Use:   "v2",
 		Short: "command subtree with support for v2 apis",
@@ -19,12 +20,21 @@ var (
 )
 
 func initialize(cmd *cobra.Command, args []string) error {
-	credsFile, err := cmd.Flags().GetString("credentials-file")
-	if err != nil {
-		return fmt.Errorf("credentials-file flag not specified: %v", err)
+	// The error case cannot happen in these lookups, defaults are set by the top level root command
+	credsFile, _ := cmd.Flags().GetString("credentials-file")
+	hostURL, _ := cmd.Flags().GetString("sherlock-url")
+	// remove https:// protocol prefix, needed for v1 cli support but not the v2 client lib
+	hostURL = strings.TrimPrefix(hostURL, "https://")
+	useSaAuth, _ := cmd.Flags().GetBool("use-sa-auth")
+
+	clientOptions := sherlockClientOptions{
+		hostURL:               hostURL,
+		credentialsPath:       credsFile,
+		schemes:               []string{"https"},
+		useServiceAccountAuth: useSaAuth,
 	}
 
-	client, err := NewSherlockClient(credsFile)
+	client, err := NewSherlockClient(clientOptions)
 	if err != nil {
 		return fmt.Errorf("error constructing v2 client: %v", err)
 	}
@@ -34,7 +44,7 @@ func initialize(cmd *cobra.Command, args []string) error {
 }
 
 func buildV2CommandTree() {
-	RootCmd.AddCommand(MeCmd)
+	RootCmd.AddCommand(meCmd)
 }
 
 // initialize the sub command parse tree for v2 apis

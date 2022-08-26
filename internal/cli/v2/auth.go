@@ -12,21 +12,30 @@ import (
 	"google.golang.org/api/option"
 )
 
-type SherlockClient struct {
+type sherlockClient struct {
 	client *client.Sherlock
 }
 
-func NewSherlockClient(credentialsPath string) (*SherlockClient, error) {
-	transport := httptransport.New("sherlock.dsp-devops.broadinstitute.org", "", []string{"https"})
-	idToken, err := getIapTokenFromSA(credentialsPath)
-	if err != nil {
-		return nil, err
+type sherlockClientOptions struct {
+	hostURL               string
+	schemes               []string
+	credentialsPath       string
+	useServiceAccountAuth bool
+}
+
+func NewSherlockClient(options sherlockClientOptions) (*sherlockClient, error) {
+	transport := httptransport.New(options.hostURL, "", []string{"https"})
+	if options.useServiceAccountAuth {
+		idToken, err := getIapTokenFromSA(options.credentialsPath)
+		if err != nil {
+			return nil, err
+		}
+
+		transport.DefaultAuthentication = httptransport.BearerToken(idToken)
 	}
 
-	transport.DefaultAuthentication = httptransport.BearerToken(idToken)
-
 	client := client.New(transport, strfmt.Default)
-	sherlock := &SherlockClient{client}
+	sherlock := &sherlockClient{client}
 
 	return sherlock, nil
 }

@@ -9,7 +9,7 @@ import (
 )
 
 var (
-	MeCmd = &cobra.Command{
+	meCmd = &cobra.Command{
 		Use:   "me",
 		Short: "me returns info about the calling user",
 		Long:  "me returns information about the calling user which sherlock has access to",
@@ -19,7 +19,6 @@ var (
 )
 
 func getMeInfo(cmd *cobra.Command, args []string) error {
-
 	meParams := misc.NewGetMyUserParams()
 	me, err := app.client.Misc.GetMyUser(meParams)
 	if err != nil {
