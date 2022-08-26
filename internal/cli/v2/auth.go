@@ -13,27 +13,34 @@ import (
 )
 
 type SherlockClient struct {
-	client client.Sherlock
+	client *client.Sherlock
 }
 
-func NewSherlockClient() (SherlockClient, error) {
+func NewSherlockClient(credentialsPath string) (*SherlockClient, error) {
 	transport := httptransport.New("sherlock.dsp-devops.broadinstitute.org", "", []string{"https"})
-	transport.SetDebug(true)
-	// transport.DefaultAuthentication = httptransport.BearerToken()
+	idToken, err := getIapTokenFromSA(credentialsPath)
+	if err != nil {
+		return nil, err
+	}
 
-	_ = client.New(transport, strfmt.Default)
+	transport.DefaultAuthentication = httptransport.BearerToken(idToken)
+
+	client := client.New(transport, strfmt.Default)
+	sherlock := &SherlockClient{client}
+
+	return sherlock, nil
 }
 
 func getIapTokenFromSA(credentialsPath string) (string, error) {
 	ctx := context.Background()
 	audience, ok := os.LookupEnv("SHERLOCK_OAUTH_AUDIENCE")
 	if !ok {
-		return "", fmt.Errorf("Unable to determine oauth audience")
+		return "", fmt.Errorf("unable to determine oauth audience")
 	}
 
 	tokenSource, err := idtoken.NewTokenSource(ctx, audience, option.WithCredentialsFile(credentialsPath))
 	if err != nil {
-		return "", fmt.Errorf("Unable to generate oauth token source from credentials: %v", err)
+		return "", fmt.Errorf("unable to generate oauth token source from credentials: %v", err)
 	}
 
 	accessToken, err := tokenSource.Token()

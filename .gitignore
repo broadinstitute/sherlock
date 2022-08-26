@@ -21,3 +21,6 @@ gha-creds-*.json
 
 # Client stuff
 clients/typescript-fetch/node_modules
+
+# ignore sa-creds used in local testing
+*_sa.json
