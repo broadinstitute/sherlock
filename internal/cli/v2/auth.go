@@ -24,7 +24,7 @@ type sherlockClientOptions struct {
 }
 
 func NewSherlockClient(options sherlockClientOptions) (*sherlockClient, error) {
-	transport := httptransport.New(options.hostURL, "", []string{"https"})
+	transport := httptransport.New(options.hostURL, "", options.schemes)
 	if options.useServiceAccountAuth {
 		idToken, err := getIapTokenFromSA(options.credentialsPath)
 		if err != nil {

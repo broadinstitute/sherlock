@@ -3,8 +3,10 @@ package v2
 import (
 	"bytes"
 	"encoding/json"
+	"log"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/broadinstitute/sherlock/internal/handlers/misc"
@@ -25,6 +27,7 @@ func Test_meCommand(t *testing.T) {
 				"me",
 			},
 			mockServerResponse: func(w http.ResponseWriter, r *http.Request) {
+				w.Header().Add("Content-Type", "application/json")
 				_ = json.NewEncoder(w).Encode(misc.MyUserResponse{
 					Email:       "test@test.com",
 					Suitability: "true",
@@ -38,18 +41,26 @@ func Test_meCommand(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			testServer := httptest.NewServer(testCase.mockServerResponse)
 			defer testServer.Close()
+
+			testURL := strings.TrimPrefix(testServer.URL, "http://")
 			clientOptions := sherlockClientOptions{
-				hostURL:               testServer.URL,
+				hostURL:               testURL,
 				useServiceAccountAuth: false,
+				schemes:               []string{"http"},
 			}
 			client, err := NewSherlockClient(clientOptions)
-			app = client
 			if err != nil {
 				t.Fatalf("error building sherlock client: %v", err)
 			}
 
+			app = client
+
 			buildV2CommandTree()
-			_, err = executeCommand(RootCmd, testCase.cliArgs...)
+			// disable pre run intialization so test sherlock client doesn't get overwritten
+			RootCmd.PersistentPreRunE = nil
+
+			output, err := executeCommand(RootCmd, testCase.cliArgs...)
+			log.Println(output)
 			assert.NoError(t, err, "expected no error from me command but got one")
 		})
 	}
