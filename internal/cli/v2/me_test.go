@@ -44,9 +44,8 @@ func Test_meCommand(t *testing.T) {
 
 			testURL := strings.TrimPrefix(testServer.URL, "http://")
 			clientOptions := sherlockClientOptions{
-				hostURL:               testURL,
-				useServiceAccountAuth: false,
-				schemes:               []string{"http"},
+				hostURL: testURL,
+				schemes: []string{"http"},
 			}
 			client, err := NewSherlockClient(clientOptions)
 			if err != nil {

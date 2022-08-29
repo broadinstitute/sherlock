@@ -16,16 +16,17 @@ type sherlockClient struct {
 }
 
 type sherlockClientOptions struct {
-	hostURL               string
-	schemes               []string
-	credentialsPath       string
-	audience              string
-	useServiceAccountAuth bool
+	hostURL         string
+	schemes         []string
+	credentialsPath string
+	audience        string
 }
 
 func NewSherlockClient(options sherlockClientOptions) (*sherlockClient, error) {
 	transport := httptransport.New(options.hostURL, "", options.schemes)
-	if options.useServiceAccountAuth {
+
+	// If an sa key file is provided, use it to make an authed request
+	if options.credentialsPath != "" {
 		idToken, err := getIapTokenFromSA(options.credentialsPath, options.audience)
 		if err != nil {
 			return nil, err

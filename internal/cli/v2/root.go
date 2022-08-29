@@ -33,20 +33,18 @@ func initialize(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	// The error case cannot happen in these lookups, defaults are set by the top level root command
+	// Pull global config out of koanf config object
 	credsFile := config.String("credentials-file")
 	hostURL := config.String("sherlock-url")
 	// remove https:// protocol prefix, needed for v1 cli support but not the v2 client lib
 	hostURL = strings.TrimPrefix(hostURL, "https://")
-	useSaAuth := config.Bool("use-sa-auth")
 	audience := config.String("oauth-audience")
 
 	clientOptions := sherlockClientOptions{
-		hostURL:               hostURL,
-		credentialsPath:       credsFile,
-		schemes:               []string{"https"},
-		useServiceAccountAuth: useSaAuth,
-		audience:              audience,
+		hostURL:         hostURL,
+		credentialsPath: credsFile,
+		schemes:         []string{"https"},
+		audience:        audience,
 	}
 
 	client, err := NewSherlockClient(clientOptions)
