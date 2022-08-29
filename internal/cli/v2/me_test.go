@@ -3,12 +3,14 @@ package v2
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
 
+	"github.com/broadinstitute/sherlock/clients/go/client/models"
 	"github.com/broadinstitute/sherlock/internal/handlers/misc"
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/assert"
@@ -54,6 +56,22 @@ func (suite *meCommandSuite) TestMeCommand() {
 			},
 			expectError: nil,
 		},
+		{
+			name: "permissions error",
+			cliArgs: []string{
+				"me",
+			},
+			mockServerResponse: func(w http.ResponseWriter, r *http.Request) {
+				w.WriteHeader(http.StatusProxyAuthRequired)
+				w.Header().Add("Content-type", "application/json")
+				_ = json.NewEncoder(w).Encode(models.ErrorsErrorResponse{
+					Message: "unauthorized",
+					ToBlame: "permissions",
+					Type:    "authorization",
+				})
+			},
+			expectError: fmt.Errorf("unauthorized"),
+		},
 	}
 
 	for _, testCase := range testCases {
@@ -69,7 +87,13 @@ func (suite *meCommandSuite) TestMeCommand() {
 
 			output, err := executeCommand(RootCmd, testCase.cliArgs...)
 			log.Println(output)
-			assert.NoError(suite.T(), err, "expected no error from me command but got one")
+			if testCase.expectError == nil {
+				assert.NoError(suite.T(), err, "expected no error from me command but got one")
+			} else {
+				assert.Error(suite.T(), err)
+				assert.ErrorContains(suite.T(), err, testCase.expectError.Error())
+			}
+
 			assert.Contains(suite.T(), output, "test@test.com")
 		})
 	}
