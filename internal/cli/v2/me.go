@@ -30,5 +30,5 @@ func getMeInfo(cmd *cobra.Command, args []string) error {
 }
 
 func formatMeResponse(user, suitability string) string {
-	return fmt.Sprintf("retrieving current user info\nUser: %s\nSuitability: %s\n", user, suitability)
+	return fmt.Sprintf("User: %s\nSuitability: %s\n", user, suitability)
 }
