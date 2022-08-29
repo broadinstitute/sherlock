@@ -28,7 +28,7 @@ type meCommandSuite struct {
 	suite.Suite
 }
 
-func (suite *meCommandSuite) SetupSuite() {
+func (suite *meCommandSuite) SetupTest() {
 	// initialize command parse tree
 	buildV2CommandTree()
 	// disable pre run intialization so test sherlock client doesn't get overwritten
