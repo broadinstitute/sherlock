@@ -3,13 +3,21 @@ package v2
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
 	"strings"
 
+	"github.com/knadh/koanf"
+	"github.com/knadh/koanf/providers/env"
+	"github.com/knadh/koanf/providers/posflag"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
 
 var (
 	app     *sherlockClient
+	cfgFile string
+	config  = koanf.New(".")
 	RootCmd = &cobra.Command{
 		Use:   "v2",
 		Short: "command subtree with support for v2 apis",
@@ -20,18 +28,25 @@ var (
 )
 
 func initialize(cmd *cobra.Command, args []string) error {
+	// initialize global config flags passed
+	if err := config.Load(posflag.Provider(cmd.Flags(), ".", config), nil); err != nil {
+		return err
+	}
+
 	// The error case cannot happen in these lookups, defaults are set by the top level root command
-	credsFile, _ := cmd.Flags().GetString("credentials-file")
-	hostURL, _ := cmd.Flags().GetString("sherlock-url")
+	credsFile := config.String("credentials-file")
+	hostURL := config.String("sherlock-url")
 	// remove https:// protocol prefix, needed for v1 cli support but not the v2 client lib
 	hostURL = strings.TrimPrefix(hostURL, "https://")
-	useSaAuth, _ := cmd.Flags().GetBool("use-sa-auth")
+	useSaAuth := config.Bool("use-sa-auth")
+	audience := config.String("oauth-audience")
 
 	clientOptions := sherlockClientOptions{
 		hostURL:               hostURL,
 		credentialsPath:       credsFile,
 		schemes:               []string{"https"},
 		useServiceAccountAuth: useSaAuth,
+		audience:              audience,
 	}
 
 	client, err := NewSherlockClient(clientOptions)
@@ -49,5 +64,21 @@ func buildV2CommandTree() {
 
 // initialize the sub command parse tree for v2 apis
 func init() {
+	initConfig()
 	buildV2CommandTree()
+}
+
+func initConfig() {
+	if cfgFile == "" {
+		home, err := os.UserHomeDir()
+		cobra.CheckErr(err)
+		cfgFile = filepath.Clean(filepath.Join(home, ".sherlock.yaml"))
+	}
+
+	if err := config.Load(env.Provider("SHERLOCK_", ".", func(s string) string {
+		return strings.Replace(strings.ToLower(
+			strings.TrimPrefix(s, "SHERLOCK_")), "_", "-", -1)
+	}), nil); err != nil {
+		log.Fatal().Msgf("failed to load config from environment: %v", err)
+	}
 }

@@ -51,6 +51,7 @@ func init() {
 	rootCmd.PersistentFlags().BoolVar(&useServiceAccountAuth, "use-sa-auth", false, "Whether or not to use service account credentials for oauth")
 
 	err := config.Load(posflag.Provider(rootCmd.PersistentFlags(), ".", config), nil)
+
 	rootCmd.AddCommand(v2.RootCmd)
 	cobra.CheckErr(err)
 }

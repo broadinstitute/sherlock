@@ -3,7 +3,6 @@ package v2
 import (
 	"context"
 	"fmt"
-	"os"
 
 	"github.com/broadinstitute/sherlock/clients/go/client"
 	httptransport "github.com/go-openapi/runtime/client"
@@ -20,13 +19,14 @@ type sherlockClientOptions struct {
 	hostURL               string
 	schemes               []string
 	credentialsPath       string
+	audience              string
 	useServiceAccountAuth bool
 }
 
 func NewSherlockClient(options sherlockClientOptions) (*sherlockClient, error) {
 	transport := httptransport.New(options.hostURL, "", options.schemes)
 	if options.useServiceAccountAuth {
-		idToken, err := getIapTokenFromSA(options.credentialsPath)
+		idToken, err := getIapTokenFromSA(options.credentialsPath, options.audience)
 		if err != nil {
 			return nil, err
 		}
@@ -40,12 +40,8 @@ func NewSherlockClient(options sherlockClientOptions) (*sherlockClient, error) {
 	return sherlock, nil
 }
 
-func getIapTokenFromSA(credentialsPath string) (string, error) {
+func getIapTokenFromSA(credentialsPath, audience string) (string, error) {
 	ctx := context.Background()
-	audience, ok := os.LookupEnv("SHERLOCK_OAUTH_AUDIENCE")
-	if !ok {
-		return "", fmt.Errorf("unable to determine oauth audience")
-	}
 
 	tokenSource, err := idtoken.NewTokenSource(ctx, audience, option.WithCredentialsFile(credentialsPath))
 	if err != nil {
