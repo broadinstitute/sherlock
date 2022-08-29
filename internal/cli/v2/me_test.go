@@ -12,9 +12,28 @@ import (
 	"github.com/broadinstitute/sherlock/internal/handlers/misc"
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/suite"
 )
 
-func Test_meCommand(t *testing.T) {
+func TestMeCommandSuite(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping functional test")
+	}
+	suite.Run(t, new(meCommandSuite))
+}
+
+type meCommandSuite struct {
+	suite.Suite
+}
+
+func (suite *meCommandSuite) SetupSuite() {
+	// initialize command parse tree
+	buildV2CommandTree()
+	// disable pre run intialization so test sherlock client doesn't get overwritten
+	RootCmd.PersistentPreRunE = nil
+}
+
+func (suite *meCommandSuite) TestMeCommand() {
 	testCases := []struct {
 		name               string
 		cliArgs            []string
@@ -38,31 +57,32 @@ func Test_meCommand(t *testing.T) {
 	}
 
 	for _, testCase := range testCases {
-		t.Run(testCase.name, func(t *testing.T) {
+		suite.Run(testCase.name, func() {
 			testServer := httptest.NewServer(testCase.mockServerResponse)
 			defer testServer.Close()
 
-			testURL := strings.TrimPrefix(testServer.URL, "http://")
-			clientOptions := sherlockClientOptions{
-				hostURL: testURL,
-				schemes: []string{"http"},
-			}
-			client, err := NewSherlockClient(clientOptions)
+			client, err := newTestClient(testServer.URL)
 			if err != nil {
-				t.Fatalf("error building sherlock client: %v", err)
+				suite.T().Fatalf("error building sherlock client: %v", err)
 			}
-
 			app = client
-
-			buildV2CommandTree()
-			// disable pre run intialization so test sherlock client doesn't get overwritten
-			RootCmd.PersistentPreRunE = nil
 
 			output, err := executeCommand(RootCmd, testCase.cliArgs...)
 			log.Println(output)
-			assert.NoError(t, err, "expected no error from me command but got one")
+			assert.NoError(suite.T(), err, "expected no error from me command but got one")
+			assert.Contains(suite.T(), output, "test@test.com")
 		})
 	}
+}
+
+func newTestClient(url string) (*sherlockClient, error) {
+	// urls from httptest include the scheme, strip this to work with the client lib
+	testURL := strings.TrimPrefix(url, "http://")
+	clientOptions := sherlockClientOptions{
+		hostURL: testURL,
+		schemes: []string{"http"},
+	}
+	return NewSherlockClient(clientOptions)
 }
 
 func executeCommand(root *cobra.Command, args ...string) (string, error) {
