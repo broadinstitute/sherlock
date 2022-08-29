@@ -92,6 +92,8 @@ func (suite *meCommandSuite) TestMeCommand() {
 			} else {
 				assert.Error(suite.T(), err)
 				assert.ErrorContains(suite.T(), err, testCase.expectError.Error())
+				// nothing else to assert on in error case
+				return
 			}
 
 			assert.Contains(suite.T(), output, "test@test.com")
