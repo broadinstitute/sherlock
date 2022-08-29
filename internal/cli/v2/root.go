@@ -22,7 +22,7 @@ var (
 		Use:   "v2",
 		Short: "command subtree with support for v2 apis",
 		Long:  "v2 contains subcommands for interacting with sherlock v2 apis",
-		// ensures
+		// ensures configuration and client initialization happens as a pre-run step before each child command
 		PersistentPreRunE: initialize,
 	}
 )
