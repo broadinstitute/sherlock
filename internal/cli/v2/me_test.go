@@ -4,13 +4,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
 
-	"github.com/broadinstitute/sherlock/clients/go/client/models"
 	"github.com/broadinstitute/sherlock/internal/handlers/misc"
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/assert"
@@ -18,9 +16,6 @@ import (
 )
 
 func TestMeCommandSuite(t *testing.T) {
-	if testing.Short() {
-		t.Skip("skipping functional test")
-	}
 	suite.Run(t, new(meCommandSuite))
 }
 
@@ -63,14 +58,9 @@ func (suite *meCommandSuite) TestMeCommand() {
 			},
 			mockServerResponse: func(w http.ResponseWriter, r *http.Request) {
 				w.WriteHeader(http.StatusProxyAuthRequired)
-				w.Header().Add("Content-type", "application/json")
-				_ = json.NewEncoder(w).Encode(models.ErrorsErrorResponse{
-					Message: "unauthorized",
-					ToBlame: "permissions",
-					Type:    "authorization",
-				})
+				w.Header().Add("Content-Type", "application/json")
 			},
-			expectError: fmt.Errorf("unauthorized"),
+			expectError: fmt.Errorf("error retrieving current user info"),
 		},
 	}
 
@@ -86,7 +76,6 @@ func (suite *meCommandSuite) TestMeCommand() {
 			app = client
 
 			output, err := executeCommand(RootCmd, testCase.cliArgs...)
-			log.Println(output)
 			if testCase.expectError == nil {
 				assert.NoError(suite.T(), err, "expected no error from me command but got one")
 			} else {

@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/broadinstitute/sherlock/clients/go/client/misc"
-	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
 
@@ -25,10 +24,11 @@ func getMeInfo(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("error retrieving current user info: %v", err)
 	}
 
-	showMeResponse(me.Payload.Email, me.Payload.Suitability)
+	response := formatMeResponse(me.Payload.Email, me.Payload.Suitability)
+	fmt.Fprint(cmd.OutOrStdout(), response)
 	return nil
 }
 
-func showMeResponse(user, suitability string) {
-	log.Info().Msgf("retrieving current user info\nUser: %s\nSuitability: %s\n", user, suitability)
+func formatMeResponse(user, suitability string) string {
+	return fmt.Sprintf("retrieving current user info\nUser: %s\nSuitability: %s\n", user, suitability)
 }
