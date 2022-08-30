@@ -61,7 +61,7 @@ func buildV2CommandTree() {
 }
 
 // initialize the sub command parse tree for v2 apis
-func init() {
+func Initialize() {
 	initConfig()
 	buildV2CommandTree()
 }

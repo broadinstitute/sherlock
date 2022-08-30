@@ -52,6 +52,8 @@ func init() {
 
 	err := config.Load(posflag.Provider(rootCmd.PersistentFlags(), ".", config), nil)
 
+	// perform initialization stuff for v2 cli
+	v2.Initialize()
 	rootCmd.AddCommand(v2.RootCmd)
 	cobra.CheckErr(err)
 }
