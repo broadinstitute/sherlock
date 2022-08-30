@@ -23,11 +23,11 @@ var (
 		Short: "command subtree with support for v2 apis",
 		Long:  "v2 contains subcommands for interacting with sherlock v2 apis",
 		// ensures configuration and client initialization happens as a pre-run step before each child command
-		PersistentPreRunE: initialize,
+		PersistentPreRunE: buildClient,
 	}
 )
 
-func initialize(cmd *cobra.Command, args []string) error {
+func buildClient(cmd *cobra.Command, args []string) error {
 	// initialize global config flags passed
 	if err := config.Load(posflag.Provider(cmd.Flags(), ".", config), nil); err != nil {
 		return err
