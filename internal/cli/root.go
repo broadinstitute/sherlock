@@ -1,16 +1,18 @@
 package cli
 
 import (
+	"os"
+	"path/filepath"
+	"strings"
+
 	"github.com/knadh/koanf"
 	"github.com/knadh/koanf/parsers/yaml"
 	"github.com/knadh/koanf/providers/env"
 	"github.com/knadh/koanf/providers/file"
 	"github.com/knadh/koanf/providers/posflag"
 	"github.com/rs/zerolog/log"
-	"os"
-	"path/filepath"
-	"strings"
 
+	v2 "github.com/broadinstitute/sherlock/internal/cli/v2"
 	"github.com/spf13/cobra"
 )
 
@@ -49,6 +51,10 @@ func init() {
 	rootCmd.PersistentFlags().BoolVar(&useServiceAccountAuth, "use-sa-auth", false, "Whether or not to use service account credentials for oauth")
 
 	err := config.Load(posflag.Provider(rootCmd.PersistentFlags(), ".", config), nil)
+
+	// perform initialization stuff for v2 cli
+	v2.Initialize()
+	rootCmd.AddCommand(v2.RootCmd)
 	cobra.CheckErr(err)
 }
 
