@@ -90,6 +90,8 @@ func (suite *meCommandSuite) TestMeCommand() {
 	}
 }
 
+// newTestClient instantiates a sherlock client that is specifically intended for use in unit tests
+// and is intended to be used to issue requests to a mock sherlock server run using httptest
 func newTestClient(url string) (*sherlockClient, error) {
 	// urls from httptest include the scheme, strip this to work with the client lib
 	testURL := strings.TrimPrefix(url, "http://")
@@ -100,6 +102,8 @@ func newTestClient(url string) (*sherlockClient, error) {
 	return NewSherlockClient(clientOptions)
 }
 
+// executeCommand  is a test utility function used to run a cobra command and capture any output
+// in a byes.Buffer so it can be inspected and asserted against
 func executeCommand(root *cobra.Command, args ...string) (string, error) {
 	buf := new(bytes.Buffer)
 	root.SetOut(buf)

@@ -18,6 +18,7 @@ var (
 	app     *sherlockClient
 	cfgFile string
 	config  = koanf.New(".")
+	// RootCmd is a cobra command instances that serves as the base of the command parse tree for all v2 commands
 	RootCmd = &cobra.Command{
 		Use:   "v2",
 		Short: "command subtree with support for v2 apis",
@@ -27,6 +28,8 @@ var (
 	}
 )
 
+// buildClient instantiates an instance of the sherlock swagger client based on provided config,
+// this is run as pre-run hook before execurting any command under the v2 tree
 func buildClient(cmd *cobra.Command, args []string) error {
 	// initialize global config flags passed
 	if err := config.Load(posflag.Provider(cmd.Flags(), ".", config), nil); err != nil {
@@ -56,11 +59,12 @@ func buildClient(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
+// buildV2CommandTree is a utility method to construct the tree parse tree for v2 commands
 func buildV2CommandTree() {
 	RootCmd.AddCommand(meCmd)
 }
 
-// initialize the sub command parse tree for v2 apis
+// Initialize the sub command parse tree for v2 apis and read in config from file and environment
 func Initialize() {
 	initConfig()
 	buildV2CommandTree()

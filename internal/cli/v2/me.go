@@ -17,6 +17,8 @@ var (
 	}
 )
 
+// getMeInfo executes a request to sherlock's /my-user endpoint and returns
+// info about the calling user including suitability
 func getMeInfo(cmd *cobra.Command, args []string) error {
 	meParams := misc.NewGetMyUserParams()
 	me, err := app.client.Misc.GetMyUser(meParams)
