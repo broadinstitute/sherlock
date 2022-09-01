@@ -194,8 +194,6 @@ func (suite *chartDeployRecordControllerSuite) TestChartDeployRecordGet() {
 	suite.seedCharts(suite.T())
 	suite.seedChartReleases(suite.T())
 	suite.seedChartDeployRecords(suite.T())
-	suite.seedAppVersions(suite.T())
-	suite.seedChartVersions(suite.T())
 	chartDeployRecords, _ := suite.ChartDeployRecordController.ListAllMatching(ChartDeployRecord{
 		CreatableChartDeployRecord: CreatableChartDeployRecord{
 			ChartRelease: datarepoDevChartRelease.Name,
