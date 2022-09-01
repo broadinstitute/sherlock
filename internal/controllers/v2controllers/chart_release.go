@@ -9,9 +9,9 @@ import (
 
 type ChartRelease struct {
 	ReadableBaseType
-	ChartInfo       Chart        `json:"chartInfo" form:"chartInfo"`
-	ClusterInfo     *Cluster     `json:"clusterInfo,omitempty" form:"clusterInfo"`
-	EnvironmentInfo *Environment `json:"environmentInfo,omitempty" form:"environmentInfo"`
+	ChartInfo       Chart        `json:"chartInfo" form:"-"`
+	ClusterInfo     *Cluster     `json:"clusterInfo,omitempty" form:"-"`
+	EnvironmentInfo *Environment `json:"environmentInfo,omitempty" form:"-"`
 	DestinationType string       `json:"destinationType" form:"destinationType" enum:"environment,cluster"` // Calculated field
 	CreatableChartRelease
 }

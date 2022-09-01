@@ -7,7 +7,7 @@ import (
 
 type ChartVersion struct {
 	ReadableBaseType
-	ChartInfo Chart `json:"chartInfo" form:"chartInfo"`
+	ChartInfo Chart `json:"chartInfo" form:"-"`
 	CreatableChartVersion
 }
 
