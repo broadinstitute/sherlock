@@ -8,7 +8,7 @@ import (
 
 type ChartDeployRecord struct {
 	ReadableBaseType
-	ChartReleaseInfo ChartRelease `json:"chartReleaseInfo" form:"chartReleaseInfo"`
+	ChartReleaseInfo ChartRelease `json:"chartReleaseInfo" form:"-"`
 	CreatableChartDeployRecord
 }
 

@@ -15,8 +15,8 @@ import (
 
 type Environment struct {
 	ReadableBaseType
-	TemplateEnvironmentInfo *Environment `json:"templateEnvironmentInfo,omitempty" swaggertype:"object" form:"templateEnvironmentInfo"` // Single-layer recursive; provides info of the template environment if this environment has one
-	DefaultClusterInfo      *Cluster     `json:"defaultClusterInfo,omitempty" form:"defaultClusterInfo"`
+	TemplateEnvironmentInfo *Environment `json:"templateEnvironmentInfo,omitempty" swaggertype:"object" form:"-"` // Single-layer recursive; provides info of the template environment if this environment has one
+	DefaultClusterInfo      *Cluster     `json:"defaultClusterInfo,omitempty" form:"-"`
 	ValuesName              string       `json:"valuesName" form:"valuesName"`
 	CreatableEnvironment
 }

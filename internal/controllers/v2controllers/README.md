@@ -11,6 +11,7 @@ For naming, for a model type called `v2models.X`, the three types would be `X`, 
 #### Do use:
 - `json` controls the field name when parsing to/from json (always add)
 - `form` controls the field name when parsing from query parameters (always add)
+  - Struct types can't ever be parsed from query parameters, so `form:"-"` should be used [to skip them during parsing](https://github.com/gin-gonic/gin/pull/1733)
 - `swaggertype` can override the type of the field documented on Swagger, useful for anything recursive (only add when Swaggo is parsing the type incorrectly)
 - `enums` controls possible values for the field as documented on Swagger (add when reasonable)
 - `default` controls (add when reasonable):
