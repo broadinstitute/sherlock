@@ -5,13 +5,16 @@ import (
 	"github.com/broadinstitute/sherlock/internal/errors"
 	"gorm.io/gorm"
 	"strconv"
+	"strings"
 )
 
 type ChartVersion struct {
 	gorm.Model
-	Chart        Chart
-	ChartID      uint   `gorm:"not null: default:null"`
-	ChartVersion string `gorm:"not null: default:null"`
+	Chart                Chart
+	ChartID              uint   `gorm:"not null: default:null"`
+	ChartVersion         string `gorm:"not null: default:null"`
+	ParentChartVersion   *ChartVersion
+	ParentChartVersionID *uint
 }
 
 func (c ChartVersion) TableName() string {
@@ -24,10 +27,11 @@ func newChartVersionStore(db *gorm.DB) *Store[ChartVersion] {
 		selectorToQueryModel: chartVersionSelectorToQuery,
 		modelToSelectors:     chartVersionToSelectors,
 		validateModel:        validateChartVersion,
+		rejectDuplicate:      rejectDuplicateChartVersion,
 	}
 }
 
-func chartVersionSelectorToQuery(_ *gorm.DB, selector string) (ChartVersion, error) {
+func chartVersionSelectorToQuery(db *gorm.DB, selector string) (ChartVersion, error) {
 	if len(selector) == 0 {
 		return ChartVersion{}, fmt.Errorf("(%s) chart version selector cannot be empty", errors.BadRequest)
 	}
@@ -39,6 +43,28 @@ func chartVersionSelectorToQuery(_ *gorm.DB, selector string) (ChartVersion, err
 		}
 		query.ID = uint(id)
 		return query, nil
+	} else if strings.Count(selector, "/") == 1 { // chart + version
+		parts := strings.Split(selector, "/")
+
+		// chart
+		chartQuery, err := chartSelectorToQuery(db, parts[0])
+		if err != nil {
+			return ChartVersion{}, fmt.Errorf("invalid chart release selector %s, chart sub-selector error: %v", selector, err)
+		}
+		chart, err := getFromQuery(db, chartQuery)
+		if err != nil {
+			return ChartVersion{}, fmt.Errorf("error handling chart sub-selector %s: %v", parts[0], err)
+		}
+		query.ChartID = chart.ID
+
+		// version
+		version := parts[1]
+		if len(version) == 0 {
+			return ChartVersion{}, fmt.Errorf("(%s) invalid chart version selector %s, version sub-selector was empty", errors.BadRequest, selector)
+		}
+		query.ChartVersion = version
+
+		return query, nil
 	}
 	return ChartVersion{}, fmt.Errorf("(%s) invalid chart version selector '%s'", errors.BadRequest, selector)
 }
@@ -47,6 +73,16 @@ func chartVersionToSelectors(chartVersion ChartVersion) []string {
 	var selectors []string
 	if chartVersion.ID != 0 {
 		selectors = append(selectors, fmt.Sprintf("%d", chartVersion.ID))
+	}
+	if chartVersion.ChartVersion != "" {
+		chartSelectors := chartToSelectors(chartVersion.Chart)
+		if len(chartSelectors) == 0 && chartVersion.ChartID != 0 {
+			// Chart not filled so chartToSelectors gives nothing, but we have the chart ID and it is a selector anyway
+			chartSelectors = []string{fmt.Sprintf("%d", chartVersion.ChartID)}
+		}
+		for _, chartSelector := range chartSelectors {
+			selectors = append(selectors, fmt.Sprintf("%s/%s", chartSelector, chartVersion.ChartVersion))
+		}
 	}
 	return selectors
 }
@@ -57,6 +93,23 @@ func validateChartVersion(chartVersion ChartVersion) error {
 	}
 	if chartVersion.ChartVersion == "" {
 		return fmt.Errorf("an %T must have a non-empty chart version", chartVersion)
+	}
+	return nil
+}
+
+func rejectDuplicateChartVersion(existing ChartVersion, new ChartVersion) error {
+	if existing.ChartVersion != new.ChartVersion {
+		return fmt.Errorf("new %T has chart version %s, which is mismatched with the existing value of %s", new, new.ChartVersion, existing.ChartVersion)
+	}
+	if existing.ChartID != new.ChartID {
+		return fmt.Errorf("new %T has chart ID %d, which is mismatched with the existing value of %d", new, new.ChartID, existing.ChartID)
+	}
+	if (existing.ParentChartVersionID != nil) && (new.ParentChartVersionID == nil) {
+		return fmt.Errorf("new %T has no parent ID, which is mismatched with the existing having one", new)
+	} else if (existing.ParentChartVersionID == nil) && (new.ParentChartVersionID != nil) {
+		return fmt.Errorf("new %T has a parent ID, which is mismatched with the existing not having one", new)
+	} else if existing.ParentChartVersionID != nil && new.ParentChartVersionID != nil && *existing.ParentChartVersionID != *new.ParentChartVersionID {
+		return fmt.Errorf("new %T has parent ID %d, which is mismatched with the existing value of %d", new, *new.ParentChartVersionID, *existing.ParentChartVersionID)
 	}
 	return nil
 }

@@ -74,6 +74,11 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "parentAppVersion",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "name": "updatedAt",
                         "in": "query"
                     },
@@ -133,7 +138,7 @@ const docTemplate = `{
                 }
             },
             "post": {
-                "description": "Create a new AppVersion entry. Note that fields are immutable after creation.",
+                "description": "Create a new AppVersion entry. Note that fields are immutable after creation.\nIf the new entry is a duplicate of one already in the database, the database will not be altered and the call will return normally but with a 200 code.",
                 "consumes": [
                     "application/json"
                 ],
@@ -209,7 +214,7 @@ const docTemplate = `{
         },
         "/api/v2/app-versions/{selector}": {
             "get": {
-                "description": "Get an existing AppVersion entry via one its \"selector\"--its numeric ID.",
+                "description": "Get an existing AppVersion entry via one its \"selectors\": chart/version or numeric ID.",
                 "produces": [
                     "application/json"
                 ],
@@ -220,7 +225,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "The AppVersion to get's selector: name or numeric ID",
+                        "description": "The AppVersion to get's selector: chart/version or numeric ID",
                         "name": "selector",
                         "in": "path",
                         "required": true
@@ -1010,6 +1015,11 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "parentChartVersion",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "name": "updatedAt",
                         "in": "query"
                     },
@@ -1069,7 +1079,7 @@ const docTemplate = `{
                 }
             },
             "post": {
-                "description": "Create a new ChartVersion entry. Note that fields are immutable after creation.",
+                "description": "Create a new ChartVersion entry. Note that fields are immutable after creation.\nIf the new entry is a duplicate of one already in the database, the database will not be altered and the call will return normally but with a 200 code.",
                 "consumes": [
                     "application/json"
                 ],
@@ -1145,7 +1155,7 @@ const docTemplate = `{
         },
         "/api/v2/chart-versions/{selector}": {
             "get": {
-                "description": "Get an existing ChartVersion entry via one its \"selector\"--its numeric ID.",
+                "description": "Get an existing ChartVersion entry via one its \"selectors\": chart/version or numeric ID.",
                 "produces": [
                     "application/json"
                 ],
@@ -1156,7 +1166,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "The ChartVersion to get's selector: name or numeric ID",
+                        "description": "The ChartVersion to get's selector: chart/version or numeric ID",
                         "name": "selector",
                         "in": "path",
                         "required": true
@@ -3099,6 +3109,12 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
+                "parentAppVersion": {
+                    "type": "string"
+                },
+                "parentAppVersionInfo": {
+                    "type": "object"
+                },
                 "updatedAt": {
                     "type": "string"
                 }
@@ -3275,6 +3291,12 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
+                "parentChartVersion": {
+                    "type": "string"
+                },
+                "parentChartVersionInfo": {
+                    "type": "object"
+                },
                 "updatedAt": {
                     "type": "string"
                 }
@@ -3342,6 +3364,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "gitCommit": {
+                    "type": "string"
+                },
+                "parentAppVersion": {
                     "type": "string"
                 }
             }
@@ -3463,6 +3488,9 @@ const docTemplate = `{
                 },
                 "chartVersion": {
                     "description": "Required when creating",
+                    "type": "string"
+                },
+                "parentChartVersion": {
                     "type": "string"
                 }
             }
@@ -3714,7 +3742,7 @@ var SwaggerInfo = &swag.Spec{
 	BasePath:         "",
 	Schemes:          []string{"https"},
 	Title:            "Sherlock",
-	Description:      "The Data Science Platform's source-of-truth service",
+	Description:      "The Data Science Platform's source-of-truth service.\nNote: this API will try to load and return associations in responses, so clients won't need to make as many requests. This behavior isn't recursive, though, so associations of associations are *not* fully loaded (even if it might seem that way from looking at the data types).",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 }

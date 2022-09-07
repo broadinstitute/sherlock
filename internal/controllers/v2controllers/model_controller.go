@@ -56,16 +56,13 @@ type Editable[R Readable, C Creatable[R]] interface {
 type ModelController[M v2models.Model, R Readable, C Creatable[R], E Editable[R, C]] struct {
 	// primaryStore is the part of the model that this is a controller for.
 	primaryStore *v2models.Store[M]
-
 	// allStores is a reference to the entire model, so that readableToModel and setDynamicDefaults can work
 	// with associations if they need to.
 	allStores *v2models.StoreSet
-
 	// modelToReadable is a required half of the Readable-v2models.Model mapping that the ModelController establishes.
 	//
 	// Since this direction is coming from the database type, it can be done offline and without errors.
 	modelToReadable func(model M) *R
-
 	// readableToModel is a required half of the Readable-v2models.Model mapping that the ModelController establishes.
 	//
 	// Since this direction is coming from the user type, it may take advantage of the database stores to load
@@ -74,7 +71,9 @@ type ModelController[M v2models.Model, R Readable, C Creatable[R], E Editable[R,
 	// example the filters given to ListAllMatching).
 	readableToModel func(readable R, stores *v2models.StoreSet) (M, error)
 
-	// setDynamicDefaults is an optional function to set context-dynamic defaults during creation.
+	// Optional:
+
+	// setDynamicDefaults allows setting context-dynamic defaults during creation.
 	//
 	// Normally, github.com/creasty/defaults is run to respect the same `default` struct tags that
 	// github.com/swaggo/swag understands for documentation.
@@ -101,8 +100,8 @@ func (c ModelController[M, R, C, E]) Create(creatable C, user *auth.User) (R, bo
 	if err != nil {
 		return readable, false, err
 	}
-	result, err := c.primaryStore.Create(model, user)
-	return *c.modelToReadable(result), err == nil, err
+	result, created, err := c.primaryStore.Create(model, user)
+	return *c.modelToReadable(result), created, err
 }
 
 func (c ModelController[M, R, C, E]) ListAllMatching(filter R, limit int) ([]R, error) {

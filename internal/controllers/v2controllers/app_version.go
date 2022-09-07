@@ -1,21 +1,25 @@
 package v2controllers
 
 import (
+	"fmt"
+	"github.com/broadinstitute/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/internal/models/v2models"
 	"gorm.io/gorm"
 )
 
 type AppVersion struct {
 	ReadableBaseType
-	ChartInfo Chart `json:"chartInfo" form:"-"`
+	ChartInfo            Chart       `json:"chartInfo"  form:"-"`
+	ParentAppVersionInfo *AppVersion `json:"parentAppVersionInfo,omitempty" swaggertype:"object" form:"-"`
 	CreatableAppVersion
 }
 
 type CreatableAppVersion struct {
-	Chart      string `json:"chart" form:"chart"`           // Required when creating
-	AppVersion string `json:"appVersion" form:"appVersion"` // Required when creating
-	GitCommit  string `json:"gitCommit" form:"gitCommit"`
-	GitBranch  string `json:"gitBranch" form:"gitBranch"`
+	Chart            string `json:"chart" form:"chart"`           // Required when creating
+	AppVersion       string `json:"appVersion" form:"appVersion"` // Required when creating
+	GitCommit        string `json:"gitCommit" form:"gitCommit"`
+	GitBranch        string `json:"gitBranch" form:"gitBranch"`
+	ParentAppVersion string `json:"parentAppVersion" form:"parentAppVersion"`
 	EditableAppVersion
 }
 
@@ -44,18 +48,28 @@ func newAppVersionController(stores *v2models.StoreSet) *AppVersionController {
 
 func modelAppVersionToAppVersion(model v2models.AppVersion) *AppVersion {
 	chart := modelChartToChart(model.Chart)
+	var parentAppVersion *AppVersion
+	var parentAppVersionSelector string
+	if model.ParentAppVersion != nil {
+		parentAppVersion = modelAppVersionToAppVersion(*model.ParentAppVersion)
+		// The parent's associations might not be loaded, so we can't safely get the chart name of the parent, but
+		// we know that the parent's chart name is the same as ours.
+		parentAppVersionSelector = fmt.Sprintf("%s/%s", chart.Name, parentAppVersion.AppVersion)
+	}
 	return &AppVersion{
 		ReadableBaseType: ReadableBaseType{
 			ID:        model.ID,
 			CreatedAt: model.CreatedAt,
 			UpdatedAt: model.UpdatedAt,
 		},
-		ChartInfo: *chart,
+		ChartInfo:            *chart,
+		ParentAppVersionInfo: parentAppVersion,
 		CreatableAppVersion: CreatableAppVersion{
-			Chart:      chart.Name,
-			AppVersion: model.AppVersion,
-			GitCommit:  model.GitCommit,
-			GitBranch:  model.GitBranch,
+			Chart:            chart.Name,
+			AppVersion:       model.AppVersion,
+			GitCommit:        model.GitCommit,
+			GitBranch:        model.GitBranch,
+			ParentAppVersion: parentAppVersionSelector,
 		},
 	}
 }
@@ -69,15 +83,27 @@ func appVersionToModelAppVersion(appVersion AppVersion, stores *v2models.StoreSe
 		}
 		chartID = chart.ID
 	}
+	var parentAppVersionID *uint
+	if appVersion.ParentAppVersion != "" {
+		parentAppVersion, err := stores.AppVersionStore.Get(appVersion.ParentAppVersion)
+		if err != nil {
+			return v2models.AppVersion{}, err
+		}
+		if chartID != 0 && parentAppVersion.ChartID != chartID {
+			return v2models.AppVersion{}, fmt.Errorf("(%s) given parent matches a different chart (%s, ID %d) than this one does (%s, ID %d)", errors.BadRequest, parentAppVersion.Chart.Name, parentAppVersion.ChartID, appVersion.Chart, chartID)
+		}
+		parentAppVersionID = &parentAppVersion.ID
+	}
 	return v2models.AppVersion{
 		Model: gorm.Model{
 			ID:        appVersion.ID,
 			CreatedAt: appVersion.CreatedAt,
 			UpdatedAt: appVersion.UpdatedAt,
 		},
-		ChartID:    chartID,
-		AppVersion: appVersion.AppVersion,
-		GitCommit:  appVersion.GitCommit,
-		GitBranch:  appVersion.GitBranch,
+		ChartID:            chartID,
+		AppVersion:         appVersion.AppVersion,
+		GitCommit:          appVersion.GitCommit,
+		GitBranch:          appVersion.GitBranch,
+		ParentAppVersionID: parentAppVersionID,
 	}, nil
 }

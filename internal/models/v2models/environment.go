@@ -129,7 +129,7 @@ func postCreateEnvironment(db *gorm.DB, environment Environment, user *auth.User
 			return fmt.Errorf("wasn't able to list chart releases of template %s: %v", environment.TemplateEnvironment.Name, err)
 		}
 		for _, chartRelease := range chartReleases {
-			_, err := storeSet.ChartReleaseStore.Create(
+			_, _, err := storeSet.ChartReleaseStore.Create(
 				ChartRelease{
 					ChartID:                  chartRelease.ChartID,
 					ClusterID:                environment.DefaultClusterID,

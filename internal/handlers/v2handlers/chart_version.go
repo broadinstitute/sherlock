@@ -15,6 +15,7 @@ func RegisterChartVersionHandlers(routerGroup *gin.RouterGroup, controller *v2co
 // createChartVersion godoc
 // @summary     Create a new ChartVersion entry
 // @description Create a new ChartVersion entry. Note that fields are immutable after creation.
+// @description If the new entry is a duplicate of one already in the database, the database will not be altered and the call will return normally but with a 200 code.
 // @tags        ChartVersions
 // @accept      json
 // @produce     json
@@ -42,10 +43,10 @@ func listChartVersion(controller *v2controllers.ChartVersionController) func(ctx
 
 // getChartVersion godoc
 // @summary     Get a ChartVersion entry
-// @description Get an existing ChartVersion entry via one its "selector"--its numeric ID.
+// @description Get an existing ChartVersion entry via one its "selectors": chart/version or numeric ID.
 // @tags        ChartVersions
 // @produce     json
-// @param       selector                path     string true "The ChartVersion to get's selector: name or numeric ID"
+// @param       selector                path     string true "The ChartVersion to get's selector: chart/version or numeric ID"
 // @success     200                     {object} v2controllers.ChartVersion
 // @failure     400,403,404,407,409,500 {object} errors.ErrorResponse
 // @router      /api/v2/chart-versions/{selector} [get]

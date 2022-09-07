@@ -50,12 +50,18 @@ type Store[M Model] struct {
 	// It is acceptable for this function to build a StoreSet using the provided db, so long as the StoreSet isn't
 	// persisted in any way--the db given may actually be a transaction reference.
 	postCreate func(db *gorm.DB, model M, user *auth.User) error
+	// rejectDuplicateCreate lets a type provide custom handling for when a new entry has selectors that match an
+	// entry that's already in the database. Typically, this is always considered an error. If this function is
+	// provided and does not error, the database will not be changed and the already-stored entry will be returned.
+	// This means that duplicate create calls would all return successfully, while still maintaining selector-uniqueness
+	// inside the database.
+	rejectDuplicate func(existing M, new M) error
 }
 
-func (s Store[M]) Create(model M, user *auth.User) (M, error) {
+func (s Store[M]) Create(model M, user *auth.User) (M, bool, error) {
 	if s.validateModel != nil {
 		if err := s.validateModel(model); err != nil {
-			return model, fmt.Errorf("creation validation error: (%s) new %T: %v", errors.BadRequest, model, err)
+			return model, false, fmt.Errorf("creation validation error: (%s) new %T: %v", errors.BadRequest, model, err)
 		}
 	}
 	selectorsThatShouldNotCurrentlyExist := s.modelToSelectors(model)
@@ -63,15 +69,25 @@ func (s Store[M]) Create(model M, user *auth.User) (M, error) {
 	for _, selector := range selectorsThatShouldNotCurrentlyExist {
 		queryThatShouldNotMatch, err := s.selectorToQueryModel(s.db, selector)
 		if err != nil {
-			return model, fmt.Errorf("creation validation error: new %T would have an invalid selector %s: %v", model, selector, err)
+			return model, false, fmt.Errorf("creation validation error: new %T would have an invalid selector %s: %v", model, selector, err)
 		}
-		var shouldStayEmpty M
-		result := s.db.Where(&queryThatShouldNotMatch).Limit(1).Find(&shouldStayEmpty)
+		var shouldStayEmpty []M
+		result := s.db.Where(&queryThatShouldNotMatch).Find(&shouldStayEmpty)
 		if result.Error != nil {
-			return model, fmt.Errorf("(%s) unexpected creation error: new %T's selector %s couldn't be uniqueness-checked against the database due to an error: %v", errors.InternalServerError, model, selector, result.Error)
+			return model, false, fmt.Errorf("(%s) unexpected creation error: new %T's selector %s couldn't be uniqueness-checked against the database due to an error: %v", errors.InternalServerError, model, selector, result.Error)
 		} else if result.RowsAffected > 0 {
-			log.Debug().Msgf("can't add new %T, selector %s already exists", model, selector)
-			return shouldStayEmpty, fmt.Errorf("creation validation error: (%s) new %T's selector %s already matches an entry in the database", errors.Conflict, model, selector)
+			// There's entries in the database already; if there's custom handling run that instead of just erroring
+			if s.rejectDuplicate != nil {
+				for _, existingMatch := range shouldStayEmpty {
+					if err = s.rejectDuplicate(existingMatch, model); err != nil {
+						return existingMatch, false, fmt.Errorf("creation validation error: (%s) new %T's selector %s matches an entry already in the database and there was an error resolving the duplicates: %v", errors.Conflict, model, selector, err)
+					}
+				}
+				log.Debug().Msgf("won't add new %T, selector %s already exists but rejectDuplicateCreate didn't error so accepting and returning the first accepting match", model, selector)
+				return shouldStayEmpty[0], false, nil
+			} else {
+				return shouldStayEmpty[0], false, fmt.Errorf("creation validation error: (%s) new %T's selector %s already matches an entry in the database", errors.Conflict, model, selector)
+			}
 		}
 	}
 	var ret M
@@ -105,7 +121,7 @@ func (s Store[M]) Create(model M, user *auth.User) (M, error) {
 		ret = result
 		return nil
 	})
-	return ret, err
+	return ret, err == nil, err
 }
 
 func (s Store[M]) ListAllMatching(filter M, limit int) ([]M, error) {

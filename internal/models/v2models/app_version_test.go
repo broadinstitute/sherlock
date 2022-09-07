@@ -150,3 +150,87 @@ func Test_validateAppVersion(t *testing.T) {
 		})
 	}
 }
+
+func Test_rejectDuplicateAppVersion(t *testing.T) {
+	type args struct {
+		existing AppVersion
+		new      AppVersion
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantErr bool
+	}{
+		{
+			name: "mismatch chart version",
+			args: args{
+				existing: AppVersion{AppVersion: "123"},
+				new:      AppVersion{AppVersion: "456"},
+			},
+			wantErr: true,
+		},
+		{
+			name: "mismatch chart",
+			args: args{
+				existing: AppVersion{ChartID: 123},
+				new:      AppVersion{ChartID: 456},
+			},
+			wantErr: true,
+		},
+		{
+			name: "mismatch git branch",
+			args: args{
+				existing: AppVersion{GitBranch: "123"},
+				new:      AppVersion{GitBranch: "456"},
+			},
+			wantErr: true,
+		},
+		{
+			name: "mismatch git commit",
+			args: args{
+				existing: AppVersion{GitCommit: "123"},
+				new:      AppVersion{GitCommit: "456"},
+			},
+			wantErr: true,
+		},
+		{
+			name: "only existing has parent",
+			args: args{
+				existing: AppVersion{ParentAppVersionID: testutils.PointerTo[uint](123)},
+				new:      AppVersion{},
+			},
+			wantErr: true,
+		},
+		{
+			name: "only new has parent",
+			args: args{
+				existing: AppVersion{},
+				new:      AppVersion{ParentAppVersionID: testutils.PointerTo[uint](456)},
+			},
+			wantErr: true,
+		},
+		{
+			name: "mismatch parent",
+			args: args{
+				existing: AppVersion{ParentAppVersionID: testutils.PointerTo[uint](123)},
+				new:      AppVersion{ParentAppVersionID: testutils.PointerTo[uint](456)},
+			},
+			wantErr: true,
+		},
+		{
+			name: "no mismatch",
+			args: args{
+				existing: AppVersion{},
+				new:      AppVersion{},
+			},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if err := rejectDuplicateAppVersion(tt.args.existing, tt.args.new); (err != nil) != tt.wantErr {
+				t.Errorf("rejectDuplicateAppVersion() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}

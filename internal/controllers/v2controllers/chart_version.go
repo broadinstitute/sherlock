@@ -1,19 +1,23 @@
 package v2controllers
 
 import (
+	"fmt"
+	"github.com/broadinstitute/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/internal/models/v2models"
 	"gorm.io/gorm"
 )
 
 type ChartVersion struct {
 	ReadableBaseType
-	ChartInfo Chart `json:"chartInfo" form:"-"`
+	ChartInfo              Chart         `json:"chartInfo" form:"-"`
+	ParentChartVersionInfo *ChartVersion `json:"parentChartVersionInfo,omitempty" swaggertype:"object" form:"-"`
 	CreatableChartVersion
 }
 
 type CreatableChartVersion struct {
-	Chart        string `json:"chart" form:"chart"`               // Required when creating
-	ChartVersion string `json:"chartVersion" form:"chartVersion"` // Required when creating
+	Chart              string `json:"chart" form:"chart"`               // Required when creating
+	ChartVersion       string `json:"chartVersion" form:"chartVersion"` // Required when creating
+	ParentChartVersion string `json:"parentChartVersion" form:"parentChartVersion"`
 	EditableChartVersion
 }
 
@@ -42,16 +46,26 @@ func newChartVersionController(stores *v2models.StoreSet) *ChartVersionControlle
 
 func modelChartVersionToChartVersion(model v2models.ChartVersion) *ChartVersion {
 	chart := modelChartToChart(model.Chart)
+	var parentChartVersion *ChartVersion
+	var parentChartVersionSelector string
+	if model.ParentChartVersion != nil {
+		parentChartVersion = modelChartVersionToChartVersion(*model.ParentChartVersion)
+		// The parent's associations might not be loaded, so we can't safely get the chart name of the parent, but
+		// we know that the parent's chart name is the same as ours.
+		parentChartVersionSelector = fmt.Sprintf("%s/%s", chart.Name, parentChartVersion.ChartVersion)
+	}
 	return &ChartVersion{
 		ReadableBaseType: ReadableBaseType{
 			ID:        model.ID,
 			CreatedAt: model.CreatedAt,
 			UpdatedAt: model.UpdatedAt,
 		},
-		ChartInfo: *chart,
+		ChartInfo:              *chart,
+		ParentChartVersionInfo: parentChartVersion,
 		CreatableChartVersion: CreatableChartVersion{
-			Chart:        chart.Name,
-			ChartVersion: model.ChartVersion,
+			Chart:              chart.Name,
+			ChartVersion:       model.ChartVersion,
+			ParentChartVersion: parentChartVersionSelector,
 		},
 	}
 }
@@ -65,13 +79,25 @@ func chartVersionToModelChartVersion(chartVersion ChartVersion, stores *v2models
 		}
 		chartID = chart.ID
 	}
+	var parentChartVersionID *uint
+	if chartVersion.ParentChartVersion != "" {
+		parentChartVersion, err := stores.ChartVersionStore.Get(chartVersion.ParentChartVersion)
+		if err != nil {
+			return v2models.ChartVersion{}, err
+		}
+		if chartID != 0 && parentChartVersion.ChartID != chartID {
+			return v2models.ChartVersion{}, fmt.Errorf("(%s) given parent matches a different chart (%s, ID %d) than this one does (%s, ID %d)", errors.BadRequest, parentChartVersion.Chart.Name, parentChartVersion.ChartID, chartVersion.Chart, chartID)
+		}
+		parentChartVersionID = &parentChartVersion.ID
+	}
 	return v2models.ChartVersion{
 		Model: gorm.Model{
 			ID:        chartVersion.ID,
 			CreatedAt: chartVersion.CreatedAt,
 			UpdatedAt: chartVersion.UpdatedAt,
 		},
-		ChartID:      chartID,
-		ChartVersion: chartVersion.ChartVersion,
+		ChartID:              chartID,
+		ChartVersion:         chartVersion.ChartVersion,
+		ParentChartVersionID: parentChartVersionID,
 	}, nil
 }

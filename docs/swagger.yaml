@@ -91,6 +91,10 @@ definitions:
         type: string
       id:
         type: integer
+      parentAppVersion:
+        type: string
+      parentAppVersionInfo:
+        type: object
       updatedAt:
         type: string
     type: object
@@ -222,6 +226,10 @@ definitions:
         type: string
       id:
         type: integer
+      parentChartVersion:
+        type: string
+      parentChartVersionInfo:
+        type: object
       updatedAt:
         type: string
     type: object
@@ -271,6 +279,8 @@ definitions:
       gitBranch:
         type: string
       gitCommit:
+        type: string
+      parentAppVersion:
         type: string
     type: object
   v2controllers.CreatableChart:
@@ -365,6 +375,8 @@ definitions:
         type: string
       chartVersion:
         description: Required when creating
+        type: string
+      parentChartVersion:
         type: string
     type: object
   v2controllers.CreatableCluster:
@@ -546,7 +558,9 @@ info:
   contact:
     email: dsp-devops@broadinstitute.org
     name: DSP DevOps
-  description: The Data Science Platform's source-of-truth service
+  description: |-
+    The Data Science Platform's source-of-truth service.
+    Note: this API will try to load and return associations in responses, so clients won't need to make as many requests. This behavior isn't recursive, though, so associations of associations are *not* fully loaded (even if it might seem that way from looking at the data types).
   license:
     name: BSD-3-Clause
     url: https://github.com/broadinstitute/sherlock/blob/main/LICENSE.txt
@@ -577,6 +591,9 @@ paths:
       - in: query
         name: id
         type: integer
+      - in: query
+        name: parentAppVersion
+        type: string
       - in: query
         name: updatedAt
         type: string
@@ -623,8 +640,9 @@ paths:
     post:
       consumes:
       - application/json
-      description: Create a new AppVersion entry. Note that fields are immutable after
-        creation.
+      description: |-
+        Create a new AppVersion entry. Note that fields are immutable after creation.
+        If the new entry is a duplicate of one already in the database, the database will not be altered and the call will return normally but with a 200 code.
       parameters:
       - description: The AppVersion to create
         in: body
@@ -672,10 +690,11 @@ paths:
       - AppVersions
   /api/v2/app-versions/{selector}:
     get:
-      description: Get an existing AppVersion entry via one its "selector"--its numeric
-        ID.
+      description: 'Get an existing AppVersion entry via one its "selectors": chart/version
+        or numeric ID.'
       parameters:
-      - description: 'The AppVersion to get''s selector: name or numeric ID'
+      - description: 'The AppVersion to get''s selector: chart/version or numeric
+          ID'
         in: path
         name: selector
         required: true
@@ -1213,6 +1232,9 @@ paths:
         name: id
         type: integer
       - in: query
+        name: parentChartVersion
+        type: string
+      - in: query
         name: updatedAt
         type: string
       - description: An optional limit to the number of entries returned
@@ -1258,8 +1280,9 @@ paths:
     post:
       consumes:
       - application/json
-      description: Create a new ChartVersion entry. Note that fields are immutable
-        after creation.
+      description: |-
+        Create a new ChartVersion entry. Note that fields are immutable after creation.
+        If the new entry is a duplicate of one already in the database, the database will not be altered and the call will return normally but with a 200 code.
       parameters:
       - description: The ChartVersion to create
         in: body
@@ -1307,10 +1330,11 @@ paths:
       - ChartVersions
   /api/v2/chart-versions/{selector}:
     get:
-      description: Get an existing ChartVersion entry via one its "selector"--its
-        numeric ID.
+      description: 'Get an existing ChartVersion entry via one its "selectors": chart/version
+        or numeric ID.'
       parameters:
-      - description: 'The ChartVersion to get''s selector: name or numeric ID'
+      - description: 'The ChartVersion to get''s selector: chart/version or numeric
+          ID'
         in: path
         name: selector
         required: true

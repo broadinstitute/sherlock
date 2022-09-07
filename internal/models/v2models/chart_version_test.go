@@ -118,3 +118,71 @@ func Test_validateChartVersion(t *testing.T) {
 		})
 	}
 }
+
+func Test_rejectDuplicateChartVersion(t *testing.T) {
+	type args struct {
+		existing ChartVersion
+		new      ChartVersion
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantErr bool
+	}{
+		{
+			name: "mismatch chart version",
+			args: args{
+				existing: ChartVersion{ChartVersion: "123"},
+				new:      ChartVersion{ChartVersion: "456"},
+			},
+			wantErr: true,
+		},
+		{
+			name: "mismatch chart",
+			args: args{
+				existing: ChartVersion{ChartID: 123},
+				new:      ChartVersion{ChartID: 456},
+			},
+			wantErr: true,
+		},
+		{
+			name: "only existing has parent",
+			args: args{
+				existing: ChartVersion{ParentChartVersionID: testutils.PointerTo[uint](123)},
+				new:      ChartVersion{},
+			},
+			wantErr: true,
+		},
+		{
+			name: "only new has parent",
+			args: args{
+				existing: ChartVersion{},
+				new:      ChartVersion{ParentChartVersionID: testutils.PointerTo[uint](456)},
+			},
+			wantErr: true,
+		},
+		{
+			name: "mismatch parent",
+			args: args{
+				existing: ChartVersion{ParentChartVersionID: testutils.PointerTo[uint](123)},
+				new:      ChartVersion{ParentChartVersionID: testutils.PointerTo[uint](456)},
+			},
+			wantErr: true,
+		},
+		{
+			name: "no mismatch",
+			args: args{
+				existing: ChartVersion{},
+				new:      ChartVersion{},
+			},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if err := rejectDuplicateChartVersion(tt.args.existing, tt.args.new); (err != nil) != tt.wantErr {
+				t.Errorf("rejectDuplicateChartVersion() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
