@@ -19,7 +19,7 @@ func RegisterChartDeployRecordHandlers(routerGroup *gin.RouterGroup, controller 
 // @accept      json
 // @produce     json
 // @param       chart-deploy-record     body     v2controllers.CreatableChartDeployRecord true "The ChartDeployRecord to create"
-// @success     201                     {object} v2controllers.ChartDeployRecord
+// @success     200,201                 {object} v2controllers.ChartDeployRecord
 // @failure     400,403,404,407,409,500 {object} errors.ErrorResponse
 // @router      /api/v2/chart-deploy-records [post]
 func createChartDeployRecord(controller *v2controllers.ChartDeployRecordController) func(ctx *gin.Context) {

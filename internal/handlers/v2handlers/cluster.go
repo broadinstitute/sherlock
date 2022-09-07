@@ -21,7 +21,7 @@ func RegisterClusterHandlers(routerGroup *gin.RouterGroup, controller *v2control
 // @accept      json
 // @produce     json
 // @param       cluster                 body     v2controllers.CreatableCluster true "The Cluster to create"
-// @success     201                     {object} v2controllers.Cluster
+// @success     200,201                 {object} v2controllers.Cluster
 // @failure     400,403,404,407,409,500 {object} errors.ErrorResponse
 // @router      /api/v2/clusters [post]
 func createCluster(controller *v2controllers.ClusterController) func(ctx *gin.Context) {

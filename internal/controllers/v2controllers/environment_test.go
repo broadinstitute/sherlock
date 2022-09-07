@@ -85,7 +85,7 @@ var (
 
 func (controllerSet *ControllerSet) seedEnvironments(t *testing.T) {
 	for _, creatable := range environmentSeedList {
-		if _, err := controllerSet.EnvironmentController.Create(creatable, auth.GenerateUser(t, true)); err != nil {
+		if _, _, err := controllerSet.EnvironmentController.Create(creatable, auth.GenerateUser(t, true)); err != nil {
 			t.Errorf("error seeding environment %s: %v", creatable.Name, err)
 		}
 	}
@@ -101,8 +101,9 @@ func (suite *environmentControllerSuite) TestEnvironmentCreate() {
 		suite.seedClusters(suite.T())
 
 		suite.Run("static", func() {
-			env, err := suite.EnvironmentController.Create(terraDevEnvironment, auth.GenerateUser(suite.T(), false))
+			env, created, err := suite.EnvironmentController.Create(terraDevEnvironment, auth.GenerateUser(suite.T(), false))
 			assert.NoError(suite.T(), err)
+			assert.True(suite.T(), created)
 			assert.Equal(suite.T(), terraDevEnvironment.Name, env.Name)
 			assert.True(suite.T(), env.ID > 0)
 			suite.Run("default non-suitable", func() {
@@ -113,8 +114,9 @@ func (suite *environmentControllerSuite) TestEnvironmentCreate() {
 			})
 		})
 		suite.Run("template", func() {
-			env, err := suite.EnvironmentController.Create(swatomationEnvironment, auth.GenerateUser(suite.T(), false))
+			env, created, err := suite.EnvironmentController.Create(swatomationEnvironment, auth.GenerateUser(suite.T(), false))
 			assert.NoError(suite.T(), err)
+			assert.True(suite.T(), created)
 			assert.Equal(suite.T(), swatomationEnvironment.Name, env.Name)
 			assert.True(suite.T(), env.ID > 0)
 			suite.Run("default non-suitable", func() {
@@ -123,8 +125,9 @@ func (suite *environmentControllerSuite) TestEnvironmentCreate() {
 		})
 		suite.Run("dynamic", func() {
 			user := auth.GenerateUser(suite.T(), false)
-			env, err := suite.EnvironmentController.Create(dynamicSwatomationEnvironment, auth.GenerateUser(suite.T(), false))
+			env, created, err := suite.EnvironmentController.Create(dynamicSwatomationEnvironment, auth.GenerateUser(suite.T(), false))
 			assert.NoError(suite.T(), err)
+			assert.True(suite.T(), created)
 			assert.Equal(suite.T(), dynamicSwatomationEnvironment.Name, env.Name)
 			assert.True(suite.T(), env.ID > 0)
 			suite.Run("references template name in defaults", func() {
@@ -149,17 +152,20 @@ func (suite *environmentControllerSuite) TestEnvironmentCreate() {
 		db.Truncate(suite.T(), suite.db)
 		suite.seedClusters(suite.T())
 
-		env, err := suite.EnvironmentController.Create(terraDevEnvironment, auth.GenerateUser(suite.T(), false))
+		env, created, err := suite.EnvironmentController.Create(terraDevEnvironment, auth.GenerateUser(suite.T(), false))
 		assert.NoError(suite.T(), err)
+		assert.True(suite.T(), created)
 		assert.True(suite.T(), env.ID > 0)
-		_, err = suite.EnvironmentController.Create(terraDevEnvironment, auth.GenerateUser(suite.T(), false))
+		_, created, err = suite.EnvironmentController.Create(terraDevEnvironment, auth.GenerateUser(suite.T(), false))
 		assert.ErrorContains(suite.T(), err, errors.Conflict)
+		assert.False(suite.T(), created)
 	})
 	suite.Run("validates incoming entries", func() {
 		db.Truncate(suite.T(), suite.db)
 
-		_, err := suite.EnvironmentController.Create(CreatableEnvironment{}, auth.GenerateUser(suite.T(), false))
+		_, created, err := suite.EnvironmentController.Create(CreatableEnvironment{}, auth.GenerateUser(suite.T(), false))
 		assert.ErrorContains(suite.T(), err, errors.BadRequest)
+		assert.False(suite.T(), created)
 	})
 	suite.Run("checks suitability", func() {
 		db.Truncate(suite.T(), suite.db)
@@ -167,12 +173,14 @@ func (suite *environmentControllerSuite) TestEnvironmentCreate() {
 
 		assert.True(suite.T(), *terraProdEnvironment.RequiresSuitability)
 		suite.Run("blocks suitable creation for non-suitable", func() {
-			_, err := suite.EnvironmentController.Create(terraProdEnvironment, auth.GenerateUser(suite.T(), false))
+			_, created, err := suite.EnvironmentController.Create(terraProdEnvironment, auth.GenerateUser(suite.T(), false))
 			assert.ErrorContains(suite.T(), err, errors.Forbidden)
+			assert.False(suite.T(), created)
 		})
 		suite.Run("allows suitable creation for suitable", func() {
-			env, err := suite.EnvironmentController.Create(terraProdEnvironment, auth.GenerateUser(suite.T(), true))
+			env, created, err := suite.EnvironmentController.Create(terraProdEnvironment, auth.GenerateUser(suite.T(), true))
 			assert.NoError(suite.T(), err)
+			assert.True(suite.T(), created)
 			assert.True(suite.T(), env.ID > 0)
 		})
 	})
@@ -185,8 +193,9 @@ func (suite *environmentControllerSuite) TestEnvironmentCreate() {
 		assert.NoError(suite.T(), err)
 		assert.False(suite.T(), *swat.RequiresSuitability)
 
-		env1, err := suite.EnvironmentController.Create(CreatableEnvironment{TemplateEnvironment: swatomationEnvironment.Name}, auth.GenerateUser(suite.T(), false))
+		env1, created, err := suite.EnvironmentController.Create(CreatableEnvironment{TemplateEnvironment: swatomationEnvironment.Name}, auth.GenerateUser(suite.T(), false))
 		assert.NoError(suite.T(), err)
+		assert.True(suite.T(), created)
 		assert.False(suite.T(), *env1.RequiresSuitability)
 
 		swat, err = suite.EnvironmentController.Edit(swatomationEnvironment.Name, EditableEnvironment{RequiresSuitability: testutils.PointerTo(true)}, auth.GenerateUser(suite.T(), true))
@@ -194,8 +203,9 @@ func (suite *environmentControllerSuite) TestEnvironmentCreate() {
 		assert.True(suite.T(), *swat.RequiresSuitability)
 		assert.False(suite.T(), *env1.RequiresSuitability)
 
-		env2, err := suite.EnvironmentController.Create(CreatableEnvironment{TemplateEnvironment: swatomationEnvironment.Name}, auth.GenerateUser(suite.T(), true))
+		env2, created, err := suite.EnvironmentController.Create(CreatableEnvironment{TemplateEnvironment: swatomationEnvironment.Name}, auth.GenerateUser(suite.T(), true))
 		assert.NoError(suite.T(), err)
+		assert.True(suite.T(), created)
 		assert.True(suite.T(), *env2.RequiresSuitability)
 		assert.False(suite.T(), *env1.RequiresSuitability)
 	})
@@ -211,8 +221,9 @@ func (suite *environmentControllerSuite) TestEnvironmentCreate() {
 		assert.NoError(suite.T(), err)
 		assert.True(suite.T(), len(swatReleases) > 0)
 
-		environment, err := suite.EnvironmentController.Create(CreatableEnvironment{TemplateEnvironment: swatomationEnvironment.Name}, auth.GenerateUser(suite.T(), false))
+		environment, created, err := suite.EnvironmentController.Create(CreatableEnvironment{TemplateEnvironment: swatomationEnvironment.Name}, auth.GenerateUser(suite.T(), false))
 		assert.NoError(suite.T(), err)
+		assert.True(suite.T(), created)
 
 		environmentReleases, err := suite.ChartReleaseController.ListAllMatching(
 			ChartRelease{CreatableChartRelease: CreatableChartRelease{Environment: environment.Name}}, 0)
@@ -399,9 +410,10 @@ func (suite *environmentControllerSuite) TestEnvironmentDelete() {
 		_, err = suite.EnvironmentController.Get(terraDevEnvironment.Name)
 		assert.ErrorContains(suite.T(), err, errors.NotFound)
 		suite.Run("sql constraints ignore soft deletion", func() {
-			_, err = suite.EnvironmentController.Create(terraDevEnvironment, auth.GenerateUser(suite.T(), false))
+			_, created, err := suite.EnvironmentController.Create(terraDevEnvironment, auth.GenerateUser(suite.T(), false))
 			assert.ErrorContains(suite.T(), err, errors.BadRequest)
 			assert.ErrorContains(suite.T(), err, "Contact DevOps")
+			assert.False(suite.T(), created)
 		})
 	})
 	suite.Run("delete suitable environment", func() {

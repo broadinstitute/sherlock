@@ -156,6 +156,12 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.AppVersion"
+                        }
+                    },
                     "201": {
                         "description": "Created",
                         "schema": {
@@ -395,6 +401,12 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.ChartDeployRecord"
+                        }
+                    },
                     "201": {
                         "description": "Created",
                         "schema": {
@@ -709,6 +721,12 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.ChartRelease"
+                        }
+                    },
                     "201": {
                         "description": "Created",
                         "schema": {
@@ -1074,6 +1092,12 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.ChartVersion"
+                        }
+                    },
                     "201": {
                         "description": "Created",
                         "schema": {
@@ -1311,6 +1335,12 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.Chart"
+                        }
+                    },
                     "201": {
                         "description": "Created",
                         "schema": {
@@ -1710,6 +1740,12 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.Cluster"
+                        }
+                    },
                     "201": {
                         "description": "Created",
                         "schema": {
@@ -2121,6 +2157,12 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.Environment"
+                        }
+                    },
                     "201": {
                         "description": "Created",
                         "schema": {

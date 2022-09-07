@@ -85,24 +85,24 @@ type ModelController[M v2models.Model, R Readable, C Creatable[R], E Editable[R,
 	setDynamicDefaults func(readable *R, stores *v2models.StoreSet, user *auth.User) error
 }
 
-func (c ModelController[M, R, C, E]) Create(creatable C, user *auth.User) (R, error) {
+func (c ModelController[M, R, C, E]) Create(creatable C, user *auth.User) (R, bool, error) {
 	readable := creatable.toReadable()
 	// Handle dynamic defaults, like making an environment from a template
 	if c.setDynamicDefaults != nil {
 		if err := c.setDynamicDefaults(&readable, c.allStores, user); err != nil {
-			return readable, fmt.Errorf("error setting dynamic default values for %T: %v", readable, err)
+			return readable, false, fmt.Errorf("error setting dynamic default values for %T: %v", readable, err)
 		}
 	}
 	// Handle static struct default tags, which both swaggo/swag and this creasty/defaults.Set function respect
 	if err := defaults.Set(&readable); err != nil {
-		return readable, fmt.Errorf("(%s) error setting static default values for %T: %v", errors.InternalServerError, readable, err)
+		return readable, false, fmt.Errorf("(%s) error setting static default values for %T: %v", errors.InternalServerError, readable, err)
 	}
 	model, err := c.readableToModel(readable, c.allStores)
 	if err != nil {
-		return readable, err
+		return readable, false, err
 	}
 	result, err := c.primaryStore.Create(model, user)
-	return *c.modelToReadable(result), err
+	return *c.modelToReadable(result), err == nil, err
 }
 
 func (c ModelController[M, R, C, E]) ListAllMatching(filter R, limit int) ([]R, error) {

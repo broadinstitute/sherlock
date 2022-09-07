@@ -19,7 +19,7 @@ func RegisterAppVersionHandlers(routerGroup *gin.RouterGroup, controller *v2cont
 // @accept      json
 // @produce     json
 // @param       app-version             body     v2controllers.CreatableAppVersion true "The AppVersion to create"
-// @success     201                     {object} v2controllers.AppVersion
+// @success     200,201                 {object} v2controllers.AppVersion
 // @failure     400,403,404,407,409,500 {object} errors.ErrorResponse
 // @router      /api/v2/app-versions [post]
 func createAppVersion(controller *v2controllers.AppVersionController) func(ctx *gin.Context) {

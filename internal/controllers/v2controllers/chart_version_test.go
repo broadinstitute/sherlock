@@ -75,7 +75,7 @@ var (
 
 func (controllerSet *ControllerSet) seedChartVersions(t *testing.T) {
 	for _, creatable := range chartVersionSeedList {
-		if _, err := controllerSet.ChartVersionController.Create(creatable, auth.GenerateUser(t, false)); err != nil {
+		if _, _, err := controllerSet.ChartVersionController.Create(creatable, auth.GenerateUser(t, false)); err != nil {
 			t.Errorf("error seeding app version %s for chart %s: %v", creatable.ChartVersion, creatable.Chart, err)
 		}
 	}
@@ -90,14 +90,16 @@ func (suite *chartVersionControllerSuite) TestChartVersionCreate() {
 		db.Truncate(suite.T(), suite.db)
 		suite.seedCharts(suite.T())
 
-		chartVersion, err := suite.ChartVersionController.Create(leonardoBranch3ChartVersion, auth.GenerateUser(suite.T(), false))
+		chartVersion, created, err := suite.ChartVersionController.Create(leonardoBranch3ChartVersion, auth.GenerateUser(suite.T(), false))
 		assert.NoError(suite.T(), err)
+		assert.True(suite.T(), created)
 		assert.Equal(suite.T(), leonardoBranch3ChartVersion.ChartVersion, chartVersion.ChartVersion)
 		assert.True(suite.T(), chartVersion.ID > 0)
 
 		suite.Run("can create duplicates", func() {
-			secondChartVersion, err := suite.ChartVersionController.Create(leonardoBranch3ChartVersion, auth.GenerateUser(suite.T(), false))
+			secondChartVersion, created, err := suite.ChartVersionController.Create(leonardoBranch3ChartVersion, auth.GenerateUser(suite.T(), false))
 			assert.NoError(suite.T(), err)
+			assert.True(suite.T(), created)
 			assert.Equal(suite.T(), leonardoBranch3ChartVersion.ChartVersion, secondChartVersion.ChartVersion)
 			assert.True(suite.T(), secondChartVersion.ID > 0)
 		})
@@ -105,8 +107,9 @@ func (suite *chartVersionControllerSuite) TestChartVersionCreate() {
 	suite.Run("validates incoming entries", func() {
 		db.Truncate(suite.T(), suite.db)
 
-		_, err := suite.ChartVersionController.Create(CreatableChartVersion{}, auth.GenerateUser(suite.T(), false))
+		_, created, err := suite.ChartVersionController.Create(CreatableChartVersion{}, auth.GenerateUser(suite.T(), false))
 		assert.ErrorContains(suite.T(), err, errors.BadRequest)
+		assert.False(suite.T(), created)
 	})
 }
 

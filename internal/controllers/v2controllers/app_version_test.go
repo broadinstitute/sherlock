@@ -87,7 +87,7 @@ var (
 
 func (controllerSet *ControllerSet) seedAppVersions(t *testing.T) {
 	for _, creatable := range appVersionSeedList {
-		if _, err := controllerSet.AppVersionController.Create(creatable, auth.GenerateUser(t, false)); err != nil {
+		if _, _, err := controllerSet.AppVersionController.Create(creatable, auth.GenerateUser(t, false)); err != nil {
 			t.Errorf("error seeding app version %s for chart %s: %v", creatable.AppVersion, creatable.Chart, err)
 		}
 	}
@@ -102,14 +102,16 @@ func (suite *appVersionControllerSuite) TestAppVersionCreate() {
 		db.Truncate(suite.T(), suite.db)
 		suite.seedCharts(suite.T())
 
-		appVersion, err := suite.AppVersionController.Create(leonardoBranch3AppVersion, auth.GenerateUser(suite.T(), false))
+		appVersion, created, err := suite.AppVersionController.Create(leonardoBranch3AppVersion, auth.GenerateUser(suite.T(), false))
 		assert.NoError(suite.T(), err)
+		assert.True(suite.T(), created)
 		assert.Equal(suite.T(), leonardoBranch3AppVersion.AppVersion, appVersion.AppVersion)
 		assert.True(suite.T(), appVersion.ID > 0)
 
 		suite.Run("can create duplicates", func() {
-			secondAppVersion, err := suite.AppVersionController.Create(leonardoBranch3AppVersion, auth.GenerateUser(suite.T(), false))
+			secondAppVersion, created, err := suite.AppVersionController.Create(leonardoBranch3AppVersion, auth.GenerateUser(suite.T(), false))
 			assert.NoError(suite.T(), err)
+			assert.True(suite.T(), created)
 			assert.Equal(suite.T(), leonardoBranch3AppVersion.AppVersion, secondAppVersion.AppVersion)
 			assert.True(suite.T(), secondAppVersion.ID > 0)
 		})
@@ -117,8 +119,9 @@ func (suite *appVersionControllerSuite) TestAppVersionCreate() {
 	suite.Run("validates incoming entries", func() {
 		db.Truncate(suite.T(), suite.db)
 
-		_, err := suite.AppVersionController.Create(CreatableAppVersion{}, auth.GenerateUser(suite.T(), false))
+		_, created, err := suite.AppVersionController.Create(CreatableAppVersion{}, auth.GenerateUser(suite.T(), false))
 		assert.ErrorContains(suite.T(), err, errors.BadRequest)
+		assert.False(suite.T(), created)
 	})
 }
 

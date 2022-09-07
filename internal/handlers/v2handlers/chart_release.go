@@ -21,7 +21,7 @@ func RegisterChartReleaseHandlers(routerGroup *gin.RouterGroup, controller *v2co
 // @accept      json
 // @produce     json
 // @param       chart-release           body     v2controllers.CreatableChartRelease true "The ChartRelease to create"
-// @success     201                     {object} v2controllers.ChartRelease
+// @success     200,201                 {object} v2controllers.ChartRelease
 // @failure     400,403,404,407,409,500 {object} errors.ErrorResponse
 // @router      /api/v2/chart-releases [post]
 func createChartRelease(controller *v2controllers.ChartReleaseController) func(ctx *gin.Context) {

@@ -31,12 +31,16 @@ func handleCreate[M v2models.Model, R v2controllers.Readable, C v2controllers.Cr
 			ctx.JSON(errors.ErrorToApiResponse(fmt.Errorf("(%s) JSON error parsing to %T: %v", errors.BadRequest, creatable, err)))
 			return
 		}
-		result, err := controller.Create(creatable, user)
+		result, created, err := controller.Create(creatable, user)
 		if err != nil {
 			ctx.JSON(errors.ErrorToApiResponse(err))
 			return
 		}
-		ctx.JSON(http.StatusCreated, result)
+		if created {
+			ctx.JSON(http.StatusCreated, result)
+		} else {
+			ctx.JSON(http.StatusOK, result)
+		}
 	}
 }
 
