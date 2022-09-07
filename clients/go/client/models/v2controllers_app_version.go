@@ -39,6 +39,12 @@ type V2controllersAppVersion struct {
 	// id
 	ID int64 `json:"id,omitempty"`
 
+	// parent app version
+	ParentAppVersion string `json:"parentAppVersion,omitempty"`
+
+	// parent app version info
+	ParentAppVersionInfo interface{} `json:"parentAppVersionInfo,omitempty"`
+
 	// updated at
 	UpdatedAt string `json:"updatedAt,omitempty"`
 }

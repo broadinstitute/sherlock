@@ -36,7 +36,7 @@ type ClientService interface {
 
 	GetAPIV2SelectorsChartDeployRecordsSelector(params *GetAPIV2SelectorsChartDeployRecordsSelectorParams, opts ...ClientOption) (*GetAPIV2SelectorsChartDeployRecordsSelectorOK, error)
 
-	PostAPIV2ChartDeployRecords(params *PostAPIV2ChartDeployRecordsParams, opts ...ClientOption) (*PostAPIV2ChartDeployRecordsCreated, error)
+	PostAPIV2ChartDeployRecords(params *PostAPIV2ChartDeployRecordsParams, opts ...ClientOption) (*PostAPIV2ChartDeployRecordsOK, *PostAPIV2ChartDeployRecordsCreated, error)
 
 	SetTransport(transport runtime.ClientTransport)
 }
@@ -166,7 +166,7 @@ func (a *Client) GetAPIV2SelectorsChartDeployRecordsSelector(params *GetAPIV2Sel
 
   Create a new ChartDeployRecord entry. Note that fields are immutable after creation.
 */
-func (a *Client) PostAPIV2ChartDeployRecords(params *PostAPIV2ChartDeployRecordsParams, opts ...ClientOption) (*PostAPIV2ChartDeployRecordsCreated, error) {
+func (a *Client) PostAPIV2ChartDeployRecords(params *PostAPIV2ChartDeployRecordsParams, opts ...ClientOption) (*PostAPIV2ChartDeployRecordsOK, *PostAPIV2ChartDeployRecordsCreated, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewPostAPIV2ChartDeployRecordsParams()
@@ -189,15 +189,16 @@ func (a *Client) PostAPIV2ChartDeployRecords(params *PostAPIV2ChartDeployRecords
 
 	result, err := a.transport.Submit(op)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-	success, ok := result.(*PostAPIV2ChartDeployRecordsCreated)
-	if ok {
-		return success, nil
+	switch value := result.(type) {
+	case *PostAPIV2ChartDeployRecordsOK:
+		return value, nil, nil
+	case *PostAPIV2ChartDeployRecordsCreated:
+		return nil, value, nil
 	}
-	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
-	msg := fmt.Sprintf("unexpected success response for PostAPIV2ChartDeployRecords: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	msg := fmt.Sprintf("unexpected success response for chart_deploy_records: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 

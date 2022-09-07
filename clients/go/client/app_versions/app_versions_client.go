@@ -36,7 +36,7 @@ type ClientService interface {
 
 	GetAPIV2SelectorsAppVersionsSelector(params *GetAPIV2SelectorsAppVersionsSelectorParams, opts ...ClientOption) (*GetAPIV2SelectorsAppVersionsSelectorOK, error)
 
-	PostAPIV2AppVersions(params *PostAPIV2AppVersionsParams, opts ...ClientOption) (*PostAPIV2AppVersionsCreated, error)
+	PostAPIV2AppVersions(params *PostAPIV2AppVersionsParams, opts ...ClientOption) (*PostAPIV2AppVersionsOK, *PostAPIV2AppVersionsCreated, error)
 
 	SetTransport(transport runtime.ClientTransport)
 }
@@ -84,7 +84,7 @@ func (a *Client) GetAPIV2AppVersions(params *GetAPIV2AppVersionsParams, opts ...
 /*
   GetAPIV2AppVersionsSelector gets a app version entry
 
-  Get an existing AppVersion entry via one its "selector"--its numeric ID.
+  Get an existing AppVersion entry via one its "selectors": chart/version or numeric ID.
 */
 func (a *Client) GetAPIV2AppVersionsSelector(params *GetAPIV2AppVersionsSelectorParams, opts ...ClientOption) (*GetAPIV2AppVersionsSelectorOK, error) {
 	// TODO: Validate the params before sending
@@ -165,8 +165,9 @@ func (a *Client) GetAPIV2SelectorsAppVersionsSelector(params *GetAPIV2SelectorsA
   PostAPIV2AppVersions creates a new app version entry
 
   Create a new AppVersion entry. Note that fields are immutable after creation.
+If the new entry is a duplicate of one already in the database, the database will not be altered and the call will return normally but with a 200 code.
 */
-func (a *Client) PostAPIV2AppVersions(params *PostAPIV2AppVersionsParams, opts ...ClientOption) (*PostAPIV2AppVersionsCreated, error) {
+func (a *Client) PostAPIV2AppVersions(params *PostAPIV2AppVersionsParams, opts ...ClientOption) (*PostAPIV2AppVersionsOK, *PostAPIV2AppVersionsCreated, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewPostAPIV2AppVersionsParams()
@@ -189,15 +190,16 @@ func (a *Client) PostAPIV2AppVersions(params *PostAPIV2AppVersionsParams, opts .
 
 	result, err := a.transport.Submit(op)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-	success, ok := result.(*PostAPIV2AppVersionsCreated)
-	if ok {
-		return success, nil
+	switch value := result.(type) {
+	case *PostAPIV2AppVersionsOK:
+		return value, nil, nil
+	case *PostAPIV2AppVersionsCreated:
+		return nil, value, nil
 	}
-	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
-	msg := fmt.Sprintf("unexpected success response for PostAPIV2AppVersions: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	msg := fmt.Sprintf("unexpected success response for app_versions: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 

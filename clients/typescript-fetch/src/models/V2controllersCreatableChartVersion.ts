@@ -2,7 +2,7 @@
 /* eslint-disable */
 /**
  * Sherlock
- * The Data Science Platform\'s source-of-truth service
+ * The Data Science Platform\'s source-of-truth service. Note: this API will try to load and return associations in responses, so clients won\'t need to make as many requests. This behavior isn\'t recursive, though, so associations of associations are *not* fully loaded (even if it might seem that way from looking at the data types).
  *
  * The version of the OpenAPI document: development
  * Contact: dsp-devops@broadinstitute.org
@@ -31,6 +31,12 @@ export interface V2controllersCreatableChartVersion {
      * @memberof V2controllersCreatableChartVersion
      */
     chartVersion?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof V2controllersCreatableChartVersion
+     */
+    parentChartVersion?: string;
 }
 
 /**
@@ -54,6 +60,7 @@ export function V2controllersCreatableChartVersionFromJSONTyped(json: any, ignor
         
         'chart': !exists(json, 'chart') ? undefined : json['chart'],
         'chartVersion': !exists(json, 'chartVersion') ? undefined : json['chartVersion'],
+        'parentChartVersion': !exists(json, 'parentChartVersion') ? undefined : json['parentChartVersion'],
     };
 }
 
@@ -68,6 +75,7 @@ export function V2controllersCreatableChartVersionToJSON(value?: V2controllersCr
         
         'chart': value.chart,
         'chartVersion': value.chartVersion,
+        'parentChartVersion': value.parentChartVersion,
     };
 }
 

@@ -2,7 +2,7 @@
 /* eslint-disable */
 /**
  * Sherlock
- * The Data Science Platform\'s source-of-truth service
+ * The Data Science Platform\'s source-of-truth service. Note: this API will try to load and return associations in responses, so clients won\'t need to make as many requests. This behavior isn\'t recursive, though, so associations of associations are *not* fully loaded (even if it might seem that way from looking at the data types).
  *
  * The version of the OpenAPI document: development
  * Contact: dsp-devops@broadinstitute.org
@@ -33,6 +33,7 @@ export interface ApiV2ChartVersionsGetRequest {
     chartVersion?: string;
     createdAt?: string;
     id?: number;
+    parentChartVersion?: string;
     updatedAt?: string;
     limit?: number;
 }
@@ -77,6 +78,10 @@ export class ChartVersionsApi extends runtime.BaseAPI {
             queryParameters['id'] = requestParameters.id;
         }
 
+        if (requestParameters.parentChartVersion !== undefined) {
+            queryParameters['parentChartVersion'] = requestParameters.parentChartVersion;
+        }
+
         if (requestParameters.updatedAt !== undefined) {
             queryParameters['updatedAt'] = requestParameters.updatedAt;
         }
@@ -107,7 +112,7 @@ export class ChartVersionsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Create a new ChartVersion entry. Note that fields are immutable after creation.
+     * Create a new ChartVersion entry. Note that fields are immutable after creation. If the new entry is a duplicate of one already in the database, the database will not be altered and the call will return normally but with a 200 code.
      * Create a new ChartVersion entry
      */
     async apiV2ChartVersionsPostRaw(requestParameters: ApiV2ChartVersionsPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<V2controllersChartVersion>> {
@@ -133,7 +138,7 @@ export class ChartVersionsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Create a new ChartVersion entry. Note that fields are immutable after creation.
+     * Create a new ChartVersion entry. Note that fields are immutable after creation. If the new entry is a duplicate of one already in the database, the database will not be altered and the call will return normally but with a 200 code.
      * Create a new ChartVersion entry
      */
     async apiV2ChartVersionsPost(requestParameters: ApiV2ChartVersionsPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<V2controllersChartVersion> {
@@ -142,7 +147,7 @@ export class ChartVersionsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Get an existing ChartVersion entry via one its \"selector\"--its numeric ID.
+     * Get an existing ChartVersion entry via one its \"selectors\": chart/version or numeric ID.
      * Get a ChartVersion entry
      */
     async apiV2ChartVersionsSelectorGetRaw(requestParameters: ApiV2ChartVersionsSelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<V2controllersChartVersion>> {
@@ -165,7 +170,7 @@ export class ChartVersionsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Get an existing ChartVersion entry via one its \"selector\"--its numeric ID.
+     * Get an existing ChartVersion entry via one its \"selectors\": chart/version or numeric ID.
      * Get a ChartVersion entry
      */
     async apiV2ChartVersionsSelectorGet(requestParameters: ApiV2ChartVersionsSelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<V2controllersChartVersion> {

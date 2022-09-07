@@ -33,6 +33,12 @@ type V2controllersChartVersion struct {
 	// id
 	ID int64 `json:"id,omitempty"`
 
+	// parent chart version
+	ParentChartVersion string `json:"parentChartVersion,omitempty"`
+
+	// parent chart version info
+	ParentChartVersionInfo interface{} `json:"parentChartVersionInfo,omitempty"`
+
 	// updated at
 	UpdatedAt string `json:"updatedAt,omitempty"`
 }

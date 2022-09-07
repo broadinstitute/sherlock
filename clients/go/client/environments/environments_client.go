@@ -40,7 +40,7 @@ type ClientService interface {
 
 	PatchAPIV2EnvironmentsSelector(params *PatchAPIV2EnvironmentsSelectorParams, opts ...ClientOption) (*PatchAPIV2EnvironmentsSelectorOK, error)
 
-	PostAPIV2Environments(params *PostAPIV2EnvironmentsParams, opts ...ClientOption) (*PostAPIV2EnvironmentsCreated, error)
+	PostAPIV2Environments(params *PostAPIV2EnvironmentsParams, opts ...ClientOption) (*PostAPIV2EnvironmentsOK, *PostAPIV2EnvironmentsCreated, error)
 
 	SetTransport(transport runtime.ClientTransport)
 }
@@ -251,7 +251,7 @@ func (a *Client) PatchAPIV2EnvironmentsSelector(params *PatchAPIV2EnvironmentsSe
   Create a new Environment entry. Note that some fields are immutable after creation; /edit lists mutable fields.
 Creating a dynamic environment based on a template will also copy ChartReleases from the template.
 */
-func (a *Client) PostAPIV2Environments(params *PostAPIV2EnvironmentsParams, opts ...ClientOption) (*PostAPIV2EnvironmentsCreated, error) {
+func (a *Client) PostAPIV2Environments(params *PostAPIV2EnvironmentsParams, opts ...ClientOption) (*PostAPIV2EnvironmentsOK, *PostAPIV2EnvironmentsCreated, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewPostAPIV2EnvironmentsParams()
@@ -274,15 +274,16 @@ func (a *Client) PostAPIV2Environments(params *PostAPIV2EnvironmentsParams, opts
 
 	result, err := a.transport.Submit(op)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-	success, ok := result.(*PostAPIV2EnvironmentsCreated)
-	if ok {
-		return success, nil
+	switch value := result.(type) {
+	case *PostAPIV2EnvironmentsOK:
+		return value, nil, nil
+	case *PostAPIV2EnvironmentsCreated:
+		return nil, value, nil
 	}
-	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
-	msg := fmt.Sprintf("unexpected success response for PostAPIV2Environments: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	msg := fmt.Sprintf("unexpected success response for environments: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 

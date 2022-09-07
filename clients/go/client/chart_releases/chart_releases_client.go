@@ -40,7 +40,7 @@ type ClientService interface {
 
 	PatchAPIV2ChartReleasesSelector(params *PatchAPIV2ChartReleasesSelectorParams, opts ...ClientOption) (*PatchAPIV2ChartReleasesSelectorOK, error)
 
-	PostAPIV2ChartReleases(params *PostAPIV2ChartReleasesParams, opts ...ClientOption) (*PostAPIV2ChartReleasesCreated, error)
+	PostAPIV2ChartReleases(params *PostAPIV2ChartReleasesParams, opts ...ClientOption) (*PostAPIV2ChartReleasesOK, *PostAPIV2ChartReleasesCreated, error)
 
 	SetTransport(transport runtime.ClientTransport)
 }
@@ -250,7 +250,7 @@ func (a *Client) PatchAPIV2ChartReleasesSelector(params *PatchAPIV2ChartReleases
 
   Create a new ChartRelease entry. Note that some fields are immutable after creation; /edit lists mutable fields.
 */
-func (a *Client) PostAPIV2ChartReleases(params *PostAPIV2ChartReleasesParams, opts ...ClientOption) (*PostAPIV2ChartReleasesCreated, error) {
+func (a *Client) PostAPIV2ChartReleases(params *PostAPIV2ChartReleasesParams, opts ...ClientOption) (*PostAPIV2ChartReleasesOK, *PostAPIV2ChartReleasesCreated, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewPostAPIV2ChartReleasesParams()
@@ -273,15 +273,16 @@ func (a *Client) PostAPIV2ChartReleases(params *PostAPIV2ChartReleasesParams, op
 
 	result, err := a.transport.Submit(op)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-	success, ok := result.(*PostAPIV2ChartReleasesCreated)
-	if ok {
-		return success, nil
+	switch value := result.(type) {
+	case *PostAPIV2ChartReleasesOK:
+		return value, nil, nil
+	case *PostAPIV2ChartReleasesCreated:
+		return nil, value, nil
 	}
-	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
-	msg := fmt.Sprintf("unexpected success response for PostAPIV2ChartReleases: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	msg := fmt.Sprintf("unexpected success response for chart_releases: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 

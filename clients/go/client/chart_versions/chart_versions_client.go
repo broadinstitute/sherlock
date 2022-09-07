@@ -36,7 +36,7 @@ type ClientService interface {
 
 	GetAPIV2SelectorsChartVersionsSelector(params *GetAPIV2SelectorsChartVersionsSelectorParams, opts ...ClientOption) (*GetAPIV2SelectorsChartVersionsSelectorOK, error)
 
-	PostAPIV2ChartVersions(params *PostAPIV2ChartVersionsParams, opts ...ClientOption) (*PostAPIV2ChartVersionsCreated, error)
+	PostAPIV2ChartVersions(params *PostAPIV2ChartVersionsParams, opts ...ClientOption) (*PostAPIV2ChartVersionsOK, *PostAPIV2ChartVersionsCreated, error)
 
 	SetTransport(transport runtime.ClientTransport)
 }
@@ -84,7 +84,7 @@ func (a *Client) GetAPIV2ChartVersions(params *GetAPIV2ChartVersionsParams, opts
 /*
   GetAPIV2ChartVersionsSelector gets a chart version entry
 
-  Get an existing ChartVersion entry via one its "selector"--its numeric ID.
+  Get an existing ChartVersion entry via one its "selectors": chart/version or numeric ID.
 */
 func (a *Client) GetAPIV2ChartVersionsSelector(params *GetAPIV2ChartVersionsSelectorParams, opts ...ClientOption) (*GetAPIV2ChartVersionsSelectorOK, error) {
 	// TODO: Validate the params before sending
@@ -165,8 +165,9 @@ func (a *Client) GetAPIV2SelectorsChartVersionsSelector(params *GetAPIV2Selector
   PostAPIV2ChartVersions creates a new chart version entry
 
   Create a new ChartVersion entry. Note that fields are immutable after creation.
+If the new entry is a duplicate of one already in the database, the database will not be altered and the call will return normally but with a 200 code.
 */
-func (a *Client) PostAPIV2ChartVersions(params *PostAPIV2ChartVersionsParams, opts ...ClientOption) (*PostAPIV2ChartVersionsCreated, error) {
+func (a *Client) PostAPIV2ChartVersions(params *PostAPIV2ChartVersionsParams, opts ...ClientOption) (*PostAPIV2ChartVersionsOK, *PostAPIV2ChartVersionsCreated, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewPostAPIV2ChartVersionsParams()
@@ -189,15 +190,16 @@ func (a *Client) PostAPIV2ChartVersions(params *PostAPIV2ChartVersionsParams, op
 
 	result, err := a.transport.Submit(op)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-	success, ok := result.(*PostAPIV2ChartVersionsCreated)
-	if ok {
-		return success, nil
+	switch value := result.(type) {
+	case *PostAPIV2ChartVersionsOK:
+		return value, nil, nil
+	case *PostAPIV2ChartVersionsCreated:
+		return nil, value, nil
 	}
-	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
-	msg := fmt.Sprintf("unexpected success response for PostAPIV2ChartVersions: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	msg := fmt.Sprintf("unexpected success response for chart_versions: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 

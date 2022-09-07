@@ -90,6 +90,9 @@ type GetAPIV2AppVersionsParams struct {
 	*/
 	Limit *int64
 
+	// ParentAppVersion.
+	ParentAppVersion *string
+
 	// UpdatedAt.
 	UpdatedAt *string
 
@@ -221,6 +224,17 @@ func (o *GetAPIV2AppVersionsParams) WithLimit(limit *int64) *GetAPIV2AppVersions
 // SetLimit adds the limit to the get API v2 app versions params
 func (o *GetAPIV2AppVersionsParams) SetLimit(limit *int64) {
 	o.Limit = limit
+}
+
+// WithParentAppVersion adds the parentAppVersion to the get API v2 app versions params
+func (o *GetAPIV2AppVersionsParams) WithParentAppVersion(parentAppVersion *string) *GetAPIV2AppVersionsParams {
+	o.SetParentAppVersion(parentAppVersion)
+	return o
+}
+
+// SetParentAppVersion adds the parentAppVersion to the get API v2 app versions params
+func (o *GetAPIV2AppVersionsParams) SetParentAppVersion(parentAppVersion *string) {
+	o.ParentAppVersion = parentAppVersion
 }
 
 // WithUpdatedAt adds the updatedAt to the get API v2 app versions params
@@ -356,6 +370,23 @@ func (o *GetAPIV2AppVersionsParams) WriteToRequest(r runtime.ClientRequest, reg 
 		if qLimit != "" {
 
 			if err := r.SetQueryParam("limit", qLimit); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.ParentAppVersion != nil {
+
+		// query param parentAppVersion
+		var qrParentAppVersion string
+
+		if o.ParentAppVersion != nil {
+			qrParentAppVersion = *o.ParentAppVersion
+		}
+		qParentAppVersion := qrParentAppVersion
+		if qParentAppVersion != "" {
+
+			if err := r.SetQueryParam("parentAppVersion", qParentAppVersion); err != nil {
 				return err
 			}
 		}

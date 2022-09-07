@@ -84,6 +84,9 @@ type GetAPIV2ChartVersionsParams struct {
 	*/
 	Limit *int64
 
+	// ParentChartVersion.
+	ParentChartVersion *string
+
 	// UpdatedAt.
 	UpdatedAt *string
 
@@ -195,6 +198,17 @@ func (o *GetAPIV2ChartVersionsParams) SetLimit(limit *int64) {
 	o.Limit = limit
 }
 
+// WithParentChartVersion adds the parentChartVersion to the get API v2 chart versions params
+func (o *GetAPIV2ChartVersionsParams) WithParentChartVersion(parentChartVersion *string) *GetAPIV2ChartVersionsParams {
+	o.SetParentChartVersion(parentChartVersion)
+	return o
+}
+
+// SetParentChartVersion adds the parentChartVersion to the get API v2 chart versions params
+func (o *GetAPIV2ChartVersionsParams) SetParentChartVersion(parentChartVersion *string) {
+	o.ParentChartVersion = parentChartVersion
+}
+
 // WithUpdatedAt adds the updatedAt to the get API v2 chart versions params
 func (o *GetAPIV2ChartVersionsParams) WithUpdatedAt(updatedAt *string) *GetAPIV2ChartVersionsParams {
 	o.SetUpdatedAt(updatedAt)
@@ -294,6 +308,23 @@ func (o *GetAPIV2ChartVersionsParams) WriteToRequest(r runtime.ClientRequest, re
 		if qLimit != "" {
 
 			if err := r.SetQueryParam("limit", qLimit); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.ParentChartVersion != nil {
+
+		// query param parentChartVersion
+		var qrParentChartVersion string
+
+		if o.ParentChartVersion != nil {
+			qrParentChartVersion = *o.ParentChartVersion
+		}
+		qParentChartVersion := qrParentChartVersion
+		if qParentChartVersion != "" {
+
+			if err := r.SetQueryParam("parentChartVersion", qParentChartVersion); err != nil {
 				return err
 			}
 		}

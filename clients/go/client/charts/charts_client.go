@@ -40,7 +40,7 @@ type ClientService interface {
 
 	PatchAPIV2ChartsSelector(params *PatchAPIV2ChartsSelectorParams, opts ...ClientOption) (*PatchAPIV2ChartsSelectorOK, error)
 
-	PostAPIV2Charts(params *PostAPIV2ChartsParams, opts ...ClientOption) (*PostAPIV2ChartsCreated, error)
+	PostAPIV2Charts(params *PostAPIV2ChartsParams, opts ...ClientOption) (*PostAPIV2ChartsOK, *PostAPIV2ChartsCreated, error)
 
 	SetTransport(transport runtime.ClientTransport)
 }
@@ -250,7 +250,7 @@ func (a *Client) PatchAPIV2ChartsSelector(params *PatchAPIV2ChartsSelectorParams
 
   Create a new Chart entry. Note that some fields are immutable after creation; /edit lists mutable fields.
 */
-func (a *Client) PostAPIV2Charts(params *PostAPIV2ChartsParams, opts ...ClientOption) (*PostAPIV2ChartsCreated, error) {
+func (a *Client) PostAPIV2Charts(params *PostAPIV2ChartsParams, opts ...ClientOption) (*PostAPIV2ChartsOK, *PostAPIV2ChartsCreated, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewPostAPIV2ChartsParams()
@@ -273,15 +273,16 @@ func (a *Client) PostAPIV2Charts(params *PostAPIV2ChartsParams, opts ...ClientOp
 
 	result, err := a.transport.Submit(op)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-	success, ok := result.(*PostAPIV2ChartsCreated)
-	if ok {
-		return success, nil
+	switch value := result.(type) {
+	case *PostAPIV2ChartsOK:
+		return value, nil, nil
+	case *PostAPIV2ChartsCreated:
+		return nil, value, nil
 	}
-	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
-	msg := fmt.Sprintf("unexpected success response for PostAPIV2Charts: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	msg := fmt.Sprintf("unexpected success response for charts: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 

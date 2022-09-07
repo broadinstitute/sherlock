@@ -2,7 +2,7 @@
 /* eslint-disable */
 /**
  * Sherlock
- * The Data Science Platform\'s source-of-truth service
+ * The Data Science Platform\'s source-of-truth service. Note: this API will try to load and return associations in responses, so clients won\'t need to make as many requests. This behavior isn\'t recursive, though, so associations of associations are *not* fully loaded (even if it might seem that way from looking at the data types).
  *
  * The version of the OpenAPI document: development
  * Contact: dsp-devops@broadinstitute.org
@@ -61,6 +61,18 @@ export interface V2controllersChartVersion {
      * @type {string}
      * @memberof V2controllersChartVersion
      */
+    parentChartVersion?: string;
+    /**
+     * 
+     * @type {object}
+     * @memberof V2controllersChartVersion
+     */
+    parentChartVersionInfo?: object;
+    /**
+     * 
+     * @type {string}
+     * @memberof V2controllersChartVersion
+     */
     updatedAt?: string;
 }
 
@@ -88,6 +100,8 @@ export function V2controllersChartVersionFromJSONTyped(json: any, ignoreDiscrimi
         'chartVersion': !exists(json, 'chartVersion') ? undefined : json['chartVersion'],
         'createdAt': !exists(json, 'createdAt') ? undefined : json['createdAt'],
         'id': !exists(json, 'id') ? undefined : json['id'],
+        'parentChartVersion': !exists(json, 'parentChartVersion') ? undefined : json['parentChartVersion'],
+        'parentChartVersionInfo': !exists(json, 'parentChartVersionInfo') ? undefined : json['parentChartVersionInfo'],
         'updatedAt': !exists(json, 'updatedAt') ? undefined : json['updatedAt'],
     };
 }
@@ -106,6 +120,8 @@ export function V2controllersChartVersionToJSON(value?: V2controllersChartVersio
         'chartVersion': value.chartVersion,
         'createdAt': value.createdAt,
         'id': value.id,
+        'parentChartVersion': value.parentChartVersion,
+        'parentChartVersionInfo': value.parentChartVersionInfo,
         'updatedAt': value.updatedAt,
     };
 }

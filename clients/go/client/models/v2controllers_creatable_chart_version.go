@@ -22,6 +22,9 @@ type V2controllersCreatableChartVersion struct {
 
 	// Required when creating
 	ChartVersion string `json:"chartVersion,omitempty"`
+
+	// parent chart version
+	ParentChartVersion string `json:"parentChartVersion,omitempty"`
 }
 
 // Validate validates this v2controllers creatable chart version

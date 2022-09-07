@@ -2,7 +2,7 @@
 /* eslint-disable */
 /**
  * Sherlock
- * The Data Science Platform\'s source-of-truth service
+ * The Data Science Platform\'s source-of-truth service. Note: this API will try to load and return associations in responses, so clients won\'t need to make as many requests. This behavior isn\'t recursive, though, so associations of associations are *not* fully loaded (even if it might seem that way from looking at the data types).
  *
  * The version of the OpenAPI document: development
  * Contact: dsp-devops@broadinstitute.org
@@ -35,6 +35,7 @@ export interface ApiV2AppVersionsGetRequest {
     gitBranch?: string;
     gitCommit?: string;
     id?: number;
+    parentAppVersion?: string;
     updatedAt?: string;
     limit?: number;
 }
@@ -87,6 +88,10 @@ export class AppVersionsApi extends runtime.BaseAPI {
             queryParameters['id'] = requestParameters.id;
         }
 
+        if (requestParameters.parentAppVersion !== undefined) {
+            queryParameters['parentAppVersion'] = requestParameters.parentAppVersion;
+        }
+
         if (requestParameters.updatedAt !== undefined) {
             queryParameters['updatedAt'] = requestParameters.updatedAt;
         }
@@ -117,7 +122,7 @@ export class AppVersionsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Create a new AppVersion entry. Note that fields are immutable after creation.
+     * Create a new AppVersion entry. Note that fields are immutable after creation. If the new entry is a duplicate of one already in the database, the database will not be altered and the call will return normally but with a 200 code.
      * Create a new AppVersion entry
      */
     async apiV2AppVersionsPostRaw(requestParameters: ApiV2AppVersionsPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<V2controllersAppVersion>> {
@@ -143,7 +148,7 @@ export class AppVersionsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Create a new AppVersion entry. Note that fields are immutable after creation.
+     * Create a new AppVersion entry. Note that fields are immutable after creation. If the new entry is a duplicate of one already in the database, the database will not be altered and the call will return normally but with a 200 code.
      * Create a new AppVersion entry
      */
     async apiV2AppVersionsPost(requestParameters: ApiV2AppVersionsPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<V2controllersAppVersion> {
@@ -152,7 +157,7 @@ export class AppVersionsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Get an existing AppVersion entry via one its \"selector\"--its numeric ID.
+     * Get an existing AppVersion entry via one its \"selectors\": chart/version or numeric ID.
      * Get a AppVersion entry
      */
     async apiV2AppVersionsSelectorGetRaw(requestParameters: ApiV2AppVersionsSelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<V2controllersAppVersion>> {
@@ -175,7 +180,7 @@ export class AppVersionsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Get an existing AppVersion entry via one its \"selector\"--its numeric ID.
+     * Get an existing AppVersion entry via one its \"selectors\": chart/version or numeric ID.
      * Get a AppVersion entry
      */
     async apiV2AppVersionsSelectorGet(requestParameters: ApiV2AppVersionsSelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<V2controllersAppVersion> {

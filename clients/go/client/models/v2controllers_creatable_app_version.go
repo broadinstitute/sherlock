@@ -28,6 +28,9 @@ type V2controllersCreatableAppVersion struct {
 
 	// git commit
 	GitCommit string `json:"gitCommit,omitempty"`
+
+	// parent app version
+	ParentAppVersion string `json:"parentAppVersion,omitempty"`
 }
 
 // Validate validates this v2controllers creatable app version

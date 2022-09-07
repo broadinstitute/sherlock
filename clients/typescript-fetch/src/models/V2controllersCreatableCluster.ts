@@ -2,7 +2,7 @@
 /* eslint-disable */
 /**
  * Sherlock
- * The Data Science Platform\'s source-of-truth service
+ * The Data Science Platform\'s source-of-truth service. Note: this API will try to load and return associations in responses, so clients won\'t need to make as many requests. This behavior isn\'t recursive, though, so associations of associations are *not* fully loaded (even if it might seem that way from looking at the data types).
  *
  * The version of the OpenAPI document: development
  * Contact: dsp-devops@broadinstitute.org

@@ -61,7 +61,7 @@ type GetAPIV2ChartVersionsSelectorParams struct {
 
 	/* Selector.
 
-	   The ChartVersion to get's selector: name or numeric ID
+	   The ChartVersion to get's selector: chart/version or numeric ID
 	*/
 	Selector string
 
