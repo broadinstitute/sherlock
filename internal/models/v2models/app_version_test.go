@@ -69,6 +69,27 @@ func Test_appVersionToSelectors(t *testing.T) {
 			args: args{appVersion: AppVersion{Model: gorm.Model{ID: 123}}},
 			want: []string{"123"},
 		},
+		{
+			name: "id and chart + version",
+			args: args{appVersion: AppVersion{
+				Model: gorm.Model{ID: 123},
+				Chart: Chart{
+					Model: gorm.Model{ID: 456},
+					Name:  "datarepo",
+				},
+				AppVersion: "1.2.3",
+			}},
+			want: []string{"123", "datarepo/1.2.3", "456/1.2.3"},
+		},
+		{
+			name: "id and chart id + version",
+			args: args{appVersion: AppVersion{
+				Model:      gorm.Model{ID: 123},
+				ChartID:    456,
+				AppVersion: "1.2.3",
+			}},
+			want: []string{"123", "456/1.2.3"},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

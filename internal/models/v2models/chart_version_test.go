@@ -69,6 +69,27 @@ func Test_chartVersionToSelectors(t *testing.T) {
 			args: args{chartVersion: ChartVersion{Model: gorm.Model{ID: 123}}},
 			want: []string{"123"},
 		},
+		{
+			name: "id and chart + version",
+			args: args{chartVersion: ChartVersion{
+				Model: gorm.Model{ID: 123},
+				Chart: Chart{
+					Model: gorm.Model{ID: 456},
+					Name:  "datarepo",
+				},
+				ChartVersion: "1.2.3",
+			}},
+			want: []string{"123", "datarepo/1.2.3", "456/1.2.3"},
+		},
+		{
+			name: "id and chart id + version",
+			args: args{chartVersion: ChartVersion{
+				Model:        gorm.Model{ID: 123},
+				ChartID:      456,
+				ChartVersion: "1.2.3",
+			}},
+			want: []string{"123", "456/1.2.3"},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
