@@ -75,7 +75,7 @@ var (
 
 func (controllerSet *ControllerSet) seedChartDeployRecords(t *testing.T) {
 	for _, creatable := range chartDeployRecordSeedList {
-		if _, err := controllerSet.ChartDeployRecordController.Create(creatable, auth.GenerateUser(t, true)); err != nil {
+		if _, _, err := controllerSet.ChartDeployRecordController.Create(creatable, auth.GenerateUser(t, true)); err != nil {
 			t.Errorf("error seeding chart deploy version %s,%s,%s for chart release %s: %v", creatable.ExactChartVersion, creatable.ExactAppVersion, creatable.HelmfileRef, creatable.ChartRelease, err)
 		}
 	}
@@ -93,22 +93,25 @@ func (suite *chartDeployRecordControllerSuite) TestChartDeployRecordCreate() {
 		suite.seedCharts(suite.T())
 		suite.seedChartReleases(suite.T())
 
-		chartDeployRecord, err := suite.ChartDeployRecordController.Create(datarepoDev1ChartDeployRecord, auth.GenerateUser(suite.T(), false))
+		chartDeployRecord, created, err := suite.ChartDeployRecordController.Create(datarepoDev1ChartDeployRecord, auth.GenerateUser(suite.T(), false))
 		assert.NoError(suite.T(), err)
+		assert.True(suite.T(), created)
 		assert.Equal(suite.T(), datarepoDev1ChartDeployRecord.ExactAppVersion, chartDeployRecord.ExactAppVersion)
 		assert.True(suite.T(), chartDeployRecord.ID > 0)
 
 		suite.Run("can create duplicates", func() {
-			secondChartDeployRecord, err := suite.ChartDeployRecordController.Create(datarepoDev1ChartDeployRecord, auth.GenerateUser(suite.T(), false))
+			secondChartDeployRecord, created, err := suite.ChartDeployRecordController.Create(datarepoDev1ChartDeployRecord, auth.GenerateUser(suite.T(), false))
 			assert.NoError(suite.T(), err)
+			assert.True(suite.T(), created)
 			assert.Equal(suite.T(), datarepoDev1ChartDeployRecord.ExactAppVersion, secondChartDeployRecord.ExactAppVersion)
 			assert.True(suite.T(), secondChartDeployRecord.ID > 0)
 		})
 		suite.Run("will pull defaults from chart release", func() {
-			thirdChartDeployRecord, err := suite.ChartDeployRecordController.Create(CreatableChartDeployRecord{
+			thirdChartDeployRecord, created, err := suite.ChartDeployRecordController.Create(CreatableChartDeployRecord{
 				ChartRelease: datarepoDevChartRelease.Name,
 			}, auth.GenerateUser(suite.T(), false))
 			assert.NoError(suite.T(), err)
+			assert.True(suite.T(), created)
 			assert.Equal(suite.T(), *datarepoDevChartRelease.CurrentChartVersionExact, thirdChartDeployRecord.ExactChartVersion)
 			assert.Equal(suite.T(), *datarepoDevChartRelease.CurrentAppVersionExact, thirdChartDeployRecord.ExactAppVersion)
 			assert.Equal(suite.T(), "HEAD", thirdChartDeployRecord.HelmfileRef)
@@ -117,8 +120,9 @@ func (suite *chartDeployRecordControllerSuite) TestChartDeployRecordCreate() {
 	suite.Run("validates incoming entries", func() {
 		db.Truncate(suite.T(), suite.db)
 
-		_, err := suite.ChartDeployRecordController.Create(CreatableChartDeployRecord{}, auth.GenerateUser(suite.T(), false))
+		_, created, err := suite.ChartDeployRecordController.Create(CreatableChartDeployRecord{}, auth.GenerateUser(suite.T(), false))
 		assert.ErrorContains(suite.T(), err, errors.BadRequest)
+		assert.False(suite.T(), created)
 	})
 	suite.Run("checks suitability", func() {
 		db.Truncate(suite.T(), suite.db)
@@ -128,12 +132,14 @@ func (suite *chartDeployRecordControllerSuite) TestChartDeployRecordCreate() {
 		suite.seedChartReleases(suite.T())
 
 		suite.Run("blocks suitable creation for non-suitable", func() {
-			_, err := suite.ChartDeployRecordController.Create(datarepoProd1ChartDeployRecord, auth.GenerateUser(suite.T(), false))
+			_, created, err := suite.ChartDeployRecordController.Create(datarepoProd1ChartDeployRecord, auth.GenerateUser(suite.T(), false))
 			assert.ErrorContains(suite.T(), err, errors.Forbidden)
+			assert.False(suite.T(), created)
 		})
 		suite.Run("allows suitable creation for suitable", func() {
-			chartDeployRecord, err := suite.ChartDeployRecordController.Create(datarepoProd1ChartDeployRecord, auth.GenerateUser(suite.T(), true))
+			chartDeployRecord, created, err := suite.ChartDeployRecordController.Create(datarepoProd1ChartDeployRecord, auth.GenerateUser(suite.T(), true))
 			assert.NoError(suite.T(), err)
+			assert.True(suite.T(), created)
 			assert.True(suite.T(), chartDeployRecord.ID > 0)
 		})
 	})

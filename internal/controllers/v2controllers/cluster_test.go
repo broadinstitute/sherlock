@@ -111,7 +111,7 @@ var (
 
 func (controllerSet *ControllerSet) seedClusters(t *testing.T) {
 	for _, creatable := range clusterSeedList {
-		if _, err := controllerSet.ClusterController.Create(creatable, auth.GenerateUser(t, true)); err != nil {
+		if _, _, err := controllerSet.ClusterController.Create(creatable, auth.GenerateUser(t, true)); err != nil {
 			t.Errorf("error seeding cluster %s: %v", creatable.Name, err)
 		}
 	}
@@ -125,8 +125,9 @@ func (suite *clusterControllerSuite) TestClusterCreate() {
 	suite.Run("can create a new cluster", func() {
 		db.Truncate(suite.T(), suite.db)
 
-		cluster, err := suite.ClusterController.Create(terraDevCluster, auth.GenerateUser(suite.T(), false))
+		cluster, created, err := suite.ClusterController.Create(terraDevCluster, auth.GenerateUser(suite.T(), false))
 		assert.NoError(suite.T(), err)
+		assert.True(suite.T(), created)
 		assert.Equal(suite.T(), terraDevCluster.Name, cluster.Name)
 		assert.True(suite.T(), cluster.ID > 0)
 		suite.Run("default provider google", func() {
@@ -139,8 +140,9 @@ func (suite *clusterControllerSuite) TestClusterCreate() {
 	suite.Run("can create a new azure cluster", func() {
 		db.Truncate(suite.T(), suite.db)
 
-		cluster, err := suite.ClusterController.Create(terraDevAzureCluster, auth.GenerateUser(suite.T(), false))
+		cluster, created, err := suite.ClusterController.Create(terraDevAzureCluster, auth.GenerateUser(suite.T(), false))
 		assert.NoError(suite.T(), err)
+		assert.True(suite.T(), created)
 		assert.Equal(suite.T(), terraDevAzureCluster.Name, cluster.Name)
 		assert.True(suite.T(), cluster.ID > 0)
 		assert.Equal(suite.T(), terraDevAzureCluster.AzureSubscription, cluster.AzureSubscription)
@@ -149,28 +151,33 @@ func (suite *clusterControllerSuite) TestClusterCreate() {
 	suite.Run("won't create duplicates", func() {
 		db.Truncate(suite.T(), suite.db)
 
-		cluster, err := suite.ClusterController.Create(terraDevCluster, auth.GenerateUser(suite.T(), false))
+		cluster, created, err := suite.ClusterController.Create(terraDevCluster, auth.GenerateUser(suite.T(), false))
 		assert.NoError(suite.T(), err)
+		assert.True(suite.T(), created)
 		assert.True(suite.T(), cluster.ID > 0)
-		_, err = suite.ClusterController.Create(terraDevCluster, auth.GenerateUser(suite.T(), false))
+		_, created, err = suite.ClusterController.Create(terraDevCluster, auth.GenerateUser(suite.T(), false))
 		assert.ErrorContains(suite.T(), err, errors.Conflict)
+		assert.False(suite.T(), created)
 	})
 	suite.Run("validates incoming entries", func() {
 		db.Truncate(suite.T(), suite.db)
 
-		_, err := suite.ClusterController.Create(CreatableCluster{}, auth.GenerateUser(suite.T(), false))
+		_, created, err := suite.ClusterController.Create(CreatableCluster{}, auth.GenerateUser(suite.T(), false))
 		assert.ErrorContains(suite.T(), err, errors.BadRequest)
+		assert.False(suite.T(), created)
 	})
 	suite.Run("checks suitability", func() {
 		db.Truncate(suite.T(), suite.db)
 
 		suite.Run("blocks suitable creation for non-suitable", func() {
-			_, err := suite.ClusterController.Create(terraProdCluster, auth.GenerateUser(suite.T(), false))
+			_, created, err := suite.ClusterController.Create(terraProdCluster, auth.GenerateUser(suite.T(), false))
 			assert.ErrorContains(suite.T(), err, errors.Forbidden)
+			assert.False(suite.T(), created)
 		})
 		suite.Run("allows suitable creation for suitable", func() {
-			cluster, err := suite.ClusterController.Create(terraProdCluster, auth.GenerateUser(suite.T(), true))
+			cluster, created, err := suite.ClusterController.Create(terraProdCluster, auth.GenerateUser(suite.T(), true))
 			assert.NoError(suite.T(), err)
+			assert.True(suite.T(), created)
 			assert.True(suite.T(), cluster.ID > 0)
 		})
 	})
@@ -334,9 +341,10 @@ func (suite *clusterControllerSuite) TestClusterDelete() {
 		_, err = suite.ClusterController.Get(terraDevCluster.Name)
 		assert.ErrorContains(suite.T(), err, errors.NotFound)
 		suite.Run("sql constraints ignore soft deletion", func() {
-			_, err = suite.ClusterController.Create(terraDevCluster, auth.GenerateUser(suite.T(), false))
+			_, created, err := suite.ClusterController.Create(terraDevCluster, auth.GenerateUser(suite.T(), false))
 			assert.ErrorContains(suite.T(), err, errors.BadRequest)
 			assert.ErrorContains(suite.T(), err, "Contact DevOps")
+			assert.False(suite.T(), created)
 		})
 	})
 	suite.Run("delete suitable environment", func() {

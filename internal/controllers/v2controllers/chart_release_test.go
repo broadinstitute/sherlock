@@ -158,7 +158,7 @@ var (
 
 func (controllerSet *ControllerSet) seedChartReleases(t *testing.T) {
 	for _, creatable := range chartReleaseSeedList {
-		if _, err := controllerSet.ChartReleaseController.Create(creatable, auth.GenerateUser(t, true)); err != nil {
+		if _, _, err := controllerSet.ChartReleaseController.Create(creatable, auth.GenerateUser(t, true)); err != nil {
 			t.Errorf("error seeding chart release for %s in %s/%s: %v", creatable.Chart, creatable.Environment, creatable.Cluster, err)
 		}
 	}
@@ -176,8 +176,9 @@ func (suite *chartReleaseControllerSuite) TestChartReleaseCreate() {
 		suite.seedCharts(suite.T())
 
 		suite.Run("simple app release", func() {
-			release, err := suite.ChartReleaseController.Create(leonardoDevChartRelease, auth.GenerateUser(suite.T(), false))
+			release, created, err := suite.ChartReleaseController.Create(leonardoDevChartRelease, auth.GenerateUser(suite.T(), false))
 			assert.NoError(suite.T(), err)
+			assert.True(suite.T(), created)
 			assert.True(suite.T(), release.ID > 0)
 			suite.Run("defaults target app version branch to that of chart", func() {
 				assert.Equal(suite.T(), leonardoChart.AppImageGitMainBranch, release.TargetAppVersionBranch)
@@ -202,8 +203,9 @@ func (suite *chartReleaseControllerSuite) TestChartReleaseCreate() {
 			})
 		})
 		suite.Run("custom cluster app release", func() {
-			release, err := suite.ChartReleaseController.Create(datarepoDevChartRelease, auth.GenerateUser(suite.T(), false))
+			release, created, err := suite.ChartReleaseController.Create(datarepoDevChartRelease, auth.GenerateUser(suite.T(), false))
 			assert.NoError(suite.T(), err)
+			assert.True(suite.T(), created)
 			assert.True(suite.T(), release.ID > 0)
 			suite.Run("name doesn't get overridden when it is provided", func() {
 				assert.Equal(suite.T(), datarepoDevChartRelease.Name, release.Name)
@@ -216,16 +218,18 @@ func (suite *chartReleaseControllerSuite) TestChartReleaseCreate() {
 			})
 		})
 		suite.Run("release in an env but with a set namespace", func() {
-			release, err := suite.ChartReleaseController.Create(yaleDevChartRelease, auth.GenerateUser(suite.T(), false))
+			release, created, err := suite.ChartReleaseController.Create(yaleDevChartRelease, auth.GenerateUser(suite.T(), false))
 			assert.NoError(suite.T(), err)
+			assert.True(suite.T(), created)
 			assert.True(suite.T(), release.ID > 0)
 			suite.Run("namespace doesn't get overridden when it is provided", func() {
 				assert.Equal(suite.T(), yaleDevChartRelease.Namespace, release.Namespace)
 			})
 		})
 		suite.Run("cluster release", func() {
-			release, err := suite.ChartReleaseController.Create(storageDevChartRelease, auth.GenerateUser(suite.T(), false))
+			release, created, err := suite.ChartReleaseController.Create(storageDevChartRelease, auth.GenerateUser(suite.T(), false))
 			assert.NoError(suite.T(), err)
+			assert.True(suite.T(), created)
 			assert.True(suite.T(), release.ID > 0)
 			suite.Run("environment stays empty when not provided", func() {
 				assert.Equal(suite.T(), "", release.Environment)
@@ -245,37 +249,41 @@ func (suite *chartReleaseControllerSuite) TestChartReleaseCreate() {
 			suite.seedChartReleases(suite.T())
 
 			suite.Run("exact duplicate", func() {
-				_, err := suite.ChartReleaseController.Create(leonardoDevChartRelease, auth.GenerateUser(suite.T(), false))
+				_, created, err := suite.ChartReleaseController.Create(leonardoDevChartRelease, auth.GenerateUser(suite.T(), false))
 				assert.ErrorContains(suite.T(), err, errors.Conflict)
+				assert.False(suite.T(), created)
 			})
 			suite.Run("duplicate chart/env", func() {
-				_, err := suite.ChartReleaseController.Create(CreatableChartRelease{
+				_, created, err := suite.ChartReleaseController.Create(CreatableChartRelease{
 					Chart:       leonardoChart.Name,
 					Environment: terraDevEnvironment.Name,
 					Namespace:   "abc",
 					Name:        "def",
 				}, auth.GenerateUser(suite.T(), false))
 				assert.ErrorContains(suite.T(), err, errors.Conflict)
+				assert.False(suite.T(), created)
 			})
 			suite.Run("duplicate chart/namespace/cluster", func() {
 				release, err := suite.ChartReleaseController.Get(fmt.Sprintf("%s-%s", leonardoChart.Name, terraDevEnvironment.Name))
 				assert.NoError(suite.T(), err)
-				_, err = suite.ChartReleaseController.Create(CreatableChartRelease{
+				_, created, err := suite.ChartReleaseController.Create(CreatableChartRelease{
 					Chart:     leonardoChart.Name,
 					Cluster:   release.Cluster,
 					Namespace: release.Namespace,
 					Name:      "abc",
 				}, auth.GenerateUser(suite.T(), false))
 				assert.ErrorContains(suite.T(), err, errors.Conflict)
+				assert.False(suite.T(), created)
 			})
 			suite.Run("duplicate name", func() {
-				_, err := suite.ChartReleaseController.Create(CreatableChartRelease{
+				_, created, err := suite.ChartReleaseController.Create(CreatableChartRelease{
 					Chart:       yaleChart.Name,
 					Environment: dynamicSwatomationEnvironment.Name,
 					// This name exists associated to another environment, namespace, and cluster
 					Name: datarepoDevChartRelease.Name,
 				}, auth.GenerateUser(suite.T(), false))
 				assert.ErrorContains(suite.T(), err, errors.Conflict)
+				assert.False(suite.T(), created)
 			})
 		})
 		suite.Run("validates incoming entries", func() {
@@ -285,11 +293,12 @@ func (suite *chartReleaseControllerSuite) TestChartReleaseCreate() {
 			suite.seedCharts(suite.T())
 
 			suite.Run("no associations", func() {
-				_, err := suite.ChartReleaseController.Create(CreatableChartRelease{}, auth.GenerateUser(suite.T(), false))
+				_, created, err := suite.ChartReleaseController.Create(CreatableChartRelease{}, auth.GenerateUser(suite.T(), false))
 				assert.ErrorContains(suite.T(), err, errors.BadRequest)
+				assert.False(suite.T(), created)
 			})
 			suite.Run("good associations but bad values", func() {
-				_, err := suite.ChartReleaseController.Create(CreatableChartRelease{
+				_, created, err := suite.ChartReleaseController.Create(CreatableChartRelease{
 					Chart:       leonardoChart.Name,
 					Environment: terraDevEnvironment.Name,
 					EditableChartRelease: EditableChartRelease{
@@ -297,6 +306,7 @@ func (suite *chartReleaseControllerSuite) TestChartReleaseCreate() {
 					},
 				}, auth.GenerateUser(suite.T(), false))
 				assert.ErrorContains(suite.T(), err, errors.BadRequest)
+				assert.False(suite.T(), created)
 			})
 		})
 		suite.Run("checks suitability", func() {
@@ -306,12 +316,14 @@ func (suite *chartReleaseControllerSuite) TestChartReleaseCreate() {
 			suite.seedCharts(suite.T())
 
 			suite.Run("blocks suitable creation for non-suitable", func() {
-				_, err := suite.ChartReleaseController.Create(leonardoProdChartRelease, auth.GenerateUser(suite.T(), false))
+				_, created, err := suite.ChartReleaseController.Create(leonardoProdChartRelease, auth.GenerateUser(suite.T(), false))
 				assert.ErrorContains(suite.T(), err, errors.Forbidden)
+				assert.False(suite.T(), created)
 			})
 			suite.Run("allows suitable creation for suitable", func() {
-				release, err := suite.ChartReleaseController.Create(leonardoProdChartRelease, auth.GenerateUser(suite.T(), true))
+				release, created, err := suite.ChartReleaseController.Create(leonardoProdChartRelease, auth.GenerateUser(suite.T(), true))
 				assert.NoError(suite.T(), err)
+				assert.True(suite.T(), created)
 				assert.True(suite.T(), release.ID > 0)
 			})
 		})
@@ -527,9 +539,10 @@ func (suite *chartReleaseControllerSuite) TestChartReleaseDelete() {
 		_, err = suite.ChartReleaseController.Get(datarepoDevChartRelease.Name)
 		assert.ErrorContains(suite.T(), err, errors.NotFound)
 		suite.Run("sql constraints ignore soft deletion", func() {
-			_, err = suite.ChartReleaseController.Create(datarepoDevChartRelease, auth.GenerateUser(suite.T(), false))
+			_, created, err := suite.ChartReleaseController.Create(datarepoDevChartRelease, auth.GenerateUser(suite.T(), false))
 			assert.ErrorContains(suite.T(), err, errors.BadRequest)
 			assert.ErrorContains(suite.T(), err, "Contact DevOps")
+			assert.False(suite.T(), created)
 		})
 	})
 	suite.Run("delete suitable chart release", func() {

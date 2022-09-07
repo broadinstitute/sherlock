@@ -50,14 +50,14 @@ func chartReleaseSelectorToQuery(db *gorm.DB, selector string) (ChartRelease, er
 	if len(selector) == 0 {
 		return ChartRelease{}, fmt.Errorf("(%s) chart release selector cannot be empty", errors.BadRequest)
 	}
-	var ret ChartRelease
+	var query ChartRelease
 	if isNumeric(selector) { // ID
 		id, err := strconv.Atoi(selector)
 		if err != nil {
 			return ChartRelease{}, fmt.Errorf("(%s) string to int conversion error of '%s': %v", errors.BadRequest, selector, err)
 		}
-		ret.ID = uint(id)
-		return ret, nil
+		query.ID = uint(id)
+		return query, nil
 	} else if strings.Count(selector, "/") == 1 { // environment + chart
 		parts := strings.Split(selector, "/")
 
@@ -70,7 +70,7 @@ func chartReleaseSelectorToQuery(db *gorm.DB, selector string) (ChartRelease, er
 		if err != nil {
 			return ChartRelease{}, fmt.Errorf("error handling environment sub-selector %s: %v", parts[0], err)
 		}
-		ret.EnvironmentID = &environment.ID
+		query.EnvironmentID = &environment.ID
 
 		// chart
 		chartQuery, err := chartSelectorToQuery(db, parts[1])
@@ -81,9 +81,9 @@ func chartReleaseSelectorToQuery(db *gorm.DB, selector string) (ChartRelease, er
 		if err != nil {
 			return ChartRelease{}, fmt.Errorf("error handling chart sub-selector %s: %v", parts[1], err)
 		}
-		ret.ChartID = chart.ID
+		query.ChartID = chart.ID
 
-		return ret, nil
+		return query, nil
 	} else if strings.Count(selector, "/") == 2 { // cluster + namespace + chart
 		parts := strings.Split(selector, "/")
 
@@ -96,7 +96,7 @@ func chartReleaseSelectorToQuery(db *gorm.DB, selector string) (ChartRelease, er
 		if err != nil {
 			return ChartRelease{}, fmt.Errorf("error handling cluster sub-selector %s: %v", parts[0], err)
 		}
-		ret.ClusterID = &cluster.ID
+		query.ClusterID = &cluster.ID
 
 		// namespace
 		namespace := parts[1]
@@ -106,7 +106,7 @@ func chartReleaseSelectorToQuery(db *gorm.DB, selector string) (ChartRelease, er
 			isEndingWithAlphaNumeric(namespace)) {
 			return ChartRelease{}, fmt.Errorf("(%s) invalid chart release selector %s, namespace sub-selector %s was invalid", errors.BadRequest, selector, namespace)
 		}
-		ret.Namespace = namespace
+		query.Namespace = namespace
 
 		// chart
 		chartQuery, err := chartSelectorToQuery(db, parts[2])
@@ -117,14 +117,14 @@ func chartReleaseSelectorToQuery(db *gorm.DB, selector string) (ChartRelease, er
 		if err != nil {
 			return ChartRelease{}, fmt.Errorf("error handling chart sub-selector %s: %v", parts[1], err)
 		}
-		ret.ChartID = chart.ID
+		query.ChartID = chart.ID
 
-		return ret, nil
+		return query, nil
 	} else if isAlphaNumericWithHyphens(selector) &&
 		isStartingWithLetter(selector) &&
 		isEndingWithAlphaNumeric(selector) { // name
-		ret.Name = selector
-		return ret, nil
+		query.Name = selector
+		return query, nil
 	}
 	return ChartRelease{}, fmt.Errorf("(%s) invalid chart release selector '%s'", errors.BadRequest, selector)
 }

@@ -53,41 +53,46 @@ var (
 		GitBranch:  *leonardoChart.AppImageGitMainBranch,
 	}
 	leonardoMain2AppVersion = CreatableAppVersion{
-		Chart:      leonardoChart.Name,
-		AppVersion: "1.2.4",
-		GitCommit:  "a1b2",
-		GitBranch:  *leonardoChart.AppImageGitMainBranch,
+		Chart:            leonardoChart.Name,
+		AppVersion:       "1.2.4",
+		GitCommit:        "a1b2",
+		GitBranch:        *leonardoChart.AppImageGitMainBranch,
+		ParentAppVersion: fmt.Sprintf("%s/%s", leonardoChart.Name, leonardoMain1AppVersion.AppVersion),
 	}
 	leonardoMain3AppVersion = CreatableAppVersion{
-		Chart:      leonardoChart.Name,
-		AppVersion: "1.2.5",
-		GitCommit:  "a1b3",
-		GitBranch:  *leonardoChart.AppImageGitMainBranch,
+		Chart:            leonardoChart.Name,
+		AppVersion:       "1.2.5",
+		GitCommit:        "a1b3",
+		GitBranch:        *leonardoChart.AppImageGitMainBranch,
+		ParentAppVersion: fmt.Sprintf("%s/%s", leonardoChart.Name, leonardoMain2AppVersion.AppVersion),
 	}
 	leonardoBranch1AppVersion = CreatableAppVersion{
-		Chart:      leonardoChart.Name,
-		AppVersion: "1.2.3-a1c1",
-		GitCommit:  "a1c1",
-		GitBranch:  "branchy-branch",
+		Chart:            leonardoChart.Name,
+		AppVersion:       "1.2.4-a1c1",
+		GitCommit:        "a1c1",
+		GitBranch:        "branchy-branch",
+		ParentAppVersion: fmt.Sprintf("%s/%s", leonardoChart.Name, leonardoMain1AppVersion.AppVersion),
 	}
 	leonardoBranch2AppVersion = CreatableAppVersion{
-		Chart:      leonardoChart.Name,
-		AppVersion: "1.2.3-a1c2",
-		GitCommit:  "a1c2",
-		GitBranch:  "branchy-branch",
+		Chart:            leonardoChart.Name,
+		AppVersion:       "1.2.4-a1c2",
+		GitCommit:        "a1c2",
+		GitBranch:        "branchy-branch",
+		ParentAppVersion: fmt.Sprintf("%s/%s", leonardoChart.Name, leonardoBranch1AppVersion.AppVersion),
 	}
 	leonardoBranch3AppVersion = CreatableAppVersion{
-		Chart:      leonardoChart.Name,
-		AppVersion: "1.2.3-a1c3",
-		GitCommit:  "a1c3",
-		GitBranch:  "branchy-branch",
+		Chart:            leonardoChart.Name,
+		AppVersion:       "1.2.4-a1c3",
+		GitCommit:        "a1c3",
+		GitBranch:        "branchy-branch",
+		ParentAppVersion: fmt.Sprintf("%s/%s", leonardoChart.Name, leonardoBranch2AppVersion.AppVersion),
 	}
 	appVersionSeedList = []CreatableAppVersion{leonardoMain1AppVersion, leonardoMain2AppVersion, leonardoMain3AppVersion, leonardoBranch1AppVersion, leonardoBranch2AppVersion, leonardoBranch3AppVersion}
 )
 
 func (controllerSet *ControllerSet) seedAppVersions(t *testing.T) {
 	for _, creatable := range appVersionSeedList {
-		if _, err := controllerSet.AppVersionController.Create(creatable, auth.GenerateUser(t, false)); err != nil {
+		if _, _, err := controllerSet.AppVersionController.Create(creatable, auth.GenerateUser(t, false)); err != nil {
 			t.Errorf("error seeding app version %s for chart %s: %v", creatable.AppVersion, creatable.Chart, err)
 		}
 	}
@@ -102,23 +107,57 @@ func (suite *appVersionControllerSuite) TestAppVersionCreate() {
 		db.Truncate(suite.T(), suite.db)
 		suite.seedCharts(suite.T())
 
-		appVersion, err := suite.AppVersionController.Create(leonardoBranch3AppVersion, auth.GenerateUser(suite.T(), false))
+		appVersion, created, err := suite.AppVersionController.Create(leonardoMain1AppVersion, auth.GenerateUser(suite.T(), false))
 		assert.NoError(suite.T(), err)
-		assert.Equal(suite.T(), leonardoBranch3AppVersion.AppVersion, appVersion.AppVersion)
+		assert.True(suite.T(), created)
+		assert.Equal(suite.T(), leonardoMain1AppVersion.AppVersion, appVersion.AppVersion)
 		assert.True(suite.T(), appVersion.ID > 0)
 
-		suite.Run("can create duplicates", func() {
-			secondAppVersion, err := suite.AppVersionController.Create(leonardoBranch3AppVersion, auth.GenerateUser(suite.T(), false))
+		suite.Run("can accept duplicates", func() {
+			secondAppVersion, created, err := suite.AppVersionController.Create(leonardoMain1AppVersion, auth.GenerateUser(suite.T(), false))
 			assert.NoError(suite.T(), err)
-			assert.Equal(suite.T(), leonardoBranch3AppVersion.AppVersion, secondAppVersion.AppVersion)
+			assert.False(suite.T(), created)
+			assert.Equal(suite.T(), leonardoMain1AppVersion.AppVersion, secondAppVersion.AppVersion)
 			assert.True(suite.T(), secondAppVersion.ID > 0)
 		})
 	})
 	suite.Run("validates incoming entries", func() {
 		db.Truncate(suite.T(), suite.db)
 
-		_, err := suite.AppVersionController.Create(CreatableAppVersion{}, auth.GenerateUser(suite.T(), false))
+		_, created, err := suite.AppVersionController.Create(CreatableAppVersion{}, auth.GenerateUser(suite.T(), false))
 		assert.ErrorContains(suite.T(), err, errors.BadRequest)
+		assert.False(suite.T(), created)
+	})
+	suite.Run("rejects mismatched duplicates", func() {
+		db.Truncate(suite.T(), suite.db)
+		suite.seedCharts(suite.T())
+		suite.seedAppVersions(suite.T())
+
+		_, created, err := suite.AppVersionController.Create(CreatableAppVersion{
+			Chart:      leonardoChart.Name,
+			AppVersion: "1.2.5",
+			GitCommit:  "a1b3",
+			GitBranch:  *leonardoChart.AppImageGitMainBranch,
+			// Mismatched parent
+			ParentAppVersion: fmt.Sprintf("%s/%s", leonardoChart.Name, leonardoMain1AppVersion.AppVersion),
+		}, auth.GenerateUser(suite.T(), false))
+		assert.ErrorContains(suite.T(), err, errors.Conflict)
+		assert.False(suite.T(), created)
+	})
+	suite.Run("accepts bad parents", func() {
+		db.Truncate(suite.T(), suite.db)
+		suite.seedCharts(suite.T())
+		suite.seedAppVersions(suite.T())
+
+		appVersion, created, err := suite.AppVersionController.Create(CreatableAppVersion{
+			Chart:      datarepoChart.Name,
+			AppVersion: "1.1.1",
+			// Nonexistent parent
+			ParentAppVersion: fmt.Sprintf("%s/%s", datarepoChart.Name, leonardoMain1AppVersion.AppVersion),
+		}, auth.GenerateUser(suite.T(), false))
+		assert.NoError(suite.T(), err)
+		assert.True(suite.T(), created)
+		assert.Empty(suite.T(), appVersion.ParentAppVersion)
 	})
 }
 
@@ -201,7 +240,7 @@ func (suite *appVersionControllerSuite) TestAppVersionGetOtherValidSelectors() {
 	suite.Run("successfully", func() {
 		selectors, err := suite.AppVersionController.GetOtherValidSelectors(anID)
 		assert.NoError(suite.T(), err)
-		assert.Equal(suite.T(), 1, len(selectors))
+		assert.Equal(suite.T(), 3, len(selectors))
 		assert.Equal(suite.T(), anID, selectors[0])
 	})
 	suite.Run("unsuccessfully for not found", func() {

@@ -15,11 +15,12 @@ func RegisterAppVersionHandlers(routerGroup *gin.RouterGroup, controller *v2cont
 // createAppVersion godoc
 // @summary     Create a new AppVersion entry
 // @description Create a new AppVersion entry. Note that fields are immutable after creation.
+// @description If the new entry is a duplicate of one already in the database, the database will not be altered and the call will return normally but with a 200 code.
 // @tags        AppVersions
 // @accept      json
 // @produce     json
 // @param       app-version             body     v2controllers.CreatableAppVersion true "The AppVersion to create"
-// @success     201                     {object} v2controllers.AppVersion
+// @success     200,201                 {object} v2controllers.AppVersion
 // @failure     400,403,404,407,409,500 {object} errors.ErrorResponse
 // @router      /api/v2/app-versions [post]
 func createAppVersion(controller *v2controllers.AppVersionController) func(ctx *gin.Context) {
@@ -42,10 +43,10 @@ func listAppVersion(controller *v2controllers.AppVersionController) func(ctx *gi
 
 // getAppVersion godoc
 // @summary     Get a AppVersion entry
-// @description Get an existing AppVersion entry via one its "selector"--its numeric ID.
+// @description Get an existing AppVersion entry via one its "selectors": chart/version or numeric ID.
 // @tags        AppVersions
 // @produce     json
-// @param       selector                path     string true "The AppVersion to get's selector: name or numeric ID"
+// @param       selector                path     string true "The AppVersion to get's selector: chart/version or numeric ID"
 // @success     200                     {object} v2controllers.AppVersion
 // @failure     400,403,404,407,409,500 {object} errors.ErrorResponse
 // @router      /api/v2/app-versions/{selector} [get]
