@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/broadinstitute/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/internal/models/v2models"
+	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
 )
 
@@ -83,12 +84,13 @@ func chartVersionToModelChartVersion(chartVersion ChartVersion, stores *v2models
 	if chartVersion.ParentChartVersion != "" {
 		parentChartVersion, err := stores.ChartVersionStore.Get(chartVersion.ParentChartVersion)
 		if err != nil {
-			return v2models.ChartVersion{}, err
+			log.Debug().Msgf("while handling %T was given parent %s that didn't have a match, ignoring: %v", chartVersion, chartVersion.ParentChartVersion, err)
+		} else {
+			if chartID != 0 && parentChartVersion.ChartID != chartID {
+				return v2models.ChartVersion{}, fmt.Errorf("(%s) given parent matches a different chart (%s, ID %d) than this one does (%s, ID %d)", errors.BadRequest, parentChartVersion.Chart.Name, parentChartVersion.ChartID, chartVersion.Chart, chartID)
+			}
+			parentChartVersionID = &parentChartVersion.ID
 		}
-		if chartID != 0 && parentChartVersion.ChartID != chartID {
-			return v2models.ChartVersion{}, fmt.Errorf("(%s) given parent matches a different chart (%s, ID %d) than this one does (%s, ID %d)", errors.BadRequest, parentChartVersion.Chart.Name, parentChartVersion.ChartID, chartVersion.Chart, chartID)
-		}
-		parentChartVersionID = &parentChartVersion.ID
 	}
 	return v2models.ChartVersion{
 		Model: gorm.Model{

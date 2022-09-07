@@ -130,6 +130,21 @@ func (suite *chartVersionControllerSuite) TestChartVersionCreate() {
 		assert.ErrorContains(suite.T(), err, errors.Conflict)
 		assert.False(suite.T(), created)
 	})
+	suite.Run("accepts bad parents", func() {
+		db.Truncate(suite.T(), suite.db)
+		suite.seedCharts(suite.T())
+		suite.seedChartVersions(suite.T())
+
+		chartVersion, created, err := suite.ChartVersionController.Create(CreatableChartVersion{
+			Chart:        datarepoChart.Name,
+			ChartVersion: "1.1.1",
+			// Nonexistent parent
+			ParentChartVersion: fmt.Sprintf("%s/%s", datarepoChart.Name, leonardoMain1ChartVersion.ChartVersion),
+		}, auth.GenerateUser(suite.T(), false))
+		assert.NoError(suite.T(), err)
+		assert.True(suite.T(), created)
+		assert.Empty(suite.T(), chartVersion.ParentChartVersion)
+	})
 }
 
 func (suite *chartVersionControllerSuite) TestChartVersionListAllMatching() {

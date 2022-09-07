@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/broadinstitute/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/internal/models/v2models"
+	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
 )
 
@@ -87,12 +88,13 @@ func appVersionToModelAppVersion(appVersion AppVersion, stores *v2models.StoreSe
 	if appVersion.ParentAppVersion != "" {
 		parentAppVersion, err := stores.AppVersionStore.Get(appVersion.ParentAppVersion)
 		if err != nil {
-			return v2models.AppVersion{}, err
+			log.Debug().Msgf("while handling %T was given parent %s that didn't have a match, ignoring: %v", appVersion, appVersion.ParentAppVersion, err)
+		} else {
+			if chartID != 0 && parentAppVersion.ChartID != chartID {
+				return v2models.AppVersion{}, fmt.Errorf("(%s) given parent matches a different chart (%s, ID %d) than this one does (%s, ID %d)", errors.BadRequest, parentAppVersion.Chart.Name, parentAppVersion.ChartID, appVersion.Chart, chartID)
+			}
+			parentAppVersionID = &parentAppVersion.ID
 		}
-		if chartID != 0 && parentAppVersion.ChartID != chartID {
-			return v2models.AppVersion{}, fmt.Errorf("(%s) given parent matches a different chart (%s, ID %d) than this one does (%s, ID %d)", errors.BadRequest, parentAppVersion.Chart.Name, parentAppVersion.ChartID, appVersion.Chart, chartID)
-		}
-		parentAppVersionID = &parentAppVersion.ID
 	}
 	return v2models.AppVersion{
 		Model: gorm.Model{

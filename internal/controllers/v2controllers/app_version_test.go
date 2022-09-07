@@ -144,6 +144,21 @@ func (suite *appVersionControllerSuite) TestAppVersionCreate() {
 		assert.ErrorContains(suite.T(), err, errors.Conflict)
 		assert.False(suite.T(), created)
 	})
+	suite.Run("accepts bad parents", func() {
+		db.Truncate(suite.T(), suite.db)
+		suite.seedCharts(suite.T())
+		suite.seedAppVersions(suite.T())
+
+		appVersion, created, err := suite.AppVersionController.Create(CreatableAppVersion{
+			Chart:      datarepoChart.Name,
+			AppVersion: "1.1.1",
+			// Nonexistent parent
+			ParentAppVersion: fmt.Sprintf("%s/%s", datarepoChart.Name, leonardoMain1AppVersion.AppVersion),
+		}, auth.GenerateUser(suite.T(), false))
+		assert.NoError(suite.T(), err)
+		assert.True(suite.T(), created)
+		assert.Empty(suite.T(), appVersion.ParentAppVersion)
+	})
 }
 
 func (suite *appVersionControllerSuite) TestAppVersionListAllMatching() {
