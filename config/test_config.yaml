@@ -14,7 +14,6 @@ db:
   port: 5432
   ssl: disable
   init: true
-  autoMigrateV2: true
 
 auth:
   # These are for testing our handling of this config; tests run fully off-line
