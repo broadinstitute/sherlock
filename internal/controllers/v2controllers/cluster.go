@@ -51,7 +51,11 @@ func newClusterController(stores *v2models.StoreSet) *ClusterController {
 	}
 }
 
-func modelClusterToCluster(model v2models.Cluster) *Cluster {
+func modelClusterToCluster(model *v2models.Cluster) *Cluster {
+	if model == nil {
+		return nil
+	}
+
 	return &Cluster{
 		ReadableBaseType: ReadableBaseType{
 			ID:        model.ID,

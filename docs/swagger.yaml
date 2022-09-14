@@ -98,6 +98,125 @@ definitions:
       updatedAt:
         type: string
     type: object
+  v2controllers.Changeset:
+    properties:
+      appliedAt:
+        type: string
+      chartRelease:
+        type: string
+      chartReleaseInfo:
+        $ref: '#/definitions/v2controllers.ChartRelease'
+      createdAt:
+        type: string
+      fromAppVersionBranch:
+        type: string
+      fromAppVersionCommit:
+        type: string
+      fromAppVersionExact:
+        type: string
+      fromAppVersionInfo:
+        $ref: '#/definitions/v2controllers.AppVersion'
+      fromAppVersionReference:
+        type: string
+      fromAppVersionResolver:
+        type: string
+      fromChartVersionExact:
+        type: string
+      fromChartVersionInfo:
+        $ref: '#/definitions/v2controllers.ChartVersion'
+      fromChartVersionReference:
+        type: string
+      fromChartVersionResolver:
+        type: string
+      fromHelmfileRef:
+        type: string
+      fromResolvedAt:
+        type: string
+      id:
+        type: integer
+      isApplied:
+        type: boolean
+      newAppVersions:
+        items:
+          $ref: '#/definitions/v2controllers.AppVersion'
+        type: array
+      newChartVersions:
+        items:
+          $ref: '#/definitions/v2controllers.ChartVersion'
+        type: array
+      supersededAt:
+        type: string
+      toAppVersionBranch:
+        type: string
+      toAppVersionCommit:
+        type: string
+      toAppVersionExact:
+        type: string
+      toAppVersionInfo:
+        $ref: '#/definitions/v2controllers.AppVersion'
+      toAppVersionReference:
+        type: string
+      toAppVersionResolver:
+        type: string
+      toChartVersionExact:
+        type: string
+      toChartVersionInfo:
+        $ref: '#/definitions/v2controllers.ChartVersion'
+      toChartVersionReference:
+        type: string
+      toChartVersionResolver:
+        type: string
+      toHelmfileRef:
+        type: string
+      toResolvedAt:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  v2controllers.ChangesetPlanRequest:
+    properties:
+      chartReleases:
+        items:
+          properties:
+            chartRelease:
+              type: string
+            toAppVersionBranch:
+              type: string
+            toAppVersionCommit:
+              type: string
+            toAppVersionExact:
+              type: string
+            toAppVersionResolver:
+              type: string
+            toChartVersionExact:
+              type: string
+            toChartVersionResolver:
+              type: string
+            toHelmfileRef:
+              type: string
+            useExactVersionsFromOtherChartRelease:
+              type: string
+          type: object
+        type: array
+      environments:
+        items:
+          properties:
+            environment:
+              type: string
+            excludeCharts:
+              items:
+                type: string
+              type: array
+            includeCharts:
+              description: If omitted, will include all charts
+              items:
+                type: string
+              type: array
+            useExactVersionsFromOtherEnvironment:
+              type: string
+          type: object
+        type: array
+    type: object
   v2controllers.Chart:
     properties:
       appImageGitMainBranch:
@@ -117,39 +236,47 @@ definitions:
       updatedAt:
         type: string
     type: object
-  v2controllers.ChartDeployRecord:
-    properties:
-      chartRelease:
-        description: Required when creating
-        type: string
-      chartReleaseInfo:
-        $ref: '#/definitions/v2controllers.ChartRelease'
-      createdAt:
-        type: string
-      exactAppVersion:
-        description: When creating, will default to the value currently held by the
-          chart release
-        type: string
-      exactChartVersion:
-        description: When creating, will default to the value currently held by the
-          chart release
-        type: string
-      helmfileRef:
-        description: When creating, will default to the value currently held by the
-          chart release
-        type: string
-      id:
-        type: integer
-      updatedAt:
-        type: string
-    type: object
   v2controllers.ChartRelease:
     properties:
+      appVersionBranch:
+        description: When creating, will default to the app's mainline branch if no
+          other app version info is present
+        type: string
+      appVersionCommit:
+        type: string
+      appVersionExact:
+        type: string
+      appVersionInfo:
+        $ref: '#/definitions/v2controllers.AppVersion'
+      appVersionReference:
+        type: string
+      appVersionResolver:
+        description: // When creating, will default to automatically reference any
+          provided app version fields
+        enum:
+        - branch
+        - commit
+        - exact
+        - none
+        type: string
       chart:
         description: Required when creating
         type: string
       chartInfo:
         $ref: '#/definitions/v2controllers.Chart'
+      chartVersionExact:
+        type: string
+      chartVersionInfo:
+        $ref: '#/definitions/v2controllers.ChartVersion'
+      chartVersionReference:
+        type: string
+      chartVersionResolver:
+        description: When creating, will default to automatically reference any provided
+          chart version
+        enum:
+        - latest
+        - exact
+        type: string
       cluster:
         description: When creating, will default the environment's default cluster,
           if provided. Either this or environment must be provided.
@@ -157,10 +284,6 @@ definitions:
       clusterInfo:
         $ref: '#/definitions/v2controllers.Cluster'
       createdAt:
-        type: string
-      currentAppVersionExact:
-        type: string
-      currentChartVersionExact:
         type: string
       destinationType:
         description: Calculated field
@@ -181,33 +304,6 @@ definitions:
       namespace:
         description: When creating, will default to the environment's default namespace,
           if provided
-        type: string
-      targetAppVersionBranch:
-        description: When creating, will default to the app's main branch if it has
-          one recorded
-        type: string
-      targetAppVersionCommit:
-        type: string
-      targetAppVersionExact:
-        type: string
-      targetAppVersionUse:
-        description: When creating, will default to referencing any provided target
-          app version field (exact, then commit, then branch)
-        enum:
-        - branch
-        - commit
-        - exact
-        type: string
-      targetChartVersionExact:
-        type: string
-      targetChartVersionUse:
-        description: When creating, will default to latest unless an exact target
-          chart version is provided
-        enum:
-        - latest
-        - exact
-        type: string
-      thelmaMode:
         type: string
       updatedAt:
         type: string
@@ -283,6 +379,25 @@ definitions:
       parentAppVersion:
         type: string
     type: object
+  v2controllers.CreatableChangeset:
+    properties:
+      chartRelease:
+        type: string
+      toAppVersionBranch:
+        type: string
+      toAppVersionCommit:
+        type: string
+      toAppVersionExact:
+        type: string
+      toAppVersionResolver:
+        type: string
+      toChartVersionExact:
+        type: string
+      toChartVersionResolver:
+        type: string
+      toHelmfileRef:
+        type: string
+    type: object
   v2controllers.CreatableChart:
     properties:
       appImageGitMainBranch:
@@ -296,36 +411,40 @@ definitions:
         description: Required when creating
         type: string
     type: object
-  v2controllers.CreatableChartDeployRecord:
-    properties:
-      chartRelease:
-        description: Required when creating
-        type: string
-      exactAppVersion:
-        description: When creating, will default to the value currently held by the
-          chart release
-        type: string
-      exactChartVersion:
-        description: When creating, will default to the value currently held by the
-          chart release
-        type: string
-      helmfileRef:
-        description: When creating, will default to the value currently held by the
-          chart release
-        type: string
-    type: object
   v2controllers.CreatableChartRelease:
     properties:
+      appVersionBranch:
+        description: When creating, will default to the app's mainline branch if no
+          other app version info is present
+        type: string
+      appVersionCommit:
+        type: string
+      appVersionExact:
+        type: string
+      appVersionResolver:
+        description: // When creating, will default to automatically reference any
+          provided app version fields
+        enum:
+        - branch
+        - commit
+        - exact
+        - none
+        type: string
       chart:
         description: Required when creating
+        type: string
+      chartVersionExact:
+        type: string
+      chartVersionResolver:
+        description: When creating, will default to automatically reference any provided
+          chart version
+        enum:
+        - latest
+        - exact
         type: string
       cluster:
         description: When creating, will default the environment's default cluster,
           if provided. Either this or environment must be provided.
-        type: string
-      currentAppVersionExact:
-        type: string
-      currentChartVersionExact:
         type: string
       environment:
         description: Either this or cluster must be provided.
@@ -339,33 +458,6 @@ definitions:
       namespace:
         description: When creating, will default to the environment's default namespace,
           if provided
-        type: string
-      targetAppVersionBranch:
-        description: When creating, will default to the app's main branch if it has
-          one recorded
-        type: string
-      targetAppVersionCommit:
-        type: string
-      targetAppVersionExact:
-        type: string
-      targetAppVersionUse:
-        description: When creating, will default to referencing any provided target
-          app version field (exact, then commit, then branch)
-        enum:
-        - branch
-        - commit
-        - exact
-        type: string
-      targetChartVersionExact:
-        type: string
-      targetChartVersionUse:
-        description: When creating, will default to latest unless an exact target
-          chart version is provided
-        enum:
-        - latest
-        - exact
-        type: string
-      thelmaMode:
         type: string
     type: object
   v2controllers.CreatableChartVersion:
@@ -448,41 +540,6 @@ definitions:
         type: string
     type: object
   v2controllers.EditableChartRelease:
-    properties:
-      currentAppVersionExact:
-        type: string
-      currentChartVersionExact:
-        type: string
-      helmfileRef:
-        default: HEAD
-        type: string
-      targetAppVersionBranch:
-        description: When creating, will default to the app's main branch if it has
-          one recorded
-        type: string
-      targetAppVersionCommit:
-        type: string
-      targetAppVersionExact:
-        type: string
-      targetAppVersionUse:
-        description: When creating, will default to referencing any provided target
-          app version field (exact, then commit, then branch)
-        enum:
-        - branch
-        - commit
-        - exact
-        type: string
-      targetChartVersionExact:
-        type: string
-      targetChartVersionUse:
-        description: When creating, will default to latest unless an exact target
-          chart version is provided
-        enum:
-        - latest
-        - exact
-        type: string
-      thelmaMode:
-        type: string
     type: object
   v2controllers.EditableCluster:
     description: The subset of Cluster fields that can be edited after creation
@@ -733,36 +790,88 @@ paths:
       summary: Get a AppVersion entry
       tags:
       - AppVersions
-  /api/v2/chart-deploy-records:
+  /api/v2/changesets:
     get:
-      description: List existing ChartDeployRecord entries, ordered by most recently
-        updated.
+      description: List existing Changeset entries, ordered by most recently updated.
       parameters:
-      - description: Required when creating
-        in: query
+      - in: query
+        name: appliedAt
+        type: string
+      - in: query
         name: chartRelease
         type: string
       - in: query
         name: createdAt
         type: string
-      - description: When creating, will default to the value currently held by the
-          chart release
-        in: query
-        name: exactAppVersion
+      - in: query
+        name: fromAppVersionBranch
         type: string
-      - description: When creating, will default to the value currently held by the
-          chart release
-        in: query
-        name: exactChartVersion
+      - in: query
+        name: fromAppVersionCommit
         type: string
-      - description: When creating, will default to the value currently held by the
-          chart release
-        in: query
-        name: helmfileRef
+      - in: query
+        name: fromAppVersionExact
+        type: string
+      - in: query
+        name: fromAppVersionReference
+        type: string
+      - in: query
+        name: fromAppVersionResolver
+        type: string
+      - in: query
+        name: fromChartVersionExact
+        type: string
+      - in: query
+        name: fromChartVersionReference
+        type: string
+      - in: query
+        name: fromChartVersionResolver
+        type: string
+      - in: query
+        name: fromHelmfileRef
+        type: string
+      - in: query
+        name: fromResolvedAt
         type: string
       - in: query
         name: id
         type: integer
+      - in: query
+        name: isApplied
+        type: boolean
+      - in: query
+        name: supersededAt
+        type: string
+      - in: query
+        name: toAppVersionBranch
+        type: string
+      - in: query
+        name: toAppVersionCommit
+        type: string
+      - in: query
+        name: toAppVersionExact
+        type: string
+      - in: query
+        name: toAppVersionReference
+        type: string
+      - in: query
+        name: toAppVersionResolver
+        type: string
+      - in: query
+        name: toChartVersionExact
+        type: string
+      - in: query
+        name: toChartVersionReference
+        type: string
+      - in: query
+        name: toChartVersionResolver
+        type: string
+      - in: query
+        name: toHelmfileRef
+        type: string
+      - in: query
+        name: toResolvedAt
+        type: string
       - in: query
         name: updatedAt
         type: string
@@ -777,7 +886,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/v2controllers.ChartDeployRecord'
+              $ref: '#/definitions/v2controllers.Changeset'
             type: array
         "400":
           description: Bad Request
@@ -803,32 +912,33 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/errors.ErrorResponse'
-      summary: List ChartDeployRecord entries
+      summary: List Changeset entries
       tags:
-      - ChartDeployRecords
+      - Changesets
     post:
       consumes:
       - application/json
-      description: Create a new ChartDeployRecord entry. Note that fields are immutable
-        after creation.
+      description: |-
+        Create a new Changeset entry. Note that fields are immutable after creation.
+        You'll likely want to use the plan endpoint instead, which conditionally creates a Changeset based on there actually being a version diff.
       parameters:
-      - description: The ChartDeployRecord to create
+      - description: The Changeset to create
         in: body
-        name: chart-deploy-record
+        name: changeset
         required: true
         schema:
-          $ref: '#/definitions/v2controllers.CreatableChartDeployRecord'
+          $ref: '#/definitions/v2controllers.CreatableChangeset'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/v2controllers.ChartDeployRecord'
+            $ref: '#/definitions/v2controllers.Changeset'
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/v2controllers.ChartDeployRecord'
+            $ref: '#/definitions/v2controllers.Changeset'
         "400":
           description: Bad Request
           schema:
@@ -853,15 +963,15 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/errors.ErrorResponse'
-      summary: Create a new ChartDeployRecord entry
+      summary: Create a new Changeset entry
       tags:
-      - ChartDeployRecords
-  /api/v2/chart-deploy-records/{selector}:
+      - Changesets
+  /api/v2/changesets/{selector}:
     get:
-      description: Get an existing ChartDeployRecord entry via one its "selector"--its
-        numeric ID.
+      description: Get an existing Changeset entry via its "selector"--its numeric
+        ID.
       parameters:
-      - description: 'The ChartDeployRecord to get''s selector: name or numeric ID'
+      - description: The Changeset to get's selector--numeric ID
         in: path
         name: selector
         required: true
@@ -872,7 +982,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/v2controllers.ChartDeployRecord'
+            $ref: '#/definitions/v2controllers.Changeset'
         "400":
           description: Bad Request
           schema:
@@ -897,16 +1007,54 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/errors.ErrorResponse'
-      summary: Get a ChartDeployRecord entry
+      summary: Get a Changeset entry
       tags:
-      - ChartDeployRecords
+      - Changesets
   /api/v2/chart-releases:
     get:
       description: List existing ChartRelease entries, ordered by most recently updated.
       parameters:
+      - description: When creating, will default to the app's mainline branch if no
+          other app version info is present
+        in: query
+        name: appVersionBranch
+        type: string
+      - in: query
+        name: appVersionCommit
+        type: string
+      - in: query
+        name: appVersionExact
+        type: string
+      - in: query
+        name: appVersionReference
+        type: string
+      - description: // When creating, will default to automatically reference any
+          provided app version fields
+        enum:
+        - branch
+        - commit
+        - exact
+        - none
+        in: query
+        name: appVersionResolver
+        type: string
       - description: Required when creating
         in: query
         name: chart
+        type: string
+      - in: query
+        name: chartVersionExact
+        type: string
+      - in: query
+        name: chartVersionReference
+        type: string
+      - description: When creating, will default to automatically reference any provided
+          chart version
+        enum:
+        - latest
+        - exact
+        in: query
+        name: chartVersionResolver
         type: string
       - description: When creating, will default the environment's default cluster,
           if provided. Either this or environment must be provided.
@@ -915,12 +1063,6 @@ paths:
         type: string
       - in: query
         name: createdAt
-        type: string
-      - in: query
-        name: currentAppVersionExact
-        type: string
-      - in: query
-        name: currentChartVersionExact
         type: string
       - description: Calculated field
         in: query
@@ -945,40 +1087,6 @@ paths:
           if provided
         in: query
         name: namespace
-        type: string
-      - description: When creating, will default to the app's main branch if it has
-          one recorded
-        in: query
-        name: targetAppVersionBranch
-        type: string
-      - in: query
-        name: targetAppVersionCommit
-        type: string
-      - in: query
-        name: targetAppVersionExact
-        type: string
-      - description: When creating, will default to referencing any provided target
-          app version field (exact, then commit, then branch)
-        enum:
-        - branch
-        - commit
-        - exact
-        in: query
-        name: targetAppVersionUse
-        type: string
-      - in: query
-        name: targetChartVersionExact
-        type: string
-      - description: When creating, will default to latest unless an exact target
-          chart version is provided
-        enum:
-        - latest
-        - exact
-        in: query
-        name: targetChartVersionUse
-        type: string
-      - in: query
-        name: thelmaMode
         type: string
       - in: query
         name: updatedAt
@@ -1078,7 +1186,7 @@ paths:
       description: 'Delete an existing ChartRelease entry via one of its "selectors":
         name, numeric ID, environment/chart, or cluster/namespace/chart.'
       parameters:
-      - description: 'The ChartRelease to delete''s selector: name or numeric ID'
+      - description: The ChartRelease to delete's selector
         in: path
         name: selector
         required: true
@@ -1121,7 +1229,7 @@ paths:
       description: 'Get an existing ChartRelease entry via one of its "selectors":
         name, numeric ID, environment/chart, or cluster/namespace/chart.'
       parameters:
-      - description: 'The ChartRelease to get''s selector: name or numeric ID'
+      - description: The ChartRelease to get's selector
         in: path
         name: selector
         required: true
@@ -1168,7 +1276,7 @@ paths:
         only mutable fields are available here, immutable fields can only be set using
         /create.'
       parameters:
-      - description: 'The ChartRelease to edit''s selector: name or numeric ID'
+      - description: The ChartRelease to edit's selector
         in: path
         name: selector
         required: true
@@ -2184,6 +2292,168 @@ paths:
       summary: Edit a Environment entry
       tags:
       - Environments
+  /api/v2/procedures/changesets/apply:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Looks up and applies previously-planned version diffs given by the ID. Other stored plans against the same Chart Releases are marked as superseded.
+        Multiple Changesets can be specified simply by passing multiple IDs in the list.
+      parameters:
+      - description: String IDs of the Changesets to apply
+        in: body
+        name: apply-request
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/v2controllers.Changeset'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Apply previously planned version changes to Chart Releases
+      tags:
+      - Changesets
+  /api/v2/procedures/changesets/plan:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Refreshes and calculates version diffs for Chart Releases. If there's a diff, the plan is stored and returned so it can be applied later.
+        Multiple Chart Releases can be specified--as can groups of Chart Releases from multiple Environments.
+      parameters:
+      - description: Info on what version changes or refreshes to plan
+        in: body
+        name: changeset-plan-request
+        required: true
+        schema:
+          $ref: '#/definitions/v2controllers.ChangesetPlanRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/v2controllers.Changeset'
+            type: array
+        "201":
+          description: Created
+          schema:
+            items:
+              $ref: '#/definitions/v2controllers.Changeset'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Plan--but do not apply--version changes to Chart Releases
+      tags:
+      - Changesets
+  /api/v2/procedures/changesets/plan-and-apply:
+    post:
+      consumes:
+      - application/json
+      description: Like the plan and apply endpoints immediately in sequence.
+      parameters:
+      - description: Info on what version changes or refreshes to perform
+        in: body
+        name: changeset-plan-request
+        required: true
+        schema:
+          $ref: '#/definitions/v2controllers.ChangesetPlanRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/v2controllers.Changeset'
+            type: array
+        "201":
+          description: Created
+          schema:
+            items:
+              $ref: '#/definitions/v2controllers.Changeset'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Plan and apply version changes in one step
+      tags:
+      - Changesets
   /api/v2/selectors/app-versions/{selector}:
     get:
       description: Validate a given AppVersion selector and provide any other selectors
@@ -2230,13 +2500,12 @@ paths:
       summary: List AppVersion selectors
       tags:
       - AppVersions
-  /api/v2/selectors/chart-deploy-records/{selector}:
+  /api/v2/selectors/changesets/{selector}:
     get:
-      description: Validate a given ChartDeployRecord selector and provide any other
-        selectors that would match the same ChartDeployRecord.
+      description: Validate a given Changeset selector and provide any other selectors
+        that would match the same Changeset.
       parameters:
-      - description: The selector of the ChartDeployRecord to list other selectors
-          for
+      - description: The selector of the Changeset to list other selectors for
         in: path
         name: selector
         required: true
@@ -2274,9 +2543,9 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/errors.ErrorResponse'
-      summary: List ChartDeployRecord selectors
+      summary: List Changeset selectors
       tags:
-      - ChartDeployRecords
+      - Changesets
   /api/v2/selectors/chart-releases/{selector}:
     get:
       description: Validate a given ChartRelease selector and provide any other selectors

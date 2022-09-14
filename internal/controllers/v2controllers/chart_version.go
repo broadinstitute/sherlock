@@ -10,7 +10,7 @@ import (
 
 type ChartVersion struct {
 	ReadableBaseType
-	ChartInfo              Chart         `json:"chartInfo" form:"-"`
+	ChartInfo              *Chart        `json:"chartInfo,omitempty" form:"-"`
 	ParentChartVersionInfo *ChartVersion `json:"parentChartVersionInfo,omitempty" swaggertype:"object" form:"-"`
 	CreatableChartVersion
 }
@@ -45,26 +45,35 @@ func newChartVersionController(stores *v2models.StoreSet) *ChartVersionControlle
 	}
 }
 
-func modelChartVersionToChartVersion(model v2models.ChartVersion) *ChartVersion {
+func modelChartVersionToChartVersion(model *v2models.ChartVersion) *ChartVersion {
+	if model == nil {
+		return nil
+	}
+
+	var chartName string
 	chart := modelChartToChart(model.Chart)
-	var parentChartVersion *ChartVersion
+	if chart != nil {
+		chartName = chart.Name
+	}
+
 	var parentChartVersionSelector string
-	if model.ParentChartVersion != nil {
-		parentChartVersion = modelChartVersionToChartVersion(*model.ParentChartVersion)
+	parentChartVersion := modelChartVersionToChartVersion(model.ParentChartVersion)
+	if parentChartVersion != nil {
 		// The parent's associations might not be loaded, so we can't safely get the chart name of the parent, but
 		// we know that the parent's chart name is the same as ours.
-		parentChartVersionSelector = fmt.Sprintf("%s/%s", chart.Name, parentChartVersion.ChartVersion)
+		parentChartVersionSelector = fmt.Sprintf("%s/%s", chartName, parentChartVersion.ChartVersion)
 	}
+
 	return &ChartVersion{
 		ReadableBaseType: ReadableBaseType{
 			ID:        model.ID,
 			CreatedAt: model.CreatedAt,
 			UpdatedAt: model.UpdatedAt,
 		},
-		ChartInfo:              *chart,
+		ChartInfo:              chart,
 		ParentChartVersionInfo: parentChartVersion,
 		CreatableChartVersion: CreatableChartVersion{
-			Chart:              chart.Name,
+			Chart:              chartName,
 			ChartVersion:       model.ChartVersion,
 			ParentChartVersion: parentChartVersionSelector,
 		},

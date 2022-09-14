@@ -5,14 +5,19 @@ import (
 	"github.com/broadinstitute/sherlock/internal/auth"
 	"github.com/broadinstitute/sherlock/internal/models/v2models"
 	"gorm.io/gorm"
+	"strconv"
 )
 
 type ChartRelease struct {
 	ReadableBaseType
-	ChartInfo       Chart        `json:"chartInfo" form:"-"`
-	ClusterInfo     *Cluster     `json:"clusterInfo,omitempty" form:"-"`
-	EnvironmentInfo *Environment `json:"environmentInfo,omitempty" form:"-"`
-	DestinationType string       `json:"destinationType" form:"destinationType" enum:"environment,cluster"` // Calculated field
+	ChartInfo             *Chart        `json:"chartInfo,omitempty" form:"-"`
+	ClusterInfo           *Cluster      `json:"clusterInfo,omitempty" form:"-"`
+	EnvironmentInfo       *Environment  `json:"environmentInfo,omitempty" form:"-"`
+	AppVersionReference   string        `json:"appVersionReference,omitempty" form:"appVersionReference"`
+	AppVersionInfo        *AppVersion   `json:"appVersionInfo,omitempty" form:"-"`
+	ChartVersionReference string        `json:"chartVersionReference,omitempty" form:"chartVersionReference"`
+	ChartVersionInfo      *ChartVersion `json:"chartVersionInfo,omitempty" form:"-"`
+	DestinationType       string        `json:"destinationType" form:"destinationType" enum:"environment,cluster"` // Calculated field
 	CreatableChartRelease
 }
 
@@ -22,26 +27,19 @@ type CreatableChartRelease struct {
 	Environment string `json:"environment" form:"environment"` // Either this or cluster must be provided.
 	Name        string `json:"name" form:"name"`               // When creating, will be calculated if left empty
 	Namespace   string `json:"namespace" form:"namespace"`     // When creating, will default to the environment's default namespace, if provided
+
+	AppVersionResolver   *string `json:"appVersionResolver" form:"appVersionResolver" enums:"branch,commit,exact,none"` // // When creating, will default to automatically reference any provided app version fields
+	AppVersionExact      *string `json:"appVersionExact" form:"appVersionExact"`
+	AppVersionBranch     *string `json:"appVersionBranch" form:"appVersionBranch"` // When creating, will default to the app's mainline branch if no other app version info is present
+	AppVersionCommit     *string `json:"appVersionCommit" form:"appVersionCommit"`
+	ChartVersionResolver *string `json:"chartVersionResolver" form:"chartVersionResolver" enums:"latest,exact"` // When creating, will default to automatically reference any provided chart version
+	ChartVersionExact    *string `json:"chartVersionExact" form:"chartVersionExact"`
+	HelmfileRef          *string `json:"helmfileRef" form:"helmfileRef" default:"HEAD"`
 	EditableChartRelease
 }
 
-// EditableChartRelease
-// There's indeed some grouped fields here. Trying to nest them in an object or something will quickly make Swaggo
-// upset. There's four things to worry about: Gin's json parsing, Swaggo's json tag parsing, Gin's form parsing for
-// query params, and Swaggo's apparent parsing of json tags (instead of form ones) for query params. The query param
-// part only shows up on the list method; all the times Jack tried to add nesting, something broke.
-// https://broadinstitute.slack.com/archives/CQ6SL4N5T/p1660059822037769
 type EditableChartRelease struct {
-	CurrentAppVersionExact   *string `json:"currentAppVersionExact" form:"currentAppVersionExact"`
-	CurrentChartVersionExact *string `json:"currentChartVersionExact" form:"currentChartVersionExact"`
-	HelmfileRef              *string `json:"helmfileRef" form:"helmfileRef" default:"HEAD"`
-	TargetAppVersionBranch   *string `json:"targetAppVersionBranch" form:"targetAppVersionBranch"` // When creating, will default to the app's main branch if it has one recorded
-	TargetAppVersionCommit   *string `json:"targetAppVersionCommit" form:"targetAppVersionCommit"`
-	TargetAppVersionExact    *string `json:"targetAppVersionExact" form:"targetAppVersionExact"`
-	TargetAppVersionUse      *string `json:"targetAppVersionUse" form:"targetAppVersionUse" enums:"branch,commit,exact"` // When creating, will default to referencing any provided target app version field (exact, then commit, then branch)
-	TargetChartVersionExact  *string `json:"targetChartVersionExact" form:"targetChartVersionExact"`
-	TargetChartVersionUse    *string `json:"targetChartVersionUse" form:"targetChartVersionUse" enums:"latest,exact"` // When creating, will default to latest unless an exact target chart version is provided
-	ThelmaMode               *string `json:"thelmaMode,omitempty" form:"thelmaMode"`
+	// I'm sure we'll have something here pretty soon--maybe that `subdomain` field I had added to Thelma a while back?
 }
 
 //nolint:unused
@@ -66,48 +64,73 @@ func newChartReleaseController(stores *v2models.StoreSet) *ChartReleaseControlle
 	}
 }
 
-func modelChartReleaseToChartRelease(model v2models.ChartRelease) *ChartRelease {
+func modelChartReleaseToChartRelease(model *v2models.ChartRelease) *ChartRelease {
+	if model == nil {
+		return nil
+	}
+
+	var chartName string
 	chart := modelChartToChart(model.Chart)
-	var environment *Environment
+	if chart != nil {
+		chartName = chart.Name
+	}
+
 	var environmentName string
-	if model.Environment != nil {
-		environment = modelEnvironmentToEnvironment(*model.Environment)
+	environment := modelEnvironmentToEnvironment(model.Environment)
+	if environment != nil {
 		environmentName = environment.Name
 	}
-	var cluster *Cluster
+
 	var clusterName string
-	if model.Cluster != nil {
-		cluster = modelClusterToCluster(*model.Cluster)
+	cluster := modelClusterToCluster(model.Cluster)
+	if cluster != nil {
 		clusterName = cluster.Name
 	}
+
+	var appVersionReference string
+	appVersion := modelAppVersionToAppVersion(model.AppVersion)
+	if appVersion != nil {
+		appVersionReference = fmt.Sprintf("%s/%s", chartName, appVersion.AppVersion)
+	} else if model.AppVersionID != nil {
+		appVersionReference = strconv.FormatUint(uint64(*model.AppVersionID), 10)
+	}
+
+	var chartVersionReference string
+	chartVersion := modelChartVersionToChartVersion(model.ChartVersion)
+	if chartVersion != nil {
+		chartVersionReference = fmt.Sprintf("%s/%s", chartName, chartVersion.ChartVersion)
+	} else if model.ChartVersionID != nil {
+		chartVersionReference = strconv.FormatUint(uint64(*model.ChartVersionID), 10)
+	}
+
 	return &ChartRelease{
 		ReadableBaseType: ReadableBaseType{
 			ID:        model.ID,
 			CreatedAt: model.CreatedAt,
 			UpdatedAt: model.UpdatedAt,
 		},
-		ChartInfo:       *chart,
-		ClusterInfo:     cluster,
-		EnvironmentInfo: environment,
-		DestinationType: model.DestinationType,
+		ChartInfo:             chart,
+		ClusterInfo:           cluster,
+		EnvironmentInfo:       environment,
+		AppVersionReference:   appVersionReference,
+		AppVersionInfo:        appVersion,
+		ChartVersionReference: chartVersionReference,
+		ChartVersionInfo:      chartVersion,
+		DestinationType:       model.DestinationType,
 		CreatableChartRelease: CreatableChartRelease{
-			Chart:       chart.Name,
-			Cluster:     clusterName,
-			Environment: environmentName,
-			Name:        model.Name,
-			Namespace:   model.Namespace,
-			EditableChartRelease: EditableChartRelease{
-				CurrentAppVersionExact:   model.CurrentAppVersionExact,
-				CurrentChartVersionExact: model.CurrentChartVersionExact,
-				HelmfileRef:              model.HelmfileRef,
-				TargetAppVersionBranch:   model.TargetAppVersionBranch,
-				TargetAppVersionCommit:   model.TargetAppVersionCommit,
-				TargetAppVersionExact:    model.TargetAppVersionExact,
-				TargetAppVersionUse:      model.TargetAppVersionUse,
-				TargetChartVersionExact:  model.TargetChartVersionExact,
-				TargetChartVersionUse:    model.TargetChartVersionUse,
-				ThelmaMode:               model.ThelmaMode,
-			},
+			Chart:                chartName,
+			Cluster:              clusterName,
+			Environment:          environmentName,
+			Name:                 model.Name,
+			Namespace:            model.Namespace,
+			AppVersionResolver:   model.AppVersionResolver,
+			AppVersionExact:      model.AppVersionExact,
+			AppVersionBranch:     model.AppVersionBranch,
+			AppVersionCommit:     model.AppVersionCommit,
+			ChartVersionResolver: model.ChartVersionResolver,
+			ChartVersionExact:    model.ChartVersionExact,
+			HelmfileRef:          model.HelmfileRef,
+			EditableChartRelease: EditableChartRelease{},
 		},
 	}
 }
@@ -137,28 +160,45 @@ func chartReleaseToModelChartRelease(chartRelease ChartRelease, stores *v2models
 		}
 		clusterID = &cluster.ID
 	}
+	var appVersionID *uint
+	if chartRelease.AppVersionReference != "" {
+		appVersion, err := stores.AppVersionStore.Get(chartRelease.AppVersionReference)
+		if err != nil {
+			return v2models.ChartRelease{}, err
+		}
+		appVersionID = &appVersion.ID
+	}
+	var chartVersionID *uint
+	if chartRelease.ChartVersionReference != "" {
+		chartVersion, err := stores.ChartVersionStore.Get(chartRelease.ChartVersionReference)
+		if err != nil {
+			return v2models.ChartRelease{}, err
+		}
+		chartVersionID = &chartVersion.ID
+	}
 	return v2models.ChartRelease{
 		Model: gorm.Model{
 			ID:        chartRelease.ID,
 			CreatedAt: chartRelease.CreatedAt,
 			UpdatedAt: chartRelease.UpdatedAt,
 		},
-		ChartID:                  chartID,
-		ClusterID:                clusterID,
-		EnvironmentID:            environmentID,
-		DestinationType:          chartRelease.DestinationType,
-		Name:                     chartRelease.Name,
-		Namespace:                chartRelease.Namespace,
-		CurrentAppVersionExact:   chartRelease.CurrentAppVersionExact,
-		CurrentChartVersionExact: chartRelease.CurrentChartVersionExact,
-		HelmfileRef:              chartRelease.HelmfileRef,
-		TargetAppVersionBranch:   chartRelease.TargetAppVersionBranch,
-		TargetAppVersionCommit:   chartRelease.TargetAppVersionCommit,
-		TargetAppVersionExact:    chartRelease.TargetAppVersionExact,
-		TargetAppVersionUse:      chartRelease.TargetAppVersionUse,
-		TargetChartVersionExact:  chartRelease.TargetChartVersionExact,
-		TargetChartVersionUse:    chartRelease.TargetChartVersionUse,
-		ThelmaMode:               chartRelease.ThelmaMode,
+		ChartID:         chartID,
+		ClusterID:       clusterID,
+		EnvironmentID:   environmentID,
+		DestinationType: chartRelease.DestinationType,
+		Name:            chartRelease.Name,
+		Namespace:       chartRelease.Namespace,
+		ChartReleaseVersion: v2models.ChartReleaseVersion{
+			AppVersionResolver:   chartRelease.AppVersionResolver,
+			AppVersionExact:      chartRelease.AppVersionExact,
+			AppVersionBranch:     chartRelease.AppVersionBranch,
+			AppVersionCommit:     chartRelease.AppVersionCommit,
+			AppVersionID:         appVersionID,
+			ChartVersionResolver: chartRelease.ChartVersionResolver,
+			ChartVersionExact:    chartRelease.ChartVersionExact,
+			ChartVersionID:       chartVersionID,
+			HelmfileRef:          chartRelease.HelmfileRef,
+		},
 	}, nil
 }
 
@@ -167,30 +207,30 @@ func setChartReleaseDynamicDefaults(chartRelease *ChartRelease, stores *v2models
 	if err != nil {
 		return err
 	}
-	if chart.AppImageGitMainBranch != nil && *chart.AppImageGitMainBranch != "" && chartRelease.TargetAppVersionBranch == nil {
-		chartRelease.TargetAppVersionBranch = chart.AppImageGitMainBranch
+	if chart.AppImageGitMainBranch != nil && *chart.AppImageGitMainBranch != "" && chartRelease.AppVersionBranch == nil {
+		chartRelease.AppVersionBranch = chart.AppImageGitMainBranch
 	}
 
-	if chartRelease.TargetAppVersionUse == nil {
-		var temp string
-		if chartRelease.TargetAppVersionExact != nil {
-			temp = "exact"
-		} else if chartRelease.TargetAppVersionCommit != nil {
-			temp = "commit"
-		} else if chartRelease.TargetAppVersionBranch != nil {
-			temp = "branch"
+	if chartRelease.AppVersionResolver == nil {
+		resolver := "none"
+		if chartRelease.AppVersionExact != nil {
+			resolver = "exact"
+		} else if chartRelease.AppVersionCommit != nil {
+			resolver = "commit"
+		} else if chartRelease.AppVersionBranch != nil {
+			resolver = "branch"
 		}
-		if temp != "" {
-			chartRelease.TargetAppVersionUse = &temp
+		if resolver != "" {
+			chartRelease.AppVersionResolver = &resolver
 		}
 	}
 
-	if chartRelease.TargetChartVersionUse == nil {
-		temp := "latest"
-		if chartRelease.TargetChartVersionExact != nil {
-			temp = "exact"
+	if chartRelease.ChartVersionResolver == nil {
+		resolver := "latest"
+		if chartRelease.ChartVersionExact != nil {
+			resolver = "exact"
 		}
-		chartRelease.TargetChartVersionUse = &temp
+		chartRelease.ChartVersionResolver = &resolver
 	}
 
 	if chartRelease.Environment != "" {

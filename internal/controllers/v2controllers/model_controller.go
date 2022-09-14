@@ -43,7 +43,7 @@ type Editable[R Readable, C Creatable[R]] interface {
 	toCreatable() C
 }
 
-// ModelController exposes the same "verbs" exposed by a v2models.Store, but it adds the user-type to database-type
+// ModelController exposes the same "verbs" exposed by a v2models.internalStore, but it adds the user-type to database-type
 // mapping that provides type safety for what fields can be read/queried, created, and edited. ModelController also
 // handles setting defaults--even complex ones, like from template Environment entries.
 //
@@ -55,14 +55,14 @@ type Editable[R Readable, C Creatable[R]] interface {
 // handled in terms of the user-type, making for simpler documentation and more obvious behavior.
 type ModelController[M v2models.Model, R Readable, C Creatable[R], E Editable[R, C]] struct {
 	// primaryStore is the part of the model that this is a controller for.
-	primaryStore *v2models.Store[M]
+	primaryStore *v2models.ModelStore[M]
 	// allStores is a reference to the entire model, so that readableToModel and setDynamicDefaults can work
 	// with associations if they need to.
 	allStores *v2models.StoreSet
 	// modelToReadable is a required half of the Readable-v2models.Model mapping that the ModelController establishes.
 	//
 	// Since this direction is coming from the database type, it can be done offline and without errors.
-	modelToReadable func(model M) *R
+	modelToReadable func(model *M) *R
 	// readableToModel is a required half of the Readable-v2models.Model mapping that the ModelController establishes.
 	//
 	// Since this direction is coming from the user type, it may take advantage of the database stores to load
@@ -101,7 +101,7 @@ func (c ModelController[M, R, C, E]) Create(creatable C, user *auth.User) (R, bo
 		return readable, false, err
 	}
 	result, created, err := c.primaryStore.Create(model, user)
-	return *c.modelToReadable(result), created, err
+	return *c.modelToReadable(&result), created, err
 }
 
 func (c ModelController[M, R, C, E]) ListAllMatching(filter R, limit int) ([]R, error) {
@@ -112,14 +112,14 @@ func (c ModelController[M, R, C, E]) ListAllMatching(filter R, limit int) ([]R, 
 	results, err := c.primaryStore.ListAllMatching(model, limit)
 	readables := make([]R, 0)
 	for _, result := range results {
-		readables = append(readables, *c.modelToReadable(result))
+		readables = append(readables, *c.modelToReadable(&result))
 	}
 	return readables, err
 }
 
 func (c ModelController[M, R, C, E]) Get(selector string) (R, error) {
 	result, err := c.primaryStore.Get(selector)
-	return *c.modelToReadable(result), err
+	return *c.modelToReadable(&result), err
 }
 
 func (c ModelController[M, R, C, E]) GetOtherValidSelectors(selector string) ([]string, error) {
@@ -133,10 +133,10 @@ func (c ModelController[M, R, C, E]) Edit(selector string, editable E, user *aut
 		return readable, err
 	}
 	result, err := c.primaryStore.Edit(selector, model, user)
-	return *c.modelToReadable(result), err
+	return *c.modelToReadable(&result), err
 }
 
 func (c ModelController[M, R, C, E]) Delete(selector string, user *auth.User) (R, error) {
 	result, err := c.primaryStore.Delete(selector, user)
-	return *c.modelToReadable(result), err
+	return *c.modelToReadable(&result), err
 }

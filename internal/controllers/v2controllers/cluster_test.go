@@ -63,6 +63,15 @@ var (
 			Address: testutils.PointerTo("192.168.30.1"),
 		},
 	}
+	terraStagingCluster = CreatableCluster{
+		Name:          "terra-staging",
+		GoogleProject: "broad-dsde-staging",
+		EditableCluster: EditableCluster{
+			Base:                testutils.PointerTo("terra"),
+			Address:             testutils.PointerTo("192.168.0.10"),
+			RequiresSuitability: testutils.PointerTo(true),
+		},
+	}
 	terraProdCluster = CreatableCluster{
 		Name:          "terra-prod",
 		GoogleProject: "broad-dsde-prod",
@@ -106,7 +115,15 @@ var (
 			Address: testutils.PointerTo("192.168.2.1"),
 		},
 	}
-	clusterSeedList = []CreatableCluster{terraDevCluster, terraProdCluster, datarepoDevCluster, datarepoProdCluster, terraDevBeesCluster, terraQaBeesCluster}
+	clusterSeedList = []CreatableCluster{
+		terraDevCluster,
+		terraStagingCluster,
+		terraProdCluster,
+		datarepoDevCluster,
+		datarepoProdCluster,
+		terraDevBeesCluster,
+		terraQaBeesCluster,
+	}
 )
 
 func (controllerSet *ControllerSet) seedClusters(t *testing.T) {

@@ -59,19 +59,23 @@ func newEnvironmentController(stores *v2models.StoreSet) *EnvironmentController 
 	}
 }
 
-func modelEnvironmentToEnvironment(model v2models.Environment) *Environment {
-	var templateEnvironment *Environment
+func modelEnvironmentToEnvironment(model *v2models.Environment) *Environment {
+	if model == nil {
+		return nil
+	}
+
 	var templateEnvironmentName string
-	if model.TemplateEnvironment != nil {
-		templateEnvironment = modelEnvironmentToEnvironment(*model.TemplateEnvironment)
+	templateEnvironment := modelEnvironmentToEnvironment(model.TemplateEnvironment)
+	if templateEnvironment != nil {
 		templateEnvironmentName = templateEnvironment.Name
 	}
-	var defaultCluster *Cluster
+
 	var defaultClusterName string
-	if model.DefaultCluster != nil {
-		defaultCluster = modelClusterToCluster(*model.DefaultCluster)
+	defaultCluster := modelClusterToCluster(model.DefaultCluster)
+	if defaultCluster != nil {
 		defaultClusterName = defaultCluster.Name
 	}
+
 	return &Environment{
 		ReadableBaseType: ReadableBaseType{
 			ID:        model.ID,

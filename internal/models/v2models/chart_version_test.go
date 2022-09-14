@@ -52,7 +52,7 @@ func Test_chartVersionSelectorToQuery(t *testing.T) {
 
 func Test_chartVersionToSelectors(t *testing.T) {
 	type args struct {
-		chartVersion ChartVersion
+		chartVersion *ChartVersion
 	}
 	tests := []struct {
 		name string
@@ -61,19 +61,19 @@ func Test_chartVersionToSelectors(t *testing.T) {
 	}{
 		{
 			name: "none",
-			args: args{chartVersion: ChartVersion{}},
+			args: args{chartVersion: &ChartVersion{}},
 			want: nil,
 		},
 		{
 			name: "id",
-			args: args{chartVersion: ChartVersion{Model: gorm.Model{ID: 123}}},
+			args: args{chartVersion: &ChartVersion{Model: gorm.Model{ID: 123}}},
 			want: []string{"123"},
 		},
 		{
 			name: "id and chart + version",
-			args: args{chartVersion: ChartVersion{
+			args: args{chartVersion: &ChartVersion{
 				Model: gorm.Model{ID: 123},
-				Chart: Chart{
+				Chart: &Chart{
 					Model: gorm.Model{ID: 456},
 					Name:  "datarepo",
 				},
@@ -83,7 +83,7 @@ func Test_chartVersionToSelectors(t *testing.T) {
 		},
 		{
 			name: "id and chart id + version",
-			args: args{chartVersion: ChartVersion{
+			args: args{chartVersion: &ChartVersion{
 				Model:        gorm.Model{ID: 123},
 				ChartID:      456,
 				ChartVersion: "1.2.3",
@@ -101,7 +101,7 @@ func Test_chartVersionToSelectors(t *testing.T) {
 
 func Test_validateChartVersion(t *testing.T) {
 	type args struct {
-		chartVersion ChartVersion
+		chartVersion *ChartVersion
 	}
 	tests := []struct {
 		name    string
@@ -110,21 +110,21 @@ func Test_validateChartVersion(t *testing.T) {
 	}{
 		{
 			name: "no chart",
-			args: args{chartVersion: ChartVersion{
+			args: args{chartVersion: &ChartVersion{
 				ChartVersion: "1.2.3",
 			}},
 			wantErr: true,
 		},
 		{
 			name: "no version",
-			args: args{chartVersion: ChartVersion{
+			args: args{chartVersion: &ChartVersion{
 				ChartID: 123,
 			}},
 			wantErr: true,
 		},
 		{
 			name: "valid",
-			args: args{chartVersion: ChartVersion{
+			args: args{chartVersion: &ChartVersion{
 				ChartID:      123,
 				ChartVersion: "1.2.3",
 			}},
@@ -142,8 +142,8 @@ func Test_validateChartVersion(t *testing.T) {
 
 func Test_rejectDuplicateChartVersion(t *testing.T) {
 	type args struct {
-		existing ChartVersion
-		new      ChartVersion
+		existing *ChartVersion
+		new      *ChartVersion
 	}
 	tests := []struct {
 		name    string
@@ -153,48 +153,48 @@ func Test_rejectDuplicateChartVersion(t *testing.T) {
 		{
 			name: "mismatch chart version",
 			args: args{
-				existing: ChartVersion{ChartVersion: "123"},
-				new:      ChartVersion{ChartVersion: "456"},
+				existing: &ChartVersion{ChartVersion: "123"},
+				new:      &ChartVersion{ChartVersion: "456"},
 			},
 			wantErr: true,
 		},
 		{
 			name: "mismatch chart",
 			args: args{
-				existing: ChartVersion{ChartID: 123},
-				new:      ChartVersion{ChartID: 456},
+				existing: &ChartVersion{ChartID: 123},
+				new:      &ChartVersion{ChartID: 456},
 			},
 			wantErr: true,
 		},
 		{
 			name: "only existing has parent",
 			args: args{
-				existing: ChartVersion{ParentChartVersionID: testutils.PointerTo[uint](123)},
-				new:      ChartVersion{},
+				existing: &ChartVersion{ParentChartVersionID: testutils.PointerTo[uint](123)},
+				new:      &ChartVersion{},
 			},
 			wantErr: true,
 		},
 		{
 			name: "only new has parent",
 			args: args{
-				existing: ChartVersion{},
-				new:      ChartVersion{ParentChartVersionID: testutils.PointerTo[uint](456)},
+				existing: &ChartVersion{},
+				new:      &ChartVersion{ParentChartVersionID: testutils.PointerTo[uint](456)},
 			},
 			wantErr: true,
 		},
 		{
 			name: "mismatch parent",
 			args: args{
-				existing: ChartVersion{ParentChartVersionID: testutils.PointerTo[uint](123)},
-				new:      ChartVersion{ParentChartVersionID: testutils.PointerTo[uint](456)},
+				existing: &ChartVersion{ParentChartVersionID: testutils.PointerTo[uint](123)},
+				new:      &ChartVersion{ParentChartVersionID: testutils.PointerTo[uint](456)},
 			},
 			wantErr: true,
 		},
 		{
 			name: "no mismatch",
 			args: args{
-				existing: ChartVersion{},
-				new:      ChartVersion{},
+				existing: &ChartVersion{},
+				new:      &ChartVersion{},
 			},
 			wantErr: false,
 		},

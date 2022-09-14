@@ -52,7 +52,7 @@ func Test_appVersionSelectorToQuery(t *testing.T) {
 
 func Test_appVersionToSelectors(t *testing.T) {
 	type args struct {
-		appVersion AppVersion
+		appVersion *AppVersion
 	}
 	tests := []struct {
 		name string
@@ -61,19 +61,19 @@ func Test_appVersionToSelectors(t *testing.T) {
 	}{
 		{
 			name: "none",
-			args: args{appVersion: AppVersion{}},
+			args: args{appVersion: &AppVersion{}},
 			want: nil,
 		},
 		{
 			name: "id",
-			args: args{appVersion: AppVersion{Model: gorm.Model{ID: 123}}},
+			args: args{appVersion: &AppVersion{Model: gorm.Model{ID: 123}}},
 			want: []string{"123"},
 		},
 		{
 			name: "id and chart + version",
-			args: args{appVersion: AppVersion{
+			args: args{appVersion: &AppVersion{
 				Model: gorm.Model{ID: 123},
-				Chart: Chart{
+				Chart: &Chart{
 					Model: gorm.Model{ID: 456},
 					Name:  "datarepo",
 				},
@@ -83,7 +83,7 @@ func Test_appVersionToSelectors(t *testing.T) {
 		},
 		{
 			name: "id and chart id + version",
-			args: args{appVersion: AppVersion{
+			args: args{appVersion: &AppVersion{
 				Model:      gorm.Model{ID: 123},
 				ChartID:    456,
 				AppVersion: "1.2.3",
@@ -101,7 +101,7 @@ func Test_appVersionToSelectors(t *testing.T) {
 
 func Test_validateAppVersion(t *testing.T) {
 	type args struct {
-		appVersion AppVersion
+		appVersion *AppVersion
 	}
 	tests := []struct {
 		name    string
@@ -110,7 +110,7 @@ func Test_validateAppVersion(t *testing.T) {
 	}{
 		{
 			name: "no chart",
-			args: args{appVersion: AppVersion{
+			args: args{appVersion: &AppVersion{
 				AppVersion: "1.2.3",
 				GitCommit:  "abcd",
 				GitBranch:  "main",
@@ -119,7 +119,7 @@ func Test_validateAppVersion(t *testing.T) {
 		},
 		{
 			name: "no version",
-			args: args{appVersion: AppVersion{
+			args: args{appVersion: &AppVersion{
 				ChartID:   123,
 				GitCommit: "abcd",
 				GitBranch: "main",
@@ -128,7 +128,7 @@ func Test_validateAppVersion(t *testing.T) {
 		},
 		{
 			name: "valid",
-			args: args{appVersion: AppVersion{
+			args: args{appVersion: &AppVersion{
 				ChartID:    123,
 				AppVersion: "1.2.3",
 				GitCommit:  "abcd",
@@ -138,7 +138,7 @@ func Test_validateAppVersion(t *testing.T) {
 		},
 		{
 			name: "valid without commit",
-			args: args{appVersion: AppVersion{
+			args: args{appVersion: &AppVersion{
 				ChartID:    123,
 				AppVersion: "1.2.3",
 				GitBranch:  "main",
@@ -147,7 +147,7 @@ func Test_validateAppVersion(t *testing.T) {
 		},
 		{
 			name: "valid without branch",
-			args: args{appVersion: AppVersion{
+			args: args{appVersion: &AppVersion{
 				ChartID:    123,
 				AppVersion: "1.2.3",
 				GitCommit:  "abcd",
@@ -156,7 +156,7 @@ func Test_validateAppVersion(t *testing.T) {
 		},
 		{
 			name: "valid without git at all",
-			args: args{appVersion: AppVersion{
+			args: args{appVersion: &AppVersion{
 				ChartID:    123,
 				AppVersion: "1.2.3",
 			}},
@@ -174,8 +174,8 @@ func Test_validateAppVersion(t *testing.T) {
 
 func Test_rejectDuplicateAppVersion(t *testing.T) {
 	type args struct {
-		existing AppVersion
-		new      AppVersion
+		existing *AppVersion
+		new      *AppVersion
 	}
 	tests := []struct {
 		name    string
@@ -185,64 +185,64 @@ func Test_rejectDuplicateAppVersion(t *testing.T) {
 		{
 			name: "mismatch chart version",
 			args: args{
-				existing: AppVersion{AppVersion: "123"},
-				new:      AppVersion{AppVersion: "456"},
+				existing: &AppVersion{AppVersion: "123"},
+				new:      &AppVersion{AppVersion: "456"},
 			},
 			wantErr: true,
 		},
 		{
 			name: "mismatch chart",
 			args: args{
-				existing: AppVersion{ChartID: 123},
-				new:      AppVersion{ChartID: 456},
+				existing: &AppVersion{ChartID: 123},
+				new:      &AppVersion{ChartID: 456},
 			},
 			wantErr: true,
 		},
 		{
 			name: "mismatch git branch",
 			args: args{
-				existing: AppVersion{GitBranch: "123"},
-				new:      AppVersion{GitBranch: "456"},
+				existing: &AppVersion{GitBranch: "123"},
+				new:      &AppVersion{GitBranch: "456"},
 			},
 			wantErr: true,
 		},
 		{
 			name: "mismatch git commit",
 			args: args{
-				existing: AppVersion{GitCommit: "123"},
-				new:      AppVersion{GitCommit: "456"},
+				existing: &AppVersion{GitCommit: "123"},
+				new:      &AppVersion{GitCommit: "456"},
 			},
 			wantErr: true,
 		},
 		{
 			name: "only existing has parent",
 			args: args{
-				existing: AppVersion{ParentAppVersionID: testutils.PointerTo[uint](123)},
-				new:      AppVersion{},
+				existing: &AppVersion{ParentAppVersionID: testutils.PointerTo[uint](123)},
+				new:      &AppVersion{},
 			},
 			wantErr: true,
 		},
 		{
 			name: "only new has parent",
 			args: args{
-				existing: AppVersion{},
-				new:      AppVersion{ParentAppVersionID: testutils.PointerTo[uint](456)},
+				existing: &AppVersion{},
+				new:      &AppVersion{ParentAppVersionID: testutils.PointerTo[uint](456)},
 			},
 			wantErr: true,
 		},
 		{
 			name: "mismatch parent",
 			args: args{
-				existing: AppVersion{ParentAppVersionID: testutils.PointerTo[uint](123)},
-				new:      AppVersion{ParentAppVersionID: testutils.PointerTo[uint](456)},
+				existing: &AppVersion{ParentAppVersionID: testutils.PointerTo[uint](123)},
+				new:      &AppVersion{ParentAppVersionID: testutils.PointerTo[uint](456)},
 			},
 			wantErr: true,
 		},
 		{
 			name: "no mismatch",
 			args: args{
-				existing: AppVersion{},
-				new:      AppVersion{},
+				existing: &AppVersion{},
+				new:      &AppVersion{},
 			},
 			wantErr: false,
 		},

@@ -62,7 +62,7 @@ func Test_clusterSelectorToQuery(t *testing.T) {
 
 func Test_clusterToSelectors(t *testing.T) {
 	type args struct {
-		cluster Cluster
+		cluster *Cluster
 	}
 	tests := []struct {
 		name string
@@ -76,21 +76,21 @@ func Test_clusterToSelectors(t *testing.T) {
 		},
 		{
 			name: "with name",
-			args: args{cluster: Cluster{
+			args: args{cluster: &Cluster{
 				Name: "foobar",
 			}},
 			want: []string{"foobar"},
 		},
 		{
 			name: "with id",
-			args: args{cluster: Cluster{
+			args: args{cluster: &Cluster{
 				Model: gorm.Model{ID: 123},
 			}},
 			want: []string{"123"},
 		},
 		{
 			name: "with name and id",
-			args: args{cluster: Cluster{
+			args: args{cluster: &Cluster{
 				Model: gorm.Model{ID: 123},
 				Name:  "foobar",
 			}},
@@ -110,7 +110,7 @@ func Test_clusterRequiresSuitability(t *testing.T) {
 	fal := false
 	type args struct {
 		db      *gorm.DB
-		cluster Cluster
+		cluster *Cluster
 	}
 	tests := []struct {
 		name string
@@ -119,17 +119,17 @@ func Test_clusterRequiresSuitability(t *testing.T) {
 	}{
 		{
 			name: "does require",
-			args: args{cluster: Cluster{RequiresSuitability: &tru}},
+			args: args{cluster: &Cluster{RequiresSuitability: &tru}},
 			want: true,
 		},
 		{
 			name: "does not require",
-			args: args{cluster: Cluster{RequiresSuitability: &fal}},
+			args: args{cluster: &Cluster{RequiresSuitability: &fal}},
 			want: false,
 		},
 		{
 			name: "fail safe",
-			args: args{cluster: Cluster{}},
+			args: args{cluster: &Cluster{}},
 			want: true,
 		},
 	}
@@ -143,7 +143,7 @@ func Test_clusterRequiresSuitability(t *testing.T) {
 
 func Test_validateCluster(t *testing.T) {
 	type args struct {
-		cluster Cluster
+		cluster *Cluster
 	}
 	tests := []struct {
 		name    string
@@ -152,7 +152,7 @@ func Test_validateCluster(t *testing.T) {
 	}{
 		{
 			name: "missing name",
-			args: args{cluster: Cluster{
+			args: args{cluster: &Cluster{
 				Provider:            "google",
 				GoogleProject:       "broad-dsde-dev",
 				Base:                testutils.PointerTo("live"),
@@ -163,7 +163,7 @@ func Test_validateCluster(t *testing.T) {
 		},
 		{
 			name: "google provider but no project",
-			args: args{cluster: Cluster{
+			args: args{cluster: &Cluster{
 				Name:                "terra-dev",
 				Provider:            "google",
 				Base:                testutils.PointerTo("live"),
@@ -174,7 +174,7 @@ func Test_validateCluster(t *testing.T) {
 		},
 		{
 			name: "azure provider but no subscription",
-			args: args{cluster: Cluster{
+			args: args{cluster: &Cluster{
 				Name:                "terra-dev",
 				Provider:            "azure",
 				Base:                testutils.PointerTo("live"),
@@ -185,7 +185,7 @@ func Test_validateCluster(t *testing.T) {
 		},
 		{
 			name: "invalid provider",
-			args: args{cluster: Cluster{
+			args: args{cluster: &Cluster{
 				Name:                "terra-dev",
 				Provider:            "foo-bar",
 				GoogleProject:       "broad-dsde-dev",
@@ -198,7 +198,7 @@ func Test_validateCluster(t *testing.T) {
 		},
 		{
 			name: "no base",
-			args: args{cluster: Cluster{
+			args: args{cluster: &Cluster{
 				Name:                "terra-dev",
 				Provider:            "google",
 				GoogleProject:       "broad-dsde-dev",
@@ -209,7 +209,7 @@ func Test_validateCluster(t *testing.T) {
 		},
 		{
 			name: "no address",
-			args: args{cluster: Cluster{
+			args: args{cluster: &Cluster{
 				Name:                "terra-dev",
 				Provider:            "google",
 				GoogleProject:       "broad-dsde-dev",
@@ -220,7 +220,7 @@ func Test_validateCluster(t *testing.T) {
 		},
 		{
 			name: "no requires suitability",
-			args: args{cluster: Cluster{
+			args: args{cluster: &Cluster{
 				Name:          "terra-dev",
 				Provider:      "google",
 				GoogleProject: "broad-dsde-dev",
@@ -231,7 +231,7 @@ func Test_validateCluster(t *testing.T) {
 		},
 		{
 			name: "valid with google",
-			args: args{cluster: Cluster{
+			args: args{cluster: &Cluster{
 				Name:                "terra-dev",
 				Provider:            "google",
 				GoogleProject:       "broad-dsde-dev",
@@ -243,7 +243,7 @@ func Test_validateCluster(t *testing.T) {
 		},
 		{
 			name: "valid with azure",
-			args: args{cluster: Cluster{
+			args: args{cluster: &Cluster{
 				Name:                "terra-dev",
 				Provider:            "azure",
 				AzureSubscription:   "some uuid probably",

@@ -55,6 +55,13 @@ var (
 			AppImageGitMainBranch: testutils.PointerTo("main"),
 		},
 	}
+	samChart = CreatableChart{
+		Name: "sam",
+		EditableChart: EditableChart{
+			AppImageGitRepo:       testutils.PointerTo("broadinstitute/sam"),
+			AppImageGitMainBranch: testutils.PointerTo("develop"),
+		},
+	}
 	datarepoChart = CreatableChart{
 		Name: "datarepo",
 		EditableChart: EditableChart{
@@ -87,7 +94,16 @@ var (
 	yaleLibChart = CreatableChart{
 		Name: "yalelib",
 	}
-	chartSeedList = []CreatableChart{leonardoChart, datarepoChart, honeycombChart, terraClusterStorageChart, yaleChart, ingressChart, yaleLibChart}
+	chartSeedList = []CreatableChart{
+		leonardoChart,
+		samChart,
+		datarepoChart,
+		honeycombChart,
+		terraClusterStorageChart,
+		yaleChart,
+		ingressChart,
+		yaleLibChart,
+	}
 )
 
 func (controllerSet *ControllerSet) seedCharts(t *testing.T) {

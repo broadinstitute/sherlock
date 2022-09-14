@@ -92,7 +92,7 @@ func (a *Application) buildRouter() {
 	v2handlers.RegisterChartVersionHandlers(v2api, a.v2controllers.ChartVersionController)
 	v2handlers.RegisterAppVersionHandlers(v2api, a.v2controllers.AppVersionController)
 	v2handlers.RegisterChartReleaseHandlers(v2api, a.v2controllers.ChartReleaseController)
-	v2handlers.RegisterChartDeployRecordHandlers(v2api, a.v2controllers.ChartDeployRecordController)
+	v2handlers.RegisterChangesetHandlers(v2api, a.v2controllers.ChangesetController)
 
 	a.Handler = router
 }

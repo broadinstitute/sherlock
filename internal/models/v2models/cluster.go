@@ -23,9 +23,10 @@ func (c Cluster) TableName() string {
 	return "v2_clusters"
 }
 
-func newClusterStore(db *gorm.DB) *Store[Cluster] {
-	return &Store[Cluster]{
-		db:                       db,
+var clusterStore *internalModelStore[Cluster]
+
+func init() {
+	clusterStore = &internalModelStore[Cluster]{
 		selectorToQueryModel:     clusterSelectorToQuery,
 		modelToSelectors:         clusterToSelectors,
 		modelRequiresSuitability: clusterRequiresSuitability,
@@ -57,23 +58,28 @@ func clusterSelectorToQuery(_ *gorm.DB, selector string) (Cluster, error) {
 	return Cluster{}, fmt.Errorf("(%s) invalid cluster selector '%s'", errors.BadRequest, selector)
 }
 
-func clusterToSelectors(cluster Cluster) []string {
+func clusterToSelectors(cluster *Cluster) []string {
 	var selectors []string
-	if cluster.Name != "" {
-		selectors = append(selectors, cluster.Name)
-	}
-	if cluster.ID != 0 {
-		selectors = append(selectors, fmt.Sprintf("%d", cluster.ID))
+	if cluster != nil {
+		if cluster.Name != "" {
+			selectors = append(selectors, cluster.Name)
+		}
+		if cluster.ID != 0 {
+			selectors = append(selectors, fmt.Sprintf("%d", cluster.ID))
+		}
 	}
 	return selectors
 }
 
-func clusterRequiresSuitability(_ *gorm.DB, cluster Cluster) bool {
+func clusterRequiresSuitability(_ *gorm.DB, cluster *Cluster) bool {
 	// RequiresSuitability is a required field and shouldn't ever actually be stored as nil, but if it is we fail-safe
 	return cluster.RequiresSuitability == nil || *cluster.RequiresSuitability
 }
 
-func validateCluster(cluster Cluster) error {
+func validateCluster(cluster *Cluster) error {
+	if cluster == nil {
+		return fmt.Errorf("the model passed was nil")
+	}
 	if cluster.Name == "" {
 		return fmt.Errorf("a %T must have a non-empty name", cluster)
 	}

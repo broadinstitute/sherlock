@@ -4,6 +4,7 @@ import (
 	"github.com/broadinstitute/sherlock/internal/testutils"
 	"gorm.io/gorm"
 	"testing"
+	"time"
 )
 
 // Test_chartReleaseSelectorToQuery can't fully test chartReleaseSelectorToQuery because that function actually
@@ -64,7 +65,7 @@ func Test_chartReleaseSelectorToQuery(t *testing.T) {
 // errors.
 func Test_chartReleaseToSelectors(t *testing.T) {
 	type args struct {
-		chartRelease ChartRelease
+		chartRelease *ChartRelease
 	}
 	tests := []struct {
 		name string
@@ -73,43 +74,43 @@ func Test_chartReleaseToSelectors(t *testing.T) {
 	}{
 		{
 			name: "none",
-			args: args{chartRelease: ChartRelease{}},
+			args: args{chartRelease: &ChartRelease{}},
 			want: nil,
 		},
 		{
 			name: "name",
-			args: args{chartRelease: ChartRelease{Name: "foobar"}},
+			args: args{chartRelease: &ChartRelease{Name: "foobar"}},
 			want: []string{"foobar"},
 		},
 		{
 			name: "id",
-			args: args{chartRelease: ChartRelease{Model: gorm.Model{ID: 123}}},
+			args: args{chartRelease: &ChartRelease{Model: gorm.Model{ID: 123}}},
 			want: []string{"123"},
 		},
 		{
 			name: "name and id",
-			args: args{chartRelease: ChartRelease{Model: gorm.Model{ID: 123}, Name: "foobar"}},
+			args: args{chartRelease: &ChartRelease{Model: gorm.Model{ID: 123}, Name: "foobar"}},
 			want: []string{"foobar", "123"},
 		},
 		{
 			name: "environment-based selectors",
-			args: args{chartRelease: ChartRelease{
-				Chart:       Chart{Name: "chart-a", Model: gorm.Model{ID: 246}},
+			args: args{chartRelease: &ChartRelease{
+				Chart:       &Chart{Name: "chart-a", Model: gorm.Model{ID: 246}},
 				Environment: &Environment{Name: "environment-a", Model: gorm.Model{ID: 135}},
 			}},
 			want: []string{"environment-a/chart-a", "environment-a/246", "135/chart-a", "135/246"},
 		},
 		{
 			name: "environment-based selectors from environment id only",
-			args: args{chartRelease: ChartRelease{
-				Chart:         Chart{Name: "chart-a", Model: gorm.Model{ID: 246}},
+			args: args{chartRelease: &ChartRelease{
+				Chart:         &Chart{Name: "chart-a", Model: gorm.Model{ID: 246}},
 				EnvironmentID: testutils.PointerTo[uint](135),
 			}},
 			want: []string{"135/chart-a", "135/246"},
 		},
 		{
 			name: "environment-based selectors from chart and environment id only",
-			args: args{chartRelease: ChartRelease{
+			args: args{chartRelease: &ChartRelease{
 				ChartID:       246,
 				EnvironmentID: testutils.PointerTo[uint](135),
 			}},
@@ -117,9 +118,9 @@ func Test_chartReleaseToSelectors(t *testing.T) {
 		},
 		{
 			name: "environment-based selectors with ids available",
-			args: args{chartRelease: ChartRelease{
+			args: args{chartRelease: &ChartRelease{
 				ChartID:       246,
-				Chart:         Chart{Name: "chart-a", Model: gorm.Model{ID: 246}},
+				Chart:         &Chart{Name: "chart-a", Model: gorm.Model{ID: 246}},
 				EnvironmentID: testutils.PointerTo[uint](135),
 				Environment:   &Environment{Name: "environment-a", Model: gorm.Model{ID: 135}},
 			}},
@@ -127,8 +128,8 @@ func Test_chartReleaseToSelectors(t *testing.T) {
 		},
 		{
 			name: "cluster-based selectors",
-			args: args{chartRelease: ChartRelease{
-				Chart:     Chart{Name: "chart-a", Model: gorm.Model{ID: 246}},
+			args: args{chartRelease: &ChartRelease{
+				Chart:     &Chart{Name: "chart-a", Model: gorm.Model{ID: 246}},
 				Cluster:   &Cluster{Name: "cluster-a", Model: gorm.Model{ID: 789}},
 				Namespace: "namespace-a",
 			}},
@@ -136,8 +137,8 @@ func Test_chartReleaseToSelectors(t *testing.T) {
 		},
 		{
 			name: "cluster-based selectors from cluster id only",
-			args: args{chartRelease: ChartRelease{
-				Chart:     Chart{Name: "chart-a", Model: gorm.Model{ID: 246}},
+			args: args{chartRelease: &ChartRelease{
+				Chart:     &Chart{Name: "chart-a", Model: gorm.Model{ID: 246}},
 				ClusterID: testutils.PointerTo[uint](789),
 				Namespace: "namespace-a",
 			}},
@@ -145,7 +146,7 @@ func Test_chartReleaseToSelectors(t *testing.T) {
 		},
 		{
 			name: "cluster-based selectors from chart and cluster id only",
-			args: args{chartRelease: ChartRelease{
+			args: args{chartRelease: &ChartRelease{
 				ChartID:   246,
 				ClusterID: testutils.PointerTo[uint](789),
 				Namespace: "namespace-a",
@@ -154,9 +155,9 @@ func Test_chartReleaseToSelectors(t *testing.T) {
 		},
 		{
 			name: "cluster-based selectors with ids available",
-			args: args{chartRelease: ChartRelease{
+			args: args{chartRelease: &ChartRelease{
 				ChartID:   246,
-				Chart:     Chart{Name: "chart-a", Model: gorm.Model{ID: 246}},
+				Chart:     &Chart{Name: "chart-a", Model: gorm.Model{ID: 246}},
 				ClusterID: testutils.PointerTo[uint](789),
 				Cluster:   &Cluster{Name: "cluster-a", Model: gorm.Model{ID: 789}},
 				Namespace: "namespace-a",
@@ -165,10 +166,10 @@ func Test_chartReleaseToSelectors(t *testing.T) {
 		},
 		{
 			name: "all possible selectors",
-			args: args{chartRelease: ChartRelease{
+			args: args{chartRelease: &ChartRelease{
 				Model:       gorm.Model{ID: 123},
 				Name:        "foobar",
-				Chart:       Chart{Name: "chart-a", Model: gorm.Model{ID: 246}},
+				Chart:       &Chart{Name: "chart-a", Model: gorm.Model{ID: 246}},
 				Cluster:     &Cluster{Name: "cluster-a", Model: gorm.Model{ID: 789}},
 				Namespace:   "namespace-a",
 				Environment: &Environment{Name: "environment-a", Model: gorm.Model{ID: 135}},
@@ -177,11 +178,11 @@ func Test_chartReleaseToSelectors(t *testing.T) {
 		},
 		{
 			name: "all possible selectors with IDs available",
-			args: args{chartRelease: ChartRelease{
+			args: args{chartRelease: &ChartRelease{
 				Model:         gorm.Model{ID: 123},
 				Name:          "foobar",
 				ChartID:       246,
-				Chart:         Chart{Name: "chart-a", Model: gorm.Model{ID: 246}},
+				Chart:         &Chart{Name: "chart-a", Model: gorm.Model{ID: 246}},
 				ClusterID:     testutils.PointerTo[uint](789),
 				Cluster:       &Cluster{Name: "cluster-a", Model: gorm.Model{ID: 789}},
 				Namespace:     "namespace-a",
@@ -192,10 +193,10 @@ func Test_chartReleaseToSelectors(t *testing.T) {
 		},
 		{
 			name: "cluster selectors disappear if namespace is empty",
-			args: args{chartRelease: ChartRelease{
+			args: args{chartRelease: &ChartRelease{
 				Model:       gorm.Model{ID: 123},
 				Name:        "foobar",
-				Chart:       Chart{Name: "chart-a", Model: gorm.Model{ID: 246}},
+				Chart:       &Chart{Name: "chart-a", Model: gorm.Model{ID: 246}},
 				Cluster:     &Cluster{Name: "cluster-a", Model: gorm.Model{ID: 789}},
 				Namespace:   "",
 				Environment: &Environment{Name: "environment-a", Model: gorm.Model{ID: 135}},
@@ -204,10 +205,10 @@ func Test_chartReleaseToSelectors(t *testing.T) {
 		},
 		{
 			name: "all possible selectors without full selectors on associations",
-			args: args{chartRelease: ChartRelease{
+			args: args{chartRelease: &ChartRelease{
 				Model:       gorm.Model{ID: 123},
 				Name:        "foobar",
-				Chart:       Chart{Model: gorm.Model{ID: 246}},
+				Chart:       &Chart{Model: gorm.Model{ID: 246}},
 				Cluster:     &Cluster{Name: "cluster-a"},
 				Namespace:   "namespace-a",
 				Environment: &Environment{Name: "environment-a"},
@@ -225,7 +226,7 @@ func Test_chartReleaseToSelectors(t *testing.T) {
 
 func Test_validateChartRelease(t *testing.T) {
 	type args struct {
-		chartRelease ChartRelease
+		chartRelease *ChartRelease
 	}
 	tests := []struct {
 		name    string
@@ -234,355 +235,399 @@ func Test_validateChartRelease(t *testing.T) {
 	}{
 		{
 			name: "valid with all fields set",
-			args: args{chartRelease: ChartRelease{
-				Name:                     "foobar",
-				ChartID:                  246,
-				ClusterID:                testutils.PointerTo[uint](789),
-				Namespace:                "a-namespace",
-				EnvironmentID:            testutils.PointerTo[uint](135),
-				DestinationType:          "environment",
-				HelmfileRef:              testutils.PointerTo("HEAD"),
-				TargetAppVersionUse:      testutils.PointerTo("branch"),
-				TargetAppVersionBranch:   testutils.PointerTo("main"),
-				TargetAppVersionCommit:   testutils.PointerTo("abcd"),
-				TargetAppVersionExact:    testutils.PointerTo("abcd2"),
-				TargetChartVersionUse:    testutils.PointerTo("latest"),
-				TargetChartVersionExact:  testutils.PointerTo("zxy"),
-				ThelmaMode:               testutils.PointerTo("deploy"),
-				CurrentChartVersionExact: testutils.PointerTo("zxy2"),
-				CurrentAppVersionExact:   testutils.PointerTo("abcd3"),
-			}},
-			wantErr: false,
-		},
-		{
-			name: "valid with app branch",
-			args: args{chartRelease: ChartRelease{
-				Name:                   "foobar",
-				ChartID:                246,
-				ClusterID:              testutils.PointerTo[uint](789),
-				Namespace:              "a-namespace",
-				EnvironmentID:          testutils.PointerTo[uint](135),
-				DestinationType:        "environment",
-				HelmfileRef:            testutils.PointerTo("HEAD"),
-				TargetAppVersionUse:    testutils.PointerTo("branch"),
-				TargetAppVersionBranch: testutils.PointerTo("main"),
-				TargetChartVersionUse:  testutils.PointerTo("latest"),
-			}},
-			wantErr: false,
-		},
-		{
-			name: "valid with app commit",
-			args: args{chartRelease: ChartRelease{
-				Name:                   "foobar",
-				ChartID:                246,
-				ClusterID:              testutils.PointerTo[uint](789),
-				Namespace:              "a-namespace",
-				EnvironmentID:          testutils.PointerTo[uint](135),
-				DestinationType:        "environment",
-				HelmfileRef:            testutils.PointerTo("HEAD"),
-				TargetAppVersionUse:    testutils.PointerTo("commit"),
-				TargetAppVersionCommit: testutils.PointerTo("abcd"),
-				TargetChartVersionUse:  testutils.PointerTo("latest"),
-			}},
-			wantErr: false,
-		},
-		{
-			name: "valid with exact versions",
-			args: args{chartRelease: ChartRelease{
-				Name:                    "foobar",
-				ChartID:                 246,
-				ClusterID:               testutils.PointerTo[uint](789),
-				Namespace:               "a-namespace",
-				EnvironmentID:           testutils.PointerTo[uint](135),
-				DestinationType:         "environment",
-				HelmfileRef:             testutils.PointerTo("HEAD"),
-				TargetAppVersionUse:     testutils.PointerTo("exact"),
-				TargetAppVersionExact:   testutils.PointerTo("abcd"),
-				TargetChartVersionUse:   testutils.PointerTo("exact"),
-				TargetChartVersionExact: testutils.PointerTo("zxy"),
-			}},
-			wantErr: false,
-		},
-		{
-			name: "valid without app",
-			args: args{chartRelease: ChartRelease{
-				Name:                  "foobar",
-				ChartID:               246,
-				ClusterID:             testutils.PointerTo[uint](789),
-				Namespace:             "a-namespace",
-				EnvironmentID:         testutils.PointerTo[uint](135),
-				DestinationType:       "environment",
-				HelmfileRef:           testutils.PointerTo("HEAD"),
-				TargetChartVersionUse: testutils.PointerTo("latest"),
+			args: args{chartRelease: &ChartRelease{
+				Name:            "foobar",
+				ChartID:         246,
+				ClusterID:       testutils.PointerTo[uint](789),
+				Namespace:       "a-namespace",
+				EnvironmentID:   testutils.PointerTo[uint](135),
+				DestinationType: "environment",
+				ChartReleaseVersion: ChartReleaseVersion{
+					ResolvedAt: testutils.PointerTo(time.Now()),
+
+					AppVersionResolver: testutils.PointerTo("branch"),
+					AppVersionExact:    testutils.PointerTo("v1.2.3"),
+					AppVersionCommit:   testutils.PointerTo("a1b2c3d4"),
+					AppVersionBranch:   testutils.PointerTo("main"),
+					AppVersion: &AppVersion{
+						Model:      gorm.Model{ID: 1},
+						AppVersion: "v1.2.3",
+						GitCommit:  "a1b2c3d4",
+						GitBranch:  "main",
+					},
+					AppVersionID: testutils.PointerTo[uint](1),
+
+					ChartVersionResolver: testutils.PointerTo("latest"),
+					ChartVersionExact:    testutils.PointerTo("v0.0.100"),
+					ChartVersion: &ChartVersion{
+						Model:        gorm.Model{ID: 2},
+						ChartVersion: "v0.0.100",
+					},
+					ChartVersionID: testutils.PointerTo[uint](2),
+
+					HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				},
 			}},
 			wantErr: false,
 		},
 		{
 			name: "valid with only cluster",
-			args: args{chartRelease: ChartRelease{
-				Name:                  "foobar",
-				ChartID:               246,
-				ClusterID:             testutils.PointerTo[uint](789),
-				Namespace:             "a-namespace",
-				DestinationType:       "cluster",
-				HelmfileRef:           testutils.PointerTo("HEAD"),
-				TargetChartVersionUse: testutils.PointerTo("latest"),
+			args: args{chartRelease: &ChartRelease{
+				Name:            "foobar",
+				ChartID:         246,
+				ClusterID:       testutils.PointerTo[uint](789),
+				Namespace:       "a-namespace",
+				DestinationType: "cluster",
+				ChartReleaseVersion: ChartReleaseVersion{
+					ResolvedAt: testutils.PointerTo(time.Now()),
+
+					AppVersionResolver: testutils.PointerTo("branch"),
+					AppVersionExact:    testutils.PointerTo("v1.2.3"),
+					AppVersionCommit:   testutils.PointerTo("a1b2c3d4"),
+					AppVersionBranch:   testutils.PointerTo("main"),
+					AppVersion: &AppVersion{
+						Model:      gorm.Model{ID: 1},
+						AppVersion: "v1.2.3",
+						GitCommit:  "a1b2c3d4",
+						GitBranch:  "main",
+					},
+					AppVersionID: testutils.PointerTo[uint](1),
+
+					ChartVersionResolver: testutils.PointerTo("latest"),
+					ChartVersionExact:    testutils.PointerTo("v0.0.100"),
+					ChartVersion: &ChartVersion{
+						Model:        gorm.Model{ID: 2},
+						ChartVersion: "v0.0.100",
+					},
+					ChartVersionID: testutils.PointerTo[uint](2),
+
+					HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				},
 			}},
 			wantErr: false,
 		},
 		{
 			name: "valid with only environment",
-			args: args{chartRelease: ChartRelease{
-				Name:                  "foobar",
-				ChartID:               246,
-				EnvironmentID:         testutils.PointerTo[uint](135),
-				DestinationType:       "environment",
-				HelmfileRef:           testutils.PointerTo("HEAD"),
-				TargetChartVersionUse: testutils.PointerTo("latest"),
+			args: args{chartRelease: &ChartRelease{
+				Name:            "foobar",
+				ChartID:         246,
+				EnvironmentID:   testutils.PointerTo[uint](135),
+				DestinationType: "environment",
+				ChartReleaseVersion: ChartReleaseVersion{
+					ResolvedAt: testutils.PointerTo(time.Now()),
+
+					AppVersionResolver: testutils.PointerTo("branch"),
+					AppVersionExact:    testutils.PointerTo("v1.2.3"),
+					AppVersionCommit:   testutils.PointerTo("a1b2c3d4"),
+					AppVersionBranch:   testutils.PointerTo("main"),
+					AppVersion: &AppVersion{
+						Model:      gorm.Model{ID: 1},
+						AppVersion: "v1.2.3",
+						GitCommit:  "a1b2c3d4",
+						GitBranch:  "main",
+					},
+					AppVersionID: testutils.PointerTo[uint](1),
+
+					ChartVersionResolver: testutils.PointerTo("latest"),
+					ChartVersionExact:    testutils.PointerTo("v0.0.100"),
+					ChartVersion: &ChartVersion{
+						Model:        gorm.Model{ID: 2},
+						ChartVersion: "v0.0.100",
+					},
+					ChartVersionID: testutils.PointerTo[uint](2),
+
+					HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				},
 			}},
 			wantErr: false,
 		},
 		{
 			name: "no name",
-			args: args{chartRelease: ChartRelease{
-				ChartID:                246,
-				ClusterID:              testutils.PointerTo[uint](789),
-				Namespace:              "a-namespace",
-				EnvironmentID:          testutils.PointerTo[uint](135),
-				DestinationType:        "environment",
-				HelmfileRef:            testutils.PointerTo("HEAD"),
-				TargetAppVersionUse:    testutils.PointerTo("branch"),
-				TargetAppVersionBranch: testutils.PointerTo("main"),
-				TargetChartVersionUse:  testutils.PointerTo("latest"),
+			args: args{chartRelease: &ChartRelease{
+				ChartID:         246,
+				ClusterID:       testutils.PointerTo[uint](789),
+				Namespace:       "a-namespace",
+				EnvironmentID:   testutils.PointerTo[uint](135),
+				DestinationType: "environment",
+				ChartReleaseVersion: ChartReleaseVersion{
+					ResolvedAt: testutils.PointerTo(time.Now()),
+
+					AppVersionResolver: testutils.PointerTo("branch"),
+					AppVersionExact:    testutils.PointerTo("v1.2.3"),
+					AppVersionCommit:   testutils.PointerTo("a1b2c3d4"),
+					AppVersionBranch:   testutils.PointerTo("main"),
+					AppVersion: &AppVersion{
+						Model:      gorm.Model{ID: 1},
+						AppVersion: "v1.2.3",
+						GitCommit:  "a1b2c3d4",
+						GitBranch:  "main",
+					},
+					AppVersionID: testutils.PointerTo[uint](1),
+
+					ChartVersionResolver: testutils.PointerTo("latest"),
+					ChartVersionExact:    testutils.PointerTo("v0.0.100"),
+					ChartVersion: &ChartVersion{
+						Model:        gorm.Model{ID: 2},
+						ChartVersion: "v0.0.100",
+					},
+					ChartVersionID: testutils.PointerTo[uint](2),
+
+					HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				},
 			}},
 			wantErr: true,
 		},
 		{
 			name: "no chart",
-			args: args{chartRelease: ChartRelease{
-				Name:                   "foobar",
-				ClusterID:              testutils.PointerTo[uint](789),
-				Namespace:              "a-namespace",
-				EnvironmentID:          testutils.PointerTo[uint](135),
-				DestinationType:        "environment",
-				HelmfileRef:            testutils.PointerTo("HEAD"),
-				TargetAppVersionUse:    testutils.PointerTo("branch"),
-				TargetAppVersionBranch: testutils.PointerTo("main"),
-				TargetChartVersionUse:  testutils.PointerTo("latest"),
+			args: args{chartRelease: &ChartRelease{
+				Name:            "foobar",
+				ClusterID:       testutils.PointerTo[uint](789),
+				Namespace:       "a-namespace",
+				EnvironmentID:   testutils.PointerTo[uint](135),
+				DestinationType: "environment",
+				ChartReleaseVersion: ChartReleaseVersion{
+					ResolvedAt: testutils.PointerTo(time.Now()),
+
+					AppVersionResolver: testutils.PointerTo("branch"),
+					AppVersionExact:    testutils.PointerTo("v1.2.3"),
+					AppVersionCommit:   testutils.PointerTo("a1b2c3d4"),
+					AppVersionBranch:   testutils.PointerTo("main"),
+					AppVersion: &AppVersion{
+						Model:      gorm.Model{ID: 1},
+						AppVersion: "v1.2.3",
+						GitCommit:  "a1b2c3d4",
+						GitBranch:  "main",
+					},
+					AppVersionID: testutils.PointerTo[uint](1),
+
+					ChartVersionResolver: testutils.PointerTo("latest"),
+					ChartVersionExact:    testutils.PointerTo("v0.0.100"),
+					ChartVersion: &ChartVersion{
+						Model:        gorm.Model{ID: 2},
+						ChartVersion: "v0.0.100",
+					},
+					ChartVersionID: testutils.PointerTo[uint](2),
+
+					HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				},
 			}},
 			wantErr: true,
 		},
 		{
 			name: "wrong destination for environment",
-			args: args{chartRelease: ChartRelease{
-				Name:                   "foobar",
-				ChartID:                246,
-				ClusterID:              testutils.PointerTo[uint](789),
-				Namespace:              "a-namespace",
-				EnvironmentID:          testutils.PointerTo[uint](135),
-				DestinationType:        "cluster",
-				HelmfileRef:            testutils.PointerTo("HEAD"),
-				TargetAppVersionUse:    testutils.PointerTo("branch"),
-				TargetAppVersionBranch: testutils.PointerTo("main"),
-				TargetChartVersionUse:  testutils.PointerTo("latest"),
+			args: args{chartRelease: &ChartRelease{
+				Name:            "foobar",
+				ChartID:         246,
+				ClusterID:       testutils.PointerTo[uint](789),
+				Namespace:       "a-namespace",
+				EnvironmentID:   testutils.PointerTo[uint](135),
+				DestinationType: "cluster",
+				ChartReleaseVersion: ChartReleaseVersion{
+					ResolvedAt: testutils.PointerTo(time.Now()),
+
+					AppVersionResolver: testutils.PointerTo("branch"),
+					AppVersionExact:    testutils.PointerTo("v1.2.3"),
+					AppVersionCommit:   testutils.PointerTo("a1b2c3d4"),
+					AppVersionBranch:   testutils.PointerTo("main"),
+					AppVersion: &AppVersion{
+						Model:      gorm.Model{ID: 1},
+						AppVersion: "v1.2.3",
+						GitCommit:  "a1b2c3d4",
+						GitBranch:  "main",
+					},
+					AppVersionID: testutils.PointerTo[uint](1),
+
+					ChartVersionResolver: testutils.PointerTo("latest"),
+					ChartVersionExact:    testutils.PointerTo("v0.0.100"),
+					ChartVersion: &ChartVersion{
+						Model:        gorm.Model{ID: 2},
+						ChartVersion: "v0.0.100",
+					},
+					ChartVersionID: testutils.PointerTo[uint](2),
+
+					HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				},
 			}},
 			wantErr: true,
 		},
 		{
 			name: "wrong destination for only having cluster",
-			args: args{chartRelease: ChartRelease{
-				Name:                   "foobar",
-				ChartID:                246,
-				ClusterID:              testutils.PointerTo[uint](789),
-				Namespace:              "a-namespace",
-				DestinationType:        "environment",
-				HelmfileRef:            testutils.PointerTo("HEAD"),
-				TargetAppVersionUse:    testutils.PointerTo("branch"),
-				TargetAppVersionBranch: testutils.PointerTo("main"),
-				TargetChartVersionUse:  testutils.PointerTo("latest"),
+			args: args{chartRelease: &ChartRelease{
+				Name:            "foobar",
+				ChartID:         246,
+				ClusterID:       testutils.PointerTo[uint](789),
+				Namespace:       "a-namespace",
+				DestinationType: "environment",
+				ChartReleaseVersion: ChartReleaseVersion{
+					ResolvedAt: testutils.PointerTo(time.Now()),
+
+					AppVersionResolver: testutils.PointerTo("branch"),
+					AppVersionExact:    testutils.PointerTo("v1.2.3"),
+					AppVersionCommit:   testutils.PointerTo("a1b2c3d4"),
+					AppVersionBranch:   testutils.PointerTo("main"),
+					AppVersion: &AppVersion{
+						Model:      gorm.Model{ID: 1},
+						AppVersion: "v1.2.3",
+						GitCommit:  "a1b2c3d4",
+						GitBranch:  "main",
+					},
+					AppVersionID: testutils.PointerTo[uint](1),
+
+					ChartVersionResolver: testutils.PointerTo("latest"),
+					ChartVersionExact:    testutils.PointerTo("v0.0.100"),
+					ChartVersion: &ChartVersion{
+						Model:        gorm.Model{ID: 2},
+						ChartVersion: "v0.0.100",
+					},
+					ChartVersionID: testutils.PointerTo[uint](2),
+
+					HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				},
 			}},
 			wantErr: true,
 		},
 		{
 			name: "no environment or cluster",
-			args: args{chartRelease: ChartRelease{
-				Name:                   "foobar",
-				ChartID:                246,
-				DestinationType:        "environment",
-				HelmfileRef:            testutils.PointerTo("HEAD"),
-				TargetAppVersionUse:    testutils.PointerTo("branch"),
-				TargetAppVersionBranch: testutils.PointerTo("main"),
-				TargetChartVersionUse:  testutils.PointerTo("latest"),
+			args: args{chartRelease: &ChartRelease{
+				Name:            "foobar",
+				ChartID:         246,
+				DestinationType: "environment",
+				ChartReleaseVersion: ChartReleaseVersion{
+					ResolvedAt: testutils.PointerTo(time.Now()),
+
+					AppVersionResolver: testutils.PointerTo("branch"),
+					AppVersionExact:    testutils.PointerTo("v1.2.3"),
+					AppVersionCommit:   testutils.PointerTo("a1b2c3d4"),
+					AppVersionBranch:   testutils.PointerTo("main"),
+					AppVersion: &AppVersion{
+						Model:      gorm.Model{ID: 1},
+						AppVersion: "v1.2.3",
+						GitCommit:  "a1b2c3d4",
+						GitBranch:  "main",
+					},
+					AppVersionID: testutils.PointerTo[uint](1),
+
+					ChartVersionResolver: testutils.PointerTo("latest"),
+					ChartVersionExact:    testutils.PointerTo("v0.0.100"),
+					ChartVersion: &ChartVersion{
+						Model:        gorm.Model{ID: 2},
+						ChartVersion: "v0.0.100",
+					},
+					ChartVersionID: testutils.PointerTo[uint](2),
+
+					HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				},
 			}},
 			wantErr: true,
 		},
 		{
 			name: "cluster but no namespace",
-			args: args{chartRelease: ChartRelease{
-				Name:                   "foobar",
-				ChartID:                246,
-				ClusterID:              testutils.PointerTo[uint](789),
-				EnvironmentID:          testutils.PointerTo[uint](135),
-				DestinationType:        "environment",
-				HelmfileRef:            testutils.PointerTo("HEAD"),
-				TargetAppVersionUse:    testutils.PointerTo("branch"),
-				TargetAppVersionBranch: testutils.PointerTo("main"),
-				TargetChartVersionUse:  testutils.PointerTo("latest"),
+			args: args{chartRelease: &ChartRelease{
+				Name:            "foobar",
+				ChartID:         246,
+				ClusterID:       testutils.PointerTo[uint](789),
+				EnvironmentID:   testutils.PointerTo[uint](135),
+				DestinationType: "environment",
+				ChartReleaseVersion: ChartReleaseVersion{
+					ResolvedAt: testutils.PointerTo(time.Now()),
+
+					AppVersionResolver: testutils.PointerTo("branch"),
+					AppVersionExact:    testutils.PointerTo("v1.2.3"),
+					AppVersionCommit:   testutils.PointerTo("a1b2c3d4"),
+					AppVersionBranch:   testutils.PointerTo("main"),
+					AppVersion: &AppVersion{
+						Model:      gorm.Model{ID: 1},
+						AppVersion: "v1.2.3",
+						GitCommit:  "a1b2c3d4",
+						GitBranch:  "main",
+					},
+					AppVersionID: testutils.PointerTo[uint](1),
+
+					ChartVersionResolver: testutils.PointerTo("latest"),
+					ChartVersionExact:    testutils.PointerTo("v0.0.100"),
+					ChartVersion: &ChartVersion{
+						Model:        gorm.Model{ID: 2},
+						ChartVersion: "v0.0.100",
+					},
+					ChartVersionID: testutils.PointerTo[uint](2),
+
+					HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				},
 			}},
 			wantErr: true,
 		},
 		{
 			name: "namespace but no cluster",
-			args: args{chartRelease: ChartRelease{
-				Name:                   "foobar",
-				ChartID:                246,
-				Namespace:              "a-namespace",
-				EnvironmentID:          testutils.PointerTo[uint](135),
-				DestinationType:        "environment",
-				HelmfileRef:            testutils.PointerTo("HEAD"),
-				TargetAppVersionUse:    testutils.PointerTo("branch"),
-				TargetAppVersionBranch: testutils.PointerTo("main"),
-				TargetChartVersionUse:  testutils.PointerTo("latest"),
+			args: args{chartRelease: &ChartRelease{
+				Name:            "foobar",
+				ChartID:         246,
+				Namespace:       "a-namespace",
+				EnvironmentID:   testutils.PointerTo[uint](135),
+				DestinationType: "environment",
+				ChartReleaseVersion: ChartReleaseVersion{
+					ResolvedAt: testutils.PointerTo(time.Now()),
+
+					AppVersionResolver: testutils.PointerTo("branch"),
+					AppVersionExact:    testutils.PointerTo("v1.2.3"),
+					AppVersionCommit:   testutils.PointerTo("a1b2c3d4"),
+					AppVersionBranch:   testutils.PointerTo("main"),
+					AppVersion: &AppVersion{
+						Model:      gorm.Model{ID: 1},
+						AppVersion: "v1.2.3",
+						GitCommit:  "a1b2c3d4",
+						GitBranch:  "main",
+					},
+					AppVersionID: testutils.PointerTo[uint](1),
+
+					ChartVersionResolver: testutils.PointerTo("latest"),
+					ChartVersionExact:    testutils.PointerTo("v0.0.100"),
+					ChartVersion: &ChartVersion{
+						Model:        gorm.Model{ID: 2},
+						ChartVersion: "v0.0.100",
+					},
+					ChartVersionID: testutils.PointerTo[uint](2),
+
+					HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				},
 			}},
 			wantErr: true,
 		},
 		{
-			name: "no helmfile ref",
-			args: args{chartRelease: ChartRelease{
-				Name:                   "foobar",
-				ChartID:                246,
-				ClusterID:              testutils.PointerTo[uint](789),
-				Namespace:              "a-namespace",
-				EnvironmentID:          testutils.PointerTo[uint](135),
-				DestinationType:        "environment",
-				TargetAppVersionUse:    testutils.PointerTo("branch"),
-				TargetAppVersionBranch: testutils.PointerTo("main"),
-				TargetChartVersionUse:  testutils.PointerTo("latest"),
-			}},
-			wantErr: true,
-		},
-		{
-			name: "app version use branch but no branch provided",
-			args: args{chartRelease: ChartRelease{
-				Name:                  "foobar",
-				ChartID:               246,
-				ClusterID:             testutils.PointerTo[uint](789),
-				Namespace:             "a-namespace",
-				EnvironmentID:         testutils.PointerTo[uint](135),
-				DestinationType:       "environment",
-				HelmfileRef:           testutils.PointerTo("HEAD"),
-				TargetAppVersionUse:   testutils.PointerTo("branch"),
-				TargetChartVersionUse: testutils.PointerTo("latest"),
-			}},
-			wantErr: true,
-		},
-		{
-			name: "app version use commit but no commit provided",
-			args: args{chartRelease: ChartRelease{
-				Name:                  "foobar",
-				ChartID:               246,
-				ClusterID:             testutils.PointerTo[uint](789),
-				Namespace:             "a-namespace",
-				EnvironmentID:         testutils.PointerTo[uint](135),
-				DestinationType:       "environment",
-				HelmfileRef:           testutils.PointerTo("HEAD"),
-				TargetAppVersionUse:   testutils.PointerTo("commit"),
-				TargetChartVersionUse: testutils.PointerTo("latest"),
-			}},
-			wantErr: true,
-		},
-		{
-			name: "app version use exact but no exact provided",
-			args: args{chartRelease: ChartRelease{
-				Name:                  "foobar",
-				ChartID:               246,
-				ClusterID:             testutils.PointerTo[uint](789),
-				Namespace:             "a-namespace",
-				EnvironmentID:         testutils.PointerTo[uint](135),
-				DestinationType:       "environment",
-				HelmfileRef:           testutils.PointerTo("HEAD"),
-				TargetAppVersionUse:   testutils.PointerTo("exact"),
-				TargetChartVersionUse: testutils.PointerTo("latest"),
-			}},
-			wantErr: true,
-		},
-		{
-			name: "invalid app version use",
-			args: args{chartRelease: ChartRelease{
-				Name:                   "foobar",
-				ChartID:                246,
-				ClusterID:              testutils.PointerTo[uint](789),
-				Namespace:              "a-namespace",
-				EnvironmentID:          testutils.PointerTo[uint](135),
-				DestinationType:        "environment",
-				HelmfileRef:            testutils.PointerTo("HEAD"),
-				TargetAppVersionUse:    testutils.PointerTo("something obviously incorrect"),
-				TargetAppVersionBranch: testutils.PointerTo("main"),
-				TargetChartVersionUse:  testutils.PointerTo("latest"),
-			}},
-			wantErr: true,
-		},
-		{
-			name: "omitted chart version use",
-			args: args{chartRelease: ChartRelease{
-				Name:                   "foobar",
-				ChartID:                246,
-				ClusterID:              testutils.PointerTo[uint](789),
-				Namespace:              "a-namespace",
-				EnvironmentID:          testutils.PointerTo[uint](135),
-				DestinationType:        "environment",
-				HelmfileRef:            testutils.PointerTo("HEAD"),
-				TargetAppVersionUse:    testutils.PointerTo("branch"),
-				TargetAppVersionBranch: testutils.PointerTo("main"),
-			}},
-			wantErr: true,
-		},
-		{
-			name: "invalid chart version use",
-			args: args{chartRelease: ChartRelease{
-				Name:                   "foobar",
-				ChartID:                246,
-				ClusterID:              testutils.PointerTo[uint](789),
-				Namespace:              "a-namespace",
-				EnvironmentID:          testutils.PointerTo[uint](135),
-				DestinationType:        "environment",
-				HelmfileRef:            testutils.PointerTo("HEAD"),
-				TargetAppVersionUse:    testutils.PointerTo("branch"),
-				TargetAppVersionBranch: testutils.PointerTo("main"),
-				TargetChartVersionUse:  testutils.PointerTo("something obviously incorrect"),
-			}},
-			wantErr: true,
-		},
-		{
-			name: "chart version use exact but no exact provided",
-			args: args{chartRelease: ChartRelease{
-				Name:                   "foobar",
-				ChartID:                246,
-				ClusterID:              testutils.PointerTo[uint](789),
-				Namespace:              "a-namespace",
-				EnvironmentID:          testutils.PointerTo[uint](135),
-				DestinationType:        "environment",
-				HelmfileRef:            testutils.PointerTo("HEAD"),
-				TargetAppVersionUse:    testutils.PointerTo("branch"),
-				TargetAppVersionBranch: testutils.PointerTo("main"),
-				TargetChartVersionUse:  testutils.PointerTo("exact"),
-			}},
-			wantErr: true,
-		},
-		{
-			name: "specifically empty (thus invalid) thelma mode",
-			args: args{chartRelease: ChartRelease{
-				Name:                   "foobar",
-				ChartID:                246,
-				ClusterID:              testutils.PointerTo[uint](789),
-				Namespace:              "a-namespace",
-				EnvironmentID:          testutils.PointerTo[uint](135),
-				DestinationType:        "environment",
-				HelmfileRef:            testutils.PointerTo("HEAD"),
-				TargetAppVersionUse:    testutils.PointerTo("branch"),
-				TargetAppVersionBranch: testutils.PointerTo("main"),
-				TargetChartVersionUse:  testutils.PointerTo("latest"),
-				ThelmaMode:             testutils.PointerTo(""),
+			name: "invalid inside the ChartReleaseVersion",
+			args: args{chartRelease: &ChartRelease{
+				Name:            "foobar",
+				ChartID:         246,
+				ClusterID:       testutils.PointerTo[uint](789),
+				Namespace:       "a-namespace",
+				EnvironmentID:   testutils.PointerTo[uint](135),
+				DestinationType: "environment",
+				ChartReleaseVersion: ChartReleaseVersion{
+					// This not being nil is something only checked inside ChartReleaseVersion.validate--we won't
+					// re-enumerate the thousand lines of tests, just check that we're calling it
+					ResolvedAt: nil,
+
+					AppVersionResolver: testutils.PointerTo("branch"),
+					AppVersionExact:    testutils.PointerTo("v1.2.3"),
+					AppVersionCommit:   testutils.PointerTo("a1b2c3d4"),
+					AppVersionBranch:   testutils.PointerTo("main"),
+					AppVersion: &AppVersion{
+						Model:      gorm.Model{ID: 1},
+						AppVersion: "v1.2.3",
+						GitCommit:  "a1b2c3d4",
+						GitBranch:  "main",
+					},
+					AppVersionID: testutils.PointerTo[uint](1),
+
+					ChartVersionResolver: testutils.PointerTo("latest"),
+					ChartVersionExact:    testutils.PointerTo("v0.0.100"),
+					ChartVersion: &ChartVersion{
+						Model:        gorm.Model{ID: 2},
+						ChartVersion: "v0.0.100",
+					},
+					ChartVersionID: testutils.PointerTo[uint](2),
+
+					HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				},
 			}},
 			wantErr: true,
 		},

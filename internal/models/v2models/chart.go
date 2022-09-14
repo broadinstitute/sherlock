@@ -20,9 +20,10 @@ func (c Chart) TableName() string {
 	return "v2_charts"
 }
 
-func newChartStore(db *gorm.DB) *Store[Chart] {
-	return &Store[Chart]{
-		db:                   db,
+var chartStore *internalModelStore[Chart]
+
+func init() {
+	chartStore = &internalModelStore[Chart]{
 		selectorToQueryModel: chartSelectorToQuery,
 		modelToSelectors:     chartToSelectors,
 		validateModel:        validateChart,
@@ -50,18 +51,23 @@ func chartSelectorToQuery(_ *gorm.DB, selector string) (Chart, error) {
 	return Chart{}, fmt.Errorf("(%s) invalid chart selector '%s'", errors.BadRequest, selector)
 }
 
-func chartToSelectors(chart Chart) []string {
+func chartToSelectors(chart *Chart) []string {
 	var selectors []string
-	if chart.Name != "" {
-		selectors = append(selectors, chart.Name)
-	}
-	if chart.ID != 0 {
-		selectors = append(selectors, fmt.Sprintf("%d", chart.ID))
+	if chart != nil {
+		if chart.Name != "" {
+			selectors = append(selectors, chart.Name)
+		}
+		if chart.ID != 0 {
+			selectors = append(selectors, fmt.Sprintf("%d", chart.ID))
+		}
 	}
 	return selectors
 }
 
-func validateChart(chart Chart) error {
+func validateChart(chart *Chart) error {
+	if chart == nil {
+		return fmt.Errorf("the model passed was nil")
+	}
 	if chart.Name == "" {
 		return fmt.Errorf("a %T must have a non-empty name", chart)
 	}

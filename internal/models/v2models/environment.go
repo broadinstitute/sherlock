@@ -29,9 +29,10 @@ func (e Environment) TableName() string {
 	return "v2_environments"
 }
 
-func newEnvironmentStore(db *gorm.DB) *Store[Environment] {
-	return &Store[Environment]{
-		db:                       db,
+var environmentStore *internalModelStore[Environment]
+
+func init() {
+	environmentStore = &internalModelStore[Environment]{
 		selectorToQueryModel:     environmentSelectorToQuery,
 		modelToSelectors:         environmentToSelectors,
 		modelRequiresSuitability: environmentRequiresSuitability,
@@ -64,23 +65,28 @@ func environmentSelectorToQuery(_ *gorm.DB, selector string) (Environment, error
 	return Environment{}, fmt.Errorf("(%s) invalid environment selector '%s'", errors.BadRequest, selector)
 }
 
-func environmentToSelectors(environment Environment) []string {
+func environmentToSelectors(environment *Environment) []string {
 	var selectors []string
-	if environment.Name != "" {
-		selectors = append(selectors, environment.Name)
-	}
-	if environment.ID != 0 {
-		selectors = append(selectors, fmt.Sprintf("%d", environment.ID))
+	if environment != nil {
+		if environment.Name != "" {
+			selectors = append(selectors, environment.Name)
+		}
+		if environment.ID != 0 {
+			selectors = append(selectors, fmt.Sprintf("%d", environment.ID))
+		}
 	}
 	return selectors
 }
 
-func environmentRequiresSuitability(_ *gorm.DB, environment Environment) bool {
+func environmentRequiresSuitability(_ *gorm.DB, environment *Environment) bool {
 	// RequiresSuitability is a required field and shouldn't ever actually be stored as nil, but if it is we fail-safe
 	return environment.RequiresSuitability == nil || *environment.RequiresSuitability
 }
 
-func validateEnvironment(environment Environment) error {
+func validateEnvironment(environment *Environment) error {
+	if environment == nil {
+		return fmt.Errorf("the model passed was nil")
+	}
 	if environment.Name == "" {
 		return fmt.Errorf("a %T must have a non-empty name", environment)
 	}
@@ -116,37 +122,26 @@ func validateEnvironment(environment Environment) error {
 	return nil
 }
 
-func postCreateEnvironment(db *gorm.DB, environment Environment, user *auth.User) error {
+func postCreateEnvironment(db *gorm.DB, environment *Environment, user *auth.User) error {
 	if environment.Lifecycle == "dynamic" &&
 		environment.ChartReleasesFromTemplate != nil &&
 		*environment.ChartReleasesFromTemplate &&
 		environment.TemplateEnvironmentID != nil {
-		storeSet := NewStoreSet(db)
 		// This is a dynamic environment that is getting created right now, let's copy the chart releases from the template too
-		chartReleases, err := storeSet.ChartReleaseStore.ListAllMatching(
-			ChartRelease{EnvironmentID: environment.TemplateEnvironmentID}, 0)
+		chartReleases, err := chartReleaseStore.listAllMatching(db, 0, ChartRelease{EnvironmentID: environment.TemplateEnvironmentID})
 		if err != nil {
 			return fmt.Errorf("wasn't able to list chart releases of template %s: %v", environment.TemplateEnvironment.Name, err)
 		}
 		for _, chartRelease := range chartReleases {
-			_, _, err := storeSet.ChartReleaseStore.Create(
+			_, _, err := chartReleaseStore.create(db,
 				ChartRelease{
-					ChartID:                  chartRelease.ChartID,
-					ClusterID:                environment.DefaultClusterID,
-					DestinationType:          "environment",
-					EnvironmentID:            &environment.ID,
-					Name:                     fmt.Sprintf("%s-%s", chartRelease.Chart.Name, environment.Name),
-					Namespace:                *environment.DefaultNamespace,
-					CurrentAppVersionExact:   chartRelease.CurrentAppVersionExact,
-					CurrentChartVersionExact: chartRelease.CurrentChartVersionExact,
-					HelmfileRef:              chartRelease.HelmfileRef,
-					TargetAppVersionBranch:   chartRelease.TargetAppVersionBranch,
-					TargetAppVersionCommit:   chartRelease.TargetAppVersionCommit,
-					TargetAppVersionExact:    chartRelease.TargetAppVersionExact,
-					TargetAppVersionUse:      chartRelease.TargetAppVersionUse,
-					TargetChartVersionExact:  chartRelease.TargetChartVersionExact,
-					TargetChartVersionUse:    chartRelease.TargetChartVersionUse,
-					ThelmaMode:               chartRelease.ThelmaMode,
+					ChartID:             chartRelease.ChartID,
+					ClusterID:           environment.DefaultClusterID,
+					DestinationType:     "environment",
+					EnvironmentID:       &environment.ID,
+					Name:                fmt.Sprintf("%s-%s", chartRelease.Chart.Name, environment.Name),
+					Namespace:           *environment.DefaultNamespace,
+					ChartReleaseVersion: chartRelease.ChartReleaseVersion,
 				}, user)
 			if err != nil {
 				return fmt.Errorf("wasn't able to copy template's release of the %s chart: %v", chartRelease.Chart.Name, err)

@@ -87,7 +87,43 @@ var (
 		GitBranch:        "branchy-branch",
 		ParentAppVersion: fmt.Sprintf("%s/%s", leonardoChart.Name, leonardoBranch2AppVersion.AppVersion),
 	}
-	appVersionSeedList = []CreatableAppVersion{leonardoMain1AppVersion, leonardoMain2AppVersion, leonardoMain3AppVersion, leonardoBranch1AppVersion, leonardoBranch2AppVersion, leonardoBranch3AppVersion}
+	samMain1AppVersion = CreatableAppVersion{
+		Chart:      samChart.Name,
+		AppVersion: "0.1.0",
+		GitCommit:  "a1b2",
+		GitBranch:  *samChart.AppImageGitMainBranch,
+	}
+	samMain2AppVersion = CreatableAppVersion{
+		Chart:            samChart.Name,
+		AppVersion:       "0.2.0",
+		GitCommit:        "c3d4",
+		GitBranch:        *samChart.AppImageGitMainBranch,
+		ParentAppVersion: fmt.Sprintf("%s/%s", samChart.Name, samMain1AppVersion.AppVersion),
+	}
+	yaleMain1AppVersion = CreatableAppVersion{
+		Chart:      yaleChart.Name,
+		AppVersion: "someversion",
+		GitCommit:  "somecommit",
+		GitBranch:  "main",
+	}
+	datarepoMain1AppVerison = CreatableAppVersion{
+		Chart:      datarepoChart.Name,
+		AppVersion: "1.1.1",
+		GitCommit:  "abcd",
+		GitBranch:  "develop",
+	}
+	appVersionSeedList = []CreatableAppVersion{
+		leonardoMain1AppVersion,
+		leonardoMain2AppVersion,
+		leonardoMain3AppVersion,
+		leonardoBranch1AppVersion,
+		leonardoBranch2AppVersion,
+		leonardoBranch3AppVersion,
+		samMain1AppVersion,
+		samMain2AppVersion,
+		yaleMain1AppVersion,
+		datarepoMain1AppVerison,
+	}
 )
 
 func (controllerSet *ControllerSet) seedAppVersions(t *testing.T) {
@@ -151,7 +187,7 @@ func (suite *appVersionControllerSuite) TestAppVersionCreate() {
 
 		appVersion, created, err := suite.AppVersionController.Create(CreatableAppVersion{
 			Chart:      datarepoChart.Name,
-			AppVersion: "1.1.1",
+			AppVersion: "1.1.2",
 			// Nonexistent parent
 			ParentAppVersion: fmt.Sprintf("%s/%s", datarepoChart.Name, leonardoMain1AppVersion.AppVersion),
 		}, auth.GenerateUser(suite.T(), false))

@@ -52,14 +52,16 @@ var (
 		Environment: terraDevEnvironment.Name,
 	}
 	datarepoDevChartRelease = CreatableChartRelease{
-		Name:        "datarepo-dev",
-		Chart:       datarepoChart.Name,
+		Name:              "datarepo-dev",
+		Chart:             datarepoChart.Name,
+		Environment:       terraDevEnvironment.Name,
+		Cluster:           datarepoDevCluster.Name,
+		AppVersionExact:   testutils.PointerTo("a1b2c3d4"),
+		ChartVersionExact: testutils.PointerTo("1.2.3"),
+	}
+	samDevChartRelease = CreatableChartRelease{
+		Chart:       samChart.Name,
 		Environment: terraDevEnvironment.Name,
-		Cluster:     datarepoDevCluster.Name,
-		EditableChartRelease: EditableChartRelease{
-			CurrentAppVersionExact:   testutils.PointerTo("a1b2c3d4"),
-			CurrentChartVersionExact: testutils.PointerTo("1.2.3"),
-		},
 	}
 	yaleDevChartRelease = CreatableChartRelease{
 		Chart:       yaleChart.Name,
@@ -73,35 +75,60 @@ var (
 	}
 
 	leonardoProdChartRelease = CreatableChartRelease{
-		Chart:       leonardoChart.Name,
-		Environment: terraProdEnvironment.Name,
-		EditableChartRelease: EditableChartRelease{
-			TargetAppVersionExact:   testutils.PointerTo("a1b2c3d4"),
-			TargetChartVersionExact: testutils.PointerTo("1.2.3"),
-		},
+		Chart:             leonardoChart.Name,
+		Environment:       terraProdEnvironment.Name,
+		AppVersionExact:   testutils.PointerTo("a1b2c3d4"),
+		ChartVersionExact: testutils.PointerTo("1.2.3"),
 	}
 	datarepoProdChartRelease = CreatableChartRelease{
-		Name:        "datarepo-prod",
-		Chart:       datarepoChart.Name,
-		Environment: terraProdEnvironment.Name,
-		Cluster:     datarepoProdCluster.Name,
-		EditableChartRelease: EditableChartRelease{
-			TargetAppVersionExact:   testutils.PointerTo("2.200.1"),
-			TargetChartVersionExact: testutils.PointerTo("0.10.0"),
-		},
+		Name:              "datarepo-prod",
+		Chart:             datarepoChart.Name,
+		Environment:       terraProdEnvironment.Name,
+		Cluster:           datarepoProdCluster.Name,
+		AppVersionExact:   testutils.PointerTo("2.200.1"),
+		ChartVersionExact: testutils.PointerTo("0.10.0"),
+	}
+	samProdChartRelease = CreatableChartRelease{
+		Chart:             samChart.Name,
+		Environment:       terraProdEnvironment.Name,
+		AppVersionExact:   &samMain2AppVersion.AppVersion,
+		ChartVersionExact: &sam2ChartVersion.ChartVersion,
 	}
 	yaleProdChartRelease = CreatableChartRelease{
-		Chart:       yaleChart.Name,
-		Environment: terraProdEnvironment.Name,
-		Namespace:   "yale",
-		EditableChartRelease: EditableChartRelease{
-			TargetAppVersionExact:   testutils.PointerTo("0.0.18"),
-			TargetChartVersionExact: testutils.PointerTo("1.15.0"),
-		},
+		Chart:             yaleChart.Name,
+		Environment:       terraProdEnvironment.Name,
+		Namespace:         "yale",
+		AppVersionExact:   testutils.PointerTo("0.0.18"),
+		ChartVersionExact: testutils.PointerTo("1.15.0"),
 	}
 	storageProdChartRelease = CreatableChartRelease{
 		Chart:     terraClusterStorageChart.Name,
 		Cluster:   terraProdCluster.Name,
+		Namespace: "default",
+	}
+
+	leonardoStagingChartRelease = CreatableChartRelease{
+		Chart:             leonardoChart.Name,
+		Environment:       terraStagingEnvironment.Name,
+		AppVersionExact:   testutils.PointerTo("a1b2c3d4"),
+		ChartVersionExact: testutils.PointerTo("1.2.3"),
+	}
+	samStagingChartRelease = CreatableChartRelease{
+		Chart:             samChart.Name,
+		Environment:       terraStagingEnvironment.Name,
+		AppVersionExact:   &samMain2AppVersion.AppVersion,
+		ChartVersionExact: &sam2ChartVersion.ChartVersion,
+	}
+	yaleStagingChartRelease = CreatableChartRelease{
+		Chart:             yaleChart.Name,
+		Environment:       terraStagingEnvironment.Name,
+		Namespace:         "yale",
+		AppVersionExact:   testutils.PointerTo("0.0.18"),
+		ChartVersionExact: testutils.PointerTo("1.15.0"),
+	}
+	storageStagingChartRelease = CreatableChartRelease{
+		Chart:     terraClusterStorageChart.Name,
+		Cluster:   terraStagingCluster.Name,
 		Namespace: "default",
 	}
 
@@ -117,6 +144,10 @@ var (
 	}
 	datarepoSwatomationChartRelease = CreatableChartRelease{
 		Chart:       datarepoChart.Name,
+		Environment: swatomationEnvironment.Name,
+	}
+	samSwatomationChartRelease = CreatableChartRelease{
+		Chart:       samChart.Name,
 		Environment: swatomationEnvironment.Name,
 	}
 	honeycombSwatomationChartRelease = CreatableChartRelease{
@@ -140,15 +171,22 @@ var (
 	chartReleaseSeedList = []CreatableChartRelease{
 		leonardoDevChartRelease,
 		datarepoDevChartRelease,
+		samDevChartRelease,
 		yaleDevChartRelease,
 		storageDevChartRelease,
 		leonardoProdChartRelease,
 		datarepoProdChartRelease,
+		samProdChartRelease,
 		yaleProdChartRelease,
 		storageProdChartRelease,
+		leonardoStagingChartRelease,
+		samStagingChartRelease,
+		yaleStagingChartRelease,
+		storageStagingChartRelease,
 		storageBeeChartRelease,
 		leonardoSwatomationChartRelease,
 		datarepoSwatomationChartRelease,
+		samSwatomationChartRelease,
 		honeycombSwatomationChartRelease,
 		leonardoDynamicSwatomationChartRelease,
 		datarepoDynamicSwatomationChartRelease,
@@ -174,6 +212,8 @@ func (suite *chartReleaseControllerSuite) TestChartReleaseCreate() {
 		suite.seedClusters(suite.T())
 		suite.seedEnvironments(suite.T())
 		suite.seedCharts(suite.T())
+		suite.seedAppVersions(suite.T())
+		suite.seedChartVersions(suite.T())
 
 		suite.Run("simple app release", func() {
 			release, created, err := suite.ChartReleaseController.Create(leonardoDevChartRelease, auth.GenerateUser(suite.T(), false))
@@ -181,13 +221,19 @@ func (suite *chartReleaseControllerSuite) TestChartReleaseCreate() {
 			assert.True(suite.T(), created)
 			assert.True(suite.T(), release.ID > 0)
 			suite.Run("defaults target app version branch to that of chart", func() {
-				assert.Equal(suite.T(), leonardoChart.AppImageGitMainBranch, release.TargetAppVersionBranch)
+				assert.Equal(suite.T(), leonardoChart.AppImageGitMainBranch, release.AppVersionBranch)
 			})
 			suite.Run("defaults target app version use to branch when nothing else set", func() {
-				assert.Equal(suite.T(), testutils.PointerTo("branch"), release.TargetAppVersionUse)
+				assert.Equal(suite.T(), testutils.PointerTo("branch"), release.AppVersionResolver)
+				suite.Run("automatically derives exact version", func() {
+					assert.Equal(suite.T(), leonardoMain3AppVersion.AppVersion, *release.AppVersionExact)
+				})
 			})
 			suite.Run("defaults target chart version use to latest", func() {
-				assert.Equal(suite.T(), testutils.PointerTo("latest"), release.TargetChartVersionUse)
+				assert.Equal(suite.T(), testutils.PointerTo("latest"), release.ChartVersionResolver)
+				suite.Run("automatically derives exact version", func() {
+					assert.Equal(suite.T(), leonardo3ChartVersion.ChartVersion, *release.ChartVersionExact)
+				})
 			})
 			suite.Run("defaults name to chart-env if possible", func() {
 				assert.Equal(suite.T(), fmt.Sprintf("%s-%s", leonardoChart.Name, terraDevEnvironment.Name), release.Name)
@@ -246,6 +292,8 @@ func (suite *chartReleaseControllerSuite) TestChartReleaseCreate() {
 			suite.seedClusters(suite.T())
 			suite.seedEnvironments(suite.T())
 			suite.seedCharts(suite.T())
+			suite.seedAppVersions(suite.T())
+			suite.seedChartVersions(suite.T())
 			suite.seedChartReleases(suite.T())
 
 			suite.Run("exact duplicate", func() {
@@ -291,6 +339,8 @@ func (suite *chartReleaseControllerSuite) TestChartReleaseCreate() {
 			suite.seedClusters(suite.T())
 			suite.seedEnvironments(suite.T())
 			suite.seedCharts(suite.T())
+			suite.seedAppVersions(suite.T())
+			suite.seedChartVersions(suite.T())
 
 			suite.Run("no associations", func() {
 				_, created, err := suite.ChartReleaseController.Create(CreatableChartRelease{}, auth.GenerateUser(suite.T(), false))
@@ -299,11 +349,9 @@ func (suite *chartReleaseControllerSuite) TestChartReleaseCreate() {
 			})
 			suite.Run("good associations but bad values", func() {
 				_, created, err := suite.ChartReleaseController.Create(CreatableChartRelease{
-					Chart:       leonardoChart.Name,
-					Environment: terraDevEnvironment.Name,
-					EditableChartRelease: EditableChartRelease{
-						TargetChartVersionUse: testutils.PointerTo("something obviously incorrect"),
-					},
+					Chart:                leonardoChart.Name,
+					Environment:          terraDevEnvironment.Name,
+					ChartVersionResolver: testutils.PointerTo("something obviously incorrect"),
 				}, auth.GenerateUser(suite.T(), false))
 				assert.ErrorContains(suite.T(), err, errors.BadRequest)
 				assert.False(suite.T(), created)
@@ -314,6 +362,8 @@ func (suite *chartReleaseControllerSuite) TestChartReleaseCreate() {
 			suite.seedClusters(suite.T())
 			suite.seedEnvironments(suite.T())
 			suite.seedCharts(suite.T())
+			suite.seedAppVersions(suite.T())
+			suite.seedChartVersions(suite.T())
 
 			suite.Run("blocks suitable creation for non-suitable", func() {
 				_, created, err := suite.ChartReleaseController.Create(leonardoProdChartRelease, auth.GenerateUser(suite.T(), false))
@@ -335,6 +385,8 @@ func (suite *chartReleaseControllerSuite) TestChartReleaseListAllMatching() {
 	suite.seedClusters(suite.T())
 	suite.seedEnvironments(suite.T())
 	suite.seedCharts(suite.T())
+	suite.seedAppVersions(suite.T())
+	suite.seedChartVersions(suite.T())
 	suite.seedChartReleases(suite.T())
 
 	suite.Run("lists all chart releases", func() {
@@ -384,6 +436,8 @@ func (suite *chartReleaseControllerSuite) TestChartReleaseGet() {
 	suite.seedClusters(suite.T())
 	suite.seedEnvironments(suite.T())
 	suite.seedCharts(suite.T())
+	suite.seedAppVersions(suite.T())
+	suite.seedChartVersions(suite.T())
 	suite.seedChartReleases(suite.T())
 
 	suite.Run("successfully", func() {
@@ -445,6 +499,8 @@ func (suite *chartReleaseControllerSuite) TestChartReleaseGetOtherValidSelectors
 	suite.seedClusters(suite.T())
 	suite.seedEnvironments(suite.T())
 	suite.seedCharts(suite.T())
+	suite.seedAppVersions(suite.T())
+	suite.seedChartVersions(suite.T())
 	suite.seedChartReleases(suite.T())
 	suite.Run("successfully", func() {
 		selectors, err := suite.ChartReleaseController.GetOtherValidSelectors(datarepoDevChartRelease.Name)
@@ -463,66 +519,69 @@ func (suite *chartReleaseControllerSuite) TestChartReleaseGetOtherValidSelectors
 }
 
 func (suite *chartReleaseControllerSuite) TestChartReleaseEdit() {
-	suite.Run("successfully", func() {
-		db.Truncate(suite.T(), suite.db)
-		suite.seedClusters(suite.T())
-		suite.seedEnvironments(suite.T())
-		suite.seedCharts(suite.T())
-		suite.seedChartReleases(suite.T())
+	// Right now chart releases don't have any edits but I'm not deleting this because it's a (slightly out of date)
+	// skeleton for testing edits
 
-		before, err := suite.ChartReleaseController.Get(datarepoDevChartRelease.Name)
-		assert.NoError(suite.T(), err)
-		assert.Equal(suite.T(), "latest", *before.TargetChartVersionUse)
-		edited, err := suite.ChartReleaseController.Edit(datarepoDevChartRelease.Name, EditableChartRelease{
-			TargetChartVersionUse: testutils.PointerTo("exact"), TargetChartVersionExact: testutils.PointerTo("11.22.33"),
-		}, auth.GenerateUser(suite.T(), false))
-		assert.NoError(suite.T(), err)
-		assert.Equal(suite.T(), "exact", *edited.TargetChartVersionUse)
-		assert.Equal(suite.T(), "11.22.33", *edited.TargetChartVersionExact)
-		after, err := suite.ChartReleaseController.Get(datarepoDevChartRelease.Name)
-		assert.NoError(suite.T(), err)
-		assert.Equal(suite.T(), "exact", *after.TargetChartVersionUse)
-		assert.Equal(suite.T(), "11.22.33", *after.TargetChartVersionExact)
-	})
-	suite.Run("edit to suitable chart release", func() {
-		db.Truncate(suite.T(), suite.db)
-		suite.seedClusters(suite.T())
-		suite.seedEnvironments(suite.T())
-		suite.seedCharts(suite.T())
-		suite.seedChartReleases(suite.T())
-
-		suite.Run("unsuccessfully if not suitable", func() {
-			before, err := suite.ChartReleaseController.Get(datarepoProdChartRelease.Name)
-			assert.NoError(suite.T(), err)
-			assert.Nil(suite.T(), before.TargetAppVersionCommit)
-			_, err = suite.ChartReleaseController.Edit(datarepoProdChartRelease.Name, EditableChartRelease{
-				TargetAppVersionCommit: testutils.PointerTo("abc"),
-			}, auth.GenerateUser(suite.T(), false))
-			assert.ErrorContains(suite.T(), err, errors.Forbidden)
-			notEdited, err := suite.ChartReleaseController.Get(datarepoProdChartRelease.Name)
-			assert.NoError(suite.T(), err)
-			assert.Nil(suite.T(), notEdited.TargetAppVersionCommit)
-		})
-		suite.Run("successfully if suitable", func() {
-			edited, err := suite.ChartReleaseController.Edit(datarepoProdChartRelease.Name, EditableChartRelease{
-				TargetAppVersionCommit: testutils.PointerTo("abc"),
-			}, auth.GenerateUser(suite.T(), true))
-			assert.NoError(suite.T(), err)
-			assert.Equal(suite.T(), "abc", *edited.TargetAppVersionCommit)
-		})
-	})
-	suite.Run("unsuccessfully if invalid", func() {
-		db.Truncate(suite.T(), suite.db)
-		suite.seedClusters(suite.T())
-		suite.seedEnvironments(suite.T())
-		suite.seedCharts(suite.T())
-		suite.seedChartReleases(suite.T())
-
-		_, err := suite.ChartReleaseController.Edit(datarepoProdChartRelease.Name, EditableChartRelease{
-			TargetAppVersionUse: testutils.PointerTo("something obviously incorrect"),
-		}, auth.GenerateUser(suite.T(), true))
-		assert.ErrorContains(suite.T(), err, errors.BadRequest)
-	})
+	//suite.Run("successfully", func() {
+	//	db.Truncate(suite.T(), suite.db)
+	//	suite.seedClusters(suite.T())
+	//	suite.seedEnvironments(suite.T())
+	//	suite.seedCharts(suite.T())
+	//	suite.seedChartReleases(suite.T())
+	//
+	//	before, err := suite.ChartReleaseController.Get(datarepoDevChartRelease.Name)
+	//	assert.NoError(suite.T(), err)
+	//	assert.Equal(suite.T(), "latest", *before.TargetChartVersionUse)
+	//	edited, err := suite.ChartReleaseController.Edit(datarepoDevChartRelease.Name, EditableChartRelease{
+	//		TargetChartVersionUse: testutils.PointerTo("exact"), TargetChartVersionExact: testutils.PointerTo("11.22.33"),
+	//	}, auth.GenerateUser(suite.T(), false))
+	//	assert.NoError(suite.T(), err)
+	//	assert.Equal(suite.T(), "exact", *edited.TargetChartVersionUse)
+	//	assert.Equal(suite.T(), "11.22.33", *edited.TargetChartVersionExact)
+	//	after, err := suite.ChartReleaseController.Get(datarepoDevChartRelease.Name)
+	//	assert.NoError(suite.T(), err)
+	//	assert.Equal(suite.T(), "exact", *after.TargetChartVersionUse)
+	//	assert.Equal(suite.T(), "11.22.33", *after.TargetChartVersionExact)
+	//})
+	//suite.Run("edit to suitable chart release", func() {
+	//	db.Truncate(suite.T(), suite.db)
+	//	suite.seedClusters(suite.T())
+	//	suite.seedEnvironments(suite.T())
+	//	suite.seedCharts(suite.T())
+	//	suite.seedChartReleases(suite.T())
+	//
+	//	suite.Run("unsuccessfully if not suitable", func() {
+	//		before, err := suite.ChartReleaseController.Get(datarepoProdChartRelease.Name)
+	//		assert.NoError(suite.T(), err)
+	//		assert.Nil(suite.T(), before.TargetAppVersionCommit)
+	//		_, err = suite.ChartReleaseController.Edit(datarepoProdChartRelease.Name, EditableChartRelease{
+	//			TargetAppVersionCommit: testutils.PointerTo("abc"),
+	//		}, auth.GenerateUser(suite.T(), false))
+	//		assert.ErrorContains(suite.T(), err, errors.Forbidden)
+	//		notEdited, err := suite.ChartReleaseController.Get(datarepoProdChartRelease.Name)
+	//		assert.NoError(suite.T(), err)
+	//		assert.Nil(suite.T(), notEdited.TargetAppVersionCommit)
+	//	})
+	//	suite.Run("successfully if suitable", func() {
+	//		edited, err := suite.ChartReleaseController.Edit(datarepoProdChartRelease.Name, EditableChartRelease{
+	//			TargetAppVersionCommit: testutils.PointerTo("abc"),
+	//		}, auth.GenerateUser(suite.T(), true))
+	//		assert.NoError(suite.T(), err)
+	//		assert.Equal(suite.T(), "abc", *edited.TargetAppVersionCommit)
+	//	})
+	//})
+	//suite.Run("unsuccessfully if invalid", func() {
+	//	db.Truncate(suite.T(), suite.db)
+	//	suite.seedClusters(suite.T())
+	//	suite.seedEnvironments(suite.T())
+	//	suite.seedCharts(suite.T())
+	//	suite.seedChartReleases(suite.T())
+	//
+	//	_, err := suite.ChartReleaseController.Edit(datarepoProdChartRelease.Name, EditableChartRelease{
+	//		TargetAppVersionUse: testutils.PointerTo("something obviously incorrect"),
+	//	}, auth.GenerateUser(suite.T(), true))
+	//	assert.ErrorContains(suite.T(), err, errors.BadRequest)
+	//})
 }
 
 func (suite *chartReleaseControllerSuite) TestChartReleaseDelete() {
@@ -531,6 +590,8 @@ func (suite *chartReleaseControllerSuite) TestChartReleaseDelete() {
 		suite.seedClusters(suite.T())
 		suite.seedEnvironments(suite.T())
 		suite.seedCharts(suite.T())
+		suite.seedAppVersions(suite.T())
+		suite.seedChartVersions(suite.T())
 		suite.seedChartReleases(suite.T())
 
 		deleted, err := suite.ChartReleaseController.Delete(datarepoDevChartRelease.Name, auth.GenerateUser(suite.T(), false))
@@ -550,6 +611,8 @@ func (suite *chartReleaseControllerSuite) TestChartReleaseDelete() {
 		suite.seedClusters(suite.T())
 		suite.seedEnvironments(suite.T())
 		suite.seedCharts(suite.T())
+		suite.seedAppVersions(suite.T())
+		suite.seedChartVersions(suite.T())
 		suite.seedChartReleases(suite.T())
 
 		suite.Run("unsuccessfully if not suitable", func() {
