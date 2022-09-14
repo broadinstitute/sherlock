@@ -198,8 +198,6 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 		Environments: []ChangesetPlanRequestEnvironmentEntry{
 			// Here we refresh all of terra-dev, but we could just do Sam too
 			{Environment: "terra-dev"},
-			// Refresh terra-staging too--it uses exact versions so it wouldn't budge
-			{Environment: "terra-staging"},
 		},
 	}, auth.GenerateUser(suite.T(), true))
 	assert.NoError(suite.T(), err)

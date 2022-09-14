@@ -169,7 +169,7 @@ func Test_validateChangeset(t *testing.T) {
 					HelmfileRef: testutils.PointerTo("e5f6g7h8"),
 				},
 			}},
-			wantErr: true,
+			wantErr: false,
 		},
 		{
 			name: "empty to",
