@@ -94,7 +94,7 @@ func Test_validateChangeset(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			name: "empty from",
+			name: "empty from; there is no validation on from",
 			args: args{changeset: &Changeset{
 				To: ChartReleaseVersion{
 					ResolvedAt: testutils.PointerTo(time.Now()),
@@ -122,10 +122,10 @@ func Test_validateChangeset(t *testing.T) {
 					HelmfileRef: testutils.PointerTo("e5f6g7h8"),
 				},
 			}},
-			wantErr: true,
+			wantErr: false,
 		},
 		{
-			name: "invalid from",
+			name: "invalid from; there is no validation on from",
 			args: args{changeset: &Changeset{
 				From: ChartReleaseVersion{
 					ResolvedAt: testutils.PointerTo(time.Now()),
