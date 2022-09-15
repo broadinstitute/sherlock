@@ -59,7 +59,8 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 	suite.seedChartVersions(suite.T())
 	suite.seedChartReleases(suite.T())
 
-	// Suppose a Sam dev begins work on a new feature--they open a PR, triggering a build that's reported to Sherlock.
+	// Suppose a Sam engineer begins work on a new feature--they open a PR, triggering a build that's reported to
+	// Sherlock.
 	samPrVersion1, created, err := suite.AppVersionController.Create(CreatableAppVersion{
 		Chart:            "sam",
 		AppVersion:       "0.3.0-eee1",
@@ -80,8 +81,8 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 	assert.NoError(suite.T(), err)
 	assert.Empty(suite.T(), plans)
 
-	// Let's say the Sam dev wants to run this new build of Sam in a new BEE. There might be stuff configured in the PR
-	// action that would help them do this, or they'd use Beehive. First they'd create the BEE.
+	// Let's say the Sam engineer wants to run this new build of Sam in a new BEE. There might be stuff configured in
+	// the PR action that would help them do this, or they'd use Beehive. First they'd create the BEE.
 	newBee, created, err := suite.EnvironmentController.Create(CreatableEnvironment{
 		TemplateEnvironment: "swatomation",
 	}, auth.GenerateUser(suite.T(), true))
@@ -108,7 +109,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 	assert.NoError(suite.T(), err)
 	assert.Len(suite.T(), applied, 1)
 
-	// Now the BEE's Sam will be tracking the PR branch--and it'll have the version the dev just committed.
+	// Now the BEE's Sam will be tracking the PR branch--and it'll have the version the engineer just committed.
 	samInBee, err = suite.ChartReleaseController.Get(fmt.Sprintf("%s/%s", newBee.Name, "sam"))
 	assert.NoError(suite.T(), err)
 	assert.Equal(suite.T(), "branch", *samInBee.AppVersionResolver)
@@ -122,7 +123,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 
 	// Now is when Thelma would wait on Argo to sync and create the BEE.
 
-	// Let's say the dev pushes another commit:
+	// Let's say the engineer pushes another commit:
 	samPrVersion2, created, err := suite.AppVersionController.Create(CreatableAppVersion{
 		Chart:      "sam",
 		AppVersion: "0.3.0-ggg2",
@@ -138,7 +139,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 	assert.NoError(suite.T(), err)
 	assert.True(suite.T(), created)
 
-	// Suppose that part of the build failed and the developer re-ran it. That's alright:
+	// Suppose that part of the build failed and the engineer re-ran it. That's alright:
 	samPrVersion2_2, created, err := suite.AppVersionController.Create(CreatableAppVersion{
 		Chart:            "sam",
 		AppVersion:       "0.3.0-ggg2",
@@ -151,7 +152,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 	assert.False(suite.T(), created)
 	assert.Equal(suite.T(), samPrVersion2.ID, samPrVersion2_2.ID)
 
-	// Suppose the dev wants to update their BEE again, they wouldn't need to change the version, just refresh:
+	// Suppose the engineer wants to update their BEE again, they wouldn't need to change the version, just refresh:
 	applied, err = suite.ChangesetController.PlanAndApply(ChangesetPlanRequest{
 		ChartReleases: []ChangesetPlanRequestChartReleaseEntry{
 			{CreatableChangeset: CreatableChangeset{
@@ -182,7 +183,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 	assert.NoError(suite.T(), err)
 	assert.Empty(suite.T(), applied)
 
-	// Let's suppose the dev merges, and we get a new commit on mainline:
+	// Let's suppose the engineer merges, and we get a new commit on mainline:
 	_, created, err = suite.AppVersionController.Create(CreatableAppVersion{
 		Chart:            "sam",
 		AppVersion:       "0.3.0",
@@ -205,7 +206,8 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 	assert.Equal(suite.T(), "sam-terra-dev", applied[0].ChartRelease)
 	assert.Equal(suite.T(), "0.3.0", *applied[0].ToAppVersionExact)
 
-	// Staging didn't get updated automatically, but maybe some CI would prepare a Changeset that the dev could apply:
+	// Staging didn't get updated automatically, but maybe some CI would prepare a Changeset that the engineer could
+	// apply:
 	planTo030, err := suite.ChangesetController.Plan(ChangesetPlanRequest{
 		ChartReleases: []ChangesetPlanRequestChartReleaseEntry{
 			{CreatableChangeset: CreatableChangeset{
@@ -219,7 +221,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 	assert.Equal(suite.T(), "sam-terra-staging", planTo030[0].ChartRelease)
 	assert.Equal(suite.T(), "0.3.0", *planTo030[0].ToAppVersionExact)
 
-	// Rather than deploying immediately, maybe the dev merges another PR to mainline:
+	// Rather than deploying immediately, maybe the engineer merges another PR to mainline:
 	sam040, created, err := suite.AppVersionController.Create(CreatableAppVersion{
 		Chart:            "sam",
 		AppVersion:       "0.4.0",
@@ -250,7 +252,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 	assert.Equal(suite.T(), "0.3.0", planTo040[0].NewAppVersions[0].AppVersion)
 	assert.Equal(suite.T(), "0.4.0", planTo040[0].NewAppVersions[1].AppVersion)
 
-	// Suppose the dev opts to apply this latest plan:
+	// Suppose the engineer opts to apply this latest plan:
 	applied, err = suite.ChangesetController.Apply([]string{
 		strconv.FormatUint(uint64(planTo040[0].ID), 10),
 	}, auth.GenerateUser(suite.T(), true))
@@ -264,20 +266,20 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 	assert.Equal(suite.T(), sam040.ID, samInStaging.AppVersionInfo.ID)
 	assert.Equal(suite.T(), "exact", *samInStaging.AppVersionResolver)
 
-	// If we get the other plan that went from 0.2.0 to 0.3.0, it is now marked superseded.
+	// The other plan that went from 0.2.0 to 0.3.0, it is now marked superseded.
 	plan, err := suite.ChangesetController.Get(strconv.FormatUint(uint64(planTo030[0].ID), 10))
 	assert.NoError(suite.T(), err)
 	assert.NotNil(suite.T(), plan.SupersededAt)
 	assert.Nil(suite.T(), plan.AppliedAt)
 
-	// If we try to apply it, we get an error.
+	// If the engineer tries to apply it, they get an error.
 	_, err = suite.ChangesetController.Apply([]string{
 		strconv.FormatUint(uint64(planTo030[0].ID), 10),
 	}, auth.GenerateUser(suite.T(), true))
 	assert.ErrorContains(suite.T(), err, "superseded")
 
-	// Finally, suppose smoke tests pass on staging and we want to get that version into prod and make sure dev is
-	// updated too:
+	// Finally, suppose smoke tests pass on staging and the engineer want to get that version into prod and make sure
+	// the dev environment is updated too:
 	applied, err = suite.ChangesetController.PlanAndApply(ChangesetPlanRequest{
 		Environments: []ChangesetPlanRequestEnvironmentEntry{
 			{
@@ -290,7 +292,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 	assert.NoError(suite.T(), err)
 	assert.Len(suite.T(), applied, 2)
 
-	// If we get prod, the version is updated there:
+	// Prod is now updated:
 	samInProd, err := suite.ChartReleaseController.Get("terra-prod/sam")
 	assert.NoError(suite.T(), err)
 	assert.Equal(suite.T(), "0.4.0", *samInProd.AppVersionExact)
