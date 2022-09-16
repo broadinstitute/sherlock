@@ -177,7 +177,7 @@ func setEnvironmentDynamicDefaults(environment *Environment, stores *v2models.St
 	if environment.DefaultNamespace == nil {
 		environment.DefaultNamespace = &environment.Name
 	}
-	if defaults.CanUpdate(environment.Owner) {
+	if environment.Owner == nil {
 		environment.Owner = &user.AuthenticatedEmail
 	}
 	return nil
