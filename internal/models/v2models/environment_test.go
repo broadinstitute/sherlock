@@ -62,7 +62,7 @@ func Test_environmentSelectorToQuery(t *testing.T) {
 
 func Test_environmentToSelectors(t *testing.T) {
 	type args struct {
-		environment Environment
+		environment *Environment
 	}
 	tests := []struct {
 		name string
@@ -76,21 +76,21 @@ func Test_environmentToSelectors(t *testing.T) {
 		},
 		{
 			name: "with name",
-			args: args{environment: Environment{
+			args: args{environment: &Environment{
 				Name: "foobar",
 			}},
 			want: []string{"foobar"},
 		},
 		{
 			name: "with id",
-			args: args{environment: Environment{
+			args: args{environment: &Environment{
 				Model: gorm.Model{ID: 123},
 			}},
 			want: []string{"123"},
 		},
 		{
 			name: "with name and id",
-			args: args{environment: Environment{
+			args: args{environment: &Environment{
 				Model: gorm.Model{ID: 123},
 				Name:  "foobar",
 			}},
@@ -110,7 +110,7 @@ func Test_environmentRequiresSuitability(t *testing.T) {
 	fal := false
 	type args struct {
 		db          *gorm.DB
-		environment Environment
+		environment *Environment
 	}
 	tests := []struct {
 		name string
@@ -119,17 +119,17 @@ func Test_environmentRequiresSuitability(t *testing.T) {
 	}{
 		{
 			name: "does require",
-			args: args{environment: Environment{RequiresSuitability: &tru}},
+			args: args{environment: &Environment{RequiresSuitability: &tru}},
 			want: true,
 		},
 		{
 			name: "does not require",
-			args: args{environment: Environment{RequiresSuitability: &fal}},
+			args: args{environment: &Environment{RequiresSuitability: &fal}},
 			want: false,
 		},
 		{
 			name: "fail safe",
-			args: args{environment: Environment{}},
+			args: args{environment: &Environment{}},
 			want: true,
 		},
 	}
@@ -143,7 +143,7 @@ func Test_environmentRequiresSuitability(t *testing.T) {
 
 func Test_validateEnvironment(t *testing.T) {
 	type args struct {
-		environment Environment
+		environment *Environment
 	}
 	tests := []struct {
 		name    string
@@ -152,7 +152,7 @@ func Test_validateEnvironment(t *testing.T) {
 	}{
 		{
 			name: "valid template",
-			args: args{environment: Environment{
+			args: args{environment: &Environment{
 				Name:      "foobar",
 				Lifecycle: "template",
 			}},
@@ -160,7 +160,7 @@ func Test_validateEnvironment(t *testing.T) {
 		},
 		{
 			name: "valid dynamic",
-			args: args{environment: Environment{
+			args: args{environment: &Environment{
 				Name:                  "foobar",
 				Lifecycle:             "dynamic",
 				TemplateEnvironmentID: testutils.PointerTo[uint](123),
@@ -174,7 +174,7 @@ func Test_validateEnvironment(t *testing.T) {
 		},
 		{
 			name: "valid static",
-			args: args{environment: Environment{
+			args: args{environment: &Environment{
 				Name:                "foobar",
 				Lifecycle:           "static",
 				Base:                "base",
@@ -187,21 +187,21 @@ func Test_validateEnvironment(t *testing.T) {
 		},
 		{
 			name: "no name",
-			args: args{environment: Environment{
+			args: args{environment: &Environment{
 				Lifecycle: "template",
 			}},
 			wantErr: true,
 		},
 		{
 			name: "no lifecycle",
-			args: args{environment: Environment{
+			args: args{environment: &Environment{
 				Name: "foobar",
 			}},
 			wantErr: true,
 		},
 		{
 			name: "template with template",
-			args: args{environment: Environment{
+			args: args{environment: &Environment{
 				Name:                  "foobar",
 				Lifecycle:             "template",
 				TemplateEnvironmentID: testutils.PointerTo[uint](123),
@@ -210,7 +210,7 @@ func Test_validateEnvironment(t *testing.T) {
 		},
 		{
 			name: "dynamic without template",
-			args: args{environment: Environment{
+			args: args{environment: &Environment{
 				Name:                "foobar",
 				Lifecycle:           "dynamic",
 				Base:                "base",
@@ -223,7 +223,7 @@ func Test_validateEnvironment(t *testing.T) {
 		},
 		{
 			name: "dynamic no base",
-			args: args{environment: Environment{
+			args: args{environment: &Environment{
 				Name:                  "foobar",
 				Lifecycle:             "dynamic",
 				TemplateEnvironmentID: testutils.PointerTo[uint](123),
@@ -236,7 +236,7 @@ func Test_validateEnvironment(t *testing.T) {
 		},
 		{
 			name: "dynamic no default cluster",
-			args: args{environment: Environment{
+			args: args{environment: &Environment{
 				Name:                  "foobar",
 				Lifecycle:             "dynamic",
 				TemplateEnvironmentID: testutils.PointerTo[uint](123),
@@ -249,7 +249,7 @@ func Test_validateEnvironment(t *testing.T) {
 		},
 		{
 			name: "dynamic no default namespace",
-			args: args{environment: Environment{
+			args: args{environment: &Environment{
 				Name:                  "foobar",
 				Lifecycle:             "dynamic",
 				TemplateEnvironmentID: testutils.PointerTo[uint](123),
@@ -262,7 +262,7 @@ func Test_validateEnvironment(t *testing.T) {
 		},
 		{
 			name: "dynamic no owner",
-			args: args{environment: Environment{
+			args: args{environment: &Environment{
 				Name:                  "foobar",
 				Lifecycle:             "dynamic",
 				TemplateEnvironmentID: testutils.PointerTo[uint](123),
@@ -275,7 +275,7 @@ func Test_validateEnvironment(t *testing.T) {
 		},
 		{
 			name: "dynamic no requires suitability",
-			args: args{environment: Environment{
+			args: args{environment: &Environment{
 				Name:                  "foobar",
 				Lifecycle:             "dynamic",
 				TemplateEnvironmentID: testutils.PointerTo[uint](123),
@@ -288,7 +288,7 @@ func Test_validateEnvironment(t *testing.T) {
 		},
 		{
 			name: "static no base",
-			args: args{environment: Environment{
+			args: args{environment: &Environment{
 				Name:                  "foobar",
 				Lifecycle:             "static",
 				TemplateEnvironmentID: testutils.PointerTo[uint](123),
@@ -301,7 +301,7 @@ func Test_validateEnvironment(t *testing.T) {
 		},
 		{
 			name: "static no default cluster",
-			args: args{environment: Environment{
+			args: args{environment: &Environment{
 				Name:                  "foobar",
 				Lifecycle:             "static",
 				TemplateEnvironmentID: testutils.PointerTo[uint](123),
@@ -314,7 +314,7 @@ func Test_validateEnvironment(t *testing.T) {
 		},
 		{
 			name: "static no default namespace",
-			args: args{environment: Environment{
+			args: args{environment: &Environment{
 				Name:                  "foobar",
 				Lifecycle:             "static",
 				TemplateEnvironmentID: testutils.PointerTo[uint](123),
@@ -327,7 +327,7 @@ func Test_validateEnvironment(t *testing.T) {
 		},
 		{
 			name: "static no owner",
-			args: args{environment: Environment{
+			args: args{environment: &Environment{
 				Name:                  "foobar",
 				Lifecycle:             "static",
 				TemplateEnvironmentID: testutils.PointerTo[uint](123),
@@ -340,7 +340,7 @@ func Test_validateEnvironment(t *testing.T) {
 		},
 		{
 			name: "static no requires suitability",
-			args: args{environment: Environment{
+			args: args{environment: &Environment{
 				Name:                  "foobar",
 				Lifecycle:             "static",
 				TemplateEnvironmentID: testutils.PointerTo[uint](123),

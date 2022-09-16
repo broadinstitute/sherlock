@@ -46,36 +46,56 @@ func (suite *chartVersionControllerSuite) TearDownTest() {
 //
 
 var (
-	leonardoMain1ChartVersion = CreatableChartVersion{
+	leonardo1ChartVersion = CreatableChartVersion{
 		Chart:        leonardoChart.Name,
 		ChartVersion: "1.2.3",
 	}
-	leonardoMain2ChartVersion = CreatableChartVersion{
+	leonardo2ChartVersion = CreatableChartVersion{
 		Chart:              leonardoChart.Name,
 		ChartVersion:       "1.2.4",
-		ParentChartVersion: fmt.Sprintf("%s/%s", leonardoChart.Name, leonardoMain1ChartVersion.ChartVersion),
+		ParentChartVersion: fmt.Sprintf("%s/%s", leonardoChart.Name, leonardo1ChartVersion.ChartVersion),
 	}
-	leonardoMain3ChartVersion = CreatableChartVersion{
+	leonardo3ChartVersion = CreatableChartVersion{
 		Chart:              leonardoChart.Name,
 		ChartVersion:       "1.2.5",
-		ParentChartVersion: fmt.Sprintf("%s/%s", leonardoChart.Name, leonardoMain2ChartVersion.ChartVersion),
+		ParentChartVersion: fmt.Sprintf("%s/%s", leonardoChart.Name, leonardo2ChartVersion.ChartVersion),
 	}
-	leonardoBranch1ChartVersion = CreatableChartVersion{
-		Chart:              leonardoChart.Name,
-		ChartVersion:       "1.2.4-a1c1",
-		ParentChartVersion: fmt.Sprintf("%s/%s", leonardoChart.Name, leonardoMain1ChartVersion.ChartVersion),
+	sam1ChartVersion = CreatableChartVersion{
+		Chart:        samChart.Name,
+		ChartVersion: "0.0.1",
 	}
-	leonardoBranch2ChartVersion = CreatableChartVersion{
-		Chart:              leonardoChart.Name,
-		ChartVersion:       "1.2.4-a1c2",
-		ParentChartVersion: fmt.Sprintf("%s/%s", leonardoChart.Name, leonardoBranch1ChartVersion.ChartVersion),
+	sam2ChartVersion = CreatableChartVersion{
+		Chart:              samChart.Name,
+		ChartVersion:       "0.0.2",
+		ParentChartVersion: fmt.Sprintf("%s/%s", samChart.Name, sam1ChartVersion.ChartVersion),
 	}
-	leonardoBranch3ChartVersion = CreatableChartVersion{
-		Chart:              leonardoChart.Name,
-		ChartVersion:       "1.2.4-a1c3",
-		ParentChartVersion: fmt.Sprintf("%s/%s", leonardoChart.Name, leonardoBranch2ChartVersion.ChartVersion),
+	yale1ChartVersion = CreatableChartVersion{
+		Chart:        yaleChart.Name,
+		ChartVersion: "0.0.100",
 	}
-	chartVersionSeedList = []CreatableChartVersion{leonardoMain1ChartVersion, leonardoMain2ChartVersion, leonardoMain3ChartVersion, leonardoBranch1ChartVersion, leonardoBranch2ChartVersion, leonardoBranch3ChartVersion}
+	terraClusterStorage1ChartVersion = CreatableChartVersion{
+		Chart:        terraClusterStorageChart.Name,
+		ChartVersion: "0.0.1",
+	}
+	datarepo1ChartVersion = CreatableChartVersion{
+		Chart:        datarepoChart.Name,
+		ChartVersion: "1.1.1",
+	}
+	honeycomb1ChartVersion = CreatableChartVersion{
+		Chart:        honeycombChart.Name,
+		ChartVersion: "0.0.0",
+	}
+	chartVersionSeedList = []CreatableChartVersion{
+		leonardo1ChartVersion,
+		leonardo2ChartVersion,
+		leonardo3ChartVersion,
+		sam1ChartVersion,
+		sam2ChartVersion,
+		yale1ChartVersion,
+		terraClusterStorage1ChartVersion,
+		datarepo1ChartVersion,
+		honeycomb1ChartVersion,
+	}
 )
 
 func (controllerSet *ControllerSet) seedChartVersions(t *testing.T) {
@@ -95,17 +115,17 @@ func (suite *chartVersionControllerSuite) TestChartVersionCreate() {
 		db.Truncate(suite.T(), suite.db)
 		suite.seedCharts(suite.T())
 
-		chartVersion, created, err := suite.ChartVersionController.Create(leonardoMain1ChartVersion, auth.GenerateUser(suite.T(), false))
+		chartVersion, created, err := suite.ChartVersionController.Create(leonardo1ChartVersion, auth.GenerateUser(suite.T(), false))
 		assert.NoError(suite.T(), err)
 		assert.True(suite.T(), created)
-		assert.Equal(suite.T(), leonardoMain1ChartVersion.ChartVersion, chartVersion.ChartVersion)
+		assert.Equal(suite.T(), leonardo1ChartVersion.ChartVersion, chartVersion.ChartVersion)
 		assert.True(suite.T(), chartVersion.ID > 0)
 
 		suite.Run("can accept duplicates", func() {
-			secondChartVersion, created, err := suite.ChartVersionController.Create(leonardoMain1ChartVersion, auth.GenerateUser(suite.T(), false))
+			secondChartVersion, created, err := suite.ChartVersionController.Create(leonardo1ChartVersion, auth.GenerateUser(suite.T(), false))
 			assert.NoError(suite.T(), err)
 			assert.False(suite.T(), created)
-			assert.Equal(suite.T(), leonardoMain1ChartVersion.ChartVersion, secondChartVersion.ChartVersion)
+			assert.Equal(suite.T(), leonardo1ChartVersion.ChartVersion, secondChartVersion.ChartVersion)
 			assert.True(suite.T(), secondChartVersion.ID > 0)
 		})
 	})
@@ -125,7 +145,7 @@ func (suite *chartVersionControllerSuite) TestChartVersionCreate() {
 			Chart:        leonardoChart.Name,
 			ChartVersion: "1.2.5",
 			// Mismatched parent
-			ParentChartVersion: fmt.Sprintf("%s/%s", leonardoChart.Name, leonardoMain1ChartVersion.ChartVersion),
+			ParentChartVersion: fmt.Sprintf("%s/%s", leonardoChart.Name, leonardo1ChartVersion.ChartVersion),
 		}, auth.GenerateUser(suite.T(), false))
 		assert.ErrorContains(suite.T(), err, errors.Conflict)
 		assert.False(suite.T(), created)
@@ -137,9 +157,9 @@ func (suite *chartVersionControllerSuite) TestChartVersionCreate() {
 
 		chartVersion, created, err := suite.ChartVersionController.Create(CreatableChartVersion{
 			Chart:        datarepoChart.Name,
-			ChartVersion: "1.1.1",
+			ChartVersion: "1.1.2",
 			// Nonexistent parent
-			ParentChartVersion: fmt.Sprintf("%s/%s", datarepoChart.Name, leonardoMain1ChartVersion.ChartVersion),
+			ParentChartVersion: fmt.Sprintf("%s/%s", datarepoChart.Name, leonardo1ChartVersion.ChartVersion),
 		}, auth.GenerateUser(suite.T(), false))
 		assert.NoError(suite.T(), err)
 		assert.True(suite.T(), created)
@@ -170,10 +190,10 @@ func (suite *chartVersionControllerSuite) TestChartVersionListAllMatching() {
 		assert.Equal(suite.T(), limit, len(matching))
 	})
 	suite.Run("filters exactly", func() {
-		matching, err := suite.ChartVersionController.ListAllMatching(ChartVersion{CreatableChartVersion: leonardoBranch3ChartVersion}, 0)
+		matching, err := suite.ChartVersionController.ListAllMatching(ChartVersion{CreatableChartVersion: leonardo3ChartVersion}, 0)
 		assert.NoError(suite.T(), err)
 		assert.Equal(suite.T(), 1, len(matching))
-		assert.Equal(suite.T(), leonardoBranch3ChartVersion.ChartVersion, matching[0].ChartVersion)
+		assert.Equal(suite.T(), leonardo3ChartVersion.ChartVersion, matching[0].ChartVersion)
 	})
 	suite.Run("filters multiple", func() {
 		matching, err := suite.ChartVersionController.ListAllMatching(ChartVersion{CreatableChartVersion: CreatableChartVersion{Chart: leonardoChart.Name}}, 0)

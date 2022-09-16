@@ -277,20 +277,24 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v2/chart-deploy-records": {
+        "/api/v2/changesets": {
             "get": {
-                "description": "List existing ChartDeployRecord entries, ordered by most recently updated.",
+                "description": "List existing Changeset entries, ordered by most recently updated.",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "ChartDeployRecords"
+                    "Changesets"
                 ],
-                "summary": "List ChartDeployRecord entries",
+                "summary": "List Changeset entries",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Required when creating",
+                        "name": "appliedAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "name": "chartRelease",
                         "in": "query"
                     },
@@ -301,25 +305,117 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "When creating, will default to the value currently held by the chart release",
-                        "name": "exactAppVersion",
+                        "name": "fromAppVersionBranch",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "When creating, will default to the value currently held by the chart release",
-                        "name": "exactChartVersion",
+                        "name": "fromAppVersionCommit",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "When creating, will default to the value currently held by the chart release",
-                        "name": "helmfileRef",
+                        "name": "fromAppVersionExact",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "fromAppVersionReference",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "fromAppVersionResolver",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "fromChartVersionExact",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "fromChartVersionReference",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "fromChartVersionResolver",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "fromHelmfileRef",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "fromResolvedAt",
                         "in": "query"
                     },
                     {
                         "type": "integer",
                         "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "isApplied",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "supersededAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "toAppVersionBranch",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "toAppVersionCommit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "toAppVersionExact",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "toAppVersionReference",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "toAppVersionResolver",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "toChartVersionExact",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "toChartVersionReference",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "toChartVersionResolver",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "toHelmfileRef",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "toResolvedAt",
                         "in": "query"
                     },
                     {
@@ -340,7 +436,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/v2controllers.ChartDeployRecord"
+                                "$ref": "#/definitions/v2controllers.Changeset"
                             }
                         }
                     },
@@ -383,7 +479,7 @@ const docTemplate = `{
                 }
             },
             "post": {
-                "description": "Create a new ChartDeployRecord entry. Note that fields are immutable after creation.",
+                "description": "Create a new Changeset entry. Note that fields are immutable after creation.\nYou'll likely want to use the plan endpoint instead, which conditionally creates a Changeset based on there actually being a version diff.",
                 "consumes": [
                     "application/json"
                 ],
@@ -391,17 +487,17 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "ChartDeployRecords"
+                    "Changesets"
                 ],
-                "summary": "Create a new ChartDeployRecord entry",
+                "summary": "Create a new Changeset entry",
                 "parameters": [
                     {
-                        "description": "The ChartDeployRecord to create",
-                        "name": "chart-deploy-record",
+                        "description": "The Changeset to create",
+                        "name": "changeset",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v2controllers.CreatableChartDeployRecord"
+                            "$ref": "#/definitions/v2controllers.CreatableChangeset"
                         }
                     }
                 ],
@@ -409,13 +505,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v2controllers.ChartDeployRecord"
+                            "$ref": "#/definitions/v2controllers.Changeset"
                         }
                     },
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/v2controllers.ChartDeployRecord"
+                            "$ref": "#/definitions/v2controllers.Changeset"
                         }
                     },
                     "400": {
@@ -457,20 +553,20 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v2/chart-deploy-records/{selector}": {
+        "/api/v2/changesets/{selector}": {
             "get": {
-                "description": "Get an existing ChartDeployRecord entry via one its \"selector\"--its numeric ID.",
+                "description": "Get an existing Changeset entry via its \"selector\"--its numeric ID.",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "ChartDeployRecords"
+                    "Changesets"
                 ],
-                "summary": "Get a ChartDeployRecord entry",
+                "summary": "Get a Changeset entry",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "The ChartDeployRecord to get's selector: name or numeric ID",
+                        "description": "The Changeset to get's selector--numeric ID",
                         "name": "selector",
                         "in": "path",
                         "required": true
@@ -480,7 +576,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v2controllers.ChartDeployRecord"
+                            "$ref": "#/definitions/v2controllers.Changeset"
                         }
                     },
                     "400": {
@@ -535,8 +631,61 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
+                        "description": "When creating, will default to the app's mainline branch if no other app version info is present",
+                        "name": "appVersionBranch",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "appVersionCommit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "appVersionExact",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "appVersionReference",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "branch",
+                            "commit",
+                            "exact",
+                            "none"
+                        ],
+                        "type": "string",
+                        "description": "// When creating, will default to automatically reference any provided app version fields",
+                        "name": "appVersionResolver",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "Required when creating",
                         "name": "chart",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "chartVersionExact",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "chartVersionReference",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "latest",
+                            "exact"
+                        ],
+                        "type": "string",
+                        "description": "When creating, will default to automatically reference any provided chart version",
+                        "name": "chartVersionResolver",
                         "in": "query"
                     },
                     {
@@ -548,16 +697,6 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "name": "createdAt",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "currentAppVersionExact",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "currentChartVersionExact",
                         "in": "query"
                     },
                     {
@@ -593,53 +732,6 @@ const docTemplate = `{
                         "type": "string",
                         "description": "When creating, will default to the environment's default namespace, if provided",
                         "name": "namespace",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "When creating, will default to the app's main branch if it has one recorded",
-                        "name": "targetAppVersionBranch",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "targetAppVersionCommit",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "targetAppVersionExact",
-                        "in": "query"
-                    },
-                    {
-                        "enum": [
-                            "branch",
-                            "commit",
-                            "exact"
-                        ],
-                        "type": "string",
-                        "description": "When creating, will default to referencing any provided target app version field (exact, then commit, then branch)",
-                        "name": "targetAppVersionUse",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "targetChartVersionExact",
-                        "in": "query"
-                    },
-                    {
-                        "enum": [
-                            "latest",
-                            "exact"
-                        ],
-                        "type": "string",
-                        "description": "When creating, will default to latest unless an exact target chart version is provided",
-                        "name": "targetChartVersionUse",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "thelmaMode",
                         "in": "query"
                     },
                     {
@@ -790,7 +882,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "The ChartRelease to get's selector: name or numeric ID",
+                        "description": "The ChartRelease to get's selector",
                         "name": "selector",
                         "in": "path",
                         "required": true
@@ -853,7 +945,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "The ChartRelease to delete's selector: name or numeric ID",
+                        "description": "The ChartRelease to delete's selector",
                         "name": "selector",
                         "in": "path",
                         "required": true
@@ -919,7 +1011,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "The ChartRelease to edit's selector: name or numeric ID",
+                        "description": "The ChartRelease to edit's selector",
                         "name": "selector",
                         "in": "path",
                         "required": true
@@ -2421,6 +2513,246 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v2/procedures/changesets/apply": {
+            "post": {
+                "description": "Looks up and applies previously-planned version diffs given by the ID. Other stored plans against the same Chart Releases are marked as superseded.\nMultiple Changesets can be specified simply by passing multiple IDs in the list.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Changesets"
+                ],
+                "summary": "Apply previously planned version changes to Chart Releases",
+                "parameters": [
+                    {
+                        "description": "String IDs of the Changesets to apply",
+                        "name": "apply-request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/v2controllers.Changeset"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v2/procedures/changesets/plan": {
+            "post": {
+                "description": "Refreshes and calculates version diffs for Chart Releases. If there's a diff, the plan is stored and returned so it can be applied later.\nMultiple Chart Releases can be specified--as can groups of Chart Releases from multiple Environments.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Changesets"
+                ],
+                "summary": "Plan--but do not apply--version changes to Chart Releases",
+                "parameters": [
+                    {
+                        "description": "Info on what version changes or refreshes to plan",
+                        "name": "changeset-plan-request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.ChangesetPlanRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/v2controllers.Changeset"
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/v2controllers.Changeset"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v2/procedures/changesets/plan-and-apply": {
+            "post": {
+                "description": "Like the plan and apply endpoints immediately in sequence.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Changesets"
+                ],
+                "summary": "Plan and apply version changes in one step",
+                "parameters": [
+                    {
+                        "description": "Info on what version changes or refreshes to perform",
+                        "name": "changeset-plan-request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.ChangesetPlanRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/v2controllers.Changeset"
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/v2controllers.Changeset"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v2/selectors/app-versions/{selector}": {
             "get": {
                 "description": "Validate a given AppVersion selector and provide any other selectors that would match the same AppVersion.",
@@ -2489,20 +2821,20 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v2/selectors/chart-deploy-records/{selector}": {
+        "/api/v2/selectors/changesets/{selector}": {
             "get": {
-                "description": "Validate a given ChartDeployRecord selector and provide any other selectors that would match the same ChartDeployRecord.",
+                "description": "Validate a given Changeset selector and provide any other selectors that would match the same Changeset.",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "ChartDeployRecords"
+                    "Changesets"
                 ],
-                "summary": "List ChartDeployRecord selectors",
+                "summary": "List Changeset selectors",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "The selector of the ChartDeployRecord to list other selectors for",
+                        "description": "The selector of the Changeset to list other selectors for",
                         "name": "selector",
                         "in": "path",
                         "required": true
@@ -3120,6 +3452,186 @@ const docTemplate = `{
                 }
             }
         },
+        "v2controllers.Changeset": {
+            "type": "object",
+            "properties": {
+                "appliedAt": {
+                    "type": "string"
+                },
+                "chartRelease": {
+                    "type": "string"
+                },
+                "chartReleaseInfo": {
+                    "$ref": "#/definitions/v2controllers.ChartRelease"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "fromAppVersionBranch": {
+                    "type": "string"
+                },
+                "fromAppVersionCommit": {
+                    "type": "string"
+                },
+                "fromAppVersionExact": {
+                    "type": "string"
+                },
+                "fromAppVersionInfo": {
+                    "$ref": "#/definitions/v2controllers.AppVersion"
+                },
+                "fromAppVersionReference": {
+                    "type": "string"
+                },
+                "fromAppVersionResolver": {
+                    "type": "string"
+                },
+                "fromChartVersionExact": {
+                    "type": "string"
+                },
+                "fromChartVersionInfo": {
+                    "$ref": "#/definitions/v2controllers.ChartVersion"
+                },
+                "fromChartVersionReference": {
+                    "type": "string"
+                },
+                "fromChartVersionResolver": {
+                    "type": "string"
+                },
+                "fromHelmfileRef": {
+                    "type": "string"
+                },
+                "fromResolvedAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "isApplied": {
+                    "type": "boolean"
+                },
+                "newAppVersions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/v2controllers.AppVersion"
+                    }
+                },
+                "newChartVersions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/v2controllers.ChartVersion"
+                    }
+                },
+                "supersededAt": {
+                    "type": "string"
+                },
+                "toAppVersionBranch": {
+                    "type": "string"
+                },
+                "toAppVersionCommit": {
+                    "type": "string"
+                },
+                "toAppVersionExact": {
+                    "type": "string"
+                },
+                "toAppVersionInfo": {
+                    "$ref": "#/definitions/v2controllers.AppVersion"
+                },
+                "toAppVersionReference": {
+                    "type": "string"
+                },
+                "toAppVersionResolver": {
+                    "type": "string"
+                },
+                "toChartVersionExact": {
+                    "type": "string"
+                },
+                "toChartVersionInfo": {
+                    "$ref": "#/definitions/v2controllers.ChartVersion"
+                },
+                "toChartVersionReference": {
+                    "type": "string"
+                },
+                "toChartVersionResolver": {
+                    "type": "string"
+                },
+                "toHelmfileRef": {
+                    "type": "string"
+                },
+                "toResolvedAt": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "v2controllers.ChangesetPlanRequest": {
+            "type": "object",
+            "properties": {
+                "chartReleases": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "chartRelease": {
+                                "type": "string"
+                            },
+                            "toAppVersionBranch": {
+                                "type": "string"
+                            },
+                            "toAppVersionCommit": {
+                                "type": "string"
+                            },
+                            "toAppVersionExact": {
+                                "type": "string"
+                            },
+                            "toAppVersionResolver": {
+                                "type": "string"
+                            },
+                            "toChartVersionExact": {
+                                "type": "string"
+                            },
+                            "toChartVersionResolver": {
+                                "type": "string"
+                            },
+                            "toHelmfileRef": {
+                                "type": "string"
+                            },
+                            "useExactVersionsFromOtherChartRelease": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "environments": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "environment": {
+                                "type": "string"
+                            },
+                            "excludeCharts": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "includeCharts": {
+                                "description": "If omitted, will include all charts",
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "useExactVersionsFromOtherEnvironment": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "v2controllers.Chart": {
             "type": "object",
             "properties": {
@@ -3148,48 +3660,58 @@ const docTemplate = `{
                 }
             }
         },
-        "v2controllers.ChartDeployRecord": {
-            "type": "object",
-            "properties": {
-                "chartRelease": {
-                    "description": "Required when creating",
-                    "type": "string"
-                },
-                "chartReleaseInfo": {
-                    "$ref": "#/definitions/v2controllers.ChartRelease"
-                },
-                "createdAt": {
-                    "type": "string"
-                },
-                "exactAppVersion": {
-                    "description": "When creating, will default to the value currently held by the chart release",
-                    "type": "string"
-                },
-                "exactChartVersion": {
-                    "description": "When creating, will default to the value currently held by the chart release",
-                    "type": "string"
-                },
-                "helmfileRef": {
-                    "description": "When creating, will default to the value currently held by the chart release",
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "updatedAt": {
-                    "type": "string"
-                }
-            }
-        },
         "v2controllers.ChartRelease": {
             "type": "object",
             "properties": {
+                "appVersionBranch": {
+                    "description": "When creating, will default to the app's mainline branch if no other app version info is present",
+                    "type": "string"
+                },
+                "appVersionCommit": {
+                    "type": "string"
+                },
+                "appVersionExact": {
+                    "type": "string"
+                },
+                "appVersionInfo": {
+                    "$ref": "#/definitions/v2controllers.AppVersion"
+                },
+                "appVersionReference": {
+                    "type": "string"
+                },
+                "appVersionResolver": {
+                    "description": "// When creating, will default to automatically reference any provided app version fields",
+                    "type": "string",
+                    "enum": [
+                        "branch",
+                        "commit",
+                        "exact",
+                        "none"
+                    ]
+                },
                 "chart": {
                     "description": "Required when creating",
                     "type": "string"
                 },
                 "chartInfo": {
                     "$ref": "#/definitions/v2controllers.Chart"
+                },
+                "chartVersionExact": {
+                    "type": "string"
+                },
+                "chartVersionInfo": {
+                    "$ref": "#/definitions/v2controllers.ChartVersion"
+                },
+                "chartVersionReference": {
+                    "type": "string"
+                },
+                "chartVersionResolver": {
+                    "description": "When creating, will default to automatically reference any provided chart version",
+                    "type": "string",
+                    "enum": [
+                        "latest",
+                        "exact"
+                    ]
                 },
                 "cluster": {
                     "description": "When creating, will default the environment's default cluster, if provided. Either this or environment must be provided.",
@@ -3199,12 +3721,6 @@ const docTemplate = `{
                     "$ref": "#/definitions/v2controllers.Cluster"
                 },
                 "createdAt": {
-                    "type": "string"
-                },
-                "currentAppVersionExact": {
-                    "type": "string"
-                },
-                "currentChartVersionExact": {
                     "type": "string"
                 },
                 "destinationType": {
@@ -3231,39 +3747,6 @@ const docTemplate = `{
                 },
                 "namespace": {
                     "description": "When creating, will default to the environment's default namespace, if provided",
-                    "type": "string"
-                },
-                "targetAppVersionBranch": {
-                    "description": "When creating, will default to the app's main branch if it has one recorded",
-                    "type": "string"
-                },
-                "targetAppVersionCommit": {
-                    "type": "string"
-                },
-                "targetAppVersionExact": {
-                    "type": "string"
-                },
-                "targetAppVersionUse": {
-                    "description": "When creating, will default to referencing any provided target app version field (exact, then commit, then branch)",
-                    "type": "string",
-                    "enum": [
-                        "branch",
-                        "commit",
-                        "exact"
-                    ]
-                },
-                "targetChartVersionExact": {
-                    "type": "string"
-                },
-                "targetChartVersionUse": {
-                    "description": "When creating, will default to latest unless an exact target chart version is provided",
-                    "type": "string",
-                    "enum": [
-                        "latest",
-                        "exact"
-                    ]
-                },
-                "thelmaMode": {
                     "type": "string"
                 },
                 "updatedAt": {
@@ -3371,6 +3854,35 @@ const docTemplate = `{
                 }
             }
         },
+        "v2controllers.CreatableChangeset": {
+            "type": "object",
+            "properties": {
+                "chartRelease": {
+                    "type": "string"
+                },
+                "toAppVersionBranch": {
+                    "type": "string"
+                },
+                "toAppVersionCommit": {
+                    "type": "string"
+                },
+                "toAppVersionExact": {
+                    "type": "string"
+                },
+                "toAppVersionResolver": {
+                    "type": "string"
+                },
+                "toChartVersionExact": {
+                    "type": "string"
+                },
+                "toChartVersionResolver": {
+                    "type": "string"
+                },
+                "toHelmfileRef": {
+                    "type": "string"
+                }
+            }
+        },
         "v2controllers.CreatableChart": {
             "type": "object",
             "properties": {
@@ -3390,42 +3902,46 @@ const docTemplate = `{
                 }
             }
         },
-        "v2controllers.CreatableChartDeployRecord": {
-            "type": "object",
-            "properties": {
-                "chartRelease": {
-                    "description": "Required when creating",
-                    "type": "string"
-                },
-                "exactAppVersion": {
-                    "description": "When creating, will default to the value currently held by the chart release",
-                    "type": "string"
-                },
-                "exactChartVersion": {
-                    "description": "When creating, will default to the value currently held by the chart release",
-                    "type": "string"
-                },
-                "helmfileRef": {
-                    "description": "When creating, will default to the value currently held by the chart release",
-                    "type": "string"
-                }
-            }
-        },
         "v2controllers.CreatableChartRelease": {
             "type": "object",
             "properties": {
+                "appVersionBranch": {
+                    "description": "When creating, will default to the app's mainline branch if no other app version info is present",
+                    "type": "string"
+                },
+                "appVersionCommit": {
+                    "type": "string"
+                },
+                "appVersionExact": {
+                    "type": "string"
+                },
+                "appVersionResolver": {
+                    "description": "// When creating, will default to automatically reference any provided app version fields",
+                    "type": "string",
+                    "enum": [
+                        "branch",
+                        "commit",
+                        "exact",
+                        "none"
+                    ]
+                },
                 "chart": {
                     "description": "Required when creating",
                     "type": "string"
                 },
+                "chartVersionExact": {
+                    "type": "string"
+                },
+                "chartVersionResolver": {
+                    "description": "When creating, will default to automatically reference any provided chart version",
+                    "type": "string",
+                    "enum": [
+                        "latest",
+                        "exact"
+                    ]
+                },
                 "cluster": {
                     "description": "When creating, will default the environment's default cluster, if provided. Either this or environment must be provided.",
-                    "type": "string"
-                },
-                "currentAppVersionExact": {
-                    "type": "string"
-                },
-                "currentChartVersionExact": {
                     "type": "string"
                 },
                 "environment": {
@@ -3442,39 +3958,6 @@ const docTemplate = `{
                 },
                 "namespace": {
                     "description": "When creating, will default to the environment's default namespace, if provided",
-                    "type": "string"
-                },
-                "targetAppVersionBranch": {
-                    "description": "When creating, will default to the app's main branch if it has one recorded",
-                    "type": "string"
-                },
-                "targetAppVersionCommit": {
-                    "type": "string"
-                },
-                "targetAppVersionExact": {
-                    "type": "string"
-                },
-                "targetAppVersionUse": {
-                    "description": "When creating, will default to referencing any provided target app version field (exact, then commit, then branch)",
-                    "type": "string",
-                    "enum": [
-                        "branch",
-                        "commit",
-                        "exact"
-                    ]
-                },
-                "targetChartVersionExact": {
-                    "type": "string"
-                },
-                "targetChartVersionUse": {
-                    "description": "When creating, will default to latest unless an exact target chart version is provided",
-                    "type": "string",
-                    "enum": [
-                        "latest",
-                        "exact"
-                    ]
-                },
-                "thelmaMode": {
                     "type": "string"
                 }
             }
@@ -3589,52 +4072,7 @@ const docTemplate = `{
             }
         },
         "v2controllers.EditableChartRelease": {
-            "type": "object",
-            "properties": {
-                "currentAppVersionExact": {
-                    "type": "string"
-                },
-                "currentChartVersionExact": {
-                    "type": "string"
-                },
-                "helmfileRef": {
-                    "type": "string",
-                    "default": "HEAD"
-                },
-                "targetAppVersionBranch": {
-                    "description": "When creating, will default to the app's main branch if it has one recorded",
-                    "type": "string"
-                },
-                "targetAppVersionCommit": {
-                    "type": "string"
-                },
-                "targetAppVersionExact": {
-                    "type": "string"
-                },
-                "targetAppVersionUse": {
-                    "description": "When creating, will default to referencing any provided target app version field (exact, then commit, then branch)",
-                    "type": "string",
-                    "enum": [
-                        "branch",
-                        "commit",
-                        "exact"
-                    ]
-                },
-                "targetChartVersionExact": {
-                    "type": "string"
-                },
-                "targetChartVersionUse": {
-                    "description": "When creating, will default to latest unless an exact target chart version is provided",
-                    "type": "string",
-                    "enum": [
-                        "latest",
-                        "exact"
-                    ]
-                },
-                "thelmaMode": {
-                    "type": "string"
-                }
-            }
+            "type": "object"
         },
         "v2controllers.EditableCluster": {
             "description": "The subset of Cluster fields that can be edited after creation",

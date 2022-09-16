@@ -57,7 +57,7 @@ func Test_chartSelectorToQuery(t *testing.T) {
 
 func Test_chartToSelectors(t *testing.T) {
 	type args struct {
-		chart Chart
+		chart *Chart
 	}
 	tests := []struct {
 		name string
@@ -66,22 +66,22 @@ func Test_chartToSelectors(t *testing.T) {
 	}{
 		{
 			name: "none",
-			args: args{chart: Chart{}},
+			args: args{chart: &Chart{}},
 			want: nil,
 		},
 		{
 			name: "name",
-			args: args{chart: Chart{Name: "foobar"}},
+			args: args{chart: &Chart{Name: "foobar"}},
 			want: []string{"foobar"},
 		},
 		{
 			name: "id",
-			args: args{chart: Chart{Model: gorm.Model{ID: 123}}},
+			args: args{chart: &Chart{Model: gorm.Model{ID: 123}}},
 			want: []string{"123"},
 		},
 		{
 			name: "name and id",
-			args: args{chart: Chart{Name: "foobar", Model: gorm.Model{ID: 123}}},
+			args: args{chart: &Chart{Name: "foobar", Model: gorm.Model{ID: 123}}},
 			want: []string{"foobar", "123"},
 		},
 	}
@@ -95,7 +95,7 @@ func Test_chartToSelectors(t *testing.T) {
 
 func Test_validateChart(t *testing.T) {
 	type args struct {
-		chart Chart
+		chart *Chart
 	}
 	tests := []struct {
 		name    string
@@ -104,7 +104,7 @@ func Test_validateChart(t *testing.T) {
 	}{
 		{
 			name: "no name",
-			args: args{chart: Chart{
+			args: args{chart: &Chart{
 				ChartRepo:             testutils.PointerTo("terra-helm"),
 				AppImageGitRepo:       testutils.PointerTo("broadinstitute/leonardo"),
 				AppImageGitMainBranch: testutils.PointerTo("main"),
@@ -113,7 +113,7 @@ func Test_validateChart(t *testing.T) {
 		},
 		{
 			name: "no chart repo",
-			args: args{chart: Chart{
+			args: args{chart: &Chart{
 				Name:                  "leonardo",
 				AppImageGitRepo:       testutils.PointerTo("broadinstitute/leonardo"),
 				AppImageGitMainBranch: testutils.PointerTo("main"),
@@ -122,7 +122,7 @@ func Test_validateChart(t *testing.T) {
 		},
 		{
 			name: "valid with git info",
-			args: args{chart: Chart{
+			args: args{chart: &Chart{
 				Name:                  "leonardo",
 				ChartRepo:             testutils.PointerTo("terra-helm"),
 				AppImageGitRepo:       testutils.PointerTo("broadinstitute/leonardo"),
@@ -132,7 +132,7 @@ func Test_validateChart(t *testing.T) {
 		},
 		{
 			name: "valid without git info",
-			args: args{chart: Chart{
+			args: args{chart: &Chart{
 				Name:      "leonardo",
 				ChartRepo: testutils.PointerTo("terra-helm"),
 			}},

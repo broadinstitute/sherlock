@@ -42,7 +42,11 @@ func newChartController(stores *v2models.StoreSet) *ChartController {
 	}
 }
 
-func modelChartToChart(model v2models.Chart) *Chart {
+func modelChartToChart(model *v2models.Chart) *Chart {
+	if model == nil {
+		return nil
+	}
+
 	return &Chart{
 		ReadableBaseType: ReadableBaseType{
 			ID:        model.ID,

@@ -10,7 +10,7 @@ import (
 
 type AppVersion struct {
 	ReadableBaseType
-	ChartInfo            Chart       `json:"chartInfo"  form:"-"`
+	ChartInfo            *Chart      `json:"chartInfo,omitempty"  form:"-"`
 	ParentAppVersionInfo *AppVersion `json:"parentAppVersionInfo,omitempty" swaggertype:"object" form:"-"`
 	CreatableAppVersion
 }
@@ -47,26 +47,35 @@ func newAppVersionController(stores *v2models.StoreSet) *AppVersionController {
 	}
 }
 
-func modelAppVersionToAppVersion(model v2models.AppVersion) *AppVersion {
+func modelAppVersionToAppVersion(model *v2models.AppVersion) *AppVersion {
+	if model == nil {
+		return nil
+	}
+
+	var chartName string
 	chart := modelChartToChart(model.Chart)
-	var parentAppVersion *AppVersion
+	if chart != nil {
+		chartName = chart.Name
+	}
+
 	var parentAppVersionSelector string
-	if model.ParentAppVersion != nil {
-		parentAppVersion = modelAppVersionToAppVersion(*model.ParentAppVersion)
+	parentAppVersion := modelAppVersionToAppVersion(model.ParentAppVersion)
+	if parentAppVersion != nil {
 		// The parent's associations might not be loaded, so we can't safely get the chart name of the parent, but
 		// we know that the parent's chart name is the same as ours.
-		parentAppVersionSelector = fmt.Sprintf("%s/%s", chart.Name, parentAppVersion.AppVersion)
+		parentAppVersionSelector = fmt.Sprintf("%s/%s", chartName, parentAppVersion.AppVersion)
 	}
+
 	return &AppVersion{
 		ReadableBaseType: ReadableBaseType{
 			ID:        model.ID,
 			CreatedAt: model.CreatedAt,
 			UpdatedAt: model.UpdatedAt,
 		},
-		ChartInfo:            *chart,
+		ChartInfo:            chart,
 		ParentAppVersionInfo: parentAppVersion,
 		CreatableAppVersion: CreatableAppVersion{
-			Chart:            chart.Name,
+			Chart:            chartName,
 			AppVersion:       model.AppVersion,
 			GitCommit:        model.GitCommit,
 			GitBranch:        model.GitBranch,

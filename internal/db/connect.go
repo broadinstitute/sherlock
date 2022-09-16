@@ -38,7 +38,7 @@ var (
 		&v2models.ChartVersion{},
 		&v2models.AppVersion{},
 		&v2models.ChartRelease{},
-		&v2models.ChartDeployRecord{},
+		&v2models.Changeset{},
 	}
 )
 

@@ -47,7 +47,7 @@ func listChartRelease(controller *v2controllers.ChartReleaseController) func(ctx
 // @description Get an existing ChartRelease entry via one of its "selectors": name, numeric ID, environment/chart, or cluster/namespace/chart.
 // @tags        ChartReleases
 // @produce     json
-// @param       selector                path     string true "The ChartRelease to get's selector: name or numeric ID"
+// @param       selector                path     string true "The ChartRelease to get's selector"
 // @success     200                     {object} v2controllers.ChartRelease
 // @failure     400,403,404,407,409,500 {object} errors.ErrorResponse
 // @router      /api/v2/chart-releases/{selector} [get]
@@ -61,7 +61,7 @@ func getChartRelease(controller *v2controllers.ChartReleaseController) func(ctx 
 // @tags        ChartReleases
 // @accept      json
 // @produce     json
-// @param       selector                path     string                             true "The ChartRelease to edit's selector: name or numeric ID"
+// @param       selector                path     string                             true "The ChartRelease to edit's selector"
 // @param       chart-release           body     v2controllers.EditableChartRelease true "The edits to make to the ChartRelease"
 // @success     200                     {object} v2controllers.ChartRelease
 // @failure     400,403,404,407,409,500 {object} errors.ErrorResponse
@@ -75,7 +75,7 @@ func editChartRelease(controller *v2controllers.ChartReleaseController) func(ctx
 // @description Delete an existing ChartRelease entry via one of its "selectors": name, numeric ID, environment/chart, or cluster/namespace/chart.
 // @tags        ChartReleases
 // @produce     json
-// @param       selector                path     string true "The ChartRelease to delete's selector: name or numeric ID"
+// @param       selector                path     string true "The ChartRelease to delete's selector"
 // @success     200                     {object} v2controllers.ChartRelease
 // @failure     400,403,404,407,409,500 {object} errors.ErrorResponse
 // @router      /api/v2/chart-releases/{selector} [delete]

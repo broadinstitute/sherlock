@@ -57,6 +57,16 @@ var (
 			Owner:            testutils.PointerTo("dsp-devops@broadinstitute.org"),
 		},
 	}
+	terraStagingEnvironment = CreatableEnvironment{
+		Name:      "terra-staging",
+		Base:      "live",
+		Lifecycle: "static",
+		EditableEnvironment: EditableEnvironment{
+			DefaultCluster:      &terraStagingCluster.Name,
+			Owner:               testutils.PointerTo("dsp-devops@broadinstitute.org"),
+			RequiresSuitability: testutils.PointerTo(true),
+		},
+	}
 	terraProdEnvironment = CreatableEnvironment{
 		Name:      "terra-prod",
 		Base:      "live",
@@ -80,7 +90,13 @@ var (
 		Name:                "swatomation-instance-one",
 		TemplateEnvironment: swatomationEnvironment.Name,
 	}
-	environmentSeedList = []CreatableEnvironment{terraDevEnvironment, terraProdEnvironment, swatomationEnvironment, dynamicSwatomationEnvironment}
+	environmentSeedList = []CreatableEnvironment{
+		terraDevEnvironment,
+		terraStagingEnvironment,
+		terraProdEnvironment,
+		swatomationEnvironment,
+		dynamicSwatomationEnvironment,
+	}
 )
 
 func (controllerSet *ControllerSet) seedEnvironments(t *testing.T) {
@@ -214,6 +230,8 @@ func (suite *environmentControllerSuite) TestEnvironmentCreate() {
 		suite.seedClusters(suite.T())
 		suite.seedEnvironments(suite.T())
 		suite.seedCharts(suite.T())
+		suite.seedAppVersions(suite.T())
+		suite.seedChartVersions(suite.T())
 		suite.seedChartReleases(suite.T())
 
 		swatReleases, err := suite.ChartReleaseController.ListAllMatching(
@@ -235,7 +253,7 @@ func (suite *environmentControllerSuite) TestEnvironmentCreate() {
 				if swatRelease.Chart == envRelease.Chart {
 					found = true
 					// The template gets this field set based on the Chart's app main branch, dynamic should copy
-					assert.Equal(suite.T(), swatRelease.TargetAppVersionBranch, envRelease.TargetAppVersionBranch)
+					assert.Equal(suite.T(), swatRelease.AppVersionBranch, envRelease.AppVersionBranch)
 					assert.True(suite.T(), envRelease.ID > 0)
 				}
 			}

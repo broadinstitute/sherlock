@@ -2,6 +2,7 @@ package v2models
 
 import (
 	"fmt"
+	"github.com/broadinstitute/sherlock/internal/auth"
 	"github.com/broadinstitute/sherlock/internal/errors"
 	"gorm.io/gorm"
 	"strconv"
@@ -10,7 +11,7 @@ import (
 
 type ChartRelease struct {
 	gorm.Model
-	Chart           Chart
+	Chart           *Chart
 	ChartID         uint
 	Cluster         *Cluster
 	ClusterID       *uint
@@ -19,30 +20,22 @@ type ChartRelease struct {
 	EnvironmentID   *uint
 	Name            string `gorm:"not null; default:null; unique"`
 	Namespace       string
-	// Mutable
-	CurrentAppVersionExact   *string
-	CurrentChartVersionExact *string
-	HelmfileRef              *string
-	TargetAppVersionBranch   *string
-	TargetAppVersionCommit   *string
-	TargetAppVersionExact    *string
-	TargetAppVersionUse      *string
-	TargetChartVersionExact  *string
-	TargetChartVersionUse    *string `gorm:"not null; default:null"`
-	ThelmaMode               *string
+	ChartReleaseVersion
 }
 
 func (c ChartRelease) TableName() string {
 	return "v2_chart_releases"
 }
 
-func newChartReleaseStore(db *gorm.DB) *Store[ChartRelease] {
-	return &Store[ChartRelease]{
-		db:                       db,
+var chartReleaseStore *internalModelStore[ChartRelease]
+
+func init() {
+	chartReleaseStore = &internalModelStore[ChartRelease]{
 		selectorToQueryModel:     chartReleaseSelectorToQuery,
 		modelToSelectors:         chartReleaseToSelectors,
 		modelRequiresSuitability: chartReleaseRequiresSuitability,
 		validateModel:            validateChartRelease,
+		preCreate:                preCreateChartRelease,
 	}
 }
 
@@ -66,7 +59,7 @@ func chartReleaseSelectorToQuery(db *gorm.DB, selector string) (ChartRelease, er
 		if err != nil {
 			return ChartRelease{}, fmt.Errorf("invalid chart release selector %s, environment sub-selector error: %v", selector, err)
 		}
-		environment, err := getFromQuery(db, environmentQuery)
+		environment, err := environmentStore.get(db, environmentQuery)
 		if err != nil {
 			return ChartRelease{}, fmt.Errorf("error handling environment sub-selector %s: %v", parts[0], err)
 		}
@@ -77,7 +70,7 @@ func chartReleaseSelectorToQuery(db *gorm.DB, selector string) (ChartRelease, er
 		if err != nil {
 			return ChartRelease{}, fmt.Errorf("invalid chart release selector %s, chart sub-selector error: %v", selector, err)
 		}
-		chart, err := getFromQuery(db, chartQuery)
+		chart, err := chartStore.get(db, chartQuery)
 		if err != nil {
 			return ChartRelease{}, fmt.Errorf("error handling chart sub-selector %s: %v", parts[1], err)
 		}
@@ -92,7 +85,7 @@ func chartReleaseSelectorToQuery(db *gorm.DB, selector string) (ChartRelease, er
 		if err != nil {
 			return ChartRelease{}, fmt.Errorf("invalid chart release selector %s, cluster sub-selector error: %v", selector, err)
 		}
-		cluster, err := getFromQuery(db, clusterQuery)
+		cluster, err := clusterStore.get(db, clusterQuery)
 		if err != nil {
 			return ChartRelease{}, fmt.Errorf("error handling cluster sub-selector %s: %v", parts[0], err)
 		}
@@ -113,7 +106,7 @@ func chartReleaseSelectorToQuery(db *gorm.DB, selector string) (ChartRelease, er
 		if err != nil {
 			return ChartRelease{}, fmt.Errorf("invalid chart release selector %s, chart sub-selector error: %v", selector, err)
 		}
-		chart, err := getFromQuery(db, chartQuery)
+		chart, err := chartStore.get(db, chartQuery)
 		if err != nil {
 			return ChartRelease{}, fmt.Errorf("error handling chart sub-selector %s: %v", parts[1], err)
 		}
@@ -141,69 +134,74 @@ func chartReleaseSelectorToQuery(db *gorm.DB, selector string) (ChartRelease, er
 // (This "ID present but the association wasn't loaded" case is actually just a general thing across most types here,
 // but ChartRelease is the only type where those associations actually influence the selectors, so the modelToSelectors
 // functions for other types don't need to care)
-func chartReleaseToSelectors(chartRelease ChartRelease) []string {
+func chartReleaseToSelectors(chartRelease *ChartRelease) []string {
 	var selectors []string
-	if (chartRelease.Environment != nil || chartRelease.EnvironmentID != nil) || ((chartRelease.Cluster != nil || chartRelease.ClusterID != nil) && chartRelease.Namespace != "") {
-		chartSelectors := chartToSelectors(chartRelease.Chart)
-		if len(chartSelectors) == 0 && chartRelease.ChartID != 0 {
-			// Chart not filled so chartToSelectors gives nothing, but we have the chart ID and it is a selector anyway
-			chartSelectors = []string{fmt.Sprintf("%d", chartRelease.ChartID)}
-		}
-		if chartRelease.Environment != nil {
-			for _, environmentSelector := range environmentToSelectors(*chartRelease.Environment) {
+	if chartRelease != nil {
+		if (chartRelease.Environment != nil || chartRelease.EnvironmentID != nil) || ((chartRelease.Cluster != nil || chartRelease.ClusterID != nil) && chartRelease.Namespace != "") {
+			chartSelectors := chartToSelectors(chartRelease.Chart)
+			if len(chartSelectors) == 0 && chartRelease.ChartID != 0 {
+				// Chart not filled so chartToSelectors gives nothing, but we have the chart ID and it is a selector anyway
+				chartSelectors = []string{fmt.Sprintf("%d", chartRelease.ChartID)}
+			}
+			if chartRelease.Environment != nil {
+				for _, environmentSelector := range environmentToSelectors(chartRelease.Environment) {
+					for _, chartSelector := range chartSelectors {
+						selectors = append(selectors, fmt.Sprintf("%s/%s", environmentSelector, chartSelector))
+					}
+				}
+			} else if chartRelease.EnvironmentID != nil {
+				// Environment not present but ID is, we can't call environmentToSelectors but we know the ID is a selector anyway
 				for _, chartSelector := range chartSelectors {
-					selectors = append(selectors, fmt.Sprintf("%s/%s", environmentSelector, chartSelector))
+					selectors = append(selectors, fmt.Sprintf("%d/%s", *chartRelease.EnvironmentID, chartSelector))
 				}
 			}
-		} else if chartRelease.EnvironmentID != nil {
-			// Environment not present but ID is, we can't call environmentToSelectors but we know the ID is a selector anyway
-			for _, chartSelector := range chartSelectors {
-				selectors = append(selectors, fmt.Sprintf("%d/%s", *chartRelease.EnvironmentID, chartSelector))
-			}
-		}
-		if chartRelease.Cluster != nil && chartRelease.Namespace != "" {
-			for _, clusterSelector := range clusterToSelectors(*chartRelease.Cluster) {
+			if chartRelease.Cluster != nil && chartRelease.Namespace != "" {
+				for _, clusterSelector := range clusterToSelectors(chartRelease.Cluster) {
+					for _, chartSelector := range chartSelectors {
+						selectors = append(selectors, fmt.Sprintf("%s/%s/%s", clusterSelector, chartRelease.Namespace, chartSelector))
+					}
+				}
+			} else if chartRelease.ClusterID != nil && chartRelease.Namespace != "" {
+				// Cluster not present but ID is, we can't call clusterToSelectors but we know the ID is a selector anyway
 				for _, chartSelector := range chartSelectors {
-					selectors = append(selectors, fmt.Sprintf("%s/%s/%s", clusterSelector, chartRelease.Namespace, chartSelector))
+					selectors = append(selectors, fmt.Sprintf("%d/%s/%s", *chartRelease.ClusterID, chartRelease.Namespace, chartSelector))
 				}
 			}
-		} else if chartRelease.ClusterID != nil && chartRelease.Namespace != "" {
-			// Cluster not present but ID is, we can't call clusterToSelectors but we know the ID is a selector anyway
-			for _, chartSelector := range chartSelectors {
-				selectors = append(selectors, fmt.Sprintf("%d/%s/%s", *chartRelease.ClusterID, chartRelease.Namespace, chartSelector))
-			}
 		}
-	}
-	if chartRelease.Name != "" {
-		selectors = append(selectors, chartRelease.Name)
-	}
-	if chartRelease.ID != 0 {
-		selectors = append(selectors, fmt.Sprintf("%d", chartRelease.ID))
+		if chartRelease.Name != "" {
+			selectors = append(selectors, chartRelease.Name)
+		}
+		if chartRelease.ID != 0 {
+			selectors = append(selectors, fmt.Sprintf("%d", chartRelease.ID))
+		}
 	}
 	return selectors
 }
 
-func chartReleaseRequiresSuitability(db *gorm.DB, chartRelease ChartRelease) bool {
+func chartReleaseRequiresSuitability(db *gorm.DB, chartRelease *ChartRelease) bool {
 	clusterRequires := false
 	if chartRelease.Cluster != nil {
-		cluster, err := getFromQuery(db, *chartRelease.Cluster)
+		cluster, err := clusterStore.get(db, *chartRelease.Cluster)
 		if err != nil {
 			return true
 		}
-		clusterRequires = clusterRequiresSuitability(db, cluster)
+		clusterRequires = clusterRequiresSuitability(db, &cluster)
 	}
 	environmentRequires := false
 	if chartRelease.Environment != nil {
-		environment, err := getFromQuery(db, *chartRelease.Environment)
+		environment, err := environmentStore.get(db, *chartRelease.Environment)
 		if err != nil {
 			return true
 		}
-		environmentRequires = environmentRequiresSuitability(db, environment)
+		environmentRequires = environmentRequiresSuitability(db, &environment)
 	}
 	return clusterRequires || environmentRequires
 }
 
-func validateChartRelease(chartRelease ChartRelease) error {
+func validateChartRelease(chartRelease *ChartRelease) error {
+	if chartRelease == nil {
+		return fmt.Errorf("the model passed was nil")
+	}
 	if chartRelease.Name == "" {
 		return fmt.Errorf("a %T must have a non-empty Name", chartRelease)
 	}
@@ -228,32 +226,12 @@ func validateChartRelease(chartRelease ChartRelease) error {
 		return fmt.Errorf("a %T that doesn't have a cluster must not have a namespace", chartRelease)
 	}
 
-	if chartRelease.HelmfileRef == nil || *chartRelease.HelmfileRef == "" {
-		return fmt.Errorf("a %T must have a non-empty HelmfileRef", chartRelease)
-	}
+	return chartRelease.ChartReleaseVersion.validate()
+}
 
-	if chartRelease.TargetAppVersionUse != nil {
-		if *chartRelease.TargetAppVersionUse == "branch" && (chartRelease.TargetAppVersionBranch == nil || *chartRelease.TargetAppVersionBranch == "") {
-			return fmt.Errorf("a %T must have a non-empty TargetAppVersionBranch if TargetAppVersionUse is set to 'branch'", chartRelease)
-		} else if *chartRelease.TargetAppVersionUse == "commit" && (chartRelease.TargetAppVersionCommit == nil || *chartRelease.TargetAppVersionCommit == "") {
-			return fmt.Errorf("a %T must have a non-empty TargetAppVersionCommit if TargetAppVersionUse is set to 'commit'", chartRelease)
-		} else if *chartRelease.TargetAppVersionUse == "exact" && (chartRelease.TargetAppVersionExact == nil || *chartRelease.TargetAppVersionExact == "") {
-			return fmt.Errorf("a %T must have a non-empty TargetAppVersionExact if TargetAppVersionUse is set to 'exact'", chartRelease)
-		} else if *chartRelease.TargetAppVersionUse != "branch" && *chartRelease.TargetAppVersionUse != "commit" && *chartRelease.TargetAppVersionUse != "exact" && *chartRelease.TargetAppVersionUse != "" {
-			return fmt.Errorf("a %T must have a TargetAppVersionUse of 'branch', 'commit', 'exact', or none at all (empty string '' is equivalent to none)", chartRelease)
-		}
+func preCreateChartRelease(db *gorm.DB, toCreate *ChartRelease, _ *auth.User) error {
+	if toCreate != nil {
+		return toCreate.ChartReleaseVersion.resolve(db, Chart{Model: gorm.Model{ID: toCreate.ChartID}})
 	}
-
-	if chartRelease.TargetChartVersionUse == nil || (*chartRelease.TargetChartVersionUse != "latest" && *chartRelease.TargetChartVersionUse != "exact") {
-		return fmt.Errorf("a %T must have a TargetChartVersionUse of either 'latest' or 'exact'", chartRelease)
-	}
-	if *chartRelease.TargetChartVersionUse == "exact" && (chartRelease.TargetChartVersionExact == nil || *chartRelease.TargetChartVersionExact == "") {
-		return fmt.Errorf("a %T must have a non-empty TargetChartVersionExact if TargetChartVersionUse is set to 'exact'", chartRelease)
-	}
-
-	if chartRelease.ThelmaMode != nil && *chartRelease.ThelmaMode == "" {
-		return fmt.Errorf("a %T cannot have a ThelmaMode specifically set to be empty, it can be omitted or non-empty", chartRelease)
-	}
-
 	return nil
 }

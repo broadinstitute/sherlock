@@ -10,7 +10,7 @@ import (
 
 type ChartVersion struct {
 	gorm.Model
-	Chart                Chart
+	Chart                *Chart
 	ChartID              uint   `gorm:"not null: default:null"`
 	ChartVersion         string `gorm:"not null: default:null"`
 	ParentChartVersion   *ChartVersion
@@ -21,9 +21,10 @@ func (c ChartVersion) TableName() string {
 	return "v2_chart_versions"
 }
 
-func newChartVersionStore(db *gorm.DB) *Store[ChartVersion] {
-	return &Store[ChartVersion]{
-		db:                   db,
+var chartVersionStore *internalModelStore[ChartVersion]
+
+func init() {
+	chartVersionStore = &internalModelStore[ChartVersion]{
 		selectorToQueryModel: chartVersionSelectorToQuery,
 		modelToSelectors:     chartVersionToSelectors,
 		validateModel:        validateChartVersion,
@@ -51,7 +52,7 @@ func chartVersionSelectorToQuery(db *gorm.DB, selector string) (ChartVersion, er
 		if err != nil {
 			return ChartVersion{}, fmt.Errorf("invalid chart release selector %s, chart sub-selector error: %v", selector, err)
 		}
-		chart, err := getFromQuery(db, chartQuery)
+		chart, err := chartStore.get(db, chartQuery)
 		if err != nil {
 			return ChartVersion{}, fmt.Errorf("error handling chart sub-selector %s: %v", parts[0], err)
 		}
@@ -69,25 +70,30 @@ func chartVersionSelectorToQuery(db *gorm.DB, selector string) (ChartVersion, er
 	return ChartVersion{}, fmt.Errorf("(%s) invalid chart version selector '%s'", errors.BadRequest, selector)
 }
 
-func chartVersionToSelectors(chartVersion ChartVersion) []string {
+func chartVersionToSelectors(chartVersion *ChartVersion) []string {
 	var selectors []string
-	if chartVersion.ID != 0 {
-		selectors = append(selectors, fmt.Sprintf("%d", chartVersion.ID))
-	}
-	if chartVersion.ChartVersion != "" {
-		chartSelectors := chartToSelectors(chartVersion.Chart)
-		if len(chartSelectors) == 0 && chartVersion.ChartID != 0 {
-			// Chart not filled so chartToSelectors gives nothing, but we have the chart ID and it is a selector anyway
-			chartSelectors = []string{fmt.Sprintf("%d", chartVersion.ChartID)}
+	if chartVersion != nil {
+		if chartVersion.ID != 0 {
+			selectors = append(selectors, fmt.Sprintf("%d", chartVersion.ID))
 		}
-		for _, chartSelector := range chartSelectors {
-			selectors = append(selectors, fmt.Sprintf("%s/%s", chartSelector, chartVersion.ChartVersion))
+		if chartVersion.ChartVersion != "" {
+			chartSelectors := chartToSelectors(chartVersion.Chart)
+			if len(chartSelectors) == 0 && chartVersion.ChartID != 0 {
+				// Chart not filled so chartToSelectors gives nothing, but we have the chart ID and it is a selector anyway
+				chartSelectors = []string{fmt.Sprintf("%d", chartVersion.ChartID)}
+			}
+			for _, chartSelector := range chartSelectors {
+				selectors = append(selectors, fmt.Sprintf("%s/%s", chartSelector, chartVersion.ChartVersion))
+			}
 		}
 	}
 	return selectors
 }
 
-func validateChartVersion(chartVersion ChartVersion) error {
+func validateChartVersion(chartVersion *ChartVersion) error {
+	if chartVersion == nil {
+		return fmt.Errorf("the model passed was nil")
+	}
 	if chartVersion.ChartID == 0 {
 		return fmt.Errorf("an %T must have an associated chart", chartVersion)
 	}
@@ -97,7 +103,7 @@ func validateChartVersion(chartVersion ChartVersion) error {
 	return nil
 }
 
-func rejectDuplicateChartVersion(existing ChartVersion, new ChartVersion) error {
+func rejectDuplicateChartVersion(existing *ChartVersion, new *ChartVersion) error {
 	if existing.ChartVersion != new.ChartVersion {
 		return fmt.Errorf("new %T has chart version %s, which is mismatched with the existing value of %s", new, new.ChartVersion, existing.ChartVersion)
 	}
