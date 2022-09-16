@@ -225,6 +225,11 @@ definitions:
         type: string
       appImageGitRepo:
         type: string
+      chartExposesEndpoint:
+        default: false
+        description: Indicates if the default subdomain, protocol, and port fields
+          are relevant for this chart
+        type: boolean
       chartRepo:
         default: terra-helm
         type: string
@@ -424,6 +429,11 @@ definitions:
         type: string
       appImageGitRepo:
         type: string
+      chartExposesEndpoint:
+        default: false
+        description: Indicates if the default subdomain, protocol, and port fields
+          are relevant for this chart
+        type: boolean
       chartRepo:
         default: terra-helm
         type: string
@@ -579,6 +589,11 @@ definitions:
         type: string
       appImageGitRepo:
         type: string
+      chartExposesEndpoint:
+        default: false
+        description: Indicates if the default subdomain, protocol, and port fields
+          are relevant for this chart
+        type: boolean
       chartRepo:
         default: terra-helm
         type: string
@@ -1575,6 +1590,12 @@ paths:
       - in: query
         name: appImageGitRepo
         type: string
+      - default: false
+        description: Indicates if the default subdomain, protocol, and port fields
+          are relevant for this chart
+        in: query
+        name: chartExposesEndpoint
+        type: boolean
       - default: terra-helm
         in: query
         name: chartRepo

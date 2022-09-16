@@ -66,6 +66,12 @@ type GetAPIV2ChartsParams struct {
 	// AppImageGitRepo.
 	AppImageGitRepo *string
 
+	/* ChartExposesEndpoint.
+
+	   Indicates if the default subdomain, protocol, and port fields are relevant for this chart
+	*/
+	ChartExposesEndpoint *bool
+
 	// ChartRepo.
 	//
 	// Default: "terra-helm"
@@ -126,6 +132,8 @@ func (o *GetAPIV2ChartsParams) WithDefaults() *GetAPIV2ChartsParams {
 // All values with no default are reset to their zero value.
 func (o *GetAPIV2ChartsParams) SetDefaults() {
 	var (
+		chartExposesEndpointDefault = bool(false)
+
 		chartRepoDefault = string("terra-helm")
 
 		defaultPortDefault = int64(443)
@@ -134,9 +142,10 @@ func (o *GetAPIV2ChartsParams) SetDefaults() {
 	)
 
 	val := GetAPIV2ChartsParams{
-		ChartRepo:       &chartRepoDefault,
-		DefaultPort:     &defaultPortDefault,
-		DefaultProtocol: &defaultProtocolDefault,
+		ChartExposesEndpoint: &chartExposesEndpointDefault,
+		ChartRepo:            &chartRepoDefault,
+		DefaultPort:          &defaultPortDefault,
+		DefaultProtocol:      &defaultProtocolDefault,
 	}
 
 	val.timeout = o.timeout
@@ -198,6 +207,17 @@ func (o *GetAPIV2ChartsParams) WithAppImageGitRepo(appImageGitRepo *string) *Get
 // SetAppImageGitRepo adds the appImageGitRepo to the get API v2 charts params
 func (o *GetAPIV2ChartsParams) SetAppImageGitRepo(appImageGitRepo *string) {
 	o.AppImageGitRepo = appImageGitRepo
+}
+
+// WithChartExposesEndpoint adds the chartExposesEndpoint to the get API v2 charts params
+func (o *GetAPIV2ChartsParams) WithChartExposesEndpoint(chartExposesEndpoint *bool) *GetAPIV2ChartsParams {
+	o.SetChartExposesEndpoint(chartExposesEndpoint)
+	return o
+}
+
+// SetChartExposesEndpoint adds the chartExposesEndpoint to the get API v2 charts params
+func (o *GetAPIV2ChartsParams) SetChartExposesEndpoint(chartExposesEndpoint *bool) {
+	o.ChartExposesEndpoint = chartExposesEndpoint
 }
 
 // WithChartRepo adds the chartRepo to the get API v2 charts params
@@ -336,6 +356,23 @@ func (o *GetAPIV2ChartsParams) WriteToRequest(r runtime.ClientRequest, reg strfm
 		if qAppImageGitRepo != "" {
 
 			if err := r.SetQueryParam("appImageGitRepo", qAppImageGitRepo); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.ChartExposesEndpoint != nil {
+
+		// query param chartExposesEndpoint
+		var qrChartExposesEndpoint bool
+
+		if o.ChartExposesEndpoint != nil {
+			qrChartExposesEndpoint = *o.ChartExposesEndpoint
+		}
+		qChartExposesEndpoint := swag.FormatBool(qrChartExposesEndpoint)
+		if qChartExposesEndpoint != "" {
+
+			if err := r.SetQueryParam("chartExposesEndpoint", qChartExposesEndpoint); err != nil {
 				return err
 			}
 		}

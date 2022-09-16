@@ -1345,6 +1345,13 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "Indicates if the default subdomain, protocol, and port fields are relevant for this chart",
+                        "name": "chartExposesEndpoint",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "default": "terra-helm",
                         "name": "chartRepo",
@@ -3687,6 +3694,11 @@ const docTemplate = `{
                 "appImageGitRepo": {
                     "type": "string"
                 },
+                "chartExposesEndpoint": {
+                    "description": "Indicates if the default subdomain, protocol, and port fields are relevant for this chart",
+                    "type": "boolean",
+                    "default": false
+                },
                 "chartRepo": {
                     "type": "string",
                     "default": "terra-helm"
@@ -3962,6 +3974,11 @@ const docTemplate = `{
                 "appImageGitRepo": {
                     "type": "string"
                 },
+                "chartExposesEndpoint": {
+                    "description": "Indicates if the default subdomain, protocol, and port fields are relevant for this chart",
+                    "type": "boolean",
+                    "default": false
+                },
                 "chartRepo": {
                     "type": "string",
                     "default": "terra-helm"
@@ -4166,6 +4183,11 @@ const docTemplate = `{
                 },
                 "appImageGitRepo": {
                     "type": "string"
+                },
+                "chartExposesEndpoint": {
+                    "description": "Indicates if the default subdomain, protocol, and port fields are relevant for this chart",
+                    "type": "boolean",
+                    "default": false
                 },
                 "chartRepo": {
                     "type": "string",

@@ -23,6 +23,9 @@ type V2controllersEditableChart struct {
 	// app image git repo
 	AppImageGitRepo string `json:"appImageGitRepo,omitempty"`
 
+	// Indicates if the default subdomain, protocol, and port fields are relevant for this chart
+	ChartExposesEndpoint *bool `json:"chartExposesEndpoint,omitempty"`
+
 	// chart repo
 	ChartRepo *string `json:"chartRepo,omitempty"`
 

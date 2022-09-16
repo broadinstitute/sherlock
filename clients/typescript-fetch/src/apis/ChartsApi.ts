@@ -34,6 +34,7 @@ import {
 export interface ApiV2ChartsGetRequest {
     appImageGitMainBranch?: string;
     appImageGitRepo?: string;
+    chartExposesEndpoint?: boolean;
     chartRepo?: string;
     createdAt?: string;
     defaultPort?: number;
@@ -84,6 +85,10 @@ export class ChartsApi extends runtime.BaseAPI {
 
         if (requestParameters.appImageGitRepo !== undefined) {
             queryParameters['appImageGitRepo'] = requestParameters.appImageGitRepo;
+        }
+
+        if (requestParameters.chartExposesEndpoint !== undefined) {
+            queryParameters['chartExposesEndpoint'] = requestParameters.chartExposesEndpoint;
         }
 
         if (requestParameters.chartRepo !== undefined) {

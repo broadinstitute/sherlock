@@ -32,6 +32,12 @@ export interface V2controllersCreatableChart {
      */
     appImageGitRepo?: string;
     /**
+     * Indicates if the default subdomain, protocol, and port fields are relevant for this chart
+     * @type {boolean}
+     * @memberof V2controllersCreatableChart
+     */
+    chartExposesEndpoint?: boolean;
+    /**
      * 
      * @type {string}
      * @memberof V2controllersCreatableChart
@@ -84,6 +90,7 @@ export function V2controllersCreatableChartFromJSONTyped(json: any, ignoreDiscri
         
         'appImageGitMainBranch': !exists(json, 'appImageGitMainBranch') ? undefined : json['appImageGitMainBranch'],
         'appImageGitRepo': !exists(json, 'appImageGitRepo') ? undefined : json['appImageGitRepo'],
+        'chartExposesEndpoint': !exists(json, 'chartExposesEndpoint') ? undefined : json['chartExposesEndpoint'],
         'chartRepo': !exists(json, 'chartRepo') ? undefined : json['chartRepo'],
         'defaultPort': !exists(json, 'defaultPort') ? undefined : json['defaultPort'],
         'defaultProtocol': !exists(json, 'defaultProtocol') ? undefined : json['defaultProtocol'],
@@ -103,6 +110,7 @@ export function V2controllersCreatableChartToJSON(value?: V2controllersCreatable
         
         'appImageGitMainBranch': value.appImageGitMainBranch,
         'appImageGitRepo': value.appImageGitRepo,
+        'chartExposesEndpoint': value.chartExposesEndpoint,
         'chartRepo': value.chartRepo,
         'defaultPort': value.defaultPort,
         'defaultProtocol': value.defaultProtocol,
