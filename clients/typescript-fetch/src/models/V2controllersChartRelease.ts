@@ -183,6 +183,24 @@ export interface V2controllersChartRelease {
      */
     namespace?: string;
     /**
+     * When creating, will use the chart's default if left empty
+     * @type {number}
+     * @memberof V2controllersChartRelease
+     */
+    port?: number;
+    /**
+     * When creating, will use the chart's default if left empty
+     * @type {string}
+     * @memberof V2controllersChartRelease
+     */
+    protocol?: string;
+    /**
+     * When creating, will use the chart's default if left empty
+     * @type {string}
+     * @memberof V2controllersChartRelease
+     */
+    subdomain?: string;
+    /**
      * 
      * @type {string}
      * @memberof V2controllersChartRelease
@@ -253,6 +271,9 @@ export function V2controllersChartReleaseFromJSONTyped(json: any, ignoreDiscrimi
         'id': !exists(json, 'id') ? undefined : json['id'],
         'name': !exists(json, 'name') ? undefined : json['name'],
         'namespace': !exists(json, 'namespace') ? undefined : json['namespace'],
+        'port': !exists(json, 'port') ? undefined : json['port'],
+        'protocol': !exists(json, 'protocol') ? undefined : json['protocol'],
+        'subdomain': !exists(json, 'subdomain') ? undefined : json['subdomain'],
         'updatedAt': !exists(json, 'updatedAt') ? undefined : json['updatedAt'],
     };
 }
@@ -288,6 +309,9 @@ export function V2controllersChartReleaseToJSON(value?: V2controllersChartReleas
         'id': value.id,
         'name': value.name,
         'namespace': value.namespace,
+        'port': value.port,
+        'protocol': value.protocol,
+        'subdomain': value.subdomain,
         'updatedAt': value.updatedAt,
     };
 }

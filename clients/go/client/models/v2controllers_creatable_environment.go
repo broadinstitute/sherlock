@@ -20,6 +20,9 @@ type V2controllersCreatableEnvironment struct {
 	// Required when creating
 	Base string `json:"base,omitempty"`
 
+	// base domain
+	BaseDomain *string `json:"baseDomain,omitempty"`
+
 	// Upon creation of a dynamic environment, if this is true the template's chart releases will be copied to the new environment
 	ChartReleasesFromTemplate *bool `json:"chartReleasesFromTemplate,omitempty"`
 
@@ -34,6 +37,9 @@ type V2controllersCreatableEnvironment struct {
 
 	// When creating, will be calculated if dynamic, required otherwise
 	Name string `json:"name,omitempty"`
+
+	// name prefixes domain
+	NamePrefixesDomain *bool `json:"namePrefixesDomain,omitempty"`
 
 	// When creating, will be set to your email
 	Owner string `json:"owner,omitempty"`

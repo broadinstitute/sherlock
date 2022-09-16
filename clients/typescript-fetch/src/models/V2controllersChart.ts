@@ -48,6 +48,24 @@ export interface V2controllersChart {
      * @type {number}
      * @memberof V2controllersChart
      */
+    defaultPort?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof V2controllersChart
+     */
+    defaultProtocol?: string;
+    /**
+     * When creating, will default to the name of the chart
+     * @type {string}
+     * @memberof V2controllersChart
+     */
+    defaultSubdomain?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof V2controllersChart
+     */
     id?: number;
     /**
      * Required when creating
@@ -86,6 +104,9 @@ export function V2controllersChartFromJSONTyped(json: any, ignoreDiscriminator: 
         'appImageGitRepo': !exists(json, 'appImageGitRepo') ? undefined : json['appImageGitRepo'],
         'chartRepo': !exists(json, 'chartRepo') ? undefined : json['chartRepo'],
         'createdAt': !exists(json, 'createdAt') ? undefined : json['createdAt'],
+        'defaultPort': !exists(json, 'defaultPort') ? undefined : json['defaultPort'],
+        'defaultProtocol': !exists(json, 'defaultProtocol') ? undefined : json['defaultProtocol'],
+        'defaultSubdomain': !exists(json, 'defaultSubdomain') ? undefined : json['defaultSubdomain'],
         'id': !exists(json, 'id') ? undefined : json['id'],
         'name': !exists(json, 'name') ? undefined : json['name'],
         'updatedAt': !exists(json, 'updatedAt') ? undefined : json['updatedAt'],
@@ -105,6 +126,9 @@ export function V2controllersChartToJSON(value?: V2controllersChart | null): any
         'appImageGitRepo': value.appImageGitRepo,
         'chartRepo': value.chartRepo,
         'createdAt': value.createdAt,
+        'defaultPort': value.defaultPort,
+        'defaultProtocol': value.defaultProtocol,
+        'defaultSubdomain': value.defaultSubdomain,
         'id': value.id,
         'name': value.name,
         'updatedAt': value.updatedAt,

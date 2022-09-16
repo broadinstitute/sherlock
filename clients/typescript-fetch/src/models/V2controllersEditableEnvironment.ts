@@ -24,6 +24,12 @@ export interface V2controllersEditableEnvironment {
      * @type {string}
      * @memberof V2controllersEditableEnvironment
      */
+    baseDomain?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof V2controllersEditableEnvironment
+     */
     defaultCluster?: string;
     /**
      * 
@@ -31,6 +37,12 @@ export interface V2controllersEditableEnvironment {
      * @memberof V2controllersEditableEnvironment
      */
     defaultNamespace?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof V2controllersEditableEnvironment
+     */
+    namePrefixesDomain?: boolean;
     /**
      * When creating, will be set to your email
      * @type {string}
@@ -64,8 +76,10 @@ export function V2controllersEditableEnvironmentFromJSONTyped(json: any, ignoreD
     }
     return {
         
+        'baseDomain': !exists(json, 'baseDomain') ? undefined : json['baseDomain'],
         'defaultCluster': !exists(json, 'defaultCluster') ? undefined : json['defaultCluster'],
         'defaultNamespace': !exists(json, 'defaultNamespace') ? undefined : json['defaultNamespace'],
+        'namePrefixesDomain': !exists(json, 'namePrefixesDomain') ? undefined : json['namePrefixesDomain'],
         'owner': !exists(json, 'owner') ? undefined : json['owner'],
         'requiresSuitability': !exists(json, 'requiresSuitability') ? undefined : json['requiresSuitability'],
     };
@@ -80,8 +94,10 @@ export function V2controllersEditableEnvironmentToJSON(value?: V2controllersEdit
     }
     return {
         
+        'baseDomain': value.baseDomain,
         'defaultCluster': value.defaultCluster,
         'defaultNamespace': value.defaultNamespace,
+        'namePrefixesDomain': value.namePrefixesDomain,
         'owner': value.owner,
         'requiresSuitability': value.requiresSuitability,
     };

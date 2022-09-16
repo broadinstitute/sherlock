@@ -230,6 +230,15 @@ definitions:
         type: string
       createdAt:
         type: string
+      defaultPort:
+        default: 443
+        type: integer
+      defaultProtocol:
+        default: https
+        type: string
+      defaultSubdomain:
+        description: When creating, will default to the name of the chart
+        type: string
       id:
         type: integer
       name:
@@ -306,6 +315,15 @@ definitions:
       namespace:
         description: When creating, will default to the environment's default namespace,
           if provided
+        type: string
+      port:
+        description: When creating, will use the chart's default if left empty
+        type: integer
+      protocol:
+        description: When creating, will use the chart's default if left empty
+        type: string
+      subdomain:
+        description: When creating, will use the chart's default if left empty
         type: string
       updatedAt:
         type: string
@@ -409,6 +427,15 @@ definitions:
       chartRepo:
         default: terra-helm
         type: string
+      defaultPort:
+        default: 443
+        type: integer
+      defaultProtocol:
+        default: https
+        type: string
+      defaultSubdomain:
+        description: When creating, will default to the name of the chart
+        type: string
       name:
         description: Required when creating
         type: string
@@ -461,6 +488,15 @@ definitions:
         description: When creating, will default to the environment's default namespace,
           if provided
         type: string
+      port:
+        description: When creating, will use the chart's default if left empty
+        type: integer
+      protocol:
+        description: When creating, will use the chart's default if left empty
+        type: string
+      subdomain:
+        description: When creating, will use the chart's default if left empty
+        type: string
     type: object
   v2controllers.CreatableChartVersion:
     properties:
@@ -506,6 +542,9 @@ definitions:
       base:
         description: Required when creating
         type: string
+      baseDomain:
+        default: bee.envs-terra.bio
+        type: string
       chartReleasesFromTemplate:
         default: true
         description: Upon creation of a dynamic environment, if this is true the template's
@@ -521,6 +560,9 @@ definitions:
       name:
         description: When creating, will be calculated if dynamic, required otherwise
         type: string
+      namePrefixesDomain:
+        default: true
+        type: boolean
       owner:
         description: When creating, will be set to your email
         type: string
@@ -540,8 +582,27 @@ definitions:
       chartRepo:
         default: terra-helm
         type: string
+      defaultPort:
+        default: 443
+        type: integer
+      defaultProtocol:
+        default: https
+        type: string
+      defaultSubdomain:
+        description: When creating, will default to the name of the chart
+        type: string
     type: object
   v2controllers.EditableChartRelease:
+    properties:
+      port:
+        description: When creating, will use the chart's default if left empty
+        type: integer
+      protocol:
+        description: When creating, will use the chart's default if left empty
+        type: string
+      subdomain:
+        description: When creating, will use the chart's default if left empty
+        type: string
     type: object
   v2controllers.EditableCluster:
     description: The subset of Cluster fields that can be edited after creation
@@ -558,10 +619,16 @@ definitions:
     type: object
   v2controllers.EditableEnvironment:
     properties:
+      baseDomain:
+        default: bee.envs-terra.bio
+        type: string
       defaultCluster:
         type: string
       defaultNamespace:
         type: string
+      namePrefixesDomain:
+        default: true
+        type: boolean
       owner:
         description: When creating, will be set to your email
         type: string
@@ -573,6 +640,9 @@ definitions:
     properties:
       base:
         description: Required when creating
+        type: string
+      baseDomain:
+        default: bee.envs-terra.bio
         type: string
       chartReleasesFromTemplate:
         default: true
@@ -595,6 +665,9 @@ definitions:
       name:
         description: When creating, will be calculated if dynamic, required otherwise
         type: string
+      namePrefixesDomain:
+        default: true
+        type: boolean
       owner:
         description: When creating, will be set to your email
         type: string
@@ -1087,6 +1160,18 @@ paths:
         in: query
         name: namespace
         type: string
+      - description: When creating, will use the chart's default if left empty
+        in: query
+        name: port
+        type: integer
+      - description: When creating, will use the chart's default if left empty
+        in: query
+        name: protocol
+        type: string
+      - description: When creating, will use the chart's default if left empty
+        in: query
+        name: subdomain
+        type: string
       - in: query
         name: updatedAt
         type: string
@@ -1496,6 +1581,18 @@ paths:
         type: string
       - in: query
         name: createdAt
+        type: string
+      - default: 443
+        in: query
+        name: defaultPort
+        type: integer
+      - default: https
+        in: query
+        name: defaultProtocol
+        type: string
+      - description: When creating, will default to the name of the chart
+        in: query
+        name: defaultSubdomain
         type: string
       - in: query
         name: id
@@ -2017,6 +2114,10 @@ paths:
         in: query
         name: base
         type: string
+      - default: bee.envs-terra.bio
+        in: query
+        name: baseDomain
+        type: string
       - default: true
         description: Upon creation of a dynamic environment, if this is true the template's
           chart releases will be copied to the new environment
@@ -2043,6 +2144,10 @@ paths:
         in: query
         name: name
         type: string
+      - default: true
+        in: query
+        name: namePrefixesDomain
+        type: boolean
       - description: When creating, will be set to your email
         in: query
         name: owner

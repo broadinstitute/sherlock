@@ -17,11 +17,17 @@ import (
 // swagger:model v2controllers.EditableEnvironment
 type V2controllersEditableEnvironment struct {
 
+	// base domain
+	BaseDomain *string `json:"baseDomain,omitempty"`
+
 	// default cluster
 	DefaultCluster string `json:"defaultCluster,omitempty"`
 
 	// default namespace
 	DefaultNamespace string `json:"defaultNamespace,omitempty"`
+
+	// name prefixes domain
+	NamePrefixesDomain *bool `json:"namePrefixesDomain,omitempty"`
 
 	// When creating, will be set to your email
 	Owner string `json:"owner,omitempty"`

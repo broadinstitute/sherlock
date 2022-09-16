@@ -29,6 +29,15 @@ type V2controllersChart struct {
 	// created at
 	CreatedAt string `json:"createdAt,omitempty"`
 
+	// default port
+	DefaultPort *int64 `json:"defaultPort,omitempty"`
+
+	// default protocol
+	DefaultProtocol *string `json:"defaultProtocol,omitempty"`
+
+	// When creating, will default to the name of the chart
+	DefaultSubdomain string `json:"defaultSubdomain,omitempty"`
+
 	// id
 	ID int64 `json:"id,omitempty"`
 

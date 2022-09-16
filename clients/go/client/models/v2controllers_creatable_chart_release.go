@@ -57,6 +57,15 @@ type V2controllersCreatableChartRelease struct {
 
 	// When creating, will default to the environment's default namespace, if provided
 	Namespace string `json:"namespace,omitempty"`
+
+	// When creating, will use the chart's default if left empty
+	Port int64 `json:"port,omitempty"`
+
+	// When creating, will use the chart's default if left empty
+	Protocol string `json:"protocol,omitempty"`
+
+	// When creating, will use the chart's default if left empty
+	Subdomain string `json:"subdomain,omitempty"`
 }
 
 // Validate validates this v2controllers creatable chart release

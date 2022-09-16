@@ -18,6 +18,7 @@ import type {
   ErrorsErrorResponse,
   V2controllersChartRelease,
   V2controllersCreatableChartRelease,
+  V2controllersEditableChartRelease,
 } from '../models';
 import {
     ErrorsErrorResponseFromJSON,
@@ -26,6 +27,8 @@ import {
     V2controllersChartReleaseToJSON,
     V2controllersCreatableChartReleaseFromJSON,
     V2controllersCreatableChartReleaseToJSON,
+    V2controllersEditableChartReleaseFromJSON,
+    V2controllersEditableChartReleaseToJSON,
 } from '../models';
 
 export interface ApiV2ChartReleasesGetRequest {
@@ -46,6 +49,9 @@ export interface ApiV2ChartReleasesGetRequest {
     id?: number;
     name?: string;
     namespace?: string;
+    port?: number;
+    protocol?: string;
+    subdomain?: string;
     updatedAt?: string;
     limit?: number;
 }
@@ -64,7 +70,7 @@ export interface ApiV2ChartReleasesSelectorGetRequest {
 
 export interface ApiV2ChartReleasesSelectorPatchRequest {
     selector: string;
-    chartRelease: object;
+    chartRelease: V2controllersEditableChartRelease;
 }
 
 export interface ApiV2SelectorsChartReleasesSelectorGetRequest {
@@ -149,6 +155,18 @@ export class ChartReleasesApi extends runtime.BaseAPI {
 
         if (requestParameters.namespace !== undefined) {
             queryParameters['namespace'] = requestParameters.namespace;
+        }
+
+        if (requestParameters.port !== undefined) {
+            queryParameters['port'] = requestParameters.port;
+        }
+
+        if (requestParameters.protocol !== undefined) {
+            queryParameters['protocol'] = requestParameters.protocol;
+        }
+
+        if (requestParameters.subdomain !== undefined) {
+            queryParameters['subdomain'] = requestParameters.subdomain;
         }
 
         if (requestParameters.updatedAt !== undefined) {
@@ -303,7 +321,7 @@ export class ChartReleasesApi extends runtime.BaseAPI {
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
-            body: requestParameters.chartRelease as any,
+            body: V2controllersEditableChartReleaseToJSON(requestParameters.chartRelease),
         }, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => V2controllersChartReleaseFromJSON(jsonValue));

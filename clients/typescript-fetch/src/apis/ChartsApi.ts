@@ -36,6 +36,9 @@ export interface ApiV2ChartsGetRequest {
     appImageGitRepo?: string;
     chartRepo?: string;
     createdAt?: string;
+    defaultPort?: number;
+    defaultProtocol?: string;
+    defaultSubdomain?: string;
     id?: number;
     name?: string;
     updatedAt?: string;
@@ -89,6 +92,18 @@ export class ChartsApi extends runtime.BaseAPI {
 
         if (requestParameters.createdAt !== undefined) {
             queryParameters['createdAt'] = requestParameters.createdAt;
+        }
+
+        if (requestParameters.defaultPort !== undefined) {
+            queryParameters['defaultPort'] = requestParameters.defaultPort;
+        }
+
+        if (requestParameters.defaultProtocol !== undefined) {
+            queryParameters['defaultProtocol'] = requestParameters.defaultProtocol;
+        }
+
+        if (requestParameters.defaultSubdomain !== undefined) {
+            queryParameters['defaultSubdomain'] = requestParameters.defaultSubdomain;
         }
 
         if (requestParameters.id !== undefined) {

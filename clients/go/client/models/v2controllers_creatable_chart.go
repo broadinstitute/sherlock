@@ -26,6 +26,15 @@ type V2controllersCreatableChart struct {
 	// chart repo
 	ChartRepo *string `json:"chartRepo,omitempty"`
 
+	// default port
+	DefaultPort *int64 `json:"defaultPort,omitempty"`
+
+	// default protocol
+	DefaultProtocol *string `json:"defaultProtocol,omitempty"`
+
+	// When creating, will default to the name of the chart
+	DefaultSubdomain string `json:"defaultSubdomain,omitempty"`
+
 	// Required when creating
 	Name string `json:"name,omitempty"`
 }

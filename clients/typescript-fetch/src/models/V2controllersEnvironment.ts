@@ -33,6 +33,12 @@ export interface V2controllersEnvironment {
      */
     base?: string;
     /**
+     * 
+     * @type {string}
+     * @memberof V2controllersEnvironment
+     */
+    baseDomain?: string;
+    /**
      * Upon creation of a dynamic environment, if this is true the template's chart releases will be copied to the new environment
      * @type {boolean}
      * @memberof V2controllersEnvironment
@@ -80,6 +86,12 @@ export interface V2controllersEnvironment {
      * @memberof V2controllersEnvironment
      */
     name?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof V2controllersEnvironment
+     */
+    namePrefixesDomain?: boolean;
     /**
      * When creating, will be set to your email
      * @type {string}
@@ -138,6 +150,7 @@ export function V2controllersEnvironmentFromJSONTyped(json: any, ignoreDiscrimin
     return {
         
         'base': !exists(json, 'base') ? undefined : json['base'],
+        'baseDomain': !exists(json, 'baseDomain') ? undefined : json['baseDomain'],
         'chartReleasesFromTemplate': !exists(json, 'chartReleasesFromTemplate') ? undefined : json['chartReleasesFromTemplate'],
         'createdAt': !exists(json, 'createdAt') ? undefined : json['createdAt'],
         'defaultCluster': !exists(json, 'defaultCluster') ? undefined : json['defaultCluster'],
@@ -146,6 +159,7 @@ export function V2controllersEnvironmentFromJSONTyped(json: any, ignoreDiscrimin
         'id': !exists(json, 'id') ? undefined : json['id'],
         'lifecycle': !exists(json, 'lifecycle') ? undefined : json['lifecycle'],
         'name': !exists(json, 'name') ? undefined : json['name'],
+        'namePrefixesDomain': !exists(json, 'namePrefixesDomain') ? undefined : json['namePrefixesDomain'],
         'owner': !exists(json, 'owner') ? undefined : json['owner'],
         'requiresSuitability': !exists(json, 'requiresSuitability') ? undefined : json['requiresSuitability'],
         'templateEnvironment': !exists(json, 'templateEnvironment') ? undefined : json['templateEnvironment'],
@@ -165,6 +179,7 @@ export function V2controllersEnvironmentToJSON(value?: V2controllersEnvironment 
     return {
         
         'base': value.base,
+        'baseDomain': value.baseDomain,
         'chartReleasesFromTemplate': value.chartReleasesFromTemplate,
         'createdAt': value.createdAt,
         'defaultCluster': value.defaultCluster,
@@ -173,6 +188,7 @@ export function V2controllersEnvironmentToJSON(value?: V2controllersEnvironment 
         'id': value.id,
         'lifecycle': value.lifecycle,
         'name': value.name,
+        'namePrefixesDomain': value.namePrefixesDomain,
         'owner': value.owner,
         'requiresSuitability': value.requiresSuitability,
         'templateEnvironment': value.templateEnvironment,

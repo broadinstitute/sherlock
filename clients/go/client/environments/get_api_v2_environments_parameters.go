@@ -66,6 +66,11 @@ type GetAPIV2EnvironmentsParams struct {
 	*/
 	Base *string
 
+	// BaseDomain.
+	//
+	// Default: "bee.envs-terra.bio"
+	BaseDomain *string
+
 	/* ChartReleasesFromTemplate.
 
 	   Upon creation of a dynamic environment, if this is true the template's chart releases will be copied to the new environment
@@ -102,6 +107,11 @@ type GetAPIV2EnvironmentsParams struct {
 	   When creating, will be calculated if dynamic, required otherwise
 	*/
 	Name *string
+
+	// NamePrefixesDomain.
+	//
+	// Default: true
+	NamePrefixesDomain *bool
 
 	/* Owner.
 
@@ -142,16 +152,22 @@ func (o *GetAPIV2EnvironmentsParams) WithDefaults() *GetAPIV2EnvironmentsParams 
 // All values with no default are reset to their zero value.
 func (o *GetAPIV2EnvironmentsParams) SetDefaults() {
 	var (
+		baseDomainDefault = string("bee.envs-terra.bio")
+
 		chartReleasesFromTemplateDefault = bool(true)
 
 		lifecycleDefault = string("dynamic")
+
+		namePrefixesDomainDefault = bool(true)
 
 		requiresSuitabilityDefault = bool(false)
 	)
 
 	val := GetAPIV2EnvironmentsParams{
+		BaseDomain:                &baseDomainDefault,
 		ChartReleasesFromTemplate: &chartReleasesFromTemplateDefault,
 		Lifecycle:                 &lifecycleDefault,
+		NamePrefixesDomain:        &namePrefixesDomainDefault,
 		RequiresSuitability:       &requiresSuitabilityDefault,
 	}
 
@@ -203,6 +219,17 @@ func (o *GetAPIV2EnvironmentsParams) WithBase(base *string) *GetAPIV2Environment
 // SetBase adds the base to the get API v2 environments params
 func (o *GetAPIV2EnvironmentsParams) SetBase(base *string) {
 	o.Base = base
+}
+
+// WithBaseDomain adds the baseDomain to the get API v2 environments params
+func (o *GetAPIV2EnvironmentsParams) WithBaseDomain(baseDomain *string) *GetAPIV2EnvironmentsParams {
+	o.SetBaseDomain(baseDomain)
+	return o
+}
+
+// SetBaseDomain adds the baseDomain to the get API v2 environments params
+func (o *GetAPIV2EnvironmentsParams) SetBaseDomain(baseDomain *string) {
+	o.BaseDomain = baseDomain
 }
 
 // WithChartReleasesFromTemplate adds the chartReleasesFromTemplate to the get API v2 environments params
@@ -293,6 +320,17 @@ func (o *GetAPIV2EnvironmentsParams) SetName(name *string) {
 	o.Name = name
 }
 
+// WithNamePrefixesDomain adds the namePrefixesDomain to the get API v2 environments params
+func (o *GetAPIV2EnvironmentsParams) WithNamePrefixesDomain(namePrefixesDomain *bool) *GetAPIV2EnvironmentsParams {
+	o.SetNamePrefixesDomain(namePrefixesDomain)
+	return o
+}
+
+// SetNamePrefixesDomain adds the namePrefixesDomain to the get API v2 environments params
+func (o *GetAPIV2EnvironmentsParams) SetNamePrefixesDomain(namePrefixesDomain *bool) {
+	o.NamePrefixesDomain = namePrefixesDomain
+}
+
 // WithOwner adds the owner to the get API v2 environments params
 func (o *GetAPIV2EnvironmentsParams) WithOwner(owner *string) *GetAPIV2EnvironmentsParams {
 	o.SetOwner(owner)
@@ -368,6 +406,23 @@ func (o *GetAPIV2EnvironmentsParams) WriteToRequest(r runtime.ClientRequest, reg
 		if qBase != "" {
 
 			if err := r.SetQueryParam("base", qBase); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.BaseDomain != nil {
+
+		// query param baseDomain
+		var qrBaseDomain string
+
+		if o.BaseDomain != nil {
+			qrBaseDomain = *o.BaseDomain
+		}
+		qBaseDomain := qrBaseDomain
+		if qBaseDomain != "" {
+
+			if err := r.SetQueryParam("baseDomain", qBaseDomain); err != nil {
 				return err
 			}
 		}
@@ -504,6 +559,23 @@ func (o *GetAPIV2EnvironmentsParams) WriteToRequest(r runtime.ClientRequest, reg
 		if qName != "" {
 
 			if err := r.SetQueryParam("name", qName); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.NamePrefixesDomain != nil {
+
+		// query param namePrefixesDomain
+		var qrNamePrefixesDomain bool
+
+		if o.NamePrefixesDomain != nil {
+			qrNamePrefixesDomain = *o.NamePrefixesDomain
+		}
+		qNamePrefixesDomain := swag.FormatBool(qrNamePrefixesDomain)
+		if qNamePrefixesDomain != "" {
+
+			if err := r.SetQueryParam("namePrefixesDomain", qNamePrefixesDomain); err != nil {
 				return err
 			}
 		}

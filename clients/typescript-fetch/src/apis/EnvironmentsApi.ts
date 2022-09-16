@@ -33,6 +33,7 @@ import {
 
 export interface ApiV2EnvironmentsGetRequest {
     base?: string;
+    baseDomain?: string;
     chartReleasesFromTemplate?: boolean;
     createdAt?: string;
     defaultCluster?: string;
@@ -40,6 +41,7 @@ export interface ApiV2EnvironmentsGetRequest {
     id?: number;
     lifecycle?: string;
     name?: string;
+    namePrefixesDomain?: boolean;
     owner?: string;
     requiresSuitability?: boolean;
     templateEnvironment?: string;
@@ -85,6 +87,10 @@ export class EnvironmentsApi extends runtime.BaseAPI {
             queryParameters['base'] = requestParameters.base;
         }
 
+        if (requestParameters.baseDomain !== undefined) {
+            queryParameters['baseDomain'] = requestParameters.baseDomain;
+        }
+
         if (requestParameters.chartReleasesFromTemplate !== undefined) {
             queryParameters['chartReleasesFromTemplate'] = requestParameters.chartReleasesFromTemplate;
         }
@@ -111,6 +117,10 @@ export class EnvironmentsApi extends runtime.BaseAPI {
 
         if (requestParameters.name !== undefined) {
             queryParameters['name'] = requestParameters.name;
+        }
+
+        if (requestParameters.namePrefixesDomain !== undefined) {
+            queryParameters['namePrefixesDomain'] = requestParameters.namePrefixesDomain;
         }
 
         if (requestParameters.owner !== undefined) {

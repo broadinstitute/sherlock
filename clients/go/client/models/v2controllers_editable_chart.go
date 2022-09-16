@@ -25,6 +25,15 @@ type V2controllersEditableChart struct {
 
 	// chart repo
 	ChartRepo *string `json:"chartRepo,omitempty"`
+
+	// default port
+	DefaultPort *int64 `json:"defaultPort,omitempty"`
+
+	// default protocol
+	DefaultProtocol *string `json:"defaultProtocol,omitempty"`
+
+	// When creating, will default to the name of the chart
+	DefaultSubdomain string `json:"defaultSubdomain,omitempty"`
 }
 
 // Validate validates this v2controllers editable chart

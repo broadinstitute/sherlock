@@ -37,6 +37,24 @@ export interface V2controllersEditableChart {
      * @memberof V2controllersEditableChart
      */
     chartRepo?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof V2controllersEditableChart
+     */
+    defaultPort?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof V2controllersEditableChart
+     */
+    defaultProtocol?: string;
+    /**
+     * When creating, will default to the name of the chart
+     * @type {string}
+     * @memberof V2controllersEditableChart
+     */
+    defaultSubdomain?: string;
 }
 
 /**
@@ -61,6 +79,9 @@ export function V2controllersEditableChartFromJSONTyped(json: any, ignoreDiscrim
         'appImageGitMainBranch': !exists(json, 'appImageGitMainBranch') ? undefined : json['appImageGitMainBranch'],
         'appImageGitRepo': !exists(json, 'appImageGitRepo') ? undefined : json['appImageGitRepo'],
         'chartRepo': !exists(json, 'chartRepo') ? undefined : json['chartRepo'],
+        'defaultPort': !exists(json, 'defaultPort') ? undefined : json['defaultPort'],
+        'defaultProtocol': !exists(json, 'defaultProtocol') ? undefined : json['defaultProtocol'],
+        'defaultSubdomain': !exists(json, 'defaultSubdomain') ? undefined : json['defaultSubdomain'],
     };
 }
 
@@ -76,6 +97,9 @@ export function V2controllersEditableChartToJSON(value?: V2controllersEditableCh
         'appImageGitMainBranch': value.appImageGitMainBranch,
         'appImageGitRepo': value.appImageGitRepo,
         'chartRepo': value.chartRepo,
+        'defaultPort': value.defaultPort,
+        'defaultProtocol': value.defaultProtocol,
+        'defaultSubdomain': value.defaultSubdomain,
     };
 }
 

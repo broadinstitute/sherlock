@@ -730,6 +730,24 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "integer",
+                        "description": "When creating, will use the chart's default if left empty",
+                        "name": "port",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "When creating, will use the chart's default if left empty",
+                        "name": "protocol",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "When creating, will use the chart's default if left empty",
+                        "name": "subdomain",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "name": "updatedAt",
                         "in": "query"
@@ -1335,6 +1353,24 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "name": "createdAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 443,
+                        "name": "defaultPort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "default": "https",
+                        "name": "defaultProtocol",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "When creating, will default to the name of the chart",
+                        "name": "defaultSubdomain",
                         "in": "query"
                     },
                     {
@@ -2109,6 +2145,12 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "default": "bee.envs-terra.bio",
+                        "name": "baseDomain",
+                        "in": "query"
+                    },
+                    {
                         "type": "boolean",
                         "default": true,
                         "description": "Upon creation of a dynamic environment, if this is true the template's chart releases will be copied to the new environment",
@@ -2145,6 +2187,12 @@ const docTemplate = `{
                         "type": "string",
                         "description": "When creating, will be calculated if dynamic, required otherwise",
                         "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "default": true,
+                        "name": "namePrefixesDomain",
                         "in": "query"
                     },
                     {
@@ -3646,6 +3694,18 @@ const docTemplate = `{
                 "createdAt": {
                     "type": "string"
                 },
+                "defaultPort": {
+                    "type": "integer",
+                    "default": 443
+                },
+                "defaultProtocol": {
+                    "type": "string",
+                    "default": "https"
+                },
+                "defaultSubdomain": {
+                    "description": "When creating, will default to the name of the chart",
+                    "type": "string"
+                },
                 "id": {
                     "type": "integer"
                 },
@@ -3745,6 +3805,18 @@ const docTemplate = `{
                 },
                 "namespace": {
                     "description": "When creating, will default to the environment's default namespace, if provided",
+                    "type": "string"
+                },
+                "port": {
+                    "description": "When creating, will use the chart's default if left empty",
+                    "type": "integer"
+                },
+                "protocol": {
+                    "description": "When creating, will use the chart's default if left empty",
+                    "type": "string"
+                },
+                "subdomain": {
+                    "description": "When creating, will use the chart's default if left empty",
                     "type": "string"
                 },
                 "updatedAt": {
@@ -3894,6 +3966,18 @@ const docTemplate = `{
                     "type": "string",
                     "default": "terra-helm"
                 },
+                "defaultPort": {
+                    "type": "integer",
+                    "default": 443
+                },
+                "defaultProtocol": {
+                    "type": "string",
+                    "default": "https"
+                },
+                "defaultSubdomain": {
+                    "description": "When creating, will default to the name of the chart",
+                    "type": "string"
+                },
                 "name": {
                     "description": "Required when creating",
                     "type": "string"
@@ -3956,6 +4040,18 @@ const docTemplate = `{
                 },
                 "namespace": {
                     "description": "When creating, will default to the environment's default namespace, if provided",
+                    "type": "string"
+                },
+                "port": {
+                    "description": "When creating, will use the chart's default if left empty",
+                    "type": "integer"
+                },
+                "protocol": {
+                    "description": "When creating, will use the chart's default if left empty",
+                    "type": "string"
+                },
+                "subdomain": {
+                    "description": "When creating, will use the chart's default if left empty",
                     "type": "string"
                 }
             }
@@ -4021,6 +4117,10 @@ const docTemplate = `{
                     "description": "Required when creating",
                     "type": "string"
                 },
+                "baseDomain": {
+                    "type": "string",
+                    "default": "bee.envs-terra.bio"
+                },
                 "chartReleasesFromTemplate": {
                     "description": "Upon creation of a dynamic environment, if this is true the template's chart releases will be copied to the new environment",
                     "type": "boolean",
@@ -4039,6 +4139,10 @@ const docTemplate = `{
                 "name": {
                     "description": "When creating, will be calculated if dynamic, required otherwise",
                     "type": "string"
+                },
+                "namePrefixesDomain": {
+                    "type": "boolean",
+                    "default": true
                 },
                 "owner": {
                     "description": "When creating, will be set to your email",
@@ -4066,11 +4170,37 @@ const docTemplate = `{
                 "chartRepo": {
                     "type": "string",
                     "default": "terra-helm"
+                },
+                "defaultPort": {
+                    "type": "integer",
+                    "default": 443
+                },
+                "defaultProtocol": {
+                    "type": "string",
+                    "default": "https"
+                },
+                "defaultSubdomain": {
+                    "description": "When creating, will default to the name of the chart",
+                    "type": "string"
                 }
             }
         },
         "v2controllers.EditableChartRelease": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+                "port": {
+                    "description": "When creating, will use the chart's default if left empty",
+                    "type": "integer"
+                },
+                "protocol": {
+                    "description": "When creating, will use the chart's default if left empty",
+                    "type": "string"
+                },
+                "subdomain": {
+                    "description": "When creating, will use the chart's default if left empty",
+                    "type": "string"
+                }
+            }
         },
         "v2controllers.EditableCluster": {
             "description": "The subset of Cluster fields that can be edited after creation",
@@ -4093,11 +4223,19 @@ const docTemplate = `{
         "v2controllers.EditableEnvironment": {
             "type": "object",
             "properties": {
+                "baseDomain": {
+                    "type": "string",
+                    "default": "bee.envs-terra.bio"
+                },
                 "defaultCluster": {
                     "type": "string"
                 },
                 "defaultNamespace": {
                     "type": "string"
+                },
+                "namePrefixesDomain": {
+                    "type": "boolean",
+                    "default": true
                 },
                 "owner": {
                     "description": "When creating, will be set to your email",
@@ -4115,6 +4253,10 @@ const docTemplate = `{
                 "base": {
                     "description": "Required when creating",
                     "type": "string"
+                },
+                "baseDomain": {
+                    "type": "string",
+                    "default": "bee.envs-terra.bio"
                 },
                 "chartReleasesFromTemplate": {
                     "description": "Upon creation of a dynamic environment, if this is true the template's chart releases will be copied to the new environment",
@@ -4143,6 +4285,10 @@ const docTemplate = `{
                 "name": {
                     "description": "When creating, will be calculated if dynamic, required otherwise",
                     "type": "string"
+                },
+                "namePrefixesDomain": {
+                    "type": "boolean",
+                    "default": true
                 },
                 "owner": {
                     "description": "When creating, will be set to your email",

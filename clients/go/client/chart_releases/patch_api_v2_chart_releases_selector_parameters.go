@@ -65,7 +65,7 @@ type PatchAPIV2ChartReleasesSelectorParams struct {
 
 	   The edits to make to the ChartRelease
 	*/
-	ChartRelease models.V2controllersEditableChartRelease
+	ChartRelease *models.V2controllersEditableChartRelease
 
 	/* Selector.
 
@@ -127,13 +127,13 @@ func (o *PatchAPIV2ChartReleasesSelectorParams) SetHTTPClient(client *http.Clien
 }
 
 // WithChartRelease adds the chartRelease to the patch API v2 chart releases selector params
-func (o *PatchAPIV2ChartReleasesSelectorParams) WithChartRelease(chartRelease models.V2controllersEditableChartRelease) *PatchAPIV2ChartReleasesSelectorParams {
+func (o *PatchAPIV2ChartReleasesSelectorParams) WithChartRelease(chartRelease *models.V2controllersEditableChartRelease) *PatchAPIV2ChartReleasesSelectorParams {
 	o.SetChartRelease(chartRelease)
 	return o
 }
 
 // SetChartRelease adds the chartRelease to the patch API v2 chart releases selector params
-func (o *PatchAPIV2ChartReleasesSelectorParams) SetChartRelease(chartRelease models.V2controllersEditableChartRelease) {
+func (o *PatchAPIV2ChartReleasesSelectorParams) SetChartRelease(chartRelease *models.V2controllersEditableChartRelease) {
 	o.ChartRelease = chartRelease
 }
 

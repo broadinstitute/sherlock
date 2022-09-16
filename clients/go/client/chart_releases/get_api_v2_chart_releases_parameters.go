@@ -146,6 +146,24 @@ type GetAPIV2ChartReleasesParams struct {
 	*/
 	Namespace *string
 
+	/* Port.
+
+	   When creating, will use the chart's default if left empty
+	*/
+	Port *int64
+
+	/* Protocol.
+
+	   When creating, will use the chart's default if left empty
+	*/
+	Protocol *string
+
+	/* Subdomain.
+
+	   When creating, will use the chart's default if left empty
+	*/
+	Subdomain *string
+
 	// UpdatedAt.
 	UpdatedAt *string
 
@@ -409,6 +427,39 @@ func (o *GetAPIV2ChartReleasesParams) WithNamespace(namespace *string) *GetAPIV2
 // SetNamespace adds the namespace to the get API v2 chart releases params
 func (o *GetAPIV2ChartReleasesParams) SetNamespace(namespace *string) {
 	o.Namespace = namespace
+}
+
+// WithPort adds the port to the get API v2 chart releases params
+func (o *GetAPIV2ChartReleasesParams) WithPort(port *int64) *GetAPIV2ChartReleasesParams {
+	o.SetPort(port)
+	return o
+}
+
+// SetPort adds the port to the get API v2 chart releases params
+func (o *GetAPIV2ChartReleasesParams) SetPort(port *int64) {
+	o.Port = port
+}
+
+// WithProtocol adds the protocol to the get API v2 chart releases params
+func (o *GetAPIV2ChartReleasesParams) WithProtocol(protocol *string) *GetAPIV2ChartReleasesParams {
+	o.SetProtocol(protocol)
+	return o
+}
+
+// SetProtocol adds the protocol to the get API v2 chart releases params
+func (o *GetAPIV2ChartReleasesParams) SetProtocol(protocol *string) {
+	o.Protocol = protocol
+}
+
+// WithSubdomain adds the subdomain to the get API v2 chart releases params
+func (o *GetAPIV2ChartReleasesParams) WithSubdomain(subdomain *string) *GetAPIV2ChartReleasesParams {
+	o.SetSubdomain(subdomain)
+	return o
+}
+
+// SetSubdomain adds the subdomain to the get API v2 chart releases params
+func (o *GetAPIV2ChartReleasesParams) SetSubdomain(subdomain *string) {
+	o.Subdomain = subdomain
 }
 
 // WithUpdatedAt adds the updatedAt to the get API v2 chart releases params
@@ -731,6 +782,57 @@ func (o *GetAPIV2ChartReleasesParams) WriteToRequest(r runtime.ClientRequest, re
 		if qNamespace != "" {
 
 			if err := r.SetQueryParam("namespace", qNamespace); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.Port != nil {
+
+		// query param port
+		var qrPort int64
+
+		if o.Port != nil {
+			qrPort = *o.Port
+		}
+		qPort := swag.FormatInt64(qrPort)
+		if qPort != "" {
+
+			if err := r.SetQueryParam("port", qPort); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.Protocol != nil {
+
+		// query param protocol
+		var qrProtocol string
+
+		if o.Protocol != nil {
+			qrProtocol = *o.Protocol
+		}
+		qProtocol := qrProtocol
+		if qProtocol != "" {
+
+			if err := r.SetQueryParam("protocol", qProtocol); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.Subdomain != nil {
+
+		// query param subdomain
+		var qrSubdomain string
+
+		if o.Subdomain != nil {
+			qrSubdomain = *o.Subdomain
+		}
+		qSubdomain := qrSubdomain
+		if qSubdomain != "" {
+
+			if err := r.SetQueryParam("subdomain", qSubdomain); err != nil {
 				return err
 			}
 		}

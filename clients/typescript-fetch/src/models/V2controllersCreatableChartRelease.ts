@@ -91,6 +91,24 @@ export interface V2controllersCreatableChartRelease {
      * @memberof V2controllersCreatableChartRelease
      */
     namespace?: string;
+    /**
+     * When creating, will use the chart's default if left empty
+     * @type {number}
+     * @memberof V2controllersCreatableChartRelease
+     */
+    port?: number;
+    /**
+     * When creating, will use the chart's default if left empty
+     * @type {string}
+     * @memberof V2controllersCreatableChartRelease
+     */
+    protocol?: string;
+    /**
+     * When creating, will use the chart's default if left empty
+     * @type {string}
+     * @memberof V2controllersCreatableChartRelease
+     */
+    subdomain?: string;
 }
 
 
@@ -146,6 +164,9 @@ export function V2controllersCreatableChartReleaseFromJSONTyped(json: any, ignor
         'helmfileRef': !exists(json, 'helmfileRef') ? undefined : json['helmfileRef'],
         'name': !exists(json, 'name') ? undefined : json['name'],
         'namespace': !exists(json, 'namespace') ? undefined : json['namespace'],
+        'port': !exists(json, 'port') ? undefined : json['port'],
+        'protocol': !exists(json, 'protocol') ? undefined : json['protocol'],
+        'subdomain': !exists(json, 'subdomain') ? undefined : json['subdomain'],
     };
 }
 
@@ -170,6 +191,9 @@ export function V2controllersCreatableChartReleaseToJSON(value?: V2controllersCr
         'helmfileRef': value.helmfileRef,
         'name': value.name,
         'namespace': value.namespace,
+        'port': value.port,
+        'protocol': value.protocol,
+        'subdomain': value.subdomain,
     };
 }
 

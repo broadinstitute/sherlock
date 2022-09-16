@@ -38,6 +38,24 @@ export interface V2controllersCreatableChart {
      */
     chartRepo?: string;
     /**
+     * 
+     * @type {number}
+     * @memberof V2controllersCreatableChart
+     */
+    defaultPort?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof V2controllersCreatableChart
+     */
+    defaultProtocol?: string;
+    /**
+     * When creating, will default to the name of the chart
+     * @type {string}
+     * @memberof V2controllersCreatableChart
+     */
+    defaultSubdomain?: string;
+    /**
      * Required when creating
      * @type {string}
      * @memberof V2controllersCreatableChart
@@ -67,6 +85,9 @@ export function V2controllersCreatableChartFromJSONTyped(json: any, ignoreDiscri
         'appImageGitMainBranch': !exists(json, 'appImageGitMainBranch') ? undefined : json['appImageGitMainBranch'],
         'appImageGitRepo': !exists(json, 'appImageGitRepo') ? undefined : json['appImageGitRepo'],
         'chartRepo': !exists(json, 'chartRepo') ? undefined : json['chartRepo'],
+        'defaultPort': !exists(json, 'defaultPort') ? undefined : json['defaultPort'],
+        'defaultProtocol': !exists(json, 'defaultProtocol') ? undefined : json['defaultProtocol'],
+        'defaultSubdomain': !exists(json, 'defaultSubdomain') ? undefined : json['defaultSubdomain'],
         'name': !exists(json, 'name') ? undefined : json['name'],
     };
 }
@@ -83,6 +104,9 @@ export function V2controllersCreatableChartToJSON(value?: V2controllersCreatable
         'appImageGitMainBranch': value.appImageGitMainBranch,
         'appImageGitRepo': value.appImageGitRepo,
         'chartRepo': value.chartRepo,
+        'defaultPort': value.defaultPort,
+        'defaultProtocol': value.defaultProtocol,
+        'defaultSubdomain': value.defaultSubdomain,
         'name': value.name,
     };
 }

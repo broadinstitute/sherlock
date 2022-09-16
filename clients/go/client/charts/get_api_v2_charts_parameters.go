@@ -74,6 +74,22 @@ type GetAPIV2ChartsParams struct {
 	// CreatedAt.
 	CreatedAt *string
 
+	// DefaultPort.
+	//
+	// Default: 443
+	DefaultPort *int64
+
+	// DefaultProtocol.
+	//
+	// Default: "https"
+	DefaultProtocol *string
+
+	/* DefaultSubdomain.
+
+	   When creating, will default to the name of the chart
+	*/
+	DefaultSubdomain *string
+
 	// ID.
 	ID *int64
 
@@ -111,10 +127,16 @@ func (o *GetAPIV2ChartsParams) WithDefaults() *GetAPIV2ChartsParams {
 func (o *GetAPIV2ChartsParams) SetDefaults() {
 	var (
 		chartRepoDefault = string("terra-helm")
+
+		defaultPortDefault = int64(443)
+
+		defaultProtocolDefault = string("https")
 	)
 
 	val := GetAPIV2ChartsParams{
-		ChartRepo: &chartRepoDefault,
+		ChartRepo:       &chartRepoDefault,
+		DefaultPort:     &defaultPortDefault,
+		DefaultProtocol: &defaultProtocolDefault,
 	}
 
 	val.timeout = o.timeout
@@ -198,6 +220,39 @@ func (o *GetAPIV2ChartsParams) WithCreatedAt(createdAt *string) *GetAPIV2ChartsP
 // SetCreatedAt adds the createdAt to the get API v2 charts params
 func (o *GetAPIV2ChartsParams) SetCreatedAt(createdAt *string) {
 	o.CreatedAt = createdAt
+}
+
+// WithDefaultPort adds the defaultPort to the get API v2 charts params
+func (o *GetAPIV2ChartsParams) WithDefaultPort(defaultPort *int64) *GetAPIV2ChartsParams {
+	o.SetDefaultPort(defaultPort)
+	return o
+}
+
+// SetDefaultPort adds the defaultPort to the get API v2 charts params
+func (o *GetAPIV2ChartsParams) SetDefaultPort(defaultPort *int64) {
+	o.DefaultPort = defaultPort
+}
+
+// WithDefaultProtocol adds the defaultProtocol to the get API v2 charts params
+func (o *GetAPIV2ChartsParams) WithDefaultProtocol(defaultProtocol *string) *GetAPIV2ChartsParams {
+	o.SetDefaultProtocol(defaultProtocol)
+	return o
+}
+
+// SetDefaultProtocol adds the defaultProtocol to the get API v2 charts params
+func (o *GetAPIV2ChartsParams) SetDefaultProtocol(defaultProtocol *string) {
+	o.DefaultProtocol = defaultProtocol
+}
+
+// WithDefaultSubdomain adds the defaultSubdomain to the get API v2 charts params
+func (o *GetAPIV2ChartsParams) WithDefaultSubdomain(defaultSubdomain *string) *GetAPIV2ChartsParams {
+	o.SetDefaultSubdomain(defaultSubdomain)
+	return o
+}
+
+// SetDefaultSubdomain adds the defaultSubdomain to the get API v2 charts params
+func (o *GetAPIV2ChartsParams) SetDefaultSubdomain(defaultSubdomain *string) {
+	o.DefaultSubdomain = defaultSubdomain
 }
 
 // WithID adds the id to the get API v2 charts params
@@ -315,6 +370,57 @@ func (o *GetAPIV2ChartsParams) WriteToRequest(r runtime.ClientRequest, reg strfm
 		if qCreatedAt != "" {
 
 			if err := r.SetQueryParam("createdAt", qCreatedAt); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.DefaultPort != nil {
+
+		// query param defaultPort
+		var qrDefaultPort int64
+
+		if o.DefaultPort != nil {
+			qrDefaultPort = *o.DefaultPort
+		}
+		qDefaultPort := swag.FormatInt64(qrDefaultPort)
+		if qDefaultPort != "" {
+
+			if err := r.SetQueryParam("defaultPort", qDefaultPort); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.DefaultProtocol != nil {
+
+		// query param defaultProtocol
+		var qrDefaultProtocol string
+
+		if o.DefaultProtocol != nil {
+			qrDefaultProtocol = *o.DefaultProtocol
+		}
+		qDefaultProtocol := qrDefaultProtocol
+		if qDefaultProtocol != "" {
+
+			if err := r.SetQueryParam("defaultProtocol", qDefaultProtocol); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.DefaultSubdomain != nil {
+
+		// query param defaultSubdomain
+		var qrDefaultSubdomain string
+
+		if o.DefaultSubdomain != nil {
+			qrDefaultSubdomain = *o.DefaultSubdomain
+		}
+		qDefaultSubdomain := qrDefaultSubdomain
+		if qDefaultSubdomain != "" {
+
+			if err := r.SetQueryParam("defaultSubdomain", qDefaultSubdomain); err != nil {
 				return err
 			}
 		}
