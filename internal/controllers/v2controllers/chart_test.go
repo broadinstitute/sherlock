@@ -130,6 +130,15 @@ func (suite *chartControllerSuite) TestChartCreate() {
 		suite.Run("default chart repo terra-helm", func() {
 			assert.Equal(suite.T(), "terra-helm", *chart.ChartRepo)
 		})
+		suite.Run("default subdomain is name", func() {
+			assert.Equal(suite.T(), "leonardo", *chart.DefaultSubdomain)
+		})
+		suite.Run("default protocol is https", func() {
+			assert.Equal(suite.T(), "https", *chart.DefaultProtocol)
+		})
+		suite.Run("default port is 443", func() {
+			assert.Equal(suite.T(), uint(443), *chart.DefaultPort)
+		})
 	})
 	suite.Run("chart repo can be customized", func() {
 		db.Truncate(suite.T(), suite.db)

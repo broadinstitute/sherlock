@@ -14,6 +14,9 @@ type Chart struct {
 	ChartRepo             *string `gorm:"not null; default:null"`
 	AppImageGitRepo       *string
 	AppImageGitMainBranch *string
+	DefaultSubdomain      *string
+	DefaultProtocol       *string
+	DefaultPort           *uint
 }
 
 func (c Chart) TableName() string {

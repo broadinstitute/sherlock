@@ -23,6 +23,8 @@ type Environment struct {
 	DefaultNamespace    *string
 	Owner               *string `gorm:"not null;default:null"`
 	RequiresSuitability *bool
+	BaseDomain          *string
+	NamePrefixesDomain  *bool
 }
 
 func (e Environment) TableName() string {
@@ -142,6 +144,9 @@ func postCreateEnvironment(db *gorm.DB, environment *Environment, user *auth.Use
 					Name:                fmt.Sprintf("%s-%s", chartRelease.Chart.Name, environment.Name),
 					Namespace:           *environment.DefaultNamespace,
 					ChartReleaseVersion: chartRelease.ChartReleaseVersion,
+					Subdomain:           chartRelease.Subdomain,
+					Protocol:            chartRelease.Protocol,
+					Port:                chartRelease.Port,
 				}, user)
 			if err != nil {
 				return fmt.Errorf("wasn't able to copy template's release of the %s chart: %v", chartRelease.Chart.Name, err)
