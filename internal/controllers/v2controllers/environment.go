@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/broadinstitute/sherlock/internal/auth"
 	"github.com/broadinstitute/sherlock/internal/models/v2models"
-	"github.com/creasty/defaults"
 	"github.com/dustinkirkland/golang-petname"
 	"gorm.io/gorm"
 	"math/rand"
@@ -34,7 +33,9 @@ type EditableEnvironment struct {
 	DefaultCluster      *string `json:"defaultCluster" form:"defaultCluster"`
 	DefaultNamespace    *string `json:"defaultNamespace" form:"defaultNamespace"`
 	Owner               *string `json:"owner" form:"owner"` // When creating, will be set to your email
-	RequiresSuitability *bool   `json:"requiresSuitability" default:"false" form:"requiresSuitability"`
+	RequiresSuitability *bool   `json:"requiresSuitability" form:"requiresSuitability" default:"false"`
+	BaseDomain          *string `json:"baseDomain" form:"baseDomain" default:"bee.envs-terra.bio"`
+	NamePrefixesDomain  *bool   `json:"namePrefixesDomain" form:"namePrefixesDomain" default:"true"`
 }
 
 //nolint:unused
@@ -96,6 +97,8 @@ func modelEnvironmentToEnvironment(model *v2models.Environment) *Environment {
 				DefaultNamespace:    model.DefaultNamespace,
 				Owner:               model.Owner,
 				RequiresSuitability: model.RequiresSuitability,
+				BaseDomain:          model.BaseDomain,
+				NamePrefixesDomain:  model.NamePrefixesDomain,
 			},
 		},
 	}
@@ -134,6 +137,8 @@ func environmentToModelEnvironment(environment Environment, stores *v2models.Sto
 		DefaultNamespace:          environment.DefaultNamespace,
 		Owner:                     environment.Owner,
 		RequiresSuitability:       environment.RequiresSuitability,
+		BaseDomain:                environment.BaseDomain,
+		NamePrefixesDomain:        environment.NamePrefixesDomain,
 	}, nil
 }
 
@@ -169,6 +174,12 @@ func setEnvironmentDynamicDefaults(environment *Environment, stores *v2models.St
 			if len(environment.Name) > 32 {
 				environment.Name = strings.TrimSuffix(environment.Name[0:31], "-")
 			}
+		}
+		if environment.BaseDomain == nil {
+			environment.BaseDomain = templateEnvironment.BaseDomain
+		}
+		if environment.NamePrefixesDomain == nil {
+			environment.NamePrefixesDomain = templateEnvironment.NamePrefixesDomain
 		}
 	} else {
 		// If there's no template, the valuesName to use is the name of this environment

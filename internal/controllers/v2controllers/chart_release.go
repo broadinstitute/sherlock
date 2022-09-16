@@ -39,7 +39,9 @@ type CreatableChartRelease struct {
 }
 
 type EditableChartRelease struct {
-	// I'm sure we'll have something here pretty soon--maybe that `subdomain` field I had added to Thelma a while back?
+	Subdomain *string `json:"subdomain,omitempty" form:"subdomain"` // When creating, will use the chart's default if left empty
+	Protocol  *string `json:"protocol,omitempty" form:"protocol"`   // When creating, will use the chart's default if left empty
+	Port      *uint   `json:"port,omitempty" form:"port"`           // When creating, will use the chart's default if left empty
 }
 
 //nolint:unused
@@ -130,7 +132,11 @@ func modelChartReleaseToChartRelease(model *v2models.ChartRelease) *ChartRelease
 			ChartVersionResolver: model.ChartVersionResolver,
 			ChartVersionExact:    model.ChartVersionExact,
 			HelmfileRef:          model.HelmfileRef,
-			EditableChartRelease: EditableChartRelease{},
+			EditableChartRelease: EditableChartRelease{
+				Subdomain: model.Subdomain,
+				Protocol:  model.Protocol,
+				Port:      model.Port,
+			},
 		},
 	}
 }
@@ -199,6 +205,9 @@ func chartReleaseToModelChartRelease(chartRelease ChartRelease, stores *v2models
 			ChartVersionID:       chartVersionID,
 			HelmfileRef:          chartRelease.HelmfileRef,
 		},
+		Subdomain: chartRelease.Subdomain,
+		Protocol:  chartRelease.Protocol,
+		Port:      chartRelease.Port,
 	}, nil
 }
 
@@ -209,6 +218,15 @@ func setChartReleaseDynamicDefaults(chartRelease *ChartRelease, stores *v2models
 	}
 	if chart.AppImageGitMainBranch != nil && *chart.AppImageGitMainBranch != "" && chartRelease.AppVersionBranch == nil {
 		chartRelease.AppVersionBranch = chart.AppImageGitMainBranch
+	}
+	if chartRelease.Subdomain == nil {
+		chartRelease.Subdomain = chart.DefaultSubdomain
+	}
+	if chartRelease.Protocol == nil {
+		chartRelease.Protocol = chart.DefaultProtocol
+	}
+	if chartRelease.Port == nil {
+		chartRelease.Port = chart.DefaultPort
 	}
 
 	if chartRelease.AppVersionResolver == nil {

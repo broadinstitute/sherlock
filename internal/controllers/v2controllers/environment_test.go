@@ -242,6 +242,12 @@ func (suite *environmentControllerSuite) TestEnvironmentCreate() {
 		environment, created, err := suite.EnvironmentController.Create(CreatableEnvironment{TemplateEnvironment: swatomationEnvironment.Name}, auth.GenerateUser(suite.T(), false))
 		assert.NoError(suite.T(), err)
 		assert.True(suite.T(), created)
+		suite.Run("copies base domain", func() {
+			assert.Equal(suite.T(), "bee.envs-terra.bio", *environment.BaseDomain)
+		})
+		suite.Run("copies name prefixing", func() {
+			assert.Equal(suite.T(), true, *environment.NamePrefixesDomain)
+		})
 
 		environmentReleases, err := suite.ChartReleaseController.ListAllMatching(
 			ChartRelease{CreatableChartRelease: CreatableChartRelease{Environment: environment.Name}}, 0)
@@ -255,6 +261,7 @@ func (suite *environmentControllerSuite) TestEnvironmentCreate() {
 					// The template gets this field set based on the Chart's app main branch, dynamic should copy
 					assert.Equal(suite.T(), swatRelease.AppVersionBranch, envRelease.AppVersionBranch)
 					assert.True(suite.T(), envRelease.ID > 0)
+					assert.Equal(suite.T(), *swatRelease.Subdomain, *envRelease.Subdomain)
 				}
 			}
 			assert.True(suite.T(), found)

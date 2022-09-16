@@ -247,6 +247,15 @@ func (suite *chartReleaseControllerSuite) TestChartReleaseCreate() {
 			suite.Run("sets destination type to environment", func() {
 				assert.Equal(suite.T(), "environment", release.DestinationType)
 			})
+			suite.Run("default to chart subdomain", func() {
+				assert.Equal(suite.T(), "leonardo", *release.Subdomain)
+			})
+			suite.Run("default to chart protocol", func() {
+				assert.Equal(suite.T(), "https", *release.Protocol)
+			})
+			suite.Run("default to chart port", func() {
+				assert.Equal(suite.T(), uint(443), *release.Port)
+			})
 		})
 		suite.Run("custom cluster app release", func() {
 			release, created, err := suite.ChartReleaseController.Create(datarepoDevChartRelease, auth.GenerateUser(suite.T(), false))

@@ -21,6 +21,9 @@ type ChartRelease struct {
 	Name            string `gorm:"not null; default:null; unique"`
 	Namespace       string
 	ChartReleaseVersion
+	Subdomain *string
+	Protocol  *string
+	Port      *uint
 }
 
 func (c ChartRelease) TableName() string {
