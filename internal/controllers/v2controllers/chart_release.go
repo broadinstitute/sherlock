@@ -219,14 +219,16 @@ func setChartReleaseDynamicDefaults(chartRelease *ChartRelease, stores *v2models
 	if chart.AppImageGitMainBranch != nil && *chart.AppImageGitMainBranch != "" && chartRelease.AppVersionBranch == nil {
 		chartRelease.AppVersionBranch = chart.AppImageGitMainBranch
 	}
-	if chartRelease.Subdomain == nil {
-		chartRelease.Subdomain = chart.DefaultSubdomain
-	}
-	if chartRelease.Protocol == nil {
-		chartRelease.Protocol = chart.DefaultProtocol
-	}
-	if chartRelease.Port == nil {
-		chartRelease.Port = chart.DefaultPort
+	if chart.ChartExposesEndpoint != nil && *chart.ChartExposesEndpoint {
+		if chartRelease.Subdomain == nil {
+			chartRelease.Subdomain = chart.DefaultSubdomain
+		}
+		if chartRelease.Protocol == nil {
+			chartRelease.Protocol = chart.DefaultProtocol
+		}
+		if chartRelease.Port == nil {
+			chartRelease.Port = chart.DefaultPort
+		}
 	}
 
 	if chartRelease.AppVersionResolver == nil {
