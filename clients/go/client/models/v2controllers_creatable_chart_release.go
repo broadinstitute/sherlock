@@ -20,17 +20,31 @@ import (
 // swagger:model v2controllers.CreatableChartRelease
 type V2controllersCreatableChartRelease struct {
 
+	// When creating, will default to the app's mainline branch if no other app version info is present
+	AppVersionBranch string `json:"appVersionBranch,omitempty"`
+
+	// app version commit
+	AppVersionCommit string `json:"appVersionCommit,omitempty"`
+
+	// app version exact
+	AppVersionExact string `json:"appVersionExact,omitempty"`
+
+	// // When creating, will default to automatically reference any provided app version fields
+	// Enum: [branch commit exact none]
+	AppVersionResolver string `json:"appVersionResolver,omitempty"`
+
 	// Required when creating
 	Chart string `json:"chart,omitempty"`
 
+	// chart version exact
+	ChartVersionExact string `json:"chartVersionExact,omitempty"`
+
+	// When creating, will default to automatically reference any provided chart version
+	// Enum: [latest exact]
+	ChartVersionResolver string `json:"chartVersionResolver,omitempty"`
+
 	// When creating, will default the environment's default cluster, if provided. Either this or environment must be provided.
 	Cluster string `json:"cluster,omitempty"`
-
-	// current app version exact
-	CurrentAppVersionExact string `json:"currentAppVersionExact,omitempty"`
-
-	// current chart version exact
-	CurrentChartVersionExact string `json:"currentChartVersionExact,omitempty"`
 
 	// Either this or cluster must be provided.
 	Environment string `json:"environment,omitempty"`
@@ -43,40 +57,17 @@ type V2controllersCreatableChartRelease struct {
 
 	// When creating, will default to the environment's default namespace, if provided
 	Namespace string `json:"namespace,omitempty"`
-
-	// When creating, will default to the app's main branch if it has one recorded
-	TargetAppVersionBranch string `json:"targetAppVersionBranch,omitempty"`
-
-	// target app version commit
-	TargetAppVersionCommit string `json:"targetAppVersionCommit,omitempty"`
-
-	// target app version exact
-	TargetAppVersionExact string `json:"targetAppVersionExact,omitempty"`
-
-	// When creating, will default to referencing any provided target app version field (exact, then commit, then branch)
-	// Enum: [branch commit exact]
-	TargetAppVersionUse string `json:"targetAppVersionUse,omitempty"`
-
-	// target chart version exact
-	TargetChartVersionExact string `json:"targetChartVersionExact,omitempty"`
-
-	// When creating, will default to latest unless an exact target chart version is provided
-	// Enum: [latest exact]
-	TargetChartVersionUse string `json:"targetChartVersionUse,omitempty"`
-
-	// thelma mode
-	ThelmaMode string `json:"thelmaMode,omitempty"`
 }
 
 // Validate validates this v2controllers creatable chart release
 func (m *V2controllersCreatableChartRelease) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateTargetAppVersionUse(formats); err != nil {
+	if err := m.validateAppVersionResolver(formats); err != nil {
 		res = append(res, err)
 	}
 
-	if err := m.validateTargetChartVersionUse(formats); err != nil {
+	if err := m.validateChartVersionResolver(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -86,52 +77,55 @@ func (m *V2controllersCreatableChartRelease) Validate(formats strfmt.Registry) e
 	return nil
 }
 
-var v2controllersCreatableChartReleaseTypeTargetAppVersionUsePropEnum []interface{}
+var v2controllersCreatableChartReleaseTypeAppVersionResolverPropEnum []interface{}
 
 func init() {
 	var res []string
-	if err := json.Unmarshal([]byte(`["branch","commit","exact"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["branch","commit","exact","none"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
-		v2controllersCreatableChartReleaseTypeTargetAppVersionUsePropEnum = append(v2controllersCreatableChartReleaseTypeTargetAppVersionUsePropEnum, v)
+		v2controllersCreatableChartReleaseTypeAppVersionResolverPropEnum = append(v2controllersCreatableChartReleaseTypeAppVersionResolverPropEnum, v)
 	}
 }
 
 const (
 
-	// V2controllersCreatableChartReleaseTargetAppVersionUseBranch captures enum value "branch"
-	V2controllersCreatableChartReleaseTargetAppVersionUseBranch string = "branch"
+	// V2controllersCreatableChartReleaseAppVersionResolverBranch captures enum value "branch"
+	V2controllersCreatableChartReleaseAppVersionResolverBranch string = "branch"
 
-	// V2controllersCreatableChartReleaseTargetAppVersionUseCommit captures enum value "commit"
-	V2controllersCreatableChartReleaseTargetAppVersionUseCommit string = "commit"
+	// V2controllersCreatableChartReleaseAppVersionResolverCommit captures enum value "commit"
+	V2controllersCreatableChartReleaseAppVersionResolverCommit string = "commit"
 
-	// V2controllersCreatableChartReleaseTargetAppVersionUseExact captures enum value "exact"
-	V2controllersCreatableChartReleaseTargetAppVersionUseExact string = "exact"
+	// V2controllersCreatableChartReleaseAppVersionResolverExact captures enum value "exact"
+	V2controllersCreatableChartReleaseAppVersionResolverExact string = "exact"
+
+	// V2controllersCreatableChartReleaseAppVersionResolverNone captures enum value "none"
+	V2controllersCreatableChartReleaseAppVersionResolverNone string = "none"
 )
 
 // prop value enum
-func (m *V2controllersCreatableChartRelease) validateTargetAppVersionUseEnum(path, location string, value string) error {
-	if err := validate.EnumCase(path, location, value, v2controllersCreatableChartReleaseTypeTargetAppVersionUsePropEnum, true); err != nil {
+func (m *V2controllersCreatableChartRelease) validateAppVersionResolverEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, v2controllersCreatableChartReleaseTypeAppVersionResolverPropEnum, true); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (m *V2controllersCreatableChartRelease) validateTargetAppVersionUse(formats strfmt.Registry) error {
-	if swag.IsZero(m.TargetAppVersionUse) { // not required
+func (m *V2controllersCreatableChartRelease) validateAppVersionResolver(formats strfmt.Registry) error {
+	if swag.IsZero(m.AppVersionResolver) { // not required
 		return nil
 	}
 
 	// value enum
-	if err := m.validateTargetAppVersionUseEnum("targetAppVersionUse", "body", m.TargetAppVersionUse); err != nil {
+	if err := m.validateAppVersionResolverEnum("appVersionResolver", "body", m.AppVersionResolver); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-var v2controllersCreatableChartReleaseTypeTargetChartVersionUsePropEnum []interface{}
+var v2controllersCreatableChartReleaseTypeChartVersionResolverPropEnum []interface{}
 
 func init() {
 	var res []string
@@ -139,34 +133,34 @@ func init() {
 		panic(err)
 	}
 	for _, v := range res {
-		v2controllersCreatableChartReleaseTypeTargetChartVersionUsePropEnum = append(v2controllersCreatableChartReleaseTypeTargetChartVersionUsePropEnum, v)
+		v2controllersCreatableChartReleaseTypeChartVersionResolverPropEnum = append(v2controllersCreatableChartReleaseTypeChartVersionResolverPropEnum, v)
 	}
 }
 
 const (
 
-	// V2controllersCreatableChartReleaseTargetChartVersionUseLatest captures enum value "latest"
-	V2controllersCreatableChartReleaseTargetChartVersionUseLatest string = "latest"
+	// V2controllersCreatableChartReleaseChartVersionResolverLatest captures enum value "latest"
+	V2controllersCreatableChartReleaseChartVersionResolverLatest string = "latest"
 
-	// V2controllersCreatableChartReleaseTargetChartVersionUseExact captures enum value "exact"
-	V2controllersCreatableChartReleaseTargetChartVersionUseExact string = "exact"
+	// V2controllersCreatableChartReleaseChartVersionResolverExact captures enum value "exact"
+	V2controllersCreatableChartReleaseChartVersionResolverExact string = "exact"
 )
 
 // prop value enum
-func (m *V2controllersCreatableChartRelease) validateTargetChartVersionUseEnum(path, location string, value string) error {
-	if err := validate.EnumCase(path, location, value, v2controllersCreatableChartReleaseTypeTargetChartVersionUsePropEnum, true); err != nil {
+func (m *V2controllersCreatableChartRelease) validateChartVersionResolverEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, v2controllersCreatableChartReleaseTypeChartVersionResolverPropEnum, true); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (m *V2controllersCreatableChartRelease) validateTargetChartVersionUse(formats strfmt.Registry) error {
-	if swag.IsZero(m.TargetChartVersionUse) { // not required
+func (m *V2controllersCreatableChartRelease) validateChartVersionResolver(formats strfmt.Registry) error {
+	if swag.IsZero(m.ChartVersionResolver) { // not required
 		return nil
 	}
 
 	// value enum
-	if err := m.validateTargetChartVersionUseEnum("targetChartVersionUse", "body", m.TargetChartVersionUse); err != nil {
+	if err := m.validateChartVersionResolverEnum("chartVersionResolver", "body", m.ChartVersionResolver); err != nil {
 		return err
 	}
 

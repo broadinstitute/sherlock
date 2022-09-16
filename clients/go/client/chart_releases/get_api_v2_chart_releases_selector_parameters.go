@@ -61,7 +61,7 @@ type GetAPIV2ChartReleasesSelectorParams struct {
 
 	/* Selector.
 
-	   The ChartRelease to get's selector: name or numeric ID
+	   The ChartRelease to get's selector
 	*/
 	Selector string
 

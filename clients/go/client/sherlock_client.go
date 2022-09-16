@@ -11,7 +11,7 @@ import (
 	"github.com/go-openapi/strfmt"
 
 	"github.com/broadinstitute/sherlock/clients/go/client/app_versions"
-	"github.com/broadinstitute/sherlock/clients/go/client/chart_deploy_records"
+	"github.com/broadinstitute/sherlock/clients/go/client/changesets"
 	"github.com/broadinstitute/sherlock/clients/go/client/chart_releases"
 	"github.com/broadinstitute/sherlock/clients/go/client/chart_versions"
 	"github.com/broadinstitute/sherlock/clients/go/client/charts"
@@ -63,7 +63,7 @@ func New(transport runtime.ClientTransport, formats strfmt.Registry) *Sherlock {
 	cli := new(Sherlock)
 	cli.Transport = transport
 	cli.AppVersions = app_versions.New(transport, formats)
-	cli.ChartDeployRecords = chart_deploy_records.New(transport, formats)
+	cli.Changesets = changesets.New(transport, formats)
 	cli.ChartReleases = chart_releases.New(transport, formats)
 	cli.ChartVersions = chart_versions.New(transport, formats)
 	cli.Charts = charts.New(transport, formats)
@@ -116,7 +116,7 @@ func (cfg *TransportConfig) WithSchemes(schemes []string) *TransportConfig {
 type Sherlock struct {
 	AppVersions app_versions.ClientService
 
-	ChartDeployRecords chart_deploy_records.ClientService
+	Changesets changesets.ClientService
 
 	ChartReleases chart_releases.ClientService
 
@@ -137,7 +137,7 @@ type Sherlock struct {
 func (c *Sherlock) SetTransport(transport runtime.ClientTransport) {
 	c.Transport = transport
 	c.AppVersions.SetTransport(transport)
-	c.ChartDeployRecords.SetTransport(transport)
+	c.Changesets.SetTransport(transport)
 	c.ChartReleases.SetTransport(transport)
 	c.ChartVersions.SetTransport(transport)
 	c.Charts.SetTransport(transport)

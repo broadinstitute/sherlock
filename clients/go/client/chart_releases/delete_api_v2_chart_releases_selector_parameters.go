@@ -61,7 +61,7 @@ type DeleteAPIV2ChartReleasesSelectorParams struct {
 
 	/* Selector.
 
-	   The ChartRelease to delete's selector: name or numeric ID
+	   The ChartRelease to delete's selector
 	*/
 	Selector string
 

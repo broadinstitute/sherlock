@@ -60,11 +60,44 @@ func NewGetAPIV2ChartReleasesParamsWithHTTPClient(client *http.Client) *GetAPIV2
 */
 type GetAPIV2ChartReleasesParams struct {
 
+	/* AppVersionBranch.
+
+	   When creating, will default to the app's mainline branch if no other app version info is present
+	*/
+	AppVersionBranch *string
+
+	// AppVersionCommit.
+	AppVersionCommit *string
+
+	// AppVersionExact.
+	AppVersionExact *string
+
+	// AppVersionReference.
+	AppVersionReference *string
+
+	/* AppVersionResolver.
+
+	   // When creating, will default to automatically reference any provided app version fields
+	*/
+	AppVersionResolver *string
+
 	/* Chart.
 
 	   Required when creating
 	*/
 	Chart *string
+
+	// ChartVersionExact.
+	ChartVersionExact *string
+
+	// ChartVersionReference.
+	ChartVersionReference *string
+
+	/* ChartVersionResolver.
+
+	   When creating, will default to automatically reference any provided chart version
+	*/
+	ChartVersionResolver *string
 
 	/* Cluster.
 
@@ -74,12 +107,6 @@ type GetAPIV2ChartReleasesParams struct {
 
 	// CreatedAt.
 	CreatedAt *string
-
-	// CurrentAppVersionExact.
-	CurrentAppVersionExact *string
-
-	// CurrentChartVersionExact.
-	CurrentChartVersionExact *string
 
 	/* DestinationType.
 
@@ -118,36 +145,6 @@ type GetAPIV2ChartReleasesParams struct {
 	   When creating, will default to the environment's default namespace, if provided
 	*/
 	Namespace *string
-
-	/* TargetAppVersionBranch.
-
-	   When creating, will default to the app's main branch if it has one recorded
-	*/
-	TargetAppVersionBranch *string
-
-	// TargetAppVersionCommit.
-	TargetAppVersionCommit *string
-
-	// TargetAppVersionExact.
-	TargetAppVersionExact *string
-
-	/* TargetAppVersionUse.
-
-	   When creating, will default to referencing any provided target app version field (exact, then commit, then branch)
-	*/
-	TargetAppVersionUse *string
-
-	// TargetChartVersionExact.
-	TargetChartVersionExact *string
-
-	/* TargetChartVersionUse.
-
-	   When creating, will default to latest unless an exact target chart version is provided
-	*/
-	TargetChartVersionUse *string
-
-	// ThelmaMode.
-	ThelmaMode *string
 
 	// UpdatedAt.
 	UpdatedAt *string
@@ -216,6 +213,61 @@ func (o *GetAPIV2ChartReleasesParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
+// WithAppVersionBranch adds the appVersionBranch to the get API v2 chart releases params
+func (o *GetAPIV2ChartReleasesParams) WithAppVersionBranch(appVersionBranch *string) *GetAPIV2ChartReleasesParams {
+	o.SetAppVersionBranch(appVersionBranch)
+	return o
+}
+
+// SetAppVersionBranch adds the appVersionBranch to the get API v2 chart releases params
+func (o *GetAPIV2ChartReleasesParams) SetAppVersionBranch(appVersionBranch *string) {
+	o.AppVersionBranch = appVersionBranch
+}
+
+// WithAppVersionCommit adds the appVersionCommit to the get API v2 chart releases params
+func (o *GetAPIV2ChartReleasesParams) WithAppVersionCommit(appVersionCommit *string) *GetAPIV2ChartReleasesParams {
+	o.SetAppVersionCommit(appVersionCommit)
+	return o
+}
+
+// SetAppVersionCommit adds the appVersionCommit to the get API v2 chart releases params
+func (o *GetAPIV2ChartReleasesParams) SetAppVersionCommit(appVersionCommit *string) {
+	o.AppVersionCommit = appVersionCommit
+}
+
+// WithAppVersionExact adds the appVersionExact to the get API v2 chart releases params
+func (o *GetAPIV2ChartReleasesParams) WithAppVersionExact(appVersionExact *string) *GetAPIV2ChartReleasesParams {
+	o.SetAppVersionExact(appVersionExact)
+	return o
+}
+
+// SetAppVersionExact adds the appVersionExact to the get API v2 chart releases params
+func (o *GetAPIV2ChartReleasesParams) SetAppVersionExact(appVersionExact *string) {
+	o.AppVersionExact = appVersionExact
+}
+
+// WithAppVersionReference adds the appVersionReference to the get API v2 chart releases params
+func (o *GetAPIV2ChartReleasesParams) WithAppVersionReference(appVersionReference *string) *GetAPIV2ChartReleasesParams {
+	o.SetAppVersionReference(appVersionReference)
+	return o
+}
+
+// SetAppVersionReference adds the appVersionReference to the get API v2 chart releases params
+func (o *GetAPIV2ChartReleasesParams) SetAppVersionReference(appVersionReference *string) {
+	o.AppVersionReference = appVersionReference
+}
+
+// WithAppVersionResolver adds the appVersionResolver to the get API v2 chart releases params
+func (o *GetAPIV2ChartReleasesParams) WithAppVersionResolver(appVersionResolver *string) *GetAPIV2ChartReleasesParams {
+	o.SetAppVersionResolver(appVersionResolver)
+	return o
+}
+
+// SetAppVersionResolver adds the appVersionResolver to the get API v2 chart releases params
+func (o *GetAPIV2ChartReleasesParams) SetAppVersionResolver(appVersionResolver *string) {
+	o.AppVersionResolver = appVersionResolver
+}
+
 // WithChart adds the chart to the get API v2 chart releases params
 func (o *GetAPIV2ChartReleasesParams) WithChart(chart *string) *GetAPIV2ChartReleasesParams {
 	o.SetChart(chart)
@@ -225,6 +277,39 @@ func (o *GetAPIV2ChartReleasesParams) WithChart(chart *string) *GetAPIV2ChartRel
 // SetChart adds the chart to the get API v2 chart releases params
 func (o *GetAPIV2ChartReleasesParams) SetChart(chart *string) {
 	o.Chart = chart
+}
+
+// WithChartVersionExact adds the chartVersionExact to the get API v2 chart releases params
+func (o *GetAPIV2ChartReleasesParams) WithChartVersionExact(chartVersionExact *string) *GetAPIV2ChartReleasesParams {
+	o.SetChartVersionExact(chartVersionExact)
+	return o
+}
+
+// SetChartVersionExact adds the chartVersionExact to the get API v2 chart releases params
+func (o *GetAPIV2ChartReleasesParams) SetChartVersionExact(chartVersionExact *string) {
+	o.ChartVersionExact = chartVersionExact
+}
+
+// WithChartVersionReference adds the chartVersionReference to the get API v2 chart releases params
+func (o *GetAPIV2ChartReleasesParams) WithChartVersionReference(chartVersionReference *string) *GetAPIV2ChartReleasesParams {
+	o.SetChartVersionReference(chartVersionReference)
+	return o
+}
+
+// SetChartVersionReference adds the chartVersionReference to the get API v2 chart releases params
+func (o *GetAPIV2ChartReleasesParams) SetChartVersionReference(chartVersionReference *string) {
+	o.ChartVersionReference = chartVersionReference
+}
+
+// WithChartVersionResolver adds the chartVersionResolver to the get API v2 chart releases params
+func (o *GetAPIV2ChartReleasesParams) WithChartVersionResolver(chartVersionResolver *string) *GetAPIV2ChartReleasesParams {
+	o.SetChartVersionResolver(chartVersionResolver)
+	return o
+}
+
+// SetChartVersionResolver adds the chartVersionResolver to the get API v2 chart releases params
+func (o *GetAPIV2ChartReleasesParams) SetChartVersionResolver(chartVersionResolver *string) {
+	o.ChartVersionResolver = chartVersionResolver
 }
 
 // WithCluster adds the cluster to the get API v2 chart releases params
@@ -247,28 +332,6 @@ func (o *GetAPIV2ChartReleasesParams) WithCreatedAt(createdAt *string) *GetAPIV2
 // SetCreatedAt adds the createdAt to the get API v2 chart releases params
 func (o *GetAPIV2ChartReleasesParams) SetCreatedAt(createdAt *string) {
 	o.CreatedAt = createdAt
-}
-
-// WithCurrentAppVersionExact adds the currentAppVersionExact to the get API v2 chart releases params
-func (o *GetAPIV2ChartReleasesParams) WithCurrentAppVersionExact(currentAppVersionExact *string) *GetAPIV2ChartReleasesParams {
-	o.SetCurrentAppVersionExact(currentAppVersionExact)
-	return o
-}
-
-// SetCurrentAppVersionExact adds the currentAppVersionExact to the get API v2 chart releases params
-func (o *GetAPIV2ChartReleasesParams) SetCurrentAppVersionExact(currentAppVersionExact *string) {
-	o.CurrentAppVersionExact = currentAppVersionExact
-}
-
-// WithCurrentChartVersionExact adds the currentChartVersionExact to the get API v2 chart releases params
-func (o *GetAPIV2ChartReleasesParams) WithCurrentChartVersionExact(currentChartVersionExact *string) *GetAPIV2ChartReleasesParams {
-	o.SetCurrentChartVersionExact(currentChartVersionExact)
-	return o
-}
-
-// SetCurrentChartVersionExact adds the currentChartVersionExact to the get API v2 chart releases params
-func (o *GetAPIV2ChartReleasesParams) SetCurrentChartVersionExact(currentChartVersionExact *string) {
-	o.CurrentChartVersionExact = currentChartVersionExact
 }
 
 // WithDestinationType adds the destinationType to the get API v2 chart releases params
@@ -348,83 +411,6 @@ func (o *GetAPIV2ChartReleasesParams) SetNamespace(namespace *string) {
 	o.Namespace = namespace
 }
 
-// WithTargetAppVersionBranch adds the targetAppVersionBranch to the get API v2 chart releases params
-func (o *GetAPIV2ChartReleasesParams) WithTargetAppVersionBranch(targetAppVersionBranch *string) *GetAPIV2ChartReleasesParams {
-	o.SetTargetAppVersionBranch(targetAppVersionBranch)
-	return o
-}
-
-// SetTargetAppVersionBranch adds the targetAppVersionBranch to the get API v2 chart releases params
-func (o *GetAPIV2ChartReleasesParams) SetTargetAppVersionBranch(targetAppVersionBranch *string) {
-	o.TargetAppVersionBranch = targetAppVersionBranch
-}
-
-// WithTargetAppVersionCommit adds the targetAppVersionCommit to the get API v2 chart releases params
-func (o *GetAPIV2ChartReleasesParams) WithTargetAppVersionCommit(targetAppVersionCommit *string) *GetAPIV2ChartReleasesParams {
-	o.SetTargetAppVersionCommit(targetAppVersionCommit)
-	return o
-}
-
-// SetTargetAppVersionCommit adds the targetAppVersionCommit to the get API v2 chart releases params
-func (o *GetAPIV2ChartReleasesParams) SetTargetAppVersionCommit(targetAppVersionCommit *string) {
-	o.TargetAppVersionCommit = targetAppVersionCommit
-}
-
-// WithTargetAppVersionExact adds the targetAppVersionExact to the get API v2 chart releases params
-func (o *GetAPIV2ChartReleasesParams) WithTargetAppVersionExact(targetAppVersionExact *string) *GetAPIV2ChartReleasesParams {
-	o.SetTargetAppVersionExact(targetAppVersionExact)
-	return o
-}
-
-// SetTargetAppVersionExact adds the targetAppVersionExact to the get API v2 chart releases params
-func (o *GetAPIV2ChartReleasesParams) SetTargetAppVersionExact(targetAppVersionExact *string) {
-	o.TargetAppVersionExact = targetAppVersionExact
-}
-
-// WithTargetAppVersionUse adds the targetAppVersionUse to the get API v2 chart releases params
-func (o *GetAPIV2ChartReleasesParams) WithTargetAppVersionUse(targetAppVersionUse *string) *GetAPIV2ChartReleasesParams {
-	o.SetTargetAppVersionUse(targetAppVersionUse)
-	return o
-}
-
-// SetTargetAppVersionUse adds the targetAppVersionUse to the get API v2 chart releases params
-func (o *GetAPIV2ChartReleasesParams) SetTargetAppVersionUse(targetAppVersionUse *string) {
-	o.TargetAppVersionUse = targetAppVersionUse
-}
-
-// WithTargetChartVersionExact adds the targetChartVersionExact to the get API v2 chart releases params
-func (o *GetAPIV2ChartReleasesParams) WithTargetChartVersionExact(targetChartVersionExact *string) *GetAPIV2ChartReleasesParams {
-	o.SetTargetChartVersionExact(targetChartVersionExact)
-	return o
-}
-
-// SetTargetChartVersionExact adds the targetChartVersionExact to the get API v2 chart releases params
-func (o *GetAPIV2ChartReleasesParams) SetTargetChartVersionExact(targetChartVersionExact *string) {
-	o.TargetChartVersionExact = targetChartVersionExact
-}
-
-// WithTargetChartVersionUse adds the targetChartVersionUse to the get API v2 chart releases params
-func (o *GetAPIV2ChartReleasesParams) WithTargetChartVersionUse(targetChartVersionUse *string) *GetAPIV2ChartReleasesParams {
-	o.SetTargetChartVersionUse(targetChartVersionUse)
-	return o
-}
-
-// SetTargetChartVersionUse adds the targetChartVersionUse to the get API v2 chart releases params
-func (o *GetAPIV2ChartReleasesParams) SetTargetChartVersionUse(targetChartVersionUse *string) {
-	o.TargetChartVersionUse = targetChartVersionUse
-}
-
-// WithThelmaMode adds the thelmaMode to the get API v2 chart releases params
-func (o *GetAPIV2ChartReleasesParams) WithThelmaMode(thelmaMode *string) *GetAPIV2ChartReleasesParams {
-	o.SetThelmaMode(thelmaMode)
-	return o
-}
-
-// SetThelmaMode adds the thelmaMode to the get API v2 chart releases params
-func (o *GetAPIV2ChartReleasesParams) SetThelmaMode(thelmaMode *string) {
-	o.ThelmaMode = thelmaMode
-}
-
 // WithUpdatedAt adds the updatedAt to the get API v2 chart releases params
 func (o *GetAPIV2ChartReleasesParams) WithUpdatedAt(updatedAt *string) *GetAPIV2ChartReleasesParams {
 	o.SetUpdatedAt(updatedAt)
@@ -444,6 +430,91 @@ func (o *GetAPIV2ChartReleasesParams) WriteToRequest(r runtime.ClientRequest, re
 	}
 	var res []error
 
+	if o.AppVersionBranch != nil {
+
+		// query param appVersionBranch
+		var qrAppVersionBranch string
+
+		if o.AppVersionBranch != nil {
+			qrAppVersionBranch = *o.AppVersionBranch
+		}
+		qAppVersionBranch := qrAppVersionBranch
+		if qAppVersionBranch != "" {
+
+			if err := r.SetQueryParam("appVersionBranch", qAppVersionBranch); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.AppVersionCommit != nil {
+
+		// query param appVersionCommit
+		var qrAppVersionCommit string
+
+		if o.AppVersionCommit != nil {
+			qrAppVersionCommit = *o.AppVersionCommit
+		}
+		qAppVersionCommit := qrAppVersionCommit
+		if qAppVersionCommit != "" {
+
+			if err := r.SetQueryParam("appVersionCommit", qAppVersionCommit); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.AppVersionExact != nil {
+
+		// query param appVersionExact
+		var qrAppVersionExact string
+
+		if o.AppVersionExact != nil {
+			qrAppVersionExact = *o.AppVersionExact
+		}
+		qAppVersionExact := qrAppVersionExact
+		if qAppVersionExact != "" {
+
+			if err := r.SetQueryParam("appVersionExact", qAppVersionExact); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.AppVersionReference != nil {
+
+		// query param appVersionReference
+		var qrAppVersionReference string
+
+		if o.AppVersionReference != nil {
+			qrAppVersionReference = *o.AppVersionReference
+		}
+		qAppVersionReference := qrAppVersionReference
+		if qAppVersionReference != "" {
+
+			if err := r.SetQueryParam("appVersionReference", qAppVersionReference); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.AppVersionResolver != nil {
+
+		// query param appVersionResolver
+		var qrAppVersionResolver string
+
+		if o.AppVersionResolver != nil {
+			qrAppVersionResolver = *o.AppVersionResolver
+		}
+		qAppVersionResolver := qrAppVersionResolver
+		if qAppVersionResolver != "" {
+
+			if err := r.SetQueryParam("appVersionResolver", qAppVersionResolver); err != nil {
+				return err
+			}
+		}
+	}
+
 	if o.Chart != nil {
 
 		// query param chart
@@ -456,6 +527,57 @@ func (o *GetAPIV2ChartReleasesParams) WriteToRequest(r runtime.ClientRequest, re
 		if qChart != "" {
 
 			if err := r.SetQueryParam("chart", qChart); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.ChartVersionExact != nil {
+
+		// query param chartVersionExact
+		var qrChartVersionExact string
+
+		if o.ChartVersionExact != nil {
+			qrChartVersionExact = *o.ChartVersionExact
+		}
+		qChartVersionExact := qrChartVersionExact
+		if qChartVersionExact != "" {
+
+			if err := r.SetQueryParam("chartVersionExact", qChartVersionExact); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.ChartVersionReference != nil {
+
+		// query param chartVersionReference
+		var qrChartVersionReference string
+
+		if o.ChartVersionReference != nil {
+			qrChartVersionReference = *o.ChartVersionReference
+		}
+		qChartVersionReference := qrChartVersionReference
+		if qChartVersionReference != "" {
+
+			if err := r.SetQueryParam("chartVersionReference", qChartVersionReference); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.ChartVersionResolver != nil {
+
+		// query param chartVersionResolver
+		var qrChartVersionResolver string
+
+		if o.ChartVersionResolver != nil {
+			qrChartVersionResolver = *o.ChartVersionResolver
+		}
+		qChartVersionResolver := qrChartVersionResolver
+		if qChartVersionResolver != "" {
+
+			if err := r.SetQueryParam("chartVersionResolver", qChartVersionResolver); err != nil {
 				return err
 			}
 		}
@@ -490,40 +612,6 @@ func (o *GetAPIV2ChartReleasesParams) WriteToRequest(r runtime.ClientRequest, re
 		if qCreatedAt != "" {
 
 			if err := r.SetQueryParam("createdAt", qCreatedAt); err != nil {
-				return err
-			}
-		}
-	}
-
-	if o.CurrentAppVersionExact != nil {
-
-		// query param currentAppVersionExact
-		var qrCurrentAppVersionExact string
-
-		if o.CurrentAppVersionExact != nil {
-			qrCurrentAppVersionExact = *o.CurrentAppVersionExact
-		}
-		qCurrentAppVersionExact := qrCurrentAppVersionExact
-		if qCurrentAppVersionExact != "" {
-
-			if err := r.SetQueryParam("currentAppVersionExact", qCurrentAppVersionExact); err != nil {
-				return err
-			}
-		}
-	}
-
-	if o.CurrentChartVersionExact != nil {
-
-		// query param currentChartVersionExact
-		var qrCurrentChartVersionExact string
-
-		if o.CurrentChartVersionExact != nil {
-			qrCurrentChartVersionExact = *o.CurrentChartVersionExact
-		}
-		qCurrentChartVersionExact := qrCurrentChartVersionExact
-		if qCurrentChartVersionExact != "" {
-
-			if err := r.SetQueryParam("currentChartVersionExact", qCurrentChartVersionExact); err != nil {
 				return err
 			}
 		}
@@ -643,125 +731,6 @@ func (o *GetAPIV2ChartReleasesParams) WriteToRequest(r runtime.ClientRequest, re
 		if qNamespace != "" {
 
 			if err := r.SetQueryParam("namespace", qNamespace); err != nil {
-				return err
-			}
-		}
-	}
-
-	if o.TargetAppVersionBranch != nil {
-
-		// query param targetAppVersionBranch
-		var qrTargetAppVersionBranch string
-
-		if o.TargetAppVersionBranch != nil {
-			qrTargetAppVersionBranch = *o.TargetAppVersionBranch
-		}
-		qTargetAppVersionBranch := qrTargetAppVersionBranch
-		if qTargetAppVersionBranch != "" {
-
-			if err := r.SetQueryParam("targetAppVersionBranch", qTargetAppVersionBranch); err != nil {
-				return err
-			}
-		}
-	}
-
-	if o.TargetAppVersionCommit != nil {
-
-		// query param targetAppVersionCommit
-		var qrTargetAppVersionCommit string
-
-		if o.TargetAppVersionCommit != nil {
-			qrTargetAppVersionCommit = *o.TargetAppVersionCommit
-		}
-		qTargetAppVersionCommit := qrTargetAppVersionCommit
-		if qTargetAppVersionCommit != "" {
-
-			if err := r.SetQueryParam("targetAppVersionCommit", qTargetAppVersionCommit); err != nil {
-				return err
-			}
-		}
-	}
-
-	if o.TargetAppVersionExact != nil {
-
-		// query param targetAppVersionExact
-		var qrTargetAppVersionExact string
-
-		if o.TargetAppVersionExact != nil {
-			qrTargetAppVersionExact = *o.TargetAppVersionExact
-		}
-		qTargetAppVersionExact := qrTargetAppVersionExact
-		if qTargetAppVersionExact != "" {
-
-			if err := r.SetQueryParam("targetAppVersionExact", qTargetAppVersionExact); err != nil {
-				return err
-			}
-		}
-	}
-
-	if o.TargetAppVersionUse != nil {
-
-		// query param targetAppVersionUse
-		var qrTargetAppVersionUse string
-
-		if o.TargetAppVersionUse != nil {
-			qrTargetAppVersionUse = *o.TargetAppVersionUse
-		}
-		qTargetAppVersionUse := qrTargetAppVersionUse
-		if qTargetAppVersionUse != "" {
-
-			if err := r.SetQueryParam("targetAppVersionUse", qTargetAppVersionUse); err != nil {
-				return err
-			}
-		}
-	}
-
-	if o.TargetChartVersionExact != nil {
-
-		// query param targetChartVersionExact
-		var qrTargetChartVersionExact string
-
-		if o.TargetChartVersionExact != nil {
-			qrTargetChartVersionExact = *o.TargetChartVersionExact
-		}
-		qTargetChartVersionExact := qrTargetChartVersionExact
-		if qTargetChartVersionExact != "" {
-
-			if err := r.SetQueryParam("targetChartVersionExact", qTargetChartVersionExact); err != nil {
-				return err
-			}
-		}
-	}
-
-	if o.TargetChartVersionUse != nil {
-
-		// query param targetChartVersionUse
-		var qrTargetChartVersionUse string
-
-		if o.TargetChartVersionUse != nil {
-			qrTargetChartVersionUse = *o.TargetChartVersionUse
-		}
-		qTargetChartVersionUse := qrTargetChartVersionUse
-		if qTargetChartVersionUse != "" {
-
-			if err := r.SetQueryParam("targetChartVersionUse", qTargetChartVersionUse); err != nil {
-				return err
-			}
-		}
-	}
-
-	if o.ThelmaMode != nil {
-
-		// query param thelmaMode
-		var qrThelmaMode string
-
-		if o.ThelmaMode != nil {
-			qrThelmaMode = *o.ThelmaMode
-		}
-		qThelmaMode := qrThelmaMode
-		if qThelmaMode != "" {
-
-			if err := r.SetQueryParam("thelmaMode", qThelmaMode); err != nil {
 				return err
 			}
 		}
