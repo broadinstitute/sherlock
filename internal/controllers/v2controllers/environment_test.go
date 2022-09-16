@@ -261,7 +261,7 @@ func (suite *environmentControllerSuite) TestEnvironmentCreate() {
 					// The template gets this field set based on the Chart's app main branch, dynamic should copy
 					assert.Equal(suite.T(), swatRelease.AppVersionBranch, envRelease.AppVersionBranch)
 					assert.True(suite.T(), envRelease.ID > 0)
-					assert.Equal(suite.T(), *swatRelease.Subdomain, *envRelease.Subdomain)
+					assert.Equal(suite.T(), swatRelease.Subdomain, envRelease.Subdomain)
 				}
 			}
 			assert.True(suite.T(), found)
