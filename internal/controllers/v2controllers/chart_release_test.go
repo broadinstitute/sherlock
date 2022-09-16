@@ -295,6 +295,11 @@ func (suite *chartReleaseControllerSuite) TestChartReleaseCreate() {
 			suite.Run("sets destination type to cluster", func() {
 				assert.Equal(suite.T(), "cluster", release.DestinationType)
 			})
+			suite.Run("chart without an endpoint doesn't fill endpoint fields in chart release", func() {
+				assert.Empty(suite.T(), release.Subdomain)
+				assert.Empty(suite.T(), release.Protocol)
+				assert.Empty(suite.T(), release.Port)
+			})
 		})
 		suite.Run("won't create duplicates", func() {
 			db.Truncate(suite.T(), suite.db)

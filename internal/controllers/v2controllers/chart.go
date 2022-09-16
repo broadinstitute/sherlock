@@ -20,7 +20,8 @@ type EditableChart struct {
 	ChartRepo             *string `json:"chartRepo" form:"chartRepo" default:"terra-helm"`
 	AppImageGitRepo       *string `json:"appImageGitRepo" form:"appImageGitRepo"`
 	AppImageGitMainBranch *string `json:"appImageGitMainBranch" form:"appImageGitMainBranch"`
-	DefaultSubdomain      *string `json:"defaultSubdomain" form:"defaultSubdomain"` // When creating, will default to the name of the chart
+	ChartExposesEndpoint  *bool   `json:"chartExposesEndpoint" form:"chartExposesEndpoint" default:"false"` // Indicates if the default subdomain, protocol, and port fields are relevant for this chart
+	DefaultSubdomain      *string `json:"defaultSubdomain" form:"defaultSubdomain"`                         // When creating, will default to the name of the chart
 	DefaultProtocol       *string `json:"defaultProtocol" form:"defaultProtocol" default:"https"`
 	DefaultPort           *uint   `json:"defaultPort" form:"defaultPort" default:"443"`
 }
@@ -64,6 +65,7 @@ func modelChartToChart(model *v2models.Chart) *Chart {
 				ChartRepo:             model.ChartRepo,
 				AppImageGitRepo:       model.AppImageGitRepo,
 				AppImageGitMainBranch: model.AppImageGitMainBranch,
+				ChartExposesEndpoint:  model.ChartExposesEndpoint,
 				DefaultSubdomain:      model.DefaultSubdomain,
 				DefaultProtocol:       model.DefaultProtocol,
 				DefaultPort:           model.DefaultPort,
@@ -83,6 +85,7 @@ func chartToModelChart(chart Chart, _ *v2models.StoreSet) (v2models.Chart, error
 		ChartRepo:             chart.ChartRepo,
 		AppImageGitRepo:       chart.AppImageGitRepo,
 		AppImageGitMainBranch: chart.AppImageGitMainBranch,
+		ChartExposesEndpoint:  chart.ChartExposesEndpoint,
 		DefaultSubdomain:      chart.DefaultSubdomain,
 		DefaultProtocol:       chart.DefaultProtocol,
 		DefaultPort:           chart.DefaultPort,

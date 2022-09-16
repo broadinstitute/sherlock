@@ -14,6 +14,7 @@ type Chart struct {
 	ChartRepo             *string `gorm:"not null; default:null"`
 	AppImageGitRepo       *string
 	AppImageGitMainBranch *string
+	ChartExposesEndpoint  *bool
 	DefaultSubdomain      *string
 	DefaultProtocol       *string
 	DefaultPort           *uint

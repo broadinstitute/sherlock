@@ -53,6 +53,7 @@ var (
 		EditableChart: EditableChart{
 			AppImageGitRepo:       testutils.PointerTo("DataBiosphere/leonardo"),
 			AppImageGitMainBranch: testutils.PointerTo("main"),
+			ChartExposesEndpoint:  testutils.PointerTo(true),
 		},
 	}
 	samChart = CreatableChart{
@@ -60,6 +61,7 @@ var (
 		EditableChart: EditableChart{
 			AppImageGitRepo:       testutils.PointerTo("broadinstitute/sam"),
 			AppImageGitMainBranch: testutils.PointerTo("develop"),
+			ChartExposesEndpoint:  testutils.PointerTo(true),
 		},
 	}
 	datarepoChart = CreatableChart{
@@ -68,6 +70,7 @@ var (
 			ChartRepo:             testutils.PointerTo("datarepo-helm"),
 			AppImageGitRepo:       testutils.PointerTo("DataBiosphere/jade-data-repo"),
 			AppImageGitMainBranch: testutils.PointerTo("develop"),
+			ChartExposesEndpoint:  testutils.PointerTo(true),
 		},
 	}
 	// "app release" (per environment), but doesn't actually have an application
