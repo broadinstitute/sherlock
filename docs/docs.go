@@ -359,11 +359,6 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
-                        "type": "boolean",
-                        "name": "isApplied",
-                        "in": "query"
-                    },
-                    {
                         "type": "string",
                         "name": "supersededAt",
                         "in": "query"
@@ -3506,9 +3501,6 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
-                "isApplied": {
-                    "type": "boolean"
-                },
                 "newAppVersions": {
                     "type": "array",
                     "items": {
@@ -3571,64 +3563,70 @@ const docTemplate = `{
                 "chartReleases": {
                     "type": "array",
                     "items": {
-                        "type": "object",
-                        "properties": {
-                            "chartRelease": {
-                                "type": "string"
-                            },
-                            "toAppVersionBranch": {
-                                "type": "string"
-                            },
-                            "toAppVersionCommit": {
-                                "type": "string"
-                            },
-                            "toAppVersionExact": {
-                                "type": "string"
-                            },
-                            "toAppVersionResolver": {
-                                "type": "string"
-                            },
-                            "toChartVersionExact": {
-                                "type": "string"
-                            },
-                            "toChartVersionResolver": {
-                                "type": "string"
-                            },
-                            "toHelmfileRef": {
-                                "type": "string"
-                            },
-                            "useExactVersionsFromOtherChartRelease": {
-                                "type": "string"
-                            }
-                        }
+                        "$ref": "#/definitions/v2controllers.ChangesetPlanRequestChartReleaseEntry"
                     }
                 },
                 "environments": {
                     "type": "array",
                     "items": {
-                        "type": "object",
-                        "properties": {
-                            "environment": {
-                                "type": "string"
-                            },
-                            "excludeCharts": {
-                                "type": "array",
-                                "items": {
-                                    "type": "string"
-                                }
-                            },
-                            "includeCharts": {
-                                "description": "If omitted, will include all charts",
-                                "type": "array",
-                                "items": {
-                                    "type": "string"
-                                }
-                            },
-                            "useExactVersionsFromOtherEnvironment": {
-                                "type": "string"
-                            }
-                        }
+                        "$ref": "#/definitions/v2controllers.ChangesetPlanRequestEnvironmentEntry"
                     }
+                }
+            }
+        },
+        "v2controllers.ChangesetPlanRequestChartReleaseEntry": {
+            "type": "object",
+            "properties": {
+                "chartRelease": {
+                    "type": "string"
+                },
+                "toAppVersionBranch": {
+                    "type": "string"
+                },
+                "toAppVersionCommit": {
+                    "type": "string"
+                },
+                "toAppVersionExact": {
+                    "type": "string"
+                },
+                "toAppVersionResolver": {
+                    "type": "string"
+                },
+                "toChartVersionExact": {
+                    "type": "string"
+                },
+                "toChartVersionResolver": {
+                    "type": "string"
+                },
+                "toHelmfileRef": {
+                    "type": "string"
+                },
+                "useExactVersionsFromOtherChartRelease": {
+                    "type": "string"
+                }
+            }
+        },
+        "v2controllers.ChangesetPlanRequestEnvironmentEntry": {
+            "type": "object",
+            "properties": {
+                "environment": {
+                    "type": "string"
+                },
+                "excludeCharts": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "includeCharts": {
+                    "description": "If omitted, will include all charts",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "useExactVersionsFromOtherEnvironment": {
+                    "type": "string"
                 }
             }
         },
