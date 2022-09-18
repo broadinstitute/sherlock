@@ -329,4 +329,15 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 	samInProd, err = suite.ChartReleaseController.Get("terra-prod/sam")
 	assert.NoError(suite.T(), err)
 	assert.Equal(suite.T(), "0.0.3", *samInProd.ChartVersionExact)
+
+	// Plans can't get created if there's chart mismatches:
+	_, err = suite.ChangesetController.Plan(ChangesetPlanRequest{
+		ChartReleases: []ChangesetPlanRequestChartReleaseEntry{
+			{
+				CreatableChangeset:                    CreatableChangeset{ChartRelease: "terra-dev/sam"},
+				UseExactVersionsFromOtherChartRelease: testutils.PointerTo("terra-staging/leonardo"),
+			},
+		},
+	}, auth.GenerateUser(suite.T(), true))
+	assert.ErrorContains(suite.T(), err, "mismatched chart")
 }
