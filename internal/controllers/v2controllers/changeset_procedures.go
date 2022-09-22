@@ -39,6 +39,11 @@ func (c ChangesetController) changesetPlanRequestToModelChangesets(request Chang
 			if err != nil {
 				return nil, fmt.Errorf("error getting referenced other chart release '%s' for chart release entry %d, '%s': %v", *chartReleaseRequestEntry.UseExactVersionsFromOtherChartRelease, index+1, fullChangesetRequest.ChartRelease, err)
 			}
+			if chartRelease, err := c.allStores.ChartReleaseStore.Get(fullChangesetRequest.ChartRelease); err != nil {
+				return nil, fmt.Errorf("error getting referenced chart release '%s' for chart release entry %d: %v", fullChangesetRequest.ChartRelease, index+1, err)
+			} else if chartRelease.ChartID != otherChartRelease.ChartID {
+				return nil, fmt.Errorf("validation error on chart release entry %d: chart release has chart '%s' but referenced other chart release has mismatched chart '%s'", index+1, chartRelease.Chart.Name, otherChartRelease.Chart.Name)
+			}
 			if otherChartRelease.AppVersionResolver != nil && *otherChartRelease.AppVersionResolver == "none" {
 				fullChangesetRequest.ToAppVersionResolver = otherChartRelease.AppVersionResolver
 			} else {
