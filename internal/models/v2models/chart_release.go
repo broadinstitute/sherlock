@@ -140,6 +140,9 @@ func chartReleaseSelectorToQuery(db *gorm.DB, selector string) (ChartRelease, er
 func chartReleaseToSelectors(chartRelease *ChartRelease) []string {
 	var selectors []string
 	if chartRelease != nil {
+		if chartRelease.Name != "" {
+			selectors = append(selectors, chartRelease.Name)
+		}
 		if (chartRelease.Environment != nil || chartRelease.EnvironmentID != nil) || ((chartRelease.Cluster != nil || chartRelease.ClusterID != nil) && chartRelease.Namespace != "") {
 			chartSelectors := chartToSelectors(chartRelease.Chart)
 			if len(chartSelectors) == 0 && chartRelease.ChartID != 0 {
@@ -170,9 +173,6 @@ func chartReleaseToSelectors(chartRelease *ChartRelease) []string {
 					selectors = append(selectors, fmt.Sprintf("%d/%s/%s", *chartRelease.ClusterID, chartRelease.Namespace, chartSelector))
 				}
 			}
-		}
-		if chartRelease.Name != "" {
-			selectors = append(selectors, chartRelease.Name)
 		}
 		if chartRelease.ID != 0 {
 			selectors = append(selectors, fmt.Sprintf("%d", chartRelease.ID))
