@@ -174,7 +174,7 @@ func Test_chartReleaseToSelectors(t *testing.T) {
 				Namespace:   "namespace-a",
 				Environment: &Environment{Name: "environment-a", Model: gorm.Model{ID: 135}},
 			}},
-			want: []string{"environment-a/chart-a", "environment-a/246", "135/chart-a", "135/246", "cluster-a/namespace-a/chart-a", "cluster-a/namespace-a/246", "789/namespace-a/chart-a", "789/namespace-a/246", "foobar", "123"},
+			want: []string{"foobar", "environment-a/chart-a", "environment-a/246", "135/chart-a", "135/246", "cluster-a/namespace-a/chart-a", "cluster-a/namespace-a/246", "789/namespace-a/chart-a", "789/namespace-a/246", "123"},
 		},
 		{
 			name: "all possible selectors with IDs available",
@@ -189,7 +189,7 @@ func Test_chartReleaseToSelectors(t *testing.T) {
 				EnvironmentID: testutils.PointerTo[uint](135),
 				Environment:   &Environment{Name: "environment-a", Model: gorm.Model{ID: 135}},
 			}},
-			want: []string{"environment-a/chart-a", "environment-a/246", "135/chart-a", "135/246", "cluster-a/namespace-a/chart-a", "cluster-a/namespace-a/246", "789/namespace-a/chart-a", "789/namespace-a/246", "foobar", "123"},
+			want: []string{"foobar", "environment-a/chart-a", "environment-a/246", "135/chart-a", "135/246", "cluster-a/namespace-a/chart-a", "cluster-a/namespace-a/246", "789/namespace-a/chart-a", "789/namespace-a/246", "123"},
 		},
 		{
 			name: "cluster selectors disappear if namespace is empty",
@@ -201,7 +201,7 @@ func Test_chartReleaseToSelectors(t *testing.T) {
 				Namespace:   "",
 				Environment: &Environment{Name: "environment-a", Model: gorm.Model{ID: 135}},
 			}},
-			want: []string{"environment-a/chart-a", "environment-a/246", "135/chart-a", "135/246", "foobar", "123"},
+			want: []string{"foobar", "environment-a/chart-a", "environment-a/246", "135/chart-a", "135/246", "123"},
 		},
 		{
 			name: "all possible selectors without full selectors on associations",
@@ -213,7 +213,7 @@ func Test_chartReleaseToSelectors(t *testing.T) {
 				Namespace:   "namespace-a",
 				Environment: &Environment{Name: "environment-a"},
 			}},
-			want: []string{"environment-a/246", "cluster-a/namespace-a/246", "foobar", "123"},
+			want: []string{"foobar", "environment-a/246", "cluster-a/namespace-a/246", "123"},
 		},
 	}
 	for _, tt := range tests {
