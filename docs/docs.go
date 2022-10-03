@@ -59,6 +59,12 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "Generally the Git commit message",
+                        "name": "description",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "name": "gitBranch",
                         "in": "query"
                     },
@@ -229,6 +235,81 @@ const docTemplate = `{
                         "name": "selector",
                         "in": "path",
                         "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.AppVersion"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Edit an existing AppVersion entry via one its \"selectors\": chart/version or numeric ID. Note that only mutable fields are available here, immutable fields can only be set using /create.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AppVersions"
+                ],
+                "summary": "Edit a AppVersion entry",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The AppVersion to edit's selector: chart/version or numeric ID",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "The edits to make to the AppVersion",
+                        "name": "app-version",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.EditableAppVersion"
+                        }
                     }
                 ],
                 "responses": {
@@ -1114,6 +1195,12 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "description": "Generally the Git commit message",
+                        "name": "description",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
                         "name": "id",
                         "in": "query"
@@ -1275,6 +1362,81 @@ const docTemplate = `{
                         "name": "selector",
                         "in": "path",
                         "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.ChartVersion"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Edit an existing ChartVersion entry via one its \"selectors\": chart/version or numeric ID. Note that only mutable fields are available here, immutable fields can only be set using /create.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ChartVersions"
+                ],
+                "summary": "Edit a ChartVersion entry",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The ChartVersion to edit's selector: chart/version or numeric ID",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "The edits to make to the ChartVersion",
+                        "name": "chart-version",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.EditableChartVersion"
+                        }
                     }
                 ],
                 "responses": {
@@ -3482,6 +3644,10 @@ const docTemplate = `{
                 "createdAt": {
                     "type": "string"
                 },
+                "description": {
+                    "description": "Generally the Git commit message",
+                    "type": "string"
+                },
                 "gitBranch": {
                     "type": "string"
                 },
@@ -3853,6 +4019,10 @@ const docTemplate = `{
                 "createdAt": {
                     "type": "string"
                 },
+                "description": {
+                    "description": "Generally the Git commit message",
+                    "type": "string"
+                },
                 "id": {
                     "type": "integer"
                 },
@@ -3923,6 +4093,10 @@ const docTemplate = `{
                 },
                 "chart": {
                     "description": "Required when creating",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "Generally the Git commit message",
                     "type": "string"
                 },
                 "gitBranch": {
@@ -4084,6 +4258,10 @@ const docTemplate = `{
                     "description": "Required when creating",
                     "type": "string"
                 },
+                "description": {
+                    "description": "Generally the Git commit message",
+                    "type": "string"
+                },
                 "parentChartVersion": {
                     "type": "string"
                 }
@@ -4175,6 +4353,15 @@ const docTemplate = `{
                 }
             }
         },
+        "v2controllers.EditableAppVersion": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "description": "Generally the Git commit message",
+                    "type": "string"
+                }
+            }
+        },
         "v2controllers.EditableChart": {
             "type": "object",
             "properties": {
@@ -4220,6 +4407,15 @@ const docTemplate = `{
                 },
                 "subdomain": {
                     "description": "When creating, will use the chart's default if left empty",
+                    "type": "string"
+                }
+            }
+        },
+        "v2controllers.EditableChartVersion": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "description": "Generally the Git commit message",
                     "type": "string"
                 }
             }

@@ -292,15 +292,16 @@ func (suite *appVersionControllerSuite) TestAppVersionGetOtherValidSelectors() {
 }
 
 func (suite *appVersionControllerSuite) TestAppVersionEdit() {
-	suite.Run("'successfully' but there's no fields", func() {
+	suite.Run("successfully", func() {
 		db.Truncate(suite.T(), suite.db)
 		suite.seedCharts(suite.T())
 		suite.seedAppVersions(suite.T())
 		appVersions, _ := suite.AppVersionController.ListAllMatching(AppVersion{}, 1)
 		anID := fmt.Sprintf("%d", appVersions[0].ID)
 
-		_, err := suite.AppVersionController.Edit(anID, EditableAppVersion{}, auth.GenerateUser(suite.T(), false))
+		response, err := suite.AppVersionController.Edit(anID, EditableAppVersion{Description: "blah"}, auth.GenerateUser(suite.T(), false))
 		assert.NoError(suite.T(), err)
+		assert.Equal(suite.T(), "blah", response.Description)
 	})
 }
 

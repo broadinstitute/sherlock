@@ -85,6 +85,9 @@ definitions:
         $ref: '#/definitions/v2controllers.Chart'
       createdAt:
         type: string
+      description:
+        description: Generally the Git commit message
+        type: string
       gitBranch:
         type: string
       gitCommit:
@@ -345,6 +348,9 @@ definitions:
         type: string
       createdAt:
         type: string
+      description:
+        description: Generally the Git commit message
+        type: string
       id:
         type: integer
       parentChartVersion:
@@ -396,6 +402,9 @@ definitions:
         type: string
       chart:
         description: Required when creating
+        type: string
+      description:
+        description: Generally the Git commit message
         type: string
       gitBranch:
         type: string
@@ -516,6 +525,9 @@ definitions:
       chartVersion:
         description: Required when creating
         type: string
+      description:
+        description: Generally the Git commit message
+        type: string
       parentChartVersion:
         type: string
     type: object
@@ -583,6 +595,12 @@ definitions:
         description: Required for dynamic environments
         type: string
     type: object
+  v2controllers.EditableAppVersion:
+    properties:
+      description:
+        description: Generally the Git commit message
+        type: string
+    type: object
   v2controllers.EditableChart:
     properties:
       appImageGitMainBranch:
@@ -617,6 +635,12 @@ definitions:
         type: string
       subdomain:
         description: When creating, will use the chart's default if left empty
+        type: string
+    type: object
+  v2controllers.EditableChartVersion:
+    properties:
+      description:
+        description: Generally the Git commit message
         type: string
     type: object
   v2controllers.EditableCluster:
@@ -728,6 +752,10 @@ paths:
         type: string
       - in: query
         name: createdAt
+        type: string
+      - description: Generally the Git commit message
+        in: query
+        name: description
         type: string
       - in: query
         name: gitBranch
@@ -878,6 +906,59 @@ paths:
           schema:
             $ref: '#/definitions/errors.ErrorResponse'
       summary: Get a AppVersion entry
+      tags:
+      - AppVersions
+    patch:
+      consumes:
+      - application/json
+      description: 'Edit an existing AppVersion entry via one its "selectors": chart/version
+        or numeric ID. Note that only mutable fields are available here, immutable
+        fields can only be set using /create.'
+      parameters:
+      - description: 'The AppVersion to edit''s selector: chart/version or numeric
+          ID'
+        in: path
+        name: selector
+        required: true
+        type: string
+      - description: The edits to make to the AppVersion
+        in: body
+        name: app-version
+        required: true
+        schema:
+          $ref: '#/definitions/v2controllers.EditableAppVersion'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v2controllers.AppVersion'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Edit a AppVersion entry
       tags:
       - AppVersions
   /api/v2/changesets:
@@ -1435,6 +1516,10 @@ paths:
       - in: query
         name: createdAt
         type: string
+      - description: Generally the Git commit message
+        in: query
+        name: description
+        type: string
       - in: query
         name: id
         type: integer
@@ -1578,6 +1663,59 @@ paths:
           schema:
             $ref: '#/definitions/errors.ErrorResponse'
       summary: Get a ChartVersion entry
+      tags:
+      - ChartVersions
+    patch:
+      consumes:
+      - application/json
+      description: 'Edit an existing ChartVersion entry via one its "selectors": chart/version
+        or numeric ID. Note that only mutable fields are available here, immutable
+        fields can only be set using /create.'
+      parameters:
+      - description: 'The ChartVersion to edit''s selector: chart/version or numeric
+          ID'
+        in: path
+        name: selector
+        required: true
+        type: string
+      - description: The edits to make to the ChartVersion
+        in: body
+        name: chart-version
+        required: true
+        schema:
+          $ref: '#/definitions/v2controllers.EditableChartVersion'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v2controllers.ChartVersion'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Edit a ChartVersion entry
       tags:
       - ChartVersions
   /api/v2/charts:

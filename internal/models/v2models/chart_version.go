@@ -13,6 +13,7 @@ type ChartVersion struct {
 	Chart                *Chart
 	ChartID              uint   `gorm:"not null: default:null"`
 	ChartVersion         string `gorm:"not null: default:null"`
+	Description          string
 	ParentChartVersion   *ChartVersion
 	ParentChartVersionID *uint
 }

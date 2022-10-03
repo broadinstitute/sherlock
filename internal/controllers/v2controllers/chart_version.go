@@ -22,7 +22,9 @@ type CreatableChartVersion struct {
 	EditableChartVersion
 }
 
-type EditableChartVersion struct{}
+type EditableChartVersion struct {
+	Description string `json:"description" form:"description"` // Generally the Git commit message
+}
 
 //nolint:unused
 func (c CreatableChartVersion) toReadable() ChartVersion {
@@ -73,9 +75,10 @@ func modelChartVersionToChartVersion(model *v2models.ChartVersion) *ChartVersion
 		ChartInfo:              chart,
 		ParentChartVersionInfo: parentChartVersion,
 		CreatableChartVersion: CreatableChartVersion{
-			Chart:              chartName,
-			ChartVersion:       model.ChartVersion,
-			ParentChartVersion: parentChartVersionSelector,
+			Chart:                chartName,
+			ChartVersion:         model.ChartVersion,
+			ParentChartVersion:   parentChartVersionSelector,
+			EditableChartVersion: EditableChartVersion{Description: model.Description},
 		},
 	}
 }
@@ -110,5 +113,6 @@ func chartVersionToModelChartVersion(chartVersion ChartVersion, stores *v2models
 		ChartID:              chartID,
 		ChartVersion:         chartVersion.ChartVersion,
 		ParentChartVersionID: parentChartVersionID,
+		Description:          chartVersion.Description,
 	}, nil
 }
