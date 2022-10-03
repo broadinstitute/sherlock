@@ -23,6 +23,9 @@ type V2controllersCreatableAppVersion struct {
 	// Required when creating
 	Chart string `json:"chart,omitempty"`
 
+	// Generally the Git commit message
+	Description string `json:"description,omitempty"`
+
 	// git branch
 	GitBranch string `json:"gitBranch,omitempty"`
 

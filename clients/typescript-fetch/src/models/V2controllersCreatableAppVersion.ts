@@ -32,6 +32,12 @@ export interface V2controllersCreatableAppVersion {
      */
     chart?: string;
     /**
+     * Generally the Git commit message
+     * @type {string}
+     * @memberof V2controllersCreatableAppVersion
+     */
+    description?: string;
+    /**
      * 
      * @type {string}
      * @memberof V2controllersCreatableAppVersion
@@ -72,6 +78,7 @@ export function V2controllersCreatableAppVersionFromJSONTyped(json: any, ignoreD
         
         'appVersion': !exists(json, 'appVersion') ? undefined : json['appVersion'],
         'chart': !exists(json, 'chart') ? undefined : json['chart'],
+        'description': !exists(json, 'description') ? undefined : json['description'],
         'gitBranch': !exists(json, 'gitBranch') ? undefined : json['gitBranch'],
         'gitCommit': !exists(json, 'gitCommit') ? undefined : json['gitCommit'],
         'parentAppVersion': !exists(json, 'parentAppVersion') ? undefined : json['parentAppVersion'],
@@ -89,6 +96,7 @@ export function V2controllersCreatableAppVersionToJSON(value?: V2controllersCrea
         
         'appVersion': value.appVersion,
         'chart': value.chart,
+        'description': value.description,
         'gitBranch': value.gitBranch,
         'gitCommit': value.gitCommit,
         'parentAppVersion': value.parentAppVersion,

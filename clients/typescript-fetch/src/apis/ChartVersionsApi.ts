@@ -18,6 +18,7 @@ import type {
   ErrorsErrorResponse,
   V2controllersChartVersion,
   V2controllersCreatableChartVersion,
+  V2controllersEditableChartVersion,
 } from '../models';
 import {
     ErrorsErrorResponseFromJSON,
@@ -26,12 +27,15 @@ import {
     V2controllersChartVersionToJSON,
     V2controllersCreatableChartVersionFromJSON,
     V2controllersCreatableChartVersionToJSON,
+    V2controllersEditableChartVersionFromJSON,
+    V2controllersEditableChartVersionToJSON,
 } from '../models';
 
 export interface ApiV2ChartVersionsGetRequest {
     chart?: string;
     chartVersion?: string;
     createdAt?: string;
+    description?: string;
     id?: number;
     parentChartVersion?: string;
     updatedAt?: string;
@@ -44,6 +48,11 @@ export interface ApiV2ChartVersionsPostRequest {
 
 export interface ApiV2ChartVersionsSelectorGetRequest {
     selector: string;
+}
+
+export interface ApiV2ChartVersionsSelectorPatchRequest {
+    selector: string;
+    chartVersion: V2controllersEditableChartVersion;
 }
 
 export interface ApiV2SelectorsChartVersionsSelectorGetRequest {
@@ -72,6 +81,10 @@ export class ChartVersionsApi extends runtime.BaseAPI {
 
         if (requestParameters.createdAt !== undefined) {
             queryParameters['createdAt'] = requestParameters.createdAt;
+        }
+
+        if (requestParameters.description !== undefined) {
+            queryParameters['description'] = requestParameters.description;
         }
 
         if (requestParameters.id !== undefined) {
@@ -175,6 +188,45 @@ export class ChartVersionsApi extends runtime.BaseAPI {
      */
     async apiV2ChartVersionsSelectorGet(requestParameters: ApiV2ChartVersionsSelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<V2controllersChartVersion> {
         const response = await this.apiV2ChartVersionsSelectorGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Edit an existing ChartVersion entry via one its \"selectors\": chart/version or numeric ID. Note that only mutable fields are available here, immutable fields can only be set using /create.
+     * Edit a ChartVersion entry
+     */
+    async apiV2ChartVersionsSelectorPatchRaw(requestParameters: ApiV2ChartVersionsSelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<V2controllersChartVersion>> {
+        if (requestParameters.selector === null || requestParameters.selector === undefined) {
+            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiV2ChartVersionsSelectorPatch.');
+        }
+
+        if (requestParameters.chartVersion === null || requestParameters.chartVersion === undefined) {
+            throw new runtime.RequiredError('chartVersion','Required parameter requestParameters.chartVersion was null or undefined when calling apiV2ChartVersionsSelectorPatch.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/api/v2/chart-versions/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            method: 'PATCH',
+            headers: headerParameters,
+            query: queryParameters,
+            body: V2controllersEditableChartVersionToJSON(requestParameters.chartVersion),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => V2controllersChartVersionFromJSON(jsonValue));
+    }
+
+    /**
+     * Edit an existing ChartVersion entry via one its \"selectors\": chart/version or numeric ID. Note that only mutable fields are available here, immutable fields can only be set using /create.
+     * Edit a ChartVersion entry
+     */
+    async apiV2ChartVersionsSelectorPatch(requestParameters: ApiV2ChartVersionsSelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<V2controllersChartVersion> {
+        const response = await this.apiV2ChartVersionsSelectorPatchRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

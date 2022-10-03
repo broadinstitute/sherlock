@@ -30,6 +30,9 @@ type V2controllersChartVersion struct {
 	// created at
 	CreatedAt string `json:"createdAt,omitempty"`
 
+	// Generally the Git commit message
+	Description string `json:"description,omitempty"`
+
 	// id
 	ID int64 `json:"id,omitempty"`
 

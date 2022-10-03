@@ -30,6 +30,9 @@ type V2controllersAppVersion struct {
 	// created at
 	CreatedAt string `json:"createdAt,omitempty"`
 
+	// Generally the Git commit message
+	Description string `json:"description,omitempty"`
+
 	// git branch
 	GitBranch string `json:"gitBranch,omitempty"`
 

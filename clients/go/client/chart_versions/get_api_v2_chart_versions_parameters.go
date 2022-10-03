@@ -75,6 +75,12 @@ type GetAPIV2ChartVersionsParams struct {
 	// CreatedAt.
 	CreatedAt *string
 
+	/* Description.
+
+	   Generally the Git commit message
+	*/
+	Description *string
+
 	// ID.
 	ID *int64
 
@@ -176,6 +182,17 @@ func (o *GetAPIV2ChartVersionsParams) SetCreatedAt(createdAt *string) {
 	o.CreatedAt = createdAt
 }
 
+// WithDescription adds the description to the get API v2 chart versions params
+func (o *GetAPIV2ChartVersionsParams) WithDescription(description *string) *GetAPIV2ChartVersionsParams {
+	o.SetDescription(description)
+	return o
+}
+
+// SetDescription adds the description to the get API v2 chart versions params
+func (o *GetAPIV2ChartVersionsParams) SetDescription(description *string) {
+	o.Description = description
+}
+
 // WithID adds the id to the get API v2 chart versions params
 func (o *GetAPIV2ChartVersionsParams) WithID(id *int64) *GetAPIV2ChartVersionsParams {
 	o.SetID(id)
@@ -274,6 +291,23 @@ func (o *GetAPIV2ChartVersionsParams) WriteToRequest(r runtime.ClientRequest, re
 		if qCreatedAt != "" {
 
 			if err := r.SetQueryParam("createdAt", qCreatedAt); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.Description != nil {
+
+		// query param description
+		var qrDescription string
+
+		if o.Description != nil {
+			qrDescription = *o.Description
+		}
+		qDescription := qrDescription
+		if qDescription != "" {
+
+			if err := r.SetQueryParam("description", qDescription); err != nil {
 				return err
 			}
 		}

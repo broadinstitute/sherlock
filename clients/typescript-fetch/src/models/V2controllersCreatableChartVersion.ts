@@ -32,6 +32,12 @@ export interface V2controllersCreatableChartVersion {
      */
     chartVersion?: string;
     /**
+     * Generally the Git commit message
+     * @type {string}
+     * @memberof V2controllersCreatableChartVersion
+     */
+    description?: string;
+    /**
      * 
      * @type {string}
      * @memberof V2controllersCreatableChartVersion
@@ -60,6 +66,7 @@ export function V2controllersCreatableChartVersionFromJSONTyped(json: any, ignor
         
         'chart': !exists(json, 'chart') ? undefined : json['chart'],
         'chartVersion': !exists(json, 'chartVersion') ? undefined : json['chartVersion'],
+        'description': !exists(json, 'description') ? undefined : json['description'],
         'parentChartVersion': !exists(json, 'parentChartVersion') ? undefined : json['parentChartVersion'],
     };
 }
@@ -75,6 +82,7 @@ export function V2controllersCreatableChartVersionToJSON(value?: V2controllersCr
         
         'chart': value.chart,
         'chartVersion': value.chartVersion,
+        'description': value.description,
         'parentChartVersion': value.parentChartVersion,
     };
 }

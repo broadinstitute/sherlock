@@ -18,6 +18,7 @@ import type {
   ErrorsErrorResponse,
   V2controllersAppVersion,
   V2controllersCreatableAppVersion,
+  V2controllersEditableAppVersion,
 } from '../models';
 import {
     ErrorsErrorResponseFromJSON,
@@ -26,12 +27,15 @@ import {
     V2controllersAppVersionToJSON,
     V2controllersCreatableAppVersionFromJSON,
     V2controllersCreatableAppVersionToJSON,
+    V2controllersEditableAppVersionFromJSON,
+    V2controllersEditableAppVersionToJSON,
 } from '../models';
 
 export interface ApiV2AppVersionsGetRequest {
     appVersion?: string;
     chart?: string;
     createdAt?: string;
+    description?: string;
     gitBranch?: string;
     gitCommit?: string;
     id?: number;
@@ -46,6 +50,11 @@ export interface ApiV2AppVersionsPostRequest {
 
 export interface ApiV2AppVersionsSelectorGetRequest {
     selector: string;
+}
+
+export interface ApiV2AppVersionsSelectorPatchRequest {
+    selector: string;
+    appVersion: V2controllersEditableAppVersion;
 }
 
 export interface ApiV2SelectorsAppVersionsSelectorGetRequest {
@@ -74,6 +83,10 @@ export class AppVersionsApi extends runtime.BaseAPI {
 
         if (requestParameters.createdAt !== undefined) {
             queryParameters['createdAt'] = requestParameters.createdAt;
+        }
+
+        if (requestParameters.description !== undefined) {
+            queryParameters['description'] = requestParameters.description;
         }
 
         if (requestParameters.gitBranch !== undefined) {
@@ -185,6 +198,45 @@ export class AppVersionsApi extends runtime.BaseAPI {
      */
     async apiV2AppVersionsSelectorGet(requestParameters: ApiV2AppVersionsSelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<V2controllersAppVersion> {
         const response = await this.apiV2AppVersionsSelectorGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Edit an existing AppVersion entry via one its \"selectors\": chart/version or numeric ID. Note that only mutable fields are available here, immutable fields can only be set using /create.
+     * Edit a AppVersion entry
+     */
+    async apiV2AppVersionsSelectorPatchRaw(requestParameters: ApiV2AppVersionsSelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<V2controllersAppVersion>> {
+        if (requestParameters.selector === null || requestParameters.selector === undefined) {
+            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiV2AppVersionsSelectorPatch.');
+        }
+
+        if (requestParameters.appVersion === null || requestParameters.appVersion === undefined) {
+            throw new runtime.RequiredError('appVersion','Required parameter requestParameters.appVersion was null or undefined when calling apiV2AppVersionsSelectorPatch.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/api/v2/app-versions/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            method: 'PATCH',
+            headers: headerParameters,
+            query: queryParameters,
+            body: V2controllersEditableAppVersionToJSON(requestParameters.appVersion),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => V2controllersAppVersionFromJSON(jsonValue));
+    }
+
+    /**
+     * Edit an existing AppVersion entry via one its \"selectors\": chart/version or numeric ID. Note that only mutable fields are available here, immutable fields can only be set using /create.
+     * Edit a AppVersion entry
+     */
+    async apiV2AppVersionsSelectorPatch(requestParameters: ApiV2AppVersionsSelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<V2controllersAppVersion> {
+        const response = await this.apiV2AppVersionsSelectorPatchRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

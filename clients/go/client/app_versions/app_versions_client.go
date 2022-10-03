@@ -36,6 +36,8 @@ type ClientService interface {
 
 	GetAPIV2SelectorsAppVersionsSelector(params *GetAPIV2SelectorsAppVersionsSelectorParams, opts ...ClientOption) (*GetAPIV2SelectorsAppVersionsSelectorOK, error)
 
+	PatchAPIV2AppVersionsSelector(params *PatchAPIV2AppVersionsSelectorParams, opts ...ClientOption) (*PatchAPIV2AppVersionsSelectorOK, error)
+
 	PostAPIV2AppVersions(params *PostAPIV2AppVersionsParams, opts ...ClientOption) (*PostAPIV2AppVersionsOK, *PostAPIV2AppVersionsCreated, error)
 
 	SetTransport(transport runtime.ClientTransport)
@@ -158,6 +160,46 @@ func (a *Client) GetAPIV2SelectorsAppVersionsSelector(params *GetAPIV2SelectorsA
 	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for GetAPIV2SelectorsAppVersionsSelector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+  PatchAPIV2AppVersionsSelector edits a app version entry
+
+  Edit an existing AppVersion entry via one its "selectors": chart/version or numeric ID. Note that only mutable fields are available here, immutable fields can only be set using /create.
+*/
+func (a *Client) PatchAPIV2AppVersionsSelector(params *PatchAPIV2AppVersionsSelectorParams, opts ...ClientOption) (*PatchAPIV2AppVersionsSelectorOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewPatchAPIV2AppVersionsSelectorParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "PatchAPIV2AppVersionsSelector",
+		Method:             "PATCH",
+		PathPattern:        "/api/v2/app-versions/{selector}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &PatchAPIV2AppVersionsSelectorReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*PatchAPIV2AppVersionsSelectorOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for PatchAPIV2AppVersionsSelector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 

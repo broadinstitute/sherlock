@@ -75,6 +75,12 @@ type GetAPIV2AppVersionsParams struct {
 	// CreatedAt.
 	CreatedAt *string
 
+	/* Description.
+
+	   Generally the Git commit message
+	*/
+	Description *string
+
 	// GitBranch.
 	GitBranch *string
 
@@ -180,6 +186,17 @@ func (o *GetAPIV2AppVersionsParams) WithCreatedAt(createdAt *string) *GetAPIV2Ap
 // SetCreatedAt adds the createdAt to the get API v2 app versions params
 func (o *GetAPIV2AppVersionsParams) SetCreatedAt(createdAt *string) {
 	o.CreatedAt = createdAt
+}
+
+// WithDescription adds the description to the get API v2 app versions params
+func (o *GetAPIV2AppVersionsParams) WithDescription(description *string) *GetAPIV2AppVersionsParams {
+	o.SetDescription(description)
+	return o
+}
+
+// SetDescription adds the description to the get API v2 app versions params
+func (o *GetAPIV2AppVersionsParams) SetDescription(description *string) {
+	o.Description = description
 }
 
 // WithGitBranch adds the gitBranch to the get API v2 app versions params
@@ -302,6 +319,23 @@ func (o *GetAPIV2AppVersionsParams) WriteToRequest(r runtime.ClientRequest, reg 
 		if qCreatedAt != "" {
 
 			if err := r.SetQueryParam("createdAt", qCreatedAt); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.Description != nil {
+
+		// query param description
+		var qrDescription string
+
+		if o.Description != nil {
+			qrDescription = *o.Description
+		}
+		qDescription := qrDescription
+		if qDescription != "" {
+
+			if err := r.SetQueryParam("description", qDescription); err != nil {
 				return err
 			}
 		}

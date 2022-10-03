@@ -51,6 +51,12 @@ export interface V2controllersAppVersion {
      */
     createdAt?: string;
     /**
+     * Generally the Git commit message
+     * @type {string}
+     * @memberof V2controllersAppVersion
+     */
+    description?: string;
+    /**
      * 
      * @type {string}
      * @memberof V2controllersAppVersion
@@ -111,6 +117,7 @@ export function V2controllersAppVersionFromJSONTyped(json: any, ignoreDiscrimina
         'chart': !exists(json, 'chart') ? undefined : json['chart'],
         'chartInfo': !exists(json, 'chartInfo') ? undefined : V2controllersChartFromJSON(json['chartInfo']),
         'createdAt': !exists(json, 'createdAt') ? undefined : json['createdAt'],
+        'description': !exists(json, 'description') ? undefined : json['description'],
         'gitBranch': !exists(json, 'gitBranch') ? undefined : json['gitBranch'],
         'gitCommit': !exists(json, 'gitCommit') ? undefined : json['gitCommit'],
         'id': !exists(json, 'id') ? undefined : json['id'],
@@ -133,6 +140,7 @@ export function V2controllersAppVersionToJSON(value?: V2controllersAppVersion | 
         'chart': value.chart,
         'chartInfo': V2controllersChartToJSON(value.chartInfo),
         'createdAt': value.createdAt,
+        'description': value.description,
         'gitBranch': value.gitBranch,
         'gitCommit': value.gitCommit,
         'id': value.id,

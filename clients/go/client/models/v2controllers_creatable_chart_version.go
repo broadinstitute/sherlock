@@ -23,6 +23,9 @@ type V2controllersCreatableChartVersion struct {
 	// Required when creating
 	ChartVersion string `json:"chartVersion,omitempty"`
 
+	// Generally the Git commit message
+	Description string `json:"description,omitempty"`
+
 	// parent chart version
 	ParentChartVersion string `json:"parentChartVersion,omitempty"`
 }
