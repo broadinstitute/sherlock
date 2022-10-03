@@ -9,6 +9,7 @@ func RegisterChartVersionHandlers(routerGroup *gin.RouterGroup, controller *v2co
 	routerGroup.POST("/chart-versions", createChartVersion(controller))
 	routerGroup.GET("/chart-versions", listChartVersion(controller))
 	routerGroup.GET("/chart-versions/*selector", getChartVersion(controller))
+	routerGroup.PATCH("/chart-versions/*selector", editChartVersion(controller))
 	routerGroup.GET("/selectors/chart-versions/*selector", listChartVersionSelectors(controller))
 }
 
@@ -52,6 +53,21 @@ func listChartVersion(controller *v2controllers.ChartVersionController) func(ctx
 // @router      /api/v2/chart-versions/{selector} [get]
 func getChartVersion(controller *v2controllers.ChartVersionController) func(ctx *gin.Context) {
 	return handleGet(controller)
+}
+
+// editChartVersion godoc
+// @summary     Edit a ChartVersion entry
+// @description Edit an existing ChartVersion entry via one its "selectors": chart/version or numeric ID. Note that only mutable fields are available here, immutable fields can only be set using /create.
+// @tags        ChartVersions
+// @accept      json
+// @produce     json
+// @param       selector                path     string                             true "The ChartVersion to edit's selector: chart/version or numeric ID"
+// @param       chart-version           body     v2controllers.EditableChartVersion true "The edits to make to the ChartVersion"
+// @success     200                     {object} v2controllers.ChartVersion
+// @failure     400,403,404,407,409,500 {object} errors.ErrorResponse
+// @router      /api/v2/chart-versions/{selector} [patch]
+func editChartVersion(controller *v2controllers.ChartVersionController) func(ctx *gin.Context) {
+	return handleEdit(controller)
 }
 
 // listChartVersionSelectors godoc

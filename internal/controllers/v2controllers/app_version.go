@@ -24,7 +24,9 @@ type CreatableAppVersion struct {
 	EditableAppVersion
 }
 
-type EditableAppVersion struct{}
+type EditableAppVersion struct {
+	Description string `json:"description" form:"description"` // Generally the Git commit message
+}
 
 //nolint:unused
 func (c CreatableAppVersion) toReadable() AppVersion {
@@ -75,11 +77,12 @@ func modelAppVersionToAppVersion(model *v2models.AppVersion) *AppVersion {
 		ChartInfo:            chart,
 		ParentAppVersionInfo: parentAppVersion,
 		CreatableAppVersion: CreatableAppVersion{
-			Chart:            chartName,
-			AppVersion:       model.AppVersion,
-			GitCommit:        model.GitCommit,
-			GitBranch:        model.GitBranch,
-			ParentAppVersion: parentAppVersionSelector,
+			Chart:              chartName,
+			AppVersion:         model.AppVersion,
+			GitCommit:          model.GitCommit,
+			GitBranch:          model.GitBranch,
+			ParentAppVersion:   parentAppVersionSelector,
+			EditableAppVersion: EditableAppVersion{Description: model.Description},
 		},
 	}
 }
@@ -116,5 +119,6 @@ func appVersionToModelAppVersion(appVersion AppVersion, stores *v2models.StoreSe
 		GitCommit:          appVersion.GitCommit,
 		GitBranch:          appVersion.GitBranch,
 		ParentAppVersionID: parentAppVersionID,
+		Description:        appVersion.Description,
 	}, nil
 }

@@ -9,6 +9,7 @@ func RegisterAppVersionHandlers(routerGroup *gin.RouterGroup, controller *v2cont
 	routerGroup.POST("/app-versions", createAppVersion(controller))
 	routerGroup.GET("/app-versions", listAppVersion(controller))
 	routerGroup.GET("/app-versions/*selector", getAppVersion(controller))
+	routerGroup.PATCH("/app-versions/*selector", editAppVersion(controller))
 	routerGroup.GET("/selectors/app-versions/*selector", listAppVersionSelectors(controller))
 }
 
@@ -52,6 +53,21 @@ func listAppVersion(controller *v2controllers.AppVersionController) func(ctx *gi
 // @router      /api/v2/app-versions/{selector} [get]
 func getAppVersion(controller *v2controllers.AppVersionController) func(ctx *gin.Context) {
 	return handleGet(controller)
+}
+
+// editAppVersion godoc
+// @summary     Edit a AppVersion entry
+// @description Edit an existing AppVersion entry via one its "selectors": chart/version or numeric ID. Note that only mutable fields are available here, immutable fields can only be set using /create.
+// @tags        AppVersions
+// @accept      json
+// @produce     json
+// @param       selector                path     string                           true "The AppVersion to edit's selector: chart/version or numeric ID"
+// @param       app-version             body     v2controllers.EditableAppVersion true "The edits to make to the AppVersion"
+// @success     200                     {object} v2controllers.AppVersion
+// @failure     400,403,404,407,409,500 {object} errors.ErrorResponse
+// @router      /api/v2/app-versions/{selector} [patch]
+func editAppVersion(controller *v2controllers.AppVersionController) func(ctx *gin.Context) {
+	return handleEdit(controller)
 }
 
 // listAppVersionSelectors godoc

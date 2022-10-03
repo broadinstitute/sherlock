@@ -262,15 +262,16 @@ func (suite *chartVersionControllerSuite) TestChartVersionGetOtherValidSelectors
 }
 
 func (suite *chartVersionControllerSuite) TestChartVersionEdit() {
-	suite.Run("'successfully' but there's no fields", func() {
+	suite.Run("successfully", func() {
 		db.Truncate(suite.T(), suite.db)
 		suite.seedCharts(suite.T())
 		suite.seedChartVersions(suite.T())
 		chartVersions, _ := suite.ChartVersionController.ListAllMatching(ChartVersion{}, 1)
 		anID := fmt.Sprintf("%d", chartVersions[0].ID)
 
-		_, err := suite.ChartVersionController.Edit(anID, EditableChartVersion{}, auth.GenerateUser(suite.T(), false))
+		response, err := suite.ChartVersionController.Edit(anID, EditableChartVersion{Description: "blah"}, auth.GenerateUser(suite.T(), false))
 		assert.NoError(suite.T(), err)
+		assert.Equal(suite.T(), "blah", response.Description)
 	})
 }
 

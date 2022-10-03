@@ -15,6 +15,7 @@ type AppVersion struct {
 	AppVersion         string `gorm:"not null: default:null"`
 	GitCommit          string
 	GitBranch          string
+	Description        string
 	ParentAppVersion   *AppVersion
 	ParentAppVersionID *uint
 }
