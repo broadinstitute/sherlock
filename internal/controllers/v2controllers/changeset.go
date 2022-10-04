@@ -1,7 +1,6 @@
 package v2controllers
 
 import (
-	"fmt"
 	"github.com/broadinstitute/sherlock/internal/auth"
 	"github.com/broadinstitute/sherlock/internal/models/v2models"
 	"gorm.io/gorm"
@@ -96,56 +95,33 @@ func modelChangesetToChangeset(model *v2models.Changeset) *Changeset {
 		chartReleaseName = chartRelease.Name
 	}
 
+	// We don't try to create pretty selectors here because there's some fishy behavior in gorm
+	// with not quite returning all the nested data we're asking for--potentially because we're
+	// asking for nested data from the same table multiple times over in the exact same query.
+	// To be predictable, we just set the reference here to always be the numeric ID.
 	var toAppVersionReference string
-	toAppVersion := modelAppVersionToAppVersion(model.To.AppVersion)
-	if toAppVersion != nil {
-		// We return so much info about app versions and chart versions that returning the "pretty" selectors
-		// isn't worth doing extra database queries to deep-load associations, but if we happen to have the info
-		// already we'll go ahead and use it.
-		if toAppVersion.Chart != "" {
-			toAppVersionReference = fmt.Sprintf("%s/%s", toAppVersion.Chart, toAppVersion.AppVersion)
-		} else if chartRelease != nil && chartRelease.Chart != "" {
-			toAppVersionReference = fmt.Sprintf("%s/%s", chartRelease.Chart, toAppVersion.AppVersion)
-		}
-	} else if model.To.AppVersionID != nil {
+	if model.To.AppVersionID != nil {
 		toAppVersionReference = strconv.FormatUint(uint64(*model.To.AppVersionID), 10)
 	}
+	toAppVersion := modelAppVersionToAppVersion(model.To.AppVersion)
 
 	var toChartVersionReference string
-	toChartVersion := modelChartVersionToChartVersion(model.To.ChartVersion)
-	if toChartVersion != nil {
-		if toChartVersion.Chart != "" {
-			toChartVersionReference = fmt.Sprintf("%s/%s", toChartVersion.Chart, toChartVersion.ChartVersion)
-		} else if chartRelease != nil && chartRelease.Chart != "" {
-			toChartVersionReference = fmt.Sprintf("%s/%s", chartRelease.Chart, toChartVersion.ChartVersion)
-		}
-	} else if model.To.ChartVersionID != nil {
+	if model.To.ChartVersionID != nil {
 		toChartVersionReference = strconv.FormatUint(uint64(*model.To.ChartVersionID), 10)
 	}
+	toChartVersion := modelChartVersionToChartVersion(model.To.ChartVersion)
 
 	var fromAppVersionReference string
-	fromAppVersion := modelAppVersionToAppVersion(model.From.AppVersion)
-	if fromAppVersion != nil {
-		if fromAppVersion.Chart != "" {
-			fromAppVersionReference = fmt.Sprintf("%s/%s", fromAppVersion.Chart, fromAppVersion.AppVersion)
-		} else if chartRelease != nil && chartRelease.Chart != "" {
-			fromAppVersionReference = fmt.Sprintf("%s/%s", chartRelease.Chart, fromAppVersion.AppVersion)
-		}
-	} else if model.From.AppVersionID != nil {
+	if model.From.AppVersionID != nil {
 		fromAppVersionReference = strconv.FormatUint(uint64(*model.From.AppVersionID), 10)
 	}
+	fromAppVersion := modelAppVersionToAppVersion(model.From.AppVersion)
 
 	var fromChartVersionReference string
-	fromChartVersion := modelChartVersionToChartVersion(model.From.ChartVersion)
-	if fromChartVersion != nil {
-		if fromChartVersion.Chart != "" {
-			fromChartVersionReference = fmt.Sprintf("%s/%s", fromChartVersion.Chart, fromChartVersion.ChartVersion)
-		} else if chartRelease != nil && chartRelease.Chart != "" {
-			fromChartVersionReference = fmt.Sprintf("%s/%s", chartRelease.Chart, fromChartVersion.ChartVersion)
-		}
-	} else if model.From.ChartVersionID != nil {
+	if model.From.ChartVersionID != nil {
 		fromChartVersionReference = strconv.FormatUint(uint64(*model.From.ChartVersionID), 10)
 	}
+	fromChartVersion := modelChartVersionToChartVersion(model.From.ChartVersion)
 
 	var newAppVersions []AppVersion
 	for _, modelNewAppVersion := range model.NewAppVersions {
