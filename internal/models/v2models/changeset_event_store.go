@@ -105,7 +105,7 @@ func (s *internalChangesetEventStore) apply(db *gorm.DB, changesets []Changeset,
 				// which would've already been caught. In any case, we won't be applying this Changeset, so first mark it as
 				// superseded:
 				now := time.Now()
-				_, err = s.edit(tx, Changeset{Model: gorm.Model{ID: toApply.ID}}, Changeset{SupersededAt: &now}, user)
+				_, err = s.edit(tx, Changeset{Model: gorm.Model{ID: toApply.ID}}, Changeset{SupersededAt: &now}, user, false)
 				if err != nil {
 					log.Error().Err(err).Msgf("couldn't retroactively mark Changeset %d as superseded", toApply.ID)
 				}
@@ -119,7 +119,10 @@ func (s *internalChangesetEventStore) apply(db *gorm.DB, changesets []Changeset,
 				// Return an error with errors.InternalServerError so it'll get logged
 				return fmt.Errorf("(%s) apply validation error on %T %d (ID: %d): the %T was detected as being out-of-date before it could be applied--it has now been properly marked as superseded; please plan again or contact DevOps if the problem persists", errors.InternalServerError, changeset, index+1, toApply.ID, changeset.To)
 			}
-			chartRelease, err = chartReleaseStore.edit(tx, ChartRelease{Model: gorm.Model{ID: toApply.ChartReleaseID}}, ChartRelease{ChartReleaseVersion: toApply.To}, user)
+			// Update the struct fields of what came from the database
+			chartRelease.ChartReleaseVersion = toApply.To
+			// Now save what we have--*all* of it, including zero fields--back into the database
+			chartRelease, err = chartReleaseStore.edit(tx, ChartRelease{Model: gorm.Model{ID: toApply.ChartReleaseID}}, chartRelease, user, true)
 			if err != nil {
 				return fmt.Errorf("apply error on %T %d (ID: %d): failed to modify %T (ID: %d): %v", changeset, index+1, toApply.ID, chartRelease, toApply.ChartReleaseID, err)
 			}
@@ -131,13 +134,13 @@ func (s *internalChangesetEventStore) apply(db *gorm.DB, changesets []Changeset,
 			}
 			for _, consumedChangeset := range consumedChangesets {
 				if consumedChangeset.ID == toApply.ID {
-					applied, err := s.edit(tx, Changeset{Model: gorm.Model{ID: consumedChangeset.ID}}, Changeset{AppliedAt: &chartRelease.UpdatedAt}, user)
+					applied, err := s.edit(tx, Changeset{Model: gorm.Model{ID: consumedChangeset.ID}}, Changeset{AppliedAt: &chartRelease.UpdatedAt}, user, false)
 					if err != nil {
 						return fmt.Errorf("post-apply error on %T %d (ID: %d): couldn't mark it as applied: %v", changeset, index+1, toApply.ID, err)
 					}
 					ret = append(ret, applied)
 				} else {
-					_, err := s.edit(tx, Changeset{Model: gorm.Model{ID: consumedChangeset.ID}}, Changeset{SupersededAt: &chartRelease.UpdatedAt}, user)
+					_, err := s.edit(tx, Changeset{Model: gorm.Model{ID: consumedChangeset.ID}}, Changeset{SupersededAt: &chartRelease.UpdatedAt}, user, false)
 					if err != nil {
 						return fmt.Errorf("post-apply error on %T %d (ID: %d): couldn't mark superseded %T (ID: %d) as superseded: %v", changeset, index+1, toApply.ID, changeset, consumedChangeset.ID, err)
 					}

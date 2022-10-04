@@ -199,8 +199,8 @@ func (chartReleaseVersion *ChartReleaseVersion) validate() error {
 			}
 		case "exact":
 			if chartReleaseVersion.ChartVersion != nil && chartReleaseVersion.ChartVersion.ChartVersion != *chartReleaseVersion.ChartVersionExact {
-				return fmt.Errorf("a %T must not have an associated internal ChartVersion in conflict with the exact version on %T, here '%s'",
-					chartReleaseVersion, chartReleaseVersion, *chartReleaseVersion.ChartVersionExact)
+				return fmt.Errorf("a %T must not have an associated internal ChartVersion (ID: %d, %s) in conflict with the exact version on %T, here '%s'",
+					chartReleaseVersion, *chartReleaseVersion.ChartVersionID, chartReleaseVersion.ChartVersion.ChartVersion, chartReleaseVersion, *chartReleaseVersion.ChartVersionExact)
 			}
 		default:
 			return fmt.Errorf("a %T must have a ChartVersionResolver of 'latest' or 'exact'", chartReleaseVersion)

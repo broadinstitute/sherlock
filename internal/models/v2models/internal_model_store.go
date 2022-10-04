@@ -153,7 +153,7 @@ func (s internalModelStore[M]) get(db *gorm.DB, query M) (M, error) {
 	return matching[0], nil
 }
 
-func (s internalModelStore[M]) edit(db *gorm.DB, query M, editsToMake M, user *auth.User) (M, error) {
+func (s internalModelStore[M]) edit(db *gorm.DB, query M, editsToMake M, user *auth.User, updateAllFields bool) (M, error) {
 	toEdit, err := s.get(db, query)
 	if err != nil {
 		return toEdit, err
@@ -165,7 +165,11 @@ func (s internalModelStore[M]) edit(db *gorm.DB, query M, editsToMake M, user *a
 	}
 	var ret M
 	err = db.Transaction(func(tx *gorm.DB) error {
-		if err = tx.Model(&toEdit).Updates(&editsToMake).Error; err != nil {
+		var chain = tx.Model(&toEdit)
+		if updateAllFields {
+			chain.Select("*")
+		}
+		if err = chain.Updates(&editsToMake).Error; err != nil {
 			return fmt.Errorf("edit error editing %T: %v", toEdit, err)
 		}
 		result, err := s.get(tx, toEdit)
