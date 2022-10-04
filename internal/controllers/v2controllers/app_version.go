@@ -6,6 +6,7 @@ import (
 	"github.com/broadinstitute/sherlock/internal/models/v2models"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
+	"strconv"
 )
 
 type AppVersion struct {
@@ -66,6 +67,10 @@ func modelAppVersionToAppVersion(model *v2models.AppVersion) *AppVersion {
 		// The parent's associations might not be loaded, so we can't safely get the chart name of the parent, but
 		// we know that the parent's chart name is the same as ours.
 		parentAppVersionSelector = fmt.Sprintf("%s/%s", chartName, parentAppVersion.AppVersion)
+	}
+	if parentAppVersionSelector == "" && model.ParentAppVersionID != nil {
+		// If that didn't work but we have an ID, use it directly--just means our associations weren't loaded.
+		parentAppVersionSelector = strconv.FormatUint(uint64(*model.ParentAppVersionID), 10)
 	}
 
 	return &AppVersion{

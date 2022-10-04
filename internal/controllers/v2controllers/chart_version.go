@@ -6,6 +6,7 @@ import (
 	"github.com/broadinstitute/sherlock/internal/models/v2models"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
+	"strconv"
 )
 
 type ChartVersion struct {
@@ -64,6 +65,10 @@ func modelChartVersionToChartVersion(model *v2models.ChartVersion) *ChartVersion
 		// The parent's associations might not be loaded, so we can't safely get the chart name of the parent, but
 		// we know that the parent's chart name is the same as ours.
 		parentChartVersionSelector = fmt.Sprintf("%s/%s", chartName, parentChartVersion.ChartVersion)
+	}
+	if parentChartVersionSelector == "" && model.ParentChartVersionID != nil {
+		// If that didn't work but we have an ID, use it directly--just means our associations weren't loaded
+		parentChartVersionSelector = strconv.FormatUint(uint64(*model.ParentChartVersionID), 10)
 	}
 
 	return &ChartVersion{
