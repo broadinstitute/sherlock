@@ -340,4 +340,16 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 		},
 	}, auth.GenerateUser(suite.T(), true))
 	assert.ErrorContains(suite.T(), err, "mismatched chart")
+
+	// We can go to arbitrary chart and app versions too:
+	_, err = suite.ChangesetController.PlanAndApply(ChangesetPlanRequest{
+		ChartReleases: []ChangesetPlanRequestChartReleaseEntry{
+			{CreatableChangeset: CreatableChangeset{
+				ChartRelease:        fmt.Sprintf("%s/%s", newBee.Name, "sam"),
+				ToAppVersionExact:   testutils.PointerTo("7.7.7"),
+				ToChartVersionExact: testutils.PointerTo("8.8.8"),
+			}},
+		},
+	}, auth.GenerateUser(suite.T(), true))
+	assert.NoError(suite.T(), err)
 }

@@ -40,7 +40,7 @@ func (s ModelStore[M]) Edit(selector string, editsToMake M, user *auth.User) (M,
 	if err != nil {
 		return query, fmt.Errorf("query error parsing %T selector '%s': %v", query, selector, err)
 	}
-	ret, err := s.edit(s.db, query, editsToMake, user)
+	ret, err := s.edit(s.db, query, editsToMake, user, false)
 	if err != nil {
 		return query, fmt.Errorf("edit error using %T selector '%s': %v", query, selector, err)
 	}
