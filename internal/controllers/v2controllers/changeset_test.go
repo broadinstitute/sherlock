@@ -342,7 +342,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 	assert.ErrorContains(suite.T(), err, "mismatched chart")
 
 	// We can go to arbitrary chart and app versions too:
-	_, err = suite.ChangesetController.PlanAndApply(ChangesetPlanRequest{
+	applied, err = suite.ChangesetController.PlanAndApply(ChangesetPlanRequest{
 		ChartReleases: []ChangesetPlanRequestChartReleaseEntry{
 			{CreatableChangeset: CreatableChangeset{
 				ChartRelease:        fmt.Sprintf("%s/%s", newBee.Name, "sam"),
@@ -352,4 +352,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 		},
 	}, auth.GenerateUser(suite.T(), true))
 	assert.NoError(suite.T(), err)
+	// And the changelogs don't balloon in size:
+	assert.Len(suite.T(), applied[0].NewAppVersions, 1)
+	assert.Len(suite.T(), applied[0].NewChartVersions, 1)
 }
