@@ -342,14 +342,43 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 	assert.ErrorContains(suite.T(), err, "mismatched chart")
 
 	// We can go to arbitrary chart and app versions too:
-	_, err = suite.ChangesetController.PlanAndApply(ChangesetPlanRequest{
+	applied, err = suite.ChangesetController.PlanAndApply(ChangesetPlanRequest{
 		ChartReleases: []ChangesetPlanRequestChartReleaseEntry{
 			{CreatableChangeset: CreatableChangeset{
-				ChartRelease:        fmt.Sprintf("%s/%s", newBee.Name, "sam"),
-				ToAppVersionExact:   testutils.PointerTo("7.7.7"),
-				ToChartVersionExact: testutils.PointerTo("8.8.8"),
+				ChartRelease:           fmt.Sprintf("%s/%s", newBee.Name, "sam"),
+				ToAppVersionResolver:   testutils.PointerTo("exact"),
+				ToAppVersionExact:      testutils.PointerTo("7.7.7"),
+				ToChartVersionResolver: testutils.PointerTo("exact"),
+				ToChartVersionExact:    testutils.PointerTo("8.8.8"),
 			}},
 		},
 	}, auth.GenerateUser(suite.T(), true))
 	assert.NoError(suite.T(), err)
+	// And the changelogs are empty:
+	assert.Len(suite.T(), applied[0].NewAppVersions, 0)
+	assert.Len(suite.T(), applied[0].NewChartVersions, 0)
+
+	// If we branch-hop, the changelogs truncate because there's no plain directional
+	// path between the two versions
+	applied, err = suite.ChangesetController.PlanAndApply(ChangesetPlanRequest{
+		ChartReleases: []ChangesetPlanRequestChartReleaseEntry{
+			{CreatableChangeset: CreatableChangeset{
+				ChartRelease:         fmt.Sprintf("%s/%s", newBee.Name, "sam"),
+				ToAppVersionResolver: testutils.PointerTo("branch"),
+				ToAppVersionBranch:   testutils.PointerTo("develop"),
+			}},
+		},
+	}, auth.GenerateUser(suite.T(), true))
+	assert.NoError(suite.T(), err)
+	assert.Len(suite.T(), applied[0].NewAppVersions, 0)
+	applied, err = suite.ChangesetController.PlanAndApply(ChangesetPlanRequest{
+		ChartReleases: []ChangesetPlanRequestChartReleaseEntry{
+			{CreatableChangeset: CreatableChangeset{
+				ChartRelease:       fmt.Sprintf("%s/%s", newBee.Name, "sam"),
+				ToAppVersionBranch: testutils.PointerTo("ID-123-my-new-feature"),
+			}},
+		},
+	}, auth.GenerateUser(suite.T(), true))
+	assert.NoError(suite.T(), err)
+	assert.Len(suite.T(), applied[0].NewAppVersions, 1)
 }

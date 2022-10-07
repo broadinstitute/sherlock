@@ -96,62 +96,67 @@ func preCreateChangeset(db *gorm.DB, toCreate *Changeset, _ *auth.User) error {
 
 		// List new app versions
 		if toCreate.From.AppVersionID != nil && toCreate.To.AppVersionID != nil && *toCreate.From.AppVersionID != *toCreate.To.AppVersionID {
+			var observedVersions []*AppVersion
 			newVersion := toCreate.To.AppVersion
-			for *toCreate.From.AppVersionID != newVersion.ID {
-				if newVersion != nil {
-					isActuallyNew := true
-					for _, listedVersion := range toCreate.NewAppVersions {
-						if listedVersion.ID == newVersion.ID {
-							isActuallyNew = false
-						}
-					}
-					if isActuallyNew {
-						toCreate.NewAppVersions = append(toCreate.NewAppVersions, newVersion)
-						if newVersion.ParentAppVersionID != nil {
-							potentialNewVersion, err := appVersionStore.get(db, AppVersion{Model: gorm.Model{ID: *newVersion.ParentAppVersionID}})
-							if err == nil {
-								newVersion = &potentialNewVersion
-							} else {
-								break
-							}
-						} else {
-							break
-						}
-					} else {
+			for newVersion != nil && *toCreate.From.AppVersionID != newVersion.ID {
+				for _, observedVersion := range observedVersions {
+					if observedVersion.ID == newVersion.ID {
 						break
 					}
 				}
+				observedVersions = append(observedVersions, newVersion)
+				if newVersion.ParentAppVersionID != nil {
+					potentialNewVersion, err := appVersionStore.get(db, AppVersion{Model: gorm.Model{ID: *newVersion.ParentAppVersionID}})
+					if err == nil {
+						newVersion = &potentialNewVersion
+					} else {
+						break
+					}
+				} else {
+					break
+				}
+			}
+			if len(observedVersions) > 0 &&
+				observedVersions[len(observedVersions)-1] != nil &&
+				observedVersions[len(observedVersions)-1].ParentAppVersionID != nil &&
+				*observedVersions[len(observedVersions)-1].ParentAppVersionID == *toCreate.From.AppVersionID {
+				toCreate.NewAppVersions = observedVersions
+			} else {
+				// If we didn't end up connecting the tree, just include the most recent rather than literally every version.
+				toCreate.NewAppVersions = []*AppVersion{toCreate.To.AppVersion}
 			}
 		}
 
 		// List new chart versions
 		if toCreate.From.ChartVersionID != nil && toCreate.To.ChartVersionID != nil && *toCreate.From.ChartVersionID != *toCreate.To.ChartVersionID {
+			var observedVersions []*ChartVersion
 			newVersion := toCreate.To.ChartVersion
-			for *toCreate.From.ChartVersionID != newVersion.ID {
-				if newVersion != nil {
-					isActuallyNew := true
-					for _, listedVersion := range toCreate.NewChartVersions {
-						if listedVersion.ID == newVersion.ID {
-							isActuallyNew = false
-						}
-					}
-					if isActuallyNew {
-						toCreate.NewChartVersions = append(toCreate.NewChartVersions, newVersion)
-						if newVersion.ParentChartVersionID != nil {
-							potentialNewVersion, err := chartVersionStore.get(db, ChartVersion{Model: gorm.Model{ID: *newVersion.ParentChartVersionID}})
-							if err == nil {
-								newVersion = &potentialNewVersion
-							} else {
-								break
-							}
-						} else {
-							break
-						}
-					} else {
+			for newVersion != nil && *toCreate.From.ChartVersionID != newVersion.ID {
+				for _, observedVersion := range observedVersions {
+					if observedVersion.ID == newVersion.ID {
 						break
 					}
 				}
-
+				observedVersions = append(observedVersions, newVersion)
+				if newVersion.ParentChartVersionID != nil {
+					potentialNewVersion, err := chartVersionStore.get(db, ChartVersion{Model: gorm.Model{ID: *newVersion.ParentChartVersionID}})
+					if err == nil {
+						newVersion = &potentialNewVersion
+					} else {
+						break
+					}
+				} else {
+					break
+				}
+			}
+			if len(observedVersions) > 0 &&
+				observedVersions[len(observedVersions)-1] != nil &&
+				observedVersions[len(observedVersions)-1].ParentChartVersionID != nil &&
+				*observedVersions[len(observedVersions)-1].ParentChartVersionID == *toCreate.From.ChartVersionID {
+				toCreate.NewChartVersions = observedVersions
+			} else {
+				// If we didn't end up connecting the tree, just include the most recent rather than literally every version.
+				toCreate.NewChartVersions = []*ChartVersion{toCreate.To.ChartVersion}
 			}
 		}
 	}
