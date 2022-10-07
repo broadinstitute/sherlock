@@ -16,6 +16,7 @@ RUN go mod download && go mod verify
 COPY . .
 RUN go build -ldflags="-X 'main.BuildVersion=${SHERLOCK_BUILD_VERSION}'" -o /bin/sherlock ./cmd/server/...
 
-FROM alpine:${ALPINE_VERSION} as runtime
+# FROM alpine:${ALPINE_VERSION} as runtime <-- use this if you hit issues
+FROM gcr.io/distroless/static as runtime
 COPY --from=build /bin/sherlock /bin/sherlock
 ENTRYPOINT [ "/bin/sherlock" ]
