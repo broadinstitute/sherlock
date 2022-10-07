@@ -116,7 +116,10 @@ func preCreateChangeset(db *gorm.DB, toCreate *Changeset, _ *auth.User) error {
 					break
 				}
 			}
-			if len(observedVersions) > 0 && observedVersions[len(observedVersions)] != nil && observedVersions[len(observedVersions)].ID == *toCreate.From.AppVersionID {
+			if len(observedVersions) > 0 &&
+				observedVersions[len(observedVersions)-1] != nil &&
+				observedVersions[len(observedVersions)-1].ParentAppVersionID != nil &&
+				*observedVersions[len(observedVersions)-1].ParentAppVersionID == *toCreate.From.AppVersionID {
 				toCreate.NewAppVersions = observedVersions
 			} else {
 				// If we didn't end up connecting the tree, just include the most recent rather than literally every version.
@@ -146,7 +149,10 @@ func preCreateChangeset(db *gorm.DB, toCreate *Changeset, _ *auth.User) error {
 					break
 				}
 			}
-			if len(observedVersions) > 0 && observedVersions[len(observedVersions)] != nil && observedVersions[len(observedVersions)].ID == *toCreate.From.ChartVersionID {
+			if len(observedVersions) > 0 &&
+				observedVersions[len(observedVersions)-1] != nil &&
+				observedVersions[len(observedVersions)-1].ParentChartVersionID != nil &&
+				*observedVersions[len(observedVersions)-1].ParentChartVersionID == *toCreate.From.ChartVersionID {
 				toCreate.NewChartVersions = observedVersions
 			} else {
 				// If we didn't end up connecting the tree, just include the most recent rather than literally every version.
