@@ -2,9 +2,10 @@ package v2models
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/broadinstitute/sherlock/internal/errors"
 	"gorm.io/gorm"
-	"time"
 )
 
 // ChartReleaseVersion isn't stored in the database on its own, it is included as a part of a ChartRelease or
@@ -25,7 +26,8 @@ type ChartReleaseVersion struct {
 	ChartVersion         *ChartVersion
 	ChartVersionID       *uint
 
-	HelmfileRef *string
+	HelmfileRef         *string
+	FirecloudDevelopRef *string
 }
 
 func (chartReleaseVersion *ChartReleaseVersion) resolve(db *gorm.DB, chartQuery Chart) error {
