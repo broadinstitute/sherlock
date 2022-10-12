@@ -275,6 +275,19 @@ func Test_validateCluster(t *testing.T) {
 			}},
 			wantErr: true,
 		},
+		{
+			name: "valid with location",
+			args: args{cluster: &Cluster{
+				Name:                "terra-dev",
+				Provider:            "google",
+				GoogleProject:       "broad-dsde-dev",
+				Location:            "us-central1-a",
+				Base:                testutils.PointerTo("live"),
+				Address:             testutils.PointerTo("1.2.3.4"),
+				RequiresSuitability: testutils.PointerTo(false),
+			}},
+			wantErr: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
