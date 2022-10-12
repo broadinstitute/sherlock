@@ -1,11 +1,12 @@
 package v2controllers
 
 import (
+	"strconv"
+	"time"
+
 	"github.com/broadinstitute/sherlock/internal/auth"
 	"github.com/broadinstitute/sherlock/internal/models/v2models"
 	"gorm.io/gorm"
-	"strconv"
-	"time"
 )
 
 type Changeset struct {
@@ -30,6 +31,7 @@ type Changeset struct {
 	FromChartVersionInfo      *ChartVersion `json:"fromChartVersionInfo,omitempty" form:"-"`
 	FromChartVersionReference string        `json:"fromChartVersionReference,omitempty" form:"fromChartVersionReference"`
 	FromHelmfileRef           *string       `json:"fromHelmfileRef,omitempty" form:"fromHelmfileRef"`
+	FromFirecloudDevelopRef   *string       `json:"fromFirecloudDevelopRef,omitempty" form:"fromFirecloudDevelopRef"`
 
 	ToResolvedAt            *time.Time    `json:"toResolvedAt,omitempty" from:"toResolvedAt"`
 	ToAppVersionInfo        *AppVersion   `json:"toAppVersionInfo,omitempty" form:"-"`
@@ -48,6 +50,7 @@ type CreatableChangeset struct {
 	ToChartVersionResolver *string `json:"toChartVersionResolver,omitempty" form:"toChartVersionResolver"`
 	ToChartVersionExact    *string `json:"toChartVersionExact,omitempty" form:"toChartVersionExact"`
 	ToHelmfileRef          *string `json:"toHelmfileRef,omitempty" form:"toHelmfileRef"`
+	ToFirecloudDevelopRef  *string `json:"toFirecloudDevelopRef,omitempty" form:"toFirecloudDevelopRef"`
 
 	ChartRelease string `json:"chartRelease" form:"chartRelease"`
 
@@ -162,6 +165,7 @@ func modelChangesetToChangeset(model *v2models.Changeset) *Changeset {
 		FromChartVersionInfo:      fromChartVersion,
 		FromChartVersionReference: fromChartVersionReference,
 		FromHelmfileRef:           model.From.HelmfileRef,
+		FromFirecloudDevelopRef:   model.From.FirecloudDevelopRef,
 		ToResolvedAt:              model.To.ResolvedAt,
 		ToAppVersionInfo:          toAppVersion,
 		ToAppVersionReference:     toAppVersionReference,
@@ -175,6 +179,7 @@ func modelChangesetToChangeset(model *v2models.Changeset) *Changeset {
 			ToChartVersionResolver: model.To.ChartVersionResolver,
 			ToChartVersionExact:    model.To.ChartVersionExact,
 			ToHelmfileRef:          model.To.HelmfileRef,
+			ToFirecloudDevelopRef:  model.To.FirecloudDevelopRef,
 			ChartRelease:           chartReleaseName,
 			EditableChangeset:      EditableChangeset{},
 		},
