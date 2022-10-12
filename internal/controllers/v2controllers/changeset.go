@@ -245,6 +245,7 @@ func changesetToModelChangeset(changeset Changeset, stores *v2models.StoreSet) (
 			ChartVersionExact:    changeset.FromChartVersionExact,
 			ChartVersionID:       fromChartVersionID,
 			HelmfileRef:          changeset.FromHelmfileRef,
+			FirecloudDevelopRef:  changeset.FromFirecloudDevelopRef,
 		},
 		To: v2models.ChartReleaseVersion{
 			ResolvedAt:           changeset.ToResolvedAt,
@@ -257,6 +258,7 @@ func changesetToModelChangeset(changeset Changeset, stores *v2models.StoreSet) (
 			ChartVersionExact:    changeset.ToChartVersionExact,
 			ChartVersionID:       toChartVersionID,
 			HelmfileRef:          changeset.ToHelmfileRef,
+			FirecloudDevelopRef:  changeset.ToFirecloudDevelopRef,
 		},
 		AppliedAt:    changeset.AppliedAt,
 		SupersededAt: changeset.SupersededAt,

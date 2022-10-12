@@ -29,6 +29,7 @@ type EditableCluster struct {
 	Base                *string `json:"base"  form:"base"`      // Required when creating
 	Address             *string `json:"address" form:"address"` // Required when creating
 	RequiresSuitability *bool   `json:"requiresSuitability" form:"requiresSuitability" default:"false"`
+	HelmfileRef         *string `json:"helmfileRef" form:"helmfileRef" default:"HEAD"`
 }
 
 //nolint:unused
@@ -73,6 +74,7 @@ func modelClusterToCluster(model *v2models.Cluster) *Cluster {
 				Base:                model.Base,
 				Address:             model.Address,
 				RequiresSuitability: model.RequiresSuitability,
+				HelmfileRef:         model.HelmfileRef,
 			},
 		},
 	}
@@ -93,5 +95,6 @@ func clusterToModelCluster(cluster Cluster, _ *v2models.StoreSet) (v2models.Clus
 		Base:                cluster.Base,
 		Address:             cluster.Address,
 		RequiresSuitability: cluster.RequiresSuitability,
+		HelmfileRef:         cluster.HelmfileRef,
 	}, nil
 }

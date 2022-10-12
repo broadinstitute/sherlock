@@ -2,14 +2,15 @@ package v2controllers
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/internal/auth"
-	"github.com/broadinstitute/sherlock/internal/models/v2models"
-	"github.com/dustinkirkland/golang-petname"
-	"gorm.io/gorm"
 	"math/rand"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/broadinstitute/sherlock/internal/auth"
+	"github.com/broadinstitute/sherlock/internal/models/v2models"
+	petname "github.com/dustinkirkland/golang-petname"
+	"gorm.io/gorm"
 )
 
 type Environment struct {
@@ -36,6 +37,7 @@ type EditableEnvironment struct {
 	RequiresSuitability *bool   `json:"requiresSuitability" form:"requiresSuitability" default:"false"`
 	BaseDomain          *string `json:"baseDomain" form:"baseDomain" default:"bee.envs-terra.bio"`
 	NamePrefixesDomain  *bool   `json:"namePrefixesDomain" form:"namePrefixesDomain" default:"true"`
+	HelmfileRef         *string `json:"helmfileRef" form:"helmfileRef" default:"HEAD"`
 }
 
 //nolint:unused
@@ -99,6 +101,7 @@ func modelEnvironmentToEnvironment(model *v2models.Environment) *Environment {
 				RequiresSuitability: model.RequiresSuitability,
 				BaseDomain:          model.BaseDomain,
 				NamePrefixesDomain:  model.NamePrefixesDomain,
+				HelmfileRef:         model.HelmfileRef,
 			},
 		},
 	}
@@ -139,6 +142,7 @@ func environmentToModelEnvironment(environment Environment, stores *v2models.Sto
 		RequiresSuitability:       environment.RequiresSuitability,
 		BaseDomain:                environment.BaseDomain,
 		NamePrefixesDomain:        environment.NamePrefixesDomain,
+		HelmfileRef:               environment.HelmfileRef,
 	}, nil
 }
 
