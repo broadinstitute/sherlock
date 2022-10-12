@@ -2,6 +2,8 @@ package v2controllers
 
 import (
 	"fmt"
+	"testing"
+
 	"github.com/broadinstitute/sherlock/internal/auth"
 	"github.com/broadinstitute/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/internal/db"
@@ -11,7 +13,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"gorm.io/gorm"
-	"testing"
 )
 
 //
@@ -50,6 +51,7 @@ var (
 	terraDevCluster = CreatableCluster{
 		Name:          "terra-dev",
 		GoogleProject: "broad-dsde-dev",
+		Location:      "us-central1-a",
 		EditableCluster: EditableCluster{
 			Base:    testutils.PointerTo("terra"),
 			Address: testutils.PointerTo("192.168.0.1"),
@@ -58,6 +60,7 @@ var (
 	datarepoDevCluster = CreatableCluster{
 		Name:          "datarepo-dev",
 		GoogleProject: "datarepo-dev",
+		Location:      "us-central1-a",
 		EditableCluster: EditableCluster{
 			Base:    testutils.PointerTo("datarepo"),
 			Address: testutils.PointerTo("192.168.30.1"),
@@ -66,6 +69,7 @@ var (
 	terraStagingCluster = CreatableCluster{
 		Name:          "terra-staging",
 		GoogleProject: "broad-dsde-staging",
+		Location:      "us-central1-a",
 		EditableCluster: EditableCluster{
 			Base:                testutils.PointerTo("terra"),
 			Address:             testutils.PointerTo("192.168.0.10"),
@@ -75,6 +79,7 @@ var (
 	terraProdCluster = CreatableCluster{
 		Name:          "terra-prod",
 		GoogleProject: "broad-dsde-prod",
+		Location:      "us-central1",
 		EditableCluster: EditableCluster{
 			Base:                testutils.PointerTo("terra"),
 			Address:             testutils.PointerTo("192.168.0.10"),
@@ -84,6 +89,7 @@ var (
 	datarepoProdCluster = CreatableCluster{
 		Name:          "datarepo-prod",
 		GoogleProject: "datarepo-prod",
+		Location:      "us-central1",
 		EditableCluster: EditableCluster{
 			Base:                testutils.PointerTo("datarepo"),
 			Address:             testutils.PointerTo("192.168.30.10"),
@@ -93,6 +99,7 @@ var (
 	terraDevBeesCluster = CreatableCluster{
 		Name:          "terra-dev-bees",
 		GoogleProject: "broad-dsde-dev",
+		Location:      "us-central1-a",
 		EditableCluster: EditableCluster{
 			Base:    testutils.PointerTo("bee-cluster"),
 			Address: testutils.PointerTo("192.168.1.1"),
@@ -101,6 +108,7 @@ var (
 	terraQaBeesCluster = CreatableCluster{
 		Name:          "terra-qa-bees",
 		GoogleProject: "broad-dsde-qa",
+		Location:      "us-central1-a",
 		EditableCluster: EditableCluster{
 			Base:    testutils.PointerTo("bee-cluster"),
 			Address: testutils.PointerTo("192.168.1.2"),
@@ -110,6 +118,7 @@ var (
 		Name:              "terra-dev-azure",
 		Provider:          "azure",
 		AzureSubscription: "some-uuid",
+		Location:          "US-EAST",
 		EditableCluster: EditableCluster{
 			Base:    testutils.PointerTo("terra-azure"),
 			Address: testutils.PointerTo("192.168.2.1"),

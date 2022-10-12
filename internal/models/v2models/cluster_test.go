@@ -1,9 +1,10 @@
 package v2models
 
 import (
+	"testing"
+
 	"github.com/broadinstitute/sherlock/internal/testutils"
 	"gorm.io/gorm"
-	"testing"
 )
 
 func Test_clusterSelectorToQuery(t *testing.T) {
@@ -158,6 +159,7 @@ func Test_validateCluster(t *testing.T) {
 				Base:                testutils.PointerTo("live"),
 				Address:             testutils.PointerTo("1.2.3.4"),
 				RequiresSuitability: testutils.PointerTo(false),
+				Location:            "us-central1-a",
 			}},
 			wantErr: true,
 		},
@@ -169,6 +171,7 @@ func Test_validateCluster(t *testing.T) {
 				Base:                testutils.PointerTo("live"),
 				Address:             testutils.PointerTo("1.2.3.4"),
 				RequiresSuitability: testutils.PointerTo(false),
+				Location:            "us-central1-a",
 			}},
 			wantErr: true,
 		},
@@ -180,6 +183,7 @@ func Test_validateCluster(t *testing.T) {
 				Base:                testutils.PointerTo("live"),
 				Address:             testutils.PointerTo("1.2.3.4"),
 				RequiresSuitability: testutils.PointerTo(false),
+				Location:            "US-EAST",
 			}},
 			wantErr: true,
 		},
@@ -193,6 +197,7 @@ func Test_validateCluster(t *testing.T) {
 				Base:                testutils.PointerTo("live"),
 				Address:             testutils.PointerTo("1.2.3.4"),
 				RequiresSuitability: testutils.PointerTo(false),
+				Location:            "us-central1-a",
 			}},
 			wantErr: true,
 		},
@@ -204,6 +209,7 @@ func Test_validateCluster(t *testing.T) {
 				GoogleProject:       "broad-dsde-dev",
 				Address:             testutils.PointerTo("1.2.3.4"),
 				RequiresSuitability: testutils.PointerTo(false),
+				Location:            "us-central1-a",
 			}},
 			wantErr: true,
 		},
@@ -215,6 +221,7 @@ func Test_validateCluster(t *testing.T) {
 				GoogleProject:       "broad-dsde-dev",
 				Base:                testutils.PointerTo("live"),
 				RequiresSuitability: testutils.PointerTo(false),
+				Location:            "us-central1-a",
 			}},
 			wantErr: true,
 		},
@@ -226,6 +233,7 @@ func Test_validateCluster(t *testing.T) {
 				GoogleProject: "broad-dsde-dev",
 				Base:          testutils.PointerTo("live"),
 				Address:       testutils.PointerTo("1.2.3.4"),
+				Location:      "us-central1-a",
 			}},
 			wantErr: true,
 		},
@@ -238,6 +246,7 @@ func Test_validateCluster(t *testing.T) {
 				Base:                testutils.PointerTo("live"),
 				Address:             testutils.PointerTo("1.2.3.4"),
 				RequiresSuitability: testutils.PointerTo(false),
+				Location:            "us-central1-a",
 			}},
 			wantErr: false,
 		},
@@ -250,8 +259,21 @@ func Test_validateCluster(t *testing.T) {
 				Base:                testutils.PointerTo("live"),
 				Address:             testutils.PointerTo("1.2.3.4"),
 				RequiresSuitability: testutils.PointerTo(false),
+				Location:            "us-central1-a",
 			}},
 			wantErr: false,
+		},
+		{
+			name: "missing location",
+			args: args{cluster: &Cluster{
+				Name:                "terra-dev",
+				Provider:            "azure",
+				AzureSubscription:   "some uuid probably",
+				Base:                testutils.PointerTo("live"),
+				Address:             testutils.PointerTo("1.2.3.4"),
+				RequiresSuitability: testutils.PointerTo(false),
+			}},
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {

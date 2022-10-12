@@ -2,10 +2,11 @@ package v2models
 
 import (
 	"fmt"
+	"strconv"
+
 	"github.com/broadinstitute/sherlock/internal/auth"
 	"github.com/broadinstitute/sherlock/internal/errors"
 	"gorm.io/gorm"
-	"strconv"
 )
 
 type Environment struct {
@@ -25,6 +26,7 @@ type Environment struct {
 	RequiresSuitability *bool
 	BaseDomain          *string
 	NamePrefixesDomain  *bool
+	HelmfileRef         *string `gorm:"not null; default:master"`
 }
 
 func (e Environment) TableName() string {

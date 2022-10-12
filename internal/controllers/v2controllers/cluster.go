@@ -19,6 +19,7 @@ type CreatableCluster struct {
 	Provider          string `json:"provider" form:"provider" enums:"google,azure" default:"google"`
 	GoogleProject     string `json:"googleProject" form:"googleProject"`         // Required when creating if provider is 'google'
 	AzureSubscription string `json:"azureSubscription" form:"azureSubscription"` // Required when creating if providers is 'azure'
+	Location          string `json:"location" form:"location"`
 	EditableCluster
 }
 
@@ -67,6 +68,7 @@ func modelClusterToCluster(model *v2models.Cluster) *Cluster {
 			Provider:          model.Provider,
 			GoogleProject:     model.GoogleProject,
 			AzureSubscription: model.AzureSubscription,
+			Location:          model.Location,
 			EditableCluster: EditableCluster{
 				Base:                model.Base,
 				Address:             model.Address,
@@ -87,6 +89,7 @@ func clusterToModelCluster(cluster Cluster, _ *v2models.StoreSet) (v2models.Clus
 		Provider:            cluster.Provider,
 		GoogleProject:       cluster.GoogleProject,
 		AzureSubscription:   cluster.AzureSubscription,
+		Location:            cluster.Location,
 		Base:                cluster.Base,
 		Address:             cluster.Address,
 		RequiresSuitability: cluster.RequiresSuitability,
