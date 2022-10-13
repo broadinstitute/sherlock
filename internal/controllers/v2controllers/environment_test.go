@@ -2,6 +2,8 @@ package v2controllers
 
 import (
 	"fmt"
+	"testing"
+
 	"github.com/broadinstitute/sherlock/internal/auth"
 	"github.com/broadinstitute/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/internal/db"
@@ -11,7 +13,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"gorm.io/gorm"
-	"testing"
 )
 
 //
@@ -128,6 +129,9 @@ func (suite *environmentControllerSuite) TestEnvironmentCreate() {
 			suite.Run("default the default namespace to environment name", func() {
 				assert.Equal(suite.T(), terraDevEnvironment.Name, *env.DefaultNamespace)
 			})
+			suite.Run("default terra-helmfile-ref", func() {
+				suite.Assert().Equal("HEAD", *env.HelmfileRef)
+			})
 		})
 		suite.Run("template", func() {
 			env, created, err := suite.EnvironmentController.Create(swatomationEnvironment, auth.GenerateUser(suite.T(), false))
@@ -137,6 +141,9 @@ func (suite *environmentControllerSuite) TestEnvironmentCreate() {
 			assert.True(suite.T(), env.ID > 0)
 			suite.Run("default non-suitable", func() {
 				assert.False(suite.T(), *env.RequiresSuitability)
+			})
+			suite.Run("default terra-helmfile ref head", func() {
+				suite.Assert().Equal("HEAD", *env.HelmfileRef)
 			})
 		})
 		suite.Run("dynamic", func() {
@@ -161,6 +168,9 @@ func (suite *environmentControllerSuite) TestEnvironmentCreate() {
 			})
 			suite.Run("namespace of name", func() {
 				assert.Equal(suite.T(), env.Name, *env.DefaultNamespace)
+			})
+			suite.Run("default terra-helmfile ref head", func() {
+				suite.Assert().Equal("HEAD", *env.HelmfileRef)
 			})
 		})
 	})
