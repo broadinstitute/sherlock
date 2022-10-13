@@ -26,7 +26,7 @@ type Environment struct {
 	RequiresSuitability *bool
 	BaseDomain          *string
 	NamePrefixesDomain  *bool
-	HelmfileRef         *string `gorm:"not null; default:master"`
+	HelmfileRef         *string `gorm:"not null; default:null"`
 }
 
 func (e Environment) TableName() string {
@@ -122,6 +122,10 @@ func validateEnvironment(environment *Environment) error {
 		}
 	default:
 		return fmt.Errorf("a %T must have a lifecycle of either 'template', 'static', or 'dynamic'", environment)
+	}
+
+	if environment.HelmfileRef == nil || *environment.HelmfileRef == "" {
+		return fmt.Errorf("a %T must have a non-empty terra-helmfile ref", environment)
 	}
 	return nil
 }

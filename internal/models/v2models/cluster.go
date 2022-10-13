@@ -19,7 +19,7 @@ type Cluster struct {
 	Base                *string `gorm:"not null; default:null"`
 	Address             *string `gorm:"not null; default:null"`
 	RequiresSuitability *bool   `gorm:"not null; default:null"`
-	HelmfileRef         *string `gorm:"not null; default:master"`
+	HelmfileRef         *string `gorm:"not null; default:null"`
 }
 
 func (c Cluster) TableName() string {
@@ -109,6 +109,9 @@ func validateCluster(cluster *Cluster) error {
 	}
 	if cluster.RequiresSuitability == nil {
 		return fmt.Errorf("a %T must set whether it requires suitability or not", cluster)
+	}
+	if cluster.HelmfileRef == nil || *cluster.HelmfileRef == "" {
+		return fmt.Errorf("a %T must have a non-empty terra-helmfile ref", cluster)
 	}
 	return nil
 }

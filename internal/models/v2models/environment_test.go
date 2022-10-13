@@ -1,9 +1,10 @@
 package v2models
 
 import (
+	"testing"
+
 	"github.com/broadinstitute/sherlock/internal/testutils"
 	"gorm.io/gorm"
-	"testing"
 )
 
 func Test_environmentSelectorToQuery(t *testing.T) {
@@ -153,8 +154,9 @@ func Test_validateEnvironment(t *testing.T) {
 		{
 			name: "valid template",
 			args: args{environment: &Environment{
-				Name:      "foobar",
-				Lifecycle: "template",
+				Name:        "foobar",
+				Lifecycle:   "template",
+				HelmfileRef: testutils.PointerTo("HEAD"),
 			}},
 			wantErr: false,
 		},
@@ -169,6 +171,7 @@ func Test_validateEnvironment(t *testing.T) {
 				DefaultNamespace:      testutils.PointerTo("namespace"),
 				Owner:                 testutils.PointerTo("fake@broadinstitute.org"),
 				RequiresSuitability:   testutils.PointerTo(false),
+				HelmfileRef:           testutils.PointerTo("HEAD"),
 			}},
 			wantErr: false,
 		},
@@ -182,20 +185,31 @@ func Test_validateEnvironment(t *testing.T) {
 				DefaultNamespace:    testutils.PointerTo("namespace"),
 				Owner:               testutils.PointerTo("fake@broadinstitute.org"),
 				RequiresSuitability: testutils.PointerTo(false),
+				HelmfileRef:         testutils.PointerTo("HEAD"),
 			}},
 			wantErr: false,
 		},
 		{
 			name: "no name",
 			args: args{environment: &Environment{
+				Lifecycle:   "template",
+				HelmfileRef: testutils.PointerTo("HEAD"),
+			}},
+			wantErr: true,
+		},
+		{
+			name: "no helmfileRef",
+			args: args{environment: &Environment{
 				Lifecycle: "template",
+				Name:      "foobar",
 			}},
 			wantErr: true,
 		},
 		{
 			name: "no lifecycle",
 			args: args{environment: &Environment{
-				Name: "foobar",
+				Name:        "foobar",
+				HelmfileRef: testutils.PointerTo("HEAD"),
 			}},
 			wantErr: true,
 		},
@@ -205,6 +219,7 @@ func Test_validateEnvironment(t *testing.T) {
 				Name:                  "foobar",
 				Lifecycle:             "template",
 				TemplateEnvironmentID: testutils.PointerTo[uint](123),
+				HelmfileRef:           testutils.PointerTo("HEAD"),
 			}},
 			wantErr: true,
 		},
@@ -218,6 +233,7 @@ func Test_validateEnvironment(t *testing.T) {
 				DefaultNamespace:    testutils.PointerTo("namespace"),
 				Owner:               testutils.PointerTo("fake@broadinstitute.org"),
 				RequiresSuitability: testutils.PointerTo(false),
+				HelmfileRef:         testutils.PointerTo("HEAD"),
 			}},
 			wantErr: true,
 		},
@@ -231,6 +247,7 @@ func Test_validateEnvironment(t *testing.T) {
 				DefaultNamespace:      testutils.PointerTo("namespace"),
 				Owner:                 testutils.PointerTo("fake@broadinstitute.org"),
 				RequiresSuitability:   testutils.PointerTo(false),
+				HelmfileRef:           testutils.PointerTo("HEAD"),
 			}},
 			wantErr: true,
 		},
@@ -244,6 +261,7 @@ func Test_validateEnvironment(t *testing.T) {
 				DefaultNamespace:      testutils.PointerTo("namespace"),
 				Owner:                 testutils.PointerTo("fake@broadinstitute.org"),
 				RequiresSuitability:   testutils.PointerTo(false),
+				HelmfileRef:           testutils.PointerTo("HEAD"),
 			}},
 			wantErr: true,
 		},
@@ -257,6 +275,7 @@ func Test_validateEnvironment(t *testing.T) {
 				DefaultClusterID:      testutils.PointerTo[uint](456),
 				Owner:                 testutils.PointerTo("fake@broadinstitute.org"),
 				RequiresSuitability:   testutils.PointerTo(false),
+				HelmfileRef:           testutils.PointerTo("HEAD"),
 			}},
 			wantErr: true,
 		},
@@ -270,6 +289,7 @@ func Test_validateEnvironment(t *testing.T) {
 				DefaultClusterID:      testutils.PointerTo[uint](456),
 				DefaultNamespace:      testutils.PointerTo("namespace"),
 				RequiresSuitability:   testutils.PointerTo(false),
+				HelmfileRef:           testutils.PointerTo("HEAD"),
 			}},
 			wantErr: true,
 		},
@@ -283,6 +303,7 @@ func Test_validateEnvironment(t *testing.T) {
 				DefaultClusterID:      testutils.PointerTo[uint](456),
 				DefaultNamespace:      testutils.PointerTo("namespace"),
 				Owner:                 testutils.PointerTo("fake@broadinstitute.org"),
+				HelmfileRef:           testutils.PointerTo("HEAD"),
 			}},
 			wantErr: true,
 		},
@@ -296,6 +317,7 @@ func Test_validateEnvironment(t *testing.T) {
 				DefaultNamespace:      testutils.PointerTo("namespace"),
 				Owner:                 testutils.PointerTo("fake@broadinstitute.org"),
 				RequiresSuitability:   testutils.PointerTo(false),
+				HelmfileRef:           testutils.PointerTo("HEAD"),
 			}},
 			wantErr: true,
 		},
@@ -309,6 +331,7 @@ func Test_validateEnvironment(t *testing.T) {
 				DefaultNamespace:      testutils.PointerTo("namespace"),
 				Owner:                 testutils.PointerTo("fake@broadinstitute.org"),
 				RequiresSuitability:   testutils.PointerTo(false),
+				HelmfileRef:           testutils.PointerTo("HEAD"),
 			}},
 			wantErr: true,
 		},
@@ -322,6 +345,7 @@ func Test_validateEnvironment(t *testing.T) {
 				DefaultClusterID:      testutils.PointerTo[uint](456),
 				Owner:                 testutils.PointerTo("fake@broadinstitute.org"),
 				RequiresSuitability:   testutils.PointerTo(false),
+				HelmfileRef:           testutils.PointerTo("HEAD"),
 			}},
 			wantErr: true,
 		},
@@ -335,6 +359,7 @@ func Test_validateEnvironment(t *testing.T) {
 				DefaultClusterID:      testutils.PointerTo[uint](456),
 				DefaultNamespace:      testutils.PointerTo("namespace"),
 				RequiresSuitability:   testutils.PointerTo(false),
+				HelmfileRef:           testutils.PointerTo("HEAD"),
 			}},
 			wantErr: true,
 		},
@@ -348,6 +373,7 @@ func Test_validateEnvironment(t *testing.T) {
 				DefaultClusterID:      testutils.PointerTo[uint](456),
 				DefaultNamespace:      testutils.PointerTo("namespace"),
 				Owner:                 testutils.PointerTo("fake@broadinstitute.org"),
+				HelmfileRef:           testutils.PointerTo("HEAD"),
 			}},
 			wantErr: true,
 		},
