@@ -162,6 +162,9 @@ func (suite *clusterControllerSuite) TestClusterCreate() {
 		suite.Run("default non-suitable", func() {
 			assert.False(suite.T(), *cluster.RequiresSuitability)
 		})
+		suite.Run("default terra-helmfile ref", func() {
+			suite.Assert().Equal("HEAD", *cluster.HelmfileRef)
+		})
 	})
 	suite.Run("can create a new azure cluster", func() {
 		db.Truncate(suite.T(), suite.db)
