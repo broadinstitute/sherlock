@@ -22,7 +22,7 @@ type Environment struct {
 	DefaultCluster      *Cluster
 	DefaultClusterID    *uint
 	DefaultNamespace    *string
-	Owner               *string `gorm:"not null;default:null"`
+	Owner               *string `gorm:"not null; default:null"`
 	RequiresSuitability *bool
 	BaseDomain          *string
 	NamePrefixesDomain  *bool

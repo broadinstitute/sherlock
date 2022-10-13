@@ -14,7 +14,7 @@ type Cluster struct {
 	Provider          string `gorm:"not null; default:null"`
 	GoogleProject     string
 	AzureSubscription string
-	Location          string
+	Location          string `gorm:"not null; default:null"`
 	// Mutable
 	Base                *string `gorm:"not null; default:null"`
 	Address             *string `gorm:"not null; default:null"`
