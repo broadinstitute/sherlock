@@ -1,9 +1,10 @@
 package v2models
 
 import (
+	"testing"
+
 	"github.com/broadinstitute/sherlock/internal/testutils"
 	"gorm.io/gorm"
-	"testing"
 )
 
 func Test_chartSelectorToQuery(t *testing.T) {
@@ -132,6 +133,23 @@ func Test_validateChart(t *testing.T) {
 		},
 		{
 			name: "valid without git info",
+			args: args{chart: &Chart{
+				Name:      "leonardo",
+				ChartRepo: testutils.PointerTo("terra-helm"),
+			}},
+			wantErr: false,
+		},
+		{
+			name: "valid with legacy configs enabled",
+			args: args{chart: &Chart{
+				Name:                 "leonardo",
+				ChartRepo:            testutils.PointerTo("terra-helm"),
+				LegacyConfigsEnabled: testutils.PointerTo(true),
+			}},
+			wantErr: false,
+		},
+		{
+			name: "valid without legacy configs set",
 			args: args{chart: &Chart{
 				Name:      "leonardo",
 				ChartRepo: testutils.PointerTo("terra-helm"),

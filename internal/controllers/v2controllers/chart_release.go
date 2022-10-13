@@ -36,7 +36,7 @@ type CreatableChartRelease struct {
 	ChartVersionResolver *string `json:"chartVersionResolver" form:"chartVersionResolver" enums:"latest,exact"` // When creating, will default to automatically reference any provided chart version
 	ChartVersionExact    *string `json:"chartVersionExact" form:"chartVersionExact"`
 	HelmfileRef          *string `json:"helmfileRef" form:"helmfileRef" default:"HEAD"`
-	FirecloudDevelopRef  *string `json:"firecloudDevelopRef" form:"firecloudDevelopRef" default:"dev"`
+	FirecloudDevelopRef  *string `json:"firecloudDevelopRef" form:"firecloudDevelopRef"`
 	EditableChartRelease
 }
 

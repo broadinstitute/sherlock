@@ -15,3 +15,6 @@ alter table v2_environments
 
 alter table v2_clusters
     drop column if exists location;
+
+alter table v2_charts
+    drop column if exists legacy_configs_enabled;

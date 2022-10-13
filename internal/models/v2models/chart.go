@@ -2,9 +2,10 @@ package v2models
 
 import (
 	"fmt"
+	"strconv"
+
 	"github.com/broadinstitute/sherlock/internal/errors"
 	"gorm.io/gorm"
-	"strconv"
 )
 
 type Chart struct {
@@ -18,6 +19,7 @@ type Chart struct {
 	DefaultSubdomain      *string
 	DefaultProtocol       *string
 	DefaultPort           *uint
+	LegacyConfigsEnabled  *bool
 }
 
 func (c Chart) TableName() string {

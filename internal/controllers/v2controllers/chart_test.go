@@ -2,6 +2,8 @@ package v2controllers
 
 import (
 	"fmt"
+	"testing"
+
 	"github.com/broadinstitute/sherlock/internal/auth"
 	"github.com/broadinstitute/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/internal/db"
@@ -11,7 +13,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"gorm.io/gorm"
-	"testing"
 )
 
 //
@@ -54,6 +55,7 @@ var (
 			AppImageGitRepo:       testutils.PointerTo("DataBiosphere/leonardo"),
 			AppImageGitMainBranch: testutils.PointerTo("main"),
 			ChartExposesEndpoint:  testutils.PointerTo(true),
+			LegacyConfigsEnabled:  testutils.PointerTo(true),
 		},
 	}
 	samChart = CreatableChart{
@@ -62,6 +64,7 @@ var (
 			AppImageGitRepo:       testutils.PointerTo("broadinstitute/sam"),
 			AppImageGitMainBranch: testutils.PointerTo("develop"),
 			ChartExposesEndpoint:  testutils.PointerTo(true),
+			LegacyConfigsEnabled:  testutils.PointerTo(true),
 		},
 	}
 	datarepoChart = CreatableChart{
@@ -71,6 +74,7 @@ var (
 			AppImageGitRepo:       testutils.PointerTo("DataBiosphere/jade-data-repo"),
 			AppImageGitMainBranch: testutils.PointerTo("develop"),
 			ChartExposesEndpoint:  testutils.PointerTo(true),
+			LegacyConfigsEnabled:  testutils.PointerTo(false),
 		},
 	}
 	// "app release" (per environment), but doesn't actually have an application

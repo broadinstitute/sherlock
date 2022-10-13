@@ -18,11 +18,12 @@ alter table v2_clusters
 
 alter table v2_clusters
     alter column location DROP DEFAULT;
-    
+
 alter table v2_environments
     add if not exists helmfile_ref text DEFAUlT 'HEAD' NOT NULL;
 
 alter table v2_environments
    alter column helmfile_ref DROP DEFAULT;
 
-
+alter table v2_charts
+   add if not exists legacy_configs_enabled boolean;
