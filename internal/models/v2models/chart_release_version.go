@@ -216,6 +216,10 @@ func (chartReleaseVersion *ChartReleaseVersion) validate() error {
 		return fmt.Errorf("a %T must have a terra-helmfile git reference", chartReleaseVersion)
 	}
 
+	if chartReleaseVersion.FirecloudDevelopRef == nil || *chartReleaseVersion.FirecloudDevelopRef == "" {
+		return fmt.Errorf("a %T must have a firecloud-develop git reference", chartReleaseVersion)
+	}
+
 	return nil
 }
 
