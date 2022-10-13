@@ -19,7 +19,7 @@ type CreatableCluster struct {
 	Provider          string `json:"provider" form:"provider" enums:"google,azure" default:"google"`
 	GoogleProject     string `json:"googleProject" form:"googleProject"`         // Required when creating if provider is 'google'
 	AzureSubscription string `json:"azureSubscription" form:"azureSubscription"` // Required when creating if providers is 'azure'
-	Location          string `json:"location" form:"location"`
+	Location          string `json:"location" form:"location" default:"us-central1-a"`
 	EditableCluster
 }
 
