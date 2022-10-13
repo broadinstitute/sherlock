@@ -284,8 +284,7 @@ func setChangesetDynamicDefaults(changeset *Changeset, stores *v2models.StoreSet
 		changeset.FromChartVersionReference = strconv.FormatUint(uint64(*chartRelease.ChartVersionID), 10)
 	}
 	changeset.FromHelmfileRef = chartRelease.HelmfileRef
-	// changesets should not modify firecloud-develop refs
-	changeset.ToFirecloudDevelopRef = chartRelease.FirecloudDevelopRef
+	changeset.FromFirecloudDevelopRef = chartRelease.FirecloudDevelopRef
 
 	if changeset.ToAppVersionResolver == nil {
 		changeset.ToAppVersionResolver = changeset.FromAppVersionResolver
@@ -307,6 +306,9 @@ func setChangesetDynamicDefaults(changeset *Changeset, stores *v2models.StoreSet
 	}
 	if changeset.ToHelmfileRef == nil {
 		changeset.ToHelmfileRef = changeset.FromHelmfileRef
+	}
+	if changeset.ToFirecloudDevelopRef == nil {
+		changeset.ToFirecloudDevelopRef = changeset.FromFirecloudDevelopRef
 	}
 	return nil
 }
