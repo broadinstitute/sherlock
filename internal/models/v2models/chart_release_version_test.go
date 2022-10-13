@@ -413,6 +413,20 @@ func TestChartReleaseVersion_validate(t *testing.T) {
 			},
 		},
 		{
+			name:    "chartReleaseVersionValidNoFirecloudDevelopRef",
+			wantErr: false,
+			obj: ChartReleaseVersion{
+				ResolvedAt: testutils.PointerTo(time.Now()),
+
+				AppVersionResolver: testutils.PointerTo("none"),
+
+				ChartVersionResolver: testutils.PointerTo("exact"),
+				ChartVersionExact:    testutils.PointerTo("v0.0.100"),
+
+				HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+			},
+		},
+		{
 			name:    "chartReleaseVersionInvalidUnresolved",
 			wantErr: true,
 			obj: ChartReleaseVersion{
