@@ -146,6 +146,9 @@ func (suite *chartControllerSuite) TestChartCreate() {
 		suite.Run("default port is 443", func() {
 			assert.Equal(suite.T(), uint(443), *chart.DefaultPort)
 		})
+		suite.Run("legacy configs are enabled", func() {
+			suite.Assert().Equal(true, *chart.LegacyConfigsEnabled)
+		})
 	})
 	suite.Run("chart repo can be customized", func() {
 		db.Truncate(suite.T(), suite.db)

@@ -132,6 +132,9 @@ func (suite *environmentControllerSuite) TestEnvironmentCreate() {
 			suite.Run("default terra-helmfile-ref", func() {
 				suite.Assert().Equal("HEAD", *env.HelmfileRef)
 			})
+			suite.Run("default firecloud-develop ref", func() {
+				suite.Assert().Equal("terra-dev", *env.DefaultFirecloudDevelopRef)
+			})
 		})
 		suite.Run("template", func() {
 			env, created, err := suite.EnvironmentController.Create(swatomationEnvironment, auth.GenerateUser(suite.T(), false))

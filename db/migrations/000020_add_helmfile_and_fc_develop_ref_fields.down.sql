@@ -13,6 +13,9 @@ alter table v2_clusters
 alter table v2_environments
     drop column if exists helmfile_ref;
 
+alter table v2_environments
+    drop column if exists default_firecloud_develop_ref;
+
 alter table v2_clusters
     drop column if exists location;
 

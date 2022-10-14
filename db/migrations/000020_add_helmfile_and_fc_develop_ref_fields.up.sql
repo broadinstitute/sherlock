@@ -25,5 +25,8 @@ alter table v2_environments
 alter table v2_environments
    alter column helmfile_ref DROP DEFAULT;
 
+alter table v2_environments
+    add if not exists default_firecloud_develop_ref text;
+
 alter table v2_charts
    add if not exists legacy_configs_enabled boolean;
