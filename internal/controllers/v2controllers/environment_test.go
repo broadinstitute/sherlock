@@ -91,12 +91,28 @@ var (
 		Name:                "swatomation-instance-one",
 		TemplateEnvironment: swatomationEnvironment.Name,
 	}
+	prodlikeTemplateEnvironment = CreatableEnvironment{
+		Name:      "prodlike",
+		Base:      "bee",
+		Lifecycle: "template",
+		EditableEnvironment: EditableEnvironment{
+			DefaultCluster:             &terraQaBeesCluster.Name,
+			Owner:                      testutils.PointerTo("dsp-devops@broadinstitute.org"),
+			DefaultFirecloudDevelopRef: testutils.PointerTo("prod"),
+		},
+	}
+	dynamicProdlikeEnvironment = CreatableEnvironment{
+		Name:                "prodlike-one",
+		TemplateEnvironment: prodlikeTemplateEnvironment.Name,
+	}
 	environmentSeedList = []CreatableEnvironment{
 		terraDevEnvironment,
 		terraStagingEnvironment,
 		terraProdEnvironment,
 		swatomationEnvironment,
+		prodlikeTemplateEnvironment,
 		dynamicSwatomationEnvironment,
+		dynamicProdlikeEnvironment,
 	}
 )
 
@@ -148,6 +164,9 @@ func (suite *environmentControllerSuite) TestEnvironmentCreate() {
 			suite.Run("default terra-helmfile ref head", func() {
 				suite.Assert().Equal("HEAD", *env.HelmfileRef)
 			})
+			suite.Run("default firecloud develop ref", func() {
+				suite.Assert().Equal("dev", *env.DefaultFirecloudDevelopRef)
+			})
 		})
 		suite.Run("dynamic", func() {
 			user := auth.GenerateUser(suite.T(), false)
@@ -174,6 +193,49 @@ func (suite *environmentControllerSuite) TestEnvironmentCreate() {
 			})
 			suite.Run("default terra-helmfile ref head", func() {
 				suite.Assert().Equal("HEAD", *env.HelmfileRef)
+			})
+		})
+		suite.Run("prodlike template", func() {
+			env, created, err := suite.EnvironmentController.Create(prodlikeTemplateEnvironment, auth.GenerateUser(suite.T(), false))
+			assert.NoError(suite.T(), err)
+			assert.True(suite.T(), created)
+			assert.Equal(suite.T(), prodlikeTemplateEnvironment.Name, env.Name)
+			assert.True(suite.T(), env.ID > 0)
+			suite.Run("default terra-helmfile ref head", func() {
+				suite.Assert().Equal("HEAD", *env.HelmfileRef)
+			})
+			suite.Run("overrides default firecloud develop ref", func() {
+				suite.Assert().Equal(*prodlikeTemplateEnvironment.DefaultFirecloudDevelopRef, *env.DefaultFirecloudDevelopRef)
+			})
+		})
+		suite.Run("dynamic prodlike", func() {
+			user := auth.GenerateUser(suite.T(), false)
+			env, created, err := suite.EnvironmentController.Create(dynamicProdlikeEnvironment, auth.GenerateUser(suite.T(), false))
+			assert.NoError(suite.T(), err)
+			assert.True(suite.T(), created)
+			assert.Equal(suite.T(), dynamicProdlikeEnvironment.Name, env.Name)
+			assert.True(suite.T(), env.ID > 0)
+			suite.Run("references template name in defaults", func() {
+				assert.Equal(suite.T(), prodlikeTemplateEnvironment.Name, env.TemplateEnvironment)
+				assert.Equal(suite.T(), prodlikeTemplateEnvironment.Name, env.ValuesName)
+			})
+			suite.Run("base of template", func() {
+				assert.Equal(suite.T(), prodlikeTemplateEnvironment.Base, env.Base)
+			})
+			suite.Run("cluster of template", func() {
+				assert.Equal(suite.T(), prodlikeTemplateEnvironment.DefaultCluster, env.DefaultCluster)
+			})
+			suite.Run("fills owner", func() {
+				assert.Equal(suite.T(), user.AuthenticatedEmail, *env.Owner)
+			})
+			suite.Run("namespace of name", func() {
+				assert.Equal(suite.T(), env.Name, *env.DefaultNamespace)
+			})
+			suite.Run("default terra-helmfile ref head", func() {
+				suite.Assert().Equal("HEAD", *env.HelmfileRef)
+			})
+			suite.Run("uses default firecloud develop ref from template", func() {
+				suite.Assert().Equal(*prodlikeTemplateEnvironment.DefaultFirecloudDevelopRef, *env.DefaultFirecloudDevelopRef)
 			})
 		})
 	})
