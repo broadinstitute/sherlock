@@ -74,6 +74,12 @@ export interface V2controllersChart {
      */
     id?: number;
     /**
+     * Indicates whether a chart requires config rendering from firecloud-develop
+     * @type {boolean}
+     * @memberof V2controllersChart
+     */
+    legacyConfigsEnabled?: boolean;
+    /**
      * Required when creating
      * @type {string}
      * @memberof V2controllersChart
@@ -115,6 +121,7 @@ export function V2controllersChartFromJSONTyped(json: any, ignoreDiscriminator: 
         'defaultProtocol': !exists(json, 'defaultProtocol') ? undefined : json['defaultProtocol'],
         'defaultSubdomain': !exists(json, 'defaultSubdomain') ? undefined : json['defaultSubdomain'],
         'id': !exists(json, 'id') ? undefined : json['id'],
+        'legacyConfigsEnabled': !exists(json, 'legacyConfigsEnabled') ? undefined : json['legacyConfigsEnabled'],
         'name': !exists(json, 'name') ? undefined : json['name'],
         'updatedAt': !exists(json, 'updatedAt') ? undefined : json['updatedAt'],
     };
@@ -138,6 +145,7 @@ export function V2controllersChartToJSON(value?: V2controllersChart | null): any
         'defaultProtocol': value.defaultProtocol,
         'defaultSubdomain': value.defaultSubdomain,
         'id': value.id,
+        'legacyConfigsEnabled': value.legacyConfigsEnabled,
         'name': value.name,
         'updatedAt': value.updatedAt,
     };

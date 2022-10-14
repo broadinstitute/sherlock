@@ -36,8 +36,14 @@ type V2controllersEnvironment struct {
 	// default cluster info
 	DefaultClusterInfo *V2controllersCluster `json:"defaultClusterInfo,omitempty"`
 
+	// should be the environment branch for live envs. Is usually dev for template/dynamic but not necessarily
+	DefaultFirecloudDevelopRef *string `json:"defaultFirecloudDevelopRef,omitempty"`
+
 	// default namespace
 	DefaultNamespace string `json:"defaultNamespace,omitempty"`
+
+	// helmfile ref
+	HelmfileRef *string `json:"helmfileRef,omitempty"`
 
 	// id
 	ID int64 `json:"id,omitempty"`

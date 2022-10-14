@@ -45,6 +45,7 @@ export interface ApiV2ChartReleasesGetRequest {
     createdAt?: string;
     destinationType?: string;
     environment?: string;
+    firecloudDevelopRef?: string;
     helmfileRef?: string;
     id?: number;
     name?: string;
@@ -139,6 +140,10 @@ export class ChartReleasesApi extends runtime.BaseAPI {
 
         if (requestParameters.environment !== undefined) {
             queryParameters['environment'] = requestParameters.environment;
+        }
+
+        if (requestParameters.firecloudDevelopRef !== undefined) {
+            queryParameters['firecloudDevelopRef'] = requestParameters.firecloudDevelopRef;
         }
 
         if (requestParameters.helmfileRef !== undefined) {

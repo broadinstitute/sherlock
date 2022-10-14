@@ -61,6 +61,9 @@ type V2controllersChangeset struct {
 	// from chart version resolver
 	FromChartVersionResolver string `json:"fromChartVersionResolver,omitempty"`
 
+	// from firecloud develop ref
+	FromFirecloudDevelopRef string `json:"fromFirecloudDevelopRef,omitempty"`
+
 	// from helmfile ref
 	FromHelmfileRef string `json:"fromHelmfileRef,omitempty"`
 
@@ -108,6 +111,9 @@ type V2controllersChangeset struct {
 
 	// to chart version resolver
 	ToChartVersionResolver string `json:"toChartVersionResolver,omitempty"`
+
+	// to firecloud develop ref
+	ToFirecloudDevelopRef string `json:"toFirecloudDevelopRef,omitempty"`
 
 	// to helmfile ref
 	ToHelmfileRef string `json:"toHelmfileRef,omitempty"`

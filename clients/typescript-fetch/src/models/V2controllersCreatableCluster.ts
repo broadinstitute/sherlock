@@ -44,6 +44,18 @@ export interface V2controllersCreatableCluster {
      */
     googleProject?: string;
     /**
+     * 
+     * @type {string}
+     * @memberof V2controllersCreatableCluster
+     */
+    helmfileRef?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof V2controllersCreatableCluster
+     */
+    location?: string;
+    /**
      * Required when creating
      * @type {string}
      * @memberof V2controllersCreatableCluster
@@ -97,6 +109,8 @@ export function V2controllersCreatableClusterFromJSONTyped(json: any, ignoreDisc
         'azureSubscription': !exists(json, 'azureSubscription') ? undefined : json['azureSubscription'],
         'base': !exists(json, 'base') ? undefined : json['base'],
         'googleProject': !exists(json, 'googleProject') ? undefined : json['googleProject'],
+        'helmfileRef': !exists(json, 'helmfileRef') ? undefined : json['helmfileRef'],
+        'location': !exists(json, 'location') ? undefined : json['location'],
         'name': !exists(json, 'name') ? undefined : json['name'],
         'provider': !exists(json, 'provider') ? undefined : json['provider'],
         'requiresSuitability': !exists(json, 'requiresSuitability') ? undefined : json['requiresSuitability'],
@@ -116,6 +130,8 @@ export function V2controllersCreatableClusterToJSON(value?: V2controllersCreatab
         'azureSubscription': value.azureSubscription,
         'base': value.base,
         'googleProject': value.googleProject,
+        'helmfileRef': value.helmfileRef,
+        'location': value.location,
         'name': value.name,
         'provider': value.provider,
         'requiresSuitability': value.requiresSuitability,

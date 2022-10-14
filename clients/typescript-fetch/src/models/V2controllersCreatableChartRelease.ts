@@ -78,6 +78,12 @@ export interface V2controllersCreatableChartRelease {
      * @type {string}
      * @memberof V2controllersCreatableChartRelease
      */
+    firecloudDevelopRef?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof V2controllersCreatableChartRelease
+     */
     helmfileRef?: string;
     /**
      * When creating, will be calculated if left empty
@@ -161,6 +167,7 @@ export function V2controllersCreatableChartReleaseFromJSONTyped(json: any, ignor
         'chartVersionResolver': !exists(json, 'chartVersionResolver') ? undefined : json['chartVersionResolver'],
         'cluster': !exists(json, 'cluster') ? undefined : json['cluster'],
         'environment': !exists(json, 'environment') ? undefined : json['environment'],
+        'firecloudDevelopRef': !exists(json, 'firecloudDevelopRef') ? undefined : json['firecloudDevelopRef'],
         'helmfileRef': !exists(json, 'helmfileRef') ? undefined : json['helmfileRef'],
         'name': !exists(json, 'name') ? undefined : json['name'],
         'namespace': !exists(json, 'namespace') ? undefined : json['namespace'],
@@ -188,6 +195,7 @@ export function V2controllersCreatableChartReleaseToJSON(value?: V2controllersCr
         'chartVersionResolver': value.chartVersionResolver,
         'cluster': value.cluster,
         'environment': value.environment,
+        'firecloudDevelopRef': value.firecloudDevelopRef,
         'helmfileRef': value.helmfileRef,
         'name': value.name,
         'namespace': value.namespace,

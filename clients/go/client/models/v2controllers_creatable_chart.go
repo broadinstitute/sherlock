@@ -38,6 +38,9 @@ type V2controllersCreatableChart struct {
 	// When creating, will default to the name of the chart
 	DefaultSubdomain string `json:"defaultSubdomain,omitempty"`
 
+	// Indicates whether a chart requires config rendering from firecloud-develop
+	LegacyConfigsEnabled *bool `json:"legacyConfigsEnabled,omitempty"`
+
 	// Required when creating
 	Name string `json:"name,omitempty"`
 }

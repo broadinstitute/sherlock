@@ -66,6 +66,12 @@ export interface V2controllersCreatableChangeset {
      * @type {string}
      * @memberof V2controllersCreatableChangeset
      */
+    toFirecloudDevelopRef?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof V2controllersCreatableChangeset
+     */
     toHelmfileRef?: string;
 }
 
@@ -95,6 +101,7 @@ export function V2controllersCreatableChangesetFromJSONTyped(json: any, ignoreDi
         'toAppVersionResolver': !exists(json, 'toAppVersionResolver') ? undefined : json['toAppVersionResolver'],
         'toChartVersionExact': !exists(json, 'toChartVersionExact') ? undefined : json['toChartVersionExact'],
         'toChartVersionResolver': !exists(json, 'toChartVersionResolver') ? undefined : json['toChartVersionResolver'],
+        'toFirecloudDevelopRef': !exists(json, 'toFirecloudDevelopRef') ? undefined : json['toFirecloudDevelopRef'],
         'toHelmfileRef': !exists(json, 'toHelmfileRef') ? undefined : json['toHelmfileRef'],
     };
 }
@@ -115,6 +122,7 @@ export function V2controllersCreatableChangesetToJSON(value?: V2controllersCreat
         'toAppVersionResolver': value.toAppVersionResolver,
         'toChartVersionExact': value.toChartVersionExact,
         'toChartVersionResolver': value.toChartVersionResolver,
+        'toFirecloudDevelopRef': value.toFirecloudDevelopRef,
         'toHelmfileRef': value.toHelmfileRef,
     };
 }

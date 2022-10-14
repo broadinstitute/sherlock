@@ -127,6 +127,12 @@ export interface V2controllersChangeset {
      * @type {string}
      * @memberof V2controllersChangeset
      */
+    fromFirecloudDevelopRef?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof V2controllersChangeset
+     */
     fromHelmfileRef?: string;
     /**
      * 
@@ -223,6 +229,12 @@ export interface V2controllersChangeset {
      * @type {string}
      * @memberof V2controllersChangeset
      */
+    toFirecloudDevelopRef?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof V2controllersChangeset
+     */
     toHelmfileRef?: string;
     /**
      * 
@@ -271,6 +283,7 @@ export function V2controllersChangesetFromJSONTyped(json: any, ignoreDiscriminat
         'fromChartVersionInfo': !exists(json, 'fromChartVersionInfo') ? undefined : V2controllersChartVersionFromJSON(json['fromChartVersionInfo']),
         'fromChartVersionReference': !exists(json, 'fromChartVersionReference') ? undefined : json['fromChartVersionReference'],
         'fromChartVersionResolver': !exists(json, 'fromChartVersionResolver') ? undefined : json['fromChartVersionResolver'],
+        'fromFirecloudDevelopRef': !exists(json, 'fromFirecloudDevelopRef') ? undefined : json['fromFirecloudDevelopRef'],
         'fromHelmfileRef': !exists(json, 'fromHelmfileRef') ? undefined : json['fromHelmfileRef'],
         'fromResolvedAt': !exists(json, 'fromResolvedAt') ? undefined : json['fromResolvedAt'],
         'id': !exists(json, 'id') ? undefined : json['id'],
@@ -287,6 +300,7 @@ export function V2controllersChangesetFromJSONTyped(json: any, ignoreDiscriminat
         'toChartVersionInfo': !exists(json, 'toChartVersionInfo') ? undefined : V2controllersChartVersionFromJSON(json['toChartVersionInfo']),
         'toChartVersionReference': !exists(json, 'toChartVersionReference') ? undefined : json['toChartVersionReference'],
         'toChartVersionResolver': !exists(json, 'toChartVersionResolver') ? undefined : json['toChartVersionResolver'],
+        'toFirecloudDevelopRef': !exists(json, 'toFirecloudDevelopRef') ? undefined : json['toFirecloudDevelopRef'],
         'toHelmfileRef': !exists(json, 'toHelmfileRef') ? undefined : json['toHelmfileRef'],
         'toResolvedAt': !exists(json, 'toResolvedAt') ? undefined : json['toResolvedAt'],
         'updatedAt': !exists(json, 'updatedAt') ? undefined : json['updatedAt'],
@@ -316,6 +330,7 @@ export function V2controllersChangesetToJSON(value?: V2controllersChangeset | nu
         'fromChartVersionInfo': V2controllersChartVersionToJSON(value.fromChartVersionInfo),
         'fromChartVersionReference': value.fromChartVersionReference,
         'fromChartVersionResolver': value.fromChartVersionResolver,
+        'fromFirecloudDevelopRef': value.fromFirecloudDevelopRef,
         'fromHelmfileRef': value.fromHelmfileRef,
         'fromResolvedAt': value.fromResolvedAt,
         'id': value.id,
@@ -332,6 +347,7 @@ export function V2controllersChangesetToJSON(value?: V2controllersChangeset | nu
         'toChartVersionInfo': V2controllersChartVersionToJSON(value.toChartVersionInfo),
         'toChartVersionReference': value.toChartVersionReference,
         'toChartVersionResolver': value.toChartVersionResolver,
+        'toFirecloudDevelopRef': value.toFirecloudDevelopRef,
         'toHelmfileRef': value.toHelmfileRef,
         'toResolvedAt': value.toResolvedAt,
         'updatedAt': value.updatedAt,

@@ -61,6 +61,12 @@ export interface V2controllersEditableChart {
      * @memberof V2controllersEditableChart
      */
     defaultSubdomain?: string;
+    /**
+     * Indicates whether a chart requires config rendering from firecloud-develop
+     * @type {boolean}
+     * @memberof V2controllersEditableChart
+     */
+    legacyConfigsEnabled?: boolean;
 }
 
 /**
@@ -89,6 +95,7 @@ export function V2controllersEditableChartFromJSONTyped(json: any, ignoreDiscrim
         'defaultPort': !exists(json, 'defaultPort') ? undefined : json['defaultPort'],
         'defaultProtocol': !exists(json, 'defaultProtocol') ? undefined : json['defaultProtocol'],
         'defaultSubdomain': !exists(json, 'defaultSubdomain') ? undefined : json['defaultSubdomain'],
+        'legacyConfigsEnabled': !exists(json, 'legacyConfigsEnabled') ? undefined : json['legacyConfigsEnabled'],
     };
 }
 
@@ -108,6 +115,7 @@ export function V2controllersEditableChartToJSON(value?: V2controllersEditableCh
         'defaultPort': value.defaultPort,
         'defaultProtocol': value.defaultProtocol,
         'defaultSubdomain': value.defaultSubdomain,
+        'legacyConfigsEnabled': value.legacyConfigsEnabled,
     };
 }
 

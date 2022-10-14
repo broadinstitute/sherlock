@@ -87,6 +87,11 @@ type GetAPIV2ClustersParams struct {
 	*/
 	GoogleProject *string
 
+	// HelmfileRef.
+	//
+	// Default: "HEAD"
+	HelmfileRef *string
+
 	// ID.
 	ID *int64
 
@@ -95,6 +100,11 @@ type GetAPIV2ClustersParams struct {
 	   An optional limit to the number of entries returned
 	*/
 	Limit *int64
+
+	// Location.
+	//
+	// Default: "us-central1-a"
+	Location *string
 
 	/* Name.
 
@@ -131,12 +141,18 @@ func (o *GetAPIV2ClustersParams) WithDefaults() *GetAPIV2ClustersParams {
 // All values with no default are reset to their zero value.
 func (o *GetAPIV2ClustersParams) SetDefaults() {
 	var (
+		helmfileRefDefault = string("HEAD")
+
+		locationDefault = string("us-central1-a")
+
 		providerDefault = string("google")
 
 		requiresSuitabilityDefault = bool(false)
 	)
 
 	val := GetAPIV2ClustersParams{
+		HelmfileRef:         &helmfileRefDefault,
+		Location:            &locationDefault,
 		Provider:            &providerDefault,
 		RequiresSuitability: &requiresSuitabilityDefault,
 	}
@@ -235,6 +251,17 @@ func (o *GetAPIV2ClustersParams) SetGoogleProject(googleProject *string) {
 	o.GoogleProject = googleProject
 }
 
+// WithHelmfileRef adds the helmfileRef to the get API v2 clusters params
+func (o *GetAPIV2ClustersParams) WithHelmfileRef(helmfileRef *string) *GetAPIV2ClustersParams {
+	o.SetHelmfileRef(helmfileRef)
+	return o
+}
+
+// SetHelmfileRef adds the helmfileRef to the get API v2 clusters params
+func (o *GetAPIV2ClustersParams) SetHelmfileRef(helmfileRef *string) {
+	o.HelmfileRef = helmfileRef
+}
+
 // WithID adds the id to the get API v2 clusters params
 func (o *GetAPIV2ClustersParams) WithID(id *int64) *GetAPIV2ClustersParams {
 	o.SetID(id)
@@ -255,6 +282,17 @@ func (o *GetAPIV2ClustersParams) WithLimit(limit *int64) *GetAPIV2ClustersParams
 // SetLimit adds the limit to the get API v2 clusters params
 func (o *GetAPIV2ClustersParams) SetLimit(limit *int64) {
 	o.Limit = limit
+}
+
+// WithLocation adds the location to the get API v2 clusters params
+func (o *GetAPIV2ClustersParams) WithLocation(location *string) *GetAPIV2ClustersParams {
+	o.SetLocation(location)
+	return o
+}
+
+// SetLocation adds the location to the get API v2 clusters params
+func (o *GetAPIV2ClustersParams) SetLocation(location *string) {
+	o.Location = location
 }
 
 // WithName adds the name to the get API v2 clusters params
@@ -394,6 +432,23 @@ func (o *GetAPIV2ClustersParams) WriteToRequest(r runtime.ClientRequest, reg str
 		}
 	}
 
+	if o.HelmfileRef != nil {
+
+		// query param helmfileRef
+		var qrHelmfileRef string
+
+		if o.HelmfileRef != nil {
+			qrHelmfileRef = *o.HelmfileRef
+		}
+		qHelmfileRef := qrHelmfileRef
+		if qHelmfileRef != "" {
+
+			if err := r.SetQueryParam("helmfileRef", qHelmfileRef); err != nil {
+				return err
+			}
+		}
+	}
+
 	if o.ID != nil {
 
 		// query param id
@@ -423,6 +478,23 @@ func (o *GetAPIV2ClustersParams) WriteToRequest(r runtime.ClientRequest, reg str
 		if qLimit != "" {
 
 			if err := r.SetQueryParam("limit", qLimit); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.Location != nil {
+
+		// query param location
+		var qrLocation string
+
+		if o.Location != nil {
+			qrLocation = *o.Location
+		}
+		qLocation := qrLocation
+		if qLocation != "" {
+
+			if err := r.SetQueryParam("location", qLocation); err != nil {
 				return err
 			}
 		}

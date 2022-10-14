@@ -43,6 +43,7 @@ export interface ApiV2ChangesetsGetRequest {
     fromChartVersionExact?: string;
     fromChartVersionReference?: string;
     fromChartVersionResolver?: string;
+    fromFirecloudDevelopRef?: string;
     fromHelmfileRef?: string;
     fromResolvedAt?: string;
     id?: number;
@@ -55,6 +56,7 @@ export interface ApiV2ChangesetsGetRequest {
     toChartVersionExact?: string;
     toChartVersionReference?: string;
     toChartVersionResolver?: string;
+    toFirecloudDevelopRef?: string;
     toHelmfileRef?: string;
     toResolvedAt?: string;
     updatedAt?: string;
@@ -141,6 +143,10 @@ export class ChangesetsApi extends runtime.BaseAPI {
             queryParameters['fromChartVersionResolver'] = requestParameters.fromChartVersionResolver;
         }
 
+        if (requestParameters.fromFirecloudDevelopRef !== undefined) {
+            queryParameters['fromFirecloudDevelopRef'] = requestParameters.fromFirecloudDevelopRef;
+        }
+
         if (requestParameters.fromHelmfileRef !== undefined) {
             queryParameters['fromHelmfileRef'] = requestParameters.fromHelmfileRef;
         }
@@ -187,6 +193,10 @@ export class ChangesetsApi extends runtime.BaseAPI {
 
         if (requestParameters.toChartVersionResolver !== undefined) {
             queryParameters['toChartVersionResolver'] = requestParameters.toChartVersionResolver;
+        }
+
+        if (requestParameters.toFirecloudDevelopRef !== undefined) {
+            queryParameters['toFirecloudDevelopRef'] = requestParameters.toFirecloudDevelopRef;
         }
 
         if (requestParameters.toHelmfileRef !== undefined) {

@@ -37,7 +37,9 @@ export interface ApiV2EnvironmentsGetRequest {
     chartReleasesFromTemplate?: boolean;
     createdAt?: string;
     defaultCluster?: string;
+    defaultFirecloudDevelopRef?: string;
     defaultNamespace?: string;
+    helmfileRef?: string;
     id?: number;
     lifecycle?: string;
     name?: string;
@@ -103,8 +105,16 @@ export class EnvironmentsApi extends runtime.BaseAPI {
             queryParameters['defaultCluster'] = requestParameters.defaultCluster;
         }
 
+        if (requestParameters.defaultFirecloudDevelopRef !== undefined) {
+            queryParameters['defaultFirecloudDevelopRef'] = requestParameters.defaultFirecloudDevelopRef;
+        }
+
         if (requestParameters.defaultNamespace !== undefined) {
             queryParameters['defaultNamespace'] = requestParameters.defaultNamespace;
+        }
+
+        if (requestParameters.helmfileRef !== undefined) {
+            queryParameters['helmfileRef'] = requestParameters.helmfileRef;
         }
 
         if (requestParameters.id !== undefined) {

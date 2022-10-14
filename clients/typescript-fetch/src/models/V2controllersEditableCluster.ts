@@ -33,6 +33,12 @@ export interface V2controllersEditableCluster {
     base?: string;
     /**
      * 
+     * @type {string}
+     * @memberof V2controllersEditableCluster
+     */
+    helmfileRef?: string;
+    /**
+     * 
      * @type {boolean}
      * @memberof V2controllersEditableCluster
      */
@@ -60,6 +66,7 @@ export function V2controllersEditableClusterFromJSONTyped(json: any, ignoreDiscr
         
         'address': !exists(json, 'address') ? undefined : json['address'],
         'base': !exists(json, 'base') ? undefined : json['base'],
+        'helmfileRef': !exists(json, 'helmfileRef') ? undefined : json['helmfileRef'],
         'requiresSuitability': !exists(json, 'requiresSuitability') ? undefined : json['requiresSuitability'],
     };
 }
@@ -75,6 +82,7 @@ export function V2controllersEditableClusterToJSON(value?: V2controllersEditable
         
         'address': value.address,
         'base': value.base,
+        'helmfileRef': value.helmfileRef,
         'requiresSuitability': value.requiresSuitability,
     };
 }

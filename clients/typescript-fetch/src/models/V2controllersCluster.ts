@@ -51,10 +51,22 @@ export interface V2controllersCluster {
     googleProject?: string;
     /**
      * 
+     * @type {string}
+     * @memberof V2controllersCluster
+     */
+    helmfileRef?: string;
+    /**
+     * 
      * @type {number}
      * @memberof V2controllersCluster
      */
     id?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof V2controllersCluster
+     */
+    location?: string;
     /**
      * Required when creating
      * @type {string}
@@ -116,7 +128,9 @@ export function V2controllersClusterFromJSONTyped(json: any, ignoreDiscriminator
         'base': !exists(json, 'base') ? undefined : json['base'],
         'createdAt': !exists(json, 'createdAt') ? undefined : json['createdAt'],
         'googleProject': !exists(json, 'googleProject') ? undefined : json['googleProject'],
+        'helmfileRef': !exists(json, 'helmfileRef') ? undefined : json['helmfileRef'],
         'id': !exists(json, 'id') ? undefined : json['id'],
+        'location': !exists(json, 'location') ? undefined : json['location'],
         'name': !exists(json, 'name') ? undefined : json['name'],
         'provider': !exists(json, 'provider') ? undefined : json['provider'],
         'requiresSuitability': !exists(json, 'requiresSuitability') ? undefined : json['requiresSuitability'],
@@ -138,7 +152,9 @@ export function V2controllersClusterToJSON(value?: V2controllersCluster | null):
         'base': value.base,
         'createdAt': value.createdAt,
         'googleProject': value.googleProject,
+        'helmfileRef': value.helmfileRef,
         'id': value.id,
+        'location': value.location,
         'name': value.name,
         'provider': value.provider,
         'requiresSuitability': value.requiresSuitability,

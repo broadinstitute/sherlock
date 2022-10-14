@@ -76,6 +76,9 @@ type V2controllersChartRelease struct {
 	// environment info
 	EnvironmentInfo *V2controllersEnvironment `json:"environmentInfo,omitempty"`
 
+	// firecloud develop ref
+	FirecloudDevelopRef string `json:"firecloudDevelopRef,omitempty"`
+
 	// helmfile ref
 	HelmfileRef *string `json:"helmfileRef,omitempty"`
 

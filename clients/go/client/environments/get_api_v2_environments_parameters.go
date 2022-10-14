@@ -85,8 +85,21 @@ type GetAPIV2EnvironmentsParams struct {
 	// DefaultCluster.
 	DefaultCluster *string
 
+	/* DefaultFirecloudDevelopRef.
+
+	   should be the environment branch for live envs. Is usually dev for template/dynamic but not necessarily
+
+	   Default: "dev"
+	*/
+	DefaultFirecloudDevelopRef *string
+
 	// DefaultNamespace.
 	DefaultNamespace *string
+
+	// HelmfileRef.
+	//
+	// Default: "HEAD"
+	HelmfileRef *string
 
 	// ID.
 	ID *int64
@@ -156,6 +169,10 @@ func (o *GetAPIV2EnvironmentsParams) SetDefaults() {
 
 		chartReleasesFromTemplateDefault = bool(true)
 
+		defaultFirecloudDevelopRefDefault = string("dev")
+
+		helmfileRefDefault = string("HEAD")
+
 		lifecycleDefault = string("dynamic")
 
 		namePrefixesDomainDefault = bool(true)
@@ -164,11 +181,13 @@ func (o *GetAPIV2EnvironmentsParams) SetDefaults() {
 	)
 
 	val := GetAPIV2EnvironmentsParams{
-		BaseDomain:                &baseDomainDefault,
-		ChartReleasesFromTemplate: &chartReleasesFromTemplateDefault,
-		Lifecycle:                 &lifecycleDefault,
-		NamePrefixesDomain:        &namePrefixesDomainDefault,
-		RequiresSuitability:       &requiresSuitabilityDefault,
+		BaseDomain:                 &baseDomainDefault,
+		ChartReleasesFromTemplate:  &chartReleasesFromTemplateDefault,
+		DefaultFirecloudDevelopRef: &defaultFirecloudDevelopRefDefault,
+		HelmfileRef:                &helmfileRefDefault,
+		Lifecycle:                  &lifecycleDefault,
+		NamePrefixesDomain:         &namePrefixesDomainDefault,
+		RequiresSuitability:        &requiresSuitabilityDefault,
 	}
 
 	val.timeout = o.timeout
@@ -265,6 +284,17 @@ func (o *GetAPIV2EnvironmentsParams) SetDefaultCluster(defaultCluster *string) {
 	o.DefaultCluster = defaultCluster
 }
 
+// WithDefaultFirecloudDevelopRef adds the defaultFirecloudDevelopRef to the get API v2 environments params
+func (o *GetAPIV2EnvironmentsParams) WithDefaultFirecloudDevelopRef(defaultFirecloudDevelopRef *string) *GetAPIV2EnvironmentsParams {
+	o.SetDefaultFirecloudDevelopRef(defaultFirecloudDevelopRef)
+	return o
+}
+
+// SetDefaultFirecloudDevelopRef adds the defaultFirecloudDevelopRef to the get API v2 environments params
+func (o *GetAPIV2EnvironmentsParams) SetDefaultFirecloudDevelopRef(defaultFirecloudDevelopRef *string) {
+	o.DefaultFirecloudDevelopRef = defaultFirecloudDevelopRef
+}
+
 // WithDefaultNamespace adds the defaultNamespace to the get API v2 environments params
 func (o *GetAPIV2EnvironmentsParams) WithDefaultNamespace(defaultNamespace *string) *GetAPIV2EnvironmentsParams {
 	o.SetDefaultNamespace(defaultNamespace)
@@ -274,6 +304,17 @@ func (o *GetAPIV2EnvironmentsParams) WithDefaultNamespace(defaultNamespace *stri
 // SetDefaultNamespace adds the defaultNamespace to the get API v2 environments params
 func (o *GetAPIV2EnvironmentsParams) SetDefaultNamespace(defaultNamespace *string) {
 	o.DefaultNamespace = defaultNamespace
+}
+
+// WithHelmfileRef adds the helmfileRef to the get API v2 environments params
+func (o *GetAPIV2EnvironmentsParams) WithHelmfileRef(helmfileRef *string) *GetAPIV2EnvironmentsParams {
+	o.SetHelmfileRef(helmfileRef)
+	return o
+}
+
+// SetHelmfileRef adds the helmfileRef to the get API v2 environments params
+func (o *GetAPIV2EnvironmentsParams) SetHelmfileRef(helmfileRef *string) {
+	o.HelmfileRef = helmfileRef
 }
 
 // WithID adds the id to the get API v2 environments params
@@ -479,6 +520,23 @@ func (o *GetAPIV2EnvironmentsParams) WriteToRequest(r runtime.ClientRequest, reg
 		}
 	}
 
+	if o.DefaultFirecloudDevelopRef != nil {
+
+		// query param defaultFirecloudDevelopRef
+		var qrDefaultFirecloudDevelopRef string
+
+		if o.DefaultFirecloudDevelopRef != nil {
+			qrDefaultFirecloudDevelopRef = *o.DefaultFirecloudDevelopRef
+		}
+		qDefaultFirecloudDevelopRef := qrDefaultFirecloudDevelopRef
+		if qDefaultFirecloudDevelopRef != "" {
+
+			if err := r.SetQueryParam("defaultFirecloudDevelopRef", qDefaultFirecloudDevelopRef); err != nil {
+				return err
+			}
+		}
+	}
+
 	if o.DefaultNamespace != nil {
 
 		// query param defaultNamespace
@@ -491,6 +549,23 @@ func (o *GetAPIV2EnvironmentsParams) WriteToRequest(r runtime.ClientRequest, reg
 		if qDefaultNamespace != "" {
 
 			if err := r.SetQueryParam("defaultNamespace", qDefaultNamespace); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.HelmfileRef != nil {
+
+		// query param helmfileRef
+		var qrHelmfileRef string
+
+		if o.HelmfileRef != nil {
+			qrHelmfileRef = *o.HelmfileRef
+		}
+		qHelmfileRef := qrHelmfileRef
+		if qHelmfileRef != "" {
+
+			if err := r.SetQueryParam("helmfileRef", qHelmfileRef); err != nil {
 				return err
 			}
 		}

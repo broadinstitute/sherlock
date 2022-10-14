@@ -120,6 +120,9 @@ type GetAPIV2ChartReleasesParams struct {
 	*/
 	Environment *string
 
+	// FirecloudDevelopRef.
+	FirecloudDevelopRef *string
+
 	// HelmfileRef.
 	//
 	// Default: "HEAD"
@@ -372,6 +375,17 @@ func (o *GetAPIV2ChartReleasesParams) WithEnvironment(environment *string) *GetA
 // SetEnvironment adds the environment to the get API v2 chart releases params
 func (o *GetAPIV2ChartReleasesParams) SetEnvironment(environment *string) {
 	o.Environment = environment
+}
+
+// WithFirecloudDevelopRef adds the firecloudDevelopRef to the get API v2 chart releases params
+func (o *GetAPIV2ChartReleasesParams) WithFirecloudDevelopRef(firecloudDevelopRef *string) *GetAPIV2ChartReleasesParams {
+	o.SetFirecloudDevelopRef(firecloudDevelopRef)
+	return o
+}
+
+// SetFirecloudDevelopRef adds the firecloudDevelopRef to the get API v2 chart releases params
+func (o *GetAPIV2ChartReleasesParams) SetFirecloudDevelopRef(firecloudDevelopRef *string) {
+	o.FirecloudDevelopRef = firecloudDevelopRef
 }
 
 // WithHelmfileRef adds the helmfileRef to the get API v2 chart releases params
@@ -697,6 +711,23 @@ func (o *GetAPIV2ChartReleasesParams) WriteToRequest(r runtime.ClientRequest, re
 		if qEnvironment != "" {
 
 			if err := r.SetQueryParam("environment", qEnvironment); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.FirecloudDevelopRef != nil {
+
+		// query param firecloudDevelopRef
+		var qrFirecloudDevelopRef string
+
+		if o.FirecloudDevelopRef != nil {
+			qrFirecloudDevelopRef = *o.FirecloudDevelopRef
+		}
+		qFirecloudDevelopRef := qrFirecloudDevelopRef
+		if qFirecloudDevelopRef != "" {
+
+			if err := r.SetQueryParam("firecloudDevelopRef", qFirecloudDevelopRef); err != nil {
 				return err
 			}
 		}

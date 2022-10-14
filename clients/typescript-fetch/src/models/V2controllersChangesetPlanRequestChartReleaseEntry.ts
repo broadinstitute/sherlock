@@ -66,6 +66,12 @@ export interface V2controllersChangesetPlanRequestChartReleaseEntry {
      * @type {string}
      * @memberof V2controllersChangesetPlanRequestChartReleaseEntry
      */
+    toFirecloudDevelopRef?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof V2controllersChangesetPlanRequestChartReleaseEntry
+     */
     toHelmfileRef?: string;
     /**
      * 
@@ -101,6 +107,7 @@ export function V2controllersChangesetPlanRequestChartReleaseEntryFromJSONTyped(
         'toAppVersionResolver': !exists(json, 'toAppVersionResolver') ? undefined : json['toAppVersionResolver'],
         'toChartVersionExact': !exists(json, 'toChartVersionExact') ? undefined : json['toChartVersionExact'],
         'toChartVersionResolver': !exists(json, 'toChartVersionResolver') ? undefined : json['toChartVersionResolver'],
+        'toFirecloudDevelopRef': !exists(json, 'toFirecloudDevelopRef') ? undefined : json['toFirecloudDevelopRef'],
         'toHelmfileRef': !exists(json, 'toHelmfileRef') ? undefined : json['toHelmfileRef'],
         'useExactVersionsFromOtherChartRelease': !exists(json, 'useExactVersionsFromOtherChartRelease') ? undefined : json['useExactVersionsFromOtherChartRelease'],
     };
@@ -122,6 +129,7 @@ export function V2controllersChangesetPlanRequestChartReleaseEntryToJSON(value?:
         'toAppVersionResolver': value.toAppVersionResolver,
         'toChartVersionExact': value.toChartVersionExact,
         'toChartVersionResolver': value.toChartVersionResolver,
+        'toFirecloudDevelopRef': value.toFirecloudDevelopRef,
         'toHelmfileRef': value.toHelmfileRef,
         'useExactVersionsFromOtherChartRelease': value.useExactVersionsFromOtherChartRelease,
     };

@@ -23,6 +23,9 @@ type V2controllersEditableCluster struct {
 	// Required when creating
 	Base string `json:"base,omitempty"`
 
+	// helmfile ref
+	HelmfileRef *string `json:"helmfileRef,omitempty"`
+
 	// requires suitability
 	RequiresSuitability *bool `json:"requiresSuitability,omitempty"`
 }

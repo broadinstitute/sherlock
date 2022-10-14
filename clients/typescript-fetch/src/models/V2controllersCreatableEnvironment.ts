@@ -44,11 +44,23 @@ export interface V2controllersCreatableEnvironment {
      */
     defaultCluster?: string;
     /**
+     * should be the environment branch for live envs. Is usually dev for template/dynamic but not necessarily
+     * @type {string}
+     * @memberof V2controllersCreatableEnvironment
+     */
+    defaultFirecloudDevelopRef?: string;
+    /**
      * 
      * @type {string}
      * @memberof V2controllersCreatableEnvironment
      */
     defaultNamespace?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof V2controllersCreatableEnvironment
+     */
+    helmfileRef?: string;
     /**
      * 
      * @type {string}
@@ -110,7 +122,9 @@ export function V2controllersCreatableEnvironmentFromJSONTyped(json: any, ignore
         'baseDomain': !exists(json, 'baseDomain') ? undefined : json['baseDomain'],
         'chartReleasesFromTemplate': !exists(json, 'chartReleasesFromTemplate') ? undefined : json['chartReleasesFromTemplate'],
         'defaultCluster': !exists(json, 'defaultCluster') ? undefined : json['defaultCluster'],
+        'defaultFirecloudDevelopRef': !exists(json, 'defaultFirecloudDevelopRef') ? undefined : json['defaultFirecloudDevelopRef'],
         'defaultNamespace': !exists(json, 'defaultNamespace') ? undefined : json['defaultNamespace'],
+        'helmfileRef': !exists(json, 'helmfileRef') ? undefined : json['helmfileRef'],
         'lifecycle': !exists(json, 'lifecycle') ? undefined : json['lifecycle'],
         'name': !exists(json, 'name') ? undefined : json['name'],
         'namePrefixesDomain': !exists(json, 'namePrefixesDomain') ? undefined : json['namePrefixesDomain'],
@@ -133,7 +147,9 @@ export function V2controllersCreatableEnvironmentToJSON(value?: V2controllersCre
         'baseDomain': value.baseDomain,
         'chartReleasesFromTemplate': value.chartReleasesFromTemplate,
         'defaultCluster': value.defaultCluster,
+        'defaultFirecloudDevelopRef': value.defaultFirecloudDevelopRef,
         'defaultNamespace': value.defaultNamespace,
+        'helmfileRef': value.helmfileRef,
         'lifecycle': value.lifecycle,
         'name': value.name,
         'namePrefixesDomain': value.namePrefixesDomain,

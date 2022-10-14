@@ -63,11 +63,23 @@ export interface V2controllersEnvironment {
      */
     defaultClusterInfo?: V2controllersCluster;
     /**
+     * should be the environment branch for live envs. Is usually dev for template/dynamic but not necessarily
+     * @type {string}
+     * @memberof V2controllersEnvironment
+     */
+    defaultFirecloudDevelopRef?: string;
+    /**
      * 
      * @type {string}
      * @memberof V2controllersEnvironment
      */
     defaultNamespace?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof V2controllersEnvironment
+     */
+    helmfileRef?: string;
     /**
      * 
      * @type {number}
@@ -155,7 +167,9 @@ export function V2controllersEnvironmentFromJSONTyped(json: any, ignoreDiscrimin
         'createdAt': !exists(json, 'createdAt') ? undefined : json['createdAt'],
         'defaultCluster': !exists(json, 'defaultCluster') ? undefined : json['defaultCluster'],
         'defaultClusterInfo': !exists(json, 'defaultClusterInfo') ? undefined : V2controllersClusterFromJSON(json['defaultClusterInfo']),
+        'defaultFirecloudDevelopRef': !exists(json, 'defaultFirecloudDevelopRef') ? undefined : json['defaultFirecloudDevelopRef'],
         'defaultNamespace': !exists(json, 'defaultNamespace') ? undefined : json['defaultNamespace'],
+        'helmfileRef': !exists(json, 'helmfileRef') ? undefined : json['helmfileRef'],
         'id': !exists(json, 'id') ? undefined : json['id'],
         'lifecycle': !exists(json, 'lifecycle') ? undefined : json['lifecycle'],
         'name': !exists(json, 'name') ? undefined : json['name'],
@@ -184,7 +198,9 @@ export function V2controllersEnvironmentToJSON(value?: V2controllersEnvironment 
         'createdAt': value.createdAt,
         'defaultCluster': value.defaultCluster,
         'defaultClusterInfo': V2controllersClusterToJSON(value.defaultClusterInfo),
+        'defaultFirecloudDevelopRef': value.defaultFirecloudDevelopRef,
         'defaultNamespace': value.defaultNamespace,
+        'helmfileRef': value.helmfileRef,
         'id': value.id,
         'lifecycle': value.lifecycle,
         'name': value.name,

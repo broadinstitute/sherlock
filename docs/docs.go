@@ -426,6 +426,11 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "fromFirecloudDevelopRef",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "name": "fromHelmfileRef",
                         "in": "query"
                     },
@@ -482,6 +487,11 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "name": "toChartVersionResolver",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "toFirecloudDevelopRef",
                         "in": "query"
                     },
                     {
@@ -785,6 +795,11 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Either this or cluster must be provided.",
                         "name": "environment",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "firecloudDevelopRef",
                         "in": "query"
                     },
                     {
@@ -1548,6 +1563,13 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "Indicates whether a chart requires config rendering from firecloud-develop",
+                        "name": "legacyConfigsEnabled",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "description": "Required when creating",
                         "name": "name",
@@ -1932,8 +1954,20 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "default": "HEAD",
+                        "name": "helmfileRef",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
                         "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "default": "us-central1-a",
+                        "name": "location",
                         "in": "query"
                     },
                     {
@@ -2338,7 +2372,20 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "default": "dev",
+                        "description": "should be the environment branch for live envs. Is usually dev for template/dynamic but not necessarily",
+                        "name": "defaultFirecloudDevelopRef",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "name": "defaultNamespace",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "default": "HEAD",
+                        "name": "helmfileRef",
                         "in": "query"
                     },
                     {
@@ -3713,6 +3760,9 @@ const docTemplate = `{
                 "fromChartVersionResolver": {
                     "type": "string"
                 },
+                "fromFirecloudDevelopRef": {
+                    "type": "string"
+                },
                 "fromHelmfileRef": {
                     "type": "string"
                 },
@@ -3767,6 +3817,9 @@ const docTemplate = `{
                 "toChartVersionResolver": {
                     "type": "string"
                 },
+                "toFirecloudDevelopRef": {
+                    "type": "string"
+                },
                 "toHelmfileRef": {
                     "type": "string"
                 },
@@ -3817,6 +3870,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "toChartVersionResolver": {
+                    "type": "string"
+                },
+                "toFirecloudDevelopRef": {
                     "type": "string"
                 },
                 "toHelmfileRef": {
@@ -3886,6 +3942,11 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "integer"
+                },
+                "legacyConfigsEnabled": {
+                    "description": "Indicates whether a chart requires config rendering from firecloud-develop",
+                    "type": "boolean",
+                    "default": false
                 },
                 "name": {
                     "description": "Required when creating",
@@ -3969,6 +4030,9 @@ const docTemplate = `{
                 },
                 "environmentInfo": {
                     "$ref": "#/definitions/v2controllers.Environment"
+                },
+                "firecloudDevelopRef": {
+                    "type": "string"
                 },
                 "helmfileRef": {
                     "type": "string",
@@ -4060,8 +4124,16 @@ const docTemplate = `{
                     "description": "Required when creating if provider is 'google'",
                     "type": "string"
                 },
+                "helmfileRef": {
+                    "type": "string",
+                    "default": "HEAD"
+                },
                 "id": {
                     "type": "integer"
+                },
+                "location": {
+                    "type": "string",
+                    "default": "us-central1-a"
                 },
                 "name": {
                     "description": "Required when creating",
@@ -4134,6 +4206,9 @@ const docTemplate = `{
                 "toChartVersionResolver": {
                     "type": "string"
                 },
+                "toFirecloudDevelopRef": {
+                    "type": "string"
+                },
                 "toHelmfileRef": {
                     "type": "string"
                 }
@@ -4168,6 +4243,11 @@ const docTemplate = `{
                 "defaultSubdomain": {
                     "description": "When creating, will default to the name of the chart",
                     "type": "string"
+                },
+                "legacyConfigsEnabled": {
+                    "description": "Indicates whether a chart requires config rendering from firecloud-develop",
+                    "type": "boolean",
+                    "default": false
                 },
                 "name": {
                     "description": "Required when creating",
@@ -4219,6 +4299,9 @@ const docTemplate = `{
                 },
                 "environment": {
                     "description": "Either this or cluster must be provided.",
+                    "type": "string"
+                },
+                "firecloudDevelopRef": {
                     "type": "string"
                 },
                 "helmfileRef": {
@@ -4287,6 +4370,14 @@ const docTemplate = `{
                     "description": "Required when creating if provider is 'google'",
                     "type": "string"
                 },
+                "helmfileRef": {
+                    "type": "string",
+                    "default": "HEAD"
+                },
+                "location": {
+                    "type": "string",
+                    "default": "us-central1-a"
+                },
                 "name": {
                     "description": "Required when creating",
                     "type": "string"
@@ -4324,8 +4415,17 @@ const docTemplate = `{
                 "defaultCluster": {
                     "type": "string"
                 },
+                "defaultFirecloudDevelopRef": {
+                    "description": "should be the environment branch for live envs. Is usually dev for template/dynamic but not necessarily",
+                    "type": "string",
+                    "default": "dev"
+                },
                 "defaultNamespace": {
                     "type": "string"
+                },
+                "helmfileRef": {
+                    "type": "string",
+                    "default": "HEAD"
                 },
                 "lifecycle": {
                     "type": "string",
@@ -4391,6 +4491,11 @@ const docTemplate = `{
                 "defaultSubdomain": {
                     "description": "When creating, will default to the name of the chart",
                     "type": "string"
+                },
+                "legacyConfigsEnabled": {
+                    "description": "Indicates whether a chart requires config rendering from firecloud-develop",
+                    "type": "boolean",
+                    "default": false
                 }
             }
         },
@@ -4432,6 +4537,10 @@ const docTemplate = `{
                     "description": "Required when creating",
                     "type": "string"
                 },
+                "helmfileRef": {
+                    "type": "string",
+                    "default": "HEAD"
+                },
                 "requiresSuitability": {
                     "type": "boolean",
                     "default": false
@@ -4448,8 +4557,17 @@ const docTemplate = `{
                 "defaultCluster": {
                     "type": "string"
                 },
+                "defaultFirecloudDevelopRef": {
+                    "description": "should be the environment branch for live envs. Is usually dev for template/dynamic but not necessarily",
+                    "type": "string",
+                    "default": "dev"
+                },
                 "defaultNamespace": {
                     "type": "string"
+                },
+                "helmfileRef": {
+                    "type": "string",
+                    "default": "HEAD"
                 },
                 "namePrefixesDomain": {
                     "type": "boolean",
@@ -4490,8 +4608,17 @@ const docTemplate = `{
                 "defaultClusterInfo": {
                     "$ref": "#/definitions/v2controllers.Cluster"
                 },
+                "defaultFirecloudDevelopRef": {
+                    "description": "should be the environment branch for live envs. Is usually dev for template/dynamic but not necessarily",
+                    "type": "string",
+                    "default": "dev"
+                },
                 "defaultNamespace": {
                     "type": "string"
+                },
+                "helmfileRef": {
+                    "type": "string",
+                    "default": "HEAD"
                 },
                 "id": {
                     "type": "integer"

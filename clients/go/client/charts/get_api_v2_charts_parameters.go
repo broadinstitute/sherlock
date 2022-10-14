@@ -99,6 +99,12 @@ type GetAPIV2ChartsParams struct {
 	// ID.
 	ID *int64
 
+	/* LegacyConfigsEnabled.
+
+	   Indicates whether a chart requires config rendering from firecloud-develop
+	*/
+	LegacyConfigsEnabled *bool
+
 	/* Limit.
 
 	   An optional limit to the number of entries returned
@@ -139,6 +145,8 @@ func (o *GetAPIV2ChartsParams) SetDefaults() {
 		defaultPortDefault = int64(443)
 
 		defaultProtocolDefault = string("https")
+
+		legacyConfigsEnabledDefault = bool(false)
 	)
 
 	val := GetAPIV2ChartsParams{
@@ -146,6 +154,7 @@ func (o *GetAPIV2ChartsParams) SetDefaults() {
 		ChartRepo:            &chartRepoDefault,
 		DefaultPort:          &defaultPortDefault,
 		DefaultProtocol:      &defaultProtocolDefault,
+		LegacyConfigsEnabled: &legacyConfigsEnabledDefault,
 	}
 
 	val.timeout = o.timeout
@@ -284,6 +293,17 @@ func (o *GetAPIV2ChartsParams) WithID(id *int64) *GetAPIV2ChartsParams {
 // SetID adds the id to the get API v2 charts params
 func (o *GetAPIV2ChartsParams) SetID(id *int64) {
 	o.ID = id
+}
+
+// WithLegacyConfigsEnabled adds the legacyConfigsEnabled to the get API v2 charts params
+func (o *GetAPIV2ChartsParams) WithLegacyConfigsEnabled(legacyConfigsEnabled *bool) *GetAPIV2ChartsParams {
+	o.SetLegacyConfigsEnabled(legacyConfigsEnabled)
+	return o
+}
+
+// SetLegacyConfigsEnabled adds the legacyConfigsEnabled to the get API v2 charts params
+func (o *GetAPIV2ChartsParams) SetLegacyConfigsEnabled(legacyConfigsEnabled *bool) {
+	o.LegacyConfigsEnabled = legacyConfigsEnabled
 }
 
 // WithLimit adds the limit to the get API v2 charts params
@@ -475,6 +495,23 @@ func (o *GetAPIV2ChartsParams) WriteToRequest(r runtime.ClientRequest, reg strfm
 		if qID != "" {
 
 			if err := r.SetQueryParam("id", qID); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.LegacyConfigsEnabled != nil {
+
+		// query param legacyConfigsEnabled
+		var qrLegacyConfigsEnabled bool
+
+		if o.LegacyConfigsEnabled != nil {
+			qrLegacyConfigsEnabled = *o.LegacyConfigsEnabled
+		}
+		qLegacyConfigsEnabled := swag.FormatBool(qrLegacyConfigsEnabled)
+		if qLegacyConfigsEnabled != "" {
+
+			if err := r.SetQueryParam("legacyConfigsEnabled", qLegacyConfigsEnabled); err != nil {
 				return err
 			}
 		}

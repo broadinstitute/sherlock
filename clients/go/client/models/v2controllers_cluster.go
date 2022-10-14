@@ -35,8 +35,14 @@ type V2controllersCluster struct {
 	// Required when creating if provider is 'google'
 	GoogleProject string `json:"googleProject,omitempty"`
 
+	// helmfile ref
+	HelmfileRef *string `json:"helmfileRef,omitempty"`
+
 	// id
 	ID int64 `json:"id,omitempty"`
+
+	// location
+	Location *string `json:"location,omitempty"`
 
 	// Required when creating
 	Name string `json:"name,omitempty"`

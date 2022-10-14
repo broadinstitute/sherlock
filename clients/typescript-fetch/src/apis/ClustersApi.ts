@@ -37,7 +37,9 @@ export interface ApiV2ClustersGetRequest {
     base?: string;
     createdAt?: string;
     googleProject?: string;
+    helmfileRef?: string;
     id?: number;
+    location?: string;
     name?: string;
     provider?: ApiV2ClustersGetProviderEnum;
     requiresSuitability?: boolean;
@@ -98,8 +100,16 @@ export class ClustersApi extends runtime.BaseAPI {
             queryParameters['googleProject'] = requestParameters.googleProject;
         }
 
+        if (requestParameters.helmfileRef !== undefined) {
+            queryParameters['helmfileRef'] = requestParameters.helmfileRef;
+        }
+
         if (requestParameters.id !== undefined) {
             queryParameters['id'] = requestParameters.id;
+        }
+
+        if (requestParameters.location !== undefined) {
+            queryParameters['location'] = requestParameters.location;
         }
 
         if (requestParameters.name !== undefined) {

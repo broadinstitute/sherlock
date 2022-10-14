@@ -163,6 +163,12 @@ export interface V2controllersChartRelease {
      * @type {string}
      * @memberof V2controllersChartRelease
      */
+    firecloudDevelopRef?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof V2controllersChartRelease
+     */
     helmfileRef?: string;
     /**
      * 
@@ -267,6 +273,7 @@ export function V2controllersChartReleaseFromJSONTyped(json: any, ignoreDiscrimi
         'destinationType': !exists(json, 'destinationType') ? undefined : json['destinationType'],
         'environment': !exists(json, 'environment') ? undefined : json['environment'],
         'environmentInfo': !exists(json, 'environmentInfo') ? undefined : V2controllersEnvironmentFromJSON(json['environmentInfo']),
+        'firecloudDevelopRef': !exists(json, 'firecloudDevelopRef') ? undefined : json['firecloudDevelopRef'],
         'helmfileRef': !exists(json, 'helmfileRef') ? undefined : json['helmfileRef'],
         'id': !exists(json, 'id') ? undefined : json['id'],
         'name': !exists(json, 'name') ? undefined : json['name'],
@@ -305,6 +312,7 @@ export function V2controllersChartReleaseToJSON(value?: V2controllersChartReleas
         'destinationType': value.destinationType,
         'environment': value.environment,
         'environmentInfo': V2controllersEnvironmentToJSON(value.environmentInfo),
+        'firecloudDevelopRef': value.firecloudDevelopRef,
         'helmfileRef': value.helmfileRef,
         'id': value.id,
         'name': value.name,
