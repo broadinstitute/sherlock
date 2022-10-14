@@ -337,6 +337,12 @@ func (suite *environmentControllerSuite) TestEnvironmentCreate() {
 					assert.Equal(suite.T(), swatRelease.AppVersionBranch, envRelease.AppVersionBranch)
 					assert.True(suite.T(), envRelease.ID > 0)
 					assert.Equal(suite.T(), swatRelease.Subdomain, envRelease.Subdomain)
+					if envRelease.ChartInfo.LegacyConfigsEnabled != nil && *envRelease.ChartInfo.LegacyConfigsEnabled {
+						suite.Assert().Equal(*environment.DefaultFirecloudDevelopRef, *envRelease.FirecloudDevelopRef)
+					}
+					if envRelease.ChartInfo.LegacyConfigsEnabled != nil && !*envRelease.ChartInfo.LegacyConfigsEnabled {
+						suite.Assert().Nil(envRelease.FirecloudDevelopRef, "firecloud dev ref should be nil when legacy configs are not enabled")
+					}
 				}
 			}
 			assert.True(suite.T(), found)

@@ -274,6 +274,11 @@ func setChartReleaseDynamicDefaults(chartRelease *ChartRelease, stores *v2models
 		if chartRelease.DestinationType == "" {
 			chartRelease.DestinationType = "environment"
 		}
+		if chartRelease.FirecloudDevelopRef == nil {
+			if chart.LegacyConfigsEnabled != nil && *chart.LegacyConfigsEnabled {
+				chartRelease.FirecloudDevelopRef = environment.DefaultFirecloudDevelopRef
+			}
+		}
 	}
 
 	if chartRelease.Cluster != "" {
