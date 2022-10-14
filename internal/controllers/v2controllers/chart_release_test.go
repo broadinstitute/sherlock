@@ -2,6 +2,8 @@ package v2controllers
 
 import (
 	"fmt"
+	"testing"
+
 	"github.com/broadinstitute/sherlock/internal/auth"
 	"github.com/broadinstitute/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/internal/db"
@@ -11,7 +13,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"gorm.io/gorm"
-	"testing"
 )
 
 //
@@ -255,6 +256,9 @@ func (suite *chartReleaseControllerSuite) TestChartReleaseCreate() {
 			})
 			suite.Run("default to chart port", func() {
 				assert.Equal(suite.T(), uint(443), *release.Port)
+			})
+			suite.Run("has legacy configs enabeld and a defaultFirecloudDevelopRef on environment", func() {
+				suite.Assert().Equal("terra-dev", *release.FirecloudDevelopRef)
 			})
 		})
 		suite.Run("custom cluster app release", func() {

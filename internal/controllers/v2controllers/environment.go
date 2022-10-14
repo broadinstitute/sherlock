@@ -2,14 +2,15 @@ package v2controllers
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/internal/auth"
-	"github.com/broadinstitute/sherlock/internal/models/v2models"
-	"github.com/dustinkirkland/golang-petname"
-	"gorm.io/gorm"
 	"math/rand"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/broadinstitute/sherlock/internal/auth"
+	"github.com/broadinstitute/sherlock/internal/models/v2models"
+	petname "github.com/dustinkirkland/golang-petname"
+	"gorm.io/gorm"
 )
 
 type Environment struct {
@@ -30,12 +31,14 @@ type CreatableEnvironment struct {
 }
 
 type EditableEnvironment struct {
-	DefaultCluster      *string `json:"defaultCluster" form:"defaultCluster"`
-	DefaultNamespace    *string `json:"defaultNamespace" form:"defaultNamespace"`
-	Owner               *string `json:"owner" form:"owner"` // When creating, will be set to your email
-	RequiresSuitability *bool   `json:"requiresSuitability" form:"requiresSuitability" default:"false"`
-	BaseDomain          *string `json:"baseDomain" form:"baseDomain" default:"bee.envs-terra.bio"`
-	NamePrefixesDomain  *bool   `json:"namePrefixesDomain" form:"namePrefixesDomain" default:"true"`
+	DefaultCluster             *string `json:"defaultCluster" form:"defaultCluster"`
+	DefaultNamespace           *string `json:"defaultNamespace" form:"defaultNamespace"`
+	DefaultFirecloudDevelopRef *string `json:"defaultFirecloudDevelopRef" form:"defaultFirecloudDevelopRef" default:"dev"` // should be the environment branch for live envs. Is usually dev for template/dynamic but not necessarily
+	Owner                      *string `json:"owner" form:"owner"`                                                         // When creating, will be set to your email
+	RequiresSuitability        *bool   `json:"requiresSuitability" form:"requiresSuitability" default:"false"`
+	BaseDomain                 *string `json:"baseDomain" form:"baseDomain" default:"bee.envs-terra.bio"`
+	NamePrefixesDomain         *bool   `json:"namePrefixesDomain" form:"namePrefixesDomain" default:"true"`
+	HelmfileRef                *string `json:"helmfileRef" form:"helmfileRef" default:"HEAD"`
 }
 
 //nolint:unused
@@ -93,12 +96,14 @@ func modelEnvironmentToEnvironment(model *v2models.Environment) *Environment {
 			Name:                      model.Name,
 			TemplateEnvironment:       templateEnvironmentName,
 			EditableEnvironment: EditableEnvironment{
-				DefaultCluster:      &defaultClusterName,
-				DefaultNamespace:    model.DefaultNamespace,
-				Owner:               model.Owner,
-				RequiresSuitability: model.RequiresSuitability,
-				BaseDomain:          model.BaseDomain,
-				NamePrefixesDomain:  model.NamePrefixesDomain,
+				DefaultCluster:             &defaultClusterName,
+				DefaultNamespace:           model.DefaultNamespace,
+				DefaultFirecloudDevelopRef: model.DefaultFirecloudDevelopRef,
+				Owner:                      model.Owner,
+				RequiresSuitability:        model.RequiresSuitability,
+				BaseDomain:                 model.BaseDomain,
+				NamePrefixesDomain:         model.NamePrefixesDomain,
+				HelmfileRef:                model.HelmfileRef,
 			},
 		},
 	}
@@ -127,18 +132,20 @@ func environmentToModelEnvironment(environment Environment, stores *v2models.Sto
 			CreatedAt: environment.CreatedAt,
 			UpdatedAt: environment.UpdatedAt,
 		},
-		Base:                      environment.Base,
-		ChartReleasesFromTemplate: environment.ChartReleasesFromTemplate,
-		Lifecycle:                 environment.Lifecycle,
-		Name:                      environment.Name,
-		TemplateEnvironmentID:     templateEnvironmentID,
-		ValuesName:                environment.ValuesName,
-		DefaultClusterID:          defaultClusterID,
-		DefaultNamespace:          environment.DefaultNamespace,
-		Owner:                     environment.Owner,
-		RequiresSuitability:       environment.RequiresSuitability,
-		BaseDomain:                environment.BaseDomain,
-		NamePrefixesDomain:        environment.NamePrefixesDomain,
+		Base:                       environment.Base,
+		ChartReleasesFromTemplate:  environment.ChartReleasesFromTemplate,
+		Lifecycle:                  environment.Lifecycle,
+		Name:                       environment.Name,
+		TemplateEnvironmentID:      templateEnvironmentID,
+		ValuesName:                 environment.ValuesName,
+		DefaultClusterID:           defaultClusterID,
+		DefaultNamespace:           environment.DefaultNamespace,
+		DefaultFirecloudDevelopRef: environment.DefaultFirecloudDevelopRef,
+		Owner:                      environment.Owner,
+		RequiresSuitability:        environment.RequiresSuitability,
+		BaseDomain:                 environment.BaseDomain,
+		NamePrefixesDomain:         environment.NamePrefixesDomain,
+		HelmfileRef:                environment.HelmfileRef,
 	}, nil
 }
 
@@ -181,6 +188,11 @@ func setEnvironmentDynamicDefaults(environment *Environment, stores *v2models.St
 		if environment.NamePrefixesDomain == nil {
 			environment.NamePrefixesDomain = templateEnvironment.NamePrefixesDomain
 		}
+		// if a default firecloud develop ref is not specified check the template
+		if environment.DefaultFirecloudDevelopRef == nil && templateEnvironment.DefaultFirecloudDevelopRef != nil {
+			environment.DefaultFirecloudDevelopRef = templateEnvironment.DefaultFirecloudDevelopRef
+		}
+
 	} else {
 		// If there's no template, the valuesName to use is the name of this environment
 		environment.ValuesName = environment.Name
@@ -191,5 +203,14 @@ func setEnvironmentDynamicDefaults(environment *Environment, stores *v2models.St
 	if environment.Owner == nil {
 		environment.Owner = &user.AuthenticatedEmail
 	}
+
+	// set default firecloud-develop ref for live terra envs
+	if environment.DefaultFirecloudDevelopRef == nil {
+		// if we are in a live terra env, the fc-develop ref should be the env name
+		if environment.Lifecycle == "static" && environment.Base == "live" {
+			environment.DefaultFirecloudDevelopRef = &environment.Name
+		}
+	}
+
 	return nil
 }

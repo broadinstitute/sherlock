@@ -1,10 +1,11 @@
 package v2models
 
 import (
-	"github.com/broadinstitute/sherlock/internal/testutils"
-	"gorm.io/gorm"
 	"testing"
 	"time"
+
+	"github.com/broadinstitute/sherlock/internal/testutils"
+	"gorm.io/gorm"
 )
 
 func TestChartReleaseVersion_validate(t *testing.T) {
@@ -39,7 +40,8 @@ func TestChartReleaseVersion_validate(t *testing.T) {
 				},
 				ChartVersionID: testutils.PointerTo[uint](2),
 
-				HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+				FirecloudDevelopRef: testutils.PointerTo("dev"),
 			},
 		},
 		{
@@ -68,7 +70,8 @@ func TestChartReleaseVersion_validate(t *testing.T) {
 				},
 				ChartVersionID: testutils.PointerTo[uint](2),
 
-				HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+				FirecloudDevelopRef: testutils.PointerTo("dev"),
 			},
 		},
 		{
@@ -97,7 +100,8 @@ func TestChartReleaseVersion_validate(t *testing.T) {
 				},
 				ChartVersionID: testutils.PointerTo[uint](2),
 
-				HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+				FirecloudDevelopRef: testutils.PointerTo("dev"),
 			},
 		},
 		{
@@ -116,7 +120,8 @@ func TestChartReleaseVersion_validate(t *testing.T) {
 				},
 				ChartVersionID: testutils.PointerTo[uint](2),
 
-				HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+				FirecloudDevelopRef: testutils.PointerTo("dev"),
 			},
 		},
 		{
@@ -145,7 +150,8 @@ func TestChartReleaseVersion_validate(t *testing.T) {
 				},
 				ChartVersionID: testutils.PointerTo[uint](2),
 
-				HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+				FirecloudDevelopRef: testutils.PointerTo("dev"),
 			},
 		},
 		{
@@ -174,7 +180,8 @@ func TestChartReleaseVersion_validate(t *testing.T) {
 				},
 				ChartVersionID: testutils.PointerTo[uint](2),
 
-				HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+				FirecloudDevelopRef: testutils.PointerTo("dev"),
 			},
 		},
 		{
@@ -203,7 +210,8 @@ func TestChartReleaseVersion_validate(t *testing.T) {
 				},
 				ChartVersionID: testutils.PointerTo[uint](2),
 
-				HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+				FirecloudDevelopRef: testutils.PointerTo("dev"),
 			},
 		},
 		{
@@ -222,7 +230,8 @@ func TestChartReleaseVersion_validate(t *testing.T) {
 				},
 				ChartVersionID: testutils.PointerTo[uint](2),
 
-				HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+				FirecloudDevelopRef: testutils.PointerTo("dev"),
 			},
 		},
 		{
@@ -251,7 +260,8 @@ func TestChartReleaseVersion_validate(t *testing.T) {
 				},
 				ChartVersionID: testutils.PointerTo[uint](2),
 
-				HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+				FirecloudDevelopRef: testutils.PointerTo("dev"),
 			},
 		},
 		{
@@ -278,7 +288,8 @@ func TestChartReleaseVersion_validate(t *testing.T) {
 				},
 				ChartVersionID: testutils.PointerTo[uint](2),
 
-				HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+				FirecloudDevelopRef: testutils.PointerTo("dev"),
 			},
 		},
 		{
@@ -298,7 +309,8 @@ func TestChartReleaseVersion_validate(t *testing.T) {
 				},
 				ChartVersionID: testutils.PointerTo[uint](2),
 
-				HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+				FirecloudDevelopRef: testutils.PointerTo("dev"),
 			},
 		},
 		{
@@ -317,7 +329,8 @@ func TestChartReleaseVersion_validate(t *testing.T) {
 				},
 				ChartVersionID: testutils.PointerTo[uint](2),
 
-				HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+				FirecloudDevelopRef: testutils.PointerTo("dev"),
 			},
 		},
 		{
@@ -341,7 +354,8 @@ func TestChartReleaseVersion_validate(t *testing.T) {
 				ChartVersionResolver: testutils.PointerTo("exact"),
 				ChartVersionExact:    testutils.PointerTo("v0.0.100"),
 
-				HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+				FirecloudDevelopRef: testutils.PointerTo("dev"),
 			},
 		},
 		{
@@ -363,7 +377,8 @@ func TestChartReleaseVersion_validate(t *testing.T) {
 				ChartVersionResolver: testutils.PointerTo("exact"),
 				ChartVersionExact:    testutils.PointerTo("v0.0.100"),
 
-				HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+				FirecloudDevelopRef: testutils.PointerTo("dev"),
 			},
 		},
 		{
@@ -378,11 +393,27 @@ func TestChartReleaseVersion_validate(t *testing.T) {
 				ChartVersionResolver: testutils.PointerTo("exact"),
 				ChartVersionExact:    testutils.PointerTo("v0.0.100"),
 
-				HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+				FirecloudDevelopRef: testutils.PointerTo("dev"),
 			},
 		},
 		{
 			name:    "chartReleaseVersionValidNoneExactMin",
+			wantErr: false,
+			obj: ChartReleaseVersion{
+				ResolvedAt: testutils.PointerTo(time.Now()),
+
+				AppVersionResolver: testutils.PointerTo("none"),
+
+				ChartVersionResolver: testutils.PointerTo("exact"),
+				ChartVersionExact:    testutils.PointerTo("v0.0.100"),
+
+				HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+				FirecloudDevelopRef: testutils.PointerTo("dev"),
+			},
+		},
+		{
+			name:    "chartReleaseVersionValidNoFirecloudDevelopRef",
 			wantErr: false,
 			obj: ChartReleaseVersion{
 				ResolvedAt: testutils.PointerTo(time.Now()),
@@ -419,7 +450,8 @@ func TestChartReleaseVersion_validate(t *testing.T) {
 				},
 				ChartVersionID: testutils.PointerTo[uint](2),
 
-				HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+				FirecloudDevelopRef: testutils.PointerTo("dev"),
 			},
 		},
 		{
@@ -447,7 +479,8 @@ func TestChartReleaseVersion_validate(t *testing.T) {
 				},
 				ChartVersionID: testutils.PointerTo[uint](2),
 
-				HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+				FirecloudDevelopRef: testutils.PointerTo("dev"),
 			},
 		},
 		{
@@ -475,7 +508,8 @@ func TestChartReleaseVersion_validate(t *testing.T) {
 				},
 				ChartVersionID: testutils.PointerTo[uint](2),
 
-				HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+				FirecloudDevelopRef: testutils.PointerTo("dev"),
 			},
 		},
 		{
@@ -504,7 +538,8 @@ func TestChartReleaseVersion_validate(t *testing.T) {
 				},
 				ChartVersionID: testutils.PointerTo[uint](2),
 
-				HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+				FirecloudDevelopRef: testutils.PointerTo("dev"),
 			},
 		},
 		{
@@ -527,7 +562,8 @@ func TestChartReleaseVersion_validate(t *testing.T) {
 				},
 				ChartVersionID: testutils.PointerTo[uint](2),
 
-				HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+				FirecloudDevelopRef: testutils.PointerTo("dev"),
 			},
 		},
 		{
@@ -555,7 +591,8 @@ func TestChartReleaseVersion_validate(t *testing.T) {
 				},
 				ChartVersionID: testutils.PointerTo[uint](2),
 
-				HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+				FirecloudDevelopRef: testutils.PointerTo("dev"),
 			},
 		},
 		{
@@ -584,7 +621,8 @@ func TestChartReleaseVersion_validate(t *testing.T) {
 				},
 				ChartVersionID: testutils.PointerTo[uint](2),
 
-				HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+				FirecloudDevelopRef: testutils.PointerTo("dev"),
 			},
 		},
 		{
@@ -612,7 +650,8 @@ func TestChartReleaseVersion_validate(t *testing.T) {
 				},
 				ChartVersionID: testutils.PointerTo[uint](2),
 
-				HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+				FirecloudDevelopRef: testutils.PointerTo("dev"),
 			},
 		},
 		{
@@ -641,7 +680,8 @@ func TestChartReleaseVersion_validate(t *testing.T) {
 				},
 				ChartVersionID: testutils.PointerTo[uint](2),
 
-				HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+				FirecloudDevelopRef: testutils.PointerTo("dev"),
 			},
 		},
 		{
@@ -668,7 +708,8 @@ func TestChartReleaseVersion_validate(t *testing.T) {
 				},
 				ChartVersionID: testutils.PointerTo[uint](2),
 
-				HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+				FirecloudDevelopRef: testutils.PointerTo("dev"),
 			},
 		},
 		{
@@ -697,7 +738,8 @@ func TestChartReleaseVersion_validate(t *testing.T) {
 				},
 				ChartVersionID: testutils.PointerTo[uint](2),
 
-				HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+				FirecloudDevelopRef: testutils.PointerTo("dev"),
 			},
 		},
 		{
@@ -720,7 +762,8 @@ func TestChartReleaseVersion_validate(t *testing.T) {
 				},
 				ChartVersionID: testutils.PointerTo[uint](2),
 
-				HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+				FirecloudDevelopRef: testutils.PointerTo("dev"),
 			},
 		},
 		{
@@ -748,7 +791,8 @@ func TestChartReleaseVersion_validate(t *testing.T) {
 				},
 				ChartVersionID: testutils.PointerTo[uint](2),
 
-				HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+				FirecloudDevelopRef: testutils.PointerTo("dev"),
 			},
 		},
 		{
@@ -777,7 +821,8 @@ func TestChartReleaseVersion_validate(t *testing.T) {
 				},
 				ChartVersionID: testutils.PointerTo[uint](2),
 
-				HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+				FirecloudDevelopRef: testutils.PointerTo("dev"),
 			},
 		},
 		{
@@ -803,7 +848,8 @@ func TestChartReleaseVersion_validate(t *testing.T) {
 				},
 				ChartVersionID: testutils.PointerTo[uint](2),
 
-				HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+				FirecloudDevelopRef: testutils.PointerTo("dev"),
 			},
 		},
 		{
@@ -832,7 +878,8 @@ func TestChartReleaseVersion_validate(t *testing.T) {
 				},
 				ChartVersionID: testutils.PointerTo[uint](2),
 
-				HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+				FirecloudDevelopRef: testutils.PointerTo("dev"),
 			},
 		},
 		{
@@ -852,7 +899,8 @@ func TestChartReleaseVersion_validate(t *testing.T) {
 				},
 				ChartVersionID: testutils.PointerTo[uint](2),
 
-				HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+				FirecloudDevelopRef: testutils.PointerTo("dev"),
 			},
 		},
 		{
@@ -872,7 +920,8 @@ func TestChartReleaseVersion_validate(t *testing.T) {
 				},
 				ChartVersionID: testutils.PointerTo[uint](2),
 
-				HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+				FirecloudDevelopRef: testutils.PointerTo("dev"),
 			},
 		},
 		{
@@ -892,7 +941,8 @@ func TestChartReleaseVersion_validate(t *testing.T) {
 				},
 				ChartVersionID: testutils.PointerTo[uint](2),
 
-				HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+				FirecloudDevelopRef: testutils.PointerTo("dev"),
 			},
 		},
 		{
@@ -918,7 +968,8 @@ func TestChartReleaseVersion_validate(t *testing.T) {
 				},
 				ChartVersionID: testutils.PointerTo[uint](2),
 
-				HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+				FirecloudDevelopRef: testutils.PointerTo("dev"),
 			},
 		},
 		{
@@ -947,7 +998,8 @@ func TestChartReleaseVersion_validate(t *testing.T) {
 				},
 				ChartVersionID: testutils.PointerTo[uint](2),
 
-				HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+				FirecloudDevelopRef: testutils.PointerTo("dev"),
 			},
 		},
 		{
@@ -976,7 +1028,8 @@ func TestChartReleaseVersion_validate(t *testing.T) {
 				},
 				ChartVersionID: testutils.PointerTo[uint](2),
 
-				HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+				FirecloudDevelopRef: testutils.PointerTo("dev"),
 			},
 		},
 		{
@@ -1004,7 +1057,8 @@ func TestChartReleaseVersion_validate(t *testing.T) {
 				},
 				ChartVersionID: testutils.PointerTo[uint](2),
 
-				HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+				FirecloudDevelopRef: testutils.PointerTo("dev"),
 			},
 		},
 		{
@@ -1028,7 +1082,8 @@ func TestChartReleaseVersion_validate(t *testing.T) {
 				ChartVersionResolver: testutils.PointerTo("latest"),
 				ChartVersionExact:    testutils.PointerTo("v0.0.100"),
 
-				HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+				FirecloudDevelopRef: testutils.PointerTo("dev"),
 			},
 		},
 		{
@@ -1057,7 +1112,8 @@ func TestChartReleaseVersion_validate(t *testing.T) {
 				},
 				ChartVersionID: testutils.PointerTo[uint](2),
 
-				HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+				FirecloudDevelopRef: testutils.PointerTo("dev"),
 			},
 		},
 		{
@@ -1086,7 +1142,8 @@ func TestChartReleaseVersion_validate(t *testing.T) {
 				},
 				ChartVersionID: testutils.PointerTo[uint](2),
 
-				HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+				FirecloudDevelopRef: testutils.PointerTo("dev"),
 			},
 		},
 		{
@@ -1114,7 +1171,8 @@ func TestChartReleaseVersion_validate(t *testing.T) {
 				},
 				ChartVersionID: testutils.PointerTo[uint](2),
 
-				HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+				FirecloudDevelopRef: testutils.PointerTo("dev"),
 			},
 		},
 		{
@@ -1143,7 +1201,8 @@ func TestChartReleaseVersion_validate(t *testing.T) {
 				},
 				ChartVersionID: testutils.PointerTo[uint](2),
 
-				HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+				FirecloudDevelopRef: testutils.PointerTo("dev"),
 			},
 		},
 		{
@@ -1170,7 +1229,8 @@ func TestChartReleaseVersion_validate(t *testing.T) {
 					Model:        gorm.Model{ID: 2},
 					ChartVersion: "v0.0.100",
 				},
-				ChartVersionID: testutils.PointerTo[uint](2),
+				ChartVersionID:      testutils.PointerTo[uint](2),
+				FirecloudDevelopRef: testutils.PointerTo("dev"),
 			},
 		},
 	}
@@ -1197,6 +1257,7 @@ func TestChartReleaseVersion_equalTo(t *testing.T) {
 		ChartVersion         *ChartVersion
 		ChartVersionID       *uint
 		HelmfileRef          *string
+		FirecloudDevelopRef  *string
 		ThelmaMode           *string
 	}
 	type args struct {
@@ -1248,7 +1309,8 @@ func TestChartReleaseVersion_equalTo(t *testing.T) {
 				},
 				ChartVersionID: testutils.PointerTo[uint](2),
 
-				HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+				FirecloudDevelopRef: testutils.PointerTo("dev"),
 			},
 			args: args{other: ChartReleaseVersion{
 				ResolvedAt: testutils.PointerTo(time.Now()),
@@ -1273,7 +1335,8 @@ func TestChartReleaseVersion_equalTo(t *testing.T) {
 				},
 				ChartVersionID: testutils.PointerTo[uint](2),
 
-				HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+				FirecloudDevelopRef: testutils.PointerTo("dev"),
 			}},
 			want: true,
 		},
@@ -1302,7 +1365,8 @@ func TestChartReleaseVersion_equalTo(t *testing.T) {
 				},
 				ChartVersionID: testutils.PointerTo[uint](2),
 
-				HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+				FirecloudDevelopRef: testutils.PointerTo("dev"),
 			},
 			args: args{other: ChartReleaseVersion{
 				ResolvedAt: testutils.PointerTo(time.Now()),
@@ -1320,7 +1384,8 @@ func TestChartReleaseVersion_equalTo(t *testing.T) {
 				ChartVersionResolver: testutils.PointerTo("exact"),
 				ChartVersionExact:    testutils.PointerTo("v0.0.100"),
 
-				HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+				HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+				FirecloudDevelopRef: testutils.PointerTo("dev"),
 			}},
 			want: false,
 		},
@@ -1340,6 +1405,7 @@ func TestChartReleaseVersion_equalTo(t *testing.T) {
 				ChartVersion:         tt.fields.ChartVersion,
 				ChartVersionID:       tt.fields.ChartVersionID,
 				HelmfileRef:          tt.fields.HelmfileRef,
+				FirecloudDevelopRef:  tt.fields.FirecloudDevelopRef,
 			}
 			if got := chartReleaseVersion.equalTo(tt.args.other); got != tt.want {
 				t.Errorf("equalTo() = %v, want %v", got, tt.want)

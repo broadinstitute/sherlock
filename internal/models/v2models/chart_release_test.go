@@ -1,10 +1,11 @@
 package v2models
 
 import (
-	"github.com/broadinstitute/sherlock/internal/testutils"
-	"gorm.io/gorm"
 	"testing"
 	"time"
+
+	"github.com/broadinstitute/sherlock/internal/testutils"
+	"gorm.io/gorm"
 )
 
 // Test_chartReleaseSelectorToQuery can't fully test chartReleaseSelectorToQuery because that function actually
@@ -265,7 +266,8 @@ func Test_validateChartRelease(t *testing.T) {
 					},
 					ChartVersionID: testutils.PointerTo[uint](2),
 
-					HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+					HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+					FirecloudDevelopRef: testutils.PointerTo("dev"),
 				},
 			}},
 			wantErr: false,
@@ -301,7 +303,8 @@ func Test_validateChartRelease(t *testing.T) {
 					},
 					ChartVersionID: testutils.PointerTo[uint](2),
 
-					HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+					HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+					FirecloudDevelopRef: testutils.PointerTo("dev"),
 				},
 			}},
 			wantErr: false,
@@ -336,7 +339,8 @@ func Test_validateChartRelease(t *testing.T) {
 					},
 					ChartVersionID: testutils.PointerTo[uint](2),
 
-					HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+					HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+					FirecloudDevelopRef: testutils.PointerTo("dev"),
 				},
 			}},
 			wantErr: false,
@@ -372,7 +376,8 @@ func Test_validateChartRelease(t *testing.T) {
 					},
 					ChartVersionID: testutils.PointerTo[uint](2),
 
-					HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+					HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+					FirecloudDevelopRef: testutils.PointerTo("dev"),
 				},
 			}},
 			wantErr: true,
@@ -408,7 +413,8 @@ func Test_validateChartRelease(t *testing.T) {
 					},
 					ChartVersionID: testutils.PointerTo[uint](2),
 
-					HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+					HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+					FirecloudDevelopRef: testutils.PointerTo("dev"),
 				},
 			}},
 			wantErr: true,
@@ -445,7 +451,8 @@ func Test_validateChartRelease(t *testing.T) {
 					},
 					ChartVersionID: testutils.PointerTo[uint](2),
 
-					HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+					HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+					FirecloudDevelopRef: testutils.PointerTo("dev"),
 				},
 			}},
 			wantErr: true,
@@ -481,7 +488,8 @@ func Test_validateChartRelease(t *testing.T) {
 					},
 					ChartVersionID: testutils.PointerTo[uint](2),
 
-					HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+					HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+					FirecloudDevelopRef: testutils.PointerTo("dev"),
 				},
 			}},
 			wantErr: true,
@@ -515,7 +523,8 @@ func Test_validateChartRelease(t *testing.T) {
 					},
 					ChartVersionID: testutils.PointerTo[uint](2),
 
-					HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+					HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+					FirecloudDevelopRef: testutils.PointerTo("dev"),
 				},
 			}},
 			wantErr: true,
@@ -551,7 +560,8 @@ func Test_validateChartRelease(t *testing.T) {
 					},
 					ChartVersionID: testutils.PointerTo[uint](2),
 
-					HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+					HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+					FirecloudDevelopRef: testutils.PointerTo("dev"),
 				},
 			}},
 			wantErr: true,
@@ -587,7 +597,8 @@ func Test_validateChartRelease(t *testing.T) {
 					},
 					ChartVersionID: testutils.PointerTo[uint](2),
 
-					HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+					HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+					FirecloudDevelopRef: testutils.PointerTo("dev"),
 				},
 			}},
 			wantErr: true,
@@ -626,7 +637,8 @@ func Test_validateChartRelease(t *testing.T) {
 					},
 					ChartVersionID: testutils.PointerTo[uint](2),
 
-					HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+					HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+					FirecloudDevelopRef: testutils.PointerTo("dev"),
 				},
 			}},
 			wantErr: true,

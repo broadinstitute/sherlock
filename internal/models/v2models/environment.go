@@ -2,10 +2,11 @@ package v2models
 
 import (
 	"fmt"
+	"strconv"
+
 	"github.com/broadinstitute/sherlock/internal/auth"
 	"github.com/broadinstitute/sherlock/internal/errors"
 	"gorm.io/gorm"
-	"strconv"
 )
 
 type Environment struct {
@@ -18,13 +19,15 @@ type Environment struct {
 	ValuesName                string
 	ChartReleasesFromTemplate *bool
 	// Mutable
-	DefaultCluster      *Cluster
-	DefaultClusterID    *uint
-	DefaultNamespace    *string
-	Owner               *string `gorm:"not null;default:null"`
-	RequiresSuitability *bool
-	BaseDomain          *string
-	NamePrefixesDomain  *bool
+	DefaultCluster             *Cluster
+	DefaultClusterID           *uint
+	DefaultNamespace           *string
+	DefaultFirecloudDevelopRef *string
+	Owner                      *string `gorm:"not null; default:null"`
+	RequiresSuitability        *bool
+	BaseDomain                 *string
+	NamePrefixesDomain         *bool
+	HelmfileRef                *string `gorm:"not null; default:null"`
 }
 
 func (e Environment) TableName() string {
@@ -120,6 +123,14 @@ func validateEnvironment(environment *Environment) error {
 		}
 	default:
 		return fmt.Errorf("a %T must have a lifecycle of either 'template', 'static', or 'dynamic'", environment)
+	}
+
+	if environment.HelmfileRef == nil || *environment.HelmfileRef == "" {
+		return fmt.Errorf("a %T must have a non-empty terra-helmfile ref", environment)
+	}
+
+	if environment.DefaultFirecloudDevelopRef == nil || *environment.DefaultFirecloudDevelopRef == "" {
+		return fmt.Errorf("a %T must have a non-empty default firecloud-develop ref", environment)
 	}
 	return nil
 }

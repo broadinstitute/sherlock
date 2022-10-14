@@ -2,9 +2,10 @@ package v2models
 
 import (
 	"fmt"
+	"strconv"
+
 	"github.com/broadinstitute/sherlock/internal/errors"
 	"gorm.io/gorm"
-	"strconv"
 )
 
 type Cluster struct {
@@ -13,10 +14,12 @@ type Cluster struct {
 	Provider          string `gorm:"not null; default:null"`
 	GoogleProject     string
 	AzureSubscription string
+	Location          string `gorm:"not null; default:null"`
 	// Mutable
 	Base                *string `gorm:"not null; default:null"`
 	Address             *string `gorm:"not null; default:null"`
 	RequiresSuitability *bool   `gorm:"not null; default:null"`
+	HelmfileRef         *string `gorm:"not null; default:null"`
 }
 
 func (c Cluster) TableName() string {
@@ -101,8 +104,14 @@ func validateCluster(cluster *Cluster) error {
 	if cluster.Address == nil || *cluster.Address == "" {
 		return fmt.Errorf("a %T must have a non-empty address", cluster)
 	}
+	if cluster.Location == "" {
+		return fmt.Errorf("a %T must specify a location", cluster)
+	}
 	if cluster.RequiresSuitability == nil {
 		return fmt.Errorf("a %T must set whether it requires suitability or not", cluster)
+	}
+	if cluster.HelmfileRef == nil || *cluster.HelmfileRef == "" {
+		return fmt.Errorf("a %T must have a non-empty terra-helmfile ref", cluster)
 	}
 	return nil
 }

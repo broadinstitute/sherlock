@@ -19,6 +19,7 @@ type CreatableCluster struct {
 	Provider          string `json:"provider" form:"provider" enums:"google,azure" default:"google"`
 	GoogleProject     string `json:"googleProject" form:"googleProject"`         // Required when creating if provider is 'google'
 	AzureSubscription string `json:"azureSubscription" form:"azureSubscription"` // Required when creating if providers is 'azure'
+	Location          string `json:"location" form:"location" default:"us-central1-a"`
 	EditableCluster
 }
 
@@ -28,6 +29,7 @@ type EditableCluster struct {
 	Base                *string `json:"base"  form:"base"`      // Required when creating
 	Address             *string `json:"address" form:"address"` // Required when creating
 	RequiresSuitability *bool   `json:"requiresSuitability" form:"requiresSuitability" default:"false"`
+	HelmfileRef         *string `json:"helmfileRef" form:"helmfileRef" default:"HEAD"`
 }
 
 //nolint:unused
@@ -67,10 +69,12 @@ func modelClusterToCluster(model *v2models.Cluster) *Cluster {
 			Provider:          model.Provider,
 			GoogleProject:     model.GoogleProject,
 			AzureSubscription: model.AzureSubscription,
+			Location:          model.Location,
 			EditableCluster: EditableCluster{
 				Base:                model.Base,
 				Address:             model.Address,
 				RequiresSuitability: model.RequiresSuitability,
+				HelmfileRef:         model.HelmfileRef,
 			},
 		},
 	}
@@ -87,8 +91,10 @@ func clusterToModelCluster(cluster Cluster, _ *v2models.StoreSet) (v2models.Clus
 		Provider:            cluster.Provider,
 		GoogleProject:       cluster.GoogleProject,
 		AzureSubscription:   cluster.AzureSubscription,
+		Location:            cluster.Location,
 		Base:                cluster.Base,
 		Address:             cluster.Address,
 		RequiresSuitability: cluster.RequiresSuitability,
+		HelmfileRef:         cluster.HelmfileRef,
 	}, nil
 }

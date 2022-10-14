@@ -1,10 +1,11 @@
 package v2models
 
 import (
-	"github.com/broadinstitute/sherlock/internal/testutils"
-	"gorm.io/gorm"
 	"testing"
 	"time"
+
+	"github.com/broadinstitute/sherlock/internal/testutils"
+	"gorm.io/gorm"
 )
 
 func Test_ChangesetSelectorToQuery(t *testing.T) {
@@ -119,7 +120,8 @@ func Test_validateChangeset(t *testing.T) {
 					},
 					ChartVersionID: testutils.PointerTo[uint](2),
 
-					HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+					HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+					FirecloudDevelopRef: testutils.PointerTo("dev"),
 				},
 			}},
 			wantErr: false,
@@ -141,7 +143,8 @@ func Test_validateChangeset(t *testing.T) {
 					},
 					ChartVersionID: testutils.PointerTo[uint](2),
 
-					HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+					HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+					FirecloudDevelopRef: testutils.PointerTo("dev"),
 				},
 				To: ChartReleaseVersion{
 					ResolvedAt: testutils.PointerTo(time.Now()),
@@ -166,7 +169,8 @@ func Test_validateChangeset(t *testing.T) {
 					},
 					ChartVersionID: testutils.PointerTo[uint](2),
 
-					HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+					HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+					FirecloudDevelopRef: testutils.PointerTo("dev"),
 				},
 			}},
 			wantErr: false,
@@ -197,7 +201,8 @@ func Test_validateChangeset(t *testing.T) {
 					},
 					ChartVersionID: testutils.PointerTo[uint](2),
 
-					HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+					HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+					FirecloudDevelopRef: testutils.PointerTo("dev"),
 				},
 			}},
 			wantErr: true,
@@ -228,7 +233,8 @@ func Test_validateChangeset(t *testing.T) {
 					},
 					ChartVersionID: testutils.PointerTo[uint](2),
 
-					HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+					HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+					FirecloudDevelopRef: testutils.PointerTo("dev"),
 				},
 				To: ChartReleaseVersion{
 					ResolvedAt: testutils.PointerTo(time.Now()),
@@ -244,7 +250,8 @@ func Test_validateChangeset(t *testing.T) {
 					},
 					ChartVersionID: testutils.PointerTo[uint](2),
 
-					HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+					HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+					FirecloudDevelopRef: testutils.PointerTo("dev"),
 				},
 			}},
 			wantErr: true,
@@ -275,7 +282,8 @@ func Test_validateChangeset(t *testing.T) {
 					},
 					ChartVersionID: testutils.PointerTo[uint](2),
 
-					HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+					HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+					FirecloudDevelopRef: testutils.PointerTo("dev"),
 				},
 				To: ChartReleaseVersion{
 					ResolvedAt: testutils.PointerTo(time.Now()),
@@ -300,7 +308,8 @@ func Test_validateChangeset(t *testing.T) {
 					},
 					ChartVersionID: testutils.PointerTo[uint](2),
 
-					HelmfileRef: testutils.PointerTo("e5f6g7h8"),
+					HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+					FirecloudDevelopRef: testutils.PointerTo("dev"),
 				},
 			}},
 			wantErr: false,

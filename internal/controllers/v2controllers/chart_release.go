@@ -2,10 +2,11 @@ package v2controllers
 
 import (
 	"fmt"
+	"strconv"
+
 	"github.com/broadinstitute/sherlock/internal/auth"
 	"github.com/broadinstitute/sherlock/internal/models/v2models"
 	"gorm.io/gorm"
-	"strconv"
 )
 
 type ChartRelease struct {
@@ -35,6 +36,7 @@ type CreatableChartRelease struct {
 	ChartVersionResolver *string `json:"chartVersionResolver" form:"chartVersionResolver" enums:"latest,exact"` // When creating, will default to automatically reference any provided chart version
 	ChartVersionExact    *string `json:"chartVersionExact" form:"chartVersionExact"`
 	HelmfileRef          *string `json:"helmfileRef" form:"helmfileRef" default:"HEAD"`
+	FirecloudDevelopRef  *string `json:"firecloudDevelopRef" form:"firecloudDevelopRef"`
 	EditableChartRelease
 }
 
@@ -132,6 +134,7 @@ func modelChartReleaseToChartRelease(model *v2models.ChartRelease) *ChartRelease
 			ChartVersionResolver: model.ChartVersionResolver,
 			ChartVersionExact:    model.ChartVersionExact,
 			HelmfileRef:          model.HelmfileRef,
+			FirecloudDevelopRef:  model.FirecloudDevelopRef,
 			EditableChartRelease: EditableChartRelease{
 				Subdomain: model.Subdomain,
 				Protocol:  model.Protocol,
@@ -204,6 +207,7 @@ func chartReleaseToModelChartRelease(chartRelease ChartRelease, stores *v2models
 			ChartVersionExact:    chartRelease.ChartVersionExact,
 			ChartVersionID:       chartVersionID,
 			HelmfileRef:          chartRelease.HelmfileRef,
+			FirecloudDevelopRef:  chartRelease.FirecloudDevelopRef,
 		},
 		Subdomain: chartRelease.Subdomain,
 		Protocol:  chartRelease.Protocol,
@@ -269,6 +273,11 @@ func setChartReleaseDynamicDefaults(chartRelease *ChartRelease, stores *v2models
 		}
 		if chartRelease.DestinationType == "" {
 			chartRelease.DestinationType = "environment"
+		}
+		if chartRelease.FirecloudDevelopRef == nil {
+			if chart.LegacyConfigsEnabled != nil && *chart.LegacyConfigsEnabled {
+				chartRelease.FirecloudDevelopRef = environment.DefaultFirecloudDevelopRef
+			}
 		}
 	}
 
