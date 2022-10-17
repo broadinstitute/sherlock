@@ -228,5 +228,6 @@ func (chartReleaseVersion *ChartReleaseVersion) equalTo(other ChartReleaseVersio
 		((chartReleaseVersion.ChartVersionResolver == nil && other.ChartVersionResolver == nil) || (*chartReleaseVersion.ChartVersionResolver == *other.ChartVersionResolver)) &&
 		((chartReleaseVersion.ChartVersionExact == nil && other.ChartVersionExact == nil) || (*chartReleaseVersion.ChartVersionExact == *other.ChartVersionExact)) &&
 		((chartReleaseVersion.ChartVersionID == nil && other.ChartVersionID == nil) || (*chartReleaseVersion.ChartVersionID == *other.ChartVersionID)) &&
-		((chartReleaseVersion.HelmfileRef == nil && other.HelmfileRef == nil) || (*chartReleaseVersion.HelmfileRef == *other.HelmfileRef))
+		((chartReleaseVersion.HelmfileRef == nil && other.HelmfileRef == nil) || (*chartReleaseVersion.HelmfileRef == *other.HelmfileRef)) &&
+		((chartReleaseVersion.FirecloudDevelopRef == nil && other.FirecloudDevelopRef == nil) || (*chartReleaseVersion.FirecloudDevelopRef == *other.FirecloudDevelopRef))
 }
