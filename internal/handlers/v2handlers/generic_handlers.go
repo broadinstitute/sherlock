@@ -51,7 +51,7 @@ func handleList[M v2models.Model, R v2controllers.Readable, C v2controllers.Crea
 			ctx.JSON(errors.ErrorToApiResponse(fmt.Errorf("(%s) error parsing a filtering %T from the query parameters: %v", errors.BadRequest, filter, err)))
 			return
 		} else {
-			log.Debug().Msgf("parsing query params to %T: '%s' => %+v", filter, ctx.Request.URL.RawQuery, filter)
+			log.Trace().Msgf("parsing query params to %T: '%s' => %+v", filter, ctx.Request.URL.RawQuery, filter)
 		}
 		limitString := ctx.DefaultQuery("limit", "0")
 		limit, err := strconv.Atoi(limitString)
