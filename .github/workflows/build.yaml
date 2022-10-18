@@ -57,7 +57,7 @@ jobs:
         env:
           DEFAULT_BUMP: patch
           GITHUB_TOKEN: ${{ secrets.BROADBOT_TOKEN }}
-          RELEASE_BRANCHES: main
+          RELEASE_BRANCHES: ${{ github.event.repository.default_branch }}
           WITH_V: true
 
       # GCP config
@@ -82,7 +82,7 @@ jobs:
       - name: Setup Node/NPM
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
 
       # Swagger file generation
       - name: Install swaggo
@@ -118,29 +118,51 @@ jobs:
       - name: Construct docker images name and tag
         id: image-name
         run: |
-          DOCKER_TAG=${{ steps.tag.outputs.tag }}
-          echo ::set-output name=cli-name::${GOOGLE_DOCKER_REPOSITORY}/${GOOGLE_PROJECT}/${REPOSITORY_NAME}/${CLI_IMAGE_NAME}:${DOCKER_TAG}
-          echo ::set-output name=server-name::${GOOGLE_DOCKER_REPOSITORY}/${GOOGLE_PROJECT}/${REPOSITORY_NAME}/${SERVER_IMAGE_NAME}:${DOCKER_TAG}
+          DOCKER_TAG="${{ steps.tag.outputs.tag }}"
+          
+          CLI_NAME="${GOOGLE_DOCKER_REPOSITORY}/${GOOGLE_PROJECT}/${REPOSITORY_NAME}/${CLI_IMAGE_NAME}"
+          CLI_TAGGED="${NAME}:${DOCKER_TAG}"
+          echo "CLI_NAME: ${CLI_NAME}"
+          echo "CLI_TAGGED: ${CLI_TAGGED}"
+          echo "cli-name=${CLI_NAME}" >> $GITHUB_OUTPUT
+          echo "cli-tagged=${CLI_TAGGED}" >> $GITHUB_OUTPUT
+          
+          SERVER_NAME="${GOOGLE_DOCKER_REPOSITORY}/${GOOGLE_PROJECT}/${REPOSITORY_NAME}/${SERVER_IMAGE_NAME}"
+          SERVER_TAGGED="${NAME}:${DOCKER_TAG}"
+          echo "SERVER_NAME: ${SERVER_NAME}"
+          echo "SERVER_TAGGED: ${SERVER_TAGGED}"
+          echo "server-name=${SERVER_NAME}" >> $GITHUB_OUTPUT
+          echo "server-tagged=${SERVER_TAGGED}" >> $GITHUB_OUTPUT
+
       - name: Build image
         run: |
-          docker build --build-arg SHERLOCK_BUILD_VERSION=${{ steps.tag.outputs.tag }} -t ${{ steps.image-name.outputs.cli-name }} -f build/cli/Dockerfile .
-          docker build --build-arg SHERLOCK_BUILD_VERSION=${{ steps.tag.outputs.tag }} -t ${{ steps.image-name.outputs.server-name }} -f build/server/Dockerfile .
+          docker build --build-arg SHERLOCK_BUILD_VERSION=${{ steps.tag.outputs.tag }} -t ${{ steps.image-name.outputs.cli-tagged }} -f build/cli/Dockerfile .
+          docker build --build-arg SHERLOCK_BUILD_VERSION=${{ steps.tag.outputs.tag }} -t ${{ steps.image-name.outputs.server-tagged }} -f build/server/Dockerfile .
 
       # Publish images
       - name: Run Trivy vulnerability scanner on CLI
         # From https://github.com/broadinstitute/dsp-appsec-trivy-action
         uses: broadinstitute/dsp-appsec-trivy-action@v1
         with:
-          image: ${{ steps.image-name.outputs.cli-name }}
+          image: ${{ steps.image-name.outputs.cli-tagged }}
       - name: Run Trivy vulnerability scanner on server
         # From https://github.com/broadinstitute/dsp-appsec-trivy-action
         uses: broadinstitute/dsp-appsec-trivy-action@v1
         with:
-          image: ${{ steps.image-name.outputs.server-name }}
+          image: ${{ steps.image-name.outputs.server-tagged }}
       - name: Push image
         run: |
-          docker push ${{ steps.image-name.outputs.cli-name }}
-          docker push ${{ steps.image-name.outputs.server-name }}
+          docker push ${{ steps.image-name.outputs.cli-tagged }}
+          docker push ${{ steps.image-name.outputs.server-tagged }}
+      - name: Add latest tag to Docker image
+        if: github.event_name != 'pull_request'
+        run: |
+          gcloud artifacts docker tags add \
+            "${{ steps.image-name.outputs.cli-tagged }}" \
+            "${{ steps.image-name.outputs.cli-name }}:latest"
+          gcloud artifacts docker tags add \
+            "${{ steps.image-name.outputs.server-tagged }}" \
+            "${{ steps.image-name.outputs.server-name }}:latest"
 
       # Build typescript client
       - name: Build typescript client
