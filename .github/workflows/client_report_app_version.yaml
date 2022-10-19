@@ -28,9 +28,6 @@ name: Report App Version
 #       id-token: 'write'
 # ```
 
-
-
-
 on:
   workflow_call:
     inputs:
