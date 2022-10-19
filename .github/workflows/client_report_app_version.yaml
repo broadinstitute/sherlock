@@ -1,0 +1,195 @@
+name: Report App Version
+
+# This workflow is meant to be called from other repositories' workflows to report a new app version to Sherlock.
+#
+# The caller repository must have Workload Identity Federation configured to allow impersonation of the
+# "dsp-tools-iap-access@dsp-tools-k8s.iam.gserviceaccount.com" service account; steps 1 and 2 of the documentation:
+# https://docs.google.com/document/d/1bnhDmWQHAMat_Saoa_z28FHwXmGWw6kywjdbKf208h4/edit
+#
+# With that configured, here's how you can call this workflow from whatever workflow currently publishes the app:
+# ```yaml
+# jobs:
+#
+#   <your-existing-job-id>:
+#     # Output the version from your existing job's tag/bump step, something like this:
+#     outputs:
+#       tag: ${{ steps.tag.outputs.tag }}
+#     steps:
+#       # ... (The rest of your existing job can stay the same)
+#
+#   report_to_sherlock:
+#     uses: broadinstitute/sherlock/.github/workflows/client_report_app_version.yaml@main
+#     needs: <your-existing-job-id>
+#     with:
+#       new_version: ${{ needs.<your-existing-job-id>.outputs.tag }}
+#       chart_name: '<your-app-helm-chart-name>'
+#     permissions:
+#       contents: 'read'
+#       id-token: 'write'
+# ```
+
+on:
+  workflow_call:
+    inputs:
+      new_version:
+        required: true
+        type: string
+        description: "The app's new semantic version to record in Sherlock"
+      chart_name:
+        required: true
+        type: string
+        description: "The name of the Helm Chart that deploys this app"
+      include_git_context:
+        required: false
+        type: boolean
+        default: true
+        description: "If the Git context of the caller should be reported as the commit/branch that the new version came from"
+      custom_description:
+        required: false
+        type: string
+        description: "Optionally provide a custom description for the version instead of the commit message"
+      
+      use_sherlock_prod:
+        required: false
+        type: boolean
+        default: true
+        description: "If the version should be reported to the general-use production Sherlock instance"
+      fail_on_prod_failure:
+        required: false
+        type: boolean
+        default: true
+        description: "If an issue communicating with production Sherlock should cause an overall failure"
+
+      use_sherlock_dev:
+        required: false
+        type: boolean
+        default: true
+        description: "If the version should be reported to the DevOps-use development Sherlock instance"
+      fail_on_dev_failure:
+        required: false
+        type: boolean
+        default: false
+        description: "If an issue communicating with development Sherlock should cause an overall failure"
+
+env:
+  SHERLOCK_PROD_URL: 'https://sherlock.dsp-devops.broadinstitute.org'
+  SHERLOCK_DEV_URL: 'https://sherlock-dev.dsp-devops.broadinstitute.org'
+  BEEHIVE_PROD_URL: 'https://beehive.dsp-devops.broadinstitute.org'
+  BEEHIVE_DEV_URL: 'https://beehive-dev.dsp-devops.broadinstitute.org'
+
+jobs:
+  report:
+    runs-on: ubuntu-22.04
+
+    # When this workflow is called, the job runs with the context of the caller, so we're setting
+    # permissions of the caller's GITHUB_TOKEN before we use it for Workload Identity. We can't
+    # actually upgrade permissions here--the caller must declare permissions as well--but we can
+    # cause an error if there's a misconfiguration.
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    
+    steps:
+
+      - name: "Checkout"
+        uses: actions/checkout@v3
+
+      - name: "Authenticate"
+        id: 'auth'
+        uses: google-github-actions/auth@v0
+        with:
+          workload_identity_provider: 'projects/1038484894585/locations/global/workloadIdentityPools/github-wi-pool/providers/github-wi-provider'
+          service_account: 'dsp-tools-iap-access@dsp-tools-k8s.iam.gserviceaccount.com'
+          token_format: 'id_token'
+          id_token_audience: '1038484894585-k8qvf7l876733laev0lm8kenfa2lj6bn.apps.googleusercontent.com'
+          id_token_include_email: true
+
+      - name: "Begin Request Body"
+        # Explicitly declaring bash as the shell enables fail-fast behavior
+        # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#exit-codes-and-error-action-preference
+        shell: bash
+        run: |
+          echo '{
+            "appVersion": "${{ inputs.new_version }}",
+            "chart": "${{ inputs.chart_name }}"
+          }' > "$RUNNER_TEMP/body.json"
+
+      - name: "Parse Commit"
+        if: ${{ inputs.include_git_context == true }}
+        shell: bash
+        run: |
+          export COMMIT="$(git rev-parse HEAD)"
+          if [ -n "$COMMIT" ]
+          then
+            cat <<< $(jq '.gitCommit = env.COMMIT' "$RUNNER_TEMP/body.json") > "$RUNNER_TEMP/body.json"
+          fi
+
+      - name: "Parse Branch"
+        if: ${{ inputs.include_git_context == true && github.ref_type == 'branch' }}
+        shell: bash
+        run: |
+          export BRANCH="$(git rev-parse --abbrev-ref HEAD)"
+          if [ -n "$BRANCH" ]
+          then
+            cat <<< $(jq '.gitBranch = env.BRANCH' "$RUNNER_TEMP/body.json") > "$RUNNER_TEMP/body.json"
+          fi
+
+      - name: "Parse Last Tag as Parent"
+        if: ${{ inputs.include_git_context == true }}
+        shell: bash
+        # Use `|| true` since this step is entirely opportunistic.
+        # We don't validate either, since Sherlock is opportunistic about this field too.
+        run: |
+          export PARENT="$(git describe --tags --abbrev=0 HEAD^ || true)"
+          if [ -n "$PARENT" ]
+          then
+            export PARENT="${{ inputs.chart_name }}/$PARENT"
+            cat <<< $(jq '.parentAppVersion = env.PARENT' "$RUNNER_TEMP/body.json") > "$RUNNER_TEMP/body.json"
+          fi
+
+      - name: "Use Custom Description"
+        if: ${{ inputs.custom_description != "" }}
+        shell: bash
+        run: |
+          cat <<< $(jq '.description = "${{ inputs.custom_description }}"' "$RUNNER_TEMP/body.json") > "$RUNNER_TEMP/body.json"
+
+      - name: "Parse Commit Message as Description"
+        if: ${{ inputs.include_git_context == true && inputs.custom_description == "" }}
+        shell: bash
+        run: |
+          export DESCRIPTION="$(git log -1 --pretty=%B)"
+          if [ -n "$DESCRIPTION" ]
+          then
+            cat <<< $(jq '.description = env.DESCRIPTION' "$RUNNER_TEMP/body.json") > "$RUNNER_TEMP/body.json"
+          fi
+
+      - name: "Log Request Body"
+        shell: bash
+        run: |
+          cat "$RUNNER_TEMP/body.json"
+          echo "## Reported ${{ inputs.chart_name }}/${{ inputs.new_version }} to Sherlock" >> $GITHUB_STEP_SUMMARY
+
+      # Sherlock's endpoint here is idempotent so we don't need to do anything special to handle re-runs
+      
+      - name: "Send to Sherlock Prod"
+        if: ${{ inputs.use_sherlock_prod }}
+        shell: bash
+        run: |
+          curl -X 'POST' \
+            "$SHERLOCK_PROD_URL/api/v2/app-versions" \
+            -H 'Content-Type: application/json' \
+            -H 'Authorization: Bearer ${{ steps.auth.outputs.id_token }}' \
+            -d "@$RUNNER_TEMP/body.json ${{ (inputs.fail_on_prod_failure == false && '|| true') || '' }}
+          echo "### Available in Beehive at $BEEHIVE_PROD_URL/charts/${{ inputs.chart_name }}/app-versions/${{ inputs.new_version }}"" >> $GITHUB_STEP_SUMMARY
+          
+
+      - name: "Send to Sherlock Dev"
+        if: ${{ inputs.use_sherlock_dev }}
+        shell: bash
+        run: |
+          curl -X 'POST' \
+            "$SHERLOCK_DEV_URL/api/v2/app-versions" \
+            -H 'Content-Type: application/json' \
+            -H 'Authorization: Bearer ${{ steps.auth.outputs.id_token }}' \
+            -d "@$RUNNER_TEMP/body.json ${{ (inputs.fail_on_dev_failure == false && '|| true') || '' }}
+          echo "### Available in Beehive Dev at $BEEHIVE_DEV_URL/charts/${{ inputs.chart_name }}/app-versions/${{ inputs.new_version }}"" >> $GITHUB_STEP_SUMMARY
