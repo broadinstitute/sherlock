@@ -121,14 +121,14 @@ jobs:
           DOCKER_TAG="${{ steps.tag.outputs.tag }}"
           
           CLI_NAME="${GOOGLE_DOCKER_REPOSITORY}/${GOOGLE_PROJECT}/${REPOSITORY_NAME}/${CLI_IMAGE_NAME}"
-          CLI_TAGGED="${NAME}:${DOCKER_TAG}"
+          CLI_TAGGED="${CLI_NAME}:${DOCKER_TAG}"
           echo "CLI_NAME: ${CLI_NAME}"
           echo "CLI_TAGGED: ${CLI_TAGGED}"
           echo "cli-name=${CLI_NAME}" >> $GITHUB_OUTPUT
           echo "cli-tagged=${CLI_TAGGED}" >> $GITHUB_OUTPUT
           
           SERVER_NAME="${GOOGLE_DOCKER_REPOSITORY}/${GOOGLE_PROJECT}/${REPOSITORY_NAME}/${SERVER_IMAGE_NAME}"
-          SERVER_TAGGED="${NAME}:${DOCKER_TAG}"
+          SERVER_TAGGED="${SERVER_NAME}:${DOCKER_TAG}"
           echo "SERVER_NAME: ${SERVER_NAME}"
           echo "SERVER_TAGGED: ${SERVER_TAGGED}"
           echo "server-name=${SERVER_NAME}" >> $GITHUB_OUTPUT
