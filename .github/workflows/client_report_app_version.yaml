@@ -148,13 +148,13 @@ jobs:
           fi
 
       - name: "Use Custom Description"
-        if: ${{ inputs.custom_description != "" }}
+        if: ${{ inputs.custom_description != '' }}
         shell: bash
         run: |
           cat <<< $(jq '.description = "${{ inputs.custom_description }}"' "$RUNNER_TEMP/body.json") > "$RUNNER_TEMP/body.json"
 
       - name: "Parse Commit Message as Description"
-        if: ${{ inputs.include_git_context == true && inputs.custom_description == "" }}
+        if: ${{ inputs.include_git_context == true && inputs.custom_description == '' }}
         shell: bash
         run: |
           export DESCRIPTION="$(git log -1 --pretty=%B)"
