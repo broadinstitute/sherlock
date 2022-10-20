@@ -194,4 +194,3 @@ jobs:
             -H 'Content-Type: application/json' \
             -H 'Authorization: Bearer ${{ steps.auth.outputs.id_token }}' \
             -d "@$RUNNER_TEMP/body.json" ${{ (inputs.fail_on_dev_failure == false && '|| true') || '' }}
-          echo "### Available in Beehive Dev at $BEEHIVE_DEV_URL/charts/${{ inputs.chart_name }}/app-versions/${{ inputs.new_version }}" >> $GITHUB_STEP_SUMMARY
