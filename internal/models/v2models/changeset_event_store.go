@@ -128,7 +128,7 @@ func (s *internalChangesetEventStore) apply(db *gorm.DB, changesets []Changeset,
 			}
 			// Forcibly include AppliedAt and SupersededAt in the match criteria so we only find things where both of those
 			// fields are empty.
-			consumedChangesets, err := s.listAllMatching(tx, 0, Changeset{ChartReleaseID: toApply.ChartReleaseID}, "ChartReleaseID", "AppliedAt", "SupersededAt")
+			consumedChangesets, err := s.listAllMatchingByUpdated(tx, 0, Changeset{ChartReleaseID: toApply.ChartReleaseID}, "ChartReleaseID", "AppliedAt", "SupersededAt")
 			if err != nil {
 				return fmt.Errorf("post-apply error on %T %d (ID: %d): couldn't query consumed %T: %v", changeset, index+1, toApply.ID, changeset, err)
 			}

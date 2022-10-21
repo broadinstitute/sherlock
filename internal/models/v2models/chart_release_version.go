@@ -39,7 +39,7 @@ func (chartReleaseVersion *ChartReleaseVersion) resolve(db *gorm.DB, chartQuery 
 		switch *chartReleaseVersion.AppVersionResolver {
 		case "branch":
 			if chartReleaseVersion.AppVersionBranch != nil {
-				appVersions, err := appVersionStore.listAllMatching(db, 1, AppVersion{ChartID: chart.ID, GitBranch: *chartReleaseVersion.AppVersionBranch})
+				appVersions, err := appVersionStore.listAllMatchingByCreated(db, 1, AppVersion{ChartID: chart.ID, GitBranch: *chartReleaseVersion.AppVersionBranch})
 				if err != nil {
 					return fmt.Errorf("(%s) failed to get matching app versions for branch '%s': %v", errors.InternalServerError, *chartReleaseVersion.AppVersionBranch, err)
 				} else if len(appVersions) == 0 {
@@ -57,7 +57,7 @@ func (chartReleaseVersion *ChartReleaseVersion) resolve(db *gorm.DB, chartQuery 
 				}
 				// It's ugly but we go down to basically raw SQL here so we can handle the fact that people are definitely going
 				// to specify commits with less than the full hash.
-				appVersions, err := appVersionStore.listAllMatching(db, 1, "chart_id = ? and git_commit LIKE ?", chart.ID, fmt.Sprintf("%s%%", *chartReleaseVersion.AppVersionCommit))
+				appVersions, err := appVersionStore.listAllMatchingByCreated(db, 1, "chart_id = ? and git_commit LIKE ?", chart.ID, fmt.Sprintf("%s%%", *chartReleaseVersion.AppVersionCommit))
 				if err != nil {
 					return fmt.Errorf("(%s) failed to get matching app versions for commit '%s': %v", errors.InternalServerError, *chartReleaseVersion.AppVersionCommit, err)
 				} else if len(appVersions) == 0 {
@@ -72,7 +72,7 @@ func (chartReleaseVersion *ChartReleaseVersion) resolve(db *gorm.DB, chartQuery 
 			}
 		case "exact":
 			if chartReleaseVersion.AppVersionExact != nil {
-				appVersions, err := appVersionStore.listAllMatching(db, 1, AppVersion{ChartID: chart.ID, AppVersion: *chartReleaseVersion.AppVersionExact})
+				appVersions, err := appVersionStore.listAllMatchingByCreated(db, 1, AppVersion{ChartID: chart.ID, AppVersion: *chartReleaseVersion.AppVersionExact})
 				if err == nil && len(appVersions) > 0 {
 					chartReleaseVersion.AppVersion = &appVersions[0]
 					chartReleaseVersion.AppVersionID = &appVersions[0].ID
@@ -96,7 +96,7 @@ func (chartReleaseVersion *ChartReleaseVersion) resolve(db *gorm.DB, chartQuery 
 	if chartReleaseVersion.ChartVersionResolver != nil {
 		switch *chartReleaseVersion.ChartVersionResolver {
 		case "latest":
-			chartVersions, err := chartVersionStore.listAllMatching(db, 1, ChartVersion{ChartID: chart.ID})
+			chartVersions, err := chartVersionStore.listAllMatchingByCreated(db, 1, ChartVersion{ChartID: chart.ID})
 			if err != nil {
 				return fmt.Errorf("(%s) failed to get latest chart versions for %s", errors.InternalServerError, chart.Name)
 			} else if len(chartVersions) == 0 {
@@ -107,7 +107,7 @@ func (chartReleaseVersion *ChartReleaseVersion) resolve(db *gorm.DB, chartQuery 
 			chartReleaseVersion.ChartVersionExact = &chartVersions[0].ChartVersion
 		case "exact":
 			if chartReleaseVersion.ChartVersionExact != nil {
-				chartVersions, err := chartVersionStore.listAllMatching(db, 1, ChartVersion{ChartID: chart.ID, ChartVersion: *chartReleaseVersion.ChartVersionExact})
+				chartVersions, err := chartVersionStore.listAllMatchingByCreated(db, 1, ChartVersion{ChartID: chart.ID, ChartVersion: *chartReleaseVersion.ChartVersionExact})
 				if err == nil && len(chartVersions) > 0 {
 					chartReleaseVersion.ChartVersion = &chartVersions[0]
 					chartReleaseVersion.ChartVersionID = &chartVersions[0].ID

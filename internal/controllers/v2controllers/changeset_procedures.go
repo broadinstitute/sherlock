@@ -89,7 +89,7 @@ func (c ChangesetController) changesetPlanRequestToModelChangesets(request Chang
 			}
 			chartsToExclude[chart.ID] = struct{}{}
 		}
-		environmentChartReleases, err := c.allStores.ChartReleaseStore.ListAllMatching(v2models.ChartRelease{EnvironmentID: &environment.ID}, 0)
+		environmentChartReleases, err := c.allStores.ChartReleaseStore.ListAllMatchingByUpdated(v2models.ChartRelease{EnvironmentID: &environment.ID}, 0)
 		if err != nil {
 			return nil, fmt.Errorf("error getting chart releases in environment '%s' for environment entry %d: %v", environmentRequestEntry.Environment, index+1, err)
 		}
@@ -109,7 +109,7 @@ func (c ChangesetController) changesetPlanRequestToModelChangesets(request Chang
 			if err != nil {
 				return nil, fmt.Errorf("error getting referenced other environment '%s' for environment entry %d, '%s': %v", *environmentRequestEntry.UseExactVersionsFromOtherEnvironment, index+1, environmentRequestEntry.Environment, err)
 			}
-			otherChartReleases, err := c.allStores.ChartReleaseStore.ListAllMatching(v2models.ChartRelease{EnvironmentID: &otherEnvironment.ID}, 0)
+			otherChartReleases, err := c.allStores.ChartReleaseStore.ListAllMatchingByUpdated(v2models.ChartRelease{EnvironmentID: &otherEnvironment.ID}, 0)
 			if err != nil {
 				return nil, fmt.Errorf("error getting chart releases in referenced other environment '%s' for environment entry %d, '%s': %v", *environmentRequestEntry.UseExactVersionsFromOtherEnvironment, index+1, environmentRequestEntry.Environment, err)
 			}

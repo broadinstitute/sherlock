@@ -126,11 +126,19 @@ func (s internalModelStore[M]) create(db *gorm.DB, model M, user *auth.User) (M,
 }
 
 // The signature here is really loose so we don't need to go down to the raw db's Where method. The signature exposed
-// outside this package by ModelStore's ListAllMatching is more restrictive.
-func (s internalModelStore[M]) listAllMatching(db *gorm.DB, limit int, query interface{}, args ...interface{}) ([]M, error) {
+// outside this package by ModelStore's ListAllMatchingByUpdated is more restrictive.
+func (s internalModelStore[M]) listAllMatchingByUpdated(db *gorm.DB, limit int, query interface{}, args ...interface{}) ([]M, error) {
+	return s.listAllMatchingOrdered(db, limit, "updated_at desc", query, args...)
+}
+
+func (s internalModelStore[M]) listAllMatchingByCreated(db *gorm.DB, limit int, query interface{}, args ...interface{}) ([]M, error) {
+	return s.listAllMatchingOrdered(db, limit, "created_at desc", query, args...)
+}
+
+func (s internalModelStore[M]) listAllMatchingOrdered(db *gorm.DB, limit int, order string, query interface{}, args ...interface{}) ([]M, error) {
 	var modelRef M
 	var matching []M
-	tx := db.Model(&modelRef).Where(query, args...).Preload(clause.Associations).Order("updated_at desc")
+	tx := db.Model(&modelRef).Where(query, args...).Preload(clause.Associations).Order(order)
 	if limit > 0 {
 		tx = tx.Limit(limit)
 	}
