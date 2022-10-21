@@ -180,7 +180,7 @@ jobs:
         shell: bash
         # We want to use --fail with curl but we don't want to actually exit the script early
         run: |
-          curl --fail -X 'POST' \
+          curl --fail-with-body -X 'POST' \
             "$SHERLOCK_PROD_URL/api/v2/app-versions" \
             -H 'Content-Type: application/json' \
             -H 'Authorization: Bearer ${{ steps.auth.outputs.id_token }}' \
@@ -196,7 +196,7 @@ jobs:
         if: ${{ inputs.use-sherlock-dev }}
         shell: bash
         run: |
-          curl --fail -X 'POST' \
+          curl --fail-with-body -X 'POST' \
             "$SHERLOCK_DEV_URL/api/v2/app-versions" \
             -H 'Content-Type: application/json' \
             -H 'Authorization: Bearer ${{ steps.auth.outputs.id_token }}' \
