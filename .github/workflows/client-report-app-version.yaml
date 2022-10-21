@@ -17,12 +17,12 @@ name: Report App Version
 #     steps:
 #       # ... (The rest of your existing job can stay the same)
 #
-#   report_to_sherlock:
-#     uses: broadinstitute/sherlock/.github/workflows/client_report_app_version.yaml@main
+#   report-to-sherlock:
+#     uses: broadinstitute/sherlock/.github/workflows/client-report-app-version.yaml@main
 #     needs: <your-existing-job-id>
 #     with:
-#       new_version: ${{ needs.<your-existing-job-id>.outputs.tag }}
-#       chart_name: '<your-app-helm-chart-name>'
+#       new-version: ${{ needs.<your-existing-job-id>.outputs.tag }}
+#       chart-name: '<your-app-helm-chart-name>'
 #     permissions:
 #       contents: 'read'
 #       id-token: 'write'
@@ -31,41 +31,41 @@ name: Report App Version
 on:
   workflow_call:
     inputs:
-      new_version:
+      new-version:
         required: true
         type: string
         description: "The app's new semantic version to record in Sherlock"
-      chart_name:
+      chart-name:
         required: true
         type: string
         description: "The name of the Helm Chart that deploys this app"
-      include_git_context:
+      include-git-context:
         required: false
         type: boolean
         default: true
         description: "If the Git context of the caller should be reported as the commit/branch that the new version came from"
-      custom_description:
+      custom-description:
         required: false
         type: string
         description: "Optionally provide a custom description for the version instead of the commit message"
       
-      use_sherlock_prod:
+      use-sherlock-prod:
         required: false
         type: boolean
         default: true
         description: "If the version should be reported to the general-use production Sherlock instance"
-      fail_on_prod_failure:
+      fail-on-prod-failure:
         required: false
         type: boolean
         default: true
         description: "If an issue communicating with production Sherlock should cause an overall failure"
 
-      use_sherlock_dev:
+      use-sherlock-dev:
         required: false
         type: boolean
         default: true
         description: "If the version should be reported to the DevOps-use development Sherlock instance"
-      fail_on_dev_failure:
+      fail-on-dev-failure:
         required: false
         type: boolean
         default: false
@@ -74,8 +74,10 @@ on:
 env:
   SHERLOCK_PROD_URL: 'https://sherlock.dsp-devops.broadinstitute.org'
   SHERLOCK_DEV_URL: 'https://sherlock-dev.dsp-devops.broadinstitute.org'
-  BEEHIVE_PROD_URL: 'https://beehive.dsp-devops.broadinstitute.org'
+  BEEHIVE_PROD_URL: 'https://beehive.dsp-devops.broadinsitute.org'
   BEEHIVE_DEV_URL: 'https://beehive-dev.dsp-devops.broadinstitute.org'
+  BEEHIVE_PROD_VANITY_URL: 'https://broad.io/beehive'
+  BEEHIVE_DEV_VANITY_URL: 'https://broad.io/beehive-dev'
 
 jobs:
   report:
@@ -112,12 +114,12 @@ jobs:
         shell: bash
         run: |
           echo '{
-            "appVersion": "${{ inputs.new_version }}",
-            "chart": "${{ inputs.chart_name }}"
+            "appVersion": "${{ inputs.new-version }}",
+            "chart": "${{ inputs.chart-name }}"
           }' > "$RUNNER_TEMP/body.json"
 
       - name: "Parse Commit"
-        if: ${{ inputs.include_git_context == true }}
+        if: ${{ inputs.include-git-context == true }}
         shell: bash
         run: |
           export COMMIT="$(git rev-parse HEAD)"
@@ -127,7 +129,7 @@ jobs:
           fi
 
       - name: "Parse Branch"
-        if: ${{ inputs.include_git_context == true && github.ref_type == 'branch' }}
+        if: ${{ inputs.include-git-context == true && github.ref-type == 'branch' }}
         shell: bash
         run: |
           export BRANCH="$(git rev-parse --abbrev-ref HEAD)"
@@ -137,7 +139,7 @@ jobs:
           fi
 
       - name: "Parse Last Tag as Parent"
-        if: ${{ inputs.include_git_context == true }}
+        if: ${{ inputs.include-git-context == true }}
         shell: bash
         # Use `|| true` since this step is entirely opportunistic.
         # We don't validate either, since Sherlock is opportunistic about this field too.
@@ -145,18 +147,18 @@ jobs:
           export PARENT="$(git describe --tags --abbrev=0 HEAD^ || true)"
           if [ -n "$PARENT" ]
           then
-            export PARENT="${{ inputs.chart_name }}/$PARENT"
+            export PARENT="${{ inputs.chart-name }}/$PARENT"
             cat <<< $(jq '.parentAppVersion = env.PARENT' "$RUNNER_TEMP/body.json") > "$RUNNER_TEMP/body.json"
           fi
 
       - name: "Use Custom Description"
-        if: ${{ inputs.custom_description != '' }}
+        if: ${{ inputs.custom-description != '' }}
         shell: bash
         run: |
-          cat <<< $(jq '.description = "${{ inputs.custom_description }}"' "$RUNNER_TEMP/body.json") > "$RUNNER_TEMP/body.json"
+          cat <<< $(jq '.description = "${{ inputs.custom-description }}"' "$RUNNER_TEMP/body.json") > "$RUNNER_TEMP/body.json"
 
       - name: "Parse Commit Message as Description"
-        if: ${{ inputs.include_git_context == true && inputs.custom_description == '' }}
+        if: ${{ inputs.include-git-context == true && inputs.custom-description == '' }}
         shell: bash
         run: |
           export DESCRIPTION="$(git log -1 --pretty=%B)"
@@ -169,28 +171,38 @@ jobs:
         shell: bash
         run: |
           cat "$RUNNER_TEMP/body.json"
-          echo "## Reported ${{ inputs.chart_name }}/${{ inputs.new_version }} to Sherlock" >> $GITHUB_STEP_SUMMARY
+          echo "## Reported ${{ inputs.chart-name }}/${{ inputs.new-version }} to Sherlock" >> $GITHUB_STEP_SUMMARY
 
       # Sherlock's endpoint here is idempotent so we don't need to do anything special to handle re-runs
       
       - name: "Send to Sherlock Prod"
-        if: ${{ inputs.use_sherlock_prod }}
+        if: ${{ inputs.use-sherlock-prod }}
         shell: bash
+        # We want to use --fail with curl but we don't want to actually exit the script early
         run: |
-          curl -X 'POST' \
+          curl --fail -X 'POST' \
             "$SHERLOCK_PROD_URL/api/v2/app-versions" \
             -H 'Content-Type: application/json' \
             -H 'Authorization: Bearer ${{ steps.auth.outputs.id_token }}' \
-            -d "@$RUNNER_TEMP/body.json" ${{ (inputs.fail_on_prod_failure == false && '|| true') || '' }}
-          echo "### Available in Beehive at $BEEHIVE_PROD_URL/charts/${{ inputs.chart_name }}/app-versions/${{ inputs.new_version }}" >> $GITHUB_STEP_SUMMARY
+            -d "@$RUNNER_TEMP/body.json" && export EXIT=0 || export EXIT=1
+          if [ "$EXIT" == "0" ]
+          then
+            echo "### Available in Beehive at $BEEHIVE_PROD_VANITY_URL/r/app-version/${{ inputs.chart-name }}/${{ inputs.new-version }}" >> $GITHUB_STEP_SUMMARY
+          fi
+          exit ${{ (inputs.fail-on-prod-failure == true && '$EXIT') || '0' }}
           
 
       - name: "Send to Sherlock Dev"
-        if: ${{ inputs.use_sherlock_dev }}
+        if: ${{ inputs.use-sherlock-dev }}
         shell: bash
         run: |
-          curl -X 'POST' \
+          curl --fail -X 'POST' \
             "$SHERLOCK_DEV_URL/api/v2/app-versions" \
             -H 'Content-Type: application/json' \
             -H 'Authorization: Bearer ${{ steps.auth.outputs.id_token }}' \
-            -d "@$RUNNER_TEMP/body.json" ${{ (inputs.fail_on_dev_failure == false && '|| true') || '' }}
+            -d "@$RUNNER_TEMP/body.json" && export EXIT=0 || export EXIT=1
+          if [ "$EXIT" == "0" ]
+          then
+            echo "Available in Beehive's dev instance at $BEEHIVE_DEV_VANITY_URL/r/app-version/${{ inputs.chart-name }}/${{ inputs.new-version }}" >> $GITHUB_STEP_SUMMARY
+          fi
+          exit ${{ (inputs.fail-on-dev-failure == true && '$EXIT') || '0' }}
