@@ -194,7 +194,15 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 	assert.NoError(suite.T(), err)
 	assert.True(suite.T(), created)
 
-	// terra-dev tracks Sam mainline, so upon next refresh it would get updated:
+	// Maybe someone else happens to be editing the description of an earlier version at the same time,
+	// making that earlier version suddenly the most recently edited version:
+	_, err = suite.AppVersionController.Edit("sam/0.2.0", EditableAppVersion{
+		Description: "some random edit",
+	}, auth.GenerateUser(suite.T(), true))
+	assert.NoError(suite.T(), err)
+
+	// terra-dev tracks Sam mainline, so upon next refresh it would get updated to the most recently created version,
+	// even though an older version was just edited above:
 	applied, err = suite.ChangesetController.PlanAndApply(ChangesetPlanRequest{
 		Environments: []ChangesetPlanRequestEnvironmentEntry{
 			// Here we refresh all of terra-dev, but we could just do Sam too

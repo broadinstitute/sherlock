@@ -141,7 +141,7 @@ func postCreateEnvironment(db *gorm.DB, environment *Environment, user *auth.Use
 		*environment.ChartReleasesFromTemplate &&
 		environment.TemplateEnvironmentID != nil {
 		// This is a dynamic environment that is getting created right now, let's copy the chart releases from the template too
-		chartReleases, err := chartReleaseStore.listAllMatching(db, 0, ChartRelease{EnvironmentID: environment.TemplateEnvironmentID})
+		chartReleases, err := chartReleaseStore.listAllMatchingByUpdated(db, 0, ChartRelease{EnvironmentID: environment.TemplateEnvironmentID})
 		if err != nil {
 			return fmt.Errorf("wasn't able to list chart releases of template %s: %v", environment.TemplateEnvironment.Name, err)
 		}

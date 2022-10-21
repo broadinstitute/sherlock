@@ -19,8 +19,12 @@ func (s ModelStore[M]) Create(model M, user *auth.User) (M, bool, error) {
 	return s.create(s.db, model, user)
 }
 
-func (s ModelStore[M]) ListAllMatching(filter M, limit int) ([]M, error) {
-	return s.listAllMatching(s.db, limit, &filter)
+func (s ModelStore[M]) ListAllMatchingByUpdated(filter M, limit int) ([]M, error) {
+	return s.listAllMatchingByUpdated(s.db, limit, &filter)
+}
+
+func (s ModelStore[M]) ListAllMatchingByCreated(filter M, limit int) ([]M, error) {
+	return s.listAllMatchingByCreated(s.db, limit, &filter)
 }
 
 func (s ModelStore[M]) Get(selector string) (M, error) {

@@ -115,13 +115,13 @@ func (a *Application) initializeMetrics() error {
 	ctx := context.Background()
 
 	if config.Config.String("metrics.accelerate.fromAPI") == "v2" {
-		//staticEnvironments, err := a.v2controllers.EnvironmentController.ListAllMatching(
+		//staticEnvironments, err := a.v2controllers.EnvironmentController.ListAllMatchingByUpdated(
 		//	v2controllers.Environment{CreatableEnvironment: v2controllers.CreatableEnvironment{Lifecycle: "static"}}, 0)
 		//if err != nil {
 		//	return err
 		//}
 		//for _, staticEnvironment := range staticEnvironments {
-		//	chartReleases, err := a.v2controllers.ChartReleaseController.ListAllMatching(
+		//	chartReleases, err := a.v2controllers.ChartReleaseController.ListAllMatchingByUpdated(
 		//		v2controllers.ChartRelease{CreatableChartRelease: v2controllers.CreatableChartRelease{Environment: staticEnvironment.Name}}, 0)
 		//	if err != nil {
 		//		return err
@@ -130,7 +130,7 @@ func (a *Application) initializeMetrics() error {
 		//		metrics.RecordDeployFrequency(ctx, chartRelease.Environment, chartRelease.Chart)
 		//
 		//		// Maybe we should allow sorting by AppliedAt? That might accomplish this the easiest
-		//		mostRecentDeploy, err := a.v2controllers.ChangesetController.ListAllMatching(
+		//		mostRecentDeploy, err := a.v2controllers.ChangesetController.ListAllMatchingByUpdated(
 		//			v2controllers.Changeset{CreatableChangeset: v2controllers.CreatableChangeset{ChartRelease: chartRelease.Name}, IsApplied: true}, 1) // We'd need to actually add IsApplied to the database for this to work, or add extra handling
 		//		if err != nil {
 		//			return err
