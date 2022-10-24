@@ -9,6 +9,7 @@ import (
 	"github.com/broadinstitute/sherlock/internal/handlers/v2handlers"
 	"github.com/broadinstitute/sherlock/internal/metrics"
 	"github.com/broadinstitute/sherlock/internal/version"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -49,6 +50,12 @@ func (a *Application) buildRouter() {
 	router := gin.New()
 	router.Use(gin.Recovery())
 	router.Use(logger())
+	// No origins allowed by default
+	router.Use(cors.New(cors.DefaultConfig()))
+	// Browsers shouldn't ever cache Sherlock responses
+	router.Use(func(c *gin.Context) {
+		c.Writer.Header().Set("Cache-Control", "no-store")
+	})
 
 	// swagger
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
