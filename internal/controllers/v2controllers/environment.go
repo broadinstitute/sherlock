@@ -208,7 +208,16 @@ func setEnvironmentDynamicDefaults(environment *Environment, stores *v2models.St
 	if environment.DefaultFirecloudDevelopRef == nil {
 		// if we are in a live terra env, the fc-develop ref should be the env name
 		if environment.Lifecycle == "static" && environment.Base == "live" {
-			environment.DefaultFirecloudDevelopRef = &environment.Name
+			if environment.Name == "perf" {
+				// We are actively deprecating perf but it is weird in that it uses the dev branch.
+				// It being incorrect just causes noise in our diffs as we work on cutting over to
+				// Sherlock, so we special case it here knowing full well that we'll remove the
+				// entire fc-dev field at some point down the road.
+				devString := "dev"
+				environment.DefaultFirecloudDevelopRef = &devString
+			} else {
+				environment.DefaultFirecloudDevelopRef = &environment.Name
+			}
 		}
 	}
 
