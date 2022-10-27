@@ -28,12 +28,12 @@ type CreatableEnvironment struct {
 	Name                      string `json:"name" form:"name"`                                 // When creating, will be calculated if dynamic, required otherwise
 	TemplateEnvironment       string `json:"templateEnvironment" form:"templateEnvironment"`   // Required for dynamic environments
 	UniqueResourcePrefix      string `json:"uniqueResourcePrefix" form:"uniqueResourcePrefix"` // When creating, will be calculated if left empty
+	DefaultNamespace          string `json:"defaultNamespace" form:"defaultNamespace"`         // When creating, will be calculated if left empty
 	EditableEnvironment
 }
 
 type EditableEnvironment struct {
 	DefaultCluster             *string `json:"defaultCluster" form:"defaultCluster"`
-	DefaultNamespace           *string `json:"defaultNamespace" form:"defaultNamespace"`
 	DefaultFirecloudDevelopRef *string `json:"defaultFirecloudDevelopRef" form:"defaultFirecloudDevelopRef" default:"dev"` // should be the environment branch for live envs. Is usually dev for template/dynamic but not necessarily
 	Owner                      *string `json:"owner" form:"owner"`                                                         // When creating, will be set to your email
 	RequiresSuitability        *bool   `json:"requiresSuitability" form:"requiresSuitability" default:"false"`
@@ -97,9 +97,9 @@ func modelEnvironmentToEnvironment(model *v2models.Environment) *Environment {
 			Name:                      model.Name,
 			TemplateEnvironment:       templateEnvironmentName,
 			UniqueResourcePrefix:      model.UniqueResourcePrefix,
+			DefaultNamespace:          model.DefaultNamespace,
 			EditableEnvironment: EditableEnvironment{
 				DefaultCluster:             &defaultClusterName,
-				DefaultNamespace:           model.DefaultNamespace,
 				DefaultFirecloudDevelopRef: model.DefaultFirecloudDevelopRef,
 				Owner:                      model.Owner,
 				RequiresSuitability:        model.RequiresSuitability,
@@ -200,8 +200,8 @@ func setEnvironmentDynamicDefaults(environment *Environment, stores *v2models.St
 		// If there's no template, the valuesName to use is the name of this environment
 		environment.ValuesName = environment.Name
 	}
-	if environment.DefaultNamespace == nil {
-		environment.DefaultNamespace = &environment.Name
+	if environment.DefaultNamespace == "" {
+		environment.DefaultNamespace = fmt.Sprintf("terra-%s", environment.Name)
 	}
 	if environment.Owner == nil {
 		environment.Owner = &user.AuthenticatedEmail
