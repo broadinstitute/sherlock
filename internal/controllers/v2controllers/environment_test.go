@@ -427,7 +427,7 @@ func (suite *environmentControllerSuite) TestEnvironmentGetOtherValidSelectors()
 	suite.Run("successfully", func() {
 		selectors, err := suite.EnvironmentController.GetOtherValidSelectors(terraDevEnvironment.Name)
 		assert.NoError(suite.T(), err)
-		assert.Equal(suite.T(), 2, len(selectors))
+		assert.Equal(suite.T(), 3, len(selectors))
 		assert.Equal(suite.T(), terraDevEnvironment.Name, selectors[0])
 	})
 	suite.Run("unsuccessfully for not found", func() {
