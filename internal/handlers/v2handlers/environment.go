@@ -45,10 +45,10 @@ func listEnvironment(controller *v2controllers.EnvironmentController) func(ctx *
 
 // getEnvironment godoc
 // @summary     Get a Environment entry
-// @description Get an existing Environment entry via one of its "selectors": name or numeric ID.
+// @description Get an existing Environment entry via one of its "selectors": name, numeric ID, or "resource-prefix/" + the unique resource prefix.
 // @tags        Environments
 // @produce     json
-// @param       selector                path     string true "The Environment to get's selector: name or numeric ID"
+// @param       selector                path     string true "The Environment to get's selector: name, numeric ID, or "resource-prefix/" + the unique resource prefix"
 // @success     200                     {object} v2controllers.Environment
 // @failure     400,403,404,407,409,500 {object} errors.ErrorResponse
 // @router      /api/v2/environments/{selector} [get]
@@ -58,11 +58,11 @@ func getEnvironment(controller *v2controllers.EnvironmentController) func(ctx *g
 
 // editEnvironment godoc
 // @summary     Edit a Environment entry
-// @description Edit an existing Environment entry via one of its "selectors": name or numeric ID. Note that only mutable fields are available here, immutable fields can only be set using /create.
+// @description Edit an existing Environment entry via one of its "selectors": name, numeric ID. Note that only mutable fields are available here, immutable fields can only be set using /create, or "resource-prefix/" + the unique resource prefix.
 // @tags        Environments
 // @accept      json
 // @produce     json
-// @param       selector                path     string                            true "The Environment to edit's selector: name or numeric ID"
+// @param       selector                path     string                            true "The Environment to edit's selector: name, numeric ID, or "resource-prefix/" + the unique resource prefix"
 // @param       environment             body     v2controllers.EditableEnvironment true "The edits to make to the Environment"
 // @success     200                     {object} v2controllers.Environment
 // @failure     400,403,404,407,409,500 {object} errors.ErrorResponse
@@ -73,10 +73,10 @@ func editEnvironment(controller *v2controllers.EnvironmentController) func(ctx *
 
 // deleteEnvironment godoc
 // @summary     Delete a Environment entry
-// @description Delete an existing Environment entry via one of its "selectors": name or numeric ID.
+// @description Delete an existing Environment entry via one of its "selectors": name, numeric ID, or "resource-prefix/" + the unique resource prefix.
 // @tags        Environments
 // @produce     json
-// @param       selector                path     string true "The Environment to delete's selector: name or numeric ID"
+// @param       selector                path     string true "The Environment to delete's selector: name, numeric ID, or "resource-prefix/" + the unique resource prefix"
 // @success     200                     {object} v2controllers.Environment
 // @failure     400,403,404,407,409,500 {object} errors.ErrorResponse
 // @router      /api/v2/environments/{selector} [delete]

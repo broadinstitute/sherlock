@@ -23,6 +23,15 @@ func isAlphaNumeric(selector string) bool {
 	return true
 }
 
+func isLowerAlphaNumeric(selector string) bool {
+	for _, r := range selector {
+		if !unicode.IsDigit(r) && !(unicode.IsLetter(r) && unicode.IsLower(r)) {
+			return false
+		}
+	}
+	return true
+}
+
 func isAlphaNumericWithHyphens(selector string) bool {
 	for _, r := range selector {
 		if !unicode.IsDigit(r) && !unicode.IsLetter(r) && r != '-' {

@@ -523,7 +523,7 @@ func (suite *chartReleaseControllerSuite) TestChartReleaseGetOtherValidSelectors
 	suite.Run("successfully", func() {
 		selectors, err := suite.ChartReleaseController.GetOtherValidSelectors(datarepoDevChartRelease.Name)
 		assert.NoError(suite.T(), err)
-		assert.Equal(suite.T(), 10, len(selectors))
+		assert.Equal(suite.T(), 12, len(selectors))
 		assert.Contains(suite.T(), selectors, datarepoDevChartRelease.Name)
 	})
 	suite.Run("unsuccessfully for non-present", func() {

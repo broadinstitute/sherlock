@@ -25,8 +25,9 @@ type CreatableEnvironment struct {
 	Base                      string `json:"base" form:"base"`                                                          // Required when creating
 	ChartReleasesFromTemplate *bool  `json:"chartReleasesFromTemplate" form:"chartReleasesFromTemplate" default:"true"` // Upon creation of a dynamic environment, if this is true the template's chart releases will be copied to the new environment
 	Lifecycle                 string `json:"lifecycle" form:"lifecycle" default:"dynamic"`
-	Name                      string `json:"name" form:"name"`                               // When creating, will be calculated if dynamic, required otherwise
-	TemplateEnvironment       string `json:"templateEnvironment" form:"templateEnvironment"` // Required for dynamic environments
+	Name                      string `json:"name" form:"name"`                                 // When creating, will be calculated if dynamic, required otherwise
+	TemplateEnvironment       string `json:"templateEnvironment" form:"templateEnvironment"`   // Required for dynamic environments
+	UniqueResourcePrefix      string `json:"uniqueResourcePrefix" form:"uniqueResourcePrefix"` // When creating, will be calculated if left empty
 	EditableEnvironment
 }
 
@@ -95,6 +96,7 @@ func modelEnvironmentToEnvironment(model *v2models.Environment) *Environment {
 			Lifecycle:                 model.Lifecycle,
 			Name:                      model.Name,
 			TemplateEnvironment:       templateEnvironmentName,
+			UniqueResourcePrefix:      model.UniqueResourcePrefix,
 			EditableEnvironment: EditableEnvironment{
 				DefaultCluster:             &defaultClusterName,
 				DefaultNamespace:           model.DefaultNamespace,
@@ -138,6 +140,7 @@ func environmentToModelEnvironment(environment Environment, stores *v2models.Sto
 		Name:                       environment.Name,
 		TemplateEnvironmentID:      templateEnvironmentID,
 		ValuesName:                 environment.ValuesName,
+		UniqueResourcePrefix:       environment.UniqueResourcePrefix,
 		DefaultClusterID:           defaultClusterID,
 		DefaultNamespace:           environment.DefaultNamespace,
 		DefaultFirecloudDevelopRef: environment.DefaultFirecloudDevelopRef,

@@ -1,6 +1,8 @@
 package v2models
 
 import (
+	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/broadinstitute/sherlock/internal/testutils"
@@ -48,6 +50,31 @@ func Test_environmentSelectorToQuery(t *testing.T) {
 			args:    args{selector: "foooooooooooooooooooooooooooooooo"},
 			wantErr: true,
 		},
+		{
+			name: "valid resource prefix",
+			args: args{selector: "resource-prefix/a2k3"},
+			want: Environment{UniqueResourcePrefix: "a2k3"},
+		},
+		{
+			name:    "invalid resource prefix start",
+			args:    args{selector: "blah/a2k3"},
+			wantErr: true,
+		},
+		{
+			name:    "invalid resource prefix end, caps",
+			args:    args{selector: "resource-prefix/Caps"},
+			wantErr: true,
+		},
+		{
+			name:    "invalid resource prefix end, len",
+			args:    args{selector: "resource-prefix/toolong"},
+			wantErr: true,
+		},
+		{
+			name:    "invalid resource prefix end, number start",
+			args:    args{selector: "resource-prefix/1234"},
+			wantErr: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -90,12 +117,28 @@ func Test_environmentToSelectors(t *testing.T) {
 			want: []string{"123"},
 		},
 		{
+			name: "with resource prefix",
+			args: args{environment: &Environment{
+				UniqueResourcePrefix: "a1b2",
+			}},
+			want: []string{"resource-prefix/a1b2"},
+		},
+		{
 			name: "with name and id",
 			args: args{environment: &Environment{
 				Model: gorm.Model{ID: 123},
 				Name:  "foobar",
 			}},
 			want: []string{"foobar", "123"},
+		},
+		{
+			name: "with name and id and resource prefix",
+			args: args{environment: &Environment{
+				Model:                gorm.Model{ID: 123},
+				Name:                 "foobar",
+				UniqueResourcePrefix: "a1b2",
+			}},
+			want: []string{"foobar", "123", "resource-prefix/a1b2"},
 		},
 	}
 	for _, tt := range tests {
@@ -156,6 +199,7 @@ func Test_validateEnvironment(t *testing.T) {
 			args: args{environment: &Environment{
 				Name:                       "foobar",
 				Lifecycle:                  "template",
+				UniqueResourcePrefix:       "a1b2",
 				HelmfileRef:                testutils.PointerTo("HEAD"),
 				DefaultFirecloudDevelopRef: testutils.PointerTo("dev"),
 			}},
@@ -166,6 +210,7 @@ func Test_validateEnvironment(t *testing.T) {
 			args: args{environment: &Environment{
 				Name:                       "foobar",
 				Lifecycle:                  "dynamic",
+				UniqueResourcePrefix:       "a1b2",
 				TemplateEnvironmentID:      testutils.PointerTo[uint](123),
 				Base:                       "base",
 				DefaultClusterID:           testutils.PointerTo[uint](456),
@@ -182,6 +227,7 @@ func Test_validateEnvironment(t *testing.T) {
 			args: args{environment: &Environment{
 				Name:                       "foobar",
 				Lifecycle:                  "static",
+				UniqueResourcePrefix:       "a1b2",
 				Base:                       "base",
 				DefaultClusterID:           testutils.PointerTo[uint](456),
 				DefaultNamespace:           testutils.PointerTo("namespace"),
@@ -196,6 +242,7 @@ func Test_validateEnvironment(t *testing.T) {
 			name: "no name",
 			args: args{environment: &Environment{
 				Lifecycle:                  "template",
+				UniqueResourcePrefix:       "a1b2",
 				HelmfileRef:                testutils.PointerTo("HEAD"),
 				DefaultFirecloudDevelopRef: testutils.PointerTo("dev"),
 			}},
@@ -205,6 +252,7 @@ func Test_validateEnvironment(t *testing.T) {
 			name: "no helmfileRef",
 			args: args{environment: &Environment{
 				Lifecycle:                  "template",
+				UniqueResourcePrefix:       "a1b2",
 				Name:                       "foobar",
 				DefaultFirecloudDevelopRef: testutils.PointerTo("dev"),
 			}},
@@ -214,6 +262,7 @@ func Test_validateEnvironment(t *testing.T) {
 			name: "no lifecycle",
 			args: args{environment: &Environment{
 				Name:                       "foobar",
+				UniqueResourcePrefix:       "a1b2",
 				HelmfileRef:                testutils.PointerTo("HEAD"),
 				DefaultFirecloudDevelopRef: testutils.PointerTo("dev"),
 			}},
@@ -222,8 +271,9 @@ func Test_validateEnvironment(t *testing.T) {
 		{
 			name: "no default firecloud develop ref",
 			args: args{environment: &Environment{
-				Name:        "foobar",
-				HelmfileRef: testutils.PointerTo("HEAD"),
+				Name:                 "foobar",
+				UniqueResourcePrefix: "a1b2",
+				HelmfileRef:          testutils.PointerTo("HEAD"),
 			}},
 			wantErr: true,
 		},
@@ -232,6 +282,7 @@ func Test_validateEnvironment(t *testing.T) {
 			args: args{environment: &Environment{
 				Name:                       "foobar",
 				Lifecycle:                  "template",
+				UniqueResourcePrefix:       "a1b2",
 				TemplateEnvironmentID:      testutils.PointerTo[uint](123),
 				HelmfileRef:                testutils.PointerTo("HEAD"),
 				DefaultFirecloudDevelopRef: testutils.PointerTo("dev"),
@@ -243,6 +294,7 @@ func Test_validateEnvironment(t *testing.T) {
 			args: args{environment: &Environment{
 				Name:                       "foobar",
 				Lifecycle:                  "dynamic",
+				UniqueResourcePrefix:       "a1b2",
 				Base:                       "base",
 				DefaultClusterID:           testutils.PointerTo[uint](456),
 				DefaultNamespace:           testutils.PointerTo("namespace"),
@@ -258,6 +310,7 @@ func Test_validateEnvironment(t *testing.T) {
 			args: args{environment: &Environment{
 				Name:                       "foobar",
 				Lifecycle:                  "dynamic",
+				UniqueResourcePrefix:       "a1b2",
 				TemplateEnvironmentID:      testutils.PointerTo[uint](123),
 				DefaultClusterID:           testutils.PointerTo[uint](456),
 				DefaultNamespace:           testutils.PointerTo("namespace"),
@@ -273,6 +326,7 @@ func Test_validateEnvironment(t *testing.T) {
 			args: args{environment: &Environment{
 				Name:                       "foobar",
 				Lifecycle:                  "dynamic",
+				UniqueResourcePrefix:       "a1b2",
 				TemplateEnvironmentID:      testutils.PointerTo[uint](123),
 				Base:                       "base",
 				DefaultNamespace:           testutils.PointerTo("namespace"),
@@ -288,6 +342,7 @@ func Test_validateEnvironment(t *testing.T) {
 			args: args{environment: &Environment{
 				Name:                       "foobar",
 				Lifecycle:                  "dynamic",
+				UniqueResourcePrefix:       "a1b2",
 				TemplateEnvironmentID:      testutils.PointerTo[uint](123),
 				Base:                       "base",
 				DefaultClusterID:           testutils.PointerTo[uint](456),
@@ -303,6 +358,7 @@ func Test_validateEnvironment(t *testing.T) {
 			args: args{environment: &Environment{
 				Name:                       "foobar",
 				Lifecycle:                  "dynamic",
+				UniqueResourcePrefix:       "a1b2",
 				TemplateEnvironmentID:      testutils.PointerTo[uint](123),
 				Base:                       "base",
 				DefaultClusterID:           testutils.PointerTo[uint](456),
@@ -318,6 +374,7 @@ func Test_validateEnvironment(t *testing.T) {
 			args: args{environment: &Environment{
 				Name:                       "foobar",
 				Lifecycle:                  "dynamic",
+				UniqueResourcePrefix:       "a1b2",
 				TemplateEnvironmentID:      testutils.PointerTo[uint](123),
 				Base:                       "base",
 				DefaultClusterID:           testutils.PointerTo[uint](456),
@@ -333,6 +390,7 @@ func Test_validateEnvironment(t *testing.T) {
 			args: args{environment: &Environment{
 				Name:                       "foobar",
 				Lifecycle:                  "static",
+				UniqueResourcePrefix:       "a1b2",
 				TemplateEnvironmentID:      testutils.PointerTo[uint](123),
 				DefaultClusterID:           testutils.PointerTo[uint](456),
 				DefaultNamespace:           testutils.PointerTo("namespace"),
@@ -348,6 +406,7 @@ func Test_validateEnvironment(t *testing.T) {
 			args: args{environment: &Environment{
 				Name:                       "foobar",
 				Lifecycle:                  "static",
+				UniqueResourcePrefix:       "a1b2",
 				TemplateEnvironmentID:      testutils.PointerTo[uint](123),
 				Base:                       "base",
 				DefaultNamespace:           testutils.PointerTo("namespace"),
@@ -363,6 +422,7 @@ func Test_validateEnvironment(t *testing.T) {
 			args: args{environment: &Environment{
 				Name:                       "foobar",
 				Lifecycle:                  "static",
+				UniqueResourcePrefix:       "a1b2",
 				TemplateEnvironmentID:      testutils.PointerTo[uint](123),
 				Base:                       "base",
 				DefaultClusterID:           testutils.PointerTo[uint](456),
@@ -378,6 +438,7 @@ func Test_validateEnvironment(t *testing.T) {
 			args: args{environment: &Environment{
 				Name:                       "foobar",
 				Lifecycle:                  "static",
+				UniqueResourcePrefix:       "a1b2",
 				TemplateEnvironmentID:      testutils.PointerTo[uint](123),
 				Base:                       "base",
 				DefaultClusterID:           testutils.PointerTo[uint](456),
@@ -393,11 +454,22 @@ func Test_validateEnvironment(t *testing.T) {
 			args: args{environment: &Environment{
 				Name:                       "foobar",
 				Lifecycle:                  "static",
+				UniqueResourcePrefix:       "a1b2",
 				TemplateEnvironmentID:      testutils.PointerTo[uint](123),
 				Base:                       "base",
 				DefaultClusterID:           testutils.PointerTo[uint](456),
 				DefaultNamespace:           testutils.PointerTo("namespace"),
 				Owner:                      testutils.PointerTo("fake@broadinstitute.org"),
+				HelmfileRef:                testutils.PointerTo("HEAD"),
+				DefaultFirecloudDevelopRef: testutils.PointerTo("dev"),
+			}},
+			wantErr: true,
+		},
+		{
+			name: "no resource prefix",
+			args: args{environment: &Environment{
+				Name:                       "foobar",
+				Lifecycle:                  "template",
 				HelmfileRef:                testutils.PointerTo("HEAD"),
 				DefaultFirecloudDevelopRef: testutils.PointerTo("dev"),
 			}},
@@ -409,6 +481,31 @@ func Test_validateEnvironment(t *testing.T) {
 			if err := validateEnvironment(tt.args.environment); (err != nil) != tt.wantErr {
 				t.Errorf("validateEnvironment() error = %v, wantErr %v", err, tt.wantErr)
 			}
+		})
+	}
+}
+
+func Test_generateUniqueResourcePrefix(t *testing.T) {
+	sb := strings.Builder{}
+	sb.Grow(4)
+	tests := []struct {
+		input  uint64
+		output string
+	}{
+		{0, "aaaa"},
+		{1, "aaab"},
+		{2, "aaac"},
+		{possibleCombinations - 2, "z998"},
+		{possibleCombinations - 1, "z999"},
+		{possibleCombinations, "aaaa"},
+		{possibleCombinations + 1, "aaab"},
+		{possibleCombinations + 2, "aaac"},
+	}
+	for _, tt := range tests {
+		t.Run(fmt.Sprintf("%d to %s", tt.input, tt.output), func(t *testing.T) {
+			generateUniqueResourcePrefix(&sb, tt.input)
+			testutils.AssertNoDiff(t, tt.output, sb.String())
+			sb.Reset()
 		})
 	}
 }
