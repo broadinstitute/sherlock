@@ -2431,6 +2431,12 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "When creating, will be calculated if left empty",
+                        "name": "uniqueResourcePrefix",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "name": "updatedAt",
                         "in": "query"
                     },
@@ -2571,7 +2577,7 @@ const docTemplate = `{
         },
         "/api/v2/environments/{selector}": {
             "get": {
-                "description": "Get an existing Environment entry via one of its \"selectors\": name or numeric ID.",
+                "description": "Get an existing Environment entry via one of its \"selectors\": name, numeric ID, or \"resource-prefix/\" + the unique resource prefix.",
                 "produces": [
                     "application/json"
                 ],
@@ -2582,7 +2588,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "The Environment to get's selector: name or numeric ID",
+                        "description": "The Environment to get's selector: name, numeric ID, or ",
                         "name": "selector",
                         "in": "path",
                         "required": true
@@ -2634,7 +2640,7 @@ const docTemplate = `{
                 }
             },
             "delete": {
-                "description": "Delete an existing Environment entry via one of its \"selectors\": name or numeric ID.",
+                "description": "Delete an existing Environment entry via one of its \"selectors\": name, numeric ID, or \"resource-prefix/\" + the unique resource prefix.",
                 "produces": [
                     "application/json"
                 ],
@@ -2645,7 +2651,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "The Environment to delete's selector: name or numeric ID",
+                        "description": "The Environment to delete's selector: name, numeric ID, or ",
                         "name": "selector",
                         "in": "path",
                         "required": true
@@ -2697,7 +2703,7 @@ const docTemplate = `{
                 }
             },
             "patch": {
-                "description": "Edit an existing Environment entry via one of its \"selectors\": name or numeric ID. Note that only mutable fields are available here, immutable fields can only be set using /create.",
+                "description": "Edit an existing Environment entry via one of its \"selectors\": name, numeric ID. Note that only mutable fields are available here, immutable fields can only be set using /create, or \"resource-prefix/\" + the unique resource prefix.",
                 "consumes": [
                     "application/json"
                 ],
@@ -2711,7 +2717,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "The Environment to edit's selector: name or numeric ID",
+                        "description": "The Environment to edit's selector: name, numeric ID, or ",
                         "name": "selector",
                         "in": "path",
                         "required": true
@@ -4450,6 +4456,10 @@ const docTemplate = `{
                 "templateEnvironment": {
                     "description": "Required for dynamic environments",
                     "type": "string"
+                },
+                "uniqueResourcePrefix": {
+                    "description": "When creating, will be calculated if left empty",
+                    "type": "string"
                 }
             }
         },
@@ -4650,6 +4660,10 @@ const docTemplate = `{
                 "templateEnvironmentInfo": {
                     "description": "Single-layer recursive; provides info of the template environment if this environment has one",
                     "type": "object"
+                },
+                "uniqueResourcePrefix": {
+                    "description": "When creating, will be calculated if left empty",
+                    "type": "string"
                 },
                 "updatedAt": {
                     "type": "string"

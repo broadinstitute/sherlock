@@ -634,6 +634,9 @@ definitions:
       templateEnvironment:
         description: Required for dynamic environments
         type: string
+      uniqueResourcePrefix:
+        description: When creating, will be calculated if left empty
+        type: string
     type: object
   v2controllers.EditableAppVersion:
     properties:
@@ -783,6 +786,9 @@ definitions:
         description: Single-layer recursive; provides info of the template environment
           if this environment has one
         type: object
+      uniqueResourcePrefix:
+        description: When creating, will be calculated if left empty
+        type: string
       updatedAt:
         type: string
       valuesName:
@@ -2414,6 +2420,10 @@ paths:
         in: query
         name: templateEnvironment
         type: string
+      - description: When creating, will be calculated if left empty
+        in: query
+        name: uniqueResourcePrefix
+        type: string
       - in: query
         name: updatedAt
         type: string
@@ -2514,9 +2524,9 @@ paths:
   /api/v2/environments/{selector}:
     delete:
       description: 'Delete an existing Environment entry via one of its "selectors":
-        name or numeric ID.'
+        name, numeric ID, or "resource-prefix/" + the unique resource prefix.'
       parameters:
-      - description: 'The Environment to delete''s selector: name or numeric ID'
+      - description: 'The Environment to delete''s selector: name, numeric ID, or '
         in: path
         name: selector
         required: true
@@ -2557,9 +2567,9 @@ paths:
       - Environments
     get:
       description: 'Get an existing Environment entry via one of its "selectors":
-        name or numeric ID.'
+        name, numeric ID, or "resource-prefix/" + the unique resource prefix.'
       parameters:
-      - description: 'The Environment to get''s selector: name or numeric ID'
+      - description: 'The Environment to get''s selector: name, numeric ID, or '
         in: path
         name: selector
         required: true
@@ -2602,10 +2612,11 @@ paths:
       consumes:
       - application/json
       description: 'Edit an existing Environment entry via one of its "selectors":
-        name or numeric ID. Note that only mutable fields are available here, immutable
-        fields can only be set using /create.'
+        name, numeric ID. Note that only mutable fields are available here, immutable
+        fields can only be set using /create, or "resource-prefix/" + the unique resource
+        prefix.'
       parameters:
-      - description: 'The Environment to edit''s selector: name or numeric ID'
+      - description: 'The Environment to edit''s selector: name, numeric ID, or '
         in: path
         name: selector
         required: true

@@ -129,6 +129,12 @@ export interface V2controllersEnvironment {
      */
     templateEnvironmentInfo?: object;
     /**
+     * When creating, will be calculated if left empty
+     * @type {string}
+     * @memberof V2controllersEnvironment
+     */
+    uniqueResourcePrefix?: string;
+    /**
      * 
      * @type {string}
      * @memberof V2controllersEnvironment
@@ -178,6 +184,7 @@ export function V2controllersEnvironmentFromJSONTyped(json: any, ignoreDiscrimin
         'requiresSuitability': !exists(json, 'requiresSuitability') ? undefined : json['requiresSuitability'],
         'templateEnvironment': !exists(json, 'templateEnvironment') ? undefined : json['templateEnvironment'],
         'templateEnvironmentInfo': !exists(json, 'templateEnvironmentInfo') ? undefined : json['templateEnvironmentInfo'],
+        'uniqueResourcePrefix': !exists(json, 'uniqueResourcePrefix') ? undefined : json['uniqueResourcePrefix'],
         'updatedAt': !exists(json, 'updatedAt') ? undefined : json['updatedAt'],
         'valuesName': !exists(json, 'valuesName') ? undefined : json['valuesName'],
     };
@@ -209,6 +216,7 @@ export function V2controllersEnvironmentToJSON(value?: V2controllersEnvironment 
         'requiresSuitability': value.requiresSuitability,
         'templateEnvironment': value.templateEnvironment,
         'templateEnvironmentInfo': value.templateEnvironmentInfo,
+        'uniqueResourcePrefix': value.uniqueResourcePrefix,
         'updatedAt': value.updatedAt,
         'valuesName': value.valuesName,
     };

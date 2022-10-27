@@ -48,7 +48,7 @@ type ClientService interface {
 /*
   DeleteAPIV2EnvironmentsSelector deletes a environment entry
 
-  Delete an existing Environment entry via one of its "selectors": name or numeric ID.
+  Delete an existing Environment entry via one of its "selectors": name, numeric ID, or "resource-prefix/" + the unique resource prefix.
 */
 func (a *Client) DeleteAPIV2EnvironmentsSelector(params *DeleteAPIV2EnvironmentsSelectorParams, opts ...ClientOption) (*DeleteAPIV2EnvironmentsSelectorOK, error) {
 	// TODO: Validate the params before sending
@@ -128,7 +128,7 @@ func (a *Client) GetAPIV2Environments(params *GetAPIV2EnvironmentsParams, opts .
 /*
   GetAPIV2EnvironmentsSelector gets a environment entry
 
-  Get an existing Environment entry via one of its "selectors": name or numeric ID.
+  Get an existing Environment entry via one of its "selectors": name, numeric ID, or "resource-prefix/" + the unique resource prefix.
 */
 func (a *Client) GetAPIV2EnvironmentsSelector(params *GetAPIV2EnvironmentsSelectorParams, opts ...ClientOption) (*GetAPIV2EnvironmentsSelectorOK, error) {
 	// TODO: Validate the params before sending
@@ -208,7 +208,7 @@ func (a *Client) GetAPIV2SelectorsEnvironmentsSelector(params *GetAPIV2Selectors
 /*
   PatchAPIV2EnvironmentsSelector edits a environment entry
 
-  Edit an existing Environment entry via one of its "selectors": name or numeric ID. Note that only mutable fields are available here, immutable fields can only be set using /create.
+  Edit an existing Environment entry via one of its "selectors": name, numeric ID. Note that only mutable fields are available here, immutable fields can only be set using /create, or "resource-prefix/" + the unique resource prefix.
 */
 func (a *Client) PatchAPIV2EnvironmentsSelector(params *PatchAPIV2EnvironmentsSelectorParams, opts ...ClientOption) (*PatchAPIV2EnvironmentsSelectorOK, error) {
 	// TODO: Validate the params before sending

@@ -55,6 +55,9 @@ type V2controllersCreatableEnvironment struct {
 
 	// Required for dynamic environments
 	TemplateEnvironment string `json:"templateEnvironment,omitempty"`
+
+	// When creating, will be calculated if left empty
+	UniqueResourcePrefix string `json:"uniqueResourcePrefix,omitempty"`
 }
 
 // Validate validates this v2controllers creatable environment

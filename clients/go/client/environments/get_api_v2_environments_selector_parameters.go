@@ -61,7 +61,7 @@ type GetAPIV2EnvironmentsSelectorParams struct {
 
 	/* Selector.
 
-	   The Environment to get's selector: name or numeric ID
+	   The Environment to get's selector: name, numeric ID, or
 	*/
 	Selector string
 

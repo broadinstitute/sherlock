@@ -141,6 +141,12 @@ type GetAPIV2EnvironmentsParams struct {
 	*/
 	TemplateEnvironment *string
 
+	/* UniqueResourcePrefix.
+
+	   When creating, will be calculated if left empty
+	*/
+	UniqueResourcePrefix *string
+
 	// UpdatedAt.
 	UpdatedAt *string
 
@@ -403,6 +409,17 @@ func (o *GetAPIV2EnvironmentsParams) WithTemplateEnvironment(templateEnvironment
 // SetTemplateEnvironment adds the templateEnvironment to the get API v2 environments params
 func (o *GetAPIV2EnvironmentsParams) SetTemplateEnvironment(templateEnvironment *string) {
 	o.TemplateEnvironment = templateEnvironment
+}
+
+// WithUniqueResourcePrefix adds the uniqueResourcePrefix to the get API v2 environments params
+func (o *GetAPIV2EnvironmentsParams) WithUniqueResourcePrefix(uniqueResourcePrefix *string) *GetAPIV2EnvironmentsParams {
+	o.SetUniqueResourcePrefix(uniqueResourcePrefix)
+	return o
+}
+
+// SetUniqueResourcePrefix adds the uniqueResourcePrefix to the get API v2 environments params
+func (o *GetAPIV2EnvironmentsParams) SetUniqueResourcePrefix(uniqueResourcePrefix *string) {
+	o.UniqueResourcePrefix = uniqueResourcePrefix
 }
 
 // WithUpdatedAt adds the updatedAt to the get API v2 environments params
@@ -702,6 +719,23 @@ func (o *GetAPIV2EnvironmentsParams) WriteToRequest(r runtime.ClientRequest, reg
 		if qTemplateEnvironment != "" {
 
 			if err := r.SetQueryParam("templateEnvironment", qTemplateEnvironment); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.UniqueResourcePrefix != nil {
+
+		// query param uniqueResourcePrefix
+		var qrUniqueResourcePrefix string
+
+		if o.UniqueResourcePrefix != nil {
+			qrUniqueResourcePrefix = *o.UniqueResourcePrefix
+		}
+		qUniqueResourcePrefix := qrUniqueResourcePrefix
+		if qUniqueResourcePrefix != "" {
+
+			if err := r.SetQueryParam("uniqueResourcePrefix", qUniqueResourcePrefix); err != nil {
 				return err
 			}
 		}

@@ -69,6 +69,9 @@ type V2controllersEnvironment struct {
 	// Single-layer recursive; provides info of the template environment if this environment has one
 	TemplateEnvironmentInfo interface{} `json:"templateEnvironmentInfo,omitempty"`
 
+	// When creating, will be calculated if left empty
+	UniqueResourcePrefix string `json:"uniqueResourcePrefix,omitempty"`
+
 	// updated at
 	UpdatedAt string `json:"updatedAt,omitempty"`
 

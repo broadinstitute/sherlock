@@ -47,6 +47,7 @@ export interface ApiV2EnvironmentsGetRequest {
     owner?: string;
     requiresSuitability?: boolean;
     templateEnvironment?: string;
+    uniqueResourcePrefix?: string;
     updatedAt?: string;
     valuesName?: string;
     limit?: number;
@@ -145,6 +146,10 @@ export class EnvironmentsApi extends runtime.BaseAPI {
             queryParameters['templateEnvironment'] = requestParameters.templateEnvironment;
         }
 
+        if (requestParameters.uniqueResourcePrefix !== undefined) {
+            queryParameters['uniqueResourcePrefix'] = requestParameters.uniqueResourcePrefix;
+        }
+
         if (requestParameters.updatedAt !== undefined) {
             queryParameters['updatedAt'] = requestParameters.updatedAt;
         }
@@ -214,7 +219,7 @@ export class EnvironmentsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Delete an existing Environment entry via one of its \"selectors\": name or numeric ID.
+     * Delete an existing Environment entry via one of its \"selectors\": name, numeric ID, or \"resource-prefix/\" + the unique resource prefix.
      * Delete a Environment entry
      */
     async apiV2EnvironmentsSelectorDeleteRaw(requestParameters: ApiV2EnvironmentsSelectorDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<V2controllersEnvironment>> {
@@ -237,7 +242,7 @@ export class EnvironmentsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Delete an existing Environment entry via one of its \"selectors\": name or numeric ID.
+     * Delete an existing Environment entry via one of its \"selectors\": name, numeric ID, or \"resource-prefix/\" + the unique resource prefix.
      * Delete a Environment entry
      */
     async apiV2EnvironmentsSelectorDelete(requestParameters: ApiV2EnvironmentsSelectorDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<V2controllersEnvironment> {
@@ -246,7 +251,7 @@ export class EnvironmentsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Get an existing Environment entry via one of its \"selectors\": name or numeric ID.
+     * Get an existing Environment entry via one of its \"selectors\": name, numeric ID, or \"resource-prefix/\" + the unique resource prefix.
      * Get a Environment entry
      */
     async apiV2EnvironmentsSelectorGetRaw(requestParameters: ApiV2EnvironmentsSelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<V2controllersEnvironment>> {
@@ -269,7 +274,7 @@ export class EnvironmentsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Get an existing Environment entry via one of its \"selectors\": name or numeric ID.
+     * Get an existing Environment entry via one of its \"selectors\": name, numeric ID, or \"resource-prefix/\" + the unique resource prefix.
      * Get a Environment entry
      */
     async apiV2EnvironmentsSelectorGet(requestParameters: ApiV2EnvironmentsSelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<V2controllersEnvironment> {
@@ -278,7 +283,7 @@ export class EnvironmentsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Edit an existing Environment entry via one of its \"selectors\": name or numeric ID. Note that only mutable fields are available here, immutable fields can only be set using /create.
+     * Edit an existing Environment entry via one of its \"selectors\": name, numeric ID. Note that only mutable fields are available here, immutable fields can only be set using /create, or \"resource-prefix/\" + the unique resource prefix.
      * Edit a Environment entry
      */
     async apiV2EnvironmentsSelectorPatchRaw(requestParameters: ApiV2EnvironmentsSelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<V2controllersEnvironment>> {
@@ -308,7 +313,7 @@ export class EnvironmentsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Edit an existing Environment entry via one of its \"selectors\": name or numeric ID. Note that only mutable fields are available here, immutable fields can only be set using /create.
+     * Edit an existing Environment entry via one of its \"selectors\": name, numeric ID. Note that only mutable fields are available here, immutable fields can only be set using /create, or \"resource-prefix/\" + the unique resource prefix.
      * Edit a Environment entry
      */
     async apiV2EnvironmentsSelectorPatch(requestParameters: ApiV2EnvironmentsSelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<V2controllersEnvironment> {

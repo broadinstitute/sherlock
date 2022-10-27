@@ -61,7 +61,7 @@ type DeleteAPIV2EnvironmentsSelectorParams struct {
 
 	/* Selector.
 
-	   The Environment to delete's selector: name or numeric ID
+	   The Environment to delete's selector: name, numeric ID, or
 	*/
 	Selector string
 

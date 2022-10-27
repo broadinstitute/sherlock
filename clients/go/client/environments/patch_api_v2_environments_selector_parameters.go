@@ -69,7 +69,7 @@ type PatchAPIV2EnvironmentsSelectorParams struct {
 
 	/* Selector.
 
-	   The Environment to edit's selector: name or numeric ID
+	   The Environment to edit's selector: name, numeric ID, or
 	*/
 	Selector string
 
