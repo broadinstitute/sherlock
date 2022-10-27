@@ -93,7 +93,10 @@ type GetAPIV2EnvironmentsParams struct {
 	*/
 	DefaultFirecloudDevelopRef *string
 
-	// DefaultNamespace.
+	/* DefaultNamespace.
+
+	   When creating, will be calculated if left empty
+	*/
 	DefaultNamespace *string
 
 	// HelmfileRef.

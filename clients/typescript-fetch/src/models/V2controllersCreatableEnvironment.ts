@@ -50,7 +50,7 @@ export interface V2controllersCreatableEnvironment {
      */
     defaultFirecloudDevelopRef?: string;
     /**
-     * 
+     * When creating, will be calculated if left empty
      * @type {string}
      * @memberof V2controllersCreatableEnvironment
      */

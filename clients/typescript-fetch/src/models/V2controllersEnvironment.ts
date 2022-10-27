@@ -69,7 +69,7 @@ export interface V2controllersEnvironment {
      */
     defaultFirecloudDevelopRef?: string;
     /**
-     * 
+     * When creating, will be calculated if left empty
      * @type {string}
      * @memberof V2controllersEnvironment
      */

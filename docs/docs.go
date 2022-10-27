@@ -2379,6 +2379,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "When creating, will be calculated if left empty",
                         "name": "defaultNamespace",
                         "in": "query"
                     },
@@ -4427,6 +4428,7 @@ const docTemplate = `{
                     "default": "dev"
                 },
                 "defaultNamespace": {
+                    "description": "When creating, will be calculated if left empty",
                     "type": "string"
                 },
                 "helmfileRef": {
@@ -4572,9 +4574,6 @@ const docTemplate = `{
                     "type": "string",
                     "default": "dev"
                 },
-                "defaultNamespace": {
-                    "type": "string"
-                },
                 "helmfileRef": {
                     "type": "string",
                     "default": "HEAD"
@@ -4624,6 +4623,7 @@ const docTemplate = `{
                     "default": "dev"
                 },
                 "defaultNamespace": {
+                    "description": "When creating, will be calculated if left empty",
                     "type": "string"
                 },
                 "helmfileRef": {

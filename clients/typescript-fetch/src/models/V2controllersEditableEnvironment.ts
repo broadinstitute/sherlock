@@ -42,12 +42,6 @@ export interface V2controllersEditableEnvironment {
      * @type {string}
      * @memberof V2controllersEditableEnvironment
      */
-    defaultNamespace?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof V2controllersEditableEnvironment
-     */
     helmfileRef?: string;
     /**
      * 
@@ -91,7 +85,6 @@ export function V2controllersEditableEnvironmentFromJSONTyped(json: any, ignoreD
         'baseDomain': !exists(json, 'baseDomain') ? undefined : json['baseDomain'],
         'defaultCluster': !exists(json, 'defaultCluster') ? undefined : json['defaultCluster'],
         'defaultFirecloudDevelopRef': !exists(json, 'defaultFirecloudDevelopRef') ? undefined : json['defaultFirecloudDevelopRef'],
-        'defaultNamespace': !exists(json, 'defaultNamespace') ? undefined : json['defaultNamespace'],
         'helmfileRef': !exists(json, 'helmfileRef') ? undefined : json['helmfileRef'],
         'namePrefixesDomain': !exists(json, 'namePrefixesDomain') ? undefined : json['namePrefixesDomain'],
         'owner': !exists(json, 'owner') ? undefined : json['owner'],
@@ -111,7 +104,6 @@ export function V2controllersEditableEnvironmentToJSON(value?: V2controllersEdit
         'baseDomain': value.baseDomain,
         'defaultCluster': value.defaultCluster,
         'defaultFirecloudDevelopRef': value.defaultFirecloudDevelopRef,
-        'defaultNamespace': value.defaultNamespace,
         'helmfileRef': value.helmfileRef,
         'namePrefixesDomain': value.namePrefixesDomain,
         'owner': value.owner,
