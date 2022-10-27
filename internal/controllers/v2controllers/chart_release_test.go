@@ -243,7 +243,7 @@ func (suite *chartReleaseControllerSuite) TestChartReleaseCreate() {
 				assert.Equal(suite.T(), terraDevCluster.Name, release.Cluster)
 			})
 			suite.Run("defaults namespace to that of environment", func() {
-				assert.Equal(suite.T(), *terraDevEnvironment.DefaultNamespace, release.Namespace)
+				assert.Equal(suite.T(), terraDevEnvironment.DefaultNamespace, release.Namespace)
 			})
 			suite.Run("sets destination type to environment", func() {
 				assert.Equal(suite.T(), "environment", release.DestinationType)
@@ -273,7 +273,7 @@ func (suite *chartReleaseControllerSuite) TestChartReleaseCreate() {
 				assert.Equal(suite.T(), datarepoDevChartRelease.Cluster, release.Cluster)
 			})
 			suite.Run("namespace still gets defaulted", func() {
-				assert.Equal(suite.T(), *terraDevEnvironment.DefaultNamespace, release.Namespace)
+				assert.Equal(suite.T(), terraDevEnvironment.DefaultNamespace, release.Namespace)
 			})
 		})
 		suite.Run("release in an env but with a set namespace", func() {

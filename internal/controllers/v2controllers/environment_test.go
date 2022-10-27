@@ -49,13 +49,13 @@ func (suite *environmentControllerSuite) TearDownTest() {
 
 var (
 	terraDevEnvironment = CreatableEnvironment{
-		Name:      "terra-dev",
-		Base:      "live",
-		Lifecycle: "static",
+		Name:             "terra-dev",
+		Base:             "live",
+		Lifecycle:        "static",
+		DefaultNamespace: "terra-dev",
 		EditableEnvironment: EditableEnvironment{
-			DefaultCluster:   &terraDevCluster.Name,
-			DefaultNamespace: testutils.PointerTo("terra-dev"),
-			Owner:            testutils.PointerTo("dsp-devops@broadinstitute.org"),
+			DefaultCluster: &terraDevCluster.Name,
+			Owner:          testutils.PointerTo("dsp-devops@broadinstitute.org"),
 		},
 	}
 	terraStagingEnvironment = CreatableEnvironment{
@@ -142,9 +142,6 @@ func (suite *environmentControllerSuite) TestEnvironmentCreate() {
 			suite.Run("default non-suitable", func() {
 				assert.False(suite.T(), *env.RequiresSuitability)
 			})
-			suite.Run("default the default namespace to environment name", func() {
-				assert.Equal(suite.T(), terraDevEnvironment.Name, *env.DefaultNamespace)
-			})
 			suite.Run("default terra-helmfile-ref", func() {
 				suite.Assert().Equal("HEAD", *env.HelmfileRef)
 			})
@@ -188,8 +185,8 @@ func (suite *environmentControllerSuite) TestEnvironmentCreate() {
 			suite.Run("fills owner", func() {
 				assert.Equal(suite.T(), user.AuthenticatedEmail, *env.Owner)
 			})
-			suite.Run("namespace of name", func() {
-				assert.Equal(suite.T(), env.Name, *env.DefaultNamespace)
+			suite.Run("namespace of terra-$name", func() {
+				assert.Equal(suite.T(), fmt.Sprintf("terra-%s", env.Name), env.DefaultNamespace)
 			})
 			suite.Run("default terra-helmfile ref head", func() {
 				suite.Assert().Equal("HEAD", *env.HelmfileRef)
@@ -228,8 +225,8 @@ func (suite *environmentControllerSuite) TestEnvironmentCreate() {
 			suite.Run("fills owner", func() {
 				assert.Equal(suite.T(), user.AuthenticatedEmail, *env.Owner)
 			})
-			suite.Run("namespace of name", func() {
-				assert.Equal(suite.T(), env.Name, *env.DefaultNamespace)
+			suite.Run("namespace of terra-$name", func() {
+				assert.Equal(suite.T(), fmt.Sprintf("terra-%s", env.Name), env.DefaultNamespace)
 			})
 			suite.Run("default terra-helmfile ref head", func() {
 				suite.Assert().Equal("HEAD", *env.HelmfileRef)
@@ -448,32 +445,32 @@ func (suite *environmentControllerSuite) TestEnvironmentEdit() {
 
 		before, err := suite.EnvironmentController.Get(terraDevEnvironment.Name)
 		assert.NoError(suite.T(), err)
-		assert.Equal(suite.T(), terraDevEnvironment.DefaultNamespace, before.DefaultNamespace)
-		newNamespace := testutils.PointerTo("new")
-		edited, err := suite.EnvironmentController.Edit(terraDevEnvironment.Name, EditableEnvironment{DefaultNamespace: newNamespace}, auth.GenerateUser(suite.T(), false))
+		assert.Equal(suite.T(), terraDevEnvironment.Owner, before.Owner)
+		newOwner := testutils.PointerTo("new")
+		edited, err := suite.EnvironmentController.Edit(terraDevEnvironment.Name, EditableEnvironment{Owner: newOwner}, auth.GenerateUser(suite.T(), false))
 		assert.NoError(suite.T(), err)
-		assert.Equal(suite.T(), newNamespace, edited.DefaultNamespace)
+		assert.Equal(suite.T(), newOwner, edited.Owner)
 		after, err := suite.EnvironmentController.Get(terraDevEnvironment.Name)
 		assert.NoError(suite.T(), err)
-		assert.Equal(suite.T(), newNamespace, after.DefaultNamespace)
+		assert.Equal(suite.T(), newOwner, after.Owner)
 	})
 	suite.Run("edit to suitable environment", func() {
 		db.Truncate(suite.T(), suite.db)
 		suite.seedClusters(suite.T())
 		suite.seedEnvironments(suite.T())
-		newNamespace := testutils.PointerTo("new")
+		newOwner := testutils.PointerTo("new")
 
 		suite.Run("unsuccessfully if not suitable", func() {
-			_, err := suite.EnvironmentController.Edit(terraProdEnvironment.Name, EditableEnvironment{DefaultNamespace: newNamespace}, auth.GenerateUser(suite.T(), false))
+			_, err := suite.EnvironmentController.Edit(terraProdEnvironment.Name, EditableEnvironment{Owner: newOwner}, auth.GenerateUser(suite.T(), false))
 			assert.ErrorContains(suite.T(), err, errors.Forbidden)
 			notEdited, err := suite.EnvironmentController.Get(terraProdEnvironment.Name)
 			assert.NoError(suite.T(), err)
-			assert.NotEqual(suite.T(), newNamespace, notEdited.DefaultNamespace)
+			assert.NotEqual(suite.T(), newOwner, notEdited.Owner)
 		})
 		suite.Run("successfully if suitable", func() {
-			edited, err := suite.EnvironmentController.Edit(terraProdEnvironment.Name, EditableEnvironment{DefaultNamespace: newNamespace}, auth.GenerateUser(suite.T(), true))
+			edited, err := suite.EnvironmentController.Edit(terraProdEnvironment.Name, EditableEnvironment{Owner: newOwner}, auth.GenerateUser(suite.T(), true))
 			assert.NoError(suite.T(), err)
-			assert.Equal(suite.T(), newNamespace, edited.DefaultNamespace)
+			assert.Equal(suite.T(), newOwner, edited.Owner)
 		})
 	})
 	suite.Run("edit that would make environment suitable", func() {
@@ -499,7 +496,7 @@ func (suite *environmentControllerSuite) TestEnvironmentEdit() {
 		suite.seedClusters(suite.T())
 		suite.seedEnvironments(suite.T())
 
-		_, err := suite.EnvironmentController.Edit(terraDevEnvironment.Name, EditableEnvironment{DefaultNamespace: testutils.PointerTo("")}, auth.GenerateUser(suite.T(), false))
+		_, err := suite.EnvironmentController.Edit(terraDevEnvironment.Name, EditableEnvironment{Owner: testutils.PointerTo("")}, auth.GenerateUser(suite.T(), false))
 		assert.ErrorContains(suite.T(), err, errors.BadRequest)
 	})
 }

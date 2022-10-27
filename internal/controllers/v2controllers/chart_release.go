@@ -268,8 +268,8 @@ func setChartReleaseDynamicDefaults(chartRelease *ChartRelease, stores *v2models
 		if chartRelease.Cluster == "" && environment.DefaultCluster != nil {
 			chartRelease.Cluster = environment.DefaultCluster.Name
 		}
-		if chartRelease.Namespace == "" && environment.DefaultNamespace != nil {
-			chartRelease.Namespace = *environment.DefaultNamespace
+		if chartRelease.Namespace == "" && environment.DefaultNamespace != "" {
+			chartRelease.Namespace = environment.DefaultNamespace
 		}
 		if chartRelease.DestinationType == "" {
 			chartRelease.DestinationType = "environment"

@@ -21,10 +21,10 @@ type Environment struct {
 	ValuesName                string
 	ChartReleasesFromTemplate *bool
 	UniqueResourcePrefix      string `gorm:"not null; default:null"`
+	DefaultNamespace          string
 	// Mutable
 	DefaultCluster             *Cluster
 	DefaultClusterID           *uint
-	DefaultNamespace           *string
 	DefaultFirecloudDevelopRef *string
 	Owner                      *string `gorm:"not null; default:null"`
 	RequiresSuitability        *bool
@@ -143,9 +143,6 @@ func validateEnvironment(environment *Environment) error {
 		if environment.DefaultClusterID == nil {
 			return fmt.Errorf("a non-template %T must have a default cluster", environment)
 		}
-		if environment.DefaultNamespace == nil || *environment.DefaultNamespace == "" {
-			return fmt.Errorf("a non-template %T must have a default namespace", environment)
-		}
 		if environment.Owner == nil || *environment.Owner == "" {
 			return fmt.Errorf("a non-template %T must have an owner", environment)
 		}
@@ -154,6 +151,10 @@ func validateEnvironment(environment *Environment) error {
 		}
 	default:
 		return fmt.Errorf("a %T must have a lifecycle of either 'template', 'static', or 'dynamic'", environment)
+	}
+
+	if environment.DefaultNamespace == "" {
+		return fmt.Errorf("a %T must have a default namespace", environment)
 	}
 
 	if environment.HelmfileRef == nil || *environment.HelmfileRef == "" {
@@ -293,7 +294,7 @@ func postCreateEnvironment(db *gorm.DB, environment *Environment, user *auth.Use
 					DestinationType:     "environment",
 					EnvironmentID:       &environment.ID,
 					Name:                fmt.Sprintf("%s-%s", chartRelease.Chart.Name, environment.Name),
-					Namespace:           *environment.DefaultNamespace,
+					Namespace:           environment.DefaultNamespace,
 					ChartReleaseVersion: chartRelease.ChartReleaseVersion,
 					Subdomain:           chartRelease.Subdomain,
 					Protocol:            chartRelease.Protocol,
