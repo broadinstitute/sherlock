@@ -29,6 +29,7 @@ type CreatableEnvironment struct {
 	TemplateEnvironment       string `json:"templateEnvironment" form:"templateEnvironment"`   // Required for dynamic environments
 	UniqueResourcePrefix      string `json:"uniqueResourcePrefix" form:"uniqueResourcePrefix"` // When creating, will be calculated if left empty
 	DefaultNamespace          string `json:"defaultNamespace" form:"defaultNamespace"`         // When creating, will be calculated if left empty
+	NamePrefix                string `json:"namePrefix" form:"namePrefix"`                     // Used for dynamic environment name generation only, to override using the owner email handle and template name
 	EditableEnvironment
 }
 
@@ -98,6 +99,7 @@ func modelEnvironmentToEnvironment(model *v2models.Environment) *Environment {
 			TemplateEnvironment:       templateEnvironmentName,
 			UniqueResourcePrefix:      model.UniqueResourcePrefix,
 			DefaultNamespace:          model.DefaultNamespace,
+			NamePrefix:                model.NamePrefix,
 			EditableEnvironment: EditableEnvironment{
 				DefaultCluster:             &defaultClusterName,
 				DefaultFirecloudDevelopRef: model.DefaultFirecloudDevelopRef,
@@ -143,6 +145,7 @@ func environmentToModelEnvironment(environment Environment, stores *v2models.Sto
 		UniqueResourcePrefix:       environment.UniqueResourcePrefix,
 		DefaultClusterID:           defaultClusterID,
 		DefaultNamespace:           environment.DefaultNamespace,
+		NamePrefix:                 environment.NamePrefix,
 		DefaultFirecloudDevelopRef: environment.DefaultFirecloudDevelopRef,
 		Owner:                      environment.Owner,
 		RequiresSuitability:        environment.RequiresSuitability,
@@ -174,9 +177,13 @@ func setEnvironmentDynamicDefaults(environment *Environment, stores *v2models.St
 			environment.RequiresSuitability = templateEnvironment.RequiresSuitability
 		}
 		if environment.Name == "" {
+			namePrefix := environment.NamePrefix
+			if namePrefix == "" {
+				namePrefix = fmt.Sprintf("%s-%s", user.AlphaNumericHyphenatedUsername(), templateEnvironment.Name)
+			}
 			rand.Seed(time.Now().UnixNano())
 			for suffixLength := 3; suffixLength >= 1; suffixLength-- {
-				environment.Name = fmt.Sprintf("%s-%s-%s", user.AlphaNumericHyphenatedUsername(), templateEnvironment.Name, petname.Generate(suffixLength, "-"))
+				environment.Name = fmt.Sprintf("%s-%s", namePrefix, petname.Generate(suffixLength, "-"))
 				if len(environment.Name) <= 32 {
 					break
 				}
