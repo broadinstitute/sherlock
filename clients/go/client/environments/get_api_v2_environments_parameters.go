@@ -124,6 +124,12 @@ type GetAPIV2EnvironmentsParams struct {
 	*/
 	Name *string
 
+	/* NamePrefix.
+
+	   Used for dynamic environment name generation only, to override using the owner email handle and template name
+	*/
+	NamePrefix *string
+
 	// NamePrefixesDomain.
 	//
 	// Default: true
@@ -368,6 +374,17 @@ func (o *GetAPIV2EnvironmentsParams) WithName(name *string) *GetAPIV2Environment
 // SetName adds the name to the get API v2 environments params
 func (o *GetAPIV2EnvironmentsParams) SetName(name *string) {
 	o.Name = name
+}
+
+// WithNamePrefix adds the namePrefix to the get API v2 environments params
+func (o *GetAPIV2EnvironmentsParams) WithNamePrefix(namePrefix *string) *GetAPIV2EnvironmentsParams {
+	o.SetNamePrefix(namePrefix)
+	return o
+}
+
+// SetNamePrefix adds the namePrefix to the get API v2 environments params
+func (o *GetAPIV2EnvironmentsParams) SetNamePrefix(namePrefix *string) {
+	o.NamePrefix = namePrefix
 }
 
 // WithNamePrefixesDomain adds the namePrefixesDomain to the get API v2 environments params
@@ -654,6 +671,23 @@ func (o *GetAPIV2EnvironmentsParams) WriteToRequest(r runtime.ClientRequest, reg
 		if qName != "" {
 
 			if err := r.SetQueryParam("name", qName); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.NamePrefix != nil {
+
+		// query param namePrefix
+		var qrNamePrefix string
+
+		if o.NamePrefix != nil {
+			qrNamePrefix = *o.NamePrefix
+		}
+		qNamePrefix := qrNamePrefix
+		if qNamePrefix != "" {
+
+			if err := r.SetQueryParam("namePrefix", qNamePrefix); err != nil {
 				return err
 			}
 		}

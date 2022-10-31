@@ -43,6 +43,7 @@ export interface ApiV2EnvironmentsGetRequest {
     id?: number;
     lifecycle?: string;
     name?: string;
+    namePrefix?: string;
     namePrefixesDomain?: boolean;
     owner?: string;
     requiresSuitability?: boolean;
@@ -128,6 +129,10 @@ export class EnvironmentsApi extends runtime.BaseAPI {
 
         if (requestParameters.name !== undefined) {
             queryParameters['name'] = requestParameters.name;
+        }
+
+        if (requestParameters.namePrefix !== undefined) {
+            queryParameters['namePrefix'] = requestParameters.namePrefix;
         }
 
         if (requestParameters.namePrefixesDomain !== undefined) {

@@ -74,6 +74,12 @@ export interface V2controllersCreatableEnvironment {
      */
     name?: string;
     /**
+     * Used for dynamic environment name generation only, to override using the owner email handle and template name
+     * @type {string}
+     * @memberof V2controllersCreatableEnvironment
+     */
+    namePrefix?: string;
+    /**
      * 
      * @type {boolean}
      * @memberof V2controllersCreatableEnvironment
@@ -133,6 +139,7 @@ export function V2controllersCreatableEnvironmentFromJSONTyped(json: any, ignore
         'helmfileRef': !exists(json, 'helmfileRef') ? undefined : json['helmfileRef'],
         'lifecycle': !exists(json, 'lifecycle') ? undefined : json['lifecycle'],
         'name': !exists(json, 'name') ? undefined : json['name'],
+        'namePrefix': !exists(json, 'namePrefix') ? undefined : json['namePrefix'],
         'namePrefixesDomain': !exists(json, 'namePrefixesDomain') ? undefined : json['namePrefixesDomain'],
         'owner': !exists(json, 'owner') ? undefined : json['owner'],
         'requiresSuitability': !exists(json, 'requiresSuitability') ? undefined : json['requiresSuitability'],
@@ -159,6 +166,7 @@ export function V2controllersCreatableEnvironmentToJSON(value?: V2controllersCre
         'helmfileRef': value.helmfileRef,
         'lifecycle': value.lifecycle,
         'name': value.name,
+        'namePrefix': value.namePrefix,
         'namePrefixesDomain': value.namePrefixesDomain,
         'owner': value.owner,
         'requiresSuitability': value.requiresSuitability,

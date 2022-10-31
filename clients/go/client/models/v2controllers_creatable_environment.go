@@ -44,6 +44,9 @@ type V2controllersCreatableEnvironment struct {
 	// When creating, will be calculated if dynamic, required otherwise
 	Name string `json:"name,omitempty"`
 
+	// Used for dynamic environment name generation only, to override using the owner email handle and template name
+	NamePrefix string `json:"namePrefix,omitempty"`
+
 	// name prefixes domain
 	NamePrefixesDomain *bool `json:"namePrefixesDomain,omitempty"`
 

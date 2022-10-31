@@ -2407,6 +2407,12 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "description": "Used for dynamic environment name generation only, to override using the owner email handle and template name",
+                        "name": "namePrefix",
+                        "in": "query"
+                    },
+                    {
                         "type": "boolean",
                         "default": true,
                         "name": "namePrefixesDomain",
@@ -4443,6 +4449,10 @@ const docTemplate = `{
                     "description": "When creating, will be calculated if dynamic, required otherwise",
                     "type": "string"
                 },
+                "namePrefix": {
+                    "description": "Used for dynamic environment name generation only, to override using the owner email handle and template name",
+                    "type": "string"
+                },
                 "namePrefixesDomain": {
                     "type": "boolean",
                     "default": true
@@ -4639,6 +4649,10 @@ const docTemplate = `{
                 },
                 "name": {
                     "description": "When creating, will be calculated if dynamic, required otherwise",
+                    "type": "string"
+                },
+                "namePrefix": {
+                    "description": "Used for dynamic environment name generation only, to override using the owner email handle and template name",
                     "type": "string"
                 },
                 "namePrefixesDomain": {

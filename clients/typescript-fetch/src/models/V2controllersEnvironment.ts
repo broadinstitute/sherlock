@@ -99,6 +99,12 @@ export interface V2controllersEnvironment {
      */
     name?: string;
     /**
+     * Used for dynamic environment name generation only, to override using the owner email handle and template name
+     * @type {string}
+     * @memberof V2controllersEnvironment
+     */
+    namePrefix?: string;
+    /**
      * 
      * @type {boolean}
      * @memberof V2controllersEnvironment
@@ -179,6 +185,7 @@ export function V2controllersEnvironmentFromJSONTyped(json: any, ignoreDiscrimin
         'id': !exists(json, 'id') ? undefined : json['id'],
         'lifecycle': !exists(json, 'lifecycle') ? undefined : json['lifecycle'],
         'name': !exists(json, 'name') ? undefined : json['name'],
+        'namePrefix': !exists(json, 'namePrefix') ? undefined : json['namePrefix'],
         'namePrefixesDomain': !exists(json, 'namePrefixesDomain') ? undefined : json['namePrefixesDomain'],
         'owner': !exists(json, 'owner') ? undefined : json['owner'],
         'requiresSuitability': !exists(json, 'requiresSuitability') ? undefined : json['requiresSuitability'],
@@ -211,6 +218,7 @@ export function V2controllersEnvironmentToJSON(value?: V2controllersEnvironment 
         'id': value.id,
         'lifecycle': value.lifecycle,
         'name': value.name,
+        'namePrefix': value.namePrefix,
         'namePrefixesDomain': value.namePrefixesDomain,
         'owner': value.owner,
         'requiresSuitability': value.requiresSuitability,
