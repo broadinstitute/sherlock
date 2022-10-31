@@ -16,6 +16,7 @@ type Environment struct {
 	Base                      string
 	Lifecycle                 string `gorm:"not null; default:null"`
 	Name                      string `gorm:"not null; default:null; unique"`
+	NamePrefix                string
 	TemplateEnvironment       *Environment
 	TemplateEnvironmentID     *uint
 	ValuesName                string

@@ -2,6 +2,7 @@ package v2controllers
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/broadinstitute/sherlock/internal/auth"
@@ -191,6 +192,16 @@ func (suite *environmentControllerSuite) TestEnvironmentCreate() {
 			suite.Run("default terra-helmfile ref head", func() {
 				suite.Assert().Equal("HEAD", *env.HelmfileRef)
 			})
+		})
+		suite.Run("dynamic with name prefix", func() {
+			prefix := "boo"
+			env, created, err := suite.EnvironmentController.Create(CreatableEnvironment{
+				TemplateEnvironment: swatomationEnvironment.Name,
+				NamePrefix:          prefix,
+			}, auth.GenerateUser(suite.T(), false))
+			assert.NoError(suite.T(), err)
+			assert.True(suite.T(), created)
+			assert.True(suite.T(), strings.HasPrefix(env.Name, prefix))
 		})
 		suite.Run("prodlike template", func() {
 			env, created, err := suite.EnvironmentController.Create(prodlikeTemplateEnvironment, auth.GenerateUser(suite.T(), false))
