@@ -186,7 +186,7 @@ jobs:
             "$SHERLOCK_PROD_URL/api/v2/app-versions" \
             -H 'Content-Type: application/json' \
             -H 'Authorization: Bearer ${{ steps.auth.outputs.id_token }}' \
-            -d "@$RUNNER_TEMP/body.json"
+            -d "@$RUNNER_TEMP/body.json" | jq
           echo "### Available in Beehive at $BEEHIVE_PROD_VANITY_URL/r/app-version/${{ inputs.chart-name }}/${{ inputs.new-version }}" >> $GITHUB_STEP_SUMMARY
 
       - name: "Send to Sherlock Dev"
@@ -199,5 +199,5 @@ jobs:
             "$SHERLOCK_DEV_URL/api/v2/app-versions" \
             -H 'Content-Type: application/json' \
             -H 'Authorization: Bearer ${{ steps.auth.outputs.id_token }}' \
-            -d "@$RUNNER_TEMP/body.json"
+            -d "@$RUNNER_TEMP/body.json" | jq
           echo "Available in Beehive's dev instance at $BEEHIVE_DEV_VANITY_URL/r/app-version/${{ inputs.chart-name }}/${{ inputs.new-version }}" >> $GITHUB_STEP_SUMMARY
