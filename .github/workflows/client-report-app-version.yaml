@@ -179,7 +179,6 @@ jobs:
         if: ${{ inputs.use-sherlock-prod }}
         continue-on-error: ${{ !inputs.fail-on-prod-failure }}
         shell: bash
-        # We want to use --fail with curl but we don't want to actually exit the script early
         run: |
           set -ex
           curl --fail-with-body -X 'POST' \
