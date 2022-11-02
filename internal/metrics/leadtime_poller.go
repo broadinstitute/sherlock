@@ -17,7 +17,7 @@ type LeadTimePoller struct {
 	deploys *v1controllers.DeployController
 }
 
-func newLeadTimePoller(
+func NewLeadTimePoller(
 	ctx context.Context,
 	deploys *v1controllers.DeployController,
 	pollInterval,
@@ -33,6 +33,12 @@ func newLeadTimePoller(
 	}
 }
 
+// TODO implement me
+func (p *LeadTimePoller) InitializeAndRun() (<-chan struct{}, error) {
+	return nil, nil
+}
+
+// TODO implement me
 func (p *LeadTimePoller) loadCache() error {
 	return nil
 }
