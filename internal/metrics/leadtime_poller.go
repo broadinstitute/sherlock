@@ -4,21 +4,31 @@ import (
 	"context"
 	"time"
 
+	"github.com/broadinstitute/sherlock/internal/controllers/v1controllers"
 	"github.com/rs/zerolog/log"
 )
 
 type LeadTimePoller struct {
-	pollTimer *time.Ticker
-	done      <-chan struct{}
+	pollTimer       *time.Ticker
+	cacheFlushTimer *time.Ticker
+	done            <-chan struct{}
 	*leadTimeCache
+	deploys *v1controllers.DeployController
 }
 
-func NewLeadTimePoller(ctx context.Context, pollInterval time.Duration) *LeadTimePoller {
+func newLeadTimePoller(
+	ctx context.Context,
+	deployController *v1controllers.DeployController,
+	pollInterval,
+	cacheFlushInterval time.Duration,
+) *LeadTimePoller {
 	cache := newLeadTimeCache()
 	return &LeadTimePoller{
-		done:          ctx.Done(),
-		pollTimer:     time.NewTicker(pollInterval),
-		leadTimeCache: cache,
+		done:            ctx.Done(),
+		pollTimer:       time.NewTicker(pollInterval),
+		cacheFlushTimer: time.NewTicker(cacheFlushInterval),
+		leadTimeCache:   cache,
+		deploys:         deployController,
 	}
 }
 
@@ -58,5 +68,5 @@ func (c *leadTimeCache) insert(key string, value *leadTimeData) bool {
 type leadTimeData struct {
 	environment string
 	service     string
-	leadtime    float64
+	leadTime    float64
 }
