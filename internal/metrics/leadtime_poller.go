@@ -13,12 +13,13 @@ type LeadTimePoller struct {
 	cacheFlushTimer *time.Ticker
 	done            <-chan struct{}
 	*leadTimeCache
+	// TODO use an interface that supports v1 or v2
 	deploys *v1controllers.DeployController
 }
 
 func newLeadTimePoller(
 	ctx context.Context,
-	deployController *v1controllers.DeployController,
+	deploys *v1controllers.DeployController,
 	pollInterval,
 	cacheFlushInterval time.Duration,
 ) *LeadTimePoller {
@@ -28,7 +29,7 @@ func newLeadTimePoller(
 		pollTimer:       time.NewTicker(pollInterval),
 		cacheFlushTimer: time.NewTicker(cacheFlushInterval),
 		leadTimeCache:   cache,
-		deploys:         deployController,
+		deploys:         deploys,
 	}
 }
 
