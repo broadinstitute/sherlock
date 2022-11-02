@@ -177,32 +177,27 @@ jobs:
       
       - name: "Send to Sherlock Prod"
         if: ${{ inputs.use-sherlock-prod }}
+        continue-on-error: ${{ !inputs.fail-on-prod-failure }}
         shell: bash
         # We want to use --fail with curl but we don't want to actually exit the script early
         run: |
+          set -ex
           curl --fail-with-body -X 'POST' \
             "$SHERLOCK_PROD_URL/api/v2/app-versions" \
             -H 'Content-Type: application/json' \
             -H 'Authorization: Bearer ${{ steps.auth.outputs.id_token }}' \
-            -d "@$RUNNER_TEMP/body.json" && export EXIT=0 || export EXIT=1
-          if [ "$EXIT" == "0" ]
-          then
-            echo "### Available in Beehive at $BEEHIVE_PROD_VANITY_URL/r/app-version/${{ inputs.chart-name }}/${{ inputs.new-version }}" >> $GITHUB_STEP_SUMMARY
-          fi
-          exit ${{ (inputs.fail-on-prod-failure == true && '$EXIT') || '0' }}
-          
+            -d "@$RUNNER_TEMP/body.json"
+          echo "### Available in Beehive at $BEEHIVE_PROD_VANITY_URL/r/app-version/${{ inputs.chart-name }}/${{ inputs.new-version }}" >> $GITHUB_STEP_SUMMARY
 
       - name: "Send to Sherlock Dev"
         if: ${{ inputs.use-sherlock-dev }}
+        continue-on-error: ${{ !inputs.fail-on-dev-failure }}
         shell: bash
         run: |
+          set -ex
           curl --fail-with-body -X 'POST' \
             "$SHERLOCK_DEV_URL/api/v2/app-versions" \
             -H 'Content-Type: application/json' \
             -H 'Authorization: Bearer ${{ steps.auth.outputs.id_token }}' \
-            -d "@$RUNNER_TEMP/body.json" && export EXIT=0 || export EXIT=1
-          if [ "$EXIT" == "0" ]
-          then
-            echo "Available in Beehive's dev instance at $BEEHIVE_DEV_VANITY_URL/r/app-version/${{ inputs.chart-name }}/${{ inputs.new-version }}" >> $GITHUB_STEP_SUMMARY
-          fi
-          exit ${{ (inputs.fail-on-dev-failure == true && '$EXIT') || '0' }}
+            -d "@$RUNNER_TEMP/body.json"
+          echo "Available in Beehive's dev instance at $BEEHIVE_DEV_VANITY_URL/r/app-version/${{ inputs.chart-name }}/${{ inputs.new-version }}" >> $GITHUB_STEP_SUMMARY
