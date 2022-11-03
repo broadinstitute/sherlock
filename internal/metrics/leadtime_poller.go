@@ -2,45 +2,46 @@ package metrics
 
 import (
 	"context"
-	"fmt"
 	"strings"
 	"time"
 
-	"github.com/broadinstitute/sherlock/internal/controllers/v1controllers"
 	"github.com/rs/zerolog/log"
 )
+
+type LatestLeadTimesLister interface {
+	ListLatestLeadTimes() ([]LeadTimeData, error)
+}
 
 type LeadTimePoller struct {
 	pollTimer       *time.Ticker
 	cacheFlushTimer *time.Ticker
-	*leadTimeCache
-	// TODO use an interface that supports v1 or v2
-	deploys *v1controllers.DeployController
+	cache           *leadTimeCache
+	LatestLeadTimesLister
 }
 
 func NewLeadTimePoller(
-	deploys *v1controllers.DeployController,
+	deploys LatestLeadTimesLister,
 	pollInterval,
 	cacheFlushInterval time.Duration,
 ) *LeadTimePoller {
 	cache := newLeadTimeCache()
 	return &LeadTimePoller{
-		pollTimer:       time.NewTicker(pollInterval),
-		cacheFlushTimer: time.NewTicker(cacheFlushInterval),
-		leadTimeCache:   cache,
-		deploys:         deploys,
+		pollTimer:             time.NewTicker(pollInterval),
+		cacheFlushTimer:       time.NewTicker(cacheFlushInterval),
+		cache:                 cache,
+		LatestLeadTimesLister: deploys,
 	}
 }
 
 // TODO implement me
-func (p *LeadTimePoller) InitializeAndRun(ctx context.Context) error {
+func (p *LeadTimePoller) InitializeAndPoll(ctx context.Context) error {
 	// initialize the lead time cache
 	log.Info().Msgf("initializing leadtime metrics cache")
 	if err := p.loadCache(); err != nil {
 		return err
 	}
 	// set initial values for lead time metrics
-	p.updateMetricValues(ctx)
+	p.cache.updateMetricValues(ctx)
 
 	// run the lead time polling loop as a background process
 	go func() {
@@ -60,52 +61,64 @@ func (p *LeadTimePoller) poll(ctx context.Context) {
 			p.loadCache()
 		case <-p.pollTimer.C:
 			log.Debug().Msg("updating leadtime metric values")
-			p.updateMetricValues(ctx)
+			p.cache.updateMetricValues(ctx)
 		}
 	}
 }
 
 // TODO implement with an interface that can support V1 and V2 controllers
 func (p *LeadTimePoller) loadCache() error {
-	serviceInstances, err := p.deploys.ListServiceInstances()
+	leadtimes, err := p.ListLatestLeadTimes()
 	if err != nil {
-		return fmt.Errorf("error loading leadtime poller cache: %v", err)
+		return err
 	}
-	for _, serviceInstance := range serviceInstances {
-		mostRecentDeploy, err := p.deploys.GetMostRecentDeploy(
-			serviceInstance.Environment.Name,
-			serviceInstance.Service.Name,
-		)
-		if err != nil {
-			return err
-		}
-		envName := mostRecentDeploy.ServiceInstance.Environment.Name
-		servicName := mostRecentDeploy.ServiceInstance.Service.Name
+
+	for _, leadTime := range leadtimes {
 		cacheKey := strings.Join(
-			[]string{envName, servicName},
+			[]string{leadTime.Environment, leadTime.Service},
 			"-",
 		)
-		cacheEntry := &leadTimeData{
-			environment: envName,
-			service:     servicName,
-			leadTime:    mostRecentDeploy.CalculateLeadTimeHours(),
-		}
-		p.insert(cacheKey, cacheEntry)
+		p.cache.insert(cacheKey, &leadTime)
 	}
+	// serviceInstances, err := p.deploys.ListServiceInstances()
+	// if err != nil {
+	// 	return fmt.Errorf("error loading leadtime poller cache: %v", err)
+	// }
+	// for _, serviceInstance := range serviceInstances {
+	// 	mostRecentDeploy, err := p.deploys.GetMostRecentDeploy(
+	// 		serviceInstance.Environment.Name,
+	// 		serviceInstance.Service.Name,
+	// 	)
+	// 	if err != nil {
+	// 		return err
+	// 	}
+	// 	envName := mostRecentDeploy.ServiceInstance.Environment.Name
+	// 	servicName := mostRecentDeploy.ServiceInstance.Service.Name
+	// 	cacheKey := strings.Join(
+	// 		[]string{envName, servicName},
+	// 		"-",
+	// 	)
+	// 	cacheEntry := &LeadTimeData{
+	// 		environment: envName,
+	// 		service:     servicName,
+	// 		leadTime:    mostRecentDeploy.CalculateLeadTimeHours(),
+	// 	}
+	// 	p.cache.insert(cacheKey, cacheEntry)
+	// }
 	return nil
 }
 
 type leadTimeCache struct {
-	cache map[string]*leadTimeData
+	cache map[string]*LeadTimeData
 }
 
 func newLeadTimeCache() *leadTimeCache {
 	return &leadTimeCache{
-		cache: make(map[string]*leadTimeData),
+		cache: make(map[string]*LeadTimeData),
 	}
 }
 
-func (c *leadTimeCache) insert(key string, value *leadTimeData) bool {
+func (c *leadTimeCache) insert(key string, value *LeadTimeData) bool {
 	_, found := c.cache[key]
 	c.cache[key] = value
 	if found {
@@ -118,15 +131,15 @@ func (c *leadTimeCache) updateMetricValues(ctx context.Context) {
 	for _, leadtime := range c.cache {
 		RecordLeadTime(
 			ctx,
-			leadtime.leadTime,
-			leadtime.environment,
-			leadtime.service,
+			leadtime.LeadTime,
+			leadtime.Environment,
+			leadtime.Service,
 		)
 	}
 }
 
-type leadTimeData struct {
-	environment string
-	service     string
-	leadTime    float64
+type LeadTimeData struct {
+	Environment string
+	Service     string
+	LeadTime    float64
 }

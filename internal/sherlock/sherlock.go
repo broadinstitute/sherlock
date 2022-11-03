@@ -166,7 +166,7 @@ func (a *Application) initializeMetrics() error {
 			1*time.Minute,
 		)
 		ctx, cancel := context.WithCancel(context.Background())
-		leadTimePoller.InitializeAndRun(ctx)
+		leadTimePoller.InitializeAndPoll(ctx)
 		a.contextsToCancel = append(a.contextsToCancel, cancel)
 		return nil
 	}

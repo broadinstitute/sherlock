@@ -2,6 +2,8 @@ package v1controllers
 
 import (
 	"errors"
+
+	"github.com/broadinstitute/sherlock/internal/metrics"
 	"github.com/broadinstitute/sherlock/internal/models/v1models"
 	"github.com/broadinstitute/sherlock/internal/serializers/v1serializers"
 
@@ -102,4 +104,32 @@ func (dc *DeployController) Serialize(deploy ...v1models.Deploy) []v1serializers
 
 	serializer := v1serializers.DeploysSerializer{Deploys: deployList}
 	return serializer.Response()
+}
+
+func (dc *DeployController) ListLatestLeadTimes() ([]metrics.LeadTimeData, error) {
+	serviceInstances, err := dc.ListServiceInstances()
+	if err != nil {
+		return nil, err
+	}
+	leadtimes := make([]metrics.LeadTimeData, len(serviceInstances))
+	var envName, serviceName string
+
+	for i, serviceInstance := range serviceInstances {
+		envName = serviceInstance.Environment.Name
+		serviceName = serviceInstance.Service.Name
+		mostRecentDeploy, err := dc.GetMostRecentDeploy(
+			envName,
+			serviceName,
+		)
+		if err != nil {
+			return nil, err
+		}
+		leadtime := metrics.LeadTimeData{
+			Environment: envName,
+			Service:     serviceName,
+			LeadTime:    mostRecentDeploy.CalculateLeadTimeHours(),
+		}
+		leadtimes[i] = leadtime
+	}
+	return leadtimes, nil
 }
