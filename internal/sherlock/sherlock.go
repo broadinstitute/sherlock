@@ -2,6 +2,7 @@ package sherlock
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -156,17 +157,19 @@ func (a *Application) initializeMetrics() error {
 			return err
 		}
 
-		// metrics library requires a context
+		// initialize deploy frequency metric for each service instance in db
 		for _, serviceInstance := range serviceInstances {
 			metrics.RecordDeployFrequency(ctx, serviceInstance.Environment.Name, serviceInstance.Service.Name)
 		}
 		leadTimePoller := metrics.NewLeadTimePoller(
 			a.Deploys,
-			10*time.Second,
-			1*time.Minute,
+			config.Config.MustDuration("metrics.leadTimePoller.pollInterval"),
+			config.Config.MustDuration("metrics.leadTimePoller.cacheFlushInterval"),
 		)
-		ctx, cancel := context.WithCancel(context.Background())
-		leadTimePoller.InitializeAndPoll(ctx)
+		ctx, cancel := context.WithCancel(ctx)
+		if err = leadTimePoller.InitializeAndPoll(ctx); err != nil {
+			return fmt.Errorf("error initializing leadtime poller: %v", err)
+		}
 		a.contextsToCancel = append(a.contextsToCancel, cancel)
 		return nil
 	}

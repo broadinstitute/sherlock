@@ -29,6 +29,9 @@ db:
 metrics:
   accelerate:
     fromAPI: v1
+  leadTimePoller:
+    pollInterval: 10s
+    cacheFlushInterval: 3m
 
 auth:
   updateIntervalMinutes: 15

@@ -24,16 +24,14 @@ func NewLeadTimePoller(
 	pollInterval,
 	cacheFlushInterval time.Duration,
 ) *LeadTimePoller {
-	cache := newLeadTimeCache()
 	return &LeadTimePoller{
 		pollTimer:             time.NewTicker(pollInterval),
 		cacheFlushTimer:       time.NewTicker(cacheFlushInterval),
-		cache:                 cache,
+		cache:                 newLeadTimeCache(),
 		LatestLeadTimesLister: deploys,
 	}
 }
 
-// TODO implement me
 func (p *LeadTimePoller) InitializeAndPoll(ctx context.Context) error {
 	// initialize the lead time cache
 	log.Info().Msgf("initializing leadtime metrics cache")
@@ -80,31 +78,6 @@ func (p *LeadTimePoller) loadCache() error {
 		)
 		p.cache.insert(cacheKey, &leadTime)
 	}
-	// serviceInstances, err := p.deploys.ListServiceInstances()
-	// if err != nil {
-	// 	return fmt.Errorf("error loading leadtime poller cache: %v", err)
-	// }
-	// for _, serviceInstance := range serviceInstances {
-	// 	mostRecentDeploy, err := p.deploys.GetMostRecentDeploy(
-	// 		serviceInstance.Environment.Name,
-	// 		serviceInstance.Service.Name,
-	// 	)
-	// 	if err != nil {
-	// 		return err
-	// 	}
-	// 	envName := mostRecentDeploy.ServiceInstance.Environment.Name
-	// 	servicName := mostRecentDeploy.ServiceInstance.Service.Name
-	// 	cacheKey := strings.Join(
-	// 		[]string{envName, servicName},
-	// 		"-",
-	// 	)
-	// 	cacheEntry := &LeadTimeData{
-	// 		environment: envName,
-	// 		service:     servicName,
-	// 		leadTime:    mostRecentDeploy.CalculateLeadTimeHours(),
-	// 	}
-	// 	p.cache.insert(cacheKey, cacheEntry)
-	// }
 	return nil
 }
 
