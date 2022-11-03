@@ -95,7 +95,7 @@ func (c *leadTimeCache) insert(key string, value *LeadTimeData) bool {
 	_, found := c.cache[key]
 	c.cache[key] = value
 	if found {
-		log.Debug().Msgf("leadtime cache upsert service: %q, environment: %q")
+		log.Debug().Msgf("leadtime cache upsert service: %q, environment: %q", value.Service, value.Environment)
 	}
 	return found
 }
