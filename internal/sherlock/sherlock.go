@@ -2,6 +2,9 @@ package sherlock
 
 import (
 	"context"
+	"net/http"
+	"time"
+
 	"contrib.go.opencensus.io/exporter/stackdriver"
 	"github.com/broadinstitute/sherlock/internal/auth"
 	"github.com/broadinstitute/sherlock/internal/config"
@@ -11,8 +14,6 @@ import (
 	"github.com/broadinstitute/sherlock/internal/models/v2models"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
-	"net/http"
-	"time"
 )
 
 // Application is the core application type containing a router and db connection
@@ -158,18 +159,15 @@ func (a *Application) initializeMetrics() error {
 		// metrics library requires a context
 		for _, serviceInstance := range serviceInstances {
 			metrics.RecordDeployFrequency(ctx, serviceInstance.Environment.Name, serviceInstance.Service.Name)
-			// initialize leadtime by finding most recent deploy, calculating it's lead time and update the metric
-			mostRecentDeploy, err := a.Deploys.GetMostRecentDeploy(serviceInstance.Environment.Name, serviceInstance.Service.Name)
-			if err != nil {
-				return err
-			}
-			metrics.RecordLeadTime(
-				ctx,
-				mostRecentDeploy.CalculateLeadTimeHours(),
-				serviceInstance.Environment.Name,
-				serviceInstance.Service.Name,
-			)
 		}
+		leadTimePoller := metrics.NewLeadTimePoller(
+			a.Deploys,
+			10*time.Second,
+			1*time.Minute,
+		)
+		ctx, cancel := context.WithCancel(context.Background())
+		leadTimePoller.InitializeAndRun(ctx)
+		a.contextsToCancel = append(a.contextsToCancel, cancel)
 		return nil
 	}
 }
