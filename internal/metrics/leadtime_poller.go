@@ -8,13 +8,21 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-// LatestLeadTimes
+// LatestLeadTimes is an interface that represents the
+// capability to enumerate over all the latest lead time values for
+// all releases in all environments. Currently it is only implemented
+// for the V1 APIs, When we are ready to switch to V2 apis as the source
+// for accelerate data it will need to implement this interface
 type LatestLeadTimesLister interface {
 	ListLatestLeadTimes() ([]LeadTimeData, error)
 }
 
+// LeadTimePoller contains wraps the information needed to continuously poll the DB
+// for the latest lead time interval.
 type LeadTimePoller struct {
-	pollTimer       <-chan time.Time
+	// pollTimer interval at which metric data is written to the /metrics endpoint
+	pollTimer <-chan time.Time
+	// cacheFlushTimer inteval at which the cache is flushed and new lead time data is updated from the DB
 	cacheFlushTimer <-chan time.Time
 	cache           *leadTimeCache
 	LatestLeadTimesLister
@@ -50,9 +58,7 @@ func (p *LeadTimePoller) InitializeAndPoll(ctx context.Context) error {
 	p.cache.updateMetricValues(ctx)
 
 	// run the lead time polling loop in its own go routine
-	go func() {
-		p.poll(ctx)
-	}()
+	go p.poll(ctx)
 	return nil
 }
 
