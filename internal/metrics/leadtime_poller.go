@@ -117,11 +117,11 @@ func newLeadTimeCache() *leadTimeCache {
 }
 
 func (c *leadTimeCache) insert(key string, value *LeadTimeData) bool {
-	_, found := c.cache[key]
-	c.cache[key] = value
-	if found {
+	oldValue, found := c.cache[key]
+	if found && oldValue.LeadTime != value.LeadTime {
 		log.Debug().Msgf("leadtime cache upsert service: %q, environment: %q", value.Service, value.Environment)
 	}
+	c.cache[key] = value
 	return found
 }
 

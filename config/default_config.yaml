@@ -4,7 +4,7 @@ mode: debug
 log:
   timestamp: true
   caller: false
-  level: debug
+  level: info
 
 db:
   host: localhost
