@@ -66,7 +66,6 @@ func (p *LeadTimePoller) poll(ctx context.Context) {
 	}
 }
 
-// TODO implement with an interface that can support V1 and V2 controllers
 func (p *LeadTimePoller) loadCache() error {
 	leadtimes, err := p.ListLatestLeadTimes()
 	if err != nil {
