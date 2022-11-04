@@ -101,7 +101,11 @@ func (p *LeadTimePoller) loadCache() error {
 			[]string{leadTime.Environment, leadTime.Service},
 			"-",
 		)
-		p.cache.insert(cacheKey, &leadTime)
+		p.cache.insert(cacheKey, &LeadTimeData{
+			Environment: leadTime.Environment,
+			Service:     leadTime.Service,
+			LeadTime:    leadTime.LeadTime,
+		})
 	}
 	return nil
 }
