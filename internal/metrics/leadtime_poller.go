@@ -48,6 +48,16 @@ func (p *LeadTimePoller) InitializeAndPoll(ctx context.Context) error {
 	return nil
 }
 
+// poll is run from it's own go routine. It uses a for select loop
+// to switch between executing multiple different async processes.
+//
+// The two timers are the core of the loop cache flush will update
+// the leadtime cache based on what is in the db
+// the poll timer will right what is in the cache to the prometheus /metrics
+// endpoint
+//
+// The ctx.Done case is just to ensure the goroutine isn't leaked
+// when sherlock shuts down
 func (p *LeadTimePoller) poll(ctx context.Context) {
 	for {
 		select {
