@@ -56,7 +56,9 @@ func (p *LeadTimePoller) poll(ctx context.Context) {
 			return
 		case <-p.cacheFlushTimer:
 			log.Debug().Msg("refreshing leadtime cache")
-			p.loadCache()
+			if err := p.loadCache(); err != nil {
+				log.Error().Msgf("error refreshing lead times cache: %v", err)
+			}
 		case <-p.pollTimer:
 			log.Debug().Msg("updating leadtime metric values")
 			p.cache.updateMetricValues(ctx)
