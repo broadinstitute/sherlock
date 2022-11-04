@@ -34,3 +34,6 @@ pg-down:
 generate-swagger:
 	swag fmt -d ./ -g internal/sherlock/routes.go
 	swag init -d ./ -g internal/sherlock/routes.go
+
+mocks:
+	mockery --dir ./internal/metrics --name LatestLeadTimesLister --output=./internal/metrics/mocks --outpkg mocks --filename mocks.go

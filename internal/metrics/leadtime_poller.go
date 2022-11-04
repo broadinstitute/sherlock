@@ -13,8 +13,8 @@ type LatestLeadTimesLister interface {
 }
 
 type LeadTimePoller struct {
-	pollTimer       *time.Ticker
-	cacheFlushTimer *time.Ticker
+	pollTimer       <-chan time.Time
+	cacheFlushTimer <-chan time.Time
 	cache           *leadTimeCache
 	LatestLeadTimesLister
 }
@@ -25,8 +25,8 @@ func NewLeadTimePoller(
 	cacheFlushInterval time.Duration,
 ) *LeadTimePoller {
 	return &LeadTimePoller{
-		pollTimer:             time.NewTicker(pollInterval),
-		cacheFlushTimer:       time.NewTicker(cacheFlushInterval),
+		pollTimer:             time.NewTicker(pollInterval).C,
+		cacheFlushTimer:       time.NewTicker(cacheFlushInterval).C,
 		cache:                 newLeadTimeCache(),
 		LatestLeadTimesLister: deploys,
 	}
@@ -54,10 +54,10 @@ func (p *LeadTimePoller) poll(ctx context.Context) {
 		case <-ctx.Done():
 			log.Info().Msg("shutting down leadtime poller")
 			return
-		case <-p.cacheFlushTimer.C:
+		case <-p.cacheFlushTimer:
 			log.Debug().Msg("refreshing leadtime cache")
 			p.loadCache()
-		case <-p.pollTimer.C:
+		case <-p.pollTimer:
 			log.Debug().Msg("updating leadtime metric values")
 			p.cache.updateMetricValues(ctx)
 		}
