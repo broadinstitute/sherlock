@@ -2,6 +2,10 @@ package sherlock
 
 import (
 	"context"
+	"fmt"
+	"net/http"
+	"time"
+
 	"contrib.go.opencensus.io/exporter/stackdriver"
 	"github.com/broadinstitute/sherlock/internal/auth"
 	"github.com/broadinstitute/sherlock/internal/config"
@@ -11,8 +15,6 @@ import (
 	"github.com/broadinstitute/sherlock/internal/models/v2models"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
-	"net/http"
-	"time"
 )
 
 // Application is the core application type containing a router and db connection
@@ -111,6 +113,8 @@ func (a *Application) CancelContexts() {
 // It performs a lookup of each service instance and initializes its deploy counter.
 // To initialize lead time it looks up the most recent deploy for a given service instance
 // and sets the associated metric to the lead time of that deploy
+//
+//nolint:govet
 func (a *Application) initializeMetrics() error {
 	ctx := context.Background()
 
@@ -155,21 +159,20 @@ func (a *Application) initializeMetrics() error {
 			return err
 		}
 
-		// metrics library requires a context
+		// initialize deploy frequency metric for each service instance in db
 		for _, serviceInstance := range serviceInstances {
 			metrics.RecordDeployFrequency(ctx, serviceInstance.Environment.Name, serviceInstance.Service.Name)
-			// initialize leadtime by finding most recent deploy, calculating it's lead time and update the metric
-			mostRecentDeploy, err := a.Deploys.GetMostRecentDeploy(serviceInstance.Environment.Name, serviceInstance.Service.Name)
-			if err != nil {
-				return err
-			}
-			metrics.RecordLeadTime(
-				ctx,
-				mostRecentDeploy.CalculateLeadTimeHours(),
-				serviceInstance.Environment.Name,
-				serviceInstance.Service.Name,
-			)
 		}
+		leadTimePoller := metrics.NewLeadTimePoller(
+			a.Deploys,
+			config.Config.MustDuration("metrics.leadTimePoller.pollInterval"),
+			config.Config.MustDuration("metrics.leadTimePoller.cacheFlushInterval"),
+		)
+		ctx, cancel := context.WithCancel(ctx)
+		if err = leadTimePoller.InitializeAndPoll(ctx); err != nil {
+			return fmt.Errorf("error initializing leadtime poller: %v", err)
+		}
+		a.contextsToCancel = append(a.contextsToCancel, cancel)
 		return nil
 	}
 }

@@ -4,7 +4,7 @@ mode: debug
 log:
   timestamp: true
   caller: false
-  level: debug
+  level: info
 
 db:
   host: localhost
@@ -29,6 +29,9 @@ db:
 metrics:
   accelerate:
     fromAPI: v1
+  leadTimePoller:
+    pollInterval: 10s
+    cacheFlushInterval: 3m
 
 auth:
   updateIntervalMinutes: 15
