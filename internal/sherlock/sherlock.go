@@ -113,6 +113,8 @@ func (a *Application) CancelContexts() {
 // It performs a lookup of each service instance and initializes its deploy counter.
 // To initialize lead time it looks up the most recent deploy for a given service instance
 // and sets the associated metric to the lead time of that deploy
+//
+//nolint:lostcancel
 func (a *Application) initializeMetrics() error {
 	ctx := context.Background()
 

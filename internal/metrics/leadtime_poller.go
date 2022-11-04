@@ -41,7 +41,7 @@ func (p *LeadTimePoller) InitializeAndPoll(ctx context.Context) error {
 	// set initial values for lead time metrics
 	p.cache.updateMetricValues(ctx)
 
-	// run the lead time polling loop as a background process
+	// run the lead time polling loop in its own go routine
 	go func() {
 		p.poll(ctx)
 	}()
