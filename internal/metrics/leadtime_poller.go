@@ -8,6 +8,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+// LatestLeadTimes
 type LatestLeadTimesLister interface {
 	ListLatestLeadTimes() ([]LeadTimeData, error)
 }
@@ -32,6 +33,13 @@ func NewLeadTimePoller(
 	}
 }
 
+// Initialize and Run will perform the intialization of the leadtime metrics for each release in each environment
+// so that when sherlock restarts the time series won't just dissappear when Sherlock restarts
+
+// This function will block until the initialization completes or errors so that sherlock will not start serving requests
+// until the data for the /metrics endpoint is initialized.
+// then it will kick off the lead time polling loop it's an own go routine which will listen for cancellation signals via
+// ctx
 func (p *LeadTimePoller) InitializeAndPoll(ctx context.Context) error {
 	// initialize the lead time cache
 	log.Info().Msgf("initializing leadtime metrics cache")
