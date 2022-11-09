@@ -25,7 +25,7 @@ db:
   # SQL migration files.
   autoMigrateV1: false
   autoMigrateV2: false
-  maxOpenConnections: 150
+  maxOpenConnections: 75
 
 metrics:
   accelerate:
