@@ -2,12 +2,11 @@ package v1handlers
 
 import (
 	"errors"
-	"net/http"
-
 	"github.com/broadinstitute/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/internal/controllers/v1controllers"
 	"github.com/broadinstitute/sherlock/internal/models/v1models"
 	"github.com/broadinstitute/sherlock/internal/serializers/v1serializers"
+	"net/http"
 
 	"github.com/broadinstitute/sherlock/internal/metrics"
 	"github.com/gin-gonic/gin"
@@ -71,17 +70,17 @@ func createDeploy(dc *v1controllers.DeployController) func(c *gin.Context) {
 		}
 
 		// flag used to track if this deploy event is a no-op redeploy in which case lead time shouldn't change
-		// shouldUpdateLeadTime := true
+		shouldUpdateLeadTime := true
 		// look up the current active deployment for the give service instance
-		// currentDeploy, err := dc.GetMostRecentDeploy(newDeployRequest.EnvironmentName, newDeployRequest.ServiceName)
-		// if err != nil && err != v1models.ErrDeployNotFound {
-		// 	c.JSON(http.StatusInternalServerError, v1serializers.DeploysResponse{Error: err.Error()})
-		// }
+		currentDeploy, err := dc.GetMostRecentDeploy(newDeployRequest.EnvironmentName, newDeployRequest.ServiceName)
+		if err != nil && err != v1models.ErrDeployNotFound {
+			c.JSON(http.StatusInternalServerError, v1serializers.DeploysResponse{Error: err.Error()})
+		}
 
 		// if doing a redeploy of the current build, don't update leadtime
-		// if currentDeploy.Build.VersionString == newDeployRequest.BuildVersionString {
-		// 	shouldUpdateLeadTime = false
-		// }
+		if currentDeploy.Build.VersionString == newDeployRequest.BuildVersionString {
+			shouldUpdateLeadTime = false
+		}
 
 		deploy, err := dc.CreateNew(newDeployRequest)
 		if err != nil {
@@ -96,10 +95,10 @@ func createDeploy(dc *v1controllers.DeployController) func(c *gin.Context) {
 		if config.Config.String("metrics.accelerate.fromAPI") != "v2" {
 			metrics.RecordDeployFrequency(c, environment, service)
 			// calculate lead time
-			// if shouldUpdateLeadTime {
-			// 	leadTime := deploy.CalculateLeadTimeHours()
-			// 	metrics.RecordLeadTime(c, leadTime, environment, service)
-			// }
+			if shouldUpdateLeadTime {
+				leadTime := deploy.CalculateLeadTimeHours()
+				metrics.RecordLeadTime(c, leadTime, environment, service)
+			}
 		}
 
 		c.JSON(http.StatusCreated, v1serializers.DeploysResponse{Deploys: dc.Serialize(deploy)})
