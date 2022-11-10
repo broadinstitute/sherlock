@@ -3,6 +3,8 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	"time"
+
 	migrationFiles "github.com/broadinstitute/sherlock/db"
 	"github.com/broadinstitute/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/internal/models/v1models"
@@ -13,7 +15,6 @@ import (
 	"github.com/rs/zerolog/log"
 	gormpg "gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"time"
 
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/jackc/pgx/v4/stdlib"
@@ -149,6 +150,10 @@ func applyAutoMigrations(db *gorm.DB) error {
 }
 
 func Configure(sqlDB *sql.DB) (*gorm.DB, error) {
+	// defensively set max number of open connections to defend against contention issues
+	maxOpenConnections := config.Config.MustInt("db.maxOpenConnections")
+	sqlDB.SetMaxOpenConns(maxOpenConnections)
+
 	if err := applyMigrations(sqlDB); err != nil {
 		return nil, fmt.Errorf("error migrating database: %v", err)
 	}
