@@ -2,6 +2,7 @@ package v2controllers
 
 import (
 	"fmt"
+	"github.com/broadinstitute/sherlock/internal/models/v2models/environment"
 	"math/rand"
 	"strconv"
 	"strings"
@@ -34,13 +35,15 @@ type CreatableEnvironment struct {
 }
 
 type EditableEnvironment struct {
-	DefaultCluster             *string `json:"defaultCluster" form:"defaultCluster"`
-	DefaultFirecloudDevelopRef *string `json:"defaultFirecloudDevelopRef" form:"defaultFirecloudDevelopRef" default:"dev"` // should be the environment branch for live envs. Is usually dev for template/dynamic but not necessarily
-	Owner                      *string `json:"owner" form:"owner"`                                                         // When creating, will be set to your email
-	RequiresSuitability        *bool   `json:"requiresSuitability" form:"requiresSuitability" default:"false"`
-	BaseDomain                 *string `json:"baseDomain" form:"baseDomain" default:"bee.envs-terra.bio"`
-	NamePrefixesDomain         *bool   `json:"namePrefixesDomain" form:"namePrefixesDomain" default:"true"`
-	HelmfileRef                *string `json:"helmfileRef" form:"helmfileRef" default:"HEAD"`
+	DefaultCluster             *string                 `json:"defaultCluster" form:"defaultCluster"`
+	DefaultFirecloudDevelopRef *string                 `json:"defaultFirecloudDevelopRef" form:"defaultFirecloudDevelopRef" default:"dev"` // should be the environment branch for live envs. Is usually dev for template/dynamic but not necessarily
+	Owner                      *string                 `json:"owner" form:"owner"`                                                         // When creating, will be set to your email
+	RequiresSuitability        *bool                   `json:"requiresSuitability" form:"requiresSuitability" default:"false"`
+	BaseDomain                 *string                 `json:"baseDomain" form:"baseDomain" default:"bee.envs-terra.bio"`
+	NamePrefixesDomain         *bool                   `json:"namePrefixesDomain" form:"namePrefixesDomain" default:"true"`
+	HelmfileRef                *string                 `json:"helmfileRef" form:"helmfileRef" default:"HEAD"`
+	PreventDeletion            *bool                   `json:"preventDeletion" form:"preventDeletion" default:"false"` // Used to protect specific BEEs from deletion (thelma checks this field)
+	AutoDelete                 *environment.AutoDelete `json:"autoDelete" form:"autoDelete"`                           // Used to schedule automatic deletion of BEEs
 }
 
 //nolint:unused
@@ -108,6 +111,8 @@ func modelEnvironmentToEnvironment(model *v2models.Environment) *Environment {
 				BaseDomain:                 model.BaseDomain,
 				NamePrefixesDomain:         model.NamePrefixesDomain,
 				HelmfileRef:                model.HelmfileRef,
+				PreventDeletion:            model.PreventDeletion,
+				AutoDelete:                 model.AutoDelete,
 			},
 		},
 	}
@@ -152,6 +157,8 @@ func environmentToModelEnvironment(environment Environment, stores *v2models.Sto
 		BaseDomain:                 environment.BaseDomain,
 		NamePrefixesDomain:         environment.NamePrefixesDomain,
 		HelmfileRef:                environment.HelmfileRef,
+		PreventDeletion:            environment.PreventDeletion,
+		AutoDelete:                 environment.AutoDelete,
 	}, nil
 }
 

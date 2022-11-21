@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/broadinstitute/sherlock/internal/auth"
 	"github.com/broadinstitute/sherlock/internal/errors"
+	"github.com/broadinstitute/sherlock/internal/models/v2models/environment"
 	"gorm.io/gorm"
 	"math/bits"
 	"strconv"
@@ -32,6 +33,8 @@ type Environment struct {
 	BaseDomain                 *string
 	NamePrefixesDomain         *bool
 	HelmfileRef                *string `gorm:"not null; default:null"`
+	PreventDeletion            *bool
+	AutoDelete                 *environment.AutoDelete `gorm:"column:delete_after"`
 }
 
 func (e Environment) TableName() string {
@@ -170,6 +173,22 @@ func validateEnvironment(environment *Environment) error {
 	if environment.UniqueResourcePrefix == "" {
 		return fmt.Errorf("a %T must have a non-empty unique resource prefix", environment)
 	}
+
+	if environment.PreventDeletion != nil && *environment.PreventDeletion && environment.Lifecycle != "dynamic" {
+		return fmt.Errorf("preventDeletion is only valid for dynamic environments")
+	}
+	if environment.AutoDelete != nil {
+		if err := environment.AutoDelete.Validate(); err != nil {
+			return err
+		}
+		if environment.Lifecycle != "dynamic" {
+			return fmt.Errorf("autoDelete is only valid for dynamic environments")
+		}
+		if environment.PreventDeletion != nil && *environment.PreventDeletion {
+			return fmt.Errorf("either preventDeletion or autoDelete may be enabled, but not both")
+		}
+	}
+
 	return nil
 }
 
