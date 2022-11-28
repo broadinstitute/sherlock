@@ -18,7 +18,7 @@ type ChartRelease struct {
 	DestinationType string
 	Environment     *Environment
 	EnvironmentID   *uint
-	Name            string `gorm:"not null; default:null; unique"`
+	Name            string `gorm:"not null; default:null"`
 	Namespace       string
 	ChartReleaseVersion
 	Subdomain *string

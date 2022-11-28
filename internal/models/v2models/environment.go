@@ -15,7 +15,7 @@ type Environment struct {
 	gorm.Model
 	Base                      string
 	Lifecycle                 string `gorm:"not null; default:null"`
-	Name                      string `gorm:"not null; default:null; unique"`
+	Name                      string `gorm:"not null; default:null"`
 	NamePrefix                string
 	TemplateEnvironment       *Environment
 	TemplateEnvironmentID     *uint
