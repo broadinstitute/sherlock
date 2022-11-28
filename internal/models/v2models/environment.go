@@ -48,6 +48,7 @@ func init() {
 		validateModel:            validateEnvironment,
 		preCreate:                preCreateEnvironment,
 		postCreate:               postCreateEnvironment,
+		preDeletePostValidate:    preDeletePostValidateEnvironment,
 	}
 }
 
@@ -304,6 +305,22 @@ func postCreateEnvironment(db *gorm.DB, environment *Environment, user *auth.Use
 			if err != nil {
 				return fmt.Errorf("wasn't able to copy template's release of the %s chart: %v", chartRelease.Chart.Name, err)
 			}
+		}
+	}
+	return nil
+}
+
+func preDeletePostValidateEnvironment(db *gorm.DB, environment *Environment, user *auth.User) error {
+	chartReleases, err := chartReleaseStore.listAllMatchingByUpdated(db, 0, ChartRelease{EnvironmentID: &environment.ID})
+	if err != nil {
+		return fmt.Errorf("wasn't able to list chart releases: %v", err)
+	}
+	for _, chartRelease := range chartReleases {
+		_, err = chartReleaseStore.delete(db, ChartRelease{
+			Model: gorm.Model{ID: chartRelease.ID},
+		}, user)
+		if err != nil {
+			return fmt.Errorf("wasn't able to delete chart release %s: %v", chartRelease.Name, err)
 		}
 	}
 	return nil

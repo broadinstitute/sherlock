@@ -46,6 +46,9 @@ type internalModelStore[M Model] struct {
 	// preCreate is similar to postCreate but it runs before even validation does--before the model has entered the
 	// database at all.
 	preCreate func(db *gorm.DB, toCreate *M, user *auth.User) error
+	// preDeletePostValidate runs after validation right before deletion. Since it runs after validation, it is important
+	// that this function not change toDelete in a way that would require re-validation.
+	preDeletePostValidate func(db *gorm.DB, toDelete *M, user *auth.User) error
 	// rejectDuplicateCreate lets a type provide custom handling for when a new entry has selectors that match an
 	// entry that's already in the database. Typically, this is always considered an error. If this function is
 	// provided and does not error, the database will not be changed and the already-stored entry will be returned.
@@ -212,7 +215,15 @@ func (s internalModelStore[M]) delete(db *gorm.DB, query M, user *auth.User) (M,
 			return toDelete, fmt.Errorf("delete error: (%s) suitability is required to delete %T: %v", errors.Forbidden, toDelete, err)
 		}
 	}
-	if err = db.Delete(&toDelete).Error; err != nil {
+	err = db.Transaction(func(tx *gorm.DB) error {
+		if s.preDeletePostValidate != nil {
+			if err := s.preDeletePostValidate(tx, &toDelete, user); err != nil {
+				return fmt.Errorf("pre-delete post-validate error: %v", err)
+			}
+		}
+		return db.Delete(&toDelete).Error
+	})
+	if err != nil {
 		return toDelete, fmt.Errorf("delete error deleting %T: %v", toDelete, err)
 	}
 	return toDelete, nil
