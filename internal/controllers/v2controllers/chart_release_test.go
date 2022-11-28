@@ -617,11 +617,11 @@ func (suite *chartReleaseControllerSuite) TestChartReleaseDelete() {
 		assert.Equal(suite.T(), datarepoDevChartRelease.Name, deleted.Name)
 		_, err = suite.ChartReleaseController.Get(datarepoDevChartRelease.Name)
 		assert.ErrorContains(suite.T(), err, errors.NotFound)
-		suite.Run("sql constraints ignore soft deletion", func() {
-			_, created, err := suite.ChartReleaseController.Create(datarepoDevChartRelease, auth.GenerateUser(suite.T(), false))
-			assert.ErrorContains(suite.T(), err, errors.BadRequest)
-			assert.ErrorContains(suite.T(), err, "Contact DevOps")
-			assert.False(suite.T(), created)
+		suite.Run("allows re-creation", func() {
+			chartRelease, created, err := suite.ChartReleaseController.Create(datarepoDevChartRelease, auth.GenerateUser(suite.T(), false))
+			assert.NoError(suite.T(), err)
+			assert.True(suite.T(), created)
+			assert.NotEqual(suite.T(), deleted.ID, chartRelease.ID)
 		})
 	})
 	suite.Run("delete suitable chart release", func() {

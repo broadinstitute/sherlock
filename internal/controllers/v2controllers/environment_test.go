@@ -538,11 +538,11 @@ func (suite *environmentControllerSuite) TestEnvironmentDelete() {
 				assert.Len(suite.T(), shouldBeEmpty, 0)
 			}
 		})
-		suite.Run("sql constraints ignore soft deletion", func() {
-			_, created, err := suite.EnvironmentController.Create(terraDevEnvironment, auth.GenerateUser(suite.T(), false))
-			assert.ErrorContains(suite.T(), err, errors.BadRequest)
-			assert.ErrorContains(suite.T(), err, "Contact DevOps")
-			assert.False(suite.T(), created)
+		suite.Run("allows re-creation", func() {
+			environment, created, err := suite.EnvironmentController.Create(terraDevEnvironment, auth.GenerateUser(suite.T(), false))
+			assert.NoError(suite.T(), err)
+			assert.True(suite.T(), created)
+			assert.NotEqual(suite.T(), deleted.ID, environment.ID)
 		})
 	})
 	suite.Run("delete suitable environment", func() {
