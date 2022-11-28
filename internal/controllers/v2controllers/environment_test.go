@@ -517,12 +517,27 @@ func (suite *environmentControllerSuite) TestEnvironmentDelete() {
 		db.Truncate(suite.T(), suite.db)
 		suite.seedClusters(suite.T())
 		suite.seedEnvironments(suite.T())
+		suite.seedCharts(suite.T())
+		suite.seedChartVersions(suite.T())
+		suite.seedAppVersions(suite.T())
+		suite.seedChartReleases(suite.T())
+
+		chartReleases, err := suite.ChartReleaseController.ListAllMatching(ChartRelease{CreatableChartRelease: CreatableChartRelease{Environment: terraDevEnvironment.Name}}, 0)
+		assert.NoError(suite.T(), err)
+		assert.True(suite.T(), len(chartReleases) > 0)
 
 		deleted, err := suite.EnvironmentController.Delete(terraDevEnvironment.Name, auth.GenerateUser(suite.T(), false))
 		assert.NoError(suite.T(), err)
 		assert.Equal(suite.T(), terraDevEnvironment.Name, deleted.Name)
 		_, err = suite.EnvironmentController.Get(terraDevEnvironment.Name)
 		assert.ErrorContains(suite.T(), err, errors.NotFound)
+		suite.Run("deletions cascaded", func() {
+			for _, chartRelease := range chartReleases {
+				shouldBeEmpty, err := suite.ChartReleaseController.ListAllMatching(ChartRelease{ReadableBaseType: ReadableBaseType{ID: chartRelease.ID}}, 1)
+				assert.NoError(suite.T(), err)
+				assert.Len(suite.T(), shouldBeEmpty, 0)
+			}
+		})
 		suite.Run("sql constraints ignore soft deletion", func() {
 			_, created, err := suite.EnvironmentController.Create(terraDevEnvironment, auth.GenerateUser(suite.T(), false))
 			assert.ErrorContains(suite.T(), err, errors.BadRequest)
