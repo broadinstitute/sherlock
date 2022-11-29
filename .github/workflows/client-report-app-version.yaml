@@ -30,7 +30,18 @@ name: Report App Version
 
 on:
   workflow_call:
+
+    secrets:
+      custom-git-token:
+        required: false
+        description: "Use a specific token instead of the one automatically available from the calling workflow"
+
     inputs:
+
+      ##
+      ## Required configuration:
+      ##
+
       new-version:
         required: true
         type: string
@@ -39,16 +50,49 @@ on:
         required: true
         type: string
         description: "The name of the Helm Chart that deploys this app"
-      include-git-context:
+
+      ##
+      ## Git configuration:
+      ##   (Note that custom-git-token is available, just defined below in the secrets block)
+      ##
+
+      use-git:
         required: false
         type: boolean
         default: true
-        description: "If the Git context of the caller should be reported as the commit/branch that the new version came from"
-      custom-description:
+        description: "If extra version information should be gleaned from Git"
+
+      custom-git-repo:
+        required: false
+        type: string
+        description: "Checkout another repo instead of the calling workflow's"
+  
+      override-branch:
+        required: false
+        type: string
+        description: "Optionally provide a specific branch of the repo, instead of the calling workflow's context or custom git repo's default"
+      override-commit:
+        required: false
+        type: string
+        description: "Optionall provide a specific commit of the branch, instead of HEAD"
+      override-description:
         required: false
         type: string
         description: "Optionally provide a custom description for the version instead of the commit message"
+      override-parent:
+        required: false
+        type: string
+        description: "Optionally provide the parent version for the new version"
+
+      no-parent:
+        required: false
+        type: string
+        description: "Entirely omit the parent field, useful when the repository doesn't tag versions"
       
+      ##
+      ## Sherlock configuration:
+      ##
+
       use-sherlock-prod:
         required: false
         type: boolean
@@ -82,23 +126,125 @@ env:
 jobs:
   report:
     runs-on: ubuntu-22.04
-
-    # When this workflow is called, the job runs with the context of the caller, so we're setting
-    # permissions of the caller's GITHUB_TOKEN before we use it for Workload Identity. We can't
-    # actually upgrade permissions here--the caller must declare permissions as well--but we can
-    # cause an error if there's a misconfiguration.
     permissions:
       contents: 'read'
       id-token: 'write'
     
     steps:
 
+      ##
+      ## Handle required:
+      ##
+
+      - name: "Begin Request Body"
+        shell: bash
+        run: |
+          echo '{
+            "appVersion": "${{ inputs.new-version }}",
+            "chart": "${{ inputs.chart-name }}"
+          }' > "$RUNNER_TEMP/body.json"
+
+      ##
+      ## Handle Git:
+      ##
+
       - name: "Checkout"
+        if: ${{ inputs.use-git == true }}
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
+          repository: ${{ inputs.custom-git-repo }}
 
-      - name: "Authenticate"
+      # Branch:
+
+      - name: "Parse Branch From Git"
+        if: ${{ inputs.use-git == true && inputs.override-branch == '' }}
+        shell: bash
+        run: |
+          export BRANCH="$(git rev-parse --abbrev-ref HEAD || true)"
+          if [ -n "$BRANCH" ]
+          then
+            cat <<< $(jq '.gitBranch = env.BRANCH' "$RUNNER_TEMP/body.json") > "$RUNNER_TEMP/body.json"
+          fi
+      - name: "Use Overridden Branch"
+        if: ${{ inputs.override-branch != '' }}
+        shell: bash
+        run: |
+          cat <<< $(jq '.gitBranch = "${{ inputs.override-branch }}"' "$RUNNER_TEMP/body.json") > "$RUNNER_TEMP/body.json"
+      - name: "Respect Overridden Branch Downstream"
+        if: ${{ inputs.use-git == true && inputs.override-branch != '' }}
+        shell: bash
+        run: |
+          git checkout ${{ inputs.override-branch }}
+
+      # Commit:
+
+      - name: "Parse Commit From Git"
+        if: ${{ inputs.use-git == true && inputs.override-commit == '' }}
+        shell: bash
+        run: |
+          export COMMIT="$(git rev-parse HEAD || true)"
+          if [ -n "$COMMIT" ]
+          then
+            cat <<< $(jq '.gitCommit = env.COMMIT' "$RUNNER_TEMP/body.json") > "$RUNNER_TEMP/body.json"
+          fi
+      - name: "Use Overridden Commit"
+        if: ${{ inputs.override-commit != '' }}
+        shell: bash
+        run: |
+          cat <<< $(jq '.gitCommit = "${{ inputs.override-commit }}"' "$RUNNER_TEMP/body.json") > "$RUNNER_TEMP/body.json"
+      - name: "Respect Overridden Commit Downstream"
+        if: ${{ inputs.use-git == true && inputs.override-commit != '' }}
+        shell: bash
+        run: |
+          git checkout ${{ inputs.override-commit }}
+
+      # Description:
+
+      - name: "Parse Commit Message From Git as Description"
+        if: ${{ inputs.use-git == true && inputs.override-description == '' }}
+        shell: bash
+        run: |
+          export DESCRIPTION="$(git log -1 --pretty=%B || true)"
+          if [ -n "$DESCRIPTION" ]
+          then
+            cat <<< $(jq '.description = env.DESCRIPTION' "$RUNNER_TEMP/body.json") > "$RUNNER_TEMP/body.json"
+          fi
+      - name: "Use Overridden Description"
+        if: ${{ inputs.override-description != '' }}
+        shell: bash
+        run: |
+          cat <<< $(jq '.description = "${{ inputs.override-description }}"' "$RUNNER_TEMP/body.json") > "$RUNNER_TEMP/body.json"
+
+      # Parent
+
+      - name: "Parse Last Tag From Git as Parent"
+        if: ${{ inputs.use-git == true && inputs.no-parent == false && inputs.override-parent == '' }}
+        shell: bash
+        run: |
+          export PARENT="$(git describe --tags --abbrev=0 HEAD^ || true)"
+          if [ -n "$PARENT" ]
+          then
+            export PARENT="${{ inputs.chart-name }}/$PARENT"
+            cat <<< $(jq '.parentAppVersion = env.PARENT' "$RUNNER_TEMP/body.json") > "$RUNNER_TEMP/body.json"
+          fi
+      - name: "Use Overridden Parent"
+        if: ${{ inputs.no-parent == false && inputs.override-parent != '' }}
+        shell: bash
+        run: |
+          cat <<< $(jq '.parentAppVersion = "${{ inputs.chart-name }}/${{ inputs.override-parent }}"' "$RUNNER_TEMP/body.json") > "$RUNNER_TEMP/body.json"
+
+      ##
+      ## Handle Sherlock:
+      ##
+
+      - name: "Log Request Body"
+        shell: bash
+        run: |
+          cat "$RUNNER_TEMP/body.json"
+          echo "## Reported ${{ inputs.chart-name }}/${{ inputs.new-version }} to Sherlock" >> $GITHUB_STEP_SUMMARY
+
+      - name: "Authenticate to GCP"
         id: 'auth'
         uses: google-github-actions/auth@v0
         with:
@@ -107,73 +253,8 @@ jobs:
           token_format: 'id_token'
           id_token_audience: '1038484894585-k8qvf7l876733laev0lm8kenfa2lj6bn.apps.googleusercontent.com'
           id_token_include_email: true
-
-      - name: "Begin Request Body"
-        # Explicitly declaring bash as the shell enables fail-fast behavior
-        # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#exit-codes-and-error-action-preference
-        shell: bash
-        run: |
-          echo '{
-            "appVersion": "${{ inputs.new-version }}",
-            "chart": "${{ inputs.chart-name }}"
-          }' > "$RUNNER_TEMP/body.json"
-
-      - name: "Parse Commit"
-        if: ${{ inputs.include-git-context == true }}
-        shell: bash
-        run: |
-          export COMMIT="$(git rev-parse HEAD)"
-          if [ -n "$COMMIT" ]
-          then
-            cat <<< $(jq '.gitCommit = env.COMMIT' "$RUNNER_TEMP/body.json") > "$RUNNER_TEMP/body.json"
-          fi
-
-      - name: "Parse Branch"
-        if: ${{ inputs.include-git-context == true && github.ref-type == 'branch' }}
-        shell: bash
-        run: |
-          export BRANCH="$(git rev-parse --abbrev-ref HEAD)"
-          if [ -n "$BRANCH" ]
-          then
-            cat <<< $(jq '.gitBranch = env.BRANCH' "$RUNNER_TEMP/body.json") > "$RUNNER_TEMP/body.json"
-          fi
-
-      - name: "Parse Last Tag as Parent"
-        if: ${{ inputs.include-git-context == true }}
-        shell: bash
-        # Use `|| true` since this step is entirely opportunistic.
-        # We don't validate either, since Sherlock is opportunistic about this field too.
-        run: |
-          export PARENT="$(git describe --tags --abbrev=0 HEAD^ || true)"
-          if [ -n "$PARENT" ]
-          then
-            export PARENT="${{ inputs.chart-name }}/$PARENT"
-            cat <<< $(jq '.parentAppVersion = env.PARENT' "$RUNNER_TEMP/body.json") > "$RUNNER_TEMP/body.json"
-          fi
-
-      - name: "Use Custom Description"
-        if: ${{ inputs.custom-description != '' }}
-        shell: bash
-        run: |
-          cat <<< $(jq '.description = "${{ inputs.custom-description }}"' "$RUNNER_TEMP/body.json") > "$RUNNER_TEMP/body.json"
-
-      - name: "Parse Commit Message as Description"
-        if: ${{ inputs.include-git-context == true && inputs.custom-description == '' }}
-        shell: bash
-        run: |
-          export DESCRIPTION="$(git log -1 --pretty=%B)"
-          if [ -n "$DESCRIPTION" ]
-          then
-            cat <<< $(jq '.description = env.DESCRIPTION' "$RUNNER_TEMP/body.json") > "$RUNNER_TEMP/body.json"
-          fi
-
-      - name: "Log Request Body"
-        shell: bash
-        run: |
-          cat "$RUNNER_TEMP/body.json"
-          echo "## Reported ${{ inputs.chart-name }}/${{ inputs.new-version }} to Sherlock" >> $GITHUB_STEP_SUMMARY
-
-      # Sherlock's endpoint here is idempotent so we don't need to do anything special to handle re-runs
+          create_credentials_file: false
+          export_environment_variables: false
       
       - name: "Send to Sherlock Prod"
         if: ${{ inputs.use-sherlock-prod }}
