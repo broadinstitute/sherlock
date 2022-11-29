@@ -154,6 +154,7 @@ jobs:
         with:
           fetch-depth: 0
           repository: ${{ inputs.custom-git-repo }}
+          token: ${{ secrets.custom-git-token }}
 
       # Branch:
 
