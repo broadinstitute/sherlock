@@ -391,7 +391,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 	assert.Len(suite.T(), applied[0].NewAppVersions, 1)
 
 	// We can follow things too!
-	applied, err = suite.ChangesetController.PlanAndApply(ChangesetPlanRequest{
+	_, err = suite.ChangesetController.PlanAndApply(ChangesetPlanRequest{
 		Environments: []ChangesetPlanRequestEnvironmentEntry{
 			{
 				Environment:                        newBee.Name,
@@ -401,7 +401,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 	}, auth.GenerateUser(suite.T(), true))
 	assert.NoError(suite.T(), err)
 	// If we make a change in dev...
-	applied, err = suite.ChangesetController.PlanAndApply(ChangesetPlanRequest{
+	_, err = suite.ChangesetController.PlanAndApply(ChangesetPlanRequest{
 		ChartReleases: []ChangesetPlanRequestChartReleaseEntry{
 			{CreatableChangeset: CreatableChangeset{
 				ChartRelease:         "terra-dev/sam",
