@@ -883,6 +883,36 @@ func TestChartReleaseVersion_validate(t *testing.T) {
 			},
 		},
 		{
+			name:    "chartReleaseVersionInvalidNoAppVersionFollowID",
+			wantErr: true,
+			obj: ChartReleaseVersion{
+				ResolvedAt: testutils.PointerTo(time.Now()),
+
+				AppVersionResolver: testutils.PointerTo("follow"),
+				AppVersionExact:    testutils.PointerTo("v1.2.3"),
+				AppVersionCommit:   testutils.PointerTo("a1b2c3d4"),
+				AppVersionBranch:   testutils.PointerTo("main"),
+				AppVersion: &AppVersion{
+					Model:      gorm.Model{ID: 1},
+					AppVersion: "v1.2.3",
+					GitCommit:  "a1b2c3d4",
+					GitBranch:  "main",
+				},
+				AppVersionID: testutils.PointerTo[uint](1),
+
+				ChartVersionResolver: testutils.PointerTo("latest"),
+				ChartVersionExact:    testutils.PointerTo("v0.0.100"),
+				ChartVersion: &ChartVersion{
+					Model:        gorm.Model{ID: 2},
+					ChartVersion: "v0.0.100",
+				},
+				ChartVersionID: testutils.PointerTo[uint](2),
+
+				HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+				FirecloudDevelopRef: testutils.PointerTo("dev"),
+			},
+		},
+		{
 			name:    "chartReleaseVersionInvalidNoneWithBranch",
 			wantErr: true,
 			obj: ChartReleaseVersion{
@@ -959,6 +989,27 @@ func TestChartReleaseVersion_validate(t *testing.T) {
 					GitBranch:  "main",
 				},
 				AppVersionID: testutils.PointerTo[uint](1),
+
+				ChartVersionResolver: testutils.PointerTo("latest"),
+				ChartVersionExact:    testutils.PointerTo("v0.0.100"),
+				ChartVersion: &ChartVersion{
+					Model:        gorm.Model{ID: 2},
+					ChartVersion: "v0.0.100",
+				},
+				ChartVersionID: testutils.PointerTo[uint](2),
+
+				HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+				FirecloudDevelopRef: testutils.PointerTo("dev"),
+			},
+		},
+		{
+			name:    "chartReleaseVersionInvalidNoneWithFollowID",
+			wantErr: true,
+			obj: ChartReleaseVersion{
+				ResolvedAt: testutils.PointerTo(time.Now()),
+
+				AppVersionResolver:             testutils.PointerTo("none"),
+				AppVersionFollowChartReleaseID: testutils.PointerTo[uint](1),
 
 				ChartVersionResolver: testutils.PointerTo("latest"),
 				ChartVersionExact:    testutils.PointerTo("v0.0.100"),
@@ -1081,6 +1132,30 @@ func TestChartReleaseVersion_validate(t *testing.T) {
 
 				ChartVersionResolver: testutils.PointerTo("latest"),
 				ChartVersionExact:    testutils.PointerTo("v0.0.100"),
+
+				HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
+				FirecloudDevelopRef: testutils.PointerTo("dev"),
+			},
+		},
+		{
+			name:    "chartReleaseVersionInvalidNoChartVersionFollowID",
+			wantErr: true,
+			obj: ChartReleaseVersion{
+				ResolvedAt: testutils.PointerTo(time.Now()),
+
+				AppVersionResolver: testutils.PointerTo("branch"),
+				AppVersionExact:    testutils.PointerTo("v1.2.3"),
+				AppVersionCommit:   testutils.PointerTo("a1b2c3d4"),
+				AppVersionBranch:   testutils.PointerTo("main"),
+				AppVersion: &AppVersion{
+					Model:      gorm.Model{ID: 1},
+					AppVersion: "v1.2.3",
+					GitCommit:  "a1b2c3d4",
+					GitBranch:  "main",
+				},
+				AppVersionID: testutils.PointerTo[uint](1),
+
+				ChartVersionResolver: testutils.PointerTo("follow"),
 
 				HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
 				FirecloudDevelopRef: testutils.PointerTo("dev"),
@@ -1245,20 +1320,24 @@ func TestChartReleaseVersion_validate(t *testing.T) {
 
 func TestChartReleaseVersion_equalTo(t *testing.T) {
 	type fields struct {
-		ResolvedAt           *time.Time
-		AppVersionResolver   *string
-		AppVersionExact      *string
-		AppVersionBranch     *string
-		AppVersionCommit     *string
-		AppVersion           *AppVersion
-		AppVersionID         *uint
-		ChartVersionResolver *string
-		ChartVersionExact    *string
-		ChartVersion         *ChartVersion
-		ChartVersionID       *uint
-		HelmfileRef          *string
-		FirecloudDevelopRef  *string
-		ThelmaMode           *string
+		ResolvedAt                       *time.Time
+		AppVersionResolver               *string
+		AppVersionExact                  *string
+		AppVersionBranch                 *string
+		AppVersionCommit                 *string
+		AppVersionFollowChartRelease     *ChartRelease
+		AppVersionFollowChartReleaseID   *uint
+		AppVersion                       *AppVersion
+		AppVersionID                     *uint
+		ChartVersionResolver             *string
+		ChartVersionExact                *string
+		ChartVersionFollowChartRelease   *ChartRelease
+		ChartVersionFollowChartReleaseID *uint
+		ChartVersion                     *ChartVersion
+		ChartVersionID                   *uint
+		HelmfileRef                      *string
+		FirecloudDevelopRef              *string
+		ThelmaMode                       *string
 	}
 	type args struct {
 		other ChartReleaseVersion
@@ -1445,23 +1524,47 @@ func TestChartReleaseVersion_equalTo(t *testing.T) {
 			}},
 			want: false,
 		},
+		{
+			name: "checks app version follow id",
+			fields: fields{
+				AppVersionFollowChartReleaseID: testutils.PointerTo[uint](1),
+			},
+			args: args{other: ChartReleaseVersion{
+				AppVersionFollowChartReleaseID: testutils.PointerTo[uint](2),
+			}},
+			want: false,
+		},
+		{
+			name: "checks chart version follow id",
+			fields: fields{
+				ChartVersionFollowChartReleaseID: testutils.PointerTo[uint](1),
+			},
+			args: args{other: ChartReleaseVersion{
+				ChartVersionFollowChartReleaseID: testutils.PointerTo[uint](2),
+			}},
+			want: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			chartReleaseVersion := &ChartReleaseVersion{
-				ResolvedAt:           tt.fields.ResolvedAt,
-				AppVersionResolver:   tt.fields.AppVersionResolver,
-				AppVersionExact:      tt.fields.AppVersionExact,
-				AppVersionBranch:     tt.fields.AppVersionBranch,
-				AppVersionCommit:     tt.fields.AppVersionCommit,
-				AppVersion:           tt.fields.AppVersion,
-				AppVersionID:         tt.fields.AppVersionID,
-				ChartVersionResolver: tt.fields.ChartVersionResolver,
-				ChartVersionExact:    tt.fields.ChartVersionExact,
-				ChartVersion:         tt.fields.ChartVersion,
-				ChartVersionID:       tt.fields.ChartVersionID,
-				HelmfileRef:          tt.fields.HelmfileRef,
-				FirecloudDevelopRef:  tt.fields.FirecloudDevelopRef,
+				ResolvedAt:                       tt.fields.ResolvedAt,
+				AppVersionResolver:               tt.fields.AppVersionResolver,
+				AppVersionExact:                  tt.fields.AppVersionExact,
+				AppVersionBranch:                 tt.fields.AppVersionBranch,
+				AppVersionCommit:                 tt.fields.AppVersionCommit,
+				AppVersionFollowChartRelease:     tt.fields.AppVersionFollowChartRelease,
+				AppVersionFollowChartReleaseID:   tt.fields.AppVersionFollowChartReleaseID,
+				AppVersion:                       tt.fields.AppVersion,
+				AppVersionID:                     tt.fields.AppVersionID,
+				ChartVersionResolver:             tt.fields.ChartVersionResolver,
+				ChartVersionExact:                tt.fields.ChartVersionExact,
+				ChartVersionFollowChartRelease:   tt.fields.ChartVersionFollowChartRelease,
+				ChartVersionFollowChartReleaseID: tt.fields.ChartVersionFollowChartReleaseID,
+				ChartVersion:                     tt.fields.ChartVersion,
+				ChartVersionID:                   tt.fields.ChartVersionID,
+				HelmfileRef:                      tt.fields.HelmfileRef,
+				FirecloudDevelopRef:              tt.fields.FirecloudDevelopRef,
 			}
 			if got := chartReleaseVersion.equalTo(tt.args.other); got != tt.want {
 				t.Errorf("equalTo() = %v, want %v", got, tt.want)

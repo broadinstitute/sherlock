@@ -20,6 +20,7 @@ type ChangesetPlanRequestChartReleaseEntry struct {
 type ChangesetPlanRequestEnvironmentEntry struct {
 	Environment                          string
 	UseExactVersionsFromOtherEnvironment *string  `json:"useExactVersionsFromOtherEnvironment"`
+	FollowVersionsFromOtherEnvironment   *string  `json:"followVersionsFromOtherEnvironment"`
 	IncludeCharts                        []string `json:"includeCharts"` // If omitted, will include all charts
 	ExcludeCharts                        []string `json:"excludeCharts"`
 }
@@ -27,6 +28,7 @@ type ChangesetPlanRequestEnvironmentEntry struct {
 func (c ChangesetController) changesetPlanRequestToModelChangesets(request ChangesetPlanRequest, user *auth.User) ([]v2models.Changeset, error) {
 	modelChangesets := make(map[uint]v2models.Changeset)
 	exact := "exact"
+	follow := "follow"
 
 	// Handle the chart releases
 	for index, chartReleaseRequestEntry := range request.ChartReleases {
@@ -103,9 +105,17 @@ func (c ChangesetController) changesetPlanRequestToModelChangesets(request Chang
 			}
 			targetChartReleases = append(targetChartReleases, potentialTargetChartRelease)
 		}
-		chartReleasesToUseExactVersionFrom := make(map[uint]v2models.ChartRelease)
-		if environmentRequestEntry.UseExactVersionsFromOtherEnvironment != nil {
-			otherEnvironment, err := c.allStores.EnvironmentStore.Get(*environmentRequestEntry.UseExactVersionsFromOtherEnvironment)
+		chartReleasesToUseVersionsFrom := make(map[uint]v2models.ChartRelease)
+		if environmentRequestEntry.UseExactVersionsFromOtherEnvironment != nil || environmentRequestEntry.FollowVersionsFromOtherEnvironment != nil {
+			if environmentRequestEntry.UseExactVersionsFromOtherEnvironment != nil && environmentRequestEntry.FollowVersionsFromOtherEnvironment != nil {
+				return nil, fmt.Errorf("(%s) both UseExactVersionsFromOtherEnvironment and FollowVersionsFromOtherEnvironment passed for environment entry %d, '%s': only one may be passed", errors.BadRequest, index+1, environmentRequestEntry.Environment)
+			}
+			var otherEnvironment v2models.Environment
+			if environmentRequestEntry.UseExactVersionsFromOtherEnvironment != nil {
+				otherEnvironment, err = c.allStores.EnvironmentStore.Get(*environmentRequestEntry.UseExactVersionsFromOtherEnvironment)
+			} else if environmentRequestEntry.FollowVersionsFromOtherEnvironment != nil {
+				otherEnvironment, err = c.allStores.EnvironmentStore.Get(*environmentRequestEntry.FollowVersionsFromOtherEnvironment)
+			}
 			if err != nil {
 				return nil, fmt.Errorf("error getting referenced other environment '%s' for environment entry %d, '%s': %v", *environmentRequestEntry.UseExactVersionsFromOtherEnvironment, index+1, environmentRequestEntry.Environment, err)
 			}
@@ -114,7 +124,7 @@ func (c ChangesetController) changesetPlanRequestToModelChangesets(request Chang
 				return nil, fmt.Errorf("error getting chart releases in referenced other environment '%s' for environment entry %d, '%s': %v", *environmentRequestEntry.UseExactVersionsFromOtherEnvironment, index+1, environmentRequestEntry.Environment, err)
 			}
 			for _, otherChartRelease := range otherChartReleases {
-				chartReleasesToUseExactVersionFrom[otherChartRelease.ChartID] = otherChartRelease
+				chartReleasesToUseVersionsFrom[otherChartRelease.ChartID] = otherChartRelease
 			}
 		}
 		for _, targetChartRelease := range targetChartReleases {
@@ -122,16 +132,22 @@ func (c ChangesetController) changesetPlanRequestToModelChangesets(request Chang
 			if err := setChangesetDynamicDefaults(&generatedChangeset, c.allStores, user); err != nil {
 				return nil, fmt.Errorf("error setting dynamic default values for generated changeset for chart release '%s' for environment entry %d, '%s': %v", targetChartRelease.Name, index+1, environmentRequestEntry.Environment, err)
 			}
-			if otherChartRelease, present := chartReleasesToUseExactVersionFrom[targetChartRelease.ChartID]; present {
+			if otherChartRelease, present := chartReleasesToUseVersionsFrom[targetChartRelease.ChartID]; present {
 				if otherChartRelease.AppVersionResolver != nil && *otherChartRelease.AppVersionResolver == "none" {
 					generatedChangeset.ToAppVersionResolver = otherChartRelease.AppVersionResolver
-				} else {
+					generatedChangeset.ToChartVersionResolver = &exact
+				} else if environmentRequestEntry.UseExactVersionsFromOtherEnvironment != nil {
 					generatedChangeset.ToAppVersionResolver = &exact
+					generatedChangeset.ToChartVersionResolver = &exact
+				} else if environmentRequestEntry.FollowVersionsFromOtherEnvironment != nil {
+					generatedChangeset.ToAppVersionResolver = &follow
+					generatedChangeset.ToChartVersionResolver = &follow
+					generatedChangeset.ToAppVersionFollowChartRelease = otherChartRelease.Name
+					generatedChangeset.ToChartVersionFollowChartRelease = otherChartRelease.Name
 				}
 				generatedChangeset.ToAppVersionExact = otherChartRelease.AppVersionExact
 				generatedChangeset.ToAppVersionBranch = otherChartRelease.AppVersionBranch
 				generatedChangeset.ToAppVersionCommit = otherChartRelease.AppVersionCommit
-				generatedChangeset.ToChartVersionResolver = &exact
 				generatedChangeset.ToChartVersionExact = otherChartRelease.ChartVersionExact
 				generatedChangeset.ToHelmfileRef = otherChartRelease.HelmfileRef
 			}
