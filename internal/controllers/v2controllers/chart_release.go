@@ -29,14 +29,16 @@ type CreatableChartRelease struct {
 	Name        string `json:"name" form:"name"`               // When creating, will be calculated if left empty
 	Namespace   string `json:"namespace" form:"namespace"`     // When creating, will default to the environment's default namespace, if provided
 
-	AppVersionResolver   *string `json:"appVersionResolver" form:"appVersionResolver" enums:"branch,commit,exact,none"` // // When creating, will default to automatically reference any provided app version fields
-	AppVersionExact      *string `json:"appVersionExact" form:"appVersionExact"`
-	AppVersionBranch     *string `json:"appVersionBranch" form:"appVersionBranch"` // When creating, will default to the app's mainline branch if no other app version info is present
-	AppVersionCommit     *string `json:"appVersionCommit" form:"appVersionCommit"`
-	ChartVersionResolver *string `json:"chartVersionResolver" form:"chartVersionResolver" enums:"latest,exact"` // When creating, will default to automatically reference any provided chart version
-	ChartVersionExact    *string `json:"chartVersionExact" form:"chartVersionExact"`
-	HelmfileRef          *string `json:"helmfileRef" form:"helmfileRef" default:"HEAD"`
-	FirecloudDevelopRef  *string `json:"firecloudDevelopRef" form:"firecloudDevelopRef"`
+	AppVersionResolver             *string `json:"appVersionResolver" form:"appVersionResolver" enums:"branch,commit,exact,follow,none"` // // When creating, will default to automatically reference any provided app version fields
+	AppVersionExact                *string `json:"appVersionExact" form:"appVersionExact"`
+	AppVersionBranch               *string `json:"appVersionBranch" form:"appVersionBranch"` // When creating, will default to the app's mainline branch if no other app version info is present
+	AppVersionCommit               *string `json:"appVersionCommit" form:"appVersionCommit"`
+	AppVersionFollowChartRelease   string  `json:"appVersionFollowChartRelease" form:"appVersionFollowChartRelease"`
+	ChartVersionResolver           *string `json:"chartVersionResolver" form:"chartVersionResolver" enums:"latest,exact,follow"` // When creating, will default to automatically reference any provided chart version
+	ChartVersionExact              *string `json:"chartVersionExact" form:"chartVersionExact"`
+	ChartVersionFollowChartRelease string  `json:"chartVersionFollowChartRelease" form:"chartVersionFollowChartRelease"`
+	HelmfileRef                    *string `json:"helmfileRef" form:"helmfileRef" default:"HEAD"`
+	FirecloudDevelopRef            *string `json:"firecloudDevelopRef" form:"firecloudDevelopRef"`
 	EditableChartRelease
 }
 
@@ -107,6 +109,20 @@ func modelChartReleaseToChartRelease(model *v2models.ChartRelease) *ChartRelease
 		chartVersionReference = strconv.FormatUint(uint64(*model.ChartVersionID), 10)
 	}
 
+	var appVersionFollowChartRelease string
+	if model.AppVersionFollowChartRelease != nil && model.AppVersionFollowChartRelease.Name != "" {
+		appVersionFollowChartRelease = model.AppVersionFollowChartRelease.Name
+	} else if model.AppVersionFollowChartReleaseID != nil {
+		appVersionFollowChartRelease = strconv.FormatUint(uint64(*model.AppVersionFollowChartReleaseID), 10)
+	}
+
+	var chartVersionFollowChartRelease string
+	if model.ChartVersionFollowChartRelease != nil && model.ChartVersionFollowChartRelease.Name != "" {
+		chartVersionFollowChartRelease = model.ChartVersionFollowChartRelease.Name
+	} else if model.ChartVersionFollowChartReleaseID != nil {
+		chartVersionFollowChartRelease = strconv.FormatUint(uint64(*model.ChartVersionFollowChartReleaseID), 10)
+	}
+
 	return &ChartRelease{
 		ReadableBaseType: ReadableBaseType{
 			ID:        model.ID,
@@ -122,19 +138,21 @@ func modelChartReleaseToChartRelease(model *v2models.ChartRelease) *ChartRelease
 		ChartVersionInfo:      chartVersion,
 		DestinationType:       model.DestinationType,
 		CreatableChartRelease: CreatableChartRelease{
-			Chart:                chartName,
-			Cluster:              clusterName,
-			Environment:          environmentName,
-			Name:                 model.Name,
-			Namespace:            model.Namespace,
-			AppVersionResolver:   model.AppVersionResolver,
-			AppVersionExact:      model.AppVersionExact,
-			AppVersionBranch:     model.AppVersionBranch,
-			AppVersionCommit:     model.AppVersionCommit,
-			ChartVersionResolver: model.ChartVersionResolver,
-			ChartVersionExact:    model.ChartVersionExact,
-			HelmfileRef:          model.HelmfileRef,
-			FirecloudDevelopRef:  model.FirecloudDevelopRef,
+			Chart:                          chartName,
+			Cluster:                        clusterName,
+			Environment:                    environmentName,
+			Name:                           model.Name,
+			Namespace:                      model.Namespace,
+			AppVersionResolver:             model.AppVersionResolver,
+			AppVersionExact:                model.AppVersionExact,
+			AppVersionBranch:               model.AppVersionBranch,
+			AppVersionCommit:               model.AppVersionCommit,
+			AppVersionFollowChartRelease:   appVersionFollowChartRelease,
+			ChartVersionResolver:           model.ChartVersionResolver,
+			ChartVersionExact:              model.ChartVersionExact,
+			ChartVersionFollowChartRelease: chartVersionFollowChartRelease,
+			HelmfileRef:                    model.HelmfileRef,
+			FirecloudDevelopRef:            model.FirecloudDevelopRef,
 			EditableChartRelease: EditableChartRelease{
 				Subdomain: model.Subdomain,
 				Protocol:  model.Protocol,
@@ -185,6 +203,22 @@ func chartReleaseToModelChartRelease(chartRelease ChartRelease, stores *v2models
 		}
 		chartVersionID = &chartVersion.ID
 	}
+	var appVersionFollowChartReleaseID *uint
+	if chartRelease.AppVersionFollowChartRelease != "" {
+		followChartRelease, err := stores.ChartReleaseStore.Get(chartRelease.AppVersionFollowChartRelease)
+		if err != nil {
+			return v2models.ChartRelease{}, err
+		}
+		appVersionFollowChartReleaseID = &followChartRelease.ID
+	}
+	var chartVersionFollowChartReleaseID *uint
+	if chartRelease.ChartVersionFollowChartRelease != "" {
+		followChartRelease, err := stores.ChartReleaseStore.Get(chartRelease.ChartVersionFollowChartRelease)
+		if err != nil {
+			return v2models.ChartRelease{}, err
+		}
+		chartVersionFollowChartReleaseID = &followChartRelease.ID
+	}
 	return v2models.ChartRelease{
 		Model: gorm.Model{
 			ID:        chartRelease.ID,
@@ -198,16 +232,18 @@ func chartReleaseToModelChartRelease(chartRelease ChartRelease, stores *v2models
 		Name:            chartRelease.Name,
 		Namespace:       chartRelease.Namespace,
 		ChartReleaseVersion: v2models.ChartReleaseVersion{
-			AppVersionResolver:   chartRelease.AppVersionResolver,
-			AppVersionExact:      chartRelease.AppVersionExact,
-			AppVersionBranch:     chartRelease.AppVersionBranch,
-			AppVersionCommit:     chartRelease.AppVersionCommit,
-			AppVersionID:         appVersionID,
-			ChartVersionResolver: chartRelease.ChartVersionResolver,
-			ChartVersionExact:    chartRelease.ChartVersionExact,
-			ChartVersionID:       chartVersionID,
-			HelmfileRef:          chartRelease.HelmfileRef,
-			FirecloudDevelopRef:  chartRelease.FirecloudDevelopRef,
+			AppVersionResolver:               chartRelease.AppVersionResolver,
+			AppVersionExact:                  chartRelease.AppVersionExact,
+			AppVersionBranch:                 chartRelease.AppVersionBranch,
+			AppVersionCommit:                 chartRelease.AppVersionCommit,
+			AppVersionFollowChartReleaseID:   appVersionFollowChartReleaseID,
+			AppVersionID:                     appVersionID,
+			ChartVersionResolver:             chartRelease.ChartVersionResolver,
+			ChartVersionExact:                chartRelease.ChartVersionExact,
+			ChartVersionFollowChartReleaseID: chartVersionFollowChartReleaseID,
+			ChartVersionID:                   chartVersionID,
+			HelmfileRef:                      chartRelease.HelmfileRef,
+			FirecloudDevelopRef:              chartRelease.FirecloudDevelopRef,
 		},
 		Subdomain: chartRelease.Subdomain,
 		Protocol:  chartRelease.Protocol,
@@ -243,6 +279,8 @@ func setChartReleaseDynamicDefaults(chartRelease *ChartRelease, stores *v2models
 			resolver = "commit"
 		} else if chartRelease.AppVersionBranch != nil {
 			resolver = "branch"
+		} else if chartRelease.AppVersionFollowChartRelease != "" {
+			resolver = "follow"
 		}
 		if resolver != "" {
 			chartRelease.AppVersionResolver = &resolver
@@ -253,6 +291,8 @@ func setChartReleaseDynamicDefaults(chartRelease *ChartRelease, stores *v2models
 		resolver := "latest"
 		if chartRelease.ChartVersionExact != nil {
 			resolver = "exact"
+		} else if chartRelease.ChartVersionFollowChartRelease != "" {
+			resolver = "follow"
 		}
 		chartRelease.ChartVersionResolver = &resolver
 	}

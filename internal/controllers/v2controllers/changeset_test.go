@@ -389,4 +389,41 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 	}, auth.GenerateUser(suite.T(), true))
 	assert.NoError(suite.T(), err)
 	assert.Len(suite.T(), applied[0].NewAppVersions, 1)
+
+	// We can follow things too!
+	applied, err = suite.ChangesetController.PlanAndApply(ChangesetPlanRequest{
+		Environments: []ChangesetPlanRequestEnvironmentEntry{
+			{
+				Environment:                        newBee.Name,
+				FollowVersionsFromOtherEnvironment: testutils.PointerTo("terra-dev"),
+			},
+		},
+	}, auth.GenerateUser(suite.T(), true))
+	assert.NoError(suite.T(), err)
+	// If we make a change in dev...
+	applied, err = suite.ChangesetController.PlanAndApply(ChangesetPlanRequest{
+		ChartReleases: []ChangesetPlanRequestChartReleaseEntry{
+			{CreatableChangeset: CreatableChangeset{
+				ChartRelease:         "terra-dev/sam",
+				ToAppVersionResolver: testutils.PointerTo("exact"),
+				ToAppVersionExact:    testutils.PointerTo("my-new-version"),
+			}},
+		},
+	}, auth.GenerateUser(suite.T(), true))
+	assert.NoError(suite.T(), err)
+	// ... we can just refresh the "following" environment to get that change!
+	// (it's working at the chart release level under the hood)
+	applied, err = suite.ChangesetController.PlanAndApply(ChangesetPlanRequest{
+		Environments: []ChangesetPlanRequestEnvironmentEntry{
+			{
+				Environment: newBee.Name,
+			},
+		},
+	}, auth.GenerateUser(suite.T(), true))
+	assert.NoError(suite.T(), err)
+	assert.Len(suite.T(), applied, 1)
+	samInBee, err = suite.ChartReleaseController.Get(fmt.Sprintf("%s/%s", newBee.Name, "sam"))
+	assert.NoError(suite.T(), err)
+	assert.Equal(suite.T(), "my-new-version", *samInBee.AppVersionExact)
+
 }

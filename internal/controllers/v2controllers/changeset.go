@@ -1,6 +1,7 @@
 package v2controllers
 
 import (
+	"fmt"
 	"strconv"
 	"time"
 
@@ -19,38 +20,38 @@ type Changeset struct {
 	NewAppVersions   []AppVersion   `json:"newAppVersions,omitempty" form:"-"`
 	NewChartVersions []ChartVersion `json:"newChartVersions,omitempty" form:"-"`
 
-	FromResolvedAt            *time.Time    `json:"fromResolvedAt,omitempty" form:"fromResolvedAt"`
-	FromAppVersionResolver    *string       `json:"fromAppVersionResolver,omitempty" form:"fromAppVersionResolver"`
-	FromAppVersionExact       *string       `json:"fromAppVersionExact,omitempty" form:"fromAppVersionExact"`
-	FromAppVersionBranch      *string       `json:"fromAppVersionBranch,omitempty" form:"fromAppVersionBranch"`
-	FromAppVersionCommit      *string       `json:"fromAppVersionCommit,omitempty" form:"fromAppVersionCommit"`
-	FromAppVersionInfo        *AppVersion   `json:"fromAppVersionInfo,omitempty" form:"-"`
-	FromAppVersionReference   string        `json:"fromAppVersionReference,omitempty" form:"fromAppVersionReference"`
-	FromChartVersionResolver  *string       `json:"fromChartVersionResolver,omitempty" form:"fromChartVersionResolver"`
-	FromChartVersionExact     *string       `json:"fromChartVersionExact,omitempty" form:"fromChartVersionExact"`
-	FromChartVersionInfo      *ChartVersion `json:"fromChartVersionInfo,omitempty" form:"-"`
-	FromChartVersionReference string        `json:"fromChartVersionReference,omitempty" form:"fromChartVersionReference"`
-	FromHelmfileRef           *string       `json:"fromHelmfileRef,omitempty" form:"fromHelmfileRef"`
-	FromFirecloudDevelopRef   *string       `json:"fromFirecloudDevelopRef,omitempty" form:"fromFirecloudDevelopRef"`
+	FromResolvedAt                     *time.Time `json:"fromResolvedAt,omitempty" form:"fromResolvedAt"`
+	FromAppVersionResolver             *string    `json:"fromAppVersionResolver,omitempty" form:"fromAppVersionResolver"`
+	FromAppVersionExact                *string    `json:"fromAppVersionExact,omitempty" form:"fromAppVersionExact"`
+	FromAppVersionBranch               *string    `json:"fromAppVersionBranch,omitempty" form:"fromAppVersionBranch"`
+	FromAppVersionCommit               *string    `json:"fromAppVersionCommit,omitempty" form:"fromAppVersionCommit"`
+	FromAppVersionFollowChartRelease   string     `json:"fromAppVersionFollowChartRelease,omitempty" form:"fromAppVersionFollowChartRelease"`
+	FromAppVersionReference            string     `json:"fromAppVersionReference,omitempty" form:"fromAppVersionReference"`
+	FromChartVersionResolver           *string    `json:"fromChartVersionResolver,omitempty" form:"fromChartVersionResolver"`
+	FromChartVersionExact              *string    `json:"fromChartVersionExact,omitempty" form:"fromChartVersionExact"`
+	FromChartVersionFollowChartRelease string     `json:"fromChartVersionFollowChartRelease,omitempty" form:"fromChartVersionFollowChartRelease"`
+	FromChartVersionReference          string     `json:"fromChartVersionReference,omitempty" form:"fromChartVersionReference"`
+	FromHelmfileRef                    *string    `json:"fromHelmfileRef,omitempty" form:"fromHelmfileRef"`
+	FromFirecloudDevelopRef            *string    `json:"fromFirecloudDevelopRef,omitempty" form:"fromFirecloudDevelopRef"`
 
-	ToResolvedAt            *time.Time    `json:"toResolvedAt,omitempty" from:"toResolvedAt"`
-	ToAppVersionInfo        *AppVersion   `json:"toAppVersionInfo,omitempty" form:"-"`
-	ToAppVersionReference   string        `json:"toAppVersionReference,omitempty" form:"toAppVersionReference"`
-	ToChartVersionInfo      *ChartVersion `json:"toChartVersionInfo,omitempty" form:"-"`
-	ToChartVersionReference string        `json:"toChartVersionReference,omitempty" form:"toChartVersionReference"`
+	ToResolvedAt            *time.Time `json:"toResolvedAt,omitempty" from:"toResolvedAt"`
+	ToAppVersionReference   string     `json:"toAppVersionReference,omitempty" form:"toAppVersionReference"`
+	ToChartVersionReference string     `json:"toChartVersionReference,omitempty" form:"toChartVersionReference"`
 
 	CreatableChangeset
 }
 
 type CreatableChangeset struct {
-	ToAppVersionResolver   *string `json:"toAppVersionResolver,omitempty" form:"toAppVersionResolver"`
-	ToAppVersionExact      *string `json:"toAppVersionExact,omitempty" form:"toAppVersionExact"`
-	ToAppVersionBranch     *string `json:"toAppVersionBranch,omitempty" form:"toAppVersionBranch"`
-	ToAppVersionCommit     *string `json:"toAppVersionCommit,omitempty" form:"toAppVersionCommit"`
-	ToChartVersionResolver *string `json:"toChartVersionResolver,omitempty" form:"toChartVersionResolver"`
-	ToChartVersionExact    *string `json:"toChartVersionExact,omitempty" form:"toChartVersionExact"`
-	ToHelmfileRef          *string `json:"toHelmfileRef,omitempty" form:"toHelmfileRef"`
-	ToFirecloudDevelopRef  *string `json:"toFirecloudDevelopRef,omitempty" form:"toFirecloudDevelopRef"`
+	ToAppVersionResolver             *string `json:"toAppVersionResolver,omitempty" form:"toAppVersionResolver"`
+	ToAppVersionExact                *string `json:"toAppVersionExact,omitempty" form:"toAppVersionExact"`
+	ToAppVersionBranch               *string `json:"toAppVersionBranch,omitempty" form:"toAppVersionBranch"`
+	ToAppVersionCommit               *string `json:"toAppVersionCommit,omitempty" form:"toAppVersionCommit"`
+	ToAppVersionFollowChartRelease   string  `json:"toAppVersionFollowChartRelease,omitempty" form:"toAppVersionFollowChartRelease"`
+	ToChartVersionResolver           *string `json:"toChartVersionResolver,omitempty" form:"toChartVersionResolver"`
+	ToChartVersionExact              *string `json:"toChartVersionExact,omitempty" form:"toChartVersionExact"`
+	ToChartVersionFollowChartRelease string  `json:"toChartVersionFollowChartRelease,omitempty" form:"toChartVersionFollowChartRelease"`
+	ToHelmfileRef                    *string `json:"toHelmfileRef,omitempty" form:"toHelmfileRef"`
+	ToFirecloudDevelopRef            *string `json:"toFirecloudDevelopRef,omitempty" form:"toFirecloudDevelopRef"`
 
 	ChartRelease string `json:"chartRelease" form:"chartRelease"`
 
@@ -98,33 +99,56 @@ func modelChangesetToChangeset(model *v2models.Changeset) *Changeset {
 		chartReleaseName = chartRelease.Name
 	}
 
-	// We don't try to create pretty selectors here because there's some fishy behavior in gorm
-	// with not quite returning all the nested data we're asking for--potentially because we're
-	// asking for nested data from the same table multiple times over in the exact same query.
-	// To be predictable, we just set the reference here to always be the numeric ID.
+	// See 000024_fix_gorm_multi_fk.up.sql for info on why this code is unusually defensive.
 	var toAppVersionReference string
-	if model.To.AppVersionID != nil {
+	if model.To.AppVersion != nil && model.To.AppVersion.AppVersion != "" && chartRelease != nil && chartRelease.Chart != "" {
+		toAppVersionReference = fmt.Sprintf("%s/%s", model.To.AppVersion.AppVersion, chartRelease.Chart)
+	} else if model.To.AppVersionID != nil {
 		toAppVersionReference = strconv.FormatUint(uint64(*model.To.AppVersionID), 10)
 	}
-	toAppVersion := modelAppVersionToAppVersion(model.To.AppVersion)
-
 	var toChartVersionReference string
-	if model.To.ChartVersionID != nil {
+	if model.To.ChartVersion != nil && model.To.ChartVersion.ChartVersion != "" && chartRelease != nil && chartRelease.Chart != "" {
+		toChartVersionReference = fmt.Sprintf("%s/%s", model.To.ChartVersion.ChartVersion, chartRelease.Chart)
+	} else if model.To.ChartVersionID != nil {
 		toChartVersionReference = strconv.FormatUint(uint64(*model.To.ChartVersionID), 10)
 	}
-	toChartVersion := modelChartVersionToChartVersion(model.To.ChartVersion)
-
 	var fromAppVersionReference string
-	if model.From.AppVersionID != nil {
+	if model.From.AppVersion != nil && model.From.AppVersion.AppVersion != "" && chartRelease != nil && chartRelease.Chart != "" {
+		fromAppVersionReference = fmt.Sprintf("%s/%s", model.From.AppVersion.AppVersion, chartRelease.Chart)
+	} else if model.From.AppVersionID != nil {
 		fromAppVersionReference = strconv.FormatUint(uint64(*model.From.AppVersionID), 10)
 	}
-	fromAppVersion := modelAppVersionToAppVersion(model.From.AppVersion)
-
 	var fromChartVersionReference string
-	if model.From.ChartVersionID != nil {
+	if model.From.ChartVersion != nil && model.From.ChartVersion.ChartVersion != "" && chartRelease != nil && chartRelease.Chart != "" {
+		fromChartVersionReference = fmt.Sprintf("%s/%s", model.From.ChartVersion.ChartVersion, chartRelease.Chart)
+	} else if model.From.ChartVersionID != nil {
 		fromChartVersionReference = strconv.FormatUint(uint64(*model.From.ChartVersionID), 10)
 	}
-	fromChartVersion := modelChartVersionToChartVersion(model.From.ChartVersion)
+
+	var toAppVersionFollowChartRelease string
+	if model.To.AppVersionFollowChartRelease != nil && model.To.AppVersionFollowChartRelease.Name != "" {
+		toAppVersionFollowChartRelease = model.To.AppVersionFollowChartRelease.Name
+	} else if model.To.AppVersionFollowChartReleaseID != nil {
+		toAppVersionFollowChartRelease = strconv.FormatUint(uint64(*model.To.AppVersionFollowChartReleaseID), 10)
+	}
+	var toChartVersionFollowChartRelease string
+	if model.To.ChartVersionFollowChartRelease != nil && model.To.ChartVersionFollowChartRelease.Name != "" {
+		toChartVersionFollowChartRelease = model.To.ChartVersionFollowChartRelease.Name
+	} else if model.To.ChartVersionFollowChartReleaseID != nil {
+		toChartVersionFollowChartRelease = strconv.FormatUint(uint64(*model.To.ChartVersionFollowChartReleaseID), 10)
+	}
+	var fromAppVersionFollowChartRelease string
+	if model.From.AppVersionFollowChartRelease != nil && model.From.AppVersionFollowChartRelease.Name != "" {
+		fromAppVersionFollowChartRelease = model.From.AppVersionFollowChartRelease.Name
+	} else if model.From.AppVersionFollowChartReleaseID != nil {
+		fromAppVersionFollowChartRelease = strconv.FormatUint(uint64(*model.From.AppVersionFollowChartReleaseID), 10)
+	}
+	var fromChartVersionFollowChartRelease string
+	if model.From.ChartVersionFollowChartRelease != nil && model.From.ChartVersionFollowChartRelease.Name != "" {
+		fromChartVersionFollowChartRelease = model.From.ChartVersionFollowChartRelease.Name
+	} else if model.From.ChartVersionFollowChartReleaseID != nil {
+		fromChartVersionFollowChartRelease = strconv.FormatUint(uint64(*model.From.ChartVersionFollowChartReleaseID), 10)
+	}
 
 	var newAppVersions []AppVersion
 	for _, modelNewAppVersion := range model.NewAppVersions {
@@ -148,40 +172,40 @@ func modelChangesetToChangeset(model *v2models.Changeset) *Changeset {
 			CreatedAt: model.CreatedAt,
 			UpdatedAt: model.UpdatedAt,
 		},
-		ChartReleaseInfo:          chartRelease,
-		AppliedAt:                 model.AppliedAt,
-		SupersededAt:              model.SupersededAt,
-		NewAppVersions:            newAppVersions,
-		NewChartVersions:          newChartVersions,
-		FromResolvedAt:            model.From.ResolvedAt,
-		FromAppVersionResolver:    model.From.AppVersionResolver,
-		FromAppVersionExact:       model.From.AppVersionExact,
-		FromAppVersionBranch:      model.From.AppVersionBranch,
-		FromAppVersionCommit:      model.From.AppVersionCommit,
-		FromAppVersionInfo:        fromAppVersion,
-		FromAppVersionReference:   fromAppVersionReference,
-		FromChartVersionResolver:  model.From.ChartVersionResolver,
-		FromChartVersionExact:     model.From.ChartVersionExact,
-		FromChartVersionInfo:      fromChartVersion,
-		FromChartVersionReference: fromChartVersionReference,
-		FromHelmfileRef:           model.From.HelmfileRef,
-		FromFirecloudDevelopRef:   model.From.FirecloudDevelopRef,
-		ToResolvedAt:              model.To.ResolvedAt,
-		ToAppVersionInfo:          toAppVersion,
-		ToAppVersionReference:     toAppVersionReference,
-		ToChartVersionInfo:        toChartVersion,
-		ToChartVersionReference:   toChartVersionReference,
+		ChartReleaseInfo:                   chartRelease,
+		AppliedAt:                          model.AppliedAt,
+		SupersededAt:                       model.SupersededAt,
+		NewAppVersions:                     newAppVersions,
+		NewChartVersions:                   newChartVersions,
+		FromResolvedAt:                     model.From.ResolvedAt,
+		FromAppVersionResolver:             model.From.AppVersionResolver,
+		FromAppVersionExact:                model.From.AppVersionExact,
+		FromAppVersionBranch:               model.From.AppVersionBranch,
+		FromAppVersionCommit:               model.From.AppVersionCommit,
+		FromAppVersionFollowChartRelease:   fromAppVersionFollowChartRelease,
+		FromAppVersionReference:            fromAppVersionReference,
+		FromChartVersionResolver:           model.From.ChartVersionResolver,
+		FromChartVersionExact:              model.From.ChartVersionExact,
+		FromChartVersionFollowChartRelease: fromChartVersionFollowChartRelease,
+		FromChartVersionReference:          fromChartVersionReference,
+		FromHelmfileRef:                    model.From.HelmfileRef,
+		FromFirecloudDevelopRef:            model.From.FirecloudDevelopRef,
+		ToResolvedAt:                       model.To.ResolvedAt,
+		ToAppVersionReference:              toAppVersionReference,
+		ToChartVersionReference:            toChartVersionReference,
 		CreatableChangeset: CreatableChangeset{
-			ToAppVersionResolver:   model.To.AppVersionResolver,
-			ToAppVersionExact:      model.To.AppVersionExact,
-			ToAppVersionBranch:     model.To.AppVersionBranch,
-			ToAppVersionCommit:     model.To.AppVersionCommit,
-			ToChartVersionResolver: model.To.ChartVersionResolver,
-			ToChartVersionExact:    model.To.ChartVersionExact,
-			ToHelmfileRef:          model.To.HelmfileRef,
-			ToFirecloudDevelopRef:  model.To.FirecloudDevelopRef,
-			ChartRelease:           chartReleaseName,
-			EditableChangeset:      EditableChangeset{},
+			ToAppVersionResolver:             model.To.AppVersionResolver,
+			ToAppVersionExact:                model.To.AppVersionExact,
+			ToAppVersionBranch:               model.To.AppVersionBranch,
+			ToAppVersionCommit:               model.To.AppVersionCommit,
+			ToAppVersionFollowChartRelease:   toAppVersionFollowChartRelease,
+			ToChartVersionResolver:           model.To.ChartVersionResolver,
+			ToChartVersionExact:              model.To.ChartVersionExact,
+			ToChartVersionFollowChartRelease: toChartVersionFollowChartRelease,
+			ToHelmfileRef:                    model.To.HelmfileRef,
+			ToFirecloudDevelopRef:            model.To.FirecloudDevelopRef,
+			ChartRelease:                     chartReleaseName,
+			EditableChangeset:                EditableChangeset{},
 		},
 	}
 }
@@ -194,6 +218,23 @@ func changesetToModelChangeset(changeset Changeset, stores *v2models.StoreSet) (
 			return v2models.Changeset{}, err
 		}
 		chartReleaseID = chartRelease.ID
+	}
+
+	var toAppVersionID *uint
+	if changeset.ToAppVersionReference != "" {
+		toAppVersion, err := stores.AppVersionStore.Get(changeset.ToAppVersionReference)
+		if err != nil {
+			return v2models.Changeset{}, err
+		}
+		toAppVersionID = &toAppVersion.ID
+	}
+	var toChartVersionID *uint
+	if changeset.ToChartVersionReference != "" {
+		toChartVersion, err := stores.ChartVersionStore.Get(changeset.ToChartVersionReference)
+		if err != nil {
+			return v2models.Changeset{}, err
+		}
+		toChartVersionID = &toChartVersion.ID
 	}
 	var fromAppVersionID *uint
 	if changeset.FromAppVersionReference != "" {
@@ -211,22 +252,40 @@ func changesetToModelChangeset(changeset Changeset, stores *v2models.StoreSet) (
 		}
 		fromChartVersionID = &fromChartVersion.ID
 	}
-	var toAppVersionID *uint
-	if changeset.ToAppVersionReference != "" {
-		toAppVersion, err := stores.AppVersionStore.Get(changeset.ToAppVersionReference)
+
+	var toAppVersionFollowChartReleaseID *uint
+	if changeset.ToAppVersionFollowChartRelease != "" {
+		toAppVersionFollowChartRelease, err := stores.ChartReleaseStore.Get(changeset.ToAppVersionFollowChartRelease)
 		if err != nil {
 			return v2models.Changeset{}, err
 		}
-		toAppVersionID = &toAppVersion.ID
+		toAppVersionFollowChartReleaseID = &toAppVersionFollowChartRelease.ID
 	}
-	var toChartVersionID *uint
-	if changeset.ToChartVersionReference != "" {
-		toChartVersion, err := stores.ChartVersionStore.Get(changeset.ToChartVersionReference)
+	var toChartVersionFollowChartReleaseID *uint
+	if changeset.ToChartVersionFollowChartRelease != "" {
+		toChartVersionFollowChartRelease, err := stores.ChartReleaseStore.Get(changeset.ToChartVersionFollowChartRelease)
 		if err != nil {
 			return v2models.Changeset{}, err
 		}
-		toChartVersionID = &toChartVersion.ID
+		toChartVersionFollowChartReleaseID = &toChartVersionFollowChartRelease.ID
 	}
+	var fromAppVersionFollowChartReleaseID *uint
+	if changeset.FromAppVersionFollowChartRelease != "" {
+		fromAppVersionFollowChartRelease, err := stores.ChartReleaseStore.Get(changeset.FromAppVersionFollowChartRelease)
+		if err != nil {
+			return v2models.Changeset{}, err
+		}
+		fromAppVersionFollowChartReleaseID = &fromAppVersionFollowChartRelease.ID
+	}
+	var fromChartVersionFollowChartReleaseID *uint
+	if changeset.FromChartVersionFollowChartRelease != "" {
+		fromChartVersionFollowChartRelease, err := stores.ChartReleaseStore.Get(changeset.FromChartVersionFollowChartRelease)
+		if err != nil {
+			return v2models.Changeset{}, err
+		}
+		fromChartVersionFollowChartReleaseID = &fromChartVersionFollowChartRelease.ID
+	}
+
 	return v2models.Changeset{
 		Model: gorm.Model{
 			ID:        changeset.ID,
@@ -235,30 +294,34 @@ func changesetToModelChangeset(changeset Changeset, stores *v2models.StoreSet) (
 		},
 		ChartReleaseID: chartReleaseID,
 		From: v2models.ChartReleaseVersion{
-			ResolvedAt:           changeset.FromResolvedAt,
-			AppVersionResolver:   changeset.FromAppVersionResolver,
-			AppVersionExact:      changeset.FromAppVersionExact,
-			AppVersionBranch:     changeset.FromAppVersionBranch,
-			AppVersionCommit:     changeset.FromAppVersionCommit,
-			AppVersionID:         fromAppVersionID,
-			ChartVersionResolver: changeset.FromChartVersionResolver,
-			ChartVersionExact:    changeset.FromChartVersionExact,
-			ChartVersionID:       fromChartVersionID,
-			HelmfileRef:          changeset.FromHelmfileRef,
-			FirecloudDevelopRef:  changeset.FromFirecloudDevelopRef,
+			ResolvedAt:                       changeset.FromResolvedAt,
+			AppVersionResolver:               changeset.FromAppVersionResolver,
+			AppVersionExact:                  changeset.FromAppVersionExact,
+			AppVersionBranch:                 changeset.FromAppVersionBranch,
+			AppVersionCommit:                 changeset.FromAppVersionCommit,
+			AppVersionFollowChartReleaseID:   fromAppVersionFollowChartReleaseID,
+			AppVersionID:                     fromAppVersionID,
+			ChartVersionResolver:             changeset.FromChartVersionResolver,
+			ChartVersionExact:                changeset.FromChartVersionExact,
+			ChartVersionFollowChartReleaseID: fromChartVersionFollowChartReleaseID,
+			ChartVersionID:                   fromChartVersionID,
+			HelmfileRef:                      changeset.FromHelmfileRef,
+			FirecloudDevelopRef:              changeset.FromFirecloudDevelopRef,
 		},
 		To: v2models.ChartReleaseVersion{
-			ResolvedAt:           changeset.ToResolvedAt,
-			AppVersionResolver:   changeset.ToAppVersionResolver,
-			AppVersionExact:      changeset.ToAppVersionExact,
-			AppVersionBranch:     changeset.ToAppVersionBranch,
-			AppVersionCommit:     changeset.ToAppVersionCommit,
-			AppVersionID:         toAppVersionID,
-			ChartVersionResolver: changeset.ToChartVersionResolver,
-			ChartVersionExact:    changeset.ToChartVersionExact,
-			ChartVersionID:       toChartVersionID,
-			HelmfileRef:          changeset.ToHelmfileRef,
-			FirecloudDevelopRef:  changeset.ToFirecloudDevelopRef,
+			ResolvedAt:                       changeset.ToResolvedAt,
+			AppVersionResolver:               changeset.ToAppVersionResolver,
+			AppVersionExact:                  changeset.ToAppVersionExact,
+			AppVersionBranch:                 changeset.ToAppVersionBranch,
+			AppVersionCommit:                 changeset.ToAppVersionCommit,
+			AppVersionFollowChartReleaseID:   toAppVersionFollowChartReleaseID,
+			AppVersionID:                     toAppVersionID,
+			ChartVersionResolver:             changeset.ToChartVersionResolver,
+			ChartVersionExact:                changeset.ToChartVersionExact,
+			ChartVersionFollowChartReleaseID: toChartVersionFollowChartReleaseID,
+			ChartVersionID:                   toChartVersionID,
+			HelmfileRef:                      changeset.ToHelmfileRef,
+			FirecloudDevelopRef:              changeset.ToFirecloudDevelopRef,
 		},
 		AppliedAt:    changeset.AppliedAt,
 		SupersededAt: changeset.SupersededAt,
@@ -275,11 +338,17 @@ func setChangesetDynamicDefaults(changeset *Changeset, stores *v2models.StoreSet
 	changeset.FromAppVersionExact = chartRelease.AppVersionExact
 	changeset.FromAppVersionBranch = chartRelease.AppVersionBranch
 	changeset.FromAppVersionCommit = chartRelease.AppVersionCommit
+	if chartRelease.AppVersionFollowChartReleaseID != nil {
+		changeset.FromAppVersionFollowChartRelease = strconv.FormatUint(uint64(*chartRelease.AppVersionFollowChartReleaseID), 10)
+	}
 	if chartRelease.AppVersionID != nil {
 		changeset.FromAppVersionReference = strconv.FormatUint(uint64(*chartRelease.AppVersionID), 10)
 	}
 	changeset.FromChartVersionResolver = chartRelease.ChartVersionResolver
 	changeset.FromChartVersionExact = chartRelease.ChartVersionExact
+	if chartRelease.ChartVersionFollowChartReleaseID != nil {
+		changeset.FromChartVersionFollowChartRelease = strconv.FormatUint(uint64(*chartRelease.ChartVersionFollowChartReleaseID), 10)
+	}
 	if chartRelease.ChartVersionID != nil {
 		changeset.FromChartVersionReference = strconv.FormatUint(uint64(*chartRelease.ChartVersionID), 10)
 	}
@@ -298,11 +367,17 @@ func setChangesetDynamicDefaults(changeset *Changeset, stores *v2models.StoreSet
 	if changeset.ToAppVersionCommit == nil {
 		changeset.ToAppVersionCommit = changeset.FromAppVersionCommit
 	}
+	if changeset.ToAppVersionFollowChartRelease == "" {
+		changeset.ToAppVersionFollowChartRelease = changeset.FromAppVersionFollowChartRelease
+	}
 	if changeset.ToChartVersionResolver == nil {
 		changeset.ToChartVersionResolver = changeset.FromChartVersionResolver
 	}
 	if changeset.ToChartVersionExact == nil {
 		changeset.ToChartVersionExact = changeset.FromChartVersionExact
+	}
+	if changeset.ToChartVersionFollowChartRelease == "" {
+		changeset.ToChartVersionFollowChartRelease = changeset.FromChartVersionFollowChartRelease
 	}
 	if changeset.ToHelmfileRef == nil {
 		changeset.ToHelmfileRef = changeset.FromHelmfileRef

@@ -14,17 +14,21 @@ import (
 type ChartReleaseVersion struct {
 	ResolvedAt *time.Time
 
-	AppVersionResolver *string
-	AppVersionExact    *string
-	AppVersionBranch   *string
-	AppVersionCommit   *string
-	AppVersion         *AppVersion
-	AppVersionID       *uint
+	AppVersionResolver             *string
+	AppVersionExact                *string
+	AppVersionBranch               *string
+	AppVersionCommit               *string
+	AppVersionFollowChartRelease   *ChartRelease
+	AppVersionFollowChartReleaseID *uint
+	AppVersion                     *AppVersion
+	AppVersionID                   *uint
 
-	ChartVersionResolver *string
-	ChartVersionExact    *string
-	ChartVersion         *ChartVersion
-	ChartVersionID       *uint
+	ChartVersionResolver             *string
+	ChartVersionExact                *string
+	ChartVersionFollowChartRelease   *ChartRelease
+	ChartVersionFollowChartReleaseID *uint
+	ChartVersion                     *ChartVersion
+	ChartVersionID                   *uint
 
 	HelmfileRef         *string
 	FirecloudDevelopRef *string
@@ -49,6 +53,8 @@ func (chartReleaseVersion *ChartReleaseVersion) resolve(db *gorm.DB, chartQuery 
 				chartReleaseVersion.AppVersionID = &appVersions[0].ID
 				chartReleaseVersion.AppVersionCommit = &appVersions[0].GitCommit
 				chartReleaseVersion.AppVersionExact = &appVersions[0].AppVersion
+				chartReleaseVersion.AppVersionFollowChartRelease = nil
+				chartReleaseVersion.AppVersionFollowChartReleaseID = nil
 			}
 		case "commit":
 			if chartReleaseVersion.AppVersionCommit != nil {
@@ -69,6 +75,8 @@ func (chartReleaseVersion *ChartReleaseVersion) resolve(db *gorm.DB, chartQuery 
 				chartReleaseVersion.AppVersionExact = &appVersions[0].AppVersion
 				// Since we might've matched against less than the full hash, copy that too
 				chartReleaseVersion.AppVersionCommit = &appVersions[0].GitCommit
+				chartReleaseVersion.AppVersionFollowChartRelease = nil
+				chartReleaseVersion.AppVersionFollowChartReleaseID = nil
 			}
 		case "exact":
 			if chartReleaseVersion.AppVersionExact != nil {
@@ -84,6 +92,24 @@ func (chartReleaseVersion *ChartReleaseVersion) resolve(db *gorm.DB, chartQuery 
 					chartReleaseVersion.AppVersionBranch = nil
 					chartReleaseVersion.AppVersionCommit = nil
 				}
+				chartReleaseVersion.AppVersionFollowChartRelease = nil
+				chartReleaseVersion.AppVersionFollowChartReleaseID = nil
+			}
+		case "follow":
+			if chartReleaseVersion.AppVersionFollowChartReleaseID != nil {
+				chartReleases, err := chartReleaseStore.listAllMatchingByCreated(db, 1, ChartRelease{ChartID: chart.ID, Model: gorm.Model{ID: *chartReleaseVersion.AppVersionFollowChartReleaseID}})
+				if err != nil {
+					return fmt.Errorf("(%s) failed to follow app version of chart release %d: %v", errors.InternalServerError, *chartReleaseVersion.AppVersionFollowChartReleaseID, err)
+				} else if len(chartReleases) == 0 {
+					return fmt.Errorf("(%s) failed to follow app version of chart release %d: not found", errors.NotFound, *chartReleaseVersion.AppVersionFollowChartReleaseID)
+				} else {
+					chartReleaseVersion.AppVersion = chartReleases[0].AppVersion
+					chartReleaseVersion.AppVersionID = chartReleases[0].AppVersionID
+					chartReleaseVersion.AppVersionBranch = chartReleases[0].AppVersionBranch
+					chartReleaseVersion.AppVersionCommit = chartReleases[0].AppVersionCommit
+					chartReleaseVersion.AppVersionExact = chartReleases[0].AppVersionExact
+					chartReleaseVersion.AppVersionFollowChartRelease = &chartReleases[0]
+				}
 			}
 		case "none":
 			chartReleaseVersion.AppVersion = nil
@@ -91,6 +117,8 @@ func (chartReleaseVersion *ChartReleaseVersion) resolve(db *gorm.DB, chartQuery 
 			chartReleaseVersion.AppVersionBranch = nil
 			chartReleaseVersion.AppVersionCommit = nil
 			chartReleaseVersion.AppVersionExact = nil
+			chartReleaseVersion.AppVersionFollowChartRelease = nil
+			chartReleaseVersion.AppVersionFollowChartReleaseID = nil
 		}
 	}
 	if chartReleaseVersion.ChartVersionResolver != nil {
@@ -105,6 +133,8 @@ func (chartReleaseVersion *ChartReleaseVersion) resolve(db *gorm.DB, chartQuery 
 			chartReleaseVersion.ChartVersion = &chartVersions[0]
 			chartReleaseVersion.ChartVersionID = &chartVersions[0].ID
 			chartReleaseVersion.ChartVersionExact = &chartVersions[0].ChartVersion
+			chartReleaseVersion.ChartVersionFollowChartRelease = nil
+			chartReleaseVersion.ChartVersionFollowChartReleaseID = nil
 		case "exact":
 			if chartReleaseVersion.ChartVersionExact != nil {
 				chartVersions, err := chartVersionStore.listAllMatchingByCreated(db, 1, ChartVersion{ChartID: chart.ID, ChartVersion: *chartReleaseVersion.ChartVersionExact})
@@ -114,6 +144,22 @@ func (chartReleaseVersion *ChartReleaseVersion) resolve(db *gorm.DB, chartQuery 
 				} else {
 					chartReleaseVersion.ChartVersion = nil
 					chartReleaseVersion.ChartVersionID = nil
+				}
+				chartReleaseVersion.ChartVersionFollowChartRelease = nil
+				chartReleaseVersion.ChartVersionFollowChartReleaseID = nil
+			}
+		case "follow":
+			if chartReleaseVersion.ChartVersionFollowChartReleaseID != nil {
+				chartReleases, err := chartReleaseStore.listAllMatchingByCreated(db, 1, ChartRelease{ChartID: chart.ID, Model: gorm.Model{ID: *chartReleaseVersion.ChartVersionFollowChartReleaseID}})
+				if err != nil {
+					return fmt.Errorf("(%s) failed to follow chart version of chart release %d: %v", errors.InternalServerError, *chartReleaseVersion.ChartVersionFollowChartReleaseID, err)
+				} else if len(chartReleases) == 0 {
+					return fmt.Errorf("(%s) failed to follow chart version of chart release %d: not found", errors.NotFound, *chartReleaseVersion.ChartVersionFollowChartReleaseID)
+				} else {
+					chartReleaseVersion.ChartVersion = chartReleases[0].ChartVersion
+					chartReleaseVersion.ChartVersionID = chartReleases[0].ChartVersionID
+					chartReleaseVersion.ChartVersionExact = chartReleases[0].ChartVersionExact
+					chartReleaseVersion.ChartVersionFollowChartRelease = &chartReleases[0]
 				}
 			}
 		}
@@ -162,6 +208,10 @@ func (chartReleaseVersion *ChartReleaseVersion) validate() error {
 				return fmt.Errorf("a %T must not have an associated internal AppVersion in conflict with the exact version on the %T, here '%s'",
 					chartReleaseVersion, chartReleaseVersion, *chartReleaseVersion.AppVersionExact)
 			}
+		case "follow":
+			if chartReleaseVersion.AppVersionFollowChartReleaseID == nil {
+				return fmt.Errorf("a %T with an AppVersionResolver of %s must have an AppVersionFollowChartReleaseID", chartReleaseVersion, *chartReleaseVersion.AppVersionResolver)
+			}
 		case "none":
 			if !(chartReleaseVersion.AppVersionBranch == nil || *chartReleaseVersion.AppVersionBranch == "") {
 				return fmt.Errorf("a %T with an AppVersionResolver of %s must not have an AppVersionBranch",
@@ -178,6 +228,9 @@ func (chartReleaseVersion *ChartReleaseVersion) validate() error {
 			if chartReleaseVersion.AppVersion != nil || chartReleaseVersion.AppVersionID != nil {
 				return fmt.Errorf("a %T with an AppVersionResolver of %s must not be associated to an internal AppVersion",
 					chartReleaseVersion, *chartReleaseVersion.AppVersionResolver)
+			}
+			if chartReleaseVersion.AppVersionFollowChartRelease != nil || chartReleaseVersion.AppVersionFollowChartReleaseID != nil {
+				return fmt.Errorf("a %T with an AppVersionResolver of %s must not be following with an AppVersionFollowChartReleaseID", chartReleaseVersion, *chartReleaseVersion.AppVersionResolver)
 			}
 		default:
 			return fmt.Errorf("a %T must have an AppVersionResolver of 'branch', 'commit', 'exact', or 'none'", chartReleaseVersion)
@@ -204,6 +257,10 @@ func (chartReleaseVersion *ChartReleaseVersion) validate() error {
 				return fmt.Errorf("a %T must not have an associated internal ChartVersion (ID: %d, %s) in conflict with the exact version on %T, here '%s'",
 					chartReleaseVersion, *chartReleaseVersion.ChartVersionID, chartReleaseVersion.ChartVersion.ChartVersion, chartReleaseVersion, *chartReleaseVersion.ChartVersionExact)
 			}
+		case "follow":
+			if chartReleaseVersion.ChartVersionFollowChartReleaseID == nil {
+				return fmt.Errorf("a %T with an ChartVersionResolver of %s must have an ChartVersionFollowChartReleaseID", chartReleaseVersion, *chartReleaseVersion.ChartVersionResolver)
+			}
 		default:
 			return fmt.Errorf("a %T must have a ChartVersionResolver of 'latest' or 'exact'", chartReleaseVersion)
 		}
@@ -220,14 +277,40 @@ func (chartReleaseVersion *ChartReleaseVersion) validate() error {
 }
 
 func (chartReleaseVersion *ChartReleaseVersion) equalTo(other ChartReleaseVersion) bool {
-	return ((chartReleaseVersion.AppVersionResolver == nil && other.AppVersionResolver == nil) || (*chartReleaseVersion.AppVersionResolver == *other.AppVersionResolver)) &&
-		((chartReleaseVersion.AppVersionExact == nil && other.AppVersionExact == nil) || (*chartReleaseVersion.AppVersionExact == *other.AppVersionExact)) &&
-		((chartReleaseVersion.AppVersionBranch == nil && other.AppVersionBranch == nil) || (*chartReleaseVersion.AppVersionBranch == *other.AppVersionBranch)) &&
-		((chartReleaseVersion.AppVersionCommit == nil && other.AppVersionCommit == nil) || (*chartReleaseVersion.AppVersionCommit == *other.AppVersionCommit)) &&
-		((chartReleaseVersion.AppVersionID == nil && other.AppVersionID == nil) || (*chartReleaseVersion.AppVersionID == *other.AppVersionID)) &&
-		((chartReleaseVersion.ChartVersionResolver == nil && other.ChartVersionResolver == nil) || (*chartReleaseVersion.ChartVersionResolver == *other.ChartVersionResolver)) &&
-		((chartReleaseVersion.ChartVersionExact == nil && other.ChartVersionExact == nil) || (*chartReleaseVersion.ChartVersionExact == *other.ChartVersionExact)) &&
-		((chartReleaseVersion.ChartVersionID == nil && other.ChartVersionID == nil) || (*chartReleaseVersion.ChartVersionID == *other.ChartVersionID)) &&
-		((chartReleaseVersion.HelmfileRef == nil && other.HelmfileRef == nil) || (*chartReleaseVersion.HelmfileRef == *other.HelmfileRef)) &&
-		((chartReleaseVersion.FirecloudDevelopRef == nil && other.FirecloudDevelopRef == nil) || (*chartReleaseVersion.FirecloudDevelopRef == *other.FirecloudDevelopRef))
+	return ((chartReleaseVersion.AppVersionResolver == nil && other.AppVersionResolver == nil) ||
+		(chartReleaseVersion.AppVersionResolver != nil && other.AppVersionResolver != nil &&
+			*chartReleaseVersion.AppVersionResolver == *other.AppVersionResolver)) &&
+		((chartReleaseVersion.AppVersionExact == nil && other.AppVersionExact == nil) ||
+			(chartReleaseVersion.AppVersionExact != nil && other.AppVersionExact != nil &&
+				*chartReleaseVersion.AppVersionExact == *other.AppVersionExact)) &&
+		((chartReleaseVersion.AppVersionBranch == nil && other.AppVersionBranch == nil) ||
+			(chartReleaseVersion.AppVersionBranch != nil && other.AppVersionBranch != nil &&
+				*chartReleaseVersion.AppVersionBranch == *other.AppVersionBranch)) &&
+		((chartReleaseVersion.AppVersionCommit == nil && other.AppVersionCommit == nil) ||
+			(chartReleaseVersion.AppVersionCommit != nil && other.AppVersionCommit != nil &&
+				*chartReleaseVersion.AppVersionCommit == *other.AppVersionCommit)) &&
+		((chartReleaseVersion.AppVersionFollowChartReleaseID == nil && other.AppVersionFollowChartReleaseID == nil) ||
+			(chartReleaseVersion.AppVersionFollowChartReleaseID != nil && other.AppVersionFollowChartReleaseID != nil &&
+				*chartReleaseVersion.AppVersionFollowChartReleaseID == *other.AppVersionFollowChartReleaseID)) &&
+		((chartReleaseVersion.AppVersionID == nil && other.AppVersionID == nil) ||
+			(chartReleaseVersion.AppVersionID != nil && other.AppVersionID != nil &&
+				*chartReleaseVersion.AppVersionID == *other.AppVersionID)) &&
+		((chartReleaseVersion.ChartVersionResolver == nil && other.ChartVersionResolver == nil) ||
+			(chartReleaseVersion.ChartVersionResolver != nil && other.ChartVersionResolver != nil &&
+				*chartReleaseVersion.ChartVersionResolver == *other.ChartVersionResolver)) &&
+		((chartReleaseVersion.ChartVersionExact == nil && other.ChartVersionExact == nil) ||
+			(chartReleaseVersion.ChartVersionExact != nil && other.ChartVersionExact != nil &&
+				*chartReleaseVersion.ChartVersionExact == *other.ChartVersionExact)) &&
+		((chartReleaseVersion.ChartVersionFollowChartReleaseID == nil && other.ChartVersionFollowChartReleaseID == nil) ||
+			(chartReleaseVersion.ChartVersionFollowChartReleaseID != nil && other.ChartVersionFollowChartReleaseID != nil &&
+				*chartReleaseVersion.ChartVersionFollowChartReleaseID == *other.ChartVersionFollowChartReleaseID)) &&
+		((chartReleaseVersion.ChartVersionID == nil && other.ChartVersionID == nil) ||
+			(chartReleaseVersion.ChartVersionID != nil && other.ChartVersionID != nil &&
+				*chartReleaseVersion.ChartVersionID == *other.ChartVersionID)) &&
+		((chartReleaseVersion.HelmfileRef == nil && other.HelmfileRef == nil) ||
+			(chartReleaseVersion.HelmfileRef != nil && other.HelmfileRef != nil &&
+				*chartReleaseVersion.HelmfileRef == *other.HelmfileRef)) &&
+		((chartReleaseVersion.FirecloudDevelopRef == nil && other.FirecloudDevelopRef == nil) ||
+			(chartReleaseVersion.FirecloudDevelopRef != nil && other.FirecloudDevelopRef != nil &&
+				*chartReleaseVersion.FirecloudDevelopRef == *other.FirecloudDevelopRef))
 }
