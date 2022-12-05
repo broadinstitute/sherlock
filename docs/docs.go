@@ -401,6 +401,11 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "fromAppVersionFollowChartRelease",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "name": "fromAppVersionReference",
                         "in": "query"
                     },
@@ -412,6 +417,11 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "name": "fromChartVersionExact",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "fromChartVersionFollowChartRelease",
                         "in": "query"
                     },
                     {
@@ -466,6 +476,11 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "toAppVersionFollowChartRelease",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "name": "toAppVersionReference",
                         "in": "query"
                     },
@@ -477,6 +492,11 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "name": "toChartVersionExact",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "toChartVersionFollowChartRelease",
                         "in": "query"
                     },
                     {
@@ -733,6 +753,11 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "appVersionFollowChartRelease",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "name": "appVersionReference",
                         "in": "query"
                     },
@@ -741,6 +766,7 @@ const docTemplate = `{
                             "branch",
                             "commit",
                             "exact",
+                            "follow",
                             "none"
                         ],
                         "type": "string",
@@ -761,13 +787,19 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "chartVersionFollowChartRelease",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "name": "chartVersionReference",
                         "in": "query"
                     },
                     {
                         "enum": [
                             "latest",
-                            "exact"
+                            "exact",
+                            "follow"
                         ],
                         "type": "string",
                         "description": "When creating, will default to automatically reference any provided chart version",
@@ -3752,8 +3784,8 @@ const docTemplate = `{
                 "fromAppVersionExact": {
                     "type": "string"
                 },
-                "fromAppVersionInfo": {
-                    "$ref": "#/definitions/v2controllers.AppVersion"
+                "fromAppVersionFollowChartRelease": {
+                    "type": "string"
                 },
                 "fromAppVersionReference": {
                     "type": "string"
@@ -3764,8 +3796,8 @@ const docTemplate = `{
                 "fromChartVersionExact": {
                     "type": "string"
                 },
-                "fromChartVersionInfo": {
-                    "$ref": "#/definitions/v2controllers.ChartVersion"
+                "fromChartVersionFollowChartRelease": {
+                    "type": "string"
                 },
                 "fromChartVersionReference": {
                     "type": "string"
@@ -3809,8 +3841,8 @@ const docTemplate = `{
                 "toAppVersionExact": {
                     "type": "string"
                 },
-                "toAppVersionInfo": {
-                    "$ref": "#/definitions/v2controllers.AppVersion"
+                "toAppVersionFollowChartRelease": {
+                    "type": "string"
                 },
                 "toAppVersionReference": {
                     "type": "string"
@@ -3821,8 +3853,8 @@ const docTemplate = `{
                 "toChartVersionExact": {
                     "type": "string"
                 },
-                "toChartVersionInfo": {
-                    "$ref": "#/definitions/v2controllers.ChartVersion"
+                "toChartVersionFollowChartRelease": {
+                    "type": "string"
                 },
                 "toChartVersionReference": {
                     "type": "string"
@@ -3876,10 +3908,16 @@ const docTemplate = `{
                 "toAppVersionExact": {
                     "type": "string"
                 },
+                "toAppVersionFollowChartRelease": {
+                    "type": "string"
+                },
                 "toAppVersionResolver": {
                     "type": "string"
                 },
                 "toChartVersionExact": {
+                    "type": "string"
+                },
+                "toChartVersionFollowChartRelease": {
                     "type": "string"
                 },
                 "toChartVersionResolver": {
@@ -3907,6 +3945,9 @@ const docTemplate = `{
                     "items": {
                         "type": "string"
                     }
+                },
+                "followVersionsFromOtherEnvironment": {
+                    "type": "string"
                 },
                 "includeCharts": {
                     "description": "If omitted, will include all charts",
@@ -3983,6 +4024,9 @@ const docTemplate = `{
                 "appVersionExact": {
                     "type": "string"
                 },
+                "appVersionFollowChartRelease": {
+                    "type": "string"
+                },
                 "appVersionInfo": {
                     "$ref": "#/definitions/v2controllers.AppVersion"
                 },
@@ -3996,6 +4040,7 @@ const docTemplate = `{
                         "branch",
                         "commit",
                         "exact",
+                        "follow",
                         "none"
                     ]
                 },
@@ -4009,6 +4054,9 @@ const docTemplate = `{
                 "chartVersionExact": {
                     "type": "string"
                 },
+                "chartVersionFollowChartRelease": {
+                    "type": "string"
+                },
                 "chartVersionInfo": {
                     "$ref": "#/definitions/v2controllers.ChartVersion"
                 },
@@ -4020,7 +4068,8 @@ const docTemplate = `{
                     "type": "string",
                     "enum": [
                         "latest",
-                        "exact"
+                        "exact",
+                        "follow"
                     ]
                 },
                 "cluster": {
@@ -4210,10 +4259,16 @@ const docTemplate = `{
                 "toAppVersionExact": {
                     "type": "string"
                 },
+                "toAppVersionFollowChartRelease": {
+                    "type": "string"
+                },
                 "toAppVersionResolver": {
                     "type": "string"
                 },
                 "toChartVersionExact": {
+                    "type": "string"
+                },
+                "toChartVersionFollowChartRelease": {
                     "type": "string"
                 },
                 "toChartVersionResolver": {
@@ -4281,6 +4336,9 @@ const docTemplate = `{
                 "appVersionExact": {
                     "type": "string"
                 },
+                "appVersionFollowChartRelease": {
+                    "type": "string"
+                },
                 "appVersionResolver": {
                     "description": "// When creating, will default to automatically reference any provided app version fields",
                     "type": "string",
@@ -4288,6 +4346,7 @@ const docTemplate = `{
                         "branch",
                         "commit",
                         "exact",
+                        "follow",
                         "none"
                     ]
                 },
@@ -4298,12 +4357,16 @@ const docTemplate = `{
                 "chartVersionExact": {
                     "type": "string"
                 },
+                "chartVersionFollowChartRelease": {
+                    "type": "string"
+                },
                 "chartVersionResolver": {
                     "description": "When creating, will default to automatically reference any provided chart version",
                     "type": "string",
                     "enum": [
                         "latest",
-                        "exact"
+                        "exact",
+                        "follow"
                     ]
                 },
                 "cluster": {

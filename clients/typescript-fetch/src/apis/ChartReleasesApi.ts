@@ -35,10 +35,12 @@ export interface ApiV2ChartReleasesGetRequest {
     appVersionBranch?: string;
     appVersionCommit?: string;
     appVersionExact?: string;
+    appVersionFollowChartRelease?: string;
     appVersionReference?: string;
     appVersionResolver?: ApiV2ChartReleasesGetAppVersionResolverEnum;
     chart?: string;
     chartVersionExact?: string;
+    chartVersionFollowChartRelease?: string;
     chartVersionReference?: string;
     chartVersionResolver?: ApiV2ChartReleasesGetChartVersionResolverEnum;
     cluster?: string;
@@ -102,6 +104,10 @@ export class ChartReleasesApi extends runtime.BaseAPI {
             queryParameters['appVersionExact'] = requestParameters.appVersionExact;
         }
 
+        if (requestParameters.appVersionFollowChartRelease !== undefined) {
+            queryParameters['appVersionFollowChartRelease'] = requestParameters.appVersionFollowChartRelease;
+        }
+
         if (requestParameters.appVersionReference !== undefined) {
             queryParameters['appVersionReference'] = requestParameters.appVersionReference;
         }
@@ -116,6 +122,10 @@ export class ChartReleasesApi extends runtime.BaseAPI {
 
         if (requestParameters.chartVersionExact !== undefined) {
             queryParameters['chartVersionExact'] = requestParameters.chartVersionExact;
+        }
+
+        if (requestParameters.chartVersionFollowChartRelease !== undefined) {
+            queryParameters['chartVersionFollowChartRelease'] = requestParameters.chartVersionFollowChartRelease;
         }
 
         if (requestParameters.chartVersionReference !== undefined) {
@@ -382,6 +392,7 @@ export const ApiV2ChartReleasesGetAppVersionResolverEnum = {
     Branch: 'branch',
     Commit: 'commit',
     Exact: 'exact',
+    Follow: 'follow',
     None: 'none'
 } as const;
 export type ApiV2ChartReleasesGetAppVersionResolverEnum = typeof ApiV2ChartReleasesGetAppVersionResolverEnum[keyof typeof ApiV2ChartReleasesGetAppVersionResolverEnum];
@@ -390,6 +401,7 @@ export type ApiV2ChartReleasesGetAppVersionResolverEnum = typeof ApiV2ChartRelea
  */
 export const ApiV2ChartReleasesGetChartVersionResolverEnum = {
     Latest: 'latest',
-    Exact: 'exact'
+    Exact: 'exact',
+    Follow: 'follow'
 } as const;
 export type ApiV2ChartReleasesGetChartVersionResolverEnum = typeof ApiV2ChartReleasesGetChartVersionResolverEnum[keyof typeof ApiV2ChartReleasesGetChartVersionResolverEnum];

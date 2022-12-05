@@ -117,16 +117,16 @@ definitions:
         type: string
       fromAppVersionExact:
         type: string
-      fromAppVersionInfo:
-        $ref: '#/definitions/v2controllers.AppVersion'
+      fromAppVersionFollowChartRelease:
+        type: string
       fromAppVersionReference:
         type: string
       fromAppVersionResolver:
         type: string
       fromChartVersionExact:
         type: string
-      fromChartVersionInfo:
-        $ref: '#/definitions/v2controllers.ChartVersion'
+      fromChartVersionFollowChartRelease:
+        type: string
       fromChartVersionReference:
         type: string
       fromChartVersionResolver:
@@ -155,16 +155,16 @@ definitions:
         type: string
       toAppVersionExact:
         type: string
-      toAppVersionInfo:
-        $ref: '#/definitions/v2controllers.AppVersion'
+      toAppVersionFollowChartRelease:
+        type: string
       toAppVersionReference:
         type: string
       toAppVersionResolver:
         type: string
       toChartVersionExact:
         type: string
-      toChartVersionInfo:
-        $ref: '#/definitions/v2controllers.ChartVersion'
+      toChartVersionFollowChartRelease:
+        type: string
       toChartVersionReference:
         type: string
       toChartVersionResolver:
@@ -199,9 +199,13 @@ definitions:
         type: string
       toAppVersionExact:
         type: string
+      toAppVersionFollowChartRelease:
+        type: string
       toAppVersionResolver:
         type: string
       toChartVersionExact:
+        type: string
+      toChartVersionFollowChartRelease:
         type: string
       toChartVersionResolver:
         type: string
@@ -220,6 +224,8 @@ definitions:
         items:
           type: string
         type: array
+      followVersionsFromOtherEnvironment:
+        type: string
       includeCharts:
         description: If omitted, will include all charts
         items:
@@ -275,6 +281,8 @@ definitions:
         type: string
       appVersionExact:
         type: string
+      appVersionFollowChartRelease:
+        type: string
       appVersionInfo:
         $ref: '#/definitions/v2controllers.AppVersion'
       appVersionReference:
@@ -286,6 +294,7 @@ definitions:
         - branch
         - commit
         - exact
+        - follow
         - none
         type: string
       chart:
@@ -294,6 +303,8 @@ definitions:
       chartInfo:
         $ref: '#/definitions/v2controllers.Chart'
       chartVersionExact:
+        type: string
+      chartVersionFollowChartRelease:
         type: string
       chartVersionInfo:
         $ref: '#/definitions/v2controllers.ChartVersion'
@@ -305,6 +316,7 @@ definitions:
         enum:
         - latest
         - exact
+        - follow
         type: string
       cluster:
         description: When creating, will default the environment's default cluster,
@@ -441,9 +453,13 @@ definitions:
         type: string
       toAppVersionExact:
         type: string
+      toAppVersionFollowChartRelease:
+        type: string
       toAppVersionResolver:
         type: string
       toChartVersionExact:
+        type: string
+      toChartVersionFollowChartRelease:
         type: string
       toChartVersionResolver:
         type: string
@@ -493,6 +509,8 @@ definitions:
         type: string
       appVersionExact:
         type: string
+      appVersionFollowChartRelease:
+        type: string
       appVersionResolver:
         description: // When creating, will default to automatically reference any
           provided app version fields
@@ -500,6 +518,7 @@ definitions:
         - branch
         - commit
         - exact
+        - follow
         - none
         type: string
       chart:
@@ -507,12 +526,15 @@ definitions:
         type: string
       chartVersionExact:
         type: string
+      chartVersionFollowChartRelease:
+        type: string
       chartVersionResolver:
         description: When creating, will default to automatically reference any provided
           chart version
         enum:
         - latest
         - exact
+        - follow
         type: string
       cluster:
         description: When creating, will default the environment's default cluster,
@@ -1061,6 +1083,9 @@ paths:
         name: fromAppVersionExact
         type: string
       - in: query
+        name: fromAppVersionFollowChartRelease
+        type: string
+      - in: query
         name: fromAppVersionReference
         type: string
       - in: query
@@ -1068,6 +1093,9 @@ paths:
         type: string
       - in: query
         name: fromChartVersionExact
+        type: string
+      - in: query
+        name: fromChartVersionFollowChartRelease
         type: string
       - in: query
         name: fromChartVersionReference
@@ -1100,6 +1128,9 @@ paths:
         name: toAppVersionExact
         type: string
       - in: query
+        name: toAppVersionFollowChartRelease
+        type: string
+      - in: query
         name: toAppVersionReference
         type: string
       - in: query
@@ -1107,6 +1138,9 @@ paths:
         type: string
       - in: query
         name: toChartVersionExact
+        type: string
+      - in: query
+        name: toChartVersionFollowChartRelease
         type: string
       - in: query
         name: toChartVersionReference
@@ -1277,6 +1311,9 @@ paths:
         name: appVersionExact
         type: string
       - in: query
+        name: appVersionFollowChartRelease
+        type: string
+      - in: query
         name: appVersionReference
         type: string
       - description: // When creating, will default to automatically reference any
@@ -1285,6 +1322,7 @@ paths:
         - branch
         - commit
         - exact
+        - follow
         - none
         in: query
         name: appVersionResolver
@@ -1297,6 +1335,9 @@ paths:
         name: chartVersionExact
         type: string
       - in: query
+        name: chartVersionFollowChartRelease
+        type: string
+      - in: query
         name: chartVersionReference
         type: string
       - description: When creating, will default to automatically reference any provided
@@ -1304,6 +1345,7 @@ paths:
         enum:
         - latest
         - exact
+        - follow
         in: query
         name: chartVersionResolver
         type: string

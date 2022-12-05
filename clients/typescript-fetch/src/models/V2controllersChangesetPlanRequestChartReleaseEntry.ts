@@ -48,6 +48,12 @@ export interface V2controllersChangesetPlanRequestChartReleaseEntry {
      * @type {string}
      * @memberof V2controllersChangesetPlanRequestChartReleaseEntry
      */
+    toAppVersionFollowChartRelease?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof V2controllersChangesetPlanRequestChartReleaseEntry
+     */
     toAppVersionResolver?: string;
     /**
      * 
@@ -55,6 +61,12 @@ export interface V2controllersChangesetPlanRequestChartReleaseEntry {
      * @memberof V2controllersChangesetPlanRequestChartReleaseEntry
      */
     toChartVersionExact?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof V2controllersChangesetPlanRequestChartReleaseEntry
+     */
+    toChartVersionFollowChartRelease?: string;
     /**
      * 
      * @type {string}
@@ -104,8 +116,10 @@ export function V2controllersChangesetPlanRequestChartReleaseEntryFromJSONTyped(
         'toAppVersionBranch': !exists(json, 'toAppVersionBranch') ? undefined : json['toAppVersionBranch'],
         'toAppVersionCommit': !exists(json, 'toAppVersionCommit') ? undefined : json['toAppVersionCommit'],
         'toAppVersionExact': !exists(json, 'toAppVersionExact') ? undefined : json['toAppVersionExact'],
+        'toAppVersionFollowChartRelease': !exists(json, 'toAppVersionFollowChartRelease') ? undefined : json['toAppVersionFollowChartRelease'],
         'toAppVersionResolver': !exists(json, 'toAppVersionResolver') ? undefined : json['toAppVersionResolver'],
         'toChartVersionExact': !exists(json, 'toChartVersionExact') ? undefined : json['toChartVersionExact'],
+        'toChartVersionFollowChartRelease': !exists(json, 'toChartVersionFollowChartRelease') ? undefined : json['toChartVersionFollowChartRelease'],
         'toChartVersionResolver': !exists(json, 'toChartVersionResolver') ? undefined : json['toChartVersionResolver'],
         'toFirecloudDevelopRef': !exists(json, 'toFirecloudDevelopRef') ? undefined : json['toFirecloudDevelopRef'],
         'toHelmfileRef': !exists(json, 'toHelmfileRef') ? undefined : json['toHelmfileRef'],
@@ -126,8 +140,10 @@ export function V2controllersChangesetPlanRequestChartReleaseEntryToJSON(value?:
         'toAppVersionBranch': value.toAppVersionBranch,
         'toAppVersionCommit': value.toAppVersionCommit,
         'toAppVersionExact': value.toAppVersionExact,
+        'toAppVersionFollowChartRelease': value.toAppVersionFollowChartRelease,
         'toAppVersionResolver': value.toAppVersionResolver,
         'toChartVersionExact': value.toChartVersionExact,
+        'toChartVersionFollowChartRelease': value.toChartVersionFollowChartRelease,
         'toChartVersionResolver': value.toChartVersionResolver,
         'toFirecloudDevelopRef': value.toFirecloudDevelopRef,
         'toHelmfileRef': value.toHelmfileRef,

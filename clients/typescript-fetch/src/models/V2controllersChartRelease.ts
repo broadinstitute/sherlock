@@ -70,6 +70,12 @@ export interface V2controllersChartRelease {
     appVersionExact?: string;
     /**
      * 
+     * @type {string}
+     * @memberof V2controllersChartRelease
+     */
+    appVersionFollowChartRelease?: string;
+    /**
+     * 
      * @type {V2controllersAppVersion}
      * @memberof V2controllersChartRelease
      */
@@ -104,6 +110,12 @@ export interface V2controllersChartRelease {
      * @memberof V2controllersChartRelease
      */
     chartVersionExact?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof V2controllersChartRelease
+     */
+    chartVersionFollowChartRelease?: string;
     /**
      * 
      * @type {V2controllersChartVersion}
@@ -222,6 +234,7 @@ export const V2controllersChartReleaseAppVersionResolverEnum = {
     Branch: 'branch',
     Commit: 'commit',
     Exact: 'exact',
+    Follow: 'follow',
     None: 'none'
 } as const;
 export type V2controllersChartReleaseAppVersionResolverEnum = typeof V2controllersChartReleaseAppVersionResolverEnum[keyof typeof V2controllersChartReleaseAppVersionResolverEnum];
@@ -231,7 +244,8 @@ export type V2controllersChartReleaseAppVersionResolverEnum = typeof V2controlle
  */
 export const V2controllersChartReleaseChartVersionResolverEnum = {
     Latest: 'latest',
-    Exact: 'exact'
+    Exact: 'exact',
+    Follow: 'follow'
 } as const;
 export type V2controllersChartReleaseChartVersionResolverEnum = typeof V2controllersChartReleaseChartVersionResolverEnum[keyof typeof V2controllersChartReleaseChartVersionResolverEnum];
 
@@ -258,12 +272,14 @@ export function V2controllersChartReleaseFromJSONTyped(json: any, ignoreDiscrimi
         'appVersionBranch': !exists(json, 'appVersionBranch') ? undefined : json['appVersionBranch'],
         'appVersionCommit': !exists(json, 'appVersionCommit') ? undefined : json['appVersionCommit'],
         'appVersionExact': !exists(json, 'appVersionExact') ? undefined : json['appVersionExact'],
+        'appVersionFollowChartRelease': !exists(json, 'appVersionFollowChartRelease') ? undefined : json['appVersionFollowChartRelease'],
         'appVersionInfo': !exists(json, 'appVersionInfo') ? undefined : V2controllersAppVersionFromJSON(json['appVersionInfo']),
         'appVersionReference': !exists(json, 'appVersionReference') ? undefined : json['appVersionReference'],
         'appVersionResolver': !exists(json, 'appVersionResolver') ? undefined : json['appVersionResolver'],
         'chart': !exists(json, 'chart') ? undefined : json['chart'],
         'chartInfo': !exists(json, 'chartInfo') ? undefined : V2controllersChartFromJSON(json['chartInfo']),
         'chartVersionExact': !exists(json, 'chartVersionExact') ? undefined : json['chartVersionExact'],
+        'chartVersionFollowChartRelease': !exists(json, 'chartVersionFollowChartRelease') ? undefined : json['chartVersionFollowChartRelease'],
         'chartVersionInfo': !exists(json, 'chartVersionInfo') ? undefined : V2controllersChartVersionFromJSON(json['chartVersionInfo']),
         'chartVersionReference': !exists(json, 'chartVersionReference') ? undefined : json['chartVersionReference'],
         'chartVersionResolver': !exists(json, 'chartVersionResolver') ? undefined : json['chartVersionResolver'],
@@ -297,12 +313,14 @@ export function V2controllersChartReleaseToJSON(value?: V2controllersChartReleas
         'appVersionBranch': value.appVersionBranch,
         'appVersionCommit': value.appVersionCommit,
         'appVersionExact': value.appVersionExact,
+        'appVersionFollowChartRelease': value.appVersionFollowChartRelease,
         'appVersionInfo': V2controllersAppVersionToJSON(value.appVersionInfo),
         'appVersionReference': value.appVersionReference,
         'appVersionResolver': value.appVersionResolver,
         'chart': value.chart,
         'chartInfo': V2controllersChartToJSON(value.chartInfo),
         'chartVersionExact': value.chartVersionExact,
+        'chartVersionFollowChartRelease': value.chartVersionFollowChartRelease,
         'chartVersionInfo': V2controllersChartVersionToJSON(value.chartVersionInfo),
         'chartVersionReference': value.chartVersionReference,
         'chartVersionResolver': value.chartVersionResolver,

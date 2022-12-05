@@ -29,11 +29,17 @@ type V2controllersCreatableChangeset struct {
 	// to app version exact
 	ToAppVersionExact string `json:"toAppVersionExact,omitempty"`
 
+	// to app version follow chart release
+	ToAppVersionFollowChartRelease string `json:"toAppVersionFollowChartRelease,omitempty"`
+
 	// to app version resolver
 	ToAppVersionResolver string `json:"toAppVersionResolver,omitempty"`
 
 	// to chart version exact
 	ToChartVersionExact string `json:"toChartVersionExact,omitempty"`
+
+	// to chart version follow chart release
+	ToChartVersionFollowChartRelease string `json:"toChartVersionFollowChartRelease,omitempty"`
 
 	// to chart version resolver
 	ToChartVersionResolver string `json:"toChartVersionResolver,omitempty"`

@@ -29,6 +29,9 @@ type V2controllersChartRelease struct {
 	// app version exact
 	AppVersionExact string `json:"appVersionExact,omitempty"`
 
+	// app version follow chart release
+	AppVersionFollowChartRelease string `json:"appVersionFollowChartRelease,omitempty"`
+
 	// app version info
 	AppVersionInfo *V2controllersAppVersion `json:"appVersionInfo,omitempty"`
 
@@ -36,7 +39,7 @@ type V2controllersChartRelease struct {
 	AppVersionReference string `json:"appVersionReference,omitempty"`
 
 	// // When creating, will default to automatically reference any provided app version fields
-	// Enum: [branch commit exact none]
+	// Enum: [branch commit exact follow none]
 	AppVersionResolver string `json:"appVersionResolver,omitempty"`
 
 	// Required when creating
@@ -48,6 +51,9 @@ type V2controllersChartRelease struct {
 	// chart version exact
 	ChartVersionExact string `json:"chartVersionExact,omitempty"`
 
+	// chart version follow chart release
+	ChartVersionFollowChartRelease string `json:"chartVersionFollowChartRelease,omitempty"`
+
 	// chart version info
 	ChartVersionInfo *V2controllersChartVersion `json:"chartVersionInfo,omitempty"`
 
@@ -55,7 +61,7 @@ type V2controllersChartRelease struct {
 	ChartVersionReference string `json:"chartVersionReference,omitempty"`
 
 	// When creating, will default to automatically reference any provided chart version
-	// Enum: [latest exact]
+	// Enum: [latest exact follow]
 	ChartVersionResolver string `json:"chartVersionResolver,omitempty"`
 
 	// When creating, will default the environment's default cluster, if provided. Either this or environment must be provided.
@@ -165,7 +171,7 @@ var v2controllersChartReleaseTypeAppVersionResolverPropEnum []interface{}
 
 func init() {
 	var res []string
-	if err := json.Unmarshal([]byte(`["branch","commit","exact","none"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["branch","commit","exact","follow","none"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -183,6 +189,9 @@ const (
 
 	// V2controllersChartReleaseAppVersionResolverExact captures enum value "exact"
 	V2controllersChartReleaseAppVersionResolverExact string = "exact"
+
+	// V2controllersChartReleaseAppVersionResolverFollow captures enum value "follow"
+	V2controllersChartReleaseAppVersionResolverFollow string = "follow"
 
 	// V2controllersChartReleaseAppVersionResolverNone captures enum value "none"
 	V2controllersChartReleaseAppVersionResolverNone string = "none"
@@ -251,7 +260,7 @@ var v2controllersChartReleaseTypeChartVersionResolverPropEnum []interface{}
 
 func init() {
 	var res []string
-	if err := json.Unmarshal([]byte(`["latest","exact"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["latest","exact","follow"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -266,6 +275,9 @@ const (
 
 	// V2controllersChartReleaseChartVersionResolverExact captures enum value "exact"
 	V2controllersChartReleaseChartVersionResolverExact string = "exact"
+
+	// V2controllersChartReleaseChartVersionResolverFollow captures enum value "follow"
+	V2controllersChartReleaseChartVersionResolverFollow string = "follow"
 )
 
 // prop value enum

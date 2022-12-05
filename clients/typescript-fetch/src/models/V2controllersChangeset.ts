@@ -82,10 +82,10 @@ export interface V2controllersChangeset {
     fromAppVersionExact?: string;
     /**
      * 
-     * @type {V2controllersAppVersion}
+     * @type {string}
      * @memberof V2controllersChangeset
      */
-    fromAppVersionInfo?: V2controllersAppVersion;
+    fromAppVersionFollowChartRelease?: string;
     /**
      * 
      * @type {string}
@@ -106,10 +106,10 @@ export interface V2controllersChangeset {
     fromChartVersionExact?: string;
     /**
      * 
-     * @type {V2controllersChartVersion}
+     * @type {string}
      * @memberof V2controllersChangeset
      */
-    fromChartVersionInfo?: V2controllersChartVersion;
+    fromChartVersionFollowChartRelease?: string;
     /**
      * 
      * @type {string}
@@ -184,10 +184,10 @@ export interface V2controllersChangeset {
     toAppVersionExact?: string;
     /**
      * 
-     * @type {V2controllersAppVersion}
+     * @type {string}
      * @memberof V2controllersChangeset
      */
-    toAppVersionInfo?: V2controllersAppVersion;
+    toAppVersionFollowChartRelease?: string;
     /**
      * 
      * @type {string}
@@ -208,10 +208,10 @@ export interface V2controllersChangeset {
     toChartVersionExact?: string;
     /**
      * 
-     * @type {V2controllersChartVersion}
+     * @type {string}
      * @memberof V2controllersChangeset
      */
-    toChartVersionInfo?: V2controllersChartVersion;
+    toChartVersionFollowChartRelease?: string;
     /**
      * 
      * @type {string}
@@ -276,11 +276,11 @@ export function V2controllersChangesetFromJSONTyped(json: any, ignoreDiscriminat
         'fromAppVersionBranch': !exists(json, 'fromAppVersionBranch') ? undefined : json['fromAppVersionBranch'],
         'fromAppVersionCommit': !exists(json, 'fromAppVersionCommit') ? undefined : json['fromAppVersionCommit'],
         'fromAppVersionExact': !exists(json, 'fromAppVersionExact') ? undefined : json['fromAppVersionExact'],
-        'fromAppVersionInfo': !exists(json, 'fromAppVersionInfo') ? undefined : V2controllersAppVersionFromJSON(json['fromAppVersionInfo']),
+        'fromAppVersionFollowChartRelease': !exists(json, 'fromAppVersionFollowChartRelease') ? undefined : json['fromAppVersionFollowChartRelease'],
         'fromAppVersionReference': !exists(json, 'fromAppVersionReference') ? undefined : json['fromAppVersionReference'],
         'fromAppVersionResolver': !exists(json, 'fromAppVersionResolver') ? undefined : json['fromAppVersionResolver'],
         'fromChartVersionExact': !exists(json, 'fromChartVersionExact') ? undefined : json['fromChartVersionExact'],
-        'fromChartVersionInfo': !exists(json, 'fromChartVersionInfo') ? undefined : V2controllersChartVersionFromJSON(json['fromChartVersionInfo']),
+        'fromChartVersionFollowChartRelease': !exists(json, 'fromChartVersionFollowChartRelease') ? undefined : json['fromChartVersionFollowChartRelease'],
         'fromChartVersionReference': !exists(json, 'fromChartVersionReference') ? undefined : json['fromChartVersionReference'],
         'fromChartVersionResolver': !exists(json, 'fromChartVersionResolver') ? undefined : json['fromChartVersionResolver'],
         'fromFirecloudDevelopRef': !exists(json, 'fromFirecloudDevelopRef') ? undefined : json['fromFirecloudDevelopRef'],
@@ -293,11 +293,11 @@ export function V2controllersChangesetFromJSONTyped(json: any, ignoreDiscriminat
         'toAppVersionBranch': !exists(json, 'toAppVersionBranch') ? undefined : json['toAppVersionBranch'],
         'toAppVersionCommit': !exists(json, 'toAppVersionCommit') ? undefined : json['toAppVersionCommit'],
         'toAppVersionExact': !exists(json, 'toAppVersionExact') ? undefined : json['toAppVersionExact'],
-        'toAppVersionInfo': !exists(json, 'toAppVersionInfo') ? undefined : V2controllersAppVersionFromJSON(json['toAppVersionInfo']),
+        'toAppVersionFollowChartRelease': !exists(json, 'toAppVersionFollowChartRelease') ? undefined : json['toAppVersionFollowChartRelease'],
         'toAppVersionReference': !exists(json, 'toAppVersionReference') ? undefined : json['toAppVersionReference'],
         'toAppVersionResolver': !exists(json, 'toAppVersionResolver') ? undefined : json['toAppVersionResolver'],
         'toChartVersionExact': !exists(json, 'toChartVersionExact') ? undefined : json['toChartVersionExact'],
-        'toChartVersionInfo': !exists(json, 'toChartVersionInfo') ? undefined : V2controllersChartVersionFromJSON(json['toChartVersionInfo']),
+        'toChartVersionFollowChartRelease': !exists(json, 'toChartVersionFollowChartRelease') ? undefined : json['toChartVersionFollowChartRelease'],
         'toChartVersionReference': !exists(json, 'toChartVersionReference') ? undefined : json['toChartVersionReference'],
         'toChartVersionResolver': !exists(json, 'toChartVersionResolver') ? undefined : json['toChartVersionResolver'],
         'toFirecloudDevelopRef': !exists(json, 'toFirecloudDevelopRef') ? undefined : json['toFirecloudDevelopRef'],
@@ -323,11 +323,11 @@ export function V2controllersChangesetToJSON(value?: V2controllersChangeset | nu
         'fromAppVersionBranch': value.fromAppVersionBranch,
         'fromAppVersionCommit': value.fromAppVersionCommit,
         'fromAppVersionExact': value.fromAppVersionExact,
-        'fromAppVersionInfo': V2controllersAppVersionToJSON(value.fromAppVersionInfo),
+        'fromAppVersionFollowChartRelease': value.fromAppVersionFollowChartRelease,
         'fromAppVersionReference': value.fromAppVersionReference,
         'fromAppVersionResolver': value.fromAppVersionResolver,
         'fromChartVersionExact': value.fromChartVersionExact,
-        'fromChartVersionInfo': V2controllersChartVersionToJSON(value.fromChartVersionInfo),
+        'fromChartVersionFollowChartRelease': value.fromChartVersionFollowChartRelease,
         'fromChartVersionReference': value.fromChartVersionReference,
         'fromChartVersionResolver': value.fromChartVersionResolver,
         'fromFirecloudDevelopRef': value.fromFirecloudDevelopRef,
@@ -340,11 +340,11 @@ export function V2controllersChangesetToJSON(value?: V2controllersChangeset | nu
         'toAppVersionBranch': value.toAppVersionBranch,
         'toAppVersionCommit': value.toAppVersionCommit,
         'toAppVersionExact': value.toAppVersionExact,
-        'toAppVersionInfo': V2controllersAppVersionToJSON(value.toAppVersionInfo),
+        'toAppVersionFollowChartRelease': value.toAppVersionFollowChartRelease,
         'toAppVersionReference': value.toAppVersionReference,
         'toAppVersionResolver': value.toAppVersionResolver,
         'toChartVersionExact': value.toChartVersionExact,
-        'toChartVersionInfo': V2controllersChartVersionToJSON(value.toChartVersionInfo),
+        'toChartVersionFollowChartRelease': value.toChartVersionFollowChartRelease,
         'toChartVersionReference': value.toChartVersionReference,
         'toChartVersionResolver': value.toChartVersionResolver,
         'toFirecloudDevelopRef': value.toFirecloudDevelopRef,

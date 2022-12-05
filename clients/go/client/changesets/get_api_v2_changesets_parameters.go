@@ -78,6 +78,9 @@ type GetAPIV2ChangesetsParams struct {
 	// FromAppVersionExact.
 	FromAppVersionExact *string
 
+	// FromAppVersionFollowChartRelease.
+	FromAppVersionFollowChartRelease *string
+
 	// FromAppVersionReference.
 	FromAppVersionReference *string
 
@@ -86,6 +89,9 @@ type GetAPIV2ChangesetsParams struct {
 
 	// FromChartVersionExact.
 	FromChartVersionExact *string
+
+	// FromChartVersionFollowChartRelease.
+	FromChartVersionFollowChartRelease *string
 
 	// FromChartVersionReference.
 	FromChartVersionReference *string
@@ -123,6 +129,9 @@ type GetAPIV2ChangesetsParams struct {
 	// ToAppVersionExact.
 	ToAppVersionExact *string
 
+	// ToAppVersionFollowChartRelease.
+	ToAppVersionFollowChartRelease *string
+
 	// ToAppVersionReference.
 	ToAppVersionReference *string
 
@@ -131,6 +140,9 @@ type GetAPIV2ChangesetsParams struct {
 
 	// ToChartVersionExact.
 	ToChartVersionExact *string
+
+	// ToChartVersionFollowChartRelease.
+	ToChartVersionFollowChartRelease *string
 
 	// ToChartVersionReference.
 	ToChartVersionReference *string
@@ -269,6 +281,17 @@ func (o *GetAPIV2ChangesetsParams) SetFromAppVersionExact(fromAppVersionExact *s
 	o.FromAppVersionExact = fromAppVersionExact
 }
 
+// WithFromAppVersionFollowChartRelease adds the fromAppVersionFollowChartRelease to the get API v2 changesets params
+func (o *GetAPIV2ChangesetsParams) WithFromAppVersionFollowChartRelease(fromAppVersionFollowChartRelease *string) *GetAPIV2ChangesetsParams {
+	o.SetFromAppVersionFollowChartRelease(fromAppVersionFollowChartRelease)
+	return o
+}
+
+// SetFromAppVersionFollowChartRelease adds the fromAppVersionFollowChartRelease to the get API v2 changesets params
+func (o *GetAPIV2ChangesetsParams) SetFromAppVersionFollowChartRelease(fromAppVersionFollowChartRelease *string) {
+	o.FromAppVersionFollowChartRelease = fromAppVersionFollowChartRelease
+}
+
 // WithFromAppVersionReference adds the fromAppVersionReference to the get API v2 changesets params
 func (o *GetAPIV2ChangesetsParams) WithFromAppVersionReference(fromAppVersionReference *string) *GetAPIV2ChangesetsParams {
 	o.SetFromAppVersionReference(fromAppVersionReference)
@@ -300,6 +323,17 @@ func (o *GetAPIV2ChangesetsParams) WithFromChartVersionExact(fromChartVersionExa
 // SetFromChartVersionExact adds the fromChartVersionExact to the get API v2 changesets params
 func (o *GetAPIV2ChangesetsParams) SetFromChartVersionExact(fromChartVersionExact *string) {
 	o.FromChartVersionExact = fromChartVersionExact
+}
+
+// WithFromChartVersionFollowChartRelease adds the fromChartVersionFollowChartRelease to the get API v2 changesets params
+func (o *GetAPIV2ChangesetsParams) WithFromChartVersionFollowChartRelease(fromChartVersionFollowChartRelease *string) *GetAPIV2ChangesetsParams {
+	o.SetFromChartVersionFollowChartRelease(fromChartVersionFollowChartRelease)
+	return o
+}
+
+// SetFromChartVersionFollowChartRelease adds the fromChartVersionFollowChartRelease to the get API v2 changesets params
+func (o *GetAPIV2ChangesetsParams) SetFromChartVersionFollowChartRelease(fromChartVersionFollowChartRelease *string) {
+	o.FromChartVersionFollowChartRelease = fromChartVersionFollowChartRelease
 }
 
 // WithFromChartVersionReference adds the fromChartVersionReference to the get API v2 changesets params
@@ -423,6 +457,17 @@ func (o *GetAPIV2ChangesetsParams) SetToAppVersionExact(toAppVersionExact *strin
 	o.ToAppVersionExact = toAppVersionExact
 }
 
+// WithToAppVersionFollowChartRelease adds the toAppVersionFollowChartRelease to the get API v2 changesets params
+func (o *GetAPIV2ChangesetsParams) WithToAppVersionFollowChartRelease(toAppVersionFollowChartRelease *string) *GetAPIV2ChangesetsParams {
+	o.SetToAppVersionFollowChartRelease(toAppVersionFollowChartRelease)
+	return o
+}
+
+// SetToAppVersionFollowChartRelease adds the toAppVersionFollowChartRelease to the get API v2 changesets params
+func (o *GetAPIV2ChangesetsParams) SetToAppVersionFollowChartRelease(toAppVersionFollowChartRelease *string) {
+	o.ToAppVersionFollowChartRelease = toAppVersionFollowChartRelease
+}
+
 // WithToAppVersionReference adds the toAppVersionReference to the get API v2 changesets params
 func (o *GetAPIV2ChangesetsParams) WithToAppVersionReference(toAppVersionReference *string) *GetAPIV2ChangesetsParams {
 	o.SetToAppVersionReference(toAppVersionReference)
@@ -454,6 +499,17 @@ func (o *GetAPIV2ChangesetsParams) WithToChartVersionExact(toChartVersionExact *
 // SetToChartVersionExact adds the toChartVersionExact to the get API v2 changesets params
 func (o *GetAPIV2ChangesetsParams) SetToChartVersionExact(toChartVersionExact *string) {
 	o.ToChartVersionExact = toChartVersionExact
+}
+
+// WithToChartVersionFollowChartRelease adds the toChartVersionFollowChartRelease to the get API v2 changesets params
+func (o *GetAPIV2ChangesetsParams) WithToChartVersionFollowChartRelease(toChartVersionFollowChartRelease *string) *GetAPIV2ChangesetsParams {
+	o.SetToChartVersionFollowChartRelease(toChartVersionFollowChartRelease)
+	return o
+}
+
+// SetToChartVersionFollowChartRelease adds the toChartVersionFollowChartRelease to the get API v2 changesets params
+func (o *GetAPIV2ChangesetsParams) SetToChartVersionFollowChartRelease(toChartVersionFollowChartRelease *string) {
+	o.ToChartVersionFollowChartRelease = toChartVersionFollowChartRelease
 }
 
 // WithToChartVersionReference adds the toChartVersionReference to the get API v2 changesets params
@@ -632,6 +688,23 @@ func (o *GetAPIV2ChangesetsParams) WriteToRequest(r runtime.ClientRequest, reg s
 		}
 	}
 
+	if o.FromAppVersionFollowChartRelease != nil {
+
+		// query param fromAppVersionFollowChartRelease
+		var qrFromAppVersionFollowChartRelease string
+
+		if o.FromAppVersionFollowChartRelease != nil {
+			qrFromAppVersionFollowChartRelease = *o.FromAppVersionFollowChartRelease
+		}
+		qFromAppVersionFollowChartRelease := qrFromAppVersionFollowChartRelease
+		if qFromAppVersionFollowChartRelease != "" {
+
+			if err := r.SetQueryParam("fromAppVersionFollowChartRelease", qFromAppVersionFollowChartRelease); err != nil {
+				return err
+			}
+		}
+	}
+
 	if o.FromAppVersionReference != nil {
 
 		// query param fromAppVersionReference
@@ -678,6 +751,23 @@ func (o *GetAPIV2ChangesetsParams) WriteToRequest(r runtime.ClientRequest, reg s
 		if qFromChartVersionExact != "" {
 
 			if err := r.SetQueryParam("fromChartVersionExact", qFromChartVersionExact); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.FromChartVersionFollowChartRelease != nil {
+
+		// query param fromChartVersionFollowChartRelease
+		var qrFromChartVersionFollowChartRelease string
+
+		if o.FromChartVersionFollowChartRelease != nil {
+			qrFromChartVersionFollowChartRelease = *o.FromChartVersionFollowChartRelease
+		}
+		qFromChartVersionFollowChartRelease := qrFromChartVersionFollowChartRelease
+		if qFromChartVersionFollowChartRelease != "" {
+
+			if err := r.SetQueryParam("fromChartVersionFollowChartRelease", qFromChartVersionFollowChartRelease); err != nil {
 				return err
 			}
 		}
@@ -870,6 +960,23 @@ func (o *GetAPIV2ChangesetsParams) WriteToRequest(r runtime.ClientRequest, reg s
 		}
 	}
 
+	if o.ToAppVersionFollowChartRelease != nil {
+
+		// query param toAppVersionFollowChartRelease
+		var qrToAppVersionFollowChartRelease string
+
+		if o.ToAppVersionFollowChartRelease != nil {
+			qrToAppVersionFollowChartRelease = *o.ToAppVersionFollowChartRelease
+		}
+		qToAppVersionFollowChartRelease := qrToAppVersionFollowChartRelease
+		if qToAppVersionFollowChartRelease != "" {
+
+			if err := r.SetQueryParam("toAppVersionFollowChartRelease", qToAppVersionFollowChartRelease); err != nil {
+				return err
+			}
+		}
+	}
+
 	if o.ToAppVersionReference != nil {
 
 		// query param toAppVersionReference
@@ -916,6 +1023,23 @@ func (o *GetAPIV2ChangesetsParams) WriteToRequest(r runtime.ClientRequest, reg s
 		if qToChartVersionExact != "" {
 
 			if err := r.SetQueryParam("toChartVersionExact", qToChartVersionExact); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.ToChartVersionFollowChartRelease != nil {
+
+		// query param toChartVersionFollowChartRelease
+		var qrToChartVersionFollowChartRelease string
+
+		if o.ToChartVersionFollowChartRelease != nil {
+			qrToChartVersionFollowChartRelease = *o.ToChartVersionFollowChartRelease
+		}
+		qToChartVersionFollowChartRelease := qrToChartVersionFollowChartRelease
+		if qToChartVersionFollowChartRelease != "" {
+
+			if err := r.SetQueryParam("toChartVersionFollowChartRelease", qToChartVersionFollowChartRelease); err != nil {
 				return err
 			}
 		}

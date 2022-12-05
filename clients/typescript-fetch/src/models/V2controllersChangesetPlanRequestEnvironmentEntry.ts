@@ -32,6 +32,12 @@ export interface V2controllersChangesetPlanRequestEnvironmentEntry {
      */
     excludeCharts?: Array<string>;
     /**
+     * 
+     * @type {string}
+     * @memberof V2controllersChangesetPlanRequestEnvironmentEntry
+     */
+    followVersionsFromOtherEnvironment?: string;
+    /**
      * If omitted, will include all charts
      * @type {Array<string>}
      * @memberof V2controllersChangesetPlanRequestEnvironmentEntry
@@ -66,6 +72,7 @@ export function V2controllersChangesetPlanRequestEnvironmentEntryFromJSONTyped(j
         
         'environment': !exists(json, 'environment') ? undefined : json['environment'],
         'excludeCharts': !exists(json, 'excludeCharts') ? undefined : json['excludeCharts'],
+        'followVersionsFromOtherEnvironment': !exists(json, 'followVersionsFromOtherEnvironment') ? undefined : json['followVersionsFromOtherEnvironment'],
         'includeCharts': !exists(json, 'includeCharts') ? undefined : json['includeCharts'],
         'useExactVersionsFromOtherEnvironment': !exists(json, 'useExactVersionsFromOtherEnvironment') ? undefined : json['useExactVersionsFromOtherEnvironment'],
     };
@@ -82,6 +89,7 @@ export function V2controllersChangesetPlanRequestEnvironmentEntryToJSON(value?: 
         
         'environment': value.environment,
         'excludeCharts': value.excludeCharts,
+        'followVersionsFromOtherEnvironment': value.followVersionsFromOtherEnvironment,
         'includeCharts': value.includeCharts,
         'useExactVersionsFromOtherEnvironment': value.useExactVersionsFromOtherEnvironment,
     };

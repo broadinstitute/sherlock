@@ -38,9 +38,11 @@ export interface ApiV2ChangesetsGetRequest {
     fromAppVersionBranch?: string;
     fromAppVersionCommit?: string;
     fromAppVersionExact?: string;
+    fromAppVersionFollowChartRelease?: string;
     fromAppVersionReference?: string;
     fromAppVersionResolver?: string;
     fromChartVersionExact?: string;
+    fromChartVersionFollowChartRelease?: string;
     fromChartVersionReference?: string;
     fromChartVersionResolver?: string;
     fromFirecloudDevelopRef?: string;
@@ -51,9 +53,11 @@ export interface ApiV2ChangesetsGetRequest {
     toAppVersionBranch?: string;
     toAppVersionCommit?: string;
     toAppVersionExact?: string;
+    toAppVersionFollowChartRelease?: string;
     toAppVersionReference?: string;
     toAppVersionResolver?: string;
     toChartVersionExact?: string;
+    toChartVersionFollowChartRelease?: string;
     toChartVersionReference?: string;
     toChartVersionResolver?: string;
     toFirecloudDevelopRef?: string;
@@ -123,6 +127,10 @@ export class ChangesetsApi extends runtime.BaseAPI {
             queryParameters['fromAppVersionExact'] = requestParameters.fromAppVersionExact;
         }
 
+        if (requestParameters.fromAppVersionFollowChartRelease !== undefined) {
+            queryParameters['fromAppVersionFollowChartRelease'] = requestParameters.fromAppVersionFollowChartRelease;
+        }
+
         if (requestParameters.fromAppVersionReference !== undefined) {
             queryParameters['fromAppVersionReference'] = requestParameters.fromAppVersionReference;
         }
@@ -133,6 +141,10 @@ export class ChangesetsApi extends runtime.BaseAPI {
 
         if (requestParameters.fromChartVersionExact !== undefined) {
             queryParameters['fromChartVersionExact'] = requestParameters.fromChartVersionExact;
+        }
+
+        if (requestParameters.fromChartVersionFollowChartRelease !== undefined) {
+            queryParameters['fromChartVersionFollowChartRelease'] = requestParameters.fromChartVersionFollowChartRelease;
         }
 
         if (requestParameters.fromChartVersionReference !== undefined) {
@@ -175,6 +187,10 @@ export class ChangesetsApi extends runtime.BaseAPI {
             queryParameters['toAppVersionExact'] = requestParameters.toAppVersionExact;
         }
 
+        if (requestParameters.toAppVersionFollowChartRelease !== undefined) {
+            queryParameters['toAppVersionFollowChartRelease'] = requestParameters.toAppVersionFollowChartRelease;
+        }
+
         if (requestParameters.toAppVersionReference !== undefined) {
             queryParameters['toAppVersionReference'] = requestParameters.toAppVersionReference;
         }
@@ -185,6 +201,10 @@ export class ChangesetsApi extends runtime.BaseAPI {
 
         if (requestParameters.toChartVersionExact !== undefined) {
             queryParameters['toChartVersionExact'] = requestParameters.toChartVersionExact;
+        }
+
+        if (requestParameters.toChartVersionFollowChartRelease !== undefined) {
+            queryParameters['toChartVersionFollowChartRelease'] = requestParameters.toChartVersionFollowChartRelease;
         }
 
         if (requestParameters.toChartVersionReference !== undefined) {

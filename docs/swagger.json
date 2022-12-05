@@ -395,6 +395,11 @@
                     },
                     {
                         "type": "string",
+                        "name": "fromAppVersionFollowChartRelease",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "name": "fromAppVersionReference",
                         "in": "query"
                     },
@@ -406,6 +411,11 @@
                     {
                         "type": "string",
                         "name": "fromChartVersionExact",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "fromChartVersionFollowChartRelease",
                         "in": "query"
                     },
                     {
@@ -460,6 +470,11 @@
                     },
                     {
                         "type": "string",
+                        "name": "toAppVersionFollowChartRelease",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "name": "toAppVersionReference",
                         "in": "query"
                     },
@@ -471,6 +486,11 @@
                     {
                         "type": "string",
                         "name": "toChartVersionExact",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "toChartVersionFollowChartRelease",
                         "in": "query"
                     },
                     {
@@ -727,6 +747,11 @@
                     },
                     {
                         "type": "string",
+                        "name": "appVersionFollowChartRelease",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "name": "appVersionReference",
                         "in": "query"
                     },
@@ -735,6 +760,7 @@
                             "branch",
                             "commit",
                             "exact",
+                            "follow",
                             "none"
                         ],
                         "type": "string",
@@ -755,13 +781,19 @@
                     },
                     {
                         "type": "string",
+                        "name": "chartVersionFollowChartRelease",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "name": "chartVersionReference",
                         "in": "query"
                     },
                     {
                         "enum": [
                             "latest",
-                            "exact"
+                            "exact",
+                            "follow"
                         ],
                         "type": "string",
                         "description": "When creating, will default to automatically reference any provided chart version",
@@ -3746,8 +3778,8 @@
                 "fromAppVersionExact": {
                     "type": "string"
                 },
-                "fromAppVersionInfo": {
-                    "$ref": "#/definitions/v2controllers.AppVersion"
+                "fromAppVersionFollowChartRelease": {
+                    "type": "string"
                 },
                 "fromAppVersionReference": {
                     "type": "string"
@@ -3758,8 +3790,8 @@
                 "fromChartVersionExact": {
                     "type": "string"
                 },
-                "fromChartVersionInfo": {
-                    "$ref": "#/definitions/v2controllers.ChartVersion"
+                "fromChartVersionFollowChartRelease": {
+                    "type": "string"
                 },
                 "fromChartVersionReference": {
                     "type": "string"
@@ -3803,8 +3835,8 @@
                 "toAppVersionExact": {
                     "type": "string"
                 },
-                "toAppVersionInfo": {
-                    "$ref": "#/definitions/v2controllers.AppVersion"
+                "toAppVersionFollowChartRelease": {
+                    "type": "string"
                 },
                 "toAppVersionReference": {
                     "type": "string"
@@ -3815,8 +3847,8 @@
                 "toChartVersionExact": {
                     "type": "string"
                 },
-                "toChartVersionInfo": {
-                    "$ref": "#/definitions/v2controllers.ChartVersion"
+                "toChartVersionFollowChartRelease": {
+                    "type": "string"
                 },
                 "toChartVersionReference": {
                     "type": "string"
@@ -3870,10 +3902,16 @@
                 "toAppVersionExact": {
                     "type": "string"
                 },
+                "toAppVersionFollowChartRelease": {
+                    "type": "string"
+                },
                 "toAppVersionResolver": {
                     "type": "string"
                 },
                 "toChartVersionExact": {
+                    "type": "string"
+                },
+                "toChartVersionFollowChartRelease": {
                     "type": "string"
                 },
                 "toChartVersionResolver": {
@@ -3901,6 +3939,9 @@
                     "items": {
                         "type": "string"
                     }
+                },
+                "followVersionsFromOtherEnvironment": {
+                    "type": "string"
                 },
                 "includeCharts": {
                     "description": "If omitted, will include all charts",
@@ -3977,6 +4018,9 @@
                 "appVersionExact": {
                     "type": "string"
                 },
+                "appVersionFollowChartRelease": {
+                    "type": "string"
+                },
                 "appVersionInfo": {
                     "$ref": "#/definitions/v2controllers.AppVersion"
                 },
@@ -3990,6 +4034,7 @@
                         "branch",
                         "commit",
                         "exact",
+                        "follow",
                         "none"
                     ]
                 },
@@ -4003,6 +4048,9 @@
                 "chartVersionExact": {
                     "type": "string"
                 },
+                "chartVersionFollowChartRelease": {
+                    "type": "string"
+                },
                 "chartVersionInfo": {
                     "$ref": "#/definitions/v2controllers.ChartVersion"
                 },
@@ -4014,7 +4062,8 @@
                     "type": "string",
                     "enum": [
                         "latest",
-                        "exact"
+                        "exact",
+                        "follow"
                     ]
                 },
                 "cluster": {
@@ -4204,10 +4253,16 @@
                 "toAppVersionExact": {
                     "type": "string"
                 },
+                "toAppVersionFollowChartRelease": {
+                    "type": "string"
+                },
                 "toAppVersionResolver": {
                     "type": "string"
                 },
                 "toChartVersionExact": {
+                    "type": "string"
+                },
+                "toChartVersionFollowChartRelease": {
                     "type": "string"
                 },
                 "toChartVersionResolver": {
@@ -4275,6 +4330,9 @@
                 "appVersionExact": {
                     "type": "string"
                 },
+                "appVersionFollowChartRelease": {
+                    "type": "string"
+                },
                 "appVersionResolver": {
                     "description": "// When creating, will default to automatically reference any provided app version fields",
                     "type": "string",
@@ -4282,6 +4340,7 @@
                         "branch",
                         "commit",
                         "exact",
+                        "follow",
                         "none"
                     ]
                 },
@@ -4292,12 +4351,16 @@
                 "chartVersionExact": {
                     "type": "string"
                 },
+                "chartVersionFollowChartRelease": {
+                    "type": "string"
+                },
                 "chartVersionResolver": {
                     "description": "When creating, will default to automatically reference any provided chart version",
                     "type": "string",
                     "enum": [
                         "latest",
-                        "exact"
+                        "exact",
+                        "follow"
                     ]
                 },
                 "cluster": {

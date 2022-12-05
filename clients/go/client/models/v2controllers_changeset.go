@@ -40,8 +40,8 @@ type V2controllersChangeset struct {
 	// from app version exact
 	FromAppVersionExact string `json:"fromAppVersionExact,omitempty"`
 
-	// from app version info
-	FromAppVersionInfo *V2controllersAppVersion `json:"fromAppVersionInfo,omitempty"`
+	// from app version follow chart release
+	FromAppVersionFollowChartRelease string `json:"fromAppVersionFollowChartRelease,omitempty"`
 
 	// from app version reference
 	FromAppVersionReference string `json:"fromAppVersionReference,omitempty"`
@@ -52,8 +52,8 @@ type V2controllersChangeset struct {
 	// from chart version exact
 	FromChartVersionExact string `json:"fromChartVersionExact,omitempty"`
 
-	// from chart version info
-	FromChartVersionInfo *V2controllersChartVersion `json:"fromChartVersionInfo,omitempty"`
+	// from chart version follow chart release
+	FromChartVersionFollowChartRelease string `json:"fromChartVersionFollowChartRelease,omitempty"`
 
 	// from chart version reference
 	FromChartVersionReference string `json:"fromChartVersionReference,omitempty"`
@@ -91,8 +91,8 @@ type V2controllersChangeset struct {
 	// to app version exact
 	ToAppVersionExact string `json:"toAppVersionExact,omitempty"`
 
-	// to app version info
-	ToAppVersionInfo *V2controllersAppVersion `json:"toAppVersionInfo,omitempty"`
+	// to app version follow chart release
+	ToAppVersionFollowChartRelease string `json:"toAppVersionFollowChartRelease,omitempty"`
 
 	// to app version reference
 	ToAppVersionReference string `json:"toAppVersionReference,omitempty"`
@@ -103,8 +103,8 @@ type V2controllersChangeset struct {
 	// to chart version exact
 	ToChartVersionExact string `json:"toChartVersionExact,omitempty"`
 
-	// to chart version info
-	ToChartVersionInfo *V2controllersChartVersion `json:"toChartVersionInfo,omitempty"`
+	// to chart version follow chart release
+	ToChartVersionFollowChartRelease string `json:"toChartVersionFollowChartRelease,omitempty"`
 
 	// to chart version reference
 	ToChartVersionReference string `json:"toChartVersionReference,omitempty"`
@@ -133,27 +133,11 @@ func (m *V2controllersChangeset) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateFromAppVersionInfo(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateFromChartVersionInfo(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.validateNewAppVersions(formats); err != nil {
 		res = append(res, err)
 	}
 
 	if err := m.validateNewChartVersions(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateToAppVersionInfo(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateToChartVersionInfo(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -174,44 +158,6 @@ func (m *V2controllersChangeset) validateChartReleaseInfo(formats strfmt.Registr
 				return ve.ValidateName("chartReleaseInfo")
 			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("chartReleaseInfo")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *V2controllersChangeset) validateFromAppVersionInfo(formats strfmt.Registry) error {
-	if swag.IsZero(m.FromAppVersionInfo) { // not required
-		return nil
-	}
-
-	if m.FromAppVersionInfo != nil {
-		if err := m.FromAppVersionInfo.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("fromAppVersionInfo")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("fromAppVersionInfo")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *V2controllersChangeset) validateFromChartVersionInfo(formats strfmt.Registry) error {
-	if swag.IsZero(m.FromChartVersionInfo) { // not required
-		return nil
-	}
-
-	if m.FromChartVersionInfo != nil {
-		if err := m.FromChartVersionInfo.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("fromChartVersionInfo")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("fromChartVersionInfo")
 			}
 			return err
 		}
@@ -272,44 +218,6 @@ func (m *V2controllersChangeset) validateNewChartVersions(formats strfmt.Registr
 	return nil
 }
 
-func (m *V2controllersChangeset) validateToAppVersionInfo(formats strfmt.Registry) error {
-	if swag.IsZero(m.ToAppVersionInfo) { // not required
-		return nil
-	}
-
-	if m.ToAppVersionInfo != nil {
-		if err := m.ToAppVersionInfo.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("toAppVersionInfo")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("toAppVersionInfo")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *V2controllersChangeset) validateToChartVersionInfo(formats strfmt.Registry) error {
-	if swag.IsZero(m.ToChartVersionInfo) { // not required
-		return nil
-	}
-
-	if m.ToChartVersionInfo != nil {
-		if err := m.ToChartVersionInfo.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("toChartVersionInfo")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("toChartVersionInfo")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
 // ContextValidate validate this v2controllers changeset based on the context it is used
 func (m *V2controllersChangeset) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
@@ -318,27 +226,11 @@ func (m *V2controllersChangeset) ContextValidate(ctx context.Context, formats st
 		res = append(res, err)
 	}
 
-	if err := m.contextValidateFromAppVersionInfo(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.contextValidateFromChartVersionInfo(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.contextValidateNewAppVersions(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
 	if err := m.contextValidateNewChartVersions(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.contextValidateToAppVersionInfo(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.contextValidateToChartVersionInfo(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -356,38 +248,6 @@ func (m *V2controllersChangeset) contextValidateChartReleaseInfo(ctx context.Con
 				return ve.ValidateName("chartReleaseInfo")
 			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("chartReleaseInfo")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *V2controllersChangeset) contextValidateFromAppVersionInfo(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.FromAppVersionInfo != nil {
-		if err := m.FromAppVersionInfo.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("fromAppVersionInfo")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("fromAppVersionInfo")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *V2controllersChangeset) contextValidateFromChartVersionInfo(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.FromChartVersionInfo != nil {
-		if err := m.FromChartVersionInfo.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("fromChartVersionInfo")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("fromChartVersionInfo")
 			}
 			return err
 		}
@@ -431,38 +291,6 @@ func (m *V2controllersChangeset) contextValidateNewChartVersions(ctx context.Con
 			}
 		}
 
-	}
-
-	return nil
-}
-
-func (m *V2controllersChangeset) contextValidateToAppVersionInfo(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.ToAppVersionInfo != nil {
-		if err := m.ToAppVersionInfo.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("toAppVersionInfo")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("toAppVersionInfo")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *V2controllersChangeset) contextValidateToChartVersionInfo(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.ToChartVersionInfo != nil {
-		if err := m.ToChartVersionInfo.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("toChartVersionInfo")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("toChartVersionInfo")
-			}
-			return err
-		}
 	}
 
 	return nil

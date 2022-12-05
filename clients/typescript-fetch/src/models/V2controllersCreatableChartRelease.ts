@@ -38,6 +38,12 @@ export interface V2controllersCreatableChartRelease {
      */
     appVersionExact?: string;
     /**
+     * 
+     * @type {string}
+     * @memberof V2controllersCreatableChartRelease
+     */
+    appVersionFollowChartRelease?: string;
+    /**
      * // When creating, will default to automatically reference any provided app version fields
      * @type {string}
      * @memberof V2controllersCreatableChartRelease
@@ -55,6 +61,12 @@ export interface V2controllersCreatableChartRelease {
      * @memberof V2controllersCreatableChartRelease
      */
     chartVersionExact?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof V2controllersCreatableChartRelease
+     */
+    chartVersionFollowChartRelease?: string;
     /**
      * When creating, will default to automatically reference any provided chart version
      * @type {string}
@@ -125,6 +137,7 @@ export const V2controllersCreatableChartReleaseAppVersionResolverEnum = {
     Branch: 'branch',
     Commit: 'commit',
     Exact: 'exact',
+    Follow: 'follow',
     None: 'none'
 } as const;
 export type V2controllersCreatableChartReleaseAppVersionResolverEnum = typeof V2controllersCreatableChartReleaseAppVersionResolverEnum[keyof typeof V2controllersCreatableChartReleaseAppVersionResolverEnum];
@@ -134,7 +147,8 @@ export type V2controllersCreatableChartReleaseAppVersionResolverEnum = typeof V2
  */
 export const V2controllersCreatableChartReleaseChartVersionResolverEnum = {
     Latest: 'latest',
-    Exact: 'exact'
+    Exact: 'exact',
+    Follow: 'follow'
 } as const;
 export type V2controllersCreatableChartReleaseChartVersionResolverEnum = typeof V2controllersCreatableChartReleaseChartVersionResolverEnum[keyof typeof V2controllersCreatableChartReleaseChartVersionResolverEnum];
 
@@ -161,9 +175,11 @@ export function V2controllersCreatableChartReleaseFromJSONTyped(json: any, ignor
         'appVersionBranch': !exists(json, 'appVersionBranch') ? undefined : json['appVersionBranch'],
         'appVersionCommit': !exists(json, 'appVersionCommit') ? undefined : json['appVersionCommit'],
         'appVersionExact': !exists(json, 'appVersionExact') ? undefined : json['appVersionExact'],
+        'appVersionFollowChartRelease': !exists(json, 'appVersionFollowChartRelease') ? undefined : json['appVersionFollowChartRelease'],
         'appVersionResolver': !exists(json, 'appVersionResolver') ? undefined : json['appVersionResolver'],
         'chart': !exists(json, 'chart') ? undefined : json['chart'],
         'chartVersionExact': !exists(json, 'chartVersionExact') ? undefined : json['chartVersionExact'],
+        'chartVersionFollowChartRelease': !exists(json, 'chartVersionFollowChartRelease') ? undefined : json['chartVersionFollowChartRelease'],
         'chartVersionResolver': !exists(json, 'chartVersionResolver') ? undefined : json['chartVersionResolver'],
         'cluster': !exists(json, 'cluster') ? undefined : json['cluster'],
         'environment': !exists(json, 'environment') ? undefined : json['environment'],
@@ -189,9 +205,11 @@ export function V2controllersCreatableChartReleaseToJSON(value?: V2controllersCr
         'appVersionBranch': value.appVersionBranch,
         'appVersionCommit': value.appVersionCommit,
         'appVersionExact': value.appVersionExact,
+        'appVersionFollowChartRelease': value.appVersionFollowChartRelease,
         'appVersionResolver': value.appVersionResolver,
         'chart': value.chart,
         'chartVersionExact': value.chartVersionExact,
+        'chartVersionFollowChartRelease': value.chartVersionFollowChartRelease,
         'chartVersionResolver': value.chartVersionResolver,
         'cluster': value.cluster,
         'environment': value.environment,

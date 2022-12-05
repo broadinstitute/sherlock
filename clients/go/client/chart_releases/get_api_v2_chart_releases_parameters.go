@@ -72,6 +72,9 @@ type GetAPIV2ChartReleasesParams struct {
 	// AppVersionExact.
 	AppVersionExact *string
 
+	// AppVersionFollowChartRelease.
+	AppVersionFollowChartRelease *string
+
 	// AppVersionReference.
 	AppVersionReference *string
 
@@ -89,6 +92,9 @@ type GetAPIV2ChartReleasesParams struct {
 
 	// ChartVersionExact.
 	ChartVersionExact *string
+
+	// ChartVersionFollowChartRelease.
+	ChartVersionFollowChartRelease *string
 
 	// ChartVersionReference.
 	ChartVersionReference *string
@@ -267,6 +273,17 @@ func (o *GetAPIV2ChartReleasesParams) SetAppVersionExact(appVersionExact *string
 	o.AppVersionExact = appVersionExact
 }
 
+// WithAppVersionFollowChartRelease adds the appVersionFollowChartRelease to the get API v2 chart releases params
+func (o *GetAPIV2ChartReleasesParams) WithAppVersionFollowChartRelease(appVersionFollowChartRelease *string) *GetAPIV2ChartReleasesParams {
+	o.SetAppVersionFollowChartRelease(appVersionFollowChartRelease)
+	return o
+}
+
+// SetAppVersionFollowChartRelease adds the appVersionFollowChartRelease to the get API v2 chart releases params
+func (o *GetAPIV2ChartReleasesParams) SetAppVersionFollowChartRelease(appVersionFollowChartRelease *string) {
+	o.AppVersionFollowChartRelease = appVersionFollowChartRelease
+}
+
 // WithAppVersionReference adds the appVersionReference to the get API v2 chart releases params
 func (o *GetAPIV2ChartReleasesParams) WithAppVersionReference(appVersionReference *string) *GetAPIV2ChartReleasesParams {
 	o.SetAppVersionReference(appVersionReference)
@@ -309,6 +326,17 @@ func (o *GetAPIV2ChartReleasesParams) WithChartVersionExact(chartVersionExact *s
 // SetChartVersionExact adds the chartVersionExact to the get API v2 chart releases params
 func (o *GetAPIV2ChartReleasesParams) SetChartVersionExact(chartVersionExact *string) {
 	o.ChartVersionExact = chartVersionExact
+}
+
+// WithChartVersionFollowChartRelease adds the chartVersionFollowChartRelease to the get API v2 chart releases params
+func (o *GetAPIV2ChartReleasesParams) WithChartVersionFollowChartRelease(chartVersionFollowChartRelease *string) *GetAPIV2ChartReleasesParams {
+	o.SetChartVersionFollowChartRelease(chartVersionFollowChartRelease)
+	return o
+}
+
+// SetChartVersionFollowChartRelease adds the chartVersionFollowChartRelease to the get API v2 chart releases params
+func (o *GetAPIV2ChartReleasesParams) SetChartVersionFollowChartRelease(chartVersionFollowChartRelease *string) {
+	o.ChartVersionFollowChartRelease = chartVersionFollowChartRelease
 }
 
 // WithChartVersionReference adds the chartVersionReference to the get API v2 chart releases params
@@ -546,6 +574,23 @@ func (o *GetAPIV2ChartReleasesParams) WriteToRequest(r runtime.ClientRequest, re
 		}
 	}
 
+	if o.AppVersionFollowChartRelease != nil {
+
+		// query param appVersionFollowChartRelease
+		var qrAppVersionFollowChartRelease string
+
+		if o.AppVersionFollowChartRelease != nil {
+			qrAppVersionFollowChartRelease = *o.AppVersionFollowChartRelease
+		}
+		qAppVersionFollowChartRelease := qrAppVersionFollowChartRelease
+		if qAppVersionFollowChartRelease != "" {
+
+			if err := r.SetQueryParam("appVersionFollowChartRelease", qAppVersionFollowChartRelease); err != nil {
+				return err
+			}
+		}
+	}
+
 	if o.AppVersionReference != nil {
 
 		// query param appVersionReference
@@ -609,6 +654,23 @@ func (o *GetAPIV2ChartReleasesParams) WriteToRequest(r runtime.ClientRequest, re
 		if qChartVersionExact != "" {
 
 			if err := r.SetQueryParam("chartVersionExact", qChartVersionExact); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.ChartVersionFollowChartRelease != nil {
+
+		// query param chartVersionFollowChartRelease
+		var qrChartVersionFollowChartRelease string
+
+		if o.ChartVersionFollowChartRelease != nil {
+			qrChartVersionFollowChartRelease = *o.ChartVersionFollowChartRelease
+		}
+		qChartVersionFollowChartRelease := qrChartVersionFollowChartRelease
+		if qChartVersionFollowChartRelease != "" {
+
+			if err := r.SetQueryParam("chartVersionFollowChartRelease", qChartVersionFollowChartRelease); err != nil {
 				return err
 			}
 		}
