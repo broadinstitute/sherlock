@@ -1,0 +1,162 @@
+name: Set Environment App Version
+
+# This workflow is meant to be called from other repositories' workflows to set a Sherlock environment to have a
+# specific version for some app.
+#
+# Note that this workflow cannot modify anything marked within Sherlock as requiring suitability.
+#
+# The caller repository must have Workload Identity Federation configured to allow impersonation of the
+# "dsp-tools-iap-access@dsp-tools-k8s.iam.gserviceaccount.com" service account; steps 1 and 2 of the documentation:
+# https://docs.google.com/document/d/1bnhDmWQHAMat_Saoa_z28FHwXmGWw6kywjdbKf208h4/edit
+#
+# With that configured, here's how you can call this workflow from whatever workflow currently publishes the app:
+# ```yaml
+# jobs:
+#
+#   <your-existing-job-id>:
+#     # Output the version from your existing job's tag/bump step, something like this:
+#     outputs:
+#       tag: ${{ steps.tag.outputs.tag }}
+#     steps:
+#       # ... (The rest of your existing job can stay the same)
+#
+#   set-app-version-in-environment:
+#     uses: broadinstitute/sherlock/.github/workflows/client-set-environment-app-version.yaml@main
+#     needs: <your-existing-job-id>
+#     with:
+#       new-version: ${{ needs.<your-existing-job-id>.outputs.tag }}
+#       chart-name: '<your-app-helm-chart-name>'
+#       environment-name: '<the-environment-to-update>'
+#     permissions:
+#       contents: 'read'
+#       id-token: 'write'
+# ```
+
+on:
+  workflow_call:
+    inputs:
+
+      ##
+      ## Required configuration:
+      ##
+
+      new-version:
+        required: true
+        type: string
+        description: "The app's new semantic version to record in Sherlock"
+      chart-name:
+        required: true
+        type: string
+        description: "The name of the Helm Chart that deploys this app"
+      environment-name:
+        required: true
+        type: string
+        description: "The name of the environment to update"
+      
+      ##
+      ## Sherlock configuration:
+      ##
+
+      use-sherlock-prod:
+        required: false
+        type: boolean
+        default: true
+        description: "If the version should be reported to the general-use production Sherlock instance"
+      fail-on-prod-failure:
+        required: false
+        type: boolean
+        default: true
+        description: "If an issue communicating with production Sherlock should cause an overall failure"
+
+      use-sherlock-dev:
+        required: false
+        type: boolean
+        default: true
+        description: "If the version should be reported to the DevOps-use development Sherlock instance"
+      fail-on-dev-failure:
+        required: false
+        type: boolean
+        default: false
+        description: "If an issue communicating with development Sherlock should cause an overall failure"
+
+env:
+  SHERLOCK_PROD_URL: 'https://sherlock.dsp-devops.broadinstitute.org'
+  SHERLOCK_DEV_URL: 'https://sherlock-dev.dsp-devops.broadinstitute.org'
+  BEEHIVE_PROD_URL: 'https://beehive.dsp-devops.broadinsitute.org'
+  BEEHIVE_DEV_URL: 'https://beehive-dev.dsp-devops.broadinstitute.org'
+  BEEHIVE_PROD_VANITY_URL: 'https://broad.io/beehive'
+  BEEHIVE_DEV_VANITY_URL: 'https://broad.io/beehive-dev'
+
+jobs:
+  report:
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    
+    steps:
+
+      ##
+      ## Handle required:
+      ##
+
+      - name: "Write Request"
+        shell: bash
+        run: |
+          echo '{
+            "chartReleases": [
+              {
+                "chartRelease": "${{ inputs.environment-name }}/${{ inputs.chart-name }}",
+                "toAppVersionResolver": "exact",
+                "toAppVersionExact": "${{ inputs.new-version }}"
+              }
+            ]
+          }' > "$RUNNER_TEMP/body.json"
+
+      ##
+      ## Handle Sherlock:
+      ##
+
+      - name: "Log Request Body"
+        shell: bash
+        run: |
+          cat "$RUNNER_TEMP/body.json"
+          echo "## Set ${{ inputs.environment-name }}/${{ inputs.chart-name }} to ${{ inputs.new-version }} Sherlock" >> $GITHUB_STEP_SUMMARY
+
+      - name: "Authenticate to GCP"
+        id: 'auth'
+        uses: google-github-actions/auth@v0
+        with:
+          workload_identity_provider: 'projects/1038484894585/locations/global/workloadIdentityPools/github-wi-pool/providers/github-wi-provider'
+          service_account: 'dsp-tools-iap-access@dsp-tools-k8s.iam.gserviceaccount.com'
+          token_format: 'id_token'
+          id_token_audience: '1038484894585-k8qvf7l876733laev0lm8kenfa2lj6bn.apps.googleusercontent.com'
+          id_token_include_email: true
+          create_credentials_file: false
+          export_environment_variables: false
+      
+      - name: "Send to Sherlock Prod"
+        if: ${{ inputs.use-sherlock-prod }}
+        continue-on-error: ${{ !inputs.fail-on-prod-failure }}
+        shell: bash
+        run: |
+          set -ex
+          curl --fail-with-body -X 'POST' \
+            "$SHERLOCK_PROD_URL/api/v2/procedures/changesets/plan-and-apply" \
+            -H 'Content-Type: application/json' \
+            -H 'Authorization: Bearer ${{ steps.auth.outputs.id_token }}' \
+            -d "@$RUNNER_TEMP/body.json" | jq
+          echo "### Available in Beehive at $BEEHIVE_PROD_VANITY_URL/r/chart-release/${{ inputs.environment-name }}/${{ inputs.chart-name }}" >> $GITHUB_STEP_SUMMARY
+
+      - name: "Send to Sherlock Dev"
+        if: ${{ inputs.use-sherlock-dev }}
+        continue-on-error: ${{ !inputs.fail-on-dev-failure }}
+        shell: bash
+        run: |
+          set -ex
+          curl --fail-with-body -X 'POST' \
+            "$SHERLOCK_DEV_URL/api/v2/procedures/changesets/plan-and-apply" \
+            -H 'Content-Type: application/json' \
+            -H 'Authorization: Bearer ${{ steps.auth.outputs.id_token }}' \
+            -d "@$RUNNER_TEMP/body.json" | jq
+          echo "Available in Beehive's dev instance at $BEEHIVE_DEV_VANITY_URL/r/chart-release/${{ inputs.environment-name }}/${{ inputs.chart-name }}" >> $GITHUB_STEP_SUMMARY
