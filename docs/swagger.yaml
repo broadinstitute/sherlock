@@ -39,6 +39,14 @@ definitions:
       matchedFirecloudAccount:
         $ref: '#/definitions/auth.FirecloudAccount'
     type: object
+  environment.AutoDelete:
+    properties:
+      after:
+        type: string
+      enabled:
+        default: false
+        type: boolean
+    type: object
   errors.ErrorResponse:
     properties:
       message:
@@ -615,6 +623,10 @@ definitions:
     type: object
   v2controllers.CreatableEnvironment:
     properties:
+      autoDelete:
+        allOf:
+        - $ref: '#/definitions/environment.AutoDelete'
+        description: Used to schedule automatic deletion of BEEs
       base:
         description: Required when creating
         type: string
@@ -655,6 +667,11 @@ definitions:
       owner:
         description: When creating, will be set to your email
         type: string
+      preventDeletion:
+        default: false
+        description: Used to protect specific BEEs from deletion (thelma checks this
+          field)
+        type: boolean
       requiresSuitability:
         default: false
         type: boolean
@@ -735,6 +752,10 @@ definitions:
     type: object
   v2controllers.EditableEnvironment:
     properties:
+      autoDelete:
+        allOf:
+        - $ref: '#/definitions/environment.AutoDelete'
+        description: Used to schedule automatic deletion of BEEs
       baseDomain:
         default: bee.envs-terra.bio
         type: string
@@ -754,12 +775,21 @@ definitions:
       owner:
         description: When creating, will be set to your email
         type: string
+      preventDeletion:
+        default: false
+        description: Used to protect specific BEEs from deletion (thelma checks this
+          field)
+        type: boolean
       requiresSuitability:
         default: false
         type: boolean
     type: object
   v2controllers.Environment:
     properties:
+      autoDelete:
+        allOf:
+        - $ref: '#/definitions/environment.AutoDelete'
+        description: Used to schedule automatic deletion of BEEs
       base:
         description: Required when creating
         type: string
@@ -806,6 +836,11 @@ definitions:
       owner:
         description: When creating, will be set to your email
         type: string
+      preventDeletion:
+        default: false
+        description: Used to protect specific BEEs from deletion (thelma checks this
+          field)
+        type: boolean
       requiresSuitability:
         default: false
         type: boolean
@@ -2468,6 +2503,12 @@ paths:
         in: query
         name: owner
         type: string
+      - default: false
+        description: Used to protect specific BEEs from deletion (thelma checks this
+          field)
+        in: query
+        name: preventDeletion
+        type: boolean
       - default: false
         in: query
         name: requiresSuitability

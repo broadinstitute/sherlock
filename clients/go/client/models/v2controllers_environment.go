@@ -18,6 +18,11 @@ import (
 // swagger:model v2controllers.Environment
 type V2controllersEnvironment struct {
 
+	// Used to schedule automatic deletion of BEEs
+	AutoDelete struct {
+		EnvironmentAutoDelete
+	} `json:"autoDelete,omitempty"`
+
 	// Required when creating
 	Base string `json:"base,omitempty"`
 
@@ -63,6 +68,9 @@ type V2controllersEnvironment struct {
 	// When creating, will be set to your email
 	Owner string `json:"owner,omitempty"`
 
+	// Used to protect specific BEEs from deletion (thelma checks this field)
+	PreventDeletion *bool `json:"preventDeletion,omitempty"`
+
 	// requires suitability
 	RequiresSuitability *bool `json:"requiresSuitability,omitempty"`
 
@@ -86,6 +94,10 @@ type V2controllersEnvironment struct {
 func (m *V2controllersEnvironment) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateAutoDelete(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateDefaultClusterInfo(formats); err != nil {
 		res = append(res, err)
 	}
@@ -93,6 +105,14 @@ func (m *V2controllersEnvironment) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *V2controllersEnvironment) validateAutoDelete(formats strfmt.Registry) error {
+	if swag.IsZero(m.AutoDelete) { // not required
+		return nil
+	}
+
 	return nil
 }
 
@@ -119,6 +139,10 @@ func (m *V2controllersEnvironment) validateDefaultClusterInfo(formats strfmt.Reg
 func (m *V2controllersEnvironment) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.contextValidateAutoDelete(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidateDefaultClusterInfo(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -126,6 +150,11 @@ func (m *V2controllersEnvironment) ContextValidate(ctx context.Context, formats 
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *V2controllersEnvironment) contextValidateAutoDelete(ctx context.Context, formats strfmt.Registry) error {
+
 	return nil
 }
 

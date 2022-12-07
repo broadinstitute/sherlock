@@ -141,6 +141,12 @@ type GetAPIV2EnvironmentsParams struct {
 	*/
 	Owner *string
 
+	/* PreventDeletion.
+
+	   Used to protect specific BEEs from deletion (thelma checks this field)
+	*/
+	PreventDeletion *bool
+
 	// RequiresSuitability.
 	RequiresSuitability *bool
 
@@ -192,6 +198,8 @@ func (o *GetAPIV2EnvironmentsParams) SetDefaults() {
 
 		namePrefixesDomainDefault = bool(true)
 
+		preventDeletionDefault = bool(false)
+
 		requiresSuitabilityDefault = bool(false)
 	)
 
@@ -202,6 +210,7 @@ func (o *GetAPIV2EnvironmentsParams) SetDefaults() {
 		HelmfileRef:                &helmfileRefDefault,
 		Lifecycle:                  &lifecycleDefault,
 		NamePrefixesDomain:         &namePrefixesDomainDefault,
+		PreventDeletion:            &preventDeletionDefault,
 		RequiresSuitability:        &requiresSuitabilityDefault,
 	}
 
@@ -407,6 +416,17 @@ func (o *GetAPIV2EnvironmentsParams) WithOwner(owner *string) *GetAPIV2Environme
 // SetOwner adds the owner to the get API v2 environments params
 func (o *GetAPIV2EnvironmentsParams) SetOwner(owner *string) {
 	o.Owner = owner
+}
+
+// WithPreventDeletion adds the preventDeletion to the get API v2 environments params
+func (o *GetAPIV2EnvironmentsParams) WithPreventDeletion(preventDeletion *bool) *GetAPIV2EnvironmentsParams {
+	o.SetPreventDeletion(preventDeletion)
+	return o
+}
+
+// SetPreventDeletion adds the preventDeletion to the get API v2 environments params
+func (o *GetAPIV2EnvironmentsParams) SetPreventDeletion(preventDeletion *bool) {
+	o.PreventDeletion = preventDeletion
 }
 
 // WithRequiresSuitability adds the requiresSuitability to the get API v2 environments params
@@ -722,6 +742,23 @@ func (o *GetAPIV2EnvironmentsParams) WriteToRequest(r runtime.ClientRequest, reg
 		if qOwner != "" {
 
 			if err := r.SetQueryParam("owner", qOwner); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.PreventDeletion != nil {
+
+		// query param preventDeletion
+		var qrPreventDeletion bool
+
+		if o.PreventDeletion != nil {
+			qrPreventDeletion = *o.PreventDeletion
+		}
+		qPreventDeletion := swag.FormatBool(qrPreventDeletion)
+		if qPreventDeletion != "" {
+
+			if err := r.SetQueryParam("preventDeletion", qPreventDeletion); err != nil {
 				return err
 			}
 		}
