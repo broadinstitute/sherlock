@@ -81,7 +81,8 @@ func NewPostAPIV2EnvironmentsOK() *PostAPIV2EnvironmentsOK {
 	return &PostAPIV2EnvironmentsOK{}
 }
 
-/* PostAPIV2EnvironmentsOK describes a response with status code 200, with default header values.
+/*
+PostAPIV2EnvironmentsOK describes a response with status code 200, with default header values.
 
 OK
 */
@@ -89,9 +90,39 @@ type PostAPIV2EnvironmentsOK struct {
 	Payload *models.V2controllersEnvironment
 }
 
+// IsSuccess returns true when this post Api v2 environments o k response has a 2xx status code
+func (o *PostAPIV2EnvironmentsOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this post Api v2 environments o k response has a 3xx status code
+func (o *PostAPIV2EnvironmentsOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this post Api v2 environments o k response has a 4xx status code
+func (o *PostAPIV2EnvironmentsOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this post Api v2 environments o k response has a 5xx status code
+func (o *PostAPIV2EnvironmentsOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this post Api v2 environments o k response a status code equal to that given
+func (o *PostAPIV2EnvironmentsOK) IsCode(code int) bool {
+	return code == 200
+}
+
 func (o *PostAPIV2EnvironmentsOK) Error() string {
 	return fmt.Sprintf("[POST /api/v2/environments][%d] postApiV2EnvironmentsOK  %+v", 200, o.Payload)
 }
+
+func (o *PostAPIV2EnvironmentsOK) String() string {
+	return fmt.Sprintf("[POST /api/v2/environments][%d] postApiV2EnvironmentsOK  %+v", 200, o.Payload)
+}
+
 func (o *PostAPIV2EnvironmentsOK) GetPayload() *models.V2controllersEnvironment {
 	return o.Payload
 }
@@ -113,7 +144,8 @@ func NewPostAPIV2EnvironmentsCreated() *PostAPIV2EnvironmentsCreated {
 	return &PostAPIV2EnvironmentsCreated{}
 }
 
-/* PostAPIV2EnvironmentsCreated describes a response with status code 201, with default header values.
+/*
+PostAPIV2EnvironmentsCreated describes a response with status code 201, with default header values.
 
 Created
 */
@@ -121,9 +153,39 @@ type PostAPIV2EnvironmentsCreated struct {
 	Payload *models.V2controllersEnvironment
 }
 
+// IsSuccess returns true when this post Api v2 environments created response has a 2xx status code
+func (o *PostAPIV2EnvironmentsCreated) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this post Api v2 environments created response has a 3xx status code
+func (o *PostAPIV2EnvironmentsCreated) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this post Api v2 environments created response has a 4xx status code
+func (o *PostAPIV2EnvironmentsCreated) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this post Api v2 environments created response has a 5xx status code
+func (o *PostAPIV2EnvironmentsCreated) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this post Api v2 environments created response a status code equal to that given
+func (o *PostAPIV2EnvironmentsCreated) IsCode(code int) bool {
+	return code == 201
+}
+
 func (o *PostAPIV2EnvironmentsCreated) Error() string {
 	return fmt.Sprintf("[POST /api/v2/environments][%d] postApiV2EnvironmentsCreated  %+v", 201, o.Payload)
 }
+
+func (o *PostAPIV2EnvironmentsCreated) String() string {
+	return fmt.Sprintf("[POST /api/v2/environments][%d] postApiV2EnvironmentsCreated  %+v", 201, o.Payload)
+}
+
 func (o *PostAPIV2EnvironmentsCreated) GetPayload() *models.V2controllersEnvironment {
 	return o.Payload
 }
@@ -145,7 +207,8 @@ func NewPostAPIV2EnvironmentsBadRequest() *PostAPIV2EnvironmentsBadRequest {
 	return &PostAPIV2EnvironmentsBadRequest{}
 }
 
-/* PostAPIV2EnvironmentsBadRequest describes a response with status code 400, with default header values.
+/*
+PostAPIV2EnvironmentsBadRequest describes a response with status code 400, with default header values.
 
 Bad Request
 */
@@ -153,9 +216,39 @@ type PostAPIV2EnvironmentsBadRequest struct {
 	Payload *models.ErrorsErrorResponse
 }
 
+// IsSuccess returns true when this post Api v2 environments bad request response has a 2xx status code
+func (o *PostAPIV2EnvironmentsBadRequest) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this post Api v2 environments bad request response has a 3xx status code
+func (o *PostAPIV2EnvironmentsBadRequest) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this post Api v2 environments bad request response has a 4xx status code
+func (o *PostAPIV2EnvironmentsBadRequest) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this post Api v2 environments bad request response has a 5xx status code
+func (o *PostAPIV2EnvironmentsBadRequest) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this post Api v2 environments bad request response a status code equal to that given
+func (o *PostAPIV2EnvironmentsBadRequest) IsCode(code int) bool {
+	return code == 400
+}
+
 func (o *PostAPIV2EnvironmentsBadRequest) Error() string {
 	return fmt.Sprintf("[POST /api/v2/environments][%d] postApiV2EnvironmentsBadRequest  %+v", 400, o.Payload)
 }
+
+func (o *PostAPIV2EnvironmentsBadRequest) String() string {
+	return fmt.Sprintf("[POST /api/v2/environments][%d] postApiV2EnvironmentsBadRequest  %+v", 400, o.Payload)
+}
+
 func (o *PostAPIV2EnvironmentsBadRequest) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -177,7 +270,8 @@ func NewPostAPIV2EnvironmentsForbidden() *PostAPIV2EnvironmentsForbidden {
 	return &PostAPIV2EnvironmentsForbidden{}
 }
 
-/* PostAPIV2EnvironmentsForbidden describes a response with status code 403, with default header values.
+/*
+PostAPIV2EnvironmentsForbidden describes a response with status code 403, with default header values.
 
 Forbidden
 */
@@ -185,9 +279,39 @@ type PostAPIV2EnvironmentsForbidden struct {
 	Payload *models.ErrorsErrorResponse
 }
 
+// IsSuccess returns true when this post Api v2 environments forbidden response has a 2xx status code
+func (o *PostAPIV2EnvironmentsForbidden) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this post Api v2 environments forbidden response has a 3xx status code
+func (o *PostAPIV2EnvironmentsForbidden) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this post Api v2 environments forbidden response has a 4xx status code
+func (o *PostAPIV2EnvironmentsForbidden) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this post Api v2 environments forbidden response has a 5xx status code
+func (o *PostAPIV2EnvironmentsForbidden) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this post Api v2 environments forbidden response a status code equal to that given
+func (o *PostAPIV2EnvironmentsForbidden) IsCode(code int) bool {
+	return code == 403
+}
+
 func (o *PostAPIV2EnvironmentsForbidden) Error() string {
 	return fmt.Sprintf("[POST /api/v2/environments][%d] postApiV2EnvironmentsForbidden  %+v", 403, o.Payload)
 }
+
+func (o *PostAPIV2EnvironmentsForbidden) String() string {
+	return fmt.Sprintf("[POST /api/v2/environments][%d] postApiV2EnvironmentsForbidden  %+v", 403, o.Payload)
+}
+
 func (o *PostAPIV2EnvironmentsForbidden) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -209,7 +333,8 @@ func NewPostAPIV2EnvironmentsNotFound() *PostAPIV2EnvironmentsNotFound {
 	return &PostAPIV2EnvironmentsNotFound{}
 }
 
-/* PostAPIV2EnvironmentsNotFound describes a response with status code 404, with default header values.
+/*
+PostAPIV2EnvironmentsNotFound describes a response with status code 404, with default header values.
 
 Not Found
 */
@@ -217,9 +342,39 @@ type PostAPIV2EnvironmentsNotFound struct {
 	Payload *models.ErrorsErrorResponse
 }
 
+// IsSuccess returns true when this post Api v2 environments not found response has a 2xx status code
+func (o *PostAPIV2EnvironmentsNotFound) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this post Api v2 environments not found response has a 3xx status code
+func (o *PostAPIV2EnvironmentsNotFound) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this post Api v2 environments not found response has a 4xx status code
+func (o *PostAPIV2EnvironmentsNotFound) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this post Api v2 environments not found response has a 5xx status code
+func (o *PostAPIV2EnvironmentsNotFound) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this post Api v2 environments not found response a status code equal to that given
+func (o *PostAPIV2EnvironmentsNotFound) IsCode(code int) bool {
+	return code == 404
+}
+
 func (o *PostAPIV2EnvironmentsNotFound) Error() string {
 	return fmt.Sprintf("[POST /api/v2/environments][%d] postApiV2EnvironmentsNotFound  %+v", 404, o.Payload)
 }
+
+func (o *PostAPIV2EnvironmentsNotFound) String() string {
+	return fmt.Sprintf("[POST /api/v2/environments][%d] postApiV2EnvironmentsNotFound  %+v", 404, o.Payload)
+}
+
 func (o *PostAPIV2EnvironmentsNotFound) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -241,7 +396,8 @@ func NewPostAPIV2EnvironmentsProxyAuthenticationRequired() *PostAPIV2Environment
 	return &PostAPIV2EnvironmentsProxyAuthenticationRequired{}
 }
 
-/* PostAPIV2EnvironmentsProxyAuthenticationRequired describes a response with status code 407, with default header values.
+/*
+PostAPIV2EnvironmentsProxyAuthenticationRequired describes a response with status code 407, with default header values.
 
 Proxy Authentication Required
 */
@@ -249,9 +405,39 @@ type PostAPIV2EnvironmentsProxyAuthenticationRequired struct {
 	Payload *models.ErrorsErrorResponse
 }
 
+// IsSuccess returns true when this post Api v2 environments proxy authentication required response has a 2xx status code
+func (o *PostAPIV2EnvironmentsProxyAuthenticationRequired) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this post Api v2 environments proxy authentication required response has a 3xx status code
+func (o *PostAPIV2EnvironmentsProxyAuthenticationRequired) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this post Api v2 environments proxy authentication required response has a 4xx status code
+func (o *PostAPIV2EnvironmentsProxyAuthenticationRequired) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this post Api v2 environments proxy authentication required response has a 5xx status code
+func (o *PostAPIV2EnvironmentsProxyAuthenticationRequired) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this post Api v2 environments proxy authentication required response a status code equal to that given
+func (o *PostAPIV2EnvironmentsProxyAuthenticationRequired) IsCode(code int) bool {
+	return code == 407
+}
+
 func (o *PostAPIV2EnvironmentsProxyAuthenticationRequired) Error() string {
 	return fmt.Sprintf("[POST /api/v2/environments][%d] postApiV2EnvironmentsProxyAuthenticationRequired  %+v", 407, o.Payload)
 }
+
+func (o *PostAPIV2EnvironmentsProxyAuthenticationRequired) String() string {
+	return fmt.Sprintf("[POST /api/v2/environments][%d] postApiV2EnvironmentsProxyAuthenticationRequired  %+v", 407, o.Payload)
+}
+
 func (o *PostAPIV2EnvironmentsProxyAuthenticationRequired) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -273,7 +459,8 @@ func NewPostAPIV2EnvironmentsConflict() *PostAPIV2EnvironmentsConflict {
 	return &PostAPIV2EnvironmentsConflict{}
 }
 
-/* PostAPIV2EnvironmentsConflict describes a response with status code 409, with default header values.
+/*
+PostAPIV2EnvironmentsConflict describes a response with status code 409, with default header values.
 
 Conflict
 */
@@ -281,9 +468,39 @@ type PostAPIV2EnvironmentsConflict struct {
 	Payload *models.ErrorsErrorResponse
 }
 
+// IsSuccess returns true when this post Api v2 environments conflict response has a 2xx status code
+func (o *PostAPIV2EnvironmentsConflict) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this post Api v2 environments conflict response has a 3xx status code
+func (o *PostAPIV2EnvironmentsConflict) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this post Api v2 environments conflict response has a 4xx status code
+func (o *PostAPIV2EnvironmentsConflict) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this post Api v2 environments conflict response has a 5xx status code
+func (o *PostAPIV2EnvironmentsConflict) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this post Api v2 environments conflict response a status code equal to that given
+func (o *PostAPIV2EnvironmentsConflict) IsCode(code int) bool {
+	return code == 409
+}
+
 func (o *PostAPIV2EnvironmentsConflict) Error() string {
 	return fmt.Sprintf("[POST /api/v2/environments][%d] postApiV2EnvironmentsConflict  %+v", 409, o.Payload)
 }
+
+func (o *PostAPIV2EnvironmentsConflict) String() string {
+	return fmt.Sprintf("[POST /api/v2/environments][%d] postApiV2EnvironmentsConflict  %+v", 409, o.Payload)
+}
+
 func (o *PostAPIV2EnvironmentsConflict) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -305,7 +522,8 @@ func NewPostAPIV2EnvironmentsInternalServerError() *PostAPIV2EnvironmentsInterna
 	return &PostAPIV2EnvironmentsInternalServerError{}
 }
 
-/* PostAPIV2EnvironmentsInternalServerError describes a response with status code 500, with default header values.
+/*
+PostAPIV2EnvironmentsInternalServerError describes a response with status code 500, with default header values.
 
 Internal Server Error
 */
@@ -313,9 +531,39 @@ type PostAPIV2EnvironmentsInternalServerError struct {
 	Payload *models.ErrorsErrorResponse
 }
 
+// IsSuccess returns true when this post Api v2 environments internal server error response has a 2xx status code
+func (o *PostAPIV2EnvironmentsInternalServerError) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this post Api v2 environments internal server error response has a 3xx status code
+func (o *PostAPIV2EnvironmentsInternalServerError) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this post Api v2 environments internal server error response has a 4xx status code
+func (o *PostAPIV2EnvironmentsInternalServerError) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this post Api v2 environments internal server error response has a 5xx status code
+func (o *PostAPIV2EnvironmentsInternalServerError) IsServerError() bool {
+	return true
+}
+
+// IsCode returns true when this post Api v2 environments internal server error response a status code equal to that given
+func (o *PostAPIV2EnvironmentsInternalServerError) IsCode(code int) bool {
+	return code == 500
+}
+
 func (o *PostAPIV2EnvironmentsInternalServerError) Error() string {
 	return fmt.Sprintf("[POST /api/v2/environments][%d] postApiV2EnvironmentsInternalServerError  %+v", 500, o.Payload)
 }
+
+func (o *PostAPIV2EnvironmentsInternalServerError) String() string {
+	return fmt.Sprintf("[POST /api/v2/environments][%d] postApiV2EnvironmentsInternalServerError  %+v", 500, o.Payload)
+}
+
 func (o *PostAPIV2EnvironmentsInternalServerError) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }

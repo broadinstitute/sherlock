@@ -81,7 +81,8 @@ func NewPostAPIV2ChangesetsOK() *PostAPIV2ChangesetsOK {
 	return &PostAPIV2ChangesetsOK{}
 }
 
-/* PostAPIV2ChangesetsOK describes a response with status code 200, with default header values.
+/*
+PostAPIV2ChangesetsOK describes a response with status code 200, with default header values.
 
 OK
 */
@@ -89,9 +90,39 @@ type PostAPIV2ChangesetsOK struct {
 	Payload *models.V2controllersChangeset
 }
 
+// IsSuccess returns true when this post Api v2 changesets o k response has a 2xx status code
+func (o *PostAPIV2ChangesetsOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this post Api v2 changesets o k response has a 3xx status code
+func (o *PostAPIV2ChangesetsOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this post Api v2 changesets o k response has a 4xx status code
+func (o *PostAPIV2ChangesetsOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this post Api v2 changesets o k response has a 5xx status code
+func (o *PostAPIV2ChangesetsOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this post Api v2 changesets o k response a status code equal to that given
+func (o *PostAPIV2ChangesetsOK) IsCode(code int) bool {
+	return code == 200
+}
+
 func (o *PostAPIV2ChangesetsOK) Error() string {
 	return fmt.Sprintf("[POST /api/v2/changesets][%d] postApiV2ChangesetsOK  %+v", 200, o.Payload)
 }
+
+func (o *PostAPIV2ChangesetsOK) String() string {
+	return fmt.Sprintf("[POST /api/v2/changesets][%d] postApiV2ChangesetsOK  %+v", 200, o.Payload)
+}
+
 func (o *PostAPIV2ChangesetsOK) GetPayload() *models.V2controllersChangeset {
 	return o.Payload
 }
@@ -113,7 +144,8 @@ func NewPostAPIV2ChangesetsCreated() *PostAPIV2ChangesetsCreated {
 	return &PostAPIV2ChangesetsCreated{}
 }
 
-/* PostAPIV2ChangesetsCreated describes a response with status code 201, with default header values.
+/*
+PostAPIV2ChangesetsCreated describes a response with status code 201, with default header values.
 
 Created
 */
@@ -121,9 +153,39 @@ type PostAPIV2ChangesetsCreated struct {
 	Payload *models.V2controllersChangeset
 }
 
+// IsSuccess returns true when this post Api v2 changesets created response has a 2xx status code
+func (o *PostAPIV2ChangesetsCreated) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this post Api v2 changesets created response has a 3xx status code
+func (o *PostAPIV2ChangesetsCreated) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this post Api v2 changesets created response has a 4xx status code
+func (o *PostAPIV2ChangesetsCreated) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this post Api v2 changesets created response has a 5xx status code
+func (o *PostAPIV2ChangesetsCreated) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this post Api v2 changesets created response a status code equal to that given
+func (o *PostAPIV2ChangesetsCreated) IsCode(code int) bool {
+	return code == 201
+}
+
 func (o *PostAPIV2ChangesetsCreated) Error() string {
 	return fmt.Sprintf("[POST /api/v2/changesets][%d] postApiV2ChangesetsCreated  %+v", 201, o.Payload)
 }
+
+func (o *PostAPIV2ChangesetsCreated) String() string {
+	return fmt.Sprintf("[POST /api/v2/changesets][%d] postApiV2ChangesetsCreated  %+v", 201, o.Payload)
+}
+
 func (o *PostAPIV2ChangesetsCreated) GetPayload() *models.V2controllersChangeset {
 	return o.Payload
 }
@@ -145,7 +207,8 @@ func NewPostAPIV2ChangesetsBadRequest() *PostAPIV2ChangesetsBadRequest {
 	return &PostAPIV2ChangesetsBadRequest{}
 }
 
-/* PostAPIV2ChangesetsBadRequest describes a response with status code 400, with default header values.
+/*
+PostAPIV2ChangesetsBadRequest describes a response with status code 400, with default header values.
 
 Bad Request
 */
@@ -153,9 +216,39 @@ type PostAPIV2ChangesetsBadRequest struct {
 	Payload *models.ErrorsErrorResponse
 }
 
+// IsSuccess returns true when this post Api v2 changesets bad request response has a 2xx status code
+func (o *PostAPIV2ChangesetsBadRequest) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this post Api v2 changesets bad request response has a 3xx status code
+func (o *PostAPIV2ChangesetsBadRequest) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this post Api v2 changesets bad request response has a 4xx status code
+func (o *PostAPIV2ChangesetsBadRequest) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this post Api v2 changesets bad request response has a 5xx status code
+func (o *PostAPIV2ChangesetsBadRequest) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this post Api v2 changesets bad request response a status code equal to that given
+func (o *PostAPIV2ChangesetsBadRequest) IsCode(code int) bool {
+	return code == 400
+}
+
 func (o *PostAPIV2ChangesetsBadRequest) Error() string {
 	return fmt.Sprintf("[POST /api/v2/changesets][%d] postApiV2ChangesetsBadRequest  %+v", 400, o.Payload)
 }
+
+func (o *PostAPIV2ChangesetsBadRequest) String() string {
+	return fmt.Sprintf("[POST /api/v2/changesets][%d] postApiV2ChangesetsBadRequest  %+v", 400, o.Payload)
+}
+
 func (o *PostAPIV2ChangesetsBadRequest) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -177,7 +270,8 @@ func NewPostAPIV2ChangesetsForbidden() *PostAPIV2ChangesetsForbidden {
 	return &PostAPIV2ChangesetsForbidden{}
 }
 
-/* PostAPIV2ChangesetsForbidden describes a response with status code 403, with default header values.
+/*
+PostAPIV2ChangesetsForbidden describes a response with status code 403, with default header values.
 
 Forbidden
 */
@@ -185,9 +279,39 @@ type PostAPIV2ChangesetsForbidden struct {
 	Payload *models.ErrorsErrorResponse
 }
 
+// IsSuccess returns true when this post Api v2 changesets forbidden response has a 2xx status code
+func (o *PostAPIV2ChangesetsForbidden) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this post Api v2 changesets forbidden response has a 3xx status code
+func (o *PostAPIV2ChangesetsForbidden) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this post Api v2 changesets forbidden response has a 4xx status code
+func (o *PostAPIV2ChangesetsForbidden) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this post Api v2 changesets forbidden response has a 5xx status code
+func (o *PostAPIV2ChangesetsForbidden) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this post Api v2 changesets forbidden response a status code equal to that given
+func (o *PostAPIV2ChangesetsForbidden) IsCode(code int) bool {
+	return code == 403
+}
+
 func (o *PostAPIV2ChangesetsForbidden) Error() string {
 	return fmt.Sprintf("[POST /api/v2/changesets][%d] postApiV2ChangesetsForbidden  %+v", 403, o.Payload)
 }
+
+func (o *PostAPIV2ChangesetsForbidden) String() string {
+	return fmt.Sprintf("[POST /api/v2/changesets][%d] postApiV2ChangesetsForbidden  %+v", 403, o.Payload)
+}
+
 func (o *PostAPIV2ChangesetsForbidden) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -209,7 +333,8 @@ func NewPostAPIV2ChangesetsNotFound() *PostAPIV2ChangesetsNotFound {
 	return &PostAPIV2ChangesetsNotFound{}
 }
 
-/* PostAPIV2ChangesetsNotFound describes a response with status code 404, with default header values.
+/*
+PostAPIV2ChangesetsNotFound describes a response with status code 404, with default header values.
 
 Not Found
 */
@@ -217,9 +342,39 @@ type PostAPIV2ChangesetsNotFound struct {
 	Payload *models.ErrorsErrorResponse
 }
 
+// IsSuccess returns true when this post Api v2 changesets not found response has a 2xx status code
+func (o *PostAPIV2ChangesetsNotFound) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this post Api v2 changesets not found response has a 3xx status code
+func (o *PostAPIV2ChangesetsNotFound) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this post Api v2 changesets not found response has a 4xx status code
+func (o *PostAPIV2ChangesetsNotFound) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this post Api v2 changesets not found response has a 5xx status code
+func (o *PostAPIV2ChangesetsNotFound) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this post Api v2 changesets not found response a status code equal to that given
+func (o *PostAPIV2ChangesetsNotFound) IsCode(code int) bool {
+	return code == 404
+}
+
 func (o *PostAPIV2ChangesetsNotFound) Error() string {
 	return fmt.Sprintf("[POST /api/v2/changesets][%d] postApiV2ChangesetsNotFound  %+v", 404, o.Payload)
 }
+
+func (o *PostAPIV2ChangesetsNotFound) String() string {
+	return fmt.Sprintf("[POST /api/v2/changesets][%d] postApiV2ChangesetsNotFound  %+v", 404, o.Payload)
+}
+
 func (o *PostAPIV2ChangesetsNotFound) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -241,7 +396,8 @@ func NewPostAPIV2ChangesetsProxyAuthenticationRequired() *PostAPIV2ChangesetsPro
 	return &PostAPIV2ChangesetsProxyAuthenticationRequired{}
 }
 
-/* PostAPIV2ChangesetsProxyAuthenticationRequired describes a response with status code 407, with default header values.
+/*
+PostAPIV2ChangesetsProxyAuthenticationRequired describes a response with status code 407, with default header values.
 
 Proxy Authentication Required
 */
@@ -249,9 +405,39 @@ type PostAPIV2ChangesetsProxyAuthenticationRequired struct {
 	Payload *models.ErrorsErrorResponse
 }
 
+// IsSuccess returns true when this post Api v2 changesets proxy authentication required response has a 2xx status code
+func (o *PostAPIV2ChangesetsProxyAuthenticationRequired) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this post Api v2 changesets proxy authentication required response has a 3xx status code
+func (o *PostAPIV2ChangesetsProxyAuthenticationRequired) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this post Api v2 changesets proxy authentication required response has a 4xx status code
+func (o *PostAPIV2ChangesetsProxyAuthenticationRequired) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this post Api v2 changesets proxy authentication required response has a 5xx status code
+func (o *PostAPIV2ChangesetsProxyAuthenticationRequired) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this post Api v2 changesets proxy authentication required response a status code equal to that given
+func (o *PostAPIV2ChangesetsProxyAuthenticationRequired) IsCode(code int) bool {
+	return code == 407
+}
+
 func (o *PostAPIV2ChangesetsProxyAuthenticationRequired) Error() string {
 	return fmt.Sprintf("[POST /api/v2/changesets][%d] postApiV2ChangesetsProxyAuthenticationRequired  %+v", 407, o.Payload)
 }
+
+func (o *PostAPIV2ChangesetsProxyAuthenticationRequired) String() string {
+	return fmt.Sprintf("[POST /api/v2/changesets][%d] postApiV2ChangesetsProxyAuthenticationRequired  %+v", 407, o.Payload)
+}
+
 func (o *PostAPIV2ChangesetsProxyAuthenticationRequired) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -273,7 +459,8 @@ func NewPostAPIV2ChangesetsConflict() *PostAPIV2ChangesetsConflict {
 	return &PostAPIV2ChangesetsConflict{}
 }
 
-/* PostAPIV2ChangesetsConflict describes a response with status code 409, with default header values.
+/*
+PostAPIV2ChangesetsConflict describes a response with status code 409, with default header values.
 
 Conflict
 */
@@ -281,9 +468,39 @@ type PostAPIV2ChangesetsConflict struct {
 	Payload *models.ErrorsErrorResponse
 }
 
+// IsSuccess returns true when this post Api v2 changesets conflict response has a 2xx status code
+func (o *PostAPIV2ChangesetsConflict) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this post Api v2 changesets conflict response has a 3xx status code
+func (o *PostAPIV2ChangesetsConflict) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this post Api v2 changesets conflict response has a 4xx status code
+func (o *PostAPIV2ChangesetsConflict) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this post Api v2 changesets conflict response has a 5xx status code
+func (o *PostAPIV2ChangesetsConflict) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this post Api v2 changesets conflict response a status code equal to that given
+func (o *PostAPIV2ChangesetsConflict) IsCode(code int) bool {
+	return code == 409
+}
+
 func (o *PostAPIV2ChangesetsConflict) Error() string {
 	return fmt.Sprintf("[POST /api/v2/changesets][%d] postApiV2ChangesetsConflict  %+v", 409, o.Payload)
 }
+
+func (o *PostAPIV2ChangesetsConflict) String() string {
+	return fmt.Sprintf("[POST /api/v2/changesets][%d] postApiV2ChangesetsConflict  %+v", 409, o.Payload)
+}
+
 func (o *PostAPIV2ChangesetsConflict) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -305,7 +522,8 @@ func NewPostAPIV2ChangesetsInternalServerError() *PostAPIV2ChangesetsInternalSer
 	return &PostAPIV2ChangesetsInternalServerError{}
 }
 
-/* PostAPIV2ChangesetsInternalServerError describes a response with status code 500, with default header values.
+/*
+PostAPIV2ChangesetsInternalServerError describes a response with status code 500, with default header values.
 
 Internal Server Error
 */
@@ -313,9 +531,39 @@ type PostAPIV2ChangesetsInternalServerError struct {
 	Payload *models.ErrorsErrorResponse
 }
 
+// IsSuccess returns true when this post Api v2 changesets internal server error response has a 2xx status code
+func (o *PostAPIV2ChangesetsInternalServerError) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this post Api v2 changesets internal server error response has a 3xx status code
+func (o *PostAPIV2ChangesetsInternalServerError) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this post Api v2 changesets internal server error response has a 4xx status code
+func (o *PostAPIV2ChangesetsInternalServerError) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this post Api v2 changesets internal server error response has a 5xx status code
+func (o *PostAPIV2ChangesetsInternalServerError) IsServerError() bool {
+	return true
+}
+
+// IsCode returns true when this post Api v2 changesets internal server error response a status code equal to that given
+func (o *PostAPIV2ChangesetsInternalServerError) IsCode(code int) bool {
+	return code == 500
+}
+
 func (o *PostAPIV2ChangesetsInternalServerError) Error() string {
 	return fmt.Sprintf("[POST /api/v2/changesets][%d] postApiV2ChangesetsInternalServerError  %+v", 500, o.Payload)
 }
+
+func (o *PostAPIV2ChangesetsInternalServerError) String() string {
+	return fmt.Sprintf("[POST /api/v2/changesets][%d] postApiV2ChangesetsInternalServerError  %+v", 500, o.Payload)
+}
+
 func (o *PostAPIV2ChangesetsInternalServerError) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }

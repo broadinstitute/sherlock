@@ -44,9 +44,9 @@ type ClientService interface {
 }
 
 /*
-  GetAPIV2AppVersions lists app version entries
+GetAPIV2AppVersions lists app version entries
 
-  List existing AppVersion entries, ordered by most recently updated.
+List existing AppVersion entries, ordered by most recently updated.
 */
 func (a *Client) GetAPIV2AppVersions(params *GetAPIV2AppVersionsParams, opts ...ClientOption) (*GetAPIV2AppVersionsOK, error) {
 	// TODO: Validate the params before sending
@@ -84,9 +84,9 @@ func (a *Client) GetAPIV2AppVersions(params *GetAPIV2AppVersionsParams, opts ...
 }
 
 /*
-  GetAPIV2AppVersionsSelector gets a app version entry
+GetAPIV2AppVersionsSelector gets a app version entry
 
-  Get an existing AppVersion entry via one its "selectors": chart/version or numeric ID.
+Get an existing AppVersion entry via one its "selectors": chart/version or numeric ID.
 */
 func (a *Client) GetAPIV2AppVersionsSelector(params *GetAPIV2AppVersionsSelectorParams, opts ...ClientOption) (*GetAPIV2AppVersionsSelectorOK, error) {
 	// TODO: Validate the params before sending
@@ -124,9 +124,9 @@ func (a *Client) GetAPIV2AppVersionsSelector(params *GetAPIV2AppVersionsSelector
 }
 
 /*
-  GetAPIV2SelectorsAppVersionsSelector lists app version selectors
+GetAPIV2SelectorsAppVersionsSelector lists app version selectors
 
-  Validate a given AppVersion selector and provide any other selectors that would match the same AppVersion.
+Validate a given AppVersion selector and provide any other selectors that would match the same AppVersion.
 */
 func (a *Client) GetAPIV2SelectorsAppVersionsSelector(params *GetAPIV2SelectorsAppVersionsSelectorParams, opts ...ClientOption) (*GetAPIV2SelectorsAppVersionsSelectorOK, error) {
 	// TODO: Validate the params before sending
@@ -164,9 +164,9 @@ func (a *Client) GetAPIV2SelectorsAppVersionsSelector(params *GetAPIV2SelectorsA
 }
 
 /*
-  PatchAPIV2AppVersionsSelector edits a app version entry
+PatchAPIV2AppVersionsSelector edits a app version entry
 
-  Edit an existing AppVersion entry via one its "selectors": chart/version or numeric ID. Note that only mutable fields are available here, immutable fields can only be set using /create.
+Edit an existing AppVersion entry via one its "selectors": chart/version or numeric ID. Note that only mutable fields are available here, immutable fields can only be set using /create.
 */
 func (a *Client) PatchAPIV2AppVersionsSelector(params *PatchAPIV2AppVersionsSelectorParams, opts ...ClientOption) (*PatchAPIV2AppVersionsSelectorOK, error) {
 	// TODO: Validate the params before sending
@@ -204,9 +204,10 @@ func (a *Client) PatchAPIV2AppVersionsSelector(params *PatchAPIV2AppVersionsSele
 }
 
 /*
-  PostAPIV2AppVersions creates a new app version entry
+	PostAPIV2AppVersions creates a new app version entry
 
-  Create a new AppVersion entry. Note that fields are immutable after creation.
+	Create a new AppVersion entry. Note that fields are immutable after creation.
+
 If the new entry is a duplicate of one already in the database, the database will not be altered and the call will return normally but with a 200 code.
 */
 func (a *Client) PostAPIV2AppVersions(params *PostAPIV2AppVersionsParams, opts ...ClientOption) (*PostAPIV2AppVersionsOK, *PostAPIV2AppVersionsCreated, error) {

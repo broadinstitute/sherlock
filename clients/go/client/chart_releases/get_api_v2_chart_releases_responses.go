@@ -75,7 +75,8 @@ func NewGetAPIV2ChartReleasesOK() *GetAPIV2ChartReleasesOK {
 	return &GetAPIV2ChartReleasesOK{}
 }
 
-/* GetAPIV2ChartReleasesOK describes a response with status code 200, with default header values.
+/*
+GetAPIV2ChartReleasesOK describes a response with status code 200, with default header values.
 
 OK
 */
@@ -83,9 +84,39 @@ type GetAPIV2ChartReleasesOK struct {
 	Payload []*models.V2controllersChartRelease
 }
 
+// IsSuccess returns true when this get Api v2 chart releases o k response has a 2xx status code
+func (o *GetAPIV2ChartReleasesOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this get Api v2 chart releases o k response has a 3xx status code
+func (o *GetAPIV2ChartReleasesOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this get Api v2 chart releases o k response has a 4xx status code
+func (o *GetAPIV2ChartReleasesOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this get Api v2 chart releases o k response has a 5xx status code
+func (o *GetAPIV2ChartReleasesOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this get Api v2 chart releases o k response a status code equal to that given
+func (o *GetAPIV2ChartReleasesOK) IsCode(code int) bool {
+	return code == 200
+}
+
 func (o *GetAPIV2ChartReleasesOK) Error() string {
 	return fmt.Sprintf("[GET /api/v2/chart-releases][%d] getApiV2ChartReleasesOK  %+v", 200, o.Payload)
 }
+
+func (o *GetAPIV2ChartReleasesOK) String() string {
+	return fmt.Sprintf("[GET /api/v2/chart-releases][%d] getApiV2ChartReleasesOK  %+v", 200, o.Payload)
+}
+
 func (o *GetAPIV2ChartReleasesOK) GetPayload() []*models.V2controllersChartRelease {
 	return o.Payload
 }
@@ -105,7 +136,8 @@ func NewGetAPIV2ChartReleasesBadRequest() *GetAPIV2ChartReleasesBadRequest {
 	return &GetAPIV2ChartReleasesBadRequest{}
 }
 
-/* GetAPIV2ChartReleasesBadRequest describes a response with status code 400, with default header values.
+/*
+GetAPIV2ChartReleasesBadRequest describes a response with status code 400, with default header values.
 
 Bad Request
 */
@@ -113,9 +145,39 @@ type GetAPIV2ChartReleasesBadRequest struct {
 	Payload *models.ErrorsErrorResponse
 }
 
+// IsSuccess returns true when this get Api v2 chart releases bad request response has a 2xx status code
+func (o *GetAPIV2ChartReleasesBadRequest) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this get Api v2 chart releases bad request response has a 3xx status code
+func (o *GetAPIV2ChartReleasesBadRequest) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this get Api v2 chart releases bad request response has a 4xx status code
+func (o *GetAPIV2ChartReleasesBadRequest) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this get Api v2 chart releases bad request response has a 5xx status code
+func (o *GetAPIV2ChartReleasesBadRequest) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this get Api v2 chart releases bad request response a status code equal to that given
+func (o *GetAPIV2ChartReleasesBadRequest) IsCode(code int) bool {
+	return code == 400
+}
+
 func (o *GetAPIV2ChartReleasesBadRequest) Error() string {
 	return fmt.Sprintf("[GET /api/v2/chart-releases][%d] getApiV2ChartReleasesBadRequest  %+v", 400, o.Payload)
 }
+
+func (o *GetAPIV2ChartReleasesBadRequest) String() string {
+	return fmt.Sprintf("[GET /api/v2/chart-releases][%d] getApiV2ChartReleasesBadRequest  %+v", 400, o.Payload)
+}
+
 func (o *GetAPIV2ChartReleasesBadRequest) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -137,7 +199,8 @@ func NewGetAPIV2ChartReleasesForbidden() *GetAPIV2ChartReleasesForbidden {
 	return &GetAPIV2ChartReleasesForbidden{}
 }
 
-/* GetAPIV2ChartReleasesForbidden describes a response with status code 403, with default header values.
+/*
+GetAPIV2ChartReleasesForbidden describes a response with status code 403, with default header values.
 
 Forbidden
 */
@@ -145,9 +208,39 @@ type GetAPIV2ChartReleasesForbidden struct {
 	Payload *models.ErrorsErrorResponse
 }
 
+// IsSuccess returns true when this get Api v2 chart releases forbidden response has a 2xx status code
+func (o *GetAPIV2ChartReleasesForbidden) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this get Api v2 chart releases forbidden response has a 3xx status code
+func (o *GetAPIV2ChartReleasesForbidden) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this get Api v2 chart releases forbidden response has a 4xx status code
+func (o *GetAPIV2ChartReleasesForbidden) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this get Api v2 chart releases forbidden response has a 5xx status code
+func (o *GetAPIV2ChartReleasesForbidden) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this get Api v2 chart releases forbidden response a status code equal to that given
+func (o *GetAPIV2ChartReleasesForbidden) IsCode(code int) bool {
+	return code == 403
+}
+
 func (o *GetAPIV2ChartReleasesForbidden) Error() string {
 	return fmt.Sprintf("[GET /api/v2/chart-releases][%d] getApiV2ChartReleasesForbidden  %+v", 403, o.Payload)
 }
+
+func (o *GetAPIV2ChartReleasesForbidden) String() string {
+	return fmt.Sprintf("[GET /api/v2/chart-releases][%d] getApiV2ChartReleasesForbidden  %+v", 403, o.Payload)
+}
+
 func (o *GetAPIV2ChartReleasesForbidden) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -169,7 +262,8 @@ func NewGetAPIV2ChartReleasesNotFound() *GetAPIV2ChartReleasesNotFound {
 	return &GetAPIV2ChartReleasesNotFound{}
 }
 
-/* GetAPIV2ChartReleasesNotFound describes a response with status code 404, with default header values.
+/*
+GetAPIV2ChartReleasesNotFound describes a response with status code 404, with default header values.
 
 Not Found
 */
@@ -177,9 +271,39 @@ type GetAPIV2ChartReleasesNotFound struct {
 	Payload *models.ErrorsErrorResponse
 }
 
+// IsSuccess returns true when this get Api v2 chart releases not found response has a 2xx status code
+func (o *GetAPIV2ChartReleasesNotFound) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this get Api v2 chart releases not found response has a 3xx status code
+func (o *GetAPIV2ChartReleasesNotFound) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this get Api v2 chart releases not found response has a 4xx status code
+func (o *GetAPIV2ChartReleasesNotFound) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this get Api v2 chart releases not found response has a 5xx status code
+func (o *GetAPIV2ChartReleasesNotFound) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this get Api v2 chart releases not found response a status code equal to that given
+func (o *GetAPIV2ChartReleasesNotFound) IsCode(code int) bool {
+	return code == 404
+}
+
 func (o *GetAPIV2ChartReleasesNotFound) Error() string {
 	return fmt.Sprintf("[GET /api/v2/chart-releases][%d] getApiV2ChartReleasesNotFound  %+v", 404, o.Payload)
 }
+
+func (o *GetAPIV2ChartReleasesNotFound) String() string {
+	return fmt.Sprintf("[GET /api/v2/chart-releases][%d] getApiV2ChartReleasesNotFound  %+v", 404, o.Payload)
+}
+
 func (o *GetAPIV2ChartReleasesNotFound) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -201,7 +325,8 @@ func NewGetAPIV2ChartReleasesProxyAuthenticationRequired() *GetAPIV2ChartRelease
 	return &GetAPIV2ChartReleasesProxyAuthenticationRequired{}
 }
 
-/* GetAPIV2ChartReleasesProxyAuthenticationRequired describes a response with status code 407, with default header values.
+/*
+GetAPIV2ChartReleasesProxyAuthenticationRequired describes a response with status code 407, with default header values.
 
 Proxy Authentication Required
 */
@@ -209,9 +334,39 @@ type GetAPIV2ChartReleasesProxyAuthenticationRequired struct {
 	Payload *models.ErrorsErrorResponse
 }
 
+// IsSuccess returns true when this get Api v2 chart releases proxy authentication required response has a 2xx status code
+func (o *GetAPIV2ChartReleasesProxyAuthenticationRequired) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this get Api v2 chart releases proxy authentication required response has a 3xx status code
+func (o *GetAPIV2ChartReleasesProxyAuthenticationRequired) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this get Api v2 chart releases proxy authentication required response has a 4xx status code
+func (o *GetAPIV2ChartReleasesProxyAuthenticationRequired) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this get Api v2 chart releases proxy authentication required response has a 5xx status code
+func (o *GetAPIV2ChartReleasesProxyAuthenticationRequired) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this get Api v2 chart releases proxy authentication required response a status code equal to that given
+func (o *GetAPIV2ChartReleasesProxyAuthenticationRequired) IsCode(code int) bool {
+	return code == 407
+}
+
 func (o *GetAPIV2ChartReleasesProxyAuthenticationRequired) Error() string {
 	return fmt.Sprintf("[GET /api/v2/chart-releases][%d] getApiV2ChartReleasesProxyAuthenticationRequired  %+v", 407, o.Payload)
 }
+
+func (o *GetAPIV2ChartReleasesProxyAuthenticationRequired) String() string {
+	return fmt.Sprintf("[GET /api/v2/chart-releases][%d] getApiV2ChartReleasesProxyAuthenticationRequired  %+v", 407, o.Payload)
+}
+
 func (o *GetAPIV2ChartReleasesProxyAuthenticationRequired) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -233,7 +388,8 @@ func NewGetAPIV2ChartReleasesConflict() *GetAPIV2ChartReleasesConflict {
 	return &GetAPIV2ChartReleasesConflict{}
 }
 
-/* GetAPIV2ChartReleasesConflict describes a response with status code 409, with default header values.
+/*
+GetAPIV2ChartReleasesConflict describes a response with status code 409, with default header values.
 
 Conflict
 */
@@ -241,9 +397,39 @@ type GetAPIV2ChartReleasesConflict struct {
 	Payload *models.ErrorsErrorResponse
 }
 
+// IsSuccess returns true when this get Api v2 chart releases conflict response has a 2xx status code
+func (o *GetAPIV2ChartReleasesConflict) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this get Api v2 chart releases conflict response has a 3xx status code
+func (o *GetAPIV2ChartReleasesConflict) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this get Api v2 chart releases conflict response has a 4xx status code
+func (o *GetAPIV2ChartReleasesConflict) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this get Api v2 chart releases conflict response has a 5xx status code
+func (o *GetAPIV2ChartReleasesConflict) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this get Api v2 chart releases conflict response a status code equal to that given
+func (o *GetAPIV2ChartReleasesConflict) IsCode(code int) bool {
+	return code == 409
+}
+
 func (o *GetAPIV2ChartReleasesConflict) Error() string {
 	return fmt.Sprintf("[GET /api/v2/chart-releases][%d] getApiV2ChartReleasesConflict  %+v", 409, o.Payload)
 }
+
+func (o *GetAPIV2ChartReleasesConflict) String() string {
+	return fmt.Sprintf("[GET /api/v2/chart-releases][%d] getApiV2ChartReleasesConflict  %+v", 409, o.Payload)
+}
+
 func (o *GetAPIV2ChartReleasesConflict) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -265,7 +451,8 @@ func NewGetAPIV2ChartReleasesInternalServerError() *GetAPIV2ChartReleasesInterna
 	return &GetAPIV2ChartReleasesInternalServerError{}
 }
 
-/* GetAPIV2ChartReleasesInternalServerError describes a response with status code 500, with default header values.
+/*
+GetAPIV2ChartReleasesInternalServerError describes a response with status code 500, with default header values.
 
 Internal Server Error
 */
@@ -273,9 +460,39 @@ type GetAPIV2ChartReleasesInternalServerError struct {
 	Payload *models.ErrorsErrorResponse
 }
 
+// IsSuccess returns true when this get Api v2 chart releases internal server error response has a 2xx status code
+func (o *GetAPIV2ChartReleasesInternalServerError) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this get Api v2 chart releases internal server error response has a 3xx status code
+func (o *GetAPIV2ChartReleasesInternalServerError) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this get Api v2 chart releases internal server error response has a 4xx status code
+func (o *GetAPIV2ChartReleasesInternalServerError) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this get Api v2 chart releases internal server error response has a 5xx status code
+func (o *GetAPIV2ChartReleasesInternalServerError) IsServerError() bool {
+	return true
+}
+
+// IsCode returns true when this get Api v2 chart releases internal server error response a status code equal to that given
+func (o *GetAPIV2ChartReleasesInternalServerError) IsCode(code int) bool {
+	return code == 500
+}
+
 func (o *GetAPIV2ChartReleasesInternalServerError) Error() string {
 	return fmt.Sprintf("[GET /api/v2/chart-releases][%d] getApiV2ChartReleasesInternalServerError  %+v", 500, o.Payload)
 }
+
+func (o *GetAPIV2ChartReleasesInternalServerError) String() string {
+	return fmt.Sprintf("[GET /api/v2/chart-releases][%d] getApiV2ChartReleasesInternalServerError  %+v", 500, o.Payload)
+}
+
 func (o *GetAPIV2ChartReleasesInternalServerError) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }

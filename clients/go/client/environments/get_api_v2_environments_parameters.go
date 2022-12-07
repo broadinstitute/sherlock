@@ -53,10 +53,12 @@ func NewGetAPIV2EnvironmentsParamsWithHTTPClient(client *http.Client) *GetAPIV2E
 	}
 }
 
-/* GetAPIV2EnvironmentsParams contains all the parameters to send to the API endpoint
-   for the get API v2 environments operation.
+/*
+GetAPIV2EnvironmentsParams contains all the parameters to send to the API endpoint
 
-   Typically these are written to a http.Request.
+	for the get API v2 environments operation.
+
+	Typically these are written to a http.Request.
 */
 type GetAPIV2EnvironmentsParams struct {
 
@@ -80,7 +82,9 @@ type GetAPIV2EnvironmentsParams struct {
 	ChartReleasesFromTemplate *bool
 
 	// CreatedAt.
-	CreatedAt *string
+	//
+	// Format: date-time
+	CreatedAt *strfmt.DateTime
 
 	// DefaultCluster.
 	DefaultCluster *string
@@ -163,7 +167,9 @@ type GetAPIV2EnvironmentsParams struct {
 	UniqueResourcePrefix *string
 
 	// UpdatedAt.
-	UpdatedAt *string
+	//
+	// Format: date-time
+	UpdatedAt *strfmt.DateTime
 
 	// ValuesName.
 	ValuesName *string
@@ -287,13 +293,13 @@ func (o *GetAPIV2EnvironmentsParams) SetChartReleasesFromTemplate(chartReleasesF
 }
 
 // WithCreatedAt adds the createdAt to the get API v2 environments params
-func (o *GetAPIV2EnvironmentsParams) WithCreatedAt(createdAt *string) *GetAPIV2EnvironmentsParams {
+func (o *GetAPIV2EnvironmentsParams) WithCreatedAt(createdAt *strfmt.DateTime) *GetAPIV2EnvironmentsParams {
 	o.SetCreatedAt(createdAt)
 	return o
 }
 
 // SetCreatedAt adds the createdAt to the get API v2 environments params
-func (o *GetAPIV2EnvironmentsParams) SetCreatedAt(createdAt *string) {
+func (o *GetAPIV2EnvironmentsParams) SetCreatedAt(createdAt *strfmt.DateTime) {
 	o.CreatedAt = createdAt
 }
 
@@ -463,13 +469,13 @@ func (o *GetAPIV2EnvironmentsParams) SetUniqueResourcePrefix(uniqueResourcePrefi
 }
 
 // WithUpdatedAt adds the updatedAt to the get API v2 environments params
-func (o *GetAPIV2EnvironmentsParams) WithUpdatedAt(updatedAt *string) *GetAPIV2EnvironmentsParams {
+func (o *GetAPIV2EnvironmentsParams) WithUpdatedAt(updatedAt *strfmt.DateTime) *GetAPIV2EnvironmentsParams {
 	o.SetUpdatedAt(updatedAt)
 	return o
 }
 
 // SetUpdatedAt adds the updatedAt to the get API v2 environments params
-func (o *GetAPIV2EnvironmentsParams) SetUpdatedAt(updatedAt *string) {
+func (o *GetAPIV2EnvironmentsParams) SetUpdatedAt(updatedAt *strfmt.DateTime) {
 	o.UpdatedAt = updatedAt
 }
 
@@ -546,12 +552,12 @@ func (o *GetAPIV2EnvironmentsParams) WriteToRequest(r runtime.ClientRequest, reg
 	if o.CreatedAt != nil {
 
 		// query param createdAt
-		var qrCreatedAt string
+		var qrCreatedAt strfmt.DateTime
 
 		if o.CreatedAt != nil {
 			qrCreatedAt = *o.CreatedAt
 		}
-		qCreatedAt := qrCreatedAt
+		qCreatedAt := qrCreatedAt.String()
 		if qCreatedAt != "" {
 
 			if err := r.SetQueryParam("createdAt", qCreatedAt); err != nil {
@@ -818,12 +824,12 @@ func (o *GetAPIV2EnvironmentsParams) WriteToRequest(r runtime.ClientRequest, reg
 	if o.UpdatedAt != nil {
 
 		// query param updatedAt
-		var qrUpdatedAt string
+		var qrUpdatedAt strfmt.DateTime
 
 		if o.UpdatedAt != nil {
 			qrUpdatedAt = *o.UpdatedAt
 		}
-		qUpdatedAt := qrUpdatedAt
+		qUpdatedAt := qrUpdatedAt.String()
 		if qUpdatedAt != "" {
 
 			if err := r.SetQueryParam("updatedAt", qUpdatedAt); err != nil {

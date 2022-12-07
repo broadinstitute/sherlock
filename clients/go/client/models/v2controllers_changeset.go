@@ -12,6 +12,7 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // V2controllersChangeset v2controllers changeset
@@ -29,7 +30,8 @@ type V2controllersChangeset struct {
 	ChartReleaseInfo *V2controllersChartRelease `json:"chartReleaseInfo,omitempty"`
 
 	// created at
-	CreatedAt string `json:"createdAt,omitempty"`
+	// Format: date-time
+	CreatedAt strfmt.DateTime `json:"createdAt,omitempty"`
 
 	// from app version branch
 	FromAppVersionBranch string `json:"fromAppVersionBranch,omitempty"`
@@ -122,7 +124,8 @@ type V2controllersChangeset struct {
 	ToResolvedAt string `json:"toResolvedAt,omitempty"`
 
 	// updated at
-	UpdatedAt string `json:"updatedAt,omitempty"`
+	// Format: date-time
+	UpdatedAt strfmt.DateTime `json:"updatedAt,omitempty"`
 }
 
 // Validate validates this v2controllers changeset
@@ -133,11 +136,19 @@ func (m *V2controllersChangeset) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateCreatedAt(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateNewAppVersions(formats); err != nil {
 		res = append(res, err)
 	}
 
 	if err := m.validateNewChartVersions(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateUpdatedAt(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -161,6 +172,18 @@ func (m *V2controllersChangeset) validateChartReleaseInfo(formats strfmt.Registr
 			}
 			return err
 		}
+	}
+
+	return nil
+}
+
+func (m *V2controllersChangeset) validateCreatedAt(formats strfmt.Registry) error {
+	if swag.IsZero(m.CreatedAt) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("createdAt", "body", "date-time", m.CreatedAt.String(), formats); err != nil {
+		return err
 	}
 
 	return nil
@@ -213,6 +236,18 @@ func (m *V2controllersChangeset) validateNewChartVersions(formats strfmt.Registr
 			}
 		}
 
+	}
+
+	return nil
+}
+
+func (m *V2controllersChangeset) validateUpdatedAt(formats strfmt.Registry) error {
+	if swag.IsZero(m.UpdatedAt) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("updatedAt", "body", "date-time", m.UpdatedAt.String(), formats); err != nil {
+		return err
 	}
 
 	return nil

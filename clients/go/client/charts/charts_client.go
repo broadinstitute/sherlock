@@ -46,9 +46,9 @@ type ClientService interface {
 }
 
 /*
-  DeleteAPIV2ChartsSelector deletes a chart entry
+DeleteAPIV2ChartsSelector deletes a chart entry
 
-  Delete an existing Chart entry via one of its "selectors": name or numeric ID.
+Delete an existing Chart entry via one of its "selectors": name or numeric ID.
 */
 func (a *Client) DeleteAPIV2ChartsSelector(params *DeleteAPIV2ChartsSelectorParams, opts ...ClientOption) (*DeleteAPIV2ChartsSelectorOK, error) {
 	// TODO: Validate the params before sending
@@ -86,9 +86,9 @@ func (a *Client) DeleteAPIV2ChartsSelector(params *DeleteAPIV2ChartsSelectorPara
 }
 
 /*
-  GetAPIV2Charts lists chart entries
+GetAPIV2Charts lists chart entries
 
-  List existing Chart entries, ordered by most recently updated.
+List existing Chart entries, ordered by most recently updated.
 */
 func (a *Client) GetAPIV2Charts(params *GetAPIV2ChartsParams, opts ...ClientOption) (*GetAPIV2ChartsOK, error) {
 	// TODO: Validate the params before sending
@@ -126,9 +126,9 @@ func (a *Client) GetAPIV2Charts(params *GetAPIV2ChartsParams, opts ...ClientOpti
 }
 
 /*
-  GetAPIV2ChartsSelector gets a chart entry
+GetAPIV2ChartsSelector gets a chart entry
 
-  Get an existing Chart entry via one of its "selectors": name or numeric ID.
+Get an existing Chart entry via one of its "selectors": name or numeric ID.
 */
 func (a *Client) GetAPIV2ChartsSelector(params *GetAPIV2ChartsSelectorParams, opts ...ClientOption) (*GetAPIV2ChartsSelectorOK, error) {
 	// TODO: Validate the params before sending
@@ -166,9 +166,9 @@ func (a *Client) GetAPIV2ChartsSelector(params *GetAPIV2ChartsSelectorParams, op
 }
 
 /*
-  GetAPIV2SelectorsChartsSelector lists chart selectors
+GetAPIV2SelectorsChartsSelector lists chart selectors
 
-  Validate a given Chart selector and provide any other selectors that would match the same Chart.
+Validate a given Chart selector and provide any other selectors that would match the same Chart.
 */
 func (a *Client) GetAPIV2SelectorsChartsSelector(params *GetAPIV2SelectorsChartsSelectorParams, opts ...ClientOption) (*GetAPIV2SelectorsChartsSelectorOK, error) {
 	// TODO: Validate the params before sending
@@ -206,9 +206,9 @@ func (a *Client) GetAPIV2SelectorsChartsSelector(params *GetAPIV2SelectorsCharts
 }
 
 /*
-  PatchAPIV2ChartsSelector edits a chart entry
+PatchAPIV2ChartsSelector edits a chart entry
 
-  Edit an existing Chart entry via one of its "selectors": name or numeric ID. Note that only mutable fields are available here, immutable fields can only be set using /create.
+Edit an existing Chart entry via one of its "selectors": name or numeric ID. Note that only mutable fields are available here, immutable fields can only be set using /create.
 */
 func (a *Client) PatchAPIV2ChartsSelector(params *PatchAPIV2ChartsSelectorParams, opts ...ClientOption) (*PatchAPIV2ChartsSelectorOK, error) {
 	// TODO: Validate the params before sending
@@ -246,9 +246,9 @@ func (a *Client) PatchAPIV2ChartsSelector(params *PatchAPIV2ChartsSelectorParams
 }
 
 /*
-  PostAPIV2Charts creates a new chart entry
+PostAPIV2Charts creates a new chart entry
 
-  Create a new Chart entry. Note that some fields are immutable after creation; /edit lists mutable fields.
+Create a new Chart entry. Note that some fields are immutable after creation; /edit lists mutable fields.
 */
 func (a *Client) PostAPIV2Charts(params *PostAPIV2ChartsParams, opts ...ClientOption) (*PostAPIV2ChartsOK, *PostAPIV2ChartsCreated, error) {
 	// TODO: Validate the params before sending

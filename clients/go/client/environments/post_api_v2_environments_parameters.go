@@ -54,10 +54,12 @@ func NewPostAPIV2EnvironmentsParamsWithHTTPClient(client *http.Client) *PostAPIV
 	}
 }
 
-/* PostAPIV2EnvironmentsParams contains all the parameters to send to the API endpoint
-   for the post API v2 environments operation.
+/*
+PostAPIV2EnvironmentsParams contains all the parameters to send to the API endpoint
 
-   Typically these are written to a http.Request.
+	for the post API v2 environments operation.
+
+	Typically these are written to a http.Request.
 */
 type PostAPIV2EnvironmentsParams struct {
 

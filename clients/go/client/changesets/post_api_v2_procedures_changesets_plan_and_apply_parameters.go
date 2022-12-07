@@ -54,10 +54,12 @@ func NewPostAPIV2ProceduresChangesetsPlanAndApplyParamsWithHTTPClient(client *ht
 	}
 }
 
-/* PostAPIV2ProceduresChangesetsPlanAndApplyParams contains all the parameters to send to the API endpoint
-   for the post API v2 procedures changesets plan and apply operation.
+/*
+PostAPIV2ProceduresChangesetsPlanAndApplyParams contains all the parameters to send to the API endpoint
 
-   Typically these are written to a http.Request.
+	for the post API v2 procedures changesets plan and apply operation.
+
+	Typically these are written to a http.Request.
 */
 type PostAPIV2ProceduresChangesetsPlanAndApplyParams struct {
 

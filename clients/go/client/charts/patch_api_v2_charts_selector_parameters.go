@@ -54,10 +54,12 @@ func NewPatchAPIV2ChartsSelectorParamsWithHTTPClient(client *http.Client) *Patch
 	}
 }
 
-/* PatchAPIV2ChartsSelectorParams contains all the parameters to send to the API endpoint
-   for the patch API v2 charts selector operation.
+/*
+PatchAPIV2ChartsSelectorParams contains all the parameters to send to the API endpoint
 
-   Typically these are written to a http.Request.
+	for the patch API v2 charts selector operation.
+
+	Typically these are written to a http.Request.
 */
 type PatchAPIV2ChartsSelectorParams struct {
 

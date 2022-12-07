@@ -46,9 +46,9 @@ type ClientService interface {
 }
 
 /*
-  DeleteAPIV2EnvironmentsSelector deletes a environment entry
+DeleteAPIV2EnvironmentsSelector deletes a environment entry
 
-  Delete an existing Environment entry via one of its "selectors": name, numeric ID, or "resource-prefix/" + the unique resource prefix.
+Delete an existing Environment entry via one of its "selectors": name, numeric ID, or "resource-prefix/" + the unique resource prefix.
 */
 func (a *Client) DeleteAPIV2EnvironmentsSelector(params *DeleteAPIV2EnvironmentsSelectorParams, opts ...ClientOption) (*DeleteAPIV2EnvironmentsSelectorOK, error) {
 	// TODO: Validate the params before sending
@@ -86,9 +86,9 @@ func (a *Client) DeleteAPIV2EnvironmentsSelector(params *DeleteAPIV2Environments
 }
 
 /*
-  GetAPIV2Environments lists environment entries
+GetAPIV2Environments lists environment entries
 
-  List existing Environment entries, ordered by most recently updated.
+List existing Environment entries, ordered by most recently updated.
 */
 func (a *Client) GetAPIV2Environments(params *GetAPIV2EnvironmentsParams, opts ...ClientOption) (*GetAPIV2EnvironmentsOK, error) {
 	// TODO: Validate the params before sending
@@ -126,9 +126,9 @@ func (a *Client) GetAPIV2Environments(params *GetAPIV2EnvironmentsParams, opts .
 }
 
 /*
-  GetAPIV2EnvironmentsSelector gets a environment entry
+GetAPIV2EnvironmentsSelector gets a environment entry
 
-  Get an existing Environment entry via one of its "selectors": name, numeric ID, or "resource-prefix/" + the unique resource prefix.
+Get an existing Environment entry via one of its "selectors": name, numeric ID, or "resource-prefix/" + the unique resource prefix.
 */
 func (a *Client) GetAPIV2EnvironmentsSelector(params *GetAPIV2EnvironmentsSelectorParams, opts ...ClientOption) (*GetAPIV2EnvironmentsSelectorOK, error) {
 	// TODO: Validate the params before sending
@@ -166,9 +166,9 @@ func (a *Client) GetAPIV2EnvironmentsSelector(params *GetAPIV2EnvironmentsSelect
 }
 
 /*
-  GetAPIV2SelectorsEnvironmentsSelector lists environment selectors
+GetAPIV2SelectorsEnvironmentsSelector lists environment selectors
 
-  Validate a given Environment selector and provide any other selectors that would match the same Environment.
+Validate a given Environment selector and provide any other selectors that would match the same Environment.
 */
 func (a *Client) GetAPIV2SelectorsEnvironmentsSelector(params *GetAPIV2SelectorsEnvironmentsSelectorParams, opts ...ClientOption) (*GetAPIV2SelectorsEnvironmentsSelectorOK, error) {
 	// TODO: Validate the params before sending
@@ -206,9 +206,9 @@ func (a *Client) GetAPIV2SelectorsEnvironmentsSelector(params *GetAPIV2Selectors
 }
 
 /*
-  PatchAPIV2EnvironmentsSelector edits a environment entry
+PatchAPIV2EnvironmentsSelector edits a environment entry
 
-  Edit an existing Environment entry via one of its "selectors": name, numeric ID. Note that only mutable fields are available here, immutable fields can only be set using /create, or "resource-prefix/" + the unique resource prefix.
+Edit an existing Environment entry via one of its "selectors": name, numeric ID. Note that only mutable fields are available here, immutable fields can only be set using /create, or "resource-prefix/" + the unique resource prefix.
 */
 func (a *Client) PatchAPIV2EnvironmentsSelector(params *PatchAPIV2EnvironmentsSelectorParams, opts ...ClientOption) (*PatchAPIV2EnvironmentsSelectorOK, error) {
 	// TODO: Validate the params before sending
@@ -246,9 +246,10 @@ func (a *Client) PatchAPIV2EnvironmentsSelector(params *PatchAPIV2EnvironmentsSe
 }
 
 /*
-  PostAPIV2Environments creates a new environment entry
+	PostAPIV2Environments creates a new environment entry
 
-  Create a new Environment entry. Note that some fields are immutable after creation; /edit lists mutable fields.
+	Create a new Environment entry. Note that some fields are immutable after creation; /edit lists mutable fields.
+
 Creating a dynamic environment based on a template will also copy ChartReleases from the template.
 */
 func (a *Client) PostAPIV2Environments(params *PostAPIV2EnvironmentsParams, opts ...ClientOption) (*PostAPIV2EnvironmentsOK, *PostAPIV2EnvironmentsCreated, error) {

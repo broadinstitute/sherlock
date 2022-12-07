@@ -9,7 +9,7 @@ import (
 
 type AutoDelete struct {
 	Enabled bool      `json:"enabled" form:"enabled" default:"false"`
-	After   time.Time `json:"after" form:"after"`
+	After   time.Time `json:"after" form:"after" format:"date-time"`
 }
 
 // Validate returns an error if the given auto-delete configuration is not valid

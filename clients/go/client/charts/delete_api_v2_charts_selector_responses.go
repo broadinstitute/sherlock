@@ -75,7 +75,8 @@ func NewDeleteAPIV2ChartsSelectorOK() *DeleteAPIV2ChartsSelectorOK {
 	return &DeleteAPIV2ChartsSelectorOK{}
 }
 
-/* DeleteAPIV2ChartsSelectorOK describes a response with status code 200, with default header values.
+/*
+DeleteAPIV2ChartsSelectorOK describes a response with status code 200, with default header values.
 
 OK
 */
@@ -83,9 +84,39 @@ type DeleteAPIV2ChartsSelectorOK struct {
 	Payload *models.V2controllersChart
 }
 
+// IsSuccess returns true when this delete Api v2 charts selector o k response has a 2xx status code
+func (o *DeleteAPIV2ChartsSelectorOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this delete Api v2 charts selector o k response has a 3xx status code
+func (o *DeleteAPIV2ChartsSelectorOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this delete Api v2 charts selector o k response has a 4xx status code
+func (o *DeleteAPIV2ChartsSelectorOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this delete Api v2 charts selector o k response has a 5xx status code
+func (o *DeleteAPIV2ChartsSelectorOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this delete Api v2 charts selector o k response a status code equal to that given
+func (o *DeleteAPIV2ChartsSelectorOK) IsCode(code int) bool {
+	return code == 200
+}
+
 func (o *DeleteAPIV2ChartsSelectorOK) Error() string {
 	return fmt.Sprintf("[DELETE /api/v2/charts/{selector}][%d] deleteApiV2ChartsSelectorOK  %+v", 200, o.Payload)
 }
+
+func (o *DeleteAPIV2ChartsSelectorOK) String() string {
+	return fmt.Sprintf("[DELETE /api/v2/charts/{selector}][%d] deleteApiV2ChartsSelectorOK  %+v", 200, o.Payload)
+}
+
 func (o *DeleteAPIV2ChartsSelectorOK) GetPayload() *models.V2controllersChart {
 	return o.Payload
 }
@@ -107,7 +138,8 @@ func NewDeleteAPIV2ChartsSelectorBadRequest() *DeleteAPIV2ChartsSelectorBadReque
 	return &DeleteAPIV2ChartsSelectorBadRequest{}
 }
 
-/* DeleteAPIV2ChartsSelectorBadRequest describes a response with status code 400, with default header values.
+/*
+DeleteAPIV2ChartsSelectorBadRequest describes a response with status code 400, with default header values.
 
 Bad Request
 */
@@ -115,9 +147,39 @@ type DeleteAPIV2ChartsSelectorBadRequest struct {
 	Payload *models.ErrorsErrorResponse
 }
 
+// IsSuccess returns true when this delete Api v2 charts selector bad request response has a 2xx status code
+func (o *DeleteAPIV2ChartsSelectorBadRequest) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this delete Api v2 charts selector bad request response has a 3xx status code
+func (o *DeleteAPIV2ChartsSelectorBadRequest) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this delete Api v2 charts selector bad request response has a 4xx status code
+func (o *DeleteAPIV2ChartsSelectorBadRequest) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this delete Api v2 charts selector bad request response has a 5xx status code
+func (o *DeleteAPIV2ChartsSelectorBadRequest) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this delete Api v2 charts selector bad request response a status code equal to that given
+func (o *DeleteAPIV2ChartsSelectorBadRequest) IsCode(code int) bool {
+	return code == 400
+}
+
 func (o *DeleteAPIV2ChartsSelectorBadRequest) Error() string {
 	return fmt.Sprintf("[DELETE /api/v2/charts/{selector}][%d] deleteApiV2ChartsSelectorBadRequest  %+v", 400, o.Payload)
 }
+
+func (o *DeleteAPIV2ChartsSelectorBadRequest) String() string {
+	return fmt.Sprintf("[DELETE /api/v2/charts/{selector}][%d] deleteApiV2ChartsSelectorBadRequest  %+v", 400, o.Payload)
+}
+
 func (o *DeleteAPIV2ChartsSelectorBadRequest) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -139,7 +201,8 @@ func NewDeleteAPIV2ChartsSelectorForbidden() *DeleteAPIV2ChartsSelectorForbidden
 	return &DeleteAPIV2ChartsSelectorForbidden{}
 }
 
-/* DeleteAPIV2ChartsSelectorForbidden describes a response with status code 403, with default header values.
+/*
+DeleteAPIV2ChartsSelectorForbidden describes a response with status code 403, with default header values.
 
 Forbidden
 */
@@ -147,9 +210,39 @@ type DeleteAPIV2ChartsSelectorForbidden struct {
 	Payload *models.ErrorsErrorResponse
 }
 
+// IsSuccess returns true when this delete Api v2 charts selector forbidden response has a 2xx status code
+func (o *DeleteAPIV2ChartsSelectorForbidden) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this delete Api v2 charts selector forbidden response has a 3xx status code
+func (o *DeleteAPIV2ChartsSelectorForbidden) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this delete Api v2 charts selector forbidden response has a 4xx status code
+func (o *DeleteAPIV2ChartsSelectorForbidden) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this delete Api v2 charts selector forbidden response has a 5xx status code
+func (o *DeleteAPIV2ChartsSelectorForbidden) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this delete Api v2 charts selector forbidden response a status code equal to that given
+func (o *DeleteAPIV2ChartsSelectorForbidden) IsCode(code int) bool {
+	return code == 403
+}
+
 func (o *DeleteAPIV2ChartsSelectorForbidden) Error() string {
 	return fmt.Sprintf("[DELETE /api/v2/charts/{selector}][%d] deleteApiV2ChartsSelectorForbidden  %+v", 403, o.Payload)
 }
+
+func (o *DeleteAPIV2ChartsSelectorForbidden) String() string {
+	return fmt.Sprintf("[DELETE /api/v2/charts/{selector}][%d] deleteApiV2ChartsSelectorForbidden  %+v", 403, o.Payload)
+}
+
 func (o *DeleteAPIV2ChartsSelectorForbidden) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -171,7 +264,8 @@ func NewDeleteAPIV2ChartsSelectorNotFound() *DeleteAPIV2ChartsSelectorNotFound {
 	return &DeleteAPIV2ChartsSelectorNotFound{}
 }
 
-/* DeleteAPIV2ChartsSelectorNotFound describes a response with status code 404, with default header values.
+/*
+DeleteAPIV2ChartsSelectorNotFound describes a response with status code 404, with default header values.
 
 Not Found
 */
@@ -179,9 +273,39 @@ type DeleteAPIV2ChartsSelectorNotFound struct {
 	Payload *models.ErrorsErrorResponse
 }
 
+// IsSuccess returns true when this delete Api v2 charts selector not found response has a 2xx status code
+func (o *DeleteAPIV2ChartsSelectorNotFound) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this delete Api v2 charts selector not found response has a 3xx status code
+func (o *DeleteAPIV2ChartsSelectorNotFound) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this delete Api v2 charts selector not found response has a 4xx status code
+func (o *DeleteAPIV2ChartsSelectorNotFound) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this delete Api v2 charts selector not found response has a 5xx status code
+func (o *DeleteAPIV2ChartsSelectorNotFound) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this delete Api v2 charts selector not found response a status code equal to that given
+func (o *DeleteAPIV2ChartsSelectorNotFound) IsCode(code int) bool {
+	return code == 404
+}
+
 func (o *DeleteAPIV2ChartsSelectorNotFound) Error() string {
 	return fmt.Sprintf("[DELETE /api/v2/charts/{selector}][%d] deleteApiV2ChartsSelectorNotFound  %+v", 404, o.Payload)
 }
+
+func (o *DeleteAPIV2ChartsSelectorNotFound) String() string {
+	return fmt.Sprintf("[DELETE /api/v2/charts/{selector}][%d] deleteApiV2ChartsSelectorNotFound  %+v", 404, o.Payload)
+}
+
 func (o *DeleteAPIV2ChartsSelectorNotFound) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -203,7 +327,8 @@ func NewDeleteAPIV2ChartsSelectorProxyAuthenticationRequired() *DeleteAPIV2Chart
 	return &DeleteAPIV2ChartsSelectorProxyAuthenticationRequired{}
 }
 
-/* DeleteAPIV2ChartsSelectorProxyAuthenticationRequired describes a response with status code 407, with default header values.
+/*
+DeleteAPIV2ChartsSelectorProxyAuthenticationRequired describes a response with status code 407, with default header values.
 
 Proxy Authentication Required
 */
@@ -211,9 +336,39 @@ type DeleteAPIV2ChartsSelectorProxyAuthenticationRequired struct {
 	Payload *models.ErrorsErrorResponse
 }
 
+// IsSuccess returns true when this delete Api v2 charts selector proxy authentication required response has a 2xx status code
+func (o *DeleteAPIV2ChartsSelectorProxyAuthenticationRequired) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this delete Api v2 charts selector proxy authentication required response has a 3xx status code
+func (o *DeleteAPIV2ChartsSelectorProxyAuthenticationRequired) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this delete Api v2 charts selector proxy authentication required response has a 4xx status code
+func (o *DeleteAPIV2ChartsSelectorProxyAuthenticationRequired) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this delete Api v2 charts selector proxy authentication required response has a 5xx status code
+func (o *DeleteAPIV2ChartsSelectorProxyAuthenticationRequired) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this delete Api v2 charts selector proxy authentication required response a status code equal to that given
+func (o *DeleteAPIV2ChartsSelectorProxyAuthenticationRequired) IsCode(code int) bool {
+	return code == 407
+}
+
 func (o *DeleteAPIV2ChartsSelectorProxyAuthenticationRequired) Error() string {
 	return fmt.Sprintf("[DELETE /api/v2/charts/{selector}][%d] deleteApiV2ChartsSelectorProxyAuthenticationRequired  %+v", 407, o.Payload)
 }
+
+func (o *DeleteAPIV2ChartsSelectorProxyAuthenticationRequired) String() string {
+	return fmt.Sprintf("[DELETE /api/v2/charts/{selector}][%d] deleteApiV2ChartsSelectorProxyAuthenticationRequired  %+v", 407, o.Payload)
+}
+
 func (o *DeleteAPIV2ChartsSelectorProxyAuthenticationRequired) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -235,7 +390,8 @@ func NewDeleteAPIV2ChartsSelectorConflict() *DeleteAPIV2ChartsSelectorConflict {
 	return &DeleteAPIV2ChartsSelectorConflict{}
 }
 
-/* DeleteAPIV2ChartsSelectorConflict describes a response with status code 409, with default header values.
+/*
+DeleteAPIV2ChartsSelectorConflict describes a response with status code 409, with default header values.
 
 Conflict
 */
@@ -243,9 +399,39 @@ type DeleteAPIV2ChartsSelectorConflict struct {
 	Payload *models.ErrorsErrorResponse
 }
 
+// IsSuccess returns true when this delete Api v2 charts selector conflict response has a 2xx status code
+func (o *DeleteAPIV2ChartsSelectorConflict) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this delete Api v2 charts selector conflict response has a 3xx status code
+func (o *DeleteAPIV2ChartsSelectorConflict) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this delete Api v2 charts selector conflict response has a 4xx status code
+func (o *DeleteAPIV2ChartsSelectorConflict) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this delete Api v2 charts selector conflict response has a 5xx status code
+func (o *DeleteAPIV2ChartsSelectorConflict) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this delete Api v2 charts selector conflict response a status code equal to that given
+func (o *DeleteAPIV2ChartsSelectorConflict) IsCode(code int) bool {
+	return code == 409
+}
+
 func (o *DeleteAPIV2ChartsSelectorConflict) Error() string {
 	return fmt.Sprintf("[DELETE /api/v2/charts/{selector}][%d] deleteApiV2ChartsSelectorConflict  %+v", 409, o.Payload)
 }
+
+func (o *DeleteAPIV2ChartsSelectorConflict) String() string {
+	return fmt.Sprintf("[DELETE /api/v2/charts/{selector}][%d] deleteApiV2ChartsSelectorConflict  %+v", 409, o.Payload)
+}
+
 func (o *DeleteAPIV2ChartsSelectorConflict) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -267,7 +453,8 @@ func NewDeleteAPIV2ChartsSelectorInternalServerError() *DeleteAPIV2ChartsSelecto
 	return &DeleteAPIV2ChartsSelectorInternalServerError{}
 }
 
-/* DeleteAPIV2ChartsSelectorInternalServerError describes a response with status code 500, with default header values.
+/*
+DeleteAPIV2ChartsSelectorInternalServerError describes a response with status code 500, with default header values.
 
 Internal Server Error
 */
@@ -275,9 +462,39 @@ type DeleteAPIV2ChartsSelectorInternalServerError struct {
 	Payload *models.ErrorsErrorResponse
 }
 
+// IsSuccess returns true when this delete Api v2 charts selector internal server error response has a 2xx status code
+func (o *DeleteAPIV2ChartsSelectorInternalServerError) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this delete Api v2 charts selector internal server error response has a 3xx status code
+func (o *DeleteAPIV2ChartsSelectorInternalServerError) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this delete Api v2 charts selector internal server error response has a 4xx status code
+func (o *DeleteAPIV2ChartsSelectorInternalServerError) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this delete Api v2 charts selector internal server error response has a 5xx status code
+func (o *DeleteAPIV2ChartsSelectorInternalServerError) IsServerError() bool {
+	return true
+}
+
+// IsCode returns true when this delete Api v2 charts selector internal server error response a status code equal to that given
+func (o *DeleteAPIV2ChartsSelectorInternalServerError) IsCode(code int) bool {
+	return code == 500
+}
+
 func (o *DeleteAPIV2ChartsSelectorInternalServerError) Error() string {
 	return fmt.Sprintf("[DELETE /api/v2/charts/{selector}][%d] deleteApiV2ChartsSelectorInternalServerError  %+v", 500, o.Payload)
 }
+
+func (o *DeleteAPIV2ChartsSelectorInternalServerError) String() string {
+	return fmt.Sprintf("[DELETE /api/v2/charts/{selector}][%d] deleteApiV2ChartsSelectorInternalServerError  %+v", 500, o.Payload)
+}
+
 func (o *DeleteAPIV2ChartsSelectorInternalServerError) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }

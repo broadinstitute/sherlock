@@ -48,6 +48,7 @@
                     },
                     {
                         "type": "string",
+                        "format": "date-time",
                         "name": "createdAt",
                         "in": "query"
                     },
@@ -79,6 +80,7 @@
                     },
                     {
                         "type": "string",
+                        "format": "date-time",
                         "name": "updatedAt",
                         "in": "query"
                     },
@@ -375,6 +377,7 @@
                     },
                     {
                         "type": "string",
+                        "format": "date-time",
                         "name": "createdAt",
                         "in": "query"
                     },
@@ -520,6 +523,7 @@
                     },
                     {
                         "type": "string",
+                        "format": "date-time",
                         "name": "updatedAt",
                         "in": "query"
                     },
@@ -808,6 +812,7 @@
                     },
                     {
                         "type": "string",
+                        "format": "date-time",
                         "name": "createdAt",
                         "in": "query"
                     },
@@ -871,6 +876,7 @@
                     },
                     {
                         "type": "string",
+                        "format": "date-time",
                         "name": "updatedAt",
                         "in": "query"
                     },
@@ -1232,6 +1238,7 @@
                     },
                     {
                         "type": "string",
+                        "format": "date-time",
                         "name": "createdAt",
                         "in": "query"
                     },
@@ -1253,6 +1260,7 @@
                     },
                     {
                         "type": "string",
+                        "format": "date-time",
                         "name": "updatedAt",
                         "in": "query"
                     },
@@ -1562,6 +1570,7 @@
                     },
                     {
                         "type": "string",
+                        "format": "date-time",
                         "name": "createdAt",
                         "in": "query"
                     },
@@ -1603,6 +1612,7 @@
                     },
                     {
                         "type": "string",
+                        "format": "date-time",
                         "name": "updatedAt",
                         "in": "query"
                     },
@@ -1970,6 +1980,7 @@
                     },
                     {
                         "type": "string",
+                        "format": "date-time",
                         "name": "createdAt",
                         "in": "query"
                     },
@@ -2020,6 +2031,7 @@
                     },
                     {
                         "type": "string",
+                        "format": "date-time",
                         "name": "updatedAt",
                         "in": "query"
                     },
@@ -2388,6 +2400,7 @@
                     },
                     {
                         "type": "string",
+                        "format": "date-time",
                         "name": "createdAt",
                         "in": "query"
                     },
@@ -2477,6 +2490,7 @@
                     },
                     {
                         "type": "string",
+                        "format": "date-time",
                         "name": "updatedAt",
                         "in": "query"
                     },
@@ -3671,7 +3685,8 @@
             "type": "object",
             "properties": {
                 "after": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "enabled": {
                     "type": "boolean",
@@ -3747,7 +3762,8 @@
                     "$ref": "#/definitions/v2controllers.Chart"
                 },
                 "createdAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "description": {
                     "description": "Generally the Git commit message",
@@ -3769,7 +3785,8 @@
                     "type": "object"
                 },
                 "updatedAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 }
             }
         },
@@ -3786,7 +3803,8 @@
                     "$ref": "#/definitions/v2controllers.ChartRelease"
                 },
                 "createdAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "fromAppVersionBranch": {
                     "type": "string"
@@ -3885,7 +3903,8 @@
                     "type": "string"
                 },
                 "updatedAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 }
             }
         },
@@ -3993,7 +4012,8 @@
                     "default": "terra-helm"
                 },
                 "createdAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "defaultPort": {
                     "type": "integer",
@@ -4020,7 +4040,8 @@
                     "type": "string"
                 },
                 "updatedAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 }
             }
         },
@@ -4093,7 +4114,8 @@
                     "$ref": "#/definitions/v2controllers.Cluster"
                 },
                 "createdAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "destinationType": {
                     "description": "Calculated field",
@@ -4137,7 +4159,8 @@
                     "type": "string"
                 },
                 "updatedAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 }
             }
         },
@@ -4156,7 +4179,8 @@
                     "type": "string"
                 },
                 "createdAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "description": {
                     "description": "Generally the Git commit message",
@@ -4172,7 +4196,8 @@
                     "type": "object"
                 },
                 "updatedAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 }
             }
         },
@@ -4193,7 +4218,8 @@
                     "type": "string"
                 },
                 "createdAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "googleProject": {
                     "description": "Required when creating if provider is 'google'",
@@ -4227,7 +4253,8 @@
                     "default": false
                 },
                 "updatedAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 }
             }
         },
@@ -4729,7 +4756,8 @@
                     "default": true
                 },
                 "createdAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "defaultCluster": {
                     "type": "string"
@@ -4795,7 +4823,8 @@
                     "type": "string"
                 },
                 "updatedAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "valuesName": {
                     "type": "string"

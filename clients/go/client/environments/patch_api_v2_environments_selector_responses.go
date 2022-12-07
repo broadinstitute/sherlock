@@ -75,7 +75,8 @@ func NewPatchAPIV2EnvironmentsSelectorOK() *PatchAPIV2EnvironmentsSelectorOK {
 	return &PatchAPIV2EnvironmentsSelectorOK{}
 }
 
-/* PatchAPIV2EnvironmentsSelectorOK describes a response with status code 200, with default header values.
+/*
+PatchAPIV2EnvironmentsSelectorOK describes a response with status code 200, with default header values.
 
 OK
 */
@@ -83,9 +84,39 @@ type PatchAPIV2EnvironmentsSelectorOK struct {
 	Payload *models.V2controllersEnvironment
 }
 
+// IsSuccess returns true when this patch Api v2 environments selector o k response has a 2xx status code
+func (o *PatchAPIV2EnvironmentsSelectorOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this patch Api v2 environments selector o k response has a 3xx status code
+func (o *PatchAPIV2EnvironmentsSelectorOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this patch Api v2 environments selector o k response has a 4xx status code
+func (o *PatchAPIV2EnvironmentsSelectorOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this patch Api v2 environments selector o k response has a 5xx status code
+func (o *PatchAPIV2EnvironmentsSelectorOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this patch Api v2 environments selector o k response a status code equal to that given
+func (o *PatchAPIV2EnvironmentsSelectorOK) IsCode(code int) bool {
+	return code == 200
+}
+
 func (o *PatchAPIV2EnvironmentsSelectorOK) Error() string {
 	return fmt.Sprintf("[PATCH /api/v2/environments/{selector}][%d] patchApiV2EnvironmentsSelectorOK  %+v", 200, o.Payload)
 }
+
+func (o *PatchAPIV2EnvironmentsSelectorOK) String() string {
+	return fmt.Sprintf("[PATCH /api/v2/environments/{selector}][%d] patchApiV2EnvironmentsSelectorOK  %+v", 200, o.Payload)
+}
+
 func (o *PatchAPIV2EnvironmentsSelectorOK) GetPayload() *models.V2controllersEnvironment {
 	return o.Payload
 }
@@ -107,7 +138,8 @@ func NewPatchAPIV2EnvironmentsSelectorBadRequest() *PatchAPIV2EnvironmentsSelect
 	return &PatchAPIV2EnvironmentsSelectorBadRequest{}
 }
 
-/* PatchAPIV2EnvironmentsSelectorBadRequest describes a response with status code 400, with default header values.
+/*
+PatchAPIV2EnvironmentsSelectorBadRequest describes a response with status code 400, with default header values.
 
 Bad Request
 */
@@ -115,9 +147,39 @@ type PatchAPIV2EnvironmentsSelectorBadRequest struct {
 	Payload *models.ErrorsErrorResponse
 }
 
+// IsSuccess returns true when this patch Api v2 environments selector bad request response has a 2xx status code
+func (o *PatchAPIV2EnvironmentsSelectorBadRequest) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this patch Api v2 environments selector bad request response has a 3xx status code
+func (o *PatchAPIV2EnvironmentsSelectorBadRequest) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this patch Api v2 environments selector bad request response has a 4xx status code
+func (o *PatchAPIV2EnvironmentsSelectorBadRequest) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this patch Api v2 environments selector bad request response has a 5xx status code
+func (o *PatchAPIV2EnvironmentsSelectorBadRequest) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this patch Api v2 environments selector bad request response a status code equal to that given
+func (o *PatchAPIV2EnvironmentsSelectorBadRequest) IsCode(code int) bool {
+	return code == 400
+}
+
 func (o *PatchAPIV2EnvironmentsSelectorBadRequest) Error() string {
 	return fmt.Sprintf("[PATCH /api/v2/environments/{selector}][%d] patchApiV2EnvironmentsSelectorBadRequest  %+v", 400, o.Payload)
 }
+
+func (o *PatchAPIV2EnvironmentsSelectorBadRequest) String() string {
+	return fmt.Sprintf("[PATCH /api/v2/environments/{selector}][%d] patchApiV2EnvironmentsSelectorBadRequest  %+v", 400, o.Payload)
+}
+
 func (o *PatchAPIV2EnvironmentsSelectorBadRequest) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -139,7 +201,8 @@ func NewPatchAPIV2EnvironmentsSelectorForbidden() *PatchAPIV2EnvironmentsSelecto
 	return &PatchAPIV2EnvironmentsSelectorForbidden{}
 }
 
-/* PatchAPIV2EnvironmentsSelectorForbidden describes a response with status code 403, with default header values.
+/*
+PatchAPIV2EnvironmentsSelectorForbidden describes a response with status code 403, with default header values.
 
 Forbidden
 */
@@ -147,9 +210,39 @@ type PatchAPIV2EnvironmentsSelectorForbidden struct {
 	Payload *models.ErrorsErrorResponse
 }
 
+// IsSuccess returns true when this patch Api v2 environments selector forbidden response has a 2xx status code
+func (o *PatchAPIV2EnvironmentsSelectorForbidden) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this patch Api v2 environments selector forbidden response has a 3xx status code
+func (o *PatchAPIV2EnvironmentsSelectorForbidden) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this patch Api v2 environments selector forbidden response has a 4xx status code
+func (o *PatchAPIV2EnvironmentsSelectorForbidden) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this patch Api v2 environments selector forbidden response has a 5xx status code
+func (o *PatchAPIV2EnvironmentsSelectorForbidden) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this patch Api v2 environments selector forbidden response a status code equal to that given
+func (o *PatchAPIV2EnvironmentsSelectorForbidden) IsCode(code int) bool {
+	return code == 403
+}
+
 func (o *PatchAPIV2EnvironmentsSelectorForbidden) Error() string {
 	return fmt.Sprintf("[PATCH /api/v2/environments/{selector}][%d] patchApiV2EnvironmentsSelectorForbidden  %+v", 403, o.Payload)
 }
+
+func (o *PatchAPIV2EnvironmentsSelectorForbidden) String() string {
+	return fmt.Sprintf("[PATCH /api/v2/environments/{selector}][%d] patchApiV2EnvironmentsSelectorForbidden  %+v", 403, o.Payload)
+}
+
 func (o *PatchAPIV2EnvironmentsSelectorForbidden) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -171,7 +264,8 @@ func NewPatchAPIV2EnvironmentsSelectorNotFound() *PatchAPIV2EnvironmentsSelector
 	return &PatchAPIV2EnvironmentsSelectorNotFound{}
 }
 
-/* PatchAPIV2EnvironmentsSelectorNotFound describes a response with status code 404, with default header values.
+/*
+PatchAPIV2EnvironmentsSelectorNotFound describes a response with status code 404, with default header values.
 
 Not Found
 */
@@ -179,9 +273,39 @@ type PatchAPIV2EnvironmentsSelectorNotFound struct {
 	Payload *models.ErrorsErrorResponse
 }
 
+// IsSuccess returns true when this patch Api v2 environments selector not found response has a 2xx status code
+func (o *PatchAPIV2EnvironmentsSelectorNotFound) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this patch Api v2 environments selector not found response has a 3xx status code
+func (o *PatchAPIV2EnvironmentsSelectorNotFound) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this patch Api v2 environments selector not found response has a 4xx status code
+func (o *PatchAPIV2EnvironmentsSelectorNotFound) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this patch Api v2 environments selector not found response has a 5xx status code
+func (o *PatchAPIV2EnvironmentsSelectorNotFound) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this patch Api v2 environments selector not found response a status code equal to that given
+func (o *PatchAPIV2EnvironmentsSelectorNotFound) IsCode(code int) bool {
+	return code == 404
+}
+
 func (o *PatchAPIV2EnvironmentsSelectorNotFound) Error() string {
 	return fmt.Sprintf("[PATCH /api/v2/environments/{selector}][%d] patchApiV2EnvironmentsSelectorNotFound  %+v", 404, o.Payload)
 }
+
+func (o *PatchAPIV2EnvironmentsSelectorNotFound) String() string {
+	return fmt.Sprintf("[PATCH /api/v2/environments/{selector}][%d] patchApiV2EnvironmentsSelectorNotFound  %+v", 404, o.Payload)
+}
+
 func (o *PatchAPIV2EnvironmentsSelectorNotFound) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -203,7 +327,8 @@ func NewPatchAPIV2EnvironmentsSelectorProxyAuthenticationRequired() *PatchAPIV2E
 	return &PatchAPIV2EnvironmentsSelectorProxyAuthenticationRequired{}
 }
 
-/* PatchAPIV2EnvironmentsSelectorProxyAuthenticationRequired describes a response with status code 407, with default header values.
+/*
+PatchAPIV2EnvironmentsSelectorProxyAuthenticationRequired describes a response with status code 407, with default header values.
 
 Proxy Authentication Required
 */
@@ -211,9 +336,39 @@ type PatchAPIV2EnvironmentsSelectorProxyAuthenticationRequired struct {
 	Payload *models.ErrorsErrorResponse
 }
 
+// IsSuccess returns true when this patch Api v2 environments selector proxy authentication required response has a 2xx status code
+func (o *PatchAPIV2EnvironmentsSelectorProxyAuthenticationRequired) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this patch Api v2 environments selector proxy authentication required response has a 3xx status code
+func (o *PatchAPIV2EnvironmentsSelectorProxyAuthenticationRequired) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this patch Api v2 environments selector proxy authentication required response has a 4xx status code
+func (o *PatchAPIV2EnvironmentsSelectorProxyAuthenticationRequired) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this patch Api v2 environments selector proxy authentication required response has a 5xx status code
+func (o *PatchAPIV2EnvironmentsSelectorProxyAuthenticationRequired) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this patch Api v2 environments selector proxy authentication required response a status code equal to that given
+func (o *PatchAPIV2EnvironmentsSelectorProxyAuthenticationRequired) IsCode(code int) bool {
+	return code == 407
+}
+
 func (o *PatchAPIV2EnvironmentsSelectorProxyAuthenticationRequired) Error() string {
 	return fmt.Sprintf("[PATCH /api/v2/environments/{selector}][%d] patchApiV2EnvironmentsSelectorProxyAuthenticationRequired  %+v", 407, o.Payload)
 }
+
+func (o *PatchAPIV2EnvironmentsSelectorProxyAuthenticationRequired) String() string {
+	return fmt.Sprintf("[PATCH /api/v2/environments/{selector}][%d] patchApiV2EnvironmentsSelectorProxyAuthenticationRequired  %+v", 407, o.Payload)
+}
+
 func (o *PatchAPIV2EnvironmentsSelectorProxyAuthenticationRequired) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -235,7 +390,8 @@ func NewPatchAPIV2EnvironmentsSelectorConflict() *PatchAPIV2EnvironmentsSelector
 	return &PatchAPIV2EnvironmentsSelectorConflict{}
 }
 
-/* PatchAPIV2EnvironmentsSelectorConflict describes a response with status code 409, with default header values.
+/*
+PatchAPIV2EnvironmentsSelectorConflict describes a response with status code 409, with default header values.
 
 Conflict
 */
@@ -243,9 +399,39 @@ type PatchAPIV2EnvironmentsSelectorConflict struct {
 	Payload *models.ErrorsErrorResponse
 }
 
+// IsSuccess returns true when this patch Api v2 environments selector conflict response has a 2xx status code
+func (o *PatchAPIV2EnvironmentsSelectorConflict) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this patch Api v2 environments selector conflict response has a 3xx status code
+func (o *PatchAPIV2EnvironmentsSelectorConflict) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this patch Api v2 environments selector conflict response has a 4xx status code
+func (o *PatchAPIV2EnvironmentsSelectorConflict) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this patch Api v2 environments selector conflict response has a 5xx status code
+func (o *PatchAPIV2EnvironmentsSelectorConflict) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this patch Api v2 environments selector conflict response a status code equal to that given
+func (o *PatchAPIV2EnvironmentsSelectorConflict) IsCode(code int) bool {
+	return code == 409
+}
+
 func (o *PatchAPIV2EnvironmentsSelectorConflict) Error() string {
 	return fmt.Sprintf("[PATCH /api/v2/environments/{selector}][%d] patchApiV2EnvironmentsSelectorConflict  %+v", 409, o.Payload)
 }
+
+func (o *PatchAPIV2EnvironmentsSelectorConflict) String() string {
+	return fmt.Sprintf("[PATCH /api/v2/environments/{selector}][%d] patchApiV2EnvironmentsSelectorConflict  %+v", 409, o.Payload)
+}
+
 func (o *PatchAPIV2EnvironmentsSelectorConflict) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -267,7 +453,8 @@ func NewPatchAPIV2EnvironmentsSelectorInternalServerError() *PatchAPIV2Environme
 	return &PatchAPIV2EnvironmentsSelectorInternalServerError{}
 }
 
-/* PatchAPIV2EnvironmentsSelectorInternalServerError describes a response with status code 500, with default header values.
+/*
+PatchAPIV2EnvironmentsSelectorInternalServerError describes a response with status code 500, with default header values.
 
 Internal Server Error
 */
@@ -275,9 +462,39 @@ type PatchAPIV2EnvironmentsSelectorInternalServerError struct {
 	Payload *models.ErrorsErrorResponse
 }
 
+// IsSuccess returns true when this patch Api v2 environments selector internal server error response has a 2xx status code
+func (o *PatchAPIV2EnvironmentsSelectorInternalServerError) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this patch Api v2 environments selector internal server error response has a 3xx status code
+func (o *PatchAPIV2EnvironmentsSelectorInternalServerError) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this patch Api v2 environments selector internal server error response has a 4xx status code
+func (o *PatchAPIV2EnvironmentsSelectorInternalServerError) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this patch Api v2 environments selector internal server error response has a 5xx status code
+func (o *PatchAPIV2EnvironmentsSelectorInternalServerError) IsServerError() bool {
+	return true
+}
+
+// IsCode returns true when this patch Api v2 environments selector internal server error response a status code equal to that given
+func (o *PatchAPIV2EnvironmentsSelectorInternalServerError) IsCode(code int) bool {
+	return code == 500
+}
+
 func (o *PatchAPIV2EnvironmentsSelectorInternalServerError) Error() string {
 	return fmt.Sprintf("[PATCH /api/v2/environments/{selector}][%d] patchApiV2EnvironmentsSelectorInternalServerError  %+v", 500, o.Payload)
 }
+
+func (o *PatchAPIV2EnvironmentsSelectorInternalServerError) String() string {
+	return fmt.Sprintf("[PATCH /api/v2/environments/{selector}][%d] patchApiV2EnvironmentsSelectorInternalServerError  %+v", 500, o.Payload)
+}
+
 func (o *PatchAPIV2EnvironmentsSelectorInternalServerError) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }

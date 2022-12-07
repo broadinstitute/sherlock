@@ -52,10 +52,12 @@ func NewDeleteAPIV2ChartReleasesSelectorParamsWithHTTPClient(client *http.Client
 	}
 }
 
-/* DeleteAPIV2ChartReleasesSelectorParams contains all the parameters to send to the API endpoint
-   for the delete API v2 chart releases selector operation.
+/*
+DeleteAPIV2ChartReleasesSelectorParams contains all the parameters to send to the API endpoint
 
-   Typically these are written to a http.Request.
+	for the delete API v2 chart releases selector operation.
+
+	Typically these are written to a http.Request.
 */
 type DeleteAPIV2ChartReleasesSelectorParams struct {
 

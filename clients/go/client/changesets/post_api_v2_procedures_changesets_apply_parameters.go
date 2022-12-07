@@ -52,10 +52,12 @@ func NewPostAPIV2ProceduresChangesetsApplyParamsWithHTTPClient(client *http.Clie
 	}
 }
 
-/* PostAPIV2ProceduresChangesetsApplyParams contains all the parameters to send to the API endpoint
-   for the post API v2 procedures changesets apply operation.
+/*
+PostAPIV2ProceduresChangesetsApplyParams contains all the parameters to send to the API endpoint
 
-   Typically these are written to a http.Request.
+	for the post API v2 procedures changesets apply operation.
+
+	Typically these are written to a http.Request.
 */
 type PostAPIV2ProceduresChangesetsApplyParams struct {
 

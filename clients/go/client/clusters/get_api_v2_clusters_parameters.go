@@ -53,10 +53,12 @@ func NewGetAPIV2ClustersParamsWithHTTPClient(client *http.Client) *GetAPIV2Clust
 	}
 }
 
-/* GetAPIV2ClustersParams contains all the parameters to send to the API endpoint
-   for the get API v2 clusters operation.
+/*
+GetAPIV2ClustersParams contains all the parameters to send to the API endpoint
 
-   Typically these are written to a http.Request.
+	for the get API v2 clusters operation.
+
+	Typically these are written to a http.Request.
 */
 type GetAPIV2ClustersParams struct {
 
@@ -79,7 +81,9 @@ type GetAPIV2ClustersParams struct {
 	Base *string
 
 	// CreatedAt.
-	CreatedAt *string
+	//
+	// Format: date-time
+	CreatedAt *strfmt.DateTime
 
 	/* GoogleProject.
 
@@ -121,7 +125,9 @@ type GetAPIV2ClustersParams struct {
 	RequiresSuitability *bool
 
 	// UpdatedAt.
-	UpdatedAt *string
+	//
+	// Format: date-time
+	UpdatedAt *strfmt.DateTime
 
 	timeout    time.Duration
 	Context    context.Context
@@ -230,13 +236,13 @@ func (o *GetAPIV2ClustersParams) SetBase(base *string) {
 }
 
 // WithCreatedAt adds the createdAt to the get API v2 clusters params
-func (o *GetAPIV2ClustersParams) WithCreatedAt(createdAt *string) *GetAPIV2ClustersParams {
+func (o *GetAPIV2ClustersParams) WithCreatedAt(createdAt *strfmt.DateTime) *GetAPIV2ClustersParams {
 	o.SetCreatedAt(createdAt)
 	return o
 }
 
 // SetCreatedAt adds the createdAt to the get API v2 clusters params
-func (o *GetAPIV2ClustersParams) SetCreatedAt(createdAt *string) {
+func (o *GetAPIV2ClustersParams) SetCreatedAt(createdAt *strfmt.DateTime) {
 	o.CreatedAt = createdAt
 }
 
@@ -329,13 +335,13 @@ func (o *GetAPIV2ClustersParams) SetRequiresSuitability(requiresSuitability *boo
 }
 
 // WithUpdatedAt adds the updatedAt to the get API v2 clusters params
-func (o *GetAPIV2ClustersParams) WithUpdatedAt(updatedAt *string) *GetAPIV2ClustersParams {
+func (o *GetAPIV2ClustersParams) WithUpdatedAt(updatedAt *strfmt.DateTime) *GetAPIV2ClustersParams {
 	o.SetUpdatedAt(updatedAt)
 	return o
 }
 
 // SetUpdatedAt adds the updatedAt to the get API v2 clusters params
-func (o *GetAPIV2ClustersParams) SetUpdatedAt(updatedAt *string) {
+func (o *GetAPIV2ClustersParams) SetUpdatedAt(updatedAt *strfmt.DateTime) {
 	o.UpdatedAt = updatedAt
 }
 
@@ -401,12 +407,12 @@ func (o *GetAPIV2ClustersParams) WriteToRequest(r runtime.ClientRequest, reg str
 	if o.CreatedAt != nil {
 
 		// query param createdAt
-		var qrCreatedAt string
+		var qrCreatedAt strfmt.DateTime
 
 		if o.CreatedAt != nil {
 			qrCreatedAt = *o.CreatedAt
 		}
-		qCreatedAt := qrCreatedAt
+		qCreatedAt := qrCreatedAt.String()
 		if qCreatedAt != "" {
 
 			if err := r.SetQueryParam("createdAt", qCreatedAt); err != nil {
@@ -554,12 +560,12 @@ func (o *GetAPIV2ClustersParams) WriteToRequest(r runtime.ClientRequest, reg str
 	if o.UpdatedAt != nil {
 
 		// query param updatedAt
-		var qrUpdatedAt string
+		var qrUpdatedAt strfmt.DateTime
 
 		if o.UpdatedAt != nil {
 			qrUpdatedAt = *o.UpdatedAt
 		}
-		qUpdatedAt := qrUpdatedAt
+		qUpdatedAt := qrUpdatedAt.String()
 		if qUpdatedAt != "" {
 
 			if err := r.SetQueryParam("updatedAt", qUpdatedAt); err != nil {

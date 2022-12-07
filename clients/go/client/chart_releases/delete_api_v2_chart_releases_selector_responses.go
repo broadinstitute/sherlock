@@ -75,7 +75,8 @@ func NewDeleteAPIV2ChartReleasesSelectorOK() *DeleteAPIV2ChartReleasesSelectorOK
 	return &DeleteAPIV2ChartReleasesSelectorOK{}
 }
 
-/* DeleteAPIV2ChartReleasesSelectorOK describes a response with status code 200, with default header values.
+/*
+DeleteAPIV2ChartReleasesSelectorOK describes a response with status code 200, with default header values.
 
 OK
 */
@@ -83,9 +84,39 @@ type DeleteAPIV2ChartReleasesSelectorOK struct {
 	Payload *models.V2controllersChartRelease
 }
 
+// IsSuccess returns true when this delete Api v2 chart releases selector o k response has a 2xx status code
+func (o *DeleteAPIV2ChartReleasesSelectorOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this delete Api v2 chart releases selector o k response has a 3xx status code
+func (o *DeleteAPIV2ChartReleasesSelectorOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this delete Api v2 chart releases selector o k response has a 4xx status code
+func (o *DeleteAPIV2ChartReleasesSelectorOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this delete Api v2 chart releases selector o k response has a 5xx status code
+func (o *DeleteAPIV2ChartReleasesSelectorOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this delete Api v2 chart releases selector o k response a status code equal to that given
+func (o *DeleteAPIV2ChartReleasesSelectorOK) IsCode(code int) bool {
+	return code == 200
+}
+
 func (o *DeleteAPIV2ChartReleasesSelectorOK) Error() string {
 	return fmt.Sprintf("[DELETE /api/v2/chart-releases/{selector}][%d] deleteApiV2ChartReleasesSelectorOK  %+v", 200, o.Payload)
 }
+
+func (o *DeleteAPIV2ChartReleasesSelectorOK) String() string {
+	return fmt.Sprintf("[DELETE /api/v2/chart-releases/{selector}][%d] deleteApiV2ChartReleasesSelectorOK  %+v", 200, o.Payload)
+}
+
 func (o *DeleteAPIV2ChartReleasesSelectorOK) GetPayload() *models.V2controllersChartRelease {
 	return o.Payload
 }
@@ -107,7 +138,8 @@ func NewDeleteAPIV2ChartReleasesSelectorBadRequest() *DeleteAPIV2ChartReleasesSe
 	return &DeleteAPIV2ChartReleasesSelectorBadRequest{}
 }
 
-/* DeleteAPIV2ChartReleasesSelectorBadRequest describes a response with status code 400, with default header values.
+/*
+DeleteAPIV2ChartReleasesSelectorBadRequest describes a response with status code 400, with default header values.
 
 Bad Request
 */
@@ -115,9 +147,39 @@ type DeleteAPIV2ChartReleasesSelectorBadRequest struct {
 	Payload *models.ErrorsErrorResponse
 }
 
+// IsSuccess returns true when this delete Api v2 chart releases selector bad request response has a 2xx status code
+func (o *DeleteAPIV2ChartReleasesSelectorBadRequest) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this delete Api v2 chart releases selector bad request response has a 3xx status code
+func (o *DeleteAPIV2ChartReleasesSelectorBadRequest) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this delete Api v2 chart releases selector bad request response has a 4xx status code
+func (o *DeleteAPIV2ChartReleasesSelectorBadRequest) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this delete Api v2 chart releases selector bad request response has a 5xx status code
+func (o *DeleteAPIV2ChartReleasesSelectorBadRequest) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this delete Api v2 chart releases selector bad request response a status code equal to that given
+func (o *DeleteAPIV2ChartReleasesSelectorBadRequest) IsCode(code int) bool {
+	return code == 400
+}
+
 func (o *DeleteAPIV2ChartReleasesSelectorBadRequest) Error() string {
 	return fmt.Sprintf("[DELETE /api/v2/chart-releases/{selector}][%d] deleteApiV2ChartReleasesSelectorBadRequest  %+v", 400, o.Payload)
 }
+
+func (o *DeleteAPIV2ChartReleasesSelectorBadRequest) String() string {
+	return fmt.Sprintf("[DELETE /api/v2/chart-releases/{selector}][%d] deleteApiV2ChartReleasesSelectorBadRequest  %+v", 400, o.Payload)
+}
+
 func (o *DeleteAPIV2ChartReleasesSelectorBadRequest) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -139,7 +201,8 @@ func NewDeleteAPIV2ChartReleasesSelectorForbidden() *DeleteAPIV2ChartReleasesSel
 	return &DeleteAPIV2ChartReleasesSelectorForbidden{}
 }
 
-/* DeleteAPIV2ChartReleasesSelectorForbidden describes a response with status code 403, with default header values.
+/*
+DeleteAPIV2ChartReleasesSelectorForbidden describes a response with status code 403, with default header values.
 
 Forbidden
 */
@@ -147,9 +210,39 @@ type DeleteAPIV2ChartReleasesSelectorForbidden struct {
 	Payload *models.ErrorsErrorResponse
 }
 
+// IsSuccess returns true when this delete Api v2 chart releases selector forbidden response has a 2xx status code
+func (o *DeleteAPIV2ChartReleasesSelectorForbidden) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this delete Api v2 chart releases selector forbidden response has a 3xx status code
+func (o *DeleteAPIV2ChartReleasesSelectorForbidden) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this delete Api v2 chart releases selector forbidden response has a 4xx status code
+func (o *DeleteAPIV2ChartReleasesSelectorForbidden) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this delete Api v2 chart releases selector forbidden response has a 5xx status code
+func (o *DeleteAPIV2ChartReleasesSelectorForbidden) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this delete Api v2 chart releases selector forbidden response a status code equal to that given
+func (o *DeleteAPIV2ChartReleasesSelectorForbidden) IsCode(code int) bool {
+	return code == 403
+}
+
 func (o *DeleteAPIV2ChartReleasesSelectorForbidden) Error() string {
 	return fmt.Sprintf("[DELETE /api/v2/chart-releases/{selector}][%d] deleteApiV2ChartReleasesSelectorForbidden  %+v", 403, o.Payload)
 }
+
+func (o *DeleteAPIV2ChartReleasesSelectorForbidden) String() string {
+	return fmt.Sprintf("[DELETE /api/v2/chart-releases/{selector}][%d] deleteApiV2ChartReleasesSelectorForbidden  %+v", 403, o.Payload)
+}
+
 func (o *DeleteAPIV2ChartReleasesSelectorForbidden) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -171,7 +264,8 @@ func NewDeleteAPIV2ChartReleasesSelectorNotFound() *DeleteAPIV2ChartReleasesSele
 	return &DeleteAPIV2ChartReleasesSelectorNotFound{}
 }
 
-/* DeleteAPIV2ChartReleasesSelectorNotFound describes a response with status code 404, with default header values.
+/*
+DeleteAPIV2ChartReleasesSelectorNotFound describes a response with status code 404, with default header values.
 
 Not Found
 */
@@ -179,9 +273,39 @@ type DeleteAPIV2ChartReleasesSelectorNotFound struct {
 	Payload *models.ErrorsErrorResponse
 }
 
+// IsSuccess returns true when this delete Api v2 chart releases selector not found response has a 2xx status code
+func (o *DeleteAPIV2ChartReleasesSelectorNotFound) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this delete Api v2 chart releases selector not found response has a 3xx status code
+func (o *DeleteAPIV2ChartReleasesSelectorNotFound) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this delete Api v2 chart releases selector not found response has a 4xx status code
+func (o *DeleteAPIV2ChartReleasesSelectorNotFound) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this delete Api v2 chart releases selector not found response has a 5xx status code
+func (o *DeleteAPIV2ChartReleasesSelectorNotFound) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this delete Api v2 chart releases selector not found response a status code equal to that given
+func (o *DeleteAPIV2ChartReleasesSelectorNotFound) IsCode(code int) bool {
+	return code == 404
+}
+
 func (o *DeleteAPIV2ChartReleasesSelectorNotFound) Error() string {
 	return fmt.Sprintf("[DELETE /api/v2/chart-releases/{selector}][%d] deleteApiV2ChartReleasesSelectorNotFound  %+v", 404, o.Payload)
 }
+
+func (o *DeleteAPIV2ChartReleasesSelectorNotFound) String() string {
+	return fmt.Sprintf("[DELETE /api/v2/chart-releases/{selector}][%d] deleteApiV2ChartReleasesSelectorNotFound  %+v", 404, o.Payload)
+}
+
 func (o *DeleteAPIV2ChartReleasesSelectorNotFound) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -203,7 +327,8 @@ func NewDeleteAPIV2ChartReleasesSelectorProxyAuthenticationRequired() *DeleteAPI
 	return &DeleteAPIV2ChartReleasesSelectorProxyAuthenticationRequired{}
 }
 
-/* DeleteAPIV2ChartReleasesSelectorProxyAuthenticationRequired describes a response with status code 407, with default header values.
+/*
+DeleteAPIV2ChartReleasesSelectorProxyAuthenticationRequired describes a response with status code 407, with default header values.
 
 Proxy Authentication Required
 */
@@ -211,9 +336,39 @@ type DeleteAPIV2ChartReleasesSelectorProxyAuthenticationRequired struct {
 	Payload *models.ErrorsErrorResponse
 }
 
+// IsSuccess returns true when this delete Api v2 chart releases selector proxy authentication required response has a 2xx status code
+func (o *DeleteAPIV2ChartReleasesSelectorProxyAuthenticationRequired) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this delete Api v2 chart releases selector proxy authentication required response has a 3xx status code
+func (o *DeleteAPIV2ChartReleasesSelectorProxyAuthenticationRequired) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this delete Api v2 chart releases selector proxy authentication required response has a 4xx status code
+func (o *DeleteAPIV2ChartReleasesSelectorProxyAuthenticationRequired) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this delete Api v2 chart releases selector proxy authentication required response has a 5xx status code
+func (o *DeleteAPIV2ChartReleasesSelectorProxyAuthenticationRequired) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this delete Api v2 chart releases selector proxy authentication required response a status code equal to that given
+func (o *DeleteAPIV2ChartReleasesSelectorProxyAuthenticationRequired) IsCode(code int) bool {
+	return code == 407
+}
+
 func (o *DeleteAPIV2ChartReleasesSelectorProxyAuthenticationRequired) Error() string {
 	return fmt.Sprintf("[DELETE /api/v2/chart-releases/{selector}][%d] deleteApiV2ChartReleasesSelectorProxyAuthenticationRequired  %+v", 407, o.Payload)
 }
+
+func (o *DeleteAPIV2ChartReleasesSelectorProxyAuthenticationRequired) String() string {
+	return fmt.Sprintf("[DELETE /api/v2/chart-releases/{selector}][%d] deleteApiV2ChartReleasesSelectorProxyAuthenticationRequired  %+v", 407, o.Payload)
+}
+
 func (o *DeleteAPIV2ChartReleasesSelectorProxyAuthenticationRequired) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -235,7 +390,8 @@ func NewDeleteAPIV2ChartReleasesSelectorConflict() *DeleteAPIV2ChartReleasesSele
 	return &DeleteAPIV2ChartReleasesSelectorConflict{}
 }
 
-/* DeleteAPIV2ChartReleasesSelectorConflict describes a response with status code 409, with default header values.
+/*
+DeleteAPIV2ChartReleasesSelectorConflict describes a response with status code 409, with default header values.
 
 Conflict
 */
@@ -243,9 +399,39 @@ type DeleteAPIV2ChartReleasesSelectorConflict struct {
 	Payload *models.ErrorsErrorResponse
 }
 
+// IsSuccess returns true when this delete Api v2 chart releases selector conflict response has a 2xx status code
+func (o *DeleteAPIV2ChartReleasesSelectorConflict) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this delete Api v2 chart releases selector conflict response has a 3xx status code
+func (o *DeleteAPIV2ChartReleasesSelectorConflict) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this delete Api v2 chart releases selector conflict response has a 4xx status code
+func (o *DeleteAPIV2ChartReleasesSelectorConflict) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this delete Api v2 chart releases selector conflict response has a 5xx status code
+func (o *DeleteAPIV2ChartReleasesSelectorConflict) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this delete Api v2 chart releases selector conflict response a status code equal to that given
+func (o *DeleteAPIV2ChartReleasesSelectorConflict) IsCode(code int) bool {
+	return code == 409
+}
+
 func (o *DeleteAPIV2ChartReleasesSelectorConflict) Error() string {
 	return fmt.Sprintf("[DELETE /api/v2/chart-releases/{selector}][%d] deleteApiV2ChartReleasesSelectorConflict  %+v", 409, o.Payload)
 }
+
+func (o *DeleteAPIV2ChartReleasesSelectorConflict) String() string {
+	return fmt.Sprintf("[DELETE /api/v2/chart-releases/{selector}][%d] deleteApiV2ChartReleasesSelectorConflict  %+v", 409, o.Payload)
+}
+
 func (o *DeleteAPIV2ChartReleasesSelectorConflict) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -267,7 +453,8 @@ func NewDeleteAPIV2ChartReleasesSelectorInternalServerError() *DeleteAPIV2ChartR
 	return &DeleteAPIV2ChartReleasesSelectorInternalServerError{}
 }
 
-/* DeleteAPIV2ChartReleasesSelectorInternalServerError describes a response with status code 500, with default header values.
+/*
+DeleteAPIV2ChartReleasesSelectorInternalServerError describes a response with status code 500, with default header values.
 
 Internal Server Error
 */
@@ -275,9 +462,39 @@ type DeleteAPIV2ChartReleasesSelectorInternalServerError struct {
 	Payload *models.ErrorsErrorResponse
 }
 
+// IsSuccess returns true when this delete Api v2 chart releases selector internal server error response has a 2xx status code
+func (o *DeleteAPIV2ChartReleasesSelectorInternalServerError) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this delete Api v2 chart releases selector internal server error response has a 3xx status code
+func (o *DeleteAPIV2ChartReleasesSelectorInternalServerError) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this delete Api v2 chart releases selector internal server error response has a 4xx status code
+func (o *DeleteAPIV2ChartReleasesSelectorInternalServerError) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this delete Api v2 chart releases selector internal server error response has a 5xx status code
+func (o *DeleteAPIV2ChartReleasesSelectorInternalServerError) IsServerError() bool {
+	return true
+}
+
+// IsCode returns true when this delete Api v2 chart releases selector internal server error response a status code equal to that given
+func (o *DeleteAPIV2ChartReleasesSelectorInternalServerError) IsCode(code int) bool {
+	return code == 500
+}
+
 func (o *DeleteAPIV2ChartReleasesSelectorInternalServerError) Error() string {
 	return fmt.Sprintf("[DELETE /api/v2/chart-releases/{selector}][%d] deleteApiV2ChartReleasesSelectorInternalServerError  %+v", 500, o.Payload)
 }
+
+func (o *DeleteAPIV2ChartReleasesSelectorInternalServerError) String() string {
+	return fmt.Sprintf("[DELETE /api/v2/chart-releases/{selector}][%d] deleteApiV2ChartReleasesSelectorInternalServerError  %+v", 500, o.Payload)
+}
+
 func (o *DeleteAPIV2ChartReleasesSelectorInternalServerError) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }

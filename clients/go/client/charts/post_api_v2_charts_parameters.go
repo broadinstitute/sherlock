@@ -54,10 +54,12 @@ func NewPostAPIV2ChartsParamsWithHTTPClient(client *http.Client) *PostAPIV2Chart
 	}
 }
 
-/* PostAPIV2ChartsParams contains all the parameters to send to the API endpoint
-   for the post API v2 charts operation.
+/*
+PostAPIV2ChartsParams contains all the parameters to send to the API endpoint
 
-   Typically these are written to a http.Request.
+	for the post API v2 charts operation.
+
+	Typically these are written to a http.Request.
 */
 type PostAPIV2ChartsParams struct {
 

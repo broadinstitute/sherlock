@@ -75,7 +75,8 @@ func NewGetAPIV2AppVersionsSelectorOK() *GetAPIV2AppVersionsSelectorOK {
 	return &GetAPIV2AppVersionsSelectorOK{}
 }
 
-/* GetAPIV2AppVersionsSelectorOK describes a response with status code 200, with default header values.
+/*
+GetAPIV2AppVersionsSelectorOK describes a response with status code 200, with default header values.
 
 OK
 */
@@ -83,9 +84,39 @@ type GetAPIV2AppVersionsSelectorOK struct {
 	Payload *models.V2controllersAppVersion
 }
 
+// IsSuccess returns true when this get Api v2 app versions selector o k response has a 2xx status code
+func (o *GetAPIV2AppVersionsSelectorOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this get Api v2 app versions selector o k response has a 3xx status code
+func (o *GetAPIV2AppVersionsSelectorOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this get Api v2 app versions selector o k response has a 4xx status code
+func (o *GetAPIV2AppVersionsSelectorOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this get Api v2 app versions selector o k response has a 5xx status code
+func (o *GetAPIV2AppVersionsSelectorOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this get Api v2 app versions selector o k response a status code equal to that given
+func (o *GetAPIV2AppVersionsSelectorOK) IsCode(code int) bool {
+	return code == 200
+}
+
 func (o *GetAPIV2AppVersionsSelectorOK) Error() string {
 	return fmt.Sprintf("[GET /api/v2/app-versions/{selector}][%d] getApiV2AppVersionsSelectorOK  %+v", 200, o.Payload)
 }
+
+func (o *GetAPIV2AppVersionsSelectorOK) String() string {
+	return fmt.Sprintf("[GET /api/v2/app-versions/{selector}][%d] getApiV2AppVersionsSelectorOK  %+v", 200, o.Payload)
+}
+
 func (o *GetAPIV2AppVersionsSelectorOK) GetPayload() *models.V2controllersAppVersion {
 	return o.Payload
 }
@@ -107,7 +138,8 @@ func NewGetAPIV2AppVersionsSelectorBadRequest() *GetAPIV2AppVersionsSelectorBadR
 	return &GetAPIV2AppVersionsSelectorBadRequest{}
 }
 
-/* GetAPIV2AppVersionsSelectorBadRequest describes a response with status code 400, with default header values.
+/*
+GetAPIV2AppVersionsSelectorBadRequest describes a response with status code 400, with default header values.
 
 Bad Request
 */
@@ -115,9 +147,39 @@ type GetAPIV2AppVersionsSelectorBadRequest struct {
 	Payload *models.ErrorsErrorResponse
 }
 
+// IsSuccess returns true when this get Api v2 app versions selector bad request response has a 2xx status code
+func (o *GetAPIV2AppVersionsSelectorBadRequest) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this get Api v2 app versions selector bad request response has a 3xx status code
+func (o *GetAPIV2AppVersionsSelectorBadRequest) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this get Api v2 app versions selector bad request response has a 4xx status code
+func (o *GetAPIV2AppVersionsSelectorBadRequest) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this get Api v2 app versions selector bad request response has a 5xx status code
+func (o *GetAPIV2AppVersionsSelectorBadRequest) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this get Api v2 app versions selector bad request response a status code equal to that given
+func (o *GetAPIV2AppVersionsSelectorBadRequest) IsCode(code int) bool {
+	return code == 400
+}
+
 func (o *GetAPIV2AppVersionsSelectorBadRequest) Error() string {
 	return fmt.Sprintf("[GET /api/v2/app-versions/{selector}][%d] getApiV2AppVersionsSelectorBadRequest  %+v", 400, o.Payload)
 }
+
+func (o *GetAPIV2AppVersionsSelectorBadRequest) String() string {
+	return fmt.Sprintf("[GET /api/v2/app-versions/{selector}][%d] getApiV2AppVersionsSelectorBadRequest  %+v", 400, o.Payload)
+}
+
 func (o *GetAPIV2AppVersionsSelectorBadRequest) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -139,7 +201,8 @@ func NewGetAPIV2AppVersionsSelectorForbidden() *GetAPIV2AppVersionsSelectorForbi
 	return &GetAPIV2AppVersionsSelectorForbidden{}
 }
 
-/* GetAPIV2AppVersionsSelectorForbidden describes a response with status code 403, with default header values.
+/*
+GetAPIV2AppVersionsSelectorForbidden describes a response with status code 403, with default header values.
 
 Forbidden
 */
@@ -147,9 +210,39 @@ type GetAPIV2AppVersionsSelectorForbidden struct {
 	Payload *models.ErrorsErrorResponse
 }
 
+// IsSuccess returns true when this get Api v2 app versions selector forbidden response has a 2xx status code
+func (o *GetAPIV2AppVersionsSelectorForbidden) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this get Api v2 app versions selector forbidden response has a 3xx status code
+func (o *GetAPIV2AppVersionsSelectorForbidden) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this get Api v2 app versions selector forbidden response has a 4xx status code
+func (o *GetAPIV2AppVersionsSelectorForbidden) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this get Api v2 app versions selector forbidden response has a 5xx status code
+func (o *GetAPIV2AppVersionsSelectorForbidden) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this get Api v2 app versions selector forbidden response a status code equal to that given
+func (o *GetAPIV2AppVersionsSelectorForbidden) IsCode(code int) bool {
+	return code == 403
+}
+
 func (o *GetAPIV2AppVersionsSelectorForbidden) Error() string {
 	return fmt.Sprintf("[GET /api/v2/app-versions/{selector}][%d] getApiV2AppVersionsSelectorForbidden  %+v", 403, o.Payload)
 }
+
+func (o *GetAPIV2AppVersionsSelectorForbidden) String() string {
+	return fmt.Sprintf("[GET /api/v2/app-versions/{selector}][%d] getApiV2AppVersionsSelectorForbidden  %+v", 403, o.Payload)
+}
+
 func (o *GetAPIV2AppVersionsSelectorForbidden) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -171,7 +264,8 @@ func NewGetAPIV2AppVersionsSelectorNotFound() *GetAPIV2AppVersionsSelectorNotFou
 	return &GetAPIV2AppVersionsSelectorNotFound{}
 }
 
-/* GetAPIV2AppVersionsSelectorNotFound describes a response with status code 404, with default header values.
+/*
+GetAPIV2AppVersionsSelectorNotFound describes a response with status code 404, with default header values.
 
 Not Found
 */
@@ -179,9 +273,39 @@ type GetAPIV2AppVersionsSelectorNotFound struct {
 	Payload *models.ErrorsErrorResponse
 }
 
+// IsSuccess returns true when this get Api v2 app versions selector not found response has a 2xx status code
+func (o *GetAPIV2AppVersionsSelectorNotFound) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this get Api v2 app versions selector not found response has a 3xx status code
+func (o *GetAPIV2AppVersionsSelectorNotFound) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this get Api v2 app versions selector not found response has a 4xx status code
+func (o *GetAPIV2AppVersionsSelectorNotFound) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this get Api v2 app versions selector not found response has a 5xx status code
+func (o *GetAPIV2AppVersionsSelectorNotFound) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this get Api v2 app versions selector not found response a status code equal to that given
+func (o *GetAPIV2AppVersionsSelectorNotFound) IsCode(code int) bool {
+	return code == 404
+}
+
 func (o *GetAPIV2AppVersionsSelectorNotFound) Error() string {
 	return fmt.Sprintf("[GET /api/v2/app-versions/{selector}][%d] getApiV2AppVersionsSelectorNotFound  %+v", 404, o.Payload)
 }
+
+func (o *GetAPIV2AppVersionsSelectorNotFound) String() string {
+	return fmt.Sprintf("[GET /api/v2/app-versions/{selector}][%d] getApiV2AppVersionsSelectorNotFound  %+v", 404, o.Payload)
+}
+
 func (o *GetAPIV2AppVersionsSelectorNotFound) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -203,7 +327,8 @@ func NewGetAPIV2AppVersionsSelectorProxyAuthenticationRequired() *GetAPIV2AppVer
 	return &GetAPIV2AppVersionsSelectorProxyAuthenticationRequired{}
 }
 
-/* GetAPIV2AppVersionsSelectorProxyAuthenticationRequired describes a response with status code 407, with default header values.
+/*
+GetAPIV2AppVersionsSelectorProxyAuthenticationRequired describes a response with status code 407, with default header values.
 
 Proxy Authentication Required
 */
@@ -211,9 +336,39 @@ type GetAPIV2AppVersionsSelectorProxyAuthenticationRequired struct {
 	Payload *models.ErrorsErrorResponse
 }
 
+// IsSuccess returns true when this get Api v2 app versions selector proxy authentication required response has a 2xx status code
+func (o *GetAPIV2AppVersionsSelectorProxyAuthenticationRequired) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this get Api v2 app versions selector proxy authentication required response has a 3xx status code
+func (o *GetAPIV2AppVersionsSelectorProxyAuthenticationRequired) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this get Api v2 app versions selector proxy authentication required response has a 4xx status code
+func (o *GetAPIV2AppVersionsSelectorProxyAuthenticationRequired) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this get Api v2 app versions selector proxy authentication required response has a 5xx status code
+func (o *GetAPIV2AppVersionsSelectorProxyAuthenticationRequired) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this get Api v2 app versions selector proxy authentication required response a status code equal to that given
+func (o *GetAPIV2AppVersionsSelectorProxyAuthenticationRequired) IsCode(code int) bool {
+	return code == 407
+}
+
 func (o *GetAPIV2AppVersionsSelectorProxyAuthenticationRequired) Error() string {
 	return fmt.Sprintf("[GET /api/v2/app-versions/{selector}][%d] getApiV2AppVersionsSelectorProxyAuthenticationRequired  %+v", 407, o.Payload)
 }
+
+func (o *GetAPIV2AppVersionsSelectorProxyAuthenticationRequired) String() string {
+	return fmt.Sprintf("[GET /api/v2/app-versions/{selector}][%d] getApiV2AppVersionsSelectorProxyAuthenticationRequired  %+v", 407, o.Payload)
+}
+
 func (o *GetAPIV2AppVersionsSelectorProxyAuthenticationRequired) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -235,7 +390,8 @@ func NewGetAPIV2AppVersionsSelectorConflict() *GetAPIV2AppVersionsSelectorConfli
 	return &GetAPIV2AppVersionsSelectorConflict{}
 }
 
-/* GetAPIV2AppVersionsSelectorConflict describes a response with status code 409, with default header values.
+/*
+GetAPIV2AppVersionsSelectorConflict describes a response with status code 409, with default header values.
 
 Conflict
 */
@@ -243,9 +399,39 @@ type GetAPIV2AppVersionsSelectorConflict struct {
 	Payload *models.ErrorsErrorResponse
 }
 
+// IsSuccess returns true when this get Api v2 app versions selector conflict response has a 2xx status code
+func (o *GetAPIV2AppVersionsSelectorConflict) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this get Api v2 app versions selector conflict response has a 3xx status code
+func (o *GetAPIV2AppVersionsSelectorConflict) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this get Api v2 app versions selector conflict response has a 4xx status code
+func (o *GetAPIV2AppVersionsSelectorConflict) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this get Api v2 app versions selector conflict response has a 5xx status code
+func (o *GetAPIV2AppVersionsSelectorConflict) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this get Api v2 app versions selector conflict response a status code equal to that given
+func (o *GetAPIV2AppVersionsSelectorConflict) IsCode(code int) bool {
+	return code == 409
+}
+
 func (o *GetAPIV2AppVersionsSelectorConflict) Error() string {
 	return fmt.Sprintf("[GET /api/v2/app-versions/{selector}][%d] getApiV2AppVersionsSelectorConflict  %+v", 409, o.Payload)
 }
+
+func (o *GetAPIV2AppVersionsSelectorConflict) String() string {
+	return fmt.Sprintf("[GET /api/v2/app-versions/{selector}][%d] getApiV2AppVersionsSelectorConflict  %+v", 409, o.Payload)
+}
+
 func (o *GetAPIV2AppVersionsSelectorConflict) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -267,7 +453,8 @@ func NewGetAPIV2AppVersionsSelectorInternalServerError() *GetAPIV2AppVersionsSel
 	return &GetAPIV2AppVersionsSelectorInternalServerError{}
 }
 
-/* GetAPIV2AppVersionsSelectorInternalServerError describes a response with status code 500, with default header values.
+/*
+GetAPIV2AppVersionsSelectorInternalServerError describes a response with status code 500, with default header values.
 
 Internal Server Error
 */
@@ -275,9 +462,39 @@ type GetAPIV2AppVersionsSelectorInternalServerError struct {
 	Payload *models.ErrorsErrorResponse
 }
 
+// IsSuccess returns true when this get Api v2 app versions selector internal server error response has a 2xx status code
+func (o *GetAPIV2AppVersionsSelectorInternalServerError) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this get Api v2 app versions selector internal server error response has a 3xx status code
+func (o *GetAPIV2AppVersionsSelectorInternalServerError) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this get Api v2 app versions selector internal server error response has a 4xx status code
+func (o *GetAPIV2AppVersionsSelectorInternalServerError) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this get Api v2 app versions selector internal server error response has a 5xx status code
+func (o *GetAPIV2AppVersionsSelectorInternalServerError) IsServerError() bool {
+	return true
+}
+
+// IsCode returns true when this get Api v2 app versions selector internal server error response a status code equal to that given
+func (o *GetAPIV2AppVersionsSelectorInternalServerError) IsCode(code int) bool {
+	return code == 500
+}
+
 func (o *GetAPIV2AppVersionsSelectorInternalServerError) Error() string {
 	return fmt.Sprintf("[GET /api/v2/app-versions/{selector}][%d] getApiV2AppVersionsSelectorInternalServerError  %+v", 500, o.Payload)
 }
+
+func (o *GetAPIV2AppVersionsSelectorInternalServerError) String() string {
+	return fmt.Sprintf("[GET /api/v2/app-versions/{selector}][%d] getApiV2AppVersionsSelectorInternalServerError  %+v", 500, o.Payload)
+}
+
 func (o *GetAPIV2AppVersionsSelectorInternalServerError) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }

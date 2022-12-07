@@ -75,7 +75,8 @@ func NewPatchAPIV2ChartReleasesSelectorOK() *PatchAPIV2ChartReleasesSelectorOK {
 	return &PatchAPIV2ChartReleasesSelectorOK{}
 }
 
-/* PatchAPIV2ChartReleasesSelectorOK describes a response with status code 200, with default header values.
+/*
+PatchAPIV2ChartReleasesSelectorOK describes a response with status code 200, with default header values.
 
 OK
 */
@@ -83,9 +84,39 @@ type PatchAPIV2ChartReleasesSelectorOK struct {
 	Payload *models.V2controllersChartRelease
 }
 
+// IsSuccess returns true when this patch Api v2 chart releases selector o k response has a 2xx status code
+func (o *PatchAPIV2ChartReleasesSelectorOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this patch Api v2 chart releases selector o k response has a 3xx status code
+func (o *PatchAPIV2ChartReleasesSelectorOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this patch Api v2 chart releases selector o k response has a 4xx status code
+func (o *PatchAPIV2ChartReleasesSelectorOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this patch Api v2 chart releases selector o k response has a 5xx status code
+func (o *PatchAPIV2ChartReleasesSelectorOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this patch Api v2 chart releases selector o k response a status code equal to that given
+func (o *PatchAPIV2ChartReleasesSelectorOK) IsCode(code int) bool {
+	return code == 200
+}
+
 func (o *PatchAPIV2ChartReleasesSelectorOK) Error() string {
 	return fmt.Sprintf("[PATCH /api/v2/chart-releases/{selector}][%d] patchApiV2ChartReleasesSelectorOK  %+v", 200, o.Payload)
 }
+
+func (o *PatchAPIV2ChartReleasesSelectorOK) String() string {
+	return fmt.Sprintf("[PATCH /api/v2/chart-releases/{selector}][%d] patchApiV2ChartReleasesSelectorOK  %+v", 200, o.Payload)
+}
+
 func (o *PatchAPIV2ChartReleasesSelectorOK) GetPayload() *models.V2controllersChartRelease {
 	return o.Payload
 }
@@ -107,7 +138,8 @@ func NewPatchAPIV2ChartReleasesSelectorBadRequest() *PatchAPIV2ChartReleasesSele
 	return &PatchAPIV2ChartReleasesSelectorBadRequest{}
 }
 
-/* PatchAPIV2ChartReleasesSelectorBadRequest describes a response with status code 400, with default header values.
+/*
+PatchAPIV2ChartReleasesSelectorBadRequest describes a response with status code 400, with default header values.
 
 Bad Request
 */
@@ -115,9 +147,39 @@ type PatchAPIV2ChartReleasesSelectorBadRequest struct {
 	Payload *models.ErrorsErrorResponse
 }
 
+// IsSuccess returns true when this patch Api v2 chart releases selector bad request response has a 2xx status code
+func (o *PatchAPIV2ChartReleasesSelectorBadRequest) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this patch Api v2 chart releases selector bad request response has a 3xx status code
+func (o *PatchAPIV2ChartReleasesSelectorBadRequest) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this patch Api v2 chart releases selector bad request response has a 4xx status code
+func (o *PatchAPIV2ChartReleasesSelectorBadRequest) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this patch Api v2 chart releases selector bad request response has a 5xx status code
+func (o *PatchAPIV2ChartReleasesSelectorBadRequest) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this patch Api v2 chart releases selector bad request response a status code equal to that given
+func (o *PatchAPIV2ChartReleasesSelectorBadRequest) IsCode(code int) bool {
+	return code == 400
+}
+
 func (o *PatchAPIV2ChartReleasesSelectorBadRequest) Error() string {
 	return fmt.Sprintf("[PATCH /api/v2/chart-releases/{selector}][%d] patchApiV2ChartReleasesSelectorBadRequest  %+v", 400, o.Payload)
 }
+
+func (o *PatchAPIV2ChartReleasesSelectorBadRequest) String() string {
+	return fmt.Sprintf("[PATCH /api/v2/chart-releases/{selector}][%d] patchApiV2ChartReleasesSelectorBadRequest  %+v", 400, o.Payload)
+}
+
 func (o *PatchAPIV2ChartReleasesSelectorBadRequest) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -139,7 +201,8 @@ func NewPatchAPIV2ChartReleasesSelectorForbidden() *PatchAPIV2ChartReleasesSelec
 	return &PatchAPIV2ChartReleasesSelectorForbidden{}
 }
 
-/* PatchAPIV2ChartReleasesSelectorForbidden describes a response with status code 403, with default header values.
+/*
+PatchAPIV2ChartReleasesSelectorForbidden describes a response with status code 403, with default header values.
 
 Forbidden
 */
@@ -147,9 +210,39 @@ type PatchAPIV2ChartReleasesSelectorForbidden struct {
 	Payload *models.ErrorsErrorResponse
 }
 
+// IsSuccess returns true when this patch Api v2 chart releases selector forbidden response has a 2xx status code
+func (o *PatchAPIV2ChartReleasesSelectorForbidden) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this patch Api v2 chart releases selector forbidden response has a 3xx status code
+func (o *PatchAPIV2ChartReleasesSelectorForbidden) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this patch Api v2 chart releases selector forbidden response has a 4xx status code
+func (o *PatchAPIV2ChartReleasesSelectorForbidden) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this patch Api v2 chart releases selector forbidden response has a 5xx status code
+func (o *PatchAPIV2ChartReleasesSelectorForbidden) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this patch Api v2 chart releases selector forbidden response a status code equal to that given
+func (o *PatchAPIV2ChartReleasesSelectorForbidden) IsCode(code int) bool {
+	return code == 403
+}
+
 func (o *PatchAPIV2ChartReleasesSelectorForbidden) Error() string {
 	return fmt.Sprintf("[PATCH /api/v2/chart-releases/{selector}][%d] patchApiV2ChartReleasesSelectorForbidden  %+v", 403, o.Payload)
 }
+
+func (o *PatchAPIV2ChartReleasesSelectorForbidden) String() string {
+	return fmt.Sprintf("[PATCH /api/v2/chart-releases/{selector}][%d] patchApiV2ChartReleasesSelectorForbidden  %+v", 403, o.Payload)
+}
+
 func (o *PatchAPIV2ChartReleasesSelectorForbidden) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -171,7 +264,8 @@ func NewPatchAPIV2ChartReleasesSelectorNotFound() *PatchAPIV2ChartReleasesSelect
 	return &PatchAPIV2ChartReleasesSelectorNotFound{}
 }
 
-/* PatchAPIV2ChartReleasesSelectorNotFound describes a response with status code 404, with default header values.
+/*
+PatchAPIV2ChartReleasesSelectorNotFound describes a response with status code 404, with default header values.
 
 Not Found
 */
@@ -179,9 +273,39 @@ type PatchAPIV2ChartReleasesSelectorNotFound struct {
 	Payload *models.ErrorsErrorResponse
 }
 
+// IsSuccess returns true when this patch Api v2 chart releases selector not found response has a 2xx status code
+func (o *PatchAPIV2ChartReleasesSelectorNotFound) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this patch Api v2 chart releases selector not found response has a 3xx status code
+func (o *PatchAPIV2ChartReleasesSelectorNotFound) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this patch Api v2 chart releases selector not found response has a 4xx status code
+func (o *PatchAPIV2ChartReleasesSelectorNotFound) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this patch Api v2 chart releases selector not found response has a 5xx status code
+func (o *PatchAPIV2ChartReleasesSelectorNotFound) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this patch Api v2 chart releases selector not found response a status code equal to that given
+func (o *PatchAPIV2ChartReleasesSelectorNotFound) IsCode(code int) bool {
+	return code == 404
+}
+
 func (o *PatchAPIV2ChartReleasesSelectorNotFound) Error() string {
 	return fmt.Sprintf("[PATCH /api/v2/chart-releases/{selector}][%d] patchApiV2ChartReleasesSelectorNotFound  %+v", 404, o.Payload)
 }
+
+func (o *PatchAPIV2ChartReleasesSelectorNotFound) String() string {
+	return fmt.Sprintf("[PATCH /api/v2/chart-releases/{selector}][%d] patchApiV2ChartReleasesSelectorNotFound  %+v", 404, o.Payload)
+}
+
 func (o *PatchAPIV2ChartReleasesSelectorNotFound) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -203,7 +327,8 @@ func NewPatchAPIV2ChartReleasesSelectorProxyAuthenticationRequired() *PatchAPIV2
 	return &PatchAPIV2ChartReleasesSelectorProxyAuthenticationRequired{}
 }
 
-/* PatchAPIV2ChartReleasesSelectorProxyAuthenticationRequired describes a response with status code 407, with default header values.
+/*
+PatchAPIV2ChartReleasesSelectorProxyAuthenticationRequired describes a response with status code 407, with default header values.
 
 Proxy Authentication Required
 */
@@ -211,9 +336,39 @@ type PatchAPIV2ChartReleasesSelectorProxyAuthenticationRequired struct {
 	Payload *models.ErrorsErrorResponse
 }
 
+// IsSuccess returns true when this patch Api v2 chart releases selector proxy authentication required response has a 2xx status code
+func (o *PatchAPIV2ChartReleasesSelectorProxyAuthenticationRequired) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this patch Api v2 chart releases selector proxy authentication required response has a 3xx status code
+func (o *PatchAPIV2ChartReleasesSelectorProxyAuthenticationRequired) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this patch Api v2 chart releases selector proxy authentication required response has a 4xx status code
+func (o *PatchAPIV2ChartReleasesSelectorProxyAuthenticationRequired) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this patch Api v2 chart releases selector proxy authentication required response has a 5xx status code
+func (o *PatchAPIV2ChartReleasesSelectorProxyAuthenticationRequired) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this patch Api v2 chart releases selector proxy authentication required response a status code equal to that given
+func (o *PatchAPIV2ChartReleasesSelectorProxyAuthenticationRequired) IsCode(code int) bool {
+	return code == 407
+}
+
 func (o *PatchAPIV2ChartReleasesSelectorProxyAuthenticationRequired) Error() string {
 	return fmt.Sprintf("[PATCH /api/v2/chart-releases/{selector}][%d] patchApiV2ChartReleasesSelectorProxyAuthenticationRequired  %+v", 407, o.Payload)
 }
+
+func (o *PatchAPIV2ChartReleasesSelectorProxyAuthenticationRequired) String() string {
+	return fmt.Sprintf("[PATCH /api/v2/chart-releases/{selector}][%d] patchApiV2ChartReleasesSelectorProxyAuthenticationRequired  %+v", 407, o.Payload)
+}
+
 func (o *PatchAPIV2ChartReleasesSelectorProxyAuthenticationRequired) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -235,7 +390,8 @@ func NewPatchAPIV2ChartReleasesSelectorConflict() *PatchAPIV2ChartReleasesSelect
 	return &PatchAPIV2ChartReleasesSelectorConflict{}
 }
 
-/* PatchAPIV2ChartReleasesSelectorConflict describes a response with status code 409, with default header values.
+/*
+PatchAPIV2ChartReleasesSelectorConflict describes a response with status code 409, with default header values.
 
 Conflict
 */
@@ -243,9 +399,39 @@ type PatchAPIV2ChartReleasesSelectorConflict struct {
 	Payload *models.ErrorsErrorResponse
 }
 
+// IsSuccess returns true when this patch Api v2 chart releases selector conflict response has a 2xx status code
+func (o *PatchAPIV2ChartReleasesSelectorConflict) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this patch Api v2 chart releases selector conflict response has a 3xx status code
+func (o *PatchAPIV2ChartReleasesSelectorConflict) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this patch Api v2 chart releases selector conflict response has a 4xx status code
+func (o *PatchAPIV2ChartReleasesSelectorConflict) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this patch Api v2 chart releases selector conflict response has a 5xx status code
+func (o *PatchAPIV2ChartReleasesSelectorConflict) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this patch Api v2 chart releases selector conflict response a status code equal to that given
+func (o *PatchAPIV2ChartReleasesSelectorConflict) IsCode(code int) bool {
+	return code == 409
+}
+
 func (o *PatchAPIV2ChartReleasesSelectorConflict) Error() string {
 	return fmt.Sprintf("[PATCH /api/v2/chart-releases/{selector}][%d] patchApiV2ChartReleasesSelectorConflict  %+v", 409, o.Payload)
 }
+
+func (o *PatchAPIV2ChartReleasesSelectorConflict) String() string {
+	return fmt.Sprintf("[PATCH /api/v2/chart-releases/{selector}][%d] patchApiV2ChartReleasesSelectorConflict  %+v", 409, o.Payload)
+}
+
 func (o *PatchAPIV2ChartReleasesSelectorConflict) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -267,7 +453,8 @@ func NewPatchAPIV2ChartReleasesSelectorInternalServerError() *PatchAPIV2ChartRel
 	return &PatchAPIV2ChartReleasesSelectorInternalServerError{}
 }
 
-/* PatchAPIV2ChartReleasesSelectorInternalServerError describes a response with status code 500, with default header values.
+/*
+PatchAPIV2ChartReleasesSelectorInternalServerError describes a response with status code 500, with default header values.
 
 Internal Server Error
 */
@@ -275,9 +462,39 @@ type PatchAPIV2ChartReleasesSelectorInternalServerError struct {
 	Payload *models.ErrorsErrorResponse
 }
 
+// IsSuccess returns true when this patch Api v2 chart releases selector internal server error response has a 2xx status code
+func (o *PatchAPIV2ChartReleasesSelectorInternalServerError) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this patch Api v2 chart releases selector internal server error response has a 3xx status code
+func (o *PatchAPIV2ChartReleasesSelectorInternalServerError) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this patch Api v2 chart releases selector internal server error response has a 4xx status code
+func (o *PatchAPIV2ChartReleasesSelectorInternalServerError) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this patch Api v2 chart releases selector internal server error response has a 5xx status code
+func (o *PatchAPIV2ChartReleasesSelectorInternalServerError) IsServerError() bool {
+	return true
+}
+
+// IsCode returns true when this patch Api v2 chart releases selector internal server error response a status code equal to that given
+func (o *PatchAPIV2ChartReleasesSelectorInternalServerError) IsCode(code int) bool {
+	return code == 500
+}
+
 func (o *PatchAPIV2ChartReleasesSelectorInternalServerError) Error() string {
 	return fmt.Sprintf("[PATCH /api/v2/chart-releases/{selector}][%d] patchApiV2ChartReleasesSelectorInternalServerError  %+v", 500, o.Payload)
 }
+
+func (o *PatchAPIV2ChartReleasesSelectorInternalServerError) String() string {
+	return fmt.Sprintf("[PATCH /api/v2/chart-releases/{selector}][%d] patchApiV2ChartReleasesSelectorInternalServerError  %+v", 500, o.Payload)
+}
+
 func (o *PatchAPIV2ChartReleasesSelectorInternalServerError) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }

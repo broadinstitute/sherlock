@@ -54,10 +54,12 @@ func NewPostAPIV2ChangesetsParamsWithHTTPClient(client *http.Client) *PostAPIV2C
 	}
 }
 
-/* PostAPIV2ChangesetsParams contains all the parameters to send to the API endpoint
-   for the post API v2 changesets operation.
+/*
+PostAPIV2ChangesetsParams contains all the parameters to send to the API endpoint
 
-   Typically these are written to a http.Request.
+	for the post API v2 changesets operation.
+
+	Typically these are written to a http.Request.
 */
 type PostAPIV2ChangesetsParams struct {
 

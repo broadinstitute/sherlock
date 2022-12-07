@@ -54,6 +54,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "format": "date-time",
                         "name": "createdAt",
                         "in": "query"
                     },
@@ -85,6 +86,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "format": "date-time",
                         "name": "updatedAt",
                         "in": "query"
                     },
@@ -381,6 +383,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "format": "date-time",
                         "name": "createdAt",
                         "in": "query"
                     },
@@ -526,6 +529,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "format": "date-time",
                         "name": "updatedAt",
                         "in": "query"
                     },
@@ -814,6 +818,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "format": "date-time",
                         "name": "createdAt",
                         "in": "query"
                     },
@@ -877,6 +882,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "format": "date-time",
                         "name": "updatedAt",
                         "in": "query"
                     },
@@ -1238,6 +1244,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "format": "date-time",
                         "name": "createdAt",
                         "in": "query"
                     },
@@ -1259,6 +1266,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "format": "date-time",
                         "name": "updatedAt",
                         "in": "query"
                     },
@@ -1568,6 +1576,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "format": "date-time",
                         "name": "createdAt",
                         "in": "query"
                     },
@@ -1609,6 +1618,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "format": "date-time",
                         "name": "updatedAt",
                         "in": "query"
                     },
@@ -1976,6 +1986,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "format": "date-time",
                         "name": "createdAt",
                         "in": "query"
                     },
@@ -2026,6 +2037,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "format": "date-time",
                         "name": "updatedAt",
                         "in": "query"
                     },
@@ -2394,6 +2406,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "format": "date-time",
                         "name": "createdAt",
                         "in": "query"
                     },
@@ -2483,6 +2496,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "format": "date-time",
                         "name": "updatedAt",
                         "in": "query"
                     },
@@ -3677,7 +3691,8 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "after": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "enabled": {
                     "type": "boolean",
@@ -3753,7 +3768,8 @@ const docTemplate = `{
                     "$ref": "#/definitions/v2controllers.Chart"
                 },
                 "createdAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "description": {
                     "description": "Generally the Git commit message",
@@ -3775,7 +3791,8 @@ const docTemplate = `{
                     "type": "object"
                 },
                 "updatedAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 }
             }
         },
@@ -3792,7 +3809,8 @@ const docTemplate = `{
                     "$ref": "#/definitions/v2controllers.ChartRelease"
                 },
                 "createdAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "fromAppVersionBranch": {
                     "type": "string"
@@ -3891,7 +3909,8 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "updatedAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 }
             }
         },
@@ -3999,7 +4018,8 @@ const docTemplate = `{
                     "default": "terra-helm"
                 },
                 "createdAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "defaultPort": {
                     "type": "integer",
@@ -4026,7 +4046,8 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "updatedAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 }
             }
         },
@@ -4099,7 +4120,8 @@ const docTemplate = `{
                     "$ref": "#/definitions/v2controllers.Cluster"
                 },
                 "createdAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "destinationType": {
                     "description": "Calculated field",
@@ -4143,7 +4165,8 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "updatedAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 }
             }
         },
@@ -4162,7 +4185,8 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "createdAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "description": {
                     "description": "Generally the Git commit message",
@@ -4178,7 +4202,8 @@ const docTemplate = `{
                     "type": "object"
                 },
                 "updatedAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 }
             }
         },
@@ -4199,7 +4224,8 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "createdAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "googleProject": {
                     "description": "Required when creating if provider is 'google'",
@@ -4233,7 +4259,8 @@ const docTemplate = `{
                     "default": false
                 },
                 "updatedAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 }
             }
         },
@@ -4735,7 +4762,8 @@ const docTemplate = `{
                     "default": true
                 },
                 "createdAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "defaultCluster": {
                     "type": "string"
@@ -4801,7 +4829,8 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "updatedAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "valuesName": {
                     "type": "string"
