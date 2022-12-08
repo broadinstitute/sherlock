@@ -75,8 +75,7 @@ func NewGetAPIV2ClustersSelectorOK() *GetAPIV2ClustersSelectorOK {
 	return &GetAPIV2ClustersSelectorOK{}
 }
 
-/*
-GetAPIV2ClustersSelectorOK describes a response with status code 200, with default header values.
+/* GetAPIV2ClustersSelectorOK describes a response with status code 200, with default header values.
 
 OK
 */
@@ -84,39 +83,9 @@ type GetAPIV2ClustersSelectorOK struct {
 	Payload *models.V2controllersCluster
 }
 
-// IsSuccess returns true when this get Api v2 clusters selector o k response has a 2xx status code
-func (o *GetAPIV2ClustersSelectorOK) IsSuccess() bool {
-	return true
-}
-
-// IsRedirect returns true when this get Api v2 clusters selector o k response has a 3xx status code
-func (o *GetAPIV2ClustersSelectorOK) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get Api v2 clusters selector o k response has a 4xx status code
-func (o *GetAPIV2ClustersSelectorOK) IsClientError() bool {
-	return false
-}
-
-// IsServerError returns true when this get Api v2 clusters selector o k response has a 5xx status code
-func (o *GetAPIV2ClustersSelectorOK) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get Api v2 clusters selector o k response a status code equal to that given
-func (o *GetAPIV2ClustersSelectorOK) IsCode(code int) bool {
-	return code == 200
-}
-
 func (o *GetAPIV2ClustersSelectorOK) Error() string {
 	return fmt.Sprintf("[GET /api/v2/clusters/{selector}][%d] getApiV2ClustersSelectorOK  %+v", 200, o.Payload)
 }
-
-func (o *GetAPIV2ClustersSelectorOK) String() string {
-	return fmt.Sprintf("[GET /api/v2/clusters/{selector}][%d] getApiV2ClustersSelectorOK  %+v", 200, o.Payload)
-}
-
 func (o *GetAPIV2ClustersSelectorOK) GetPayload() *models.V2controllersCluster {
 	return o.Payload
 }
@@ -138,8 +107,7 @@ func NewGetAPIV2ClustersSelectorBadRequest() *GetAPIV2ClustersSelectorBadRequest
 	return &GetAPIV2ClustersSelectorBadRequest{}
 }
 
-/*
-GetAPIV2ClustersSelectorBadRequest describes a response with status code 400, with default header values.
+/* GetAPIV2ClustersSelectorBadRequest describes a response with status code 400, with default header values.
 
 Bad Request
 */
@@ -147,39 +115,9 @@ type GetAPIV2ClustersSelectorBadRequest struct {
 	Payload *models.ErrorsErrorResponse
 }
 
-// IsSuccess returns true when this get Api v2 clusters selector bad request response has a 2xx status code
-func (o *GetAPIV2ClustersSelectorBadRequest) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this get Api v2 clusters selector bad request response has a 3xx status code
-func (o *GetAPIV2ClustersSelectorBadRequest) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get Api v2 clusters selector bad request response has a 4xx status code
-func (o *GetAPIV2ClustersSelectorBadRequest) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this get Api v2 clusters selector bad request response has a 5xx status code
-func (o *GetAPIV2ClustersSelectorBadRequest) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get Api v2 clusters selector bad request response a status code equal to that given
-func (o *GetAPIV2ClustersSelectorBadRequest) IsCode(code int) bool {
-	return code == 400
-}
-
 func (o *GetAPIV2ClustersSelectorBadRequest) Error() string {
 	return fmt.Sprintf("[GET /api/v2/clusters/{selector}][%d] getApiV2ClustersSelectorBadRequest  %+v", 400, o.Payload)
 }
-
-func (o *GetAPIV2ClustersSelectorBadRequest) String() string {
-	return fmt.Sprintf("[GET /api/v2/clusters/{selector}][%d] getApiV2ClustersSelectorBadRequest  %+v", 400, o.Payload)
-}
-
 func (o *GetAPIV2ClustersSelectorBadRequest) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -201,8 +139,7 @@ func NewGetAPIV2ClustersSelectorForbidden() *GetAPIV2ClustersSelectorForbidden {
 	return &GetAPIV2ClustersSelectorForbidden{}
 }
 
-/*
-GetAPIV2ClustersSelectorForbidden describes a response with status code 403, with default header values.
+/* GetAPIV2ClustersSelectorForbidden describes a response with status code 403, with default header values.
 
 Forbidden
 */
@@ -210,39 +147,9 @@ type GetAPIV2ClustersSelectorForbidden struct {
 	Payload *models.ErrorsErrorResponse
 }
 
-// IsSuccess returns true when this get Api v2 clusters selector forbidden response has a 2xx status code
-func (o *GetAPIV2ClustersSelectorForbidden) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this get Api v2 clusters selector forbidden response has a 3xx status code
-func (o *GetAPIV2ClustersSelectorForbidden) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get Api v2 clusters selector forbidden response has a 4xx status code
-func (o *GetAPIV2ClustersSelectorForbidden) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this get Api v2 clusters selector forbidden response has a 5xx status code
-func (o *GetAPIV2ClustersSelectorForbidden) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get Api v2 clusters selector forbidden response a status code equal to that given
-func (o *GetAPIV2ClustersSelectorForbidden) IsCode(code int) bool {
-	return code == 403
-}
-
 func (o *GetAPIV2ClustersSelectorForbidden) Error() string {
 	return fmt.Sprintf("[GET /api/v2/clusters/{selector}][%d] getApiV2ClustersSelectorForbidden  %+v", 403, o.Payload)
 }
-
-func (o *GetAPIV2ClustersSelectorForbidden) String() string {
-	return fmt.Sprintf("[GET /api/v2/clusters/{selector}][%d] getApiV2ClustersSelectorForbidden  %+v", 403, o.Payload)
-}
-
 func (o *GetAPIV2ClustersSelectorForbidden) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -264,8 +171,7 @@ func NewGetAPIV2ClustersSelectorNotFound() *GetAPIV2ClustersSelectorNotFound {
 	return &GetAPIV2ClustersSelectorNotFound{}
 }
 
-/*
-GetAPIV2ClustersSelectorNotFound describes a response with status code 404, with default header values.
+/* GetAPIV2ClustersSelectorNotFound describes a response with status code 404, with default header values.
 
 Not Found
 */
@@ -273,39 +179,9 @@ type GetAPIV2ClustersSelectorNotFound struct {
 	Payload *models.ErrorsErrorResponse
 }
 
-// IsSuccess returns true when this get Api v2 clusters selector not found response has a 2xx status code
-func (o *GetAPIV2ClustersSelectorNotFound) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this get Api v2 clusters selector not found response has a 3xx status code
-func (o *GetAPIV2ClustersSelectorNotFound) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get Api v2 clusters selector not found response has a 4xx status code
-func (o *GetAPIV2ClustersSelectorNotFound) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this get Api v2 clusters selector not found response has a 5xx status code
-func (o *GetAPIV2ClustersSelectorNotFound) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get Api v2 clusters selector not found response a status code equal to that given
-func (o *GetAPIV2ClustersSelectorNotFound) IsCode(code int) bool {
-	return code == 404
-}
-
 func (o *GetAPIV2ClustersSelectorNotFound) Error() string {
 	return fmt.Sprintf("[GET /api/v2/clusters/{selector}][%d] getApiV2ClustersSelectorNotFound  %+v", 404, o.Payload)
 }
-
-func (o *GetAPIV2ClustersSelectorNotFound) String() string {
-	return fmt.Sprintf("[GET /api/v2/clusters/{selector}][%d] getApiV2ClustersSelectorNotFound  %+v", 404, o.Payload)
-}
-
 func (o *GetAPIV2ClustersSelectorNotFound) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -327,8 +203,7 @@ func NewGetAPIV2ClustersSelectorProxyAuthenticationRequired() *GetAPIV2ClustersS
 	return &GetAPIV2ClustersSelectorProxyAuthenticationRequired{}
 }
 
-/*
-GetAPIV2ClustersSelectorProxyAuthenticationRequired describes a response with status code 407, with default header values.
+/* GetAPIV2ClustersSelectorProxyAuthenticationRequired describes a response with status code 407, with default header values.
 
 Proxy Authentication Required
 */
@@ -336,39 +211,9 @@ type GetAPIV2ClustersSelectorProxyAuthenticationRequired struct {
 	Payload *models.ErrorsErrorResponse
 }
 
-// IsSuccess returns true when this get Api v2 clusters selector proxy authentication required response has a 2xx status code
-func (o *GetAPIV2ClustersSelectorProxyAuthenticationRequired) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this get Api v2 clusters selector proxy authentication required response has a 3xx status code
-func (o *GetAPIV2ClustersSelectorProxyAuthenticationRequired) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get Api v2 clusters selector proxy authentication required response has a 4xx status code
-func (o *GetAPIV2ClustersSelectorProxyAuthenticationRequired) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this get Api v2 clusters selector proxy authentication required response has a 5xx status code
-func (o *GetAPIV2ClustersSelectorProxyAuthenticationRequired) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get Api v2 clusters selector proxy authentication required response a status code equal to that given
-func (o *GetAPIV2ClustersSelectorProxyAuthenticationRequired) IsCode(code int) bool {
-	return code == 407
-}
-
 func (o *GetAPIV2ClustersSelectorProxyAuthenticationRequired) Error() string {
 	return fmt.Sprintf("[GET /api/v2/clusters/{selector}][%d] getApiV2ClustersSelectorProxyAuthenticationRequired  %+v", 407, o.Payload)
 }
-
-func (o *GetAPIV2ClustersSelectorProxyAuthenticationRequired) String() string {
-	return fmt.Sprintf("[GET /api/v2/clusters/{selector}][%d] getApiV2ClustersSelectorProxyAuthenticationRequired  %+v", 407, o.Payload)
-}
-
 func (o *GetAPIV2ClustersSelectorProxyAuthenticationRequired) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -390,8 +235,7 @@ func NewGetAPIV2ClustersSelectorConflict() *GetAPIV2ClustersSelectorConflict {
 	return &GetAPIV2ClustersSelectorConflict{}
 }
 
-/*
-GetAPIV2ClustersSelectorConflict describes a response with status code 409, with default header values.
+/* GetAPIV2ClustersSelectorConflict describes a response with status code 409, with default header values.
 
 Conflict
 */
@@ -399,39 +243,9 @@ type GetAPIV2ClustersSelectorConflict struct {
 	Payload *models.ErrorsErrorResponse
 }
 
-// IsSuccess returns true when this get Api v2 clusters selector conflict response has a 2xx status code
-func (o *GetAPIV2ClustersSelectorConflict) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this get Api v2 clusters selector conflict response has a 3xx status code
-func (o *GetAPIV2ClustersSelectorConflict) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get Api v2 clusters selector conflict response has a 4xx status code
-func (o *GetAPIV2ClustersSelectorConflict) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this get Api v2 clusters selector conflict response has a 5xx status code
-func (o *GetAPIV2ClustersSelectorConflict) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get Api v2 clusters selector conflict response a status code equal to that given
-func (o *GetAPIV2ClustersSelectorConflict) IsCode(code int) bool {
-	return code == 409
-}
-
 func (o *GetAPIV2ClustersSelectorConflict) Error() string {
 	return fmt.Sprintf("[GET /api/v2/clusters/{selector}][%d] getApiV2ClustersSelectorConflict  %+v", 409, o.Payload)
 }
-
-func (o *GetAPIV2ClustersSelectorConflict) String() string {
-	return fmt.Sprintf("[GET /api/v2/clusters/{selector}][%d] getApiV2ClustersSelectorConflict  %+v", 409, o.Payload)
-}
-
 func (o *GetAPIV2ClustersSelectorConflict) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -453,8 +267,7 @@ func NewGetAPIV2ClustersSelectorInternalServerError() *GetAPIV2ClustersSelectorI
 	return &GetAPIV2ClustersSelectorInternalServerError{}
 }
 
-/*
-GetAPIV2ClustersSelectorInternalServerError describes a response with status code 500, with default header values.
+/* GetAPIV2ClustersSelectorInternalServerError describes a response with status code 500, with default header values.
 
 Internal Server Error
 */
@@ -462,39 +275,9 @@ type GetAPIV2ClustersSelectorInternalServerError struct {
 	Payload *models.ErrorsErrorResponse
 }
 
-// IsSuccess returns true when this get Api v2 clusters selector internal server error response has a 2xx status code
-func (o *GetAPIV2ClustersSelectorInternalServerError) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this get Api v2 clusters selector internal server error response has a 3xx status code
-func (o *GetAPIV2ClustersSelectorInternalServerError) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get Api v2 clusters selector internal server error response has a 4xx status code
-func (o *GetAPIV2ClustersSelectorInternalServerError) IsClientError() bool {
-	return false
-}
-
-// IsServerError returns true when this get Api v2 clusters selector internal server error response has a 5xx status code
-func (o *GetAPIV2ClustersSelectorInternalServerError) IsServerError() bool {
-	return true
-}
-
-// IsCode returns true when this get Api v2 clusters selector internal server error response a status code equal to that given
-func (o *GetAPIV2ClustersSelectorInternalServerError) IsCode(code int) bool {
-	return code == 500
-}
-
 func (o *GetAPIV2ClustersSelectorInternalServerError) Error() string {
 	return fmt.Sprintf("[GET /api/v2/clusters/{selector}][%d] getApiV2ClustersSelectorInternalServerError  %+v", 500, o.Payload)
 }
-
-func (o *GetAPIV2ClustersSelectorInternalServerError) String() string {
-	return fmt.Sprintf("[GET /api/v2/clusters/{selector}][%d] getApiV2ClustersSelectorInternalServerError  %+v", 500, o.Payload)
-}
-
 func (o *GetAPIV2ClustersSelectorInternalServerError) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }

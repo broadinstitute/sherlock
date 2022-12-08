@@ -46,9 +46,9 @@ type ClientService interface {
 }
 
 /*
-DeleteAPIV2ChartReleasesSelector deletes a chart release entry
+  DeleteAPIV2ChartReleasesSelector deletes a chart release entry
 
-Delete an existing ChartRelease entry via one of its "selectors": name, numeric ID, environment/chart, or cluster/namespace/chart.
+  Delete an existing ChartRelease entry via one of its "selectors": name, numeric ID, environment/chart, or cluster/namespace/chart.
 */
 func (a *Client) DeleteAPIV2ChartReleasesSelector(params *DeleteAPIV2ChartReleasesSelectorParams, opts ...ClientOption) (*DeleteAPIV2ChartReleasesSelectorOK, error) {
 	// TODO: Validate the params before sending
@@ -86,9 +86,9 @@ func (a *Client) DeleteAPIV2ChartReleasesSelector(params *DeleteAPIV2ChartReleas
 }
 
 /*
-GetAPIV2ChartReleases lists chart release entries
+  GetAPIV2ChartReleases lists chart release entries
 
-List existing ChartRelease entries, ordered by most recently updated.
+  List existing ChartRelease entries, ordered by most recently updated.
 */
 func (a *Client) GetAPIV2ChartReleases(params *GetAPIV2ChartReleasesParams, opts ...ClientOption) (*GetAPIV2ChartReleasesOK, error) {
 	// TODO: Validate the params before sending
@@ -126,9 +126,9 @@ func (a *Client) GetAPIV2ChartReleases(params *GetAPIV2ChartReleasesParams, opts
 }
 
 /*
-GetAPIV2ChartReleasesSelector gets a chart release entry
+  GetAPIV2ChartReleasesSelector gets a chart release entry
 
-Get an existing ChartRelease entry via one of its "selectors": name, numeric ID, environment/chart, or cluster/namespace/chart.
+  Get an existing ChartRelease entry via one of its "selectors": name, numeric ID, environment/chart, or cluster/namespace/chart.
 */
 func (a *Client) GetAPIV2ChartReleasesSelector(params *GetAPIV2ChartReleasesSelectorParams, opts ...ClientOption) (*GetAPIV2ChartReleasesSelectorOK, error) {
 	// TODO: Validate the params before sending
@@ -166,9 +166,9 @@ func (a *Client) GetAPIV2ChartReleasesSelector(params *GetAPIV2ChartReleasesSele
 }
 
 /*
-GetAPIV2SelectorsChartReleasesSelector lists chart release selectors
+  GetAPIV2SelectorsChartReleasesSelector lists chart release selectors
 
-Validate a given ChartRelease selector and provide any other selectors that would match the same ChartRelease.
+  Validate a given ChartRelease selector and provide any other selectors that would match the same ChartRelease.
 */
 func (a *Client) GetAPIV2SelectorsChartReleasesSelector(params *GetAPIV2SelectorsChartReleasesSelectorParams, opts ...ClientOption) (*GetAPIV2SelectorsChartReleasesSelectorOK, error) {
 	// TODO: Validate the params before sending
@@ -206,9 +206,9 @@ func (a *Client) GetAPIV2SelectorsChartReleasesSelector(params *GetAPIV2Selector
 }
 
 /*
-PatchAPIV2ChartReleasesSelector edits a chart release entry
+  PatchAPIV2ChartReleasesSelector edits a chart release entry
 
-Edit an existing ChartRelease entry via one of its "selectors": name, numeric ID, environment/chart, or cluster/namespace/chart. Note that only mutable fields are available here, immutable fields can only be set using /create.
+  Edit an existing ChartRelease entry via one of its "selectors": name, numeric ID, environment/chart, or cluster/namespace/chart. Note that only mutable fields are available here, immutable fields can only be set using /create.
 */
 func (a *Client) PatchAPIV2ChartReleasesSelector(params *PatchAPIV2ChartReleasesSelectorParams, opts ...ClientOption) (*PatchAPIV2ChartReleasesSelectorOK, error) {
 	// TODO: Validate the params before sending
@@ -246,9 +246,9 @@ func (a *Client) PatchAPIV2ChartReleasesSelector(params *PatchAPIV2ChartReleases
 }
 
 /*
-PostAPIV2ChartReleases creates a new chart release entry
+  PostAPIV2ChartReleases creates a new chart release entry
 
-Create a new ChartRelease entry. Note that some fields are immutable after creation; /edit lists mutable fields.
+  Create a new ChartRelease entry. Note that some fields are immutable after creation; /edit lists mutable fields.
 */
 func (a *Client) PostAPIV2ChartReleases(params *PostAPIV2ChartReleasesParams, opts ...ClientOption) (*PostAPIV2ChartReleasesOK, *PostAPIV2ChartReleasesCreated, error) {
 	// TODO: Validate the params before sending

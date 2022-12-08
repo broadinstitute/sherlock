@@ -48,9 +48,9 @@ type ClientService interface {
 }
 
 /*
-GetAPIV2Changesets lists changeset entries
+  GetAPIV2Changesets lists changeset entries
 
-List existing Changeset entries, ordered by most recently updated.
+  List existing Changeset entries, ordered by most recently updated.
 */
 func (a *Client) GetAPIV2Changesets(params *GetAPIV2ChangesetsParams, opts ...ClientOption) (*GetAPIV2ChangesetsOK, error) {
 	// TODO: Validate the params before sending
@@ -88,9 +88,9 @@ func (a *Client) GetAPIV2Changesets(params *GetAPIV2ChangesetsParams, opts ...Cl
 }
 
 /*
-GetAPIV2ChangesetsSelector gets a changeset entry
+  GetAPIV2ChangesetsSelector gets a changeset entry
 
-Get an existing Changeset entry via its "selector"--its numeric ID.
+  Get an existing Changeset entry via its "selector"--its numeric ID.
 */
 func (a *Client) GetAPIV2ChangesetsSelector(params *GetAPIV2ChangesetsSelectorParams, opts ...ClientOption) (*GetAPIV2ChangesetsSelectorOK, error) {
 	// TODO: Validate the params before sending
@@ -128,9 +128,9 @@ func (a *Client) GetAPIV2ChangesetsSelector(params *GetAPIV2ChangesetsSelectorPa
 }
 
 /*
-GetAPIV2SelectorsChangesetsSelector lists changeset selectors
+  GetAPIV2SelectorsChangesetsSelector lists changeset selectors
 
-Validate a given Changeset selector and provide any other selectors that would match the same Changeset.
+  Validate a given Changeset selector and provide any other selectors that would match the same Changeset.
 */
 func (a *Client) GetAPIV2SelectorsChangesetsSelector(params *GetAPIV2SelectorsChangesetsSelectorParams, opts ...ClientOption) (*GetAPIV2SelectorsChangesetsSelectorOK, error) {
 	// TODO: Validate the params before sending
@@ -168,10 +168,9 @@ func (a *Client) GetAPIV2SelectorsChangesetsSelector(params *GetAPIV2SelectorsCh
 }
 
 /*
-	PostAPIV2Changesets creates a new changeset entry
+  PostAPIV2Changesets creates a new changeset entry
 
-	Create a new Changeset entry. Note that fields are immutable after creation.
-
+  Create a new Changeset entry. Note that fields are immutable after creation.
 You'll likely want to use the plan endpoint instead, which conditionally creates a Changeset based on there actually being a version diff.
 */
 func (a *Client) PostAPIV2Changesets(params *PostAPIV2ChangesetsParams, opts ...ClientOption) (*PostAPIV2ChangesetsOK, *PostAPIV2ChangesetsCreated, error) {
@@ -211,10 +210,9 @@ func (a *Client) PostAPIV2Changesets(params *PostAPIV2ChangesetsParams, opts ...
 }
 
 /*
-	PostAPIV2ProceduresChangesetsApply applies previously planned version changes to chart releases
+  PostAPIV2ProceduresChangesetsApply applies previously planned version changes to chart releases
 
-	Looks up and applies previously-planned version diffs given by the ID. Other stored plans against the same Chart Releases are marked as superseded.
-
+  Looks up and applies previously-planned version diffs given by the ID. Other stored plans against the same Chart Releases are marked as superseded.
 Multiple Changesets can be specified simply by passing multiple IDs in the list.
 */
 func (a *Client) PostAPIV2ProceduresChangesetsApply(params *PostAPIV2ProceduresChangesetsApplyParams, opts ...ClientOption) (*PostAPIV2ProceduresChangesetsApplyOK, error) {
@@ -253,10 +251,9 @@ func (a *Client) PostAPIV2ProceduresChangesetsApply(params *PostAPIV2ProceduresC
 }
 
 /*
-	PostAPIV2ProceduresChangesetsPlan plans but do not apply version changes to chart releases
+  PostAPIV2ProceduresChangesetsPlan plans but do not apply version changes to chart releases
 
-	Refreshes and calculates version diffs for Chart Releases. If there's a diff, the plan is stored and returned so it can be applied later.
-
+  Refreshes and calculates version diffs for Chart Releases. If there's a diff, the plan is stored and returned so it can be applied later.
 Multiple Chart Releases can be specified--as can groups of Chart Releases from multiple Environments.
 */
 func (a *Client) PostAPIV2ProceduresChangesetsPlan(params *PostAPIV2ProceduresChangesetsPlanParams, opts ...ClientOption) (*PostAPIV2ProceduresChangesetsPlanOK, *PostAPIV2ProceduresChangesetsPlanCreated, error) {
@@ -296,9 +293,9 @@ func (a *Client) PostAPIV2ProceduresChangesetsPlan(params *PostAPIV2ProceduresCh
 }
 
 /*
-PostAPIV2ProceduresChangesetsPlanAndApply plans and apply version changes in one step
+  PostAPIV2ProceduresChangesetsPlanAndApply plans and apply version changes in one step
 
-Like the plan and apply endpoints immediately in sequence.
+  Like the plan and apply endpoints immediately in sequence.
 */
 func (a *Client) PostAPIV2ProceduresChangesetsPlanAndApply(params *PostAPIV2ProceduresChangesetsPlanAndApplyParams, opts ...ClientOption) (*PostAPIV2ProceduresChangesetsPlanAndApplyOK, *PostAPIV2ProceduresChangesetsPlanAndApplyCreated, error) {
 	// TODO: Validate the params before sending

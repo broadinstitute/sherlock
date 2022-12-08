@@ -53,12 +53,10 @@ func NewGetAPIV2ChangesetsParamsWithHTTPClient(client *http.Client) *GetAPIV2Cha
 	}
 }
 
-/*
-GetAPIV2ChangesetsParams contains all the parameters to send to the API endpoint
+/* GetAPIV2ChangesetsParams contains all the parameters to send to the API endpoint
+   for the get API v2 changesets operation.
 
-	for the get API v2 changesets operation.
-
-	Typically these are written to a http.Request.
+   Typically these are written to a http.Request.
 */
 type GetAPIV2ChangesetsParams struct {
 
@@ -69,9 +67,7 @@ type GetAPIV2ChangesetsParams struct {
 	ChartRelease *string
 
 	// CreatedAt.
-	//
-	// Format: date-time
-	CreatedAt *strfmt.DateTime
+	CreatedAt *string
 
 	// FromAppVersionBranch.
 	FromAppVersionBranch *string
@@ -164,9 +160,7 @@ type GetAPIV2ChangesetsParams struct {
 	ToResolvedAt *string
 
 	// UpdatedAt.
-	//
-	// Format: date-time
-	UpdatedAt *strfmt.DateTime
+	UpdatedAt *string
 
 	timeout    time.Duration
 	Context    context.Context
@@ -244,13 +238,13 @@ func (o *GetAPIV2ChangesetsParams) SetChartRelease(chartRelease *string) {
 }
 
 // WithCreatedAt adds the createdAt to the get API v2 changesets params
-func (o *GetAPIV2ChangesetsParams) WithCreatedAt(createdAt *strfmt.DateTime) *GetAPIV2ChangesetsParams {
+func (o *GetAPIV2ChangesetsParams) WithCreatedAt(createdAt *string) *GetAPIV2ChangesetsParams {
 	o.SetCreatedAt(createdAt)
 	return o
 }
 
 // SetCreatedAt adds the createdAt to the get API v2 changesets params
-func (o *GetAPIV2ChangesetsParams) SetCreatedAt(createdAt *strfmt.DateTime) {
+func (o *GetAPIV2ChangesetsParams) SetCreatedAt(createdAt *string) {
 	o.CreatedAt = createdAt
 }
 
@@ -574,13 +568,13 @@ func (o *GetAPIV2ChangesetsParams) SetToResolvedAt(toResolvedAt *string) {
 }
 
 // WithUpdatedAt adds the updatedAt to the get API v2 changesets params
-func (o *GetAPIV2ChangesetsParams) WithUpdatedAt(updatedAt *strfmt.DateTime) *GetAPIV2ChangesetsParams {
+func (o *GetAPIV2ChangesetsParams) WithUpdatedAt(updatedAt *string) *GetAPIV2ChangesetsParams {
 	o.SetUpdatedAt(updatedAt)
 	return o
 }
 
 // SetUpdatedAt adds the updatedAt to the get API v2 changesets params
-func (o *GetAPIV2ChangesetsParams) SetUpdatedAt(updatedAt *strfmt.DateTime) {
+func (o *GetAPIV2ChangesetsParams) SetUpdatedAt(updatedAt *string) {
 	o.UpdatedAt = updatedAt
 }
 
@@ -629,12 +623,12 @@ func (o *GetAPIV2ChangesetsParams) WriteToRequest(r runtime.ClientRequest, reg s
 	if o.CreatedAt != nil {
 
 		// query param createdAt
-		var qrCreatedAt strfmt.DateTime
+		var qrCreatedAt string
 
 		if o.CreatedAt != nil {
 			qrCreatedAt = *o.CreatedAt
 		}
-		qCreatedAt := qrCreatedAt.String()
+		qCreatedAt := qrCreatedAt
 		if qCreatedAt != "" {
 
 			if err := r.SetQueryParam("createdAt", qCreatedAt); err != nil {
@@ -1139,12 +1133,12 @@ func (o *GetAPIV2ChangesetsParams) WriteToRequest(r runtime.ClientRequest, reg s
 	if o.UpdatedAt != nil {
 
 		// query param updatedAt
-		var qrUpdatedAt strfmt.DateTime
+		var qrUpdatedAt string
 
 		if o.UpdatedAt != nil {
 			qrUpdatedAt = *o.UpdatedAt
 		}
-		qUpdatedAt := qrUpdatedAt.String()
+		qUpdatedAt := qrUpdatedAt
 		if qUpdatedAt != "" {
 
 			if err := r.SetQueryParam("updatedAt", qUpdatedAt); err != nil {

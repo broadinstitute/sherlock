@@ -39,15 +39,6 @@ definitions:
       matchedFirecloudAccount:
         $ref: '#/definitions/auth.FirecloudAccount'
     type: object
-  environment.AutoDelete:
-    properties:
-      after:
-        format: date-time
-        type: string
-      enabled:
-        default: false
-        type: boolean
-    type: object
   errors.ErrorResponse:
     properties:
       message:
@@ -93,7 +84,6 @@ definitions:
       chartInfo:
         $ref: '#/definitions/v2controllers.Chart'
       createdAt:
-        format: date-time
         type: string
       description:
         description: Generally the Git commit message
@@ -109,7 +99,6 @@ definitions:
       parentAppVersionInfo:
         type: object
       updatedAt:
-        format: date-time
         type: string
     type: object
   v2controllers.Changeset:
@@ -121,7 +110,6 @@ definitions:
       chartReleaseInfo:
         $ref: '#/definitions/v2controllers.ChartRelease'
       createdAt:
-        format: date-time
         type: string
       fromAppVersionBranch:
         type: string
@@ -188,7 +176,6 @@ definitions:
       toResolvedAt:
         type: string
       updatedAt:
-        format: date-time
         type: string
     type: object
   v2controllers.ChangesetPlanRequest:
@@ -262,7 +249,6 @@ definitions:
         default: terra-helm
         type: string
       createdAt:
-        format: date-time
         type: string
       defaultPort:
         default: 443
@@ -283,7 +269,6 @@ definitions:
         description: Required when creating
         type: string
       updatedAt:
-        format: date-time
         type: string
     type: object
   v2controllers.ChartRelease:
@@ -340,7 +325,6 @@ definitions:
       clusterInfo:
         $ref: '#/definitions/v2controllers.Cluster'
       createdAt:
-        format: date-time
         type: string
       destinationType:
         description: Calculated field
@@ -374,7 +358,6 @@ definitions:
         description: When creating, will use the chart's default if left empty
         type: string
       updatedAt:
-        format: date-time
         type: string
     type: object
   v2controllers.ChartVersion:
@@ -388,7 +371,6 @@ definitions:
         description: Required when creating
         type: string
       createdAt:
-        format: date-time
         type: string
       description:
         description: Generally the Git commit message
@@ -400,7 +382,6 @@ definitions:
       parentChartVersionInfo:
         type: object
       updatedAt:
-        format: date-time
         type: string
     type: object
   v2controllers.Cluster:
@@ -417,7 +398,6 @@ definitions:
         description: Required when creating
         type: string
       createdAt:
-        format: date-time
         type: string
       googleProject:
         description: Required when creating if provider is 'google'
@@ -443,7 +423,6 @@ definitions:
         default: false
         type: boolean
       updatedAt:
-        format: date-time
         type: string
     type: object
   v2controllers.CreatableAppVersion:
@@ -636,10 +615,6 @@ definitions:
     type: object
   v2controllers.CreatableEnvironment:
     properties:
-      autoDelete:
-        allOf:
-        - $ref: '#/definitions/environment.AutoDelete'
-        description: Used to schedule automatic deletion of BEEs
       base:
         description: Required when creating
         type: string
@@ -680,11 +655,6 @@ definitions:
       owner:
         description: When creating, will be set to your email
         type: string
-      preventDeletion:
-        default: false
-        description: Used to protect specific BEEs from deletion (thelma checks this
-          field)
-        type: boolean
       requiresSuitability:
         default: false
         type: boolean
@@ -765,10 +735,6 @@ definitions:
     type: object
   v2controllers.EditableEnvironment:
     properties:
-      autoDelete:
-        allOf:
-        - $ref: '#/definitions/environment.AutoDelete'
-        description: Used to schedule automatic deletion of BEEs
       baseDomain:
         default: bee.envs-terra.bio
         type: string
@@ -788,21 +754,12 @@ definitions:
       owner:
         description: When creating, will be set to your email
         type: string
-      preventDeletion:
-        default: false
-        description: Used to protect specific BEEs from deletion (thelma checks this
-          field)
-        type: boolean
       requiresSuitability:
         default: false
         type: boolean
     type: object
   v2controllers.Environment:
     properties:
-      autoDelete:
-        allOf:
-        - $ref: '#/definitions/environment.AutoDelete'
-        description: Used to schedule automatic deletion of BEEs
       base:
         description: Required when creating
         type: string
@@ -815,7 +772,6 @@ definitions:
           chart releases will be copied to the new environment
         type: boolean
       createdAt:
-        format: date-time
         type: string
       defaultCluster:
         type: string
@@ -850,11 +806,6 @@ definitions:
       owner:
         description: When creating, will be set to your email
         type: string
-      preventDeletion:
-        default: false
-        description: Used to protect specific BEEs from deletion (thelma checks this
-          field)
-        type: boolean
       requiresSuitability:
         default: false
         type: boolean
@@ -869,7 +820,6 @@ definitions:
         description: When creating, will be calculated if left empty
         type: string
       updatedAt:
-        format: date-time
         type: string
       valuesName:
         type: string
@@ -899,8 +849,7 @@ paths:
         in: query
         name: chart
         type: string
-      - format: date-time
-        in: query
+      - in: query
         name: createdAt
         type: string
       - description: Generally the Git commit message
@@ -919,8 +868,7 @@ paths:
       - in: query
         name: parentAppVersion
         type: string
-      - format: date-time
-        in: query
+      - in: query
         name: updatedAt
         type: string
       - description: An optional limit to the number of entries returned
@@ -1122,8 +1070,7 @@ paths:
       - in: query
         name: chartRelease
         type: string
-      - format: date-time
-        in: query
+      - in: query
         name: createdAt
         type: string
       - in: query
@@ -1210,8 +1157,7 @@ paths:
       - in: query
         name: toResolvedAt
         type: string
-      - format: date-time
-        in: query
+      - in: query
         name: updatedAt
         type: string
       - description: An optional limit to the number of entries returned
@@ -1408,8 +1354,7 @@ paths:
         in: query
         name: cluster
         type: string
-      - format: date-time
-        in: query
+      - in: query
         name: createdAt
         type: string
       - description: Calculated field
@@ -1451,8 +1396,7 @@ paths:
         in: query
         name: subdomain
         type: string
-      - format: date-time
-        in: query
+      - in: query
         name: updatedAt
         type: string
       - description: An optional limit to the number of entries returned
@@ -1697,8 +1641,7 @@ paths:
         in: query
         name: chartVersion
         type: string
-      - format: date-time
-        in: query
+      - in: query
         name: createdAt
         type: string
       - description: Generally the Git commit message
@@ -1711,8 +1654,7 @@ paths:
       - in: query
         name: parentChartVersion
         type: string
-      - format: date-time
-        in: query
+      - in: query
         name: updatedAt
         type: string
       - description: An optional limit to the number of entries returned
@@ -1924,8 +1866,7 @@ paths:
         in: query
         name: chartRepo
         type: string
-      - format: date-time
-        in: query
+      - in: query
         name: createdAt
         type: string
       - default: 443
@@ -1952,8 +1893,7 @@ paths:
         in: query
         name: name
         type: string
-      - format: date-time
-        in: query
+      - in: query
         name: updatedAt
         type: string
       - description: An optional limit to the number of entries returned
@@ -2201,8 +2141,7 @@ paths:
         in: query
         name: base
         type: string
-      - format: date-time
-        in: query
+      - in: query
         name: createdAt
         type: string
       - description: Required when creating if provider is 'google'
@@ -2235,8 +2174,7 @@ paths:
         in: query
         name: requiresSuitability
         type: boolean
-      - format: date-time
-        in: query
+      - in: query
         name: updatedAt
         type: string
       - description: An optional limit to the number of entries returned
@@ -2486,8 +2424,7 @@ paths:
         in: query
         name: chartReleasesFromTemplate
         type: boolean
-      - format: date-time
-        in: query
+      - in: query
         name: createdAt
         type: string
       - in: query
@@ -2532,12 +2469,6 @@ paths:
         name: owner
         type: string
       - default: false
-        description: Used to protect specific BEEs from deletion (thelma checks this
-          field)
-        in: query
-        name: preventDeletion
-        type: boolean
-      - default: false
         in: query
         name: requiresSuitability
         type: boolean
@@ -2549,8 +2480,7 @@ paths:
         in: query
         name: uniqueResourcePrefix
         type: string
-      - format: date-time
-        in: query
+      - in: query
         name: updatedAt
         type: string
       - in: query

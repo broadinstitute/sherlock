@@ -75,8 +75,7 @@ func NewGetAPIV2ChartVersionsSelectorOK() *GetAPIV2ChartVersionsSelectorOK {
 	return &GetAPIV2ChartVersionsSelectorOK{}
 }
 
-/*
-GetAPIV2ChartVersionsSelectorOK describes a response with status code 200, with default header values.
+/* GetAPIV2ChartVersionsSelectorOK describes a response with status code 200, with default header values.
 
 OK
 */
@@ -84,39 +83,9 @@ type GetAPIV2ChartVersionsSelectorOK struct {
 	Payload *models.V2controllersChartVersion
 }
 
-// IsSuccess returns true when this get Api v2 chart versions selector o k response has a 2xx status code
-func (o *GetAPIV2ChartVersionsSelectorOK) IsSuccess() bool {
-	return true
-}
-
-// IsRedirect returns true when this get Api v2 chart versions selector o k response has a 3xx status code
-func (o *GetAPIV2ChartVersionsSelectorOK) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get Api v2 chart versions selector o k response has a 4xx status code
-func (o *GetAPIV2ChartVersionsSelectorOK) IsClientError() bool {
-	return false
-}
-
-// IsServerError returns true when this get Api v2 chart versions selector o k response has a 5xx status code
-func (o *GetAPIV2ChartVersionsSelectorOK) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get Api v2 chart versions selector o k response a status code equal to that given
-func (o *GetAPIV2ChartVersionsSelectorOK) IsCode(code int) bool {
-	return code == 200
-}
-
 func (o *GetAPIV2ChartVersionsSelectorOK) Error() string {
 	return fmt.Sprintf("[GET /api/v2/chart-versions/{selector}][%d] getApiV2ChartVersionsSelectorOK  %+v", 200, o.Payload)
 }
-
-func (o *GetAPIV2ChartVersionsSelectorOK) String() string {
-	return fmt.Sprintf("[GET /api/v2/chart-versions/{selector}][%d] getApiV2ChartVersionsSelectorOK  %+v", 200, o.Payload)
-}
-
 func (o *GetAPIV2ChartVersionsSelectorOK) GetPayload() *models.V2controllersChartVersion {
 	return o.Payload
 }
@@ -138,8 +107,7 @@ func NewGetAPIV2ChartVersionsSelectorBadRequest() *GetAPIV2ChartVersionsSelector
 	return &GetAPIV2ChartVersionsSelectorBadRequest{}
 }
 
-/*
-GetAPIV2ChartVersionsSelectorBadRequest describes a response with status code 400, with default header values.
+/* GetAPIV2ChartVersionsSelectorBadRequest describes a response with status code 400, with default header values.
 
 Bad Request
 */
@@ -147,39 +115,9 @@ type GetAPIV2ChartVersionsSelectorBadRequest struct {
 	Payload *models.ErrorsErrorResponse
 }
 
-// IsSuccess returns true when this get Api v2 chart versions selector bad request response has a 2xx status code
-func (o *GetAPIV2ChartVersionsSelectorBadRequest) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this get Api v2 chart versions selector bad request response has a 3xx status code
-func (o *GetAPIV2ChartVersionsSelectorBadRequest) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get Api v2 chart versions selector bad request response has a 4xx status code
-func (o *GetAPIV2ChartVersionsSelectorBadRequest) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this get Api v2 chart versions selector bad request response has a 5xx status code
-func (o *GetAPIV2ChartVersionsSelectorBadRequest) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get Api v2 chart versions selector bad request response a status code equal to that given
-func (o *GetAPIV2ChartVersionsSelectorBadRequest) IsCode(code int) bool {
-	return code == 400
-}
-
 func (o *GetAPIV2ChartVersionsSelectorBadRequest) Error() string {
 	return fmt.Sprintf("[GET /api/v2/chart-versions/{selector}][%d] getApiV2ChartVersionsSelectorBadRequest  %+v", 400, o.Payload)
 }
-
-func (o *GetAPIV2ChartVersionsSelectorBadRequest) String() string {
-	return fmt.Sprintf("[GET /api/v2/chart-versions/{selector}][%d] getApiV2ChartVersionsSelectorBadRequest  %+v", 400, o.Payload)
-}
-
 func (o *GetAPIV2ChartVersionsSelectorBadRequest) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -201,8 +139,7 @@ func NewGetAPIV2ChartVersionsSelectorForbidden() *GetAPIV2ChartVersionsSelectorF
 	return &GetAPIV2ChartVersionsSelectorForbidden{}
 }
 
-/*
-GetAPIV2ChartVersionsSelectorForbidden describes a response with status code 403, with default header values.
+/* GetAPIV2ChartVersionsSelectorForbidden describes a response with status code 403, with default header values.
 
 Forbidden
 */
@@ -210,39 +147,9 @@ type GetAPIV2ChartVersionsSelectorForbidden struct {
 	Payload *models.ErrorsErrorResponse
 }
 
-// IsSuccess returns true when this get Api v2 chart versions selector forbidden response has a 2xx status code
-func (o *GetAPIV2ChartVersionsSelectorForbidden) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this get Api v2 chart versions selector forbidden response has a 3xx status code
-func (o *GetAPIV2ChartVersionsSelectorForbidden) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get Api v2 chart versions selector forbidden response has a 4xx status code
-func (o *GetAPIV2ChartVersionsSelectorForbidden) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this get Api v2 chart versions selector forbidden response has a 5xx status code
-func (o *GetAPIV2ChartVersionsSelectorForbidden) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get Api v2 chart versions selector forbidden response a status code equal to that given
-func (o *GetAPIV2ChartVersionsSelectorForbidden) IsCode(code int) bool {
-	return code == 403
-}
-
 func (o *GetAPIV2ChartVersionsSelectorForbidden) Error() string {
 	return fmt.Sprintf("[GET /api/v2/chart-versions/{selector}][%d] getApiV2ChartVersionsSelectorForbidden  %+v", 403, o.Payload)
 }
-
-func (o *GetAPIV2ChartVersionsSelectorForbidden) String() string {
-	return fmt.Sprintf("[GET /api/v2/chart-versions/{selector}][%d] getApiV2ChartVersionsSelectorForbidden  %+v", 403, o.Payload)
-}
-
 func (o *GetAPIV2ChartVersionsSelectorForbidden) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -264,8 +171,7 @@ func NewGetAPIV2ChartVersionsSelectorNotFound() *GetAPIV2ChartVersionsSelectorNo
 	return &GetAPIV2ChartVersionsSelectorNotFound{}
 }
 
-/*
-GetAPIV2ChartVersionsSelectorNotFound describes a response with status code 404, with default header values.
+/* GetAPIV2ChartVersionsSelectorNotFound describes a response with status code 404, with default header values.
 
 Not Found
 */
@@ -273,39 +179,9 @@ type GetAPIV2ChartVersionsSelectorNotFound struct {
 	Payload *models.ErrorsErrorResponse
 }
 
-// IsSuccess returns true when this get Api v2 chart versions selector not found response has a 2xx status code
-func (o *GetAPIV2ChartVersionsSelectorNotFound) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this get Api v2 chart versions selector not found response has a 3xx status code
-func (o *GetAPIV2ChartVersionsSelectorNotFound) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get Api v2 chart versions selector not found response has a 4xx status code
-func (o *GetAPIV2ChartVersionsSelectorNotFound) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this get Api v2 chart versions selector not found response has a 5xx status code
-func (o *GetAPIV2ChartVersionsSelectorNotFound) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get Api v2 chart versions selector not found response a status code equal to that given
-func (o *GetAPIV2ChartVersionsSelectorNotFound) IsCode(code int) bool {
-	return code == 404
-}
-
 func (o *GetAPIV2ChartVersionsSelectorNotFound) Error() string {
 	return fmt.Sprintf("[GET /api/v2/chart-versions/{selector}][%d] getApiV2ChartVersionsSelectorNotFound  %+v", 404, o.Payload)
 }
-
-func (o *GetAPIV2ChartVersionsSelectorNotFound) String() string {
-	return fmt.Sprintf("[GET /api/v2/chart-versions/{selector}][%d] getApiV2ChartVersionsSelectorNotFound  %+v", 404, o.Payload)
-}
-
 func (o *GetAPIV2ChartVersionsSelectorNotFound) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -327,8 +203,7 @@ func NewGetAPIV2ChartVersionsSelectorProxyAuthenticationRequired() *GetAPIV2Char
 	return &GetAPIV2ChartVersionsSelectorProxyAuthenticationRequired{}
 }
 
-/*
-GetAPIV2ChartVersionsSelectorProxyAuthenticationRequired describes a response with status code 407, with default header values.
+/* GetAPIV2ChartVersionsSelectorProxyAuthenticationRequired describes a response with status code 407, with default header values.
 
 Proxy Authentication Required
 */
@@ -336,39 +211,9 @@ type GetAPIV2ChartVersionsSelectorProxyAuthenticationRequired struct {
 	Payload *models.ErrorsErrorResponse
 }
 
-// IsSuccess returns true when this get Api v2 chart versions selector proxy authentication required response has a 2xx status code
-func (o *GetAPIV2ChartVersionsSelectorProxyAuthenticationRequired) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this get Api v2 chart versions selector proxy authentication required response has a 3xx status code
-func (o *GetAPIV2ChartVersionsSelectorProxyAuthenticationRequired) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get Api v2 chart versions selector proxy authentication required response has a 4xx status code
-func (o *GetAPIV2ChartVersionsSelectorProxyAuthenticationRequired) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this get Api v2 chart versions selector proxy authentication required response has a 5xx status code
-func (o *GetAPIV2ChartVersionsSelectorProxyAuthenticationRequired) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get Api v2 chart versions selector proxy authentication required response a status code equal to that given
-func (o *GetAPIV2ChartVersionsSelectorProxyAuthenticationRequired) IsCode(code int) bool {
-	return code == 407
-}
-
 func (o *GetAPIV2ChartVersionsSelectorProxyAuthenticationRequired) Error() string {
 	return fmt.Sprintf("[GET /api/v2/chart-versions/{selector}][%d] getApiV2ChartVersionsSelectorProxyAuthenticationRequired  %+v", 407, o.Payload)
 }
-
-func (o *GetAPIV2ChartVersionsSelectorProxyAuthenticationRequired) String() string {
-	return fmt.Sprintf("[GET /api/v2/chart-versions/{selector}][%d] getApiV2ChartVersionsSelectorProxyAuthenticationRequired  %+v", 407, o.Payload)
-}
-
 func (o *GetAPIV2ChartVersionsSelectorProxyAuthenticationRequired) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -390,8 +235,7 @@ func NewGetAPIV2ChartVersionsSelectorConflict() *GetAPIV2ChartVersionsSelectorCo
 	return &GetAPIV2ChartVersionsSelectorConflict{}
 }
 
-/*
-GetAPIV2ChartVersionsSelectorConflict describes a response with status code 409, with default header values.
+/* GetAPIV2ChartVersionsSelectorConflict describes a response with status code 409, with default header values.
 
 Conflict
 */
@@ -399,39 +243,9 @@ type GetAPIV2ChartVersionsSelectorConflict struct {
 	Payload *models.ErrorsErrorResponse
 }
 
-// IsSuccess returns true when this get Api v2 chart versions selector conflict response has a 2xx status code
-func (o *GetAPIV2ChartVersionsSelectorConflict) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this get Api v2 chart versions selector conflict response has a 3xx status code
-func (o *GetAPIV2ChartVersionsSelectorConflict) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get Api v2 chart versions selector conflict response has a 4xx status code
-func (o *GetAPIV2ChartVersionsSelectorConflict) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this get Api v2 chart versions selector conflict response has a 5xx status code
-func (o *GetAPIV2ChartVersionsSelectorConflict) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get Api v2 chart versions selector conflict response a status code equal to that given
-func (o *GetAPIV2ChartVersionsSelectorConflict) IsCode(code int) bool {
-	return code == 409
-}
-
 func (o *GetAPIV2ChartVersionsSelectorConflict) Error() string {
 	return fmt.Sprintf("[GET /api/v2/chart-versions/{selector}][%d] getApiV2ChartVersionsSelectorConflict  %+v", 409, o.Payload)
 }
-
-func (o *GetAPIV2ChartVersionsSelectorConflict) String() string {
-	return fmt.Sprintf("[GET /api/v2/chart-versions/{selector}][%d] getApiV2ChartVersionsSelectorConflict  %+v", 409, o.Payload)
-}
-
 func (o *GetAPIV2ChartVersionsSelectorConflict) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -453,8 +267,7 @@ func NewGetAPIV2ChartVersionsSelectorInternalServerError() *GetAPIV2ChartVersion
 	return &GetAPIV2ChartVersionsSelectorInternalServerError{}
 }
 
-/*
-GetAPIV2ChartVersionsSelectorInternalServerError describes a response with status code 500, with default header values.
+/* GetAPIV2ChartVersionsSelectorInternalServerError describes a response with status code 500, with default header values.
 
 Internal Server Error
 */
@@ -462,39 +275,9 @@ type GetAPIV2ChartVersionsSelectorInternalServerError struct {
 	Payload *models.ErrorsErrorResponse
 }
 
-// IsSuccess returns true when this get Api v2 chart versions selector internal server error response has a 2xx status code
-func (o *GetAPIV2ChartVersionsSelectorInternalServerError) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this get Api v2 chart versions selector internal server error response has a 3xx status code
-func (o *GetAPIV2ChartVersionsSelectorInternalServerError) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get Api v2 chart versions selector internal server error response has a 4xx status code
-func (o *GetAPIV2ChartVersionsSelectorInternalServerError) IsClientError() bool {
-	return false
-}
-
-// IsServerError returns true when this get Api v2 chart versions selector internal server error response has a 5xx status code
-func (o *GetAPIV2ChartVersionsSelectorInternalServerError) IsServerError() bool {
-	return true
-}
-
-// IsCode returns true when this get Api v2 chart versions selector internal server error response a status code equal to that given
-func (o *GetAPIV2ChartVersionsSelectorInternalServerError) IsCode(code int) bool {
-	return code == 500
-}
-
 func (o *GetAPIV2ChartVersionsSelectorInternalServerError) Error() string {
 	return fmt.Sprintf("[GET /api/v2/chart-versions/{selector}][%d] getApiV2ChartVersionsSelectorInternalServerError  %+v", 500, o.Payload)
 }
-
-func (o *GetAPIV2ChartVersionsSelectorInternalServerError) String() string {
-	return fmt.Sprintf("[GET /api/v2/chart-versions/{selector}][%d] getApiV2ChartVersionsSelectorInternalServerError  %+v", 500, o.Payload)
-}
-
 func (o *GetAPIV2ChartVersionsSelectorInternalServerError) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }

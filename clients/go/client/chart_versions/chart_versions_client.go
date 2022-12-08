@@ -44,9 +44,9 @@ type ClientService interface {
 }
 
 /*
-GetAPIV2ChartVersions lists chart version entries
+  GetAPIV2ChartVersions lists chart version entries
 
-List existing ChartVersion entries, ordered by most recently updated.
+  List existing ChartVersion entries, ordered by most recently updated.
 */
 func (a *Client) GetAPIV2ChartVersions(params *GetAPIV2ChartVersionsParams, opts ...ClientOption) (*GetAPIV2ChartVersionsOK, error) {
 	// TODO: Validate the params before sending
@@ -84,9 +84,9 @@ func (a *Client) GetAPIV2ChartVersions(params *GetAPIV2ChartVersionsParams, opts
 }
 
 /*
-GetAPIV2ChartVersionsSelector gets a chart version entry
+  GetAPIV2ChartVersionsSelector gets a chart version entry
 
-Get an existing ChartVersion entry via one its "selectors": chart/version or numeric ID.
+  Get an existing ChartVersion entry via one its "selectors": chart/version or numeric ID.
 */
 func (a *Client) GetAPIV2ChartVersionsSelector(params *GetAPIV2ChartVersionsSelectorParams, opts ...ClientOption) (*GetAPIV2ChartVersionsSelectorOK, error) {
 	// TODO: Validate the params before sending
@@ -124,9 +124,9 @@ func (a *Client) GetAPIV2ChartVersionsSelector(params *GetAPIV2ChartVersionsSele
 }
 
 /*
-GetAPIV2SelectorsChartVersionsSelector lists chart version selectors
+  GetAPIV2SelectorsChartVersionsSelector lists chart version selectors
 
-Validate a given ChartVersion selector and provide any other selectors that would match the same ChartVersion.
+  Validate a given ChartVersion selector and provide any other selectors that would match the same ChartVersion.
 */
 func (a *Client) GetAPIV2SelectorsChartVersionsSelector(params *GetAPIV2SelectorsChartVersionsSelectorParams, opts ...ClientOption) (*GetAPIV2SelectorsChartVersionsSelectorOK, error) {
 	// TODO: Validate the params before sending
@@ -164,9 +164,9 @@ func (a *Client) GetAPIV2SelectorsChartVersionsSelector(params *GetAPIV2Selector
 }
 
 /*
-PatchAPIV2ChartVersionsSelector edits a chart version entry
+  PatchAPIV2ChartVersionsSelector edits a chart version entry
 
-Edit an existing ChartVersion entry via one its "selectors": chart/version or numeric ID. Note that only mutable fields are available here, immutable fields can only be set using /create.
+  Edit an existing ChartVersion entry via one its "selectors": chart/version or numeric ID. Note that only mutable fields are available here, immutable fields can only be set using /create.
 */
 func (a *Client) PatchAPIV2ChartVersionsSelector(params *PatchAPIV2ChartVersionsSelectorParams, opts ...ClientOption) (*PatchAPIV2ChartVersionsSelectorOK, error) {
 	// TODO: Validate the params before sending
@@ -204,10 +204,9 @@ func (a *Client) PatchAPIV2ChartVersionsSelector(params *PatchAPIV2ChartVersions
 }
 
 /*
-	PostAPIV2ChartVersions creates a new chart version entry
+  PostAPIV2ChartVersions creates a new chart version entry
 
-	Create a new ChartVersion entry. Note that fields are immutable after creation.
-
+  Create a new ChartVersion entry. Note that fields are immutable after creation.
 If the new entry is a duplicate of one already in the database, the database will not be altered and the call will return normally but with a 200 code.
 */
 func (a *Client) PostAPIV2ChartVersions(params *PostAPIV2ChartVersionsParams, opts ...ClientOption) (*PostAPIV2ChartVersionsOK, *PostAPIV2ChartVersionsCreated, error) {

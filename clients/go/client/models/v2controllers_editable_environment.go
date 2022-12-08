@@ -8,7 +8,6 @@ package models
 import (
 	"context"
 
-	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
@@ -17,11 +16,6 @@ import (
 //
 // swagger:model v2controllers.EditableEnvironment
 type V2controllersEditableEnvironment struct {
-
-	// Used to schedule automatic deletion of BEEs
-	AutoDelete struct {
-		EnvironmentAutoDelete
-	} `json:"autoDelete,omitempty"`
 
 	// base domain
 	BaseDomain *string `json:"baseDomain,omitempty"`
@@ -41,51 +35,17 @@ type V2controllersEditableEnvironment struct {
 	// When creating, will be set to your email
 	Owner string `json:"owner,omitempty"`
 
-	// Used to protect specific BEEs from deletion (thelma checks this field)
-	PreventDeletion *bool `json:"preventDeletion,omitempty"`
-
 	// requires suitability
 	RequiresSuitability *bool `json:"requiresSuitability,omitempty"`
 }
 
 // Validate validates this v2controllers editable environment
 func (m *V2controllersEditableEnvironment) Validate(formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.validateAutoDelete(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
 	return nil
 }
 
-func (m *V2controllersEditableEnvironment) validateAutoDelete(formats strfmt.Registry) error {
-	if swag.IsZero(m.AutoDelete) { // not required
-		return nil
-	}
-
-	return nil
-}
-
-// ContextValidate validate this v2controllers editable environment based on the context it is used
+// ContextValidate validates this v2controllers editable environment based on context it is used
 func (m *V2controllersEditableEnvironment) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.contextValidateAutoDelete(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *V2controllersEditableEnvironment) contextValidateAutoDelete(ctx context.Context, formats strfmt.Registry) error {
-
 	return nil
 }
 

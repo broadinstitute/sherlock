@@ -11,18 +11,12 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
-	"github.com/go-openapi/validate"
 )
 
 // V2controllersEnvironment v2controllers environment
 //
 // swagger:model v2controllers.Environment
 type V2controllersEnvironment struct {
-
-	// Used to schedule automatic deletion of BEEs
-	AutoDelete struct {
-		EnvironmentAutoDelete
-	} `json:"autoDelete,omitempty"`
 
 	// Required when creating
 	Base string `json:"base,omitempty"`
@@ -34,8 +28,7 @@ type V2controllersEnvironment struct {
 	ChartReleasesFromTemplate *bool `json:"chartReleasesFromTemplate,omitempty"`
 
 	// created at
-	// Format: date-time
-	CreatedAt strfmt.DateTime `json:"createdAt,omitempty"`
+	CreatedAt string `json:"createdAt,omitempty"`
 
 	// default cluster
 	DefaultCluster string `json:"defaultCluster,omitempty"`
@@ -70,9 +63,6 @@ type V2controllersEnvironment struct {
 	// When creating, will be set to your email
 	Owner string `json:"owner,omitempty"`
 
-	// Used to protect specific BEEs from deletion (thelma checks this field)
-	PreventDeletion *bool `json:"preventDeletion,omitempty"`
-
 	// requires suitability
 	RequiresSuitability *bool `json:"requiresSuitability,omitempty"`
 
@@ -86,8 +76,7 @@ type V2controllersEnvironment struct {
 	UniqueResourcePrefix string `json:"uniqueResourcePrefix,omitempty"`
 
 	// updated at
-	// Format: date-time
-	UpdatedAt strfmt.DateTime `json:"updatedAt,omitempty"`
+	UpdatedAt string `json:"updatedAt,omitempty"`
 
 	// values name
 	ValuesName string `json:"valuesName,omitempty"`
@@ -97,45 +86,13 @@ type V2controllersEnvironment struct {
 func (m *V2controllersEnvironment) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateAutoDelete(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateCreatedAt(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.validateDefaultClusterInfo(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateUpdatedAt(formats); err != nil {
 		res = append(res, err)
 	}
 
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *V2controllersEnvironment) validateAutoDelete(formats strfmt.Registry) error {
-	if swag.IsZero(m.AutoDelete) { // not required
-		return nil
-	}
-
-	return nil
-}
-
-func (m *V2controllersEnvironment) validateCreatedAt(formats strfmt.Registry) error {
-	if swag.IsZero(m.CreatedAt) { // not required
-		return nil
-	}
-
-	if err := validate.FormatOf("createdAt", "body", "date-time", m.CreatedAt.String(), formats); err != nil {
-		return err
-	}
-
 	return nil
 }
 
@@ -158,25 +115,9 @@ func (m *V2controllersEnvironment) validateDefaultClusterInfo(formats strfmt.Reg
 	return nil
 }
 
-func (m *V2controllersEnvironment) validateUpdatedAt(formats strfmt.Registry) error {
-	if swag.IsZero(m.UpdatedAt) { // not required
-		return nil
-	}
-
-	if err := validate.FormatOf("updatedAt", "body", "date-time", m.UpdatedAt.String(), formats); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 // ContextValidate validate this v2controllers environment based on the context it is used
 func (m *V2controllersEnvironment) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
-
-	if err := m.contextValidateAutoDelete(ctx, formats); err != nil {
-		res = append(res, err)
-	}
 
 	if err := m.contextValidateDefaultClusterInfo(ctx, formats); err != nil {
 		res = append(res, err)
@@ -185,11 +126,6 @@ func (m *V2controllersEnvironment) ContextValidate(ctx context.Context, formats 
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *V2controllersEnvironment) contextValidateAutoDelete(ctx context.Context, formats strfmt.Registry) error {
-
 	return nil
 }
 

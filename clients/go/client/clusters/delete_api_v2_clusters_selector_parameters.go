@@ -52,12 +52,10 @@ func NewDeleteAPIV2ClustersSelectorParamsWithHTTPClient(client *http.Client) *De
 	}
 }
 
-/*
-DeleteAPIV2ClustersSelectorParams contains all the parameters to send to the API endpoint
+/* DeleteAPIV2ClustersSelectorParams contains all the parameters to send to the API endpoint
+   for the delete API v2 clusters selector operation.
 
-	for the delete API v2 clusters selector operation.
-
-	Typically these are written to a http.Request.
+   Typically these are written to a http.Request.
 */
 type DeleteAPIV2ClustersSelectorParams struct {
 

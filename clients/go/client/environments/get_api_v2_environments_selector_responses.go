@@ -75,8 +75,7 @@ func NewGetAPIV2EnvironmentsSelectorOK() *GetAPIV2EnvironmentsSelectorOK {
 	return &GetAPIV2EnvironmentsSelectorOK{}
 }
 
-/*
-GetAPIV2EnvironmentsSelectorOK describes a response with status code 200, with default header values.
+/* GetAPIV2EnvironmentsSelectorOK describes a response with status code 200, with default header values.
 
 OK
 */
@@ -84,39 +83,9 @@ type GetAPIV2EnvironmentsSelectorOK struct {
 	Payload *models.V2controllersEnvironment
 }
 
-// IsSuccess returns true when this get Api v2 environments selector o k response has a 2xx status code
-func (o *GetAPIV2EnvironmentsSelectorOK) IsSuccess() bool {
-	return true
-}
-
-// IsRedirect returns true when this get Api v2 environments selector o k response has a 3xx status code
-func (o *GetAPIV2EnvironmentsSelectorOK) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get Api v2 environments selector o k response has a 4xx status code
-func (o *GetAPIV2EnvironmentsSelectorOK) IsClientError() bool {
-	return false
-}
-
-// IsServerError returns true when this get Api v2 environments selector o k response has a 5xx status code
-func (o *GetAPIV2EnvironmentsSelectorOK) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get Api v2 environments selector o k response a status code equal to that given
-func (o *GetAPIV2EnvironmentsSelectorOK) IsCode(code int) bool {
-	return code == 200
-}
-
 func (o *GetAPIV2EnvironmentsSelectorOK) Error() string {
 	return fmt.Sprintf("[GET /api/v2/environments/{selector}][%d] getApiV2EnvironmentsSelectorOK  %+v", 200, o.Payload)
 }
-
-func (o *GetAPIV2EnvironmentsSelectorOK) String() string {
-	return fmt.Sprintf("[GET /api/v2/environments/{selector}][%d] getApiV2EnvironmentsSelectorOK  %+v", 200, o.Payload)
-}
-
 func (o *GetAPIV2EnvironmentsSelectorOK) GetPayload() *models.V2controllersEnvironment {
 	return o.Payload
 }
@@ -138,8 +107,7 @@ func NewGetAPIV2EnvironmentsSelectorBadRequest() *GetAPIV2EnvironmentsSelectorBa
 	return &GetAPIV2EnvironmentsSelectorBadRequest{}
 }
 
-/*
-GetAPIV2EnvironmentsSelectorBadRequest describes a response with status code 400, with default header values.
+/* GetAPIV2EnvironmentsSelectorBadRequest describes a response with status code 400, with default header values.
 
 Bad Request
 */
@@ -147,39 +115,9 @@ type GetAPIV2EnvironmentsSelectorBadRequest struct {
 	Payload *models.ErrorsErrorResponse
 }
 
-// IsSuccess returns true when this get Api v2 environments selector bad request response has a 2xx status code
-func (o *GetAPIV2EnvironmentsSelectorBadRequest) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this get Api v2 environments selector bad request response has a 3xx status code
-func (o *GetAPIV2EnvironmentsSelectorBadRequest) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get Api v2 environments selector bad request response has a 4xx status code
-func (o *GetAPIV2EnvironmentsSelectorBadRequest) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this get Api v2 environments selector bad request response has a 5xx status code
-func (o *GetAPIV2EnvironmentsSelectorBadRequest) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get Api v2 environments selector bad request response a status code equal to that given
-func (o *GetAPIV2EnvironmentsSelectorBadRequest) IsCode(code int) bool {
-	return code == 400
-}
-
 func (o *GetAPIV2EnvironmentsSelectorBadRequest) Error() string {
 	return fmt.Sprintf("[GET /api/v2/environments/{selector}][%d] getApiV2EnvironmentsSelectorBadRequest  %+v", 400, o.Payload)
 }
-
-func (o *GetAPIV2EnvironmentsSelectorBadRequest) String() string {
-	return fmt.Sprintf("[GET /api/v2/environments/{selector}][%d] getApiV2EnvironmentsSelectorBadRequest  %+v", 400, o.Payload)
-}
-
 func (o *GetAPIV2EnvironmentsSelectorBadRequest) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -201,8 +139,7 @@ func NewGetAPIV2EnvironmentsSelectorForbidden() *GetAPIV2EnvironmentsSelectorFor
 	return &GetAPIV2EnvironmentsSelectorForbidden{}
 }
 
-/*
-GetAPIV2EnvironmentsSelectorForbidden describes a response with status code 403, with default header values.
+/* GetAPIV2EnvironmentsSelectorForbidden describes a response with status code 403, with default header values.
 
 Forbidden
 */
@@ -210,39 +147,9 @@ type GetAPIV2EnvironmentsSelectorForbidden struct {
 	Payload *models.ErrorsErrorResponse
 }
 
-// IsSuccess returns true when this get Api v2 environments selector forbidden response has a 2xx status code
-func (o *GetAPIV2EnvironmentsSelectorForbidden) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this get Api v2 environments selector forbidden response has a 3xx status code
-func (o *GetAPIV2EnvironmentsSelectorForbidden) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get Api v2 environments selector forbidden response has a 4xx status code
-func (o *GetAPIV2EnvironmentsSelectorForbidden) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this get Api v2 environments selector forbidden response has a 5xx status code
-func (o *GetAPIV2EnvironmentsSelectorForbidden) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get Api v2 environments selector forbidden response a status code equal to that given
-func (o *GetAPIV2EnvironmentsSelectorForbidden) IsCode(code int) bool {
-	return code == 403
-}
-
 func (o *GetAPIV2EnvironmentsSelectorForbidden) Error() string {
 	return fmt.Sprintf("[GET /api/v2/environments/{selector}][%d] getApiV2EnvironmentsSelectorForbidden  %+v", 403, o.Payload)
 }
-
-func (o *GetAPIV2EnvironmentsSelectorForbidden) String() string {
-	return fmt.Sprintf("[GET /api/v2/environments/{selector}][%d] getApiV2EnvironmentsSelectorForbidden  %+v", 403, o.Payload)
-}
-
 func (o *GetAPIV2EnvironmentsSelectorForbidden) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -264,8 +171,7 @@ func NewGetAPIV2EnvironmentsSelectorNotFound() *GetAPIV2EnvironmentsSelectorNotF
 	return &GetAPIV2EnvironmentsSelectorNotFound{}
 }
 
-/*
-GetAPIV2EnvironmentsSelectorNotFound describes a response with status code 404, with default header values.
+/* GetAPIV2EnvironmentsSelectorNotFound describes a response with status code 404, with default header values.
 
 Not Found
 */
@@ -273,39 +179,9 @@ type GetAPIV2EnvironmentsSelectorNotFound struct {
 	Payload *models.ErrorsErrorResponse
 }
 
-// IsSuccess returns true when this get Api v2 environments selector not found response has a 2xx status code
-func (o *GetAPIV2EnvironmentsSelectorNotFound) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this get Api v2 environments selector not found response has a 3xx status code
-func (o *GetAPIV2EnvironmentsSelectorNotFound) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get Api v2 environments selector not found response has a 4xx status code
-func (o *GetAPIV2EnvironmentsSelectorNotFound) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this get Api v2 environments selector not found response has a 5xx status code
-func (o *GetAPIV2EnvironmentsSelectorNotFound) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get Api v2 environments selector not found response a status code equal to that given
-func (o *GetAPIV2EnvironmentsSelectorNotFound) IsCode(code int) bool {
-	return code == 404
-}
-
 func (o *GetAPIV2EnvironmentsSelectorNotFound) Error() string {
 	return fmt.Sprintf("[GET /api/v2/environments/{selector}][%d] getApiV2EnvironmentsSelectorNotFound  %+v", 404, o.Payload)
 }
-
-func (o *GetAPIV2EnvironmentsSelectorNotFound) String() string {
-	return fmt.Sprintf("[GET /api/v2/environments/{selector}][%d] getApiV2EnvironmentsSelectorNotFound  %+v", 404, o.Payload)
-}
-
 func (o *GetAPIV2EnvironmentsSelectorNotFound) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -327,8 +203,7 @@ func NewGetAPIV2EnvironmentsSelectorProxyAuthenticationRequired() *GetAPIV2Envir
 	return &GetAPIV2EnvironmentsSelectorProxyAuthenticationRequired{}
 }
 
-/*
-GetAPIV2EnvironmentsSelectorProxyAuthenticationRequired describes a response with status code 407, with default header values.
+/* GetAPIV2EnvironmentsSelectorProxyAuthenticationRequired describes a response with status code 407, with default header values.
 
 Proxy Authentication Required
 */
@@ -336,39 +211,9 @@ type GetAPIV2EnvironmentsSelectorProxyAuthenticationRequired struct {
 	Payload *models.ErrorsErrorResponse
 }
 
-// IsSuccess returns true when this get Api v2 environments selector proxy authentication required response has a 2xx status code
-func (o *GetAPIV2EnvironmentsSelectorProxyAuthenticationRequired) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this get Api v2 environments selector proxy authentication required response has a 3xx status code
-func (o *GetAPIV2EnvironmentsSelectorProxyAuthenticationRequired) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get Api v2 environments selector proxy authentication required response has a 4xx status code
-func (o *GetAPIV2EnvironmentsSelectorProxyAuthenticationRequired) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this get Api v2 environments selector proxy authentication required response has a 5xx status code
-func (o *GetAPIV2EnvironmentsSelectorProxyAuthenticationRequired) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get Api v2 environments selector proxy authentication required response a status code equal to that given
-func (o *GetAPIV2EnvironmentsSelectorProxyAuthenticationRequired) IsCode(code int) bool {
-	return code == 407
-}
-
 func (o *GetAPIV2EnvironmentsSelectorProxyAuthenticationRequired) Error() string {
 	return fmt.Sprintf("[GET /api/v2/environments/{selector}][%d] getApiV2EnvironmentsSelectorProxyAuthenticationRequired  %+v", 407, o.Payload)
 }
-
-func (o *GetAPIV2EnvironmentsSelectorProxyAuthenticationRequired) String() string {
-	return fmt.Sprintf("[GET /api/v2/environments/{selector}][%d] getApiV2EnvironmentsSelectorProxyAuthenticationRequired  %+v", 407, o.Payload)
-}
-
 func (o *GetAPIV2EnvironmentsSelectorProxyAuthenticationRequired) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -390,8 +235,7 @@ func NewGetAPIV2EnvironmentsSelectorConflict() *GetAPIV2EnvironmentsSelectorConf
 	return &GetAPIV2EnvironmentsSelectorConflict{}
 }
 
-/*
-GetAPIV2EnvironmentsSelectorConflict describes a response with status code 409, with default header values.
+/* GetAPIV2EnvironmentsSelectorConflict describes a response with status code 409, with default header values.
 
 Conflict
 */
@@ -399,39 +243,9 @@ type GetAPIV2EnvironmentsSelectorConflict struct {
 	Payload *models.ErrorsErrorResponse
 }
 
-// IsSuccess returns true when this get Api v2 environments selector conflict response has a 2xx status code
-func (o *GetAPIV2EnvironmentsSelectorConflict) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this get Api v2 environments selector conflict response has a 3xx status code
-func (o *GetAPIV2EnvironmentsSelectorConflict) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get Api v2 environments selector conflict response has a 4xx status code
-func (o *GetAPIV2EnvironmentsSelectorConflict) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this get Api v2 environments selector conflict response has a 5xx status code
-func (o *GetAPIV2EnvironmentsSelectorConflict) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get Api v2 environments selector conflict response a status code equal to that given
-func (o *GetAPIV2EnvironmentsSelectorConflict) IsCode(code int) bool {
-	return code == 409
-}
-
 func (o *GetAPIV2EnvironmentsSelectorConflict) Error() string {
 	return fmt.Sprintf("[GET /api/v2/environments/{selector}][%d] getApiV2EnvironmentsSelectorConflict  %+v", 409, o.Payload)
 }
-
-func (o *GetAPIV2EnvironmentsSelectorConflict) String() string {
-	return fmt.Sprintf("[GET /api/v2/environments/{selector}][%d] getApiV2EnvironmentsSelectorConflict  %+v", 409, o.Payload)
-}
-
 func (o *GetAPIV2EnvironmentsSelectorConflict) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -453,8 +267,7 @@ func NewGetAPIV2EnvironmentsSelectorInternalServerError() *GetAPIV2EnvironmentsS
 	return &GetAPIV2EnvironmentsSelectorInternalServerError{}
 }
 
-/*
-GetAPIV2EnvironmentsSelectorInternalServerError describes a response with status code 500, with default header values.
+/* GetAPIV2EnvironmentsSelectorInternalServerError describes a response with status code 500, with default header values.
 
 Internal Server Error
 */
@@ -462,39 +275,9 @@ type GetAPIV2EnvironmentsSelectorInternalServerError struct {
 	Payload *models.ErrorsErrorResponse
 }
 
-// IsSuccess returns true when this get Api v2 environments selector internal server error response has a 2xx status code
-func (o *GetAPIV2EnvironmentsSelectorInternalServerError) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this get Api v2 environments selector internal server error response has a 3xx status code
-func (o *GetAPIV2EnvironmentsSelectorInternalServerError) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get Api v2 environments selector internal server error response has a 4xx status code
-func (o *GetAPIV2EnvironmentsSelectorInternalServerError) IsClientError() bool {
-	return false
-}
-
-// IsServerError returns true when this get Api v2 environments selector internal server error response has a 5xx status code
-func (o *GetAPIV2EnvironmentsSelectorInternalServerError) IsServerError() bool {
-	return true
-}
-
-// IsCode returns true when this get Api v2 environments selector internal server error response a status code equal to that given
-func (o *GetAPIV2EnvironmentsSelectorInternalServerError) IsCode(code int) bool {
-	return code == 500
-}
-
 func (o *GetAPIV2EnvironmentsSelectorInternalServerError) Error() string {
 	return fmt.Sprintf("[GET /api/v2/environments/{selector}][%d] getApiV2EnvironmentsSelectorInternalServerError  %+v", 500, o.Payload)
 }
-
-func (o *GetAPIV2EnvironmentsSelectorInternalServerError) String() string {
-	return fmt.Sprintf("[GET /api/v2/environments/{selector}][%d] getApiV2EnvironmentsSelectorInternalServerError  %+v", 500, o.Payload)
-}
-
 func (o *GetAPIV2EnvironmentsSelectorInternalServerError) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }

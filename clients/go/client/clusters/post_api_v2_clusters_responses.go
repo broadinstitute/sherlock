@@ -81,8 +81,7 @@ func NewPostAPIV2ClustersOK() *PostAPIV2ClustersOK {
 	return &PostAPIV2ClustersOK{}
 }
 
-/*
-PostAPIV2ClustersOK describes a response with status code 200, with default header values.
+/* PostAPIV2ClustersOK describes a response with status code 200, with default header values.
 
 OK
 */
@@ -90,39 +89,9 @@ type PostAPIV2ClustersOK struct {
 	Payload *models.V2controllersCluster
 }
 
-// IsSuccess returns true when this post Api v2 clusters o k response has a 2xx status code
-func (o *PostAPIV2ClustersOK) IsSuccess() bool {
-	return true
-}
-
-// IsRedirect returns true when this post Api v2 clusters o k response has a 3xx status code
-func (o *PostAPIV2ClustersOK) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this post Api v2 clusters o k response has a 4xx status code
-func (o *PostAPIV2ClustersOK) IsClientError() bool {
-	return false
-}
-
-// IsServerError returns true when this post Api v2 clusters o k response has a 5xx status code
-func (o *PostAPIV2ClustersOK) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this post Api v2 clusters o k response a status code equal to that given
-func (o *PostAPIV2ClustersOK) IsCode(code int) bool {
-	return code == 200
-}
-
 func (o *PostAPIV2ClustersOK) Error() string {
 	return fmt.Sprintf("[POST /api/v2/clusters][%d] postApiV2ClustersOK  %+v", 200, o.Payload)
 }
-
-func (o *PostAPIV2ClustersOK) String() string {
-	return fmt.Sprintf("[POST /api/v2/clusters][%d] postApiV2ClustersOK  %+v", 200, o.Payload)
-}
-
 func (o *PostAPIV2ClustersOK) GetPayload() *models.V2controllersCluster {
 	return o.Payload
 }
@@ -144,8 +113,7 @@ func NewPostAPIV2ClustersCreated() *PostAPIV2ClustersCreated {
 	return &PostAPIV2ClustersCreated{}
 }
 
-/*
-PostAPIV2ClustersCreated describes a response with status code 201, with default header values.
+/* PostAPIV2ClustersCreated describes a response with status code 201, with default header values.
 
 Created
 */
@@ -153,39 +121,9 @@ type PostAPIV2ClustersCreated struct {
 	Payload *models.V2controllersCluster
 }
 
-// IsSuccess returns true when this post Api v2 clusters created response has a 2xx status code
-func (o *PostAPIV2ClustersCreated) IsSuccess() bool {
-	return true
-}
-
-// IsRedirect returns true when this post Api v2 clusters created response has a 3xx status code
-func (o *PostAPIV2ClustersCreated) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this post Api v2 clusters created response has a 4xx status code
-func (o *PostAPIV2ClustersCreated) IsClientError() bool {
-	return false
-}
-
-// IsServerError returns true when this post Api v2 clusters created response has a 5xx status code
-func (o *PostAPIV2ClustersCreated) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this post Api v2 clusters created response a status code equal to that given
-func (o *PostAPIV2ClustersCreated) IsCode(code int) bool {
-	return code == 201
-}
-
 func (o *PostAPIV2ClustersCreated) Error() string {
 	return fmt.Sprintf("[POST /api/v2/clusters][%d] postApiV2ClustersCreated  %+v", 201, o.Payload)
 }
-
-func (o *PostAPIV2ClustersCreated) String() string {
-	return fmt.Sprintf("[POST /api/v2/clusters][%d] postApiV2ClustersCreated  %+v", 201, o.Payload)
-}
-
 func (o *PostAPIV2ClustersCreated) GetPayload() *models.V2controllersCluster {
 	return o.Payload
 }
@@ -207,8 +145,7 @@ func NewPostAPIV2ClustersBadRequest() *PostAPIV2ClustersBadRequest {
 	return &PostAPIV2ClustersBadRequest{}
 }
 
-/*
-PostAPIV2ClustersBadRequest describes a response with status code 400, with default header values.
+/* PostAPIV2ClustersBadRequest describes a response with status code 400, with default header values.
 
 Bad Request
 */
@@ -216,39 +153,9 @@ type PostAPIV2ClustersBadRequest struct {
 	Payload *models.ErrorsErrorResponse
 }
 
-// IsSuccess returns true when this post Api v2 clusters bad request response has a 2xx status code
-func (o *PostAPIV2ClustersBadRequest) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this post Api v2 clusters bad request response has a 3xx status code
-func (o *PostAPIV2ClustersBadRequest) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this post Api v2 clusters bad request response has a 4xx status code
-func (o *PostAPIV2ClustersBadRequest) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this post Api v2 clusters bad request response has a 5xx status code
-func (o *PostAPIV2ClustersBadRequest) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this post Api v2 clusters bad request response a status code equal to that given
-func (o *PostAPIV2ClustersBadRequest) IsCode(code int) bool {
-	return code == 400
-}
-
 func (o *PostAPIV2ClustersBadRequest) Error() string {
 	return fmt.Sprintf("[POST /api/v2/clusters][%d] postApiV2ClustersBadRequest  %+v", 400, o.Payload)
 }
-
-func (o *PostAPIV2ClustersBadRequest) String() string {
-	return fmt.Sprintf("[POST /api/v2/clusters][%d] postApiV2ClustersBadRequest  %+v", 400, o.Payload)
-}
-
 func (o *PostAPIV2ClustersBadRequest) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -270,8 +177,7 @@ func NewPostAPIV2ClustersForbidden() *PostAPIV2ClustersForbidden {
 	return &PostAPIV2ClustersForbidden{}
 }
 
-/*
-PostAPIV2ClustersForbidden describes a response with status code 403, with default header values.
+/* PostAPIV2ClustersForbidden describes a response with status code 403, with default header values.
 
 Forbidden
 */
@@ -279,39 +185,9 @@ type PostAPIV2ClustersForbidden struct {
 	Payload *models.ErrorsErrorResponse
 }
 
-// IsSuccess returns true when this post Api v2 clusters forbidden response has a 2xx status code
-func (o *PostAPIV2ClustersForbidden) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this post Api v2 clusters forbidden response has a 3xx status code
-func (o *PostAPIV2ClustersForbidden) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this post Api v2 clusters forbidden response has a 4xx status code
-func (o *PostAPIV2ClustersForbidden) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this post Api v2 clusters forbidden response has a 5xx status code
-func (o *PostAPIV2ClustersForbidden) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this post Api v2 clusters forbidden response a status code equal to that given
-func (o *PostAPIV2ClustersForbidden) IsCode(code int) bool {
-	return code == 403
-}
-
 func (o *PostAPIV2ClustersForbidden) Error() string {
 	return fmt.Sprintf("[POST /api/v2/clusters][%d] postApiV2ClustersForbidden  %+v", 403, o.Payload)
 }
-
-func (o *PostAPIV2ClustersForbidden) String() string {
-	return fmt.Sprintf("[POST /api/v2/clusters][%d] postApiV2ClustersForbidden  %+v", 403, o.Payload)
-}
-
 func (o *PostAPIV2ClustersForbidden) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -333,8 +209,7 @@ func NewPostAPIV2ClustersNotFound() *PostAPIV2ClustersNotFound {
 	return &PostAPIV2ClustersNotFound{}
 }
 
-/*
-PostAPIV2ClustersNotFound describes a response with status code 404, with default header values.
+/* PostAPIV2ClustersNotFound describes a response with status code 404, with default header values.
 
 Not Found
 */
@@ -342,39 +217,9 @@ type PostAPIV2ClustersNotFound struct {
 	Payload *models.ErrorsErrorResponse
 }
 
-// IsSuccess returns true when this post Api v2 clusters not found response has a 2xx status code
-func (o *PostAPIV2ClustersNotFound) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this post Api v2 clusters not found response has a 3xx status code
-func (o *PostAPIV2ClustersNotFound) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this post Api v2 clusters not found response has a 4xx status code
-func (o *PostAPIV2ClustersNotFound) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this post Api v2 clusters not found response has a 5xx status code
-func (o *PostAPIV2ClustersNotFound) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this post Api v2 clusters not found response a status code equal to that given
-func (o *PostAPIV2ClustersNotFound) IsCode(code int) bool {
-	return code == 404
-}
-
 func (o *PostAPIV2ClustersNotFound) Error() string {
 	return fmt.Sprintf("[POST /api/v2/clusters][%d] postApiV2ClustersNotFound  %+v", 404, o.Payload)
 }
-
-func (o *PostAPIV2ClustersNotFound) String() string {
-	return fmt.Sprintf("[POST /api/v2/clusters][%d] postApiV2ClustersNotFound  %+v", 404, o.Payload)
-}
-
 func (o *PostAPIV2ClustersNotFound) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -396,8 +241,7 @@ func NewPostAPIV2ClustersProxyAuthenticationRequired() *PostAPIV2ClustersProxyAu
 	return &PostAPIV2ClustersProxyAuthenticationRequired{}
 }
 
-/*
-PostAPIV2ClustersProxyAuthenticationRequired describes a response with status code 407, with default header values.
+/* PostAPIV2ClustersProxyAuthenticationRequired describes a response with status code 407, with default header values.
 
 Proxy Authentication Required
 */
@@ -405,39 +249,9 @@ type PostAPIV2ClustersProxyAuthenticationRequired struct {
 	Payload *models.ErrorsErrorResponse
 }
 
-// IsSuccess returns true when this post Api v2 clusters proxy authentication required response has a 2xx status code
-func (o *PostAPIV2ClustersProxyAuthenticationRequired) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this post Api v2 clusters proxy authentication required response has a 3xx status code
-func (o *PostAPIV2ClustersProxyAuthenticationRequired) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this post Api v2 clusters proxy authentication required response has a 4xx status code
-func (o *PostAPIV2ClustersProxyAuthenticationRequired) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this post Api v2 clusters proxy authentication required response has a 5xx status code
-func (o *PostAPIV2ClustersProxyAuthenticationRequired) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this post Api v2 clusters proxy authentication required response a status code equal to that given
-func (o *PostAPIV2ClustersProxyAuthenticationRequired) IsCode(code int) bool {
-	return code == 407
-}
-
 func (o *PostAPIV2ClustersProxyAuthenticationRequired) Error() string {
 	return fmt.Sprintf("[POST /api/v2/clusters][%d] postApiV2ClustersProxyAuthenticationRequired  %+v", 407, o.Payload)
 }
-
-func (o *PostAPIV2ClustersProxyAuthenticationRequired) String() string {
-	return fmt.Sprintf("[POST /api/v2/clusters][%d] postApiV2ClustersProxyAuthenticationRequired  %+v", 407, o.Payload)
-}
-
 func (o *PostAPIV2ClustersProxyAuthenticationRequired) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -459,8 +273,7 @@ func NewPostAPIV2ClustersConflict() *PostAPIV2ClustersConflict {
 	return &PostAPIV2ClustersConflict{}
 }
 
-/*
-PostAPIV2ClustersConflict describes a response with status code 409, with default header values.
+/* PostAPIV2ClustersConflict describes a response with status code 409, with default header values.
 
 Conflict
 */
@@ -468,39 +281,9 @@ type PostAPIV2ClustersConflict struct {
 	Payload *models.ErrorsErrorResponse
 }
 
-// IsSuccess returns true when this post Api v2 clusters conflict response has a 2xx status code
-func (o *PostAPIV2ClustersConflict) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this post Api v2 clusters conflict response has a 3xx status code
-func (o *PostAPIV2ClustersConflict) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this post Api v2 clusters conflict response has a 4xx status code
-func (o *PostAPIV2ClustersConflict) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this post Api v2 clusters conflict response has a 5xx status code
-func (o *PostAPIV2ClustersConflict) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this post Api v2 clusters conflict response a status code equal to that given
-func (o *PostAPIV2ClustersConflict) IsCode(code int) bool {
-	return code == 409
-}
-
 func (o *PostAPIV2ClustersConflict) Error() string {
 	return fmt.Sprintf("[POST /api/v2/clusters][%d] postApiV2ClustersConflict  %+v", 409, o.Payload)
 }
-
-func (o *PostAPIV2ClustersConflict) String() string {
-	return fmt.Sprintf("[POST /api/v2/clusters][%d] postApiV2ClustersConflict  %+v", 409, o.Payload)
-}
-
 func (o *PostAPIV2ClustersConflict) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -522,8 +305,7 @@ func NewPostAPIV2ClustersInternalServerError() *PostAPIV2ClustersInternalServerE
 	return &PostAPIV2ClustersInternalServerError{}
 }
 
-/*
-PostAPIV2ClustersInternalServerError describes a response with status code 500, with default header values.
+/* PostAPIV2ClustersInternalServerError describes a response with status code 500, with default header values.
 
 Internal Server Error
 */
@@ -531,39 +313,9 @@ type PostAPIV2ClustersInternalServerError struct {
 	Payload *models.ErrorsErrorResponse
 }
 
-// IsSuccess returns true when this post Api v2 clusters internal server error response has a 2xx status code
-func (o *PostAPIV2ClustersInternalServerError) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this post Api v2 clusters internal server error response has a 3xx status code
-func (o *PostAPIV2ClustersInternalServerError) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this post Api v2 clusters internal server error response has a 4xx status code
-func (o *PostAPIV2ClustersInternalServerError) IsClientError() bool {
-	return false
-}
-
-// IsServerError returns true when this post Api v2 clusters internal server error response has a 5xx status code
-func (o *PostAPIV2ClustersInternalServerError) IsServerError() bool {
-	return true
-}
-
-// IsCode returns true when this post Api v2 clusters internal server error response a status code equal to that given
-func (o *PostAPIV2ClustersInternalServerError) IsCode(code int) bool {
-	return code == 500
-}
-
 func (o *PostAPIV2ClustersInternalServerError) Error() string {
 	return fmt.Sprintf("[POST /api/v2/clusters][%d] postApiV2ClustersInternalServerError  %+v", 500, o.Payload)
 }
-
-func (o *PostAPIV2ClustersInternalServerError) String() string {
-	return fmt.Sprintf("[POST /api/v2/clusters][%d] postApiV2ClustersInternalServerError  %+v", 500, o.Payload)
-}
-
 func (o *PostAPIV2ClustersInternalServerError) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }

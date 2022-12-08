@@ -52,12 +52,10 @@ func NewGetAPIV2ClustersSelectorParamsWithHTTPClient(client *http.Client) *GetAP
 	}
 }
 
-/*
-GetAPIV2ClustersSelectorParams contains all the parameters to send to the API endpoint
+/* GetAPIV2ClustersSelectorParams contains all the parameters to send to the API endpoint
+   for the get API v2 clusters selector operation.
 
-	for the get API v2 clusters selector operation.
-
-	Typically these are written to a http.Request.
+   Typically these are written to a http.Request.
 */
 type GetAPIV2ClustersSelectorParams struct {
 

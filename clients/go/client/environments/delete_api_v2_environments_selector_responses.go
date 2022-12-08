@@ -75,8 +75,7 @@ func NewDeleteAPIV2EnvironmentsSelectorOK() *DeleteAPIV2EnvironmentsSelectorOK {
 	return &DeleteAPIV2EnvironmentsSelectorOK{}
 }
 
-/*
-DeleteAPIV2EnvironmentsSelectorOK describes a response with status code 200, with default header values.
+/* DeleteAPIV2EnvironmentsSelectorOK describes a response with status code 200, with default header values.
 
 OK
 */
@@ -84,39 +83,9 @@ type DeleteAPIV2EnvironmentsSelectorOK struct {
 	Payload *models.V2controllersEnvironment
 }
 
-// IsSuccess returns true when this delete Api v2 environments selector o k response has a 2xx status code
-func (o *DeleteAPIV2EnvironmentsSelectorOK) IsSuccess() bool {
-	return true
-}
-
-// IsRedirect returns true when this delete Api v2 environments selector o k response has a 3xx status code
-func (o *DeleteAPIV2EnvironmentsSelectorOK) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this delete Api v2 environments selector o k response has a 4xx status code
-func (o *DeleteAPIV2EnvironmentsSelectorOK) IsClientError() bool {
-	return false
-}
-
-// IsServerError returns true when this delete Api v2 environments selector o k response has a 5xx status code
-func (o *DeleteAPIV2EnvironmentsSelectorOK) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this delete Api v2 environments selector o k response a status code equal to that given
-func (o *DeleteAPIV2EnvironmentsSelectorOK) IsCode(code int) bool {
-	return code == 200
-}
-
 func (o *DeleteAPIV2EnvironmentsSelectorOK) Error() string {
 	return fmt.Sprintf("[DELETE /api/v2/environments/{selector}][%d] deleteApiV2EnvironmentsSelectorOK  %+v", 200, o.Payload)
 }
-
-func (o *DeleteAPIV2EnvironmentsSelectorOK) String() string {
-	return fmt.Sprintf("[DELETE /api/v2/environments/{selector}][%d] deleteApiV2EnvironmentsSelectorOK  %+v", 200, o.Payload)
-}
-
 func (o *DeleteAPIV2EnvironmentsSelectorOK) GetPayload() *models.V2controllersEnvironment {
 	return o.Payload
 }
@@ -138,8 +107,7 @@ func NewDeleteAPIV2EnvironmentsSelectorBadRequest() *DeleteAPIV2EnvironmentsSele
 	return &DeleteAPIV2EnvironmentsSelectorBadRequest{}
 }
 
-/*
-DeleteAPIV2EnvironmentsSelectorBadRequest describes a response with status code 400, with default header values.
+/* DeleteAPIV2EnvironmentsSelectorBadRequest describes a response with status code 400, with default header values.
 
 Bad Request
 */
@@ -147,39 +115,9 @@ type DeleteAPIV2EnvironmentsSelectorBadRequest struct {
 	Payload *models.ErrorsErrorResponse
 }
 
-// IsSuccess returns true when this delete Api v2 environments selector bad request response has a 2xx status code
-func (o *DeleteAPIV2EnvironmentsSelectorBadRequest) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this delete Api v2 environments selector bad request response has a 3xx status code
-func (o *DeleteAPIV2EnvironmentsSelectorBadRequest) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this delete Api v2 environments selector bad request response has a 4xx status code
-func (o *DeleteAPIV2EnvironmentsSelectorBadRequest) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this delete Api v2 environments selector bad request response has a 5xx status code
-func (o *DeleteAPIV2EnvironmentsSelectorBadRequest) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this delete Api v2 environments selector bad request response a status code equal to that given
-func (o *DeleteAPIV2EnvironmentsSelectorBadRequest) IsCode(code int) bool {
-	return code == 400
-}
-
 func (o *DeleteAPIV2EnvironmentsSelectorBadRequest) Error() string {
 	return fmt.Sprintf("[DELETE /api/v2/environments/{selector}][%d] deleteApiV2EnvironmentsSelectorBadRequest  %+v", 400, o.Payload)
 }
-
-func (o *DeleteAPIV2EnvironmentsSelectorBadRequest) String() string {
-	return fmt.Sprintf("[DELETE /api/v2/environments/{selector}][%d] deleteApiV2EnvironmentsSelectorBadRequest  %+v", 400, o.Payload)
-}
-
 func (o *DeleteAPIV2EnvironmentsSelectorBadRequest) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -201,8 +139,7 @@ func NewDeleteAPIV2EnvironmentsSelectorForbidden() *DeleteAPIV2EnvironmentsSelec
 	return &DeleteAPIV2EnvironmentsSelectorForbidden{}
 }
 
-/*
-DeleteAPIV2EnvironmentsSelectorForbidden describes a response with status code 403, with default header values.
+/* DeleteAPIV2EnvironmentsSelectorForbidden describes a response with status code 403, with default header values.
 
 Forbidden
 */
@@ -210,39 +147,9 @@ type DeleteAPIV2EnvironmentsSelectorForbidden struct {
 	Payload *models.ErrorsErrorResponse
 }
 
-// IsSuccess returns true when this delete Api v2 environments selector forbidden response has a 2xx status code
-func (o *DeleteAPIV2EnvironmentsSelectorForbidden) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this delete Api v2 environments selector forbidden response has a 3xx status code
-func (o *DeleteAPIV2EnvironmentsSelectorForbidden) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this delete Api v2 environments selector forbidden response has a 4xx status code
-func (o *DeleteAPIV2EnvironmentsSelectorForbidden) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this delete Api v2 environments selector forbidden response has a 5xx status code
-func (o *DeleteAPIV2EnvironmentsSelectorForbidden) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this delete Api v2 environments selector forbidden response a status code equal to that given
-func (o *DeleteAPIV2EnvironmentsSelectorForbidden) IsCode(code int) bool {
-	return code == 403
-}
-
 func (o *DeleteAPIV2EnvironmentsSelectorForbidden) Error() string {
 	return fmt.Sprintf("[DELETE /api/v2/environments/{selector}][%d] deleteApiV2EnvironmentsSelectorForbidden  %+v", 403, o.Payload)
 }
-
-func (o *DeleteAPIV2EnvironmentsSelectorForbidden) String() string {
-	return fmt.Sprintf("[DELETE /api/v2/environments/{selector}][%d] deleteApiV2EnvironmentsSelectorForbidden  %+v", 403, o.Payload)
-}
-
 func (o *DeleteAPIV2EnvironmentsSelectorForbidden) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -264,8 +171,7 @@ func NewDeleteAPIV2EnvironmentsSelectorNotFound() *DeleteAPIV2EnvironmentsSelect
 	return &DeleteAPIV2EnvironmentsSelectorNotFound{}
 }
 
-/*
-DeleteAPIV2EnvironmentsSelectorNotFound describes a response with status code 404, with default header values.
+/* DeleteAPIV2EnvironmentsSelectorNotFound describes a response with status code 404, with default header values.
 
 Not Found
 */
@@ -273,39 +179,9 @@ type DeleteAPIV2EnvironmentsSelectorNotFound struct {
 	Payload *models.ErrorsErrorResponse
 }
 
-// IsSuccess returns true when this delete Api v2 environments selector not found response has a 2xx status code
-func (o *DeleteAPIV2EnvironmentsSelectorNotFound) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this delete Api v2 environments selector not found response has a 3xx status code
-func (o *DeleteAPIV2EnvironmentsSelectorNotFound) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this delete Api v2 environments selector not found response has a 4xx status code
-func (o *DeleteAPIV2EnvironmentsSelectorNotFound) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this delete Api v2 environments selector not found response has a 5xx status code
-func (o *DeleteAPIV2EnvironmentsSelectorNotFound) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this delete Api v2 environments selector not found response a status code equal to that given
-func (o *DeleteAPIV2EnvironmentsSelectorNotFound) IsCode(code int) bool {
-	return code == 404
-}
-
 func (o *DeleteAPIV2EnvironmentsSelectorNotFound) Error() string {
 	return fmt.Sprintf("[DELETE /api/v2/environments/{selector}][%d] deleteApiV2EnvironmentsSelectorNotFound  %+v", 404, o.Payload)
 }
-
-func (o *DeleteAPIV2EnvironmentsSelectorNotFound) String() string {
-	return fmt.Sprintf("[DELETE /api/v2/environments/{selector}][%d] deleteApiV2EnvironmentsSelectorNotFound  %+v", 404, o.Payload)
-}
-
 func (o *DeleteAPIV2EnvironmentsSelectorNotFound) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -327,8 +203,7 @@ func NewDeleteAPIV2EnvironmentsSelectorProxyAuthenticationRequired() *DeleteAPIV
 	return &DeleteAPIV2EnvironmentsSelectorProxyAuthenticationRequired{}
 }
 
-/*
-DeleteAPIV2EnvironmentsSelectorProxyAuthenticationRequired describes a response with status code 407, with default header values.
+/* DeleteAPIV2EnvironmentsSelectorProxyAuthenticationRequired describes a response with status code 407, with default header values.
 
 Proxy Authentication Required
 */
@@ -336,39 +211,9 @@ type DeleteAPIV2EnvironmentsSelectorProxyAuthenticationRequired struct {
 	Payload *models.ErrorsErrorResponse
 }
 
-// IsSuccess returns true when this delete Api v2 environments selector proxy authentication required response has a 2xx status code
-func (o *DeleteAPIV2EnvironmentsSelectorProxyAuthenticationRequired) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this delete Api v2 environments selector proxy authentication required response has a 3xx status code
-func (o *DeleteAPIV2EnvironmentsSelectorProxyAuthenticationRequired) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this delete Api v2 environments selector proxy authentication required response has a 4xx status code
-func (o *DeleteAPIV2EnvironmentsSelectorProxyAuthenticationRequired) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this delete Api v2 environments selector proxy authentication required response has a 5xx status code
-func (o *DeleteAPIV2EnvironmentsSelectorProxyAuthenticationRequired) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this delete Api v2 environments selector proxy authentication required response a status code equal to that given
-func (o *DeleteAPIV2EnvironmentsSelectorProxyAuthenticationRequired) IsCode(code int) bool {
-	return code == 407
-}
-
 func (o *DeleteAPIV2EnvironmentsSelectorProxyAuthenticationRequired) Error() string {
 	return fmt.Sprintf("[DELETE /api/v2/environments/{selector}][%d] deleteApiV2EnvironmentsSelectorProxyAuthenticationRequired  %+v", 407, o.Payload)
 }
-
-func (o *DeleteAPIV2EnvironmentsSelectorProxyAuthenticationRequired) String() string {
-	return fmt.Sprintf("[DELETE /api/v2/environments/{selector}][%d] deleteApiV2EnvironmentsSelectorProxyAuthenticationRequired  %+v", 407, o.Payload)
-}
-
 func (o *DeleteAPIV2EnvironmentsSelectorProxyAuthenticationRequired) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -390,8 +235,7 @@ func NewDeleteAPIV2EnvironmentsSelectorConflict() *DeleteAPIV2EnvironmentsSelect
 	return &DeleteAPIV2EnvironmentsSelectorConflict{}
 }
 
-/*
-DeleteAPIV2EnvironmentsSelectorConflict describes a response with status code 409, with default header values.
+/* DeleteAPIV2EnvironmentsSelectorConflict describes a response with status code 409, with default header values.
 
 Conflict
 */
@@ -399,39 +243,9 @@ type DeleteAPIV2EnvironmentsSelectorConflict struct {
 	Payload *models.ErrorsErrorResponse
 }
 
-// IsSuccess returns true when this delete Api v2 environments selector conflict response has a 2xx status code
-func (o *DeleteAPIV2EnvironmentsSelectorConflict) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this delete Api v2 environments selector conflict response has a 3xx status code
-func (o *DeleteAPIV2EnvironmentsSelectorConflict) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this delete Api v2 environments selector conflict response has a 4xx status code
-func (o *DeleteAPIV2EnvironmentsSelectorConflict) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this delete Api v2 environments selector conflict response has a 5xx status code
-func (o *DeleteAPIV2EnvironmentsSelectorConflict) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this delete Api v2 environments selector conflict response a status code equal to that given
-func (o *DeleteAPIV2EnvironmentsSelectorConflict) IsCode(code int) bool {
-	return code == 409
-}
-
 func (o *DeleteAPIV2EnvironmentsSelectorConflict) Error() string {
 	return fmt.Sprintf("[DELETE /api/v2/environments/{selector}][%d] deleteApiV2EnvironmentsSelectorConflict  %+v", 409, o.Payload)
 }
-
-func (o *DeleteAPIV2EnvironmentsSelectorConflict) String() string {
-	return fmt.Sprintf("[DELETE /api/v2/environments/{selector}][%d] deleteApiV2EnvironmentsSelectorConflict  %+v", 409, o.Payload)
-}
-
 func (o *DeleteAPIV2EnvironmentsSelectorConflict) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -453,8 +267,7 @@ func NewDeleteAPIV2EnvironmentsSelectorInternalServerError() *DeleteAPIV2Environ
 	return &DeleteAPIV2EnvironmentsSelectorInternalServerError{}
 }
 
-/*
-DeleteAPIV2EnvironmentsSelectorInternalServerError describes a response with status code 500, with default header values.
+/* DeleteAPIV2EnvironmentsSelectorInternalServerError describes a response with status code 500, with default header values.
 
 Internal Server Error
 */
@@ -462,39 +275,9 @@ type DeleteAPIV2EnvironmentsSelectorInternalServerError struct {
 	Payload *models.ErrorsErrorResponse
 }
 
-// IsSuccess returns true when this delete Api v2 environments selector internal server error response has a 2xx status code
-func (o *DeleteAPIV2EnvironmentsSelectorInternalServerError) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this delete Api v2 environments selector internal server error response has a 3xx status code
-func (o *DeleteAPIV2EnvironmentsSelectorInternalServerError) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this delete Api v2 environments selector internal server error response has a 4xx status code
-func (o *DeleteAPIV2EnvironmentsSelectorInternalServerError) IsClientError() bool {
-	return false
-}
-
-// IsServerError returns true when this delete Api v2 environments selector internal server error response has a 5xx status code
-func (o *DeleteAPIV2EnvironmentsSelectorInternalServerError) IsServerError() bool {
-	return true
-}
-
-// IsCode returns true when this delete Api v2 environments selector internal server error response a status code equal to that given
-func (o *DeleteAPIV2EnvironmentsSelectorInternalServerError) IsCode(code int) bool {
-	return code == 500
-}
-
 func (o *DeleteAPIV2EnvironmentsSelectorInternalServerError) Error() string {
 	return fmt.Sprintf("[DELETE /api/v2/environments/{selector}][%d] deleteApiV2EnvironmentsSelectorInternalServerError  %+v", 500, o.Payload)
 }
-
-func (o *DeleteAPIV2EnvironmentsSelectorInternalServerError) String() string {
-	return fmt.Sprintf("[DELETE /api/v2/environments/{selector}][%d] deleteApiV2EnvironmentsSelectorInternalServerError  %+v", 500, o.Payload)
-}
-
 func (o *DeleteAPIV2EnvironmentsSelectorInternalServerError) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }

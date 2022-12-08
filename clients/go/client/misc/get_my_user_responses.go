@@ -51,8 +51,7 @@ func NewGetMyUserOK() *GetMyUserOK {
 	return &GetMyUserOK{}
 }
 
-/*
-GetMyUserOK describes a response with status code 200, with default header values.
+/* GetMyUserOK describes a response with status code 200, with default header values.
 
 OK
 */
@@ -60,39 +59,9 @@ type GetMyUserOK struct {
 	Payload *models.MiscMyUserResponse
 }
 
-// IsSuccess returns true when this get my user o k response has a 2xx status code
-func (o *GetMyUserOK) IsSuccess() bool {
-	return true
-}
-
-// IsRedirect returns true when this get my user o k response has a 3xx status code
-func (o *GetMyUserOK) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get my user o k response has a 4xx status code
-func (o *GetMyUserOK) IsClientError() bool {
-	return false
-}
-
-// IsServerError returns true when this get my user o k response has a 5xx status code
-func (o *GetMyUserOK) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get my user o k response a status code equal to that given
-func (o *GetMyUserOK) IsCode(code int) bool {
-	return code == 200
-}
-
 func (o *GetMyUserOK) Error() string {
 	return fmt.Sprintf("[GET /my-user][%d] getMyUserOK  %+v", 200, o.Payload)
 }
-
-func (o *GetMyUserOK) String() string {
-	return fmt.Sprintf("[GET /my-user][%d] getMyUserOK  %+v", 200, o.Payload)
-}
-
 func (o *GetMyUserOK) GetPayload() *models.MiscMyUserResponse {
 	return o.Payload
 }
@@ -114,8 +83,7 @@ func NewGetMyUserProxyAuthenticationRequired() *GetMyUserProxyAuthenticationRequ
 	return &GetMyUserProxyAuthenticationRequired{}
 }
 
-/*
-GetMyUserProxyAuthenticationRequired describes a response with status code 407, with default header values.
+/* GetMyUserProxyAuthenticationRequired describes a response with status code 407, with default header values.
 
 Proxy Authentication Required
 */
@@ -123,39 +91,9 @@ type GetMyUserProxyAuthenticationRequired struct {
 	Payload *models.ErrorsErrorResponse
 }
 
-// IsSuccess returns true when this get my user proxy authentication required response has a 2xx status code
-func (o *GetMyUserProxyAuthenticationRequired) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this get my user proxy authentication required response has a 3xx status code
-func (o *GetMyUserProxyAuthenticationRequired) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get my user proxy authentication required response has a 4xx status code
-func (o *GetMyUserProxyAuthenticationRequired) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this get my user proxy authentication required response has a 5xx status code
-func (o *GetMyUserProxyAuthenticationRequired) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get my user proxy authentication required response a status code equal to that given
-func (o *GetMyUserProxyAuthenticationRequired) IsCode(code int) bool {
-	return code == 407
-}
-
 func (o *GetMyUserProxyAuthenticationRequired) Error() string {
 	return fmt.Sprintf("[GET /my-user][%d] getMyUserProxyAuthenticationRequired  %+v", 407, o.Payload)
 }
-
-func (o *GetMyUserProxyAuthenticationRequired) String() string {
-	return fmt.Sprintf("[GET /my-user][%d] getMyUserProxyAuthenticationRequired  %+v", 407, o.Payload)
-}
-
 func (o *GetMyUserProxyAuthenticationRequired) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -177,8 +115,7 @@ func NewGetMyUserInternalServerError() *GetMyUserInternalServerError {
 	return &GetMyUserInternalServerError{}
 }
 
-/*
-GetMyUserInternalServerError describes a response with status code 500, with default header values.
+/* GetMyUserInternalServerError describes a response with status code 500, with default header values.
 
 Internal Server Error
 */
@@ -186,39 +123,9 @@ type GetMyUserInternalServerError struct {
 	Payload *models.ErrorsErrorResponse
 }
 
-// IsSuccess returns true when this get my user internal server error response has a 2xx status code
-func (o *GetMyUserInternalServerError) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this get my user internal server error response has a 3xx status code
-func (o *GetMyUserInternalServerError) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get my user internal server error response has a 4xx status code
-func (o *GetMyUserInternalServerError) IsClientError() bool {
-	return false
-}
-
-// IsServerError returns true when this get my user internal server error response has a 5xx status code
-func (o *GetMyUserInternalServerError) IsServerError() bool {
-	return true
-}
-
-// IsCode returns true when this get my user internal server error response a status code equal to that given
-func (o *GetMyUserInternalServerError) IsCode(code int) bool {
-	return code == 500
-}
-
 func (o *GetMyUserInternalServerError) Error() string {
 	return fmt.Sprintf("[GET /my-user][%d] getMyUserInternalServerError  %+v", 500, o.Payload)
 }
-
-func (o *GetMyUserInternalServerError) String() string {
-	return fmt.Sprintf("[GET /my-user][%d] getMyUserInternalServerError  %+v", 500, o.Payload)
-}
-
 func (o *GetMyUserInternalServerError) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }

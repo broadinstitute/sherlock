@@ -75,8 +75,7 @@ func NewGetAPIV2SelectorsChangesetsSelectorOK() *GetAPIV2SelectorsChangesetsSele
 	return &GetAPIV2SelectorsChangesetsSelectorOK{}
 }
 
-/*
-GetAPIV2SelectorsChangesetsSelectorOK describes a response with status code 200, with default header values.
+/* GetAPIV2SelectorsChangesetsSelectorOK describes a response with status code 200, with default header values.
 
 OK
 */
@@ -84,39 +83,9 @@ type GetAPIV2SelectorsChangesetsSelectorOK struct {
 	Payload []string
 }
 
-// IsSuccess returns true when this get Api v2 selectors changesets selector o k response has a 2xx status code
-func (o *GetAPIV2SelectorsChangesetsSelectorOK) IsSuccess() bool {
-	return true
-}
-
-// IsRedirect returns true when this get Api v2 selectors changesets selector o k response has a 3xx status code
-func (o *GetAPIV2SelectorsChangesetsSelectorOK) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get Api v2 selectors changesets selector o k response has a 4xx status code
-func (o *GetAPIV2SelectorsChangesetsSelectorOK) IsClientError() bool {
-	return false
-}
-
-// IsServerError returns true when this get Api v2 selectors changesets selector o k response has a 5xx status code
-func (o *GetAPIV2SelectorsChangesetsSelectorOK) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get Api v2 selectors changesets selector o k response a status code equal to that given
-func (o *GetAPIV2SelectorsChangesetsSelectorOK) IsCode(code int) bool {
-	return code == 200
-}
-
 func (o *GetAPIV2SelectorsChangesetsSelectorOK) Error() string {
 	return fmt.Sprintf("[GET /api/v2/selectors/changesets/{selector}][%d] getApiV2SelectorsChangesetsSelectorOK  %+v", 200, o.Payload)
 }
-
-func (o *GetAPIV2SelectorsChangesetsSelectorOK) String() string {
-	return fmt.Sprintf("[GET /api/v2/selectors/changesets/{selector}][%d] getApiV2SelectorsChangesetsSelectorOK  %+v", 200, o.Payload)
-}
-
 func (o *GetAPIV2SelectorsChangesetsSelectorOK) GetPayload() []string {
 	return o.Payload
 }
@@ -136,8 +105,7 @@ func NewGetAPIV2SelectorsChangesetsSelectorBadRequest() *GetAPIV2SelectorsChange
 	return &GetAPIV2SelectorsChangesetsSelectorBadRequest{}
 }
 
-/*
-GetAPIV2SelectorsChangesetsSelectorBadRequest describes a response with status code 400, with default header values.
+/* GetAPIV2SelectorsChangesetsSelectorBadRequest describes a response with status code 400, with default header values.
 
 Bad Request
 */
@@ -145,39 +113,9 @@ type GetAPIV2SelectorsChangesetsSelectorBadRequest struct {
 	Payload *models.ErrorsErrorResponse
 }
 
-// IsSuccess returns true when this get Api v2 selectors changesets selector bad request response has a 2xx status code
-func (o *GetAPIV2SelectorsChangesetsSelectorBadRequest) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this get Api v2 selectors changesets selector bad request response has a 3xx status code
-func (o *GetAPIV2SelectorsChangesetsSelectorBadRequest) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get Api v2 selectors changesets selector bad request response has a 4xx status code
-func (o *GetAPIV2SelectorsChangesetsSelectorBadRequest) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this get Api v2 selectors changesets selector bad request response has a 5xx status code
-func (o *GetAPIV2SelectorsChangesetsSelectorBadRequest) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get Api v2 selectors changesets selector bad request response a status code equal to that given
-func (o *GetAPIV2SelectorsChangesetsSelectorBadRequest) IsCode(code int) bool {
-	return code == 400
-}
-
 func (o *GetAPIV2SelectorsChangesetsSelectorBadRequest) Error() string {
 	return fmt.Sprintf("[GET /api/v2/selectors/changesets/{selector}][%d] getApiV2SelectorsChangesetsSelectorBadRequest  %+v", 400, o.Payload)
 }
-
-func (o *GetAPIV2SelectorsChangesetsSelectorBadRequest) String() string {
-	return fmt.Sprintf("[GET /api/v2/selectors/changesets/{selector}][%d] getApiV2SelectorsChangesetsSelectorBadRequest  %+v", 400, o.Payload)
-}
-
 func (o *GetAPIV2SelectorsChangesetsSelectorBadRequest) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -199,8 +137,7 @@ func NewGetAPIV2SelectorsChangesetsSelectorForbidden() *GetAPIV2SelectorsChanges
 	return &GetAPIV2SelectorsChangesetsSelectorForbidden{}
 }
 
-/*
-GetAPIV2SelectorsChangesetsSelectorForbidden describes a response with status code 403, with default header values.
+/* GetAPIV2SelectorsChangesetsSelectorForbidden describes a response with status code 403, with default header values.
 
 Forbidden
 */
@@ -208,39 +145,9 @@ type GetAPIV2SelectorsChangesetsSelectorForbidden struct {
 	Payload *models.ErrorsErrorResponse
 }
 
-// IsSuccess returns true when this get Api v2 selectors changesets selector forbidden response has a 2xx status code
-func (o *GetAPIV2SelectorsChangesetsSelectorForbidden) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this get Api v2 selectors changesets selector forbidden response has a 3xx status code
-func (o *GetAPIV2SelectorsChangesetsSelectorForbidden) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get Api v2 selectors changesets selector forbidden response has a 4xx status code
-func (o *GetAPIV2SelectorsChangesetsSelectorForbidden) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this get Api v2 selectors changesets selector forbidden response has a 5xx status code
-func (o *GetAPIV2SelectorsChangesetsSelectorForbidden) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get Api v2 selectors changesets selector forbidden response a status code equal to that given
-func (o *GetAPIV2SelectorsChangesetsSelectorForbidden) IsCode(code int) bool {
-	return code == 403
-}
-
 func (o *GetAPIV2SelectorsChangesetsSelectorForbidden) Error() string {
 	return fmt.Sprintf("[GET /api/v2/selectors/changesets/{selector}][%d] getApiV2SelectorsChangesetsSelectorForbidden  %+v", 403, o.Payload)
 }
-
-func (o *GetAPIV2SelectorsChangesetsSelectorForbidden) String() string {
-	return fmt.Sprintf("[GET /api/v2/selectors/changesets/{selector}][%d] getApiV2SelectorsChangesetsSelectorForbidden  %+v", 403, o.Payload)
-}
-
 func (o *GetAPIV2SelectorsChangesetsSelectorForbidden) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -262,8 +169,7 @@ func NewGetAPIV2SelectorsChangesetsSelectorNotFound() *GetAPIV2SelectorsChangese
 	return &GetAPIV2SelectorsChangesetsSelectorNotFound{}
 }
 
-/*
-GetAPIV2SelectorsChangesetsSelectorNotFound describes a response with status code 404, with default header values.
+/* GetAPIV2SelectorsChangesetsSelectorNotFound describes a response with status code 404, with default header values.
 
 Not Found
 */
@@ -271,39 +177,9 @@ type GetAPIV2SelectorsChangesetsSelectorNotFound struct {
 	Payload *models.ErrorsErrorResponse
 }
 
-// IsSuccess returns true when this get Api v2 selectors changesets selector not found response has a 2xx status code
-func (o *GetAPIV2SelectorsChangesetsSelectorNotFound) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this get Api v2 selectors changesets selector not found response has a 3xx status code
-func (o *GetAPIV2SelectorsChangesetsSelectorNotFound) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get Api v2 selectors changesets selector not found response has a 4xx status code
-func (o *GetAPIV2SelectorsChangesetsSelectorNotFound) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this get Api v2 selectors changesets selector not found response has a 5xx status code
-func (o *GetAPIV2SelectorsChangesetsSelectorNotFound) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get Api v2 selectors changesets selector not found response a status code equal to that given
-func (o *GetAPIV2SelectorsChangesetsSelectorNotFound) IsCode(code int) bool {
-	return code == 404
-}
-
 func (o *GetAPIV2SelectorsChangesetsSelectorNotFound) Error() string {
 	return fmt.Sprintf("[GET /api/v2/selectors/changesets/{selector}][%d] getApiV2SelectorsChangesetsSelectorNotFound  %+v", 404, o.Payload)
 }
-
-func (o *GetAPIV2SelectorsChangesetsSelectorNotFound) String() string {
-	return fmt.Sprintf("[GET /api/v2/selectors/changesets/{selector}][%d] getApiV2SelectorsChangesetsSelectorNotFound  %+v", 404, o.Payload)
-}
-
 func (o *GetAPIV2SelectorsChangesetsSelectorNotFound) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -325,8 +201,7 @@ func NewGetAPIV2SelectorsChangesetsSelectorProxyAuthenticationRequired() *GetAPI
 	return &GetAPIV2SelectorsChangesetsSelectorProxyAuthenticationRequired{}
 }
 
-/*
-GetAPIV2SelectorsChangesetsSelectorProxyAuthenticationRequired describes a response with status code 407, with default header values.
+/* GetAPIV2SelectorsChangesetsSelectorProxyAuthenticationRequired describes a response with status code 407, with default header values.
 
 Proxy Authentication Required
 */
@@ -334,39 +209,9 @@ type GetAPIV2SelectorsChangesetsSelectorProxyAuthenticationRequired struct {
 	Payload *models.ErrorsErrorResponse
 }
 
-// IsSuccess returns true when this get Api v2 selectors changesets selector proxy authentication required response has a 2xx status code
-func (o *GetAPIV2SelectorsChangesetsSelectorProxyAuthenticationRequired) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this get Api v2 selectors changesets selector proxy authentication required response has a 3xx status code
-func (o *GetAPIV2SelectorsChangesetsSelectorProxyAuthenticationRequired) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get Api v2 selectors changesets selector proxy authentication required response has a 4xx status code
-func (o *GetAPIV2SelectorsChangesetsSelectorProxyAuthenticationRequired) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this get Api v2 selectors changesets selector proxy authentication required response has a 5xx status code
-func (o *GetAPIV2SelectorsChangesetsSelectorProxyAuthenticationRequired) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get Api v2 selectors changesets selector proxy authentication required response a status code equal to that given
-func (o *GetAPIV2SelectorsChangesetsSelectorProxyAuthenticationRequired) IsCode(code int) bool {
-	return code == 407
-}
-
 func (o *GetAPIV2SelectorsChangesetsSelectorProxyAuthenticationRequired) Error() string {
 	return fmt.Sprintf("[GET /api/v2/selectors/changesets/{selector}][%d] getApiV2SelectorsChangesetsSelectorProxyAuthenticationRequired  %+v", 407, o.Payload)
 }
-
-func (o *GetAPIV2SelectorsChangesetsSelectorProxyAuthenticationRequired) String() string {
-	return fmt.Sprintf("[GET /api/v2/selectors/changesets/{selector}][%d] getApiV2SelectorsChangesetsSelectorProxyAuthenticationRequired  %+v", 407, o.Payload)
-}
-
 func (o *GetAPIV2SelectorsChangesetsSelectorProxyAuthenticationRequired) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -388,8 +233,7 @@ func NewGetAPIV2SelectorsChangesetsSelectorConflict() *GetAPIV2SelectorsChangese
 	return &GetAPIV2SelectorsChangesetsSelectorConflict{}
 }
 
-/*
-GetAPIV2SelectorsChangesetsSelectorConflict describes a response with status code 409, with default header values.
+/* GetAPIV2SelectorsChangesetsSelectorConflict describes a response with status code 409, with default header values.
 
 Conflict
 */
@@ -397,39 +241,9 @@ type GetAPIV2SelectorsChangesetsSelectorConflict struct {
 	Payload *models.ErrorsErrorResponse
 }
 
-// IsSuccess returns true when this get Api v2 selectors changesets selector conflict response has a 2xx status code
-func (o *GetAPIV2SelectorsChangesetsSelectorConflict) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this get Api v2 selectors changesets selector conflict response has a 3xx status code
-func (o *GetAPIV2SelectorsChangesetsSelectorConflict) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get Api v2 selectors changesets selector conflict response has a 4xx status code
-func (o *GetAPIV2SelectorsChangesetsSelectorConflict) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this get Api v2 selectors changesets selector conflict response has a 5xx status code
-func (o *GetAPIV2SelectorsChangesetsSelectorConflict) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get Api v2 selectors changesets selector conflict response a status code equal to that given
-func (o *GetAPIV2SelectorsChangesetsSelectorConflict) IsCode(code int) bool {
-	return code == 409
-}
-
 func (o *GetAPIV2SelectorsChangesetsSelectorConflict) Error() string {
 	return fmt.Sprintf("[GET /api/v2/selectors/changesets/{selector}][%d] getApiV2SelectorsChangesetsSelectorConflict  %+v", 409, o.Payload)
 }
-
-func (o *GetAPIV2SelectorsChangesetsSelectorConflict) String() string {
-	return fmt.Sprintf("[GET /api/v2/selectors/changesets/{selector}][%d] getApiV2SelectorsChangesetsSelectorConflict  %+v", 409, o.Payload)
-}
-
 func (o *GetAPIV2SelectorsChangesetsSelectorConflict) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -451,8 +265,7 @@ func NewGetAPIV2SelectorsChangesetsSelectorInternalServerError() *GetAPIV2Select
 	return &GetAPIV2SelectorsChangesetsSelectorInternalServerError{}
 }
 
-/*
-GetAPIV2SelectorsChangesetsSelectorInternalServerError describes a response with status code 500, with default header values.
+/* GetAPIV2SelectorsChangesetsSelectorInternalServerError describes a response with status code 500, with default header values.
 
 Internal Server Error
 */
@@ -460,39 +273,9 @@ type GetAPIV2SelectorsChangesetsSelectorInternalServerError struct {
 	Payload *models.ErrorsErrorResponse
 }
 
-// IsSuccess returns true when this get Api v2 selectors changesets selector internal server error response has a 2xx status code
-func (o *GetAPIV2SelectorsChangesetsSelectorInternalServerError) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this get Api v2 selectors changesets selector internal server error response has a 3xx status code
-func (o *GetAPIV2SelectorsChangesetsSelectorInternalServerError) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get Api v2 selectors changesets selector internal server error response has a 4xx status code
-func (o *GetAPIV2SelectorsChangesetsSelectorInternalServerError) IsClientError() bool {
-	return false
-}
-
-// IsServerError returns true when this get Api v2 selectors changesets selector internal server error response has a 5xx status code
-func (o *GetAPIV2SelectorsChangesetsSelectorInternalServerError) IsServerError() bool {
-	return true
-}
-
-// IsCode returns true when this get Api v2 selectors changesets selector internal server error response a status code equal to that given
-func (o *GetAPIV2SelectorsChangesetsSelectorInternalServerError) IsCode(code int) bool {
-	return code == 500
-}
-
 func (o *GetAPIV2SelectorsChangesetsSelectorInternalServerError) Error() string {
 	return fmt.Sprintf("[GET /api/v2/selectors/changesets/{selector}][%d] getApiV2SelectorsChangesetsSelectorInternalServerError  %+v", 500, o.Payload)
 }
-
-func (o *GetAPIV2SelectorsChangesetsSelectorInternalServerError) String() string {
-	return fmt.Sprintf("[GET /api/v2/selectors/changesets/{selector}][%d] getApiV2SelectorsChangesetsSelectorInternalServerError  %+v", 500, o.Payload)
-}
-
 func (o *GetAPIV2SelectorsChangesetsSelectorInternalServerError) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }

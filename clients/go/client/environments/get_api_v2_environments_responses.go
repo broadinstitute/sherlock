@@ -75,8 +75,7 @@ func NewGetAPIV2EnvironmentsOK() *GetAPIV2EnvironmentsOK {
 	return &GetAPIV2EnvironmentsOK{}
 }
 
-/*
-GetAPIV2EnvironmentsOK describes a response with status code 200, with default header values.
+/* GetAPIV2EnvironmentsOK describes a response with status code 200, with default header values.
 
 OK
 */
@@ -84,39 +83,9 @@ type GetAPIV2EnvironmentsOK struct {
 	Payload []*models.V2controllersEnvironment
 }
 
-// IsSuccess returns true when this get Api v2 environments o k response has a 2xx status code
-func (o *GetAPIV2EnvironmentsOK) IsSuccess() bool {
-	return true
-}
-
-// IsRedirect returns true when this get Api v2 environments o k response has a 3xx status code
-func (o *GetAPIV2EnvironmentsOK) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get Api v2 environments o k response has a 4xx status code
-func (o *GetAPIV2EnvironmentsOK) IsClientError() bool {
-	return false
-}
-
-// IsServerError returns true when this get Api v2 environments o k response has a 5xx status code
-func (o *GetAPIV2EnvironmentsOK) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get Api v2 environments o k response a status code equal to that given
-func (o *GetAPIV2EnvironmentsOK) IsCode(code int) bool {
-	return code == 200
-}
-
 func (o *GetAPIV2EnvironmentsOK) Error() string {
 	return fmt.Sprintf("[GET /api/v2/environments][%d] getApiV2EnvironmentsOK  %+v", 200, o.Payload)
 }
-
-func (o *GetAPIV2EnvironmentsOK) String() string {
-	return fmt.Sprintf("[GET /api/v2/environments][%d] getApiV2EnvironmentsOK  %+v", 200, o.Payload)
-}
-
 func (o *GetAPIV2EnvironmentsOK) GetPayload() []*models.V2controllersEnvironment {
 	return o.Payload
 }
@@ -136,8 +105,7 @@ func NewGetAPIV2EnvironmentsBadRequest() *GetAPIV2EnvironmentsBadRequest {
 	return &GetAPIV2EnvironmentsBadRequest{}
 }
 
-/*
-GetAPIV2EnvironmentsBadRequest describes a response with status code 400, with default header values.
+/* GetAPIV2EnvironmentsBadRequest describes a response with status code 400, with default header values.
 
 Bad Request
 */
@@ -145,39 +113,9 @@ type GetAPIV2EnvironmentsBadRequest struct {
 	Payload *models.ErrorsErrorResponse
 }
 
-// IsSuccess returns true when this get Api v2 environments bad request response has a 2xx status code
-func (o *GetAPIV2EnvironmentsBadRequest) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this get Api v2 environments bad request response has a 3xx status code
-func (o *GetAPIV2EnvironmentsBadRequest) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get Api v2 environments bad request response has a 4xx status code
-func (o *GetAPIV2EnvironmentsBadRequest) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this get Api v2 environments bad request response has a 5xx status code
-func (o *GetAPIV2EnvironmentsBadRequest) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get Api v2 environments bad request response a status code equal to that given
-func (o *GetAPIV2EnvironmentsBadRequest) IsCode(code int) bool {
-	return code == 400
-}
-
 func (o *GetAPIV2EnvironmentsBadRequest) Error() string {
 	return fmt.Sprintf("[GET /api/v2/environments][%d] getApiV2EnvironmentsBadRequest  %+v", 400, o.Payload)
 }
-
-func (o *GetAPIV2EnvironmentsBadRequest) String() string {
-	return fmt.Sprintf("[GET /api/v2/environments][%d] getApiV2EnvironmentsBadRequest  %+v", 400, o.Payload)
-}
-
 func (o *GetAPIV2EnvironmentsBadRequest) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -199,8 +137,7 @@ func NewGetAPIV2EnvironmentsForbidden() *GetAPIV2EnvironmentsForbidden {
 	return &GetAPIV2EnvironmentsForbidden{}
 }
 
-/*
-GetAPIV2EnvironmentsForbidden describes a response with status code 403, with default header values.
+/* GetAPIV2EnvironmentsForbidden describes a response with status code 403, with default header values.
 
 Forbidden
 */
@@ -208,39 +145,9 @@ type GetAPIV2EnvironmentsForbidden struct {
 	Payload *models.ErrorsErrorResponse
 }
 
-// IsSuccess returns true when this get Api v2 environments forbidden response has a 2xx status code
-func (o *GetAPIV2EnvironmentsForbidden) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this get Api v2 environments forbidden response has a 3xx status code
-func (o *GetAPIV2EnvironmentsForbidden) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get Api v2 environments forbidden response has a 4xx status code
-func (o *GetAPIV2EnvironmentsForbidden) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this get Api v2 environments forbidden response has a 5xx status code
-func (o *GetAPIV2EnvironmentsForbidden) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get Api v2 environments forbidden response a status code equal to that given
-func (o *GetAPIV2EnvironmentsForbidden) IsCode(code int) bool {
-	return code == 403
-}
-
 func (o *GetAPIV2EnvironmentsForbidden) Error() string {
 	return fmt.Sprintf("[GET /api/v2/environments][%d] getApiV2EnvironmentsForbidden  %+v", 403, o.Payload)
 }
-
-func (o *GetAPIV2EnvironmentsForbidden) String() string {
-	return fmt.Sprintf("[GET /api/v2/environments][%d] getApiV2EnvironmentsForbidden  %+v", 403, o.Payload)
-}
-
 func (o *GetAPIV2EnvironmentsForbidden) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -262,8 +169,7 @@ func NewGetAPIV2EnvironmentsNotFound() *GetAPIV2EnvironmentsNotFound {
 	return &GetAPIV2EnvironmentsNotFound{}
 }
 
-/*
-GetAPIV2EnvironmentsNotFound describes a response with status code 404, with default header values.
+/* GetAPIV2EnvironmentsNotFound describes a response with status code 404, with default header values.
 
 Not Found
 */
@@ -271,39 +177,9 @@ type GetAPIV2EnvironmentsNotFound struct {
 	Payload *models.ErrorsErrorResponse
 }
 
-// IsSuccess returns true when this get Api v2 environments not found response has a 2xx status code
-func (o *GetAPIV2EnvironmentsNotFound) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this get Api v2 environments not found response has a 3xx status code
-func (o *GetAPIV2EnvironmentsNotFound) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get Api v2 environments not found response has a 4xx status code
-func (o *GetAPIV2EnvironmentsNotFound) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this get Api v2 environments not found response has a 5xx status code
-func (o *GetAPIV2EnvironmentsNotFound) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get Api v2 environments not found response a status code equal to that given
-func (o *GetAPIV2EnvironmentsNotFound) IsCode(code int) bool {
-	return code == 404
-}
-
 func (o *GetAPIV2EnvironmentsNotFound) Error() string {
 	return fmt.Sprintf("[GET /api/v2/environments][%d] getApiV2EnvironmentsNotFound  %+v", 404, o.Payload)
 }
-
-func (o *GetAPIV2EnvironmentsNotFound) String() string {
-	return fmt.Sprintf("[GET /api/v2/environments][%d] getApiV2EnvironmentsNotFound  %+v", 404, o.Payload)
-}
-
 func (o *GetAPIV2EnvironmentsNotFound) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -325,8 +201,7 @@ func NewGetAPIV2EnvironmentsProxyAuthenticationRequired() *GetAPIV2EnvironmentsP
 	return &GetAPIV2EnvironmentsProxyAuthenticationRequired{}
 }
 
-/*
-GetAPIV2EnvironmentsProxyAuthenticationRequired describes a response with status code 407, with default header values.
+/* GetAPIV2EnvironmentsProxyAuthenticationRequired describes a response with status code 407, with default header values.
 
 Proxy Authentication Required
 */
@@ -334,39 +209,9 @@ type GetAPIV2EnvironmentsProxyAuthenticationRequired struct {
 	Payload *models.ErrorsErrorResponse
 }
 
-// IsSuccess returns true when this get Api v2 environments proxy authentication required response has a 2xx status code
-func (o *GetAPIV2EnvironmentsProxyAuthenticationRequired) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this get Api v2 environments proxy authentication required response has a 3xx status code
-func (o *GetAPIV2EnvironmentsProxyAuthenticationRequired) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get Api v2 environments proxy authentication required response has a 4xx status code
-func (o *GetAPIV2EnvironmentsProxyAuthenticationRequired) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this get Api v2 environments proxy authentication required response has a 5xx status code
-func (o *GetAPIV2EnvironmentsProxyAuthenticationRequired) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get Api v2 environments proxy authentication required response a status code equal to that given
-func (o *GetAPIV2EnvironmentsProxyAuthenticationRequired) IsCode(code int) bool {
-	return code == 407
-}
-
 func (o *GetAPIV2EnvironmentsProxyAuthenticationRequired) Error() string {
 	return fmt.Sprintf("[GET /api/v2/environments][%d] getApiV2EnvironmentsProxyAuthenticationRequired  %+v", 407, o.Payload)
 }
-
-func (o *GetAPIV2EnvironmentsProxyAuthenticationRequired) String() string {
-	return fmt.Sprintf("[GET /api/v2/environments][%d] getApiV2EnvironmentsProxyAuthenticationRequired  %+v", 407, o.Payload)
-}
-
 func (o *GetAPIV2EnvironmentsProxyAuthenticationRequired) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -388,8 +233,7 @@ func NewGetAPIV2EnvironmentsConflict() *GetAPIV2EnvironmentsConflict {
 	return &GetAPIV2EnvironmentsConflict{}
 }
 
-/*
-GetAPIV2EnvironmentsConflict describes a response with status code 409, with default header values.
+/* GetAPIV2EnvironmentsConflict describes a response with status code 409, with default header values.
 
 Conflict
 */
@@ -397,39 +241,9 @@ type GetAPIV2EnvironmentsConflict struct {
 	Payload *models.ErrorsErrorResponse
 }
 
-// IsSuccess returns true when this get Api v2 environments conflict response has a 2xx status code
-func (o *GetAPIV2EnvironmentsConflict) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this get Api v2 environments conflict response has a 3xx status code
-func (o *GetAPIV2EnvironmentsConflict) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get Api v2 environments conflict response has a 4xx status code
-func (o *GetAPIV2EnvironmentsConflict) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this get Api v2 environments conflict response has a 5xx status code
-func (o *GetAPIV2EnvironmentsConflict) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get Api v2 environments conflict response a status code equal to that given
-func (o *GetAPIV2EnvironmentsConflict) IsCode(code int) bool {
-	return code == 409
-}
-
 func (o *GetAPIV2EnvironmentsConflict) Error() string {
 	return fmt.Sprintf("[GET /api/v2/environments][%d] getApiV2EnvironmentsConflict  %+v", 409, o.Payload)
 }
-
-func (o *GetAPIV2EnvironmentsConflict) String() string {
-	return fmt.Sprintf("[GET /api/v2/environments][%d] getApiV2EnvironmentsConflict  %+v", 409, o.Payload)
-}
-
 func (o *GetAPIV2EnvironmentsConflict) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -451,8 +265,7 @@ func NewGetAPIV2EnvironmentsInternalServerError() *GetAPIV2EnvironmentsInternalS
 	return &GetAPIV2EnvironmentsInternalServerError{}
 }
 
-/*
-GetAPIV2EnvironmentsInternalServerError describes a response with status code 500, with default header values.
+/* GetAPIV2EnvironmentsInternalServerError describes a response with status code 500, with default header values.
 
 Internal Server Error
 */
@@ -460,39 +273,9 @@ type GetAPIV2EnvironmentsInternalServerError struct {
 	Payload *models.ErrorsErrorResponse
 }
 
-// IsSuccess returns true when this get Api v2 environments internal server error response has a 2xx status code
-func (o *GetAPIV2EnvironmentsInternalServerError) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this get Api v2 environments internal server error response has a 3xx status code
-func (o *GetAPIV2EnvironmentsInternalServerError) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get Api v2 environments internal server error response has a 4xx status code
-func (o *GetAPIV2EnvironmentsInternalServerError) IsClientError() bool {
-	return false
-}
-
-// IsServerError returns true when this get Api v2 environments internal server error response has a 5xx status code
-func (o *GetAPIV2EnvironmentsInternalServerError) IsServerError() bool {
-	return true
-}
-
-// IsCode returns true when this get Api v2 environments internal server error response a status code equal to that given
-func (o *GetAPIV2EnvironmentsInternalServerError) IsCode(code int) bool {
-	return code == 500
-}
-
 func (o *GetAPIV2EnvironmentsInternalServerError) Error() string {
 	return fmt.Sprintf("[GET /api/v2/environments][%d] getApiV2EnvironmentsInternalServerError  %+v", 500, o.Payload)
 }
-
-func (o *GetAPIV2EnvironmentsInternalServerError) String() string {
-	return fmt.Sprintf("[GET /api/v2/environments][%d] getApiV2EnvironmentsInternalServerError  %+v", 500, o.Payload)
-}
-
 func (o *GetAPIV2EnvironmentsInternalServerError) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }

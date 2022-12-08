@@ -52,12 +52,10 @@ func NewGetAPIV2SelectorsEnvironmentsSelectorParamsWithHTTPClient(client *http.C
 	}
 }
 
-/*
-GetAPIV2SelectorsEnvironmentsSelectorParams contains all the parameters to send to the API endpoint
+/* GetAPIV2SelectorsEnvironmentsSelectorParams contains all the parameters to send to the API endpoint
+   for the get API v2 selectors environments selector operation.
 
-	for the get API v2 selectors environments selector operation.
-
-	Typically these are written to a http.Request.
+   Typically these are written to a http.Request.
 */
 type GetAPIV2SelectorsEnvironmentsSelectorParams struct {
 

@@ -54,12 +54,10 @@ func NewPostAPIV2ProceduresChangesetsPlanParamsWithHTTPClient(client *http.Clien
 	}
 }
 
-/*
-PostAPIV2ProceduresChangesetsPlanParams contains all the parameters to send to the API endpoint
+/* PostAPIV2ProceduresChangesetsPlanParams contains all the parameters to send to the API endpoint
+   for the post API v2 procedures changesets plan operation.
 
-	for the post API v2 procedures changesets plan operation.
-
-	Typically these are written to a http.Request.
+   Typically these are written to a http.Request.
 */
 type PostAPIV2ProceduresChangesetsPlanParams struct {
 

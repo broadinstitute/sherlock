@@ -40,9 +40,9 @@ type ClientService interface {
 }
 
 /*
-GetMyUser gets information about the calling user
+  GetMyUser gets information about the calling user
 
-Get Sherlock's understanding of the calling user based on IAP and the Firecloud.org Google Workspace organization.
+  Get Sherlock's understanding of the calling user based on IAP and the Firecloud.org Google Workspace organization.
 */
 func (a *Client) GetMyUser(params *GetMyUserParams, opts ...ClientOption) (*GetMyUserOK, error) {
 	// TODO: Validate the params before sending
@@ -80,10 +80,9 @@ func (a *Client) GetMyUser(params *GetMyUserParams, opts ...ClientOption) (*GetM
 }
 
 /*
-	GetStatus gets sherlock s current status
+  GetStatus gets sherlock s current status
 
-	Get Sherlock's current status. Right now, this endpoint always returned OK (if the server is online).
-
+  Get Sherlock's current status. Right now, this endpoint always returned OK (if the server is online).
 This endpoint is acceptable to use for a readiness check.
 */
 func (a *Client) GetStatus(params *GetStatusParams, opts ...ClientOption) (*GetStatusOK, error) {
@@ -122,9 +121,9 @@ func (a *Client) GetStatus(params *GetStatusParams, opts ...ClientOption) (*GetS
 }
 
 /*
-GetVersion gets sherlock s own current version
+  GetVersion gets sherlock s own current version
 
-Get the build version of this Sherlock instance.
+  Get the build version of this Sherlock instance.
 */
 func (a *Client) GetVersion(params *GetVersionParams, opts ...ClientOption) (*GetVersionOK, error) {
 	// TODO: Validate the params before sending

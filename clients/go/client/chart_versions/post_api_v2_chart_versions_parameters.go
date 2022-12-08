@@ -54,12 +54,10 @@ func NewPostAPIV2ChartVersionsParamsWithHTTPClient(client *http.Client) *PostAPI
 	}
 }
 
-/*
-PostAPIV2ChartVersionsParams contains all the parameters to send to the API endpoint
+/* PostAPIV2ChartVersionsParams contains all the parameters to send to the API endpoint
+   for the post API v2 chart versions operation.
 
-	for the post API v2 chart versions operation.
-
-	Typically these are written to a http.Request.
+   Typically these are written to a http.Request.
 */
 type PostAPIV2ChartVersionsParams struct {
 

@@ -52,12 +52,10 @@ func NewDeleteAPIV2EnvironmentsSelectorParamsWithHTTPClient(client *http.Client)
 	}
 }
 
-/*
-DeleteAPIV2EnvironmentsSelectorParams contains all the parameters to send to the API endpoint
+/* DeleteAPIV2EnvironmentsSelectorParams contains all the parameters to send to the API endpoint
+   for the delete API v2 environments selector operation.
 
-	for the delete API v2 environments selector operation.
-
-	Typically these are written to a http.Request.
+   Typically these are written to a http.Request.
 */
 type DeleteAPIV2EnvironmentsSelectorParams struct {
 

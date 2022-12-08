@@ -81,8 +81,7 @@ func NewPostAPIV2ProceduresChangesetsPlanOK() *PostAPIV2ProceduresChangesetsPlan
 	return &PostAPIV2ProceduresChangesetsPlanOK{}
 }
 
-/*
-PostAPIV2ProceduresChangesetsPlanOK describes a response with status code 200, with default header values.
+/* PostAPIV2ProceduresChangesetsPlanOK describes a response with status code 200, with default header values.
 
 OK
 */
@@ -90,39 +89,9 @@ type PostAPIV2ProceduresChangesetsPlanOK struct {
 	Payload []*models.V2controllersChangeset
 }
 
-// IsSuccess returns true when this post Api v2 procedures changesets plan o k response has a 2xx status code
-func (o *PostAPIV2ProceduresChangesetsPlanOK) IsSuccess() bool {
-	return true
-}
-
-// IsRedirect returns true when this post Api v2 procedures changesets plan o k response has a 3xx status code
-func (o *PostAPIV2ProceduresChangesetsPlanOK) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this post Api v2 procedures changesets plan o k response has a 4xx status code
-func (o *PostAPIV2ProceduresChangesetsPlanOK) IsClientError() bool {
-	return false
-}
-
-// IsServerError returns true when this post Api v2 procedures changesets plan o k response has a 5xx status code
-func (o *PostAPIV2ProceduresChangesetsPlanOK) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this post Api v2 procedures changesets plan o k response a status code equal to that given
-func (o *PostAPIV2ProceduresChangesetsPlanOK) IsCode(code int) bool {
-	return code == 200
-}
-
 func (o *PostAPIV2ProceduresChangesetsPlanOK) Error() string {
 	return fmt.Sprintf("[POST /api/v2/procedures/changesets/plan][%d] postApiV2ProceduresChangesetsPlanOK  %+v", 200, o.Payload)
 }
-
-func (o *PostAPIV2ProceduresChangesetsPlanOK) String() string {
-	return fmt.Sprintf("[POST /api/v2/procedures/changesets/plan][%d] postApiV2ProceduresChangesetsPlanOK  %+v", 200, o.Payload)
-}
-
 func (o *PostAPIV2ProceduresChangesetsPlanOK) GetPayload() []*models.V2controllersChangeset {
 	return o.Payload
 }
@@ -142,8 +111,7 @@ func NewPostAPIV2ProceduresChangesetsPlanCreated() *PostAPIV2ProceduresChangeset
 	return &PostAPIV2ProceduresChangesetsPlanCreated{}
 }
 
-/*
-PostAPIV2ProceduresChangesetsPlanCreated describes a response with status code 201, with default header values.
+/* PostAPIV2ProceduresChangesetsPlanCreated describes a response with status code 201, with default header values.
 
 Created
 */
@@ -151,39 +119,9 @@ type PostAPIV2ProceduresChangesetsPlanCreated struct {
 	Payload []*models.V2controllersChangeset
 }
 
-// IsSuccess returns true when this post Api v2 procedures changesets plan created response has a 2xx status code
-func (o *PostAPIV2ProceduresChangesetsPlanCreated) IsSuccess() bool {
-	return true
-}
-
-// IsRedirect returns true when this post Api v2 procedures changesets plan created response has a 3xx status code
-func (o *PostAPIV2ProceduresChangesetsPlanCreated) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this post Api v2 procedures changesets plan created response has a 4xx status code
-func (o *PostAPIV2ProceduresChangesetsPlanCreated) IsClientError() bool {
-	return false
-}
-
-// IsServerError returns true when this post Api v2 procedures changesets plan created response has a 5xx status code
-func (o *PostAPIV2ProceduresChangesetsPlanCreated) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this post Api v2 procedures changesets plan created response a status code equal to that given
-func (o *PostAPIV2ProceduresChangesetsPlanCreated) IsCode(code int) bool {
-	return code == 201
-}
-
 func (o *PostAPIV2ProceduresChangesetsPlanCreated) Error() string {
 	return fmt.Sprintf("[POST /api/v2/procedures/changesets/plan][%d] postApiV2ProceduresChangesetsPlanCreated  %+v", 201, o.Payload)
 }
-
-func (o *PostAPIV2ProceduresChangesetsPlanCreated) String() string {
-	return fmt.Sprintf("[POST /api/v2/procedures/changesets/plan][%d] postApiV2ProceduresChangesetsPlanCreated  %+v", 201, o.Payload)
-}
-
 func (o *PostAPIV2ProceduresChangesetsPlanCreated) GetPayload() []*models.V2controllersChangeset {
 	return o.Payload
 }
@@ -203,8 +141,7 @@ func NewPostAPIV2ProceduresChangesetsPlanBadRequest() *PostAPIV2ProceduresChange
 	return &PostAPIV2ProceduresChangesetsPlanBadRequest{}
 }
 
-/*
-PostAPIV2ProceduresChangesetsPlanBadRequest describes a response with status code 400, with default header values.
+/* PostAPIV2ProceduresChangesetsPlanBadRequest describes a response with status code 400, with default header values.
 
 Bad Request
 */
@@ -212,39 +149,9 @@ type PostAPIV2ProceduresChangesetsPlanBadRequest struct {
 	Payload *models.ErrorsErrorResponse
 }
 
-// IsSuccess returns true when this post Api v2 procedures changesets plan bad request response has a 2xx status code
-func (o *PostAPIV2ProceduresChangesetsPlanBadRequest) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this post Api v2 procedures changesets plan bad request response has a 3xx status code
-func (o *PostAPIV2ProceduresChangesetsPlanBadRequest) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this post Api v2 procedures changesets plan bad request response has a 4xx status code
-func (o *PostAPIV2ProceduresChangesetsPlanBadRequest) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this post Api v2 procedures changesets plan bad request response has a 5xx status code
-func (o *PostAPIV2ProceduresChangesetsPlanBadRequest) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this post Api v2 procedures changesets plan bad request response a status code equal to that given
-func (o *PostAPIV2ProceduresChangesetsPlanBadRequest) IsCode(code int) bool {
-	return code == 400
-}
-
 func (o *PostAPIV2ProceduresChangesetsPlanBadRequest) Error() string {
 	return fmt.Sprintf("[POST /api/v2/procedures/changesets/plan][%d] postApiV2ProceduresChangesetsPlanBadRequest  %+v", 400, o.Payload)
 }
-
-func (o *PostAPIV2ProceduresChangesetsPlanBadRequest) String() string {
-	return fmt.Sprintf("[POST /api/v2/procedures/changesets/plan][%d] postApiV2ProceduresChangesetsPlanBadRequest  %+v", 400, o.Payload)
-}
-
 func (o *PostAPIV2ProceduresChangesetsPlanBadRequest) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -266,8 +173,7 @@ func NewPostAPIV2ProceduresChangesetsPlanForbidden() *PostAPIV2ProceduresChanges
 	return &PostAPIV2ProceduresChangesetsPlanForbidden{}
 }
 
-/*
-PostAPIV2ProceduresChangesetsPlanForbidden describes a response with status code 403, with default header values.
+/* PostAPIV2ProceduresChangesetsPlanForbidden describes a response with status code 403, with default header values.
 
 Forbidden
 */
@@ -275,39 +181,9 @@ type PostAPIV2ProceduresChangesetsPlanForbidden struct {
 	Payload *models.ErrorsErrorResponse
 }
 
-// IsSuccess returns true when this post Api v2 procedures changesets plan forbidden response has a 2xx status code
-func (o *PostAPIV2ProceduresChangesetsPlanForbidden) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this post Api v2 procedures changesets plan forbidden response has a 3xx status code
-func (o *PostAPIV2ProceduresChangesetsPlanForbidden) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this post Api v2 procedures changesets plan forbidden response has a 4xx status code
-func (o *PostAPIV2ProceduresChangesetsPlanForbidden) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this post Api v2 procedures changesets plan forbidden response has a 5xx status code
-func (o *PostAPIV2ProceduresChangesetsPlanForbidden) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this post Api v2 procedures changesets plan forbidden response a status code equal to that given
-func (o *PostAPIV2ProceduresChangesetsPlanForbidden) IsCode(code int) bool {
-	return code == 403
-}
-
 func (o *PostAPIV2ProceduresChangesetsPlanForbidden) Error() string {
 	return fmt.Sprintf("[POST /api/v2/procedures/changesets/plan][%d] postApiV2ProceduresChangesetsPlanForbidden  %+v", 403, o.Payload)
 }
-
-func (o *PostAPIV2ProceduresChangesetsPlanForbidden) String() string {
-	return fmt.Sprintf("[POST /api/v2/procedures/changesets/plan][%d] postApiV2ProceduresChangesetsPlanForbidden  %+v", 403, o.Payload)
-}
-
 func (o *PostAPIV2ProceduresChangesetsPlanForbidden) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -329,8 +205,7 @@ func NewPostAPIV2ProceduresChangesetsPlanNotFound() *PostAPIV2ProceduresChangese
 	return &PostAPIV2ProceduresChangesetsPlanNotFound{}
 }
 
-/*
-PostAPIV2ProceduresChangesetsPlanNotFound describes a response with status code 404, with default header values.
+/* PostAPIV2ProceduresChangesetsPlanNotFound describes a response with status code 404, with default header values.
 
 Not Found
 */
@@ -338,39 +213,9 @@ type PostAPIV2ProceduresChangesetsPlanNotFound struct {
 	Payload *models.ErrorsErrorResponse
 }
 
-// IsSuccess returns true when this post Api v2 procedures changesets plan not found response has a 2xx status code
-func (o *PostAPIV2ProceduresChangesetsPlanNotFound) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this post Api v2 procedures changesets plan not found response has a 3xx status code
-func (o *PostAPIV2ProceduresChangesetsPlanNotFound) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this post Api v2 procedures changesets plan not found response has a 4xx status code
-func (o *PostAPIV2ProceduresChangesetsPlanNotFound) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this post Api v2 procedures changesets plan not found response has a 5xx status code
-func (o *PostAPIV2ProceduresChangesetsPlanNotFound) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this post Api v2 procedures changesets plan not found response a status code equal to that given
-func (o *PostAPIV2ProceduresChangesetsPlanNotFound) IsCode(code int) bool {
-	return code == 404
-}
-
 func (o *PostAPIV2ProceduresChangesetsPlanNotFound) Error() string {
 	return fmt.Sprintf("[POST /api/v2/procedures/changesets/plan][%d] postApiV2ProceduresChangesetsPlanNotFound  %+v", 404, o.Payload)
 }
-
-func (o *PostAPIV2ProceduresChangesetsPlanNotFound) String() string {
-	return fmt.Sprintf("[POST /api/v2/procedures/changesets/plan][%d] postApiV2ProceduresChangesetsPlanNotFound  %+v", 404, o.Payload)
-}
-
 func (o *PostAPIV2ProceduresChangesetsPlanNotFound) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -392,8 +237,7 @@ func NewPostAPIV2ProceduresChangesetsPlanProxyAuthenticationRequired() *PostAPIV
 	return &PostAPIV2ProceduresChangesetsPlanProxyAuthenticationRequired{}
 }
 
-/*
-PostAPIV2ProceduresChangesetsPlanProxyAuthenticationRequired describes a response with status code 407, with default header values.
+/* PostAPIV2ProceduresChangesetsPlanProxyAuthenticationRequired describes a response with status code 407, with default header values.
 
 Proxy Authentication Required
 */
@@ -401,39 +245,9 @@ type PostAPIV2ProceduresChangesetsPlanProxyAuthenticationRequired struct {
 	Payload *models.ErrorsErrorResponse
 }
 
-// IsSuccess returns true when this post Api v2 procedures changesets plan proxy authentication required response has a 2xx status code
-func (o *PostAPIV2ProceduresChangesetsPlanProxyAuthenticationRequired) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this post Api v2 procedures changesets plan proxy authentication required response has a 3xx status code
-func (o *PostAPIV2ProceduresChangesetsPlanProxyAuthenticationRequired) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this post Api v2 procedures changesets plan proxy authentication required response has a 4xx status code
-func (o *PostAPIV2ProceduresChangesetsPlanProxyAuthenticationRequired) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this post Api v2 procedures changesets plan proxy authentication required response has a 5xx status code
-func (o *PostAPIV2ProceduresChangesetsPlanProxyAuthenticationRequired) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this post Api v2 procedures changesets plan proxy authentication required response a status code equal to that given
-func (o *PostAPIV2ProceduresChangesetsPlanProxyAuthenticationRequired) IsCode(code int) bool {
-	return code == 407
-}
-
 func (o *PostAPIV2ProceduresChangesetsPlanProxyAuthenticationRequired) Error() string {
 	return fmt.Sprintf("[POST /api/v2/procedures/changesets/plan][%d] postApiV2ProceduresChangesetsPlanProxyAuthenticationRequired  %+v", 407, o.Payload)
 }
-
-func (o *PostAPIV2ProceduresChangesetsPlanProxyAuthenticationRequired) String() string {
-	return fmt.Sprintf("[POST /api/v2/procedures/changesets/plan][%d] postApiV2ProceduresChangesetsPlanProxyAuthenticationRequired  %+v", 407, o.Payload)
-}
-
 func (o *PostAPIV2ProceduresChangesetsPlanProxyAuthenticationRequired) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -455,8 +269,7 @@ func NewPostAPIV2ProceduresChangesetsPlanConflict() *PostAPIV2ProceduresChangese
 	return &PostAPIV2ProceduresChangesetsPlanConflict{}
 }
 
-/*
-PostAPIV2ProceduresChangesetsPlanConflict describes a response with status code 409, with default header values.
+/* PostAPIV2ProceduresChangesetsPlanConflict describes a response with status code 409, with default header values.
 
 Conflict
 */
@@ -464,39 +277,9 @@ type PostAPIV2ProceduresChangesetsPlanConflict struct {
 	Payload *models.ErrorsErrorResponse
 }
 
-// IsSuccess returns true when this post Api v2 procedures changesets plan conflict response has a 2xx status code
-func (o *PostAPIV2ProceduresChangesetsPlanConflict) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this post Api v2 procedures changesets plan conflict response has a 3xx status code
-func (o *PostAPIV2ProceduresChangesetsPlanConflict) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this post Api v2 procedures changesets plan conflict response has a 4xx status code
-func (o *PostAPIV2ProceduresChangesetsPlanConflict) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this post Api v2 procedures changesets plan conflict response has a 5xx status code
-func (o *PostAPIV2ProceduresChangesetsPlanConflict) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this post Api v2 procedures changesets plan conflict response a status code equal to that given
-func (o *PostAPIV2ProceduresChangesetsPlanConflict) IsCode(code int) bool {
-	return code == 409
-}
-
 func (o *PostAPIV2ProceduresChangesetsPlanConflict) Error() string {
 	return fmt.Sprintf("[POST /api/v2/procedures/changesets/plan][%d] postApiV2ProceduresChangesetsPlanConflict  %+v", 409, o.Payload)
 }
-
-func (o *PostAPIV2ProceduresChangesetsPlanConflict) String() string {
-	return fmt.Sprintf("[POST /api/v2/procedures/changesets/plan][%d] postApiV2ProceduresChangesetsPlanConflict  %+v", 409, o.Payload)
-}
-
 func (o *PostAPIV2ProceduresChangesetsPlanConflict) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }
@@ -518,8 +301,7 @@ func NewPostAPIV2ProceduresChangesetsPlanInternalServerError() *PostAPIV2Procedu
 	return &PostAPIV2ProceduresChangesetsPlanInternalServerError{}
 }
 
-/*
-PostAPIV2ProceduresChangesetsPlanInternalServerError describes a response with status code 500, with default header values.
+/* PostAPIV2ProceduresChangesetsPlanInternalServerError describes a response with status code 500, with default header values.
 
 Internal Server Error
 */
@@ -527,39 +309,9 @@ type PostAPIV2ProceduresChangesetsPlanInternalServerError struct {
 	Payload *models.ErrorsErrorResponse
 }
 
-// IsSuccess returns true when this post Api v2 procedures changesets plan internal server error response has a 2xx status code
-func (o *PostAPIV2ProceduresChangesetsPlanInternalServerError) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this post Api v2 procedures changesets plan internal server error response has a 3xx status code
-func (o *PostAPIV2ProceduresChangesetsPlanInternalServerError) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this post Api v2 procedures changesets plan internal server error response has a 4xx status code
-func (o *PostAPIV2ProceduresChangesetsPlanInternalServerError) IsClientError() bool {
-	return false
-}
-
-// IsServerError returns true when this post Api v2 procedures changesets plan internal server error response has a 5xx status code
-func (o *PostAPIV2ProceduresChangesetsPlanInternalServerError) IsServerError() bool {
-	return true
-}
-
-// IsCode returns true when this post Api v2 procedures changesets plan internal server error response a status code equal to that given
-func (o *PostAPIV2ProceduresChangesetsPlanInternalServerError) IsCode(code int) bool {
-	return code == 500
-}
-
 func (o *PostAPIV2ProceduresChangesetsPlanInternalServerError) Error() string {
 	return fmt.Sprintf("[POST /api/v2/procedures/changesets/plan][%d] postApiV2ProceduresChangesetsPlanInternalServerError  %+v", 500, o.Payload)
 }
-
-func (o *PostAPIV2ProceduresChangesetsPlanInternalServerError) String() string {
-	return fmt.Sprintf("[POST /api/v2/procedures/changesets/plan][%d] postApiV2ProceduresChangesetsPlanInternalServerError  %+v", 500, o.Payload)
-}
-
 func (o *PostAPIV2ProceduresChangesetsPlanInternalServerError) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
 }

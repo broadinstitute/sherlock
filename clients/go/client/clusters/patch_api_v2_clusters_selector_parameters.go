@@ -54,12 +54,10 @@ func NewPatchAPIV2ClustersSelectorParamsWithHTTPClient(client *http.Client) *Pat
 	}
 }
 
-/*
-PatchAPIV2ClustersSelectorParams contains all the parameters to send to the API endpoint
+/* PatchAPIV2ClustersSelectorParams contains all the parameters to send to the API endpoint
+   for the patch API v2 clusters selector operation.
 
-	for the patch API v2 clusters selector operation.
-
-	Typically these are written to a http.Request.
+   Typically these are written to a http.Request.
 */
 type PatchAPIV2ClustersSelectorParams struct {
 

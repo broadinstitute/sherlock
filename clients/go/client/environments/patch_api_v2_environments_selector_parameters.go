@@ -54,12 +54,10 @@ func NewPatchAPIV2EnvironmentsSelectorParamsWithHTTPClient(client *http.Client) 
 	}
 }
 
-/*
-PatchAPIV2EnvironmentsSelectorParams contains all the parameters to send to the API endpoint
+/* PatchAPIV2EnvironmentsSelectorParams contains all the parameters to send to the API endpoint
+   for the patch API v2 environments selector operation.
 
-	for the patch API v2 environments selector operation.
-
-	Typically these are written to a http.Request.
+   Typically these are written to a http.Request.
 */
 type PatchAPIV2EnvironmentsSelectorParams struct {
 

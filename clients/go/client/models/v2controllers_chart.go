@@ -8,10 +8,8 @@ package models
 import (
 	"context"
 
-	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
-	"github.com/go-openapi/validate"
 )
 
 // V2controllersChart v2controllers chart
@@ -32,8 +30,7 @@ type V2controllersChart struct {
 	ChartRepo *string `json:"chartRepo,omitempty"`
 
 	// created at
-	// Format: date-time
-	CreatedAt strfmt.DateTime `json:"createdAt,omitempty"`
+	CreatedAt string `json:"createdAt,omitempty"`
 
 	// default port
 	DefaultPort *int64 `json:"defaultPort,omitempty"`
@@ -54,49 +51,11 @@ type V2controllersChart struct {
 	Name string `json:"name,omitempty"`
 
 	// updated at
-	// Format: date-time
-	UpdatedAt strfmt.DateTime `json:"updatedAt,omitempty"`
+	UpdatedAt string `json:"updatedAt,omitempty"`
 }
 
 // Validate validates this v2controllers chart
 func (m *V2controllersChart) Validate(formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.validateCreatedAt(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateUpdatedAt(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *V2controllersChart) validateCreatedAt(formats strfmt.Registry) error {
-	if swag.IsZero(m.CreatedAt) { // not required
-		return nil
-	}
-
-	if err := validate.FormatOf("createdAt", "body", "date-time", m.CreatedAt.String(), formats); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *V2controllersChart) validateUpdatedAt(formats strfmt.Registry) error {
-	if swag.IsZero(m.UpdatedAt) { // not required
-		return nil
-	}
-
-	if err := validate.FormatOf("updatedAt", "body", "date-time", m.UpdatedAt.String(), formats); err != nil {
-		return err
-	}
-
 	return nil
 }
 

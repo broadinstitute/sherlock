@@ -53,12 +53,10 @@ func NewGetAPIV2ChartReleasesParamsWithHTTPClient(client *http.Client) *GetAPIV2
 	}
 }
 
-/*
-GetAPIV2ChartReleasesParams contains all the parameters to send to the API endpoint
+/* GetAPIV2ChartReleasesParams contains all the parameters to send to the API endpoint
+   for the get API v2 chart releases operation.
 
-	for the get API v2 chart releases operation.
-
-	Typically these are written to a http.Request.
+   Typically these are written to a http.Request.
 */
 type GetAPIV2ChartReleasesParams struct {
 
@@ -114,9 +112,7 @@ type GetAPIV2ChartReleasesParams struct {
 	Cluster *string
 
 	// CreatedAt.
-	//
-	// Format: date-time
-	CreatedAt *strfmt.DateTime
+	CreatedAt *string
 
 	/* DestinationType.
 
@@ -178,9 +174,7 @@ type GetAPIV2ChartReleasesParams struct {
 	Subdomain *string
 
 	// UpdatedAt.
-	//
-	// Format: date-time
-	UpdatedAt *strfmt.DateTime
+	UpdatedAt *string
 
 	timeout    time.Duration
 	Context    context.Context
@@ -379,13 +373,13 @@ func (o *GetAPIV2ChartReleasesParams) SetCluster(cluster *string) {
 }
 
 // WithCreatedAt adds the createdAt to the get API v2 chart releases params
-func (o *GetAPIV2ChartReleasesParams) WithCreatedAt(createdAt *strfmt.DateTime) *GetAPIV2ChartReleasesParams {
+func (o *GetAPIV2ChartReleasesParams) WithCreatedAt(createdAt *string) *GetAPIV2ChartReleasesParams {
 	o.SetCreatedAt(createdAt)
 	return o
 }
 
 // SetCreatedAt adds the createdAt to the get API v2 chart releases params
-func (o *GetAPIV2ChartReleasesParams) SetCreatedAt(createdAt *strfmt.DateTime) {
+func (o *GetAPIV2ChartReleasesParams) SetCreatedAt(createdAt *string) {
 	o.CreatedAt = createdAt
 }
 
@@ -511,13 +505,13 @@ func (o *GetAPIV2ChartReleasesParams) SetSubdomain(subdomain *string) {
 }
 
 // WithUpdatedAt adds the updatedAt to the get API v2 chart releases params
-func (o *GetAPIV2ChartReleasesParams) WithUpdatedAt(updatedAt *strfmt.DateTime) *GetAPIV2ChartReleasesParams {
+func (o *GetAPIV2ChartReleasesParams) WithUpdatedAt(updatedAt *string) *GetAPIV2ChartReleasesParams {
 	o.SetUpdatedAt(updatedAt)
 	return o
 }
 
 // SetUpdatedAt adds the updatedAt to the get API v2 chart releases params
-func (o *GetAPIV2ChartReleasesParams) SetUpdatedAt(updatedAt *strfmt.DateTime) {
+func (o *GetAPIV2ChartReleasesParams) SetUpdatedAt(updatedAt *string) {
 	o.UpdatedAt = updatedAt
 }
 
@@ -736,12 +730,12 @@ func (o *GetAPIV2ChartReleasesParams) WriteToRequest(r runtime.ClientRequest, re
 	if o.CreatedAt != nil {
 
 		// query param createdAt
-		var qrCreatedAt strfmt.DateTime
+		var qrCreatedAt string
 
 		if o.CreatedAt != nil {
 			qrCreatedAt = *o.CreatedAt
 		}
-		qCreatedAt := qrCreatedAt.String()
+		qCreatedAt := qrCreatedAt
 		if qCreatedAt != "" {
 
 			if err := r.SetQueryParam("createdAt", qCreatedAt); err != nil {
@@ -940,12 +934,12 @@ func (o *GetAPIV2ChartReleasesParams) WriteToRequest(r runtime.ClientRequest, re
 	if o.UpdatedAt != nil {
 
 		// query param updatedAt
-		var qrUpdatedAt strfmt.DateTime
+		var qrUpdatedAt string
 
 		if o.UpdatedAt != nil {
 			qrUpdatedAt = *o.UpdatedAt
 		}
-		qUpdatedAt := qrUpdatedAt.String()
+		qUpdatedAt := qrUpdatedAt
 		if qUpdatedAt != "" {
 
 			if err := r.SetQueryParam("updatedAt", qUpdatedAt); err != nil {

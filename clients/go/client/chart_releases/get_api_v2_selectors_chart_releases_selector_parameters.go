@@ -52,12 +52,10 @@ func NewGetAPIV2SelectorsChartReleasesSelectorParamsWithHTTPClient(client *http.
 	}
 }
 
-/*
-GetAPIV2SelectorsChartReleasesSelectorParams contains all the parameters to send to the API endpoint
+/* GetAPIV2SelectorsChartReleasesSelectorParams contains all the parameters to send to the API endpoint
+   for the get API v2 selectors chart releases selector operation.
 
-	for the get API v2 selectors chart releases selector operation.
-
-	Typically these are written to a http.Request.
+   Typically these are written to a http.Request.
 */
 type GetAPIV2SelectorsChartReleasesSelectorParams struct {
 

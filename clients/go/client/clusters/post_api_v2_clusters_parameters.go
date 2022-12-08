@@ -54,12 +54,10 @@ func NewPostAPIV2ClustersParamsWithHTTPClient(client *http.Client) *PostAPIV2Clu
 	}
 }
 
-/*
-PostAPIV2ClustersParams contains all the parameters to send to the API endpoint
+/* PostAPIV2ClustersParams contains all the parameters to send to the API endpoint
+   for the post API v2 clusters operation.
 
-	for the post API v2 clusters operation.
-
-	Typically these are written to a http.Request.
+   Typically these are written to a http.Request.
 */
 type PostAPIV2ClustersParams struct {
 

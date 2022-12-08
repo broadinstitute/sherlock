@@ -54,12 +54,10 @@ func NewPostAPIV2AppVersionsParamsWithHTTPClient(client *http.Client) *PostAPIV2
 	}
 }
 
-/*
-PostAPIV2AppVersionsParams contains all the parameters to send to the API endpoint
+/* PostAPIV2AppVersionsParams contains all the parameters to send to the API endpoint
+   for the post API v2 app versions operation.
 
-	for the post API v2 app versions operation.
-
-	Typically these are written to a http.Request.
+   Typically these are written to a http.Request.
 */
 type PostAPIV2AppVersionsParams struct {
 

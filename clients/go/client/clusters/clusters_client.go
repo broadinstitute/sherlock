@@ -46,9 +46,9 @@ type ClientService interface {
 }
 
 /*
-DeleteAPIV2ClustersSelector deletes a cluster entry
+  DeleteAPIV2ClustersSelector deletes a cluster entry
 
-Delete an existing Cluster entry via one of its "selectors": name or numeric ID.
+  Delete an existing Cluster entry via one of its "selectors": name or numeric ID.
 */
 func (a *Client) DeleteAPIV2ClustersSelector(params *DeleteAPIV2ClustersSelectorParams, opts ...ClientOption) (*DeleteAPIV2ClustersSelectorOK, error) {
 	// TODO: Validate the params before sending
@@ -86,9 +86,9 @@ func (a *Client) DeleteAPIV2ClustersSelector(params *DeleteAPIV2ClustersSelector
 }
 
 /*
-GetAPIV2Clusters lists cluster entries
+  GetAPIV2Clusters lists cluster entries
 
-List existing Cluster entries, ordered by most recently updated.
+  List existing Cluster entries, ordered by most recently updated.
 */
 func (a *Client) GetAPIV2Clusters(params *GetAPIV2ClustersParams, opts ...ClientOption) (*GetAPIV2ClustersOK, error) {
 	// TODO: Validate the params before sending
@@ -126,9 +126,9 @@ func (a *Client) GetAPIV2Clusters(params *GetAPIV2ClustersParams, opts ...Client
 }
 
 /*
-GetAPIV2ClustersSelector gets a cluster entry
+  GetAPIV2ClustersSelector gets a cluster entry
 
-Get an existing Cluster entry via one of its "selectors": name or numeric ID.
+  Get an existing Cluster entry via one of its "selectors": name or numeric ID.
 */
 func (a *Client) GetAPIV2ClustersSelector(params *GetAPIV2ClustersSelectorParams, opts ...ClientOption) (*GetAPIV2ClustersSelectorOK, error) {
 	// TODO: Validate the params before sending
@@ -166,9 +166,9 @@ func (a *Client) GetAPIV2ClustersSelector(params *GetAPIV2ClustersSelectorParams
 }
 
 /*
-GetAPIV2SelectorsClustersSelector lists cluster selectors
+  GetAPIV2SelectorsClustersSelector lists cluster selectors
 
-Validate a given Cluster selector and provide any other selectors that would match the same Cluster.
+  Validate a given Cluster selector and provide any other selectors that would match the same Cluster.
 */
 func (a *Client) GetAPIV2SelectorsClustersSelector(params *GetAPIV2SelectorsClustersSelectorParams, opts ...ClientOption) (*GetAPIV2SelectorsClustersSelectorOK, error) {
 	// TODO: Validate the params before sending
@@ -206,9 +206,9 @@ func (a *Client) GetAPIV2SelectorsClustersSelector(params *GetAPIV2SelectorsClus
 }
 
 /*
-PatchAPIV2ClustersSelector edits a cluster entry
+  PatchAPIV2ClustersSelector edits a cluster entry
 
-Edit an existing Cluster entry via one of its "selectors": name or numeric ID. Note that only mutable fields are available here, immutable fields can only be set using /create.
+  Edit an existing Cluster entry via one of its "selectors": name or numeric ID. Note that only mutable fields are available here, immutable fields can only be set using /create.
 */
 func (a *Client) PatchAPIV2ClustersSelector(params *PatchAPIV2ClustersSelectorParams, opts ...ClientOption) (*PatchAPIV2ClustersSelectorOK, error) {
 	// TODO: Validate the params before sending
@@ -246,9 +246,9 @@ func (a *Client) PatchAPIV2ClustersSelector(params *PatchAPIV2ClustersSelectorPa
 }
 
 /*
-PostAPIV2Clusters creates a new cluster entry
+  PostAPIV2Clusters creates a new cluster entry
 
-Create a new Cluster entry. Note that some fields are immutable after creation; /edit lists mutable fields.
+  Create a new Cluster entry. Note that some fields are immutable after creation; /edit lists mutable fields.
 */
 func (a *Client) PostAPIV2Clusters(params *PostAPIV2ClustersParams, opts ...ClientOption) (*PostAPIV2ClustersOK, *PostAPIV2ClustersCreated, error) {
 	// TODO: Validate the params before sending

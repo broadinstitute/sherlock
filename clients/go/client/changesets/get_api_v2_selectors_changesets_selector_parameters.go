@@ -52,12 +52,10 @@ func NewGetAPIV2SelectorsChangesetsSelectorParamsWithHTTPClient(client *http.Cli
 	}
 }
 
-/*
-GetAPIV2SelectorsChangesetsSelectorParams contains all the parameters to send to the API endpoint
+/* GetAPIV2SelectorsChangesetsSelectorParams contains all the parameters to send to the API endpoint
+   for the get API v2 selectors changesets selector operation.
 
-	for the get API v2 selectors changesets selector operation.
-
-	Typically these are written to a http.Request.
+   Typically these are written to a http.Request.
 */
 type GetAPIV2SelectorsChangesetsSelectorParams struct {
 

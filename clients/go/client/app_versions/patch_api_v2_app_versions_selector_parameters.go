@@ -54,12 +54,10 @@ func NewPatchAPIV2AppVersionsSelectorParamsWithHTTPClient(client *http.Client) *
 	}
 }
 
-/*
-PatchAPIV2AppVersionsSelectorParams contains all the parameters to send to the API endpoint
+/* PatchAPIV2AppVersionsSelectorParams contains all the parameters to send to the API endpoint
+   for the patch API v2 app versions selector operation.
 
-	for the patch API v2 app versions selector operation.
-
-	Typically these are written to a http.Request.
+   Typically these are written to a http.Request.
 */
 type PatchAPIV2AppVersionsSelectorParams struct {
 
