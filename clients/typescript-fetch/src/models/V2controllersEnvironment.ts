@@ -19,6 +19,12 @@ import {
     V2controllersClusterFromJSONTyped,
     V2controllersClusterToJSON,
 } from './V2controllersCluster';
+import type { V2controllersCreatableEnvironmentAutoDelete } from './V2controllersCreatableEnvironmentAutoDelete';
+import {
+    V2controllersCreatableEnvironmentAutoDeleteFromJSON,
+    V2controllersCreatableEnvironmentAutoDeleteFromJSONTyped,
+    V2controllersCreatableEnvironmentAutoDeleteToJSON,
+} from './V2controllersCreatableEnvironmentAutoDelete';
 
 /**
  * 
@@ -26,6 +32,12 @@ import {
  * @interface V2controllersEnvironment
  */
 export interface V2controllersEnvironment {
+    /**
+     * 
+     * @type {V2controllersCreatableEnvironmentAutoDelete}
+     * @memberof V2controllersEnvironment
+     */
+    autoDelete?: V2controllersCreatableEnvironmentAutoDelete;
     /**
      * Required when creating
      * @type {string}
@@ -46,10 +58,10 @@ export interface V2controllersEnvironment {
     chartReleasesFromTemplate?: boolean;
     /**
      * 
-     * @type {string}
+     * @type {Date}
      * @memberof V2controllersEnvironment
      */
-    createdAt?: string;
+    createdAt?: Date;
     /**
      * 
      * @type {string}
@@ -117,6 +129,12 @@ export interface V2controllersEnvironment {
      */
     owner?: string;
     /**
+     * Used to protect specific BEEs from deletion (thelma checks this field)
+     * @type {boolean}
+     * @memberof V2controllersEnvironment
+     */
+    preventDeletion?: boolean;
+    /**
      * 
      * @type {boolean}
      * @memberof V2controllersEnvironment
@@ -142,10 +160,10 @@ export interface V2controllersEnvironment {
     uniqueResourcePrefix?: string;
     /**
      * 
-     * @type {string}
+     * @type {Date}
      * @memberof V2controllersEnvironment
      */
-    updatedAt?: string;
+    updatedAt?: Date;
     /**
      * 
      * @type {string}
@@ -173,10 +191,11 @@ export function V2controllersEnvironmentFromJSONTyped(json: any, ignoreDiscrimin
     }
     return {
         
+        'autoDelete': !exists(json, 'autoDelete') ? undefined : V2controllersCreatableEnvironmentAutoDeleteFromJSON(json['autoDelete']),
         'base': !exists(json, 'base') ? undefined : json['base'],
         'baseDomain': !exists(json, 'baseDomain') ? undefined : json['baseDomain'],
         'chartReleasesFromTemplate': !exists(json, 'chartReleasesFromTemplate') ? undefined : json['chartReleasesFromTemplate'],
-        'createdAt': !exists(json, 'createdAt') ? undefined : json['createdAt'],
+        'createdAt': !exists(json, 'createdAt') ? undefined : (new Date(json['createdAt'])),
         'defaultCluster': !exists(json, 'defaultCluster') ? undefined : json['defaultCluster'],
         'defaultClusterInfo': !exists(json, 'defaultClusterInfo') ? undefined : V2controllersClusterFromJSON(json['defaultClusterInfo']),
         'defaultFirecloudDevelopRef': !exists(json, 'defaultFirecloudDevelopRef') ? undefined : json['defaultFirecloudDevelopRef'],
@@ -188,11 +207,12 @@ export function V2controllersEnvironmentFromJSONTyped(json: any, ignoreDiscrimin
         'namePrefix': !exists(json, 'namePrefix') ? undefined : json['namePrefix'],
         'namePrefixesDomain': !exists(json, 'namePrefixesDomain') ? undefined : json['namePrefixesDomain'],
         'owner': !exists(json, 'owner') ? undefined : json['owner'],
+        'preventDeletion': !exists(json, 'preventDeletion') ? undefined : json['preventDeletion'],
         'requiresSuitability': !exists(json, 'requiresSuitability') ? undefined : json['requiresSuitability'],
         'templateEnvironment': !exists(json, 'templateEnvironment') ? undefined : json['templateEnvironment'],
         'templateEnvironmentInfo': !exists(json, 'templateEnvironmentInfo') ? undefined : json['templateEnvironmentInfo'],
         'uniqueResourcePrefix': !exists(json, 'uniqueResourcePrefix') ? undefined : json['uniqueResourcePrefix'],
-        'updatedAt': !exists(json, 'updatedAt') ? undefined : json['updatedAt'],
+        'updatedAt': !exists(json, 'updatedAt') ? undefined : (new Date(json['updatedAt'])),
         'valuesName': !exists(json, 'valuesName') ? undefined : json['valuesName'],
     };
 }
@@ -206,10 +226,11 @@ export function V2controllersEnvironmentToJSON(value?: V2controllersEnvironment 
     }
     return {
         
+        'autoDelete': V2controllersCreatableEnvironmentAutoDeleteToJSON(value.autoDelete),
         'base': value.base,
         'baseDomain': value.baseDomain,
         'chartReleasesFromTemplate': value.chartReleasesFromTemplate,
-        'createdAt': value.createdAt,
+        'createdAt': value.createdAt === undefined ? undefined : (value.createdAt.toISOString()),
         'defaultCluster': value.defaultCluster,
         'defaultClusterInfo': V2controllersClusterToJSON(value.defaultClusterInfo),
         'defaultFirecloudDevelopRef': value.defaultFirecloudDevelopRef,
@@ -221,11 +242,12 @@ export function V2controllersEnvironmentToJSON(value?: V2controllersEnvironment 
         'namePrefix': value.namePrefix,
         'namePrefixesDomain': value.namePrefixesDomain,
         'owner': value.owner,
+        'preventDeletion': value.preventDeletion,
         'requiresSuitability': value.requiresSuitability,
         'templateEnvironment': value.templateEnvironment,
         'templateEnvironmentInfo': value.templateEnvironmentInfo,
         'uniqueResourcePrefix': value.uniqueResourcePrefix,
-        'updatedAt': value.updatedAt,
+        'updatedAt': value.updatedAt === undefined ? undefined : (value.updatedAt.toISOString()),
         'valuesName': value.valuesName,
     };
 }

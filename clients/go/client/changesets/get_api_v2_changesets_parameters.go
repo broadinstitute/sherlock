@@ -67,7 +67,9 @@ type GetAPIV2ChangesetsParams struct {
 	ChartRelease *string
 
 	// CreatedAt.
-	CreatedAt *string
+	//
+	// Format: date-time
+	CreatedAt *strfmt.DateTime
 
 	// FromAppVersionBranch.
 	FromAppVersionBranch *string
@@ -160,7 +162,9 @@ type GetAPIV2ChangesetsParams struct {
 	ToResolvedAt *string
 
 	// UpdatedAt.
-	UpdatedAt *string
+	//
+	// Format: date-time
+	UpdatedAt *strfmt.DateTime
 
 	timeout    time.Duration
 	Context    context.Context
@@ -238,13 +242,13 @@ func (o *GetAPIV2ChangesetsParams) SetChartRelease(chartRelease *string) {
 }
 
 // WithCreatedAt adds the createdAt to the get API v2 changesets params
-func (o *GetAPIV2ChangesetsParams) WithCreatedAt(createdAt *string) *GetAPIV2ChangesetsParams {
+func (o *GetAPIV2ChangesetsParams) WithCreatedAt(createdAt *strfmt.DateTime) *GetAPIV2ChangesetsParams {
 	o.SetCreatedAt(createdAt)
 	return o
 }
 
 // SetCreatedAt adds the createdAt to the get API v2 changesets params
-func (o *GetAPIV2ChangesetsParams) SetCreatedAt(createdAt *string) {
+func (o *GetAPIV2ChangesetsParams) SetCreatedAt(createdAt *strfmt.DateTime) {
 	o.CreatedAt = createdAt
 }
 
@@ -568,13 +572,13 @@ func (o *GetAPIV2ChangesetsParams) SetToResolvedAt(toResolvedAt *string) {
 }
 
 // WithUpdatedAt adds the updatedAt to the get API v2 changesets params
-func (o *GetAPIV2ChangesetsParams) WithUpdatedAt(updatedAt *string) *GetAPIV2ChangesetsParams {
+func (o *GetAPIV2ChangesetsParams) WithUpdatedAt(updatedAt *strfmt.DateTime) *GetAPIV2ChangesetsParams {
 	o.SetUpdatedAt(updatedAt)
 	return o
 }
 
 // SetUpdatedAt adds the updatedAt to the get API v2 changesets params
-func (o *GetAPIV2ChangesetsParams) SetUpdatedAt(updatedAt *string) {
+func (o *GetAPIV2ChangesetsParams) SetUpdatedAt(updatedAt *strfmt.DateTime) {
 	o.UpdatedAt = updatedAt
 }
 
@@ -623,12 +627,12 @@ func (o *GetAPIV2ChangesetsParams) WriteToRequest(r runtime.ClientRequest, reg s
 	if o.CreatedAt != nil {
 
 		// query param createdAt
-		var qrCreatedAt string
+		var qrCreatedAt strfmt.DateTime
 
 		if o.CreatedAt != nil {
 			qrCreatedAt = *o.CreatedAt
 		}
-		qCreatedAt := qrCreatedAt
+		qCreatedAt := qrCreatedAt.String()
 		if qCreatedAt != "" {
 
 			if err := r.SetQueryParam("createdAt", qCreatedAt); err != nil {
@@ -1133,12 +1137,12 @@ func (o *GetAPIV2ChangesetsParams) WriteToRequest(r runtime.ClientRequest, reg s
 	if o.UpdatedAt != nil {
 
 		// query param updatedAt
-		var qrUpdatedAt string
+		var qrUpdatedAt strfmt.DateTime
 
 		if o.UpdatedAt != nil {
 			qrUpdatedAt = *o.UpdatedAt
 		}
-		qUpdatedAt := qrUpdatedAt
+		qUpdatedAt := qrUpdatedAt.String()
 		if qUpdatedAt != "" {
 
 			if err := r.SetQueryParam("updatedAt", qUpdatedAt); err != nil {

@@ -34,7 +34,7 @@ import {
 export interface ApiV2ChangesetsGetRequest {
     appliedAt?: string;
     chartRelease?: string;
-    createdAt?: string;
+    createdAt?: Date;
     fromAppVersionBranch?: string;
     fromAppVersionCommit?: string;
     fromAppVersionExact?: string;
@@ -63,7 +63,7 @@ export interface ApiV2ChangesetsGetRequest {
     toFirecloudDevelopRef?: string;
     toHelmfileRef?: string;
     toResolvedAt?: string;
-    updatedAt?: string;
+    updatedAt?: Date;
     limit?: number;
 }
 
@@ -112,7 +112,7 @@ export class ChangesetsApi extends runtime.BaseAPI {
         }
 
         if (requestParameters.createdAt !== undefined) {
-            queryParameters['createdAt'] = requestParameters.createdAt;
+            queryParameters['createdAt'] = (requestParameters.createdAt as any).toISOString();
         }
 
         if (requestParameters.fromAppVersionBranch !== undefined) {
@@ -228,7 +228,7 @@ export class ChangesetsApi extends runtime.BaseAPI {
         }
 
         if (requestParameters.updatedAt !== undefined) {
-            queryParameters['updatedAt'] = requestParameters.updatedAt;
+            queryParameters['updatedAt'] = (requestParameters.updatedAt as any).toISOString();
         }
 
         if (requestParameters.limit !== undefined) {

@@ -13,12 +13,25 @@
  */
 
 import { exists, mapValues } from '../runtime';
+import type { V2controllersCreatableEnvironmentAutoDelete } from './V2controllersCreatableEnvironmentAutoDelete';
+import {
+    V2controllersCreatableEnvironmentAutoDeleteFromJSON,
+    V2controllersCreatableEnvironmentAutoDeleteFromJSONTyped,
+    V2controllersCreatableEnvironmentAutoDeleteToJSON,
+} from './V2controllersCreatableEnvironmentAutoDelete';
+
 /**
  * 
  * @export
  * @interface V2controllersEditableEnvironment
  */
 export interface V2controllersEditableEnvironment {
+    /**
+     * 
+     * @type {V2controllersCreatableEnvironmentAutoDelete}
+     * @memberof V2controllersEditableEnvironment
+     */
+    autoDelete?: V2controllersCreatableEnvironmentAutoDelete;
     /**
      * 
      * @type {string}
@@ -56,6 +69,12 @@ export interface V2controllersEditableEnvironment {
      */
     owner?: string;
     /**
+     * Used to protect specific BEEs from deletion (thelma checks this field)
+     * @type {boolean}
+     * @memberof V2controllersEditableEnvironment
+     */
+    preventDeletion?: boolean;
+    /**
      * 
      * @type {boolean}
      * @memberof V2controllersEditableEnvironment
@@ -82,12 +101,14 @@ export function V2controllersEditableEnvironmentFromJSONTyped(json: any, ignoreD
     }
     return {
         
+        'autoDelete': !exists(json, 'autoDelete') ? undefined : V2controllersCreatableEnvironmentAutoDeleteFromJSON(json['autoDelete']),
         'baseDomain': !exists(json, 'baseDomain') ? undefined : json['baseDomain'],
         'defaultCluster': !exists(json, 'defaultCluster') ? undefined : json['defaultCluster'],
         'defaultFirecloudDevelopRef': !exists(json, 'defaultFirecloudDevelopRef') ? undefined : json['defaultFirecloudDevelopRef'],
         'helmfileRef': !exists(json, 'helmfileRef') ? undefined : json['helmfileRef'],
         'namePrefixesDomain': !exists(json, 'namePrefixesDomain') ? undefined : json['namePrefixesDomain'],
         'owner': !exists(json, 'owner') ? undefined : json['owner'],
+        'preventDeletion': !exists(json, 'preventDeletion') ? undefined : json['preventDeletion'],
         'requiresSuitability': !exists(json, 'requiresSuitability') ? undefined : json['requiresSuitability'],
     };
 }
@@ -101,12 +122,14 @@ export function V2controllersEditableEnvironmentToJSON(value?: V2controllersEdit
     }
     return {
         
+        'autoDelete': V2controllersCreatableEnvironmentAutoDeleteToJSON(value.autoDelete),
         'baseDomain': value.baseDomain,
         'defaultCluster': value.defaultCluster,
         'defaultFirecloudDevelopRef': value.defaultFirecloudDevelopRef,
         'helmfileRef': value.helmfileRef,
         'namePrefixesDomain': value.namePrefixesDomain,
         'owner': value.owner,
+        'preventDeletion': value.preventDeletion,
         'requiresSuitability': value.requiresSuitability,
     };
 }

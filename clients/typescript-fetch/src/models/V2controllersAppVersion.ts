@@ -46,10 +46,10 @@ export interface V2controllersAppVersion {
     chartInfo?: V2controllersChart;
     /**
      * 
-     * @type {string}
+     * @type {Date}
      * @memberof V2controllersAppVersion
      */
-    createdAt?: string;
+    createdAt?: Date;
     /**
      * Generally the Git commit message
      * @type {string}
@@ -88,10 +88,10 @@ export interface V2controllersAppVersion {
     parentAppVersionInfo?: object;
     /**
      * 
-     * @type {string}
+     * @type {Date}
      * @memberof V2controllersAppVersion
      */
-    updatedAt?: string;
+    updatedAt?: Date;
 }
 
 /**
@@ -116,14 +116,14 @@ export function V2controllersAppVersionFromJSONTyped(json: any, ignoreDiscrimina
         'appVersion': !exists(json, 'appVersion') ? undefined : json['appVersion'],
         'chart': !exists(json, 'chart') ? undefined : json['chart'],
         'chartInfo': !exists(json, 'chartInfo') ? undefined : V2controllersChartFromJSON(json['chartInfo']),
-        'createdAt': !exists(json, 'createdAt') ? undefined : json['createdAt'],
+        'createdAt': !exists(json, 'createdAt') ? undefined : (new Date(json['createdAt'])),
         'description': !exists(json, 'description') ? undefined : json['description'],
         'gitBranch': !exists(json, 'gitBranch') ? undefined : json['gitBranch'],
         'gitCommit': !exists(json, 'gitCommit') ? undefined : json['gitCommit'],
         'id': !exists(json, 'id') ? undefined : json['id'],
         'parentAppVersion': !exists(json, 'parentAppVersion') ? undefined : json['parentAppVersion'],
         'parentAppVersionInfo': !exists(json, 'parentAppVersionInfo') ? undefined : json['parentAppVersionInfo'],
-        'updatedAt': !exists(json, 'updatedAt') ? undefined : json['updatedAt'],
+        'updatedAt': !exists(json, 'updatedAt') ? undefined : (new Date(json['updatedAt'])),
     };
 }
 
@@ -139,14 +139,14 @@ export function V2controllersAppVersionToJSON(value?: V2controllersAppVersion | 
         'appVersion': value.appVersion,
         'chart': value.chart,
         'chartInfo': V2controllersChartToJSON(value.chartInfo),
-        'createdAt': value.createdAt,
+        'createdAt': value.createdAt === undefined ? undefined : (value.createdAt.toISOString()),
         'description': value.description,
         'gitBranch': value.gitBranch,
         'gitCommit': value.gitCommit,
         'id': value.id,
         'parentAppVersion': value.parentAppVersion,
         'parentAppVersionInfo': value.parentAppVersionInfo,
-        'updatedAt': value.updatedAt,
+        'updatedAt': value.updatedAt === undefined ? undefined : (value.updatedAt.toISOString()),
     };
 }
 

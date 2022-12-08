@@ -34,13 +34,13 @@ import {
 export interface ApiV2AppVersionsGetRequest {
     appVersion?: string;
     chart?: string;
-    createdAt?: string;
+    createdAt?: Date;
     description?: string;
     gitBranch?: string;
     gitCommit?: string;
     id?: number;
     parentAppVersion?: string;
-    updatedAt?: string;
+    updatedAt?: Date;
     limit?: number;
 }
 
@@ -82,7 +82,7 @@ export class AppVersionsApi extends runtime.BaseAPI {
         }
 
         if (requestParameters.createdAt !== undefined) {
-            queryParameters['createdAt'] = requestParameters.createdAt;
+            queryParameters['createdAt'] = (requestParameters.createdAt as any).toISOString();
         }
 
         if (requestParameters.description !== undefined) {
@@ -106,7 +106,7 @@ export class AppVersionsApi extends runtime.BaseAPI {
         }
 
         if (requestParameters.updatedAt !== undefined) {
-            queryParameters['updatedAt'] = requestParameters.updatedAt;
+            queryParameters['updatedAt'] = (requestParameters.updatedAt as any).toISOString();
         }
 
         if (requestParameters.limit !== undefined) {

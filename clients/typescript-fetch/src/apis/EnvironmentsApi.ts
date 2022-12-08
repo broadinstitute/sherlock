@@ -35,7 +35,7 @@ export interface ApiV2EnvironmentsGetRequest {
     base?: string;
     baseDomain?: string;
     chartReleasesFromTemplate?: boolean;
-    createdAt?: string;
+    createdAt?: Date;
     defaultCluster?: string;
     defaultFirecloudDevelopRef?: string;
     defaultNamespace?: string;
@@ -46,10 +46,11 @@ export interface ApiV2EnvironmentsGetRequest {
     namePrefix?: string;
     namePrefixesDomain?: boolean;
     owner?: string;
+    preventDeletion?: boolean;
     requiresSuitability?: boolean;
     templateEnvironment?: string;
     uniqueResourcePrefix?: string;
-    updatedAt?: string;
+    updatedAt?: Date;
     valuesName?: string;
     limit?: number;
 }
@@ -100,7 +101,7 @@ export class EnvironmentsApi extends runtime.BaseAPI {
         }
 
         if (requestParameters.createdAt !== undefined) {
-            queryParameters['createdAt'] = requestParameters.createdAt;
+            queryParameters['createdAt'] = (requestParameters.createdAt as any).toISOString();
         }
 
         if (requestParameters.defaultCluster !== undefined) {
@@ -143,6 +144,10 @@ export class EnvironmentsApi extends runtime.BaseAPI {
             queryParameters['owner'] = requestParameters.owner;
         }
 
+        if (requestParameters.preventDeletion !== undefined) {
+            queryParameters['preventDeletion'] = requestParameters.preventDeletion;
+        }
+
         if (requestParameters.requiresSuitability !== undefined) {
             queryParameters['requiresSuitability'] = requestParameters.requiresSuitability;
         }
@@ -156,7 +161,7 @@ export class EnvironmentsApi extends runtime.BaseAPI {
         }
 
         if (requestParameters.updatedAt !== undefined) {
-            queryParameters['updatedAt'] = requestParameters.updatedAt;
+            queryParameters['updatedAt'] = (requestParameters.updatedAt as any).toISOString();
         }
 
         if (requestParameters.valuesName !== undefined) {

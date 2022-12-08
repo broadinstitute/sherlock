@@ -30,7 +30,8 @@ type V2controllersCluster struct {
 	Base string `json:"base,omitempty"`
 
 	// created at
-	CreatedAt string `json:"createdAt,omitempty"`
+	// Format: date-time
+	CreatedAt strfmt.DateTime `json:"createdAt,omitempty"`
 
 	// Required when creating if provider is 'google'
 	GoogleProject string `json:"googleProject,omitempty"`
@@ -55,20 +56,41 @@ type V2controllersCluster struct {
 	RequiresSuitability *bool `json:"requiresSuitability,omitempty"`
 
 	// updated at
-	UpdatedAt string `json:"updatedAt,omitempty"`
+	// Format: date-time
+	UpdatedAt strfmt.DateTime `json:"updatedAt,omitempty"`
 }
 
 // Validate validates this v2controllers cluster
 func (m *V2controllersCluster) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateCreatedAt(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateProvider(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateUpdatedAt(formats); err != nil {
 		res = append(res, err)
 	}
 
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *V2controllersCluster) validateCreatedAt(formats strfmt.Registry) error {
+	if swag.IsZero(m.CreatedAt) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("createdAt", "body", "date-time", m.CreatedAt.String(), formats); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -108,6 +130,18 @@ func (m *V2controllersCluster) validateProvider(formats strfmt.Registry) error {
 
 	// value enum
 	if err := m.validateProviderEnum("provider", "body", *m.Provider); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *V2controllersCluster) validateUpdatedAt(formats strfmt.Registry) error {
+	if swag.IsZero(m.UpdatedAt) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("updatedAt", "body", "date-time", m.UpdatedAt.String(), formats); err != nil {
 		return err
 	}
 

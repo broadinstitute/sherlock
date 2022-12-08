@@ -39,10 +39,10 @@ export interface V2controllersCluster {
     base?: string;
     /**
      * 
-     * @type {string}
+     * @type {Date}
      * @memberof V2controllersCluster
      */
-    createdAt?: string;
+    createdAt?: Date;
     /**
      * Required when creating if provider is 'google'
      * @type {string}
@@ -87,10 +87,10 @@ export interface V2controllersCluster {
     requiresSuitability?: boolean;
     /**
      * 
-     * @type {string}
+     * @type {Date}
      * @memberof V2controllersCluster
      */
-    updatedAt?: string;
+    updatedAt?: Date;
 }
 
 
@@ -126,7 +126,7 @@ export function V2controllersClusterFromJSONTyped(json: any, ignoreDiscriminator
         'address': !exists(json, 'address') ? undefined : json['address'],
         'azureSubscription': !exists(json, 'azureSubscription') ? undefined : json['azureSubscription'],
         'base': !exists(json, 'base') ? undefined : json['base'],
-        'createdAt': !exists(json, 'createdAt') ? undefined : json['createdAt'],
+        'createdAt': !exists(json, 'createdAt') ? undefined : (new Date(json['createdAt'])),
         'googleProject': !exists(json, 'googleProject') ? undefined : json['googleProject'],
         'helmfileRef': !exists(json, 'helmfileRef') ? undefined : json['helmfileRef'],
         'id': !exists(json, 'id') ? undefined : json['id'],
@@ -134,7 +134,7 @@ export function V2controllersClusterFromJSONTyped(json: any, ignoreDiscriminator
         'name': !exists(json, 'name') ? undefined : json['name'],
         'provider': !exists(json, 'provider') ? undefined : json['provider'],
         'requiresSuitability': !exists(json, 'requiresSuitability') ? undefined : json['requiresSuitability'],
-        'updatedAt': !exists(json, 'updatedAt') ? undefined : json['updatedAt'],
+        'updatedAt': !exists(json, 'updatedAt') ? undefined : (new Date(json['updatedAt'])),
     };
 }
 
@@ -150,7 +150,7 @@ export function V2controllersClusterToJSON(value?: V2controllersCluster | null):
         'address': value.address,
         'azureSubscription': value.azureSubscription,
         'base': value.base,
-        'createdAt': value.createdAt,
+        'createdAt': value.createdAt === undefined ? undefined : (value.createdAt.toISOString()),
         'googleProject': value.googleProject,
         'helmfileRef': value.helmfileRef,
         'id': value.id,
@@ -158,7 +158,7 @@ export function V2controllersClusterToJSON(value?: V2controllersCluster | null):
         'name': value.name,
         'provider': value.provider,
         'requiresSuitability': value.requiresSuitability,
-        'updatedAt': value.updatedAt,
+        'updatedAt': value.updatedAt === undefined ? undefined : (value.updatedAt.toISOString()),
     };
 }
 

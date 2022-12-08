@@ -73,7 +73,9 @@ type GetAPIV2AppVersionsParams struct {
 	Chart *string
 
 	// CreatedAt.
-	CreatedAt *string
+	//
+	// Format: date-time
+	CreatedAt *strfmt.DateTime
 
 	/* Description.
 
@@ -100,7 +102,9 @@ type GetAPIV2AppVersionsParams struct {
 	ParentAppVersion *string
 
 	// UpdatedAt.
-	UpdatedAt *string
+	//
+	// Format: date-time
+	UpdatedAt *strfmt.DateTime
 
 	timeout    time.Duration
 	Context    context.Context
@@ -178,13 +182,13 @@ func (o *GetAPIV2AppVersionsParams) SetChart(chart *string) {
 }
 
 // WithCreatedAt adds the createdAt to the get API v2 app versions params
-func (o *GetAPIV2AppVersionsParams) WithCreatedAt(createdAt *string) *GetAPIV2AppVersionsParams {
+func (o *GetAPIV2AppVersionsParams) WithCreatedAt(createdAt *strfmt.DateTime) *GetAPIV2AppVersionsParams {
 	o.SetCreatedAt(createdAt)
 	return o
 }
 
 // SetCreatedAt adds the createdAt to the get API v2 app versions params
-func (o *GetAPIV2AppVersionsParams) SetCreatedAt(createdAt *string) {
+func (o *GetAPIV2AppVersionsParams) SetCreatedAt(createdAt *strfmt.DateTime) {
 	o.CreatedAt = createdAt
 }
 
@@ -255,13 +259,13 @@ func (o *GetAPIV2AppVersionsParams) SetParentAppVersion(parentAppVersion *string
 }
 
 // WithUpdatedAt adds the updatedAt to the get API v2 app versions params
-func (o *GetAPIV2AppVersionsParams) WithUpdatedAt(updatedAt *string) *GetAPIV2AppVersionsParams {
+func (o *GetAPIV2AppVersionsParams) WithUpdatedAt(updatedAt *strfmt.DateTime) *GetAPIV2AppVersionsParams {
 	o.SetUpdatedAt(updatedAt)
 	return o
 }
 
 // SetUpdatedAt adds the updatedAt to the get API v2 app versions params
-func (o *GetAPIV2AppVersionsParams) SetUpdatedAt(updatedAt *string) {
+func (o *GetAPIV2AppVersionsParams) SetUpdatedAt(updatedAt *strfmt.DateTime) {
 	o.UpdatedAt = updatedAt
 }
 
@@ -310,12 +314,12 @@ func (o *GetAPIV2AppVersionsParams) WriteToRequest(r runtime.ClientRequest, reg 
 	if o.CreatedAt != nil {
 
 		// query param createdAt
-		var qrCreatedAt string
+		var qrCreatedAt strfmt.DateTime
 
 		if o.CreatedAt != nil {
 			qrCreatedAt = *o.CreatedAt
 		}
-		qCreatedAt := qrCreatedAt
+		qCreatedAt := qrCreatedAt.String()
 		if qCreatedAt != "" {
 
 			if err := r.SetQueryParam("createdAt", qCreatedAt); err != nil {
@@ -429,12 +433,12 @@ func (o *GetAPIV2AppVersionsParams) WriteToRequest(r runtime.ClientRequest, reg 
 	if o.UpdatedAt != nil {
 
 		// query param updatedAt
-		var qrUpdatedAt string
+		var qrUpdatedAt strfmt.DateTime
 
 		if o.UpdatedAt != nil {
 			qrUpdatedAt = *o.UpdatedAt
 		}
-		qUpdatedAt := qrUpdatedAt
+		qUpdatedAt := qrUpdatedAt.String()
 		if qUpdatedAt != "" {
 
 			if err := r.SetQueryParam("updatedAt", qUpdatedAt); err != nil {

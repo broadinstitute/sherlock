@@ -36,14 +36,14 @@ export interface ApiV2ChartsGetRequest {
     appImageGitRepo?: string;
     chartExposesEndpoint?: boolean;
     chartRepo?: string;
-    createdAt?: string;
+    createdAt?: Date;
     defaultPort?: number;
     defaultProtocol?: string;
     defaultSubdomain?: string;
     id?: number;
     legacyConfigsEnabled?: boolean;
     name?: string;
-    updatedAt?: string;
+    updatedAt?: Date;
     limit?: number;
 }
 
@@ -97,7 +97,7 @@ export class ChartsApi extends runtime.BaseAPI {
         }
 
         if (requestParameters.createdAt !== undefined) {
-            queryParameters['createdAt'] = requestParameters.createdAt;
+            queryParameters['createdAt'] = (requestParameters.createdAt as any).toISOString();
         }
 
         if (requestParameters.defaultPort !== undefined) {
@@ -125,7 +125,7 @@ export class ChartsApi extends runtime.BaseAPI {
         }
 
         if (requestParameters.updatedAt !== undefined) {
-            queryParameters['updatedAt'] = requestParameters.updatedAt;
+            queryParameters['updatedAt'] = (requestParameters.updatedAt as any).toISOString();
         }
 
         if (requestParameters.limit !== undefined) {

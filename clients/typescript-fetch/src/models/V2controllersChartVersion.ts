@@ -46,10 +46,10 @@ export interface V2controllersChartVersion {
     chartVersion?: string;
     /**
      * 
-     * @type {string}
+     * @type {Date}
      * @memberof V2controllersChartVersion
      */
-    createdAt?: string;
+    createdAt?: Date;
     /**
      * Generally the Git commit message
      * @type {string}
@@ -76,10 +76,10 @@ export interface V2controllersChartVersion {
     parentChartVersionInfo?: object;
     /**
      * 
-     * @type {string}
+     * @type {Date}
      * @memberof V2controllersChartVersion
      */
-    updatedAt?: string;
+    updatedAt?: Date;
 }
 
 /**
@@ -104,12 +104,12 @@ export function V2controllersChartVersionFromJSONTyped(json: any, ignoreDiscrimi
         'chart': !exists(json, 'chart') ? undefined : json['chart'],
         'chartInfo': !exists(json, 'chartInfo') ? undefined : V2controllersChartFromJSON(json['chartInfo']),
         'chartVersion': !exists(json, 'chartVersion') ? undefined : json['chartVersion'],
-        'createdAt': !exists(json, 'createdAt') ? undefined : json['createdAt'],
+        'createdAt': !exists(json, 'createdAt') ? undefined : (new Date(json['createdAt'])),
         'description': !exists(json, 'description') ? undefined : json['description'],
         'id': !exists(json, 'id') ? undefined : json['id'],
         'parentChartVersion': !exists(json, 'parentChartVersion') ? undefined : json['parentChartVersion'],
         'parentChartVersionInfo': !exists(json, 'parentChartVersionInfo') ? undefined : json['parentChartVersionInfo'],
-        'updatedAt': !exists(json, 'updatedAt') ? undefined : json['updatedAt'],
+        'updatedAt': !exists(json, 'updatedAt') ? undefined : (new Date(json['updatedAt'])),
     };
 }
 
@@ -125,12 +125,12 @@ export function V2controllersChartVersionToJSON(value?: V2controllersChartVersio
         'chart': value.chart,
         'chartInfo': V2controllersChartToJSON(value.chartInfo),
         'chartVersion': value.chartVersion,
-        'createdAt': value.createdAt,
+        'createdAt': value.createdAt === undefined ? undefined : (value.createdAt.toISOString()),
         'description': value.description,
         'id': value.id,
         'parentChartVersion': value.parentChartVersion,
         'parentChartVersionInfo': value.parentChartVersionInfo,
-        'updatedAt': value.updatedAt,
+        'updatedAt': value.updatedAt === undefined ? undefined : (value.updatedAt.toISOString()),
     };
 }
 

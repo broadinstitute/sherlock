@@ -44,7 +44,7 @@ export interface ApiV2ChartReleasesGetRequest {
     chartVersionReference?: string;
     chartVersionResolver?: ApiV2ChartReleasesGetChartVersionResolverEnum;
     cluster?: string;
-    createdAt?: string;
+    createdAt?: Date;
     destinationType?: string;
     environment?: string;
     firecloudDevelopRef?: string;
@@ -55,7 +55,7 @@ export interface ApiV2ChartReleasesGetRequest {
     port?: number;
     protocol?: string;
     subdomain?: string;
-    updatedAt?: string;
+    updatedAt?: Date;
     limit?: number;
 }
 
@@ -141,7 +141,7 @@ export class ChartReleasesApi extends runtime.BaseAPI {
         }
 
         if (requestParameters.createdAt !== undefined) {
-            queryParameters['createdAt'] = requestParameters.createdAt;
+            queryParameters['createdAt'] = (requestParameters.createdAt as any).toISOString();
         }
 
         if (requestParameters.destinationType !== undefined) {
@@ -185,7 +185,7 @@ export class ChartReleasesApi extends runtime.BaseAPI {
         }
 
         if (requestParameters.updatedAt !== undefined) {
-            queryParameters['updatedAt'] = requestParameters.updatedAt;
+            queryParameters['updatedAt'] = (requestParameters.updatedAt as any).toISOString();
         }
 
         if (requestParameters.limit !== undefined) {

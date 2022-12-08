@@ -54,6 +54,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "format": "date-time",
                         "name": "createdAt",
                         "in": "query"
                     },
@@ -85,6 +86,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "format": "date-time",
                         "name": "updatedAt",
                         "in": "query"
                     },
@@ -381,6 +383,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "format": "date-time",
                         "name": "createdAt",
                         "in": "query"
                     },
@@ -526,6 +529,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "format": "date-time",
                         "name": "updatedAt",
                         "in": "query"
                     },
@@ -814,6 +818,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "format": "date-time",
                         "name": "createdAt",
                         "in": "query"
                     },
@@ -877,6 +882,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "format": "date-time",
                         "name": "updatedAt",
                         "in": "query"
                     },
@@ -1238,6 +1244,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "format": "date-time",
                         "name": "createdAt",
                         "in": "query"
                     },
@@ -1259,6 +1266,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "format": "date-time",
                         "name": "updatedAt",
                         "in": "query"
                     },
@@ -1568,6 +1576,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "format": "date-time",
                         "name": "createdAt",
                         "in": "query"
                     },
@@ -1609,6 +1618,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "format": "date-time",
                         "name": "updatedAt",
                         "in": "query"
                     },
@@ -1976,6 +1986,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "format": "date-time",
                         "name": "createdAt",
                         "in": "query"
                     },
@@ -2026,6 +2037,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "format": "date-time",
                         "name": "updatedAt",
                         "in": "query"
                     },
@@ -2394,6 +2406,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "format": "date-time",
                         "name": "createdAt",
                         "in": "query"
                     },
@@ -2459,6 +2472,13 @@ const docTemplate = `{
                     {
                         "type": "boolean",
                         "default": false,
+                        "description": "Used to protect specific BEEs from deletion (thelma checks this field)",
+                        "name": "preventDeletion",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "default": false,
                         "name": "requiresSuitability",
                         "in": "query"
                     },
@@ -2476,6 +2496,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "format": "date-time",
                         "name": "updatedAt",
                         "in": "query"
                     },
@@ -3666,6 +3687,19 @@ const docTemplate = `{
                 }
             }
         },
+        "environment.AutoDelete": {
+            "type": "object",
+            "properties": {
+                "after": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "enabled": {
+                    "type": "boolean",
+                    "default": false
+                }
+            }
+        },
         "errors.ErrorResponse": {
             "type": "object",
             "properties": {
@@ -3734,7 +3768,8 @@ const docTemplate = `{
                     "$ref": "#/definitions/v2controllers.Chart"
                 },
                 "createdAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "description": {
                     "description": "Generally the Git commit message",
@@ -3756,7 +3791,8 @@ const docTemplate = `{
                     "type": "object"
                 },
                 "updatedAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 }
             }
         },
@@ -3773,7 +3809,8 @@ const docTemplate = `{
                     "$ref": "#/definitions/v2controllers.ChartRelease"
                 },
                 "createdAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "fromAppVersionBranch": {
                     "type": "string"
@@ -3872,7 +3909,8 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "updatedAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 }
             }
         },
@@ -3980,7 +4018,8 @@ const docTemplate = `{
                     "default": "terra-helm"
                 },
                 "createdAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "defaultPort": {
                     "type": "integer",
@@ -4007,7 +4046,8 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "updatedAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 }
             }
         },
@@ -4080,7 +4120,8 @@ const docTemplate = `{
                     "$ref": "#/definitions/v2controllers.Cluster"
                 },
                 "createdAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "destinationType": {
                     "description": "Calculated field",
@@ -4124,7 +4165,8 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "updatedAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 }
             }
         },
@@ -4143,7 +4185,8 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "createdAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "description": {
                     "description": "Generally the Git commit message",
@@ -4159,7 +4202,8 @@ const docTemplate = `{
                     "type": "object"
                 },
                 "updatedAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 }
             }
         },
@@ -4180,7 +4224,8 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "createdAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "googleProject": {
                     "description": "Required when creating if provider is 'google'",
@@ -4214,7 +4259,8 @@ const docTemplate = `{
                     "default": false
                 },
                 "updatedAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 }
             }
         },
@@ -4475,6 +4521,14 @@ const docTemplate = `{
         "v2controllers.CreatableEnvironment": {
             "type": "object",
             "properties": {
+                "autoDelete": {
+                    "description": "Used to schedule automatic deletion of BEEs",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/environment.AutoDelete"
+                        }
+                    ]
+                },
                 "base": {
                     "description": "Required when creating",
                     "type": "string"
@@ -4523,6 +4577,11 @@ const docTemplate = `{
                 "owner": {
                     "description": "When creating, will be set to your email",
                     "type": "string"
+                },
+                "preventDeletion": {
+                    "description": "Used to protect specific BEEs from deletion (thelma checks this field)",
+                    "type": "boolean",
+                    "default": false
                 },
                 "requiresSuitability": {
                     "type": "boolean",
@@ -4635,6 +4694,14 @@ const docTemplate = `{
         "v2controllers.EditableEnvironment": {
             "type": "object",
             "properties": {
+                "autoDelete": {
+                    "description": "Used to schedule automatic deletion of BEEs",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/environment.AutoDelete"
+                        }
+                    ]
+                },
                 "baseDomain": {
                     "type": "string",
                     "default": "bee.envs-terra.bio"
@@ -4659,6 +4726,11 @@ const docTemplate = `{
                     "description": "When creating, will be set to your email",
                     "type": "string"
                 },
+                "preventDeletion": {
+                    "description": "Used to protect specific BEEs from deletion (thelma checks this field)",
+                    "type": "boolean",
+                    "default": false
+                },
                 "requiresSuitability": {
                     "type": "boolean",
                     "default": false
@@ -4668,6 +4740,14 @@ const docTemplate = `{
         "v2controllers.Environment": {
             "type": "object",
             "properties": {
+                "autoDelete": {
+                    "description": "Used to schedule automatic deletion of BEEs",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/environment.AutoDelete"
+                        }
+                    ]
+                },
                 "base": {
                     "description": "Required when creating",
                     "type": "string"
@@ -4682,7 +4762,8 @@ const docTemplate = `{
                     "default": true
                 },
                 "createdAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "defaultCluster": {
                     "type": "string"
@@ -4726,6 +4807,11 @@ const docTemplate = `{
                     "description": "When creating, will be set to your email",
                     "type": "string"
                 },
+                "preventDeletion": {
+                    "description": "Used to protect specific BEEs from deletion (thelma checks this field)",
+                    "type": "boolean",
+                    "default": false
+                },
                 "requiresSuitability": {
                     "type": "boolean",
                     "default": false
@@ -4743,7 +4829,8 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "updatedAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "valuesName": {
                     "type": "string"

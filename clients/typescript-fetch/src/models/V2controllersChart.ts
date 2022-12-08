@@ -45,10 +45,10 @@ export interface V2controllersChart {
     chartRepo?: string;
     /**
      * 
-     * @type {string}
+     * @type {Date}
      * @memberof V2controllersChart
      */
-    createdAt?: string;
+    createdAt?: Date;
     /**
      * 
      * @type {number}
@@ -87,10 +87,10 @@ export interface V2controllersChart {
     name?: string;
     /**
      * 
-     * @type {string}
+     * @type {Date}
      * @memberof V2controllersChart
      */
-    updatedAt?: string;
+    updatedAt?: Date;
 }
 
 /**
@@ -116,14 +116,14 @@ export function V2controllersChartFromJSONTyped(json: any, ignoreDiscriminator: 
         'appImageGitRepo': !exists(json, 'appImageGitRepo') ? undefined : json['appImageGitRepo'],
         'chartExposesEndpoint': !exists(json, 'chartExposesEndpoint') ? undefined : json['chartExposesEndpoint'],
         'chartRepo': !exists(json, 'chartRepo') ? undefined : json['chartRepo'],
-        'createdAt': !exists(json, 'createdAt') ? undefined : json['createdAt'],
+        'createdAt': !exists(json, 'createdAt') ? undefined : (new Date(json['createdAt'])),
         'defaultPort': !exists(json, 'defaultPort') ? undefined : json['defaultPort'],
         'defaultProtocol': !exists(json, 'defaultProtocol') ? undefined : json['defaultProtocol'],
         'defaultSubdomain': !exists(json, 'defaultSubdomain') ? undefined : json['defaultSubdomain'],
         'id': !exists(json, 'id') ? undefined : json['id'],
         'legacyConfigsEnabled': !exists(json, 'legacyConfigsEnabled') ? undefined : json['legacyConfigsEnabled'],
         'name': !exists(json, 'name') ? undefined : json['name'],
-        'updatedAt': !exists(json, 'updatedAt') ? undefined : json['updatedAt'],
+        'updatedAt': !exists(json, 'updatedAt') ? undefined : (new Date(json['updatedAt'])),
     };
 }
 
@@ -140,14 +140,14 @@ export function V2controllersChartToJSON(value?: V2controllersChart | null): any
         'appImageGitRepo': value.appImageGitRepo,
         'chartExposesEndpoint': value.chartExposesEndpoint,
         'chartRepo': value.chartRepo,
-        'createdAt': value.createdAt,
+        'createdAt': value.createdAt === undefined ? undefined : (value.createdAt.toISOString()),
         'defaultPort': value.defaultPort,
         'defaultProtocol': value.defaultProtocol,
         'defaultSubdomain': value.defaultSubdomain,
         'id': value.id,
         'legacyConfigsEnabled': value.legacyConfigsEnabled,
         'name': value.name,
-        'updatedAt': value.updatedAt,
+        'updatedAt': value.updatedAt === undefined ? undefined : (value.updatedAt.toISOString()),
     };
 }
 

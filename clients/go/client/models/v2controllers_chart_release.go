@@ -71,7 +71,8 @@ type V2controllersChartRelease struct {
 	ClusterInfo *V2controllersCluster `json:"clusterInfo,omitempty"`
 
 	// created at
-	CreatedAt string `json:"createdAt,omitempty"`
+	// Format: date-time
+	CreatedAt strfmt.DateTime `json:"createdAt,omitempty"`
 
 	// Calculated field
 	DestinationType string `json:"destinationType,omitempty"`
@@ -107,7 +108,8 @@ type V2controllersChartRelease struct {
 	Subdomain string `json:"subdomain,omitempty"`
 
 	// updated at
-	UpdatedAt string `json:"updatedAt,omitempty"`
+	// Format: date-time
+	UpdatedAt strfmt.DateTime `json:"updatedAt,omitempty"`
 }
 
 // Validate validates this v2controllers chart release
@@ -138,7 +140,15 @@ func (m *V2controllersChartRelease) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateCreatedAt(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateEnvironmentInfo(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateUpdatedAt(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -320,6 +330,18 @@ func (m *V2controllersChartRelease) validateClusterInfo(formats strfmt.Registry)
 	return nil
 }
 
+func (m *V2controllersChartRelease) validateCreatedAt(formats strfmt.Registry) error {
+	if swag.IsZero(m.CreatedAt) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("createdAt", "body", "date-time", m.CreatedAt.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (m *V2controllersChartRelease) validateEnvironmentInfo(formats strfmt.Registry) error {
 	if swag.IsZero(m.EnvironmentInfo) { // not required
 		return nil
@@ -334,6 +356,18 @@ func (m *V2controllersChartRelease) validateEnvironmentInfo(formats strfmt.Regis
 			}
 			return err
 		}
+	}
+
+	return nil
+}
+
+func (m *V2controllersChartRelease) validateUpdatedAt(formats strfmt.Registry) error {
+	if swag.IsZero(m.UpdatedAt) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("updatedAt", "body", "date-time", m.UpdatedAt.String(), formats); err != nil {
+		return err
 	}
 
 	return nil

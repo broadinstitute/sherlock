@@ -13,12 +13,25 @@
  */
 
 import { exists, mapValues } from '../runtime';
+import type { V2controllersCreatableEnvironmentAutoDelete } from './V2controllersCreatableEnvironmentAutoDelete';
+import {
+    V2controllersCreatableEnvironmentAutoDeleteFromJSON,
+    V2controllersCreatableEnvironmentAutoDeleteFromJSONTyped,
+    V2controllersCreatableEnvironmentAutoDeleteToJSON,
+} from './V2controllersCreatableEnvironmentAutoDelete';
+
 /**
  * 
  * @export
  * @interface V2controllersCreatableEnvironment
  */
 export interface V2controllersCreatableEnvironment {
+    /**
+     * 
+     * @type {V2controllersCreatableEnvironmentAutoDelete}
+     * @memberof V2controllersCreatableEnvironment
+     */
+    autoDelete?: V2controllersCreatableEnvironmentAutoDelete;
     /**
      * Required when creating
      * @type {string}
@@ -92,6 +105,12 @@ export interface V2controllersCreatableEnvironment {
      */
     owner?: string;
     /**
+     * Used to protect specific BEEs from deletion (thelma checks this field)
+     * @type {boolean}
+     * @memberof V2controllersCreatableEnvironment
+     */
+    preventDeletion?: boolean;
+    /**
      * 
      * @type {boolean}
      * @memberof V2controllersCreatableEnvironment
@@ -130,6 +149,7 @@ export function V2controllersCreatableEnvironmentFromJSONTyped(json: any, ignore
     }
     return {
         
+        'autoDelete': !exists(json, 'autoDelete') ? undefined : V2controllersCreatableEnvironmentAutoDeleteFromJSON(json['autoDelete']),
         'base': !exists(json, 'base') ? undefined : json['base'],
         'baseDomain': !exists(json, 'baseDomain') ? undefined : json['baseDomain'],
         'chartReleasesFromTemplate': !exists(json, 'chartReleasesFromTemplate') ? undefined : json['chartReleasesFromTemplate'],
@@ -142,6 +162,7 @@ export function V2controllersCreatableEnvironmentFromJSONTyped(json: any, ignore
         'namePrefix': !exists(json, 'namePrefix') ? undefined : json['namePrefix'],
         'namePrefixesDomain': !exists(json, 'namePrefixesDomain') ? undefined : json['namePrefixesDomain'],
         'owner': !exists(json, 'owner') ? undefined : json['owner'],
+        'preventDeletion': !exists(json, 'preventDeletion') ? undefined : json['preventDeletion'],
         'requiresSuitability': !exists(json, 'requiresSuitability') ? undefined : json['requiresSuitability'],
         'templateEnvironment': !exists(json, 'templateEnvironment') ? undefined : json['templateEnvironment'],
         'uniqueResourcePrefix': !exists(json, 'uniqueResourcePrefix') ? undefined : json['uniqueResourcePrefix'],
@@ -157,6 +178,7 @@ export function V2controllersCreatableEnvironmentToJSON(value?: V2controllersCre
     }
     return {
         
+        'autoDelete': V2controllersCreatableEnvironmentAutoDeleteToJSON(value.autoDelete),
         'base': value.base,
         'baseDomain': value.baseDomain,
         'chartReleasesFromTemplate': value.chartReleasesFromTemplate,
@@ -169,6 +191,7 @@ export function V2controllersCreatableEnvironmentToJSON(value?: V2controllersCre
         'namePrefix': value.namePrefix,
         'namePrefixesDomain': value.namePrefixesDomain,
         'owner': value.owner,
+        'preventDeletion': value.preventDeletion,
         'requiresSuitability': value.requiresSuitability,
         'templateEnvironment': value.templateEnvironment,
         'uniqueResourcePrefix': value.uniqueResourcePrefix,

@@ -11,6 +11,7 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // V2controllersChartVersion v2controllers chart version
@@ -28,7 +29,8 @@ type V2controllersChartVersion struct {
 	ChartVersion string `json:"chartVersion,omitempty"`
 
 	// created at
-	CreatedAt string `json:"createdAt,omitempty"`
+	// Format: date-time
+	CreatedAt strfmt.DateTime `json:"createdAt,omitempty"`
 
 	// Generally the Git commit message
 	Description string `json:"description,omitempty"`
@@ -43,7 +45,8 @@ type V2controllersChartVersion struct {
 	ParentChartVersionInfo interface{} `json:"parentChartVersionInfo,omitempty"`
 
 	// updated at
-	UpdatedAt string `json:"updatedAt,omitempty"`
+	// Format: date-time
+	UpdatedAt strfmt.DateTime `json:"updatedAt,omitempty"`
 }
 
 // Validate validates this v2controllers chart version
@@ -51,6 +54,14 @@ func (m *V2controllersChartVersion) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateChartInfo(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateCreatedAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateUpdatedAt(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -74,6 +85,30 @@ func (m *V2controllersChartVersion) validateChartInfo(formats strfmt.Registry) e
 			}
 			return err
 		}
+	}
+
+	return nil
+}
+
+func (m *V2controllersChartVersion) validateCreatedAt(formats strfmt.Registry) error {
+	if swag.IsZero(m.CreatedAt) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("createdAt", "body", "date-time", m.CreatedAt.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *V2controllersChartVersion) validateUpdatedAt(formats strfmt.Registry) error {
+	if swag.IsZero(m.UpdatedAt) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("updatedAt", "body", "date-time", m.UpdatedAt.String(), formats); err != nil {
+		return err
 	}
 
 	return nil

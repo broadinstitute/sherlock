@@ -35,7 +35,7 @@ export interface ApiV2ClustersGetRequest {
     address?: string;
     azureSubscription?: string;
     base?: string;
-    createdAt?: string;
+    createdAt?: Date;
     googleProject?: string;
     helmfileRef?: string;
     id?: number;
@@ -43,7 +43,7 @@ export interface ApiV2ClustersGetRequest {
     name?: string;
     provider?: ApiV2ClustersGetProviderEnum;
     requiresSuitability?: boolean;
-    updatedAt?: string;
+    updatedAt?: Date;
     limit?: number;
 }
 
@@ -93,7 +93,7 @@ export class ClustersApi extends runtime.BaseAPI {
         }
 
         if (requestParameters.createdAt !== undefined) {
-            queryParameters['createdAt'] = requestParameters.createdAt;
+            queryParameters['createdAt'] = (requestParameters.createdAt as any).toISOString();
         }
 
         if (requestParameters.googleProject !== undefined) {
@@ -125,7 +125,7 @@ export class ClustersApi extends runtime.BaseAPI {
         }
 
         if (requestParameters.updatedAt !== undefined) {
-            queryParameters['updatedAt'] = requestParameters.updatedAt;
+            queryParameters['updatedAt'] = (requestParameters.updatedAt as any).toISOString();
         }
 
         if (requestParameters.limit !== undefined) {

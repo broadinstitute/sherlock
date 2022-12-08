@@ -78,7 +78,9 @@ type GetAPIV2ChartsParams struct {
 	ChartRepo *string
 
 	// CreatedAt.
-	CreatedAt *string
+	//
+	// Format: date-time
+	CreatedAt *strfmt.DateTime
 
 	// DefaultPort.
 	//
@@ -118,7 +120,9 @@ type GetAPIV2ChartsParams struct {
 	Name *string
 
 	// UpdatedAt.
-	UpdatedAt *string
+	//
+	// Format: date-time
+	UpdatedAt *strfmt.DateTime
 
 	timeout    time.Duration
 	Context    context.Context
@@ -241,13 +245,13 @@ func (o *GetAPIV2ChartsParams) SetChartRepo(chartRepo *string) {
 }
 
 // WithCreatedAt adds the createdAt to the get API v2 charts params
-func (o *GetAPIV2ChartsParams) WithCreatedAt(createdAt *string) *GetAPIV2ChartsParams {
+func (o *GetAPIV2ChartsParams) WithCreatedAt(createdAt *strfmt.DateTime) *GetAPIV2ChartsParams {
 	o.SetCreatedAt(createdAt)
 	return o
 }
 
 // SetCreatedAt adds the createdAt to the get API v2 charts params
-func (o *GetAPIV2ChartsParams) SetCreatedAt(createdAt *string) {
+func (o *GetAPIV2ChartsParams) SetCreatedAt(createdAt *strfmt.DateTime) {
 	o.CreatedAt = createdAt
 }
 
@@ -329,13 +333,13 @@ func (o *GetAPIV2ChartsParams) SetName(name *string) {
 }
 
 // WithUpdatedAt adds the updatedAt to the get API v2 charts params
-func (o *GetAPIV2ChartsParams) WithUpdatedAt(updatedAt *string) *GetAPIV2ChartsParams {
+func (o *GetAPIV2ChartsParams) WithUpdatedAt(updatedAt *strfmt.DateTime) *GetAPIV2ChartsParams {
 	o.SetUpdatedAt(updatedAt)
 	return o
 }
 
 // SetUpdatedAt adds the updatedAt to the get API v2 charts params
-func (o *GetAPIV2ChartsParams) SetUpdatedAt(updatedAt *string) {
+func (o *GetAPIV2ChartsParams) SetUpdatedAt(updatedAt *strfmt.DateTime) {
 	o.UpdatedAt = updatedAt
 }
 
@@ -418,12 +422,12 @@ func (o *GetAPIV2ChartsParams) WriteToRequest(r runtime.ClientRequest, reg strfm
 	if o.CreatedAt != nil {
 
 		// query param createdAt
-		var qrCreatedAt string
+		var qrCreatedAt strfmt.DateTime
 
 		if o.CreatedAt != nil {
 			qrCreatedAt = *o.CreatedAt
 		}
-		qCreatedAt := qrCreatedAt
+		qCreatedAt := qrCreatedAt.String()
 		if qCreatedAt != "" {
 
 			if err := r.SetQueryParam("createdAt", qCreatedAt); err != nil {
@@ -554,12 +558,12 @@ func (o *GetAPIV2ChartsParams) WriteToRequest(r runtime.ClientRequest, reg strfm
 	if o.UpdatedAt != nil {
 
 		// query param updatedAt
-		var qrUpdatedAt string
+		var qrUpdatedAt strfmt.DateTime
 
 		if o.UpdatedAt != nil {
 			qrUpdatedAt = *o.UpdatedAt
 		}
-		qUpdatedAt := qrUpdatedAt
+		qUpdatedAt := qrUpdatedAt.String()
 		if qUpdatedAt != "" {
 
 			if err := r.SetQueryParam("updatedAt", qUpdatedAt); err != nil {

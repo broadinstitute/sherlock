@@ -58,10 +58,10 @@ export interface V2controllersChangeset {
     chartReleaseInfo?: V2controllersChartRelease;
     /**
      * 
-     * @type {string}
+     * @type {Date}
      * @memberof V2controllersChangeset
      */
-    createdAt?: string;
+    createdAt?: Date;
     /**
      * 
      * @type {string}
@@ -244,10 +244,10 @@ export interface V2controllersChangeset {
     toResolvedAt?: string;
     /**
      * 
-     * @type {string}
+     * @type {Date}
      * @memberof V2controllersChangeset
      */
-    updatedAt?: string;
+    updatedAt?: Date;
 }
 
 /**
@@ -272,7 +272,7 @@ export function V2controllersChangesetFromJSONTyped(json: any, ignoreDiscriminat
         'appliedAt': !exists(json, 'appliedAt') ? undefined : json['appliedAt'],
         'chartRelease': !exists(json, 'chartRelease') ? undefined : json['chartRelease'],
         'chartReleaseInfo': !exists(json, 'chartReleaseInfo') ? undefined : V2controllersChartReleaseFromJSON(json['chartReleaseInfo']),
-        'createdAt': !exists(json, 'createdAt') ? undefined : json['createdAt'],
+        'createdAt': !exists(json, 'createdAt') ? undefined : (new Date(json['createdAt'])),
         'fromAppVersionBranch': !exists(json, 'fromAppVersionBranch') ? undefined : json['fromAppVersionBranch'],
         'fromAppVersionCommit': !exists(json, 'fromAppVersionCommit') ? undefined : json['fromAppVersionCommit'],
         'fromAppVersionExact': !exists(json, 'fromAppVersionExact') ? undefined : json['fromAppVersionExact'],
@@ -303,7 +303,7 @@ export function V2controllersChangesetFromJSONTyped(json: any, ignoreDiscriminat
         'toFirecloudDevelopRef': !exists(json, 'toFirecloudDevelopRef') ? undefined : json['toFirecloudDevelopRef'],
         'toHelmfileRef': !exists(json, 'toHelmfileRef') ? undefined : json['toHelmfileRef'],
         'toResolvedAt': !exists(json, 'toResolvedAt') ? undefined : json['toResolvedAt'],
-        'updatedAt': !exists(json, 'updatedAt') ? undefined : json['updatedAt'],
+        'updatedAt': !exists(json, 'updatedAt') ? undefined : (new Date(json['updatedAt'])),
     };
 }
 
@@ -319,7 +319,7 @@ export function V2controllersChangesetToJSON(value?: V2controllersChangeset | nu
         'appliedAt': value.appliedAt,
         'chartRelease': value.chartRelease,
         'chartReleaseInfo': V2controllersChartReleaseToJSON(value.chartReleaseInfo),
-        'createdAt': value.createdAt,
+        'createdAt': value.createdAt === undefined ? undefined : (value.createdAt.toISOString()),
         'fromAppVersionBranch': value.fromAppVersionBranch,
         'fromAppVersionCommit': value.fromAppVersionCommit,
         'fromAppVersionExact': value.fromAppVersionExact,
@@ -350,7 +350,7 @@ export function V2controllersChangesetToJSON(value?: V2controllersChangeset | nu
         'toFirecloudDevelopRef': value.toFirecloudDevelopRef,
         'toHelmfileRef': value.toHelmfileRef,
         'toResolvedAt': value.toResolvedAt,
-        'updatedAt': value.updatedAt,
+        'updatedAt': value.updatedAt === undefined ? undefined : (value.updatedAt.toISOString()),
     };
 }
 

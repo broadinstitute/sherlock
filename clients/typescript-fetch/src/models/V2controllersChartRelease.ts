@@ -148,10 +148,10 @@ export interface V2controllersChartRelease {
     clusterInfo?: V2controllersCluster;
     /**
      * 
-     * @type {string}
+     * @type {Date}
      * @memberof V2controllersChartRelease
      */
-    createdAt?: string;
+    createdAt?: Date;
     /**
      * Calculated field
      * @type {string}
@@ -220,10 +220,10 @@ export interface V2controllersChartRelease {
     subdomain?: string;
     /**
      * 
-     * @type {string}
+     * @type {Date}
      * @memberof V2controllersChartRelease
      */
-    updatedAt?: string;
+    updatedAt?: Date;
 }
 
 
@@ -285,7 +285,7 @@ export function V2controllersChartReleaseFromJSONTyped(json: any, ignoreDiscrimi
         'chartVersionResolver': !exists(json, 'chartVersionResolver') ? undefined : json['chartVersionResolver'],
         'cluster': !exists(json, 'cluster') ? undefined : json['cluster'],
         'clusterInfo': !exists(json, 'clusterInfo') ? undefined : V2controllersClusterFromJSON(json['clusterInfo']),
-        'createdAt': !exists(json, 'createdAt') ? undefined : json['createdAt'],
+        'createdAt': !exists(json, 'createdAt') ? undefined : (new Date(json['createdAt'])),
         'destinationType': !exists(json, 'destinationType') ? undefined : json['destinationType'],
         'environment': !exists(json, 'environment') ? undefined : json['environment'],
         'environmentInfo': !exists(json, 'environmentInfo') ? undefined : V2controllersEnvironmentFromJSON(json['environmentInfo']),
@@ -297,7 +297,7 @@ export function V2controllersChartReleaseFromJSONTyped(json: any, ignoreDiscrimi
         'port': !exists(json, 'port') ? undefined : json['port'],
         'protocol': !exists(json, 'protocol') ? undefined : json['protocol'],
         'subdomain': !exists(json, 'subdomain') ? undefined : json['subdomain'],
-        'updatedAt': !exists(json, 'updatedAt') ? undefined : json['updatedAt'],
+        'updatedAt': !exists(json, 'updatedAt') ? undefined : (new Date(json['updatedAt'])),
     };
 }
 
@@ -326,7 +326,7 @@ export function V2controllersChartReleaseToJSON(value?: V2controllersChartReleas
         'chartVersionResolver': value.chartVersionResolver,
         'cluster': value.cluster,
         'clusterInfo': V2controllersClusterToJSON(value.clusterInfo),
-        'createdAt': value.createdAt,
+        'createdAt': value.createdAt === undefined ? undefined : (value.createdAt.toISOString()),
         'destinationType': value.destinationType,
         'environment': value.environment,
         'environmentInfo': V2controllersEnvironmentToJSON(value.environmentInfo),
@@ -338,7 +338,7 @@ export function V2controllersChartReleaseToJSON(value?: V2controllersChartReleas
         'port': value.port,
         'protocol': value.protocol,
         'subdomain': value.subdomain,
-        'updatedAt': value.updatedAt,
+        'updatedAt': value.updatedAt === undefined ? undefined : (value.updatedAt.toISOString()),
     };
 }
 

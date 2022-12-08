@@ -80,7 +80,9 @@ type GetAPIV2EnvironmentsParams struct {
 	ChartReleasesFromTemplate *bool
 
 	// CreatedAt.
-	CreatedAt *string
+	//
+	// Format: date-time
+	CreatedAt *strfmt.DateTime
 
 	// DefaultCluster.
 	DefaultCluster *string
@@ -141,6 +143,12 @@ type GetAPIV2EnvironmentsParams struct {
 	*/
 	Owner *string
 
+	/* PreventDeletion.
+
+	   Used to protect specific BEEs from deletion (thelma checks this field)
+	*/
+	PreventDeletion *bool
+
 	// RequiresSuitability.
 	RequiresSuitability *bool
 
@@ -157,7 +165,9 @@ type GetAPIV2EnvironmentsParams struct {
 	UniqueResourcePrefix *string
 
 	// UpdatedAt.
-	UpdatedAt *string
+	//
+	// Format: date-time
+	UpdatedAt *strfmt.DateTime
 
 	// ValuesName.
 	ValuesName *string
@@ -192,6 +202,8 @@ func (o *GetAPIV2EnvironmentsParams) SetDefaults() {
 
 		namePrefixesDomainDefault = bool(true)
 
+		preventDeletionDefault = bool(false)
+
 		requiresSuitabilityDefault = bool(false)
 	)
 
@@ -202,6 +214,7 @@ func (o *GetAPIV2EnvironmentsParams) SetDefaults() {
 		HelmfileRef:                &helmfileRefDefault,
 		Lifecycle:                  &lifecycleDefault,
 		NamePrefixesDomain:         &namePrefixesDomainDefault,
+		PreventDeletion:            &preventDeletionDefault,
 		RequiresSuitability:        &requiresSuitabilityDefault,
 	}
 
@@ -278,13 +291,13 @@ func (o *GetAPIV2EnvironmentsParams) SetChartReleasesFromTemplate(chartReleasesF
 }
 
 // WithCreatedAt adds the createdAt to the get API v2 environments params
-func (o *GetAPIV2EnvironmentsParams) WithCreatedAt(createdAt *string) *GetAPIV2EnvironmentsParams {
+func (o *GetAPIV2EnvironmentsParams) WithCreatedAt(createdAt *strfmt.DateTime) *GetAPIV2EnvironmentsParams {
 	o.SetCreatedAt(createdAt)
 	return o
 }
 
 // SetCreatedAt adds the createdAt to the get API v2 environments params
-func (o *GetAPIV2EnvironmentsParams) SetCreatedAt(createdAt *string) {
+func (o *GetAPIV2EnvironmentsParams) SetCreatedAt(createdAt *strfmt.DateTime) {
 	o.CreatedAt = createdAt
 }
 
@@ -409,6 +422,17 @@ func (o *GetAPIV2EnvironmentsParams) SetOwner(owner *string) {
 	o.Owner = owner
 }
 
+// WithPreventDeletion adds the preventDeletion to the get API v2 environments params
+func (o *GetAPIV2EnvironmentsParams) WithPreventDeletion(preventDeletion *bool) *GetAPIV2EnvironmentsParams {
+	o.SetPreventDeletion(preventDeletion)
+	return o
+}
+
+// SetPreventDeletion adds the preventDeletion to the get API v2 environments params
+func (o *GetAPIV2EnvironmentsParams) SetPreventDeletion(preventDeletion *bool) {
+	o.PreventDeletion = preventDeletion
+}
+
 // WithRequiresSuitability adds the requiresSuitability to the get API v2 environments params
 func (o *GetAPIV2EnvironmentsParams) WithRequiresSuitability(requiresSuitability *bool) *GetAPIV2EnvironmentsParams {
 	o.SetRequiresSuitability(requiresSuitability)
@@ -443,13 +467,13 @@ func (o *GetAPIV2EnvironmentsParams) SetUniqueResourcePrefix(uniqueResourcePrefi
 }
 
 // WithUpdatedAt adds the updatedAt to the get API v2 environments params
-func (o *GetAPIV2EnvironmentsParams) WithUpdatedAt(updatedAt *string) *GetAPIV2EnvironmentsParams {
+func (o *GetAPIV2EnvironmentsParams) WithUpdatedAt(updatedAt *strfmt.DateTime) *GetAPIV2EnvironmentsParams {
 	o.SetUpdatedAt(updatedAt)
 	return o
 }
 
 // SetUpdatedAt adds the updatedAt to the get API v2 environments params
-func (o *GetAPIV2EnvironmentsParams) SetUpdatedAt(updatedAt *string) {
+func (o *GetAPIV2EnvironmentsParams) SetUpdatedAt(updatedAt *strfmt.DateTime) {
 	o.UpdatedAt = updatedAt
 }
 
@@ -526,12 +550,12 @@ func (o *GetAPIV2EnvironmentsParams) WriteToRequest(r runtime.ClientRequest, reg
 	if o.CreatedAt != nil {
 
 		// query param createdAt
-		var qrCreatedAt string
+		var qrCreatedAt strfmt.DateTime
 
 		if o.CreatedAt != nil {
 			qrCreatedAt = *o.CreatedAt
 		}
-		qCreatedAt := qrCreatedAt
+		qCreatedAt := qrCreatedAt.String()
 		if qCreatedAt != "" {
 
 			if err := r.SetQueryParam("createdAt", qCreatedAt); err != nil {
@@ -727,6 +751,23 @@ func (o *GetAPIV2EnvironmentsParams) WriteToRequest(r runtime.ClientRequest, reg
 		}
 	}
 
+	if o.PreventDeletion != nil {
+
+		// query param preventDeletion
+		var qrPreventDeletion bool
+
+		if o.PreventDeletion != nil {
+			qrPreventDeletion = *o.PreventDeletion
+		}
+		qPreventDeletion := swag.FormatBool(qrPreventDeletion)
+		if qPreventDeletion != "" {
+
+			if err := r.SetQueryParam("preventDeletion", qPreventDeletion); err != nil {
+				return err
+			}
+		}
+	}
+
 	if o.RequiresSuitability != nil {
 
 		// query param requiresSuitability
@@ -781,12 +822,12 @@ func (o *GetAPIV2EnvironmentsParams) WriteToRequest(r runtime.ClientRequest, reg
 	if o.UpdatedAt != nil {
 
 		// query param updatedAt
-		var qrUpdatedAt string
+		var qrUpdatedAt strfmt.DateTime
 
 		if o.UpdatedAt != nil {
 			qrUpdatedAt = *o.UpdatedAt
 		}
-		qUpdatedAt := qrUpdatedAt
+		qUpdatedAt := qrUpdatedAt.String()
 		if qUpdatedAt != "" {
 
 			if err := r.SetQueryParam("updatedAt", qUpdatedAt); err != nil {
