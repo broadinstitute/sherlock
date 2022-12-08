@@ -196,7 +196,7 @@ jobs:
 
   get-environment:
     # We do this so that we don't accidentally try to have Thelma sync something that's just a template instance. Runs in parallel and super quick so why not.
-    if: ${{ secrets.sync-github-token != '' }}
+    if: ${{ secrets.sync-git-token != '' }}
     uses: ./.github/workflows/client-get-environment.yaml
     permissions:
       id-token: 'write'
@@ -205,7 +205,7 @@ jobs:
 
   sync:
     needs: [set, get-environment]
-    if: ${{ secrets.sync-github-token != '' && needs.get-environment.outputs.lifecycle != 'template' }}
+    if: ${{ secrets.sync-git-token != '' && needs.get-environment.outputs.lifecycle != 'template' }}
     runs-on: ubuntu-latest
     steps:
 
@@ -219,5 +219,5 @@ jobs:
           repo: broadinstitute/terra-github-workflows
           workflow: sync-release
           ref: refs/heads/main
-          token: ${{ secrets.sync-github-token }}
+          token: ${{ secrets.sync-git-token }}
           inputs: '{ "chart-release-names": "${{ inputs.environment-name }}/${{ inputs.chart-name }}" }'
