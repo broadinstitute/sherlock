@@ -197,14 +197,14 @@ jobs:
   get-environment:
     # We do this so that we don't accidentally try to have Thelma sync something that's just a template instance. Runs in parallel and super quick so why not.
     if: ${{ secrets.sync-github-token != '' }}
-    uses: ./github/workflows/client-get-environment.yaml
+    uses: ./.github/workflows/client-get-environment.yaml
     permissions:
       id-token: 'write'
     with:
       environment-name: ${{ inputs.environment-name }}
 
   sync:
-    needs: [report, get-environment]
+    needs: [set, get-environment]
     if: ${{ secrets.sync-github-token != '' && needs.get-environment.outputs.lifecycle != 'template' }}
     runs-on: ubuntu-latest
     steps:
