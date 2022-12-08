@@ -30,9 +30,44 @@ name: Set Environment App Version
 #     permissions:
 #       id-token: 'write'
 # ```
+#
+# If you'd like to automatically sync the environment--meaning deploy whatever changes were made--you can provide
+# a custom GitHub token to the workflow. It cannot be default one in the workflow as default tokens cannot use
+# the workflow dispatch API.
+#
+# An example, assuming your repo has the BROADBOT_TOKEN available:
+# ```yaml
+# jobs:
+#
+#   <your-existing-job-id>:
+#     # Output the version from your existing job's tag/bump step, something like this:
+#     outputs:
+#       tag: ${{ steps.tag.outputs.tag }}
+#     steps:
+#       # ... (The rest of your existing job can stay the same)
+#
+#   set-app-version-in-environment:
+#     uses: broadinstitute/sherlock/.github/workflows/client-set-environment-app-version.yaml@main
+#     needs: <your-existing-job-id>
+#     with:
+#       new-version: ${{ needs.<your-existing-job-id>.outputs.tag }}
+#       chart-name: '<your-app-helm-chart-name>'
+#       environment-name: '<the-environment-to-update>'
+#     secrets:
+#       sync-git-token: ${{ secrets.BROADBOT_TOKEN }}
+#     permissions:
+#       id-token: 'write'
+# ```
+
 
 on:
   workflow_call:
+
+    secrets:
+      sync-git-token:
+        required: false
+        description: "When provided, finish by calling out to terra-github-workflows to sync the affected chart release"
+
     inputs:
 
       ##
@@ -87,7 +122,7 @@ env:
   BEEHIVE_DEV_VANITY_URL: 'https://broad.io/beehive-dev'
 
 jobs:
-  report:
+  set:
     runs-on: ubuntu-22.04
     permissions:
       id-token: 'write'
@@ -158,3 +193,31 @@ jobs:
             -H 'Authorization: Bearer ${{ steps.auth.outputs.id_token }}' \
             -d "@$RUNNER_TEMP/body.json" | jq
           echo "Available in Beehive's dev instance at $BEEHIVE_DEV_VANITY_URL/r/chart-release/${{ inputs.environment-name }}/${{ inputs.chart-name }}" >> $GITHUB_STEP_SUMMARY
+
+  get-environment:
+    # We do this so that we don't accidentally try to have Thelma sync something that's just a template instance. Runs in parallel and super quick so why not.
+    if: ${{ secrets.sync-github-token != '' }}
+    uses: ./github/workflows/client-get-environment.yaml
+    permissions:
+      id-token: 'write'
+    with:
+      environment-name: ${{ inputs.environment-name }}
+
+  sync:
+    needs: [report, get-environment]
+    if: ${{ secrets.sync-github-token != '' && needs.get-environment.outputs.lifecycle != 'template' }}
+    runs-on: ubuntu-latest
+    steps:
+
+      ##
+      ## Handle syncing:
+      ##
+
+      - name: "Dispatch to terra-github-workflows"
+        uses: aurelien-baudet/workflow-dispatch@v2
+        with: 
+          repo: broadinstitute/terra-github-workflows
+          workflow: sync-release
+          ref: refs/heads/main
+          token: ${{ secrets.sync-github-token }}
+          inputs: '{ "chart-release-names": "${{ inputs.environment-name }}/${{ inputs.chart-name }}" }'
