@@ -28,7 +28,6 @@ name: Set Environment App Version
 #       chart-name: '<your-app-helm-chart-name>'
 #       environment-name: '<the-environment-to-update>'
 #     permissions:
-#       contents: 'read'
 #       id-token: 'write'
 # ```
 
@@ -91,7 +90,6 @@ jobs:
   report:
     runs-on: ubuntu-22.04
     permissions:
-      contents: 'read'
       id-token: 'write'
     
     steps:
