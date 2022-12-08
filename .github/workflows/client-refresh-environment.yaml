@@ -14,7 +14,7 @@ name: Refresh Environment
 # jobs:
 #
 #   refresh-environment:
-#     uses: broadinstitute/sherlock/.github/workflows/client-set-environment-app-version.yaml@main
+#     uses: broadinstitute/sherlock/.github/workflows/client-refresh-environment.yaml@main
 #     with:
 #       environment-name: '<the-environment-to-update>'
 #     permissions:
@@ -33,7 +33,7 @@ name: Refresh Environment
 # jobs:
 #
 #   refresh-environment:
-#     uses: broadinstitute/sherlock/.github/workflows/client-set-environment-app-version.yaml@main
+#     uses: broadinstitute/sherlock/.github/workflows/client-refresh-environment.yaml@main
 #     with:
 #       environment-name: '<the-environment-to-update>'
 #     permissions:
