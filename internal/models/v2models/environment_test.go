@@ -2,8 +2,10 @@ package v2models
 
 import (
 	"fmt"
+	"github.com/broadinstitute/sherlock/internal/models/v2models/environment"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/broadinstitute/sherlock/internal/testutils"
 	"gorm.io/gorm"
@@ -473,6 +475,100 @@ func Test_validateEnvironment(t *testing.T) {
 				Lifecycle:                  "template",
 				HelmfileRef:                testutils.PointerTo("HEAD"),
 				DefaultFirecloudDevelopRef: testutils.PointerTo("dev"),
+			}},
+			wantErr: true,
+		},
+		{
+			name: "template with prevent deletion",
+			args: args{environment: &Environment{
+				Name:                       "foobar",
+				Lifecycle:                  "template",
+				UniqueResourcePrefix:       "a1b2",
+				DefaultNamespace:           "terra-foobar",
+				HelmfileRef:                testutils.PointerTo("HEAD"),
+				DefaultFirecloudDevelopRef: testutils.PointerTo("dev"),
+				PreventDeletion:            testutils.PointerTo(true),
+			}},
+			wantErr: true,
+		},
+		{
+			name: "static with auto-delete",
+			args: args{environment: &Environment{
+				Name:                       "foobar",
+				Lifecycle:                  "static",
+				UniqueResourcePrefix:       "a1b2",
+				Base:                       "base",
+				DefaultClusterID:           testutils.PointerTo[uint](456),
+				DefaultNamespace:           "namespace",
+				Owner:                      testutils.PointerTo("fake@broadinstitute.org"),
+				RequiresSuitability:        testutils.PointerTo(false),
+				HelmfileRef:                testutils.PointerTo("HEAD"),
+				DefaultFirecloudDevelopRef: testutils.PointerTo("dev"),
+				AutoDelete: testutils.PointerTo(environment.AutoDelete{
+					Enabled: true,
+					After:   time.Now(),
+				}),
+			}},
+			wantErr: true,
+		},
+		{
+			name: "dynamic with prevent deletion",
+			args: args{environment: &Environment{
+				Name:                       "foobar",
+				Lifecycle:                  "dynamic",
+				UniqueResourcePrefix:       "a1b2",
+				TemplateEnvironmentID:      testutils.PointerTo[uint](123),
+				Base:                       "base",
+				DefaultClusterID:           testutils.PointerTo[uint](456),
+				DefaultNamespace:           "namespace",
+				Owner:                      testutils.PointerTo("fake@broadinstitute.org"),
+				RequiresSuitability:        testutils.PointerTo(false),
+				HelmfileRef:                testutils.PointerTo("HEAD"),
+				DefaultFirecloudDevelopRef: testutils.PointerTo("dev"),
+				PreventDeletion:            testutils.PointerTo(true),
+			}},
+			wantErr: false,
+		},
+		{
+			name: "dynamic with auto-delete",
+			args: args{environment: &Environment{
+				Name:                       "foobar",
+				Lifecycle:                  "dynamic",
+				UniqueResourcePrefix:       "a1b2",
+				TemplateEnvironmentID:      testutils.PointerTo[uint](123),
+				Base:                       "base",
+				DefaultClusterID:           testutils.PointerTo[uint](456),
+				DefaultNamespace:           "namespace",
+				Owner:                      testutils.PointerTo("fake@broadinstitute.org"),
+				RequiresSuitability:        testutils.PointerTo(false),
+				HelmfileRef:                testutils.PointerTo("HEAD"),
+				DefaultFirecloudDevelopRef: testutils.PointerTo("dev"),
+				AutoDelete: testutils.PointerTo(environment.AutoDelete{
+					Enabled: true,
+					After:   time.Now(),
+				}),
+			}},
+			wantErr: false,
+		},
+		{
+			name: "dynamic with prevent deletion and auto-delete",
+			args: args{environment: &Environment{
+				Name:                       "foobar",
+				Lifecycle:                  "dynamic",
+				UniqueResourcePrefix:       "a1b2",
+				TemplateEnvironmentID:      testutils.PointerTo[uint](123),
+				Base:                       "base",
+				DefaultClusterID:           testutils.PointerTo[uint](456),
+				DefaultNamespace:           "namespace",
+				Owner:                      testutils.PointerTo("fake@broadinstitute.org"),
+				RequiresSuitability:        testutils.PointerTo(false),
+				HelmfileRef:                testutils.PointerTo("HEAD"),
+				DefaultFirecloudDevelopRef: testutils.PointerTo("dev"),
+				PreventDeletion:            testutils.PointerTo(true),
+				AutoDelete: testutils.PointerTo(environment.AutoDelete{
+					Enabled: true,
+					After:   time.Now(),
+				}),
 			}},
 			wantErr: true,
 		},

@@ -11,8 +11,8 @@ import (
 
 type ReadableBaseType struct {
 	ID        uint      `json:"id" form:"id"`
-	CreatedAt time.Time `json:"createdAt" form:"createdAt"`
-	UpdatedAt time.Time `json:"updatedAt" form:"updatedAt"`
+	CreatedAt time.Time `json:"createdAt" form:"createdAt" format:"date-time"`
+	UpdatedAt time.Time `json:"updatedAt" form:"updatedAt" format:"date-time"`
 }
 
 // Readable represents the full set of fields that can be read (or queried for) by a user.
