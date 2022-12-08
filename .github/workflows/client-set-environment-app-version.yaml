@@ -194,9 +194,23 @@ jobs:
             -d "@$RUNNER_TEMP/body.json" | jq
           echo "Available in Beehive's dev instance at $BEEHIVE_DEV_VANITY_URL/r/chart-release/${{ inputs.environment-name }}/${{ inputs.chart-name }}" >> $GITHUB_STEP_SUMMARY
 
+  should-sync:
+    runs-on: ubuntu-22.04
+    outputs:
+      should-sync: ${{ steps.check.outputs.should-sync }}
+    steps:
+    - name: "Check Token"
+      id: check
+      shell: bash
+      run: |
+        if [ -z "${{ secrets.sync-git-token }}" ]
+        then
+          echo "should-sync=false" >> $GITHUB_OUTPUT
+        else
+          echo "should-sync=true" >> $GITHUB_OUTPUT
+        fi
+
   get-environment:
-    # We do this so that we don't accidentally try to have Thelma sync something that's just a template instance. Runs in parallel and super quick so why not.
-    if: ${{ secrets.sync-git-token != '' }}
     uses: ./.github/workflows/client-get-environment.yaml
     permissions:
       id-token: 'write'
@@ -204,8 +218,8 @@ jobs:
       environment-name: ${{ inputs.environment-name }}
 
   sync:
-    needs: [set, get-environment]
-    if: ${{ secrets.sync-git-token != '' && needs.get-environment.outputs.lifecycle != 'template' }}
+    needs: [set, get-environment, should-sync]
+    if: ${{ needs.should-sync.outputs.should-sync == 'true' && needs.get-environment.outputs.lifecycle != 'template' }}
     runs-on: ubuntu-latest
     steps:
 
