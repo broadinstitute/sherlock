@@ -39,6 +39,7 @@ jobs:
     permissions:
       contents: 'read'
       id-token: 'write'
+    concurrency: main
     steps:
 
       # Git config
