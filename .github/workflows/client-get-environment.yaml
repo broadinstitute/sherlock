@@ -1,5 +1,26 @@
 name: Get Environment
 
+# This workflow provides GitHub Actions native access to information about Sherlock environments.
+#
+# The caller repository must have Workload Identity Federation configured to allow impersonation of the
+# "dsp-tools-iap-access@dsp-tools-k8s.iam.gserviceaccount.com" service account; steps 1 and 2 of the documentation:
+# https://docs.google.com/document/d/1bnhDmWQHAMat_Saoa_z28FHwXmGWw6kywjdbKf208h4/edit
+#
+# With that configured, here's how you can call this workflow:
+# ```yaml
+# jobs:
+#
+#   get-environment:
+#     uses: broadinstitute/sherlock/.github/workflows/client-get-environment.yaml@main
+#     with:
+#       environment-name: '<the-environment-to-get>'
+#     permissions:
+#       id-token: 'write'
+# ```
+#
+# For more information on using called workflow outputs, see 
+# https://docs.github.com/en/actions/using-workflows/reusing-workflows#using-outputs-from-a-reusable-workflow
+
 on:
   workflow_call:
 

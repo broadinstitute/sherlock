@@ -194,10 +194,19 @@ jobs:
             -d "@$RUNNER_TEMP/body.json" | jq
           echo "Available in Beehive's dev instance at $BEEHIVE_DEV_VANITY_URL/r/chart-release/${{ inputs.environment-name }}/${{ inputs.chart-name }}" >> $GITHUB_STEP_SUMMARY
 
-  sync:
+  get-environment:
+    # We do this so that we don't accidentally try to have Thelma sync something that's just a template instance. Runs in parallel and super quick so why not.
     if: ${{ secrets.sync-github-token != '' }}
+    uses: ./github/workflows/client-get-environment.yaml
+    permissions:
+      id-token: 'write'
+    with:
+      environment-name: ${{ inputs.environment-name }}
+
+  sync:
+    needs: [report, get-environment]
+    if: ${{ secrets.sync-github-token != '' && needs.get-environment.outputs.lifecycle != 'template' }}
     runs-on: ubuntu-latest
-    needs: report
     steps:
 
       ##
