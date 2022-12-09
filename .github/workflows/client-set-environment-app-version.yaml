@@ -234,4 +234,4 @@ jobs:
           workflow: sync-release
           ref: refs/heads/main
           token: ${{ secrets.sync-git-token }}
-          inputs: '{ "chart-release-names": "${{ inputs.environment-name }}/${{ inputs.chart-name }}" }'
+          inputs: '{ "chart-release-names": "${{ inputs.environment-name }}/${{ inputs.chart-name }}", "refresh-only": "${{ needs.should-sync.outputs.should-sync }}" }'
