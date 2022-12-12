@@ -194,6 +194,8 @@ func validateEnvironment(environment *Environment) error {
 
 func preCreateEnvironment(db *gorm.DB, environment *Environment, _ *auth.User) error {
 	if environment.UniqueResourcePrefix == "" {
+		var generatedUniqueResourcePrefix bool
+
 		// Time to derive a unique resource prefix. /^[a-z][a-z0-9]{3}$/ and unique among
 		// all non-deleted environments. The tricky part is that environments *can* specify
 		// a custom prefix, for Thelma state-provider migration or debugging purposes.
@@ -211,7 +213,7 @@ func preCreateEnvironment(db *gorm.DB, environment *Environment, _ *auth.User) e
 		// through a few hundred environments to find a match, we can do so fast enough
 		// that no one will care, and eventually the environments that conflict with this
 		// algorithm will get deleted and the runtime will recover.
-		var countOfAllEnvironmentsEver, candidateOccurrencesInDatabase int64
+		var countOfAllEnvironmentsEver int64
 		var unsignedCountOfAllEnvironmentsEver, iterations uint64
 		var candidate Environment
 		// First, we take advantage of the domain size as much as we can. We offset by
@@ -243,10 +245,12 @@ func preCreateEnvironment(db *gorm.DB, environment *Environment, _ *auth.User) e
 			// Check the database for this candidate prefix existing. Note that we do not use
 			// Unscoped here like we did above, because now we don't care if there is a
 			// conflict in the soft-deleted environments.
-			db.Where(&candidate).Count(&candidateOccurrencesInDatabase)
-			if candidateOccurrencesInDatabase == 0 {
+			var firstMatch Environment
+			db.Where(candidate).First(&firstMatch)
+			if firstMatch.ID == 0 {
 				// If the candidate prefix we just generated isn't already in a non-deleted
 				// Environment, we're good to bail
+				generatedUniqueResourcePrefix = true
 				break
 			} else {
 				// Otherwise, reset the string builder and let's try incrementing.
@@ -257,7 +261,7 @@ func preCreateEnvironment(db *gorm.DB, environment *Environment, _ *auth.User) e
 				iterations++
 			}
 		}
-		if candidate.UniqueResourcePrefix == "" {
+		if !generatedUniqueResourcePrefix {
 			return fmt.Errorf("(%s) could not derive a unique environment resource prefix, used %d iterations based on an initial lifetime environment count of %d (loop exited but prefix was still empty)",
 				errors.InternalServerError, iterations, countOfAllEnvironmentsEver)
 		} else {
