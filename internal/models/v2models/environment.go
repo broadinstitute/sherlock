@@ -193,6 +193,8 @@ func validateEnvironment(environment *Environment) error {
 }
 
 func preCreateEnvironment(db *gorm.DB, environment *Environment, _ *auth.User) error {
+	var generatedUniqueResourcePrefix bool
+
 	if environment.UniqueResourcePrefix == "" {
 		// Time to derive a unique resource prefix. /^[a-z][a-z0-9]{3}$/ and unique among
 		// all non-deleted environments. The tricky part is that environments *can* specify
@@ -229,7 +231,7 @@ func preCreateEnvironment(db *gorm.DB, environment *Environment, _ *auth.User) e
 		// We set a deadline here three seconds into the future. This is purely a
 		// guess based on what we can probably get away with in proxies and UIs without
 		// needing to add additional handling.
-		for end := time.Now().Add(3 * time.Second); ; {
+		for end := time.Now().Add(10 * time.Second); ; {
 			// Every 16th iteration via bitmask (faster than modulo), check if we're past the deadline
 			if iterations&15 == 0 && time.Now().After(end) {
 				return fmt.Errorf("(%s) could not derive a unique environment resource prefix, used %d iterations based on an initial lifetime environment count of %d",
@@ -247,6 +249,7 @@ func preCreateEnvironment(db *gorm.DB, environment *Environment, _ *auth.User) e
 			if candidateOccurrencesInDatabase == 0 {
 				// If the candidate prefix we just generated isn't already in a non-deleted
 				// Environment, we're good to bail
+				generatedUniqueResourcePrefix = true
 				break
 			} else {
 				// Otherwise, reset the string builder and let's try incrementing.
@@ -257,7 +260,7 @@ func preCreateEnvironment(db *gorm.DB, environment *Environment, _ *auth.User) e
 				iterations++
 			}
 		}
-		if candidate.UniqueResourcePrefix == "" {
+		if !generatedUniqueResourcePrefix {
 			return fmt.Errorf("(%s) could not derive a unique environment resource prefix, used %d iterations based on an initial lifetime environment count of %d (loop exited but prefix was still empty)",
 				errors.InternalServerError, iterations, countOfAllEnvironmentsEver)
 		} else {
