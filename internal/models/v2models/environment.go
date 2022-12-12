@@ -193,9 +193,9 @@ func validateEnvironment(environment *Environment) error {
 }
 
 func preCreateEnvironment(db *gorm.DB, environment *Environment, _ *auth.User) error {
-	var generatedUniqueResourcePrefix bool
-
 	if environment.UniqueResourcePrefix == "" {
+		var generatedUniqueResourcePrefix bool
+
 		// Time to derive a unique resource prefix. /^[a-z][a-z0-9]{3}$/ and unique among
 		// all non-deleted environments. The tricky part is that environments *can* specify
 		// a custom prefix, for Thelma state-provider migration or debugging purposes.
