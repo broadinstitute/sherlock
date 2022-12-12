@@ -213,7 +213,7 @@ func preCreateEnvironment(db *gorm.DB, environment *Environment, _ *auth.User) e
 		// through a few hundred environments to find a match, we can do so fast enough
 		// that no one will care, and eventually the environments that conflict with this
 		// algorithm will get deleted and the runtime will recover.
-		var countOfAllEnvironmentsEver, candidateOccurrencesInDatabase int64
+		var countOfAllEnvironmentsEver int64
 		var unsignedCountOfAllEnvironmentsEver, iterations uint64
 		var candidate Environment
 		// First, we take advantage of the domain size as much as we can. We offset by
@@ -231,7 +231,7 @@ func preCreateEnvironment(db *gorm.DB, environment *Environment, _ *auth.User) e
 		// We set a deadline here three seconds into the future. This is purely a
 		// guess based on what we can probably get away with in proxies and UIs without
 		// needing to add additional handling.
-		for end := time.Now().Add(10 * time.Second); ; {
+		for end := time.Now().Add(3 * time.Second); ; {
 			// Every 16th iteration via bitmask (faster than modulo), check if we're past the deadline
 			if iterations&15 == 0 && time.Now().After(end) {
 				return fmt.Errorf("(%s) could not derive a unique environment resource prefix, used %d iterations based on an initial lifetime environment count of %d",
@@ -245,8 +245,9 @@ func preCreateEnvironment(db *gorm.DB, environment *Environment, _ *auth.User) e
 			// Check the database for this candidate prefix existing. Note that we do not use
 			// Unscoped here like we did above, because now we don't care if there is a
 			// conflict in the soft-deleted environments.
-			db.Where(&candidate).Count(&candidateOccurrencesInDatabase)
-			if candidateOccurrencesInDatabase == 0 {
+			var firstMatch Environment
+			db.Where(&Environment{UniqueResourcePrefix: sb.String()}).First(&firstMatch)
+			if firstMatch.ID == 0 {
 				// If the candidate prefix we just generated isn't already in a non-deleted
 				// Environment, we're good to bail
 				generatedUniqueResourcePrefix = true
