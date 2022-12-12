@@ -15,6 +15,8 @@ name: Bump, Tag, and Publish
 # - BROADBOT_TOKEN - the broadbot token, so we can avoid two reviewer rule on GHA operations
 on:
   push:
+    branches:
+      - main
     paths-ignore:
       - 'README.md'
       - 'docs/**'
@@ -172,7 +174,6 @@ jobs:
 
       # Publish typescript client
       - name: Publish typescript client
-        if: github.event_name != 'pull_request'
         working-directory: clients/typescript-fetch
         run: |
           npx google-artifactregistry-auth --yes
@@ -180,7 +181,6 @@ jobs:
 
       # Commit generated files back
       - name: Add and commit swagger spec
-        if: github.event_name != 'pull_request'
         shell: bash
         run: |
           git add .
