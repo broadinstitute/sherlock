@@ -2,14 +2,15 @@ package v2models
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/internal/auth"
-	"github.com/broadinstitute/sherlock/internal/errors"
-	"github.com/broadinstitute/sherlock/internal/models/v2models/environment"
-	"gorm.io/gorm"
 	"math/bits"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/broadinstitute/sherlock/internal/auth"
+	"github.com/broadinstitute/sherlock/internal/errors"
+	"github.com/broadinstitute/sherlock/internal/models/v2models/environment"
+	"gorm.io/gorm"
 )
 
 type Environment struct {
@@ -246,8 +247,13 @@ func preCreateEnvironment(db *gorm.DB, environment *Environment, _ *auth.User) e
 			// Unscoped here like we did above, because now we don't care if there is a
 			// conflict in the soft-deleted environments.
 			var firstMatch Environment
-			db.Where(candidate).First(&firstMatch)
-			if firstMatch.ID == 0 {
+			err := db.Where(candidate).First(&firstMatch).Error
+			// check for unexpected errors from DB
+			if err != nil && err != gorm.ErrRecordNotFound {
+				return fmt.Errorf("(%s) could not check other existing environments to verify prefix uniqueness: %v", errors.InternalServerError, err)
+			}
+			// no other environments with the same resource prefix exist in DB
+			if err == gorm.ErrRecordNotFound {
 				// If the candidate prefix we just generated isn't already in a non-deleted
 				// Environment, we're good to bail
 				generatedUniqueResourcePrefix = true
