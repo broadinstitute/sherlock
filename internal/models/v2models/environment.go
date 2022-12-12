@@ -246,7 +246,7 @@ func preCreateEnvironment(db *gorm.DB, environment *Environment, _ *auth.User) e
 			// Unscoped here like we did above, because now we don't care if there is a
 			// conflict in the soft-deleted environments.
 			var firstMatch Environment
-			db.Where(&Environment{UniqueResourcePrefix: sb.String()}).First(&firstMatch)
+			db.Where(candidate).First(&firstMatch)
 			if firstMatch.ID == 0 {
 				// If the candidate prefix we just generated isn't already in a non-deleted
 				// Environment, we're good to bail
