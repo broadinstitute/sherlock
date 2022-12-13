@@ -70,8 +70,9 @@ jobs:
     permissions:
       id-token: 'write'
     outputs:
-      lifecycle: ${{ steps.parse.outputs.lifecycle }}
-      owner: ${{ steps.parse.outputs.owner }}
+      name: ${{ steps.parse.outputs.name }}
+      environment: ${{ steps.parse.outputs.environment }}
+      cluster: ${{ steps.parse.outputs.cluster }}
     steps:
       - name: "Authenticate to GCP"
         id: 'auth'
