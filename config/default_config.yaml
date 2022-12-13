@@ -27,10 +27,6 @@ db:
   autoMigrateV2: false
   maxOpenConnections: 75
 
-metrics:
-  accelerate:
-    fromAPI: v1
-
 auth:
   updateIntervalMinutes: 15
   broadinstitute:

@@ -1,14 +1,7 @@
-package metrics
+package v1metrics
 
 import (
 	"context"
-	"fmt"
-	"log"
-	"time"
-
-	"contrib.go.opencensus.io/exporter/prometheus"
-	"contrib.go.opencensus.io/exporter/stackdriver"
-	"github.com/gin-gonic/gin"
 	"go.opencensus.io/stats"
 	"go.opencensus.io/stats/view"
 	"go.opencensus.io/tag"
@@ -45,41 +38,8 @@ var (
 )
 
 // RegisterViews will setup opencensus view aggregators for each metric tracked by sherlock
-func registerViews() error {
+func RegisterViews() error {
 	return view.Register(DeployCounterView, LeadTimeView)
-}
-
-// RegisterPrometheusMetricsHandler accepts a gin.RouterGroup and will set up
-// a prometheus metrics endpoint on the provided route
-func RegisterPrometheusMetricsHandler(metricsGroup *gin.RouterGroup) {
-	if err := registerViews(); err != nil {
-		log.Fatalf("error registering metrics views")
-	}
-
-	prometheusExporter, err := prometheus.NewExporter(prometheus.Options{
-		Namespace: "sherlock",
-	})
-	if err != nil {
-		log.Fatalf("error creating prometheus exporter")
-	}
-
-	metricsGroup.GET("", gin.WrapH(prometheusExporter))
-}
-
-// RegisterStackdriverExporter will
-func RegisterStackdriverExporter() (*stackdriver.Exporter, error) {
-	sdExporter, err := stackdriver.NewExporter(stackdriver.Options{
-		ProjectID:         "dsp-tools-k8s",
-		MetricPrefix:      "sherlock",
-		ReportingInterval: 60 * time.Second,
-	})
-	if err != nil {
-		return nil, err
-	}
-	if err := sdExporter.StartMetricsExporter(); err != nil {
-		return nil, fmt.Errorf("error starting stackdriver metrics exporter: %v", err)
-	}
-	return sdExporter, nil
 }
 
 // RecordDeployFrequency will record a new data point for the given service and environment
