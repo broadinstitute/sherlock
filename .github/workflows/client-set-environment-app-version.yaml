@@ -122,7 +122,15 @@ env:
   BEEHIVE_DEV_VANITY_URL: 'https://broad.io/beehive-dev'
 
 jobs:
+  get-chart-release:
+    uses: ./.github/workflows/client-get-chart-release.yaml
+    permissions:
+      id-token: 'write'
+    with:
+      chart-release-name: ${{ inputs.environment-name }}/${{ inputs.chart-name }}
+
   set:
+    needs: get-chart-release
     runs-on: ubuntu-22.04
     permissions:
       id-token: 'write'
@@ -211,6 +219,8 @@ jobs:
         fi
 
   get-environment:
+    needs: should-sync
+    if: needs.should-sync.outputs.should-sync == 'true'
     uses: ./.github/workflows/client-get-environment.yaml
     permissions:
       id-token: 'write'
@@ -218,7 +228,7 @@ jobs:
       environment-name: ${{ inputs.environment-name }}
 
   sync:
-    needs: [set, get-environment, should-sync]
+    needs: [set, get-environment, get-chart-release, should-sync]
     if: ${{ needs.should-sync.outputs.should-sync == 'true' && needs.get-environment.outputs.lifecycle != 'template' }}
     runs-on: ubuntu-latest
     steps:
@@ -234,4 +244,4 @@ jobs:
           workflow: sync-release
           ref: refs/heads/main
           token: ${{ secrets.sync-git-token }}
-          inputs: '{ "chart-release-names": "${{ inputs.environment-name }}/${{ inputs.chart-name }}", "refresh-only": "false" }'
+          inputs: '{ "chart-release-names": "${{ needs.get-chart-release.outputs.name }}", "refresh-only": "false" }'
