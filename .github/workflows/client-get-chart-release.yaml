@@ -1,0 +1,115 @@
+name: Get Chart Release
+
+# This workflow provides GitHub Actions native access to information about Sherlock chart releases (chart instances).
+#
+# The caller repository must have Workload Identity Federation configured to allow impersonation of the
+# "dsp-tools-iap-access@dsp-tools-k8s.iam.gserviceaccount.com" service account; steps 1 and 2 of the documentation:
+# https://docs.google.com/document/d/1bnhDmWQHAMat_Saoa_z28FHwXmGWw6kywjdbKf208h4/edit
+#
+# With that configured, here's how you can call this workflow:
+# ```yaml
+# jobs:
+#
+#   get-chart-release:
+#     uses: broadinstitute/sherlock/.github/workflows/client-get-chart-release.yaml@main
+#     with:
+#       chart-release-name: '<the-chart-release-to-get>'
+#     permissions:
+#       id-token: 'write'
+# ```
+#
+# For more information on using called workflow outputs, see 
+# https://docs.github.com/en/actions/using-workflows/reusing-workflows#using-outputs-from-a-reusable-workflow
+
+on:
+  workflow_call:
+
+    inputs:
+
+      ##
+      ## Required configuration:
+      ##
+
+      chart-release-name:
+        required: true
+        type: string
+        description: "The name or selector of the chart release (chart instance) to get"
+
+      ##
+      ## Sherlock configuration:
+      ##
+
+      use-sherlock-dev:
+        required: false
+        type: boolean
+        default: false
+        description: "If the environment should be gotten from the DevOps-use development Sherlock instance instead of the general-use production instance"
+
+    outputs:
+      name:
+        description: "The name of the chart release"
+        value: ${{ jobs.get.outputs.name }}
+      environment:
+        description: "The environment of the chart release"
+        value: ${{ jobs.get.outputs.environment }}
+      cluster:
+        description: "The cluster of the chart release"
+        value: ${{ jobs.get.outputs.cluster }}
+
+env:
+  SHERLOCK_PROD_URL: 'https://sherlock.dsp-devops.broadinstitute.org'
+  SHERLOCK_DEV_URL: 'https://sherlock-dev.dsp-devops.broadinstitute.org'
+  BEEHIVE_PROD_URL: 'https://beehive.dsp-devops.broadinsitute.org'
+  BEEHIVE_DEV_URL: 'https://beehive-dev.dsp-devops.broadinstitute.org'
+  BEEHIVE_PROD_VANITY_URL: 'https://broad.io/beehive'
+  BEEHIVE_DEV_VANITY_URL: 'https://broad.io/beehive-dev'
+
+jobs:
+  get:
+    runs-on: ubuntu-22.04
+    permissions:
+      id-token: 'write'
+    outputs:
+      name: ${{ steps.parse.outputs.name }}
+      environment: ${{ steps.parse.outputs.environment }}
+      cluster: ${{ steps.parse.outputs.cluster }}
+    steps:
+      - name: "Authenticate to GCP"
+        id: 'auth'
+        uses: google-github-actions/auth@v0
+        with:
+          workload_identity_provider: 'projects/1038484894585/locations/global/workloadIdentityPools/github-wi-pool/providers/github-wi-provider'
+          service_account: 'dsp-tools-iap-access@dsp-tools-k8s.iam.gserviceaccount.com'
+          token_format: 'id_token'
+          id_token_audience: '1038484894585-k8qvf7l876733laev0lm8kenfa2lj6bn.apps.googleusercontent.com'
+          id_token_include_email: true
+          create_credentials_file: false
+          export_environment_variables: false
+
+      - name: "Get from Sherlock Dev"
+        if: ${{ inputs.use-sherlock-dev == true }}
+        shell: bash
+        run: |
+          set -ex
+          curl --fail-with-body \
+            "$SHERLOCK_DEV_URL/api/v2/chart-releases/${{ inputs.chart-release-name }}" \
+            -H 'Content-Type: application/json' \
+            -H 'Authorization: Bearer ${{ steps.auth.outputs.id_token }}' \
+            -o "$RUNNER_TEMP/response.json"
+
+      - name: "Get from Sherlock Prod"
+        if: ${{ inputs.use-sherlock-dev == false }}
+        shell: bash
+        run: |
+          set -ex
+          curl --fail-with-body \
+            "$SHERLOCK_PROD_URL/api/v2/chart-releases/${{ inputs.chart-release-name }}" \
+            -H 'Content-Type: application/json' \
+            -H 'Authorization: Bearer ${{ steps.auth.outputs.id_token }}' \
+            -o "$RUNNER_TEMP/response.json"
+      
+      - name: "Parse Outputs"
+        id: 'parse'
+        shell: bash
+        run: |
+          jq -r 'to_entries | map("\(.key)=\(.value|tostring)") | .[]' $RUNNER_TEMP/response.json >> $GITHUB_OUTPUT
