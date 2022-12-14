@@ -65,7 +65,7 @@ env:
   BEEHIVE_DEV_VANITY_URL: 'https://broad.io/beehive-dev'
 
 jobs:
-  get:
+  get-chart-release:
     runs-on: ubuntu-22.04
     permissions:
       id-token: 'write'

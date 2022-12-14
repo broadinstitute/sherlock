@@ -103,7 +103,7 @@ env:
   BEEHIVE_DEV_VANITY_URL: 'https://broad.io/beehive-dev'
 
 jobs:
-  set:
+  refresh:
     runs-on: ubuntu-22.04
     permissions:
       id-token: 'write'
@@ -171,10 +171,10 @@ jobs:
             -H 'Authorization: Bearer ${{ steps.auth.outputs.id_token }}' \
             -d "@$RUNNER_TEMP/body.json" | jq
 
-  should-sync:
+  can-sync:
     runs-on: ubuntu-22.04
     outputs:
-      should-sync: ${{ steps.check.outputs.should-sync }}
+      can-sync: ${{ steps.check.outputs.can-sync }}
     steps:
     - name: "Check Token"
       id: check
@@ -182,12 +182,14 @@ jobs:
       run: |
         if [ -z "${{ secrets.sync-git-token }}" ]
         then
-          echo "should-sync=false" >> $GITHUB_OUTPUT
+          echo "can-sync=false" >> $GITHUB_OUTPUT
         else
-          echo "should-sync=true" >> $GITHUB_OUTPUT
+          echo "can-sync=true" >> $GITHUB_OUTPUT
         fi
   
   get-environment:
+    needs: can-sync
+    if: ${{ needs.can-sync.outputs.can-sync == 'true' }}
     uses: ./.github/workflows/client-get-environment.yaml
     permissions:
       id-token: 'write'
@@ -195,8 +197,8 @@ jobs:
       environment-name: ${{ inputs.environment-name }}
 
   sync:
-    needs: [set, get-environment, should-sync]
-    if: ${{ needs.should-sync.outputs.should-sync == 'true' && needs.get-environment.outputs.lifecycle != 'template' }}
+    needs: [refresh, get-environment, can-sync]
+    if: ${{ needs.can-sync.outputs.can-sync == 'true' && needs.get-environment.outputs.lifecycle != 'template' }}
     runs-on: ubuntu-latest
     steps:
 
