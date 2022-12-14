@@ -129,7 +129,7 @@ jobs:
     with:
       chart-release-name: ${{ inputs.environment-name }}/${{ inputs.chart-name }}
 
-  set:
+  set-version:
     needs: get-chart-release
     runs-on: ubuntu-22.04
     permissions:
@@ -162,7 +162,7 @@ jobs:
         shell: bash
         run: |
           cat "$RUNNER_TEMP/body.json"
-          echo "## Set ${{ inputs.environment-name }}/${{ inputs.chart-name }} to ${{ inputs.new-version }} Sherlock" >> $GITHUB_STEP_SUMMARY
+          echo "## Set ${{ inputs.environment-name }}/${{ inputs.chart-name }} to ${{ inputs.chart-name }}/${{ inputs.new-version }} in Sherlock" >> $GITHUB_STEP_SUMMARY
 
       - name: "Authenticate to GCP"
         id: 'auth'
@@ -200,12 +200,11 @@ jobs:
             -H 'Content-Type: application/json' \
             -H 'Authorization: Bearer ${{ steps.auth.outputs.id_token }}' \
             -d "@$RUNNER_TEMP/body.json" | jq
-          echo "Available in Beehive's dev instance at $BEEHIVE_DEV_VANITY_URL/r/chart-release/${{ inputs.environment-name }}/${{ inputs.chart-name }}" >> $GITHUB_STEP_SUMMARY
 
-  should-sync:
+  can-sync:
     runs-on: ubuntu-22.04
     outputs:
-      should-sync: ${{ steps.check.outputs.should-sync }}
+      can-sync: ${{ steps.check.outputs.can-sync }}
     steps:
     - name: "Check Token"
       id: check
@@ -213,14 +212,14 @@ jobs:
       run: |
         if [ -z "${{ secrets.sync-git-token }}" ]
         then
-          echo "should-sync=false" >> $GITHUB_OUTPUT
+          echo "can-sync=false" >> $GITHUB_OUTPUT
         else
-          echo "should-sync=true" >> $GITHUB_OUTPUT
+          echo "can-sync=true" >> $GITHUB_OUTPUT
         fi
 
   get-environment:
-    needs: should-sync
-    if: needs.should-sync.outputs.should-sync == 'true'
+    needs: can-sync
+    if: ${{ needs.can-sync.outputs.can-sync == 'true' }}
     uses: ./.github/workflows/client-get-environment.yaml
     permissions:
       id-token: 'write'
@@ -228,8 +227,8 @@ jobs:
       environment-name: ${{ inputs.environment-name }}
 
   sync:
-    needs: [set, get-environment, get-chart-release, should-sync]
-    if: ${{ needs.should-sync.outputs.should-sync == 'true' && needs.get-environment.outputs.lifecycle != 'template' }}
+    needs: [set-version, get-environment, get-chart-release, can-sync]
+    if: ${{ needs.can-sync.outputs.can-sync == 'true' && needs.get-environment.outputs.lifecycle != 'template' }}
     runs-on: ubuntu-latest
     steps:
 
