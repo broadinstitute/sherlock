@@ -48,10 +48,10 @@ on:
     outputs:
       lifecycle:
         description: "The lifecycle of the environment"
-        value: ${{ jobs.get.outputs.lifecycle }}
+        value: ${{ jobs.get-environment.outputs.lifecycle }}
       owner:
         description: "The owner of the environment"
-        value: ${{ jobs.get.outputs.owner }}
+        value: ${{ jobs.get-environment.outputs.owner }}
 
 env:
   SHERLOCK_PROD_URL: 'https://sherlock.dsp-devops.broadinstitute.org'

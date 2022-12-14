@@ -48,13 +48,13 @@ on:
     outputs:
       name:
         description: "The name of the chart release"
-        value: ${{ jobs.get.outputs.name }}
+        value: ${{ jobs.get-chart-release.outputs.name }}
       environment:
         description: "The environment of the chart release"
-        value: ${{ jobs.get.outputs.environment }}
+        value: ${{ jobs.get-chart-release.outputs.environment }}
       cluster:
         description: "The cluster of the chart release"
-        value: ${{ jobs.get.outputs.cluster }}
+        value: ${{ jobs.get-chart-release.outputs.cluster }}
 
 env:
   SHERLOCK_PROD_URL: 'https://sherlock.dsp-devops.broadinstitute.org'
