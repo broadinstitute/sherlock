@@ -49,6 +49,9 @@ type V2controllersEnvironment struct {
 	// When creating, will be calculated if left empty
 	DefaultNamespace string `json:"defaultNamespace,omitempty"`
 
+	// description
+	Description string `json:"description,omitempty"`
+
 	// helmfile ref
 	HelmfileRef *string `json:"helmfileRef,omitempty"`
 

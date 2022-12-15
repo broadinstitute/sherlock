@@ -36,6 +36,7 @@ type Environment struct {
 	HelmfileRef                *string `gorm:"not null; default:null"`
 	PreventDeletion            *bool
 	AutoDelete                 *environment.AutoDelete `gorm:"column:delete_after"`
+	Description                *string
 }
 
 func (e Environment) TableName() string {

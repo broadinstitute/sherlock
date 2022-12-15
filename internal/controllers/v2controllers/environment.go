@@ -44,6 +44,7 @@ type EditableEnvironment struct {
 	HelmfileRef                *string                 `json:"helmfileRef" form:"helmfileRef" default:"HEAD"`
 	PreventDeletion            *bool                   `json:"preventDeletion" form:"preventDeletion" default:"false"` // Used to protect specific BEEs from deletion (thelma checks this field)
 	AutoDelete                 *environment.AutoDelete `json:"autoDelete" form:"autoDelete"`                           // Used to schedule automatic deletion of BEEs
+	Description                *string                 `json:"description" form:"description"`
 }
 
 //nolint:unused
@@ -113,6 +114,7 @@ func modelEnvironmentToEnvironment(model *v2models.Environment) *Environment {
 				HelmfileRef:                model.HelmfileRef,
 				PreventDeletion:            model.PreventDeletion,
 				AutoDelete:                 model.AutoDelete,
+				Description:                model.Description,
 			},
 		},
 	}
@@ -159,6 +161,7 @@ func environmentToModelEnvironment(environment Environment, stores *v2models.Sto
 		HelmfileRef:                environment.HelmfileRef,
 		PreventDeletion:            environment.PreventDeletion,
 		AutoDelete:                 environment.AutoDelete,
+		Description:                environment.Description,
 	}, nil
 }
 

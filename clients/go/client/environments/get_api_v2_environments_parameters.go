@@ -101,6 +101,9 @@ type GetAPIV2EnvironmentsParams struct {
 	*/
 	DefaultNamespace *string
 
+	// Description.
+	Description *string
+
 	// HelmfileRef.
 	//
 	// Default: "HEAD"
@@ -332,6 +335,17 @@ func (o *GetAPIV2EnvironmentsParams) WithDefaultNamespace(defaultNamespace *stri
 // SetDefaultNamespace adds the defaultNamespace to the get API v2 environments params
 func (o *GetAPIV2EnvironmentsParams) SetDefaultNamespace(defaultNamespace *string) {
 	o.DefaultNamespace = defaultNamespace
+}
+
+// WithDescription adds the description to the get API v2 environments params
+func (o *GetAPIV2EnvironmentsParams) WithDescription(description *string) *GetAPIV2EnvironmentsParams {
+	o.SetDescription(description)
+	return o
+}
+
+// SetDescription adds the description to the get API v2 environments params
+func (o *GetAPIV2EnvironmentsParams) SetDescription(description *string) {
+	o.Description = description
 }
 
 // WithHelmfileRef adds the helmfileRef to the get API v2 environments params
@@ -610,6 +624,23 @@ func (o *GetAPIV2EnvironmentsParams) WriteToRequest(r runtime.ClientRequest, reg
 		if qDefaultNamespace != "" {
 
 			if err := r.SetQueryParam("defaultNamespace", qDefaultNamespace); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.Description != nil {
+
+		// query param description
+		var qrDescription string
+
+		if o.Description != nil {
+			qrDescription = *o.Description
+		}
+		qDescription := qrDescription
+		if qDescription != "" {
+
+			if err := r.SetQueryParam("description", qDescription); err != nil {
 				return err
 			}
 		}

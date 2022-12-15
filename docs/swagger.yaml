@@ -661,6 +661,8 @@ definitions:
       defaultNamespace:
         description: When creating, will be calculated if left empty
         type: string
+      description:
+        type: string
       helmfileRef:
         default: HEAD
         type: string
@@ -779,6 +781,8 @@ definitions:
         description: should be the environment branch for live envs. Is usually dev
           for template/dynamic but not necessarily
         type: string
+      description:
+        type: string
       helmfileRef:
         default: HEAD
         type: string
@@ -828,6 +832,8 @@ definitions:
         type: string
       defaultNamespace:
         description: When creating, will be calculated if left empty
+        type: string
+      description:
         type: string
       helmfileRef:
         default: HEAD
@@ -2502,6 +2508,9 @@ paths:
       - description: When creating, will be calculated if left empty
         in: query
         name: defaultNamespace
+        type: string
+      - in: query
+        name: description
         type: string
       - default: HEAD
         in: query

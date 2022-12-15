@@ -124,7 +124,7 @@ env:
   BEEHIVE_DEV_VANITY_URL: 'https://broad.io/beehive-dev'
 
 jobs:
-  report:
+  report-new-version:
     runs-on: ubuntu-22.04
     permissions:
       contents: 'read'
@@ -287,4 +287,3 @@ jobs:
             -H 'Content-Type: application/json' \
             -H 'Authorization: Bearer ${{ steps.auth.outputs.id_token }}' \
             -d "@$RUNNER_TEMP/body.json" | jq
-          echo "Available in Beehive's dev instance at $BEEHIVE_DEV_VANITY_URL/r/app-version/${{ inputs.chart-name }}/${{ inputs.new-version }}" >> $GITHUB_STEP_SUMMARY
