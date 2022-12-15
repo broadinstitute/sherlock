@@ -91,6 +91,12 @@ export interface V2controllersEnvironment {
      * @type {string}
      * @memberof V2controllersEnvironment
      */
+    description?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof V2controllersEnvironment
+     */
     helmfileRef?: string;
     /**
      * 
@@ -200,6 +206,7 @@ export function V2controllersEnvironmentFromJSONTyped(json: any, ignoreDiscrimin
         'defaultClusterInfo': !exists(json, 'defaultClusterInfo') ? undefined : V2controllersClusterFromJSON(json['defaultClusterInfo']),
         'defaultFirecloudDevelopRef': !exists(json, 'defaultFirecloudDevelopRef') ? undefined : json['defaultFirecloudDevelopRef'],
         'defaultNamespace': !exists(json, 'defaultNamespace') ? undefined : json['defaultNamespace'],
+        'description': !exists(json, 'description') ? undefined : json['description'],
         'helmfileRef': !exists(json, 'helmfileRef') ? undefined : json['helmfileRef'],
         'id': !exists(json, 'id') ? undefined : json['id'],
         'lifecycle': !exists(json, 'lifecycle') ? undefined : json['lifecycle'],
@@ -235,6 +242,7 @@ export function V2controllersEnvironmentToJSON(value?: V2controllersEnvironment 
         'defaultClusterInfo': V2controllersClusterToJSON(value.defaultClusterInfo),
         'defaultFirecloudDevelopRef': value.defaultFirecloudDevelopRef,
         'defaultNamespace': value.defaultNamespace,
+        'description': value.description,
         'helmfileRef': value.helmfileRef,
         'id': value.id,
         'lifecycle': value.lifecycle,

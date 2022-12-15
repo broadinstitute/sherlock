@@ -32,6 +32,9 @@ type V2controllersEditableEnvironment struct {
 	// should be the environment branch for live envs. Is usually dev for template/dynamic but not necessarily
 	DefaultFirecloudDevelopRef *string `json:"defaultFirecloudDevelopRef,omitempty"`
 
+	// description
+	Description string `json:"description,omitempty"`
+
 	// helmfile ref
 	HelmfileRef *string `json:"helmfileRef,omitempty"`
 

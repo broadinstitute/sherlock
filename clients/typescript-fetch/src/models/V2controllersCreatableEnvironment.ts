@@ -73,6 +73,12 @@ export interface V2controllersCreatableEnvironment {
      * @type {string}
      * @memberof V2controllersCreatableEnvironment
      */
+    description?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof V2controllersCreatableEnvironment
+     */
     helmfileRef?: string;
     /**
      * 
@@ -156,6 +162,7 @@ export function V2controllersCreatableEnvironmentFromJSONTyped(json: any, ignore
         'defaultCluster': !exists(json, 'defaultCluster') ? undefined : json['defaultCluster'],
         'defaultFirecloudDevelopRef': !exists(json, 'defaultFirecloudDevelopRef') ? undefined : json['defaultFirecloudDevelopRef'],
         'defaultNamespace': !exists(json, 'defaultNamespace') ? undefined : json['defaultNamespace'],
+        'description': !exists(json, 'description') ? undefined : json['description'],
         'helmfileRef': !exists(json, 'helmfileRef') ? undefined : json['helmfileRef'],
         'lifecycle': !exists(json, 'lifecycle') ? undefined : json['lifecycle'],
         'name': !exists(json, 'name') ? undefined : json['name'],
@@ -185,6 +192,7 @@ export function V2controllersCreatableEnvironmentToJSON(value?: V2controllersCre
         'defaultCluster': value.defaultCluster,
         'defaultFirecloudDevelopRef': value.defaultFirecloudDevelopRef,
         'defaultNamespace': value.defaultNamespace,
+        'description': value.description,
         'helmfileRef': value.helmfileRef,
         'lifecycle': value.lifecycle,
         'name': value.name,

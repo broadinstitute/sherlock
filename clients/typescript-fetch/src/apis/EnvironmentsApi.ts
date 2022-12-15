@@ -39,6 +39,7 @@ export interface ApiV2EnvironmentsGetRequest {
     defaultCluster?: string;
     defaultFirecloudDevelopRef?: string;
     defaultNamespace?: string;
+    description?: string;
     helmfileRef?: string;
     id?: number;
     lifecycle?: string;
@@ -114,6 +115,10 @@ export class EnvironmentsApi extends runtime.BaseAPI {
 
         if (requestParameters.defaultNamespace !== undefined) {
             queryParameters['defaultNamespace'] = requestParameters.defaultNamespace;
+        }
+
+        if (requestParameters.description !== undefined) {
+            queryParameters['description'] = requestParameters.description;
         }
 
         if (requestParameters.helmfileRef !== undefined) {

@@ -2424,6 +2424,11 @@
                     },
                     {
                         "type": "string",
+                        "name": "description",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "default": "HEAD",
                         "name": "helmfileRef",
                         "in": "query"
@@ -4548,6 +4553,9 @@
                     "description": "When creating, will be calculated if left empty",
                     "type": "string"
                 },
+                "description": {
+                    "type": "string"
+                },
                 "helmfileRef": {
                     "type": "string",
                     "default": "HEAD"
@@ -4708,6 +4716,9 @@
                     "type": "string",
                     "default": "dev"
                 },
+                "description": {
+                    "type": "string"
+                },
                 "helmfileRef": {
                     "type": "string",
                     "default": "HEAD"
@@ -4772,6 +4783,9 @@
                 },
                 "defaultNamespace": {
                     "description": "When creating, will be calculated if left empty",
+                    "type": "string"
+                },
+                "description": {
                     "type": "string"
                 },
                 "helmfileRef": {
