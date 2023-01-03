@@ -38,6 +38,6 @@ func (a *Application) v1MetricsInit() error {
 		)
 	}
 
-	log.Debug().Msgf("MTRC | v1 metrics initialized, took %s", time.Now().Sub(initStartTime).String())
+	log.Debug().Msgf("MTRC | v1 metrics initialized, took %s", time.Since(initStartTime).String())
 	return nil
 }

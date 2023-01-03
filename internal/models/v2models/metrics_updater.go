@@ -281,6 +281,9 @@ func UpdateMetrics(ctx context.Context, db *gorm.DB) error {
 			} {
 				ctx, err = tag.New(ctx,
 					tag.Upsert(v2metrics.ChangesetStateKey, changesetState))
+				if err != nil {
+					return err
+				}
 				stats.Record(ctx, v2metrics.ChangesetCountMeasure.M(countMap[chartRelease.ID]))
 			}
 		}
