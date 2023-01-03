@@ -9,6 +9,7 @@ import (
 	"github.com/broadinstitute/sherlock/internal/controllers/v2controllers"
 	"github.com/broadinstitute/sherlock/internal/metrics"
 	"github.com/broadinstitute/sherlock/internal/metrics/v1metrics"
+	"github.com/broadinstitute/sherlock/internal/metrics/v2metrics"
 	"github.com/broadinstitute/sherlock/internal/models/v2models"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
@@ -61,21 +62,38 @@ func New(db *gorm.DB) *Application {
 	auth.CacheExtraPermissions()
 
 	app.registerControllers()
-	// initialize the gin router and store it in our app struct
-	app.buildRouter()
 
-	if err := v1metrics.RegisterViews(); err != nil {
-		log.Error().Msgf("error registering v1 metrics views: %v", err)
-	}
 	// start up stackdriver exporter and save it to the application struct
 	sd, err := metrics.RegisterStackdriverExporter()
 	if err != nil {
 		log.Error().Msgf("error starting stackdriver exporter: %v", err)
 	}
 	app.Stackdriver = sd
-	if err := app.v1MetricsInit(); err != nil {
-		log.Error().Msgf("error initializing metrics: %v", err)
+
+	if config.Config.Bool("metrics.v1.enable") {
+		if err := v1metrics.RegisterViews(); err != nil {
+			log.Error().Msgf("error registering v1 metrics views: %v", err)
+		}
+		if err := app.v1MetricsInit(); err != nil {
+			log.Error().Msgf("error initializing v1 metrics: %v", err)
+		}
 	}
+	if config.Config.Bool("metrics.v2.enable") {
+		if err := v2metrics.RegisterViews(); err != nil {
+			log.Fatal().Msgf("error registering v2 metrics views: %v", err)
+			return nil
+		}
+		if err := v2models.UpdateMetrics(context.Background(), db); err != nil {
+			log.Fatal().Msgf("error initializing v2 metrics: %v", err)
+			return nil
+		}
+		ctx, cancelFunc := context.WithCancel(context.Background())
+		app.contextsToCancel = append(app.contextsToCancel, cancelFunc)
+		go v2models.KeepMetricsUpdated(ctx, db, time.Duration(config.Config.MustInt("metrics.v2.updateIntervalMinutes"))*time.Minute)
+	}
+
+	// initialize the gin router and store it in our app struct
+	app.buildRouter()
 
 	return app
 }

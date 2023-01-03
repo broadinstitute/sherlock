@@ -44,3 +44,10 @@ auth:
   extraPermissions:
     #- email: example@dsp-tools-k8s.iam.gserviceaccount.com
     #  suitable: false
+
+metrics:
+  v1:
+    enable: true
+  v2:
+    enable: true
+    updateIntervalMinutes: 5
