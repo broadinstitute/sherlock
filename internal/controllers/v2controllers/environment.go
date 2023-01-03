@@ -43,7 +43,7 @@ type EditableEnvironment struct {
 	NamePrefixesDomain         *bool                   `json:"namePrefixesDomain" form:"namePrefixesDomain" default:"true"`
 	HelmfileRef                *string                 `json:"helmfileRef" form:"helmfileRef" default:"HEAD"`
 	PreventDeletion            *bool                   `json:"preventDeletion" form:"preventDeletion" default:"false"` // Used to protect specific BEEs from deletion (thelma checks this field)
-	AutoDelete                 *environment.AutoDelete `json:"autoDelete" form:"autoDelete"`                           // Used to schedule automatic deletion of BEEs
+	AutoDelete                 *environment.AutoDelete `json:"autoDelete" form:"autoDelete"`
 	Description                *string                 `json:"description" form:"description"`
 }
 
