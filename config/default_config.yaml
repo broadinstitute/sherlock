@@ -27,10 +27,6 @@ db:
   autoMigrateV2: false
   maxOpenConnections: 75
 
-metrics:
-  accelerate:
-    fromAPI: v1
-
 auth:
   updateIntervalMinutes: 15
   broadinstitute:
@@ -48,3 +44,10 @@ auth:
   extraPermissions:
     #- email: example@dsp-tools-k8s.iam.gserviceaccount.com
     #  suitable: false
+
+metrics:
+  v1:
+    enable: true
+  v2:
+    enable: true
+    updateIntervalMinutes: 5

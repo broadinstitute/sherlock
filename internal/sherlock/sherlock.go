@@ -8,6 +8,8 @@ import (
 	"github.com/broadinstitute/sherlock/internal/controllers/v1controllers"
 	"github.com/broadinstitute/sherlock/internal/controllers/v2controllers"
 	"github.com/broadinstitute/sherlock/internal/metrics"
+	"github.com/broadinstitute/sherlock/internal/metrics/v1metrics"
+	"github.com/broadinstitute/sherlock/internal/metrics/v2metrics"
 	"github.com/broadinstitute/sherlock/internal/models/v2models"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
@@ -60,8 +62,6 @@ func New(db *gorm.DB) *Application {
 	auth.CacheExtraPermissions()
 
 	app.registerControllers()
-	// initialize the gin router and store it in our app struct
-	app.buildRouter()
 
 	// start up stackdriver exporter and save it to the application struct
 	sd, err := metrics.RegisterStackdriverExporter()
@@ -69,9 +69,31 @@ func New(db *gorm.DB) *Application {
 		log.Error().Msgf("error starting stackdriver exporter: %v", err)
 	}
 	app.Stackdriver = sd
-	if err := app.initializeMetrics(); err != nil {
-		log.Error().Msgf("error initializing metrics: %v", err)
+
+	if config.Config.Bool("metrics.v1.enable") {
+		if err := v1metrics.RegisterViews(); err != nil {
+			log.Error().Msgf("error registering v1 metrics views: %v", err)
+		}
+		if err := app.v1MetricsInit(); err != nil {
+			log.Error().Msgf("error initializing v1 metrics: %v", err)
+		}
 	}
+	if config.Config.Bool("metrics.v2.enable") {
+		if err := v2metrics.RegisterViews(); err != nil {
+			log.Fatal().Msgf("error registering v2 metrics views: %v", err)
+			return nil
+		}
+		if err := v2models.UpdateMetrics(context.Background(), db); err != nil {
+			log.Fatal().Msgf("error initializing v2 metrics: %v", err)
+			return nil
+		}
+		ctx, cancelFunc := context.WithCancel(context.Background())
+		app.contextsToCancel = append(app.contextsToCancel, cancelFunc)
+		go v2models.KeepMetricsUpdated(ctx, db, time.Duration(config.Config.MustInt("metrics.v2.updateIntervalMinutes"))*time.Minute)
+	}
+
+	// initialize the gin router and store it in our app struct
+	app.buildRouter()
 
 	return app
 }
@@ -103,73 +125,5 @@ func (a *Application) ShutdownStackdriver() {
 func (a *Application) CancelContexts() {
 	for _, cancelFunc := range a.contextsToCancel {
 		cancelFunc()
-	}
-}
-
-// initializeMetrics is used to ensure the prometheus endpoint will restore time series
-// for each service instance being tracked by sherlock.
-// It performs a lookup of each service instance and initializes its deploy counter.
-// To initialize lead time it looks up the most recent deploy for a given service instance
-// and sets the associated metric to the lead time of that deploy
-func (a *Application) initializeMetrics() error {
-	ctx := context.Background()
-
-	if config.Config.String("metrics.accelerate.fromAPI") == "v2" {
-		//staticEnvironments, err := a.v2controllers.EnvironmentController.ListAllMatchingByUpdated(
-		//	v2controllers.Environment{CreatableEnvironment: v2controllers.CreatableEnvironment{Lifecycle: "static"}}, 0)
-		//if err != nil {
-		//	return err
-		//}
-		//for _, staticEnvironment := range staticEnvironments {
-		//	chartReleases, err := a.v2controllers.ChartReleaseController.ListAllMatchingByUpdated(
-		//		v2controllers.ChartRelease{CreatableChartRelease: v2controllers.CreatableChartRelease{Environment: staticEnvironment.Name}}, 0)
-		//	if err != nil {
-		//		return err
-		//	}
-		//	for _, chartRelease := range chartReleases {
-		//		metrics.RecordDeployFrequency(ctx, chartRelease.Environment, chartRelease.Chart)
-		//
-		//		// Maybe we should allow sorting by AppliedAt? That might accomplish this the easiest
-		//		mostRecentDeploy, err := a.v2controllers.ChangesetController.ListAllMatchingByUpdated(
-		//			v2controllers.Changeset{CreatableChangeset: v2controllers.CreatableChangeset{ChartRelease: chartRelease.Name}, IsApplied: true}, 1) // We'd need to actually add IsApplied to the database for this to work, or add extra handling
-		//		if err != nil {
-		//			return err
-		//		} else if len(mostRecentDeploy) == 0 {
-		//			break
-		//		} else if mostRecentDeploy[0].ToAppVersionInfo == nil {
-		//			break
-		//		}
-		//
-		//		metrics.RecordLeadTime(
-		//			ctx,
-		//			mostRecentDeploy[0].AppliedAt.Sub(mostRecentDeploy[0].ToAppVersionInfo.CreatedAt).Hours(),
-		//			chartRelease.Environment,
-		//			chartRelease.Chart)
-		//	}
-		//}
-		return nil
-	} else {
-		// retrieve all service instances and initalize the deploy frequency metric for each one
-		serviceInstances, err := a.Deploys.ListServiceInstances()
-		if err != nil {
-			return err
-		}
-
-		// metrics library requires a context
-		for _, serviceInstance := range serviceInstances {
-			metrics.RecordDeployFrequency(ctx, serviceInstance.Environment.Name, serviceInstance.Service.Name)
-			// initialize leadtime by finding most recent deploy, calculating it's lead time and update the metric
-			mostRecentDeploy, err := a.Deploys.GetMostRecentDeploy(serviceInstance.Environment.Name, serviceInstance.Service.Name)
-			if err != nil {
-				return err
-			}
-			metrics.RecordLeadTime(
-				ctx,
-				mostRecentDeploy.CalculateLeadTimeHours(),
-				serviceInstance.Environment.Name,
-				serviceInstance.Service.Name,
-			)
-		}
-		return nil
 	}
 }
