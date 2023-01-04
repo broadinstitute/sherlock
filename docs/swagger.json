@@ -4521,12 +4521,7 @@
             "type": "object",
             "properties": {
                 "autoDelete": {
-                    "description": "Used to schedule automatic deletion of BEEs",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/environment.AutoDelete"
-                        }
-                    ]
+                    "$ref": "#/definitions/environment.AutoDelete"
                 },
                 "base": {
                     "description": "Required when creating",
@@ -4697,12 +4692,7 @@
             "type": "object",
             "properties": {
                 "autoDelete": {
-                    "description": "Used to schedule automatic deletion of BEEs",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/environment.AutoDelete"
-                        }
-                    ]
+                    "$ref": "#/definitions/environment.AutoDelete"
                 },
                 "baseDomain": {
                     "type": "string",
@@ -4746,12 +4736,7 @@
             "type": "object",
             "properties": {
                 "autoDelete": {
-                    "description": "Used to schedule automatic deletion of BEEs",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/environment.AutoDelete"
-                        }
-                    ]
+                    "$ref": "#/definitions/environment.AutoDelete"
                 },
                 "base": {
                     "description": "Required when creating",

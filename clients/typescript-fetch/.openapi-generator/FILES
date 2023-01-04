@@ -37,7 +37,6 @@ src/models/V2controllersCreatableChartRelease.ts
 src/models/V2controllersCreatableChartVersion.ts
 src/models/V2controllersCreatableCluster.ts
 src/models/V2controllersCreatableEnvironment.ts
-src/models/V2controllersCreatableEnvironmentAutoDelete.ts
 src/models/V2controllersEditableAppVersion.ts
 src/models/V2controllersEditableChart.ts
 src/models/V2controllersEditableChartRelease.ts

@@ -13,18 +13,18 @@
  */
 
 import { exists, mapValues } from '../runtime';
+import type { EnvironmentAutoDelete } from './EnvironmentAutoDelete';
+import {
+    EnvironmentAutoDeleteFromJSON,
+    EnvironmentAutoDeleteFromJSONTyped,
+    EnvironmentAutoDeleteToJSON,
+} from './EnvironmentAutoDelete';
 import type { V2controllersCluster } from './V2controllersCluster';
 import {
     V2controllersClusterFromJSON,
     V2controllersClusterFromJSONTyped,
     V2controllersClusterToJSON,
 } from './V2controllersCluster';
-import type { V2controllersCreatableEnvironmentAutoDelete } from './V2controllersCreatableEnvironmentAutoDelete';
-import {
-    V2controllersCreatableEnvironmentAutoDeleteFromJSON,
-    V2controllersCreatableEnvironmentAutoDeleteFromJSONTyped,
-    V2controllersCreatableEnvironmentAutoDeleteToJSON,
-} from './V2controllersCreatableEnvironmentAutoDelete';
 
 /**
  * 
@@ -34,10 +34,10 @@ import {
 export interface V2controllersEnvironment {
     /**
      * 
-     * @type {V2controllersCreatableEnvironmentAutoDelete}
+     * @type {EnvironmentAutoDelete}
      * @memberof V2controllersEnvironment
      */
-    autoDelete?: V2controllersCreatableEnvironmentAutoDelete;
+    autoDelete?: EnvironmentAutoDelete;
     /**
      * Required when creating
      * @type {string}
@@ -197,7 +197,7 @@ export function V2controllersEnvironmentFromJSONTyped(json: any, ignoreDiscrimin
     }
     return {
         
-        'autoDelete': !exists(json, 'autoDelete') ? undefined : V2controllersCreatableEnvironmentAutoDeleteFromJSON(json['autoDelete']),
+        'autoDelete': !exists(json, 'autoDelete') ? undefined : EnvironmentAutoDeleteFromJSON(json['autoDelete']),
         'base': !exists(json, 'base') ? undefined : json['base'],
         'baseDomain': !exists(json, 'baseDomain') ? undefined : json['baseDomain'],
         'chartReleasesFromTemplate': !exists(json, 'chartReleasesFromTemplate') ? undefined : json['chartReleasesFromTemplate'],
@@ -233,7 +233,7 @@ export function V2controllersEnvironmentToJSON(value?: V2controllersEnvironment 
     }
     return {
         
-        'autoDelete': V2controllersCreatableEnvironmentAutoDeleteToJSON(value.autoDelete),
+        'autoDelete': EnvironmentAutoDeleteToJSON(value.autoDelete),
         'base': value.base,
         'baseDomain': value.baseDomain,
         'chartReleasesFromTemplate': value.chartReleasesFromTemplate,

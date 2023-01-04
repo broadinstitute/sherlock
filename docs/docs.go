@@ -4527,12 +4527,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "autoDelete": {
-                    "description": "Used to schedule automatic deletion of BEEs",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/environment.AutoDelete"
-                        }
-                    ]
+                    "$ref": "#/definitions/environment.AutoDelete"
                 },
                 "base": {
                     "description": "Required when creating",
@@ -4703,12 +4698,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "autoDelete": {
-                    "description": "Used to schedule automatic deletion of BEEs",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/environment.AutoDelete"
-                        }
-                    ]
+                    "$ref": "#/definitions/environment.AutoDelete"
                 },
                 "baseDomain": {
                     "type": "string",
@@ -4752,12 +4742,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "autoDelete": {
-                    "description": "Used to schedule automatic deletion of BEEs",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/environment.AutoDelete"
-                        }
-                    ]
+                    "$ref": "#/definitions/environment.AutoDelete"
                 },
                 "base": {
                     "description": "Required when creating",

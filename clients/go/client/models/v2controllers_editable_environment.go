@@ -18,10 +18,8 @@ import (
 // swagger:model v2controllers.EditableEnvironment
 type V2controllersEditableEnvironment struct {
 
-	// Used to schedule automatic deletion of BEEs
-	AutoDelete struct {
-		EnvironmentAutoDelete
-	} `json:"autoDelete,omitempty"`
+	// auto delete
+	AutoDelete *EnvironmentAutoDelete `json:"autoDelete,omitempty"`
 
 	// base domain
 	BaseDomain *string `json:"baseDomain,omitempty"`
@@ -70,6 +68,17 @@ func (m *V2controllersEditableEnvironment) validateAutoDelete(formats strfmt.Reg
 		return nil
 	}
 
+	if m.AutoDelete != nil {
+		if err := m.AutoDelete.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("autoDelete")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("autoDelete")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -88,6 +97,17 @@ func (m *V2controllersEditableEnvironment) ContextValidate(ctx context.Context, 
 }
 
 func (m *V2controllersEditableEnvironment) contextValidateAutoDelete(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.AutoDelete != nil {
+		if err := m.AutoDelete.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("autoDelete")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("autoDelete")
+			}
+			return err
+		}
+	}
 
 	return nil
 }

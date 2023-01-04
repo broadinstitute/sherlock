@@ -25,7 +25,6 @@ export * from './V2controllersCreatableChartRelease';
 export * from './V2controllersCreatableChartVersion';
 export * from './V2controllersCreatableCluster';
 export * from './V2controllersCreatableEnvironment';
-export * from './V2controllersCreatableEnvironmentAutoDelete';
 export * from './V2controllersEditableAppVersion';
 export * from './V2controllersEditableChart';
 export * from './V2controllersEditableChartRelease';

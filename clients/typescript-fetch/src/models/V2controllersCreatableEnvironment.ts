@@ -13,12 +13,12 @@
  */
 
 import { exists, mapValues } from '../runtime';
-import type { V2controllersCreatableEnvironmentAutoDelete } from './V2controllersCreatableEnvironmentAutoDelete';
+import type { EnvironmentAutoDelete } from './EnvironmentAutoDelete';
 import {
-    V2controllersCreatableEnvironmentAutoDeleteFromJSON,
-    V2controllersCreatableEnvironmentAutoDeleteFromJSONTyped,
-    V2controllersCreatableEnvironmentAutoDeleteToJSON,
-} from './V2controllersCreatableEnvironmentAutoDelete';
+    EnvironmentAutoDeleteFromJSON,
+    EnvironmentAutoDeleteFromJSONTyped,
+    EnvironmentAutoDeleteToJSON,
+} from './EnvironmentAutoDelete';
 
 /**
  * 
@@ -28,10 +28,10 @@ import {
 export interface V2controllersCreatableEnvironment {
     /**
      * 
-     * @type {V2controllersCreatableEnvironmentAutoDelete}
+     * @type {EnvironmentAutoDelete}
      * @memberof V2controllersCreatableEnvironment
      */
-    autoDelete?: V2controllersCreatableEnvironmentAutoDelete;
+    autoDelete?: EnvironmentAutoDelete;
     /**
      * Required when creating
      * @type {string}
@@ -155,7 +155,7 @@ export function V2controllersCreatableEnvironmentFromJSONTyped(json: any, ignore
     }
     return {
         
-        'autoDelete': !exists(json, 'autoDelete') ? undefined : V2controllersCreatableEnvironmentAutoDeleteFromJSON(json['autoDelete']),
+        'autoDelete': !exists(json, 'autoDelete') ? undefined : EnvironmentAutoDeleteFromJSON(json['autoDelete']),
         'base': !exists(json, 'base') ? undefined : json['base'],
         'baseDomain': !exists(json, 'baseDomain') ? undefined : json['baseDomain'],
         'chartReleasesFromTemplate': !exists(json, 'chartReleasesFromTemplate') ? undefined : json['chartReleasesFromTemplate'],
@@ -185,7 +185,7 @@ export function V2controllersCreatableEnvironmentToJSON(value?: V2controllersCre
     }
     return {
         
-        'autoDelete': V2controllersCreatableEnvironmentAutoDeleteToJSON(value.autoDelete),
+        'autoDelete': EnvironmentAutoDeleteToJSON(value.autoDelete),
         'base': value.base,
         'baseDomain': value.baseDomain,
         'chartReleasesFromTemplate': value.chartReleasesFromTemplate,

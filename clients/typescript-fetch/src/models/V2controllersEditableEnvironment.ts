@@ -13,12 +13,12 @@
  */
 
 import { exists, mapValues } from '../runtime';
-import type { V2controllersCreatableEnvironmentAutoDelete } from './V2controllersCreatableEnvironmentAutoDelete';
+import type { EnvironmentAutoDelete } from './EnvironmentAutoDelete';
 import {
-    V2controllersCreatableEnvironmentAutoDeleteFromJSON,
-    V2controllersCreatableEnvironmentAutoDeleteFromJSONTyped,
-    V2controllersCreatableEnvironmentAutoDeleteToJSON,
-} from './V2controllersCreatableEnvironmentAutoDelete';
+    EnvironmentAutoDeleteFromJSON,
+    EnvironmentAutoDeleteFromJSONTyped,
+    EnvironmentAutoDeleteToJSON,
+} from './EnvironmentAutoDelete';
 
 /**
  * 
@@ -28,10 +28,10 @@ import {
 export interface V2controllersEditableEnvironment {
     /**
      * 
-     * @type {V2controllersCreatableEnvironmentAutoDelete}
+     * @type {EnvironmentAutoDelete}
      * @memberof V2controllersEditableEnvironment
      */
-    autoDelete?: V2controllersCreatableEnvironmentAutoDelete;
+    autoDelete?: EnvironmentAutoDelete;
     /**
      * 
      * @type {string}
@@ -107,7 +107,7 @@ export function V2controllersEditableEnvironmentFromJSONTyped(json: any, ignoreD
     }
     return {
         
-        'autoDelete': !exists(json, 'autoDelete') ? undefined : V2controllersCreatableEnvironmentAutoDeleteFromJSON(json['autoDelete']),
+        'autoDelete': !exists(json, 'autoDelete') ? undefined : EnvironmentAutoDeleteFromJSON(json['autoDelete']),
         'baseDomain': !exists(json, 'baseDomain') ? undefined : json['baseDomain'],
         'defaultCluster': !exists(json, 'defaultCluster') ? undefined : json['defaultCluster'],
         'defaultFirecloudDevelopRef': !exists(json, 'defaultFirecloudDevelopRef') ? undefined : json['defaultFirecloudDevelopRef'],
@@ -129,7 +129,7 @@ export function V2controllersEditableEnvironmentToJSON(value?: V2controllersEdit
     }
     return {
         
-        'autoDelete': V2controllersCreatableEnvironmentAutoDeleteToJSON(value.autoDelete),
+        'autoDelete': EnvironmentAutoDeleteToJSON(value.autoDelete),
         'baseDomain': value.baseDomain,
         'defaultCluster': value.defaultCluster,
         'defaultFirecloudDevelopRef': value.defaultFirecloudDevelopRef,
