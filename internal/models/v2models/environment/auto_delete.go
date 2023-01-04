@@ -36,8 +36,8 @@ func (a AutoDelete) Validate() error {
 
 // Value implement the driver.Valuer interface (for serializing AutoDelete to database)
 func (a AutoDelete) Value() (driver.Value, error) {
-	if !(*a.Enabled) {
-		// a"disabled" autodelete is stored as null in database
+	if a.Enabled == nil || a.After == nil || !(*a.Enabled) {
+		// a "disabled" autodelete is stored as null in database
 		return nil, nil
 	}
 	// non-null "delete-after" timestamp indicates auto-delete is enabled
