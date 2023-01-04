@@ -505,8 +505,8 @@ func Test_validateEnvironment(t *testing.T) {
 				HelmfileRef:                testutils.PointerTo("HEAD"),
 				DefaultFirecloudDevelopRef: testutils.PointerTo("dev"),
 				AutoDelete: testutils.PointerTo(environment.AutoDelete{
-					Enabled: testutils.PointerTo(true),
-					After:   testutils.PointerTo(time.Now()),
+					Enabled: true,
+					After:   time.Now(),
 				}),
 			}},
 			wantErr: true,
@@ -544,8 +544,8 @@ func Test_validateEnvironment(t *testing.T) {
 				HelmfileRef:                testutils.PointerTo("HEAD"),
 				DefaultFirecloudDevelopRef: testutils.PointerTo("dev"),
 				AutoDelete: testutils.PointerTo(environment.AutoDelete{
-					Enabled: testutils.PointerTo(true),
-					After:   testutils.PointerTo(time.Now()),
+					Enabled: true,
+					After:   time.Now(),
 				}),
 			}},
 			wantErr: false,
@@ -566,8 +566,8 @@ func Test_validateEnvironment(t *testing.T) {
 				DefaultFirecloudDevelopRef: testutils.PointerTo("dev"),
 				PreventDeletion:            testutils.PointerTo(true),
 				AutoDelete: testutils.PointerTo(environment.AutoDelete{
-					Enabled: testutils.PointerTo(true),
-					After:   testutils.PointerTo(time.Now()),
+					Enabled: true,
+					After:   time.Now(),
 				}),
 			}},
 			wantErr: true,
