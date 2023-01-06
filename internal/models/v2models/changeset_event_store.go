@@ -6,6 +6,7 @@ import (
 	"github.com/broadinstitute/sherlock/internal/errors"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 	"time"
 )
 
@@ -41,6 +42,18 @@ func (s *ChangesetEventStore) Apply(selectors []string, user *auth.User) ([]Chan
 		queries = append(queries, query)
 	}
 	return s.apply(s.db, queries, user)
+}
+
+func (s *ChangesetEventStore) QueryApplied(chartReleaseSelector string, offset int, limit int) ([]Changeset, error) {
+	chartReleaseQuery, err := chartReleaseStore.selectorToQueryModel(s.db, chartReleaseSelector)
+	if err != nil {
+		return nil, err
+	}
+	chartRelease, err := chartReleaseStore.get(s.db, chartReleaseQuery)
+	if err != nil {
+		return nil, err
+	}
+	return s.internalChangesetEventStore.queryApplied(s.db, chartRelease.ID, offset, limit)
 }
 
 type internalChangesetEventStore struct {
@@ -149,5 +162,21 @@ func (s *internalChangesetEventStore) apply(db *gorm.DB, changesets []Changeset,
 		}
 		return nil
 	})
+	return ret, err
+}
+
+func (s *internalChangesetEventStore) queryApplied(db *gorm.DB, chartReleaseID uint, offset int, limit int) ([]Changeset, error) {
+	ret := make([]Changeset, 0)
+	chain := db.
+		Unscoped().
+		Where(&Changeset{ChartReleaseID: chartReleaseID}).
+		Where("applied_at is not null").
+		Order("applied_at desc").
+		Preload(clause.Associations).
+		Offset(offset)
+	if limit > 0 {
+		chain = chain.Limit(limit)
+	}
+	err := chain.Find(&ret).Error
 	return ret, err
 }

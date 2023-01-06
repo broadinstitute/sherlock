@@ -216,3 +216,16 @@ func (c ChangesetController) Apply(selectors []string, user *auth.User) ([]Chang
 	}
 	return ret, nil
 }
+
+func (c ChangesetController) QueryApplied(chartReleaseSelector string, offset int, limit int) ([]Changeset, error) {
+	modelChangesets, err := c.ChangesetEventStore.QueryApplied(chartReleaseSelector, offset, limit)
+	if err != nil {
+		return nil, err
+	}
+	//golang:noinspection GoPreferNilSlice
+	ret := []Changeset{}
+	for _, modelChangeset := range modelChangesets {
+		ret = append(ret, *modelChangesetToChangeset(&modelChangeset))
+	}
+	return ret, nil
+}
