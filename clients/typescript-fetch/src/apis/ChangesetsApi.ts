@@ -87,6 +87,12 @@ export interface ApiV2ProceduresChangesetsPlanPostRequest {
     changesetPlanRequest: V2controllersChangesetPlanRequest;
 }
 
+export interface ApiV2ProceduresChangesetsQueryAppliedForChartReleaseSelectorGetRequest {
+    selector: string;
+    offset?: number;
+    limit?: number;
+}
+
 export interface ApiV2SelectorsChangesetsSelectorGetRequest {
     selector: string;
 }
@@ -425,6 +431,46 @@ export class ChangesetsApi extends runtime.BaseAPI {
      */
     async apiV2ProceduresChangesetsPlanPost(requestParameters: ApiV2ProceduresChangesetsPlanPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<V2controllersChangeset>> {
         const response = await this.apiV2ProceduresChangesetsPlanPostRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * List existing applied Changesets for a particular Chart Release, ordered by most recently applied.
+     * List applied Changesets for a Chart Release
+     */
+    async apiV2ProceduresChangesetsQueryAppliedForChartReleaseSelectorGetRaw(requestParameters: ApiV2ProceduresChangesetsQueryAppliedForChartReleaseSelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<V2controllersChangeset>>> {
+        if (requestParameters.selector === null || requestParameters.selector === undefined) {
+            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiV2ProceduresChangesetsQueryAppliedForChartReleaseSelectorGet.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.offset !== undefined) {
+            queryParameters['offset'] = requestParameters.offset;
+        }
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/v2/procedures/changesets/query-applied-for-chart-release/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(V2controllersChangesetFromJSON));
+    }
+
+    /**
+     * List existing applied Changesets for a particular Chart Release, ordered by most recently applied.
+     * List applied Changesets for a Chart Release
+     */
+    async apiV2ProceduresChangesetsQueryAppliedForChartReleaseSelectorGet(requestParameters: ApiV2ProceduresChangesetsQueryAppliedForChartReleaseSelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<V2controllersChangeset>> {
+        const response = await this.apiV2ProceduresChangesetsQueryAppliedForChartReleaseSelectorGetRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

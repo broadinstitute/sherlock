@@ -34,6 +34,8 @@ type ClientService interface {
 
 	GetAPIV2ChangesetsSelector(params *GetAPIV2ChangesetsSelectorParams, opts ...ClientOption) (*GetAPIV2ChangesetsSelectorOK, error)
 
+	GetAPIV2ProceduresChangesetsQueryAppliedForChartReleaseSelector(params *GetAPIV2ProceduresChangesetsQueryAppliedForChartReleaseSelectorParams, opts ...ClientOption) (*GetAPIV2ProceduresChangesetsQueryAppliedForChartReleaseSelectorOK, error)
+
 	GetAPIV2SelectorsChangesetsSelector(params *GetAPIV2SelectorsChangesetsSelectorParams, opts ...ClientOption) (*GetAPIV2SelectorsChangesetsSelectorOK, error)
 
 	PostAPIV2Changesets(params *PostAPIV2ChangesetsParams, opts ...ClientOption) (*PostAPIV2ChangesetsOK, *PostAPIV2ChangesetsCreated, error)
@@ -124,6 +126,46 @@ func (a *Client) GetAPIV2ChangesetsSelector(params *GetAPIV2ChangesetsSelectorPa
 	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for GetAPIV2ChangesetsSelector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+  GetAPIV2ProceduresChangesetsQueryAppliedForChartReleaseSelector lists applied changesets for a chart release
+
+  List existing applied Changesets for a particular Chart Release, ordered by most recently applied.
+*/
+func (a *Client) GetAPIV2ProceduresChangesetsQueryAppliedForChartReleaseSelector(params *GetAPIV2ProceduresChangesetsQueryAppliedForChartReleaseSelectorParams, opts ...ClientOption) (*GetAPIV2ProceduresChangesetsQueryAppliedForChartReleaseSelectorOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetAPIV2ProceduresChangesetsQueryAppliedForChartReleaseSelectorParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "GetAPIV2ProceduresChangesetsQueryAppliedForChartReleaseSelector",
+		Method:             "GET",
+		PathPattern:        "/api/v2/procedures/changesets/query-applied-for-chart-release/{selector}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &GetAPIV2ProceduresChangesetsQueryAppliedForChartReleaseSelectorReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*GetAPIV2ProceduresChangesetsQueryAppliedForChartReleaseSelectorOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for GetAPIV2ProceduresChangesetsQueryAppliedForChartReleaseSelector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 
