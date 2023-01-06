@@ -7,6 +7,7 @@ import (
 	"github.com/broadinstitute/sherlock/internal/errors"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 )
 
 func RegisterChangesetHandlers(routerGroup *gin.RouterGroup, controller *v2controllers.ChangesetController) {
@@ -17,6 +18,7 @@ func RegisterChangesetHandlers(routerGroup *gin.RouterGroup, controller *v2contr
 	routerGroup.POST("/procedures/changesets/plan-and-apply", planAndApplyChangeset(controller))
 	routerGroup.POST("/procedures/changesets/plan", planChangeset(controller))
 	routerGroup.POST("/procedures/changesets/apply", applyChangeset(controller))
+	routerGroup.GET("/procedures/changesets/query-applied-for-chart-release/*selector", queryAppliedChangeset(controller))
 }
 
 // createChangeset godoc
@@ -169,6 +171,40 @@ func applyChangeset(controller *v2controllers.ChangesetController) func(ctx *gin
 			return
 		}
 		result, err := controller.Apply(request, user)
+		if err != nil {
+			ctx.JSON(errors.ErrorToApiResponse(err))
+			return
+		}
+		ctx.JSON(http.StatusOK, result)
+	}
+}
+
+// listChangeset godoc
+// @summary     List applied Changesets for a Chart Release
+// @description List existing applied Changesets for a particular Chart Release, ordered by most recently applied.
+// @tags        Changesets
+// @produce     json
+// @param       selector                path     string true "Selector the Chart Release to find applied Changesets for"
+// @param       offset                  query    int                     false "An optional offset to skip a number of latest Changesets"
+// @param       limit                   query    int                     false "An optional limit to the number of entries returned"
+// @success     200                     {array}  v2controllers.Changeset
+// @failure     400,403,404,407,409,500 {object} errors.ErrorResponse
+// @router      /api/v2/procedures/changesets/query-applied-for-chart-release/{selector} [get]
+func queryAppliedChangeset(controller *v2controllers.ChangesetController) func(ctx *gin.Context) {
+	return func(ctx *gin.Context) {
+		offsetString := ctx.DefaultQuery("offset", "0")
+		offset, err := strconv.Atoi(offsetString)
+		if err != nil {
+			ctx.JSON(errors.ErrorToApiResponse(fmt.Errorf("(%s) error parsing offset parameter: %v", errors.BadRequest, err)))
+			return
+		}
+		limitString := ctx.DefaultQuery("limit", "0")
+		limit, err := strconv.Atoi(limitString)
+		if err != nil {
+			ctx.JSON(errors.ErrorToApiResponse(fmt.Errorf("(%s) error parsing limit parameter: %v", errors.BadRequest, err)))
+			return
+		}
+		result, err := controller.QueryApplied(formatSelector(ctx.Param("selector")), offset, limit)
 		if err != nil {
 			ctx.JSON(errors.ErrorToApiResponse(err))
 			return

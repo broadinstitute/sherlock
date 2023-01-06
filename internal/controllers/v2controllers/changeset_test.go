@@ -426,4 +426,21 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 	assert.NoError(suite.T(), err)
 	assert.Equal(suite.T(), "my-new-version", *samInBee.AppVersionExact)
 
+	// We can also query things that were applied!
+	unapplied, err := suite.ChangesetController.Plan(ChangesetPlanRequest{
+		ChartReleases: []ChangesetPlanRequestChartReleaseEntry{
+			{CreatableChangeset: CreatableChangeset{
+				ChartRelease:         "terra-dev/sam",
+				ToAppVersionResolver: testutils.PointerTo("exact"),
+				ToAppVersionExact:    testutils.PointerTo("some fake version"),
+			}},
+		},
+	}, auth.GenerateUser(suite.T(), true))
+	assert.NoError(suite.T(), err)
+	assert.Len(suite.T(), applied, 1)
+	queried, err := suite.ChangesetController.QueryApplied("terra-dev/sam", 0, 100)
+	assert.NoError(suite.T(), err)
+	for _, result := range queried {
+		assert.NotEqual(suite.T(), unapplied[0].ID, result.ID)
+	}
 }

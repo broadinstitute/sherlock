@@ -3077,6 +3077,86 @@
                 }
             }
         },
+        "/api/v2/procedures/changesets/query-applied-for-chart-release/{selector}": {
+            "get": {
+                "description": "List existing applied Changesets for a particular Chart Release, ordered by most recently applied.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Changesets"
+                ],
+                "summary": "List applied Changesets for a Chart Release",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Selector the Chart Release to find applied Changesets for",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "An optional offset to skip a number of latest Changesets",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "An optional limit to the number of entries returned",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/v2controllers.Changeset"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v2/selectors/app-versions/{selector}": {
             "get": {
                 "description": "Validate a given AppVersion selector and provide any other selectors that would match the same AppVersion.",
