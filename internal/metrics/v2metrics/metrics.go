@@ -28,6 +28,10 @@ var (
 		"sherlock/v2_chart_version_30_day_lead_time",
 		"average seconds between chart version reporting and deployment for versions reported in last 30 days",
 		"seconds")
+	ChartFirecloudDevelopUsageMeasure = stats.Int64(
+		"sherlock/v2_chart_firecloud_develop_usage",
+		"boolean value of if a given chart currently is flagged as using firecloud-develop for config",
+		"true")
 	DataTypeCountMeasure = stats.Int64(
 		"sherlock/v2_data_type_count",
 		"count of records per data type",
@@ -76,6 +80,13 @@ var (
 		Description: ChartVersionLeadTimeMeasure.Description(),
 		Aggregation: view.LastValue(),
 	}
+	ChartFirecloudDevelopUsageView = &view.View{
+		Name:        "v2_chart_firecloud_develop_usage",
+		Measure:     ChartFirecloudDevelopUsageMeasure,
+		TagKeys:     []tag.Key{ChartKey},
+		Description: ChartFirecloudDevelopUsageMeasure.Description(),
+		Aggregation: view.LastValue(),
+	}
 	DataTypeCountView = &view.View{
 		Name:        "v2_data_type_count",
 		Measure:     DataTypeCountMeasure,
@@ -92,6 +103,7 @@ func RegisterViews() error {
 		ChartVersionCountView,
 		AppVersionLeadTimeView,
 		ChartVersionLeadTimeView,
+		ChartFirecloudDevelopUsageView,
 		DataTypeCountView,
 	)
 }

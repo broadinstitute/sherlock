@@ -216,6 +216,11 @@ func UpdateMetrics(ctx context.Context, db *gorm.DB) error {
 		}
 
 		stats.Record(ctx, v2metrics.ChartVersionCountMeasure.M(chartVersionCounts[chart.ID]))
+		if chart.LegacyConfigsEnabled != nil && *chart.LegacyConfigsEnabled {
+			stats.Record(ctx, v2metrics.ChartFirecloudDevelopUsageMeasure.M(1))
+		} else {
+			stats.Record(ctx, v2metrics.ChartFirecloudDevelopUsageMeasure.M(0))
+		}
 
 		mainlineAppVersionCount, branchAppVersionCount, unknownAppVersionCount, err := calculateAppVersionCounts(db, chart.ID, chart.AppImageGitMainBranch)
 		if err != nil {
