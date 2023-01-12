@@ -2,6 +2,7 @@ package sherlock
 
 import (
 	"github.com/broadinstitute/sherlock/docs"
+	"github.com/broadinstitute/sherlock/html"
 	"github.com/broadinstitute/sherlock/internal/auth"
 	"github.com/broadinstitute/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/internal/handlers/misc"
@@ -53,6 +54,9 @@ func (a *Application) buildRouter() {
 	router.Use(func(c *gin.Context) {
 		c.Writer.Header().Set("Cache-Control", "no-store")
 	})
+
+	// serve static files
+	router.StaticFS("/static", http.FS(html.StaticHtmlFiles))
 
 	// swagger
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
