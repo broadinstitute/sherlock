@@ -587,80 +587,6 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
-            "post": {
-                "description": "Create a new Changeset entry. Note that fields are immutable after creation.\nYou'll likely want to use the plan endpoint instead, which conditionally creates a Changeset based on there actually being a version diff.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Changesets"
-                ],
-                "summary": "Create a new Changeset entry",
-                "parameters": [
-                    {
-                        "description": "The Changeset to create",
-                        "name": "changeset",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/v2controllers.CreatableChangeset"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/v2controllers.Changeset"
-                        }
-                    },
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/v2controllers.Changeset"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "407": {
-                        "description": "Proxy Authentication Required",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "409": {
-                        "description": "Conflict",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    }
-                }
             }
         },
         "/api/v2/changesets/{selector}": {
@@ -2507,6 +2433,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "When creating, defaults to template name or environment name",
                         "name": "valuesName",
                         "in": "query"
                     },
@@ -4375,44 +4302,6 @@ const docTemplate = `{
                 }
             }
         },
-        "v2controllers.CreatableChangeset": {
-            "type": "object",
-            "properties": {
-                "chartRelease": {
-                    "type": "string"
-                },
-                "toAppVersionBranch": {
-                    "type": "string"
-                },
-                "toAppVersionCommit": {
-                    "type": "string"
-                },
-                "toAppVersionExact": {
-                    "type": "string"
-                },
-                "toAppVersionFollowChartRelease": {
-                    "type": "string"
-                },
-                "toAppVersionResolver": {
-                    "type": "string"
-                },
-                "toChartVersionExact": {
-                    "type": "string"
-                },
-                "toChartVersionFollowChartRelease": {
-                    "type": "string"
-                },
-                "toChartVersionResolver": {
-                    "type": "string"
-                },
-                "toFirecloudDevelopRef": {
-                    "type": "string"
-                },
-                "toHelmfileRef": {
-                    "type": "string"
-                }
-            }
-        },
         "v2controllers.CreatableChart": {
             "type": "object",
             "properties": {
@@ -4677,6 +4566,10 @@ const docTemplate = `{
                 "uniqueResourcePrefix": {
                     "description": "When creating, will be calculated if left empty",
                     "type": "string"
+                },
+                "valuesName": {
+                    "description": "When creating, defaults to template name or environment name",
+                    "type": "string"
                 }
             }
         },
@@ -4912,6 +4805,7 @@ const docTemplate = `{
                     "format": "date-time"
                 },
                 "valuesName": {
+                    "description": "When creating, defaults to template name or environment name",
                     "type": "string"
                 }
             }

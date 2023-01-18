@@ -33,13 +33,33 @@ type EditableCluster struct {
 }
 
 //nolint:unused
-func (c CreatableCluster) toReadable() Cluster {
-	return Cluster{CreatableCluster: c}
+func (c Cluster) toModel(_ *v2models.StoreSet) (v2models.Cluster, error) {
+	return v2models.Cluster{
+		Model: gorm.Model{
+			ID:        c.ID,
+			CreatedAt: c.CreatedAt,
+			UpdatedAt: c.UpdatedAt,
+		},
+		Name:                c.Name,
+		Provider:            c.Provider,
+		GoogleProject:       c.GoogleProject,
+		AzureSubscription:   c.AzureSubscription,
+		Location:            c.Location,
+		Base:                c.Base,
+		Address:             c.Address,
+		RequiresSuitability: c.RequiresSuitability,
+		HelmfileRef:         c.HelmfileRef,
+	}, nil
 }
 
 //nolint:unused
-func (e EditableCluster) toCreatable() CreatableCluster {
-	return CreatableCluster{EditableCluster: e}
+func (c CreatableCluster) toModel(storeSet *v2models.StoreSet) (v2models.Cluster, error) {
+	return Cluster{CreatableCluster: c}.toModel(storeSet)
+}
+
+//nolint:unused
+func (c EditableCluster) toModel(storeSet *v2models.StoreSet) (v2models.Cluster, error) {
+	return CreatableCluster{EditableCluster: c}.toModel(storeSet)
 }
 
 type ClusterController = ModelController[v2models.Cluster, Cluster, CreatableCluster, EditableCluster]
@@ -49,7 +69,6 @@ func newClusterController(stores *v2models.StoreSet) *ClusterController {
 		primaryStore:    stores.ClusterStore,
 		allStores:       stores,
 		modelToReadable: modelClusterToCluster,
-		readableToModel: clusterToModelCluster,
 	}
 }
 
@@ -78,23 +97,4 @@ func modelClusterToCluster(model *v2models.Cluster) *Cluster {
 			},
 		},
 	}
-}
-
-func clusterToModelCluster(cluster Cluster, _ *v2models.StoreSet) (v2models.Cluster, error) {
-	return v2models.Cluster{
-		Model: gorm.Model{
-			ID:        cluster.ID,
-			CreatedAt: cluster.CreatedAt,
-			UpdatedAt: cluster.UpdatedAt,
-		},
-		Name:                cluster.Name,
-		Provider:            cluster.Provider,
-		GoogleProject:       cluster.GoogleProject,
-		AzureSubscription:   cluster.AzureSubscription,
-		Location:            cluster.Location,
-		Base:                cluster.Base,
-		Address:             cluster.Address,
-		RequiresSuitability: cluster.RequiresSuitability,
-		HelmfileRef:         cluster.HelmfileRef,
-	}, nil
 }

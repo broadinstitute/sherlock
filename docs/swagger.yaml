@@ -464,31 +464,6 @@ definitions:
       parentAppVersion:
         type: string
     type: object
-  v2controllers.CreatableChangeset:
-    properties:
-      chartRelease:
-        type: string
-      toAppVersionBranch:
-        type: string
-      toAppVersionCommit:
-        type: string
-      toAppVersionExact:
-        type: string
-      toAppVersionFollowChartRelease:
-        type: string
-      toAppVersionResolver:
-        type: string
-      toChartVersionExact:
-        type: string
-      toChartVersionFollowChartRelease:
-        type: string
-      toChartVersionResolver:
-        type: string
-      toFirecloudDevelopRef:
-        type: string
-      toHelmfileRef:
-        type: string
-    type: object
   v2controllers.CreatableChart:
     properties:
       appImageGitMainBranch:
@@ -694,6 +669,9 @@ definitions:
       uniqueResourcePrefix:
         description: When creating, will be calculated if left empty
         type: string
+      valuesName:
+        description: When creating, defaults to template name or environment name
+        type: string
     type: object
   v2controllers.EditableAppVersion:
     properties:
@@ -872,6 +850,7 @@ definitions:
         format: date-time
         type: string
       valuesName:
+        description: When creating, defaults to template name or environment name
         type: string
     type: object
 info:
@@ -1252,57 +1231,6 @@ paths:
           schema:
             $ref: '#/definitions/errors.ErrorResponse'
       summary: List Changeset entries
-      tags:
-      - Changesets
-    post:
-      consumes:
-      - application/json
-      description: |-
-        Create a new Changeset entry. Note that fields are immutable after creation.
-        You'll likely want to use the plan endpoint instead, which conditionally creates a Changeset based on there actually being a version diff.
-      parameters:
-      - description: The Changeset to create
-        in: body
-        name: changeset
-        required: true
-        schema:
-          $ref: '#/definitions/v2controllers.CreatableChangeset'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/v2controllers.Changeset'
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/v2controllers.Changeset'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "407":
-          description: Proxy Authentication Required
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "409":
-          description: Conflict
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-      summary: Create a new Changeset entry
       tags:
       - Changesets
   /api/v2/changesets/{selector}:
@@ -2556,7 +2484,8 @@ paths:
         in: query
         name: updatedAt
         type: string
-      - in: query
+      - description: When creating, defaults to template name or environment name
+        in: query
         name: valuesName
         type: string
       - description: An optional limit to the number of entries returned

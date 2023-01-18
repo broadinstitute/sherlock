@@ -11,7 +11,6 @@ import (
 )
 
 func RegisterChangesetHandlers(routerGroup *gin.RouterGroup, controller *v2controllers.ChangesetController) {
-	routerGroup.POST("/changesets", createChangeset(controller))
 	routerGroup.GET("/changesets", listChangeset(controller))
 	routerGroup.GET("/changesets/*selector", getChangeset(controller))
 	routerGroup.GET("/selectors/changesets/*selector", listChangesetSelectors(controller))
@@ -19,21 +18,6 @@ func RegisterChangesetHandlers(routerGroup *gin.RouterGroup, controller *v2contr
 	routerGroup.POST("/procedures/changesets/plan", planChangeset(controller))
 	routerGroup.POST("/procedures/changesets/apply", applyChangeset(controller))
 	routerGroup.GET("/procedures/changesets/query-applied-for-chart-release/*selector", queryAppliedChangeset(controller))
-}
-
-// createChangeset godoc
-// @summary     Create a new Changeset entry
-// @description Create a new Changeset entry. Note that fields are immutable after creation.
-// @description You'll likely want to use the plan endpoint instead, which conditionally creates a Changeset based on there actually being a version diff.
-// @tags        Changesets
-// @accept      json
-// @produce     json
-// @param       changeset               body     v2controllers.CreatableChangeset true "The Changeset to create"
-// @success     200,201                 {object} v2controllers.Changeset
-// @failure     400,403,404,407,409,500 {object} errors.ErrorResponse
-// @router      /api/v2/changesets [post]
-func createChangeset(controller *v2controllers.ChangesetController) func(ctx *gin.Context) {
-	return handleCreate(&controller.ModelController)
 }
 
 // listChangeset godoc

@@ -49,13 +49,103 @@ type EditableChartRelease struct {
 }
 
 //nolint:unused
-func (c CreatableChartRelease) toReadable() ChartRelease {
-	return ChartRelease{CreatableChartRelease: c}
+func (c ChartRelease) toModel(storeSet *v2models.StoreSet) (v2models.ChartRelease, error) {
+	var chartID uint
+	if c.Chart != "" {
+		chart, err := storeSet.ChartStore.Get(c.Chart)
+		if err != nil {
+			return v2models.ChartRelease{}, err
+		}
+		chartID = chart.ID
+	}
+	var environmentID *uint
+	if c.Environment != "" {
+		environment, err := storeSet.EnvironmentStore.Get(c.Environment)
+		if err != nil {
+			return v2models.ChartRelease{}, err
+		}
+		environmentID = &environment.ID
+	}
+	var clusterID *uint
+	if c.Cluster != "" {
+		cluster, err := storeSet.ClusterStore.Get(c.Cluster)
+		if err != nil {
+			return v2models.ChartRelease{}, err
+		}
+		clusterID = &cluster.ID
+	}
+	var appVersionID *uint
+	if c.AppVersionReference != "" {
+		appVersion, err := storeSet.AppVersionStore.Get(c.AppVersionReference)
+		if err != nil {
+			return v2models.ChartRelease{}, err
+		}
+		appVersionID = &appVersion.ID
+	}
+	var chartVersionID *uint
+	if c.ChartVersionReference != "" {
+		chartVersion, err := storeSet.ChartVersionStore.Get(c.ChartVersionReference)
+		if err != nil {
+			return v2models.ChartRelease{}, err
+		}
+		chartVersionID = &chartVersion.ID
+	}
+	var appVersionFollowChartReleaseID *uint
+	if c.AppVersionFollowChartRelease != "" {
+		followChartRelease, err := storeSet.ChartReleaseStore.Get(c.AppVersionFollowChartRelease)
+		if err != nil {
+			return v2models.ChartRelease{}, err
+		}
+		appVersionFollowChartReleaseID = &followChartRelease.ID
+	}
+	var chartVersionFollowChartReleaseID *uint
+	if c.ChartVersionFollowChartRelease != "" {
+		followChartRelease, err := storeSet.ChartReleaseStore.Get(c.ChartVersionFollowChartRelease)
+		if err != nil {
+			return v2models.ChartRelease{}, err
+		}
+		chartVersionFollowChartReleaseID = &followChartRelease.ID
+	}
+	return v2models.ChartRelease{
+		Model: gorm.Model{
+			ID:        c.ID,
+			CreatedAt: c.CreatedAt,
+			UpdatedAt: c.UpdatedAt,
+		},
+		ChartID:         chartID,
+		ClusterID:       clusterID,
+		EnvironmentID:   environmentID,
+		DestinationType: c.DestinationType,
+		Name:            c.Name,
+		Namespace:       c.Namespace,
+		ChartReleaseVersion: v2models.ChartReleaseVersion{
+			AppVersionResolver:               c.AppVersionResolver,
+			AppVersionExact:                  c.AppVersionExact,
+			AppVersionBranch:                 c.AppVersionBranch,
+			AppVersionCommit:                 c.AppVersionCommit,
+			AppVersionFollowChartReleaseID:   appVersionFollowChartReleaseID,
+			AppVersionID:                     appVersionID,
+			ChartVersionResolver:             c.ChartVersionResolver,
+			ChartVersionExact:                c.ChartVersionExact,
+			ChartVersionFollowChartReleaseID: chartVersionFollowChartReleaseID,
+			ChartVersionID:                   chartVersionID,
+			HelmfileRef:                      c.HelmfileRef,
+			FirecloudDevelopRef:              c.FirecloudDevelopRef,
+		},
+		Subdomain: c.Subdomain,
+		Protocol:  c.Protocol,
+		Port:      c.Port,
+	}, nil
 }
 
 //nolint:unused
-func (e EditableChartRelease) toCreatable() CreatableChartRelease {
-	return CreatableChartRelease{EditableChartRelease: e}
+func (c CreatableChartRelease) toModel(storeSet *v2models.StoreSet) (v2models.ChartRelease, error) {
+	return ChartRelease{CreatableChartRelease: c}.toModel(storeSet)
+}
+
+//nolint:unused
+func (c EditableChartRelease) toModel(storeSet *v2models.StoreSet) (v2models.ChartRelease, error) {
+	return CreatableChartRelease{EditableChartRelease: c}.toModel(storeSet)
 }
 
 type ChartReleaseController = ModelController[v2models.ChartRelease, ChartRelease, CreatableChartRelease, EditableChartRelease]
@@ -65,7 +155,6 @@ func newChartReleaseController(stores *v2models.StoreSet) *ChartReleaseControlle
 		primaryStore:       stores.ChartReleaseStore,
 		allStores:          stores,
 		modelToReadable:    modelChartReleaseToChartRelease,
-		readableToModel:    chartReleaseToModelChartRelease,
 		setDynamicDefaults: setChartReleaseDynamicDefaults,
 	}
 }
@@ -162,96 +251,7 @@ func modelChartReleaseToChartRelease(model *v2models.ChartRelease) *ChartRelease
 	}
 }
 
-func chartReleaseToModelChartRelease(chartRelease ChartRelease, stores *v2models.StoreSet) (v2models.ChartRelease, error) {
-	var chartID uint
-	if chartRelease.Chart != "" {
-		chart, err := stores.ChartStore.Get(chartRelease.Chart)
-		if err != nil {
-			return v2models.ChartRelease{}, err
-		}
-		chartID = chart.ID
-	}
-	var environmentID *uint
-	if chartRelease.Environment != "" {
-		environment, err := stores.EnvironmentStore.Get(chartRelease.Environment)
-		if err != nil {
-			return v2models.ChartRelease{}, err
-		}
-		environmentID = &environment.ID
-	}
-	var clusterID *uint
-	if chartRelease.Cluster != "" {
-		cluster, err := stores.ClusterStore.Get(chartRelease.Cluster)
-		if err != nil {
-			return v2models.ChartRelease{}, err
-		}
-		clusterID = &cluster.ID
-	}
-	var appVersionID *uint
-	if chartRelease.AppVersionReference != "" {
-		appVersion, err := stores.AppVersionStore.Get(chartRelease.AppVersionReference)
-		if err != nil {
-			return v2models.ChartRelease{}, err
-		}
-		appVersionID = &appVersion.ID
-	}
-	var chartVersionID *uint
-	if chartRelease.ChartVersionReference != "" {
-		chartVersion, err := stores.ChartVersionStore.Get(chartRelease.ChartVersionReference)
-		if err != nil {
-			return v2models.ChartRelease{}, err
-		}
-		chartVersionID = &chartVersion.ID
-	}
-	var appVersionFollowChartReleaseID *uint
-	if chartRelease.AppVersionFollowChartRelease != "" {
-		followChartRelease, err := stores.ChartReleaseStore.Get(chartRelease.AppVersionFollowChartRelease)
-		if err != nil {
-			return v2models.ChartRelease{}, err
-		}
-		appVersionFollowChartReleaseID = &followChartRelease.ID
-	}
-	var chartVersionFollowChartReleaseID *uint
-	if chartRelease.ChartVersionFollowChartRelease != "" {
-		followChartRelease, err := stores.ChartReleaseStore.Get(chartRelease.ChartVersionFollowChartRelease)
-		if err != nil {
-			return v2models.ChartRelease{}, err
-		}
-		chartVersionFollowChartReleaseID = &followChartRelease.ID
-	}
-	return v2models.ChartRelease{
-		Model: gorm.Model{
-			ID:        chartRelease.ID,
-			CreatedAt: chartRelease.CreatedAt,
-			UpdatedAt: chartRelease.UpdatedAt,
-		},
-		ChartID:         chartID,
-		ClusterID:       clusterID,
-		EnvironmentID:   environmentID,
-		DestinationType: chartRelease.DestinationType,
-		Name:            chartRelease.Name,
-		Namespace:       chartRelease.Namespace,
-		ChartReleaseVersion: v2models.ChartReleaseVersion{
-			AppVersionResolver:               chartRelease.AppVersionResolver,
-			AppVersionExact:                  chartRelease.AppVersionExact,
-			AppVersionBranch:                 chartRelease.AppVersionBranch,
-			AppVersionCommit:                 chartRelease.AppVersionCommit,
-			AppVersionFollowChartReleaseID:   appVersionFollowChartReleaseID,
-			AppVersionID:                     appVersionID,
-			ChartVersionResolver:             chartRelease.ChartVersionResolver,
-			ChartVersionExact:                chartRelease.ChartVersionExact,
-			ChartVersionFollowChartReleaseID: chartVersionFollowChartReleaseID,
-			ChartVersionID:                   chartVersionID,
-			HelmfileRef:                      chartRelease.HelmfileRef,
-			FirecloudDevelopRef:              chartRelease.FirecloudDevelopRef,
-		},
-		Subdomain: chartRelease.Subdomain,
-		Protocol:  chartRelease.Protocol,
-		Port:      chartRelease.Port,
-	}, nil
-}
-
-func setChartReleaseDynamicDefaults(chartRelease *ChartRelease, stores *v2models.StoreSet, _ *auth.User) error {
+func setChartReleaseDynamicDefaults(chartRelease *CreatableChartRelease, stores *v2models.StoreSet, _ *auth.User) error {
 	chart, err := stores.ChartStore.Get(chartRelease.Chart)
 	if err != nil {
 		return err
@@ -311,9 +311,6 @@ func setChartReleaseDynamicDefaults(chartRelease *ChartRelease, stores *v2models
 		if chartRelease.Namespace == "" && environment.DefaultNamespace != "" {
 			chartRelease.Namespace = environment.DefaultNamespace
 		}
-		if chartRelease.DestinationType == "" {
-			chartRelease.DestinationType = "environment"
-		}
 		if chartRelease.FirecloudDevelopRef == nil {
 			if chart.LegacyConfigsEnabled != nil && *chart.LegacyConfigsEnabled {
 				chartRelease.FirecloudDevelopRef = environment.DefaultFirecloudDevelopRef
@@ -332,9 +329,6 @@ func setChartReleaseDynamicDefaults(chartRelease *ChartRelease, stores *v2models
 			} else {
 				chartRelease.Name = fmt.Sprintf("%s-%s-%s", chart.Name, chartRelease.Namespace, cluster.Name)
 			}
-		}
-		if chartRelease.DestinationType == "" {
-			chartRelease.DestinationType = "cluster"
 		}
 	}
 	return nil

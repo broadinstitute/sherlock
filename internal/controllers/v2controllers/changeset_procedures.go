@@ -32,9 +32,9 @@ func (c ChangesetController) changesetPlanRequestToModelChangesets(request Chang
 
 	// Handle the chart releases
 	for index, chartReleaseRequestEntry := range request.ChartReleases {
-		fullChangesetRequest := chartReleaseRequestEntry.CreatableChangeset.toReadable()
-		if err := setChangesetDynamicDefaults(&fullChangesetRequest, c.allStores, user); err != nil {
-			return nil, fmt.Errorf("error setting dynamic default values for chart release entry %d, '%s': %v", index+1, fullChangesetRequest.ChartRelease, err)
+		fullChangesetRequest, err := chartReleaseRequestEntry.CreatableChangeset.toReadable(c.allStores)
+		if err != nil {
+			return nil, fmt.Errorf("error interpolating chart release entry %d, '%s': %v", index+1, fullChangesetRequest.ChartRelease, err)
 		}
 		if chartReleaseRequestEntry.UseExactVersionsFromOtherChartRelease != nil {
 			otherChartRelease, err := c.allStores.ChartReleaseStore.Get(*chartReleaseRequestEntry.UseExactVersionsFromOtherChartRelease)
@@ -58,7 +58,7 @@ func (c ChangesetController) changesetPlanRequestToModelChangesets(request Chang
 			fullChangesetRequest.ToChartVersionExact = otherChartRelease.ChartVersionExact
 			fullChangesetRequest.ToHelmfileRef = otherChartRelease.HelmfileRef
 		}
-		model, err := changesetToModelChangeset(fullChangesetRequest, c.allStores)
+		model, err := fullChangesetRequest.toModel(c.allStores)
 		if err != nil {
 			return nil, fmt.Errorf("error parsing chart release entry %d, '%s': %v", index+1, fullChangesetRequest.ChartRelease, err)
 		}
@@ -128,8 +128,8 @@ func (c ChangesetController) changesetPlanRequestToModelChangesets(request Chang
 			}
 		}
 		for _, targetChartRelease := range targetChartReleases {
-			generatedChangeset := CreatableChangeset{ChartRelease: targetChartRelease.Name}.toReadable()
-			if err := setChangesetDynamicDefaults(&generatedChangeset, c.allStores, user); err != nil {
+			generatedChangeset, err := CreatableChangeset{ChartRelease: targetChartRelease.Name}.toReadable(c.allStores)
+			if err != nil {
 				return nil, fmt.Errorf("error setting dynamic default values for generated changeset for chart release '%s' for environment entry %d, '%s': %v", targetChartRelease.Name, index+1, environmentRequestEntry.Environment, err)
 			}
 			if otherChartRelease, present := chartReleasesToUseVersionsFrom[targetChartRelease.ChartID]; present {
@@ -151,7 +151,7 @@ func (c ChangesetController) changesetPlanRequestToModelChangesets(request Chang
 				generatedChangeset.ToChartVersionExact = otherChartRelease.ChartVersionExact
 				generatedChangeset.ToHelmfileRef = otherChartRelease.HelmfileRef
 			}
-			model, err := changesetToModelChangeset(generatedChangeset, c.allStores)
+			model, err := generatedChangeset.toModel(c.allStores)
 			if err != nil {
 				return nil, fmt.Errorf("error parsing generated changeset for chart release '%s' for environment entry %d, '%s': %v", targetChartRelease.Name, index+1, environmentRequestEntry.Environment, err)
 			}

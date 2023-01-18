@@ -19,7 +19,7 @@ func formatSelector(selector string) string {
 	return strings.Trim(selector, "/")
 }
 
-func handleCreate[M v2models.Model, R v2controllers.Readable, C v2controllers.Creatable[R], E v2controllers.Editable[R, C]](controller *v2controllers.ModelController[M, R, C, E]) func(ctx *gin.Context) {
+func handleCreate[M v2models.Model, R v2controllers.Readable[M], C v2controllers.Creatable[M], E v2controllers.Editable[M]](controller *v2controllers.ModelController[M, R, C, E]) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
 		user, err := auth.ExtractUserFromContext(ctx)
 		if err != nil {
@@ -44,7 +44,7 @@ func handleCreate[M v2models.Model, R v2controllers.Readable, C v2controllers.Cr
 	}
 }
 
-func handleList[M v2models.Model, R v2controllers.Readable, C v2controllers.Creatable[R], E v2controllers.Editable[R, C]](controller *v2controllers.ModelController[M, R, C, E]) func(ctx *gin.Context) {
+func handleList[M v2models.Model, R v2controllers.Readable[M], C v2controllers.Creatable[M], E v2controllers.Editable[M]](controller *v2controllers.ModelController[M, R, C, E]) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
 		var filter R
 		if err := ctx.ShouldBindQuery(&filter); err != nil {
@@ -68,7 +68,7 @@ func handleList[M v2models.Model, R v2controllers.Readable, C v2controllers.Crea
 	}
 }
 
-func handleGet[M v2models.Model, R v2controllers.Readable, C v2controllers.Creatable[R], E v2controllers.Editable[R, C]](controller *v2controllers.ModelController[M, R, C, E]) func(ctx *gin.Context) {
+func handleGet[M v2models.Model, R v2controllers.Readable[M], C v2controllers.Creatable[M], E v2controllers.Editable[M]](controller *v2controllers.ModelController[M, R, C, E]) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
 		result, err := controller.Get(formatSelector(ctx.Param("selector")))
 		if err != nil {
@@ -79,7 +79,7 @@ func handleGet[M v2models.Model, R v2controllers.Readable, C v2controllers.Creat
 	}
 }
 
-func handleEdit[M v2models.Model, R v2controllers.Readable, C v2controllers.Creatable[R], E v2controllers.Editable[R, C]](controller *v2controllers.ModelController[M, R, C, E]) func(ctx *gin.Context) {
+func handleEdit[M v2models.Model, R v2controllers.Readable[M], C v2controllers.Creatable[M], E v2controllers.Editable[M]](controller *v2controllers.ModelController[M, R, C, E]) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
 		user, err := auth.ExtractUserFromContext(ctx)
 		if err != nil {
@@ -100,7 +100,7 @@ func handleEdit[M v2models.Model, R v2controllers.Readable, C v2controllers.Crea
 	}
 }
 
-func handleDelete[M v2models.Model, R v2controllers.Readable, C v2controllers.Creatable[R], E v2controllers.Editable[R, C]](controller *v2controllers.ModelController[M, R, C, E]) func(ctx *gin.Context) {
+func handleDelete[M v2models.Model, R v2controllers.Readable[M], C v2controllers.Creatable[M], E v2controllers.Editable[M]](controller *v2controllers.ModelController[M, R, C, E]) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
 		user, err := auth.ExtractUserFromContext(ctx)
 		if err != nil {
@@ -116,7 +116,7 @@ func handleDelete[M v2models.Model, R v2controllers.Readable, C v2controllers.Cr
 	}
 }
 
-func handleSelectorList[M v2models.Model, R v2controllers.Readable, C v2controllers.Creatable[R], E v2controllers.Editable[R, C]](controller *v2controllers.ModelController[M, R, C, E]) func(ctx *gin.Context) {
+func handleSelectorList[M v2models.Model, R v2controllers.Readable[M], C v2controllers.Creatable[M], E v2controllers.Editable[M]](controller *v2controllers.ModelController[M, R, C, E]) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
 		result, err := controller.GetOtherValidSelectors(formatSelector(ctx.Param("selector")))
 		if err != nil {

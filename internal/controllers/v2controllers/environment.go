@@ -18,7 +18,6 @@ type Environment struct {
 	ReadableBaseType
 	TemplateEnvironmentInfo *Environment `json:"templateEnvironmentInfo,omitempty" swaggertype:"object" form:"-"` // Single-layer recursive; provides info of the template environment if this environment has one
 	DefaultClusterInfo      *Cluster     `json:"defaultClusterInfo,omitempty" form:"-"`
-	ValuesName              string       `json:"valuesName" form:"valuesName"`
 	CreatableEnvironment
 }
 
@@ -31,6 +30,7 @@ type CreatableEnvironment struct {
 	UniqueResourcePrefix      string `json:"uniqueResourcePrefix" form:"uniqueResourcePrefix"` // When creating, will be calculated if left empty
 	DefaultNamespace          string `json:"defaultNamespace" form:"defaultNamespace"`         // When creating, will be calculated if left empty
 	NamePrefix                string `json:"namePrefix" form:"namePrefix"`                     // Used for dynamic environment name generation only, to override using the owner email handle and template name
+	ValuesName                string `json:"valuesName" form:"valuesName"`                     // When creating, defaults to template name or environment name
 	EditableEnvironment
 }
 
@@ -48,13 +48,59 @@ type EditableEnvironment struct {
 }
 
 //nolint:unused
-func (c CreatableEnvironment) toReadable() Environment {
-	return Environment{CreatableEnvironment: c}
+func (e Environment) toModel(storeSet *v2models.StoreSet) (v2models.Environment, error) {
+	var templateEnvironmentID *uint
+	if e.TemplateEnvironment != "" {
+		templateEnvironment, err := storeSet.EnvironmentStore.Get(e.TemplateEnvironment)
+		if err != nil {
+			return v2models.Environment{}, err
+		}
+		templateEnvironmentID = &templateEnvironment.ID
+	}
+	var defaultClusterID *uint
+	if e.DefaultCluster != nil && *e.DefaultCluster != "" {
+		defaultCluster, err := storeSet.ClusterStore.Get(*e.DefaultCluster)
+		if err != nil {
+			return v2models.Environment{}, err
+		}
+		defaultClusterID = &defaultCluster.ID
+	}
+	return v2models.Environment{
+		Model: gorm.Model{
+			ID:        e.ID,
+			CreatedAt: e.CreatedAt,
+			UpdatedAt: e.UpdatedAt,
+		},
+		Base:                       e.Base,
+		ChartReleasesFromTemplate:  e.ChartReleasesFromTemplate,
+		Lifecycle:                  e.Lifecycle,
+		Name:                       e.Name,
+		TemplateEnvironmentID:      templateEnvironmentID,
+		ValuesName:                 e.ValuesName,
+		UniqueResourcePrefix:       e.UniqueResourcePrefix,
+		DefaultClusterID:           defaultClusterID,
+		DefaultNamespace:           e.DefaultNamespace,
+		NamePrefix:                 e.NamePrefix,
+		DefaultFirecloudDevelopRef: e.DefaultFirecloudDevelopRef,
+		Owner:                      e.Owner,
+		RequiresSuitability:        e.RequiresSuitability,
+		BaseDomain:                 e.BaseDomain,
+		NamePrefixesDomain:         e.NamePrefixesDomain,
+		HelmfileRef:                e.HelmfileRef,
+		PreventDeletion:            e.PreventDeletion,
+		AutoDelete:                 e.AutoDelete,
+		Description:                e.Description,
+	}, nil
 }
 
 //nolint:unused
-func (e EditableEnvironment) toCreatable() CreatableEnvironment {
-	return CreatableEnvironment{EditableEnvironment: e}
+func (e CreatableEnvironment) toModel(storeSet *v2models.StoreSet) (v2models.Environment, error) {
+	return Environment{CreatableEnvironment: e}.toModel(storeSet)
+}
+
+//nolint:unused
+func (e EditableEnvironment) toModel(storeSet *v2models.StoreSet) (v2models.Environment, error) {
+	return CreatableEnvironment{EditableEnvironment: e}.toModel(storeSet)
 }
 
 type EnvironmentController = ModelController[v2models.Environment, Environment, CreatableEnvironment, EditableEnvironment]
@@ -64,7 +110,6 @@ func newEnvironmentController(stores *v2models.StoreSet) *EnvironmentController 
 		primaryStore:       stores.EnvironmentStore,
 		allStores:          stores,
 		modelToReadable:    modelEnvironmentToEnvironment,
-		readableToModel:    environmentToModelEnvironment,
 		setDynamicDefaults: setEnvironmentDynamicDefaults,
 	}
 }
@@ -94,7 +139,6 @@ func modelEnvironmentToEnvironment(model *v2models.Environment) *Environment {
 		},
 		TemplateEnvironmentInfo: templateEnvironment,
 		DefaultClusterInfo:      defaultCluster,
-		ValuesName:              model.ValuesName,
 		CreatableEnvironment: CreatableEnvironment{
 			Base:                      model.Base,
 			ChartReleasesFromTemplate: model.ChartReleasesFromTemplate,
@@ -104,6 +148,7 @@ func modelEnvironmentToEnvironment(model *v2models.Environment) *Environment {
 			UniqueResourcePrefix:      model.UniqueResourcePrefix,
 			DefaultNamespace:          model.DefaultNamespace,
 			NamePrefix:                model.NamePrefix,
+			ValuesName:                model.ValuesName,
 			EditableEnvironment: EditableEnvironment{
 				DefaultCluster:             &defaultClusterName,
 				DefaultFirecloudDevelopRef: model.DefaultFirecloudDevelopRef,
@@ -120,62 +165,19 @@ func modelEnvironmentToEnvironment(model *v2models.Environment) *Environment {
 	}
 }
 
-func environmentToModelEnvironment(environment Environment, stores *v2models.StoreSet) (v2models.Environment, error) {
-	var templateEnvironmentID *uint
-	if environment.TemplateEnvironment != "" {
-		templateEnvironment, err := stores.EnvironmentStore.Get(environment.TemplateEnvironment)
-		if err != nil {
-			return v2models.Environment{}, err
-		}
-		templateEnvironmentID = &templateEnvironment.ID
-	}
-	var defaultClusterID *uint
-	if environment.DefaultCluster != nil && *environment.DefaultCluster != "" {
-		defaultCluster, err := stores.ClusterStore.Get(*environment.DefaultCluster)
-		if err != nil {
-			return v2models.Environment{}, err
-		}
-		defaultClusterID = &defaultCluster.ID
-	}
-	return v2models.Environment{
-		Model: gorm.Model{
-			ID:        environment.ID,
-			CreatedAt: environment.CreatedAt,
-			UpdatedAt: environment.UpdatedAt,
-		},
-		Base:                       environment.Base,
-		ChartReleasesFromTemplate:  environment.ChartReleasesFromTemplate,
-		Lifecycle:                  environment.Lifecycle,
-		Name:                       environment.Name,
-		TemplateEnvironmentID:      templateEnvironmentID,
-		ValuesName:                 environment.ValuesName,
-		UniqueResourcePrefix:       environment.UniqueResourcePrefix,
-		DefaultClusterID:           defaultClusterID,
-		DefaultNamespace:           environment.DefaultNamespace,
-		NamePrefix:                 environment.NamePrefix,
-		DefaultFirecloudDevelopRef: environment.DefaultFirecloudDevelopRef,
-		Owner:                      environment.Owner,
-		RequiresSuitability:        environment.RequiresSuitability,
-		BaseDomain:                 environment.BaseDomain,
-		NamePrefixesDomain:         environment.NamePrefixesDomain,
-		HelmfileRef:                environment.HelmfileRef,
-		PreventDeletion:            environment.PreventDeletion,
-		AutoDelete:                 environment.AutoDelete,
-		Description:                environment.Description,
-	}, nil
-}
-
 // setEnvironmentDynamicDefaults doesn't need to worry about validation, nor does it need to worry about any
 // static defaults defined in struct tags. The model handles validation, and the caller will handle struct tags
 // after this function runs.
-func setEnvironmentDynamicDefaults(environment *Environment, stores *v2models.StoreSet, user *auth.User) error {
+func setEnvironmentDynamicDefaults(environment *CreatableEnvironment, stores *v2models.StoreSet, user *auth.User) error {
 	if environment.TemplateEnvironment != "" {
 		templateEnvironment, err := stores.EnvironmentStore.Get(environment.TemplateEnvironment)
 		if err != nil {
 			return err
 		}
-		// If there's a template, the valuesName to use is the name of the template
-		environment.ValuesName = templateEnvironment.Name
+		if environment.ValuesName == "" {
+			// If there's a template, the valuesName to use is the name of the template
+			environment.ValuesName = templateEnvironment.Name
+		}
 		if environment.Base == "" {
 			environment.Base = templateEnvironment.Base
 		}

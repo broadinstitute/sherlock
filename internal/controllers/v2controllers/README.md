@@ -7,6 +7,9 @@ ModelController requires three types to work with a model type:
 Go's struct nesting means we can have the Readable contain the Creatable type, and the Creatable contain the Editable type.
 For naming, for a model type called `v2models.X`, the three types would be `X`, `CreatableX`, and `EditableX`. These types will be picked up by Swaggo and Gin.
 
+It used to be that Readable was strictly a superset of Creatable, and Creatable was strictly a superset of Editable.
+This isn't a strict requirement anymore, just the norm. There's some cases where we might want to have different read/query and mutate views on the same database row.
+
 ### Wow, what a lot of struct tags:
 #### Do use:
 - `json` controls the field name when parsing to/from json (always add)
