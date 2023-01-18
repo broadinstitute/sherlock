@@ -19,7 +19,6 @@ export * from './V2controllersChartRelease';
 export * from './V2controllersChartVersion';
 export * from './V2controllersCluster';
 export * from './V2controllersCreatableAppVersion';
-export * from './V2controllersCreatableChangeset';
 export * from './V2controllersCreatableChart';
 export * from './V2controllersCreatableChartRelease';
 export * from './V2controllersCreatableChartVersion';

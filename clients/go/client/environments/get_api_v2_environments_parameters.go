@@ -172,7 +172,10 @@ type GetAPIV2EnvironmentsParams struct {
 	// Format: date-time
 	UpdatedAt *strfmt.DateTime
 
-	// ValuesName.
+	/* ValuesName.
+
+	   When creating, defaults to template name or environment name
+	*/
 	ValuesName *string
 
 	timeout    time.Duration

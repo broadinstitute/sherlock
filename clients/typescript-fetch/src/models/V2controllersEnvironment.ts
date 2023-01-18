@@ -171,7 +171,7 @@ export interface V2controllersEnvironment {
      */
     updatedAt?: Date;
     /**
-     * 
+     * When creating, defaults to template name or environment name
      * @type {string}
      * @memberof V2controllersEnvironment
      */

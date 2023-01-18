@@ -31,7 +31,6 @@ src/models/V2controllersChartRelease.ts
 src/models/V2controllersChartVersion.ts
 src/models/V2controllersCluster.ts
 src/models/V2controllersCreatableAppVersion.ts
-src/models/V2controllersCreatableChangeset.ts
 src/models/V2controllersCreatableChart.ts
 src/models/V2controllersCreatableChartRelease.ts
 src/models/V2controllersCreatableChartVersion.ts

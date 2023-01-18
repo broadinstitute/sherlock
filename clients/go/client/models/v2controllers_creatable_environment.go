@@ -71,6 +71,9 @@ type V2controllersCreatableEnvironment struct {
 
 	// When creating, will be calculated if left empty
 	UniqueResourcePrefix string `json:"uniqueResourcePrefix,omitempty"`
+
+	// When creating, defaults to template name or environment name
+	ValuesName string `json:"valuesName,omitempty"`
 }
 
 // Validate validates this v2controllers creatable environment

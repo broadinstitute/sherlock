@@ -90,7 +90,7 @@ type V2controllersEnvironment struct {
 	// Format: date-time
 	UpdatedAt strfmt.DateTime `json:"updatedAt,omitempty"`
 
-	// values name
+	// When creating, defaults to template name or environment name
 	ValuesName string `json:"valuesName,omitempty"`
 }
 

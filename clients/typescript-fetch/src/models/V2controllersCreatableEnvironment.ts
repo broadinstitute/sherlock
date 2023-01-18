@@ -134,6 +134,12 @@ export interface V2controllersCreatableEnvironment {
      * @memberof V2controllersCreatableEnvironment
      */
     uniqueResourcePrefix?: string;
+    /**
+     * When creating, defaults to template name or environment name
+     * @type {string}
+     * @memberof V2controllersCreatableEnvironment
+     */
+    valuesName?: string;
 }
 
 /**
@@ -173,6 +179,7 @@ export function V2controllersCreatableEnvironmentFromJSONTyped(json: any, ignore
         'requiresSuitability': !exists(json, 'requiresSuitability') ? undefined : json['requiresSuitability'],
         'templateEnvironment': !exists(json, 'templateEnvironment') ? undefined : json['templateEnvironment'],
         'uniqueResourcePrefix': !exists(json, 'uniqueResourcePrefix') ? undefined : json['uniqueResourcePrefix'],
+        'valuesName': !exists(json, 'valuesName') ? undefined : json['valuesName'],
     };
 }
 
@@ -203,6 +210,7 @@ export function V2controllersCreatableEnvironmentToJSON(value?: V2controllersCre
         'requiresSuitability': value.requiresSuitability,
         'templateEnvironment': value.templateEnvironment,
         'uniqueResourcePrefix': value.uniqueResourcePrefix,
+        'valuesName': value.valuesName,
     };
 }
 

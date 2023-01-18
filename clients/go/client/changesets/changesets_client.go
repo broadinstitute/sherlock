@@ -38,8 +38,6 @@ type ClientService interface {
 
 	GetAPIV2SelectorsChangesetsSelector(params *GetAPIV2SelectorsChangesetsSelectorParams, opts ...ClientOption) (*GetAPIV2SelectorsChangesetsSelectorOK, error)
 
-	PostAPIV2Changesets(params *PostAPIV2ChangesetsParams, opts ...ClientOption) (*PostAPIV2ChangesetsOK, *PostAPIV2ChangesetsCreated, error)
-
 	PostAPIV2ProceduresChangesetsApply(params *PostAPIV2ProceduresChangesetsApplyParams, opts ...ClientOption) (*PostAPIV2ProceduresChangesetsApplyOK, error)
 
 	PostAPIV2ProceduresChangesetsPlan(params *PostAPIV2ProceduresChangesetsPlanParams, opts ...ClientOption) (*PostAPIV2ProceduresChangesetsPlanOK, *PostAPIV2ProceduresChangesetsPlanCreated, error)
@@ -206,48 +204,6 @@ func (a *Client) GetAPIV2SelectorsChangesetsSelector(params *GetAPIV2SelectorsCh
 	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for GetAPIV2SelectorsChangesetsSelector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
-	panic(msg)
-}
-
-/*
-  PostAPIV2Changesets creates a new changeset entry
-
-  Create a new Changeset entry. Note that fields are immutable after creation.
-You'll likely want to use the plan endpoint instead, which conditionally creates a Changeset based on there actually being a version diff.
-*/
-func (a *Client) PostAPIV2Changesets(params *PostAPIV2ChangesetsParams, opts ...ClientOption) (*PostAPIV2ChangesetsOK, *PostAPIV2ChangesetsCreated, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewPostAPIV2ChangesetsParams()
-	}
-	op := &runtime.ClientOperation{
-		ID:                 "PostAPIV2Changesets",
-		Method:             "POST",
-		PathPattern:        "/api/v2/changesets",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"https"},
-		Params:             params,
-		Reader:             &PostAPIV2ChangesetsReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
-	if err != nil {
-		return nil, nil, err
-	}
-	switch value := result.(type) {
-	case *PostAPIV2ChangesetsOK:
-		return value, nil, nil
-	case *PostAPIV2ChangesetsCreated:
-		return nil, value, nil
-	}
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
-	msg := fmt.Sprintf("unexpected success response for changesets: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 

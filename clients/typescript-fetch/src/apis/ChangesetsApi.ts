@@ -18,7 +18,6 @@ import type {
   ErrorsErrorResponse,
   V2controllersChangeset,
   V2controllersChangesetPlanRequest,
-  V2controllersCreatableChangeset,
 } from '../models';
 import {
     ErrorsErrorResponseFromJSON,
@@ -27,8 +26,6 @@ import {
     V2controllersChangesetToJSON,
     V2controllersChangesetPlanRequestFromJSON,
     V2controllersChangesetPlanRequestToJSON,
-    V2controllersCreatableChangesetFromJSON,
-    V2controllersCreatableChangesetToJSON,
 } from '../models';
 
 export interface ApiV2ChangesetsGetRequest {
@@ -65,10 +62,6 @@ export interface ApiV2ChangesetsGetRequest {
     toResolvedAt?: string;
     updatedAt?: Date;
     limit?: number;
-}
-
-export interface ApiV2ChangesetsPostRequest {
-    changeset: V2controllersCreatableChangeset;
 }
 
 export interface ApiV2ChangesetsSelectorGetRequest {
@@ -259,41 +252,6 @@ export class ChangesetsApi extends runtime.BaseAPI {
      */
     async apiV2ChangesetsGet(requestParameters: ApiV2ChangesetsGetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<V2controllersChangeset>> {
         const response = await this.apiV2ChangesetsGetRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     * Create a new Changeset entry. Note that fields are immutable after creation. You\'ll likely want to use the plan endpoint instead, which conditionally creates a Changeset based on there actually being a version diff.
-     * Create a new Changeset entry
-     */
-    async apiV2ChangesetsPostRaw(requestParameters: ApiV2ChangesetsPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<V2controllersChangeset>> {
-        if (requestParameters.changeset === null || requestParameters.changeset === undefined) {
-            throw new runtime.RequiredError('changeset','Required parameter requestParameters.changeset was null or undefined when calling apiV2ChangesetsPost.');
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        headerParameters['Content-Type'] = 'application/json';
-
-        const response = await this.request({
-            path: `/api/v2/changesets`,
-            method: 'POST',
-            headers: headerParameters,
-            query: queryParameters,
-            body: V2controllersCreatableChangesetToJSON(requestParameters.changeset),
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => V2controllersChangesetFromJSON(jsonValue));
-    }
-
-    /**
-     * Create a new Changeset entry. Note that fields are immutable after creation. You\'ll likely want to use the plan endpoint instead, which conditionally creates a Changeset based on there actually being a version diff.
-     * Create a new Changeset entry
-     */
-    async apiV2ChangesetsPost(requestParameters: ApiV2ChangesetsPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<V2controllersChangeset> {
-        const response = await this.apiV2ChangesetsPostRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
