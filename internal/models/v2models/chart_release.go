@@ -234,6 +234,11 @@ func validateChartRelease(chartRelease *ChartRelease) error {
 
 func preCreateChartRelease(db *gorm.DB, toCreate *ChartRelease, _ *auth.User) error {
 	if toCreate != nil {
+		if toCreate.EnvironmentID != nil {
+			toCreate.DestinationType = "environment"
+		} else if toCreate.ClusterID != nil {
+			toCreate.DestinationType = "cluster"
+		}
 		return toCreate.ChartReleaseVersion.resolve(db, Chart{Model: gorm.Model{ID: toCreate.ChartID}})
 	}
 	return nil

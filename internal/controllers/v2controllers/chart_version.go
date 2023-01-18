@@ -27,14 +27,46 @@ type EditableChartVersion struct {
 	Description string `json:"description" form:"description"` // Generally the Git commit message
 }
 
-//nolint:unused
-func (c CreatableChartVersion) toReadable() ChartVersion {
-	return ChartVersion{CreatableChartVersion: c}
+func (c ChartVersion) toModel(storeSet *v2models.StoreSet) (v2models.ChartVersion, error) {
+	var chartID uint
+	if c.Chart != "" {
+		chart, err := storeSet.ChartStore.Get(c.Chart)
+		if err != nil {
+			return v2models.ChartVersion{}, err
+		}
+		chartID = chart.ID
+	}
+	var parentChartVersionID *uint
+	if c.ParentChartVersion != "" {
+		parentChartVersion, err := storeSet.ChartVersionStore.Get(c.ParentChartVersion)
+		if err != nil {
+			log.Debug().Msgf("while handling %T was given parent %s that didn't have a match, ignoring: %v", c, c.ParentChartVersion, err)
+		} else {
+			if chartID != 0 && parentChartVersion.ChartID != chartID {
+				return v2models.ChartVersion{}, fmt.Errorf("(%s) given parent matches a different chart (%s, ID %d) than this one does (%s, ID %d)", errors.BadRequest, parentChartVersion.Chart.Name, parentChartVersion.ChartID, c.Chart, chartID)
+			}
+			parentChartVersionID = &parentChartVersion.ID
+		}
+	}
+	return v2models.ChartVersion{
+		Model: gorm.Model{
+			ID:        c.ID,
+			CreatedAt: c.CreatedAt,
+			UpdatedAt: c.UpdatedAt,
+		},
+		ChartID:              chartID,
+		ChartVersion:         c.ChartVersion,
+		ParentChartVersionID: parentChartVersionID,
+		Description:          c.Description,
+	}, nil
 }
 
-//nolint:unused
-func (e EditableChartVersion) toCreatable() CreatableChartVersion {
-	return CreatableChartVersion{EditableChartVersion: e}
+func (c CreatableChartVersion) toModel(storeSet *v2models.StoreSet) (v2models.ChartVersion, error) {
+	return ChartVersion{CreatableChartVersion: c}.toModel(storeSet)
+}
+
+func (c EditableChartVersion) toModel(storeSet *v2models.StoreSet) (v2models.ChartVersion, error) {
+	return CreatableChartVersion{EditableChartVersion: c}.toModel(storeSet)
 }
 
 type ChartVersionController = ModelController[v2models.ChartVersion, ChartVersion, CreatableChartVersion, EditableChartVersion]
@@ -44,7 +76,6 @@ func newChartVersionController(stores *v2models.StoreSet) *ChartVersionControlle
 		primaryStore:    stores.ChartVersionStore,
 		allStores:       stores,
 		modelToReadable: modelChartVersionToChartVersion,
-		readableToModel: chartVersionToModelChartVersion,
 	}
 }
 
@@ -86,38 +117,4 @@ func modelChartVersionToChartVersion(model *v2models.ChartVersion) *ChartVersion
 			EditableChartVersion: EditableChartVersion{Description: model.Description},
 		},
 	}
-}
-
-func chartVersionToModelChartVersion(chartVersion ChartVersion, stores *v2models.StoreSet) (v2models.ChartVersion, error) {
-	var chartID uint
-	if chartVersion.Chart != "" {
-		chart, err := stores.ChartStore.Get(chartVersion.Chart)
-		if err != nil {
-			return v2models.ChartVersion{}, err
-		}
-		chartID = chart.ID
-	}
-	var parentChartVersionID *uint
-	if chartVersion.ParentChartVersion != "" {
-		parentChartVersion, err := stores.ChartVersionStore.Get(chartVersion.ParentChartVersion)
-		if err != nil {
-			log.Debug().Msgf("while handling %T was given parent %s that didn't have a match, ignoring: %v", chartVersion, chartVersion.ParentChartVersion, err)
-		} else {
-			if chartID != 0 && parentChartVersion.ChartID != chartID {
-				return v2models.ChartVersion{}, fmt.Errorf("(%s) given parent matches a different chart (%s, ID %d) than this one does (%s, ID %d)", errors.BadRequest, parentChartVersion.Chart.Name, parentChartVersion.ChartID, chartVersion.Chart, chartID)
-			}
-			parentChartVersionID = &parentChartVersion.ID
-		}
-	}
-	return v2models.ChartVersion{
-		Model: gorm.Model{
-			ID:        chartVersion.ID,
-			CreatedAt: chartVersion.CreatedAt,
-			UpdatedAt: chartVersion.UpdatedAt,
-		},
-		ChartID:              chartID,
-		ChartVersion:         chartVersion.ChartVersion,
-		ParentChartVersionID: parentChartVersionID,
-		Description:          chartVersion.Description,
-	}, nil
 }

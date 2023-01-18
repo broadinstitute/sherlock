@@ -5,7 +5,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/broadinstitute/sherlock/internal/auth"
 	"github.com/broadinstitute/sherlock/internal/models/v2models"
 	"gorm.io/gorm"
 )
@@ -60,14 +59,191 @@ type CreatableChangeset struct {
 
 type EditableChangeset struct{}
 
-//nolint:unused
-func (c CreatableChangeset) toReadable() Changeset {
-	return Changeset{CreatableChangeset: c}
+func (c Changeset) toModel(storeSet *v2models.StoreSet) (v2models.Changeset, error) {
+	var chartReleaseID uint
+	if c.ChartRelease != "" {
+		chartRelease, err := storeSet.ChartReleaseStore.Get(c.ChartRelease)
+		if err != nil {
+			return v2models.Changeset{}, err
+		}
+		chartReleaseID = chartRelease.ID
+	}
+
+	var toAppVersionID *uint
+	if c.ToAppVersionReference != "" {
+		toAppVersion, err := storeSet.AppVersionStore.Get(c.ToAppVersionReference)
+		if err != nil {
+			return v2models.Changeset{}, err
+		}
+		toAppVersionID = &toAppVersion.ID
+	}
+	var toChartVersionID *uint
+	if c.ToChartVersionReference != "" {
+		toChartVersion, err := storeSet.ChartVersionStore.Get(c.ToChartVersionReference)
+		if err != nil {
+			return v2models.Changeset{}, err
+		}
+		toChartVersionID = &toChartVersion.ID
+	}
+	var fromAppVersionID *uint
+	if c.FromAppVersionReference != "" {
+		fromAppVersion, err := storeSet.AppVersionStore.Get(c.FromAppVersionReference)
+		if err != nil {
+			return v2models.Changeset{}, err
+		}
+		fromAppVersionID = &fromAppVersion.ID
+	}
+	var fromChartVersionID *uint
+	if c.FromChartVersionReference != "" {
+		fromChartVersion, err := storeSet.ChartVersionStore.Get(c.FromChartVersionReference)
+		if err != nil {
+			return v2models.Changeset{}, err
+		}
+		fromChartVersionID = &fromChartVersion.ID
+	}
+
+	var toAppVersionFollowChartReleaseID *uint
+	if c.ToAppVersionFollowChartRelease != "" {
+		toAppVersionFollowChartRelease, err := storeSet.ChartReleaseStore.Get(c.ToAppVersionFollowChartRelease)
+		if err != nil {
+			return v2models.Changeset{}, err
+		}
+		toAppVersionFollowChartReleaseID = &toAppVersionFollowChartRelease.ID
+	}
+	var toChartVersionFollowChartReleaseID *uint
+	if c.ToChartVersionFollowChartRelease != "" {
+		toChartVersionFollowChartRelease, err := storeSet.ChartReleaseStore.Get(c.ToChartVersionFollowChartRelease)
+		if err != nil {
+			return v2models.Changeset{}, err
+		}
+		toChartVersionFollowChartReleaseID = &toChartVersionFollowChartRelease.ID
+	}
+	var fromAppVersionFollowChartReleaseID *uint
+	if c.FromAppVersionFollowChartRelease != "" {
+		fromAppVersionFollowChartRelease, err := storeSet.ChartReleaseStore.Get(c.FromAppVersionFollowChartRelease)
+		if err != nil {
+			return v2models.Changeset{}, err
+		}
+		fromAppVersionFollowChartReleaseID = &fromAppVersionFollowChartRelease.ID
+	}
+	var fromChartVersionFollowChartReleaseID *uint
+	if c.FromChartVersionFollowChartRelease != "" {
+		fromChartVersionFollowChartRelease, err := storeSet.ChartReleaseStore.Get(c.FromChartVersionFollowChartRelease)
+		if err != nil {
+			return v2models.Changeset{}, err
+		}
+		fromChartVersionFollowChartReleaseID = &fromChartVersionFollowChartRelease.ID
+	}
+
+	return v2models.Changeset{
+		Model: gorm.Model{
+			ID:        c.ID,
+			CreatedAt: c.CreatedAt,
+			UpdatedAt: c.UpdatedAt,
+		},
+		ChartReleaseID: chartReleaseID,
+		From: v2models.ChartReleaseVersion{
+			ResolvedAt:                       c.FromResolvedAt,
+			AppVersionResolver:               c.FromAppVersionResolver,
+			AppVersionExact:                  c.FromAppVersionExact,
+			AppVersionBranch:                 c.FromAppVersionBranch,
+			AppVersionCommit:                 c.FromAppVersionCommit,
+			AppVersionFollowChartReleaseID:   fromAppVersionFollowChartReleaseID,
+			AppVersionID:                     fromAppVersionID,
+			ChartVersionResolver:             c.FromChartVersionResolver,
+			ChartVersionExact:                c.FromChartVersionExact,
+			ChartVersionFollowChartReleaseID: fromChartVersionFollowChartReleaseID,
+			ChartVersionID:                   fromChartVersionID,
+			HelmfileRef:                      c.FromHelmfileRef,
+			FirecloudDevelopRef:              c.FromFirecloudDevelopRef,
+		},
+		To: v2models.ChartReleaseVersion{
+			ResolvedAt:                       c.ToResolvedAt,
+			AppVersionResolver:               c.ToAppVersionResolver,
+			AppVersionExact:                  c.ToAppVersionExact,
+			AppVersionBranch:                 c.ToAppVersionBranch,
+			AppVersionCommit:                 c.ToAppVersionCommit,
+			AppVersionFollowChartReleaseID:   toAppVersionFollowChartReleaseID,
+			AppVersionID:                     toAppVersionID,
+			ChartVersionResolver:             c.ToChartVersionResolver,
+			ChartVersionExact:                c.ToChartVersionExact,
+			ChartVersionFollowChartReleaseID: toChartVersionFollowChartReleaseID,
+			ChartVersionID:                   toChartVersionID,
+			HelmfileRef:                      c.ToHelmfileRef,
+			FirecloudDevelopRef:              c.ToFirecloudDevelopRef,
+		},
+		AppliedAt:    c.AppliedAt,
+		SupersededAt: c.SupersededAt,
+	}, nil
 }
 
-//nolint:unused
-func (e EditableChangeset) toCreatable() CreatableChangeset {
-	return CreatableChangeset{EditableChangeset: e}
+func (c CreatableChangeset) toModel(storeSet *v2models.StoreSet) (v2models.Changeset, error) {
+	return Changeset{CreatableChangeset: c}.toModel(storeSet)
+}
+
+func (c CreatableChangeset) toReadable(storeSet *v2models.StoreSet) (Changeset, error) {
+	changeset := Changeset{CreatableChangeset: c}
+	chartRelease, err := storeSet.ChartReleaseStore.Get(changeset.ChartRelease)
+	if err != nil {
+		return changeset, err
+	}
+	changeset.FromResolvedAt = chartRelease.ResolvedAt
+	changeset.FromAppVersionResolver = chartRelease.AppVersionResolver
+	changeset.FromAppVersionExact = chartRelease.AppVersionExact
+	changeset.FromAppVersionBranch = chartRelease.AppVersionBranch
+	changeset.FromAppVersionCommit = chartRelease.AppVersionCommit
+	if chartRelease.AppVersionFollowChartReleaseID != nil {
+		changeset.FromAppVersionFollowChartRelease = strconv.FormatUint(uint64(*chartRelease.AppVersionFollowChartReleaseID), 10)
+	}
+	if chartRelease.AppVersionID != nil {
+		changeset.FromAppVersionReference = strconv.FormatUint(uint64(*chartRelease.AppVersionID), 10)
+	}
+	changeset.FromChartVersionResolver = chartRelease.ChartVersionResolver
+	changeset.FromChartVersionExact = chartRelease.ChartVersionExact
+	if chartRelease.ChartVersionFollowChartReleaseID != nil {
+		changeset.FromChartVersionFollowChartRelease = strconv.FormatUint(uint64(*chartRelease.ChartVersionFollowChartReleaseID), 10)
+	}
+	if chartRelease.ChartVersionID != nil {
+		changeset.FromChartVersionReference = strconv.FormatUint(uint64(*chartRelease.ChartVersionID), 10)
+	}
+	changeset.FromHelmfileRef = chartRelease.HelmfileRef
+	changeset.FromFirecloudDevelopRef = chartRelease.FirecloudDevelopRef
+
+	if changeset.ToAppVersionResolver == nil {
+		changeset.ToAppVersionResolver = changeset.FromAppVersionResolver
+	}
+	if changeset.ToAppVersionExact == nil {
+		changeset.ToAppVersionExact = changeset.FromAppVersionExact
+	}
+	if changeset.ToAppVersionBranch == nil {
+		changeset.ToAppVersionBranch = changeset.FromAppVersionBranch
+	}
+	if changeset.ToAppVersionCommit == nil {
+		changeset.ToAppVersionCommit = changeset.FromAppVersionCommit
+	}
+	if changeset.ToAppVersionFollowChartRelease == "" {
+		changeset.ToAppVersionFollowChartRelease = changeset.FromAppVersionFollowChartRelease
+	}
+	if changeset.ToChartVersionResolver == nil {
+		changeset.ToChartVersionResolver = changeset.FromChartVersionResolver
+	}
+	if changeset.ToChartVersionExact == nil {
+		changeset.ToChartVersionExact = changeset.FromChartVersionExact
+	}
+	if changeset.ToChartVersionFollowChartRelease == "" {
+		changeset.ToChartVersionFollowChartRelease = changeset.FromChartVersionFollowChartRelease
+	}
+	if changeset.ToHelmfileRef == nil {
+		changeset.ToHelmfileRef = changeset.FromHelmfileRef
+	}
+	if changeset.ToFirecloudDevelopRef == nil {
+		changeset.ToFirecloudDevelopRef = changeset.FromFirecloudDevelopRef
+	}
+	return changeset, nil
+}
+
+func (c EditableChangeset) toModel(storeSet *v2models.StoreSet) (v2models.Changeset, error) {
+	return CreatableChangeset{EditableChangeset: c}.toModel(storeSet)
 }
 
 type ChangesetController struct {
@@ -78,11 +254,9 @@ type ChangesetController struct {
 func newChangesetController(stores *v2models.StoreSet) *ChangesetController {
 	return &ChangesetController{
 		ModelController: ModelController[v2models.Changeset, Changeset, CreatableChangeset, EditableChangeset]{
-			primaryStore:       stores.ChangesetEventStore.ModelStore,
-			allStores:          stores,
-			modelToReadable:    modelChangesetToChangeset,
-			readableToModel:    changesetToModelChangeset,
-			setDynamicDefaults: setChangesetDynamicDefaults,
+			primaryStore:    stores.ChangesetEventStore.ModelStore,
+			allStores:       stores,
+			modelToReadable: modelChangesetToChangeset,
 		},
 		ChangesetEventStore: stores.ChangesetEventStore,
 	}
@@ -208,182 +382,4 @@ func modelChangesetToChangeset(model *v2models.Changeset) *Changeset {
 			EditableChangeset:                EditableChangeset{},
 		},
 	}
-}
-
-func changesetToModelChangeset(changeset Changeset, stores *v2models.StoreSet) (v2models.Changeset, error) {
-	var chartReleaseID uint
-	if changeset.ChartRelease != "" {
-		chartRelease, err := stores.ChartReleaseStore.Get(changeset.ChartRelease)
-		if err != nil {
-			return v2models.Changeset{}, err
-		}
-		chartReleaseID = chartRelease.ID
-	}
-
-	var toAppVersionID *uint
-	if changeset.ToAppVersionReference != "" {
-		toAppVersion, err := stores.AppVersionStore.Get(changeset.ToAppVersionReference)
-		if err != nil {
-			return v2models.Changeset{}, err
-		}
-		toAppVersionID = &toAppVersion.ID
-	}
-	var toChartVersionID *uint
-	if changeset.ToChartVersionReference != "" {
-		toChartVersion, err := stores.ChartVersionStore.Get(changeset.ToChartVersionReference)
-		if err != nil {
-			return v2models.Changeset{}, err
-		}
-		toChartVersionID = &toChartVersion.ID
-	}
-	var fromAppVersionID *uint
-	if changeset.FromAppVersionReference != "" {
-		fromAppVersion, err := stores.AppVersionStore.Get(changeset.FromAppVersionReference)
-		if err != nil {
-			return v2models.Changeset{}, err
-		}
-		fromAppVersionID = &fromAppVersion.ID
-	}
-	var fromChartVersionID *uint
-	if changeset.FromChartVersionReference != "" {
-		fromChartVersion, err := stores.ChartVersionStore.Get(changeset.FromChartVersionReference)
-		if err != nil {
-			return v2models.Changeset{}, err
-		}
-		fromChartVersionID = &fromChartVersion.ID
-	}
-
-	var toAppVersionFollowChartReleaseID *uint
-	if changeset.ToAppVersionFollowChartRelease != "" {
-		toAppVersionFollowChartRelease, err := stores.ChartReleaseStore.Get(changeset.ToAppVersionFollowChartRelease)
-		if err != nil {
-			return v2models.Changeset{}, err
-		}
-		toAppVersionFollowChartReleaseID = &toAppVersionFollowChartRelease.ID
-	}
-	var toChartVersionFollowChartReleaseID *uint
-	if changeset.ToChartVersionFollowChartRelease != "" {
-		toChartVersionFollowChartRelease, err := stores.ChartReleaseStore.Get(changeset.ToChartVersionFollowChartRelease)
-		if err != nil {
-			return v2models.Changeset{}, err
-		}
-		toChartVersionFollowChartReleaseID = &toChartVersionFollowChartRelease.ID
-	}
-	var fromAppVersionFollowChartReleaseID *uint
-	if changeset.FromAppVersionFollowChartRelease != "" {
-		fromAppVersionFollowChartRelease, err := stores.ChartReleaseStore.Get(changeset.FromAppVersionFollowChartRelease)
-		if err != nil {
-			return v2models.Changeset{}, err
-		}
-		fromAppVersionFollowChartReleaseID = &fromAppVersionFollowChartRelease.ID
-	}
-	var fromChartVersionFollowChartReleaseID *uint
-	if changeset.FromChartVersionFollowChartRelease != "" {
-		fromChartVersionFollowChartRelease, err := stores.ChartReleaseStore.Get(changeset.FromChartVersionFollowChartRelease)
-		if err != nil {
-			return v2models.Changeset{}, err
-		}
-		fromChartVersionFollowChartReleaseID = &fromChartVersionFollowChartRelease.ID
-	}
-
-	return v2models.Changeset{
-		Model: gorm.Model{
-			ID:        changeset.ID,
-			CreatedAt: changeset.CreatedAt,
-			UpdatedAt: changeset.UpdatedAt,
-		},
-		ChartReleaseID: chartReleaseID,
-		From: v2models.ChartReleaseVersion{
-			ResolvedAt:                       changeset.FromResolvedAt,
-			AppVersionResolver:               changeset.FromAppVersionResolver,
-			AppVersionExact:                  changeset.FromAppVersionExact,
-			AppVersionBranch:                 changeset.FromAppVersionBranch,
-			AppVersionCommit:                 changeset.FromAppVersionCommit,
-			AppVersionFollowChartReleaseID:   fromAppVersionFollowChartReleaseID,
-			AppVersionID:                     fromAppVersionID,
-			ChartVersionResolver:             changeset.FromChartVersionResolver,
-			ChartVersionExact:                changeset.FromChartVersionExact,
-			ChartVersionFollowChartReleaseID: fromChartVersionFollowChartReleaseID,
-			ChartVersionID:                   fromChartVersionID,
-			HelmfileRef:                      changeset.FromHelmfileRef,
-			FirecloudDevelopRef:              changeset.FromFirecloudDevelopRef,
-		},
-		To: v2models.ChartReleaseVersion{
-			ResolvedAt:                       changeset.ToResolvedAt,
-			AppVersionResolver:               changeset.ToAppVersionResolver,
-			AppVersionExact:                  changeset.ToAppVersionExact,
-			AppVersionBranch:                 changeset.ToAppVersionBranch,
-			AppVersionCommit:                 changeset.ToAppVersionCommit,
-			AppVersionFollowChartReleaseID:   toAppVersionFollowChartReleaseID,
-			AppVersionID:                     toAppVersionID,
-			ChartVersionResolver:             changeset.ToChartVersionResolver,
-			ChartVersionExact:                changeset.ToChartVersionExact,
-			ChartVersionFollowChartReleaseID: toChartVersionFollowChartReleaseID,
-			ChartVersionID:                   toChartVersionID,
-			HelmfileRef:                      changeset.ToHelmfileRef,
-			FirecloudDevelopRef:              changeset.ToFirecloudDevelopRef,
-		},
-		AppliedAt:    changeset.AppliedAt,
-		SupersededAt: changeset.SupersededAt,
-	}, nil
-}
-
-func setChangesetDynamicDefaults(changeset *Changeset, stores *v2models.StoreSet, _ *auth.User) error {
-	chartRelease, err := stores.ChartReleaseStore.Get(changeset.ChartRelease)
-	if err != nil {
-		return err
-	}
-	changeset.FromResolvedAt = chartRelease.ResolvedAt
-	changeset.FromAppVersionResolver = chartRelease.AppVersionResolver
-	changeset.FromAppVersionExact = chartRelease.AppVersionExact
-	changeset.FromAppVersionBranch = chartRelease.AppVersionBranch
-	changeset.FromAppVersionCommit = chartRelease.AppVersionCommit
-	if chartRelease.AppVersionFollowChartReleaseID != nil {
-		changeset.FromAppVersionFollowChartRelease = strconv.FormatUint(uint64(*chartRelease.AppVersionFollowChartReleaseID), 10)
-	}
-	if chartRelease.AppVersionID != nil {
-		changeset.FromAppVersionReference = strconv.FormatUint(uint64(*chartRelease.AppVersionID), 10)
-	}
-	changeset.FromChartVersionResolver = chartRelease.ChartVersionResolver
-	changeset.FromChartVersionExact = chartRelease.ChartVersionExact
-	if chartRelease.ChartVersionFollowChartReleaseID != nil {
-		changeset.FromChartVersionFollowChartRelease = strconv.FormatUint(uint64(*chartRelease.ChartVersionFollowChartReleaseID), 10)
-	}
-	if chartRelease.ChartVersionID != nil {
-		changeset.FromChartVersionReference = strconv.FormatUint(uint64(*chartRelease.ChartVersionID), 10)
-	}
-	changeset.FromHelmfileRef = chartRelease.HelmfileRef
-	changeset.FromFirecloudDevelopRef = chartRelease.FirecloudDevelopRef
-
-	if changeset.ToAppVersionResolver == nil {
-		changeset.ToAppVersionResolver = changeset.FromAppVersionResolver
-	}
-	if changeset.ToAppVersionExact == nil {
-		changeset.ToAppVersionExact = changeset.FromAppVersionExact
-	}
-	if changeset.ToAppVersionBranch == nil {
-		changeset.ToAppVersionBranch = changeset.FromAppVersionBranch
-	}
-	if changeset.ToAppVersionCommit == nil {
-		changeset.ToAppVersionCommit = changeset.FromAppVersionCommit
-	}
-	if changeset.ToAppVersionFollowChartRelease == "" {
-		changeset.ToAppVersionFollowChartRelease = changeset.FromAppVersionFollowChartRelease
-	}
-	if changeset.ToChartVersionResolver == nil {
-		changeset.ToChartVersionResolver = changeset.FromChartVersionResolver
-	}
-	if changeset.ToChartVersionExact == nil {
-		changeset.ToChartVersionExact = changeset.FromChartVersionExact
-	}
-	if changeset.ToChartVersionFollowChartRelease == "" {
-		changeset.ToChartVersionFollowChartRelease = changeset.FromChartVersionFollowChartRelease
-	}
-	if changeset.ToHelmfileRef == nil {
-		changeset.ToHelmfileRef = changeset.FromHelmfileRef
-	}
-	if changeset.ToFirecloudDevelopRef == nil {
-		changeset.ToFirecloudDevelopRef = changeset.FromFirecloudDevelopRef
-	}
-	return nil
 }

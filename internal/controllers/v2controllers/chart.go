@@ -27,14 +27,31 @@ type EditableChart struct {
 	DefaultPort           *uint   `json:"defaultPort" form:"defaultPort" default:"443"`
 }
 
-//nolint:unused
-func (c CreatableChart) toReadable() Chart {
-	return Chart{CreatableChart: c}
+func (c Chart) toModel(_ *v2models.StoreSet) (v2models.Chart, error) {
+	return v2models.Chart{
+		Model: gorm.Model{
+			ID:        c.ID,
+			CreatedAt: c.CreatedAt,
+			UpdatedAt: c.UpdatedAt,
+		},
+		Name:                  c.Name,
+		ChartRepo:             c.ChartRepo,
+		AppImageGitRepo:       c.AppImageGitRepo,
+		AppImageGitMainBranch: c.AppImageGitMainBranch,
+		ChartExposesEndpoint:  c.ChartExposesEndpoint,
+		LegacyConfigsEnabled:  c.LegacyConfigsEnabled,
+		DefaultSubdomain:      c.DefaultSubdomain,
+		DefaultProtocol:       c.DefaultProtocol,
+		DefaultPort:           c.DefaultPort,
+	}, nil
 }
 
-//nolint:unused
-func (e EditableChart) toCreatable() CreatableChart {
-	return CreatableChart{EditableChart: e}
+func (c CreatableChart) toModel(storeSet *v2models.StoreSet) (v2models.Chart, error) {
+	return Chart{CreatableChart: c}.toModel(storeSet)
+}
+
+func (c EditableChart) toModel(storeSet *v2models.StoreSet) (v2models.Chart, error) {
+	return CreatableChart{EditableChart: c}.toModel(storeSet)
 }
 
 type ChartController = ModelController[v2models.Chart, Chart, CreatableChart, EditableChart]
@@ -44,7 +61,6 @@ func newChartController(stores *v2models.StoreSet) *ChartController {
 		primaryStore:       stores.ChartStore,
 		allStores:          stores,
 		modelToReadable:    modelChartToChart,
-		readableToModel:    chartToModelChart,
 		setDynamicDefaults: setChartDynamicDefaults,
 	}
 }
@@ -76,26 +92,7 @@ func modelChartToChart(model *v2models.Chart) *Chart {
 	}
 }
 
-func chartToModelChart(chart Chart, _ *v2models.StoreSet) (v2models.Chart, error) {
-	return v2models.Chart{
-		Model: gorm.Model{
-			ID:        chart.ID,
-			CreatedAt: chart.CreatedAt,
-			UpdatedAt: chart.UpdatedAt,
-		},
-		Name:                  chart.Name,
-		ChartRepo:             chart.ChartRepo,
-		AppImageGitRepo:       chart.AppImageGitRepo,
-		AppImageGitMainBranch: chart.AppImageGitMainBranch,
-		ChartExposesEndpoint:  chart.ChartExposesEndpoint,
-		LegacyConfigsEnabled:  chart.LegacyConfigsEnabled,
-		DefaultSubdomain:      chart.DefaultSubdomain,
-		DefaultProtocol:       chart.DefaultProtocol,
-		DefaultPort:           chart.DefaultPort,
-	}, nil
-}
-
-func setChartDynamicDefaults(chart *Chart, _ *v2models.StoreSet, _ *auth.User) error {
+func setChartDynamicDefaults(chart *CreatableChart, _ *v2models.StoreSet, _ *auth.User) error {
 	if chart.DefaultSubdomain == nil {
 		chart.DefaultSubdomain = &chart.Name
 	}
