@@ -59,6 +59,7 @@ type CreatableChangeset struct {
 
 type EditableChangeset struct{}
 
+//nolint:unused
 func (c Changeset) toModel(storeSet *v2models.StoreSet) (v2models.Changeset, error) {
 	var chartReleaseID uint
 	if c.ChartRelease != "" {
@@ -177,6 +178,7 @@ func (c Changeset) toModel(storeSet *v2models.StoreSet) (v2models.Changeset, err
 	}, nil
 }
 
+//nolint:unused
 func (c CreatableChangeset) toModel(storeSet *v2models.StoreSet) (v2models.Changeset, error) {
 	return Changeset{CreatableChangeset: c}.toModel(storeSet)
 }
@@ -242,6 +244,7 @@ func (c CreatableChangeset) toReadable(storeSet *v2models.StoreSet) (Changeset, 
 	return changeset, nil
 }
 
+//nolint:unused
 func (c EditableChangeset) toModel(storeSet *v2models.StoreSet) (v2models.Changeset, error) {
 	return CreatableChangeset{EditableChangeset: c}.toModel(storeSet)
 }

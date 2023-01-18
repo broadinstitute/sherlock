@@ -32,6 +32,7 @@ type EditableCluster struct {
 	HelmfileRef         *string `json:"helmfileRef" form:"helmfileRef" default:"HEAD"`
 }
 
+//nolint:unused
 func (c Cluster) toModel(_ *v2models.StoreSet) (v2models.Cluster, error) {
 	return v2models.Cluster{
 		Model: gorm.Model{
@@ -51,10 +52,12 @@ func (c Cluster) toModel(_ *v2models.StoreSet) (v2models.Cluster, error) {
 	}, nil
 }
 
+//nolint:unused
 func (c CreatableCluster) toModel(storeSet *v2models.StoreSet) (v2models.Cluster, error) {
 	return Cluster{CreatableCluster: c}.toModel(storeSet)
 }
 
+//nolint:unused
 func (c EditableCluster) toModel(storeSet *v2models.StoreSet) (v2models.Cluster, error) {
 	return CreatableCluster{EditableCluster: c}.toModel(storeSet)
 }

@@ -47,6 +47,7 @@ type EditableEnvironment struct {
 	Description                *string                 `json:"description" form:"description"`
 }
 
+//nolint:unused
 func (e Environment) toModel(storeSet *v2models.StoreSet) (v2models.Environment, error) {
 	var templateEnvironmentID *uint
 	if e.TemplateEnvironment != "" {
@@ -92,10 +93,12 @@ func (e Environment) toModel(storeSet *v2models.StoreSet) (v2models.Environment,
 	}, nil
 }
 
+//nolint:unused
 func (e CreatableEnvironment) toModel(storeSet *v2models.StoreSet) (v2models.Environment, error) {
 	return Environment{CreatableEnvironment: e}.toModel(storeSet)
 }
 
+//nolint:unused
 func (e EditableEnvironment) toModel(storeSet *v2models.StoreSet) (v2models.Environment, error) {
 	return CreatableEnvironment{EditableEnvironment: e}.toModel(storeSet)
 }

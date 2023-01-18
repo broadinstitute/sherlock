@@ -27,6 +27,7 @@ type EditableChart struct {
 	DefaultPort           *uint   `json:"defaultPort" form:"defaultPort" default:"443"`
 }
 
+//nolint:unused
 func (c Chart) toModel(_ *v2models.StoreSet) (v2models.Chart, error) {
 	return v2models.Chart{
 		Model: gorm.Model{
@@ -46,10 +47,12 @@ func (c Chart) toModel(_ *v2models.StoreSet) (v2models.Chart, error) {
 	}, nil
 }
 
+//nolint:unused
 func (c CreatableChart) toModel(storeSet *v2models.StoreSet) (v2models.Chart, error) {
 	return Chart{CreatableChart: c}.toModel(storeSet)
 }
 
+//nolint:unused
 func (c EditableChart) toModel(storeSet *v2models.StoreSet) (v2models.Chart, error) {
 	return CreatableChart{EditableChart: c}.toModel(storeSet)
 }

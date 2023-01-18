@@ -48,6 +48,7 @@ type EditableChartRelease struct {
 	Port      *uint   `json:"port,omitempty" form:"port"`           // When creating, will use the chart's default if left empty
 }
 
+//nolint:unused
 func (c ChartRelease) toModel(storeSet *v2models.StoreSet) (v2models.ChartRelease, error) {
 	var chartID uint
 	if c.Chart != "" {
@@ -137,10 +138,12 @@ func (c ChartRelease) toModel(storeSet *v2models.StoreSet) (v2models.ChartReleas
 	}, nil
 }
 
+//nolint:unused
 func (c CreatableChartRelease) toModel(storeSet *v2models.StoreSet) (v2models.ChartRelease, error) {
 	return ChartRelease{CreatableChartRelease: c}.toModel(storeSet)
 }
 
+//nolint:unused
 func (c EditableChartRelease) toModel(storeSet *v2models.StoreSet) (v2models.ChartRelease, error) {
 	return CreatableChartRelease{EditableChartRelease: c}.toModel(storeSet)
 }

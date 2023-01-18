@@ -27,6 +27,7 @@ type EditableChartVersion struct {
 	Description string `json:"description" form:"description"` // Generally the Git commit message
 }
 
+//nolint:unused
 func (c ChartVersion) toModel(storeSet *v2models.StoreSet) (v2models.ChartVersion, error) {
 	var chartID uint
 	if c.Chart != "" {
@@ -61,10 +62,12 @@ func (c ChartVersion) toModel(storeSet *v2models.StoreSet) (v2models.ChartVersio
 	}, nil
 }
 
+//nolint:unused
 func (c CreatableChartVersion) toModel(storeSet *v2models.StoreSet) (v2models.ChartVersion, error) {
 	return ChartVersion{CreatableChartVersion: c}.toModel(storeSet)
 }
 
+//nolint:unused
 func (c EditableChartVersion) toModel(storeSet *v2models.StoreSet) (v2models.ChartVersion, error) {
 	return CreatableChartVersion{EditableChartVersion: c}.toModel(storeSet)
 }

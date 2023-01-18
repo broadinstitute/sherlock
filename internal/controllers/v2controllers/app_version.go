@@ -29,6 +29,7 @@ type EditableAppVersion struct {
 	Description string `json:"description" form:"description"` // Generally the Git commit message
 }
 
+//nolint:unused
 func (a AppVersion) toModel(storeSet *v2models.StoreSet) (v2models.AppVersion, error) {
 	var chartID uint
 	if a.Chart != "" {
@@ -65,10 +66,12 @@ func (a AppVersion) toModel(storeSet *v2models.StoreSet) (v2models.AppVersion, e
 	}, nil
 }
 
+//nolint:unused
 func (a CreatableAppVersion) toModel(storeSet *v2models.StoreSet) (v2models.AppVersion, error) {
 	return AppVersion{CreatableAppVersion: a}.toModel(storeSet)
 }
 
+//nolint:unused
 func (a EditableAppVersion) toModel(storeSet *v2models.StoreSet) (v2models.AppVersion, error) {
 	return CreatableAppVersion{EditableAppVersion: a}.toModel(storeSet)
 }
