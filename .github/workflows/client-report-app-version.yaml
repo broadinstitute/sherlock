@@ -163,7 +163,7 @@ jobs:
         if: ${{ inputs.use-git == true && inputs.override-branch == '' && github.head_ref != '' }}
         shell: bash
         run: |
-          git checkout ${{ github.head_ref }}
+          git checkout "${{ github.head_ref }}"
       - name: "Parse Branch From Git"
         if: ${{ inputs.use-git == true && inputs.override-branch == '' }}
         shell: bash
