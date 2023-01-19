@@ -168,7 +168,7 @@ func (s *internalChangesetEventStore) apply(db *gorm.DB, changesets []Changeset,
 
 	// If the update happened successfully, report these changes to any relevant Pagerduty integrations
 	if err == nil {
-		go func() {
+		go func(db *gorm.DB, affectedChartReleases map[uint]ChartRelease) {
 			environmentReleases := make(map[uint][]string)
 
 			for _, chartRelease := range affectedChartReleases {
@@ -194,7 +194,7 @@ func (s *internalChangesetEventStore) apply(db *gorm.DB, changesets []Changeset,
 					)
 				}
 			}
-		}()
+		}(db, affectedChartReleases)
 	}
 
 	return ret, err
