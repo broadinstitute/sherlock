@@ -111,6 +111,12 @@ export interface V2controllersCreatableEnvironment {
      */
     owner?: string;
     /**
+     * 
+     * @type {string}
+     * @memberof V2controllersCreatableEnvironment
+     */
+    pagerdutyIntegration?: string;
+    /**
      * Used to protect specific BEEs from deletion (thelma checks this field)
      * @type {boolean}
      * @memberof V2controllersCreatableEnvironment
@@ -175,6 +181,7 @@ export function V2controllersCreatableEnvironmentFromJSONTyped(json: any, ignore
         'namePrefix': !exists(json, 'namePrefix') ? undefined : json['namePrefix'],
         'namePrefixesDomain': !exists(json, 'namePrefixesDomain') ? undefined : json['namePrefixesDomain'],
         'owner': !exists(json, 'owner') ? undefined : json['owner'],
+        'pagerdutyIntegration': !exists(json, 'pagerdutyIntegration') ? undefined : json['pagerdutyIntegration'],
         'preventDeletion': !exists(json, 'preventDeletion') ? undefined : json['preventDeletion'],
         'requiresSuitability': !exists(json, 'requiresSuitability') ? undefined : json['requiresSuitability'],
         'templateEnvironment': !exists(json, 'templateEnvironment') ? undefined : json['templateEnvironment'],
@@ -206,6 +213,7 @@ export function V2controllersCreatableEnvironmentToJSON(value?: V2controllersCre
         'namePrefix': value.namePrefix,
         'namePrefixesDomain': value.namePrefixesDomain,
         'owner': value.owner,
+        'pagerdutyIntegration': value.pagerdutyIntegration,
         'preventDeletion': value.preventDeletion,
         'requiresSuitability': value.requiresSuitability,
         'templateEnvironment': value.templateEnvironment,

@@ -16,6 +16,8 @@
 import * as runtime from '../runtime';
 import type {
   ErrorsErrorResponse,
+  PagerdutyAlertSummary,
+  PagerdutySendAlertResponse,
   V2controllersChartRelease,
   V2controllersCreatableChartRelease,
   V2controllersEditableChartRelease,
@@ -23,6 +25,10 @@ import type {
 import {
     ErrorsErrorResponseFromJSON,
     ErrorsErrorResponseToJSON,
+    PagerdutyAlertSummaryFromJSON,
+    PagerdutyAlertSummaryToJSON,
+    PagerdutySendAlertResponseFromJSON,
+    PagerdutySendAlertResponseToJSON,
     V2controllersChartReleaseFromJSON,
     V2controllersChartReleaseToJSON,
     V2controllersCreatableChartReleaseFromJSON,
@@ -52,6 +58,7 @@ export interface ApiV2ChartReleasesGetRequest {
     id?: number;
     name?: string;
     namespace?: string;
+    pagerdutyIntegration?: string;
     port?: number;
     protocol?: string;
     subdomain?: string;
@@ -74,6 +81,16 @@ export interface ApiV2ChartReleasesSelectorGetRequest {
 export interface ApiV2ChartReleasesSelectorPatchRequest {
     selector: string;
     chartRelease: V2controllersEditableChartRelease;
+}
+
+export interface ApiV2ChartReleasesSelectorPutRequest {
+    selector: string;
+    chartRelease: V2controllersCreatableChartRelease;
+}
+
+export interface ApiV2ProceduresChartReleasesTriggerIncidentSelectorPostRequest {
+    selector: string;
+    summary: PagerdutyAlertSummary;
 }
 
 export interface ApiV2SelectorsChartReleasesSelectorGetRequest {
@@ -170,6 +187,10 @@ export class ChartReleasesApi extends runtime.BaseAPI {
 
         if (requestParameters.namespace !== undefined) {
             queryParameters['namespace'] = requestParameters.namespace;
+        }
+
+        if (requestParameters.pagerdutyIntegration !== undefined) {
+            queryParameters['pagerdutyIntegration'] = requestParameters.pagerdutyIntegration;
         }
 
         if (requestParameters.port !== undefined) {
@@ -348,6 +369,84 @@ export class ChartReleasesApi extends runtime.BaseAPI {
      */
     async apiV2ChartReleasesSelectorPatch(requestParameters: ApiV2ChartReleasesSelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<V2controllersChartRelease> {
         const response = await this.apiV2ChartReleasesSelectorPatchRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Create or edit a ChartRelease entry. Attempts to edit and will attempt to create upon an error. If an edit was made or the creation process de-duplicates, this method will return normally with a 200.
+     * Create or edit a ChartRelease entry
+     */
+    async apiV2ChartReleasesSelectorPutRaw(requestParameters: ApiV2ChartReleasesSelectorPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<V2controllersChartRelease>> {
+        if (requestParameters.selector === null || requestParameters.selector === undefined) {
+            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiV2ChartReleasesSelectorPut.');
+        }
+
+        if (requestParameters.chartRelease === null || requestParameters.chartRelease === undefined) {
+            throw new runtime.RequiredError('chartRelease','Required parameter requestParameters.chartRelease was null or undefined when calling apiV2ChartReleasesSelectorPut.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/api/v2/chart-releases/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            method: 'PUT',
+            headers: headerParameters,
+            query: queryParameters,
+            body: V2controllersCreatableChartReleaseToJSON(requestParameters.chartRelease),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => V2controllersChartReleaseFromJSON(jsonValue));
+    }
+
+    /**
+     * Create or edit a ChartRelease entry. Attempts to edit and will attempt to create upon an error. If an edit was made or the creation process de-duplicates, this method will return normally with a 200.
+     * Create or edit a ChartRelease entry
+     */
+    async apiV2ChartReleasesSelectorPut(requestParameters: ApiV2ChartReleasesSelectorPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<V2controllersChartRelease> {
+        const response = await this.apiV2ChartReleasesSelectorPutRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Trigger an alert for the Pagerduty integration configured for a given ChartRelease.
+     * Trigger a Pagerduty incident for a given ChartRelease
+     */
+    async apiV2ProceduresChartReleasesTriggerIncidentSelectorPostRaw(requestParameters: ApiV2ProceduresChartReleasesTriggerIncidentSelectorPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<PagerdutySendAlertResponse>> {
+        if (requestParameters.selector === null || requestParameters.selector === undefined) {
+            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiV2ProceduresChartReleasesTriggerIncidentSelectorPost.');
+        }
+
+        if (requestParameters.summary === null || requestParameters.summary === undefined) {
+            throw new runtime.RequiredError('summary','Required parameter requestParameters.summary was null or undefined when calling apiV2ProceduresChartReleasesTriggerIncidentSelectorPost.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/api/v2/procedures/chart-releases/trigger-incident/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: PagerdutyAlertSummaryToJSON(requestParameters.summary),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => PagerdutySendAlertResponseFromJSON(jsonValue));
+    }
+
+    /**
+     * Trigger an alert for the Pagerduty integration configured for a given ChartRelease.
+     * Trigger a Pagerduty incident for a given ChartRelease
+     */
+    async apiV2ProceduresChartReleasesTriggerIncidentSelectorPost(requestParameters: ApiV2ProceduresChartReleasesTriggerIncidentSelectorPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PagerdutySendAlertResponse> {
+        const response = await this.apiV2ProceduresChartReleasesTriggerIncidentSelectorPostRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

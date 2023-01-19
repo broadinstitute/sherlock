@@ -71,6 +71,12 @@ type V2controllersEnvironment struct {
 	// When creating, will be set to your email
 	Owner string `json:"owner,omitempty"`
 
+	// pagerduty integration
+	PagerdutyIntegration string `json:"pagerdutyIntegration,omitempty"`
+
+	// pagerduty integration info
+	PagerdutyIntegrationInfo *V2controllersPagerdutyIntegration `json:"pagerdutyIntegrationInfo,omitempty"`
+
 	// Used to protect specific BEEs from deletion (thelma checks this field)
 	PreventDeletion *bool `json:"preventDeletion,omitempty"`
 
@@ -107,6 +113,10 @@ func (m *V2controllersEnvironment) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateDefaultClusterInfo(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validatePagerdutyIntegrationInfo(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -170,6 +180,25 @@ func (m *V2controllersEnvironment) validateDefaultClusterInfo(formats strfmt.Reg
 	return nil
 }
 
+func (m *V2controllersEnvironment) validatePagerdutyIntegrationInfo(formats strfmt.Registry) error {
+	if swag.IsZero(m.PagerdutyIntegrationInfo) { // not required
+		return nil
+	}
+
+	if m.PagerdutyIntegrationInfo != nil {
+		if err := m.PagerdutyIntegrationInfo.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("pagerdutyIntegrationInfo")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("pagerdutyIntegrationInfo")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (m *V2controllersEnvironment) validateUpdatedAt(formats strfmt.Registry) error {
 	if swag.IsZero(m.UpdatedAt) { // not required
 		return nil
@@ -191,6 +220,10 @@ func (m *V2controllersEnvironment) ContextValidate(ctx context.Context, formats 
 	}
 
 	if err := m.contextValidateDefaultClusterInfo(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidatePagerdutyIntegrationInfo(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -224,6 +257,22 @@ func (m *V2controllersEnvironment) contextValidateDefaultClusterInfo(ctx context
 				return ve.ValidateName("defaultClusterInfo")
 			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("defaultClusterInfo")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *V2controllersEnvironment) contextValidatePagerdutyIntegrationInfo(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.PagerdutyIntegrationInfo != nil {
+		if err := m.PagerdutyIntegrationInfo.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("pagerdutyIntegrationInfo")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("pagerdutyIntegrationInfo")
 			}
 			return err
 		}

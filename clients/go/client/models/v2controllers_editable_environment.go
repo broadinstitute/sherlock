@@ -42,6 +42,9 @@ type V2controllersEditableEnvironment struct {
 	// When creating, will be set to your email
 	Owner string `json:"owner,omitempty"`
 
+	// pagerduty integration
+	PagerdutyIntegration string `json:"pagerdutyIntegration,omitempty"`
+
 	// Used to protect specific BEEs from deletion (thelma checks this field)
 	PreventDeletion *bool `json:"preventDeletion,omitempty"`
 

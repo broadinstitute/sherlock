@@ -10,6 +10,7 @@ src/apis/ChartsApi.ts
 src/apis/ClustersApi.ts
 src/apis/EnvironmentsApi.ts
 src/apis/MiscApi.ts
+src/apis/PagerdutyIntegrationsApi.ts
 src/apis/index.ts
 src/index.ts
 src/models/AuthExtraPermissions.ts
@@ -21,6 +22,8 @@ src/models/ErrorsErrorResponse.ts
 src/models/MiscMyUserResponse.ts
 src/models/MiscStatusResponse.ts
 src/models/MiscVersionResponse.ts
+src/models/PagerdutyAlertSummary.ts
+src/models/PagerdutySendAlertResponse.ts
 src/models/V2controllersAppVersion.ts
 src/models/V2controllersChangeset.ts
 src/models/V2controllersChangesetPlanRequest.ts
@@ -36,13 +39,16 @@ src/models/V2controllersCreatableChartRelease.ts
 src/models/V2controllersCreatableChartVersion.ts
 src/models/V2controllersCreatableCluster.ts
 src/models/V2controllersCreatableEnvironment.ts
+src/models/V2controllersCreatablePagerdutyIntegration.ts
 src/models/V2controllersEditableAppVersion.ts
 src/models/V2controllersEditableChart.ts
 src/models/V2controllersEditableChartRelease.ts
 src/models/V2controllersEditableChartVersion.ts
 src/models/V2controllersEditableCluster.ts
 src/models/V2controllersEditableEnvironment.ts
+src/models/V2controllersEditablePagerdutyIntegration.ts
 src/models/V2controllersEnvironment.ts
+src/models/V2controllersPagerdutyIntegration.ts
 src/models/index.ts
 src/runtime.ts
 tsconfig.esm.json

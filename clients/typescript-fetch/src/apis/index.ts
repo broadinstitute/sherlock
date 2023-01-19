@@ -8,3 +8,4 @@ export * from './ChartsApi';
 export * from './ClustersApi';
 export * from './EnvironmentsApi';
 export * from './MiscApi';
+export * from './PagerdutyIntegrationsApi';

@@ -64,6 +64,11 @@ export interface ApiV2ChartsSelectorPatchRequest {
     chart: V2controllersEditableChart;
 }
 
+export interface ApiV2ChartsSelectorPutRequest {
+    selector: string;
+    chartRelease: V2controllersCreatableChart;
+}
+
 export interface ApiV2SelectorsChartsSelectorGetRequest {
     selector: string;
 }
@@ -288,6 +293,45 @@ export class ChartsApi extends runtime.BaseAPI {
      */
     async apiV2ChartsSelectorPatch(requestParameters: ApiV2ChartsSelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<V2controllersChart> {
         const response = await this.apiV2ChartsSelectorPatchRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Create or edit a Chart entry. Attempts to edit and will attempt to create upon an error. If an edit was made or the creation process de-duplicates, this method will return normally with a 200.
+     * Create or edit a Chart entry
+     */
+    async apiV2ChartsSelectorPutRaw(requestParameters: ApiV2ChartsSelectorPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<V2controllersChart>> {
+        if (requestParameters.selector === null || requestParameters.selector === undefined) {
+            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiV2ChartsSelectorPut.');
+        }
+
+        if (requestParameters.chartRelease === null || requestParameters.chartRelease === undefined) {
+            throw new runtime.RequiredError('chartRelease','Required parameter requestParameters.chartRelease was null or undefined when calling apiV2ChartsSelectorPut.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/api/v2/charts/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            method: 'PUT',
+            headers: headerParameters,
+            query: queryParameters,
+            body: V2controllersCreatableChartToJSON(requestParameters.chartRelease),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => V2controllersChartFromJSON(jsonValue));
+    }
+
+    /**
+     * Create or edit a Chart entry. Attempts to edit and will attempt to create upon an error. If an edit was made or the creation process de-duplicates, this method will return normally with a 200.
+     * Create or edit a Chart entry
+     */
+    async apiV2ChartsSelectorPut(requestParameters: ApiV2ChartsSelectorPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<V2controllersChart> {
+        const response = await this.apiV2ChartsSelectorPutRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

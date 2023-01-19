@@ -67,6 +67,9 @@ type V2controllersCreatableChartRelease struct {
 	// When creating, will default to the environment's default namespace, if provided
 	Namespace string `json:"namespace,omitempty"`
 
+	// pagerduty integration
+	PagerdutyIntegration string `json:"pagerdutyIntegration,omitempty"`
+
 	// When creating, will use the chart's default if left empty
 	Port int64 `json:"port,omitempty"`
 

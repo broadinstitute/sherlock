@@ -146,6 +146,9 @@ type GetAPIV2EnvironmentsParams struct {
 	*/
 	Owner *string
 
+	// PagerdutyIntegration.
+	PagerdutyIntegration *string
+
 	/* PreventDeletion.
 
 	   Used to protect specific BEEs from deletion (thelma checks this field)
@@ -437,6 +440,17 @@ func (o *GetAPIV2EnvironmentsParams) WithOwner(owner *string) *GetAPIV2Environme
 // SetOwner adds the owner to the get API v2 environments params
 func (o *GetAPIV2EnvironmentsParams) SetOwner(owner *string) {
 	o.Owner = owner
+}
+
+// WithPagerdutyIntegration adds the pagerdutyIntegration to the get API v2 environments params
+func (o *GetAPIV2EnvironmentsParams) WithPagerdutyIntegration(pagerdutyIntegration *string) *GetAPIV2EnvironmentsParams {
+	o.SetPagerdutyIntegration(pagerdutyIntegration)
+	return o
+}
+
+// SetPagerdutyIntegration adds the pagerdutyIntegration to the get API v2 environments params
+func (o *GetAPIV2EnvironmentsParams) SetPagerdutyIntegration(pagerdutyIntegration *string) {
+	o.PagerdutyIntegration = pagerdutyIntegration
 }
 
 // WithPreventDeletion adds the preventDeletion to the get API v2 environments params
@@ -780,6 +794,23 @@ func (o *GetAPIV2EnvironmentsParams) WriteToRequest(r runtime.ClientRequest, reg
 		if qOwner != "" {
 
 			if err := r.SetQueryParam("owner", qOwner); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.PagerdutyIntegration != nil {
+
+		// query param pagerdutyIntegration
+		var qrPagerdutyIntegration string
+
+		if o.PagerdutyIntegration != nil {
+			qrPagerdutyIntegration = *o.PagerdutyIntegration
+		}
+		qPagerdutyIntegration := qrPagerdutyIntegration
+		if qPagerdutyIntegration != "" {
+
+			if err := r.SetQueryParam("pagerdutyIntegration", qPagerdutyIntegration); err != nil {
 				return err
 			}
 		}

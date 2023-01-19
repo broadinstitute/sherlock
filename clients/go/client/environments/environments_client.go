@@ -42,6 +42,10 @@ type ClientService interface {
 
 	PostAPIV2Environments(params *PostAPIV2EnvironmentsParams, opts ...ClientOption) (*PostAPIV2EnvironmentsOK, *PostAPIV2EnvironmentsCreated, error)
 
+	PostAPIV2ProceduresEnvironmentsTriggerIncidentSelector(params *PostAPIV2ProceduresEnvironmentsTriggerIncidentSelectorParams, opts ...ClientOption) (*PostAPIV2ProceduresEnvironmentsTriggerIncidentSelectorAccepted, error)
+
+	PutAPIV2EnvironmentsSelector(params *PutAPIV2EnvironmentsSelectorParams, opts ...ClientOption) (*PutAPIV2EnvironmentsSelectorOK, *PutAPIV2EnvironmentsSelectorCreated, error)
+
 	SetTransport(transport runtime.ClientTransport)
 }
 
@@ -280,6 +284,88 @@ func (a *Client) PostAPIV2Environments(params *PostAPIV2EnvironmentsParams, opts
 	case *PostAPIV2EnvironmentsOK:
 		return value, nil, nil
 	case *PostAPIV2EnvironmentsCreated:
+		return nil, value, nil
+	}
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for environments: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+  PostAPIV2ProceduresEnvironmentsTriggerIncidentSelector triggers a pagerduty incident for a given environment
+
+  Trigger an alert for the Pagerduty integration configured for a given Environment.
+*/
+func (a *Client) PostAPIV2ProceduresEnvironmentsTriggerIncidentSelector(params *PostAPIV2ProceduresEnvironmentsTriggerIncidentSelectorParams, opts ...ClientOption) (*PostAPIV2ProceduresEnvironmentsTriggerIncidentSelectorAccepted, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewPostAPIV2ProceduresEnvironmentsTriggerIncidentSelectorParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "PostAPIV2ProceduresEnvironmentsTriggerIncidentSelector",
+		Method:             "POST",
+		PathPattern:        "/api/v2/procedures/environments/trigger-incident/{selector}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &PostAPIV2ProceduresEnvironmentsTriggerIncidentSelectorReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*PostAPIV2ProceduresEnvironmentsTriggerIncidentSelectorAccepted)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for PostAPIV2ProceduresEnvironmentsTriggerIncidentSelector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+  PutAPIV2EnvironmentsSelector creates or edit an environment entry
+
+  Create or edit an Environment entry. Attempts to edit and will attempt to create upon an error.
+If an edit was made or the creation process de-duplicates, this method will return normally with a 200.
+*/
+func (a *Client) PutAPIV2EnvironmentsSelector(params *PutAPIV2EnvironmentsSelectorParams, opts ...ClientOption) (*PutAPIV2EnvironmentsSelectorOK, *PutAPIV2EnvironmentsSelectorCreated, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewPutAPIV2EnvironmentsSelectorParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "PutAPIV2EnvironmentsSelector",
+		Method:             "PUT",
+		PathPattern:        "/api/v2/environments/{selector}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &PutAPIV2EnvironmentsSelectorReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, nil, err
+	}
+	switch value := result.(type) {
+	case *PutAPIV2EnvironmentsSelectorOK:
+		return value, nil, nil
+	case *PutAPIV2EnvironmentsSelectorCreated:
 		return nil, value, nil
 	}
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue

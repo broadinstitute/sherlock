@@ -75,6 +75,12 @@ export interface V2controllersEditableEnvironment {
      */
     owner?: string;
     /**
+     * 
+     * @type {string}
+     * @memberof V2controllersEditableEnvironment
+     */
+    pagerdutyIntegration?: string;
+    /**
      * Used to protect specific BEEs from deletion (thelma checks this field)
      * @type {boolean}
      * @memberof V2controllersEditableEnvironment
@@ -115,6 +121,7 @@ export function V2controllersEditableEnvironmentFromJSONTyped(json: any, ignoreD
         'helmfileRef': !exists(json, 'helmfileRef') ? undefined : json['helmfileRef'],
         'namePrefixesDomain': !exists(json, 'namePrefixesDomain') ? undefined : json['namePrefixesDomain'],
         'owner': !exists(json, 'owner') ? undefined : json['owner'],
+        'pagerdutyIntegration': !exists(json, 'pagerdutyIntegration') ? undefined : json['pagerdutyIntegration'],
         'preventDeletion': !exists(json, 'preventDeletion') ? undefined : json['preventDeletion'],
         'requiresSuitability': !exists(json, 'requiresSuitability') ? undefined : json['requiresSuitability'],
     };
@@ -137,6 +144,7 @@ export function V2controllersEditableEnvironmentToJSON(value?: V2controllersEdit
         'helmfileRef': value.helmfileRef,
         'namePrefixesDomain': value.namePrefixesDomain,
         'owner': value.owner,
+        'pagerdutyIntegration': value.pagerdutyIntegration,
         'preventDeletion': value.preventDeletion,
         'requiresSuitability': value.requiresSuitability,
     };

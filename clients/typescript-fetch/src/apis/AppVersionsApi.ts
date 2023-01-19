@@ -57,6 +57,11 @@ export interface ApiV2AppVersionsSelectorPatchRequest {
     appVersion: V2controllersEditableAppVersion;
 }
 
+export interface ApiV2AppVersionsSelectorPutRequest {
+    selector: string;
+    appVersion: V2controllersCreatableAppVersion;
+}
+
 export interface ApiV2SelectorsAppVersionsSelectorGetRequest {
     selector: string;
 }
@@ -237,6 +242,45 @@ export class AppVersionsApi extends runtime.BaseAPI {
      */
     async apiV2AppVersionsSelectorPatch(requestParameters: ApiV2AppVersionsSelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<V2controllersAppVersion> {
         const response = await this.apiV2AppVersionsSelectorPatchRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Create or edit an AppVersion entry. Attempts to edit and will attempt to create upon an error. If an edit was made or the creation process de-duplicates, this method will return normally with a 200.
+     * Create or edit an AppVersion entry
+     */
+    async apiV2AppVersionsSelectorPutRaw(requestParameters: ApiV2AppVersionsSelectorPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<V2controllersAppVersion>> {
+        if (requestParameters.selector === null || requestParameters.selector === undefined) {
+            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiV2AppVersionsSelectorPut.');
+        }
+
+        if (requestParameters.appVersion === null || requestParameters.appVersion === undefined) {
+            throw new runtime.RequiredError('appVersion','Required parameter requestParameters.appVersion was null or undefined when calling apiV2AppVersionsSelectorPut.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/api/v2/app-versions/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            method: 'PUT',
+            headers: headerParameters,
+            query: queryParameters,
+            body: V2controllersCreatableAppVersionToJSON(requestParameters.appVersion),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => V2controllersAppVersionFromJSON(jsonValue));
+    }
+
+    /**
+     * Create or edit an AppVersion entry. Attempts to edit and will attempt to create upon an error. If an edit was made or the creation process de-duplicates, this method will return normally with a 200.
+     * Create or edit an AppVersion entry
+     */
+    async apiV2AppVersionsSelectorPut(requestParameters: ApiV2AppVersionsSelectorPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<V2controllersAppVersion> {
+        const response = await this.apiV2AppVersionsSelectorPutRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

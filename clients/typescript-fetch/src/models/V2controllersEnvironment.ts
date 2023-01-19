@@ -25,6 +25,12 @@ import {
     V2controllersClusterFromJSONTyped,
     V2controllersClusterToJSON,
 } from './V2controllersCluster';
+import type { V2controllersPagerdutyIntegration } from './V2controllersPagerdutyIntegration';
+import {
+    V2controllersPagerdutyIntegrationFromJSON,
+    V2controllersPagerdutyIntegrationFromJSONTyped,
+    V2controllersPagerdutyIntegrationToJSON,
+} from './V2controllersPagerdutyIntegration';
 
 /**
  * 
@@ -135,6 +141,18 @@ export interface V2controllersEnvironment {
      */
     owner?: string;
     /**
+     * 
+     * @type {string}
+     * @memberof V2controllersEnvironment
+     */
+    pagerdutyIntegration?: string;
+    /**
+     * 
+     * @type {V2controllersPagerdutyIntegration}
+     * @memberof V2controllersEnvironment
+     */
+    pagerdutyIntegrationInfo?: V2controllersPagerdutyIntegration;
+    /**
      * Used to protect specific BEEs from deletion (thelma checks this field)
      * @type {boolean}
      * @memberof V2controllersEnvironment
@@ -214,6 +232,8 @@ export function V2controllersEnvironmentFromJSONTyped(json: any, ignoreDiscrimin
         'namePrefix': !exists(json, 'namePrefix') ? undefined : json['namePrefix'],
         'namePrefixesDomain': !exists(json, 'namePrefixesDomain') ? undefined : json['namePrefixesDomain'],
         'owner': !exists(json, 'owner') ? undefined : json['owner'],
+        'pagerdutyIntegration': !exists(json, 'pagerdutyIntegration') ? undefined : json['pagerdutyIntegration'],
+        'pagerdutyIntegrationInfo': !exists(json, 'pagerdutyIntegrationInfo') ? undefined : V2controllersPagerdutyIntegrationFromJSON(json['pagerdutyIntegrationInfo']),
         'preventDeletion': !exists(json, 'preventDeletion') ? undefined : json['preventDeletion'],
         'requiresSuitability': !exists(json, 'requiresSuitability') ? undefined : json['requiresSuitability'],
         'templateEnvironment': !exists(json, 'templateEnvironment') ? undefined : json['templateEnvironment'],
@@ -250,6 +270,8 @@ export function V2controllersEnvironmentToJSON(value?: V2controllersEnvironment 
         'namePrefix': value.namePrefix,
         'namePrefixesDomain': value.namePrefixesDomain,
         'owner': value.owner,
+        'pagerdutyIntegration': value.pagerdutyIntegration,
+        'pagerdutyIntegrationInfo': V2controllersPagerdutyIntegrationToJSON(value.pagerdutyIntegrationInfo),
         'preventDeletion': value.preventDeletion,
         'requiresSuitability': value.requiresSuitability,
         'templateEnvironment': value.templateEnvironment,

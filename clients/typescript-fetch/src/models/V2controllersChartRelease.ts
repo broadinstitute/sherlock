@@ -43,6 +43,12 @@ import {
     V2controllersEnvironmentFromJSONTyped,
     V2controllersEnvironmentToJSON,
 } from './V2controllersEnvironment';
+import type { V2controllersPagerdutyIntegration } from './V2controllersPagerdutyIntegration';
+import {
+    V2controllersPagerdutyIntegrationFromJSON,
+    V2controllersPagerdutyIntegrationFromJSONTyped,
+    V2controllersPagerdutyIntegrationToJSON,
+} from './V2controllersPagerdutyIntegration';
 
 /**
  * 
@@ -201,6 +207,18 @@ export interface V2controllersChartRelease {
      */
     namespace?: string;
     /**
+     * 
+     * @type {string}
+     * @memberof V2controllersChartRelease
+     */
+    pagerdutyIntegration?: string;
+    /**
+     * 
+     * @type {V2controllersPagerdutyIntegration}
+     * @memberof V2controllersChartRelease
+     */
+    pagerdutyIntegrationInfo?: V2controllersPagerdutyIntegration;
+    /**
      * When creating, will use the chart's default if left empty
      * @type {number}
      * @memberof V2controllersChartRelease
@@ -294,6 +312,8 @@ export function V2controllersChartReleaseFromJSONTyped(json: any, ignoreDiscrimi
         'id': !exists(json, 'id') ? undefined : json['id'],
         'name': !exists(json, 'name') ? undefined : json['name'],
         'namespace': !exists(json, 'namespace') ? undefined : json['namespace'],
+        'pagerdutyIntegration': !exists(json, 'pagerdutyIntegration') ? undefined : json['pagerdutyIntegration'],
+        'pagerdutyIntegrationInfo': !exists(json, 'pagerdutyIntegrationInfo') ? undefined : V2controllersPagerdutyIntegrationFromJSON(json['pagerdutyIntegrationInfo']),
         'port': !exists(json, 'port') ? undefined : json['port'],
         'protocol': !exists(json, 'protocol') ? undefined : json['protocol'],
         'subdomain': !exists(json, 'subdomain') ? undefined : json['subdomain'],
@@ -335,6 +355,8 @@ export function V2controllersChartReleaseToJSON(value?: V2controllersChartReleas
         'id': value.id,
         'name': value.name,
         'namespace': value.namespace,
+        'pagerdutyIntegration': value.pagerdutyIntegration,
+        'pagerdutyIntegrationInfo': V2controllersPagerdutyIntegrationToJSON(value.pagerdutyIntegrationInfo),
         'port': value.port,
         'protocol': value.protocol,
         'subdomain': value.subdomain,

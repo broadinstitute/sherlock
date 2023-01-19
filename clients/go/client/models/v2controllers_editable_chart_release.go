@@ -17,6 +17,9 @@ import (
 // swagger:model v2controllers.EditableChartRelease
 type V2controllersEditableChartRelease struct {
 
+	// pagerduty integration
+	PagerdutyIntegration string `json:"pagerdutyIntegration,omitempty"`
+
 	// When creating, will use the chart's default if left empty
 	Port int64 `json:"port,omitempty"`
 

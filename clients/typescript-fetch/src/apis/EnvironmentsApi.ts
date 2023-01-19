@@ -16,6 +16,8 @@
 import * as runtime from '../runtime';
 import type {
   ErrorsErrorResponse,
+  PagerdutyAlertSummary,
+  PagerdutySendAlertResponse,
   V2controllersCreatableEnvironment,
   V2controllersEditableEnvironment,
   V2controllersEnvironment,
@@ -23,6 +25,10 @@ import type {
 import {
     ErrorsErrorResponseFromJSON,
     ErrorsErrorResponseToJSON,
+    PagerdutyAlertSummaryFromJSON,
+    PagerdutyAlertSummaryToJSON,
+    PagerdutySendAlertResponseFromJSON,
+    PagerdutySendAlertResponseToJSON,
     V2controllersCreatableEnvironmentFromJSON,
     V2controllersCreatableEnvironmentToJSON,
     V2controllersEditableEnvironmentFromJSON,
@@ -47,6 +53,7 @@ export interface ApiV2EnvironmentsGetRequest {
     namePrefix?: string;
     namePrefixesDomain?: boolean;
     owner?: string;
+    pagerdutyIntegration?: string;
     preventDeletion?: boolean;
     requiresSuitability?: boolean;
     templateEnvironment?: string;
@@ -71,6 +78,16 @@ export interface ApiV2EnvironmentsSelectorGetRequest {
 export interface ApiV2EnvironmentsSelectorPatchRequest {
     selector: string;
     environment: V2controllersEditableEnvironment;
+}
+
+export interface ApiV2EnvironmentsSelectorPutRequest {
+    selector: string;
+    environment: V2controllersCreatableEnvironment;
+}
+
+export interface ApiV2ProceduresEnvironmentsTriggerIncidentSelectorPostRequest {
+    selector: string;
+    summary: PagerdutyAlertSummary;
 }
 
 export interface ApiV2SelectorsEnvironmentsSelectorGetRequest {
@@ -147,6 +164,10 @@ export class EnvironmentsApi extends runtime.BaseAPI {
 
         if (requestParameters.owner !== undefined) {
             queryParameters['owner'] = requestParameters.owner;
+        }
+
+        if (requestParameters.pagerdutyIntegration !== undefined) {
+            queryParameters['pagerdutyIntegration'] = requestParameters.pagerdutyIntegration;
         }
 
         if (requestParameters.preventDeletion !== undefined) {
@@ -333,6 +354,84 @@ export class EnvironmentsApi extends runtime.BaseAPI {
      */
     async apiV2EnvironmentsSelectorPatch(requestParameters: ApiV2EnvironmentsSelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<V2controllersEnvironment> {
         const response = await this.apiV2EnvironmentsSelectorPatchRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Create or edit an Environment entry. Attempts to edit and will attempt to create upon an error. If an edit was made or the creation process de-duplicates, this method will return normally with a 200.
+     * Create or edit an Environment entry
+     */
+    async apiV2EnvironmentsSelectorPutRaw(requestParameters: ApiV2EnvironmentsSelectorPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<V2controllersEnvironment>> {
+        if (requestParameters.selector === null || requestParameters.selector === undefined) {
+            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiV2EnvironmentsSelectorPut.');
+        }
+
+        if (requestParameters.environment === null || requestParameters.environment === undefined) {
+            throw new runtime.RequiredError('environment','Required parameter requestParameters.environment was null or undefined when calling apiV2EnvironmentsSelectorPut.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/api/v2/environments/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            method: 'PUT',
+            headers: headerParameters,
+            query: queryParameters,
+            body: V2controllersCreatableEnvironmentToJSON(requestParameters.environment),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => V2controllersEnvironmentFromJSON(jsonValue));
+    }
+
+    /**
+     * Create or edit an Environment entry. Attempts to edit and will attempt to create upon an error. If an edit was made or the creation process de-duplicates, this method will return normally with a 200.
+     * Create or edit an Environment entry
+     */
+    async apiV2EnvironmentsSelectorPut(requestParameters: ApiV2EnvironmentsSelectorPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<V2controllersEnvironment> {
+        const response = await this.apiV2EnvironmentsSelectorPutRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Trigger an alert for the Pagerduty integration configured for a given Environment.
+     * Trigger a Pagerduty incident for a given Environment
+     */
+    async apiV2ProceduresEnvironmentsTriggerIncidentSelectorPostRaw(requestParameters: ApiV2ProceduresEnvironmentsTriggerIncidentSelectorPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<PagerdutySendAlertResponse>> {
+        if (requestParameters.selector === null || requestParameters.selector === undefined) {
+            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiV2ProceduresEnvironmentsTriggerIncidentSelectorPost.');
+        }
+
+        if (requestParameters.summary === null || requestParameters.summary === undefined) {
+            throw new runtime.RequiredError('summary','Required parameter requestParameters.summary was null or undefined when calling apiV2ProceduresEnvironmentsTriggerIncidentSelectorPost.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/api/v2/procedures/environments/trigger-incident/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: PagerdutyAlertSummaryToJSON(requestParameters.summary),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => PagerdutySendAlertResponseFromJSON(jsonValue));
+    }
+
+    /**
+     * Trigger an alert for the Pagerduty integration configured for a given Environment.
+     * Trigger a Pagerduty incident for a given Environment
+     */
+    async apiV2ProceduresEnvironmentsTriggerIncidentSelectorPost(requestParameters: ApiV2ProceduresEnvironmentsTriggerIncidentSelectorPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PagerdutySendAlertResponse> {
+        const response = await this.apiV2ProceduresEnvironmentsTriggerIncidentSelectorPostRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

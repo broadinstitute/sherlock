@@ -42,6 +42,10 @@ type ClientService interface {
 
 	PostAPIV2ChartReleases(params *PostAPIV2ChartReleasesParams, opts ...ClientOption) (*PostAPIV2ChartReleasesOK, *PostAPIV2ChartReleasesCreated, error)
 
+	PostAPIV2ProceduresChartReleasesTriggerIncidentSelector(params *PostAPIV2ProceduresChartReleasesTriggerIncidentSelectorParams, opts ...ClientOption) (*PostAPIV2ProceduresChartReleasesTriggerIncidentSelectorAccepted, error)
+
+	PutAPIV2ChartReleasesSelector(params *PutAPIV2ChartReleasesSelectorParams, opts ...ClientOption) (*PutAPIV2ChartReleasesSelectorOK, *PutAPIV2ChartReleasesSelectorCreated, error)
+
 	SetTransport(transport runtime.ClientTransport)
 }
 
@@ -279,6 +283,88 @@ func (a *Client) PostAPIV2ChartReleases(params *PostAPIV2ChartReleasesParams, op
 	case *PostAPIV2ChartReleasesOK:
 		return value, nil, nil
 	case *PostAPIV2ChartReleasesCreated:
+		return nil, value, nil
+	}
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for chart_releases: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+  PostAPIV2ProceduresChartReleasesTriggerIncidentSelector triggers a pagerduty incident for a given chart release
+
+  Trigger an alert for the Pagerduty integration configured for a given ChartRelease.
+*/
+func (a *Client) PostAPIV2ProceduresChartReleasesTriggerIncidentSelector(params *PostAPIV2ProceduresChartReleasesTriggerIncidentSelectorParams, opts ...ClientOption) (*PostAPIV2ProceduresChartReleasesTriggerIncidentSelectorAccepted, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewPostAPIV2ProceduresChartReleasesTriggerIncidentSelectorParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "PostAPIV2ProceduresChartReleasesTriggerIncidentSelector",
+		Method:             "POST",
+		PathPattern:        "/api/v2/procedures/chart-releases/trigger-incident/{selector}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &PostAPIV2ProceduresChartReleasesTriggerIncidentSelectorReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*PostAPIV2ProceduresChartReleasesTriggerIncidentSelectorAccepted)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for PostAPIV2ProceduresChartReleasesTriggerIncidentSelector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+  PutAPIV2ChartReleasesSelector creates or edit a chart release entry
+
+  Create or edit a ChartRelease entry. Attempts to edit and will attempt to create upon an error.
+If an edit was made or the creation process de-duplicates, this method will return normally with a 200.
+*/
+func (a *Client) PutAPIV2ChartReleasesSelector(params *PutAPIV2ChartReleasesSelectorParams, opts ...ClientOption) (*PutAPIV2ChartReleasesSelectorOK, *PutAPIV2ChartReleasesSelectorCreated, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewPutAPIV2ChartReleasesSelectorParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "PutAPIV2ChartReleasesSelector",
+		Method:             "PUT",
+		PathPattern:        "/api/v2/chart-releases/{selector}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &PutAPIV2ChartReleasesSelectorReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, nil, err
+	}
+	switch value := result.(type) {
+	case *PutAPIV2ChartReleasesSelectorOK:
+		return value, nil, nil
+	case *PutAPIV2ChartReleasesSelectorCreated:
 		return nil, value, nil
 	}
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue

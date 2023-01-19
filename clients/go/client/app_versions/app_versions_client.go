@@ -40,6 +40,8 @@ type ClientService interface {
 
 	PostAPIV2AppVersions(params *PostAPIV2AppVersionsParams, opts ...ClientOption) (*PostAPIV2AppVersionsOK, *PostAPIV2AppVersionsCreated, error)
 
+	PutAPIV2AppVersionsSelector(params *PutAPIV2AppVersionsSelectorParams, opts ...ClientOption) (*PutAPIV2AppVersionsSelectorOK, *PutAPIV2AppVersionsSelectorCreated, error)
+
 	SetTransport(transport runtime.ClientTransport)
 }
 
@@ -238,6 +240,48 @@ func (a *Client) PostAPIV2AppVersions(params *PostAPIV2AppVersionsParams, opts .
 	case *PostAPIV2AppVersionsOK:
 		return value, nil, nil
 	case *PostAPIV2AppVersionsCreated:
+		return nil, value, nil
+	}
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for app_versions: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+  PutAPIV2AppVersionsSelector creates or edit an app version entry
+
+  Create or edit an AppVersion entry. Attempts to edit and will attempt to create upon an error.
+If an edit was made or the creation process de-duplicates, this method will return normally with a 200.
+*/
+func (a *Client) PutAPIV2AppVersionsSelector(params *PutAPIV2AppVersionsSelectorParams, opts ...ClientOption) (*PutAPIV2AppVersionsSelectorOK, *PutAPIV2AppVersionsSelectorCreated, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewPutAPIV2AppVersionsSelectorParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "PutAPIV2AppVersionsSelector",
+		Method:             "PUT",
+		PathPattern:        "/api/v2/app-versions/{selector}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &PutAPIV2AppVersionsSelectorReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, nil, err
+	}
+	switch value := result.(type) {
+	case *PutAPIV2AppVersionsSelectorOK:
+		return value, nil, nil
+	case *PutAPIV2AppVersionsSelectorCreated:
 		return nil, value, nil
 	}
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue

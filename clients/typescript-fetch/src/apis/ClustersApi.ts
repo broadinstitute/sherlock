@@ -64,6 +64,11 @@ export interface ApiV2ClustersSelectorPatchRequest {
     cluster: V2controllersEditableCluster;
 }
 
+export interface ApiV2ClustersSelectorPutRequest {
+    selector: string;
+    cluster: V2controllersCreatableCluster;
+}
+
 export interface ApiV2SelectorsClustersSelectorGetRequest {
     selector: string;
 }
@@ -288,6 +293,45 @@ export class ClustersApi extends runtime.BaseAPI {
      */
     async apiV2ClustersSelectorPatch(requestParameters: ApiV2ClustersSelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<V2controllersCluster> {
         const response = await this.apiV2ClustersSelectorPatchRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Create or edit a Cluster entry. Attempts to edit and will attempt to create upon an error. If an edit was made or the creation process de-duplicates, this method will return normally with a 200.
+     * Create or edit a Cluster entry
+     */
+    async apiV2ClustersSelectorPutRaw(requestParameters: ApiV2ClustersSelectorPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<V2controllersCluster>> {
+        if (requestParameters.selector === null || requestParameters.selector === undefined) {
+            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiV2ClustersSelectorPut.');
+        }
+
+        if (requestParameters.cluster === null || requestParameters.cluster === undefined) {
+            throw new runtime.RequiredError('cluster','Required parameter requestParameters.cluster was null or undefined when calling apiV2ClustersSelectorPut.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/api/v2/clusters/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            method: 'PUT',
+            headers: headerParameters,
+            query: queryParameters,
+            body: V2controllersCreatableClusterToJSON(requestParameters.cluster),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => V2controllersClusterFromJSON(jsonValue));
+    }
+
+    /**
+     * Create or edit a Cluster entry. Attempts to edit and will attempt to create upon an error. If an edit was made or the creation process de-duplicates, this method will return normally with a 200.
+     * Create or edit a Cluster entry
+     */
+    async apiV2ClustersSelectorPut(requestParameters: ApiV2ClustersSelectorPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<V2controllersCluster> {
+        const response = await this.apiV2ClustersSelectorPutRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

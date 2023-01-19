@@ -157,6 +157,9 @@ type GetAPIV2ChartReleasesParams struct {
 	*/
 	Namespace *string
 
+	// PagerdutyIntegration.
+	PagerdutyIntegration *string
+
 	/* Port.
 
 	   When creating, will use the chart's default if left empty
@@ -473,6 +476,17 @@ func (o *GetAPIV2ChartReleasesParams) WithNamespace(namespace *string) *GetAPIV2
 // SetNamespace adds the namespace to the get API v2 chart releases params
 func (o *GetAPIV2ChartReleasesParams) SetNamespace(namespace *string) {
 	o.Namespace = namespace
+}
+
+// WithPagerdutyIntegration adds the pagerdutyIntegration to the get API v2 chart releases params
+func (o *GetAPIV2ChartReleasesParams) WithPagerdutyIntegration(pagerdutyIntegration *string) *GetAPIV2ChartReleasesParams {
+	o.SetPagerdutyIntegration(pagerdutyIntegration)
+	return o
+}
+
+// SetPagerdutyIntegration adds the pagerdutyIntegration to the get API v2 chart releases params
+func (o *GetAPIV2ChartReleasesParams) SetPagerdutyIntegration(pagerdutyIntegration *string) {
+	o.PagerdutyIntegration = pagerdutyIntegration
 }
 
 // WithPort adds the port to the get API v2 chart releases params
@@ -879,6 +893,23 @@ func (o *GetAPIV2ChartReleasesParams) WriteToRequest(r runtime.ClientRequest, re
 		if qNamespace != "" {
 
 			if err := r.SetQueryParam("namespace", qNamespace); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.PagerdutyIntegration != nil {
+
+		// query param pagerdutyIntegration
+		var qrPagerdutyIntegration string
+
+		if o.PagerdutyIntegration != nil {
+			qrPagerdutyIntegration = *o.PagerdutyIntegration
+		}
+		qPagerdutyIntegration := qrPagerdutyIntegration
+		if qPagerdutyIntegration != "" {
+
+			if err := r.SetQueryParam("pagerdutyIntegration", qPagerdutyIntegration); err != nil {
 				return err
 			}
 		}

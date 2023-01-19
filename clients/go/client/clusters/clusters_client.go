@@ -42,6 +42,8 @@ type ClientService interface {
 
 	PostAPIV2Clusters(params *PostAPIV2ClustersParams, opts ...ClientOption) (*PostAPIV2ClustersOK, *PostAPIV2ClustersCreated, error)
 
+	PutAPIV2ClustersSelector(params *PutAPIV2ClustersSelectorParams, opts ...ClientOption) (*PutAPIV2ClustersSelectorOK, *PutAPIV2ClustersSelectorCreated, error)
+
 	SetTransport(transport runtime.ClientTransport)
 }
 
@@ -279,6 +281,48 @@ func (a *Client) PostAPIV2Clusters(params *PostAPIV2ClustersParams, opts ...Clie
 	case *PostAPIV2ClustersOK:
 		return value, nil, nil
 	case *PostAPIV2ClustersCreated:
+		return nil, value, nil
+	}
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for clusters: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+  PutAPIV2ClustersSelector creates or edit a cluster entry
+
+  Create or edit a Cluster entry. Attempts to edit and will attempt to create upon an error.
+If an edit was made or the creation process de-duplicates, this method will return normally with a 200.
+*/
+func (a *Client) PutAPIV2ClustersSelector(params *PutAPIV2ClustersSelectorParams, opts ...ClientOption) (*PutAPIV2ClustersSelectorOK, *PutAPIV2ClustersSelectorCreated, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewPutAPIV2ClustersSelectorParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "PutAPIV2ClustersSelector",
+		Method:             "PUT",
+		PathPattern:        "/api/v2/clusters/{selector}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &PutAPIV2ClustersSelectorReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, nil, err
+	}
+	switch value := result.(type) {
+	case *PutAPIV2ClustersSelectorOK:
+		return value, nil, nil
+	case *PutAPIV2ClustersSelectorCreated:
 		return nil, value, nil
 	}
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue

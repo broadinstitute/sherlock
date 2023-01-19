@@ -20,6 +20,12 @@ import { exists, mapValues } from '../runtime';
  */
 export interface V2controllersEditableChartRelease {
     /**
+     * 
+     * @type {string}
+     * @memberof V2controllersEditableChartRelease
+     */
+    pagerdutyIntegration?: string;
+    /**
      * When creating, will use the chart's default if left empty
      * @type {number}
      * @memberof V2controllersEditableChartRelease
@@ -58,6 +64,7 @@ export function V2controllersEditableChartReleaseFromJSONTyped(json: any, ignore
     }
     return {
         
+        'pagerdutyIntegration': !exists(json, 'pagerdutyIntegration') ? undefined : json['pagerdutyIntegration'],
         'port': !exists(json, 'port') ? undefined : json['port'],
         'protocol': !exists(json, 'protocol') ? undefined : json['protocol'],
         'subdomain': !exists(json, 'subdomain') ? undefined : json['subdomain'],
@@ -73,6 +80,7 @@ export function V2controllersEditableChartReleaseToJSON(value?: V2controllersEdi
     }
     return {
         
+        'pagerdutyIntegration': value.pagerdutyIntegration,
         'port': value.port,
         'protocol': value.protocol,
         'subdomain': value.subdomain,

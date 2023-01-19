@@ -98,6 +98,12 @@ type V2controllersChartRelease struct {
 	// When creating, will default to the environment's default namespace, if provided
 	Namespace string `json:"namespace,omitempty"`
 
+	// pagerduty integration
+	PagerdutyIntegration string `json:"pagerdutyIntegration,omitempty"`
+
+	// pagerduty integration info
+	PagerdutyIntegrationInfo *V2controllersPagerdutyIntegration `json:"pagerdutyIntegrationInfo,omitempty"`
+
 	// When creating, will use the chart's default if left empty
 	Port int64 `json:"port,omitempty"`
 
@@ -145,6 +151,10 @@ func (m *V2controllersChartRelease) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateEnvironmentInfo(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validatePagerdutyIntegrationInfo(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -361,6 +371,25 @@ func (m *V2controllersChartRelease) validateEnvironmentInfo(formats strfmt.Regis
 	return nil
 }
 
+func (m *V2controllersChartRelease) validatePagerdutyIntegrationInfo(formats strfmt.Registry) error {
+	if swag.IsZero(m.PagerdutyIntegrationInfo) { // not required
+		return nil
+	}
+
+	if m.PagerdutyIntegrationInfo != nil {
+		if err := m.PagerdutyIntegrationInfo.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("pagerdutyIntegrationInfo")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("pagerdutyIntegrationInfo")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (m *V2controllersChartRelease) validateUpdatedAt(formats strfmt.Registry) error {
 	if swag.IsZero(m.UpdatedAt) { // not required
 		return nil
@@ -394,6 +423,10 @@ func (m *V2controllersChartRelease) ContextValidate(ctx context.Context, formats
 	}
 
 	if err := m.contextValidateEnvironmentInfo(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidatePagerdutyIntegrationInfo(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -475,6 +508,22 @@ func (m *V2controllersChartRelease) contextValidateEnvironmentInfo(ctx context.C
 				return ve.ValidateName("environmentInfo")
 			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("environmentInfo")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *V2controllersChartRelease) contextValidatePagerdutyIntegrationInfo(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.PagerdutyIntegrationInfo != nil {
+		if err := m.PagerdutyIntegrationInfo.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("pagerdutyIntegrationInfo")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("pagerdutyIntegrationInfo")
 			}
 			return err
 		}
