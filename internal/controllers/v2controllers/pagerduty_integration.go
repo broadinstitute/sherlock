@@ -24,6 +24,7 @@ type EditablePagerdutyIntegration struct {
 	Type *string `json:"type" form:"type"`
 }
 
+//nolint:unused
 func (p PagerdutyIntegration) toModel(_ *v2models.StoreSet) (v2models.PagerdutyIntegration, error) {
 	return v2models.PagerdutyIntegration{
 		Model: gorm.Model{
@@ -37,6 +38,7 @@ func (p PagerdutyIntegration) toModel(_ *v2models.StoreSet) (v2models.PagerdutyI
 	}, nil
 }
 
+//nolint:unused
 func (p CreatablePagerdutyIntegration) toModel(_ *v2models.StoreSet) (v2models.PagerdutyIntegration, error) {
 	return v2models.PagerdutyIntegration{
 		Name:        p.Name,
@@ -46,6 +48,7 @@ func (p CreatablePagerdutyIntegration) toModel(_ *v2models.StoreSet) (v2models.P
 	}, nil
 }
 
+//nolint:unused
 func (p EditablePagerdutyIntegration) toModel(storeSet *v2models.StoreSet) (v2models.PagerdutyIntegration, error) {
 	return CreatablePagerdutyIntegration{EditablePagerdutyIntegration: p}.toModel(storeSet)
 }
