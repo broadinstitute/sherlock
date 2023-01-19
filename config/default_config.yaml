@@ -51,3 +51,11 @@ metrics:
   v2:
     enable: true
     updateIntervalMinutes: 5
+
+pagerduty:
+  enable: false
+
+beehive:
+    chartReleaseUrlFormatString: https://beehive.dsp-devops.broadinstitute.org/r/chart-release/%s
+    environmentUrlFormatString: https://beehive.dsp-devops.broadinstitute.org/r/environment/%s
+    pagerdutyIntegrationUrlFormatString: https://beehive.dsp-devops.broadinstitute.org/r/pagerduty-integration/%s

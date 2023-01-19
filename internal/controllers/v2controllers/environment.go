@@ -2,6 +2,7 @@ package v2controllers
 
 import (
 	"fmt"
+	"github.com/broadinstitute/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/internal/models/v2models/environment"
 	"math/rand"
 	"strconv"
@@ -16,8 +17,9 @@ import (
 
 type Environment struct {
 	ReadableBaseType
-	TemplateEnvironmentInfo *Environment `json:"templateEnvironmentInfo,omitempty" swaggertype:"object" form:"-"` // Single-layer recursive; provides info of the template environment if this environment has one
-	DefaultClusterInfo      *Cluster     `json:"defaultClusterInfo,omitempty" form:"-"`
+	TemplateEnvironmentInfo  *Environment          `json:"templateEnvironmentInfo,omitempty" swaggertype:"object" form:"-"` // Single-layer recursive; provides info of the template environment if this environment has one
+	DefaultClusterInfo       *Cluster              `json:"defaultClusterInfo,omitempty" form:"-"`
+	PagerdutyIntegrationInfo *PagerdutyIntegration `json:"pagerdutyIntegrationInfo,omitempty" form:"-"`
 	CreatableEnvironment
 }
 
@@ -45,6 +47,7 @@ type EditableEnvironment struct {
 	PreventDeletion            *bool                   `json:"preventDeletion" form:"preventDeletion" default:"false"` // Used to protect specific BEEs from deletion (thelma checks this field)
 	AutoDelete                 *environment.AutoDelete `json:"autoDelete" form:"autoDelete"`
 	Description                *string                 `json:"description" form:"description"`
+	PagerdutyIntegration       *string                 `json:"pagerdutyIntegration,omitempty" form:"pagerdutyIntegration"`
 }
 
 //nolint:unused
@@ -64,6 +67,14 @@ func (e Environment) toModel(storeSet *v2models.StoreSet) (v2models.Environment,
 			return v2models.Environment{}, err
 		}
 		defaultClusterID = &defaultCluster.ID
+	}
+	var pagerdutyIntegrationID *uint
+	if e.PagerdutyIntegration != nil {
+		pagerdutyIntegration, err := storeSet.PagerdutyIntegration.Get(*e.PagerdutyIntegration)
+		if err != nil {
+			return v2models.Environment{}, err
+		}
+		pagerdutyIntegrationID = &pagerdutyIntegration.ID
 	}
 	return v2models.Environment{
 		Model: gorm.Model{
@@ -90,6 +101,7 @@ func (e Environment) toModel(storeSet *v2models.StoreSet) (v2models.Environment,
 		PreventDeletion:            e.PreventDeletion,
 		AutoDelete:                 e.AutoDelete,
 		Description:                e.Description,
+		PagerdutyIntegrationID:     pagerdutyIntegrationID,
 	}, nil
 }
 
@@ -107,10 +119,12 @@ type EnvironmentController = ModelController[v2models.Environment, Environment, 
 
 func newEnvironmentController(stores *v2models.StoreSet) *EnvironmentController {
 	return &EnvironmentController{
-		primaryStore:       stores.EnvironmentStore,
-		allStores:          stores,
-		modelToReadable:    modelEnvironmentToEnvironment,
-		setDynamicDefaults: setEnvironmentDynamicDefaults,
+		primaryStore:                   stores.EnvironmentStore,
+		allStores:                      stores,
+		modelToReadable:                modelEnvironmentToEnvironment,
+		setDynamicDefaults:             setEnvironmentDynamicDefaults,
+		beehiveUrlFormatString:         config.Config.MustString("beehive.environmentUrlFormatString"),
+		extractPagerdutyIntegrationKey: extractPagerdutyIntegrationKeyFromEnvironment,
 	}
 }
 
@@ -131,14 +145,21 @@ func modelEnvironmentToEnvironment(model *v2models.Environment) *Environment {
 		defaultClusterName = defaultCluster.Name
 	}
 
+	var pagerdutyIntegrationID string
+	pagerdutyIntegration := modelPagerdutyIntegrationToPagerdutyIntegration(model.PagerdutyIntegration)
+	if pagerdutyIntegration != nil {
+		pagerdutyIntegrationID = strconv.FormatUint(uint64(pagerdutyIntegration.ID), 10)
+	}
+
 	return &Environment{
 		ReadableBaseType: ReadableBaseType{
 			ID:        model.ID,
 			CreatedAt: model.CreatedAt,
 			UpdatedAt: model.UpdatedAt,
 		},
-		TemplateEnvironmentInfo: templateEnvironment,
-		DefaultClusterInfo:      defaultCluster,
+		TemplateEnvironmentInfo:  templateEnvironment,
+		DefaultClusterInfo:       defaultCluster,
+		PagerdutyIntegrationInfo: pagerdutyIntegration,
 		CreatableEnvironment: CreatableEnvironment{
 			Base:                      model.Base,
 			ChartReleasesFromTemplate: model.ChartReleasesFromTemplate,
@@ -160,6 +181,7 @@ func modelEnvironmentToEnvironment(model *v2models.Environment) *Environment {
 				PreventDeletion:            model.PreventDeletion,
 				AutoDelete:                 model.AutoDelete,
 				Description:                model.Description,
+				PagerdutyIntegration:       &pagerdutyIntegrationID,
 			},
 		},
 	}
@@ -234,5 +256,12 @@ func setEnvironmentDynamicDefaults(environment *CreatableEnvironment, stores *v2
 		}
 	}
 
+	return nil
+}
+
+func extractPagerdutyIntegrationKeyFromEnvironment(model *v2models.Environment) *string {
+	if model != nil && model.PagerdutyIntegration != nil {
+		return model.PagerdutyIntegration.Key
+	}
 	return nil
 }

@@ -6,6 +6,7 @@ import (
 	"go.opencensus.io/tag"
 )
 
+// Synced across replicas
 var (
 	ChangesetCountMeasure = stats.Int64(
 		"sherlock/v2_changeset_count",
@@ -36,14 +37,26 @@ var (
 		"sherlock/v2_data_type_count",
 		"count of records per data type",
 		"records")
+)
 
-	ChartKey                = tag.MustNewKey("chart")
-	EnvironmentKey          = tag.MustNewKey("environment")
-	EnvironmentLifecycleKey = tag.MustNewKey("environment_lifecycle")
-	ChartReleaseKey         = tag.MustNewKey("chart_release")
-	ChangesetStateKey       = tag.MustNewKey("changeset_state")
-	AppVersionTypeKey       = tag.MustNewKey("app_version_type")
-	DataTypeKey             = tag.MustNewKey("data_type")
+// Unique per replica
+var (
+	PagerdutyRequestCount = stats.Int64(
+		"sherlock/v2_pagerduty_request_count",
+		"count of outgoing requests to pagerduty",
+		"requests")
+)
+
+var (
+	ChartKey                 = tag.MustNewKey("chart")
+	EnvironmentKey           = tag.MustNewKey("environment")
+	EnvironmentLifecycleKey  = tag.MustNewKey("environment_lifecycle")
+	ChartReleaseKey          = tag.MustNewKey("chart_release")
+	ChangesetStateKey        = tag.MustNewKey("changeset_state")
+	AppVersionTypeKey        = tag.MustNewKey("app_version_type")
+	DataTypeKey              = tag.MustNewKey("data_type")
+	PagerdutyRequestTypeKey  = tag.MustNewKey("pd_request_type")
+	PagerdutyResponseCodeKey = tag.MustNewKey("pd_response_code")
 
 	ChangesetCountView = &view.View{
 		Name:        "v2_changeset_count",
@@ -94,6 +107,13 @@ var (
 		Description: DataTypeCountMeasure.Description(),
 		Aggregation: view.LastValue(),
 	}
+	PagerdutyRequestCountView = &view.View{
+		Name:        "v2_pagerduty_request_count",
+		Measure:     PagerdutyRequestCount,
+		TagKeys:     []tag.Key{PagerdutyRequestTypeKey, PagerdutyResponseCodeKey},
+		Description: PagerdutyRequestCount.Description(),
+		Aggregation: view.Count(),
+	}
 )
 
 func RegisterViews() error {
@@ -105,5 +125,6 @@ func RegisterViews() error {
 		ChartVersionLeadTimeView,
 		ChartFirecloudDevelopUsageView,
 		DataTypeCountView,
+		PagerdutyRequestCountView,
 	)
 }

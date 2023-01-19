@@ -16,19 +16,19 @@ import (
 	"net/http"
 )
 
-// @title       Sherlock
-// @description The Data Science Platform's source-of-truth service.
-// @description Note: this API will try to load and return associations in responses, so clients won't need to make as many requests. This behavior isn't recursive, though, so associations of associations are *not* fully loaded (even if it might seem that way from looking at the data types).
-// @version     development
-// @schemes     https
-// @accept      json
-// @produce     json
+//	@title			Sherlock
+//	@description	The Data Science Platform's source-of-truth service.
+//	@description	Note: this API will try to load and return associations in responses, so clients won't need to make as many requests. This behavior isn't recursive, though, so associations of associations are *not* fully loaded (even if it might seem that way from looking at the data types).
+//	@version		development
+//	@schemes		https
+//	@accept			json
+//	@produce		json
 
-// @contact.name  DSP DevOps
-// @contact.email dsp-devops@broadinstitute.org
+//	@contact.name	DSP DevOps
+//	@contact.email	dsp-devops@broadinstitute.org
 
-// @license.name BSD-3-Clause
-// @license.url  https://github.com/broadinstitute/sherlock/blob/main/LICENSE.txt
+//	@license.name	BSD-3-Clause
+//	@license.url	https://github.com/broadinstitute/sherlock/blob/main/LICENSE.txt
 
 // buildRouter attaches a Gin router with API, Swagger, and other endpoints to
 // an existing Application instance. This exists outside of Application itself
@@ -101,6 +101,7 @@ func (a *Application) buildRouter() {
 	v2handlers.RegisterAppVersionHandlers(v2api, a.v2controllers.AppVersionController)
 	v2handlers.RegisterChartReleaseHandlers(v2api, a.v2controllers.ChartReleaseController)
 	v2handlers.RegisterChangesetHandlers(v2api, a.v2controllers.ChangesetController)
+	v2handlers.RegisterPagerdutyIntegrationHandlers(v2api, a.v2controllers.PagerdutyIntegrationController)
 
 	a.Handler = router
 }

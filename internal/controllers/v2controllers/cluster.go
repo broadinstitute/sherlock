@@ -6,14 +6,16 @@ import (
 )
 
 // Cluster
-// @description The full set of Cluster fields that can be read or used for filtering queries
+//
+//	@description	The full set of Cluster fields that can be read or used for filtering queries
 type Cluster struct {
 	ReadableBaseType
 	CreatableCluster
 }
 
 // CreatableCluster
-// @description The subset of Cluster fields that can be set upon creation
+//
+//	@description	The subset of Cluster fields that can be set upon creation
 type CreatableCluster struct {
 	Name              string `json:"name" form:"name"` // Required when creating
 	Provider          string `json:"provider" form:"provider" enums:"google,azure" default:"google"`
@@ -24,7 +26,8 @@ type CreatableCluster struct {
 }
 
 // EditableCluster
-// @description The subset of Cluster fields that can be edited after creation
+//
+//	@description	The subset of Cluster fields that can be edited after creation
 type EditableCluster struct {
 	Base                *string `json:"base"  form:"base"`      // Required when creating
 	Address             *string `json:"address" form:"address"` // Required when creating

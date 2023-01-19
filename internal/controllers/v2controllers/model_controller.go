@@ -5,6 +5,7 @@ import (
 	"github.com/broadinstitute/sherlock/internal/auth"
 	"github.com/broadinstitute/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/internal/models/v2models"
+	"github.com/broadinstitute/sherlock/internal/pagerduty"
 	"github.com/creasty/defaults"
 	"time"
 )
@@ -60,6 +61,16 @@ type ModelController[M v2models.Model, R Readable[M], C Creatable[M], E Editable
 	// creasty/defaults. It shouldn't worry about handling those `default` struct tags--it can be provided to allow a
 	// type to set defaults before creation that are dynamic based on other existing data or the calling user.
 	setDynamicDefaults func(creatable *C, stores *v2models.StoreSet, user *auth.User) error
+
+	// extractPagerdutyIntegrationKey allows a data type to declare how to go from the database type to a Pagerduty key.
+	//
+	// Defining this function and beehiveUrlFormatString enables the TriggerPagerdutyIncident method.
+	extractPagerdutyIntegrationKey func(model *M) *string
+
+	// beehiveUrlFormatString is a format string to go from a selector to a Beehive link.
+	//
+	// Defining this and extractPagerdutyIntegrationKey enables the TriggerPagerdutyIncident method.
+	beehiveUrlFormatString string
 }
 
 func (c ModelController[M, R, C, E]) Create(creatable C, user *auth.User) (R, bool, error) {
@@ -114,7 +125,39 @@ func (c ModelController[M, R, C, E]) Edit(selector string, editable E, user *aut
 	return *c.modelToReadable(&result), err
 }
 
+// Upsert is "dumb": it tries to edit, and if there's an error, it tries to create. Edit will always error if the
+// selector didn't match, but it could error for other reasons too. We're relying on Create also error-ing in the case
+// of those other reasons, which is reasonable since the same validation functions get called.
+func (c ModelController[M, R, C, E]) Upsert(selector string, creatable C, editable E, user *auth.User) (R, bool, error) {
+	ret, err := c.Edit(selector, editable, user)
+	if err != nil {
+		return c.Create(creatable, user)
+	} else {
+		return ret, false, nil
+	}
+}
+
 func (c ModelController[M, R, C, E]) Delete(selector string, user *auth.User) (R, error) {
 	result, err := c.primaryStore.Delete(selector, user)
 	return *c.modelToReadable(&result), err
+}
+
+func (c ModelController[M, R, C, E]) TriggerPagerdutyIncident(selector string, summary pagerduty.AlertSummary) (pagerduty.SendAlertResponse, error) {
+	if c.extractPagerdutyIntegrationKey == nil {
+		var empty R
+		return pagerduty.SendAlertResponse{}, fmt.Errorf("(%s) Pagerduty incidents can't be triggered via %Ts, no extractPagerdutyIntegrationKey functionality configured", errors.InternalServerError, empty)
+	}
+	if c.beehiveUrlFormatString == "" {
+		var empty R
+		return pagerduty.SendAlertResponse{}, fmt.Errorf("(%s) Pagerduty incidents can't be triggered via %Ts, no beehiveUrlFormatString configured", errors.InternalServerError, empty)
+	}
+	match, err := c.primaryStore.Get(selector)
+	if err != nil {
+		return pagerduty.SendAlertResponse{}, err
+	}
+	if key := c.extractPagerdutyIntegrationKey(&match); key != nil {
+		return pagerduty.SendAlert(*key, summary, fmt.Sprintf(c.beehiveUrlFormatString, selector))
+	} else {
+		return pagerduty.SendAlertResponse{}, fmt.Errorf("(%s) no Pagerduty integration configured for %T '%s'", errors.BadRequest, match, selector)
+	}
 }

@@ -14,13 +14,14 @@ type MyUserResponse struct {
 }
 
 // MyUserHandler godoc
-// @summary     Get information about the calling user
-// @description Get Sherlock's understanding of the calling user based on IAP and the Firecloud.org Google Workspace organization.
-// @tags        Misc
-// @produce     json
-// @success     200     {object} misc.MyUserResponse
-// @failure     407,500 {object} errors.ErrorResponse
-// @router      /my-user [get]
+//
+//	@summary		Get information about the calling user
+//	@description	Get Sherlock's understanding of the calling user based on IAP and the Firecloud.org Google Workspace organization.
+//	@tags			Misc
+//	@produce		json
+//	@success		200		{object}	misc.MyUserResponse
+//	@failure		407,500	{object}	errors.ErrorResponse
+//	@router			/my-user [get]
 func MyUserHandler(ctx *gin.Context) {
 	user, err := auth.ExtractUserFromContext(ctx)
 	if err != nil {

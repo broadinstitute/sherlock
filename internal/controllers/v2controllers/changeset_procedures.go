@@ -25,7 +25,7 @@ type ChangesetPlanRequestEnvironmentEntry struct {
 	ExcludeCharts                        []string `json:"excludeCharts"`
 }
 
-func (c ChangesetController) changesetPlanRequestToModelChangesets(request ChangesetPlanRequest, user *auth.User) ([]v2models.Changeset, error) {
+func (c ChangesetController) changesetPlanRequestToModelChangesets(request ChangesetPlanRequest, _ *auth.User) ([]v2models.Changeset, error) {
 	modelChangesets := make(map[uint]v2models.Changeset)
 	exact := "exact"
 	follow := "follow"
