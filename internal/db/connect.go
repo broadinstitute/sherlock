@@ -40,6 +40,7 @@ var (
 		&v2models.AppVersion{},
 		&v2models.ChartRelease{},
 		&v2models.Changeset{},
+		&v2models.PagerdutyIntegration{},
 	}
 )
 

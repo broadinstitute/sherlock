@@ -3,10 +3,13 @@ package v2models
 import (
 	"fmt"
 	"github.com/broadinstitute/sherlock/internal/auth"
+	"github.com/broadinstitute/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/internal/errors"
+	"github.com/broadinstitute/sherlock/internal/pagerduty"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
+	"strings"
 	"time"
 )
 
@@ -88,7 +91,7 @@ func (s *internalChangesetEventStore) plan(db *gorm.DB, changesets []Changeset, 
 
 func (s *internalChangesetEventStore) apply(db *gorm.DB, changesets []Changeset, user *auth.User) ([]Changeset, error) {
 	var ret []Changeset
-	affectedChartReleases := make(map[uint]struct{})
+	affectedChartReleases := make(map[uint]ChartRelease)
 	err := db.Transaction(func(tx *gorm.DB) error {
 		for index, changeset := range changesets {
 			toApply, err := s.get(tx, changeset)
@@ -111,7 +114,7 @@ func (s *internalChangesetEventStore) apply(db *gorm.DB, changesets []Changeset,
 			if _, alreadyAffected := affectedChartReleases[chartRelease.ID]; alreadyAffected {
 				return fmt.Errorf("(%s) apply validation error: multiple changesets were against %T '%s'", errors.BadRequest, chartRelease, chartRelease.Name)
 			} else {
-				affectedChartReleases[chartRelease.ID] = struct{}{}
+				affectedChartReleases[chartRelease.ID] = chartRelease
 			}
 			if !chartRelease.ChartReleaseVersion.equalTo(toApply.From) {
 				// We really shouldn't ever hit this case--when a Changeset is applied we mark all other as superseded,
@@ -162,6 +165,38 @@ func (s *internalChangesetEventStore) apply(db *gorm.DB, changesets []Changeset,
 		}
 		return nil
 	})
+
+	// If the update happened successfully, report these changes to any relevant Pagerduty integrations
+	if err == nil {
+		go func(db *gorm.DB, affectedChartReleases map[uint]ChartRelease) {
+			environmentReleases := make(map[uint][]string)
+
+			for _, chartRelease := range affectedChartReleases {
+				if chartRelease.EnvironmentID != nil {
+					environmentReleases[*chartRelease.EnvironmentID] = append(environmentReleases[*chartRelease.EnvironmentID], chartRelease.Name)
+				}
+				if chartRelease.PagerdutyIntegration != nil && chartRelease.PagerdutyIntegration.Key != nil {
+					pagerduty.SendChangeSwallowErrors(
+						*chartRelease.PagerdutyIntegration.Key,
+						fmt.Sprintf("Version changes to %s via Sherlock/Beehive", chartRelease.Name),
+						fmt.Sprintf(config.Config.MustString("beehive.chartReleaseUrlFormatString"), chartRelease.Name),
+					)
+				}
+			}
+
+			for environmentID, chartReleaseNames := range environmentReleases {
+				environment, err := environmentStore.get(db, Environment{Model: gorm.Model{ID: environmentID}})
+				if err == nil && environment.PagerdutyIntegration != nil && environment.PagerdutyIntegration.Key != nil {
+					pagerduty.SendChangeSwallowErrors(
+						*environment.PagerdutyIntegration.Key,
+						fmt.Sprintf("Version changes to %s via Sherlock/Beehive", strings.Join(chartReleaseNames, ", ")),
+						fmt.Sprintf(config.Config.MustString("beehive.environmentUrlFormatString"), environment.Name),
+					)
+				}
+			}
+		}(db, affectedChartReleases)
+	}
+
 	return ret, err
 }
 

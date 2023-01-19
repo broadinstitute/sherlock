@@ -13,12 +13,13 @@ type VersionResponse struct {
 }
 
 // VersionHandler godoc
-// @summary     Get Sherlock's own current version
-// @description Get the build version of this Sherlock instance.
-// @tags        Misc
-// @produce     json
-// @success     200 {object} misc.VersionResponse
-// @router      /version [get]
+//
+//	@summary		Get Sherlock's own current version
+//	@description	Get the build version of this Sherlock instance.
+//	@tags			Misc
+//	@produce		json
+//	@success		200	{object}	misc.VersionResponse
+//	@router			/version [get]
 func VersionHandler(ctx *gin.Context) {
 	response := &VersionResponse{Version: version.BuildVersion}
 	if buildInfo := version.BuildInfo(); buildInfo != nil {

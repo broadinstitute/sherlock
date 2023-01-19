@@ -284,6 +284,87 @@ const docTemplate = `{
                     }
                 }
             },
+            "put": {
+                "description": "Create or edit an AppVersion entry. Attempts to edit and will attempt to create upon an error.\nIf an edit was made or the creation process de-duplicates, this method will return normally with a 200.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AppVersions"
+                ],
+                "summary": "Create or edit an AppVersion entry",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The AppVersion to upsert's selector: chart/version or numeric ID",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "The AppVersion to upsert",
+                        "name": "app-version",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.CreatableAppVersion"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.AppVersion"
+                        }
+                    },
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.AppVersion"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            },
             "patch": {
                 "description": "Edit an existing AppVersion entry via one its \"selectors\": chart/version or numeric ID. Note that only mutable fields are available here, immutable fields can only be set using /create.",
                 "consumes": [
@@ -789,6 +870,11 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "name": "pagerdutyIntegration",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
                         "description": "When creating, will use the chart's default if left empty",
                         "name": "port",
@@ -964,6 +1050,87 @@ const docTemplate = `{
                 "responses": {
                     "200": {
                         "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.ChartRelease"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Create or edit a ChartRelease entry. Attempts to edit and will attempt to create upon an error.\nIf an edit was made or the creation process de-duplicates, this method will return normally with a 200.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ChartReleases"
+                ],
+                "summary": "Create or edit a ChartRelease entry",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The ChartRelease to upsert's selector: name, numeric ID, environment/chart, or cluster/namespace/chart",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "The ChartRelease to upsert",
+                        "name": "chart-release",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.CreatableChartRelease"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.ChartRelease"
+                        }
+                    },
+                    "201": {
+                        "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/v2controllers.ChartRelease"
                         }
@@ -1390,6 +1557,87 @@ const docTemplate = `{
                     }
                 }
             },
+            "put": {
+                "description": "Create or edit a ChartVersion entry. Attempts to edit and will attempt to create upon an error.\nIf an edit was made or the creation process de-duplicates, this method will return normally with a 200.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ChartVersions"
+                ],
+                "summary": "Create or edit a ChartVersion entry",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The ChartVersion to upsert's selector: chart/version or numeric ID",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "The ChartVersion to upsert",
+                        "name": "chart-version",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.CreatableChartVersion"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.ChartVersion"
+                        }
+                    },
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.ChartVersion"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            },
             "patch": {
                 "description": "Edit an existing ChartVersion entry via one its \"selectors\": chart/version or numeric ID. Note that only mutable fields are available here, immutable fields can only be set using /create.",
                 "consumes": [
@@ -1700,6 +1948,87 @@ const docTemplate = `{
                 "responses": {
                     "200": {
                         "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.Chart"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Create or edit a Chart entry. Attempts to edit and will attempt to create upon an error.\nIf an edit was made or the creation process de-duplicates, this method will return normally with a 200.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Charts"
+                ],
+                "summary": "Create or edit a Chart entry",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The Chart to upsert's selector: name or numeric ID",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "The Chart to upsert",
+                        "name": "chart-release",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.CreatableChart"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.Chart"
+                        }
+                    },
+                    "201": {
+                        "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/v2controllers.Chart"
                         }
@@ -2161,6 +2490,87 @@ const docTemplate = `{
                     }
                 }
             },
+            "put": {
+                "description": "Create or edit a Cluster entry. Attempts to edit and will attempt to create upon an error.\nIf an edit was made or the creation process de-duplicates, this method will return normally with a 200.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Clusters"
+                ],
+                "summary": "Create or edit a Cluster entry",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The Cluster to upsert's selector: name or numeric ID",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "The Cluster to upsert",
+                        "name": "cluster",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.CreatableCluster"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.Cluster"
+                        }
+                    },
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.Cluster"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            },
             "delete": {
                 "description": "Delete an existing Cluster entry via one of its \"selectors\": name or numeric ID.",
                 "produces": [
@@ -2401,6 +2811,11 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "name": "pagerdutyIntegration",
+                        "in": "query"
+                    },
+                    {
                         "type": "boolean",
                         "default": false,
                         "description": "Used to protect specific BEEs from deletion (thelma checks this field)",
@@ -2631,6 +3046,87 @@ const docTemplate = `{
                     }
                 }
             },
+            "put": {
+                "description": "Create or edit an Environment entry. Attempts to edit and will attempt to create upon an error.\nIf an edit was made or the creation process de-duplicates, this method will return normally with a 200.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Environments"
+                ],
+                "summary": "Create or edit an Environment entry",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The Environment to upsert's selector: name or numeric ID",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "The Environment to upsert",
+                        "name": "environment",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.CreatableEnvironment"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.Environment"
+                        }
+                    },
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.Environment"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            },
             "delete": {
                 "description": "Delete an existing Environment entry via one of its \"selectors\": name, numeric ID, or \"resource-prefix/\" + the unique resource prefix.",
                 "produces": [
@@ -2729,6 +3225,463 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/v2controllers.Environment"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v2/pagerduty-integrations": {
+            "get": {
+                "description": "List existing PagerdutyIntegration entries, ordered by most recently updated.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PagerdutyIntegrations"
+                ],
+                "summary": "List PagerdutyIntegration entries",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "date-time",
+                        "name": "createdAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "pagerdutyID",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "type",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "format": "date-time",
+                        "name": "updatedAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "An optional limit to the number of entries returned",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/v2controllers.PagerdutyIntegration"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a new PagerdutyIntegration entry. Note that fields are immutable after creation.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PagerdutyIntegrations"
+                ],
+                "summary": "Create a new PagerdutyIntegration entry",
+                "parameters": [
+                    {
+                        "description": "The PagerdutyIntegration to create",
+                        "name": "pagerduty-integration",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.CreatablePagerdutyIntegration"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.PagerdutyIntegration"
+                        }
+                    },
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.PagerdutyIntegration"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v2/pagerduty-integrations/{selector}": {
+            "get": {
+                "description": "Get an existing PagerdutyIntegration entry via one its \"selectors\": \"pd-id/\" + Pagerduty ID or numeric Sherlock ID.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PagerdutyIntegrations"
+                ],
+                "summary": "Get a PagerdutyIntegration entry",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The PagerdutyIntegration to get's selector: chart/version or numeric ID",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.PagerdutyIntegration"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Create or edit a PagerdutyIntegration entry. Attempts to edit and will attempt to create upon an error.\nIf an edit was made or the creation process de-duplicates, this method will return normally with a 200.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PagerdutyIntegrations"
+                ],
+                "summary": "Create or edit a PagerdutyIntegration entry",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The PagerdutyIntegration to upsert's selector: ",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "The PagerdutyIntegration to upsert",
+                        "name": "pagerduty-integration",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.CreatablePagerdutyIntegration"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.PagerdutyIntegration"
+                        }
+                    },
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.PagerdutyIntegration"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete an existing PagerdutyIntegration entry via one of its \"selectors\": \"pd-id/\" + Pagerduty ID or numeric Sherlock ID.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PagerdutyIntegrations"
+                ],
+                "summary": "Delete a PagerdutyIntegration entry",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The PagerdutyIntegration to delete's selector: ",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.PagerdutyIntegration"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Edit an existing PagerdutyIntegration entry via one its \"selectors\": \"pd-id/\" + Pagerduty ID or numeric Sherlock ID. Note that only mutable fields are available here, immutable fields can only be set using /create.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PagerdutyIntegrations"
+                ],
+                "summary": "Edit a PagerdutyIntegration entry",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The PagerdutyIntegration to edit's selector: chart/version or numeric ID",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "The edits to make to the PagerdutyIntegration",
+                        "name": "pagerduty-integration",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.EditablePagerdutyIntegration"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.PagerdutyIntegration"
                         }
                     },
                     "400": {
@@ -3049,6 +4002,237 @@ const docTemplate = `{
                             "items": {
                                 "$ref": "#/definitions/v2controllers.Changeset"
                             }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v2/procedures/chart-releases/trigger-incident/{selector}": {
+            "post": {
+                "description": "Trigger an alert for the Pagerduty integration configured for a given ChartRelease.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ChartReleases"
+                ],
+                "summary": "Trigger a Pagerduty incident for a given ChartRelease",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The ChartRelease's selector",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Summary of the incident",
+                        "name": "summary",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pagerduty.AlertSummary"
+                        }
+                    }
+                ],
+                "responses": {
+                    "202": {
+                        "description": "Accepted",
+                        "schema": {
+                            "$ref": "#/definitions/pagerduty.SendAlertResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v2/procedures/environments/trigger-incident/{selector}": {
+            "post": {
+                "description": "Trigger an alert for the Pagerduty integration configured for a given Environment.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Environments"
+                ],
+                "summary": "Trigger a Pagerduty incident for a given Environment",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The Environment's selector",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Summary of the incident",
+                        "name": "summary",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pagerduty.AlertSummary"
+                        }
+                    }
+                ],
+                "responses": {
+                    "202": {
+                        "description": "Accepted",
+                        "schema": {
+                            "$ref": "#/definitions/pagerduty.SendAlertResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v2/procedures/pagerduty-integrations/trigger-incident/{selector}": {
+            "post": {
+                "description": "Trigger an alert via a PagerdutyIntegration itself.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PagerdutyIntegrations"
+                ],
+                "summary": "Trigger a Pagerduty incident for a given PagerdutyIntegration",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The PagerdutyIntegration's selector",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Summary of the incident",
+                        "name": "summary",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pagerduty.AlertSummary"
+                        }
+                    }
+                ],
+                "responses": {
+                    "202": {
+                        "description": "Accepted",
+                        "schema": {
+                            "$ref": "#/definitions/pagerduty.SendAlertResponse"
                         }
                     },
                     "400": {
@@ -3566,6 +4750,74 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v2/selectors/pagerduty-integrations/{selector}": {
+            "get": {
+                "description": "Validate a given PagerdutyIntegration selector and provide any other selectors that would match the same PagerdutyIntegration.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PagerdutyIntegrations"
+                ],
+                "summary": "List PagerdutyIntegration selectors",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The selector of the PagerdutyIntegration to list other selectors for",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/my-user": {
             "get": {
                 "description": "Get Sherlock's understanding of the calling user based on IAP and the Firecloud.org Google Workspace organization.",
@@ -3761,6 +5013,25 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "version": {
+                    "type": "string"
+                }
+            }
+        },
+        "pagerduty.AlertSummary": {
+            "type": "object",
+            "properties": {
+                "summary": {
+                    "type": "string"
+                }
+            }
+        },
+        "pagerduty.SendAlertResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "status": {
                     "type": "string"
                 }
             }
@@ -4164,6 +5435,12 @@ const docTemplate = `{
                     "description": "When creating, will default to the environment's default namespace, if provided",
                     "type": "string"
                 },
+                "pagerdutyIntegration": {
+                    "type": "string"
+                },
+                "pagerdutyIntegrationInfo": {
+                    "$ref": "#/definitions/v2controllers.PagerdutyIntegration"
+                },
                 "port": {
                     "description": "When creating, will use the chart's default if left empty",
                     "type": "integer"
@@ -4412,6 +5689,9 @@ const docTemplate = `{
                     "description": "When creating, will default to the environment's default namespace, if provided",
                     "type": "string"
                 },
+                "pagerdutyIntegration": {
+                    "type": "string"
+                },
                 "port": {
                     "description": "When creating, will use the chart's default if left empty",
                     "type": "integer"
@@ -4550,6 +5830,9 @@ const docTemplate = `{
                     "description": "When creating, will be set to your email",
                     "type": "string"
                 },
+                "pagerdutyIntegration": {
+                    "type": "string"
+                },
                 "preventDeletion": {
                     "description": "Used to protect specific BEEs from deletion (thelma checks this field)",
                     "type": "boolean",
@@ -4569,6 +5852,23 @@ const docTemplate = `{
                 },
                 "valuesName": {
                     "description": "When creating, defaults to template name or environment name",
+                    "type": "string"
+                }
+            }
+        },
+        "v2controllers.CreatablePagerdutyIntegration": {
+            "type": "object",
+            "properties": {
+                "key": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "pagerdutyID": {
+                    "type": "string"
+                },
+                "type": {
                     "type": "string"
                 }
             }
@@ -4622,6 +5922,9 @@ const docTemplate = `{
         "v2controllers.EditableChartRelease": {
             "type": "object",
             "properties": {
+                "pagerdutyIntegration": {
+                    "type": "string"
+                },
                 "port": {
                     "description": "When creating, will use the chart's default if left empty",
                     "type": "integer"
@@ -4700,6 +6003,9 @@ const docTemplate = `{
                     "description": "When creating, will be set to your email",
                     "type": "string"
                 },
+                "pagerdutyIntegration": {
+                    "type": "string"
+                },
                 "preventDeletion": {
                     "description": "Used to protect specific BEEs from deletion (thelma checks this field)",
                     "type": "boolean",
@@ -4708,6 +6014,20 @@ const docTemplate = `{
                 "requiresSuitability": {
                     "type": "boolean",
                     "default": false
+                }
+            }
+        },
+        "v2controllers.EditablePagerdutyIntegration": {
+            "type": "object",
+            "properties": {
+                "key": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
                 }
             }
         },
@@ -4779,6 +6099,12 @@ const docTemplate = `{
                     "description": "When creating, will be set to your email",
                     "type": "string"
                 },
+                "pagerdutyIntegration": {
+                    "type": "string"
+                },
+                "pagerdutyIntegrationInfo": {
+                    "$ref": "#/definitions/v2controllers.PagerdutyIntegration"
+                },
                 "preventDeletion": {
                     "description": "Used to protect specific BEEs from deletion (thelma checks this field)",
                     "type": "boolean",
@@ -4807,6 +6133,31 @@ const docTemplate = `{
                 "valuesName": {
                     "description": "When creating, defaults to template name or environment name",
                     "type": "string"
+                }
+            }
+        },
+        "v2controllers.PagerdutyIntegration": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "pagerdutyID": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string",
+                    "format": "date-time"
                 }
             }
         }

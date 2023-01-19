@@ -35,8 +35,10 @@ type Environment struct {
 	NamePrefixesDomain         *bool
 	HelmfileRef                *string `gorm:"not null; default:null"`
 	PreventDeletion            *bool
-	AutoDelete                 *environment.AutoDelete `gorm:"column:delete_after"`
+	AutoDelete                 *environment.AutoDelete `gorm:"column:delete_after; -:migration"`
 	Description                *string
+	PagerdutyIntegration       *PagerdutyIntegration
+	PagerdutyIntegrationID     *uint
 }
 
 func (e Environment) TableName() string {

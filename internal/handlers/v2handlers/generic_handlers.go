@@ -6,7 +6,9 @@ import (
 	"github.com/broadinstitute/sherlock/internal/controllers/v2controllers"
 	"github.com/broadinstitute/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/internal/models/v2models"
+	"github.com/broadinstitute/sherlock/internal/pagerduty"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 	"github.com/rs/zerolog/log"
 	"net/http"
 	"strconv"
@@ -100,6 +102,36 @@ func handleEdit[M v2models.Model, R v2controllers.Readable[M], C v2controllers.C
 	}
 }
 
+func handleUpsert[M v2models.Model, R v2controllers.Readable[M], C v2controllers.Creatable[M], E v2controllers.Editable[M]](controller *v2controllers.ModelController[M, R, C, E]) func(ctx *gin.Context) {
+	return func(ctx *gin.Context) {
+		user, err := auth.ExtractUserFromContext(ctx)
+		if err != nil {
+			ctx.JSON(errors.ErrorToApiResponse(err))
+			return
+		}
+		var creatable C
+		if err := ctx.ShouldBindBodyWith(&creatable, binding.JSON); err != nil {
+			ctx.JSON(errors.ErrorToApiResponse(fmt.Errorf("(%s) JSON error parsing to %T: %v", errors.BadRequest, creatable, err)))
+			return
+		}
+		var editable E
+		if err := ctx.ShouldBindBodyWith(&editable, binding.JSON); err != nil {
+			ctx.JSON(errors.ErrorToApiResponse(fmt.Errorf("(%s) JSON error parsing to %T: %v", errors.BadRequest, editable, err)))
+			return
+		}
+		result, created, err := controller.Upsert(formatSelector(ctx.Param("selector")), creatable, editable, user)
+		if err != nil {
+			ctx.JSON(errors.ErrorToApiResponse(err))
+			return
+		}
+		if created {
+			ctx.JSON(http.StatusCreated, result)
+		} else {
+			ctx.JSON(http.StatusOK, result)
+		}
+	}
+}
+
 func handleDelete[M v2models.Model, R v2controllers.Readable[M], C v2controllers.Creatable[M], E v2controllers.Editable[M]](controller *v2controllers.ModelController[M, R, C, E]) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
 		user, err := auth.ExtractUserFromContext(ctx)
@@ -124,5 +156,25 @@ func handleSelectorList[M v2models.Model, R v2controllers.Readable[M], C v2contr
 			return
 		}
 		ctx.JSON(http.StatusOK, result)
+	}
+}
+
+func handleTriggerPagerdutyIncident[M v2models.Model, R v2controllers.Readable[M], C v2controllers.Creatable[M], E v2controllers.Editable[M]](controller *v2controllers.ModelController[M, R, C, E]) func(ctx *gin.Context) {
+	return func(ctx *gin.Context) {
+		_, err := auth.ExtractUserFromContext(ctx)
+		if err != nil {
+			ctx.JSON(errors.ErrorToApiResponse(err))
+			return
+		}
+		var request pagerduty.AlertSummary
+		if err := ctx.ShouldBindJSON(&request); err != nil {
+			ctx.JSON(errors.ErrorToApiResponse(fmt.Errorf("(%s) JSON error parsing to %T: %v", errors.BadRequest, request, err)))
+			return
+		}
+		result, err := controller.TriggerPagerdutyIncident(formatSelector(ctx.Param("selector")), request)
+		if err != nil {
+			ctx.JSON(errors.ErrorToApiResponse(err))
+		}
+		ctx.JSON(http.StatusAccepted, result)
 	}
 }

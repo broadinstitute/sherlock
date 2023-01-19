@@ -82,6 +82,18 @@ definitions:
       version:
         type: string
     type: object
+  pagerduty.AlertSummary:
+    properties:
+      summary:
+        type: string
+    type: object
+  pagerduty.SendAlertResponse:
+    properties:
+      message:
+        type: string
+      status:
+        type: string
+    type: object
   v2controllers.AppVersion:
     properties:
       appVersion:
@@ -364,6 +376,10 @@ definitions:
         description: When creating, will default to the environment's default namespace,
           if provided
         type: string
+      pagerdutyIntegration:
+        type: string
+      pagerdutyIntegrationInfo:
+        $ref: '#/definitions/v2controllers.PagerdutyIntegration'
       port:
         description: When creating, will use the chart's default if left empty
         type: integer
@@ -551,6 +567,8 @@ definitions:
         description: When creating, will default to the environment's default namespace,
           if provided
         type: string
+      pagerdutyIntegration:
+        type: string
       port:
         description: When creating, will use the chart's default if left empty
         type: integer
@@ -655,6 +673,8 @@ definitions:
       owner:
         description: When creating, will be set to your email
         type: string
+      pagerdutyIntegration:
+        type: string
       preventDeletion:
         default: false
         description: Used to protect specific BEEs from deletion (thelma checks this
@@ -671,6 +691,17 @@ definitions:
         type: string
       valuesName:
         description: When creating, defaults to template name or environment name
+        type: string
+    type: object
+  v2controllers.CreatablePagerdutyIntegration:
+    properties:
+      key:
+        type: string
+      name:
+        type: string
+      pagerdutyID:
+        type: string
+      type:
         type: string
     type: object
   v2controllers.EditableAppVersion:
@@ -709,6 +740,8 @@ definitions:
     type: object
   v2controllers.EditableChartRelease:
     properties:
+      pagerdutyIntegration:
+        type: string
       port:
         description: When creating, will use the chart's default if left empty
         type: integer
@@ -766,6 +799,8 @@ definitions:
       owner:
         description: When creating, will be set to your email
         type: string
+      pagerdutyIntegration:
+        type: string
       preventDeletion:
         default: false
         description: Used to protect specific BEEs from deletion (thelma checks this
@@ -774,6 +809,15 @@ definitions:
       requiresSuitability:
         default: false
         type: boolean
+    type: object
+  v2controllers.EditablePagerdutyIntegration:
+    properties:
+      key:
+        type: string
+      name:
+        type: string
+      type:
+        type: string
     type: object
   v2controllers.Environment:
     properties:
@@ -828,6 +872,10 @@ definitions:
       owner:
         description: When creating, will be set to your email
         type: string
+      pagerdutyIntegration:
+        type: string
+      pagerdutyIntegrationInfo:
+        $ref: '#/definitions/v2controllers.PagerdutyIntegration'
       preventDeletion:
         default: false
         description: Used to protect specific BEEs from deletion (thelma checks this
@@ -851,6 +899,23 @@ definitions:
         type: string
       valuesName:
         description: When creating, defaults to template name or environment name
+        type: string
+    type: object
+  v2controllers.PagerdutyIntegration:
+    properties:
+      createdAt:
+        format: date-time
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      pagerdutyID:
+        type: string
+      type:
+        type: string
+      updatedAt:
+        format: date-time
         type: string
     type: object
 info:
@@ -1089,6 +1154,63 @@ paths:
           schema:
             $ref: '#/definitions/errors.ErrorResponse'
       summary: Edit a AppVersion entry
+      tags:
+      - AppVersions
+    put:
+      consumes:
+      - application/json
+      description: |-
+        Create or edit an AppVersion entry. Attempts to edit and will attempt to create upon an error.
+        If an edit was made or the creation process de-duplicates, this method will return normally with a 200.
+      parameters:
+      - description: 'The AppVersion to upsert''s selector: chart/version or numeric
+          ID'
+        in: path
+        name: selector
+        required: true
+        type: string
+      - description: The AppVersion to upsert
+        in: body
+        name: app-version
+        required: true
+        schema:
+          $ref: '#/definitions/v2controllers.CreatableAppVersion'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v2controllers.AppVersion'
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/v2controllers.AppVersion'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Create or edit an AppVersion entry
       tags:
       - AppVersions
   /api/v2/changesets:
@@ -1367,6 +1489,9 @@ paths:
         in: query
         name: namespace
         type: string
+      - in: query
+        name: pagerdutyIntegration
+        type: string
       - description: When creating, will use the chart's default if left empty
         in: query
         name: port
@@ -1613,6 +1738,63 @@ paths:
       summary: Edit a ChartRelease entry
       tags:
       - ChartReleases
+    put:
+      consumes:
+      - application/json
+      description: |-
+        Create or edit a ChartRelease entry. Attempts to edit and will attempt to create upon an error.
+        If an edit was made or the creation process de-duplicates, this method will return normally with a 200.
+      parameters:
+      - description: 'The ChartRelease to upsert''s selector: name, numeric ID, environment/chart,
+          or cluster/namespace/chart'
+        in: path
+        name: selector
+        required: true
+        type: string
+      - description: The ChartRelease to upsert
+        in: body
+        name: chart-release
+        required: true
+        schema:
+          $ref: '#/definitions/v2controllers.CreatableChartRelease'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v2controllers.ChartRelease'
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/v2controllers.ChartRelease'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Create or edit a ChartRelease entry
+      tags:
+      - ChartReleases
   /api/v2/chart-versions:
     get:
       description: List existing ChartVersion entries, ordered by most recently updated.
@@ -1830,6 +2012,63 @@ paths:
           schema:
             $ref: '#/definitions/errors.ErrorResponse'
       summary: Edit a ChartVersion entry
+      tags:
+      - ChartVersions
+    put:
+      consumes:
+      - application/json
+      description: |-
+        Create or edit a ChartVersion entry. Attempts to edit and will attempt to create upon an error.
+        If an edit was made or the creation process de-duplicates, this method will return normally with a 200.
+      parameters:
+      - description: 'The ChartVersion to upsert''s selector: chart/version or numeric
+          ID'
+        in: path
+        name: selector
+        required: true
+        type: string
+      - description: The ChartVersion to upsert
+        in: body
+        name: chart-version
+        required: true
+        schema:
+          $ref: '#/definitions/v2controllers.CreatableChartVersion'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v2controllers.ChartVersion'
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/v2controllers.ChartVersion'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Create or edit a ChartVersion entry
       tags:
       - ChartVersions
   /api/v2/charts:
@@ -2111,6 +2350,62 @@ paths:
           schema:
             $ref: '#/definitions/errors.ErrorResponse'
       summary: Edit a Chart entry
+      tags:
+      - Charts
+    put:
+      consumes:
+      - application/json
+      description: |-
+        Create or edit a Chart entry. Attempts to edit and will attempt to create upon an error.
+        If an edit was made or the creation process de-duplicates, this method will return normally with a 200.
+      parameters:
+      - description: 'The Chart to upsert''s selector: name or numeric ID'
+        in: path
+        name: selector
+        required: true
+        type: string
+      - description: The Chart to upsert
+        in: body
+        name: chart-release
+        required: true
+        schema:
+          $ref: '#/definitions/v2controllers.CreatableChart'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v2controllers.Chart'
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/v2controllers.Chart'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Create or edit a Chart entry
       tags:
       - Charts
   /api/v2/clusters:
@@ -2396,6 +2691,62 @@ paths:
       summary: Edit a Cluster entry
       tags:
       - Clusters
+    put:
+      consumes:
+      - application/json
+      description: |-
+        Create or edit a Cluster entry. Attempts to edit and will attempt to create upon an error.
+        If an edit was made or the creation process de-duplicates, this method will return normally with a 200.
+      parameters:
+      - description: 'The Cluster to upsert''s selector: name or numeric ID'
+        in: path
+        name: selector
+        required: true
+        type: string
+      - description: The Cluster to upsert
+        in: body
+        name: cluster
+        required: true
+        schema:
+          $ref: '#/definitions/v2controllers.CreatableCluster'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v2controllers.Cluster'
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/v2controllers.Cluster'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Create or edit a Cluster entry
+      tags:
+      - Clusters
   /api/v2/environments:
     get:
       description: List existing Environment entries, ordered by most recently updated.
@@ -2461,6 +2812,9 @@ paths:
       - description: When creating, will be set to your email
         in: query
         name: owner
+        type: string
+      - in: query
+        name: pagerdutyIntegration
         type: string
       - default: false
         description: Used to protect specific BEEs from deletion (thelma checks this
@@ -2719,6 +3073,374 @@ paths:
       summary: Edit a Environment entry
       tags:
       - Environments
+    put:
+      consumes:
+      - application/json
+      description: |-
+        Create or edit an Environment entry. Attempts to edit and will attempt to create upon an error.
+        If an edit was made or the creation process de-duplicates, this method will return normally with a 200.
+      parameters:
+      - description: 'The Environment to upsert''s selector: name or numeric ID'
+        in: path
+        name: selector
+        required: true
+        type: string
+      - description: The Environment to upsert
+        in: body
+        name: environment
+        required: true
+        schema:
+          $ref: '#/definitions/v2controllers.CreatableEnvironment'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v2controllers.Environment'
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/v2controllers.Environment'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Create or edit an Environment entry
+      tags:
+      - Environments
+  /api/v2/pagerduty-integrations:
+    get:
+      description: List existing PagerdutyIntegration entries, ordered by most recently
+        updated.
+      parameters:
+      - format: date-time
+        in: query
+        name: createdAt
+        type: string
+      - in: query
+        name: id
+        type: integer
+      - in: query
+        name: name
+        type: string
+      - in: query
+        name: pagerdutyID
+        type: string
+      - in: query
+        name: type
+        type: string
+      - format: date-time
+        in: query
+        name: updatedAt
+        type: string
+      - description: An optional limit to the number of entries returned
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/v2controllers.PagerdutyIntegration'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: List PagerdutyIntegration entries
+      tags:
+      - PagerdutyIntegrations
+    post:
+      consumes:
+      - application/json
+      description: Create a new PagerdutyIntegration entry. Note that fields are immutable
+        after creation.
+      parameters:
+      - description: The PagerdutyIntegration to create
+        in: body
+        name: pagerduty-integration
+        required: true
+        schema:
+          $ref: '#/definitions/v2controllers.CreatablePagerdutyIntegration'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v2controllers.PagerdutyIntegration'
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/v2controllers.PagerdutyIntegration'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Create a new PagerdutyIntegration entry
+      tags:
+      - PagerdutyIntegrations
+  /api/v2/pagerduty-integrations/{selector}:
+    delete:
+      description: 'Delete an existing PagerdutyIntegration entry via one of its "selectors":
+        "pd-id/" + Pagerduty ID or numeric Sherlock ID.'
+      parameters:
+      - description: 'The PagerdutyIntegration to delete''s selector: '
+        in: path
+        name: selector
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v2controllers.PagerdutyIntegration'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Delete a PagerdutyIntegration entry
+      tags:
+      - PagerdutyIntegrations
+    get:
+      description: 'Get an existing PagerdutyIntegration entry via one its "selectors":
+        "pd-id/" + Pagerduty ID or numeric Sherlock ID.'
+      parameters:
+      - description: 'The PagerdutyIntegration to get''s selector: chart/version or
+          numeric ID'
+        in: path
+        name: selector
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v2controllers.PagerdutyIntegration'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Get a PagerdutyIntegration entry
+      tags:
+      - PagerdutyIntegrations
+    patch:
+      consumes:
+      - application/json
+      description: 'Edit an existing PagerdutyIntegration entry via one its "selectors":
+        "pd-id/" + Pagerduty ID or numeric Sherlock ID. Note that only mutable fields
+        are available here, immutable fields can only be set using /create.'
+      parameters:
+      - description: 'The PagerdutyIntegration to edit''s selector: chart/version
+          or numeric ID'
+        in: path
+        name: selector
+        required: true
+        type: string
+      - description: The edits to make to the PagerdutyIntegration
+        in: body
+        name: pagerduty-integration
+        required: true
+        schema:
+          $ref: '#/definitions/v2controllers.EditablePagerdutyIntegration'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v2controllers.PagerdutyIntegration'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Edit a PagerdutyIntegration entry
+      tags:
+      - PagerdutyIntegrations
+    put:
+      consumes:
+      - application/json
+      description: |-
+        Create or edit a PagerdutyIntegration entry. Attempts to edit and will attempt to create upon an error.
+        If an edit was made or the creation process de-duplicates, this method will return normally with a 200.
+      parameters:
+      - description: 'The PagerdutyIntegration to upsert''s selector: '
+        in: path
+        name: selector
+        required: true
+        type: string
+      - description: The PagerdutyIntegration to upsert
+        in: body
+        name: pagerduty-integration
+        required: true
+        schema:
+          $ref: '#/definitions/v2controllers.CreatablePagerdutyIntegration'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v2controllers.PagerdutyIntegration'
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/v2controllers.PagerdutyIntegration'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Create or edit a PagerdutyIntegration entry
+      tags:
+      - PagerdutyIntegrations
   /api/v2/procedures/changesets/apply:
     post:
       consumes:
@@ -2935,6 +3657,161 @@ paths:
       summary: List applied Changesets for a Chart Release
       tags:
       - Changesets
+  /api/v2/procedures/chart-releases/trigger-incident/{selector}:
+    post:
+      consumes:
+      - application/json
+      description: Trigger an alert for the Pagerduty integration configured for a
+        given ChartRelease.
+      parameters:
+      - description: The ChartRelease's selector
+        in: path
+        name: selector
+        required: true
+        type: string
+      - description: Summary of the incident
+        in: body
+        name: summary
+        required: true
+        schema:
+          $ref: '#/definitions/pagerduty.AlertSummary'
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+          schema:
+            $ref: '#/definitions/pagerduty.SendAlertResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Trigger a Pagerduty incident for a given ChartRelease
+      tags:
+      - ChartReleases
+  /api/v2/procedures/environments/trigger-incident/{selector}:
+    post:
+      consumes:
+      - application/json
+      description: Trigger an alert for the Pagerduty integration configured for a
+        given Environment.
+      parameters:
+      - description: The Environment's selector
+        in: path
+        name: selector
+        required: true
+        type: string
+      - description: Summary of the incident
+        in: body
+        name: summary
+        required: true
+        schema:
+          $ref: '#/definitions/pagerduty.AlertSummary'
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+          schema:
+            $ref: '#/definitions/pagerduty.SendAlertResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Trigger a Pagerduty incident for a given Environment
+      tags:
+      - Environments
+  /api/v2/procedures/pagerduty-integrations/trigger-incident/{selector}:
+    post:
+      consumes:
+      - application/json
+      description: Trigger an alert via a PagerdutyIntegration itself.
+      parameters:
+      - description: The PagerdutyIntegration's selector
+        in: path
+        name: selector
+        required: true
+        type: string
+      - description: Summary of the incident
+        in: body
+        name: summary
+        required: true
+        schema:
+          $ref: '#/definitions/pagerduty.AlertSummary'
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+          schema:
+            $ref: '#/definitions/pagerduty.SendAlertResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Trigger a Pagerduty incident for a given PagerdutyIntegration
+      tags:
+      - PagerdutyIntegrations
   /api/v2/selectors/app-versions/{selector}:
     get:
       description: Validate a given AppVersion selector and provide any other selectors
@@ -3257,6 +4134,53 @@ paths:
       summary: List Environment selectors
       tags:
       - Environments
+  /api/v2/selectors/pagerduty-integrations/{selector}:
+    get:
+      description: Validate a given PagerdutyIntegration selector and provide any
+        other selectors that would match the same PagerdutyIntegration.
+      parameters:
+      - description: The selector of the PagerdutyIntegration to list other selectors
+          for
+        in: path
+        name: selector
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: string
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: List PagerdutyIntegration selectors
+      tags:
+      - PagerdutyIntegrations
   /my-user:
     get:
       description: Get Sherlock's understanding of the calling user based on IAP and

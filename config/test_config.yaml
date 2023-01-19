@@ -22,3 +22,6 @@ auth:
       suitable: true
     - email: has-extra-permissions-non-suitable@example.com
       suitable: false
+
+pagerduty:
+  enable: false

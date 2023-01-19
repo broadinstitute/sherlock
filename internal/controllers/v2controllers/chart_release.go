@@ -2,6 +2,7 @@ package v2controllers
 
 import (
 	"fmt"
+	"github.com/broadinstitute/sherlock/internal/config"
 	"strconv"
 
 	"github.com/broadinstitute/sherlock/internal/auth"
@@ -11,14 +12,15 @@ import (
 
 type ChartRelease struct {
 	ReadableBaseType
-	ChartInfo             *Chart        `json:"chartInfo,omitempty" form:"-"`
-	ClusterInfo           *Cluster      `json:"clusterInfo,omitempty" form:"-"`
-	EnvironmentInfo       *Environment  `json:"environmentInfo,omitempty" form:"-"`
-	AppVersionReference   string        `json:"appVersionReference,omitempty" form:"appVersionReference"`
-	AppVersionInfo        *AppVersion   `json:"appVersionInfo,omitempty" form:"-"`
-	ChartVersionReference string        `json:"chartVersionReference,omitempty" form:"chartVersionReference"`
-	ChartVersionInfo      *ChartVersion `json:"chartVersionInfo,omitempty" form:"-"`
-	DestinationType       string        `json:"destinationType" form:"destinationType" enum:"environment,cluster"` // Calculated field
+	ChartInfo                *Chart                `json:"chartInfo,omitempty" form:"-"`
+	ClusterInfo              *Cluster              `json:"clusterInfo,omitempty" form:"-"`
+	EnvironmentInfo          *Environment          `json:"environmentInfo,omitempty" form:"-"`
+	AppVersionReference      string                `json:"appVersionReference,omitempty" form:"appVersionReference"`
+	AppVersionInfo           *AppVersion           `json:"appVersionInfo,omitempty" form:"-"`
+	ChartVersionReference    string                `json:"chartVersionReference,omitempty" form:"chartVersionReference"`
+	ChartVersionInfo         *ChartVersion         `json:"chartVersionInfo,omitempty" form:"-"`
+	PagerdutyIntegrationInfo *PagerdutyIntegration `json:"pagerdutyIntegrationInfo,omitempty" form:"-"`
+	DestinationType          string                `json:"destinationType" form:"destinationType" enum:"environment,cluster"` // Calculated field
 	CreatableChartRelease
 }
 
@@ -43,9 +45,10 @@ type CreatableChartRelease struct {
 }
 
 type EditableChartRelease struct {
-	Subdomain *string `json:"subdomain,omitempty" form:"subdomain"` // When creating, will use the chart's default if left empty
-	Protocol  *string `json:"protocol,omitempty" form:"protocol"`   // When creating, will use the chart's default if left empty
-	Port      *uint   `json:"port,omitempty" form:"port"`           // When creating, will use the chart's default if left empty
+	Subdomain            *string `json:"subdomain,omitempty" form:"subdomain"` // When creating, will use the chart's default if left empty
+	Protocol             *string `json:"protocol,omitempty" form:"protocol"`   // When creating, will use the chart's default if left empty
+	Port                 *uint   `json:"port,omitempty" form:"port"`           // When creating, will use the chart's default if left empty
+	PagerdutyIntegration *string `json:"pagerdutyIntegration,omitempty" form:"pagerdutyIntegration"`
 }
 
 //nolint:unused
@@ -106,6 +109,14 @@ func (c ChartRelease) toModel(storeSet *v2models.StoreSet) (v2models.ChartReleas
 		}
 		chartVersionFollowChartReleaseID = &followChartRelease.ID
 	}
+	var pagerdutyIntegrationID *uint
+	if c.PagerdutyIntegration != nil {
+		pagerdutyIntegration, err := storeSet.PagerdutyIntegration.Get(*c.PagerdutyIntegration)
+		if err != nil {
+			return v2models.ChartRelease{}, err
+		}
+		pagerdutyIntegrationID = &pagerdutyIntegration.ID
+	}
 	return v2models.ChartRelease{
 		Model: gorm.Model{
 			ID:        c.ID,
@@ -132,9 +143,10 @@ func (c ChartRelease) toModel(storeSet *v2models.StoreSet) (v2models.ChartReleas
 			HelmfileRef:                      c.HelmfileRef,
 			FirecloudDevelopRef:              c.FirecloudDevelopRef,
 		},
-		Subdomain: c.Subdomain,
-		Protocol:  c.Protocol,
-		Port:      c.Port,
+		Subdomain:              c.Subdomain,
+		Protocol:               c.Protocol,
+		Port:                   c.Port,
+		PagerdutyIntegrationID: pagerdutyIntegrationID,
 	}, nil
 }
 
@@ -152,10 +164,12 @@ type ChartReleaseController = ModelController[v2models.ChartRelease, ChartReleas
 
 func newChartReleaseController(stores *v2models.StoreSet) *ChartReleaseController {
 	return &ChartReleaseController{
-		primaryStore:       stores.ChartReleaseStore,
-		allStores:          stores,
-		modelToReadable:    modelChartReleaseToChartRelease,
-		setDynamicDefaults: setChartReleaseDynamicDefaults,
+		primaryStore:                   stores.ChartReleaseStore,
+		allStores:                      stores,
+		modelToReadable:                modelChartReleaseToChartRelease,
+		setDynamicDefaults:             setChartReleaseDynamicDefaults,
+		extractPagerdutyIntegrationKey: extractPagerdutyIntegrationKeyFromChartRelease,
+		beehiveUrlFormatString:         config.Config.MustString("beehive.chartReleaseUrlFormatString"),
 	}
 }
 
@@ -212,20 +226,27 @@ func modelChartReleaseToChartRelease(model *v2models.ChartRelease) *ChartRelease
 		chartVersionFollowChartRelease = strconv.FormatUint(uint64(*model.ChartVersionFollowChartReleaseID), 10)
 	}
 
+	var pagerdutyIntegrationID string
+	pagerdutyIntegration := modelPagerdutyIntegrationToPagerdutyIntegration(model.PagerdutyIntegration)
+	if pagerdutyIntegration != nil {
+		pagerdutyIntegrationID = strconv.FormatUint(uint64(pagerdutyIntegration.ID), 10)
+	}
+
 	return &ChartRelease{
 		ReadableBaseType: ReadableBaseType{
 			ID:        model.ID,
 			CreatedAt: model.CreatedAt,
 			UpdatedAt: model.UpdatedAt,
 		},
-		ChartInfo:             chart,
-		ClusterInfo:           cluster,
-		EnvironmentInfo:       environment,
-		AppVersionReference:   appVersionReference,
-		AppVersionInfo:        appVersion,
-		ChartVersionReference: chartVersionReference,
-		ChartVersionInfo:      chartVersion,
-		DestinationType:       model.DestinationType,
+		ChartInfo:                chart,
+		ClusterInfo:              cluster,
+		EnvironmentInfo:          environment,
+		AppVersionReference:      appVersionReference,
+		AppVersionInfo:           appVersion,
+		ChartVersionReference:    chartVersionReference,
+		ChartVersionInfo:         chartVersion,
+		PagerdutyIntegrationInfo: pagerdutyIntegration,
+		DestinationType:          model.DestinationType,
 		CreatableChartRelease: CreatableChartRelease{
 			Chart:                          chartName,
 			Cluster:                        clusterName,
@@ -243,9 +264,10 @@ func modelChartReleaseToChartRelease(model *v2models.ChartRelease) *ChartRelease
 			HelmfileRef:                    model.HelmfileRef,
 			FirecloudDevelopRef:            model.FirecloudDevelopRef,
 			EditableChartRelease: EditableChartRelease{
-				Subdomain: model.Subdomain,
-				Protocol:  model.Protocol,
-				Port:      model.Port,
+				Subdomain:            model.Subdomain,
+				Protocol:             model.Protocol,
+				Port:                 model.Port,
+				PagerdutyIntegration: &pagerdutyIntegrationID,
 			},
 		},
 	}
@@ -330,6 +352,13 @@ func setChartReleaseDynamicDefaults(chartRelease *CreatableChartRelease, stores 
 				chartRelease.Name = fmt.Sprintf("%s-%s-%s", chart.Name, chartRelease.Namespace, cluster.Name)
 			}
 		}
+	}
+	return nil
+}
+
+func extractPagerdutyIntegrationKeyFromChartRelease(model *v2models.ChartRelease) *string {
+	if model != nil && model.PagerdutyIntegration != nil {
+		return model.PagerdutyIntegration.Key
 	}
 	return nil
 }
