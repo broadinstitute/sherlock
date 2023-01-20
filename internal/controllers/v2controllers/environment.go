@@ -69,7 +69,7 @@ func (e Environment) toModel(storeSet *v2models.StoreSet) (v2models.Environment,
 		defaultClusterID = &defaultCluster.ID
 	}
 	var pagerdutyIntegrationID *uint
-	if e.PagerdutyIntegration != nil {
+	if e.PagerdutyIntegration != nil && *e.PagerdutyIntegration != "" {
 		pagerdutyIntegration, err := storeSet.PagerdutyIntegration.Get(*e.PagerdutyIntegration)
 		if err != nil {
 			return v2models.Environment{}, err
@@ -149,6 +149,8 @@ func modelEnvironmentToEnvironment(model *v2models.Environment) *Environment {
 	pagerdutyIntegration := modelPagerdutyIntegrationToPagerdutyIntegration(model.PagerdutyIntegration)
 	if pagerdutyIntegration != nil {
 		pagerdutyIntegrationID = strconv.FormatUint(uint64(pagerdutyIntegration.ID), 10)
+	} else if model.PagerdutyIntegrationID != nil {
+		pagerdutyIntegrationID = strconv.FormatUint(uint64(*model.PagerdutyIntegrationID), 10)
 	}
 
 	return &Environment{

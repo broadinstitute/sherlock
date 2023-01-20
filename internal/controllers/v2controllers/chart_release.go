@@ -110,7 +110,7 @@ func (c ChartRelease) toModel(storeSet *v2models.StoreSet) (v2models.ChartReleas
 		chartVersionFollowChartReleaseID = &followChartRelease.ID
 	}
 	var pagerdutyIntegrationID *uint
-	if c.PagerdutyIntegration != nil {
+	if c.PagerdutyIntegration != nil && *c.PagerdutyIntegration != "" {
 		pagerdutyIntegration, err := storeSet.PagerdutyIntegration.Get(*c.PagerdutyIntegration)
 		if err != nil {
 			return v2models.ChartRelease{}, err
@@ -230,6 +230,8 @@ func modelChartReleaseToChartRelease(model *v2models.ChartRelease) *ChartRelease
 	pagerdutyIntegration := modelPagerdutyIntegrationToPagerdutyIntegration(model.PagerdutyIntegration)
 	if pagerdutyIntegration != nil {
 		pagerdutyIntegrationID = strconv.FormatUint(uint64(pagerdutyIntegration.ID), 10)
+	} else if model.PagerdutyIntegrationID != nil {
+		pagerdutyIntegrationID = strconv.FormatUint(uint64(*model.PagerdutyIntegrationID), 10)
 	}
 
 	return &ChartRelease{
