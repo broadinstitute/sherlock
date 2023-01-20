@@ -168,33 +168,31 @@ func (s *internalChangesetEventStore) apply(db *gorm.DB, changesets []Changeset,
 
 	// If the update happened successfully, report these changes to any relevant Pagerduty integrations
 	if err == nil {
-		go func(db *gorm.DB, affectedChartReleases map[uint]ChartRelease) {
-			environmentReleases := make(map[uint][]string)
+		environmentReleases := make(map[uint][]string)
 
-			for _, chartRelease := range affectedChartReleases {
-				if chartRelease.EnvironmentID != nil {
-					environmentReleases[*chartRelease.EnvironmentID] = append(environmentReleases[*chartRelease.EnvironmentID], chartRelease.Name)
-				}
-				if chartRelease.PagerdutyIntegration != nil && chartRelease.PagerdutyIntegration.Key != nil {
-					pagerduty.SendChangeSwallowErrors(
-						*chartRelease.PagerdutyIntegration.Key,
-						fmt.Sprintf("Version changes to %s via Sherlock/Beehive", chartRelease.Name),
-						fmt.Sprintf(config.Config.MustString("beehive.chartReleaseUrlFormatString"), chartRelease.Name),
-					)
-				}
+		for _, chartRelease := range affectedChartReleases {
+			if chartRelease.EnvironmentID != nil {
+				environmentReleases[*chartRelease.EnvironmentID] = append(environmentReleases[*chartRelease.EnvironmentID], chartRelease.Name)
 			}
+			if chartRelease.PagerdutyIntegration != nil && chartRelease.PagerdutyIntegration.Key != nil {
+				go pagerduty.SendChangeSwallowErrors(
+					*chartRelease.PagerdutyIntegration.Key,
+					fmt.Sprintf("Version changes to %s via Sherlock/Beehive", chartRelease.Name),
+					fmt.Sprintf(config.Config.MustString("beehive.chartReleaseUrlFormatString"), chartRelease.Name),
+				)
+			}
+		}
 
-			for environmentID, chartReleaseNames := range environmentReleases {
-				environment, err := environmentStore.get(db, Environment{Model: gorm.Model{ID: environmentID}})
-				if err == nil && environment.PagerdutyIntegration != nil && environment.PagerdutyIntegration.Key != nil {
-					pagerduty.SendChangeSwallowErrors(
-						*environment.PagerdutyIntegration.Key,
-						fmt.Sprintf("Version changes to %s via Sherlock/Beehive", strings.Join(chartReleaseNames, ", ")),
-						fmt.Sprintf(config.Config.MustString("beehive.environmentUrlFormatString"), environment.Name),
-					)
-				}
+		for environmentID, chartReleaseNames := range environmentReleases {
+			environment, err := environmentStore.get(db, Environment{Model: gorm.Model{ID: environmentID}})
+			if err == nil && environment.PagerdutyIntegration != nil && environment.PagerdutyIntegration.Key != nil {
+				go pagerduty.SendChangeSwallowErrors(
+					*environment.PagerdutyIntegration.Key,
+					fmt.Sprintf("Version changes to %s via Sherlock/Beehive", strings.Join(chartReleaseNames, ", ")),
+					fmt.Sprintf(config.Config.MustString("beehive.environmentUrlFormatString"), environment.Name),
+				)
 			}
-		}(db, affectedChartReleases)
+		}
 	}
 
 	return ret, err
