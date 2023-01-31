@@ -53,7 +53,7 @@ metrics:
     updateIntervalMinutes: 5
 
 pagerduty:
-  enable: false
+  enable: true
 
 beehive:
     chartReleaseUrlFormatString: https://beehive.dsp-devops.broadinstitute.org/r/chart-release/%s

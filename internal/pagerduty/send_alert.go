@@ -19,14 +19,18 @@ type SendAlertResponse struct {
 }
 
 func SendAlert(integrationKey string, summary AlertSummary, sourceLink string) (SendAlertResponse, error) {
+	summaryText := summary.Summary
+	if len(summaryText) > 1024 {
+		summaryText = summaryText[:1024]
+	}
 	if config.Config.Bool("pagerduty.enable") {
 		ctx := context.Background()
-		log.Info().Msgf("PDTY | sending alert '%s' due to pagerduty.enable = true", summary.Summary)
+		log.Info().Msgf("PDTY | sending alert '%s' due to pagerduty.enable = true", summaryText)
 		event := pagerduty.V2Event{
 			RoutingKey: integrationKey,
 			Action:     "trigger",
 			Payload: &pagerduty.V2Payload{
-				Summary:   summary.Summary[:1024],
+				Summary:   summaryText,
 				Source:    sourceLink,
 				Severity:  "critical",
 				Timestamp: time.Now().Format(time.RFC3339),
@@ -54,7 +58,7 @@ func SendAlert(integrationKey string, summary AlertSummary, sourceLink string) (
 			}, nil
 		}
 	} else {
-		log.Info().Msgf("PDTY | not sending alert '%s' due to pagerduty.enable = false", summary.Summary)
+		log.Info().Msgf("PDTY | not sending alert '%s' due to pagerduty.enable = false", summaryText)
 		return SendAlertResponse{}, nil
 	}
 }

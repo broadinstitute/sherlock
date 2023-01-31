@@ -9,13 +9,17 @@ import (
 )
 
 func SendChange(integrationKey string, summary string, sourceLink string) error {
+	summaryText := summary
+	if len(summaryText) > 1024 {
+		summaryText = summaryText[:1024]
+	}
 	if config.Config.Bool("pagerduty.enable") {
 		ctx := context.Background()
-		log.Info().Msgf("PDTY | sending change '%s' due to pagerduty.enable = true", summary)
+		log.Info().Msgf("PDTY | sending change '%s' due to pagerduty.enable = true", summaryText)
 		event := pagerduty.ChangeEvent{
 			RoutingKey: integrationKey,
 			Payload: pagerduty.ChangeEventPayload{
-				Summary:   summary[:1024],
+				Summary:   summaryText,
 				Source:    sourceLink,
 				Timestamp: time.Now().Format(time.RFC3339),
 			},
@@ -32,7 +36,7 @@ func SendChange(integrationKey string, summary string, sourceLink string) error 
 
 		return err
 	} else {
-		log.Info().Msgf("PDTY | not sending change '%s' due to pagerduty.enable = false", summary)
+		log.Info().Msgf("PDTY | not sending change '%s' due to pagerduty.enable = false", summaryText)
 		return nil
 	}
 }
