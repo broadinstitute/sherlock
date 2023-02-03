@@ -48,6 +48,7 @@ type EditableEnvironment struct {
 	AutoDelete                 *environment.AutoDelete `json:"autoDelete" form:"autoDelete"`
 	Description                *string                 `json:"description" form:"description"`
 	PagerdutyIntegration       *string                 `json:"pagerdutyIntegration,omitempty" form:"pagerdutyIntegration"`
+	Offline                    *bool                   `json:"offline" form:"offline" default:"false"` // Applicable for BEEs only, whether Thelma should render the BEE as "offline" zero replicas (this field is a target state, not a status)
 }
 
 //nolint:unused
@@ -102,6 +103,7 @@ func (e Environment) toModel(storeSet *v2models.StoreSet) (v2models.Environment,
 		AutoDelete:                 e.AutoDelete,
 		Description:                e.Description,
 		PagerdutyIntegrationID:     pagerdutyIntegrationID,
+		Offline:                    e.Offline,
 	}, nil
 }
 
@@ -184,6 +186,7 @@ func modelEnvironmentToEnvironment(model *v2models.Environment) *Environment {
 				AutoDelete:                 model.AutoDelete,
 				Description:                model.Description,
 				PagerdutyIntegration:       &pagerdutyIntegrationID,
+				Offline:                    model.Offline,
 			},
 		},
 	}
