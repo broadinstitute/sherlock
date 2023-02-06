@@ -39,6 +39,7 @@ type Environment struct {
 	Description                *string
 	PagerdutyIntegration       *PagerdutyIntegration
 	PagerdutyIntegrationID     *uint
+	Offline                    *bool
 }
 
 func (e Environment) TableName() string {
@@ -191,6 +192,10 @@ func validateEnvironment(environment *Environment) error {
 		if environment.PreventDeletion != nil && *environment.PreventDeletion {
 			return fmt.Errorf("either preventDeletion or autoDelete may be enabled, but not both")
 		}
+	}
+
+	if environment.Offline != nil && *environment.Offline && environment.Lifecycle != "dynamic" {
+		return fmt.Errorf("%s environments can't be set to offline, only dynamic ones can", environment.Lifecycle)
 	}
 
 	return nil
