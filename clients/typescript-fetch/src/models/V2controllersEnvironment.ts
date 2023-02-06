@@ -135,6 +135,12 @@ export interface V2controllersEnvironment {
      */
     namePrefixesDomain?: boolean;
     /**
+     * Applicable for BEEs only, whether Thelma should render the BEE as "offline" zero replicas (this field is a target state, not a status)
+     * @type {boolean}
+     * @memberof V2controllersEnvironment
+     */
+    offline?: boolean;
+    /**
      * When creating, will be set to your email
      * @type {string}
      * @memberof V2controllersEnvironment
@@ -231,6 +237,7 @@ export function V2controllersEnvironmentFromJSONTyped(json: any, ignoreDiscrimin
         'name': !exists(json, 'name') ? undefined : json['name'],
         'namePrefix': !exists(json, 'namePrefix') ? undefined : json['namePrefix'],
         'namePrefixesDomain': !exists(json, 'namePrefixesDomain') ? undefined : json['namePrefixesDomain'],
+        'offline': !exists(json, 'offline') ? undefined : json['offline'],
         'owner': !exists(json, 'owner') ? undefined : json['owner'],
         'pagerdutyIntegration': !exists(json, 'pagerdutyIntegration') ? undefined : json['pagerdutyIntegration'],
         'pagerdutyIntegrationInfo': !exists(json, 'pagerdutyIntegrationInfo') ? undefined : V2controllersPagerdutyIntegrationFromJSON(json['pagerdutyIntegrationInfo']),
@@ -269,6 +276,7 @@ export function V2controllersEnvironmentToJSON(value?: V2controllersEnvironment 
         'name': value.name,
         'namePrefix': value.namePrefix,
         'namePrefixesDomain': value.namePrefixesDomain,
+        'offline': value.offline,
         'owner': value.owner,
         'pagerdutyIntegration': value.pagerdutyIntegration,
         'pagerdutyIntegrationInfo': V2controllersPagerdutyIntegrationToJSON(value.pagerdutyIntegrationInfo),

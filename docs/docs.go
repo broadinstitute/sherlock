@@ -2804,6 +2804,13 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "Applicable for BEEs only, whether Thelma should render the BEE as \"offline\" zero replicas (this field is a target state, not a status)",
+                        "name": "offline",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "description": "When creating, will be set to your email",
                         "name": "owner",
@@ -5825,6 +5832,11 @@ const docTemplate = `{
                     "type": "boolean",
                     "default": true
                 },
+                "offline": {
+                    "description": "Applicable for BEEs only, whether Thelma should render the BEE as \"offline\" zero replicas (this field is a target state, not a status)",
+                    "type": "boolean",
+                    "default": false
+                },
                 "owner": {
                     "description": "When creating, will be set to your email",
                     "type": "string"
@@ -5998,6 +6010,11 @@ const docTemplate = `{
                     "type": "boolean",
                     "default": true
                 },
+                "offline": {
+                    "description": "Applicable for BEEs only, whether Thelma should render the BEE as \"offline\" zero replicas (this field is a target state, not a status)",
+                    "type": "boolean",
+                    "default": false
+                },
                 "owner": {
                     "description": "When creating, will be set to your email",
                     "type": "string"
@@ -6093,6 +6110,11 @@ const docTemplate = `{
                 "namePrefixesDomain": {
                     "type": "boolean",
                     "default": true
+                },
+                "offline": {
+                    "description": "Applicable for BEEs only, whether Thelma should render the BEE as \"offline\" zero replicas (this field is a target state, not a status)",
+                    "type": "boolean",
+                    "default": false
                 },
                 "owner": {
                     "description": "When creating, will be set to your email",

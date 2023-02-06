@@ -670,6 +670,11 @@ definitions:
       namePrefixesDomain:
         default: true
         type: boolean
+      offline:
+        default: false
+        description: Applicable for BEEs only, whether Thelma should render the BEE
+          as "offline" zero replicas (this field is a target state, not a status)
+        type: boolean
       owner:
         description: When creating, will be set to your email
         type: string
@@ -796,6 +801,11 @@ definitions:
       namePrefixesDomain:
         default: true
         type: boolean
+      offline:
+        default: false
+        description: Applicable for BEEs only, whether Thelma should render the BEE
+          as "offline" zero replicas (this field is a target state, not a status)
+        type: boolean
       owner:
         description: When creating, will be set to your email
         type: string
@@ -868,6 +878,11 @@ definitions:
         type: string
       namePrefixesDomain:
         default: true
+        type: boolean
+      offline:
+        default: false
+        description: Applicable for BEEs only, whether Thelma should render the BEE
+          as "offline" zero replicas (this field is a target state, not a status)
         type: boolean
       owner:
         description: When creating, will be set to your email
@@ -2808,6 +2823,12 @@ paths:
       - default: true
         in: query
         name: namePrefixesDomain
+        type: boolean
+      - default: false
+        description: Applicable for BEEs only, whether Thelma should render the BEE
+          as "offline" zero replicas (this field is a target state, not a status)
+        in: query
+        name: offline
         type: boolean
       - description: When creating, will be set to your email
         in: query

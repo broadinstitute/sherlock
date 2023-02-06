@@ -39,6 +39,9 @@ type V2controllersEditableEnvironment struct {
 	// name prefixes domain
 	NamePrefixesDomain *bool `json:"namePrefixesDomain,omitempty"`
 
+	// Applicable for BEEs only, whether Thelma should render the BEE as "offline" zero replicas (this field is a target state, not a status)
+	Offline *bool `json:"offline,omitempty"`
+
 	// When creating, will be set to your email
 	Owner string `json:"owner,omitempty"`
 

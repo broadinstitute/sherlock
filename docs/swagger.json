@@ -2799,6 +2799,13 @@
                         "in": "query"
                     },
                     {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "Applicable for BEEs only, whether Thelma should render the BEE as \"offline\" zero replicas (this field is a target state, not a status)",
+                        "name": "offline",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "description": "When creating, will be set to your email",
                         "name": "owner",
@@ -5820,6 +5827,11 @@
                     "type": "boolean",
                     "default": true
                 },
+                "offline": {
+                    "description": "Applicable for BEEs only, whether Thelma should render the BEE as \"offline\" zero replicas (this field is a target state, not a status)",
+                    "type": "boolean",
+                    "default": false
+                },
                 "owner": {
                     "description": "When creating, will be set to your email",
                     "type": "string"
@@ -5993,6 +6005,11 @@
                     "type": "boolean",
                     "default": true
                 },
+                "offline": {
+                    "description": "Applicable for BEEs only, whether Thelma should render the BEE as \"offline\" zero replicas (this field is a target state, not a status)",
+                    "type": "boolean",
+                    "default": false
+                },
                 "owner": {
                     "description": "When creating, will be set to your email",
                     "type": "string"
@@ -6088,6 +6105,11 @@
                 "namePrefixesDomain": {
                     "type": "boolean",
                     "default": true
+                },
+                "offline": {
+                    "description": "Applicable for BEEs only, whether Thelma should render the BEE as \"offline\" zero replicas (this field is a target state, not a status)",
+                    "type": "boolean",
+                    "default": false
                 },
                 "owner": {
                     "description": "When creating, will be set to your email",

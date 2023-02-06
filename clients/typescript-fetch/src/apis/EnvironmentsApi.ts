@@ -52,6 +52,7 @@ export interface ApiV2EnvironmentsGetRequest {
     name?: string;
     namePrefix?: string;
     namePrefixesDomain?: boolean;
+    offline?: boolean;
     owner?: string;
     pagerdutyIntegration?: string;
     preventDeletion?: boolean;
@@ -160,6 +161,10 @@ export class EnvironmentsApi extends runtime.BaseAPI {
 
         if (requestParameters.namePrefixesDomain !== undefined) {
             queryParameters['namePrefixesDomain'] = requestParameters.namePrefixesDomain;
+        }
+
+        if (requestParameters.offline !== undefined) {
+            queryParameters['offline'] = requestParameters.offline;
         }
 
         if (requestParameters.owner !== undefined) {

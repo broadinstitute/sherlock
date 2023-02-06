@@ -140,6 +140,12 @@ type GetAPIV2EnvironmentsParams struct {
 	// Default: true
 	NamePrefixesDomain *bool
 
+	/* Offline.
+
+	   Applicable for BEEs only, whether Thelma should render the BEE as "offline" zero replicas (this field is a target state, not a status)
+	*/
+	Offline *bool
+
 	/* Owner.
 
 	   When creating, will be set to your email
@@ -211,6 +217,8 @@ func (o *GetAPIV2EnvironmentsParams) SetDefaults() {
 
 		namePrefixesDomainDefault = bool(true)
 
+		offlineDefault = bool(false)
+
 		preventDeletionDefault = bool(false)
 
 		requiresSuitabilityDefault = bool(false)
@@ -223,6 +231,7 @@ func (o *GetAPIV2EnvironmentsParams) SetDefaults() {
 		HelmfileRef:                &helmfileRefDefault,
 		Lifecycle:                  &lifecycleDefault,
 		NamePrefixesDomain:         &namePrefixesDomainDefault,
+		Offline:                    &offlineDefault,
 		PreventDeletion:            &preventDeletionDefault,
 		RequiresSuitability:        &requiresSuitabilityDefault,
 	}
@@ -429,6 +438,17 @@ func (o *GetAPIV2EnvironmentsParams) WithNamePrefixesDomain(namePrefixesDomain *
 // SetNamePrefixesDomain adds the namePrefixesDomain to the get API v2 environments params
 func (o *GetAPIV2EnvironmentsParams) SetNamePrefixesDomain(namePrefixesDomain *bool) {
 	o.NamePrefixesDomain = namePrefixesDomain
+}
+
+// WithOffline adds the offline to the get API v2 environments params
+func (o *GetAPIV2EnvironmentsParams) WithOffline(offline *bool) *GetAPIV2EnvironmentsParams {
+	o.SetOffline(offline)
+	return o
+}
+
+// SetOffline adds the offline to the get API v2 environments params
+func (o *GetAPIV2EnvironmentsParams) SetOffline(offline *bool) {
+	o.Offline = offline
 }
 
 // WithOwner adds the owner to the get API v2 environments params
@@ -777,6 +797,23 @@ func (o *GetAPIV2EnvironmentsParams) WriteToRequest(r runtime.ClientRequest, reg
 		if qNamePrefixesDomain != "" {
 
 			if err := r.SetQueryParam("namePrefixesDomain", qNamePrefixesDomain); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.Offline != nil {
+
+		// query param offline
+		var qrOffline bool
+
+		if o.Offline != nil {
+			qrOffline = *o.Offline
+		}
+		qOffline := swag.FormatBool(qrOffline)
+		if qOffline != "" {
+
+			if err := r.SetQueryParam("offline", qOffline); err != nil {
 				return err
 			}
 		}

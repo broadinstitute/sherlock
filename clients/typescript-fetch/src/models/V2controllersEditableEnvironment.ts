@@ -69,6 +69,12 @@ export interface V2controllersEditableEnvironment {
      */
     namePrefixesDomain?: boolean;
     /**
+     * Applicable for BEEs only, whether Thelma should render the BEE as "offline" zero replicas (this field is a target state, not a status)
+     * @type {boolean}
+     * @memberof V2controllersEditableEnvironment
+     */
+    offline?: boolean;
+    /**
      * When creating, will be set to your email
      * @type {string}
      * @memberof V2controllersEditableEnvironment
@@ -120,6 +126,7 @@ export function V2controllersEditableEnvironmentFromJSONTyped(json: any, ignoreD
         'description': !exists(json, 'description') ? undefined : json['description'],
         'helmfileRef': !exists(json, 'helmfileRef') ? undefined : json['helmfileRef'],
         'namePrefixesDomain': !exists(json, 'namePrefixesDomain') ? undefined : json['namePrefixesDomain'],
+        'offline': !exists(json, 'offline') ? undefined : json['offline'],
         'owner': !exists(json, 'owner') ? undefined : json['owner'],
         'pagerdutyIntegration': !exists(json, 'pagerdutyIntegration') ? undefined : json['pagerdutyIntegration'],
         'preventDeletion': !exists(json, 'preventDeletion') ? undefined : json['preventDeletion'],
@@ -143,6 +150,7 @@ export function V2controllersEditableEnvironmentToJSON(value?: V2controllersEdit
         'description': value.description,
         'helmfileRef': value.helmfileRef,
         'namePrefixesDomain': value.namePrefixesDomain,
+        'offline': value.offline,
         'owner': value.owner,
         'pagerdutyIntegration': value.pagerdutyIntegration,
         'preventDeletion': value.preventDeletion,
