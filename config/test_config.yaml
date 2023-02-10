@@ -25,3 +25,9 @@ auth:
 
 pagerduty:
   enable: false
+
+model:
+  environments:
+    templates:
+      autoPopulateCharts:
+        - name: honeycomb

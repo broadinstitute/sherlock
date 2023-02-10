@@ -2,6 +2,8 @@ package v2models
 
 import (
 	"fmt"
+	"github.com/broadinstitute/sherlock/internal/config"
+	"github.com/rs/zerolog/log"
 	"math/bits"
 	"strconv"
 	"strings"
@@ -22,7 +24,7 @@ type Environment struct {
 	TemplateEnvironment       *Environment
 	TemplateEnvironmentID     *uint
 	ValuesName                string
-	ChartReleasesFromTemplate *bool
+	AutoPopulateChartReleases *bool
 	UniqueResourcePrefix      string `gorm:"not null; default:null"`
 	DefaultNamespace          string
 	// Mutable
@@ -316,31 +318,67 @@ func generateUniqueResourcePrefix(sb *strings.Builder, number uint64) {
 }
 
 func postCreateEnvironment(db *gorm.DB, environment *Environment, user *auth.User) error {
-	if environment.Lifecycle == "dynamic" &&
-		environment.ChartReleasesFromTemplate != nil &&
-		*environment.ChartReleasesFromTemplate &&
-		environment.TemplateEnvironmentID != nil {
-		// This is a dynamic environment that is getting created right now, let's copy the chart releases from the template too
-		chartReleases, err := chartReleaseStore.listAllMatchingByUpdated(db, 0, ChartRelease{EnvironmentID: environment.TemplateEnvironmentID})
-		if err != nil {
-			return fmt.Errorf("wasn't able to list chart releases of template %s: %v", environment.TemplateEnvironment.Name, err)
-		}
-		for _, chartRelease := range chartReleases {
-			_, _, err := chartReleaseStore.create(db,
-				ChartRelease{
-					ChartID:             chartRelease.ChartID,
-					ClusterID:           environment.DefaultClusterID,
-					DestinationType:     "environment",
-					EnvironmentID:       &environment.ID,
-					Name:                fmt.Sprintf("%s-%s", chartRelease.Chart.Name, environment.Name),
-					Namespace:           environment.DefaultNamespace,
-					ChartReleaseVersion: chartRelease.ChartReleaseVersion,
-					Subdomain:           chartRelease.Subdomain,
-					Protocol:            chartRelease.Protocol,
-					Port:                chartRelease.Port,
-				}, user)
+	if environment.AutoPopulateChartReleases != nil && *environment.AutoPopulateChartReleases {
+		if environment.Lifecycle == "dynamic" && environment.TemplateEnvironmentID != nil {
+			// This is a dynamic environment that is getting created right now, let's copy the chart releases from the template too
+			chartReleases, err := chartReleaseStore.listAllMatchingByUpdated(db, 0, ChartRelease{EnvironmentID: environment.TemplateEnvironmentID})
 			if err != nil {
-				return fmt.Errorf("wasn't able to copy template's release of the %s chart: %v", chartRelease.Chart.Name, err)
+				return fmt.Errorf("wasn't able to list chart releases of template %s (disable autoPopulateChartReleases to skip): %v", environment.TemplateEnvironment.Name, err)
+			}
+			for _, chartRelease := range chartReleases {
+				_, _, err := chartReleaseStore.create(db,
+					ChartRelease{
+						ChartID:             chartRelease.ChartID,
+						ClusterID:           environment.DefaultClusterID,
+						DestinationType:     "environment",
+						EnvironmentID:       &environment.ID,
+						Name:                fmt.Sprintf("%s-%s", chartRelease.Chart.Name, environment.Name),
+						Namespace:           environment.DefaultNamespace,
+						ChartReleaseVersion: chartRelease.ChartReleaseVersion,
+						Subdomain:           chartRelease.Subdomain,
+						Protocol:            chartRelease.Protocol,
+						Port:                chartRelease.Port,
+					}, user)
+				if err != nil {
+					return fmt.Errorf("wasn't able to copy template's release of the %s chart (disable autoPopulateChartReleases to skip): %v", chartRelease.Chart.Name, err)
+				}
+			}
+		} else if environment.Lifecycle == "template" {
+			autoPopulateCharts := config.Config.Slices("model.environments.templates.autoPopulateCharts")
+			if autoPopulateCharts != nil {
+				noneString := "none"
+				latestString := "latest"
+				headString := "HEAD"
+				for index, chartEntry := range autoPopulateCharts {
+					if chartEntry.String("name") != "" {
+						chart, err := chartStore.get(db, Chart{Name: chartEntry.String("name")})
+						if err != nil {
+							return fmt.Errorf("wasn't able to get the honeycomb chart (disable autoPopulateChartReleases to skip): %v", err)
+						}
+						_, _, err = chartReleaseStore.create(db,
+							ChartRelease{
+								ChartID:         chart.ID,
+								ClusterID:       environment.DefaultClusterID,
+								DestinationType: "environment",
+								EnvironmentID:   &environment.ID,
+								Name:            fmt.Sprintf("%s-%s", chart.Name, environment.Name),
+								Namespace:       environment.DefaultNamespace,
+								ChartReleaseVersion: ChartReleaseVersion{
+									AppVersionResolver:   &noneString,
+									ChartVersionResolver: &latestString,
+									HelmfileRef:          &headString,
+								},
+								Subdomain: chart.DefaultSubdomain,
+								Protocol:  chart.DefaultProtocol,
+								Port:      chart.DefaultPort,
+							}, user)
+						if err != nil {
+							return fmt.Errorf("wasn't able to insert model.environments.templates.autoPopulateCharts entry %d, '%s' (disable autoPopulateChartReleases to skip): %v", index, chart.Name, err)
+						}
+					} else {
+						log.Debug().Msgf("couldn't parse model.environments.templates.autoPopulateCharts entry %d", index)
+					}
+				}
 			}
 		}
 	}
