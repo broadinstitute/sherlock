@@ -252,6 +252,17 @@ func Test_validateEnvironment(t *testing.T) {
 			wantErr: true,
 		},
 		{
+			name: "invalid name",
+			args: args{environment: &Environment{
+				Name:                       "CAPITAL-LETTERS-ARE-BAD",
+				Lifecycle:                  "template",
+				UniqueResourcePrefix:       "a1b2",
+				HelmfileRef:                testutils.PointerTo("HEAD"),
+				DefaultFirecloudDevelopRef: testutils.PointerTo("dev"),
+			}},
+			wantErr: true,
+		},
+		{
 			name: "no helmfileRef",
 			args: args{environment: &Environment{
 				Lifecycle:                  "template",

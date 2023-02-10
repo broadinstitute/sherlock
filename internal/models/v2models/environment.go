@@ -3,6 +3,7 @@ package v2models
 import (
 	"fmt"
 	"math/bits"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -129,12 +130,18 @@ func environmentRequiresSuitability(_ *gorm.DB, environment *Environment) bool {
 	return environment.RequiresSuitability == nil || *environment.RequiresSuitability
 }
 
+const environmentNameRegexString = "[a-z0-9]([-a-z0-9]*[a-z0-9])?"
+
 func validateEnvironment(environment *Environment) error {
 	if environment == nil {
 		return fmt.Errorf("the model passed was nil")
 	}
 	if environment.Name == "" {
 		return fmt.Errorf("a %T must have a non-empty name", environment)
+	} else if regex, err := regexp.Compile(environmentNameRegexString); err != nil {
+		return fmt.Errorf("environment-matching regex failed with %v", err)
+	} else if !regex.MatchString(environment.Name) {
+		return fmt.Errorf("environment name %s did not match %s", environment.Name, environmentNameRegexString)
 	}
 	switch environment.Lifecycle {
 	case "template":
