@@ -55,6 +55,13 @@ metrics:
 pagerduty:
   enable: false
 
+model:
+  environments:
+    templates:
+      # Uses appVersionResolver = "none", chartVersionResolver = "latest", and helmfileRef = "HEAD"
+      autoPopulateCharts:
+        - name: honeycomb
+
 beehive:
     chartReleaseUrlFormatString: https://beehive.dsp-devops.broadinstitute.org/r/chart-release/%s
     environmentUrlFormatString: https://beehive.dsp-devops.broadinstitute.org/r/environment/%s

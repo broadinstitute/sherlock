@@ -80,9 +80,10 @@ var (
 		},
 	}
 	swatomationEnvironment = CreatableEnvironment{
-		Name:      "swatomation",
-		Base:      "bee",
-		Lifecycle: "template",
+		Name:                      "swatomation",
+		Base:                      "bee",
+		Lifecycle:                 "template",
+		AutoPopulateChartReleases: testutils.PointerTo(false),
 		EditableEnvironment: EditableEnvironment{
 			DefaultCluster: &terraQaBeesCluster.Name,
 			Owner:          testutils.PointerTo("dsp-devops@broadinstitute.org"),
@@ -93,9 +94,10 @@ var (
 		TemplateEnvironment: swatomationEnvironment.Name,
 	}
 	prodlikeTemplateEnvironment = CreatableEnvironment{
-		Name:      "prodlike",
-		Base:      "bee",
-		Lifecycle: "template",
+		Name:                      "prodlike",
+		Base:                      "bee",
+		Lifecycle:                 "template",
+		AutoPopulateChartReleases: testutils.PointerTo(false),
 		EditableEnvironment: EditableEnvironment{
 			DefaultCluster:             &terraQaBeesCluster.Name,
 			Owner:                      testutils.PointerTo("dsp-devops@broadinstitute.org"),
@@ -355,6 +357,76 @@ func (suite *environmentControllerSuite) TestEnvironmentCreate() {
 			}
 			assert.True(suite.T(), found)
 		}
+	})
+}
+
+func (suite *environmentControllerSuite) TestEnvironmentAutoPopulateChartReleases() {
+	db.Truncate(suite.T(), suite.db)
+	suite.seedClusters(suite.T())
+	suite.seedEnvironments(suite.T())
+	suite.seedCharts(suite.T())
+	suite.seedAppVersions(suite.T())
+	suite.seedChartVersions(suite.T())
+	suite.seedChartReleases(suite.T())
+
+	suite.Run("check that honeycomb is still in the config", func() {
+		autoPopulateCharts := config.Config.Slices("model.environments.templates.autoPopulateCharts")
+		assert.NotNil(suite.T(), autoPopulateCharts)
+		honeycombPresent := false
+		for _, entry := range autoPopulateCharts {
+			if entry.String("name") == "honeycomb" {
+				honeycombPresent = true
+			}
+		}
+		assert.True(suite.T(), honeycombPresent)
+	})
+
+	suite.Run("template includes honeycomb by default", func() {
+		template, created, err := suite.EnvironmentController.Create(CreatableEnvironment{
+			Name:      "some-template",
+			Base:      "bee",
+			Lifecycle: "template",
+			EditableEnvironment: EditableEnvironment{
+				DefaultCluster: &terraQaBeesCluster.Name,
+			},
+		}, auth.GenerateUser(suite.T(), false))
+		assert.NoError(suite.T(), err)
+		assert.True(suite.T(), created)
+		templateChartReleases, err := suite.ChartReleaseController.ListAllMatching(ChartRelease{
+			CreatableChartRelease: CreatableChartRelease{
+				Environment: template.Name,
+			},
+		}, 0)
+		assert.NoError(suite.T(), err)
+		honeycombPresent := false
+		for _, chartRelease := range templateChartReleases {
+			if chartRelease.Chart == "honeycomb" {
+				honeycombPresent = true
+			}
+		}
+		assert.True(suite.T(), honeycombPresent)
+
+		suite.Run("dynamic environments copy template chart releases", func() {
+			bee, created, err := suite.EnvironmentController.Create(CreatableEnvironment{
+				TemplateEnvironment: template.Name,
+			}, auth.GenerateUser(suite.T(), false))
+			assert.NoError(suite.T(), err)
+			assert.True(suite.T(), created)
+			beeChartReleases, err := suite.ChartReleaseController.ListAllMatching(ChartRelease{
+				CreatableChartRelease: CreatableChartRelease{
+					Environment: bee.Name,
+				},
+			}, 0)
+			assert.NoError(suite.T(), err)
+			assert.Equal(suite.T(), len(templateChartReleases), len(beeChartReleases))
+			honeycombPresent := false
+			for _, chartRelease := range beeChartReleases {
+				if chartRelease.Chart == "honeycomb" {
+					honeycombPresent = true
+				}
+			}
+			assert.True(suite.T(), honeycombPresent)
+		})
 	})
 }
 
