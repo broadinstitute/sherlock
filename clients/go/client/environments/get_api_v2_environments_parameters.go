@@ -60,6 +60,14 @@ func NewGetAPIV2EnvironmentsParamsWithHTTPClient(client *http.Client) *GetAPIV2E
 */
 type GetAPIV2EnvironmentsParams struct {
 
+	/* AutoPopulateChartReleases.
+
+	   If true when creating, dynamic environments copy from template and template environments get the honeycomb chart
+
+	   Default: true
+	*/
+	AutoPopulateChartReleases *bool
+
 	/* Base.
 
 	   Required when creating
@@ -73,7 +81,7 @@ type GetAPIV2EnvironmentsParams struct {
 
 	/* ChartReleasesFromTemplate.
 
-	   Upon creation of a dynamic environment, if this is true the template's chart releases will be copied to the new environment
+	   Deprecated, use AutoPopulateChartReleases
 
 	   Default: true
 	*/
@@ -205,6 +213,8 @@ func (o *GetAPIV2EnvironmentsParams) WithDefaults() *GetAPIV2EnvironmentsParams 
 // All values with no default are reset to their zero value.
 func (o *GetAPIV2EnvironmentsParams) SetDefaults() {
 	var (
+		autoPopulateChartReleasesDefault = bool(true)
+
 		baseDomainDefault = string("bee.envs-terra.bio")
 
 		chartReleasesFromTemplateDefault = bool(true)
@@ -225,6 +235,7 @@ func (o *GetAPIV2EnvironmentsParams) SetDefaults() {
 	)
 
 	val := GetAPIV2EnvironmentsParams{
+		AutoPopulateChartReleases:  &autoPopulateChartReleasesDefault,
 		BaseDomain:                 &baseDomainDefault,
 		ChartReleasesFromTemplate:  &chartReleasesFromTemplateDefault,
 		DefaultFirecloudDevelopRef: &defaultFirecloudDevelopRefDefault,
@@ -273,6 +284,17 @@ func (o *GetAPIV2EnvironmentsParams) WithHTTPClient(client *http.Client) *GetAPI
 // SetHTTPClient adds the HTTPClient to the get API v2 environments params
 func (o *GetAPIV2EnvironmentsParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
+}
+
+// WithAutoPopulateChartReleases adds the autoPopulateChartReleases to the get API v2 environments params
+func (o *GetAPIV2EnvironmentsParams) WithAutoPopulateChartReleases(autoPopulateChartReleases *bool) *GetAPIV2EnvironmentsParams {
+	o.SetAutoPopulateChartReleases(autoPopulateChartReleases)
+	return o
+}
+
+// SetAutoPopulateChartReleases adds the autoPopulateChartReleases to the get API v2 environments params
+func (o *GetAPIV2EnvironmentsParams) SetAutoPopulateChartReleases(autoPopulateChartReleases *bool) {
+	o.AutoPopulateChartReleases = autoPopulateChartReleases
 }
 
 // WithBase adds the base to the get API v2 environments params
@@ -546,6 +568,23 @@ func (o *GetAPIV2EnvironmentsParams) WriteToRequest(r runtime.ClientRequest, reg
 		return err
 	}
 	var res []error
+
+	if o.AutoPopulateChartReleases != nil {
+
+		// query param autoPopulateChartReleases
+		var qrAutoPopulateChartReleases bool
+
+		if o.AutoPopulateChartReleases != nil {
+			qrAutoPopulateChartReleases = *o.AutoPopulateChartReleases
+		}
+		qAutoPopulateChartReleases := swag.FormatBool(qrAutoPopulateChartReleases)
+		if qAutoPopulateChartReleases != "" {
+
+			if err := r.SetQueryParam("autoPopulateChartReleases", qAutoPopulateChartReleases); err != nil {
+				return err
+			}
+		}
+	}
 
 	if o.Base != nil {
 

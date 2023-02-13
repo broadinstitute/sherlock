@@ -2721,6 +2721,13 @@ const docTemplate = `{
                 "summary": "List Environment entries",
                 "parameters": [
                     {
+                        "type": "boolean",
+                        "default": true,
+                        "description": "If true when creating, dynamic environments copy from template and template environments get the honeycomb chart",
+                        "name": "autoPopulateChartReleases",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "description": "Required when creating",
                         "name": "base",
@@ -2735,7 +2742,7 @@ const docTemplate = `{
                     {
                         "type": "boolean",
                         "default": true,
-                        "description": "Upon creation of a dynamic environment, if this is true the template's chart releases will be copied to the new environment",
+                        "description": "Deprecated, use AutoPopulateChartReleases",
                         "name": "chartReleasesFromTemplate",
                         "in": "query"
                     },
@@ -5784,6 +5791,11 @@ const docTemplate = `{
                 "autoDelete": {
                     "$ref": "#/definitions/environment.AutoDelete"
                 },
+                "autoPopulateChartReleases": {
+                    "description": "If true when creating, dynamic environments copy from template and template environments get the honeycomb chart",
+                    "type": "boolean",
+                    "default": true
+                },
                 "base": {
                     "description": "Required when creating",
                     "type": "string"
@@ -5793,7 +5805,7 @@ const docTemplate = `{
                     "default": "bee.envs-terra.bio"
                 },
                 "chartReleasesFromTemplate": {
-                    "description": "Upon creation of a dynamic environment, if this is true the template's chart releases will be copied to the new environment",
+                    "description": "Deprecated, use AutoPopulateChartReleases",
                     "type": "boolean",
                     "default": true
                 },
@@ -6053,6 +6065,11 @@ const docTemplate = `{
                 "autoDelete": {
                     "$ref": "#/definitions/environment.AutoDelete"
                 },
+                "autoPopulateChartReleases": {
+                    "description": "If true when creating, dynamic environments copy from template and template environments get the honeycomb chart",
+                    "type": "boolean",
+                    "default": true
+                },
                 "base": {
                     "description": "Required when creating",
                     "type": "string"
@@ -6062,7 +6079,7 @@ const docTemplate = `{
                     "default": "bee.envs-terra.bio"
                 },
                 "chartReleasesFromTemplate": {
-                    "description": "Upon creation of a dynamic environment, if this is true the template's chart releases will be copied to the new environment",
+                    "description": "Deprecated, use AutoPopulateChartReleases",
                     "type": "boolean",
                     "default": true
                 },

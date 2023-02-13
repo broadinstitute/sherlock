@@ -38,6 +38,7 @@ import {
 } from '../models';
 
 export interface ApiV2EnvironmentsGetRequest {
+    autoPopulateChartReleases?: boolean;
     base?: string;
     baseDomain?: string;
     chartReleasesFromTemplate?: boolean;
@@ -106,6 +107,10 @@ export class EnvironmentsApi extends runtime.BaseAPI {
      */
     async apiV2EnvironmentsGetRaw(requestParameters: ApiV2EnvironmentsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<V2controllersEnvironment>>> {
         const queryParameters: any = {};
+
+        if (requestParameters.autoPopulateChartReleases !== undefined) {
+            queryParameters['autoPopulateChartReleases'] = requestParameters.autoPopulateChartReleases;
+        }
 
         if (requestParameters.base !== undefined) {
             queryParameters['base'] = requestParameters.base;

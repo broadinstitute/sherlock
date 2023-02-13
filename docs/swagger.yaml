@@ -631,6 +631,11 @@ definitions:
     properties:
       autoDelete:
         $ref: '#/definitions/environment.AutoDelete'
+      autoPopulateChartReleases:
+        default: true
+        description: If true when creating, dynamic environments copy from template
+          and template environments get the honeycomb chart
+        type: boolean
       base:
         description: Required when creating
         type: string
@@ -639,8 +644,7 @@ definitions:
         type: string
       chartReleasesFromTemplate:
         default: true
-        description: Upon creation of a dynamic environment, if this is true the template's
-          chart releases will be copied to the new environment
+        description: Deprecated, use AutoPopulateChartReleases
         type: boolean
       defaultCluster:
         type: string
@@ -833,6 +837,11 @@ definitions:
     properties:
       autoDelete:
         $ref: '#/definitions/environment.AutoDelete'
+      autoPopulateChartReleases:
+        default: true
+        description: If true when creating, dynamic environments copy from template
+          and template environments get the honeycomb chart
+        type: boolean
       base:
         description: Required when creating
         type: string
@@ -841,8 +850,7 @@ definitions:
         type: string
       chartReleasesFromTemplate:
         default: true
-        description: Upon creation of a dynamic environment, if this is true the template's
-          chart releases will be copied to the new environment
+        description: Deprecated, use AutoPopulateChartReleases
         type: boolean
       createdAt:
         format: date-time
@@ -2766,6 +2774,12 @@ paths:
     get:
       description: List existing Environment entries, ordered by most recently updated.
       parameters:
+      - default: true
+        description: If true when creating, dynamic environments copy from template
+          and template environments get the honeycomb chart
+        in: query
+        name: autoPopulateChartReleases
+        type: boolean
       - description: Required when creating
         in: query
         name: base
@@ -2775,8 +2789,7 @@ paths:
         name: baseDomain
         type: string
       - default: true
-        description: Upon creation of a dynamic environment, if this is true the template's
-          chart releases will be copied to the new environment
+        description: Deprecated, use AutoPopulateChartReleases
         in: query
         name: chartReleasesFromTemplate
         type: boolean

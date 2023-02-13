@@ -33,6 +33,12 @@ export interface V2controllersCreatableEnvironment {
      */
     autoDelete?: EnvironmentAutoDelete;
     /**
+     * If true when creating, dynamic environments copy from template and template environments get the honeycomb chart
+     * @type {boolean}
+     * @memberof V2controllersCreatableEnvironment
+     */
+    autoPopulateChartReleases?: boolean;
+    /**
      * Required when creating
      * @type {string}
      * @memberof V2controllersCreatableEnvironment
@@ -45,7 +51,7 @@ export interface V2controllersCreatableEnvironment {
      */
     baseDomain?: string;
     /**
-     * Upon creation of a dynamic environment, if this is true the template's chart releases will be copied to the new environment
+     * Deprecated, use AutoPopulateChartReleases
      * @type {boolean}
      * @memberof V2controllersCreatableEnvironment
      */
@@ -174,6 +180,7 @@ export function V2controllersCreatableEnvironmentFromJSONTyped(json: any, ignore
     return {
         
         'autoDelete': !exists(json, 'autoDelete') ? undefined : EnvironmentAutoDeleteFromJSON(json['autoDelete']),
+        'autoPopulateChartReleases': !exists(json, 'autoPopulateChartReleases') ? undefined : json['autoPopulateChartReleases'],
         'base': !exists(json, 'base') ? undefined : json['base'],
         'baseDomain': !exists(json, 'baseDomain') ? undefined : json['baseDomain'],
         'chartReleasesFromTemplate': !exists(json, 'chartReleasesFromTemplate') ? undefined : json['chartReleasesFromTemplate'],
@@ -207,6 +214,7 @@ export function V2controllersCreatableEnvironmentToJSON(value?: V2controllersCre
     return {
         
         'autoDelete': EnvironmentAutoDeleteToJSON(value.autoDelete),
+        'autoPopulateChartReleases': value.autoPopulateChartReleases,
         'base': value.base,
         'baseDomain': value.baseDomain,
         'chartReleasesFromTemplate': value.chartReleasesFromTemplate,

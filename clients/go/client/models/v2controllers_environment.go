@@ -22,13 +22,16 @@ type V2controllersEnvironment struct {
 	// auto delete
 	AutoDelete *EnvironmentAutoDelete `json:"autoDelete,omitempty"`
 
+	// If true when creating, dynamic environments copy from template and template environments get the honeycomb chart
+	AutoPopulateChartReleases *bool `json:"autoPopulateChartReleases,omitempty"`
+
 	// Required when creating
 	Base string `json:"base,omitempty"`
 
 	// base domain
 	BaseDomain *string `json:"baseDomain,omitempty"`
 
-	// Upon creation of a dynamic environment, if this is true the template's chart releases will be copied to the new environment
+	// Deprecated, use AutoPopulateChartReleases
 	ChartReleasesFromTemplate *bool `json:"chartReleasesFromTemplate,omitempty"`
 
 	// created at
