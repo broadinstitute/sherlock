@@ -41,7 +41,6 @@ export interface ApiV2EnvironmentsGetRequest {
     autoPopulateChartReleases?: boolean;
     base?: string;
     baseDomain?: string;
-    chartReleasesFromTemplate?: boolean;
     createdAt?: Date;
     defaultCluster?: string;
     defaultFirecloudDevelopRef?: string;
@@ -54,6 +53,10 @@ export interface ApiV2EnvironmentsGetRequest {
     namePrefix?: string;
     namePrefixesDomain?: boolean;
     offline?: boolean;
+    offlineScheduleBegin?: string;
+    offlineScheduleEnabled?: boolean;
+    offlineScheduleEnd?: string;
+    offlineScheduleEndWeekdayOnly?: boolean;
     owner?: string;
     pagerdutyIntegration?: string;
     preventDeletion?: boolean;
@@ -120,10 +123,6 @@ export class EnvironmentsApi extends runtime.BaseAPI {
             queryParameters['baseDomain'] = requestParameters.baseDomain;
         }
 
-        if (requestParameters.chartReleasesFromTemplate !== undefined) {
-            queryParameters['chartReleasesFromTemplate'] = requestParameters.chartReleasesFromTemplate;
-        }
-
         if (requestParameters.createdAt !== undefined) {
             queryParameters['createdAt'] = (requestParameters.createdAt as any).toISOString();
         }
@@ -170,6 +169,22 @@ export class EnvironmentsApi extends runtime.BaseAPI {
 
         if (requestParameters.offline !== undefined) {
             queryParameters['offline'] = requestParameters.offline;
+        }
+
+        if (requestParameters.offlineScheduleBegin !== undefined) {
+            queryParameters['offlineScheduleBegin'] = requestParameters.offlineScheduleBegin;
+        }
+
+        if (requestParameters.offlineScheduleEnabled !== undefined) {
+            queryParameters['offlineScheduleEnabled'] = requestParameters.offlineScheduleEnabled;
+        }
+
+        if (requestParameters.offlineScheduleEnd !== undefined) {
+            queryParameters['offlineScheduleEnd'] = requestParameters.offlineScheduleEnd;
+        }
+
+        if (requestParameters.offlineScheduleEndWeekdayOnly !== undefined) {
+            queryParameters['offlineScheduleEndWeekdayOnly'] = requestParameters.offlineScheduleEndWeekdayOnly;
         }
 
         if (requestParameters.owner !== undefined) {

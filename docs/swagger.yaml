@@ -642,10 +642,6 @@ definitions:
       baseDomain:
         default: bee.envs-terra.bio
         type: string
-      chartReleasesFromTemplate:
-        default: true
-        description: Deprecated, use AutoPopulateChartReleases
-        type: boolean
       defaultCluster:
         type: string
       defaultFirecloudDevelopRef:
@@ -678,6 +674,18 @@ definitions:
         default: false
         description: Applicable for BEEs only, whether Thelma should render the BEE
           as "offline" zero replicas (this field is a target state, not a status)
+        type: boolean
+      offlineScheduleBegin:
+        type: string
+      offlineScheduleEnabled:
+        description: If enabled, the BEE should be offline between the begin and end
+          time's hour+minute+second
+        type: boolean
+      offlineScheduleEnd:
+        type: string
+      offlineScheduleEndWeekdayOnly:
+        description: If enabled, the schedule should not be applied on weekends (so
+          the BEE won't be woken up if it is offline already)
         type: boolean
       owner:
         description: When creating, will be set to your email
@@ -810,6 +818,18 @@ definitions:
         description: Applicable for BEEs only, whether Thelma should render the BEE
           as "offline" zero replicas (this field is a target state, not a status)
         type: boolean
+      offlineScheduleBegin:
+        type: string
+      offlineScheduleEnabled:
+        description: If enabled, the BEE should be offline between the begin and end
+          time's hour+minute+second
+        type: boolean
+      offlineScheduleEnd:
+        type: string
+      offlineScheduleEndWeekdayOnly:
+        description: If enabled, the schedule should not be applied on weekends (so
+          the BEE won't be woken up if it is offline already)
+        type: boolean
       owner:
         description: When creating, will be set to your email
         type: string
@@ -848,10 +868,6 @@ definitions:
       baseDomain:
         default: bee.envs-terra.bio
         type: string
-      chartReleasesFromTemplate:
-        default: true
-        description: Deprecated, use AutoPopulateChartReleases
-        type: boolean
       createdAt:
         format: date-time
         type: string
@@ -891,6 +907,18 @@ definitions:
         default: false
         description: Applicable for BEEs only, whether Thelma should render the BEE
           as "offline" zero replicas (this field is a target state, not a status)
+        type: boolean
+      offlineScheduleBegin:
+        type: string
+      offlineScheduleEnabled:
+        description: If enabled, the BEE should be offline between the begin and end
+          time's hour+minute+second
+        type: boolean
+      offlineScheduleEnd:
+        type: string
+      offlineScheduleEndWeekdayOnly:
+        description: If enabled, the schedule should not be applied on weekends (so
+          the BEE won't be woken up if it is offline already)
         type: boolean
       owner:
         description: When creating, will be set to your email
@@ -2788,11 +2816,6 @@ paths:
         in: query
         name: baseDomain
         type: string
-      - default: true
-        description: Deprecated, use AutoPopulateChartReleases
-        in: query
-        name: chartReleasesFromTemplate
-        type: boolean
       - format: date-time
         in: query
         name: createdAt
@@ -2842,6 +2865,22 @@ paths:
           as "offline" zero replicas (this field is a target state, not a status)
         in: query
         name: offline
+        type: boolean
+      - in: query
+        name: offlineScheduleBegin
+        type: string
+      - description: If enabled, the BEE should be offline between the begin and end
+          time's hour+minute+second
+        in: query
+        name: offlineScheduleEnabled
+        type: boolean
+      - in: query
+        name: offlineScheduleEnd
+        type: string
+      - description: If enabled, the schedule should not be applied on weekends (so
+          the BEE won't be woken up if it is offline already)
+        in: query
+        name: offlineScheduleEndWeekdayOnly
         type: boolean
       - description: When creating, will be set to your email
         in: query

@@ -2740,13 +2740,6 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
-                        "type": "boolean",
-                        "default": true,
-                        "description": "Deprecated, use AutoPopulateChartReleases",
-                        "name": "chartReleasesFromTemplate",
-                        "in": "query"
-                    },
-                    {
                         "type": "string",
                         "format": "date-time",
                         "name": "createdAt",
@@ -2815,6 +2808,28 @@ const docTemplate = `{
                         "default": false,
                         "description": "Applicable for BEEs only, whether Thelma should render the BEE as \"offline\" zero replicas (this field is a target state, not a status)",
                         "name": "offline",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "offlineScheduleBegin",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "If enabled, the BEE should be offline between the begin and end time's hour+minute+second",
+                        "name": "offlineScheduleEnabled",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "offlineScheduleEnd",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "If enabled, the schedule should not be applied on weekends (so the BEE won't be woken up if it is offline already)",
+                        "name": "offlineScheduleEndWeekdayOnly",
                         "in": "query"
                     },
                     {
@@ -5804,11 +5819,6 @@ const docTemplate = `{
                     "type": "string",
                     "default": "bee.envs-terra.bio"
                 },
-                "chartReleasesFromTemplate": {
-                    "description": "Deprecated, use AutoPopulateChartReleases",
-                    "type": "boolean",
-                    "default": true
-                },
                 "defaultCluster": {
                     "type": "string"
                 },
@@ -5848,6 +5858,20 @@ const docTemplate = `{
                     "description": "Applicable for BEEs only, whether Thelma should render the BEE as \"offline\" zero replicas (this field is a target state, not a status)",
                     "type": "boolean",
                     "default": false
+                },
+                "offlineScheduleBegin": {
+                    "type": "string"
+                },
+                "offlineScheduleEnabled": {
+                    "description": "If enabled, the BEE should be offline between the begin and end time's hour+minute+second",
+                    "type": "boolean"
+                },
+                "offlineScheduleEnd": {
+                    "type": "string"
+                },
+                "offlineScheduleEndWeekdayOnly": {
+                    "description": "If enabled, the schedule should not be applied on weekends (so the BEE won't be woken up if it is offline already)",
+                    "type": "boolean"
                 },
                 "owner": {
                     "description": "When creating, will be set to your email",
@@ -6027,6 +6051,20 @@ const docTemplate = `{
                     "type": "boolean",
                     "default": false
                 },
+                "offlineScheduleBegin": {
+                    "type": "string"
+                },
+                "offlineScheduleEnabled": {
+                    "description": "If enabled, the BEE should be offline between the begin and end time's hour+minute+second",
+                    "type": "boolean"
+                },
+                "offlineScheduleEnd": {
+                    "type": "string"
+                },
+                "offlineScheduleEndWeekdayOnly": {
+                    "description": "If enabled, the schedule should not be applied on weekends (so the BEE won't be woken up if it is offline already)",
+                    "type": "boolean"
+                },
                 "owner": {
                     "description": "When creating, will be set to your email",
                     "type": "string"
@@ -6078,11 +6116,6 @@ const docTemplate = `{
                     "type": "string",
                     "default": "bee.envs-terra.bio"
                 },
-                "chartReleasesFromTemplate": {
-                    "description": "Deprecated, use AutoPopulateChartReleases",
-                    "type": "boolean",
-                    "default": true
-                },
                 "createdAt": {
                     "type": "string",
                     "format": "date-time"
@@ -6132,6 +6165,20 @@ const docTemplate = `{
                     "description": "Applicable for BEEs only, whether Thelma should render the BEE as \"offline\" zero replicas (this field is a target state, not a status)",
                     "type": "boolean",
                     "default": false
+                },
+                "offlineScheduleBegin": {
+                    "type": "string"
+                },
+                "offlineScheduleEnabled": {
+                    "description": "If enabled, the BEE should be offline between the begin and end time's hour+minute+second",
+                    "type": "boolean"
+                },
+                "offlineScheduleEnd": {
+                    "type": "string"
+                },
+                "offlineScheduleEndWeekdayOnly": {
+                    "description": "If enabled, the schedule should not be applied on weekends (so the BEE won't be woken up if it is offline already)",
+                    "type": "boolean"
                 },
                 "owner": {
                     "description": "When creating, will be set to your email",

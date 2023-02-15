@@ -79,14 +79,6 @@ type GetAPIV2EnvironmentsParams struct {
 	// Default: "bee.envs-terra.bio"
 	BaseDomain *string
 
-	/* ChartReleasesFromTemplate.
-
-	   Deprecated, use AutoPopulateChartReleases
-
-	   Default: true
-	*/
-	ChartReleasesFromTemplate *bool
-
 	// CreatedAt.
 	//
 	// Format: date-time
@@ -154,6 +146,24 @@ type GetAPIV2EnvironmentsParams struct {
 	*/
 	Offline *bool
 
+	// OfflineScheduleBegin.
+	OfflineScheduleBegin *string
+
+	/* OfflineScheduleEnabled.
+
+	   If enabled, the BEE should be offline between the begin and end time's hour+minute+second
+	*/
+	OfflineScheduleEnabled *bool
+
+	// OfflineScheduleEnd.
+	OfflineScheduleEnd *string
+
+	/* OfflineScheduleEndWeekdayOnly.
+
+	   If enabled, the schedule should not be applied on weekends (so the BEE won't be woken up if it is offline already)
+	*/
+	OfflineScheduleEndWeekdayOnly *bool
+
 	/* Owner.
 
 	   When creating, will be set to your email
@@ -217,8 +227,6 @@ func (o *GetAPIV2EnvironmentsParams) SetDefaults() {
 
 		baseDomainDefault = string("bee.envs-terra.bio")
 
-		chartReleasesFromTemplateDefault = bool(true)
-
 		defaultFirecloudDevelopRefDefault = string("dev")
 
 		helmfileRefDefault = string("HEAD")
@@ -237,7 +245,6 @@ func (o *GetAPIV2EnvironmentsParams) SetDefaults() {
 	val := GetAPIV2EnvironmentsParams{
 		AutoPopulateChartReleases:  &autoPopulateChartReleasesDefault,
 		BaseDomain:                 &baseDomainDefault,
-		ChartReleasesFromTemplate:  &chartReleasesFromTemplateDefault,
 		DefaultFirecloudDevelopRef: &defaultFirecloudDevelopRefDefault,
 		HelmfileRef:                &helmfileRefDefault,
 		Lifecycle:                  &lifecycleDefault,
@@ -317,17 +324,6 @@ func (o *GetAPIV2EnvironmentsParams) WithBaseDomain(baseDomain *string) *GetAPIV
 // SetBaseDomain adds the baseDomain to the get API v2 environments params
 func (o *GetAPIV2EnvironmentsParams) SetBaseDomain(baseDomain *string) {
 	o.BaseDomain = baseDomain
-}
-
-// WithChartReleasesFromTemplate adds the chartReleasesFromTemplate to the get API v2 environments params
-func (o *GetAPIV2EnvironmentsParams) WithChartReleasesFromTemplate(chartReleasesFromTemplate *bool) *GetAPIV2EnvironmentsParams {
-	o.SetChartReleasesFromTemplate(chartReleasesFromTemplate)
-	return o
-}
-
-// SetChartReleasesFromTemplate adds the chartReleasesFromTemplate to the get API v2 environments params
-func (o *GetAPIV2EnvironmentsParams) SetChartReleasesFromTemplate(chartReleasesFromTemplate *bool) {
-	o.ChartReleasesFromTemplate = chartReleasesFromTemplate
 }
 
 // WithCreatedAt adds the createdAt to the get API v2 environments params
@@ -473,6 +469,50 @@ func (o *GetAPIV2EnvironmentsParams) SetOffline(offline *bool) {
 	o.Offline = offline
 }
 
+// WithOfflineScheduleBegin adds the offlineScheduleBegin to the get API v2 environments params
+func (o *GetAPIV2EnvironmentsParams) WithOfflineScheduleBegin(offlineScheduleBegin *string) *GetAPIV2EnvironmentsParams {
+	o.SetOfflineScheduleBegin(offlineScheduleBegin)
+	return o
+}
+
+// SetOfflineScheduleBegin adds the offlineScheduleBegin to the get API v2 environments params
+func (o *GetAPIV2EnvironmentsParams) SetOfflineScheduleBegin(offlineScheduleBegin *string) {
+	o.OfflineScheduleBegin = offlineScheduleBegin
+}
+
+// WithOfflineScheduleEnabled adds the offlineScheduleEnabled to the get API v2 environments params
+func (o *GetAPIV2EnvironmentsParams) WithOfflineScheduleEnabled(offlineScheduleEnabled *bool) *GetAPIV2EnvironmentsParams {
+	o.SetOfflineScheduleEnabled(offlineScheduleEnabled)
+	return o
+}
+
+// SetOfflineScheduleEnabled adds the offlineScheduleEnabled to the get API v2 environments params
+func (o *GetAPIV2EnvironmentsParams) SetOfflineScheduleEnabled(offlineScheduleEnabled *bool) {
+	o.OfflineScheduleEnabled = offlineScheduleEnabled
+}
+
+// WithOfflineScheduleEnd adds the offlineScheduleEnd to the get API v2 environments params
+func (o *GetAPIV2EnvironmentsParams) WithOfflineScheduleEnd(offlineScheduleEnd *string) *GetAPIV2EnvironmentsParams {
+	o.SetOfflineScheduleEnd(offlineScheduleEnd)
+	return o
+}
+
+// SetOfflineScheduleEnd adds the offlineScheduleEnd to the get API v2 environments params
+func (o *GetAPIV2EnvironmentsParams) SetOfflineScheduleEnd(offlineScheduleEnd *string) {
+	o.OfflineScheduleEnd = offlineScheduleEnd
+}
+
+// WithOfflineScheduleEndWeekdayOnly adds the offlineScheduleEndWeekdayOnly to the get API v2 environments params
+func (o *GetAPIV2EnvironmentsParams) WithOfflineScheduleEndWeekdayOnly(offlineScheduleEndWeekdayOnly *bool) *GetAPIV2EnvironmentsParams {
+	o.SetOfflineScheduleEndWeekdayOnly(offlineScheduleEndWeekdayOnly)
+	return o
+}
+
+// SetOfflineScheduleEndWeekdayOnly adds the offlineScheduleEndWeekdayOnly to the get API v2 environments params
+func (o *GetAPIV2EnvironmentsParams) SetOfflineScheduleEndWeekdayOnly(offlineScheduleEndWeekdayOnly *bool) {
+	o.OfflineScheduleEndWeekdayOnly = offlineScheduleEndWeekdayOnly
+}
+
 // WithOwner adds the owner to the get API v2 environments params
 func (o *GetAPIV2EnvironmentsParams) WithOwner(owner *string) *GetAPIV2EnvironmentsParams {
 	o.SetOwner(owner)
@@ -615,23 +655,6 @@ func (o *GetAPIV2EnvironmentsParams) WriteToRequest(r runtime.ClientRequest, reg
 		if qBaseDomain != "" {
 
 			if err := r.SetQueryParam("baseDomain", qBaseDomain); err != nil {
-				return err
-			}
-		}
-	}
-
-	if o.ChartReleasesFromTemplate != nil {
-
-		// query param chartReleasesFromTemplate
-		var qrChartReleasesFromTemplate bool
-
-		if o.ChartReleasesFromTemplate != nil {
-			qrChartReleasesFromTemplate = *o.ChartReleasesFromTemplate
-		}
-		qChartReleasesFromTemplate := swag.FormatBool(qrChartReleasesFromTemplate)
-		if qChartReleasesFromTemplate != "" {
-
-			if err := r.SetQueryParam("chartReleasesFromTemplate", qChartReleasesFromTemplate); err != nil {
 				return err
 			}
 		}
@@ -853,6 +876,74 @@ func (o *GetAPIV2EnvironmentsParams) WriteToRequest(r runtime.ClientRequest, reg
 		if qOffline != "" {
 
 			if err := r.SetQueryParam("offline", qOffline); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.OfflineScheduleBegin != nil {
+
+		// query param offlineScheduleBegin
+		var qrOfflineScheduleBegin string
+
+		if o.OfflineScheduleBegin != nil {
+			qrOfflineScheduleBegin = *o.OfflineScheduleBegin
+		}
+		qOfflineScheduleBegin := qrOfflineScheduleBegin
+		if qOfflineScheduleBegin != "" {
+
+			if err := r.SetQueryParam("offlineScheduleBegin", qOfflineScheduleBegin); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.OfflineScheduleEnabled != nil {
+
+		// query param offlineScheduleEnabled
+		var qrOfflineScheduleEnabled bool
+
+		if o.OfflineScheduleEnabled != nil {
+			qrOfflineScheduleEnabled = *o.OfflineScheduleEnabled
+		}
+		qOfflineScheduleEnabled := swag.FormatBool(qrOfflineScheduleEnabled)
+		if qOfflineScheduleEnabled != "" {
+
+			if err := r.SetQueryParam("offlineScheduleEnabled", qOfflineScheduleEnabled); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.OfflineScheduleEnd != nil {
+
+		// query param offlineScheduleEnd
+		var qrOfflineScheduleEnd string
+
+		if o.OfflineScheduleEnd != nil {
+			qrOfflineScheduleEnd = *o.OfflineScheduleEnd
+		}
+		qOfflineScheduleEnd := qrOfflineScheduleEnd
+		if qOfflineScheduleEnd != "" {
+
+			if err := r.SetQueryParam("offlineScheduleEnd", qOfflineScheduleEnd); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.OfflineScheduleEndWeekdayOnly != nil {
+
+		// query param offlineScheduleEndWeekdayOnly
+		var qrOfflineScheduleEndWeekdayOnly bool
+
+		if o.OfflineScheduleEndWeekdayOnly != nil {
+			qrOfflineScheduleEndWeekdayOnly = *o.OfflineScheduleEndWeekdayOnly
+		}
+		qOfflineScheduleEndWeekdayOnly := swag.FormatBool(qrOfflineScheduleEndWeekdayOnly)
+		if qOfflineScheduleEndWeekdayOnly != "" {
+
+			if err := r.SetQueryParam("offlineScheduleEndWeekdayOnly", qOfflineScheduleEndWeekdayOnly); err != nil {
 				return err
 			}
 		}

@@ -63,12 +63,6 @@ export interface V2controllersEnvironment {
      */
     baseDomain?: string;
     /**
-     * Deprecated, use AutoPopulateChartReleases
-     * @type {boolean}
-     * @memberof V2controllersEnvironment
-     */
-    chartReleasesFromTemplate?: boolean;
-    /**
      * 
      * @type {Date}
      * @memberof V2controllersEnvironment
@@ -146,6 +140,30 @@ export interface V2controllersEnvironment {
      * @memberof V2controllersEnvironment
      */
     offline?: boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof V2controllersEnvironment
+     */
+    offlineScheduleBegin?: string;
+    /**
+     * If enabled, the BEE should be offline between the begin and end time's hour+minute+second
+     * @type {boolean}
+     * @memberof V2controllersEnvironment
+     */
+    offlineScheduleEnabled?: boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof V2controllersEnvironment
+     */
+    offlineScheduleEnd?: string;
+    /**
+     * If enabled, the schedule should not be applied on weekends (so the BEE won't be woken up if it is offline already)
+     * @type {boolean}
+     * @memberof V2controllersEnvironment
+     */
+    offlineScheduleEndWeekdayOnly?: boolean;
     /**
      * When creating, will be set to your email
      * @type {string}
@@ -231,7 +249,6 @@ export function V2controllersEnvironmentFromJSONTyped(json: any, ignoreDiscrimin
         'autoPopulateChartReleases': !exists(json, 'autoPopulateChartReleases') ? undefined : json['autoPopulateChartReleases'],
         'base': !exists(json, 'base') ? undefined : json['base'],
         'baseDomain': !exists(json, 'baseDomain') ? undefined : json['baseDomain'],
-        'chartReleasesFromTemplate': !exists(json, 'chartReleasesFromTemplate') ? undefined : json['chartReleasesFromTemplate'],
         'createdAt': !exists(json, 'createdAt') ? undefined : (new Date(json['createdAt'])),
         'defaultCluster': !exists(json, 'defaultCluster') ? undefined : json['defaultCluster'],
         'defaultClusterInfo': !exists(json, 'defaultClusterInfo') ? undefined : V2controllersClusterFromJSON(json['defaultClusterInfo']),
@@ -245,6 +262,10 @@ export function V2controllersEnvironmentFromJSONTyped(json: any, ignoreDiscrimin
         'namePrefix': !exists(json, 'namePrefix') ? undefined : json['namePrefix'],
         'namePrefixesDomain': !exists(json, 'namePrefixesDomain') ? undefined : json['namePrefixesDomain'],
         'offline': !exists(json, 'offline') ? undefined : json['offline'],
+        'offlineScheduleBegin': !exists(json, 'offlineScheduleBegin') ? undefined : json['offlineScheduleBegin'],
+        'offlineScheduleEnabled': !exists(json, 'offlineScheduleEnabled') ? undefined : json['offlineScheduleEnabled'],
+        'offlineScheduleEnd': !exists(json, 'offlineScheduleEnd') ? undefined : json['offlineScheduleEnd'],
+        'offlineScheduleEndWeekdayOnly': !exists(json, 'offlineScheduleEndWeekdayOnly') ? undefined : json['offlineScheduleEndWeekdayOnly'],
         'owner': !exists(json, 'owner') ? undefined : json['owner'],
         'pagerdutyIntegration': !exists(json, 'pagerdutyIntegration') ? undefined : json['pagerdutyIntegration'],
         'pagerdutyIntegrationInfo': !exists(json, 'pagerdutyIntegrationInfo') ? undefined : V2controllersPagerdutyIntegrationFromJSON(json['pagerdutyIntegrationInfo']),
@@ -271,7 +292,6 @@ export function V2controllersEnvironmentToJSON(value?: V2controllersEnvironment 
         'autoPopulateChartReleases': value.autoPopulateChartReleases,
         'base': value.base,
         'baseDomain': value.baseDomain,
-        'chartReleasesFromTemplate': value.chartReleasesFromTemplate,
         'createdAt': value.createdAt === undefined ? undefined : (value.createdAt.toISOString()),
         'defaultCluster': value.defaultCluster,
         'defaultClusterInfo': V2controllersClusterToJSON(value.defaultClusterInfo),
@@ -285,6 +305,10 @@ export function V2controllersEnvironmentToJSON(value?: V2controllersEnvironment 
         'namePrefix': value.namePrefix,
         'namePrefixesDomain': value.namePrefixesDomain,
         'offline': value.offline,
+        'offlineScheduleBegin': value.offlineScheduleBegin,
+        'offlineScheduleEnabled': value.offlineScheduleEnabled,
+        'offlineScheduleEnd': value.offlineScheduleEnd,
+        'offlineScheduleEndWeekdayOnly': value.offlineScheduleEndWeekdayOnly,
         'owner': value.owner,
         'pagerdutyIntegration': value.pagerdutyIntegration,
         'pagerdutyIntegrationInfo': V2controllersPagerdutyIntegrationToJSON(value.pagerdutyIntegrationInfo),
