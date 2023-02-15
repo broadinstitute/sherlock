@@ -8,4 +8,4 @@ alter table v2_environments
     add if not exists offline_schedule_end timestamp with time zone;
 
 alter table v2_environments
-    add if not exists offline_schedule_weekday_only boolean;
+    add if not exists offline_schedule_end_weekday_only boolean;

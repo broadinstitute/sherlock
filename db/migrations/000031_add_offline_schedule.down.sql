@@ -8,4 +8,4 @@ alter table v2_environments
     drop column if exists offline_schedule_end;
 
 alter table v2_environments
-    drop column if exists offline_schedule_weekday_only;
+    drop column if exists offline_schedule_end_weekday_only;

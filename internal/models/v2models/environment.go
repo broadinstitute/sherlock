@@ -29,24 +29,24 @@ type Environment struct {
 	UniqueResourcePrefix      string `gorm:"not null; default:null"`
 	DefaultNamespace          string
 	// Mutable
-	DefaultCluster             *Cluster
-	DefaultClusterID           *uint
-	DefaultFirecloudDevelopRef *string
-	Owner                      *string `gorm:"not null; default:null"`
-	RequiresSuitability        *bool
-	BaseDomain                 *string
-	NamePrefixesDomain         *bool
-	HelmfileRef                *string `gorm:"not null; default:null"`
-	PreventDeletion            *bool
-	AutoDelete                 *environment.AutoDelete `gorm:"column:delete_after; -:migration"`
-	Description                *string
-	PagerdutyIntegration       *PagerdutyIntegration
-	PagerdutyIntegrationID     *uint
-	Offline                    *bool
-	OfflineScheduleEnabled     *bool
-	OfflineScheduleBegin       *time.Time
-	OfflineScheduleEnd         *time.Time
-	OfflineScheduleWeekdayOnly *bool
+	DefaultCluster                *Cluster
+	DefaultClusterID              *uint
+	DefaultFirecloudDevelopRef    *string
+	Owner                         *string `gorm:"not null; default:null"`
+	RequiresSuitability           *bool
+	BaseDomain                    *string
+	NamePrefixesDomain            *bool
+	HelmfileRef                   *string `gorm:"not null; default:null"`
+	PreventDeletion               *bool
+	AutoDelete                    *environment.AutoDelete `gorm:"column:delete_after; -:migration"`
+	Description                   *string
+	PagerdutyIntegration          *PagerdutyIntegration
+	PagerdutyIntegrationID        *uint
+	Offline                       *bool
+	OfflineScheduleEnabled        *bool
+	OfflineScheduleBegin          *time.Time
+	OfflineScheduleEnd            *time.Time
+	OfflineScheduleEndWeekdayOnly *bool
 }
 
 func (e Environment) TableName() string {
