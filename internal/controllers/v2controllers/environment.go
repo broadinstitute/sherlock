@@ -25,7 +25,6 @@ type Environment struct {
 
 type CreatableEnvironment struct {
 	Base                      string `json:"base" form:"base"`                                                          // Required when creating
-	ChartReleasesFromTemplate *bool  `json:"chartReleasesFromTemplate" form:"chartReleasesFromTemplate" default:"true"` // Deprecated, use AutoPopulateChartReleases
 	AutoPopulateChartReleases *bool  `json:"autoPopulateChartReleases" form:"autoPopulateChartReleases" default:"true"` // If true when creating, dynamic environments copy from template and template environments get the honeycomb chart
 	Lifecycle                 string `json:"lifecycle" form:"lifecycle" default:"dynamic"`
 	Name                      string `json:"name" form:"name"`                                 // When creating, will be calculated if dynamic, required otherwise
@@ -78,10 +77,6 @@ func (e Environment) toModel(storeSet *v2models.StoreSet) (v2models.Environment,
 		}
 		pagerdutyIntegrationID = &pagerdutyIntegration.ID
 	}
-	autoPopulateChartReleases := e.ChartReleasesFromTemplate
-	if e.AutoPopulateChartReleases != nil {
-		autoPopulateChartReleases = e.AutoPopulateChartReleases
-	}
 	return v2models.Environment{
 		Model: gorm.Model{
 			ID:        e.ID,
@@ -89,7 +84,7 @@ func (e Environment) toModel(storeSet *v2models.StoreSet) (v2models.Environment,
 			UpdatedAt: e.UpdatedAt,
 		},
 		Base:                       e.Base,
-		AutoPopulateChartReleases:  autoPopulateChartReleases,
+		AutoPopulateChartReleases:  e.AutoPopulateChartReleases,
 		Lifecycle:                  e.Lifecycle,
 		Name:                       e.Name,
 		TemplateEnvironmentID:      templateEnvironmentID,
@@ -171,7 +166,6 @@ func modelEnvironmentToEnvironment(model *v2models.Environment) *Environment {
 		PagerdutyIntegrationInfo: pagerdutyIntegration,
 		CreatableEnvironment: CreatableEnvironment{
 			Base:                      model.Base,
-			ChartReleasesFromTemplate: model.AutoPopulateChartReleases,
 			AutoPopulateChartReleases: model.AutoPopulateChartReleases,
 			Lifecycle:                 model.Lifecycle,
 			Name:                      model.Name,
