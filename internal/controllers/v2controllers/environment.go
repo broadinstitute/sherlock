@@ -48,7 +48,11 @@ type EditableEnvironment struct {
 	AutoDelete                 *environment.AutoDelete `json:"autoDelete" form:"autoDelete"`
 	Description                *string                 `json:"description" form:"description"`
 	PagerdutyIntegration       *string                 `json:"pagerdutyIntegration,omitempty" form:"pagerdutyIntegration"`
-	Offline                    *bool                   `json:"offline" form:"offline" default:"false"` // Applicable for BEEs only, whether Thelma should render the BEE as "offline" zero replicas (this field is a target state, not a status)
+	Offline                    *bool                   `json:"offline" form:"offline" default:"false"`                         // Applicable for BEEs only, whether Thelma should render the BEE as "offline" zero replicas (this field is a target state, not a status)
+	OfflineScheduleEnabled     *bool                   `json:"offlineScheduleEnabled,omitempty" form:"offlineScheduleEnabled"` // If enabled, the BEE should be offline between the begin and end time's hour+minute+second
+	OfflineScheduleBegin       *time.Time              `json:"offlineScheduleBegin,omitempty" form:"offlineScheduleBegin"`
+	OfflineScheduleEnd         *time.Time              `json:"offlineScheduleEnd,omitempty" form:"offlineScheduleEnd"`
+	OfflineScheduleWeekdayOnly *bool                   `json:"offlineScheduleWeekdayOnly,omitempty" form:"offlineScheduleWeekdayOnly"` // If enabled, the schedule should not be applied on weekends (so the BEE won't be woken up if it is offline already)
 }
 
 //nolint:unused
@@ -104,6 +108,10 @@ func (e Environment) toModel(storeSet *v2models.StoreSet) (v2models.Environment,
 		Description:                e.Description,
 		PagerdutyIntegrationID:     pagerdutyIntegrationID,
 		Offline:                    e.Offline,
+		OfflineScheduleEnabled:     e.OfflineScheduleEnabled,
+		OfflineScheduleBegin:       e.OfflineScheduleBegin,
+		OfflineScheduleEnd:         e.OfflineScheduleEnd,
+		OfflineScheduleWeekdayOnly: e.OfflineScheduleWeekdayOnly,
 	}, nil
 }
 
@@ -187,6 +195,10 @@ func modelEnvironmentToEnvironment(model *v2models.Environment) *Environment {
 				Description:                model.Description,
 				PagerdutyIntegration:       &pagerdutyIntegrationID,
 				Offline:                    model.Offline,
+				OfflineScheduleEnabled:     model.OfflineScheduleEnabled,
+				OfflineScheduleBegin:       model.OfflineScheduleBegin,
+				OfflineScheduleEnd:         model.OfflineScheduleEnd,
+				OfflineScheduleWeekdayOnly: model.OfflineScheduleWeekdayOnly,
 			},
 		},
 	}
