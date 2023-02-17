@@ -675,17 +675,19 @@ definitions:
         description: Applicable for BEEs only, whether Thelma should render the BEE
           as "offline" zero replicas (this field is a target state, not a status)
         type: boolean
-      offlineScheduleBegin:
-        type: string
-      offlineScheduleEnabled:
-        description: If enabled, the BEE should be offline between the begin and end
-          time's hour+minute+second
+      offlineScheduleBeginEnabled:
+        description: When enabled, the BEE will be slated to go offline around the
+          begin time each day
         type: boolean
-      offlineScheduleEnd:
+      offlineScheduleBeginTime:
         type: string
-      offlineScheduleEndWeekdayOnly:
-        description: If enabled, the schedule should not be applied on weekends (so
-          the BEE won't be woken up if it is offline already)
+      offlineScheduleEndEnabled:
+        description: When enabled, the BEE will be slated to come online around the
+          end time each weekday (each day if weekends enabled)
+        type: boolean
+      offlineScheduleEndTime:
+        type: string
+      offlineScheduleEndWeekends:
         type: boolean
       owner:
         description: When creating, will be set to your email
@@ -818,17 +820,19 @@ definitions:
         description: Applicable for BEEs only, whether Thelma should render the BEE
           as "offline" zero replicas (this field is a target state, not a status)
         type: boolean
-      offlineScheduleBegin:
-        type: string
-      offlineScheduleEnabled:
-        description: If enabled, the BEE should be offline between the begin and end
-          time's hour+minute+second
+      offlineScheduleBeginEnabled:
+        description: When enabled, the BEE will be slated to go offline around the
+          begin time each day
         type: boolean
-      offlineScheduleEnd:
+      offlineScheduleBeginTime:
         type: string
-      offlineScheduleEndWeekdayOnly:
-        description: If enabled, the schedule should not be applied on weekends (so
-          the BEE won't be woken up if it is offline already)
+      offlineScheduleEndEnabled:
+        description: When enabled, the BEE will be slated to come online around the
+          end time each weekday (each day if weekends enabled)
+        type: boolean
+      offlineScheduleEndTime:
+        type: string
+      offlineScheduleEndWeekends:
         type: boolean
       owner:
         description: When creating, will be set to your email
@@ -908,17 +912,19 @@ definitions:
         description: Applicable for BEEs only, whether Thelma should render the BEE
           as "offline" zero replicas (this field is a target state, not a status)
         type: boolean
-      offlineScheduleBegin:
-        type: string
-      offlineScheduleEnabled:
-        description: If enabled, the BEE should be offline between the begin and end
-          time's hour+minute+second
+      offlineScheduleBeginEnabled:
+        description: When enabled, the BEE will be slated to go offline around the
+          begin time each day
         type: boolean
-      offlineScheduleEnd:
+      offlineScheduleBeginTime:
         type: string
-      offlineScheduleEndWeekdayOnly:
-        description: If enabled, the schedule should not be applied on weekends (so
-          the BEE won't be woken up if it is offline already)
+      offlineScheduleEndEnabled:
+        description: When enabled, the BEE will be slated to come online around the
+          end time each weekday (each day if weekends enabled)
+        type: boolean
+      offlineScheduleEndTime:
+        type: string
+      offlineScheduleEndWeekends:
         type: boolean
       owner:
         description: When creating, will be set to your email
@@ -2866,21 +2872,24 @@ paths:
         in: query
         name: offline
         type: boolean
-      - in: query
-        name: offlineScheduleBegin
-        type: string
-      - description: If enabled, the BEE should be offline between the begin and end
-          time's hour+minute+second
+      - description: When enabled, the BEE will be slated to go offline around the
+          begin time each day
         in: query
-        name: offlineScheduleEnabled
+        name: offlineScheduleBeginEnabled
         type: boolean
       - in: query
-        name: offlineScheduleEnd
+        name: offlineScheduleBeginTime
         type: string
-      - description: If enabled, the schedule should not be applied on weekends (so
-          the BEE won't be woken up if it is offline already)
+      - description: When enabled, the BEE will be slated to come online around the
+          end time each weekday (each day if weekends enabled)
         in: query
-        name: offlineScheduleEndWeekdayOnly
+        name: offlineScheduleEndEnabled
+        type: boolean
+      - in: query
+        name: offlineScheduleEndTime
+        type: string
+      - in: query
+        name: offlineScheduleEndWeekends
         type: boolean
       - description: When creating, will be set to your email
         in: query

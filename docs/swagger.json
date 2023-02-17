@@ -2806,25 +2806,30 @@
                         "in": "query"
                     },
                     {
-                        "type": "string",
-                        "name": "offlineScheduleBegin",
-                        "in": "query"
-                    },
-                    {
                         "type": "boolean",
-                        "description": "If enabled, the BEE should be offline between the begin and end time's hour+minute+second",
-                        "name": "offlineScheduleEnabled",
+                        "description": "When enabled, the BEE will be slated to go offline around the begin time each day",
+                        "name": "offlineScheduleBeginEnabled",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "name": "offlineScheduleEnd",
+                        "name": "offlineScheduleBeginTime",
                         "in": "query"
                     },
                     {
                         "type": "boolean",
-                        "description": "If enabled, the schedule should not be applied on weekends (so the BEE won't be woken up if it is offline already)",
-                        "name": "offlineScheduleEndWeekdayOnly",
+                        "description": "When enabled, the BEE will be slated to come online around the end time each weekday (each day if weekends enabled)",
+                        "name": "offlineScheduleEndEnabled",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "offlineScheduleEndTime",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "offlineScheduleEndWeekends",
                         "in": "query"
                     },
                     {
@@ -5854,18 +5859,21 @@
                     "type": "boolean",
                     "default": false
                 },
-                "offlineScheduleBegin": {
-                    "type": "string"
-                },
-                "offlineScheduleEnabled": {
-                    "description": "If enabled, the BEE should be offline between the begin and end time's hour+minute+second",
+                "offlineScheduleBeginEnabled": {
+                    "description": "When enabled, the BEE will be slated to go offline around the begin time each day",
                     "type": "boolean"
                 },
-                "offlineScheduleEnd": {
+                "offlineScheduleBeginTime": {
                     "type": "string"
                 },
-                "offlineScheduleEndWeekdayOnly": {
-                    "description": "If enabled, the schedule should not be applied on weekends (so the BEE won't be woken up if it is offline already)",
+                "offlineScheduleEndEnabled": {
+                    "description": "When enabled, the BEE will be slated to come online around the end time each weekday (each day if weekends enabled)",
+                    "type": "boolean"
+                },
+                "offlineScheduleEndTime": {
+                    "type": "string"
+                },
+                "offlineScheduleEndWeekends": {
                     "type": "boolean"
                 },
                 "owner": {
@@ -6046,18 +6054,21 @@
                     "type": "boolean",
                     "default": false
                 },
-                "offlineScheduleBegin": {
-                    "type": "string"
-                },
-                "offlineScheduleEnabled": {
-                    "description": "If enabled, the BEE should be offline between the begin and end time's hour+minute+second",
+                "offlineScheduleBeginEnabled": {
+                    "description": "When enabled, the BEE will be slated to go offline around the begin time each day",
                     "type": "boolean"
                 },
-                "offlineScheduleEnd": {
+                "offlineScheduleBeginTime": {
                     "type": "string"
                 },
-                "offlineScheduleEndWeekdayOnly": {
-                    "description": "If enabled, the schedule should not be applied on weekends (so the BEE won't be woken up if it is offline already)",
+                "offlineScheduleEndEnabled": {
+                    "description": "When enabled, the BEE will be slated to come online around the end time each weekday (each day if weekends enabled)",
+                    "type": "boolean"
+                },
+                "offlineScheduleEndTime": {
+                    "type": "string"
+                },
+                "offlineScheduleEndWeekends": {
                     "type": "boolean"
                 },
                 "owner": {
@@ -6161,18 +6172,21 @@
                     "type": "boolean",
                     "default": false
                 },
-                "offlineScheduleBegin": {
-                    "type": "string"
-                },
-                "offlineScheduleEnabled": {
-                    "description": "If enabled, the BEE should be offline between the begin and end time's hour+minute+second",
+                "offlineScheduleBeginEnabled": {
+                    "description": "When enabled, the BEE will be slated to go offline around the begin time each day",
                     "type": "boolean"
                 },
-                "offlineScheduleEnd": {
+                "offlineScheduleBeginTime": {
                     "type": "string"
                 },
-                "offlineScheduleEndWeekdayOnly": {
-                    "description": "If enabled, the schedule should not be applied on weekends (so the BEE won't be woken up if it is offline already)",
+                "offlineScheduleEndEnabled": {
+                    "description": "When enabled, the BEE will be slated to come online around the end time each weekday (each day if weekends enabled)",
+                    "type": "boolean"
+                },
+                "offlineScheduleEndTime": {
+                    "type": "string"
+                },
+                "offlineScheduleEndWeekends": {
                     "type": "boolean"
                 },
                 "owner": {

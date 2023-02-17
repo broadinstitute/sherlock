@@ -53,10 +53,11 @@ export interface ApiV2EnvironmentsGetRequest {
     namePrefix?: string;
     namePrefixesDomain?: boolean;
     offline?: boolean;
-    offlineScheduleBegin?: string;
-    offlineScheduleEnabled?: boolean;
-    offlineScheduleEnd?: string;
-    offlineScheduleEndWeekdayOnly?: boolean;
+    offlineScheduleBeginEnabled?: boolean;
+    offlineScheduleBeginTime?: string;
+    offlineScheduleEndEnabled?: boolean;
+    offlineScheduleEndTime?: string;
+    offlineScheduleEndWeekends?: boolean;
     owner?: string;
     pagerdutyIntegration?: string;
     preventDeletion?: boolean;
@@ -171,20 +172,24 @@ export class EnvironmentsApi extends runtime.BaseAPI {
             queryParameters['offline'] = requestParameters.offline;
         }
 
-        if (requestParameters.offlineScheduleBegin !== undefined) {
-            queryParameters['offlineScheduleBegin'] = requestParameters.offlineScheduleBegin;
+        if (requestParameters.offlineScheduleBeginEnabled !== undefined) {
+            queryParameters['offlineScheduleBeginEnabled'] = requestParameters.offlineScheduleBeginEnabled;
         }
 
-        if (requestParameters.offlineScheduleEnabled !== undefined) {
-            queryParameters['offlineScheduleEnabled'] = requestParameters.offlineScheduleEnabled;
+        if (requestParameters.offlineScheduleBeginTime !== undefined) {
+            queryParameters['offlineScheduleBeginTime'] = requestParameters.offlineScheduleBeginTime;
         }
 
-        if (requestParameters.offlineScheduleEnd !== undefined) {
-            queryParameters['offlineScheduleEnd'] = requestParameters.offlineScheduleEnd;
+        if (requestParameters.offlineScheduleEndEnabled !== undefined) {
+            queryParameters['offlineScheduleEndEnabled'] = requestParameters.offlineScheduleEndEnabled;
         }
 
-        if (requestParameters.offlineScheduleEndWeekdayOnly !== undefined) {
-            queryParameters['offlineScheduleEndWeekdayOnly'] = requestParameters.offlineScheduleEndWeekdayOnly;
+        if (requestParameters.offlineScheduleEndTime !== undefined) {
+            queryParameters['offlineScheduleEndTime'] = requestParameters.offlineScheduleEndTime;
+        }
+
+        if (requestParameters.offlineScheduleEndWeekends !== undefined) {
+            queryParameters['offlineScheduleEndWeekends'] = requestParameters.offlineScheduleEndWeekends;
         }
 
         if (requestParameters.owner !== undefined) {

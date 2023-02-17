@@ -111,29 +111,35 @@ export interface V2controllersCreatableEnvironment {
      */
     offline?: boolean;
     /**
-     * 
-     * @type {string}
-     * @memberof V2controllersCreatableEnvironment
-     */
-    offlineScheduleBegin?: string;
-    /**
-     * If enabled, the BEE should be offline between the begin and end time's hour+minute+second
+     * When enabled, the BEE will be slated to go offline around the begin time each day
      * @type {boolean}
      * @memberof V2controllersCreatableEnvironment
      */
-    offlineScheduleEnabled?: boolean;
+    offlineScheduleBeginEnabled?: boolean;
     /**
      * 
      * @type {string}
      * @memberof V2controllersCreatableEnvironment
      */
-    offlineScheduleEnd?: string;
+    offlineScheduleBeginTime?: string;
     /**
-     * If enabled, the schedule should not be applied on weekends (so the BEE won't be woken up if it is offline already)
+     * When enabled, the BEE will be slated to come online around the end time each weekday (each day if weekends enabled)
      * @type {boolean}
      * @memberof V2controllersCreatableEnvironment
      */
-    offlineScheduleEndWeekdayOnly?: boolean;
+    offlineScheduleEndEnabled?: boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof V2controllersCreatableEnvironment
+     */
+    offlineScheduleEndTime?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof V2controllersCreatableEnvironment
+     */
+    offlineScheduleEndWeekends?: boolean;
     /**
      * When creating, will be set to your email
      * @type {string}
@@ -211,10 +217,11 @@ export function V2controllersCreatableEnvironmentFromJSONTyped(json: any, ignore
         'namePrefix': !exists(json, 'namePrefix') ? undefined : json['namePrefix'],
         'namePrefixesDomain': !exists(json, 'namePrefixesDomain') ? undefined : json['namePrefixesDomain'],
         'offline': !exists(json, 'offline') ? undefined : json['offline'],
-        'offlineScheduleBegin': !exists(json, 'offlineScheduleBegin') ? undefined : json['offlineScheduleBegin'],
-        'offlineScheduleEnabled': !exists(json, 'offlineScheduleEnabled') ? undefined : json['offlineScheduleEnabled'],
-        'offlineScheduleEnd': !exists(json, 'offlineScheduleEnd') ? undefined : json['offlineScheduleEnd'],
-        'offlineScheduleEndWeekdayOnly': !exists(json, 'offlineScheduleEndWeekdayOnly') ? undefined : json['offlineScheduleEndWeekdayOnly'],
+        'offlineScheduleBeginEnabled': !exists(json, 'offlineScheduleBeginEnabled') ? undefined : json['offlineScheduleBeginEnabled'],
+        'offlineScheduleBeginTime': !exists(json, 'offlineScheduleBeginTime') ? undefined : json['offlineScheduleBeginTime'],
+        'offlineScheduleEndEnabled': !exists(json, 'offlineScheduleEndEnabled') ? undefined : json['offlineScheduleEndEnabled'],
+        'offlineScheduleEndTime': !exists(json, 'offlineScheduleEndTime') ? undefined : json['offlineScheduleEndTime'],
+        'offlineScheduleEndWeekends': !exists(json, 'offlineScheduleEndWeekends') ? undefined : json['offlineScheduleEndWeekends'],
         'owner': !exists(json, 'owner') ? undefined : json['owner'],
         'pagerdutyIntegration': !exists(json, 'pagerdutyIntegration') ? undefined : json['pagerdutyIntegration'],
         'preventDeletion': !exists(json, 'preventDeletion') ? undefined : json['preventDeletion'],
@@ -248,10 +255,11 @@ export function V2controllersCreatableEnvironmentToJSON(value?: V2controllersCre
         'namePrefix': value.namePrefix,
         'namePrefixesDomain': value.namePrefixesDomain,
         'offline': value.offline,
-        'offlineScheduleBegin': value.offlineScheduleBegin,
-        'offlineScheduleEnabled': value.offlineScheduleEnabled,
-        'offlineScheduleEnd': value.offlineScheduleEnd,
-        'offlineScheduleEndWeekdayOnly': value.offlineScheduleEndWeekdayOnly,
+        'offlineScheduleBeginEnabled': value.offlineScheduleBeginEnabled,
+        'offlineScheduleBeginTime': value.offlineScheduleBeginTime,
+        'offlineScheduleEndEnabled': value.offlineScheduleEndEnabled,
+        'offlineScheduleEndTime': value.offlineScheduleEndTime,
+        'offlineScheduleEndWeekends': value.offlineScheduleEndWeekends,
         'owner': value.owner,
         'pagerdutyIntegration': value.pagerdutyIntegration,
         'preventDeletion': value.preventDeletion,

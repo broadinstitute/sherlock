@@ -146,23 +146,26 @@ type GetAPIV2EnvironmentsParams struct {
 	*/
 	Offline *bool
 
-	// OfflineScheduleBegin.
-	OfflineScheduleBegin *string
+	/* OfflineScheduleBeginEnabled.
 
-	/* OfflineScheduleEnabled.
-
-	   If enabled, the BEE should be offline between the begin and end time's hour+minute+second
+	   When enabled, the BEE will be slated to go offline around the begin time each day
 	*/
-	OfflineScheduleEnabled *bool
+	OfflineScheduleBeginEnabled *bool
 
-	// OfflineScheduleEnd.
-	OfflineScheduleEnd *string
+	// OfflineScheduleBeginTime.
+	OfflineScheduleBeginTime *string
 
-	/* OfflineScheduleEndWeekdayOnly.
+	/* OfflineScheduleEndEnabled.
 
-	   If enabled, the schedule should not be applied on weekends (so the BEE won't be woken up if it is offline already)
+	   When enabled, the BEE will be slated to come online around the end time each weekday (each day if weekends enabled)
 	*/
-	OfflineScheduleEndWeekdayOnly *bool
+	OfflineScheduleEndEnabled *bool
+
+	// OfflineScheduleEndTime.
+	OfflineScheduleEndTime *string
+
+	// OfflineScheduleEndWeekends.
+	OfflineScheduleEndWeekends *bool
 
 	/* Owner.
 
@@ -469,48 +472,59 @@ func (o *GetAPIV2EnvironmentsParams) SetOffline(offline *bool) {
 	o.Offline = offline
 }
 
-// WithOfflineScheduleBegin adds the offlineScheduleBegin to the get API v2 environments params
-func (o *GetAPIV2EnvironmentsParams) WithOfflineScheduleBegin(offlineScheduleBegin *string) *GetAPIV2EnvironmentsParams {
-	o.SetOfflineScheduleBegin(offlineScheduleBegin)
+// WithOfflineScheduleBeginEnabled adds the offlineScheduleBeginEnabled to the get API v2 environments params
+func (o *GetAPIV2EnvironmentsParams) WithOfflineScheduleBeginEnabled(offlineScheduleBeginEnabled *bool) *GetAPIV2EnvironmentsParams {
+	o.SetOfflineScheduleBeginEnabled(offlineScheduleBeginEnabled)
 	return o
 }
 
-// SetOfflineScheduleBegin adds the offlineScheduleBegin to the get API v2 environments params
-func (o *GetAPIV2EnvironmentsParams) SetOfflineScheduleBegin(offlineScheduleBegin *string) {
-	o.OfflineScheduleBegin = offlineScheduleBegin
+// SetOfflineScheduleBeginEnabled adds the offlineScheduleBeginEnabled to the get API v2 environments params
+func (o *GetAPIV2EnvironmentsParams) SetOfflineScheduleBeginEnabled(offlineScheduleBeginEnabled *bool) {
+	o.OfflineScheduleBeginEnabled = offlineScheduleBeginEnabled
 }
 
-// WithOfflineScheduleEnabled adds the offlineScheduleEnabled to the get API v2 environments params
-func (o *GetAPIV2EnvironmentsParams) WithOfflineScheduleEnabled(offlineScheduleEnabled *bool) *GetAPIV2EnvironmentsParams {
-	o.SetOfflineScheduleEnabled(offlineScheduleEnabled)
+// WithOfflineScheduleBeginTime adds the offlineScheduleBeginTime to the get API v2 environments params
+func (o *GetAPIV2EnvironmentsParams) WithOfflineScheduleBeginTime(offlineScheduleBeginTime *string) *GetAPIV2EnvironmentsParams {
+	o.SetOfflineScheduleBeginTime(offlineScheduleBeginTime)
 	return o
 }
 
-// SetOfflineScheduleEnabled adds the offlineScheduleEnabled to the get API v2 environments params
-func (o *GetAPIV2EnvironmentsParams) SetOfflineScheduleEnabled(offlineScheduleEnabled *bool) {
-	o.OfflineScheduleEnabled = offlineScheduleEnabled
+// SetOfflineScheduleBeginTime adds the offlineScheduleBeginTime to the get API v2 environments params
+func (o *GetAPIV2EnvironmentsParams) SetOfflineScheduleBeginTime(offlineScheduleBeginTime *string) {
+	o.OfflineScheduleBeginTime = offlineScheduleBeginTime
 }
 
-// WithOfflineScheduleEnd adds the offlineScheduleEnd to the get API v2 environments params
-func (o *GetAPIV2EnvironmentsParams) WithOfflineScheduleEnd(offlineScheduleEnd *string) *GetAPIV2EnvironmentsParams {
-	o.SetOfflineScheduleEnd(offlineScheduleEnd)
+// WithOfflineScheduleEndEnabled adds the offlineScheduleEndEnabled to the get API v2 environments params
+func (o *GetAPIV2EnvironmentsParams) WithOfflineScheduleEndEnabled(offlineScheduleEndEnabled *bool) *GetAPIV2EnvironmentsParams {
+	o.SetOfflineScheduleEndEnabled(offlineScheduleEndEnabled)
 	return o
 }
 
-// SetOfflineScheduleEnd adds the offlineScheduleEnd to the get API v2 environments params
-func (o *GetAPIV2EnvironmentsParams) SetOfflineScheduleEnd(offlineScheduleEnd *string) {
-	o.OfflineScheduleEnd = offlineScheduleEnd
+// SetOfflineScheduleEndEnabled adds the offlineScheduleEndEnabled to the get API v2 environments params
+func (o *GetAPIV2EnvironmentsParams) SetOfflineScheduleEndEnabled(offlineScheduleEndEnabled *bool) {
+	o.OfflineScheduleEndEnabled = offlineScheduleEndEnabled
 }
 
-// WithOfflineScheduleEndWeekdayOnly adds the offlineScheduleEndWeekdayOnly to the get API v2 environments params
-func (o *GetAPIV2EnvironmentsParams) WithOfflineScheduleEndWeekdayOnly(offlineScheduleEndWeekdayOnly *bool) *GetAPIV2EnvironmentsParams {
-	o.SetOfflineScheduleEndWeekdayOnly(offlineScheduleEndWeekdayOnly)
+// WithOfflineScheduleEndTime adds the offlineScheduleEndTime to the get API v2 environments params
+func (o *GetAPIV2EnvironmentsParams) WithOfflineScheduleEndTime(offlineScheduleEndTime *string) *GetAPIV2EnvironmentsParams {
+	o.SetOfflineScheduleEndTime(offlineScheduleEndTime)
 	return o
 }
 
-// SetOfflineScheduleEndWeekdayOnly adds the offlineScheduleEndWeekdayOnly to the get API v2 environments params
-func (o *GetAPIV2EnvironmentsParams) SetOfflineScheduleEndWeekdayOnly(offlineScheduleEndWeekdayOnly *bool) {
-	o.OfflineScheduleEndWeekdayOnly = offlineScheduleEndWeekdayOnly
+// SetOfflineScheduleEndTime adds the offlineScheduleEndTime to the get API v2 environments params
+func (o *GetAPIV2EnvironmentsParams) SetOfflineScheduleEndTime(offlineScheduleEndTime *string) {
+	o.OfflineScheduleEndTime = offlineScheduleEndTime
+}
+
+// WithOfflineScheduleEndWeekends adds the offlineScheduleEndWeekends to the get API v2 environments params
+func (o *GetAPIV2EnvironmentsParams) WithOfflineScheduleEndWeekends(offlineScheduleEndWeekends *bool) *GetAPIV2EnvironmentsParams {
+	o.SetOfflineScheduleEndWeekends(offlineScheduleEndWeekends)
+	return o
+}
+
+// SetOfflineScheduleEndWeekends adds the offlineScheduleEndWeekends to the get API v2 environments params
+func (o *GetAPIV2EnvironmentsParams) SetOfflineScheduleEndWeekends(offlineScheduleEndWeekends *bool) {
+	o.OfflineScheduleEndWeekends = offlineScheduleEndWeekends
 }
 
 // WithOwner adds the owner to the get API v2 environments params
@@ -881,69 +895,86 @@ func (o *GetAPIV2EnvironmentsParams) WriteToRequest(r runtime.ClientRequest, reg
 		}
 	}
 
-	if o.OfflineScheduleBegin != nil {
+	if o.OfflineScheduleBeginEnabled != nil {
 
-		// query param offlineScheduleBegin
-		var qrOfflineScheduleBegin string
+		// query param offlineScheduleBeginEnabled
+		var qrOfflineScheduleBeginEnabled bool
 
-		if o.OfflineScheduleBegin != nil {
-			qrOfflineScheduleBegin = *o.OfflineScheduleBegin
+		if o.OfflineScheduleBeginEnabled != nil {
+			qrOfflineScheduleBeginEnabled = *o.OfflineScheduleBeginEnabled
 		}
-		qOfflineScheduleBegin := qrOfflineScheduleBegin
-		if qOfflineScheduleBegin != "" {
+		qOfflineScheduleBeginEnabled := swag.FormatBool(qrOfflineScheduleBeginEnabled)
+		if qOfflineScheduleBeginEnabled != "" {
 
-			if err := r.SetQueryParam("offlineScheduleBegin", qOfflineScheduleBegin); err != nil {
+			if err := r.SetQueryParam("offlineScheduleBeginEnabled", qOfflineScheduleBeginEnabled); err != nil {
 				return err
 			}
 		}
 	}
 
-	if o.OfflineScheduleEnabled != nil {
+	if o.OfflineScheduleBeginTime != nil {
 
-		// query param offlineScheduleEnabled
-		var qrOfflineScheduleEnabled bool
+		// query param offlineScheduleBeginTime
+		var qrOfflineScheduleBeginTime string
 
-		if o.OfflineScheduleEnabled != nil {
-			qrOfflineScheduleEnabled = *o.OfflineScheduleEnabled
+		if o.OfflineScheduleBeginTime != nil {
+			qrOfflineScheduleBeginTime = *o.OfflineScheduleBeginTime
 		}
-		qOfflineScheduleEnabled := swag.FormatBool(qrOfflineScheduleEnabled)
-		if qOfflineScheduleEnabled != "" {
+		qOfflineScheduleBeginTime := qrOfflineScheduleBeginTime
+		if qOfflineScheduleBeginTime != "" {
 
-			if err := r.SetQueryParam("offlineScheduleEnabled", qOfflineScheduleEnabled); err != nil {
+			if err := r.SetQueryParam("offlineScheduleBeginTime", qOfflineScheduleBeginTime); err != nil {
 				return err
 			}
 		}
 	}
 
-	if o.OfflineScheduleEnd != nil {
+	if o.OfflineScheduleEndEnabled != nil {
 
-		// query param offlineScheduleEnd
-		var qrOfflineScheduleEnd string
+		// query param offlineScheduleEndEnabled
+		var qrOfflineScheduleEndEnabled bool
 
-		if o.OfflineScheduleEnd != nil {
-			qrOfflineScheduleEnd = *o.OfflineScheduleEnd
+		if o.OfflineScheduleEndEnabled != nil {
+			qrOfflineScheduleEndEnabled = *o.OfflineScheduleEndEnabled
 		}
-		qOfflineScheduleEnd := qrOfflineScheduleEnd
-		if qOfflineScheduleEnd != "" {
+		qOfflineScheduleEndEnabled := swag.FormatBool(qrOfflineScheduleEndEnabled)
+		if qOfflineScheduleEndEnabled != "" {
 
-			if err := r.SetQueryParam("offlineScheduleEnd", qOfflineScheduleEnd); err != nil {
+			if err := r.SetQueryParam("offlineScheduleEndEnabled", qOfflineScheduleEndEnabled); err != nil {
 				return err
 			}
 		}
 	}
 
-	if o.OfflineScheduleEndWeekdayOnly != nil {
+	if o.OfflineScheduleEndTime != nil {
 
-		// query param offlineScheduleEndWeekdayOnly
-		var qrOfflineScheduleEndWeekdayOnly bool
+		// query param offlineScheduleEndTime
+		var qrOfflineScheduleEndTime string
 
-		if o.OfflineScheduleEndWeekdayOnly != nil {
-			qrOfflineScheduleEndWeekdayOnly = *o.OfflineScheduleEndWeekdayOnly
+		if o.OfflineScheduleEndTime != nil {
+			qrOfflineScheduleEndTime = *o.OfflineScheduleEndTime
 		}
-		qOfflineScheduleEndWeekdayOnly := swag.FormatBool(qrOfflineScheduleEndWeekdayOnly)
-		if qOfflineScheduleEndWeekdayOnly != "" {
+		qOfflineScheduleEndTime := qrOfflineScheduleEndTime
+		if qOfflineScheduleEndTime != "" {
 
-			if err := r.SetQueryParam("offlineScheduleEndWeekdayOnly", qOfflineScheduleEndWeekdayOnly); err != nil {
+			if err := r.SetQueryParam("offlineScheduleEndTime", qOfflineScheduleEndTime); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.OfflineScheduleEndWeekends != nil {
+
+		// query param offlineScheduleEndWeekends
+		var qrOfflineScheduleEndWeekends bool
+
+		if o.OfflineScheduleEndWeekends != nil {
+			qrOfflineScheduleEndWeekends = *o.OfflineScheduleEndWeekends
+		}
+		qOfflineScheduleEndWeekends := swag.FormatBool(qrOfflineScheduleEndWeekends)
+		if qOfflineScheduleEndWeekends != "" {
+
+			if err := r.SetQueryParam("offlineScheduleEndWeekends", qOfflineScheduleEndWeekends); err != nil {
 				return err
 			}
 		}

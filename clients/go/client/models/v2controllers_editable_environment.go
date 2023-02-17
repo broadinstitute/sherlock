@@ -42,17 +42,20 @@ type V2controllersEditableEnvironment struct {
 	// Applicable for BEEs only, whether Thelma should render the BEE as "offline" zero replicas (this field is a target state, not a status)
 	Offline *bool `json:"offline,omitempty"`
 
-	// offline schedule begin
-	OfflineScheduleBegin string `json:"offlineScheduleBegin,omitempty"`
+	// When enabled, the BEE will be slated to go offline around the begin time each day
+	OfflineScheduleBeginEnabled bool `json:"offlineScheduleBeginEnabled,omitempty"`
 
-	// If enabled, the BEE should be offline between the begin and end time's hour+minute+second
-	OfflineScheduleEnabled bool `json:"offlineScheduleEnabled,omitempty"`
+	// offline schedule begin time
+	OfflineScheduleBeginTime string `json:"offlineScheduleBeginTime,omitempty"`
 
-	// offline schedule end
-	OfflineScheduleEnd string `json:"offlineScheduleEnd,omitempty"`
+	// When enabled, the BEE will be slated to come online around the end time each weekday (each day if weekends enabled)
+	OfflineScheduleEndEnabled bool `json:"offlineScheduleEndEnabled,omitempty"`
 
-	// If enabled, the schedule should not be applied on weekends (so the BEE won't be woken up if it is offline already)
-	OfflineScheduleEndWeekdayOnly bool `json:"offlineScheduleEndWeekdayOnly,omitempty"`
+	// offline schedule end time
+	OfflineScheduleEndTime string `json:"offlineScheduleEndTime,omitempty"`
+
+	// offline schedule end weekends
+	OfflineScheduleEndWeekends bool `json:"offlineScheduleEndWeekends,omitempty"`
 
 	// When creating, will be set to your email
 	Owner string `json:"owner,omitempty"`
