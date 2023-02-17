@@ -29,24 +29,25 @@ type Environment struct {
 	UniqueResourcePrefix      string `gorm:"not null; default:null"`
 	DefaultNamespace          string
 	// Mutable
-	DefaultCluster                *Cluster
-	DefaultClusterID              *uint
-	DefaultFirecloudDevelopRef    *string
-	Owner                         *string `gorm:"not null; default:null"`
-	RequiresSuitability           *bool
-	BaseDomain                    *string
-	NamePrefixesDomain            *bool
-	HelmfileRef                   *string `gorm:"not null; default:null"`
-	PreventDeletion               *bool
-	AutoDelete                    *environment.AutoDelete `gorm:"column:delete_after; -:migration"`
-	Description                   *string
-	PagerdutyIntegration          *PagerdutyIntegration
-	PagerdutyIntegrationID        *uint
-	Offline                       *bool
-	OfflineScheduleEnabled        *bool
-	OfflineScheduleBegin          *time.Time
-	OfflineScheduleEnd            *time.Time
-	OfflineScheduleEndWeekdayOnly *bool
+	DefaultCluster              *Cluster
+	DefaultClusterID            *uint
+	DefaultFirecloudDevelopRef  *string
+	Owner                       *string `gorm:"not null; default:null"`
+	RequiresSuitability         *bool
+	BaseDomain                  *string
+	NamePrefixesDomain          *bool
+	HelmfileRef                 *string `gorm:"not null; default:null"`
+	PreventDeletion             *bool
+	AutoDelete                  *environment.AutoDelete `gorm:"column:delete_after; -:migration"`
+	Description                 *string
+	PagerdutyIntegration        *PagerdutyIntegration
+	PagerdutyIntegrationID      *uint
+	Offline                     *bool
+	OfflineScheduleBeginEnabled *bool
+	OfflineScheduleBeginTime    *time.Time
+	OfflineScheduleEndEnabled   *bool
+	OfflineScheduleEndTime      *time.Time
+	OfflineScheduleEndWeekends  *bool
 }
 
 func (e Environment) TableName() string {
@@ -158,14 +159,6 @@ func validateEnvironment(environment *Environment) error {
 		if environment.TemplateEnvironmentID == nil {
 			return fmt.Errorf("a dynamic %T must have a template", environment)
 		}
-		if environment.OfflineScheduleEnabled != nil && *environment.OfflineScheduleEnabled {
-			if environment.OfflineScheduleBegin == nil {
-				return fmt.Errorf("a dynamic %T with offline schedule must have a begin time", environment)
-			}
-			if environment.OfflineScheduleEnd == nil {
-				return fmt.Errorf("a dynamic %T with offline schedule must have an end time", environment)
-			}
-		}
 		fallthrough
 	case "static":
 		if environment.Base == "" {
@@ -217,11 +210,18 @@ func validateEnvironment(environment *Environment) error {
 
 	if environment.Lifecycle != "dynamic" {
 		if environment.Offline != nil && *environment.Offline {
-			return fmt.Errorf("%s environments can't be set to offline, only dynamic ones can", environment.Lifecycle)
+			return fmt.Errorf("%s %T can't be set to offline, only dynamic ones can", environment.Lifecycle, environment)
 		}
-		if environment.OfflineScheduleEnabled != nil && *environment.OfflineScheduleEnabled {
-			return fmt.Errorf("%s environments can't have an offline schedule, only dynamic ones can", environment.Lifecycle)
+		if (environment.OfflineScheduleBeginEnabled != nil && *environment.OfflineScheduleBeginEnabled) || (environment.OfflineScheduleEndEnabled != nil && *environment.OfflineScheduleEndEnabled) {
+			return fmt.Errorf("%s %T can't have an offline schedule, only dynamic ones can", environment.Lifecycle, environment)
 		}
+	}
+
+	if environment.OfflineScheduleBeginEnabled != nil && *environment.OfflineScheduleBeginEnabled && environment.OfflineScheduleBeginTime == nil {
+		return fmt.Errorf("a %T with a begin-offline schedule enabled must have a time", environment)
+	}
+	if environment.OfflineScheduleEndEnabled != nil && *environment.OfflineScheduleEndEnabled && environment.OfflineScheduleEndTime == nil {
+		return fmt.Errorf("a %T with an end-offline schedule enabled must have a time", environment)
 	}
 
 	return nil
