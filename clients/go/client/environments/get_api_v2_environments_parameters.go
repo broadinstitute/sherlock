@@ -153,7 +153,9 @@ type GetAPIV2EnvironmentsParams struct {
 	OfflineScheduleBeginEnabled *bool
 
 	// OfflineScheduleBeginTime.
-	OfflineScheduleBeginTime *string
+	//
+	// Format: date-time
+	OfflineScheduleBeginTime *strfmt.DateTime
 
 	/* OfflineScheduleEndEnabled.
 
@@ -162,7 +164,9 @@ type GetAPIV2EnvironmentsParams struct {
 	OfflineScheduleEndEnabled *bool
 
 	// OfflineScheduleEndTime.
-	OfflineScheduleEndTime *string
+	//
+	// Format: date-time
+	OfflineScheduleEndTime *strfmt.DateTime
 
 	// OfflineScheduleEndWeekends.
 	OfflineScheduleEndWeekends *bool
@@ -484,13 +488,13 @@ func (o *GetAPIV2EnvironmentsParams) SetOfflineScheduleBeginEnabled(offlineSched
 }
 
 // WithOfflineScheduleBeginTime adds the offlineScheduleBeginTime to the get API v2 environments params
-func (o *GetAPIV2EnvironmentsParams) WithOfflineScheduleBeginTime(offlineScheduleBeginTime *string) *GetAPIV2EnvironmentsParams {
+func (o *GetAPIV2EnvironmentsParams) WithOfflineScheduleBeginTime(offlineScheduleBeginTime *strfmt.DateTime) *GetAPIV2EnvironmentsParams {
 	o.SetOfflineScheduleBeginTime(offlineScheduleBeginTime)
 	return o
 }
 
 // SetOfflineScheduleBeginTime adds the offlineScheduleBeginTime to the get API v2 environments params
-func (o *GetAPIV2EnvironmentsParams) SetOfflineScheduleBeginTime(offlineScheduleBeginTime *string) {
+func (o *GetAPIV2EnvironmentsParams) SetOfflineScheduleBeginTime(offlineScheduleBeginTime *strfmt.DateTime) {
 	o.OfflineScheduleBeginTime = offlineScheduleBeginTime
 }
 
@@ -506,13 +510,13 @@ func (o *GetAPIV2EnvironmentsParams) SetOfflineScheduleEndEnabled(offlineSchedul
 }
 
 // WithOfflineScheduleEndTime adds the offlineScheduleEndTime to the get API v2 environments params
-func (o *GetAPIV2EnvironmentsParams) WithOfflineScheduleEndTime(offlineScheduleEndTime *string) *GetAPIV2EnvironmentsParams {
+func (o *GetAPIV2EnvironmentsParams) WithOfflineScheduleEndTime(offlineScheduleEndTime *strfmt.DateTime) *GetAPIV2EnvironmentsParams {
 	o.SetOfflineScheduleEndTime(offlineScheduleEndTime)
 	return o
 }
 
 // SetOfflineScheduleEndTime adds the offlineScheduleEndTime to the get API v2 environments params
-func (o *GetAPIV2EnvironmentsParams) SetOfflineScheduleEndTime(offlineScheduleEndTime *string) {
+func (o *GetAPIV2EnvironmentsParams) SetOfflineScheduleEndTime(offlineScheduleEndTime *strfmt.DateTime) {
 	o.OfflineScheduleEndTime = offlineScheduleEndTime
 }
 
@@ -915,12 +919,12 @@ func (o *GetAPIV2EnvironmentsParams) WriteToRequest(r runtime.ClientRequest, reg
 	if o.OfflineScheduleBeginTime != nil {
 
 		// query param offlineScheduleBeginTime
-		var qrOfflineScheduleBeginTime string
+		var qrOfflineScheduleBeginTime strfmt.DateTime
 
 		if o.OfflineScheduleBeginTime != nil {
 			qrOfflineScheduleBeginTime = *o.OfflineScheduleBeginTime
 		}
-		qOfflineScheduleBeginTime := qrOfflineScheduleBeginTime
+		qOfflineScheduleBeginTime := qrOfflineScheduleBeginTime.String()
 		if qOfflineScheduleBeginTime != "" {
 
 			if err := r.SetQueryParam("offlineScheduleBeginTime", qOfflineScheduleBeginTime); err != nil {
@@ -949,12 +953,12 @@ func (o *GetAPIV2EnvironmentsParams) WriteToRequest(r runtime.ClientRequest, reg
 	if o.OfflineScheduleEndTime != nil {
 
 		// query param offlineScheduleEndTime
-		var qrOfflineScheduleEndTime string
+		var qrOfflineScheduleEndTime strfmt.DateTime
 
 		if o.OfflineScheduleEndTime != nil {
 			qrOfflineScheduleEndTime = *o.OfflineScheduleEndTime
 		}
-		qOfflineScheduleEndTime := qrOfflineScheduleEndTime
+		qOfflineScheduleEndTime := qrOfflineScheduleEndTime.String()
 		if qOfflineScheduleEndTime != "" {
 
 			if err := r.SetQueryParam("offlineScheduleEndTime", qOfflineScheduleEndTime); err != nil {

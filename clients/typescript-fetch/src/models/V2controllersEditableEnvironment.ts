@@ -82,10 +82,10 @@ export interface V2controllersEditableEnvironment {
     offlineScheduleBeginEnabled?: boolean;
     /**
      * 
-     * @type {string}
+     * @type {Date}
      * @memberof V2controllersEditableEnvironment
      */
-    offlineScheduleBeginTime?: string;
+    offlineScheduleBeginTime?: Date;
     /**
      * When enabled, the BEE will be slated to come online around the end time each weekday (each day if weekends enabled)
      * @type {boolean}
@@ -94,10 +94,10 @@ export interface V2controllersEditableEnvironment {
     offlineScheduleEndEnabled?: boolean;
     /**
      * 
-     * @type {string}
+     * @type {Date}
      * @memberof V2controllersEditableEnvironment
      */
-    offlineScheduleEndTime?: string;
+    offlineScheduleEndTime?: Date;
     /**
      * 
      * @type {boolean}
@@ -158,9 +158,9 @@ export function V2controllersEditableEnvironmentFromJSONTyped(json: any, ignoreD
         'namePrefixesDomain': !exists(json, 'namePrefixesDomain') ? undefined : json['namePrefixesDomain'],
         'offline': !exists(json, 'offline') ? undefined : json['offline'],
         'offlineScheduleBeginEnabled': !exists(json, 'offlineScheduleBeginEnabled') ? undefined : json['offlineScheduleBeginEnabled'],
-        'offlineScheduleBeginTime': !exists(json, 'offlineScheduleBeginTime') ? undefined : json['offlineScheduleBeginTime'],
+        'offlineScheduleBeginTime': !exists(json, 'offlineScheduleBeginTime') ? undefined : (new Date(json['offlineScheduleBeginTime'])),
         'offlineScheduleEndEnabled': !exists(json, 'offlineScheduleEndEnabled') ? undefined : json['offlineScheduleEndEnabled'],
-        'offlineScheduleEndTime': !exists(json, 'offlineScheduleEndTime') ? undefined : json['offlineScheduleEndTime'],
+        'offlineScheduleEndTime': !exists(json, 'offlineScheduleEndTime') ? undefined : (new Date(json['offlineScheduleEndTime'])),
         'offlineScheduleEndWeekends': !exists(json, 'offlineScheduleEndWeekends') ? undefined : json['offlineScheduleEndWeekends'],
         'owner': !exists(json, 'owner') ? undefined : json['owner'],
         'pagerdutyIntegration': !exists(json, 'pagerdutyIntegration') ? undefined : json['pagerdutyIntegration'],
@@ -187,9 +187,9 @@ export function V2controllersEditableEnvironmentToJSON(value?: V2controllersEdit
         'namePrefixesDomain': value.namePrefixesDomain,
         'offline': value.offline,
         'offlineScheduleBeginEnabled': value.offlineScheduleBeginEnabled,
-        'offlineScheduleBeginTime': value.offlineScheduleBeginTime,
+        'offlineScheduleBeginTime': value.offlineScheduleBeginTime === undefined ? undefined : (value.offlineScheduleBeginTime.toISOString()),
         'offlineScheduleEndEnabled': value.offlineScheduleEndEnabled,
-        'offlineScheduleEndTime': value.offlineScheduleEndTime,
+        'offlineScheduleEndTime': value.offlineScheduleEndTime === undefined ? undefined : (value.offlineScheduleEndTime.toISOString()),
         'offlineScheduleEndWeekends': value.offlineScheduleEndWeekends,
         'owner': value.owner,
         'pagerdutyIntegration': value.pagerdutyIntegration,

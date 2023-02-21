@@ -54,9 +54,9 @@ export interface ApiV2EnvironmentsGetRequest {
     namePrefixesDomain?: boolean;
     offline?: boolean;
     offlineScheduleBeginEnabled?: boolean;
-    offlineScheduleBeginTime?: string;
+    offlineScheduleBeginTime?: Date;
     offlineScheduleEndEnabled?: boolean;
-    offlineScheduleEndTime?: string;
+    offlineScheduleEndTime?: Date;
     offlineScheduleEndWeekends?: boolean;
     owner?: string;
     pagerdutyIntegration?: string;
@@ -177,7 +177,7 @@ export class EnvironmentsApi extends runtime.BaseAPI {
         }
 
         if (requestParameters.offlineScheduleBeginTime !== undefined) {
-            queryParameters['offlineScheduleBeginTime'] = requestParameters.offlineScheduleBeginTime;
+            queryParameters['offlineScheduleBeginTime'] = (requestParameters.offlineScheduleBeginTime as any).toISOString();
         }
 
         if (requestParameters.offlineScheduleEndEnabled !== undefined) {
@@ -185,7 +185,7 @@ export class EnvironmentsApi extends runtime.BaseAPI {
         }
 
         if (requestParameters.offlineScheduleEndTime !== undefined) {
-            queryParameters['offlineScheduleEndTime'] = requestParameters.offlineScheduleEndTime;
+            queryParameters['offlineScheduleEndTime'] = (requestParameters.offlineScheduleEndTime as any).toISOString();
         }
 
         if (requestParameters.offlineScheduleEndWeekends !== undefined) {

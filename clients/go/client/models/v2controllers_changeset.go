@@ -21,7 +21,8 @@ import (
 type V2controllersChangeset struct {
 
 	// applied at
-	AppliedAt string `json:"appliedAt,omitempty"`
+	// Format: date-time
+	AppliedAt strfmt.DateTime `json:"appliedAt,omitempty"`
 
 	// chart release
 	ChartRelease string `json:"chartRelease,omitempty"`
@@ -70,7 +71,8 @@ type V2controllersChangeset struct {
 	FromHelmfileRef string `json:"fromHelmfileRef,omitempty"`
 
 	// from resolved at
-	FromResolvedAt string `json:"fromResolvedAt,omitempty"`
+	// Format: date-time
+	FromResolvedAt strfmt.DateTime `json:"fromResolvedAt,omitempty"`
 
 	// id
 	ID int64 `json:"id,omitempty"`
@@ -82,7 +84,8 @@ type V2controllersChangeset struct {
 	NewChartVersions []*V2controllersChartVersion `json:"newChartVersions"`
 
 	// superseded at
-	SupersededAt string `json:"supersededAt,omitempty"`
+	// Format: date-time
+	SupersededAt strfmt.DateTime `json:"supersededAt,omitempty"`
 
 	// to app version branch
 	ToAppVersionBranch string `json:"toAppVersionBranch,omitempty"`
@@ -121,7 +124,8 @@ type V2controllersChangeset struct {
 	ToHelmfileRef string `json:"toHelmfileRef,omitempty"`
 
 	// to resolved at
-	ToResolvedAt string `json:"toResolvedAt,omitempty"`
+	// Format: date-time
+	ToResolvedAt strfmt.DateTime `json:"toResolvedAt,omitempty"`
 
 	// updated at
 	// Format: date-time
@@ -132,11 +136,19 @@ type V2controllersChangeset struct {
 func (m *V2controllersChangeset) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateAppliedAt(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateChartReleaseInfo(formats); err != nil {
 		res = append(res, err)
 	}
 
 	if err := m.validateCreatedAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateFromResolvedAt(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -148,6 +160,14 @@ func (m *V2controllersChangeset) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateSupersededAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateToResolvedAt(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateUpdatedAt(formats); err != nil {
 		res = append(res, err)
 	}
@@ -155,6 +175,18 @@ func (m *V2controllersChangeset) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *V2controllersChangeset) validateAppliedAt(formats strfmt.Registry) error {
+	if swag.IsZero(m.AppliedAt) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("appliedAt", "body", "date-time", m.AppliedAt.String(), formats); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -183,6 +215,18 @@ func (m *V2controllersChangeset) validateCreatedAt(formats strfmt.Registry) erro
 	}
 
 	if err := validate.FormatOf("createdAt", "body", "date-time", m.CreatedAt.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *V2controllersChangeset) validateFromResolvedAt(formats strfmt.Registry) error {
+	if swag.IsZero(m.FromResolvedAt) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("fromResolvedAt", "body", "date-time", m.FromResolvedAt.String(), formats); err != nil {
 		return err
 	}
 
@@ -236,6 +280,30 @@ func (m *V2controllersChangeset) validateNewChartVersions(formats strfmt.Registr
 			}
 		}
 
+	}
+
+	return nil
+}
+
+func (m *V2controllersChangeset) validateSupersededAt(formats strfmt.Registry) error {
+	if swag.IsZero(m.SupersededAt) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("supersededAt", "body", "date-time", m.SupersededAt.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *V2controllersChangeset) validateToResolvedAt(formats strfmt.Registry) error {
+	if swag.IsZero(m.ToResolvedAt) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("toResolvedAt", "body", "date-time", m.ToResolvedAt.String(), formats); err != nil {
+		return err
 	}
 
 	return nil

@@ -61,7 +61,9 @@ func NewGetAPIV2ChangesetsParamsWithHTTPClient(client *http.Client) *GetAPIV2Cha
 type GetAPIV2ChangesetsParams struct {
 
 	// AppliedAt.
-	AppliedAt *string
+	//
+	// Format: date-time
+	AppliedAt *strfmt.DateTime
 
 	// ChartRelease.
 	ChartRelease *string
@@ -108,7 +110,9 @@ type GetAPIV2ChangesetsParams struct {
 	FromHelmfileRef *string
 
 	// FromResolvedAt.
-	FromResolvedAt *string
+	//
+	// Format: date-time
+	FromResolvedAt *strfmt.DateTime
 
 	// ID.
 	ID *int64
@@ -120,7 +124,9 @@ type GetAPIV2ChangesetsParams struct {
 	Limit *int64
 
 	// SupersededAt.
-	SupersededAt *string
+	//
+	// Format: date-time
+	SupersededAt *strfmt.DateTime
 
 	// ToAppVersionBranch.
 	ToAppVersionBranch *string
@@ -159,7 +165,9 @@ type GetAPIV2ChangesetsParams struct {
 	ToHelmfileRef *string
 
 	// ToResolvedAt.
-	ToResolvedAt *string
+	//
+	// Format: date-time
+	ToResolvedAt *strfmt.DateTime
 
 	// UpdatedAt.
 	//
@@ -220,13 +228,13 @@ func (o *GetAPIV2ChangesetsParams) SetHTTPClient(client *http.Client) {
 }
 
 // WithAppliedAt adds the appliedAt to the get API v2 changesets params
-func (o *GetAPIV2ChangesetsParams) WithAppliedAt(appliedAt *string) *GetAPIV2ChangesetsParams {
+func (o *GetAPIV2ChangesetsParams) WithAppliedAt(appliedAt *strfmt.DateTime) *GetAPIV2ChangesetsParams {
 	o.SetAppliedAt(appliedAt)
 	return o
 }
 
 // SetAppliedAt adds the appliedAt to the get API v2 changesets params
-func (o *GetAPIV2ChangesetsParams) SetAppliedAt(appliedAt *string) {
+func (o *GetAPIV2ChangesetsParams) SetAppliedAt(appliedAt *strfmt.DateTime) {
 	o.AppliedAt = appliedAt
 }
 
@@ -385,13 +393,13 @@ func (o *GetAPIV2ChangesetsParams) SetFromHelmfileRef(fromHelmfileRef *string) {
 }
 
 // WithFromResolvedAt adds the fromResolvedAt to the get API v2 changesets params
-func (o *GetAPIV2ChangesetsParams) WithFromResolvedAt(fromResolvedAt *string) *GetAPIV2ChangesetsParams {
+func (o *GetAPIV2ChangesetsParams) WithFromResolvedAt(fromResolvedAt *strfmt.DateTime) *GetAPIV2ChangesetsParams {
 	o.SetFromResolvedAt(fromResolvedAt)
 	return o
 }
 
 // SetFromResolvedAt adds the fromResolvedAt to the get API v2 changesets params
-func (o *GetAPIV2ChangesetsParams) SetFromResolvedAt(fromResolvedAt *string) {
+func (o *GetAPIV2ChangesetsParams) SetFromResolvedAt(fromResolvedAt *strfmt.DateTime) {
 	o.FromResolvedAt = fromResolvedAt
 }
 
@@ -418,13 +426,13 @@ func (o *GetAPIV2ChangesetsParams) SetLimit(limit *int64) {
 }
 
 // WithSupersededAt adds the supersededAt to the get API v2 changesets params
-func (o *GetAPIV2ChangesetsParams) WithSupersededAt(supersededAt *string) *GetAPIV2ChangesetsParams {
+func (o *GetAPIV2ChangesetsParams) WithSupersededAt(supersededAt *strfmt.DateTime) *GetAPIV2ChangesetsParams {
 	o.SetSupersededAt(supersededAt)
 	return o
 }
 
 // SetSupersededAt adds the supersededAt to the get API v2 changesets params
-func (o *GetAPIV2ChangesetsParams) SetSupersededAt(supersededAt *string) {
+func (o *GetAPIV2ChangesetsParams) SetSupersededAt(supersededAt *strfmt.DateTime) {
 	o.SupersededAt = supersededAt
 }
 
@@ -561,13 +569,13 @@ func (o *GetAPIV2ChangesetsParams) SetToHelmfileRef(toHelmfileRef *string) {
 }
 
 // WithToResolvedAt adds the toResolvedAt to the get API v2 changesets params
-func (o *GetAPIV2ChangesetsParams) WithToResolvedAt(toResolvedAt *string) *GetAPIV2ChangesetsParams {
+func (o *GetAPIV2ChangesetsParams) WithToResolvedAt(toResolvedAt *strfmt.DateTime) *GetAPIV2ChangesetsParams {
 	o.SetToResolvedAt(toResolvedAt)
 	return o
 }
 
 // SetToResolvedAt adds the toResolvedAt to the get API v2 changesets params
-func (o *GetAPIV2ChangesetsParams) SetToResolvedAt(toResolvedAt *string) {
+func (o *GetAPIV2ChangesetsParams) SetToResolvedAt(toResolvedAt *strfmt.DateTime) {
 	o.ToResolvedAt = toResolvedAt
 }
 
@@ -593,12 +601,12 @@ func (o *GetAPIV2ChangesetsParams) WriteToRequest(r runtime.ClientRequest, reg s
 	if o.AppliedAt != nil {
 
 		// query param appliedAt
-		var qrAppliedAt string
+		var qrAppliedAt strfmt.DateTime
 
 		if o.AppliedAt != nil {
 			qrAppliedAt = *o.AppliedAt
 		}
-		qAppliedAt := qrAppliedAt
+		qAppliedAt := qrAppliedAt.String()
 		if qAppliedAt != "" {
 
 			if err := r.SetQueryParam("appliedAt", qAppliedAt); err != nil {
@@ -848,12 +856,12 @@ func (o *GetAPIV2ChangesetsParams) WriteToRequest(r runtime.ClientRequest, reg s
 	if o.FromResolvedAt != nil {
 
 		// query param fromResolvedAt
-		var qrFromResolvedAt string
+		var qrFromResolvedAt strfmt.DateTime
 
 		if o.FromResolvedAt != nil {
 			qrFromResolvedAt = *o.FromResolvedAt
 		}
-		qFromResolvedAt := qrFromResolvedAt
+		qFromResolvedAt := qrFromResolvedAt.String()
 		if qFromResolvedAt != "" {
 
 			if err := r.SetQueryParam("fromResolvedAt", qFromResolvedAt); err != nil {
@@ -899,12 +907,12 @@ func (o *GetAPIV2ChangesetsParams) WriteToRequest(r runtime.ClientRequest, reg s
 	if o.SupersededAt != nil {
 
 		// query param supersededAt
-		var qrSupersededAt string
+		var qrSupersededAt strfmt.DateTime
 
 		if o.SupersededAt != nil {
 			qrSupersededAt = *o.SupersededAt
 		}
-		qSupersededAt := qrSupersededAt
+		qSupersededAt := qrSupersededAt.String()
 		if qSupersededAt != "" {
 
 			if err := r.SetQueryParam("supersededAt", qSupersededAt); err != nil {
@@ -1120,12 +1128,12 @@ func (o *GetAPIV2ChangesetsParams) WriteToRequest(r runtime.ClientRequest, reg s
 	if o.ToResolvedAt != nil {
 
 		// query param toResolvedAt
-		var qrToResolvedAt string
+		var qrToResolvedAt strfmt.DateTime
 
 		if o.ToResolvedAt != nil {
 			qrToResolvedAt = *o.ToResolvedAt
 		}
-		qToResolvedAt := qrToResolvedAt
+		qToResolvedAt := qrToResolvedAt.String()
 		if qToResolvedAt != "" {
 
 			if err := r.SetQueryParam("toResolvedAt", qToResolvedAt); err != nil {

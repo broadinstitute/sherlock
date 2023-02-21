@@ -40,10 +40,10 @@ import {
 export interface V2controllersChangeset {
     /**
      * 
-     * @type {string}
+     * @type {Date}
      * @memberof V2controllersChangeset
      */
-    appliedAt?: string;
+    appliedAt?: Date;
     /**
      * 
      * @type {string}
@@ -136,10 +136,10 @@ export interface V2controllersChangeset {
     fromHelmfileRef?: string;
     /**
      * 
-     * @type {string}
+     * @type {Date}
      * @memberof V2controllersChangeset
      */
-    fromResolvedAt?: string;
+    fromResolvedAt?: Date;
     /**
      * 
      * @type {number}
@@ -160,10 +160,10 @@ export interface V2controllersChangeset {
     newChartVersions?: Array<V2controllersChartVersion>;
     /**
      * 
-     * @type {string}
+     * @type {Date}
      * @memberof V2controllersChangeset
      */
-    supersededAt?: string;
+    supersededAt?: Date;
     /**
      * 
      * @type {string}
@@ -238,10 +238,10 @@ export interface V2controllersChangeset {
     toHelmfileRef?: string;
     /**
      * 
-     * @type {string}
+     * @type {Date}
      * @memberof V2controllersChangeset
      */
-    toResolvedAt?: string;
+    toResolvedAt?: Date;
     /**
      * 
      * @type {Date}
@@ -269,7 +269,7 @@ export function V2controllersChangesetFromJSONTyped(json: any, ignoreDiscriminat
     }
     return {
         
-        'appliedAt': !exists(json, 'appliedAt') ? undefined : json['appliedAt'],
+        'appliedAt': !exists(json, 'appliedAt') ? undefined : (new Date(json['appliedAt'])),
         'chartRelease': !exists(json, 'chartRelease') ? undefined : json['chartRelease'],
         'chartReleaseInfo': !exists(json, 'chartReleaseInfo') ? undefined : V2controllersChartReleaseFromJSON(json['chartReleaseInfo']),
         'createdAt': !exists(json, 'createdAt') ? undefined : (new Date(json['createdAt'])),
@@ -285,11 +285,11 @@ export function V2controllersChangesetFromJSONTyped(json: any, ignoreDiscriminat
         'fromChartVersionResolver': !exists(json, 'fromChartVersionResolver') ? undefined : json['fromChartVersionResolver'],
         'fromFirecloudDevelopRef': !exists(json, 'fromFirecloudDevelopRef') ? undefined : json['fromFirecloudDevelopRef'],
         'fromHelmfileRef': !exists(json, 'fromHelmfileRef') ? undefined : json['fromHelmfileRef'],
-        'fromResolvedAt': !exists(json, 'fromResolvedAt') ? undefined : json['fromResolvedAt'],
+        'fromResolvedAt': !exists(json, 'fromResolvedAt') ? undefined : (new Date(json['fromResolvedAt'])),
         'id': !exists(json, 'id') ? undefined : json['id'],
         'newAppVersions': !exists(json, 'newAppVersions') ? undefined : ((json['newAppVersions'] as Array<any>).map(V2controllersAppVersionFromJSON)),
         'newChartVersions': !exists(json, 'newChartVersions') ? undefined : ((json['newChartVersions'] as Array<any>).map(V2controllersChartVersionFromJSON)),
-        'supersededAt': !exists(json, 'supersededAt') ? undefined : json['supersededAt'],
+        'supersededAt': !exists(json, 'supersededAt') ? undefined : (new Date(json['supersededAt'])),
         'toAppVersionBranch': !exists(json, 'toAppVersionBranch') ? undefined : json['toAppVersionBranch'],
         'toAppVersionCommit': !exists(json, 'toAppVersionCommit') ? undefined : json['toAppVersionCommit'],
         'toAppVersionExact': !exists(json, 'toAppVersionExact') ? undefined : json['toAppVersionExact'],
@@ -302,7 +302,7 @@ export function V2controllersChangesetFromJSONTyped(json: any, ignoreDiscriminat
         'toChartVersionResolver': !exists(json, 'toChartVersionResolver') ? undefined : json['toChartVersionResolver'],
         'toFirecloudDevelopRef': !exists(json, 'toFirecloudDevelopRef') ? undefined : json['toFirecloudDevelopRef'],
         'toHelmfileRef': !exists(json, 'toHelmfileRef') ? undefined : json['toHelmfileRef'],
-        'toResolvedAt': !exists(json, 'toResolvedAt') ? undefined : json['toResolvedAt'],
+        'toResolvedAt': !exists(json, 'toResolvedAt') ? undefined : (new Date(json['toResolvedAt'])),
         'updatedAt': !exists(json, 'updatedAt') ? undefined : (new Date(json['updatedAt'])),
     };
 }
@@ -316,7 +316,7 @@ export function V2controllersChangesetToJSON(value?: V2controllersChangeset | nu
     }
     return {
         
-        'appliedAt': value.appliedAt,
+        'appliedAt': value.appliedAt === undefined ? undefined : (value.appliedAt.toISOString()),
         'chartRelease': value.chartRelease,
         'chartReleaseInfo': V2controllersChartReleaseToJSON(value.chartReleaseInfo),
         'createdAt': value.createdAt === undefined ? undefined : (value.createdAt.toISOString()),
@@ -332,11 +332,11 @@ export function V2controllersChangesetToJSON(value?: V2controllersChangeset | nu
         'fromChartVersionResolver': value.fromChartVersionResolver,
         'fromFirecloudDevelopRef': value.fromFirecloudDevelopRef,
         'fromHelmfileRef': value.fromHelmfileRef,
-        'fromResolvedAt': value.fromResolvedAt,
+        'fromResolvedAt': value.fromResolvedAt === undefined ? undefined : (value.fromResolvedAt.toISOString()),
         'id': value.id,
         'newAppVersions': value.newAppVersions === undefined ? undefined : ((value.newAppVersions as Array<any>).map(V2controllersAppVersionToJSON)),
         'newChartVersions': value.newChartVersions === undefined ? undefined : ((value.newChartVersions as Array<any>).map(V2controllersChartVersionToJSON)),
-        'supersededAt': value.supersededAt,
+        'supersededAt': value.supersededAt === undefined ? undefined : (value.supersededAt.toISOString()),
         'toAppVersionBranch': value.toAppVersionBranch,
         'toAppVersionCommit': value.toAppVersionCommit,
         'toAppVersionExact': value.toAppVersionExact,
@@ -349,7 +349,7 @@ export function V2controllersChangesetToJSON(value?: V2controllersChangeset | nu
         'toChartVersionResolver': value.toChartVersionResolver,
         'toFirecloudDevelopRef': value.toFirecloudDevelopRef,
         'toHelmfileRef': value.toHelmfileRef,
-        'toResolvedAt': value.toResolvedAt,
+        'toResolvedAt': value.toResolvedAt === undefined ? undefined : (value.toResolvedAt.toISOString()),
         'updatedAt': value.updatedAt === undefined ? undefined : (value.updatedAt.toISOString()),
     };
 }

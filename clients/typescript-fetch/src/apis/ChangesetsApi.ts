@@ -29,7 +29,7 @@ import {
 } from '../models';
 
 export interface ApiV2ChangesetsGetRequest {
-    appliedAt?: string;
+    appliedAt?: Date;
     chartRelease?: string;
     createdAt?: Date;
     fromAppVersionBranch?: string;
@@ -44,9 +44,9 @@ export interface ApiV2ChangesetsGetRequest {
     fromChartVersionResolver?: string;
     fromFirecloudDevelopRef?: string;
     fromHelmfileRef?: string;
-    fromResolvedAt?: string;
+    fromResolvedAt?: Date;
     id?: number;
-    supersededAt?: string;
+    supersededAt?: Date;
     toAppVersionBranch?: string;
     toAppVersionCommit?: string;
     toAppVersionExact?: string;
@@ -59,7 +59,7 @@ export interface ApiV2ChangesetsGetRequest {
     toChartVersionResolver?: string;
     toFirecloudDevelopRef?: string;
     toHelmfileRef?: string;
-    toResolvedAt?: string;
+    toResolvedAt?: Date;
     updatedAt?: Date;
     limit?: number;
 }
@@ -103,7 +103,7 @@ export class ChangesetsApi extends runtime.BaseAPI {
         const queryParameters: any = {};
 
         if (requestParameters.appliedAt !== undefined) {
-            queryParameters['appliedAt'] = requestParameters.appliedAt;
+            queryParameters['appliedAt'] = (requestParameters.appliedAt as any).toISOString();
         }
 
         if (requestParameters.chartRelease !== undefined) {
@@ -163,7 +163,7 @@ export class ChangesetsApi extends runtime.BaseAPI {
         }
 
         if (requestParameters.fromResolvedAt !== undefined) {
-            queryParameters['fromResolvedAt'] = requestParameters.fromResolvedAt;
+            queryParameters['fromResolvedAt'] = (requestParameters.fromResolvedAt as any).toISOString();
         }
 
         if (requestParameters.id !== undefined) {
@@ -171,7 +171,7 @@ export class ChangesetsApi extends runtime.BaseAPI {
         }
 
         if (requestParameters.supersededAt !== undefined) {
-            queryParameters['supersededAt'] = requestParameters.supersededAt;
+            queryParameters['supersededAt'] = (requestParameters.supersededAt as any).toISOString();
         }
 
         if (requestParameters.toAppVersionBranch !== undefined) {
@@ -223,7 +223,7 @@ export class ChangesetsApi extends runtime.BaseAPI {
         }
 
         if (requestParameters.toResolvedAt !== undefined) {
-            queryParameters['toResolvedAt'] = requestParameters.toResolvedAt;
+            queryParameters['toResolvedAt'] = (requestParameters.toResolvedAt as any).toISOString();
         }
 
         if (requestParameters.updatedAt !== undefined) {

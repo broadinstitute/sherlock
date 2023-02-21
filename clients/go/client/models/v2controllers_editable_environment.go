@@ -11,6 +11,7 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // V2controllersEditableEnvironment v2controllers editable environment
@@ -46,13 +47,15 @@ type V2controllersEditableEnvironment struct {
 	OfflineScheduleBeginEnabled bool `json:"offlineScheduleBeginEnabled,omitempty"`
 
 	// offline schedule begin time
-	OfflineScheduleBeginTime string `json:"offlineScheduleBeginTime,omitempty"`
+	// Format: date-time
+	OfflineScheduleBeginTime strfmt.DateTime `json:"offlineScheduleBeginTime,omitempty"`
 
 	// When enabled, the BEE will be slated to come online around the end time each weekday (each day if weekends enabled)
 	OfflineScheduleEndEnabled bool `json:"offlineScheduleEndEnabled,omitempty"`
 
 	// offline schedule end time
-	OfflineScheduleEndTime string `json:"offlineScheduleEndTime,omitempty"`
+	// Format: date-time
+	OfflineScheduleEndTime strfmt.DateTime `json:"offlineScheduleEndTime,omitempty"`
 
 	// offline schedule end weekends
 	OfflineScheduleEndWeekends bool `json:"offlineScheduleEndWeekends,omitempty"`
@@ -78,6 +81,14 @@ func (m *V2controllersEditableEnvironment) Validate(formats strfmt.Registry) err
 		res = append(res, err)
 	}
 
+	if err := m.validateOfflineScheduleBeginTime(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateOfflineScheduleEndTime(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -98,6 +109,30 @@ func (m *V2controllersEditableEnvironment) validateAutoDelete(formats strfmt.Reg
 			}
 			return err
 		}
+	}
+
+	return nil
+}
+
+func (m *V2controllersEditableEnvironment) validateOfflineScheduleBeginTime(formats strfmt.Registry) error {
+	if swag.IsZero(m.OfflineScheduleBeginTime) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("offlineScheduleBeginTime", "body", "date-time", m.OfflineScheduleBeginTime.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *V2controllersEditableEnvironment) validateOfflineScheduleEndTime(formats strfmt.Registry) error {
+	if swag.IsZero(m.OfflineScheduleEndTime) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("offlineScheduleEndTime", "body", "date-time", m.OfflineScheduleEndTime.String(), formats); err != nil {
+		return err
 	}
 
 	return nil
