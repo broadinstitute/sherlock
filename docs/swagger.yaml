@@ -127,6 +127,7 @@ definitions:
   v2controllers.Changeset:
     properties:
       appliedAt:
+        format: date-time
         type: string
       chartRelease:
         type: string
@@ -160,6 +161,7 @@ definitions:
       fromHelmfileRef:
         type: string
       fromResolvedAt:
+        format: date-time
         type: string
       id:
         type: integer
@@ -172,6 +174,7 @@ definitions:
           $ref: '#/definitions/v2controllers.ChartVersion'
         type: array
       supersededAt:
+        format: date-time
         type: string
       toAppVersionBranch:
         type: string
@@ -198,6 +201,7 @@ definitions:
       toHelmfileRef:
         type: string
       toResolvedAt:
+        format: date-time
         type: string
       updatedAt:
         format: date-time
@@ -680,12 +684,14 @@ definitions:
           begin time each day
         type: boolean
       offlineScheduleBeginTime:
+        format: date-time
         type: string
       offlineScheduleEndEnabled:
         description: When enabled, the BEE will be slated to come online around the
           end time each weekday (each day if weekends enabled)
         type: boolean
       offlineScheduleEndTime:
+        format: date-time
         type: string
       offlineScheduleEndWeekends:
         type: boolean
@@ -825,12 +831,14 @@ definitions:
           begin time each day
         type: boolean
       offlineScheduleBeginTime:
+        format: date-time
         type: string
       offlineScheduleEndEnabled:
         description: When enabled, the BEE will be slated to come online around the
           end time each weekday (each day if weekends enabled)
         type: boolean
       offlineScheduleEndTime:
+        format: date-time
         type: string
       offlineScheduleEndWeekends:
         type: boolean
@@ -917,12 +925,14 @@ definitions:
           begin time each day
         type: boolean
       offlineScheduleBeginTime:
+        format: date-time
         type: string
       offlineScheduleEndEnabled:
         description: When enabled, the BEE will be slated to come online around the
           end time each weekday (each day if weekends enabled)
         type: boolean
       offlineScheduleEndTime:
+        format: date-time
         type: string
       offlineScheduleEndWeekends:
         type: boolean
@@ -1274,7 +1284,8 @@ paths:
     get:
       description: List existing Changeset entries, ordered by most recently updated.
       parameters:
-      - in: query
+      - format: date-time
+        in: query
         name: appliedAt
         type: string
       - in: query
@@ -1320,13 +1331,15 @@ paths:
       - in: query
         name: fromHelmfileRef
         type: string
-      - in: query
+      - format: date-time
+        in: query
         name: fromResolvedAt
         type: string
       - in: query
         name: id
         type: integer
-      - in: query
+      - format: date-time
+        in: query
         name: supersededAt
         type: string
       - in: query
@@ -1365,7 +1378,8 @@ paths:
       - in: query
         name: toHelmfileRef
         type: string
-      - in: query
+      - format: date-time
+        in: query
         name: toResolvedAt
         type: string
       - format: date-time
@@ -2877,7 +2891,8 @@ paths:
         in: query
         name: offlineScheduleBeginEnabled
         type: boolean
-      - in: query
+      - format: date-time
+        in: query
         name: offlineScheduleBeginTime
         type: string
       - description: When enabled, the BEE will be slated to come online around the
@@ -2885,7 +2900,8 @@ paths:
         in: query
         name: offlineScheduleEndEnabled
         type: boolean
-      - in: query
+      - format: date-time
+        in: query
         name: offlineScheduleEndTime
         type: string
       - in: query

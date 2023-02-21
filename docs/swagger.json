@@ -448,6 +448,7 @@
                 "parameters": [
                     {
                         "type": "string",
+                        "format": "date-time",
                         "name": "appliedAt",
                         "in": "query"
                     },
@@ -524,6 +525,7 @@
                     },
                     {
                         "type": "string",
+                        "format": "date-time",
                         "name": "fromResolvedAt",
                         "in": "query"
                     },
@@ -534,6 +536,7 @@
                     },
                     {
                         "type": "string",
+                        "format": "date-time",
                         "name": "supersededAt",
                         "in": "query"
                     },
@@ -599,6 +602,7 @@
                     },
                     {
                         "type": "string",
+                        "format": "date-time",
                         "name": "toResolvedAt",
                         "in": "query"
                     },
@@ -2813,6 +2817,7 @@
                     },
                     {
                         "type": "string",
+                        "format": "date-time",
                         "name": "offlineScheduleBeginTime",
                         "in": "query"
                     },
@@ -2824,6 +2829,7 @@
                     },
                     {
                         "type": "string",
+                        "format": "date-time",
                         "name": "offlineScheduleEndTime",
                         "in": "query"
                     },
@@ -5111,7 +5117,8 @@
             "type": "object",
             "properties": {
                 "appliedAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "chartRelease": {
                     "type": "string"
@@ -5160,7 +5167,8 @@
                     "type": "string"
                 },
                 "fromResolvedAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "id": {
                     "type": "integer"
@@ -5178,7 +5186,8 @@
                     }
                 },
                 "supersededAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "toAppVersionBranch": {
                     "type": "string"
@@ -5217,7 +5226,8 @@
                     "type": "string"
                 },
                 "toResolvedAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "updatedAt": {
                     "type": "string",
@@ -5864,14 +5874,16 @@
                     "type": "boolean"
                 },
                 "offlineScheduleBeginTime": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "offlineScheduleEndEnabled": {
                     "description": "When enabled, the BEE will be slated to come online around the end time each weekday (each day if weekends enabled)",
                     "type": "boolean"
                 },
                 "offlineScheduleEndTime": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "offlineScheduleEndWeekends": {
                     "type": "boolean"
@@ -6059,14 +6071,16 @@
                     "type": "boolean"
                 },
                 "offlineScheduleBeginTime": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "offlineScheduleEndEnabled": {
                     "description": "When enabled, the BEE will be slated to come online around the end time each weekday (each day if weekends enabled)",
                     "type": "boolean"
                 },
                 "offlineScheduleEndTime": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "offlineScheduleEndWeekends": {
                     "type": "boolean"
@@ -6177,14 +6191,16 @@
                     "type": "boolean"
                 },
                 "offlineScheduleBeginTime": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "offlineScheduleEndEnabled": {
                     "description": "When enabled, the BEE will be slated to come online around the end time each weekday (each day if weekends enabled)",
                     "type": "boolean"
                 },
                 "offlineScheduleEndTime": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "offlineScheduleEndWeekends": {
                     "type": "boolean"

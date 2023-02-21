@@ -50,9 +50,9 @@ type EditableEnvironment struct {
 	PagerdutyIntegration        *string                 `json:"pagerdutyIntegration,omitempty" form:"pagerdutyIntegration"`
 	Offline                     *bool                   `json:"offline" form:"offline" default:"false"`                                   // Applicable for BEEs only, whether Thelma should render the BEE as "offline" zero replicas (this field is a target state, not a status)
 	OfflineScheduleBeginEnabled *bool                   `json:"offlineScheduleBeginEnabled,omitempty" form:"offlineScheduleBeginEnabled"` // When enabled, the BEE will be slated to go offline around the begin time each day
-	OfflineScheduleBeginTime    *time.Time              `json:"offlineScheduleBeginTime,omitempty" form:"offlineScheduleBeginTime"`
+	OfflineScheduleBeginTime    *time.Time              `json:"offlineScheduleBeginTime,omitempty" form:"offlineScheduleBeginTime"  format:"date-time"`
 	OfflineScheduleEndEnabled   *bool                   `json:"offlineScheduleEndEnabled,omitempty" form:"offlineScheduleEndEnabled"` // When enabled, the BEE will be slated to come online around the end time each weekday (each day if weekends enabled)
-	OfflineScheduleEndTime      *time.Time              `json:"offlineScheduleEndTime,omitempty" form:"offlineScheduleEndTime"`
+	OfflineScheduleEndTime      *time.Time              `json:"offlineScheduleEndTime,omitempty" form:"offlineScheduleEndTime"  format:"date-time"`
 	OfflineScheduleEndWeekends  *bool                   `json:"offlineScheduleEndWeekends,omitempty" form:"offlineScheduleEndWeekends"`
 }
 
