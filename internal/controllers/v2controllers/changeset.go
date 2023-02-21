@@ -13,13 +13,13 @@ type Changeset struct {
 	ReadableBaseType
 	ChartReleaseInfo *ChartRelease `json:"chartReleaseInfo,omitempty" form:"-"`
 
-	AppliedAt    *time.Time `json:"appliedAt,omitempty" form:"appliedAt"`
-	SupersededAt *time.Time `json:"supersededAt,omitempty" form:"supersededAt"`
+	AppliedAt    *time.Time `json:"appliedAt,omitempty" form:"appliedAt"  format:"date-time"`
+	SupersededAt *time.Time `json:"supersededAt,omitempty" form:"supersededAt"  format:"date-time"`
 
 	NewAppVersions   []AppVersion   `json:"newAppVersions,omitempty" form:"-"`
 	NewChartVersions []ChartVersion `json:"newChartVersions,omitempty" form:"-"`
 
-	FromResolvedAt                     *time.Time `json:"fromResolvedAt,omitempty" form:"fromResolvedAt"`
+	FromResolvedAt                     *time.Time `json:"fromResolvedAt,omitempty" form:"fromResolvedAt"  format:"date-time"`
 	FromAppVersionResolver             *string    `json:"fromAppVersionResolver,omitempty" form:"fromAppVersionResolver"`
 	FromAppVersionExact                *string    `json:"fromAppVersionExact,omitempty" form:"fromAppVersionExact"`
 	FromAppVersionBranch               *string    `json:"fromAppVersionBranch,omitempty" form:"fromAppVersionBranch"`
@@ -33,7 +33,7 @@ type Changeset struct {
 	FromHelmfileRef                    *string    `json:"fromHelmfileRef,omitempty" form:"fromHelmfileRef"`
 	FromFirecloudDevelopRef            *string    `json:"fromFirecloudDevelopRef,omitempty" form:"fromFirecloudDevelopRef"`
 
-	ToResolvedAt            *time.Time `json:"toResolvedAt,omitempty" from:"toResolvedAt"`
+	ToResolvedAt            *time.Time `json:"toResolvedAt,omitempty" from:"toResolvedAt"  format:"date-time"`
 	ToAppVersionReference   string     `json:"toAppVersionReference,omitempty" form:"toAppVersionReference"`
 	ToChartVersionReference string     `json:"toChartVersionReference,omitempty" form:"toChartVersionReference"`
 
