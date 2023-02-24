@@ -2,6 +2,7 @@ package v2models
 
 import (
 	"context"
+	"fmt"
 	"github.com/broadinstitute/sherlock/internal/metrics/v2metrics"
 	"github.com/rs/zerolog/log"
 	"go.opencensus.io/stats"
@@ -186,6 +187,66 @@ group by result_per_version.chart_release_id
 	return appVersionLeadTimes, chartVersionLeadTimes, nil
 }
 
+func reportDataTypeCounts(ctx context.Context, db *gorm.DB) error {
+	for dataType, model := range map[string]Model{
+		"chart":         Chart{},
+		"environment":   Environment{},
+		"cluster":       Cluster{},
+		"app_version":   AppVersion{},
+		"chart_version": ChartVersion{},
+		"changeset":     Changeset{},
+		"chart_release": ChartRelease{},
+	} {
+		var count int64
+		if err := db.
+			Model(&model).
+			Select("count(1)").
+			Scan(&count).Error; err != nil {
+			return err
+		}
+		ctx, err := tag.New(ctx, tag.Upsert(v2metrics.DataTypeKey, dataType))
+		if err != nil {
+			return err
+		}
+		stats.Record(ctx, v2metrics.DataTypeCountMeasure.M(count))
+	}
+	return nil
+}
+
+func reportEnvironmentStateCounts(ctx context.Context, db *gorm.DB) error {
+	for _, lifecycle := range []string{"template", "static", "dynamic"} {
+		ctx, err := tag.New(ctx,
+			tag.Upsert(v2metrics.EnvironmentLifecycleKey, lifecycle))
+		if err != nil {
+			return err
+		}
+		for _, offline := range []bool{true, false} {
+			ctx, err := tag.New(ctx,
+				tag.Upsert(v2metrics.EnvironmentOfflineKey, fmt.Sprintf("%t", offline)))
+			if err != nil {
+				return err
+			}
+			for _, preventDeletion := range []bool{true, false} {
+				ctx, err := tag.New(ctx,
+					tag.Upsert(v2metrics.EnvironmentPreventDeletionKey, fmt.Sprintf("%t", preventDeletion)))
+				if err != nil {
+					return err
+				}
+				var count int64
+				if err := db.
+					Model(&Environment{}).
+					Where(Environment{Lifecycle: lifecycle, Offline: &offline, PreventDeletion: &preventDeletion}).
+					Select("count(1)").
+					Scan(&count).Error; err != nil {
+					return err
+				}
+				stats.Record(ctx, v2metrics.EnvironmentStateCountMeasure.M(count))
+			}
+		}
+	}
+	return nil
+}
+
 func UpdateMetrics(ctx context.Context, db *gorm.DB) error {
 	updateStartTime := time.Now()
 
@@ -294,27 +355,12 @@ func UpdateMetrics(ctx context.Context, db *gorm.DB) error {
 		}
 	}
 
-	for dataType, model := range map[string]Model{
-		"chart":         Chart{},
-		"environment":   Environment{},
-		"cluster":       Cluster{},
-		"app_version":   AppVersion{},
-		"chart_version": ChartVersion{},
-		"changeset":     Changeset{},
-		"chart_release": ChartRelease{},
-	} {
-		var count int64
-		if err = db.
-			Model(&model).
-			Select("count(1)").
-			Scan(&count).Error; err != nil {
-			return err
-		}
-		ctx, err = tag.New(ctx, tag.Upsert(v2metrics.DataTypeKey, dataType))
-		if err != nil {
-			return err
-		}
-		stats.Record(ctx, v2metrics.DataTypeCountMeasure.M(count))
+	if err = reportDataTypeCounts(ctx, db); err != nil {
+		return err
+	}
+
+	if err = reportEnvironmentStateCounts(ctx, db); err != nil {
+		return err
 	}
 
 	lastUpdateTime = time.Now()

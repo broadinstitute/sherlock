@@ -37,6 +37,10 @@ var (
 		"sherlock/v2_data_type_count",
 		"count of records per data type",
 		"records")
+	EnvironmentStateCountMeasure = stats.Int64(
+		"sherlock/v2_environment_state_count",
+		"count of environments",
+		"environments")
 )
 
 // Unique per replica
@@ -48,15 +52,17 @@ var (
 )
 
 var (
-	ChartKey                 = tag.MustNewKey("chart")
-	EnvironmentKey           = tag.MustNewKey("environment")
-	EnvironmentLifecycleKey  = tag.MustNewKey("environment_lifecycle")
-	ChartReleaseKey          = tag.MustNewKey("chart_release")
-	ChangesetStateKey        = tag.MustNewKey("changeset_state")
-	AppVersionTypeKey        = tag.MustNewKey("app_version_type")
-	DataTypeKey              = tag.MustNewKey("data_type")
-	PagerdutyRequestTypeKey  = tag.MustNewKey("pd_request_type")
-	PagerdutyResponseCodeKey = tag.MustNewKey("pd_response_code")
+	ChartKey                      = tag.MustNewKey("chart")
+	EnvironmentKey                = tag.MustNewKey("environment")
+	EnvironmentLifecycleKey       = tag.MustNewKey("environment_lifecycle")
+	EnvironmentOfflineKey         = tag.MustNewKey("environment_offline")
+	EnvironmentPreventDeletionKey = tag.MustNewKey("environment_prevent_deletion")
+	ChartReleaseKey               = tag.MustNewKey("chart_release")
+	ChangesetStateKey             = tag.MustNewKey("changeset_state")
+	AppVersionTypeKey             = tag.MustNewKey("app_version_type")
+	DataTypeKey                   = tag.MustNewKey("data_type")
+	PagerdutyRequestTypeKey       = tag.MustNewKey("pd_request_type")
+	PagerdutyResponseCodeKey      = tag.MustNewKey("pd_response_code")
 
 	ChangesetCountView = &view.View{
 		Name:        "v2_changeset_count",
@@ -114,6 +120,13 @@ var (
 		Description: PagerdutyRequestCount.Description(),
 		Aggregation: view.Count(),
 	}
+	EnvironmentStateCountView = &view.View{
+		Name:        "v2_environment_state_count",
+		Measure:     EnvironmentStateCountMeasure,
+		TagKeys:     []tag.Key{EnvironmentLifecycleKey, EnvironmentOfflineKey, EnvironmentPreventDeletionKey},
+		Description: EnvironmentStateCountMeasure.Description(),
+		Aggregation: view.LastValue(),
+	}
 )
 
 func RegisterViews() error {
@@ -126,5 +139,6 @@ func RegisterViews() error {
 		ChartFirecloudDevelopUsageView,
 		DataTypeCountView,
 		PagerdutyRequestCountView,
+		EnvironmentStateCountView,
 	)
 }
