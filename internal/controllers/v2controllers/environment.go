@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/broadinstitute/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/internal/models/v2models/environment"
+	"github.com/broadinstitute/sherlock/internal/utils"
 	"math/rand"
 	"strconv"
 	"strings"
@@ -110,9 +111,9 @@ func (e Environment) toModel(storeSet *v2models.StoreSet) (v2models.Environment,
 		PagerdutyIntegrationID:      pagerdutyIntegrationID,
 		Offline:                     e.Offline,
 		OfflineScheduleBeginEnabled: e.OfflineScheduleBeginEnabled,
-		OfflineScheduleBeginTime:    e.OfflineScheduleBeginTime,
+		OfflineScheduleBeginTime:    utils.NilOrNonZeroTime(e.OfflineScheduleBeginTime),
 		OfflineScheduleEndEnabled:   e.OfflineScheduleEndEnabled,
-		OfflineScheduleEndTime:      e.OfflineScheduleEndTime,
+		OfflineScheduleEndTime:      utils.NilOrNonZeroTime(e.OfflineScheduleEndTime),
 		OfflineScheduleEndWeekends:  e.OfflineScheduleEndWeekends,
 	}, nil
 }
@@ -164,7 +165,6 @@ func modelEnvironmentToEnvironment(model *v2models.Environment) *Environment {
 	} else if model.PagerdutyIntegrationID != nil {
 		pagerdutyIntegrationID = strconv.FormatUint(uint64(*model.PagerdutyIntegrationID), 10)
 	}
-
 	return &Environment{
 		ReadableBaseType: ReadableBaseType{
 			ID:        model.ID,
@@ -198,9 +198,9 @@ func modelEnvironmentToEnvironment(model *v2models.Environment) *Environment {
 				PagerdutyIntegration:        &pagerdutyIntegrationID,
 				Offline:                     model.Offline,
 				OfflineScheduleBeginEnabled: model.OfflineScheduleBeginEnabled,
-				OfflineScheduleBeginTime:    model.OfflineScheduleBeginTime,
+				OfflineScheduleBeginTime:    utils.NilOrNonZeroTime(model.OfflineScheduleBeginTime),
 				OfflineScheduleEndEnabled:   model.OfflineScheduleEndEnabled,
-				OfflineScheduleEndTime:      model.OfflineScheduleEndTime,
+				OfflineScheduleEndTime:      utils.NilOrNonZeroTime(model.OfflineScheduleEndTime),
 				OfflineScheduleEndWeekends:  model.OfflineScheduleEndWeekends,
 			},
 		},
