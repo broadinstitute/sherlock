@@ -5,6 +5,7 @@ import (
 	"github.com/broadinstitute/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/internal/models/v2models/environment"
 	"github.com/broadinstitute/sherlock/internal/utils"
+	"github.com/rs/zerolog/log"
 	"math/rand"
 	"strconv"
 	"strings"
@@ -49,11 +50,11 @@ type EditableEnvironment struct {
 	AutoDelete                  *environment.AutoDelete `json:"autoDelete" form:"autoDelete"`
 	Description                 *string                 `json:"description" form:"description"`
 	PagerdutyIntegration        *string                 `json:"pagerdutyIntegration,omitempty" form:"pagerdutyIntegration"`
-	Offline                     *bool                   `json:"offline" form:"offline" default:"false"`                                   // Applicable for BEEs only, whether Thelma should render the BEE as "offline" zero replicas (this field is a target state, not a status)
-	OfflineScheduleBeginEnabled *bool                   `json:"offlineScheduleBeginEnabled,omitempty" form:"offlineScheduleBeginEnabled"` // When enabled, the BEE will be slated to go offline around the begin time each day
-	OfflineScheduleBeginTime    *time.Time              `json:"offlineScheduleBeginTime,omitempty" form:"offlineScheduleBeginTime"  format:"date-time"`
-	OfflineScheduleEndEnabled   *bool                   `json:"offlineScheduleEndEnabled,omitempty" form:"offlineScheduleEndEnabled"` // When enabled, the BEE will be slated to come online around the end time each weekday (each day if weekends enabled)
-	OfflineScheduleEndTime      *time.Time              `json:"offlineScheduleEndTime,omitempty" form:"offlineScheduleEndTime"  format:"date-time"`
+	Offline                     *bool                   `json:"offline" form:"offline" default:"false"`                                                 // Applicable for BEEs only, whether Thelma should render the BEE as "offline" zero replicas (this field is a target state, not a status)
+	OfflineScheduleBeginEnabled *bool                   `json:"offlineScheduleBeginEnabled,omitempty" form:"offlineScheduleBeginEnabled"`               // When enabled, the BEE will be slated to go offline around the begin time each day
+	OfflineScheduleBeginTime    *time.Time              `json:"offlineScheduleBeginTime,omitempty" form:"offlineScheduleBeginTime"  format:"date-time"` // Stored with timezone to determine day of the week
+	OfflineScheduleEndEnabled   *bool                   `json:"offlineScheduleEndEnabled,omitempty" form:"offlineScheduleEndEnabled"`                   // When enabled, the BEE will be slated to come online around the end time each weekday (each day if weekends enabled)
+	OfflineScheduleEndTime      *time.Time              `json:"offlineScheduleEndTime,omitempty" form:"offlineScheduleEndTime"  format:"date-time"`     // Stored with timezone to determine day of the week
 	OfflineScheduleEndWeekends  *bool                   `json:"offlineScheduleEndWeekends,omitempty" form:"offlineScheduleEndWeekends"`
 }
 
@@ -111,9 +112,9 @@ func (e Environment) toModel(storeSet *v2models.StoreSet) (v2models.Environment,
 		PagerdutyIntegrationID:      pagerdutyIntegrationID,
 		Offline:                     e.Offline,
 		OfflineScheduleBeginEnabled: e.OfflineScheduleBeginEnabled,
-		OfflineScheduleBeginTime:    utils.NilOrNonZeroTime(e.OfflineScheduleBeginTime),
+		OfflineScheduleBeginTime:    utils.TimePtrToISO8601(e.OfflineScheduleBeginTime),
 		OfflineScheduleEndEnabled:   e.OfflineScheduleEndEnabled,
-		OfflineScheduleEndTime:      utils.NilOrNonZeroTime(e.OfflineScheduleEndTime),
+		OfflineScheduleEndTime:      utils.TimePtrToISO8601(e.OfflineScheduleEndTime),
 		OfflineScheduleEndWeekends:  e.OfflineScheduleEndWeekends,
 	}, nil
 }
@@ -165,6 +166,14 @@ func modelEnvironmentToEnvironment(model *v2models.Environment) *Environment {
 	} else if model.PagerdutyIntegrationID != nil {
 		pagerdutyIntegrationID = strconv.FormatUint(uint64(*model.PagerdutyIntegrationID), 10)
 	}
+	offlineScheduleBeginTime, err := utils.ISO8601PtrToTime(model.OfflineScheduleBeginTime)
+	if err != nil {
+		log.Error().Err(err).Msgf("couldn't parse %s's offlineScheduleBeginTime coming from the database, swallowing: %v", model.Name, err)
+	}
+	offlineScheduleEndTime, err := utils.ISO8601PtrToTime(model.OfflineScheduleEndTime)
+	if err != nil {
+		log.Error().Err(err).Msgf("couldn't parse %s's offlineScheduleEndTime coming from the database, swallowing: %v", model.Name, err)
+	}
 	return &Environment{
 		ReadableBaseType: ReadableBaseType{
 			ID:        model.ID,
@@ -198,9 +207,9 @@ func modelEnvironmentToEnvironment(model *v2models.Environment) *Environment {
 				PagerdutyIntegration:        &pagerdutyIntegrationID,
 				Offline:                     model.Offline,
 				OfflineScheduleBeginEnabled: model.OfflineScheduleBeginEnabled,
-				OfflineScheduleBeginTime:    utils.NilOrNonZeroTime(model.OfflineScheduleBeginTime),
+				OfflineScheduleBeginTime:    offlineScheduleBeginTime,
 				OfflineScheduleEndEnabled:   model.OfflineScheduleEndEnabled,
-				OfflineScheduleEndTime:      utils.NilOrNonZeroTime(model.OfflineScheduleEndTime),
+				OfflineScheduleEndTime:      offlineScheduleEndTime,
 				OfflineScheduleEndWeekends:  model.OfflineScheduleEndWeekends,
 			},
 		},

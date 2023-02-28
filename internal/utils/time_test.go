@@ -1,20 +1,78 @@
 package utils
 
 import (
+	"github.com/broadinstitute/sherlock/internal/testutils"
 	"reflect"
 	"testing"
 	"time"
 )
 
-func TestNilOrNonZeroTime(t *testing.T) {
-	now := time.Now()
+func TestISO8601PtrToTime(t *testing.T) {
+	example := "2023-02-27T18:00:08-05:00"
+	parsedExample, err := time.Parse(time.RFC3339, example)
+	if err != nil {
+		t.Error(err)
+		t.Fail()
+	}
+	type args struct {
+		s *string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    *time.Time
+		wantErr bool
+	}{
+		{
+			name: "nil",
+			args: args{s: nil},
+			want: nil,
+		},
+		{
+			name: "empty",
+			args: args{s: testutils.PointerTo("")},
+			want: nil,
+		},
+		{
+			name: "8601",
+			args: args{s: testutils.PointerTo(example)},
+			want: &parsedExample,
+		},
+		{
+			name:    "invalid",
+			args:    args{s: testutils.PointerTo("abc")},
+			want:    nil,
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := ISO8601PtrToTime(tt.args.s)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("ISO8601PtrToTime() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("ISO8601PtrToTime() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestTimePtrToISO8601(t *testing.T) {
+	example := "2023-02-27T18:00:08-05:00"
+	parsedExample, err := time.Parse(time.RFC3339, example)
+	if err != nil {
+		t.Error(err)
+		t.Fail()
+	}
 	type args struct {
 		t *time.Time
 	}
 	tests := []struct {
 		name string
 		args args
-		want *time.Time
+		want *string
 	}{
 		{
 			name: "nil",
@@ -22,20 +80,20 @@ func TestNilOrNonZeroTime(t *testing.T) {
 			want: nil,
 		},
 		{
-			name: "zero to nil",
+			name: "empty",
 			args: args{t: &time.Time{}},
 			want: nil,
 		},
 		{
-			name: "nonzero stays",
-			args: args{t: &now},
-			want: &now,
+			name: "8601",
+			args: args{t: &parsedExample},
+			want: &example,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NilOrNonZeroTime(tt.args.t); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NilOrNonZeroTime() = %v, want %v", got, tt.want)
+			if got := TimePtrToISO8601(tt.args.t); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("TimePtrToISO8601() = %v, want %v", got, tt.want)
 			}
 		})
 	}
