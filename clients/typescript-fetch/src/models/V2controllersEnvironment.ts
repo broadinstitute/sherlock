@@ -147,7 +147,7 @@ export interface V2controllersEnvironment {
      */
     offlineScheduleBeginEnabled?: boolean;
     /**
-     * 
+     * Stored with timezone to determine day of the week
      * @type {Date}
      * @memberof V2controllersEnvironment
      */
@@ -159,7 +159,7 @@ export interface V2controllersEnvironment {
      */
     offlineScheduleEndEnabled?: boolean;
     /**
-     * 
+     * Stored with timezone to determine day of the week
      * @type {Date}
      * @memberof V2controllersEnvironment
      */

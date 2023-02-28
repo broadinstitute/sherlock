@@ -2823,6 +2823,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "format": "date-time",
+                        "description": "Stored with timezone to determine day of the week",
                         "name": "offlineScheduleBeginTime",
                         "in": "query"
                     },
@@ -2835,6 +2836,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "format": "date-time",
+                        "description": "Stored with timezone to determine day of the week",
                         "name": "offlineScheduleEndTime",
                         "in": "query"
                     },
@@ -5879,6 +5881,7 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "offlineScheduleBeginTime": {
+                    "description": "Stored with timezone to determine day of the week",
                     "type": "string",
                     "format": "date-time"
                 },
@@ -5887,6 +5890,7 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "offlineScheduleEndTime": {
+                    "description": "Stored with timezone to determine day of the week",
                     "type": "string",
                     "format": "date-time"
                 },
@@ -6076,6 +6080,7 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "offlineScheduleBeginTime": {
+                    "description": "Stored with timezone to determine day of the week",
                     "type": "string",
                     "format": "date-time"
                 },
@@ -6084,6 +6089,7 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "offlineScheduleEndTime": {
+                    "description": "Stored with timezone to determine day of the week",
                     "type": "string",
                     "format": "date-time"
                 },
@@ -6196,6 +6202,7 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "offlineScheduleBeginTime": {
+                    "description": "Stored with timezone to determine day of the week",
                     "type": "string",
                     "format": "date-time"
                 },
@@ -6204,6 +6211,7 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "offlineScheduleEndTime": {
+                    "description": "Stored with timezone to determine day of the week",
                     "type": "string",
                     "format": "date-time"
                 },

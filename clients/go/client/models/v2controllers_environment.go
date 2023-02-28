@@ -74,14 +74,14 @@ type V2controllersEnvironment struct {
 	// When enabled, the BEE will be slated to go offline around the begin time each day
 	OfflineScheduleBeginEnabled bool `json:"offlineScheduleBeginEnabled,omitempty"`
 
-	// offline schedule begin time
+	// Stored with timezone to determine day of the week
 	// Format: date-time
 	OfflineScheduleBeginTime strfmt.DateTime `json:"offlineScheduleBeginTime,omitempty"`
 
 	// When enabled, the BEE will be slated to come online around the end time each weekday (each day if weekends enabled)
 	OfflineScheduleEndEnabled bool `json:"offlineScheduleEndEnabled,omitempty"`
 
-	// offline schedule end time
+	// Stored with timezone to determine day of the week
 	// Format: date-time
 	OfflineScheduleEndTime strfmt.DateTime `json:"offlineScheduleEndTime,omitempty"`
 

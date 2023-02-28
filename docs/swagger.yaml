@@ -684,6 +684,7 @@ definitions:
           begin time each day
         type: boolean
       offlineScheduleBeginTime:
+        description: Stored with timezone to determine day of the week
         format: date-time
         type: string
       offlineScheduleEndEnabled:
@@ -691,6 +692,7 @@ definitions:
           end time each weekday (each day if weekends enabled)
         type: boolean
       offlineScheduleEndTime:
+        description: Stored with timezone to determine day of the week
         format: date-time
         type: string
       offlineScheduleEndWeekends:
@@ -831,6 +833,7 @@ definitions:
           begin time each day
         type: boolean
       offlineScheduleBeginTime:
+        description: Stored with timezone to determine day of the week
         format: date-time
         type: string
       offlineScheduleEndEnabled:
@@ -838,6 +841,7 @@ definitions:
           end time each weekday (each day if weekends enabled)
         type: boolean
       offlineScheduleEndTime:
+        description: Stored with timezone to determine day of the week
         format: date-time
         type: string
       offlineScheduleEndWeekends:
@@ -925,6 +929,7 @@ definitions:
           begin time each day
         type: boolean
       offlineScheduleBeginTime:
+        description: Stored with timezone to determine day of the week
         format: date-time
         type: string
       offlineScheduleEndEnabled:
@@ -932,6 +937,7 @@ definitions:
           end time each weekday (each day if weekends enabled)
         type: boolean
       offlineScheduleEndTime:
+        description: Stored with timezone to determine day of the week
         format: date-time
         type: string
       offlineScheduleEndWeekends:
@@ -2891,7 +2897,8 @@ paths:
         in: query
         name: offlineScheduleBeginEnabled
         type: boolean
-      - format: date-time
+      - description: Stored with timezone to determine day of the week
+        format: date-time
         in: query
         name: offlineScheduleBeginTime
         type: string
@@ -2900,7 +2907,8 @@ paths:
         in: query
         name: offlineScheduleEndEnabled
         type: boolean
-      - format: date-time
+      - description: Stored with timezone to determine day of the week
+        format: date-time
         in: query
         name: offlineScheduleEndTime
         type: string

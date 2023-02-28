@@ -2818,6 +2818,7 @@
                     {
                         "type": "string",
                         "format": "date-time",
+                        "description": "Stored with timezone to determine day of the week",
                         "name": "offlineScheduleBeginTime",
                         "in": "query"
                     },
@@ -2830,6 +2831,7 @@
                     {
                         "type": "string",
                         "format": "date-time",
+                        "description": "Stored with timezone to determine day of the week",
                         "name": "offlineScheduleEndTime",
                         "in": "query"
                     },
@@ -5874,6 +5876,7 @@
                     "type": "boolean"
                 },
                 "offlineScheduleBeginTime": {
+                    "description": "Stored with timezone to determine day of the week",
                     "type": "string",
                     "format": "date-time"
                 },
@@ -5882,6 +5885,7 @@
                     "type": "boolean"
                 },
                 "offlineScheduleEndTime": {
+                    "description": "Stored with timezone to determine day of the week",
                     "type": "string",
                     "format": "date-time"
                 },
@@ -6071,6 +6075,7 @@
                     "type": "boolean"
                 },
                 "offlineScheduleBeginTime": {
+                    "description": "Stored with timezone to determine day of the week",
                     "type": "string",
                     "format": "date-time"
                 },
@@ -6079,6 +6084,7 @@
                     "type": "boolean"
                 },
                 "offlineScheduleEndTime": {
+                    "description": "Stored with timezone to determine day of the week",
                     "type": "string",
                     "format": "date-time"
                 },
@@ -6191,6 +6197,7 @@
                     "type": "boolean"
                 },
                 "offlineScheduleBeginTime": {
+                    "description": "Stored with timezone to determine day of the week",
                     "type": "string",
                     "format": "date-time"
                 },
@@ -6199,6 +6206,7 @@
                     "type": "boolean"
                 },
                 "offlineScheduleEndTime": {
+                    "description": "Stored with timezone to determine day of the week",
                     "type": "string",
                     "format": "date-time"
                 },

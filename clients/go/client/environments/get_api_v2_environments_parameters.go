@@ -152,9 +152,12 @@ type GetAPIV2EnvironmentsParams struct {
 	*/
 	OfflineScheduleBeginEnabled *bool
 
-	// OfflineScheduleBeginTime.
-	//
-	// Format: date-time
+	/* OfflineScheduleBeginTime.
+
+	   Stored with timezone to determine day of the week
+
+	   Format: date-time
+	*/
 	OfflineScheduleBeginTime *strfmt.DateTime
 
 	/* OfflineScheduleEndEnabled.
@@ -163,9 +166,12 @@ type GetAPIV2EnvironmentsParams struct {
 	*/
 	OfflineScheduleEndEnabled *bool
 
-	// OfflineScheduleEndTime.
-	//
-	// Format: date-time
+	/* OfflineScheduleEndTime.
+
+	   Stored with timezone to determine day of the week
+
+	   Format: date-time
+	*/
 	OfflineScheduleEndTime *strfmt.DateTime
 
 	// OfflineScheduleEndWeekends.
