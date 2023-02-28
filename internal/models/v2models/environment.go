@@ -44,9 +44,9 @@ type Environment struct {
 	PagerdutyIntegrationID      *uint
 	Offline                     *bool
 	OfflineScheduleBeginEnabled *bool
-	OfflineScheduleBeginTime    *time.Time
+	OfflineScheduleBeginTime    *string
 	OfflineScheduleEndEnabled   *bool
-	OfflineScheduleEndTime      *time.Time
+	OfflineScheduleEndTime      *string
 	OfflineScheduleEndWeekends  *bool
 }
 
