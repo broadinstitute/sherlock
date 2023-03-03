@@ -102,6 +102,7 @@ func (a *Application) buildRouter() {
 	v2handlers.RegisterChartReleaseHandlers(v2api, a.v2controllers.ChartReleaseController)
 	v2handlers.RegisterChangesetHandlers(v2api, a.v2controllers.ChangesetController)
 	v2handlers.RegisterPagerdutyIntegrationHandlers(v2api, a.v2controllers.PagerdutyIntegrationController)
+	v2handlers.RegisterDatabaseInstanceHandlers(v2api, a.v2controllers.DatabaseInstanceController)
 
 	a.Handler = router
 }

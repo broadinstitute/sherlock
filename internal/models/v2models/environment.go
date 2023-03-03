@@ -345,26 +345,46 @@ func postCreateEnvironment(db *gorm.DB, environment *Environment, user *auth.Use
 	if environment.AutoPopulateChartReleases != nil && *environment.AutoPopulateChartReleases {
 		if environment.Lifecycle == "dynamic" && environment.TemplateEnvironmentID != nil {
 			// This is a dynamic environment that is getting created right now, let's copy the chart releases from the template too
-			chartReleases, err := chartReleaseStore.listAllMatchingByUpdated(db, 0, ChartRelease{EnvironmentID: environment.TemplateEnvironmentID})
+			templateChartReleases, err := chartReleaseStore.listAllMatchingByUpdated(db, 0, ChartRelease{EnvironmentID: environment.TemplateEnvironmentID})
 			if err != nil {
 				return fmt.Errorf("wasn't able to list chart releases of template %s (disable autoPopulateChartReleases to skip): %v", environment.TemplateEnvironment.Name, err)
 			}
-			for _, chartRelease := range chartReleases {
-				_, _, err := chartReleaseStore.create(db,
+			for _, templateChartRelease := range templateChartReleases {
+				chartRelease, _, err := chartReleaseStore.create(db,
 					ChartRelease{
-						ChartID:             chartRelease.ChartID,
+						ChartID:             templateChartRelease.ChartID,
 						ClusterID:           environment.DefaultClusterID,
 						DestinationType:     "environment",
 						EnvironmentID:       &environment.ID,
-						Name:                fmt.Sprintf("%s-%s", chartRelease.Chart.Name, environment.Name),
+						Name:                fmt.Sprintf("%s-%s", templateChartRelease.Chart.Name, environment.Name),
 						Namespace:           environment.DefaultNamespace,
-						ChartReleaseVersion: chartRelease.ChartReleaseVersion,
-						Subdomain:           chartRelease.Subdomain,
-						Protocol:            chartRelease.Protocol,
-						Port:                chartRelease.Port,
+						ChartReleaseVersion: templateChartRelease.ChartReleaseVersion,
+						Subdomain:           templateChartRelease.Subdomain,
+						Protocol:            templateChartRelease.Protocol,
+						Port:                templateChartRelease.Port,
 					}, user)
 				if err != nil {
-					return fmt.Errorf("wasn't able to copy template's release of the %s chart (disable autoPopulateChartReleases to skip): %v", chartRelease.Chart.Name, err)
+					return fmt.Errorf("wasn't able to copy template's release of the %s chart (disable autoPopulateChartReleases to skip): %v", templateChartRelease.Chart.Name, err)
+				}
+				templateDatabaseInstance, err := databaseInstanceStore.getIfExists(db, DatabaseInstance{ChartReleaseID: templateChartRelease.ID})
+				if err != nil {
+					return fmt.Errorf("wasn't able to get possible database instance of template's %s chart instance (disable autoPopulateChartReleases to skip): %v", templateChartRelease.Chart.Name, err)
+				}
+				if templateDatabaseInstance != nil {
+					_, _, err := databaseInstanceStore.create(db,
+						DatabaseInstance{
+							ChartReleaseID:            chartRelease.ID,
+							Platform:                  templateDatabaseInstance.Platform,
+							GoogleProject:             templateDatabaseInstance.GoogleProject,
+							GoogleLocation:            templateDatabaseInstance.GoogleProject,
+							AzureSubscription:         templateDatabaseInstance.AzureSubscription,
+							AzureManagedResourceGroup: templateDatabaseInstance.AzureManagedResourceGroup,
+							InstanceName:              templateDatabaseInstance.InstanceName,
+							DefaultDatabase:           templateDatabaseInstance.DefaultDatabase,
+						}, user)
+					if err != nil {
+						return fmt.Errorf("wasn't able to copy database instance of template's %s chart instance (disable autoPopulateChartReleases to skip): %v", templateChartRelease.Chart.Name, err)
+					}
 				}
 			}
 		} else if environment.Lifecycle == "template" {
