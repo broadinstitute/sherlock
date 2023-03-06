@@ -212,5 +212,5 @@ jobs:
           repo: broadinstitute/terra-github-workflows
           workflow: sync-environment
           ref: refs/heads/main
-          token: ${{ secrets.sync-github-token }}
+          token: ${{ secrets.sync-git-token }}
           inputs: '{ "environment-names": "${{ inputs.environment-name }}", "refresh-only": "false" }'
