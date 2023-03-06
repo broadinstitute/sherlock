@@ -11,6 +11,7 @@ type ControllerSet struct {
 	ChartReleaseController         *ChartReleaseController
 	ChangesetController            *ChangesetController
 	PagerdutyIntegrationController *PagerdutyIntegrationController
+	DatabaseInstanceController     *DatabaseInstanceController
 }
 
 func NewControllerSet(stores *v2models.StoreSet) *ControllerSet {
@@ -23,5 +24,6 @@ func NewControllerSet(stores *v2models.StoreSet) *ControllerSet {
 		ChartReleaseController:         newChartReleaseController(stores),
 		ChangesetController:            newChangesetController(stores),
 		PagerdutyIntegrationController: newPagerdutyIntegrationController(stores),
+		DatabaseInstanceController:     newDatabaseInstanceController(stores),
 	}
 }

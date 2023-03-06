@@ -41,6 +41,7 @@ func init() {
 		modelRequiresSuitability: chartReleaseRequiresSuitability,
 		validateModel:            validateChartRelease,
 		preCreate:                preCreateChartRelease,
+		preDeletePostValidate:    preDeletePostValidateChartRelease,
 	}
 }
 
@@ -244,4 +245,9 @@ func preCreateChartRelease(db *gorm.DB, toCreate *ChartRelease, _ *auth.User) er
 		return toCreate.ChartReleaseVersion.resolve(db, Chart{Model: gorm.Model{ID: toCreate.ChartID}})
 	}
 	return nil
+}
+
+func preDeletePostValidateChartRelease(db *gorm.DB, chartRelease *ChartRelease, user *auth.User) error {
+	_, err := databaseInstanceStore.deleteIfExists(db, DatabaseInstance{ChartReleaseID: chartRelease.ID}, user)
+	return err
 }

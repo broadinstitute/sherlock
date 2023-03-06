@@ -151,17 +151,29 @@ func (s internalModelStore[M]) listAllMatchingOrdered(db *gorm.DB, limit int, or
 	return matching, nil
 }
 
-func (s internalModelStore[M]) get(db *gorm.DB, query M) (M, error) {
+func (s internalModelStore[M]) getIfExists(db *gorm.DB, query M) (*M, error) {
 	var matching []M
 	tx := db.Where(&query).Preload(clause.Associations)
 	if err := tx.Find(&matching).Error; err != nil {
-		return query, fmt.Errorf("(%s) unexpected query error: failed to run query %T %+v against the database: %v", errors.InternalServerError, query, query, err)
-	} else if len(matching) == 0 {
-		return query, fmt.Errorf("query result error: (%s) no entry matched non-zero values of %T %+v", errors.NotFound, query, query)
+		return nil, fmt.Errorf("(%s) unexpected query error: failed to run query %T %+v against the database: %v", errors.InternalServerError, query, query, err)
 	} else if len(matching) > 1 {
-		return query, fmt.Errorf("query result error: (%s) more than one entry (%d total) matched non-zero values of %T %+v", errors.BadRequest, len(matching), query, query)
+		return nil, fmt.Errorf("query result error: (%s) more than one entry (%d total) matched non-zero values of %T %+v", errors.BadRequest, len(matching), query, query)
+	} else if len(matching) == 1 {
+		return &matching[0], nil
+	} else {
+		return nil, nil
 	}
-	return matching[0], nil
+}
+
+func (s internalModelStore[M]) get(db *gorm.DB, query M) (M, error) {
+	var zeroValue M
+	if result, err := s.getIfExists(db, query); err != nil {
+		return zeroValue, err
+	} else if result == nil {
+		return zeroValue, fmt.Errorf("query not found (%s)", errors.NotFound)
+	} else {
+		return *result, nil
+	}
 }
 
 func (s internalModelStore[M]) edit(db *gorm.DB, query M, editsToMake M, user *auth.User, updateAllFields bool) (M, error) {
@@ -205,26 +217,37 @@ func (s internalModelStore[M]) edit(db *gorm.DB, query M, editsToMake M, user *a
 	return ret, err
 }
 
-func (s internalModelStore[M]) delete(db *gorm.DB, query M, user *auth.User) (M, error) {
-	toDelete, err := s.get(db, query)
-	if err != nil {
+func (s internalModelStore[M]) deleteIfExists(db *gorm.DB, query M, user *auth.User) (*M, error) {
+	if toDelete, err := s.getIfExists(db, query); err != nil || toDelete == nil {
 		return toDelete, err
-	}
-	if s.modelRequiresSuitability != nil && s.modelRequiresSuitability(db, &toDelete) {
-		if err = user.SuitableOrError(); err != nil {
-			return toDelete, fmt.Errorf("delete error: (%s) suitability is required to delete %T: %v", errors.Forbidden, toDelete, err)
-		}
-	}
-	err = db.Transaction(func(tx *gorm.DB) error {
-		if s.preDeletePostValidate != nil {
-			if err := s.preDeletePostValidate(tx, &toDelete, user); err != nil {
-				return fmt.Errorf("pre-delete post-validate error: %v", err)
+	} else {
+		if s.modelRequiresSuitability != nil && s.modelRequiresSuitability(db, toDelete) {
+			if err = user.SuitableOrError(); err != nil {
+				return toDelete, fmt.Errorf("delete error: (%s) suitability is required to delete %T: %v", errors.Forbidden, toDelete, err)
 			}
 		}
-		return db.Delete(&toDelete).Error
-	})
-	if err != nil {
-		return toDelete, fmt.Errorf("delete error deleting %T: %v", toDelete, err)
+		err = db.Transaction(func(tx *gorm.DB) error {
+			if s.preDeletePostValidate != nil {
+				if err := s.preDeletePostValidate(tx, toDelete, user); err != nil {
+					return fmt.Errorf("pre-delete post-validate error: %v", err)
+				}
+			}
+			return db.Delete(&toDelete).Error
+		})
+		if err != nil {
+			return toDelete, fmt.Errorf("delete error deleting %T: %v", toDelete, err)
+		}
+		return toDelete, nil
 	}
-	return toDelete, nil
+}
+
+func (s internalModelStore[M]) delete(db *gorm.DB, query M, user *auth.User) (M, error) {
+	var zeroValue M
+	if result, err := s.deleteIfExists(db, query, user); err != nil {
+		return zeroValue, err
+	} else if result == nil {
+		return zeroValue, fmt.Errorf("delete error: query not found (%s)", errors.NotFound)
+	} else {
+		return *result, nil
+	}
 }

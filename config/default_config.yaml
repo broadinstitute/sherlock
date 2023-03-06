@@ -12,6 +12,7 @@ db:
   name: sherlock
   port: 5432
   ssl: disable
+  maxOpenConnections: 75
   init: true
 
   # retryConnection is helpful especially for local testing, in case the Postgres container hasn't come up yet.
@@ -20,12 +21,17 @@ db:
     times: 10
     interval: 1s
 
+  # configures logging behavior just for the database
+  log:
+    slowThreshold: 200ms
+    ignoreNotFoundWarning: true
+    level: warn
+
   # autoMigrate will have Gorm align the database schema with its understanding of model structs post-init.
   # It should not be enabled in merged code but can be useful for development, to iterate before adding
   # SQL migration files.
   autoMigrateV1: false
   autoMigrateV2: false
-  maxOpenConnections: 75
 
 auth:
   updateIntervalMinutes: 15

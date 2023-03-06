@@ -631,6 +631,34 @@ definitions:
         default: false
         type: boolean
     type: object
+  v2controllers.CreatableDatabaseInstance:
+    properties:
+      azureManagedResourceGroup:
+        description: Required if platform is 'azure'
+        type: string
+      azureSubscription:
+        description: Required if platform is 'azure'
+        type: string
+      chartRelease:
+        description: Required when creating
+        type: string
+      defaultDatabase:
+        description: When creating, defaults to the chart name
+        type: string
+      googleLocation:
+        description: Required if platform is 'google'
+        type: string
+      googleProject:
+        description: Required if platform is 'google'
+        type: string
+      instanceName:
+        description: Required if platform is 'google' or 'azure'
+        type: string
+      platform:
+        default: kubernetes
+        description: '''google'', ''azure'', or default ''kubernetes'''
+        type: string
+    type: object
   v2controllers.CreatableEnvironment:
     properties:
       autoDelete:
@@ -731,6 +759,44 @@ definitions:
       type:
         type: string
     type: object
+  v2controllers.DatabaseInstance:
+    properties:
+      azureManagedResourceGroup:
+        description: Required if platform is 'azure'
+        type: string
+      azureSubscription:
+        description: Required if platform is 'azure'
+        type: string
+      chartRelease:
+        description: Required when creating
+        type: string
+      chartReleaseInfo:
+        $ref: '#/definitions/v2controllers.ChartRelease'
+      createdAt:
+        format: date-time
+        type: string
+      defaultDatabase:
+        description: When creating, defaults to the chart name
+        type: string
+      googleLocation:
+        description: Required if platform is 'google'
+        type: string
+      googleProject:
+        description: Required if platform is 'google'
+        type: string
+      id:
+        type: integer
+      instanceName:
+        description: Required if platform is 'google' or 'azure'
+        type: string
+      platform:
+        default: kubernetes
+        description: '''google'', ''azure'', or default ''kubernetes'''
+        type: string
+      updatedAt:
+        format: date-time
+        type: string
+    type: object
   v2controllers.EditableAppVersion:
     properties:
       description:
@@ -800,6 +866,31 @@ definitions:
       requiresSuitability:
         default: false
         type: boolean
+    type: object
+  v2controllers.EditableDatabaseInstance:
+    properties:
+      azureManagedResourceGroup:
+        description: Required if platform is 'azure'
+        type: string
+      azureSubscription:
+        description: Required if platform is 'azure'
+        type: string
+      defaultDatabase:
+        description: When creating, defaults to the chart name
+        type: string
+      googleLocation:
+        description: Required if platform is 'google'
+        type: string
+      googleProject:
+        description: Required if platform is 'google'
+        type: string
+      instanceName:
+        description: Required if platform is 'google' or 'azure'
+        type: string
+      platform:
+        default: kubernetes
+        description: '''google'', ''azure'', or default ''kubernetes'''
+        type: string
     type: object
   v2controllers.EditableEnvironment:
     properties:
@@ -2824,6 +2915,345 @@ paths:
       summary: Create or edit a Cluster entry
       tags:
       - Clusters
+  /api/v2/database-instances:
+    get:
+      description: List existing DatabaseInstance entries, ordered by most recently
+        updated.
+      parameters:
+      - description: Required if platform is 'azure'
+        in: query
+        name: azureManagedResourceGroup
+        type: string
+      - description: Required if platform is 'azure'
+        in: query
+        name: azureSubscription
+        type: string
+      - description: Required when creating
+        in: query
+        name: chartRelease
+        type: string
+      - format: date-time
+        in: query
+        name: createdAt
+        type: string
+      - description: When creating, defaults to the chart name
+        in: query
+        name: defaultDatabase
+        type: string
+      - description: Required if platform is 'google'
+        in: query
+        name: googleLocation
+        type: string
+      - description: Required if platform is 'google'
+        in: query
+        name: googleProject
+        type: string
+      - in: query
+        name: id
+        type: integer
+      - description: Required if platform is 'google' or 'azure'
+        in: query
+        name: instanceName
+        type: string
+      - default: kubernetes
+        description: '''google'', ''azure'', or default ''kubernetes'''
+        in: query
+        name: platform
+        type: string
+      - format: date-time
+        in: query
+        name: updatedAt
+        type: string
+      - description: An optional limit to the number of entries returned
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/v2controllers.DatabaseInstance'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: List DatabaseInstance entries
+      tags:
+      - DatabaseInstances
+    post:
+      consumes:
+      - application/json
+      description: Create a new DatabaseInstance entry. Note that some fields are
+        immutable after creation; /edit lists mutable fields.
+      parameters:
+      - description: The DatabaseInstance to create
+        in: body
+        name: chart
+        required: true
+        schema:
+          $ref: '#/definitions/v2controllers.CreatableDatabaseInstance'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v2controllers.DatabaseInstance'
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/v2controllers.DatabaseInstance'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Create a new DatabaseInstance entry
+      tags:
+      - DatabaseInstances
+  /api/v2/database-instances/{selector}:
+    delete:
+      description: 'Delete an existing DatabaseInstance entry via one of its "selectors":
+        numeric ID of ''chart-release/'' followed by a chart release selector.'
+      parameters:
+      - description: 'The DatabaseInstance to delete''s selector: numeric ID of ''chart-release/''
+          followed by a chart release selector'
+        in: path
+        name: selector
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v2controllers.DatabaseInstance'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Delete a DatabaseInstance entry
+      tags:
+      - DatabaseInstances
+    get:
+      description: 'Get an existing DatabaseInstance entry via one of its "selectors":
+        numeric ID of ''chart-release/'' followed by a chart release selector.'
+      parameters:
+      - description: 'The DatabaseInstance to get''s selector: numeric ID of ''chart-release/''
+          followed by a chart release selector'
+        in: path
+        name: selector
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v2controllers.DatabaseInstance'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Get a DatabaseInstance entry
+      tags:
+      - DatabaseInstances
+    patch:
+      consumes:
+      - application/json
+      description: 'Edit an existing DatabaseInstance entry via one of its "selectors":
+        numeric ID of ''chart-release/'' followed by a chart release selector. Note
+        that only mutable fields are available here, immutable fields can only be
+        set using /create.'
+      parameters:
+      - description: 'The DatabaseInstance to edit''s selector: numeric ID of ''chart-release/''
+          followed by a chart release selector'
+        in: path
+        name: selector
+        required: true
+        type: string
+      - description: The edits to make to the DatabaseInstance
+        in: body
+        name: chart
+        required: true
+        schema:
+          $ref: '#/definitions/v2controllers.EditableDatabaseInstance'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v2controllers.DatabaseInstance'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Edit a DatabaseInstance entry
+      tags:
+      - DatabaseInstances
+    put:
+      consumes:
+      - application/json
+      description: |-
+        Create or edit a DatabaseInstance entry. Attempts to edit and will attempt to create upon an error.
+        If an edit was made or the creation process de-duplicates, this method will return normally with a 200.
+      parameters:
+      - description: 'The DatabaseInstance to upsert''s selector: numeric ID of ''chart-release/''
+          followed by a chart release selector'
+        in: path
+        name: selector
+        required: true
+        type: string
+      - description: The DatabaseInstance to upsert
+        in: body
+        name: chart-release
+        required: true
+        schema:
+          $ref: '#/definitions/v2controllers.CreatableDatabaseInstance'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v2controllers.DatabaseInstance'
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/v2controllers.DatabaseInstance'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Create or edit a DatabaseInstance entry
+      tags:
+      - DatabaseInstances
   /api/v2/environments:
     get:
       description: List existing Environment entries, ordered by most recently updated.
@@ -4194,6 +4624,53 @@ paths:
       summary: List Cluster selectors
       tags:
       - Clusters
+  /api/v2/selectors/database-instances/{selector}:
+    get:
+      description: Validate a given DatabaseInstance selector and provide any other
+        selectors that would match the same DatabaseInstance.
+      parameters:
+      - description: The selector of the DatabaseInstance to list other selectors
+          for
+        in: path
+        name: selector
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: string
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: List DatabaseInstance selectors
+      tags:
+      - DatabaseInstances
   /api/v2/selectors/environments/{selector}:
     get:
       description: Validate a given Environment selector and provide any other selectors
