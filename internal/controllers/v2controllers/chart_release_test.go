@@ -537,69 +537,55 @@ func (suite *chartReleaseControllerSuite) TestChartReleaseGetOtherValidSelectors
 }
 
 func (suite *chartReleaseControllerSuite) TestChartReleaseEdit() {
-	// Right now chart releases don't have any edits but I'm not deleting this because it's a (slightly out of date)
-	// skeleton for testing edits
+	suite.Run("successfully", func() {
+		db.Truncate(suite.T(), suite.db)
+		suite.seedClusters(suite.T())
+		suite.seedEnvironments(suite.T())
+		suite.seedCharts(suite.T())
+		suite.seedAppVersions(suite.T())
+		suite.seedChartVersions(suite.T())
+		suite.seedChartReleases(suite.T())
 
-	//suite.Run("successfully", func() {
-	//	db.Truncate(suite.T(), suite.db)
-	//	suite.seedClusters(suite.T())
-	//	suite.seedEnvironments(suite.T())
-	//	suite.seedCharts(suite.T())
-	//	suite.seedChartReleases(suite.T())
-	//
-	//	before, err := suite.ChartReleaseController.Get(datarepoDevChartRelease.Name)
-	//	assert.NoError(suite.T(), err)
-	//	assert.Equal(suite.T(), "latest", *before.TargetChartVersionUse)
-	//	edited, err := suite.ChartReleaseController.Edit(datarepoDevChartRelease.Name, EditableChartRelease{
-	//		TargetChartVersionUse: testutils.PointerTo("exact"), TargetChartVersionExact: testutils.PointerTo("11.22.33"),
-	//	}, auth.GenerateUser(suite.T(), false))
-	//	assert.NoError(suite.T(), err)
-	//	assert.Equal(suite.T(), "exact", *edited.TargetChartVersionUse)
-	//	assert.Equal(suite.T(), "11.22.33", *edited.TargetChartVersionExact)
-	//	after, err := suite.ChartReleaseController.Get(datarepoDevChartRelease.Name)
-	//	assert.NoError(suite.T(), err)
-	//	assert.Equal(suite.T(), "exact", *after.TargetChartVersionUse)
-	//	assert.Equal(suite.T(), "11.22.33", *after.TargetChartVersionExact)
-	//})
-	//suite.Run("edit to suitable chart release", func() {
-	//	db.Truncate(suite.T(), suite.db)
-	//	suite.seedClusters(suite.T())
-	//	suite.seedEnvironments(suite.T())
-	//	suite.seedCharts(suite.T())
-	//	suite.seedChartReleases(suite.T())
-	//
-	//	suite.Run("unsuccessfully if not suitable", func() {
-	//		before, err := suite.ChartReleaseController.Get(datarepoProdChartRelease.Name)
-	//		assert.NoError(suite.T(), err)
-	//		assert.Nil(suite.T(), before.TargetAppVersionCommit)
-	//		_, err = suite.ChartReleaseController.Edit(datarepoProdChartRelease.Name, EditableChartRelease{
-	//			TargetAppVersionCommit: testutils.PointerTo("abc"),
-	//		}, auth.GenerateUser(suite.T(), false))
-	//		assert.ErrorContains(suite.T(), err, errors.Forbidden)
-	//		notEdited, err := suite.ChartReleaseController.Get(datarepoProdChartRelease.Name)
-	//		assert.NoError(suite.T(), err)
-	//		assert.Nil(suite.T(), notEdited.TargetAppVersionCommit)
-	//	})
-	//	suite.Run("successfully if suitable", func() {
-	//		edited, err := suite.ChartReleaseController.Edit(datarepoProdChartRelease.Name, EditableChartRelease{
-	//			TargetAppVersionCommit: testutils.PointerTo("abc"),
-	//		}, auth.GenerateUser(suite.T(), true))
-	//		assert.NoError(suite.T(), err)
-	//		assert.Equal(suite.T(), "abc", *edited.TargetAppVersionCommit)
-	//	})
-	//})
-	//suite.Run("unsuccessfully if invalid", func() {
-	//	db.Truncate(suite.T(), suite.db)
-	//	suite.seedClusters(suite.T())
-	//	suite.seedEnvironments(suite.T())
-	//	suite.seedCharts(suite.T())
-	//	suite.seedChartReleases(suite.T())
-	//
-	//	_, err := suite.ChartReleaseController.Edit(datarepoProdChartRelease.Name, EditableChartRelease{
-	//		TargetAppVersionUse: testutils.PointerTo("something obviously incorrect"),
-	//	}, auth.GenerateUser(suite.T(), true))
-	//	assert.ErrorContains(suite.T(), err, errors.BadRequest)
-	//})
+		before, err := suite.ChartReleaseController.Get(datarepoDevChartRelease.Name)
+		assert.NoError(suite.T(), err)
+		assert.Equal(suite.T(), "datarepo", *before.Subdomain)
+		edited, err := suite.ChartReleaseController.Edit(datarepoDevChartRelease.Name, EditableChartRelease{
+			Subdomain: testutils.PointerTo("data"),
+		}, auth.GenerateUser(suite.T(), false))
+		assert.NoError(suite.T(), err)
+		assert.Equal(suite.T(), "data", *edited.Subdomain)
+		after, err := suite.ChartReleaseController.Get(datarepoDevChartRelease.Name)
+		assert.NoError(suite.T(), err)
+		assert.Equal(suite.T(), "data", *after.Subdomain)
+	})
+	suite.Run("edit to suitable chart release", func() {
+		db.Truncate(suite.T(), suite.db)
+		suite.seedClusters(suite.T())
+		suite.seedEnvironments(suite.T())
+		suite.seedCharts(suite.T())
+		suite.seedAppVersions(suite.T())
+		suite.seedChartVersions(suite.T())
+		suite.seedChartReleases(suite.T())
+
+		suite.Run("unsuccessfully if not suitable", func() {
+			before, err := suite.ChartReleaseController.Get(datarepoProdChartRelease.Name)
+			assert.NoError(suite.T(), err)
+			_, err = suite.ChartReleaseController.Edit(datarepoProdChartRelease.Name, EditableChartRelease{
+				Subdomain: testutils.PointerTo("data"),
+			}, auth.GenerateUser(suite.T(), false))
+			assert.ErrorContains(suite.T(), err, errors.Forbidden)
+			notEdited, err := suite.ChartReleaseController.Get(datarepoProdChartRelease.Name)
+			assert.NoError(suite.T(), err)
+			assert.Equal(suite.T(), before.Subdomain, notEdited.Subdomain)
+		})
+		suite.Run("successfully if suitable", func() {
+			edited, err := suite.ChartReleaseController.Edit(datarepoProdChartRelease.Name, EditableChartRelease{
+				Subdomain: testutils.PointerTo("data"),
+			}, auth.GenerateUser(suite.T(), true))
+			assert.NoError(suite.T(), err)
+			assert.Equal(suite.T(), "data", *edited.Subdomain)
+		})
+	})
 }
 
 func (suite *chartReleaseControllerSuite) TestChartReleaseDelete() {
@@ -611,12 +597,22 @@ func (suite *chartReleaseControllerSuite) TestChartReleaseDelete() {
 		suite.seedAppVersions(suite.T())
 		suite.seedChartVersions(suite.T())
 		suite.seedChartReleases(suite.T())
+		suite.seedDatabaseInstances(suite.T())
+
+		databaseInstance, err := suite.DatabaseInstanceController.Get(fmt.Sprintf("chart-release/%s", datarepoDevChartRelease.Name))
+		assert.NoError(suite.T(), err)
+		assert.True(suite.T(), databaseInstance.ID > 0)
 
 		deleted, err := suite.ChartReleaseController.Delete(datarepoDevChartRelease.Name, auth.GenerateUser(suite.T(), false))
 		assert.NoError(suite.T(), err)
 		assert.Equal(suite.T(), datarepoDevChartRelease.Name, deleted.Name)
 		_, err = suite.ChartReleaseController.Get(datarepoDevChartRelease.Name)
 		assert.ErrorContains(suite.T(), err, errors.NotFound)
+		suite.Run("deletions cascaded", func() {
+			shouldBeEmpty, err := suite.DatabaseInstanceController.ListAllMatching(DatabaseInstance{ReadableBaseType: ReadableBaseType{ID: databaseInstance.ID}}, 0)
+			assert.NoError(suite.T(), err)
+			assert.Len(suite.T(), shouldBeEmpty, 0)
+		})
 		suite.Run("allows re-creation", func() {
 			chartRelease, created, err := suite.ChartReleaseController.Create(datarepoDevChartRelease, auth.GenerateUser(suite.T(), false))
 			assert.NoError(suite.T(), err)

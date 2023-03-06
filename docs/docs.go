@@ -2781,7 +2781,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "default": "kubernetes",
-                        "description": "Required when creating; 'google', 'azure', or 'kubernetes'",
+                        "description": "'google', 'azure', or default 'kubernetes'",
                         "name": "platform",
                         "in": "query"
                     },
@@ -6409,7 +6409,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "platform": {
-                    "description": "Required when creating; 'google', 'azure', or 'kubernetes'",
+                    "description": "'google', 'azure', or default 'kubernetes'",
                     "type": "string",
                     "default": "kubernetes"
                 }
@@ -6584,7 +6584,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "platform": {
-                    "description": "Required when creating; 'google', 'azure', or 'kubernetes'",
+                    "description": "'google', 'azure', or default 'kubernetes'",
                     "type": "string",
                     "default": "kubernetes"
                 },
@@ -6719,7 +6719,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "platform": {
-                    "description": "Required when creating; 'google', 'azure', or 'kubernetes'",
+                    "description": "'google', 'azure', or default 'kubernetes'",
                     "type": "string",
                     "default": "kubernetes"
                 }

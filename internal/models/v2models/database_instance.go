@@ -69,7 +69,11 @@ func databaseInstanceSelectorToQuery(db *gorm.DB, selector string) (DatabaseInst
 func databaseInstanceToSelectors(databaseInstance *DatabaseInstance) []string {
 	var selectors []string
 	if databaseInstance != nil {
-		if databaseInstance.ChartReleaseID != 0 {
+		if chartReleaseSelectors := chartReleaseToSelectors(databaseInstance.ChartRelease); len(chartReleaseSelectors) > 0 {
+			for _, chartReleaseSelector := range chartReleaseSelectors {
+				selectors = append(selectors, fmt.Sprintf("chart-release/%s", chartReleaseSelector))
+			}
+		} else if databaseInstance.ChartReleaseID != 0 {
 			selectors = append(selectors, fmt.Sprintf("chart-release/%d", databaseInstance.ChartReleaseID))
 		}
 		if databaseInstance.ID != 0 {

@@ -158,8 +158,11 @@ func (s internalModelStore[M]) getIfExists(db *gorm.DB, query M) (*M, error) {
 		return nil, fmt.Errorf("(%s) unexpected query error: failed to run query %T %+v against the database: %v", errors.InternalServerError, query, query, err)
 	} else if len(matching) > 1 {
 		return nil, fmt.Errorf("query result error: (%s) more than one entry (%d total) matched non-zero values of %T %+v", errors.BadRequest, len(matching), query, query)
+	} else if len(matching) == 1 {
+		return &matching[0], nil
+	} else {
+		return nil, nil
 	}
-	return &matching[0], nil
 }
 
 func (s internalModelStore[M]) get(db *gorm.DB, query M) (M, error) {

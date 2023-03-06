@@ -2775,7 +2775,7 @@
                     {
                         "type": "string",
                         "default": "kubernetes",
-                        "description": "Required when creating; 'google', 'azure', or 'kubernetes'",
+                        "description": "'google', 'azure', or default 'kubernetes'",
                         "name": "platform",
                         "in": "query"
                     },
@@ -6403,7 +6403,7 @@
                     "type": "string"
                 },
                 "platform": {
-                    "description": "Required when creating; 'google', 'azure', or 'kubernetes'",
+                    "description": "'google', 'azure', or default 'kubernetes'",
                     "type": "string",
                     "default": "kubernetes"
                 }
@@ -6578,7 +6578,7 @@
                     "type": "string"
                 },
                 "platform": {
-                    "description": "Required when creating; 'google', 'azure', or 'kubernetes'",
+                    "description": "'google', 'azure', or default 'kubernetes'",
                     "type": "string",
                     "default": "kubernetes"
                 },
@@ -6713,7 +6713,7 @@
                     "type": "string"
                 },
                 "platform": {
-                    "description": "Required when creating; 'google', 'azure', or 'kubernetes'",
+                    "description": "'google', 'azure', or default 'kubernetes'",
                     "type": "string",
                     "default": "kubernetes"
                 }

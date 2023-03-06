@@ -368,6 +368,7 @@ func (suite *environmentControllerSuite) TestEnvironmentAutoPopulateChartRelease
 	suite.seedAppVersions(suite.T())
 	suite.seedChartVersions(suite.T())
 	suite.seedChartReleases(suite.T())
+	suite.seedDatabaseInstances(suite.T())
 
 	suite.Run("check that honeycomb is still in the config", func() {
 		autoPopulateCharts := config.Config.Slices("model.environments.templates.autoPopulateCharts")
@@ -397,6 +398,7 @@ func (suite *environmentControllerSuite) TestEnvironmentAutoPopulateChartRelease
 				Environment: template.Name,
 			},
 		}, 0)
+		defaultTemplateChartReleaseCount := len(templateChartReleases)
 		assert.NoError(suite.T(), err)
 		honeycombPresent := false
 		for _, chartRelease := range templateChartReleases {
@@ -405,6 +407,35 @@ func (suite *environmentControllerSuite) TestEnvironmentAutoPopulateChartRelease
 			}
 		}
 		assert.True(suite.T(), honeycombPresent)
+
+		suite.Run("can add to template", func() {
+			_, created, err = suite.ChartReleaseController.Create(CreatableChartRelease{
+				Chart:       datarepoChart.Name,
+				Environment: template.Name,
+			}, auth.GenerateUser(suite.T(), false))
+			assert.NoError(suite.T(), err)
+			assert.True(suite.T(), created)
+			_, created, err = suite.DatabaseInstanceController.Create(CreatableDatabaseInstance{
+				ChartRelease: fmt.Sprintf("%s/%s", template.Name, datarepoChart.Name),
+			}, auth.GenerateUser(suite.T(), false))
+			assert.NoError(suite.T(), err)
+			assert.True(suite.T(), created)
+
+			templateChartReleases, err = suite.ChartReleaseController.ListAllMatching(ChartRelease{
+				CreatableChartRelease: CreatableChartRelease{
+					Environment: template.Name,
+				},
+			}, 0)
+			assert.NoError(suite.T(), err)
+			assert.Equal(suite.T(), defaultTemplateChartReleaseCount+1, len(templateChartReleases))
+			honeycombPresent = false
+			for _, chartRelease := range templateChartReleases {
+				if chartRelease.Chart == "honeycomb" {
+					honeycombPresent = true
+				}
+			}
+			assert.True(suite.T(), honeycombPresent)
+		})
 
 		suite.Run("dynamic environments copy template chart releases", func() {
 			bee, created, err := suite.EnvironmentController.Create(CreatableEnvironment{
@@ -419,13 +450,29 @@ func (suite *environmentControllerSuite) TestEnvironmentAutoPopulateChartRelease
 			}, 0)
 			assert.NoError(suite.T(), err)
 			assert.Equal(suite.T(), len(templateChartReleases), len(beeChartReleases))
-			honeycombPresent := false
+			honeycombPresent = false
 			for _, chartRelease := range beeChartReleases {
 				if chartRelease.Chart == "honeycomb" {
 					honeycombPresent = true
 				}
 			}
 			assert.True(suite.T(), honeycombPresent)
+			suite.Run("database instances copied", func() {
+				databaseInstanceCopied := false
+				for _, templateChartRelease := range templateChartReleases {
+					templateDatabaseInstance, err := suite.DatabaseInstanceController.Get(fmt.Sprintf("chart-release/%s", templateChartRelease.Name))
+					if err != nil {
+						assert.ErrorContains(suite.T(), err, errors.NotFound)
+						continue
+					} else {
+						beeDatabaseInstance, err := suite.DatabaseInstanceController.Get(fmt.Sprintf("chart-release/%s/%s", bee.Name, templateChartRelease.Chart))
+						assert.NoError(suite.T(), err)
+						assert.NotEqual(suite.T(), templateDatabaseInstance.ID, beeDatabaseInstance.ID)
+						databaseInstanceCopied = true
+					}
+				}
+				assert.True(suite.T(), databaseInstanceCopied)
+			})
 		})
 	})
 }

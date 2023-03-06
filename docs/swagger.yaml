@@ -656,7 +656,7 @@ definitions:
         type: string
       platform:
         default: kubernetes
-        description: Required when creating; 'google', 'azure', or 'kubernetes'
+        description: '''google'', ''azure'', or default ''kubernetes'''
         type: string
     type: object
   v2controllers.CreatableEnvironment:
@@ -791,7 +791,7 @@ definitions:
         type: string
       platform:
         default: kubernetes
-        description: Required when creating; 'google', 'azure', or 'kubernetes'
+        description: '''google'', ''azure'', or default ''kubernetes'''
         type: string
       updatedAt:
         format: date-time
@@ -889,7 +889,7 @@ definitions:
         type: string
       platform:
         default: kubernetes
-        description: Required when creating; 'google', 'azure', or 'kubernetes'
+        description: '''google'', ''azure'', or default ''kubernetes'''
         type: string
     type: object
   v2controllers.EditableEnvironment:
@@ -2956,7 +2956,7 @@ paths:
         name: instanceName
         type: string
       - default: kubernetes
-        description: Required when creating; 'google', 'azure', or 'kubernetes'
+        description: '''google'', ''azure'', or default ''kubernetes'''
         in: query
         name: platform
         type: string

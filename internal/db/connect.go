@@ -3,6 +3,7 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	"gorm.io/gorm/logger"
 	"time"
 
 	migrationFiles "github.com/broadinstitute/sherlock/db"
@@ -33,6 +34,7 @@ var (
 		&v1models.Deploy{},
 	}
 	v2ModelHierarchy = []any{
+		&v2models.PagerdutyIntegration{},
 		&v2models.Cluster{},
 		&v2models.Environment{},
 		&v2models.Chart{},
@@ -40,7 +42,7 @@ var (
 		&v2models.AppVersion{},
 		&v2models.ChartRelease{},
 		&v2models.Changeset{},
-		&v2models.PagerdutyIntegration{},
+		&v2models.DatabaseInstance{},
 	}
 )
 
@@ -112,18 +114,30 @@ func applyMigrations(db *sql.DB) error {
 }
 
 func openGorm(db *sql.DB) (*gorm.DB, error) {
+	logLevel, err := parseGormLogLevel(config.Config.String("db.log.level"))
+	if err != nil {
+		return nil, err
+	}
 	return gorm.Open(
 		gormpg.New(gormpg.Config{
 			Conn: db,
 		}),
-		// This is to account for the fact that go and postgres have different
-		// time stamp precision which causes issues in testing.
-		// This is a fix to have gorm round down timestamps to postgres's millisecond
-		// precision
+
 		&gorm.Config{
+			// This is to account for the fact that go and postgres have different
+			// time stamp precision which causes issues in testing.
+			// This is a fix to have gorm round down timestamps to postgres's millisecond
+			// precision
 			NowFunc: func() time.Time {
 				return time.Now().Round(time.Millisecond)
 			},
+			// log.Logger is Zerolog's global logger that the rest of Sherlock uses
+			Logger: logger.New(&log.Logger, logger.Config{
+				SlowThreshold:             config.Config.Duration("db.log.slowThresholdMs"),
+				LogLevel:                  logLevel,
+				IgnoreRecordNotFoundError: config.Config.Bool("db.log.ignoreNotFoundWarning"),
+				Colorful:                  config.Config.String("mode") == "debug",
+			}),
 		})
 }
 

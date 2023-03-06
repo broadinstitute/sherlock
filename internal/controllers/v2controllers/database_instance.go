@@ -18,12 +18,12 @@ type CreatableDatabaseInstance struct {
 }
 
 type EditableDatabaseInstance struct {
-	Platform                  *string `json:"platform" form:"platform" default:"kubernetes"`               // Required when creating; 'google', 'azure', or 'kubernetes'
-	GoogleProject             *string `json:"googleProject" form:"googleProject" `                         // Required if platform is 'google'
-	GoogleLocation            *string `json:"googleLocation" form:"googleLocation" `                       // Required if platform is 'google'
-	AzureSubscription         *string `json:"azureSubscription" form:"azureSubscription" `                 // Required if platform is 'azure'
-	AzureManagedResourceGroup *string `json:"azureManagedResourceGroup" form:"azureManagedResourceGroup" ` // Required if platform is 'azure'
-	InstanceName              *string `json:"instanceName" form:"instanceName" `                           // Required if platform is 'google' or 'azure'
+	Platform                  *string `json:"platform" form:"platform" default:"kubernetes"`              // 'google', 'azure', or default 'kubernetes'
+	GoogleProject             *string `json:"googleProject" form:"googleProject"`                         // Required if platform is 'google'
+	GoogleLocation            *string `json:"googleLocation" form:"googleLocation"`                       // Required if platform is 'google'
+	AzureSubscription         *string `json:"azureSubscription" form:"azureSubscription"`                 // Required if platform is 'azure'
+	AzureManagedResourceGroup *string `json:"azureManagedResourceGroup" form:"azureManagedResourceGroup"` // Required if platform is 'azure'
+	InstanceName              *string `json:"instanceName" form:"instanceName"`                           // Required if platform is 'google' or 'azure'
 
 	DefaultDatabase *string `json:"defaultDatabase" form:"defaultDatabase" ` // When creating, defaults to the chart name
 }
