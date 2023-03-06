@@ -6,6 +6,7 @@ export * from './ChartReleasesApi';
 export * from './ChartVersionsApi';
 export * from './ChartsApi';
 export * from './ClustersApi';
+export * from './DatabaseInstancesApi';
 export * from './EnvironmentsApi';
 export * from './MiscApi';
 export * from './PagerdutyIntegrationsApi';

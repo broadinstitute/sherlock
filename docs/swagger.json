@@ -2917,7 +2917,7 @@
         },
         "/api/v2/database-instances/{selector}": {
             "get": {
-                "description": "Get an existing DatabaseInstance entry via one of its \"selectors\": numeric ID of 'chart-release/' followed by a chart release selector.",
+                "description": "Get an existing DatabaseInstance entry via one of its \"selectors\": numeric ID or 'chart-release/' followed by a chart release selector.",
                 "produces": [
                     "application/json"
                 ],
@@ -2928,7 +2928,7 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "The DatabaseInstance to get's selector: numeric ID of 'chart-release/' followed by a chart release selector",
+                        "description": "The DatabaseInstance to get's selector: numeric ID or 'chart-release/' followed by a chart release selector",
                         "name": "selector",
                         "in": "path",
                         "required": true
@@ -2994,7 +2994,7 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "The DatabaseInstance to upsert's selector: numeric ID of 'chart-release/' followed by a chart release selector",
+                        "description": "The DatabaseInstance to upsert's selector: numeric ID or 'chart-release/' followed by a chart release selector",
                         "name": "selector",
                         "in": "path",
                         "required": true
@@ -3061,7 +3061,7 @@
                 }
             },
             "delete": {
-                "description": "Delete an existing DatabaseInstance entry via one of its \"selectors\": numeric ID of 'chart-release/' followed by a chart release selector.",
+                "description": "Delete an existing DatabaseInstance entry via one of its \"selectors\": numeric ID or 'chart-release/' followed by a chart release selector.",
                 "produces": [
                     "application/json"
                 ],
@@ -3072,7 +3072,7 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "The DatabaseInstance to delete's selector: numeric ID of 'chart-release/' followed by a chart release selector",
+                        "description": "The DatabaseInstance to delete's selector: numeric ID or 'chart-release/' followed by a chart release selector",
                         "name": "selector",
                         "in": "path",
                         "required": true
@@ -3124,7 +3124,7 @@
                 }
             },
             "patch": {
-                "description": "Edit an existing DatabaseInstance entry via one of its \"selectors\": numeric ID of 'chart-release/' followed by a chart release selector. Note that only mutable fields are available here, immutable fields can only be set using /create.",
+                "description": "Edit an existing DatabaseInstance entry via one of its \"selectors\": numeric ID or 'chart-release/' followed by a chart release selector. Note that only mutable fields are available here, immutable fields can only be set using /create.",
                 "consumes": [
                     "application/json"
                 ],
@@ -3138,7 +3138,7 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "The DatabaseInstance to edit's selector: numeric ID of 'chart-release/' followed by a chart release selector",
+                        "description": "The DatabaseInstance to edit's selector: numeric ID or 'chart-release/' followed by a chart release selector",
                         "name": "selector",
                         "in": "path",
                         "required": true

@@ -8,6 +8,7 @@ src/apis/ChartReleasesApi.ts
 src/apis/ChartVersionsApi.ts
 src/apis/ChartsApi.ts
 src/apis/ClustersApi.ts
+src/apis/DatabaseInstancesApi.ts
 src/apis/EnvironmentsApi.ts
 src/apis/MiscApi.ts
 src/apis/PagerdutyIntegrationsApi.ts
@@ -38,13 +39,16 @@ src/models/V2controllersCreatableChart.ts
 src/models/V2controllersCreatableChartRelease.ts
 src/models/V2controllersCreatableChartVersion.ts
 src/models/V2controllersCreatableCluster.ts
+src/models/V2controllersCreatableDatabaseInstance.ts
 src/models/V2controllersCreatableEnvironment.ts
 src/models/V2controllersCreatablePagerdutyIntegration.ts
+src/models/V2controllersDatabaseInstance.ts
 src/models/V2controllersEditableAppVersion.ts
 src/models/V2controllersEditableChart.ts
 src/models/V2controllersEditableChartRelease.ts
 src/models/V2controllersEditableChartVersion.ts
 src/models/V2controllersEditableCluster.ts
+src/models/V2controllersEditableDatabaseInstance.ts
 src/models/V2controllersEditableEnvironment.ts
 src/models/V2controllersEditablePagerdutyIntegration.ts
 src/models/V2controllersEnvironment.ts

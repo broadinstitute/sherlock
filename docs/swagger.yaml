@@ -3057,9 +3057,9 @@ paths:
   /api/v2/database-instances/{selector}:
     delete:
       description: 'Delete an existing DatabaseInstance entry via one of its "selectors":
-        numeric ID of ''chart-release/'' followed by a chart release selector.'
+        numeric ID or ''chart-release/'' followed by a chart release selector.'
       parameters:
-      - description: 'The DatabaseInstance to delete''s selector: numeric ID of ''chart-release/''
+      - description: 'The DatabaseInstance to delete''s selector: numeric ID or ''chart-release/''
           followed by a chart release selector'
         in: path
         name: selector
@@ -3101,9 +3101,9 @@ paths:
       - DatabaseInstances
     get:
       description: 'Get an existing DatabaseInstance entry via one of its "selectors":
-        numeric ID of ''chart-release/'' followed by a chart release selector.'
+        numeric ID or ''chart-release/'' followed by a chart release selector.'
       parameters:
-      - description: 'The DatabaseInstance to get''s selector: numeric ID of ''chart-release/''
+      - description: 'The DatabaseInstance to get''s selector: numeric ID or ''chart-release/''
           followed by a chart release selector'
         in: path
         name: selector
@@ -3147,11 +3147,11 @@ paths:
       consumes:
       - application/json
       description: 'Edit an existing DatabaseInstance entry via one of its "selectors":
-        numeric ID of ''chart-release/'' followed by a chart release selector. Note
+        numeric ID or ''chart-release/'' followed by a chart release selector. Note
         that only mutable fields are available here, immutable fields can only be
         set using /create.'
       parameters:
-      - description: 'The DatabaseInstance to edit''s selector: numeric ID of ''chart-release/''
+      - description: 'The DatabaseInstance to edit''s selector: numeric ID or ''chart-release/''
           followed by a chart release selector'
         in: path
         name: selector
@@ -3204,7 +3204,7 @@ paths:
         Create or edit a DatabaseInstance entry. Attempts to edit and will attempt to create upon an error.
         If an edit was made or the creation process de-duplicates, this method will return normally with a 200.
       parameters:
-      - description: 'The DatabaseInstance to upsert''s selector: numeric ID of ''chart-release/''
+      - description: 'The DatabaseInstance to upsert''s selector: numeric ID or ''chart-release/''
           followed by a chart release selector'
         in: path
         name: selector
