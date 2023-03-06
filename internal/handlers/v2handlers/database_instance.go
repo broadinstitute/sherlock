@@ -48,10 +48,10 @@ func listDatabaseInstance(controller *v2controllers.DatabaseInstanceController) 
 // getDatabaseInstance godoc
 //
 //	@summary		Get a DatabaseInstance entry
-//	@description	Get an existing DatabaseInstance entry via one of its "selectors": numeric ID of 'chart-release/' followed by a chart release selector.
+//	@description	Get an existing DatabaseInstance entry via one of its "selectors": numeric ID or 'chart-release/' followed by a chart release selector.
 //	@tags			DatabaseInstances
 //	@produce		json
-//	@param			selector				path		string	true	"The DatabaseInstance to get's selector: numeric ID of 'chart-release/' followed by a chart release selector"
+//	@param			selector				path		string	true	"The DatabaseInstance to get's selector: numeric ID or 'chart-release/' followed by a chart release selector"
 //	@success		200						{object}	v2controllers.DatabaseInstance
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/v2/database-instances/{selector} [get]
@@ -62,11 +62,11 @@ func getDatabaseInstance(controller *v2controllers.DatabaseInstanceController) f
 // editDatabaseInstance godoc
 //
 //	@summary		Edit a DatabaseInstance entry
-//	@description	Edit an existing DatabaseInstance entry via one of its "selectors": numeric ID of 'chart-release/' followed by a chart release selector. Note that only mutable fields are available here, immutable fields can only be set using /create.
+//	@description	Edit an existing DatabaseInstance entry via one of its "selectors": numeric ID or 'chart-release/' followed by a chart release selector. Note that only mutable fields are available here, immutable fields can only be set using /create.
 //	@tags			DatabaseInstances
 //	@accept			json
 //	@produce		json
-//	@param			selector				path		string									true	"The DatabaseInstance to edit's selector: numeric ID of 'chart-release/' followed by a chart release selector"
+//	@param			selector				path		string									true	"The DatabaseInstance to edit's selector: numeric ID or 'chart-release/' followed by a chart release selector"
 //	@param			chart					body		v2controllers.EditableDatabaseInstance	true	"The edits to make to the DatabaseInstance"
 //	@success		200						{object}	v2controllers.DatabaseInstance
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
@@ -83,7 +83,7 @@ func editDatabaseInstance(controller *v2controllers.DatabaseInstanceController) 
 //	@tags			DatabaseInstances
 //	@accept			json
 //	@produce		json
-//	@param			selector				path		string									true	"The DatabaseInstance to upsert's selector: numeric ID of 'chart-release/' followed by a chart release selector"
+//	@param			selector				path		string									true	"The DatabaseInstance to upsert's selector: numeric ID or 'chart-release/' followed by a chart release selector"
 //	@param			chart-release			body		v2controllers.CreatableDatabaseInstance	true	"The DatabaseInstance to upsert"
 //	@success		200,201					{object}	v2controllers.DatabaseInstance
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
@@ -95,10 +95,10 @@ func upsertDatabaseInstance(controller *v2controllers.DatabaseInstanceController
 // deleteDatabaseInstance godoc
 //
 //	@summary		Delete a DatabaseInstance entry
-//	@description	Delete an existing DatabaseInstance entry via one of its "selectors": numeric ID of 'chart-release/' followed by a chart release selector.
+//	@description	Delete an existing DatabaseInstance entry via one of its "selectors": numeric ID or 'chart-release/' followed by a chart release selector.
 //	@tags			DatabaseInstances
 //	@produce		json
-//	@param			selector				path		string	true	"The DatabaseInstance to delete's selector: numeric ID of 'chart-release/' followed by a chart release selector"
+//	@param			selector				path		string	true	"The DatabaseInstance to delete's selector: numeric ID or 'chart-release/' followed by a chart release selector"
 //	@success		200						{object}	v2controllers.DatabaseInstance
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/v2/database-instances/{selector} [delete]
