@@ -46,7 +46,7 @@ func FakeUserMiddleware(userStore *v2models.UserMiddlewareStore) gin.HandlerFunc
 			firecloudAccount = nil
 		} else {
 			firecloudAccount = &auth_models.FirecloudAccount{
-				Email:               email,
+				Email:               emailToFirecloudEmail(email),
 				AcceptedGoogleTerms: true,
 				EnrolledIn2fa:       true,
 				Suspended:           false,

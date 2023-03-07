@@ -20,7 +20,7 @@ func logger() gin.HandlerFunc {
 		}
 		identity := "client not identified"
 		if user, err := auth.ExtractUserFromContext(ctx); err == nil {
-			identity = user.AuthenticatedEmail
+			identity = user.Email
 		}
 		var event *zerolog.Event
 		switch code := ctx.Writer.Status(); {
