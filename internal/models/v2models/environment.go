@@ -2,6 +2,7 @@ package v2models
 
 import (
 	"fmt"
+	"github.com/broadinstitute/sherlock/internal/auth/auth_models"
 	"github.com/broadinstitute/sherlock/internal/config"
 	"github.com/rs/zerolog/log"
 	"math/bits"
@@ -10,7 +11,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/broadinstitute/sherlock/internal/auth"
 	"github.com/broadinstitute/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/internal/models/v2models/environment"
 	"gorm.io/gorm"
@@ -227,7 +227,7 @@ func validateEnvironment(environment *Environment) error {
 	return nil
 }
 
-func preCreateEnvironment(db *gorm.DB, environment *Environment, _ *auth.User) error {
+func preCreateEnvironment(db *gorm.DB, environment *Environment, _ *auth_models.User) error {
 	if environment != nil && environment.UniqueResourcePrefix == "" {
 		var generatedUniqueResourcePrefix bool
 
@@ -341,7 +341,7 @@ func generateUniqueResourcePrefix(sb *strings.Builder, number uint64) {
 	sb.WriteByte(characterBytes[r0])
 }
 
-func postCreateEnvironment(db *gorm.DB, environment *Environment, user *auth.User) error {
+func postCreateEnvironment(db *gorm.DB, environment *Environment, user *auth_models.User) error {
 	if environment.AutoPopulateChartReleases != nil && *environment.AutoPopulateChartReleases {
 		if environment.Lifecycle == "dynamic" && environment.TemplateEnvironmentID != nil {
 			// This is a dynamic environment that is getting created right now, let's copy the chart releases from the template too
@@ -429,7 +429,7 @@ func postCreateEnvironment(db *gorm.DB, environment *Environment, user *auth.Use
 	return nil
 }
 
-func preDeletePostValidateEnvironment(db *gorm.DB, environment *Environment, user *auth.User) error {
+func preDeletePostValidateEnvironment(db *gorm.DB, environment *Environment, user *auth_models.User) error {
 	chartReleases, err := chartReleaseStore.listAllMatchingByUpdated(db, 0, ChartRelease{EnvironmentID: &environment.ID})
 	if err != nil {
 		return fmt.Errorf("wasn't able to list chart releases: %v", err)

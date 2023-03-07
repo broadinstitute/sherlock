@@ -2,7 +2,7 @@ package v2models
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/internal/auth"
+	"github.com/broadinstitute/sherlock/internal/auth/auth_models"
 	"github.com/broadinstitute/sherlock/internal/errors"
 	"gorm.io/gorm"
 	"strconv"
@@ -105,7 +105,7 @@ func validatePagerdutyIntegration(pagerdutyIntegration *PagerdutyIntegration) er
 	return nil
 }
 
-func preDeletePostValidatePagerdutyIntegration(db *gorm.DB, pagerdutyIntegration *PagerdutyIntegration, _ *auth.User) error {
+func preDeletePostValidatePagerdutyIntegration(db *gorm.DB, pagerdutyIntegration *PagerdutyIntegration, _ *auth_models.User) error {
 	chartReleases, err := chartReleaseStore.listAllMatchingByUpdated(db, 0, ChartRelease{PagerdutyIntegrationID: &pagerdutyIntegration.ID})
 	if err != nil {
 		return fmt.Errorf("wasn't able to check for chart releases that use this integration: %v", err)

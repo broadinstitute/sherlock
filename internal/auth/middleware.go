@@ -2,68 +2,74 @@ package auth
 
 import (
 	"fmt"
+	"github.com/broadinstitute/sherlock/internal/auth/auth_models"
+	"github.com/broadinstitute/sherlock/internal/auth/iap_auth"
 	"github.com/broadinstitute/sherlock/internal/errors"
+	"github.com/broadinstitute/sherlock/internal/models/v2models"
 	"github.com/gin-gonic/gin"
-	"google.golang.org/api/idtoken"
 )
 
 const contextUserKey = "SherlockUser"
 
-func IapUserMiddleware() gin.HandlerFunc {
+func IapUserMiddleware(userStore *v2models.UserMiddlewareStore) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		iapJWT := ctx.GetHeader("X-Goog-IAP-JWT-Assertion")
-		if iapJWT == "" {
-			ctx.JSON(errors.ErrorToApiResponse(fmt.Errorf("(%s) no 'X-Goog-IAP-JWT-Assertion' header set, IAP authentication required", errors.ProxyAuthenticationRequired)))
-			return
-		}
-		// Sherlock is deployed behind an Apache proxy that checks that it is correctly wrapped by IAP, so we don't
-		// actually care about exhaustively validating here (and we lack all the audience information to do so),
-		// this is just the easiest way to decode the JWT payload.
-		payload, err := idtoken.Validate(ctx, iapJWT, "")
+		email, googleID, err := iap_auth.ParseIAP(ctx)
 		if err != nil {
-			ctx.JSON(errors.ErrorToApiResponse(fmt.Errorf("(%s) failed to validate IAP JWT in 'X-Goog-IAP-JWT-Assertion' header: %v", errors.ProxyAuthenticationRequired, err)))
+			ctx.JSON(errors.ErrorToApiResponse(err))
 			return
-		}
-		emailValue := payload.Claims["email"]
-		email, ok := emailValue.(string)
-		if !ok || email == "" {
-			ctx.JSON(errors.ErrorToApiResponse(fmt.Errorf("(%s) IAP JWT seemed to pass validation but lacked an email claim", errors.ProxyAuthenticationRequired)))
 		}
 
-		ctx.Set(contextUserKey, &User{
-			AuthenticatedEmail:      email,
-			MatchedFirecloudAccount: cachedFirecloudAccounts[emailToFirecloudEmail(email)],
-			MatchedExtraPermissions: cachedExtraPermissions[email],
+		storedUser, err := userStore.GetOrCreateUser(email, googleID)
+		if err != nil {
+			ctx.JSON(errors.ErrorToApiResponse(err))
+			return
+		}
+
+		ctx.Set(contextUserKey, &auth_models.User{
+			StoredUserFields: storedUser.StoredUserFields,
+			InferredUserFields: auth_models.InferredUserFields{
+				MatchedFirecloudAccount: cachedFirecloudAccounts[emailToFirecloudEmail(email)],
+				MatchedExtraPermissions: cachedExtraPermissions[email],
+			},
 		})
 
 		ctx.Next()
 	}
 }
 
-func FakeUserMiddleware() gin.HandlerFunc {
+func FakeUserMiddleware(userStore *v2models.UserMiddlewareStore) gin.HandlerFunc {
 	email := "fake@broadinstitute.org"
+	googleID := "some id would go here"
 	return func(ctx *gin.Context) {
-		var firecloudAccount *FirecloudAccount
+		var firecloudAccount *auth_models.FirecloudAccount
 		if ctx.GetHeader("Suitable") == "false" {
 			firecloudAccount = nil
 		} else {
-			firecloudAccount = &FirecloudAccount{
+			firecloudAccount = &auth_models.FirecloudAccount{
 				Email:               email,
 				AcceptedGoogleTerms: true,
 				EnrolledIn2fa:       true,
 				Suspended:           false,
 				Archived:            false,
 				SuspensionReason:    "",
-				Groups: &FirecloudGroupMembership{
+				Groups: &auth_models.FirecloudGroupMembership{
 					FcAdmins:               true,
 					FirecloudProjectOwners: true,
 				},
 			}
 		}
-		ctx.Set(contextUserKey, &User{
-			AuthenticatedEmail:      email,
-			MatchedFirecloudAccount: firecloudAccount,
-			MatchedExtraPermissions: cachedExtraPermissions[email],
+
+		storedUser, err := userStore.GetOrCreateUser(email, googleID)
+		if err != nil {
+			ctx.JSON(errors.ErrorToApiResponse(err))
+			return
+		}
+
+		ctx.Set(contextUserKey, &auth_models.User{
+			StoredUserFields: storedUser.StoredUserFields,
+			InferredUserFields: auth_models.InferredUserFields{
+				MatchedFirecloudAccount: firecloudAccount,
+			},
 		})
 
 		ctx.Next()
@@ -72,12 +78,12 @@ func FakeUserMiddleware() gin.HandlerFunc {
 
 // ExtractUserFromContext is the counterpart to the middlewares provided by this package:
 // handlers can call it to extract a User from the context.
-func ExtractUserFromContext(ctx *gin.Context) (*User, error) {
+func ExtractUserFromContext(ctx *gin.Context) (*auth_models.User, error) {
 	userValue, exists := ctx.Get(contextUserKey)
 	if !exists {
 		return nil, fmt.Errorf("(%s) authentication middleware not present", errors.InternalServerError)
 	}
-	user, ok := userValue.(*User)
+	user, ok := userValue.(*auth_models.User)
 	if !ok {
 		return nil, fmt.Errorf("(%s) authentication middleware misconfigured: suitability represented as %T", errors.InternalServerError, userValue)
 	}

@@ -3,6 +3,7 @@ package auth
 import (
 	"context"
 	"fmt"
+	"github.com/broadinstitute/sherlock/internal/auth/auth_models"
 	"github.com/broadinstitute/sherlock/internal/config"
 	"github.com/rs/zerolog/log"
 	admin "google.golang.org/api/admin/directory/v1"
@@ -11,7 +12,7 @@ import (
 )
 
 // cachedFirecloudAccounts associates firecloud.org email addresses to FirecloudAccount info
-var cachedFirecloudAccounts map[string]*FirecloudAccount
+var cachedFirecloudAccounts map[string]*auth_models.FirecloudAccount
 var lastCacheTime time.Time
 
 func CacheFirecloudAccounts(ctx context.Context) error {
@@ -20,7 +21,7 @@ func CacheFirecloudAccounts(ctx context.Context) error {
 		return fmt.Errorf("failed to authenticate to Google Workspace: %v", err)
 	}
 
-	newCache := make(map[string]*FirecloudAccount)
+	newCache := make(map[string]*auth_models.FirecloudAccount)
 	err = adminService.Users.List().Domain(config.Config.MustString("auth.firecloud.domain")).Pages(ctx, func(workspaceUsers *admin.Users) error {
 		if workspaceUsers == nil {
 			log.Warn().Msg("CacheFirecloudAccounts got a nil user page from Google?")
@@ -29,9 +30,15 @@ func CacheFirecloudAccounts(ctx context.Context) error {
 				if workspaceUser == nil {
 					log.Warn().Msg("CacheFirecloudAccounts got a nil user from Google?")
 				} else {
-					fcAccount := &FirecloudAccount{Groups: &FirecloudGroupMembership{}}
-					fcAccount.parseWorkspaceUser(workspaceUser)
-					newCache[fcAccount.Email] = fcAccount
+					newCache[workspaceUser.PrimaryEmail] = &auth_models.FirecloudAccount{
+						Email:               workspaceUser.PrimaryEmail,
+						AcceptedGoogleTerms: workspaceUser.AgreedToTerms,
+						EnrolledIn2fa:       workspaceUser.IsEnrolledIn2Sv,
+						Suspended:           workspaceUser.Suspended,
+						Archived:            workspaceUser.Archived,
+						SuspensionReason:    workspaceUser.SuspensionReason,
+						Groups:              &auth_models.FirecloudGroupMembership{},
+					}
 				}
 			}
 		}

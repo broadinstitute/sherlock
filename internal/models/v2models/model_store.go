@@ -2,7 +2,7 @@ package v2models
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/internal/auth"
+	"github.com/broadinstitute/sherlock/internal/auth/auth_models"
 	"gorm.io/gorm"
 )
 
@@ -15,7 +15,7 @@ type ModelStore[M Model] struct {
 	*internalModelStore[M]
 }
 
-func (s ModelStore[M]) Create(model M, user *auth.User) (M, bool, error) {
+func (s ModelStore[M]) Create(model M, user *auth_models.User) (M, bool, error) {
 	return s.create(s.db, model, user)
 }
 
@@ -39,7 +39,7 @@ func (s ModelStore[M]) Get(selector string) (M, error) {
 	return ret, nil
 }
 
-func (s ModelStore[M]) Edit(selector string, editsToMake M, user *auth.User) (M, error) {
+func (s ModelStore[M]) Edit(selector string, editsToMake M, user *auth_models.User) (M, error) {
 	query, err := s.selectorToQueryModel(s.db, selector)
 	if err != nil {
 		return query, fmt.Errorf("query error parsing %T selector '%s': %v", query, selector, err)
@@ -51,7 +51,7 @@ func (s ModelStore[M]) Edit(selector string, editsToMake M, user *auth.User) (M,
 	return ret, nil
 }
 
-func (s ModelStore[M]) Delete(selector string, user *auth.User) (M, error) {
+func (s ModelStore[M]) Delete(selector string, user *auth_models.User) (M, error) {
 	query, err := s.selectorToQueryModel(s.db, selector)
 	if err != nil {
 		return query, fmt.Errorf("query error parsing %T selector '%s': %v", query, selector, err)

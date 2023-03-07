@@ -1,18 +1,19 @@
 package auth
 
 import (
+	"github.com/broadinstitute/sherlock/internal/auth/auth_models"
 	"github.com/broadinstitute/sherlock/internal/config"
 	"github.com/rs/zerolog/log"
 )
 
 // cachedExtraPermissions associated arbitrary email addresses to ExtraPermissions info.
-var cachedExtraPermissions map[string]*ExtraPermissions
+var cachedExtraPermissions map[string]*auth_models.ExtraPermissions
 
 func CacheExtraPermissions() {
-	newCache := make(map[string]*ExtraPermissions)
+	newCache := make(map[string]*auth_models.ExtraPermissions)
 	for index, entry := range config.Config.Slices("auth.extraPermissions") {
 		if email := entry.String("email"); email != "" {
-			newCache[email] = &ExtraPermissions{
+			newCache[email] = &auth_models.ExtraPermissions{
 				Suitable: entry.Bool("suitable"),
 			}
 		} else {

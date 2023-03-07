@@ -2,7 +2,7 @@ package v2models
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/internal/auth"
+	"github.com/broadinstitute/sherlock/internal/auth/auth_models"
 	"github.com/broadinstitute/sherlock/internal/errors"
 	"gorm.io/gorm"
 	"strconv"
@@ -76,7 +76,7 @@ func validateChangeset(changeset *Changeset) error {
 	return nil
 }
 
-func preCreateChangeset(db *gorm.DB, toCreate *Changeset, _ *auth.User) error {
+func preCreateChangeset(db *gorm.DB, toCreate *Changeset, _ *auth_models.User) error {
 	if toCreate != nil {
 
 		// Resolve 'to' versions
