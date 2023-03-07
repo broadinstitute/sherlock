@@ -19,6 +19,8 @@ require (
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/golang-migrate/migrate/v4 v4.15.2
 	github.com/google/go-cmp v0.5.9
+	github.com/jackc/pgconn v1.13.0
+	github.com/jackc/pgerrcode v0.0.0-20220416144525-469b46aa5efa
 	github.com/jackc/pgx/v4 v4.17.2
 	github.com/knadh/koanf v1.4.4
 	github.com/rs/zerolog v1.28.0
@@ -70,8 +72,6 @@ require (
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
-	github.com/jackc/pgconn v1.13.0 // indirect
-	github.com/jackc/pgerrcode v0.0.0-20220416144525-469b46aa5efa // indirect
 	github.com/jackc/pgio v1.0.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgproto3/v2 v2.3.1 // indirect
