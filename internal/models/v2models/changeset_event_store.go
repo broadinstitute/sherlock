@@ -2,7 +2,7 @@ package v2models
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/internal/auth"
+	"github.com/broadinstitute/sherlock/internal/auth/auth_models"
 	"github.com/broadinstitute/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/internal/pagerduty"
@@ -18,7 +18,7 @@ type ChangesetEventStore struct {
 	*internalChangesetEventStore
 }
 
-func (s *ChangesetEventStore) PlanAndApply(changesets []Changeset, user *auth.User) ([]Changeset, error) {
+func (s *ChangesetEventStore) PlanAndApply(changesets []Changeset, user *auth_models.User) ([]Changeset, error) {
 	var ret []Changeset
 	err := s.db.Transaction(func(tx *gorm.DB) error {
 		planned, err := s.plan(tx, changesets, user)
@@ -31,11 +31,11 @@ func (s *ChangesetEventStore) PlanAndApply(changesets []Changeset, user *auth.Us
 	return ret, err
 }
 
-func (s *ChangesetEventStore) Plan(changesets []Changeset, user *auth.User) ([]Changeset, error) {
+func (s *ChangesetEventStore) Plan(changesets []Changeset, user *auth_models.User) ([]Changeset, error) {
 	return s.plan(s.db, changesets, user)
 }
 
-func (s *ChangesetEventStore) Apply(selectors []string, user *auth.User) ([]Changeset, error) {
+func (s *ChangesetEventStore) Apply(selectors []string, user *auth_models.User) ([]Changeset, error) {
 	var queries []Changeset
 	for index, selector := range selectors {
 		query, err := s.internalChangesetEventStore.selectorToQueryModel(s.db, selector)
@@ -63,7 +63,7 @@ type internalChangesetEventStore struct {
 	*internalModelStore[Changeset]
 }
 
-func (s *internalChangesetEventStore) plan(db *gorm.DB, changesets []Changeset, user *auth.User) ([]Changeset, error) {
+func (s *internalChangesetEventStore) plan(db *gorm.DB, changesets []Changeset, user *auth_models.User) ([]Changeset, error) {
 	var ret []Changeset
 	err := db.Transaction(func(tx *gorm.DB) error {
 		for index, changeset := range changesets {
@@ -89,7 +89,7 @@ func (s *internalChangesetEventStore) plan(db *gorm.DB, changesets []Changeset, 
 	return ret, err
 }
 
-func (s *internalChangesetEventStore) apply(db *gorm.DB, changesets []Changeset, user *auth.User) ([]Changeset, error) {
+func (s *internalChangesetEventStore) apply(db *gorm.DB, changesets []Changeset, user *auth_models.User) ([]Changeset, error) {
 	var ret []Changeset
 	affectedChartReleases := make(map[uint]ChartRelease)
 	err := db.Transaction(func(tx *gorm.DB) error {

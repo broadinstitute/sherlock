@@ -50,7 +50,7 @@ func databaseInstanceSelectorToQuery(db *gorm.DB, selector string) (DatabaseInst
 		}
 		query.ID = uint(id)
 		return query, nil
-	} else if strings.HasPrefix(selector, "chart-release/") {
+	} else if strings.HasPrefix(selector, "chart-release/") { // "chart-release/" + chart release
 		chartReleaseSubSelector := strings.TrimPrefix(selector, "chart-release/")
 		chartReleaseQuery, err := chartReleaseSelectorToQuery(db, chartReleaseSubSelector)
 		if err != nil {

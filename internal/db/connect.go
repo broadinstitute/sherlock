@@ -34,6 +34,7 @@ var (
 		&v1models.Deploy{},
 	}
 	v2ModelHierarchy = []any{
+		&v2models.User{},
 		&v2models.PagerdutyIntegration{},
 		&v2models.Cluster{},
 		&v2models.Environment{},

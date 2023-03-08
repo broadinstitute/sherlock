@@ -1,7 +1,7 @@
 package v2controllers
 
 import (
-	"github.com/broadinstitute/sherlock/internal/auth"
+	"github.com/broadinstitute/sherlock/internal/auth/auth_models"
 	"github.com/broadinstitute/sherlock/internal/models/v2models"
 	"gorm.io/gorm"
 )
@@ -109,7 +109,7 @@ func modelDatabaseInstanceToDatabaseInstance(model *v2models.DatabaseInstance) *
 	}
 }
 
-func setDatabaseInstanceDynamicDefaults(databaseInstance *CreatableDatabaseInstance, stores *v2models.StoreSet, user *auth.User) error {
+func setDatabaseInstanceDynamicDefaults(databaseInstance *CreatableDatabaseInstance, stores *v2models.StoreSet, _ *auth_models.User) error {
 	if (databaseInstance.DefaultDatabase == nil || *databaseInstance.DefaultDatabase == "") && databaseInstance.ChartRelease != "" {
 		chartRelease, err := stores.ChartReleaseStore.Get(databaseInstance.ChartRelease)
 		if err != nil {

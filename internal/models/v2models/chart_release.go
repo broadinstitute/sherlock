@@ -2,7 +2,7 @@ package v2models
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/internal/auth"
+	"github.com/broadinstitute/sherlock/internal/auth/auth_models"
 	"github.com/broadinstitute/sherlock/internal/errors"
 	"gorm.io/gorm"
 	"strconv"
@@ -235,7 +235,7 @@ func validateChartRelease(chartRelease *ChartRelease) error {
 	return chartRelease.ChartReleaseVersion.validate()
 }
 
-func preCreateChartRelease(db *gorm.DB, toCreate *ChartRelease, _ *auth.User) error {
+func preCreateChartRelease(db *gorm.DB, toCreate *ChartRelease, _ *auth_models.User) error {
 	if toCreate != nil {
 		if toCreate.EnvironmentID != nil {
 			toCreate.DestinationType = "environment"
@@ -247,7 +247,7 @@ func preCreateChartRelease(db *gorm.DB, toCreate *ChartRelease, _ *auth.User) er
 	return nil
 }
 
-func preDeletePostValidateChartRelease(db *gorm.DB, chartRelease *ChartRelease, user *auth.User) error {
+func preDeletePostValidateChartRelease(db *gorm.DB, chartRelease *ChartRelease, user *auth_models.User) error {
 	_, err := databaseInstanceStore.deleteIfExists(db, DatabaseInstance{ChartReleaseID: chartRelease.ID}, user)
 	return err
 }

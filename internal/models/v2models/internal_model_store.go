@@ -2,7 +2,7 @@ package v2models
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/internal/auth"
+	"github.com/broadinstitute/sherlock/internal/auth/auth_models"
 	"github.com/broadinstitute/sherlock/internal/errors"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
@@ -42,13 +42,13 @@ type internalModelStore[M Model] struct {
 	validateModel func(model *M) error
 	// postCreate lets a type run perform additional actions once the model has been created but before the database
 	// transaction finishes. Errors returned by this function will roll back the entire transaction.
-	postCreate func(db *gorm.DB, created *M, user *auth.User) error
+	postCreate func(db *gorm.DB, created *M, user *auth_models.User) error
 	// preCreate is similar to postCreate but it runs before even validation does--before the model has entered the
 	// database at all.
-	preCreate func(db *gorm.DB, toCreate *M, user *auth.User) error
+	preCreate func(db *gorm.DB, toCreate *M, user *auth_models.User) error
 	// preDeletePostValidate runs after validation right before deletion. Since it runs after validation, it is important
 	// that this function not change toDelete in a way that would require re-validation.
-	preDeletePostValidate func(db *gorm.DB, toDelete *M, user *auth.User) error
+	preDeletePostValidate func(db *gorm.DB, toDelete *M, user *auth_models.User) error
 	// rejectDuplicateCreate lets a type provide custom handling for when a new entry has selectors that match an
 	// entry that's already in the database. Typically, this is always considered an error. If this function is
 	// provided and does not error, the database will not be changed and the already-stored entry will be returned.
@@ -57,7 +57,7 @@ type internalModelStore[M Model] struct {
 	rejectDuplicate func(existing *M, new *M) error
 }
 
-func (s internalModelStore[M]) create(db *gorm.DB, model M, user *auth.User) (M, bool, error) {
+func (s internalModelStore[M]) create(db *gorm.DB, model M, user *auth_models.User) (M, bool, error) {
 	if s.preCreate != nil {
 		if err := s.preCreate(db, &model, user); err != nil {
 			return model, false, fmt.Errorf("pre-create error: %v", err)
@@ -176,7 +176,7 @@ func (s internalModelStore[M]) get(db *gorm.DB, query M) (M, error) {
 	}
 }
 
-func (s internalModelStore[M]) edit(db *gorm.DB, query M, editsToMake M, user *auth.User, updateAllFields bool) (M, error) {
+func (s internalModelStore[M]) edit(db *gorm.DB, query M, editsToMake M, user *auth_models.User, updateAllFields bool) (M, error) {
 	toEdit, err := s.get(db, query)
 	if err != nil {
 		return toEdit, err
@@ -217,7 +217,7 @@ func (s internalModelStore[M]) edit(db *gorm.DB, query M, editsToMake M, user *a
 	return ret, err
 }
 
-func (s internalModelStore[M]) deleteIfExists(db *gorm.DB, query M, user *auth.User) (*M, error) {
+func (s internalModelStore[M]) deleteIfExists(db *gorm.DB, query M, user *auth_models.User) (*M, error) {
 	if toDelete, err := s.getIfExists(db, query); err != nil || toDelete == nil {
 		return toDelete, err
 	} else {
@@ -241,7 +241,7 @@ func (s internalModelStore[M]) deleteIfExists(db *gorm.DB, query M, user *auth.U
 	}
 }
 
-func (s internalModelStore[M]) delete(db *gorm.DB, query M, user *auth.User) (M, error) {
+func (s internalModelStore[M]) delete(db *gorm.DB, query M, user *auth_models.User) (M, error) {
 	var zeroValue M
 	if result, err := s.deleteIfExists(db, query, user); err != nil {
 		return zeroValue, err

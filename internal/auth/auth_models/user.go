@@ -1,23 +1,25 @@
-package auth
+package auth_models
 
 import (
-	"context"
 	"fmt"
 	"github.com/broadinstitute/sherlock/internal/config"
-	"github.com/rs/zerolog/log"
-	admin "google.golang.org/api/admin/directory/v1"
-	"google.golang.org/api/option"
 	"strings"
 	"unicode"
 )
 
 type User struct {
-	AuthenticatedEmail      string            `json:"authenticatedEmail"`
+	StoredUserFields
+	InferredUserFields
+}
+
+type StoredUserFields struct {
+	Email    string `json:"email" form:"email" gorm:"not null;default:null;unique"`
+	GoogleID string `json:"googleID" form:"googleID" gorm:"not null;default:null;unique"`
+}
+
+type InferredUserFields struct {
 	MatchedFirecloudAccount *FirecloudAccount `json:"matchedFirecloudAccount,omitempty"`
 	MatchedExtraPermissions *ExtraPermissions `json:"matchedExtraPermissions,omitempty"`
-	// offline is an internal field that can be set to skip any automatic "try to refresh
-	// before denying" behavior, which would always fail during tests.
-	offline bool
 }
 
 type FirecloudAccount struct {
@@ -30,15 +32,6 @@ type FirecloudAccount struct {
 	Groups              *FirecloudGroupMembership `json:"groups"`
 }
 
-func (f *FirecloudAccount) parseWorkspaceUser(user *admin.User) {
-	f.Email = user.PrimaryEmail
-	f.AcceptedGoogleTerms = user.AgreedToTerms
-	f.EnrolledIn2fa = user.IsEnrolledIn2Sv
-	f.Suspended = user.Suspended
-	f.Archived = user.Archived
-	f.SuspensionReason = user.SuspensionReason
-}
-
 type FirecloudGroupMembership struct {
 	FcAdmins               bool `json:"fc-admins"`
 	FirecloudProjectOwners bool `json:"firecloud-project-owners"`
@@ -49,7 +42,7 @@ type ExtraPermissions struct {
 }
 
 func (u *User) Username() string {
-	return strings.Split(u.AuthenticatedEmail, "@")[0]
+	return strings.Split(u.Email, "@")[0]
 }
 
 func (u *User) AlphaNumericHyphenatedUsername() string {
@@ -62,6 +55,14 @@ func (u *User) AlphaNumericHyphenatedUsername() string {
 		}
 	}
 	return string(ret)
+}
+
+func (u *User) SuitableOrError() error {
+	if u.isKnownSuitable() {
+		return nil
+	} else {
+		return fmt.Errorf("%s", u.describeSuitability())
+	}
 }
 
 func (u *User) isKnownSuitable() bool {
@@ -77,7 +78,7 @@ func (u *User) isKnownSuitable() bool {
 
 func (u *User) describeSuitability() string {
 	if u.MatchedExtraPermissions != nil && u.MatchedExtraPermissions.Suitable {
-		return fmt.Sprintf("%s is known suitable via extra Sherlock-only permissions", u.AuthenticatedEmail)
+		return fmt.Sprintf("%s is known suitable via extra Sherlock-only permissions", u.Email)
 	} else if u.MatchedFirecloudAccount == nil {
 		return fmt.Sprintf("%s is not known suitable as a matching Firecloud account wasn't found", u.Username())
 	} else {
@@ -114,67 +115,6 @@ func (u *User) describeSuitability() string {
 			return fmt.Sprintf("%s may be suitable but the matching Firecloud account has issues: %s", u.Username(), strings.Join(problems, ", "))
 		} else {
 			return fmt.Sprintf("%s is known suitable", u.Username())
-		}
-	}
-}
-
-func (u *User) SuitableOrError() error {
-	if u.isKnownSuitable() {
-		return nil
-	} else if u.offline {
-		log.Debug().Msgf("AUTH | %s is not suitable and is marked as OFFLINE internally, denying without refresh", u.AuthenticatedEmail)
-		return fmt.Errorf("%s", u.describeSuitability())
-	} else {
-		log.Debug().Msgf("AUTH | %s might not be suitable, refreshing before denying", u.AuthenticatedEmail)
-		adminService, err := admin.NewService(context.Background(), option.WithScopes(admin.AdminDirectoryUserReadonlyScope, admin.AdminDirectoryGroupMemberReadonlyScope))
-		if err != nil {
-			return fmt.Errorf("%s [Sherlock also failed to authenticate to Google to refresh this info: %v]", u.describeSuitability(), err)
-		}
-
-		var email string
-		if u.MatchedFirecloudAccount == nil {
-			email = emailToFirecloudEmail(u.AuthenticatedEmail)
-		} else {
-			email = u.MatchedFirecloudAccount.Email
-		}
-
-		workspaceUser, err := adminService.Users.Get(email).Do()
-		if err != nil {
-			if strings.Contains(err.Error(), "403") {
-				// Google returns "this user doesn't exist" as a 403 error, which is perhaps a bit unhelpful.
-				// We'll know if our auth is good based on the cache process, though, so we just swallow it
-				// here to provide good user output for 99.99% of cases
-				return fmt.Errorf("%s [Sherlock refreshed this info just now and couldn't fetch a user under '%s']", u.describeSuitability(), email)
-			} else {
-				return fmt.Errorf("%s [Sherlock got an unexpected error refreshing this info: %v]", u.describeSuitability(), err)
-			}
-		}
-
-		if u.MatchedFirecloudAccount == nil {
-			u.MatchedFirecloudAccount = &FirecloudAccount{}
-		}
-		u.MatchedFirecloudAccount.parseWorkspaceUser(workspaceUser)
-
-		if u.MatchedFirecloudAccount.Groups == nil {
-			u.MatchedFirecloudAccount.Groups = &FirecloudGroupMembership{}
-		}
-
-		fcAdminsMembership, err := adminService.Members.HasMember(config.Config.MustString("auth.firecloud.groups.fcAdmins"), email).Do()
-		if err != nil {
-			return fmt.Errorf("%s [Sherlock also failed to refresh user's membership in %s: %v", u.describeSuitability(), config.Config.MustString("auth.firecloud.groups.fcAdmins"), email)
-		}
-		u.MatchedFirecloudAccount.Groups.FcAdmins = fcAdminsMembership.IsMember
-
-		firecloudProjectOwnersMembership, err := adminService.Members.HasMember(config.Config.MustString("auth.firecloud.groups.firecloudProjectOwners"), email).Do()
-		if err != nil {
-			return fmt.Errorf("%s [Sherlock also failed to refresh user's membership in %s: %v", u.describeSuitability(), config.Config.MustString("auth.firecloud.groups.firecloudProjectOwners"), email)
-		}
-		u.MatchedFirecloudAccount.Groups.FirecloudProjectOwners = firecloudProjectOwnersMembership.IsMember
-
-		if u.isKnownSuitable() {
-			return nil
-		} else {
-			return fmt.Errorf("%s", u.describeSuitability())
 		}
 	}
 }

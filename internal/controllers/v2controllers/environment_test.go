@@ -186,7 +186,7 @@ func (suite *environmentControllerSuite) TestEnvironmentCreate() {
 				assert.Equal(suite.T(), swatomationEnvironment.DefaultCluster, env.DefaultCluster)
 			})
 			suite.Run("fills owner", func() {
-				assert.Equal(suite.T(), user.AuthenticatedEmail, *env.Owner)
+				assert.Equal(suite.T(), user.Email, *env.Owner)
 			})
 			suite.Run("namespace of terra-$name", func() {
 				assert.Equal(suite.T(), fmt.Sprintf("terra-%s", env.Name), env.DefaultNamespace)
@@ -236,7 +236,7 @@ func (suite *environmentControllerSuite) TestEnvironmentCreate() {
 				assert.Equal(suite.T(), prodlikeTemplateEnvironment.DefaultCluster, env.DefaultCluster)
 			})
 			suite.Run("fills owner", func() {
-				assert.Equal(suite.T(), user.AuthenticatedEmail, *env.Owner)
+				assert.Equal(suite.T(), user.Email, *env.Owner)
 			})
 			suite.Run("namespace of terra-$name", func() {
 				assert.Equal(suite.T(), fmt.Sprintf("terra-%s", env.Name), env.DefaultNamespace)

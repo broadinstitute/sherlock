@@ -2,15 +2,16 @@ package misc
 
 import (
 	"github.com/broadinstitute/sherlock/internal/auth"
+	"github.com/broadinstitute/sherlock/internal/auth/auth_models"
 	"github.com/broadinstitute/sherlock/internal/errors"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
 type MyUserResponse struct {
-	Email       string     `json:"email"`
-	Suitability string     `json:"suitability"`
-	RawInfo     *auth.User `json:"rawInfo"`
+	Email       string            `json:"email"`
+	Suitability string            `json:"suitability"`
+	RawInfo     *auth_models.User `json:"rawInfo"`
 }
 
 // MyUserHandler godoc
@@ -37,7 +38,7 @@ func MyUserHandler(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, MyUserResponse{
-		Email:       user.AuthenticatedEmail,
+		Email:       user.Email,
 		Suitability: suitabilityDescription,
 		RawInfo:     user,
 	})

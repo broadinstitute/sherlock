@@ -9,6 +9,7 @@ import (
 	"github.com/broadinstitute/sherlock/internal/handlers/v1handlers"
 	"github.com/broadinstitute/sherlock/internal/handlers/v2handlers"
 	"github.com/broadinstitute/sherlock/internal/metrics"
+	"github.com/broadinstitute/sherlock/internal/models/v2models"
 	"github.com/broadinstitute/sherlock/internal/version"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
@@ -35,15 +36,15 @@ import (
 // so that Application instances can be more easily tested without the complexity
 // of running a full server.
 func (a *Application) buildRouter() {
-	authMiddleware := auth.IapUserMiddleware
-
+	var authMiddleware gin.HandlerFunc
 	docs.SwaggerInfo.Version = version.BuildVersion
 	if config.Config.MustString("mode") == "debug" {
 		// if a dev build, allow http on Swagger page for localhost usage
 		docs.SwaggerInfo.Schemes = []string{"http", "https"}
-		authMiddleware = auth.FakeUserMiddleware
+		authMiddleware = auth.FakeUserMiddleware(v2models.NewUserMiddlewareStore(a.DB))
 		gin.SetMode(gin.DebugMode)
 	} else {
+		authMiddleware = auth.IapUserMiddleware(v2models.NewUserMiddlewareStore(a.DB))
 		gin.SetMode(gin.ReleaseMode)
 	}
 
@@ -64,7 +65,7 @@ func (a *Application) buildRouter() {
 
 	// register generic handlers just on /*
 	router.GET("/version", misc.VersionHandler)
-	router.GET("/my-user", authMiddleware(), misc.MyUserHandler)
+	router.GET("/my-user", authMiddleware, misc.MyUserHandler)
 	router.GET("/status", misc.StatusHandler)
 
 	// register v1 API handlers on both /* and /api/v1/*
@@ -93,7 +94,7 @@ func (a *Application) buildRouter() {
 
 	// register v2 API handlers on /api/v2/*
 	v2api := router.Group("api/v2")
-	v2api.Use(authMiddleware())
+	v2api.Use(authMiddleware)
 	v2handlers.RegisterClusterHandlers(v2api, a.v2controllers.ClusterController)
 	v2handlers.RegisterEnvironmentHandlers(v2api, a.v2controllers.EnvironmentController)
 	v2handlers.RegisterChartHandlers(v2api, a.v2controllers.ChartController)

@@ -1,4 +1,4 @@
-package auth
+package auth_models
 
 import (
 	"fmt"
@@ -9,8 +9,7 @@ import (
 
 func TestUser_Username(t *testing.T) {
 	type fields struct {
-		AuthenticatedEmail      string
-		MatchedFirecloudAccount *FirecloudAccount
+		Email string
 	}
 	tests := []struct {
 		name   string
@@ -19,20 +18,21 @@ func TestUser_Username(t *testing.T) {
 	}{
 		{
 			name:   "reasonable email",
-			fields: fields{AuthenticatedEmail: "basic@gmail.com"},
+			fields: fields{Email: "basic@gmail.com"},
 			want:   "basic",
 		},
 		{
 			name:   "hi there RFC5321",
-			fields: fields{AuthenticatedEmail: "\"foo % bar\"@I'm breaking relay syntax but only barely@[IPv6:::1]"},
+			fields: fields{Email: "\"foo % bar\"@I'm breaking relay syntax but only barely@[IPv6:::1]"},
 			want:   "\"foo % bar\"",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			u := &User{
-				AuthenticatedEmail:      tt.fields.AuthenticatedEmail,
-				MatchedFirecloudAccount: tt.fields.MatchedFirecloudAccount,
+				StoredUserFields: StoredUserFields{
+					Email: tt.fields.Email,
+				},
 			}
 			got := u.Username()
 			testutils.AssertNoDiff(t, tt.want, got)
@@ -42,7 +42,7 @@ func TestUser_Username(t *testing.T) {
 
 func TestUser_checkSuitability(t *testing.T) {
 	type fields struct {
-		AuthenticatedEmail      string
+		Email                   string
 		MatchedFirecloudAccount *FirecloudAccount
 	}
 	tests := []struct {
@@ -54,7 +54,7 @@ func TestUser_checkSuitability(t *testing.T) {
 		{
 			name: "no FC account",
 			fields: fields{
-				AuthenticatedEmail: "name@broadinstitute.org",
+				Email: "name@broadinstitute.org",
 			},
 			wantDescription: "name is not known suitable as a matching Firecloud account wasn't found",
 			wantBool:        false,
@@ -62,7 +62,7 @@ func TestUser_checkSuitability(t *testing.T) {
 		{
 			name: "no FC workspace ToS accepted",
 			fields: fields{
-				AuthenticatedEmail: "name@broadinstitute.org",
+				Email: "name@broadinstitute.org",
 				MatchedFirecloudAccount: &FirecloudAccount{
 					AcceptedGoogleTerms: false,
 					EnrolledIn2fa:       true,
@@ -80,7 +80,7 @@ func TestUser_checkSuitability(t *testing.T) {
 		{
 			name: "no FC workspace 2FA",
 			fields: fields{
-				AuthenticatedEmail: "name@broadinstitute.org",
+				Email: "name@broadinstitute.org",
 				MatchedFirecloudAccount: &FirecloudAccount{
 					AcceptedGoogleTerms: true,
 					EnrolledIn2fa:       false,
@@ -98,7 +98,7 @@ func TestUser_checkSuitability(t *testing.T) {
 		{
 			name: "FC account suspended, no reason",
 			fields: fields{
-				AuthenticatedEmail: "name@broadinstitute.org",
+				Email: "name@broadinstitute.org",
 				MatchedFirecloudAccount: &FirecloudAccount{
 					AcceptedGoogleTerms: true,
 					EnrolledIn2fa:       true,
@@ -116,7 +116,7 @@ func TestUser_checkSuitability(t *testing.T) {
 		{
 			name: "FC account suspended, reason given",
 			fields: fields{
-				AuthenticatedEmail: "name@broadinstitute.org",
+				Email: "name@broadinstitute.org",
 				MatchedFirecloudAccount: &FirecloudAccount{
 					AcceptedGoogleTerms: true,
 					EnrolledIn2fa:       true,
@@ -135,7 +135,7 @@ func TestUser_checkSuitability(t *testing.T) {
 		{
 			name: "FC account archived",
 			fields: fields{
-				AuthenticatedEmail: "name@broadinstitute.org",
+				Email: "name@broadinstitute.org",
 				MatchedFirecloudAccount: &FirecloudAccount{
 					AcceptedGoogleTerms: true,
 					EnrolledIn2fa:       true,
@@ -153,7 +153,7 @@ func TestUser_checkSuitability(t *testing.T) {
 		{
 			name: "FC account not in fc-admins",
 			fields: fields{
-				AuthenticatedEmail: "name@broadinstitute.org",
+				Email: "name@broadinstitute.org",
 				MatchedFirecloudAccount: &FirecloudAccount{
 					AcceptedGoogleTerms: true,
 					EnrolledIn2fa:       true,
@@ -171,7 +171,7 @@ func TestUser_checkSuitability(t *testing.T) {
 		{
 			name: "FC account not in firecloud-project-owners",
 			fields: fields{
-				AuthenticatedEmail: "name@broadinstitute.org",
+				Email: "name@broadinstitute.org",
 				MatchedFirecloudAccount: &FirecloudAccount{
 					AcceptedGoogleTerms: true,
 					EnrolledIn2fa:       true,
@@ -189,7 +189,7 @@ func TestUser_checkSuitability(t *testing.T) {
 		{
 			name: "multiple problems",
 			fields: fields{
-				AuthenticatedEmail: "name@broadinstitute.org",
+				Email: "name@broadinstitute.org",
 				MatchedFirecloudAccount: &FirecloudAccount{
 					AcceptedGoogleTerms: false,
 					EnrolledIn2fa:       true,
@@ -208,7 +208,7 @@ func TestUser_checkSuitability(t *testing.T) {
 		{
 			name: "suitable",
 			fields: fields{
-				AuthenticatedEmail: "name@broadinstitute.org",
+				Email: "name@broadinstitute.org",
 				MatchedFirecloudAccount: &FirecloudAccount{
 					AcceptedGoogleTerms: true,
 					EnrolledIn2fa:       true,
@@ -227,8 +227,12 @@ func TestUser_checkSuitability(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			u := &User{
-				AuthenticatedEmail:      tt.fields.AuthenticatedEmail,
-				MatchedFirecloudAccount: tt.fields.MatchedFirecloudAccount,
+				StoredUserFields: StoredUserFields{
+					Email: tt.fields.Email,
+				},
+				InferredUserFields: InferredUserFields{
+					MatchedFirecloudAccount: tt.fields.MatchedFirecloudAccount,
+				},
 			}
 			gotDescription := u.describeSuitability()
 			testutils.AssertNoDiff(t, tt.wantDescription, gotDescription)
@@ -240,7 +244,7 @@ func TestUser_checkSuitability(t *testing.T) {
 
 func TestUser_AlphaNumericHyphenatedUsername(t *testing.T) {
 	type fields struct {
-		AuthenticatedEmail      string
+		Email                   string
 		MatchedFirecloudAccount *FirecloudAccount
 	}
 	tests := []struct {
@@ -250,25 +254,29 @@ func TestUser_AlphaNumericHyphenatedUsername(t *testing.T) {
 	}{
 		{
 			name:   "normal BI username",
-			fields: fields{AuthenticatedEmail: "someone@broadinstitute.org"},
+			fields: fields{Email: "someone@broadinstitute.org"},
 			want:   "someone",
 		},
 		{
 			name:   "with separators",
-			fields: fields{AuthenticatedEmail: "someone.else-blah_blah@somewhere.info"},
+			fields: fields{Email: "someone.else-blah_blah@somewhere.info"},
 			want:   "someone-else-blah-blah",
 		},
 		{
 			name:   "strips invalid",
-			fields: fields{AuthenticatedEmail: "1a bc?de.23"},
+			fields: fields{Email: "1a bc?de.23"},
 			want:   "1abcde-23",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			u := &User{
-				AuthenticatedEmail:      tt.fields.AuthenticatedEmail,
-				MatchedFirecloudAccount: tt.fields.MatchedFirecloudAccount,
+				StoredUserFields: StoredUserFields{
+					Email: tt.fields.Email,
+				},
+				InferredUserFields: InferredUserFields{
+					MatchedFirecloudAccount: tt.fields.MatchedFirecloudAccount,
+				},
 			}
 			got := u.AlphaNumericHyphenatedUsername()
 			testutils.AssertNoDiff(t, tt.want, got)

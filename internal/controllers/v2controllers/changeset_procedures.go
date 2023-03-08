@@ -2,7 +2,7 @@ package v2controllers
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/internal/auth"
+	"github.com/broadinstitute/sherlock/internal/auth/auth_models"
 	"github.com/broadinstitute/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/internal/models/v2models"
 )
@@ -25,7 +25,7 @@ type ChangesetPlanRequestEnvironmentEntry struct {
 	ExcludeCharts                        []string `json:"excludeCharts"`
 }
 
-func (c ChangesetController) changesetPlanRequestToModelChangesets(request ChangesetPlanRequest, _ *auth.User) ([]v2models.Changeset, error) {
+func (c ChangesetController) changesetPlanRequestToModelChangesets(request ChangesetPlanRequest, _ *auth_models.User) ([]v2models.Changeset, error) {
 	modelChangesets := make(map[uint]v2models.Changeset)
 	exact := "exact"
 	follow := "follow"
@@ -170,7 +170,7 @@ func (c ChangesetController) changesetPlanRequestToModelChangesets(request Chang
 	return ret, nil
 }
 
-func (c ChangesetController) PlanAndApply(request ChangesetPlanRequest, user *auth.User) ([]Changeset, error) {
+func (c ChangesetController) PlanAndApply(request ChangesetPlanRequest, user *auth_models.User) ([]Changeset, error) {
 	modelChangesets, err := c.changesetPlanRequestToModelChangesets(request, user)
 	if err != nil {
 		return nil, err
@@ -187,7 +187,7 @@ func (c ChangesetController) PlanAndApply(request ChangesetPlanRequest, user *au
 	return ret, nil
 }
 
-func (c ChangesetController) Plan(request ChangesetPlanRequest, user *auth.User) ([]Changeset, error) {
+func (c ChangesetController) Plan(request ChangesetPlanRequest, user *auth_models.User) ([]Changeset, error) {
 	modelChangesets, err := c.changesetPlanRequestToModelChangesets(request, user)
 	if err != nil {
 		return nil, err
@@ -204,7 +204,7 @@ func (c ChangesetController) Plan(request ChangesetPlanRequest, user *auth.User)
 	return ret, nil
 }
 
-func (c ChangesetController) Apply(selectors []string, user *auth.User) ([]Changeset, error) {
+func (c ChangesetController) Apply(selectors []string, user *auth_models.User) ([]Changeset, error) {
 	modelChangesets, err := c.ChangesetEventStore.Apply(selectors, user)
 	if err != nil {
 		return nil, err
