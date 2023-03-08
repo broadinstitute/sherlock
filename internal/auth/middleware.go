@@ -11,7 +11,7 @@ import (
 
 const contextUserKey = "SherlockUser"
 
-func IapUserMiddleware(userStore *v2models.UserMiddlewareStore) gin.HandlerFunc {
+func IapUserMiddleware(userStore *v2models.UserStore) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		email, googleID, err := iap_auth.ParseIAP(ctx)
 		if err != nil {
@@ -37,7 +37,7 @@ func IapUserMiddleware(userStore *v2models.UserMiddlewareStore) gin.HandlerFunc 
 	}
 }
 
-func FakeUserMiddleware(userStore *v2models.UserMiddlewareStore) gin.HandlerFunc {
+func FakeUserMiddleware(userStore *v2models.UserStore) gin.HandlerFunc {
 	email := "fake@broadinstitute.org"
 	googleID := "some id would go here"
 	return func(ctx *gin.Context) {

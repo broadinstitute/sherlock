@@ -10,17 +10,17 @@ import (
 	"gorm.io/gorm"
 )
 
-func NewUserMiddlewareStore(db *gorm.DB) *UserMiddlewareStore {
-	return &UserMiddlewareStore{
+func NewUserStore(db *gorm.DB) *UserStore {
+	return &UserStore{
 		ModelStore: &ModelStore[User]{db: db, internalModelStore: userStore},
 	}
 }
 
-type UserMiddlewareStore struct {
+type UserStore struct {
 	*ModelStore[User]
 }
 
-func (s *UserMiddlewareStore) GetOrCreateUser(email, googleID string) (User, error) {
+func (s *UserStore) GetOrCreateUser(email, googleID string) (User, error) {
 	query := User{
 		StoredUserFields: auth_models.StoredUserFields{
 			Email: email,

@@ -41,10 +41,10 @@ func (a *Application) buildRouter() {
 	if config.Config.MustString("mode") == "debug" {
 		// if a dev build, allow http on Swagger page for localhost usage
 		docs.SwaggerInfo.Schemes = []string{"http", "https"}
-		authMiddleware = auth.FakeUserMiddleware(v2models.NewUserMiddlewareStore(a.DB))
+		authMiddleware = auth.FakeUserMiddleware(v2models.NewUserStore(a.DB))
 		gin.SetMode(gin.DebugMode)
 	} else {
-		authMiddleware = auth.IapUserMiddleware(v2models.NewUserMiddlewareStore(a.DB))
+		authMiddleware = auth.IapUserMiddleware(v2models.NewUserStore(a.DB))
 		gin.SetMode(gin.ReleaseMode)
 	}
 
