@@ -1,9 +1,9 @@
 /* tslint:disable */
 /* eslint-disable */
-export * from './AuthExtraPermissions';
-export * from './AuthFirecloudAccount';
-export * from './AuthFirecloudGroupMembership';
-export * from './AuthUser';
+export * from './AuthModelsExtraPermissions';
+export * from './AuthModelsFirecloudAccount';
+export * from './AuthModelsFirecloudGroupMembership';
+export * from './AuthModelsUser';
 export * from './EnvironmentAutoDelete';
 export * from './ErrorsErrorResponse';
 export * from './MiscMyUserResponse';

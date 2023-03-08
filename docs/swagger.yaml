@@ -1,12 +1,12 @@
 consumes:
 - application/json
 definitions:
-  auth.ExtraPermissions:
+  auth_models.ExtraPermissions:
     properties:
       suitable:
         type: boolean
     type: object
-  auth.FirecloudAccount:
+  auth_models.FirecloudAccount:
     properties:
       acceptedGoogleTerms:
         type: boolean
@@ -17,27 +17,29 @@ definitions:
       enrolledIn2Fa:
         type: boolean
       groups:
-        $ref: '#/definitions/auth.FirecloudGroupMembership'
+        $ref: '#/definitions/auth_models.FirecloudGroupMembership'
       suspended:
         type: boolean
       suspensionReason:
         type: string
     type: object
-  auth.FirecloudGroupMembership:
+  auth_models.FirecloudGroupMembership:
     properties:
       fc-admins:
         type: boolean
       firecloud-project-owners:
         type: boolean
     type: object
-  auth.User:
+  auth_models.User:
     properties:
-      authenticatedEmail:
+      email:
+        type: string
+      googleID:
         type: string
       matchedExtraPermissions:
-        $ref: '#/definitions/auth.ExtraPermissions'
+        $ref: '#/definitions/auth_models.ExtraPermissions'
       matchedFirecloudAccount:
-        $ref: '#/definitions/auth.FirecloudAccount'
+        $ref: '#/definitions/auth_models.FirecloudAccount'
     type: object
   environment.AutoDelete:
     properties:
@@ -62,7 +64,7 @@ definitions:
       email:
         type: string
       rawInfo:
-        $ref: '#/definitions/auth.User'
+        $ref: '#/definitions/auth_models.User'
       suitability:
         type: string
     type: object

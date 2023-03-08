@@ -5487,7 +5487,7 @@
         }
     },
     "definitions": {
-        "auth.ExtraPermissions": {
+        "auth_models.ExtraPermissions": {
             "type": "object",
             "properties": {
                 "suitable": {
@@ -5495,7 +5495,7 @@
                 }
             }
         },
-        "auth.FirecloudAccount": {
+        "auth_models.FirecloudAccount": {
             "type": "object",
             "properties": {
                 "acceptedGoogleTerms": {
@@ -5511,7 +5511,7 @@
                     "type": "boolean"
                 },
                 "groups": {
-                    "$ref": "#/definitions/auth.FirecloudGroupMembership"
+                    "$ref": "#/definitions/auth_models.FirecloudGroupMembership"
                 },
                 "suspended": {
                     "type": "boolean"
@@ -5521,7 +5521,7 @@
                 }
             }
         },
-        "auth.FirecloudGroupMembership": {
+        "auth_models.FirecloudGroupMembership": {
             "type": "object",
             "properties": {
                 "fc-admins": {
@@ -5532,17 +5532,20 @@
                 }
             }
         },
-        "auth.User": {
+        "auth_models.User": {
             "type": "object",
             "properties": {
-                "authenticatedEmail": {
+                "email": {
+                    "type": "string"
+                },
+                "googleID": {
                     "type": "string"
                 },
                 "matchedExtraPermissions": {
-                    "$ref": "#/definitions/auth.ExtraPermissions"
+                    "$ref": "#/definitions/auth_models.ExtraPermissions"
                 },
                 "matchedFirecloudAccount": {
-                    "$ref": "#/definitions/auth.FirecloudAccount"
+                    "$ref": "#/definitions/auth_models.FirecloudAccount"
                 }
             }
         },
@@ -5580,7 +5583,7 @@
                     "type": "string"
                 },
                 "rawInfo": {
-                    "$ref": "#/definitions/auth.User"
+                    "$ref": "#/definitions/auth_models.User"
                 },
                 "suitability": {
                     "type": "string"

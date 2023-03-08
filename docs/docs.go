@@ -5492,7 +5492,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "auth.ExtraPermissions": {
+        "auth_models.ExtraPermissions": {
             "type": "object",
             "properties": {
                 "suitable": {
@@ -5500,7 +5500,7 @@ const docTemplate = `{
                 }
             }
         },
-        "auth.FirecloudAccount": {
+        "auth_models.FirecloudAccount": {
             "type": "object",
             "properties": {
                 "acceptedGoogleTerms": {
@@ -5516,7 +5516,7 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "groups": {
-                    "$ref": "#/definitions/auth.FirecloudGroupMembership"
+                    "$ref": "#/definitions/auth_models.FirecloudGroupMembership"
                 },
                 "suspended": {
                     "type": "boolean"
@@ -5526,7 +5526,7 @@ const docTemplate = `{
                 }
             }
         },
-        "auth.FirecloudGroupMembership": {
+        "auth_models.FirecloudGroupMembership": {
             "type": "object",
             "properties": {
                 "fc-admins": {
@@ -5537,17 +5537,20 @@ const docTemplate = `{
                 }
             }
         },
-        "auth.User": {
+        "auth_models.User": {
             "type": "object",
             "properties": {
-                "authenticatedEmail": {
+                "email": {
+                    "type": "string"
+                },
+                "googleID": {
                     "type": "string"
                 },
                 "matchedExtraPermissions": {
-                    "$ref": "#/definitions/auth.ExtraPermissions"
+                    "$ref": "#/definitions/auth_models.ExtraPermissions"
                 },
                 "matchedFirecloudAccount": {
-                    "$ref": "#/definitions/auth.FirecloudAccount"
+                    "$ref": "#/definitions/auth_models.FirecloudAccount"
                 }
             }
         },
@@ -5585,7 +5588,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "rawInfo": {
-                    "$ref": "#/definitions/auth.User"
+                    "$ref": "#/definitions/auth_models.User"
                 },
                 "suitability": {
                     "type": "string"

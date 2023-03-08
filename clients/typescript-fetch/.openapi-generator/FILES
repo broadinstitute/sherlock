@@ -14,10 +14,10 @@ src/apis/MiscApi.ts
 src/apis/PagerdutyIntegrationsApi.ts
 src/apis/index.ts
 src/index.ts
-src/models/AuthExtraPermissions.ts
-src/models/AuthFirecloudAccount.ts
-src/models/AuthFirecloudGroupMembership.ts
-src/models/AuthUser.ts
+src/models/AuthModelsExtraPermissions.ts
+src/models/AuthModelsFirecloudAccount.ts
+src/models/AuthModelsFirecloudGroupMembership.ts
+src/models/AuthModelsUser.ts
 src/models/EnvironmentAutoDelete.ts
 src/models/ErrorsErrorResponse.ts
 src/models/MiscMyUserResponse.ts

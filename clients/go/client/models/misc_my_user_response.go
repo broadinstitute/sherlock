@@ -22,7 +22,7 @@ type MiscMyUserResponse struct {
 	Email string `json:"email,omitempty"`
 
 	// raw info
-	RawInfo *AuthUser `json:"rawInfo,omitempty"`
+	RawInfo *AuthModelsUser `json:"rawInfo,omitempty"`
 
 	// suitability
 	Suitability string `json:"suitability,omitempty"`

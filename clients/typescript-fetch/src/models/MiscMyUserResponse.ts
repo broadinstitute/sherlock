@@ -13,12 +13,12 @@
  */
 
 import { exists, mapValues } from '../runtime';
-import type { AuthUser } from './AuthUser';
+import type { AuthModelsUser } from './AuthModelsUser';
 import {
-    AuthUserFromJSON,
-    AuthUserFromJSONTyped,
-    AuthUserToJSON,
-} from './AuthUser';
+    AuthModelsUserFromJSON,
+    AuthModelsUserFromJSONTyped,
+    AuthModelsUserToJSON,
+} from './AuthModelsUser';
 
 /**
  * 
@@ -34,10 +34,10 @@ export interface MiscMyUserResponse {
     email?: string;
     /**
      * 
-     * @type {AuthUser}
+     * @type {AuthModelsUser}
      * @memberof MiscMyUserResponse
      */
-    rawInfo?: AuthUser;
+    rawInfo?: AuthModelsUser;
     /**
      * 
      * @type {string}
@@ -66,7 +66,7 @@ export function MiscMyUserResponseFromJSONTyped(json: any, ignoreDiscriminator: 
     return {
         
         'email': !exists(json, 'email') ? undefined : json['email'],
-        'rawInfo': !exists(json, 'rawInfo') ? undefined : AuthUserFromJSON(json['rawInfo']),
+        'rawInfo': !exists(json, 'rawInfo') ? undefined : AuthModelsUserFromJSON(json['rawInfo']),
         'suitability': !exists(json, 'suitability') ? undefined : json['suitability'],
     };
 }
@@ -81,7 +81,7 @@ export function MiscMyUserResponseToJSON(value?: MiscMyUserResponse | null): any
     return {
         
         'email': value.email,
-        'rawInfo': AuthUserToJSON(value.rawInfo),
+        'rawInfo': AuthModelsUserToJSON(value.rawInfo),
         'suitability': value.suitability,
     };
 }
