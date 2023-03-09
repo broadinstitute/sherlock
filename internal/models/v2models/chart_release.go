@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/broadinstitute/sherlock/internal/auth/auth_models"
 	"github.com/broadinstitute/sherlock/internal/errors"
+	"github.com/broadinstitute/sherlock/internal/models/model_actions"
 	"gorm.io/gorm"
 	"strconv"
 	"strings"
@@ -36,12 +37,12 @@ var chartReleaseStore *internalModelStore[ChartRelease]
 
 func init() {
 	chartReleaseStore = &internalModelStore[ChartRelease]{
-		selectorToQueryModel:     chartReleaseSelectorToQuery,
-		modelToSelectors:         chartReleaseToSelectors,
-		modelRequiresSuitability: chartReleaseRequiresSuitability,
-		validateModel:            validateChartRelease,
-		preCreate:                preCreateChartRelease,
-		preDeletePostValidate:    preDeletePostValidateChartRelease,
+		selectorToQueryModel:  chartReleaseSelectorToQuery,
+		modelToSelectors:      chartReleaseToSelectors,
+		errorIfForbidden:      chartReleaseErrorIfForbidden,
+		validateModel:         validateChartRelease,
+		preCreate:             preCreateChartRelease,
+		preDeletePostValidate: preDeletePostValidateChartRelease,
 	}
 }
 
@@ -184,24 +185,22 @@ func chartReleaseToSelectors(chartRelease *ChartRelease) []string {
 	return selectors
 }
 
-func chartReleaseRequiresSuitability(db *gorm.DB, chartRelease *ChartRelease) bool {
-	clusterRequires := false
+func chartReleaseErrorIfForbidden(db *gorm.DB, chartRelease *ChartRelease, action model_actions.ActionType, user *auth_models.User) error {
 	if chartRelease.Cluster != nil {
-		cluster, err := clusterStore.get(db, *chartRelease.Cluster)
-		if err != nil {
-			return true
+		if cluster, err := clusterStore.get(db, *chartRelease.Cluster); err != nil {
+			return err
+		} else if err = clusterErrorIfForbidden(db, &cluster, action, user); err != nil {
+			return err
 		}
-		clusterRequires = clusterRequiresSuitability(db, &cluster)
 	}
-	environmentRequires := false
 	if chartRelease.Environment != nil {
-		environment, err := environmentStore.get(db, *chartRelease.Environment)
-		if err != nil {
-			return true
+		if environment, err := environmentStore.get(db, *chartRelease.Environment); err != nil {
+			return err
+		} else if err = environmentErrorIfForbidden(db, &environment, action, user); err != nil {
+			return err
 		}
-		environmentRequires = environmentRequiresSuitability(db, &environment)
 	}
-	return clusterRequires || environmentRequires
+	return nil
 }
 
 func validateChartRelease(chartRelease *ChartRelease) error {

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/broadinstitute/sherlock/internal/auth/auth_models"
 	"github.com/broadinstitute/sherlock/internal/errors"
+	"github.com/broadinstitute/sherlock/internal/models/model_actions"
 	"gorm.io/gorm"
 	"strconv"
 	"strings"
@@ -25,11 +26,11 @@ var pagerdutyIntegrationStore *internalModelStore[PagerdutyIntegration]
 
 func init() {
 	pagerdutyIntegrationStore = &internalModelStore[PagerdutyIntegration]{
-		selectorToQueryModel:     pagerdutyIntegrationSelectorToQuery,
-		modelToSelectors:         pagerdutyIntegrationToSelectors,
-		modelRequiresSuitability: pagerdutyIntegrationRequiresSuitability,
-		validateModel:            validatePagerdutyIntegration,
-		preDeletePostValidate:    preDeletePostValidatePagerdutyIntegration,
+		selectorToQueryModel:  pagerdutyIntegrationSelectorToQuery,
+		modelToSelectors:      pagerdutyIntegrationToSelectors,
+		errorIfForbidden:      pagerdutyIntegrationErrorIfForbidden,
+		validateModel:         validatePagerdutyIntegration,
+		preDeletePostValidate: preDeletePostValidatePagerdutyIntegration,
 	}
 }
 
@@ -82,8 +83,8 @@ func pagerdutyIntegrationToSelectors(pagerdutyIntegration *PagerdutyIntegration)
 	return selectors
 }
 
-func pagerdutyIntegrationRequiresSuitability(_ *gorm.DB, _ *PagerdutyIntegration) bool {
-	return true
+func pagerdutyIntegrationErrorIfForbidden(_ *gorm.DB, _ *PagerdutyIntegration, _ model_actions.ActionType, user *auth_models.User) error {
+	return user.SuitableOrError()
 }
 
 func validatePagerdutyIntegration(pagerdutyIntegration *PagerdutyIntegration) error {

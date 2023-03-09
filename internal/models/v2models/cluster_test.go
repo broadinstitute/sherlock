@@ -106,42 +106,6 @@ func Test_clusterToSelectors(t *testing.T) {
 	}
 }
 
-func Test_clusterRequiresSuitability(t *testing.T) {
-	tru := true
-	fal := false
-	type args struct {
-		db      *gorm.DB
-		cluster *Cluster
-	}
-	tests := []struct {
-		name string
-		args args
-		want bool
-	}{
-		{
-			name: "does require",
-			args: args{cluster: &Cluster{RequiresSuitability: &tru}},
-			want: true,
-		},
-		{
-			name: "does not require",
-			args: args{cluster: &Cluster{RequiresSuitability: &fal}},
-			want: false,
-		},
-		{
-			name: "fail safe",
-			args: args{cluster: &Cluster{}},
-			want: true,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got := clusterRequiresSuitability(tt.args.db, tt.args.cluster)
-			testutils.AssertNoDiff(t, tt.want, got)
-		})
-	}
-}
-
 func Test_validateCluster(t *testing.T) {
 	type args struct {
 		cluster *Cluster

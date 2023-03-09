@@ -44,7 +44,7 @@ type UserController = ModelController[v2models.User, User, CreatableUser, Editab
 
 func newUserController(stores *v2models.StoreSet) *UserController {
 	return &UserController{
-		primaryStore:    stores.UserStore,
+		primaryStore:    stores.UserStore.ModelStore,
 		allStores:       stores,
 		modelToReadable: modelUserToUser,
 	}

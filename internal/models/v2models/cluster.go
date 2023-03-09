@@ -2,6 +2,8 @@ package v2models
 
 import (
 	"fmt"
+	"github.com/broadinstitute/sherlock/internal/auth/auth_models"
+	"github.com/broadinstitute/sherlock/internal/models/model_actions"
 	"strconv"
 
 	"github.com/broadinstitute/sherlock/internal/errors"
@@ -30,10 +32,10 @@ var clusterStore *internalModelStore[Cluster]
 
 func init() {
 	clusterStore = &internalModelStore[Cluster]{
-		selectorToQueryModel:     clusterSelectorToQuery,
-		modelToSelectors:         clusterToSelectors,
-		modelRequiresSuitability: clusterRequiresSuitability,
-		validateModel:            validateCluster,
+		selectorToQueryModel: clusterSelectorToQuery,
+		modelToSelectors:     clusterToSelectors,
+		errorIfForbidden:     clusterErrorIfForbidden,
+		validateModel:        validateCluster,
 	}
 }
 
@@ -74,9 +76,12 @@ func clusterToSelectors(cluster *Cluster) []string {
 	return selectors
 }
 
-func clusterRequiresSuitability(_ *gorm.DB, cluster *Cluster) bool {
-	// RequiresSuitability is a required field and shouldn't ever actually be stored as nil, but if it is we fail-safe
-	return cluster.RequiresSuitability == nil || *cluster.RequiresSuitability
+func clusterErrorIfForbidden(_ *gorm.DB, cluster *Cluster, _ model_actions.ActionType, user *auth_models.User) error {
+	if cluster.RequiresSuitability == nil || *cluster.RequiresSuitability {
+		return user.SuitableOrError()
+	} else {
+		return nil
+	}
 }
 
 func validateCluster(cluster *Cluster) error {

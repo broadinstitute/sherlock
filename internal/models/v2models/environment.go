@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/broadinstitute/sherlock/internal/auth/auth_models"
 	"github.com/broadinstitute/sherlock/internal/config"
+	"github.com/broadinstitute/sherlock/internal/models/model_actions"
 	"github.com/rs/zerolog/log"
 	"math/bits"
 	"regexp"
@@ -58,13 +59,13 @@ var environmentStore *internalModelStore[Environment]
 
 func init() {
 	environmentStore = &internalModelStore[Environment]{
-		selectorToQueryModel:     environmentSelectorToQuery,
-		modelToSelectors:         environmentToSelectors,
-		modelRequiresSuitability: environmentRequiresSuitability,
-		validateModel:            validateEnvironment,
-		preCreate:                preCreateEnvironment,
-		postCreate:               postCreateEnvironment,
-		preDeletePostValidate:    preDeletePostValidateEnvironment,
+		selectorToQueryModel:  environmentSelectorToQuery,
+		modelToSelectors:      environmentToSelectors,
+		errorIfForbidden:      environmentErrorIfForbidden,
+		validateModel:         validateEnvironment,
+		preCreate:             preCreateEnvironment,
+		postCreate:            postCreateEnvironment,
+		preDeletePostValidate: preDeletePostValidateEnvironment,
 	}
 }
 
@@ -132,9 +133,12 @@ func environmentToSelectors(environment *Environment) []string {
 	return selectors
 }
 
-func environmentRequiresSuitability(_ *gorm.DB, environment *Environment) bool {
-	// RequiresSuitability is a required field and shouldn't ever actually be stored as nil, but if it is we fail-safe
-	return environment.RequiresSuitability == nil || *environment.RequiresSuitability
+func environmentErrorIfForbidden(_ *gorm.DB, environment *Environment, _ model_actions.ActionType, user *auth_models.User) error {
+	if environment.RequiresSuitability == nil || *environment.RequiresSuitability {
+		return user.SuitableOrError()
+	} else {
+		return nil
+	}
 }
 
 const environmentNameRegexString = "[a-z0-9]([-a-z0-9]*[a-z0-9])?"

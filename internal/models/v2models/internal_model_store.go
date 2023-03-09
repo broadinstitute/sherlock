@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/broadinstitute/sherlock/internal/auth/auth_models"
 	"github.com/broadinstitute/sherlock/internal/errors"
+	"github.com/broadinstitute/sherlock/internal/models/model_actions"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -28,11 +29,10 @@ type internalModelStore[M Model] struct {
 
 	// Optional:
 
-	// modelRequiresSuitability lets a particular type flag that the given model (which will always come from the
-	// database) requires suitability for any mutations. If no function is provided, the model type is assumed
-	// to have no suitability restrictions. To support hopping from association to association and to fail-safe,
-	// the db reference should be used to load associations if they're used.
-	modelRequiresSuitability func(db *gorm.DB, model *M) bool
+	// errorIfForbidden controls whether a user may perform a certain action on the model instance in question.
+	// If not provided, it is assumed any Sherlock user may perform any action on the model isntance.
+	// The db reference should be used to fully load any associations that are used.
+	errorIfForbidden func(db *gorm.DB, model *M, action model_actions.ActionType, user *auth_models.User) error
 	// validateModel lets a type enforce restrictions upon data entry. Associated data will not be present but foreign
 	// keys themselves can be checked. There's no need to validate the grammar of selectors, that can be checked
 	// automatically.
@@ -55,6 +55,16 @@ type internalModelStore[M Model] struct {
 	// This means that duplicate create calls would all return successfully, while still maintaining selector-uniqueness
 	// inside the database.
 	rejectDuplicate func(existing *M, new *M) error
+}
+
+func (s internalModelStore[M]) wrappedErrorIfForbidden(db *gorm.DB, model *M, action model_actions.ActionType, user *auth_models.User) error {
+	if s.errorIfForbidden == nil {
+		return nil
+	} else if err := s.errorIfForbidden(db, model, action, user); err != nil {
+		return fmt.Errorf("%s permissions error for %T (%s): %v", model_actions.ActionTypeToString(action), *model, errors.Forbidden, err)
+	} else {
+		return nil
+	}
 }
 
 func (s internalModelStore[M]) create(db *gorm.DB, model M, user *auth_models.User) (M, bool, error) {
@@ -107,15 +117,13 @@ func (s internalModelStore[M]) create(db *gorm.DB, model M, user *auth_models.Us
 		if err != nil {
 			return fmt.Errorf("(%s) unexpected creation error: mid-transaction validation on %T failed: %v", errors.InternalServerError, model, err)
 		}
-		// Use db instead of tx here because tx is dirty and user-modified. Determination of suitability should
+		// Use db instead of tx here because tx is dirty and user-modified. Determination of permissions should
 		// never be recursive, so this is safer.
-		// (Why do we check suitability here rather than before adding at all? Adding and then querying lets us load
-		// associations, and while suitability isn't recursive, it can be associative. Ex: a chart release's suitability
-		// is defined in terms of the environment and cluster's suitability)
-		if s.modelRequiresSuitability != nil && s.modelRequiresSuitability(db, &result) {
-			if err = user.SuitableOrError(); err != nil {
-				return fmt.Errorf("creation error: (%s) suitability is required to create this %T: %v", errors.Forbidden, model, err)
-			}
+		// (Why do we check permissions here rather than before adding at all? Adding and then querying lets us load
+		// associations, and while permissions aren't recursive, they can be associative. Ex: the ability to affect
+		// a chart release is dependent on the chart release's environment and cluster)
+		if err = s.wrappedErrorIfForbidden(db, &result, model_actions.CREATE, user); err != nil {
+			return err
 		}
 		if s.postCreate != nil {
 			if err = s.postCreate(tx, &result, user); err != nil {
@@ -181,10 +189,8 @@ func (s internalModelStore[M]) edit(db *gorm.DB, query M, editsToMake M, user *a
 	if err != nil {
 		return toEdit, err
 	}
-	if s.modelRequiresSuitability != nil && s.modelRequiresSuitability(db, &toEdit) {
-		if err = user.SuitableOrError(); err != nil {
-			return toEdit, fmt.Errorf("edit error: (%s) suitability is required to edit %T: %v", errors.Forbidden, toEdit, err)
-		}
+	if err = s.wrappedErrorIfForbidden(db, &toEdit, model_actions.EDIT, user); err != nil {
+		return toEdit, err
 	}
 	var ret M
 	err = db.Transaction(func(tx *gorm.DB) error {
@@ -204,12 +210,10 @@ func (s internalModelStore[M]) edit(db *gorm.DB, query M, editsToMake M, user *a
 				return fmt.Errorf("edit validation error: (%s) resulting %T: %v", errors.BadRequest, result, err)
 			}
 		}
-		// We check suitability *again* to prevent a user from editing an entry in a way that makes it require
-		// suitability in the future, if they aren't themselves suitable.
-		if s.modelRequiresSuitability != nil && s.modelRequiresSuitability(db, &result) {
-			if err = user.SuitableOrError(); err != nil {
-				return fmt.Errorf("edit error: (%s) suitability is required to edit %T in this way: %v", errors.Forbidden, toEdit, err)
-			}
+		// We check permissions *again* to prevent a user from editing an entry in a way that makes it require
+		// permissions above theirs in the future.
+		if err = s.wrappedErrorIfForbidden(db, &toEdit, model_actions.EDIT, user); err != nil {
+			return err
 		}
 		ret = result
 		return nil
@@ -221,10 +225,8 @@ func (s internalModelStore[M]) deleteIfExists(db *gorm.DB, query M, user *auth_m
 	if toDelete, err := s.getIfExists(db, query); err != nil || toDelete == nil {
 		return toDelete, err
 	} else {
-		if s.modelRequiresSuitability != nil && s.modelRequiresSuitability(db, toDelete) {
-			if err = user.SuitableOrError(); err != nil {
-				return toDelete, fmt.Errorf("delete error: (%s) suitability is required to delete %T: %v", errors.Forbidden, toDelete, err)
-			}
+		if err = s.wrappedErrorIfForbidden(db, toDelete, model_actions.DELETE, user); err != nil {
+			return toDelete, err
 		}
 		err = db.Transaction(func(tx *gorm.DB) error {
 			if s.preDeletePostValidate != nil {

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/broadinstitute/sherlock/internal/auth/auth_models"
 	"github.com/broadinstitute/sherlock/internal/errors"
+	"github.com/broadinstitute/sherlock/internal/models/model_actions"
 	"gorm.io/gorm"
 	"strconv"
 	"strings"
@@ -24,6 +25,7 @@ func init() {
 	userStore = &internalModelStore[User]{
 		selectorToQueryModel: userSelectorToQuery,
 		modelToSelectors:     userToSelectors,
+		errorIfForbidden:     userErrorIfForbidden,
 		validateModel:        validateUser,
 	}
 }
@@ -64,6 +66,23 @@ func userToSelectors(user *User) []string {
 		}
 	}
 	return selectors
+}
+
+func userErrorIfForbidden(_ *gorm.DB, modelUser *User, action model_actions.ActionType, user *auth_models.User) error {
+	switch action {
+	case model_actions.CREATE:
+		if user != nil {
+			// The controller always sets the user, so it being nil means we're still at the auth middleware.
+			return fmt.Errorf("users can only be created during their first request")
+		}
+	case model_actions.EDIT:
+		if modelUser.Email != user.Email {
+			return fmt.Errorf("users can only edit themselves")
+		}
+	case model_actions.DELETE:
+		return fmt.Errorf("users cannot be deleted")
+	}
+	return nil
 }
 
 func validateUser(user *User) error {

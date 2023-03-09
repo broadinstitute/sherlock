@@ -2,7 +2,9 @@ package v2models
 
 import (
 	"fmt"
+	"github.com/broadinstitute/sherlock/internal/auth/auth_models"
 	"github.com/broadinstitute/sherlock/internal/errors"
+	"github.com/broadinstitute/sherlock/internal/models/model_actions"
 	"gorm.io/gorm"
 	"strconv"
 	"strings"
@@ -31,10 +33,10 @@ var databaseInstanceStore *internalModelStore[DatabaseInstance]
 
 func init() {
 	databaseInstanceStore = &internalModelStore[DatabaseInstance]{
-		selectorToQueryModel:     databaseInstanceSelectorToQuery,
-		modelToSelectors:         databaseInstanceToSelectors,
-		modelRequiresSuitability: databaseInstanceRequiresSuitability,
-		validateModel:            validateDatabaseInstance,
+		selectorToQueryModel: databaseInstanceSelectorToQuery,
+		modelToSelectors:     databaseInstanceToSelectors,
+		errorIfForbidden:     databaseInstanceErrorIfForbidden,
+		validateModel:        validateDatabaseInstance,
 	}
 }
 
@@ -83,12 +85,13 @@ func databaseInstanceToSelectors(databaseInstance *DatabaseInstance) []string {
 	return selectors
 }
 
-func databaseInstanceRequiresSuitability(db *gorm.DB, databaseInstance *DatabaseInstance) bool {
+func databaseInstanceErrorIfForbidden(db *gorm.DB, databaseInstance *DatabaseInstance, action model_actions.ActionType, user *auth_models.User) error {
 	if chartRelease, err := chartReleaseStore.get(db, *databaseInstance.ChartRelease); err != nil {
-		return true
-	} else {
-		return chartReleaseRequiresSuitability(db, &chartRelease)
+		return err
+	} else if err = chartReleaseErrorIfForbidden(db, &chartRelease, action, user); err != nil {
+		return err
 	}
+	return nil
 }
 
 func validateDatabaseInstance(databaseInstance *DatabaseInstance) error {
