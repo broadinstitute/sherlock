@@ -2,7 +2,10 @@ package v2models
 
 import (
 	"fmt"
+	"github.com/broadinstitute/sherlock/internal/auth/auth_models"
 	"github.com/broadinstitute/sherlock/internal/errors"
+	"github.com/broadinstitute/sherlock/internal/models/model_actions"
+	"github.com/broadinstitute/sherlock/internal/utils"
 	"gorm.io/gorm"
 	"strconv"
 	"strings"
@@ -27,14 +30,18 @@ func (d DatabaseInstance) TableName() string {
 	return "v2_database_instances"
 }
 
+func (d DatabaseInstance) getID() uint {
+	return d.ID
+}
+
 var databaseInstanceStore *internalModelStore[DatabaseInstance]
 
 func init() {
 	databaseInstanceStore = &internalModelStore[DatabaseInstance]{
-		selectorToQueryModel:     databaseInstanceSelectorToQuery,
-		modelToSelectors:         databaseInstanceToSelectors,
-		modelRequiresSuitability: databaseInstanceRequiresSuitability,
-		validateModel:            validateDatabaseInstance,
+		selectorToQueryModel: databaseInstanceSelectorToQuery,
+		modelToSelectors:     databaseInstanceToSelectors,
+		errorIfForbidden:     databaseInstanceErrorIfForbidden,
+		validateModel:        validateDatabaseInstance,
 	}
 }
 
@@ -43,7 +50,7 @@ func databaseInstanceSelectorToQuery(db *gorm.DB, selector string) (DatabaseInst
 		return DatabaseInstance{}, fmt.Errorf("(%s) database instance selector cannot be empty", errors.BadRequest)
 	}
 	var query DatabaseInstance
-	if isNumeric(selector) { // ID
+	if utils.IsNumeric(selector) { // ID
 		id, err := strconv.Atoi(selector)
 		if err != nil {
 			return DatabaseInstance{}, fmt.Errorf("(%s) string to int conversion error of '%s': %v", errors.BadRequest, selector, err)
@@ -83,12 +90,13 @@ func databaseInstanceToSelectors(databaseInstance *DatabaseInstance) []string {
 	return selectors
 }
 
-func databaseInstanceRequiresSuitability(db *gorm.DB, databaseInstance *DatabaseInstance) bool {
+func databaseInstanceErrorIfForbidden(db *gorm.DB, databaseInstance *DatabaseInstance, action model_actions.ActionType, user *auth_models.User) error {
 	if chartRelease, err := chartReleaseStore.get(db, *databaseInstance.ChartRelease); err != nil {
-		return true
-	} else {
-		return chartReleaseRequiresSuitability(db, &chartRelease)
+		return err
+	} else if err = chartReleaseErrorIfForbidden(db, &chartRelease, action, user); err != nil {
+		return err
 	}
+	return nil
 }
 
 func validateDatabaseInstance(databaseInstance *DatabaseInstance) error {

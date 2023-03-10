@@ -2,6 +2,9 @@ package v2models
 
 import (
 	"fmt"
+	"github.com/broadinstitute/sherlock/internal/auth/auth_models"
+	"github.com/broadinstitute/sherlock/internal/models/model_actions"
+	"github.com/broadinstitute/sherlock/internal/utils"
 	"strconv"
 
 	"github.com/broadinstitute/sherlock/internal/errors"
@@ -26,14 +29,18 @@ func (c Cluster) TableName() string {
 	return "v2_clusters"
 }
 
+func (c Cluster) getID() uint {
+	return c.ID
+}
+
 var clusterStore *internalModelStore[Cluster]
 
 func init() {
 	clusterStore = &internalModelStore[Cluster]{
-		selectorToQueryModel:     clusterSelectorToQuery,
-		modelToSelectors:         clusterToSelectors,
-		modelRequiresSuitability: clusterRequiresSuitability,
-		validateModel:            validateCluster,
+		selectorToQueryModel: clusterSelectorToQuery,
+		modelToSelectors:     clusterToSelectors,
+		errorIfForbidden:     clusterErrorIfForbidden,
+		validateModel:        validateCluster,
 	}
 }
 
@@ -42,16 +49,16 @@ func clusterSelectorToQuery(_ *gorm.DB, selector string) (Cluster, error) {
 		return Cluster{}, fmt.Errorf("(%s) cluster selector cannot be empty", errors.BadRequest)
 	}
 	var query Cluster
-	if isNumeric(selector) { // ID
+	if utils.IsNumeric(selector) { // ID
 		id, err := strconv.Atoi(selector)
 		if err != nil {
 			return Cluster{}, fmt.Errorf("(%s) string to int conversion error of '%s': %v", errors.BadRequest, selector, err)
 		}
 		query.ID = uint(id)
 		return query, nil
-	} else if isAlphaNumericWithHyphens(selector) &&
-		isStartingWithLetter(selector) &&
-		isEndingWithAlphaNumeric(selector) { // Name
+	} else if utils.IsAlphaNumericWithHyphens(selector) &&
+		utils.IsStartingWithLetter(selector) &&
+		utils.IsEndingWithAlphaNumeric(selector) { // Name
 		if len(selector) > 32 {
 			return Cluster{}, fmt.Errorf("(%s) %T name is too long, was %d characters and the maximum is 32", errors.BadRequest, Cluster{}, len(selector))
 		}
@@ -74,9 +81,12 @@ func clusterToSelectors(cluster *Cluster) []string {
 	return selectors
 }
 
-func clusterRequiresSuitability(_ *gorm.DB, cluster *Cluster) bool {
-	// RequiresSuitability is a required field and shouldn't ever actually be stored as nil, but if it is we fail-safe
-	return cluster.RequiresSuitability == nil || *cluster.RequiresSuitability
+func clusterErrorIfForbidden(_ *gorm.DB, cluster *Cluster, _ model_actions.ActionType, user *auth_models.User) error {
+	if cluster.RequiresSuitability == nil || *cluster.RequiresSuitability {
+		return user.SuitableOrError()
+	} else {
+		return nil
+	}
 }
 
 func validateCluster(cluster *Cluster) error {

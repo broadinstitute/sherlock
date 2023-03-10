@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"github.com/broadinstitute/sherlock/internal/auth/auth_models"
 	"github.com/broadinstitute/sherlock/internal/errors"
+	"github.com/broadinstitute/sherlock/internal/models/model_actions"
+	"github.com/broadinstitute/sherlock/internal/utils"
 	"gorm.io/gorm"
 	"strconv"
 	"strings"
@@ -32,16 +34,20 @@ func (c ChartRelease) TableName() string {
 	return "v2_chart_releases"
 }
 
+func (c ChartRelease) getID() uint {
+	return c.ID
+}
+
 var chartReleaseStore *internalModelStore[ChartRelease]
 
 func init() {
 	chartReleaseStore = &internalModelStore[ChartRelease]{
-		selectorToQueryModel:     chartReleaseSelectorToQuery,
-		modelToSelectors:         chartReleaseToSelectors,
-		modelRequiresSuitability: chartReleaseRequiresSuitability,
-		validateModel:            validateChartRelease,
-		preCreate:                preCreateChartRelease,
-		preDeletePostValidate:    preDeletePostValidateChartRelease,
+		selectorToQueryModel:  chartReleaseSelectorToQuery,
+		modelToSelectors:      chartReleaseToSelectors,
+		errorIfForbidden:      chartReleaseErrorIfForbidden,
+		validateModel:         validateChartRelease,
+		preCreate:             preCreateChartRelease,
+		preDeletePostValidate: preDeletePostValidateChartRelease,
 	}
 }
 
@@ -50,7 +56,7 @@ func chartReleaseSelectorToQuery(db *gorm.DB, selector string) (ChartRelease, er
 		return ChartRelease{}, fmt.Errorf("(%s) chart release selector cannot be empty", errors.BadRequest)
 	}
 	var query ChartRelease
-	if isNumeric(selector) { // ID
+	if utils.IsNumeric(selector) { // ID
 		id, err := strconv.Atoi(selector)
 		if err != nil {
 			return ChartRelease{}, fmt.Errorf("(%s) string to int conversion error of '%s': %v", errors.BadRequest, selector, err)
@@ -99,10 +105,10 @@ func chartReleaseSelectorToQuery(db *gorm.DB, selector string) (ChartRelease, er
 
 		// namespace
 		namespace := parts[1]
-		if !(isAlphaNumericWithHyphens(namespace) &&
+		if !(utils.IsAlphaNumericWithHyphens(namespace) &&
 			len(namespace) > 0 &&
-			isStartingWithLetter(namespace) &&
-			isEndingWithAlphaNumeric(namespace)) {
+			utils.IsStartingWithLetter(namespace) &&
+			utils.IsEndingWithAlphaNumeric(namespace)) {
 			return ChartRelease{}, fmt.Errorf("(%s) invalid chart release selector %s, namespace sub-selector %s was invalid", errors.BadRequest, selector, namespace)
 		}
 		query.Namespace = namespace
@@ -119,9 +125,9 @@ func chartReleaseSelectorToQuery(db *gorm.DB, selector string) (ChartRelease, er
 		query.ChartID = chart.ID
 
 		return query, nil
-	} else if isAlphaNumericWithHyphens(selector) &&
-		isStartingWithLetter(selector) &&
-		isEndingWithAlphaNumeric(selector) { // name
+	} else if utils.IsAlphaNumericWithHyphens(selector) &&
+		utils.IsStartingWithLetter(selector) &&
+		utils.IsEndingWithAlphaNumeric(selector) { // name
 		query.Name = selector
 		return query, nil
 	}
@@ -184,24 +190,22 @@ func chartReleaseToSelectors(chartRelease *ChartRelease) []string {
 	return selectors
 }
 
-func chartReleaseRequiresSuitability(db *gorm.DB, chartRelease *ChartRelease) bool {
-	clusterRequires := false
+func chartReleaseErrorIfForbidden(db *gorm.DB, chartRelease *ChartRelease, action model_actions.ActionType, user *auth_models.User) error {
 	if chartRelease.Cluster != nil {
-		cluster, err := clusterStore.get(db, *chartRelease.Cluster)
-		if err != nil {
-			return true
+		if cluster, err := clusterStore.get(db, *chartRelease.Cluster); err != nil {
+			return err
+		} else if err = clusterErrorIfForbidden(db, &cluster, action, user); err != nil {
+			return err
 		}
-		clusterRequires = clusterRequiresSuitability(db, &cluster)
 	}
-	environmentRequires := false
 	if chartRelease.Environment != nil {
-		environment, err := environmentStore.get(db, *chartRelease.Environment)
-		if err != nil {
-			return true
+		if environment, err := environmentStore.get(db, *chartRelease.Environment); err != nil {
+			return err
+		} else if err = environmentErrorIfForbidden(db, &environment, action, user); err != nil {
+			return err
 		}
-		environmentRequires = environmentRequiresSuitability(db, &environment)
 	}
-	return clusterRequires || environmentRequires
+	return nil
 }
 
 func validateChartRelease(chartRelease *ChartRelease) error {

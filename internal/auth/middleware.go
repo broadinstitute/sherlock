@@ -11,7 +11,7 @@ import (
 
 const contextUserKey = "SherlockUser"
 
-func IapUserMiddleware(userStore *v2models.UserMiddlewareStore) gin.HandlerFunc {
+func IapUserMiddleware(userStore *v2models.MiddlewareUserStore) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		email, googleID, err := iap_auth.ParseIAP(ctx)
 		if err != nil {
@@ -26,7 +26,9 @@ func IapUserMiddleware(userStore *v2models.UserMiddlewareStore) gin.HandlerFunc 
 		}
 
 		ctx.Set(contextUserKey, &auth_models.User{
-			StoredUserFields: storedUser.StoredUserFields,
+			ID:                         storedUser.ID,
+			StoredControlledUserFields: storedUser.StoredControlledUserFields,
+			StoredMutableUserFields:    storedUser.StoredMutableUserFields,
 			InferredUserFields: auth_models.InferredUserFields{
 				MatchedFirecloudAccount: cachedFirecloudAccounts[emailToFirecloudEmail(email)],
 				MatchedExtraPermissions: cachedExtraPermissions[email],
@@ -37,9 +39,9 @@ func IapUserMiddleware(userStore *v2models.UserMiddlewareStore) gin.HandlerFunc 
 	}
 }
 
-func FakeUserMiddleware(userStore *v2models.UserMiddlewareStore) gin.HandlerFunc {
+func FakeUserMiddleware(userStore *v2models.MiddlewareUserStore) gin.HandlerFunc {
 	email := "fake@broadinstitute.org"
-	googleID := "some id would go here"
+	googleID := "fakeGoogleID"
 	return func(ctx *gin.Context) {
 		var firecloudAccount *auth_models.FirecloudAccount
 		if ctx.GetHeader("Suitable") == "false" {
@@ -66,7 +68,9 @@ func FakeUserMiddleware(userStore *v2models.UserMiddlewareStore) gin.HandlerFunc
 		}
 
 		ctx.Set(contextUserKey, &auth_models.User{
-			StoredUserFields: storedUser.StoredUserFields,
+			ID:                         storedUser.ID,
+			StoredControlledUserFields: storedUser.StoredControlledUserFields,
+			StoredMutableUserFields:    storedUser.StoredMutableUserFields,
 			InferredUserFields: auth_models.InferredUserFields{
 				MatchedFirecloudAccount: firecloudAccount,
 			},

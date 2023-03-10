@@ -30,7 +30,7 @@ func TestUser_Username(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			u := &User{
-				StoredUserFields: StoredUserFields{
+				StoredControlledUserFields: StoredControlledUserFields{
 					Email: tt.fields.Email,
 				},
 			}
@@ -227,7 +227,7 @@ func TestUser_checkSuitability(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			u := &User{
-				StoredUserFields: StoredUserFields{
+				StoredControlledUserFields: StoredControlledUserFields{
 					Email: tt.fields.Email,
 				},
 				InferredUserFields: InferredUserFields{
@@ -271,7 +271,7 @@ func TestUser_AlphaNumericHyphenatedUsername(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			u := &User{
-				StoredUserFields: StoredUserFields{
+				StoredControlledUserFields: StoredControlledUserFields{
 					Email: tt.fields.Email,
 				},
 				InferredUserFields: InferredUserFields{

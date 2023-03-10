@@ -4801,6 +4801,82 @@
                 }
             }
         },
+        "/api/v2/procedures/users/link-github": {
+            "post": {
+                "description": "Update the authenticated User's associated personal GitHub account",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Update the User's GitHub account link",
+                "parameters": [
+                    {
+                        "description": "Access to the GitHub account to link",
+                        "name": "github-access-payload-request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.GithubAccessPayload"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.User"
+                        }
+                    },
+                    "202": {
+                        "description": "Accepted",
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.User"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v2/selectors/app-versions/{selector}": {
             "get": {
                 "description": "Validate a given AppVersion selector and provide any other selectors that would match the same AppVersion.",
@@ -5538,14 +5614,26 @@
                 "email": {
                     "type": "string"
                 },
+                "githubID": {
+                    "type": "string"
+                },
+                "githubUsername": {
+                    "type": "string"
+                },
                 "googleID": {
                     "type": "string"
+                },
+                "id": {
+                    "type": "integer"
                 },
                 "matchedExtraPermissions": {
                     "$ref": "#/definitions/auth_models.ExtraPermissions"
                 },
                 "matchedFirecloudAccount": {
                     "$ref": "#/definitions/auth_models.FirecloudAccount"
+                },
+                "name": {
+                    "type": "string"
                 }
             }
         },
@@ -6940,6 +7028,14 @@
                 }
             }
         },
+        "v2controllers.GithubAccessPayload": {
+            "type": "object",
+            "properties": {
+                "githubAccessToken": {
+                    "type": "string"
+                }
+            }
+        },
         "v2controllers.PagerdutyIntegration": {
             "type": "object",
             "properties": {
@@ -6957,6 +7053,37 @@
                     "type": "string"
                 },
                 "type": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string",
+                    "format": "date-time"
+                }
+            }
+        },
+        "v2controllers.User": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "githubID": {
+                    "type": "string"
+                },
+                "githubUsername": {
+                    "type": "string"
+                },
+                "googleID": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
                     "type": "string"
                 },
                 "updatedAt": {

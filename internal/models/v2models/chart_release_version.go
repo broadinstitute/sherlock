@@ -2,6 +2,7 @@ package v2models
 
 import (
 	"fmt"
+	"github.com/broadinstitute/sherlock/internal/utils"
 	"time"
 
 	"github.com/broadinstitute/sherlock/internal/errors"
@@ -58,7 +59,7 @@ func (chartReleaseVersion *ChartReleaseVersion) resolve(db *gorm.DB, chartQuery 
 			}
 		case "commit":
 			if chartReleaseVersion.AppVersionCommit != nil {
-				if !isAlphaNumeric(*chartReleaseVersion.AppVersionCommit) {
+				if !utils.IsAlphaNumeric(*chartReleaseVersion.AppVersionCommit) {
 					return fmt.Errorf("(%s) the given commit '%s' seems to have an invalid format", errors.BadRequest, *chartReleaseVersion.AppVersionCommit)
 				}
 				// It's ugly but we go down to basically raw SQL here so we can handle the fact that people are definitely going

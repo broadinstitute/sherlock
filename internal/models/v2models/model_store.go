@@ -8,6 +8,7 @@ import (
 
 type Model interface {
 	TableName() string
+	getID() uint
 }
 
 type ModelStore[M Model] struct {

@@ -3,6 +3,7 @@ package v2models
 import (
 	"fmt"
 	"github.com/broadinstitute/sherlock/internal/errors"
+	"github.com/broadinstitute/sherlock/internal/utils"
 	"gorm.io/gorm"
 	"strconv"
 	"strings"
@@ -20,18 +21,22 @@ type AppVersion struct {
 	ParentAppVersionID *uint
 }
 
-func (c AppVersion) TableName() string {
+func (a AppVersion) TableName() string {
 	return "v2_app_versions"
+}
+
+func (a AppVersion) getID() uint {
+	return a.ID
 }
 
 var appVersionStore *internalModelStore[AppVersion]
 
 func init() {
 	appVersionStore = &internalModelStore[AppVersion]{
-		selectorToQueryModel: appVersionSelectorToQuery,
-		modelToSelectors:     appVersionToSelectors,
-		validateModel:        validateAppVersion,
-		rejectDuplicate:      rejectDuplicateAppVersion,
+		selectorToQueryModel:    appVersionSelectorToQuery,
+		modelToSelectors:        appVersionToSelectors,
+		validateModel:           validateAppVersion,
+		handleIncomingDuplicate: rejectDuplicateAppVersion,
 	}
 }
 
@@ -40,7 +45,7 @@ func appVersionSelectorToQuery(db *gorm.DB, selector string) (AppVersion, error)
 		return AppVersion{}, fmt.Errorf("(%s) app version selector cannot be empty", errors.BadRequest)
 	}
 	var query AppVersion
-	if isNumeric(selector) { // ID
+	if utils.IsNumeric(selector) { // ID
 		id, err := strconv.Atoi(selector)
 		if err != nil {
 			return AppVersion{}, fmt.Errorf("(%s) string to int conversion error of '%s': %v", errors.BadRequest, selector, err)

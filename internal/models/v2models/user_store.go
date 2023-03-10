@@ -7,26 +7,27 @@ import (
 	"github.com/broadinstitute/sherlock/internal/errors"
 	"github.com/jackc/pgconn"
 	"github.com/jackc/pgerrcode"
+	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
 )
 
-func NewUserMiddlewareStore(db *gorm.DB) *UserMiddlewareStore {
-	return &UserMiddlewareStore{
-		ModelStore: &ModelStore[User]{db: db, internalModelStore: userStore},
+func NewMiddlewareUserStore(db *gorm.DB) *MiddlewareUserStore {
+	return &MiddlewareUserStore{
+		modelStore: &ModelStore[User]{db: db, internalModelStore: userStore},
 	}
 }
 
-type UserMiddlewareStore struct {
-	*ModelStore[User]
+type MiddlewareUserStore struct {
+	modelStore *ModelStore[User]
 }
 
-func (s *UserMiddlewareStore) GetOrCreateUser(email, googleID string) (User, error) {
+func (s *MiddlewareUserStore) GetOrCreateUser(email, googleID string) (User, error) {
 	query := User{
-		StoredUserFields: auth_models.StoredUserFields{
+		StoredControlledUserFields: auth_models.StoredControlledUserFields{
 			Email: email,
 		},
 	}
-	existing, err := s.getIfExists(s.db, query)
+	existing, err := s.modelStore.getIfExists(s.modelStore.db, query)
 	if err != nil {
 		return User{}, err
 	} else if existing != nil {
@@ -36,8 +37,9 @@ func (s *UserMiddlewareStore) GetOrCreateUser(email, googleID string) (User, err
 			return *existing, nil
 		}
 	} else {
-		user, _, err := s.create(s.db, User{
-			StoredUserFields: auth_models.StoredUserFields{
+		log.Info().Msgf("AUTH | automatically adding new user %s (ID %s)", email, googleID)
+		user, _, err := s.modelStore.create(s.modelStore.db, User{
+			StoredControlledUserFields: auth_models.StoredControlledUserFields{
 				Email:    email,
 				GoogleID: googleID,
 			},
@@ -45,7 +47,7 @@ func (s *UserMiddlewareStore) GetOrCreateUser(email, googleID string) (User, err
 		if err != nil {
 			var pgErr *pgconn.PgError
 			if go_errors.As(err, &pgErr) && pgErr != nil && pgerrcode.UniqueViolation == pgErr.Code {
-				existing, err = s.getIfExists(s.db, query)
+				existing, err = s.modelStore.getIfExists(s.modelStore.db, query)
 				if err != nil {
 					return User{}, err
 				} else if existing != nil {

@@ -151,42 +151,6 @@ func Test_environmentToSelectors(t *testing.T) {
 	}
 }
 
-func Test_environmentRequiresSuitability(t *testing.T) {
-	tru := true
-	fal := false
-	type args struct {
-		db          *gorm.DB
-		environment *Environment
-	}
-	tests := []struct {
-		name string
-		args args
-		want bool
-	}{
-		{
-			name: "does require",
-			args: args{environment: &Environment{RequiresSuitability: &tru}},
-			want: true,
-		},
-		{
-			name: "does not require",
-			args: args{environment: &Environment{RequiresSuitability: &fal}},
-			want: false,
-		},
-		{
-			name: "fail safe",
-			args: args{environment: &Environment{}},
-			want: true,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got := environmentRequiresSuitability(tt.args.db, tt.args.environment)
-			testutils.AssertNoDiff(t, tt.want, got)
-		})
-	}
-}
-
 func Test_validateEnvironment(t *testing.T) {
 	type args struct {
 		environment *Environment

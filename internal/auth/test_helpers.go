@@ -15,7 +15,7 @@ func GenerateUser(t *testing.T, suitable bool) *auth_models.User {
 		suspensionReason = "user was generated to be non-suitable"
 	}
 	return &auth_models.User{
-		StoredUserFields: auth_models.StoredUserFields{
+		StoredControlledUserFields: auth_models.StoredControlledUserFields{
 			Email:    "sherlock.holmes@broadinstitute.org",
 			GoogleID: "someidwouldgohere",
 		},

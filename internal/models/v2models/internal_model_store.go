@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/broadinstitute/sherlock/internal/auth/auth_models"
 	"github.com/broadinstitute/sherlock/internal/errors"
+	"github.com/broadinstitute/sherlock/internal/models/model_actions"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -28,11 +29,10 @@ type internalModelStore[M Model] struct {
 
 	// Optional:
 
-	// modelRequiresSuitability lets a particular type flag that the given model (which will always come from the
-	// database) requires suitability for any mutations. If no function is provided, the model type is assumed
-	// to have no suitability restrictions. To support hopping from association to association and to fail-safe,
-	// the db reference should be used to load associations if they're used.
-	modelRequiresSuitability func(db *gorm.DB, model *M) bool
+	// errorIfForbidden controls whether a user may perform a certain action on the model instance in question.
+	// If not provided, it is assumed any Sherlock user may perform any action on the model isntance.
+	// The db reference should be used to fully load any associations that are used.
+	errorIfForbidden func(db *gorm.DB, model *M, action model_actions.ActionType, user *auth_models.User) error
 	// validateModel lets a type enforce restrictions upon data entry. Associated data will not be present but foreign
 	// keys themselves can be checked. There's no need to validate the grammar of selectors, that can be checked
 	// automatically.
@@ -49,12 +49,60 @@ type internalModelStore[M Model] struct {
 	// preDeletePostValidate runs after validation right before deletion. Since it runs after validation, it is important
 	// that this function not change toDelete in a way that would require re-validation.
 	preDeletePostValidate func(db *gorm.DB, toDelete *M, user *auth_models.User) error
-	// rejectDuplicateCreate lets a type provide custom handling for when a new entry has selectors that match an
-	// entry that's already in the database. Typically, this is always considered an error. If this function is
-	// provided and does not error, the database will not be changed and the already-stored entry will be returned.
-	// This means that duplicate create calls would all return successfully, while still maintaining selector-uniqueness
-	// inside the database.
-	rejectDuplicate func(existing *M, new *M) error
+	// handleIncomingDuplicate lets a type determine if an error should actually be thrown when a duplicate is detected
+	// at creation-time. Normally, this is always an error, but if this function is defined and doesn't error, the
+	// database will be unaltered and the existing entry will be returned to the user as the result.
+	handleIncomingDuplicate func(existing *M, new *M) error
+	// editsMayChangeSelectors lets a type declare that its selectors are impacted by mutable fields, so edits should
+	// have the selector-uniqueness property enforced.
+	editsMayChangeSelectors bool
+}
+
+func (s internalModelStore[M]) wrappedErrorIfForbidden(db *gorm.DB, model *M, action model_actions.ActionType, user *auth_models.User) error {
+	if s.errorIfForbidden == nil {
+		return nil
+	} else if err := s.errorIfForbidden(db, model, action, user); err != nil {
+		return fmt.Errorf("%s permissions error for %T (%s): %v", model_actions.ActionTypeToString(action), *model, errors.Forbidden, err)
+	} else {
+		return nil
+	}
+}
+
+func (s internalModelStore[M]) requireSameModel(existing *M, new *M) error {
+	if existing != nil && new != nil && (*existing).getID() == (*new).getID() {
+		return nil
+	} else {
+		return fmt.Errorf("mismatch")
+	}
+}
+
+func (s internalModelStore[M]) enforceSelectorUniqueness(db *gorm.DB, model *M, handleConflicts func(existing *M, new *M) error) (acceptedDuplicate *M, err error) {
+	selectors := s.modelToSelectors(model)
+	log.Debug().Msgf("enforcing %T selector uniqueness across %d selectors (%+v); handleConflicts provided=%t", model, len(selectors), selectors, handleConflicts != nil)
+	for _, selector := range s.modelToSelectors(model) {
+		query, err := s.selectorToQueryModel(db, selector)
+		if err != nil {
+			return nil, fmt.Errorf("selector validation error: resulting model has invalid selector '%s': %v", selector, err)
+		}
+		var results []M
+		if err := db.Where(&query).Find(&results).Error; err != nil {
+			return nil, fmt.Errorf("(%s) unexpected selector validation error: failed to query possible selector conflicts: %v", errors.InternalServerError, err)
+		} else {
+			for _, result := range results {
+				if handleConflicts == nil { // if we can't handle conflicts
+					return nil, fmt.Errorf("(%s) selector conflict: new %T selector '%s' already matches an entry in the database (ID %d)", errors.Conflict, result, selector, result.getID())
+				} else if err := handleConflicts(&result, model); err != nil { // if handling a conflict still errors
+					return nil, fmt.Errorf("(%s) selector conflict: new %T selector '%s' already matches an entry in the database (ID %d): conflict handler reported %v", errors.Conflict, result, selector, result.getID(), err)
+				} else if acceptedDuplicate == nil { // if we don't have a duplicate recorded, fine
+					acceptedDuplicate = &result
+				} else if (*acceptedDuplicate).getID() != (result).getID() { // if we do have a duplicate it's different, still error
+					// I'm not sure it's possible to hit this case, but maybe if handleConflicts was changed in-flight then duplicates could "appear" in the database
+					return nil, fmt.Errorf("(%s) selector conflict: new %T matched multiple duplicates in the database (at least IDs %d and %d)", errors.Conflict, result, (*acceptedDuplicate).getID(), (result).getID())
+				}
+			}
+		}
+	}
+	return acceptedDuplicate, nil
 }
 
 func (s internalModelStore[M]) create(db *gorm.DB, model M, user *auth_models.User) (M, bool, error) {
@@ -68,31 +116,10 @@ func (s internalModelStore[M]) create(db *gorm.DB, model M, user *auth_models.Us
 			return model, false, fmt.Errorf("creation validation error: (%s) new %T: %v", errors.BadRequest, model, err)
 		}
 	}
-	selectorsThatShouldNotCurrentlyExist := s.modelToSelectors(&model)
-	log.Debug().Msgf("about to add new %T, checking that %d selectors don't already exist: %+v", model, len(selectorsThatShouldNotCurrentlyExist), selectorsThatShouldNotCurrentlyExist)
-	for _, selector := range selectorsThatShouldNotCurrentlyExist {
-		queryThatShouldNotMatch, err := s.selectorToQueryModel(db, selector)
-		if err != nil {
-			return model, false, fmt.Errorf("creation validation error: new %T would have an invalid selector %s: %v", model, selector, err)
-		}
-		var shouldStayEmpty []M
-		result := db.Where(&queryThatShouldNotMatch).Find(&shouldStayEmpty)
-		if result.Error != nil {
-			return model, false, fmt.Errorf("(%s) unexpected creation error: new %T's selector %s couldn't be uniqueness-checked against the database due to an error: %v", errors.InternalServerError, model, selector, result.Error)
-		} else if result.RowsAffected > 0 {
-			// There's entries in the database already; if there's custom handling run that instead of just erroring
-			if s.rejectDuplicate != nil {
-				for _, existingMatch := range shouldStayEmpty {
-					if err = s.rejectDuplicate(&existingMatch, &model); err != nil {
-						return existingMatch, false, fmt.Errorf("creation validation error: (%s) new %T's selector %s matches an entry already in the database and there was an error resolving the duplicates: %v", errors.Conflict, model, selector, err)
-					}
-				}
-				log.Debug().Msgf("won't add new %T, selector %s already exists but rejectDuplicateCreate didn't error so accepting and returning the first accepting match", model, selector)
-				return shouldStayEmpty[0], false, nil
-			} else {
-				return shouldStayEmpty[0], false, fmt.Errorf("creation validation error: (%s) new %T's selector %s already matches an entry in the database", errors.Conflict, model, selector)
-			}
-		}
+	if allowedDuplicate, err := s.enforceSelectorUniqueness(db, &model, s.handleIncomingDuplicate); err != nil {
+		return model, false, fmt.Errorf("create validation error: %v", err)
+	} else if allowedDuplicate != nil {
+		return *allowedDuplicate, false, nil
 	}
 	var ret M
 	err := db.Transaction(func(tx *gorm.DB) error {
@@ -107,15 +134,13 @@ func (s internalModelStore[M]) create(db *gorm.DB, model M, user *auth_models.Us
 		if err != nil {
 			return fmt.Errorf("(%s) unexpected creation error: mid-transaction validation on %T failed: %v", errors.InternalServerError, model, err)
 		}
-		// Use db instead of tx here because tx is dirty and user-modified. Determination of suitability should
+		// Use db instead of tx here because tx is dirty and user-modified. Determination of permissions should
 		// never be recursive, so this is safer.
-		// (Why do we check suitability here rather than before adding at all? Adding and then querying lets us load
-		// associations, and while suitability isn't recursive, it can be associative. Ex: a chart release's suitability
-		// is defined in terms of the environment and cluster's suitability)
-		if s.modelRequiresSuitability != nil && s.modelRequiresSuitability(db, &result) {
-			if err = user.SuitableOrError(); err != nil {
-				return fmt.Errorf("creation error: (%s) suitability is required to create this %T: %v", errors.Forbidden, model, err)
-			}
+		// (Why do we check permissions here rather than before adding at all? Adding and then querying lets us load
+		// associations, and while permissions aren't recursive, they can be associative. Ex: the ability to affect
+		// a chart release is dependent on the chart release's environment and cluster)
+		if err = s.wrappedErrorIfForbidden(db, &result, model_actions.CREATE, user); err != nil {
+			return err
 		}
 		if s.postCreate != nil {
 			if err = s.postCreate(tx, &result, user); err != nil {
@@ -181,10 +206,8 @@ func (s internalModelStore[M]) edit(db *gorm.DB, query M, editsToMake M, user *a
 	if err != nil {
 		return toEdit, err
 	}
-	if s.modelRequiresSuitability != nil && s.modelRequiresSuitability(db, &toEdit) {
-		if err = user.SuitableOrError(); err != nil {
-			return toEdit, fmt.Errorf("edit error: (%s) suitability is required to edit %T: %v", errors.Forbidden, toEdit, err)
-		}
+	if err = s.wrappedErrorIfForbidden(db, &toEdit, model_actions.EDIT, user); err != nil {
+		return toEdit, err
 	}
 	var ret M
 	err = db.Transaction(func(tx *gorm.DB) error {
@@ -204,11 +227,14 @@ func (s internalModelStore[M]) edit(db *gorm.DB, query M, editsToMake M, user *a
 				return fmt.Errorf("edit validation error: (%s) resulting %T: %v", errors.BadRequest, result, err)
 			}
 		}
-		// We check suitability *again* to prevent a user from editing an entry in a way that makes it require
-		// suitability in the future, if they aren't themselves suitable.
-		if s.modelRequiresSuitability != nil && s.modelRequiresSuitability(db, &result) {
-			if err = user.SuitableOrError(); err != nil {
-				return fmt.Errorf("edit error: (%s) suitability is required to edit %T in this way: %v", errors.Forbidden, toEdit, err)
+		// We check permissions *again* to prevent a user from editing an entry in a way that makes it require
+		// permissions above theirs in the future.
+		if err = s.wrappedErrorIfForbidden(db, &result, model_actions.EDIT, user); err != nil {
+			return err
+		}
+		if s.editsMayChangeSelectors {
+			if _, err := s.enforceSelectorUniqueness(tx, &result, s.requireSameModel); err != nil {
+				return fmt.Errorf("edit validation error: %v", err)
 			}
 		}
 		ret = result
@@ -221,10 +247,8 @@ func (s internalModelStore[M]) deleteIfExists(db *gorm.DB, query M, user *auth_m
 	if toDelete, err := s.getIfExists(db, query); err != nil || toDelete == nil {
 		return toDelete, err
 	} else {
-		if s.modelRequiresSuitability != nil && s.modelRequiresSuitability(db, toDelete) {
-			if err = user.SuitableOrError(); err != nil {
-				return toDelete, fmt.Errorf("delete error: (%s) suitability is required to delete %T: %v", errors.Forbidden, toDelete, err)
-			}
+		if err = s.wrappedErrorIfForbidden(db, toDelete, model_actions.DELETE, user); err != nil {
+			return toDelete, err
 		}
 		err = db.Transaction(func(tx *gorm.DB) error {
 			if s.preDeletePostValidate != nil {
