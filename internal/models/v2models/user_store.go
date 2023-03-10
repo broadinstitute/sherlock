@@ -63,3 +63,12 @@ func (s *MiddlewareUserStore) GetOrCreateUser(email, googleID string) (User, err
 		return user, nil
 	}
 }
+
+func (s *MiddlewareUserStore) GetGithubUserIfExists(githubID string) (*User, error) {
+	query := User{
+		StoredControlledUserFields: auth_models.StoredControlledUserFields{
+			GithubID: &githubID,
+		},
+	}
+	return s.modelStore.getIfExists(s.modelStore.db, query)
+}

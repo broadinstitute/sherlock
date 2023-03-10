@@ -13,7 +13,7 @@ const (
 	subClaim   = "sub"
 )
 
-func ParseIAP(ctx *gin.Context) (email string, googleID string, err error) {
+func ParseHeader(ctx *gin.Context) (email string, googleID string, err error) {
 	iapJWT := ctx.GetHeader(iapHeader)
 	if iapJWT == "" {
 		return "", "", fmt.Errorf("(%s) no '%s' header set, IAP authentication required", errors.ProxyAuthenticationRequired, iapHeader)
@@ -24,7 +24,9 @@ func ParseIAP(ctx *gin.Context) (email string, googleID string, err error) {
 	// this is just the easiest way to decode the JWT payload.
 	payload, err := idtoken.Validate(ctx, iapJWT, "")
 	if err != nil {
-		return "", "", fmt.Errorf("(%s) failed to validate IAP JWT in 'X-Goog-IAP-JWT-Assertion' header: %v", errors.ProxyAuthenticationRequired, err)
+		return "", "", fmt.Errorf("(%s) failed to validate IAP JWT in '%s' header: %v", errors.ProxyAuthenticationRequired, iapHeader, err)
+	} else if payload == nil {
+		return "", "", fmt.Errorf("(%s) IAP JWT seemed to pass validation but payload was nil", errors.ProxyAuthenticationRequired)
 	}
 
 	emailValue := payload.Claims[emailClaim]

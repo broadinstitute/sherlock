@@ -12,6 +12,8 @@ type User struct {
 	StoredControlledUserFields
 	StoredMutableUserFields
 	InferredUserFields
+	AuthMethod AuthMethod `json:"authMethod" form:"authMethod"`
+	Via        *User      `json:"via,omitempty" form:"-"`
 }
 
 type StoredControlledUserFields struct {

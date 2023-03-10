@@ -4,6 +4,7 @@ import (
 	"context"
 	"contrib.go.opencensus.io/exporter/stackdriver"
 	"github.com/broadinstitute/sherlock/internal/auth"
+	"github.com/broadinstitute/sherlock/internal/auth/gha_oidc_auth"
 	"github.com/broadinstitute/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/internal/controllers/v1controllers"
 	"github.com/broadinstitute/sherlock/internal/controllers/v2controllers"
@@ -57,8 +58,18 @@ func New(db *gorm.DB) *Application {
 		}
 		ctx, cancelFunc := context.WithCancel(context.Background())
 		app.contextsToCancel = append(app.contextsToCancel, cancelFunc)
-		go auth.KeepCacheUpdated(ctx, time.Duration(config.Config.MustInt("auth.updateIntervalMinutes"))*time.Minute)
+		go auth.KeepFirecloudCacheUpdated(ctx, time.Duration(config.Config.MustInt("auth.updateIntervalMinutes"))*time.Minute)
 	}
+
+	if config.Config.Bool("auth.githubActionsOIDC.enable") {
+		ctx, cancelFunc := context.WithCancel(context.Background())
+		app.contextsToCancel = append(app.contextsToCancel, cancelFunc)
+		if err := gha_oidc_auth.InitVerifier(ctx); err != nil {
+			log.Fatal().Msgf("unable to initialize GitHub Actions OIDC token verifier")
+			return nil
+		}
+	}
+
 	auth.CacheExtraPermissions()
 
 	app.registerControllers()
