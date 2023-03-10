@@ -90,14 +90,14 @@ func (s internalModelStore[M]) enforceSelectorUniqueness(db *gorm.DB, model *M, 
 		} else {
 			for _, result := range results {
 				if handleConflicts == nil { // if we can't handle conflicts
-					return nil, fmt.Errorf("(%s) selector conflict: new %T selector '%s' already matches an entry in the database (ID %d)", errors.BadRequest, result, selector, result.getID())
+					return nil, fmt.Errorf("(%s) selector conflict: new %T selector '%s' already matches an entry in the database (ID %d)", errors.Conflict, result, selector, result.getID())
 				} else if err := handleConflicts(&result, model); err != nil { // if handling a conflict still errors
-					return nil, fmt.Errorf("(%s) selector conflict: new %T selector '%s' already matches an entry in the database (ID %d): conflict handler reported %v", errors.BadRequest, result, selector, result.getID(), err)
+					return nil, fmt.Errorf("(%s) selector conflict: new %T selector '%s' already matches an entry in the database (ID %d): conflict handler reported %v", errors.Conflict, result, selector, result.getID(), err)
 				} else if acceptedDuplicate == nil { // if we don't have a duplicate recorded, fine
 					acceptedDuplicate = &result
 				} else if (*acceptedDuplicate).getID() != (result).getID() { // if we do have a duplicate it's different, still error
 					// I'm not sure it's possible to hit this case, but maybe if handleConflicts was changed in-flight then duplicates could "appear" in the database
-					return nil, fmt.Errorf("(%s) selector conflict: new %T matched multiple duplicates in the database (at least IDs %d and %d)", errors.BadRequest, result, (*acceptedDuplicate).getID(), (result).getID())
+					return nil, fmt.Errorf("(%s) selector conflict: new %T matched multiple duplicates in the database (at least IDs %d and %d)", errors.Conflict, result, (*acceptedDuplicate).getID(), (result).getID())
 				}
 			}
 		}
