@@ -3,6 +3,7 @@ package v2models
 import (
 	"fmt"
 	"github.com/broadinstitute/sherlock/internal/errors"
+	"github.com/broadinstitute/sherlock/internal/utils"
 	"gorm.io/gorm"
 	"strconv"
 	"strings"
@@ -22,14 +23,18 @@ func (c ChartVersion) TableName() string {
 	return "v2_chart_versions"
 }
 
+func (c ChartVersion) getID() uint {
+	return c.ID
+}
+
 var chartVersionStore *internalModelStore[ChartVersion]
 
 func init() {
 	chartVersionStore = &internalModelStore[ChartVersion]{
-		selectorToQueryModel: chartVersionSelectorToQuery,
-		modelToSelectors:     chartVersionToSelectors,
-		validateModel:        validateChartVersion,
-		rejectDuplicate:      rejectDuplicateChartVersion,
+		selectorToQueryModel:    chartVersionSelectorToQuery,
+		modelToSelectors:        chartVersionToSelectors,
+		validateModel:           validateChartVersion,
+		handleIncomingDuplicate: rejectDuplicateChartVersion,
 	}
 }
 
@@ -38,7 +43,7 @@ func chartVersionSelectorToQuery(db *gorm.DB, selector string) (ChartVersion, er
 		return ChartVersion{}, fmt.Errorf("(%s) chart version selector cannot be empty", errors.BadRequest)
 	}
 	var query ChartVersion
-	if isNumeric(selector) { // ID
+	if utils.IsNumeric(selector) { // ID
 		id, err := strconv.Atoi(selector)
 		if err != nil {
 			return ChartVersion{}, fmt.Errorf("(%s) string to int conversion error of '%s': %v", errors.BadRequest, selector, err)

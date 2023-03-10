@@ -5,6 +5,7 @@ import (
 	"github.com/broadinstitute/sherlock/internal/auth/auth_models"
 	"github.com/broadinstitute/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/internal/models/model_actions"
+	"github.com/broadinstitute/sherlock/internal/utils"
 	"gorm.io/gorm"
 	"strconv"
 	"strings"
@@ -12,21 +13,27 @@ import (
 
 type User struct {
 	gorm.Model
-	auth_models.StoredUserFields
+	auth_models.StoredControlledUserFields
+	auth_models.StoredMutableUserFields
 }
 
 func (u User) TableName() string {
 	return "v2_users"
 }
 
+func (u User) getID() uint {
+	return u.ID
+}
+
 var userStore *internalModelStore[User]
 
 func init() {
 	userStore = &internalModelStore[User]{
-		selectorToQueryModel: userSelectorToQuery,
-		modelToSelectors:     userToSelectors,
-		errorIfForbidden:     userErrorIfForbidden,
-		validateModel:        validateUser,
+		selectorToQueryModel:    userSelectorToQuery,
+		modelToSelectors:        userToSelectors,
+		errorIfForbidden:        userErrorIfForbidden,
+		validateModel:           validateUser,
+		editsMayChangeSelectors: true,
 	}
 }
 
@@ -35,7 +42,7 @@ func userSelectorToQuery(_ *gorm.DB, selector string) (User, error) {
 		return User{}, fmt.Errorf("(%s) user selector cannot be empty", errors.BadRequest)
 	}
 	var query User
-	if isNumeric(selector) { // ID
+	if utils.IsNumeric(selector) { // ID
 		id, err := strconv.Atoi(selector)
 		if err != nil {
 			return User{}, fmt.Errorf("(%s) string to int conversion error of '%s': %v", errors.BadRequest, selector, err)
@@ -47,6 +54,14 @@ func userSelectorToQuery(_ *gorm.DB, selector string) (User, error) {
 		return query, nil
 	} else if strings.HasPrefix(selector, "google-id/") { // "google-id/" + Google Subject ID
 		query.GoogleID = strings.TrimPrefix(selector, "google-id/")
+		return query, nil
+	} else if strings.HasPrefix(selector, "github/") { // "github/" + GitHub Username
+		githubUsername := strings.TrimPrefix(selector, "github/")
+		query.GithubUsername = &githubUsername
+		return query, nil
+	} else if strings.HasPrefix(selector, "github-id/") { // "github-id/" + GitHub ID
+		githubID := strings.TrimPrefix(selector, "github-id/")
+		query.GithubID = &githubID
 		return query, nil
 	}
 	return User{}, fmt.Errorf("(%s) invalid user selector '%s'", errors.BadRequest, selector)
@@ -64,6 +79,12 @@ func userToSelectors(user *User) []string {
 		if user.ID != 0 {
 			selectors = append(selectors, fmt.Sprintf("%d", user.ID))
 		}
+		if user.GithubUsername != nil {
+			selectors = append(selectors, fmt.Sprintf("github/%s", *user.GithubUsername))
+		}
+		if user.GithubID != nil {
+			selectors = append(selectors, fmt.Sprintf("github-id/%s", *user.GithubID))
+		}
 	}
 	return selectors
 }
@@ -72,8 +93,8 @@ func userErrorIfForbidden(_ *gorm.DB, modelUser *User, action model_actions.Acti
 	switch action {
 	case model_actions.CREATE:
 		if user != nil {
-			// The controller always sets the user, so it being nil means we're still at the auth middleware.
-			return fmt.Errorf("users can only be created during their first request")
+			// The handler/controller always pass the user, so it being nil means we're still at the auth middleware.
+			return fmt.Errorf("users can only be created via middleware")
 		}
 	case model_actions.EDIT:
 		if modelUser.Email != user.Email {
@@ -96,6 +117,9 @@ func validateUser(user *User) error {
 	}
 	if user.GoogleID == "" {
 		return fmt.Errorf("a %T must have a Google subject ID", user)
+	}
+	if (user.GithubUsername == nil) != (user.GithubID == nil) {
+		return fmt.Errorf("a %T must either have both a GitHub username and ID set or neither", user)
 	}
 	return nil
 }

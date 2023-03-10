@@ -49,12 +49,13 @@ type internalModelStore[M Model] struct {
 	// preDeletePostValidate runs after validation right before deletion. Since it runs after validation, it is important
 	// that this function not change toDelete in a way that would require re-validation.
 	preDeletePostValidate func(db *gorm.DB, toDelete *M, user *auth_models.User) error
-	// rejectDuplicateCreate lets a type provide custom handling for when a new entry has selectors that match an
-	// entry that's already in the database. Typically, this is always considered an error. If this function is
-	// provided and does not error, the database will not be changed and the already-stored entry will be returned.
-	// This means that duplicate create calls would all return successfully, while still maintaining selector-uniqueness
-	// inside the database.
-	rejectDuplicate func(existing *M, new *M) error
+	// handleIncomingDuplicate lets a type determine if an error should actually be thrown when a duplicate is detected
+	// at creation-time. Normally, this is always an error, but if this function is defined and doesn't error, the
+	// database will be unaltered and the existing entry will be returned to the user as the result.
+	handleIncomingDuplicate func(existing *M, new *M) error
+	// editsMayChangeSelectors lets a type declare that its selectors are impacted by mutable fields, so edits should
+	// have the selector-uniqueness property enforced.
+	editsMayChangeSelectors bool
 }
 
 func (s internalModelStore[M]) wrappedErrorIfForbidden(db *gorm.DB, model *M, action model_actions.ActionType, user *auth_models.User) error {
@@ -65,6 +66,43 @@ func (s internalModelStore[M]) wrappedErrorIfForbidden(db *gorm.DB, model *M, ac
 	} else {
 		return nil
 	}
+}
+
+func (s internalModelStore[M]) requireSameModel(existing *M, new *M) error {
+	if existing != nil && new != nil && (*existing).getID() == (*new).getID() {
+		return nil
+	} else {
+		return fmt.Errorf("mismatch")
+	}
+}
+
+func (s internalModelStore[M]) enforceSelectorUniqueness(db *gorm.DB, model *M, handleConflicts func(existing *M, new *M) error) (acceptedDuplicate *M, err error) {
+	selectors := s.modelToSelectors(model)
+	log.Debug().Msgf("enforcing %T selector uniqueness across %d selectors (%+v); handleConflicts provided=%t", model, len(selectors), selectors, handleConflicts != nil)
+	for _, selector := range s.modelToSelectors(model) {
+		query, err := s.selectorToQueryModel(db, selector)
+		if err != nil {
+			return nil, fmt.Errorf("selector validation error: resulting model has invalid selector '%s': %v", selector, err)
+		}
+		var results []M
+		if err := db.Where(&query).Find(&results).Error; err != nil {
+			return nil, fmt.Errorf("(%s) unexpected selector validation error: failed to query possible selector conflicts: %v", errors.InternalServerError, err)
+		} else {
+			for _, result := range results {
+				if handleConflicts == nil { // if we can't handle conflicts
+					return nil, fmt.Errorf("(%s) selector conflict: new %T selector '%s' already matches an entry in the database (ID %d)", errors.BadRequest, result, selector, result.getID())
+				} else if err := handleConflicts(&result, model); err != nil { // if handling a conflict still errors
+					return nil, fmt.Errorf("(%s) selector conflict: new %T selector '%s' already matches an entry in the database (ID %d): conflict handler reported %v", errors.BadRequest, result, selector, result.getID(), err)
+				} else if acceptedDuplicate == nil { // if we don't have a duplicate recorded, fine
+					acceptedDuplicate = &result
+				} else if (*acceptedDuplicate).getID() != (result).getID() { // if we do have a duplicate it's different, still error
+					// I'm not sure it's possible to hit this case, but maybe if handleConflicts was changed in-flight then duplicates could "appear" in the database
+					return nil, fmt.Errorf("(%s) selector conflict: new %T matched multiple duplicates in the database (at least IDs %d and %d)", errors.BadRequest, result, (*acceptedDuplicate).getID(), (result).getID())
+				}
+			}
+		}
+	}
+	return acceptedDuplicate, nil
 }
 
 func (s internalModelStore[M]) create(db *gorm.DB, model M, user *auth_models.User) (M, bool, error) {
@@ -78,31 +116,10 @@ func (s internalModelStore[M]) create(db *gorm.DB, model M, user *auth_models.Us
 			return model, false, fmt.Errorf("creation validation error: (%s) new %T: %v", errors.BadRequest, model, err)
 		}
 	}
-	selectorsThatShouldNotCurrentlyExist := s.modelToSelectors(&model)
-	log.Debug().Msgf("about to add new %T, checking that %d selectors don't already exist: %+v", model, len(selectorsThatShouldNotCurrentlyExist), selectorsThatShouldNotCurrentlyExist)
-	for _, selector := range selectorsThatShouldNotCurrentlyExist {
-		queryThatShouldNotMatch, err := s.selectorToQueryModel(db, selector)
-		if err != nil {
-			return model, false, fmt.Errorf("creation validation error: new %T would have an invalid selector %s: %v", model, selector, err)
-		}
-		var shouldStayEmpty []M
-		result := db.Where(&queryThatShouldNotMatch).Find(&shouldStayEmpty)
-		if result.Error != nil {
-			return model, false, fmt.Errorf("(%s) unexpected creation error: new %T's selector %s couldn't be uniqueness-checked against the database due to an error: %v", errors.InternalServerError, model, selector, result.Error)
-		} else if result.RowsAffected > 0 {
-			// There's entries in the database already; if there's custom handling run that instead of just erroring
-			if s.rejectDuplicate != nil {
-				for _, existingMatch := range shouldStayEmpty {
-					if err = s.rejectDuplicate(&existingMatch, &model); err != nil {
-						return existingMatch, false, fmt.Errorf("creation validation error: (%s) new %T's selector %s matches an entry already in the database and there was an error resolving the duplicates: %v", errors.Conflict, model, selector, err)
-					}
-				}
-				log.Debug().Msgf("won't add new %T, selector %s already exists but rejectDuplicateCreate didn't error so accepting and returning the first accepting match", model, selector)
-				return shouldStayEmpty[0], false, nil
-			} else {
-				return shouldStayEmpty[0], false, fmt.Errorf("creation validation error: (%s) new %T's selector %s already matches an entry in the database", errors.Conflict, model, selector)
-			}
-		}
+	if allowedDuplicate, err := s.enforceSelectorUniqueness(db, &model, s.handleIncomingDuplicate); err != nil {
+		return model, false, fmt.Errorf("create validation error: %v", err)
+	} else if allowedDuplicate != nil {
+		return *allowedDuplicate, false, nil
 	}
 	var ret M
 	err := db.Transaction(func(tx *gorm.DB) error {
@@ -212,8 +229,13 @@ func (s internalModelStore[M]) edit(db *gorm.DB, query M, editsToMake M, user *a
 		}
 		// We check permissions *again* to prevent a user from editing an entry in a way that makes it require
 		// permissions above theirs in the future.
-		if err = s.wrappedErrorIfForbidden(db, &toEdit, model_actions.EDIT, user); err != nil {
+		if err = s.wrappedErrorIfForbidden(db, &result, model_actions.EDIT, user); err != nil {
 			return err
+		}
+		if s.editsMayChangeSelectors {
+			if _, err := s.enforceSelectorUniqueness(tx, &result, s.requireSameModel); err != nil {
+				return fmt.Errorf("edit validation error: %v", err)
+			}
 		}
 		ret = result
 		return nil

@@ -34,12 +34,20 @@ definitions:
     properties:
       email:
         type: string
+      githubID:
+        type: string
+      githubUsername:
+        type: string
       googleID:
         type: string
+      id:
+        type: integer
       matchedExtraPermissions:
         $ref: '#/definitions/auth_models.ExtraPermissions'
       matchedFirecloudAccount:
         $ref: '#/definitions/auth_models.FirecloudAccount'
+      name:
+        type: string
     type: object
   environment.AutoDelete:
     properties:
@@ -1067,6 +1075,11 @@ definitions:
         description: When creating, defaults to template name or environment name
         type: string
     type: object
+  v2controllers.GithubAccessPayload:
+    properties:
+      githubAccessToken:
+        type: string
+    type: object
   v2controllers.PagerdutyIntegration:
     properties:
       createdAt:
@@ -1079,6 +1092,27 @@ definitions:
       pagerdutyID:
         type: string
       type:
+        type: string
+      updatedAt:
+        format: date-time
+        type: string
+    type: object
+  v2controllers.User:
+    properties:
+      createdAt:
+        format: date-time
+        type: string
+      email:
+        type: string
+      githubID:
+        type: string
+      githubUsername:
+        type: string
+      googleID:
+        type: string
+      id:
+        type: integer
+      name:
         type: string
       updatedAt:
         format: date-time
@@ -4350,6 +4384,56 @@ paths:
       summary: Trigger a Pagerduty incident for a given PagerdutyIntegration
       tags:
       - PagerdutyIntegrations
+  /api/v2/procedures/users/link-github:
+    post:
+      consumes:
+      - application/json
+      description: Update the authenticated User's associated personal GitHub account
+      parameters:
+      - description: Access to the GitHub account to link
+        in: body
+        name: github-access-payload-request
+        required: true
+        schema:
+          $ref: '#/definitions/v2controllers.GithubAccessPayload'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v2controllers.User'
+        "202":
+          description: Accepted
+          schema:
+            $ref: '#/definitions/v2controllers.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Update the User's GitHub account link
+      tags:
+      - Users
   /api/v2/selectors/app-versions/{selector}:
     get:
       description: Validate a given AppVersion selector and provide any other selectors

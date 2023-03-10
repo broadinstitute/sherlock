@@ -5,6 +5,7 @@ import (
 	"github.com/broadinstitute/sherlock/internal/auth/auth_models"
 	"github.com/broadinstitute/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/internal/models/model_actions"
+	"github.com/broadinstitute/sherlock/internal/utils"
 	"gorm.io/gorm"
 	"strconv"
 	"strings"
@@ -29,6 +30,10 @@ func (d DatabaseInstance) TableName() string {
 	return "v2_database_instances"
 }
 
+func (d DatabaseInstance) getID() uint {
+	return d.ID
+}
+
 var databaseInstanceStore *internalModelStore[DatabaseInstance]
 
 func init() {
@@ -45,7 +50,7 @@ func databaseInstanceSelectorToQuery(db *gorm.DB, selector string) (DatabaseInst
 		return DatabaseInstance{}, fmt.Errorf("(%s) database instance selector cannot be empty", errors.BadRequest)
 	}
 	var query DatabaseInstance
-	if isNumeric(selector) { // ID
+	if utils.IsNumeric(selector) { // ID
 		id, err := strconv.Atoi(selector)
 		if err != nil {
 			return DatabaseInstance{}, fmt.Errorf("(%s) string to int conversion error of '%s': %v", errors.BadRequest, selector, err)

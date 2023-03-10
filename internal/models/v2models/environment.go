@@ -5,6 +5,7 @@ import (
 	"github.com/broadinstitute/sherlock/internal/auth/auth_models"
 	"github.com/broadinstitute/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/internal/models/model_actions"
+	"github.com/broadinstitute/sherlock/internal/utils"
 	"github.com/rs/zerolog/log"
 	"math/bits"
 	"regexp"
@@ -55,6 +56,10 @@ func (e Environment) TableName() string {
 	return "v2_environments"
 }
 
+func (e Environment) getID() uint {
+	return e.ID
+}
+
 var environmentStore *internalModelStore[Environment]
 
 func init() {
@@ -74,16 +79,16 @@ func environmentSelectorToQuery(_ *gorm.DB, selector string) (Environment, error
 		return Environment{}, fmt.Errorf("(%s) environment selector cannot be empty", errors.BadRequest)
 	}
 	var query Environment
-	if isNumeric(selector) { // ID
+	if utils.IsNumeric(selector) { // ID
 		id, err := strconv.Atoi(selector)
 		if err != nil {
 			return Environment{}, fmt.Errorf("(%s) string to int conversion error of '%s': %v", errors.BadRequest, selector, err)
 		}
 		query.ID = uint(id)
 		return query, nil
-	} else if isAlphaNumericWithHyphens(selector) &&
-		isStartingWithLetter(selector) &&
-		isEndingWithAlphaNumeric(selector) { // Name
+	} else if utils.IsAlphaNumericWithHyphens(selector) &&
+		utils.IsStartingWithLetter(selector) &&
+		utils.IsEndingWithAlphaNumeric(selector) { // Name
 		if len(selector) > 32 {
 			return Environment{}, fmt.Errorf("(%s) %T name is too long, was %d characters and the maximum is 32", errors.BadRequest, Environment{}, len(selector))
 		}
@@ -105,9 +110,9 @@ func environmentSelectorToQuery(_ *gorm.DB, selector string) (Environment, error
 
 		// unique resource prefix
 		uniqueResourcePrefix := parts[1]
-		if !(isLowerAlphaNumeric(uniqueResourcePrefix) &&
-			isStartingWithLetter(uniqueResourcePrefix) &&
-			isEndingWithAlphaNumeric(uniqueResourcePrefix) &&
+		if !(utils.IsLowerAlphaNumeric(uniqueResourcePrefix) &&
+			utils.IsStartingWithLetter(uniqueResourcePrefix) &&
+			utils.IsEndingWithAlphaNumeric(uniqueResourcePrefix) &&
 			len(uniqueResourcePrefix) == 4) {
 			return Environment{}, fmt.Errorf("(%s) invalid environment selector %s, unique resource prefix sub-selector %s was invalid", errors.BadRequest, selector, uniqueResourcePrefix)
 		}

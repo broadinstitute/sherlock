@@ -15,7 +15,7 @@ type StoreSet struct {
 	ChartReleaseStore     *ModelStore[ChartRelease]
 	PagerdutyIntegration  *ModelStore[PagerdutyIntegration]
 	DatabaseInstanceStore *ModelStore[DatabaseInstance]
-	UserStore             *UserStore
+	UserStore             *ModelStore[User]
 
 	ChangesetEventStore *ChangesetEventStore
 }
@@ -32,7 +32,7 @@ func NewStoreSet(db *gorm.DB) *StoreSet {
 		ChartReleaseStore:     &ModelStore[ChartRelease]{db: db, internalModelStore: chartReleaseStore},
 		PagerdutyIntegration:  &ModelStore[PagerdutyIntegration]{db: db, internalModelStore: pagerdutyIntegrationStore},
 		DatabaseInstanceStore: &ModelStore[DatabaseInstance]{db: db, internalModelStore: databaseInstanceStore},
-		UserStore:             NewUserStore(db),
+		UserStore:             &ModelStore[User]{db: db, internalModelStore: userStore},
 
 		ChangesetEventStore: &ChangesetEventStore{
 			ModelStore:                  &ModelStore[Changeset]{db: db, internalModelStore: changesetStore.internalModelStore},

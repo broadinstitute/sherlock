@@ -8,13 +8,21 @@ import (
 )
 
 type User struct {
-	StoredUserFields
+	ID uint `json:"id" form:"id"`
+	StoredControlledUserFields
+	StoredMutableUserFields
 	InferredUserFields
 }
 
-type StoredUserFields struct {
-	Email    string `json:"email" form:"email" gorm:"not null;default:null;unique"`
-	GoogleID string `json:"googleID" form:"googleID" gorm:"not null;default:null;unique"`
+type StoredControlledUserFields struct {
+	Email          string  `json:"email" form:"email" gorm:"not null;default:null;unique"`
+	GoogleID       string  `json:"googleID" form:"googleID" gorm:"not null;default:null;unique"`
+	GithubUsername *string `json:"githubUsername" form:"githubUsername"`
+	GithubID       *string `json:"githubID" form:"githubID"`
+}
+
+type StoredMutableUserFields struct {
+	Name *string `json:"name,omitempty" form:"name"`
 }
 
 type InferredUserFields struct {

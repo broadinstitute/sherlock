@@ -2,6 +2,7 @@ package v2models
 
 import (
 	"fmt"
+	"github.com/broadinstitute/sherlock/internal/utils"
 	"strconv"
 
 	"github.com/broadinstitute/sherlock/internal/errors"
@@ -26,6 +27,10 @@ func (c Chart) TableName() string {
 	return "v2_charts"
 }
 
+func (c Chart) getID() uint {
+	return c.ID
+}
+
 var chartStore *internalModelStore[Chart]
 
 func init() {
@@ -41,16 +46,16 @@ func chartSelectorToQuery(_ *gorm.DB, selector string) (Chart, error) {
 		return Chart{}, fmt.Errorf("(%s) chart selector cannot be empty", errors.BadRequest)
 	}
 	var query Chart
-	if isNumeric(selector) { // ID
+	if utils.IsNumeric(selector) { // ID
 		id, err := strconv.Atoi(selector)
 		if err != nil {
 			return Chart{}, fmt.Errorf("(%s) string to int conversion error of '%s': %v", errors.BadRequest, selector, err)
 		}
 		query.ID = uint(id)
 		return query, nil
-	} else if isAlphaNumericWithHyphens(selector) &&
-		isStartingWithLetter(selector) &&
-		isEndingWithAlphaNumeric(selector) { // Name
+	} else if utils.IsAlphaNumericWithHyphens(selector) &&
+		utils.IsStartingWithLetter(selector) &&
+		utils.IsEndingWithAlphaNumeric(selector) { // Name
 		query.Name = selector
 		return query, nil
 	}

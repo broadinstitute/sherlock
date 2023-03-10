@@ -5,6 +5,7 @@ import (
 	"github.com/broadinstitute/sherlock/internal/auth/auth_models"
 	"github.com/broadinstitute/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/internal/models/model_actions"
+	"github.com/broadinstitute/sherlock/internal/utils"
 	"gorm.io/gorm"
 	"strconv"
 	"strings"
@@ -33,6 +34,10 @@ func (c ChartRelease) TableName() string {
 	return "v2_chart_releases"
 }
 
+func (c ChartRelease) getID() uint {
+	return c.ID
+}
+
 var chartReleaseStore *internalModelStore[ChartRelease]
 
 func init() {
@@ -51,7 +56,7 @@ func chartReleaseSelectorToQuery(db *gorm.DB, selector string) (ChartRelease, er
 		return ChartRelease{}, fmt.Errorf("(%s) chart release selector cannot be empty", errors.BadRequest)
 	}
 	var query ChartRelease
-	if isNumeric(selector) { // ID
+	if utils.IsNumeric(selector) { // ID
 		id, err := strconv.Atoi(selector)
 		if err != nil {
 			return ChartRelease{}, fmt.Errorf("(%s) string to int conversion error of '%s': %v", errors.BadRequest, selector, err)
@@ -100,10 +105,10 @@ func chartReleaseSelectorToQuery(db *gorm.DB, selector string) (ChartRelease, er
 
 		// namespace
 		namespace := parts[1]
-		if !(isAlphaNumericWithHyphens(namespace) &&
+		if !(utils.IsAlphaNumericWithHyphens(namespace) &&
 			len(namespace) > 0 &&
-			isStartingWithLetter(namespace) &&
-			isEndingWithAlphaNumeric(namespace)) {
+			utils.IsStartingWithLetter(namespace) &&
+			utils.IsEndingWithAlphaNumeric(namespace)) {
 			return ChartRelease{}, fmt.Errorf("(%s) invalid chart release selector %s, namespace sub-selector %s was invalid", errors.BadRequest, selector, namespace)
 		}
 		query.Namespace = namespace
@@ -120,9 +125,9 @@ func chartReleaseSelectorToQuery(db *gorm.DB, selector string) (ChartRelease, er
 		query.ChartID = chart.ID
 
 		return query, nil
-	} else if isAlphaNumericWithHyphens(selector) &&
-		isStartingWithLetter(selector) &&
-		isEndingWithAlphaNumeric(selector) { // name
+	} else if utils.IsAlphaNumericWithHyphens(selector) &&
+		utils.IsStartingWithLetter(selector) &&
+		utils.IsEndingWithAlphaNumeric(selector) { // name
 		query.Name = selector
 		return query, nil
 	}

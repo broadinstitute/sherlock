@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/broadinstitute/sherlock/internal/auth/auth_models"
 	"github.com/broadinstitute/sherlock/internal/errors"
+	"github.com/broadinstitute/sherlock/internal/utils"
 	"gorm.io/gorm"
 	"strconv"
 	"time"
@@ -26,6 +27,10 @@ func (c Changeset) TableName() string {
 	return "v2_changesets"
 }
 
+func (c Changeset) getID() uint {
+	return c.ID
+}
+
 var changesetStore *internalChangesetEventStore
 
 func init() {
@@ -45,7 +50,7 @@ func changesetSelectorToQuery(_ *gorm.DB, selector string) (Changeset, error) {
 	}
 
 	var query Changeset
-	if isNumeric(selector) { // ID
+	if utils.IsNumeric(selector) { // ID
 		id, err := strconv.Atoi(selector)
 		if err != nil {
 			return Changeset{}, fmt.Errorf("(%s) string to int conversion error of '%s': %v", errors.BadRequest, selector, err)

@@ -5,6 +5,7 @@ import (
 	"github.com/broadinstitute/sherlock/internal/auth/auth_models"
 	"github.com/broadinstitute/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/internal/models/model_actions"
+	"github.com/broadinstitute/sherlock/internal/utils"
 	"gorm.io/gorm"
 	"strconv"
 	"strings"
@@ -20,6 +21,10 @@ type PagerdutyIntegration struct {
 
 func (p PagerdutyIntegration) TableName() string {
 	return "v2_pagerduty_integrations"
+}
+
+func (p PagerdutyIntegration) getID() uint {
+	return p.ID
 }
 
 var pagerdutyIntegrationStore *internalModelStore[PagerdutyIntegration]
@@ -39,7 +44,7 @@ func pagerdutyIntegrationSelectorToQuery(_ *gorm.DB, selector string) (Pagerduty
 		return PagerdutyIntegration{}, fmt.Errorf("(%s) pagerduty integration selector cannot be empty", errors.BadRequest)
 	}
 	var query PagerdutyIntegration
-	if isNumeric(selector) {
+	if utils.IsNumeric(selector) {
 		id, err := strconv.Atoi(selector)
 		if err != nil {
 			return PagerdutyIntegration{}, fmt.Errorf("(%s) string to int conversion error of '%s': %v", errors.BadRequest, selector, err)

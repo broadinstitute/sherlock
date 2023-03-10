@@ -8,7 +8,8 @@ import (
 
 type User struct {
 	ReadableBaseType
-	auth_models.StoredUserFields
+	auth_models.StoredControlledUserFields
+	CreatableUser
 }
 
 type CreatableUser struct {
@@ -16,6 +17,7 @@ type CreatableUser struct {
 }
 
 type EditableUser struct {
+	auth_models.StoredMutableUserFields
 }
 
 //nolint:unused
@@ -26,7 +28,8 @@ func (u User) toModel(_ *v2models.StoreSet) (v2models.User, error) {
 			CreatedAt: u.CreatedAt,
 			UpdatedAt: u.UpdatedAt,
 		},
-		StoredUserFields: u.StoredUserFields,
+		StoredControlledUserFields: u.StoredControlledUserFields,
+		StoredMutableUserFields:    u.StoredMutableUserFields,
 	}, nil
 }
 
@@ -40,13 +43,17 @@ func (u EditableUser) toModel(storeSet *v2models.StoreSet) (v2models.User, error
 	return CreatableUser{EditableUser: u}.toModel(storeSet)
 }
 
-type UserController = ModelController[v2models.User, User, CreatableUser, EditableUser]
+type UserController struct {
+	ModelController[v2models.User, User, CreatableUser, EditableUser]
+}
 
 func newUserController(stores *v2models.StoreSet) *UserController {
 	return &UserController{
-		primaryStore:    stores.UserStore.ModelStore,
-		allStores:       stores,
-		modelToReadable: modelUserToUser,
+		ModelController: ModelController[v2models.User, User, CreatableUser, EditableUser]{
+			primaryStore:    stores.UserStore,
+			allStores:       stores,
+			modelToReadable: modelUserToUser,
+		},
 	}
 }
 
@@ -60,6 +67,11 @@ func modelUserToUser(model *v2models.User) *User {
 			CreatedAt: model.CreatedAt,
 			UpdatedAt: model.UpdatedAt,
 		},
-		StoredUserFields: model.StoredUserFields,
+		StoredControlledUserFields: model.StoredControlledUserFields,
+		CreatableUser: CreatableUser{
+			EditableUser: EditableUser{
+				StoredMutableUserFields: model.StoredMutableUserFields,
+			},
+		},
 	}
 }
