@@ -13,106 +13,93 @@
  */
 
 import { exists, mapValues } from '../runtime';
-import type { AuthModelsExtraPermissions } from './AuthModelsExtraPermissions';
-import {
-    AuthModelsExtraPermissionsFromJSON,
-    AuthModelsExtraPermissionsFromJSONTyped,
-    AuthModelsExtraPermissionsToJSON,
-} from './AuthModelsExtraPermissions';
-import type { AuthModelsFirecloudAccount } from './AuthModelsFirecloudAccount';
-import {
-    AuthModelsFirecloudAccountFromJSON,
-    AuthModelsFirecloudAccountFromJSONTyped,
-    AuthModelsFirecloudAccountToJSON,
-} from './AuthModelsFirecloudAccount';
-
 /**
  * 
  * @export
- * @interface AuthModelsUser
+ * @interface V2controllersUser
  */
-export interface AuthModelsUser {
+export interface V2controllersUser {
+    /**
+     * 
+     * @type {Date}
+     * @memberof V2controllersUser
+     */
+    createdAt?: Date;
     /**
      * 
      * @type {string}
-     * @memberof AuthModelsUser
+     * @memberof V2controllersUser
      */
     email?: string;
     /**
      * 
      * @type {string}
-     * @memberof AuthModelsUser
+     * @memberof V2controllersUser
      */
     githubID?: string;
     /**
      * 
      * @type {string}
-     * @memberof AuthModelsUser
+     * @memberof V2controllersUser
      */
     githubUsername?: string;
     /**
      * 
      * @type {string}
-     * @memberof AuthModelsUser
+     * @memberof V2controllersUser
      */
     googleID?: string;
     /**
      * 
      * @type {number}
-     * @memberof AuthModelsUser
+     * @memberof V2controllersUser
      */
     id?: number;
     /**
      * 
-     * @type {AuthModelsExtraPermissions}
-     * @memberof AuthModelsUser
-     */
-    matchedExtraPermissions?: AuthModelsExtraPermissions;
-    /**
-     * 
-     * @type {AuthModelsFirecloudAccount}
-     * @memberof AuthModelsUser
-     */
-    matchedFirecloudAccount?: AuthModelsFirecloudAccount;
-    /**
-     * 
      * @type {string}
-     * @memberof AuthModelsUser
+     * @memberof V2controllersUser
      */
     name?: string;
+    /**
+     * 
+     * @type {Date}
+     * @memberof V2controllersUser
+     */
+    updatedAt?: Date;
 }
 
 /**
- * Check if a given object implements the AuthModelsUser interface.
+ * Check if a given object implements the V2controllersUser interface.
  */
-export function instanceOfAuthModelsUser(value: object): boolean {
+export function instanceOfV2controllersUser(value: object): boolean {
     let isInstance = true;
 
     return isInstance;
 }
 
-export function AuthModelsUserFromJSON(json: any): AuthModelsUser {
-    return AuthModelsUserFromJSONTyped(json, false);
+export function V2controllersUserFromJSON(json: any): V2controllersUser {
+    return V2controllersUserFromJSONTyped(json, false);
 }
 
-export function AuthModelsUserFromJSONTyped(json: any, ignoreDiscriminator: boolean): AuthModelsUser {
+export function V2controllersUserFromJSONTyped(json: any, ignoreDiscriminator: boolean): V2controllersUser {
     if ((json === undefined) || (json === null)) {
         return json;
     }
     return {
         
+        'createdAt': !exists(json, 'createdAt') ? undefined : (new Date(json['createdAt'])),
         'email': !exists(json, 'email') ? undefined : json['email'],
         'githubID': !exists(json, 'githubID') ? undefined : json['githubID'],
         'githubUsername': !exists(json, 'githubUsername') ? undefined : json['githubUsername'],
         'googleID': !exists(json, 'googleID') ? undefined : json['googleID'],
         'id': !exists(json, 'id') ? undefined : json['id'],
-        'matchedExtraPermissions': !exists(json, 'matchedExtraPermissions') ? undefined : AuthModelsExtraPermissionsFromJSON(json['matchedExtraPermissions']),
-        'matchedFirecloudAccount': !exists(json, 'matchedFirecloudAccount') ? undefined : AuthModelsFirecloudAccountFromJSON(json['matchedFirecloudAccount']),
         'name': !exists(json, 'name') ? undefined : json['name'],
+        'updatedAt': !exists(json, 'updatedAt') ? undefined : (new Date(json['updatedAt'])),
     };
 }
 
-export function AuthModelsUserToJSON(value?: AuthModelsUser | null): any {
+export function V2controllersUserToJSON(value?: V2controllersUser | null): any {
     if (value === undefined) {
         return undefined;
     }
@@ -121,14 +108,14 @@ export function AuthModelsUserToJSON(value?: AuthModelsUser | null): any {
     }
     return {
         
+        'createdAt': value.createdAt === undefined ? undefined : (value.createdAt.toISOString()),
         'email': value.email,
         'githubID': value.githubID,
         'githubUsername': value.githubUsername,
         'googleID': value.googleID,
         'id': value.id,
-        'matchedExtraPermissions': AuthModelsExtraPermissionsToJSON(value.matchedExtraPermissions),
-        'matchedFirecloudAccount': AuthModelsFirecloudAccountToJSON(value.matchedFirecloudAccount),
         'name': value.name,
+        'updatedAt': value.updatedAt === undefined ? undefined : (value.updatedAt.toISOString()),
     };
 }
 

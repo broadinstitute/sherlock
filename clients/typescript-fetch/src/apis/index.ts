@@ -10,3 +10,4 @@ export * from './DatabaseInstancesApi';
 export * from './EnvironmentsApi';
 export * from './MiscApi';
 export * from './PagerdutyIntegrationsApi';
+export * from './UsersApi';

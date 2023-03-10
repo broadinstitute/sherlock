@@ -20,6 +20,7 @@ import (
 	"github.com/broadinstitute/sherlock/clients/go/client/environments"
 	"github.com/broadinstitute/sherlock/clients/go/client/misc"
 	"github.com/broadinstitute/sherlock/clients/go/client/pagerduty_integrations"
+	"github.com/broadinstitute/sherlock/clients/go/client/users"
 )
 
 // Default sherlock HTTP client.
@@ -74,6 +75,7 @@ func New(transport runtime.ClientTransport, formats strfmt.Registry) *Sherlock {
 	cli.Environments = environments.New(transport, formats)
 	cli.Misc = misc.New(transport, formats)
 	cli.PagerdutyIntegrations = pagerduty_integrations.New(transport, formats)
+	cli.Users = users.New(transport, formats)
 	return cli
 }
 
@@ -138,6 +140,8 @@ type Sherlock struct {
 
 	PagerdutyIntegrations pagerduty_integrations.ClientService
 
+	Users users.ClientService
+
 	Transport runtime.ClientTransport
 }
 
@@ -154,4 +158,5 @@ func (c *Sherlock) SetTransport(transport runtime.ClientTransport) {
 	c.Environments.SetTransport(transport)
 	c.Misc.SetTransport(transport)
 	c.PagerdutyIntegrations.SetTransport(transport)
+	c.Users.SetTransport(transport)
 }

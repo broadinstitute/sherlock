@@ -12,6 +12,7 @@ src/apis/DatabaseInstancesApi.ts
 src/apis/EnvironmentsApi.ts
 src/apis/MiscApi.ts
 src/apis/PagerdutyIntegrationsApi.ts
+src/apis/UsersApi.ts
 src/apis/index.ts
 src/index.ts
 src/models/AuthModelsExtraPermissions.ts
@@ -52,7 +53,9 @@ src/models/V2controllersEditableDatabaseInstance.ts
 src/models/V2controllersEditableEnvironment.ts
 src/models/V2controllersEditablePagerdutyIntegration.ts
 src/models/V2controllersEnvironment.ts
+src/models/V2controllersGithubAccessPayload.ts
 src/models/V2controllersPagerdutyIntegration.ts
+src/models/V2controllersUser.ts
 src/models/index.ts
 src/runtime.ts
 tsconfig.esm.json

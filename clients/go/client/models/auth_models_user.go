@@ -21,14 +21,26 @@ type AuthModelsUser struct {
 	// email
 	Email string `json:"email,omitempty"`
 
+	// github ID
+	GithubID string `json:"githubID,omitempty"`
+
+	// github username
+	GithubUsername string `json:"githubUsername,omitempty"`
+
 	// google ID
 	GoogleID string `json:"googleID,omitempty"`
+
+	// id
+	ID int64 `json:"id,omitempty"`
 
 	// matched extra permissions
 	MatchedExtraPermissions *AuthModelsExtraPermissions `json:"matchedExtraPermissions,omitempty"`
 
 	// matched firecloud account
 	MatchedFirecloudAccount *AuthModelsFirecloudAccount `json:"matchedFirecloudAccount,omitempty"`
+
+	// name
+	Name string `json:"name,omitempty"`
 }
 
 // Validate validates this auth models user

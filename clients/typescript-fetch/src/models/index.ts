@@ -38,4 +38,6 @@ export * from './V2controllersEditableDatabaseInstance';
 export * from './V2controllersEditableEnvironment';
 export * from './V2controllersEditablePagerdutyIntegration';
 export * from './V2controllersEnvironment';
+export * from './V2controllersGithubAccessPayload';
 export * from './V2controllersPagerdutyIntegration';
+export * from './V2controllersUser';
