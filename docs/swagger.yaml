@@ -1,6 +1,14 @@
 consumes:
 - application/json
 definitions:
+  auth_models.AuthMethod:
+    enum:
+    - 0
+    - 1
+    type: integer
+    x-enum-varnames:
+    - AuthMethodIAP
+    - AuthMethodGHA
   auth_models.ExtraPermissions:
     properties:
       suitable:
@@ -32,6 +40,8 @@ definitions:
     type: object
   auth_models.User:
     properties:
+      authMethod:
+        $ref: '#/definitions/auth_models.AuthMethod'
       email:
         type: string
       githubID:
@@ -48,6 +58,8 @@ definitions:
         $ref: '#/definitions/auth_models.FirecloudAccount'
       name:
         type: string
+      via:
+        $ref: '#/definitions/auth_models.User'
     type: object
   environment.AutoDelete:
     properties:

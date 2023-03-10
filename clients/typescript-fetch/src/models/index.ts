@@ -1,5 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
+export * from './AuthModelsAuthMethod';
 export * from './AuthModelsExtraPermissions';
 export * from './AuthModelsFirecloudAccount';
 export * from './AuthModelsFirecloudGroupMembership';

@@ -13,6 +13,12 @@
  */
 
 import { exists, mapValues } from '../runtime';
+import type { AuthModelsAuthMethod } from './AuthModelsAuthMethod';
+import {
+    AuthModelsAuthMethodFromJSON,
+    AuthModelsAuthMethodFromJSONTyped,
+    AuthModelsAuthMethodToJSON,
+} from './AuthModelsAuthMethod';
 import type { AuthModelsExtraPermissions } from './AuthModelsExtraPermissions';
 import {
     AuthModelsExtraPermissionsFromJSON,
@@ -32,6 +38,12 @@ import {
  * @interface AuthModelsUser
  */
 export interface AuthModelsUser {
+    /**
+     * 
+     * @type {AuthModelsAuthMethod}
+     * @memberof AuthModelsUser
+     */
+    authMethod?: AuthModelsAuthMethod;
     /**
      * 
      * @type {string}
@@ -80,6 +92,12 @@ export interface AuthModelsUser {
      * @memberof AuthModelsUser
      */
     name?: string;
+    /**
+     * 
+     * @type {AuthModelsUser}
+     * @memberof AuthModelsUser
+     */
+    via?: AuthModelsUser;
 }
 
 /**
@@ -101,6 +119,7 @@ export function AuthModelsUserFromJSONTyped(json: any, ignoreDiscriminator: bool
     }
     return {
         
+        'authMethod': !exists(json, 'authMethod') ? undefined : AuthModelsAuthMethodFromJSON(json['authMethod']),
         'email': !exists(json, 'email') ? undefined : json['email'],
         'githubID': !exists(json, 'githubID') ? undefined : json['githubID'],
         'githubUsername': !exists(json, 'githubUsername') ? undefined : json['githubUsername'],
@@ -109,6 +128,7 @@ export function AuthModelsUserFromJSONTyped(json: any, ignoreDiscriminator: bool
         'matchedExtraPermissions': !exists(json, 'matchedExtraPermissions') ? undefined : AuthModelsExtraPermissionsFromJSON(json['matchedExtraPermissions']),
         'matchedFirecloudAccount': !exists(json, 'matchedFirecloudAccount') ? undefined : AuthModelsFirecloudAccountFromJSON(json['matchedFirecloudAccount']),
         'name': !exists(json, 'name') ? undefined : json['name'],
+        'via': !exists(json, 'via') ? undefined : AuthModelsUserFromJSON(json['via']),
     };
 }
 
@@ -121,6 +141,7 @@ export function AuthModelsUserToJSON(value?: AuthModelsUser | null): any {
     }
     return {
         
+        'authMethod': AuthModelsAuthMethodToJSON(value.authMethod),
         'email': value.email,
         'githubID': value.githubID,
         'githubUsername': value.githubUsername,
@@ -129,6 +150,7 @@ export function AuthModelsUserToJSON(value?: AuthModelsUser | null): any {
         'matchedExtraPermissions': AuthModelsExtraPermissionsToJSON(value.matchedExtraPermissions),
         'matchedFirecloudAccount': AuthModelsFirecloudAccountToJSON(value.matchedFirecloudAccount),
         'name': value.name,
+        'via': AuthModelsUserToJSON(value.via),
     };
 }
 

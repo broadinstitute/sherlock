@@ -15,6 +15,7 @@ src/apis/PagerdutyIntegrationsApi.ts
 src/apis/UsersApi.ts
 src/apis/index.ts
 src/index.ts
+src/models/AuthModelsAuthMethod.ts
 src/models/AuthModelsExtraPermissions.ts
 src/models/AuthModelsFirecloudAccount.ts
 src/models/AuthModelsFirecloudGroupMembership.ts

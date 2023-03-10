@@ -18,6 +18,9 @@ import (
 // swagger:model auth_models.User
 type AuthModelsUser struct {
 
+	// auth method
+	AuthMethod AuthModelsAuthMethod `json:"authMethod,omitempty"`
+
 	// email
 	Email string `json:"email,omitempty"`
 
@@ -41,11 +44,18 @@ type AuthModelsUser struct {
 
 	// name
 	Name string `json:"name,omitempty"`
+
+	// via
+	Via *AuthModelsUser `json:"via,omitempty"`
 }
 
 // Validate validates this auth models user
 func (m *AuthModelsUser) Validate(formats strfmt.Registry) error {
 	var res []error
+
+	if err := m.validateAuthMethod(formats); err != nil {
+		res = append(res, err)
+	}
 
 	if err := m.validateMatchedExtraPermissions(formats); err != nil {
 		res = append(res, err)
@@ -55,9 +65,30 @@ func (m *AuthModelsUser) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateVia(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *AuthModelsUser) validateAuthMethod(formats strfmt.Registry) error {
+	if swag.IsZero(m.AuthMethod) { // not required
+		return nil
+	}
+
+	if err := m.AuthMethod.Validate(formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("authMethod")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("authMethod")
+		}
+		return err
+	}
+
 	return nil
 }
 
@@ -99,9 +130,32 @@ func (m *AuthModelsUser) validateMatchedFirecloudAccount(formats strfmt.Registry
 	return nil
 }
 
+func (m *AuthModelsUser) validateVia(formats strfmt.Registry) error {
+	if swag.IsZero(m.Via) { // not required
+		return nil
+	}
+
+	if m.Via != nil {
+		if err := m.Via.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("via")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("via")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
 // ContextValidate validate this auth models user based on the context it is used
 func (m *AuthModelsUser) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
+
+	if err := m.contextValidateAuthMethod(ctx, formats); err != nil {
+		res = append(res, err)
+	}
 
 	if err := m.contextValidateMatchedExtraPermissions(ctx, formats); err != nil {
 		res = append(res, err)
@@ -111,9 +165,27 @@ func (m *AuthModelsUser) ContextValidate(ctx context.Context, formats strfmt.Reg
 		res = append(res, err)
 	}
 
+	if err := m.contextValidateVia(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *AuthModelsUser) contextValidateAuthMethod(ctx context.Context, formats strfmt.Registry) error {
+
+	if err := m.AuthMethod.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("authMethod")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("authMethod")
+		}
+		return err
+	}
+
 	return nil
 }
 
@@ -141,6 +213,22 @@ func (m *AuthModelsUser) contextValidateMatchedFirecloudAccount(ctx context.Cont
 				return ve.ValidateName("matchedFirecloudAccount")
 			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("matchedFirecloudAccount")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *AuthModelsUser) contextValidateVia(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Via != nil {
+		if err := m.Via.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("via")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("via")
 			}
 			return err
 		}

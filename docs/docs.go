@@ -5568,6 +5568,17 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "auth_models.AuthMethod": {
+            "type": "integer",
+            "enum": [
+                0,
+                1
+            ],
+            "x-enum-varnames": [
+                "AuthMethodIAP",
+                "AuthMethodGHA"
+            ]
+        },
         "auth_models.ExtraPermissions": {
             "type": "object",
             "properties": {
@@ -5616,6 +5627,9 @@ const docTemplate = `{
         "auth_models.User": {
             "type": "object",
             "properties": {
+                "authMethod": {
+                    "$ref": "#/definitions/auth_models.AuthMethod"
+                },
                 "email": {
                     "type": "string"
                 },
@@ -5639,6 +5653,9 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
+                },
+                "via": {
+                    "$ref": "#/definitions/auth_models.User"
                 }
             }
         },
