@@ -20,9 +20,7 @@ jobs:
         id: idtoken
         with:
           script: |
-            const coredemo = require('@actions/core')
-            let id_token = await coredemo.getIDToken()
-            coredemo.setOutput('id_token', id_token)
+            core.setOutput('id_token', await core.getIDToken())
       - name: "Authenticate to GCP"
         id: 'auth'
         uses: google-github-actions/auth@v0
