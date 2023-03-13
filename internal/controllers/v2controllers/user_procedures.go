@@ -54,7 +54,7 @@ func (c UserController) UpdateUserGithubAssociation(githubAccess GithubAccessPay
 			log.Info().Msgf("GH   | user %s changing linked github account from %s (ID %s) to %s (ID %s)", user.Email, *user.GithubUsername, *user.GithubID, *githubUser.Login, githubUserIdString)
 			editsToMake.GithubUsername = githubUser.Login
 			editsToMake.GithubID = &githubUserIdString
-		} else if *user.GithubUsername != *githubUser.Login { // If the stored github user is the same, just new name
+		} else if *user.GithubUsername != *githubUser.Login { // If the stored github user is the same, just new username
 			log.Info().Msgf("GH   | user %s linked github account (ID %s) has new username, from %s to %s", user.Email, *user.GithubID, *user.GithubUsername, *githubUser.Login)
 			editsToMake.GithubUsername = githubUser.Login
 		}
