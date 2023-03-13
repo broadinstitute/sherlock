@@ -9,6 +9,7 @@ import (
 	"github.com/google/go-github/v50/github"
 	"github.com/rs/zerolog/log"
 	"golang.org/x/oauth2"
+	"time"
 )
 
 type GithubAccessPayload struct {
@@ -26,7 +27,9 @@ func (c UserController) UpdateUserGithubAssociation(githubAccess GithubAccessPay
 		// to have an error message than hit the nil pointer.
 		return User{}, false, fmt.Errorf("(%s) user not passed from middleware", errors.InternalServerError)
 	}
-	ctx := context.Background()
+	// Arbitrary long-ish timeout; Beehive doesn't call this endpoint synchronously
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
 	tokenSource := oauth2.StaticTokenSource(
 		&oauth2.Token{AccessToken: githubAccess.GithubAccessToken},
 	)
