@@ -18,6 +18,7 @@ func RegisterUserHandlers(routerGroup *gin.RouterGroup, controller *v2controller
 	routerGroup.DELETE("/users/*selector", deleteUser(controller))
 	routerGroup.GET("/selectors/users/*selector", listUserSelectors(controller))
 	routerGroup.POST("/procedures/users/link-github", updateUserGithubAssociation(controller))
+	routerGroup.GET("/procedures/users/me", getOwnUser(controller))
 }
 
 // createUser godoc
@@ -160,5 +161,30 @@ func updateUserGithubAssociation(controller *v2controllers.UserController) func(
 		} else {
 			ctx.JSON(http.StatusOK, result)
 		}
+	}
+}
+
+// getOwnUser godoc
+//
+//	@summary		Get your own User entry
+//	@description	Get your own User entry
+//	@tags			Users
+//	@produce		json
+//	@success		200						{object}	v2controllers.User
+//	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
+//	@router			/api/v2/procedures/users/me [get]
+func getOwnUser(controller *v2controllers.UserController) func(ctx *gin.Context) {
+	return func(ctx *gin.Context) {
+		user, err := auth.ExtractUserFromContext(ctx)
+		if err != nil {
+			ctx.JSON(errors.ErrorToApiResponse(err))
+			return
+		}
+		result, err := controller.Get(user.Email)
+		if err != nil {
+			ctx.JSON(errors.ErrorToApiResponse(err))
+			return
+		}
+		ctx.JSON(http.StatusOK, result)
 	}
 }
