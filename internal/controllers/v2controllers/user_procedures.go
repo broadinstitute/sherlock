@@ -58,9 +58,11 @@ func (c UserController) UpdateUserGithubAssociation(githubAccess GithubAccessPay
 			log.Info().Msgf("GH   | user %s linked github account (ID %s) has new username, from %s to %s", user.Email, *user.GithubID, *user.GithubUsername, *githubUser.Login)
 			editsToMake.GithubUsername = githubUser.Login
 		}
-		if user.Name == nil && githubUser.Name != nil { // If we don't have a name but the github info does
+		if (user.Name == nil || user.NameInferredFromGithub == nil || *user.NameInferredFromGithub) && githubUser.Name != nil { // If we should grab the name from github
 			log.Info().Msgf("GH   | user %s github account data contained name %s, recording", user.Email, *githubUser.Name)
 			editsToMake.Name = githubUser.Name
+			trueValue := true
+			editsToMake.NameInferredFromGithub = &trueValue
 		}
 
 		if editsToMake.GithubID != nil || editsToMake.GithubUsername != nil || editsToMake.Name != nil {
