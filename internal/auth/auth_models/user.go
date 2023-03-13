@@ -75,6 +75,18 @@ func (u *User) SuitableOrError() error {
 	}
 }
 
+// IsFromAuthMethod checks if this User is entirely derived from the provided auth method. This function is recursive on
+// the "Via" User field.
+func (u *User) IsFromAuthMethod(authMethod AuthMethod) bool {
+	if u.AuthMethod != authMethod {
+		return false
+	} else if u.Via != nil {
+		return u.Via.IsFromAuthMethod(authMethod)
+	} else {
+		return true
+	}
+}
+
 func (u *User) isKnownSuitable() bool {
 	return (u.MatchedFirecloudAccount != nil &&
 		u.MatchedFirecloudAccount.AcceptedGoogleTerms &&

@@ -99,6 +99,8 @@ func userErrorIfForbidden(_ *gorm.DB, modelUser *User, action model_actions.Acti
 	case model_actions.EDIT:
 		if modelUser.Email != user.Email {
 			return fmt.Errorf("users can only edit themselves")
+		} else if !user.IsFromAuthMethod(auth_models.AuthMethodIAP) {
+			return fmt.Errorf("users cannot be edited from non-IAP auth methods")
 		}
 	case model_actions.DELETE:
 		return fmt.Errorf("users cannot be deleted")
