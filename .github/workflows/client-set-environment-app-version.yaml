@@ -165,7 +165,7 @@ jobs:
           echo "## Set ${{ inputs.environment-name }}/${{ inputs.chart-name }} to ${{ inputs.chart-name }}/${{ inputs.new-version }} in Sherlock" >> $GITHUB_STEP_SUMMARY
 
       - name: "Authenticate to GCP"
-        id: 'auth'
+        id: 'iap_auth'
         uses: google-github-actions/auth@v0
         with:
           workload_identity_provider: 'projects/1038484894585/locations/global/workloadIdentityPools/github-wi-pool/providers/github-wi-provider'
@@ -175,6 +175,12 @@ jobs:
           id_token_include_email: true
           create_credentials_file: false
           export_environment_variables: false
+
+      - name: "Generate GHA OIDC Token"
+        id: 'gha_auth'
+        uses: actions/github-script@v6
+        with:
+          script: core.setOutput('id_token', await core.getIDToken())
       
       - name: "Send to Sherlock Prod"
         if: ${{ inputs.use-sherlock-prod }}
@@ -185,7 +191,8 @@ jobs:
           curl --fail-with-body -X 'POST' \
             "$SHERLOCK_PROD_URL/api/v2/procedures/changesets/plan-and-apply" \
             -H 'Content-Type: application/json' \
-            -H 'Authorization: Bearer ${{ steps.auth.outputs.id_token }}' \
+            -H 'Authorization: Bearer ${{ steps.iap_auth.outputs.id_token }}' \
+            -H 'X-GHA-OIDC-JWT: ${{ steps.gha_auth.outputs.id_token }}' \
             -d "@$RUNNER_TEMP/body.json" | jq
           echo "### Available in Beehive at $BEEHIVE_PROD_VANITY_URL/r/chart-release/${{ inputs.environment-name }}/${{ inputs.chart-name }}" >> $GITHUB_STEP_SUMMARY
 
@@ -198,7 +205,8 @@ jobs:
           curl --fail-with-body -X 'POST' \
             "$SHERLOCK_DEV_URL/api/v2/procedures/changesets/plan-and-apply" \
             -H 'Content-Type: application/json' \
-            -H 'Authorization: Bearer ${{ steps.auth.outputs.id_token }}' \
+            -H 'Authorization: Bearer ${{ steps.iap_auth.outputs.id_token }}' \
+            -H 'X-GHA-OIDC-JWT: ${{ steps.gha_auth.outputs.id_token }}' \
             -d "@$RUNNER_TEMP/body.json" | jq
 
   can-sync:
