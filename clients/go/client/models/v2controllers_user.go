@@ -41,6 +41,9 @@ type V2controllersUser struct {
 	// name
 	Name string `json:"name,omitempty"`
 
+	// name inferred from github
+	NameInferredFromGithub bool `json:"nameInferredFromGithub,omitempty"`
+
 	// updated at
 	// Format: date-time
 	UpdatedAt strfmt.DateTime `json:"updatedAt,omitempty"`

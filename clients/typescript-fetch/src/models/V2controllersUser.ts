@@ -63,6 +63,12 @@ export interface V2controllersUser {
     name?: string;
     /**
      * 
+     * @type {boolean}
+     * @memberof V2controllersUser
+     */
+    nameInferredFromGithub?: boolean;
+    /**
+     * 
      * @type {Date}
      * @memberof V2controllersUser
      */
@@ -95,6 +101,7 @@ export function V2controllersUserFromJSONTyped(json: any, ignoreDiscriminator: b
         'googleID': !exists(json, 'googleID') ? undefined : json['googleID'],
         'id': !exists(json, 'id') ? undefined : json['id'],
         'name': !exists(json, 'name') ? undefined : json['name'],
+        'nameInferredFromGithub': !exists(json, 'nameInferredFromGithub') ? undefined : json['nameInferredFromGithub'],
         'updatedAt': !exists(json, 'updatedAt') ? undefined : (new Date(json['updatedAt'])),
     };
 }
@@ -115,6 +122,7 @@ export function V2controllersUserToJSON(value?: V2controllersUser | null): any {
         'googleID': value.googleID,
         'id': value.id,
         'name': value.name,
+        'nameInferredFromGithub': value.nameInferredFromGithub,
         'updatedAt': value.updatedAt === undefined ? undefined : (value.updatedAt.toISOString()),
     };
 }

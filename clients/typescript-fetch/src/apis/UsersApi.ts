@@ -16,12 +16,15 @@
 import * as runtime from '../runtime';
 import type {
   ErrorsErrorResponse,
+  V2controllersEditableUser,
   V2controllersGithubAccessPayload,
   V2controllersUser,
 } from '../models';
 import {
     ErrorsErrorResponseFromJSON,
     ErrorsErrorResponseToJSON,
+    V2controllersEditableUserFromJSON,
+    V2controllersEditableUserToJSON,
     V2controllersGithubAccessPayloadFromJSON,
     V2controllersGithubAccessPayloadToJSON,
     V2controllersUserFromJSON,
@@ -30,6 +33,32 @@ import {
 
 export interface ApiV2ProceduresUsersLinkGithubPostRequest {
     githubAccessPayloadRequest: V2controllersGithubAccessPayload;
+}
+
+export interface ApiV2SelectorsUsersSelectorGetRequest {
+    selector: string;
+}
+
+export interface ApiV2UsersGetRequest {
+    createdAt?: Date;
+    email?: string;
+    githubID?: string;
+    githubUsername?: string;
+    googleID?: string;
+    id?: number;
+    name?: string;
+    nameInferredFromGithub?: boolean;
+    updatedAt?: Date;
+    limit?: number;
+}
+
+export interface ApiV2UsersSelectorGetRequest {
+    selector: string;
+}
+
+export interface ApiV2UsersSelectorPatchRequest {
+    selector: string;
+    user: V2controllersEditableUser;
 }
 
 /**
@@ -69,6 +98,205 @@ export class UsersApi extends runtime.BaseAPI {
      */
     async apiV2ProceduresUsersLinkGithubPost(requestParameters: ApiV2ProceduresUsersLinkGithubPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<V2controllersUser> {
         const response = await this.apiV2ProceduresUsersLinkGithubPostRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Get your own User entry
+     * Get your own User entry
+     */
+    async apiV2ProceduresUsersMeGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<V2controllersUser>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/v2/procedures/users/me`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => V2controllersUserFromJSON(jsonValue));
+    }
+
+    /**
+     * Get your own User entry
+     * Get your own User entry
+     */
+    async apiV2ProceduresUsersMeGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<V2controllersUser> {
+        const response = await this.apiV2ProceduresUsersMeGetRaw(initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Validate a given User selector and provide any other selectors that would match the same User.
+     * List User selectors
+     */
+    async apiV2SelectorsUsersSelectorGetRaw(requestParameters: ApiV2SelectorsUsersSelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<string>>> {
+        if (requestParameters.selector === null || requestParameters.selector === undefined) {
+            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiV2SelectorsUsersSelectorGet.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/v2/selectors/users/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse<any>(response);
+    }
+
+    /**
+     * Validate a given User selector and provide any other selectors that would match the same User.
+     * List User selectors
+     */
+    async apiV2SelectorsUsersSelectorGet(requestParameters: ApiV2SelectorsUsersSelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<string>> {
+        const response = await this.apiV2SelectorsUsersSelectorGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * List existing User entries, ordered by most recently updated.
+     * List User entries
+     */
+    async apiV2UsersGetRaw(requestParameters: ApiV2UsersGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<V2controllersUser>>> {
+        const queryParameters: any = {};
+
+        if (requestParameters.createdAt !== undefined) {
+            queryParameters['createdAt'] = (requestParameters.createdAt as any).toISOString();
+        }
+
+        if (requestParameters.email !== undefined) {
+            queryParameters['email'] = requestParameters.email;
+        }
+
+        if (requestParameters.githubID !== undefined) {
+            queryParameters['githubID'] = requestParameters.githubID;
+        }
+
+        if (requestParameters.githubUsername !== undefined) {
+            queryParameters['githubUsername'] = requestParameters.githubUsername;
+        }
+
+        if (requestParameters.googleID !== undefined) {
+            queryParameters['googleID'] = requestParameters.googleID;
+        }
+
+        if (requestParameters.id !== undefined) {
+            queryParameters['id'] = requestParameters.id;
+        }
+
+        if (requestParameters.name !== undefined) {
+            queryParameters['name'] = requestParameters.name;
+        }
+
+        if (requestParameters.nameInferredFromGithub !== undefined) {
+            queryParameters['nameInferredFromGithub'] = requestParameters.nameInferredFromGithub;
+        }
+
+        if (requestParameters.updatedAt !== undefined) {
+            queryParameters['updatedAt'] = (requestParameters.updatedAt as any).toISOString();
+        }
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/v2/users`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(V2controllersUserFromJSON));
+    }
+
+    /**
+     * List existing User entries, ordered by most recently updated.
+     * List User entries
+     */
+    async apiV2UsersGet(requestParameters: ApiV2UsersGetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<V2controllersUser>> {
+        const response = await this.apiV2UsersGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Get an existing User entry via one of its \"selectors\": email, numeric id, \'github/\' + GitHub username, \'github-id/\' + GitHub numeric id, or \'google-id/\' + Google numeric id.
+     * Get a User entry
+     */
+    async apiV2UsersSelectorGetRaw(requestParameters: ApiV2UsersSelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<V2controllersUser>> {
+        if (requestParameters.selector === null || requestParameters.selector === undefined) {
+            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiV2UsersSelectorGet.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/v2/users/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => V2controllersUserFromJSON(jsonValue));
+    }
+
+    /**
+     * Get an existing User entry via one of its \"selectors\": email, numeric id, \'github/\' + GitHub username, \'github-id/\' + GitHub numeric id, or \'google-id/\' + Google numeric id.
+     * Get a User entry
+     */
+    async apiV2UsersSelectorGet(requestParameters: ApiV2UsersSelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<V2controllersUser> {
+        const response = await this.apiV2UsersSelectorGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Edit an existing User entry via one of its \"selectors\": email, numeric id, \'github/\' + GitHub username, \'github-id/\' + GitHub numeric id, or \'google-id/\' + Google numeric id. Note that only mutable fields are available here, immutable fields can only be set using /create.
+     * Edit a User entry
+     */
+    async apiV2UsersSelectorPatchRaw(requestParameters: ApiV2UsersSelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<V2controllersUser>> {
+        if (requestParameters.selector === null || requestParameters.selector === undefined) {
+            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiV2UsersSelectorPatch.');
+        }
+
+        if (requestParameters.user === null || requestParameters.user === undefined) {
+            throw new runtime.RequiredError('user','Required parameter requestParameters.user was null or undefined when calling apiV2UsersSelectorPatch.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/api/v2/users/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            method: 'PATCH',
+            headers: headerParameters,
+            query: queryParameters,
+            body: V2controllersEditableUserToJSON(requestParameters.user),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => V2controllersUserFromJSON(jsonValue));
+    }
+
+    /**
+     * Edit an existing User entry via one of its \"selectors\": email, numeric id, \'github/\' + GitHub username, \'github-id/\' + GitHub numeric id, or \'google-id/\' + Google numeric id. Note that only mutable fields are available here, immutable fields can only be set using /create.
+     * Edit a User entry
+     */
+    async apiV2UsersSelectorPatch(requestParameters: ApiV2UsersSelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<V2controllersUser> {
+        const response = await this.apiV2UsersSelectorPatchRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

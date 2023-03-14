@@ -94,6 +94,12 @@ export interface AuthModelsUser {
     name?: string;
     /**
      * 
+     * @type {boolean}
+     * @memberof AuthModelsUser
+     */
+    nameInferredFromGithub?: boolean;
+    /**
+     * 
      * @type {AuthModelsUser}
      * @memberof AuthModelsUser
      */
@@ -128,6 +134,7 @@ export function AuthModelsUserFromJSONTyped(json: any, ignoreDiscriminator: bool
         'matchedExtraPermissions': !exists(json, 'matchedExtraPermissions') ? undefined : AuthModelsExtraPermissionsFromJSON(json['matchedExtraPermissions']),
         'matchedFirecloudAccount': !exists(json, 'matchedFirecloudAccount') ? undefined : AuthModelsFirecloudAccountFromJSON(json['matchedFirecloudAccount']),
         'name': !exists(json, 'name') ? undefined : json['name'],
+        'nameInferredFromGithub': !exists(json, 'nameInferredFromGithub') ? undefined : json['nameInferredFromGithub'],
         'via': !exists(json, 'via') ? undefined : AuthModelsUserFromJSON(json['via']),
     };
 }
@@ -150,6 +157,7 @@ export function AuthModelsUserToJSON(value?: AuthModelsUser | null): any {
         'matchedExtraPermissions': AuthModelsExtraPermissionsToJSON(value.matchedExtraPermissions),
         'matchedFirecloudAccount': AuthModelsFirecloudAccountToJSON(value.matchedFirecloudAccount),
         'name': value.name,
+        'nameInferredFromGithub': value.nameInferredFromGithub,
         'via': AuthModelsUserToJSON(value.via),
     };
 }

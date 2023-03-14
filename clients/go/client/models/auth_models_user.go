@@ -45,6 +45,9 @@ type AuthModelsUser struct {
 	// name
 	Name string `json:"name,omitempty"`
 
+	// name inferred from github
+	NameInferredFromGithub bool `json:"nameInferredFromGithub,omitempty"`
+
 	// via
 	Via *AuthModelsUser `json:"via,omitempty"`
 }
