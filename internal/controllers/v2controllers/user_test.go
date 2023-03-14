@@ -106,8 +106,7 @@ func (suite *userControllerSuite) TestUserFlow() {
 
 	// The middleware also has a shortcut to a narrow "get matching github user if present" method.
 	// It returns nil when there's no match, rather than an error.
-	var generatedUserGithubID int64
-	generatedUserGithubID = 12341234
+	generatedUserGithubID := int64(12341234)
 	nilUser, err := suite.middleware.GetGithubUserIfExists(strconv.FormatInt(generatedUserGithubID, 10))
 	assert.NoError(suite.T(), err)
 	assert.Nil(suite.T(), nilUser)
