@@ -136,7 +136,15 @@ func (suite *userControllerSuite) TestUserFlow() {
 	// Just for test purposes, we'll patch up the auth user object again
 	generatedUser.StoredControlledUserFields = controllerUserWithGithub.StoredControlledUserFields
 
-	// This record github method will then just read instead of writing.
+	// Once the user has github info, then the middleware's shortcut to read it will return non nil:
+	suite.Run("shortcut works", func() {
+		shortcutUser, err := suite.middleware.GetGithubUserIfExists(strconv.FormatInt(generatedUserGithubID, 10))
+		assert.NoError(suite.T(), err)
+		assert.NotNil(suite.T(), shortcutUser)
+		assert.Equal(suite.T(), controllerUserWithGithub.ID, shortcutUser.ID)
+	})
+
+	// The record github method will then just read instead of writing.
 	suite.Run("subsequent github record calls just read", func() {
 		readUserOne, updated, err := suite.UserController.recordGithubInformation(githubPayload, generatedUser)
 		assert.NoError(suite.T(), err)
