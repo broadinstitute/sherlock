@@ -24,7 +24,8 @@ type StoredControlledUserFields struct {
 }
 
 type StoredMutableUserFields struct {
-	Name *string `json:"name,omitempty" form:"name"`
+	Name                   *string `json:"name,omitempty" form:"name"`
+	NameInferredFromGithub *bool   `json:"nameInferredFromGithub" form:"nameInferredFromGithub"`
 }
 
 type InferredUserFields struct {

@@ -70,14 +70,14 @@ func userSelectorToQuery(_ *gorm.DB, selector string) (User, error) {
 func userToSelectors(user *User) []string {
 	var selectors []string
 	if user != nil {
+		if user.ID != 0 {
+			selectors = append(selectors, fmt.Sprintf("%d", user.ID))
+		}
 		if user.Email != "" {
 			selectors = append(selectors, user.Email)
 		}
 		if user.GoogleID != "" {
 			selectors = append(selectors, fmt.Sprintf("google-id/%s", user.GoogleID))
-		}
-		if user.ID != 0 {
-			selectors = append(selectors, fmt.Sprintf("%d", user.ID))
 		}
 		if user.GithubUsername != nil {
 			selectors = append(selectors, fmt.Sprintf("github/%s", *user.GithubUsername))
