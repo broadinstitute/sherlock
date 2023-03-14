@@ -44,33 +44,37 @@ func (c UserController) UpdateUserGithubAssociation(githubAccess GithubAccessPay
 	} else if githubUser.ID == nil || githubUser.Login == nil {
 		return User{}, false, fmt.Errorf("(%s) github api call with user's github access token didn't error but the response didn't contain the id and login fields", errors.InternalServerError)
 	} else {
-		var editsToMake v2models.User
-		githubUserIdString := fmt.Sprintf("%d", *githubUser.ID)
-		if user.GithubID == nil || user.GithubUsername == nil { // If we don't store a github user
-			log.Info().Msgf("GH   | user %s first-time linking github account %s (ID %s)", user.Email, *githubUser.Login, githubUserIdString)
-			editsToMake.GithubUsername = githubUser.Login
-			editsToMake.GithubID = &githubUserIdString
-		} else if *user.GithubID != githubUserIdString { // If the stored github user is a different user (different ID)
-			log.Info().Msgf("GH   | user %s changing linked github account from %s (ID %s) to %s (ID %s)", user.Email, *user.GithubUsername, *user.GithubID, *githubUser.Login, githubUserIdString)
-			editsToMake.GithubUsername = githubUser.Login
-			editsToMake.GithubID = &githubUserIdString
-		} else if *user.GithubUsername != *githubUser.Login { // If the stored github user is the same, just new username
-			log.Info().Msgf("GH   | user %s linked github account (ID %s) has new username, from %s to %s", user.Email, *user.GithubID, *user.GithubUsername, *githubUser.Login)
-			editsToMake.GithubUsername = githubUser.Login
-		}
-		if (user.Name == nil || user.NameInferredFromGithub == nil || *user.NameInferredFromGithub) && githubUser.Name != nil { // If we should grab the name from github
-			log.Info().Msgf("GH   | user %s github account data contained name %s, recording", user.Email, *githubUser.Name)
-			editsToMake.Name = githubUser.Name
-			trueValue := true
-			editsToMake.NameInferredFromGithub = &trueValue
-		}
+		return c.recordGithubInformation(githubUser, user)
+	}
+}
 
-		if editsToMake.GithubID != nil || editsToMake.GithubUsername != nil || editsToMake.Name != nil {
-			modelUser, err := c.primaryStore.Edit(fmt.Sprintf("%d", user.ID), editsToMake, user)
-			return *c.modelToReadable(&modelUser), true, err
-		} else {
-			returnableUser, err := c.Get(fmt.Sprintf("%d", user.ID))
-			return returnableUser, false, err
-		}
+func (c UserController) recordGithubInformation(githubInformation *github.User, user *auth_models.User) (User, bool, error) {
+	var editsToMake v2models.User
+	githubUserIdString := fmt.Sprintf("%d", *githubInformation.ID)
+	if user.GithubID == nil || user.GithubUsername == nil { // If we don't store a github user
+		log.Info().Msgf("GH   | user %s first-time linking github account %s (ID %s)", user.Email, *githubInformation.Login, githubUserIdString)
+		editsToMake.GithubUsername = githubInformation.Login
+		editsToMake.GithubID = &githubUserIdString
+	} else if *user.GithubID != githubUserIdString { // If the stored github user is a different user (different ID)
+		log.Info().Msgf("GH   | user %s changing linked github account from %s (ID %s) to %s (ID %s)", user.Email, *user.GithubUsername, *user.GithubID, *githubInformation.Login, githubUserIdString)
+		editsToMake.GithubUsername = githubInformation.Login
+		editsToMake.GithubID = &githubUserIdString
+	} else if *user.GithubUsername != *githubInformation.Login { // If the stored github user is the same, just new username
+		log.Info().Msgf("GH   | user %s linked github account (ID %s) has new username, from %s to %s", user.Email, *user.GithubID, *user.GithubUsername, *githubInformation.Login)
+		editsToMake.GithubUsername = githubInformation.Login
+	}
+	if (user.Name == nil || user.NameInferredFromGithub == nil || *user.NameInferredFromGithub) && githubInformation.Name != nil { // If we should grab the name from github
+		log.Info().Msgf("GH   | user %s github account data contained name %s, recording", user.Email, *githubInformation.Name)
+		editsToMake.Name = githubInformation.Name
+		trueValue := true
+		editsToMake.NameInferredFromGithub = &trueValue
+	}
+
+	if editsToMake.GithubID != nil || editsToMake.GithubUsername != nil || editsToMake.Name != nil {
+		modelUser, err := c.primaryStore.Edit(user.Email, editsToMake, user)
+		return *c.modelToReadable(&modelUser), true, err
+	} else {
+		returnableUser, err := c.Get(user.Email)
+		return returnableUser, false, err
 	}
 }

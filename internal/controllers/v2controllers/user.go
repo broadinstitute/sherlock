@@ -35,7 +35,7 @@ func (u User) toModel(_ *v2models.StoreSet) (v2models.User, error) {
 
 //nolint:unused
 func (u CreatableUser) toModel(storeSet *v2models.StoreSet) (v2models.User, error) {
-	return User{}.toModel(storeSet)
+	return User{CreatableUser: u}.toModel(storeSet)
 }
 
 //nolint:unused

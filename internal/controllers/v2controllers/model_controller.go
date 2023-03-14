@@ -75,6 +75,9 @@ type ModelController[M v2models.Model, R Readable[M], C Creatable[M], E Editable
 
 func (c ModelController[M, R, C, E]) Create(creatable C, user *auth_models.User) (R, bool, error) {
 	var empty R
+	if user == nil {
+		return empty, false, fmt.Errorf("(%s) user was nil", errors.InternalServerError)
+	}
 	// Handle dynamic defaults, like making an environment from a template
 	if c.setDynamicDefaults != nil {
 		if err := c.setDynamicDefaults(&creatable, c.allStores, user); err != nil {
@@ -117,6 +120,9 @@ func (c ModelController[M, R, C, E]) GetOtherValidSelectors(selector string) ([]
 
 func (c ModelController[M, R, C, E]) Edit(selector string, editable E, user *auth_models.User) (R, error) {
 	var empty R
+	if user == nil {
+		return empty, fmt.Errorf("(%s) user was nil", errors.InternalServerError)
+	}
 	model, err := editable.toModel(c.allStores)
 	if err != nil {
 		return empty, err
@@ -138,6 +144,10 @@ func (c ModelController[M, R, C, E]) Upsert(selector string, creatable C, editab
 }
 
 func (c ModelController[M, R, C, E]) Delete(selector string, user *auth_models.User) (R, error) {
+	var empty R
+	if user == nil {
+		return empty, fmt.Errorf("(%s) user was nil", errors.InternalServerError)
+	}
 	result, err := c.primaryStore.Delete(selector, user)
 	return *c.modelToReadable(&result), err
 }
