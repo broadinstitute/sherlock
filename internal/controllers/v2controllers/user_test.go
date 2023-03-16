@@ -168,6 +168,18 @@ func (suite *userControllerSuite) TestUserFlow() {
 	// This would also get pulled in again upon a new request.
 	generatedUser.StoredMutableUserFields = controllerUserWithGithub.StoredMutableUserFields
 
+	// Consecutive calls still read only (there was a bug here once, hence the weirdly specific test).
+	suite.Run("subsequent github record calls with name just read", func() {
+		readUserOne, updated, err := suite.UserController.recordGithubInformation(githubPayload, generatedUser)
+		assert.NoError(suite.T(), err)
+		assert.False(suite.T(), updated)
+		assert.Equal(suite.T(), controllerUserWithGithub.UpdatedAt, readUserOne.UpdatedAt)
+		readUserTwo, updated, err := suite.UserController.recordGithubInformation(githubPayload, generatedUser)
+		assert.NoError(suite.T(), err)
+		assert.False(suite.T(), updated)
+		assert.Equal(suite.T(), controllerUserWithGithub.UpdatedAt, readUserTwo.UpdatedAt)
+	})
+
 	// The name can be edited in the API...
 	otherName := "MALLORY"
 	controllerUserWithGithub, err = suite.UserController.Edit(generatedUser.Email, EditableUser{
