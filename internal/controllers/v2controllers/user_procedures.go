@@ -63,7 +63,9 @@ func (c UserController) recordGithubInformation(githubInformation *github.User, 
 		log.Info().Msgf("GH   | user %s linked github account (ID %s) has new username, from %s to %s", user.Email, *user.GithubID, *user.GithubUsername, *githubInformation.Login)
 		editsToMake.GithubUsername = githubInformation.Login
 	}
-	if (user.Name == nil || user.NameInferredFromGithub == nil || *user.NameInferredFromGithub) && githubInformation.Name != nil { // If we should grab the name from github
+
+	// If we have a github name, and we either don't store a name or should infer a different name than what we store
+	if githubInformation.Name != nil && (user.Name == nil || ((user.NameInferredFromGithub == nil || *user.NameInferredFromGithub) && *githubInformation.Name != *user.Name)) {
 		log.Info().Msgf("GH   | user %s github account data contained name %s, recording", user.Email, *githubInformation.Name)
 		editsToMake.Name = githubInformation.Name
 		trueValue := true
