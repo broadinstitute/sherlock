@@ -15,6 +15,7 @@ type ChangesetPlanRequest struct {
 type ChangesetPlanRequestChartReleaseEntry struct {
 	CreatableChangeset
 	UseExactVersionsFromOtherChartRelease *string `json:"useExactVersionsFromOtherChartRelease"`
+	UseOthersFirecloudDevelopRef          *bool   `json:"useOthersFirecloudDevelopRef"` // If this is set, also copy the fc-dev ref from an OtherChartRelease
 }
 
 type ChangesetPlanRequestEnvironmentEntry struct {
@@ -23,6 +24,7 @@ type ChangesetPlanRequestEnvironmentEntry struct {
 	FollowVersionsFromOtherEnvironment   *string  `json:"followVersionsFromOtherEnvironment"`
 	IncludeCharts                        []string `json:"includeCharts"` // If omitted, will include all chart releases that haven't opted out of bulk updates
 	ExcludeCharts                        []string `json:"excludeCharts"`
+	UseOthersFirecloudDevelopRef         *bool    `json:"useOthersFirecloudDevelopRef"` // If this is set, also copy the fc-dev ref from an OtherEnvironment
 }
 
 func (c ChangesetController) changesetPlanRequestToModelChangesets(request ChangesetPlanRequest, _ *auth_models.User) ([]v2models.Changeset, error) {
@@ -57,6 +59,9 @@ func (c ChangesetController) changesetPlanRequestToModelChangesets(request Chang
 			fullChangesetRequest.ToChartVersionResolver = &exact
 			fullChangesetRequest.ToChartVersionExact = otherChartRelease.ChartVersionExact
 			fullChangesetRequest.ToHelmfileRef = otherChartRelease.HelmfileRef
+			if chartReleaseRequestEntry.UseOthersFirecloudDevelopRef != nil && *chartReleaseRequestEntry.UseOthersFirecloudDevelopRef {
+				fullChangesetRequest.ToFirecloudDevelopRef = otherChartRelease.FirecloudDevelopRef
+			}
 		}
 		model, err := fullChangesetRequest.toModel(c.allStores)
 		if err != nil {
@@ -155,6 +160,9 @@ func (c ChangesetController) changesetPlanRequestToModelChangesets(request Chang
 				generatedChangeset.ToAppVersionCommit = otherChartRelease.AppVersionCommit
 				generatedChangeset.ToChartVersionExact = otherChartRelease.ChartVersionExact
 				generatedChangeset.ToHelmfileRef = otherChartRelease.HelmfileRef
+				if environmentRequestEntry.UseOthersFirecloudDevelopRef != nil && *environmentRequestEntry.UseOthersFirecloudDevelopRef {
+					generatedChangeset.ToFirecloudDevelopRef = otherChartRelease.FirecloudDevelopRef
+				}
 			}
 			model, err := generatedChangeset.toModel(c.allStores)
 			if err != nil {
