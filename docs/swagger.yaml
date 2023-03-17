@@ -280,7 +280,8 @@ definitions:
       followVersionsFromOtherEnvironment:
         type: string
       includeCharts:
-        description: If omitted, will include all charts
+        description: If omitted, will include all chart releases that haven't opted
+          out of bulk updates
         items:
           type: string
         type: array
@@ -397,6 +398,9 @@ definitions:
         type: string
       id:
         type: integer
+      includedInBulkChangesets:
+        default: true
+        type: boolean
       name:
         description: When creating, will be calculated if left empty
         type: string
@@ -588,6 +592,9 @@ definitions:
       helmfileRef:
         default: HEAD
         type: string
+      includedInBulkChangesets:
+        default: true
+        type: boolean
       name:
         description: When creating, will be calculated if left empty
         type: string
@@ -857,6 +864,9 @@ definitions:
     type: object
   v2controllers.EditableChartRelease:
     properties:
+      includedInBulkChangesets:
+        default: true
+        type: boolean
       pagerdutyIntegration:
         type: string
       port:
@@ -1707,6 +1717,10 @@ paths:
       - in: query
         name: id
         type: integer
+      - default: true
+        in: query
+        name: includedInBulkChangesets
+        type: boolean
       - description: When creating, will be calculated if left empty
         in: query
         name: name

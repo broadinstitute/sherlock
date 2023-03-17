@@ -139,6 +139,11 @@ type GetAPIV2ChartReleasesParams struct {
 	// ID.
 	ID *int64
 
+	// IncludedInBulkChangesets.
+	//
+	// Default: true
+	IncludedInBulkChangesets *bool
+
 	/* Limit.
 
 	   An optional limit to the number of entries returned
@@ -202,10 +207,13 @@ func (o *GetAPIV2ChartReleasesParams) WithDefaults() *GetAPIV2ChartReleasesParam
 func (o *GetAPIV2ChartReleasesParams) SetDefaults() {
 	var (
 		helmfileRefDefault = string("HEAD")
+
+		includedInBulkChangesetsDefault = bool(true)
 	)
 
 	val := GetAPIV2ChartReleasesParams{
-		HelmfileRef: &helmfileRefDefault,
+		HelmfileRef:              &helmfileRefDefault,
+		IncludedInBulkChangesets: &includedInBulkChangesetsDefault,
 	}
 
 	val.timeout = o.timeout
@@ -443,6 +451,17 @@ func (o *GetAPIV2ChartReleasesParams) WithID(id *int64) *GetAPIV2ChartReleasesPa
 // SetID adds the id to the get API v2 chart releases params
 func (o *GetAPIV2ChartReleasesParams) SetID(id *int64) {
 	o.ID = id
+}
+
+// WithIncludedInBulkChangesets adds the includedInBulkChangesets to the get API v2 chart releases params
+func (o *GetAPIV2ChartReleasesParams) WithIncludedInBulkChangesets(includedInBulkChangesets *bool) *GetAPIV2ChartReleasesParams {
+	o.SetIncludedInBulkChangesets(includedInBulkChangesets)
+	return o
+}
+
+// SetIncludedInBulkChangesets adds the includedInBulkChangesets to the get API v2 chart releases params
+func (o *GetAPIV2ChartReleasesParams) SetIncludedInBulkChangesets(includedInBulkChangesets *bool) {
+	o.IncludedInBulkChangesets = includedInBulkChangesets
 }
 
 // WithLimit adds the limit to the get API v2 chart releases params
@@ -842,6 +861,23 @@ func (o *GetAPIV2ChartReleasesParams) WriteToRequest(r runtime.ClientRequest, re
 		if qID != "" {
 
 			if err := r.SetQueryParam("id", qID); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.IncludedInBulkChangesets != nil {
+
+		// query param includedInBulkChangesets
+		var qrIncludedInBulkChangesets bool
+
+		if o.IncludedInBulkChangesets != nil {
+			qrIncludedInBulkChangesets = *o.IncludedInBulkChangesets
+		}
+		qIncludedInBulkChangesets := swag.FormatBool(qrIncludedInBulkChangesets)
+		if qIncludedInBulkChangesets != "" {
+
+			if err := r.SetQueryParam("includedInBulkChangesets", qIncludedInBulkChangesets); err != nil {
 				return err
 			}
 		}

@@ -21,6 +21,12 @@ import { exists, mapValues } from '../runtime';
 export interface V2controllersEditableChartRelease {
     /**
      * 
+     * @type {boolean}
+     * @memberof V2controllersEditableChartRelease
+     */
+    includedInBulkChangesets?: boolean;
+    /**
+     * 
      * @type {string}
      * @memberof V2controllersEditableChartRelease
      */
@@ -64,6 +70,7 @@ export function V2controllersEditableChartReleaseFromJSONTyped(json: any, ignore
     }
     return {
         
+        'includedInBulkChangesets': !exists(json, 'includedInBulkChangesets') ? undefined : json['includedInBulkChangesets'],
         'pagerdutyIntegration': !exists(json, 'pagerdutyIntegration') ? undefined : json['pagerdutyIntegration'],
         'port': !exists(json, 'port') ? undefined : json['port'],
         'protocol': !exists(json, 'protocol') ? undefined : json['protocol'],
@@ -80,6 +87,7 @@ export function V2controllersEditableChartReleaseToJSON(value?: V2controllersEdi
     }
     return {
         
+        'includedInBulkChangesets': value.includedInBulkChangesets,
         'pagerdutyIntegration': value.pagerdutyIntegration,
         'port': value.port,
         'protocol': value.protocol,

@@ -26,7 +26,7 @@ type V2controllersChangesetPlanRequestEnvironmentEntry struct {
 	// follow versions from other environment
 	FollowVersionsFromOtherEnvironment string `json:"followVersionsFromOtherEnvironment,omitempty"`
 
-	// If omitted, will include all charts
+	// If omitted, will include all chart releases that haven't opted out of bulk updates
 	IncludeCharts []string `json:"includeCharts"`
 
 	// use exact versions from other environment
