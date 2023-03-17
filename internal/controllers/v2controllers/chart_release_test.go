@@ -257,8 +257,11 @@ func (suite *chartReleaseControllerSuite) TestChartReleaseCreate() {
 			suite.Run("default to chart port", func() {
 				assert.Equal(suite.T(), uint(443), *release.Port)
 			})
-			suite.Run("has legacy configs enabeld and a defaultFirecloudDevelopRef on environment", func() {
+			suite.Run("has legacy configs enabled and a defaultFirecloudDevelopRef on environment", func() {
 				suite.Assert().Equal("terra-dev", *release.FirecloudDevelopRef)
+			})
+			suite.Run("defaults to being included in bulk changesets", func() {
+				suite.Assert().Equal(true, *release.IncludeInBulkChangesets)
 			})
 		})
 		suite.Run("custom cluster app release", func() {

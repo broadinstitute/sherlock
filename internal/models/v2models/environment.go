@@ -361,16 +361,17 @@ func postCreateEnvironment(db *gorm.DB, environment *Environment, user *auth_mod
 			for _, templateChartRelease := range templateChartReleases {
 				chartRelease, _, err := chartReleaseStore.create(db,
 					ChartRelease{
-						ChartID:             templateChartRelease.ChartID,
-						ClusterID:           environment.DefaultClusterID,
-						DestinationType:     "environment",
-						EnvironmentID:       &environment.ID,
-						Name:                fmt.Sprintf("%s-%s", templateChartRelease.Chart.Name, environment.Name),
-						Namespace:           environment.DefaultNamespace,
-						ChartReleaseVersion: templateChartRelease.ChartReleaseVersion,
-						Subdomain:           templateChartRelease.Subdomain,
-						Protocol:            templateChartRelease.Protocol,
-						Port:                templateChartRelease.Port,
+						ChartID:                 templateChartRelease.ChartID,
+						ClusterID:               environment.DefaultClusterID,
+						DestinationType:         "environment",
+						EnvironmentID:           &environment.ID,
+						Name:                    fmt.Sprintf("%s-%s", templateChartRelease.Chart.Name, environment.Name),
+						Namespace:               environment.DefaultNamespace,
+						ChartReleaseVersion:     templateChartRelease.ChartReleaseVersion,
+						Subdomain:               templateChartRelease.Subdomain,
+						Protocol:                templateChartRelease.Protocol,
+						Port:                    templateChartRelease.Port,
+						IncludeInBulkChangesets: templateChartRelease.IncludeInBulkChangesets,
 					}, user)
 				if err != nil {
 					return fmt.Errorf("wasn't able to copy template's release of the %s chart (disable autoPopulateChartReleases to skip): %v", templateChartRelease.Chart.Name, err)
@@ -402,6 +403,7 @@ func postCreateEnvironment(db *gorm.DB, environment *Environment, user *auth_mod
 				noneString := "none"
 				latestString := "latest"
 				headString := "HEAD"
+				trueBoolean := true
 				for index, chartEntry := range autoPopulateCharts {
 					if chartEntry.String("name") != "" {
 						chart, err := chartStore.get(db, Chart{Name: chartEntry.String("name")})
@@ -421,9 +423,10 @@ func postCreateEnvironment(db *gorm.DB, environment *Environment, user *auth_mod
 									ChartVersionResolver: &latestString,
 									HelmfileRef:          &headString,
 								},
-								Subdomain: chart.DefaultSubdomain,
-								Protocol:  chart.DefaultProtocol,
-								Port:      chart.DefaultPort,
+								Subdomain:               chart.DefaultSubdomain,
+								Protocol:                chart.DefaultProtocol,
+								Port:                    chart.DefaultPort,
+								IncludeInBulkChangesets: &trueBoolean,
 							}, user)
 						if err != nil {
 							return fmt.Errorf("wasn't able to insert model.environments.templates.autoPopulateCharts entry %d, '%s' (disable autoPopulateChartReleases to skip): %v", index, chart.Name, err)
