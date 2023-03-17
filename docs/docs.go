@@ -861,6 +861,12 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "boolean",
+                        "default": true,
+                        "name": "includedInBulkChangesets",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "description": "When creating, will be calculated if left empty",
                         "name": "name",
@@ -6364,7 +6370,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "includeCharts": {
-                    "description": "If omitted, will include all charts",
+                    "description": "If omitted, will include all chart releases that haven't opted out of bulk updates",
                     "type": "array",
                     "items": {
                         "type": "string"
@@ -6519,6 +6525,10 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "integer"
+                },
+                "includedInBulkChangesets": {
+                    "type": "boolean",
+                    "default": true
                 },
                 "name": {
                     "description": "When creating, will be calculated if left empty",
@@ -6773,6 +6783,10 @@ const docTemplate = `{
                 "helmfileRef": {
                     "type": "string",
                     "default": "HEAD"
+                },
+                "includedInBulkChangesets": {
+                    "type": "boolean",
+                    "default": true
                 },
                 "name": {
                     "description": "When creating, will be calculated if left empty",
@@ -7131,6 +7145,10 @@ const docTemplate = `{
         "v2controllers.EditableChartRelease": {
             "type": "object",
             "properties": {
+                "includedInBulkChangesets": {
+                    "type": "boolean",
+                    "default": true
+                },
                 "pagerdutyIntegration": {
                     "type": "string"
                 },

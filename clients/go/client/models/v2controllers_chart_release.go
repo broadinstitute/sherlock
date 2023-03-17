@@ -92,6 +92,9 @@ type V2controllersChartRelease struct {
 	// id
 	ID int64 `json:"id,omitempty"`
 
+	// included in bulk changesets
+	IncludedInBulkChangesets *bool `json:"includedInBulkChangesets,omitempty"`
+
 	// When creating, will be calculated if left empty
 	Name string `json:"name,omitempty"`
 

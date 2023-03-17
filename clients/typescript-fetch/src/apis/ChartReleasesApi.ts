@@ -56,6 +56,7 @@ export interface ApiV2ChartReleasesGetRequest {
     firecloudDevelopRef?: string;
     helmfileRef?: string;
     id?: number;
+    includedInBulkChangesets?: boolean;
     name?: string;
     namespace?: string;
     pagerdutyIntegration?: string;
@@ -179,6 +180,10 @@ export class ChartReleasesApi extends runtime.BaseAPI {
 
         if (requestParameters.id !== undefined) {
             queryParameters['id'] = requestParameters.id;
+        }
+
+        if (requestParameters.includedInBulkChangesets !== undefined) {
+            queryParameters['includedInBulkChangesets'] = requestParameters.includedInBulkChangesets;
         }
 
         if (requestParameters.name !== undefined) {

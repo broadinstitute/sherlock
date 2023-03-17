@@ -38,7 +38,7 @@ export interface V2controllersChangesetPlanRequestEnvironmentEntry {
      */
     followVersionsFromOtherEnvironment?: string;
     /**
-     * If omitted, will include all charts
+     * If omitted, will include all chart releases that haven't opted out of bulk updates
      * @type {Array<string>}
      * @memberof V2controllersChangesetPlanRequestEnvironmentEntry
      */

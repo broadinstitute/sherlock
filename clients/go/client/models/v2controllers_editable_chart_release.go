@@ -17,6 +17,9 @@ import (
 // swagger:model v2controllers.EditableChartRelease
 type V2controllersEditableChartRelease struct {
 
+	// included in bulk changesets
+	IncludedInBulkChangesets *bool `json:"includedInBulkChangesets,omitempty"`
+
 	// pagerduty integration
 	PagerdutyIntegration string `json:"pagerdutyIntegration,omitempty"`
 

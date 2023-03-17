@@ -195,6 +195,12 @@ export interface V2controllersChartRelease {
      */
     id?: number;
     /**
+     * 
+     * @type {boolean}
+     * @memberof V2controllersChartRelease
+     */
+    includedInBulkChangesets?: boolean;
+    /**
      * When creating, will be calculated if left empty
      * @type {string}
      * @memberof V2controllersChartRelease
@@ -310,6 +316,7 @@ export function V2controllersChartReleaseFromJSONTyped(json: any, ignoreDiscrimi
         'firecloudDevelopRef': !exists(json, 'firecloudDevelopRef') ? undefined : json['firecloudDevelopRef'],
         'helmfileRef': !exists(json, 'helmfileRef') ? undefined : json['helmfileRef'],
         'id': !exists(json, 'id') ? undefined : json['id'],
+        'includedInBulkChangesets': !exists(json, 'includedInBulkChangesets') ? undefined : json['includedInBulkChangesets'],
         'name': !exists(json, 'name') ? undefined : json['name'],
         'namespace': !exists(json, 'namespace') ? undefined : json['namespace'],
         'pagerdutyIntegration': !exists(json, 'pagerdutyIntegration') ? undefined : json['pagerdutyIntegration'],
@@ -353,6 +360,7 @@ export function V2controllersChartReleaseToJSON(value?: V2controllersChartReleas
         'firecloudDevelopRef': value.firecloudDevelopRef,
         'helmfileRef': value.helmfileRef,
         'id': value.id,
+        'includedInBulkChangesets': value.includedInBulkChangesets,
         'name': value.name,
         'namespace': value.namespace,
         'pagerdutyIntegration': value.pagerdutyIntegration,
