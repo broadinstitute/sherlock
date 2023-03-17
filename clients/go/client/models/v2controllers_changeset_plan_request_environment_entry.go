@@ -31,6 +31,9 @@ type V2controllersChangesetPlanRequestEnvironmentEntry struct {
 
 	// use exact versions from other environment
 	UseExactVersionsFromOtherEnvironment string `json:"useExactVersionsFromOtherEnvironment,omitempty"`
+
+	// If this is set, also copy the fc-dev ref from an OtherEnvironment
+	UseOthersFirecloudDevelopRef bool `json:"useOthersFirecloudDevelopRef,omitempty"`
 }
 
 // Validate validates this v2controllers changeset plan request environment entry

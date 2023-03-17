@@ -52,6 +52,9 @@ type V2controllersChangesetPlanRequestChartReleaseEntry struct {
 
 	// use exact versions from other chart release
 	UseExactVersionsFromOtherChartRelease string `json:"useExactVersionsFromOtherChartRelease,omitempty"`
+
+	// If this is set, also copy the fc-dev ref from an OtherChartRelease
+	UseOthersFirecloudDevelopRef bool `json:"useOthersFirecloudDevelopRef,omitempty"`
 }
 
 // Validate validates this v2controllers changeset plan request chart release entry

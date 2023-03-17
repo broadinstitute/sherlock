@@ -49,6 +49,12 @@ export interface V2controllersChangesetPlanRequestEnvironmentEntry {
      * @memberof V2controllersChangesetPlanRequestEnvironmentEntry
      */
     useExactVersionsFromOtherEnvironment?: string;
+    /**
+     * If this is set, also copy the fc-dev ref from an OtherEnvironment
+     * @type {boolean}
+     * @memberof V2controllersChangesetPlanRequestEnvironmentEntry
+     */
+    useOthersFirecloudDevelopRef?: boolean;
 }
 
 /**
@@ -75,6 +81,7 @@ export function V2controllersChangesetPlanRequestEnvironmentEntryFromJSONTyped(j
         'followVersionsFromOtherEnvironment': !exists(json, 'followVersionsFromOtherEnvironment') ? undefined : json['followVersionsFromOtherEnvironment'],
         'includeCharts': !exists(json, 'includeCharts') ? undefined : json['includeCharts'],
         'useExactVersionsFromOtherEnvironment': !exists(json, 'useExactVersionsFromOtherEnvironment') ? undefined : json['useExactVersionsFromOtherEnvironment'],
+        'useOthersFirecloudDevelopRef': !exists(json, 'useOthersFirecloudDevelopRef') ? undefined : json['useOthersFirecloudDevelopRef'],
     };
 }
 
@@ -92,6 +99,7 @@ export function V2controllersChangesetPlanRequestEnvironmentEntryToJSON(value?: 
         'followVersionsFromOtherEnvironment': value.followVersionsFromOtherEnvironment,
         'includeCharts': value.includeCharts,
         'useExactVersionsFromOtherEnvironment': value.useExactVersionsFromOtherEnvironment,
+        'useOthersFirecloudDevelopRef': value.useOthersFirecloudDevelopRef,
     };
 }
 

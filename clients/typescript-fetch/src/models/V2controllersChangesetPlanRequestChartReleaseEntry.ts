@@ -91,6 +91,12 @@ export interface V2controllersChangesetPlanRequestChartReleaseEntry {
      * @memberof V2controllersChangesetPlanRequestChartReleaseEntry
      */
     useExactVersionsFromOtherChartRelease?: string;
+    /**
+     * If this is set, also copy the fc-dev ref from an OtherChartRelease
+     * @type {boolean}
+     * @memberof V2controllersChangesetPlanRequestChartReleaseEntry
+     */
+    useOthersFirecloudDevelopRef?: boolean;
 }
 
 /**
@@ -124,6 +130,7 @@ export function V2controllersChangesetPlanRequestChartReleaseEntryFromJSONTyped(
         'toFirecloudDevelopRef': !exists(json, 'toFirecloudDevelopRef') ? undefined : json['toFirecloudDevelopRef'],
         'toHelmfileRef': !exists(json, 'toHelmfileRef') ? undefined : json['toHelmfileRef'],
         'useExactVersionsFromOtherChartRelease': !exists(json, 'useExactVersionsFromOtherChartRelease') ? undefined : json['useExactVersionsFromOtherChartRelease'],
+        'useOthersFirecloudDevelopRef': !exists(json, 'useOthersFirecloudDevelopRef') ? undefined : json['useOthersFirecloudDevelopRef'],
     };
 }
 
@@ -148,6 +155,7 @@ export function V2controllersChangesetPlanRequestChartReleaseEntryToJSON(value?:
         'toFirecloudDevelopRef': value.toFirecloudDevelopRef,
         'toHelmfileRef': value.toHelmfileRef,
         'useExactVersionsFromOtherChartRelease': value.useExactVersionsFromOtherChartRelease,
+        'useOthersFirecloudDevelopRef': value.useOthersFirecloudDevelopRef,
     };
 }
 

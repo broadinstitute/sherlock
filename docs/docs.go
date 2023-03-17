@@ -6351,6 +6351,10 @@ const docTemplate = `{
                 },
                 "useExactVersionsFromOtherChartRelease": {
                     "type": "string"
+                },
+                "useOthersFirecloudDevelopRef": {
+                    "description": "If this is set, also copy the fc-dev ref from an OtherChartRelease",
+                    "type": "boolean"
                 }
             }
         },
@@ -6378,6 +6382,10 @@ const docTemplate = `{
                 },
                 "useExactVersionsFromOtherEnvironment": {
                     "type": "string"
+                },
+                "useOthersFirecloudDevelopRef": {
+                    "description": "If this is set, also copy the fc-dev ref from an OtherEnvironment",
+                    "type": "boolean"
                 }
             }
         },
