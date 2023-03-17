@@ -104,6 +104,8 @@ func (c ChangesetController) changesetPlanRequestToModelChangesets(request Chang
 
 			defaultIncluded := potentialTargetChartRelease.IncludeInBulkChangesets == nil || *potentialTargetChartRelease.IncludeInBulkChangesets
 
+			// Explicitly included is always included.
+			// Otherwise, it's included if it is included by default and isn't explicitly excluded.
 			if explicitlyIncluded || (!explicitlyExcluded && defaultIncluded) {
 				targetChartReleases = append(targetChartReleases, potentialTargetChartRelease)
 			}
