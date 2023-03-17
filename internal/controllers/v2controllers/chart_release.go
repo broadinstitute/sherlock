@@ -45,10 +45,11 @@ type CreatableChartRelease struct {
 }
 
 type EditableChartRelease struct {
-	Subdomain            *string `json:"subdomain,omitempty" form:"subdomain"` // When creating, will use the chart's default if left empty
-	Protocol             *string `json:"protocol,omitempty" form:"protocol"`   // When creating, will use the chart's default if left empty
-	Port                 *uint   `json:"port,omitempty" form:"port"`           // When creating, will use the chart's default if left empty
-	PagerdutyIntegration *string `json:"pagerdutyIntegration,omitempty" form:"pagerdutyIntegration"`
+	Subdomain               *string `json:"subdomain,omitempty" form:"subdomain"` // When creating, will use the chart's default if left empty
+	Protocol                *string `json:"protocol,omitempty" form:"protocol"`   // When creating, will use the chart's default if left empty
+	Port                    *uint   `json:"port,omitempty" form:"port"`           // When creating, will use the chart's default if left empty
+	PagerdutyIntegration    *string `json:"pagerdutyIntegration,omitempty" form:"pagerdutyIntegration"`
+	IncludeInBulkChangesets *bool   `json:"includedInBulkChangesets" form:"includedInBulkChangesets" default:"true"`
 }
 
 //nolint:unused
@@ -143,10 +144,11 @@ func (c ChartRelease) toModel(storeSet *v2models.StoreSet) (v2models.ChartReleas
 			HelmfileRef:                      c.HelmfileRef,
 			FirecloudDevelopRef:              c.FirecloudDevelopRef,
 		},
-		Subdomain:              c.Subdomain,
-		Protocol:               c.Protocol,
-		Port:                   c.Port,
-		PagerdutyIntegrationID: pagerdutyIntegrationID,
+		Subdomain:               c.Subdomain,
+		Protocol:                c.Protocol,
+		Port:                    c.Port,
+		PagerdutyIntegrationID:  pagerdutyIntegrationID,
+		IncludeInBulkChangesets: c.IncludeInBulkChangesets,
 	}, nil
 }
 
@@ -266,10 +268,11 @@ func modelChartReleaseToChartRelease(model *v2models.ChartRelease) *ChartRelease
 			HelmfileRef:                    model.HelmfileRef,
 			FirecloudDevelopRef:            model.FirecloudDevelopRef,
 			EditableChartRelease: EditableChartRelease{
-				Subdomain:            model.Subdomain,
-				Protocol:             model.Protocol,
-				Port:                 model.Port,
-				PagerdutyIntegration: &pagerdutyIntegrationID,
+				Subdomain:               model.Subdomain,
+				Protocol:                model.Protocol,
+				Port:                    model.Port,
+				PagerdutyIntegration:    &pagerdutyIntegrationID,
+				IncludeInBulkChangesets: model.IncludeInBulkChangesets,
 			},
 		},
 	}

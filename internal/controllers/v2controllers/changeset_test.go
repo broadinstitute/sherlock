@@ -443,4 +443,50 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 	for _, result := range queried {
 		assert.NotEqual(suite.T(), unapplied[0].ID, result.ID)
 	}
+
+	// It's also possible to exclude a chart release from the bulk update by default.
+	_, err = suite.ChartReleaseController.Edit(fmt.Sprintf("%s/%s", newBee.Name, "sam"),
+		EditableChartRelease{IncludeInBulkChangesets: testutils.PointerTo(false)},
+		auth.GenerateUser(suite.T(), true))
+	assert.NoError(suite.T(), err)
+	// If we make a change to the upstream...
+	_, err = suite.ChangesetController.PlanAndApply(ChangesetPlanRequest{
+		ChartReleases: []ChangesetPlanRequestChartReleaseEntry{
+			{CreatableChangeset: CreatableChangeset{
+				ChartRelease:         "terra-dev/sam",
+				ToAppVersionResolver: testutils.PointerTo("exact"),
+				ToAppVersionExact:    testutils.PointerTo("yet-another-new-version"),
+			}},
+		},
+	}, auth.GenerateUser(suite.T(), true))
+	assert.NoError(suite.T(), err)
+	// And just refresh the BEE...
+	applied, err = suite.ChangesetController.PlanAndApply(ChangesetPlanRequest{
+		Environments: []ChangesetPlanRequestEnvironmentEntry{
+			{
+				Environment: newBee.Name,
+			},
+		},
+	}, auth.GenerateUser(suite.T(), true))
+	assert.NoError(suite.T(), err)
+	// Sam won't get updated!
+	assert.Len(suite.T(), applied, 0)
+	samInBee, err = suite.ChartReleaseController.Get(fmt.Sprintf("%s/%s", newBee.Name, "sam"))
+	assert.NoError(suite.T(), err)
+	assert.Equal(suite.T(), "my-new-version", *samInBee.AppVersionExact)
+
+	// If a chart release is excluded by default, we need to explicitly include what chart releases we want.
+	applied, err = suite.ChangesetController.PlanAndApply(ChangesetPlanRequest{
+		Environments: []ChangesetPlanRequestEnvironmentEntry{
+			{
+				Environment:   newBee.Name,
+				IncludeCharts: []string{"sam"},
+			},
+		},
+	}, auth.GenerateUser(suite.T(), true))
+	assert.NoError(suite.T(), err)
+	assert.Len(suite.T(), applied, 1)
+	samInBee, err = suite.ChartReleaseController.Get(fmt.Sprintf("%s/%s", newBee.Name, "sam"))
+	assert.NoError(suite.T(), err)
+	assert.Equal(suite.T(), "yet-another-new-version", *samInBee.AppVersionExact)
 }

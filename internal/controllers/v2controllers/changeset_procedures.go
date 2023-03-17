@@ -21,7 +21,7 @@ type ChangesetPlanRequestEnvironmentEntry struct {
 	Environment                          string
 	UseExactVersionsFromOtherEnvironment *string  `json:"useExactVersionsFromOtherEnvironment"`
 	FollowVersionsFromOtherEnvironment   *string  `json:"followVersionsFromOtherEnvironment"`
-	IncludeCharts                        []string `json:"includeCharts"` // If omitted, will include all charts
+	IncludeCharts                        []string `json:"includeCharts"` // If omitted, will include all chart releases that haven't opted out of bulk updates
 	ExcludeCharts                        []string `json:"excludeCharts"`
 }
 
@@ -75,21 +75,21 @@ func (c ChangesetController) changesetPlanRequestToModelChangesets(request Chang
 		if err != nil {
 			return nil, fmt.Errorf("error getting referenced environment '%s' for environment entry %d: %v", environmentRequestEntry.Environment, index+1, err)
 		}
-		chartsToInclude := make(map[uint]struct{})
+		chartsToExplicitlyInclude := make(map[uint]struct{})
 		for _, chartSelector := range environmentRequestEntry.IncludeCharts {
 			chart, err := c.allStores.ChartStore.Get(chartSelector)
 			if err != nil {
 				return nil, fmt.Errorf("error getting referenced chart to include '%s' for environment entry %d, '%s': %v", chartSelector, index+1, environmentRequestEntry.Environment, err)
 			}
-			chartsToInclude[chart.ID] = struct{}{}
+			chartsToExplicitlyInclude[chart.ID] = struct{}{}
 		}
-		chartsToExclude := make(map[uint]struct{})
+		chartsToExplicitlyExclude := make(map[uint]struct{})
 		for _, chartSelector := range environmentRequestEntry.ExcludeCharts {
 			chart, err := c.allStores.ChartStore.Get(chartSelector)
 			if err != nil {
 				return nil, fmt.Errorf("error getting referenced chart to exclude '%s' for environment entry %d, '%s': %v", chartSelector, index+1, environmentRequestEntry.Environment, err)
 			}
-			chartsToExclude[chart.ID] = struct{}{}
+			chartsToExplicitlyExclude[chart.ID] = struct{}{}
 		}
 		environmentChartReleases, err := c.allStores.ChartReleaseStore.ListAllMatchingByUpdated(v2models.ChartRelease{EnvironmentID: &environment.ID}, 0)
 		if err != nil {
@@ -97,13 +97,16 @@ func (c ChangesetController) changesetPlanRequestToModelChangesets(request Chang
 		}
 		var targetChartReleases []v2models.ChartRelease
 		for _, potentialTargetChartRelease := range environmentChartReleases {
-			if _, explicitlyIncluded := chartsToInclude[potentialTargetChartRelease.ChartID]; !explicitlyIncluded && len(chartsToInclude) > 0 {
-				continue
+
+			_, explicitlyIncluded := chartsToExplicitlyInclude[potentialTargetChartRelease.ChartID]
+
+			_, explicitlyExcluded := chartsToExplicitlyExclude[potentialTargetChartRelease.ChartID]
+
+			defaultIncluded := potentialTargetChartRelease.IncludeInBulkChangesets == nil || *potentialTargetChartRelease.IncludeInBulkChangesets
+
+			if explicitlyIncluded || (!explicitlyExcluded && defaultIncluded) {
+				targetChartReleases = append(targetChartReleases, potentialTargetChartRelease)
 			}
-			if _, excluded := chartsToExclude[potentialTargetChartRelease.ChartID]; excluded {
-				continue
-			}
-			targetChartReleases = append(targetChartReleases, potentialTargetChartRelease)
 		}
 		chartReleasesToUseVersionsFrom := make(map[uint]v2models.ChartRelease)
 		if environmentRequestEntry.UseExactVersionsFromOtherEnvironment != nil || environmentRequestEntry.FollowVersionsFromOtherEnvironment != nil {

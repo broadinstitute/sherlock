@@ -23,11 +23,12 @@ type ChartRelease struct {
 	Name            string `gorm:"not null; default:null"`
 	Namespace       string
 	ChartReleaseVersion
-	Subdomain              *string
-	Protocol               *string
-	Port                   *uint
-	PagerdutyIntegration   *PagerdutyIntegration
-	PagerdutyIntegrationID *uint
+	Subdomain               *string
+	Protocol                *string
+	Port                    *uint
+	PagerdutyIntegration    *PagerdutyIntegration
+	PagerdutyIntegrationID  *uint
+	IncludeInBulkChangesets *bool
 }
 
 func (c ChartRelease) TableName() string {
