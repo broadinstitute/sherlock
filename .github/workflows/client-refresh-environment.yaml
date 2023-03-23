@@ -218,7 +218,7 @@ jobs:
         uses: aurelien-baudet/workflow-dispatch@v2
         with: 
           repo: broadinstitute/terra-github-workflows
-          workflow: sync-environment
+          workflow: .github/workflows/sync-environment.yaml
           ref: refs/heads/main
           token: ${{ secrets.sync-git-token }}
           inputs: '{ "environment-names": "${{ inputs.environment-name }}", "refresh-only": "false" }'
