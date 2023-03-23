@@ -2360,7 +2360,7 @@ paths:
       - default: false
         description: Indicates whether a chart requires config rendering from firecloud-develop
         in: query
-        name: legacyConfigsEnabled
+        name: legacyConfigsEnbled
         type: boolean
       - description: Required when creating
         in: query

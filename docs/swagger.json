@@ -1785,7 +1785,7 @@
                         "type": "boolean",
                         "default": false,
                         "description": "Indicates whether a chart requires config rendering from firecloud-develop",
-                        "name": "legacyConfigsEnabled",
+                        "name": "legacyConfigsEnbled",
                         "in": "query"
                     },
                     {

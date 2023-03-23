@@ -101,11 +101,11 @@ type GetAPIV2ChartsParams struct {
 	// ID.
 	ID *int64
 
-	/* LegacyConfigsEnabled.
+	/* LegacyConfigsEnbled.
 
 	   Indicates whether a chart requires config rendering from firecloud-develop
 	*/
-	LegacyConfigsEnabled *bool
+	LegacyConfigsEnbled *bool
 
 	/* Limit.
 
@@ -150,7 +150,7 @@ func (o *GetAPIV2ChartsParams) SetDefaults() {
 
 		defaultProtocolDefault = string("https")
 
-		legacyConfigsEnabledDefault = bool(false)
+		legacyConfigsEnbledDefault = bool(false)
 	)
 
 	val := GetAPIV2ChartsParams{
@@ -158,7 +158,7 @@ func (o *GetAPIV2ChartsParams) SetDefaults() {
 		ChartRepo:            &chartRepoDefault,
 		DefaultPort:          &defaultPortDefault,
 		DefaultProtocol:      &defaultProtocolDefault,
-		LegacyConfigsEnabled: &legacyConfigsEnabledDefault,
+		LegacyConfigsEnbled:  &legacyConfigsEnbledDefault,
 	}
 
 	val.timeout = o.timeout
@@ -299,15 +299,15 @@ func (o *GetAPIV2ChartsParams) SetID(id *int64) {
 	o.ID = id
 }
 
-// WithLegacyConfigsEnabled adds the legacyConfigsEnabled to the get API v2 charts params
-func (o *GetAPIV2ChartsParams) WithLegacyConfigsEnabled(legacyConfigsEnabled *bool) *GetAPIV2ChartsParams {
-	o.SetLegacyConfigsEnabled(legacyConfigsEnabled)
+// WithLegacyConfigsEnbled adds the legacyConfigsEnbled to the get API v2 charts params
+func (o *GetAPIV2ChartsParams) WithLegacyConfigsEnbled(legacyConfigsEnbled *bool) *GetAPIV2ChartsParams {
+	o.SetLegacyConfigsEnbled(legacyConfigsEnbled)
 	return o
 }
 
-// SetLegacyConfigsEnabled adds the legacyConfigsEnabled to the get API v2 charts params
-func (o *GetAPIV2ChartsParams) SetLegacyConfigsEnabled(legacyConfigsEnabled *bool) {
-	o.LegacyConfigsEnabled = legacyConfigsEnabled
+// SetLegacyConfigsEnbled adds the legacyConfigsEnbled to the get API v2 charts params
+func (o *GetAPIV2ChartsParams) SetLegacyConfigsEnbled(legacyConfigsEnbled *bool) {
+	o.LegacyConfigsEnbled = legacyConfigsEnbled
 }
 
 // WithLimit adds the limit to the get API v2 charts params
@@ -504,18 +504,18 @@ func (o *GetAPIV2ChartsParams) WriteToRequest(r runtime.ClientRequest, reg strfm
 		}
 	}
 
-	if o.LegacyConfigsEnabled != nil {
+	if o.LegacyConfigsEnbled != nil {
 
-		// query param legacyConfigsEnabled
-		var qrLegacyConfigsEnabled bool
+		// query param legacyConfigsEnbled
+		var qrLegacyConfigsEnbled bool
 
-		if o.LegacyConfigsEnabled != nil {
-			qrLegacyConfigsEnabled = *o.LegacyConfigsEnabled
+		if o.LegacyConfigsEnbled != nil {
+			qrLegacyConfigsEnbled = *o.LegacyConfigsEnbled
 		}
-		qLegacyConfigsEnabled := swag.FormatBool(qrLegacyConfigsEnabled)
-		if qLegacyConfigsEnabled != "" {
+		qLegacyConfigsEnbled := swag.FormatBool(qrLegacyConfigsEnbled)
+		if qLegacyConfigsEnbled != "" {
 
-			if err := r.SetQueryParam("legacyConfigsEnabled", qLegacyConfigsEnabled); err != nil {
+			if err := r.SetQueryParam("legacyConfigsEnbled", qLegacyConfigsEnbled); err != nil {
 				return err
 			}
 		}
