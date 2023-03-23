@@ -248,7 +248,7 @@ jobs:
         uses: aurelien-baudet/workflow-dispatch@v2
         with: 
           repo: broadinstitute/terra-github-workflows
-          workflow: sync-release
+          workflow: .github/workflows/sync-release.yaml
           ref: refs/heads/main
           token: ${{ secrets.sync-git-token }}
           inputs: '{ "chart-release-names": "${{ needs.get-chart-release.outputs.name }}", "refresh-only": "false" }'
