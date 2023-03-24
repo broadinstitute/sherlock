@@ -178,3 +178,18 @@ func handleTriggerPagerdutyIncident[M v2models.Model, R v2controllers.Readable[M
 		ctx.JSON(http.StatusAccepted, result)
 	}
 }
+
+func handleGetChildrenPathToParent[M v2models.TreeModel, R v2controllers.Readable[M], C v2controllers.Creatable[M], E v2controllers.Editable[M]](controller *v2controllers.TreeModelController[M, R, C, E]) func(ctx *gin.Context) {
+	return func(ctx *gin.Context) {
+		results, connected, err := controller.GetChildrenPathToParent(ctx.Query("child"), ctx.Query("parent"))
+		if err != nil {
+			ctx.JSON(errors.ErrorToApiResponse(err))
+			return
+		}
+		if connected {
+			ctx.JSON(http.StatusOK, results)
+		} else {
+			ctx.JSON(http.StatusNoContent, results)
+		}
+	}
+}

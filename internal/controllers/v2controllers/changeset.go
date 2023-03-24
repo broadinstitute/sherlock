@@ -251,17 +251,17 @@ func (c EditableChangeset) toModel(storeSet *v2models.StoreSet) (v2models.Change
 
 type ChangesetController struct {
 	ModelController[v2models.Changeset, Changeset, CreatableChangeset, EditableChangeset]
-	*v2models.ChangesetEventStore
+	*v2models.ChangesetStore
 }
 
 func newChangesetController(stores *v2models.StoreSet) *ChangesetController {
 	return &ChangesetController{
 		ModelController: ModelController[v2models.Changeset, Changeset, CreatableChangeset, EditableChangeset]{
-			primaryStore:    stores.ChangesetEventStore.ModelStore,
+			primaryStore:    stores.ChangesetStore.ModelStore,
 			allStores:       stores,
 			modelToReadable: modelChangesetToChangeset,
 		},
-		ChangesetEventStore: stores.ChangesetEventStore,
+		ChangesetStore: stores.ChangesetStore,
 	}
 }
 

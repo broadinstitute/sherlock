@@ -27,14 +27,20 @@ func (c ChartVersion) getID() uint {
 	return c.ID
 }
 
-var chartVersionStore *internalModelStore[ChartVersion]
+func (c ChartVersion) getParentID() *uint {
+	return c.ParentChartVersionID
+}
+
+var chartVersionStore *internalTreeModelStore[ChartVersion]
 
 func init() {
-	chartVersionStore = &internalModelStore[ChartVersion]{
-		selectorToQueryModel:    chartVersionSelectorToQuery,
-		modelToSelectors:        chartVersionToSelectors,
-		validateModel:           validateChartVersion,
-		handleIncomingDuplicate: rejectDuplicateChartVersion,
+	chartVersionStore = &internalTreeModelStore[ChartVersion]{
+		internalModelStore: &internalModelStore[ChartVersion]{
+			selectorToQueryModel:    chartVersionSelectorToQuery,
+			modelToSelectors:        chartVersionToSelectors,
+			validateModel:           validateChartVersion,
+			handleIncomingDuplicate: rejectDuplicateChartVersion,
+		},
 	}
 }
 

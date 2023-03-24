@@ -76,13 +76,16 @@ func (a EditableAppVersion) toModel(storeSet *v2models.StoreSet) (v2models.AppVe
 	return CreatableAppVersion{EditableAppVersion: a}.toModel(storeSet)
 }
 
-type AppVersionController = ModelController[v2models.AppVersion, AppVersion, CreatableAppVersion, EditableAppVersion]
+type AppVersionController = TreeModelController[v2models.AppVersion, AppVersion, CreatableAppVersion, EditableAppVersion]
 
 func newAppVersionController(stores *v2models.StoreSet) *AppVersionController {
 	return &AppVersionController{
-		primaryStore:    stores.AppVersionStore,
-		allStores:       stores,
-		modelToReadable: modelAppVersionToAppVersion,
+		ModelController: &ModelController[v2models.AppVersion, AppVersion, CreatableAppVersion, EditableAppVersion]{
+			primaryStore:    stores.AppVersionStore.ModelStore,
+			allStores:       stores,
+			modelToReadable: modelAppVersionToAppVersion,
+		},
+		treeModelStore: stores.AppVersionStore,
 	}
 }
 

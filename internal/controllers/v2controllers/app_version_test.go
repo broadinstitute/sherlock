@@ -242,6 +242,39 @@ func (suite *appVersionControllerSuite) TestAppVersionListAllMatching() {
 	})
 }
 
+func (suite *appVersionControllerSuite) TestAppVersionGetChildrenPathToParent() {
+	db.Truncate(suite.T(), suite.db)
+	suite.seedCharts(suite.T())
+	suite.seedAppVersions(suite.T())
+
+	childSelector := fmt.Sprintf("%s/%s", leonardoChart.Name, leonardoMain3AppVersion.AppVersion)
+	parentSelector := fmt.Sprintf("%s/%s", leonardoChart.Name, leonardoMain1AppVersion.AppVersion)
+
+	suite.Run("handles same", func() {
+		path, connected, err := suite.AppVersionController.GetChildrenPathToParent(childSelector, childSelector)
+		suite.Assert().NoError(err)
+		suite.Assert().True(connected)
+		suite.Assert().Len(path, 0)
+		path, connected, err = suite.AppVersionController.GetChildrenPathToParent(parentSelector, parentSelector)
+		suite.Assert().NoError(err)
+		suite.Assert().True(connected)
+		suite.Assert().Len(path, 0)
+	})
+	suite.Run("handles different but connected", func() {
+		path, connected, err := suite.AppVersionController.GetChildrenPathToParent(childSelector, parentSelector)
+		suite.Assert().NoError(err)
+		suite.Assert().True(connected)
+		suite.Assert().Len(path, 2)
+		suite.Assert().Equal(leonardoMain2AppVersion.AppVersion, path[1].AppVersion)
+	})
+	suite.Run("handles different but disconnected", func() {
+		path, connected, err := suite.AppVersionController.GetChildrenPathToParent(parentSelector, childSelector)
+		suite.Assert().NoError(err)
+		suite.Assert().False(connected)
+		suite.Assert().Len(path, 1)
+	})
+}
+
 func (suite *appVersionControllerSuite) TestAppVersionGet() {
 	db.Truncate(suite.T(), suite.db)
 	suite.seedCharts(suite.T())

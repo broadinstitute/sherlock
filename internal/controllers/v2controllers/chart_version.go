@@ -72,13 +72,16 @@ func (c EditableChartVersion) toModel(storeSet *v2models.StoreSet) (v2models.Cha
 	return CreatableChartVersion{EditableChartVersion: c}.toModel(storeSet)
 }
 
-type ChartVersionController = ModelController[v2models.ChartVersion, ChartVersion, CreatableChartVersion, EditableChartVersion]
+type ChartVersionController = TreeModelController[v2models.ChartVersion, ChartVersion, CreatableChartVersion, EditableChartVersion]
 
 func newChartVersionController(stores *v2models.StoreSet) *ChartVersionController {
 	return &ChartVersionController{
-		primaryStore:    stores.ChartVersionStore,
-		allStores:       stores,
-		modelToReadable: modelChartVersionToChartVersion,
+		ModelController: &ModelController[v2models.ChartVersion, ChartVersion, CreatableChartVersion, EditableChartVersion]{
+			primaryStore:    stores.ChartVersionStore.ModelStore,
+			allStores:       stores,
+			modelToReadable: modelChartVersionToChartVersion,
+		},
+		treeModelStore: stores.ChartVersionStore,
 	}
 }
 
