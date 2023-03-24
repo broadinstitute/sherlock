@@ -29,14 +29,20 @@ func (a AppVersion) getID() uint {
 	return a.ID
 }
 
-var appVersionStore *internalModelStore[AppVersion]
+func (a AppVersion) getParentID() *uint {
+	return a.ParentAppVersionID
+}
+
+var appVersionStore *internalTreeModelStore[AppVersion]
 
 func init() {
-	appVersionStore = &internalModelStore[AppVersion]{
-		selectorToQueryModel:    appVersionSelectorToQuery,
-		modelToSelectors:        appVersionToSelectors,
-		validateModel:           validateAppVersion,
-		handleIncomingDuplicate: rejectDuplicateAppVersion,
+	appVersionStore = &internalTreeModelStore[AppVersion]{
+		internalModelStore: &internalModelStore[AppVersion]{
+			selectorToQueryModel:    appVersionSelectorToQuery,
+			modelToSelectors:        appVersionToSelectors,
+			validateModel:           validateAppVersion,
+			handleIncomingDuplicate: rejectDuplicateAppVersion,
+		},
 	}
 }
 

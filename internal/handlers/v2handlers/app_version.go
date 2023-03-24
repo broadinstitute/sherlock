@@ -12,6 +12,7 @@ func RegisterAppVersionHandlers(routerGroup *gin.RouterGroup, controller *v2cont
 	routerGroup.PATCH("/app-versions/*selector", editAppVersion(controller))
 	routerGroup.PUT("/app-versions/*selector", upsertAppVersion(controller))
 	routerGroup.GET("/selectors/app-versions/*selector", listAppVersionSelectors(controller))
+	routerGroup.GET("/procedures/app-versions/children-path-to-parent", getAppVersionChildrenPathToParent(controller))
 }
 
 // createAppVersion godoc
@@ -27,7 +28,7 @@ func RegisterAppVersionHandlers(routerGroup *gin.RouterGroup, controller *v2cont
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/v2/app-versions [post]
 func createAppVersion(controller *v2controllers.AppVersionController) func(ctx *gin.Context) {
-	return handleCreate(controller)
+	return handleCreate(controller.ModelController)
 }
 
 // listAppVersion godoc
@@ -42,7 +43,7 @@ func createAppVersion(controller *v2controllers.AppVersionController) func(ctx *
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/v2/app-versions [get]
 func listAppVersion(controller *v2controllers.AppVersionController) func(ctx *gin.Context) {
-	return handleList(controller)
+	return handleList(controller.ModelController)
 }
 
 // getAppVersion godoc
@@ -56,7 +57,7 @@ func listAppVersion(controller *v2controllers.AppVersionController) func(ctx *gi
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/v2/app-versions/{selector} [get]
 func getAppVersion(controller *v2controllers.AppVersionController) func(ctx *gin.Context) {
-	return handleGet(controller)
+	return handleGet(controller.ModelController)
 }
 
 // editAppVersion godoc
@@ -72,7 +73,7 @@ func getAppVersion(controller *v2controllers.AppVersionController) func(ctx *gin
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/v2/app-versions/{selector} [patch]
 func editAppVersion(controller *v2controllers.AppVersionController) func(ctx *gin.Context) {
-	return handleEdit(controller)
+	return handleEdit(controller.ModelController)
 }
 
 // upsertAppVersion godoc
@@ -89,7 +90,7 @@ func editAppVersion(controller *v2controllers.AppVersionController) func(ctx *gi
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/v2/app-versions/{selector} [put]
 func upsertAppVersion(controller *v2controllers.AppVersionController) func(ctx *gin.Context) {
-	return handleUpsert(controller)
+	return handleUpsert(controller.ModelController)
 }
 
 // listAppVersionSelectors godoc
@@ -103,5 +104,20 @@ func upsertAppVersion(controller *v2controllers.AppVersionController) func(ctx *
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/v2/selectors/app-versions/{selector} [get]
 func listAppVersionSelectors(controller *v2controllers.AppVersionController) func(ctx *gin.Context) {
-	return handleSelectorList(controller)
+	return handleSelectorList(controller.ModelController)
+}
+
+// getAppVersionChildrenPathToParent godoc
+//
+//	@summary		Get a changelog between two AppVersions
+//	@description	Get the path through parent references from a child AppVersion (inclusive) to a parent AppVersion (exclusive), if possible. Because parent references point from newer children to older parents, the newer AppVersion should be the child. The result will always exclude the parent. If the child can't be connected to the parent, just the child will be returned with a 204 code.
+//	@tags			AppVersions
+//	@produce		json
+//	@param			child					query		string	true	"The selector of the newer AppVersion for the changelog"
+//	@param			parent					query		string	true	"The selector of the older AppVersion for the changelog"
+//	@success		200,204					{array}		v2controllers.AppVersion
+//	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
+//	@router			/api/v2/procedures/app-versions/children-path-to-parent [get]
+func getAppVersionChildrenPathToParent(controller *v2controllers.AppVersionController) func(ctx *gin.Context) {
+	return handleGetChildrenPathToParent(controller)
 }

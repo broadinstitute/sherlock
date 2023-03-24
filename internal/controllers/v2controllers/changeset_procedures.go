@@ -188,7 +188,7 @@ func (c ChangesetController) PlanAndApply(request ChangesetPlanRequest, user *au
 	if err != nil {
 		return nil, err
 	}
-	modelChangesets, err = c.ChangesetEventStore.PlanAndApply(modelChangesets, user)
+	modelChangesets, err = c.ChangesetStore.PlanAndApply(modelChangesets, user)
 	if err != nil {
 		return nil, err
 	}
@@ -205,7 +205,7 @@ func (c ChangesetController) Plan(request ChangesetPlanRequest, user *auth_model
 	if err != nil {
 		return nil, err
 	}
-	modelChangesets, err = c.ChangesetEventStore.Plan(modelChangesets, user)
+	modelChangesets, err = c.ChangesetStore.Plan(modelChangesets, user)
 	if err != nil {
 		return nil, err
 	}
@@ -218,7 +218,7 @@ func (c ChangesetController) Plan(request ChangesetPlanRequest, user *auth_model
 }
 
 func (c ChangesetController) Apply(selectors []string, user *auth_models.User) ([]Changeset, error) {
-	modelChangesets, err := c.ChangesetEventStore.Apply(selectors, user)
+	modelChangesets, err := c.ChangesetStore.Apply(selectors, user)
 	if err != nil {
 		return nil, err
 	}
@@ -231,7 +231,7 @@ func (c ChangesetController) Apply(selectors []string, user *auth_models.User) (
 }
 
 func (c ChangesetController) QueryApplied(chartReleaseSelector string, offset int, limit int) ([]Changeset, error) {
-	modelChangesets, err := c.ChangesetEventStore.QueryApplied(chartReleaseSelector, offset, limit)
+	modelChangesets, err := c.ChangesetStore.QueryApplied(chartReleaseSelector, offset, limit)
 	if err != nil {
 		return nil, err
 	}

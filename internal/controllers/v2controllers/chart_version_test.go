@@ -212,6 +212,39 @@ func (suite *chartVersionControllerSuite) TestChartVersionListAllMatching() {
 	})
 }
 
+func (suite *chartVersionControllerSuite) TestChartVersionGetChildrenPathToParent() {
+	db.Truncate(suite.T(), suite.db)
+	suite.seedCharts(suite.T())
+	suite.seedChartVersions(suite.T())
+
+	childSelector := fmt.Sprintf("%s/%s", leonardoChart.Name, leonardo3ChartVersion.ChartVersion)
+	parentSelector := fmt.Sprintf("%s/%s", leonardoChart.Name, leonardo1ChartVersion.ChartVersion)
+
+	suite.Run("handles same", func() {
+		path, connected, err := suite.ChartVersionController.GetChildrenPathToParent(childSelector, childSelector)
+		suite.Assert().NoError(err)
+		suite.Assert().True(connected)
+		suite.Assert().Len(path, 0)
+		path, connected, err = suite.ChartVersionController.GetChildrenPathToParent(parentSelector, parentSelector)
+		suite.Assert().NoError(err)
+		suite.Assert().True(connected)
+		suite.Assert().Len(path, 0)
+	})
+	suite.Run("handles different but connected", func() {
+		path, connected, err := suite.ChartVersionController.GetChildrenPathToParent(childSelector, parentSelector)
+		suite.Assert().NoError(err)
+		suite.Assert().True(connected)
+		suite.Assert().Len(path, 2)
+		suite.Assert().Equal(leonardo2ChartVersion.ChartVersion, path[1].ChartVersion)
+	})
+	suite.Run("handles different but disconnected", func() {
+		path, connected, err := suite.ChartVersionController.GetChildrenPathToParent(parentSelector, childSelector)
+		suite.Assert().NoError(err)
+		suite.Assert().False(connected)
+		suite.Assert().Len(path, 1)
+	})
+}
+
 func (suite *chartVersionControllerSuite) TestChartVersionGet() {
 	db.Truncate(suite.T(), suite.db)
 	suite.seedCharts(suite.T())

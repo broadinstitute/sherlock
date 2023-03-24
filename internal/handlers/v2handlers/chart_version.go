@@ -12,6 +12,7 @@ func RegisterChartVersionHandlers(routerGroup *gin.RouterGroup, controller *v2co
 	routerGroup.PATCH("/chart-versions/*selector", editChartVersion(controller))
 	routerGroup.PUT("/chart-versions/*selector", upsertChartVersion(controller))
 	routerGroup.GET("/selectors/chart-versions/*selector", listChartVersionSelectors(controller))
+	routerGroup.GET("/procedures/chart-versions/children-path-to-parent", getChartVersionChildrenPathToParent(controller))
 }
 
 // createChartVersion godoc
@@ -27,7 +28,7 @@ func RegisterChartVersionHandlers(routerGroup *gin.RouterGroup, controller *v2co
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/v2/chart-versions [post]
 func createChartVersion(controller *v2controllers.ChartVersionController) func(ctx *gin.Context) {
-	return handleCreate(controller)
+	return handleCreate(controller.ModelController)
 }
 
 // listChartVersion godoc
@@ -42,7 +43,7 @@ func createChartVersion(controller *v2controllers.ChartVersionController) func(c
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/v2/chart-versions [get]
 func listChartVersion(controller *v2controllers.ChartVersionController) func(ctx *gin.Context) {
-	return handleList(controller)
+	return handleList(controller.ModelController)
 }
 
 // getChartVersion godoc
@@ -56,7 +57,7 @@ func listChartVersion(controller *v2controllers.ChartVersionController) func(ctx
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/v2/chart-versions/{selector} [get]
 func getChartVersion(controller *v2controllers.ChartVersionController) func(ctx *gin.Context) {
-	return handleGet(controller)
+	return handleGet(controller.ModelController)
 }
 
 // editChartVersion godoc
@@ -72,7 +73,7 @@ func getChartVersion(controller *v2controllers.ChartVersionController) func(ctx 
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/v2/chart-versions/{selector} [patch]
 func editChartVersion(controller *v2controllers.ChartVersionController) func(ctx *gin.Context) {
-	return handleEdit(controller)
+	return handleEdit(controller.ModelController)
 }
 
 // upsertChartVersion godoc
@@ -89,7 +90,7 @@ func editChartVersion(controller *v2controllers.ChartVersionController) func(ctx
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/v2/chart-versions/{selector} [put]
 func upsertChartVersion(controller *v2controllers.ChartVersionController) func(ctx *gin.Context) {
-	return handleUpsert(controller)
+	return handleUpsert(controller.ModelController)
 }
 
 // listChartVersionSelectors godoc
@@ -103,5 +104,20 @@ func upsertChartVersion(controller *v2controllers.ChartVersionController) func(c
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/v2/selectors/chart-versions/{selector} [get]
 func listChartVersionSelectors(controller *v2controllers.ChartVersionController) func(ctx *gin.Context) {
-	return handleSelectorList(controller)
+	return handleSelectorList(controller.ModelController)
+}
+
+// getChartVersionChildrenPathToParent godoc
+//
+//	@summary		Get a changelog between two ChartVersions
+//	@description	Get the path through parent references from a child ChartVersion (inclusive) to a parent ChartVersion (exclusive), if possible. Because parent references point from newer children to older parents, the newer ChartVersion should be the child. The result will always exclude the parent. If the child can't be connected to the parent, just the child will be returned with a 204 code.
+//	@tags			ChartVersions
+//	@produce		json
+//	@param			child					query		string	true	"The selector of the newer ChartVersion for the changelog"
+//	@param			parent					query		string	true	"The selector of the older ChartVersion for the changelog"
+//	@success		200,204					{array}		v2controllers.ChartVersion
+//	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
+//	@router			/api/v2/procedures/chart-versions/children-path-to-parent [get]
+func getChartVersionChildrenPathToParent(controller *v2controllers.ChartVersionController) func(ctx *gin.Context) {
+	return handleGetChildrenPathToParent(controller)
 }
