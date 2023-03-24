@@ -62,6 +62,11 @@ export interface ApiV2AppVersionsSelectorPutRequest {
     appVersion: V2controllersCreatableAppVersion;
 }
 
+export interface ApiV2ProceduresAppVersionsChildrenPathToParentGetRequest {
+    child: string;
+    parent: string;
+}
+
 export interface ApiV2SelectorsAppVersionsSelectorGetRequest {
     selector: string;
 }
@@ -281,6 +286,50 @@ export class AppVersionsApi extends runtime.BaseAPI {
      */
     async apiV2AppVersionsSelectorPut(requestParameters: ApiV2AppVersionsSelectorPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<V2controllersAppVersion> {
         const response = await this.apiV2AppVersionsSelectorPutRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Get the path through parent references from a child AppVersion (inclusive) to a parent AppVersion (exclusive), if possible. Because parent references point from newer children to older parents, the newer AppVersion should be the child. The result will always exclude the parent. If the child can\'t be connected to the parent, just the child will be returned with a 204 code.
+     * Get a changelog between two AppVersions
+     */
+    async apiV2ProceduresAppVersionsChildrenPathToParentGetRaw(requestParameters: ApiV2ProceduresAppVersionsChildrenPathToParentGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<V2controllersAppVersion>>> {
+        if (requestParameters.child === null || requestParameters.child === undefined) {
+            throw new runtime.RequiredError('child','Required parameter requestParameters.child was null or undefined when calling apiV2ProceduresAppVersionsChildrenPathToParentGet.');
+        }
+
+        if (requestParameters.parent === null || requestParameters.parent === undefined) {
+            throw new runtime.RequiredError('parent','Required parameter requestParameters.parent was null or undefined when calling apiV2ProceduresAppVersionsChildrenPathToParentGet.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.child !== undefined) {
+            queryParameters['child'] = requestParameters.child;
+        }
+
+        if (requestParameters.parent !== undefined) {
+            queryParameters['parent'] = requestParameters.parent;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/v2/procedures/app-versions/children-path-to-parent`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(V2controllersAppVersionFromJSON));
+    }
+
+    /**
+     * Get the path through parent references from a child AppVersion (inclusive) to a parent AppVersion (exclusive), if possible. Because parent references point from newer children to older parents, the newer AppVersion should be the child. The result will always exclude the parent. If the child can\'t be connected to the parent, just the child will be returned with a 204 code.
+     * Get a changelog between two AppVersions
+     */
+    async apiV2ProceduresAppVersionsChildrenPathToParentGet(requestParameters: ApiV2ProceduresAppVersionsChildrenPathToParentGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<V2controllersAppVersion>> {
+        const response = await this.apiV2ProceduresAppVersionsChildrenPathToParentGetRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

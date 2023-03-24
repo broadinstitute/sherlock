@@ -60,6 +60,11 @@ export interface ApiV2ChartVersionsSelectorPutRequest {
     chartVersion: V2controllersCreatableChartVersion;
 }
 
+export interface ApiV2ProceduresChartVersionsChildrenPathToParentGetRequest {
+    child: string;
+    parent: string;
+}
+
 export interface ApiV2SelectorsChartVersionsSelectorGetRequest {
     selector: string;
 }
@@ -271,6 +276,50 @@ export class ChartVersionsApi extends runtime.BaseAPI {
      */
     async apiV2ChartVersionsSelectorPut(requestParameters: ApiV2ChartVersionsSelectorPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<V2controllersChartVersion> {
         const response = await this.apiV2ChartVersionsSelectorPutRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Get the path through parent references from a child ChartVersion (inclusive) to a parent ChartVersion (exclusive), if possible. Because parent references point from newer children to older parents, the newer ChartVersion should be the child. The result will always exclude the parent. If the child can\'t be connected to the parent, just the child will be returned with a 204 code.
+     * Get a changelog between two ChartVersions
+     */
+    async apiV2ProceduresChartVersionsChildrenPathToParentGetRaw(requestParameters: ApiV2ProceduresChartVersionsChildrenPathToParentGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<V2controllersChartVersion>>> {
+        if (requestParameters.child === null || requestParameters.child === undefined) {
+            throw new runtime.RequiredError('child','Required parameter requestParameters.child was null or undefined when calling apiV2ProceduresChartVersionsChildrenPathToParentGet.');
+        }
+
+        if (requestParameters.parent === null || requestParameters.parent === undefined) {
+            throw new runtime.RequiredError('parent','Required parameter requestParameters.parent was null or undefined when calling apiV2ProceduresChartVersionsChildrenPathToParentGet.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.child !== undefined) {
+            queryParameters['child'] = requestParameters.child;
+        }
+
+        if (requestParameters.parent !== undefined) {
+            queryParameters['parent'] = requestParameters.parent;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/v2/procedures/chart-versions/children-path-to-parent`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(V2controllersChartVersionFromJSON));
+    }
+
+    /**
+     * Get the path through parent references from a child ChartVersion (inclusive) to a parent ChartVersion (exclusive), if possible. Because parent references point from newer children to older parents, the newer ChartVersion should be the child. The result will always exclude the parent. If the child can\'t be connected to the parent, just the child will be returned with a 204 code.
+     * Get a changelog between two ChartVersions
+     */
+    async apiV2ProceduresChartVersionsChildrenPathToParentGet(requestParameters: ApiV2ProceduresChartVersionsChildrenPathToParentGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<V2controllersChartVersion>> {
+        const response = await this.apiV2ProceduresChartVersionsChildrenPathToParentGetRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

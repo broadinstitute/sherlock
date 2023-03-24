@@ -34,6 +34,8 @@ type ClientService interface {
 
 	GetAPIV2ChartVersionsSelector(params *GetAPIV2ChartVersionsSelectorParams, opts ...ClientOption) (*GetAPIV2ChartVersionsSelectorOK, error)
 
+	GetAPIV2ProceduresChartVersionsChildrenPathToParent(params *GetAPIV2ProceduresChartVersionsChildrenPathToParentParams, opts ...ClientOption) (*GetAPIV2ProceduresChartVersionsChildrenPathToParentOK, *GetAPIV2ProceduresChartVersionsChildrenPathToParentNoContent, error)
+
 	GetAPIV2SelectorsChartVersionsSelector(params *GetAPIV2SelectorsChartVersionsSelectorParams, opts ...ClientOption) (*GetAPIV2SelectorsChartVersionsSelectorOK, error)
 
 	PatchAPIV2ChartVersionsSelector(params *PatchAPIV2ChartVersionsSelectorParams, opts ...ClientOption) (*PatchAPIV2ChartVersionsSelectorOK, error)
@@ -122,6 +124,47 @@ func (a *Client) GetAPIV2ChartVersionsSelector(params *GetAPIV2ChartVersionsSele
 	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for GetAPIV2ChartVersionsSelector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+  GetAPIV2ProceduresChartVersionsChildrenPathToParent gets a changelog between two chart versions
+
+  Get the path through parent references from a child ChartVersion (inclusive) to a parent ChartVersion (exclusive), if possible. Because parent references point from newer children to older parents, the newer ChartVersion should be the child. The result will always exclude the parent. If the child can't be connected to the parent, just the child will be returned with a 204 code.
+*/
+func (a *Client) GetAPIV2ProceduresChartVersionsChildrenPathToParent(params *GetAPIV2ProceduresChartVersionsChildrenPathToParentParams, opts ...ClientOption) (*GetAPIV2ProceduresChartVersionsChildrenPathToParentOK, *GetAPIV2ProceduresChartVersionsChildrenPathToParentNoContent, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetAPIV2ProceduresChartVersionsChildrenPathToParentParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "GetAPIV2ProceduresChartVersionsChildrenPathToParent",
+		Method:             "GET",
+		PathPattern:        "/api/v2/procedures/chart-versions/children-path-to-parent",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &GetAPIV2ProceduresChartVersionsChildrenPathToParentReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, nil, err
+	}
+	switch value := result.(type) {
+	case *GetAPIV2ProceduresChartVersionsChildrenPathToParentOK:
+		return value, nil, nil
+	case *GetAPIV2ProceduresChartVersionsChildrenPathToParentNoContent:
+		return nil, value, nil
+	}
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for chart_versions: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 

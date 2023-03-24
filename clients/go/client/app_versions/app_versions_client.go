@@ -34,6 +34,8 @@ type ClientService interface {
 
 	GetAPIV2AppVersionsSelector(params *GetAPIV2AppVersionsSelectorParams, opts ...ClientOption) (*GetAPIV2AppVersionsSelectorOK, error)
 
+	GetAPIV2ProceduresAppVersionsChildrenPathToParent(params *GetAPIV2ProceduresAppVersionsChildrenPathToParentParams, opts ...ClientOption) (*GetAPIV2ProceduresAppVersionsChildrenPathToParentOK, *GetAPIV2ProceduresAppVersionsChildrenPathToParentNoContent, error)
+
 	GetAPIV2SelectorsAppVersionsSelector(params *GetAPIV2SelectorsAppVersionsSelectorParams, opts ...ClientOption) (*GetAPIV2SelectorsAppVersionsSelectorOK, error)
 
 	PatchAPIV2AppVersionsSelector(params *PatchAPIV2AppVersionsSelectorParams, opts ...ClientOption) (*PatchAPIV2AppVersionsSelectorOK, error)
@@ -122,6 +124,47 @@ func (a *Client) GetAPIV2AppVersionsSelector(params *GetAPIV2AppVersionsSelector
 	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for GetAPIV2AppVersionsSelector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+  GetAPIV2ProceduresAppVersionsChildrenPathToParent gets a changelog between two app versions
+
+  Get the path through parent references from a child AppVersion (inclusive) to a parent AppVersion (exclusive), if possible. Because parent references point from newer children to older parents, the newer AppVersion should be the child. The result will always exclude the parent. If the child can't be connected to the parent, just the child will be returned with a 204 code.
+*/
+func (a *Client) GetAPIV2ProceduresAppVersionsChildrenPathToParent(params *GetAPIV2ProceduresAppVersionsChildrenPathToParentParams, opts ...ClientOption) (*GetAPIV2ProceduresAppVersionsChildrenPathToParentOK, *GetAPIV2ProceduresAppVersionsChildrenPathToParentNoContent, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetAPIV2ProceduresAppVersionsChildrenPathToParentParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "GetAPIV2ProceduresAppVersionsChildrenPathToParent",
+		Method:             "GET",
+		PathPattern:        "/api/v2/procedures/app-versions/children-path-to-parent",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &GetAPIV2ProceduresAppVersionsChildrenPathToParentReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, nil, err
+	}
+	switch value := result.(type) {
+	case *GetAPIV2ProceduresAppVersionsChildrenPathToParentOK:
+		return value, nil, nil
+	case *GetAPIV2ProceduresAppVersionsChildrenPathToParentNoContent:
+		return nil, value, nil
+	}
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for app_versions: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 
