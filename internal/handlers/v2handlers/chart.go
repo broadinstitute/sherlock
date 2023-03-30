@@ -84,7 +84,7 @@ func editChart(controller *v2controllers.ChartController) func(ctx *gin.Context)
 //	@accept			json
 //	@produce		json
 //	@param			selector				path		string							true	"The Chart to upsert's selector: name or numeric ID"
-//	@param			chart-release			body		v2controllers.CreatableChart	true	"The Chart to upsert"
+//	@param			chart					body		v2controllers.CreatableChart	true	"The Chart to upsert"
 //	@success		200,201					{object}	v2controllers.Chart
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/v2/charts/{selector} [put]

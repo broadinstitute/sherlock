@@ -95,7 +95,7 @@ func editUser(controller *v2controllers.UserController) func(ctx *gin.Context) {
 ////	@accept			json
 ////	@produce		json
 ////	@param			selector				path		string							true	"The User to upsert's selector: email, numeric id, 'github/' + GitHub username, 'github-id/' + GitHub numeric id, or 'google-id/' + Google numeric id"
-////	@param			user-release			body		v2controllers.CreatableUser	true	"The User to upsert"
+////	@param			user					body		v2controllers.CreatableUser	true	"The User to upsert"
 ////	@success		200,201					{object}	v2controllers.User
 ////	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 ////	@router			/api/v2/users/{selector} [put]

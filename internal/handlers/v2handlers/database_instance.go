@@ -84,7 +84,7 @@ func editDatabaseInstance(controller *v2controllers.DatabaseInstanceController) 
 //	@accept			json
 //	@produce		json
 //	@param			selector				path		string									true	"The DatabaseInstance to upsert's selector: numeric ID or 'chart-release/' followed by a chart release selector"
-//	@param			chart-release			body		v2controllers.CreatableDatabaseInstance	true	"The DatabaseInstance to upsert"
+//	@param			database-instance		body		v2controllers.CreatableDatabaseInstance	true	"The DatabaseInstance to upsert"
 //	@success		200,201					{object}	v2controllers.DatabaseInstance
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/v2/database-instances/{selector} [put]
