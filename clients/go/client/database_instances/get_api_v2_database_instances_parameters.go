@@ -60,18 +60,6 @@ func NewGetAPIV2DatabaseInstancesParamsWithHTTPClient(client *http.Client) *GetA
 */
 type GetAPIV2DatabaseInstancesParams struct {
 
-	/* AzureManagedResourceGroup.
-
-	   Required if platform is 'azure'
-	*/
-	AzureManagedResourceGroup *string
-
-	/* AzureSubscription.
-
-	   Required if platform is 'azure'
-	*/
-	AzureSubscription *string
-
 	/* ChartRelease.
 
 	   Required when creating
@@ -88,12 +76,6 @@ type GetAPIV2DatabaseInstancesParams struct {
 	   When creating, defaults to the chart name
 	*/
 	DefaultDatabase *string
-
-	/* GoogleLocation.
-
-	   Required if platform is 'google'
-	*/
-	GoogleLocation *string
 
 	/* GoogleProject.
 
@@ -193,28 +175,6 @@ func (o *GetAPIV2DatabaseInstancesParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithAzureManagedResourceGroup adds the azureManagedResourceGroup to the get API v2 database instances params
-func (o *GetAPIV2DatabaseInstancesParams) WithAzureManagedResourceGroup(azureManagedResourceGroup *string) *GetAPIV2DatabaseInstancesParams {
-	o.SetAzureManagedResourceGroup(azureManagedResourceGroup)
-	return o
-}
-
-// SetAzureManagedResourceGroup adds the azureManagedResourceGroup to the get API v2 database instances params
-func (o *GetAPIV2DatabaseInstancesParams) SetAzureManagedResourceGroup(azureManagedResourceGroup *string) {
-	o.AzureManagedResourceGroup = azureManagedResourceGroup
-}
-
-// WithAzureSubscription adds the azureSubscription to the get API v2 database instances params
-func (o *GetAPIV2DatabaseInstancesParams) WithAzureSubscription(azureSubscription *string) *GetAPIV2DatabaseInstancesParams {
-	o.SetAzureSubscription(azureSubscription)
-	return o
-}
-
-// SetAzureSubscription adds the azureSubscription to the get API v2 database instances params
-func (o *GetAPIV2DatabaseInstancesParams) SetAzureSubscription(azureSubscription *string) {
-	o.AzureSubscription = azureSubscription
-}
-
 // WithChartRelease adds the chartRelease to the get API v2 database instances params
 func (o *GetAPIV2DatabaseInstancesParams) WithChartRelease(chartRelease *string) *GetAPIV2DatabaseInstancesParams {
 	o.SetChartRelease(chartRelease)
@@ -246,17 +206,6 @@ func (o *GetAPIV2DatabaseInstancesParams) WithDefaultDatabase(defaultDatabase *s
 // SetDefaultDatabase adds the defaultDatabase to the get API v2 database instances params
 func (o *GetAPIV2DatabaseInstancesParams) SetDefaultDatabase(defaultDatabase *string) {
 	o.DefaultDatabase = defaultDatabase
-}
-
-// WithGoogleLocation adds the googleLocation to the get API v2 database instances params
-func (o *GetAPIV2DatabaseInstancesParams) WithGoogleLocation(googleLocation *string) *GetAPIV2DatabaseInstancesParams {
-	o.SetGoogleLocation(googleLocation)
-	return o
-}
-
-// SetGoogleLocation adds the googleLocation to the get API v2 database instances params
-func (o *GetAPIV2DatabaseInstancesParams) SetGoogleLocation(googleLocation *string) {
-	o.GoogleLocation = googleLocation
 }
 
 // WithGoogleProject adds the googleProject to the get API v2 database instances params
@@ -333,40 +282,6 @@ func (o *GetAPIV2DatabaseInstancesParams) WriteToRequest(r runtime.ClientRequest
 	}
 	var res []error
 
-	if o.AzureManagedResourceGroup != nil {
-
-		// query param azureManagedResourceGroup
-		var qrAzureManagedResourceGroup string
-
-		if o.AzureManagedResourceGroup != nil {
-			qrAzureManagedResourceGroup = *o.AzureManagedResourceGroup
-		}
-		qAzureManagedResourceGroup := qrAzureManagedResourceGroup
-		if qAzureManagedResourceGroup != "" {
-
-			if err := r.SetQueryParam("azureManagedResourceGroup", qAzureManagedResourceGroup); err != nil {
-				return err
-			}
-		}
-	}
-
-	if o.AzureSubscription != nil {
-
-		// query param azureSubscription
-		var qrAzureSubscription string
-
-		if o.AzureSubscription != nil {
-			qrAzureSubscription = *o.AzureSubscription
-		}
-		qAzureSubscription := qrAzureSubscription
-		if qAzureSubscription != "" {
-
-			if err := r.SetQueryParam("azureSubscription", qAzureSubscription); err != nil {
-				return err
-			}
-		}
-	}
-
 	if o.ChartRelease != nil {
 
 		// query param chartRelease
@@ -413,23 +328,6 @@ func (o *GetAPIV2DatabaseInstancesParams) WriteToRequest(r runtime.ClientRequest
 		if qDefaultDatabase != "" {
 
 			if err := r.SetQueryParam("defaultDatabase", qDefaultDatabase); err != nil {
-				return err
-			}
-		}
-	}
-
-	if o.GoogleLocation != nil {
-
-		// query param googleLocation
-		var qrGoogleLocation string
-
-		if o.GoogleLocation != nil {
-			qrGoogleLocation = *o.GoogleLocation
-		}
-		qGoogleLocation := qrGoogleLocation
-		if qGoogleLocation != "" {
-
-			if err := r.SetQueryParam("googleLocation", qGoogleLocation); err != nil {
 				return err
 			}
 		}

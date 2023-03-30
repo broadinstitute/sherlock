@@ -27,18 +27,6 @@ import {
  */
 export interface V2controllersDatabaseInstance {
     /**
-     * Required if platform is 'azure'
-     * @type {string}
-     * @memberof V2controllersDatabaseInstance
-     */
-    azureManagedResourceGroup?: string;
-    /**
-     * Required if platform is 'azure'
-     * @type {string}
-     * @memberof V2controllersDatabaseInstance
-     */
-    azureSubscription?: string;
-    /**
      * Required when creating
      * @type {string}
      * @memberof V2controllersDatabaseInstance
@@ -62,12 +50,6 @@ export interface V2controllersDatabaseInstance {
      * @memberof V2controllersDatabaseInstance
      */
     defaultDatabase?: string;
-    /**
-     * Required if platform is 'google'
-     * @type {string}
-     * @memberof V2controllersDatabaseInstance
-     */
-    googleLocation?: string;
     /**
      * Required if platform is 'google'
      * @type {string}
@@ -119,13 +101,10 @@ export function V2controllersDatabaseInstanceFromJSONTyped(json: any, ignoreDisc
     }
     return {
         
-        'azureManagedResourceGroup': !exists(json, 'azureManagedResourceGroup') ? undefined : json['azureManagedResourceGroup'],
-        'azureSubscription': !exists(json, 'azureSubscription') ? undefined : json['azureSubscription'],
         'chartRelease': !exists(json, 'chartRelease') ? undefined : json['chartRelease'],
         'chartReleaseInfo': !exists(json, 'chartReleaseInfo') ? undefined : V2controllersChartReleaseFromJSON(json['chartReleaseInfo']),
         'createdAt': !exists(json, 'createdAt') ? undefined : (new Date(json['createdAt'])),
         'defaultDatabase': !exists(json, 'defaultDatabase') ? undefined : json['defaultDatabase'],
-        'googleLocation': !exists(json, 'googleLocation') ? undefined : json['googleLocation'],
         'googleProject': !exists(json, 'googleProject') ? undefined : json['googleProject'],
         'id': !exists(json, 'id') ? undefined : json['id'],
         'instanceName': !exists(json, 'instanceName') ? undefined : json['instanceName'],
@@ -143,13 +122,10 @@ export function V2controllersDatabaseInstanceToJSON(value?: V2controllersDatabas
     }
     return {
         
-        'azureManagedResourceGroup': value.azureManagedResourceGroup,
-        'azureSubscription': value.azureSubscription,
         'chartRelease': value.chartRelease,
         'chartReleaseInfo': V2controllersChartReleaseToJSON(value.chartReleaseInfo),
         'createdAt': value.createdAt === undefined ? undefined : (value.createdAt.toISOString()),
         'defaultDatabase': value.defaultDatabase,
-        'googleLocation': value.googleLocation,
         'googleProject': value.googleProject,
         'id': value.id,
         'instanceName': value.instanceName,

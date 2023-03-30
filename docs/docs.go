@@ -2733,18 +2733,6 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Required if platform is 'azure'",
-                        "name": "azureManagedResourceGroup",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Required if platform is 'azure'",
-                        "name": "azureSubscription",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
                         "description": "Required when creating",
                         "name": "chartRelease",
                         "in": "query"
@@ -2759,12 +2747,6 @@ const docTemplate = `{
                         "type": "string",
                         "description": "When creating, defaults to the chart name",
                         "name": "defaultDatabase",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Required if platform is 'google'",
-                        "name": "googleLocation",
                         "in": "query"
                     },
                     {
@@ -7059,24 +7041,12 @@ const docTemplate = `{
         "v2controllers.CreatableDatabaseInstance": {
             "type": "object",
             "properties": {
-                "azureManagedResourceGroup": {
-                    "description": "Required if platform is 'azure'",
-                    "type": "string"
-                },
-                "azureSubscription": {
-                    "description": "Required if platform is 'azure'",
-                    "type": "string"
-                },
                 "chartRelease": {
                     "description": "Required when creating",
                     "type": "string"
                 },
                 "defaultDatabase": {
                     "description": "When creating, defaults to the chart name",
-                    "type": "string"
-                },
-                "googleLocation": {
-                    "description": "Required if platform is 'google'",
                     "type": "string"
                 },
                 "googleProject": {
@@ -7224,14 +7194,6 @@ const docTemplate = `{
         "v2controllers.DatabaseInstance": {
             "type": "object",
             "properties": {
-                "azureManagedResourceGroup": {
-                    "description": "Required if platform is 'azure'",
-                    "type": "string"
-                },
-                "azureSubscription": {
-                    "description": "Required if platform is 'azure'",
-                    "type": "string"
-                },
                 "chartRelease": {
                     "description": "Required when creating",
                     "type": "string"
@@ -7245,10 +7207,6 @@ const docTemplate = `{
                 },
                 "defaultDatabase": {
                     "description": "When creating, defaults to the chart name",
-                    "type": "string"
-                },
-                "googleLocation": {
-                    "description": "Required if platform is 'google'",
                     "type": "string"
                 },
                 "googleProject": {
@@ -7377,20 +7335,8 @@ const docTemplate = `{
         "v2controllers.EditableDatabaseInstance": {
             "type": "object",
             "properties": {
-                "azureManagedResourceGroup": {
-                    "description": "Required if platform is 'azure'",
-                    "type": "string"
-                },
-                "azureSubscription": {
-                    "description": "Required if platform is 'azure'",
-                    "type": "string"
-                },
                 "defaultDatabase": {
                     "description": "When creating, defaults to the chart name",
-                    "type": "string"
-                },
-                "googleLocation": {
-                    "description": "Required if platform is 'google'",
                     "type": "string"
                 },
                 "googleProject": {

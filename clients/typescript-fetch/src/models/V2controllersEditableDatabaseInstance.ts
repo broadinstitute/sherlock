@@ -20,29 +20,11 @@ import { exists, mapValues } from '../runtime';
  */
 export interface V2controllersEditableDatabaseInstance {
     /**
-     * Required if platform is 'azure'
-     * @type {string}
-     * @memberof V2controllersEditableDatabaseInstance
-     */
-    azureManagedResourceGroup?: string;
-    /**
-     * Required if platform is 'azure'
-     * @type {string}
-     * @memberof V2controllersEditableDatabaseInstance
-     */
-    azureSubscription?: string;
-    /**
      * When creating, defaults to the chart name
      * @type {string}
      * @memberof V2controllersEditableDatabaseInstance
      */
     defaultDatabase?: string;
-    /**
-     * Required if platform is 'google'
-     * @type {string}
-     * @memberof V2controllersEditableDatabaseInstance
-     */
-    googleLocation?: string;
     /**
      * Required if platform is 'google'
      * @type {string}
@@ -82,10 +64,7 @@ export function V2controllersEditableDatabaseInstanceFromJSONTyped(json: any, ig
     }
     return {
         
-        'azureManagedResourceGroup': !exists(json, 'azureManagedResourceGroup') ? undefined : json['azureManagedResourceGroup'],
-        'azureSubscription': !exists(json, 'azureSubscription') ? undefined : json['azureSubscription'],
         'defaultDatabase': !exists(json, 'defaultDatabase') ? undefined : json['defaultDatabase'],
-        'googleLocation': !exists(json, 'googleLocation') ? undefined : json['googleLocation'],
         'googleProject': !exists(json, 'googleProject') ? undefined : json['googleProject'],
         'instanceName': !exists(json, 'instanceName') ? undefined : json['instanceName'],
         'platform': !exists(json, 'platform') ? undefined : json['platform'],
@@ -101,10 +80,7 @@ export function V2controllersEditableDatabaseInstanceToJSON(value?: V2controller
     }
     return {
         
-        'azureManagedResourceGroup': value.azureManagedResourceGroup,
-        'azureSubscription': value.azureSubscription,
         'defaultDatabase': value.defaultDatabase,
-        'googleLocation': value.googleLocation,
         'googleProject': value.googleProject,
         'instanceName': value.instanceName,
         'platform': value.platform,

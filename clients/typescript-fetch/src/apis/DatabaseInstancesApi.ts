@@ -32,12 +32,9 @@ import {
 } from '../models';
 
 export interface ApiV2DatabaseInstancesGetRequest {
-    azureManagedResourceGroup?: string;
-    azureSubscription?: string;
     chartRelease?: string;
     createdAt?: Date;
     defaultDatabase?: string;
-    googleLocation?: string;
     googleProject?: string;
     id?: number;
     instanceName?: string;
@@ -84,14 +81,6 @@ export class DatabaseInstancesApi extends runtime.BaseAPI {
     async apiV2DatabaseInstancesGetRaw(requestParameters: ApiV2DatabaseInstancesGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<V2controllersDatabaseInstance>>> {
         const queryParameters: any = {};
 
-        if (requestParameters.azureManagedResourceGroup !== undefined) {
-            queryParameters['azureManagedResourceGroup'] = requestParameters.azureManagedResourceGroup;
-        }
-
-        if (requestParameters.azureSubscription !== undefined) {
-            queryParameters['azureSubscription'] = requestParameters.azureSubscription;
-        }
-
         if (requestParameters.chartRelease !== undefined) {
             queryParameters['chartRelease'] = requestParameters.chartRelease;
         }
@@ -102,10 +91,6 @@ export class DatabaseInstancesApi extends runtime.BaseAPI {
 
         if (requestParameters.defaultDatabase !== undefined) {
             queryParameters['defaultDatabase'] = requestParameters.defaultDatabase;
-        }
-
-        if (requestParameters.googleLocation !== undefined) {
-            queryParameters['googleLocation'] = requestParameters.googleLocation;
         }
 
         if (requestParameters.googleProject !== undefined) {

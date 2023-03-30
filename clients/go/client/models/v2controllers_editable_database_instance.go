@@ -17,17 +17,8 @@ import (
 // swagger:model v2controllers.EditableDatabaseInstance
 type V2controllersEditableDatabaseInstance struct {
 
-	// Required if platform is 'azure'
-	AzureManagedResourceGroup string `json:"azureManagedResourceGroup,omitempty"`
-
-	// Required if platform is 'azure'
-	AzureSubscription string `json:"azureSubscription,omitempty"`
-
 	// When creating, defaults to the chart name
 	DefaultDatabase string `json:"defaultDatabase,omitempty"`
-
-	// Required if platform is 'google'
-	GoogleLocation string `json:"googleLocation,omitempty"`
 
 	// Required if platform is 'google'
 	GoogleProject string `json:"googleProject,omitempty"`
