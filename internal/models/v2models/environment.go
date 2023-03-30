@@ -383,14 +383,11 @@ func postCreateEnvironment(db *gorm.DB, environment *Environment, user *auth_mod
 				if templateDatabaseInstance != nil {
 					_, _, err := databaseInstanceStore.create(db,
 						DatabaseInstance{
-							ChartReleaseID:            chartRelease.ID,
-							Platform:                  templateDatabaseInstance.Platform,
-							GoogleProject:             templateDatabaseInstance.GoogleProject,
-							GoogleLocation:            templateDatabaseInstance.GoogleProject,
-							AzureSubscription:         templateDatabaseInstance.AzureSubscription,
-							AzureManagedResourceGroup: templateDatabaseInstance.AzureManagedResourceGroup,
-							InstanceName:              templateDatabaseInstance.InstanceName,
-							DefaultDatabase:           templateDatabaseInstance.DefaultDatabase,
+							ChartReleaseID:  chartRelease.ID,
+							Platform:        templateDatabaseInstance.Platform,
+							GoogleProject:   templateDatabaseInstance.GoogleProject,
+							InstanceName:    templateDatabaseInstance.InstanceName,
+							DefaultDatabase: templateDatabaseInstance.DefaultDatabase,
 						}, user)
 					if err != nil {
 						return fmt.Errorf("wasn't able to copy database instance of template's %s chart instance (disable autoPopulateChartReleases to skip): %v", templateChartRelease.Chart.Name, err)

@@ -16,12 +16,9 @@ type DatabaseInstance struct {
 	ChartRelease   *ChartRelease
 	ChartReleaseID uint
 
-	Platform                  *string
-	GoogleProject             *string
-	GoogleLocation            *string
-	AzureSubscription         *string
-	AzureManagedResourceGroup *string
-	InstanceName              *string
+	Platform      *string
+	GoogleProject *string
+	InstanceName  *string
 
 	DefaultDatabase *string
 }
@@ -114,21 +111,10 @@ func validateDatabaseInstance(databaseInstance *DatabaseInstance) error {
 			if databaseInstance.GoogleProject == nil || *databaseInstance.GoogleProject == "" {
 				return fmt.Errorf("a %T with a 'google' provider must have a google project", databaseInstance)
 			}
-			if databaseInstance.GoogleLocation == nil || *databaseInstance.GoogleProject == "" {
-				return fmt.Errorf("a %T with a 'google' provider must have a location", databaseInstance)
-			}
-			if databaseInstance.InstanceName == nil || *databaseInstance.InstanceName == "" {
-				return fmt.Errorf("a %T with an 'google' provider must have an instance name", databaseInstance)
-			}
+			fallthrough
 		case "azure":
-			if databaseInstance.AzureSubscription == nil || *databaseInstance.AzureSubscription == "" {
-				return fmt.Errorf("a %T with an 'azure' provider must have a subscription", databaseInstance)
-			}
-			if databaseInstance.AzureManagedResourceGroup == nil || *databaseInstance.AzureManagedResourceGroup == "" {
-				return fmt.Errorf("a %T with an 'azure' provider must have an MRG", databaseInstance)
-			}
 			if databaseInstance.InstanceName == nil || *databaseInstance.InstanceName == "" {
-				return fmt.Errorf("a %T with an 'azure' provider must have an instance name", databaseInstance)
+				return fmt.Errorf("a %T with a 'google' or 'azure' provider must have an instance name", databaseInstance)
 			}
 		case "kubernetes":
 		default:
