@@ -18,12 +18,9 @@ type CreatableDatabaseInstance struct {
 }
 
 type EditableDatabaseInstance struct {
-	Platform                  *string `json:"platform" form:"platform" default:"kubernetes"`              // 'google', 'azure', or default 'kubernetes'
-	GoogleProject             *string `json:"googleProject" form:"googleProject"`                         // Required if platform is 'google'
-	GoogleLocation            *string `json:"googleLocation" form:"googleLocation"`                       // Required if platform is 'google'
-	AzureSubscription         *string `json:"azureSubscription" form:"azureSubscription"`                 // Required if platform is 'azure'
-	AzureManagedResourceGroup *string `json:"azureManagedResourceGroup" form:"azureManagedResourceGroup"` // Required if platform is 'azure'
-	InstanceName              *string `json:"instanceName" form:"instanceName"`                           // Required if platform is 'google' or 'azure'
+	Platform      *string `json:"platform" form:"platform" default:"kubernetes"` // 'google', 'azure', or default 'kubernetes'
+	GoogleProject *string `json:"googleProject" form:"googleProject"`            // Required if platform is 'google'
+	InstanceName  *string `json:"instanceName" form:"instanceName"`              // Required if platform is 'google' or 'azure'
 
 	DefaultDatabase *string `json:"defaultDatabase" form:"defaultDatabase" ` // When creating, defaults to the chart name
 }
@@ -44,14 +41,11 @@ func (d DatabaseInstance) toModel(storeSet *v2models.StoreSet) (v2models.Databas
 			CreatedAt: d.CreatedAt,
 			UpdatedAt: d.UpdatedAt,
 		},
-		ChartReleaseID:            chartReleaseID,
-		Platform:                  d.Platform,
-		GoogleProject:             d.GoogleProject,
-		GoogleLocation:            d.GoogleLocation,
-		AzureSubscription:         d.AzureSubscription,
-		AzureManagedResourceGroup: d.AzureManagedResourceGroup,
-		InstanceName:              d.InstanceName,
-		DefaultDatabase:           d.DefaultDatabase,
+		ChartReleaseID:  chartReleaseID,
+		Platform:        d.Platform,
+		GoogleProject:   d.GoogleProject,
+		InstanceName:    d.InstanceName,
+		DefaultDatabase: d.DefaultDatabase,
 	}, nil
 }
 
@@ -97,13 +91,10 @@ func modelDatabaseInstanceToDatabaseInstance(model *v2models.DatabaseInstance) *
 		CreatableDatabaseInstance: CreatableDatabaseInstance{
 			ChartRelease: chartReleaseName,
 			EditableDatabaseInstance: EditableDatabaseInstance{
-				Platform:                  model.Platform,
-				GoogleProject:             model.GoogleProject,
-				GoogleLocation:            model.GoogleLocation,
-				AzureSubscription:         model.AzureSubscription,
-				AzureManagedResourceGroup: model.AzureManagedResourceGroup,
-				InstanceName:              model.InstanceName,
-				DefaultDatabase:           model.DefaultDatabase,
+				Platform:        model.Platform,
+				GoogleProject:   model.GoogleProject,
+				InstanceName:    model.InstanceName,
+				DefaultDatabase: model.DefaultDatabase,
 			},
 		},
 	}

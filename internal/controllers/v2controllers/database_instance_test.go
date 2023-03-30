@@ -50,10 +50,9 @@ var (
 	datarepoDevDatabaseInstance = CreatableDatabaseInstance{
 		ChartRelease: datarepoDevChartRelease.Name,
 		EditableDatabaseInstance: EditableDatabaseInstance{
-			Platform:       testutils.PointerTo("google"),
-			GoogleProject:  testutils.PointerTo("broad-datarepo-dev"),
-			GoogleLocation: testutils.PointerTo("us-central1"),
-			InstanceName:   testutils.PointerTo("datarepo-abcdef"),
+			Platform:      testutils.PointerTo("google"),
+			GoogleProject: testutils.PointerTo("broad-datarepo-dev"),
+			InstanceName:  testutils.PointerTo("datarepo-abcdef"),
 		},
 	}
 	datarepoProdDatabaseInstance = CreatableDatabaseInstance{
@@ -61,7 +60,6 @@ var (
 		EditableDatabaseInstance: EditableDatabaseInstance{
 			Platform:        testutils.PointerTo("google"),
 			GoogleProject:   testutils.PointerTo("broad-datarepo-prod"),
-			GoogleLocation:  testutils.PointerTo("us-central1"),
 			InstanceName:    testutils.PointerTo("datarepo-abcdef"),
 			DefaultDatabase: testutils.PointerTo("datarepo-2"),
 		},
@@ -128,10 +126,8 @@ func (suite *databaseInstanceControllerSuite) TestDatabaseInstanceCreate() {
 			instance, created, err := suite.DatabaseInstanceController.Create(CreatableDatabaseInstance{
 				ChartRelease: fmt.Sprintf("%s-%s", yaleChart.Name, terraDevEnvironment.Name),
 				EditableDatabaseInstance: EditableDatabaseInstance{
-					Platform:                  testutils.PointerTo("azure"),
-					AzureSubscription:         testutils.PointerTo("abc"),
-					AzureManagedResourceGroup: testutils.PointerTo("def"),
-					InstanceName:              testutils.PointerTo("ghi"),
+					Platform:     testutils.PointerTo("azure"),
+					InstanceName: testutils.PointerTo("ghi"),
 				},
 			}, auth.GenerateUser(suite.T(), false))
 			assert.NoError(suite.T(), err)
@@ -168,10 +164,9 @@ func (suite *databaseInstanceControllerSuite) TestDatabaseInstanceCreate() {
 		suite.Run("no associations", func() {
 			_, created, err := suite.DatabaseInstanceController.Create(CreatableDatabaseInstance{
 				EditableDatabaseInstance: EditableDatabaseInstance{
-					Platform:       testutils.PointerTo("google"),
-					GoogleProject:  testutils.PointerTo("broad-datarepo-dev"),
-					GoogleLocation: testutils.PointerTo("us-central1"),
-					InstanceName:   testutils.PointerTo("datarepo-abcdef"),
+					Platform:      testutils.PointerTo("google"),
+					GoogleProject: testutils.PointerTo("broad-datarepo-dev"),
+					InstanceName:  testutils.PointerTo("datarepo-abcdef"),
 				},
 			}, auth.GenerateUser(suite.T(), false))
 			assert.ErrorContains(suite.T(), err, errors.BadRequest)
