@@ -2022,7 +2022,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "The Chart to upsert",
-                        "name": "chart-release",
+                        "name": "chart",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -2995,7 +2995,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "The DatabaseInstance to upsert",
-                        "name": "chart-release",
+                        "name": "database-instance",
                         "in": "body",
                         "required": true,
                         "schema": {

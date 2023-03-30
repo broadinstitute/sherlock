@@ -62,7 +62,7 @@ export interface ApiV2DatabaseInstancesSelectorPatchRequest {
 
 export interface ApiV2DatabaseInstancesSelectorPutRequest {
     selector: string;
-    chartRelease: V2controllersCreatableDatabaseInstance;
+    databaseInstance: V2controllersCreatableDatabaseInstance;
 }
 
 export interface ApiV2SelectorsDatabaseInstancesSelectorGetRequest {
@@ -285,8 +285,8 @@ export class DatabaseInstancesApi extends runtime.BaseAPI {
             throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiV2DatabaseInstancesSelectorPut.');
         }
 
-        if (requestParameters.chartRelease === null || requestParameters.chartRelease === undefined) {
-            throw new runtime.RequiredError('chartRelease','Required parameter requestParameters.chartRelease was null or undefined when calling apiV2DatabaseInstancesSelectorPut.');
+        if (requestParameters.databaseInstance === null || requestParameters.databaseInstance === undefined) {
+            throw new runtime.RequiredError('databaseInstance','Required parameter requestParameters.databaseInstance was null or undefined when calling apiV2DatabaseInstancesSelectorPut.');
         }
 
         const queryParameters: any = {};
@@ -300,7 +300,7 @@ export class DatabaseInstancesApi extends runtime.BaseAPI {
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
-            body: V2controllersCreatableDatabaseInstanceToJSON(requestParameters.chartRelease),
+            body: V2controllersCreatableDatabaseInstanceToJSON(requestParameters.databaseInstance),
         }, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => V2controllersDatabaseInstanceFromJSON(jsonValue));

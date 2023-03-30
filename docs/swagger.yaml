@@ -2586,7 +2586,7 @@ paths:
         type: string
       - description: The Chart to upsert
         in: body
-        name: chart-release
+        name: chart
         required: true
         schema:
           $ref: '#/definitions/v2controllers.CreatableChart'
@@ -3252,7 +3252,7 @@ paths:
         type: string
       - description: The DatabaseInstance to upsert
         in: body
-        name: chart-release
+        name: database-instance
         required: true
         schema:
           $ref: '#/definitions/v2controllers.CreatableDatabaseInstance'

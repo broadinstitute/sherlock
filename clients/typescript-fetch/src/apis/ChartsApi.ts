@@ -66,7 +66,7 @@ export interface ApiV2ChartsSelectorPatchRequest {
 
 export interface ApiV2ChartsSelectorPutRequest {
     selector: string;
-    chartRelease: V2controllersCreatableChart;
+    chart: V2controllersCreatableChart;
 }
 
 export interface ApiV2SelectorsChartsSelectorGetRequest {
@@ -305,8 +305,8 @@ export class ChartsApi extends runtime.BaseAPI {
             throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiV2ChartsSelectorPut.');
         }
 
-        if (requestParameters.chartRelease === null || requestParameters.chartRelease === undefined) {
-            throw new runtime.RequiredError('chartRelease','Required parameter requestParameters.chartRelease was null or undefined when calling apiV2ChartsSelectorPut.');
+        if (requestParameters.chart === null || requestParameters.chart === undefined) {
+            throw new runtime.RequiredError('chart','Required parameter requestParameters.chart was null or undefined when calling apiV2ChartsSelectorPut.');
         }
 
         const queryParameters: any = {};
@@ -320,7 +320,7 @@ export class ChartsApi extends runtime.BaseAPI {
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
-            body: V2controllersCreatableChartToJSON(requestParameters.chartRelease),
+            body: V2controllersCreatableChartToJSON(requestParameters.chart),
         }, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => V2controllersChartFromJSON(jsonValue));

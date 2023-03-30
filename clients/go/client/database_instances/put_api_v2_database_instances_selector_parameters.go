@@ -61,11 +61,11 @@ func NewPutAPIV2DatabaseInstancesSelectorParamsWithHTTPClient(client *http.Clien
 */
 type PutAPIV2DatabaseInstancesSelectorParams struct {
 
-	/* ChartRelease.
+	/* DatabaseInstance.
 
 	   The DatabaseInstance to upsert
 	*/
-	ChartRelease *models.V2controllersCreatableDatabaseInstance
+	DatabaseInstance *models.V2controllersCreatableDatabaseInstance
 
 	/* Selector.
 
@@ -126,15 +126,15 @@ func (o *PutAPIV2DatabaseInstancesSelectorParams) SetHTTPClient(client *http.Cli
 	o.HTTPClient = client
 }
 
-// WithChartRelease adds the chartRelease to the put API v2 database instances selector params
-func (o *PutAPIV2DatabaseInstancesSelectorParams) WithChartRelease(chartRelease *models.V2controllersCreatableDatabaseInstance) *PutAPIV2DatabaseInstancesSelectorParams {
-	o.SetChartRelease(chartRelease)
+// WithDatabaseInstance adds the databaseInstance to the put API v2 database instances selector params
+func (o *PutAPIV2DatabaseInstancesSelectorParams) WithDatabaseInstance(databaseInstance *models.V2controllersCreatableDatabaseInstance) *PutAPIV2DatabaseInstancesSelectorParams {
+	o.SetDatabaseInstance(databaseInstance)
 	return o
 }
 
-// SetChartRelease adds the chartRelease to the put API v2 database instances selector params
-func (o *PutAPIV2DatabaseInstancesSelectorParams) SetChartRelease(chartRelease *models.V2controllersCreatableDatabaseInstance) {
-	o.ChartRelease = chartRelease
+// SetDatabaseInstance adds the databaseInstance to the put API v2 database instances selector params
+func (o *PutAPIV2DatabaseInstancesSelectorParams) SetDatabaseInstance(databaseInstance *models.V2controllersCreatableDatabaseInstance) {
+	o.DatabaseInstance = databaseInstance
 }
 
 // WithSelector adds the selector to the put API v2 database instances selector params
@@ -155,8 +155,8 @@ func (o *PutAPIV2DatabaseInstancesSelectorParams) WriteToRequest(r runtime.Clien
 		return err
 	}
 	var res []error
-	if o.ChartRelease != nil {
-		if err := r.SetBodyParam(o.ChartRelease); err != nil {
+	if o.DatabaseInstance != nil {
+		if err := r.SetBodyParam(o.DatabaseInstance); err != nil {
 			return err
 		}
 	}

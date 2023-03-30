@@ -61,11 +61,11 @@ func NewPutAPIV2ChartsSelectorParamsWithHTTPClient(client *http.Client) *PutAPIV
 */
 type PutAPIV2ChartsSelectorParams struct {
 
-	/* ChartRelease.
+	/* Chart.
 
 	   The Chart to upsert
 	*/
-	ChartRelease *models.V2controllersCreatableChart
+	Chart *models.V2controllersCreatableChart
 
 	/* Selector.
 
@@ -126,15 +126,15 @@ func (o *PutAPIV2ChartsSelectorParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithChartRelease adds the chartRelease to the put API v2 charts selector params
-func (o *PutAPIV2ChartsSelectorParams) WithChartRelease(chartRelease *models.V2controllersCreatableChart) *PutAPIV2ChartsSelectorParams {
-	o.SetChartRelease(chartRelease)
+// WithChart adds the chart to the put API v2 charts selector params
+func (o *PutAPIV2ChartsSelectorParams) WithChart(chart *models.V2controllersCreatableChart) *PutAPIV2ChartsSelectorParams {
+	o.SetChart(chart)
 	return o
 }
 
-// SetChartRelease adds the chartRelease to the put API v2 charts selector params
-func (o *PutAPIV2ChartsSelectorParams) SetChartRelease(chartRelease *models.V2controllersCreatableChart) {
-	o.ChartRelease = chartRelease
+// SetChart adds the chart to the put API v2 charts selector params
+func (o *PutAPIV2ChartsSelectorParams) SetChart(chart *models.V2controllersCreatableChart) {
+	o.Chart = chart
 }
 
 // WithSelector adds the selector to the put API v2 charts selector params
@@ -155,8 +155,8 @@ func (o *PutAPIV2ChartsSelectorParams) WriteToRequest(r runtime.ClientRequest, r
 		return err
 	}
 	var res []error
-	if o.ChartRelease != nil {
-		if err := r.SetBodyParam(o.ChartRelease); err != nil {
+	if o.Chart != nil {
+		if err := r.SetBodyParam(o.Chart); err != nil {
 			return err
 		}
 	}
