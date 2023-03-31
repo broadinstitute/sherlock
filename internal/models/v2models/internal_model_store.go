@@ -195,7 +195,7 @@ func (s internalModelStore[M]) get(db *gorm.DB, query M) (M, error) {
 	if result, err := s.getIfExists(db, query); err != nil {
 		return zeroValue, err
 	} else if result == nil {
-		return zeroValue, fmt.Errorf("query not found (%s)", errors.NotFound)
+		return zeroValue, fmt.Errorf("no result for query (%s)", errors.NotFound)
 	} else {
 		return *result, nil
 	}
@@ -270,7 +270,7 @@ func (s internalModelStore[M]) delete(db *gorm.DB, query M, user *auth_models.Us
 	if result, err := s.deleteIfExists(db, query, user); err != nil {
 		return zeroValue, err
 	} else if result == nil {
-		return zeroValue, fmt.Errorf("delete error: query not found (%s)", errors.NotFound)
+		return zeroValue, fmt.Errorf("delete error: no result for query (%s)", errors.NotFound)
 	} else {
 		return *result, nil
 	}
