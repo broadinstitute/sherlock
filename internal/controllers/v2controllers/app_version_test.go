@@ -126,9 +126,9 @@ var (
 	}
 )
 
-func (controllerSet *ControllerSet) seedAppVersions(t *testing.T) {
+func (controllerSet *ControllerSet) seedAppVersions(t *testing.T, db *gorm.DB) {
 	for _, creatable := range appVersionSeedList {
-		if _, _, err := controllerSet.AppVersionController.Create(creatable, auth.GenerateUser(t, false)); err != nil {
+		if _, _, err := controllerSet.AppVersionController.Create(creatable, auth.GenerateUser(t, db, false)); err != nil {
 			t.Errorf("error seeding app version %s for chart %s: %v", creatable.AppVersion, creatable.Chart, err)
 		}
 	}
@@ -141,16 +141,16 @@ func (controllerSet *ControllerSet) seedAppVersions(t *testing.T) {
 func (suite *appVersionControllerSuite) TestAppVersionCreate() {
 	suite.Run("can create a new app version", func() {
 		db.Truncate(suite.T(), suite.db)
-		suite.seedCharts(suite.T())
+		suite.seedCharts(suite.T(), suite.db)
 
-		appVersion, created, err := suite.AppVersionController.Create(leonardoMain1AppVersion, auth.GenerateUser(suite.T(), false))
+		appVersion, created, err := suite.AppVersionController.Create(leonardoMain1AppVersion, auth.GenerateUser(suite.T(), suite.db, false))
 		assert.NoError(suite.T(), err)
 		assert.True(suite.T(), created)
 		assert.Equal(suite.T(), leonardoMain1AppVersion.AppVersion, appVersion.AppVersion)
 		assert.True(suite.T(), appVersion.ID > 0)
 
 		suite.Run("can accept duplicates", func() {
-			secondAppVersion, created, err := suite.AppVersionController.Create(leonardoMain1AppVersion, auth.GenerateUser(suite.T(), false))
+			secondAppVersion, created, err := suite.AppVersionController.Create(leonardoMain1AppVersion, auth.GenerateUser(suite.T(), suite.db, false))
 			assert.NoError(suite.T(), err)
 			assert.False(suite.T(), created)
 			assert.Equal(suite.T(), leonardoMain1AppVersion.AppVersion, secondAppVersion.AppVersion)
@@ -160,14 +160,14 @@ func (suite *appVersionControllerSuite) TestAppVersionCreate() {
 	suite.Run("validates incoming entries", func() {
 		db.Truncate(suite.T(), suite.db)
 
-		_, created, err := suite.AppVersionController.Create(CreatableAppVersion{}, auth.GenerateUser(suite.T(), false))
+		_, created, err := suite.AppVersionController.Create(CreatableAppVersion{}, auth.GenerateUser(suite.T(), suite.db, false))
 		assert.ErrorContains(suite.T(), err, errors.BadRequest)
 		assert.False(suite.T(), created)
 	})
 	suite.Run("rejects mismatched duplicates", func() {
 		db.Truncate(suite.T(), suite.db)
-		suite.seedCharts(suite.T())
-		suite.seedAppVersions(suite.T())
+		suite.seedCharts(suite.T(), suite.db)
+		suite.seedAppVersions(suite.T(), suite.db)
 
 		_, created, err := suite.AppVersionController.Create(CreatableAppVersion{
 			Chart:      leonardoChart.Name,
@@ -176,21 +176,21 @@ func (suite *appVersionControllerSuite) TestAppVersionCreate() {
 			GitBranch:  *leonardoChart.AppImageGitMainBranch,
 			// Mismatched parent
 			ParentAppVersion: fmt.Sprintf("%s/%s", leonardoChart.Name, leonardoMain1AppVersion.AppVersion),
-		}, auth.GenerateUser(suite.T(), false))
+		}, auth.GenerateUser(suite.T(), suite.db, false))
 		assert.ErrorContains(suite.T(), err, errors.Conflict)
 		assert.False(suite.T(), created)
 	})
 	suite.Run("accepts bad parents", func() {
 		db.Truncate(suite.T(), suite.db)
-		suite.seedCharts(suite.T())
-		suite.seedAppVersions(suite.T())
+		suite.seedCharts(suite.T(), suite.db)
+		suite.seedAppVersions(suite.T(), suite.db)
 
 		appVersion, created, err := suite.AppVersionController.Create(CreatableAppVersion{
 			Chart:      datarepoChart.Name,
 			AppVersion: "1.1.2",
 			// Nonexistent parent
 			ParentAppVersion: fmt.Sprintf("%s/%s", datarepoChart.Name, leonardoMain1AppVersion.AppVersion),
-		}, auth.GenerateUser(suite.T(), false))
+		}, auth.GenerateUser(suite.T(), suite.db, false))
 		assert.NoError(suite.T(), err)
 		assert.True(suite.T(), created)
 		assert.Empty(suite.T(), appVersion.ParentAppVersion)
@@ -199,8 +199,8 @@ func (suite *appVersionControllerSuite) TestAppVersionCreate() {
 
 func (suite *appVersionControllerSuite) TestAppVersionListAllMatching() {
 	db.Truncate(suite.T(), suite.db)
-	suite.seedCharts(suite.T())
-	suite.seedAppVersions(suite.T())
+	suite.seedCharts(suite.T(), suite.db)
+	suite.seedAppVersions(suite.T(), suite.db)
 
 	suite.Run("lists all appVersions", func() {
 		matching, err := suite.AppVersionController.ListAllMatching(AppVersion{}, 0)
@@ -244,8 +244,8 @@ func (suite *appVersionControllerSuite) TestAppVersionListAllMatching() {
 
 func (suite *appVersionControllerSuite) TestAppVersionGetChildrenPathToParent() {
 	db.Truncate(suite.T(), suite.db)
-	suite.seedCharts(suite.T())
-	suite.seedAppVersions(suite.T())
+	suite.seedCharts(suite.T(), suite.db)
+	suite.seedAppVersions(suite.T(), suite.db)
 
 	childSelector := fmt.Sprintf("%s/%s", leonardoChart.Name, leonardoMain3AppVersion.AppVersion)
 	parentSelector := fmt.Sprintf("%s/%s", leonardoChart.Name, leonardoMain1AppVersion.AppVersion)
@@ -277,8 +277,8 @@ func (suite *appVersionControllerSuite) TestAppVersionGetChildrenPathToParent() 
 
 func (suite *appVersionControllerSuite) TestAppVersionGet() {
 	db.Truncate(suite.T(), suite.db)
-	suite.seedCharts(suite.T())
-	suite.seedAppVersions(suite.T())
+	suite.seedCharts(suite.T(), suite.db)
+	suite.seedAppVersions(suite.T(), suite.db)
 	appVersions, _ := suite.AppVersionController.ListAllMatching(AppVersion{}, 1)
 	anID := appVersions[0].ID
 
@@ -289,7 +289,7 @@ func (suite *appVersionControllerSuite) TestAppVersionGet() {
 	})
 	suite.Run("unsuccessfully for non-present", func() {
 		// Can't predict IDs so we just delete one that we know existed
-		_, _ = suite.AppVersionController.Delete(fmt.Sprintf("%d", anID), auth.GenerateUser(suite.T(), false))
+		_, _ = suite.AppVersionController.Delete(fmt.Sprintf("%d", anID), auth.GenerateUser(suite.T(), suite.db, false))
 		_, err := suite.AppVersionController.Get(fmt.Sprintf("%d", anID))
 		assert.ErrorContains(suite.T(), err, errors.NotFound)
 	})
@@ -301,8 +301,8 @@ func (suite *appVersionControllerSuite) TestAppVersionGet() {
 
 func (suite *appVersionControllerSuite) TestAppVersionGetOtherValidSelectors() {
 	db.Truncate(suite.T(), suite.db)
-	suite.seedCharts(suite.T())
-	suite.seedAppVersions(suite.T())
+	suite.seedCharts(suite.T(), suite.db)
+	suite.seedAppVersions(suite.T(), suite.db)
 	appVersions, _ := suite.AppVersionController.ListAllMatching(AppVersion{}, 1)
 	anID := fmt.Sprintf("%d", appVersions[0].ID)
 
@@ -314,7 +314,7 @@ func (suite *appVersionControllerSuite) TestAppVersionGetOtherValidSelectors() {
 	})
 	suite.Run("unsuccessfully for not found", func() {
 		// Can't predict IDs so we just delete one that we know existed
-		_, _ = suite.AppVersionController.Delete(anID, auth.GenerateUser(suite.T(), false))
+		_, _ = suite.AppVersionController.Delete(anID, auth.GenerateUser(suite.T(), suite.db, false))
 		_, err := suite.AppVersionController.GetOtherValidSelectors(anID)
 		assert.ErrorContains(suite.T(), err, errors.NotFound)
 	})
@@ -327,12 +327,12 @@ func (suite *appVersionControllerSuite) TestAppVersionGetOtherValidSelectors() {
 func (suite *appVersionControllerSuite) TestAppVersionEdit() {
 	suite.Run("successfully", func() {
 		db.Truncate(suite.T(), suite.db)
-		suite.seedCharts(suite.T())
-		suite.seedAppVersions(suite.T())
+		suite.seedCharts(suite.T(), suite.db)
+		suite.seedAppVersions(suite.T(), suite.db)
 		appVersions, _ := suite.AppVersionController.ListAllMatching(AppVersion{}, 1)
 		anID := fmt.Sprintf("%d", appVersions[0].ID)
 
-		response, err := suite.AppVersionController.Edit(anID, EditableAppVersion{Description: "blah"}, auth.GenerateUser(suite.T(), false))
+		response, err := suite.AppVersionController.Edit(anID, EditableAppVersion{Description: "blah"}, auth.GenerateUser(suite.T(), suite.db, false))
 		assert.NoError(suite.T(), err)
 		assert.Equal(suite.T(), "blah", response.Description)
 	})
@@ -341,12 +341,12 @@ func (suite *appVersionControllerSuite) TestAppVersionEdit() {
 func (suite *appVersionControllerSuite) TestAppVersionDelete() {
 	suite.Run("successfully", func() {
 		db.Truncate(suite.T(), suite.db)
-		suite.seedCharts(suite.T())
-		suite.seedAppVersions(suite.T())
+		suite.seedCharts(suite.T(), suite.db)
+		suite.seedAppVersions(suite.T(), suite.db)
 		appVersions, _ := suite.AppVersionController.ListAllMatching(AppVersion{}, 1)
 		anID := fmt.Sprintf("%d", appVersions[0].ID)
 
-		deleted, err := suite.AppVersionController.Delete(anID, auth.GenerateUser(suite.T(), false))
+		deleted, err := suite.AppVersionController.Delete(anID, auth.GenerateUser(suite.T(), suite.db, false))
 		assert.NoError(suite.T(), err)
 		assert.Equal(suite.T(), appVersions[0].AppVersion, deleted.AppVersion)
 		_, err = suite.AppVersionController.Get(anID)

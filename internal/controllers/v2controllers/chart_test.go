@@ -113,9 +113,9 @@ var (
 	}
 )
 
-func (controllerSet *ControllerSet) seedCharts(t *testing.T) {
+func (controllerSet *ControllerSet) seedCharts(t *testing.T, db *gorm.DB) {
 	for _, creatable := range chartSeedList {
-		if _, _, err := controllerSet.ChartController.Create(creatable, auth.GenerateUser(t, false)); err != nil {
+		if _, _, err := controllerSet.ChartController.Create(creatable, auth.GenerateUser(t, db, false)); err != nil {
 			t.Errorf("error seeding chart %s: %v", creatable.Name, err)
 		}
 	}
@@ -129,7 +129,7 @@ func (suite *chartControllerSuite) TestChartCreate() {
 	suite.Run("can create a new chart", func() {
 		db.Truncate(suite.T(), suite.db)
 
-		chart, created, err := suite.ChartController.Create(leonardoChart, auth.GenerateUser(suite.T(), false))
+		chart, created, err := suite.ChartController.Create(leonardoChart, auth.GenerateUser(suite.T(), suite.db, false))
 		assert.NoError(suite.T(), err)
 		assert.True(suite.T(), created)
 		assert.Equal(suite.T(), leonardoChart.Name, chart.Name)
@@ -153,7 +153,7 @@ func (suite *chartControllerSuite) TestChartCreate() {
 	suite.Run("chart repo can be customized", func() {
 		db.Truncate(suite.T(), suite.db)
 
-		chart, created, err := suite.ChartController.Create(datarepoChart, auth.GenerateUser(suite.T(), false))
+		chart, created, err := suite.ChartController.Create(datarepoChart, auth.GenerateUser(suite.T(), suite.db, false))
 		assert.NoError(suite.T(), err)
 		assert.True(suite.T(), created)
 		assert.Equal(suite.T(), datarepoChart.ChartRepo, chart.ChartRepo)
@@ -161,18 +161,18 @@ func (suite *chartControllerSuite) TestChartCreate() {
 	suite.Run("won't create duplicates", func() {
 		db.Truncate(suite.T(), suite.db)
 
-		chart, created, err := suite.ChartController.Create(leonardoChart, auth.GenerateUser(suite.T(), false))
+		chart, created, err := suite.ChartController.Create(leonardoChart, auth.GenerateUser(suite.T(), suite.db, false))
 		assert.NoError(suite.T(), err)
 		assert.True(suite.T(), created)
 		assert.True(suite.T(), chart.ID > 0)
-		_, created, err = suite.ChartController.Create(leonardoChart, auth.GenerateUser(suite.T(), false))
+		_, created, err = suite.ChartController.Create(leonardoChart, auth.GenerateUser(suite.T(), suite.db, false))
 		assert.ErrorContains(suite.T(), err, errors.Conflict)
 		assert.False(suite.T(), created)
 	})
 	suite.Run("validates incoming entries", func() {
 		db.Truncate(suite.T(), suite.db)
 
-		_, created, err := suite.ChartController.Create(CreatableChart{}, auth.GenerateUser(suite.T(), false))
+		_, created, err := suite.ChartController.Create(CreatableChart{}, auth.GenerateUser(suite.T(), suite.db, false))
 		assert.ErrorContains(suite.T(), err, errors.BadRequest)
 		assert.False(suite.T(), created)
 	})
@@ -180,7 +180,7 @@ func (suite *chartControllerSuite) TestChartCreate() {
 
 func (suite *chartControllerSuite) TestChartListAllMatching() {
 	db.Truncate(suite.T(), suite.db)
-	suite.seedCharts(suite.T())
+	suite.seedCharts(suite.T(), suite.db)
 
 	suite.Run("lists all charts", func() {
 		matching, err := suite.ChartController.ListAllMatching(Chart{}, 0)
@@ -225,7 +225,7 @@ func (suite *chartControllerSuite) TestChartListAllMatching() {
 
 func (suite *chartControllerSuite) TestChartGet() {
 	db.Truncate(suite.T(), suite.db)
-	suite.seedCharts(suite.T())
+	suite.seedCharts(suite.T(), suite.db)
 
 	suite.Run("successfully", func() {
 		byName, err := suite.ChartController.Get(yaleChart.Name)
@@ -247,7 +247,7 @@ func (suite *chartControllerSuite) TestChartGet() {
 
 func (suite *chartControllerSuite) TestChartGetOtherValidSelectors() {
 	db.Truncate(suite.T(), suite.db)
-	suite.seedCharts(suite.T())
+	suite.seedCharts(suite.T(), suite.db)
 
 	suite.Run("successfully", func() {
 		selectors, err := suite.ChartController.GetOtherValidSelectors(yaleChart.Name)
@@ -268,13 +268,13 @@ func (suite *chartControllerSuite) TestChartGetOtherValidSelectors() {
 func (suite *chartControllerSuite) TestChartEdit() {
 	suite.Run("successfully", func() {
 		db.Truncate(suite.T(), suite.db)
-		suite.seedCharts(suite.T())
+		suite.seedCharts(suite.T(), suite.db)
 
 		before, err := suite.ChartController.Get(yaleChart.Name)
 		assert.NoError(suite.T(), err)
 		assert.Equal(suite.T(), yaleChart.AppImageGitMainBranch, before.AppImageGitMainBranch)
 		newBranch := testutils.PointerTo("new")
-		edited, err := suite.ChartController.Edit(yaleChart.Name, EditableChart{AppImageGitMainBranch: newBranch}, auth.GenerateUser(suite.T(), false))
+		edited, err := suite.ChartController.Edit(yaleChart.Name, EditableChart{AppImageGitMainBranch: newBranch}, auth.GenerateUser(suite.T(), suite.db, false))
 		assert.NoError(suite.T(), err)
 		assert.Equal(suite.T(), newBranch, edited.AppImageGitMainBranch)
 		after, err := suite.ChartController.Get(yaleChart.Name)
@@ -283,9 +283,9 @@ func (suite *chartControllerSuite) TestChartEdit() {
 	})
 	suite.Run("unsuccessfully if invalid", func() {
 		db.Truncate(suite.T(), suite.db)
-		suite.seedCharts(suite.T())
+		suite.seedCharts(suite.T(), suite.db)
 
-		_, err := suite.ChartController.Edit(yaleLibChart.Name, EditableChart{ChartRepo: testutils.PointerTo("")}, auth.GenerateUser(suite.T(), false))
+		_, err := suite.ChartController.Edit(yaleLibChart.Name, EditableChart{ChartRepo: testutils.PointerTo("")}, auth.GenerateUser(suite.T(), suite.db, false))
 		assert.ErrorContains(suite.T(), err, errors.BadRequest)
 	})
 }
@@ -293,15 +293,15 @@ func (suite *chartControllerSuite) TestChartEdit() {
 func (suite *chartControllerSuite) TestChartDelete() {
 	suite.Run("successfully", func() {
 		db.Truncate(suite.T(), suite.db)
-		suite.seedCharts(suite.T())
+		suite.seedCharts(suite.T(), suite.db)
 
-		deleted, err := suite.ChartController.Delete(leonardoChart.Name, auth.GenerateUser(suite.T(), false))
+		deleted, err := suite.ChartController.Delete(leonardoChart.Name, auth.GenerateUser(suite.T(), suite.db, false))
 		assert.NoError(suite.T(), err)
 		assert.Equal(suite.T(), leonardoChart.Name, deleted.Name)
 		_, err = suite.ChartController.Get(leonardoChart.Name)
 		assert.ErrorContains(suite.T(), err, errors.NotFound)
 		suite.Run("sql constraints ignore soft deletion", func() {
-			_, created, err := suite.ChartController.Create(leonardoChart, auth.GenerateUser(suite.T(), false))
+			_, created, err := suite.ChartController.Create(leonardoChart, auth.GenerateUser(suite.T(), suite.db, false))
 			assert.ErrorContains(suite.T(), err, errors.BadRequest)
 			assert.ErrorContains(suite.T(), err, "Contact DevOps")
 			assert.False(suite.T(), created)

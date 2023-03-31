@@ -52,12 +52,12 @@ func (suite *changesetControllerSuite) TearDownTest() {
 
 func (suite *changesetControllerSuite) TestChangesetFlow() {
 	db.Truncate(suite.T(), suite.db)
-	suite.seedClusters(suite.T())
-	suite.seedEnvironments(suite.T())
-	suite.seedCharts(suite.T())
-	suite.seedAppVersions(suite.T())
-	suite.seedChartVersions(suite.T())
-	suite.seedChartReleases(suite.T())
+	suite.seedClusters(suite.T(), suite.db)
+	suite.seedEnvironments(suite.T(), suite.db)
+	suite.seedCharts(suite.T(), suite.db)
+	suite.seedAppVersions(suite.T(), suite.db)
+	suite.seedChartVersions(suite.T(), suite.db)
+	suite.seedChartReleases(suite.T(), suite.db)
 
 	// Suppose a Sam engineer begins work on a new feature--they open a PR, triggering a build that's reported to
 	// Sherlock.
@@ -67,7 +67,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 		GitCommit:        "eee1",
 		GitBranch:        "ID-123-my-new-feature",
 		ParentAppVersion: "sam/0.2.0",
-	}, auth.GenerateUser(suite.T(), true))
+	}, auth.GenerateUser(suite.T(), suite.db, true))
 	assert.NoError(suite.T(), err)
 	assert.True(suite.T(), created)
 
@@ -77,7 +77,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 		ChartReleases: []ChangesetPlanRequestChartReleaseEntry{
 			{CreatableChangeset: CreatableChangeset{ChartRelease: "terra-dev/sam"}},
 		},
-	}, auth.GenerateUser(suite.T(), true))
+	}, auth.GenerateUser(suite.T(), suite.db, true))
 	assert.NoError(suite.T(), err)
 	assert.Empty(suite.T(), plans)
 
@@ -85,7 +85,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 	// the PR action that would help them do this, or they'd use Beehive. First they'd create the BEE.
 	newBee, created, err := suite.EnvironmentController.Create(CreatableEnvironment{
 		TemplateEnvironment: "swatomation",
-	}, auth.GenerateUser(suite.T(), true))
+	}, auth.GenerateUser(suite.T(), suite.db, true))
 	assert.NoError(suite.T(), err)
 	assert.True(suite.T(), created)
 
@@ -105,7 +105,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 				ToAppVersionBranch: testutils.PointerTo("ID-123-my-new-feature"),
 			}},
 		},
-	}, auth.GenerateUser(suite.T(), true))
+	}, auth.GenerateUser(suite.T(), suite.db, true))
 	assert.NoError(suite.T(), err)
 	assert.Len(suite.T(), applied, 1)
 
@@ -135,7 +135,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 		// way, but the diffs that the parent tree allows are really only impactful on mainline deploys, as demonstrated
 		// later.
 		ParentAppVersion: "sam/0.2.0",
-	}, auth.GenerateUser(suite.T(), true))
+	}, auth.GenerateUser(suite.T(), suite.db, true))
 	assert.NoError(suite.T(), err)
 	assert.True(suite.T(), created)
 
@@ -146,7 +146,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 		GitCommit:        "ggg2",
 		GitBranch:        "ID-123-my-new-feature",
 		ParentAppVersion: "sam/0.2.0",
-	}, auth.GenerateUser(suite.T(), true))
+	}, auth.GenerateUser(suite.T(), suite.db, true))
 	assert.NoError(suite.T(), err)
 	// It just wouldn't get created again on retry
 	assert.False(suite.T(), created)
@@ -159,7 +159,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 				ChartRelease: fmt.Sprintf("%s/%s", newBee.Name, "sam"),
 			}},
 		},
-	}, auth.GenerateUser(suite.T(), true))
+	}, auth.GenerateUser(suite.T(), suite.db, true))
 	assert.NoError(suite.T(), err)
 	assert.Len(suite.T(), applied, 1)
 
@@ -179,7 +179,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 				ChartRelease: fmt.Sprintf("%s/%s", newBee.Name, "sam"),
 			}},
 		},
-	}, auth.GenerateUser(suite.T(), true))
+	}, auth.GenerateUser(suite.T(), suite.db, true))
 	assert.NoError(suite.T(), err)
 	assert.Empty(suite.T(), applied)
 
@@ -190,7 +190,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 		GitCommit:        "hhh3",
 		GitBranch:        "develop",
 		ParentAppVersion: "sam/0.2.0",
-	}, auth.GenerateUser(suite.T(), true))
+	}, auth.GenerateUser(suite.T(), suite.db, true))
 	assert.NoError(suite.T(), err)
 	assert.True(suite.T(), created)
 
@@ -198,7 +198,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 	// making that earlier version suddenly the most recently edited version:
 	_, err = suite.AppVersionController.Edit("sam/0.2.0", EditableAppVersion{
 		Description: "some random edit",
-	}, auth.GenerateUser(suite.T(), true))
+	}, auth.GenerateUser(suite.T(), suite.db, true))
 	assert.NoError(suite.T(), err)
 
 	// terra-dev tracks Sam mainline, so upon next refresh it would get updated to the most recently created version,
@@ -208,7 +208,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 			// Here we refresh all of terra-dev, but we could just do Sam too
 			{Environment: "terra-dev"},
 		},
-	}, auth.GenerateUser(suite.T(), true))
+	}, auth.GenerateUser(suite.T(), suite.db, true))
 	assert.NoError(suite.T(), err)
 	assert.Len(suite.T(), applied, 1)
 	assert.Equal(suite.T(), "sam-terra-dev", applied[0].ChartRelease)
@@ -223,7 +223,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 				ToAppVersionExact: testutils.PointerTo("0.3.0"),
 			}},
 		},
-	}, auth.GenerateUser(suite.T(), true))
+	}, auth.GenerateUser(suite.T(), suite.db, true))
 	assert.NoError(suite.T(), err)
 	assert.Len(suite.T(), planTo030, 1)
 	assert.Equal(suite.T(), "sam-terra-staging", planTo030[0].ChartRelease)
@@ -236,7 +236,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 		GitCommit:        "jjj4",
 		GitBranch:        "develop",
 		ParentAppVersion: "sam/0.3.0",
-	}, auth.GenerateUser(suite.T(), true))
+	}, auth.GenerateUser(suite.T(), suite.db, true))
 	assert.NoError(suite.T(), err)
 	assert.True(suite.T(), created)
 
@@ -248,7 +248,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 				ToAppVersionExact: testutils.PointerTo("0.4.0"),
 			}},
 		},
-	}, auth.GenerateUser(suite.T(), true))
+	}, auth.GenerateUser(suite.T(), suite.db, true))
 	assert.NoError(suite.T(), err)
 	assert.Len(suite.T(), planTo040, 1)
 	assert.Equal(suite.T(), "sam-terra-staging", planTo040[0].ChartRelease)
@@ -263,7 +263,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 	// Suppose the engineer opts to apply this latest plan:
 	applied, err = suite.ChangesetController.Apply([]string{
 		strconv.FormatUint(uint64(planTo040[0].ID), 10),
-	}, auth.GenerateUser(suite.T(), true))
+	}, auth.GenerateUser(suite.T(), suite.db, true))
 	assert.NoError(suite.T(), err)
 	assert.NotNil(suite.T(), applied[0].AppliedAt)
 
@@ -283,7 +283,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 	// If the engineer tries to apply it, they get an error.
 	_, err = suite.ChangesetController.Apply([]string{
 		strconv.FormatUint(uint64(planTo030[0].ID), 10),
-	}, auth.GenerateUser(suite.T(), true))
+	}, auth.GenerateUser(suite.T(), suite.db, true))
 	assert.ErrorContains(suite.T(), err, "superseded")
 
 	// Finally, suppose smoke tests pass on staging and the engineer want to get that version into prod and make sure
@@ -296,7 +296,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 			},
 			{Environment: "terra-dev"},
 		},
-	}, auth.GenerateUser(suite.T(), true))
+	}, auth.GenerateUser(suite.T(), suite.db, true))
 	assert.NoError(suite.T(), err)
 	assert.Len(suite.T(), applied, 2)
 
@@ -312,14 +312,14 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 		Chart:              "sam",
 		ChartVersion:       "0.0.3",
 		ParentChartVersion: "sam/0.0.2",
-	}, auth.GenerateUser(suite.T(), true))
+	}, auth.GenerateUser(suite.T(), suite.db, true))
 	assert.NoError(suite.T(), err)
 	assert.True(suite.T(), created)
 	_, err = suite.ChangesetController.PlanAndApply(ChangesetPlanRequest{
 		ChartReleases: []ChangesetPlanRequestChartReleaseEntry{
 			{CreatableChangeset: CreatableChangeset{ChartRelease: "terra-dev/sam"}},
 		},
-	}, auth.GenerateUser(suite.T(), true))
+	}, auth.GenerateUser(suite.T(), suite.db, true))
 	assert.NoError(suite.T(), err)
 	_, err = suite.ChangesetController.PlanAndApply(ChangesetPlanRequest{
 		Environments: []ChangesetPlanRequestEnvironmentEntry{
@@ -332,7 +332,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 				UseExactVersionsFromOtherEnvironment: testutils.PointerTo("terra-dev"),
 			},
 		},
-	}, auth.GenerateUser(suite.T(), true))
+	}, auth.GenerateUser(suite.T(), suite.db, true))
 	assert.NoError(suite.T(), err)
 	samInProd, err = suite.ChartReleaseController.Get("terra-prod/sam")
 	assert.NoError(suite.T(), err)
@@ -346,7 +346,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 				UseExactVersionsFromOtherChartRelease: testutils.PointerTo("terra-staging/leonardo"),
 			},
 		},
-	}, auth.GenerateUser(suite.T(), true))
+	}, auth.GenerateUser(suite.T(), suite.db, true))
 	assert.ErrorContains(suite.T(), err, "mismatched chart")
 
 	// We can go to arbitrary chart and app versions too:
@@ -360,7 +360,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 				ToChartVersionExact:    testutils.PointerTo("8.8.8"),
 			}},
 		},
-	}, auth.GenerateUser(suite.T(), true))
+	}, auth.GenerateUser(suite.T(), suite.db, true))
 	assert.NoError(suite.T(), err)
 	// And the changelogs are empty:
 	assert.Len(suite.T(), applied[0].NewAppVersions, 0)
@@ -376,7 +376,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 				ToAppVersionBranch:   testutils.PointerTo("develop"),
 			}},
 		},
-	}, auth.GenerateUser(suite.T(), true))
+	}, auth.GenerateUser(suite.T(), suite.db, true))
 	assert.NoError(suite.T(), err)
 	assert.Len(suite.T(), applied[0].NewAppVersions, 0)
 	applied, err = suite.ChangesetController.PlanAndApply(ChangesetPlanRequest{
@@ -386,7 +386,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 				ToAppVersionBranch: testutils.PointerTo("ID-123-my-new-feature"),
 			}},
 		},
-	}, auth.GenerateUser(suite.T(), true))
+	}, auth.GenerateUser(suite.T(), suite.db, true))
 	assert.NoError(suite.T(), err)
 	assert.Len(suite.T(), applied[0].NewAppVersions, 1)
 
@@ -398,7 +398,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 				FollowVersionsFromOtherEnvironment: testutils.PointerTo("terra-dev"),
 			},
 		},
-	}, auth.GenerateUser(suite.T(), true))
+	}, auth.GenerateUser(suite.T(), suite.db, true))
 	assert.NoError(suite.T(), err)
 	// If we make a change in dev...
 	_, err = suite.ChangesetController.PlanAndApply(ChangesetPlanRequest{
@@ -409,7 +409,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 				ToAppVersionExact:    testutils.PointerTo("my-new-version"),
 			}},
 		},
-	}, auth.GenerateUser(suite.T(), true))
+	}, auth.GenerateUser(suite.T(), suite.db, true))
 	assert.NoError(suite.T(), err)
 	// ... we can just refresh the "following" environment to get that change!
 	// (it's working at the chart release level under the hood)
@@ -419,7 +419,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 				Environment: newBee.Name,
 			},
 		},
-	}, auth.GenerateUser(suite.T(), true))
+	}, auth.GenerateUser(suite.T(), suite.db, true))
 	assert.NoError(suite.T(), err)
 	assert.Len(suite.T(), applied, 1)
 	samInBee, err = suite.ChartReleaseController.Get(fmt.Sprintf("%s/%s", newBee.Name, "sam"))
@@ -435,7 +435,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 				ToAppVersionExact:    testutils.PointerTo("some fake version"),
 			}},
 		},
-	}, auth.GenerateUser(suite.T(), true))
+	}, auth.GenerateUser(suite.T(), suite.db, true))
 	assert.NoError(suite.T(), err)
 	assert.Len(suite.T(), applied, 1)
 	queried, err := suite.ChangesetController.QueryApplied("terra-dev/sam", 0, 100)
@@ -447,7 +447,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 	// It's also possible to exclude a chart release from the bulk update by default.
 	_, err = suite.ChartReleaseController.Edit(fmt.Sprintf("%s/%s", newBee.Name, "sam"),
 		EditableChartRelease{IncludeInBulkChangesets: testutils.PointerTo(false)},
-		auth.GenerateUser(suite.T(), true))
+		auth.GenerateUser(suite.T(), suite.db, true))
 	assert.NoError(suite.T(), err)
 	// If we make a change to the upstream...
 	_, err = suite.ChangesetController.PlanAndApply(ChangesetPlanRequest{
@@ -458,7 +458,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 				ToAppVersionExact:    testutils.PointerTo("yet-another-new-version"),
 			}},
 		},
-	}, auth.GenerateUser(suite.T(), true))
+	}, auth.GenerateUser(suite.T(), suite.db, true))
 	assert.NoError(suite.T(), err)
 	// And just refresh the BEE...
 	applied, err = suite.ChangesetController.PlanAndApply(ChangesetPlanRequest{
@@ -467,7 +467,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 				Environment: newBee.Name,
 			},
 		},
-	}, auth.GenerateUser(suite.T(), true))
+	}, auth.GenerateUser(suite.T(), suite.db, true))
 	assert.NoError(suite.T(), err)
 	// Sam won't get updated!
 	assert.Len(suite.T(), applied, 0)
@@ -483,7 +483,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 				IncludeCharts: []string{"sam"},
 			},
 		},
-	}, auth.GenerateUser(suite.T(), true))
+	}, auth.GenerateUser(suite.T(), suite.db, true))
 	assert.NoError(suite.T(), err)
 	assert.Len(suite.T(), applied, 1)
 	samInBee, err = suite.ChartReleaseController.Get(fmt.Sprintf("%s/%s", newBee.Name, "sam"))
