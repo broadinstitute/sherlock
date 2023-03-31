@@ -34,7 +34,9 @@ type Environment struct {
 	DefaultCluster              *Cluster
 	DefaultClusterID            *uint
 	DefaultFirecloudDevelopRef  *string
-	Owner                       *string `gorm:"not null; default:null"`
+	Owner                       *User
+	OwnerID                     *uint
+	LegacyOwner                 *string
 	RequiresSuitability         *bool
 	BaseDomain                  *string
 	NamePrefixesDomain          *bool
@@ -159,6 +161,11 @@ func validateEnvironment(environment *Environment) error {
 	} else if !regex.MatchString(environment.Name) {
 		return fmt.Errorf("environment name %s did not match %s", environment.Name, environmentNameRegexString)
 	}
+
+	if environment.OwnerID == nil && (environment.LegacyOwner == nil || *environment.LegacyOwner == "") {
+		return fmt.Errorf("a %T must have an owner", environment)
+	}
+
 	switch environment.Lifecycle {
 	case "template":
 		if environment.TemplateEnvironmentID != nil {
@@ -175,9 +182,6 @@ func validateEnvironment(environment *Environment) error {
 		}
 		if environment.DefaultClusterID == nil {
 			return fmt.Errorf("a non-template %T must have a default cluster", environment)
-		}
-		if environment.Owner == nil || *environment.Owner == "" {
-			return fmt.Errorf("a non-template %T must have an owner", environment)
 		}
 		if environment.RequiresSuitability == nil {
 			return fmt.Errorf("a non-template %T must set whether it requires suitability or not", environment)
