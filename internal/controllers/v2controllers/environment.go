@@ -22,6 +22,7 @@ type Environment struct {
 	TemplateEnvironmentInfo  *Environment          `json:"templateEnvironmentInfo,omitempty" swaggertype:"object" form:"-"` // Single-layer recursive; provides info of the template environment if this environment has one
 	DefaultClusterInfo       *Cluster              `json:"defaultClusterInfo,omitempty" form:"-"`
 	PagerdutyIntegrationInfo *PagerdutyIntegration `json:"pagerdutyIntegrationInfo,omitempty" form:"-"`
+	OwnerInfo                *User                 `json:"ownerInfo,omitempty" form:"-"`
 	CreatableEnvironment
 }
 
@@ -41,7 +42,7 @@ type CreatableEnvironment struct {
 type EditableEnvironment struct {
 	DefaultCluster              *string                 `json:"defaultCluster" form:"defaultCluster"`
 	DefaultFirecloudDevelopRef  *string                 `json:"defaultFirecloudDevelopRef" form:"defaultFirecloudDevelopRef" default:"dev"` // should be the environment branch for live envs. Is usually dev for template/dynamic but not necessarily
-	Owner                       *string                 `json:"owner" form:"owner"`                                                         // When creating, will be set to your email
+	Owner                       *string                 `json:"owner" form:"owner"`                                                         // When creating, will default to you
 	RequiresSuitability         *bool                   `json:"requiresSuitability" form:"requiresSuitability" default:"false"`
 	BaseDomain                  *string                 `json:"baseDomain" form:"baseDomain" default:"bee.envs-terra.bio"`
 	NamePrefixesDomain          *bool                   `json:"namePrefixesDomain" form:"namePrefixesDomain" default:"true"`
@@ -84,6 +85,18 @@ func (e Environment) toModel(storeSet *v2models.StoreSet) (v2models.Environment,
 		}
 		pagerdutyIntegrationID = &pagerdutyIntegration.ID
 	}
+
+	// The model has LegacyOwner from when we just stored a string. We'll read that out into Owner if there's no
+	// OwnerID in the model, but we won't read back in to LegacyOwner. In other words, that field of the model
+	// is becoming read-only, and it won't ever be visible if there's an owner reference.
+	var ownerID *uint
+	if e.Owner != nil {
+		user, err := storeSet.UserStore.Get(*e.Owner)
+		if err != nil {
+			return v2models.Environment{}, err
+		}
+		ownerID = &user.ID
+	}
 	return v2models.Environment{
 		Model: gorm.Model{
 			ID:        e.ID,
@@ -101,7 +114,7 @@ func (e Environment) toModel(storeSet *v2models.StoreSet) (v2models.Environment,
 		DefaultNamespace:            e.DefaultNamespace,
 		NamePrefix:                  e.NamePrefix,
 		DefaultFirecloudDevelopRef:  e.DefaultFirecloudDevelopRef,
-		Owner:                       e.Owner,
+		OwnerID:                     ownerID,
 		RequiresSuitability:         e.RequiresSuitability,
 		BaseDomain:                  e.BaseDomain,
 		NamePrefixesDomain:          e.NamePrefixesDomain,
@@ -174,6 +187,15 @@ func modelEnvironmentToEnvironment(model *v2models.Environment) *Environment {
 	if err != nil {
 		log.Error().Err(err).Msgf("couldn't parse %s's offlineScheduleEndTime coming from the database, swallowing: %v", model.Name, err)
 	}
+
+	var ownerEmail string
+	owner := modelUserToUser(model.Owner)
+	if owner != nil {
+		ownerEmail = owner.Email
+	} else if model.LegacyOwner != nil {
+		ownerEmail = *model.LegacyOwner
+	}
+
 	return &Environment{
 		ReadableBaseType: ReadableBaseType{
 			ID:        model.ID,
@@ -183,6 +205,7 @@ func modelEnvironmentToEnvironment(model *v2models.Environment) *Environment {
 		TemplateEnvironmentInfo:  templateEnvironment,
 		DefaultClusterInfo:       defaultCluster,
 		PagerdutyIntegrationInfo: pagerdutyIntegration,
+		OwnerInfo:                owner,
 		CreatableEnvironment: CreatableEnvironment{
 			Base:                      model.Base,
 			AutoPopulateChartReleases: model.AutoPopulateChartReleases,
@@ -196,7 +219,7 @@ func modelEnvironmentToEnvironment(model *v2models.Environment) *Environment {
 			EditableEnvironment: EditableEnvironment{
 				DefaultCluster:              &defaultClusterName,
 				DefaultFirecloudDevelopRef:  model.DefaultFirecloudDevelopRef,
-				Owner:                       model.Owner,
+				Owner:                       &ownerEmail,
 				RequiresSuitability:         model.RequiresSuitability,
 				BaseDomain:                  model.BaseDomain,
 				NamePrefixesDomain:          model.NamePrefixesDomain,
