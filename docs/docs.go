@@ -3327,7 +3327,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "When creating, will be set to your email",
+                        "description": "When creating, will default to you",
                         "name": "owner",
                         "in": "query"
                     },
@@ -7145,7 +7145,7 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "owner": {
-                    "description": "When creating, will be set to your email",
+                    "description": "When creating, will default to you",
                     "type": "string"
                 },
                 "pagerdutyIntegration": {
@@ -7410,7 +7410,7 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "owner": {
-                    "description": "When creating, will be set to your email",
+                    "description": "When creating, will default to you",
                     "type": "string"
                 },
                 "pagerdutyIntegration": {
@@ -7543,8 +7543,11 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "owner": {
-                    "description": "When creating, will be set to your email",
+                    "description": "When creating, will default to you",
                     "type": "string"
+                },
+                "ownerInfo": {
+                    "$ref": "#/definitions/v2controllers.User"
                 },
                 "pagerdutyIntegration": {
                     "type": "string"

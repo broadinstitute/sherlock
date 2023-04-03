@@ -60,7 +60,7 @@ type V2controllersEditableEnvironment struct {
 	// offline schedule end weekends
 	OfflineScheduleEndWeekends bool `json:"offlineScheduleEndWeekends,omitempty"`
 
-	// When creating, will be set to your email
+	// When creating, will default to you
 	Owner string `json:"owner,omitempty"`
 
 	// pagerduty integration

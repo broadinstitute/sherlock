@@ -88,8 +88,11 @@ type V2controllersEnvironment struct {
 	// offline schedule end weekends
 	OfflineScheduleEndWeekends bool `json:"offlineScheduleEndWeekends,omitempty"`
 
-	// When creating, will be set to your email
+	// When creating, will default to you
 	Owner string `json:"owner,omitempty"`
+
+	// owner info
+	OwnerInfo *V2controllersUser `json:"ownerInfo,omitempty"`
 
 	// pagerduty integration
 	PagerdutyIntegration string `json:"pagerdutyIntegration,omitempty"`
@@ -141,6 +144,10 @@ func (m *V2controllersEnvironment) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateOfflineScheduleEndTime(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateOwnerInfo(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -232,6 +239,25 @@ func (m *V2controllersEnvironment) validateOfflineScheduleEndTime(formats strfmt
 	return nil
 }
 
+func (m *V2controllersEnvironment) validateOwnerInfo(formats strfmt.Registry) error {
+	if swag.IsZero(m.OwnerInfo) { // not required
+		return nil
+	}
+
+	if m.OwnerInfo != nil {
+		if err := m.OwnerInfo.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("ownerInfo")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("ownerInfo")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (m *V2controllersEnvironment) validatePagerdutyIntegrationInfo(formats strfmt.Registry) error {
 	if swag.IsZero(m.PagerdutyIntegrationInfo) { // not required
 		return nil
@@ -275,6 +301,10 @@ func (m *V2controllersEnvironment) ContextValidate(ctx context.Context, formats 
 		res = append(res, err)
 	}
 
+	if err := m.contextValidateOwnerInfo(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidatePagerdutyIntegrationInfo(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -309,6 +339,22 @@ func (m *V2controllersEnvironment) contextValidateDefaultClusterInfo(ctx context
 				return ve.ValidateName("defaultClusterInfo")
 			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("defaultClusterInfo")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *V2controllersEnvironment) contextValidateOwnerInfo(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.OwnerInfo != nil {
+		if err := m.OwnerInfo.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("ownerInfo")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("ownerInfo")
 			}
 			return err
 		}

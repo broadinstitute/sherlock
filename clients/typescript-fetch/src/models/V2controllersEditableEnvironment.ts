@@ -105,7 +105,7 @@ export interface V2controllersEditableEnvironment {
      */
     offlineScheduleEndWeekends?: boolean;
     /**
-     * When creating, will be set to your email
+     * When creating, will default to you
      * @type {string}
      * @memberof V2controllersEditableEnvironment
      */

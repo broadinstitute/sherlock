@@ -179,7 +179,7 @@ type GetAPIV2EnvironmentsParams struct {
 
 	/* Owner.
 
-	   When creating, will be set to your email
+	   When creating, will default to you
 	*/
 	Owner *string
 

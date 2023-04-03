@@ -31,6 +31,12 @@ import {
     V2controllersPagerdutyIntegrationFromJSONTyped,
     V2controllersPagerdutyIntegrationToJSON,
 } from './V2controllersPagerdutyIntegration';
+import type { V2controllersUser } from './V2controllersUser';
+import {
+    V2controllersUserFromJSON,
+    V2controllersUserFromJSONTyped,
+    V2controllersUserToJSON,
+} from './V2controllersUser';
 
 /**
  * 
@@ -171,11 +177,17 @@ export interface V2controllersEnvironment {
      */
     offlineScheduleEndWeekends?: boolean;
     /**
-     * When creating, will be set to your email
+     * When creating, will default to you
      * @type {string}
      * @memberof V2controllersEnvironment
      */
     owner?: string;
+    /**
+     * 
+     * @type {V2controllersUser}
+     * @memberof V2controllersEnvironment
+     */
+    ownerInfo?: V2controllersUser;
     /**
      * 
      * @type {string}
@@ -274,6 +286,7 @@ export function V2controllersEnvironmentFromJSONTyped(json: any, ignoreDiscrimin
         'offlineScheduleEndTime': !exists(json, 'offlineScheduleEndTime') ? undefined : (new Date(json['offlineScheduleEndTime'])),
         'offlineScheduleEndWeekends': !exists(json, 'offlineScheduleEndWeekends') ? undefined : json['offlineScheduleEndWeekends'],
         'owner': !exists(json, 'owner') ? undefined : json['owner'],
+        'ownerInfo': !exists(json, 'ownerInfo') ? undefined : V2controllersUserFromJSON(json['ownerInfo']),
         'pagerdutyIntegration': !exists(json, 'pagerdutyIntegration') ? undefined : json['pagerdutyIntegration'],
         'pagerdutyIntegrationInfo': !exists(json, 'pagerdutyIntegrationInfo') ? undefined : V2controllersPagerdutyIntegrationFromJSON(json['pagerdutyIntegrationInfo']),
         'preventDeletion': !exists(json, 'preventDeletion') ? undefined : json['preventDeletion'],
@@ -318,6 +331,7 @@ export function V2controllersEnvironmentToJSON(value?: V2controllersEnvironment 
         'offlineScheduleEndTime': value.offlineScheduleEndTime === undefined ? undefined : (value.offlineScheduleEndTime.toISOString()),
         'offlineScheduleEndWeekends': value.offlineScheduleEndWeekends,
         'owner': value.owner,
+        'ownerInfo': V2controllersUserToJSON(value.ownerInfo),
         'pagerdutyIntegration': value.pagerdutyIntegration,
         'pagerdutyIntegrationInfo': V2controllersPagerdutyIntegrationToJSON(value.pagerdutyIntegrationInfo),
         'preventDeletion': value.preventDeletion,
