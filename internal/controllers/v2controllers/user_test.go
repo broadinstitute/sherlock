@@ -48,7 +48,7 @@ func (suite *userControllerSuite) TestUserFlow() {
 	// It's impossible to create a user via a controller. The creation type doesn't support some required fields.
 	// The model also won't allow a normally-authenticated user to make a user entry (it only allows creation when the
 	// auth user is nil) but we can't reach that error case from here (see v2models/user_test.go for unit tests)
-	_, created, err := suite.UserController.Create(CreatableUser{}, auth.GenerateUser(suite.T(), true))
+	_, created, err := suite.UserController.Create(CreatableUser{}, auth.GenerateUser(suite.T(), suite.db, true))
 	assert.ErrorContains(suite.T(), err, errors.BadRequest)
 	assert.False(suite.T(), created)
 	// The controller does check that we can't pass a nil user, so the model's creation method isn't accessible via
@@ -58,7 +58,7 @@ func (suite *userControllerSuite) TestUserFlow() {
 	assert.False(suite.T(), created)
 
 	// Instead, the middleware may use its MiddlewareUserStore to get or create a user.
-	generatedUser := auth.GenerateUser(suite.T(), false)
+	generatedUser := auth.GenerateUser(suite.T(), suite.db, false)
 	modelUser, err := suite.middleware.GetOrCreateUser(generatedUser.Email, generatedUser.GoogleID)
 	assert.NoError(suite.T(), err)
 	assert.Equal(suite.T(), generatedUser.Email, modelUser.Email)
