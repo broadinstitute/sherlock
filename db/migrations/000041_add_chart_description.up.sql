@@ -3,4 +3,3 @@ alter table v2_charts
 
 alter table v2_charts
     add if not exists playbook_url text;
-
