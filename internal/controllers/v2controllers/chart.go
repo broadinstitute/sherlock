@@ -25,6 +25,8 @@ type EditableChart struct {
 	DefaultSubdomain      *string `json:"defaultSubdomain" form:"defaultSubdomain"`                         // When creating, will default to the name of the chart
 	DefaultProtocol       *string `json:"defaultProtocol" form:"defaultProtocol" default:"https"`
 	DefaultPort           *uint   `json:"defaultPort" form:"defaultPort" default:"443"`
+	Description           *string `json:"description" form:"description"`
+	PlaybookURL           *string `json:"playbookURL" form:"playbookURL"`
 }
 
 //nolint:unused
@@ -44,6 +46,8 @@ func (c Chart) toModel(_ *v2models.StoreSet) (v2models.Chart, error) {
 		DefaultSubdomain:      c.DefaultSubdomain,
 		DefaultProtocol:       c.DefaultProtocol,
 		DefaultPort:           c.DefaultPort,
+		Description:           c.Description,
+		PlaybookURL:           c.PlaybookURL,
 	}, nil
 }
 
@@ -90,6 +94,8 @@ func modelChartToChart(model *v2models.Chart) *Chart {
 				DefaultSubdomain:      model.DefaultSubdomain,
 				DefaultProtocol:       model.DefaultProtocol,
 				DefaultPort:           model.DefaultPort,
+				Description:           model.Description,
+				PlaybookURL:           model.PlaybookURL,
 			},
 		},
 	}

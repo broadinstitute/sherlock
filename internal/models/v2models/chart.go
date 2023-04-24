@@ -21,6 +21,8 @@ type Chart struct {
 	DefaultProtocol       *string
 	DefaultPort           *uint
 	LegacyConfigsEnabled  *bool
+	Description           *string
+	PlaybookURL           *string
 }
 
 func (c Chart) TableName() string {
