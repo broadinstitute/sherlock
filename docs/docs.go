@@ -1783,6 +1783,11 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "name": "description",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
                         "name": "id",
                         "in": "query"
@@ -1798,6 +1803,11 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Required when creating",
                         "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "playbookURL",
                         "in": "query"
                     },
                     {
@@ -6574,6 +6584,9 @@ const docTemplate = `{
                     "description": "When creating, will default to the name of the chart",
                     "type": "string"
                 },
+                "description": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "integer"
                 },
@@ -6584,6 +6597,9 @@ const docTemplate = `{
                 },
                 "name": {
                     "description": "Required when creating",
+                    "type": "string"
+                },
+                "playbookURL": {
                     "type": "string"
                 },
                 "updatedAt": {
@@ -6871,6 +6887,9 @@ const docTemplate = `{
                     "description": "When creating, will default to the name of the chart",
                     "type": "string"
                 },
+                "description": {
+                    "type": "string"
+                },
                 "legacyConfigsEnabled": {
                     "description": "Indicates whether a chart requires config rendering from firecloud-develop",
                     "type": "boolean",
@@ -6878,6 +6897,9 @@ const docTemplate = `{
                 },
                 "name": {
                     "description": "Required when creating",
+                    "type": "string"
+                },
+                "playbookURL": {
                     "type": "string"
                 }
             }
@@ -7270,10 +7292,16 @@ const docTemplate = `{
                     "description": "When creating, will default to the name of the chart",
                     "type": "string"
                 },
+                "description": {
+                    "type": "string"
+                },
                 "legacyConfigsEnabled": {
                     "description": "Indicates whether a chart requires config rendering from firecloud-develop",
                     "type": "boolean",
                     "default": false
+                },
+                "playbookURL": {
+                    "type": "string"
                 }
             }
         },
@@ -7666,6 +7694,8 @@ var SwaggerInfo = &swag.Spec{
 	Description:      "The Data Science Platform's source-of-truth service.\nNote: this API will try to load and return associations in responses, so clients won't need to make as many requests. This behavior isn't recursive, though, so associations of associations are *not* fully loaded (even if it might seem that way from looking at the data types).",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
+	LeftDelim:        "{{",
+	RightDelim:       "}}",
 }
 
 func init() {

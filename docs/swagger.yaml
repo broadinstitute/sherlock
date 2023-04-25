@@ -320,6 +320,8 @@ definitions:
       defaultSubdomain:
         description: When creating, will default to the name of the chart
         type: string
+      description:
+        type: string
       id:
         type: integer
       legacyConfigsEnabled:
@@ -328,6 +330,8 @@ definitions:
         type: boolean
       name:
         description: Required when creating
+        type: string
+      playbookURL:
         type: string
       updatedAt:
         format: date-time
@@ -541,12 +545,16 @@ definitions:
       defaultSubdomain:
         description: When creating, will default to the name of the chart
         type: string
+      description:
+        type: string
       legacyConfigsEnabled:
         default: false
         description: Indicates whether a chart requires config rendering from firecloud-develop
         type: boolean
       name:
         description: Required when creating
+        type: string
+      playbookURL:
         type: string
     type: object
   v2controllers.CreatableChartRelease:
@@ -845,10 +853,14 @@ definitions:
       defaultSubdomain:
         description: When creating, will default to the name of the chart
         type: string
+      description:
+        type: string
       legacyConfigsEnabled:
         default: false
         description: Indicates whether a chart requires config rendering from firecloud-develop
         type: boolean
+      playbookURL:
+        type: string
     type: object
   v2controllers.EditableChartRelease:
     properties:
@@ -2330,6 +2342,9 @@ paths:
         name: defaultSubdomain
         type: string
       - in: query
+        name: description
+        type: string
+      - in: query
         name: id
         type: integer
       - default: false
@@ -2340,6 +2355,9 @@ paths:
       - description: Required when creating
         in: query
         name: name
+        type: string
+      - in: query
+        name: playbookURL
         type: string
       - format: date-time
         in: query

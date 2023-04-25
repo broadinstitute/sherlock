@@ -44,6 +44,9 @@ type V2controllersChart struct {
 	// When creating, will default to the name of the chart
 	DefaultSubdomain string `json:"defaultSubdomain,omitempty"`
 
+	// description
+	Description string `json:"description,omitempty"`
+
 	// id
 	ID int64 `json:"id,omitempty"`
 
@@ -52,6 +55,9 @@ type V2controllersChart struct {
 
 	// Required when creating
 	Name string `json:"name,omitempty"`
+
+	// playbook URL
+	PlaybookURL string `json:"playbookURL,omitempty"`
 
 	// updated at
 	// Format: date-time

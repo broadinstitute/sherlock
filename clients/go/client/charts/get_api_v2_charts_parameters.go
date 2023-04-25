@@ -98,6 +98,9 @@ type GetAPIV2ChartsParams struct {
 	*/
 	DefaultSubdomain *string
 
+	// Description.
+	Description *string
+
 	// ID.
 	ID *int64
 
@@ -118,6 +121,9 @@ type GetAPIV2ChartsParams struct {
 	   Required when creating
 	*/
 	Name *string
+
+	// PlaybookURL.
+	PlaybookURL *string
 
 	// UpdatedAt.
 	//
@@ -288,6 +294,17 @@ func (o *GetAPIV2ChartsParams) SetDefaultSubdomain(defaultSubdomain *string) {
 	o.DefaultSubdomain = defaultSubdomain
 }
 
+// WithDescription adds the description to the get API v2 charts params
+func (o *GetAPIV2ChartsParams) WithDescription(description *string) *GetAPIV2ChartsParams {
+	o.SetDescription(description)
+	return o
+}
+
+// SetDescription adds the description to the get API v2 charts params
+func (o *GetAPIV2ChartsParams) SetDescription(description *string) {
+	o.Description = description
+}
+
 // WithID adds the id to the get API v2 charts params
 func (o *GetAPIV2ChartsParams) WithID(id *int64) *GetAPIV2ChartsParams {
 	o.SetID(id)
@@ -330,6 +347,17 @@ func (o *GetAPIV2ChartsParams) WithName(name *string) *GetAPIV2ChartsParams {
 // SetName adds the name to the get API v2 charts params
 func (o *GetAPIV2ChartsParams) SetName(name *string) {
 	o.Name = name
+}
+
+// WithPlaybookURL adds the playbookURL to the get API v2 charts params
+func (o *GetAPIV2ChartsParams) WithPlaybookURL(playbookURL *string) *GetAPIV2ChartsParams {
+	o.SetPlaybookURL(playbookURL)
+	return o
+}
+
+// SetPlaybookURL adds the playbookUrl to the get API v2 charts params
+func (o *GetAPIV2ChartsParams) SetPlaybookURL(playbookURL *string) {
+	o.PlaybookURL = playbookURL
 }
 
 // WithUpdatedAt adds the updatedAt to the get API v2 charts params
@@ -487,6 +515,23 @@ func (o *GetAPIV2ChartsParams) WriteToRequest(r runtime.ClientRequest, reg strfm
 		}
 	}
 
+	if o.Description != nil {
+
+		// query param description
+		var qrDescription string
+
+		if o.Description != nil {
+			qrDescription = *o.Description
+		}
+		qDescription := qrDescription
+		if qDescription != "" {
+
+			if err := r.SetQueryParam("description", qDescription); err != nil {
+				return err
+			}
+		}
+	}
+
 	if o.ID != nil {
 
 		// query param id
@@ -550,6 +595,23 @@ func (o *GetAPIV2ChartsParams) WriteToRequest(r runtime.ClientRequest, reg strfm
 		if qName != "" {
 
 			if err := r.SetQueryParam("name", qName); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.PlaybookURL != nil {
+
+		// query param playbookURL
+		var qrPlaybookURL string
+
+		if o.PlaybookURL != nil {
+			qrPlaybookURL = *o.PlaybookURL
+		}
+		qPlaybookURL := qrPlaybookURL
+		if qPlaybookURL != "" {
+
+			if err := r.SetQueryParam("playbookURL", qPlaybookURL); err != nil {
 				return err
 			}
 		}

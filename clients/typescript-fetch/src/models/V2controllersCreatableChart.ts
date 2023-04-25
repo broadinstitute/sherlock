@@ -62,6 +62,12 @@ export interface V2controllersCreatableChart {
      */
     defaultSubdomain?: string;
     /**
+     * 
+     * @type {string}
+     * @memberof V2controllersCreatableChart
+     */
+    description?: string;
+    /**
      * Indicates whether a chart requires config rendering from firecloud-develop
      * @type {boolean}
      * @memberof V2controllersCreatableChart
@@ -73,6 +79,12 @@ export interface V2controllersCreatableChart {
      * @memberof V2controllersCreatableChart
      */
     name?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof V2controllersCreatableChart
+     */
+    playbookURL?: string;
 }
 
 /**
@@ -101,8 +113,10 @@ export function V2controllersCreatableChartFromJSONTyped(json: any, ignoreDiscri
         'defaultPort': !exists(json, 'defaultPort') ? undefined : json['defaultPort'],
         'defaultProtocol': !exists(json, 'defaultProtocol') ? undefined : json['defaultProtocol'],
         'defaultSubdomain': !exists(json, 'defaultSubdomain') ? undefined : json['defaultSubdomain'],
+        'description': !exists(json, 'description') ? undefined : json['description'],
         'legacyConfigsEnabled': !exists(json, 'legacyConfigsEnabled') ? undefined : json['legacyConfigsEnabled'],
         'name': !exists(json, 'name') ? undefined : json['name'],
+        'playbookURL': !exists(json, 'playbookURL') ? undefined : json['playbookURL'],
     };
 }
 
@@ -122,8 +136,10 @@ export function V2controllersCreatableChartToJSON(value?: V2controllersCreatable
         'defaultPort': value.defaultPort,
         'defaultProtocol': value.defaultProtocol,
         'defaultSubdomain': value.defaultSubdomain,
+        'description': value.description,
         'legacyConfigsEnabled': value.legacyConfigsEnabled,
         'name': value.name,
+        'playbookURL': value.playbookURL,
     };
 }
 

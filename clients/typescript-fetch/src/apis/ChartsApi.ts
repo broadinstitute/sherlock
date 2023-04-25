@@ -40,9 +40,11 @@ export interface ApiV2ChartsGetRequest {
     defaultPort?: number;
     defaultProtocol?: string;
     defaultSubdomain?: string;
+    description?: string;
     id?: number;
     legacyConfigsEnbled?: boolean;
     name?: string;
+    playbookURL?: string;
     updatedAt?: Date;
     limit?: number;
 }
@@ -117,6 +119,10 @@ export class ChartsApi extends runtime.BaseAPI {
             queryParameters['defaultSubdomain'] = requestParameters.defaultSubdomain;
         }
 
+        if (requestParameters.description !== undefined) {
+            queryParameters['description'] = requestParameters.description;
+        }
+
         if (requestParameters.id !== undefined) {
             queryParameters['id'] = requestParameters.id;
         }
@@ -127,6 +133,10 @@ export class ChartsApi extends runtime.BaseAPI {
 
         if (requestParameters.name !== undefined) {
             queryParameters['name'] = requestParameters.name;
+        }
+
+        if (requestParameters.playbookURL !== undefined) {
+            queryParameters['playbookURL'] = requestParameters.playbookURL;
         }
 
         if (requestParameters.updatedAt !== undefined) {

@@ -1777,6 +1777,11 @@
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "name": "description",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
                         "name": "id",
                         "in": "query"
@@ -1792,6 +1797,11 @@
                         "type": "string",
                         "description": "Required when creating",
                         "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "playbookURL",
                         "in": "query"
                     },
                     {
@@ -6568,6 +6578,9 @@
                     "description": "When creating, will default to the name of the chart",
                     "type": "string"
                 },
+                "description": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "integer"
                 },
@@ -6578,6 +6591,9 @@
                 },
                 "name": {
                     "description": "Required when creating",
+                    "type": "string"
+                },
+                "playbookURL": {
                     "type": "string"
                 },
                 "updatedAt": {
@@ -6865,6 +6881,9 @@
                     "description": "When creating, will default to the name of the chart",
                     "type": "string"
                 },
+                "description": {
+                    "type": "string"
+                },
                 "legacyConfigsEnabled": {
                     "description": "Indicates whether a chart requires config rendering from firecloud-develop",
                     "type": "boolean",
@@ -6872,6 +6891,9 @@
                 },
                 "name": {
                     "description": "Required when creating",
+                    "type": "string"
+                },
+                "playbookURL": {
                     "type": "string"
                 }
             }
@@ -7264,10 +7286,16 @@
                     "description": "When creating, will default to the name of the chart",
                     "type": "string"
                 },
+                "description": {
+                    "type": "string"
+                },
                 "legacyConfigsEnabled": {
                     "description": "Indicates whether a chart requires config rendering from firecloud-develop",
                     "type": "boolean",
                     "default": false
+                },
+                "playbookURL": {
+                    "type": "string"
                 }
             }
         },

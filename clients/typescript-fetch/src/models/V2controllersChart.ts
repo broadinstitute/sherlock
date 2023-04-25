@@ -69,6 +69,12 @@ export interface V2controllersChart {
     defaultSubdomain?: string;
     /**
      * 
+     * @type {string}
+     * @memberof V2controllersChart
+     */
+    description?: string;
+    /**
+     * 
      * @type {number}
      * @memberof V2controllersChart
      */
@@ -85,6 +91,12 @@ export interface V2controllersChart {
      * @memberof V2controllersChart
      */
     name?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof V2controllersChart
+     */
+    playbookURL?: string;
     /**
      * 
      * @type {Date}
@@ -120,9 +132,11 @@ export function V2controllersChartFromJSONTyped(json: any, ignoreDiscriminator: 
         'defaultPort': !exists(json, 'defaultPort') ? undefined : json['defaultPort'],
         'defaultProtocol': !exists(json, 'defaultProtocol') ? undefined : json['defaultProtocol'],
         'defaultSubdomain': !exists(json, 'defaultSubdomain') ? undefined : json['defaultSubdomain'],
+        'description': !exists(json, 'description') ? undefined : json['description'],
         'id': !exists(json, 'id') ? undefined : json['id'],
         'legacyConfigsEnabled': !exists(json, 'legacyConfigsEnabled') ? undefined : json['legacyConfigsEnabled'],
         'name': !exists(json, 'name') ? undefined : json['name'],
+        'playbookURL': !exists(json, 'playbookURL') ? undefined : json['playbookURL'],
         'updatedAt': !exists(json, 'updatedAt') ? undefined : (new Date(json['updatedAt'])),
     };
 }
@@ -144,9 +158,11 @@ export function V2controllersChartToJSON(value?: V2controllersChart | null): any
         'defaultPort': value.defaultPort,
         'defaultProtocol': value.defaultProtocol,
         'defaultSubdomain': value.defaultSubdomain,
+        'description': value.description,
         'id': value.id,
         'legacyConfigsEnabled': value.legacyConfigsEnabled,
         'name': value.name,
+        'playbookURL': value.playbookURL,
         'updatedAt': value.updatedAt === undefined ? undefined : (value.updatedAt.toISOString()),
     };
 }
