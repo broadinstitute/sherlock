@@ -224,6 +224,8 @@ jobs:
 
       # Parent: 
 
+      # We cannot reliably determine chart parents via git tagging because helm chart repos often have multiple charts with
+      # multiple tags so we’ll never be able to calculate parent from it without bespoke help from the caller
       - name: "Set Parent"
         if: ${{ inputs.parent-chart-version != '' }}
         shell: bash
