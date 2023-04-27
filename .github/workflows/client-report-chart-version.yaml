@@ -1,0 +1,288 @@
+name: Report Chart Version
+
+# This workflow is meant to be called from other repositories' workflows to report a new chart version to Sherlock.
+#
+# The caller repository must have Workload Identity Federation configured to allow impersonation of the
+# "dsp-tools-iap-access@dsp-tools-k8s.iam.gserviceaccount.com" service account; steps 1 and 2 of the documentation:
+# https://docs.google.com/document/d/1bnhDmWQHAMat_Saoa_z28FHwXmGWw6kywjdbKf208h4/edit
+#
+# With that configured, here's how you can call this workflow from whatever workflow currently publishes the chart:
+# ```yaml
+# jobs:
+#
+#   <your-existing-job-id>:
+#     # Output the version from your existing job's tag/bump step, something like this:
+#     outputs:
+#       tag: ${{ steps.tag.outputs.tag }}
+#     steps:
+#       # ... (The rest of your existing job can stay the same)
+#
+#   report-to-sherlock:
+#     uses: broadinstitute/sherlock/.github/workflows/client-report-chart-version.yaml@main
+#     needs: <your-existing-job-id>
+#     with:
+#       new-version: ${{ needs.<your-existing-job-id>.outputs.tag }}
+#       chart-name: '<your-chart-helm-chart-name>'
+#     permissions:
+#       contents: 'read'
+#       id-token: 'write'
+# ```
+
+on:
+  workflow_call:
+
+    secrets:
+      custom-git-token:
+        required: false
+        description: "Use a specific token instead of the one automatically available from the calling workflow"
+
+    inputs:
+
+      ##
+      ## Required Configuration:
+      ##
+
+      new-version:
+        required: true
+        type: string
+        description: "The chart's new semantic version to record in Sherlock"
+      chart-name:
+        required: true
+        type: string
+        description: "The name of the Helm Chart that deploys this version"
+
+      ##
+      ## Optional Configuration:
+      ##
+
+      parent-chart-version:
+        required: false
+        type: string
+        description: "Optionally provide the parent version for the new version"
+      
+      ##
+      ## Git configuration:
+      ##   (Note that custom-git-token is available, just defined below in the secrets block)
+      ##
+
+      use-git:
+        required: false
+        type: boolean
+        default: true
+        description: "If extra version information should be gleaned from Git"
+
+      custom-git-repo:
+        required: false
+        type: string
+        description: "Checkout another repo instead of the calling workflow's"
+  
+      ##
+      ## Override configurations
+      ##
+
+      override-branch:
+        required: false
+        type: string
+        description: "Optionally provide a specific branch of the repo, instead of the calling workflow's context or custom git repo's default"
+      override-commit:
+        required: false
+        type: string
+        description: "Optionally provide a specific commit of the branch, instead of HEAD"
+      override-description:
+        required: false
+        type: string
+        description: "Optionally provide a custom description for the version instead of the commit message"
+
+      ##
+      ## Sherlock configuration:
+      ##
+
+      use-sherlock-prod:
+        required: false
+        type: boolean
+        default: true
+        description: "If the version should be reported to the general-use production Sherlock instance"
+      fail-on-prod-failure:
+        required: false
+        type: boolean
+        default: true
+        description: "If an issue communicating with production Sherlock should cause an overall failure"
+
+      use-sherlock-dev:
+        required: false
+        type: boolean
+        default: true
+        description: "If the version should be reported to the DevOps-use development Sherlock instance"
+      fail-on-dev-failure:
+        required: false
+        type: boolean
+        default: false
+        description: "If an issue communicating with development Sherlock should cause an overall failure"
+
+env:
+  SHERLOCK_PROD_URL: 'https://sherlock.dsp-devops.broadinstitute.org'
+  SHERLOCK_DEV_URL: 'https://sherlock-dev.dsp-devops.broadinstitute.org'
+  BEEHIVE_PROD_URL: 'https://beehive.dsp-devops.broadinsitute.org'
+  BEEHIVE_DEV_URL: 'https://beehive-dev.dsp-devops.broadinstitute.org'
+  BEEHIVE_PROD_VANITY_URL: 'https://broad.io/beehive'
+  BEEHIVE_DEV_VANITY_URL: 'https://broad.io/beehive-dev'
+
+jobs:
+  report-new-version:
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    
+    steps:
+
+      ##
+      ## Handle required:
+      ##
+
+      - name: "Begin Request Body"
+        shell: bash
+        run: |
+          echo '{
+            "chartVersion": "${{ inputs.new-version }}",
+            "chart": "${{ inputs.chart-name }}"
+          }' > "$RUNNER_TEMP/body.json"
+
+      ##
+      ## Handle Git:
+      ##
+
+      - name: "Checkout"
+        if: ${{ inputs.use-git == true }}
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          repository: ${{ inputs.custom-git-repo || github.repository }}
+          token: ${{ secrets.custom-git-token || github.token }}
+          persist-credentials: false
+
+      # Branch:
+
+      - name: "Parse Branch From Git"
+        if: ${{ inputs.use-git == true && inputs.override-branch == '' }}
+        shell: bash
+        run: |
+          export BRANCH="$(git rev-parse --abbrev-ref HEAD || true)"
+          if [ -n "$BRANCH" ]
+          then
+            cat <<< $(jq '.gitBranch = env.BRANCH' "$RUNNER_TEMP/body.json") > "$RUNNER_TEMP/body.json"
+          fi
+      - name: "Use Overridden Branch"
+        if: ${{ inputs.override-branch != '' }}
+        shell: bash
+        run: |
+          cat <<< $(jq '.gitBranch = "${{ inputs.override-branch }}"' "$RUNNER_TEMP/body.json") > "$RUNNER_TEMP/body.json"
+      - name: "Respect Overridden Branch Downstream"
+        if: ${{ inputs.use-git == true && inputs.override-branch != '' }}
+        shell: bash
+        run: |
+          git checkout ${{ inputs.override-branch }}
+
+      # Commit:
+
+      - name: "Parse Commit From Git"
+        if: ${{ inputs.use-git == true && inputs.override-commit == '' }}
+        shell: bash
+        run: |
+          export COMMIT="$(git rev-parse HEAD || true)"
+          if [ -n "$COMMIT" ]
+          then
+            cat <<< $(jq '.gitCommit = env.COMMIT' "$RUNNER_TEMP/body.json") > "$RUNNER_TEMP/body.json"
+          fi
+      - name: "Use Overridden Commit"
+        if: ${{ inputs.override-commit != '' }}
+        shell: bash
+        run: |
+          cat <<< $(jq '.gitCommit = "${{ inputs.override-commit }}"' "$RUNNER_TEMP/body.json") > "$RUNNER_TEMP/body.json"
+      - name: "Respect Overridden Commit Downstream"
+        if: ${{ inputs.use-git == true && inputs.override-commit != '' }}
+        shell: bash
+        run: |
+          git checkout ${{ inputs.override-commit }}
+
+      # Description:
+
+      - name: "Parse Commit Message From Git as Description"
+        if: ${{ inputs.use-git == true && inputs.override-description == '' }}
+        shell: bash
+        run: |
+          export DESCRIPTION="$(git log -1 --pretty=%B || true)"
+          if [ -n "$DESCRIPTION" ]
+          then
+            cat <<< $(jq '.description = env.DESCRIPTION' "$RUNNER_TEMP/body.json") > "$RUNNER_TEMP/body.json"
+          fi
+      - name: "Use Overridden Description"
+        if: ${{ inputs.override-description != '' }}
+        shell: bash
+        run: |
+          cat <<< $(jq '.description = "${{ inputs.override-description }}"' "$RUNNER_TEMP/body.json") > "$RUNNER_TEMP/body.json"
+
+      # Parent: 
+
+      # We cannot reliably determine chart parents via git tagging because helm chart repos often have multiple charts with
+      # multiple tags so we’ll never be able to calculate parent from it without bespoke help from the caller
+      - name: "Set Parent"
+        if: ${{ inputs.parent-chart-version != '' }}
+        shell: bash
+        run: |
+          cat <<< $(jq '.parentChartVersion = "${{ inputs.chart-name }}/${{ inputs.parent-chart-version }}"' "$RUNNER_TEMP/body.json") > "$RUNNER_TEMP/body.json"
+
+      ##
+      ## Handle Sherlock:
+      ##
+
+      - name: "Log Request Body"
+        shell: bash
+        run: |
+          cat "$RUNNER_TEMP/body.json"
+          echo "## Reported ${{ inputs.chart-name }}/${{ inputs.new-version }} to Sherlock" >> $GITHUB_STEP_SUMMARY
+
+      - name: "Authenticate to GCP"
+        id: 'iap_auth'
+        uses: google-github-actions/auth@v0
+        with:
+          workload_identity_provider: 'projects/1038484894585/locations/global/workloadIdentityPools/github-wi-pool/providers/github-wi-provider'
+          service_account: 'dsp-tools-iap-access@dsp-tools-k8s.iam.gserviceaccount.com'
+          token_format: 'id_token'
+          id_token_audience: '1038484894585-k8qvf7l876733laev0lm8kenfa2lj6bn.apps.googleusercontent.com'
+          id_token_include_email: true
+          create_credentials_file: false
+          export_environment_variables: false
+
+      - name: "Generate GHA OIDC Token"
+        id: 'gha_auth'
+        uses: actions/github-script@v6
+        with:
+          script: core.setOutput('id_token', await core.getIDToken())
+      
+      - name: "Send to Sherlock Prod"
+        if: ${{ inputs.use-sherlock-prod }}
+        continue-on-error: ${{ !inputs.fail-on-prod-failure }}
+        shell: bash
+        run: |
+          set -ex
+          curl --fail-with-body -X 'POST' \
+            "$SHERLOCK_PROD_URL/api/v2/chart-versions" \
+            -H 'Content-Type: application/json' \
+            -H 'Authorization: Bearer ${{ steps.iap_auth.outputs.id_token }}' \
+            -H 'X-GHA-OIDC-JWT: ${{ steps.gha_auth.outputs.id_token }}' \
+            -d "@$RUNNER_TEMP/body.json" | jq
+          echo "### Available in Beehive at $BEEHIVE_PROD_VANITY_URL/r/chart-version/${{ inputs.chart-name }}/${{ inputs.new-version }}" >> $GITHUB_STEP_SUMMARY
+
+      - name: "Send to Sherlock Dev"
+        if: ${{ inputs.use-sherlock-dev }}
+        continue-on-error: ${{ !inputs.fail-on-dev-failure }}
+        shell: bash
+        run: |
+          set -ex
+          curl --fail-with-body -X 'POST' \
+            "$SHERLOCK_DEV_URL/api/v2/chart-versions" \
+            -H 'Content-Type: application/json' \
+            -H 'Authorization: Bearer ${{ steps.iap_auth.outputs.id_token }}' \
+            -H 'X-GHA-OIDC-JWT: ${{ steps.gha_auth.outputs.id_token }}' \
+            -d "@$RUNNER_TEMP/body.json" | jq
