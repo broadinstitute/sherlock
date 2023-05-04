@@ -1,7 +1,9 @@
-name: Refresh Environment
+name: Set Environment Chart Version
 
-# This workflow is meant to be called from other repositories' workflows to refresh/recalculate and apply
-# version changes to an environment. This can be used to make a long-lived BEE get the latest versions, etc.
+# Note: usually this behavior is managed in terra-helmfile, however 3rd-party repos like datarepo-helm need to manually report chart versions.
+
+# This workflow is meant to be called from other repositories' workflows to set a Sherlock environment to have a
+# specific version for some app.
 #
 # Note that this workflow cannot modify anything marked within Sherlock as requiring suitability.
 #
@@ -9,43 +11,54 @@ name: Refresh Environment
 # "dsp-tools-iap-access@dsp-tools-k8s.iam.gserviceaccount.com" service account; steps 1 and 2 of the documentation:
 # https://docs.google.com/document/d/1bnhDmWQHAMat_Saoa_z28FHwXmGWw6kywjdbKf208h4/edit
 #
-# With that configured, here's how you can call this workflow:
+# With that configured, here's how you can call this workflow from whatever workflow currently publishes the app:
 # ```yaml
 # jobs:
 #
-#   refresh-environment:
-#     uses: broadinstitute/sherlock/.github/workflows/client-refresh-environment.yaml@main
+#   <your-existing-job-id>:
+#     # Output the version from your existing job's tag/bump step, something like this:
+#     outputs:
+#       tag: ${{ steps.tag.outputs.tag }}
+#     steps:
+#       # ... (The rest of your existing job can stay the same)
+#
+#   set-chart-version-in-environment:
+#     uses: broadinstitute/sherlock/.github/workflows/client-set-environment-chart-version.yaml@main
+#     needs: <your-existing-job-id>
 #     with:
+#       new-version: ${{ needs.<your-existing-job-id>.outputs.tag }}
+#       chart-name: '<your-chart-helm-chart-name>'
 #       environment-name: '<the-environment-to-update>'
 #     permissions:
 #       id-token: 'write'
-#
 # ```
 #
 # If you'd like to automatically sync the environment--meaning deploy whatever changes were made--you can provide
 # a custom GitHub token to the workflow. It cannot be default one in the workflow as default tokens cannot use
 # the workflow dispatch API.
 #
-# This can be helpful if the rest of your workflow requires the environment to be fully up to date.
-#
 # An example, assuming your repo has the BROADBOT_TOKEN available:
 # ```yaml
 # jobs:
 #
-#   refresh-environment:
-#     uses: broadinstitute/sherlock/.github/workflows/client-refresh-environment.yaml@main
-#     with:
-#       environment-name: '<the-environment-to-update>'
-#     permissions:
-#       id-token: 'write'
-#     secrets:
-#       sync-git-token: ${{ secrets.BROADBOT_TOKEN }}
-#
 #   <your-existing-job-id>:
-#     needs: refresh-environment
+#     # Output the version from your existing job's tag/bump step, something like this:
+#     outputs:
+#       tag: ${{ steps.tag.outputs.tag }}
 #     steps:
 #       # ... (The rest of your existing job can stay the same)
 #
+#   set-chart-version-in-environment:
+#     uses: broadinstitute/sherlock/.github/workflows/client-set-environment-chart-version.yaml@main
+#     needs: <your-existing-job-id>
+#     with:
+#       new-version: ${{ needs.<your-existing-job-id>.outputs.tag }}
+#       chart-name: '<your-chart-helm-chart-name>'
+#       environment-name: '<the-environment-to-update>'
+#     secrets:
+#       sync-git-token: ${{ secrets.BROADBOT_TOKEN }}
+#     permissions:
+#       id-token: 'write'
 # ```
 
 
@@ -63,6 +76,14 @@ on:
       ## Required configuration:
       ##
 
+      new-version:
+        required: true
+        type: string
+        description: "The chart's new semantic version to record in Sherlock"
+      chart-name:
+        required: true
+        type: string
+        description: "The name of the Helm Chart that deploys this chart"
       environment-name:
         required: true
         type: string
@@ -103,7 +124,15 @@ env:
   BEEHIVE_DEV_VANITY_URL: 'https://broad.io/beehive-dev'
 
 jobs:
-  refresh:
+  get-chart-release:
+    uses: ./.github/workflows/client-get-chart-release.yaml
+    permissions:
+      id-token: 'write'
+    with:
+      chart-release-name: ${{ inputs.environment-name }}/${{ inputs.chart-name }}
+
+  set-version:
+    needs: get-chart-release
     runs-on: ubuntu-22.04
     permissions:
       id-token: 'write'
@@ -118,9 +147,11 @@ jobs:
         shell: bash
         run: |
           echo '{
-            "environments": [
+            "chartReleases": [
               {
-                "environment": "${{ inputs.environment-name }}"
+                "chartRelease": "${{ inputs.environment-name }}/${{ inputs.chart-name }}",
+                "toAppVersionResolver": "exact",
+                "toAppVersionExact": "${{ inputs.new-version }}"
               }
             ]
           }' > "$RUNNER_TEMP/body.json"
@@ -133,7 +164,7 @@ jobs:
         shell: bash
         run: |
           cat "$RUNNER_TEMP/body.json"
-          echo "## Set ${{ inputs.environment-name }}/${{ inputs.chart-name }} to ${{ inputs.new-version }} Sherlock" >> $GITHUB_STEP_SUMMARY
+          echo "## Set ${{ inputs.environment-name }}/${{ inputs.chart-name }} to ${{ inputs.chart-name }}/${{ inputs.new-version }} in Sherlock" >> $GITHUB_STEP_SUMMARY
 
       - name: "Authenticate to GCP"
         id: 'iap_auth'
@@ -165,6 +196,7 @@ jobs:
             -H 'Authorization: Bearer ${{ steps.iap_auth.outputs.id_token }}' \
             -H 'X-GHA-OIDC-JWT: ${{ steps.gha_auth.outputs.id_token }}' \
             -d "@$RUNNER_TEMP/body.json" | jq
+          echo "### Available in Beehive at $BEEHIVE_PROD_VANITY_URL/r/chart-release/${{ inputs.environment-name }}/${{ inputs.chart-name }}" >> $GITHUB_STEP_SUMMARY
 
       - name: "Send to Sherlock Dev"
         if: ${{ inputs.use-sherlock-dev }}
@@ -194,7 +226,7 @@ jobs:
         else
           echo "can-sync=true" >> $GITHUB_OUTPUT
         fi
-  
+
   get-environment:
     needs: can-sync
     if: ${{ needs.can-sync.outputs.can-sync == 'true' }}
@@ -205,7 +237,7 @@ jobs:
       environment-name: ${{ inputs.environment-name }}
 
   sync:
-    needs: [refresh, get-environment, can-sync]
+    needs: [set-version, get-environment, get-chart-release, can-sync]
     if: ${{ needs.can-sync.outputs.can-sync == 'true' && needs.get-environment.outputs.lifecycle != 'template' }}
     runs-on: ubuntu-latest
     steps:
@@ -218,7 +250,7 @@ jobs:
         uses: broadinstitute/workflow-dispatch@v3
         with: 
           repo: broadinstitute/terra-github-workflows
-          workflow: .github/workflows/sync-environment.yaml
+          workflow: .github/workflows/sync-release.yaml
           ref: refs/heads/main
           token: ${{ secrets.sync-git-token }}
-          inputs: '{ "environment-names": "${{ inputs.environment-name }}", "refresh-only": "false" }'
+          inputs: '{ "chart-release-names": "${{ needs.get-chart-release.outputs.name }}", "refresh-only": "false" }'
