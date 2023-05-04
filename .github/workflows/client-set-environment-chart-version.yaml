@@ -150,8 +150,8 @@ jobs:
             "chartReleases": [
               {
                 "chartRelease": "${{ inputs.environment-name }}/${{ inputs.chart-name }}",
-                "toAppVersionResolver": "exact",
-                "toAppVersionExact": "${{ inputs.new-version }}"
+                "toChartVersionResolver": "exact",
+                "toChartVersionExact": "${{ inputs.new-version }}"
               }
             ]
           }' > "$RUNNER_TEMP/body.json"
