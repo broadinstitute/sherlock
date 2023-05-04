@@ -245,7 +245,7 @@ jobs:
       ##
 
       - name: "Dispatch to terra-github-workflows"
-        uses: aurelien-baudet/workflow-dispatch@v2
+        uses: broadinstitute/workflow-dispatch@v3
         with: 
           repo: broadinstitute/terra-github-workflows
           workflow: .github/workflows/sync-release.yaml
