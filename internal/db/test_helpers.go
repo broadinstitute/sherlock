@@ -2,7 +2,6 @@ package db
 
 import (
 	"database/sql"
-	"fmt"
 	"github.com/broadinstitute/sherlock/internal/config"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
@@ -17,7 +16,7 @@ func panicIfLooksLikeCloudSQL(t *testing.T, db *gorm.DB) {
 	var cloudSqlAdminRoleExists bool
 	err := db.Raw("SELECT 1 FROM pg_roles WHERE rolname='cloudsqladmin'").Row().Scan(&cloudSqlAdminRoleExists)
 	if err != nil && err != sql.ErrNoRows {
-		t.Fatal(fmt.Sprintf("failed to double-check that the database wasn't running in Cloud SQL: %v", err))
+		t.Fatalf("failed to double-check that the database wasn't running in Cloud SQL: %v", err)
 	}
 	if cloudSqlAdminRoleExists {
 		t.Fatal("this database looks like it is running in Cloud SQL, refusing to proceed with test harness")
