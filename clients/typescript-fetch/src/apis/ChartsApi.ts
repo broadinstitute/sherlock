@@ -42,7 +42,7 @@ export interface ApiV2ChartsGetRequest {
     defaultSubdomain?: string;
     description?: string;
     id?: number;
-    legacyConfigsEnbled?: boolean;
+    legacyConfigsEnabled?: boolean;
     name?: string;
     playbookURL?: string;
     updatedAt?: Date;
@@ -127,8 +127,8 @@ export class ChartsApi extends runtime.BaseAPI {
             queryParameters['id'] = requestParameters.id;
         }
 
-        if (requestParameters.legacyConfigsEnbled !== undefined) {
-            queryParameters['legacyConfigsEnbled'] = requestParameters.legacyConfigsEnbled;
+        if (requestParameters.legacyConfigsEnabled !== undefined) {
+            queryParameters['legacyConfigsEnabled'] = requestParameters.legacyConfigsEnabled;
         }
 
         if (requestParameters.name !== undefined) {

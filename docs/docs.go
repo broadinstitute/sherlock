@@ -1796,7 +1796,7 @@ const docTemplate = `{
                         "type": "boolean",
                         "default": false,
                         "description": "Indicates whether a chart requires config rendering from firecloud-develop",
-                        "name": "legacyConfigsEnbled",
+                        "name": "legacyConfigsEnabled",
                         "in": "query"
                     },
                     {
