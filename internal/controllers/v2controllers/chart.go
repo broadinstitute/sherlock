@@ -21,7 +21,7 @@ type EditableChart struct {
 	AppImageGitRepo       *string `json:"appImageGitRepo" form:"appImageGitRepo"`
 	AppImageGitMainBranch *string `json:"appImageGitMainBranch" form:"appImageGitMainBranch"`
 	ChartExposesEndpoint  *bool   `json:"chartExposesEndpoint" form:"chartExposesEndpoint" default:"false"` // Indicates if the default subdomain, protocol, and port fields are relevant for this chart
-	LegacyConfigsEnabled  *bool   `json:"legacyConfigsEnabled" form:"legacyConfigsEnbled" default:"false"`  // Indicates whether a chart requires config rendering from firecloud-develop
+	LegacyConfigsEnabled  *bool   `json:"legacyConfigsEnabled" form:"legacyConfigsEnabled" default:"false"` // Indicates whether a chart requires config rendering from firecloud-develop
 	DefaultSubdomain      *string `json:"defaultSubdomain" form:"defaultSubdomain"`                         // When creating, will default to the name of the chart
 	DefaultProtocol       *string `json:"defaultProtocol" form:"defaultProtocol" default:"https"`
 	DefaultPort           *uint   `json:"defaultPort" form:"defaultPort" default:"443"`
