@@ -17,6 +17,7 @@ import (
 
 type Changeset struct {
 	gorm.Model
+	CiIdentifier   *CiIdentifier `gorm:"polymorphic:Resource; polymorphicValue:changeset"`
 	ChartRelease   *ChartRelease
 	ChartReleaseID uint
 
@@ -34,6 +35,14 @@ func (c Changeset) TableName() string {
 
 func (c Changeset) getID() uint {
 	return c.ID
+}
+
+func (c Changeset) GetCiIdentifier() *CiIdentifier {
+	if c.CiIdentifier != nil {
+		return c.CiIdentifier
+	} else {
+		return &CiIdentifier{ResourceType: "changeset", ResourceID: c.ID}
+	}
 }
 
 type internalChangesetStore struct {

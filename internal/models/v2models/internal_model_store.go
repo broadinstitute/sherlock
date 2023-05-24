@@ -40,12 +40,14 @@ type internalModelStore[M Model] struct {
 	// design, as setting foreign keys is done by the controller and a non-zero value will be a valid one. This function
 	// should only worry about the presence of a foreign key, if an association is required.
 	validateModel func(model *M) error
-	// postCreate lets a type run perform additional actions once the model has been created but before the database
-	// transaction finishes. Errors returned by this function will roll back the entire transaction.
-	postCreate func(db *gorm.DB, created *M, user *auth_models.User) error
 	// preCreate is similar to postCreate but it runs before even validation does--before the model has entered the
 	// database at all.
 	preCreate func(db *gorm.DB, toCreate *M, user *auth_models.User) error
+	// postCreate lets a type run perform additional actions once the model has been created but before the database
+	// transaction finishes. Errors returned by this function will roll back the entire transaction.
+	postCreate func(db *gorm.DB, created *M, user *auth_models.User) error
+	// preEdit is like preCreate but for, well, edits.
+	preEdit func(db *gorm.DB, toEdit *M, editsToMake *M, user *auth_models.User) error
 	// preDeletePostValidate runs after validation right before deletion. Since it runs after validation, it is important
 	// that this function not change toDelete in a way that would require re-validation.
 	preDeletePostValidate func(db *gorm.DB, toDelete *M, user *auth_models.User) error
@@ -56,6 +58,12 @@ type internalModelStore[M Model] struct {
 	// editsMayChangeSelectors lets a type declare that its selectors are impacted by mutable fields, so edits should
 	// have the selector-uniqueness property enforced.
 	editsMayChangeSelectors bool
+	// editsAppendManyToMany lets a type declare associations that should always be appended to. Each key
+	// is a struct field name and each value is an accessor for that field (better to be verbose than do reflection
+	// things). The accessors are run on the incoming edits. If any returns a non-empty list, the value will be given
+	// to Gorm's "associations mode" to append to that association. https://gorm.io/docs/associations.html#Append-Associations
+	// Realistically, this is useful for mutable many2many relations, because Gorm won't touch those on its own.
+	editsAppendManyToMany map[string]func(edits *M) any
 }
 
 func (s internalModelStore[M]) wrappedErrorIfForbidden(db *gorm.DB, model *M, action model_actions.ActionType, user *auth_models.User) error {
@@ -125,7 +133,6 @@ func (s internalModelStore[M]) create(db *gorm.DB, model M, user *auth_models.Us
 	err := db.Transaction(func(tx *gorm.DB) error {
 		if err := tx.Create(&model).Error; err != nil {
 			if strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
-				// post-MVP TODO: We could pretty easily add APIs to expose soft-deletion controls to users; right now they'd have to have us go into the DB to un-delete stuff.
 				return fmt.Errorf("creation error: (%s) new %T violated a database uniqueness constraint (are you recreating something with the same name? Contact DevOps) original error: %v", errors.BadRequest, model, err)
 			}
 			return fmt.Errorf("creation error: new %T couldn't be created in the database due to an error: %v", model, err)
@@ -209,6 +216,11 @@ func (s internalModelStore[M]) edit(db *gorm.DB, query M, editsToMake M, user *a
 	if err = s.wrappedErrorIfForbidden(db, &toEdit, model_actions.EDIT, user); err != nil {
 		return toEdit, err
 	}
+	if s.preEdit != nil {
+		if err = s.preEdit(db, &toEdit, &editsToMake, user); err != nil {
+			return toEdit, fmt.Errorf("pre-edit error: %v", err)
+		}
+	}
 	var ret M
 	err = db.Transaction(func(tx *gorm.DB) error {
 		var chain = tx.Model(&toEdit)
@@ -217,6 +229,32 @@ func (s internalModelStore[M]) edit(db *gorm.DB, query M, editsToMake M, user *a
 		}
 		if err = chain.Updates(&editsToMake).Error; err != nil {
 			return fmt.Errorf("edit error editing %T: %v", toEdit, err)
+		}
+		if s.editsAppendManyToMany != nil {
+			for associationName, accessor := range s.editsAppendManyToMany {
+				if err = tx.Model(&toEdit).
+					// By default, Gorm will actually upsert the record on the other end of the join table. We don't
+					// want it doing that -- it could potentially bypass permissions or selector uniqueness checks or
+					// other validation. Instead, we use Omit to tell Gorm to not look all the way into the table on
+					// the other side of the association, so it'll just modify the join table.
+					// In other words, without this line, Gorm would do an `INSERT INTO ... ON CONFLICT DO NOTHING`
+					// onto the *other* table the many-to-many association is with, without doing any of the
+					// application-level validation we've defined. By including this Omit statement, we're forcing
+					// ourselves to handle the table on the other side of the association with something like a preEdit
+					// function (which in turn strongly guides towards patterns that would automatically do the right
+					// validation, like by using other internalModelStore methods).
+					// This isn't something we can test very well -- this line shouldn't have any behavioral impact
+					// unless someone writes an incorrect/unsafe internalModelStore. Instead, we just write a comment
+					// and hope that anyone who comes here to remove this line to make their new data type works reads
+					// this and realizes the problem is almost certainly with their code. Look at CiRun for an example
+					// of correctly doing just-in-time creation of an association via a preEdit function instead of
+					// trying to rely on Gorm.
+					Omit(fmt.Sprintf("%s.*", associationName)).
+					Association(associationName).
+					Append(accessor(&editsToMake)); err != nil {
+					return fmt.Errorf("edit error applying association for %s: %v", associationName, err)
+				}
+			}
 		}
 		result, err := s.get(tx, toEdit)
 		if err != nil {
@@ -274,4 +312,24 @@ func (s internalModelStore[M]) delete(db *gorm.DB, query M, user *auth_models.Us
 	} else {
 		return *result, nil
 	}
+}
+
+// selectorResolver is a helper interface exposing a very small amount of functionality of internalModelStore, but it
+// does so without generics. This is helpful in that you can return different selectorResolver instances from
+// a switch statement or something, when Go's poor generic type support would prevent you from returning different
+// instances of internalModelStore[Model].
+type selectorResolver interface {
+	resolveSelector(db *gorm.DB, selector string) (uint, error)
+}
+
+func (s internalModelStore[M]) resolveSelector(db *gorm.DB, selector string) (uint, error) {
+	query, err := s.selectorToQueryModel(db, selector)
+	if err != nil {
+		return 0, fmt.Errorf("invalid: %v", err)
+	}
+	result, err := s.get(db, query)
+	if err != nil {
+		return 0, fmt.Errorf("not found: %v", err)
+	}
+	return result.getID(), nil
 }

@@ -1,6 +1,7 @@
 package v2models
 
 import (
+	"reflect"
 	"testing"
 	"time"
 
@@ -319,6 +320,73 @@ func Test_validateChangeset(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if err := validateChangeset(tt.args.changeset); (err != nil) != tt.wantErr {
 				t.Errorf("validateChangeset() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func TestChangeset_GetCiIdentifier(t *testing.T) {
+	type fields struct {
+		Model            gorm.Model
+		CiIdentifier     *CiIdentifier
+		ChartRelease     *ChartRelease
+		ChartReleaseID   uint
+		From             ChartReleaseVersion
+		To               ChartReleaseVersion
+		AppliedAt        *time.Time
+		SupersededAt     *time.Time
+		NewAppVersions   []*AppVersion
+		NewChartVersions []*ChartVersion
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   *CiIdentifier
+	}{
+		{
+			name: "returns existing",
+			fields: fields{
+				CiIdentifier: &CiIdentifier{
+					Model: gorm.Model{
+						ID: 123,
+					},
+				},
+			},
+			want: &CiIdentifier{
+				Model: gorm.Model{
+					ID: 123,
+				},
+			},
+		},
+		{
+			name: "returns generated if no existing",
+			fields: fields{
+				Model: gorm.Model{
+					ID: 123,
+				},
+			},
+			want: &CiIdentifier{
+				ResourceType: "changeset",
+				ResourceID:   123,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := Changeset{
+				Model:            tt.fields.Model,
+				CiIdentifier:     tt.fields.CiIdentifier,
+				ChartRelease:     tt.fields.ChartRelease,
+				ChartReleaseID:   tt.fields.ChartReleaseID,
+				From:             tt.fields.From,
+				To:               tt.fields.To,
+				AppliedAt:        tt.fields.AppliedAt,
+				SupersededAt:     tt.fields.SupersededAt,
+				NewAppVersions:   tt.fields.NewAppVersions,
+				NewChartVersions: tt.fields.NewChartVersions,
+			}
+			if got := c.GetCiIdentifier(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("GetCiIdentifier() = %v, want %v", got, tt.want)
 			}
 		})
 	}

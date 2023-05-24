@@ -44,7 +44,7 @@ func pagerdutyIntegrationSelectorToQuery(_ *gorm.DB, selector string) (Pagerduty
 		return PagerdutyIntegration{}, fmt.Errorf("(%s) pagerduty integration selector cannot be empty", errors.BadRequest)
 	}
 	var query PagerdutyIntegration
-	if utils.IsNumeric(selector) {
+	if utils.IsNumeric(selector) { // ID
 		id, err := strconv.Atoi(selector)
 		if err != nil {
 			return PagerdutyIntegration{}, fmt.Errorf("(%s) string to int conversion error of '%s': %v", errors.BadRequest, selector, err)

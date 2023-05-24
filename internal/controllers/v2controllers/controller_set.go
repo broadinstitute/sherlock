@@ -13,6 +13,8 @@ type ControllerSet struct {
 	PagerdutyIntegrationController *PagerdutyIntegrationController
 	DatabaseInstanceController     *DatabaseInstanceController
 	UserController                 *UserController
+	CiIdentifierController         *CiIdentifierController
+	CiRunController                *CiRunController
 }
 
 func NewControllerSet(stores *v2models.StoreSet) *ControllerSet {
@@ -27,5 +29,7 @@ func NewControllerSet(stores *v2models.StoreSet) *ControllerSet {
 		PagerdutyIntegrationController: newPagerdutyIntegrationController(stores),
 		DatabaseInstanceController:     newDatabaseInstanceController(stores),
 		UserController:                 newUserController(stores),
+		CiIdentifierController:         newCiIdentifierController(stores),
+		CiRunController:                newCiRunController(stores),
 	}
 }

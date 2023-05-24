@@ -11,7 +11,8 @@ import (
 
 type Chart struct {
 	gorm.Model
-	Name string `gorm:"not null; default:null; unique"`
+	CiIdentifier *CiIdentifier `gorm:"polymorphic:Resource; polymorphicValue:chart"`
+	Name         string        `gorm:"not null; default:null; unique"`
 	// Mutable
 	ChartRepo             *string `gorm:"not null; default:null"`
 	AppImageGitRepo       *string
@@ -31,6 +32,14 @@ func (c Chart) TableName() string {
 
 func (c Chart) getID() uint {
 	return c.ID
+}
+
+func (c Chart) GetCiIdentifier() *CiIdentifier {
+	if c.CiIdentifier != nil {
+		return c.CiIdentifier
+	} else {
+		return &CiIdentifier{ResourceType: "chart", ResourceID: c.ID}
+	}
 }
 
 var chartStore *internalModelStore[Chart]

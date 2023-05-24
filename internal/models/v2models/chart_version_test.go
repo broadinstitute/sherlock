@@ -3,6 +3,7 @@ package v2models
 import (
 	"github.com/broadinstitute/sherlock/internal/testutils"
 	"gorm.io/gorm"
+	"reflect"
 	"testing"
 )
 
@@ -203,6 +204,69 @@ func Test_rejectDuplicateChartVersion(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if err := rejectDuplicateChartVersion(tt.args.existing, tt.args.new); (err != nil) != tt.wantErr {
 				t.Errorf("rejectDuplicateChartVersion() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func TestChartVersion_GetCiIdentifier(t *testing.T) {
+	type fields struct {
+		Model                gorm.Model
+		CiIdentifier         *CiIdentifier
+		Chart                *Chart
+		ChartID              uint
+		ChartVersion         string
+		Description          string
+		ParentChartVersion   *ChartVersion
+		ParentChartVersionID *uint
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   *CiIdentifier
+	}{
+		{
+			name: "returns existing",
+			fields: fields{
+				CiIdentifier: &CiIdentifier{
+					Model: gorm.Model{
+						ID: 123,
+					},
+				},
+			},
+			want: &CiIdentifier{
+				Model: gorm.Model{
+					ID: 123,
+				},
+			},
+		},
+		{
+			name: "returns generated if no existing",
+			fields: fields{
+				Model: gorm.Model{
+					ID: 123,
+				},
+			},
+			want: &CiIdentifier{
+				ResourceType: "chart-version",
+				ResourceID:   123,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := ChartVersion{
+				Model:                tt.fields.Model,
+				CiIdentifier:         tt.fields.CiIdentifier,
+				Chart:                tt.fields.Chart,
+				ChartID:              tt.fields.ChartID,
+				ChartVersion:         tt.fields.ChartVersion,
+				Description:          tt.fields.Description,
+				ParentChartVersion:   tt.fields.ParentChartVersion,
+				ParentChartVersionID: tt.fields.ParentChartVersionID,
+			}
+			if got := c.GetCiIdentifier(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("GetCiIdentifier() = %v, want %v", got, tt.want)
 			}
 		})
 	}

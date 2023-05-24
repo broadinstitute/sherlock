@@ -8,6 +8,7 @@ import (
 
 type Chart struct {
 	ReadableBaseType
+	CiIdentifier *CiIdentifier `json:"ciIdentifier,omitempty" form:"-"`
 	CreatableChart
 }
 
@@ -83,6 +84,7 @@ func modelChartToChart(model *v2models.Chart) *Chart {
 			CreatedAt: model.CreatedAt,
 			UpdatedAt: model.UpdatedAt,
 		},
+		CiIdentifier: modelCiIdentifierToCiIdentifier(model.CiIdentifier),
 		CreatableChart: CreatableChart{
 			Name: model.Name,
 			EditableChart: EditableChart{

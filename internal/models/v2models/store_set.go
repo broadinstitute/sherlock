@@ -17,6 +17,8 @@ type StoreSet struct {
 	DatabaseInstanceStore *ModelStore[DatabaseInstance]
 	UserStore             *ModelStore[User]
 	ChangesetStore        *ChangesetStore
+	CiIdentifierStore     *ModelStore[CiIdentifier]
+	CiRunStore            *ModelStore[CiRun]
 }
 
 func NewStoreSet(db *gorm.DB) *StoreSet {
@@ -41,5 +43,7 @@ func NewStoreSet(db *gorm.DB) *StoreSet {
 		ChangesetStore: &ChangesetStore{
 			ModelStore: &ModelStore[Changeset]{db: db, internalModelStore: changesetStore.internalModelStore},
 		},
+		CiIdentifierStore: &ModelStore[CiIdentifier]{db: db, internalModelStore: ciIdentifierStore},
+		CiRunStore:        &ModelStore[CiRun]{db: db, internalModelStore: ciRunStore},
 	}
 }

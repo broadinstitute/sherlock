@@ -12,6 +12,7 @@ import (
 
 type ChartRelease struct {
 	ReadableBaseType
+	CiIdentifier             *CiIdentifier         `json:"ciIdentifier,omitempty" form:"-"`
 	ChartInfo                *Chart                `json:"chartInfo,omitempty" form:"-"`
 	ClusterInfo              *Cluster              `json:"clusterInfo,omitempty" form:"-"`
 	EnvironmentInfo          *Environment          `json:"environmentInfo,omitempty" form:"-"`
@@ -242,6 +243,7 @@ func modelChartReleaseToChartRelease(model *v2models.ChartRelease) *ChartRelease
 			CreatedAt: model.CreatedAt,
 			UpdatedAt: model.UpdatedAt,
 		},
+		CiIdentifier:             modelCiIdentifierToCiIdentifier(model.CiIdentifier),
 		ChartInfo:                chart,
 		ClusterInfo:              cluster,
 		EnvironmentInfo:          environment,

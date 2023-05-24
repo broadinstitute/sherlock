@@ -56,15 +56,11 @@ func databaseInstanceSelectorToQuery(db *gorm.DB, selector string) (DatabaseInst
 		return query, nil
 	} else if strings.HasPrefix(selector, "chart-release/") { // "chart-release/" + chart release
 		chartReleaseSubSelector := strings.TrimPrefix(selector, "chart-release/")
-		chartReleaseQuery, err := chartReleaseSelectorToQuery(db, chartReleaseSubSelector)
-		if err != nil {
-			return DatabaseInstance{}, fmt.Errorf("invalid database instance selector %s, chart release sub-selector error: %v", selector, err)
-		}
-		chartRelease, err := chartReleaseStore.get(db, chartReleaseQuery)
+		chartReleaseID, err := chartReleaseStore.resolveSelector(db, chartReleaseSubSelector)
 		if err != nil {
 			return DatabaseInstance{}, fmt.Errorf("error handling database instance subselector %s: %v", chartReleaseSubSelector, err)
 		}
-		query.ChartReleaseID = chartRelease.ID
+		query.ChartReleaseID = chartReleaseID
 		return query, nil
 	}
 	return DatabaseInstance{}, fmt.Errorf("(%s) invalid database instance selector '%s'", errors.BadRequest, selector)
