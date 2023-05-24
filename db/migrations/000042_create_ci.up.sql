@@ -1,4 +1,4 @@
-create table v2_ci_identifiers
+create table if not exists v2_ci_identifiers
 (
     id            bigserial
         primary key,
@@ -9,13 +9,13 @@ create table v2_ci_identifiers
     resource_id   bigint
 );
 
-create index idx_v2_ci_identifiers_deleted_at
+create index if not exists idx_v2_ci_identifiers_deleted_at
     on v2_ci_identifiers (deleted_at);
 
-create index idx_v2_ci_identifiers_polymorphic_index
+create index if not exists idx_v2_ci_identifiers_polymorphic_index
     on v2_ci_identifiers (resource_type, resource_id);
 
-create table v2_ci_runs
+create table if not exists v2_ci_runs
 (
     id                            bigserial
         primary key,
@@ -35,10 +35,10 @@ create table v2_ci_runs
     status                        text
 );
 
-create index idx_v2_ci_runs_deleted_at
+create index if not exists idx_v2_ci_runs_deleted_at
     on v2_ci_runs (deleted_at);
 
-create table v2_ci_runs_for_identifiers
+create table if not exists v2_ci_runs_for_identifiers
 (
     ci_run_id        bigint not null
         constraint fk_v2_ci_runs_for_identifiers_ci_run
