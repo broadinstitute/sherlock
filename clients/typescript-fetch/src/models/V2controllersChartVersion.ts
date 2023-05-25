@@ -19,6 +19,12 @@ import {
     V2controllersChartFromJSONTyped,
     V2controllersChartToJSON,
 } from './V2controllersChart';
+import type { V2controllersCiIdentifier } from './V2controllersCiIdentifier';
+import {
+    V2controllersCiIdentifierFromJSON,
+    V2controllersCiIdentifierFromJSONTyped,
+    V2controllersCiIdentifierToJSON,
+} from './V2controllersCiIdentifier';
 
 /**
  * 
@@ -44,6 +50,12 @@ export interface V2controllersChartVersion {
      * @memberof V2controllersChartVersion
      */
     chartVersion?: string;
+    /**
+     * 
+     * @type {V2controllersCiIdentifier}
+     * @memberof V2controllersChartVersion
+     */
+    ciIdentifier?: V2controllersCiIdentifier;
     /**
      * 
      * @type {Date}
@@ -104,6 +116,7 @@ export function V2controllersChartVersionFromJSONTyped(json: any, ignoreDiscrimi
         'chart': !exists(json, 'chart') ? undefined : json['chart'],
         'chartInfo': !exists(json, 'chartInfo') ? undefined : V2controllersChartFromJSON(json['chartInfo']),
         'chartVersion': !exists(json, 'chartVersion') ? undefined : json['chartVersion'],
+        'ciIdentifier': !exists(json, 'ciIdentifier') ? undefined : V2controllersCiIdentifierFromJSON(json['ciIdentifier']),
         'createdAt': !exists(json, 'createdAt') ? undefined : (new Date(json['createdAt'])),
         'description': !exists(json, 'description') ? undefined : json['description'],
         'id': !exists(json, 'id') ? undefined : json['id'],
@@ -125,6 +138,7 @@ export function V2controllersChartVersionToJSON(value?: V2controllersChartVersio
         'chart': value.chart,
         'chartInfo': V2controllersChartToJSON(value.chartInfo),
         'chartVersion': value.chartVersion,
+        'ciIdentifier': V2controllersCiIdentifierToJSON(value.ciIdentifier),
         'createdAt': value.createdAt === undefined ? undefined : (value.createdAt.toISOString()),
         'description': value.description,
         'id': value.id,

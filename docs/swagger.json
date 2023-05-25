@@ -2224,6 +2224,892 @@
                 }
             }
         },
+        "/api/v2/ci-identifiers": {
+            "get": {
+                "description": "List existing CiIdentifier entries, ordered by most recently updated.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CiIdentifiers"
+                ],
+                "summary": "List CiIdentifier entries",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "date-time",
+                        "name": "createdAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "resourceID",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "resourceType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "format": "date-time",
+                        "name": "updatedAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "An optional limit to the number of entries returned",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/v2controllers.CiIdentifier"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a new CiIdentifier entry. Note that some fields are immutable after creation; /edit lists mutable fields.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CiIdentifiers"
+                ],
+                "summary": "Create a new CiIdentifier entry",
+                "parameters": [
+                    {
+                        "description": "The CiIdentifier to create",
+                        "name": "ci-identifier",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.CreatableCiIdentifier"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.CiIdentifier"
+                        }
+                    },
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.CiIdentifier"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v2/ci-identifiers/{selector}": {
+            "get": {
+                "description": "Get an existing CiIdentifier entry via one of its \"selectors\": ID or type + '/' + selector of the referenced type.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CiIdentifiers"
+                ],
+                "summary": "Get a CiIdentifier entry",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The CiIdentifier to get's selector: ID or type + '/' + selector of the referenced type",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.CiIdentifier"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Create or edit a CiIdentifier entry. Attempts to edit and will attempt to create upon an error.\nIf an edit was made or the creation process de-duplicates, this method will return normally with a 200.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CiIdentifiers"
+                ],
+                "summary": "Create or edit a CiIdentifier entry",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The CiIdentifier to upsert's selector: ID or type + '/' + selector of the referenced type",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "The CiIdentifier to upsert",
+                        "name": "ci-identifier",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.CreatableCiIdentifier"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.CiIdentifier"
+                        }
+                    },
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.CiIdentifier"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Edit an existing CiIdentifier entry via one of its \"selectors\": ID or type + '/' + selector of the referenced type. Note that only mutable fields are available here, immutable fields can only be set using /create.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CiIdentifiers"
+                ],
+                "summary": "Edit a CiIdentifier entry",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The CiIdentifier to edit's selector: ID or type + '/' + selector of the referenced type",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "The edits to make to the CiIdentifier",
+                        "name": "ci-identifier",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.EditableCiIdentifier"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.CiIdentifier"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v2/ci-runs": {
+            "get": {
+                "description": "List existing CiRun entries, ordered by most recently updated.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CiRuns"
+                ],
+                "summary": "List CiRun entries",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "argoWorkflowsName",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "argoWorkflowsNamespace",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "argoWorkflowsTemplate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "format": "date-time",
+                        "name": "createdAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "githubActionsAttemptNumber",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "githubActionsOwner",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "githubActionsRepo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "githubActionsRunID",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "githubActionsWorkflowPath",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "platform",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "terminalAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "format": "date-time",
+                        "name": "updatedAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "An optional limit to the number of entries returned",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/v2controllers.CiRun"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a new CiRun entry. Note that some fields are immutable after creation; /edit lists mutable fields.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CiRuns"
+                ],
+                "summary": "Create a new CiRun entry",
+                "parameters": [
+                    {
+                        "description": "The CiRun to create",
+                        "name": "ci-run",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.CreatableCiRun"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.CiRun"
+                        }
+                    },
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.CiRun"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v2/ci-runs/{selector}": {
+            "get": {
+                "description": "Get an existing CiRun entry via one of its \"selectors\": ID, 'github-actions/' + owner + repo + run ID + attempt number, or 'argo-workflows/' + namespace + name.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CiRuns"
+                ],
+                "summary": "Get a CiRun entry",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The CiRun to get's selector: ID, 'github-actions/' + owner + repo + run ID + attempt number, or 'argo-workflows/' + namespace + name",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.CiRun"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Create or edit a CiRun entry. Attempts to edit and will attempt to create upon an error.\nIf an edit was made or the creation process de-duplicates, this method will return normally with a 200.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CiRuns"
+                ],
+                "summary": "Create or edit a CiRun entry",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The CiRun to upsert's selector: ID, 'github-actions/' + owner + repo + run ID + attempt number, or 'argo-workflows/' + namespace + name",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "The CiRun to upsert",
+                        "name": "ci-run",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.CreatableCiRun"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.CiRun"
+                        }
+                    },
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.CiRun"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete an existing CiRun entry via one of its \"selectors\": ID, 'github-actions/' + owner + repo + run ID + attempt number, or 'argo-workflows/' + namespace + name.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CiRuns"
+                ],
+                "summary": "Delete a CiRun entry",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The CiRun to delete's selector: ID, 'github-actions/' + owner + repo + run ID + attempt number, or 'argo-workflows/' + namespace + name",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.CiRun"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Edit an existing CiRun entry via one of its \"selectors\": ID, 'github-actions/' + owner + repo + run ID + attempt number, or 'argo-workflows/' + namespace + name. Note that only mutable fields are available here, immutable fields can only be set using /create.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CiRuns"
+                ],
+                "summary": "Edit a CiRun entry",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The CiRun to edit's selector: ID, 'github-actions/' + owner + repo + run ID + attempt number, or 'argo-workflows/' + namespace + name",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "The edits to make to the CiRun",
+                        "name": "ci-run",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.EditableCiRun"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v2controllers.CiRun"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v2/clusters": {
             "get": {
                 "description": "List existing Cluster entries, ordered by most recently updated.",
@@ -5439,6 +6325,142 @@
                 }
             }
         },
+        "/api/v2/selectors/ci-identifiers/{selector}": {
+            "get": {
+                "description": "Validate a given CiIdentifier selector and provide any other selectors that would match the same CiIdentifier.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CiIdentifiers"
+                ],
+                "summary": "List CiIdentifier selectors",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The selector of the CiIdentifier to list other selectors for",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v2/selectors/ci-runs/{selector}": {
+            "get": {
+                "description": "Validate a given CiRun selector and provide any other selectors that would match the same CiRun.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CiRuns"
+                ],
+                "summary": "List CiRun selectors",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The selector of the CiRun to list other selectors for",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v2/selectors/clusters/{selector}": {
             "get": {
                 "description": "Validate a given Cluster selector and provide any other selectors that would match the same Cluster.",
@@ -6300,6 +7322,9 @@
                 "chartInfo": {
                     "$ref": "#/definitions/v2controllers.Chart"
                 },
+                "ciIdentifier": {
+                    "$ref": "#/definitions/v2controllers.CiIdentifier"
+                },
                 "createdAt": {
                     "type": "string",
                     "format": "date-time"
@@ -6341,6 +7366,9 @@
                 },
                 "chartReleaseInfo": {
                     "$ref": "#/definitions/v2controllers.ChartRelease"
+                },
+                "ciIdentifier": {
+                    "$ref": "#/definitions/v2controllers.CiIdentifier"
                 },
                 "createdAt": {
                     "type": "string",
@@ -6562,6 +7590,9 @@
                     "type": "string",
                     "default": "terra-helm"
                 },
+                "ciIdentifier": {
+                    "$ref": "#/definitions/v2controllers.CiIdentifier"
+                },
                 "createdAt": {
                     "type": "string",
                     "format": "date-time"
@@ -6663,6 +7694,9 @@
                         "follow"
                     ]
                 },
+                "ciIdentifier": {
+                    "$ref": "#/definitions/v2controllers.CiIdentifier"
+                },
                 "cluster": {
                     "description": "When creating, will default the environment's default cluster, if provided. Either this or environment must be provided.",
                     "type": "string"
@@ -6745,6 +7779,9 @@
                     "description": "Required when creating",
                     "type": "string"
                 },
+                "ciIdentifier": {
+                    "$ref": "#/definitions/v2controllers.CiIdentifier"
+                },
                 "createdAt": {
                     "type": "string",
                     "format": "date-time"
@@ -6768,6 +7805,89 @@
                 }
             }
         },
+        "v2controllers.CiIdentifier": {
+            "type": "object",
+            "properties": {
+                "ciRuns": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/v2controllers.CiRun"
+                    }
+                },
+                "createdAt": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "resourceID": {
+                    "type": "integer"
+                },
+                "resourceType": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string",
+                    "format": "date-time"
+                }
+            }
+        },
+        "v2controllers.CiRun": {
+            "type": "object",
+            "properties": {
+                "argoWorkflowsName": {
+                    "type": "string"
+                },
+                "argoWorkflowsNamespace": {
+                    "type": "string"
+                },
+                "argoWorkflowsTemplate": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "githubActionsAttemptNumber": {
+                    "type": "integer"
+                },
+                "githubActionsOwner": {
+                    "type": "string"
+                },
+                "githubActionsRepo": {
+                    "type": "string"
+                },
+                "githubActionsRunID": {
+                    "type": "integer"
+                },
+                "githubActionsWorkflowPath": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "platform": {
+                    "type": "string"
+                },
+                "relatedResources": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/v2controllers.CiIdentifier"
+                    }
+                },
+                "status": {
+                    "type": "string"
+                },
+                "terminalAt": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string",
+                    "format": "date-time"
+                }
+            }
+        },
         "v2controllers.Cluster": {
             "description": "The full set of Cluster fields that can be read or used for filtering queries",
             "type": "object",
@@ -6783,6 +7903,9 @@
                 "base": {
                     "description": "Required when creating",
                     "type": "string"
+                },
+                "ciIdentifier": {
+                    "$ref": "#/definitions/v2controllers.CiIdentifier"
                 },
                 "createdAt": {
                     "type": "string",
@@ -7004,6 +8127,111 @@
                     "type": "string"
                 },
                 "parentChartVersion": {
+                    "type": "string"
+                }
+            }
+        },
+        "v2controllers.CreatableCiIdentifier": {
+            "type": "object",
+            "properties": {
+                "ciRuns": {
+                    "description": "Always appends; will eliminate duplicates",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "resourceID": {
+                    "type": "integer"
+                },
+                "resourceType": {
+                    "type": "string"
+                }
+            }
+        },
+        "v2controllers.CreatableCiRun": {
+            "type": "object",
+            "properties": {
+                "appVersions": {
+                    "description": "Always appends; will eliminate duplicates.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "argoWorkflowsName": {
+                    "type": "string"
+                },
+                "argoWorkflowsNamespace": {
+                    "type": "string"
+                },
+                "argoWorkflowsTemplate": {
+                    "type": "string"
+                },
+                "changesets": {
+                    "description": "Always appends; will eliminate duplicates. Spreads to associated chart releases (and environments and clusters) and new app/chart versions.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "chartReleases": {
+                    "description": "Always appends; will eliminate duplicates. Spreads to associated environments and clusters.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "chartVersions": {
+                    "description": "Always appends; will eliminate duplicates.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "charts": {
+                    "description": "Always appends; will eliminate duplicates.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "clusters": {
+                    "description": "Always appends; will eliminate duplicates.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "environments": {
+                    "description": "Always appends; will eliminate duplicates.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "githubActionsAttemptNumber": {
+                    "type": "integer"
+                },
+                "githubActionsOwner": {
+                    "type": "string"
+                },
+                "githubActionsRepo": {
+                    "type": "string"
+                },
+                "githubActionsRunID": {
+                    "type": "integer"
+                },
+                "githubActionsWorkflowPath": {
+                    "type": "string"
+                },
+                "platform": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "terminalAt": {
                     "type": "string"
                 }
             }
@@ -7332,6 +8560,78 @@
                 }
             }
         },
+        "v2controllers.EditableCiIdentifier": {
+            "type": "object",
+            "properties": {
+                "ciRuns": {
+                    "description": "Always appends; will eliminate duplicates",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "v2controllers.EditableCiRun": {
+            "type": "object",
+            "properties": {
+                "appVersions": {
+                    "description": "Always appends; will eliminate duplicates.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "changesets": {
+                    "description": "Always appends; will eliminate duplicates. Spreads to associated chart releases (and environments and clusters) and new app/chart versions.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "chartReleases": {
+                    "description": "Always appends; will eliminate duplicates. Spreads to associated environments and clusters.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "chartVersions": {
+                    "description": "Always appends; will eliminate duplicates.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "charts": {
+                    "description": "Always appends; will eliminate duplicates.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "clusters": {
+                    "description": "Always appends; will eliminate duplicates.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "environments": {
+                    "description": "Always appends; will eliminate duplicates.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "status": {
+                    "type": "string"
+                },
+                "terminalAt": {
+                    "type": "string"
+                }
+            }
+        },
         "v2controllers.EditableCluster": {
             "description": "The subset of Cluster fields that can be edited after creation",
             "type": "object",
@@ -7492,6 +8792,9 @@
                 "baseDomain": {
                     "type": "string",
                     "default": "bee.envs-terra.bio"
+                },
+                "ciIdentifier": {
+                    "$ref": "#/definitions/v2controllers.CiIdentifier"
                 },
                 "createdAt": {
                     "type": "string",

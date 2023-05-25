@@ -30,6 +30,9 @@ type V2controllersChangeset struct {
 	// chart release info
 	ChartReleaseInfo *V2controllersChartRelease `json:"chartReleaseInfo,omitempty"`
 
+	// ci identifier
+	CiIdentifier *V2controllersCiIdentifier `json:"ciIdentifier,omitempty"`
+
 	// created at
 	// Format: date-time
 	CreatedAt strfmt.DateTime `json:"createdAt,omitempty"`
@@ -144,6 +147,10 @@ func (m *V2controllersChangeset) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateCiIdentifier(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateCreatedAt(formats); err != nil {
 		res = append(res, err)
 	}
@@ -201,6 +208,25 @@ func (m *V2controllersChangeset) validateChartReleaseInfo(formats strfmt.Registr
 				return ve.ValidateName("chartReleaseInfo")
 			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("chartReleaseInfo")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *V2controllersChangeset) validateCiIdentifier(formats strfmt.Registry) error {
+	if swag.IsZero(m.CiIdentifier) { // not required
+		return nil
+	}
+
+	if m.CiIdentifier != nil {
+		if err := m.CiIdentifier.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("ciIdentifier")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("ciIdentifier")
 			}
 			return err
 		}
@@ -329,6 +355,10 @@ func (m *V2controllersChangeset) ContextValidate(ctx context.Context, formats st
 		res = append(res, err)
 	}
 
+	if err := m.contextValidateCiIdentifier(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidateNewAppVersions(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -351,6 +381,22 @@ func (m *V2controllersChangeset) contextValidateChartReleaseInfo(ctx context.Con
 				return ve.ValidateName("chartReleaseInfo")
 			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("chartReleaseInfo")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *V2controllersChangeset) contextValidateCiIdentifier(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.CiIdentifier != nil {
+		if err := m.CiIdentifier.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("ciIdentifier")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("ciIdentifier")
 			}
 			return err
 		}

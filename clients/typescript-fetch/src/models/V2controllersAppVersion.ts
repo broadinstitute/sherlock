@@ -19,6 +19,12 @@ import {
     V2controllersChartFromJSONTyped,
     V2controllersChartToJSON,
 } from './V2controllersChart';
+import type { V2controllersCiIdentifier } from './V2controllersCiIdentifier';
+import {
+    V2controllersCiIdentifierFromJSON,
+    V2controllersCiIdentifierFromJSONTyped,
+    V2controllersCiIdentifierToJSON,
+} from './V2controllersCiIdentifier';
 
 /**
  * 
@@ -44,6 +50,12 @@ export interface V2controllersAppVersion {
      * @memberof V2controllersAppVersion
      */
     chartInfo?: V2controllersChart;
+    /**
+     * 
+     * @type {V2controllersCiIdentifier}
+     * @memberof V2controllersAppVersion
+     */
+    ciIdentifier?: V2controllersCiIdentifier;
     /**
      * 
      * @type {Date}
@@ -116,6 +128,7 @@ export function V2controllersAppVersionFromJSONTyped(json: any, ignoreDiscrimina
         'appVersion': !exists(json, 'appVersion') ? undefined : json['appVersion'],
         'chart': !exists(json, 'chart') ? undefined : json['chart'],
         'chartInfo': !exists(json, 'chartInfo') ? undefined : V2controllersChartFromJSON(json['chartInfo']),
+        'ciIdentifier': !exists(json, 'ciIdentifier') ? undefined : V2controllersCiIdentifierFromJSON(json['ciIdentifier']),
         'createdAt': !exists(json, 'createdAt') ? undefined : (new Date(json['createdAt'])),
         'description': !exists(json, 'description') ? undefined : json['description'],
         'gitBranch': !exists(json, 'gitBranch') ? undefined : json['gitBranch'],
@@ -139,6 +152,7 @@ export function V2controllersAppVersionToJSON(value?: V2controllersAppVersion | 
         'appVersion': value.appVersion,
         'chart': value.chart,
         'chartInfo': V2controllersChartToJSON(value.chartInfo),
+        'ciIdentifier': V2controllersCiIdentifierToJSON(value.ciIdentifier),
         'createdAt': value.createdAt === undefined ? undefined : (value.createdAt.toISOString()),
         'description': value.description,
         'gitBranch': value.gitBranch,

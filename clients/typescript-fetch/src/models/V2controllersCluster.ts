@@ -13,6 +13,13 @@
  */
 
 import { exists, mapValues } from '../runtime';
+import type { V2controllersCiIdentifier } from './V2controllersCiIdentifier';
+import {
+    V2controllersCiIdentifierFromJSON,
+    V2controllersCiIdentifierFromJSONTyped,
+    V2controllersCiIdentifierToJSON,
+} from './V2controllersCiIdentifier';
+
 /**
  * The full set of Cluster fields that can be read or used for filtering queries
  * @export
@@ -37,6 +44,12 @@ export interface V2controllersCluster {
      * @memberof V2controllersCluster
      */
     base?: string;
+    /**
+     * 
+     * @type {V2controllersCiIdentifier}
+     * @memberof V2controllersCluster
+     */
+    ciIdentifier?: V2controllersCiIdentifier;
     /**
      * 
      * @type {Date}
@@ -126,6 +139,7 @@ export function V2controllersClusterFromJSONTyped(json: any, ignoreDiscriminator
         'address': !exists(json, 'address') ? undefined : json['address'],
         'azureSubscription': !exists(json, 'azureSubscription') ? undefined : json['azureSubscription'],
         'base': !exists(json, 'base') ? undefined : json['base'],
+        'ciIdentifier': !exists(json, 'ciIdentifier') ? undefined : V2controllersCiIdentifierFromJSON(json['ciIdentifier']),
         'createdAt': !exists(json, 'createdAt') ? undefined : (new Date(json['createdAt'])),
         'googleProject': !exists(json, 'googleProject') ? undefined : json['googleProject'],
         'helmfileRef': !exists(json, 'helmfileRef') ? undefined : json['helmfileRef'],
@@ -150,6 +164,7 @@ export function V2controllersClusterToJSON(value?: V2controllersCluster | null):
         'address': value.address,
         'azureSubscription': value.azureSubscription,
         'base': value.base,
+        'ciIdentifier': V2controllersCiIdentifierToJSON(value.ciIdentifier),
         'createdAt': value.createdAt === undefined ? undefined : (value.createdAt.toISOString()),
         'googleProject': value.googleProject,
         'helmfileRef': value.helmfileRef,

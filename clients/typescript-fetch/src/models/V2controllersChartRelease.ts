@@ -31,6 +31,12 @@ import {
     V2controllersChartVersionFromJSONTyped,
     V2controllersChartVersionToJSON,
 } from './V2controllersChartVersion';
+import type { V2controllersCiIdentifier } from './V2controllersCiIdentifier';
+import {
+    V2controllersCiIdentifierFromJSON,
+    V2controllersCiIdentifierFromJSONTyped,
+    V2controllersCiIdentifierToJSON,
+} from './V2controllersCiIdentifier';
 import type { V2controllersCluster } from './V2controllersCluster';
 import {
     V2controllersClusterFromJSON,
@@ -140,6 +146,12 @@ export interface V2controllersChartRelease {
      * @memberof V2controllersChartRelease
      */
     chartVersionResolver?: V2controllersChartReleaseChartVersionResolverEnum;
+    /**
+     * 
+     * @type {V2controllersCiIdentifier}
+     * @memberof V2controllersChartRelease
+     */
+    ciIdentifier?: V2controllersCiIdentifier;
     /**
      * When creating, will default the environment's default cluster, if provided. Either this or environment must be provided.
      * @type {string}
@@ -307,6 +319,7 @@ export function V2controllersChartReleaseFromJSONTyped(json: any, ignoreDiscrimi
         'chartVersionInfo': !exists(json, 'chartVersionInfo') ? undefined : V2controllersChartVersionFromJSON(json['chartVersionInfo']),
         'chartVersionReference': !exists(json, 'chartVersionReference') ? undefined : json['chartVersionReference'],
         'chartVersionResolver': !exists(json, 'chartVersionResolver') ? undefined : json['chartVersionResolver'],
+        'ciIdentifier': !exists(json, 'ciIdentifier') ? undefined : V2controllersCiIdentifierFromJSON(json['ciIdentifier']),
         'cluster': !exists(json, 'cluster') ? undefined : json['cluster'],
         'clusterInfo': !exists(json, 'clusterInfo') ? undefined : V2controllersClusterFromJSON(json['clusterInfo']),
         'createdAt': !exists(json, 'createdAt') ? undefined : (new Date(json['createdAt'])),
@@ -351,6 +364,7 @@ export function V2controllersChartReleaseToJSON(value?: V2controllersChartReleas
         'chartVersionInfo': V2controllersChartVersionToJSON(value.chartVersionInfo),
         'chartVersionReference': value.chartVersionReference,
         'chartVersionResolver': value.chartVersionResolver,
+        'ciIdentifier': V2controllersCiIdentifierToJSON(value.ciIdentifier),
         'cluster': value.cluster,
         'clusterInfo': V2controllersClusterToJSON(value.clusterInfo),
         'createdAt': value.createdAt === undefined ? undefined : (value.createdAt.toISOString()),

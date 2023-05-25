@@ -5,6 +5,8 @@ export * from './ChangesetsApi';
 export * from './ChartReleasesApi';
 export * from './ChartVersionsApi';
 export * from './ChartsApi';
+export * from './CiIdentifiersApi';
+export * from './CiRunsApi';
 export * from './ClustersApi';
 export * from './DatabaseInstancesApi';
 export * from './EnvironmentsApi';

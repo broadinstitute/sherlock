@@ -31,6 +31,12 @@ import {
     V2controllersChartVersionFromJSONTyped,
     V2controllersChartVersionToJSON,
 } from './V2controllersChartVersion';
+import type { V2controllersCiIdentifier } from './V2controllersCiIdentifier';
+import {
+    V2controllersCiIdentifierFromJSON,
+    V2controllersCiIdentifierFromJSONTyped,
+    V2controllersCiIdentifierToJSON,
+} from './V2controllersCiIdentifier';
 
 /**
  * 
@@ -56,6 +62,12 @@ export interface V2controllersChangeset {
      * @memberof V2controllersChangeset
      */
     chartReleaseInfo?: V2controllersChartRelease;
+    /**
+     * 
+     * @type {V2controllersCiIdentifier}
+     * @memberof V2controllersChangeset
+     */
+    ciIdentifier?: V2controllersCiIdentifier;
     /**
      * 
      * @type {Date}
@@ -272,6 +284,7 @@ export function V2controllersChangesetFromJSONTyped(json: any, ignoreDiscriminat
         'appliedAt': !exists(json, 'appliedAt') ? undefined : (new Date(json['appliedAt'])),
         'chartRelease': !exists(json, 'chartRelease') ? undefined : json['chartRelease'],
         'chartReleaseInfo': !exists(json, 'chartReleaseInfo') ? undefined : V2controllersChartReleaseFromJSON(json['chartReleaseInfo']),
+        'ciIdentifier': !exists(json, 'ciIdentifier') ? undefined : V2controllersCiIdentifierFromJSON(json['ciIdentifier']),
         'createdAt': !exists(json, 'createdAt') ? undefined : (new Date(json['createdAt'])),
         'fromAppVersionBranch': !exists(json, 'fromAppVersionBranch') ? undefined : json['fromAppVersionBranch'],
         'fromAppVersionCommit': !exists(json, 'fromAppVersionCommit') ? undefined : json['fromAppVersionCommit'],
@@ -319,6 +332,7 @@ export function V2controllersChangesetToJSON(value?: V2controllersChangeset | nu
         'appliedAt': value.appliedAt === undefined ? undefined : (value.appliedAt.toISOString()),
         'chartRelease': value.chartRelease,
         'chartReleaseInfo': V2controllersChartReleaseToJSON(value.chartReleaseInfo),
+        'ciIdentifier': V2controllersCiIdentifierToJSON(value.ciIdentifier),
         'createdAt': value.createdAt === undefined ? undefined : (value.createdAt.toISOString()),
         'fromAppVersionBranch': value.fromAppVersionBranch,
         'fromAppVersionCommit': value.fromAppVersionCommit,

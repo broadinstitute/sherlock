@@ -13,6 +13,13 @@
  */
 
 import { exists, mapValues } from '../runtime';
+import type { V2controllersCiIdentifier } from './V2controllersCiIdentifier';
+import {
+    V2controllersCiIdentifierFromJSON,
+    V2controllersCiIdentifierFromJSONTyped,
+    V2controllersCiIdentifierToJSON,
+} from './V2controllersCiIdentifier';
+
 /**
  * 
  * @export
@@ -43,6 +50,12 @@ export interface V2controllersChart {
      * @memberof V2controllersChart
      */
     chartRepo?: string;
+    /**
+     * 
+     * @type {V2controllersCiIdentifier}
+     * @memberof V2controllersChart
+     */
+    ciIdentifier?: V2controllersCiIdentifier;
     /**
      * 
      * @type {Date}
@@ -128,6 +141,7 @@ export function V2controllersChartFromJSONTyped(json: any, ignoreDiscriminator: 
         'appImageGitRepo': !exists(json, 'appImageGitRepo') ? undefined : json['appImageGitRepo'],
         'chartExposesEndpoint': !exists(json, 'chartExposesEndpoint') ? undefined : json['chartExposesEndpoint'],
         'chartRepo': !exists(json, 'chartRepo') ? undefined : json['chartRepo'],
+        'ciIdentifier': !exists(json, 'ciIdentifier') ? undefined : V2controllersCiIdentifierFromJSON(json['ciIdentifier']),
         'createdAt': !exists(json, 'createdAt') ? undefined : (new Date(json['createdAt'])),
         'defaultPort': !exists(json, 'defaultPort') ? undefined : json['defaultPort'],
         'defaultProtocol': !exists(json, 'defaultProtocol') ? undefined : json['defaultProtocol'],
@@ -154,6 +168,7 @@ export function V2controllersChartToJSON(value?: V2controllersChart | null): any
         'appImageGitRepo': value.appImageGitRepo,
         'chartExposesEndpoint': value.chartExposesEndpoint,
         'chartRepo': value.chartRepo,
+        'ciIdentifier': V2controllersCiIdentifierToJSON(value.ciIdentifier),
         'createdAt': value.createdAt === undefined ? undefined : (value.createdAt.toISOString()),
         'defaultPort': value.defaultPort,
         'defaultProtocol': value.defaultProtocol,

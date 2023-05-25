@@ -29,6 +29,9 @@ type V2controllersCluster struct {
 	// Required when creating
 	Base string `json:"base,omitempty"`
 
+	// ci identifier
+	CiIdentifier *V2controllersCiIdentifier `json:"ciIdentifier,omitempty"`
+
 	// created at
 	// Format: date-time
 	CreatedAt strfmt.DateTime `json:"createdAt,omitempty"`
@@ -64,6 +67,10 @@ type V2controllersCluster struct {
 func (m *V2controllersCluster) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateCiIdentifier(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateCreatedAt(formats); err != nil {
 		res = append(res, err)
 	}
@@ -79,6 +86,25 @@ func (m *V2controllersCluster) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *V2controllersCluster) validateCiIdentifier(formats strfmt.Registry) error {
+	if swag.IsZero(m.CiIdentifier) { // not required
+		return nil
+	}
+
+	if m.CiIdentifier != nil {
+		if err := m.CiIdentifier.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("ciIdentifier")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("ciIdentifier")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -148,8 +174,33 @@ func (m *V2controllersCluster) validateUpdatedAt(formats strfmt.Registry) error 
 	return nil
 }
 
-// ContextValidate validates this v2controllers cluster based on context it is used
+// ContextValidate validate this v2controllers cluster based on the context it is used
 func (m *V2controllersCluster) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateCiIdentifier(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *V2controllersCluster) contextValidateCiIdentifier(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.CiIdentifier != nil {
+		if err := m.CiIdentifier.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("ciIdentifier")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("ciIdentifier")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 

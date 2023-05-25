@@ -128,6 +128,8 @@ definitions:
         type: string
       chartInfo:
         $ref: '#/definitions/v2controllers.Chart'
+      ciIdentifier:
+        $ref: '#/definitions/v2controllers.CiIdentifier'
       createdAt:
         format: date-time
         type: string
@@ -157,6 +159,8 @@ definitions:
         type: string
       chartReleaseInfo:
         $ref: '#/definitions/v2controllers.ChartRelease'
+      ciIdentifier:
+        $ref: '#/definitions/v2controllers.CiIdentifier'
       createdAt:
         format: date-time
         type: string
@@ -308,6 +312,8 @@ definitions:
       chartRepo:
         default: terra-helm
         type: string
+      ciIdentifier:
+        $ref: '#/definitions/v2controllers.CiIdentifier'
       createdAt:
         format: date-time
         type: string
@@ -384,6 +390,8 @@ definitions:
         - exact
         - follow
         type: string
+      ciIdentifier:
+        $ref: '#/definitions/v2controllers.CiIdentifier'
       cluster:
         description: When creating, will default the environment's default cluster,
           if provided. Either this or environment must be provided.
@@ -445,6 +453,8 @@ definitions:
       chartVersion:
         description: Required when creating
         type: string
+      ciIdentifier:
+        $ref: '#/definitions/v2controllers.CiIdentifier'
       createdAt:
         format: date-time
         type: string
@@ -457,6 +467,62 @@ definitions:
         type: string
       parentChartVersionInfo:
         type: object
+      updatedAt:
+        format: date-time
+        type: string
+    type: object
+  v2controllers.CiIdentifier:
+    properties:
+      ciRuns:
+        items:
+          $ref: '#/definitions/v2controllers.CiRun'
+        type: array
+      createdAt:
+        format: date-time
+        type: string
+      id:
+        type: integer
+      resourceID:
+        type: integer
+      resourceType:
+        type: string
+      updatedAt:
+        format: date-time
+        type: string
+    type: object
+  v2controllers.CiRun:
+    properties:
+      argoWorkflowsName:
+        type: string
+      argoWorkflowsNamespace:
+        type: string
+      argoWorkflowsTemplate:
+        type: string
+      createdAt:
+        format: date-time
+        type: string
+      githubActionsAttemptNumber:
+        type: integer
+      githubActionsOwner:
+        type: string
+      githubActionsRepo:
+        type: string
+      githubActionsRunID:
+        type: integer
+      githubActionsWorkflowPath:
+        type: string
+      id:
+        type: integer
+      platform:
+        type: string
+      relatedResources:
+        items:
+          $ref: '#/definitions/v2controllers.CiIdentifier'
+        type: array
+      status:
+        type: string
+      terminalAt:
+        type: string
       updatedAt:
         format: date-time
         type: string
@@ -474,6 +540,8 @@ definitions:
       base:
         description: Required when creating
         type: string
+      ciIdentifier:
+        $ref: '#/definitions/v2controllers.CiIdentifier'
       createdAt:
         format: date-time
         type: string
@@ -640,6 +708,80 @@ definitions:
         description: Generally the Git commit message
         type: string
       parentChartVersion:
+        type: string
+    type: object
+  v2controllers.CreatableCiIdentifier:
+    properties:
+      ciRuns:
+        description: Always appends; will eliminate duplicates
+        items:
+          type: string
+        type: array
+      resourceID:
+        type: integer
+      resourceType:
+        type: string
+    type: object
+  v2controllers.CreatableCiRun:
+    properties:
+      appVersions:
+        description: Always appends; will eliminate duplicates.
+        items:
+          type: string
+        type: array
+      argoWorkflowsName:
+        type: string
+      argoWorkflowsNamespace:
+        type: string
+      argoWorkflowsTemplate:
+        type: string
+      changesets:
+        description: Always appends; will eliminate duplicates. Spreads to associated
+          chart releases (and environments and clusters) and new app/chart versions.
+        items:
+          type: string
+        type: array
+      chartReleases:
+        description: Always appends; will eliminate duplicates. Spreads to associated
+          environments and clusters.
+        items:
+          type: string
+        type: array
+      chartVersions:
+        description: Always appends; will eliminate duplicates.
+        items:
+          type: string
+        type: array
+      charts:
+        description: Always appends; will eliminate duplicates.
+        items:
+          type: string
+        type: array
+      clusters:
+        description: Always appends; will eliminate duplicates.
+        items:
+          type: string
+        type: array
+      environments:
+        description: Always appends; will eliminate duplicates.
+        items:
+          type: string
+        type: array
+      githubActionsAttemptNumber:
+        type: integer
+      githubActionsOwner:
+        type: string
+      githubActionsRepo:
+        type: string
+      githubActionsRunID:
+        type: integer
+      githubActionsWorkflowPath:
+        type: string
+      platform:
+        type: string
+      status:
+        type: string
+      terminalAt:
         type: string
     type: object
   v2controllers.CreatableCluster:
@@ -885,6 +1027,58 @@ definitions:
         description: Generally the Git commit message
         type: string
     type: object
+  v2controllers.EditableCiIdentifier:
+    properties:
+      ciRuns:
+        description: Always appends; will eliminate duplicates
+        items:
+          type: string
+        type: array
+    type: object
+  v2controllers.EditableCiRun:
+    properties:
+      appVersions:
+        description: Always appends; will eliminate duplicates.
+        items:
+          type: string
+        type: array
+      changesets:
+        description: Always appends; will eliminate duplicates. Spreads to associated
+          chart releases (and environments and clusters) and new app/chart versions.
+        items:
+          type: string
+        type: array
+      chartReleases:
+        description: Always appends; will eliminate duplicates. Spreads to associated
+          environments and clusters.
+        items:
+          type: string
+        type: array
+      chartVersions:
+        description: Always appends; will eliminate duplicates.
+        items:
+          type: string
+        type: array
+      charts:
+        description: Always appends; will eliminate duplicates.
+        items:
+          type: string
+        type: array
+      clusters:
+        description: Always appends; will eliminate duplicates.
+        items:
+          type: string
+        type: array
+      environments:
+        description: Always appends; will eliminate duplicates.
+        items:
+          type: string
+        type: array
+      status:
+        type: string
+      terminalAt:
+        type: string
+    type: object
   v2controllers.EditableCluster:
     description: The subset of Cluster fields that can be edited after creation
     properties:
@@ -1007,6 +1201,8 @@ definitions:
       baseDomain:
         default: bee.envs-terra.bio
         type: string
+      ciIdentifier:
+        $ref: '#/definitions/v2controllers.CiIdentifier'
       createdAt:
         format: date-time
         type: string
@@ -2648,6 +2844,612 @@ paths:
       summary: Create or edit a Chart entry
       tags:
       - Charts
+  /api/v2/ci-identifiers:
+    get:
+      description: List existing CiIdentifier entries, ordered by most recently updated.
+      parameters:
+      - format: date-time
+        in: query
+        name: createdAt
+        type: string
+      - in: query
+        name: id
+        type: integer
+      - in: query
+        name: resourceID
+        type: integer
+      - in: query
+        name: resourceType
+        type: string
+      - format: date-time
+        in: query
+        name: updatedAt
+        type: string
+      - description: An optional limit to the number of entries returned
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/v2controllers.CiIdentifier'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: List CiIdentifier entries
+      tags:
+      - CiIdentifiers
+    post:
+      consumes:
+      - application/json
+      description: Create a new CiIdentifier entry. Note that some fields are immutable
+        after creation; /edit lists mutable fields.
+      parameters:
+      - description: The CiIdentifier to create
+        in: body
+        name: ci-identifier
+        required: true
+        schema:
+          $ref: '#/definitions/v2controllers.CreatableCiIdentifier'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v2controllers.CiIdentifier'
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/v2controllers.CiIdentifier'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Create a new CiIdentifier entry
+      tags:
+      - CiIdentifiers
+  /api/v2/ci-identifiers/{selector}:
+    get:
+      description: 'Get an existing CiIdentifier entry via one of its "selectors":
+        ID or type + ''/'' + selector of the referenced type.'
+      parameters:
+      - description: 'The CiIdentifier to get''s selector: ID or type + ''/'' + selector
+          of the referenced type'
+        in: path
+        name: selector
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v2controllers.CiIdentifier'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Get a CiIdentifier entry
+      tags:
+      - CiIdentifiers
+    patch:
+      consumes:
+      - application/json
+      description: 'Edit an existing CiIdentifier entry via one of its "selectors":
+        ID or type + ''/'' + selector of the referenced type. Note that only mutable
+        fields are available here, immutable fields can only be set using /create.'
+      parameters:
+      - description: 'The CiIdentifier to edit''s selector: ID or type + ''/'' + selector
+          of the referenced type'
+        in: path
+        name: selector
+        required: true
+        type: string
+      - description: The edits to make to the CiIdentifier
+        in: body
+        name: ci-identifier
+        required: true
+        schema:
+          $ref: '#/definitions/v2controllers.EditableCiIdentifier'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v2controllers.CiIdentifier'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Edit a CiIdentifier entry
+      tags:
+      - CiIdentifiers
+    put:
+      consumes:
+      - application/json
+      description: |-
+        Create or edit a CiIdentifier entry. Attempts to edit and will attempt to create upon an error.
+        If an edit was made or the creation process de-duplicates, this method will return normally with a 200.
+      parameters:
+      - description: 'The CiIdentifier to upsert''s selector: ID or type + ''/'' +
+          selector of the referenced type'
+        in: path
+        name: selector
+        required: true
+        type: string
+      - description: The CiIdentifier to upsert
+        in: body
+        name: ci-identifier
+        required: true
+        schema:
+          $ref: '#/definitions/v2controllers.CreatableCiIdentifier'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v2controllers.CiIdentifier'
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/v2controllers.CiIdentifier'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Create or edit a CiIdentifier entry
+      tags:
+      - CiIdentifiers
+  /api/v2/ci-runs:
+    get:
+      description: List existing CiRun entries, ordered by most recently updated.
+      parameters:
+      - in: query
+        name: argoWorkflowsName
+        type: string
+      - in: query
+        name: argoWorkflowsNamespace
+        type: string
+      - in: query
+        name: argoWorkflowsTemplate
+        type: string
+      - format: date-time
+        in: query
+        name: createdAt
+        type: string
+      - in: query
+        name: githubActionsAttemptNumber
+        type: integer
+      - in: query
+        name: githubActionsOwner
+        type: string
+      - in: query
+        name: githubActionsRepo
+        type: string
+      - in: query
+        name: githubActionsRunID
+        type: integer
+      - in: query
+        name: githubActionsWorkflowPath
+        type: string
+      - in: query
+        name: id
+        type: integer
+      - in: query
+        name: platform
+        type: string
+      - in: query
+        name: status
+        type: string
+      - in: query
+        name: terminalAt
+        type: string
+      - format: date-time
+        in: query
+        name: updatedAt
+        type: string
+      - description: An optional limit to the number of entries returned
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/v2controllers.CiRun'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: List CiRun entries
+      tags:
+      - CiRuns
+    post:
+      consumes:
+      - application/json
+      description: Create a new CiRun entry. Note that some fields are immutable after
+        creation; /edit lists mutable fields.
+      parameters:
+      - description: The CiRun to create
+        in: body
+        name: ci-run
+        required: true
+        schema:
+          $ref: '#/definitions/v2controllers.CreatableCiRun'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v2controllers.CiRun'
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/v2controllers.CiRun'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Create a new CiRun entry
+      tags:
+      - CiRuns
+  /api/v2/ci-runs/{selector}:
+    delete:
+      description: 'Delete an existing CiRun entry via one of its "selectors": ID,
+        ''github-actions/'' + owner + repo + run ID + attempt number, or ''argo-workflows/''
+        + namespace + name.'
+      parameters:
+      - description: 'The CiRun to delete''s selector: ID, ''github-actions/'' + owner
+          + repo + run ID + attempt number, or ''argo-workflows/'' + namespace + name'
+        in: path
+        name: selector
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v2controllers.CiRun'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Delete a CiRun entry
+      tags:
+      - CiRuns
+    get:
+      description: 'Get an existing CiRun entry via one of its "selectors": ID, ''github-actions/''
+        + owner + repo + run ID + attempt number, or ''argo-workflows/'' + namespace
+        + name.'
+      parameters:
+      - description: 'The CiRun to get''s selector: ID, ''github-actions/'' + owner
+          + repo + run ID + attempt number, or ''argo-workflows/'' + namespace + name'
+        in: path
+        name: selector
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v2controllers.CiRun'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Get a CiRun entry
+      tags:
+      - CiRuns
+    patch:
+      consumes:
+      - application/json
+      description: 'Edit an existing CiRun entry via one of its "selectors": ID, ''github-actions/''
+        + owner + repo + run ID + attempt number, or ''argo-workflows/'' + namespace
+        + name. Note that only mutable fields are available here, immutable fields
+        can only be set using /create.'
+      parameters:
+      - description: 'The CiRun to edit''s selector: ID, ''github-actions/'' + owner
+          + repo + run ID + attempt number, or ''argo-workflows/'' + namespace + name'
+        in: path
+        name: selector
+        required: true
+        type: string
+      - description: The edits to make to the CiRun
+        in: body
+        name: ci-run
+        required: true
+        schema:
+          $ref: '#/definitions/v2controllers.EditableCiRun'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v2controllers.CiRun'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Edit a CiRun entry
+      tags:
+      - CiRuns
+    put:
+      consumes:
+      - application/json
+      description: |-
+        Create or edit a CiRun entry. Attempts to edit and will attempt to create upon an error.
+        If an edit was made or the creation process de-duplicates, this method will return normally with a 200.
+      parameters:
+      - description: 'The CiRun to upsert''s selector: ID, ''github-actions/'' + owner
+          + repo + run ID + attempt number, or ''argo-workflows/'' + namespace + name'
+        in: path
+        name: selector
+        required: true
+        type: string
+      - description: The CiRun to upsert
+        in: body
+        name: ci-run
+        required: true
+        schema:
+          $ref: '#/definitions/v2controllers.CreatableCiRun'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v2controllers.CiRun'
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/v2controllers.CiRun'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Create or edit a CiRun entry
+      tags:
+      - CiRuns
   /api/v2/clusters:
     get:
       description: List existing Cluster entries, ordered by most recently updated.
@@ -4847,6 +5649,98 @@ paths:
       summary: List Chart selectors
       tags:
       - Charts
+  /api/v2/selectors/ci-identifiers/{selector}:
+    get:
+      description: Validate a given CiIdentifier selector and provide any other selectors
+        that would match the same CiIdentifier.
+      parameters:
+      - description: The selector of the CiIdentifier to list other selectors for
+        in: path
+        name: selector
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: string
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: List CiIdentifier selectors
+      tags:
+      - CiIdentifiers
+  /api/v2/selectors/ci-runs/{selector}:
+    get:
+      description: Validate a given CiRun selector and provide any other selectors
+        that would match the same CiRun.
+      parameters:
+      - description: The selector of the CiRun to list other selectors for
+        in: path
+        name: selector
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: string
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: List CiRun selectors
+      tags:
+      - CiRuns
   /api/v2/selectors/clusters/{selector}:
     get:
       description: Validate a given Cluster selector and provide any other selectors

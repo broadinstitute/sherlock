@@ -64,6 +64,9 @@ type V2controllersChartRelease struct {
 	// Enum: [latest exact follow]
 	ChartVersionResolver string `json:"chartVersionResolver,omitempty"`
 
+	// ci identifier
+	CiIdentifier *V2controllersCiIdentifier `json:"ciIdentifier,omitempty"`
+
 	// When creating, will default the environment's default cluster, if provided. Either this or environment must be provided.
 	Cluster string `json:"cluster,omitempty"`
 
@@ -142,6 +145,10 @@ func (m *V2controllersChartRelease) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateChartVersionResolver(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateCiIdentifier(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -324,6 +331,25 @@ func (m *V2controllersChartRelease) validateChartVersionResolver(formats strfmt.
 	return nil
 }
 
+func (m *V2controllersChartRelease) validateCiIdentifier(formats strfmt.Registry) error {
+	if swag.IsZero(m.CiIdentifier) { // not required
+		return nil
+	}
+
+	if m.CiIdentifier != nil {
+		if err := m.CiIdentifier.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("ciIdentifier")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("ciIdentifier")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (m *V2controllersChartRelease) validateClusterInfo(formats strfmt.Registry) error {
 	if swag.IsZero(m.ClusterInfo) { // not required
 		return nil
@@ -421,6 +447,10 @@ func (m *V2controllersChartRelease) ContextValidate(ctx context.Context, formats
 		res = append(res, err)
 	}
 
+	if err := m.contextValidateCiIdentifier(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidateClusterInfo(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -479,6 +509,22 @@ func (m *V2controllersChartRelease) contextValidateChartVersionInfo(ctx context.
 				return ve.ValidateName("chartVersionInfo")
 			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("chartVersionInfo")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *V2controllersChartRelease) contextValidateCiIdentifier(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.CiIdentifier != nil {
+		if err := m.CiIdentifier.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("ciIdentifier")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("ciIdentifier")
 			}
 			return err
 		}

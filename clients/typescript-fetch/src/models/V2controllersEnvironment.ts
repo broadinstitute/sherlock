@@ -19,6 +19,12 @@ import {
     EnvironmentAutoDeleteFromJSONTyped,
     EnvironmentAutoDeleteToJSON,
 } from './EnvironmentAutoDelete';
+import type { V2controllersCiIdentifier } from './V2controllersCiIdentifier';
+import {
+    V2controllersCiIdentifierFromJSON,
+    V2controllersCiIdentifierFromJSONTyped,
+    V2controllersCiIdentifierToJSON,
+} from './V2controllersCiIdentifier';
 import type { V2controllersCluster } from './V2controllersCluster';
 import {
     V2controllersClusterFromJSON,
@@ -68,6 +74,12 @@ export interface V2controllersEnvironment {
      * @memberof V2controllersEnvironment
      */
     baseDomain?: string;
+    /**
+     * 
+     * @type {V2controllersCiIdentifier}
+     * @memberof V2controllersEnvironment
+     */
+    ciIdentifier?: V2controllersCiIdentifier;
     /**
      * 
      * @type {Date}
@@ -267,6 +279,7 @@ export function V2controllersEnvironmentFromJSONTyped(json: any, ignoreDiscrimin
         'autoPopulateChartReleases': !exists(json, 'autoPopulateChartReleases') ? undefined : json['autoPopulateChartReleases'],
         'base': !exists(json, 'base') ? undefined : json['base'],
         'baseDomain': !exists(json, 'baseDomain') ? undefined : json['baseDomain'],
+        'ciIdentifier': !exists(json, 'ciIdentifier') ? undefined : V2controllersCiIdentifierFromJSON(json['ciIdentifier']),
         'createdAt': !exists(json, 'createdAt') ? undefined : (new Date(json['createdAt'])),
         'defaultCluster': !exists(json, 'defaultCluster') ? undefined : json['defaultCluster'],
         'defaultClusterInfo': !exists(json, 'defaultClusterInfo') ? undefined : V2controllersClusterFromJSON(json['defaultClusterInfo']),
@@ -312,6 +325,7 @@ export function V2controllersEnvironmentToJSON(value?: V2controllersEnvironment 
         'autoPopulateChartReleases': value.autoPopulateChartReleases,
         'base': value.base,
         'baseDomain': value.baseDomain,
+        'ciIdentifier': V2controllersCiIdentifierToJSON(value.ciIdentifier),
         'createdAt': value.createdAt === undefined ? undefined : (value.createdAt.toISOString()),
         'defaultCluster': value.defaultCluster,
         'defaultClusterInfo': V2controllersClusterToJSON(value.defaultClusterInfo),

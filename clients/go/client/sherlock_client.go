@@ -15,6 +15,8 @@ import (
 	"github.com/broadinstitute/sherlock/clients/go/client/chart_releases"
 	"github.com/broadinstitute/sherlock/clients/go/client/chart_versions"
 	"github.com/broadinstitute/sherlock/clients/go/client/charts"
+	"github.com/broadinstitute/sherlock/clients/go/client/ci_identifiers"
+	"github.com/broadinstitute/sherlock/clients/go/client/ci_runs"
 	"github.com/broadinstitute/sherlock/clients/go/client/clusters"
 	"github.com/broadinstitute/sherlock/clients/go/client/database_instances"
 	"github.com/broadinstitute/sherlock/clients/go/client/environments"
@@ -70,6 +72,8 @@ func New(transport runtime.ClientTransport, formats strfmt.Registry) *Sherlock {
 	cli.ChartReleases = chart_releases.New(transport, formats)
 	cli.ChartVersions = chart_versions.New(transport, formats)
 	cli.Charts = charts.New(transport, formats)
+	cli.CiIdentifiers = ci_identifiers.New(transport, formats)
+	cli.CiRuns = ci_runs.New(transport, formats)
 	cli.Clusters = clusters.New(transport, formats)
 	cli.DatabaseInstances = database_instances.New(transport, formats)
 	cli.Environments = environments.New(transport, formats)
@@ -130,6 +134,10 @@ type Sherlock struct {
 
 	Charts charts.ClientService
 
+	CiIdentifiers ci_identifiers.ClientService
+
+	CiRuns ci_runs.ClientService
+
 	Clusters clusters.ClientService
 
 	DatabaseInstances database_instances.ClientService
@@ -153,6 +161,8 @@ func (c *Sherlock) SetTransport(transport runtime.ClientTransport) {
 	c.ChartReleases.SetTransport(transport)
 	c.ChartVersions.SetTransport(transport)
 	c.Charts.SetTransport(transport)
+	c.CiIdentifiers.SetTransport(transport)
+	c.CiRuns.SetTransport(transport)
 	c.Clusters.SetTransport(transport)
 	c.DatabaseInstances.SetTransport(transport)
 	c.Environments.SetTransport(transport)
