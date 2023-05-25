@@ -13,6 +13,7 @@ import (
 
 type ChartRelease struct {
 	gorm.Model
+	CiIdentifier    *CiIdentifier `gorm:"polymorphic:Resource; polymorphicValue:chart-release"`
 	Chart           *Chart
 	ChartID         uint
 	Cluster         *Cluster
@@ -37,6 +38,14 @@ func (c ChartRelease) TableName() string {
 
 func (c ChartRelease) getID() uint {
 	return c.ID
+}
+
+func (c ChartRelease) GetCiIdentifier() *CiIdentifier {
+	if c.CiIdentifier != nil {
+		return c.CiIdentifier
+	} else {
+		return &CiIdentifier{ResourceType: "chart-release", ResourceID: c.ID}
+	}
 }
 
 var chartReleaseStore *internalModelStore[ChartRelease]
@@ -68,41 +77,29 @@ func chartReleaseSelectorToQuery(db *gorm.DB, selector string) (ChartRelease, er
 		parts := strings.Split(selector, "/")
 
 		// environment
-		environmentQuery, err := environmentSelectorToQuery(db, parts[0])
-		if err != nil {
-			return ChartRelease{}, fmt.Errorf("invalid chart release selector %s, environment sub-selector error: %v", selector, err)
-		}
-		environment, err := environmentStore.get(db, environmentQuery)
+		environmentID, err := environmentStore.resolveSelector(db, parts[0])
 		if err != nil {
 			return ChartRelease{}, fmt.Errorf("error handling environment sub-selector %s: %v", parts[0], err)
 		}
-		query.EnvironmentID = &environment.ID
+		query.EnvironmentID = &environmentID
 
 		// chart
-		chartQuery, err := chartSelectorToQuery(db, parts[1])
-		if err != nil {
-			return ChartRelease{}, fmt.Errorf("invalid chart release selector %s, chart sub-selector error: %v", selector, err)
-		}
-		chart, err := chartStore.get(db, chartQuery)
+		chartID, err := chartStore.resolveSelector(db, parts[1])
 		if err != nil {
 			return ChartRelease{}, fmt.Errorf("error handling chart sub-selector %s: %v", parts[1], err)
 		}
-		query.ChartID = chart.ID
+		query.ChartID = chartID
 
 		return query, nil
 	} else if strings.Count(selector, "/") == 2 { // cluster + namespace + chart
 		parts := strings.Split(selector, "/")
 
 		// cluster
-		clusterQuery, err := clusterSelectorToQuery(db, parts[0])
-		if err != nil {
-			return ChartRelease{}, fmt.Errorf("invalid chart release selector %s, cluster sub-selector error: %v", selector, err)
-		}
-		cluster, err := clusterStore.get(db, clusterQuery)
+		clusterID, err := clusterStore.resolveSelector(db, parts[0])
 		if err != nil {
 			return ChartRelease{}, fmt.Errorf("error handling cluster sub-selector %s: %v", parts[0], err)
 		}
-		query.ClusterID = &cluster.ID
+		query.ClusterID = &clusterID
 
 		// namespace
 		namespace := parts[1]
@@ -115,15 +112,11 @@ func chartReleaseSelectorToQuery(db *gorm.DB, selector string) (ChartRelease, er
 		query.Namespace = namespace
 
 		// chart
-		chartQuery, err := chartSelectorToQuery(db, parts[2])
-		if err != nil {
-			return ChartRelease{}, fmt.Errorf("invalid chart release selector %s, chart sub-selector error: %v", selector, err)
-		}
-		chart, err := chartStore.get(db, chartQuery)
+		chartID, err := chartStore.resolveSelector(db, parts[2])
 		if err != nil {
 			return ChartRelease{}, fmt.Errorf("error handling chart sub-selector %s: %v", parts[1], err)
 		}
-		query.ChartID = chart.ID
+		query.ChartID = chartID
 
 		return query, nil
 	} else if utils.IsAlphaNumericWithHyphens(selector) &&

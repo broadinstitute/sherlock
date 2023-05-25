@@ -20,6 +20,7 @@ import (
 
 type Environment struct {
 	gorm.Model
+	CiIdentifier              *CiIdentifier `gorm:"polymorphic:Resource; polymorphicValue:environment"`
 	Base                      string
 	Lifecycle                 string `gorm:"not null; default:null"`
 	Name                      string `gorm:"not null; default:null"`
@@ -60,6 +61,14 @@ func (e Environment) TableName() string {
 
 func (e Environment) getID() uint {
 	return e.ID
+}
+
+func (e Environment) GetCiIdentifier() *CiIdentifier {
+	if e.CiIdentifier != nil {
+		return e.CiIdentifier
+	} else {
+		return &CiIdentifier{ResourceType: "environment", ResourceID: e.ID}
+	}
 }
 
 var environmentStore *internalModelStore[Environment]

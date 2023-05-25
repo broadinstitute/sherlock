@@ -3,6 +3,7 @@ package v2models
 import (
 	"fmt"
 	"github.com/broadinstitute/sherlock/internal/models/v2models/environment"
+	"reflect"
 	"strings"
 	"testing"
 	"time"
@@ -827,6 +828,119 @@ func Test_generateUniqueResourcePrefix(t *testing.T) {
 			generateUniqueResourcePrefix(&sb, tt.input)
 			testutils.AssertNoDiff(t, tt.output, sb.String())
 			sb.Reset()
+		})
+	}
+}
+
+func TestEnvironment_GetCiIdentifier(t *testing.T) {
+	type fields struct {
+		Model                       gorm.Model
+		CiIdentifier                *CiIdentifier
+		Base                        string
+		Lifecycle                   string
+		Name                        string
+		NamePrefix                  string
+		TemplateEnvironment         *Environment
+		TemplateEnvironmentID       *uint
+		ValuesName                  string
+		AutoPopulateChartReleases   *bool
+		UniqueResourcePrefix        string
+		DefaultNamespace            string
+		DefaultCluster              *Cluster
+		DefaultClusterID            *uint
+		DefaultFirecloudDevelopRef  *string
+		Owner                       *User
+		OwnerID                     *uint
+		LegacyOwner                 *string
+		RequiresSuitability         *bool
+		BaseDomain                  *string
+		NamePrefixesDomain          *bool
+		HelmfileRef                 *string
+		PreventDeletion             *bool
+		AutoDelete                  *environment.AutoDelete
+		Description                 *string
+		PagerdutyIntegration        *PagerdutyIntegration
+		PagerdutyIntegrationID      *uint
+		Offline                     *bool
+		OfflineScheduleBeginEnabled *bool
+		OfflineScheduleBeginTime    *string
+		OfflineScheduleEndEnabled   *bool
+		OfflineScheduleEndTime      *string
+		OfflineScheduleEndWeekends  *bool
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   *CiIdentifier
+	}{
+		{
+			name: "returns existing",
+			fields: fields{
+				CiIdentifier: &CiIdentifier{
+					Model: gorm.Model{
+						ID: 123,
+					},
+				},
+			},
+			want: &CiIdentifier{
+				Model: gorm.Model{
+					ID: 123,
+				},
+			},
+		},
+		{
+			name: "returns generated if no existing",
+			fields: fields{
+				Model: gorm.Model{
+					ID: 123,
+				},
+			},
+			want: &CiIdentifier{
+				ResourceType: "environment",
+				ResourceID:   123,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			e := Environment{
+				Model:                       tt.fields.Model,
+				CiIdentifier:                tt.fields.CiIdentifier,
+				Base:                        tt.fields.Base,
+				Lifecycle:                   tt.fields.Lifecycle,
+				Name:                        tt.fields.Name,
+				NamePrefix:                  tt.fields.NamePrefix,
+				TemplateEnvironment:         tt.fields.TemplateEnvironment,
+				TemplateEnvironmentID:       tt.fields.TemplateEnvironmentID,
+				ValuesName:                  tt.fields.ValuesName,
+				AutoPopulateChartReleases:   tt.fields.AutoPopulateChartReleases,
+				UniqueResourcePrefix:        tt.fields.UniqueResourcePrefix,
+				DefaultNamespace:            tt.fields.DefaultNamespace,
+				DefaultCluster:              tt.fields.DefaultCluster,
+				DefaultClusterID:            tt.fields.DefaultClusterID,
+				DefaultFirecloudDevelopRef:  tt.fields.DefaultFirecloudDevelopRef,
+				Owner:                       tt.fields.Owner,
+				OwnerID:                     tt.fields.OwnerID,
+				LegacyOwner:                 tt.fields.LegacyOwner,
+				RequiresSuitability:         tt.fields.RequiresSuitability,
+				BaseDomain:                  tt.fields.BaseDomain,
+				NamePrefixesDomain:          tt.fields.NamePrefixesDomain,
+				HelmfileRef:                 tt.fields.HelmfileRef,
+				PreventDeletion:             tt.fields.PreventDeletion,
+				AutoDelete:                  tt.fields.AutoDelete,
+				Description:                 tt.fields.Description,
+				PagerdutyIntegration:        tt.fields.PagerdutyIntegration,
+				PagerdutyIntegrationID:      tt.fields.PagerdutyIntegrationID,
+				Offline:                     tt.fields.Offline,
+				OfflineScheduleBeginEnabled: tt.fields.OfflineScheduleBeginEnabled,
+				OfflineScheduleBeginTime:    tt.fields.OfflineScheduleBeginTime,
+				OfflineScheduleEndEnabled:   tt.fields.OfflineScheduleEndEnabled,
+				OfflineScheduleEndTime:      tt.fields.OfflineScheduleEndTime,
+				OfflineScheduleEndWeekends:  tt.fields.OfflineScheduleEndWeekends,
+			}
+			if got := e.GetCiIdentifier(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("GetCiIdentifier() = %v, want %v", got, tt.want)
+			}
 		})
 	}
 }

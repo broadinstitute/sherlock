@@ -11,8 +11,9 @@ import (
 
 type AppVersion struct {
 	ReadableBaseType
-	ChartInfo            *Chart      `json:"chartInfo,omitempty"  form:"-"`
-	ParentAppVersionInfo *AppVersion `json:"parentAppVersionInfo,omitempty" swaggertype:"object" form:"-"`
+	CiIdentifier         *CiIdentifier `json:"ciIdentifier,omitempty" form:"-"`
+	ChartInfo            *Chart        `json:"chartInfo,omitempty" form:"-"`
+	ParentAppVersionInfo *AppVersion   `json:"parentAppVersionInfo,omitempty" swaggertype:"object" form:"-"`
 	CreatableAppVersion
 }
 
@@ -118,6 +119,7 @@ func modelAppVersionToAppVersion(model *v2models.AppVersion) *AppVersion {
 			CreatedAt: model.CreatedAt,
 			UpdatedAt: model.UpdatedAt,
 		},
+		CiIdentifier:         modelCiIdentifierToCiIdentifier(model.CiIdentifier),
 		ChartInfo:            chart,
 		ParentAppVersionInfo: parentAppVersion,
 		CreatableAppVersion: CreatableAppVersion{

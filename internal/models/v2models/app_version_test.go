@@ -3,6 +3,7 @@ package v2models
 import (
 	"github.com/broadinstitute/sherlock/internal/testutils"
 	"gorm.io/gorm"
+	"reflect"
 	"testing"
 )
 
@@ -251,6 +252,73 @@ func Test_rejectDuplicateAppVersion(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if err := rejectDuplicateAppVersion(tt.args.existing, tt.args.new); (err != nil) != tt.wantErr {
 				t.Errorf("rejectDuplicateAppVersion() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func TestAppVersion_GetCiIdentifier(t *testing.T) {
+	type fields struct {
+		Model              gorm.Model
+		CiIdentifier       *CiIdentifier
+		Chart              *Chart
+		ChartID            uint
+		AppVersion         string
+		GitCommit          string
+		GitBranch          string
+		Description        string
+		ParentAppVersion   *AppVersion
+		ParentAppVersionID *uint
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   *CiIdentifier
+	}{
+		{
+			name: "returns existing",
+			fields: fields{
+				CiIdentifier: &CiIdentifier{
+					Model: gorm.Model{
+						ID: 123,
+					},
+				},
+			},
+			want: &CiIdentifier{
+				Model: gorm.Model{
+					ID: 123,
+				},
+			},
+		},
+		{
+			name: "returns generated if no existing",
+			fields: fields{
+				Model: gorm.Model{
+					ID: 123,
+				},
+			},
+			want: &CiIdentifier{
+				ResourceType: "app-version",
+				ResourceID:   123,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			a := AppVersion{
+				Model:              tt.fields.Model,
+				CiIdentifier:       tt.fields.CiIdentifier,
+				Chart:              tt.fields.Chart,
+				ChartID:            tt.fields.ChartID,
+				AppVersion:         tt.fields.AppVersion,
+				GitCommit:          tt.fields.GitCommit,
+				GitBranch:          tt.fields.GitBranch,
+				Description:        tt.fields.Description,
+				ParentAppVersion:   tt.fields.ParentAppVersion,
+				ParentAppVersionID: tt.fields.ParentAppVersionID,
+			}
+			if got := a.GetCiIdentifier(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("GetCiIdentifier() = %v, want %v", got, tt.want)
 			}
 		})
 	}

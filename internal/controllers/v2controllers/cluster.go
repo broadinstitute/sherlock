@@ -10,6 +10,7 @@ import (
 //	@description	The full set of Cluster fields that can be read or used for filtering queries
 type Cluster struct {
 	ReadableBaseType
+	CiIdentifier *CiIdentifier `json:"ciIdentifier,omitempty" form:"-"`
 	CreatableCluster
 }
 
@@ -86,6 +87,7 @@ func modelClusterToCluster(model *v2models.Cluster) *Cluster {
 			CreatedAt: model.CreatedAt,
 			UpdatedAt: model.UpdatedAt,
 		},
+		CiIdentifier: modelCiIdentifierToCiIdentifier(model.CiIdentifier),
 		CreatableCluster: CreatableCluster{
 			Name:              model.Name,
 			Provider:          model.Provider,

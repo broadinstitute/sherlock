@@ -11,6 +11,7 @@ import (
 
 type AppVersion struct {
 	gorm.Model
+	CiIdentifier       *CiIdentifier `gorm:"polymorphic:Resource; polymorphicValue:app-version"`
 	Chart              *Chart
 	ChartID            uint   `gorm:"not null: default:null"`
 	AppVersion         string `gorm:"not null: default:null"`
@@ -31,6 +32,14 @@ func (a AppVersion) getID() uint {
 
 func (a AppVersion) getParentID() *uint {
 	return a.ParentAppVersionID
+}
+
+func (a AppVersion) GetCiIdentifier() *CiIdentifier {
+	if a.CiIdentifier != nil {
+		return a.CiIdentifier
+	} else {
+		return &CiIdentifier{ResourceType: "app-version", ResourceID: a.ID}
+	}
 }
 
 var appVersionStore *internalTreeModelStore[AppVersion]
@@ -62,15 +71,11 @@ func appVersionSelectorToQuery(db *gorm.DB, selector string) (AppVersion, error)
 		parts := strings.Split(selector, "/")
 
 		// chart
-		chartQuery, err := chartSelectorToQuery(db, parts[0])
-		if err != nil {
-			return AppVersion{}, fmt.Errorf("invalid chart release selector %s, chart sub-selector error: %v", selector, err)
-		}
-		chart, err := chartStore.get(db, chartQuery)
+		chartID, err := chartStore.resolveSelector(db, parts[0])
 		if err != nil {
 			return AppVersion{}, fmt.Errorf("error handling chart sub-selector %s: %v", parts[0], err)
 		}
-		query.ChartID = chart.ID
+		query.ChartID = chartID
 
 		// version
 		version := parts[1]

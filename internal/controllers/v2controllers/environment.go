@@ -19,6 +19,7 @@ import (
 
 type Environment struct {
 	ReadableBaseType
+	CiIdentifier             *CiIdentifier         `json:"ciIdentifier,omitempty" form:"-"`
 	TemplateEnvironmentInfo  *Environment          `json:"templateEnvironmentInfo,omitempty" swaggertype:"object" form:"-"` // Single-layer recursive; provides info of the template environment if this environment has one
 	DefaultClusterInfo       *Cluster              `json:"defaultClusterInfo,omitempty" form:"-"`
 	PagerdutyIntegrationInfo *PagerdutyIntegration `json:"pagerdutyIntegrationInfo,omitempty" form:"-"`
@@ -202,6 +203,7 @@ func modelEnvironmentToEnvironment(model *v2models.Environment) *Environment {
 			CreatedAt: model.CreatedAt,
 			UpdatedAt: model.UpdatedAt,
 		},
+		CiIdentifier:             modelCiIdentifierToCiIdentifier(model.CiIdentifier),
 		TemplateEnvironmentInfo:  templateEnvironment,
 		DefaultClusterInfo:       defaultCluster,
 		PagerdutyIntegrationInfo: pagerdutyIntegration,

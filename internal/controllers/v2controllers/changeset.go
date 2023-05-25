@@ -11,6 +11,7 @@ import (
 
 type Changeset struct {
 	ReadableBaseType
+	CiIdentifier     *CiIdentifier `json:"ciIdentifier,omitempty" form:"-"`
 	ChartReleaseInfo *ChartRelease `json:"chartReleaseInfo,omitempty" form:"-"`
 
 	AppliedAt    *time.Time `json:"appliedAt,omitempty" form:"appliedAt"  format:"date-time"`
@@ -349,6 +350,7 @@ func modelChangesetToChangeset(model *v2models.Changeset) *Changeset {
 			CreatedAt: model.CreatedAt,
 			UpdatedAt: model.UpdatedAt,
 		},
+		CiIdentifier:                       modelCiIdentifierToCiIdentifier(model.CiIdentifier),
 		ChartReleaseInfo:                   chartRelease,
 		AppliedAt:                          model.AppliedAt,
 		SupersededAt:                       model.SupersededAt,

@@ -13,8 +13,9 @@ import (
 
 type Cluster struct {
 	gorm.Model
-	Name              string `gorm:"not null; default:null; unique"`
-	Provider          string `gorm:"not null; default:null"`
+	CiIdentifier      *CiIdentifier `gorm:"polymorphic:Resource; polymorphicValue:cluster"`
+	Name              string        `gorm:"not null; default:null; unique"`
+	Provider          string        `gorm:"not null; default:null"`
 	GoogleProject     string
 	AzureSubscription string
 	Location          string `gorm:"not null; default:null"`
@@ -31,6 +32,14 @@ func (c Cluster) TableName() string {
 
 func (c Cluster) getID() uint {
 	return c.ID
+}
+
+func (c Cluster) GetCiIdentifier() *CiIdentifier {
+	if c.CiIdentifier != nil {
+		return c.CiIdentifier
+	} else {
+		return &CiIdentifier{ResourceType: "cluster", ResourceID: c.ID}
+	}
 }
 
 var clusterStore *internalModelStore[Cluster]

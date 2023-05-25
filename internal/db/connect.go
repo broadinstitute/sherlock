@@ -34,6 +34,8 @@ var (
 		&v1models.Deploy{},
 	}
 	v2ModelHierarchy = []any{
+		&v2models.CiIdentifier{},
+		&v2models.CiRun{},
 		&v2models.User{},
 		&v2models.PagerdutyIntegration{},
 		&v2models.Cluster{},

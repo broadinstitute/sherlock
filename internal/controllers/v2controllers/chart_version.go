@@ -11,6 +11,7 @@ import (
 
 type ChartVersion struct {
 	ReadableBaseType
+	CiIdentifier           *CiIdentifier `json:"ciIdentifier,omitempty" form:"-"`
 	ChartInfo              *Chart        `json:"chartInfo,omitempty" form:"-"`
 	ParentChartVersionInfo *ChartVersion `json:"parentChartVersionInfo,omitempty" swaggertype:"object" form:"-"`
 	CreatableChartVersion
@@ -114,6 +115,7 @@ func modelChartVersionToChartVersion(model *v2models.ChartVersion) *ChartVersion
 			CreatedAt: model.CreatedAt,
 			UpdatedAt: model.UpdatedAt,
 		},
+		CiIdentifier:           modelCiIdentifierToCiIdentifier(model.CiIdentifier),
 		ChartInfo:              chart,
 		ParentChartVersionInfo: parentChartVersion,
 		CreatableChartVersion: CreatableChartVersion{

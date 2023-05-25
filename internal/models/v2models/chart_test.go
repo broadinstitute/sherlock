@@ -1,6 +1,7 @@
 package v2models
 
 import (
+	"reflect"
 	"testing"
 
 	"github.com/broadinstitute/sherlock/internal/testutils"
@@ -161,6 +162,79 @@ func Test_validateChart(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if err := validateChart(tt.args.chart); (err != nil) != tt.wantErr {
 				t.Errorf("validateChart() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func TestChart_GetCiIdentifier(t *testing.T) {
+	type fields struct {
+		Model                 gorm.Model
+		CiIdentifier          *CiIdentifier
+		Name                  string
+		ChartRepo             *string
+		AppImageGitRepo       *string
+		AppImageGitMainBranch *string
+		ChartExposesEndpoint  *bool
+		DefaultSubdomain      *string
+		DefaultProtocol       *string
+		DefaultPort           *uint
+		LegacyConfigsEnabled  *bool
+		Description           *string
+		PlaybookURL           *string
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   *CiIdentifier
+	}{
+		{
+			name: "returns existing",
+			fields: fields{
+				CiIdentifier: &CiIdentifier{
+					Model: gorm.Model{
+						ID: 123,
+					},
+				},
+			},
+			want: &CiIdentifier{
+				Model: gorm.Model{
+					ID: 123,
+				},
+			},
+		},
+		{
+			name: "returns generated if no existing",
+			fields: fields{
+				Model: gorm.Model{
+					ID: 123,
+				},
+			},
+			want: &CiIdentifier{
+				ResourceType: "chart",
+				ResourceID:   123,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := Chart{
+				Model:                 tt.fields.Model,
+				CiIdentifier:          tt.fields.CiIdentifier,
+				Name:                  tt.fields.Name,
+				ChartRepo:             tt.fields.ChartRepo,
+				AppImageGitRepo:       tt.fields.AppImageGitRepo,
+				AppImageGitMainBranch: tt.fields.AppImageGitMainBranch,
+				ChartExposesEndpoint:  tt.fields.ChartExposesEndpoint,
+				DefaultSubdomain:      tt.fields.DefaultSubdomain,
+				DefaultProtocol:       tt.fields.DefaultProtocol,
+				DefaultPort:           tt.fields.DefaultPort,
+				LegacyConfigsEnabled:  tt.fields.LegacyConfigsEnabled,
+				Description:           tt.fields.Description,
+				PlaybookURL:           tt.fields.PlaybookURL,
+			}
+			if got := c.GetCiIdentifier(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("GetCiIdentifier() = %v, want %v", got, tt.want)
 			}
 		})
 	}

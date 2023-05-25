@@ -1,6 +1,7 @@
 package v2models
 
 import (
+	"reflect"
 	"testing"
 	"time"
 
@@ -648,6 +649,89 @@ func Test_validateChartRelease(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if err := validateChartRelease(tt.args.chartRelease); (err != nil) != tt.wantErr {
 				t.Errorf("validateChartRelease() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func TestChartRelease_GetCiIdentifier(t *testing.T) {
+	type fields struct {
+		Model                   gorm.Model
+		CiIdentifier            *CiIdentifier
+		Chart                   *Chart
+		ChartID                 uint
+		Cluster                 *Cluster
+		ClusterID               *uint
+		DestinationType         string
+		Environment             *Environment
+		EnvironmentID           *uint
+		Name                    string
+		Namespace               string
+		ChartReleaseVersion     ChartReleaseVersion
+		Subdomain               *string
+		Protocol                *string
+		Port                    *uint
+		PagerdutyIntegration    *PagerdutyIntegration
+		PagerdutyIntegrationID  *uint
+		IncludeInBulkChangesets *bool
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   *CiIdentifier
+	}{
+		{
+			name: "returns existing",
+			fields: fields{
+				CiIdentifier: &CiIdentifier{
+					Model: gorm.Model{
+						ID: 123,
+					},
+				},
+			},
+			want: &CiIdentifier{
+				Model: gorm.Model{
+					ID: 123,
+				},
+			},
+		},
+		{
+			name: "returns generated if no existing",
+			fields: fields{
+				Model: gorm.Model{
+					ID: 123,
+				},
+			},
+			want: &CiIdentifier{
+				ResourceType: "chart-release",
+				ResourceID:   123,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := ChartRelease{
+				Model:                   tt.fields.Model,
+				CiIdentifier:            tt.fields.CiIdentifier,
+				Chart:                   tt.fields.Chart,
+				ChartID:                 tt.fields.ChartID,
+				Cluster:                 tt.fields.Cluster,
+				ClusterID:               tt.fields.ClusterID,
+				DestinationType:         tt.fields.DestinationType,
+				Environment:             tt.fields.Environment,
+				EnvironmentID:           tt.fields.EnvironmentID,
+				Name:                    tt.fields.Name,
+				Namespace:               tt.fields.Namespace,
+				ChartReleaseVersion:     tt.fields.ChartReleaseVersion,
+				Subdomain:               tt.fields.Subdomain,
+				Protocol:                tt.fields.Protocol,
+				Port:                    tt.fields.Port,
+				PagerdutyIntegration:    tt.fields.PagerdutyIntegration,
+				PagerdutyIntegrationID:  tt.fields.PagerdutyIntegrationID,
+				IncludeInBulkChangesets: tt.fields.IncludeInBulkChangesets,
+			}
+			if got := c.GetCiIdentifier(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("GetCiIdentifier() = %v, want %v", got, tt.want)
 			}
 		})
 	}

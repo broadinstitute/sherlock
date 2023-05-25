@@ -105,6 +105,8 @@ func (a *Application) buildRouter() {
 	v2handlers.RegisterPagerdutyIntegrationHandlers(v2api, a.v2controllers.PagerdutyIntegrationController)
 	v2handlers.RegisterDatabaseInstanceHandlers(v2api, a.v2controllers.DatabaseInstanceController)
 	v2handlers.RegisterUserHandlers(v2api, a.v2controllers.UserController)
+	v2handlers.RegisterCiIdentifierHandlers(v2api, a.v2controllers.CiIdentifierController)
+	v2handlers.RegisterCiRunHandlers(v2api, a.v2controllers.CiRunController)
 
 	a.Handler = router
 }
