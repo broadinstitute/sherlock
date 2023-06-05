@@ -1,4 +1,4 @@
-package sherlock
+package middleware
 
 import (
 	"github.com/broadinstitute/sherlock/internal/auth"
@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func logger() gin.HandlerFunc {
+func Logger() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		t := time.Now()
 

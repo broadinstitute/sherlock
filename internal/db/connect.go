@@ -85,11 +85,11 @@ func Connect() (*sql.DB, error) {
 
 func applyMigrations(db *sql.DB) error {
 	if !config.Config.Bool("db.init") {
-		log.Info().Msg("skipping database migrations")
+		log.Info().Msg("DB   | skipping database migrations")
 		return nil
 	}
 
-	log.Info().Msg("executing database migration")
+	log.Info().Msg("DB   | executing database migration")
 	directory, err := iofs.New(migrationFiles.MigrationFiles, "migrations")
 	if err != nil {
 		return fmt.Errorf("error accessing embedded migration files: %v", err)
@@ -107,12 +107,12 @@ func applyMigrations(db *sql.DB) error {
 		return fmt.Errorf("error building migration plan: %v", err)
 	}
 	if err = migrationPlan.Up(); err == migrate.ErrNoChange {
-		log.Info().Msg("no migration to apply, continuing")
+		log.Info().Msg("DB   | no migration to apply, continuing")
 	} else if err != nil {
 		return fmt.Errorf("error applying migration plan: %v", err)
 	}
 
-	log.Info().Msg("database migration complete")
+	log.Info().Msg("DB   | database migration complete")
 	return nil
 }
 
@@ -136,7 +136,7 @@ func openGorm(db *sql.DB) (*gorm.DB, error) {
 			},
 			// log.Logger is Zerolog's global logger that the rest of Sherlock uses
 			Logger: logger.New(&log.Logger, logger.Config{
-				SlowThreshold:             config.Config.Duration("db.log.slowThresholdMs"),
+				SlowThreshold:             config.Config.Duration("db.log.slowThreshold"),
 				LogLevel:                  logLevel,
 				IgnoreRecordNotFoundError: config.Config.Bool("db.log.ignoreNotFoundWarning"),
 				Colorful:                  config.Config.String("mode") == "debug",
@@ -151,18 +151,18 @@ func openGorm(db *sql.DB) (*gorm.DB, error) {
 // be disabled.
 func applyAutoMigrations(db *gorm.DB) error {
 	if config.Config.Bool("db.autoMigrateV1") {
-		log.Info().Msg("executing database auto-migrations for v1 models")
+		log.Info().Msg("DB   | executing database auto-migrations for v1 models")
 		if err := db.AutoMigrate(v1ModelHierarchy...); err != nil {
 			return fmt.Errorf("error running v1 model auto-migrations: %v", err)
 		}
-		log.Info().Msg("database auto-migrations for v1 models complete")
+		log.Info().Msg("DB   | database auto-migrations for v1 models complete")
 	}
 	if config.Config.Bool("db.autoMigrateV2") {
-		log.Info().Msg("executing database auto-migrations for v2 models")
+		log.Info().Msg("DB   | executing database auto-migrations for v2 models")
 		if err := db.AutoMigrate(v2ModelHierarchy...); err != nil {
 			return fmt.Errorf("error running v2 model auto-migrations: %v", err)
 		}
-		log.Info().Msg("database auto-migrations for v2 models complete")
+		log.Info().Msg("DB   | database auto-migrations for v2 models complete")
 	}
 	return nil
 }
