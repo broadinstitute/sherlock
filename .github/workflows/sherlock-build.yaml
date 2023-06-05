@@ -18,16 +18,16 @@ on:
     branches:
       - main
     paths-ignore:
-      - 'README.md'
-      - 'docs/**'
-      - 'clients/**'
+      - "README.md"
+      - "docs/**"
+      - "clients/**"
   pull_request:
     branches:
       - main
     paths-ignore:
-      - 'README.md'
-      - 'docs/**'
-      - 'clients/**'
+      - "README.md"
+      - "docs/**"
+      - "clients/**"
 
 env:
   # Google project where artifacts are uploaded.
