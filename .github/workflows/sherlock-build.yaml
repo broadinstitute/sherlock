@@ -148,7 +148,7 @@ jobs:
             type=semver,pattern=v{{major}}.{{minor}},value=${{ steps.tag.outputs.new-tag }},enable={{is_default_branch}}
 
       - name: Build image
-        uses: docker/build-push-actions@v3
+        uses: docker/build-push-action@v3
         with:
           context: .
           provenance: min
