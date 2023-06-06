@@ -151,7 +151,6 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
-          provenance: mode=min
           push: false
           load: true
           tags: ${{ steps.meta.outputs.tags }}
