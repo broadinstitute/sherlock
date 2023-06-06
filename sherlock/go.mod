@@ -6,6 +6,7 @@ require (
 	contrib.go.opencensus.io/exporter/prometheus v0.4.2
 	contrib.go.opencensus.io/exporter/stackdriver v0.13.14
 	github.com/PagerDuty/go-pagerduty v1.6.0
+	github.com/broadinstitute/sherlock/go-shared v0.0.0
 	github.com/bxcodec/faker/v3 v3.8.0
 	github.com/coreos/go-oidc v2.1.0+incompatible
 	github.com/creasty/defaults v1.6.0
@@ -29,6 +30,8 @@ require (
 	gorm.io/driver/postgres v1.4.5
 	gorm.io/gorm v1.24.2
 )
+
+replace github.com/broadinstitute/sherlock/go-shared => ../go-shared
 
 require (
 	cloud.google.com/go/compute v1.14.0 // indirect

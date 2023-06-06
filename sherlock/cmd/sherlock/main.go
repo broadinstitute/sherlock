@@ -2,8 +2,8 @@ package main
 
 import (
 	"context"
+	"github.com/broadinstitute/sherlock/go-shared/pkg/version"
 	"github.com/broadinstitute/sherlock/sherlock/internal/boot"
-	"github.com/broadinstitute/sherlock/sherlock/internal/version"
 	"github.com/rs/zerolog/log"
 	"os"
 	"os/signal"

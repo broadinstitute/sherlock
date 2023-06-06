@@ -1,6 +1,7 @@
 package boot
 
 import (
+	"github.com/broadinstitute/sherlock/go-shared/pkg/version"
 	"github.com/broadinstitute/sherlock/sherlock/docs"
 	"github.com/broadinstitute/sherlock/sherlock/html"
 	"github.com/broadinstitute/sherlock/sherlock/internal/boot/middleware"
@@ -10,7 +11,6 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/handlers/v2handlers"
 	"github.com/broadinstitute/sherlock/sherlock/internal/metrics"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models/v2models"
-	"github.com/broadinstitute/sherlock/sherlock/internal/version"
 	"github.com/gin-gonic/gin"
 	swaggo_files "github.com/swaggo/files"
 	swaggo_gin "github.com/swaggo/gin-swagger"
