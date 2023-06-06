@@ -11,11 +11,11 @@ COPY sherlock/go.mod sherlock/go.sum ./
 COPY go-shared ../go-shared/
 RUN go mod download && go mod verify
 
-# See the .dockerignore, it ignores by default
 COPY sherlock ./
 RUN go build -buildvcs=false -ldflags="-X 'main.BuildVersion=${BUILD_VERSION}'" -o /bin/sherlock ./cmd/sherlock/...
 
 # FROM alpine:${ALPINE_VERSION} as runtime <-- use this if you hit issues
 FROM gcr.io/distroless/static:nonroot as runtime
+
 COPY --from=build /bin/sherlock /bin/sherlock
 ENTRYPOINT [ "/bin/sherlock" ]
