@@ -8,6 +8,7 @@ import (
 	"github.com/broadinstitute/sherlock/internal/controllers/v2controllers"
 	"github.com/broadinstitute/sherlock/internal/handlers/misc"
 	"github.com/broadinstitute/sherlock/internal/handlers/v2handlers"
+	"github.com/broadinstitute/sherlock/internal/metrics"
 	"github.com/broadinstitute/sherlock/internal/models/v2models"
 	"github.com/broadinstitute/sherlock/internal/version"
 	"github.com/gin-gonic/gin"
@@ -47,6 +48,8 @@ func buildRouter(db *gorm.DB) (*gin.Engine, error) {
 	router.GET("/version", misc.VersionHandler)
 	router.GET("/status", misc.StatusHandler)
 	router.GET("/my-user", authMiddleware, misc.MyUserHandler)
+
+	metrics.RegisterPrometheusMetricsHandler(router.Group("/metrics"))
 
 	router.StaticFS("/static", http.FS(html.StaticHtmlFiles))
 
