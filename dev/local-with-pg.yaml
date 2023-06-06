@@ -7,7 +7,7 @@ networks:
 services: 
   sherlock:
     build:
-      context: ../
+      context: ../sherlock
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
