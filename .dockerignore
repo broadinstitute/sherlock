@@ -1,3 +1,7 @@
+# Dockerignores are read from the root of the **context**, not relative to where the Dockerfile actually is.
+# We have to use the root of the repo as our context because we need to use shared-go and whatnot, Docker
+# can't copy from outside its context.
+
 # Ignore generated credentials from google-github-actions/auth
 gha-creds-*.json
 
