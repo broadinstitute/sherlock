@@ -2,8 +2,8 @@ package gha_oidc_auth
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/internal/config"
-	"github.com/broadinstitute/sherlock/internal/errors"
+	"github.com/broadinstitute/sherlock/sherlock/internal/config"
+	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
 )

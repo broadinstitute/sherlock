@@ -2,8 +2,8 @@ package v1handlers
 
 import (
 	"errors"
-	"github.com/broadinstitute/sherlock/internal/controllers/v1controllers"
-	"github.com/broadinstitute/sherlock/internal/models/v1models"
+	"github.com/broadinstitute/sherlock/sherlock/internal/controllers/v1controllers"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models/v1models"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

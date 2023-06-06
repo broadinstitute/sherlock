@@ -1,7 +1,7 @@
 package misc
 
 import (
-	"github.com/broadinstitute/sherlock/internal/version"
+	"github.com/broadinstitute/sherlock/sherlock/internal/version"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )

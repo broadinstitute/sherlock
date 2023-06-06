@@ -1,6 +1,6 @@
 package v2controllers
 
-import "github.com/broadinstitute/sherlock/internal/models/v2models"
+import "github.com/broadinstitute/sherlock/sherlock/internal/models/v2models"
 
 type TreeModelController[M v2models.TreeModel, R Readable[M], C Creatable[M], E Editable[M]] struct {
 	*ModelController[M, R, C, E]

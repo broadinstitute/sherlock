@@ -9,8 +9,8 @@ package v1controllers
 import (
 	"errors"
 	"fmt"
-	"github.com/broadinstitute/sherlock/internal/models/v1models"
-	"github.com/broadinstitute/sherlock/internal/serializers/v1serializers"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models/v1models"
+	"github.com/broadinstitute/sherlock/sherlock/internal/serializers/v1serializers"
 
 	"gorm.io/gorm"
 )

@@ -2,11 +2,11 @@ package v2handlers
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/internal/auth"
-	"github.com/broadinstitute/sherlock/internal/controllers/v2controllers"
-	"github.com/broadinstitute/sherlock/internal/errors"
-	"github.com/broadinstitute/sherlock/internal/models/v2models"
-	"github.com/broadinstitute/sherlock/internal/pagerduty"
+	"github.com/broadinstitute/sherlock/sherlock/internal/auth"
+	"github.com/broadinstitute/sherlock/sherlock/internal/controllers/v2controllers"
+	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models/v2models"
+	"github.com/broadinstitute/sherlock/sherlock/internal/pagerduty"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/rs/zerolog/log"

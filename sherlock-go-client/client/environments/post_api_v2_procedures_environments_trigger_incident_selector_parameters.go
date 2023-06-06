@@ -15,7 +15,7 @@ import (
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
 
-	"github.com/broadinstitute/sherlock/clients/go/client/models"
+	"github.com/broadinstitute/sherlock/sherlock-go-client/client/models"
 )
 
 // NewPostAPIV2ProceduresEnvironmentsTriggerIncidentSelectorParams creates a new PostAPIV2ProceduresEnvironmentsTriggerIncidentSelectorParams object,

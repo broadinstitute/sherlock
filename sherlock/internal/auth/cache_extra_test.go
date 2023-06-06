@@ -1,7 +1,7 @@
 package auth
 
 import (
-	"github.com/broadinstitute/sherlock/internal/config"
+	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"testing"
 )
 

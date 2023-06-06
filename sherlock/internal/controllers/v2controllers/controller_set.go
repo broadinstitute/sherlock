@@ -1,6 +1,6 @@
 package v2controllers
 
-import "github.com/broadinstitute/sherlock/internal/models/v2models"
+import "github.com/broadinstitute/sherlock/sherlock/internal/models/v2models"
 
 type ControllerSet struct {
 	ClusterController              *ClusterController

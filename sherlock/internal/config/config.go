@@ -2,7 +2,7 @@ package config
 
 import (
 	"fmt"
-	embeddedFiles "github.com/broadinstitute/sherlock/config"
+	embeddedFiles "github.com/broadinstitute/sherlock/sherlock/config"
 	"github.com/knadh/koanf"
 	"github.com/knadh/koanf/parsers/yaml"
 	"github.com/knadh/koanf/providers/env"

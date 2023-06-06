@@ -1,7 +1,7 @@
 package v2models
 
 import (
-	"github.com/broadinstitute/sherlock/internal/testutils"
+	"github.com/broadinstitute/sherlock/sherlock/internal/testutils"
 	"gorm.io/gorm"
 	"testing"
 )

@@ -2,7 +2,7 @@ package db
 
 import (
 	"database/sql"
-	"github.com/broadinstitute/sherlock/internal/config"
+	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
 	"strings"

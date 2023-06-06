@@ -1,4 +1,4 @@
-module github.com/broadinstitute/sherlock
+module github.com/broadinstitute/sherlock/sherlock
 
 go 1.19
 

@@ -1,9 +1,9 @@
 package v2models
 
 import (
-	"github.com/broadinstitute/sherlock/internal/auth/auth_models"
-	"github.com/broadinstitute/sherlock/internal/models/model_actions"
-	"github.com/broadinstitute/sherlock/internal/testutils"
+	"github.com/broadinstitute/sherlock/sherlock/internal/auth/auth_models"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models/model_actions"
+	"github.com/broadinstitute/sherlock/sherlock/internal/testutils"
 	"gorm.io/gorm"
 	"testing"
 )

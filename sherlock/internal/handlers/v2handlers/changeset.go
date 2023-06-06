@@ -2,9 +2,9 @@ package v2handlers
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/internal/auth"
-	"github.com/broadinstitute/sherlock/internal/controllers/v2controllers"
-	"github.com/broadinstitute/sherlock/internal/errors"
+	"github.com/broadinstitute/sherlock/sherlock/internal/auth"
+	"github.com/broadinstitute/sherlock/sherlock/internal/controllers/v2controllers"
+	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"

@@ -2,11 +2,11 @@ package auth
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/internal/auth/auth_models"
-	"github.com/broadinstitute/sherlock/internal/auth/gha_oidc_auth"
-	"github.com/broadinstitute/sherlock/internal/auth/iap_auth"
-	"github.com/broadinstitute/sherlock/internal/errors"
-	"github.com/broadinstitute/sherlock/internal/models/v2models"
+	"github.com/broadinstitute/sherlock/sherlock/internal/auth/auth_models"
+	"github.com/broadinstitute/sherlock/sherlock/internal/auth/gha_oidc_auth"
+	"github.com/broadinstitute/sherlock/sherlock/internal/auth/iap_auth"
+	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models/v2models"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
 )

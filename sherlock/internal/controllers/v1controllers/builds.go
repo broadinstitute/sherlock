@@ -4,8 +4,8 @@ package v1controllers
 // This could eventually be moved to it's own sub-folder if it becomes unwieldy
 
 import (
-	"github.com/broadinstitute/sherlock/internal/models/v1models"
-	"github.com/broadinstitute/sherlock/internal/serializers/v1serializers"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models/v1models"
+	"github.com/broadinstitute/sherlock/sherlock/internal/serializers/v1serializers"
 	"time"
 
 	"gorm.io/gorm"

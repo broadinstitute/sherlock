@@ -3,8 +3,8 @@ package v2models
 import (
 	"context"
 	"fmt"
-	"github.com/broadinstitute/sherlock/internal/config"
-	"github.com/broadinstitute/sherlock/internal/metrics/v2metrics"
+	"github.com/broadinstitute/sherlock/sherlock/internal/config"
+	"github.com/broadinstitute/sherlock/sherlock/internal/metrics/v2metrics"
 	"github.com/rs/zerolog/log"
 	"go.opencensus.io/stats"
 	"go.opencensus.io/tag"

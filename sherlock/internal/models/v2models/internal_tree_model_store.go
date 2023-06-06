@@ -2,7 +2,7 @@ package v2models
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/internal/errors"
+	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"gorm.io/gorm"
 	"strconv"
 )

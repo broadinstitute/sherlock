@@ -12,7 +12,7 @@ import (
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/strfmt"
 
-	"github.com/broadinstitute/sherlock/clients/go/client/models"
+	"github.com/broadinstitute/sherlock/sherlock-go-client/client/models"
 )
 
 // PatchAPIV2DatabaseInstancesSelectorReader is a Reader for the PatchAPIV2DatabaseInstancesSelector structure.

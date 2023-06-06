@@ -1,7 +1,7 @@
 package v1serializers
 
 import (
-	"github.com/broadinstitute/sherlock/internal/models/v1models"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models/v1models"
 )
 
 // builds_serializers.go contains logic for building

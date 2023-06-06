@@ -2,7 +2,7 @@ package gha_oidc_auth
 
 import (
 	"context"
-	"github.com/broadinstitute/sherlock/internal/config"
+	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/coreos/go-oidc"
 )
 

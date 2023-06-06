@@ -5,7 +5,7 @@ package v1controllers
 
 import (
 	"errors"
-	"github.com/broadinstitute/sherlock/internal/models/v1models"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models/v1models"
 
 	"gorm.io/gorm"
 )

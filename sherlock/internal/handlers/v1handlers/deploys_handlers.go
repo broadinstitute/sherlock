@@ -2,12 +2,12 @@ package v1handlers
 
 import (
 	"errors"
-	"github.com/broadinstitute/sherlock/internal/controllers/v1controllers"
-	"github.com/broadinstitute/sherlock/internal/models/v1models"
-	"github.com/broadinstitute/sherlock/internal/serializers/v1serializers"
+	"github.com/broadinstitute/sherlock/sherlock/internal/controllers/v1controllers"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models/v1models"
+	"github.com/broadinstitute/sherlock/sherlock/internal/serializers/v1serializers"
 	"net/http"
 
-	"github.com/broadinstitute/sherlock/internal/metrics/v1metrics"
+	"github.com/broadinstitute/sherlock/sherlock/internal/metrics/v1metrics"
 	"github.com/gin-gonic/gin"
 )
 

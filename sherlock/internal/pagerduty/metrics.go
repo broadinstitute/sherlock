@@ -3,7 +3,7 @@ package pagerduty
 import (
 	"context"
 	"github.com/PagerDuty/go-pagerduty"
-	"github.com/broadinstitute/sherlock/internal/metrics/v2metrics"
+	"github.com/broadinstitute/sherlock/sherlock/internal/metrics/v2metrics"
 	"go.opencensus.io/stats"
 	"go.opencensus.io/tag"
 	"net/http"

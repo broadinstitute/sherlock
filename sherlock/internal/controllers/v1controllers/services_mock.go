@@ -1,7 +1,7 @@
 package v1controllers
 
 import (
-	"github.com/broadinstitute/sherlock/internal/models/v1models"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models/v1models"
 	"github.com/stretchr/testify/mock"
 )
 

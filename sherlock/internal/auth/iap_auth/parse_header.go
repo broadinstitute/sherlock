@@ -2,7 +2,7 @@ package iap_auth
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/internal/errors"
+	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/api/idtoken"
 )
