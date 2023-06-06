@@ -19,6 +19,7 @@ on:
       - ".github/workflows/sherlock-build.yaml"
       - "sherlock/**"
       - "!sherlock/docs/**"
+      - "go-shared/**"
   pull_request:
     branches:
       - main
@@ -26,6 +27,7 @@ on:
       - ".github/workflows/sherlock-build.yaml"
       - "sherlock/**"
       - "!sherlock/docs/**"
+      - "go-shared/**"
 
 env:
   # Google project where artifacts are uploaded.
