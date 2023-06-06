@@ -3,15 +3,16 @@ ARG ALPINE_VERSION='3.16'
 
 FROM golang:${GO_VERSION}-alpine${ALPINE_VERSION} as build
 ARG BUILD_VERSION='development'
-WORKDIR /build
+WORKDIR /build/sherlock
 ENV CGO_ENABLED=0
 ENV GOBIN=/bin
 
-COPY go.mod go.sum ./
+COPY sherlock/go.mod sherlock/go.sum ./
+COPY go-shared ../go-shared/
 RUN go mod download && go mod verify
 
 # See the .dockerignore, it ignores by default
-COPY . ./
+COPY sherlock ./
 RUN go build -buildvcs=false -ldflags="-X 'main.BuildVersion=${BUILD_VERSION}'" -o /bin/sherlock ./cmd/sherlock/...
 
 # FROM alpine:${ALPINE_VERSION} as runtime <-- use this if you hit issues

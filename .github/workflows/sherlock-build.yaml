@@ -152,7 +152,8 @@ jobs:
       - name: Build image
         uses: docker/build-push-action@v3
         with:
-          context: ./sherlock
+          context: .
+          file: sherlock/Dockerfile
           push: false
           load: true
           tags: ${{ steps.meta.outputs.tags }}
