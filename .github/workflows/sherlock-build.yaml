@@ -174,22 +174,6 @@ jobs:
         if: ${{ github.actor != 'dependabot[bot]' }}
         uses: google-github-actions/setup-gcloud@v0
 
-      - name: Publish typescript client
-        if: ${{ github.event_name == 'push' }}
-        working-directory: clients/typescript-fetch
-        run: |
-          npx google-artifactregistry-auth --yes
-          npm publish
-
-      - name: Explicitly auth Docker for Artifact Registry
-        if: ${{ github.actor != 'dependabot[bot]' }}
-        run: gcloud auth configure-docker ${{ env.GOOGLE_DOCKER_REPOSITORY }} --quiet
-
-      - name: Push image
-        if: ${{ github.actor != 'dependabot[bot]' }}
-        run: |
-          docker push --all-tags ${{ env.GOOGLE_DOCKER_REPOSITORY }}/${{ env.GOOGLE_PROJECT }}/${{ env.REPOSITORY_NAME }}/${{ env.IMAGE_NAME }}
-
       - name: Commit changes
         if: ${{ github.event_name == 'push' }}
         run: |
@@ -206,6 +190,22 @@ jobs:
         uses: ./.github/actions/push-with-retry
         with:
           tags: true
+
+      - name: Publish typescript client
+        if: ${{ github.event_name == 'push' }}
+        working-directory: clients/typescript-fetch
+        run: |
+          npx google-artifactregistry-auth --yes
+          npm publish
+
+      - name: Explicitly auth Docker for Artifact Registry
+        if: ${{ github.actor != 'dependabot[bot]' }}
+        run: gcloud auth configure-docker ${{ env.GOOGLE_DOCKER_REPOSITORY }} --quiet
+
+      - name: Push image
+        if: ${{ github.actor != 'dependabot[bot]' }}
+        run: |
+          docker push --all-tags ${{ env.GOOGLE_DOCKER_REPOSITORY }}/${{ env.GOOGLE_PROJECT }}/${{ env.REPOSITORY_NAME }}/${{ env.IMAGE_NAME }}
 
       - name: Comment published image
         if: ${{ github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' }}
