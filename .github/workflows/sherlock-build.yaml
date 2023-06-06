@@ -137,8 +137,10 @@ jobs:
         uses: docker/metadata-action@v4
         id: meta
         with:
+          # server image for backwards compatibility with old build behavior
           images: |
             ${{ env.GOOGLE_DOCKER_REPOSITORY }}/${{ env.GOOGLE_PROJECT }}/${{ env.REPOSITORY_NAME }}/${{ env.IMAGE_NAME }}
+            ${{ env.GOOGLE_DOCKER_REPOSITORY }}/${{ env.GOOGLE_PROJECT }}/${{ env.REPOSITORY_NAME }}/server
           tags: |
             type=raw,value=latest,enable={{is_default_branch}}
             type=raw,value=${{ steps.tag.outputs.new-tag }}
@@ -187,7 +189,9 @@ jobs:
 
       - name: Push image
         if: ${{ github.actor != 'dependabot[bot]' }}
-        run: docker push --all-tags ${{ env.GOOGLE_DOCKER_REPOSITORY }}/${{ env.GOOGLE_PROJECT }}/${{ env.REPOSITORY_NAME }}/${{ env.IMAGE_NAME }}
+        run: |
+          docker push --all-tags ${{ env.GOOGLE_DOCKER_REPOSITORY }}/${{ env.GOOGLE_PROJECT }}/${{ env.REPOSITORY_NAME }}/${{ env.IMAGE_NAME }}
+          docker push --all-tags ${{ env.GOOGLE_DOCKER_REPOSITORY }}/${{ env.GOOGLE_PROJECT }}/${{ env.REPOSITORY_NAME }}/server
 
       - name: Commit changes
         if: ${{ github.event_name == 'push' }}
