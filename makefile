@@ -15,7 +15,7 @@ functional-test:
 	docker rm test-postgres
 
 unit-test:
-	go test -v -short -race ./...
+	cd sherlock && go test -v -short -race ./...
 
 tests-with-coverage:
 	docker run --name test-postgres -e POSTGRES_PASSWORD=password -e POSTGRES_USER=sherlock -d -p 5432:5432 postgres:13 -c max_connections=200
@@ -32,5 +32,4 @@ pg-down:
 
 # To install swag, `go install github.com/swaggo/swag/cmd/swag@latest`
 generate-swagger:
-	cd sherlock && swag fmt -d ./ -g internal/boot/router.go
-	cd sherlock && swag init -d ./ -g internal/boot/router.go
+	cd sherlock && swag fmt -d ./ -g internal/boot/router.go && swag init -d ./ -g internal/boot/router.go
