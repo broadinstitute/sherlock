@@ -214,7 +214,7 @@ jobs:
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           message: |
-            Published image from ${{ github.sha }}:
+            Published image from ${{ github.event.pull_request.head.sha }} (merge ${{ github.sha }}):
             
             ```
             ${{ env.GOOGLE_DOCKER_REPOSITORY }}/${{ env.GOOGLE_PROJECT }}/${{ env.REPOSITORY_NAME }}/${{ env.IMAGE_NAME }}:${{ steps.tag.outputs.new_tag }}
