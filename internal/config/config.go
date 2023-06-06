@@ -26,9 +26,9 @@ func init() {
 	}
 
 	if err := Config.Load(file.Provider("/etc/sherlock/sherlock.yaml"), yaml.Parser()); err != nil {
-		infoMessages = append(infoMessages, fmt.Sprintf("didn't load config from /etc/sherlock/sherlock.yaml: %v", err.Error()))
+		infoMessages = append(infoMessages, fmt.Sprintf("CONF | didn't load config from /etc/sherlock/sherlock.yaml: %v", err.Error()))
 	} else {
-		infoMessages = append(infoMessages, "loaded config from /etc/sherlock/sherlock.yaml")
+		infoMessages = append(infoMessages, "CONF | loaded config from /etc/sherlock/sherlock.yaml")
 	}
 
 	if err := Config.Load(env.Provider("SHERLOCK_", ".", func(s string) string {

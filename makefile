@@ -1,11 +1,11 @@
 local-up:
-	docker-compose -f build/local/server/docker-compose.yaml up --build
+	docker-compose -f dev/local-with-pg.yaml up --build
 
 local-stop:
-	docker-compose -f build/local/server/docker-compose.yaml stop
+	docker-compose -f dev/local-with-pg.yaml stop
 
 local-down:
-	docker-compose -f build/local/server/docker-compose.yaml down --volumes
+	docker-compose -f dev/local-with-pg.yaml down --volumes
 
 # We bump the max connections because I (Jack) was sloppy with database connections but not quantity of tests
 functional-test:
@@ -32,8 +32,5 @@ pg-down:
 
 # To install swag, `go install github.com/swaggo/swag/cmd/swag@latest`
 generate-swagger:
-	# Until `go install github.com/swaggo/swag/cmd/swag@latest` includes https://github.com/swaggo/swag/pull/1398,
-	# we can't run the formatter. As of writing, that PR was merged three days ago, fixing a bug introduced in
-	# probably v1.8.8 five days ago.
-	swag fmt -d ./ -g internal/sherlock/routes.go
-	swag init -d ./ -g internal/sherlock/routes.go
+	swag fmt -d ./ -g internal/boot/router.go
+	swag init -d ./ -g internal/boot/router.go

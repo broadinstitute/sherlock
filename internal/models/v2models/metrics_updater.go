@@ -3,6 +3,7 @@ package v2models
 import (
 	"context"
 	"fmt"
+	"github.com/broadinstitute/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/internal/metrics/v2metrics"
 	"github.com/rs/zerolog/log"
 	"go.opencensus.io/stats"
@@ -368,7 +369,8 @@ func UpdateMetrics(ctx context.Context, db *gorm.DB) error {
 	return nil
 }
 
-func KeepMetricsUpdated(ctx context.Context, db *gorm.DB, interval time.Duration) {
+func KeepMetricsUpdated(ctx context.Context, db *gorm.DB) {
+	interval := time.Duration(config.Config.MustInt("metrics.v2.updateIntervalMinutes")) * time.Minute
 	for {
 		time.Sleep(interval)
 		if err := UpdateMetrics(ctx, db); err != nil {

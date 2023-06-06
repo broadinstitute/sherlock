@@ -90,7 +90,8 @@ func CacheFirecloudAccounts(ctx context.Context) error {
 	return nil
 }
 
-func KeepFirecloudCacheUpdated(ctx context.Context, interval time.Duration) {
+func KeepFirecloudCacheUpdated(ctx context.Context) {
+	interval := time.Duration(config.Config.MustInt("auth.updateIntervalMinutes")) * time.Minute
 	for {
 		time.Sleep(interval)
 		if err := CacheFirecloudAccounts(ctx); err != nil {
