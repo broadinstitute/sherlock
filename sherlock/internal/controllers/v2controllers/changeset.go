@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/broadinstitute/sherlock/internal/models/v2models"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models/v2models"
 	"gorm.io/gorm"
 )
 

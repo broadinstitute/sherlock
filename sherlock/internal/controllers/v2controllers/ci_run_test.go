@@ -2,11 +2,11 @@ package v2controllers
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/internal/auth"
-	"github.com/broadinstitute/sherlock/internal/config"
-	"github.com/broadinstitute/sherlock/internal/db"
-	"github.com/broadinstitute/sherlock/internal/models/v2models"
-	"github.com/broadinstitute/sherlock/internal/testutils"
+	"github.com/broadinstitute/sherlock/sherlock/internal/auth"
+	"github.com/broadinstitute/sherlock/sherlock/internal/config"
+	"github.com/broadinstitute/sherlock/sherlock/internal/db"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models/v2models"
+	"github.com/broadinstitute/sherlock/sherlock/internal/testutils"
 	"github.com/stretchr/testify/suite"
 	"gorm.io/gorm"
 	"strconv"

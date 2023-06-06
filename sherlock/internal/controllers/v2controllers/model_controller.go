@@ -2,10 +2,10 @@ package v2controllers
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/internal/auth/auth_models"
-	"github.com/broadinstitute/sherlock/internal/errors"
-	"github.com/broadinstitute/sherlock/internal/models/v2models"
-	"github.com/broadinstitute/sherlock/internal/pagerduty"
+	"github.com/broadinstitute/sherlock/sherlock/internal/auth/auth_models"
+	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models/v2models"
+	"github.com/broadinstitute/sherlock/sherlock/internal/pagerduty"
 	"github.com/creasty/defaults"
 	"time"
 )

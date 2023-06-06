@@ -12,7 +12,7 @@ import (
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/strfmt"
 
-	"github.com/broadinstitute/sherlock/clients/go/client/models"
+	"github.com/broadinstitute/sherlock/sherlock-go-client/client/models"
 )
 
 // PutAPIV2ChartsSelectorReader is a Reader for the PutAPIV2ChartsSelector structure.

@@ -2,9 +2,9 @@ package v2models
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/internal/auth/auth_models"
-	"github.com/broadinstitute/sherlock/internal/errors"
-	"github.com/broadinstitute/sherlock/internal/models/model_actions"
+	"github.com/broadinstitute/sherlock/sherlock/internal/auth/auth_models"
+	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models/model_actions"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"

@@ -2,9 +2,9 @@ package v2controllers
 
 import (
 	"context"
-	"github.com/broadinstitute/sherlock/internal/config"
-	"github.com/broadinstitute/sherlock/internal/db"
-	"github.com/broadinstitute/sherlock/internal/models/v2models"
+	"github.com/broadinstitute/sherlock/sherlock/internal/config"
+	"github.com/broadinstitute/sherlock/sherlock/internal/db"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models/v2models"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"gorm.io/gorm"

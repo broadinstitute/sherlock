@@ -1,8 +1,8 @@
 package v2controllers
 
 import (
-	"github.com/broadinstitute/sherlock/internal/config"
-	"github.com/broadinstitute/sherlock/internal/models/v2models"
+	"github.com/broadinstitute/sherlock/sherlock/internal/config"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models/v2models"
 	"gorm.io/gorm"
 )
 

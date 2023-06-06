@@ -3,8 +3,8 @@ package v2models
 import (
 	go_errors "errors"
 	"fmt"
-	"github.com/broadinstitute/sherlock/internal/auth/auth_models"
-	"github.com/broadinstitute/sherlock/internal/errors"
+	"github.com/broadinstitute/sherlock/sherlock/internal/auth/auth_models"
+	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/jackc/pgconn"
 	"github.com/jackc/pgerrcode"
 	"github.com/rs/zerolog/log"

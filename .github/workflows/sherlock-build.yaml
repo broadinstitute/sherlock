@@ -110,7 +110,7 @@ jobs:
             -v $(go env GOPATH):/go \
             -v $HOME:$HOME -w "$(pwd)" \
             quay.io/goswagger/swagger:${GO_SWAGGER_VERSION} \
-            generate client -f sherlock/docs/swagger.json -A sherlock --default-scheme=https -m sherlock-go-client/client/models -c sherlock-go-client/client/client
+            generate client -f sherlock/docs/swagger.json -A sherlock --default-scheme=https -m sherlock-go-client/client/models -c sherlock-go-client/client
 
       - name: Generate Typescript client library
         if: ${{ github.event_name == 'push' }}

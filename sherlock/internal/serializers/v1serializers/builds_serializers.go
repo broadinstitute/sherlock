@@ -7,7 +7,7 @@ package v1serializers
 // what is returned from api endpoints
 
 import (
-	"github.com/broadinstitute/sherlock/internal/models/v1models"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models/v1models"
 	"time"
 )
 

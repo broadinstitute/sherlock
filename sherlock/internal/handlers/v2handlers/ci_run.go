@@ -1,7 +1,7 @@
 package v2handlers
 
 import (
-	"github.com/broadinstitute/sherlock/internal/controllers/v2controllers"
+	"github.com/broadinstitute/sherlock/sherlock/internal/controllers/v2controllers"
 	"github.com/gin-gonic/gin"
 )
 

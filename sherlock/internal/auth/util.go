@@ -1,9 +1,9 @@
 package auth
 
 import (
-	"github.com/broadinstitute/sherlock/internal/auth/auth_models"
-	"github.com/broadinstitute/sherlock/internal/config"
-	"github.com/broadinstitute/sherlock/internal/models/v2models"
+	"github.com/broadinstitute/sherlock/sherlock/internal/auth/auth_models"
+	"github.com/broadinstitute/sherlock/sherlock/internal/config"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models/v2models"
 	"strings"
 )
 

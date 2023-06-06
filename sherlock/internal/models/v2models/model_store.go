@@ -2,7 +2,7 @@ package v2models
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/internal/auth/auth_models"
+	"github.com/broadinstitute/sherlock/sherlock/internal/auth/auth_models"
 	"gorm.io/gorm"
 )
 

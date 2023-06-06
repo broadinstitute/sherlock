@@ -1,9 +1,9 @@
 package v1controllers
 
 import (
-	"github.com/broadinstitute/sherlock/internal/config"
-	"github.com/broadinstitute/sherlock/internal/db"
-	"github.com/broadinstitute/sherlock/internal/models/v1models"
+	"github.com/broadinstitute/sherlock/sherlock/internal/config"
+	"github.com/broadinstitute/sherlock/sherlock/internal/db"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models/v1models"
 	"testing"
 
 	"github.com/bxcodec/faker/v3"

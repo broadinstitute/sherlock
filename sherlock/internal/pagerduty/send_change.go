@@ -3,7 +3,7 @@ package pagerduty
 import (
 	"context"
 	"github.com/PagerDuty/go-pagerduty"
-	"github.com/broadinstitute/sherlock/internal/config"
+	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/rs/zerolog/log"
 	"time"
 )
