@@ -10,10 +10,11 @@ ENV GOBIN=/bin
 COPY go.mod go.sum ./
 RUN go mod download && go mod verify
 
-COPY . .
+# See the .dockerignore, it ignores by default
+COPY . ./
 RUN go build -buildvcs=false -ldflags="-X 'main.BuildVersion=${BUILD_VERSION}'" -o /bin/sherlock ./cmd/sherlock/...
 
 # FROM alpine:${ALPINE_VERSION} as runtime <-- use this if you hit issues
-FROM gcr.io/distroless/static as runtime
+FROM gcr.io/distroless/static:nonroot as runtime
 COPY --from=build /bin/sherlock /bin/sherlock
 ENTRYPOINT [ "/bin/sherlock" ]

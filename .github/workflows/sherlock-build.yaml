@@ -1,7 +1,7 @@
 name: Bump, Tag, and Publish
 # The purpose of the workflow is to:
 #  1. Bump the version number and tag the release if not a PR
-#  2. Build docker image and publish to GCR
+#  2. Build docker image and publish to GAR
 #
 # When run on merge to main, it tags and bumps the patch version by default. You can
 # bump other parts of the version by putting #major, #minor, or #patch in your commit
@@ -10,8 +10,6 @@ name: Bump, Tag, and Publish
 # When run on a PR, it simulates bumping the tag and appends a hash to the pushed image.
 #
 # The workflow relies on github secrets:
-# - GCP_PUBLISH_EMAIL - SA email for publishing to dsp-artifact-registry
-# - GCP_PUBLISH_KEY_B64 - SA key (Base64-encoded JSON string) for publishing to dsp-artifact-registry
 # - BROADBOT_TOKEN - the broadbot token, so we can avoid two reviewer rule on GHA operations
 on:
   push:
@@ -52,15 +50,43 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == "pull_request" }}
 
 jobs:
-  generate-tag-and-source:
+  tag-build-publish:
     runs-on: ubuntu-latest
     permissions:
+      # We'll use Broadbot to push changed tag
       contents: "read"
-    outputs:
-      tag: ${{ steps.tag.outputs.new-tag }}
+      # Use OIDC -> IAP
+      id-token: "write"
+      # Make comments
+      pull-requests: "write"
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          token: ${{ (github.actor != 'dependabot[bot]' && secrets.BROADBOT_TOKEN) || secrets.GITHUB_TOKEN }}
+
+      - name: Set up Git
+        if: ${{ github.actor != 'dependabot[bot]' }}
+        run: |
+          git config --global user.name 'broadbot'
+          git config --global user.email 'broadbot@broadinstitute.org'
+
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version-file: go.mod
+
+      - name: Set up Node/NPM
+        if: ${{ github.event_name == 'push' }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Set up Swag
+        run: go install github.com/swaggo/swag/cmd/swag@latest
 
       # We use DRY_RUN so we don't push to the repo prematurely -- we may
       # have code-gen changes, or we might not end up pushing at all.
@@ -74,47 +100,11 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DRY_RUN: true
 
-      # Set up and run any source code generation tools
-      - name: Set up Go
-        uses: actions/setup-go@v3
-        with:
-          go-version-file: go.mod
-      - name: Set up Swag
-        run: go install github.com/swaggo/swag/cmd/swag@latest
-      - name: Generate Swagger source code
+      - name: Generate Swagger source
         run: make generate-swagger
 
-      # Assume the checked-out repo is dirty -- we'll upload it and overlay
-      # it on top of future checkouts
-      - name: Upload generated source code
-        uses: actions/upload-artifact@v3
-        with:
-          name: generated-source
-          path: .
-          retention-days: 1
-          if-no-files-found: error
-
-  build-go-client:
-    runs-on: ubuntu-latest
-    needs:
-      - generate-tag-and-source
-    permissions:
-      contents: "read"
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Download generated source code
-        uses: actions/download-artifact@v3
-        with:
-          name: generated-source
-          path: .
-
-      - name: Set up Go
-        uses: actions/setup-go@v3
-        with:
-          go-version-file: 'go.mod'
-
-      - name: Generate Go Client Library
+      - name: Generate Go client library
+        if: ${{ github.event_name == 'push' }}
         run: |
           docker run --rm -e GOPATH=/go \
             -v $(go env GOPATH):/go \
@@ -122,36 +112,8 @@ jobs:
             quay.io/goswagger/swagger:${GO_SWAGGER_VERSION} \
             generate client -f docs/swagger.json -A sherlock --default-scheme=https -m clients/go/client/models -c clients/go/client
 
-      - name: Upload generated client library
-        if: ${{ github.event_name == 'push' && github.actor != 'dependabot[bot]' }}
-        uses: actions/upload-artifact@v3
-        with:
-          name: go-client
-          path: clients/go
-          retention-days: 1
-          if-no-files-found: error
-
-  build-typescript-client:
-    runs-on: ubuntu-latest
-    needs:
-      - generate-tag-and-source
-    permissions:
-      contents: "read"
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Download generated source code
-        uses: actions/download-artifact@v3
-        with:
-          name: generated-source
-          path: .
-
-      - name: Set up Node/NPM
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-
-      - name: Generate Typescript (swagger-codegen) Client Lib
+      - name: Generate Typescript client library
+        if: ${{ github.event_name == 'push' }}
         run: |
           docker run --rm -v "${PWD}:/local" openapitools/openapi-generator-cli generate \
             -i /local/docs/swagger.json \
@@ -162,40 +124,14 @@ jobs:
             --additional-properties=disallowAdditionalPropertiesIfNotPresent=false \
             --additional-properties=supportsES6=true \
             --additional-properties=npmName=@sherlock-js-client/sherlock \
-            --additional-properties=npmVersion=${{ needs.generate-tag-and-source.outputs.tag }}
+            --additional-properties=npmVersion=${{ steps.tag.outputs.new-tag }}
 
-      - name: Build typescript client
+      - name: Build Typescript client
+        if: ${{ github.event_name == 'push' }}
         working-directory: clients/typescript-fetch
         run: |
           npm install --save-dev
           npm run build
-
-      - name: Upload generated client library
-        if: ${{ github.event_name == 'push' && github.actor != 'dependabot[bot]' }}
-        uses: actions/upload-artifact@v3
-        with:
-          name: typescript-client
-          path: clients/typescript-fetch
-          retention-days: 1
-          if-no-files-found: error
-
-  build-docker:
-    runs-on: ubuntu-latest
-    needs:
-      - generate-tag-and-source
-    permissions:
-      contents: "read"
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Download generated source code
-        uses: actions/download-artifact@v3
-        with:
-          name: generated-source
-          path: .
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
 
       - name: Assemble Docker tags
         uses: docker/metadata-action@v4
@@ -205,9 +141,9 @@ jobs:
             ${{ env.GOOGLE_DOCKER_REPOSITORY }}/${{ env.GOOGLE_PROJECT }}/${{ env.REPOSITORY_NAME }}/${{ env.IMAGE_NAME }}
           tags: |
             type=raw,value=latest,enable={{is_default_branch}}
-            type=raw,value=${{ needs.generate-tag-and-source.outputs.tag }}
-            type=semver,pattern=v{{major}},value=${{ needs.generate-tag-and-source.outputs.tag }},enable={{is_default_branch}}
-            type=semver,pattern=v{{major}}.{{minor}},value=${{ needs.generate-tag-and-source.outputs.tag }},enable={{is_default_branch}}
+            type=raw,value=${{ steps.tag.outputs.new-tag }}
+            type=semver,pattern=v{{major}},value=${{ steps.tag.outputs.new-tag }},enable={{is_default_branch}}
+            type=semver,pattern=v{{major}}.{{minor}},value=${{ steps.tag.outputs.new-tag }},enable={{is_default_branch}}
 
       - name: Build image
         uses: docker/build-push-actions@v3
@@ -218,166 +154,65 @@ jobs:
           load: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          build-args: BUILD_VERSION=${{ needs.generate-tag-and-source.outputs.tag }}
+          build-args: BUILD_VERSION=${{ steps.tag.outputs.new-tag }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
       - name: Run Trivy vulnerability scanner
         uses: broadinstitute/dsp-appsec-trivy-action@v1
         with:
-          image: ${{ env.GOOGLE_DOCKER_REPOSITORY }}/${{ env.GOOGLE_PROJECT }}/${{ env.REPOSITORY_NAME }}/${{ env.IMAGE_NAME }}:${{ needs.generate-tag-and-source.outputs.tag }}
+          image: ${{ env.GOOGLE_DOCKER_REPOSITORY }}/${{ env.GOOGLE_PROJECT }}/${{ env.REPOSITORY_NAME }}/${{ env.IMAGE_NAME }}:${{ steps.tag.outputs.new-tag }}
 
-      - name: Export image
-        run: docker save ${{ env.GOOGLE_DOCKER_REPOSITORY }}/${{ env.GOOGLE_PROJECT }}/${{ env.REPOSITORY_NAME }}/${{ env.IMAGE_NAME }} > image.tar
-
-      - name: Upload image artifact
+      - name: Auth to GCP
         if: ${{ github.actor != 'dependabot[bot]' }}
-        uses: actions/upload-artifact@v3
-        with:
-          name: built-image
-          path: image.tar
-          retention-days: 1
-          if-no-files-found: error
-
-  publish-typescript-client:
-    if: ${{ github.event_name == 'push' && github.actor != 'dependabot[bot]' }}
-    runs-on: ubuntu-latest
-    needs:
-      - generate-tag-and-source
-      - build-typescript-client
-    permissions:
-      contents: "read"
-      id-token: "write"
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Download generated source code
-        uses: actions/download-artifact@v3
-        with:
-          name: generated-source
-          path: .
-      - name: Download generated typescript client library
-        uses: actions/download-artifact@v3
-        with:
-          name: typescript-client
-          path: clients/typescript-fetch
-
-      - name: Auth to GCP
-        uses: google-github-actions/auth@v0
-        with:
-          workload_identity_provider: 'projects/1038484894585/locations/global/workloadIdentityPools/github-wi-pool/providers/github-wi-provider'
-          service_account: 'dsp-artifact-registry-push@dsp-artifact-registry.iam.gserviceaccount.com'
-
-      - name: Set up Node/NPM
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-
-      - name: Publish typescript client
-        working-directory: clients/typescript-fetch
-        run: |
-          npx google-artifactregistry-auth --yes
-          npm publish
-
-  publish-docker:
-    if: ${{ github.actor != 'dependabot[bot]' }}
-    runs-on: ubuntu-latest
-    needs:
-      - generate-tag-and-source
-      - build-docker
-    permissions:
-      contents: "read"
-      id-token: "write"
-    steps:
-      - name: Auth to GCP
         uses: google-github-actions/auth@v0
         with:
           workload_identity_provider: 'projects/1038484894585/locations/global/workloadIdentityPools/github-wi-pool/providers/github-wi-provider'
           service_account: 'dsp-artifact-registry-push@dsp-artifact-registry.iam.gserviceaccount.com'
 
       - name: Set up Cloud SDK
+        if: ${{ github.actor != 'dependabot[bot]' }}
         uses: google-github-actions/setup-gcloud@v0
 
+      - name: Publish typescript client
+        if: ${{ github.event_name == 'push' }}
+        working-directory: clients/typescript-fetch
+        run: |
+          npx google-artifactregistry-auth --yes
+          npm publish
+
       - name: Explicitly auth Docker for Artifact Registry
+        if: ${{ github.actor != 'dependabot[bot]' }}
         run: gcloud auth configure-docker ${{ env.GOOGLE_DOCKER_REPOSITORY }} --quiet
 
-      - name: Download built image
-        uses: actions/download-artifact@v3
-        with:
-          name: built-image
-
-      - name: Load image
-        run: docker load --input image.tar
-
       - name: Push image
+        if: ${{ github.actor != 'dependabot[bot]' }}
         run: docker push --all-tags ${{ env.GOOGLE_DOCKER_REPOSITORY }}/${{ env.GOOGLE_PROJECT }}/${{ env.REPOSITORY_NAME }}/${{ env.IMAGE_NAME }}
 
-  commit-source-changes:
-    if: ${{ github.event_name == 'push' }}
-    runs-on: ubuntu-latest
-    needs:
-      - generate-tag-and-source
-      - build-go-client
-      - build-typescript-client
-    permissions:
-      contents: "read"
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.BROADBOT_TOKEN }}
-      - name: Download generated source code
-        uses: actions/download-artifact@v3
-        with:
-          name: generated-source
-          path: .
-      - name: Download generated go client library
-        uses: actions/download-artifact@v3
-        with:
-          name: go-client
-          path: clients/go
-      - name: Download generated typescript client library
-        uses: actions/download-artifact@v3
-        with:
-          name: typescript-client
-          path: clients/typescript-fetch
-
-      - name: Set up Git
-        run: |
-          git config --global user.name 'broadbot'
-          git config --global user.email 'broadbot@broadinstitute.org'
-
       - name: Commit changes
+        if: ${{ github.event_name == 'push' }}
         run: |
           git add .
           git commit --allow-empty --message "[sherlock-build] generated from ${{ github.sha }}"
 
       - name: Add tag
+        if: ${{ github.event_name == 'push' }}
         run: |
-          git tag "${{ needs.generate-tag-and-source.outputs.tag }}"
+          git tag "${{ steps.tag.outputs.new-tag }}"
 
       - name: Push to main with retry
+        if: ${{ github.event_name == 'push' }}
         uses: ./.github/actions/push-with-retry
         with:
           tags: true
 
-  comment-published-docker:
-    if: ${{ github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' }}
-    runs-on: ubuntu-latest
-    needs:
-      - generate-tag-and-source
-      - build-docker
-      - publish-docker
-    permissions:
-      pull-requests: "write"
-    steps:
       - name: Comment published image
+        if: ${{ github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' }}
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           message: |
             Published image from ${{ github.sha }}:
             
             ```
-            ${{ env.GOOGLE_DOCKER_REPOSITORY }}/${{ env.GOOGLE_PROJECT }}/${{ env.REPOSITORY_NAME }}/${{ env.IMAGE_NAME }}:${{ needs.generate-tag-and-source.outputs.tag }}
+            ${{ env.GOOGLE_DOCKER_REPOSITORY }}/${{ env.GOOGLE_PROJECT }}/${{ env.REPOSITORY_NAME }}/${{ env.IMAGE_NAME }}:${{ steps.tag.outputs.new-tag }}
             ```
-  

@@ -1,0 +1,10 @@
+/**
+!go.mod
+!go.sum
+!LICENSE.txt
+!/cmd
+!/config
+!/db
+!/docs
+!/html
+!/internal
