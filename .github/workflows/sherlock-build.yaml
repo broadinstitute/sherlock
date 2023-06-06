@@ -124,7 +124,7 @@ jobs:
             --additional-properties=disallowAdditionalPropertiesIfNotPresent=false \
             --additional-properties=supportsES6=true \
             --additional-properties=npmName=@sherlock-js-client/sherlock \
-            --additional-properties=npmVersion=${{ steps.tag.outputs.new-tag }}
+            --additional-properties=npmVersion=${{ steps.tag.outputs.new_tag }}
 
       - name: Build Typescript client
         if: ${{ github.event_name == 'push' }}
@@ -143,9 +143,9 @@ jobs:
             ${{ env.GOOGLE_DOCKER_REPOSITORY }}/${{ env.GOOGLE_PROJECT }}/${{ env.REPOSITORY_NAME }}/server
           tags: |
             type=raw,value=latest,enable={{is_default_branch}}
-            type=raw,value=${{ steps.tag.outputs.new-tag }}
-            type=semver,pattern=v{{major}},value=${{ steps.tag.outputs.new-tag }},enable={{is_default_branch}}
-            type=semver,pattern=v{{major}}.{{minor}},value=${{ steps.tag.outputs.new-tag }},enable={{is_default_branch}}
+            type=raw,value=${{ steps.tag.outputs.new_tag }}
+            type=semver,pattern=v{{major}},value=${{ steps.tag.outputs.new_tag }},enable={{is_default_branch}}
+            type=semver,pattern=v{{major}}.{{minor}},value=${{ steps.tag.outputs.new_tag }},enable={{is_default_branch}}
 
       - name: Build image
         uses: docker/build-push-action@v3
@@ -155,14 +155,14 @@ jobs:
           load: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          build-args: BUILD_VERSION=${{ steps.tag.outputs.new-tag }}
+          build-args: BUILD_VERSION=${{ steps.tag.outputs.new_tag }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
       - name: Run Trivy vulnerability scanner
         uses: broadinstitute/dsp-appsec-trivy-action@v1
         with:
-          image: ${{ env.GOOGLE_DOCKER_REPOSITORY }}/${{ env.GOOGLE_PROJECT }}/${{ env.REPOSITORY_NAME }}/${{ env.IMAGE_NAME }}:${{ steps.tag.outputs.new-tag }}
+          image: ${{ env.GOOGLE_DOCKER_REPOSITORY }}/${{ env.GOOGLE_PROJECT }}/${{ env.REPOSITORY_NAME }}/${{ env.IMAGE_NAME }}:${{ steps.tag.outputs.new_tag }}
 
       - name: Auth to GCP
         if: ${{ github.actor != 'dependabot[bot]' }}
@@ -201,7 +201,7 @@ jobs:
       - name: Add tag
         if: ${{ github.event_name == 'push' }}
         run: |
-          git tag "${{ steps.tag.outputs.new-tag }}"
+          git tag "${{ steps.tag.outputs.new_tag }}"
 
       - name: Push to main with retry
         if: ${{ github.event_name == 'push' }}
@@ -217,5 +217,5 @@ jobs:
             Published image from ${{ github.sha }}:
             
             ```
-            ${{ env.GOOGLE_DOCKER_REPOSITORY }}/${{ env.GOOGLE_PROJECT }}/${{ env.REPOSITORY_NAME }}/${{ env.IMAGE_NAME }}:${{ steps.tag.outputs.new-tag }}
+            ${{ env.GOOGLE_DOCKER_REPOSITORY }}/${{ env.GOOGLE_PROJECT }}/${{ env.REPOSITORY_NAME }}/${{ env.IMAGE_NAME }}:${{ steps.tag.outputs.new_tag }}
             ```
