@@ -6,42 +6,28 @@
 Sherlock stores information about our Kubernetes-based deployments, including Helm Chart versions and application versions. 
 Sherlock doesn't do the deploying itself--it offers an API that other tools can use to understand our infrastructure.
 
-
 The primary clients are Beehive, a UI for changing the information stored in Sherlock, and Thelma, a CLI that combines Sherlock's knowledge with Helm, ArgoCD, and Kubernetes APIs to directly manage infrastructure.
-
 
 ### Project Structure
 
 Sherlock is a Golang server relying on a Postgres database.
 
-Two API versions currently co-exist:
-- V1, which was developed to listen to our infrastructure and record Accelerate Metric data
-- V2, which was developed to be the deployment source-of-truth
+An overview of interactions:
 
-Most references to Sherlock are talking about the newer V2 API. V1 will be more formally deprecated or removed once V2 is producing similar metrics.
-
-An overview of different interactions with Sherlock:
-
-|                                   | V1                                     | V2                                                                                                             |
-|-----------------------------------|----------------------------------------|----------------------------------------------------------------------------------------------------------------|
-| API Endpoint                      | :8080/api/v1                           | :8080/api/v2                                                                                                   |
-| Swagger Endpoint                  |                                        | :8080/swagger/index.html                                                                                       |
-| Prometheus Endpoint               | :8080/metrics                          | :8080/metrics                                                                                                  |
-| Go Client Library                 |                                        | [./clients/go](./clients/go)                                                                                   |
-| TypeScript (Fetch) Client Library |                                        | [./clients/typescript-fetch](./clients/typescript-fetch)                                                       |
-| CLI                               | [./cmd/cli/main.go](./cmd/cli/main.go) | Via [Thelma](https://github.com/broadinstitute/thelma)                                                         |
-| GitHub Actions                    | Via CLI                                | Via [Thelma](https://github.com/broadinstitute/thelma) and [./.github/workflows/client-*](./.github/workflows) |
-| UI                                |                                        | Via [Beehive](https://github.com/broadinstitute/beehive)                                                       |
+| Sherlock                  |                                                                                                                |
+|---------------------------|----------------------------------------------------------------------------------------------------------------|
+| API Endpoint              | :8080/api/v2                                                                                                   |
+| Swagger Endpoint          | :8080/swagger/index.html                                                                                       |
+| Prometheus Endpoint       | :8080/metrics                                                                                                  |
+| Go Client Library         | [./sherlock-go-client](./sherlock-go-client)                                                                   |
+| TypeScript Client Library | [./sherlock-typescript-client](./sherlock-typescript-client)                                                   |
+| CLI                       | Via [Thelma](https://github.com/broadinstitute/thelma)                                                         |
+| GitHub Actions            | Via [Thelma](https://github.com/broadinstitute/thelma) and [./.github/workflows/client-*](./.github/workflows) |
+| UI                        | Via [Beehive](https://github.com/broadinstitute/beehive)                                                       |
 
 Sherlock is meant to be deployed behind [Google Cloud's Identity-Aware Proxy](https://cloud.google.com/iap). 
 The V2 API connects to Google Workspace's Admin API to evaluate permissions of the calling users.
 
 ### Developing Locally
 
-There's a makefile that calls out to a docker-compose to help spin up Sherlock and a database locally. `make local-up` will get you started. `make local-stop` or Ctrl+C will stop it, while `make local-down` will wipe the data in the database. `./build` contains the Docker setup.
-
-Database structure lives in `./db`; migrations will be applied when Sherlock starts up. Configuration lives in `./config`; also applied during startup.
-
-`./docs` will get autogenerated by running `make generate-swagger`, while `./clients` gets generated by CI upon merge.
-
-That leaves `./cmd` for the Go entrypoints and `./internal` for all of Sherlock's main code.
+There's a makefile that calls out to a docker-compose to help spin up Sherlock and a database locally. `make local-up` will get you started. `make local-stop` or Ctrl+C will stop it, while `make local-down` will wipe the data in the database.

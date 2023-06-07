@@ -7,7 +7,7 @@
 
 # Test binary, built with `go test -c`
 *.test
-!Dockerfile.test
+
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
@@ -18,9 +18,6 @@
 
 # Ignore generated credentials from google-github-actions/auth
 gha-creds-*.json
-
-# Client stuff
-clients/typescript-fetch/node_modules
 
 # ignore sa-creds used in local testing
 *_sa.json

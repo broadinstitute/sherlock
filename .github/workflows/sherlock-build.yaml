@@ -15,17 +15,19 @@ on:
   push:
     branches:
       - main
-    paths-ignore:
-      - "README.md"
-      - "docs/**"
-      - "clients/**"
+    paths:
+      - ".github/workflows/sherlock-build.yaml"
+      - "sherlock/**"
+      - "!sherlock/docs/**"
+      - "go-shared/**"
   pull_request:
     branches:
       - main
-    paths-ignore:
-      - "README.md"
-      - "docs/**"
-      - "clients/**"
+    paths:
+      - ".github/workflows/sherlock-build.yaml"
+      - "sherlock/**"
+      - "!sherlock/docs/**"
+      - "go-shared/**"
 
 env:
   # Google project where artifacts are uploaded.
@@ -74,7 +76,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
-          go-version-file: go.mod
+          go-version-file: sherlock/go.mod
 
       - name: Set up Node/NPM
         if: ${{ github.event_name == 'push' }}
@@ -108,17 +110,18 @@ jobs:
         run: |
           docker run --rm -e GOPATH=/go \
             -v $(go env GOPATH):/go \
-            -v $HOME:$HOME -w "$(pwd)" \
+            -v "${PWD}:/local" \
+            -w "/local/sherlock-go-client" \
             quay.io/goswagger/swagger:${GO_SWAGGER_VERSION} \
-            generate client -f docs/swagger.json -A sherlock --default-scheme=https -m clients/go/client/models -c clients/go/client
+            generate client -f /local/sherlock/docs/swagger.json -A sherlock --default-scheme=https -m client/models -c client
 
       - name: Generate Typescript client library
         if: ${{ github.event_name == 'push' }}
         run: |
           docker run --rm -v "${PWD}:/local" openapitools/openapi-generator-cli generate \
-            -i /local/docs/swagger.json \
+            -i /local/sherlock/docs/swagger.json \
             -g typescript-fetch \
-            -o /local/clients/typescript-fetch \
+            -o /local/sherlock-typescript-client \
             --git-user-id broadinstitute \
             --git-repo-id sherlock \
             --additional-properties=disallowAdditionalPropertiesIfNotPresent=false \
@@ -128,7 +131,7 @@ jobs:
 
       - name: Build Typescript client
         if: ${{ github.event_name == 'push' }}
-        working-directory: clients/typescript-fetch
+        working-directory: sherlock-typescript-client
         run: |
           npm install --save-dev
           npm run build
@@ -150,6 +153,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
+          file: sherlock/Dockerfile
           push: false
           load: true
           tags: ${{ steps.meta.outputs.tags }}
@@ -193,7 +197,7 @@ jobs:
 
       - name: Publish typescript client
         if: ${{ github.event_name == 'push' }}
-        working-directory: clients/typescript-fetch
+        working-directory: sherlock-typescript-client
         run: |
           npx google-artifactregistry-auth --yes
           npm publish

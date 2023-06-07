@@ -1,20 +1,27 @@
-name: golangci-lint
+name: Lint Sherlock
 on:
   push:
     branches:
       - main
-    paths-ignore:
-    - 'README.md'
-    - '.github/**'
+    paths:
+      - ".github/workflows/sherlock-lint.yaml"
+      - "sherlock/**"
+      - "!sherlock/docs/**"
+      - "go-shared/**"
   pull_request:
     branches:
       - main
-    paths-ignore:
-      - 'README.md'
+    paths:
+      - ".github/workflows/sherlock-lint.yaml"
+      - "sherlock/**"
+      - "!sherlock/docs/**"
+      - "go-shared/**"
 jobs:
   golangci:
-    name: lint
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        directory: ["sherlock", "go-shared"]
     steps:
       - uses: actions/checkout@v2
       - name: golangci-lint
@@ -27,7 +34,7 @@ jobs:
           args: --timeout 4m0s
 
           # Optional: working directory, useful for monorepos
-          # working-directory: somedir
+          working-directory: ${{ matrix.directory }}
 
           # Optional: show only new issues if it's a pull request. The default value is `false`.
           # only-new-issues: true
