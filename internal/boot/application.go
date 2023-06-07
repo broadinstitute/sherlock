@@ -53,11 +53,9 @@ func (a *Application) Start() {
 		go auth.KeepFirecloudCacheUpdated(ctx)
 	}
 
-	if config.Config.Bool("auth.githubActionsOIDC.enable") {
-		log.Info().Msgf("BOOT | initializing GitHub Actions OIDC token verification...")
-		if err := gha_oidc_auth.InitVerifier(ctx); err != nil {
-			log.Fatal().Msgf("gha_oidc_auth.InitVerifier() err: %v", err)
-		}
+	log.Info().Msgf("BOOT | initializing GitHub Actions OIDC token verification...")
+	if err := gha_oidc_auth.InitVerifier(ctx); err != nil {
+		log.Fatal().Msgf("gha_oidc_auth.InitVerifier() err: %v", err)
 	}
 
 	log.Info().Msgf("BOOT | reading extra permissions defined in configuration...")

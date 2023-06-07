@@ -43,7 +43,6 @@ auth:
       fcAdmins: fc-admins@firecloud.org
       firecloudProjectOwners: firecloud-project-owners@firecloud.org
   githubActionsOIDC:
-    enable: true
     issuer: https://token.actions.githubusercontent.com
     allowedOrganizations:
       - broadinstitute
