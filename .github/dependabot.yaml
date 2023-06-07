@@ -1,10 +1,18 @@
 version: 2
 updates:
-  - package-ecosystem: gomod
+  - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
-  - package-ecosystem: github-actions
-    directory: /
+  - package-ecosystem: gomod
+    directory: /go-shared
+    schedule:
+      interval: weekly
+  - package-ecosystem: gomod
+    directory: /sherlock
+    schedule:
+      interval: weekly
+  - package-ecosystem: gomod
+    directory: /sherlock-go-client
     schedule:
       interval: weekly
