@@ -186,7 +186,7 @@ func preCreateCiRun(db *gorm.DB, toCreate *CiRun, user *auth_models.User) error 
 	return createCiRunIdentifiersJustInTime(db, toCreate, user)
 }
 
-func preEditCiRun(db *gorm.DB, toEdit *CiRun, editsToMake *CiRun, user *auth_models.User) error {
+func preEditCiRun(db *gorm.DB, _ *CiRun, editsToMake *CiRun, user *auth_models.User) error {
 	return createCiRunIdentifiersJustInTime(db, editsToMake, user)
 }
 
