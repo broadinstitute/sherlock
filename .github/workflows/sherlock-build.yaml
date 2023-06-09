@@ -57,7 +57,7 @@ jobs:
     permissions:
       # We'll use Broadbot to push changed tag
       contents: "read"
-      # Use OIDC -> IAP
+      # Use OIDC for workload identity
       id-token: "write"
       # Make comments
       pull-requests: "write"

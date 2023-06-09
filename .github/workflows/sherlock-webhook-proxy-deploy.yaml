@@ -1,0 +1,44 @@
+name: Deploy Webhook Proxy
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/sherlock-webhook-proxy-deploy.yaml"
+      - "sherlock-webhook-proxy/**"
+      - "sherlock-go-client/**"
+  workflow_dispatch:
+
+concurrency:
+  # Don't run this workflow concurrently
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+jobs:
+  tag-build-publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: "read"
+      # Use OIDC for workload identity
+      id-token: "write"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version-file: sherlock-webhook-proxy/go.mod
+
+      - name: Auth to GCP
+        uses: google-github-actions/auth@v0
+        with:
+          workload_identity_provider: 'projects/1038484894585/locations/global/workloadIdentityPools/github-wi-pool/providers/github-wi-provider'
+          service_account: 'sherlock-w-p-deployer@dsp-tools-k8s.iam.gserviceaccount.com'
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0
+
+      - name: Deploy
+        run: make deploy-webhook-proxy

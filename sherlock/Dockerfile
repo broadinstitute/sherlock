@@ -12,7 +12,7 @@ COPY go-shared ../go-shared/
 RUN go mod download && go mod verify
 
 COPY sherlock ./
-RUN go build -buildvcs=false -ldflags="-X 'main.BuildVersion=${BUILD_VERSION}'" -o /bin/sherlock ./cmd/sherlock/...
+RUN go build -buildvcs=false -ldflags="-X 'main.BuildVersion=${BUILD_VERSION}'" -o /bin/sherlock ./cmd/...
 
 # FROM alpine:${ALPINE_VERSION} as runtime <-- use this if you hit issues
 FROM gcr.io/distroless/static:nonroot as runtime
