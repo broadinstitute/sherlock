@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        directory: ["sherlock", "go-shared"]
+        directory: ["sherlock", "go-shared", "sherlock-webhook-proxy"]
     steps:
       - uses: actions/checkout@v2
       - name: golangci-lint
