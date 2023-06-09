@@ -519,6 +519,8 @@ definitions:
         items:
           $ref: '#/definitions/v2controllers.CiIdentifier'
         type: array
+      startedAt:
+        type: string
       status:
         type: string
       terminalAt:
@@ -778,6 +780,8 @@ definitions:
       githubActionsWorkflowPath:
         type: string
       platform:
+        type: string
+      startedAt:
         type: string
       status:
         type: string
@@ -1074,6 +1078,8 @@ definitions:
         items:
           type: string
         type: array
+      startedAt:
+        type: string
       status:
         type: string
       terminalAt:
@@ -3147,6 +3153,9 @@ paths:
         type: integer
       - in: query
         name: platform
+        type: string
+      - in: query
+        name: startedAt
         type: string
       - in: query
         name: status

@@ -57,6 +57,9 @@ type V2controllersCiRun struct {
 	// related resources
 	RelatedResources []*V2controllersCiIdentifier `json:"relatedResources"`
 
+	// started at
+	StartedAt string `json:"startedAt,omitempty"`
+
 	// status
 	Status string `json:"status,omitempty"`
 

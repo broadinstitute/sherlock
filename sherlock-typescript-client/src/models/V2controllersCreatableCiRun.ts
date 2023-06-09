@@ -120,6 +120,12 @@ export interface V2controllersCreatableCiRun {
      * @type {string}
      * @memberof V2controllersCreatableCiRun
      */
+    startedAt?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof V2controllersCreatableCiRun
+     */
     status?: string;
     /**
      * 
@@ -164,6 +170,7 @@ export function V2controllersCreatableCiRunFromJSONTyped(json: any, ignoreDiscri
         'githubActionsRunID': !exists(json, 'githubActionsRunID') ? undefined : json['githubActionsRunID'],
         'githubActionsWorkflowPath': !exists(json, 'githubActionsWorkflowPath') ? undefined : json['githubActionsWorkflowPath'],
         'platform': !exists(json, 'platform') ? undefined : json['platform'],
+        'startedAt': !exists(json, 'startedAt') ? undefined : json['startedAt'],
         'status': !exists(json, 'status') ? undefined : json['status'],
         'terminalAt': !exists(json, 'terminalAt') ? undefined : json['terminalAt'],
     };
@@ -194,6 +201,7 @@ export function V2controllersCreatableCiRunToJSON(value?: V2controllersCreatable
         'githubActionsRunID': value.githubActionsRunID,
         'githubActionsWorkflowPath': value.githubActionsWorkflowPath,
         'platform': value.platform,
+        'startedAt': value.startedAt,
         'status': value.status,
         'terminalAt': value.terminalAt,
     };

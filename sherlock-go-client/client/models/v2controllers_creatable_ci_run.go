@@ -65,6 +65,9 @@ type V2controllersCreatableCiRun struct {
 	// platform
 	Platform string `json:"platform,omitempty"`
 
+	// started at
+	StartedAt string `json:"startedAt,omitempty"`
+
 	// status
 	Status string `json:"status,omitempty"`
 

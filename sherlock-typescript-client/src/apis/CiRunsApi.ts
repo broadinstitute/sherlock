@@ -43,6 +43,7 @@ export interface ApiV2CiRunsGetRequest {
     githubActionsWorkflowPath?: string;
     id?: number;
     platform?: string;
+    startedAt?: string;
     status?: string;
     terminalAt?: string;
     updatedAt?: Date;
@@ -129,6 +130,10 @@ export class CiRunsApi extends runtime.BaseAPI {
 
         if (requestParameters.platform !== undefined) {
             queryParameters['platform'] = requestParameters.platform;
+        }
+
+        if (requestParameters.startedAt !== undefined) {
+            queryParameters['startedAt'] = requestParameters.startedAt;
         }
 
         if (requestParameters.status !== undefined) {

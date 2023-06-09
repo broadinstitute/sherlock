@@ -66,6 +66,12 @@ export interface V2controllersEditableCiRun {
      * @type {string}
      * @memberof V2controllersEditableCiRun
      */
+    startedAt?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof V2controllersEditableCiRun
+     */
     status?: string;
     /**
      * 
@@ -101,6 +107,7 @@ export function V2controllersEditableCiRunFromJSONTyped(json: any, ignoreDiscrim
         'charts': !exists(json, 'charts') ? undefined : json['charts'],
         'clusters': !exists(json, 'clusters') ? undefined : json['clusters'],
         'environments': !exists(json, 'environments') ? undefined : json['environments'],
+        'startedAt': !exists(json, 'startedAt') ? undefined : json['startedAt'],
         'status': !exists(json, 'status') ? undefined : json['status'],
         'terminalAt': !exists(json, 'terminalAt') ? undefined : json['terminalAt'],
     };
@@ -122,6 +129,7 @@ export function V2controllersEditableCiRunToJSON(value?: V2controllersEditableCi
         'charts': value.charts,
         'clusters': value.clusters,
         'environments': value.environments,
+        'startedAt': value.startedAt,
         'status': value.status,
         'terminalAt': value.terminalAt,
     };

@@ -101,6 +101,9 @@ type GetAPIV2CiRunsParams struct {
 	// Platform.
 	Platform *string
 
+	// StartedAt.
+	StartedAt *string
+
 	// Status.
 	Status *string
 
@@ -295,6 +298,17 @@ func (o *GetAPIV2CiRunsParams) WithPlatform(platform *string) *GetAPIV2CiRunsPar
 // SetPlatform adds the platform to the get API v2 ci runs params
 func (o *GetAPIV2CiRunsParams) SetPlatform(platform *string) {
 	o.Platform = platform
+}
+
+// WithStartedAt adds the startedAt to the get API v2 ci runs params
+func (o *GetAPIV2CiRunsParams) WithStartedAt(startedAt *string) *GetAPIV2CiRunsParams {
+	o.SetStartedAt(startedAt)
+	return o
+}
+
+// SetStartedAt adds the startedAt to the get API v2 ci runs params
+func (o *GetAPIV2CiRunsParams) SetStartedAt(startedAt *string) {
+	o.StartedAt = startedAt
 }
 
 // WithStatus adds the status to the get API v2 ci runs params
@@ -537,6 +551,23 @@ func (o *GetAPIV2CiRunsParams) WriteToRequest(r runtime.ClientRequest, reg strfm
 		if qPlatform != "" {
 
 			if err := r.SetQueryParam("platform", qPlatform); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.StartedAt != nil {
+
+		// query param startedAt
+		var qrStartedAt string
+
+		if o.StartedAt != nil {
+			qrStartedAt = *o.StartedAt
+		}
+		qStartedAt := qrStartedAt
+		if qStartedAt != "" {
+
+			if err := r.SetQueryParam("startedAt", qStartedAt); err != nil {
 				return err
 			}
 		}

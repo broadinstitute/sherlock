@@ -2682,6 +2682,11 @@
                     },
                     {
                         "type": "string",
+                        "name": "startedAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "name": "status",
                         "in": "query"
                     },
@@ -7876,6 +7881,9 @@
                         "$ref": "#/definitions/v2controllers.CiIdentifier"
                     }
                 },
+                "startedAt": {
+                    "type": "string"
+                },
                 "status": {
                     "type": "string"
                 },
@@ -8226,6 +8234,9 @@
                     "type": "string"
                 },
                 "platform": {
+                    "type": "string"
+                },
+                "startedAt": {
                     "type": "string"
                 },
                 "status": {
@@ -8623,6 +8634,9 @@
                     "items": {
                         "type": "string"
                     }
+                },
+                "startedAt": {
+                    "type": "string"
                 },
                 "status": {
                     "type": "string"

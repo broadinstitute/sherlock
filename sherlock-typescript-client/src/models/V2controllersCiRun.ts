@@ -103,6 +103,12 @@ export interface V2controllersCiRun {
      * @type {string}
      * @memberof V2controllersCiRun
      */
+    startedAt?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof V2controllersCiRun
+     */
     status?: string;
     /**
      * 
@@ -149,6 +155,7 @@ export function V2controllersCiRunFromJSONTyped(json: any, ignoreDiscriminator: 
         'id': !exists(json, 'id') ? undefined : json['id'],
         'platform': !exists(json, 'platform') ? undefined : json['platform'],
         'relatedResources': !exists(json, 'relatedResources') ? undefined : ((json['relatedResources'] as Array<any>).map(V2controllersCiIdentifierFromJSON)),
+        'startedAt': !exists(json, 'startedAt') ? undefined : json['startedAt'],
         'status': !exists(json, 'status') ? undefined : json['status'],
         'terminalAt': !exists(json, 'terminalAt') ? undefined : json['terminalAt'],
         'updatedAt': !exists(json, 'updatedAt') ? undefined : (new Date(json['updatedAt'])),
@@ -176,6 +183,7 @@ export function V2controllersCiRunToJSON(value?: V2controllersCiRun | null): any
         'id': value.id,
         'platform': value.platform,
         'relatedResources': value.relatedResources === undefined ? undefined : ((value.relatedResources as Array<any>).map(V2controllersCiIdentifierToJSON)),
+        'startedAt': value.startedAt,
         'status': value.status,
         'terminalAt': value.terminalAt,
         'updatedAt': value.updatedAt === undefined ? undefined : (value.updatedAt.toISOString()),

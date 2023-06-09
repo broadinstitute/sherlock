@@ -2688,6 +2688,11 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "startedAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "name": "status",
                         "in": "query"
                     },
@@ -7882,6 +7887,9 @@ const docTemplate = `{
                         "$ref": "#/definitions/v2controllers.CiIdentifier"
                     }
                 },
+                "startedAt": {
+                    "type": "string"
+                },
                 "status": {
                     "type": "string"
                 },
@@ -8232,6 +8240,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "platform": {
+                    "type": "string"
+                },
+                "startedAt": {
                     "type": "string"
                 },
                 "status": {
@@ -8629,6 +8640,9 @@ const docTemplate = `{
                     "items": {
                         "type": "string"
                     }
+                },
+                "startedAt": {
+                    "type": "string"
                 },
                 "status": {
                     "type": "string"

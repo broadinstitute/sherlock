@@ -38,6 +38,9 @@ type V2controllersEditableCiRun struct {
 	// Always appends; will eliminate duplicates.
 	Environments []string `json:"environments"`
 
+	// started at
+	StartedAt string `json:"startedAt,omitempty"`
+
 	// status
 	Status string `json:"status,omitempty"`
 
