@@ -43,6 +43,7 @@ type CiRunDataFields struct {
 }
 
 type CiRunStatusFields struct {
+	StartedAt  *time.Time `json:"startedAt,omitempty" form:"startedAt"`
 	TerminalAt *time.Time `json:"terminalAt,omitempty" form:"terminalAt"`
 	Status     *string    `json:"status,omitempty" form:"status"`
 }
@@ -64,6 +65,7 @@ func (c CiRun) toModel(_ *v2models.StoreSet) (v2models.CiRun, error) {
 		ArgoWorkflowsNamespace:     c.ArgoWorkflowsNamespace,
 		ArgoWorkflowsName:          c.ArgoWorkflowsName,
 		ArgoWorkflowsTemplate:      c.ArgoWorkflowsTemplate,
+		StartedAt:                  c.StartedAt,
 		TerminalAt:                 c.TerminalAt,
 		Status:                     c.Status,
 	}, nil
@@ -154,6 +156,7 @@ func (c CreatableCiRun) toModel(storeSet *v2models.StoreSet) (v2models.CiRun, er
 		ArgoWorkflowsNamespace:     c.ArgoWorkflowsNamespace,
 		ArgoWorkflowsName:          c.ArgoWorkflowsName,
 		ArgoWorkflowsTemplate:      c.ArgoWorkflowsTemplate,
+		StartedAt:                  c.StartedAt,
 		TerminalAt:                 c.TerminalAt,
 		Status:                     c.Status,
 		RelatedResources:           relatedResources,
@@ -208,6 +211,7 @@ func modelCiRunToCiRun(model *v2models.CiRun) *CiRun {
 			ArgoWorkflowsTemplate:      model.ArgoWorkflowsTemplate,
 		},
 		CiRunStatusFields: CiRunStatusFields{
+			StartedAt:  model.StartedAt,
 			TerminalAt: model.TerminalAt,
 			Status:     model.Status,
 		},

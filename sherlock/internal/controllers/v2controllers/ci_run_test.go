@@ -80,7 +80,10 @@ func (suite *ciRunControllerSuite) TestCiFlow() {
 	// As the CI workflow changes state, new PUTs will hit the controller
 	payload = CreatableCiRun{
 		CiRunDataFields: ciRunData,
-		EditableCiRun:   EditableCiRun{CiRunStatusFields: CiRunStatusFields{Status: testutils.PointerTo("running")}},
+		EditableCiRun: EditableCiRun{CiRunStatusFields: CiRunStatusFields{
+			StartedAt: testutils.PointerTo(time.Now()),
+			Status:    testutils.PointerTo("running")},
+		},
 	}
 	ciRun, created, err = suite.CiRunController.Upsert(
 		ciRunSelector,
@@ -90,6 +93,7 @@ func (suite *ciRunControllerSuite) TestCiFlow() {
 	)
 	suite.Assert().NoError(err)
 	suite.Assert().False(created)
+	suite.Assert().NotNil(ciRun.StartedAt)
 	suite.Assert().Equal("running", *ciRun.Status)
 	testutils.AssertNoDiff(suite.T(), ciRunData, ciRun.CiRunDataFields)
 
@@ -152,6 +156,7 @@ func (suite *ciRunControllerSuite) TestCiFlow() {
 	suite.Assert().NoError(err)
 	suite.Assert().False(created)
 	suite.Assert().Equal("succeeded", *ciRun.Status)
+	suite.Assert().NotNil(ciRun.StartedAt)
 	suite.Assert().NotNil(ciRun.TerminalAt)
 	testutils.AssertNoDiff(suite.T(), ciRunData, ciRun.CiRunDataFields)
 
@@ -329,7 +334,10 @@ func (suite *ciRunControllerSuite) TestComplexCiFlow() {
 	// When the action starts running, suppose there's another webhook changing the status
 	payload = CreatableCiRun{
 		CiRunDataFields: ciRunData,
-		EditableCiRun:   EditableCiRun{CiRunStatusFields: CiRunStatusFields{Status: testutils.PointerTo("running")}},
+		EditableCiRun: EditableCiRun{CiRunStatusFields: CiRunStatusFields{
+			StartedAt: testutils.PointerTo(time.Now()),
+			Status:    testutils.PointerTo("running")},
+		},
 	}
 	ciRun, created, err = suite.CiRunController.Upsert(
 		ciRunSelector,
@@ -339,6 +347,7 @@ func (suite *ciRunControllerSuite) TestComplexCiFlow() {
 	)
 	suite.Assert().NoError(err)
 	suite.Assert().False(created)
+	suite.Assert().NotNil(ciRun.StartedAt)
 	suite.Assert().Equal("running", *ciRun.Status)
 	testutils.AssertNoDiff(suite.T(), ciRunData, ciRun.CiRunDataFields)
 
@@ -438,6 +447,7 @@ func (suite *ciRunControllerSuite) TestComplexCiFlow() {
 	suite.Assert().NoError(err)
 	suite.Assert().False(created)
 	suite.Assert().Equal("succeeded", *ciRun.Status)
+	suite.Assert().NotNil(ciRun.StartedAt)
 	suite.Assert().NotNil(ciRun.TerminalAt)
 	testutils.AssertNoDiff(suite.T(), ciRunData, ciRun.CiRunDataFields)
 
