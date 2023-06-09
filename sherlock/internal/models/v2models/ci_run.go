@@ -228,7 +228,5 @@ func ciRunGithubActionsMetricsSend(ciRun *CiRun) {
 		return
 	}
 	stats.Record(ctx, v2metrics.GithubActionsCompletionCountMeasure.M(1))
-	seconds := int64(math.Round(ciRun.TerminalAt.Sub(*ciRun.StartedAt).Seconds()))
-	println(seconds)
-	stats.Record(ctx, v2metrics.GithubActionsDurationSumMeasure.M(seconds))
+	stats.Record(ctx, v2metrics.GithubActionsDurationSumMeasure.M(int64(math.Round(ciRun.TerminalAt.Sub(*ciRun.StartedAt).Seconds()))))
 }
