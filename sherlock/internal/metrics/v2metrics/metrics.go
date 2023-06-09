@@ -45,10 +45,18 @@ var (
 
 // Unique per replica
 var (
-	PagerdutyRequestCount = stats.Int64(
+	PagerdutyRequestCountMeasure = stats.Int64(
 		"sherlock/v2_pagerduty_request_count",
 		"count of outgoing requests to pagerduty",
 		"requests")
+	GithubActionsCompletionCountMeasure = stats.Int64(
+		"sherlock/v2_github_actions_completion_count",
+		"count of completed GitHub Actions reported to Sherlock",
+		"workflows")
+	GithubActionsDurationSumMeasure = stats.Int64(
+		"sherlock/v2_github_actions_duration_count",
+		"count of seconds spent by GitHub Actions reported to Sherlock",
+		"seconds")
 )
 
 var (
@@ -63,6 +71,10 @@ var (
 	DataTypeKey                   = tag.MustNewKey("data_type")
 	PagerdutyRequestTypeKey       = tag.MustNewKey("pd_request_type")
 	PagerdutyResponseCodeKey      = tag.MustNewKey("pd_response_code")
+	GithubActionsRepoKey          = tag.MustNewKey("github_repo")
+	GithubActionsWorkflowFileKey  = tag.MustNewKey("workflow_file")
+	GithubActionsAttemptNumberKey = tag.MustNewKey("attempt_number")
+	GithubActionsOutcomeKey       = tag.MustNewKey("outcome")
 
 	ChangesetCountView = &view.View{
 		Name:        "v2_changeset_count",
@@ -115,9 +127,9 @@ var (
 	}
 	PagerdutyRequestCountView = &view.View{
 		Name:        "v2_pagerduty_request_count",
-		Measure:     PagerdutyRequestCount,
+		Measure:     PagerdutyRequestCountMeasure,
 		TagKeys:     []tag.Key{PagerdutyRequestTypeKey, PagerdutyResponseCodeKey},
-		Description: PagerdutyRequestCount.Description(),
+		Description: PagerdutyRequestCountMeasure.Description(),
 		Aggregation: view.Count(),
 	}
 	EnvironmentStateCountView = &view.View{
@@ -126,6 +138,20 @@ var (
 		TagKeys:     []tag.Key{EnvironmentLifecycleKey, EnvironmentOfflineKey, EnvironmentPreventDeletionKey},
 		Description: EnvironmentStateCountMeasure.Description(),
 		Aggregation: view.LastValue(),
+	}
+	GithubActionsCompletionCountView = &view.View{
+		Name:        "v2_github_actions_completion_count",
+		Measure:     GithubActionsCompletionCountMeasure,
+		TagKeys:     []tag.Key{GithubActionsRepoKey, GithubActionsWorkflowFileKey, GithubActionsAttemptNumberKey, GithubActionsOutcomeKey},
+		Description: GithubActionsCompletionCountMeasure.Description(),
+		Aggregation: view.Count(),
+	}
+	GithubActionsDurationSumView = &view.View{
+		Name:        "v2_github_actions_duration_sum",
+		Measure:     GithubActionsDurationSumMeasure,
+		TagKeys:     []tag.Key{GithubActionsRepoKey, GithubActionsWorkflowFileKey, GithubActionsAttemptNumberKey, GithubActionsOutcomeKey},
+		Description: GithubActionsDurationSumMeasure.Description(),
+		Aggregation: view.Sum(),
 	}
 )
 
@@ -140,5 +166,7 @@ func RegisterViews() error {
 		DataTypeCountView,
 		PagerdutyRequestCountView,
 		EnvironmentStateCountView,
+		GithubActionsCompletionCountView,
+		GithubActionsDurationSumView,
 	)
 }

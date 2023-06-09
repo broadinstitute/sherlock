@@ -1,12 +1,17 @@
 package v2models
 
 import (
+	"context"
 	"fmt"
 	"github.com/broadinstitute/sherlock/sherlock/internal/auth/auth_models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
+	"github.com/broadinstitute/sherlock/sherlock/internal/metrics/v2metrics"
 	"github.com/broadinstitute/sherlock/sherlock/internal/utils"
 	"github.com/rs/zerolog/log"
+	"go.opencensus.io/stats"
+	"go.opencensus.io/tag"
 	"gorm.io/gorm"
+	"math"
 	"strconv"
 	"strings"
 	"time"
@@ -49,6 +54,15 @@ func init() {
 		preEdit:              preEditCiRun,
 		editsAppendManyToMany: map[string]func(edits *CiRun) any{
 			"RelatedResources": func(edits *CiRun) any { return edits.RelatedResources },
+		},
+		metricsOnceUponPredicate: []struct {
+			predicate   func(model *CiRun) bool
+			sendMetrics func(model *CiRun)
+		}{
+			{
+				predicate:   ciRunGithubActionsMetricsPredicate,
+				sendMetrics: ciRunGithubActionsMetricsSend,
+			},
 		},
 	}
 }
@@ -197,4 +211,22 @@ func createCiRunIdentifiersJustInTime(db *gorm.DB, ciRun *CiRun, user *auth_mode
 		}
 	}
 	return nil
+}
+
+func ciRunGithubActionsMetricsPredicate(ciRun *CiRun) bool {
+	return ciRun.Platform == "github-actions" && ciRun.Status != nil && ciRun.StartedAt != nil && ciRun.TerminalAt != nil
+}
+
+func ciRunGithubActionsMetricsSend(ciRun *CiRun) {
+	ctx, err := tag.New(context.Background(),
+		tag.Insert(v2metrics.GithubActionsRepoKey, fmt.Sprintf("%s/%s", ciRun.GithubActionsOwner, ciRun.GithubActionsRepo)),
+		tag.Insert(v2metrics.GithubActionsWorkflowFileKey, ciRun.GithubActionsWorkflowPath),
+		tag.Insert(v2metrics.GithubActionsAttemptNumberKey, strconv.FormatUint(uint64(ciRun.GithubActionsAttemptNumber), 10)),
+		tag.Insert(v2metrics.GithubActionsOutcomeKey, *ciRun.Status))
+	if err != nil {
+		log.Warn().Msg("reportCiRunCompletionMetrics couldn't create metrics context?")
+		return
+	}
+	stats.Record(ctx, v2metrics.GithubActionsCompletionCountMeasure.M(1))
+	stats.Record(ctx, v2metrics.GithubActionsDurationSumMeasure.M(int64(math.Round(ciRun.TerminalAt.Sub(*ciRun.StartedAt).Seconds()))))
 }

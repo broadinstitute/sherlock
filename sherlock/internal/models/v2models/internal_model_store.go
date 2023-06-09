@@ -64,6 +64,18 @@ type internalModelStore[M Model] struct {
 	// to Gorm's "associations mode" to append to that association. https://gorm.io/docs/associations.html#Append-Associations
 	// Realistically, this is useful for mutable many2many relations, because Gorm won't touch those on its own.
 	editsAppendManyToMany map[string]func(edits *M) any
+	// metricsOnceUponPredicate is a hack to let a data type define metrics that should be sent when a predicate becomes
+	// true.
+	// During creation, metrics will be sent if the predicate is true.
+	// During edits, metrics will be sent if the edits make the predicate become true.
+	//
+	// (This is otherwise really tricky to do for edits, because Gorm reuses the structs/pointers we pass to it such
+	// that we can't reliably compare before/after states of edits. This field abstracts over that complexity even if
+	// it is a bit of a weird interface.)
+	metricsOnceUponPredicate []struct {
+		predicate   func(model *M) bool
+		sendMetrics func(model *M)
+	}
 }
 
 func (s internalModelStore[M]) wrappedErrorIfForbidden(db *gorm.DB, model *M, action model_actions.ActionType, user *auth_models.User) error {
@@ -157,6 +169,13 @@ func (s internalModelStore[M]) create(db *gorm.DB, model M, user *auth_models.Us
 		ret = result
 		return nil
 	})
+	if err == nil && s.metricsOnceUponPredicate != nil {
+		for _, entry := range s.metricsOnceUponPredicate {
+			if entry.predicate(&ret) {
+				entry.sendMetrics(&ret)
+			}
+		}
+	}
 	return ret, err == nil, err
 }
 
@@ -221,6 +240,13 @@ func (s internalModelStore[M]) edit(db *gorm.DB, query M, editsToMake M, user *a
 			return toEdit, fmt.Errorf("pre-edit error: %v", err)
 		}
 	}
+	var cachedMetricsPredicateResults []bool
+	if s.metricsOnceUponPredicate != nil {
+		cachedMetricsPredicateResults = make([]bool, len(s.metricsOnceUponPredicate))
+		for i, entry := range s.metricsOnceUponPredicate {
+			cachedMetricsPredicateResults[i] = entry.predicate(&toEdit)
+		}
+	}
 	var ret M
 	err = db.Transaction(func(tx *gorm.DB) error {
 		var chain = tx.Model(&toEdit)
@@ -267,6 +293,7 @@ func (s internalModelStore[M]) edit(db *gorm.DB, query M, editsToMake M, user *a
 		}
 		// We check permissions *again* to prevent a user from editing an entry in a way that makes it require
 		// permissions above theirs in the future.
+		// Note that we run this call using db, because we don't want to use the modified state of the database.
 		if err = s.wrappedErrorIfForbidden(db, &result, model_actions.EDIT, user); err != nil {
 			return err
 		}
@@ -278,6 +305,14 @@ func (s internalModelStore[M]) edit(db *gorm.DB, query M, editsToMake M, user *a
 		ret = result
 		return nil
 	})
+	if err == nil && s.metricsOnceUponPredicate != nil {
+		for i, entry := range s.metricsOnceUponPredicate {
+			// If the predicate has changed to true as a result of our edits
+			if !cachedMetricsPredicateResults[i] && entry.predicate(&ret) {
+				entry.sendMetrics(&ret)
+			}
+		}
+	}
 	return ret, err
 }
 
