@@ -46,13 +46,8 @@ type internalModelStore[M Model] struct {
 	// postCreate lets a type run perform additional actions once the model has been created but before the database
 	// transaction finishes. Errors returned by this function will roll back the entire transaction.
 	postCreate func(db *gorm.DB, created *M, user *auth_models.User) error
-	// postCreateTransaction is like postCreate but runs once the transaction is complete. It shouldn't error, so this
-	// should be used for things like metrics that can silently fail.
-	postCreateTransaction func(db *gorm.DB, created *M, createPayload *M)
 	// preEdit is like preCreate but for, well, edits.
 	preEdit func(db *gorm.DB, toEdit *M, editsToMake *M, user *auth_models.User) error
-	// postEditTransaction is like postCreateTransaction.
-	postEditTransaction func(db *gorm.DB, edited *M, beforeEdits *M, editPayload *M)
 	// preDeletePostValidate runs after validation right before deletion. Since it runs after validation, it is important
 	// that this function not change toDelete in a way that would require re-validation.
 	preDeletePostValidate func(db *gorm.DB, toDelete *M, user *auth_models.User) error
@@ -69,6 +64,18 @@ type internalModelStore[M Model] struct {
 	// to Gorm's "associations mode" to append to that association. https://gorm.io/docs/associations.html#Append-Associations
 	// Realistically, this is useful for mutable many2many relations, because Gorm won't touch those on its own.
 	editsAppendManyToMany map[string]func(edits *M) any
+	// metricsOnceUponPredicate is a hack to let a data type define metrics that should be sent when a predicate becomes
+	// true.
+	// During creation, metrics will be sent if the predicate is true.
+	// During edits, metrics will be sent if the edits make the predicate become true.
+	//
+	// (This is otherwise really tricky to do for edits, because Gorm reuses the structs/pointers we pass so it such
+	// that we can't reliably compare before/after states of edits. This field abstracts over that complexity even if
+	// it is a bit of a weird interface.)
+	metricsOnceUponPredicate []struct {
+		predicate   func(model *M) bool
+		sendMetrics func(model *M)
+	}
 }
 
 func (s internalModelStore[M]) wrappedErrorIfForbidden(db *gorm.DB, model *M, action model_actions.ActionType, user *auth_models.User) error {
@@ -162,8 +169,12 @@ func (s internalModelStore[M]) create(db *gorm.DB, model M, user *auth_models.Us
 		ret = result
 		return nil
 	})
-	if err == nil && s.postCreateTransaction != nil {
-		s.postCreateTransaction(db, &ret, &model)
+	if err == nil && s.metricsOnceUponPredicate != nil {
+		for _, entry := range s.metricsOnceUponPredicate {
+			if entry.predicate(&ret) {
+				entry.sendMetrics(&ret)
+			}
+		}
 	}
 	return ret, err == nil, err
 }
@@ -229,6 +240,13 @@ func (s internalModelStore[M]) edit(db *gorm.DB, query M, editsToMake M, user *a
 			return toEdit, fmt.Errorf("pre-edit error: %v", err)
 		}
 	}
+	var cachedMetricsPredicateResults []bool
+	if s.metricsOnceUponPredicate != nil {
+		cachedMetricsPredicateResults = make([]bool, len(s.metricsOnceUponPredicate))
+		for i, entry := range s.metricsOnceUponPredicate {
+			cachedMetricsPredicateResults[i] = entry.predicate(&toEdit)
+		}
+	}
 	var ret M
 	err = db.Transaction(func(tx *gorm.DB) error {
 		var chain = tx.Model(&toEdit)
@@ -287,8 +305,13 @@ func (s internalModelStore[M]) edit(db *gorm.DB, query M, editsToMake M, user *a
 		ret = result
 		return nil
 	})
-	if err == nil && s.postEditTransaction != nil {
-		s.postEditTransaction(db, &ret, &toEdit, &editsToMake)
+	if err == nil && s.metricsOnceUponPredicate != nil {
+		for i, entry := range s.metricsOnceUponPredicate {
+			// If the predicate has changed to true as a result of our edits
+			if !cachedMetricsPredicateResults[i] && entry.predicate(&ret) {
+				entry.sendMetrics(&ret)
+			}
+		}
 	}
 	return ret, err
 }

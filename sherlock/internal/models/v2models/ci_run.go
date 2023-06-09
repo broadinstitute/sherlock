@@ -43,23 +43,26 @@ func (c CiRun) getID() uint {
 	return c.ID
 }
 
-func (c CiRun) readyForGithubMetrics() bool {
-	return validateCiRun(&c) == nil && c.Platform == "github-actions" && c.Status != nil && c.StartedAt != nil && c.TerminalAt != nil
-}
-
 var ciRunStore *internalModelStore[CiRun]
 
 func init() {
 	ciRunStore = &internalModelStore[CiRun]{
-		selectorToQueryModel:  ciRunSelectorToQuery,
-		modelToSelectors:      ciRunToSelectors,
-		validateModel:         validateCiRun,
-		preCreate:             preCreateCiRun,
-		postCreateTransaction: postCreateCiRunTransaction,
-		preEdit:               preEditCiRun,
-		postEditTransaction:   postEditCiRunTransaction,
+		selectorToQueryModel: ciRunSelectorToQuery,
+		modelToSelectors:     ciRunToSelectors,
+		validateModel:        validateCiRun,
+		preCreate:            preCreateCiRun,
+		preEdit:              preEditCiRun,
 		editsAppendManyToMany: map[string]func(edits *CiRun) any{
 			"RelatedResources": func(edits *CiRun) any { return edits.RelatedResources },
+		},
+		metricsOnceUponPredicate: []struct {
+			predicate   func(model *CiRun) bool
+			sendMetrics func(model *CiRun)
+		}{
+			{
+				predicate:   ciRunGithubActionsMetricsPredicate,
+				sendMetrics: ciRunGithubActionsMetricsSend,
+			},
 		},
 	}
 }
@@ -183,7 +186,7 @@ func preCreateCiRun(db *gorm.DB, toCreate *CiRun, user *auth_models.User) error 
 	return createCiRunIdentifiersJustInTime(db, toCreate, user)
 }
 
-func preEditCiRun(db *gorm.DB, _ *CiRun, editsToMake *CiRun, user *auth_models.User) error {
+func preEditCiRun(db *gorm.DB, toEdit *CiRun, editsToMake *CiRun, user *auth_models.User) error {
 	return createCiRunIdentifiersJustInTime(db, editsToMake, user)
 }
 
@@ -210,23 +213,11 @@ func createCiRunIdentifiersJustInTime(db *gorm.DB, ciRun *CiRun, user *auth_mode
 	return nil
 }
 
-func postCreateCiRunTransaction(_ *gorm.DB, created *CiRun, _ *CiRun) {
-	if created.readyForGithubMetrics() {
-		reportCiRunCompletionMetrics(created)
-	}
+func ciRunGithubActionsMetricsPredicate(ciRun *CiRun) bool {
+	return ciRun.Platform == "github-actions" && ciRun.Status != nil && ciRun.StartedAt != nil && ciRun.TerminalAt != nil
 }
 
-func postEditCiRunTransaction(_ *gorm.DB, edited *CiRun, beforeEdits *CiRun, _ *CiRun) {
-	if !beforeEdits.readyForGithubMetrics() && edited.readyForGithubMetrics() {
-		reportCiRunCompletionMetrics(edited)
-	}
-}
-
-func reportCiRunCompletionMetrics(ciRun *CiRun) {
-	if !ciRun.readyForGithubMetrics() {
-		log.Warn().Msg("reportCiRunCompletionMetrics called incorrectly, ciRun wasn't ready for metrics?")
-		return
-	}
+func ciRunGithubActionsMetricsSend(ciRun *CiRun) {
 	ctx, err := tag.New(context.Background(),
 		tag.Insert(v2metrics.GithubActionsRepoKey, fmt.Sprintf("%s/%s", ciRun.GithubActionsOwner, ciRun.GithubActionsRepo)),
 		tag.Insert(v2metrics.GithubActionsWorkflowFileKey, ciRun.GithubActionsWorkflowPath),
@@ -236,6 +227,8 @@ func reportCiRunCompletionMetrics(ciRun *CiRun) {
 		log.Warn().Msg("reportCiRunCompletionMetrics couldn't create metrics context?")
 		return
 	}
-	stats.Record(ctx, v2metrics.GithubActionsCompletionCount.M(1))
-	stats.Record(ctx, v2metrics.GithubActionsDurationCount.M(int64(math.Round(ciRun.TerminalAt.Sub(*ciRun.StartedAt).Seconds()))))
+	stats.Record(ctx, v2metrics.GithubActionsCompletionCountMeasure.M(1))
+	seconds := int64(math.Round(ciRun.TerminalAt.Sub(*ciRun.StartedAt).Seconds()))
+	println(seconds)
+	stats.Record(ctx, v2metrics.GithubActionsDurationSumMeasure.M(seconds))
 }
