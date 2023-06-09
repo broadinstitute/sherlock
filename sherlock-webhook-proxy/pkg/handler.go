@@ -188,7 +188,12 @@ func HandleWebhook(w http.ResponseWriter, r *http.Request) {
 			sherlockClient := client.New(_transport, strfmt.Default)
 
 			// Convert webhook fields into what we'll store in Sherlock
-			var status, terminalAt string
+			var startedAt, status, terminalAt string
+			if !payload.WorkflowRun.RunStartedAt.IsZero() {
+				// Seems like this field will always be present, but maybe it'll be zero if it hasn't actually started yet?
+				// Seems possible :shrug:
+				startedAt = payload.WorkflowRun.RunStartedAt.Format(time.RFC3339)
+			}
 			if payload.WorkflowRun.Conclusion != "" {
 				status = payload.WorkflowRun.Conclusion
 				terminalAt = payload.WorkflowRun.UpdatedAt.Format(time.RFC3339)
@@ -211,6 +216,7 @@ func HandleWebhook(w http.ResponseWriter, r *http.Request) {
 					GithubActionsRunID:         payload.WorkflowRun.ID,
 					GithubActionsAttemptNumber: payload.WorkflowRun.RunAttempt,
 					GithubActionsWorkflowPath:  payload.Workflow.Path,
+					StartedAt:                  startedAt,
 					TerminalAt:                 terminalAt,
 					Status:                     status,
 				},
