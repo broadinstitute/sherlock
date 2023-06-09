@@ -10,15 +10,6 @@ on:
       - "sherlock-go-client/**"
   workflow_dispatch:
 
-  # enabled just for testing!
-  pull_request:
-    branches:
-      - main
-    paths:
-      - ".github/workflows/sherlock-webhook-proxy-deploy.yaml"
-      - "sherlock-webhook-proxy/**"
-      - "sherlock-go-client/**"
-
 concurrency:
   # Don't run this workflow concurrently
   group: ${{ github.workflow }}
