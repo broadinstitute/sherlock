@@ -25,7 +25,7 @@ require (
 	github.com/swaggo/gin-swagger v1.6.0
 	github.com/swaggo/swag v1.16.1
 	go.opencensus.io v0.24.0
-	golang.org/x/oauth2 v0.6.0
+	golang.org/x/oauth2 v0.8.0
 	google.golang.org/api v0.106.0
 	gorm.io/driver/postgres v1.4.5
 	gorm.io/gorm v1.24.2
