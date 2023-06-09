@@ -19,7 +19,7 @@ import type {
   V2controllersChartVersion,
   V2controllersCreatableChartVersion,
   V2controllersEditableChartVersion,
-} from '../models';
+} from '../models/index';
 import {
     ErrorsErrorResponseFromJSON,
     ErrorsErrorResponseToJSON,
@@ -29,7 +29,7 @@ import {
     V2controllersCreatableChartVersionToJSON,
     V2controllersEditableChartVersionFromJSON,
     V2controllersEditableChartVersionToJSON,
-} from '../models';
+} from '../models/index';
 
 export interface ApiV2ChartVersionsGetRequest {
     chart?: string;

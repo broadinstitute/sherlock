@@ -19,7 +19,7 @@ import type {
   V2controllersCreatableDatabaseInstance,
   V2controllersDatabaseInstance,
   V2controllersEditableDatabaseInstance,
-} from '../models';
+} from '../models/index';
 import {
     ErrorsErrorResponseFromJSON,
     ErrorsErrorResponseToJSON,
@@ -29,7 +29,7 @@ import {
     V2controllersDatabaseInstanceToJSON,
     V2controllersEditableDatabaseInstanceFromJSON,
     V2controllersEditableDatabaseInstanceToJSON,
-} from '../models';
+} from '../models/index';
 
 export interface ApiV2DatabaseInstancesGetRequest {
     chartRelease?: string;

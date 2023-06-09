@@ -19,7 +19,7 @@ import type {
   V2controllersCiRun,
   V2controllersCreatableCiRun,
   V2controllersEditableCiRun,
-} from '../models';
+} from '../models/index';
 import {
     ErrorsErrorResponseFromJSON,
     ErrorsErrorResponseToJSON,
@@ -29,7 +29,7 @@ import {
     V2controllersCreatableCiRunToJSON,
     V2controllersEditableCiRunFromJSON,
     V2controllersEditableCiRunToJSON,
-} from '../models';
+} from '../models/index';
 
 export interface ApiV2CiRunsGetRequest {
     argoWorkflowsName?: string;
