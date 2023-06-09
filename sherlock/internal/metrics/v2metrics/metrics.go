@@ -49,6 +49,14 @@ var (
 		"sherlock/v2_pagerduty_request_count",
 		"count of outgoing requests to pagerduty",
 		"requests")
+	GithubActionsCompletionCount = stats.Int64(
+		"sherlock/v2_github_actions_completion_count",
+		"count of completed GitHub Actions reported to Sherlock",
+		"workflows")
+	GithubActionsDurationCount = stats.Int64(
+		"sherlock/v2_github_actions_duration_count",
+		"count of seconds spent by GitHub Actions reported to Sherlock",
+		"seconds")
 )
 
 var (
@@ -63,6 +71,10 @@ var (
 	DataTypeKey                   = tag.MustNewKey("data_type")
 	PagerdutyRequestTypeKey       = tag.MustNewKey("pd_request_type")
 	PagerdutyResponseCodeKey      = tag.MustNewKey("pd_response_code")
+	GithubActionsRepoKey          = tag.MustNewKey("github_repo")
+	GithubActionsWorkflowFileKey  = tag.MustNewKey("workflow_file")
+	GithubActionsAttemptNumberKey = tag.MustNewKey("attempt_number")
+	GithubActionsOutcomeKey       = tag.MustNewKey("outcome")
 
 	ChangesetCountView = &view.View{
 		Name:        "v2_changeset_count",
@@ -127,6 +139,20 @@ var (
 		Description: EnvironmentStateCountMeasure.Description(),
 		Aggregation: view.LastValue(),
 	}
+	GithubActionsCompletionCountView = &view.View{
+		Name:        "v2_github_actions_completion_count",
+		Measure:     GithubActionsCompletionCount,
+		TagKeys:     []tag.Key{GithubActionsRepoKey, GithubActionsWorkflowFileKey, GithubActionsAttemptNumberKey, GithubActionsOutcomeKey},
+		Description: GithubActionsCompletionCount.Description(),
+		Aggregation: view.Count(),
+	}
+	GithubActionsDurationCountView = &view.View{
+		Name:        "v2_github_actions_duration_count",
+		Measure:     GithubActionsDurationCount,
+		TagKeys:     []tag.Key{GithubActionsRepoKey, GithubActionsWorkflowFileKey, GithubActionsAttemptNumberKey, GithubActionsOutcomeKey},
+		Description: GithubActionsDurationCount.Description(),
+		Aggregation: view.Count(),
+	}
 )
 
 func RegisterViews() error {
@@ -140,5 +166,7 @@ func RegisterViews() error {
 		DataTypeCountView,
 		PagerdutyRequestCountView,
 		EnvironmentStateCountView,
+		GithubActionsCompletionCountView,
+		GithubActionsDurationCountView,
 	)
 }

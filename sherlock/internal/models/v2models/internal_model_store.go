@@ -46,8 +46,13 @@ type internalModelStore[M Model] struct {
 	// postCreate lets a type run perform additional actions once the model has been created but before the database
 	// transaction finishes. Errors returned by this function will roll back the entire transaction.
 	postCreate func(db *gorm.DB, created *M, user *auth_models.User) error
+	// postCreateTransaction is like postCreate but runs once the transaction is complete. It shouldn't error, so this
+	// should be used for things like metrics that can silently fail.
+	postCreateTransaction func(db *gorm.DB, created *M, createPayload *M)
 	// preEdit is like preCreate but for, well, edits.
 	preEdit func(db *gorm.DB, toEdit *M, editsToMake *M, user *auth_models.User) error
+	// postEditTransaction is like postCreateTransaction.
+	postEditTransaction func(db *gorm.DB, edited *M, beforeEdits *M, editPayload *M)
 	// preDeletePostValidate runs after validation right before deletion. Since it runs after validation, it is important
 	// that this function not change toDelete in a way that would require re-validation.
 	preDeletePostValidate func(db *gorm.DB, toDelete *M, user *auth_models.User) error
@@ -157,6 +162,9 @@ func (s internalModelStore[M]) create(db *gorm.DB, model M, user *auth_models.Us
 		ret = result
 		return nil
 	})
+	if err == nil && s.postCreateTransaction != nil {
+		s.postCreateTransaction(db, &ret, &model)
+	}
 	return ret, err == nil, err
 }
 
@@ -267,6 +275,7 @@ func (s internalModelStore[M]) edit(db *gorm.DB, query M, editsToMake M, user *a
 		}
 		// We check permissions *again* to prevent a user from editing an entry in a way that makes it require
 		// permissions above theirs in the future.
+		// Note that we run this call using db, because we don't want to use the modified state of the database.
 		if err = s.wrappedErrorIfForbidden(db, &result, model_actions.EDIT, user); err != nil {
 			return err
 		}
@@ -278,6 +287,9 @@ func (s internalModelStore[M]) edit(db *gorm.DB, query M, editsToMake M, user *a
 		ret = result
 		return nil
 	})
+	if err == nil && s.postEditTransaction != nil {
+		s.postEditTransaction(db, &ret, &toEdit, &editsToMake)
+	}
 	return ret, err
 }
 
