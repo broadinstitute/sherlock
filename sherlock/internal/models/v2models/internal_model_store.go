@@ -69,7 +69,7 @@ type internalModelStore[M Model] struct {
 	// During creation, metrics will be sent if the predicate is true.
 	// During edits, metrics will be sent if the edits make the predicate become true.
 	//
-	// (This is otherwise really tricky to do for edits, because Gorm reuses the structs/pointers we pass so it such
+	// (This is otherwise really tricky to do for edits, because Gorm reuses the structs/pointers we pass to it such
 	// that we can't reliably compare before/after states of edits. This field abstracts over that complexity even if
 	// it is a bit of a weird interface.)
 	metricsOnceUponPredicate []struct {
