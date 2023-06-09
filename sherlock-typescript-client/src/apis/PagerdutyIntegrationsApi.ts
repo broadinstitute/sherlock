@@ -21,7 +21,7 @@ import type {
   V2controllersCreatablePagerdutyIntegration,
   V2controllersEditablePagerdutyIntegration,
   V2controllersPagerdutyIntegration,
-} from '../models';
+} from '../models/index';
 import {
     ErrorsErrorResponseFromJSON,
     ErrorsErrorResponseToJSON,
@@ -35,7 +35,7 @@ import {
     V2controllersEditablePagerdutyIntegrationToJSON,
     V2controllersPagerdutyIntegrationFromJSON,
     V2controllersPagerdutyIntegrationToJSON,
-} from '../models';
+} from '../models/index';
 
 export interface ApiV2PagerdutyIntegrationsGetRequest {
     createdAt?: Date;

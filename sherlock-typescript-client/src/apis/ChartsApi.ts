@@ -19,7 +19,7 @@ import type {
   V2controllersChart,
   V2controllersCreatableChart,
   V2controllersEditableChart,
-} from '../models';
+} from '../models/index';
 import {
     ErrorsErrorResponseFromJSON,
     ErrorsErrorResponseToJSON,
@@ -29,7 +29,7 @@ import {
     V2controllersCreatableChartToJSON,
     V2controllersEditableChartFromJSON,
     V2controllersEditableChartToJSON,
-} from '../models';
+} from '../models/index';
 
 export interface ApiV2ChartsGetRequest {
     appImageGitMainBranch?: string;

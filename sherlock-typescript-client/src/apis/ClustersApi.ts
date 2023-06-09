@@ -19,7 +19,7 @@ import type {
   V2controllersCluster,
   V2controllersCreatableCluster,
   V2controllersEditableCluster,
-} from '../models';
+} from '../models/index';
 import {
     ErrorsErrorResponseFromJSON,
     ErrorsErrorResponseToJSON,
@@ -29,7 +29,7 @@ import {
     V2controllersCreatableClusterToJSON,
     V2controllersEditableClusterFromJSON,
     V2controllersEditableClusterToJSON,
-} from '../models';
+} from '../models/index';
 
 export interface ApiV2ClustersGetRequest {
     address?: string;

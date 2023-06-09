@@ -19,7 +19,7 @@ import type {
   V2controllersEditableUser,
   V2controllersGithubAccessPayload,
   V2controllersUser,
-} from '../models';
+} from '../models/index';
 import {
     ErrorsErrorResponseFromJSON,
     ErrorsErrorResponseToJSON,
@@ -29,7 +29,7 @@ import {
     V2controllersGithubAccessPayloadToJSON,
     V2controllersUserFromJSON,
     V2controllersUserToJSON,
-} from '../models';
+} from '../models/index';
 
 export interface ApiV2ProceduresUsersLinkGithubPostRequest {
     githubAccessPayloadRequest: V2controllersGithubAccessPayload;

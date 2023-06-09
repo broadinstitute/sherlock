@@ -19,7 +19,7 @@ import type {
   V2controllersCiIdentifier,
   V2controllersCreatableCiIdentifier,
   V2controllersEditableCiIdentifier,
-} from '../models';
+} from '../models/index';
 import {
     ErrorsErrorResponseFromJSON,
     ErrorsErrorResponseToJSON,
@@ -29,7 +29,7 @@ import {
     V2controllersCreatableCiIdentifierToJSON,
     V2controllersEditableCiIdentifierFromJSON,
     V2controllersEditableCiIdentifierToJSON,
-} from '../models';
+} from '../models/index';
 
 export interface ApiV2CiIdentifiersGetRequest {
     createdAt?: Date;

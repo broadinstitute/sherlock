@@ -21,7 +21,7 @@ import type {
   V2controllersCreatableEnvironment,
   V2controllersEditableEnvironment,
   V2controllersEnvironment,
-} from '../models';
+} from '../models/index';
 import {
     ErrorsErrorResponseFromJSON,
     ErrorsErrorResponseToJSON,
@@ -35,7 +35,7 @@ import {
     V2controllersEditableEnvironmentToJSON,
     V2controllersEnvironmentFromJSON,
     V2controllersEnvironmentToJSON,
-} from '../models';
+} from '../models/index';
 
 export interface ApiV2EnvironmentsGetRequest {
     autoPopulateChartReleases?: boolean;

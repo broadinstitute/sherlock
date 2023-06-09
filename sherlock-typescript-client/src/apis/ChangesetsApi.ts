@@ -18,7 +18,7 @@ import type {
   ErrorsErrorResponse,
   V2controllersChangeset,
   V2controllersChangesetPlanRequest,
-} from '../models';
+} from '../models/index';
 import {
     ErrorsErrorResponseFromJSON,
     ErrorsErrorResponseToJSON,
@@ -26,7 +26,7 @@ import {
     V2controllersChangesetToJSON,
     V2controllersChangesetPlanRequestFromJSON,
     V2controllersChangesetPlanRequestToJSON,
-} from '../models';
+} from '../models/index';
 
 export interface ApiV2ChangesetsGetRequest {
     appliedAt?: Date;

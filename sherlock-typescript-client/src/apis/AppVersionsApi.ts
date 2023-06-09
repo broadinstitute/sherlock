@@ -19,7 +19,7 @@ import type {
   V2controllersAppVersion,
   V2controllersCreatableAppVersion,
   V2controllersEditableAppVersion,
-} from '../models';
+} from '../models/index';
 import {
     ErrorsErrorResponseFromJSON,
     ErrorsErrorResponseToJSON,
@@ -29,7 +29,7 @@ import {
     V2controllersCreatableAppVersionToJSON,
     V2controllersEditableAppVersionFromJSON,
     V2controllersEditableAppVersionToJSON,
-} from '../models';
+} from '../models/index';
 
 export interface ApiV2AppVersionsGetRequest {
     appVersion?: string;

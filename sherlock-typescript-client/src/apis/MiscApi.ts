@@ -19,7 +19,7 @@ import type {
   MiscMyUserResponse,
   MiscStatusResponse,
   MiscVersionResponse,
-} from '../models';
+} from '../models/index';
 import {
     ErrorsErrorResponseFromJSON,
     ErrorsErrorResponseToJSON,
@@ -29,7 +29,7 @@ import {
     MiscStatusResponseToJSON,
     MiscVersionResponseFromJSON,
     MiscVersionResponseToJSON,
-} from '../models';
+} from '../models/index';
 
 /**
  * 

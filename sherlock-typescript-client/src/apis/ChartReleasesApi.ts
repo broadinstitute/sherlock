@@ -21,7 +21,7 @@ import type {
   V2controllersChartRelease,
   V2controllersCreatableChartRelease,
   V2controllersEditableChartRelease,
-} from '../models';
+} from '../models/index';
 import {
     ErrorsErrorResponseFromJSON,
     ErrorsErrorResponseToJSON,
@@ -35,7 +35,7 @@ import {
     V2controllersCreatableChartReleaseToJSON,
     V2controllersEditableChartReleaseFromJSON,
     V2controllersEditableChartReleaseToJSON,
-} from '../models';
+} from '../models/index';
 
 export interface ApiV2ChartReleasesGetRequest {
     appVersionBranch?: string;
