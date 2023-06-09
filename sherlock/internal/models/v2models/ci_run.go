@@ -25,6 +25,7 @@ type CiRun struct {
 	ArgoWorkflowsTemplate      string
 	// Mutable
 	RelatedResources []*CiIdentifier `gorm:"many2many:v2_ci_runs_for_identifiers; constraint:OnDelete:CASCADE,OnUpdate:CASCADE;"`
+	StartedAt        *time.Time
 	TerminalAt       *time.Time
 	Status           *string
 }
