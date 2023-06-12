@@ -253,7 +253,7 @@ func reportEnvironmentStateCounts(ctx context.Context, db *gorm.DB) error {
 func reportGitHubActionMetrics(ctx context.Context, db *gorm.DB) error {
 	type CompletionResult struct {
 		GithubActionsOwner, GithubActionsRepo, GithubActionsWorkflowPath, Status string
-		FirstAttempts, FirstAttemptsDuration, Retries, RetiresDuration           int64
+		FirstAttempts, FirstAttemptsDuration, Retries, RetriesDuration           int64
 	}
 	for interval, measures := range map[string]struct {
 		countMeasure    *stats.Int64Measure
