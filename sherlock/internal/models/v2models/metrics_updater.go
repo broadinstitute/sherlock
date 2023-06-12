@@ -313,25 +313,20 @@ group by v2_ci_runs.github_actions_owner,
 		} {
 			var results []TotalDurationResult
 			if err := db.Raw(fmt.Sprintf(`
-select v2_ci_runs_with_duration.github_actions_owner,
-       v2_ci_runs_with_duration.github_actions_repo,
-       v2_ci_runs_with_duration.github_actions_workflow_path,
-       v2_ci_runs_with_duration.status,
-       round(sum(v2_ci_runs_with_duration.duration_seconds))::bigint as total_duration_seconds
-from (select v2_ci_runs.github_actions_owner,
-             v2_ci_runs.github_actions_repo,
-             v2_ci_runs.github_actions_workflow_path,
-             v2_ci_runs.status,
-             extract(epoch from v2_ci_runs.terminal_at - v2_ci_runs.started_at) as duration_seconds
-      from v2_ci_runs
-      where v2_ci_runs.platform = 'github-actions'
-        and v2_ci_runs.terminal_at >= current_timestamp - '%s'::interval
-        and v2_ci_runs.started_at is not null
-        and v2_ci_runs.github_actions_attempt_number %s) as v2_ci_runs_with_duration
-group by v2_ci_runs_with_duration.github_actions_owner, 
-         v2_ci_runs_with_duration.github_actions_repo,
-         v2_ci_runs_with_duration.github_actions_workflow_path, 
-         v2_ci_runs_with_duration.status
+select v2_ci_runs.github_actions_owner,
+       v2_ci_runs.github_actions_repo,
+       v2_ci_runs.github_actions_workflow_path,
+       v2_ci_runs.status,
+       round(sum(extract(epoch from v2_ci_runs.terminal_at - v2_ci_runs.started_at)))::bigint as total_duration_seconds
+from v2_ci_runs
+where v2_ci_runs.platform = 'github-actions'
+  and v2_ci_runs.terminal_at >= current_timestamp - '%s'::interval
+  and v2_ci_runs.started_at is not null
+  and v2_ci_runs.github_actions_attempt_number %s
+group by v2_ci_runs.github_actions_owner,
+         v2_ci_runs.github_actions_repo,
+         v2_ci_runs.github_actions_workflow_path,
+         v2_ci_runs.status
 `, interval, attemptCountQuery)).Scan(&results).Error; err != nil {
 				return err
 			}
