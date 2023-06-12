@@ -8,7 +8,7 @@ require (
 	github.com/PagerDuty/go-pagerduty v1.6.0
 	github.com/broadinstitute/sherlock/go-shared v0.0.0
 	github.com/bxcodec/faker/v3 v3.8.1
-	github.com/coreos/go-oidc v2.1.0+incompatible
+	github.com/coreos/go-oidc v2.2.1+incompatible
 	github.com/creasty/defaults v1.6.0
 	github.com/dustinkirkland/golang-petname v0.0.0-20191129215211-8e5a1ed0cff0
 	github.com/gin-gonic/gin v1.9.0
