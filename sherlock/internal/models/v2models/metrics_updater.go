@@ -302,7 +302,7 @@ group by v2_ci_runs.github_actions_owner,
 				return err
 			}
 			stats.Record(ctx, measures.countMeasure.M(result.Retries))
-			stats.Record(ctx, measures.durationMeasure.M(result.RetiresDuration))
+			stats.Record(ctx, measures.durationMeasure.M(result.RetriesDuration))
 		}
 	}
 	return nil
