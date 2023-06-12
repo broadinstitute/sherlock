@@ -41,6 +41,22 @@ var (
 		"sherlock/v2_environment_state_count",
 		"count of environments",
 		"environments")
+	GithubActions1HourCompletionCountMeasure = stats.Int64(
+		"sherlock/v2_github_actions_1_hour_completion_count",
+		"count of GitHub Actions completions in the past hour",
+		"completions")
+	GithubActions7DayCompletionCountMeasure = stats.Int64(
+		"sherlock/v2_github_actions_7_day_completion_count",
+		"count of GitHub Actions completions in the past seven days",
+		"completions")
+	GithubActions1HourTotalDurationMeasure = stats.Int64(
+		"sherlock/v2_github_actions_1_hour_total_duration",
+		"total duration of GitHub Actions completed in the past hour",
+		"seconds")
+	GithubActions7DayTotalDurationMeasure = stats.Int64(
+		"sherlock/v2_github_actions_7_day_total_duration",
+		"total duration of GitHub Actions completed in the past seven days",
+		"seconds")
 )
 
 // Unique per replica
@@ -63,6 +79,10 @@ var (
 	DataTypeKey                   = tag.MustNewKey("data_type")
 	PagerdutyRequestTypeKey       = tag.MustNewKey("pd_request_type")
 	PagerdutyResponseCodeKey      = tag.MustNewKey("pd_response_code")
+	GithubActionsRepoKey          = tag.MustNewKey("gha_repo")
+	GithubActionsWorkflowFileKey  = tag.MustNewKey("gha_workflow_file")
+	GithubActionsOutcomeKey       = tag.MustNewKey("gha_outcome")
+	GithubActionsRetryKey         = tag.MustNewKey("gha_retry")
 
 	ChangesetCountView = &view.View{
 		Name:        "v2_changeset_count",
@@ -127,6 +147,34 @@ var (
 		Description: EnvironmentStateCountMeasure.Description(),
 		Aggregation: view.LastValue(),
 	}
+	GithubActions1HourCompletionCountView = &view.View{
+		Name:        "v2_github_actions_1_hour_completion_count",
+		Measure:     GithubActions1HourCompletionCountMeasure,
+		TagKeys:     []tag.Key{GithubActionsRepoKey, GithubActionsWorkflowFileKey, GithubActionsOutcomeKey, GithubActionsRetryKey},
+		Description: GithubActions1HourCompletionCountMeasure.Description(),
+		Aggregation: view.LastValue(),
+	}
+	GithubActions7DayCompletionCountView = &view.View{
+		Name:        "v2_github_actions_7_day_completion_count",
+		Measure:     GithubActions7DayCompletionCountMeasure,
+		TagKeys:     []tag.Key{GithubActionsRepoKey, GithubActionsWorkflowFileKey, GithubActionsOutcomeKey, GithubActionsRetryKey},
+		Description: GithubActions7DayCompletionCountMeasure.Description(),
+		Aggregation: view.LastValue(),
+	}
+	GithubActions1HourTotalDurationView = &view.View{
+		Name:        "v2_github_actions_1_hour_total_duration",
+		Measure:     GithubActions1HourTotalDurationMeasure,
+		TagKeys:     []tag.Key{GithubActionsRepoKey, GithubActionsWorkflowFileKey, GithubActionsOutcomeKey, GithubActionsRetryKey},
+		Description: GithubActions1HourTotalDurationMeasure.Description(),
+		Aggregation: view.LastValue(),
+	}
+	GithubActions7DayTotalDurationView = &view.View{
+		Name:        "v2_github_actions_7_day_total_duration",
+		Measure:     GithubActions7DayTotalDurationMeasure,
+		TagKeys:     []tag.Key{GithubActionsRepoKey, GithubActionsWorkflowFileKey, GithubActionsOutcomeKey, GithubActionsRetryKey},
+		Description: GithubActions7DayTotalDurationMeasure.Description(),
+		Aggregation: view.LastValue(),
+	}
 )
 
 func RegisterViews() error {
@@ -140,5 +188,9 @@ func RegisterViews() error {
 		DataTypeCountView,
 		PagerdutyRequestCountView,
 		EnvironmentStateCountView,
+		GithubActions1HourCompletionCountView,
+		GithubActions7DayCompletionCountView,
+		GithubActions1HourTotalDurationView,
+		GithubActions7DayTotalDurationView,
 	)
 }
