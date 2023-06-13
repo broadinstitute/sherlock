@@ -261,7 +261,7 @@ select v2_ci_runs.github_actions_owner,
        v2_ci_runs.github_actions_repo,
        v2_ci_runs.github_actions_workflow_path,
        v2_ci_runs.status,
-        count(*)
+        count(1)
            filter (where v2_ci_runs.github_actions_attempt_number = 1
                              and v2_ci_runs.terminal_at >= current_timestamp - '1 hour'::interval)
            as hourly_first_attempts,
@@ -269,7 +269,7 @@ select v2_ci_runs.github_actions_owner,
            filter (where v2_ci_runs.github_actions_attempt_number = 1
                              and v2_ci_runs.terminal_at >= current_timestamp - '1 hour'::interval))::bigint, 0)
            as hourly_first_attempts_duration,
-        count(*)
+        count(1)
            filter (where v2_ci_runs.github_actions_attempt_number > 1
                              and v2_ci_runs.terminal_at >= current_timestamp - '1 hour'::interval)
            as hourly_retries,
@@ -277,7 +277,7 @@ select v2_ci_runs.github_actions_owner,
            filter (where v2_ci_runs.github_actions_attempt_number > 1
                              and v2_ci_runs.terminal_at >= current_timestamp - '1 hour'::interval))::bigint, 0)
            as hourly_retries_duration,
-        count(*)
+        count(1)
            filter (where v2_ci_runs.github_actions_attempt_number = 1
                              and v2_ci_runs.terminal_at >= current_timestamp - '7 days'::interval)
            as weekly_first_attempts,
@@ -285,7 +285,7 @@ select v2_ci_runs.github_actions_owner,
            filter (where v2_ci_runs.github_actions_attempt_number = 1
                              and v2_ci_runs.terminal_at >= current_timestamp - '7 days'::interval))::bigint, 0)
            as weekly_first_attempts_duration,
-        count(*)
+        count(1)
            filter (where v2_ci_runs.github_actions_attempt_number > 1
                              and v2_ci_runs.terminal_at >= current_timestamp - '7 days'::interval)
            as weekly_retries,
