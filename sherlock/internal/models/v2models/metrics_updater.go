@@ -251,101 +251,92 @@ func reportEnvironmentStateCounts(ctx context.Context, db *gorm.DB) error {
 }
 
 func reportGitHubActionMetrics(ctx context.Context, db *gorm.DB) error {
-	type CompletionCountResult struct {
-		GithubActionsOwner, GithubActionsRepo, GithubActionsWorkflowPath, Status string
-		Count                                                                    int64
+	type CompletionResult struct {
+		GithubActionsOwner, GithubActionsRepo, GithubActionsWorkflowPath, Status                                                                                                       string
+		HourlyFirstAttempts, HourlyFirstAttemptsDuration, HourlyRetries, HourlyRetriesDuration, WeeklyFirstAttempts, WeeklyFirstAttemptsDuration, WeeklyRetries, WeeklyRetriesDuration int64
 	}
-	for interval, measure := range map[string]*stats.Int64Measure{
-		"1 hour": v2metrics.GithubActions1HourCompletionCountMeasure,
-		"7 days": v2metrics.GithubActions7DayCompletionCountMeasure,
-	} {
-		for retryLabel, attemptCountQuery := range map[string]string{
-			"false": "= 1",
-			"true":  "> 1",
-		} {
-			var results []CompletionCountResult
-			if err := db.Raw(fmt.Sprintf(`
+	var results []CompletionResult
+	if err := db.Raw(`
 select v2_ci_runs.github_actions_owner,
        v2_ci_runs.github_actions_repo,
        v2_ci_runs.github_actions_workflow_path,
        v2_ci_runs.status,
-       count(*)
+
+       count(1)
+       filter (where v2_ci_runs.github_actions_attempt_number = 1
+           and v2_ci_runs.terminal_at >= current_timestamp - '1 hour'::interval)
+           as hourly_first_attempts,
+
+       coalesce(round(sum(extract(epoch from v2_ci_runs.terminal_at - v2_ci_runs.started_at))
+                      filter (where v2_ci_runs.github_actions_attempt_number = 1
+                          and v2_ci_runs.terminal_at >= current_timestamp - '1 hour'::interval))::bigint, 0)
+           as hourly_first_attempts_duration,
+
+       count(1)
+       filter (where v2_ci_runs.github_actions_attempt_number > 1
+           and v2_ci_runs.terminal_at >= current_timestamp - '1 hour'::interval)
+           as hourly_retries,
+
+       coalesce(round(sum(extract(epoch from v2_ci_runs.terminal_at - v2_ci_runs.started_at))
+                      filter (where v2_ci_runs.github_actions_attempt_number > 1
+                          and v2_ci_runs.terminal_at >= current_timestamp - '1 hour'::interval))::bigint, 0)
+           as hourly_retries_duration,
+
+       count(1)
+       filter (where v2_ci_runs.github_actions_attempt_number = 1
+           and v2_ci_runs.terminal_at >= current_timestamp - '7 days'::interval)
+           as weekly_first_attempts,
+
+       coalesce(round(sum(extract(epoch from v2_ci_runs.terminal_at - v2_ci_runs.started_at))
+                      filter (where v2_ci_runs.github_actions_attempt_number = 1
+                          and v2_ci_runs.terminal_at >= current_timestamp - '7 days'::interval))::bigint, 0)
+           as weekly_first_attempts_duration,
+
+       count(1)
+       filter (where v2_ci_runs.github_actions_attempt_number > 1
+           and v2_ci_runs.terminal_at >= current_timestamp - '7 days'::interval)
+           as weekly_retries,
+    
+       coalesce(round(sum(extract(epoch from v2_ci_runs.terminal_at - v2_ci_runs.started_at))
+                      filter (where v2_ci_runs.github_actions_attempt_number > 1
+                          and v2_ci_runs.terminal_at >= current_timestamp - '7 days'::interval))::bigint, 0)
+           as weekly_retries_duration
+
 from v2_ci_runs
 where v2_ci_runs.platform = 'github-actions'
-  and v2_ci_runs.terminal_at >= current_timestamp - '%s'::interval
+  -- After two weeks, let metrics drop off to null.
+  -- This strikes a balance between tracking seldom-run actions and cleaning up after a workflow file is renamed.
+  and v2_ci_runs.terminal_at >= current_timestamp - '14 days'::interval
   and v2_ci_runs.started_at is not null
-  and v2_ci_runs.github_actions_attempt_number %s
-group by v2_ci_runs.github_actions_owner, 
-         v2_ci_runs.github_actions_repo, 
-         v2_ci_runs.github_actions_workflow_path, 
-         v2_ci_runs.status
-`, interval, attemptCountQuery)).Scan(&results).Error; err != nil {
-				return err
-			}
-			ctx, err := tag.New(ctx,
-				tag.Upsert(v2metrics.GithubActionsRetryKey, retryLabel))
-			if err != nil {
-				return err
-			}
-			for _, result := range results {
-				ctx, err := tag.New(ctx,
-					tag.Upsert(v2metrics.GithubActionsRepoKey, fmt.Sprintf("%s/%s", result.GithubActionsOwner, result.GithubActionsRepo)),
-					tag.Upsert(v2metrics.GithubActionsWorkflowFileKey, result.GithubActionsWorkflowPath),
-					tag.Upsert(v2metrics.GithubActionsOutcomeKey, result.Status))
-				if err != nil {
-					return err
-				}
-				stats.Record(ctx, measure.M(result.Count))
-			}
-		}
-	}
-	type TotalDurationResult struct {
-		GithubActionsOwner, GithubActionsRepo, GithubActionsWorkflowPath, Status string
-		TotalDurationSeconds                                                     int64
-	}
-	for interval, measure := range map[string]*stats.Int64Measure{
-		"1 hour": v2metrics.GithubActions1HourTotalDurationMeasure,
-		"7 days": v2metrics.GithubActions7DayTotalDurationMeasure,
-	} {
-		for retryLabel, attemptCountQuery := range map[string]string{
-			"false": "= 1",
-			"true":  "> 1",
-		} {
-			var results []TotalDurationResult
-			if err := db.Raw(fmt.Sprintf(`
-select v2_ci_runs.github_actions_owner,
-       v2_ci_runs.github_actions_repo,
-       v2_ci_runs.github_actions_workflow_path,
-       v2_ci_runs.status,
-       round(sum(extract(epoch from v2_ci_runs.terminal_at - v2_ci_runs.started_at)))::bigint as total_duration_seconds
-from v2_ci_runs
-where v2_ci_runs.platform = 'github-actions'
-  and v2_ci_runs.terminal_at >= current_timestamp - '%s'::interval
-  and v2_ci_runs.started_at is not null
-  and v2_ci_runs.github_actions_attempt_number %s
 group by v2_ci_runs.github_actions_owner,
          v2_ci_runs.github_actions_repo,
          v2_ci_runs.github_actions_workflow_path,
          v2_ci_runs.status
-`, interval, attemptCountQuery)).Scan(&results).Error; err != nil {
-				return err
-			}
-			ctx, err := tag.New(ctx,
-				tag.Upsert(v2metrics.GithubActionsRetryKey, retryLabel))
-			if err != nil {
-				return err
-			}
-			for _, result := range results {
-				ctx, err := tag.New(ctx,
-					tag.Upsert(v2metrics.GithubActionsRepoKey, fmt.Sprintf("%s/%s", result.GithubActionsOwner, result.GithubActionsRepo)),
-					tag.Upsert(v2metrics.GithubActionsWorkflowFileKey, result.GithubActionsWorkflowPath),
-					tag.Upsert(v2metrics.GithubActionsOutcomeKey, result.Status))
-				if err != nil {
-					return err
-				}
-				stats.Record(ctx, measure.M(result.TotalDurationSeconds))
-			}
+`).Scan(&results).Error; err != nil {
+		return err
+	}
+	for _, result := range results {
+		ctx, err := tag.New(ctx,
+			tag.Upsert(v2metrics.GithubActionsRepoKey, fmt.Sprintf("%s/%s", result.GithubActionsOwner, result.GithubActionsRepo)),
+			tag.Upsert(v2metrics.GithubActionsWorkflowFileKey, result.GithubActionsWorkflowPath),
+			tag.Upsert(v2metrics.GithubActionsOutcomeKey, result.Status),
+			tag.Upsert(v2metrics.GithubActionsRetryKey, "false"))
+		if err != nil {
+			return err
 		}
+		stats.Record(ctx, v2metrics.GithubActions1HourCompletionCountMeasure.M(result.HourlyFirstAttempts))
+		stats.Record(ctx, v2metrics.GithubActions1HourTotalDurationMeasure.M(result.HourlyFirstAttemptsDuration))
+		stats.Record(ctx, v2metrics.GithubActions7DayCompletionCountMeasure.M(result.WeeklyFirstAttempts))
+		stats.Record(ctx, v2metrics.GithubActions7DayTotalDurationMeasure.M(result.WeeklyFirstAttemptsDuration))
+		ctx, err = tag.New(ctx,
+			tag.Upsert(v2metrics.GithubActionsRetryKey, "true"))
+		if err != nil {
+			return err
+		}
+		stats.Record(ctx, v2metrics.GithubActions1HourCompletionCountMeasure.M(result.HourlyRetries))
+		stats.Record(ctx, v2metrics.GithubActions1HourTotalDurationMeasure.M(result.HourlyRetriesDuration))
+		stats.Record(ctx, v2metrics.GithubActions7DayCompletionCountMeasure.M(result.WeeklyRetries))
+		stats.Record(ctx, v2metrics.GithubActions7DayTotalDurationMeasure.M(result.WeeklyRetriesDuration))
 	}
 	return nil
 }
