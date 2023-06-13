@@ -295,7 +295,9 @@ select v2_ci_runs.github_actions_owner,
            as weekly_retries_duration
 from v2_ci_runs
 where v2_ci_runs.platform = 'github-actions'
-  and v2_ci_runs.terminal_at is not null
+  -- After two weeks, let metrics drop off to null.
+  -- This strikes a balance between tracking seldom-run actions and cleaning up after a workflow file is renamed.
+  and v2_ci_runs.terminal_at >= current_timestamp - '14 days'::interval
   and v2_ci_runs.started_at is not null
 group by v2_ci_runs.github_actions_owner,
          v2_ci_runs.github_actions_repo,
