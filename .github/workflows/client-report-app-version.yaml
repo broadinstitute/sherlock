@@ -268,7 +268,20 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: core.setOutput('id_token', await core.getIDToken())
-      
+
+      - name: "Send to Sherlock Dev"
+        if: ${{ inputs.use-sherlock-dev }}
+        continue-on-error: ${{ !inputs.fail-on-dev-failure }}
+        shell: bash
+        run: |
+          set -ex
+          curl --fail-with-body -X 'POST' \
+            "$SHERLOCK_DEV_URL/api/v2/app-versions" \
+            -H 'Content-Type: application/json' \
+            -H 'Authorization: Bearer ${{ steps.iap_auth.outputs.id_token }}' \
+            -H 'X-GHA-OIDC-JWT: ${{ steps.gha_auth.outputs.id_token }}' \
+            -d "@$RUNNER_TEMP/body.json" | jq
+
       - name: "Send to Sherlock Prod"
         if: ${{ inputs.use-sherlock-prod }}
         continue-on-error: ${{ !inputs.fail-on-prod-failure }}
@@ -283,15 +296,10 @@ jobs:
             -d "@$RUNNER_TEMP/body.json" | jq
           echo "### Available in Beehive at $BEEHIVE_PROD_VANITY_URL/r/app-version/${{ inputs.chart-name }}/${{ inputs.new-version }}" >> $GITHUB_STEP_SUMMARY
 
-      - name: "Send to Sherlock Dev"
-        if: ${{ inputs.use-sherlock-dev }}
-        continue-on-error: ${{ !inputs.fail-on-dev-failure }}
-        shell: bash
-        run: |
-          set -ex
-          curl --fail-with-body -X 'POST' \
-            "$SHERLOCK_DEV_URL/api/v2/app-versions" \
-            -H 'Content-Type: application/json' \
-            -H 'Authorization: Bearer ${{ steps.iap_auth.outputs.id_token }}' \
-            -H 'X-GHA-OIDC-JWT: ${{ steps.gha_auth.outputs.id_token }}' \
-            -d "@$RUNNER_TEMP/body.json" | jq
+  report-workflow-relation:
+    uses: ./.github/workflows/client-report-workflow-related-resources.yaml
+    needs: report-new-version
+    with:
+      app-versions: ${{ inputs.chart-name }}/${{ inputs.new-version }}
+    permissions:
+      id-token: write
