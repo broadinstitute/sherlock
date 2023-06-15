@@ -126,7 +126,7 @@ jobs:
           # The bash to do this is hard but the JS is trivial.
           script: |
             ["app-versions", "chart-versions", "chart-releases", "environments", "clusters", "charts", "changesets"].forEach((input) => {
-              core.setOutput(input, JSON.stringify(core.getInput(input).split(/[\s,]+/))))
+              core.setOutput(input, JSON.stringify(core.getInput(input).split(/[\s,]+/)))
             })
 
       - name: "Write Request Body"
