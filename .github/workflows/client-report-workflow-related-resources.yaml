@@ -131,9 +131,11 @@ jobs:
           CHARTS: ${{ inputs.charts }}
           CHANGESETS: ${{ inputs.changesets }}
         with:
-          # The bash to do this is hard but the JS is trivial.
+          # Bash action steps are usually easier to work with, but here it's easier to assemble this JSON object
+          # in JS rather than doing lots of string work with Bash.
           script: |
             core.setOutput("body", JSON.stringify({
+              // Split on commas/whitespace and filter to non-empty values
               appVersions: process.env.APP_VERSIONS.split(/[\s,]+/).filter(Boolean),
               chartVersions: process.env.CHART_VERSIONS.split(/[\s,]+/).filter(Boolean),
               chartReleases: process.env.CHART_RELEASES.split(/[\s,]+/).filter(Boolean),
@@ -141,18 +143,21 @@ jobs:
               clusters: process.env.CLUSTERS.split(/[\s,]+/).filter(Boolean),
               charts: process.env.CHARTS.split(/[\s,]+/).filter(Boolean),
               changesets: process.env.CHANGESETS.split(/[\s,]+/).filter(Boolean),
+              
+              // Supply required creation fields in case webhook deliveries are delayed and we hit first
+              platform: "github-actions",
               githubActionsAttemptNumber: ${{ github.run_attempt }},
               githubActionsOwner: "${{ github.repository }}".split("/")[0],
               githubActionsRepo: "${{ github.repository }}".split("/")[1],
               githubActionsRunID: ${{ github.run_id }},
-              githubActionsWorkflowPath: "${{ github.workflow_ref }}".slice("${{ github.repository }}".length).split("@")[0],
-              platform: "github-actions"
+              // Path is prefixed by "<owner>/<repo>/" and suffixed by "@<ref>" so strip those
+              githubActionsWorkflowPath: "${{ github.workflow_ref }}".slice("${{ github.repository }}".length+1).split("@")[0]
             }))
 
       - name: "Write Request Body"
         shell: bash
         run: |
-          echo '${{ steps.parse.outputs.body }}' > "$RUNNER_TEMP/body.json"
+          echo '${{ steps.parse.outputs.body }}' | jq > "$RUNNER_TEMP/body.json"
 
       - name: "Log Request Body"
         shell: bash
