@@ -114,7 +114,7 @@ env:
   SHERLOCK_PROD_URL: "https://sherlock.dsp-devops.broadinstitute.org"
 
 jobs:
-  report-workflow-impacts:
+  report-workflow-relations:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -122,25 +122,37 @@ jobs:
       - name: "Parse Inputs"
         id: parse
         uses: actions/github-script@v6
+        env:
+          APP_VERSIONS: ${{ inputs.app-versions }}
+          CHART_VERSIONS: ${{ inputs.chart-versions }}
+          CHART_RELEASES: ${{ inputs.chart-releases }}
+          ENVIRONMENTS: ${{ inputs.environments }}
+          CLUSTERS: ${{ inputs.clusters }}
+          CHARTS: ${{ inputs.charts }}
+          CHANGESETS: ${{ inputs.changesets }}
         with:
           # The bash to do this is hard but the JS is trivial.
           script: |
-            ["app-versions", "chart-versions", "chart-releases", "environments", "clusters", "charts", "changesets"].forEach((input) => {
-              core.setOutput(input, JSON.stringify(core.getInput(input).split(/[\s,]+/)))
-            })
+            core.setOutput("body", JSON.stringify({
+              appVersions: process.env.APP_VERSIONS.split(/[\s,]+/).filter(Boolean),
+              chartVersions: process.env.CHART_VERSIONS.split(/[\s,]+/).filter(Boolean),
+              chartReleases: process.env.CHART_RELEASES.split(/[\s,]+/).filter(Boolean),
+              environments: process.env.ENVIRONMENTS.split(/[\s,]+/).filter(Boolean),
+              clusters: process.env.CLUSTERS.split(/[\s,]+/).filter(Boolean),
+              charts: process.env.CHARTS.split(/[\s,]+/).filter(Boolean),
+              changesets: process.env.CHANGESETS.split(/[\s,]+/).filter(Boolean),
+              githubActionsAttemptNumber: ${{ github.run_attempt }},
+              githubActionsOwner: "${{ github.repository }}".split("/")[0],
+              githubActionsRepo: "${{ github.repository }}".split("/")[1],
+              githubActionsRunID: ${{ github.run_id }},
+              githubActionsWorkflowPath: "${{ github.workflow_ref }}".slice("${{ github.repository }}".length).split("@")[0],
+              platform: "github-actions"
+            }))
 
       - name: "Write Request Body"
         shell: bash
         run: |
-          echo '{
-            "appVersions": ${{ steps.parse.outputs.app-versions }},
-            "chartVersions": ${{ steps.parse.outputs.chart-versions }},
-            "chartReleases": ${{ steps.parse.outputs.chart-releases }},
-            "environments": ${{ steps.parse.outputs.environments }},
-            "clusters": ${{ steps.parse.outputs.clusters }},
-            "charts": ${{ steps.parse.outputs.charts }},
-            "changesets": ${{ steps.parse.outputs.changesets }}
-          }' > "$RUNNER_TEMP/body.json"
+          echo '${{ steps.parse.outputs.body }}' > "$RUNNER_TEMP/body.json"
 
       - name: "Log Request Body"
         shell: bash
@@ -163,13 +175,13 @@ jobs:
         id: gha_auth
         uses: actions/github-script@v6
         with:
-          script: core.setOutput('id_token', await core.getIDToken())
+          script: core.setOutput("id_token", await core.getIDToken())
 
       - name: "Send to Sherlock"
         shell: bash
         run: |
           set -ex
-          curl --fail-with-body -X 'PATCH' \
+          curl --fail-with-body -X 'PUT' \
             "$SHERLOCK_PROD_URL/api/v2/ci-runs/github-actions/${{ github.repository }}/${{ github.run_id }}/${{ github.run_attempt }}" \
             -H 'Content-Type: application/json' \
             -H 'Authorization: Bearer ${{ steps.iap_auth.outputs.id_token }}' \
