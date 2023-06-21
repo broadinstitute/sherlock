@@ -62,7 +62,7 @@ jobs:
               /specs/base/swagger.yaml \
               /specs/head/swagger.yaml
 
-      - run: ls output
+      - run: cat output/diff.md
 
       - name: Comment diff
         if: ${{ github.actor != 'dependabot[bot]' }}
