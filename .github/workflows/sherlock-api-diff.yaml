@@ -56,7 +56,7 @@ jobs:
             -v "$(pwd)/output:/output" \
             openapitools/openapi-diff:latest \
               --log INFO \
-              ${{ (github.actor == 'dependabot[bot]' && '--fail-on-changed') || '--html /output/diff.html' }} \
+              ${{ (github.actor == 'dependabot[bot]' && '--fail-on-changed') || '--markdown /output/diff.md' }} \
               /specs/base/swagger.yaml \
               /specs/head/swagger.yaml
 
@@ -65,4 +65,4 @@ jobs:
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           header: api-diff
-          path: output/diff.html
+          path: output/diff.md
