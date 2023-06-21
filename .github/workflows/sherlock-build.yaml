@@ -115,6 +115,11 @@ jobs:
             quay.io/goswagger/swagger:${GO_SWAGGER_VERSION} \
             generate client -f /local/sherlock/docs/swagger.json -A sherlock --default-scheme=https -m client/models -c client
 
+      - name: Tidy Go client library dependencies
+        if: ${{ github.event_name == 'push' }}
+        working-directory: sherlock-go-client
+        run: go mod tidy
+
       - name: Generate Typescript client library
         if: ${{ github.event_name == 'push' }}
         run: |
