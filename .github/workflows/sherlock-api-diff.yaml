@@ -46,7 +46,9 @@ jobs:
 
       - name: Create output directory
         if: ${{ github.actor != 'dependabot[bot]' }}
-        run: mkdir output
+        run: |
+          mkdir output
+          touch output/diff.md
 
       - name: Generate diff
         run: |
