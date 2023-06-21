@@ -1,4 +1,5 @@
 name: API Diff
+
 on:
   pull_request:
     branches:
@@ -8,6 +9,13 @@ on:
       - "sherlock/**"
       - "!sherlock/docs/**"
       - "go-shared/**"
+
+concurrency:
+  # Don't run this workflow concurrently on the same branch
+  group: ${{ github.workflow }}-${{ github.ref }}
+  # For PRs, don't wait for completion of existing runs, cancel them instead
+  cancel-in-progress: true
+
 jobs:
   api-diff:
     runs-on: ubuntu-latest
