@@ -75,6 +75,6 @@ jobs:
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           header: api-diff
-          path: ${{ (steps.check-diff.outputs.present == 'true' && 'output/diff.md') || '' }
+          path: ${{ (steps.check-diff.outputs.present == 'true' && 'output/diff.md') || '' }}
           message: |
             ### No API Changes
