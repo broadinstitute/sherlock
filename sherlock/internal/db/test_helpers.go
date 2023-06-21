@@ -70,9 +70,6 @@ func Truncate(t *testing.T, db *gorm.DB) {
 	})
 	statements = append(statements, "BEGIN")
 	// We must iterate backwards through the hierarchies so we don't violate foreign key restraints while we delete
-	for i := len(v1ModelHierarchy) - 1; i >= 0; i-- {
-		statements = append(statements, dryRunDB.Delete(v1ModelHierarchy[i]).Statement.SQL.String())
-	}
 	for i := len(v2ModelHierarchy) - 1; i >= 0; i-- {
 		// Unscoped disables soft-deletion handling
 		statements = append(statements, dryRunDB.Unscoped().Delete(v2ModelHierarchy[i]).Statement.SQL.String())

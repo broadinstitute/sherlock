@@ -30,7 +30,6 @@ db:
   # autoMigrate will have Gorm align the database schema with its understanding of model structs post-init.
   # It should not be enabled in merged code but can be useful for development, to iterate before adding
   # SQL migration files.
-  autoMigrateV1: false
   autoMigrateV2: false
 
 auth:
@@ -56,8 +55,6 @@ auth:
     #  suitable: false
 
 metrics:
-  v1:
-    enable: false
   v2:
     enable: true
     updateIntervalMinutes: 5

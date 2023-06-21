@@ -8,7 +8,6 @@ import (
 
 	migrationFiles "github.com/broadinstitute/sherlock/sherlock/db"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
-	"github.com/broadinstitute/sherlock/sherlock/internal/models/v1models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models/v2models"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
@@ -24,15 +23,6 @@ import (
 var (
 	// The model hierarchies must be in dependency order, so that the first model has no dependencies,
 	// the second may only depend on the first, and so on.
-	v1ModelHierarchy = []any{
-		&v1models.AllocationPool{},
-		&v1models.Service{},
-		&v1models.Environment{},
-		&v1models.Cluster{},
-		&v1models.Build{},
-		&v1models.ServiceInstance{},
-		&v1models.Deploy{},
-	}
 	v2ModelHierarchy = []any{
 		&v2models.CiIdentifier{},
 		&v2models.CiRun{},
@@ -150,13 +140,6 @@ func openGorm(db *sql.DB) (*gorm.DB, error) {
 // database changes, those changes should be represented as normal migration files so that this capability can
 // be disabled.
 func applyAutoMigrations(db *gorm.DB) error {
-	if config.Config.Bool("db.autoMigrateV1") {
-		log.Info().Msg("DB   | executing database auto-migrations for v1 models")
-		if err := db.AutoMigrate(v1ModelHierarchy...); err != nil {
-			return fmt.Errorf("error running v1 model auto-migrations: %v", err)
-		}
-		log.Info().Msg("DB   | database auto-migrations for v1 models complete")
-	}
 	if config.Config.Bool("db.autoMigrateV2") {
 		log.Info().Msg("DB   | executing database auto-migrations for v2 models")
 		if err := db.AutoMigrate(v2ModelHierarchy...); err != nil {

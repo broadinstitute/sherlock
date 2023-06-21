@@ -1,0 +1,68 @@
+name: API Diff
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/sherlock-api-diff.yaml"
+      - "sherlock/**"
+      - "!sherlock/docs/**"
+      - "go-shared/**"
+jobs:
+  api-diff:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: "read"
+      # Make comments
+      pull-requests: "write"
+    steps:
+      - name: Checkout Base
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.base_ref }}
+          path: base
+          persist-credentials: false
+
+      - name: Checkout Head
+        uses: actions/checkout@v3
+        with:
+          # Technically superfluous but clearer to be explicit
+          ref: ${{ github.head_ref }}
+          path: head
+          persist-credentials: false
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version-file: head/sherlock/go.mod
+
+      - name: Set up Swag
+        working-directory: head
+        run: go install github.com/swaggo/swag/cmd/swag@latest
+
+      - name: Generate Swagger source
+        working-directory: head
+        run: make generate-swagger
+
+      - name: Create output directory
+        if: ${{ github.actor != 'dependabot[bot]' }}
+        run: mkdir output
+
+      - name: Generate diff
+        run: |
+          docker run --rm -t \
+            -v "$(pwd)/base/sherlock/docs:/specs/base:ro" \
+            -v "$(pwd)/head/sherlock/docs:/specs/head:ro" \
+            -v "$(pwd)/output:/output" \
+            openapitools/openapi-diff:latest \
+              --log INFO \
+              ${{ (github.actor == 'dependabot[bot]' && '--fail-on-changed') || '--html /output/diff.html' }} \
+              /specs/base/swagger.yaml \
+              /specs/head/swagger.yaml
+
+      - name: Comment diff
+        if: ${{ github.actor != 'dependabot[bot]' }}
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: api-diff
+          path: output/diff.html
