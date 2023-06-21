@@ -46,9 +46,7 @@ jobs:
 
       - name: Create output directory
         if: ${{ github.actor != 'dependabot[bot]' }}
-        run: |
-          mkdir output
-          echo "### No API Changes Detected" > output/diff.md
+        run: mkdir output
 
       - name: Generate diff
         run: |
@@ -62,11 +60,10 @@ jobs:
               /specs/base/swagger.yaml \
               /specs/head/swagger.yaml
 
-      - run: cat output/diff.md
-
       - name: Comment diff
         if: ${{ github.actor != 'dependabot[bot]' }}
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           header: api-diff
+          message: No API Changes Detected
           path: output/diff.md
