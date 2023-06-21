@@ -60,10 +60,21 @@ jobs:
               /specs/base/swagger.yaml \
               /specs/head/swagger.yaml
 
+      - name: Check diff
+        id: check-diff
+        if: ${{ github.actor != 'dependabot[bot]' }}
+        run: |
+          if [[ -z $(grep '[^[:space:]]' output/diff.md) ]] ; then
+            echo present=false
+          else
+            echo present=true
+          fi
+
       - name: Comment diff
         if: ${{ github.actor != 'dependabot[bot]' }}
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           header: api-diff
-          message: No API Changes Detected
-          path: output/diff.md
+          path: ${{ (steps.check-diff.outputs.present == 'true' && 'output/diff.md') || '' }
+          message: |
+            ### No API Changes
