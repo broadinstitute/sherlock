@@ -48,7 +48,7 @@ jobs:
         if: ${{ github.actor != 'dependabot[bot]' }}
         run: |
           mkdir output
-          touch output/diff.md
+          echo "### No API Changes Detected" > output/diff.md
 
       - name: Generate diff
         run: |
