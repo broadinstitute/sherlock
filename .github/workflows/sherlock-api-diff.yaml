@@ -62,6 +62,8 @@ jobs:
               /specs/base/swagger.yaml \
               /specs/head/swagger.yaml
 
+      - run: ls output
+
       - name: Comment diff
         if: ${{ github.actor != 'dependabot[bot]' }}
         uses: marocchino/sticky-pull-request-comment@v2
