@@ -35,16 +35,6 @@ on:
         type: string
         description: "The name or selector of the chart release (chart instance) to get"
 
-      ##
-      ## Sherlock configuration:
-      ##
-
-      use-sherlock-dev:
-        required: false
-        type: boolean
-        default: false
-        description: "If the environment should be gotten from the DevOps-use development Sherlock instance instead of the general-use production instance"
-
     outputs:
       name:
         description: "The name of the chart release"
@@ -58,11 +48,8 @@ on:
 
 env:
   SHERLOCK_PROD_URL: 'https://sherlock.dsp-devops.broadinstitute.org'
-  SHERLOCK_DEV_URL: 'https://sherlock-dev.dsp-devops.broadinstitute.org'
   BEEHIVE_PROD_URL: 'https://beehive.dsp-devops.broadinsitute.org'
-  BEEHIVE_DEV_URL: 'https://beehive-dev.dsp-devops.broadinstitute.org'
   BEEHIVE_PROD_VANITY_URL: 'https://broad.io/beehive'
-  BEEHIVE_DEV_VANITY_URL: 'https://broad.io/beehive-dev'
 
 jobs:
   get-chart-release:
@@ -92,20 +79,7 @@ jobs:
         with:
           script: core.setOutput('id_token', await core.getIDToken())
 
-      - name: "Get from Sherlock Dev"
-        if: ${{ inputs.use-sherlock-dev == true }}
-        shell: bash
-        run: |
-          set -ex
-          curl --fail-with-body \
-            "$SHERLOCK_DEV_URL/api/v2/chart-releases/${{ inputs.chart-release-name }}" \
-            -H 'Content-Type: application/json' \
-            -H 'Authorization: Bearer ${{ steps.iap_auth.outputs.id_token }}' \
-            -H 'X-GHA-OIDC-JWT: ${{ steps.gha_auth.outputs.id_token }}' \
-            -o "$RUNNER_TEMP/response.json"
-
-      - name: "Get from Sherlock Prod"
-        if: ${{ inputs.use-sherlock-dev == false }}
+      - name: "Get from Sherlock"
         shell: bash
         run: |
           set -ex

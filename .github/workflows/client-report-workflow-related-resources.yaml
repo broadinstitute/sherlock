@@ -1,0 +1,194 @@
+name: Report Related Resources
+
+# This workflow is meant to be called from other repositories' workflows to report that the
+# workflow impacts or is related to some resource in Sherlock.
+#
+# The caller repository must have Workload Identity Federation configured to allow impersonation of the
+# "dsp-tools-iap-access@dsp-tools-k8s.iam.gserviceaccount.com" service account; steps 1 and 2 of the documentation:
+# https://docs.google.com/document/d/1bnhDmWQHAMat_Saoa_z28FHwXmGWw6kywjdbKf208h4/edit
+#
+# With that configured, here's an example of how you can call this workflow:
+# ```yaml
+# jobs:
+#
+#   report-related-resources:
+#     uses: broadinstitute/sherlock/.github/workflows/client-report-workflow-related-resources.yaml@main
+#     needs: <your-existing-job-id>
+#     with:
+#       chart-releases: leonardo-dev
+#     permissions:
+#       id-token: write
+# ```
+
+on:
+  workflow_call:
+    inputs:
+      app-versions:
+        required: false
+        type: string
+        description: |
+          App versions affected by the calling workflow.
+          The app versions must have already been reported to Sherlock.
+          
+          App versions should be specified by an app version selector. Some different examples:
+            - <id-integer> (`456`)
+            - <chart-selector>/<version-string> (`leonardo/v1.2.3`)
+          Multiple app versions can be reported by separating them with whitespace and/or commas.
+      chart-versions:
+        required: false
+        type: string
+        description: |
+          Chart versions affected by the calling workflow.
+          The chart versions must have already been reported to Sherlock.
+          
+          Chart versions should be specified by a chart version selector. Some different examples:
+            - <id-integer> (`456`)
+            - <chart-selector>/<version-string> (`leonardo/v1.2.3`)
+          Multiple chart versions can be reported by separating them with whitespace and/or commas.
+      chart-releases:
+        required: false
+        type: string
+        description: |
+          Chart releases (chart instances) affected by the calling workflow.
+          The chart releases must already exist in Sherlock.
+          
+          Impacting a chart release will automatically also be recorded as impacting the chart release's
+          Kubernetes cluster and/or environment, where applicable. You don't need to specify them too.
+          
+          Chart releases should be specified by a chart release selector. Some different examples:
+            - <id-integer> (`456`)
+            - <name-string> (`leonardo-dev`)
+            - <environment-selector>/<chart-selector> (`dev/leonardo`)
+            - <cluster-selector>/<namespace-string>/<chart-selector> (`terra-dev/terra-dev/leonardo`)
+          Multiple chart releases can be reported by separating them with whitespace and/or commas.
+      environments:
+        required: false
+        type: string
+        description: |
+          Environments affected by the calling workflow.
+          The environments must already exist in Sherlock.
+          
+          Environments should be specified by an environment selector. Some different examples:
+            - <id-integer> (`456`)
+            - <name-string> (`dev`)
+            - resource-prefix/<unique-resource-prefix-string> (`resource-prefix/z123`)
+          Multiple environments can be reported by separating them with whitespace and/or commas.
+      clusters:
+        required: false
+        type: string
+        description: |
+          Kubernetes clusters affected by the calling workflow.
+          The clusters must already exist in Sherlock.
+          
+          Clusters should be specified by a cluster selector. Some different examples:
+            - <id-integer> (`456`)
+            - <name-string> (`terra-dev`)
+          Multiple clusters can be reported by separating them with whitespace and/or commas.
+      charts:
+        required: false
+        type: string
+        description: |
+          Helm Charts affected by the calling workflow.
+          The charts must already exist in Sherlock.
+          
+          Charts should be specified by a chart selector. Some different examples:
+            - <id-integer> (`456`)
+            - <name-string> (`leonardo`)
+          Multiple charts can be reported by separating them with whitespace and/or commas.
+      changesets:
+        required: false
+        type: string
+        description: |
+          Changesets (chart release version change) affected or used by the calling workflow.
+          The changesets must already exist in Sherlock.
+          
+          Impacting a changeset will automatically be recorded as impacting any newly-deployed app and/or
+          chart versions and as impacting the chart release. Impacting the chart release will in turn be
+          recorded as impacting its Kubernetes cluster and/or environment, where applicable. You don't
+          need to specify those other resources.
+          
+          Changesets must be specified by their integer ID (`456`), there aren't other selectors available.
+          Multiple changesets can be reported by separating them with whitespace and/or commas.
+
+env:
+  SHERLOCK_PROD_URL: "https://sherlock.dsp-devops.broadinstitute.org"
+
+jobs:
+  report-workflow-relations:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    steps:
+      - name: "Parse Inputs"
+        id: parse
+        uses: actions/github-script@v6
+        env:
+          APP_VERSIONS: ${{ inputs.app-versions }}
+          CHART_VERSIONS: ${{ inputs.chart-versions }}
+          CHART_RELEASES: ${{ inputs.chart-releases }}
+          ENVIRONMENTS: ${{ inputs.environments }}
+          CLUSTERS: ${{ inputs.clusters }}
+          CHARTS: ${{ inputs.charts }}
+          CHANGESETS: ${{ inputs.changesets }}
+        with:
+          # Bash action steps are usually easier to work with, but here it's easier to assemble this JSON object
+          # in JS rather than doing lots of string work with Bash.
+          script: |
+            core.setOutput("body", JSON.stringify({
+              // Split on commas/whitespace and filter to non-empty values
+              appVersions: process.env.APP_VERSIONS.split(/[\s,]+/).filter(Boolean),
+              chartVersions: process.env.CHART_VERSIONS.split(/[\s,]+/).filter(Boolean),
+              chartReleases: process.env.CHART_RELEASES.split(/[\s,]+/).filter(Boolean),
+              environments: process.env.ENVIRONMENTS.split(/[\s,]+/).filter(Boolean),
+              clusters: process.env.CLUSTERS.split(/[\s,]+/).filter(Boolean),
+              charts: process.env.CHARTS.split(/[\s,]+/).filter(Boolean),
+              changesets: process.env.CHANGESETS.split(/[\s,]+/).filter(Boolean),
+              
+              // Supply required creation fields in case webhook deliveries are delayed and we hit first
+              platform: "github-actions",
+              githubActionsAttemptNumber: ${{ github.run_attempt }},
+              githubActionsOwner: "${{ github.repository }}".split("/")[0],
+              githubActionsRepo: "${{ github.repository }}".split("/")[1],
+              githubActionsRunID: ${{ github.run_id }},
+              // Path is prefixed by "<owner>/<repo>/" and suffixed by "@<ref>" so strip those
+              githubActionsWorkflowPath: "${{ github.workflow_ref }}".slice("${{ github.repository }}".length+1).split("@")[0]
+            }))
+
+      - name: "Write Request Body"
+        shell: bash
+        run: |
+          echo '${{ steps.parse.outputs.body }}' | jq > "$RUNNER_TEMP/body.json"
+
+      - name: "Log Request Body"
+        shell: bash
+        run: |
+          cat "$RUNNER_TEMP/body.json"
+
+      - name: "Authenticate to GCP"
+        id: iap_auth
+        uses: google-github-actions/auth@v1
+        with:
+          workload_identity_provider: "projects/1038484894585/locations/global/workloadIdentityPools/github-wi-pool/providers/github-wi-provider"
+          service_account: "dsp-tools-iap-access@dsp-tools-k8s.iam.gserviceaccount.com"
+          token_format: "id_token"
+          id_token_audience: "1038484894585-k8qvf7l876733laev0lm8kenfa2lj6bn.apps.googleusercontent.com"
+          id_token_include_email: true
+          create_credentials_file: false
+          export_environment_variables: false
+
+      - name: "Generate GHA OIDC Token"
+        id: gha_auth
+        uses: actions/github-script@v6
+        with:
+          script: core.setOutput("id_token", await core.getIDToken())
+
+      - name: "Send to Sherlock"
+        shell: bash
+        run: |
+          set -ex
+          curl --fail-with-body -X 'PUT' \
+            "$SHERLOCK_PROD_URL/api/v2/ci-runs/github-actions/${{ github.repository }}/${{ github.run_id }}/${{ github.run_attempt }}" \
+            -H 'Content-Type: application/json' \
+            -H 'Authorization: Bearer ${{ steps.iap_auth.outputs.id_token }}' \
+            -H 'X-GHA-OIDC-JWT: ${{ steps.gha_auth.outputs.id_token }}' \
+            -d "@$RUNNER_TEMP/body.json" | jq
