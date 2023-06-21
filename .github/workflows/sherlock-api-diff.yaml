@@ -77,4 +77,4 @@ jobs:
           header: api-diff
           path: ${{ (steps.check-diff.outputs.present == 'true' && 'output/diff.md') || '' }}
           message: |
-            ### No API Changes
+            No Sherlock API changes detected
