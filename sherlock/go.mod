@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	contrib.go.opencensus.io/exporter/prometheus v0.4.2
-	github.com/PagerDuty/go-pagerduty v1.6.0
+	github.com/PagerDuty/go-pagerduty v1.7.0
 	github.com/broadinstitute/sherlock/go-shared v0.0.0
 	github.com/coreos/go-oidc v2.2.1+incompatible
 	github.com/creasty/defaults v1.7.0
