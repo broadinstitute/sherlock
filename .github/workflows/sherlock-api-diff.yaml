@@ -73,9 +73,9 @@ jobs:
         if: ${{ github.actor != 'dependabot[bot]' }}
         run: |
           if [[ -z $(grep '[^[:space:]]' output/diff.md) ]] ; then
-            echo present=false
+            echo present=false >> $GITHUB_STATE
           else
-            echo present=true
+            echo present=true >> $GITHUB_STATE
           fi
 
       - name: Comment diff
