@@ -189,6 +189,14 @@ func (c ChangesetController) changesetPlanRequestToModelChangesets(request Chang
 		if err != nil {
 			return nil, fmt.Errorf("error recreating changeset %d: %v", existingChangesetID, err)
 		}
+		// If we're going to attempt to change the app version, set the resolver to exact to make sure it sticks
+		if changesetToRecreate.ChartReleaseInfo.AppVersionExact != nil && generatedChangeset.ToAppVersionExact != nil && *changesetToRecreate.ChartReleaseInfo.AppVersionExact != *generatedChangeset.ToAppVersionExact {
+			generatedChangeset.ToAppVersionResolver = &exact
+		}
+		// If we're going to attempt to change the chart version, set the resolver to exact to make sure it sticks
+		if changesetToRecreate.ChartReleaseInfo.ChartVersionExact != nil && generatedChangeset.ToChartVersionExact != nil && *changesetToRecreate.ChartReleaseInfo.ChartVersionExact != *generatedChangeset.ToChartVersionExact {
+			generatedChangeset.ToChartVersionResolver = &exact
+		}
 		model, err := generatedChangeset.toModel(c.allStores)
 		if err != nil {
 			return nil, fmt.Errorf("error parsing generated recreated changeset from changeset %d: %v", existingChangesetID, err)

@@ -500,12 +500,23 @@ func (suite *changesetControllerSuite) TestChangesetRecreate() {
 	suite.seedChartVersions(suite.T(), suite.db)
 	suite.seedChartReleases(suite.T(), suite.db)
 
+	_, created, err := suite.AppVersionController.Create(CreatableAppVersion{
+		Chart: "leonardo",
+		AppVersion: "one",
+		GitCommit: "1234",
+		GitBranch: "my-branch",
+	}, auth.GenerateUser(suite.T(), suite.db, false))
+	suite.Assert().True(created)
+	suite.Assert().NoError(err)
+
+	// Using branch versions here so we can test that it will correctly go back to exact resolvers to make the
+	// recreate happen
 	originallyApplied, err := suite.ChangesetController.PlanAndApply(ChangesetPlanRequest{
 		ChartReleases: []ChangesetPlanRequestChartReleaseEntry{
 			{CreatableChangeset: CreatableChangeset{
 				ChartRelease: "terra-dev/leonardo",
-				ToAppVersionResolver: testutils.PointerTo("exact"),
-				ToAppVersionExact: testutils.PointerTo("one"),
+				ToAppVersionResolver: testutils.PointerTo("branch"),
+				ToAppVersionBranch: testutils.PointerTo("my-branch"),
 			}},
 		},
 	}, auth.GenerateUser(suite.T(), suite.db, false))
@@ -514,12 +525,19 @@ func (suite *changesetControllerSuite) TestChangesetRecreate() {
 	suite.Assert().NoError(err)
 	suite.Assert().Equal("one", *leonardoDev.AppVersionExact)
 
+	_, created, err = suite.AppVersionController.Create(CreatableAppVersion{
+		Chart: "leonardo",
+		AppVersion: "two",
+		GitCommit: "1234",
+		GitBranch: "my-branch",
+	}, auth.GenerateUser(suite.T(), suite.db, false))
+	suite.Assert().True(created)
+	suite.Assert().NoError(err)
+
 	_, err = suite.ChangesetController.PlanAndApply(ChangesetPlanRequest{
 		ChartReleases: []ChangesetPlanRequestChartReleaseEntry{
 			{CreatableChangeset: CreatableChangeset{
 				ChartRelease: "terra-dev/leonardo",
-				ToAppVersionResolver: testutils.PointerTo("exact"),
-				ToAppVersionExact: testutils.PointerTo("two"),
 			}},
 		},
 	}, auth.GenerateUser(suite.T(), suite.db, false))
