@@ -7504,6 +7504,13 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/v2controllers.ChangesetPlanRequestEnvironmentEntry"
                     }
+                },
+                "recreateChangesets": {
+                    "description": "Useful for reverting a change, by recreating an earlier changeset",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 }
             }
         },

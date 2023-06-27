@@ -245,6 +245,11 @@ definitions:
         items:
           $ref: '#/definitions/v2controllers.ChangesetPlanRequestEnvironmentEntry'
         type: array
+      recreateChangesets:
+        description: Useful for reverting a change, by recreating an earlier changeset
+        items:
+          type: integer
+        type: array
     type: object
   v2controllers.ChangesetPlanRequestChartReleaseEntry:
     properties:

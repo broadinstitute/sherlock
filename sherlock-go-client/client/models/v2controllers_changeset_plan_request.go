@@ -24,6 +24,9 @@ type V2controllersChangesetPlanRequest struct {
 
 	// environments
 	Environments []*V2controllersChangesetPlanRequestEnvironmentEntry `json:"environments"`
+
+	// Useful for reverting a change, by recreating an earlier changeset
+	RecreateChangesets []int64 `json:"recreateChangesets"`
 }
 
 // Validate validates this v2controllers changeset plan request

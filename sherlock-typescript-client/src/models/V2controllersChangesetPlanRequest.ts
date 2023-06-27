@@ -44,6 +44,12 @@ export interface V2controllersChangesetPlanRequest {
      * @memberof V2controllersChangesetPlanRequest
      */
     environments?: Array<V2controllersChangesetPlanRequestEnvironmentEntry>;
+    /**
+     * Useful for reverting a change, by recreating an earlier changeset
+     * @type {Array<number>}
+     * @memberof V2controllersChangesetPlanRequest
+     */
+    recreateChangesets?: Array<number>;
 }
 
 /**
@@ -67,6 +73,7 @@ export function V2controllersChangesetPlanRequestFromJSONTyped(json: any, ignore
         
         'chartReleases': !exists(json, 'chartReleases') ? undefined : ((json['chartReleases'] as Array<any>).map(V2controllersChangesetPlanRequestChartReleaseEntryFromJSON)),
         'environments': !exists(json, 'environments') ? undefined : ((json['environments'] as Array<any>).map(V2controllersChangesetPlanRequestEnvironmentEntryFromJSON)),
+        'recreateChangesets': !exists(json, 'recreateChangesets') ? undefined : json['recreateChangesets'],
     };
 }
 
@@ -81,6 +88,7 @@ export function V2controllersChangesetPlanRequestToJSON(value?: V2controllersCha
         
         'chartReleases': value.chartReleases === undefined ? undefined : ((value.chartReleases as Array<any>).map(V2controllersChangesetPlanRequestChartReleaseEntryToJSON)),
         'environments': value.environments === undefined ? undefined : ((value.environments as Array<any>).map(V2controllersChangesetPlanRequestEnvironmentEntryToJSON)),
+        'recreateChangesets': value.recreateChangesets,
     };
 }
 
