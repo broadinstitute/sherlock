@@ -490,3 +490,50 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 	assert.NoError(suite.T(), err)
 	assert.Equal(suite.T(), "yet-another-new-version", *samInBee.AppVersionExact)
 }
+
+func (suite *changesetControllerSuite) TestChangesetRecreate() {
+	db.Truncate(suite.T(), suite.db)
+	suite.seedClusters(suite.T(), suite.db)
+	suite.seedEnvironments(suite.T(), suite.db)
+	suite.seedCharts(suite.T(), suite.db)
+	suite.seedAppVersions(suite.T(), suite.db)
+	suite.seedChartVersions(suite.T(), suite.db)
+	suite.seedChartReleases(suite.T(), suite.db)
+
+	originallyApplied, err := suite.ChangesetController.PlanAndApply(ChangesetPlanRequest{
+		ChartReleases: []ChangesetPlanRequestChartReleaseEntry{
+			{CreatableChangeset: CreatableChangeset{
+				ChartRelease: "terra-dev/leonardo",
+				ToAppVersionResolver: testutils.PointerTo("exact"),
+				ToAppVersionExact: testutils.PointerTo("one"),
+			}},
+		},
+	}, auth.GenerateUser(suite.T(), suite.db, false))
+	suite.Assert().NoError(err)
+	leonardoDev, err := suite.ChartReleaseController.Get("terra-dev/leonardo")
+	suite.Assert().NoError(err)
+	suite.Assert().Equal("one", *leonardoDev.AppVersionExact)
+
+	_, err = suite.ChangesetController.PlanAndApply(ChangesetPlanRequest{
+		ChartReleases: []ChangesetPlanRequestChartReleaseEntry{
+			{CreatableChangeset: CreatableChangeset{
+				ChartRelease: "terra-dev/leonardo",
+				ToAppVersionResolver: testutils.PointerTo("exact"),
+				ToAppVersionExact: testutils.PointerTo("two"),
+			}},
+		},
+	}, auth.GenerateUser(suite.T(), suite.db, false))
+	suite.Assert().NoError(err)
+	leonardoDev, err = suite.ChartReleaseController.Get("terra-dev/leonardo")
+	suite.Assert().NoError(err)
+	suite.Assert().Equal("two", *leonardoDev.AppVersionExact)
+
+	// Check that we can replay the first changeset we applied
+	_, err = suite.ChangesetController.PlanAndApply(ChangesetPlanRequest{
+		RecreateChangesets: []uint{originallyApplied[0].ID},
+	}, auth.GenerateUser(suite.T(), suite.db, false))
+	suite.Assert().NoError(err)
+	leonardoDev, err = suite.ChartReleaseController.Get("terra-dev/leonardo")
+	suite.Assert().NoError(err)
+	suite.Assert().Equal("one", *leonardoDev.AppVersionExact)
+}

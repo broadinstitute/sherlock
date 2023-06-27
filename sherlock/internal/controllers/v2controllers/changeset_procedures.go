@@ -5,11 +5,13 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/auth/auth_models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models/v2models"
+	"strconv"
 )
 
 type ChangesetPlanRequest struct {
 	ChartReleases []ChangesetPlanRequestChartReleaseEntry `json:"chartReleases"`
 	Environments  []ChangesetPlanRequestEnvironmentEntry  `json:"environments"`
+	RecreateChangesets []uint `json:"recreateChangesets"` // Useful for reverting a change, by recreating an earlier changeset
 }
 
 type ChangesetPlanRequestChartReleaseEntry struct {
@@ -173,6 +175,28 @@ func (c ChangesetController) changesetPlanRequestToModelChangesets(request Chang
 			} else {
 				modelChangesets[model.ChartReleaseID] = model
 			}
+		}
+	}
+
+	// Handle the recreations
+	for _, existingChangesetID := range request.RecreateChangesets {
+		changesetToRecreate, err := c.Get(strconv.FormatUint(uint64(existingChangesetID), 10))
+		if err != nil {
+			return nil, fmt.Errorf("error recreating changeset %d: %v", existingChangesetID, err)
+		}
+		// Strip out all the non-Creatable fields, so we replay the exact changeset that was used
+		generatedChangeset, err := changesetToRecreate.CreatableChangeset.toReadable(c.allStores)
+		if err != nil {
+			return nil, fmt.Errorf("error recreating changeset %d: %v", existingChangesetID, err)
+		}
+		model, err := generatedChangeset.toModel(c.allStores)
+		if err != nil {
+			return nil, fmt.Errorf("error parsing generated recreated changeset from changeset %d: %v", existingChangesetID, err)
+		}
+		if _, alreadyTargeted := modelChangesets[model.ChartReleaseID]; alreadyTargeted {
+			return nil, fmt.Errorf("(%s) a chart release '%s' is targeted twice, including by the request to recreate changeset %d", errors.BadRequest, model.ChartRelease.Name, existingChangesetID)
+		} else {
+			modelChangesets[model.ChartReleaseID] = model
 		}
 	}
 
