@@ -23,20 +23,25 @@ func panicIfLooksLikeCloudSQL(t *testing.T, db *gorm.DB) {
 	}
 }
 
+var _existingTestDB *gorm.DB
+
 // ConnectAndConfigureFromTest is like Connect and Configure but accepts a testing.T in exchange for never returning an
 // error--the test will be failed instead if there is one.
 func ConnectAndConfigureFromTest(t *testing.T) *gorm.DB {
-	sqlDB, err := Connect()
-	if err != nil {
-		t.Errorf("failed to connect to database during test: %v", err)
-		return nil
+	if _existingTestDB == nil {
+		sqlDB, err := Connect()
+		if err != nil {
+			t.Errorf("failed to connect to database during test: %v", err)
+			return nil
+		}
+		gormDB, err := Configure(sqlDB)
+		if err != nil {
+			t.Errorf("failed to configure database during test: %v", err)
+		}
+		panicIfLooksLikeCloudSQL(t, gormDB)
+		_existingTestDB = gormDB
 	}
-	gormDB, err := Configure(sqlDB)
-	if err != nil {
-		t.Errorf("failed to configure database during test: %v", err)
-	}
-	panicIfLooksLikeCloudSQL(t, gormDB)
-	return gormDB
+	return _existingTestDB
 }
 
 // Truncate cleans up tables, intended for usage with functional tests. It will refuse to run if
