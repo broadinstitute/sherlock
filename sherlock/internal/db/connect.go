@@ -70,6 +70,9 @@ func Connect() (*sql.DB, error) {
 			}
 		}
 	}
+	// defensively set max number of open connections to defend against contention issues
+	maxOpenConnections := config.Config.MustInt("db.maxOpenConnections")
+	sqlDB.SetMaxOpenConns(maxOpenConnections)
 	return nil, fmt.Errorf("unable to connect to the database after %d attempts: %v", initialAttempts, err)
 }
 
@@ -151,10 +154,6 @@ func applyAutoMigrations(db *gorm.DB) error {
 }
 
 func Configure(sqlDB *sql.DB) (*gorm.DB, error) {
-	// defensively set max number of open connections to defend against contention issues
-	maxOpenConnections := config.Config.MustInt("db.maxOpenConnections")
-	sqlDB.SetMaxOpenConns(maxOpenConnections)
-
 	if err := applyMigrations(sqlDB); err != nil {
 		return nil, fmt.Errorf("error migrating database: %v", err)
 	}

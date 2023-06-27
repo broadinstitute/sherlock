@@ -6,6 +6,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
 	"strings"
+	"sync"
 	"testing"
 )
 
@@ -23,15 +24,23 @@ func panicIfLooksLikeCloudSQL(t *testing.T, db *gorm.DB) {
 	}
 }
 
+var _mutexExistingTestDB = &sync.Mutex{}
+var _existingTestDB *sql.DB = nil
+
 // ConnectAndConfigureFromTest is like Connect and Configure but accepts a testing.T in exchange for never returning an
 // error--the test will be failed instead if there is one.
 func ConnectAndConfigureFromTest(t *testing.T) *gorm.DB {
-	sqlDB, err := Connect()
-	if err != nil {
-		t.Errorf("failed to connect to database during test: %v", err)
-		return nil
+	if _existingTestDB == nil {
+		_mutexExistingTestDB.Lock()
+		defer _mutexExistingTestDB.Unlock()
+		sqlDB, err := Connect()
+		if err != nil {
+			t.Errorf("failed to connect to database during test: %v", err)
+			return nil
+		}
+		_existingTestDB = sqlDB
 	}
-	gormDB, err := Configure(sqlDB)
+	gormDB, err := Configure(_existingTestDB)
 	if err != nil {
 		t.Errorf("failed to configure database during test: %v", err)
 	}

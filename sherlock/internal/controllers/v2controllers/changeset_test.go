@@ -490,3 +490,68 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 	assert.NoError(suite.T(), err)
 	assert.Equal(suite.T(), "yet-another-new-version", *samInBee.AppVersionExact)
 }
+
+func (suite *changesetControllerSuite) TestChangesetRecreate() {
+	db.Truncate(suite.T(), suite.db)
+	suite.seedClusters(suite.T(), suite.db)
+	suite.seedEnvironments(suite.T(), suite.db)
+	suite.seedCharts(suite.T(), suite.db)
+	suite.seedAppVersions(suite.T(), suite.db)
+	suite.seedChartVersions(suite.T(), suite.db)
+	suite.seedChartReleases(suite.T(), suite.db)
+
+	_, created, err := suite.AppVersionController.Create(CreatableAppVersion{
+		Chart: "leonardo",
+		AppVersion: "one",
+		GitCommit: "1234",
+		GitBranch: "my-branch",
+	}, auth.GenerateUser(suite.T(), suite.db, false))
+	suite.Assert().True(created)
+	suite.Assert().NoError(err)
+
+	// Using branch versions here so we can test that it will correctly go back to exact resolvers to make the
+	// recreate happen
+	originallyApplied, err := suite.ChangesetController.PlanAndApply(ChangesetPlanRequest{
+		ChartReleases: []ChangesetPlanRequestChartReleaseEntry{
+			{CreatableChangeset: CreatableChangeset{
+				ChartRelease: "terra-dev/leonardo",
+				ToAppVersionResolver: testutils.PointerTo("branch"),
+				ToAppVersionBranch: testutils.PointerTo("my-branch"),
+			}},
+		},
+	}, auth.GenerateUser(suite.T(), suite.db, false))
+	suite.Assert().NoError(err)
+	leonardoDev, err := suite.ChartReleaseController.Get("terra-dev/leonardo")
+	suite.Assert().NoError(err)
+	suite.Assert().Equal("one", *leonardoDev.AppVersionExact)
+
+	_, created, err = suite.AppVersionController.Create(CreatableAppVersion{
+		Chart: "leonardo",
+		AppVersion: "two",
+		GitCommit: "1234",
+		GitBranch: "my-branch",
+	}, auth.GenerateUser(suite.T(), suite.db, false))
+	suite.Assert().True(created)
+	suite.Assert().NoError(err)
+
+	_, err = suite.ChangesetController.PlanAndApply(ChangesetPlanRequest{
+		ChartReleases: []ChangesetPlanRequestChartReleaseEntry{
+			{CreatableChangeset: CreatableChangeset{
+				ChartRelease: "terra-dev/leonardo",
+			}},
+		},
+	}, auth.GenerateUser(suite.T(), suite.db, false))
+	suite.Assert().NoError(err)
+	leonardoDev, err = suite.ChartReleaseController.Get("terra-dev/leonardo")
+	suite.Assert().NoError(err)
+	suite.Assert().Equal("two", *leonardoDev.AppVersionExact)
+
+	// Check that we can replay the first changeset we applied
+	_, err = suite.ChangesetController.PlanAndApply(ChangesetPlanRequest{
+		RecreateChangesets: []uint{originallyApplied[0].ID},
+	}, auth.GenerateUser(suite.T(), suite.db, false))
+	suite.Assert().NoError(err)
+	leonardoDev, err = suite.ChartReleaseController.Get("terra-dev/leonardo")
+	suite.Assert().NoError(err)
+	suite.Assert().Equal("one", *leonardoDev.AppVersionExact)
+}
