@@ -23,7 +23,7 @@ func formatSelector(selector string) string {
 
 func handleCreate[M v2models.Model, R v2controllers.Readable[M], C v2controllers.Creatable[M], E v2controllers.Editable[M]](controller *v2controllers.ModelController[M, R, C, E]) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
-		user, err := auth.ExtractUserFromContext(ctx)
+		user, err := auth.GetGinUser(ctx)
 		if err != nil {
 			ctx.JSON(errors.ErrorToApiResponse(err))
 			return
@@ -83,7 +83,7 @@ func handleGet[M v2models.Model, R v2controllers.Readable[M], C v2controllers.Cr
 
 func handleEdit[M v2models.Model, R v2controllers.Readable[M], C v2controllers.Creatable[M], E v2controllers.Editable[M]](controller *v2controllers.ModelController[M, R, C, E]) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
-		user, err := auth.ExtractUserFromContext(ctx)
+		user, err := auth.GetGinUser(ctx)
 		if err != nil {
 			ctx.JSON(errors.ErrorToApiResponse(err))
 			return
@@ -104,7 +104,7 @@ func handleEdit[M v2models.Model, R v2controllers.Readable[M], C v2controllers.C
 
 func handleUpsert[M v2models.Model, R v2controllers.Readable[M], C v2controllers.Creatable[M], E v2controllers.Editable[M]](controller *v2controllers.ModelController[M, R, C, E]) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
-		user, err := auth.ExtractUserFromContext(ctx)
+		user, err := auth.GetGinUser(ctx)
 		if err != nil {
 			ctx.JSON(errors.ErrorToApiResponse(err))
 			return
@@ -134,7 +134,7 @@ func handleUpsert[M v2models.Model, R v2controllers.Readable[M], C v2controllers
 
 func handleDelete[M v2models.Model, R v2controllers.Readable[M], C v2controllers.Creatable[M], E v2controllers.Editable[M]](controller *v2controllers.ModelController[M, R, C, E]) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
-		user, err := auth.ExtractUserFromContext(ctx)
+		user, err := auth.GetGinUser(ctx)
 		if err != nil {
 			ctx.JSON(errors.ErrorToApiResponse(err))
 			return
@@ -161,7 +161,7 @@ func handleSelectorList[M v2models.Model, R v2controllers.Readable[M], C v2contr
 
 func handleTriggerPagerdutyIncident[M v2models.Model, R v2controllers.Readable[M], C v2controllers.Creatable[M], E v2controllers.Editable[M]](controller *v2controllers.ModelController[M, R, C, E]) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
-		_, err := auth.ExtractUserFromContext(ctx)
+		_, err := auth.GetGinUser(ctx)
 		if err != nil {
 			ctx.JSON(errors.ErrorToApiResponse(err))
 			return

@@ -99,9 +99,9 @@ func FakeUserMiddleware(userStore *v2models.MiddlewareUserStore) gin.HandlerFunc
 	}
 }
 
-// ExtractUserFromContext is the counterpart to the middlewares provided by this package:
+// GetGinUser is the counterpart to the middlewares provided by this package:
 // handlers can call it to extract a User from the context.
-func ExtractUserFromContext(ctx *gin.Context) (*auth_models.User, error) {
+func GetGinUser(ctx *gin.Context) (*auth_models.User, error) {
 	userValue, exists := ctx.Get(contextUserKey)
 	if !exists {
 		return nil, fmt.Errorf("(%s) authentication middleware not present", errors.InternalServerError)

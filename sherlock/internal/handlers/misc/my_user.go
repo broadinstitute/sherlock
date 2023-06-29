@@ -24,7 +24,7 @@ type MyUserResponse struct {
 //	@failure		407,500	{object}	errors.ErrorResponse
 //	@router			/my-user [get]
 func MyUserHandler(ctx *gin.Context) {
-	user, err := auth.ExtractUserFromContext(ctx)
+	user, err := auth.GetGinUser(ctx)
 	if err != nil {
 		ctx.JSON(errors.ErrorToApiResponse(err))
 		return
