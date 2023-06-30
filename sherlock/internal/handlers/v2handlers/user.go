@@ -146,7 +146,7 @@ func listUserSelectors(controller *v2controllers.UserController) func(ctx *gin.C
 //	@router			/api/v2/procedures/users/link-github [post]
 func updateUserGithubAssociation(controller *v2controllers.UserController) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
-		user, err := auth.ExtractUserFromContext(ctx)
+		user, err := auth.GetGinUser(ctx)
 		if err != nil {
 			ctx.JSON(errors.ErrorToApiResponse(err))
 			return
@@ -180,7 +180,7 @@ func updateUserGithubAssociation(controller *v2controllers.UserController) func(
 //	@router			/api/v2/procedures/users/me [get]
 func getOwnUser(controller *v2controllers.UserController) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
-		user, err := auth.ExtractUserFromContext(ctx)
+		user, err := auth.GetGinUser(ctx)
 		if err != nil {
 			ctx.JSON(errors.ErrorToApiResponse(err))
 			return

@@ -76,7 +76,7 @@ func listChangesetSelectors(controller *v2controllers.ChangesetController) func(
 //	@router			/api/v2/procedures/changesets/plan-and-apply [post]
 func planAndApplyChangeset(controller *v2controllers.ChangesetController) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
-		user, err := auth.ExtractUserFromContext(ctx)
+		user, err := auth.GetGinUser(ctx)
 		if err != nil {
 			ctx.JSON(errors.ErrorToApiResponse(err))
 			return
@@ -113,7 +113,7 @@ func planAndApplyChangeset(controller *v2controllers.ChangesetController) func(c
 //	@router			/api/v2/procedures/changesets/plan [post]
 func planChangeset(controller *v2controllers.ChangesetController) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
-		user, err := auth.ExtractUserFromContext(ctx)
+		user, err := auth.GetGinUser(ctx)
 		if err != nil {
 			ctx.JSON(errors.ErrorToApiResponse(err))
 			return
@@ -150,7 +150,7 @@ func planChangeset(controller *v2controllers.ChangesetController) func(ctx *gin.
 //	@router			/api/v2/procedures/changesets/apply [post]
 func applyChangeset(controller *v2controllers.ChangesetController) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
-		user, err := auth.ExtractUserFromContext(ctx)
+		user, err := auth.GetGinUser(ctx)
 		if err != nil {
 			ctx.JSON(errors.ErrorToApiResponse(err))
 			return
