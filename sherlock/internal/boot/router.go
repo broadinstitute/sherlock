@@ -4,13 +4,14 @@ import (
 	"github.com/broadinstitute/sherlock/go-shared/pkg/version"
 	"github.com/broadinstitute/sherlock/sherlock/docs"
 	"github.com/broadinstitute/sherlock/sherlock/html"
+	"github.com/broadinstitute/sherlock/sherlock/internal/apis/misc"
+	"github.com/broadinstitute/sherlock/sherlock/internal/apis/sherlock"
 	"github.com/broadinstitute/sherlock/sherlock/internal/boot/middleware"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
-	"github.com/broadinstitute/sherlock/sherlock/internal/controllers/v2controllers"
-	"github.com/broadinstitute/sherlock/sherlock/internal/handlers/misc"
-	"github.com/broadinstitute/sherlock/sherlock/internal/handlers/v2handlers"
+	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_controllers/v2controllers"
+	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_handlers/v2handlers"
+	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/metrics"
-	"github.com/broadinstitute/sherlock/sherlock/internal/models/v2models"
 	"github.com/gin-gonic/gin"
 	swaggo_files "github.com/swaggo/files"
 	swaggo_gin "github.com/swaggo/gin-swagger"
@@ -56,21 +57,23 @@ func buildRouter(db *gorm.DB) (*gin.Engine, error) {
 	router.GET("/swagger/*any", swaggo_gin.WrapHandler(swaggo_files.Handler))
 	router.GET("", func(c *gin.Context) { c.Redirect(http.StatusMovedPermanently, "/swagger/index.html") })
 
-	apiRoutes := router.Group("api", authMiddleware, middleware.DB(db))
-	apiV2Routes := apiRoutes.Group("v2")
-	controllers := v2controllers.NewControllerSet(v2models.NewStoreSet(db))
-	v2handlers.RegisterClusterHandlers(apiV2Routes, controllers.ClusterController)
-	v2handlers.RegisterEnvironmentHandlers(apiV2Routes, controllers.EnvironmentController)
-	v2handlers.RegisterChartHandlers(apiV2Routes, controllers.ChartController)
-	v2handlers.RegisterChartVersionHandlers(apiV2Routes, controllers.ChartVersionController)
-	v2handlers.RegisterAppVersionHandlers(apiV2Routes, controllers.AppVersionController)
-	v2handlers.RegisterChartReleaseHandlers(apiV2Routes, controllers.ChartReleaseController)
-	v2handlers.RegisterChangesetHandlers(apiV2Routes, controllers.ChangesetController)
-	v2handlers.RegisterPagerdutyIntegrationHandlers(apiV2Routes, controllers.PagerdutyIntegrationController)
-	v2handlers.RegisterDatabaseInstanceHandlers(apiV2Routes, controllers.DatabaseInstanceController)
-	v2handlers.RegisterUserHandlers(apiV2Routes, controllers.UserController)
-	v2handlers.RegisterCiIdentifierHandlers(apiV2Routes, controllers.CiIdentifierController)
-	v2handlers.RegisterCiRunHandlers(apiV2Routes, controllers.CiRunController)
+	apiRouter := router.Group("api", authMiddleware, middleware.DB(db))
+	sherlock.ConfigureRoutes(apiRouter)
+
+	v2apiRouter := apiRouter.Group("v2")
+	v2controllers := v2controllers.NewControllerSet(v2models.NewStoreSet(db))
+	v2handlers.RegisterClusterHandlers(v2apiRouter, v2controllers.ClusterController)
+	v2handlers.RegisterEnvironmentHandlers(v2apiRouter, v2controllers.EnvironmentController)
+	v2handlers.RegisterChartHandlers(v2apiRouter, v2controllers.ChartController)
+	v2handlers.RegisterChartVersionHandlers(v2apiRouter, v2controllers.ChartVersionController)
+	v2handlers.RegisterAppVersionHandlers(v2apiRouter, v2controllers.AppVersionController)
+	v2handlers.RegisterChartReleaseHandlers(v2apiRouter, v2controllers.ChartReleaseController)
+	v2handlers.RegisterChangesetHandlers(v2apiRouter, v2controllers.ChangesetController)
+	v2handlers.RegisterPagerdutyIntegrationHandlers(v2apiRouter, v2controllers.PagerdutyIntegrationController)
+	v2handlers.RegisterDatabaseInstanceHandlers(v2apiRouter, v2controllers.DatabaseInstanceController)
+	v2handlers.RegisterUserHandlers(v2apiRouter, v2controllers.UserController)
+	v2handlers.RegisterCiIdentifierHandlers(v2apiRouter, v2controllers.CiIdentifierController)
+	v2handlers.RegisterCiRunHandlers(v2apiRouter, v2controllers.CiRunController)
 
 	return router, nil
 }

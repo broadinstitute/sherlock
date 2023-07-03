@@ -5,8 +5,8 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/auth/auth_models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/auth/gha_oidc_auth"
 	"github.com/broadinstitute/sherlock/sherlock/internal/auth/iap_auth"
+	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
-	"github.com/broadinstitute/sherlock/sherlock/internal/models/v2models"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
 )
@@ -17,13 +17,13 @@ func IapUserMiddleware(userStore *v2models.MiddlewareUserStore) gin.HandlerFunc 
 	return func(ctx *gin.Context) {
 		email, googleID, err := iap_auth.ParseHeader(ctx)
 		if err != nil {
-			ctx.JSON(errors.ErrorToApiResponse(err))
+			ctx.AbortWithStatusJSON(errors.ErrorToApiResponse(err))
 			return
 		}
 
 		storedIapUser, err := userStore.GetOrCreateUser(email, googleID)
 		if err != nil {
-			ctx.JSON(errors.ErrorToApiResponse(err))
+			ctx.AbortWithStatusJSON(errors.ErrorToApiResponse(err))
 			return
 		}
 
@@ -32,13 +32,13 @@ func IapUserMiddleware(userStore *v2models.MiddlewareUserStore) gin.HandlerFunc 
 		headerPresent, githubUsername, githubID, err := gha_oidc_auth.ParseHeader(ctx)
 		if headerPresent {
 			if err != nil {
-				ctx.JSON(errors.ErrorToApiResponse(err))
+				ctx.AbortWithStatusJSON(errors.ErrorToApiResponse(err))
 				return
 			}
 
 			storedGhaUser, err := userStore.GetGithubUserIfExists(githubID)
 			if err != nil {
-				ctx.JSON(errors.ErrorToApiResponse(err))
+				ctx.AbortWithStatusJSON(errors.ErrorToApiResponse(err))
 				return
 			}
 
@@ -82,7 +82,7 @@ func FakeUserMiddleware(userStore *v2models.MiddlewareUserStore) gin.HandlerFunc
 
 		storedUser, err := userStore.GetOrCreateUser(email, googleID)
 		if err != nil {
-			ctx.JSON(errors.ErrorToApiResponse(err))
+			ctx.AbortWithStatusJSON(errors.ErrorToApiResponse(err))
 			return
 		}
 
@@ -99,9 +99,9 @@ func FakeUserMiddleware(userStore *v2models.MiddlewareUserStore) gin.HandlerFunc
 	}
 }
 
-// GetGinUser is the counterpart to the middlewares provided by this package:
+// ShouldUseUser is the counterpart to the middlewares provided by this package:
 // handlers can call it to extract a User from the context.
-func GetGinUser(ctx *gin.Context) (*auth_models.User, error) {
+func ShouldUseUser(ctx *gin.Context) (*auth_models.User, error) {
 	userValue, exists := ctx.Get(contextUserKey)
 	if !exists {
 		return nil, fmt.Errorf("(%s) authentication middleware not present", errors.InternalServerError)
@@ -111,4 +111,12 @@ func GetGinUser(ctx *gin.Context) (*auth_models.User, error) {
 		return nil, fmt.Errorf("(%s) authentication middleware misconfigured: suitability represented as %T", errors.InternalServerError, userValue)
 	}
 	return user, nil
+}
+
+func MustUseUser(ctx *gin.Context) (*auth_models.User, error) {
+	user, err := ShouldUseUser(ctx)
+	if err != nil {
+		ctx.AbortWithStatusJSON(errors.ErrorToApiResponse(err))
+	}
+	return user, err
 }

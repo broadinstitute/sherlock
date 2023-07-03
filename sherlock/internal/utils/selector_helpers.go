@@ -3,7 +3,9 @@ package utils
 // selector_helpers.go contains simple but frequently-used functions helpful for different data types
 // analyzing and validating their individual selectors
 
-import "unicode"
+import (
+	"unicode"
+)
 
 func IsNumeric(selector string) bool {
 	for _, r := range selector {

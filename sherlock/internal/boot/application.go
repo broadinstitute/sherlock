@@ -8,8 +8,8 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/boot/liveness"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/db"
-	"github.com/broadinstitute/sherlock/sherlock/internal/metrics/v2metrics"
-	"github.com/broadinstitute/sherlock/sherlock/internal/models/v2models"
+	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
+	"github.com/broadinstitute/sherlock/sherlock/internal/metrics"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
 	"net/http"
@@ -63,7 +63,7 @@ func (a *Application) Start() {
 
 	if config.Config.Bool("metrics.v2.enable") {
 		log.Info().Msgf("BOOT | registering metric views...")
-		if err := v2metrics.RegisterViews(); err != nil {
+		if err := metrics.RegisterViews(); err != nil {
 			log.Fatal().Msgf("v2metrics.RegisterViews() err: %v", err)
 		}
 

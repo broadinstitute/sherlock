@@ -19,7 +19,7 @@ func Logger() gin.HandlerFunc {
 			path = path + "?" + ctx.Request.URL.RawQuery
 		}
 		identity := "client not identified"
-		if user, err := auth.GetGinUser(ctx); err == nil {
+		if user, err := auth.ShouldUseUser(ctx); err == nil {
 			identity = user.Email
 		}
 		var event *zerolog.Event

@@ -13,9 +13,8 @@ const gormSettingsUserKey = contextUserKey
 
 func DbProviderMiddleware(db *gorm.DB) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		user, err := GetGinUser(ctx)
+		user, err := MustUseUser(ctx)
 		if err != nil {
-			ctx.JSON(errors.ErrorToApiResponse(err))
 			return
 		}
 		ctx.Set(contextDbKey, db.Set(gormSettingsUserKey, user))
@@ -24,14 +23,18 @@ func DbProviderMiddleware(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
-func GetGinDB(ctx *gin.Context) (*gorm.DB, error) {
+func MustUseDB(ctx *gin.Context) (*gorm.DB, error) {
 	dbValue, exists := ctx.Get(contextDbKey)
 	if !exists {
-		return nil, fmt.Errorf("(%s) database middleware not present", errors.InternalServerError)
+		err := fmt.Errorf("(%s) database middleware not present", errors.InternalServerError)
+		ctx.AbortWithStatusJSON(errors.ErrorToApiResponse(err))
+		return nil, err
 	}
 	db, ok := dbValue.(*gorm.DB)
 	if !ok {
-		return nil, fmt.Errorf("(%s) database middleware misconfigured: represented as %T", errors.InternalServerError, dbValue)
+		err := fmt.Errorf("(%s) database middleware misconfigured: represented as %T", errors.InternalServerError, dbValue)
+		ctx.AbortWithStatusJSON(errors.ErrorToApiResponse(err))
+		return nil, err
 	}
 	return db, nil
 }

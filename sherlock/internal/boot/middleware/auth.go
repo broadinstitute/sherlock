@@ -3,7 +3,7 @@ package middleware
 import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/auth"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
-	"github.com/broadinstitute/sherlock/sherlock/internal/models/v2models"
+	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
 	"github.com/gin-gonic/gin"
 )
 
