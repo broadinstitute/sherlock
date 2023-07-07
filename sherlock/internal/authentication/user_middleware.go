@@ -20,8 +20,10 @@ const ctxUserFieldName = "SherlockUser"
 func UserMiddleware(db *gorm.DB) gin.HandlerFunc {
 	if config.Config.String("mode") == "debug" {
 		if config.Config.Bool("auth.createTestUsersInMiddleware") {
+			log.Info().Msgf("AUTH | using test authentication; will create test users from middleware")
 			return fakeUserMiddleware(db, test_users.ParseHeader, authentication_method.TEST)
 		} else {
+			log.Info().Msgf("AUTH | using local authentication; will create a local user from middleware")
 			return fakeUserMiddleware(db, local_user.ParseHeader, authentication_method.LOCAL)
 		}
 	} else {
