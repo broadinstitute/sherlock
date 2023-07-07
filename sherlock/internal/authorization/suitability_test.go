@@ -282,7 +282,7 @@ func TestSuitability_SuitableOrError(t *testing.T) {
 				description: tt.fields.description,
 				source:      tt.fields.source,
 			}
-			tt.wantErr(t, s.SuitableOrError(), fmt.Sprintf("SuitableOrError()"))
+			tt.wantErr(t, s.SuitableOrError(), "SuitableOrError()")
 		})
 	}
 }
