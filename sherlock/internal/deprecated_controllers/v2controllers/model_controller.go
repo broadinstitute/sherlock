@@ -2,9 +2,9 @@ package v2controllers
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/sherlock/internal/auth/auth_models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/pagerduty"
 	"github.com/creasty/defaults"
 	"time"
@@ -60,7 +60,7 @@ type ModelController[M v2models.Model, R Readable[M], C Creatable[M], E Editable
 	// However, sometimes this isn't enough. When setDynamicDefaults is present, it will get run first, before
 	// creasty/defaults. It shouldn't worry about handling those `default` struct tags--it can be provided to allow a
 	// type to set defaults before creation that are dynamic based on other existing data or the calling user.
-	setDynamicDefaults func(creatable *C, stores *v2models.StoreSet, user *auth_models.User) error
+	setDynamicDefaults func(creatable *C, stores *v2models.StoreSet, user *models.User) error
 
 	// extractPagerdutyIntegrationKey allows a data type to declare how to go from the database type to a Pagerduty key.
 	//
@@ -73,7 +73,7 @@ type ModelController[M v2models.Model, R Readable[M], C Creatable[M], E Editable
 	beehiveUrlFormatString string
 }
 
-func (c ModelController[M, R, C, E]) Create(creatable C, user *auth_models.User) (R, bool, error) {
+func (c ModelController[M, R, C, E]) Create(creatable C, user *models.User) (R, bool, error) {
 	var empty R
 	if user == nil {
 		return empty, false, fmt.Errorf("(%s) user was nil", errors.InternalServerError)
@@ -118,7 +118,7 @@ func (c ModelController[M, R, C, E]) GetOtherValidSelectors(selector string) ([]
 	return c.primaryStore.GetOtherValidSelectors(selector)
 }
 
-func (c ModelController[M, R, C, E]) Edit(selector string, editable E, user *auth_models.User) (R, error) {
+func (c ModelController[M, R, C, E]) Edit(selector string, editable E, user *models.User) (R, error) {
 	var empty R
 	if user == nil {
 		return empty, fmt.Errorf("(%s) user was nil", errors.InternalServerError)
@@ -134,7 +134,7 @@ func (c ModelController[M, R, C, E]) Edit(selector string, editable E, user *aut
 // Upsert is "dumb": it tries to edit, and if there's an error, it tries to create. Edit will always error if the
 // selector didn't match, but it could error for other reasons too. We're relying on Create also error-ing in the case
 // of those other reasons, which is reasonable since the same validation functions get called.
-func (c ModelController[M, R, C, E]) Upsert(selector string, creatable C, editable E, user *auth_models.User) (R, bool, error) {
+func (c ModelController[M, R, C, E]) Upsert(selector string, creatable C, editable E, user *models.User) (R, bool, error) {
 	ret, err := c.Edit(selector, editable, user)
 	if err != nil {
 		return c.Create(creatable, user)
@@ -143,7 +143,7 @@ func (c ModelController[M, R, C, E]) Upsert(selector string, creatable C, editab
 	}
 }
 
-func (c ModelController[M, R, C, E]) Delete(selector string, user *auth_models.User) (R, error) {
+func (c ModelController[M, R, C, E]) Delete(selector string, user *models.User) (R, error) {
 	var empty R
 	if user == nil {
 		return empty, fmt.Errorf("(%s) user was nil", errors.InternalServerError)

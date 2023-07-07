@@ -1,4 +1,4 @@
-package gha_oidc_auth
+package gha_oidc
 
 import (
 	"context"

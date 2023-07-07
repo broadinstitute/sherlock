@@ -2,9 +2,9 @@ package v2models
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/sherlock/internal/auth/auth_models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/pagerduty"
 	"github.com/broadinstitute/sherlock/sherlock/internal/utils"
 	"github.com/rs/zerolog/log"
@@ -49,10 +49,10 @@ type internalChangesetStore struct {
 	*internalModelStore[Changeset]
 }
 
-var changesetStore *internalChangesetStore
+var InternalChangesetStore *internalChangesetStore
 
 func init() {
-	changesetStore = &internalChangesetStore{
+	InternalChangesetStore = &internalChangesetStore{
 		internalModelStore: &internalModelStore[Changeset]{
 			selectorToQueryModel: changesetSelectorToQuery,
 			modelToSelectors:     changesetToSelectors,
@@ -99,12 +99,12 @@ func validateChangeset(changeset *Changeset) error {
 	return nil
 }
 
-func preCreateChangeset(db *gorm.DB, toCreate *Changeset, _ *auth_models.User) error {
+func preCreateChangeset(db *gorm.DB, toCreate *Changeset, _ *models.User) error {
 	if toCreate != nil {
 
 		// Resolve 'to' versions
 		if toCreate.To.ResolvedAt == nil {
-			chartRelease, err := chartReleaseStore.get(db, ChartRelease{Model: gorm.Model{ID: toCreate.ChartReleaseID}})
+			chartRelease, err := InternalChartReleaseStore.Get(db, ChartRelease{Model: gorm.Model{ID: toCreate.ChartReleaseID}})
 			if err != nil {
 				return err
 			}
@@ -118,7 +118,7 @@ func preCreateChangeset(db *gorm.DB, toCreate *Changeset, _ *auth_models.User) e
 		}
 
 		// List new app versions
-		appVersionPath, _, err := appVersionStore.getChildrenPathToParent(db, toCreate.To.AppVersion, toCreate.From.AppVersionID)
+		appVersionPath, _, err := InternalAppVersionStore.getChildrenPathToParent(db, toCreate.To.AppVersion, toCreate.From.AppVersionID)
 		if err != nil {
 			log.Error().Msgf("swallowing %T path error during changeset creation: %v", toCreate.To.AppVersion, err)
 		} else {
@@ -126,7 +126,7 @@ func preCreateChangeset(db *gorm.DB, toCreate *Changeset, _ *auth_models.User) e
 		}
 
 		// List new chart versions
-		chartVersionPath, _, err := chartVersionStore.getChildrenPathToParent(db, toCreate.To.ChartVersion, toCreate.From.ChartVersionID)
+		chartVersionPath, _, err := InternalChartVersionStore.getChildrenPathToParent(db, toCreate.To.ChartVersion, toCreate.From.ChartVersionID)
 		if err != nil {
 			log.Error().Msgf("swallowing %T path error during changeset creation: %v", toCreate.From.ChartVersion, err)
 		} else {
@@ -136,11 +136,11 @@ func preCreateChangeset(db *gorm.DB, toCreate *Changeset, _ *auth_models.User) e
 	return nil
 }
 
-func (s *internalChangesetStore) plan(db *gorm.DB, changesets []Changeset, user *auth_models.User) ([]Changeset, error) {
+func (s *internalChangesetStore) plan(db *gorm.DB, changesets []Changeset, user *models.User) ([]Changeset, error) {
 	var ret []Changeset
 	err := db.Transaction(func(tx *gorm.DB) error {
 		for index, changeset := range changesets {
-			chartRelease, err := chartReleaseStore.get(tx, ChartRelease{Model: gorm.Model{ID: changeset.ChartReleaseID}})
+			chartRelease, err := InternalChartReleaseStore.Get(tx, ChartRelease{Model: gorm.Model{ID: changeset.ChartReleaseID}})
 			if err != nil {
 				return fmt.Errorf("plan error on %T %d: failed to get %T: %v", changeset, index+1, chartRelease, err)
 			}
@@ -150,7 +150,7 @@ func (s *internalChangesetStore) plan(db *gorm.DB, changesets []Changeset, user 
 			if changeset.To.equalTo(changeset.From) {
 				continue
 			} else {
-				planned, _, err := s.create(tx, changeset, user)
+				planned, _, err := s.Create(tx, changeset, user)
 				if err != nil {
 					return fmt.Errorf("plan error on %T %d: failed to create %T: %v", changeset, index+1, changeset, err)
 				}
@@ -162,12 +162,12 @@ func (s *internalChangesetStore) plan(db *gorm.DB, changesets []Changeset, user 
 	return ret, err
 }
 
-func (s *internalChangesetStore) apply(db *gorm.DB, changesets []Changeset, user *auth_models.User) ([]Changeset, error) {
+func (s *internalChangesetStore) apply(db *gorm.DB, changesets []Changeset, user *models.User) ([]Changeset, error) {
 	var ret []Changeset
 	affectedChartReleases := make(map[uint]ChartRelease)
 	err := db.Transaction(func(tx *gorm.DB) error {
 		for index, changeset := range changesets {
-			toApply, err := s.get(tx, changeset)
+			toApply, err := s.Get(tx, changeset)
 			if err != nil {
 				return fmt.Errorf("apply error on %T %d: failed to query referenced %T: %v", changeset, index+1, changeset, err)
 			}
@@ -180,7 +180,7 @@ func (s *internalChangesetStore) apply(db *gorm.DB, changesets []Changeset, user
 			if toApply.To.ResolvedAt == nil {
 				return fmt.Errorf("(%s) apply validation error on %T %d (ID: %d): the 'to' version appears not to have been internally resolved", errors.InternalServerError, changeset, index+1, toApply.ID)
 			}
-			chartRelease, err := chartReleaseStore.get(tx, ChartRelease{Model: gorm.Model{ID: toApply.ChartReleaseID}})
+			chartRelease, err := InternalChartReleaseStore.Get(tx, ChartRelease{Model: gorm.Model{ID: toApply.ChartReleaseID}})
 			if err != nil {
 				return fmt.Errorf("apply error on %T %d (ID: %d): failed to get %T: %v", changeset, index+1, toApply.ID, chartRelease, err)
 			}
@@ -194,7 +194,7 @@ func (s *internalChangesetStore) apply(db *gorm.DB, changesets []Changeset, user
 				// which would've already been caught. In any case, we won't be applying this Changeset, so first mark it as
 				// superseded:
 				now := time.Now()
-				_, err = s.edit(tx, Changeset{Model: gorm.Model{ID: toApply.ID}}, Changeset{SupersededAt: &now}, user, false)
+				_, err = s.Edit(tx, Changeset{Model: gorm.Model{ID: toApply.ID}}, Changeset{SupersededAt: &now}, user, false)
 				if err != nil {
 					log.Error().Err(err).Msgf("couldn't retroactively mark Changeset %d as superseded", toApply.ID)
 				}
@@ -211,25 +211,25 @@ func (s *internalChangesetStore) apply(db *gorm.DB, changesets []Changeset, user
 			// Update the struct fields of what came from the database
 			chartRelease.ChartReleaseVersion = toApply.To
 			// Now save what we have--*all* of it, including zero fields--back into the database
-			chartRelease, err = chartReleaseStore.edit(tx, ChartRelease{Model: gorm.Model{ID: toApply.ChartReleaseID}}, chartRelease, user, true)
+			chartRelease, err = InternalChartReleaseStore.Edit(tx, ChartRelease{Model: gorm.Model{ID: toApply.ChartReleaseID}}, chartRelease, user, true)
 			if err != nil {
 				return fmt.Errorf("apply error on %T %d (ID: %d): failed to modify %T (ID: %d): %v", changeset, index+1, toApply.ID, chartRelease, toApply.ChartReleaseID, err)
 			}
 			// Forcibly include AppliedAt and SupersededAt in the match criteria so we only find things where both of those
 			// fields are empty.
-			consumedChangesets, err := s.listAllMatchingByUpdated(tx, 0, Changeset{ChartReleaseID: toApply.ChartReleaseID}, "ChartReleaseID", "AppliedAt", "SupersededAt")
+			consumedChangesets, err := s.ListAllMatchingByUpdated(tx, 0, Changeset{ChartReleaseID: toApply.ChartReleaseID}, "ChartReleaseID", "AppliedAt", "SupersededAt")
 			if err != nil {
 				return fmt.Errorf("post-apply error on %T %d (ID: %d): couldn't query consumed %T: %v", changeset, index+1, toApply.ID, changeset, err)
 			}
 			for _, consumedChangeset := range consumedChangesets {
 				if consumedChangeset.ID == toApply.ID {
-					applied, err := s.edit(tx, Changeset{Model: gorm.Model{ID: consumedChangeset.ID}}, Changeset{AppliedAt: &chartRelease.UpdatedAt}, user, false)
+					applied, err := s.Edit(tx, Changeset{Model: gorm.Model{ID: consumedChangeset.ID}}, Changeset{AppliedAt: &chartRelease.UpdatedAt}, user, false)
 					if err != nil {
 						return fmt.Errorf("post-apply error on %T %d (ID: %d): couldn't mark it as applied: %v", changeset, index+1, toApply.ID, err)
 					}
 					ret = append(ret, applied)
 				} else {
-					_, err := s.edit(tx, Changeset{Model: gorm.Model{ID: consumedChangeset.ID}}, Changeset{SupersededAt: &chartRelease.UpdatedAt}, user, false)
+					_, err := s.Edit(tx, Changeset{Model: gorm.Model{ID: consumedChangeset.ID}}, Changeset{SupersededAt: &chartRelease.UpdatedAt}, user, false)
 					if err != nil {
 						return fmt.Errorf("post-apply error on %T %d (ID: %d): couldn't mark superseded %T (ID: %d) as superseded: %v", changeset, index+1, toApply.ID, changeset, consumedChangeset.ID, err)
 					}
@@ -257,7 +257,7 @@ func (s *internalChangesetStore) apply(db *gorm.DB, changesets []Changeset, user
 		}
 
 		for environmentID, chartReleaseNames := range environmentReleases {
-			environment, err := environmentStore.get(db, Environment{Model: gorm.Model{ID: environmentID}})
+			environment, err := InternalEnvironmentStore.Get(db, Environment{Model: gorm.Model{ID: environmentID}})
 			if err == nil && environment.PagerdutyIntegration != nil && environment.PagerdutyIntegration.Key != nil {
 				go pagerduty.SendChangeSwallowErrors(
 					*environment.PagerdutyIntegration.Key,

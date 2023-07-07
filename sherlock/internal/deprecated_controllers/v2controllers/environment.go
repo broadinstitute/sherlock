@@ -2,10 +2,10 @@ package v2controllers
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/sherlock/internal/auth/auth_models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models/environment"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/utils"
 	"github.com/rs/zerolog/log"
 	"math/rand"
@@ -244,7 +244,7 @@ func modelEnvironmentToEnvironment(model *v2models.Environment) *Environment {
 // setEnvironmentDynamicDefaults doesn't need to worry about validation, nor does it need to worry about any
 // static defaults defined in struct tags. The model handles validation, and the caller will handle struct tags
 // after this function runs.
-func setEnvironmentDynamicDefaults(environment *CreatableEnvironment, stores *v2models.StoreSet, user *auth_models.User) error {
+func setEnvironmentDynamicDefaults(environment *CreatableEnvironment, stores *v2models.StoreSet, user *models.User) error {
 	if environment.TemplateEnvironment != "" {
 		templateEnvironment, err := stores.EnvironmentStore.Get(environment.TemplateEnvironment)
 		if err != nil {

@@ -6,7 +6,6 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
 	"testing"
 
-	"github.com/broadinstitute/sherlock/sherlock/internal/auth"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/testutils"
@@ -115,7 +114,7 @@ var (
 
 func (controllerSet *ControllerSet) seedCharts(t *testing.T, db *gorm.DB) {
 	for _, creatable := range chartSeedList {
-		if _, _, err := controllerSet.ChartController.Create(creatable, auth.GenerateUser(t, db, false)); err != nil {
+		if _, _, err := controllerSet.ChartController.Create(creatable, generateUser(t, db, false)); err != nil {
 			t.Errorf("error seeding chart %s: %v", creatable.Name, err)
 		}
 	}
@@ -129,7 +128,7 @@ func (suite *chartControllerSuite) TestChartCreate() {
 	suite.Run("can create a new chart", func() {
 		deprecated_db.Truncate(suite.T(), suite.db)
 
-		chart, created, err := suite.ChartController.Create(leonardoChart, auth.GenerateUser(suite.T(), suite.db, false))
+		chart, created, err := suite.ChartController.Create(leonardoChart, generateUser(suite.T(), suite.db, false))
 		assert.NoError(suite.T(), err)
 		assert.True(suite.T(), created)
 		assert.Equal(suite.T(), leonardoChart.Name, chart.Name)
@@ -153,7 +152,7 @@ func (suite *chartControllerSuite) TestChartCreate() {
 	suite.Run("chart repo can be customized", func() {
 		deprecated_db.Truncate(suite.T(), suite.db)
 
-		chart, created, err := suite.ChartController.Create(datarepoChart, auth.GenerateUser(suite.T(), suite.db, false))
+		chart, created, err := suite.ChartController.Create(datarepoChart, generateUser(suite.T(), suite.db, false))
 		assert.NoError(suite.T(), err)
 		assert.True(suite.T(), created)
 		assert.Equal(suite.T(), datarepoChart.ChartRepo, chart.ChartRepo)
@@ -161,18 +160,18 @@ func (suite *chartControllerSuite) TestChartCreate() {
 	suite.Run("won't create duplicates", func() {
 		deprecated_db.Truncate(suite.T(), suite.db)
 
-		chart, created, err := suite.ChartController.Create(leonardoChart, auth.GenerateUser(suite.T(), suite.db, false))
+		chart, created, err := suite.ChartController.Create(leonardoChart, generateUser(suite.T(), suite.db, false))
 		assert.NoError(suite.T(), err)
 		assert.True(suite.T(), created)
 		assert.True(suite.T(), chart.ID > 0)
-		_, created, err = suite.ChartController.Create(leonardoChart, auth.GenerateUser(suite.T(), suite.db, false))
+		_, created, err = suite.ChartController.Create(leonardoChart, generateUser(suite.T(), suite.db, false))
 		assert.ErrorContains(suite.T(), err, errors.Conflict)
 		assert.False(suite.T(), created)
 	})
 	suite.Run("validates incoming entries", func() {
 		deprecated_db.Truncate(suite.T(), suite.db)
 
-		_, created, err := suite.ChartController.Create(CreatableChart{}, auth.GenerateUser(suite.T(), suite.db, false))
+		_, created, err := suite.ChartController.Create(CreatableChart{}, generateUser(suite.T(), suite.db, false))
 		assert.ErrorContains(suite.T(), err, errors.BadRequest)
 		assert.False(suite.T(), created)
 	})
@@ -276,7 +275,7 @@ func (suite *chartControllerSuite) TestChartEdit() {
 		assert.Empty(suite.T(), before.Description)
 		assert.Empty(suite.T(), before.PlaybookURL)
 		newValue := testutils.PointerTo("new")
-		edited, err := suite.ChartController.Edit(yaleChart.Name, EditableChart{AppImageGitMainBranch: newValue, Description: newValue, PlaybookURL: newValue}, auth.GenerateUser(suite.T(), suite.db, false))
+		edited, err := suite.ChartController.Edit(yaleChart.Name, EditableChart{AppImageGitMainBranch: newValue, Description: newValue, PlaybookURL: newValue}, generateUser(suite.T(), suite.db, false))
 		assert.NoError(suite.T(), err)
 		assert.Equal(suite.T(), newValue, edited.AppImageGitMainBranch)
 		assert.Equal(suite.T(), newValue, edited.Description)
@@ -291,7 +290,7 @@ func (suite *chartControllerSuite) TestChartEdit() {
 		deprecated_db.Truncate(suite.T(), suite.db)
 		suite.seedCharts(suite.T(), suite.db)
 
-		_, err := suite.ChartController.Edit(yaleLibChart.Name, EditableChart{ChartRepo: testutils.PointerTo("")}, auth.GenerateUser(suite.T(), suite.db, false))
+		_, err := suite.ChartController.Edit(yaleLibChart.Name, EditableChart{ChartRepo: testutils.PointerTo("")}, generateUser(suite.T(), suite.db, false))
 		assert.ErrorContains(suite.T(), err, errors.BadRequest)
 	})
 }
@@ -301,13 +300,13 @@ func (suite *chartControllerSuite) TestChartDelete() {
 		deprecated_db.Truncate(suite.T(), suite.db)
 		suite.seedCharts(suite.T(), suite.db)
 
-		deleted, err := suite.ChartController.Delete(leonardoChart.Name, auth.GenerateUser(suite.T(), suite.db, false))
+		deleted, err := suite.ChartController.Delete(leonardoChart.Name, generateUser(suite.T(), suite.db, false))
 		assert.NoError(suite.T(), err)
 		assert.Equal(suite.T(), leonardoChart.Name, deleted.Name)
 		_, err = suite.ChartController.Get(leonardoChart.Name)
 		assert.ErrorContains(suite.T(), err, errors.NotFound)
 		suite.Run("sql constraints ignore soft deletion", func() {
-			_, created, err := suite.ChartController.Create(leonardoChart, auth.GenerateUser(suite.T(), suite.db, false))
+			_, created, err := suite.ChartController.Create(leonardoChart, generateUser(suite.T(), suite.db, false))
 			assert.ErrorContains(suite.T(), err, errors.BadRequest)
 			assert.ErrorContains(suite.T(), err, "Contact DevOps")
 			assert.False(suite.T(), created)

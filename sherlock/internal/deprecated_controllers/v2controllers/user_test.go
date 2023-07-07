@@ -1,10 +1,9 @@
 package v2controllers
 
 import (
-	"github.com/broadinstitute/sherlock/sherlock/internal/auth"
-	"github.com/broadinstitute/sherlock/sherlock/internal/auth/auth_models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_db"
+	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/auth_models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/testutils"
@@ -42,13 +41,15 @@ func (suite *userControllerSuite) TearDownTest() {
 	suite.db.Rollback()
 }
 
+// TODO (Jack): This test is particularly bad now during the refactoring, to the point that we potentially want to refactor User sooner rather than later.
+
 func (suite *userControllerSuite) TestUserFlow() {
 	deprecated_db.Truncate(suite.T(), suite.db)
 
 	// It's impossible to create a user via a controller. The creation type doesn't support some required fields.
 	// The model also won't allow a normally-authenticated user to make a user entry (it only allows creation when the
 	// auth user is nil) but we can't reach that error case from here (see v2models/user_test.go for unit tests)
-	_, created, err := suite.UserController.Create(CreatableUser{}, auth.GenerateUser(suite.T(), suite.db, true))
+	_, created, err := suite.UserController.Create(CreatableUser{}, generateUser(suite.T(), suite.db, true))
 	assert.ErrorContains(suite.T(), err, errors.BadRequest)
 	assert.False(suite.T(), created)
 	// The controller does check that we can't pass a nil user, so the model's creation method isn't accessible via
@@ -58,7 +59,7 @@ func (suite *userControllerSuite) TestUserFlow() {
 	assert.False(suite.T(), created)
 
 	// Instead, the middleware may use its MiddlewareUserStore to get or create a user.
-	generatedUser := auth.GenerateUser(suite.T(), suite.db, false)
+	generatedUser := generateUser(suite.T(), suite.db, false)
 	modelUser, err := suite.middleware.GetOrCreateUser(generatedUser.Email, generatedUser.GoogleID)
 	assert.NoError(suite.T(), err)
 	assert.Equal(suite.T(), generatedUser.Email, modelUser.Email)
@@ -82,7 +83,10 @@ func (suite *userControllerSuite) TestUserFlow() {
 	// Let's assume that we're firmly in a subsequent request now--each one will load the user out of the database,
 	// so we'll patch up the object we're using like that had happened.
 	generatedUser.ID = modelUser.ID
-	generatedUser.StoredControlledUserFields = modelUser.StoredControlledUserFields
+	generatedUser.Email = modelUser.StoredControlledUserFields.Email
+	generatedUser.GoogleID = modelUser.StoredControlledUserFields.GoogleID
+	generatedUser.GithubUsername = modelUser.StoredControlledUserFields.GithubUsername
+	generatedUser.GithubID = modelUser.StoredControlledUserFields.GithubID
 
 	// The user can be read back out via the controller once it's created.
 	controllerUser, err := suite.UserController.Get(modelUser.Email)
@@ -100,7 +104,8 @@ func (suite *userControllerSuite) TestUserFlow() {
 	suite.Run("listing works", func() {
 		results, err := suite.UserController.ListAllMatching(User{}, 0)
 		assert.NoError(suite.T(), err)
-		assert.Len(suite.T(), results, 3)
+		// what we added plus the suitable and nonsuitable test users
+		assert.Len(suite.T(), results, 4)
 		assert.Contains(suite.T(), results, controllerUser)
 	})
 
@@ -134,7 +139,10 @@ func (suite *userControllerSuite) TestUserFlow() {
 	assert.Equal(suite.T(), controllerUser.ID, controllerUserWithGithub.ID)
 
 	// Just for test purposes, we'll patch up the auth user object again
-	generatedUser.StoredControlledUserFields = controllerUserWithGithub.StoredControlledUserFields
+	generatedUser.Email = controllerUserWithGithub.StoredControlledUserFields.Email
+	generatedUser.GoogleID = controllerUserWithGithub.StoredControlledUserFields.GoogleID
+	generatedUser.GithubUsername = controllerUserWithGithub.StoredControlledUserFields.GithubUsername
+	generatedUser.GithubID = controllerUserWithGithub.StoredControlledUserFields.GithubID
 
 	// Once the user has github info, then the middleware's shortcut to read it will return non nil:
 	suite.Run("shortcut works", func() {
@@ -166,7 +174,8 @@ func (suite *userControllerSuite) TestUserFlow() {
 	assert.Equal(suite.T(), generatedUserGithubName, *controllerUserWithGithub.Name)
 
 	// This would also get pulled in again upon a new request.
-	generatedUser.StoredMutableUserFields = controllerUserWithGithub.StoredMutableUserFields
+	generatedUser.Name = controllerUserWithGithub.StoredMutableUserFields.Name
+	generatedUser.NameInferredFromGithub = controllerUserWithGithub.StoredMutableUserFields.NameInferredFromGithub
 
 	// Consecutive calls still read only (there was a bug here once, hence the weirdly specific test).
 	suite.Run("subsequent github record calls with name just read", func() {
@@ -191,7 +200,8 @@ func (suite *userControllerSuite) TestUserFlow() {
 	assert.True(suite.T(), updated)
 	assert.Equal(suite.T(), controllerUser.ID, controllerUserWithGithub.ID)
 	assert.Equal(suite.T(), otherName, *controllerUserWithGithub.Name)
-	generatedUser.StoredMutableUserFields = controllerUserWithGithub.StoredMutableUserFields
+	generatedUser.Name = controllerUserWithGithub.StoredMutableUserFields.Name
+	generatedUser.NameInferredFromGithub = controllerUserWithGithub.StoredMutableUserFields.NameInferredFromGithub
 
 	// But it'll get updated by github still...
 	controllerUserWithGithub, updated, err = suite.UserController.recordGithubInformation(githubPayload, generatedUser)
@@ -199,7 +209,8 @@ func (suite *userControllerSuite) TestUserFlow() {
 	assert.True(suite.T(), updated)
 	assert.Equal(suite.T(), controllerUser.ID, controllerUserWithGithub.ID)
 	assert.Equal(suite.T(), generatedUserGithubName, *controllerUserWithGithub.Name)
-	generatedUser.StoredMutableUserFields = controllerUserWithGithub.StoredMutableUserFields
+	generatedUser.Name = controllerUserWithGithub.StoredMutableUserFields.Name
+	generatedUser.NameInferredFromGithub = controllerUserWithGithub.StoredMutableUserFields.NameInferredFromGithub
 
 	// So there's an API flag to choose whether github will update it:
 	controllerUserWithGithub, err = suite.UserController.Edit(generatedUser.Email, EditableUser{
@@ -212,13 +223,15 @@ func (suite *userControllerSuite) TestUserFlow() {
 	assert.True(suite.T(), updated)
 	assert.Equal(suite.T(), controllerUser.ID, controllerUserWithGithub.ID)
 	assert.Equal(suite.T(), otherName, *controllerUserWithGithub.Name)
-	generatedUser.StoredMutableUserFields = controllerUserWithGithub.StoredMutableUserFields
+	generatedUser.Name = controllerUserWithGithub.StoredMutableUserFields.Name
+	generatedUser.NameInferredFromGithub = controllerUserWithGithub.StoredMutableUserFields.NameInferredFromGithub
 	controllerUserWithGithub, updated, err = suite.UserController.recordGithubInformation(githubPayload, generatedUser)
 	assert.NoError(suite.T(), err)
 	assert.False(suite.T(), updated)
 	assert.Equal(suite.T(), controllerUser.ID, controllerUserWithGithub.ID)
 	assert.Equal(suite.T(), otherName, *controllerUserWithGithub.Name)
-	generatedUser.StoredMutableUserFields = controllerUserWithGithub.StoredMutableUserFields
+	generatedUser.Name = controllerUserWithGithub.StoredMutableUserFields.Name
+	generatedUser.NameInferredFromGithub = controllerUserWithGithub.StoredMutableUserFields.NameInferredFromGithub
 
 	// Editing is guarded at a permissions level, stopping people from modifying each other's accounts.
 	_, err = suite.UserController.Edit(thingOneUser.Email, EditableUser{

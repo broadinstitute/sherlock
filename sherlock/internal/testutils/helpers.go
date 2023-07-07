@@ -1,9 +1,7 @@
 package testutils
 
 import (
-	"github.com/gin-gonic/gin"
 	"github.com/google/go-cmp/cmp"
-	"net/http/httptest"
 	"testing"
 )
 
@@ -13,14 +11,6 @@ import (
 const (
 	StringNumberTooBigForInt = "9999999999999999999999999999"
 )
-
-func SetupTestContext() (*gin.Context, *httptest.ResponseRecorder) {
-	response := httptest.NewRecorder()
-	gin.SetMode(gin.TestMode)
-	c, _ := gin.CreateTestContext(response)
-
-	return c, response
-}
 
 func AssertNoDiff(t *testing.T, want any, got any) {
 	t.Helper()

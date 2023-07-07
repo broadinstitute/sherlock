@@ -2,7 +2,7 @@ package v2models
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/sherlock/internal/auth/auth_models"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"gorm.io/gorm"
 )
 
@@ -12,56 +12,32 @@ type Model interface {
 }
 
 type ModelStore[M Model] struct {
-	db *gorm.DB
-	*internalModelStore[M]
+	db       *gorm.DB
+	internal *internalModelStore[M]
 }
 
-func (s ModelStore[M]) Create(model M, user *auth_models.User) (M, bool, error) {
-	return s.create(s.db, model, user)
+func (s ModelStore[M]) Create(model M, user *models.User) (M, bool, error) {
+	return s.internal.Create(s.db, model, user)
 }
 
 func (s ModelStore[M]) ListAllMatchingByUpdated(filter M, limit int) ([]M, error) {
-	return s.listAllMatchingByUpdated(s.db, limit, &filter)
+	return s.internal.ListAllMatchingByUpdated(s.db, limit, &filter)
 }
 
 func (s ModelStore[M]) ListAllMatchingByCreated(filter M, limit int) ([]M, error) {
-	return s.listAllMatchingByCreated(s.db, limit, &filter)
+	return s.internal.ListAllMatchingByCreated(s.db, limit, &filter)
 }
 
 func (s ModelStore[M]) Get(selector string) (M, error) {
-	query, err := s.selectorToQueryModel(s.db, selector)
-	if err != nil {
-		return query, fmt.Errorf("query error parsing %T selector '%s': %v", query, selector, err)
-	}
-	ret, err := s.get(s.db, query)
-	if err != nil {
-		return query, fmt.Errorf("query error using %T selector '%s': %v", query, selector, err)
-	}
-	return ret, nil
+	return s.internal.GetBySelector(s.db, selector)
 }
 
-func (s ModelStore[M]) Edit(selector string, editsToMake M, user *auth_models.User) (M, error) {
-	query, err := s.selectorToQueryModel(s.db, selector)
-	if err != nil {
-		return query, fmt.Errorf("query error parsing %T selector '%s': %v", query, selector, err)
-	}
-	ret, err := s.edit(s.db, query, editsToMake, user, false)
-	if err != nil {
-		return query, fmt.Errorf("edit error using %T selector '%s': %v", query, selector, err)
-	}
-	return ret, nil
+func (s ModelStore[M]) Edit(selector string, editsToMake M, user *models.User) (M, error) {
+	return s.internal.EditBySelector(s.db, selector, editsToMake, user)
 }
 
-func (s ModelStore[M]) Delete(selector string, user *auth_models.User) (M, error) {
-	query, err := s.selectorToQueryModel(s.db, selector)
-	if err != nil {
-		return query, fmt.Errorf("query error parsing %T selector '%s': %v", query, selector, err)
-	}
-	ret, err := s.delete(s.db, query, user)
-	if err != nil {
-		return query, fmt.Errorf("delete error using %T selector '%s': %v", query, selector, err)
-	}
-	return ret, nil
+func (s ModelStore[M]) Delete(selector string, user *models.User) (M, error) {
+	return s.internal.DeleteBySelector(s.db, selector, user)
 }
 
 // GetOtherValidSelectors is basically just a human debug method. Different model types have different selectors to try
@@ -74,5 +50,5 @@ func (s ModelStore[M]) GetOtherValidSelectors(selector string) ([]string, error)
 	if err != nil {
 		return []string{}, fmt.Errorf("query error parsing %T selector '%s': %v", query, selector, err)
 	}
-	return s.modelToSelectors(&query), nil
+	return s.internal.modelToSelectors(&query), nil
 }

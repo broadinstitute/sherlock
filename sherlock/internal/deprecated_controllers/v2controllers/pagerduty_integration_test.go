@@ -2,7 +2,6 @@ package v2controllers
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/sherlock/internal/auth"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_db"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
@@ -71,7 +70,7 @@ var (
 
 func (controllerSet *ControllerSet) seedPagerdutyIntegrations(t *testing.T, db *gorm.DB) {
 	for _, creatable := range pagerdutyIntgrationSeedList {
-		if _, _, err := controllerSet.PagerdutyIntegrationController.Create(creatable, auth.GenerateUser(t, db, true)); err != nil {
+		if _, _, err := controllerSet.PagerdutyIntegrationController.Create(creatable, generateUser(t, db, true)); err != nil {
 			t.Errorf("error seeding pagerduty integration %s: %v", creatable.PagerdutyID, err)
 		}
 	}
@@ -85,7 +84,7 @@ func (suite *pagerdutyIntegrationControllerSuite) TestPagerdutyIntegrationCreate
 	suite.Run("can create new", func() {
 		deprecated_db.Truncate(suite.T(), suite.db)
 
-		pi, created, err := suite.PagerdutyIntegrationController.Create(pagerdutyIntegration1, auth.GenerateUser(suite.T(), suite.db, true))
+		pi, created, err := suite.PagerdutyIntegrationController.Create(pagerdutyIntegration1, generateUser(suite.T(), suite.db, true))
 		assert.NoError(suite.T(), err)
 		assert.True(suite.T(), created)
 		assert.Equal(suite.T(), pagerdutyIntegration1.Name, pi.Name)
@@ -94,7 +93,7 @@ func (suite *pagerdutyIntegrationControllerSuite) TestPagerdutyIntegrationCreate
 	suite.Run("checks suitability", func() {
 		deprecated_db.Truncate(suite.T(), suite.db)
 
-		_, created, err := suite.PagerdutyIntegrationController.Create(pagerdutyIntegration1, auth.GenerateUser(suite.T(), suite.db, false))
+		_, created, err := suite.PagerdutyIntegrationController.Create(pagerdutyIntegration1, generateUser(suite.T(), suite.db, false))
 		assert.ErrorContains(suite.T(), err, errors.Forbidden)
 		assert.False(suite.T(), created)
 	})
@@ -196,7 +195,7 @@ func (suite *pagerdutyIntegrationControllerSuite) TestPagerdutyIntegrationEdit()
 		assert.NoError(suite.T(), err)
 		assert.Equal(suite.T(), pagerdutyIntegration1.Name, before.Name)
 		newName := testutils.PointerTo("new")
-		edited, err := suite.PagerdutyIntegrationController.Edit(fmt.Sprintf("pd-id/%s", pagerdutyIntegration1.PagerdutyID), EditablePagerdutyIntegration{Name: newName}, auth.GenerateUser(suite.T(), suite.db, true))
+		edited, err := suite.PagerdutyIntegrationController.Edit(fmt.Sprintf("pd-id/%s", pagerdutyIntegration1.PagerdutyID), EditablePagerdutyIntegration{Name: newName}, generateUser(suite.T(), suite.db, true))
 		assert.NoError(suite.T(), err)
 		assert.Equal(suite.T(), newName, edited.Name)
 		after, err := suite.PagerdutyIntegrationController.Get(fmt.Sprintf("pd-id/%s", pagerdutyIntegration1.PagerdutyID))
@@ -207,14 +206,14 @@ func (suite *pagerdutyIntegrationControllerSuite) TestPagerdutyIntegrationEdit()
 		deprecated_db.Truncate(suite.T(), suite.db)
 		suite.seedPagerdutyIntegrations(suite.T(), suite.db)
 
-		_, err := suite.PagerdutyIntegrationController.Edit(fmt.Sprintf("pd-id/%s", pagerdutyIntegration1.PagerdutyID), EditablePagerdutyIntegration{Name: testutils.PointerTo("")}, auth.GenerateUser(suite.T(), suite.db, true))
+		_, err := suite.PagerdutyIntegrationController.Edit(fmt.Sprintf("pd-id/%s", pagerdutyIntegration1.PagerdutyID), EditablePagerdutyIntegration{Name: testutils.PointerTo("")}, generateUser(suite.T(), suite.db, true))
 		assert.ErrorContains(suite.T(), err, errors.BadRequest)
 	})
 	suite.Run("unsuccessfully if forbidden", func() {
 		deprecated_db.Truncate(suite.T(), suite.db)
 		suite.seedPagerdutyIntegrations(suite.T(), suite.db)
 
-		_, err := suite.PagerdutyIntegrationController.Edit(fmt.Sprintf("pd-id/%s", pagerdutyIntegration1.PagerdutyID), EditablePagerdutyIntegration{Name: testutils.PointerTo("foo")}, auth.GenerateUser(suite.T(), suite.db, false))
+		_, err := suite.PagerdutyIntegrationController.Edit(fmt.Sprintf("pd-id/%s", pagerdutyIntegration1.PagerdutyID), EditablePagerdutyIntegration{Name: testutils.PointerTo("foo")}, generateUser(suite.T(), suite.db, false))
 		assert.ErrorContains(suite.T(), err, errors.Forbidden)
 	})
 }
@@ -226,14 +225,14 @@ func (suite *pagerdutyIntegrationControllerSuite) TestPagerdutyIntegrationUpsert
 		matches, err := suite.PagerdutyIntegrationController.ListAllMatching(PagerdutyIntegration{}, 0)
 		assert.NoError(suite.T(), err)
 		assert.Empty(suite.T(), matches)
-		put, created, err := suite.PagerdutyIntegrationController.Upsert(fmt.Sprintf("pd-id/%s", pagerdutyIntegration1.PagerdutyID), pagerdutyIntegration1, pagerdutyIntegration1.EditablePagerdutyIntegration, auth.GenerateUser(suite.T(), suite.db, true))
+		put, created, err := suite.PagerdutyIntegrationController.Upsert(fmt.Sprintf("pd-id/%s", pagerdutyIntegration1.PagerdutyID), pagerdutyIntegration1, pagerdutyIntegration1.EditablePagerdutyIntegration, generateUser(suite.T(), suite.db, true))
 		assert.NoError(suite.T(), err)
 		assert.True(suite.T(), created)
 		assert.Equal(suite.T(), pagerdutyIntegration1.Name, put.Name)
 		matches, err = suite.PagerdutyIntegrationController.ListAllMatching(PagerdutyIntegration{}, 0)
 		assert.NoError(suite.T(), err)
 		assert.Len(suite.T(), matches, 1)
-		put, created, err = suite.PagerdutyIntegrationController.Upsert(fmt.Sprintf("pd-id/%s", pagerdutyIntegration1.PagerdutyID), pagerdutyIntegration1, pagerdutyIntegration1.EditablePagerdutyIntegration, auth.GenerateUser(suite.T(), suite.db, true))
+		put, created, err = suite.PagerdutyIntegrationController.Upsert(fmt.Sprintf("pd-id/%s", pagerdutyIntegration1.PagerdutyID), pagerdutyIntegration1, pagerdutyIntegration1.EditablePagerdutyIntegration, generateUser(suite.T(), suite.db, true))
 		assert.NoError(suite.T(), err)
 		assert.False(suite.T(), created)
 		assert.Equal(suite.T(), pagerdutyIntegration1.Name, put.Name)
@@ -249,7 +248,7 @@ func (suite *pagerdutyIntegrationControllerSuite) TestPagerdutyIntegrationUpsert
 				Type: pagerdutyIntegration1.Type,
 			},
 		}
-		put, created, err = suite.PagerdutyIntegrationController.Upsert(fmt.Sprintf("pd-id/%s", pagerdutyIntegration1.PagerdutyID), edited, edited.EditablePagerdutyIntegration, auth.GenerateUser(suite.T(), suite.db, true))
+		put, created, err = suite.PagerdutyIntegrationController.Upsert(fmt.Sprintf("pd-id/%s", pagerdutyIntegration1.PagerdutyID), edited, edited.EditablePagerdutyIntegration, generateUser(suite.T(), suite.db, true))
 		assert.NoError(suite.T(), err)
 		assert.False(suite.T(), created)
 		assert.Equal(suite.T(), newName, put.Name)
@@ -261,7 +260,7 @@ func (suite *pagerdutyIntegrationControllerSuite) TestPagerdutyIntegrationUpsert
 					Name: newName,
 				},
 			}
-			put, created, err = suite.PagerdutyIntegrationController.Upsert(fmt.Sprintf("pd-id/%s", pagerdutyIntegration1.PagerdutyID), editedAgain, editedAgain.EditablePagerdutyIntegration, auth.GenerateUser(suite.T(), suite.db, true))
+			put, created, err = suite.PagerdutyIntegrationController.Upsert(fmt.Sprintf("pd-id/%s", pagerdutyIntegration1.PagerdutyID), editedAgain, editedAgain.EditablePagerdutyIntegration, generateUser(suite.T(), suite.db, true))
 			assert.NoError(suite.T(), err)
 			assert.False(suite.T(), created)
 			assert.Equal(suite.T(), newName, put.Name)
@@ -274,7 +273,7 @@ func (suite *pagerdutyIntegrationControllerSuite) TestPagerdutyIntegrationUpsert
 		matches, err := suite.PagerdutyIntegrationController.ListAllMatching(PagerdutyIntegration{}, 0)
 		assert.NoError(suite.T(), err)
 		assert.Empty(suite.T(), matches)
-		_, created, err := suite.PagerdutyIntegrationController.Upsert(fmt.Sprintf("pd-id/%s", pagerdutyIntegration1.PagerdutyID), pagerdutyIntegration1, pagerdutyIntegration1.EditablePagerdutyIntegration, auth.GenerateUser(suite.T(), suite.db, false))
+		_, created, err := suite.PagerdutyIntegrationController.Upsert(fmt.Sprintf("pd-id/%s", pagerdutyIntegration1.PagerdutyID), pagerdutyIntegration1, pagerdutyIntegration1.EditablePagerdutyIntegration, generateUser(suite.T(), suite.db, false))
 		assert.ErrorContains(suite.T(), err, errors.Forbidden)
 		assert.False(suite.T(), created)
 	})
@@ -285,7 +284,7 @@ func (suite *pagerdutyIntegrationControllerSuite) TestPagerdutyIntegrationDelete
 		deprecated_db.Truncate(suite.T(), suite.db)
 		suite.seedPagerdutyIntegrations(suite.T(), suite.db)
 
-		deleted, err := suite.PagerdutyIntegrationController.Delete(fmt.Sprintf("pd-id/%s", pagerdutyIntegration1.PagerdutyID), auth.GenerateUser(suite.T(), suite.db, true))
+		deleted, err := suite.PagerdutyIntegrationController.Delete(fmt.Sprintf("pd-id/%s", pagerdutyIntegration1.PagerdutyID), generateUser(suite.T(), suite.db, true))
 		assert.NoError(suite.T(), err)
 		assert.Equal(suite.T(), pagerdutyIntegration1.PagerdutyID, deleted.PagerdutyID)
 		_, err = suite.PagerdutyIntegrationController.Get(fmt.Sprintf("pd-id/%s", pagerdutyIntegration1.PagerdutyID))
@@ -295,7 +294,7 @@ func (suite *pagerdutyIntegrationControllerSuite) TestPagerdutyIntegrationDelete
 		deprecated_db.Truncate(suite.T(), suite.db)
 		suite.seedPagerdutyIntegrations(suite.T(), suite.db)
 
-		_, err := suite.PagerdutyIntegrationController.Delete(fmt.Sprintf("pd-id/%s", pagerdutyIntegration1.PagerdutyID), auth.GenerateUser(suite.T(), suite.db, false))
+		_, err := suite.PagerdutyIntegrationController.Delete(fmt.Sprintf("pd-id/%s", pagerdutyIntegration1.PagerdutyID), generateUser(suite.T(), suite.db, false))
 		assert.ErrorContains(suite.T(), err, errors.Forbidden)
 	})
 }

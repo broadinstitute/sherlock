@@ -359,7 +359,7 @@ func UpdateMetrics(ctx context.Context, db *gorm.DB) error {
 		return err
 	}
 
-	charts, err := chartStore.listAllMatchingByUpdated(db, 0, &Chart{})
+	charts, err := InternalChartStore.ListAllMatchingByUpdated(db, 0, &Chart{})
 	if err != nil {
 		return err
 	}
@@ -392,7 +392,7 @@ func UpdateMetrics(ctx context.Context, db *gorm.DB) error {
 			stats.Record(ctx, metrics.AppVersionCountMeasure.M(count))
 		}
 
-		chartReleases, err := chartReleaseStore.listAllMatchingByUpdated(db, 0, &ChartRelease{ChartID: chart.ID})
+		chartReleases, err := InternalChartReleaseStore.ListAllMatchingByUpdated(db, 0, &ChartRelease{ChartID: chart.ID})
 		if err != nil {
 			return err
 		}

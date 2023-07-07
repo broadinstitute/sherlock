@@ -1,8 +1,8 @@
 package v2controllers
 
 import (
-	"github.com/broadinstitute/sherlock/sherlock/internal/auth/auth_models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"gorm.io/gorm"
 )
 
@@ -103,7 +103,7 @@ func modelChartToChart(model *v2models.Chart) *Chart {
 	}
 }
 
-func setChartDynamicDefaults(chart *CreatableChart, _ *v2models.StoreSet, _ *auth_models.User) error {
+func setChartDynamicDefaults(chart *CreatableChart, _ *v2models.StoreSet, _ *models.User) error {
 	if chart.DefaultSubdomain == nil {
 		chart.DefaultSubdomain = &chart.Name
 	}

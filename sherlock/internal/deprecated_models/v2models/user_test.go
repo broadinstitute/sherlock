@@ -1,8 +1,10 @@
 package v2models
 
 import (
-	"github.com/broadinstitute/sherlock/sherlock/internal/auth/auth_models"
+	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/authentication_method"
+	auth_models2 "github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/auth_models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/model_actions"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/testutils"
 	"gorm.io/gorm"
 	"testing"
@@ -41,22 +43,22 @@ func Test_userSelectorToQuery(t *testing.T) {
 		{
 			name: "email",
 			args: args{selector: "foo@bar.com"},
-			want: User{StoredControlledUserFields: auth_models.StoredControlledUserFields{Email: "foo@bar.com"}},
+			want: User{StoredControlledUserFields: auth_models2.StoredControlledUserFields{Email: "foo@bar.com"}},
 		},
 		{
 			name: "google subject id",
 			args: args{selector: "google-id/blah"},
-			want: User{StoredControlledUserFields: auth_models.StoredControlledUserFields{GoogleID: "blah"}},
+			want: User{StoredControlledUserFields: auth_models2.StoredControlledUserFields{GoogleID: "blah"}},
 		},
 		{
 			name: "github username",
 			args: args{selector: "github/blah"},
-			want: User{StoredControlledUserFields: auth_models.StoredControlledUserFields{GithubUsername: testutils.PointerTo("blah")}},
+			want: User{StoredControlledUserFields: auth_models2.StoredControlledUserFields{GithubUsername: testutils.PointerTo("blah")}},
 		},
 		{
 			name: "github id",
 			args: args{selector: "github-id/blah"},
-			want: User{StoredControlledUserFields: auth_models.StoredControlledUserFields{GithubID: testutils.PointerTo("blah")}},
+			want: User{StoredControlledUserFields: auth_models2.StoredControlledUserFields{GithubID: testutils.PointerTo("blah")}},
 		},
 	}
 	for _, tt := range tests {
@@ -94,7 +96,7 @@ func Test_userToSelectors(t *testing.T) {
 			name: "id, google id",
 			args: args{user: &User{
 				Model: gorm.Model{ID: 123},
-				StoredControlledUserFields: auth_models.StoredControlledUserFields{
+				StoredControlledUserFields: auth_models2.StoredControlledUserFields{
 					GoogleID: "some google id here",
 				},
 			}},
@@ -104,7 +106,7 @@ func Test_userToSelectors(t *testing.T) {
 			name: "id, email",
 			args: args{user: &User{
 				Model: gorm.Model{ID: 123},
-				StoredControlledUserFields: auth_models.StoredControlledUserFields{
+				StoredControlledUserFields: auth_models2.StoredControlledUserFields{
 					Email: "fake@example.com",
 				},
 			}},
@@ -114,7 +116,7 @@ func Test_userToSelectors(t *testing.T) {
 			name: "id, email, google id",
 			args: args{user: &User{
 				Model: gorm.Model{ID: 123},
-				StoredControlledUserFields: auth_models.StoredControlledUserFields{
+				StoredControlledUserFields: auth_models2.StoredControlledUserFields{
 					Email:    "fake@example.com",
 					GoogleID: "some google id here",
 				},
@@ -125,7 +127,7 @@ func Test_userToSelectors(t *testing.T) {
 			name: "id, email, google id, github id",
 			args: args{user: &User{
 				Model: gorm.Model{ID: 123},
-				StoredControlledUserFields: auth_models.StoredControlledUserFields{
+				StoredControlledUserFields: auth_models2.StoredControlledUserFields{
 					Email:    "fake@example.com",
 					GoogleID: "some google id here",
 					GithubID: testutils.PointerTo("some github id here"),
@@ -137,7 +139,7 @@ func Test_userToSelectors(t *testing.T) {
 			name: "id, email, google id, github",
 			args: args{user: &User{
 				Model: gorm.Model{ID: 123},
-				StoredControlledUserFields: auth_models.StoredControlledUserFields{
+				StoredControlledUserFields: auth_models2.StoredControlledUserFields{
 					Email:          "fake@example.com",
 					GoogleID:       "some google id here",
 					GithubUsername: testutils.PointerTo("fake-github"),
@@ -149,7 +151,7 @@ func Test_userToSelectors(t *testing.T) {
 			name: "id, email, google id, github, github id",
 			args: args{user: &User{
 				Model: gorm.Model{ID: 123},
-				StoredControlledUserFields: auth_models.StoredControlledUserFields{
+				StoredControlledUserFields: auth_models2.StoredControlledUserFields{
 					Email:          "fake@example.com",
 					GoogleID:       "some google id here",
 					GithubUsername: testutils.PointerTo("fake-github"),
@@ -171,7 +173,7 @@ func Test_userErrorIfForbidden(t *testing.T) {
 	type args struct {
 		modelUser *User
 		action    model_actions.ActionType
-		user      *auth_models.User
+		user      *models.User
 	}
 	tests := []struct {
 		name    string
@@ -183,7 +185,7 @@ func Test_userErrorIfForbidden(t *testing.T) {
 			args: args{
 				modelUser: nil,
 				action:    model_actions.CREATE,
-				user:      &auth_models.User{},
+				user:      &models.User{},
 			},
 			wantErr: true,
 		},
@@ -200,65 +202,25 @@ func Test_userErrorIfForbidden(t *testing.T) {
 			name: "edit disallowed if emails don't match",
 			args: args{
 				modelUser: &User{
-					StoredControlledUserFields: auth_models.StoredControlledUserFields{
+					StoredControlledUserFields: auth_models2.StoredControlledUserFields{
 						Email: "foo@example.com",
 					},
 				},
 				action: model_actions.EDIT,
-				user: &auth_models.User{
-					StoredControlledUserFields: auth_models.StoredControlledUserFields{
-						Email: "bar@example.com",
-					},
-					AuthMethod: auth_models.AuthMethodIAP,
-				},
+				user:   &models.User{Email: "bar@example.com", AuthenticationMethod: authentication_method.TEST},
 			},
 			wantErr: true,
 		},
 		{
-			name: "edit disallowed if GHA involved",
+			name: "edit disallowed if surprising auth method involved",
 			args: args{
 				modelUser: &User{
-					StoredControlledUserFields: auth_models.StoredControlledUserFields{
+					StoredControlledUserFields: auth_models2.StoredControlledUserFields{
 						Email: "foo@example.com",
 					},
 				},
 				action: model_actions.EDIT,
-				user: &auth_models.User{
-					StoredControlledUserFields: auth_models.StoredControlledUserFields{
-						Email: "foo@example.com",
-					},
-					AuthMethod: auth_models.AuthMethodGHA,
-					Via: &auth_models.User{
-						StoredControlledUserFields: auth_models.StoredControlledUserFields{
-							Email: "foo@example.com",
-						},
-						AuthMethod: auth_models.AuthMethodIAP,
-					},
-				},
-			},
-			wantErr: true,
-		},
-		{
-			name: "edit disallowed if GHA involved, other order",
-			args: args{
-				modelUser: &User{
-					StoredControlledUserFields: auth_models.StoredControlledUserFields{
-						Email: "foo@example.com",
-					},
-				},
-				action: model_actions.EDIT,
-				user: &auth_models.User{
-					StoredControlledUserFields: auth_models.StoredControlledUserFields{
-						Email: "foo@example.com",
-					},
-					AuthMethod: auth_models.AuthMethodIAP,
-					Via: &auth_models.User{
-						StoredControlledUserFields: auth_models.StoredControlledUserFields{
-							Email: "foo@example.com",
-						},
-						AuthMethod: auth_models.AuthMethodGHA,
-					},
-				},
+				user:   &models.User{Email: "foo@example.com", AuthenticationMethod: authentication_method.UNKNOWN},
 			},
 			wantErr: true,
 		},
@@ -266,17 +228,12 @@ func Test_userErrorIfForbidden(t *testing.T) {
 			name: "edit allowed",
 			args: args{
 				modelUser: &User{
-					StoredControlledUserFields: auth_models.StoredControlledUserFields{
+					StoredControlledUserFields: auth_models2.StoredControlledUserFields{
 						Email: "foo@example.com",
 					},
 				},
 				action: model_actions.EDIT,
-				user: &auth_models.User{
-					StoredControlledUserFields: auth_models.StoredControlledUserFields{
-						Email: "foo@example.com",
-					},
-					AuthMethod: auth_models.AuthMethodIAP,
-				},
+				user:   &models.User{Email: "foo@example.com", AuthenticationMethod: authentication_method.TEST},
 			},
 			wantErr: false,
 		},
@@ -284,17 +241,12 @@ func Test_userErrorIfForbidden(t *testing.T) {
 			name: "delete always not allowed",
 			args: args{
 				modelUser: &User{
-					StoredControlledUserFields: auth_models.StoredControlledUserFields{
+					StoredControlledUserFields: auth_models2.StoredControlledUserFields{
 						Email: "foo@example.com",
 					},
 				},
 				action: model_actions.DELETE,
-				user: &auth_models.User{
-					StoredControlledUserFields: auth_models.StoredControlledUserFields{
-						Email: "foo@example.com",
-					},
-					AuthMethod: auth_models.AuthMethodIAP,
-				},
+				user:   &models.User{Email: "foo@example.com", AuthenticationMethod: authentication_method.TEST},
 			},
 			wantErr: true,
 		},
@@ -325,7 +277,7 @@ func Test_validateUser(t *testing.T) {
 		{
 			name: "no email",
 			args: args{user: &User{
-				StoredControlledUserFields: auth_models.StoredControlledUserFields{
+				StoredControlledUserFields: auth_models2.StoredControlledUserFields{
 					GoogleID: "some id here",
 				},
 			}},
@@ -334,7 +286,7 @@ func Test_validateUser(t *testing.T) {
 		{
 			name: "bad email",
 			args: args{user: &User{
-				StoredControlledUserFields: auth_models.StoredControlledUserFields{
+				StoredControlledUserFields: auth_models2.StoredControlledUserFields{
 					Email:    "fake",
 					GoogleID: "some id here",
 				},
@@ -344,7 +296,7 @@ func Test_validateUser(t *testing.T) {
 		{
 			name: "no google id",
 			args: args{user: &User{
-				StoredControlledUserFields: auth_models.StoredControlledUserFields{
+				StoredControlledUserFields: auth_models2.StoredControlledUserFields{
 					Email: "fake@broadinstitute.org",
 				},
 			}},
@@ -353,7 +305,7 @@ func Test_validateUser(t *testing.T) {
 		{
 			name: "valid without github",
 			args: args{user: &User{
-				StoredControlledUserFields: auth_models.StoredControlledUserFields{
+				StoredControlledUserFields: auth_models2.StoredControlledUserFields{
 					Email:    "fake@broadinstitute.org",
 					GoogleID: "some id here",
 				},
@@ -363,7 +315,7 @@ func Test_validateUser(t *testing.T) {
 		{
 			name: "only half of github",
 			args: args{user: &User{
-				StoredControlledUserFields: auth_models.StoredControlledUserFields{
+				StoredControlledUserFields: auth_models2.StoredControlledUserFields{
 					Email:          "fake@broadinstitute.org",
 					GoogleID:       "some id here",
 					GithubUsername: testutils.PointerTo("blah"),
@@ -374,7 +326,7 @@ func Test_validateUser(t *testing.T) {
 		{
 			name: "the other half of github",
 			args: args{user: &User{
-				StoredControlledUserFields: auth_models.StoredControlledUserFields{
+				StoredControlledUserFields: auth_models2.StoredControlledUserFields{
 					Email:    "fake@broadinstitute.org",
 					GoogleID: "some id here",
 					GithubID: testutils.PointerTo("bleh"),
@@ -385,7 +337,7 @@ func Test_validateUser(t *testing.T) {
 		{
 			name: "valid with github",
 			args: args{user: &User{
-				StoredControlledUserFields: auth_models.StoredControlledUserFields{
+				StoredControlledUserFields: auth_models2.StoredControlledUserFields{
 					Email:          "fake@broadinstitute.org",
 					GoogleID:       "some id here",
 					GithubUsername: testutils.PointerTo("blah"),

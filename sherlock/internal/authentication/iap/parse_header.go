@@ -1,4 +1,4 @@
-package iap_auth
+package iap
 
 import (
 	"fmt"

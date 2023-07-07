@@ -2,9 +2,9 @@ package v2models
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/sherlock/internal/auth/auth_models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/model_actions"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -32,7 +32,7 @@ type internalModelStore[M Model] struct {
 	// errorIfForbidden controls whether a user may perform a certain action on the model instance in question.
 	// If not provided, it is assumed any Sherlock user may perform any action on the model isntance.
 	// The db reference should be used to fully load any associations that are used.
-	errorIfForbidden func(db *gorm.DB, model *M, action model_actions.ActionType, user *auth_models.User) error
+	errorIfForbidden func(db *gorm.DB, model *M, action model_actions.ActionType, user *models.User) error
 	// validateModel lets a type enforce restrictions upon data entry. Associated data will not be present but foreign
 	// keys themselves can be checked. There's no need to validate the grammar of selectors, that can be checked
 	// automatically.
@@ -42,15 +42,15 @@ type internalModelStore[M Model] struct {
 	validateModel func(model *M) error
 	// preCreate is similar to postCreate but it runs before even validation does--before the model has entered the
 	// database at all.
-	preCreate func(db *gorm.DB, toCreate *M, user *auth_models.User) error
+	preCreate func(db *gorm.DB, toCreate *M, user *models.User) error
 	// postCreate lets a type run perform additional actions once the model has been created but before the database
 	// transaction finishes. Errors returned by this function will roll back the entire transaction.
-	postCreate func(db *gorm.DB, created *M, user *auth_models.User) error
+	postCreate func(db *gorm.DB, created *M, user *models.User) error
 	// preEdit is like preCreate but for, well, edits.
-	preEdit func(db *gorm.DB, toEdit *M, editsToMake *M, user *auth_models.User) error
+	preEdit func(db *gorm.DB, toEdit *M, editsToMake *M, user *models.User) error
 	// preDeletePostValidate runs after validation right before deletion. Since it runs after validation, it is important
 	// that this function not change toDelete in a way that would require re-validation.
-	preDeletePostValidate func(db *gorm.DB, toDelete *M, user *auth_models.User) error
+	preDeletePostValidate func(db *gorm.DB, toDelete *M, user *models.User) error
 	// handleIncomingDuplicate lets a type determine if an error should actually be thrown when a duplicate is detected
 	// at creation-time. Normally, this is always an error, but if this function is defined and doesn't error, the
 	// database will be unaltered and the existing entry will be returned to the user as the result.
@@ -66,7 +66,7 @@ type internalModelStore[M Model] struct {
 	editsAppendManyToMany map[string]func(edits *M) any
 }
 
-func (s internalModelStore[M]) wrappedErrorIfForbidden(db *gorm.DB, model *M, action model_actions.ActionType, user *auth_models.User) error {
+func (s internalModelStore[M]) wrappedErrorIfForbidden(db *gorm.DB, model *M, action model_actions.ActionType, user *models.User) error {
 	if s.errorIfForbidden == nil {
 		return nil
 	} else if err := s.errorIfForbidden(db, model, action, user); err != nil {
@@ -113,7 +113,7 @@ func (s internalModelStore[M]) enforceSelectorUniqueness(db *gorm.DB, model *M, 
 	return acceptedDuplicate, nil
 }
 
-func (s internalModelStore[M]) create(db *gorm.DB, model M, user *auth_models.User) (M, bool, error) {
+func (s internalModelStore[M]) Create(db *gorm.DB, model M, user *models.User) (M, bool, error) {
 	if s.preCreate != nil {
 		if err := s.preCreate(db, &model, user); err != nil {
 			return model, false, fmt.Errorf("pre-create error: %v", err)
@@ -137,7 +137,7 @@ func (s internalModelStore[M]) create(db *gorm.DB, model M, user *auth_models.Us
 			}
 			return fmt.Errorf("creation error: new %T couldn't be created in the database due to an error: %v", model, err)
 		}
-		result, err := s.get(tx, model)
+		result, err := s.Get(tx, model)
 		if err != nil {
 			return fmt.Errorf("(%s) unexpected creation error: mid-transaction validation on %T failed: %v", errors.InternalServerError, model, err)
 		}
@@ -162,15 +162,15 @@ func (s internalModelStore[M]) create(db *gorm.DB, model M, user *auth_models.Us
 
 // The signature here is really loose so we don't need to go down to the raw db's Where method. The signature exposed
 // outside this package by ModelStore's ListAllMatchingByUpdated is more restrictive.
-func (s internalModelStore[M]) listAllMatchingByUpdated(db *gorm.DB, limit int, query interface{}, args ...interface{}) ([]M, error) {
-	return s.listAllMatchingOrdered(db, limit, "updated_at desc", query, args...)
+func (s internalModelStore[M]) ListAllMatchingByUpdated(db *gorm.DB, limit int, query interface{}, args ...interface{}) ([]M, error) {
+	return s.ListAllMatchingOrdered(db, limit, "updated_at desc", query, args...)
 }
 
-func (s internalModelStore[M]) listAllMatchingByCreated(db *gorm.DB, limit int, query interface{}, args ...interface{}) ([]M, error) {
-	return s.listAllMatchingOrdered(db, limit, "created_at desc", query, args...)
+func (s internalModelStore[M]) ListAllMatchingByCreated(db *gorm.DB, limit int, query interface{}, args ...interface{}) ([]M, error) {
+	return s.ListAllMatchingOrdered(db, limit, "created_at desc", query, args...)
 }
 
-func (s internalModelStore[M]) listAllMatchingOrdered(db *gorm.DB, limit int, order string, query interface{}, args ...interface{}) ([]M, error) {
+func (s internalModelStore[M]) ListAllMatchingOrdered(db *gorm.DB, limit int, order string, query interface{}, args ...interface{}) ([]M, error) {
 	var modelRef M
 	var matching []M
 	tx := db.Model(&modelRef).Where(query, args...).Preload(clause.Associations).Order(order)
@@ -183,7 +183,7 @@ func (s internalModelStore[M]) listAllMatchingOrdered(db *gorm.DB, limit int, or
 	return matching, nil
 }
 
-func (s internalModelStore[M]) getIfExists(db *gorm.DB, query M) (*M, error) {
+func (s internalModelStore[M]) GetIfExists(db *gorm.DB, query M) (*M, error) {
 	var matching []M
 	tx := db.Where(&query).Preload(clause.Associations)
 	if err := tx.Find(&matching).Error; err != nil {
@@ -197,9 +197,9 @@ func (s internalModelStore[M]) getIfExists(db *gorm.DB, query M) (*M, error) {
 	}
 }
 
-func (s internalModelStore[M]) get(db *gorm.DB, query M) (M, error) {
+func (s internalModelStore[M]) Get(db *gorm.DB, query M) (M, error) {
 	var zeroValue M
-	if result, err := s.getIfExists(db, query); err != nil {
+	if result, err := s.GetIfExists(db, query); err != nil {
 		return zeroValue, err
 	} else if result == nil {
 		return zeroValue, fmt.Errorf("no result for query (%s)", errors.NotFound)
@@ -208,8 +208,20 @@ func (s internalModelStore[M]) get(db *gorm.DB, query M) (M, error) {
 	}
 }
 
-func (s internalModelStore[M]) edit(db *gorm.DB, query M, editsToMake M, user *auth_models.User, updateAllFields bool) (M, error) {
-	toEdit, err := s.get(db, query)
+func (s internalModelStore[M]) GetBySelector(db *gorm.DB, selector string) (M, error) {
+	query, err := s.selectorToQueryModel(db, selector)
+	if err != nil {
+		return query, fmt.Errorf("query error parsing %T selector '%s': %v", query, selector, err)
+	}
+	ret, err := s.Get(db, query)
+	if err != nil {
+		return query, fmt.Errorf("query error using %T selector '%s': %v", query, selector, err)
+	}
+	return ret, nil
+}
+
+func (s internalModelStore[M]) Edit(db *gorm.DB, query M, editsToMake M, user *models.User, updateAllFields bool) (M, error) {
+	toEdit, err := s.Get(db, query)
 	if err != nil {
 		return toEdit, err
 	}
@@ -256,7 +268,7 @@ func (s internalModelStore[M]) edit(db *gorm.DB, query M, editsToMake M, user *a
 				}
 			}
 		}
-		result, err := s.get(tx, toEdit)
+		result, err := s.Get(tx, toEdit)
 		if err != nil {
 			return fmt.Errorf("(%s) unexpected edit error: mid-transaction validation on %T failed: %v", errors.InternalServerError, toEdit, err)
 		}
@@ -281,8 +293,20 @@ func (s internalModelStore[M]) edit(db *gorm.DB, query M, editsToMake M, user *a
 	return ret, err
 }
 
-func (s internalModelStore[M]) deleteIfExists(db *gorm.DB, query M, user *auth_models.User) (*M, error) {
-	if toDelete, err := s.getIfExists(db, query); err != nil || toDelete == nil {
+func (s internalModelStore[M]) EditBySelector(db *gorm.DB, selector string, editsToMake M, user *models.User) (M, error) {
+	query, err := s.selectorToQueryModel(db, selector)
+	if err != nil {
+		return query, fmt.Errorf("query error parsing %T selector '%s': %v", query, selector, err)
+	}
+	ret, err := s.Edit(db, query, editsToMake, user, false)
+	if err != nil {
+		return query, fmt.Errorf("edit error using %T selector '%s': %v", query, selector, err)
+	}
+	return ret, nil
+}
+
+func (s internalModelStore[M]) DeleteIfExists(db *gorm.DB, query M, user *models.User) (*M, error) {
+	if toDelete, err := s.GetIfExists(db, query); err != nil || toDelete == nil {
 		return toDelete, err
 	} else {
 		if err = s.wrappedErrorIfForbidden(db, toDelete, model_actions.DELETE, user); err != nil {
@@ -303,9 +327,9 @@ func (s internalModelStore[M]) deleteIfExists(db *gorm.DB, query M, user *auth_m
 	}
 }
 
-func (s internalModelStore[M]) delete(db *gorm.DB, query M, user *auth_models.User) (M, error) {
+func (s internalModelStore[M]) Delete(db *gorm.DB, query M, user *models.User) (M, error) {
 	var zeroValue M
-	if result, err := s.deleteIfExists(db, query, user); err != nil {
+	if result, err := s.DeleteIfExists(db, query, user); err != nil {
 		return zeroValue, err
 	} else if result == nil {
 		return zeroValue, fmt.Errorf("delete error: no result for query (%s)", errors.NotFound)
@@ -314,20 +338,32 @@ func (s internalModelStore[M]) delete(db *gorm.DB, query M, user *auth_models.Us
 	}
 }
 
-// selectorResolver is a helper interface exposing a very small amount of functionality of internalModelStore, but it
-// does so without generics. This is helpful in that you can return different selectorResolver instances from
-// a switch statement or something, when Go's poor generic type support would prevent you from returning different
-// instances of internalModelStore[Model].
-type selectorResolver interface {
-	resolveSelector(db *gorm.DB, selector string) (uint, error)
+func (s internalModelStore[M]) DeleteBySelector(db *gorm.DB, selector string, user *models.User) (M, error) {
+	query, err := s.selectorToQueryModel(db, selector)
+	if err != nil {
+		return query, fmt.Errorf("query error parsing %T selector '%s': %v", query, selector, err)
+	}
+	ret, err := s.Delete(db, query, user)
+	if err != nil {
+		return query, fmt.Errorf("delete error using %T selector '%s': %v", query, selector, err)
+	}
+	return ret, nil
 }
 
-func (s internalModelStore[M]) resolveSelector(db *gorm.DB, selector string) (uint, error) {
+// SelectorResolver is a helper interface exposing a very small amount of functionality of internalModelStore, but it
+// does so without generics. This is helpful in that you can return different SelectorResolver instances from
+// a switch statement or something, when Go's poor generic type support would prevent you from returning different
+// instances of internalModelStore[Model].
+type SelectorResolver interface {
+	ResolveSelector(db *gorm.DB, selector string) (uint, error)
+}
+
+func (s internalModelStore[M]) ResolveSelector(db *gorm.DB, selector string) (uint, error) {
 	query, err := s.selectorToQueryModel(db, selector)
 	if err != nil {
 		return 0, fmt.Errorf("invalid: %v", err)
 	}
-	result, err := s.get(db, query)
+	result, err := s.Get(db, query)
 	if err != nil {
 		return 0, fmt.Errorf("not found: %v", err)
 	}

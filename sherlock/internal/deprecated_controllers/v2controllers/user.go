@@ -1,7 +1,7 @@
 package v2controllers
 
 import (
-	"github.com/broadinstitute/sherlock/sherlock/internal/auth/auth_models"
+	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/auth_models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
 	"gorm.io/gorm"
 )

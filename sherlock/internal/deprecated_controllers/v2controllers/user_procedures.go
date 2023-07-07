@@ -3,9 +3,9 @@ package v2controllers
 import (
 	"context"
 	"fmt"
-	"github.com/broadinstitute/sherlock/sherlock/internal/auth/auth_models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/google/go-github/v50/github"
 	"github.com/rs/zerolog/log"
 	"golang.org/x/oauth2"
@@ -19,7 +19,7 @@ type GithubAccessPayload struct {
 // UpdateUserGithubAssociation is a controlled update of the GitHub fields recorded for each user. Rather than
 // accepting modifications to the fields itself, it accepts a GitHub access token and uses that to get the username/id,
 // which makes sure that users can only register an association with a GitHub account they control.
-func (c UserController) UpdateUserGithubAssociation(githubAccess GithubAccessPayload, user *auth_models.User) (User, bool, error) {
+func (c UserController) UpdateUserGithubAssociation(githubAccess GithubAccessPayload, user *models.User) (User, bool, error) {
 	if githubAccess.GithubAccessToken == "" {
 		return User{}, false, fmt.Errorf("(%s) no github access token provided", errors.BadRequest)
 	} else if user == nil {
@@ -48,7 +48,7 @@ func (c UserController) UpdateUserGithubAssociation(githubAccess GithubAccessPay
 	}
 }
 
-func (c UserController) recordGithubInformation(githubInformation *github.User, user *auth_models.User) (User, bool, error) {
+func (c UserController) recordGithubInformation(githubInformation *github.User, user *models.User) (User, bool, error) {
 	var editsToMake v2models.User
 	githubUserIdString := fmt.Sprintf("%d", *githubInformation.ID)
 	if user.GithubID == nil || user.GithubUsername == nil { // If we don't store a github user

@@ -42,10 +42,10 @@ func (c Chart) GetCiIdentifier() *CiIdentifier {
 	}
 }
 
-var chartStore *internalModelStore[Chart]
+var InternalChartStore *internalModelStore[Chart]
 
 func init() {
-	chartStore = &internalModelStore[Chart]{
+	InternalChartStore = &internalModelStore[Chart]{
 		selectorToQueryModel: chartSelectorToQuery,
 		modelToSelectors:     chartToSelectors,
 		validateModel:        validateChart,

@@ -3,8 +3,8 @@ package boot
 import (
 	"context"
 	"database/sql"
-	"github.com/broadinstitute/sherlock/sherlock/internal/auth"
-	"github.com/broadinstitute/sherlock/sherlock/internal/auth/gha_oidc_auth"
+	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/gha_oidc"
+	"github.com/broadinstitute/sherlock/sherlock/internal/authorization"
 	"github.com/broadinstitute/sherlock/sherlock/internal/boot/liveness"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/db"
@@ -47,19 +47,21 @@ func (a *Application) Start() {
 
 	if config.Config.MustString("mode") != "debug" {
 		log.Info().Msgf("BOOT | caching Firecloud accounts...")
-		if err := auth.CacheFirecloudAccounts(ctx); err != nil {
-			log.Fatal().Msgf("auth.CacheFirecloudAccounts() err: %v", err)
+		if err := authorization.CacheFirecloudSuitability(ctx); err != nil {
+			log.Fatal().Msgf("authorization.CacheFirecloudSuitability() err: %v", err)
 		}
-		go auth.KeepFirecloudCacheUpdated(ctx)
-	}
-
-	log.Info().Msgf("BOOT | initializing GitHub Actions OIDC token verification...")
-	if err := gha_oidc_auth.InitVerifier(ctx); err != nil {
-		log.Fatal().Msgf("gha_oidc_auth.InitVerifier() err: %v", err)
+		go authorization.KeepFirecloudCacheUpdated(ctx)
 	}
 
 	log.Info().Msgf("BOOT | reading extra permissions defined in configuration...")
-	auth.CacheExtraPermissions()
+	if err := authorization.CacheConfigSuitability(); err != nil {
+		log.Fatal().Msgf("authorization.CacheConfigSuitability() err: %v", err)
+	}
+
+	log.Info().Msgf("BOOT | initializing GitHub Actions OIDC token verification...")
+	if err := gha_oidc.InitVerifier(ctx); err != nil {
+		log.Fatal().Msgf("gha_oidc_auth.InitVerifier() err: %v", err)
+	}
 
 	if config.Config.Bool("metrics.v2.enable") {
 		log.Info().Msgf("BOOT | registering metric views...")

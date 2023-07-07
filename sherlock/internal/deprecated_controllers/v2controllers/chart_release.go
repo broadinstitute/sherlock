@@ -2,9 +2,9 @@ package v2controllers
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/sherlock/internal/auth/auth_models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"strconv"
 
 	"gorm.io/gorm"
@@ -280,7 +280,7 @@ func modelChartReleaseToChartRelease(model *v2models.ChartRelease) *ChartRelease
 	}
 }
 
-func setChartReleaseDynamicDefaults(chartRelease *CreatableChartRelease, stores *v2models.StoreSet, _ *auth_models.User) error {
+func setChartReleaseDynamicDefaults(chartRelease *CreatableChartRelease, stores *v2models.StoreSet, _ *models.User) error {
 	chart, err := stores.ChartStore.Get(chartRelease.Chart)
 	if err != nil {
 		return err

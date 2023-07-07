@@ -2,9 +2,9 @@ package v2models
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/sherlock/internal/auth/auth_models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/model_actions"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/utils"
 	"gorm.io/gorm"
 	"strconv"
@@ -31,10 +31,10 @@ func (d DatabaseInstance) getID() uint {
 	return d.ID
 }
 
-var databaseInstanceStore *internalModelStore[DatabaseInstance]
+var InternalDatabaseInstanceStore *internalModelStore[DatabaseInstance]
 
 func init() {
-	databaseInstanceStore = &internalModelStore[DatabaseInstance]{
+	InternalDatabaseInstanceStore = &internalModelStore[DatabaseInstance]{
 		selectorToQueryModel: databaseInstanceSelectorToQuery,
 		modelToSelectors:     databaseInstanceToSelectors,
 		errorIfForbidden:     databaseInstanceErrorIfForbidden,
@@ -56,7 +56,7 @@ func databaseInstanceSelectorToQuery(db *gorm.DB, selector string) (DatabaseInst
 		return query, nil
 	} else if strings.HasPrefix(selector, "chart-release/") { // "chart-release/" + chart release
 		chartReleaseSubSelector := strings.TrimPrefix(selector, "chart-release/")
-		chartReleaseID, err := chartReleaseStore.resolveSelector(db, chartReleaseSubSelector)
+		chartReleaseID, err := InternalChartReleaseStore.ResolveSelector(db, chartReleaseSubSelector)
 		if err != nil {
 			return DatabaseInstance{}, fmt.Errorf("error handling database instance subselector %s: %v", chartReleaseSubSelector, err)
 		}
@@ -83,8 +83,8 @@ func databaseInstanceToSelectors(databaseInstance *DatabaseInstance) []string {
 	return selectors
 }
 
-func databaseInstanceErrorIfForbidden(db *gorm.DB, databaseInstance *DatabaseInstance, action model_actions.ActionType, user *auth_models.User) error {
-	if chartRelease, err := chartReleaseStore.get(db, *databaseInstance.ChartRelease); err != nil {
+func databaseInstanceErrorIfForbidden(db *gorm.DB, databaseInstance *DatabaseInstance, action model_actions.ActionType, user *models.User) error {
+	if chartRelease, err := InternalChartReleaseStore.Get(db, *databaseInstance.ChartRelease); err != nil {
 		return err
 	} else if err = chartReleaseErrorIfForbidden(db, &chartRelease, action, user); err != nil {
 		return err

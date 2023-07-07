@@ -2,9 +2,9 @@ package v2models
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/sherlock/internal/auth/auth_models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/model_actions"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/utils"
 	"gorm.io/gorm"
 	"strconv"
@@ -41,10 +41,10 @@ func (c CiIdentifier) getID() uint {
 	return c.ID
 }
 
-var ciIdentifierStore *internalModelStore[CiIdentifier]
+var InternalCiIdentifierStore *internalModelStore[CiIdentifier]
 
 func init() {
-	ciIdentifierStore = &internalModelStore[CiIdentifier]{
+	InternalCiIdentifierStore = &internalModelStore[CiIdentifier]{
 		selectorToQueryModel:    ciIdentifierSelectorToQuery,
 		modelToSelectors:        ciIdentifierToSelectors,
 		errorIfForbidden:        ciIdentifierErrorIfForbidden,
@@ -74,26 +74,26 @@ func ciIdentifierSelectorToQuery(db *gorm.DB, selector string) (CiIdentifier, er
 		parts := strings.Split(selector, "/")
 		query.ResourceType = parts[0]
 		resourceSelector := strings.Join(parts[1:], "/")
-		var resolver selectorResolver
+		var resolver SelectorResolver
 		switch query.ResourceType {
 		case "chart":
-			resolver = chartStore
+			resolver = InternalChartStore
 		case "chart-version":
-			resolver = chartVersionStore
+			resolver = InternalChartVersionStore
 		case "app-version":
-			resolver = appVersionStore
+			resolver = InternalAppVersionStore
 		case "cluster":
-			resolver = clusterStore
+			resolver = InternalClusterStore
 		case "environment":
-			resolver = environmentStore
+			resolver = InternalEnvironmentStore
 		case "chart-release":
-			resolver = chartReleaseStore
+			resolver = InternalChartReleaseStore
 		case "changeset":
-			resolver = changesetStore
+			resolver = InternalChangesetStore
 		default:
 			return CiIdentifier{}, fmt.Errorf("(%s) invalid CI identifier selector '%s', resource type sub-selector '%s' wasn't recognized", errors.BadRequest, selector, query.ResourceType)
 		}
-		id, err := resolver.resolveSelector(db, resourceSelector)
+		id, err := resolver.ResolveSelector(db, resourceSelector)
 		if err != nil {
 			return CiIdentifier{}, fmt.Errorf("invalid CI identifier selector '%s', resource sub-selector '%s' had an error: %v", selector, resourceSelector, err)
 		}
@@ -116,7 +116,7 @@ func ciIdentifierToSelectors(ciIdentifier *CiIdentifier) []string {
 	return selectors
 }
 
-func ciIdentifierErrorIfForbidden(_ *gorm.DB, ciIdentifier *CiIdentifier, actionType model_actions.ActionType, _ *auth_models.User) error {
+func ciIdentifierErrorIfForbidden(_ *gorm.DB, ciIdentifier *CiIdentifier, actionType model_actions.ActionType, _ *models.User) error {
 	if actionType == model_actions.DELETE {
 		return fmt.Errorf("(%s) deleting a %T is not allowed", errors.Forbidden, ciIdentifier)
 	} else {

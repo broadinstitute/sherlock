@@ -31,20 +31,6 @@ var (
 	}
 )
 
-// panicIfLooksLikeCloudSQL does what it says on the tin -- it exits fast and hard if the database has a 'cloudsqladmin'
-// role in it. That's not something Sherlock's migration would ever add but it's there by default on Cloud SQL, so
-// it's an extra gate to make sure we don't accidentally run tests against a remote database.
-func panicIfLooksLikeCloudSQL(t *testing.T, db *gorm.DB) {
-	var cloudSqlAdminRoleExists bool
-	err := db.Raw("SELECT 1 FROM pg_roles WHERE rolname='cloudsqladmin'").Row().Scan(&cloudSqlAdminRoleExists)
-	if err != nil && err != sql.ErrNoRows {
-		t.Fatalf("failed to double-check that the database wasn't running in Cloud SQL: %v", err)
-	}
-	if cloudSqlAdminRoleExists {
-		t.Fatal("this database looks like it is running in Cloud SQL, refusing to proceed with test harness")
-	}
-}
-
 var _mutexExistingTestDB = &sync.Mutex{}
 var _existingTestDB *sql.DB = nil
 
@@ -65,7 +51,6 @@ func ConnectAndConfigureFromTest(t *testing.T) *gorm.DB {
 	if err != nil {
 		t.Errorf("failed to configure database during test: %v", err)
 	}
-	panicIfLooksLikeCloudSQL(t, gormDB)
 	return gormDB
 }
 
@@ -76,7 +61,7 @@ func ConnectAndConfigureFromTest(t *testing.T) *gorm.DB {
 // it is surprisingly annoying to debug, because it requires specific ordering, must be run manually,
 // and (with the addition of v2 models) has effectively variable table names. This function handles
 // and documents that complexity so we don't need to rediscover it each time we make a database change.
-func Truncate(t *testing.T, db *gorm.DB) {
+func Truncate(t *testing.T, gormDB *gorm.DB) {
 	if t == nil {
 		log.Fatal().Msg("refusing to truncate, was not passed a testing.T")
 		return
@@ -85,9 +70,9 @@ func Truncate(t *testing.T, db *gorm.DB) {
 		t.Errorf("refusing to truncate database, mode is '%s' instead of 'debug'", mode)
 		return
 	}
-	panicIfLooksLikeCloudSQL(t, db)
+	db.PanicIfLooksLikeCloudSQL(gormDB)
 	var statements []string
-	dryRunDB := db.Session(&gorm.Session{
+	dryRunDB := gormDB.Session(&gorm.Session{
 		// Performance boost, don't transact each delete individually
 		SkipDefaultTransaction: true,
 		// Disable Gorm's guardrails against doing unqualified batch deletions
@@ -105,7 +90,7 @@ func Truncate(t *testing.T, db *gorm.DB) {
 		statements = append(statements, dryRunDB.Unscoped().Delete(v2ModelHierarchy[i]).Statement.SQL.String())
 	}
 	statements = append(statements, "COMMIT")
-	if err := db.Exec(strings.Join(statements, ";\n")).Error; err != nil {
+	if err := gormDB.Exec(strings.Join(statements, ";\n")).Error; err != nil {
 		t.Errorf("failed to clean/truncate database: %v", err)
 	}
 }

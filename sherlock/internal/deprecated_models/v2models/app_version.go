@@ -42,10 +42,10 @@ func (a AppVersion) GetCiIdentifier() *CiIdentifier {
 	}
 }
 
-var appVersionStore *internalTreeModelStore[AppVersion]
+var InternalAppVersionStore *internalTreeModelStore[AppVersion]
 
 func init() {
-	appVersionStore = &internalTreeModelStore[AppVersion]{
+	InternalAppVersionStore = &internalTreeModelStore[AppVersion]{
 		internalModelStore: &internalModelStore[AppVersion]{
 			selectorToQueryModel:    appVersionSelectorToQuery,
 			modelToSelectors:        appVersionToSelectors,
@@ -71,7 +71,7 @@ func appVersionSelectorToQuery(db *gorm.DB, selector string) (AppVersion, error)
 		parts := strings.Split(selector, "/")
 
 		// chart
-		chartID, err := chartStore.resolveSelector(db, parts[0])
+		chartID, err := InternalChartStore.ResolveSelector(db, parts[0])
 		if err != nil {
 			return AppVersion{}, fmt.Errorf("error handling chart sub-selector %s: %v", parts[0], err)
 		}

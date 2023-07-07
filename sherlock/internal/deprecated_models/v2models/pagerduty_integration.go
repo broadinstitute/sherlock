@@ -2,9 +2,9 @@ package v2models
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/sherlock/internal/auth/auth_models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/model_actions"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/utils"
 	"gorm.io/gorm"
 	"strconv"
@@ -27,10 +27,10 @@ func (p PagerdutyIntegration) getID() uint {
 	return p.ID
 }
 
-var pagerdutyIntegrationStore *internalModelStore[PagerdutyIntegration]
+var InternalPagerdutyIntegrationStore *internalModelStore[PagerdutyIntegration]
 
 func init() {
-	pagerdutyIntegrationStore = &internalModelStore[PagerdutyIntegration]{
+	InternalPagerdutyIntegrationStore = &internalModelStore[PagerdutyIntegration]{
 		selectorToQueryModel:  pagerdutyIntegrationSelectorToQuery,
 		modelToSelectors:      pagerdutyIntegrationToSelectors,
 		errorIfForbidden:      pagerdutyIntegrationErrorIfForbidden,
@@ -88,8 +88,8 @@ func pagerdutyIntegrationToSelectors(pagerdutyIntegration *PagerdutyIntegration)
 	return selectors
 }
 
-func pagerdutyIntegrationErrorIfForbidden(_ *gorm.DB, _ *PagerdutyIntegration, _ model_actions.ActionType, user *auth_models.User) error {
-	return user.SuitableOrError()
+func pagerdutyIntegrationErrorIfForbidden(_ *gorm.DB, _ *PagerdutyIntegration, _ model_actions.ActionType, user *models.User) error {
+	return user.Suitability().SuitableOrError()
 }
 
 func validatePagerdutyIntegration(pagerdutyIntegration *PagerdutyIntegration) error {
@@ -111,14 +111,14 @@ func validatePagerdutyIntegration(pagerdutyIntegration *PagerdutyIntegration) er
 	return nil
 }
 
-func preDeletePostValidatePagerdutyIntegration(db *gorm.DB, pagerdutyIntegration *PagerdutyIntegration, _ *auth_models.User) error {
-	chartReleases, err := chartReleaseStore.listAllMatchingByUpdated(db, 0, ChartRelease{PagerdutyIntegrationID: &pagerdutyIntegration.ID})
+func preDeletePostValidatePagerdutyIntegration(db *gorm.DB, pagerdutyIntegration *PagerdutyIntegration, _ *models.User) error {
+	chartReleases, err := InternalChartReleaseStore.ListAllMatchingByUpdated(db, 0, ChartRelease{PagerdutyIntegrationID: &pagerdutyIntegration.ID})
 	if err != nil {
 		return fmt.Errorf("wasn't able to check for chart releases that use this integration: %v", err)
 	} else if len(chartReleases) > 0 {
 		return fmt.Errorf("the following chart release uses this integration: %s", chartReleases[0].Name)
 	}
-	environments, err := environmentStore.listAllMatchingByUpdated(db, 0, Environment{PagerdutyIntegrationID: &pagerdutyIntegration.ID})
+	environments, err := InternalEnvironmentStore.ListAllMatchingByUpdated(db, 0, Environment{PagerdutyIntegrationID: &pagerdutyIntegration.ID})
 	if err != nil {
 		return fmt.Errorf("wasn't able to check for environments that use this integration: %v", err)
 	} else if len(environments) > 0 {

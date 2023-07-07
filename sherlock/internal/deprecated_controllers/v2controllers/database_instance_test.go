@@ -2,7 +2,6 @@ package v2controllers
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/sherlock/internal/auth"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_db"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
@@ -87,7 +86,7 @@ var (
 
 func (controllerSet *ControllerSet) seedDatabaseInstances(t *testing.T, db *gorm.DB) {
 	for _, creatable := range databaseInstanceSeedList {
-		if _, _, err := controllerSet.DatabaseInstanceController.Create(creatable, auth.GenerateUser(t, db, true)); err != nil {
+		if _, _, err := controllerSet.DatabaseInstanceController.Create(creatable, generateUser(t, db, true)); err != nil {
 			t.Errorf("error seeding database instance for %s: %v", creatable.ChartRelease, err)
 		}
 	}
@@ -108,7 +107,7 @@ func (suite *databaseInstanceControllerSuite) TestDatabaseInstanceCreate() {
 		suite.seedChartReleases(suite.T(), suite.db)
 
 		suite.Run("simple kubernetes", func() {
-			instance, created, err := suite.DatabaseInstanceController.Create(datarepoSwatomationDatabaseInstance, auth.GenerateUser(suite.T(), suite.db, false))
+			instance, created, err := suite.DatabaseInstanceController.Create(datarepoSwatomationDatabaseInstance, generateUser(suite.T(), suite.db, false))
 			assert.NoError(suite.T(), err)
 			assert.True(suite.T(), created)
 			assert.True(suite.T(), instance.ID > 0)
@@ -117,7 +116,7 @@ func (suite *databaseInstanceControllerSuite) TestDatabaseInstanceCreate() {
 			})
 		})
 		suite.Run("google", func() {
-			instance, created, err := suite.DatabaseInstanceController.Create(datarepoDevDatabaseInstance, auth.GenerateUser(suite.T(), suite.db, false))
+			instance, created, err := suite.DatabaseInstanceController.Create(datarepoDevDatabaseInstance, generateUser(suite.T(), suite.db, false))
 			assert.NoError(suite.T(), err)
 			assert.True(suite.T(), created)
 			assert.True(suite.T(), instance.ID > 0)
@@ -129,7 +128,7 @@ func (suite *databaseInstanceControllerSuite) TestDatabaseInstanceCreate() {
 					Platform:     testutils.PointerTo("azure"),
 					InstanceName: testutils.PointerTo("ghi"),
 				},
-			}, auth.GenerateUser(suite.T(), suite.db, false))
+			}, generateUser(suite.T(), suite.db, false))
 			assert.NoError(suite.T(), err)
 			assert.True(suite.T(), created)
 			assert.True(suite.T(), instance.ID > 0)
@@ -147,7 +146,7 @@ func (suite *databaseInstanceControllerSuite) TestDatabaseInstanceCreate() {
 		suite.seedDatabaseInstances(suite.T(), suite.db)
 
 		suite.Run("exact duplicate", func() {
-			_, created, err := suite.DatabaseInstanceController.Create(datarepoSwatomationDatabaseInstance, auth.GenerateUser(suite.T(), suite.db, false))
+			_, created, err := suite.DatabaseInstanceController.Create(datarepoSwatomationDatabaseInstance, generateUser(suite.T(), suite.db, false))
 			assert.ErrorContains(suite.T(), err, errors.Conflict)
 			assert.False(suite.T(), created)
 		})
@@ -168,7 +167,7 @@ func (suite *databaseInstanceControllerSuite) TestDatabaseInstanceCreate() {
 					GoogleProject: testutils.PointerTo("broad-datarepo-dev"),
 					InstanceName:  testutils.PointerTo("datarepo-abcdef"),
 				},
-			}, auth.GenerateUser(suite.T(), suite.db, false))
+			}, generateUser(suite.T(), suite.db, false))
 			assert.ErrorContains(suite.T(), err, errors.BadRequest)
 			assert.False(suite.T(), created)
 		})
@@ -178,7 +177,7 @@ func (suite *databaseInstanceControllerSuite) TestDatabaseInstanceCreate() {
 				EditableDatabaseInstance: EditableDatabaseInstance{
 					Platform: testutils.PointerTo("google"),
 				},
-			}, auth.GenerateUser(suite.T(), suite.db, false))
+			}, generateUser(suite.T(), suite.db, false))
 			assert.ErrorContains(suite.T(), err, errors.BadRequest)
 			assert.False(suite.T(), created)
 		})
@@ -192,12 +191,12 @@ func (suite *databaseInstanceControllerSuite) TestDatabaseInstanceCreate() {
 		suite.seedChartVersions(suite.T(), suite.db)
 		suite.seedChartReleases(suite.T(), suite.db)
 		suite.Run("blocks suitable creation for non-suitable", func() {
-			_, created, err := suite.DatabaseInstanceController.Create(datarepoProdDatabaseInstance, auth.GenerateUser(suite.T(), suite.db, false))
+			_, created, err := suite.DatabaseInstanceController.Create(datarepoProdDatabaseInstance, generateUser(suite.T(), suite.db, false))
 			assert.ErrorContains(suite.T(), err, errors.Forbidden)
 			assert.False(suite.T(), created)
 		})
 		suite.Run("allows suitable creation for suitable", func() {
-			instance, created, err := suite.DatabaseInstanceController.Create(datarepoProdDatabaseInstance, auth.GenerateUser(suite.T(), suite.db, true))
+			instance, created, err := suite.DatabaseInstanceController.Create(datarepoProdDatabaseInstance, generateUser(suite.T(), suite.db, true))
 			assert.NoError(suite.T(), err)
 			assert.True(suite.T(), created)
 			assert.True(suite.T(), instance.ID > 0)
@@ -339,7 +338,7 @@ func (suite *databaseInstanceControllerSuite) TestDatabaseInstanceEdit() {
 		newInstanceName := testutils.PointerTo("new")
 		edited, err := suite.DatabaseInstanceController.Edit(fmt.Sprintf("chart-release/%s", datarepoDevDatabaseInstance.ChartRelease), EditableDatabaseInstance{
 			InstanceName: newInstanceName,
-		}, auth.GenerateUser(suite.T(), suite.db, false))
+		}, generateUser(suite.T(), suite.db, false))
 		assert.NoError(suite.T(), err)
 		assert.Equal(suite.T(), newInstanceName, edited.InstanceName)
 		after, err := suite.DatabaseInstanceController.Get(fmt.Sprintf("chart-release/%s", datarepoDevDatabaseInstance.ChartRelease))
@@ -360,7 +359,7 @@ func (suite *databaseInstanceControllerSuite) TestDatabaseInstanceEdit() {
 		suite.Run("unsuccessfully if not suitable", func() {
 			_, err := suite.DatabaseInstanceController.Edit(fmt.Sprintf("chart-release/%s", datarepoProdDatabaseInstance.ChartRelease), EditableDatabaseInstance{
 				InstanceName: newInstanceName,
-			}, auth.GenerateUser(suite.T(), suite.db, false))
+			}, generateUser(suite.T(), suite.db, false))
 			assert.ErrorContains(suite.T(), err, errors.Forbidden)
 			notEdited, err := suite.DatabaseInstanceController.Get(fmt.Sprintf("chart-release/%s", datarepoProdDatabaseInstance.ChartRelease))
 			assert.NoError(suite.T(), err)
@@ -369,7 +368,7 @@ func (suite *databaseInstanceControllerSuite) TestDatabaseInstanceEdit() {
 		suite.Run("successfully if suitable", func() {
 			edited, err := suite.DatabaseInstanceController.Edit(fmt.Sprintf("chart-release/%s", datarepoProdDatabaseInstance.ChartRelease), EditableDatabaseInstance{
 				InstanceName: newInstanceName,
-			}, auth.GenerateUser(suite.T(), suite.db, true))
+			}, generateUser(suite.T(), suite.db, true))
 			assert.NoError(suite.T(), err)
 			assert.Equal(suite.T(), newInstanceName, edited.InstanceName)
 		})
@@ -387,13 +386,13 @@ func (suite *databaseInstanceControllerSuite) TestDatabaseInstanceDelete() {
 		suite.seedChartReleases(suite.T(), suite.db)
 		suite.seedDatabaseInstances(suite.T(), suite.db)
 
-		deleted, err := suite.DatabaseInstanceController.Delete(fmt.Sprintf("chart-release/%s", datarepoDevChartRelease.Name), auth.GenerateUser(suite.T(), suite.db, false))
+		deleted, err := suite.DatabaseInstanceController.Delete(fmt.Sprintf("chart-release/%s", datarepoDevChartRelease.Name), generateUser(suite.T(), suite.db, false))
 		assert.NoError(suite.T(), err)
 		assert.Equal(suite.T(), datarepoDevChartRelease.Name, deleted.ChartRelease)
 		_, err = suite.DatabaseInstanceController.Get(fmt.Sprintf("chart-release/%s", datarepoDevChartRelease.Name))
 		assert.ErrorContains(suite.T(), err, errors.NotFound)
 		suite.Run("allow re-creation", func() {
-			instance, created, err := suite.DatabaseInstanceController.Create(datarepoDevDatabaseInstance, auth.GenerateUser(suite.T(), suite.db, false))
+			instance, created, err := suite.DatabaseInstanceController.Create(datarepoDevDatabaseInstance, generateUser(suite.T(), suite.db, false))
 			assert.NoError(suite.T(), err)
 			assert.True(suite.T(), created)
 			assert.NotEqual(suite.T(), deleted.ID, instance.ID)
@@ -410,11 +409,11 @@ func (suite *databaseInstanceControllerSuite) TestDatabaseInstanceDelete() {
 		suite.seedDatabaseInstances(suite.T(), suite.db)
 
 		suite.Run("unsuccessfully if not suitable", func() {
-			_, err := suite.DatabaseInstanceController.Delete(fmt.Sprintf("chart-release/%s", datarepoProdChartRelease.Name), auth.GenerateUser(suite.T(), suite.db, false))
+			_, err := suite.DatabaseInstanceController.Delete(fmt.Sprintf("chart-release/%s", datarepoProdChartRelease.Name), generateUser(suite.T(), suite.db, false))
 			assert.ErrorContains(suite.T(), err, errors.Forbidden)
 		})
 		suite.Run("successfully if suitable", func() {
-			deleted, err := suite.DatabaseInstanceController.Delete(fmt.Sprintf("chart-release/%s", datarepoProdChartRelease.Name), auth.GenerateUser(suite.T(), suite.db, true))
+			deleted, err := suite.DatabaseInstanceController.Delete(fmt.Sprintf("chart-release/%s", datarepoProdChartRelease.Name), generateUser(suite.T(), suite.db, true))
 			assert.NoError(suite.T(), err)
 			assert.Equal(suite.T(), datarepoProdChartRelease.Name, deleted.ChartRelease)
 		})

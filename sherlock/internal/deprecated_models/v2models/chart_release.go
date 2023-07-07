@@ -2,9 +2,9 @@ package v2models
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/sherlock/internal/auth/auth_models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/model_actions"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/utils"
 	"gorm.io/gorm"
 	"strconv"
@@ -48,10 +48,10 @@ func (c ChartRelease) GetCiIdentifier() *CiIdentifier {
 	}
 }
 
-var chartReleaseStore *internalModelStore[ChartRelease]
+var InternalChartReleaseStore *internalModelStore[ChartRelease]
 
 func init() {
-	chartReleaseStore = &internalModelStore[ChartRelease]{
+	InternalChartReleaseStore = &internalModelStore[ChartRelease]{
 		selectorToQueryModel:  chartReleaseSelectorToQuery,
 		modelToSelectors:      chartReleaseToSelectors,
 		errorIfForbidden:      chartReleaseErrorIfForbidden,
@@ -77,14 +77,14 @@ func chartReleaseSelectorToQuery(db *gorm.DB, selector string) (ChartRelease, er
 		parts := strings.Split(selector, "/")
 
 		// environment
-		environmentID, err := environmentStore.resolveSelector(db, parts[0])
+		environmentID, err := InternalEnvironmentStore.ResolveSelector(db, parts[0])
 		if err != nil {
 			return ChartRelease{}, fmt.Errorf("error handling environment sub-selector %s: %v", parts[0], err)
 		}
 		query.EnvironmentID = &environmentID
 
 		// chart
-		chartID, err := chartStore.resolveSelector(db, parts[1])
+		chartID, err := InternalChartStore.ResolveSelector(db, parts[1])
 		if err != nil {
 			return ChartRelease{}, fmt.Errorf("error handling chart sub-selector %s: %v", parts[1], err)
 		}
@@ -95,7 +95,7 @@ func chartReleaseSelectorToQuery(db *gorm.DB, selector string) (ChartRelease, er
 		parts := strings.Split(selector, "/")
 
 		// cluster
-		clusterID, err := clusterStore.resolveSelector(db, parts[0])
+		clusterID, err := InternalClusterStore.ResolveSelector(db, parts[0])
 		if err != nil {
 			return ChartRelease{}, fmt.Errorf("error handling cluster sub-selector %s: %v", parts[0], err)
 		}
@@ -112,7 +112,7 @@ func chartReleaseSelectorToQuery(db *gorm.DB, selector string) (ChartRelease, er
 		query.Namespace = namespace
 
 		// chart
-		chartID, err := chartStore.resolveSelector(db, parts[2])
+		chartID, err := InternalChartStore.ResolveSelector(db, parts[2])
 		if err != nil {
 			return ChartRelease{}, fmt.Errorf("error handling chart sub-selector %s: %v", parts[1], err)
 		}
@@ -184,16 +184,16 @@ func chartReleaseToSelectors(chartRelease *ChartRelease) []string {
 	return selectors
 }
 
-func chartReleaseErrorIfForbidden(db *gorm.DB, chartRelease *ChartRelease, action model_actions.ActionType, user *auth_models.User) error {
+func chartReleaseErrorIfForbidden(db *gorm.DB, chartRelease *ChartRelease, action model_actions.ActionType, user *models.User) error {
 	if chartRelease.Cluster != nil {
-		if cluster, err := clusterStore.get(db, *chartRelease.Cluster); err != nil {
+		if cluster, err := InternalClusterStore.Get(db, *chartRelease.Cluster); err != nil {
 			return err
 		} else if err = clusterErrorIfForbidden(db, &cluster, action, user); err != nil {
 			return err
 		}
 	}
 	if chartRelease.Environment != nil {
-		if environment, err := environmentStore.get(db, *chartRelease.Environment); err != nil {
+		if environment, err := InternalEnvironmentStore.Get(db, *chartRelease.Environment); err != nil {
 			return err
 		} else if err = environmentErrorIfForbidden(db, &environment, action, user); err != nil {
 			return err
@@ -233,7 +233,7 @@ func validateChartRelease(chartRelease *ChartRelease) error {
 	return chartRelease.ChartReleaseVersion.validate()
 }
 
-func preCreateChartRelease(db *gorm.DB, toCreate *ChartRelease, _ *auth_models.User) error {
+func preCreateChartRelease(db *gorm.DB, toCreate *ChartRelease, _ *models.User) error {
 	if toCreate != nil {
 		if toCreate.EnvironmentID != nil {
 			toCreate.DestinationType = "environment"
@@ -245,7 +245,7 @@ func preCreateChartRelease(db *gorm.DB, toCreate *ChartRelease, _ *auth_models.U
 	return nil
 }
 
-func preDeletePostValidateChartRelease(db *gorm.DB, chartRelease *ChartRelease, user *auth_models.User) error {
-	_, err := databaseInstanceStore.deleteIfExists(db, DatabaseInstance{ChartReleaseID: chartRelease.ID}, user)
+func preDeletePostValidateChartRelease(db *gorm.DB, chartRelease *ChartRelease, user *models.User) error {
+	_, err := InternalDatabaseInstanceStore.DeleteIfExists(db, DatabaseInstance{ChartReleaseID: chartRelease.ID}, user)
 	return err
 }

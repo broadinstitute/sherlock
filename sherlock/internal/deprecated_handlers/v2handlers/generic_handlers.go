@@ -2,8 +2,8 @@ package v2handlers
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/sherlock/internal/auth"
-	v2controllers2 "github.com/broadinstitute/sherlock/sherlock/internal/deprecated_controllers/v2controllers"
+	"github.com/broadinstitute/sherlock/sherlock/internal/authentication"
+	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_controllers/v2controllers"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/pagerduty"
@@ -21,9 +21,9 @@ func formatSelector(selector string) string {
 	return strings.Trim(selector, "/")
 }
 
-func handleCreate[M v2models.Model, R v2controllers2.Readable[M], C v2controllers2.Creatable[M], E v2controllers2.Editable[M]](controller *v2controllers2.ModelController[M, R, C, E]) func(ctx *gin.Context) {
+func handleCreate[M v2models.Model, R v2controllers.Readable[M], C v2controllers.Creatable[M], E v2controllers.Editable[M]](controller *v2controllers.ModelController[M, R, C, E]) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
-		user, err := auth.ShouldUseUser(ctx)
+		user, err := authentication.ShouldUseUser(ctx)
 		if err != nil {
 			ctx.JSON(errors.ErrorToApiResponse(err))
 			return
@@ -46,7 +46,7 @@ func handleCreate[M v2models.Model, R v2controllers2.Readable[M], C v2controller
 	}
 }
 
-func handleList[M v2models.Model, R v2controllers2.Readable[M], C v2controllers2.Creatable[M], E v2controllers2.Editable[M]](controller *v2controllers2.ModelController[M, R, C, E]) func(ctx *gin.Context) {
+func handleList[M v2models.Model, R v2controllers.Readable[M], C v2controllers.Creatable[M], E v2controllers.Editable[M]](controller *v2controllers.ModelController[M, R, C, E]) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
 		var filter R
 		if err := ctx.ShouldBindQuery(&filter); err != nil {
@@ -70,7 +70,7 @@ func handleList[M v2models.Model, R v2controllers2.Readable[M], C v2controllers2
 	}
 }
 
-func handleGet[M v2models.Model, R v2controllers2.Readable[M], C v2controllers2.Creatable[M], E v2controllers2.Editable[M]](controller *v2controllers2.ModelController[M, R, C, E]) func(ctx *gin.Context) {
+func handleGet[M v2models.Model, R v2controllers.Readable[M], C v2controllers.Creatable[M], E v2controllers.Editable[M]](controller *v2controllers.ModelController[M, R, C, E]) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
 		result, err := controller.Get(formatSelector(ctx.Param("selector")))
 		if err != nil {
@@ -81,9 +81,9 @@ func handleGet[M v2models.Model, R v2controllers2.Readable[M], C v2controllers2.
 	}
 }
 
-func handleEdit[M v2models.Model, R v2controllers2.Readable[M], C v2controllers2.Creatable[M], E v2controllers2.Editable[M]](controller *v2controllers2.ModelController[M, R, C, E]) func(ctx *gin.Context) {
+func handleEdit[M v2models.Model, R v2controllers.Readable[M], C v2controllers.Creatable[M], E v2controllers.Editable[M]](controller *v2controllers.ModelController[M, R, C, E]) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
-		user, err := auth.ShouldUseUser(ctx)
+		user, err := authentication.ShouldUseUser(ctx)
 		if err != nil {
 			ctx.JSON(errors.ErrorToApiResponse(err))
 			return
@@ -102,9 +102,9 @@ func handleEdit[M v2models.Model, R v2controllers2.Readable[M], C v2controllers2
 	}
 }
 
-func handleUpsert[M v2models.Model, R v2controllers2.Readable[M], C v2controllers2.Creatable[M], E v2controllers2.Editable[M]](controller *v2controllers2.ModelController[M, R, C, E]) func(ctx *gin.Context) {
+func handleUpsert[M v2models.Model, R v2controllers.Readable[M], C v2controllers.Creatable[M], E v2controllers.Editable[M]](controller *v2controllers.ModelController[M, R, C, E]) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
-		user, err := auth.ShouldUseUser(ctx)
+		user, err := authentication.ShouldUseUser(ctx)
 		if err != nil {
 			ctx.JSON(errors.ErrorToApiResponse(err))
 			return
@@ -132,9 +132,9 @@ func handleUpsert[M v2models.Model, R v2controllers2.Readable[M], C v2controller
 	}
 }
 
-func handleDelete[M v2models.Model, R v2controllers2.Readable[M], C v2controllers2.Creatable[M], E v2controllers2.Editable[M]](controller *v2controllers2.ModelController[M, R, C, E]) func(ctx *gin.Context) {
+func handleDelete[M v2models.Model, R v2controllers.Readable[M], C v2controllers.Creatable[M], E v2controllers.Editable[M]](controller *v2controllers.ModelController[M, R, C, E]) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
-		user, err := auth.ShouldUseUser(ctx)
+		user, err := authentication.ShouldUseUser(ctx)
 		if err != nil {
 			ctx.JSON(errors.ErrorToApiResponse(err))
 			return
@@ -148,7 +148,7 @@ func handleDelete[M v2models.Model, R v2controllers2.Readable[M], C v2controller
 	}
 }
 
-func handleSelectorList[M v2models.Model, R v2controllers2.Readable[M], C v2controllers2.Creatable[M], E v2controllers2.Editable[M]](controller *v2controllers2.ModelController[M, R, C, E]) func(ctx *gin.Context) {
+func handleSelectorList[M v2models.Model, R v2controllers.Readable[M], C v2controllers.Creatable[M], E v2controllers.Editable[M]](controller *v2controllers.ModelController[M, R, C, E]) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
 		result, err := controller.GetOtherValidSelectors(formatSelector(ctx.Param("selector")))
 		if err != nil {
@@ -159,9 +159,9 @@ func handleSelectorList[M v2models.Model, R v2controllers2.Readable[M], C v2cont
 	}
 }
 
-func handleTriggerPagerdutyIncident[M v2models.Model, R v2controllers2.Readable[M], C v2controllers2.Creatable[M], E v2controllers2.Editable[M]](controller *v2controllers2.ModelController[M, R, C, E]) func(ctx *gin.Context) {
+func handleTriggerPagerdutyIncident[M v2models.Model, R v2controllers.Readable[M], C v2controllers.Creatable[M], E v2controllers.Editable[M]](controller *v2controllers.ModelController[M, R, C, E]) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
-		_, err := auth.ShouldUseUser(ctx)
+		_, err := authentication.ShouldUseUser(ctx)
 		if err != nil {
 			ctx.JSON(errors.ErrorToApiResponse(err))
 			return
@@ -179,7 +179,7 @@ func handleTriggerPagerdutyIncident[M v2models.Model, R v2controllers2.Readable[
 	}
 }
 
-func handleGetChildrenPathToParent[M v2models.TreeModel, R v2controllers2.Readable[M], C v2controllers2.Creatable[M], E v2controllers2.Editable[M]](controller *v2controllers2.TreeModelController[M, R, C, E]) func(ctx *gin.Context) {
+func handleGetChildrenPathToParent[M v2models.TreeModel, R v2controllers.Readable[M], C v2controllers.Creatable[M], E v2controllers.Editable[M]](controller *v2controllers.TreeModelController[M, R, C, E]) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
 		results, connected, err := controller.GetChildrenPathToParent(ctx.Query("child"), ctx.Query("parent"))
 		if err != nil {

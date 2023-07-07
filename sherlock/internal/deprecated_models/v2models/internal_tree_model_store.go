@@ -32,7 +32,7 @@ search:
 			if err != nil {
 				return nil, false, fmt.Errorf("(%s) failed to build query for next %T tree node: %v", errors.InternalServerError, originChild, err)
 			}
-			potentialNewHead, err := s.getIfExists(db, potentialNewHeadQuery)
+			potentialNewHead, err := s.GetIfExists(db, potentialNewHeadQuery)
 			if err != nil {
 				return nil, false, fmt.Errorf("(%s) failed to query next %T tree node: %v", errors.InternalServerError, originChild, err)
 			} else if potentialNewHead != nil {

@@ -6,6 +6,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/html"
 	"github.com/broadinstitute/sherlock/sherlock/internal/apis/misc"
 	"github.com/broadinstitute/sherlock/sherlock/internal/apis/sherlock"
+	"github.com/broadinstitute/sherlock/sherlock/internal/authentication"
 	"github.com/broadinstitute/sherlock/sherlock/internal/boot/middleware"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_controllers/v2controllers"
@@ -39,41 +40,41 @@ func buildRouter(db *gorm.DB) (*gin.Engine, error) {
 
 	docs.SwaggerInfo.Version = version.BuildVersion
 	if config.Config.String("mode") == "debug" {
+		// When running locally, make the Swagger page have a scheme dropdown with http as the default
 		docs.SwaggerInfo.Schemes = []string{"http", "https"}
 	}
 
 	router := gin.New()
 	router.Use(gin.Recovery(), middleware.Logger(), middleware.Headers())
-	authMiddleware := middleware.Auth(v2models.NewMiddlewareUserStore(db))
 
 	router.GET("/version", misc.VersionHandler)
 	router.GET("/status", misc.StatusHandler)
-	router.GET("/my-user", authMiddleware, misc.MyUserHandler)
 
 	metrics.RegisterPrometheusMetricsHandler(router.Group("/metrics"))
 
 	router.StaticFS("/static", http.FS(html.StaticHtmlFiles))
 
 	router.GET("/swagger/*any", swaggo_gin.WrapHandler(swaggo_files.Handler))
-	router.GET("", func(c *gin.Context) { c.Redirect(http.StatusMovedPermanently, "/swagger/index.html") })
+	router.GET("", func(ctx *gin.Context) { ctx.Redirect(http.StatusMovedPermanently, "/swagger/index.html") })
 
-	apiRouter := router.Group("api", authMiddleware, middleware.DB(db))
+	apiRouter := router.Group("api", authentication.UserMiddleware(db), authentication.DbMiddleware(db))
+
 	sherlock.ConfigureRoutes(apiRouter)
 
 	v2apiRouter := apiRouter.Group("v2")
-	v2controllers := v2controllers.NewControllerSet(v2models.NewStoreSet(db))
-	v2handlers.RegisterClusterHandlers(v2apiRouter, v2controllers.ClusterController)
-	v2handlers.RegisterEnvironmentHandlers(v2apiRouter, v2controllers.EnvironmentController)
-	v2handlers.RegisterChartHandlers(v2apiRouter, v2controllers.ChartController)
-	v2handlers.RegisterChartVersionHandlers(v2apiRouter, v2controllers.ChartVersionController)
-	v2handlers.RegisterAppVersionHandlers(v2apiRouter, v2controllers.AppVersionController)
-	v2handlers.RegisterChartReleaseHandlers(v2apiRouter, v2controllers.ChartReleaseController)
-	v2handlers.RegisterChangesetHandlers(v2apiRouter, v2controllers.ChangesetController)
-	v2handlers.RegisterPagerdutyIntegrationHandlers(v2apiRouter, v2controllers.PagerdutyIntegrationController)
-	v2handlers.RegisterDatabaseInstanceHandlers(v2apiRouter, v2controllers.DatabaseInstanceController)
-	v2handlers.RegisterUserHandlers(v2apiRouter, v2controllers.UserController)
-	v2handlers.RegisterCiIdentifierHandlers(v2apiRouter, v2controllers.CiIdentifierController)
-	v2handlers.RegisterCiRunHandlers(v2apiRouter, v2controllers.CiRunController)
+	v2ControllerSet := v2controllers.NewControllerSet(v2models.NewStoreSet(db))
+	v2handlers.RegisterClusterHandlers(v2apiRouter, v2ControllerSet.ClusterController)
+	v2handlers.RegisterEnvironmentHandlers(v2apiRouter, v2ControllerSet.EnvironmentController)
+	v2handlers.RegisterChartHandlers(v2apiRouter, v2ControllerSet.ChartController)
+	v2handlers.RegisterChartVersionHandlers(v2apiRouter, v2ControllerSet.ChartVersionController)
+	v2handlers.RegisterAppVersionHandlers(v2apiRouter, v2ControllerSet.AppVersionController)
+	v2handlers.RegisterChartReleaseHandlers(v2apiRouter, v2ControllerSet.ChartReleaseController)
+	v2handlers.RegisterChangesetHandlers(v2apiRouter, v2ControllerSet.ChangesetController)
+	v2handlers.RegisterPagerdutyIntegrationHandlers(v2apiRouter, v2ControllerSet.PagerdutyIntegrationController)
+	v2handlers.RegisterDatabaseInstanceHandlers(v2apiRouter, v2ControllerSet.DatabaseInstanceController)
+	v2handlers.RegisterUserHandlers(v2apiRouter, v2ControllerSet.UserController)
+	v2handlers.RegisterCiIdentifierHandlers(v2apiRouter, v2ControllerSet.CiIdentifierController)
+	v2handlers.RegisterCiRunHandlers(v2apiRouter, v2ControllerSet.CiRunController)
 
 	return router, nil
 }

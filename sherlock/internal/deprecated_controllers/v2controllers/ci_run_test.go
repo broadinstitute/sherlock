@@ -2,7 +2,6 @@ package v2controllers
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/sherlock/internal/auth"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_db"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
@@ -70,7 +69,7 @@ func (suite *ciRunControllerSuite) TestCiFlow() {
 		ciRunSelector,
 		payload,
 		payload.EditableCiRun,
-		auth.GenerateUser(suite.T(), suite.db, false),
+		generateUser(suite.T(), suite.db, false),
 	)
 	suite.Assert().NoError(err)
 	suite.Assert().True(created)
@@ -89,7 +88,7 @@ func (suite *ciRunControllerSuite) TestCiFlow() {
 		ciRunSelector,
 		payload,
 		payload.EditableCiRun,
-		auth.GenerateUser(suite.T(), suite.db, false),
+		generateUser(suite.T(), suite.db, false),
 	)
 	suite.Assert().NoError(err)
 	suite.Assert().False(created)
@@ -100,7 +99,7 @@ func (suite *ciRunControllerSuite) TestCiFlow() {
 	// Let's say that the CI workflow creates an app version
 	appVersion, created, err := suite.AppVersionController.Create(
 		CreatableAppVersion{Chart: "sam", AppVersion: "v1.2.3-ci-run-test"},
-		auth.GenerateUser(suite.T(), suite.db, false))
+		generateUser(suite.T(), suite.db, false))
 	suite.Assert().NoError(err)
 	suite.Assert().True(created)
 
@@ -116,7 +115,7 @@ func (suite *ciRunControllerSuite) TestCiFlow() {
 		ciRunSelector,
 		payload,
 		payload.EditableCiRun,
-		auth.GenerateUser(suite.T(), suite.db, false),
+		generateUser(suite.T(), suite.db, false),
 	)
 	suite.Assert().NoError(err)
 	suite.Assert().False(created)
@@ -151,7 +150,7 @@ func (suite *ciRunControllerSuite) TestCiFlow() {
 		ciRunSelector,
 		payload,
 		payload.EditableCiRun,
-		auth.GenerateUser(suite.T(), suite.db, false),
+		generateUser(suite.T(), suite.db, false),
 	)
 	suite.Assert().NoError(err)
 	suite.Assert().False(created)
@@ -173,7 +172,7 @@ func (suite *ciRunControllerSuite) TestCiFlow() {
 		ciRunSelector,
 		payload,
 		payload.EditableCiRun,
-		auth.GenerateUser(suite.T(), suite.db, false),
+		generateUser(suite.T(), suite.db, false),
 	)
 	suite.Assert().NoError(err)
 	suite.Assert().False(created)
@@ -204,41 +203,41 @@ func (suite *ciRunControllerSuite) TestComplexCiFlow() {
 	// X, Y, and Z.
 	appVersionA, created, err := suite.AppVersionController.Create(
 		CreatableAppVersion{Chart: "leonardo", AppVersion: "A"},
-		auth.GenerateUser(suite.T(), suite.db, true))
+		generateUser(suite.T(), suite.db, true))
 	suite.Assert().NoError(err)
 	suite.Assert().True(created)
 	appVersionB, created, err := suite.AppVersionController.Create(
 		CreatableAppVersion{Chart: "leonardo", AppVersion: "B", ParentAppVersion: "leonardo/A"},
-		auth.GenerateUser(suite.T(), suite.db, true))
+		generateUser(suite.T(), suite.db, true))
 	suite.Assert().NoError(err)
 	suite.Assert().True(created)
 	suite.Assert().Equal(appVersionA.ID, appVersionB.ParentAppVersionInfo.ID)
 	appVersionC, created, err := suite.AppVersionController.Create(
 		CreatableAppVersion{Chart: "leonardo", AppVersion: "C", ParentAppVersion: "leonardo/B"},
-		auth.GenerateUser(suite.T(), suite.db, true))
+		generateUser(suite.T(), suite.db, true))
 	suite.Assert().NoError(err)
 	suite.Assert().True(created)
 	suite.Assert().Equal(appVersionB.ID, appVersionC.ParentAppVersionInfo.ID)
 	appVersionD, created, err := suite.AppVersionController.Create(
 		CreatableAppVersion{Chart: "leonardo", AppVersion: "D", ParentAppVersion: "leonardo/C"},
-		auth.GenerateUser(suite.T(), suite.db, true))
+		generateUser(suite.T(), suite.db, true))
 	suite.Assert().NoError(err)
 	suite.Assert().True(created)
 	suite.Assert().Equal(appVersionC.ID, appVersionD.ParentAppVersionInfo.ID)
 	chartVersionX, created, err := suite.ChartVersionController.Create(
 		CreatableChartVersion{Chart: "leonardo", ChartVersion: "X"},
-		auth.GenerateUser(suite.T(), suite.db, true))
+		generateUser(suite.T(), suite.db, true))
 	suite.Assert().NoError(err)
 	suite.Assert().True(created)
 	chartVersionY, created, err := suite.ChartVersionController.Create(
 		CreatableChartVersion{Chart: "leonardo", ChartVersion: "Y", ParentChartVersion: "leonardo/X"},
-		auth.GenerateUser(suite.T(), suite.db, true))
+		generateUser(suite.T(), suite.db, true))
 	suite.Assert().NoError(err)
 	suite.Assert().True(created)
 	suite.Assert().Equal(chartVersionX.ID, chartVersionY.ParentChartVersionInfo.ID)
 	chartVersionZ, created, err := suite.ChartVersionController.Create(
 		CreatableChartVersion{Chart: "leonardo", ChartVersion: "Z", ParentChartVersion: "leonardo/Y"},
-		auth.GenerateUser(suite.T(), suite.db, true))
+		generateUser(suite.T(), suite.db, true))
 	suite.Assert().NoError(err)
 	suite.Assert().True(created)
 	suite.Assert().Equal(chartVersionY.ID, chartVersionZ.ParentChartVersionInfo.ID)
@@ -252,7 +251,7 @@ func (suite *ciRunControllerSuite) TestComplexCiFlow() {
 			{CreatableChangeset: CreatableChangeset{ChartRelease: "leonardo-terra-dev",
 				ToAppVersionExact: testutils.PointerTo("D"), ToAppVersionResolver: testutils.PointerTo("exact"),
 				ToChartVersionExact: testutils.PointerTo("Z"), ToChartVersionResolver: testutils.PointerTo("exact")}},
-		}}, auth.GenerateUser(suite.T(), suite.db, true))
+		}}, generateUser(suite.T(), suite.db, true))
 	suite.Assert().NoError(err)
 
 	// Also suppose that the dev environment already has a CiIdentifier. We'll fudge the creation here:
@@ -260,7 +259,7 @@ func (suite *ciRunControllerSuite) TestComplexCiFlow() {
 	suite.Assert().NoError(err)
 	terraStagingIdentifier, created, err := suite.CiIdentifierController.Create(
 		CreatableCiIdentifier{ResourceType: "environment", ResourceID: terraStagingEnvironmentWithoutIdentifier.ID},
-		auth.GenerateUser(suite.T(), suite.db, true))
+		generateUser(suite.T(), suite.db, true))
 	suite.Assert().NoError(err)
 	suite.Assert().True(created)
 	terraStagingEnvironmentWithIdentifier, err := suite.EnvironmentController.Get("terra-staging")
@@ -272,7 +271,7 @@ func (suite *ciRunControllerSuite) TestComplexCiFlow() {
 		ChartReleases: []ChangesetPlanRequestChartReleaseEntry{{
 			CreatableChangeset:                    CreatableChangeset{ChartRelease: "leonardo-terra-staging"},
 			UseExactVersionsFromOtherChartRelease: testutils.PointerTo("leonardo-terra-dev"),
-		}}}, auth.GenerateUser(suite.T(), suite.db, true))
+		}}}, generateUser(suite.T(), suite.db, true))
 	suite.Assert().NoError(err)
 	suite.Assert().Len(changesets, 1)
 
@@ -300,7 +299,7 @@ func (suite *ciRunControllerSuite) TestComplexCiFlow() {
 
 	// Suppose the user hits the apply button in Beehive for this changeset. First, the changeset gets applied:
 	changesets, err = suite.ChangesetController.Apply([]string{strconv.FormatUint(uint64(changesets[0].ID), 10)},
-		auth.GenerateUser(suite.T(), suite.db, true))
+		generateUser(suite.T(), suite.db, true))
 	suite.Assert().NoError(err)
 	suite.Assert().Len(changesets, 1)
 	suite.NotNil(changesets[0].AppliedAt)
@@ -325,7 +324,7 @@ func (suite *ciRunControllerSuite) TestComplexCiFlow() {
 		ciRunSelector,
 		payload,
 		payload.EditableCiRun,
-		auth.GenerateUser(suite.T(), suite.db, false))
+		generateUser(suite.T(), suite.db, false))
 	suite.Assert().NoError(err)
 	suite.Assert().True(created)
 	suite.Assert().Equal("requested", *ciRun.Status)
@@ -343,7 +342,7 @@ func (suite *ciRunControllerSuite) TestComplexCiFlow() {
 		ciRunSelector,
 		payload,
 		payload.EditableCiRun,
-		auth.GenerateUser(suite.T(), suite.db, false),
+		generateUser(suite.T(), suite.db, false),
 	)
 	suite.Assert().NoError(err)
 	suite.Assert().False(created)
@@ -360,7 +359,7 @@ func (suite *ciRunControllerSuite) TestComplexCiFlow() {
 		ciRunSelector,
 		payload,
 		payload.EditableCiRun,
-		auth.GenerateUser(suite.T(), suite.db, false),
+		generateUser(suite.T(), suite.db, false),
 	)
 	suite.Assert().NoError(err)
 	suite.Assert().False(created)
@@ -442,7 +441,7 @@ func (suite *ciRunControllerSuite) TestComplexCiFlow() {
 		ciRunSelector,
 		payload,
 		payload.EditableCiRun,
-		auth.GenerateUser(suite.T(), suite.db, false),
+		generateUser(suite.T(), suite.db, false),
 	)
 	suite.Assert().NoError(err)
 	suite.Assert().False(created)

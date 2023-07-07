@@ -1,8 +1,8 @@
 package v2models
 
 import (
-	"github.com/broadinstitute/sherlock/sherlock/internal/auth/auth_models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/model_actions"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/testutils"
 	"gorm.io/gorm"
 	"testing"
@@ -244,7 +244,7 @@ func Test_ciIdentifierErrorIfForbidden(t *testing.T) {
 		db           *gorm.DB
 		ciIdentifier *CiIdentifier
 		actionType   model_actions.ActionType
-		user         *auth_models.User
+		user         *models.User
 	}
 	tests := []struct {
 		name    string

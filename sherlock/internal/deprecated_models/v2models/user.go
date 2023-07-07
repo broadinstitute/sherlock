@@ -2,9 +2,12 @@ package v2models
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/sherlock/internal/auth/auth_models"
+	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/authentication_method"
+	"github.com/broadinstitute/sherlock/sherlock/internal/config"
+	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/auth_models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/model_actions"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/utils"
 	"gorm.io/gorm"
 	"strconv"
@@ -25,10 +28,10 @@ func (u User) getID() uint {
 	return u.ID
 }
 
-var userStore *internalModelStore[User]
+var InternalUserStore *internalModelStore[User]
 
 func init() {
-	userStore = &internalModelStore[User]{
+	InternalUserStore = &internalModelStore[User]{
 		selectorToQueryModel:    userSelectorToQuery,
 		modelToSelectors:        userToSelectors,
 		errorIfForbidden:        userErrorIfForbidden,
@@ -89,7 +92,7 @@ func userToSelectors(user *User) []string {
 	return selectors
 }
 
-func userErrorIfForbidden(_ *gorm.DB, modelUser *User, action model_actions.ActionType, user *auth_models.User) error {
+func userErrorIfForbidden(_ *gorm.DB, modelUser *User, action model_actions.ActionType, user *models.User) error {
 	switch action {
 	case model_actions.CREATE:
 		if user != nil {
@@ -99,8 +102,10 @@ func userErrorIfForbidden(_ *gorm.DB, modelUser *User, action model_actions.Acti
 	case model_actions.EDIT:
 		if modelUser.Email != user.Email {
 			return fmt.Errorf("users can only edit themselves")
-		} else if !user.IsFromAuthMethod(auth_models.AuthMethodIAP) {
-			return fmt.Errorf("users cannot be edited from non-IAP auth methods")
+		} else if (config.Config.MustString("mode") != "debug" && user.AuthenticationMethod != authentication_method.IAP) ||
+			(config.Config.MustString("mode") == "debug" && user.AuthenticationMethod != authentication_method.TEST && user.AuthenticationMethod != authentication_method.LOCAL) {
+			// For non-debug, require IAP to edit users. For debug, require TEST or LOCAL so we can still hit this error case if we really try.
+			return fmt.Errorf("users cannot be edited via this authentication method while sherlock is in %s mode", config.Config.MustString("mode"))
 		}
 	case model_actions.DELETE:
 		return fmt.Errorf("users cannot be deleted")

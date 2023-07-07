@@ -6,7 +6,6 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
 	"testing"
 
-	"github.com/broadinstitute/sherlock/sherlock/internal/auth"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/testutils"
@@ -197,7 +196,7 @@ var (
 
 func (controllerSet *ControllerSet) seedChartReleases(t *testing.T, db *gorm.DB) {
 	for _, creatable := range chartReleaseSeedList {
-		if _, _, err := controllerSet.ChartReleaseController.Create(creatable, auth.GenerateUser(t, db, true)); err != nil {
+		if _, _, err := controllerSet.ChartReleaseController.Create(creatable, generateUser(t, db, true)); err != nil {
 			t.Errorf("error seeding chart release for %s, environment=%s cluster=%s : %v", creatable.Chart, creatable.Environment, creatable.Cluster, err)
 		}
 	}
@@ -217,7 +216,7 @@ func (suite *chartReleaseControllerSuite) TestChartReleaseCreate() {
 		suite.seedChartVersions(suite.T(), suite.db)
 
 		suite.Run("simple app release", func() {
-			release, created, err := suite.ChartReleaseController.Create(leonardoDevChartRelease, auth.GenerateUser(suite.T(), suite.db, false))
+			release, created, err := suite.ChartReleaseController.Create(leonardoDevChartRelease, generateUser(suite.T(), suite.db, false))
 			assert.NoError(suite.T(), err)
 			assert.True(suite.T(), created)
 			assert.True(suite.T(), release.ID > 0)
@@ -265,7 +264,7 @@ func (suite *chartReleaseControllerSuite) TestChartReleaseCreate() {
 			})
 		})
 		suite.Run("custom cluster app release", func() {
-			release, created, err := suite.ChartReleaseController.Create(datarepoDevChartRelease, auth.GenerateUser(suite.T(), suite.db, false))
+			release, created, err := suite.ChartReleaseController.Create(datarepoDevChartRelease, generateUser(suite.T(), suite.db, false))
 			assert.NoError(suite.T(), err)
 			assert.True(suite.T(), created)
 			assert.True(suite.T(), release.ID > 0)
@@ -280,7 +279,7 @@ func (suite *chartReleaseControllerSuite) TestChartReleaseCreate() {
 			})
 		})
 		suite.Run("release in an env but with a set namespace", func() {
-			release, created, err := suite.ChartReleaseController.Create(yaleDevChartRelease, auth.GenerateUser(suite.T(), suite.db, false))
+			release, created, err := suite.ChartReleaseController.Create(yaleDevChartRelease, generateUser(suite.T(), suite.db, false))
 			assert.NoError(suite.T(), err)
 			assert.True(suite.T(), created)
 			assert.True(suite.T(), release.ID > 0)
@@ -289,7 +288,7 @@ func (suite *chartReleaseControllerSuite) TestChartReleaseCreate() {
 			})
 		})
 		suite.Run("cluster release", func() {
-			release, created, err := suite.ChartReleaseController.Create(storageDevChartRelease, auth.GenerateUser(suite.T(), suite.db, false))
+			release, created, err := suite.ChartReleaseController.Create(storageDevChartRelease, generateUser(suite.T(), suite.db, false))
 			assert.NoError(suite.T(), err)
 			assert.True(suite.T(), created)
 			assert.True(suite.T(), release.ID > 0)
@@ -318,7 +317,7 @@ func (suite *chartReleaseControllerSuite) TestChartReleaseCreate() {
 			suite.seedChartReleases(suite.T(), suite.db)
 
 			suite.Run("exact duplicate", func() {
-				_, created, err := suite.ChartReleaseController.Create(leonardoDevChartRelease, auth.GenerateUser(suite.T(), suite.db, false))
+				_, created, err := suite.ChartReleaseController.Create(leonardoDevChartRelease, generateUser(suite.T(), suite.db, false))
 				assert.ErrorContains(suite.T(), err, errors.Conflict)
 				assert.False(suite.T(), created)
 			})
@@ -328,7 +327,7 @@ func (suite *chartReleaseControllerSuite) TestChartReleaseCreate() {
 					Environment: terraDevEnvironment.Name,
 					Namespace:   "abc",
 					Name:        "def",
-				}, auth.GenerateUser(suite.T(), suite.db, false))
+				}, generateUser(suite.T(), suite.db, false))
 				assert.ErrorContains(suite.T(), err, errors.Conflict)
 				assert.False(suite.T(), created)
 			})
@@ -340,7 +339,7 @@ func (suite *chartReleaseControllerSuite) TestChartReleaseCreate() {
 					Cluster:   release.Cluster,
 					Namespace: release.Namespace,
 					Name:      "abc",
-				}, auth.GenerateUser(suite.T(), suite.db, false))
+				}, generateUser(suite.T(), suite.db, false))
 				assert.ErrorContains(suite.T(), err, errors.Conflict)
 				assert.False(suite.T(), created)
 			})
@@ -350,7 +349,7 @@ func (suite *chartReleaseControllerSuite) TestChartReleaseCreate() {
 					Environment: dynamicSwatomationEnvironment.Name,
 					// This name exists associated to another environment, namespace, and cluster
 					Name: datarepoDevChartRelease.Name,
-				}, auth.GenerateUser(suite.T(), suite.db, false))
+				}, generateUser(suite.T(), suite.db, false))
 				assert.ErrorContains(suite.T(), err, errors.Conflict)
 				assert.False(suite.T(), created)
 			})
@@ -364,7 +363,7 @@ func (suite *chartReleaseControllerSuite) TestChartReleaseCreate() {
 			suite.seedChartVersions(suite.T(), suite.db)
 
 			suite.Run("no associations", func() {
-				_, created, err := suite.ChartReleaseController.Create(CreatableChartRelease{}, auth.GenerateUser(suite.T(), suite.db, false))
+				_, created, err := suite.ChartReleaseController.Create(CreatableChartRelease{}, generateUser(suite.T(), suite.db, false))
 				assert.ErrorContains(suite.T(), err, errors.BadRequest)
 				assert.False(suite.T(), created)
 			})
@@ -373,7 +372,7 @@ func (suite *chartReleaseControllerSuite) TestChartReleaseCreate() {
 					Chart:                leonardoChart.Name,
 					Environment:          terraDevEnvironment.Name,
 					ChartVersionResolver: testutils.PointerTo("something obviously incorrect"),
-				}, auth.GenerateUser(suite.T(), suite.db, false))
+				}, generateUser(suite.T(), suite.db, false))
 				assert.ErrorContains(suite.T(), err, errors.BadRequest)
 				assert.False(suite.T(), created)
 			})
@@ -387,12 +386,12 @@ func (suite *chartReleaseControllerSuite) TestChartReleaseCreate() {
 			suite.seedChartVersions(suite.T(), suite.db)
 
 			suite.Run("blocks suitable creation for non-suitable", func() {
-				_, created, err := suite.ChartReleaseController.Create(leonardoProdChartRelease, auth.GenerateUser(suite.T(), suite.db, false))
+				_, created, err := suite.ChartReleaseController.Create(leonardoProdChartRelease, generateUser(suite.T(), suite.db, false))
 				assert.ErrorContains(suite.T(), err, errors.Forbidden)
 				assert.False(suite.T(), created)
 			})
 			suite.Run("allows suitable creation for suitable", func() {
-				release, created, err := suite.ChartReleaseController.Create(leonardoProdChartRelease, auth.GenerateUser(suite.T(), suite.db, true))
+				release, created, err := suite.ChartReleaseController.Create(leonardoProdChartRelease, generateUser(suite.T(), suite.db, true))
 				assert.NoError(suite.T(), err)
 				assert.True(suite.T(), created)
 				assert.True(suite.T(), release.ID > 0)
@@ -554,7 +553,7 @@ func (suite *chartReleaseControllerSuite) TestChartReleaseEdit() {
 		assert.Equal(suite.T(), "datarepo", *before.Subdomain)
 		edited, err := suite.ChartReleaseController.Edit(datarepoDevChartRelease.Name, EditableChartRelease{
 			Subdomain: testutils.PointerTo("data"),
-		}, auth.GenerateUser(suite.T(), suite.db, false))
+		}, generateUser(suite.T(), suite.db, false))
 		assert.NoError(suite.T(), err)
 		assert.Equal(suite.T(), "data", *edited.Subdomain)
 		after, err := suite.ChartReleaseController.Get(datarepoDevChartRelease.Name)
@@ -575,7 +574,7 @@ func (suite *chartReleaseControllerSuite) TestChartReleaseEdit() {
 			assert.NoError(suite.T(), err)
 			_, err = suite.ChartReleaseController.Edit(datarepoProdChartRelease.Name, EditableChartRelease{
 				Subdomain: testutils.PointerTo("data"),
-			}, auth.GenerateUser(suite.T(), suite.db, false))
+			}, generateUser(suite.T(), suite.db, false))
 			assert.ErrorContains(suite.T(), err, errors.Forbidden)
 			notEdited, err := suite.ChartReleaseController.Get(datarepoProdChartRelease.Name)
 			assert.NoError(suite.T(), err)
@@ -584,7 +583,7 @@ func (suite *chartReleaseControllerSuite) TestChartReleaseEdit() {
 		suite.Run("successfully if suitable", func() {
 			edited, err := suite.ChartReleaseController.Edit(datarepoProdChartRelease.Name, EditableChartRelease{
 				Subdomain: testutils.PointerTo("data"),
-			}, auth.GenerateUser(suite.T(), suite.db, true))
+			}, generateUser(suite.T(), suite.db, true))
 			assert.NoError(suite.T(), err)
 			assert.Equal(suite.T(), "data", *edited.Subdomain)
 		})
@@ -606,7 +605,7 @@ func (suite *chartReleaseControllerSuite) TestChartReleaseDelete() {
 		assert.NoError(suite.T(), err)
 		assert.True(suite.T(), databaseInstance.ID > 0)
 
-		deleted, err := suite.ChartReleaseController.Delete(datarepoDevChartRelease.Name, auth.GenerateUser(suite.T(), suite.db, false))
+		deleted, err := suite.ChartReleaseController.Delete(datarepoDevChartRelease.Name, generateUser(suite.T(), suite.db, false))
 		assert.NoError(suite.T(), err)
 		assert.Equal(suite.T(), datarepoDevChartRelease.Name, deleted.Name)
 		_, err = suite.ChartReleaseController.Get(datarepoDevChartRelease.Name)
@@ -617,7 +616,7 @@ func (suite *chartReleaseControllerSuite) TestChartReleaseDelete() {
 			assert.Len(suite.T(), shouldBeEmpty, 0)
 		})
 		suite.Run("allows re-creation", func() {
-			chartRelease, created, err := suite.ChartReleaseController.Create(datarepoDevChartRelease, auth.GenerateUser(suite.T(), suite.db, false))
+			chartRelease, created, err := suite.ChartReleaseController.Create(datarepoDevChartRelease, generateUser(suite.T(), suite.db, false))
 			assert.NoError(suite.T(), err)
 			assert.True(suite.T(), created)
 			assert.NotEqual(suite.T(), deleted.ID, chartRelease.ID)
@@ -633,11 +632,11 @@ func (suite *chartReleaseControllerSuite) TestChartReleaseDelete() {
 		suite.seedChartReleases(suite.T(), suite.db)
 
 		suite.Run("unsuccessfully if not suitable", func() {
-			_, err := suite.ChartReleaseController.Delete(datarepoProdChartRelease.Name, auth.GenerateUser(suite.T(), suite.db, false))
+			_, err := suite.ChartReleaseController.Delete(datarepoProdChartRelease.Name, generateUser(suite.T(), suite.db, false))
 			assert.ErrorContains(suite.T(), err, errors.Forbidden)
 		})
 		suite.Run("successfully if suitable", func() {
-			deleted, err := suite.ChartReleaseController.Delete(datarepoProdChartRelease.Name, auth.GenerateUser(suite.T(), suite.db, true))
+			deleted, err := suite.ChartReleaseController.Delete(datarepoProdChartRelease.Name, generateUser(suite.T(), suite.db, true))
 			assert.NoError(suite.T(), err)
 			assert.Equal(suite.T(), datarepoProdChartRelease.Name, deleted.Name)
 		})

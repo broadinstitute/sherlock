@@ -2,8 +2,8 @@ package v2models
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/sherlock/internal/auth/auth_models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/model_actions"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/utils"
 	"strconv"
 
@@ -42,10 +42,10 @@ func (c Cluster) GetCiIdentifier() *CiIdentifier {
 	}
 }
 
-var clusterStore *internalModelStore[Cluster]
+var InternalClusterStore *internalModelStore[Cluster]
 
 func init() {
-	clusterStore = &internalModelStore[Cluster]{
+	InternalClusterStore = &internalModelStore[Cluster]{
 		selectorToQueryModel: clusterSelectorToQuery,
 		modelToSelectors:     clusterToSelectors,
 		errorIfForbidden:     clusterErrorIfForbidden,
@@ -90,9 +90,9 @@ func clusterToSelectors(cluster *Cluster) []string {
 	return selectors
 }
 
-func clusterErrorIfForbidden(_ *gorm.DB, cluster *Cluster, _ model_actions.ActionType, user *auth_models.User) error {
+func clusterErrorIfForbidden(_ *gorm.DB, cluster *Cluster, _ model_actions.ActionType, user *models.User) error {
 	if cluster.RequiresSuitability == nil || *cluster.RequiresSuitability {
-		return user.SuitableOrError()
+		return user.Suitability().SuitableOrError()
 	} else {
 		return nil
 	}

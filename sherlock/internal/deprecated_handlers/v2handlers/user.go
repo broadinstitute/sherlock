@@ -2,7 +2,7 @@ package v2handlers
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/sherlock/internal/auth"
+	"github.com/broadinstitute/sherlock/sherlock/internal/authentication"
 	v2controllers2 "github.com/broadinstitute/sherlock/sherlock/internal/deprecated_controllers/v2controllers"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/gin-gonic/gin"
@@ -146,7 +146,7 @@ func listUserSelectors(controller *v2controllers2.UserController) func(ctx *gin.
 //	@router			/api/v2/procedures/users/link-github [post]
 func updateUserGithubAssociation(controller *v2controllers2.UserController) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
-		user, err := auth.ShouldUseUser(ctx)
+		user, err := authentication.ShouldUseUser(ctx)
 		if err != nil {
 			ctx.JSON(errors.ErrorToApiResponse(err))
 			return
@@ -180,7 +180,7 @@ func updateUserGithubAssociation(controller *v2controllers2.UserController) func
 //	@router			/api/v2/procedures/users/me [get]
 func getOwnUser(controller *v2controllers2.UserController) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
-		user, err := auth.ShouldUseUser(ctx)
+		user, err := authentication.ShouldUseUser(ctx)
 		if err != nil {
 			ctx.JSON(errors.ErrorToApiResponse(err))
 			return

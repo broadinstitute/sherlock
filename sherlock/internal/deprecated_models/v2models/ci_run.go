@@ -2,8 +2,8 @@ package v2models
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/sherlock/internal/auth/auth_models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/utils"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
@@ -38,10 +38,10 @@ func (c CiRun) getID() uint {
 	return c.ID
 }
 
-var ciRunStore *internalModelStore[CiRun]
+var InternalCiRunStore *internalModelStore[CiRun]
 
 func init() {
-	ciRunStore = &internalModelStore[CiRun]{
+	InternalCiRunStore = &internalModelStore[CiRun]{
 		selectorToQueryModel: ciRunSelectorToQuery,
 		modelToSelectors:     ciRunToSelectors,
 		validateModel:        validateCiRun,
@@ -168,22 +168,22 @@ func validateCiRun(ciRun *CiRun) error {
 	return nil
 }
 
-func preCreateCiRun(db *gorm.DB, toCreate *CiRun, user *auth_models.User) error {
+func preCreateCiRun(db *gorm.DB, toCreate *CiRun, user *models.User) error {
 	return createCiRunIdentifiersJustInTime(db, toCreate, user)
 }
 
-func preEditCiRun(db *gorm.DB, _ *CiRun, editsToMake *CiRun, user *auth_models.User) error {
+func preEditCiRun(db *gorm.DB, _ *CiRun, editsToMake *CiRun, user *models.User) error {
 	return createCiRunIdentifiersJustInTime(db, editsToMake, user)
 }
 
-func createCiRunIdentifiersJustInTime(db *gorm.DB, ciRun *CiRun, user *auth_models.User) error {
+func createCiRunIdentifiersJustInTime(db *gorm.DB, ciRun *CiRun, user *models.User) error {
 	if ciRun.RelatedResources != nil {
 		for idx, ciIdentifier := range ciRun.RelatedResources {
 			if ciIdentifier != nil && ciIdentifier.ID == 0 {
 				// We do gate this whole block on the CiIdentifier not having an ID (meaning it probably doesn't really
 				// exist yet), but even if it does, our create here should still be safe. CiIdentifier handles duplicates
 				// so that it won't complain, it'll just return the existing match in the database.
-				result, created, err := ciIdentifierStore.create(db, *ciIdentifier, user)
+				result, created, err := InternalCiIdentifierStore.Create(db, *ciIdentifier, user)
 				if err != nil {
 					return fmt.Errorf("failed to create %T just-in-time for %s ID %d", ciIdentifier, ciIdentifier.ResourceType, ciIdentifier.ResourceID)
 				}

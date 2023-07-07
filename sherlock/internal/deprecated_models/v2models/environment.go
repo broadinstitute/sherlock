@@ -2,10 +2,10 @@ package v2models
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/sherlock/internal/auth/auth_models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/model_actions"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models/environment"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/utils"
 	"github.com/rs/zerolog/log"
 	"math/bits"
@@ -71,10 +71,10 @@ func (e Environment) GetCiIdentifier() *CiIdentifier {
 	}
 }
 
-var environmentStore *internalModelStore[Environment]
+var InternalEnvironmentStore *internalModelStore[Environment]
 
 func init() {
-	environmentStore = &internalModelStore[Environment]{
+	InternalEnvironmentStore = &internalModelStore[Environment]{
 		selectorToQueryModel:  environmentSelectorToQuery,
 		modelToSelectors:      environmentToSelectors,
 		errorIfForbidden:      environmentErrorIfForbidden,
@@ -149,9 +149,9 @@ func environmentToSelectors(environment *Environment) []string {
 	return selectors
 }
 
-func environmentErrorIfForbidden(_ *gorm.DB, environment *Environment, _ model_actions.ActionType, user *auth_models.User) error {
+func environmentErrorIfForbidden(_ *gorm.DB, environment *Environment, _ model_actions.ActionType, user *models.User) error {
 	if environment.RequiresSuitability == nil || *environment.RequiresSuitability {
-		return user.SuitableOrError()
+		return user.Suitability().SuitableOrError()
 	} else {
 		return nil
 	}
@@ -249,7 +249,7 @@ func validateEnvironment(environment *Environment) error {
 	return nil
 }
 
-func preCreateEnvironment(db *gorm.DB, environment *Environment, _ *auth_models.User) error {
+func preCreateEnvironment(db *gorm.DB, environment *Environment, _ *models.User) error {
 	if environment != nil && environment.UniqueResourcePrefix == "" {
 		var generatedUniqueResourcePrefix bool
 
@@ -363,16 +363,16 @@ func generateUniqueResourcePrefix(sb *strings.Builder, number uint64) {
 	sb.WriteByte(characterBytes[r0])
 }
 
-func postCreateEnvironment(db *gorm.DB, environment *Environment, user *auth_models.User) error {
+func postCreateEnvironment(db *gorm.DB, environment *Environment, user *models.User) error {
 	if environment.AutoPopulateChartReleases != nil && *environment.AutoPopulateChartReleases {
 		if environment.Lifecycle == "dynamic" && environment.TemplateEnvironmentID != nil {
 			// This is a dynamic environment that is getting created right now, let's copy the chart releases from the template too
-			templateChartReleases, err := chartReleaseStore.listAllMatchingByUpdated(db, 0, ChartRelease{EnvironmentID: environment.TemplateEnvironmentID})
+			templateChartReleases, err := InternalChartReleaseStore.ListAllMatchingByUpdated(db, 0, ChartRelease{EnvironmentID: environment.TemplateEnvironmentID})
 			if err != nil {
 				return fmt.Errorf("wasn't able to list chart releases of template %s (disable autoPopulateChartReleases to skip): %v", environment.TemplateEnvironment.Name, err)
 			}
 			for _, templateChartRelease := range templateChartReleases {
-				chartRelease, _, err := chartReleaseStore.create(db,
+				chartRelease, _, err := InternalChartReleaseStore.Create(db,
 					ChartRelease{
 						ChartID:                 templateChartRelease.ChartID,
 						ClusterID:               environment.DefaultClusterID,
@@ -389,12 +389,12 @@ func postCreateEnvironment(db *gorm.DB, environment *Environment, user *auth_mod
 				if err != nil {
 					return fmt.Errorf("wasn't able to copy template's release of the %s chart (disable autoPopulateChartReleases to skip): %v", templateChartRelease.Chart.Name, err)
 				}
-				templateDatabaseInstance, err := databaseInstanceStore.getIfExists(db, DatabaseInstance{ChartReleaseID: templateChartRelease.ID})
+				templateDatabaseInstance, err := InternalDatabaseInstanceStore.GetIfExists(db, DatabaseInstance{ChartReleaseID: templateChartRelease.ID})
 				if err != nil {
 					return fmt.Errorf("wasn't able to get possible database instance of template's %s chart instance (disable autoPopulateChartReleases to skip): %v", templateChartRelease.Chart.Name, err)
 				}
 				if templateDatabaseInstance != nil {
-					_, _, err := databaseInstanceStore.create(db,
+					_, _, err := InternalDatabaseInstanceStore.Create(db,
 						DatabaseInstance{
 							ChartReleaseID:  chartRelease.ID,
 							Platform:        templateDatabaseInstance.Platform,
@@ -416,11 +416,11 @@ func postCreateEnvironment(db *gorm.DB, environment *Environment, user *auth_mod
 				trueBoolean := true
 				for index, chartEntry := range autoPopulateCharts {
 					if chartEntry.String("name") != "" {
-						chart, err := chartStore.get(db, Chart{Name: chartEntry.String("name")})
+						chart, err := InternalChartStore.Get(db, Chart{Name: chartEntry.String("name")})
 						if err != nil {
 							return fmt.Errorf("wasn't able to get the honeycomb chart (disable autoPopulateChartReleases to skip): %v", err)
 						}
-						_, _, err = chartReleaseStore.create(db,
+						_, _, err = InternalChartReleaseStore.Create(db,
 							ChartRelease{
 								ChartID:         chart.ID,
 								ClusterID:       environment.DefaultClusterID,
@@ -451,13 +451,13 @@ func postCreateEnvironment(db *gorm.DB, environment *Environment, user *auth_mod
 	return nil
 }
 
-func preDeletePostValidateEnvironment(db *gorm.DB, environment *Environment, user *auth_models.User) error {
-	chartReleases, err := chartReleaseStore.listAllMatchingByUpdated(db, 0, ChartRelease{EnvironmentID: &environment.ID})
+func preDeletePostValidateEnvironment(db *gorm.DB, environment *Environment, user *models.User) error {
+	chartReleases, err := InternalChartReleaseStore.ListAllMatchingByUpdated(db, 0, ChartRelease{EnvironmentID: &environment.ID})
 	if err != nil {
 		return fmt.Errorf("wasn't able to list chart releases: %v", err)
 	}
 	for _, chartRelease := range chartReleases {
-		_, err = chartReleaseStore.delete(db, ChartRelease{
+		_, err = InternalChartReleaseStore.Delete(db, ChartRelease{
 			Model: gorm.Model{ID: chartRelease.ID},
 		}, user)
 		if err != nil {
