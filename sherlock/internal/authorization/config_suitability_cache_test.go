@@ -7,7 +7,7 @@ import (
 )
 
 func TestCacheConfigSuitability(t *testing.T) {
-	config.LoadTestConfig(t)
+	config.LoadTestConfig()
 	assert.NoError(t, CacheConfigSuitability())
 	tests := []struct {
 		name string

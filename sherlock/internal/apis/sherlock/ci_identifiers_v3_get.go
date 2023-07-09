@@ -2,11 +2,11 @@ package sherlock
 
 import (
 	"fmt"
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/authentication"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
-	"github.com/broadinstitute/sherlock/sherlock/internal/utils"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 	"net/http"
@@ -18,7 +18,7 @@ func ciIdentifiersV3Get(ctx *gin.Context) {
 	if err != nil {
 		return
 	}
-	query, err := ciIdentifierModelFromSelector(db, utils.CanonicalizeSelector(ctx.Param("selector")))
+	query, err := ciIdentifierModelFromSelector(db, canonicalizeSelector(ctx.Param("selector")))
 	if err != nil {
 		ctx.AbortWithStatusJSON(errors.ErrorToApiResponse(err))
 		return

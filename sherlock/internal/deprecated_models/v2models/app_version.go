@@ -2,8 +2,8 @@ package v2models
 
 import (
 	"fmt"
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
-	"github.com/broadinstitute/sherlock/sherlock/internal/utils"
 	"gorm.io/gorm"
 	"strconv"
 	"strings"

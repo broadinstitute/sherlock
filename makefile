@@ -7,19 +7,17 @@ local-stop:
 local-down:
 	docker-compose -f dev/local-with-pg.yaml down --volumes
 
-# We bump the max connections because I (Jack) was sloppy with database connections but not quantity of tests
-functional-test:
+test:
 	docker run --name test-postgres -e POSTGRES_PASSWORD=password -e POSTGRES_USER=sherlock -d -p 5432:5432 postgres:13 -c max_connections=200
-	cd sherlock && export SHERLOCK_DB_PASSWORD="password" && go test -p 1 -v -race ./...
+	cd go-shared && go test -p 1 -v -race ./...
+	cd sherlock && go test -p 1 -v -race ./...
 	docker stop test-postgres
 	docker rm test-postgres
 
-unit-test:
-	cd sherlock && go test -v -short -race ./...
-
-tests-with-coverage:
+test-with-coverage:
 	docker run --name test-postgres -e POSTGRES_PASSWORD=password -e POSTGRES_USER=sherlock -d -p 5432:5432 postgres:13 -c max_connections=200
-	cd sherlock && export SHERLOCK_DB_PASSWORD="password" && go test -p 1 -v -race -coverprofile=cover.out -covermode=atomic ./...
+	cd go-shared && go test -p 1 -v -race -coverprofile=cover.out -covermode=atomic ./...
+	cd sherlock && go test -p 1 -v -race -coverprofile=cover.out -covermode=atomic ./...
 	docker stop test-postgres
 	docker rm -f -v test-postgres
 

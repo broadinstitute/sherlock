@@ -34,7 +34,7 @@ func (a *Application) Start() {
 	log.Info().Msgf("BOOT | starting liveness endpoint...")
 	go liveness.Start()
 
-	log.Info().Msgf("BOOT | migrating database and configuring ORM...")
+	log.Info().Msgf("BOOT | migrating database and configuring Gorm...")
 	if gormDB, err := db.Configure(a.sqlDB); err != nil {
 		log.Fatal().Msgf("db.Configure() err: %v", err)
 	} else {
@@ -87,7 +87,7 @@ func (a *Application) Start() {
 		}
 	}
 
-	log.Info().Msgf("BOOT | starting server...")
+	log.Info().Msgf("BOOT | boot complete; now serving...")
 	if err := a.server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		log.Fatal().Msgf("server.ListenAndServe() err: %v", err)
 	}
@@ -99,7 +99,7 @@ func (a *Application) Stop() {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
 		if err := a.server.Shutdown(ctx); err != nil {
-			log.Warn().Msgf("server.Shutdown() err: %v", err)
+			log.Warn().Msgf("BOOT | server shutdown error: %v", err)
 		}
 	} else {
 		log.Info().Msgf("BOOT | no server; skipping shutting down server")
@@ -115,7 +115,7 @@ func (a *Application) Stop() {
 	if a.sqlDB != nil {
 		log.Info().Msgf("BOOT | closing database connections...")
 		if err := a.sqlDB.Close(); err != nil {
-			log.Warn().Msgf("sqlDB.Close() err: %v", err)
+			log.Warn().Msgf("BOOT | database connection close error: %v", err)
 		}
 	} else {
 		log.Info().Msgf("BOOT | no SQL database reference, skipping closing database connections")
@@ -123,4 +123,5 @@ func (a *Application) Stop() {
 
 	log.Info().Msgf("BOOT | stopping liveness endpoint...")
 	liveness.Stop()
+	log.Info().Msgf("BOOT | exiting...")
 }

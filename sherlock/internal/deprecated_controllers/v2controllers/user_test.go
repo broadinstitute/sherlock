@@ -1,12 +1,12 @@
 package v2controllers
 
 import (
+	"github.com/broadinstitute/sherlock/go-shared/pkg/testutils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_db"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/auth_models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
-	"github.com/broadinstitute/sherlock/sherlock/internal/testutils"
 	"github.com/google/go-github/v50/github"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
@@ -30,7 +30,7 @@ type userControllerSuite struct {
 }
 
 func (suite *userControllerSuite) SetupTest() {
-	config.LoadTestConfig(suite.T())
+	config.LoadTestConfig()
 	suite.db = deprecated_db.ConnectAndConfigureFromTest(suite.T())
 	suite.db.Begin()
 	suite.ControllerSet = NewControllerSet(v2models.NewStoreSet(suite.db))

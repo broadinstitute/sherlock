@@ -32,6 +32,9 @@ func GetCurrentUserForDB(db *gorm.DB) (*User, error) {
 	return user, nil
 }
 
+// User is a more complex type than the other types in this package simply because we don't
+// just use it as a CRUD model -- it's also the struct used as the touch-point for
+// authentication and authorization.
 type User struct {
 	gorm.Model
 	Email                  string
@@ -55,12 +58,12 @@ type User struct {
 	// See the authentication package for more information.
 	AuthenticationMethod authentication_method.Method `gorm:"-:all"`
 
-	// suitability is ignored by Gorm and isn't stored in the database -- it is used to cache calls to Suitability,
+	// cachedSuitability is ignored by Gorm and isn't stored in the database -- it is used to cache calls to Suitability,
 	// which looks up the user's authorization.Suitability.
 	// See the authorization package for more information.
 	// In the future, Sherlock will become its own source of truth for suitability and other authorization, in
 	// which case this behavior will become database-persistent and may be entirely represented in the database.
-	suitability *authorization.Suitability `gorm:"-:all"`
+	cachedSuitability *authorization.Suitability `gorm:"-:all"`
 }
 
 func (u *User) TableName() string {
@@ -94,10 +97,10 @@ func (u *User) BeforeDelete(_ *gorm.DB) error {
 }
 
 func (u *User) Suitability() *authorization.Suitability {
-	if u.Email != "" && u.suitability == nil {
-		u.suitability = authorization.GetSuitabilityFor(u.Email)
+	if u.Email != "" && u.cachedSuitability == nil {
+		u.cachedSuitability = authorization.GetSuitabilityFor(u.Email)
 	}
-	return u.suitability
+	return u.cachedSuitability
 }
 
 func (u *User) AlphaNumericHyphenatedUsername() string {

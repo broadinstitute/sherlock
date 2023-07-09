@@ -35,7 +35,7 @@ type metricsUpdaterSuite struct {
 }
 
 func (suite *metricsUpdaterSuite) SetupTest() {
-	config.LoadTestConfig(suite.T())
+	config.LoadTestConfig()
 	suite.db = deprecated_db.ConnectAndConfigureFromTest(suite.T())
 	suite.db.Begin()
 }

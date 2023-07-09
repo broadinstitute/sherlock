@@ -2,13 +2,13 @@ package v2models
 
 import (
 	"fmt"
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/authentication_method"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/auth_models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/model_actions"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
-	"github.com/broadinstitute/sherlock/sherlock/internal/utils"
 	"gorm.io/gorm"
 	"strconv"
 	"strings"

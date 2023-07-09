@@ -13,7 +13,7 @@ import (
 // so may as well check
 
 func TestGetSuitabilityFor(t *testing.T) {
-	config.LoadTestConfig(t)
+	config.LoadTestConfig()
 	cachedFirecloudSuitability = map[string]*Suitability{
 		"suitable@firecloud.org":          {suitable: true, source: FIRECLOUD, description: "yes"},
 		"suitable@broadinstitute.org":     {suitable: true, source: FIRECLOUD, description: "yes"},

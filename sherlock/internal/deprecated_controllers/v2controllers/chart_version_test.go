@@ -30,7 +30,7 @@ type chartVersionControllerSuite struct {
 }
 
 func (suite *chartVersionControllerSuite) SetupTest() {
-	config.LoadTestConfig(suite.T())
+	config.LoadTestConfig()
 	suite.db = deprecated_db.ConnectAndConfigureFromTest(suite.T())
 	suite.db.Begin()
 	suite.ControllerSet = NewControllerSet(v2models.NewStoreSet(suite.db))

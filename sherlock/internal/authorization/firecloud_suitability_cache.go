@@ -3,8 +3,8 @@ package authorization
 import (
 	"context"
 	"fmt"
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
-	"github.com/broadinstitute/sherlock/sherlock/internal/utils"
 	"github.com/rs/zerolog/log"
 	admin "google.golang.org/api/admin/directory/v1"
 	"google.golang.org/api/option"
@@ -93,7 +93,7 @@ func CacheFirecloudSuitability(ctx context.Context) error {
 		return err
 	}
 
-	log.Debug().Msgf("AUTH | firecloud suitability cache updated, now contains %d total (primary+recovery) emails", len(newCache))
+	log.Info().Msgf("AUTH | firecloud suitability cache updated, now contains %d total (primary+recovery) emails", len(newCache))
 	cachedFirecloudSuitability = newCache
 	lastFirecloudCacheTime = time.Now()
 	return nil

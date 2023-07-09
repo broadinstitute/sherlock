@@ -2,13 +2,13 @@ package v2models
 
 import (
 	"fmt"
+	"github.com/broadinstitute/sherlock/go-shared/pkg/testutils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models/environment"
 	"reflect"
 	"strings"
 	"testing"
 	"time"
 
-	"github.com/broadinstitute/sherlock/sherlock/internal/testutils"
 	"gorm.io/gorm"
 )
 

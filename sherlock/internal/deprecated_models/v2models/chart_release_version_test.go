@@ -1,10 +1,10 @@
 package v2models
 
 import (
+	"github.com/broadinstitute/sherlock/go-shared/pkg/testutils"
 	"testing"
 	"time"
 
-	"github.com/broadinstitute/sherlock/sherlock/internal/testutils"
 	"gorm.io/gorm"
 )
 

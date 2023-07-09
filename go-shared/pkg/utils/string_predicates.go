@@ -4,13 +4,8 @@ package utils
 // analyzing and validating their individual selectors
 
 import (
-	"strings"
 	"unicode"
 )
-
-func CanonicalizeSelector(selector string) string {
-	return strings.Trim(selector, "/")
-}
 
 func IsNumeric(selector string) bool {
 	for _, r := range selector {

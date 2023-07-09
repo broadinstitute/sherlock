@@ -2,7 +2,7 @@ package v2models
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/sherlock/internal/utils"
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"time"
 
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"

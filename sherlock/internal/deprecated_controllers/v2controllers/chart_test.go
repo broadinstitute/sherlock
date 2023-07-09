@@ -2,13 +2,13 @@ package v2controllers
 
 import (
 	"fmt"
+	"github.com/broadinstitute/sherlock/go-shared/pkg/testutils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_db"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
 	"testing"
 
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
-	"github.com/broadinstitute/sherlock/sherlock/internal/testutils"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"gorm.io/gorm"
@@ -32,7 +32,7 @@ type chartControllerSuite struct {
 }
 
 func (suite *chartControllerSuite) SetupTest() {
-	config.LoadTestConfig(suite.T())
+	config.LoadTestConfig()
 	suite.db = deprecated_db.ConnectAndConfigureFromTest(suite.T())
 	suite.db.Begin()
 	suite.ControllerSet = NewControllerSet(v2models.NewStoreSet(suite.db))

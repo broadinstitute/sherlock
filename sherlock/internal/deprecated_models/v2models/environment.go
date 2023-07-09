@@ -2,11 +2,11 @@ package v2models
 
 import (
 	"fmt"
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/model_actions"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models/environment"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
-	"github.com/broadinstitute/sherlock/sherlock/internal/utils"
 	"github.com/rs/zerolog/log"
 	"math/bits"
 	"regexp"

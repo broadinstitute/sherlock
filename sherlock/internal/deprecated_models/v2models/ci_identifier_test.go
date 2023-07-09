@@ -1,9 +1,9 @@
 package v2models
 
 import (
+	"github.com/broadinstitute/sherlock/go-shared/pkg/testutils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/model_actions"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
-	"github.com/broadinstitute/sherlock/sherlock/internal/testutils"
 	"gorm.io/gorm"
 	"testing"
 )

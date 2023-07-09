@@ -2,8 +2,8 @@ package auth_models
 
 import (
 	"fmt"
+	"github.com/broadinstitute/sherlock/go-shared/pkg/testutils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
-	"github.com/broadinstitute/sherlock/sherlock/internal/testutils"
 	"testing"
 )
 

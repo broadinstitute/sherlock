@@ -21,7 +21,7 @@ func CacheConfigSuitability() error {
 			return fmt.Errorf("extra config permissions entry %d seemed not to have an email", index)
 		}
 	}
-	log.Debug().Msgf("AUTH | extra config permissions cache built, contains %d entries", len(newCache))
+	log.Info().Msgf("AUTH | extra config permissions cache built, contains %d entries", len(newCache))
 	cachedConfigSuitability = newCache
 	return nil
 }
