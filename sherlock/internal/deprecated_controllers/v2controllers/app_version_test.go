@@ -29,15 +29,14 @@ type appVersionControllerSuite struct {
 	db *gorm.DB
 }
 
-func (suite *appVersionControllerSuite) SetupTest() {
+func (suite *appVersionControllerSuite) SetupSuite() {
 	config.LoadTestConfig()
 	suite.db = deprecated_db.ConnectAndConfigureFromTest(suite.T())
-	suite.db.Begin()
 	suite.ControllerSet = NewControllerSet(v2models.NewStoreSet(suite.db))
 }
 
-func (suite *appVersionControllerSuite) TearDownTest() {
-	suite.db.Rollback()
+func (suite *appVersionControllerSuite) TearDownSuite() {
+	deprecated_db.Truncate(suite.T(), suite.db)
 }
 
 //

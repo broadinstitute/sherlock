@@ -31,15 +31,14 @@ type chartControllerSuite struct {
 	db *gorm.DB
 }
 
-func (suite *chartControllerSuite) SetupTest() {
+func (suite *chartControllerSuite) SetupSuite() {
 	config.LoadTestConfig()
 	suite.db = deprecated_db.ConnectAndConfigureFromTest(suite.T())
-	suite.db.Begin()
 	suite.ControllerSet = NewControllerSet(v2models.NewStoreSet(suite.db))
 }
 
-func (suite *chartControllerSuite) TearDownTest() {
-	suite.db.Rollback()
+func (suite *chartControllerSuite) TearDownSuite() {
+	deprecated_db.Truncate(suite.T(), suite.db)
 }
 
 //

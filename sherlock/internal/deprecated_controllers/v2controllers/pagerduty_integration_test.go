@@ -30,15 +30,14 @@ type pagerdutyIntegrationControllerSuite struct {
 	db *gorm.DB
 }
 
-func (suite *pagerdutyIntegrationControllerSuite) SetupTest() {
+func (suite *pagerdutyIntegrationControllerSuite) SetupSuite() {
 	config.LoadTestConfig()
 	suite.db = deprecated_db.ConnectAndConfigureFromTest(suite.T())
-	suite.db.Begin()
 	suite.ControllerSet = NewControllerSet(v2models.NewStoreSet(suite.db))
 }
 
-func (suite *pagerdutyIntegrationControllerSuite) TearDownTest() {
-	suite.db.Rollback()
+func (suite *pagerdutyIntegrationControllerSuite) TearDownSuite() {
+	deprecated_db.Truncate(suite.T(), suite.db)
 }
 
 //

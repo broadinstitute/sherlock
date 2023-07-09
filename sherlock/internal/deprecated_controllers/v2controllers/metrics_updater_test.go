@@ -34,14 +34,13 @@ type metricsUpdaterSuite struct {
 	db *gorm.DB
 }
 
-func (suite *metricsUpdaterSuite) SetupTest() {
+func (suite *metricsUpdaterSuite) SetupSuite() {
 	config.LoadTestConfig()
 	suite.db = deprecated_db.ConnectAndConfigureFromTest(suite.T())
-	suite.db.Begin()
 }
 
-func (suite *metricsUpdaterSuite) TearDownTest() {
-	suite.db.Rollback()
+func (suite *metricsUpdaterSuite) TearDownSuite() {
+	deprecated_db.Truncate(suite.T(), suite.db)
 }
 
 func (suite *metricsUpdaterSuite) TestUpdateMetrics() {

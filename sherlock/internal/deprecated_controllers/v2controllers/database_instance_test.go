@@ -30,15 +30,14 @@ type databaseInstanceControllerSuite struct {
 	db *gorm.DB
 }
 
-func (suite *databaseInstanceControllerSuite) SetupTest() {
+func (suite *databaseInstanceControllerSuite) SetupSuite() {
 	config.LoadTestConfig()
 	suite.db = deprecated_db.ConnectAndConfigureFromTest(suite.T())
-	suite.db.Begin()
 	suite.ControllerSet = NewControllerSet(v2models.NewStoreSet(suite.db))
 }
 
-func (suite *databaseInstanceControllerSuite) TearDownTest() {
-	suite.db.Rollback()
+func (suite *databaseInstanceControllerSuite) TearDownSuite() {
+	deprecated_db.Truncate(suite.T(), suite.db)
 }
 
 //

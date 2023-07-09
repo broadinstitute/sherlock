@@ -26,15 +26,14 @@ type ciRunControllerSuite struct {
 	db *gorm.DB
 }
 
-func (suite *ciRunControllerSuite) SetupTest() {
+func (suite *ciRunControllerSuite) SetupSuite() {
 	config.LoadTestConfig()
 	suite.db = deprecated_db.ConnectAndConfigureFromTest(suite.T())
-	suite.db.Begin()
 	suite.ControllerSet = NewControllerSet(v2models.NewStoreSet(suite.db))
 }
 
-func (suite *ciRunControllerSuite) TearDownTest() {
-	suite.db.Rollback()
+func (suite *ciRunControllerSuite) TearDownSuite() {
+	deprecated_db.Truncate(suite.T(), suite.db)
 }
 
 // TestCiFlow covers both CiRun and CiIdentifier, since they're inter-referential and usage is very closely related.

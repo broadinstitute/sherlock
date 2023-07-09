@@ -29,16 +29,15 @@ type userControllerSuite struct {
 	db         *gorm.DB
 }
 
-func (suite *userControllerSuite) SetupTest() {
+func (suite *userControllerSuite) SetupSuite() {
 	config.LoadTestConfig()
 	suite.db = deprecated_db.ConnectAndConfigureFromTest(suite.T())
-	suite.db.Begin()
 	suite.ControllerSet = NewControllerSet(v2models.NewStoreSet(suite.db))
 	suite.middleware = v2models.NewMiddlewareUserStore(suite.db)
 }
 
-func (suite *userControllerSuite) TearDownTest() {
-	suite.db.Rollback()
+func (suite *userControllerSuite) TearDownSuite() {
+	deprecated_db.Truncate(suite.T(), suite.db)
 }
 
 // TODO (Jack): This test is particularly bad now during the refactoring, to the point that we potentially want to refactor User sooner rather than later.

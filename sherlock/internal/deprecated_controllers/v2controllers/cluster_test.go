@@ -31,15 +31,14 @@ type clusterControllerSuite struct {
 	db *gorm.DB
 }
 
-func (suite *clusterControllerSuite) SetupTest() {
+func (suite *clusterControllerSuite) SetupSuite() {
 	config.LoadTestConfig()
 	suite.db = deprecated_db.ConnectAndConfigureFromTest(suite.T())
-	suite.db.Begin()
 	suite.ControllerSet = NewControllerSet(v2models.NewStoreSet(suite.db))
 }
 
-func (suite *clusterControllerSuite) TearDownTest() {
-	suite.db.Rollback()
+func (suite *clusterControllerSuite) TearDownSuite() {
+	deprecated_db.Truncate(suite.T(), suite.db)
 }
 
 //
