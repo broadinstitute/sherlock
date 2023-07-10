@@ -24,9 +24,7 @@ func init() {
 		panic(fmt.Sprintf("failed to load default_config.yaml, panicking due to likely embedding issue: %v", err))
 	}
 
-	if err := Config.Load(file.Provider("/etc/sherlock/sherlock.yaml"), yaml.Parser()); err != nil {
-		infoMessages = append(infoMessages, fmt.Sprintf("CONF | didn't load config from /etc/sherlock/sherlock.yaml: %v", err.Error()))
-	} else {
+	if err := Config.Load(file.Provider("/etc/sherlock/sherlock.yaml"), yaml.Parser()); err == nil {
 		infoMessages = append(infoMessages, "CONF | loaded config from /etc/sherlock/sherlock.yaml")
 	}
 

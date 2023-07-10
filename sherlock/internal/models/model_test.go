@@ -82,7 +82,7 @@ func (s *modelSuite) SetupTest() {
 // UseUser is intended to be called from within a test function.
 // It will upsert a User with the given email and googleID and
 // set it as the modelSuite db's current user.
-func (s *modelSuite) UseUser(email, googleID string) {
+func (s *modelSuite) UseUser(email, googleID string) *User {
 	var user User
 	if err := s.db.
 		Where(&User{Email: email, GoogleID: googleID}).
@@ -91,6 +91,7 @@ func (s *modelSuite) UseUser(email, googleID string) {
 	} else {
 		user.AuthenticationMethod = authentication_method.TEST
 		s.db = SetCurrentUserForDB(s.db, &user)
+		return &user
 	}
 }
 
@@ -98,8 +99,8 @@ func (s *modelSuite) UseUser(email, googleID string) {
 // test function. It calls UseUser with the suitable test user
 // info from the test_users package, which will be recognized
 // as suitable by the authorization package.
-func (s *modelSuite) UseSuitableTestUser() {
-	s.UseUser(test_users.SuitableTestUserEmail, test_users.SuitableTestUserGoogleID)
+func (s *modelSuite) UseSuitableTestUser() *User {
+	return s.UseUser(test_users.SuitableTestUserEmail, test_users.SuitableTestUserGoogleID)
 }
 
 // UseNonSuitableTestUser is intended to be called from within
@@ -107,8 +108,8 @@ func (s *modelSuite) UseSuitableTestUser() {
 // test user from the test_users package, which will be
 // recognized but considered non-suitable by the authorization
 // package.
-func (s *modelSuite) UseNonSuitableTestUser() {
-	s.UseUser(test_users.NonSuitableTestUserEmail, test_users.NonSuitableTestUserGoogleID)
+func (s *modelSuite) UseNonSuitableTestUser() *User {
+	return s.UseUser(test_users.NonSuitableTestUserEmail, test_users.NonSuitableTestUserGoogleID)
 }
 
 // TearDownTest takes advantage of SetupTest having begun a
@@ -139,7 +140,7 @@ func (s *modelSuite) TearDownSuite() {
 func (s *modelSuite) TestModelSuiteItself() {
 	s.Run("no user by default", func() {
 		user, err := GetCurrentUserForDB(s.db)
-		s.ErrorContains(err, "database user accessed but not present")
+		s.ErrorContains(err, "database user not available")
 		s.Nil(user)
 	})
 	s.Run("suitable test user", func() {

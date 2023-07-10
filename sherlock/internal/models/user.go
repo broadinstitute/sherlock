@@ -1,6 +1,7 @@
 package models
 
 import (
+	"context"
 	"fmt"
 	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/authentication_method"
 	"github.com/broadinstitute/sherlock/sherlock/internal/authorization"
@@ -11,20 +12,16 @@ import (
 	"unicode"
 )
 
-const dbInstanceUserFieldName = "SherlockUser"
+const dbContextUserFieldName = "SherlockUser"
 
 func SetCurrentUserForDB(db *gorm.DB, user *User) *gorm.DB {
-	return db.Set(dbInstanceUserFieldName, user)
+	return db.WithContext(context.WithValue(db.Statement.Context, dbContextUserFieldName, user))
 }
 
 func GetCurrentUserForDB(db *gorm.DB) (*User, error) {
-	userValue, exists := db.Get(dbInstanceUserFieldName)
-	if !exists {
-		return nil, fmt.Errorf("(%s) database user accessed but not present", errors.InternalServerError)
-	}
-	user, ok := userValue.(*User)
+	user, ok := db.Statement.Context.Value(dbContextUserFieldName).(*User)
 	if !ok {
-		return nil, fmt.Errorf("(%s) database user stored with incorrect type: represented as %T", errors.InternalServerError, userValue)
+		return nil, fmt.Errorf("(%s) database user not available (was %T)", errors.InternalServerError, user)
 	}
 	if user == nil {
 		return nil, fmt.Errorf("(%s) database user was nil", errors.InternalServerError)
@@ -75,6 +72,8 @@ func (u *User) BeforeUpdate(tx *gorm.DB) error {
 		// (Jack) I don't think it's possible to hit this case unless some internal code tried it,
 		// since these fields aren't editable in the API, but might as well just chuck an error here.
 		// If this ever fires I suppose we'd be glad it did.
+		// I don't think it's worth being this exhaustive elsewhere, but with this table I think it makes
+		// sense because of how intertwined it is with authentication.
 		return fmt.Errorf("(%s) email and google ID cannot be changed", errors.BadRequest)
 	}
 	userMakingRequest, err := GetCurrentUserForDB(tx)
@@ -82,10 +81,17 @@ func (u *User) BeforeUpdate(tx *gorm.DB) error {
 		return err
 	}
 	if userMakingRequest.ID != u.ID {
+		if u.ID == 0 {
+			// We can smartly catch a coding error here.
+			// This is probably a result of doing something like db.Where().Updates() when you need to do
+			// db.Where().First() followed by db.Model().Updates().
+			// https://gorm.io/docs/update.html
+			return fmt.Errorf("(%s) user ID in BeforeEdit was nil, possibly a bad database call", errors.InternalServerError)
+		}
 		return fmt.Errorf("(%s) users can only edit themselves", errors.Forbidden)
 	}
-	if (config.Config.MustString("mode") != "debug" && u.AuthenticationMethod != authentication_method.IAP) ||
-		(config.Config.MustString("mode") == "debug" && u.AuthenticationMethod != authentication_method.TEST && u.AuthenticationMethod != authentication_method.LOCAL) {
+	if (config.Config.MustString("mode") != "debug" && userMakingRequest.AuthenticationMethod != authentication_method.IAP) ||
+		(config.Config.MustString("mode") == "debug" && userMakingRequest.AuthenticationMethod != authentication_method.TEST && userMakingRequest.AuthenticationMethod != authentication_method.LOCAL) {
 		// For non-debug, require IAP to edit users. For debug, require TEST or LOCAL so we can still hit this error case if we really try.
 		return fmt.Errorf("(%s) users cannot be edited via this authentication method while sherlock is in %s mode", errors.Forbidden, config.Config.MustString("mode"))
 	}
