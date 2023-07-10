@@ -12,14 +12,18 @@ import (
 	"unicode"
 )
 
-const dbContextUserFieldName = "SherlockUser"
+// sherlockDbContextField exists as a type to avoid collisions with other keys;
+// linting errors if you don't do this.
+type sherlockDbContextField string
+
+const dbUserField sherlockDbContextField = "SherlockUser"
 
 func SetCurrentUserForDB(db *gorm.DB, user *User) *gorm.DB {
-	return db.WithContext(context.WithValue(db.Statement.Context, dbContextUserFieldName, user))
+	return db.WithContext(context.WithValue(db.Statement.Context, dbUserField, user))
 }
 
 func GetCurrentUserForDB(db *gorm.DB) (*User, error) {
-	user, ok := db.Statement.Context.Value(dbContextUserFieldName).(*User)
+	user, ok := db.Statement.Context.Value(dbUserField).(*User)
 	if !ok {
 		return nil, fmt.Errorf("(%s) database user not available (was %T)", errors.InternalServerError, user)
 	}
