@@ -106,19 +106,19 @@ func (s *modelSuite) TestUserUsername() {
 	}
 }
 
-func (s *modelSuite) TestGithubValidationSqlOnlyName() {
+func (s *modelSuite) TestUserGithubValidationSqlOnlyName() {
 	user := s.UseNonSuitableTestUser()
 	err := s.db.Model(user).Updates(&User{GithubUsername: testutils.PointerTo("foo")}).Error
 	s.ErrorContains(err, "violates check constraint \"github_info_together\"")
 }
 
-func (s *modelSuite) TestGithubValidationSqlOnlyID() {
+func (s *modelSuite) TestUserGithubValidationSqlOnlyID() {
 	user := s.UseNonSuitableTestUser()
 	err := s.db.Model(user).Updates(&User{GithubID: testutils.PointerTo("bar")}).Error
 	s.ErrorContains(err, "violates check constraint \"github_info_together\"")
 }
 
-func (s *modelSuite) TestGithubValidationSqlValid() {
+func (s *modelSuite) TestUserGithubValidationSqlValid() {
 	user := s.UseNonSuitableTestUser()
 	err := s.db.Model(user).Updates(&User{
 		GithubUsername: testutils.PointerTo("foo"),
@@ -127,31 +127,31 @@ func (s *modelSuite) TestGithubValidationSqlValid() {
 	s.NoError(err)
 }
 
-func (s *modelSuite) TestEmailValidationSqlInvalid() {
+func (s *modelSuite) TestUserEmailValidationSqlInvalid() {
 	err := s.db.Create(&User{Email: "invalid", GoogleID: "some value"}).Error
 	s.ErrorContains(err, "violates check constraint \"email_format\"")
 }
 
-func (s *modelSuite) TestEmailValidationSqlValid() {
+func (s *modelSuite) TestUserEmailValidationSqlValid() {
 	err := s.db.Create(&User{Email: "valid@example.com", GoogleID: "some value"}).Error
 	s.NoError(err)
 }
 
-func (s *modelSuite) TestEmailUniquenessSql() {
+func (s *modelSuite) TestUserEmailUniquenessSql() {
 	err := s.db.Create(&User{Email: "valid@example.com", GoogleID: "some value"}).Error
 	s.NoError(err)
 	err = s.db.Create(&User{Email: "valid@example.com", GoogleID: "some other value"}).Error
 	s.ErrorContains(err, "violates unique constraint")
 }
 
-func (s *modelSuite) TestGoogleIdUniquenessSql() {
+func (s *modelSuite) TestUserGoogleIdUniquenessSql() {
 	err := s.db.Create(&User{Email: "valid@example.com", GoogleID: "some value"}).Error
 	s.NoError(err)
 	err = s.db.Create(&User{Email: "valid-2@example.com", GoogleID: "some value"}).Error
 	s.ErrorContains(err, "violates unique constraint")
 }
 
-func (s *modelSuite) TestGithubUsernameUniquenessSql() {
+func (s *modelSuite) TestUserGithubUsernameUniquenessSql() {
 	err := s.db.Create(&User{
 		Email:          "valid@example.com",
 		GoogleID:       "some value",
@@ -168,7 +168,7 @@ func (s *modelSuite) TestGithubUsernameUniquenessSql() {
 	s.ErrorContains(err, "violates unique constraint")
 }
 
-func (s *modelSuite) TestGithubIdUniquenessSql() {
+func (s *modelSuite) TestUserGithubIdUniquenessSql() {
 	err := s.db.Create(&User{
 		Email:          "valid@example.com",
 		GoogleID:       "some value",

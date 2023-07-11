@@ -1,6 +1,6 @@
 ALTER TABLE v2_ci_identifiers
     ADD CONSTRAINT resource_present
-        CHECK (resource_type <> '' AND resource_id <> 0);
+        CHECK (resource_type IS NOT NULL AND resource_type != '' AND resource_id IS NOT NULL AND resource_id != 0);
 
 CREATE UNIQUE INDEX ci_identifiers_selector_unique_constraint
     ON v2_ci_identifiers (resource_type, resource_id)
@@ -10,19 +10,19 @@ ALTER TABLE v2_ci_runs
     ADD CONSTRAINT platform_present
         CHECK ((
                            platform = 'github-actions'
-                       AND github_actions_owner <> ''
-                       AND github_actions_repo <> ''
-                       AND github_actions_run_id <> 0
-                       AND github_actions_attempt_number <> 0
-                       AND github_actions_workflow_path <> ''
+                       AND (github_actions_owner IS NOT NULL AND github_actions_owner != '')
+                       AND (github_actions_repo IS NOT NULL AND github_actions_repo != '')
+                       AND (github_actions_run_id IS NOT NULL AND github_actions_run_id != 0)
+                       AND (github_actions_attempt_number IS NOT NULL AND github_actions_attempt_number != 0)
+                       AND (github_actions_workflow_path IS NOT NULL AND github_actions_workflow_path != '')
                        AND (argo_workflows_namespace IS NULL OR argo_workflows_namespace = '')
                        AND (argo_workflows_name IS NULL OR argo_workflows_name = '')
                        AND (argo_workflows_template IS NULL OR argo_workflows_template = '')
                    ) OR (
                            platform = 'argo-workflows'
-                       AND argo_workflows_namespace <> ''
-                       AND argo_workflows_name <> ''
-                       AND argo_workflows_template <> ''
+                       AND (argo_workflows_namespace IS NOT NULL AND argo_workflows_namespace != '')
+                       AND (argo_workflows_name IS NOT NULL AND argo_workflows_name != '')
+                       AND (argo_workflows_template IS NOT NULL AND argo_workflows_template != '')
                        AND (github_actions_owner IS NULL OR github_actions_owner = '')
                        AND (github_actions_repo IS NULL OR github_actions_repo = '')
                        AND (github_actions_run_id IS NULL OR github_actions_run_id = 0)
@@ -32,7 +32,7 @@ ALTER TABLE v2_ci_runs
 
 ALTER TABLE v2_ci_runs
     ADD CONSTRAINT terminal_status_present
-        CHECK (terminal_at IS NULL or status <> '');
+        CHECK (terminal_at IS NULL OR (status IS NOT NULL AND status != ''));
 
 CREATE UNIQUE INDEX ci_runs_selector_unique_constraint
     ON v2_ci_runs (
