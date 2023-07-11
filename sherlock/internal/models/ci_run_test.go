@@ -96,3 +96,52 @@ func (s *modelSuite) TestCiRunTerminalValidationValid() {
 	}).Error
 	s.NoError(err)
 }
+
+func (s *modelSuite) TestCiRunUniquenessSqlInvalid() {
+	err := s.db.Create(&CiRun{
+		Platform:                   "github-actions",
+		GithubActionsOwner:         "owner",
+		GithubActionsRepo:          "repo",
+		GithubActionsRunID:         123,
+		GithubActionsAttemptNumber: 123,
+		GithubActionsWorkflowPath:  "path",
+	}).Error
+	s.NoError(err)
+	err = s.db.Create(&CiRun{
+		Platform:                   "github-actions",
+		GithubActionsOwner:         "owner",
+		GithubActionsRepo:          "repo",
+		GithubActionsRunID:         123,
+		GithubActionsAttemptNumber: 123,
+		GithubActionsWorkflowPath:  "path",
+	}).Error
+	s.ErrorContains(err, "violates unique constraint")
+}
+
+func (s *modelSuite) TestCiRunUniquenessSqlValid() {
+	run1 := CiRun{
+		Platform:                   "github-actions",
+		GithubActionsOwner:         "owner",
+		GithubActionsRepo:          "repo",
+		GithubActionsRunID:         123,
+		GithubActionsAttemptNumber: 123,
+		GithubActionsWorkflowPath:  "path",
+	}
+	err := s.db.Create(&run1).Error
+	s.NoError(err)
+	s.NotZero(run1.ID)
+	err = s.db.Delete(&run1).Error
+	s.NoError(err)
+	run2 := CiRun{
+		Platform:                   "github-actions",
+		GithubActionsOwner:         "owner",
+		GithubActionsRepo:          "repo",
+		GithubActionsRunID:         123,
+		GithubActionsAttemptNumber: 123,
+		GithubActionsWorkflowPath:  "path",
+	}
+	err = s.db.Create(&run2).Error
+	s.NoError(err)
+	s.NotZero(run2.ID)
+	s.NotEqual(run1.ID, run2.ID)
+}
