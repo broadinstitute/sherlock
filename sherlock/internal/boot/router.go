@@ -47,18 +47,14 @@ func buildRouter(db *gorm.DB) *gin.Engine {
 	router := gin.New()
 	router.Use(gin.Recovery(), middleware.Logger(), middleware.Headers())
 
-	router.GET("/version", misc.VersionHandler)
-	router.GET("/status", misc.StatusHandler)
+	misc.ConfigureRoutes(&router.RouterGroup)
 
-	metrics.RegisterPrometheusMetricsHandler(router.Group("/metrics"))
-
+	router.GET("/metrics", metrics.PrometheusHandler())
 	router.StaticFS("/static", http.FS(html.StaticHtmlFiles))
-
 	router.GET("/swagger/*any", swaggo_gin.WrapHandler(swaggo_files.Handler))
 	router.GET("", func(ctx *gin.Context) { ctx.Redirect(http.StatusMovedPermanently, "/swagger/index.html") })
 
 	apiRouter := router.Group("api", authentication.UserMiddleware(db), authentication.DbMiddleware(db))
-
 	sherlock.ConfigureRoutes(apiRouter)
 
 	v2apiRouter := apiRouter.Group("v2")

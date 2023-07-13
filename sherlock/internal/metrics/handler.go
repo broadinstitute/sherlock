@@ -6,9 +6,8 @@ import (
 	"log"
 )
 
-// RegisterPrometheusMetricsHandler accepts a gin.RouterGroup and will set up
-// a prometheus metrics endpoint on the provided route
-func RegisterPrometheusMetricsHandler(metricsGroup *gin.RouterGroup) {
+// PrometheusHandler exposes registered Prometheus metrics
+func PrometheusHandler() gin.HandlerFunc {
 	prometheusExporter, err := prometheus.NewExporter(prometheus.Options{
 		Namespace: "sherlock",
 	})
@@ -16,5 +15,5 @@ func RegisterPrometheusMetricsHandler(metricsGroup *gin.RouterGroup) {
 		log.Fatalf("error creating prometheus exporter")
 	}
 
-	metricsGroup.GET("", gin.WrapH(prometheusExporter))
+	return gin.WrapH(prometheusExporter)
 }

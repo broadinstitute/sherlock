@@ -9,7 +9,7 @@ type StatusResponse struct {
 	OK bool `json:"ok"`
 }
 
-// StatusHandler godoc
+// statusGet godoc
 //
 //	@summary		Get Sherlock's current status
 //	@description	Get Sherlock's current status. Right now, this endpoint always returned OK (if the server is online).
@@ -18,6 +18,6 @@ type StatusResponse struct {
 //	@produce		json
 //	@success		200	{object}	misc.StatusResponse
 //	@router			/status [get]
-func StatusHandler(ctx *gin.Context) {
+func statusGet(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, StatusResponse{OK: true})
 }
