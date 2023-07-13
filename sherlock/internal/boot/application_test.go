@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func TestApplication(t *testing.T) {
+func TestStartStop(t *testing.T) {
 	config.LoadTestConfig()
 	application := &Application{
 		runInsideDatabaseTransaction: true,
