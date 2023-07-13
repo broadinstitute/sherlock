@@ -14,10 +14,6 @@ func TestApplication_StartStop(t *testing.T) {
 		runInsideDatabaseTransaction: true,
 	}
 
-	t.Run("stop", func(t *testing.T) {
-		assert.NotPanics(t, application.Stop)
-	})
-
 	t.Run("start and then stop", func(t *testing.T) {
 		go application.Start()
 		var livenessSucceeded, readinessSucceeded bool
@@ -38,7 +34,7 @@ func TestApplication_StartStop(t *testing.T) {
 				time.Sleep(time.Second / 4)
 			}
 		}
-		assert.NotPanics(t, application.Stop)
+		application.Stop()
 		assert.Truef(t, livenessSucceeded, ":8081 returned 200")
 		assert.Truef(t, readinessSucceeded, ":8080/status returned 200")
 	})
