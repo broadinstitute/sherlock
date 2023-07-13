@@ -21,6 +21,11 @@ type Application struct {
 	gormDB    *gorm.DB
 	cancelCtx context.CancelFunc
 	server    *http.Server
+
+	// runInsideDatabaseTransaction begins a transaction on the gorm.DB after migration and rolls it back
+	// before closing the connection. This makes Start + Stop safe to run from tests, because they won't
+	// leave the database in a dirty state.
+	runInsideDatabaseTransaction bool
 }
 
 func (a *Application) Start() {
@@ -39,6 +44,10 @@ func (a *Application) Start() {
 		log.Fatal().Msgf("db.Configure() err: %v", err)
 	} else {
 		a.gormDB = gormDB
+	}
+
+	if a.runInsideDatabaseTransaction {
+		a.gormDB = a.gormDB.Begin()
 	}
 
 	log.Info().Msgf("BOOT | creating global context...")
@@ -110,6 +119,10 @@ func (a *Application) Stop() {
 		a.cancelCtx()
 	} else {
 		log.Info().Msgf("BOOT | no context cancellation function, skipping canceling global context")
+	}
+
+	if a.runInsideDatabaseTransaction && a.gormDB != nil {
+		a.gormDB.Rollback()
 	}
 
 	if a.sqlDB != nil {
