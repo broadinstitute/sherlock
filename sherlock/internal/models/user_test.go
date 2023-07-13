@@ -9,55 +9,55 @@ import (
 )
 
 func (s *modelSuite) TestUserRejectEditImmutableField() {
-	userToEdit := s.UseNonSuitableTestUser()
+	userToEdit := s.SetNonSuitableTestUserForDB()
 	s.Run("email", func() {
-		err := s.db.Model(&userToEdit).Updates(&User{Email: "some-other-email@example.com"}).Error
+		err := s.DB.Model(&userToEdit).Updates(&User{Email: "some-other-email@example.com"}).Error
 		s.ErrorContains(err, "cannot be changed")
 	})
 	s.Run("google ID", func() {
-		err := s.db.Model(&userToEdit).Updates(&User{GoogleID: "some google ID?"}).Error
+		err := s.DB.Model(&userToEdit).Updates(&User{GoogleID: "some google ID?"}).Error
 		s.ErrorContains(err, "cannot be changed")
 	})
 	s.Run("ID", func() {
-		err := s.db.Model(&userToEdit).Updates(&User{Model: gorm.Model{ID: userToEdit.ID + 1}}).Error
+		err := s.DB.Model(&userToEdit).Updates(&User{Model: gorm.Model{ID: userToEdit.ID + 1}}).Error
 		s.ErrorContains(err, "cannot be changed")
 	})
 }
 
 func (s *modelSuite) TestUserCatchBadEdit() {
-	s.UseNonSuitableTestUser()
-	err := s.db.Where(&User{Email: test_users.NonSuitableTestUserEmail}).Updates(&User{Name: testutils.PointerTo("new name")}).Error
+	s.SetNonSuitableTestUserForDB()
+	err := s.DB.Where(&User{Email: test_users.NonSuitableTestUserEmail}).Updates(&User{Name: testutils.PointerTo("new name")}).Error
 	s.ErrorContains(err, "user ID in BeforeEdit was nil, possibly a bad database call")
 }
 
 func (s *modelSuite) TestUserOnlySelfEdit() {
-	nonSuitable := s.UseNonSuitableTestUser()
-	s.UseSuitableTestUser()
-	err := s.db.Model(nonSuitable).Updates(&User{Name: testutils.PointerTo("new name")}).Error
+	nonSuitable := s.SetNonSuitableTestUserForDB()
+	s.SetSuitableTestUserForDB()
+	err := s.DB.Model(nonSuitable).Updates(&User{Name: testutils.PointerTo("new name")}).Error
 	s.ErrorContains(err, errors.Forbidden)
-	s.UseNonSuitableTestUser()
-	err = s.db.Model(nonSuitable).Updates(&User{Name: testutils.PointerTo("new name")}).Error
+	s.SetNonSuitableTestUserForDB()
+	err = s.DB.Model(nonSuitable).Updates(&User{Name: testutils.PointerTo("new name")}).Error
 	s.NoError(err)
 	s.Equal("new name", *nonSuitable.Name)
 }
 
 func (s *modelSuite) TestUserEditAuthMethodCheck() {
-	user := s.UseNonSuitableTestUser()
+	user := s.SetNonSuitableTestUserForDB()
 	user.AuthenticationMethod = authentication_method.UNKNOWN
 	var userToEdit User
-	err := s.db.Where(&User{Email: test_users.NonSuitableTestUserEmail}).First(&userToEdit).Error
+	err := s.DB.Where(&User{Email: test_users.NonSuitableTestUserEmail}).First(&userToEdit).Error
 	s.NoError(err)
-	err = s.db.Model(&userToEdit).Updates(&User{Name: testutils.PointerTo("new name")}).Error
+	err = s.DB.Model(&userToEdit).Updates(&User{Name: testutils.PointerTo("new name")}).Error
 	s.ErrorContains(err, "users cannot be edited via this authentication method")
 }
 
 func (s *modelSuite) TestUserNoDelete() {
-	s.UseNonSuitableTestUser()
-	s.UseSuitableTestUser()
+	s.SetNonSuitableTestUserForDB()
+	s.SetSuitableTestUserForDB()
 	var user User
-	err := s.db.Where(&User{Email: test_users.NonSuitableTestUserEmail}).Delete(&user).Error
+	err := s.DB.Where(&User{Email: test_users.NonSuitableTestUserEmail}).Delete(&user).Error
 	s.ErrorContains(err, errors.Forbidden)
-	err = s.db.Where(&User{Email: test_users.NonSuitableTestUserEmail}).First(&user).Error
+	err = s.DB.Where(&User{Email: test_users.NonSuitableTestUserEmail}).First(&user).Error
 	s.NoError(err)
 	s.NotZero(user.ID)
 }
@@ -107,20 +107,20 @@ func (s *modelSuite) TestUserUsername() {
 }
 
 func (s *modelSuite) TestUserGithubValidationSqlOnlyName() {
-	user := s.UseNonSuitableTestUser()
-	err := s.db.Model(user).Updates(&User{GithubUsername: testutils.PointerTo("foo")}).Error
+	user := s.SetNonSuitableTestUserForDB()
+	err := s.DB.Model(user).Updates(&User{GithubUsername: testutils.PointerTo("foo")}).Error
 	s.ErrorContains(err, "violates check constraint \"github_info_together\"")
 }
 
 func (s *modelSuite) TestUserGithubValidationSqlOnlyID() {
-	user := s.UseNonSuitableTestUser()
-	err := s.db.Model(user).Updates(&User{GithubID: testutils.PointerTo("bar")}).Error
+	user := s.SetNonSuitableTestUserForDB()
+	err := s.DB.Model(user).Updates(&User{GithubID: testutils.PointerTo("bar")}).Error
 	s.ErrorContains(err, "violates check constraint \"github_info_together\"")
 }
 
 func (s *modelSuite) TestUserGithubValidationSqlValid() {
-	user := s.UseNonSuitableTestUser()
-	err := s.db.Model(user).Updates(&User{
+	user := s.SetNonSuitableTestUserForDB()
+	err := s.DB.Model(user).Updates(&User{
 		GithubUsername: testutils.PointerTo("foo"),
 		GithubID:       testutils.PointerTo("bar"),
 	}).Error
@@ -128,38 +128,38 @@ func (s *modelSuite) TestUserGithubValidationSqlValid() {
 }
 
 func (s *modelSuite) TestUserEmailValidationSqlInvalid() {
-	err := s.db.Create(&User{Email: "invalid", GoogleID: "some value"}).Error
+	err := s.DB.Create(&User{Email: "invalid", GoogleID: "some value"}).Error
 	s.ErrorContains(err, "violates check constraint \"email_format\"")
 }
 
 func (s *modelSuite) TestUserEmailValidationSqlValid() {
-	err := s.db.Create(&User{Email: "valid@example.com", GoogleID: "some value"}).Error
+	err := s.DB.Create(&User{Email: "valid@example.com", GoogleID: "some value"}).Error
 	s.NoError(err)
 }
 
 func (s *modelSuite) TestUserEmailUniquenessSql() {
-	err := s.db.Create(&User{Email: "valid@example.com", GoogleID: "some value"}).Error
+	err := s.DB.Create(&User{Email: "valid@example.com", GoogleID: "some value"}).Error
 	s.NoError(err)
-	err = s.db.Create(&User{Email: "valid@example.com", GoogleID: "some other value"}).Error
+	err = s.DB.Create(&User{Email: "valid@example.com", GoogleID: "some other value"}).Error
 	s.ErrorContains(err, "violates unique constraint")
 }
 
 func (s *modelSuite) TestUserGoogleIdUniquenessSql() {
-	err := s.db.Create(&User{Email: "valid@example.com", GoogleID: "some value"}).Error
+	err := s.DB.Create(&User{Email: "valid@example.com", GoogleID: "some value"}).Error
 	s.NoError(err)
-	err = s.db.Create(&User{Email: "valid-2@example.com", GoogleID: "some value"}).Error
+	err = s.DB.Create(&User{Email: "valid-2@example.com", GoogleID: "some value"}).Error
 	s.ErrorContains(err, "violates unique constraint")
 }
 
 func (s *modelSuite) TestUserGithubUsernameUniquenessSql() {
-	err := s.db.Create(&User{
+	err := s.DB.Create(&User{
 		Email:          "valid@example.com",
 		GoogleID:       "some value",
 		GithubUsername: testutils.PointerTo("valid"),
 		GithubID:       testutils.PointerTo("some value"),
 	}).Error
 	s.NoError(err)
-	err = s.db.Create(&User{
+	err = s.DB.Create(&User{
 		Email:          "valid-2@example.com",
 		GoogleID:       "some other value",
 		GithubUsername: testutils.PointerTo("valid"),
@@ -169,14 +169,14 @@ func (s *modelSuite) TestUserGithubUsernameUniquenessSql() {
 }
 
 func (s *modelSuite) TestUserGithubIdUniquenessSql() {
-	err := s.db.Create(&User{
+	err := s.DB.Create(&User{
 		Email:          "valid@example.com",
 		GoogleID:       "some value",
 		GithubUsername: testutils.PointerTo("valid"),
 		GithubID:       testutils.PointerTo("some value"),
 	}).Error
 	s.NoError(err)
-	err = s.db.Create(&User{
+	err = s.DB.Create(&User{
 		Email:          "valid-2@example.com",
 		GoogleID:       "some other value",
 		GithubUsername: testutils.PointerTo("valid-2"),

@@ -6,14 +6,14 @@ import (
 )
 
 func (s *modelSuite) TestCiRunPlatformValidationSqlPlatformInvalid() {
-	err := s.db.Create(&CiRun{
+	err := s.DB.Create(&CiRun{
 		Platform: "invalid",
 	}).Error
 	s.ErrorContains(err, "violates check constraint \"platform_present\"")
 }
 
 func (s *modelSuite) TestCiRunPlatformValidationSqlGithubInvalid() {
-	err := s.db.Create(&CiRun{
+	err := s.DB.Create(&CiRun{
 		Platform:                   "github-actions",
 		GithubActionsOwner:         "owner",
 		GithubActionsRepo:          "repo",
@@ -24,7 +24,7 @@ func (s *modelSuite) TestCiRunPlatformValidationSqlGithubInvalid() {
 }
 
 func (s *modelSuite) TestCiRunPlatformValidationSqlGithubValid() {
-	err := s.db.Create(&CiRun{
+	err := s.DB.Create(&CiRun{
 		Platform:                   "github-actions",
 		GithubActionsOwner:         "owner",
 		GithubActionsRepo:          "repo",
@@ -36,7 +36,7 @@ func (s *modelSuite) TestCiRunPlatformValidationSqlGithubValid() {
 }
 
 func (s *modelSuite) TestCiRunPlatformValidationSqlArgoInvalid() {
-	err := s.db.Create(&CiRun{
+	err := s.DB.Create(&CiRun{
 		Platform:               "argo-workflows",
 		ArgoWorkflowsNamespace: "namespace",
 		ArgoWorkflowsName:      "name",
@@ -45,7 +45,7 @@ func (s *modelSuite) TestCiRunPlatformValidationSqlArgoInvalid() {
 }
 
 func (s *modelSuite) TestCiRunPlatformValidationSqlArgoValid() {
-	err := s.db.Create(&CiRun{
+	err := s.DB.Create(&CiRun{
 		Platform:               "argo-workflows",
 		ArgoWorkflowsNamespace: "namespace",
 		ArgoWorkflowsName:      "name",
@@ -55,7 +55,7 @@ func (s *modelSuite) TestCiRunPlatformValidationSqlArgoValid() {
 }
 
 func (s *modelSuite) TestCiRunPlatformValidationSqlBoth() {
-	err := s.db.Create(&CiRun{
+	err := s.DB.Create(&CiRun{
 		Platform:                   "argo-workflows",
 		GithubActionsOwner:         "owner",
 		GithubActionsRepo:          "repo",
@@ -79,12 +79,12 @@ func (s *modelSuite) TestCiRunTerminalValidationInvalid() {
 		GithubActionsWorkflowPath:  "path",
 		TerminalAt:                 testutils.PointerTo(time.Now()),
 	}
-	err := s.db.Create(&run).Error
+	err := s.DB.Create(&run).Error
 	s.ErrorContains(err, "violates check constraint \"terminal_status_present\"")
 }
 
 func (s *modelSuite) TestCiRunTerminalValidationValid() {
-	err := s.db.Create(&CiRun{
+	err := s.DB.Create(&CiRun{
 		Platform:                   "github-actions",
 		GithubActionsOwner:         "owner",
 		GithubActionsRepo:          "repo",
@@ -98,7 +98,7 @@ func (s *modelSuite) TestCiRunTerminalValidationValid() {
 }
 
 func (s *modelSuite) TestCiRunUniquenessSqlInvalid() {
-	err := s.db.Create(&CiRun{
+	err := s.DB.Create(&CiRun{
 		Platform:                   "github-actions",
 		GithubActionsOwner:         "owner",
 		GithubActionsRepo:          "repo",
@@ -107,7 +107,7 @@ func (s *modelSuite) TestCiRunUniquenessSqlInvalid() {
 		GithubActionsWorkflowPath:  "path",
 	}).Error
 	s.NoError(err)
-	err = s.db.Create(&CiRun{
+	err = s.DB.Create(&CiRun{
 		Platform:                   "github-actions",
 		GithubActionsOwner:         "owner",
 		GithubActionsRepo:          "repo",
@@ -127,10 +127,10 @@ func (s *modelSuite) TestCiRunUniquenessSqlValid() {
 		GithubActionsAttemptNumber: 123,
 		GithubActionsWorkflowPath:  "path",
 	}
-	err := s.db.Create(&run1).Error
+	err := s.DB.Create(&run1).Error
 	s.NoError(err)
 	s.NotZero(run1.ID)
-	err = s.db.Delete(&run1).Error
+	err = s.DB.Delete(&run1).Error
 	s.NoError(err)
 	run2 := CiRun{
 		Platform:                   "github-actions",
@@ -140,7 +140,7 @@ func (s *modelSuite) TestCiRunUniquenessSqlValid() {
 		GithubActionsAttemptNumber: 123,
 		GithubActionsWorkflowPath:  "path",
 	}
-	err = s.db.Create(&run2).Error
+	err = s.DB.Create(&run2).Error
 	s.NoError(err)
 	s.NotZero(run2.ID)
 	s.NotEqual(run1.ID, run2.ID)

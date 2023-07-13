@@ -2,7 +2,7 @@ package test_users
 
 import (
 	"github.com/gin-gonic/gin"
-	"strings"
+	"strconv"
 )
 
 const (
@@ -15,9 +15,16 @@ const (
 
 func ParseHeader(ctx *gin.Context) (email string, googleID string) {
 	header := ctx.GetHeader(SuitabilityControlHeader)
-	if strings.ToLower(header) == "false" {
-		return NonSuitableTestUserEmail, NonSuitableTestUserGoogleID
-	} else {
+	if header == "" {
 		return SuitableTestUserEmail, SuitableTestUserGoogleID
+	}
+	suitable, err := strconv.ParseBool(header)
+	if err != nil {
+		panic(err)
+	}
+	if suitable {
+		return SuitableTestUserEmail, SuitableTestUserGoogleID
+	} else {
+		return NonSuitableTestUserEmail, NonSuitableTestUserGoogleID
 	}
 }
