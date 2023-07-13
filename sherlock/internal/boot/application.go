@@ -87,13 +87,9 @@ func (a *Application) Start() {
 	}
 
 	log.Info().Msgf("BOOT | building Gin router...")
-	if router, err := buildRouter(a.gormDB); err != nil {
-		log.Fatal().Msgf("buildRouter() err: %v", err)
-	} else {
-		a.server = &http.Server{
-			Addr:    ":8080",
-			Handler: router,
-		}
+	a.server = &http.Server{
+		Addr:    ":8080",
+		Handler: buildRouter(a.gormDB),
 	}
 
 	log.Info().Msgf("BOOT | boot complete; now serving...")

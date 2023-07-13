@@ -34,7 +34,7 @@ import (
 //	@license.name	BSD-3-Clause
 //	@license.url	https://github.com/broadinstitute/sherlock/blob/main/LICENSE.txt
 
-func buildRouter(db *gorm.DB) (*gin.Engine, error) {
+func buildRouter(db *gorm.DB) *gin.Engine {
 	// gin.DebugMode spews console output but can help resolve routing issues
 	gin.SetMode(gin.ReleaseMode)
 
@@ -76,5 +76,5 @@ func buildRouter(db *gorm.DB) (*gin.Engine, error) {
 	v2handlers.RegisterCiIdentifierHandlers(v2apiRouter, v2ControllerSet.CiIdentifierController)
 	v2handlers.RegisterCiRunHandlers(v2apiRouter, v2ControllerSet.CiRunController)
 
-	return router, nil
+	return router
 }
