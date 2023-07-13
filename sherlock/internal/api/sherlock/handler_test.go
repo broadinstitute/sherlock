@@ -28,7 +28,7 @@ func TestHandlerSuite(t *testing.T) {
 func (s *handlerSuite) SetupSuite() {
 	s.TestSuiteHelper.SetupSuite()
 	// Reduces console output
-	gin.SetMode(gin.ReleaseMode)
+	gin.SetMode(gin.TestMode)
 }
 
 func (s *handlerSuite) SetupTest() {
