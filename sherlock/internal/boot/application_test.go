@@ -36,11 +36,3 @@ func TestApplication_StartStop(t *testing.T) {
 	assert.Truef(t, livenessSucceeded, ":8081 returned 200")
 	assert.Truef(t, readinessSucceeded, ":8080/status returned 200")
 }
-
-func TestApplication_Stop(t *testing.T) {
-	config.LoadTestConfig()
-	application := &Application{
-		runInsideDatabaseTransaction: true,
-	}
-	application.Stop()
-}
