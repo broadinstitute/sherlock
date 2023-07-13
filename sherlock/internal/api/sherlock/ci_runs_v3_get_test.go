@@ -2,9 +2,28 @@ package sherlock
 
 import (
 	"fmt"
+	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"net/http"
 )
+
+func (s *handlerSuite) TestCiRunsV3GetBadSelector() {
+	var got errors.ErrorResponse
+	code := s.HandleRequest(
+		s.NewRequest("GET", "/api/ci-runs/v3/foo-bar", nil),
+		&got)
+	s.Equal(http.StatusBadRequest, code)
+	s.Equal(errors.BadRequest, got.Type)
+}
+
+func (s *handlerSuite) TestCiRunsV3GetNotFound() {
+	var got errors.ErrorResponse
+	code := s.HandleRequest(
+		s.NewRequest("GET", "/api/ci-runs/v3/0", nil),
+		&got)
+	s.Equal(http.StatusNotFound, code)
+	s.Equal(errors.NotFound, got.Type)
+}
 
 func (s *handlerSuite) TestCiRunsV3Get() {
 	ghaCiRun := models.CiRun{
