@@ -45,9 +45,12 @@ func (c CiRunV3) toModel() models.CiRun {
 }
 
 func ciRunFromModel(model models.CiRun) CiRunV3 {
-	relatedResources := make([]CiIdentifierV3, len(model.RelatedResources))
-	for index, modelCiIdentifier := range model.RelatedResources {
-		relatedResources[index] = ciIdentifierFromModel(modelCiIdentifier)
+	var relatedResources []CiIdentifierV3
+	if len(model.RelatedResources) > 0 {
+		relatedResources = make([]CiIdentifierV3, len(model.RelatedResources))
+		for index, modelCiIdentifier := range model.RelatedResources {
+			relatedResources[index] = ciIdentifierFromModel(modelCiIdentifier)
+		}
 	}
 	return CiRunV3{
 		commonFields: commonFieldsFromGormModel(model.Model),

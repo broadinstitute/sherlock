@@ -21,9 +21,12 @@ func (c CiIdentifierV3) toModel() models.CiIdentifier {
 }
 
 func ciIdentifierFromModel(model models.CiIdentifier) CiIdentifierV3 {
-	ciRuns := make([]CiRunV3, len(model.CiRuns))
-	for index, modelCiRun := range model.CiRuns {
-		ciRuns[index] = ciRunFromModel(modelCiRun)
+	var ciRuns []CiRunV3
+	if len(model.CiRuns) > 0 {
+		ciRuns = make([]CiRunV3, len(model.CiRuns))
+		for index, modelCiRun := range model.CiRuns {
+			ciRuns[index] = ciRunFromModel(modelCiRun)
+		}
 	}
 	return CiIdentifierV3{
 		commonFields: commonFieldsFromGormModel(model.Model),
