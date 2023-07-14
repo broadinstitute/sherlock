@@ -376,7 +376,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 		},
 	}, generateUser(suite.T(), suite.db, true))
 	assert.NoError(suite.T(), err)
-	assert.Len(suite.T(), applied[0].NewAppVersions, 0)
+	assert.Len(suite.T(), applied[0].NewAppVersions, 1)
 	applied, err = suite.ChangesetController.PlanAndApply(ChangesetPlanRequest{
 		ChartReleases: []ChangesetPlanRequestChartReleaseEntry{
 			{CreatableChangeset: CreatableChangeset{
