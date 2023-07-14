@@ -159,6 +159,7 @@ func (s *handlerSuite) TestCiRunsV3UpsertIdentifiers() {
 	s.NoError(err)
 	s.Len(controllerChangesets, 1)
 	changeset, err := v2models.InternalChangesetStore.Get(s.DB, v2models.Changeset{Model: gorm.Model{ID: controllerChangesets[0].ID}})
+	s.NoError(err)
 	s.Len(changeset.NewAppVersions, 1)
 	s.Len(changeset.NewChartVersions, 1)
 
