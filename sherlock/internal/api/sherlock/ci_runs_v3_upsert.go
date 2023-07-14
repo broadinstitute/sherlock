@@ -13,13 +13,14 @@ import (
 
 type CiRunV3Upsert struct {
 	ciRunFields
-	Charts        []string `json:"charts" form:"-"`        // Always appends; will eliminate duplicates.
-	ChartVersions []string `json:"chartVersions" form:"-"` // Always appends; will eliminate duplicates.
-	AppVersions   []string `json:"appVersions" form:"-"`   // Always appends; will eliminate duplicates.
-	Clusters      []string `json:"clusters" form:"-"`      // Always appends; will eliminate duplicates.
-	Environments  []string `json:"environments" form:"-"`  // Always appends; will eliminate duplicates.
-	ChartReleases []string `json:"chartReleases" form:"-"` // Always appends; will eliminate duplicates. Spreads to associated environments and clusters.
-	Changesets    []string `json:"changesets" form:"-"`    // Always appends; will eliminate duplicates. Spreads to associated chart releases (and environments and clusters) and new app/chart versions.
+	Charts                     []string `json:"charts" form:"-"`                     // Always appends; will eliminate duplicates.
+	ChartVersions              []string `json:"chartVersions" form:"-"`              // Always appends; will eliminate duplicates.
+	AppVersions                []string `json:"appVersions" form:"-"`                // Always appends; will eliminate duplicates.
+	Clusters                   []string `json:"clusters" form:"-"`                   // Always appends; will eliminate duplicates.
+	Environments               []string `json:"environments" form:"-"`               // Always appends; will eliminate duplicates.
+	ChartReleases              []string `json:"chartReleases" form:"-"`              // Always appends; will eliminate duplicates. Spreads to associated environments and clusters.
+	Changesets                 []string `json:"changesets" form:"-"`                 // Always appends; will eliminate duplicates. Spreads to associated chart releases (and environments and clusters).
+	ChangesetsSpreadToVersions []string `json:"changesetsSpreadToVersions" form:"-"` // Always appends; will eliminate duplicates. Spreads to associated chart releases (and environments and clusters) but also new app/chart versions.
 }
 
 func ciRunsV3Upsert(ctx *gin.Context) {
@@ -55,7 +56,7 @@ func ciRunsV3Upsert(ctx *gin.Context) {
 
 	// Set related resources
 	var relatedResources []models.CiIdentifier
-	for _, changesetSelector := range body.Changesets {
+	for _, changesetSelector := range body.ChangesetsSpreadToVersions {
 		changeset, err := v2models.InternalChangesetStore.GetBySelector(db, changesetSelector)
 		if err != nil {
 			ctx.AbortWithStatusJSON(errors.ErrorToApiResponse(err))
@@ -73,6 +74,17 @@ func ciRunsV3Upsert(ctx *gin.Context) {
 			if newChartVersion != nil && newChartVersion.ID != 0 {
 				body.ChartVersions = append(body.ChartVersions, utils.UintToString(newChartVersion.ID))
 			}
+		}
+		relatedResources = append(relatedResources, ciIdentifierModelFromOldModel(changeset))
+	}
+	for _, changesetSelector := range body.Changesets {
+		changeset, err := v2models.InternalChangesetStore.GetBySelector(db, changesetSelector)
+		if err != nil {
+			ctx.AbortWithStatusJSON(errors.ErrorToApiResponse(err))
+			return
+		}
+		if changeset.ChartReleaseID != 0 {
+			body.ChartReleases = append(body.ChartReleases, utils.UintToString(changeset.ChartReleaseID))
 		}
 		relatedResources = append(relatedResources, ciIdentifierModelFromOldModel(changeset))
 	}
