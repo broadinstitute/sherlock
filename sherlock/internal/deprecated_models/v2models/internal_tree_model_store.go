@@ -12,8 +12,10 @@ type internalTreeModelStore[M TreeModel] struct {
 }
 
 func (s internalTreeModelStore[M]) getChildrenPathToParent(db *gorm.DB, originChild *M, destinationParentID *uint) (path []*M, connected bool, err error) {
-	if originChild == nil || destinationParentID == nil {
+	if originChild == nil {
 		return nil, false, nil
+	} else if destinationParentID == nil {
+		return []*M{originChild}, false, nil
 	} else if (*originChild).getID() == *destinationParentID {
 		return []*M{}, true, nil
 	}
