@@ -23,8 +23,20 @@ func ciIdentifiersV3Get(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(errors.ErrorToApiResponse(err))
 		return
 	}
+	limitCiRuns, err := utils.ParseInt(ctx.DefaultQuery("limitCiRuns", "10"))
+	if err != nil {
+		ctx.AbortWithStatusJSON(errors.ErrorToApiResponse(fmt.Errorf("(%s) %v", errors.BadRequest, err)))
+		return
+	}
+	offsetCiRuns, err := utils.ParseInt(ctx.DefaultQuery("offsetCiRuns", "0"))
+	if err != nil {
+		ctx.AbortWithStatusJSON(errors.ErrorToApiResponse(fmt.Errorf("(%s) %v", errors.BadRequest, err)))
+		return
+	}
 	var result models.CiIdentifier
-	if err = db.Where(&query).First(&result).Error; err != nil {
+	if err = db.Preload("CiRuns", func(tx *gorm.DB) *gorm.DB {
+		return tx.Limit(limitCiRuns).Offset(offsetCiRuns).Order("started_at desc")
+	}).Where(&query).First(&result).Error; err != nil {
 		ctx.AbortWithStatusJSON(errors.ErrorToApiResponse(err))
 		return
 	}

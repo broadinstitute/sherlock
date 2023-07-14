@@ -73,3 +73,72 @@ func TestUintToString(t *testing.T) {
 		})
 	}
 }
+
+func TestParseInt(t *testing.T) {
+	type args struct {
+		s string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    int
+		wantErr bool
+	}{
+		{
+			name: "123",
+			args: args{s: "123"},
+			want: 123,
+		},
+		{
+			name: "0",
+			args: args{s: "0"},
+			want: 0,
+		},
+		{
+			name:    "too big",
+			args:    args{s: testutils.StringNumberTooBigForInt},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := ParseInt(tt.args.s)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("ParseInt() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != tt.want {
+				t.Errorf("ParseInt() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestIntToString(t *testing.T) {
+	type args struct {
+		n int
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			name: "123",
+			args: args{n: 123},
+			want: "123",
+		},
+		{
+			name: "0",
+			args: args{n: 0},
+			want: "0",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := IntToString(tt.args.n); got != tt.want {
+				t.Errorf("IntToString() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

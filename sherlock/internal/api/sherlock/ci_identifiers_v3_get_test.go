@@ -8,6 +8,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"gorm.io/gorm"
 	"net/http"
+	"time"
 )
 
 func (s *handlerSuite) TestCiIdentifiersV3GetBadSelector() {
@@ -255,4 +256,81 @@ func (s *handlerSuite) TestCiIdentifiersV3Get() {
 		s.Equal(http.StatusOK, code)
 		s.Equal(changesetIdentifier.ID, gotByChangesetID.ID)
 	})
+}
+
+func (s *handlerSuite) TestCiIdentifiersV3GetLimitRuns() {
+	user := s.SetSuitableTestUserForDB()
+
+	_, created, err := v2models.InternalChartStore.Create(s.DB, v2models.Chart{
+		Name:      "leonardo",
+		ChartRepo: testutils.PointerTo("terra-helm"),
+	}, user)
+	s.NoError(err)
+	s.True(created)
+
+	totalIterations := uint(15)
+	for iteration := uint(1); iteration <= totalIterations; iteration++ {
+		var got CiRunV3
+		code := s.HandleRequest(
+			s.NewRequest("PUT", "/api/ci-runs/v3", CiRunV3Upsert{
+				ciRunFields: ciRunFields{
+					Platform:                   "github-actions",
+					GithubActionsOwner:         "owner",
+					GithubActionsRepo:          "repo",
+					GithubActionsRunID:         iteration,
+					GithubActionsAttemptNumber: 1,
+					GithubActionsWorkflowPath:  "workflow",
+					// Higher IDs started more recently, just for convenience in testing
+					StartedAt: testutils.PointerTo(time.Now().Add(-time.Hour).Add(time.Minute * time.Duration(iteration))),
+				},
+				Charts: []string{"leonardo"},
+			}),
+			&got)
+		s.Equalf(http.StatusCreated, code, "iteration %d", iteration)
+	}
+
+	var got CiIdentifierV3
+	code := s.HandleRequest(
+		s.NewRequest("GET", "/api/ci-identifiers/v3/chart/leonardo", nil),
+		&got)
+	s.Equal(http.StatusOK, code)
+	s.Len(got.CiRuns, 10) // default
+	code = s.HandleRequest(
+		s.NewRequest("GET", "/api/ci-identifiers/v3/chart/leonardo?limitCiRuns=20", nil),
+		&got)
+	s.Equal(http.StatusOK, code)
+	s.Len(got.CiRuns, int(totalIterations))
+	code = s.HandleRequest(
+		s.NewRequest("GET", "/api/ci-identifiers/v3/chart/leonardo?limitCiRuns=5", nil),
+		&got)
+	s.Equal(http.StatusOK, code)
+	s.Len(got.CiRuns, 5)
+	s.Greater(*got.CiRuns[0].StartedAt, *got.CiRuns[4].StartedAt)
+	s.Equal(got.CiRuns[0].GithubActionsRunID, totalIterations)
+	s.Equal(got.CiRuns[1].GithubActionsRunID, totalIterations-1)
+	s.Equal(got.CiRuns[2].GithubActionsRunID, totalIterations-2)
+	s.Equal(got.CiRuns[3].GithubActionsRunID, totalIterations-3)
+	s.Equal(got.CiRuns[4].GithubActionsRunID, totalIterations-4)
+	code = s.HandleRequest(
+		s.NewRequest("GET", "/api/ci-identifiers/v3/chart/leonardo?limitCiRuns=5&offsetCiRuns=5", nil),
+		&got)
+	s.Equal(http.StatusOK, code)
+	s.Len(got.CiRuns, 5)
+	s.Greater(*got.CiRuns[0].StartedAt, *got.CiRuns[4].StartedAt)
+	s.Equal(got.CiRuns[0].GithubActionsRunID, totalIterations-5)
+	s.Equal(got.CiRuns[1].GithubActionsRunID, totalIterations-6)
+	s.Equal(got.CiRuns[2].GithubActionsRunID, totalIterations-7)
+	s.Equal(got.CiRuns[3].GithubActionsRunID, totalIterations-8)
+	s.Equal(got.CiRuns[4].GithubActionsRunID, totalIterations-9)
+	code = s.HandleRequest(
+		s.NewRequest("GET", "/api/ci-identifiers/v3/chart/leonardo?limitCiRuns=10&offsetCiRuns=10", nil),
+		&got)
+	s.Equal(http.StatusOK, code)
+	s.Len(got.CiRuns, 5)
+	s.Greater(*got.CiRuns[0].StartedAt, *got.CiRuns[4].StartedAt)
+	s.Equal(got.CiRuns[0].GithubActionsRunID, totalIterations-10)
+	s.Equal(got.CiRuns[1].GithubActionsRunID, totalIterations-11)
+	s.Equal(got.CiRuns[2].GithubActionsRunID, totalIterations-12)
+	s.Equal(got.CiRuns[3].GithubActionsRunID, totalIterations-13)
+	s.Equal(got.CiRuns[4].GithubActionsRunID, totalIterations-14)
 }

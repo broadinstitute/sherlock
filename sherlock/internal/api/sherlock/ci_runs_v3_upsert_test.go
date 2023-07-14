@@ -1,6 +1,7 @@
 package sherlock
 
 import (
+	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/testutils"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_controllers/v2controllers"
@@ -198,5 +199,30 @@ func (s *handlerSuite) TestCiRunsV3UpsertIdentifiers() {
 			&got)
 		s.Equal(http.StatusCreated, code)
 		s.Len(got.RelatedResources, 6)
+		s.Run("put loads identifiers", func() {
+			var gotAgain CiRunV3
+			code = s.HandleRequest(
+				s.NewRequest("PUT", "/api/ci-runs/v3", CiRunV3Upsert{
+					ciRunFields: ciRunFields{
+						Platform:                   "github-actions",
+						GithubActionsOwner:         "owner",
+						GithubActionsRepo:          "repo",
+						GithubActionsRunID:         1,
+						GithubActionsAttemptNumber: 2,
+						GithubActionsWorkflowPath:  "workflow",
+					},
+				}),
+				&gotAgain)
+			s.Equal(http.StatusCreated, code)
+			s.Len(gotAgain.RelatedResources, 6)
+		})
+		s.Run("get loads identifiers too", func() {
+			var gotAgain CiRunV3
+			code = s.HandleRequest(
+				s.NewRequest("GET", fmt.Sprintf("/api/ci-runs/v3/%d", got.ID), nil),
+				&gotAgain)
+			s.Equal(http.StatusOK, code)
+			s.Len(gotAgain.RelatedResources, 6)
+		})
 	})
 }

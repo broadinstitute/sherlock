@@ -7,6 +7,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm/clause"
 	"net/http"
 	"strings"
 )
@@ -22,7 +23,7 @@ func ciRunsV3Get(ctx *gin.Context) {
 		return
 	}
 	var result models.CiRun
-	if err = db.Where(&query).First(&result).Error; err != nil {
+	if err = db.Preload(clause.Associations).Where(&query).First(&result).Error; err != nil {
 		ctx.AbortWithStatusJSON(errors.ErrorToApiResponse(err))
 		return
 	}

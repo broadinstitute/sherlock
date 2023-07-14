@@ -8,6 +8,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
+	"gorm.io/gorm/clause"
 	"net/http"
 )
 
@@ -148,7 +149,7 @@ func ciRunsV3Upsert(ctx *gin.Context) {
 	}
 
 	// Re-query
-	if err = db.First(&result, result.ID).Error; err != nil {
+	if err = db.Preload(clause.Associations).First(&result, result.ID).Error; err != nil {
 		ctx.AbortWithStatusJSON(errors.ErrorToApiResponse(err))
 		return
 	}
