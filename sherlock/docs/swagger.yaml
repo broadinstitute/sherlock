@@ -1,68 +1,6 @@
 consumes:
 - application/json
 definitions:
-  auth_models.AuthMethod:
-    enum:
-    - 0
-    - 1
-    type: integer
-    x-enum-varnames:
-    - AuthMethodIAP
-    - AuthMethodGHA
-  auth_models.ExtraPermissions:
-    properties:
-      suitable:
-        type: boolean
-    type: object
-  auth_models.FirecloudAccount:
-    properties:
-      acceptedGoogleTerms:
-        type: boolean
-      archived:
-        type: boolean
-      email:
-        type: string
-      enrolledIn2Fa:
-        type: boolean
-      groups:
-        $ref: '#/definitions/auth_models.FirecloudGroupMembership'
-      suspended:
-        type: boolean
-      suspensionReason:
-        type: string
-    type: object
-  auth_models.FirecloudGroupMembership:
-    properties:
-      fc-admins:
-        type: boolean
-      firecloud-project-owners:
-        type: boolean
-    type: object
-  auth_models.User:
-    properties:
-      authMethod:
-        $ref: '#/definitions/auth_models.AuthMethod'
-      email:
-        type: string
-      githubID:
-        type: string
-      githubUsername:
-        type: string
-      googleID:
-        type: string
-      id:
-        type: integer
-      matchedExtraPermissions:
-        $ref: '#/definitions/auth_models.ExtraPermissions'
-      matchedFirecloudAccount:
-        $ref: '#/definitions/auth_models.FirecloudAccount'
-      name:
-        type: string
-      nameInferredFromGithub:
-        type: boolean
-      via:
-        $ref: '#/definitions/auth_models.User'
-    type: object
   environment.AutoDelete:
     properties:
       after:
@@ -79,15 +17,6 @@ definitions:
       toBlame:
         type: string
       type:
-        type: string
-    type: object
-  misc.MyUserResponse:
-    properties:
-      email:
-        type: string
-      rawInfo:
-        $ref: '#/definitions/auth_models.User'
-      suitability:
         type: string
     type: object
   misc.StatusResponse:
@@ -116,6 +45,64 @@ definitions:
       message:
         type: string
       status:
+        type: string
+    type: object
+  sherlock.CiIdentifierV3:
+    properties:
+      ciRuns:
+        items:
+          $ref: '#/definitions/sherlock.CiRunV3'
+        type: array
+      createdAt:
+        format: date-time
+        type: string
+      id:
+        type: integer
+      resourceID:
+        type: integer
+      resourceType:
+        type: string
+      updatedAt:
+        format: date-time
+        type: string
+    type: object
+  sherlock.CiRunV3:
+    properties:
+      argoWorkflowsName:
+        type: string
+      argoWorkflowsNamespace:
+        type: string
+      argoWorkflowsTemplate:
+        type: string
+      createdAt:
+        format: date-time
+        type: string
+      githubActionsAttemptNumber:
+        type: integer
+      githubActionsOwner:
+        type: string
+      githubActionsRepo:
+        type: string
+      githubActionsRunID:
+        type: integer
+      githubActionsWorkflowPath:
+        type: string
+      id:
+        type: integer
+      platform:
+        type: string
+      relatedResources:
+        items:
+          $ref: '#/definitions/sherlock.CiIdentifierV3'
+        type: array
+      startedAt:
+        type: string
+      status:
+        type: string
+      terminalAt:
+        type: string
+      updatedAt:
+        format: date-time
         type: string
     type: object
   v2controllers.AppVersion:
@@ -1364,6 +1351,59 @@ info:
   title: Sherlock
   version: development
 paths:
+  /api/ci-identifiers/v3/{selector}:
+    get:
+      description: GetCiRuns for a resource by its CiIdentifier, which can be referenced
+        by <type>/<selector...>.
+      parameters:
+      - description: The selector of CiIdentifier, which can be referenced either
+          by numeric ID or indirectly by <type>/<selector...>
+        in: path
+        name: selector
+        required: true
+        type: string
+      - description: Control how many CiRuns are returned (default 10)
+        in: query
+        name: limitCiRuns
+        type: integer
+      - description: Control the offset for the returned CiRuns (default 0)
+        in: query
+        name: offsetCiRuns
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/sherlock.CiIdentifierV3'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Get CiRuns for a particular resource
+      tags:
+      - CiIdentifiers
   /api/v2/app-versions:
     get:
       description: List existing AppVersion entries, ordered by most recently updated.
@@ -6162,28 +6202,6 @@ paths:
       summary: Edit a User entry
       tags:
       - Users
-  /my-user:
-    get:
-      description: Get Sherlock's understanding of the calling user based on IAP and
-        the Firecloud.org Google Workspace organization.
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/misc.MyUserResponse'
-        "407":
-          description: Proxy Authentication Required
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-      summary: Get information about the calling user
-      tags:
-      - Misc
   /status:
     get:
       description: |-

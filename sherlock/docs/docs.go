@@ -29,6 +29,83 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/ci-identifiers/v3/{selector}": {
+            "get": {
+                "description": "GetCiRuns for a resource by its CiIdentifier, which can be referenced by \u003ctype\u003e/\u003cselector...\u003e.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CiIdentifiers"
+                ],
+                "summary": "Get CiRuns for a particular resource",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The selector of CiIdentifier, which can be referenced either by numeric ID or indirectly by \u003ctype\u003e/\u003cselector...\u003e",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Control how many CiRuns are returned (default 10)",
+                        "name": "limitCiRuns",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Control the offset for the returned CiRuns (default 0)",
+                        "name": "offsetCiRuns",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.CiIdentifierV3"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v2/app-versions": {
             "get": {
                 "description": "List existing AppVersion entries, ordered by most recently updated.",
@@ -7066,38 +7143,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/my-user": {
-            "get": {
-                "description": "Get Sherlock's understanding of the calling user based on IAP and the Firecloud.org Google Workspace organization.",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Misc"
-                ],
-                "summary": "Get information about the calling user",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/misc.MyUserResponse"
-                        }
-                    },
-                    "407": {
-                        "description": "Proxy Authentication Required",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/status": {
             "get": {
                 "description": "Get Sherlock's current status. Right now, this endpoint always returned OK (if the server is online).\nThis endpoint is acceptable to use for a readiness check.",
@@ -7140,100 +7185,6 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "auth_models.AuthMethod": {
-            "type": "integer",
-            "enum": [
-                0,
-                1
-            ],
-            "x-enum-varnames": [
-                "AuthMethodIAP",
-                "AuthMethodGHA"
-            ]
-        },
-        "auth_models.ExtraPermissions": {
-            "type": "object",
-            "properties": {
-                "suitable": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "auth_models.FirecloudAccount": {
-            "type": "object",
-            "properties": {
-                "acceptedGoogleTerms": {
-                    "type": "boolean"
-                },
-                "archived": {
-                    "type": "boolean"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "enrolledIn2Fa": {
-                    "type": "boolean"
-                },
-                "groups": {
-                    "$ref": "#/definitions/auth_models.FirecloudGroupMembership"
-                },
-                "suspended": {
-                    "type": "boolean"
-                },
-                "suspensionReason": {
-                    "type": "string"
-                }
-            }
-        },
-        "auth_models.FirecloudGroupMembership": {
-            "type": "object",
-            "properties": {
-                "fc-admins": {
-                    "type": "boolean"
-                },
-                "firecloud-project-owners": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "auth_models.User": {
-            "type": "object",
-            "properties": {
-                "authMethod": {
-                    "$ref": "#/definitions/auth_models.AuthMethod"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "githubID": {
-                    "type": "string"
-                },
-                "githubUsername": {
-                    "type": "string"
-                },
-                "googleID": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "matchedExtraPermissions": {
-                    "$ref": "#/definitions/auth_models.ExtraPermissions"
-                },
-                "matchedFirecloudAccount": {
-                    "$ref": "#/definitions/auth_models.FirecloudAccount"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "nameInferredFromGithub": {
-                    "type": "boolean"
-                },
-                "via": {
-                    "$ref": "#/definitions/auth_models.User"
-                }
-            }
-        },
         "environment.AutoDelete": {
             "type": "object",
             "properties": {
@@ -7257,20 +7208,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "type": {
-                    "type": "string"
-                }
-            }
-        },
-        "misc.MyUserResponse": {
-            "type": "object",
-            "properties": {
-                "email": {
-                    "type": "string"
-                },
-                "rawInfo": {
-                    "$ref": "#/definitions/auth_models.User"
-                },
-                "suitability": {
                     "type": "string"
                 }
             }
@@ -7316,6 +7253,92 @@ const docTemplate = `{
                 },
                 "status": {
                     "type": "string"
+                }
+            }
+        },
+        "sherlock.CiIdentifierV3": {
+            "type": "object",
+            "properties": {
+                "ciRuns": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/sherlock.CiRunV3"
+                    }
+                },
+                "createdAt": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "resourceID": {
+                    "type": "integer"
+                },
+                "resourceType": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string",
+                    "format": "date-time"
+                }
+            }
+        },
+        "sherlock.CiRunV3": {
+            "type": "object",
+            "properties": {
+                "argoWorkflowsName": {
+                    "type": "string"
+                },
+                "argoWorkflowsNamespace": {
+                    "type": "string"
+                },
+                "argoWorkflowsTemplate": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "githubActionsAttemptNumber": {
+                    "type": "integer"
+                },
+                "githubActionsOwner": {
+                    "type": "string"
+                },
+                "githubActionsRepo": {
+                    "type": "string"
+                },
+                "githubActionsRunID": {
+                    "type": "integer"
+                },
+                "githubActionsWorkflowPath": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "platform": {
+                    "type": "string"
+                },
+                "relatedResources": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/sherlock.CiIdentifierV3"
+                    }
+                },
+                "startedAt": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "terminalAt": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string",
+                    "format": "date-time"
                 }
             }
         },
