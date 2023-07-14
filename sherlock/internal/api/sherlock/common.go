@@ -7,8 +7,8 @@ import (
 
 type commonFields struct {
 	ID        uint      `json:"id" form:"id"`
-	CreatedAt time.Time `json:"createdAt" form:"-" format:"date-time"`
-	UpdatedAt time.Time `json:"updatedAt" form:"-" format:"date-time"`
+	CreatedAt time.Time `json:"createdAt" form:"createdAt" format:"date-time"`
+	UpdatedAt time.Time `json:"updatedAt" form:"updatedAt" format:"date-time"`
 }
 
 func (f commonFields) toGormModel() gorm.Model {

@@ -105,6 +105,76 @@ definitions:
         format: date-time
         type: string
     type: object
+  sherlock.CiRunV3Upsert:
+    properties:
+      appVersions:
+        description: Always appends; will eliminate duplicates.
+        items:
+          type: string
+        type: array
+      argoWorkflowsName:
+        type: string
+      argoWorkflowsNamespace:
+        type: string
+      argoWorkflowsTemplate:
+        type: string
+      changesets:
+        description: Always appends; will eliminate duplicates. Spreads to associated
+          chart releases (and environments and clusters).
+        items:
+          type: string
+        type: array
+      changesetsSpreadToVersions:
+        description: Always appends; will eliminate duplicates. Spreads to associated
+          chart releases (and environments and clusters) but also new app/chart versions.
+        items:
+          type: string
+        type: array
+      chartReleases:
+        description: Always appends; will eliminate duplicates. Spreads to associated
+          environments and clusters.
+        items:
+          type: string
+        type: array
+      chartVersions:
+        description: Always appends; will eliminate duplicates.
+        items:
+          type: string
+        type: array
+      charts:
+        description: Always appends; will eliminate duplicates.
+        items:
+          type: string
+        type: array
+      clusters:
+        description: Always appends; will eliminate duplicates.
+        items:
+          type: string
+        type: array
+      environments:
+        description: Always appends; will eliminate duplicates.
+        items:
+          type: string
+        type: array
+      githubActionsAttemptNumber:
+        type: integer
+      githubActionsOwner:
+        type: string
+      githubActionsRepo:
+        type: string
+      githubActionsRunID:
+        type: integer
+      githubActionsWorkflowPath:
+        type: string
+      platform:
+        type: string
+      startedAt:
+        type: string
+      status:
+        type: string
+      terminalAt:
+        type: string
+    type: object
   v2controllers.AppVersion:
     properties:
       appVersion:
@@ -1360,7 +1430,7 @@ paths:
       parameters:
       - format: date-time
         in: query
-        name: '-'
+        name: createdAt
         type: string
       - in: query
         name: id
@@ -1373,7 +1443,7 @@ paths:
         type: string
       - format: date-time
         in: query
-        name: '-'
+        name: updatedAt
         type: string
       - description: Control how many CiIdentifiers are returned (default 100)
         in: query
@@ -1489,7 +1559,7 @@ paths:
         type: string
       - format: date-time
         in: query
-        name: '-'
+        name: createdAt
         type: string
       - in: query
         name: githubActionsAttemptNumber
@@ -1523,7 +1593,7 @@ paths:
         type: string
       - format: date-time
         in: query
-        name: '-'
+        name: updatedAt
         type: string
       - description: Control how many CiRuns are returned (default 100)
         in: query
@@ -1567,6 +1637,52 @@ paths:
           schema:
             $ref: '#/definitions/errors.ErrorResponse'
       summary: List CiRuns matching a filter
+      tags:
+      - CiRuns
+    put:
+      consumes:
+      - application/json
+      description: Create or update a CiRun with timing, status, and related resource
+        information. This endpoint is idempotent.
+      parameters:
+      - description: The CiRun to upsert
+        in: body
+        name: ciRun
+        required: true
+        schema:
+          $ref: '#/definitions/sherlock.CiRunV3Upsert'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/sherlock.CiRunV3'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Create or update a CiRun
       tags:
       - CiRuns
   /api/ci-runs/v3/{selector}:

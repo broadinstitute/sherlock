@@ -43,7 +43,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "format": "date-time",
-                        "name": "-",
+                        "name": "createdAt",
                         "in": "query"
                     },
                     {
@@ -64,7 +64,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "format": "date-time",
-                        "name": "-",
+                        "name": "updatedAt",
                         "in": "query"
                     },
                     {
@@ -235,7 +235,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "format": "date-time",
-                        "name": "-",
+                        "name": "createdAt",
                         "in": "query"
                     },
                     {
@@ -291,7 +291,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "format": "date-time",
-                        "name": "-",
+                        "name": "updatedAt",
                         "in": "query"
                     },
                     {
@@ -315,6 +315,74 @@ const docTemplate = `{
                             "items": {
                                 "$ref": "#/definitions/sherlock.CiRunV3"
                             }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Create or update a CiRun with timing, status, and related resource information. This endpoint is idempotent.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CiRuns"
+                ],
+                "summary": "Create or update a CiRun",
+                "parameters": [
+                    {
+                        "description": "The CiRun to upsert",
+                        "name": "ciRun",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.CiRunV3Upsert"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.CiRunV3"
                         }
                     },
                     "400": {
@@ -7654,6 +7722,103 @@ const docTemplate = `{
                 "updatedAt": {
                     "type": "string",
                     "format": "date-time"
+                }
+            }
+        },
+        "sherlock.CiRunV3Upsert": {
+            "type": "object",
+            "properties": {
+                "appVersions": {
+                    "description": "Always appends; will eliminate duplicates.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "argoWorkflowsName": {
+                    "type": "string"
+                },
+                "argoWorkflowsNamespace": {
+                    "type": "string"
+                },
+                "argoWorkflowsTemplate": {
+                    "type": "string"
+                },
+                "changesets": {
+                    "description": "Always appends; will eliminate duplicates. Spreads to associated chart releases (and environments and clusters).",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "changesetsSpreadToVersions": {
+                    "description": "Always appends; will eliminate duplicates. Spreads to associated chart releases (and environments and clusters) but also new app/chart versions.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "chartReleases": {
+                    "description": "Always appends; will eliminate duplicates. Spreads to associated environments and clusters.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "chartVersions": {
+                    "description": "Always appends; will eliminate duplicates.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "charts": {
+                    "description": "Always appends; will eliminate duplicates.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "clusters": {
+                    "description": "Always appends; will eliminate duplicates.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "environments": {
+                    "description": "Always appends; will eliminate duplicates.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "githubActionsAttemptNumber": {
+                    "type": "integer"
+                },
+                "githubActionsOwner": {
+                    "type": "string"
+                },
+                "githubActionsRepo": {
+                    "type": "string"
+                },
+                "githubActionsRunID": {
+                    "type": "integer"
+                },
+                "githubActionsWorkflowPath": {
+                    "type": "string"
+                },
+                "platform": {
+                    "type": "string"
+                },
+                "startedAt": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "terminalAt": {
+                    "type": "string"
                 }
             }
         },

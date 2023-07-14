@@ -19,7 +19,6 @@ import (
 //	@tags			CiRuns
 //	@produce		json
 //	@param			selector				path		string	true	"The selector of the CiRun, which can be either its numeric ID, 'github-actions/{owner}/{repo}/{run ID}/{attempt}', or 'argo-workflows/{namespace}/{name}'"
-//
 //	@success		200						{object}	CiRunV3
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/ci-runs/v3/{selector} [get]

@@ -24,6 +24,17 @@ type CiRunV3Upsert struct {
 	ChangesetsSpreadToVersions []string `json:"changesetsSpreadToVersions" form:"-"` // Always appends; will eliminate duplicates. Spreads to associated chart releases (and environments and clusters) but also new app/chart versions.
 }
 
+// ciRunsV3Upsert godoc
+//
+//	@summary		Create or update a CiRun
+//	@description	Create or update a CiRun with timing, status, and related resource information. This endpoint is idempotent.
+//	@tags			CiRuns
+//	@accept			json
+//	@produce		json
+//	@param			ciRun					body		CiRunV3Upsert	true	"The CiRun to upsert"
+//	@success		201						{object}	CiRunV3
+//	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
+//	@router			/api/ci-runs/v3 [put]
 func ciRunsV3Upsert(ctx *gin.Context) {
 	db, err := authentication.MustUseDB(ctx)
 	if err != nil {
