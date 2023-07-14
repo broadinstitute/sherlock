@@ -140,5 +140,5 @@ func ciRunsV3Upsert(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(errors.ErrorToApiResponse(err))
 		return
 	}
-	ctx.JSON(http.StatusOK, ciRunFromModel(result))
+	ctx.JSON(http.StatusCreated, ciRunFromModel(result))
 }

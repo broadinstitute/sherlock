@@ -94,10 +94,17 @@ func convert(err error) (int, ErrorResponse) {
 			Message: errorString,
 		}
 	}
-	if errors.Is(err, gorm.ErrDuplicatedKey) {
+	if errors.Is(err, gorm.ErrDuplicatedKey) || strings.Contains(err.Error(), "violates unique constraint") {
 		return http.StatusConflict, ErrorResponse{
 			ToBlame: "client",
 			Type:    Conflict,
+			Message: errorString,
+		}
+	}
+	if strings.Contains(err.Error(), "violates check constraint") {
+		return http.StatusBadRequest, ErrorResponse{
+			ToBlame: "client",
+			Type:    BadRequest,
 			Message: errorString,
 		}
 	}
