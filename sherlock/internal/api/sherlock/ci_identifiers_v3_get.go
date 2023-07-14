@@ -16,7 +16,7 @@ import (
 // ciIdentifiersV3Get godoc
 //
 //	@summary		Get CiRuns for a particular resource
-//	@description	GetCiRuns for a resource by its CiIdentifier, which can be referenced by 'type/selector...'.
+//	@description	Get CiRuns for a resource by its CiIdentifier, which can be referenced by 'type/selector...'.
 //	@tags			CiIdentifiers
 //	@produce		json
 //	@param			selector				path		string	true	"The selector of CiIdentifier, which can be referenced either by numeric ID or indirectly by 'type/selector...'"

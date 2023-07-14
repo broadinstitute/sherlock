@@ -29,9 +29,109 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/ci-identifiers/v3": {
+            "get": {
+                "description": "List CiIdentifiers matching a filter. The CiRuns would have to re-queried directly to load the CiRuns.\nThis is mainly helpful for debugging and directly querying the existence of a CiIdentifier. Results are\nordered by creation date, starting at most recent.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CiIdentifiers"
+                ],
+                "summary": "List CiIdentifiers matching a filter",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "date-time",
+                        "name": "-",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "resourceID",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "resourceType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "format": "date-time",
+                        "name": "-",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Control how many CiIdentifiers are returned (default 100)",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Control the offset for the returned CiIdentifiers (default 0)",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/sherlock.CiIdentifierV3"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/ci-identifiers/v3/{selector}": {
             "get": {
-                "description": "GetCiRuns for a resource by its CiIdentifier, which can be referenced by \u003ctype\u003e/\u003cselector...\u003e.",
+                "description": "Get CiRuns for a resource by its CiIdentifier, which can be referenced by 'type/selector...'.",
                 "produces": [
                     "application/json"
                 ],
@@ -42,7 +142,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "The selector of CiIdentifier, which can be referenced either by numeric ID or indirectly by \u003ctype\u003e/\u003cselector...\u003e",
+                        "description": "The selector of CiIdentifier, which can be referenced either by numeric ID or indirectly by 'type/selector...'",
                         "name": "selector",
                         "in": "path",
                         "required": true

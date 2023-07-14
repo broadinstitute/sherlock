@@ -76,4 +76,19 @@ func (s *handlerSuite) TestCiIdentifiersV3List() {
 		s.Equal(http.StatusOK, code)
 		s.Len(got, 2)
 	})
+	s.Run("limit and offset", func() {
+		var got1 []CiIdentifierV3
+		code := s.HandleRequest(
+			s.NewRequest("GET", "/api/ci-identifiers/v3?limit=1", nil),
+			&got1)
+		s.Equal(http.StatusOK, code)
+		s.Len(got1, 1)
+		var got2 []CiIdentifierV3
+		code = s.HandleRequest(
+			s.NewRequest("GET", "/api/ci-identifiers/v3?limit=1&offset=1", nil),
+			&got2)
+		s.Equal(http.StatusOK, code)
+		s.Len(got2, 1)
+		s.NotEqual(got1[0].ID, got2[0].ID)
+	})
 }

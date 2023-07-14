@@ -1351,13 +1351,81 @@ info:
   title: Sherlock
   version: development
 paths:
+  /api/ci-identifiers/v3:
+    get:
+      description: |-
+        List CiIdentifiers matching a filter. The CiRuns would have to re-queried directly to load the CiRuns.
+        This is mainly helpful for debugging and directly querying the existence of a CiIdentifier. Results are
+        ordered by creation date, starting at most recent.
+      parameters:
+      - format: date-time
+        in: query
+        name: '-'
+        type: string
+      - in: query
+        name: id
+        type: integer
+      - in: query
+        name: resourceID
+        type: integer
+      - in: query
+        name: resourceType
+        type: string
+      - format: date-time
+        in: query
+        name: '-'
+        type: string
+      - description: Control how many CiIdentifiers are returned (default 100)
+        in: query
+        name: limit
+        type: integer
+      - description: Control the offset for the returned CiIdentifiers (default 0)
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/sherlock.CiIdentifierV3'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: List CiIdentifiers matching a filter
+      tags:
+      - CiIdentifiers
   /api/ci-identifiers/v3/{selector}:
     get:
-      description: GetCiRuns for a resource by its CiIdentifier, which can be referenced
-        by <type>/<selector...>.
+      description: Get CiRuns for a resource by its CiIdentifier, which can be referenced
+        by 'type/selector...'.
       parameters:
       - description: The selector of CiIdentifier, which can be referenced either
-          by numeric ID or indirectly by <type>/<selector...>
+          by numeric ID or indirectly by 'type/selector...'
         in: path
         name: selector
         required: true
