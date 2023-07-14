@@ -12,6 +12,17 @@ import (
 	"strings"
 )
 
+// ciRunsV3Get godoc
+//
+//	@summary		Get a CiRun, including CiIdentifiers for related resources
+//	@description	Get a CiRun, including CiIdentifiers representing related resources or resources it affected.
+//	@tags			CiRuns
+//	@produce		json
+//	@param			selector				path		string	true	"The selector of the CiRun, which can be either its numeric ID, 'github-actions/{owner}/{repo}/{run ID}/{attempt}', or 'argo-workflows/{namespace}/{name}'"
+//
+//	@success		200						{object}	CiRunV3
+//	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
+//	@router			/api/ci-runs/v3/{selector} [get]
 func ciRunsV3Get(ctx *gin.Context) {
 	db, err := authentication.MustUseDB(ctx)
 	if err != nil {

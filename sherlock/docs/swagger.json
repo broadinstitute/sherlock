@@ -125,18 +125,18 @@
         },
         "/api/ci-identifiers/v3/{selector}": {
             "get": {
-                "description": "Get CiRuns for a resource by its CiIdentifier, which can be referenced by 'type/selector...'.",
+                "description": "Get CiRuns for a resource by its CiIdentifier, which can be referenced by '{type}/{selector...}'.",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "CiIdentifiers"
                 ],
-                "summary": "Get CiRuns for a particular resource",
+                "summary": "Get CiRuns for a resource by its CiIdentifier",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "The selector of CiIdentifier, which can be referenced either by numeric ID or indirectly by 'type/selector...'",
+                        "description": "The selector of CiIdentifier, which can be referenced either by numeric ID or indirectly by '{type}/{selector...}'",
                         "name": "selector",
                         "in": "path",
                         "required": true
@@ -159,6 +159,221 @@
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/sherlock.CiIdentifierV3"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/ci-runs/v3": {
+            "get": {
+                "description": "List CiRuns matching a filter. The CiRuns would have to re-queried directly to load any related resources.\nResults are ordered by start time, starting at most recent.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CiRuns"
+                ],
+                "summary": "List CiRuns matching a filter",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "argoWorkflowsName",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "argoWorkflowsNamespace",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "argoWorkflowsTemplate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "format": "date-time",
+                        "name": "-",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "githubActionsAttemptNumber",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "githubActionsOwner",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "githubActionsRepo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "githubActionsRunID",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "githubActionsWorkflowPath",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "platform",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "-",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "-",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "format": "date-time",
+                        "name": "-",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Control how many CiRuns are returned (default 100)",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Control the offset for the returned CiRuns (default 0)",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/sherlock.CiRunV3"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/ci-runs/v3/{selector}": {
+            "get": {
+                "description": "Get a CiRun, including CiIdentifiers representing related resources or resources it affected.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CiRuns"
+                ],
+                "summary": "Get a CiRun, including CiIdentifiers for related resources",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The selector of the CiRun, which can be either its numeric ID, 'github-actions/{owner}/{repo}/{run ID}/{attempt}', or 'argo-workflows/{namespace}/{name}'",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.CiRunV3"
                         }
                     },
                     "400": {

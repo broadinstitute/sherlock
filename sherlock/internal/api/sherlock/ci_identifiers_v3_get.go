@@ -15,11 +15,11 @@ import (
 
 // ciIdentifiersV3Get godoc
 //
-//	@summary		Get CiRuns for a particular resource
-//	@description	Get CiRuns for a resource by its CiIdentifier, which can be referenced by 'type/selector...'.
+//	@summary		Get CiRuns for a resource by its CiIdentifier
+//	@description	Get CiRuns for a resource by its CiIdentifier, which can be referenced by '{type}/{selector...}'.
 //	@tags			CiIdentifiers
 //	@produce		json
-//	@param			selector				path		string	true	"The selector of CiIdentifier, which can be referenced either by numeric ID or indirectly by 'type/selector...'"
+//	@param			selector				path		string	true	"The selector of CiIdentifier, which can be referenced either by numeric ID or indirectly by '{type}/{selector...}'"
 //	@param			limitCiRuns				query		int		false	"Control how many CiRuns are returned (default 10)"
 //	@param			offsetCiRuns			query		int		false	"Control the offset for the returned CiRuns (default 0)"
 //	@success		200						{object}	CiIdentifierV3
