@@ -5,9 +5,11 @@ import (
 	"encoding/json"
 	"github.com/broadinstitute/sherlock/sherlock/internal/authentication"
 	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/test_users"
+	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/suite"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -50,8 +52,35 @@ func (s *handlerSuite) HandleRequest(req *http.Request, fromJsonBodyPointer any)
 	recorder := httptest.NewRecorder()
 	s.internalRouter.ServeHTTP(recorder, req)
 	s.Equalf("application/json; charset=utf-8", recorder.Header().Get("Content-Type"), "unexpected content type")
-	decoder := json.NewDecoder(recorder.Result().Body)
-	decoder.DisallowUnknownFields()
-	s.NoErrorf(decoder.Decode(fromJsonBodyPointer), "JSON decode error")
+
+	// Read the body out specifically so we can use it repeatedly
+	body, err := io.ReadAll(recorder.Result().Body)
+	if s.NoErrorf(err, "body read error") {
+
+		// First try to decode to the expected type. We'll error if there were any unexpected fields.
+		intendedDecoder := json.NewDecoder(bytes.NewBuffer(body))
+		intendedDecoder.DisallowUnknownFields()
+		err = intendedDecoder.Decode(fromJsonBodyPointer)
+
+		// Assert that there shouldn't be an error, but enter this conditional if there was
+		if !s.NoErrorf(err, "failed to decode body to %T", fromJsonBodyPointer) {
+
+			// Now try to decode to the universal error type. Again, we'll error if there were any unexpected fields.
+			var errorResponse errors.ErrorResponse
+			errorDecoder := json.NewDecoder(bytes.NewBuffer(body))
+			errorDecoder.DisallowUnknownFields()
+			err = errorDecoder.Decode(&errorResponse)
+
+			// Assert that there shouldn't be a parse error, and that the parsed error response isn't empty.
+			if s.NoErrorf(err, "failed to decode unknown body to %T", errorResponse) && s.NotZerof(errorResponse, "unknown body didn't supply %T fields", errorResponse) {
+				// If those assertions held, that means the test failed and just returned an error. We'll fail the test with an explicit error to help debug.
+				s.FailNowf("unexpected error response", "%s blamed on %s: %s", errorResponse.Type, errorResponse.ToBlame, errorResponse.Message)
+			} else {
+				// If those assertions didn't hold, that means there was a totally unexpected type in the response. We'll fail the test with the body to help debug.
+				s.FailNow("fully unexpected response type", "%s", string(body))
+			}
+		}
+	}
+
 	return recorder.Code
 }
