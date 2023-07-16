@@ -5,7 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func RegisterChartReleaseHandlers(routerGroup *gin.RouterGroup, controller *v2controllers.ChartReleaseController) {
+func registerChartReleaseHandlers(routerGroup *gin.RouterGroup, controller *v2controllers.ChartReleaseController) {
 	routerGroup.POST("/chart-releases", createChartRelease(controller))
 	routerGroup.GET("/chart-releases", listChartRelease(controller))
 	routerGroup.GET("/chart-releases/*selector", getChartRelease(controller))

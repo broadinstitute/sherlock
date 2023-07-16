@@ -9,9 +9,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/authentication"
 	"github.com/broadinstitute/sherlock/sherlock/internal/boot/middleware"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
-	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_controllers/v2controllers"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_handlers/v2handlers"
-	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/metrics"
 	"github.com/gin-gonic/gin"
 	swaggo_files "github.com/swaggo/files"
@@ -45,32 +43,29 @@ func buildRouter(db *gorm.DB) *gin.Engine {
 	}
 
 	router := gin.New()
+
 	router.Use(gin.Recovery(), middleware.Logger(), middleware.Headers())
 
+	// /status, /version
 	misc.ConfigureRoutes(&router.RouterGroup)
 
 	router.GET("/metrics", metrics.PrometheusHandler())
+
 	router.StaticFS("/static", http.FS(html.StaticHtmlFiles))
-	router.GET("/swagger/*any", swaggo_gin.WrapHandler(swaggo_files.Handler))
+
+	router.GET("/swagger/*any", swaggo_gin.WrapHandler(swaggo_files.Handler, func(c *swaggo_gin.Config) {
+		c.Title = "Sherlock Swagger UI"
+	}))
 	router.GET("", func(ctx *gin.Context) { ctx.Redirect(http.StatusMovedPermanently, "/swagger/index.html") })
 
+	// routes under /api require authentication and may use the database
 	apiRouter := router.Group("api", authentication.UserMiddleware(db), authentication.DbMiddleware(db))
+
+	// refactored sherlock API, under /api/{type}/v3
 	sherlock.ConfigureRoutes(apiRouter)
 
-	v2apiRouter := apiRouter.Group("v2")
-	v2ControllerSet := v2controllers.NewControllerSet(v2models.NewStoreSet(db))
-	v2handlers.RegisterClusterHandlers(v2apiRouter, v2ControllerSet.ClusterController)
-	v2handlers.RegisterEnvironmentHandlers(v2apiRouter, v2ControllerSet.EnvironmentController)
-	v2handlers.RegisterChartHandlers(v2apiRouter, v2ControllerSet.ChartController)
-	v2handlers.RegisterChartVersionHandlers(v2apiRouter, v2ControllerSet.ChartVersionController)
-	v2handlers.RegisterAppVersionHandlers(v2apiRouter, v2ControllerSet.AppVersionController)
-	v2handlers.RegisterChartReleaseHandlers(v2apiRouter, v2ControllerSet.ChartReleaseController)
-	v2handlers.RegisterChangesetHandlers(v2apiRouter, v2ControllerSet.ChangesetController)
-	v2handlers.RegisterPagerdutyIntegrationHandlers(v2apiRouter, v2ControllerSet.PagerdutyIntegrationController)
-	v2handlers.RegisterDatabaseInstanceHandlers(v2apiRouter, v2ControllerSet.DatabaseInstanceController)
-	v2handlers.RegisterUserHandlers(v2apiRouter, v2ControllerSet.UserController)
-	v2handlers.RegisterCiIdentifierHandlers(v2apiRouter, v2ControllerSet.CiIdentifierController)
-	v2handlers.RegisterCiRunHandlers(v2apiRouter, v2ControllerSet.CiRunController)
+	// deprecated "v2" API, under /api/v2/{type}
+	v2handlers.ConfigureRoutes(apiRouter.Group("v2"), db)
 
 	return router
 }

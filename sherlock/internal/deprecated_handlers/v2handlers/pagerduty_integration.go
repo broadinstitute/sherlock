@@ -5,7 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func RegisterPagerdutyIntegrationHandlers(routerGroup *gin.RouterGroup, controller *v2controllers.PagerdutyIntegrationController) {
+func registerPagerdutyIntegrationHandlers(routerGroup *gin.RouterGroup, controller *v2controllers.PagerdutyIntegrationController) {
 	routerGroup.POST("/pagerduty-integrations", createPagerdutyIntegration(controller))
 	routerGroup.GET("/pagerduty-integrations", listPagerdutyIntegration(controller))
 	routerGroup.GET("/pagerduty-integrations/*selector", getPagerdutyIntegration(controller))

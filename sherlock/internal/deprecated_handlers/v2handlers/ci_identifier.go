@@ -5,7 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func RegisterCiIdentifierHandlers(routerGroup *gin.RouterGroup, controller *v2controllers.CiIdentifierController) {
+func registerCiIdentifierHandlers(routerGroup *gin.RouterGroup, controller *v2controllers.CiIdentifierController) {
 	routerGroup.POST("/ci-identifiers", createCiIdentifier(controller))
 	routerGroup.GET("/ci-identifiers", listCiIdentifier(controller))
 	routerGroup.GET("/ci-identifiers/*selector", getCiIdentifier(controller))

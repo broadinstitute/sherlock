@@ -5,7 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func RegisterAppVersionHandlers(routerGroup *gin.RouterGroup, controller *v2controllers.AppVersionController) {
+func registerAppVersionHandlers(routerGroup *gin.RouterGroup, controller *v2controllers.AppVersionController) {
 	routerGroup.POST("/app-versions", createAppVersion(controller))
 	routerGroup.GET("/app-versions", listAppVersion(controller))
 	routerGroup.GET("/app-versions/*selector", getAppVersion(controller))

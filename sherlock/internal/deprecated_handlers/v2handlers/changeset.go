@@ -10,7 +10,7 @@ import (
 	"strconv"
 )
 
-func RegisterChangesetHandlers(routerGroup *gin.RouterGroup, controller *v2controllers2.ChangesetController) {
+func registerChangesetHandlers(routerGroup *gin.RouterGroup, controller *v2controllers2.ChangesetController) {
 	routerGroup.GET("/changesets", listChangeset(controller))
 	routerGroup.GET("/changesets/*selector", getChangeset(controller))
 	routerGroup.GET("/selectors/changesets/*selector", listChangesetSelectors(controller))

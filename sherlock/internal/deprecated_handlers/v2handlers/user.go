@@ -9,7 +9,7 @@ import (
 	"net/http"
 )
 
-func RegisterUserHandlers(routerGroup *gin.RouterGroup, controller *v2controllers2.UserController) {
+func registerUserHandlers(routerGroup *gin.RouterGroup, controller *v2controllers2.UserController) {
 	// DDO-2709 Note from Jack:
 	// I wrote out some handlers that currently return a 403 in all cases. There's tests for that happening at the
 	// controller level but I wanted to be sure. I've just commented them out here instead of actually deleting them

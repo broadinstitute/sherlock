@@ -5,7 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func RegisterChartHandlers(routerGroup *gin.RouterGroup, controller *v2controllers.ChartController) {
+func registerChartHandlers(routerGroup *gin.RouterGroup, controller *v2controllers.ChartController) {
 	routerGroup.POST("/charts", createChart(controller))
 	routerGroup.GET("/charts", listChart(controller))
 	routerGroup.GET("/charts/*selector", getChart(controller))

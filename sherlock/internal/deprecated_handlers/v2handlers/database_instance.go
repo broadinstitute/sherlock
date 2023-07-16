@@ -5,7 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func RegisterDatabaseInstanceHandlers(routerGroup *gin.RouterGroup, controller *v2controllers.DatabaseInstanceController) {
+func registerDatabaseInstanceHandlers(routerGroup *gin.RouterGroup, controller *v2controllers.DatabaseInstanceController) {
 	routerGroup.POST("/database-instances", createDatabaseInstance(controller))
 	routerGroup.GET("/database-instances", listDatabaseInstance(controller))
 	routerGroup.GET("/database-instances/*selector", getDatabaseInstance(controller))

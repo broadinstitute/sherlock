@@ -5,7 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func RegisterClusterHandlers(routerGroup *gin.RouterGroup, controller *v2controllers.ClusterController) {
+func registerClusterHandlers(routerGroup *gin.RouterGroup, controller *v2controllers.ClusterController) {
 	routerGroup.POST("/clusters", createCluster(controller))
 	routerGroup.GET("/clusters", listCluster(controller))
 	routerGroup.GET("/clusters/*selector", getCluster(controller))

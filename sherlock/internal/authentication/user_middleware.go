@@ -76,6 +76,7 @@ func realUserMiddleware(db *gorm.DB) gin.HandlerFunc {
 
 // fakeUserMiddleware has the same out-facing functionality as realUserMiddleware but it basically blindly uses the given header parser method.
 // This means that "nonsense" (insecure) header parsers can be passed, to effectively create Sherlock users out of thin air.
+// This is useful for local/test operation.
 func fakeUserMiddleware(db *gorm.DB, headerParser func(ctx *gin.Context) (email string, googleID string), method authentication_method.Method) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		email, googleID := headerParser(ctx)

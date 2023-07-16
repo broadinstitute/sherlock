@@ -5,7 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func RegisterEnvironmentHandlers(routerGroup *gin.RouterGroup, controller *v2controllers.EnvironmentController) {
+func registerEnvironmentHandlers(routerGroup *gin.RouterGroup, controller *v2controllers.EnvironmentController) {
 	routerGroup.POST("/environments", createEnvironment(controller))
 	routerGroup.GET("/environments", listEnvironment(controller))
 	routerGroup.GET("/environments/*selector", getEnvironment(controller))

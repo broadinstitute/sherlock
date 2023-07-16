@@ -5,7 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func RegisterChartVersionHandlers(routerGroup *gin.RouterGroup, controller *v2controllers.ChartVersionController) {
+func registerChartVersionHandlers(routerGroup *gin.RouterGroup, controller *v2controllers.ChartVersionController) {
 	routerGroup.POST("/chart-versions", createChartVersion(controller))
 	routerGroup.GET("/chart-versions", listChartVersion(controller))
 	routerGroup.GET("/chart-versions/*selector", getChartVersion(controller))

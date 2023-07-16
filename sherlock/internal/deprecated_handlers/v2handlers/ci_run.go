@@ -5,7 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func RegisterCiRunHandlers(routerGroup *gin.RouterGroup, controller *v2controllers.CiRunController) {
+func registerCiRunHandlers(routerGroup *gin.RouterGroup, controller *v2controllers.CiRunController) {
 	routerGroup.POST("/ci-runs", createCiRun(controller))
 	routerGroup.GET("/ci-runs", listCiRun(controller))
 	routerGroup.GET("/ci-runs/*selector", getCiRun(controller))
