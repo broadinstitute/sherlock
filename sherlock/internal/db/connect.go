@@ -43,10 +43,10 @@ func Connect() (*sql.DB, error) {
 		} else if attemptsRemaining > 0 {
 			interval := config.Config.String("db.retryConnection.interval")
 			if duration, durationErr := time.ParseDuration(interval); durationErr == nil {
-				log.Debug().Msgf("will attempt database connection %d more times in %s", attemptsRemaining-1, interval)
+				log.Info().Msgf("DB   | will attempt database connection %d more times; waiting %s", attemptsRemaining-1, interval)
 				time.Sleep(duration)
 			} else {
-				log.Warn().Msgf("while retrying database connection, couldn't parse sleep interval duration %s: %v", interval, durationErr)
+				log.Warn().Msgf("DB   | while retrying database connection, couldn't parse sleep interval duration %s: %v", interval, durationErr)
 			}
 		}
 	}
