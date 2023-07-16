@@ -35,6 +35,10 @@ func init() {
 		panic(fmt.Sprintf("failed to load config from environment, panicking due to likely runtime issue: %v", err))
 	}
 
+	if Config.MustString("mode") != "debug" && Config.MustString("mode") != "release" {
+		panic(fmt.Sprintf("mode was %s instead of either 'debug' or 'release'", Config.MustString("mode")))
+	}
+
 	configureLogging(infoMessages...)
 }
 
