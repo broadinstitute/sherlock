@@ -120,13 +120,7 @@ definitions:
         type: string
       changesets:
         description: Always appends; will eliminate duplicates. Spreads to associated
-          chart releases (and environments and clusters).
-        items:
-          type: string
-        type: array
-      changesetsSpreadToVersions:
-        description: Always appends; will eliminate duplicates. Spreads to associated
-          chart releases (and environments and clusters) but also new app/chart versions.
+          chart releases, environments, and clusters.
         items:
           type: string
         type: array
@@ -147,12 +141,14 @@ definitions:
           type: string
         type: array
       clusters:
-        description: Always appends; will eliminate duplicates.
+        description: Always appends; will eliminate duplicates. Spreads to contained
+          chart releases and their environments.
         items:
           type: string
         type: array
       environments:
-        description: Always appends; will eliminate duplicates.
+        description: Always appends; will eliminate duplicates. Spreads to contained
+          chart releases and their clusters.
         items:
           type: string
         type: array
@@ -168,6 +164,10 @@ definitions:
         type: string
       platform:
         type: string
+      relateToChangesetNewVersions:
+        description: Makes entries in the changesets field also spread to new app
+          versions and chart versions deployed by the changeset.
+        type: boolean
       startedAt:
         type: string
       status:
@@ -1642,8 +1642,11 @@ paths:
     put:
       consumes:
       - application/json
-      description: Create or update a CiRun with timing, status, and related resource
-        information. This endpoint is idempotent.
+      description: |-
+        Create or update a CiRun with timing, status, and related resource information. This endpoint is idempotent.
+        It's recommended to take note of the description of the individual fields when reporting resource relations.
+        The "spreading" behavior means that clients don't need to be smart about how resources relate -- Sherlock
+        will handle it as long as the client reports what the run directly relates to.
       parameters:
       - description: The CiRun to upsert
         in: body

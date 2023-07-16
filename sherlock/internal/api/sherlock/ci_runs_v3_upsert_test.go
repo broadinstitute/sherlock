@@ -194,7 +194,8 @@ func (s *handlerSuite) TestCiRunsV3UpsertIdentifiers() {
 					GithubActionsAttemptNumber: 2,
 					GithubActionsWorkflowPath:  "workflow",
 				},
-				ChangesetsSpreadToVersions: []string{utils.UintToString(changeset.ID)},
+				Changesets:                   []string{utils.UintToString(changeset.ID)},
+				RelateToChangesetNewVersions: true,
 			}),
 			&got)
 		s.Equal(http.StatusCreated, code)
@@ -224,5 +225,56 @@ func (s *handlerSuite) TestCiRunsV3UpsertIdentifiers() {
 			s.Equal(http.StatusOK, code)
 			s.Len(gotAgain.RelatedResources, 6)
 		})
+	})
+	s.Run("eliminates duplicates and spreads downwards", func() {
+		var got CiRunV3
+		code := s.HandleRequest(
+			s.NewRequest("PUT", "/api/ci-runs/v3", CiRunV3Upsert{
+				ciRunFields: ciRunFields{
+					Platform:                   "github-actions",
+					GithubActionsOwner:         "owner",
+					GithubActionsRepo:          "repo",
+					GithubActionsRunID:         1,
+					GithubActionsAttemptNumber: 5,
+					GithubActionsWorkflowPath:  "workflow",
+				},
+				Environments: []string{"dev", "dev", utils.UintToString(environment.ID)},
+			}),
+			&got)
+		s.Equal(http.StatusCreated, code)
+		s.Len(got.RelatedResources, 3)
+		code = s.HandleRequest(
+			s.NewRequest("PUT", "/api/ci-runs/v3", CiRunV3Upsert{
+				ciRunFields: ciRunFields{
+					Platform:                   "github-actions",
+					GithubActionsOwner:         "owner",
+					GithubActionsRepo:          "repo",
+					GithubActionsRunID:         1,
+					GithubActionsAttemptNumber: 5,
+					GithubActionsWorkflowPath:  "workflow",
+				},
+				Environments: []string{"dev"},
+			}),
+			&got)
+		s.Equal(http.StatusCreated, code)
+		s.Len(got.RelatedResources, 3)
+		var envPresent, chartReleasePresent, clusterPresent bool
+		for _, ciIdentifier := range got.RelatedResources {
+			if ciIdentifier.ResourceType == "environment" {
+				s.Equal(environment.ID, ciIdentifier.ResourceID)
+				envPresent = true
+			}
+			if ciIdentifier.ResourceType == "chart-release" {
+				s.Equal(chartRelease.ID, ciIdentifier.ResourceID)
+				chartReleasePresent = true
+			}
+			if ciIdentifier.ResourceType == "cluster" {
+				s.Equal(cluster.ID, ciIdentifier.ResourceID)
+				clusterPresent = true
+			}
+		}
+		s.True(envPresent)
+		s.True(chartReleasePresent)
+		s.True(clusterPresent)
 	})
 }
