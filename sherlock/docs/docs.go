@@ -7526,26 +7526,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/connection-check": {
-            "get": {
-                "description": "Get a static response from Sherlock to verify connection through proxies like IAP.",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Misc"
-                ],
-                "summary": "Test the client's connection to Sherlock",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/misc.ConnectionCheckResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/status": {
             "get": {
                 "description": "Get Sherlock's current status. Right now, this endpoint always returned OK (if the server is online).\nThis endpoint is acceptable to use for a readiness check.",
@@ -7612,15 +7592,6 @@ const docTemplate = `{
                 },
                 "type": {
                     "type": "string"
-                }
-            }
-        },
-        "misc.ConnectionCheckResponse": {
-            "type": "object",
-            "properties": {
-                "ok": {
-                    "description": "Always true",
-                    "type": "boolean"
                 }
             }
         },
