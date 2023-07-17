@@ -52,6 +52,8 @@ jobs:
         working-directory: head
         run: make generate-swagger
 
+        # This runs online, but if we hit issues with it, we can run it offline
+        # https://github.com/char0n/swagger-editor-validate/tree/master
       - name: Validate Swagger source
         uses: char0n/swagger-editor-validate@v1
         with:
