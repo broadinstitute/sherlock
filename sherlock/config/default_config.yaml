@@ -1,4 +1,8 @@
-# debug can be either 'debug' or 'release', defaults to 'release' behavior if another value is provided
+# mode should either be "release" or "debug".
+# - "release" requires running behind IAP and can connect to a Cloud SQL database.
+#   It will use real authentication and authorization.
+# - "debug" can run locally but will error if connected to a Cloud SQL database.
+#   It will use mock authentication and authorization.
 mode: debug
 
 log:
@@ -15,13 +19,15 @@ db:
   maxOpenConnections: 75
   init: true
 
-  # retryConnection is helpful especially for local testing, in case the Postgres container hasn't come up yet.
-  # The liveness check won't activate until a connection is established, so this is safe to ship.
+  # retryConnection will repeatedly try to connect to the database to allow it to come online.
+  # Helpful to account for delay in either the Cloud SQL proxy (for release mode) or a local Postgres
+  # (for debug mode) starting up simultaneously with Sherlock.
+  # Sherlock's liveness probe will not activate until this passes.
   retryConnection:
     times: 10
     interval: 1s
 
-  # configures logging behavior just for the database
+  # Configures logging behavior just for the database
   log:
     slowThreshold: 200ms
     ignoreNotFoundWarning: true
@@ -45,6 +51,9 @@ auth:
     issuer: https://token.actions.githubusercontent.com
     allowedOrganizations:
       - broadinstitute
+
+  # createTestUsersInMiddleware tells debug-mode Sherlock to generate the test users at the middleware level to facilitate testing.
+  createTestUsersInMiddleware: false
 
   # extraPermissions can be used to grant an exact email address access to "suitable" actions inside Sherlock,
   # regardless of that email correlating to a Firecloud account. This functionality should only be used for

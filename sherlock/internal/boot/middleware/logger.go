@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"github.com/broadinstitute/sherlock/sherlock/internal/auth"
+	"github.com/broadinstitute/sherlock/sherlock/internal/authentication"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -19,7 +19,7 @@ func Logger() gin.HandlerFunc {
 			path = path + "?" + ctx.Request.URL.RawQuery
 		}
 		identity := "client not identified"
-		if user, err := auth.GetGinUser(ctx); err == nil {
+		if user, err := authentication.ShouldUseUser(ctx); err == nil {
 			identity = user.Email
 		}
 		var event *zerolog.Event

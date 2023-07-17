@@ -12,10 +12,10 @@ services:
     ports:
       - "8080:8080"
       - "8081:8081"
-    environment: 
-      SHERLOCK_DB_INIT: "true"
-      SHERLOCK_DB_PASSWORD: "password"
-      SHERLOCK_DB_HOST: "postgres"
+    environment:
+      SHERLOCK_DB_HOST: postgres
+      SHERLOCK-DB_USER: sherlock
+      SHERLOCK_DB_PASSWORD: password
     depends_on:
       - database
     networks: 

@@ -1,7 +1,9 @@
 package errors
 
 import (
+	"errors"
 	"github.com/rs/zerolog/log"
+	"gorm.io/gorm"
 	"net/http"
 	"strings"
 )
@@ -36,6 +38,7 @@ func ErrorToApiResponse(err error) (int, ErrorResponse) {
 
 func convert(err error) (int, ErrorResponse) {
 	errorString := err.Error()
+
 	// Even though InternalServerError is the catch-all, we want it to take precedence
 	// over all others if it was actually explicitly set.
 	if strings.Contains(errorString, InternalServerError) {
@@ -45,6 +48,7 @@ func convert(err error) (int, ErrorResponse) {
 			Message: errorString,
 		}
 	}
+
 	if strings.Contains(errorString, BadRequest) {
 		return http.StatusBadRequest, ErrorResponse{
 			ToBlame: "client",
@@ -77,6 +81,30 @@ func convert(err error) (int, ErrorResponse) {
 		return http.StatusConflict, ErrorResponse{
 			ToBlame: "client",
 			Type:    Conflict,
+			Message: errorString,
+		}
+	}
+
+	// If we're about to return a 500 to the client, quickly check if
+	// we can infer a better response code from a Gorm error.
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return http.StatusNotFound, ErrorResponse{
+			ToBlame: "client",
+			Type:    NotFound,
+			Message: errorString,
+		}
+	}
+	if errors.Is(err, gorm.ErrDuplicatedKey) || strings.Contains(err.Error(), "violates unique constraint") {
+		return http.StatusConflict, ErrorResponse{
+			ToBlame: "client",
+			Type:    Conflict,
+			Message: errorString,
+		}
+	}
+	if strings.Contains(err.Error(), "violates check constraint") {
+		return http.StatusBadRequest, ErrorResponse{
+			ToBlame: "client",
+			Type:    BadRequest,
 			Message: errorString,
 		}
 	}

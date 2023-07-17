@@ -3,13 +3,12 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	"github.com/golang-migrate/migrate/v4"
 	"gorm.io/gorm/logger"
 	"time"
 
 	migrationFiles "github.com/broadinstitute/sherlock/sherlock/db"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
-	"github.com/broadinstitute/sherlock/sherlock/internal/models/v2models"
-	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
 	"github.com/golang-migrate/migrate/v4/source/iofs"
 	"github.com/rs/zerolog/log"
@@ -18,25 +17,6 @@ import (
 
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/jackc/pgx/v4/stdlib"
-)
-
-var (
-	// The model hierarchies must be in dependency order, so that the first model has no dependencies,
-	// the second may only depend on the first, and so on.
-	v2ModelHierarchy = []any{
-		&v2models.CiIdentifier{},
-		&v2models.CiRun{},
-		&v2models.User{},
-		&v2models.PagerdutyIntegration{},
-		&v2models.Cluster{},
-		&v2models.Environment{},
-		&v2models.Chart{},
-		&v2models.ChartVersion{},
-		&v2models.AppVersion{},
-		&v2models.ChartRelease{},
-		&v2models.Changeset{},
-		&v2models.DatabaseInstance{},
-	}
 )
 
 func dbConnectionString() string {
@@ -63,10 +43,10 @@ func Connect() (*sql.DB, error) {
 		} else if attemptsRemaining > 0 {
 			interval := config.Config.String("db.retryConnection.interval")
 			if duration, durationErr := time.ParseDuration(interval); durationErr == nil {
-				log.Debug().Msgf("will attempt database connection %d more times in %s", attemptsRemaining-1, interval)
+				log.Info().Msgf("DB   | will attempt database connection %d more times; waiting %s", attemptsRemaining-1, interval)
 				time.Sleep(duration)
 			} else {
-				log.Warn().Msgf("while retrying database connection, couldn't parse sleep interval duration %s: %v", interval, durationErr)
+				log.Warn().Msgf("DB   | while retrying database connection, couldn't parse sleep interval duration %s: %v", interval, durationErr)
 			}
 		}
 	}
@@ -137,20 +117,19 @@ func openGorm(db *sql.DB) (*gorm.DB, error) {
 		})
 }
 
-// applyAutoMigrations is largely a development mechanism. It leverages https://gorm.io/docs/migration.html
-// to do a best-effort migration based on Gorm's understanding of a model struct. It works well from a clean
-// database but is a bit under-developed for what we need for full production migrations. Before shipping
-// database changes, those changes should be represented as normal migration files so that this capability can
-// be disabled.
-func applyAutoMigrations(db *gorm.DB) error {
-	if config.Config.Bool("db.autoMigrateV2") {
-		log.Info().Msg("DB   | executing database auto-migrations for v2 models")
-		if err := db.AutoMigrate(v2ModelHierarchy...); err != nil {
-			return fmt.Errorf("error running v2 model auto-migrations: %v", err)
-		}
-		log.Info().Msg("DB   | database auto-migrations for v2 models complete")
+func parseGormLogLevel(logLevel string) (logger.LogLevel, error) {
+	switch logLevel {
+	case "silent":
+		return logger.Silent, nil
+	case "error":
+		return logger.Error, nil
+	case "warn":
+		return logger.Warn, nil
+	case "info":
+		return logger.Info, nil
+	default:
+		return 0, fmt.Errorf("unknown db log level '%s'", logLevel)
 	}
-	return nil
 }
 
 func Configure(sqlDB *sql.DB) (*gorm.DB, error) {
@@ -161,8 +140,22 @@ func Configure(sqlDB *sql.DB) (*gorm.DB, error) {
 	if err != nil {
 		return nil, fmt.Errorf("error opening gorm: %v", err)
 	}
-	if err = applyAutoMigrations(gormDB); err != nil {
-		return nil, fmt.Errorf("error auto-migrating database: %v", err)
+	if config.Config.MustString("mode") == "debug" {
+		PanicIfLooksLikeCloudSQL(gormDB)
 	}
 	return gormDB, nil
+}
+
+// PanicIfLooksLikeCloudSQL does what it says on the tin -- it exits fast and hard if the database has a 'cloudsqladmin'
+// role in it. That's not something Sherlock's migration would ever add but it's there by default on Cloud SQL, so
+// it's an extra gate to make sure we don't accidentally run tests against a remote database.
+func PanicIfLooksLikeCloudSQL(db *gorm.DB) {
+	var cloudSqlAdminRoleExists bool
+	err := db.Raw("SELECT 1 FROM pg_roles WHERE rolname='cloudsqladmin'").Row().Scan(&cloudSqlAdminRoleExists)
+	if err != nil && err != sql.ErrNoRows {
+		panic(fmt.Errorf("failed to double-check that the database wasn't running in Cloud SQL: %v", err))
+	}
+	if cloudSqlAdminRoleExists {
+		panic(fmt.Errorf("this database looks like it is running in Cloud SQL, refusing to proceed with test harness"))
+	}
 }
