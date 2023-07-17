@@ -1644,9 +1644,11 @@ paths:
       - application/json
       description: |-
         Create or update a CiRun with timing, status, and related resource information. This endpoint is idempotent.
-        It's recommended to take note of the description of the individual fields when reporting resource relations.
-        The "spreading" behavior means that clients don't need to be smart about how resources relate -- Sherlock
-        will handle it as long as the client reports what the run directly relates to.
+        The fields for clusters, charts, chart releases, environments, etc. all accept selectors, and they will
+        be smart about "spreading" to indirect relations. More info is available on the CiRunV3Upsert data type,
+        but the gist is that specifying a changeset implies its chart release (and optionally app/chart versions),
+        specifying or implying a chart release implies its environment/cluster, and specifying an environment/cluster
+        implies all chart releases they contain.
       parameters:
       - description: The CiRun to upsert
         in: body

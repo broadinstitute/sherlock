@@ -356,7 +356,7 @@ const docTemplate = `{
                 }
             },
             "put": {
-                "description": "Create or update a CiRun with timing, status, and related resource information. This endpoint is idempotent.\nIt's recommended to take note of the description of the individual fields when reporting resource relations.\nThe \"spreading\" behavior means that clients don't need to be smart about how resources relate -- Sherlock\nwill handle it as long as the client reports what the run directly relates to.",
+                "description": "Create or update a CiRun with timing, status, and related resource information. This endpoint is idempotent.\nThe fields for clusters, charts, chart releases, environments, etc. all accept selectors, and they will\nbe smart about \"spreading\" to indirect relations. More info is available on the CiRunV3Upsert data type,\nbut the gist is that specifying a changeset implies its chart release (and optionally app/chart versions),\nspecifying or implying a chart release implies its environment/cluster, and specifying an environment/cluster\nimplies all chart releases they contain.",
                 "consumes": [
                     "application/json"
                 ],

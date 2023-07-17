@@ -8,6 +8,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
+	"github.com/rs/zerolog/log"
 	"gorm.io/gorm/clause"
 	"net/http"
 )
@@ -28,9 +29,11 @@ type CiRunV3Upsert struct {
 //
 //	@summary		Create or update a CiRun
 //	@description	Create or update a CiRun with timing, status, and related resource information. This endpoint is idempotent.
-//	@description	It's recommended to take note of the description of the individual fields when reporting resource relations.
-//	@description	The "spreading" behavior means that clients don't need to be smart about how resources relate -- Sherlock
-//	@description	will handle it as long as the client reports what the run directly relates to.
+//	@description	The fields for clusters, charts, chart releases, environments, etc. all accept selectors, and they will
+//	@description	be smart about "spreading" to indirect relations. More info is available on the CiRunV3Upsert data type,
+//	@description	but the gist is that specifying a changeset implies its chart release (and optionally app/chart versions),
+//	@description	specifying or implying a chart release implies its environment/cluster, and specifying an environment/cluster
+//	@description	implies all chart releases they contain.
 //	@tags			CiRuns
 //	@accept			json
 //	@produce		json
@@ -47,33 +50,10 @@ func ciRunsV3Upsert(ctx *gin.Context) {
 	if err = ctx.MustBindWith(&body, binding.JSON); err != nil {
 		return
 	}
-	var result models.CiRun
-
-	// Upsert
-	if err = db.Where(&models.CiRun{
-		Platform:                   body.Platform,
-		GithubActionsOwner:         body.GithubActionsOwner,
-		GithubActionsRepo:          body.GithubActionsRepo,
-		GithubActionsRunID:         body.GithubActionsRunID,
-		GithubActionsAttemptNumber: body.GithubActionsAttemptNumber,
-		GithubActionsWorkflowPath:  body.GithubActionsWorkflowPath,
-		ArgoWorkflowsNamespace:     body.ArgoWorkflowsNamespace,
-		ArgoWorkflowsName:          body.ArgoWorkflowsName,
-		ArgoWorkflowsTemplate:      body.ArgoWorkflowsTemplate,
-	}).Assign(&models.CiRun{
-		StartedAt:  body.StartedAt,
-		TerminalAt: body.TerminalAt,
-		Status:     body.Status,
-	}).FirstOrCreate(&result).Error; err != nil {
-		ctx.AbortWithStatusJSON(errors.ErrorToApiResponse(err))
-		return
-	}
-
-	// Append related resources
 
 	// We want to handle the "spreading" mechanic that some of the fields have. To do that, we'll literally just re-assemble
-	// the body we got into a body where spreading would be a no-op. Then we'll handle that body and de-dupe the resulting
-	// CiIdentifiers before adding to the database.
+	// the body we got into one post-spread. Then we'll handle that body and de-dupe the resulting CiIdentifiers before
+	// adding to the database (the SQL gets messed up if there's duplicates in what we give to Gorm).
 
 	// First, a new body, starting from the old one.
 	bodyAfterSpreading := CiRunV3Upsert{
@@ -174,6 +154,8 @@ func ciRunsV3Upsert(ctx *gin.Context) {
 	// way to de-dupe it. Note the use of utils.Dedupe.
 	// We're taking a performance hit because we are potentially re-querying things that we queried above while handling spreading.
 	// Frankly, I (Jack) don't care, I prefer an inefficient algorithm that is obviously correct than one where we try to be slick.
+	// Requests to this endpoint are going to be from automation anyway; the endpoint could have a latency of several seconds and
+	// we wouldn't care.
 	var possiblyDuplicatedRelatedResources []models.CiIdentifier
 	for _, chartSelector := range utils.Dedupe(bodyAfterSpreading.Charts) {
 		chart, err := v2models.InternalChartStore.GetBySelector(db, chartSelector)
@@ -237,22 +219,68 @@ func ciRunsV3Upsert(ctx *gin.Context) {
 addingToDeduplicatedRelatedResources:
 	for _, potentialCiIdentifier := range possiblyDuplicatedRelatedResources {
 		for _, existingCiIdentifierInList := range deduplicatedRelatedResources {
-			if existingCiIdentifierInList.ID == potentialCiIdentifier.ID &&
+			// If we somehow hit a case where we're about to add an empty/uninitialized CiIdentifier...
+			// don't add it and log that this happened. I (Jack) think it's impossible to hit this
+			// case, but I'd rather skip it and log than knowingly set Gorm up to write bad SQL.
+			if potentialCiIdentifier.ID == 0 &&
+				(potentialCiIdentifier.ResourceType == "" || potentialCiIdentifier.ResourceID == 0) {
+				log.Warn().Msg("encountered an empty CiIdentifier that was considered for upsert via CiRun, skipping")
+				continue addingToDeduplicatedRelatedResources
+			}
+
+			// If the ID is filled, skip duplicates based on it
+			if existingCiIdentifierInList.ID != 0 &&
+				potentialCiIdentifier.ID != 0 &&
+				existingCiIdentifierInList.ID == potentialCiIdentifier.ID {
+				continue addingToDeduplicatedRelatedResources
+			}
+
+			// If the resource ID/type is filled, skip duplicates based on it
+			if existingCiIdentifierInList.ResourceType != "" &&
+				potentialCiIdentifier.ResourceType != "" &&
+				existingCiIdentifierInList.ResourceID != 0 &&
+				potentialCiIdentifier.ResourceID != 0 &&
 				existingCiIdentifierInList.ResourceType == potentialCiIdentifier.ResourceType &&
 				existingCiIdentifierInList.ResourceID == potentialCiIdentifier.ResourceID {
 				continue addingToDeduplicatedRelatedResources
 			}
 		}
+		// If we didn't continue back to the loop, then add the potential candidate to the final list
 		deduplicatedRelatedResources = append(deduplicatedRelatedResources, potentialCiIdentifier)
 	}
 
-	// Finally, append the association.
-	if err = db.Model(&result).Association("RelatedResources").Append(deduplicatedRelatedResources); err != nil {
+	// Now to actually mutate the database
+	var result models.CiRun
+
+	// Upsert the basic data
+	if err = db.Where(&models.CiRun{
+		Platform:                   body.Platform,
+		GithubActionsOwner:         body.GithubActionsOwner,
+		GithubActionsRepo:          body.GithubActionsRepo,
+		GithubActionsRunID:         body.GithubActionsRunID,
+		GithubActionsAttemptNumber: body.GithubActionsAttemptNumber,
+		GithubActionsWorkflowPath:  body.GithubActionsWorkflowPath,
+		ArgoWorkflowsNamespace:     body.ArgoWorkflowsNamespace,
+		ArgoWorkflowsName:          body.ArgoWorkflowsName,
+		ArgoWorkflowsTemplate:      body.ArgoWorkflowsTemplate,
+	}).Assign(&models.CiRun{
+		StartedAt:  body.StartedAt,
+		TerminalAt: body.TerminalAt,
+		Status:     body.Status,
+	}).FirstOrCreate(&result).Error; err != nil {
 		ctx.AbortWithStatusJSON(errors.ErrorToApiResponse(err))
 		return
 	}
 
-	// Re-query
+	// Append the related resources
+	if len(deduplicatedRelatedResources) > 0 {
+		if err = db.Model(&result).Association("RelatedResources").Append(deduplicatedRelatedResources); err != nil {
+			ctx.AbortWithStatusJSON(errors.ErrorToApiResponse(err))
+			return
+		}
+	}
+
+	// Re-query so we load all the CiIdentifiers, including any added by previous requests
 	if err = db.Preload(clause.Associations).First(&result, result.ID).Error; err != nil {
 		ctx.AbortWithStatusJSON(errors.ErrorToApiResponse(err))
 		return
