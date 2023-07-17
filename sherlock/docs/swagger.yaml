@@ -1583,13 +1583,13 @@ paths:
         name: platform
         type: string
       - in: query
-        name: '-'
+        name: startedAt
         type: string
       - in: query
         name: status
         type: string
       - in: query
-        name: '-'
+        name: terminalAt
         type: string
       - format: date-time
         in: query

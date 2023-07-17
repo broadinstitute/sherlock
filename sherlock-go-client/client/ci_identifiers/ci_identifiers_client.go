@@ -30,6 +30,10 @@ type ClientOption func(*runtime.ClientOperation)
 
 // ClientService is the interface for Client methods
 type ClientService interface {
+	GetAPICiIdentifiersV3(params *GetAPICiIdentifiersV3Params, opts ...ClientOption) (*GetAPICiIdentifiersV3OK, error)
+
+	GetAPICiIdentifiersV3Selector(params *GetAPICiIdentifiersV3SelectorParams, opts ...ClientOption) (*GetAPICiIdentifiersV3SelectorOK, error)
+
 	GetAPIV2CiIdentifiers(params *GetAPIV2CiIdentifiersParams, opts ...ClientOption) (*GetAPIV2CiIdentifiersOK, error)
 
 	GetAPIV2CiIdentifiersSelector(params *GetAPIV2CiIdentifiersSelectorParams, opts ...ClientOption) (*GetAPIV2CiIdentifiersSelectorOK, error)
@@ -43,6 +47,88 @@ type ClientService interface {
 	PutAPIV2CiIdentifiersSelector(params *PutAPIV2CiIdentifiersSelectorParams, opts ...ClientOption) (*PutAPIV2CiIdentifiersSelectorOK, *PutAPIV2CiIdentifiersSelectorCreated, error)
 
 	SetTransport(transport runtime.ClientTransport)
+}
+
+/*
+  GetAPICiIdentifiersV3 lists ci identifiers matching a filter
+
+  List CiIdentifiers matching a filter. The CiRuns would have to re-queried directly to load the CiRuns.
+This is mainly helpful for debugging and directly querying the existence of a CiIdentifier. Results are
+ordered by creation date, starting at most recent.
+*/
+func (a *Client) GetAPICiIdentifiersV3(params *GetAPICiIdentifiersV3Params, opts ...ClientOption) (*GetAPICiIdentifiersV3OK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetAPICiIdentifiersV3Params()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "GetAPICiIdentifiersV3",
+		Method:             "GET",
+		PathPattern:        "/api/ci-identifiers/v3",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &GetAPICiIdentifiersV3Reader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*GetAPICiIdentifiersV3OK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for GetAPICiIdentifiersV3: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+  GetAPICiIdentifiersV3Selector gets ci runs for a resource by its ci identifier
+
+  Get CiRuns for a resource by its CiIdentifier, which can be referenced by '{type}/{selector...}'.
+*/
+func (a *Client) GetAPICiIdentifiersV3Selector(params *GetAPICiIdentifiersV3SelectorParams, opts ...ClientOption) (*GetAPICiIdentifiersV3SelectorOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetAPICiIdentifiersV3SelectorParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "GetAPICiIdentifiersV3Selector",
+		Method:             "GET",
+		PathPattern:        "/api/ci-identifiers/v3/{selector}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &GetAPICiIdentifiersV3SelectorReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*GetAPICiIdentifiersV3SelectorOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for GetAPICiIdentifiersV3Selector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
 }
 
 /*

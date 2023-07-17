@@ -16,6 +16,8 @@
 import * as runtime from '../runtime';
 import type {
   ErrorsErrorResponse,
+  SherlockCiRunV3,
+  SherlockCiRunV3Upsert,
   V2controllersCiRun,
   V2controllersCreatableCiRun,
   V2controllersEditableCiRun,
@@ -23,6 +25,10 @@ import type {
 import {
     ErrorsErrorResponseFromJSON,
     ErrorsErrorResponseToJSON,
+    SherlockCiRunV3FromJSON,
+    SherlockCiRunV3ToJSON,
+    SherlockCiRunV3UpsertFromJSON,
+    SherlockCiRunV3UpsertToJSON,
     V2controllersCiRunFromJSON,
     V2controllersCiRunToJSON,
     V2controllersCreatableCiRunFromJSON,
@@ -30,6 +36,34 @@ import {
     V2controllersEditableCiRunFromJSON,
     V2controllersEditableCiRunToJSON,
 } from '../models/index';
+
+export interface ApiCiRunsV3GetRequest {
+    argoWorkflowsName?: string;
+    argoWorkflowsNamespace?: string;
+    argoWorkflowsTemplate?: string;
+    createdAt?: Date;
+    githubActionsAttemptNumber?: number;
+    githubActionsOwner?: string;
+    githubActionsRepo?: string;
+    githubActionsRunID?: number;
+    githubActionsWorkflowPath?: string;
+    id?: number;
+    platform?: string;
+    startedAt?: string;
+    status?: string;
+    terminalAt?: string;
+    updatedAt?: Date;
+    limit?: number;
+    offset?: number;
+}
+
+export interface ApiCiRunsV3PutRequest {
+    ciRun: SherlockCiRunV3Upsert;
+}
+
+export interface ApiCiRunsV3SelectorGetRequest {
+    selector: string;
+}
 
 export interface ApiV2CiRunsGetRequest {
     argoWorkflowsName?: string;
@@ -80,6 +114,169 @@ export interface ApiV2SelectorsCiRunsSelectorGetRequest {
  * 
  */
 export class CiRunsApi extends runtime.BaseAPI {
+
+    /**
+     * List CiRuns matching a filter. The CiRuns would have to re-queried directly to load any related resources. Results are ordered by start time, starting at most recent.
+     * List CiRuns matching a filter
+     */
+    async apiCiRunsV3GetRaw(requestParameters: ApiCiRunsV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockCiRunV3>>> {
+        const queryParameters: any = {};
+
+        if (requestParameters.argoWorkflowsName !== undefined) {
+            queryParameters['argoWorkflowsName'] = requestParameters.argoWorkflowsName;
+        }
+
+        if (requestParameters.argoWorkflowsNamespace !== undefined) {
+            queryParameters['argoWorkflowsNamespace'] = requestParameters.argoWorkflowsNamespace;
+        }
+
+        if (requestParameters.argoWorkflowsTemplate !== undefined) {
+            queryParameters['argoWorkflowsTemplate'] = requestParameters.argoWorkflowsTemplate;
+        }
+
+        if (requestParameters.createdAt !== undefined) {
+            queryParameters['createdAt'] = (requestParameters.createdAt as any).toISOString();
+        }
+
+        if (requestParameters.githubActionsAttemptNumber !== undefined) {
+            queryParameters['githubActionsAttemptNumber'] = requestParameters.githubActionsAttemptNumber;
+        }
+
+        if (requestParameters.githubActionsOwner !== undefined) {
+            queryParameters['githubActionsOwner'] = requestParameters.githubActionsOwner;
+        }
+
+        if (requestParameters.githubActionsRepo !== undefined) {
+            queryParameters['githubActionsRepo'] = requestParameters.githubActionsRepo;
+        }
+
+        if (requestParameters.githubActionsRunID !== undefined) {
+            queryParameters['githubActionsRunID'] = requestParameters.githubActionsRunID;
+        }
+
+        if (requestParameters.githubActionsWorkflowPath !== undefined) {
+            queryParameters['githubActionsWorkflowPath'] = requestParameters.githubActionsWorkflowPath;
+        }
+
+        if (requestParameters.id !== undefined) {
+            queryParameters['id'] = requestParameters.id;
+        }
+
+        if (requestParameters.platform !== undefined) {
+            queryParameters['platform'] = requestParameters.platform;
+        }
+
+        if (requestParameters.startedAt !== undefined) {
+            queryParameters['startedAt'] = requestParameters.startedAt;
+        }
+
+        if (requestParameters.status !== undefined) {
+            queryParameters['status'] = requestParameters.status;
+        }
+
+        if (requestParameters.terminalAt !== undefined) {
+            queryParameters['terminalAt'] = requestParameters.terminalAt;
+        }
+
+        if (requestParameters.updatedAt !== undefined) {
+            queryParameters['updatedAt'] = (requestParameters.updatedAt as any).toISOString();
+        }
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.offset !== undefined) {
+            queryParameters['offset'] = requestParameters.offset;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/ci-runs/v3`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(SherlockCiRunV3FromJSON));
+    }
+
+    /**
+     * List CiRuns matching a filter. The CiRuns would have to re-queried directly to load any related resources. Results are ordered by start time, starting at most recent.
+     * List CiRuns matching a filter
+     */
+    async apiCiRunsV3Get(requestParameters: ApiCiRunsV3GetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<SherlockCiRunV3>> {
+        const response = await this.apiCiRunsV3GetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Create or update a CiRun with timing, status, and related resource information. This endpoint is idempotent. The fields for clusters, charts, chart releases, environments, etc. all accept selectors, and they will be smart about \"spreading\" to indirect relations. More info is available on the CiRunV3Upsert data type, but the gist is that specifying a changeset implies its chart release (and optionally app/chart versions), specifying or implying a chart release implies its environment/cluster, and specifying an environment/cluster implies all chart releases they contain.
+     * Create or update a CiRun
+     */
+    async apiCiRunsV3PutRaw(requestParameters: ApiCiRunsV3PutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockCiRunV3>> {
+        if (requestParameters.ciRun === null || requestParameters.ciRun === undefined) {
+            throw new runtime.RequiredError('ciRun','Required parameter requestParameters.ciRun was null or undefined when calling apiCiRunsV3Put.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/api/ci-runs/v3`,
+            method: 'PUT',
+            headers: headerParameters,
+            query: queryParameters,
+            body: SherlockCiRunV3UpsertToJSON(requestParameters.ciRun),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => SherlockCiRunV3FromJSON(jsonValue));
+    }
+
+    /**
+     * Create or update a CiRun with timing, status, and related resource information. This endpoint is idempotent. The fields for clusters, charts, chart releases, environments, etc. all accept selectors, and they will be smart about \"spreading\" to indirect relations. More info is available on the CiRunV3Upsert data type, but the gist is that specifying a changeset implies its chart release (and optionally app/chart versions), specifying or implying a chart release implies its environment/cluster, and specifying an environment/cluster implies all chart releases they contain.
+     * Create or update a CiRun
+     */
+    async apiCiRunsV3Put(requestParameters: ApiCiRunsV3PutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockCiRunV3> {
+        const response = await this.apiCiRunsV3PutRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Get a CiRun, including CiIdentifiers representing related resources or resources it affected.
+     * Get a CiRun, including CiIdentifiers for related resources
+     */
+    async apiCiRunsV3SelectorGetRaw(requestParameters: ApiCiRunsV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockCiRunV3>> {
+        if (requestParameters.selector === null || requestParameters.selector === undefined) {
+            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiCiRunsV3SelectorGet.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/ci-runs/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => SherlockCiRunV3FromJSON(jsonValue));
+    }
+
+    /**
+     * Get a CiRun, including CiIdentifiers representing related resources or resources it affected.
+     * Get a CiRun, including CiIdentifiers for related resources
+     */
+    async apiCiRunsV3SelectorGet(requestParameters: ApiCiRunsV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockCiRunV3> {
+        const response = await this.apiCiRunsV3SelectorGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
 
     /**
      * List existing CiRun entries, ordered by most recently updated.

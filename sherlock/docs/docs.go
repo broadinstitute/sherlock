@@ -275,7 +275,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "name": "-",
+                        "name": "startedAt",
                         "in": "query"
                     },
                     {
@@ -285,7 +285,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "name": "-",
+                        "name": "terminalAt",
                         "in": "query"
                     },
                     {

@@ -32,6 +32,10 @@ type ClientOption func(*runtime.ClientOperation)
 type ClientService interface {
 	DeleteAPIV2CiRunsSelector(params *DeleteAPIV2CiRunsSelectorParams, opts ...ClientOption) (*DeleteAPIV2CiRunsSelectorOK, error)
 
+	GetAPICiRunsV3(params *GetAPICiRunsV3Params, opts ...ClientOption) (*GetAPICiRunsV3OK, error)
+
+	GetAPICiRunsV3Selector(params *GetAPICiRunsV3SelectorParams, opts ...ClientOption) (*GetAPICiRunsV3SelectorOK, error)
+
 	GetAPIV2CiRuns(params *GetAPIV2CiRunsParams, opts ...ClientOption) (*GetAPIV2CiRunsOK, error)
 
 	GetAPIV2CiRunsSelector(params *GetAPIV2CiRunsSelectorParams, opts ...ClientOption) (*GetAPIV2CiRunsSelectorOK, error)
@@ -41,6 +45,8 @@ type ClientService interface {
 	PatchAPIV2CiRunsSelector(params *PatchAPIV2CiRunsSelectorParams, opts ...ClientOption) (*PatchAPIV2CiRunsSelectorOK, error)
 
 	PostAPIV2CiRuns(params *PostAPIV2CiRunsParams, opts ...ClientOption) (*PostAPIV2CiRunsOK, *PostAPIV2CiRunsCreated, error)
+
+	PutAPICiRunsV3(params *PutAPICiRunsV3Params, opts ...ClientOption) (*PutAPICiRunsV3Created, error)
 
 	PutAPIV2CiRunsSelector(params *PutAPIV2CiRunsSelectorParams, opts ...ClientOption) (*PutAPIV2CiRunsSelectorOK, *PutAPIV2CiRunsSelectorCreated, error)
 
@@ -84,6 +90,87 @@ func (a *Client) DeleteAPIV2CiRunsSelector(params *DeleteAPIV2CiRunsSelectorPara
 	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for DeleteAPIV2CiRunsSelector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+  GetAPICiRunsV3 lists ci runs matching a filter
+
+  List CiRuns matching a filter. The CiRuns would have to re-queried directly to load any related resources.
+Results are ordered by start time, starting at most recent.
+*/
+func (a *Client) GetAPICiRunsV3(params *GetAPICiRunsV3Params, opts ...ClientOption) (*GetAPICiRunsV3OK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetAPICiRunsV3Params()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "GetAPICiRunsV3",
+		Method:             "GET",
+		PathPattern:        "/api/ci-runs/v3",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &GetAPICiRunsV3Reader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*GetAPICiRunsV3OK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for GetAPICiRunsV3: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+  GetAPICiRunsV3Selector gets a ci run including ci identifiers for related resources
+
+  Get a CiRun, including CiIdentifiers representing related resources or resources it affected.
+*/
+func (a *Client) GetAPICiRunsV3Selector(params *GetAPICiRunsV3SelectorParams, opts ...ClientOption) (*GetAPICiRunsV3SelectorOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetAPICiRunsV3SelectorParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "GetAPICiRunsV3Selector",
+		Method:             "GET",
+		PathPattern:        "/api/ci-runs/v3/{selector}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &GetAPICiRunsV3SelectorReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*GetAPICiRunsV3SelectorOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for GetAPICiRunsV3Selector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 
@@ -285,6 +372,51 @@ func (a *Client) PostAPIV2CiRuns(params *PostAPIV2CiRunsParams, opts ...ClientOp
 	}
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for ci_runs: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+  PutAPICiRunsV3 creates or update a ci run
+
+  Create or update a CiRun with timing, status, and related resource information. This endpoint is idempotent.
+The fields for clusters, charts, chart releases, environments, etc. all accept selectors, and they will
+be smart about "spreading" to indirect relations. More info is available on the CiRunV3Upsert data type,
+but the gist is that specifying a changeset implies its chart release (and optionally app/chart versions),
+specifying or implying a chart release implies its environment/cluster, and specifying an environment/cluster
+implies all chart releases they contain.
+*/
+func (a *Client) PutAPICiRunsV3(params *PutAPICiRunsV3Params, opts ...ClientOption) (*PutAPICiRunsV3Created, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewPutAPICiRunsV3Params()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "PutAPICiRunsV3",
+		Method:             "PUT",
+		PathPattern:        "/api/ci-runs/v3",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &PutAPICiRunsV3Reader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*PutAPICiRunsV3Created)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for PutAPICiRunsV3: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 

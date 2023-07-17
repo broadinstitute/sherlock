@@ -15,16 +15,10 @@
 
 import * as runtime from '../runtime';
 import type {
-  ErrorsErrorResponse,
-  MiscMyUserResponse,
   MiscStatusResponse,
   MiscVersionResponse,
 } from '../models/index';
 import {
-    ErrorsErrorResponseFromJSON,
-    ErrorsErrorResponseToJSON,
-    MiscMyUserResponseFromJSON,
-    MiscMyUserResponseToJSON,
     MiscStatusResponseFromJSON,
     MiscStatusResponseToJSON,
     MiscVersionResponseFromJSON,
@@ -35,34 +29,6 @@ import {
  * 
  */
 export class MiscApi extends runtime.BaseAPI {
-
-    /**
-     * Get Sherlock\'s understanding of the calling user based on IAP and the Firecloud.org Google Workspace organization.
-     * Get information about the calling user
-     */
-    async myUserGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MiscMyUserResponse>> {
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        const response = await this.request({
-            path: `/my-user`,
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => MiscMyUserResponseFromJSON(jsonValue));
-    }
-
-    /**
-     * Get Sherlock\'s understanding of the calling user based on IAP and the Firecloud.org Google Workspace organization.
-     * Get information about the calling user
-     */
-    async myUserGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<MiscMyUserResponse> {
-        const response = await this.myUserGetRaw(initOverrides);
-        return await response.value();
-    }
 
     /**
      * Get Sherlock\'s current status. Right now, this endpoint always returned OK (if the server is online). This endpoint is acceptable to use for a readiness check.

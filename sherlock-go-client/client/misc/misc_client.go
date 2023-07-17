@@ -30,53 +30,11 @@ type ClientOption func(*runtime.ClientOperation)
 
 // ClientService is the interface for Client methods
 type ClientService interface {
-	GetMyUser(params *GetMyUserParams, opts ...ClientOption) (*GetMyUserOK, error)
-
 	GetStatus(params *GetStatusParams, opts ...ClientOption) (*GetStatusOK, error)
 
 	GetVersion(params *GetVersionParams, opts ...ClientOption) (*GetVersionOK, error)
 
 	SetTransport(transport runtime.ClientTransport)
-}
-
-/*
-  GetMyUser gets information about the calling user
-
-  Get Sherlock's understanding of the calling user based on IAP and the Firecloud.org Google Workspace organization.
-*/
-func (a *Client) GetMyUser(params *GetMyUserParams, opts ...ClientOption) (*GetMyUserOK, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewGetMyUserParams()
-	}
-	op := &runtime.ClientOperation{
-		ID:                 "GetMyUser",
-		Method:             "GET",
-		PathPattern:        "/my-user",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"https"},
-		Params:             params,
-		Reader:             &GetMyUserReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
-	if err != nil {
-		return nil, err
-	}
-	success, ok := result.(*GetMyUserOK)
-	if ok {
-		return success, nil
-	}
-	// unexpected success response
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
-	msg := fmt.Sprintf("unexpected success response for GetMyUser: API contract not enforced by server. Client expected to get an error, but got: %T", result)
-	panic(msg)
 }
 
 /*

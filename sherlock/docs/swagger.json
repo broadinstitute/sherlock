@@ -269,7 +269,7 @@
                     },
                     {
                         "type": "string",
-                        "name": "-",
+                        "name": "startedAt",
                         "in": "query"
                     },
                     {
@@ -279,7 +279,7 @@
                     },
                     {
                         "type": "string",
-                        "name": "-",
+                        "name": "terminalAt",
                         "in": "query"
                     },
                     {
