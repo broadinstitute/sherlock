@@ -19,6 +19,7 @@ src/apis/index.ts
 src/index.ts
 src/models/EnvironmentAutoDelete.ts
 src/models/ErrorsErrorResponse.ts
+src/models/MiscConnectionCheckResponse.ts
 src/models/MiscStatusResponse.ts
 src/models/MiscVersionResponse.ts
 src/models/PagerdutyAlertSummary.ts

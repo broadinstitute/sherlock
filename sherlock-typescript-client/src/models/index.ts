@@ -2,6 +2,7 @@
 /* eslint-disable */
 export * from './EnvironmentAutoDelete';
 export * from './ErrorsErrorResponse';
+export * from './MiscConnectionCheckResponse';
 export * from './MiscStatusResponse';
 export * from './MiscVersionResponse';
 export * from './PagerdutyAlertSummary';

@@ -15,10 +15,13 @@
 
 import * as runtime from '../runtime';
 import type {
+  MiscConnectionCheckResponse,
   MiscStatusResponse,
   MiscVersionResponse,
 } from '../models/index';
 import {
+    MiscConnectionCheckResponseFromJSON,
+    MiscConnectionCheckResponseToJSON,
     MiscStatusResponseFromJSON,
     MiscStatusResponseToJSON,
     MiscVersionResponseFromJSON,
@@ -29,6 +32,34 @@ import {
  * 
  */
 export class MiscApi extends runtime.BaseAPI {
+
+    /**
+     * Get a static response from Sherlock to verify connection through proxies like IAP.
+     * Test the client\'s connection to Sherlock
+     */
+    async connectionCheckGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MiscConnectionCheckResponse>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/connection-check`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => MiscConnectionCheckResponseFromJSON(jsonValue));
+    }
+
+    /**
+     * Get a static response from Sherlock to verify connection through proxies like IAP.
+     * Test the client\'s connection to Sherlock
+     */
+    async connectionCheckGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<MiscConnectionCheckResponse> {
+        const response = await this.connectionCheckGetRaw(initOverrides);
+        return await response.value();
+    }
 
     /**
      * Get Sherlock\'s current status. Right now, this endpoint always returned OK (if the server is online). This endpoint is acceptable to use for a readiness check.

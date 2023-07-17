@@ -30,11 +30,53 @@ type ClientOption func(*runtime.ClientOperation)
 
 // ClientService is the interface for Client methods
 type ClientService interface {
+	GetConnectionCheck(params *GetConnectionCheckParams, opts ...ClientOption) (*GetConnectionCheckOK, error)
+
 	GetStatus(params *GetStatusParams, opts ...ClientOption) (*GetStatusOK, error)
 
 	GetVersion(params *GetVersionParams, opts ...ClientOption) (*GetVersionOK, error)
 
 	SetTransport(transport runtime.ClientTransport)
+}
+
+/*
+  GetConnectionCheck tests the client s connection to sherlock
+
+  Get a static response from Sherlock to verify connection through proxies like IAP.
+*/
+func (a *Client) GetConnectionCheck(params *GetConnectionCheckParams, opts ...ClientOption) (*GetConnectionCheckOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetConnectionCheckParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "GetConnectionCheck",
+		Method:             "GET",
+		PathPattern:        "/connection-check",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &GetConnectionCheckReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*GetConnectionCheckOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for GetConnectionCheck: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
 }
 
 /*

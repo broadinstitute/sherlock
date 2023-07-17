@@ -19,6 +19,12 @@ definitions:
       type:
         type: string
     type: object
+  misc.ConnectionCheckResponse:
+    properties:
+      ok:
+        description: Always true
+        type: boolean
+    type: object
   misc.StatusResponse:
     properties:
       ok:
@@ -6533,6 +6539,20 @@ paths:
       summary: Edit a User entry
       tags:
       - Users
+  /connection-check:
+    get:
+      description: Get a static response from Sherlock to verify connection through
+        proxies like IAP.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/misc.ConnectionCheckResponse'
+      summary: Test the client's connection to Sherlock
+      tags:
+      - Misc
   /status:
     get:
       description: |-
