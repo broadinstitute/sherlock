@@ -21,8 +21,8 @@ type ciRunFields struct {
 	ArgoWorkflowsNamespace     string     `json:"argoWorkflowsNamespace" form:"argoWorkflowsNamespace"`
 	ArgoWorkflowsName          string     `json:"argoWorkflowsName" form:"argoWorkflowsName"`
 	ArgoWorkflowsTemplate      string     `json:"argoWorkflowsTemplate" form:"argoWorkflowsTemplate"`
-	StartedAt                  *time.Time `json:"startedAt,omitempty" form:"-"`
-	TerminalAt                 *time.Time `json:"terminalAt,omitempty" form:"-"`
+	StartedAt                  *time.Time `json:"startedAt,omitempty" form:"startedAt"`
+	TerminalAt                 *time.Time `json:"terminalAt,omitempty" form:"terminalAt"`
 	Status                     *string    `json:"status,omitempty" form:"status"`
 }
 
