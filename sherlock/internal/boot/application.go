@@ -127,7 +127,6 @@ func (a *Application) Stop() {
 		log.Info().Msgf("BOOT | making liveness endpoint not check database anymore...")
 		a.livenessServer.MakeAlwaysReturnOK()
 	} else {
-
 		log.Info().Msgf("BOOT | no liveness server reference, skipping making liveness endpoint not check database")
 	}
 
