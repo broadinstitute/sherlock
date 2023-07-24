@@ -19,6 +19,8 @@ db:
   maxOpenConnections: 75
   init: true
 
+  livenessPingInterval: 10s
+
   # retryConnection will repeatedly try to connect to the database to allow it to come online.
   # Helpful to account for delay in either the Cloud SQL proxy (for release mode) or a local Postgres
   # (for debug mode) starting up simultaneously with Sherlock.
