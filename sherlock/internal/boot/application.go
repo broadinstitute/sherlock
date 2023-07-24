@@ -17,10 +17,11 @@ import (
 )
 
 type Application struct {
-	sqlDB     *sql.DB
-	gormDB    *gorm.DB
-	cancelCtx context.CancelFunc
-	server    *http.Server
+	sqlDB          *sql.DB
+	livenessServer *liveness.Server
+	gormDB         *gorm.DB
+	cancelCtx      context.CancelFunc
+	server         *http.Server
 
 	// runInsideDatabaseTransaction begins a transaction on the gorm.DB after migration and rolls it back
 	// before closing the connection. This makes Start + Stop safe to run from tests, because they won't
@@ -37,7 +38,8 @@ func (a *Application) Start() {
 	}
 
 	log.Info().Msgf("BOOT | starting liveness endpoint...")
-	go liveness.Start()
+	a.livenessServer = &liveness.Server{}
+	go a.livenessServer.Start(a.sqlDB)
 
 	log.Info().Msgf("BOOT | migrating database and configuring Gorm...")
 	if gormDB, err := db.Configure(a.sqlDB); err != nil {
@@ -121,6 +123,13 @@ func (a *Application) Stop() {
 		a.gormDB.Rollback()
 	}
 
+	if a.livenessServer != nil {
+		log.Info().Msgf("BOOT | making liveness endpoint not check database anymore...")
+		a.livenessServer.MakeAlwaysReturnOK()
+	} else {
+		log.Info().Msgf("BOOT | no liveness server reference, skipping making liveness endpoint not check database")
+	}
+
 	if a.sqlDB != nil {
 		log.Info().Msgf("BOOT | closing database connections...")
 		if err := a.sqlDB.Close(); err != nil {
@@ -130,7 +139,12 @@ func (a *Application) Stop() {
 		log.Info().Msgf("BOOT | no SQL database reference, skipping closing database connections")
 	}
 
-	log.Info().Msgf("BOOT | stopping liveness endpoint...")
-	liveness.Stop()
+	if a.livenessServer != nil {
+		log.Info().Msgf("BOOT | stopping liveness endpoint...")
+		a.livenessServer.Stop()
+	} else {
+		log.Info().Msgf("BOOT | no liveness server reference, skipping stopping liveness endpoint")
+	}
+
 	log.Info().Msgf("BOOT | exiting...")
 }
