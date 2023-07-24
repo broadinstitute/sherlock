@@ -10,6 +10,18 @@ import (
 	"time"
 )
 
+// Server runs a liveness endpoint designed to integrate with Sherlock's lifecycle.
+//
+// Server.Start should be run once the sql.DB is connected. It will begin monitoring the health of the connection
+// pool courtesy of sql.DB's Ping method and reporting that health on port 8081.
+// Server.MakeAlwaysReturnOK should be run during shutdown before the sql.DB connection pool is drained. It stops
+// monitoring of the sql.DB and sets the endpoint to always report healthy, so Kubernetes won't think Sherlock is
+// unhealthy as it shuts down.
+// Server.Stop should be called right before Sherlock exits. It shuts down the monitoring endpoint.
+//
+// Note that we're potentially being overly correct here. If Kubernetes were to detect Sherlock as unhealthy
+// during shutdown, it could potentially send another SIGTERM, but that's not really an issue. We'd already
+// be reacting to a SIGTERM, and the new one would have a longer deadline than the one we'd already be on.
 type Server struct {
 	sqlDB         *sql.DB
 	handler       *handler
@@ -64,7 +76,9 @@ func (s *Server) MakeAlwaysReturnOK() {
 		s.cancelPingCtx()
 	}
 	if s.handler != nil {
+		s.handler.mutex.Lock()
 		s.handler.returnOK = true
+		s.handler.mutex.Unlock()
 	}
 }
 
