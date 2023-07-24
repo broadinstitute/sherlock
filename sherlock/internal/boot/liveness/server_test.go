@@ -30,6 +30,8 @@ func TestServer_Lifecycle(t *testing.T) {
 		}
 		assert.True(t, livenessSucceeded)
 	})
+	err = sqlDB.Close()
+	assert.NoError(t, err)
 	t.Run("offline probe", func(t *testing.T) {
 		server.MakeAlwaysReturnOK()
 		resp, err := http.Get("http://localhost:8081")

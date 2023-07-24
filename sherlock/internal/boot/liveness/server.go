@@ -6,6 +6,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/rs/zerolog/log"
 	"net/http"
+	"sync"
 	"time"
 )
 
@@ -36,12 +37,15 @@ func (s *Server) Start(sqlDB *sql.DB) {
 func (s *Server) repeatedlyPingDatabase() {
 	interval := config.Config.MustDuration("db.livenessPingInterval")
 	for {
-		if err := s.sqlDB.PingContext(s.pingCtx); err == nil {
+		err := s.sqlDB.PingContext(s.pingCtx)
+		s.handler.mutex.Lock()
+		if err == nil {
 			s.handler.returnOK = true
 		} else {
 			s.handler.returnOK = false
 			log.Error().Msgf("LIVE | liveness.Server.sqlDB.PingContext(liveness.Server.pingCtx) err: %v", err)
 		}
+		s.handler.mutex.Unlock()
 		select {
 		case <-time.After(interval):
 		case <-s.pingCtx.Done():
@@ -78,11 +82,18 @@ func (s *Server) Stop() {
 }
 
 type handler struct {
+	// mutex is here because technically both ServeHTTP and Server.repeatedlyPingDatabase goroutines hit returnOK.
+	// It's a sync.RWMutex because it's read from ServeHTTP and only written to by Server.repeatedlyPingDatabase on
+	// an interval.
+	mutex    sync.RWMutex
 	returnOK bool
 }
 
 func (h *handler) ServeHTTP(w http.ResponseWriter, _ *http.Request) {
-	if h.returnOK {
+	h.mutex.RLock()
+	ok := h.returnOK
+	h.mutex.RUnlock()
+	if ok {
 		w.WriteHeader(http.StatusOK)
 		_, _ = w.Write([]byte("OK"))
 	} else {
