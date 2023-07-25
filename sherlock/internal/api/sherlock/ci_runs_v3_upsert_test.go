@@ -197,6 +197,26 @@ func (s *handlerSuite) TestCiRunsV3UpsertIdentifiers() {
 	}, user)
 	s.NoError(err)
 	s.True(created)
+
+	s.Run("chart release identifiers", func() {
+		var got CiRunV3
+		code := s.HandleRequest(
+			s.NewRequest("PUT", "/api/ci-runs/v3", CiRunV3Upsert{
+				ciRunFields: ciRunFields{
+					Platform:                   "github-actions",
+					GithubActionsOwner:         "owner",
+					GithubActionsRepo:          "repo",
+					GithubActionsRunID:         123123,
+					GithubActionsAttemptNumber: 1,
+					GithubActionsWorkflowPath:  "workflow",
+				},
+				ChartReleases: []string{chartRelease.Name},
+			}),
+			&got)
+		s.Equal(http.StatusCreated, code)
+		s.Len(got.RelatedResources, 3)
+	})
+
 	controllerChangesets, err := v2controllers.NewControllerSet(v2models.NewStoreSet(s.DB)).ChangesetController.PlanAndApply(v2controllers.ChangesetPlanRequest{
 		ChartReleases: []v2controllers.ChangesetPlanRequestChartReleaseEntry{
 			{
