@@ -60,6 +60,25 @@ func (s *handlerSuite) TestCiRunsV3Upsert() {
 	s.NotEqual(got1.UpdatedAt, got2.UpdatedAt)
 }
 
+func (s *handlerSuite) TestCiRunsV3UpsertFieldValidation() {
+	var got errors.ErrorResponse
+	code := s.HandleRequest(
+		s.NewRequest("PUT", "/api/ci-runs/v3", CiRunV3Upsert{
+			ciRunFields: ciRunFields{
+				Platform:                   "github-actions",
+				GithubActionsOwner:         "owner",
+				GithubActionsRepo:          "repo",
+				GithubActionsRunID:         1,
+				GithubActionsAttemptNumber: 1,
+				GithubActionsWorkflowPath:  "workflow",
+			},
+			RelateToChangesetNewVersions: "some invalid value",
+		}),
+		&got)
+	s.Equal(http.StatusBadRequest, code)
+	s.Contains(got.Message, "RelateToChangesetNewVersions")
+}
+
 func (s *handlerSuite) TestCiRunsV3UpsertIdentifiers() {
 	user := s.SetSuitableTestUserForDB()
 
@@ -129,6 +148,21 @@ func (s *handlerSuite) TestCiRunsV3UpsertIdentifiers() {
 	}, user)
 	s.NoError(err)
 	s.True(created)
+	templateEnvironment, created, err := v2models.InternalEnvironmentStore.Create(s.DB, v2models.Environment{
+		Name:                       "bee-template",
+		Lifecycle:                  "template",
+		UniqueResourcePrefix:       "a1b3",
+		Base:                       "bee",
+		DefaultClusterID:           &cluster.ID,
+		DefaultNamespace:           "terra-bee-template",
+		OwnerID:                    &user.ID,
+		RequiresSuitability:        testutils.PointerTo(false),
+		HelmfileRef:                testutils.PointerTo("HEAD"),
+		DefaultFirecloudDevelopRef: testutils.PointerTo("dev"),
+		PreventDeletion:            testutils.PointerTo(false),
+	}, user)
+	s.NoError(err)
+	s.True(created)
 	chartRelease, created, err := v2models.InternalChartReleaseStore.Create(s.DB, v2models.ChartRelease{
 		Name:          "leonardo-dev",
 		ChartID:       chart.ID,
@@ -146,6 +180,43 @@ func (s *handlerSuite) TestCiRunsV3UpsertIdentifiers() {
 	}, user)
 	s.NoError(err)
 	s.True(created)
+	templateChartRelease, created, err := v2models.InternalChartReleaseStore.Create(s.DB, v2models.ChartRelease{
+		Name:          "leonardo-bee-template",
+		ChartID:       chart.ID,
+		ClusterID:     &cluster.ID,
+		EnvironmentID: &templateEnvironment.ID,
+		Namespace:     templateEnvironment.DefaultNamespace,
+		ChartReleaseVersion: v2models.ChartReleaseVersion{
+			AppVersionResolver:   testutils.PointerTo("exact"),
+			AppVersionExact:      testutils.PointerTo("app version blah"),
+			ChartVersionResolver: testutils.PointerTo("exact"),
+			ChartVersionExact:    testutils.PointerTo("chart version blah"),
+			HelmfileRef:          testutils.PointerTo("HEAD"),
+			FirecloudDevelopRef:  testutils.PointerTo("dev"),
+		},
+	}, user)
+	s.NoError(err)
+	s.True(created)
+
+	s.Run("chart release identifiers", func() {
+		var got CiRunV3
+		code := s.HandleRequest(
+			s.NewRequest("PUT", "/api/ci-runs/v3", CiRunV3Upsert{
+				ciRunFields: ciRunFields{
+					Platform:                   "github-actions",
+					GithubActionsOwner:         "owner",
+					GithubActionsRepo:          "repo",
+					GithubActionsRunID:         123123,
+					GithubActionsAttemptNumber: 1,
+					GithubActionsWorkflowPath:  "workflow",
+				},
+				ChartReleases: []string{chartRelease.Name},
+			}),
+			&got)
+		s.Equal(http.StatusCreated, code)
+		s.Len(got.RelatedResources, 3)
+	})
+
 	controllerChangesets, err := v2controllers.NewControllerSet(v2models.NewStoreSet(s.DB)).ChangesetController.PlanAndApply(v2controllers.ChangesetPlanRequest{
 		ChartReleases: []v2controllers.ChangesetPlanRequestChartReleaseEntry{
 			{
@@ -155,14 +226,27 @@ func (s *handlerSuite) TestCiRunsV3UpsertIdentifiers() {
 					ToChartVersionExact: &chartVersion.ChartVersion,
 				},
 			},
+			{
+				CreatableChangeset: v2controllers.CreatableChangeset{
+					ChartRelease:        templateChartRelease.Name,
+					ToAppVersionExact:   &appVersion.AppVersion,
+					ToChartVersionExact: &chartVersion.ChartVersion,
+				},
+			},
 		},
 	}, user)
 	s.NoError(err)
-	s.Len(controllerChangesets, 1)
+	s.Len(controllerChangesets, 2)
 	changeset, err := v2models.InternalChangesetStore.Get(s.DB, v2models.Changeset{Model: gorm.Model{ID: controllerChangesets[0].ID}})
 	s.NoError(err)
+	s.Equal(chartRelease.ID, changeset.ChartReleaseID)
 	s.Len(changeset.NewAppVersions, 1)
 	s.Len(changeset.NewChartVersions, 1)
+	templateChangeset, err := v2models.InternalChangesetStore.Get(s.DB, v2models.Changeset{Model: gorm.Model{ID: controllerChangesets[1].ID}})
+	s.NoError(err)
+	s.Equal(templateChartRelease.ID, templateChangeset.ChartReleaseID)
+	s.Len(templateChangeset.NewAppVersions, 1)
+	s.Len(templateChangeset.NewChartVersions, 1)
 
 	s.Run("more advanced upsert of identifiers", func() {
 		var got CiRunV3
@@ -176,7 +260,8 @@ func (s *handlerSuite) TestCiRunsV3UpsertIdentifiers() {
 					GithubActionsAttemptNumber: 2,
 					GithubActionsWorkflowPath:  "workflow",
 				},
-				Changesets: []string{utils.UintToString(changeset.ID)},
+				Changesets:                   []string{utils.UintToString(changeset.ID)},
+				RelateToChangesetNewVersions: "never",
 			}),
 			&got)
 		s.Equal(http.StatusCreated, code)
@@ -194,8 +279,8 @@ func (s *handlerSuite) TestCiRunsV3UpsertIdentifiers() {
 					GithubActionsAttemptNumber: 2,
 					GithubActionsWorkflowPath:  "workflow",
 				},
-				Changesets:                   []string{utils.UintToString(changeset.ID)},
-				RelateToChangesetNewVersions: true,
+				Changesets: []string{utils.UintToString(changeset.ID)},
+				// Use default for RelateToChangesetNewVersions, which spreads for static environments
 			}),
 			&got)
 		s.Equal(http.StatusCreated, code)
@@ -224,6 +309,83 @@ func (s *handlerSuite) TestCiRunsV3UpsertIdentifiers() {
 				&gotAgain)
 			s.Equal(http.StatusOK, code)
 			s.Len(gotAgain.RelatedResources, 6)
+		})
+	})
+	s.Run("changeset spreading for non-static only when set to always", func() {
+		s.Run("never", func() {
+			var got CiRunV3
+			code := s.HandleRequest(
+				s.NewRequest("PUT", "/api/ci-runs/v3", CiRunV3Upsert{
+					ciRunFields: ciRunFields{
+						Platform:                   "github-actions",
+						GithubActionsOwner:         "owner",
+						GithubActionsRepo:          "repo",
+						GithubActionsRunID:         1,
+						GithubActionsAttemptNumber: 200,
+						GithubActionsWorkflowPath:  "workflow",
+					},
+					Changesets:                   []string{utils.UintToString(templateChangeset.ID)},
+					RelateToChangesetNewVersions: "never",
+				}),
+				&got)
+			s.Equal(http.StatusCreated, code)
+			s.Len(got.RelatedResources, 4)
+		})
+		s.Run("default", func() {
+			var got CiRunV3
+			code := s.HandleRequest(
+				s.NewRequest("PUT", "/api/ci-runs/v3", CiRunV3Upsert{
+					ciRunFields: ciRunFields{
+						Platform:                   "github-actions",
+						GithubActionsOwner:         "owner",
+						GithubActionsRepo:          "repo",
+						GithubActionsRunID:         1,
+						GithubActionsAttemptNumber: 200,
+						GithubActionsWorkflowPath:  "workflow",
+					},
+					Changesets: []string{utils.UintToString(templateChangeset.ID)},
+				}),
+				&got)
+			s.Equal(http.StatusCreated, code)
+			s.Len(got.RelatedResources, 4)
+		})
+		s.Run("explicit when-static", func() {
+			var got CiRunV3
+			code := s.HandleRequest(
+				s.NewRequest("PUT", "/api/ci-runs/v3", CiRunV3Upsert{
+					ciRunFields: ciRunFields{
+						Platform:                   "github-actions",
+						GithubActionsOwner:         "owner",
+						GithubActionsRepo:          "repo",
+						GithubActionsRunID:         1,
+						GithubActionsAttemptNumber: 200,
+						GithubActionsWorkflowPath:  "workflow",
+					},
+					Changesets:                   []string{utils.UintToString(templateChangeset.ID)},
+					RelateToChangesetNewVersions: "when-static",
+				}),
+				&got)
+			s.Equal(http.StatusCreated, code)
+			s.Len(got.RelatedResources, 4)
+		})
+		s.Run("always", func() {
+			var got CiRunV3
+			code := s.HandleRequest(
+				s.NewRequest("PUT", "/api/ci-runs/v3", CiRunV3Upsert{
+					ciRunFields: ciRunFields{
+						Platform:                   "github-actions",
+						GithubActionsOwner:         "owner",
+						GithubActionsRepo:          "repo",
+						GithubActionsRunID:         1,
+						GithubActionsAttemptNumber: 200,
+						GithubActionsWorkflowPath:  "workflow",
+					},
+					Changesets:                   []string{utils.UintToString(templateChangeset.ID)},
+					RelateToChangesetNewVersions: "always",
+				}),
+				&got)
+			s.Equal(http.StatusCreated, code)
+			s.Len(got.RelatedResources, 6)
 		})
 	})
 	s.Run("eliminates duplicates and spreads downwards", func() {
