@@ -29,12 +29,12 @@ func ciRunsV3Get(ctx *gin.Context) {
 	}
 	query, err := ciRunModelFromSelector(canonicalizeSelector(ctx.Param("selector")))
 	if err != nil {
-		ctx.AbortWithStatusJSON(errors.ErrorToApiResponse(err))
+		errors.AbortRequest(ctx, err)
 		return
 	}
 	var result models.CiRun
 	if err = db.Preload(clause.Associations).Where(&query).First(&result).Error; err != nil {
-		ctx.AbortWithStatusJSON(errors.ErrorToApiResponse(err))
+		errors.AbortRequest(ctx, err)
 		return
 	}
 	ctx.JSON(http.StatusOK, ciRunFromModel(result))

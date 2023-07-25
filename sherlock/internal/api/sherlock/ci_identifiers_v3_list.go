@@ -37,17 +37,17 @@ func ciIdentifiersV3List(ctx *gin.Context) {
 	modelFilter := filter.toModel()
 	limit, err := utils.ParseInt(ctx.DefaultQuery("limit", "100"))
 	if err != nil {
-		ctx.AbortWithStatusJSON(errors.ErrorToApiResponse(fmt.Errorf("(%s) %v", errors.BadRequest, err)))
+		errors.AbortRequest(ctx, fmt.Errorf("(%s) %v", errors.BadRequest, err))
 		return
 	}
 	offset, err := utils.ParseInt(ctx.DefaultQuery("offset", "0"))
 	if err != nil {
-		ctx.AbortWithStatusJSON(errors.ErrorToApiResponse(fmt.Errorf("(%s) %v", errors.BadRequest, err)))
+		errors.AbortRequest(ctx, fmt.Errorf("(%s) %v", errors.BadRequest, err))
 		return
 	}
 	var results []models.CiIdentifier
 	if err = db.Where(&modelFilter).Limit(limit).Offset(offset).Order("created_at desc").Find(&results).Error; err != nil {
-		ctx.AbortWithStatusJSON(errors.ErrorToApiResponse(err))
+		errors.AbortRequest(ctx, err)
 		return
 	}
 	ctx.JSON(http.StatusOK, utils.Map(results, ciIdentifierFromModel))

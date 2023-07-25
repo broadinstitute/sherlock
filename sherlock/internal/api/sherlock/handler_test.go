@@ -77,7 +77,7 @@ func (s *handlerSuite) HandleRequest(req *http.Request, fromJsonBodyPointer any)
 				s.FailNowf("unexpected error response", "%s blamed on %s: %s", errorResponse.Type, errorResponse.ToBlame, errorResponse.Message)
 			} else {
 				// If those assertions didn't hold, that means there was a totally unexpected type in the response. We'll fail the test with the body to help debug.
-				s.FailNow("fully unexpected response type", "%s", string(body))
+				s.FailNowf("fully unexpected response type", "body: %s", string(body))
 			}
 		}
 	}

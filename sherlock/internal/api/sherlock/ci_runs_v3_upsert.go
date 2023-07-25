@@ -1,28 +1,31 @@
 package sherlock
 
 import (
+	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/authentication"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
+	"github.com/creasty/defaults"
 	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/binding"
 	"github.com/rs/zerolog/log"
+	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 	"net/http"
 )
 
 type CiRunV3Upsert struct {
 	ciRunFields
-	Charts                       []string `json:"charts"`                       // Always appends; will eliminate duplicates.
-	ChartVersions                []string `json:"chartVersions"`                // Always appends; will eliminate duplicates.
-	AppVersions                  []string `json:"appVersions"`                  // Always appends; will eliminate duplicates.
-	Clusters                     []string `json:"clusters"`                     // Always appends; will eliminate duplicates. Spreads to contained chart releases and their environments.
-	Environments                 []string `json:"environments"`                 // Always appends; will eliminate duplicates. Spreads to contained chart releases and their clusters.
-	ChartReleases                []string `json:"chartReleases"`                // Always appends; will eliminate duplicates. Spreads to associated environments and clusters.
-	Changesets                   []string `json:"changesets"`                   // Always appends; will eliminate duplicates. Spreads to associated chart releases, environments, and clusters.
-	RelateToChangesetNewVersions bool     `json:"relateToChangesetNewVersions"` // Makes entries in the changesets field also spread to new app versions and chart versions deployed by the changeset.
+	Charts        []string `json:"charts"`        // Always appends; will eliminate duplicates.
+	ChartVersions []string `json:"chartVersions"` // Always appends; will eliminate duplicates.
+	AppVersions   []string `json:"appVersions"`   // Always appends; will eliminate duplicates.
+	Clusters      []string `json:"clusters"`      // Always appends; will eliminate duplicates. Spreads to contained chart releases and their environments.
+	Environments  []string `json:"environments"`  // Always appends; will eliminate duplicates. Spreads to contained chart releases and their clusters.
+	ChartReleases []string `json:"chartReleases"` // Always appends; will eliminate duplicates. Spreads to associated environments and clusters.
+	Changesets    []string `json:"changesets"`    // Always appends; will eliminate duplicates. Spreads to associated chart releases, environments, and clusters.
+	// Makes entries in the changesets field also spread to new app versions and chart versions deployed by the changeset. 'when-static' is the default and spreads when the chart release is in a static environment.
+	RelateToChangesetNewVersions string `json:"relateToChangesetNewVersions" enums:"always,when-static,never" default:"when-static" binding:"oneof=always when-static never ''"`
 }
 
 // ciRunsV3Upsert godoc
@@ -47,7 +50,13 @@ func ciRunsV3Upsert(ctx *gin.Context) {
 		return
 	}
 	var body CiRunV3Upsert
-	if err = ctx.MustBindWith(&body, binding.JSON); err != nil {
+	if err = ctx.ShouldBindJSON(&body); err != nil {
+		errors.AbortRequest(ctx, fmt.Errorf("(%s) request validation error: %v", errors.BadRequest, err))
+		return
+	}
+
+	if err = defaults.Set(&body); err != nil {
+		errors.AbortRequest(ctx, fmt.Errorf("error setting defaults: %v", err))
 		return
 	}
 
@@ -70,14 +79,14 @@ func ciRunsV3Upsert(ctx *gin.Context) {
 	for _, environmentSelector := range body.Environments {
 		environmentID, err := v2models.InternalEnvironmentStore.ResolveSelector(db, environmentSelector)
 		if err != nil {
-			ctx.AbortWithStatusJSON(errors.ErrorToApiResponse(err))
+			errors.AbortRequest(ctx, err)
 			return
 		}
 		chartReleasesInEnvironment, err := v2models.InternalChartReleaseStore.ListAllMatchingByCreated(db, 0, v2models.ChartRelease{
 			EnvironmentID: &environmentID,
 		})
 		if err != nil {
-			ctx.AbortWithStatusJSON(errors.ErrorToApiResponse(err))
+			errors.AbortRequest(ctx, err)
 			return
 		}
 		for _, chartReleaseInEnvironment := range chartReleasesInEnvironment {
@@ -92,14 +101,14 @@ func ciRunsV3Upsert(ctx *gin.Context) {
 	for _, clusterSelector := range body.Clusters {
 		clusterID, err := v2models.InternalClusterStore.ResolveSelector(db, clusterSelector)
 		if err != nil {
-			ctx.AbortWithStatusJSON(errors.ErrorToApiResponse(err))
+			errors.AbortRequest(ctx, err)
 			return
 		}
 		chartReleasesInCluster, err := v2models.InternalChartReleaseStore.ListAllMatchingByCreated(db, 0, v2models.ChartRelease{
 			ClusterID: &clusterID,
 		})
 		if err != nil {
-			ctx.AbortWithStatusJSON(errors.ErrorToApiResponse(err))
+			errors.AbortRequest(ctx, err)
 			return
 		}
 		for _, chartReleaseInCluster := range chartReleasesInCluster {
@@ -109,17 +118,28 @@ func ciRunsV3Upsert(ctx *gin.Context) {
 			}
 		}
 	}
-	// Now for changesets in the original body. They can spread to new app/chart versions, but mainly they spread to chart releases and then
-	// on to the chart releases' environment/cluster. Rather than duplicating code with handling normal chart release spreading below, we'll
-	// just make a list here and use it there in a sec.
-	var chartReleasesFromChangesets []string
+	// Now for changesets in the original body. They spread to chart releases (and to environments/clusters from there) but they can also
+	// spread to new versions they deploy based on the RelateToChangesetNewVersions field.
 	for _, changesetSelector := range body.Changesets {
 		changeset, err := v2models.InternalChangesetStore.GetBySelector(db, changesetSelector)
 		if err != nil {
-			ctx.AbortWithStatusJSON(errors.ErrorToApiResponse(err))
+			errors.AbortRequest(ctx, err)
 			return
 		}
-		if body.RelateToChangesetNewVersions {
+		chartRelease, err := v2models.InternalChartReleaseStore.Get(db, v2models.ChartRelease{Model: gorm.Model{ID: changeset.ChartReleaseID}})
+		if err != nil {
+			errors.AbortRequest(ctx, err)
+			return
+		}
+		if chartRelease.EnvironmentID != nil {
+			bodyAfterSpreading.Environments = append(bodyAfterSpreading.Environments, utils.UintToString(*chartRelease.EnvironmentID))
+		}
+		if chartRelease.ClusterID != nil {
+			bodyAfterSpreading.Clusters = append(bodyAfterSpreading.Clusters, utils.UintToString(*chartRelease.ClusterID))
+		}
+		// If RelateToChangesetNewVersions is "always", or if it is "when-static" and it's targeting a static environment,
+		// add relations for any new app/chart versions deployed.
+		if body.RelateToChangesetNewVersions == "always" || (body.RelateToChangesetNewVersions == "when-static" && chartRelease.Environment != nil && chartRelease.Environment.Lifecycle == "static") {
 			for _, newAppVersion := range changeset.NewAppVersions {
 				if newAppVersion != nil && newAppVersion.ID != 0 {
 					bodyAfterSpreading.AppVersions = append(bodyAfterSpreading.AppVersions, utils.UintToString(newAppVersion.ID))
@@ -132,14 +152,13 @@ func ciRunsV3Upsert(ctx *gin.Context) {
 			}
 		}
 		bodyAfterSpreading.ChartReleases = append(bodyAfterSpreading.ChartReleases, utils.UintToString(changeset.ChartReleaseID))
-		chartReleasesFromChangesets = append(chartReleasesFromChangesets, utils.UintToString(changeset.ChartReleaseID))
 	}
 	// Finally we handle the spreading of chart releases to their environment and cluster. We care about chart releases in the original
 	// body and also ones we just pulled from changesets above, so we concatenate those lists for the loop here.
-	for _, chartReleaseSelector := range append(body.ChartReleases, chartReleasesFromChangesets...) {
+	for _, chartReleaseSelector := range body.ChartReleases {
 		chartRelease, err := v2models.InternalChartReleaseStore.GetBySelector(db, chartReleaseSelector)
 		if err != nil {
-			ctx.AbortWithStatusJSON(errors.ErrorToApiResponse(err))
+			errors.AbortRequest(ctx, err)
 			return
 		}
 		if chartRelease.EnvironmentID != nil {
@@ -160,7 +179,7 @@ func ciRunsV3Upsert(ctx *gin.Context) {
 	for _, chartSelector := range utils.Dedupe(bodyAfterSpreading.Charts) {
 		chart, err := v2models.InternalChartStore.GetBySelector(db, chartSelector)
 		if err != nil {
-			ctx.AbortWithStatusJSON(errors.ErrorToApiResponse(err))
+			errors.AbortRequest(ctx, err)
 			return
 		}
 		possiblyDuplicatedRelatedResources = append(possiblyDuplicatedRelatedResources, ciIdentifierModelFromOldModel(chart))
@@ -168,7 +187,7 @@ func ciRunsV3Upsert(ctx *gin.Context) {
 	for _, chartVersionSelector := range utils.Dedupe(bodyAfterSpreading.ChartVersions) {
 		chartVersion, err := v2models.InternalChartVersionStore.GetBySelector(db, chartVersionSelector)
 		if err != nil {
-			ctx.AbortWithStatusJSON(errors.ErrorToApiResponse(err))
+			errors.AbortRequest(ctx, err)
 			return
 		}
 		possiblyDuplicatedRelatedResources = append(possiblyDuplicatedRelatedResources, ciIdentifierModelFromOldModel(chartVersion))
@@ -176,7 +195,7 @@ func ciRunsV3Upsert(ctx *gin.Context) {
 	for _, appVersionSelector := range utils.Dedupe(bodyAfterSpreading.AppVersions) {
 		appVersion, err := v2models.InternalAppVersionStore.GetBySelector(db, appVersionSelector)
 		if err != nil {
-			ctx.AbortWithStatusJSON(errors.ErrorToApiResponse(err))
+			errors.AbortRequest(ctx, err)
 			return
 		}
 		possiblyDuplicatedRelatedResources = append(possiblyDuplicatedRelatedResources, ciIdentifierModelFromOldModel(appVersion))
@@ -184,7 +203,7 @@ func ciRunsV3Upsert(ctx *gin.Context) {
 	for _, clusterSelector := range utils.Dedupe(bodyAfterSpreading.Clusters) {
 		cluster, err := v2models.InternalClusterStore.GetBySelector(db, clusterSelector)
 		if err != nil {
-			ctx.AbortWithStatusJSON(errors.ErrorToApiResponse(err))
+			errors.AbortRequest(ctx, err)
 			return
 		}
 		possiblyDuplicatedRelatedResources = append(possiblyDuplicatedRelatedResources, ciIdentifierModelFromOldModel(cluster))
@@ -192,7 +211,7 @@ func ciRunsV3Upsert(ctx *gin.Context) {
 	for _, environmentSelector := range utils.Dedupe(bodyAfterSpreading.Environments) {
 		environment, err := v2models.InternalEnvironmentStore.GetBySelector(db, environmentSelector)
 		if err != nil {
-			ctx.AbortWithStatusJSON(errors.ErrorToApiResponse(err))
+			errors.AbortRequest(ctx, err)
 			return
 		}
 		possiblyDuplicatedRelatedResources = append(possiblyDuplicatedRelatedResources, ciIdentifierModelFromOldModel(environment))
@@ -200,7 +219,7 @@ func ciRunsV3Upsert(ctx *gin.Context) {
 	for _, chartReleaseSelector := range utils.Dedupe(bodyAfterSpreading.ChartReleases) {
 		chartRelease, err := v2models.InternalChartReleaseStore.GetBySelector(db, chartReleaseSelector)
 		if err != nil {
-			ctx.AbortWithStatusJSON(errors.ErrorToApiResponse(err))
+			errors.AbortRequest(ctx, err)
 			return
 		}
 		possiblyDuplicatedRelatedResources = append(possiblyDuplicatedRelatedResources, ciIdentifierModelFromOldModel(chartRelease))
@@ -208,7 +227,7 @@ func ciRunsV3Upsert(ctx *gin.Context) {
 	for _, changesetSelector := range utils.Dedupe(bodyAfterSpreading.Changesets) {
 		changeset, err := v2models.InternalChangesetStore.GetBySelector(db, changesetSelector)
 		if err != nil {
-			ctx.AbortWithStatusJSON(errors.ErrorToApiResponse(err))
+			errors.AbortRequest(ctx, err)
 			return
 		}
 		possiblyDuplicatedRelatedResources = append(possiblyDuplicatedRelatedResources, ciIdentifierModelFromOldModel(changeset))
@@ -268,21 +287,21 @@ addingToDeduplicatedRelatedResources:
 		TerminalAt: body.TerminalAt,
 		Status:     body.Status,
 	}).FirstOrCreate(&result).Error; err != nil {
-		ctx.AbortWithStatusJSON(errors.ErrorToApiResponse(err))
+		errors.AbortRequest(ctx, err)
 		return
 	}
 
 	// Append the related resources
 	if len(deduplicatedRelatedResources) > 0 {
 		if err = db.Model(&result).Association("RelatedResources").Append(deduplicatedRelatedResources); err != nil {
-			ctx.AbortWithStatusJSON(errors.ErrorToApiResponse(err))
+			errors.AbortRequest(ctx, err)
 			return
 		}
 	}
 
 	// Re-query so we load all the CiIdentifiers, including any added by previous requests
 	if err = db.Preload(clause.Associations).First(&result, result.ID).Error; err != nil {
-		ctx.AbortWithStatusJSON(errors.ErrorToApiResponse(err))
+		errors.AbortRequest(ctx, err)
 		return
 	}
 	ctx.JSON(http.StatusCreated, ciRunFromModel(result))
