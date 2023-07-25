@@ -7490,21 +7490,6 @@ paths:
       summary: Test the client's connection to Sherlock
       tags:
       - Misc
-  /pact:
-    get:
-      description: |-
-        Get Sherlock's current status. Right now, this endpoint always returned OK (if the server is online).
-        This endpoint is acceptable to use for a readiness check.
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/misc.StatusResponse'
-      summary: Get Sherlock's current status
-      tags:
-      - Misc
   /status:
     get:
       description: |-
