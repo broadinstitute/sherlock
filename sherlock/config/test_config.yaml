@@ -27,6 +27,8 @@ auth:
 pagerduty:
   enable: false
 
+pactbroker:
+  enable: false
 model:
   environments:
     templates:

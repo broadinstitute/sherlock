@@ -73,6 +73,12 @@ metrics:
 pagerduty:
   enable: false
 
+pactbroker:
+  auth:
+    username:
+    password:
+  enable: 
+
 model:
   environments:
     templates:

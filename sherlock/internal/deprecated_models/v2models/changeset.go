@@ -5,7 +5,9 @@ import (
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
+
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
+	"github.com/broadinstitute/sherlock/sherlock/internal/pactbroker"
 	"github.com/broadinstitute/sherlock/sherlock/internal/pagerduty"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
@@ -254,6 +256,14 @@ func (s *internalChangesetStore) apply(db *gorm.DB, changesets []Changeset, user
 					fmt.Sprintf(config.Config.MustString("beehive.chartReleaseUrlFormatString"), chartRelease.Name),
 				)
 			}
+			if chartRelease.Environment.ParticipatesInPact != nil && *chartRelease.Environment.ParticipatesInPact && chartRelease.Chart.PactParticipant != nil && *chartRelease.Chart.PactParticipant {
+				err = pactbroker.RecordDeployment(
+					chartRelease.Chart.Name,
+					chartRelease.AppVersion.AppVersion,
+					chartRelease.Environment.Name,
+				)
+			}
+
 		}
 
 		for environmentID, chartReleaseNames := range environmentReleases {
