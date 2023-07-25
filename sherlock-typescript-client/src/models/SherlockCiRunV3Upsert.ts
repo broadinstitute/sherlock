@@ -116,11 +116,11 @@ export interface SherlockCiRunV3Upsert {
      */
     platform?: string;
     /**
-     * Makes entries in the changesets field also spread to new app versions and chart versions deployed by the changeset.
-     * @type {boolean}
+     * Makes entries in the changesets field also spread to new app versions and chart versions deployed by the changeset. 'when-static' is the default and does this spreading only when the chart release is in a static environment.
+     * @type {string}
      * @memberof SherlockCiRunV3Upsert
      */
-    relateToChangesetNewVersions?: boolean;
+    relateToChangesetNewVersions?: SherlockCiRunV3UpsertRelateToChangesetNewVersionsEnum;
     /**
      * 
      * @type {string}
@@ -140,6 +140,18 @@ export interface SherlockCiRunV3Upsert {
      */
     terminalAt?: string;
 }
+
+
+/**
+ * @export
+ */
+export const SherlockCiRunV3UpsertRelateToChangesetNewVersionsEnum = {
+    Always: 'always',
+    WhenStatic: 'when-static',
+    Never: 'never'
+} as const;
+export type SherlockCiRunV3UpsertRelateToChangesetNewVersionsEnum = typeof SherlockCiRunV3UpsertRelateToChangesetNewVersionsEnum[keyof typeof SherlockCiRunV3UpsertRelateToChangesetNewVersionsEnum];
+
 
 /**
  * Check if a given object implements the SherlockCiRunV3Upsert interface.

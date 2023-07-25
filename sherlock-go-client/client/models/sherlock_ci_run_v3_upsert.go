@@ -7,9 +7,12 @@ package models
 
 import (
 	"context"
+	"encoding/json"
 
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // SherlockCiRunV3Upsert sherlock ci run v3 upsert
@@ -65,8 +68,9 @@ type SherlockCiRunV3Upsert struct {
 	// platform
 	Platform string `json:"platform,omitempty"`
 
-	// Makes entries in the changesets field also spread to new app versions and chart versions deployed by the changeset.
-	RelateToChangesetNewVersions bool `json:"relateToChangesetNewVersions,omitempty"`
+	// Makes entries in the changesets field also spread to new app versions and chart versions deployed by the changeset. 'when-static' is the default and does this spreading only when the chart release is in a static environment.
+	// Enum: [always when-static never]
+	RelateToChangesetNewVersions *string `json:"relateToChangesetNewVersions,omitempty"`
 
 	// started at
 	StartedAt string `json:"startedAt,omitempty"`
@@ -80,6 +84,60 @@ type SherlockCiRunV3Upsert struct {
 
 // Validate validates this sherlock ci run v3 upsert
 func (m *SherlockCiRunV3Upsert) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateRelateToChangesetNewVersions(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+var sherlockCiRunV3UpsertTypeRelateToChangesetNewVersionsPropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["always","when-static","never"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		sherlockCiRunV3UpsertTypeRelateToChangesetNewVersionsPropEnum = append(sherlockCiRunV3UpsertTypeRelateToChangesetNewVersionsPropEnum, v)
+	}
+}
+
+const (
+
+	// SherlockCiRunV3UpsertRelateToChangesetNewVersionsAlways captures enum value "always"
+	SherlockCiRunV3UpsertRelateToChangesetNewVersionsAlways string = "always"
+
+	// SherlockCiRunV3UpsertRelateToChangesetNewVersionsWhenDashStatic captures enum value "when-static"
+	SherlockCiRunV3UpsertRelateToChangesetNewVersionsWhenDashStatic string = "when-static"
+
+	// SherlockCiRunV3UpsertRelateToChangesetNewVersionsNever captures enum value "never"
+	SherlockCiRunV3UpsertRelateToChangesetNewVersionsNever string = "never"
+)
+
+// prop value enum
+func (m *SherlockCiRunV3Upsert) validateRelateToChangesetNewVersionsEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, sherlockCiRunV3UpsertTypeRelateToChangesetNewVersionsPropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *SherlockCiRunV3Upsert) validateRelateToChangesetNewVersions(formats strfmt.Registry) error {
+	if swag.IsZero(m.RelateToChangesetNewVersions) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateRelateToChangesetNewVersionsEnum("relateToChangesetNewVersions", "body", *m.RelateToChangesetNewVersions); err != nil {
+		return err
+	}
+
 	return nil
 }
 

@@ -7834,8 +7834,14 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "relateToChangesetNewVersions": {
-                    "description": "Makes entries in the changesets field also spread to new app versions and chart versions deployed by the changeset.",
-                    "type": "boolean"
+                    "description": "Makes entries in the changesets field also spread to new app versions and chart versions deployed by the changeset. 'when-static' is the default and does this spreading only when the chart release is in a static environment.",
+                    "type": "string",
+                    "default": "when-static",
+                    "enum": [
+                        "always",
+                        "when-static",
+                        "never"
+                    ]
                 },
                 "startedAt": {
                     "type": "string"
