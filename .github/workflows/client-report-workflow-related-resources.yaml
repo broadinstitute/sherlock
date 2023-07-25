@@ -27,7 +27,7 @@ on:
         required: false
         type: string
         description: |
-          App versions affected by the calling workflow.
+          App versions related to or affected by the calling workflow.
           The app versions must have already been reported to Sherlock.
           
           App versions should be specified by an app version selector. Some different examples:
@@ -38,7 +38,7 @@ on:
         required: false
         type: string
         description: |
-          Chart versions affected by the calling workflow.
+          Chart versions related to or affected by the calling workflow.
           The chart versions must have already been reported to Sherlock.
           
           Chart versions should be specified by a chart version selector. Some different examples:
@@ -49,11 +49,12 @@ on:
         required: false
         type: string
         description: |
-          Chart releases (chart instances) affected by the calling workflow.
+          Chart releases (chart instances) related to or affected by the calling workflow.
           The chart releases must already exist in Sherlock.
           
-          Impacting a chart release will automatically also be recorded as impacting the chart release's
-          Kubernetes cluster and/or environment, where applicable. You don't need to specify them too.
+          Relating to a chart release will automatically also be recorded as relating to the chart
+          release's Kubernetes cluster and/or environment, where applicable. Don't directly specify
+          them too unless you also want the workflow to be related to everything else inside them.
           
           Chart releases should be specified by a chart release selector. Some different examples:
             - <id-integer> (`456`)
@@ -65,8 +66,11 @@ on:
         required: false
         type: string
         description: |
-          Environments affected by the calling workflow.
+          Environments related to or affected by the calling workflow.
           The environments must already exist in Sherlock.
+          
+          Relating to an environment will automatically also be recorded as relating to all the chart
+          releases it contains.
           
           Environments should be specified by an environment selector. Some different examples:
             - <id-integer> (`456`)
@@ -77,8 +81,11 @@ on:
         required: false
         type: string
         description: |
-          Kubernetes clusters affected by the calling workflow.
+          Kubernetes clusters related to or affected by the calling workflow.
           The clusters must already exist in Sherlock.
+          
+          Relating to a cluster will automatically also be recorded as relating to all the chart
+          releases it contains.
           
           Clusters should be specified by a cluster selector. Some different examples:
             - <id-integer> (`456`)
@@ -88,7 +95,7 @@ on:
         required: false
         type: string
         description: |
-          Helm Charts affected by the calling workflow.
+          Helm Charts related to or affected by the calling workflow.
           The charts must already exist in Sherlock.
           
           Charts should be specified by a chart selector. Some different examples:
@@ -99,16 +106,33 @@ on:
         required: false
         type: string
         description: |
-          Changesets (chart release version change) affected or used by the calling workflow.
+          Changesets (chart release version change) related to or used by the calling workflow.
           The changesets must already exist in Sherlock.
           
-          Impacting a changeset will automatically be recorded as impacting any newly-deployed app and/or
-          chart versions and as impacting the chart release. Impacting the chart release will in turn be
-          recorded as impacting its Kubernetes cluster and/or environment, where applicable. You don't
-          need to specify those other resources.
+          Relating to a changeset will automatically also be recorded as relating to the chart release it
+          affects, which will in turn also be recorded as relating to that chart release's environment
+          and/or cluster.
+          
+          Additionally, relating to a changeset can also automatically create relations with any new app
+          or chart versions introduced by that changeset. This behavior is controlled by the
+          relate-to-changeset-new-versions field.
           
           Changesets must be specified by their integer ID (`456`), there aren't other selectors available.
           Multiple changesets can be reported by separating them with whitespace and/or commas.
+      relate-to-changeset-new-versions:
+        required: false
+        type: string
+        description: |
+          This field controls whether a changeset relation should also automatically create relations with
+          any new app or chart versions introduced by the changeset.
+          
+          This field has three possible values: "always", "when-static", and "never". "when-static" is the
+          default.
+          - "always" means that those version relations should always be created
+          - "when-static" means that those version relations should only be created when the changeset's
+            target chart release is in a static environment, like dev or prod
+          - "never" means that those version relations should never be created
+        default: when-static
 
 env:
   SHERLOCK_PROD_URL: "https://sherlock.dsp-devops.broadinstitute.org"
@@ -143,8 +167,9 @@ jobs:
               clusters: process.env.CLUSTERS.split(/[\s,]+/).filter(Boolean),
               charts: process.env.CHARTS.split(/[\s,]+/).filter(Boolean),
               changesets: process.env.CHANGESETS.split(/[\s,]+/).filter(Boolean),
-              
-              // Supply required creation fields in case webhook deliveries are delayed and we hit first
+
+              relateToChangesetNewVersions: "${{ inputs.relate-to-changeset-new-versions }}",
+
               platform: "github-actions",
               githubActionsAttemptNumber: ${{ github.run_attempt }},
               githubActionsOwner: "${{ github.repository }}".split("/")[0],
@@ -187,7 +212,7 @@ jobs:
         run: |
           set -ex
           curl --fail-with-body -X 'PUT' \
-            "$SHERLOCK_PROD_URL/api/v2/ci-runs/github-actions/${{ github.repository }}/${{ github.run_id }}/${{ github.run_attempt }}" \
+            "$SHERLOCK_PROD_URL/api/ci-runs/v3" \
             -H 'Content-Type: application/json' \
             -H 'Authorization: Bearer ${{ steps.iap_auth.outputs.id_token }}' \
             -H 'X-GHA-OIDC-JWT: ${{ steps.gha_auth.outputs.id_token }}' \
