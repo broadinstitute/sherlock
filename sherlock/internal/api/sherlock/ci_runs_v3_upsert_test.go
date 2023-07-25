@@ -178,6 +178,8 @@ func (s *handlerSuite) TestCiRunsV3UpsertIdentifiers() {
 			FirecloudDevelopRef:  testutils.PointerTo("dev"),
 		},
 	}, user)
+	s.NoError(err)
+	s.True(created)
 	templateChartRelease, created, err := v2models.InternalChartReleaseStore.Create(s.DB, v2models.ChartRelease{
 		Name:          "leonardo-bee-template",
 		ChartID:       chart.ID,
