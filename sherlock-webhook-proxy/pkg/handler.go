@@ -202,14 +202,9 @@ func HandleWebhook(w http.ResponseWriter, r *http.Request) {
 			}
 
 			// PUT to Sherlock; will create if the selector isn't found and edit otherwise
-			edited, created, err := sherlockClient.CiRuns.PutAPIV2CiRunsSelector(&ci_runs.PutAPIV2CiRunsSelectorParams{
+			created, err := sherlockClient.CiRuns.PutAPICiRunsV3(&ci_runs.PutAPICiRunsV3Params{
 				Context: context.Background(),
-				Selector: fmt.Sprintf("github-actions/%s/%s/%d/%d",
-					payload.Repository.Owner.Login,
-					payload.Repository.Name,
-					payload.WorkflowRun.ID,
-					payload.WorkflowRun.RunAttempt),
-				CiRun: &models.V2controllersCreatableCiRun{
+				CiRun: &models.SherlockCiRunV3Upsert{
 					Platform:                   "github-actions",
 					GithubActionsOwner:         payload.Repository.Owner.Login,
 					GithubActionsRepo:          payload.Repository.Name,
@@ -225,13 +220,13 @@ func HandleWebhook(w http.ResponseWriter, r *http.Request) {
 			// Handle response cases
 			if err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
-				log.Printf("sherlockClient.CiRuns.PutAPIV2CiRunsSelector(): error %v", err)
-			} else if edited != nil {
-				w.WriteHeader(http.StatusOK)
-				log.Printf("sherlockClient.CiRuns.PutAPIV2CiRunsSelector(): edited CiRun %d, '%s'", edited.Payload.ID, edited.Payload.Status)
+				log.Printf("sherlockClient.CiRuns.PutAPICiRunsV3(): error %v", err)
 			} else if created != nil {
 				w.WriteHeader(http.StatusCreated)
-				log.Printf("sherlockClient.CiRuns.PutAPIV2CiRunsSelector(): created CiRun %d, '%s'", created.Payload.ID, created.Payload.Status)
+				log.Printf("sherlockClient.CiRuns.PutAPICiRunsV3(): upserted CiRun %d, '%s'", created.Payload.ID, created.Payload.Status)
+			} else {
+				w.WriteHeader(http.StatusInternalServerError)
+				log.Printf("sherlockClient.CiRuns.PutAPICiRunsV3(): error and response both nil")
 			}
 
 		// Some payload we don't handle
@@ -248,7 +243,7 @@ func HandleWebhook(w http.ResponseWriter, r *http.Request) {
 		case len(body) > 0:
 			w.WriteHeader(http.StatusBadRequest)
 		}
-		log.Printf("received request not to /webhook, body present=%v\n", len(body))
+		log.Printf("received request not to /webhook, body present=%v\n", len(body) > 0)
 		_, _ = fmt.Fprintln(w, "cloud function operational; direct webhooks to /webhook")
 	}
 }
