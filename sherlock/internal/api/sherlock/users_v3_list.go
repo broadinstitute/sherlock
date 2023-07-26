@@ -12,7 +12,7 @@ import (
 
 // usersV3List godoc
 //
-//	@summary		List Users matching a filter.
+//	@summary		List Users matching a filter
 //	@description	List Users matching a filter. The results will include suitability and other information.
 //	@description	Note that the suitability info can't directly be filtered for at this time.
 //	@tags			Users
