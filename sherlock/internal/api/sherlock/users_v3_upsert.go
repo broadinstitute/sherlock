@@ -43,7 +43,7 @@ func usersV3Upsert(ctx *gin.Context) {
 	}
 	var body UserV3Upsert
 	if err = ctx.ShouldBindJSON(&body); err != nil {
-		errors.AbortRequest(ctx, fmt.Errorf("(%s) request validation error: %v", err))
+		errors.AbortRequest(ctx, fmt.Errorf("(%s) request validation error: %v", errors.BadRequest, err))
 		return
 	}
 
