@@ -108,7 +108,7 @@ func ShouldUseUser(ctx *gin.Context) (*models.User, error) {
 func MustUseUser(ctx *gin.Context) (*models.User, error) {
 	user, err := ShouldUseUser(ctx)
 	if err != nil {
-		ctx.AbortWithStatusJSON(errors.ErrorToApiResponse(err))
+		errors.AbortRequest(ctx, err)
 	}
 	return user, err
 }
