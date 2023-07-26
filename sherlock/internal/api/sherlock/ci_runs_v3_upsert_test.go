@@ -312,78 +312,75 @@ func (s *handlerSuite) TestCiRunsV3UpsertIdentifiers() {
 		})
 	})
 	s.Run("changeset spreading for non-static only when set to always", func() {
+		var got CiRunV3
+		code := s.HandleRequest(
+			s.NewRequest("PUT", "/api/ci-runs/v3", CiRunV3Upsert{
+				ciRunFields: ciRunFields{
+					Platform:                   "github-actions",
+					GithubActionsOwner:         "owner",
+					GithubActionsRepo:          "repo",
+					GithubActionsRunID:         1,
+					GithubActionsAttemptNumber: 200,
+					GithubActionsWorkflowPath:  "workflow",
+				},
+				Changesets:                   []string{utils.UintToString(templateChangeset.ID)},
+				RelateToChangesetNewVersions: "never",
+			}),
+			&got)
 		s.Run("never", func() {
-			var got CiRunV3
-			code := s.HandleRequest(
-				s.NewRequest("PUT", "/api/ci-runs/v3", CiRunV3Upsert{
-					ciRunFields: ciRunFields{
-						Platform:                   "github-actions",
-						GithubActionsOwner:         "owner",
-						GithubActionsRepo:          "repo",
-						GithubActionsRunID:         1,
-						GithubActionsAttemptNumber: 200,
-						GithubActionsWorkflowPath:  "workflow",
-					},
-					Changesets:                   []string{utils.UintToString(templateChangeset.ID)},
-					RelateToChangesetNewVersions: "never",
-				}),
-				&got)
 			s.Equal(http.StatusCreated, code)
 			s.Len(got.RelatedResources, 4)
 		})
+		code = s.HandleRequest(
+			s.NewRequest("PUT", "/api/ci-runs/v3", CiRunV3Upsert{
+				ciRunFields: ciRunFields{
+					Platform:                   "github-actions",
+					GithubActionsOwner:         "owner",
+					GithubActionsRepo:          "repo",
+					GithubActionsRunID:         1,
+					GithubActionsAttemptNumber: 200,
+					GithubActionsWorkflowPath:  "workflow",
+				},
+				Changesets: []string{utils.UintToString(templateChangeset.ID)},
+			}),
+			&got)
 		s.Run("default", func() {
-			var got CiRunV3
-			code := s.HandleRequest(
-				s.NewRequest("PUT", "/api/ci-runs/v3", CiRunV3Upsert{
-					ciRunFields: ciRunFields{
-						Platform:                   "github-actions",
-						GithubActionsOwner:         "owner",
-						GithubActionsRepo:          "repo",
-						GithubActionsRunID:         1,
-						GithubActionsAttemptNumber: 200,
-						GithubActionsWorkflowPath:  "workflow",
-					},
-					Changesets: []string{utils.UintToString(templateChangeset.ID)},
-				}),
-				&got)
 			s.Equal(http.StatusCreated, code)
 			s.Len(got.RelatedResources, 4)
 		})
+		code = s.HandleRequest(
+			s.NewRequest("PUT", "/api/ci-runs/v3", CiRunV3Upsert{
+				ciRunFields: ciRunFields{
+					Platform:                   "github-actions",
+					GithubActionsOwner:         "owner",
+					GithubActionsRepo:          "repo",
+					GithubActionsRunID:         1,
+					GithubActionsAttemptNumber: 200,
+					GithubActionsWorkflowPath:  "workflow",
+				},
+				Changesets:                   []string{utils.UintToString(templateChangeset.ID)},
+				RelateToChangesetNewVersions: "when-static",
+			}),
+			&got)
 		s.Run("explicit when-static", func() {
-			var got CiRunV3
-			code := s.HandleRequest(
-				s.NewRequest("PUT", "/api/ci-runs/v3", CiRunV3Upsert{
-					ciRunFields: ciRunFields{
-						Platform:                   "github-actions",
-						GithubActionsOwner:         "owner",
-						GithubActionsRepo:          "repo",
-						GithubActionsRunID:         1,
-						GithubActionsAttemptNumber: 200,
-						GithubActionsWorkflowPath:  "workflow",
-					},
-					Changesets:                   []string{utils.UintToString(templateChangeset.ID)},
-					RelateToChangesetNewVersions: "when-static",
-				}),
-				&got)
 			s.Equal(http.StatusCreated, code)
 			s.Len(got.RelatedResources, 4)
 		})
+		code = s.HandleRequest(
+			s.NewRequest("PUT", "/api/ci-runs/v3", CiRunV3Upsert{
+				ciRunFields: ciRunFields{
+					Platform:                   "github-actions",
+					GithubActionsOwner:         "owner",
+					GithubActionsRepo:          "repo",
+					GithubActionsRunID:         1,
+					GithubActionsAttemptNumber: 200,
+					GithubActionsWorkflowPath:  "workflow",
+				},
+				Changesets:                   []string{utils.UintToString(templateChangeset.ID)},
+				RelateToChangesetNewVersions: "always",
+			}),
+			&got)
 		s.Run("always", func() {
-			var got CiRunV3
-			code := s.HandleRequest(
-				s.NewRequest("PUT", "/api/ci-runs/v3", CiRunV3Upsert{
-					ciRunFields: ciRunFields{
-						Platform:                   "github-actions",
-						GithubActionsOwner:         "owner",
-						GithubActionsRepo:          "repo",
-						GithubActionsRunID:         1,
-						GithubActionsAttemptNumber: 200,
-						GithubActionsWorkflowPath:  "workflow",
-					},
-					Changesets:                   []string{utils.UintToString(templateChangeset.ID)},
-					RelateToChangesetNewVersions: "always",
-				}),
-				&got)
 			s.Equal(http.StatusCreated, code)
 			s.Len(got.RelatedResources, 6)
 		})
