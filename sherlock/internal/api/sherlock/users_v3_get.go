@@ -60,13 +60,22 @@ func userModelFromSelector(selector string) (query models.User, err error) {
 		return query, nil
 	} else if strings.HasPrefix(selector, "google-id/") {
 		query.GoogleID = strings.TrimPrefix(selector, "google-id/")
+		if len(query.GoogleID) == 0 {
+			return models.User{}, fmt.Errorf("(%s) google ID selector can't be empty", errors.BadRequest)
+		}
 		return query, nil
 	} else if strings.HasPrefix(selector, "github/") {
 		githubUsername := strings.TrimPrefix(selector, "github/")
+		if len(githubUsername) == 0 {
+			return models.User{}, fmt.Errorf("(%s) github username selector can't be empty", errors.BadRequest)
+		}
 		query.GithubUsername = &githubUsername
 		return query, nil
 	} else if strings.HasPrefix(selector, "github-id/") {
 		githubID := strings.TrimPrefix(selector, "github-id/")
+		if len(githubID) == 0 {
+			return models.User{}, fmt.Errorf("(%s) github ID selector can't be empty", errors.BadRequest)
+		}
 		query.GithubID = &githubID
 		return query, nil
 	} else {
