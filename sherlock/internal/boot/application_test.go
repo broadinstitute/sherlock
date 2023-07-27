@@ -3,20 +3,32 @@ package boot
 import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/db"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/suite"
 	"net/http"
 	"sync"
 	"testing"
 	"time"
 )
 
-func TestApplication_StartStop(t *testing.T) {
+type applicationSuite struct {
+	suite.Suite
+}
+
+func TestApplicationSuite(t *testing.T) {
+	suite.Run(t, new(applicationSuite))
+}
+
+func (s *applicationSuite) SetupSuite() {
+	config.LoadTestConfig()
+}
+
+func (s *applicationSuite) TestApplication_StartStop() {
 	config.LoadTestConfig()
 	application := &Application{
 		runInsideDatabaseTransaction: true,
 	}
 
-	t.Run("start and then stop", func(t *testing.T) {
+	s.Run("start and then stop", func() {
 		go application.Start()
 		var livenessSucceeded, readinessSucceeded bool
 		attemptsRemaining := 4 * 20
@@ -37,15 +49,15 @@ func TestApplication_StartStop(t *testing.T) {
 			}
 		}
 		application.Stop()
-		assert.Truef(t, livenessSucceeded, ":8081 returned 200")
-		assert.Truef(t, readinessSucceeded, ":8080/status returned 200")
+		s.Truef(livenessSucceeded, ":8081 returned 200")
+		s.Truef(readinessSucceeded, ":8080/status returned 200")
 	})
 }
 
-func TestApplication_dbMigrationLock(t *testing.T) {
+func (s *applicationSuite) TestApplication_dbMigrationLock() {
 	config.LoadTestConfig()
 	sqlDB, err := db.Connect()
-	assert.NoError(t, err)
+	s.NoError(err)
 	application := &Application{
 		sqlDB: sqlDB,
 	}
@@ -64,7 +76,7 @@ func TestApplication_dbMigrationLock(t *testing.T) {
 	go func() {
 		application.Stop()
 		completionDesiredMutex.Lock()
-		assert.True(t, completionDesired)
+		s.True(completionDesired)
 		completionDesiredMutex.Unlock()
 
 		// Unlock this to indicate that the test can exit
