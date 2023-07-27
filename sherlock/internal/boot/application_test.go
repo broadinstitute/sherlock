@@ -82,5 +82,8 @@ func TestApplication_dbMigrationLock(t *testing.T) {
 
 	// Block for completion of the goroutine
 	completedMarker.Lock()
+
+	// Have to make the linter stand down
+	//nolint:staticcheck
 	completedMarker.Unlock()
 }
