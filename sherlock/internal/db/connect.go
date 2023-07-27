@@ -53,6 +53,11 @@ func Connect() (*sql.DB, error) {
 	// defensively set max number of open connections to defend against contention issues
 	maxOpenConnections := config.Config.MustInt("db.maxOpenConnections")
 	sqlDB.SetMaxOpenConns(maxOpenConnections)
+
+	if config.Config.MustString("mode") == "debug" {
+		PanicIfLooksLikeCloudSQL(sqlDB)
+	}
+
 	return nil, fmt.Errorf("unable to connect to the database after %d attempts: %v", initialAttempts, err)
 }
 
@@ -140,18 +145,15 @@ func Configure(sqlDB *sql.DB) (*gorm.DB, error) {
 	if err != nil {
 		return nil, fmt.Errorf("error opening gorm: %v", err)
 	}
-	if config.Config.MustString("mode") == "debug" {
-		PanicIfLooksLikeCloudSQL(gormDB)
-	}
 	return gormDB, nil
 }
 
 // PanicIfLooksLikeCloudSQL does what it says on the tin -- it exits fast and hard if the database has a 'cloudsqladmin'
 // role in it. That's not something Sherlock's migration would ever add but it's there by default on Cloud SQL, so
 // it's an extra gate to make sure we don't accidentally run tests against a remote database.
-func PanicIfLooksLikeCloudSQL(db *gorm.DB) {
+func PanicIfLooksLikeCloudSQL(db *sql.DB) {
 	var cloudSqlAdminRoleExists bool
-	err := db.Raw("SELECT 1 FROM pg_roles WHERE rolname='cloudsqladmin'").Row().Scan(&cloudSqlAdminRoleExists)
+	err := db.QueryRow("SELECT 1 FROM pg_roles WHERE rolname='cloudsqladmin'").Scan(&cloudSqlAdminRoleExists)
 	if err != nil && err != sql.ErrNoRows {
 		panic(fmt.Errorf("failed to double-check that the database wasn't running in Cloud SQL: %v", err))
 	}
