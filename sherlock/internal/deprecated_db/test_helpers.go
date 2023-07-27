@@ -70,7 +70,11 @@ func Truncate(t *testing.T, gormDB *gorm.DB) {
 		t.Errorf("refusing to truncate database, mode is '%s' instead of 'debug'", mode)
 		return
 	}
-	db.PanicIfLooksLikeCloudSQL(gormDB)
+	if sqlDB, err := gormDB.DB(); err != nil {
+		log.Fatal().Msgf("refusing to truncate, failed to get sql.DB from gorm.DB: %v", err)
+	} else {
+		db.PanicIfLooksLikeCloudSQL(sqlDB)
+	}
 	var statements []string
 	dryRunDB := gormDB.Session(&gorm.Session{
 		// Performance boost, don't transact each delete individually
