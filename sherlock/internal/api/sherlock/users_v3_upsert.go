@@ -130,10 +130,10 @@ func processUserEdits(callingUser *models.User, githubUser *github.User, directE
 			log.Info().Msgf("GH   | github account linking from %s had new username for same github account (ID: %s), %s to %s", callingUser.Email, githubUserIdString, *callingUser.GithubUsername, *githubUser.Login)
 		}
 
-		// If callingUser lacks NameInferredFromGithub, default it to true
+		// If callingUser lacks NameInferredFromGithub, default it to whether or not the callingUser already has a name
 		if callingUser.NameInferredFromGithub == nil {
-			trueValue := true
-			callingUser.NameInferredFromGithub = &trueValue
+			shouldInferFromGithub := callingUser.Name == nil
+			callingUser.NameInferredFromGithub = &shouldInferFromGithub
 			hasUpdates = true
 		}
 
