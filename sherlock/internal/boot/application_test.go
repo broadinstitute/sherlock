@@ -23,7 +23,6 @@ func (s *applicationSuite) SetupSuite() {
 }
 
 func (s *applicationSuite) TestApplication_StartStop() {
-	config.LoadTestConfig()
 	application := &Application{
 		runInsideDatabaseTransaction: true,
 	}
@@ -55,7 +54,6 @@ func (s *applicationSuite) TestApplication_StartStop() {
 }
 
 func (s *applicationSuite) TestApplication_dbMigrationLock() {
-	config.LoadTestConfig()
 	sqlDB, err := db.Connect()
 	s.NoError(err)
 	application := &Application{
