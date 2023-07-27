@@ -141,7 +141,7 @@ func (a *Application) Stop() {
 	if a.sqlDB != nil {
 		log.Info().Msgf("BOOT | closing database connections...")
 		if wasUnlocked := a.dbMigrationLock.TryLock(); !wasUnlocked {
-			log.Warn().Msgf("BOOT | detected database migration underway, attempting to wait until it completes...")
+			log.Info().Msgf("BOOT | detected database migration underway, attempting to wait until it completes...")
 			a.dbMigrationLock.Lock()
 			log.Info().Msgf("BOOT | database migration complete, proceeding with connection close...")
 		}
