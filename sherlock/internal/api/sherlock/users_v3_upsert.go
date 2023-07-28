@@ -100,6 +100,12 @@ func processUserEdits(callingUser *models.User, githubUser *github.User, directE
 		(callingUser.Name == nil || *directEdits.Name != *callingUser.Name) {
 		callingUser.Name = directEdits.Name
 		hasUpdates = true
+
+		// If callingUser lacks NameInferredFromGithub but we just set Name directly, set it to false
+		if callingUser.NameInferredFromGithub == nil {
+			falseValue := false
+			callingUser.NameInferredFromGithub = &falseValue
+		}
 	}
 
 	// If we have a githubUser:

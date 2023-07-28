@@ -2,13 +2,130 @@ package sherlock
 
 import (
 	"github.com/broadinstitute/sherlock/go-shared/pkg/testutils"
+	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/test_users"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
+	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
+	"github.com/gin-gonic/gin"
 	"github.com/google/go-github/v50/github"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/gorm"
+	"net/http"
 	"testing"
 )
+
+func (s *handlerSuite) TestUserV3UpsertError() {
+	var got errors.ErrorResponse
+	code := s.HandleRequest(
+		s.NewRequest("PUT", "/api/users/v3", gin.H{"name": true}),
+		&got)
+	s.Equal(http.StatusBadRequest, code)
+	s.Equal(errors.BadRequest, got.Type)
+}
+
+func (s *handlerSuite) TestUserV3UpsertEmpty() {
+	s.Run("{}", func() {
+		var got UserV3
+		code := s.HandleRequest(
+			s.NewRequest("PUT", "/api/users/v3", UserV3Upsert{}),
+			&got)
+		s.Equal(http.StatusOK, code)
+		s.Equal(test_users.SuitableTestUserEmail, got.Email)
+	})
+	s.Run("no body", func() {
+		var got UserV3
+		code := s.HandleRequest(
+			s.NewRequest("PUT", "/api/users/v3", nil),
+			&got)
+		s.Equal(http.StatusOK, code)
+		s.Equal(test_users.SuitableTestUserEmail, got.Email)
+	})
+}
+
+func (s *handlerSuite) TestUserV3UpsertName() {
+
+	var got UserV3
+	code := s.HandleRequest(
+		s.NewRequest("PUT", "/api/users/v3", UserV3Upsert{
+			userDirectlyEditableFields: userDirectlyEditableFields{
+				Name: testutils.PointerTo("a name"),
+			},
+		}),
+		&got)
+	s.Equal(http.StatusCreated, code)
+	s.Equal(test_users.SuitableTestUserEmail, got.Email)
+	s.Equal("a name", *got.Name)
+	s.False(*got.NameInferredFromGithub)
+
+	s.Run("update name", func() {
+		code = s.HandleRequest(
+			s.NewRequest("PUT", "/api/users/v3", UserV3Upsert{
+				userDirectlyEditableFields: userDirectlyEditableFields{
+					Name: testutils.PointerTo("a different name"),
+				},
+			}),
+			&got)
+		s.Equal(http.StatusCreated, code)
+		s.Equal(test_users.SuitableTestUserEmail, got.Email)
+		s.Equal("a different name", *got.Name)
+		s.False(*got.NameInferredFromGithub)
+	})
+}
+
+func (s *handlerSuite) TestUserV3UpsertNameInferredFromGithub() {
+	var got UserV3
+	code := s.HandleRequest(
+		s.NewRequest("PUT", "/api/users/v3", UserV3Upsert{
+			userDirectlyEditableFields: userDirectlyEditableFields{
+				NameInferredFromGithub: testutils.PointerTo(true),
+			},
+		}),
+		&got)
+	s.Equal(http.StatusCreated, code)
+	s.Equal(test_users.SuitableTestUserEmail, got.Email)
+	s.True(*got.NameInferredFromGithub)
+
+	s.Run("then doesn't update name", func() {
+		code = s.HandleRequest(
+			s.NewRequest("PUT", "/api/users/v3", UserV3Upsert{
+				userDirectlyEditableFields: userDirectlyEditableFields{
+					Name: testutils.PointerTo("a different name"),
+				},
+			}),
+			&got)
+		s.Equal(http.StatusOK, code)
+		s.Equal(test_users.SuitableTestUserEmail, got.Email)
+		s.Nil(got.Name)
+		s.True(*got.NameInferredFromGithub)
+	})
+
+	s.Run("can set to false", func() {
+		code = s.HandleRequest(
+			s.NewRequest("PUT", "/api/users/v3", UserV3Upsert{
+				userDirectlyEditableFields: userDirectlyEditableFields{
+					NameInferredFromGithub: testutils.PointerTo(false),
+				},
+			}),
+			&got)
+		s.Equal(http.StatusCreated, code)
+		s.Equal(test_users.SuitableTestUserEmail, got.Email)
+		s.False(*got.NameInferredFromGithub)
+
+		s.Run("then updates name", func() {
+			code = s.HandleRequest(
+				s.NewRequest("PUT", "/api/users/v3", UserV3Upsert{
+					userDirectlyEditableFields: userDirectlyEditableFields{
+						Name: testutils.PointerTo("a different name"),
+					},
+				}),
+				&got)
+			s.Equal(http.StatusCreated, code)
+			s.Equal(test_users.SuitableTestUserEmail, got.Email)
+			s.Equal("a different name", *got.Name)
+			s.False(*got.NameInferredFromGithub)
+		})
+	})
+}
 
 func Test_processUserEdits(t *testing.T) {
 	// Load the test config to make sure we silence the log messages here
@@ -63,7 +180,10 @@ func Test_processUserEdits(t *testing.T) {
 				callingUser: &models.User{},
 				directEdits: userDirectlyEditableFields{Name: testutils.PointerTo("name")},
 			},
-			want:        &models.User{Name: testutils.PointerTo("name")},
+			want: &models.User{
+				Name:                   testutils.PointerTo("name"),
+				NameInferredFromGithub: testutils.PointerTo(false),
+			},
 			wantChanged: true,
 		},
 		{
@@ -72,7 +192,10 @@ func Test_processUserEdits(t *testing.T) {
 				callingUser: &models.User{Name: testutils.PointerTo("different name")},
 				directEdits: userDirectlyEditableFields{Name: testutils.PointerTo("name")},
 			},
-			want:        &models.User{Name: testutils.PointerTo("name")},
+			want: &models.User{
+				Name:                   testutils.PointerTo("name"),
+				NameInferredFromGithub: testutils.PointerTo(false),
+			},
 			wantChanged: true,
 		},
 		{
