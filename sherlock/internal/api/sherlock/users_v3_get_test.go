@@ -40,6 +40,7 @@ func (s *handlerSuite) TestUsersV3GetSelf() {
 				&got)
 			s.Equal(http.StatusOK, code)
 			s.Equal(test_users.SuitableTestUserEmail, got.Email)
+			s.True(*got.Suitable)
 		})
 	}
 }
@@ -68,6 +69,7 @@ func (s *handlerSuite) TestUserV3GetOthers() {
 			s.Equal(http.StatusOK, code)
 			s.Equal(dummyUser.ID, got.ID)
 			s.Equal(dummyUser.Email, got.Email)
+			s.False(*got.Suitable)
 		})
 	}
 }
