@@ -3,11 +3,74 @@ package sherlock
 import (
 	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/testutils"
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
+	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/test_users"
+	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/gorm"
+	"net/http"
 	"testing"
 )
+
+func (s *handlerSuite) TestUserV3GetBadSelector() {
+	var got errors.ErrorResponse
+	code := s.HandleRequest(
+		s.NewRequest("GET", "/api/users/v3/foo-bar", nil),
+		&got)
+	s.Equal(http.StatusBadRequest, code)
+	s.Equal(errors.BadRequest, got.Type)
+}
+
+func (s *handlerSuite) TestUserV3GetNotFound() {
+	var got errors.ErrorResponse
+	code := s.HandleRequest(
+		s.NewRequest("GET", "/api/users/v3/foo@example.com", nil),
+		&got)
+	s.Equal(http.StatusNotFound, code)
+	s.Equal(errors.NotFound, got.Type)
+}
+
+func (s *handlerSuite) TestUsersV3GetSelf() {
+	for _, selector := range []string{"self", "me", test_users.SuitableTestUserEmail, fmt.Sprintf("google-id/%s", test_users.SuitableTestUserGoogleID)} {
+		s.Run(fmt.Sprintf("get own user via '%s'", selector), func() {
+			var got UserV3
+			code := s.HandleRequest(
+				s.NewRequest("GET", fmt.Sprintf("/api/users/v3/%s", selector), nil),
+				&got)
+			s.Equal(http.StatusOK, code)
+			s.Equal(test_users.SuitableTestUserEmail, got.Email)
+		})
+	}
+}
+
+func (s *handlerSuite) TestUserV3GetOthers() {
+	dummyUser := models.User{
+		Email:          "dummy@example.com",
+		GoogleID:       "some-fake-google-id",
+		GithubUsername: testutils.PointerTo("some-fake-github-username"),
+		GithubID:       testutils.PointerTo("some-fake-github-id"),
+	}
+	s.NoError(s.DB.Create(&dummyUser).Error)
+	s.NotZero(dummyUser.ID)
+	for _, selector := range []string{
+		utils.UintToString(dummyUser.ID),
+		dummyUser.Email,
+		fmt.Sprintf("google-id/%s", dummyUser.GoogleID),
+		fmt.Sprintf("github/%s", *dummyUser.GithubUsername),
+		fmt.Sprintf("github-id/%s", *dummyUser.GithubID),
+	} {
+		s.Run(fmt.Sprintf("get dummy user via '%s'", selector), func() {
+			var got UserV3
+			code := s.HandleRequest(
+				s.NewRequest("GET", fmt.Sprintf("/api/users/v3/%s", selector), nil),
+				&got)
+			s.Equal(http.StatusOK, code)
+			s.Equal(dummyUser.ID, got.ID)
+			s.Equal(dummyUser.Email, got.Email)
+		})
+	}
+}
 
 func Test_userModelFromSelector(t *testing.T) {
 	type args struct {

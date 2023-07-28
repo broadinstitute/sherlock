@@ -14,10 +14,10 @@ import (
 // usersV3Get godoc
 //
 //	@summary		Get an individual User
-//	@description	Get an individual User. As a special case, "me" can be passed as the selector to get the current user.
+//	@description	Get an individual User. As a special case, "me" or "self" can be passed as the selector to get the current user.
 //	@tags			Users
 //	@produce		json
-//	@param			selector				path		string	true	"The selector of the User, which can be either a numeric ID, the email, 'google-id/{google subject ID}', 'github/{github username}', or 'github-id/{github numeric ID}'. As a special case, 'me' can be passed to get the calling user."
+//	@param			selector				path		string	true	"The selector of the User, which can be either a numeric ID, the email, 'google-id/{google subject ID}', 'github/{github username}', or 'github-id/{github numeric ID}'. As a special case, 'me' or 'self' can be passed to get the calling user."
 //	@success		200						{object}	UserV3
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/users/v3/{selector} [get]
@@ -28,7 +28,7 @@ func usersV3Get(ctx *gin.Context) {
 	}
 	selector := canonicalizeSelector(ctx.Param("selector"))
 
-	if selector == "me" {
+	if selector == "me" || selector == "self" {
 		user, err := authentication.MustUseUser(ctx)
 		if err != nil {
 			return

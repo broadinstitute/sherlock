@@ -498,7 +498,7 @@ const docTemplate = `{
                 "tags": [
                     "Users"
                 ],
-                "summary": "List Users matching a filter.",
+                "summary": "List Users matching a filter",
                 "parameters": [
                     {
                         "type": "string",
@@ -697,7 +697,7 @@ const docTemplate = `{
         },
         "/api/users/v3/{selector}": {
             "get": {
-                "description": "Get an individual User. As a special case, \"me\" can be passed as the selector to get the current user.",
+                "description": "Get an individual User. As a special case, \"me\" or \"self\" can be passed as the selector to get the current user.",
                 "produces": [
                     "application/json"
                 ],
@@ -708,7 +708,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "The selector of the User, which can be either a numeric ID, the email, 'google-id/{google subject ID}', 'github/{github username}', or 'github-id/{github numeric ID}'. As a special case, 'me' can be passed to get the calling user.",
+                        "description": "The selector of the User, which can be either a numeric ID, the email, 'google-id/{google subject ID}', 'github/{github username}', or 'github-id/{github numeric ID}'. As a special case, 'me' or 'self' can be passed to get the calling user.",
                         "name": "selector",
                         "in": "path",
                         "required": true

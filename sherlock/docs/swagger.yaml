@@ -1883,7 +1883,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/errors.ErrorResponse'
-      summary: List Users matching a filter.
+      summary: List Users matching a filter
       tags:
       - Users
     put:
@@ -1939,12 +1939,13 @@ paths:
       - Users
   /api/users/v3/{selector}:
     get:
-      description: Get an individual User. As a special case, "me" can be passed as
-        the selector to get the current user.
+      description: Get an individual User. As a special case, "me" or "self" can be
+        passed as the selector to get the current user.
       parameters:
       - description: The selector of the User, which can be either a numeric ID, the
           email, 'google-id/{google subject ID}', 'github/{github username}', or 'github-id/{github
-          numeric ID}'. As a special case, 'me' can be passed to get the calling user.
+          numeric ID}'. As a special case, 'me' or 'self' can be passed to get the
+          calling user.
         in: path
         name: selector
         required: true
