@@ -10,6 +10,8 @@ export * from './PagerdutySendAlertResponse';
 export * from './SherlockCiIdentifierV3';
 export * from './SherlockCiRunV3';
 export * from './SherlockCiRunV3Upsert';
+export * from './SherlockUserV3';
+export * from './SherlockUserV3Upsert';
 export * from './V2controllersAppVersion';
 export * from './V2controllersChangeset';
 export * from './V2controllersChangesetPlanRequest';

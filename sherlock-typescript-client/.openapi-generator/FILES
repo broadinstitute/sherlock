@@ -27,6 +27,8 @@ src/models/PagerdutySendAlertResponse.ts
 src/models/SherlockCiIdentifierV3.ts
 src/models/SherlockCiRunV3.ts
 src/models/SherlockCiRunV3Upsert.ts
+src/models/SherlockUserV3.ts
+src/models/SherlockUserV3Upsert.ts
 src/models/V2controllersAppVersion.ts
 src/models/V2controllersChangeset.ts
 src/models/V2controllersChangesetPlanRequest.ts

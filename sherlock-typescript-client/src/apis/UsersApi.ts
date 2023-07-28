@@ -16,6 +16,8 @@
 import * as runtime from '../runtime';
 import type {
   ErrorsErrorResponse,
+  SherlockUserV3,
+  SherlockUserV3Upsert,
   V2controllersEditableUser,
   V2controllersGithubAccessPayload,
   V2controllersUser,
@@ -23,6 +25,10 @@ import type {
 import {
     ErrorsErrorResponseFromJSON,
     ErrorsErrorResponseToJSON,
+    SherlockUserV3FromJSON,
+    SherlockUserV3ToJSON,
+    SherlockUserV3UpsertFromJSON,
+    SherlockUserV3UpsertToJSON,
     V2controllersEditableUserFromJSON,
     V2controllersEditableUserToJSON,
     V2controllersGithubAccessPayloadFromJSON,
@@ -30,6 +36,30 @@ import {
     V2controllersUserFromJSON,
     V2controllersUserToJSON,
 } from '../models/index';
+
+export interface ApiUsersV3GetRequest {
+    createdAt?: Date;
+    email?: string;
+    githubID?: string;
+    githubUsername?: string;
+    googleID?: string;
+    id?: number;
+    name?: string;
+    nameInferredFromGithub?: boolean;
+    suitabilityDescription?: string;
+    suitable?: boolean;
+    updatedAt?: Date;
+    limit?: number;
+    offset?: number;
+}
+
+export interface ApiUsersV3PutRequest {
+    user?: SherlockUserV3Upsert;
+}
+
+export interface ApiUsersV3SelectorGetRequest {
+    selector: string;
+}
 
 export interface ApiV2ProceduresUsersLinkGithubPostRequest {
     githubAccessPayloadRequest: V2controllersGithubAccessPayload;
@@ -65,6 +95,149 @@ export interface ApiV2UsersSelectorPatchRequest {
  * 
  */
 export class UsersApi extends runtime.BaseAPI {
+
+    /**
+     * List Users matching a filter. The results will include suitability and other information. Note that the suitability info can\'t directly be filtered for at this time.
+     * List Users matching a filter
+     */
+    async apiUsersV3GetRaw(requestParameters: ApiUsersV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockUserV3>>> {
+        const queryParameters: any = {};
+
+        if (requestParameters.createdAt !== undefined) {
+            queryParameters['createdAt'] = (requestParameters.createdAt as any).toISOString();
+        }
+
+        if (requestParameters.email !== undefined) {
+            queryParameters['email'] = requestParameters.email;
+        }
+
+        if (requestParameters.githubID !== undefined) {
+            queryParameters['githubID'] = requestParameters.githubID;
+        }
+
+        if (requestParameters.githubUsername !== undefined) {
+            queryParameters['githubUsername'] = requestParameters.githubUsername;
+        }
+
+        if (requestParameters.googleID !== undefined) {
+            queryParameters['googleID'] = requestParameters.googleID;
+        }
+
+        if (requestParameters.id !== undefined) {
+            queryParameters['id'] = requestParameters.id;
+        }
+
+        if (requestParameters.name !== undefined) {
+            queryParameters['name'] = requestParameters.name;
+        }
+
+        if (requestParameters.nameInferredFromGithub !== undefined) {
+            queryParameters['nameInferredFromGithub'] = requestParameters.nameInferredFromGithub;
+        }
+
+        if (requestParameters.suitabilityDescription !== undefined) {
+            queryParameters['suitabilityDescription'] = requestParameters.suitabilityDescription;
+        }
+
+        if (requestParameters.suitable !== undefined) {
+            queryParameters['suitable'] = requestParameters.suitable;
+        }
+
+        if (requestParameters.updatedAt !== undefined) {
+            queryParameters['updatedAt'] = (requestParameters.updatedAt as any).toISOString();
+        }
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.offset !== undefined) {
+            queryParameters['offset'] = requestParameters.offset;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/users/v3`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(SherlockUserV3FromJSON));
+    }
+
+    /**
+     * List Users matching a filter. The results will include suitability and other information. Note that the suitability info can\'t directly be filtered for at this time.
+     * List Users matching a filter
+     */
+    async apiUsersV3Get(requestParameters: ApiUsersV3GetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<SherlockUserV3>> {
+        const response = await this.apiUsersV3GetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Update the calling User\'s information. As with all authenticated Sherlock endpoints, newly-observed callers will have a User record added, meaning that this endpoint behaves like an upsert.
+     * Update the calling User\'s information
+     */
+    async apiUsersV3PutRaw(requestParameters: ApiUsersV3PutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockUserV3>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/api/users/v3`,
+            method: 'PUT',
+            headers: headerParameters,
+            query: queryParameters,
+            body: SherlockUserV3UpsertToJSON(requestParameters.user),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => SherlockUserV3FromJSON(jsonValue));
+    }
+
+    /**
+     * Update the calling User\'s information. As with all authenticated Sherlock endpoints, newly-observed callers will have a User record added, meaning that this endpoint behaves like an upsert.
+     * Update the calling User\'s information
+     */
+    async apiUsersV3Put(requestParameters: ApiUsersV3PutRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockUserV3> {
+        const response = await this.apiUsersV3PutRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Get an individual User. As a special case, \"me\" or \"self\" can be passed as the selector to get the current user.
+     * Get an individual User
+     */
+    async apiUsersV3SelectorGetRaw(requestParameters: ApiUsersV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockUserV3>> {
+        if (requestParameters.selector === null || requestParameters.selector === undefined) {
+            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiUsersV3SelectorGet.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/users/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => SherlockUserV3FromJSON(jsonValue));
+    }
+
+    /**
+     * Get an individual User. As a special case, \"me\" or \"self\" can be passed as the selector to get the current user.
+     * Get an individual User
+     */
+    async apiUsersV3SelectorGet(requestParameters: ApiUsersV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockUserV3> {
+        const response = await this.apiUsersV3SelectorGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
 
     /**
      * Update the authenticated User\'s associated personal GitHub account
