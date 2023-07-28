@@ -483,6 +483,277 @@
                 }
             }
         },
+        "/api/users/v3": {
+            "get": {
+                "description": "List Users matching a filter. The results will include suitability and other information.\nNote that the suitability info can't directly be filtered for at this time.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "List Users matching a filter",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "date-time",
+                        "name": "createdAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "email",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "githubID",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "githubUsername",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "googleID",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Controls whether Sherlock should automatically update the user's name based on a connected GitHub identity.\nWill be set to true if the user account has no name and a GitHub account is linked.",
+                        "name": "nameInferredFromGithub",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Available only in responses; describes the user's production-suitability",
+                        "name": "suitabilityDescription",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Available only in responses; indicates whether the user is production-suitable",
+                        "name": "suitable",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "format": "date-time",
+                        "name": "updatedAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Control how many Users are returned (default 0, no limit)",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Control the offset for the returned Users (default 0)",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/sherlock.UserV3"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Update the calling User's information. As with all authenticated Sherlock endpoints,\nnewly-observed callers will have a User record added, meaning that this endpoint\nbehaves like an upsert.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Update the calling User's information",
+                "parameters": [
+                    {
+                        "description": "The User data to update",
+                        "name": "user",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.UserV3Upsert"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.UserV3"
+                        }
+                    },
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.UserV3"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/users/v3/{selector}": {
+            "get": {
+                "description": "Get an individual User. As a special case, \"me\" or \"self\" can be passed as the selector to get the current user.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get an individual User",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The selector of the User, which can be either a numeric ID, the email, 'google-id/{google subject ID}', 'github/{github username}', or 'github-id/{github numeric ID}'. As a special case, 'me' or 'self' can be passed to get the calling user.",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.UserV3"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v2/app-versions": {
             "get": {
                 "description": "List existing AppVersion entries, ordered by most recently updated.",
@@ -7845,6 +8116,65 @@
                 },
                 "terminalAt": {
                     "type": "string"
+                }
+            }
+        },
+        "sherlock.UserV3": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "githubID": {
+                    "type": "string"
+                },
+                "githubUsername": {
+                    "type": "string"
+                },
+                "googleID": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "nameInferredFromGithub": {
+                    "description": "Controls whether Sherlock should automatically update the user's name based on a connected GitHub identity.\nWill be set to true if the user account has no name and a GitHub account is linked.",
+                    "type": "boolean"
+                },
+                "suitabilityDescription": {
+                    "description": "Available only in responses; describes the user's production-suitability",
+                    "type": "string"
+                },
+                "suitable": {
+                    "description": "Available only in responses; indicates whether the user is production-suitable",
+                    "type": "boolean"
+                },
+                "updatedAt": {
+                    "type": "string",
+                    "format": "date-time"
+                }
+            }
+        },
+        "sherlock.UserV3Upsert": {
+            "type": "object",
+            "properties": {
+                "githubAccessToken": {
+                    "description": "An access token for the GitHub account to associate with the calling user. The access token isn't stored.\nThe design here ensures that an association is only built when someone controls both accounts (Google via\nIAP and GitHub via this access token).",
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "nameInferredFromGithub": {
+                    "description": "Controls whether Sherlock should automatically update the user's name based on a connected GitHub identity.\nWill be set to true if the user account has no name and a GitHub account is linked.",
+                    "type": "boolean"
                 }
             }
         },

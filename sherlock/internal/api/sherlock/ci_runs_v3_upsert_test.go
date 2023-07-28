@@ -237,12 +237,24 @@ func (s *handlerSuite) TestCiRunsV3UpsertIdentifiers() {
 	}, user)
 	s.NoError(err)
 	s.Len(controllerChangesets, 2)
-	changeset, err := v2models.InternalChangesetStore.Get(s.DB, v2models.Changeset{Model: gorm.Model{ID: controllerChangesets[0].ID}})
+
+	// The changesets are in a somewhat unpredictable order when they come back, so we do this just to make sure
+	// that we know which one is which when we get their database form
+	var staticEnvironmentChangesetID, templateEnvironmentChangesetID uint
+	if controllerChangesets[0].ChartReleaseInfo.ID == chartRelease.ID {
+		staticEnvironmentChangesetID = controllerChangesets[0].ID
+		templateEnvironmentChangesetID = controllerChangesets[1].ID
+	} else {
+		staticEnvironmentChangesetID = controllerChangesets[1].ID
+		templateEnvironmentChangesetID = controllerChangesets[0].ID
+	}
+
+	changeset, err := v2models.InternalChangesetStore.Get(s.DB, v2models.Changeset{Model: gorm.Model{ID: staticEnvironmentChangesetID}})
 	s.NoError(err)
 	s.Equal(chartRelease.ID, changeset.ChartReleaseID)
 	s.Len(changeset.NewAppVersions, 1)
 	s.Len(changeset.NewChartVersions, 1)
-	templateChangeset, err := v2models.InternalChangesetStore.Get(s.DB, v2models.Changeset{Model: gorm.Model{ID: controllerChangesets[1].ID}})
+	templateChangeset, err := v2models.InternalChangesetStore.Get(s.DB, v2models.Changeset{Model: gorm.Model{ID: templateEnvironmentChangesetID}})
 	s.NoError(err)
 	s.Equal(templateChartRelease.ID, templateChangeset.ChartReleaseID)
 	s.Len(templateChangeset.NewAppVersions, 1)

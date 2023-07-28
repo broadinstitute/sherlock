@@ -7,7 +7,6 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/binding"
 	"net/http"
 )
 
@@ -31,7 +30,8 @@ func ciIdentifiersV3List(ctx *gin.Context) {
 		return
 	}
 	var filter CiIdentifierV3
-	if err = ctx.MustBindWith(&filter, binding.Query); err != nil {
+	if err = ctx.ShouldBindQuery(&filter); err != nil {
+		errors.AbortRequest(ctx, err)
 		return
 	}
 	modelFilter := filter.toModel()

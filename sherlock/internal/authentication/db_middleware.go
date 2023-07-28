@@ -40,7 +40,7 @@ func ShouldUseDB(ctx *gin.Context) (*gorm.DB, error) {
 func MustUseDB(ctx *gin.Context) (*gorm.DB, error) {
 	db, err := ShouldUseDB(ctx)
 	if err != nil {
-		ctx.AbortWithStatusJSON(errors.ErrorToApiResponse(err))
+		errors.AbortRequest(ctx, err)
 	}
 	return db, nil
 }
