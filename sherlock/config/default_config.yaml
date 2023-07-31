@@ -75,9 +75,9 @@ pagerduty:
 
 pactbroker:
   auth:
-    username:
-    password:
-  enable: 
+    username: replace-username
+    password: replace-password
+  enable: false
 
 model:
   environments:
