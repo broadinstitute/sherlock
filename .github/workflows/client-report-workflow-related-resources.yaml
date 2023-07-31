@@ -28,7 +28,7 @@ on:
         type: string
         description: |
           App versions related to or affected by the calling workflow.
-          The app versions must have already been reported to Sherlock.
+          The app versions must have already been reported to Sherlock (or ignore-bad-selectors should be true).
           
           App versions should be specified by an app version selector. Some different examples:
             - <id-integer> (`456`)
@@ -39,7 +39,7 @@ on:
         type: string
         description: |
           Chart versions related to or affected by the calling workflow.
-          The chart versions must have already been reported to Sherlock.
+          The chart versions must have already been reported to Sherlock (or ignore-bad-selectors should be true).
           
           Chart versions should be specified by a chart version selector. Some different examples:
             - <id-integer> (`456`)
@@ -50,7 +50,7 @@ on:
         type: string
         description: |
           Chart releases (chart instances) related to or affected by the calling workflow.
-          The chart releases must already exist in Sherlock.
+          The chart releases must already exist in Sherlock (or ignore-bad-selectors should be true).
           
           Relating to a chart release will automatically also be recorded as relating to the chart
           release's Kubernetes cluster and/or environment, where applicable. Don't directly specify
@@ -67,7 +67,7 @@ on:
         type: string
         description: |
           Environments related to or affected by the calling workflow.
-          The environments must already exist in Sherlock.
+          The environments must already exist in Sherlock (or ignore-bad-selectors should be true).
           
           Relating to an environment will automatically also be recorded as relating to all the chart
           releases it contains.
@@ -82,7 +82,7 @@ on:
         type: string
         description: |
           Kubernetes clusters related to or affected by the calling workflow.
-          The clusters must already exist in Sherlock.
+          The clusters must already exist in Sherlock (or ignore-bad-selectors should be true).
           
           Relating to a cluster will automatically also be recorded as relating to all the chart
           releases it contains.
@@ -96,7 +96,7 @@ on:
         type: string
         description: |
           Helm Charts related to or affected by the calling workflow.
-          The charts must already exist in Sherlock.
+          The charts must already exist in Sherlock (or ignore-bad-selectors should be true).
           
           Charts should be specified by a chart selector. Some different examples:
             - <id-integer> (`456`)
@@ -107,7 +107,7 @@ on:
         type: string
         description: |
           Changesets (chart release version change) related to or used by the calling workflow.
-          The changesets must already exist in Sherlock.
+          The changesets must already exist in Sherlock (or ignore-bad-selectors should be true).
           
           Relating to a changeset will automatically also be recorded as relating to the chart release it
           affects, which will in turn also be recorded as relating to that chart release's environment
@@ -133,6 +133,13 @@ on:
             target chart release is in a static environment, like dev or prod
           - "never" means that those version relations should never be created
         default: when-static
+      ignore-bad-selectors:
+        required: false
+        type: boolean
+        description: |
+          This field controls whether errors handling the selector fields should be returned as actual errors
+          or just ignored. This is useful when you don't know whether the input will actually exist in Sherlock
+          and you'd rather this step still succeed if it doesn't.
 
 env:
   SHERLOCK_PROD_URL: "https://sherlock.dsp-devops.broadinstitute.org"
@@ -169,6 +176,7 @@ jobs:
               changesets: process.env.CHANGESETS.split(/[\s,]+/).filter(Boolean),
 
               relateToChangesetNewVersions: "${{ inputs.relate-to-changeset-new-versions }}",
+              ignoreBadSelectors: ${{ inputs.ignore-bad-selectors }},
 
               platform: "github-actions",
               githubActionsAttemptNumber: ${{ github.run_attempt }},
