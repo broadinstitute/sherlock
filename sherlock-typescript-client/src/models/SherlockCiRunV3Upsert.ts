@@ -110,6 +110,12 @@ export interface SherlockCiRunV3Upsert {
      */
     githubActionsWorkflowPath?: string;
     /**
+     * If set to true, errors handling selectors for relations should be ignored. Normally, passing an unknown chart, cluster, etc. will abort the request, but they won't if this is true.
+     * @type {boolean}
+     * @memberof SherlockCiRunV3Upsert
+     */
+    ignoreBadSelectors?: boolean;
+    /**
      * 
      * @type {string}
      * @memberof SherlockCiRunV3Upsert
@@ -187,6 +193,7 @@ export function SherlockCiRunV3UpsertFromJSONTyped(json: any, ignoreDiscriminato
         'githubActionsRepo': !exists(json, 'githubActionsRepo') ? undefined : json['githubActionsRepo'],
         'githubActionsRunID': !exists(json, 'githubActionsRunID') ? undefined : json['githubActionsRunID'],
         'githubActionsWorkflowPath': !exists(json, 'githubActionsWorkflowPath') ? undefined : json['githubActionsWorkflowPath'],
+        'ignoreBadSelectors': !exists(json, 'ignoreBadSelectors') ? undefined : json['ignoreBadSelectors'],
         'platform': !exists(json, 'platform') ? undefined : json['platform'],
         'relateToChangesetNewVersions': !exists(json, 'relateToChangesetNewVersions') ? undefined : json['relateToChangesetNewVersions'],
         'startedAt': !exists(json, 'startedAt') ? undefined : json['startedAt'],
@@ -219,6 +226,7 @@ export function SherlockCiRunV3UpsertToJSON(value?: SherlockCiRunV3Upsert | null
         'githubActionsRepo': value.githubActionsRepo,
         'githubActionsRunID': value.githubActionsRunID,
         'githubActionsWorkflowPath': value.githubActionsWorkflowPath,
+        'ignoreBadSelectors': value.ignoreBadSelectors,
         'platform': value.platform,
         'relateToChangesetNewVersions': value.relateToChangesetNewVersions,
         'startedAt': value.startedAt,

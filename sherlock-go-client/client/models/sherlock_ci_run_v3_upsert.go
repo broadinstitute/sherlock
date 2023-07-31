@@ -65,6 +65,9 @@ type SherlockCiRunV3Upsert struct {
 	// github actions workflow path
 	GithubActionsWorkflowPath string `json:"githubActionsWorkflowPath,omitempty"`
 
+	// If set to true, errors handling selectors for relations should be ignored. Normally, passing an unknown chart, cluster, etc. will abort the request, but they won't if this is true.
+	IgnoreBadSelectors *bool `json:"ignoreBadSelectors,omitempty"`
+
 	// platform
 	Platform string `json:"platform,omitempty"`
 

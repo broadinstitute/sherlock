@@ -8101,6 +8101,11 @@ const docTemplate = `{
                 "githubActionsWorkflowPath": {
                     "type": "string"
                 },
+                "ignoreBadSelectors": {
+                    "description": "If set to true, errors handling selectors for relations should be ignored. Normally, passing an unknown chart, cluster, etc. will abort the request, but they won't if this is true.",
+                    "type": "boolean",
+                    "default": false
+                },
                 "platform": {
                     "type": "string"
                 },
