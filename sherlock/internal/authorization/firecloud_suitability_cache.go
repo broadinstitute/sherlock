@@ -2,6 +2,7 @@ package authorization
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
@@ -83,6 +84,39 @@ func CacheFirecloudSuitability(ctx context.Context) error {
 					}
 					if workspaceUser.RecoveryEmail != "" {
 						newCache[workspaceUser.RecoveryEmail] = suitability
+					}
+
+					// Secondary emails on the user's account aren't `admin.User.RecoveryEmail`, they're under
+					// `admin.User.Emails`.
+					//
+					// Google doesn't bother typing the `admin.User.Emails` field; it's just `interface{}`.
+					// Because Go is impressively bad at handling JSON, we can't easily get from `interface{}` to
+					// the `[]admin.UserEmail` type we want, despite what Google's own engineers say
+					// (https://github.com/googleapis/google-api-go-client/issues/325). GoLand can open up a scratch
+					// file in sherlock's context with its dependencies if you want to see the panic for yourself.
+					//
+					// We could probably use the MapStructure package here but the rest of Sherlock doesn't use it.
+					// Instead, we do the dumb-but-correct thing and serialize it back to JSON and parse back to what
+					// we want.
+					//
+					// In theory, this madness will be somewhat short-lived, because Sherlock will become the source
+					// of truth and will be more concerned with pushing info to Google Workspace than reading from it.
+					if emailsJson, emailsParseErr := json.Marshal(workspaceUser.Emails); emailsParseErr != nil {
+						log.Debug().Err(err).Msgf("AUTH | wasn't able to marshal %s's `emails` field back to JSON: %v", workspaceUser.PrimaryEmail, err)
+					} else {
+						var parsedEmails []admin.UserEmail
+						if emailsParseErr = json.Unmarshal(emailsJson, &parsedEmails); emailsParseErr != nil {
+							log.Debug().Err(err).Msgf("AUTH | wasn't able to unmarshal %s's `emails` field to %T: %v", workspaceUser.PrimaryEmail, parsedEmails, err)
+						} else {
+							for _, parsedEmail := range parsedEmails {
+								if len(parsedEmail.Address) == 0 {
+									log.Debug().Msgf("AUTH | one of %s's `emails` had an empty address", workspaceUser.PrimaryEmail)
+								} else if parsedEmail.Address != workspaceUser.PrimaryEmail && parsedEmail.Address != workspaceUser.RecoveryEmail {
+									// Only bother with the assignment if it wasn't an email we would've already recorded.
+									newCache[parsedEmail.Address] = suitability
+								}
+							}
+						}
 					}
 				}
 			}
