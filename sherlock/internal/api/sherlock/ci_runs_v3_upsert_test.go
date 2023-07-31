@@ -449,3 +449,84 @@ func (s *handlerSuite) TestCiRunsV3UpsertIdentifiers() {
 		s.True(clusterPresent)
 	})
 }
+
+func (s *handlerSuite) TestCiRunsV3UpsertIdentifiersInvalid() {
+	user := s.SetSuitableTestUserForDB()
+
+	_, created, err := v2models.InternalChartStore.Create(s.DB, v2models.Chart{
+		Name:      "leonardo",
+		ChartRepo: testutils.PointerTo("terra-helm"),
+	}, user)
+	s.NoError(err)
+	s.True(created)
+
+	var got errors.ErrorResponse
+	code := s.HandleRequest(
+		s.NewRequest("PUT", "/api/ci-runs/v3", CiRunV3Upsert{
+			ciRunFields: ciRunFields{
+				Platform:                   "github-actions",
+				GithubActionsOwner:         "owner",
+				GithubActionsRepo:          "repo",
+				GithubActionsRunID:         1,
+				GithubActionsAttemptNumber: 1,
+				GithubActionsWorkflowPath:  "workflow",
+			},
+			Charts: []string{"leonardo-that-doesn't-exist"},
+		}),
+		&got)
+	s.Equal(http.StatusBadRequest, code)
+	s.Equal(got.Type, errors.BadRequest)
+}
+
+func (s *handlerSuite) TestCiRunsV3UpsertIdentifiersInvalidIgnore() {
+	user := s.SetSuitableTestUserForDB()
+
+	chart, created, err := v2models.InternalChartStore.Create(s.DB, v2models.Chart{
+		Name:      "leonardo",
+		ChartRepo: testutils.PointerTo("terra-helm"),
+	}, user)
+	s.NoError(err)
+	s.True(created)
+
+	s.Run("flat ignore", func() {
+		var got CiRunV3
+		code := s.HandleRequest(
+			s.NewRequest("PUT", "/api/ci-runs/v3", CiRunV3Upsert{
+				ciRunFields: ciRunFields{
+					Platform:                   "github-actions",
+					GithubActionsOwner:         "owner",
+					GithubActionsRepo:          "repo",
+					GithubActionsRunID:         1,
+					GithubActionsAttemptNumber: 1,
+					GithubActionsWorkflowPath:  "workflow",
+				},
+				Charts:             []string{"leonardo-that-doesn't-exist"},
+				IgnoreBadSelectors: true,
+			}),
+			&got)
+		s.Equal(http.StatusCreated, code)
+		s.Len(got.RelatedResources, 0)
+		s.NotZero(got.ID)
+	})
+	s.Run("opportunistic when ignoring", func() {
+		var got CiRunV3
+		code := s.HandleRequest(
+			s.NewRequest("PUT", "/api/ci-runs/v3", CiRunV3Upsert{
+				ciRunFields: ciRunFields{
+					Platform:                   "github-actions",
+					GithubActionsOwner:         "owner",
+					GithubActionsRepo:          "repo",
+					GithubActionsRunID:         1,
+					GithubActionsAttemptNumber: 1,
+					GithubActionsWorkflowPath:  "workflow",
+				},
+				Charts:             []string{"leonardo-that-doesn't-exist", "leonardo"},
+				IgnoreBadSelectors: true,
+			}),
+			&got)
+		s.Equal(http.StatusCreated, code)
+		s.Len(got.RelatedResources, 1)
+		s.Equal(chart.ID, got.RelatedResources[0].ResourceID)
+		s.NotZero(got.ID)
+	})
+}

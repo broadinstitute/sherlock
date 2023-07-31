@@ -26,6 +26,8 @@ type CiRunV3Upsert struct {
 	Changesets    []string `json:"changesets"`    // Always appends; will eliminate duplicates. Spreads to associated chart releases, environments, and clusters.
 	// Makes entries in the changesets field also spread to new app versions and chart versions deployed by the changeset. 'when-static' is the default and does this spreading only when the chart release is in a static environment.
 	RelateToChangesetNewVersions string `json:"relateToChangesetNewVersions" enums:"always,when-static,never" default:"when-static" binding:"oneof=always when-static never ''"`
+	// If set to true, errors handling selectors for relations should be ignored. Normally, passing an unknown chart, cluster, etc. will abort the request, but they won't if this is true.
+	IgnoreBadSelectors bool `json:"ignoreBadSelectors" default:"false"`
 }
 
 // ciRunsV3Upsert godoc
@@ -79,15 +81,23 @@ func ciRunsV3Upsert(ctx *gin.Context) {
 	for _, environmentSelector := range body.Environments {
 		environmentID, err := v2models.InternalEnvironmentStore.ResolveSelector(db, environmentSelector)
 		if err != nil {
-			errors.AbortRequest(ctx, err)
-			return
+			if body.IgnoreBadSelectors {
+				continue
+			} else {
+				errors.AbortRequest(ctx, err)
+				return
+			}
 		}
 		chartReleasesInEnvironment, err := v2models.InternalChartReleaseStore.ListAllMatchingByCreated(db, 0, v2models.ChartRelease{
 			EnvironmentID: &environmentID,
 		})
 		if err != nil {
-			errors.AbortRequest(ctx, err)
-			return
+			if body.IgnoreBadSelectors {
+				continue
+			} else {
+				errors.AbortRequest(ctx, err)
+				return
+			}
 		}
 		for _, chartReleaseInEnvironment := range chartReleasesInEnvironment {
 			bodyAfterSpreading.ChartReleases = append(bodyAfterSpreading.ChartReleases, utils.UintToString(chartReleaseInEnvironment.ID))
@@ -101,15 +111,23 @@ func ciRunsV3Upsert(ctx *gin.Context) {
 	for _, clusterSelector := range body.Clusters {
 		clusterID, err := v2models.InternalClusterStore.ResolveSelector(db, clusterSelector)
 		if err != nil {
-			errors.AbortRequest(ctx, err)
-			return
+			if body.IgnoreBadSelectors {
+				continue
+			} else {
+				errors.AbortRequest(ctx, err)
+				return
+			}
 		}
 		chartReleasesInCluster, err := v2models.InternalChartReleaseStore.ListAllMatchingByCreated(db, 0, v2models.ChartRelease{
 			ClusterID: &clusterID,
 		})
 		if err != nil {
-			errors.AbortRequest(ctx, err)
-			return
+			if body.IgnoreBadSelectors {
+				continue
+			} else {
+				errors.AbortRequest(ctx, err)
+				return
+			}
 		}
 		for _, chartReleaseInCluster := range chartReleasesInCluster {
 			bodyAfterSpreading.ChartReleases = append(bodyAfterSpreading.ChartReleases, utils.UintToString(chartReleaseInCluster.ID))
@@ -123,13 +141,21 @@ func ciRunsV3Upsert(ctx *gin.Context) {
 	for _, changesetSelector := range body.Changesets {
 		changeset, err := v2models.InternalChangesetStore.GetBySelector(db, changesetSelector)
 		if err != nil {
-			errors.AbortRequest(ctx, err)
-			return
+			if body.IgnoreBadSelectors {
+				continue
+			} else {
+				errors.AbortRequest(ctx, err)
+				return
+			}
 		}
 		chartRelease, err := v2models.InternalChartReleaseStore.Get(db, v2models.ChartRelease{Model: gorm.Model{ID: changeset.ChartReleaseID}})
 		if err != nil {
-			errors.AbortRequest(ctx, err)
-			return
+			if body.IgnoreBadSelectors {
+				continue
+			} else {
+				errors.AbortRequest(ctx, err)
+				return
+			}
 		}
 		if chartRelease.EnvironmentID != nil {
 			bodyAfterSpreading.Environments = append(bodyAfterSpreading.Environments, utils.UintToString(*chartRelease.EnvironmentID))
@@ -158,8 +184,12 @@ func ciRunsV3Upsert(ctx *gin.Context) {
 	for _, chartReleaseSelector := range body.ChartReleases {
 		chartRelease, err := v2models.InternalChartReleaseStore.GetBySelector(db, chartReleaseSelector)
 		if err != nil {
-			errors.AbortRequest(ctx, err)
-			return
+			if body.IgnoreBadSelectors {
+				continue
+			} else {
+				errors.AbortRequest(ctx, err)
+				return
+			}
 		}
 		if chartRelease.EnvironmentID != nil {
 			bodyAfterSpreading.Environments = append(bodyAfterSpreading.Environments, utils.UintToString(*chartRelease.EnvironmentID))
@@ -179,56 +209,84 @@ func ciRunsV3Upsert(ctx *gin.Context) {
 	for _, chartSelector := range utils.Dedupe(bodyAfterSpreading.Charts) {
 		chart, err := v2models.InternalChartStore.GetBySelector(db, chartSelector)
 		if err != nil {
-			errors.AbortRequest(ctx, err)
-			return
+			if body.IgnoreBadSelectors {
+				continue
+			} else {
+				errors.AbortRequest(ctx, err)
+				return
+			}
 		}
 		possiblyDuplicatedRelatedResources = append(possiblyDuplicatedRelatedResources, ciIdentifierModelFromOldModel(chart))
 	}
 	for _, chartVersionSelector := range utils.Dedupe(bodyAfterSpreading.ChartVersions) {
 		chartVersion, err := v2models.InternalChartVersionStore.GetBySelector(db, chartVersionSelector)
 		if err != nil {
-			errors.AbortRequest(ctx, err)
-			return
+			if body.IgnoreBadSelectors {
+				continue
+			} else {
+				errors.AbortRequest(ctx, err)
+				return
+			}
 		}
 		possiblyDuplicatedRelatedResources = append(possiblyDuplicatedRelatedResources, ciIdentifierModelFromOldModel(chartVersion))
 	}
 	for _, appVersionSelector := range utils.Dedupe(bodyAfterSpreading.AppVersions) {
 		appVersion, err := v2models.InternalAppVersionStore.GetBySelector(db, appVersionSelector)
 		if err != nil {
-			errors.AbortRequest(ctx, err)
-			return
+			if body.IgnoreBadSelectors {
+				continue
+			} else {
+				errors.AbortRequest(ctx, err)
+				return
+			}
 		}
 		possiblyDuplicatedRelatedResources = append(possiblyDuplicatedRelatedResources, ciIdentifierModelFromOldModel(appVersion))
 	}
 	for _, clusterSelector := range utils.Dedupe(bodyAfterSpreading.Clusters) {
 		cluster, err := v2models.InternalClusterStore.GetBySelector(db, clusterSelector)
 		if err != nil {
-			errors.AbortRequest(ctx, err)
-			return
+			if body.IgnoreBadSelectors {
+				continue
+			} else {
+				errors.AbortRequest(ctx, err)
+				return
+			}
 		}
 		possiblyDuplicatedRelatedResources = append(possiblyDuplicatedRelatedResources, ciIdentifierModelFromOldModel(cluster))
 	}
 	for _, environmentSelector := range utils.Dedupe(bodyAfterSpreading.Environments) {
 		environment, err := v2models.InternalEnvironmentStore.GetBySelector(db, environmentSelector)
 		if err != nil {
-			errors.AbortRequest(ctx, err)
-			return
+			if body.IgnoreBadSelectors {
+				continue
+			} else {
+				errors.AbortRequest(ctx, err)
+				return
+			}
 		}
 		possiblyDuplicatedRelatedResources = append(possiblyDuplicatedRelatedResources, ciIdentifierModelFromOldModel(environment))
 	}
 	for _, chartReleaseSelector := range utils.Dedupe(bodyAfterSpreading.ChartReleases) {
 		chartRelease, err := v2models.InternalChartReleaseStore.GetBySelector(db, chartReleaseSelector)
 		if err != nil {
-			errors.AbortRequest(ctx, err)
-			return
+			if body.IgnoreBadSelectors {
+				continue
+			} else {
+				errors.AbortRequest(ctx, err)
+				return
+			}
 		}
 		possiblyDuplicatedRelatedResources = append(possiblyDuplicatedRelatedResources, ciIdentifierModelFromOldModel(chartRelease))
 	}
 	for _, changesetSelector := range utils.Dedupe(bodyAfterSpreading.Changesets) {
 		changeset, err := v2models.InternalChangesetStore.GetBySelector(db, changesetSelector)
 		if err != nil {
-			errors.AbortRequest(ctx, err)
-			return
+			if body.IgnoreBadSelectors {
+				continue
+			} else {
+				errors.AbortRequest(ctx, err)
+				return
+			}
 		}
 		possiblyDuplicatedRelatedResources = append(possiblyDuplicatedRelatedResources, ciIdentifierModelFromOldModel(changeset))
 	}
