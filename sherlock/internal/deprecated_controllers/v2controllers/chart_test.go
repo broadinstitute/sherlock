@@ -290,7 +290,7 @@ func (suite *chartControllerSuite) TestChartEdit() {
 		suite.seedCharts(suite.T(), suite.db)
 
 		_, err := suite.ChartController.Edit(yaleLibChart.Name, EditableChart{ChartRepo: testutils.PointerTo("")}, generateUser(suite.T(), suite.db, false))
-		assert.ErrorContains(suite.T(), err, errors.BadRequest)
+		assert.ErrorContains(suite.T(), err, "violates check constraint")
 	})
 }
 
