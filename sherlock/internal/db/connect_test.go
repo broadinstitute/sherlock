@@ -26,7 +26,7 @@ func TestConnectAndConfigure(t *testing.T) {
 func Test_dbConnectionString(t *testing.T) {
 	config.LoadTestConfig()
 	s := dbConnectionString()
-	testutils.AssertNoDiff(t, "postgres://sherlock:password@localhost:5432/sherlock?sslmode=disable", s)
+	testutils.AssertNoDiff(t, "postgres://sherlock:password@localhost:5431/sherlock?sslmode=disable", s)
 }
 
 func Test_parseGormLogLevel(t *testing.T) {

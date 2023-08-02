@@ -11,7 +11,7 @@ db:
   user: sherlock
   password: password
   name: sherlock
-  port: 5432
+  port: 5431
   ssl: disable
   init: true
 
