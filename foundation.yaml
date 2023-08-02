@@ -10,7 +10,11 @@ metadata:
     - sherlock
     - kubernetes
     - dsp-devops
+  annotations:
+    github.com/project-slug: broadinstitute/sherlock
 spec:
   type: service
   lifecycle: production
   owner: dsp-devops
+  providesApi:
+    - sherlock-api
