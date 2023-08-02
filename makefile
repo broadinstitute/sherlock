@@ -8,21 +8,21 @@ local-down:
 	docker-compose -f dev/local-with-pg.yaml down --volumes
 
 test:
-	docker run --name test-postgres -e POSTGRES_PASSWORD=password -e POSTGRES_USER=sherlock -d -p 5432:5432 postgres:13 -c max_connections=200
+	docker run --name test-postgres -e POSTGRES_PASSWORD=password -e POSTGRES_USER=sherlock -d -p 5431:5432 postgres:13 -c max_connections=200
 	cd go-shared && go test -p 1 -v -race ./...
 	cd sherlock && go test -p 1 -v -race ./...
 	docker stop test-postgres
 	docker rm test-postgres
 
 test-with-coverage:
-	docker run --name test-postgres -e POSTGRES_PASSWORD=password -e POSTGRES_USER=sherlock -d -p 5432:5432 postgres:13 -c max_connections=200
+	docker run --name test-postgres -e POSTGRES_PASSWORD=password -e POSTGRES_USER=sherlock -d -p 5431:5432 postgres:13 -c max_connections=200
 	cd go-shared && go test -p 1 -v -race -coverprofile=cover.out -covermode=atomic ./...
 	cd sherlock && go test -p 1 -v -race -coverprofile=cover.out -covermode=atomic ./...
 	docker stop test-postgres
 	docker rm -f -v test-postgres
 
 make pg-up:
-	docker run --name test-postgres -e POSTGRES_PASSWORD=password -e POSTGRES_USER=sherlock -d -p 5432:5432 postgres:13 -c max_connections=200
+	docker run --name test-postgres -e POSTGRES_PASSWORD=password -e POSTGRES_USER=sherlock -d -p 5431:5432 postgres:13 -c max_connections=200
 
 pg-down:
 	docker stop test-postgres
