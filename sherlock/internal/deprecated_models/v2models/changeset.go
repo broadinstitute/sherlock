@@ -257,7 +257,7 @@ func (s *internalChangesetStore) apply(db *gorm.DB, changesets []Changeset, user
 				)
 			}
 			if chartRelease.Environment.ParticipatesInPact != nil && *chartRelease.Environment.ParticipatesInPact && chartRelease.Chart.PactParticipant != nil && *chartRelease.Chart.PactParticipant {
-				err = pactbroker.RecordDeployment(
+				go pactbroker.RecordDeployment(
 					chartRelease.Chart.Name,
 					chartRelease.AppVersion.AppVersion,
 					chartRelease.Environment.Name,

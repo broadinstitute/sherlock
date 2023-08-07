@@ -12,7 +12,7 @@ const productionID = "354e0bfa-9634-417c-b10a-4beea2ffc3bd"
 
 // Record deployment to pact broker
 // https://docs.pact.io/pact_broker/recording_deployments_and_releases
-func RecordDeployment(chartName string, chartversion string, environmentName string) error {
+func RecordDeployment(chartName string, appVersion string, environmentName string) error {
 	var eID string
 	if config.Config.Bool("pactbroker.enabled") {
 
@@ -23,7 +23,7 @@ func RecordDeployment(chartName string, chartversion string, environmentName str
 			eID = productionID
 		}
 		request, err := http.NewRequest(http.MethodPost, pburl+"/pacticipants/"+chartName+
-			"/versions/"+chartversion+"/deployed-versions/environment/"+eID, nil)
+			"/versions/"+appVersion+"/deployed-versions/environment/"+eID, nil)
 		if err != nil {
 			return err
 		}
