@@ -2,7 +2,9 @@ package pactbroker
 
 import (
 	"errors"
+	"fmt"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
+	"github.com/rs/zerolog/log"
 	"net/http"
 )
 
@@ -12,7 +14,7 @@ const productionID = "354e0bfa-9634-417c-b10a-4beea2ffc3bd"
 
 // Record deployment to pact broker
 // https://docs.pact.io/pact_broker/recording_deployments_and_releases
-func RecordDeployment(chartName string, appVersion string, environmentName string) error {
+func RecordDeployment(chartName string, appVersion string, environmentName string) {
 	var eID string
 	if config.Config.Bool("pactbroker.enabled") {
 
@@ -25,7 +27,7 @@ func RecordDeployment(chartName string, appVersion string, environmentName strin
 		request, err := http.NewRequest(http.MethodPost, pburl+"/pacticipants/"+chartName+
 			"/versions/"+appVersion+"/deployed-versions/environment/"+eID, nil)
 		if err != nil {
-			return err
+			PactSwallowErrors(err)
 		}
 		request.Header.Set("Content-Type", "application/json; charset=utf-8")
 		request.Header.Set("Accept", "application/hal+json")
@@ -34,11 +36,16 @@ func RecordDeployment(chartName string, appVersion string, environmentName strin
 		client := &http.Client{}
 		response, err := client.Do(request)
 		if err != nil {
-			return err
+			PactSwallowErrors(err)
 		}
 		if response.StatusCode != 201 {
-			return errors.New("Deployment was not recorded to pact successfully.")
+			errMsg := fmt.Sprintf("Deployment for %s app version %s was not recorded to pact successfully.\n"+
+				"Return code %d ", chartName, appVersion, response.StatusCode)
+			PactSwallowErrors(errors.New(errMsg))
 		}
 	}
-	return nil
+}
+
+func PactSwallowErrors(err error) {
+	log.Warn().Msgf("%v", err)
 }
