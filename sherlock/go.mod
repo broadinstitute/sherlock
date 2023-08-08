@@ -23,7 +23,7 @@ require (
 	github.com/swaggo/swag v1.16.1
 	go.opencensus.io v0.24.0
 	golang.org/x/net v0.14.0
-	golang.org/x/oauth2 v0.10.0
+	golang.org/x/oauth2 v0.11.0
 	google.golang.org/api v0.134.0
 	gorm.io/driver/postgres v1.5.2
 	gorm.io/gorm v1.25.2
