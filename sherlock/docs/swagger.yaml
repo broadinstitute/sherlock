@@ -1197,6 +1197,8 @@ definitions:
       owner:
         description: When creating, will default to you
         type: string
+      pactIdentifier:
+        type: string
       pagerdutyIntegration:
         type: string
       preventDeletion:
@@ -1452,6 +1454,8 @@ definitions:
       owner:
         description: When creating, will default to you
         type: string
+      pactIdentifier:
+        type: string
       pagerdutyIntegration:
         type: string
       preventDeletion:
@@ -1559,6 +1563,8 @@ definitions:
         type: string
       ownerInfo:
         $ref: '#/definitions/v2controllers.User'
+      pactIdentifier:
+        type: string
       pagerdutyIntegration:
         type: string
       pagerdutyIntegrationInfo:
@@ -5538,6 +5544,9 @@ paths:
       - description: When creating, will default to you
         in: query
         name: owner
+        type: string
+      - in: query
+        name: PactIdentifier
         type: string
       - in: query
         name: pagerdutyIntegration

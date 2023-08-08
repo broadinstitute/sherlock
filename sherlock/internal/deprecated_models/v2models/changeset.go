@@ -5,6 +5,7 @@ import (
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
+	"strings"
 
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/pactbroker"
@@ -13,7 +14,6 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 	"strconv"
-	"strings"
 	"time"
 )
 
@@ -256,27 +256,29 @@ func (s *internalChangesetStore) apply(db *gorm.DB, changesets []Changeset, user
 					fmt.Sprintf(config.Config.MustString("beehive.chartReleaseUrlFormatString"), chartRelease.Name),
 				)
 			}
+
+			for environmentID, chartReleaseNames := range environmentReleases {
+				environment, err := InternalEnvironmentStore.Get(db, Environment{Model: gorm.Model{ID: environmentID}})
+				if err == nil && environment.PagerdutyIntegration != nil && environment.PagerdutyIntegration.Key != nil {
+					go pagerduty.SendChangeSwallowErrors(
+						*environment.PagerdutyIntegration.Key,
+						fmt.Sprintf("Version changes to %s via Sherlock/Beehive", strings.Join(chartReleaseNames, ", ")),
+						fmt.Sprintf(config.Config.MustString("beehive.environmentUrlFormatString"), environment.Name),
+					)
+				}
+			}
+
 			// Record app version to Pact broker
-			if chartRelease.Environment.ParticipatesInPact != nil && *chartRelease.Environment.ParticipatesInPact && chartRelease.Chart.PactParticipant != nil && *chartRelease.Chart.PactParticipant {
+			if chartRelease.Environment != nil && chartRelease.Chart.PactParticipant != nil && *chartRelease.Chart.PactParticipant && chartRelease.Environment.PactIdentifier != nil && *chartRelease.Environment.PactIdentifier != "" {
 				go pactbroker.RecordDeployment(
 					chartRelease.Chart.Name,
 					chartRelease.AppVersion.AppVersion,
-					chartRelease.Environment.Name,
+					*chartRelease.Environment.PactIdentifier,
 				)
 			}
 
 		}
 
-		for environmentID, chartReleaseNames := range environmentReleases {
-			environment, err := InternalEnvironmentStore.Get(db, Environment{Model: gorm.Model{ID: environmentID}})
-			if err == nil && environment.PagerdutyIntegration != nil && environment.PagerdutyIntegration.Key != nil {
-				go pagerduty.SendChangeSwallowErrors(
-					*environment.PagerdutyIntegration.Key,
-					fmt.Sprintf("Version changes to %s via Sherlock/Beehive", strings.Join(chartReleaseNames, ", ")),
-					fmt.Sprintf(config.Config.MustString("beehive.environmentUrlFormatString"), environment.Name),
-				)
-			}
-		}
 	}
 
 	return ret, err

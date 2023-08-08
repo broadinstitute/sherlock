@@ -5758,6 +5758,11 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "PactIdentifier",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "name": "pagerdutyIntegration",
                         "in": "query"
                     },
@@ -10278,6 +10283,9 @@ const docTemplate = `{
                     "description": "When creating, will default to you",
                     "type": "string"
                 },
+                "pactIdentifier": {
+                    "type": "string"
+                },
                 "pagerdutyIntegration": {
                     "type": "string"
                 },
@@ -10624,6 +10632,9 @@ const docTemplate = `{
                     "description": "When creating, will default to you",
                     "type": "string"
                 },
+                "pactIdentifier": {
+                    "type": "string"
+                },
                 "pagerdutyIntegration": {
                     "type": "string"
                 },
@@ -10762,6 +10773,9 @@ const docTemplate = `{
                 },
                 "ownerInfo": {
                     "$ref": "#/definitions/v2controllers.User"
+                },
+                "pactIdentifier": {
+                    "type": "string"
                 },
                 "pagerdutyIntegration": {
                     "type": "string"

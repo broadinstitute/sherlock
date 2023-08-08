@@ -53,7 +53,7 @@ type Environment struct {
 	OfflineScheduleEndEnabled   *bool
 	OfflineScheduleEndTime      *string
 	OfflineScheduleEndWeekends  *bool
-	ParticipatesInPact          *bool
+	PactIdentifier              *string
 }
 
 func (e Environment) TableName() string {
