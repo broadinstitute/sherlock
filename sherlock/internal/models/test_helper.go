@@ -44,7 +44,7 @@ func (h *TestSuiteHelper) SetupSuite() {
 	//    example.
 	// Right now, you will still have to write migration
 	// SQL for Sherlock to use your new model when run
-	// from outside tests. You'll run into circular
+	// outside tests. You'll run into circular
 	// dependency issues if you try to import something
 	// from this package into the db package. You might
 	// be able to run this auto-migrate process from
@@ -52,7 +52,7 @@ func (h *TestSuiteHelper) SetupSuite() {
 	// consider just going ahead and writing proper SQL
 	// to represent your model.
 	//
-	//err = s.internalDB.AutoMigrate(SomeNewModel)
+	//err = h.internalDB.AutoMigrate(&SomeNewModel{})
 	//if err != nil {
 	//	panic(err)
 	//}
