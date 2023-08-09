@@ -2,9 +2,11 @@ package errors
 
 import (
 	"errors"
+	"fmt"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
 	"net/http"
+	"strconv"
 	"strings"
 )
 
@@ -106,6 +108,17 @@ func convert(err error) (int, ErrorResponse) {
 			ToBlame: "client",
 			Type:    BadRequest,
 			Message: errorString,
+		}
+	}
+
+	// If we're still about to return a 500 to the client, check if
+	// there was a Go-internal conversion error and assume that would
+	// be on the client.
+	if errors.Is(err, strconv.ErrRange) || errors.Is(err, strconv.ErrSyntax) {
+		return http.StatusBadRequest, ErrorResponse{
+			ToBlame: "client",
+			Type:    BadRequest,
+			Message: fmt.Sprintf("(%s) string conversion error: %v", BadRequest, err),
 		}
 	}
 

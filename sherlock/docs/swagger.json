@@ -483,6 +483,71 @@
                 }
             }
         },
+        "/api/deploy-hooks/slack/v3/{selector}": {
+            "get": {
+                "description": "Get an individual SlackDeployHook by its ID.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DeployHooks"
+                ],
+                "summary": "Get an individual SlackDeployHook",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The ID of the SlackDeployHook",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.SlackDeployHookV3"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/users/v3": {
             "get": {
                 "description": "List Users matching a filter. The results will include suitability and other information.\nNote that the suitability info can't directly be filtered for at this time.",
@@ -8121,6 +8186,37 @@
                 },
                 "terminalAt": {
                     "type": "string"
+                }
+            }
+        },
+        "sherlock.SlackDeployHookV3": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "onChartRelease": {
+                    "type": "string"
+                },
+                "onEnvironment": {
+                    "type": "string"
+                },
+                "onFailure": {
+                    "type": "boolean"
+                },
+                "onSuccess": {
+                    "type": "boolean"
+                },
+                "slackChannel": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string",
+                    "format": "date-time"
                 }
             }
         },
