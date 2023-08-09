@@ -11,24 +11,24 @@ import (
 	"net/http"
 )
 
-// slackDeployHooksV3List godoc
+// githubActionsDeployHooksV3List godoc
 //
-//	@summary		List SlackDeployHooks matching a filter
-//	@description	List SlackDeployHooks matching a filter.
+//	@summary		List GithubActionsDeployHooks matching a filter
+//	@description	List GithubActionsDeployHooks matching a filter.
 //	@tags			DeployHooks
 //	@produce		json
-//	@param			filter					query		SlackDeployHookV3	false	"Filter the returned SlackDeployHooks"
-//	@param			limit					query		int					false	"Control how many SlackDeployHooks are returned (default 100)"
-//	@param			offset					query		int					false	"Control the offset for the returned SlackDeployHooks (default 0)"
-//	@success		200						{array}		SlackDeployHookV3
+//	@param			filter					query		GithubActionsDeployHookV3	false	"Filter the returned GithubActionsDeployHooks"
+//	@param			limit					query		int							false	"Control how many GithubActionsDeployHooks are returned (default 100)"
+//	@param			offset					query		int							false	"Control the offset for the returned GithubActionsDeployHooks (default 0)"
+//	@success		200						{array}		GithubActionsDeployHookV3
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
-//	@router			/api/deploy-hooks/slack/v3 [get]
-func slackDeployHooksV3List(ctx *gin.Context) {
+//	@router			/api/deploy-hooks/github-actions/v3 [get]
+func githubActionsDeployHooksV3List(ctx *gin.Context) {
 	db, err := authentication.MustUseDB(ctx)
 	if err != nil {
 		return
 	}
-	var filter SlackDeployHookV3
+	var filter GithubActionsDeployHookV3
 	if err = ctx.ShouldBindQuery(&filter); err != nil {
 		errors.AbortRequest(ctx, err)
 		return
@@ -48,10 +48,10 @@ func slackDeployHooksV3List(ctx *gin.Context) {
 		errors.AbortRequest(ctx, fmt.Errorf("(%s) %v", errors.BadRequest, err))
 		return
 	}
-	var results []models.SlackDeployHook
+	var results []models.GithubActionsDeployHook
 	if err = db.Preload(clause.Associations).Where(&modelFilter).Limit(limit).Offset(offset).Order("created_at desc").Find(&results).Error; err != nil {
 		errors.AbortRequest(ctx, err)
 		return
 	}
-	ctx.JSON(http.StatusOK, utils.Map(results, slackDeployHookFromModel))
+	ctx.JSON(http.StatusOK, utils.Map(results, githubActionsDeployHookFromModel))
 }

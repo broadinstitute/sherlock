@@ -9,6 +9,10 @@ import (
 type GithubActionsDeployHookV3 struct {
 	commonFields
 	deployHookTriggerConfigV3
+	githubActionsDeployHookFields
+}
+
+type githubActionsDeployHookFields struct {
 	GithubActionsOwner        *string `json:"githubActionsOwner,omitempty" form:"githubActionsOwner"`
 	GithubActionsRepo         *string `json:"githubActionsRepo,omitempty" form:"githubActionsRepo"`
 	GithubActionsWorkflowPath *string `json:"githubActionsWorkflowPath,omitempty" form:"githubActionsWorkflowPath"`
@@ -36,13 +40,15 @@ func (g GithubActionsDeployHookV3) toModel(db *gorm.DB) (models.GithubActionsDep
 
 func githubActionsDeployHookFromModel(model models.GithubActionsDeployHook) GithubActionsDeployHookV3 {
 	return GithubActionsDeployHookV3{
-		commonFields:                commonFieldsFromGormModel(model.Model),
-		deployHookTriggerConfigV3:   deployHookTriggerConfigFromModel(model.Trigger),
-		GithubActionsOwner:          model.GithubActionsOwner,
-		GithubActionsRepo:           model.GithubActionsRepo,
-		GithubActionsWorkflowPath:   model.GithubActionsWorkflowPath,
-		GithubActionsDefaultRef:     model.GithubActionsDefaultRef,
-		GithubActionsRefBehavior:    model.GithubActionsRefBehavior,
-		GithubActionsWorkflowInputs: model.GithubActionsWorkflowInputs,
+		commonFields:              commonFieldsFromGormModel(model.Model),
+		deployHookTriggerConfigV3: deployHookTriggerConfigFromModel(model.Trigger),
+		githubActionsDeployHookFields: githubActionsDeployHookFields{
+			GithubActionsOwner:          model.GithubActionsOwner,
+			GithubActionsRepo:           model.GithubActionsRepo,
+			GithubActionsWorkflowPath:   model.GithubActionsWorkflowPath,
+			GithubActionsDefaultRef:     model.GithubActionsDefaultRef,
+			GithubActionsRefBehavior:    model.GithubActionsRefBehavior,
+			GithubActionsWorkflowInputs: model.GithubActionsWorkflowInputs,
+		},
 	}
 }

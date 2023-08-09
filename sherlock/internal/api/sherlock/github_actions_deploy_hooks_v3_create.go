@@ -1,0 +1,66 @@
+package sherlock
+
+import (
+	"fmt"
+	"github.com/broadinstitute/sherlock/sherlock/internal/authentication"
+	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models"
+	"github.com/creasty/defaults"
+	"github.com/gin-gonic/gin"
+	"net/http"
+)
+
+type GithubActionsDeployHookV3Create struct {
+	deployHookTriggerConfigV3
+	githubActionsDeployHookFields
+}
+
+// githubActionsDeployHooksV3Create godoc
+//
+//	@summary		Create a GithubActionsDeployHook
+//	@description	Create a GithubActionsDeployHook.
+//	@tags			DeployHooks
+//	@accept			json
+//	@produce		json
+//	@param			githubActionsDeployHook	body		GithubActionsDeployHookV3Create	true	"The GithubActionsDeployHook to create"
+//	@success		201						{object}	GithubActionsDeployHookV3
+//	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
+//	@router			/api/deploy-hooks/github-actions/v3 [put]
+func githubActionsDeployHooksV3Create(ctx *gin.Context) {
+	db, err := authentication.MustUseDB(ctx)
+	if err != nil {
+		return
+	}
+
+	var body GithubActionsDeployHookV3Create
+	if err = ctx.ShouldBindJSON(&body); err != nil {
+		errors.AbortRequest(ctx, fmt.Errorf("(%s) request validation error: %v", errors.BadRequest, err))
+		return
+	}
+
+	if err = defaults.Set(&body); err != nil {
+		errors.AbortRequest(ctx, fmt.Errorf("error setting defaults: %v", err))
+		return
+	}
+
+	trigger, err := body.deployHookTriggerConfigV3.toModel(db)
+	if err != nil {
+		errors.AbortRequest(ctx, err)
+		return
+	}
+
+	hook := models.GithubActionsDeployHook{
+		Trigger:                     trigger,
+		GithubActionsOwner:          body.GithubActionsOwner,
+		GithubActionsRepo:           body.GithubActionsRepo,
+		GithubActionsWorkflowPath:   body.GithubActionsWorkflowPath,
+		GithubActionsDefaultRef:     body.GithubActionsDefaultRef,
+		GithubActionsRefBehavior:    body.GithubActionsRefBehavior,
+		GithubActionsWorkflowInputs: body.GithubActionsWorkflowInputs,
+	}
+	if err = db.Create(&hook).Error; err != nil {
+		errors.AbortRequest(ctx, err)
+		return
+	}
+	ctx.JSON(http.StatusCreated, githubActionsDeployHookFromModel(hook))
+}

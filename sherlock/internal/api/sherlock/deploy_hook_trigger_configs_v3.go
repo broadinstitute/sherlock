@@ -13,8 +13,12 @@ import (
 type deployHookTriggerConfigV3 struct {
 	OnEnvironment  *string `json:"onEnvironment,omitempty" form:"onEnvironment"`
 	OnChartRelease *string `json:"onChartRelease,omitempty" form:"onChartRelease"`
-	OnFailure      *bool   `json:"onFailure,omitempty" form:"onFailure"`
-	OnSuccess      *bool   `json:"onSuccess,omitempty" form:"onSuccess"`
+	deployHookTriggerConfigV3EditableFields
+}
+
+type deployHookTriggerConfigV3EditableFields struct {
+	OnFailure *bool `json:"onFailure,omitempty" form:"onFailure"`
+	OnSuccess *bool `json:"onSuccess,omitempty" form:"onSuccess"`
 }
 
 func (d deployHookTriggerConfigV3) toModel(db *gorm.DB) (models.DeployHookTriggerConfig, error) {
@@ -57,7 +61,9 @@ func deployHookTriggerConfigFromModel(model models.DeployHookTriggerConfig) depl
 	return deployHookTriggerConfigV3{
 		OnEnvironment:  onEnvironment,
 		OnChartRelease: onChartRelease,
-		OnFailure:      model.OnFailure,
-		OnSuccess:      model.OnSuccess,
+		deployHookTriggerConfigV3EditableFields: deployHookTriggerConfigV3EditableFields{
+			OnFailure: model.OnFailure,
+			OnSuccess: model.OnSuccess,
+		},
 	}
 }

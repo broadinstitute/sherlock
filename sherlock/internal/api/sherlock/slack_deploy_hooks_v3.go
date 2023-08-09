@@ -8,6 +8,10 @@ import (
 type SlackDeployHookV3 struct {
 	commonFields
 	deployHookTriggerConfigV3
+	slackDeployHookFields
+}
+
+type slackDeployHookFields struct {
 	SlackChannel *string `json:"slackChannel,omitempty" form:"slackChannel"`
 }
 
@@ -25,6 +29,6 @@ func slackDeployHookFromModel(model models.SlackDeployHook) SlackDeployHookV3 {
 	return SlackDeployHookV3{
 		commonFields:              commonFieldsFromGormModel(model.Model),
 		deployHookTriggerConfigV3: deployHookTriggerConfigFromModel(model.Trigger),
-		SlackChannel:              model.SlackChannel,
+		slackDeployHookFields:     slackDeployHookFields{SlackChannel: model.SlackChannel},
 	}
 }
