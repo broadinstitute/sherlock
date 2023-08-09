@@ -624,7 +624,7 @@
                     }
                 }
             },
-            "put": {
+            "post": {
                 "description": "Create a GithubActionsDeployHook.",
                 "consumes": [
                     "application/json"
@@ -1007,7 +1007,7 @@
                     }
                 }
             },
-            "put": {
+            "post": {
                 "description": "Create a SlackDeployHook.",
                 "consumes": [
                     "application/json"

@@ -25,7 +25,7 @@ type GithubActionsDeployHookV3Create struct {
 //	@param			githubActionsDeployHook	body		GithubActionsDeployHookV3Create	true	"The GithubActionsDeployHook to create"
 //	@success		201						{object}	GithubActionsDeployHookV3
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
-//	@router			/api/deploy-hooks/github-actions/v3 [put]
+//	@router			/api/deploy-hooks/github-actions/v3 [post]
 func githubActionsDeployHooksV3Create(ctx *gin.Context) {
 	db, err := authentication.MustUseDB(ctx)
 	if err != nil {

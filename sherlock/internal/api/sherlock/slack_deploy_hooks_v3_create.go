@@ -25,7 +25,7 @@ type SlackDeployHookV3Create struct {
 //	@param			slackDeployHook			body		SlackDeployHookV3Create	true	"The SlackDeployHook to create"
 //	@success		201						{object}	SlackDeployHookV3
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
-//	@router			/api/deploy-hooks/slack/v3 [put]
+//	@router			/api/deploy-hooks/slack/v3 [post]
 func slackDeployHooksV3Create(ctx *gin.Context) {
 	db, err := authentication.MustUseDB(ctx)
 	if err != nil {

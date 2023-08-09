@@ -630,7 +630,7 @@ const docTemplate = `{
                     }
                 }
             },
-            "put": {
+            "post": {
                 "description": "Create a GithubActionsDeployHook.",
                 "consumes": [
                     "application/json"
@@ -1013,7 +1013,7 @@ const docTemplate = `{
                     }
                 }
             },
-            "put": {
+            "post": {
                 "description": "Create a SlackDeployHook.",
                 "consumes": [
                     "application/json"
