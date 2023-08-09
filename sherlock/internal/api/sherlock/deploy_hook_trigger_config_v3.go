@@ -11,10 +11,10 @@ import (
 // to be directly exposed in the API. Instead, SlackDeployHookV3 and GithubActionsDeployHookV3
 // will embed this struct.
 type deployHookTriggerConfigV3 struct {
-	OnEnvironment  *string
-	OnChartRelease *string
-	OnFailure      *bool
-	OnSuccess      *bool
+	OnEnvironment  *string `json:"onEnvironment,omitempty" form:"onEnvironment"`
+	OnChartRelease *string `json:"onChartRelease,omitempty" form:"onChartRelease"`
+	OnFailure      *bool   `json:"onFailure,omitempty" form:"onFailure"`
+	OnSuccess      *bool   `json:"onSuccess,omitempty" form:"onSuccess"`
 }
 
 func (d deployHookTriggerConfigV3) toModel(db *gorm.DB) (models.DeployHookTriggerConfig, error) {

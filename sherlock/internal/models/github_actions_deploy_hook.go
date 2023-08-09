@@ -11,9 +11,9 @@ type GithubActionsDeployHook struct {
 	GithubActionsOwner          *string
 	GithubActionsRepo           *string
 	GithubActionsWorkflowPath   *string
-	GithubActionsDefaultRef     *string // Must be "always-use-default-ref", "use-app-version-as-ref", or "use-app-version-commit-as-ref"
-	GithubActionsRefBehavior    *string
-	GithubActionsWorkflowInputs datatypes.JSON
+	GithubActionsDefaultRef     *string
+	GithubActionsRefBehavior    *string // Must be "always-use-default-ref", "use-app-version-as-ref", or "use-app-version-commit-as-ref"
+	GithubActionsWorkflowInputs *datatypes.JSON
 }
 
 func (g *GithubActionsDeployHook) TableName() string {

@@ -8,7 +8,7 @@ import (
 type SlackDeployHookV3 struct {
 	commonFields
 	deployHookTriggerConfigV3
-	SlackChannel *string
+	SlackChannel *string `json:"slackChannel,omitempty" form:"slackChannel"`
 }
 
 func (s SlackDeployHookV3) toModel(db *gorm.DB) (models.SlackDeployHook, error) {
