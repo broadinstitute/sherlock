@@ -10,8 +10,10 @@ import (
 
 func (s *handlerSuite) Test_deployHookTriggerConfigV3_toModel_simple() {
 	ret, err := deployHookTriggerConfigV3{
-		OnFailure: testutils.PointerTo(true),
-		OnSuccess: testutils.PointerTo(true),
+		deployHookTriggerConfigV3EditableFields: deployHookTriggerConfigV3EditableFields{
+			OnFailure: testutils.PointerTo(true),
+			OnSuccess: testutils.PointerTo(true),
+		},
 	}.toModel(nil)
 	s.NoError(err)
 	if s.NotNil(ret.OnFailure) {
@@ -152,7 +154,9 @@ func Test_deployHookTriggerConfigFromModel(t *testing.T) {
 				OnFailure: testutils.PointerTo(true),
 			}},
 			want: deployHookTriggerConfigV3{
-				OnFailure: testutils.PointerTo(true),
+				deployHookTriggerConfigV3EditableFields: deployHookTriggerConfigV3EditableFields{
+					OnFailure: testutils.PointerTo(true),
+				},
 			},
 		},
 		{
@@ -161,7 +165,9 @@ func Test_deployHookTriggerConfigFromModel(t *testing.T) {
 				OnSuccess: testutils.PointerTo(true),
 			}},
 			want: deployHookTriggerConfigV3{
-				OnSuccess: testutils.PointerTo(true),
+				deployHookTriggerConfigV3EditableFields: deployHookTriggerConfigV3EditableFields{
+					OnSuccess: testutils.PointerTo(true),
+				},
 			},
 		},
 		{
