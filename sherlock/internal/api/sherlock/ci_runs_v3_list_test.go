@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-func (s *handlerSuite) TestCiRunsV3ListNone() {
+func (s *handlerSuite) TestCiRunsV3List_none() {
 	var got []CiRunV3
 	code := s.HandleRequest(
 		s.NewRequest("GET", "/api/ci-runs/v3", nil),

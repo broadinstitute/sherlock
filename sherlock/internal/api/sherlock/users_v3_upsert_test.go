@@ -14,7 +14,7 @@ import (
 	"testing"
 )
 
-func (s *handlerSuite) TestUserV3UpsertError() {
+func (s *handlerSuite) TestUserV3Upsert_error() {
 	var got errors.ErrorResponse
 	code := s.HandleRequest(
 		s.NewRequest("PUT", "/api/users/v3", gin.H{"name": true}),
@@ -23,7 +23,7 @@ func (s *handlerSuite) TestUserV3UpsertError() {
 	s.Equal(errors.BadRequest, got.Type)
 }
 
-func (s *handlerSuite) TestUserV3UpsertEmpty() {
+func (s *handlerSuite) TestUserV3Upsert_empty() {
 	s.Run("{}", func() {
 		var got UserV3
 		code := s.HandleRequest(
@@ -42,7 +42,7 @@ func (s *handlerSuite) TestUserV3UpsertEmpty() {
 	})
 }
 
-func (s *handlerSuite) TestUserV3UpsertName() {
+func (s *handlerSuite) TestUserV3Upsert_name() {
 
 	var got UserV3
 	code := s.HandleRequest(
@@ -72,7 +72,7 @@ func (s *handlerSuite) TestUserV3UpsertName() {
 	})
 }
 
-func (s *handlerSuite) TestUserV3UpsertNameInferredFromGithub() {
+func (s *handlerSuite) TestUserV3Upsert_nameInferredFromGithub() {
 	var got UserV3
 	code := s.HandleRequest(
 		s.NewRequest("PUT", "/api/users/v3", UserV3Upsert{

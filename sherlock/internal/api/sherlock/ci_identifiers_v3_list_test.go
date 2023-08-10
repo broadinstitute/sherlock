@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-func (s *handlerSuite) TestCiIdentifiersV3ListNone() {
+func (s *handlerSuite) TestCiIdentifiersV3List_none() {
 	var got []CiIdentifierV3
 	code := s.HandleRequest(
 		s.NewRequest("GET", "/api/ci-identifiers/v3", nil),

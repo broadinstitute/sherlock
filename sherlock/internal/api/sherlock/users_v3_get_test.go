@@ -13,7 +13,7 @@ import (
 	"testing"
 )
 
-func (s *handlerSuite) TestUserV3GetBadSelector() {
+func (s *handlerSuite) TestUserV3Get_badSelector() {
 	var got errors.ErrorResponse
 	code := s.HandleRequest(
 		s.NewRequest("GET", "/api/users/v3/foo-bar", nil),
@@ -22,7 +22,7 @@ func (s *handlerSuite) TestUserV3GetBadSelector() {
 	s.Equal(errors.BadRequest, got.Type)
 }
 
-func (s *handlerSuite) TestUserV3GetNotFound() {
+func (s *handlerSuite) TestUserV3Get_notFound() {
 	var got errors.ErrorResponse
 	code := s.HandleRequest(
 		s.NewRequest("GET", "/api/users/v3/foo@example.com", nil),
@@ -31,7 +31,7 @@ func (s *handlerSuite) TestUserV3GetNotFound() {
 	s.Equal(errors.NotFound, got.Type)
 }
 
-func (s *handlerSuite) TestUsersV3GetSelf() {
+func (s *handlerSuite) TestUsersV3Get_self() {
 	for _, selector := range []string{"self", "me", test_users.SuitableTestUserEmail, fmt.Sprintf("google-id/%s", test_users.SuitableTestUserGoogleID)} {
 		s.Run(fmt.Sprintf("get own user via '%s'", selector), func() {
 			var got UserV3
@@ -45,7 +45,7 @@ func (s *handlerSuite) TestUsersV3GetSelf() {
 	}
 }
 
-func (s *handlerSuite) TestUserV3GetOthers() {
+func (s *handlerSuite) TestUserV3Get_others() {
 	dummyUser := models.User{
 		Email:          "dummy@example.com",
 		GoogleID:       "some-fake-google-id",

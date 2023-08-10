@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-func (s *handlerSuite) TestCiIdentifiersV3GetBadSelector() {
+func (s *handlerSuite) TestCiIdentifiersV3Get_badSelector() {
 	var got errors.ErrorResponse
 	code := s.HandleRequest(
 		s.NewRequest("GET", "/api/ci-identifiers/v3/foo-bar", nil),
@@ -20,7 +20,7 @@ func (s *handlerSuite) TestCiIdentifiersV3GetBadSelector() {
 	s.Equal(errors.BadRequest, got.Type)
 }
 
-func (s *handlerSuite) TestCiIdentifiersV3GetNotFound() {
+func (s *handlerSuite) TestCiIdentifiersV3Get_notFound() {
 	var got errors.ErrorResponse
 	code := s.HandleRequest(
 		s.NewRequest("GET", "/api/ci-identifiers/v3/0", nil),

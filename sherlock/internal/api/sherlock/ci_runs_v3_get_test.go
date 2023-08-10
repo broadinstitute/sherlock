@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-func (s *handlerSuite) TestCiRunsV3GetBadSelector() {
+func (s *handlerSuite) TestCiRunsV3Get_badSelector() {
 	var got errors.ErrorResponse
 	code := s.HandleRequest(
 		s.NewRequest("GET", "/api/ci-runs/v3/foo-bar", nil),
@@ -16,7 +16,7 @@ func (s *handlerSuite) TestCiRunsV3GetBadSelector() {
 	s.Equal(errors.BadRequest, got.Type)
 }
 
-func (s *handlerSuite) TestCiRunsV3GetNotFound() {
+func (s *handlerSuite) TestCiRunsV3Get_notFound() {
 	var got errors.ErrorResponse
 	code := s.HandleRequest(
 		s.NewRequest("GET", "/api/ci-runs/v3/0", nil),

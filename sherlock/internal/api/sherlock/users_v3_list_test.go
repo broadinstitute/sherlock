@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-func (s *handlerSuite) TestUsersV3ListMinimal() {
+func (s *handlerSuite) TestUsersV3List_minimal() {
 	var got []UserV3
 	code := s.HandleRequest(
 		s.NewRequest("GET", "/api/users/v3", nil),

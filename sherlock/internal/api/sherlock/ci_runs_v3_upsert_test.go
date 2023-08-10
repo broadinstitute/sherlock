@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-func (s *handlerSuite) TestCiRunsV3UpsertError() {
+func (s *handlerSuite) TestCiRunsV3Upsert_error() {
 	var got errors.ErrorResponse
 	code := s.HandleRequest(
 		s.NewRequest("PUT", "/api/ci-runs/v3", CiRunV3Upsert{}),
@@ -450,7 +450,7 @@ func (s *handlerSuite) TestCiRunsV3UpsertIdentifiers() {
 	})
 }
 
-func (s *handlerSuite) TestCiRunsV3UpsertIdentifiersInvalid() {
+func (s *handlerSuite) TestCiRunsV3Upsert_identifiersInvalid() {
 	user := s.SetSuitableTestUserForDB()
 
 	_, created, err := v2models.InternalChartStore.Create(s.DB, v2models.Chart{
@@ -478,7 +478,7 @@ func (s *handlerSuite) TestCiRunsV3UpsertIdentifiersInvalid() {
 	s.Equal(got.Type, errors.BadRequest)
 }
 
-func (s *handlerSuite) TestCiRunsV3UpsertIdentifiersInvalidIgnore() {
+func (s *handlerSuite) TestCiRunsV3Upsert_identifiersInvalidIgnore() {
 	user := s.SetSuitableTestUserForDB()
 
 	chart, created, err := v2models.InternalChartStore.Create(s.DB, v2models.Chart{
