@@ -1,6 +1,7 @@
 package sherlock
 
 import (
+	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"net/http"
 )
@@ -12,6 +13,33 @@ func (s *handlerSuite) TestCiRunsV3List_none() {
 		&got)
 	s.Equal(http.StatusOK, code)
 	s.Len(got, 0)
+}
+
+func (s *handlerSuite) TestCiRunsV3List_badFilter() {
+	var got errors.ErrorResponse
+	code := s.HandleRequest(
+		s.NewRequest("GET", "/api/ci-runs/v3?id=foo", nil),
+		&got)
+	s.Equal(http.StatusBadRequest, code)
+	s.Equal(errors.BadRequest, got.Type)
+}
+
+func (s *handlerSuite) TestCiRunsV3List_badLimit() {
+	var got errors.ErrorResponse
+	code := s.HandleRequest(
+		s.NewRequest("GET", "/api/ci-runs/v3?limit=foo", nil),
+		&got)
+	s.Equal(http.StatusBadRequest, code)
+	s.Equal(errors.BadRequest, got.Type)
+}
+
+func (s *handlerSuite) TestCiRunsV3List_badOffset() {
+	var got errors.ErrorResponse
+	code := s.HandleRequest(
+		s.NewRequest("GET", "/api/ci-runs/v3?offset=foo", nil),
+		&got)
+	s.Equal(http.StatusBadRequest, code)
+	s.Equal(errors.BadRequest, got.Type)
 }
 
 func (s *handlerSuite) TestCiRunsV3List() {
