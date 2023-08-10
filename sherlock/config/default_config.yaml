@@ -74,6 +74,7 @@ pagerduty:
   enable: false
 
 pactbroker:
+  url: https://pact-broker.dsp-eng-tools.broadinstitute.org
   auth:
     username: replace-username
     password: replace-password

@@ -5757,8 +5757,9 @@
                         "in": "query"
                     },
                     {
-                        "type": "string",
+                        "type": "uuid",
                         "name": "PactIdentifier",
+                        "description": "UUID of environment",
                         "in": "query"
                     },
                     {
@@ -10292,7 +10293,8 @@
                     "type": "string"
                 },
                 "pactIdentifier": {
-                    "type": "string"
+                    "type": "uuid",
+                    "description": "UUID of environment"
                 },
                 "pagerdutyIntegration": {
                     "type": "string"
@@ -10645,7 +10647,8 @@
                     "type": "string"
                 },
                 "pactIdentifier": {
-                    "type": "string"
+                    "type": "uuid",
+                    "description": "UUID of environment"
                 },
                 "pagerdutyIntegration": {
                     "type": "string"
@@ -10787,7 +10790,8 @@
                     "$ref": "#/definitions/v2controllers.User"
                 },
                 "pactIdentifier": {
-                    "type": "string"
+                    "type": "uuid",
+                    "description": "UUID of environment"
                 },
                 "pagerdutyIntegration": {
                     "type": "string"
