@@ -3,6 +3,7 @@ package sherlock
 import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/authentication"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -27,9 +28,19 @@ func githubActionsDeployHooksV3Delete(ctx *gin.Context) {
 		errors.AbortRequest(ctx, err)
 		return
 	}
-	if err = db.Select("Trigger").Delete(&query).Error; err != nil {
+	var result models.GithubActionsDeployHook
+	if err = db.
+		Preload("Trigger").
+		Preload("Trigger.OnEnvironment").
+		Preload("Trigger.OnChartRelease").
+		Where(&query).
+		First(&result).Error; err != nil {
 		errors.AbortRequest(ctx, err)
 		return
 	}
-	ctx.JSON(http.StatusOK, githubActionsDeployHookFromModel(query))
+	if err = db.Select("Trigger").Delete(&result).Error; err != nil {
+		errors.AbortRequest(ctx, err)
+		return
+	}
+	ctx.JSON(http.StatusOK, githubActionsDeployHookFromModel(result))
 }
