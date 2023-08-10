@@ -2,6 +2,7 @@ package db
 
 import (
 	"github.com/stretchr/testify/assert"
+	"path"
 	"strings"
 	"testing"
 )
@@ -16,13 +17,24 @@ func TestMigrationFiles(t *testing.T) {
 		assert.Falsef(t, entry.IsDir(), "%s is directory", entry.Name())
 		filenames[index] = entry.Name()
 	}
-	for _, filename := range filenames {
-		if strings.HasSuffix(filename, ".down.sql") {
-			assert.Contains(t, filenames, strings.TrimSuffix(filename, ".down.sql")+".up.sql")
-		} else if strings.HasSuffix(filename, ".up.sql") {
-			assert.Contains(t, filenames, strings.TrimSuffix(filename, ".up.sql")+".down.sql")
-		} else {
-			assert.Failf(t, "file lacks .up.sql or .down.sql extension", "filename '%s'", filename)
+	t.Run("migration file naming", func(t *testing.T) {
+		for _, filename := range filenames {
+			if strings.HasSuffix(filename, ".down.sql") {
+				assert.Contains(t, filenames, strings.TrimSuffix(filename, ".down.sql")+".up.sql")
+			} else if strings.HasSuffix(filename, ".up.sql") {
+				assert.Contains(t, filenames, strings.TrimSuffix(filename, ".up.sql")+".down.sql")
+			} else {
+				assert.Failf(t, "file lacks .up.sql or .down.sql extension", "filename '%s'", filename)
+			}
 		}
-	}
+	})
+
+	// This is kinda a linting thing but it's easier to enforce via test than anything else.
+	t.Run("migration files end with newlines", func(t *testing.T) {
+		for _, filename := range filenames {
+			data, err := MigrationFiles.ReadFile(path.Join("migrations", filename))
+			assert.NoError(t, err)
+			assert.Truef(t, strings.HasSuffix(string(data), "\n"), "migrations/%s should end with a newline", filename)
+		}
+	})
 }
