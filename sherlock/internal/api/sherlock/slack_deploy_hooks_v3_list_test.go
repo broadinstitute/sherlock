@@ -82,6 +82,21 @@ func (s *handlerSuite) TestSlackDeployHooksV3List() {
 	}, user)
 	s.NoError(err)
 	s.True(created)
+	environment2, created, err := v2models.InternalEnvironmentStore.Create(s.DB, v2models.Environment{
+		Name:                       "alpha",
+		Lifecycle:                  "static",
+		UniqueResourcePrefix:       "a1b3",
+		Base:                       "live",
+		DefaultClusterID:           &cluster.ID,
+		DefaultNamespace:           "terra-alpha",
+		OwnerID:                    &user.ID,
+		RequiresSuitability:        testutils.PointerTo(false),
+		HelmfileRef:                testutils.PointerTo("HEAD"),
+		DefaultFirecloudDevelopRef: testutils.PointerTo("alpha"),
+		PreventDeletion:            testutils.PointerTo(false),
+	}, user)
+	s.NoError(err)
+	s.True(created)
 
 	hook1 := models.SlackDeployHook{
 		Trigger: models.DeployHookTriggerConfig{
@@ -97,7 +112,7 @@ func (s *handlerSuite) TestSlackDeployHooksV3List() {
 	}
 	hook3 := models.SlackDeployHook{
 		Trigger: models.DeployHookTriggerConfig{
-			OnEnvironmentID: &environment.ID,
+			OnEnvironmentID: &environment2.ID,
 		},
 		SlackChannel: testutils.PointerTo("another channel"),
 	}
@@ -129,6 +144,14 @@ func (s *handlerSuite) TestSlackDeployHooksV3List() {
 			&got)
 		s.Equal(http.StatusOK, code)
 		s.Len(got, 1)
+	})
+	s.Run("some by environment", func() {
+		var got []SlackDeployHookV3
+		code := s.HandleRequest(
+			s.NewRequest("GET", "/api/deploy-hooks/slack/v3?onEnvironment=dev", nil),
+			&got)
+		s.Equal(http.StatusOK, code)
+		s.Len(got, 2)
 	})
 	s.Run("limit and offset", func() {
 		var got1 []SlackDeployHookV3

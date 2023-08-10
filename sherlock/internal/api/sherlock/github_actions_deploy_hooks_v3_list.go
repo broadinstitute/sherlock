@@ -7,7 +7,6 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm/clause"
 	"net/http"
 )
 
@@ -49,7 +48,13 @@ func githubActionsDeployHooksV3List(ctx *gin.Context) {
 		return
 	}
 	var results []models.GithubActionsDeployHook
-	if err = db.Preload(clause.Associations).Where(&modelFilter).Limit(limit).Offset(offset).Order("created_at desc").Find(&results).Error; err != nil {
+	if err = db.
+		InnerJoins("Trigger", db.Where(&modelFilter.Trigger)).
+		Where(&modelFilter).
+		Limit(limit).
+		Offset(offset).
+		Order("created_at desc").
+		Find(&results).Error; err != nil {
 		errors.AbortRequest(ctx, err)
 		return
 	}
