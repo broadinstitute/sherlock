@@ -6,7 +6,10 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
+	"github.com/stretchr/testify/assert"
+	"gorm.io/gorm"
 	"net/http"
+	"testing"
 )
 
 func (s *handlerSuite) TestSlackDeployHooksV3Get_badSelector() {
@@ -75,5 +78,43 @@ func (s *handlerSuite) TestSlackDeployHooksV3Get() {
 	}
 	if s.NotNil(got.OnEnvironment) {
 		s.Equal(environment.Name, *got.OnEnvironment)
+	}
+}
+
+func Test_slackDeployHookModelFromSelector(t *testing.T) {
+	type args struct {
+		selector string
+	}
+	tests := []struct {
+		name      string
+		args      args
+		wantQuery models.SlackDeployHook
+		wantErr   assert.ErrorAssertionFunc
+	}{
+		{
+			name:    "empty",
+			args:    args{selector: ""},
+			wantErr: assert.Error,
+		},
+		{
+			name:      "id",
+			args:      args{selector: "123"},
+			wantQuery: models.SlackDeployHook{Model: gorm.Model{ID: 123}},
+			wantErr:   assert.NoError,
+		},
+		{
+			name:    "invalid",
+			args:    args{selector: "foo-bar"},
+			wantErr: assert.Error,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotQuery, err := slackDeployHookModelFromSelector(tt.args.selector)
+			if !tt.wantErr(t, err, fmt.Sprintf("slackDeployHookModelFromSelector(%v)", tt.args.selector)) {
+				return
+			}
+			assert.Equalf(t, tt.wantQuery, gotQuery, "slackDeployHookModelFromSelector(%v)", tt.args.selector)
+		})
 	}
 }
