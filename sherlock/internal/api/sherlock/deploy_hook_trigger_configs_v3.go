@@ -7,10 +7,10 @@ import (
 	"gorm.io/gorm"
 )
 
-// deployHookTriggerConfigV3 isn't an exported field because this data type isn't intended
+// DeployHookTriggerConfigV3 isn't an exported field because this data type isn't intended
 // to be directly exposed in the API. Instead, SlackDeployHookV3 and GithubActionsDeployHookV3
 // will embed this struct.
-type deployHookTriggerConfigV3 struct {
+type DeployHookTriggerConfigV3 struct {
 	OnEnvironment  *string `json:"onEnvironment,omitempty" form:"onEnvironment"`
 	OnChartRelease *string `json:"onChartRelease,omitempty" form:"onChartRelease"`
 	deployHookTriggerConfigV3EditableFields
@@ -21,7 +21,7 @@ type deployHookTriggerConfigV3EditableFields struct {
 	OnSuccess *bool `json:"onSuccess,omitempty" form:"onSuccess"`
 }
 
-func (d deployHookTriggerConfigV3) toModel(db *gorm.DB) (models.DeployHookTriggerConfig, error) {
+func (d DeployHookTriggerConfigV3) toModel(db *gorm.DB) (models.DeployHookTriggerConfig, error) {
 	ret := models.DeployHookTriggerConfig{
 		OnFailure: d.OnFailure,
 		OnSuccess: d.OnSuccess,
@@ -43,7 +43,7 @@ func (d deployHookTriggerConfigV3) toModel(db *gorm.DB) (models.DeployHookTrigge
 	return ret, nil
 }
 
-func deployHookTriggerConfigFromModel(model models.DeployHookTriggerConfig) deployHookTriggerConfigV3 {
+func deployHookTriggerConfigFromModel(model models.DeployHookTriggerConfig) DeployHookTriggerConfigV3 {
 	var onEnvironment *string
 	if model.OnEnvironment != nil && model.OnEnvironment.Name != "" {
 		onEnvironment = &model.OnEnvironment.Name
@@ -58,7 +58,7 @@ func deployHookTriggerConfigFromModel(model models.DeployHookTriggerConfig) depl
 		s := utils.UintToString(*model.OnChartReleaseID)
 		onChartRelease = &s
 	}
-	return deployHookTriggerConfigV3{
+	return DeployHookTriggerConfigV3{
 		OnEnvironment:  onEnvironment,
 		OnChartRelease: onChartRelease,
 		deployHookTriggerConfigV3EditableFields: deployHookTriggerConfigV3EditableFields{

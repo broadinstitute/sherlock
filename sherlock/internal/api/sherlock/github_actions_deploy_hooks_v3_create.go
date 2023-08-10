@@ -11,8 +11,8 @@ import (
 )
 
 type GithubActionsDeployHookV3Create struct {
-	deployHookTriggerConfigV3
-	githubActionsDeployHookFields
+	DeployHookTriggerConfigV3
+	GithubActionsDeployHookFields
 }
 
 // githubActionsDeployHooksV3Create godoc
@@ -43,7 +43,7 @@ func githubActionsDeployHooksV3Create(ctx *gin.Context) {
 		return
 	}
 
-	trigger, err := body.deployHookTriggerConfigV3.toModel(db)
+	trigger, err := body.DeployHookTriggerConfigV3.toModel(db)
 	if err != nil {
 		errors.AbortRequest(ctx, err)
 		return

@@ -11,8 +11,8 @@ import (
 )
 
 type SlackDeployHookV3Create struct {
-	deployHookTriggerConfigV3
-	slackDeployHookFields
+	DeployHookTriggerConfigV3
+	SlackDeployHookFields
 }
 
 // slackDeployHooksV3Create godoc
@@ -43,7 +43,7 @@ func slackDeployHooksV3Create(ctx *gin.Context) {
 		return
 	}
 
-	trigger, err := body.deployHookTriggerConfigV3.toModel(db)
+	trigger, err := body.DeployHookTriggerConfigV3.toModel(db)
 	if err != nil {
 		errors.AbortRequest(ctx, err)
 		return

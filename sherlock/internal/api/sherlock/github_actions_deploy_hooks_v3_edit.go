@@ -12,7 +12,7 @@ import (
 
 type GithubActionsDeployHookV3Edit struct {
 	deployHookTriggerConfigV3EditableFields
-	githubActionsDeployHookFields
+	GithubActionsDeployHookFields
 }
 
 // githubActionsDeployHooksV3Edit godoc
@@ -44,7 +44,7 @@ func githubActionsDeployHooksV3Edit(ctx *gin.Context) {
 		return
 	}
 
-	trigger, err := deployHookTriggerConfigV3{deployHookTriggerConfigV3EditableFields: body.deployHookTriggerConfigV3EditableFields}.toModel(db)
+	trigger, err := DeployHookTriggerConfigV3{deployHookTriggerConfigV3EditableFields: body.deployHookTriggerConfigV3EditableFields}.toModel(db)
 	if err != nil {
 		errors.AbortRequest(ctx, err)
 		return

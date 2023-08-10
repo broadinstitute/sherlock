@@ -8,27 +8,30 @@ import (
 	"net/http"
 )
 
-func (s *handlerSuite) TestSlackDeployHooksV3Create_badBody() {
+func (s *handlerSuite) TestGithubActionsDeployHooksV3Create_badBody() {
 	var got errors.ErrorResponse
 	code := s.HandleRequest(
-		s.NewRequest("POST", "/api/deploy-hooks/slack/v3", gin.H{
-			"slackChannel": 123,
+		s.NewRequest("POST", "/api/deploy-hooks/github-actions/v3", gin.H{
+			"githubActionsOwner": 123,
 		}),
 		&got)
 	s.Equal(http.StatusBadRequest, code)
 	s.Equal(errors.BadRequest, got.Type)
-	s.Contains(got.Message, "slackChannel")
+	s.Contains(got.Message, "githubActionsOwner")
 }
 
-func (s *handlerSuite) TestSlackDeployHooksV3Create_notFoundBody() {
+func (s *handlerSuite) TestGithubActionsDeployHooksV3Create_notFoundBody() {
 	var got errors.ErrorResponse
 	code := s.HandleRequest(
-		s.NewRequest("POST", "/api/deploy-hooks/slack/v3", SlackDeployHookV3Create{
+		s.NewRequest("POST", "/api/deploy-hooks/github-actions/v3", GithubActionsDeployHookV3Create{
 			DeployHookTriggerConfigV3: DeployHookTriggerConfigV3{
 				OnEnvironment: testutils.PointerTo("foo"),
 			},
-			SlackDeployHookFields: SlackDeployHookFields{
-				SlackChannel: testutils.PointerTo("channel"),
+			GithubActionsDeployHookFields: GithubActionsDeployHookFields{
+				GithubActionsOwner:        testutils.PointerTo("owner"),
+				GithubActionsRepo:         testutils.PointerTo("repo"),
+				GithubActionsWorkflowPath: testutils.PointerTo("path"),
+				GithubActionsDefaultRef:   testutils.PointerTo("head"),
 			},
 		}),
 		&got)
@@ -36,7 +39,7 @@ func (s *handlerSuite) TestSlackDeployHooksV3Create_notFoundBody() {
 	s.Equal(errors.NotFound, got.Type)
 }
 
-func (s *handlerSuite) TestSlackDeployHooksV3Create_sqlValidation() {
+func (s *handlerSuite) TestGithubActionsDeployHooksV3Create_sqlValidation() {
 	user := s.SetSuitableTestUserForDB()
 	cluster, created, err := v2models.InternalClusterStore.Create(s.DB, v2models.Cluster{
 		Name:                "terra-dev",
@@ -68,18 +71,23 @@ func (s *handlerSuite) TestSlackDeployHooksV3Create_sqlValidation() {
 
 	var got errors.ErrorResponse
 	code := s.HandleRequest(
-		s.NewRequest("POST", "/api/deploy-hooks/slack/v3", SlackDeployHookV3Create{
+		s.NewRequest("POST", "/api/deploy-hooks/github-actions/v3", GithubActionsDeployHookV3Create{
 			DeployHookTriggerConfigV3: DeployHookTriggerConfigV3{
 				OnEnvironment: &environment.Name,
+			},
+			GithubActionsDeployHookFields: GithubActionsDeployHookFields{
+				GithubActionsRepo:         testutils.PointerTo("repo"),
+				GithubActionsWorkflowPath: testutils.PointerTo("path"),
+				GithubActionsDefaultRef:   testutils.PointerTo("head"),
 			},
 		}),
 		&got)
 	s.Equal(http.StatusBadRequest, code)
 	s.Equal(errors.BadRequest, got.Type)
-	s.Contains(got.Message, "slack_channel_present")
+	s.Contains(got.Message, "github_actions_owner_present")
 }
 
-func (s *handlerSuite) TestSlackDeployHooksV3Create() {
+func (s *handlerSuite) TestGithubActionsDeployHooksV3Create() {
 	user := s.SetSuitableTestUserForDB()
 	cluster, created, err := v2models.InternalClusterStore.Create(s.DB, v2models.Cluster{
 		Name:                "terra-dev",
@@ -109,22 +117,53 @@ func (s *handlerSuite) TestSlackDeployHooksV3Create() {
 	s.NoError(err)
 	s.True(created)
 
-	var got SlackDeployHookV3
-	code := s.HandleRequest(
-		s.NewRequest("POST", "/api/deploy-hooks/slack/v3", SlackDeployHookV3Create{
-			DeployHookTriggerConfigV3: DeployHookTriggerConfigV3{
-				OnEnvironment: &environment.Name,
-			},
-			SlackDeployHookFields: SlackDeployHookFields{
-				SlackChannel: testutils.PointerTo("channel"),
-			},
-		}),
-		&got)
-	s.Equal(http.StatusCreated, code)
-	if s.NotNil(got.SlackChannel) {
-		s.Equal("channel", *got.SlackChannel)
-	}
-	if s.NotNil(got.OnEnvironment) {
-		s.Equal(environment.Name, *got.OnEnvironment)
-	}
+	s.Run("simple case", func() {
+		var got GithubActionsDeployHookV3
+		code := s.HandleRequest(
+			s.NewRequest("POST", "/api/deploy-hooks/github-actions/v3", GithubActionsDeployHookV3Create{
+				DeployHookTriggerConfigV3: DeployHookTriggerConfigV3{
+					OnEnvironment: &environment.Name,
+				},
+				GithubActionsDeployHookFields: GithubActionsDeployHookFields{
+					GithubActionsOwner:        testutils.PointerTo("owner"),
+					GithubActionsRepo:         testutils.PointerTo("repo"),
+					GithubActionsWorkflowPath: testutils.PointerTo("path"),
+					GithubActionsDefaultRef:   testutils.PointerTo("head"),
+				},
+			}),
+			&got)
+		s.Equal(http.StatusCreated, code)
+		if s.NotNil(got.GithubActionsOwner) {
+			s.Equal("owner", *got.GithubActionsOwner)
+		}
+		if s.NotNil(got.OnEnvironment) {
+			s.Equal(environment.Name, *got.OnEnvironment)
+		}
+	})
+
+	s.Run("advanced case with JSON inputs", func() {
+		var got GithubActionsDeployHookV3
+		code := s.HandleRequest(
+			s.NewRequest("POST", "/api/deploy-hooks/github-actions/v3", gin.H{
+				"onEnvironment":             environment.Name,
+				"githubActionsOwner":        "owner",
+				"githubActionsRepo":         "repo",
+				"githubActionsWorkflowPath": "path",
+				"githubActionsDefaultRef":   "head",
+				"githubActionsWorkflowInputs": gin.H{
+					"input-1": "foo",
+				},
+			}),
+			&got)
+		s.Equal(http.StatusCreated, code)
+		if s.NotNil(got.GithubActionsOwner) {
+			s.Equal("owner", *got.GithubActionsOwner)
+		}
+		if s.NotNil(got.OnEnvironment) {
+			s.Equal(environment.Name, *got.OnEnvironment)
+		}
+		if s.NotNil(got.GithubActionsWorkflowInputs) {
+			s.Equal("{\"input-1\":\"foo\"}", got.GithubActionsWorkflowInputs.String())
+		}
+	})
 }

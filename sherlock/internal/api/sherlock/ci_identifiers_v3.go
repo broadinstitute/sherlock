@@ -6,7 +6,7 @@ import (
 )
 
 type CiIdentifierV3 struct {
-	commonFields
+	CommonFields
 	CiRuns       []CiRunV3 `json:"ciRuns,omitempty" form:"-"`
 	ResourceType string    `json:"resourceType" form:"resourceType"`
 	ResourceID   uint      `json:"resourceID" form:"resourceID"`
@@ -29,7 +29,7 @@ func ciIdentifierFromModel(model models.CiIdentifier) CiIdentifierV3 {
 		}
 	}
 	return CiIdentifierV3{
-		commonFields: commonFieldsFromGormModel(model.Model),
+		CommonFields: commonFieldsFromGormModel(model.Model),
 		CiRuns:       ciRuns,
 		ResourceType: model.ResourceType,
 		ResourceID:   model.ResourceID,

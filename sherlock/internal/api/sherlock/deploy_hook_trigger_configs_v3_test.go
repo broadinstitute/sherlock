@@ -9,7 +9,7 @@ import (
 )
 
 func (s *handlerSuite) Test_deployHookTriggerConfigV3_toModel_simple() {
-	ret, err := deployHookTriggerConfigV3{
+	ret, err := DeployHookTriggerConfigV3{
 		deployHookTriggerConfigV3EditableFields: deployHookTriggerConfigV3EditableFields{
 			OnFailure: testutils.PointerTo(true),
 			OnSuccess: testutils.PointerTo(true),
@@ -25,7 +25,7 @@ func (s *handlerSuite) Test_deployHookTriggerConfigV3_toModel_simple() {
 }
 
 func (s *handlerSuite) Test_deployHookTriggerConfigV3_toModel_environmentError() {
-	ret, err := deployHookTriggerConfigV3{
+	ret, err := DeployHookTriggerConfigV3{
 		OnEnvironment: testutils.PointerTo("bad selector"),
 	}.toModel(s.DB)
 	s.ErrorContains(err, "invalid environment selector")
@@ -61,7 +61,7 @@ func (s *handlerSuite) Test_deployHookTriggerConfigV3_toModel_environmentValid()
 	}, user)
 	s.NoError(err)
 	s.True(created)
-	ret, err := deployHookTriggerConfigV3{
+	ret, err := DeployHookTriggerConfigV3{
 		OnEnvironment: &environment.Name,
 	}.toModel(s.DB)
 	s.NoError(err)
@@ -71,7 +71,7 @@ func (s *handlerSuite) Test_deployHookTriggerConfigV3_toModel_environmentValid()
 }
 
 func (s *handlerSuite) Test_deployHookTriggerConfigV3_toModel_chartReleaseError() {
-	ret, err := deployHookTriggerConfigV3{
+	ret, err := DeployHookTriggerConfigV3{
 		OnChartRelease: testutils.PointerTo("bad selector"),
 	}.toModel(s.DB)
 	s.ErrorContains(err, "invalid chart release selector")
@@ -130,7 +130,7 @@ func (s *handlerSuite) Test_deployHookTriggerConfigV3_toModel_chartReleaseValid(
 	}, user)
 	s.NoError(err)
 	s.True(created)
-	ret, err := deployHookTriggerConfigV3{
+	ret, err := DeployHookTriggerConfigV3{
 		OnChartRelease: &chartRelease.Name,
 	}.toModel(s.DB)
 	s.NoError(err)
@@ -146,14 +146,14 @@ func Test_deployHookTriggerConfigFromModel(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want deployHookTriggerConfigV3
+		want DeployHookTriggerConfigV3
 	}{
 		{
 			name: "on failure",
 			args: args{model: models.DeployHookTriggerConfig{
 				OnFailure: testutils.PointerTo(true),
 			}},
-			want: deployHookTriggerConfigV3{
+			want: DeployHookTriggerConfigV3{
 				deployHookTriggerConfigV3EditableFields: deployHookTriggerConfigV3EditableFields{
 					OnFailure: testutils.PointerTo(true),
 				},
@@ -164,7 +164,7 @@ func Test_deployHookTriggerConfigFromModel(t *testing.T) {
 			args: args{model: models.DeployHookTriggerConfig{
 				OnSuccess: testutils.PointerTo(true),
 			}},
-			want: deployHookTriggerConfigV3{
+			want: DeployHookTriggerConfigV3{
 				deployHookTriggerConfigV3EditableFields: deployHookTriggerConfigV3EditableFields{
 					OnSuccess: testutils.PointerTo(true),
 				},
@@ -176,7 +176,7 @@ func Test_deployHookTriggerConfigFromModel(t *testing.T) {
 				OnEnvironmentID: testutils.PointerTo[uint](1),
 				OnEnvironment:   &models.Environment{Name: "name"},
 			}},
-			want: deployHookTriggerConfigV3{
+			want: DeployHookTriggerConfigV3{
 				OnEnvironment: testutils.PointerTo("name"),
 			},
 		},
@@ -185,7 +185,7 @@ func Test_deployHookTriggerConfigFromModel(t *testing.T) {
 			args: args{model: models.DeployHookTriggerConfig{
 				OnEnvironmentID: testutils.PointerTo[uint](1),
 			}},
-			want: deployHookTriggerConfigV3{
+			want: DeployHookTriggerConfigV3{
 				OnEnvironment: testutils.PointerTo("1"),
 			},
 		},
@@ -195,7 +195,7 @@ func Test_deployHookTriggerConfigFromModel(t *testing.T) {
 				OnChartReleaseID: testutils.PointerTo[uint](1),
 				OnChartRelease:   &models.ChartRelease{Name: "name"},
 			}},
-			want: deployHookTriggerConfigV3{
+			want: DeployHookTriggerConfigV3{
 				OnChartRelease: testutils.PointerTo("name"),
 			},
 		},
@@ -204,7 +204,7 @@ func Test_deployHookTriggerConfigFromModel(t *testing.T) {
 			args: args{model: models.DeployHookTriggerConfig{
 				OnChartReleaseID: testutils.PointerTo[uint](1),
 			}},
-			want: deployHookTriggerConfigV3{
+			want: DeployHookTriggerConfigV3{
 				OnChartRelease: testutils.PointerTo("1"),
 			},
 		},

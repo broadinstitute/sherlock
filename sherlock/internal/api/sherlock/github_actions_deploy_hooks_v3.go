@@ -7,12 +7,12 @@ import (
 )
 
 type GithubActionsDeployHookV3 struct {
-	commonFields
-	deployHookTriggerConfigV3
-	githubActionsDeployHookFields
+	CommonFields
+	DeployHookTriggerConfigV3
+	GithubActionsDeployHookFields
 }
 
-type githubActionsDeployHookFields struct {
+type GithubActionsDeployHookFields struct {
 	GithubActionsOwner        *string `json:"githubActionsOwner,omitempty" form:"githubActionsOwner"`
 	GithubActionsRepo         *string `json:"githubActionsRepo,omitempty" form:"githubActionsRepo"`
 	GithubActionsWorkflowPath *string `json:"githubActionsWorkflowPath,omitempty" form:"githubActionsWorkflowPath"`
@@ -25,7 +25,7 @@ type githubActionsDeployHookFields struct {
 
 func (g GithubActionsDeployHookV3) toModel(db *gorm.DB) (models.GithubActionsDeployHook, error) {
 	ret := models.GithubActionsDeployHook{
-		Model:                       g.commonFields.toGormModel(),
+		Model:                       g.CommonFields.toGormModel(),
 		GithubActionsOwner:          g.GithubActionsOwner,
 		GithubActionsRepo:           g.GithubActionsRepo,
 		GithubActionsWorkflowPath:   g.GithubActionsWorkflowPath,
@@ -34,15 +34,15 @@ func (g GithubActionsDeployHookV3) toModel(db *gorm.DB) (models.GithubActionsDep
 		GithubActionsWorkflowInputs: g.GithubActionsWorkflowInputs,
 	}
 	var err error
-	ret.Trigger, err = g.deployHookTriggerConfigV3.toModel(db)
+	ret.Trigger, err = g.DeployHookTriggerConfigV3.toModel(db)
 	return ret, err
 }
 
 func githubActionsDeployHookFromModel(model models.GithubActionsDeployHook) GithubActionsDeployHookV3 {
 	return GithubActionsDeployHookV3{
-		commonFields:              commonFieldsFromGormModel(model.Model),
-		deployHookTriggerConfigV3: deployHookTriggerConfigFromModel(model.Trigger),
-		githubActionsDeployHookFields: githubActionsDeployHookFields{
+		CommonFields:              commonFieldsFromGormModel(model.Model),
+		DeployHookTriggerConfigV3: deployHookTriggerConfigFromModel(model.Trigger),
+		GithubActionsDeployHookFields: GithubActionsDeployHookFields{
 			GithubActionsOwner:          model.GithubActionsOwner,
 			GithubActionsRepo:           model.GithubActionsRepo,
 			GithubActionsWorkflowPath:   model.GithubActionsWorkflowPath,
