@@ -6,7 +6,6 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm/clause"
 	"net/http"
 )
 
@@ -61,7 +60,12 @@ func githubActionsDeployHooksV3Edit(ctx *gin.Context) {
 	}
 
 	var toEdit models.GithubActionsDeployHook
-	if err = db.Preload(clause.Associations).Where(&query).First(&toEdit).Error; err != nil {
+	if err = db.
+		Preload("Trigger").
+		Preload("Trigger.OnEnvironment").
+		Preload("Trigger.OnChartRelease").
+		Where(&query).
+		First(&toEdit).Error; err != nil {
 		errors.AbortRequest(ctx, err)
 		return
 	}
