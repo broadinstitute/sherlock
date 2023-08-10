@@ -3330,6 +3330,12 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "boolean",
+                        "default": false,
+                        "name": "pactParticipant",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "name": "playbookURL",
                         "in": "query"
@@ -9509,6 +9515,10 @@ const docTemplate = `{
                     "description": "Required when creating",
                     "type": "string"
                 },
+                "pactParticipant": {
+                    "type": "boolean",
+                    "default": false
+                },
                 "playbookURL": {
                     "type": "string"
                 },
@@ -9903,6 +9913,10 @@ const docTemplate = `{
                 "name": {
                     "description": "Required when creating",
                     "type": "string"
+                },
+                "pactParticipant": {
+                    "type": "boolean",
+                    "default": false
                 },
                 "playbookURL": {
                     "type": "string"
@@ -10413,6 +10427,10 @@ const docTemplate = `{
                 },
                 "legacyConfigsEnabled": {
                     "description": "Indicates whether a chart requires config rendering from firecloud-develop",
+                    "type": "boolean",
+                    "default": false
+                },
+                "pactParticipant": {
                     "type": "boolean",
                     "default": false
                 },

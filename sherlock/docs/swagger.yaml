@@ -624,6 +624,9 @@ definitions:
       name:
         description: Required when creating
         type: string
+      pactParticipant:
+        default: false
+        type: boolean
       playbookURL:
         type: string
       updatedAt:
@@ -911,6 +914,9 @@ definitions:
       name:
         description: Required when creating
         type: string
+      pactParticipant:
+        default: false
+        type: boolean
       playbookURL:
         type: string
     type: object
@@ -1293,6 +1299,9 @@ definitions:
       legacyConfigsEnabled:
         default: false
         description: Indicates whether a chart requires config rendering from firecloud-develop
+        type: boolean
+      pactParticipant:
+        default: false
         type: boolean
       playbookURL:
         type: string
@@ -3883,6 +3892,10 @@ paths:
         in: query
         name: name
         type: string
+      - default: false
+        in: query
+        name: pactParticipant
+        type: boolean
       - in: query
         name: playbookURL
         type: string
