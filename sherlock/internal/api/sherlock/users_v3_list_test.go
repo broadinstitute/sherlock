@@ -3,6 +3,7 @@ package sherlock
 import (
 	"github.com/broadinstitute/sherlock/go-shared/pkg/testutils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/test_users"
+	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"net/http"
 )
@@ -19,6 +20,33 @@ func (s *handlerSuite) TestUsersV3List_minimal() {
 	s.Run("inserted user is self", func() {
 		s.Equal(test_users.SuitableTestUserEmail, got[0].Email)
 	})
+}
+
+func (s *handlerSuite) TestUsersV3List_badFilter() {
+	var got errors.ErrorResponse
+	code := s.HandleRequest(
+		s.NewRequest("GET", "/api/users/v3?id=foo", nil),
+		&got)
+	s.Equal(http.StatusBadRequest, code)
+	s.Equal(errors.BadRequest, got.Type)
+}
+
+func (s *handlerSuite) TestUsersV3List_badLimit() {
+	var got errors.ErrorResponse
+	code := s.HandleRequest(
+		s.NewRequest("GET", "/api/users/v3?limit=foo", nil),
+		&got)
+	s.Equal(http.StatusBadRequest, code)
+	s.Equal(errors.BadRequest, got.Type)
+}
+
+func (s *handlerSuite) TestUsersV3List_badOffset() {
+	var got errors.ErrorResponse
+	code := s.HandleRequest(
+		s.NewRequest("GET", "/api/users/v3?offset=foo", nil),
+		&got)
+	s.Equal(http.StatusBadRequest, code)
+	s.Equal(errors.BadRequest, got.Type)
 }
 
 func (s *handlerSuite) TestUsersV3List() {
