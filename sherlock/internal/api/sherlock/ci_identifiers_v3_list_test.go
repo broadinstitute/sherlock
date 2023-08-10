@@ -3,6 +3,7 @@ package sherlock
 import (
 	"github.com/broadinstitute/sherlock/go-shared/pkg/testutils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
+	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"net/http"
 )
 
@@ -13,6 +14,33 @@ func (s *handlerSuite) TestCiIdentifiersV3List_none() {
 		&got)
 	s.Equal(http.StatusOK, code)
 	s.Len(got, 0)
+}
+
+func (s *handlerSuite) TestCiIdentifiersV3List_badFilter() {
+	var got errors.ErrorResponse
+	code := s.HandleRequest(
+		s.NewRequest("GET", "/api/ci-identifiers/v3?id=foo", nil),
+		&got)
+	s.Equal(http.StatusBadRequest, code)
+	s.Equal(errors.BadRequest, got.Type)
+}
+
+func (s *handlerSuite) TestCiIdentifiersV3List_badLimit() {
+	var got errors.ErrorResponse
+	code := s.HandleRequest(
+		s.NewRequest("GET", "/api/ci-identifiers/v3?limit=foo", nil),
+		&got)
+	s.Equal(http.StatusBadRequest, code)
+	s.Equal(errors.BadRequest, got.Type)
+}
+
+func (s *handlerSuite) TestCiIdentifiersV3List_badOffset() {
+	var got errors.ErrorResponse
+	code := s.HandleRequest(
+		s.NewRequest("GET", "/api/ci-identifiers/v3?offset=foo", nil),
+		&got)
+	s.Equal(http.StatusBadRequest, code)
+	s.Equal(errors.BadRequest, got.Type)
 }
 
 func (s *handlerSuite) TestCiIdentifiersV3List() {
