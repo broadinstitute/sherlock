@@ -57,5 +57,15 @@ func slackDeployHooksV3Create(ctx *gin.Context) {
 		errors.AbortRequest(ctx, err)
 		return
 	}
-	ctx.JSON(http.StatusCreated, slackDeployHookFromModel(hook))
+	var result models.SlackDeployHook
+	if err = db.
+		Preload("Trigger").
+		Preload("Trigger.OnEnvironment").
+		Preload("Trigger.OnChartRelease").
+		Where(&hook).
+		First(&result).Error; err != nil {
+		errors.AbortRequest(ctx, err)
+		return
+	}
+	ctx.JSON(http.StatusCreated, slackDeployHookFromModel(result))
 }
