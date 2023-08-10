@@ -34,7 +34,7 @@ func (s *handlerSuite) TestSlackDeployHooksV3Delete() {
 		Provider:            "google",
 		GoogleProject:       "broad-dsde-dev",
 		Base:                testutils.PointerTo("live"),
-		Address:             testutils.PointerTo("1.2.3.4"),
+		Address:             testutils.PointerTo("0.0.0.0"),
 		RequiresSuitability: testutils.PointerTo(false),
 		Location:            "us-central1-a",
 		HelmfileRef:         testutils.PointerTo("HEAD"),

@@ -24,7 +24,7 @@ func (s *modelSuite) TestGithubActionsDeployHookEnvironment() {
 
 func (s *modelSuite) TestGithubActionsDeployHookChartRelease() {
 	s.SetSuitableTestUserForDB()
-	cluster := Cluster{Name: "terra-dev", Address: testutils.PointerTo("1.2.3.4"), Base: testutils.PointerTo("terra"), RequiresSuitability: testutils.PointerTo(false), HelmfileRef: testutils.PointerTo("HEAD")}
+	cluster := Cluster{Name: "terra-dev", Address: testutils.PointerTo("0.0.0.0"), Base: testutils.PointerTo("terra"), RequiresSuitability: testutils.PointerTo(false), HelmfileRef: testutils.PointerTo("HEAD")}
 	s.NoError(s.DB.Create(&cluster).Error)
 	environment := Environment{Name: "dev", Base: "live", Lifecycle: "static", RequiresSuitability: testutils.PointerTo(false), HelmfileRef: testutils.PointerTo("HEAD"), PreventDeletion: testutils.PointerTo(false)}
 	s.NoError(s.DB.Create(&environment).Error)

@@ -52,7 +52,7 @@ var (
 		Location:      "us-central1-a",
 		EditableCluster: EditableCluster{
 			Base:    testutils.PointerTo("terra"),
-			Address: testutils.PointerTo("192.168.0.1"),
+			Address: testutils.PointerTo("0.0.0.0"),
 		},
 	}
 	datarepoDevCluster = CreatableCluster{
@@ -61,7 +61,7 @@ var (
 		Location:      "us-central1-a",
 		EditableCluster: EditableCluster{
 			Base:    testutils.PointerTo("datarepo"),
-			Address: testutils.PointerTo("192.168.30.1"),
+			Address: testutils.PointerTo("0.0.0.0"),
 		},
 	}
 	terraStagingCluster = CreatableCluster{
@@ -70,7 +70,7 @@ var (
 		Location:      "us-central1-a",
 		EditableCluster: EditableCluster{
 			Base:                testutils.PointerTo("terra"),
-			Address:             testutils.PointerTo("192.168.0.10"),
+			Address:             testutils.PointerTo("0.0.0.0"),
 			RequiresSuitability: testutils.PointerTo(true),
 		},
 	}
@@ -80,7 +80,7 @@ var (
 		Location:      "us-central1",
 		EditableCluster: EditableCluster{
 			Base:                testutils.PointerTo("terra"),
-			Address:             testutils.PointerTo("192.168.0.10"),
+			Address:             testutils.PointerTo("0.0.0.0"),
 			RequiresSuitability: testutils.PointerTo(true),
 		},
 	}
@@ -90,7 +90,7 @@ var (
 		Location:      "us-central1",
 		EditableCluster: EditableCluster{
 			Base:                testutils.PointerTo("datarepo"),
-			Address:             testutils.PointerTo("192.168.30.10"),
+			Address:             testutils.PointerTo("0.0.0.0"),
 			RequiresSuitability: testutils.PointerTo(true),
 		},
 	}
@@ -100,7 +100,7 @@ var (
 		Location:      "us-central1-a",
 		EditableCluster: EditableCluster{
 			Base:    testutils.PointerTo("bee-cluster"),
-			Address: testutils.PointerTo("192.168.1.1"),
+			Address: testutils.PointerTo("0.0.0.0"),
 		},
 	}
 	terraQaBeesCluster = CreatableCluster{
@@ -109,7 +109,7 @@ var (
 		Location:      "us-central1-a",
 		EditableCluster: EditableCluster{
 			Base:    testutils.PointerTo("bee-cluster"),
-			Address: testutils.PointerTo("192.168.1.2"),
+			Address: testutils.PointerTo("0.0.0.0"),
 		},
 	}
 	terraDevAzureCluster = CreatableCluster{
@@ -119,7 +119,7 @@ var (
 		Location:          "US-EAST",
 		EditableCluster: EditableCluster{
 			Base:    testutils.PointerTo("terra-azure"),
-			Address: testutils.PointerTo("192.168.2.1"),
+			Address: testutils.PointerTo("0.0.0.0"),
 		},
 	}
 	clusterSeedList = []CreatableCluster{
