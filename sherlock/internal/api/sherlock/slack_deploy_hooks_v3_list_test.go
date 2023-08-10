@@ -26,6 +26,15 @@ func (s *handlerSuite) TestSlackDeployHooksV3List_badFilter() {
 	s.Equal(errors.BadRequest, got.Type)
 }
 
+func (s *handlerSuite) TestSlackDeployHooksV3List_notFoundFilter() {
+	var got errors.ErrorResponse
+	code := s.HandleRequest(
+		s.NewRequest("GET", "/api/deploy-hooks/slack/v3?onEnvironment=foo", nil),
+		&got)
+	s.Equal(http.StatusBadRequest, code)
+	s.Equal(errors.BadRequest, got.Type)
+}
+
 func (s *handlerSuite) TestSlackDeployHooksV3List_badLimit() {
 	var got errors.ErrorResponse
 	code := s.HandleRequest(
