@@ -37,6 +37,6 @@ func RecordDeployment(chartName string, appVersion string, eID uuid.UUID) {
 	}
 }
 
-func PactSwallowErrors(err error) {
-	log.Warn().Msgf("%v", err)
+func swallowError(err error) {
+	log.Warn().Msgf("PACT | %v", err)
 }
