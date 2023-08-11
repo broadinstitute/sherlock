@@ -274,7 +274,6 @@ func (suite *environmentControllerSuite) TestEnvironmentCreate() {
 			EditableEnvironment: EditableEnvironment{
 				DefaultCluster: &terraDevCluster.Name,
 				Owner:          testutils.PointerTo("some-email-not-in-the-database@broadinstitute.ogr"),
-				PactIdentifier: nil,
 			},
 		}, generateUser(suite.T(), suite.db, false))
 		suite.Assert().ErrorContains(err, errors.NotFound)
