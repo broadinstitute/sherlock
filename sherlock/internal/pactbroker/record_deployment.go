@@ -21,7 +21,7 @@ func RecordDeployment(chartName string, appVersion string, eID uuid.UUID) {
 		}
 		request.Header.Set("Content-Type", "application/json; charset=utf-8")
 		request.Header.Set("Accept", "application/hal+json")
-		request.SetBasicAuth(config.Config.MustString("pactbroker.auth.username"), config.Config.MustString("pactbroker.auth.password"))
+		request.SetBasicAuth(config.Config.String("pactbroker.auth.username"), config.Config.String("pactbroker.auth.password"))
 		// send the request
 		client := &http.Client{}
 		response, err := client.Do(request)
