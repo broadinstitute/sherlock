@@ -5,6 +5,7 @@ import (
 	"github.com/broadinstitute/sherlock/go-shared/pkg/testutils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_db"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
+	"github.com/google/uuid"
 	"strings"
 	"testing"
 
@@ -588,13 +589,23 @@ func (suite *environmentControllerSuite) TestEnvironmentEdit() {
 		before, err := suite.EnvironmentController.Get(terraDevEnvironment.Name)
 		assert.NoError(suite.T(), err)
 		assert.Equal(suite.T(), terraDevEnvironment.Description, before.Description)
+		assert.Equal(suite.T(), terraDevEnvironment.PactIdentifier, before.PactIdentifier)
 		newDescription := testutils.PointerTo("some description")
-		edited, err := suite.EnvironmentController.Edit(terraDevEnvironment.Name, EditableEnvironment{Description: newDescription}, generateUser(suite.T(), suite.db, false))
+		pactUuid := testutils.PointerTo(uuid.MustParse("7b95b0d1-407a-4e35-a95e-e867139d49b4"))
+		assert.NoError(suite.T(), err)
+
+		edited, err := suite.EnvironmentController.Edit(terraDevEnvironment.Name, EditableEnvironment{
+			Description:    newDescription,
+			PactIdentifier: pactUuid},
+			generateUser(suite.T(), suite.db, false))
 		assert.NoError(suite.T(), err)
 		assert.Equal(suite.T(), newDescription, edited.Description)
+		assert.Equal(suite.T(), pactUuid, edited.PactIdentifier)
+
 		after, err := suite.EnvironmentController.Get(terraDevEnvironment.Name)
 		assert.NoError(suite.T(), err)
 		assert.Equal(suite.T(), newDescription, after.Description)
+		assert.Equal(suite.T(), pactUuid, after.PactIdentifier)
 	})
 	suite.Run("edit to suitable environment", func() {
 		deprecated_db.Truncate(suite.T(), suite.db)
