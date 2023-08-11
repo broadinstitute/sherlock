@@ -30,7 +30,7 @@ type Environment struct {
 	NamePrefixesDomain          *bool
 	HelmfileRef                 *string
 	PreventDeletion             *bool
-	AutoDelete                  sql.NullTime
+	DeleteAfter                 sql.NullTime
 	Description                 *string
 	PagerdutyIntegration        *PagerdutyIntegration
 	PagerdutyIntegrationID      *uint

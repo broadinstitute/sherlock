@@ -483,6 +483,799 @@
                 }
             }
         },
+        "/api/deploy-hooks/github-actions/v3": {
+            "get": {
+                "description": "List GithubActionsDeployHooks matching a filter.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DeployHooks"
+                ],
+                "summary": "List GithubActionsDeployHooks matching a filter",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "date-time",
+                        "name": "createdAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "githubActionsDefaultRef",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "githubActionsOwner",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "always-use-default-ref",
+                            "use-app-version-as-ref",
+                            "use-app-version-commit-as-ref"
+                        ],
+                        "type": "string",
+                        "default": "always-use-default-ref",
+                        "description": "This field determines what git ref the workflow will be run on. The default of always-use-default-ref always uses the default ref; use-app-version-as-ref will use the app version (when available) as the ref, useful when versions are always commit hashes or tags; use-app-version-commit-as-ref will use the app version's commit (when available) as the ref, useful when the repo is configured to fully report app versions to Sherlock.",
+                        "name": "githubActionsRefBehavior",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "githubActionsRepo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "githubActionsWorkflowPath",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "onChartRelease",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "onEnvironment",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "onFailure",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "onSuccess",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "format": "date-time",
+                        "name": "updatedAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Control how many GithubActionsDeployHooks are returned (default 100)",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Control the offset for the returned GithubActionsDeployHooks (default 0)",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/sherlock.GithubActionsDeployHookV3"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a GithubActionsDeployHook.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DeployHooks"
+                ],
+                "summary": "Create a GithubActionsDeployHook",
+                "parameters": [
+                    {
+                        "description": "The GithubActionsDeployHook to create",
+                        "name": "githubActionsDeployHook",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.GithubActionsDeployHookV3Create"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.GithubActionsDeployHookV3"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/deploy-hooks/github-actions/v3/{selector}": {
+            "get": {
+                "description": "Get an individual GithubActionsDeployHook by its ID.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DeployHooks"
+                ],
+                "summary": "Get an individual GithubActionsDeployHook",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The ID of the GithubActionsDeployHook",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.GithubActionsDeployHookV3"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete an individual GithubActionsDeployHook by its ID.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DeployHooks"
+                ],
+                "summary": "Delete an individual GithubActionsDeployHook",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The ID of the GithubActionsDeployHook",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.GithubActionsDeployHookV3"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Edit an individual GithubActionsDeployHook by its ID.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DeployHooks"
+                ],
+                "summary": "Edit an individual GithubActionsDeployHook",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The ID of the GithubActionsDeployHook to edit",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "The edits to make to the GithubActionsDeployHook",
+                        "name": "githubActionsDeployHook",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.GithubActionsDeployHookV3Edit"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.GithubActionsDeployHookV3"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/deploy-hooks/slack/v3": {
+            "get": {
+                "description": "List SlackDeployHooks matching a filter.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DeployHooks"
+                ],
+                "summary": "List SlackDeployHooks matching a filter",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "date-time",
+                        "name": "createdAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "onChartRelease",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "onEnvironment",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "onFailure",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "onSuccess",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "slackChannel",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "format": "date-time",
+                        "name": "updatedAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Control how many SlackDeployHooks are returned (default 100)",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Control the offset for the returned SlackDeployHooks (default 0)",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/sherlock.SlackDeployHookV3"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a SlackDeployHook.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DeployHooks"
+                ],
+                "summary": "Create a SlackDeployHook",
+                "parameters": [
+                    {
+                        "description": "The SlackDeployHook to create",
+                        "name": "slackDeployHook",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.SlackDeployHookV3Create"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.SlackDeployHookV3"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/deploy-hooks/slack/v3/{selector}": {
+            "get": {
+                "description": "Get an individual SlackDeployHook by its ID.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DeployHooks"
+                ],
+                "summary": "Get an individual SlackDeployHook",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The ID of the SlackDeployHook",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.SlackDeployHookV3"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete an individual SlackDeployHook by its ID.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DeployHooks"
+                ],
+                "summary": "Delete an individual SlackDeployHook",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The ID of the SlackDeployHook",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.SlackDeployHookV3"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Edit an individual SlackDeployHook by its ID.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DeployHooks"
+                ],
+                "summary": "Edit an individual SlackDeployHook",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The ID of the SlackDeployHook to edit",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "The edits to make to the SlackDeployHook",
+                        "name": "slackDeployHook",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.SlackDeployHookV3Edit"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.SlackDeployHookV3"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/users/v3": {
             "get": {
                 "description": "List Users matching a filter. The results will include suitability and other information.\nNote that the suitability info can't directly be filtered for at this time.",
@@ -8120,6 +8913,205 @@
                     "type": "string"
                 },
                 "terminalAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "sherlock.GithubActionsDeployHookV3": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "githubActionsDefaultRef": {
+                    "type": "string"
+                },
+                "githubActionsOwner": {
+                    "type": "string"
+                },
+                "githubActionsRefBehavior": {
+                    "description": "This field determines what git ref the workflow will be run on. The default of always-use-default-ref always uses the default ref; use-app-version-as-ref will use the app version (when available) as the ref, useful when versions are always commit hashes or tags; use-app-version-commit-as-ref will use the app version's commit (when available) as the ref, useful when the repo is configured to fully report app versions to Sherlock.",
+                    "type": "string",
+                    "default": "always-use-default-ref",
+                    "enum": [
+                        "always-use-default-ref",
+                        "use-app-version-as-ref",
+                        "use-app-version-commit-as-ref"
+                    ]
+                },
+                "githubActionsRepo": {
+                    "type": "string"
+                },
+                "githubActionsWorkflowInputs": {
+                    "description": "These workflow inputs will be passed statically as-is to GitHub's workflow dispatch API (https://docs.github.com/en/rest/actions/workflows#create-a-workflow-dispatch-event) as the `inputs` parameter object.",
+                    "type": "object"
+                },
+                "githubActionsWorkflowPath": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "onChartRelease": {
+                    "type": "string"
+                },
+                "onEnvironment": {
+                    "type": "string"
+                },
+                "onFailure": {
+                    "type": "boolean"
+                },
+                "onSuccess": {
+                    "type": "boolean"
+                },
+                "updatedAt": {
+                    "type": "string",
+                    "format": "date-time"
+                }
+            }
+        },
+        "sherlock.GithubActionsDeployHookV3Create": {
+            "type": "object",
+            "properties": {
+                "githubActionsDefaultRef": {
+                    "type": "string"
+                },
+                "githubActionsOwner": {
+                    "type": "string"
+                },
+                "githubActionsRefBehavior": {
+                    "description": "This field determines what git ref the workflow will be run on. The default of always-use-default-ref always uses the default ref; use-app-version-as-ref will use the app version (when available) as the ref, useful when versions are always commit hashes or tags; use-app-version-commit-as-ref will use the app version's commit (when available) as the ref, useful when the repo is configured to fully report app versions to Sherlock.",
+                    "type": "string",
+                    "default": "always-use-default-ref",
+                    "enum": [
+                        "always-use-default-ref",
+                        "use-app-version-as-ref",
+                        "use-app-version-commit-as-ref"
+                    ]
+                },
+                "githubActionsRepo": {
+                    "type": "string"
+                },
+                "githubActionsWorkflowInputs": {
+                    "description": "These workflow inputs will be passed statically as-is to GitHub's workflow dispatch API (https://docs.github.com/en/rest/actions/workflows#create-a-workflow-dispatch-event) as the `inputs` parameter object.",
+                    "type": "object"
+                },
+                "githubActionsWorkflowPath": {
+                    "type": "string"
+                },
+                "onChartRelease": {
+                    "type": "string"
+                },
+                "onEnvironment": {
+                    "type": "string"
+                },
+                "onFailure": {
+                    "type": "boolean"
+                },
+                "onSuccess": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "sherlock.GithubActionsDeployHookV3Edit": {
+            "type": "object",
+            "properties": {
+                "githubActionsDefaultRef": {
+                    "type": "string"
+                },
+                "githubActionsOwner": {
+                    "type": "string"
+                },
+                "githubActionsRefBehavior": {
+                    "description": "This field determines what git ref the workflow will be run on. The default of always-use-default-ref always uses the default ref; use-app-version-as-ref will use the app version (when available) as the ref, useful when versions are always commit hashes or tags; use-app-version-commit-as-ref will use the app version's commit (when available) as the ref, useful when the repo is configured to fully report app versions to Sherlock.",
+                    "type": "string",
+                    "default": "always-use-default-ref",
+                    "enum": [
+                        "always-use-default-ref",
+                        "use-app-version-as-ref",
+                        "use-app-version-commit-as-ref"
+                    ]
+                },
+                "githubActionsRepo": {
+                    "type": "string"
+                },
+                "githubActionsWorkflowInputs": {
+                    "description": "These workflow inputs will be passed statically as-is to GitHub's workflow dispatch API (https://docs.github.com/en/rest/actions/workflows#create-a-workflow-dispatch-event) as the `inputs` parameter object.",
+                    "type": "object"
+                },
+                "githubActionsWorkflowPath": {
+                    "type": "string"
+                },
+                "onFailure": {
+                    "type": "boolean"
+                },
+                "onSuccess": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "sherlock.SlackDeployHookV3": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "onChartRelease": {
+                    "type": "string"
+                },
+                "onEnvironment": {
+                    "type": "string"
+                },
+                "onFailure": {
+                    "type": "boolean"
+                },
+                "onSuccess": {
+                    "type": "boolean"
+                },
+                "slackChannel": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string",
+                    "format": "date-time"
+                }
+            }
+        },
+        "sherlock.SlackDeployHookV3Create": {
+            "type": "object",
+            "properties": {
+                "onChartRelease": {
+                    "type": "string"
+                },
+                "onEnvironment": {
+                    "type": "string"
+                },
+                "onFailure": {
+                    "type": "boolean"
+                },
+                "onSuccess": {
+                    "type": "boolean"
+                },
+                "slackChannel": {
+                    "type": "string"
+                }
+            }
+        },
+        "sherlock.SlackDeployHookV3Edit": {
+            "type": "object",
+            "properties": {
+                "onFailure": {
+                    "type": "boolean"
+                },
+                "onSuccess": {
+                    "type": "boolean"
+                },
+                "slackChannel": {
                     "type": "string"
                 }
             }

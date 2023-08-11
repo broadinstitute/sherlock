@@ -48,6 +48,18 @@ func (s *handlerSuite) NewRequest(method string, url string, toJsonBody any) *ht
 	return req
 }
 
+func (s *handlerSuite) NewSuitableRequest(method string, url string, toJsonBody any) *http.Request {
+	req := s.NewRequest(method, url, toJsonBody)
+	s.UseSuitableUserFor(req)
+	return req
+}
+
+func (s *handlerSuite) NewNonSuitableRequest(method string, url string, toJsonBody any) *http.Request {
+	req := s.NewRequest(method, url, toJsonBody)
+	s.UseNonSuitableUserFor(req)
+	return req
+}
+
 func (s *handlerSuite) HandleRequest(req *http.Request, fromJsonBodyPointer any) int {
 	recorder := httptest.NewRecorder()
 	s.internalRouter.ServeHTTP(recorder, req)

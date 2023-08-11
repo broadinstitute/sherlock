@@ -194,6 +194,164 @@ definitions:
       terminalAt:
         type: string
     type: object
+  sherlock.GithubActionsDeployHookV3:
+    properties:
+      createdAt:
+        format: date-time
+        type: string
+      githubActionsDefaultRef:
+        type: string
+      githubActionsOwner:
+        type: string
+      githubActionsRefBehavior:
+        default: always-use-default-ref
+        description: This field determines what git ref the workflow will be run on.
+          The default of always-use-default-ref always uses the default ref; use-app-version-as-ref
+          will use the app version (when available) as the ref, useful when versions
+          are always commit hashes or tags; use-app-version-commit-as-ref will use
+          the app version's commit (when available) as the ref, useful when the repo
+          is configured to fully report app versions to Sherlock.
+        enum:
+        - always-use-default-ref
+        - use-app-version-as-ref
+        - use-app-version-commit-as-ref
+        type: string
+      githubActionsRepo:
+        type: string
+      githubActionsWorkflowInputs:
+        description: These workflow inputs will be passed statically as-is to GitHub's
+          workflow dispatch API (https://docs.github.com/en/rest/actions/workflows#create-a-workflow-dispatch-event)
+          as the `inputs` parameter object.
+        type: object
+      githubActionsWorkflowPath:
+        type: string
+      id:
+        type: integer
+      onChartRelease:
+        type: string
+      onEnvironment:
+        type: string
+      onFailure:
+        type: boolean
+      onSuccess:
+        type: boolean
+      updatedAt:
+        format: date-time
+        type: string
+    type: object
+  sherlock.GithubActionsDeployHookV3Create:
+    properties:
+      githubActionsDefaultRef:
+        type: string
+      githubActionsOwner:
+        type: string
+      githubActionsRefBehavior:
+        default: always-use-default-ref
+        description: This field determines what git ref the workflow will be run on.
+          The default of always-use-default-ref always uses the default ref; use-app-version-as-ref
+          will use the app version (when available) as the ref, useful when versions
+          are always commit hashes or tags; use-app-version-commit-as-ref will use
+          the app version's commit (when available) as the ref, useful when the repo
+          is configured to fully report app versions to Sherlock.
+        enum:
+        - always-use-default-ref
+        - use-app-version-as-ref
+        - use-app-version-commit-as-ref
+        type: string
+      githubActionsRepo:
+        type: string
+      githubActionsWorkflowInputs:
+        description: These workflow inputs will be passed statically as-is to GitHub's
+          workflow dispatch API (https://docs.github.com/en/rest/actions/workflows#create-a-workflow-dispatch-event)
+          as the `inputs` parameter object.
+        type: object
+      githubActionsWorkflowPath:
+        type: string
+      onChartRelease:
+        type: string
+      onEnvironment:
+        type: string
+      onFailure:
+        type: boolean
+      onSuccess:
+        type: boolean
+    type: object
+  sherlock.GithubActionsDeployHookV3Edit:
+    properties:
+      githubActionsDefaultRef:
+        type: string
+      githubActionsOwner:
+        type: string
+      githubActionsRefBehavior:
+        default: always-use-default-ref
+        description: This field determines what git ref the workflow will be run on.
+          The default of always-use-default-ref always uses the default ref; use-app-version-as-ref
+          will use the app version (when available) as the ref, useful when versions
+          are always commit hashes or tags; use-app-version-commit-as-ref will use
+          the app version's commit (when available) as the ref, useful when the repo
+          is configured to fully report app versions to Sherlock.
+        enum:
+        - always-use-default-ref
+        - use-app-version-as-ref
+        - use-app-version-commit-as-ref
+        type: string
+      githubActionsRepo:
+        type: string
+      githubActionsWorkflowInputs:
+        description: These workflow inputs will be passed statically as-is to GitHub's
+          workflow dispatch API (https://docs.github.com/en/rest/actions/workflows#create-a-workflow-dispatch-event)
+          as the `inputs` parameter object.
+        type: object
+      githubActionsWorkflowPath:
+        type: string
+      onFailure:
+        type: boolean
+      onSuccess:
+        type: boolean
+    type: object
+  sherlock.SlackDeployHookV3:
+    properties:
+      createdAt:
+        format: date-time
+        type: string
+      id:
+        type: integer
+      onChartRelease:
+        type: string
+      onEnvironment:
+        type: string
+      onFailure:
+        type: boolean
+      onSuccess:
+        type: boolean
+      slackChannel:
+        type: string
+      updatedAt:
+        format: date-time
+        type: string
+    type: object
+  sherlock.SlackDeployHookV3Create:
+    properties:
+      onChartRelease:
+        type: string
+      onEnvironment:
+        type: string
+      onFailure:
+        type: boolean
+      onSuccess:
+        type: boolean
+      slackChannel:
+        type: string
+    type: object
+  sherlock.SlackDeployHookV3Edit:
+    properties:
+      onFailure:
+        type: boolean
+      onSuccess:
+        type: boolean
+      slackChannel:
+        type: string
+    type: object
   sherlock.UserV3:
     properties:
       createdAt:
@@ -1802,6 +1960,536 @@ paths:
       summary: Get a CiRun, including CiIdentifiers for related resources
       tags:
       - CiRuns
+  /api/deploy-hooks/github-actions/v3:
+    get:
+      description: List GithubActionsDeployHooks matching a filter.
+      parameters:
+      - format: date-time
+        in: query
+        name: createdAt
+        type: string
+      - in: query
+        name: githubActionsDefaultRef
+        type: string
+      - in: query
+        name: githubActionsOwner
+        type: string
+      - default: always-use-default-ref
+        description: This field determines what git ref the workflow will be run on.
+          The default of always-use-default-ref always uses the default ref; use-app-version-as-ref
+          will use the app version (when available) as the ref, useful when versions
+          are always commit hashes or tags; use-app-version-commit-as-ref will use
+          the app version's commit (when available) as the ref, useful when the repo
+          is configured to fully report app versions to Sherlock.
+        enum:
+        - always-use-default-ref
+        - use-app-version-as-ref
+        - use-app-version-commit-as-ref
+        in: query
+        name: githubActionsRefBehavior
+        type: string
+      - in: query
+        name: githubActionsRepo
+        type: string
+      - in: query
+        name: githubActionsWorkflowPath
+        type: string
+      - in: query
+        name: id
+        type: integer
+      - in: query
+        name: onChartRelease
+        type: string
+      - in: query
+        name: onEnvironment
+        type: string
+      - in: query
+        name: onFailure
+        type: boolean
+      - in: query
+        name: onSuccess
+        type: boolean
+      - format: date-time
+        in: query
+        name: updatedAt
+        type: string
+      - description: Control how many GithubActionsDeployHooks are returned (default
+          100)
+        in: query
+        name: limit
+        type: integer
+      - description: Control the offset for the returned GithubActionsDeployHooks
+          (default 0)
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/sherlock.GithubActionsDeployHookV3'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: List GithubActionsDeployHooks matching a filter
+      tags:
+      - DeployHooks
+    post:
+      consumes:
+      - application/json
+      description: Create a GithubActionsDeployHook.
+      parameters:
+      - description: The GithubActionsDeployHook to create
+        in: body
+        name: githubActionsDeployHook
+        required: true
+        schema:
+          $ref: '#/definitions/sherlock.GithubActionsDeployHookV3Create'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/sherlock.GithubActionsDeployHookV3'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Create a GithubActionsDeployHook
+      tags:
+      - DeployHooks
+  /api/deploy-hooks/github-actions/v3/{selector}:
+    delete:
+      description: Delete an individual GithubActionsDeployHook by its ID.
+      parameters:
+      - description: The ID of the GithubActionsDeployHook
+        in: path
+        name: selector
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/sherlock.GithubActionsDeployHookV3'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Delete an individual GithubActionsDeployHook
+      tags:
+      - DeployHooks
+    get:
+      description: Get an individual GithubActionsDeployHook by its ID.
+      parameters:
+      - description: The ID of the GithubActionsDeployHook
+        in: path
+        name: selector
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/sherlock.GithubActionsDeployHookV3'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Get an individual GithubActionsDeployHook
+      tags:
+      - DeployHooks
+    patch:
+      description: Edit an individual GithubActionsDeployHook by its ID.
+      parameters:
+      - description: The ID of the GithubActionsDeployHook to edit
+        in: path
+        name: selector
+        required: true
+        type: string
+      - description: The edits to make to the GithubActionsDeployHook
+        in: body
+        name: githubActionsDeployHook
+        required: true
+        schema:
+          $ref: '#/definitions/sherlock.GithubActionsDeployHookV3Edit'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/sherlock.GithubActionsDeployHookV3'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Edit an individual GithubActionsDeployHook
+      tags:
+      - DeployHooks
+  /api/deploy-hooks/slack/v3:
+    get:
+      description: List SlackDeployHooks matching a filter.
+      parameters:
+      - format: date-time
+        in: query
+        name: createdAt
+        type: string
+      - in: query
+        name: id
+        type: integer
+      - in: query
+        name: onChartRelease
+        type: string
+      - in: query
+        name: onEnvironment
+        type: string
+      - in: query
+        name: onFailure
+        type: boolean
+      - in: query
+        name: onSuccess
+        type: boolean
+      - in: query
+        name: slackChannel
+        type: string
+      - format: date-time
+        in: query
+        name: updatedAt
+        type: string
+      - description: Control how many SlackDeployHooks are returned (default 100)
+        in: query
+        name: limit
+        type: integer
+      - description: Control the offset for the returned SlackDeployHooks (default
+          0)
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/sherlock.SlackDeployHookV3'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: List SlackDeployHooks matching a filter
+      tags:
+      - DeployHooks
+    post:
+      consumes:
+      - application/json
+      description: Create a SlackDeployHook.
+      parameters:
+      - description: The SlackDeployHook to create
+        in: body
+        name: slackDeployHook
+        required: true
+        schema:
+          $ref: '#/definitions/sherlock.SlackDeployHookV3Create'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/sherlock.SlackDeployHookV3'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Create a SlackDeployHook
+      tags:
+      - DeployHooks
+  /api/deploy-hooks/slack/v3/{selector}:
+    delete:
+      description: Delete an individual SlackDeployHook by its ID.
+      parameters:
+      - description: The ID of the SlackDeployHook
+        in: path
+        name: selector
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/sherlock.SlackDeployHookV3'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Delete an individual SlackDeployHook
+      tags:
+      - DeployHooks
+    get:
+      description: Get an individual SlackDeployHook by its ID.
+      parameters:
+      - description: The ID of the SlackDeployHook
+        in: path
+        name: selector
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/sherlock.SlackDeployHookV3'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Get an individual SlackDeployHook
+      tags:
+      - DeployHooks
+    patch:
+      description: Edit an individual SlackDeployHook by its ID.
+      parameters:
+      - description: The ID of the SlackDeployHook to edit
+        in: path
+        name: selector
+        required: true
+        type: string
+      - description: The edits to make to the SlackDeployHook
+        in: body
+        name: slackDeployHook
+        required: true
+        schema:
+          $ref: '#/definitions/sherlock.SlackDeployHookV3Edit'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/sherlock.SlackDeployHookV3'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Edit an individual SlackDeployHook
+      tags:
+      - DeployHooks
   /api/users/v3:
     get:
       description: |-

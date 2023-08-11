@@ -6,7 +6,7 @@ import (
 )
 
 type CiRunV3 struct {
-	commonFields
+	CommonFields
 	ciRunFields
 	RelatedResources []CiIdentifierV3 `json:"relatedResources" form:"-"`
 }
@@ -53,7 +53,7 @@ func ciRunFromModel(model models.CiRun) CiRunV3 {
 		}
 	}
 	return CiRunV3{
-		commonFields: commonFieldsFromGormModel(model.Model),
+		CommonFields: commonFieldsFromGormModel(model.Model),
 		ciRunFields: ciRunFields{
 			Platform:                   model.Platform,
 			GithubActionsOwner:         model.GithubActionsOwner,

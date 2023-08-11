@@ -13,7 +13,7 @@ func TestCiIdentifierV3_toModel(t *testing.T) {
 	t1 := time.Now().Add(-time.Minute)
 	t2 := time.Now().Add(-time.Second)
 	type fields struct {
-		commonFields commonFields
+		commonFields CommonFields
 		CiRuns       []CiRunV3
 		ResourceType string
 		ResourceID   uint
@@ -26,7 +26,7 @@ func TestCiIdentifierV3_toModel(t *testing.T) {
 		{
 			name: "equal",
 			fields: fields{
-				commonFields: commonFields{
+				commonFields: CommonFields{
 					ID:        1,
 					CreatedAt: t1,
 					UpdatedAt: t2,
@@ -49,14 +49,14 @@ func TestCiIdentifierV3_toModel(t *testing.T) {
 		{
 			name: "ignores ci runs",
 			fields: fields{
-				commonFields: commonFields{
+				commonFields: CommonFields{
 					ID:        1,
 					CreatedAt: t1,
 					UpdatedAt: t2,
 				},
 				CiRuns: []CiRunV3{
 					{
-						commonFields: commonFields{
+						CommonFields: CommonFields{
 							ID: 3,
 						},
 					},
@@ -79,7 +79,7 @@ func TestCiIdentifierV3_toModel(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			c := CiIdentifierV3{
-				commonFields: tt.fields.commonFields,
+				CommonFields: tt.fields.commonFields,
 				CiRuns:       tt.fields.CiRuns,
 				ResourceType: tt.fields.ResourceType,
 				ResourceID:   tt.fields.ResourceID,
@@ -117,7 +117,7 @@ func Test_ciIdentifierFromModel(t *testing.T) {
 				CiRuns:       nil,
 			}},
 			want: CiIdentifierV3{
-				commonFields: commonFields{
+				CommonFields: CommonFields{
 					ID:        1,
 					CreatedAt: t1,
 					UpdatedAt: t2,
@@ -150,14 +150,14 @@ func Test_ciIdentifierFromModel(t *testing.T) {
 				},
 			}},
 			want: CiIdentifierV3{
-				commonFields: commonFields{
+				CommonFields: CommonFields{
 					ID:        1,
 					CreatedAt: t1,
 					UpdatedAt: t2,
 				},
 				CiRuns: []CiRunV3{
 					{
-						commonFields: commonFields{
+						CommonFields: CommonFields{
 							ID: 3,
 						},
 					},

@@ -16,7 +16,7 @@ func Test_commonFieldsFromGormModel(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want commonFields
+		want CommonFields
 	}{
 		{
 			name: "equal",
@@ -25,7 +25,7 @@ func Test_commonFieldsFromGormModel(t *testing.T) {
 				CreatedAt: t1,
 				UpdatedAt: t2,
 			}},
-			want: commonFields{
+			want: CommonFields{
 				ID:        1,
 				CreatedAt: t1,
 				UpdatedAt: t2,
@@ -42,7 +42,7 @@ func Test_commonFieldsFromGormModel(t *testing.T) {
 					Time:  time.Now(),
 				},
 			}},
-			want: commonFields{
+			want: CommonFields{
 				ID:        1,
 				CreatedAt: t1,
 				UpdatedAt: t2,
@@ -85,7 +85,7 @@ func Test_commonFields_toGormModel(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := commonFields{
+			f := CommonFields{
 				ID:        tt.fields.ID,
 				CreatedAt: tt.fields.CreatedAt,
 				UpdatedAt: tt.fields.UpdatedAt,

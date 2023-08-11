@@ -5,7 +5,7 @@ import (
 )
 
 type UserV3 struct {
-	commonFields
+	CommonFields
 	Email                  string  `json:"email" form:"email"`
 	GoogleID               string  `json:"googleID" form:"googleID"`
 	GithubUsername         *string `json:"githubUsername,omitempty" form:"githubUsername"`
@@ -38,7 +38,7 @@ func userFromModel(model models.User) UserV3 {
 	suitable := model.Suitability().Suitable()
 	suitabilityDescription := model.Suitability().Description()
 	return UserV3{
-		commonFields:           commonFieldsFromGormModel(model.Model),
+		CommonFields:           commonFieldsFromGormModel(model.Model),
 		Email:                  model.Email,
 		GoogleID:               model.GoogleID,
 		GithubUsername:         model.GithubUsername,

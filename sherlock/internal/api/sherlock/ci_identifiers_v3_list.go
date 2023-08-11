@@ -10,7 +10,7 @@ import (
 	"net/http"
 )
 
-// ciIdentifiersV3Get godoc
+// ciIdentifiersV3List godoc
 //
 //	@summary		List CiIdentifiers matching a filter
 //	@description	List CiIdentifiers matching a filter. The CiRuns would have to re-queried directly to load the CiRuns.
