@@ -17,7 +17,8 @@ func RecordDeployment(chartName string, appVersion string, eID uuid.UUID) {
 		request, err := http.NewRequest(http.MethodPost, config.Config.MustString("pactbroker.url")+"/pacticipants/"+chartName+
 			"/versions/"+appVersion+"/deployed-versions/environment/"+eID.String(), nil)
 		if err != nil {
-			PactSwallowErrors(err)
+			swallowErrors(err)
+			return
 		}
 		request.Header.Set("Content-Type", "application/json; charset=utf-8")
 		request.Header.Set("Accept", "application/hal+json")
