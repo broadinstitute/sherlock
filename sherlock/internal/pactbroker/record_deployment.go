@@ -27,7 +27,8 @@ func RecordDeployment(chartName string, appVersion string, eID uuid.UUID) {
 		client := &http.Client{}
 		response, err := client.Do(request)
 		if err != nil {
-			PactSwallowErrors(err)
+			swallowError(err)
+			return
 		}
 		if response.StatusCode != 201 {
 			swallowError(fmt.Errorf("deployment for %s app version %s was not recorded to pact successfully (return code %d)", 
