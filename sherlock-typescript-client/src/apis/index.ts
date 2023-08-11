@@ -9,6 +9,7 @@ export * from './CiIdentifiersApi';
 export * from './CiRunsApi';
 export * from './ClustersApi';
 export * from './DatabaseInstancesApi';
+export * from './DeployHooksApi';
 export * from './EnvironmentsApi';
 export * from './MiscApi';
 export * from './PagerdutyIntegrationsApi';
