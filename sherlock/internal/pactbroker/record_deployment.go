@@ -1,7 +1,6 @@
 package pactbroker
 
 import (
-	"errors"
 	"fmt"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/google/uuid"
@@ -17,7 +16,7 @@ func RecordDeployment(chartName string, appVersion string, eID uuid.UUID) {
 		request, err := http.NewRequest(http.MethodPost, config.Config.MustString("pactbroker.url")+"/pacticipants/"+chartName+
 			"/versions/"+appVersion+"/deployed-versions/environment/"+eID.String(), nil)
 		if err != nil {
-			swallowErrors(err)
+			swallowError(err)
 			return
 		}
 		request.Header.Set("Content-Type", "application/json; charset=utf-8")
@@ -31,7 +30,7 @@ func RecordDeployment(chartName string, appVersion string, eID uuid.UUID) {
 			return
 		}
 		if response.StatusCode != 201 {
-			swallowError(fmt.Errorf("deployment for %s app version %s was not recorded to pact successfully (return code %d)", 
+			swallowError(fmt.Errorf("deployment for %s app version %s was not recorded to pact successfully (return code %d)",
 				chartName, appVersion, response.StatusCode))
 			return
 		}
