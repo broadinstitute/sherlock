@@ -30,9 +30,9 @@ func RecordDeployment(chartName string, appVersion string, eID uuid.UUID) {
 			PactSwallowErrors(err)
 		}
 		if response.StatusCode != 201 {
-			errMsg := fmt.Sprintf("Deployment for %s app version %s was not recorded to pact successfully.\n"+
-				"Return code %d ", chartName, appVersion, response.StatusCode)
-			PactSwallowErrors(errors.New(errMsg))
+			swallowError(fmt.Errorf("deployment for %s app version %s was not recorded to pact successfully (return code %d)", 
+				chartName, appVersion, response.StatusCode))
+			return
 		}
 	}
 }
