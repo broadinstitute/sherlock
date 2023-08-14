@@ -3,6 +3,7 @@ package boot
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/gha_oidc"
 	"github.com/broadinstitute/sherlock/sherlock/internal/authorization"
 	"github.com/broadinstitute/sherlock/sherlock/internal/boot/liveness"
@@ -103,7 +104,7 @@ func (a *Application) Start() {
 	}
 
 	log.Info().Msgf("BOOT | boot complete; now serving...")
-	if err = a.server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+	if err = a.server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 		log.Fatal().Msgf("server.ListenAndServe() err: %v", err)
 	}
 }
