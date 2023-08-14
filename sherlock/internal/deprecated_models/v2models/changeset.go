@@ -5,15 +5,14 @@ import (
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
-	"github.com/broadinstitute/sherlock/sherlock/internal/pactbroker"
-	"strings"
-
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
+	"github.com/broadinstitute/sherlock/sherlock/internal/pactbroker"
 	"github.com/broadinstitute/sherlock/sherlock/internal/pagerduty"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -246,11 +245,16 @@ func (s *internalChangesetStore) apply(db *gorm.DB, changesets []Changeset, user
 		environmentReleases := make(map[uint][]string)
 
 		for _, chartRelease := range affectedChartReleases {
-
 			if chartRelease.EnvironmentID != nil {
 				environmentReleases[*chartRelease.EnvironmentID] = append(environmentReleases[*chartRelease.EnvironmentID], chartRelease.Name)
 			}
-
+			if chartRelease.PagerdutyIntegration != nil && chartRelease.PagerdutyIntegration.Key != nil {
+				go pagerduty.SendChangeSwallowErrors(
+					*chartRelease.PagerdutyIntegration.Key,
+					fmt.Sprintf("Version changes to %s via Sherlock/Beehive", chartRelease.Name),
+					fmt.Sprintf(config.Config.MustString("beehive.chartReleaseUrlFormatString"), chartRelease.Name),
+				)
+			}
 			// Record app version to Pact broker
 			if chartRelease.Environment != nil && chartRelease.Chart.PactParticipant != nil && *chartRelease.Chart.PactParticipant && chartRelease.Environment.PactIdentifier != nil {
 				go pactbroker.RecordDeployment(
@@ -259,27 +263,18 @@ func (s *internalChangesetStore) apply(db *gorm.DB, changesets []Changeset, user
 					*chartRelease.Environment.PactIdentifier,
 				)
 			}
-
-			if chartRelease.PagerdutyIntegration != nil && chartRelease.PagerdutyIntegration.Key != nil {
-				go pagerduty.SendChangeSwallowErrors(
-					*chartRelease.PagerdutyIntegration.Key,
-					fmt.Sprintf("Version changes to %s via Sherlock/Beehive", chartRelease.Name),
-					fmt.Sprintf(config.Config.MustString("beehive.chartReleaseUrlFormatString"), chartRelease.Name),
-				)
-			}
-
-			for environmentID, chartReleaseNames := range environmentReleases {
-				environment, err := InternalEnvironmentStore.Get(db, Environment{Model: gorm.Model{ID: environmentID}})
-				if err == nil && environment.PagerdutyIntegration != nil && environment.PagerdutyIntegration.Key != nil {
-					go pagerduty.SendChangeSwallowErrors(
-						*environment.PagerdutyIntegration.Key,
-						fmt.Sprintf("Version changes to %s via Sherlock/Beehive", strings.Join(chartReleaseNames, ", ")),
-						fmt.Sprintf(config.Config.MustString("beehive.environmentUrlFormatString"), environment.Name),
-					)
-				}
-			}
 		}
 
+		for environmentID, chartReleaseNames := range environmentReleases {
+			environment, err := InternalEnvironmentStore.Get(db, Environment{Model: gorm.Model{ID: environmentID}})
+			if err == nil && environment.PagerdutyIntegration != nil && environment.PagerdutyIntegration.Key != nil {
+				go pagerduty.SendChangeSwallowErrors(
+					*environment.PagerdutyIntegration.Key,
+					fmt.Sprintf("Version changes to %s via Sherlock/Beehive", strings.Join(chartReleaseNames, ", ")),
+					fmt.Sprintf(config.Config.MustString("beehive.environmentUrlFormatString"), environment.Name),
+				)
+			}
+		}
 	}
 
 	return ret, err
