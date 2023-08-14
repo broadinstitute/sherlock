@@ -19,7 +19,8 @@
 # Ignore generated credentials from google-github-actions/auth
 gha-creds-*.json
 
-# ignore sa-creds used in local testing
+# Ignore sa-creds used in local testing
 *_sa.json
 
+# Ignore environment variable files
 .env
