@@ -7,6 +7,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/model_actions"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models/environment"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
+	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"math/bits"
 	"regexp"
@@ -53,6 +54,7 @@ type Environment struct {
 	OfflineScheduleEndEnabled   *bool
 	OfflineScheduleEndTime      *string
 	OfflineScheduleEndWeekends  *bool
+	PactIdentifier              *uuid.UUID
 }
 
 func (e Environment) TableName() string {

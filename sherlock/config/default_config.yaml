@@ -123,6 +123,13 @@ slack:
       enable: true
       emoji: dsp-beehive
 
+pactbroker:
+  url: https://pact-broker.dsp-eng-tools.broadinstitute.org
+  auth:
+    username: replace-username
+    password: replace-password
+  enable: false
+
 model:
   environments:
     templates:

@@ -35,6 +35,9 @@ slack:
         - "channel 1"
         - "channel 2"
 
+pactbroker:
+  enable: false
+
 model:
   environments:
     templates:
