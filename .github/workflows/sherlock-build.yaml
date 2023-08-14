@@ -28,6 +28,7 @@ on:
       - "sherlock/**"
       - "!sherlock/docs/**"
       - "go-shared/**"
+  workflow_dispatch:
 
 env:
   # Google project where artifacts are uploaded.
@@ -79,7 +80,7 @@ jobs:
           go-version-file: sherlock/go.mod
 
       - name: Set up Node/NPM
-        if: ${{ github.event_name == 'push' }}
+        if: ${{ github.event_name != 'pull_request' }}
         uses: actions/setup-node@v3
         with:
           node-version: 18
@@ -106,7 +107,7 @@ jobs:
         run: make generate-swagger
 
       - name: Generate Go client library
-        if: ${{ github.event_name == 'push' }}
+        if: ${{ github.event_name != 'pull_request' }}
         run: |
           docker run --rm -e GOPATH=/go \
             -v $(go env GOPATH):/go \
@@ -116,12 +117,12 @@ jobs:
             generate client -f /local/sherlock/docs/swagger.json -A sherlock --default-scheme=https -m client/models -c client
 
       - name: Tidy Go client library dependencies
-        if: ${{ github.event_name == 'push' }}
+        if: ${{ github.event_name != 'pull_request' }}
         working-directory: sherlock-go-client
         run: go mod tidy
 
       - name: Generate Typescript client library
-        if: ${{ github.event_name == 'push' }}
+        if: ${{ github.event_name != 'pull_request' }}
         run: |
           docker run --rm -v "${PWD}:/local" openapitools/openapi-generator-cli generate \
             -i /local/sherlock/docs/swagger.json \
@@ -135,7 +136,7 @@ jobs:
             --additional-properties=npmVersion=${{ steps.tag.outputs.new_tag }}
 
       - name: Build Typescript client
-        if: ${{ github.event_name == 'push' }}
+        if: ${{ github.event_name != 'pull_request' }}
         working-directory: sherlock-typescript-client
         run: |
           npm install --save-dev
@@ -184,24 +185,24 @@ jobs:
         uses: google-github-actions/setup-gcloud@v1
 
       - name: Commit changes
-        if: ${{ github.event_name == 'push' }}
+        if: ${{ github.event_name != 'pull_request' }}
         run: |
           git add .
           git commit --allow-empty --message "[sherlock-build] generated from ${{ github.sha }}"
 
       - name: Add tag
-        if: ${{ github.event_name == 'push' }}
+        if: ${{ github.event_name != 'pull_request' }}
         run: |
           git tag "${{ steps.tag.outputs.new_tag }}"
 
       - name: Push to main with retry
-        if: ${{ github.event_name == 'push' }}
+        if: ${{ github.event_name != 'pull_request' }}
         uses: ./.github/actions/push-with-retry
         with:
           tags: true
 
       - name: Publish typescript client
-        if: ${{ github.event_name == 'push' }}
+        if: ${{ github.event_name != 'pull_request' }}
         working-directory: sherlock-typescript-client
         run: |
           npx google-artifactregistry-auth --yes
