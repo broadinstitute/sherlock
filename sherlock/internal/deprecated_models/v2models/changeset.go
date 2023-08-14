@@ -237,12 +237,6 @@ func (s *internalChangesetStore) apply(db *gorm.DB, changesets []Changeset, user
 					}
 				}
 			}
-			if chartRelease.Environment != nil {
-				log.Info().Msgf("chartRelease.Environment is not nil")
-			}
-			log.Info().Msgf("chartRelease.Chart.PactParticipant %t", *chartRelease.Chart.PactParticipant)
-			log.Info().Msgf("chartRelease.Chart.PactIdentifier %v", chartRelease.Environment.PactIdentifier)
-
 		}
 		return nil
 	})
