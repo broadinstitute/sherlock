@@ -3,6 +3,7 @@ package boot
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/gha_oidc"
 	"github.com/broadinstitute/sherlock/sherlock/internal/authorization"
 	"github.com/broadinstitute/sherlock/sherlock/internal/boot/liveness"
