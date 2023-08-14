@@ -3,3 +3,4 @@ alter table v2_environments
 
 alter table v2_charts
     drop column if exists pact_participant;
+        
