@@ -28,6 +28,7 @@ type EditableChart struct {
 	DefaultPort           *uint   `json:"defaultPort" form:"defaultPort" default:"443"`
 	Description           *string `json:"description" form:"description"`
 	PlaybookURL           *string `json:"playbookURL" form:"playbookURL"`
+	PactParticipant       *bool   `json:"pactParticipant" form:"pactParticipant" default:"false"`
 }
 
 //nolint:unused
@@ -49,6 +50,7 @@ func (c Chart) toModel(_ *v2models.StoreSet) (v2models.Chart, error) {
 		DefaultPort:           c.DefaultPort,
 		Description:           c.Description,
 		PlaybookURL:           c.PlaybookURL,
+		PactParticipant:       c.PactParticipant,
 	}, nil
 }
 
@@ -98,6 +100,7 @@ func modelChartToChart(model *v2models.Chart) *Chart {
 				DefaultPort:           model.DefaultPort,
 				Description:           model.Description,
 				PlaybookURL:           model.PlaybookURL,
+				PactParticipant:       model.PactParticipant,
 			},
 		},
 	}

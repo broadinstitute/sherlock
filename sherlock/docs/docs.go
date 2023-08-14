@@ -3330,6 +3330,12 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "boolean",
+                        "default": false,
+                        "name": "pactParticipant",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "name": "playbookURL",
                         "in": "query"
@@ -5754,6 +5760,11 @@ const docTemplate = `{
                         "type": "string",
                         "description": "When creating, will default to you",
                         "name": "owner",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "PactIdentifier",
                         "in": "query"
                     },
                     {
@@ -9504,6 +9515,10 @@ const docTemplate = `{
                     "description": "Required when creating",
                     "type": "string"
                 },
+                "pactParticipant": {
+                    "type": "boolean",
+                    "default": false
+                },
                 "playbookURL": {
                     "type": "string"
                 },
@@ -9899,6 +9914,10 @@ const docTemplate = `{
                     "description": "Required when creating",
                     "type": "string"
                 },
+                "pactParticipant": {
+                    "type": "boolean",
+                    "default": false
+                },
                 "playbookURL": {
                     "type": "string"
                 }
@@ -10278,6 +10297,9 @@ const docTemplate = `{
                     "description": "When creating, will default to you",
                     "type": "string"
                 },
+                "pactIdentifier": {
+                    "type": "string"
+                },
                 "pagerdutyIntegration": {
                     "type": "string"
                 },
@@ -10405,6 +10427,10 @@ const docTemplate = `{
                 },
                 "legacyConfigsEnabled": {
                     "description": "Indicates whether a chart requires config rendering from firecloud-develop",
+                    "type": "boolean",
+                    "default": false
+                },
+                "pactParticipant": {
                     "type": "boolean",
                     "default": false
                 },
@@ -10624,6 +10650,9 @@ const docTemplate = `{
                     "description": "When creating, will default to you",
                     "type": "string"
                 },
+                "pactIdentifier": {
+                    "type": "string"
+                },
                 "pagerdutyIntegration": {
                     "type": "string"
                 },
@@ -10762,6 +10791,9 @@ const docTemplate = `{
                 },
                 "ownerInfo": {
                     "$ref": "#/definitions/v2controllers.User"
+                },
+                "pactIdentifier": {
+                    "type": "string"
                 },
                 "pagerdutyIntegration": {
                     "type": "string"

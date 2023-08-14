@@ -7,6 +7,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models/environment"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
+	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"math/rand"
 	"strconv"
@@ -51,6 +52,7 @@ type EditableEnvironment struct {
 	PreventDeletion             *bool                   `json:"preventDeletion" form:"preventDeletion" default:"false"` // Used to protect specific BEEs from deletion (thelma checks this field)
 	AutoDelete                  *environment.AutoDelete `json:"autoDelete" form:"autoDelete"`
 	Description                 *string                 `json:"description" form:"description"`
+	PactIdentifier              *uuid.UUID              `json:"pactIdentifier" form:"PactIdentifier" default:""`
 	PagerdutyIntegration        *string                 `json:"pagerdutyIntegration,omitempty" form:"pagerdutyIntegration"`
 	Offline                     *bool                   `json:"offline" form:"offline" default:"false"`                                                 // Applicable for BEEs only, whether Thelma should render the BEE as "offline" zero replicas (this field is a target state, not a status)
 	OfflineScheduleBeginEnabled *bool                   `json:"offlineScheduleBeginEnabled,omitempty" form:"offlineScheduleBeginEnabled"`               // When enabled, the BEE will be slated to go offline around the begin time each day
@@ -123,6 +125,7 @@ func (e Environment) toModel(storeSet *v2models.StoreSet) (v2models.Environment,
 		PreventDeletion:             e.PreventDeletion,
 		AutoDelete:                  e.AutoDelete,
 		Description:                 e.Description,
+		PactIdentifier:              e.PactIdentifier,
 		PagerdutyIntegrationID:      pagerdutyIntegrationID,
 		Offline:                     e.Offline,
 		OfflineScheduleBeginEnabled: e.OfflineScheduleBeginEnabled,
@@ -172,7 +175,6 @@ func modelEnvironmentToEnvironment(model *v2models.Environment) *Environment {
 	if defaultCluster != nil {
 		defaultClusterName = defaultCluster.Name
 	}
-
 	var pagerdutyIntegrationID string
 	pagerdutyIntegration := modelPagerdutyIntegrationToPagerdutyIntegration(model.PagerdutyIntegration)
 	if pagerdutyIntegration != nil {
@@ -229,6 +231,7 @@ func modelEnvironmentToEnvironment(model *v2models.Environment) *Environment {
 				PreventDeletion:             model.PreventDeletion,
 				AutoDelete:                  model.AutoDelete,
 				Description:                 model.Description,
+				PactIdentifier:              model.PactIdentifier,
 				PagerdutyIntegration:        &pagerdutyIntegrationID,
 				Offline:                     model.Offline,
 				OfflineScheduleBeginEnabled: model.OfflineScheduleBeginEnabled,

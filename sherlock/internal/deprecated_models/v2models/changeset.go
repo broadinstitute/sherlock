@@ -6,6 +6,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
+	"github.com/broadinstitute/sherlock/sherlock/internal/pactbroker"
 	"github.com/broadinstitute/sherlock/sherlock/internal/pagerduty"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
@@ -239,7 +240,7 @@ func (s *internalChangesetStore) apply(db *gorm.DB, changesets []Changeset, user
 		return nil
 	})
 
-	// If the update happened successfully, report these changes to any relevant Pagerduty integrations
+	// If the update happened successfully, report these changes to any relevant Pagerduty and Pact integrations
 	if err == nil {
 		environmentReleases := make(map[uint][]string)
 
@@ -252,6 +253,14 @@ func (s *internalChangesetStore) apply(db *gorm.DB, changesets []Changeset, user
 					*chartRelease.PagerdutyIntegration.Key,
 					fmt.Sprintf("Version changes to %s via Sherlock/Beehive", chartRelease.Name),
 					fmt.Sprintf(config.Config.MustString("beehive.chartReleaseUrlFormatString"), chartRelease.Name),
+				)
+			}
+			// Record app version to Pact broker
+			if chartRelease.Environment != nil && chartRelease.Chart.PactParticipant != nil && *chartRelease.Chart.PactParticipant && chartRelease.Environment.PactIdentifier != nil {
+				go pactbroker.RecordDeployment(
+					chartRelease.Chart.Name,
+					chartRelease.AppVersion.AppVersion,
+					*chartRelease.Environment.PactIdentifier,
 				)
 			}
 		}

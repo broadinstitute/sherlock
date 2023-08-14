@@ -3324,6 +3324,12 @@
                         "in": "query"
                     },
                     {
+                        "type": "boolean",
+                        "default": false,
+                        "name": "pactParticipant",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "name": "playbookURL",
                         "in": "query"
@@ -5748,6 +5754,12 @@
                         "type": "string",
                         "description": "When creating, will default to you",
                         "name": "owner",
+                        "in": "query"
+                    },
+                    {
+                        "type": "uuid",
+                        "name": "PactIdentifier",
+                        "description": "UUID of environment",
                         "in": "query"
                     },
                     {
@@ -9498,6 +9510,10 @@
                     "description": "Required when creating",
                     "type": "string"
                 },
+                "pactParticipant": {
+                    "type": "boolean",
+                    "default": false
+                },
                 "playbookURL": {
                     "type": "string"
                 },
@@ -9893,6 +9909,10 @@
                     "description": "Required when creating",
                     "type": "string"
                 },
+                "pactParticipant": {
+                    "type": "boolean",
+                    "default": false
+                },
                 "playbookURL": {
                     "type": "string"
                 }
@@ -10272,6 +10292,10 @@
                     "description": "When creating, will default to you",
                     "type": "string"
                 },
+                "pactIdentifier": {
+                    "type": "uuid",
+                    "description": "UUID of environment"
+                },
                 "pagerdutyIntegration": {
                     "type": "string"
                 },
@@ -10399,6 +10423,10 @@
                 },
                 "legacyConfigsEnabled": {
                     "description": "Indicates whether a chart requires config rendering from firecloud-develop",
+                    "type": "boolean",
+                    "default": false
+                },
+                "pactParticipant": {
                     "type": "boolean",
                     "default": false
                 },
@@ -10618,6 +10646,10 @@
                     "description": "When creating, will default to you",
                     "type": "string"
                 },
+                "pactIdentifier": {
+                    "type": "uuid",
+                    "description": "UUID of environment"
+                },
                 "pagerdutyIntegration": {
                     "type": "string"
                 },
@@ -10756,6 +10788,10 @@
                 },
                 "ownerInfo": {
                     "$ref": "#/definitions/v2controllers.User"
+                },
+                "pactIdentifier": {
+                    "type": "uuid",
+                    "description": "UUID of environment"
                 },
                 "pagerdutyIntegration": {
                     "type": "string"
