@@ -11,6 +11,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/db"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/metrics"
+	"github.com/broadinstitute/sherlock/sherlock/internal/slack"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
 	"net/http"
@@ -97,10 +98,18 @@ func (a *Application) Start() {
 		go v2models.KeepMetricsUpdated(ctx, a.gormDB)
 	}
 
+	if config.Config.Bool("slack.enable") {
+		log.Info().Msgf("BOOT | initializing Slack socket...")
+		if err = slack.Init(ctx); err != nil {
+			log.Fatal().Msgf("slack.Init() err: %v", err)
+		}
+		go slack.Start(ctx)
+	}
+
 	log.Info().Msgf("BOOT | building Gin router...")
 	a.server = &http.Server{
 		Addr:    ":8080",
-		Handler: buildRouter(a.gormDB),
+		Handler: buildRouter(ctx, a.gormDB),
 	}
 
 	log.Info().Msgf("BOOT | boot complete; now serving...")

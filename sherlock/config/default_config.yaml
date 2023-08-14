@@ -73,6 +73,56 @@ metrics:
 pagerduty:
   enable: false
 
+slack:
+  # When slack.enable is true, Sherlock will initiate a
+  # websocket connection with Slack upon boot. It will
+  # acknowledge all events it receives, even if it isn't
+  # configured to act on them (otherwise, Slack will
+  # redeliver repeatedly).
+  enable: false
+
+  # When slack.enableMocked is true, Sherlock will act as
+  # if slack.enable is true when the Slack client is
+  # currently mocked. This is set to true in test_config.yaml.
+  enableMocked: false
+
+  # slack.debug enables debug logging in the Slack library.
+  # Because it doesn't support leveling, the logs appear at
+  # the info level.
+  debug: false
+
+  appToken: replace me with token starting with "xapp-"
+  botToken: replace me with token starting with "xoxb-"
+
+  behaviors:
+
+    # slack.outgoing.deployHooks controls whether Sherlock
+    # should act upon Slack-based deploy hooks.
+    deployHooks:
+      enable: true
+
+    # slack.outgoing.errors controls whether Sherlock should
+    # notify a list of channels upon a 500 error.
+    errors:
+      enable: true
+      statusCodes:
+        # "Internal Server Error", sometimes used explicitly
+        # but mainly Sherlock's default for when it appears
+        # that it is to blame instead of the client.
+        - 500
+        # "Proxy Authentication Required", used if a request
+        # seems not to have been processed by IAP. We notify
+        # on it because it is highly unexpected and would
+        # indicate a misconfiguration.
+        - 407
+      channels:
+        - "#ap-k8s-monitor"
+      color: "#ef4444"
+
+    reactToMentionsWithEmoji:
+      enable: true
+      emoji: dsp-beehive
+
 model:
   environments:
     templates:

@@ -7,3 +7,5 @@ gha-creds-*.json
 
 # ignore sa-creds used in local testing
 *_sa.json
+
+.env

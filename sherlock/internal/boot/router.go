@@ -1,6 +1,7 @@
 package boot
 
 import (
+	"context"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/version"
 	"github.com/broadinstitute/sherlock/sherlock/docs"
 	"github.com/broadinstitute/sherlock/sherlock/html"
@@ -11,6 +12,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_handlers/v2handlers"
 	"github.com/broadinstitute/sherlock/sherlock/internal/metrics"
+	"github.com/broadinstitute/sherlock/sherlock/internal/slack"
 	"github.com/gin-gonic/gin"
 	swaggo_files "github.com/swaggo/files"
 	swaggo_gin "github.com/swaggo/gin-swagger"
@@ -32,7 +34,7 @@ import (
 //	@license.name	BSD-3-Clause
 //	@license.url	https://github.com/broadinstitute/sherlock/blob/main/LICENSE.txt
 
-func buildRouter(db *gorm.DB) *gin.Engine {
+func buildRouter(ctx context.Context, db *gorm.DB) *gin.Engine {
 	// gin.DebugMode spews console output but can help resolve routing issues
 	gin.SetMode(gin.ReleaseMode)
 
@@ -44,7 +46,7 @@ func buildRouter(db *gorm.DB) *gin.Engine {
 
 	router := gin.New()
 
-	router.Use(gin.Recovery(), middleware.Logger(), middleware.Headers())
+	router.Use(gin.Recovery(), middleware.Logger(), slack.ErrorReportingMiddleware(ctx), middleware.Headers())
 
 	// /status, /version
 	misc.ConfigureRoutes(&router.RouterGroup)

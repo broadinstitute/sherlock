@@ -27,6 +27,14 @@ auth:
 pagerduty:
   enable: false
 
+slack:
+  enableMocked: true
+  behaviors:
+    errors:
+      channels:
+        - "channel 1"
+        - "channel 2"
+
 model:
   environments:
     templates:

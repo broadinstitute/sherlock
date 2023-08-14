@@ -14,7 +14,6 @@ services:
       - "8081:8081"
     environment:
       SHERLOCK_DB_HOST: postgres
-      SHERLOCK-DB_USER: sherlock
       SHERLOCK_DB_PASSWORD: password
     depends_on:
       - database
