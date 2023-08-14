@@ -5,10 +5,10 @@ import (
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
+	"github.com/broadinstitute/sherlock/sherlock/internal/pactbroker"
 	"strings"
 
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
-	"github.com/broadinstitute/sherlock/sherlock/internal/pactbroker"
 	"github.com/broadinstitute/sherlock/sherlock/internal/pagerduty"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
@@ -237,6 +237,12 @@ func (s *internalChangesetStore) apply(db *gorm.DB, changesets []Changeset, user
 					}
 				}
 			}
+			if chartRelease.Environment != nil {
+				log.Info().Msgf("chartRelease.Environment is not nil")
+			}
+			log.Info().Msgf("chartRelease.Chart.PactParticipant %t", *chartRelease.Chart.PactParticipant)
+			log.Info().Msgf("chartRelease.Chart.PactIdentifier %v", chartRelease.Environment.PactIdentifier)
+
 		}
 		return nil
 	})
@@ -246,9 +252,20 @@ func (s *internalChangesetStore) apply(db *gorm.DB, changesets []Changeset, user
 		environmentReleases := make(map[uint][]string)
 
 		for _, chartRelease := range affectedChartReleases {
+
 			if chartRelease.EnvironmentID != nil {
 				environmentReleases[*chartRelease.EnvironmentID] = append(environmentReleases[*chartRelease.EnvironmentID], chartRelease.Name)
 			}
+
+			// Record app version to Pact broker
+			if chartRelease.Environment != nil && chartRelease.Chart.PactParticipant != nil && *chartRelease.Chart.PactParticipant && chartRelease.Environment.PactIdentifier != nil {
+				go pactbroker.RecordDeployment(
+					chartRelease.Chart.Name,
+					chartRelease.AppVersion.AppVersion,
+					*chartRelease.Environment.PactIdentifier,
+				)
+			}
+
 			if chartRelease.PagerdutyIntegration != nil && chartRelease.PagerdutyIntegration.Key != nil {
 				go pagerduty.SendChangeSwallowErrors(
 					*chartRelease.PagerdutyIntegration.Key,
@@ -267,16 +284,6 @@ func (s *internalChangesetStore) apply(db *gorm.DB, changesets []Changeset, user
 					)
 				}
 			}
-
-			// Record app version to Pact broker
-			if chartRelease.Environment != nil && chartRelease.Chart.PactParticipant != nil && *chartRelease.Chart.PactParticipant && chartRelease.Environment.PactIdentifier != nil {
-				go pactbroker.RecordDeployment(
-					chartRelease.Chart.Name,
-					chartRelease.AppVersion.AppVersion,
-					*chartRelease.Environment.PactIdentifier,
-				)
-			}
-
 		}
 
 	}
