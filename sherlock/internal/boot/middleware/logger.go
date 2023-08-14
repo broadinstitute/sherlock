@@ -31,6 +31,16 @@ func Logger() gin.HandlerFunc {
 		default:
 			event = log.Info()
 		}
+
+		if len(ctx.Errors) > 1 {
+			for i, err := range ctx.Errors {
+				log.Error().Err(err).Msgf("GIN  | request incurred a surprising number of errors (can't attach them all to a single log line), %d of %d: %v", i+1, len(ctx.Errors), err)
+			}
+		}
+		if len(ctx.Errors) > 0 {
+			event.Err(ctx.Errors[0])
+		}
+
 		event.Msgf("GIN  | %3d | %14s | %15s | %30s | %-7s %s",
 			ctx.Writer.Status(), time.Since(t).String(), ctx.ClientIP(), identity, ctx.Request.Method, path)
 	}

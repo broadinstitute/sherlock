@@ -148,17 +148,17 @@ func updateUserGithubAssociation(controller *v2controllers2.UserController) func
 	return func(ctx *gin.Context) {
 		user, err := authentication.ShouldUseUser(ctx)
 		if err != nil {
-			ctx.JSON(errors.ErrorToApiResponse(err))
+			errors.AbortRequest(ctx, err)
 			return
 		}
 		var request v2controllers2.GithubAccessPayload
 		if err := ctx.ShouldBindJSON(&request); err != nil {
-			ctx.JSON(errors.ErrorToApiResponse(fmt.Errorf("(%s) JSON error parsing to %T: %v", errors.BadRequest, request, err)))
+			errors.AbortRequest(ctx, fmt.Errorf("(%s) JSON error parsing to %T: %v", errors.BadRequest, request, err))
 			return
 		}
 		result, updated, err := controller.UpdateUserGithubAssociation(request, user)
 		if err != nil {
-			ctx.JSON(errors.ErrorToApiResponse(err))
+			errors.AbortRequest(ctx, err)
 			return
 		}
 		if updated {
@@ -182,12 +182,12 @@ func getOwnUser(controller *v2controllers2.UserController) func(ctx *gin.Context
 	return func(ctx *gin.Context) {
 		user, err := authentication.ShouldUseUser(ctx)
 		if err != nil {
-			ctx.JSON(errors.ErrorToApiResponse(err))
+			errors.AbortRequest(ctx, err)
 			return
 		}
 		result, err := controller.Get(user.Email)
 		if err != nil {
-			ctx.JSON(errors.ErrorToApiResponse(err))
+			errors.AbortRequest(ctx, err)
 			return
 		}
 		ctx.JSON(http.StatusOK, result)

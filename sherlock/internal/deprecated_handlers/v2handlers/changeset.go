@@ -78,17 +78,17 @@ func planAndApplyChangeset(controller *v2controllers2.ChangesetController) func(
 	return func(ctx *gin.Context) {
 		user, err := authentication.ShouldUseUser(ctx)
 		if err != nil {
-			ctx.JSON(errors.ErrorToApiResponse(err))
+			errors.AbortRequest(ctx, err)
 			return
 		}
 		var request v2controllers2.ChangesetPlanRequest
 		if err := ctx.ShouldBindJSON(&request); err != nil {
-			ctx.JSON(errors.ErrorToApiResponse(fmt.Errorf("(%s) JSON error parsing to %T: %v", errors.BadRequest, request, err)))
+			errors.AbortRequest(ctx, fmt.Errorf("(%s) JSON error parsing to %T: %v", errors.BadRequest, request, err))
 			return
 		}
 		result, err := controller.PlanAndApply(request, user)
 		if err != nil {
-			ctx.JSON(errors.ErrorToApiResponse(err))
+			errors.AbortRequest(ctx, err)
 			return
 		}
 		if len(result) > 0 {
@@ -115,17 +115,17 @@ func planChangeset(controller *v2controllers2.ChangesetController) func(ctx *gin
 	return func(ctx *gin.Context) {
 		user, err := authentication.ShouldUseUser(ctx)
 		if err != nil {
-			ctx.JSON(errors.ErrorToApiResponse(err))
+			errors.AbortRequest(ctx, err)
 			return
 		}
 		var request v2controllers2.ChangesetPlanRequest
 		if err := ctx.ShouldBindJSON(&request); err != nil {
-			ctx.JSON(errors.ErrorToApiResponse(fmt.Errorf("(%s) JSON error parsing to %T: %v", errors.BadRequest, request, err)))
+			errors.AbortRequest(ctx, fmt.Errorf("(%s) JSON error parsing to %T: %v", errors.BadRequest, request, err))
 			return
 		}
 		result, err := controller.Plan(request, user)
 		if err != nil {
-			ctx.JSON(errors.ErrorToApiResponse(err))
+			errors.AbortRequest(ctx, err)
 			return
 		}
 		if len(result) > 0 {
@@ -152,17 +152,17 @@ func applyChangeset(controller *v2controllers2.ChangesetController) func(ctx *gi
 	return func(ctx *gin.Context) {
 		user, err := authentication.ShouldUseUser(ctx)
 		if err != nil {
-			ctx.JSON(errors.ErrorToApiResponse(err))
+			errors.AbortRequest(ctx, err)
 			return
 		}
 		var request []string
 		if err := ctx.ShouldBindJSON(&request); err != nil {
-			ctx.JSON(errors.ErrorToApiResponse(fmt.Errorf("(%s) JSON error parsing to %T: %v", errors.BadRequest, request, err)))
+			errors.AbortRequest(ctx, fmt.Errorf("(%s) JSON error parsing to %T: %v", errors.BadRequest, request, err))
 			return
 		}
 		result, err := controller.Apply(request, user)
 		if err != nil {
-			ctx.JSON(errors.ErrorToApiResponse(err))
+			errors.AbortRequest(ctx, err)
 			return
 		}
 		ctx.JSON(http.StatusOK, result)
@@ -186,18 +186,18 @@ func queryAppliedChangeset(controller *v2controllers2.ChangesetController) func(
 		offsetString := ctx.DefaultQuery("offset", "0")
 		offset, err := strconv.Atoi(offsetString)
 		if err != nil {
-			ctx.JSON(errors.ErrorToApiResponse(fmt.Errorf("(%s) error parsing offset parameter: %v", errors.BadRequest, err)))
+			errors.AbortRequest(ctx, fmt.Errorf("(%s) error parsing offset parameter: %v", errors.BadRequest, err))
 			return
 		}
 		limitString := ctx.DefaultQuery("limit", "0")
 		limit, err := strconv.Atoi(limitString)
 		if err != nil {
-			ctx.JSON(errors.ErrorToApiResponse(fmt.Errorf("(%s) error parsing limit parameter: %v", errors.BadRequest, err)))
+			errors.AbortRequest(ctx, fmt.Errorf("(%s) error parsing limit parameter: %v", errors.BadRequest, err))
 			return
 		}
 		result, err := controller.QueryApplied(formatSelector(ctx.Param("selector")), offset, limit)
 		if err != nil {
-			ctx.JSON(errors.ErrorToApiResponse(err))
+			errors.AbortRequest(ctx, err)
 			return
 		}
 		ctx.JSON(http.StatusOK, result)
