@@ -11,8 +11,7 @@ import (
 // Record deployment to pact broker
 // https://docs.pact.io/pact_broker/recording_deployments_and_releases
 func RecordDeployment(chartName string, appVersion string, eID uuid.UUID) {
-	if config.Config.Bool("pactbroker.enabled") {
-
+	if config.Config.Bool("pactbroker.enable") {
 		request, err := http.NewRequest(http.MethodPost, config.Config.MustString("pactbroker.url")+"/pacticipants/"+chartName+
 			"/versions/"+appVersion+"/deployed-versions/environment/"+eID.String(), nil)
 		if err != nil {
