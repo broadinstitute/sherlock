@@ -75,6 +75,12 @@ export interface V2controllersEditableChart {
     legacyConfigsEnabled?: boolean;
     /**
      * 
+     * @type {boolean}
+     * @memberof V2controllersEditableChart
+     */
+    pactParticipant?: boolean;
+    /**
+     * 
      * @type {string}
      * @memberof V2controllersEditableChart
      */
@@ -109,6 +115,7 @@ export function V2controllersEditableChartFromJSONTyped(json: any, ignoreDiscrim
         'defaultSubdomain': !exists(json, 'defaultSubdomain') ? undefined : json['defaultSubdomain'],
         'description': !exists(json, 'description') ? undefined : json['description'],
         'legacyConfigsEnabled': !exists(json, 'legacyConfigsEnabled') ? undefined : json['legacyConfigsEnabled'],
+        'pactParticipant': !exists(json, 'pactParticipant') ? undefined : json['pactParticipant'],
         'playbookURL': !exists(json, 'playbookURL') ? undefined : json['playbookURL'],
     };
 }
@@ -131,6 +138,7 @@ export function V2controllersEditableChartToJSON(value?: V2controllersEditableCh
         'defaultSubdomain': value.defaultSubdomain,
         'description': value.description,
         'legacyConfigsEnabled': value.legacyConfigsEnabled,
+        'pactParticipant': value.pactParticipant,
         'playbookURL': value.playbookURL,
     };
 }

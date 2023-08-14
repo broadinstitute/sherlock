@@ -106,6 +106,12 @@ export interface V2controllersChart {
     name?: string;
     /**
      * 
+     * @type {boolean}
+     * @memberof V2controllersChart
+     */
+    pactParticipant?: boolean;
+    /**
+     * 
      * @type {string}
      * @memberof V2controllersChart
      */
@@ -150,6 +156,7 @@ export function V2controllersChartFromJSONTyped(json: any, ignoreDiscriminator: 
         'id': !exists(json, 'id') ? undefined : json['id'],
         'legacyConfigsEnabled': !exists(json, 'legacyConfigsEnabled') ? undefined : json['legacyConfigsEnabled'],
         'name': !exists(json, 'name') ? undefined : json['name'],
+        'pactParticipant': !exists(json, 'pactParticipant') ? undefined : json['pactParticipant'],
         'playbookURL': !exists(json, 'playbookURL') ? undefined : json['playbookURL'],
         'updatedAt': !exists(json, 'updatedAt') ? undefined : (new Date(json['updatedAt'])),
     };
@@ -177,6 +184,7 @@ export function V2controllersChartToJSON(value?: V2controllersChart | null): any
         'id': value.id,
         'legacyConfigsEnabled': value.legacyConfigsEnabled,
         'name': value.name,
+        'pactParticipant': value.pactParticipant,
         'playbookURL': value.playbookURL,
         'updatedAt': value.updatedAt === undefined ? undefined : (value.updatedAt.toISOString()),
     };

@@ -205,6 +205,12 @@ export interface V2controllersEnvironment {
      * @type {string}
      * @memberof V2controllersEnvironment
      */
+    pactIdentifier?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof V2controllersEnvironment
+     */
     pagerdutyIntegration?: string;
     /**
      * 
@@ -300,6 +306,7 @@ export function V2controllersEnvironmentFromJSONTyped(json: any, ignoreDiscrimin
         'offlineScheduleEndWeekends': !exists(json, 'offlineScheduleEndWeekends') ? undefined : json['offlineScheduleEndWeekends'],
         'owner': !exists(json, 'owner') ? undefined : json['owner'],
         'ownerInfo': !exists(json, 'ownerInfo') ? undefined : V2controllersUserFromJSON(json['ownerInfo']),
+        'pactIdentifier': !exists(json, 'pactIdentifier') ? undefined : json['pactIdentifier'],
         'pagerdutyIntegration': !exists(json, 'pagerdutyIntegration') ? undefined : json['pagerdutyIntegration'],
         'pagerdutyIntegrationInfo': !exists(json, 'pagerdutyIntegrationInfo') ? undefined : V2controllersPagerdutyIntegrationFromJSON(json['pagerdutyIntegrationInfo']),
         'preventDeletion': !exists(json, 'preventDeletion') ? undefined : json['preventDeletion'],
@@ -346,6 +353,7 @@ export function V2controllersEnvironmentToJSON(value?: V2controllersEnvironment 
         'offlineScheduleEndWeekends': value.offlineScheduleEndWeekends,
         'owner': value.owner,
         'ownerInfo': V2controllersUserToJSON(value.ownerInfo),
+        'pactIdentifier': value.pactIdentifier,
         'pagerdutyIntegration': value.pagerdutyIntegration,
         'pagerdutyIntegrationInfo': V2controllersPagerdutyIntegrationToJSON(value.pagerdutyIntegrationInfo),
         'preventDeletion': value.preventDeletion,

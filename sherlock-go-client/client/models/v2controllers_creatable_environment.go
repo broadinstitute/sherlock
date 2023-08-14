@@ -81,6 +81,9 @@ type V2controllersCreatableEnvironment struct {
 	// When creating, will default to you
 	Owner string `json:"owner,omitempty"`
 
+	// pact identifier
+	PactIdentifier string `json:"pactIdentifier,omitempty"`
+
 	// pagerduty integration
 	PagerdutyIntegration string `json:"pagerdutyIntegration,omitempty"`
 

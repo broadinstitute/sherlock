@@ -97,6 +97,9 @@ type V2controllersEnvironment struct {
 	// owner info
 	OwnerInfo *V2controllersUser `json:"ownerInfo,omitempty"`
 
+	// pact identifier
+	PactIdentifier string `json:"pactIdentifier,omitempty"`
+
 	// pagerduty integration
 	PagerdutyIntegration string `json:"pagerdutyIntegration,omitempty"`
 

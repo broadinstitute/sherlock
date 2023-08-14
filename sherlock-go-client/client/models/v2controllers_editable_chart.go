@@ -44,6 +44,9 @@ type V2controllersEditableChart struct {
 	// Indicates whether a chart requires config rendering from firecloud-develop
 	LegacyConfigsEnabled *bool `json:"legacyConfigsEnabled,omitempty"`
 
+	// pact participant
+	PactParticipant *bool `json:"pactParticipant,omitempty"`
+
 	// playbook URL
 	PlaybookURL string `json:"playbookURL,omitempty"`
 }
