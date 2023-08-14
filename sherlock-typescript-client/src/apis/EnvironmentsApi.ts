@@ -59,6 +59,7 @@ export interface ApiV2EnvironmentsGetRequest {
     offlineScheduleEndTime?: Date;
     offlineScheduleEndWeekends?: boolean;
     owner?: string;
+    pactIdentifier?: string;
     pagerdutyIntegration?: string;
     preventDeletion?: boolean;
     requiresSuitability?: boolean;
@@ -194,6 +195,10 @@ export class EnvironmentsApi extends runtime.BaseAPI {
 
         if (requestParameters.owner !== undefined) {
             queryParameters['owner'] = requestParameters.owner;
+        }
+
+        if (requestParameters.pactIdentifier !== undefined) {
+            queryParameters['PactIdentifier'] = requestParameters.pactIdentifier;
         }
 
         if (requestParameters.pagerdutyIntegration !== undefined) {

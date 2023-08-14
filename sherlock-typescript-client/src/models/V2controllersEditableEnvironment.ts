@@ -115,6 +115,12 @@ export interface V2controllersEditableEnvironment {
      * @type {string}
      * @memberof V2controllersEditableEnvironment
      */
+    pactIdentifier?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof V2controllersEditableEnvironment
+     */
     pagerdutyIntegration?: string;
     /**
      * Used to protect specific BEEs from deletion (thelma checks this field)
@@ -163,6 +169,7 @@ export function V2controllersEditableEnvironmentFromJSONTyped(json: any, ignoreD
         'offlineScheduleEndTime': !exists(json, 'offlineScheduleEndTime') ? undefined : (new Date(json['offlineScheduleEndTime'])),
         'offlineScheduleEndWeekends': !exists(json, 'offlineScheduleEndWeekends') ? undefined : json['offlineScheduleEndWeekends'],
         'owner': !exists(json, 'owner') ? undefined : json['owner'],
+        'pactIdentifier': !exists(json, 'pactIdentifier') ? undefined : json['pactIdentifier'],
         'pagerdutyIntegration': !exists(json, 'pagerdutyIntegration') ? undefined : json['pagerdutyIntegration'],
         'preventDeletion': !exists(json, 'preventDeletion') ? undefined : json['preventDeletion'],
         'requiresSuitability': !exists(json, 'requiresSuitability') ? undefined : json['requiresSuitability'],
@@ -192,6 +199,7 @@ export function V2controllersEditableEnvironmentToJSON(value?: V2controllersEdit
         'offlineScheduleEndTime': value.offlineScheduleEndTime === undefined ? undefined : (value.offlineScheduleEndTime.toISOString()),
         'offlineScheduleEndWeekends': value.offlineScheduleEndWeekends,
         'owner': value.owner,
+        'pactIdentifier': value.pactIdentifier,
         'pagerdutyIntegration': value.pagerdutyIntegration,
         'preventDeletion': value.preventDeletion,
         'requiresSuitability': value.requiresSuitability,

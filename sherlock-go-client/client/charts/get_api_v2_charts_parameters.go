@@ -122,6 +122,9 @@ type GetAPIV2ChartsParams struct {
 	*/
 	Name *string
 
+	// PactParticipant.
+	PactParticipant *bool
+
 	// PlaybookURL.
 	PlaybookURL *string
 
@@ -157,6 +160,8 @@ func (o *GetAPIV2ChartsParams) SetDefaults() {
 		defaultProtocolDefault = string("https")
 
 		legacyConfigsEnabledDefault = bool(false)
+
+		pactParticipantDefault = bool(false)
 	)
 
 	val := GetAPIV2ChartsParams{
@@ -165,6 +170,7 @@ func (o *GetAPIV2ChartsParams) SetDefaults() {
 		DefaultPort:          &defaultPortDefault,
 		DefaultProtocol:      &defaultProtocolDefault,
 		LegacyConfigsEnabled: &legacyConfigsEnabledDefault,
+		PactParticipant:      &pactParticipantDefault,
 	}
 
 	val.timeout = o.timeout
@@ -347,6 +353,17 @@ func (o *GetAPIV2ChartsParams) WithName(name *string) *GetAPIV2ChartsParams {
 // SetName adds the name to the get API v2 charts params
 func (o *GetAPIV2ChartsParams) SetName(name *string) {
 	o.Name = name
+}
+
+// WithPactParticipant adds the pactParticipant to the get API v2 charts params
+func (o *GetAPIV2ChartsParams) WithPactParticipant(pactParticipant *bool) *GetAPIV2ChartsParams {
+	o.SetPactParticipant(pactParticipant)
+	return o
+}
+
+// SetPactParticipant adds the pactParticipant to the get API v2 charts params
+func (o *GetAPIV2ChartsParams) SetPactParticipant(pactParticipant *bool) {
+	o.PactParticipant = pactParticipant
 }
 
 // WithPlaybookURL adds the playbookURL to the get API v2 charts params
@@ -595,6 +612,23 @@ func (o *GetAPIV2ChartsParams) WriteToRequest(r runtime.ClientRequest, reg strfm
 		if qName != "" {
 
 			if err := r.SetQueryParam("name", qName); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.PactParticipant != nil {
+
+		// query param pactParticipant
+		var qrPactParticipant bool
+
+		if o.PactParticipant != nil {
+			qrPactParticipant = *o.PactParticipant
+		}
+		qPactParticipant := swag.FormatBool(qrPactParticipant)
+		if qPactParticipant != "" {
+
+			if err := r.SetQueryParam("pactParticipant", qPactParticipant); err != nil {
 				return err
 			}
 		}

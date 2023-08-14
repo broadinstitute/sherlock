@@ -44,6 +44,7 @@ export interface ApiV2ChartsGetRequest {
     id?: number;
     legacyConfigsEnabled?: boolean;
     name?: string;
+    pactParticipant?: boolean;
     playbookURL?: string;
     updatedAt?: Date;
     limit?: number;
@@ -133,6 +134,10 @@ export class ChartsApi extends runtime.BaseAPI {
 
         if (requestParameters.name !== undefined) {
             queryParameters['name'] = requestParameters.name;
+        }
+
+        if (requestParameters.pactParticipant !== undefined) {
+            queryParameters['pactParticipant'] = requestParameters.pactParticipant;
         }
 
         if (requestParameters.playbookURL !== undefined) {

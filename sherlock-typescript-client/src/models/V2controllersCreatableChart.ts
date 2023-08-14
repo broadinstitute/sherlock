@@ -81,6 +81,12 @@ export interface V2controllersCreatableChart {
     name?: string;
     /**
      * 
+     * @type {boolean}
+     * @memberof V2controllersCreatableChart
+     */
+    pactParticipant?: boolean;
+    /**
+     * 
      * @type {string}
      * @memberof V2controllersCreatableChart
      */
@@ -116,6 +122,7 @@ export function V2controllersCreatableChartFromJSONTyped(json: any, ignoreDiscri
         'description': !exists(json, 'description') ? undefined : json['description'],
         'legacyConfigsEnabled': !exists(json, 'legacyConfigsEnabled') ? undefined : json['legacyConfigsEnabled'],
         'name': !exists(json, 'name') ? undefined : json['name'],
+        'pactParticipant': !exists(json, 'pactParticipant') ? undefined : json['pactParticipant'],
         'playbookURL': !exists(json, 'playbookURL') ? undefined : json['playbookURL'],
     };
 }
@@ -139,6 +146,7 @@ export function V2controllersCreatableChartToJSON(value?: V2controllersCreatable
         'description': value.description,
         'legacyConfigsEnabled': value.legacyConfigsEnabled,
         'name': value.name,
+        'pactParticipant': value.pactParticipant,
         'playbookURL': value.playbookURL,
     };
 }

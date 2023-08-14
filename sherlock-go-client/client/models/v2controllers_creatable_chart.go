@@ -47,6 +47,9 @@ type V2controllersCreatableChart struct {
 	// Required when creating
 	Name string `json:"name,omitempty"`
 
+	// pact participant
+	PactParticipant *bool `json:"pactParticipant,omitempty"`
+
 	// playbook URL
 	PlaybookURL string `json:"playbookURL,omitempty"`
 }

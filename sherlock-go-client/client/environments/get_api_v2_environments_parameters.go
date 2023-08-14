@@ -60,6 +60,9 @@ func NewGetAPIV2EnvironmentsParamsWithHTTPClient(client *http.Client) *GetAPIV2E
 */
 type GetAPIV2EnvironmentsParams struct {
 
+	// PactIdentifier.
+	PactIdentifier *string
+
 	/* AutoPopulateChartReleases.
 
 	   If true when creating, dynamic environments copy from template and template environments get the honeycomb chart
@@ -304,6 +307,17 @@ func (o *GetAPIV2EnvironmentsParams) WithHTTPClient(client *http.Client) *GetAPI
 // SetHTTPClient adds the HTTPClient to the get API v2 environments params
 func (o *GetAPIV2EnvironmentsParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
+}
+
+// WithPactIdentifier adds the pactIdentifier to the get API v2 environments params
+func (o *GetAPIV2EnvironmentsParams) WithPactIdentifier(pactIdentifier *string) *GetAPIV2EnvironmentsParams {
+	o.SetPactIdentifier(pactIdentifier)
+	return o
+}
+
+// SetPactIdentifier adds the pactIdentifier to the get API v2 environments params
+func (o *GetAPIV2EnvironmentsParams) SetPactIdentifier(pactIdentifier *string) {
+	o.PactIdentifier = pactIdentifier
 }
 
 // WithAutoPopulateChartReleases adds the autoPopulateChartReleases to the get API v2 environments params
@@ -632,6 +646,23 @@ func (o *GetAPIV2EnvironmentsParams) WriteToRequest(r runtime.ClientRequest, reg
 		return err
 	}
 	var res []error
+
+	if o.PactIdentifier != nil {
+
+		// query param PactIdentifier
+		var qrPactIdentifier string
+
+		if o.PactIdentifier != nil {
+			qrPactIdentifier = *o.PactIdentifier
+		}
+		qPactIdentifier := qrPactIdentifier
+		if qPactIdentifier != "" {
+
+			if err := r.SetQueryParam("PactIdentifier", qPactIdentifier); err != nil {
+				return err
+			}
+		}
+	}
 
 	if o.AutoPopulateChartReleases != nil {
 
