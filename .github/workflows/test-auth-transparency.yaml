@@ -43,7 +43,7 @@ jobs:
           echo '## Sherlock Prod' >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
           curl --fail-with-body \
-            "$SHERLOCK_PROD_URL/my-user" \
+            "$SHERLOCK_PROD_URL/api/users/v3/me" \
             -H 'Content-Type: application/json' \
             -H 'Authorization: Bearer ${{ steps.iap_auth.outputs.id_token }}' \
             -H 'X-GHA-OIDC-JWT: ${{ steps.gha_auth.outputs.id_token }}' | jq >> $GITHUB_STEP_SUMMARY
@@ -56,7 +56,7 @@ jobs:
           echo '## Sherlock Dev' >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
           curl --fail-with-body \
-            "$SHERLOCK_DEV_URL/my-user" \
+            "$SHERLOCK_DEV_URL/api/users/v3/me" \
             -H 'Content-Type: application/json' \
             -H 'Authorization: Bearer ${{ steps.iap_auth.outputs.id_token }}' \
             -H 'X-GHA-OIDC-JWT: ${{ steps.gha_auth.outputs.id_token }}' | jq >> $GITHUB_STEP_SUMMARY
