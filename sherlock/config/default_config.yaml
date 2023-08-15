@@ -16,6 +16,7 @@ db:
   name: sherlock
   port: 5432
   ssl: disable
+  maxIdleConnections: 50
   maxOpenConnections: 75
   init: true
 

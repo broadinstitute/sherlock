@@ -36,6 +36,10 @@ func Connect() (*sql.DB, error) {
 	if err != nil {
 		return nil, fmt.Errorf("error building SQL connection: %v", err)
 	}
+
+	sqlDB.SetMaxOpenConns(config.Config.MustInt("db.maxOpenConnections"))
+	sqlDB.SetMaxIdleConns(config.Config.MustInt("db.maxIdleConnections"))
+
 	initialAttempts := config.Config.Int("db.retryConnection.times") + 1
 	for attemptsRemaining := initialAttempts; attemptsRemaining >= 0; attemptsRemaining-- {
 		if err = sqlDB.Ping(); err == nil {
@@ -50,9 +54,6 @@ func Connect() (*sql.DB, error) {
 			}
 		}
 	}
-	// defensively set max number of open connections to defend against contention issues
-	maxOpenConnections := config.Config.MustInt("db.maxOpenConnections")
-	sqlDB.SetMaxOpenConns(maxOpenConnections)
 
 	if config.Config.MustString("mode") == "debug" {
 		PanicIfLooksLikeCloudSQL(sqlDB)
