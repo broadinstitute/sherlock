@@ -28,6 +28,8 @@ import (
 //	@accept			json
 //	@produce		json
 
+//	@host	sherlock.dsp-devops.broadinstitute.org
+
 //	@contact.name	DSP DevOps
 //	@contact.email	dsp-devops@broadinstitute.org
 
@@ -38,6 +40,9 @@ func buildRouter(ctx context.Context, db *gorm.DB) *gin.Engine {
 	// gin.DebugMode spews console output but can help resolve routing issues
 	gin.SetMode(gin.ReleaseMode)
 
+	// At runtime, we want Sherlock's own hosted Swagger page to refer to itself, however/wherever it's deployed
+	// (setting the host to an empty string achieves that behavior, like if we didn't specify a host at all)
+	docs.SwaggerInfo.Host = ""
 	docs.SwaggerInfo.Version = version.BuildVersion
 	if config.Config.String("mode") == "debug" {
 		// When running locally, make the Swagger page have a scheme dropdown with http as the default
