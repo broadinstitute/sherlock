@@ -99,4 +99,4 @@ spec:
   lifecycle: production
   owner: dsp-devops
   dependencyOf:
-    - sherlock
+    - 'component:sherlock'
