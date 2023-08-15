@@ -16,7 +16,7 @@ import (
 	"gorm.io/gorm"
 
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
-	_ "github.com/jackc/pgx/v4/stdlib"
+	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
 func dbConnectionString() string {
