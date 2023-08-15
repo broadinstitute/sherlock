@@ -1,6 +1,7 @@
 package authentication
 
 import (
+	stdErrors "errors"
 	"fmt"
 	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/authentication_method"
 	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/gha_oidc"
@@ -35,13 +36,13 @@ func realUserMiddleware(db *gorm.DB) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		email, googleID, err := iap.ParseHeader(ctx)
 		if err != nil {
-			ctx.AbortWithStatusJSON(errors.ErrorToApiResponse(err))
+			errors.AbortRequest(ctx, err)
 			return
 		}
 
 		var iapUser models.User
 		if err = db.Where(&models.User{Email: email, GoogleID: googleID}).FirstOrCreate(&iapUser).Error; err != nil {
-			ctx.AbortWithStatusJSON(errors.ErrorToApiResponse(err))
+			errors.AbortRequest(ctx, err)
 			return
 		}
 		iapUser.AuthenticationMethod = authentication_method.IAP
@@ -49,17 +50,17 @@ func realUserMiddleware(db *gorm.DB) gin.HandlerFunc {
 		headerPresent, githubUsername, githubID, err := gha_oidc.ParseHeader(ctx)
 		if headerPresent {
 			if err != nil {
-				ctx.AbortWithStatusJSON(errors.ErrorToApiResponse(err))
+				errors.AbortRequest(ctx, err)
 				return
 			}
 
 			var ghaUser models.User
 			if err = db.Where(&models.User{GithubID: &githubID}).First(&ghaUser).Error; err != nil {
-				if err == gorm.ErrRecordNotFound {
+				if stdErrors.Is(err, gorm.ErrRecordNotFound) {
 					log.Info().Msgf("AUTH | ignored GHA OIDC JWT for unknown github user %s, still using IAP JWT user %s", githubUsername, iapUser.Email)
 					ctx.Set(ctxUserFieldName, &iapUser)
 				} else {
-					ctx.AbortWithStatusJSON(errors.ErrorToApiResponse(err))
+					errors.AbortRequest(ctx, err)
 					return
 				}
 			} else {
@@ -82,7 +83,7 @@ func fakeUserMiddleware(db *gorm.DB, headerParser func(ctx *gin.Context) (email 
 		email, googleID := headerParser(ctx)
 		var fakeUser models.User
 		if err := db.Where(&models.User{Email: email, GoogleID: googleID}).FirstOrCreate(&fakeUser).Error; err != nil {
-			ctx.AbortWithStatusJSON(errors.ErrorToApiResponse(err))
+			errors.AbortRequest(ctx, err)
 			return
 		}
 		fakeUser.AuthenticationMethod = method
