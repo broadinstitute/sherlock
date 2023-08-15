@@ -22,6 +22,7 @@
         },
         "version": "development"
     },
+    "host": "sherlock.dsp-devops.broadinstitute.org",
     "paths": {
         "/api/ci-identifiers/v3": {
             "get": {

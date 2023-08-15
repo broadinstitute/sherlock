@@ -1648,6 +1648,7 @@ definitions:
         format: date-time
         type: string
     type: object
+host: sherlock.dsp-devops.broadinstitute.org
 info:
   contact:
     email: dsp-devops@broadinstitute.org
