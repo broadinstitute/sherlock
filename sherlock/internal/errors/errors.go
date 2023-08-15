@@ -30,7 +30,7 @@ type ErrorResponse struct {
 	Message string `json:"message"`
 }
 
-func ErrorToApiResponse(err error) (int, ErrorResponse) {
+func errorToApiResponse(err error) (int, ErrorResponse) {
 	code, response := convert(err)
 	if response.ToBlame == "server" {
 		log.Error().Msgf("BODY | %3d | %s", code, response.Message)
