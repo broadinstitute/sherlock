@@ -126,7 +126,7 @@ spec:
 apiVersion: backstage.io/v1alpha1
 kind: Resource
 metadata:
-  name: sherlock-cloudsql
+  name: sherlock-webhook-proxy
   description: |
     GCP cloudfunction used by sherlock to track github actions runs across all DSP repositories
   tags:
