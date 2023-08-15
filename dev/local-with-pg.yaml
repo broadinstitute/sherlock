@@ -13,8 +13,8 @@ services:
       - "8080:8080"
       - "8081:8081"
     environment:
-      SHERLOCK_DB_HOST: postgres
-      SHERLOCK_DB_PASSWORD: password
+      SHERLOCK_db_host: postgres
+      SHERLOCK_db_password: password
     depends_on:
       - database
     networks: 
