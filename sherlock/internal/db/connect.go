@@ -39,6 +39,8 @@ func Connect() (*sql.DB, error) {
 
 	sqlDB.SetMaxOpenConns(config.Config.MustInt("db.maxOpenConnections"))
 	sqlDB.SetMaxIdleConns(config.Config.MustInt("db.maxIdleConnections"))
+	sqlDB.SetConnMaxIdleTime(config.Config.MustDuration("db.connectionMaxIdleTime"))
+	sqlDB.SetConnMaxLifetime(config.Config.MustDuration("db.connectionMaxLifetime"))
 
 	initialAttempts := config.Config.Int("db.retryConnection.times") + 1
 	for attemptsRemaining := initialAttempts; attemptsRemaining >= 0; attemptsRemaining-- {

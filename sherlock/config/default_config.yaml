@@ -18,6 +18,8 @@ db:
   ssl: disable
   maxIdleConnections: 50
   maxOpenConnections: 75
+  connectionMaxIdleTime: 0s
+  connectionMaxLifetime: 0s
   init: true
 
   livenessPingInterval: 10s
