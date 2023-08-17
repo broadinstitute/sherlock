@@ -9,6 +9,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/boot/liveness"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/db"
+	"github.com/broadinstitute/sherlock/sherlock/internal/deployhooks"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/metrics"
 	"github.com/broadinstitute/sherlock/sherlock/internal/slack"
@@ -66,6 +67,11 @@ func (a *Application) Start() {
 	ctx, cancelCtx := context.WithCancel(context.Background())
 	a.cancelCtx = cancelCtx
 
+	log.Info().Msgf("BOOT | initializing deploy detection...")
+	if err = deployhooks.Init(); err != nil {
+		log.Fatal().Msgf("deployhooks.Init() err: %v", err)
+	}
+
 	if config.Config.MustString("mode") != "debug" {
 		log.Info().Msgf("BOOT | caching Firecloud accounts...")
 		if err = authorization.CacheFirecloudSuitability(ctx); err != nil {
@@ -91,7 +97,7 @@ func (a *Application) Start() {
 		}
 
 		log.Info().Msgf("BOOT | calculating metric values...")
-		if err := v2models.UpdateMetrics(ctx, a.gormDB); err != nil {
+		if err = v2models.UpdateMetrics(ctx, a.gormDB); err != nil {
 			log.Fatal().Msgf("v2models.UpdateMetrics() err: %v", err)
 		}
 

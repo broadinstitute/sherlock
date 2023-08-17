@@ -8,7 +8,8 @@ import (
 type CiRunV3 struct {
 	CommonFields
 	ciRunFields
-	RelatedResources []CiIdentifierV3 `json:"relatedResources" form:"-"`
+	DeployHooksDispatchedAt *string          `json:"deployHooksDispatchedAt,omitempty" form:"deployHooksDispatchedAt" format:"date-time"`
+	RelatedResources        []CiIdentifierV3 `json:"relatedResources" form:"-"`
 }
 
 type ciRunFields struct {
@@ -38,6 +39,7 @@ func (c CiRunV3) toModel() models.CiRun {
 		ArgoWorkflowsNamespace:     c.ArgoWorkflowsNamespace,
 		ArgoWorkflowsName:          c.ArgoWorkflowsName,
 		ArgoWorkflowsTemplate:      c.ArgoWorkflowsTemplate,
+		DeployHooksDispatchedAt:    c.DeployHooksDispatchedAt,
 		StartedAt:                  c.StartedAt,
 		TerminalAt:                 c.TerminalAt,
 		Status:                     c.Status,
@@ -68,6 +70,7 @@ func ciRunFromModel(model models.CiRun) CiRunV3 {
 			TerminalAt:                 model.TerminalAt,
 			Status:                     model.Status,
 		},
-		RelatedResources: relatedResources,
+		DeployHooksDispatchedAt: model.DeployHooksDispatchedAt,
+		RelatedResources:        relatedResources,
 	}
 }

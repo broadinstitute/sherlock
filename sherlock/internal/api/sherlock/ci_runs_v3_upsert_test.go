@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/testutils"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
+	"github.com/broadinstitute/sherlock/sherlock/internal/deployhooks"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_controllers/v2controllers"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
@@ -447,6 +448,44 @@ func (s *handlerSuite) TestCiRunsV3UpsertIdentifiers() {
 		s.True(envPresent)
 		s.True(chartReleasePresent)
 		s.True(clusterPresent)
+	})
+	s.Run("dispatches if deploy", func() {
+		s.NoError(deployhooks.Init())
+		var got CiRunV3
+		s.Run("not until finished", func() {
+			code := s.HandleRequest(
+				s.NewRequest("PUT", "/api/ci-runs/v3", CiRunV3Upsert{
+					ciRunFields: ciRunFields{
+						Platform:                   "github-actions",
+						GithubActionsOwner:         "broadinstitute",
+						GithubActionsRepo:          "terra-github-workflows",
+						GithubActionsRunID:         1,
+						GithubActionsAttemptNumber: 1,
+						GithubActionsWorkflowPath:  ".github/workflows/sync-release.yaml",
+					},
+				}),
+				&got)
+			s.Equal(http.StatusCreated, code)
+			s.Empty(got.DeployHooksDispatchedAt)
+		})
+		s.Run("when finished", func() {
+			code := s.HandleRequest(
+				s.NewRequest("PUT", "/api/ci-runs/v3", CiRunV3Upsert{
+					ciRunFields: ciRunFields{
+						Platform:                   "github-actions",
+						GithubActionsOwner:         "broadinstitute",
+						GithubActionsRepo:          "terra-github-workflows",
+						GithubActionsRunID:         1,
+						GithubActionsAttemptNumber: 1,
+						GithubActionsWorkflowPath:  ".github/workflows/sync-release.yaml",
+						TerminalAt:                 testutils.PointerTo(time.Now()),
+						Status:                     testutils.PointerTo("status"),
+					},
+				}),
+				&got)
+			s.Equal(http.StatusCreated, code)
+			s.NotNil(got.DeployHooksDispatchedAt)
+		})
 	})
 }
 
