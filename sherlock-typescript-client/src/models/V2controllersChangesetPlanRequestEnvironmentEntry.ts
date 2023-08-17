@@ -55,6 +55,12 @@ export interface V2controllersChangesetPlanRequestEnvironmentEntry {
      * @memberof V2controllersChangesetPlanRequestEnvironmentEntry
      */
     useOthersFirecloudDevelopRef?: boolean;
+    /**
+     * If this is set, also copy the helmfile ref from an OtherEnvironment
+     * @type {boolean}
+     * @memberof V2controllersChangesetPlanRequestEnvironmentEntry
+     */
+    useOthersHelmfileRef?: boolean;
 }
 
 /**
@@ -82,6 +88,7 @@ export function V2controllersChangesetPlanRequestEnvironmentEntryFromJSONTyped(j
         'includeCharts': !exists(json, 'includeCharts') ? undefined : json['includeCharts'],
         'useExactVersionsFromOtherEnvironment': !exists(json, 'useExactVersionsFromOtherEnvironment') ? undefined : json['useExactVersionsFromOtherEnvironment'],
         'useOthersFirecloudDevelopRef': !exists(json, 'useOthersFirecloudDevelopRef') ? undefined : json['useOthersFirecloudDevelopRef'],
+        'useOthersHelmfileRef': !exists(json, 'useOthersHelmfileRef') ? undefined : json['useOthersHelmfileRef'],
     };
 }
 
@@ -100,6 +107,7 @@ export function V2controllersChangesetPlanRequestEnvironmentEntryToJSON(value?: 
         'includeCharts': value.includeCharts,
         'useExactVersionsFromOtherEnvironment': value.useExactVersionsFromOtherEnvironment,
         'useOthersFirecloudDevelopRef': value.useOthersFirecloudDevelopRef,
+        'useOthersHelmfileRef': value.useOthersHelmfileRef,
     };
 }
 

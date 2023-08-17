@@ -9439,6 +9439,10 @@ const docTemplate = `{
                 "useOthersFirecloudDevelopRef": {
                     "description": "If this is set, also copy the fc-dev ref from an OtherChartRelease",
                     "type": "boolean"
+                },
+                "useOthersHelmfileRef": {
+                    "description": "If this is set, also copy the helmfile ref from an OtherChartRelease",
+                    "type": "boolean"
                 }
             }
         },
@@ -9469,6 +9473,10 @@ const docTemplate = `{
                 },
                 "useOthersFirecloudDevelopRef": {
                     "description": "If this is set, also copy the fc-dev ref from an OtherEnvironment",
+                    "type": "boolean"
+                },
+                "useOthersHelmfileRef": {
+                    "description": "If this is set, also copy the helmfile ref from an OtherEnvironment",
                     "type": "boolean"
                 }
             }

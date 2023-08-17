@@ -34,6 +34,9 @@ type V2controllersChangesetPlanRequestEnvironmentEntry struct {
 
 	// If this is set, also copy the fc-dev ref from an OtherEnvironment
 	UseOthersFirecloudDevelopRef bool `json:"useOthersFirecloudDevelopRef,omitempty"`
+
+	// If this is set, also copy the helmfile ref from an OtherEnvironment
+	UseOthersHelmfileRef bool `json:"useOthersHelmfileRef,omitempty"`
 }
 
 // Validate validates this v2controllers changeset plan request environment entry
