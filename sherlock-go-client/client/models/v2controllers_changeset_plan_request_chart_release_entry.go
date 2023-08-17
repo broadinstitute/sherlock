@@ -55,6 +55,9 @@ type V2controllersChangesetPlanRequestChartReleaseEntry struct {
 
 	// If this is set, also copy the fc-dev ref from an OtherChartRelease
 	UseOthersFirecloudDevelopRef bool `json:"useOthersFirecloudDevelopRef,omitempty"`
+
+	// If this is set, also copy the helmfile ref from an OtherChartRelease
+	UseOthersHelmfileRef bool `json:"useOthersHelmfileRef,omitempty"`
 }
 
 // Validate validates this v2controllers changeset plan request chart release entry
