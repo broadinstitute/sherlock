@@ -7,24 +7,24 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
-	"github.com/slack-go/slack"
 )
 
-func ReportError(ctx context.Context, err error) {
-	if isEnabled() && config.Config.Bool("slack.behaviors.errors.enable") {
+func ReportError(ctx context.Context, errs ...error) {
+	if isEnabled() && config.Config.Bool("slack.behaviors.errors.enable") && len(errs) > 0 {
 
-		log.Info().Err(err).Msgf("SLCK | reporting error: %v", err)
+		var messageText string
+		if len(errs) == 1 {
+			messageText = "Sherlock encountered an unexpected error:"
+			log.Info().Err(errs[0]).Msgf("SLCK | reporting error: %v", errs[0])
+		} else {
+			messageText = fmt.Sprintf("Sherlock encountered %d unexpected errors:", len(errs))
+			log.Info().Err(errs[0]).Msgf("SLCK | reporting %d errors, starting with: %v", len(errs), errs[0])
+		}
+
+		attachments := utils.Map(errs, func(e error) Attachment { return RedBlock{Text: e.Error()} })
 
 		for _, channel := range config.Config.Strings("slack.behaviors.errors.channels") {
-			_, _, _, sendErr := client.SendMessageContext(ctx, channel,
-				slack.MsgOptionText("Sherlock encountered an unexpected error:", true),
-				slack.MsgOptionAttachments(slack.Attachment{
-					Color: config.Config.String("slack.behaviors.errors.color"),
-					Text:  err.Error(),
-				}))
-			if sendErr != nil {
-				log.Warn().Err(sendErr).Msgf("SLCK | unable to send error message to %s: %v", channel, sendErr)
-			}
+			SendMessage(ctx, channel, messageText, attachments...)
 		}
 	}
 }

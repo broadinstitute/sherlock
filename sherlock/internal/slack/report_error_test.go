@@ -19,7 +19,7 @@ func TestReportError(t *testing.T) {
 	zerolog.SetGlobalLevel(zerolog.Disabled)
 	ctx := context.Background()
 	type args struct {
-		err error
+		errs []error
 	}
 	tests := []struct {
 		name       string
@@ -28,7 +28,7 @@ func TestReportError(t *testing.T) {
 	}{
 		{
 			name: "normal case",
-			args: args{err: fmt.Errorf("some error")},
+			args: args{errs: []error{fmt.Errorf("some error")}},
 			mockConfig: func(client *mockMockableClient) {
 				client.On("SendMessageContext", ctx, "channel 1",
 					mock.AnythingOfType("slack.MsgOption"),
@@ -39,8 +39,31 @@ func TestReportError(t *testing.T) {
 			},
 		},
 		{
-			name: "1 errors",
-			args: args{err: fmt.Errorf("some error")},
+			name:       "sends no errors",
+			args:       args{errs: []error{}},
+			mockConfig: func(client *mockMockableClient) {},
+		},
+		{
+			name: "sends multiple errors",
+			args: args{errs: []error{fmt.Errorf("some error"), fmt.Errorf("some second error")}},
+			mockConfig: func(client *mockMockableClient) {
+				client.On("SendMessageContext", ctx, "channel 1",
+					mock.AnythingOfType("slack.MsgOption"),
+					mock.AnythingOfType("slack.MsgOption")).Return("", "", "", nil)
+				client.On("SendMessageContext", ctx, "channel 2",
+					mock.AnythingOfType("slack.MsgOption"),
+					mock.AnythingOfType("slack.MsgOption")).Return("", "", "", nil)
+				client.On("SendMessageContext", ctx, "channel 1",
+					mock.AnythingOfType("slack.MsgOption"),
+					mock.AnythingOfType("slack.MsgOption")).Return("", "", "", nil)
+				client.On("SendMessageContext", ctx, "channel 2",
+					mock.AnythingOfType("slack.MsgOption"),
+					mock.AnythingOfType("slack.MsgOption")).Return("", "", "", nil)
+			},
+		},
+		{
+			name: "sending on channel 1 errors",
+			args: args{errs: []error{fmt.Errorf("some error")}},
 			mockConfig: func(client *mockMockableClient) {
 				client.On("SendMessageContext", ctx, "channel 1",
 					mock.AnythingOfType("slack.MsgOption"),
@@ -51,8 +74,8 @@ func TestReportError(t *testing.T) {
 			},
 		},
 		{
-			name: "2 errors",
-			args: args{err: fmt.Errorf("some error")},
+			name: "sending on channel 2 errors",
+			args: args{errs: []error{fmt.Errorf("some error")}},
 			mockConfig: func(client *mockMockableClient) {
 				client.On("SendMessageContext", ctx, "channel 1",
 					mock.AnythingOfType("slack.MsgOption"),
@@ -68,7 +91,7 @@ func TestReportError(t *testing.T) {
 			c := newMockMockableClient(t)
 			tt.mockConfig(c)
 			client = c
-			ReportError(ctx, tt.args.err)
+			ReportError(ctx, tt.args.errs...)
 			c.AssertExpectations(t)
 		})
 	}

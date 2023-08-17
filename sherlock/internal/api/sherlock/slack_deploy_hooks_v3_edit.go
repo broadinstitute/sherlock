@@ -5,6 +5,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/authentication"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
+	"github.com/broadinstitute/sherlock/sherlock/internal/slack"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -73,6 +74,14 @@ func slackDeployHooksV3Edit(ctx *gin.Context) {
 	if err = db.Model(&toEdit.Trigger).Updates(&edits.Trigger).Error; err != nil {
 		errors.AbortRequest(ctx, err)
 		return
+	}
+
+	if toEdit.SlackChannel != nil {
+		if toEdit.Trigger.OnEnvironment != nil {
+			go slack.SendMessage(db.Statement.Context, *toEdit.SlackChannel, fmt.Sprintf("This channel is set to receive notifications for Beehive deployments in %s", toEdit.Trigger.OnEnvironment.Name))
+		} else if toEdit.Trigger.OnChartRelease != nil {
+			go slack.SendMessage(db.Statement.Context, *toEdit.SlackChannel, fmt.Sprintf("This channel is set to receive notifications for Beehive deployments to %s", toEdit.Trigger.OnChartRelease.Name))
+		}
 	}
 
 	ctx.JSON(http.StatusOK, slackDeployHookFromModel(toEdit))
