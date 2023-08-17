@@ -52,6 +52,12 @@ export interface SherlockCiRunV3 {
     createdAt?: Date;
     /**
      * 
+     * @type {Date}
+     * @memberof SherlockCiRunV3
+     */
+    deployHooksDispatchedAt?: Date;
+    /**
+     * 
      * @type {number}
      * @memberof SherlockCiRunV3
      */
@@ -147,6 +153,7 @@ export function SherlockCiRunV3FromJSONTyped(json: any, ignoreDiscriminator: boo
         'argoWorkflowsNamespace': !exists(json, 'argoWorkflowsNamespace') ? undefined : json['argoWorkflowsNamespace'],
         'argoWorkflowsTemplate': !exists(json, 'argoWorkflowsTemplate') ? undefined : json['argoWorkflowsTemplate'],
         'createdAt': !exists(json, 'createdAt') ? undefined : (new Date(json['createdAt'])),
+        'deployHooksDispatchedAt': !exists(json, 'deployHooksDispatchedAt') ? undefined : (new Date(json['deployHooksDispatchedAt'])),
         'githubActionsAttemptNumber': !exists(json, 'githubActionsAttemptNumber') ? undefined : json['githubActionsAttemptNumber'],
         'githubActionsOwner': !exists(json, 'githubActionsOwner') ? undefined : json['githubActionsOwner'],
         'githubActionsRepo': !exists(json, 'githubActionsRepo') ? undefined : json['githubActionsRepo'],
@@ -175,6 +182,7 @@ export function SherlockCiRunV3ToJSON(value?: SherlockCiRunV3 | null): any {
         'argoWorkflowsNamespace': value.argoWorkflowsNamespace,
         'argoWorkflowsTemplate': value.argoWorkflowsTemplate,
         'createdAt': value.createdAt === undefined ? undefined : (value.createdAt.toISOString()),
+        'deployHooksDispatchedAt': value.deployHooksDispatchedAt === undefined ? undefined : (value.deployHooksDispatchedAt.toISOString()),
         'githubActionsAttemptNumber': value.githubActionsAttemptNumber,
         'githubActionsOwner': value.githubActionsOwner,
         'githubActionsRepo': value.githubActionsRepo,

@@ -83,6 +83,9 @@ definitions:
       createdAt:
         format: date-time
         type: string
+      deployHooksDispatchedAt:
+        format: date-time
+        type: string
       githubActionsAttemptNumber:
         type: integer
       githubActionsOwner:
@@ -1801,6 +1804,10 @@ paths:
       - format: date-time
         in: query
         name: createdAt
+        type: string
+      - format: date-time
+        in: query
+        name: deployHooksDispatchedAt
         type: string
       - in: query
         name: githubActionsAttemptNumber

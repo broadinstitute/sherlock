@@ -42,6 +42,7 @@ export interface ApiCiRunsV3GetRequest {
     argoWorkflowsNamespace?: string;
     argoWorkflowsTemplate?: string;
     createdAt?: Date;
+    deployHooksDispatchedAt?: Date;
     githubActionsAttemptNumber?: number;
     githubActionsOwner?: string;
     githubActionsRepo?: string;
@@ -136,6 +137,10 @@ export class CiRunsApi extends runtime.BaseAPI {
 
         if (requestParameters.createdAt !== undefined) {
             queryParameters['createdAt'] = (requestParameters.createdAt as any).toISOString();
+        }
+
+        if (requestParameters.deployHooksDispatchedAt !== undefined) {
+            queryParameters['deployHooksDispatchedAt'] = (requestParameters.deployHooksDispatchedAt as any).toISOString();
         }
 
         if (requestParameters.githubActionsAttemptNumber !== undefined) {
