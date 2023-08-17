@@ -136,6 +136,9 @@ pactbroker:
     password: replace-password
   enable: false
 
+argoWorkflows:
+  url: https://workflows.dsp-devops.broadinstitute.org
+
 model:
   environments:
     templates:

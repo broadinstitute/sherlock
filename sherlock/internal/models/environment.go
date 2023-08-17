@@ -46,10 +46,10 @@ func (e Environment) TableName() string {
 	return "v2_environments"
 }
 
-func (e Environment) GetCiIdentifier() *CiIdentifier {
+func (e Environment) GetCiIdentifier() CiIdentifier {
 	if e.CiIdentifier != nil {
-		return e.CiIdentifier
+		return *e.CiIdentifier
 	} else {
-		return &CiIdentifier{ResourceType: "environment", ResourceID: e.ID}
+		return CiIdentifier{ResourceType: "environment", ResourceID: e.ID}
 	}
 }

@@ -21,10 +21,10 @@ func (c Cluster) TableName() string {
 	return "v2_clusters"
 }
 
-func (c Cluster) GetCiIdentifier() *CiIdentifier {
+func (c Cluster) GetCiIdentifier() CiIdentifier {
 	if c.CiIdentifier != nil {
-		return c.CiIdentifier
+		return *c.CiIdentifier
 	} else {
-		return &CiIdentifier{ResourceType: "cluster", ResourceID: c.ID}
+		return CiIdentifier{ResourceType: "cluster", ResourceID: c.ID}
 	}
 }
