@@ -33,7 +33,7 @@ func (s *modelSuite) TestChartCiIdentifiers() {
 	chart := Chart{Name: "name", ChartRepo: testutils.PointerTo("repo")}
 	s.NoError(s.DB.Create(&chart).Error)
 	ciIdentifier := chart.GetCiIdentifier()
-	s.NoError(s.DB.Create(ciIdentifier).Error)
+	s.NoError(s.DB.Create(&ciIdentifier).Error)
 	s.NotZero(ciIdentifier.ID)
 	s.Equal("chart", ciIdentifier.ResourceType)
 	s.Run("loads association", func() {

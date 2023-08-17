@@ -17,10 +17,10 @@ func (c ChartVersion) TableName() string {
 	return "v2_chart_versions"
 }
 
-func (c ChartVersion) GetCiIdentifier() *CiIdentifier {
+func (c ChartVersion) GetCiIdentifier() CiIdentifier {
 	if c.CiIdentifier != nil {
-		return c.CiIdentifier
+		return *c.CiIdentifier
 	} else {
-		return &CiIdentifier{ResourceType: "chart-version", ResourceID: c.ID}
+		return CiIdentifier{ResourceType: "chart-version", ResourceID: c.ID}
 	}
 }

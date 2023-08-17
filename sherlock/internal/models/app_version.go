@@ -19,10 +19,10 @@ func (a AppVersion) TableName() string {
 	return "v2_app_versions"
 }
 
-func (a AppVersion) GetCiIdentifier() *CiIdentifier {
+func (a AppVersion) GetCiIdentifier() CiIdentifier {
 	if a.CiIdentifier != nil {
-		return a.CiIdentifier
+		return *a.CiIdentifier
 	} else {
-		return &CiIdentifier{ResourceType: "app-version", ResourceID: a.ID}
+		return CiIdentifier{ResourceType: "app-version", ResourceID: a.ID}
 	}
 }

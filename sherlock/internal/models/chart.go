@@ -23,10 +23,10 @@ func (c Chart) TableName() string {
 	return "v2_charts"
 }
 
-func (c Chart) GetCiIdentifier() *CiIdentifier {
+func (c Chart) GetCiIdentifier() CiIdentifier {
 	if c.CiIdentifier != nil {
-		return c.CiIdentifier
+		return *c.CiIdentifier
 	} else {
-		return &CiIdentifier{ResourceType: "chart", ResourceID: c.ID}
+		return CiIdentifier{ResourceType: "chart", ResourceID: c.ID}
 	}
 }
