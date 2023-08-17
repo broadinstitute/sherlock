@@ -239,6 +239,12 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "format": "date-time",
+                        "name": "deployHooksDispatchedAt",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
                         "name": "githubActionsAttemptNumber",
                         "in": "query"
@@ -8784,6 +8790,10 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "createdAt": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "deployHooksDispatchedAt": {
                     "type": "string",
                     "format": "date-time"
                 },

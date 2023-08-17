@@ -74,6 +74,11 @@ type GetAPICiRunsV3Params struct {
 	// Format: date-time
 	CreatedAt *strfmt.DateTime
 
+	// DeployHooksDispatchedAt.
+	//
+	// Format: date-time
+	DeployHooksDispatchedAt *strfmt.DateTime
+
 	// GithubActionsAttemptNumber.
 	GithubActionsAttemptNumber *int64
 
@@ -216,6 +221,17 @@ func (o *GetAPICiRunsV3Params) WithCreatedAt(createdAt *strfmt.DateTime) *GetAPI
 // SetCreatedAt adds the createdAt to the get API ci runs v3 params
 func (o *GetAPICiRunsV3Params) SetCreatedAt(createdAt *strfmt.DateTime) {
 	o.CreatedAt = createdAt
+}
+
+// WithDeployHooksDispatchedAt adds the deployHooksDispatchedAt to the get API ci runs v3 params
+func (o *GetAPICiRunsV3Params) WithDeployHooksDispatchedAt(deployHooksDispatchedAt *strfmt.DateTime) *GetAPICiRunsV3Params {
+	o.SetDeployHooksDispatchedAt(deployHooksDispatchedAt)
+	return o
+}
+
+// SetDeployHooksDispatchedAt adds the deployHooksDispatchedAt to the get API ci runs v3 params
+func (o *GetAPICiRunsV3Params) SetDeployHooksDispatchedAt(deployHooksDispatchedAt *strfmt.DateTime) {
+	o.DeployHooksDispatchedAt = deployHooksDispatchedAt
 }
 
 // WithGithubActionsAttemptNumber adds the githubActionsAttemptNumber to the get API ci runs v3 params
@@ -432,6 +448,23 @@ func (o *GetAPICiRunsV3Params) WriteToRequest(r runtime.ClientRequest, reg strfm
 		if qCreatedAt != "" {
 
 			if err := r.SetQueryParam("createdAt", qCreatedAt); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.DeployHooksDispatchedAt != nil {
+
+		// query param deployHooksDispatchedAt
+		var qrDeployHooksDispatchedAt strfmt.DateTime
+
+		if o.DeployHooksDispatchedAt != nil {
+			qrDeployHooksDispatchedAt = *o.DeployHooksDispatchedAt
+		}
+		qDeployHooksDispatchedAt := qrDeployHooksDispatchedAt.String()
+		if qDeployHooksDispatchedAt != "" {
+
+			if err := r.SetQueryParam("deployHooksDispatchedAt", qDeployHooksDispatchedAt); err != nil {
 				return err
 			}
 		}
