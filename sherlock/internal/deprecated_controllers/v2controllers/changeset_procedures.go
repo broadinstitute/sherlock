@@ -18,6 +18,7 @@ type ChangesetPlanRequestChartReleaseEntry struct {
 	CreatableChangeset
 	UseExactVersionsFromOtherChartRelease *string `json:"useExactVersionsFromOtherChartRelease"`
 	UseOthersFirecloudDevelopRef          *bool   `json:"useOthersFirecloudDevelopRef"` // If this is set, also copy the fc-dev ref from an OtherChartRelease
+	UseOthersHelmfileRef                  *bool   `json:"useOthersHelmfileRef"`         // If this is set, also copy the helmfile ref from an OtherChartRelease
 }
 
 type ChangesetPlanRequestEnvironmentEntry struct {
@@ -27,6 +28,7 @@ type ChangesetPlanRequestEnvironmentEntry struct {
 	IncludeCharts                        []string `json:"includeCharts"` // If omitted, will include all chart releases that haven't opted out of bulk updates
 	ExcludeCharts                        []string `json:"excludeCharts"`
 	UseOthersFirecloudDevelopRef         *bool    `json:"useOthersFirecloudDevelopRef"` // If this is set, also copy the fc-dev ref from an OtherEnvironment
+	UseOthersHelmfileRef                 *bool    `json:"useOthersHelmfileRef"`         // If this is set, also copy the helmfile ref from an OtherEnvironment
 }
 
 func (c ChangesetController) changesetPlanRequestToModelChangesets(request ChangesetPlanRequest, _ *models.User) ([]v2models.Changeset, error) {
@@ -60,7 +62,9 @@ func (c ChangesetController) changesetPlanRequestToModelChangesets(request Chang
 			fullChangesetRequest.ToAppVersionCommit = otherChartRelease.AppVersionCommit
 			fullChangesetRequest.ToChartVersionResolver = &exact
 			fullChangesetRequest.ToChartVersionExact = otherChartRelease.ChartVersionExact
-			fullChangesetRequest.ToHelmfileRef = otherChartRelease.HelmfileRef
+			if chartReleaseRequestEntry.UseOthersHelmfileRef != nil && *chartReleaseRequestEntry.UseOthersHelmfileRef {
+				fullChangesetRequest.ToHelmfileRef = otherChartRelease.HelmfileRef
+			}
 			if chartReleaseRequestEntry.UseOthersFirecloudDevelopRef != nil && *chartReleaseRequestEntry.UseOthersFirecloudDevelopRef {
 				fullChangesetRequest.ToFirecloudDevelopRef = otherChartRelease.FirecloudDevelopRef
 			}
@@ -161,7 +165,9 @@ func (c ChangesetController) changesetPlanRequestToModelChangesets(request Chang
 				generatedChangeset.ToAppVersionBranch = otherChartRelease.AppVersionBranch
 				generatedChangeset.ToAppVersionCommit = otherChartRelease.AppVersionCommit
 				generatedChangeset.ToChartVersionExact = otherChartRelease.ChartVersionExact
-				generatedChangeset.ToHelmfileRef = otherChartRelease.HelmfileRef
+				if environmentRequestEntry.UseOthersHelmfileRef != nil && *environmentRequestEntry.UseOthersHelmfileRef {
+					generatedChangeset.ToHelmfileRef = otherChartRelease.HelmfileRef
+				}
 				if environmentRequestEntry.UseOthersFirecloudDevelopRef != nil && *environmentRequestEntry.UseOthersFirecloudDevelopRef {
 					generatedChangeset.ToFirecloudDevelopRef = otherChartRelease.FirecloudDevelopRef
 				}

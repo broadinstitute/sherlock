@@ -336,6 +336,45 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 	assert.NoError(suite.T(), err)
 	assert.Equal(suite.T(), "0.0.3", *samInProd.ChartVersionExact)
 
+	// If we set a helmfile ref, that won't get copied unless we explicitly ask for it
+	_, err = suite.ChangesetController.PlanAndApply(ChangesetPlanRequest{
+		ChartReleases: []ChangesetPlanRequestChartReleaseEntry{
+			{CreatableChangeset: CreatableChangeset{ChartRelease: "terra-dev/sam", ToHelmfileRef: testutils.PointerTo("a-branch")}},
+		},
+	}, generateUser(suite.T(), suite.db, true))
+	assert.NoError(suite.T(), err)
+	_, err = suite.ChangesetController.PlanAndApply(ChangesetPlanRequest{
+		Environments: []ChangesetPlanRequestEnvironmentEntry{
+			{
+				Environment:                          "terra-prod",
+				UseExactVersionsFromOtherEnvironment: testutils.PointerTo("terra-dev"),
+			},
+		},
+	}, generateUser(suite.T(), suite.db, true))
+	assert.NoError(suite.T(), err)
+	samInProd, err = suite.ChartReleaseController.Get("terra-prod/sam")
+	assert.NoError(suite.T(), err)
+	assert.Equal(suite.T(), "HEAD", *samInProd.HelmfileRef)
+	_, err = suite.ChangesetController.PlanAndApply(ChangesetPlanRequest{
+		ChartReleases: []ChangesetPlanRequestChartReleaseEntry{
+			{CreatableChangeset: CreatableChangeset{ChartRelease: "terra-dev/sam", ToHelmfileRef: testutils.PointerTo("a-branch")}},
+		},
+	}, generateUser(suite.T(), suite.db, true))
+	assert.NoError(suite.T(), err)
+	_, err = suite.ChangesetController.PlanAndApply(ChangesetPlanRequest{
+		Environments: []ChangesetPlanRequestEnvironmentEntry{
+			{
+				Environment:                          "terra-prod",
+				UseExactVersionsFromOtherEnvironment: testutils.PointerTo("terra-dev"),
+				UseOthersHelmfileRef:                 testutils.PointerTo(true),
+			},
+		},
+	}, generateUser(suite.T(), suite.db, true))
+	assert.NoError(suite.T(), err)
+	samInProd, err = suite.ChartReleaseController.Get("terra-prod/sam")
+	assert.NoError(suite.T(), err)
+	assert.Equal(suite.T(), "a-branch", *samInProd.HelmfileRef)
+
 	// Plans can't get created if there's chart mismatches:
 	_, err = suite.ChangesetController.Plan(ChangesetPlanRequest{
 		ChartReleases: []ChangesetPlanRequestChartReleaseEntry{
