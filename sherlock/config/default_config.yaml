@@ -97,6 +97,10 @@ slack:
   appToken: replace me with token starting with "xapp-"
   botToken: replace me with token starting with "xoxb-"
 
+  colors:
+    red: "#ef4444" # tailwind's red-500
+    green: "#22c55e" # tailwind's green-500
+
   behaviors:
 
     # slack.outgoing.deployHooks controls whether Sherlock
@@ -120,7 +124,6 @@ slack:
         - 407
       channels:
         - "#ap-k8s-monitor"
-      color: "#ef4444"
 
     reactToMentionsWithEmoji:
       enable: true
