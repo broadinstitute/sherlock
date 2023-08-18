@@ -76,6 +76,8 @@ env:
 jobs:
   refresh:
     runs-on: ubuntu-22.04
+    outputs:
+      changesets: ${{ steps.changesets.outputs.changesets }}
     permissions:
       id-token: 'write'
     
@@ -133,7 +135,15 @@ jobs:
             -H 'Content-Type: application/json' \
             -H 'Authorization: Bearer ${{ steps.iap_auth.outputs.id_token }}' \
             -H 'X-GHA-OIDC-JWT: ${{ steps.gha_auth.outputs.id_token }}' \
-            -d "@$RUNNER_TEMP/body.json" | jq
+            -d "@$RUNNER_TEMP/body.json" | jq > $RUNNER_TEMP/response.json
+          cat $RUNNER_TEMP/response.json
+
+      - name: "Parse changesets"
+        id: changesets
+        shell: bash
+        run: |
+          set -ex
+          echo "changesets=$(cat $RUNNER_TEMP/response.json | jq -r 'map(.id) | join(",")')" >> $GITHUB_OUTPUT
 
   can-sync:
     runs-on: ubuntu-22.04
@@ -184,5 +194,6 @@ jobs:
     needs: refresh
     with:
       environments: ${{ inputs.environment-name }}
+      changesets: ${{ needs.refresh.outputs.changesets }}
     permissions:
       id-token: write
