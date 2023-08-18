@@ -21,15 +21,42 @@ func dispatchSlackDeployHook(db *gorm.DB, hook models.SlackDeployHook, ciRun mod
 	return nil
 }
 
-func generateSlackAttachment(_ *gorm.DB, hook models.SlackDeployHook, ciRun models.CiRun) (slack.Attachment, error) {
+func generateSlackAttachment(db *gorm.DB, hook models.SlackDeployHook, ciRun models.CiRun) (slack.Attachment, error) {
 	var sb strings.Builder
 
 	sb.WriteString("Deployment to ")
 
 	if hook.Trigger.OnEnvironment != nil {
-		sb.WriteString(hook.Trigger.OnEnvironment.Name)
+		sb.WriteString(slack.LinkHelper(
+			fmt.Sprintf(config.Config.String("beehive.environmentUrlFormatString"), hook.Trigger.OnEnvironment.Name),
+			hook.Trigger.OnEnvironment.Name))
+
+		var chartReleaseNames []string
+		for _, ciIdentifier := range ciRun.RelatedResources {
+			if ciIdentifier.ResourceType == "chart-release" {
+				var chartRelease models.ChartRelease
+				if err := db.First(&chartRelease, ciIdentifier.ResourceID).Error; err != nil {
+					return nil, err
+				} else {
+					chartReleaseNames = append(chartReleaseNames, chartRelease.Name)
+				}
+			}
+		}
+
+		if len(chartReleaseNames) > 0 {
+			sb.WriteString(" (")
+			sb.WriteString(strings.Join(utils.Map(chartReleaseNames, func(name string) string {
+				return slack.LinkHelper(
+					fmt.Sprintf(config.Config.String("beehive.chartReleaseUrlFormatString"), name),
+					name)
+			}), ", "))
+			sb.WriteString(")")
+		}
+
 	} else if hook.Trigger.OnChartRelease != nil {
-		sb.WriteString(hook.Trigger.OnChartRelease.Name)
+		sb.WriteString(slack.LinkHelper(
+			fmt.Sprintf(config.Config.String("beehive.chartReleaseUrlFormatString"), hook.Trigger.OnChartRelease.Name),
+			hook.Trigger.OnChartRelease.Name))
 	} else {
 		return nil, fmt.Errorf("SlackDeployHook %d didn't have Trigger fully loaded", hook.ID)
 	}
