@@ -227,4 +227,4 @@ jobs:
           workflow: .github/workflows/sync-release.yaml
           ref: refs/heads/main
           token: ${{ secrets.sync-git-token }}
-          inputs: '{ "chart-release-names": "${{ needs.get-chart-release.outputs.name }}", "refresh-only": "false" }'
+          inputs: '{ "chart-release-names": "${{ needs.get-chart-release.outputs.name }}", "changeset-ids": "${{ needs.set-version.outputs.changesets }}", "refresh-only": "false" }'
