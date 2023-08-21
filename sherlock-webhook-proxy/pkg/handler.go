@@ -5,7 +5,9 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
+	"errors"
 	"fmt"
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock-go-client/client"
 	"github.com/broadinstitute/sherlock/sherlock-go-client/client/ci_runs"
 	"github.com/broadinstitute/sherlock/sherlock-go-client/client/models"
@@ -31,17 +33,21 @@ const (
 	iapAudienceEnvVar = "IAP_AUDIENCE"
 	// githubWebhookSecretEnvVar should be set to the secret set in the GitHub Webhook config
 	githubWebhookSecretEnvVar = "GITHUB_WEBHOOK_SECRET"
+	// allowedGithubOrgsEnvVar should be a comma-separated list of GitHub orgs that this cloud function should pay attention to.
+	// This is necessary because GitHub Apps can theoretically be installed by anyone. That doesn't affect us except for webhooks,
+	// where it technically allows arbitrary people to lob requests at this endpoint. That's not new, this endpoint is public,
+	// but these requests will come from GitHub, so we should filter.
+	allowedGithubOrgsEnvVar = "ALLOWED_GITHUB_ORGS"
 	// idTokenUrl is the URL to use to get an IAP ID token. Will be used with ?audience=${iapAudienceEnvVar}
 	idTokenUrl = "http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/identity"
 )
 
 var (
-	_mac       hash.Hash
-	_hook      *github.Webhook
-	_transport *httptransport.Runtime
+	sherlockHostname, sherlockScheme, iapAudience, githubWebhookSecret string
+	allowedGithubOrgs                                                  []string
 )
 
-// init does first-time setup
+// init does first-time initialization
 func init() {
 	sherlockUrl, present := os.LookupEnv(sherlockUrlEnvVar)
 	if !present {
@@ -49,44 +55,60 @@ func init() {
 	} else if sherlockUrl == "" {
 		log.Fatalf("os.LookupEnv(%s): sherlockUrl=''\n", sherlockUrlEnvVar)
 	}
-
 	parsedSherlockUrl, err := url.Parse(sherlockUrl)
 	if err != nil {
 		log.Fatalf("url.Parse(%s): %v\n", sherlockUrl, err)
 	}
-	hostname := parsedSherlockUrl.Hostname()
+	sherlockHostname = parsedSherlockUrl.Hostname()
 	if parsedSherlockUrl.Port() != "" {
-		hostname += ":"
-		hostname += parsedSherlockUrl.Port()
+		sherlockHostname += ":"
+		sherlockHostname += parsedSherlockUrl.Port()
 	}
-	_transport = httptransport.New(hostname, "", []string{parsedSherlockUrl.Scheme})
+	sherlockScheme = parsedSherlockUrl.Scheme
 
-	if _, present := os.LookupEnv(iapTokenOverrideEnvVar); !present {
-		iapAudience, present := os.LookupEnv(iapAudienceEnvVar)
+	if _, present = os.LookupEnv(iapTokenOverrideEnvVar); !present {
+		iapAudience, present = os.LookupEnv(iapAudienceEnvVar)
 		if !present {
 			log.Fatalf("os.LookupEnv(%s): present=false\n", iapAudienceEnvVar)
 		} else if iapAudience == "" {
-			log.Fatalf("os.LookupEnv(%s): sherlockUrl=''\n", iapAudienceEnvVar)
+			log.Fatalf("os.LookupEnv(%s): iapAudience=''\n", iapAudienceEnvVar)
 		}
 	}
 
-	secret, present := os.LookupEnv(githubWebhookSecretEnvVar)
-	if !present {
+	if githubWebhookSecret, present = os.LookupEnv(githubWebhookSecretEnvVar); !present {
 		log.Fatalf("os.LookupEnv(%s): present=false\n", githubWebhookSecretEnvVar)
-	} else if secret == "" {
-		log.Fatalf("os.LookupEnv(%s): secret=''\n", githubWebhookSecretEnvVar)
+	} else if githubWebhookSecret == "" {
+		log.Fatalf("os.LookupEnv(%s): githubWebhookSecret=''\n", githubWebhookSecretEnvVar)
 	}
-	_mac = hmac.New(sha256.New, []byte(secret))
 
-	hook, err := github.New(github.Options.Secret(secret))
+	var allowedGithubOrgsString string
+	if allowedGithubOrgsString, present = os.LookupEnv(allowedGithubOrgsEnvVar); !present {
+		log.Fatalf("os.LookupEnv(%s): present=false\n", allowedGithubOrgsEnvVar)
+	} else if allowedGithubOrgsString == "" {
+		log.Fatalf("os.LookupEnv(%s): allowedGithubOrgsString=''\n", allowedGithubOrgsEnvVar)
+	} else if allowedGithubOrgs = strings.Split(allowedGithubOrgsString, ","); len(allowedGithubOrgs) == 0 {
+		log.Fatalf("len(strings.Split(\"%s\", \",\"))=0\n", allowedGithubOrgsString)
+	}
+}
+
+// setup creates instanced things per-request
+func setup() (mac hash.Hash, hook *github.Webhook, transport *httptransport.Runtime) {
+	transport = httptransport.New(sherlockHostname, "", []string{sherlockScheme})
+
+	mac = hmac.New(sha256.New, []byte(githubWebhookSecret))
+
+	hook, err := github.New(github.Options.Secret(githubWebhookSecret))
 	if err != nil {
 		log.Fatalf("github.New: %v\n", err)
 	}
-	_hook = hook
+
+	return mac, hook, transport
 }
 
 // HandleWebhook is what actually does the handling, running once per request
 func HandleWebhook(w http.ResponseWriter, r *http.Request) {
+	mac, hook, transport := setup()
+
 	switch r.RequestURI {
 	case "/webhook":
 		// Require that the signature header is present
@@ -97,33 +119,32 @@ func HandleWebhook(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		// As r.Body is read, additionally synchronously write it into _mac
-		_mac.Reset()
+		// As r.Body is read, additionally synchronously write it into mac
 		r.Body = struct {
 			io.Reader
 			io.Closer
 		}{
-			Reader: io.TeeReader(r.Body, _mac),
+			Reader: io.TeeReader(r.Body, mac),
 			Closer: r.Body,
 		}
 
 		// Call the library and handle its errors (it does try to check signature, but using a more insecure method)
-		rawPayload, err := _hook.Parse(r, github.WorkflowRunEvent, github.PingEvent)
+		rawPayload, err := hook.Parse(r, github.WorkflowRunEvent, github.PingEvent)
 		if err != nil {
-			switch err {
-			case github.ErrMissingHubSignatureHeader:
+			switch {
+			case errors.Is(err, github.ErrMissingHubSignatureHeader):
 				w.WriteHeader(http.StatusUnauthorized)
 				log.Printf("library said hook was unauthorized\n")
 				return
-			case github.ErrHMACVerificationFailed:
+			case errors.Is(err, github.ErrHMACVerificationFailed):
 				w.WriteHeader(http.StatusForbidden)
 				log.Printf("library said hook signature was invalid\n")
 				return
-			case github.ErrEventNotFound:
+			case errors.Is(err, github.ErrEventNotFound):
 				w.WriteHeader(http.StatusNotFound)
 				log.Printf("library said hook was a type it wasn't configured to receive\n")
 				return
-			case github.ErrInvalidHTTPMethod:
+			case errors.Is(err, github.ErrInvalidHTTPMethod):
 				w.WriteHeader(http.StatusMethodNotAllowed)
 				log.Printf("library said hook was sent with an invalid method\n")
 				return
@@ -135,7 +156,7 @@ func HandleWebhook(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Check HMAC + SHA256 signature
-		calculatedSignature := hex.EncodeToString(_mac.Sum(nil))
+		calculatedSignature := hex.EncodeToString(mac.Sum(nil))
 		if signature != calculatedSignature {
 			w.WriteHeader(http.StatusForbidden)
 			log.Printf("HMAC + SHA 256 signature was %s but calculated was %s, rejecting\n", signature, calculatedSignature)
@@ -147,17 +168,27 @@ func HandleWebhook(w http.ResponseWriter, r *http.Request) {
 
 		// ping issued upon the webhook being added to a new repo; might as well respond with 200
 		case github.PingPayload:
-			w.WriteHeader(http.StatusOK)
+			if !utils.Contains(allowedGithubOrgs, payload.Repository.Owner.Login) {
+				w.WriteHeader(http.StatusForbidden)
+			} else {
+				w.WriteHeader(http.StatusOK)
+			}
 			log.Printf("received ping from repo %s", payload.Repository.FullName)
 
 		// workflow_run issued upon workflow request, running, and completion
 		case github.WorkflowRunPayload:
+			if !utils.Contains(allowedGithubOrgs, payload.Repository.Owner.Login) {
+				w.WriteHeader(http.StatusForbidden)
+				log.Printf("bailing out, workflow run from %s", payload.Repository.FullName)
+				return
+			}
+
 			if token, present := os.LookupEnv(iapTokenOverrideEnvVar); present {
 				// If we have a token, just use that
-				_transport.DefaultAuthentication = httptransport.BearerToken(token)
+				transport.DefaultAuthentication = httptransport.BearerToken(token)
 			} else {
 				// Otherwise, do the dance to get it from the metadata server
-				formedIdTokenUrl := fmt.Sprintf("%s?audience=%s", idTokenUrl, os.Getenv(iapAudienceEnvVar))
+				formedIdTokenUrl := fmt.Sprintf("%s?audience=%s", idTokenUrl, iapAudience)
 				req, err := http.NewRequest(http.MethodGet, formedIdTokenUrl, nil)
 				if err != nil {
 					w.WriteHeader(http.StatusInternalServerError)
@@ -182,10 +213,10 @@ func HandleWebhook(w http.ResponseWriter, r *http.Request) {
 					log.Printf("io.ReadAll(resp.Body): %v\n", err)
 					return
 				}
-				_transport.DefaultAuthentication = httptransport.BearerToken(string(idToken[:]))
+				transport.DefaultAuthentication = httptransport.BearerToken(string(idToken[:]))
 			}
 
-			sherlockClient := client.New(_transport, strfmt.Default)
+			sherlockClient := client.New(transport, strfmt.Default)
 
 			// Convert webhook fields into what we'll store in Sherlock
 			var startedAt, status, terminalAt string
