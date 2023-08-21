@@ -104,8 +104,7 @@ func openGorm(db *sql.DB) (*gorm.DB, error) {
 	}
 	return gorm.Open(
 		gormpg.New(gormpg.Config{
-			Conn:                 db,
-			PreferSimpleProtocol: true,
+			Conn: db,
 		}),
 
 		&gorm.Config{
