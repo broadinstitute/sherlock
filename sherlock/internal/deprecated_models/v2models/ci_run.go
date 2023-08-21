@@ -50,6 +50,10 @@ func init() {
 		editsAppendManyToMany: map[string]func(edits *CiRun) any{
 			"RelatedResources": func(edits *CiRun) any { return edits.RelatedResources },
 		},
+		customCreationAssociationsClause: func(db *gorm.DB) *gorm.DB {
+			// Don't exclude any associations, the only one is RelatedResources which we need
+			return db
+		},
 	}
 }
 
