@@ -50,6 +50,9 @@ func init() {
 		editsAppendManyToMany: map[string]func(edits *CiRun) any{
 			"RelatedResources": func(edits *CiRun) any { return edits.RelatedResources },
 		},
+		customCreationAssociationsClause: func(db *gorm.DB) *gorm.DB {
+			return db
+		},
 	}
 }
 

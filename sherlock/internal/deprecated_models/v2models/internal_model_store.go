@@ -64,6 +64,11 @@ type internalModelStore[M Model] struct {
 	// to Gorm's "associations mode" to append to that association. https://gorm.io/docs/associations.html#Append-Associations
 	// Realistically, this is useful for mutable many2many relations, because Gorm won't touch those on its own.
 	editsAppendManyToMany map[string]func(edits *M) any
+	// customCreationAssociationsClause lets a type define how Gorm should treat associations upon creation.
+	// Simple types can rely on the default that omits association handling during creation. More complex ones
+	// may rely on ManyToMany associations and may want to more selectively define what should be omitted from
+	// the creation operation (enough to avoid deadlocks, but not so much that it impacts behavior).
+	customCreationAssociationsClause func(db *gorm.DB) *gorm.DB
 }
 
 func (s internalModelStore[M]) wrappedErrorIfForbidden(db *gorm.DB, model *M, action model_actions.ActionType, user *models.User) error {
@@ -131,7 +136,13 @@ func (s internalModelStore[M]) Create(db *gorm.DB, model M, user *models.User) (
 	}
 	var ret M
 	err := db.Transaction(func(tx *gorm.DB) error {
-		if err := tx.Create(&model).Error; err != nil {
+		chain := tx
+		if s.customCreationAssociationsClause == nil {
+			chain = chain.Omit(clause.Associations)
+		} else {
+			chain = s.customCreationAssociationsClause(tx)
+		}
+		if err := chain.Create(&model).Error; err != nil {
 			if strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
 				return fmt.Errorf("creation error: (%s) new %T violated a database uniqueness constraint (are you recreating something with the same name? Contact DevOps) original error: %v", errors.BadRequest, model, err)
 			}

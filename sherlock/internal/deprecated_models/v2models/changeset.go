@@ -59,6 +59,9 @@ func init() {
 			modelToSelectors:     changesetToSelectors,
 			validateModel:        validateChangeset,
 			preCreate:            preCreateChangeset,
+			customCreationAssociationsClause: func(db *gorm.DB) *gorm.DB {
+				return db.Omit("CiIdentifier", "ChartRelease")
+			},
 		},
 	}
 }
