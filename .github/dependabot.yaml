@@ -16,3 +16,7 @@ updates:
     directory: /sherlock-go-client
     schedule:
       interval: weekly
+  - package-ecosystem: gomod
+    directory: /sherlock-webhook-proxy
+    schedule:
+      interval: weekly

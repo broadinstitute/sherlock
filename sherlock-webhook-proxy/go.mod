@@ -4,12 +4,14 @@ go 1.19
 
 require (
 	github.com/GoogleCloudPlatform/functions-framework-go v1.7.4
+	github.com/broadinstitute/sherlock/go-shared v0.0.0
 	github.com/broadinstitute/sherlock/sherlock-go-client v0.0.0
 	github.com/go-openapi/runtime v0.26.0
 	github.com/go-openapi/strfmt v0.21.7
 	github.com/go-playground/webhooks/v6 v6.1.0
-
 )
+
+replace github.com/broadinstitute/sherlock/go-shared => ../go-shared
 
 replace github.com/broadinstitute/sherlock/sherlock-go-client => ../sherlock-go-client
 
