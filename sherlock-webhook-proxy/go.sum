@@ -703,8 +703,8 @@ github.com/go-openapi/validate v0.22.1 h1:G+c2ub6q47kfX1sOBLwIQwzBVt8qmOAARyo/9F
 github.com/go-openapi/validate v0.22.1/go.mod h1:rjnrwK57VJ7A8xqfpAOEKRH8yQSGUriMu5/zuPSQ1hg=
 github.com/go-pdf/fpdf v0.5.0/go.mod h1:HzcnA+A23uwogo0tp9yU+l3V+KXhiESpt1PMayhOh5M=
 github.com/go-pdf/fpdf v0.6.0/go.mod h1:HzcnA+A23uwogo0tp9yU+l3V+KXhiESpt1PMayhOh5M=
-github.com/go-playground/webhooks/v6 v6.1.0 h1:mREMwgiLzDPw7CuguJkt+ImuBc/P5tPJTqSQYLB3Hjg=
-github.com/go-playground/webhooks/v6 v6.1.0/go.mod h1:GCocmfMtpJdkEOM1uG9p2nXzg1kY5X/LtvQgtPHUaaA=
+github.com/go-playground/webhooks/v6 v6.3.0 h1:zBLUxK1Scxwi97TmZt5j/B/rLlard2zY7P77FHg58FE=
+github.com/go-playground/webhooks/v6 v6.3.0/go.mod h1:GCocmfMtpJdkEOM1uG9p2nXzg1kY5X/LtvQgtPHUaaA=
 github.com/go-stack/stack v1.8.0/go.mod h1:v0f6uXyyMGvRgIKkXu+yp6POWl0qKG85gN/melR3HDY=
 github.com/gobuffalo/attrs v0.0.0-20190224210810-a9411de4debd/go.mod h1:4duuawTqi2wkkpB4ePgWMaai6/Kc6WEz83bhFwpHzj0=
 github.com/gobuffalo/depgen v0.0.0-20190329151759-d478694a28d3/go.mod h1:3STtPUQYuzV0gBVOY3vy6CfMm/ljR4pABfrTeHNLHUY=
