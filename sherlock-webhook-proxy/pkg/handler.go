@@ -33,7 +33,7 @@ const (
 	iapAudienceEnvVar = "IAP_AUDIENCE"
 	// githubWebhookSecretEnvVar should be set to the secret set in the GitHub Webhook config
 	githubWebhookSecretEnvVar = "GITHUB_WEBHOOK_SECRET"
-	// allowedGithubOrgsEnvVar should be a comma-separated list of GitHub orgs that this cloud function should pay attention to.
+	// allowedGithubOrgsEnvVar should be a space-separated list of GitHub orgs that this cloud function should pay attention to.
 	// This is necessary because GitHub Apps can theoretically be installed by anyone. That doesn't affect us except for webhooks,
 	// where it technically allows arbitrary people to lob requests at this endpoint. That's not new, this endpoint is public,
 	// but these requests will come from GitHub, so we should filter.
@@ -86,8 +86,8 @@ func init() {
 		log.Fatalf("os.LookupEnv(%s): present=false\n", allowedGithubOrgsEnvVar)
 	} else if allowedGithubOrgsString == "" {
 		log.Fatalf("os.LookupEnv(%s): allowedGithubOrgsString=''\n", allowedGithubOrgsEnvVar)
-	} else if allowedGithubOrgs = strings.Split(allowedGithubOrgsString, ","); len(allowedGithubOrgs) == 0 {
-		log.Fatalf("len(strings.Split(\"%s\", \",\"))=0\n", allowedGithubOrgsString)
+	} else if allowedGithubOrgs = strings.Split(allowedGithubOrgsString, " "); len(allowedGithubOrgs) == 0 {
+		log.Fatalf("len(strings.Split(\"%s\", \" \"))=0\n", allowedGithubOrgsString)
 	}
 }
 
