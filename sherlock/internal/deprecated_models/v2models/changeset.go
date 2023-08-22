@@ -126,6 +126,13 @@ func preCreateChangeset(db *gorm.DB, toCreate *Changeset, _ *models.User) error 
 		if err != nil {
 			log.Error().Msgf("swallowing %T path error during changeset creation: %v", toCreate.To.AppVersion, err)
 		} else {
+			// This is really dumb, but we're going to go through the returned app versions and remove their relations so that Gorm doesn't try to upsert them
+			// in a moment. I will try to document what I think is going on later but I need to stop the bleeding.
+			for _, appVersion := range appVersionPath {
+				appVersion.Chart = nil
+				appVersion.CiIdentifier = nil
+			}
+
 			toCreate.NewAppVersions = appVersionPath
 		}
 
@@ -134,6 +141,13 @@ func preCreateChangeset(db *gorm.DB, toCreate *Changeset, _ *models.User) error 
 		if err != nil {
 			log.Error().Msgf("swallowing %T path error during changeset creation: %v", toCreate.From.ChartVersion, err)
 		} else {
+			// This is really dumb, but we're going to go through the returned app versions and remove their relations so that Gorm doesn't try to upsert them
+			// in a moment. I will try to document what I think is going on later but I need to stop the bleeding.
+			for _, chartVersion := range chartVersionPath {
+				chartVersion.Chart = nil
+				chartVersion.CiIdentifier = nil
+			}
+
 			toCreate.NewChartVersions = chartVersionPath
 		}
 	}
