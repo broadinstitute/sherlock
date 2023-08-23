@@ -475,7 +475,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 	}, generateUser(suite.T(), suite.db, true))
 	assert.NoError(suite.T(), err)
 	assert.Len(suite.T(), applied, 1)
-	queried, err := suite.ChangesetController.QueryApplied("terra-dev/sam", 0, 100)
+	queried, err := suite.ChangesetController.QueryAppliedForChartRelease("terra-dev/sam", 0, 100)
 	assert.NoError(suite.T(), err)
 	for _, result := range queried {
 		assert.NotEqual(suite.T(), unapplied[0].ID, result.ID)
