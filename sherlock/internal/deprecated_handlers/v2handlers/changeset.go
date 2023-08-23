@@ -17,7 +17,8 @@ func registerChangesetHandlers(routerGroup *gin.RouterGroup, controller *v2contr
 	routerGroup.POST("/procedures/changesets/plan-and-apply", planAndApplyChangeset(controller))
 	routerGroup.POST("/procedures/changesets/plan", planChangeset(controller))
 	routerGroup.POST("/procedures/changesets/apply", applyChangeset(controller))
-	routerGroup.GET("/procedures/changesets/query-applied-for-chart-release/*selector", queryAppliedChangeset(controller))
+	routerGroup.GET("/procedures/changesets/query-applied-for-chart-release/*selector", queryAppliedChangesetForChartRelease(controller))
+	routerGroup.GET("/procedures/changesets/query-applied-for-version/:version-type/:chart/:version", queryAppliedChangesetForVersion(controller))
 }
 
 // listChangeset godoc
@@ -169,7 +170,7 @@ func applyChangeset(controller *v2controllers2.ChangesetController) func(ctx *gi
 	}
 }
 
-// listChangeset godoc
+// queryAppliedChangesetForChartRelease godoc
 //
 //	@summary		List applied Changesets for a Chart Release
 //	@description	List existing applied Changesets for a particular Chart Release, ordered by most recently applied.
@@ -181,7 +182,7 @@ func applyChangeset(controller *v2controllers2.ChangesetController) func(ctx *gi
 //	@success		200						{array}		v2controllers.Changeset
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/v2/procedures/changesets/query-applied-for-chart-release/{selector} [get]
-func queryAppliedChangeset(controller *v2controllers2.ChangesetController) func(ctx *gin.Context) {
+func queryAppliedChangesetForChartRelease(controller *v2controllers2.ChangesetController) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
 		offsetString := ctx.DefaultQuery("offset", "0")
 		offset, err := strconv.Atoi(offsetString)
@@ -195,11 +196,37 @@ func queryAppliedChangeset(controller *v2controllers2.ChangesetController) func(
 			errors.AbortRequest(ctx, fmt.Errorf("(%s) error parsing limit parameter: %v", errors.BadRequest, err))
 			return
 		}
-		result, err := controller.QueryApplied(formatSelector(ctx.Param("selector")), offset, limit)
+		result, err := controller.QueryAppliedForChartRelease(formatSelector(ctx.Param("selector")), offset, limit)
 		if err != nil {
 			errors.AbortRequest(ctx, err)
 			return
 		}
 		ctx.JSON(http.StatusOK, result)
+	}
+}
+
+// queryAppliedChangesetForVersion godoc
+//
+//	@summary		List applied Changesets for an App or Chart Version
+//	@description	List existing applied Changesets that newly deployed a given App Version or Chart Version, ordered by most recently applied.
+//	@tags			Changesets
+//	@produce		json
+//	@param			version-type			path		string	true	"The type of the version, either 'app' or 'chart'"	Enums(app, chart)
+//	@param			chart					path		string	true	"The chart the version belongs to"
+//	@param			version					path		string	true	"The version to look for"
+//	@success		200						{array}		v2controllers.Changeset
+//	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
+//	@router			/api/v2/procedures/changesets/query-applied-for-version/{version-type}/{chart}/{version} [get]
+func queryAppliedChangesetForVersion(controller *v2controllers2.ChangesetController) func(ctx *gin.Context) {
+	return func(ctx *gin.Context) {
+		if result, err := controller.QueryAppliedForVersion(
+			ctx.Param("chart"),
+			ctx.Param("version"),
+			ctx.Param("version-type"),
+		); err != nil {
+			errors.AbortRequest(ctx, err)
+		} else {
+			ctx.JSON(http.StatusOK, result)
+		}
 	}
 }

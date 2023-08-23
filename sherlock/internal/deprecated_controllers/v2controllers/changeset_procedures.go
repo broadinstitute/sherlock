@@ -268,8 +268,21 @@ func (c ChangesetController) Apply(selectors []string, user *models.User) ([]Cha
 	return ret, nil
 }
 
-func (c ChangesetController) QueryApplied(chartReleaseSelector string, offset int, limit int) ([]Changeset, error) {
-	modelChangesets, err := c.ChangesetStore.QueryApplied(chartReleaseSelector, offset, limit)
+func (c ChangesetController) QueryAppliedForChartRelease(chartReleaseSelector string, offset int, limit int) ([]Changeset, error) {
+	modelChangesets, err := c.ChangesetStore.QueryAppliedForChartRelease(chartReleaseSelector, offset, limit)
+	if err != nil {
+		return nil, err
+	}
+	//golang:noinspection GoPreferNilSlice
+	ret := []Changeset{}
+	for _, modelChangeset := range modelChangesets {
+		ret = append(ret, *modelChangesetToChangeset(&modelChangeset))
+	}
+	return ret, nil
+}
+
+func (c ChangesetController) QueryAppliedForVersion(chartSelector string, version string, versionType string) ([]Changeset, error) {
+	modelChangesets, err := c.ChangesetStore.QueryAppliedForVersion(chartSelector, version, versionType)
 	if err != nil {
 		return nil, err
 	}

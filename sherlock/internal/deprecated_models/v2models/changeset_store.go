@@ -39,7 +39,7 @@ func (s *ChangesetStore) Apply(selectors []string, user *models.User) ([]Changes
 	return InternalChangesetStore.apply(s.db, queries, user)
 }
 
-func (s *ChangesetStore) QueryApplied(chartReleaseSelector string, offset int, limit int) ([]Changeset, error) {
+func (s *ChangesetStore) QueryAppliedForChartRelease(chartReleaseSelector string, offset int, limit int) ([]Changeset, error) {
 	chartReleaseQuery, err := InternalChartReleaseStore.selectorToQueryModel(s.db, chartReleaseSelector)
 	if err != nil {
 		return nil, err
@@ -48,5 +48,13 @@ func (s *ChangesetStore) QueryApplied(chartReleaseSelector string, offset int, l
 	if err != nil {
 		return nil, err
 	}
-	return InternalChangesetStore.queryApplied(s.db, chartRelease.ID, offset, limit)
+	return InternalChangesetStore.queryAppliedForChartRelease(s.db, chartRelease.ID, offset, limit)
+}
+
+func (s *ChangesetStore) QueryAppliedForVersion(chartSelector string, version string, versionType string) ([]Changeset, error) {
+	chart, err := InternalChartStore.GetBySelector(s.db, chartSelector)
+	if err != nil {
+		return nil, err
+	}
+	return InternalChangesetStore.queryAppliedForVersion(s.db, chart.ID, version, versionType)
 }
