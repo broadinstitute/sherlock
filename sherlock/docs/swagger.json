@@ -7085,6 +7085,92 @@
                 }
             }
         },
+        "/api/v2/procedures/changesets/query-applied-for-version/{version-type}/{chart}/{version}": {
+            "get": {
+                "description": "List existing applied Changesets that newly deployed a given App Version or Chart Version, ordered by most recently applied.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Changesets"
+                ],
+                "summary": "List applied Changesets for an App or Chart Version",
+                "parameters": [
+                    {
+                        "enum": [
+                            "app",
+                            "chart"
+                        ],
+                        "type": "string",
+                        "description": "The type of the version, either 'app' or 'chart'",
+                        "name": "version-type",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "The chart the version belongs to",
+                        "name": "chart",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "The version to look for",
+                        "name": "version",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/v2controllers.Changeset"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v2/procedures/chart-releases/trigger-incident/{selector}": {
             "post": {
                 "description": "Trigger an alert for the Pagerduty integration configured for a given ChartRelease.",

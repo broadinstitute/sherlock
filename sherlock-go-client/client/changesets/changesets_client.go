@@ -36,6 +36,8 @@ type ClientService interface {
 
 	GetAPIV2ProceduresChangesetsQueryAppliedForChartReleaseSelector(params *GetAPIV2ProceduresChangesetsQueryAppliedForChartReleaseSelectorParams, opts ...ClientOption) (*GetAPIV2ProceduresChangesetsQueryAppliedForChartReleaseSelectorOK, error)
 
+	GetAPIV2ProceduresChangesetsQueryAppliedForVersionVersionTypeChartVersion(params *GetAPIV2ProceduresChangesetsQueryAppliedForVersionVersionTypeChartVersionParams, opts ...ClientOption) (*GetAPIV2ProceduresChangesetsQueryAppliedForVersionVersionTypeChartVersionOK, error)
+
 	GetAPIV2SelectorsChangesetsSelector(params *GetAPIV2SelectorsChangesetsSelectorParams, opts ...ClientOption) (*GetAPIV2SelectorsChangesetsSelectorOK, error)
 
 	PostAPIV2ProceduresChangesetsApply(params *PostAPIV2ProceduresChangesetsApplyParams, opts ...ClientOption) (*PostAPIV2ProceduresChangesetsApplyOK, error)
@@ -164,6 +166,46 @@ func (a *Client) GetAPIV2ProceduresChangesetsQueryAppliedForChartReleaseSelector
 	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for GetAPIV2ProceduresChangesetsQueryAppliedForChartReleaseSelector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+  GetAPIV2ProceduresChangesetsQueryAppliedForVersionVersionTypeChartVersion lists applied changesets for an app or chart version
+
+  List existing applied Changesets that newly deployed a given App Version or Chart Version, ordered by most recently applied.
+*/
+func (a *Client) GetAPIV2ProceduresChangesetsQueryAppliedForVersionVersionTypeChartVersion(params *GetAPIV2ProceduresChangesetsQueryAppliedForVersionVersionTypeChartVersionParams, opts ...ClientOption) (*GetAPIV2ProceduresChangesetsQueryAppliedForVersionVersionTypeChartVersionOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetAPIV2ProceduresChangesetsQueryAppliedForVersionVersionTypeChartVersionParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "GetAPIV2ProceduresChangesetsQueryAppliedForVersionVersionTypeChartVersion",
+		Method:             "GET",
+		PathPattern:        "/api/v2/procedures/changesets/query-applied-for-version/{version-type}/{chart}/{version}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &GetAPIV2ProceduresChangesetsQueryAppliedForVersionVersionTypeChartVersionReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*GetAPIV2ProceduresChangesetsQueryAppliedForVersionVersionTypeChartVersionOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for GetAPIV2ProceduresChangesetsQueryAppliedForVersionVersionTypeChartVersion: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 

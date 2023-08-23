@@ -86,6 +86,12 @@ export interface ApiV2ProceduresChangesetsQueryAppliedForChartReleaseSelectorGet
     limit?: number;
 }
 
+export interface ApiV2ProceduresChangesetsQueryAppliedForVersionVersionTypeChartVersionGetRequest {
+    versionType: ApiV2ProceduresChangesetsQueryAppliedForVersionVersionTypeChartVersionGetVersionTypeEnum;
+    chart: string;
+    version: string;
+}
+
 export interface ApiV2SelectorsChangesetsSelectorGetRequest {
     selector: string;
 }
@@ -433,6 +439,46 @@ export class ChangesetsApi extends runtime.BaseAPI {
     }
 
     /**
+     * List existing applied Changesets that newly deployed a given App Version or Chart Version, ordered by most recently applied.
+     * List applied Changesets for an App or Chart Version
+     */
+    async apiV2ProceduresChangesetsQueryAppliedForVersionVersionTypeChartVersionGetRaw(requestParameters: ApiV2ProceduresChangesetsQueryAppliedForVersionVersionTypeChartVersionGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<V2controllersChangeset>>> {
+        if (requestParameters.versionType === null || requestParameters.versionType === undefined) {
+            throw new runtime.RequiredError('versionType','Required parameter requestParameters.versionType was null or undefined when calling apiV2ProceduresChangesetsQueryAppliedForVersionVersionTypeChartVersionGet.');
+        }
+
+        if (requestParameters.chart === null || requestParameters.chart === undefined) {
+            throw new runtime.RequiredError('chart','Required parameter requestParameters.chart was null or undefined when calling apiV2ProceduresChangesetsQueryAppliedForVersionVersionTypeChartVersionGet.');
+        }
+
+        if (requestParameters.version === null || requestParameters.version === undefined) {
+            throw new runtime.RequiredError('version','Required parameter requestParameters.version was null or undefined when calling apiV2ProceduresChangesetsQueryAppliedForVersionVersionTypeChartVersionGet.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/v2/procedures/changesets/query-applied-for-version/{version-type}/{chart}/{version}`.replace(`{${"version-type"}}`, encodeURIComponent(String(requestParameters.versionType))).replace(`{${"chart"}}`, encodeURIComponent(String(requestParameters.chart))).replace(`{${"version"}}`, encodeURIComponent(String(requestParameters.version))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(V2controllersChangesetFromJSON));
+    }
+
+    /**
+     * List existing applied Changesets that newly deployed a given App Version or Chart Version, ordered by most recently applied.
+     * List applied Changesets for an App or Chart Version
+     */
+    async apiV2ProceduresChangesetsQueryAppliedForVersionVersionTypeChartVersionGet(requestParameters: ApiV2ProceduresChangesetsQueryAppliedForVersionVersionTypeChartVersionGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<V2controllersChangeset>> {
+        const response = await this.apiV2ProceduresChangesetsQueryAppliedForVersionVersionTypeChartVersionGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
      * Validate a given Changeset selector and provide any other selectors that would match the same Changeset.
      * List Changeset selectors
      */
@@ -465,3 +511,12 @@ export class ChangesetsApi extends runtime.BaseAPI {
     }
 
 }
+
+/**
+ * @export
+ */
+export const ApiV2ProceduresChangesetsQueryAppliedForVersionVersionTypeChartVersionGetVersionTypeEnum = {
+    App: 'app',
+    Chart: 'chart'
+} as const;
+export type ApiV2ProceduresChangesetsQueryAppliedForVersionVersionTypeChartVersionGetVersionTypeEnum = typeof ApiV2ProceduresChangesetsQueryAppliedForVersionVersionTypeChartVersionGetVersionTypeEnum[keyof typeof ApiV2ProceduresChangesetsQueryAppliedForVersionVersionTypeChartVersionGetVersionTypeEnum];
