@@ -4,9 +4,47 @@ import (
 	"github.com/broadinstitute/sherlock/go-shared/pkg/testutils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/slack"
+	"github.com/broadinstitute/sherlock/sherlock/internal/slack/slack_mocks"
+	"github.com/stretchr/testify/mock"
 	"gorm.io/gorm"
 	"time"
 )
+
+func (s *deployHooksSuite) Test_dispatchSlackDeployHook_channelNil() {
+	s.ErrorContains(dispatchSlackDeployHook(nil, models.SlackDeployHook{}, models.CiRun{}), "slack channel was nil")
+}
+
+func (s *deployHooksSuite) Test_dispatchSlackDeployHook_generateError() {
+	s.ErrorContains(dispatchSlackDeployHook(nil, models.SlackDeployHook{
+		Model:        gorm.Model{ID: 123},
+		Trigger:      models.DeployHookTriggerConfig{},
+		SlackChannel: testutils.PointerTo("channel"),
+	}, models.CiRun{}), "SlackDeployHook 123 didn't have Trigger fully loaded")
+}
+
+func (s *deployHooksSuite) Test_dispatchSlackDeployHook() {
+	slack.UseMockedClient(s.T(), func(c *slack_mocks.MockMockableClient) {
+		c.EXPECT().
+			SendMessageContext(s.DB.Statement.Context, "channel", mock.AnythingOfType("slack.MsgOption")).
+			Return("", "", "", nil)
+	}, func() {
+		s.NoError(dispatchSlackDeployHook(s.DB, models.SlackDeployHook{
+			Trigger: models.DeployHookTriggerConfig{
+				OnEnvironment: &models.Environment{Name: "dev"},
+			},
+			SlackChannel: testutils.PointerTo("channel"),
+		}, models.CiRun{
+			Model:                      gorm.Model{ID: 123},
+			TerminalAt:                 testutils.PointerTo(time.Now()),
+			Status:                     testutils.PointerTo("success"),
+			Platform:                   "github-actions",
+			GithubActionsOwner:         "broadinstitute",
+			GithubActionsRepo:          "terra-github-workflows",
+			GithubActionsRunID:         123123,
+			GithubActionsAttemptNumber: 1,
+		}))
+	})
+}
 
 func (s *deployHooksSuite) Test_generateSlackAttachment_triggerNotLoaded() {
 	// Pass nil for the db because it shouldn't be used in this call

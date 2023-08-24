@@ -14,3 +14,4 @@ ignore:
   - "sherlock/docs"
   - "sherlock-go-client"
   - "sherlock-typescript-client"
+  - "**/*_mocks"
