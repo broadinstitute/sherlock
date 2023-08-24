@@ -6,6 +6,37 @@ outpkg: "{{ .PackageName }}"
 inpackage: True
 
 packages:
+  github.com/broadinstitute/sherlock/sherlock/internal/github:
+    interfaces:
+      mockableActionsClient:
+      mockableActivityClient:
+      mockableAdminClient:
+      mockableAppsClient:
+      mockableAuthorizationsClient:
+      mockableBillingClient:
+      mockableChecksClient:
+      mockableCodeScanningClient:
+      mockableDependabotClient:
+      mockableEnterpriseClient:
+      mockableGistsClient:
+      mockableGitClient:
+      mockableGitignoresClient:
+      mockableInteractionsClient:
+      mockableIssueImportClient:
+      mockableIssuesClient:
+      mockableLicensesClient:
+      mockableMarketplaceClient:
+      mockableMigrationsClient:
+      mockableOrganizationsClient:
+      mockableProjectsClient:
+      mockablePullRequestsClient:
+      mockableReactionsClient:
+      mockableRepositoriesClient:
+      mockableSCIMClient:
+      mockableSearchClient:
+      mockableSecretScanningClient:
+      mockableTeamsClient:
+      mockableUsersClient:
   github.com/broadinstitute/sherlock/sherlock/internal/slack:
     interfaces:
       mockableClient:

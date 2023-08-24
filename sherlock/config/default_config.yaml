@@ -76,6 +76,24 @@ metrics:
 pagerduty:
   enable: false
 
+github:
+  # When github.enable is true, requests to GitHub will be
+  # made based on the individual behavior flags below.
+  enable: false
+  # When github.enableMocked is true, Sherlock will act as
+  # if github.enable is true when the GitHub client is
+  # currently mocked. This is set to true in test_config.yaml.
+  enableMocked: false
+
+  token: replace me with token starting with "ghp_"
+
+  behaviors:
+
+    # github.outgoing.deployHooks controls whether Sherlock
+    # should act upon GitHub-based deploy hooks.
+    deployHooks:
+      enable: true
+
 slack:
   # When slack.enable is true, Sherlock will initiate a
   # websocket connection with Slack upon boot. It will

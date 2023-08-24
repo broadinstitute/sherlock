@@ -11,6 +11,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/db"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deployhooks"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
+	"github.com/broadinstitute/sherlock/sherlock/internal/github"
 	"github.com/broadinstitute/sherlock/sherlock/internal/metrics"
 	"github.com/broadinstitute/sherlock/sherlock/internal/slack"
 	"github.com/rs/zerolog/log"
@@ -110,6 +111,13 @@ func (a *Application) Start() {
 			log.Fatal().Msgf("slack.Init() err: %v", err)
 		}
 		go slack.Start(ctx)
+	}
+
+	if config.Config.Bool("github.enable") {
+		log.Info().Msgf("BOOT | initializing GitHub client...")
+		if err = github.Init(ctx); err != nil {
+			log.Fatal().Msgf("githubz.Init() err: %v", err)
+		}
 	}
 
 	log.Info().Msgf("BOOT | building Gin router...")
