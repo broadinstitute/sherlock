@@ -48,6 +48,7 @@ func ConfigureRoutes(apiRouter *gin.RouterGroup) {
 	apiRouter.GET("ci-runs/v3", ciRunsV3List)
 	apiRouter.GET("ci-runs/v3/*selector", ciRunsV3Get)
 	apiRouter.PUT("ci-runs/v3", ciRunsV3Upsert)
+	apiRouter.GET("ci-runs/procedures/v3/github-info", ciRunsProceduresV3GithubInfoList)
 
 	apiRouter.GET("users/v3", usersV3List)
 	apiRouter.GET("users/v3/*selector", usersV3Get)
