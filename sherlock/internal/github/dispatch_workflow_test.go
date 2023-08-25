@@ -61,6 +61,24 @@ func TestDispatchWorkflow(t *testing.T) {
 			},
 			wantErr: assert.Error,
 		},
+		{
+			name: "splits to filename",
+			args: args{
+				owner:        "owner",
+				repo:         "repo",
+				workflowPath: "path/to/file.yaml",
+				gitRef:       "head",
+				inputs:       map[string]any{"foo": true},
+			},
+			mockConfig: func(c *MockClient) {
+				c.Actions.EXPECT().CreateWorkflowDispatchEventByFileName(
+					ctx, "owner", "repo", "file.yaml", github.CreateWorkflowDispatchEventRequest{
+						Ref:    "head",
+						Inputs: map[string]any{"foo": true},
+					}).Return(nil, nil)
+			},
+			wantErr: assert.NoError,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

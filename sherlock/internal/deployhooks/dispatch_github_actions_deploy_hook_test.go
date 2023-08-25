@@ -34,13 +34,14 @@ func (s *deployHooksSuite) Test_dispatchGithubActionsDeployHook_basic() {
 	github.UseMockedClient(s.T(), func(c *github.MockClient) {
 		c.Actions.EXPECT().CreateWorkflowDispatchEventByFileName(
 			s.DB.Statement.Context, "owner", "repo", "path", github2.CreateWorkflowDispatchEventRequest{
-				Ref: "HEAD",
+				Ref: "main",
 			}).Return(nil, nil)
 	}, func() {
 		s.NoError(dispatchGithubActionsDeployHook(s.DB, models.GithubActionsDeployHook{
 			GithubActionsOwner:        testutils.PointerTo("owner"),
 			GithubActionsRepo:         testutils.PointerTo("repo"),
 			GithubActionsWorkflowPath: testutils.PointerTo("path"),
+			GithubActionsDefaultRef:   testutils.PointerTo("main"),
 		}, models.CiRun{}))
 	})
 }
@@ -50,30 +51,15 @@ func (s *deployHooksSuite) Test_dispatchGithubActionsDeployHook_passesThroughErr
 	github.UseMockedClient(s.T(), func(c *github.MockClient) {
 		c.Actions.EXPECT().CreateWorkflowDispatchEventByFileName(
 			s.DB.Statement.Context, "owner", "repo", "path", github2.CreateWorkflowDispatchEventRequest{
-				Ref: "HEAD",
+				Ref: "main",
 			}).Return(nil, err)
 	}, func() {
 		s.ErrorIs(dispatchGithubActionsDeployHook(s.DB, models.GithubActionsDeployHook{
 			GithubActionsOwner:        testutils.PointerTo("owner"),
 			GithubActionsRepo:         testutils.PointerTo("repo"),
 			GithubActionsWorkflowPath: testutils.PointerTo("path"),
+			GithubActionsDefaultRef:   testutils.PointerTo("main"),
 		}, models.CiRun{}), err)
-	})
-}
-
-func (s *deployHooksSuite) Test_dispatchGithubActionsDeployHook_withDefaultRef() {
-	github.UseMockedClient(s.T(), func(c *github.MockClient) {
-		c.Actions.EXPECT().CreateWorkflowDispatchEventByFileName(
-			s.DB.Statement.Context, "owner", "repo", "path", github2.CreateWorkflowDispatchEventRequest{
-				Ref: "custom ref",
-			}).Return(nil, nil)
-	}, func() {
-		s.NoError(dispatchGithubActionsDeployHook(s.DB, models.GithubActionsDeployHook{
-			GithubActionsOwner:        testutils.PointerTo("owner"),
-			GithubActionsRepo:         testutils.PointerTo("repo"),
-			GithubActionsWorkflowPath: testutils.PointerTo("path"),
-			GithubActionsDefaultRef:   testutils.PointerTo("custom ref"),
-		}, models.CiRun{}))
 	})
 }
 

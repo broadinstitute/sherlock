@@ -25,18 +25,13 @@ func dispatchGithubActionsDeployHook(db *gorm.DB, hook models.GithubActionsDeplo
 	}
 
 	// Weird to check this here but better to error out than dereference a nil pointer
-	if hook.GithubActionsOwner == nil || hook.GithubActionsRepo == nil || hook.GithubActionsWorkflowPath == nil {
+	if hook.GithubActionsOwner == nil || hook.GithubActionsRepo == nil || hook.GithubActionsWorkflowPath == nil || hook.GithubActionsDefaultRef == nil {
 		return fmt.Errorf("GithubActionsDeployHook %d lacked fields", hook.ID)
 	}
 
 	// gitRefCandidates is like a stack, where the earliest/first values are the least accurate and the latest/last
-	// values are the most accurate. We'll always fall back to HEAD if all else fails.
-	gitRefCandidates := []string{"HEAD"}
-
-	// If there's a default ref, give that precedence over HEAD
-	if hook.GithubActionsDefaultRef != nil {
-		gitRefCandidates = append(gitRefCandidates, *hook.GithubActionsDefaultRef)
-	}
+	// values are the most accurate. We use the default as the one to start at.
+	gitRefCandidates := []string{*hook.GithubActionsDefaultRef}
 
 	// If we're triggering based on a chart release AND we have a ref behavior that operates based on the app version, derive refs based on that
 	if hook.Trigger.OnChartRelease != nil && hook.GithubActionsRefBehavior != nil &&
