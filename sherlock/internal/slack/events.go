@@ -43,7 +43,7 @@ func handleEvents(event *socketmode.Event, client *socketmode.Client) {
 	case slackevents.CallbackEvent:
 		switch e := eventsAPIEvent.InnerEvent.Data.(type) {
 		case *slackevents.AppMentionEvent:
-			handleAppMentionEvent(e, client)
+			handleAppMentionEvent(client, e)
 		default:
 			log.Warn().Msgf("SLCK | unsupported event received (\"%s\")", eventsAPIEvent.InnerEvent.Type)
 		}
@@ -59,7 +59,7 @@ func handleEvents(event *socketmode.Event, client *socketmode.Client) {
 	}
 }
 
-func handleAppMentionEvent(event *slackevents.AppMentionEvent, client mockableClient) {
+func handleAppMentionEvent(client mockableClient, event *slackevents.AppMentionEvent) {
 	if config.Config.Bool("slack.behaviors.reactToMentionsWithEmoji.enable") {
 		err := client.AddReaction(
 			config.Config.String("slack.behaviors.reactToMentionsWithEmoji.emoji"),

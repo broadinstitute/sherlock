@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
+	"github.com/broadinstitute/sherlock/sherlock/internal/slack/slack_mocks"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/assert"
@@ -24,16 +25,16 @@ func TestReportError(t *testing.T) {
 	tests := []struct {
 		name       string
 		args       args
-		mockConfig func(client *mockMockableClient)
+		mockConfig func(c *slack_mocks.MockMockableClient)
 	}{
 		{
 			name: "normal case",
 			args: args{errs: []error{fmt.Errorf("some error")}},
-			mockConfig: func(client *mockMockableClient) {
-				client.On("SendMessageContext", ctx, "channel 1",
+			mockConfig: func(c *slack_mocks.MockMockableClient) {
+				c.On("SendMessageContext", ctx, "channel 1",
 					mock.AnythingOfType("slack.MsgOption"),
 					mock.AnythingOfType("slack.MsgOption")).Return("", "", "", nil)
-				client.On("SendMessageContext", ctx, "channel 2",
+				c.On("SendMessageContext", ctx, "channel 2",
 					mock.AnythingOfType("slack.MsgOption"),
 					mock.AnythingOfType("slack.MsgOption")).Return("", "", "", nil)
 			},
@@ -41,22 +42,22 @@ func TestReportError(t *testing.T) {
 		{
 			name:       "sends no errors",
 			args:       args{errs: []error{}},
-			mockConfig: func(client *mockMockableClient) {},
+			mockConfig: func(c *slack_mocks.MockMockableClient) {},
 		},
 		{
 			name: "sends multiple errors",
 			args: args{errs: []error{fmt.Errorf("some error"), fmt.Errorf("some second error")}},
-			mockConfig: func(client *mockMockableClient) {
-				client.On("SendMessageContext", ctx, "channel 1",
+			mockConfig: func(c *slack_mocks.MockMockableClient) {
+				c.On("SendMessageContext", ctx, "channel 1",
 					mock.AnythingOfType("slack.MsgOption"),
 					mock.AnythingOfType("slack.MsgOption")).Return("", "", "", nil)
-				client.On("SendMessageContext", ctx, "channel 2",
+				c.On("SendMessageContext", ctx, "channel 2",
 					mock.AnythingOfType("slack.MsgOption"),
 					mock.AnythingOfType("slack.MsgOption")).Return("", "", "", nil)
-				client.On("SendMessageContext", ctx, "channel 1",
+				c.On("SendMessageContext", ctx, "channel 1",
 					mock.AnythingOfType("slack.MsgOption"),
 					mock.AnythingOfType("slack.MsgOption")).Return("", "", "", nil)
-				client.On("SendMessageContext", ctx, "channel 2",
+				c.On("SendMessageContext", ctx, "channel 2",
 					mock.AnythingOfType("slack.MsgOption"),
 					mock.AnythingOfType("slack.MsgOption")).Return("", "", "", nil)
 			},
@@ -64,11 +65,11 @@ func TestReportError(t *testing.T) {
 		{
 			name: "sending on channel 1 errors",
 			args: args{errs: []error{fmt.Errorf("some error")}},
-			mockConfig: func(client *mockMockableClient) {
-				client.On("SendMessageContext", ctx, "channel 1",
+			mockConfig: func(c *slack_mocks.MockMockableClient) {
+				c.On("SendMessageContext", ctx, "channel 1",
 					mock.AnythingOfType("slack.MsgOption"),
 					mock.AnythingOfType("slack.MsgOption")).Return("", "", "", fmt.Errorf("some send error"))
-				client.On("SendMessageContext", ctx, "channel 2",
+				c.On("SendMessageContext", ctx, "channel 2",
 					mock.AnythingOfType("slack.MsgOption"),
 					mock.AnythingOfType("slack.MsgOption")).Return("", "", "", nil)
 			},
@@ -76,11 +77,11 @@ func TestReportError(t *testing.T) {
 		{
 			name: "sending on channel 2 errors",
 			args: args{errs: []error{fmt.Errorf("some error")}},
-			mockConfig: func(client *mockMockableClient) {
-				client.On("SendMessageContext", ctx, "channel 1",
+			mockConfig: func(c *slack_mocks.MockMockableClient) {
+				c.On("SendMessageContext", ctx, "channel 1",
 					mock.AnythingOfType("slack.MsgOption"),
 					mock.AnythingOfType("slack.MsgOption")).Return("", "", "", nil)
-				client.On("SendMessageContext", ctx, "channel 2",
+				c.On("SendMessageContext", ctx, "channel 2",
 					mock.AnythingOfType("slack.MsgOption"),
 					mock.AnythingOfType("slack.MsgOption")).Return("", "", "", fmt.Errorf("some send error"))
 			},
@@ -88,11 +89,9 @@ func TestReportError(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			c := newMockMockableClient(t)
-			tt.mockConfig(c)
-			client = c
-			ReportError(ctx, tt.args.errs...)
-			c.AssertExpectations(t)
+			UseMockedClient(t, tt.mockConfig, func() {
+				ReportError(ctx, tt.args.errs...)
+			})
 		})
 	}
 }
@@ -114,50 +113,44 @@ func TestErrorReportingMiddleware(t *testing.T) {
 	})
 
 	t.Run("400 doesn't send anything", func(t *testing.T) {
-		c := newMockMockableClient(t)
-		client = c
+		UseMockedClient(t, func(_ *slack_mocks.MockMockableClient) {}, func() {
+			recorder := httptest.NewRecorder()
+			request := httptest.NewRequest("GET", "/400", nil)
+			router.ServeHTTP(recorder, request)
 
-		recorder := httptest.NewRecorder()
-		request := httptest.NewRequest("GET", "/400", nil)
-		router.ServeHTTP(recorder, request)
-
-		assert.Equal(t, http.StatusBadRequest, recorder.Code)
-		c.AssertExpectations(t)
+			assert.Equal(t, http.StatusBadRequest, recorder.Code)
+		})
 	})
 	t.Run("407 sends", func(t *testing.T) {
-		c := newMockMockableClient(t)
-		client = c
+		UseMockedClient(t, func(c *slack_mocks.MockMockableClient) {
+			c.On("SendMessageContext", ctx, "channel 1",
+				mock.AnythingOfType("slack.MsgOption"),
+				mock.AnythingOfType("slack.MsgOption")).Return("", "", "", nil)
+			c.On("SendMessageContext", ctx, "channel 2",
+				mock.AnythingOfType("slack.MsgOption"),
+				mock.AnythingOfType("slack.MsgOption")).Return("", "", "", nil)
+		}, func() {
+			recorder := httptest.NewRecorder()
+			request := httptest.NewRequest("GET", "/407", nil)
+			router.ServeHTTP(recorder, request)
 
-		c.On("SendMessageContext", ctx, "channel 1",
-			mock.AnythingOfType("slack.MsgOption"),
-			mock.AnythingOfType("slack.MsgOption")).Return("", "", "", nil)
-		c.On("SendMessageContext", ctx, "channel 2",
-			mock.AnythingOfType("slack.MsgOption"),
-			mock.AnythingOfType("slack.MsgOption")).Return("", "", "", nil)
-
-		recorder := httptest.NewRecorder()
-		request := httptest.NewRequest("GET", "/407", nil)
-		router.ServeHTTP(recorder, request)
-
-		assert.Equal(t, http.StatusProxyAuthRequired, recorder.Code)
-		c.AssertExpectations(t)
+			assert.Equal(t, http.StatusProxyAuthRequired, recorder.Code)
+		})
 	})
 	t.Run("500 sends", func(t *testing.T) {
-		c := newMockMockableClient(t)
-		client = c
+		UseMockedClient(t, func(c *slack_mocks.MockMockableClient) {
+			c.On("SendMessageContext", ctx, "channel 1",
+				mock.AnythingOfType("slack.MsgOption"),
+				mock.AnythingOfType("slack.MsgOption")).Return("", "", "", nil)
+			c.On("SendMessageContext", ctx, "channel 2",
+				mock.AnythingOfType("slack.MsgOption"),
+				mock.AnythingOfType("slack.MsgOption")).Return("", "", "", nil)
+		}, func() {
+			recorder := httptest.NewRecorder()
+			request := httptest.NewRequest("GET", "/500", nil)
+			router.ServeHTTP(recorder, request)
 
-		c.On("SendMessageContext", ctx, "channel 1",
-			mock.AnythingOfType("slack.MsgOption"),
-			mock.AnythingOfType("slack.MsgOption")).Return("", "", "", nil)
-		c.On("SendMessageContext", ctx, "channel 2",
-			mock.AnythingOfType("slack.MsgOption"),
-			mock.AnythingOfType("slack.MsgOption")).Return("", "", "", nil)
-
-		recorder := httptest.NewRecorder()
-		request := httptest.NewRequest("GET", "/500", nil)
-		router.ServeHTTP(recorder, request)
-
-		assert.Equal(t, http.StatusInternalServerError, recorder.Code)
-		c.AssertExpectations(t)
+			assert.Equal(t, http.StatusInternalServerError, recorder.Code)
+		})
 	})
 }

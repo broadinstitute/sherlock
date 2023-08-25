@@ -1,9 +1,8 @@
 with-expecter: true
-filename: "mock_{{ .InterfaceNameSnake }}_for_test.go"
-dir: "{{ .InterfaceDir }}"
-mockname: "{{ .Mock }}{{ .InterfaceNameCamel }}"
-outpkg: "{{ .PackageName }}"
-inpackage: True
+filename: "mock_{{ .InterfaceNameSnake }}.go"
+dir: "{{ .InterfaceDir }}/{{ .PackageName }}_mocks"
+mockname: "Mock{{ .InterfaceNameCamel }}"
+outpkg: "{{ .PackageName }}_mocks"
 
 packages:
   github.com/broadinstitute/sherlock/sherlock/internal/slack:

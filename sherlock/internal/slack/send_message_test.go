@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
+	"github.com/broadinstitute/sherlock/sherlock/internal/slack/slack_mocks"
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/mock"
 	"testing"
@@ -21,18 +22,18 @@ func TestSendMessage(t *testing.T) {
 	tests := []struct {
 		name       string
 		args       args
-		mockConfig func(client *mockMockableClient)
+		mockConfig func(c *slack_mocks.MockMockableClient)
 	}{
 		{
 			name:       "doesn't do anything when empty",
 			args:       args{channel: "foo"},
-			mockConfig: func(client *mockMockableClient) {},
+			mockConfig: func(client *slack_mocks.MockMockableClient) {},
 		},
 		{
 			name: "sends text when provided",
 			args: args{channel: "foo", text: "text"},
-			mockConfig: func(client *mockMockableClient) {
-				client.On("SendMessageContext", ctx, "foo",
+			mockConfig: func(c *slack_mocks.MockMockableClient) {
+				c.On("SendMessageContext", ctx, "foo",
 					mock.AnythingOfType("slack.MsgOption")).Return("", "", "", nil)
 			},
 		},
@@ -41,8 +42,8 @@ func TestSendMessage(t *testing.T) {
 			args: args{channel: "foo", attachments: []Attachment{
 				GreenBlock{Text: "blah"}, RedBlock{"bleh"},
 			}},
-			mockConfig: func(client *mockMockableClient) {
-				client.On("SendMessageContext", ctx, "foo",
+			mockConfig: func(c *slack_mocks.MockMockableClient) {
+				c.On("SendMessageContext", ctx, "foo",
 					mock.AnythingOfType("slack.MsgOption")).Return("", "", "", nil)
 			},
 		},
@@ -51,8 +52,8 @@ func TestSendMessage(t *testing.T) {
 			args: args{channel: "foo", text: "text", attachments: []Attachment{
 				GreenBlock{Text: "blah"}, RedBlock{"bleh"},
 			}},
-			mockConfig: func(client *mockMockableClient) {
-				client.On("SendMessageContext", ctx, "foo",
+			mockConfig: func(c *slack_mocks.MockMockableClient) {
+				c.On("SendMessageContext", ctx, "foo",
 					mock.AnythingOfType("slack.MsgOption"),
 					mock.AnythingOfType("slack.MsgOption")).Return("", "", "", nil)
 			},
@@ -62,8 +63,8 @@ func TestSendMessage(t *testing.T) {
 			args: args{channel: "foo", text: "text", attachments: []Attachment{
 				GreenBlock{Text: "blah"}, RedBlock{"bleh"},
 			}},
-			mockConfig: func(client *mockMockableClient) {
-				client.On("SendMessageContext", ctx, "foo",
+			mockConfig: func(c *slack_mocks.MockMockableClient) {
+				c.On("SendMessageContext", ctx, "foo",
 					mock.AnythingOfType("slack.MsgOption"),
 					mock.AnythingOfType("slack.MsgOption")).Return("", "", "", fmt.Errorf("some error"))
 			},
@@ -71,11 +72,9 @@ func TestSendMessage(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			c := newMockMockableClient(t)
-			tt.mockConfig(c)
-			client = c
-			SendMessage(ctx, tt.args.channel, tt.args.text, tt.args.attachments...)
-			c.AssertExpectations(t)
+			UseMockedClient(t, tt.mockConfig, func() {
+				SendMessage(ctx, tt.args.channel, tt.args.text, tt.args.attachments...)
+			})
 		})
 	}
 }
