@@ -1792,6 +1792,54 @@ paths:
       summary: Get CiRuns for a resource by its CiIdentifier
       tags:
       - CiIdentifiers
+  /api/ci-runs/procedures/v3/github-info:
+    get:
+      description: |-
+        List info about GitHub repos and their workflow files as determined by CiRuns from the past 90 days.
+        This is a useful proxy for figuring out what repos Sherlock probably has access to: workflows listed
+        here can probably successfully called by a GitHub Actions deploy hook.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              additionalProperties:
+                additionalProperties:
+                  items:
+                    type: string
+                  type: array
+                type: object
+              type: object
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: List GitHub info gleaned from CiRuns
+      tags:
+      - CiRuns
   /api/ci-runs/v3:
     get:
       description: |-

@@ -206,6 +206,74 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/ci-runs/procedures/v3/github-info": {
+            "get": {
+                "description": "List info about GitHub repos and their workflow files as determined by CiRuns from the past 90 days.\nThis is a useful proxy for figuring out what repos Sherlock probably has access to: workflows listed\nhere can probably successfully called by a GitHub Actions deploy hook.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CiRuns"
+                ],
+                "summary": "List GitHub info gleaned from CiRuns",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "additionalProperties": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/ci-runs/v3": {
             "get": {
                 "description": "List CiRuns matching a filter. The CiRuns would have to re-queried directly to load any related resources.\nResults are ordered by start time, starting at most recent.",

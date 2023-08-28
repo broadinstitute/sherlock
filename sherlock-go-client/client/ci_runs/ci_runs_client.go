@@ -32,6 +32,8 @@ type ClientOption func(*runtime.ClientOperation)
 type ClientService interface {
 	DeleteAPIV2CiRunsSelector(params *DeleteAPIV2CiRunsSelectorParams, opts ...ClientOption) (*DeleteAPIV2CiRunsSelectorOK, error)
 
+	GetAPICiRunsProceduresV3GithubInfo(params *GetAPICiRunsProceduresV3GithubInfoParams, opts ...ClientOption) (*GetAPICiRunsProceduresV3GithubInfoOK, error)
+
 	GetAPICiRunsV3(params *GetAPICiRunsV3Params, opts ...ClientOption) (*GetAPICiRunsV3OK, error)
 
 	GetAPICiRunsV3Selector(params *GetAPICiRunsV3SelectorParams, opts ...ClientOption) (*GetAPICiRunsV3SelectorOK, error)
@@ -90,6 +92,48 @@ func (a *Client) DeleteAPIV2CiRunsSelector(params *DeleteAPIV2CiRunsSelectorPara
 	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for DeleteAPIV2CiRunsSelector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+  GetAPICiRunsProceduresV3GithubInfo lists git hub info gleaned from ci runs
+
+  List info about GitHub repos and their workflow files as determined by CiRuns from the past 90 days.
+This is a useful proxy for figuring out what repos Sherlock probably has access to: workflows listed
+here can probably successfully called by a GitHub Actions deploy hook.
+*/
+func (a *Client) GetAPICiRunsProceduresV3GithubInfo(params *GetAPICiRunsProceduresV3GithubInfoParams, opts ...ClientOption) (*GetAPICiRunsProceduresV3GithubInfoOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetAPICiRunsProceduresV3GithubInfoParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "GetAPICiRunsProceduresV3GithubInfo",
+		Method:             "GET",
+		PathPattern:        "/api/ci-runs/procedures/v3/github-info",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &GetAPICiRunsProceduresV3GithubInfoReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*GetAPICiRunsProceduresV3GithubInfoOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for GetAPICiRunsProceduresV3GithubInfo: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 
