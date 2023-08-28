@@ -8,6 +8,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/pactbroker"
 	"github.com/broadinstitute/sherlock/sherlock/internal/pagerduty"
+	"github.com/broadinstitute/sherlock/sherlock/internal/slack"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -156,27 +157,36 @@ func preCreateChangeset(db *gorm.DB, toCreate *Changeset, _ *models.User) error 
 
 func (s *internalChangesetStore) plan(db *gorm.DB, changesets []Changeset, user *models.User) ([]Changeset, error) {
 	var ret []Changeset
-	err := db.Transaction(func(tx *gorm.DB) error {
-		for index, changeset := range changesets {
-			chartRelease, err := InternalChartReleaseStore.Get(tx, ChartRelease{Model: gorm.Model{ID: changeset.ChartReleaseID}})
-			if err != nil {
-				return fmt.Errorf("plan error on %T %d: failed to get %T: %v", changeset, index+1, chartRelease, err)
-			}
-			if err = changeset.To.resolve(tx, Chart{Model: gorm.Model{ID: chartRelease.ChartID}}); err != nil {
-				return fmt.Errorf("plan error on %T %d: failed to resolve 'to' version: %v", changeset, index+1, err)
-			}
-			if changeset.To.equalTo(changeset.From) {
-				continue
-			} else {
-				planned, _, err := s.Create(tx, changeset, user)
-				if err != nil {
-					return fmt.Errorf("plan error on %T %d: failed to create %T: %v", changeset, index+1, changeset, err)
-				}
-				ret = append(ret, planned)
-			}
+	var err error
+	for index, changeset := range changesets {
+		var chartRelease ChartRelease
+		chartRelease, err = InternalChartReleaseStore.Get(db, ChartRelease{Model: gorm.Model{ID: changeset.ChartReleaseID}})
+		if err != nil {
+			err = fmt.Errorf("plan error on %T %d: failed to get %T: %v", changeset, index+1, chartRelease, err)
+			break
 		}
-		return nil
-	})
+		if err = changeset.To.resolve(db, Chart{Model: gorm.Model{ID: chartRelease.ChartID}}); err != nil {
+			err = fmt.Errorf("plan error on %T %d: failed to resolve 'to' version: %v", changeset, index+1, err)
+			break
+		}
+		if changeset.To.equalTo(changeset.From) {
+			continue
+		} else {
+			var planned Changeset
+			planned, _, err = s.Create(db, changeset, user)
+			if err != nil && strings.Contains(err.Error(), "deadlock detected") {
+				planned, _, err = s.Create(db, changeset, user)
+				if err == nil {
+					go slack.SendMessage(db.Statement.Context, "#ap-k8s-monitor", "Sherlock encountered a deadlock during changeset creation but recovered")
+				}
+			}
+			if err != nil {
+				err = fmt.Errorf("plan error on %T %d: failed to create %T: %v", changeset, index+1, changeset, err)
+				break
+			}
+			ret = append(ret, planned)
+		}
+	}
 	return ret, err
 }
 
