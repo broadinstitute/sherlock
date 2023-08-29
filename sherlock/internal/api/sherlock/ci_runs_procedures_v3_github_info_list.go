@@ -16,7 +16,7 @@ import (
 //	@description	here can probably successfully called by a GitHub Actions deploy hook.
 //	@tags			CiRuns
 //	@produce		json
-//	@success		200						{array}		map[string]map[string][]string
+//	@success		200						{object}	map[string]map[string][]string
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/ci-runs/procedures/v3/github-info [get]
 func ciRunsProceduresV3GithubInfoList(ctx *gin.Context) {
