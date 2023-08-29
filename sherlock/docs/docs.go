@@ -220,16 +220,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
+                            "type": "object",
+                            "additionalProperties": {
                                 "type": "object",
                                 "additionalProperties": {
-                                    "type": "object",
-                                    "additionalProperties": {
-                                        "type": "array",
-                                        "items": {
-                                            "type": "string"
-                                        }
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
                                     }
                                 }
                             }

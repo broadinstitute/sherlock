@@ -120,7 +120,7 @@ export class CiRunsApi extends runtime.BaseAPI {
      * List info about GitHub repos and their workflow files as determined by CiRuns from the past 90 days. This is a useful proxy for figuring out what repos Sherlock probably has access to: workflows listed here can probably successfully called by a GitHub Actions deploy hook.
      * List GitHub info gleaned from CiRuns
      */
-    async apiCiRunsProceduresV3GithubInfoGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<{ [key: string]: { [key: string]: Array<string>; }; }>>> {
+    async apiCiRunsProceduresV3GithubInfoGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<{ [key: string]: { [key: string]: Array<string>; }; }>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -139,7 +139,7 @@ export class CiRunsApi extends runtime.BaseAPI {
      * List info about GitHub repos and their workflow files as determined by CiRuns from the past 90 days. This is a useful proxy for figuring out what repos Sherlock probably has access to: workflows listed here can probably successfully called by a GitHub Actions deploy hook.
      * List GitHub info gleaned from CiRuns
      */
-    async apiCiRunsProceduresV3GithubInfoGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<{ [key: string]: { [key: string]: Array<string>; }; }>> {
+    async apiCiRunsProceduresV3GithubInfoGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<{ [key: string]: { [key: string]: Array<string>; }; }> {
         const response = await this.apiCiRunsProceduresV3GithubInfoGetRaw(initOverrides);
         return await response.value();
     }

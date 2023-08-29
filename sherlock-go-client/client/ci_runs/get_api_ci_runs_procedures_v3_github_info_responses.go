@@ -80,13 +80,13 @@ func NewGetAPICiRunsProceduresV3GithubInfoOK() *GetAPICiRunsProceduresV3GithubIn
 OK
 */
 type GetAPICiRunsProceduresV3GithubInfoOK struct {
-	Payload []map[string]map[string][]string
+	Payload map[string]map[string][]string
 }
 
 func (o *GetAPICiRunsProceduresV3GithubInfoOK) Error() string {
 	return fmt.Sprintf("[GET /api/ci-runs/procedures/v3/github-info][%d] getApiCiRunsProceduresV3GithubInfoOK  %+v", 200, o.Payload)
 }
-func (o *GetAPICiRunsProceduresV3GithubInfoOK) GetPayload() []map[string]map[string][]string {
+func (o *GetAPICiRunsProceduresV3GithubInfoOK) GetPayload() map[string]map[string][]string {
 	return o.Payload
 }
 

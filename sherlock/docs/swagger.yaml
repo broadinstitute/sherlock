@@ -1804,15 +1804,13 @@ paths:
         "200":
           description: OK
           schema:
-            items:
+            additionalProperties:
               additionalProperties:
-                additionalProperties:
-                  items:
-                    type: string
-                  type: array
-                type: object
+                items:
+                  type: string
+                type: array
               type: object
-            type: array
+            type: object
         "400":
           description: Bad Request
           schema:
