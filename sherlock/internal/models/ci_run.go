@@ -23,14 +23,14 @@ type CiRun struct {
 	ArgoWorkflowsName          string
 	ArgoWorkflowsTemplate      string `koanf:"argoWorkflowsTemplate"`
 
-	// DeployHooksDispatchedAt will only be set when the CiRun is recognized
-	// as a deployment. A lot of why it exists is to help avoid double-send
-	// with multiple Sherlock replicas/goroutines thinking they observed a
-	// CiRun terminate. This field is similar to UpdatedAt in that while
-	// technically mutable it isn't exposed as such directly in the API.
-	// It's a string so that we can store higher-than-Postgres levels of
-	// accuracy (again, to avoid double-send, since we use it like a mutex).
-	DeployHooksDispatchedAt *string
+	// TerminationHooksDispatchedAt is set when Sherlock sees a CiRun complete.
+	// A lot of why it exists is to help avoid double-send with multiple Sherlock
+	// replicas/goroutines thinking they observed a CiRun terminate. This field
+	// is similar to UpdatedAt in that while technically mutable it isn't exposed
+	// as such directly in the API. It's a string so that we can store
+	// higher-than-Postgres levels of accuracy (again, to avoid double-send,
+	// since we use it like a mutex).
+	TerminationHooksDispatchedAt *string
 
 	// Mutable
 	RelatedResources []CiIdentifier `gorm:"many2many:v2_ci_runs_for_identifiers"`

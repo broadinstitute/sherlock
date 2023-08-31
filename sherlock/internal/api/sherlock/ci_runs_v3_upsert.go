@@ -362,28 +362,28 @@ addingToDeduplicatedRelatedResources:
 
 	// If it looks like we have a deploy, claim that we're dispatching deploy hooks
 	var dispatchedAt string
-	if result.TerminalAt != nil && deployhooks.CiRunIsDeploy(result) && result.DeployHooksDispatchedAt == nil {
+	if result.TerminalAt != nil && deployhooks.CiRunIsDeploy(result) && result.TerminationHooksDispatchedAt == nil {
 		dispatchedAt = time.Now().Format(time.RFC3339Nano)
-		if err = db.Model(&result).Update("deploy_hooks_dispatched_at", gorm.Expr("COALESCE(deploy_hooks_dispatched_at, ?)", dispatchedAt)).Error; err != nil {
+		if err = db.Model(&result).Update("termination_hooks_dispatched_at", gorm.Expr("COALESCE(termination_hooks_dispatched_at, ?)", dispatchedAt)).Error; err != nil {
 			log.Warn().Err(err).Msgf("HOOK | failed to claim dispatch on CiRun %d: %v", result.ID, err)
 			dispatchedAt = ""
 		}
 	}
 
 	// Re-query so we load all the CiIdentifiers, including any added by previous requests
-	// This also gets DeployHooksDispatchedAt back out of the database
+	// This also gets TerminationHooksDispatchedAt back out of the database
 	if err = db.Preload(clause.Associations).First(&result, result.ID).Error; err != nil {
 		errors.AbortRequest(ctx, err)
 		return
 	}
 
-	// If our claim to DeployHooksDispatchedAt held, that means no one beat us to the punch:
+	// If our claim to TerminationHooksDispatchedAt held, that means no one beat us to the punch:
 	// now we actually do the dispatch.
 	if dispatchedAt != "" {
-		if result.DeployHooksDispatchedAt == nil {
+		if result.TerminationHooksDispatchedAt == nil {
 			log.Warn().Msgf("HOOK | claimed dispatch on CiRun %d but the field wasn't set when re-queried?", result.ID)
-		} else if dispatchedAt != *result.DeployHooksDispatchedAt {
-			log.Info().Msgf("HOOK | parallelism detected; we claimed dispatch on CiRun %d at %s but it the claim in the database ended up being %s", result.ID, dispatchedAt, *result.DeployHooksDispatchedAt)
+		} else if dispatchedAt != *result.TerminationHooksDispatchedAt {
+			log.Info().Msgf("HOOK | parallelism detected; we claimed dispatch on CiRun %d at %s but it the claim in the database ended up being %s", result.ID, dispatchedAt, *result.TerminationHooksDispatchedAt)
 		} else if config.Config.String("mode") == "debug" {
 			// Locally we do this synchronously so it occurs during the request.
 			// We don't do anything to either the db or the result during request

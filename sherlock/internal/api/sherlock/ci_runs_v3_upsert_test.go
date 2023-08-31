@@ -466,7 +466,7 @@ func (s *handlerSuite) TestCiRunsV3UpsertIdentifiers() {
 				}),
 				&got)
 			s.Equal(http.StatusCreated, code)
-			s.Empty(got.DeployHooksDispatchedAt)
+			s.Empty(got.TerminationHooksDispatchedAt)
 		})
 		s.Run("when finished", func() {
 			code := s.HandleRequest(
@@ -484,7 +484,7 @@ func (s *handlerSuite) TestCiRunsV3UpsertIdentifiers() {
 				}),
 				&got)
 			s.Equal(http.StatusCreated, code)
-			s.NotNil(got.DeployHooksDispatchedAt)
+			s.NotNil(got.TerminationHooksDispatchedAt)
 		})
 	})
 }

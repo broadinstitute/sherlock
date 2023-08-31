@@ -203,21 +203,21 @@ func TestCiRun_WebURL(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			c := &CiRun{
-				Model:                      tt.fields.Model,
-				Platform:                   tt.fields.Platform,
-				GithubActionsOwner:         tt.fields.GithubActionsOwner,
-				GithubActionsRepo:          tt.fields.GithubActionsRepo,
-				GithubActionsRunID:         tt.fields.GithubActionsRunID,
-				GithubActionsAttemptNumber: tt.fields.GithubActionsAttemptNumber,
-				GithubActionsWorkflowPath:  tt.fields.GithubActionsWorkflowPath,
-				ArgoWorkflowsNamespace:     tt.fields.ArgoWorkflowsNamespace,
-				ArgoWorkflowsName:          tt.fields.ArgoWorkflowsName,
-				ArgoWorkflowsTemplate:      tt.fields.ArgoWorkflowsTemplate,
-				DeployHooksDispatchedAt:    tt.fields.DeployHooksDispatchedAt,
-				RelatedResources:           tt.fields.RelatedResources,
-				StartedAt:                  tt.fields.StartedAt,
-				TerminalAt:                 tt.fields.TerminalAt,
-				Status:                     tt.fields.Status,
+				Model:                        tt.fields.Model,
+				Platform:                     tt.fields.Platform,
+				GithubActionsOwner:           tt.fields.GithubActionsOwner,
+				GithubActionsRepo:            tt.fields.GithubActionsRepo,
+				GithubActionsRunID:           tt.fields.GithubActionsRunID,
+				GithubActionsAttemptNumber:   tt.fields.GithubActionsAttemptNumber,
+				GithubActionsWorkflowPath:    tt.fields.GithubActionsWorkflowPath,
+				ArgoWorkflowsNamespace:       tt.fields.ArgoWorkflowsNamespace,
+				ArgoWorkflowsName:            tt.fields.ArgoWorkflowsName,
+				ArgoWorkflowsTemplate:        tt.fields.ArgoWorkflowsTemplate,
+				TerminationHooksDispatchedAt: tt.fields.DeployHooksDispatchedAt,
+				RelatedResources:             tt.fields.RelatedResources,
+				StartedAt:                    tt.fields.StartedAt,
+				TerminalAt:                   tt.fields.TerminalAt,
+				Status:                       tt.fields.Status,
 			}
 			if got := c.WebURL(); got != tt.want {
 				t.Errorf("WebURL() = %v, want %v", got, tt.want)
@@ -283,21 +283,21 @@ func TestCiRun_Succeeded(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			c := &CiRun{
-				Model:                      tt.fields.Model,
-				Platform:                   tt.fields.Platform,
-				GithubActionsOwner:         tt.fields.GithubActionsOwner,
-				GithubActionsRepo:          tt.fields.GithubActionsRepo,
-				GithubActionsRunID:         tt.fields.GithubActionsRunID,
-				GithubActionsAttemptNumber: tt.fields.GithubActionsAttemptNumber,
-				GithubActionsWorkflowPath:  tt.fields.GithubActionsWorkflowPath,
-				ArgoWorkflowsNamespace:     tt.fields.ArgoWorkflowsNamespace,
-				ArgoWorkflowsName:          tt.fields.ArgoWorkflowsName,
-				ArgoWorkflowsTemplate:      tt.fields.ArgoWorkflowsTemplate,
-				DeployHooksDispatchedAt:    tt.fields.DeployHooksDispatchedAt,
-				RelatedResources:           tt.fields.RelatedResources,
-				StartedAt:                  tt.fields.StartedAt,
-				TerminalAt:                 tt.fields.TerminalAt,
-				Status:                     tt.fields.Status,
+				Model:                        tt.fields.Model,
+				Platform:                     tt.fields.Platform,
+				GithubActionsOwner:           tt.fields.GithubActionsOwner,
+				GithubActionsRepo:            tt.fields.GithubActionsRepo,
+				GithubActionsRunID:           tt.fields.GithubActionsRunID,
+				GithubActionsAttemptNumber:   tt.fields.GithubActionsAttemptNumber,
+				GithubActionsWorkflowPath:    tt.fields.GithubActionsWorkflowPath,
+				ArgoWorkflowsNamespace:       tt.fields.ArgoWorkflowsNamespace,
+				ArgoWorkflowsName:            tt.fields.ArgoWorkflowsName,
+				ArgoWorkflowsTemplate:        tt.fields.ArgoWorkflowsTemplate,
+				TerminationHooksDispatchedAt: tt.fields.DeployHooksDispatchedAt,
+				RelatedResources:             tt.fields.RelatedResources,
+				StartedAt:                    tt.fields.StartedAt,
+				TerminalAt:                   tt.fields.TerminalAt,
+				Status:                       tt.fields.Status,
 			}
 			if got := c.Succeeded(); got != tt.want {
 				t.Errorf("Succeeded() = %v, want %v", got, tt.want)

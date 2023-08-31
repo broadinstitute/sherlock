@@ -8,8 +8,8 @@ import (
 type CiRunV3 struct {
 	CommonFields
 	ciRunFields
-	DeployHooksDispatchedAt *string          `json:"deployHooksDispatchedAt,omitempty" form:"deployHooksDispatchedAt" format:"date-time"`
-	RelatedResources        []CiIdentifierV3 `json:"relatedResources" form:"-"`
+	TerminationHooksDispatchedAt *string          `json:"terminationHooksDispatchedAt,omitempty" form:"terminationHooksDispatchedAt" format:"date-time"`
+	RelatedResources             []CiIdentifierV3 `json:"relatedResources" form:"-"`
 }
 
 type ciRunFields struct {
@@ -29,20 +29,20 @@ type ciRunFields struct {
 
 func (c CiRunV3) toModel() models.CiRun {
 	return models.CiRun{
-		Model:                      c.toGormModel(),
-		Platform:                   c.Platform,
-		GithubActionsOwner:         c.GithubActionsOwner,
-		GithubActionsRepo:          c.GithubActionsRepo,
-		GithubActionsRunID:         c.GithubActionsRunID,
-		GithubActionsAttemptNumber: c.GithubActionsAttemptNumber,
-		GithubActionsWorkflowPath:  c.GithubActionsWorkflowPath,
-		ArgoWorkflowsNamespace:     c.ArgoWorkflowsNamespace,
-		ArgoWorkflowsName:          c.ArgoWorkflowsName,
-		ArgoWorkflowsTemplate:      c.ArgoWorkflowsTemplate,
-		DeployHooksDispatchedAt:    c.DeployHooksDispatchedAt,
-		StartedAt:                  c.StartedAt,
-		TerminalAt:                 c.TerminalAt,
-		Status:                     c.Status,
+		Model:                        c.toGormModel(),
+		Platform:                     c.Platform,
+		GithubActionsOwner:           c.GithubActionsOwner,
+		GithubActionsRepo:            c.GithubActionsRepo,
+		GithubActionsRunID:           c.GithubActionsRunID,
+		GithubActionsAttemptNumber:   c.GithubActionsAttemptNumber,
+		GithubActionsWorkflowPath:    c.GithubActionsWorkflowPath,
+		ArgoWorkflowsNamespace:       c.ArgoWorkflowsNamespace,
+		ArgoWorkflowsName:            c.ArgoWorkflowsName,
+		ArgoWorkflowsTemplate:        c.ArgoWorkflowsTemplate,
+		TerminationHooksDispatchedAt: c.TerminationHooksDispatchedAt,
+		StartedAt:                    c.StartedAt,
+		TerminalAt:                   c.TerminalAt,
+		Status:                       c.Status,
 	}
 }
 
@@ -70,7 +70,7 @@ func ciRunFromModel(model models.CiRun) CiRunV3 {
 			TerminalAt:                 model.TerminalAt,
 			Status:                     model.Status,
 		},
-		DeployHooksDispatchedAt: model.DeployHooksDispatchedAt,
-		RelatedResources:        relatedResources,
+		TerminationHooksDispatchedAt: model.TerminationHooksDispatchedAt,
+		RelatedResources:             relatedResources,
 	}
 }
