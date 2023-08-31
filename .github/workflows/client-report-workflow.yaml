@@ -1,4 +1,4 @@
-name: Report GitHub Actions Workflow.
+name: Report GitHub Actions Workflow
 
 # This workflow is meant to be called from other repositories' workflows to report info about the workflow to
 # Sherlock.
@@ -11,10 +11,11 @@ name: Report GitHub Actions Workflow.
 # ```yaml
 # jobs:
 #
-#   report-related-resources:
+#   report-workflow:
 #     uses: broadinstitute/sherlock/.github/workflows/client-report-workflow.yaml@main
 #     with:
-#       chart-releases: leonardo-dev
+#       relates-to-chart-releases: leonardo-dev
+#       notify-slack-channels-on-workflow-completion: "#workbench-resilience-dev"
 #     permissions:
 #       id-token: write
 # ```
