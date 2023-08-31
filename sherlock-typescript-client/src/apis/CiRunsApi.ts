@@ -42,7 +42,6 @@ export interface ApiCiRunsV3GetRequest {
     argoWorkflowsNamespace?: string;
     argoWorkflowsTemplate?: string;
     createdAt?: Date;
-    deployHooksDispatchedAt?: Date;
     githubActionsAttemptNumber?: number;
     githubActionsOwner?: string;
     githubActionsRepo?: string;
@@ -53,6 +52,7 @@ export interface ApiCiRunsV3GetRequest {
     startedAt?: string;
     status?: string;
     terminalAt?: string;
+    terminationHooksDispatchedAt?: Date;
     updatedAt?: Date;
     limit?: number;
     offset?: number;
@@ -167,10 +167,6 @@ export class CiRunsApi extends runtime.BaseAPI {
             queryParameters['createdAt'] = (requestParameters.createdAt as any).toISOString();
         }
 
-        if (requestParameters.deployHooksDispatchedAt !== undefined) {
-            queryParameters['deployHooksDispatchedAt'] = (requestParameters.deployHooksDispatchedAt as any).toISOString();
-        }
-
         if (requestParameters.githubActionsAttemptNumber !== undefined) {
             queryParameters['githubActionsAttemptNumber'] = requestParameters.githubActionsAttemptNumber;
         }
@@ -209,6 +205,10 @@ export class CiRunsApi extends runtime.BaseAPI {
 
         if (requestParameters.terminalAt !== undefined) {
             queryParameters['terminalAt'] = requestParameters.terminalAt;
+        }
+
+        if (requestParameters.terminationHooksDispatchedAt !== undefined) {
+            queryParameters['terminationHooksDispatchedAt'] = (requestParameters.terminationHooksDispatchedAt as any).toISOString();
         }
 
         if (requestParameters.updatedAt !== undefined) {
