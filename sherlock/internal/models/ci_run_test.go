@@ -2,7 +2,6 @@ package models
 
 import (
 	"github.com/broadinstitute/sherlock/go-shared/pkg/testutils"
-	"gorm.io/datatypes"
 	"gorm.io/gorm"
 	"testing"
 	"time"
@@ -302,85 +301,6 @@ func TestCiRun_Succeeded(t *testing.T) {
 			}
 			if got := c.Succeeded(); got != tt.want {
 				t.Errorf("Succeeded() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestCiRun_Nickname(t *testing.T) {
-	type fields struct {
-		Model                          gorm.Model
-		Platform                       string
-		GithubActionsOwner             string
-		GithubActionsRepo              string
-		GithubActionsRunID             uint
-		GithubActionsAttemptNumber     uint
-		GithubActionsWorkflowPath      string
-		ArgoWorkflowsNamespace         string
-		ArgoWorkflowsName              string
-		ArgoWorkflowsTemplate          string
-		TerminationHooksDispatchedAt   *string
-		RelatedResources               []CiIdentifier
-		StartedAt                      *time.Time
-		TerminalAt                     *time.Time
-		Status                         *string
-		NotifySlackChannelsUponSuccess datatypes.JSONSlice[string]
-		NotifySlackChannelsUponFailure datatypes.JSONSlice[string]
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		want   string
-	}{
-		{
-			name: "gha",
-			fields: fields{
-				Platform:                  "github-actions",
-				GithubActionsRepo:         "repo",
-				GithubActionsWorkflowPath: "path/to/file.yaml",
-			},
-			want: "repo's file workflow",
-		},
-		{
-			name: "argo",
-			fields: fields{
-				Platform:              "argo-workflows",
-				ArgoWorkflowsTemplate: "template",
-			},
-			want: "template Argo workflow",
-		},
-		{
-			name: "unknown",
-			fields: fields{
-				Model:    gorm.Model{ID: 1},
-				Platform: "platform",
-			},
-			want: "unknown platform workflow 1",
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			c := &CiRun{
-				Model:                          tt.fields.Model,
-				Platform:                       tt.fields.Platform,
-				GithubActionsOwner:             tt.fields.GithubActionsOwner,
-				GithubActionsRepo:              tt.fields.GithubActionsRepo,
-				GithubActionsRunID:             tt.fields.GithubActionsRunID,
-				GithubActionsAttemptNumber:     tt.fields.GithubActionsAttemptNumber,
-				GithubActionsWorkflowPath:      tt.fields.GithubActionsWorkflowPath,
-				ArgoWorkflowsNamespace:         tt.fields.ArgoWorkflowsNamespace,
-				ArgoWorkflowsName:              tt.fields.ArgoWorkflowsName,
-				ArgoWorkflowsTemplate:          tt.fields.ArgoWorkflowsTemplate,
-				TerminationHooksDispatchedAt:   tt.fields.TerminationHooksDispatchedAt,
-				RelatedResources:               tt.fields.RelatedResources,
-				StartedAt:                      tt.fields.StartedAt,
-				TerminalAt:                     tt.fields.TerminalAt,
-				Status:                         tt.fields.Status,
-				NotifySlackChannelsUponSuccess: tt.fields.NotifySlackChannelsUponSuccess,
-				NotifySlackChannelsUponFailure: tt.fields.NotifySlackChannelsUponFailure,
-			}
-			if got := c.Nickname(); got != tt.want {
-				t.Errorf("Nickname() = %v, want %v", got, tt.want)
 			}
 		})
 	}

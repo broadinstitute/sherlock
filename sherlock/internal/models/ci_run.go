@@ -3,9 +3,7 @@ package models
 import (
 	"fmt"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
-	"gorm.io/datatypes"
 	"gorm.io/gorm"
-	"strings"
 	"time"
 )
 
@@ -35,12 +33,10 @@ type CiRun struct {
 	TerminationHooksDispatchedAt *string
 
 	// Mutable
-	RelatedResources               []CiIdentifier `gorm:"many2many:v2_ci_runs_for_identifiers"`
-	StartedAt                      *time.Time
-	TerminalAt                     *time.Time
-	Status                         *string
-	NotifySlackChannelsUponSuccess datatypes.JSONSlice[string]
-	NotifySlackChannelsUponFailure datatypes.JSONSlice[string]
+	RelatedResources []CiIdentifier `gorm:"many2many:v2_ci_runs_for_identifiers"`
+	StartedAt        *time.Time
+	TerminalAt       *time.Time
+	Status           *string
 }
 
 func (c *CiRun) TableName() string {
@@ -56,18 +52,6 @@ func (c *CiRun) WebURL() string {
 	default:
 		// c.Platform is an enum so we should never be able to hit this case
 		return fmt.Sprintf("https://sherlock.dsp-devops.broadinstitute.org/api/ci-runs/v3/%d", c.ID)
-	}
-}
-
-func (c *CiRun) Nickname() string {
-	switch c.Platform {
-	case "github-actions":
-		workflowPathParts := strings.Split(c.GithubActionsWorkflowPath, "/")
-		return fmt.Sprintf("%s's %s workflow", c.GithubActionsRepo, strings.Split(workflowPathParts[len(workflowPathParts)-1], ".")[0])
-	case "argo-workflows":
-		return fmt.Sprintf("%s Argo workflow", c.ArgoWorkflowsTemplate)
-	default:
-		return fmt.Sprintf("unknown %s workflow %d", c.Platform, c.ID)
 	}
 }
 
