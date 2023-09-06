@@ -175,11 +175,11 @@ jobs:
           set -ex
           echo "changesets=$(cat $RUNNER_TEMP/response.json | jq -r 'map(.id) | join(",")')" >> $GITHUB_OUTPUT
 
-  report-workflow-relation:
-    uses: ./.github/workflows/client-report-workflow-related-resources.yaml
+  report-workflow:
+    uses: ./.github/workflows/client-report-workflow.yaml
     needs: set-version
     with:
-      changesets: ${{ needs.set-version.outputs.changesets }}
+      relates-to-changesets: ${{ needs.set-version.outputs.changesets }}
     permissions:
       id-token: write
 

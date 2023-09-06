@@ -252,10 +252,10 @@ jobs:
             -d "@$RUNNER_TEMP/body.json" | jq
           echo "### Available in Beehive at $BEEHIVE_PROD_VANITY_URL/r/app-version/${{ inputs.chart-name }}/${{ inputs.new-version }}" >> $GITHUB_STEP_SUMMARY
 
-  report-workflow-relation:
-    uses: ./.github/workflows/client-report-workflow-related-resources.yaml
+  report-workflow:
+    uses: ./.github/workflows/client-report-workflow.yaml
     needs: report-new-version
     with:
-      app-versions: ${{ inputs.chart-name }}/${{ inputs.new-version }}
+      relates-to-app-versions: ${{ inputs.chart-name }}/${{ inputs.new-version }}
     permissions:
       id-token: write
