@@ -362,13 +362,13 @@ addingToDeduplicatedRelatedResources:
 	}
 
 	// If the request added any Slack channels for us to notify, record those
-	if len(body.NotifySlackChannelsOnSuccess) > 0 || len(body.NotifySlackChannelsOnFailure) > 0 {
+	if len(body.NotifySlackChannelsUponSuccess) > 0 || len(body.NotifySlackChannelsUponFailure) > 0 {
 		var channelUpdates models.CiRun
-		if len(body.NotifySlackChannelsOnSuccess) > 0 {
-			channelUpdates.NotifySlackChannelsOnSuccess = append(result.NotifySlackChannelsOnSuccess, body.NotifySlackChannelsOnSuccess...)
+		if len(body.NotifySlackChannelsUponSuccess) > 0 {
+			channelUpdates.NotifySlackChannelsUponSuccess = append(result.NotifySlackChannelsUponSuccess, body.NotifySlackChannelsUponSuccess...)
 		}
-		if len(body.NotifySlackChannelsOnFailure) > 0 {
-			channelUpdates.NotifySlackChannelsOnFailure = append(result.NotifySlackChannelsOnFailure, body.NotifySlackChannelsOnFailure...)
+		if len(body.NotifySlackChannelsUponFailure) > 0 {
+			channelUpdates.NotifySlackChannelsUponFailure = append(result.NotifySlackChannelsUponFailure, body.NotifySlackChannelsUponFailure...)
 		}
 		if err = db.Model(&result).Updates(&channelUpdates).Error; err != nil {
 			errors.AbortRequest(ctx, err)
@@ -423,13 +423,13 @@ func dispatchTerminatedCiRun(db *gorm.DB, ciRun models.CiRun) {
 	}
 	if ciRun.Status != nil {
 		if ciRun.Succeeded() {
-			for _, channel := range ciRun.NotifySlackChannelsOnSuccess {
+			for _, channel := range ciRun.NotifySlackChannelsUponSuccess {
 				slack.SendMessage(db.Statement.Context, channel, "", slack.GreenBlock{
 					Text: fmt.Sprintf("%s: %s", ciRun.Nickname(), slack.LinkHelper(ciRun.WebURL(), *ciRun.Status)),
 				})
 			}
 		} else {
-			for _, channel := range ciRun.NotifySlackChannelsOnFailure {
+			for _, channel := range ciRun.NotifySlackChannelsUponFailure {
 				slack.SendMessage(db.Statement.Context, channel, "", slack.RedBlock{
 					Text: fmt.Sprintf("%s: %s", ciRun.Nickname(), slack.LinkHelper(ciRun.WebURL(), *ciRun.Status)),
 				})

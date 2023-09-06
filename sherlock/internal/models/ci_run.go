@@ -35,12 +35,12 @@ type CiRun struct {
 	TerminationHooksDispatchedAt *string
 
 	// Mutable
-	RelatedResources             []CiIdentifier `gorm:"many2many:v2_ci_runs_for_identifiers"`
-	StartedAt                    *time.Time
-	TerminalAt                   *time.Time
-	Status                       *string
-	NotifySlackChannelsOnSuccess datatypes.JSONSlice[string]
-	NotifySlackChannelsOnFailure datatypes.JSONSlice[string]
+	RelatedResources               []CiIdentifier `gorm:"many2many:v2_ci_runs_for_identifiers"`
+	StartedAt                      *time.Time
+	TerminalAt                     *time.Time
+	Status                         *string
+	NotifySlackChannelsUponSuccess datatypes.JSONSlice[string]
+	NotifySlackChannelsUponFailure datatypes.JSONSlice[string]
 }
 
 func (c *CiRun) TableName() string {

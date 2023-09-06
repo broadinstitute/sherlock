@@ -15,7 +15,7 @@ name: Report GitHub Actions Workflow
 #     uses: broadinstitute/sherlock/.github/workflows/client-report-workflow.yaml@main
 #     with:
 #       relates-to-chart-releases: leonardo-dev
-#       notify-slack-channels-on-workflow-completion: "#workbench-resilience-dev"
+#       notify-slack-channels-upon-workflow-completion: "#workbench-resilience-dev"
 #     permissions:
 #       id-token: write
 # ```
@@ -29,21 +29,21 @@ on:
       #   eventually completes. You can specify these at any point in your workflow (doesn't have to be at
       #   the end); Sherlock will automatically wait for completion before sending notifications.
 
-      notify-slack-channels-on-workflow-completion:
+      notify-slack-channels-upon-workflow-completion:
         required: false
         type: string
         description: |
           Slack channels that Beehive should notify when this workflow completes, regardless of outcome.
           
           Multiple slack channels can be provided by separating them with whitespace and/or commas.
-      notify-slack-channels-on-workflow-success:
+      notify-slack-channels-upon-workflow-success:
         required: false
         type: string
         description: |
           Slack channels that Beehive should notify when this workflow succeeds.
           
           Multiple slack channels can be provided by separating them with whitespace and/or commas.
-      notify-slack-channels-on-workflow-failure:
+      notify-slack-channels-upon-workflow-failure:
         required: false
         type: string
         description: |
@@ -188,9 +188,9 @@ jobs:
         id: parse
         uses: actions/github-script@v6
         env:
-          SLACK_CHANNELS_UPON_COMPLETION: ${{ inputs.notify-slack-channels-on-workflow-completion }}
-          SLACK_CHANNELS_UPON_SUCCESS: ${{ inputs.notify-slack-channels-on-workflow-success }}
-          SLACK_CHANNELS_UPON_FAILURE: ${{ inputs.notify-slack-channels-on-workflow-failure }}
+          SLACK_CHANNELS_UPON_COMPLETION: ${{ inputs.notify-slack-channels-upon-workflow-completion }}
+          SLACK_CHANNELS_UPON_SUCCESS: ${{ inputs.notify-slack-channels-upon-workflow-success }}
+          SLACK_CHANNELS_UPON_FAILURE: ${{ inputs.notify-slack-channels-upon-workflow-failure }}
           APP_VERSIONS: ${{ inputs.relates-to-app-versions }}
           CHART_VERSIONS: ${{ inputs.relates-to-chart-versions }}
           CHART_RELEASES: ${{ inputs.relates-to-chart-releases }}
@@ -204,11 +204,11 @@ jobs:
           script: |
             core.setOutput("body", JSON.stringify({
               // Split on commas/whitespace and filter to non-empty values
-              notifySlackChannelsOnSuccess: [
+              notifySlackChannelsUponSuccess: [
                 ...process.env.SLACK_CHANNELS_UPON_COMPLETION.split(/[\s,]+/),
                 ...process.env.SLACK_CHANNELS_UPON_SUCCESS.split(/[\s,]+/)
               ].filter(Boolean),
-              notifySlackChannelsOnFailure: [
+              notifySlackChannelsUponFailure: [
                 ...process.env.SLACK_CHANNELS_UPON_COMPLETION.split(/[\s,]+/),
                 ...process.env.SLACK_CHANNELS_UPON_FAILURE.split(/[\s,]+/)
               ].filter(Boolean),
