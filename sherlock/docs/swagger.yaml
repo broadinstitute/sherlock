@@ -83,9 +83,6 @@ definitions:
       createdAt:
         format: date-time
         type: string
-      deployHooksDispatchedAt:
-        format: date-time
-        type: string
       githubActionsAttemptNumber:
         type: integer
       githubActionsOwner:
@@ -109,6 +106,9 @@ definitions:
       status:
         type: string
       terminalAt:
+        type: string
+      terminationHooksDispatchedAt:
+        format: date-time
         type: string
       updatedAt:
         format: date-time
@@ -1857,10 +1857,6 @@ paths:
         in: query
         name: createdAt
         type: string
-      - format: date-time
-        in: query
-        name: deployHooksDispatchedAt
-        type: string
       - in: query
         name: githubActionsAttemptNumber
         type: integer
@@ -1890,6 +1886,10 @@ paths:
         type: string
       - in: query
         name: terminalAt
+        type: string
+      - format: date-time
+        in: query
+        name: terminationHooksDispatchedAt
         type: string
       - format: date-time
         in: query

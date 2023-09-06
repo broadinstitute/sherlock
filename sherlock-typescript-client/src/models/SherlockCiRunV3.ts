@@ -52,12 +52,6 @@ export interface SherlockCiRunV3 {
     createdAt?: Date;
     /**
      * 
-     * @type {Date}
-     * @memberof SherlockCiRunV3
-     */
-    deployHooksDispatchedAt?: Date;
-    /**
-     * 
      * @type {number}
      * @memberof SherlockCiRunV3
      */
@@ -127,6 +121,12 @@ export interface SherlockCiRunV3 {
      * @type {Date}
      * @memberof SherlockCiRunV3
      */
+    terminationHooksDispatchedAt?: Date;
+    /**
+     * 
+     * @type {Date}
+     * @memberof SherlockCiRunV3
+     */
     updatedAt?: Date;
 }
 
@@ -153,7 +153,6 @@ export function SherlockCiRunV3FromJSONTyped(json: any, ignoreDiscriminator: boo
         'argoWorkflowsNamespace': !exists(json, 'argoWorkflowsNamespace') ? undefined : json['argoWorkflowsNamespace'],
         'argoWorkflowsTemplate': !exists(json, 'argoWorkflowsTemplate') ? undefined : json['argoWorkflowsTemplate'],
         'createdAt': !exists(json, 'createdAt') ? undefined : (new Date(json['createdAt'])),
-        'deployHooksDispatchedAt': !exists(json, 'deployHooksDispatchedAt') ? undefined : (new Date(json['deployHooksDispatchedAt'])),
         'githubActionsAttemptNumber': !exists(json, 'githubActionsAttemptNumber') ? undefined : json['githubActionsAttemptNumber'],
         'githubActionsOwner': !exists(json, 'githubActionsOwner') ? undefined : json['githubActionsOwner'],
         'githubActionsRepo': !exists(json, 'githubActionsRepo') ? undefined : json['githubActionsRepo'],
@@ -165,6 +164,7 @@ export function SherlockCiRunV3FromJSONTyped(json: any, ignoreDiscriminator: boo
         'startedAt': !exists(json, 'startedAt') ? undefined : json['startedAt'],
         'status': !exists(json, 'status') ? undefined : json['status'],
         'terminalAt': !exists(json, 'terminalAt') ? undefined : json['terminalAt'],
+        'terminationHooksDispatchedAt': !exists(json, 'terminationHooksDispatchedAt') ? undefined : (new Date(json['terminationHooksDispatchedAt'])),
         'updatedAt': !exists(json, 'updatedAt') ? undefined : (new Date(json['updatedAt'])),
     };
 }
@@ -182,7 +182,6 @@ export function SherlockCiRunV3ToJSON(value?: SherlockCiRunV3 | null): any {
         'argoWorkflowsNamespace': value.argoWorkflowsNamespace,
         'argoWorkflowsTemplate': value.argoWorkflowsTemplate,
         'createdAt': value.createdAt === undefined ? undefined : (value.createdAt.toISOString()),
-        'deployHooksDispatchedAt': value.deployHooksDispatchedAt === undefined ? undefined : (value.deployHooksDispatchedAt.toISOString()),
         'githubActionsAttemptNumber': value.githubActionsAttemptNumber,
         'githubActionsOwner': value.githubActionsOwner,
         'githubActionsRepo': value.githubActionsRepo,
@@ -194,6 +193,7 @@ export function SherlockCiRunV3ToJSON(value?: SherlockCiRunV3 | null): any {
         'startedAt': value.startedAt,
         'status': value.status,
         'terminalAt': value.terminalAt,
+        'terminationHooksDispatchedAt': value.terminationHooksDispatchedAt === undefined ? undefined : (value.terminationHooksDispatchedAt.toISOString()),
         'updatedAt': value.updatedAt === undefined ? undefined : (value.updatedAt.toISOString()),
     };
 }

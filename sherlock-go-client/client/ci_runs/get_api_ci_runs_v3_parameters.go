@@ -74,11 +74,6 @@ type GetAPICiRunsV3Params struct {
 	// Format: date-time
 	CreatedAt *strfmt.DateTime
 
-	// DeployHooksDispatchedAt.
-	//
-	// Format: date-time
-	DeployHooksDispatchedAt *strfmt.DateTime
-
 	// GithubActionsAttemptNumber.
 	GithubActionsAttemptNumber *int64
 
@@ -120,6 +115,11 @@ type GetAPICiRunsV3Params struct {
 
 	// TerminalAt.
 	TerminalAt *string
+
+	// TerminationHooksDispatchedAt.
+	//
+	// Format: date-time
+	TerminationHooksDispatchedAt *strfmt.DateTime
 
 	// UpdatedAt.
 	//
@@ -221,17 +221,6 @@ func (o *GetAPICiRunsV3Params) WithCreatedAt(createdAt *strfmt.DateTime) *GetAPI
 // SetCreatedAt adds the createdAt to the get API ci runs v3 params
 func (o *GetAPICiRunsV3Params) SetCreatedAt(createdAt *strfmt.DateTime) {
 	o.CreatedAt = createdAt
-}
-
-// WithDeployHooksDispatchedAt adds the deployHooksDispatchedAt to the get API ci runs v3 params
-func (o *GetAPICiRunsV3Params) WithDeployHooksDispatchedAt(deployHooksDispatchedAt *strfmt.DateTime) *GetAPICiRunsV3Params {
-	o.SetDeployHooksDispatchedAt(deployHooksDispatchedAt)
-	return o
-}
-
-// SetDeployHooksDispatchedAt adds the deployHooksDispatchedAt to the get API ci runs v3 params
-func (o *GetAPICiRunsV3Params) SetDeployHooksDispatchedAt(deployHooksDispatchedAt *strfmt.DateTime) {
-	o.DeployHooksDispatchedAt = deployHooksDispatchedAt
 }
 
 // WithGithubActionsAttemptNumber adds the githubActionsAttemptNumber to the get API ci runs v3 params
@@ -366,6 +355,17 @@ func (o *GetAPICiRunsV3Params) SetTerminalAt(terminalAt *string) {
 	o.TerminalAt = terminalAt
 }
 
+// WithTerminationHooksDispatchedAt adds the terminationHooksDispatchedAt to the get API ci runs v3 params
+func (o *GetAPICiRunsV3Params) WithTerminationHooksDispatchedAt(terminationHooksDispatchedAt *strfmt.DateTime) *GetAPICiRunsV3Params {
+	o.SetTerminationHooksDispatchedAt(terminationHooksDispatchedAt)
+	return o
+}
+
+// SetTerminationHooksDispatchedAt adds the terminationHooksDispatchedAt to the get API ci runs v3 params
+func (o *GetAPICiRunsV3Params) SetTerminationHooksDispatchedAt(terminationHooksDispatchedAt *strfmt.DateTime) {
+	o.TerminationHooksDispatchedAt = terminationHooksDispatchedAt
+}
+
 // WithUpdatedAt adds the updatedAt to the get API ci runs v3 params
 func (o *GetAPICiRunsV3Params) WithUpdatedAt(updatedAt *strfmt.DateTime) *GetAPICiRunsV3Params {
 	o.SetUpdatedAt(updatedAt)
@@ -448,23 +448,6 @@ func (o *GetAPICiRunsV3Params) WriteToRequest(r runtime.ClientRequest, reg strfm
 		if qCreatedAt != "" {
 
 			if err := r.SetQueryParam("createdAt", qCreatedAt); err != nil {
-				return err
-			}
-		}
-	}
-
-	if o.DeployHooksDispatchedAt != nil {
-
-		// query param deployHooksDispatchedAt
-		var qrDeployHooksDispatchedAt strfmt.DateTime
-
-		if o.DeployHooksDispatchedAt != nil {
-			qrDeployHooksDispatchedAt = *o.DeployHooksDispatchedAt
-		}
-		qDeployHooksDispatchedAt := qrDeployHooksDispatchedAt.String()
-		if qDeployHooksDispatchedAt != "" {
-
-			if err := r.SetQueryParam("deployHooksDispatchedAt", qDeployHooksDispatchedAt); err != nil {
 				return err
 			}
 		}
@@ -669,6 +652,23 @@ func (o *GetAPICiRunsV3Params) WriteToRequest(r runtime.ClientRequest, reg strfm
 		if qTerminalAt != "" {
 
 			if err := r.SetQueryParam("terminalAt", qTerminalAt); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.TerminationHooksDispatchedAt != nil {
+
+		// query param terminationHooksDispatchedAt
+		var qrTerminationHooksDispatchedAt strfmt.DateTime
+
+		if o.TerminationHooksDispatchedAt != nil {
+			qrTerminationHooksDispatchedAt = *o.TerminationHooksDispatchedAt
+		}
+		qTerminationHooksDispatchedAt := qrTerminationHooksDispatchedAt.String()
+		if qTerminationHooksDispatchedAt != "" {
+
+			if err := r.SetQueryParam("terminationHooksDispatchedAt", qTerminationHooksDispatchedAt); err != nil {
 				return err
 			}
 		}

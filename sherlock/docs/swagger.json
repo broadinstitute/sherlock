@@ -299,12 +299,6 @@
                         "in": "query"
                     },
                     {
-                        "type": "string",
-                        "format": "date-time",
-                        "name": "deployHooksDispatchedAt",
-                        "in": "query"
-                    },
-                    {
                         "type": "integer",
                         "name": "githubActionsAttemptNumber",
                         "in": "query"
@@ -352,6 +346,12 @@
                     {
                         "type": "string",
                         "name": "terminalAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "format": "date-time",
+                        "name": "terminationHooksDispatchedAt",
                         "in": "query"
                     },
                     {
@@ -8939,10 +8939,6 @@
                     "type": "string",
                     "format": "date-time"
                 },
-                "deployHooksDispatchedAt": {
-                    "type": "string",
-                    "format": "date-time"
-                },
                 "githubActionsAttemptNumber": {
                     "type": "integer"
                 },
@@ -8978,6 +8974,10 @@
                 },
                 "terminalAt": {
                     "type": "string"
+                },
+                "terminationHooksDispatchedAt": {
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "updatedAt": {
                     "type": "string",
