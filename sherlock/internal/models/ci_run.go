@@ -3,6 +3,7 @@ package models
 import (
 	"fmt"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
+	"gorm.io/datatypes"
 	"gorm.io/gorm"
 	"strings"
 	"time"
@@ -38,8 +39,8 @@ type CiRun struct {
 	StartedAt                    *time.Time
 	TerminalAt                   *time.Time
 	Status                       *string
-	NotifySlackChannelsOnSuccess []string
-	NotifySlackChannelsOnFailure []string
+	NotifySlackChannelsOnSuccess datatypes.JSONSlice[string]
+	NotifySlackChannelsOnFailure datatypes.JSONSlice[string]
 }
 
 func (c *CiRun) TableName() string {

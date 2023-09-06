@@ -363,10 +363,14 @@ addingToDeduplicatedRelatedResources:
 
 	// If the request added any Slack channels for us to notify, record those
 	if len(body.NotifySlackChannelsOnSuccess) > 0 || len(body.NotifySlackChannelsOnFailure) > 0 {
-		if err = db.Model(&result).Updates(&models.CiRun{
-			NotifySlackChannelsOnSuccess: utils.Dedupe(append(result.NotifySlackChannelsOnSuccess, body.NotifySlackChannelsOnSuccess...)),
-			NotifySlackChannelsOnFailure: utils.Dedupe(append(result.NotifySlackChannelsOnFailure, body.NotifySlackChannelsOnFailure...)),
-		}).Error; err != nil {
+		var channelUpdates models.CiRun
+		if len(body.NotifySlackChannelsOnSuccess) > 0 {
+			channelUpdates.NotifySlackChannelsOnSuccess = append(result.NotifySlackChannelsOnSuccess, body.NotifySlackChannelsOnSuccess...)
+		}
+		if len(body.NotifySlackChannelsOnFailure) > 0 {
+			channelUpdates.NotifySlackChannelsOnFailure = append(result.NotifySlackChannelsOnFailure, body.NotifySlackChannelsOnFailure...)
+		}
+		if err = db.Model(&result).Updates(&channelUpdates).Error; err != nil {
 			errors.AbortRequest(ctx, err)
 			return
 		}
