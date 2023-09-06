@@ -365,10 +365,10 @@ addingToDeduplicatedRelatedResources:
 	if len(body.NotifySlackChannelsUponSuccess) > 0 || len(body.NotifySlackChannelsUponFailure) > 0 {
 		var channelUpdates models.CiRun
 		if len(body.NotifySlackChannelsUponSuccess) > 0 {
-			channelUpdates.NotifySlackChannelsUponSuccess = append(result.NotifySlackChannelsUponSuccess, body.NotifySlackChannelsUponSuccess...)
+			channelUpdates.NotifySlackChannelsUponSuccess = utils.Dedupe(append(result.NotifySlackChannelsUponSuccess, body.NotifySlackChannelsUponSuccess...))
 		}
 		if len(body.NotifySlackChannelsUponFailure) > 0 {
-			channelUpdates.NotifySlackChannelsUponFailure = append(result.NotifySlackChannelsUponFailure, body.NotifySlackChannelsUponFailure...)
+			channelUpdates.NotifySlackChannelsUponFailure = utils.Dedupe(append(result.NotifySlackChannelsUponFailure, body.NotifySlackChannelsUponFailure...))
 		}
 		if err = db.Model(&result).Updates(&channelUpdates).Error; err != nil {
 			errors.AbortRequest(ctx, err)
