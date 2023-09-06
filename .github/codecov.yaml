@@ -10,6 +10,10 @@ coverage:
 github_checks:
   annotations: false
 
+comment:
+  layout: "header, diff, reach"
+  behavior: default
+
 ignore:
   - "sherlock/docs"
   - "sherlock-go-client"
