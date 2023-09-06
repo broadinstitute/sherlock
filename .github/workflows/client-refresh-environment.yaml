@@ -189,11 +189,11 @@ jobs:
           token: ${{ secrets.sync-git-token }}
           inputs: '{ "environment-names": "${{ inputs.environment-name }}", "refresh-only": "false" }'
 
-  report-workflow-relation:
-    uses: ./.github/workflows/client-report-workflow-related-resources.yaml
+  report-workflow:
+    uses: ./.github/workflows/client-report-workflow.yaml
     needs: refresh
     with:
-      environments: ${{ inputs.environment-name }}
-      changesets: ${{ needs.refresh.outputs.changesets }}
+      relates-to-environments: ${{ inputs.environment-name }}
+      relates-to-changesets: ${{ needs.refresh.outputs.changesets }}
     permissions:
       id-token: write
