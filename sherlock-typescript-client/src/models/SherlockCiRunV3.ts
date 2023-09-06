@@ -87,6 +87,18 @@ export interface SherlockCiRunV3 {
      */
     id?: number;
     /**
+     * Slack channels to notify if this CiRun fails. This field is always appended to when mutated.
+     * @type {Array<string>}
+     * @memberof SherlockCiRunV3
+     */
+    notifySlackChannelsUponFailure?: Array<string>;
+    /**
+     * Slack channels to notify if this CiRun succeeds. This field is always appended to when mutated.
+     * @type {Array<string>}
+     * @memberof SherlockCiRunV3
+     */
+    notifySlackChannelsUponSuccess?: Array<string>;
+    /**
      * 
      * @type {string}
      * @memberof SherlockCiRunV3
@@ -159,6 +171,8 @@ export function SherlockCiRunV3FromJSONTyped(json: any, ignoreDiscriminator: boo
         'githubActionsRunID': !exists(json, 'githubActionsRunID') ? undefined : json['githubActionsRunID'],
         'githubActionsWorkflowPath': !exists(json, 'githubActionsWorkflowPath') ? undefined : json['githubActionsWorkflowPath'],
         'id': !exists(json, 'id') ? undefined : json['id'],
+        'notifySlackChannelsUponFailure': !exists(json, 'notifySlackChannelsUponFailure') ? undefined : json['notifySlackChannelsUponFailure'],
+        'notifySlackChannelsUponSuccess': !exists(json, 'notifySlackChannelsUponSuccess') ? undefined : json['notifySlackChannelsUponSuccess'],
         'platform': !exists(json, 'platform') ? undefined : json['platform'],
         'relatedResources': !exists(json, 'relatedResources') ? undefined : ((json['relatedResources'] as Array<any>).map(SherlockCiIdentifierV3FromJSON)),
         'startedAt': !exists(json, 'startedAt') ? undefined : json['startedAt'],
@@ -188,6 +202,8 @@ export function SherlockCiRunV3ToJSON(value?: SherlockCiRunV3 | null): any {
         'githubActionsRunID': value.githubActionsRunID,
         'githubActionsWorkflowPath': value.githubActionsWorkflowPath,
         'id': value.id,
+        'notifySlackChannelsUponFailure': value.notifySlackChannelsUponFailure,
+        'notifySlackChannelsUponSuccess': value.notifySlackChannelsUponSuccess,
         'platform': value.platform,
         'relatedResources': value.relatedResources === undefined ? undefined : ((value.relatedResources as Array<any>).map(SherlockCiIdentifierV3ToJSON)),
         'startedAt': value.startedAt,

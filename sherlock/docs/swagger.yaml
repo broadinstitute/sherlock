@@ -95,6 +95,18 @@ definitions:
         type: string
       id:
         type: integer
+      notifySlackChannelsUponFailure:
+        description: Slack channels to notify if this CiRun fails. This field is always
+          appended to when mutated.
+        items:
+          type: string
+        type: array
+      notifySlackChannelsUponSuccess:
+        description: Slack channels to notify if this CiRun succeeds. This field is
+          always appended to when mutated.
+        items:
+          type: string
+        type: array
       platform:
         type: string
       relatedResources:
@@ -177,6 +189,18 @@ definitions:
           be ignored. Normally, passing an unknown chart, cluster, etc. will abort
           the request, but they won't if this is true.
         type: boolean
+      notifySlackChannelsUponFailure:
+        description: Slack channels to notify if this CiRun fails. This field is always
+          appended to when mutated.
+        items:
+          type: string
+        type: array
+      notifySlackChannelsUponSuccess:
+        description: Slack channels to notify if this CiRun succeeds. This field is
+          always appended to when mutated.
+        items:
+          type: string
+        type: array
       platform:
         type: string
       relateToChangesetNewVersions:
@@ -1875,6 +1899,22 @@ paths:
       - in: query
         name: id
         type: integer
+      - collectionFormat: csv
+        description: Slack channels to notify if this CiRun fails. This field is always
+          appended to when mutated.
+        in: query
+        items:
+          type: string
+        name: notifySlackChannelsUponFailure
+        type: array
+      - collectionFormat: csv
+        description: Slack channels to notify if this CiRun succeeds. This field is
+          always appended to when mutated.
+        in: query
+        items:
+          type: string
+        name: notifySlackChannelsUponSuccess
+        type: array
       - in: query
         name: platform
         type: string

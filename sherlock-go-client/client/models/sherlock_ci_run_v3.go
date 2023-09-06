@@ -51,6 +51,12 @@ type SherlockCiRunV3 struct {
 	// id
 	ID int64 `json:"id,omitempty"`
 
+	// Slack channels to notify if this CiRun fails. This field is always appended to when mutated.
+	NotifySlackChannelsUponFailure []string `json:"notifySlackChannelsUponFailure"`
+
+	// Slack channels to notify if this CiRun succeeds. This field is always appended to when mutated.
+	NotifySlackChannelsUponSuccess []string `json:"notifySlackChannelsUponSuccess"`
+
 	// platform
 	Platform string `json:"platform,omitempty"`
 
