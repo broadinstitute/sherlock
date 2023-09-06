@@ -333,6 +333,26 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "Slack channels to notify if this CiRun fails. This field is always appended to when mutated.",
+                        "name": "notifySlackChannelsUponFailure",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "Slack channels to notify if this CiRun succeeds. This field is always appended to when mutated.",
+                        "name": "notifySlackChannelsUponSuccess",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "name": "platform",
                         "in": "query"
@@ -8961,6 +8981,20 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
+                "notifySlackChannelsUponFailure": {
+                    "description": "Slack channels to notify if this CiRun fails. This field is always appended to when mutated.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "notifySlackChannelsUponSuccess": {
+                    "description": "Slack channels to notify if this CiRun succeeds. This field is always appended to when mutated.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "platform": {
                     "type": "string"
                 },
@@ -9069,6 +9103,20 @@ const docTemplate = `{
                     "description": "If set to true, errors handling selectors for relations should be ignored. Normally, passing an unknown chart, cluster, etc. will abort the request, but they won't if this is true.",
                     "type": "boolean",
                     "default": false
+                },
+                "notifySlackChannelsUponFailure": {
+                    "description": "Slack channels to notify if this CiRun fails. This field is always appended to when mutated.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "notifySlackChannelsUponSuccess": {
+                    "description": "Slack channels to notify if this CiRun succeeds. This field is always appended to when mutated.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "platform": {
                     "type": "string"

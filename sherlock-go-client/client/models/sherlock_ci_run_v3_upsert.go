@@ -68,6 +68,12 @@ type SherlockCiRunV3Upsert struct {
 	// If set to true, errors handling selectors for relations should be ignored. Normally, passing an unknown chart, cluster, etc. will abort the request, but they won't if this is true.
 	IgnoreBadSelectors *bool `json:"ignoreBadSelectors,omitempty"`
 
+	// Slack channels to notify if this CiRun fails. This field is always appended to when mutated.
+	NotifySlackChannelsUponFailure []string `json:"notifySlackChannelsUponFailure"`
+
+	// Slack channels to notify if this CiRun succeeds. This field is always appended to when mutated.
+	NotifySlackChannelsUponSuccess []string `json:"notifySlackChannelsUponSuccess"`
+
 	// platform
 	Platform string `json:"platform,omitempty"`
 
