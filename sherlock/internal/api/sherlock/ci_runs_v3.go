@@ -25,6 +25,10 @@ type ciRunFields struct {
 	StartedAt                  *time.Time `json:"startedAt,omitempty" form:"startedAt"`
 	TerminalAt                 *time.Time `json:"terminalAt,omitempty" form:"terminalAt"`
 	Status                     *string    `json:"status,omitempty" form:"status"`
+	// Slack channels to notify if this CiRun succeeds. This field is always appended to when mutated.
+	NotifySlackChannelsUponSuccess []string `json:"notifySlackChannelsUponSuccess,omitempty" form:"notifySlackChannelsUponSuccess"`
+	// Slack channels to notify if this CiRun fails. This field is always appended to when mutated.
+	NotifySlackChannelsUponFailure []string `json:"notifySlackChannelsUponFailure,omitempty" form:"notifySlackChannelsUponFailure"`
 }
 
 func (c CiRunV3) toModel() models.CiRun {
@@ -57,18 +61,20 @@ func ciRunFromModel(model models.CiRun) CiRunV3 {
 	return CiRunV3{
 		CommonFields: commonFieldsFromGormModel(model.Model),
 		ciRunFields: ciRunFields{
-			Platform:                   model.Platform,
-			GithubActionsOwner:         model.GithubActionsOwner,
-			GithubActionsRepo:          model.GithubActionsRepo,
-			GithubActionsRunID:         model.GithubActionsRunID,
-			GithubActionsAttemptNumber: model.GithubActionsAttemptNumber,
-			GithubActionsWorkflowPath:  model.GithubActionsWorkflowPath,
-			ArgoWorkflowsNamespace:     model.ArgoWorkflowsNamespace,
-			ArgoWorkflowsName:          model.ArgoWorkflowsName,
-			ArgoWorkflowsTemplate:      model.ArgoWorkflowsTemplate,
-			StartedAt:                  model.StartedAt,
-			TerminalAt:                 model.TerminalAt,
-			Status:                     model.Status,
+			Platform:                       model.Platform,
+			GithubActionsOwner:             model.GithubActionsOwner,
+			GithubActionsRepo:              model.GithubActionsRepo,
+			GithubActionsRunID:             model.GithubActionsRunID,
+			GithubActionsAttemptNumber:     model.GithubActionsAttemptNumber,
+			GithubActionsWorkflowPath:      model.GithubActionsWorkflowPath,
+			ArgoWorkflowsNamespace:         model.ArgoWorkflowsNamespace,
+			ArgoWorkflowsName:              model.ArgoWorkflowsName,
+			ArgoWorkflowsTemplate:          model.ArgoWorkflowsTemplate,
+			StartedAt:                      model.StartedAt,
+			TerminalAt:                     model.TerminalAt,
+			Status:                         model.Status,
+			NotifySlackChannelsUponSuccess: model.NotifySlackChannelsUponSuccess,
+			NotifySlackChannelsUponFailure: model.NotifySlackChannelsUponFailure,
 		},
 		TerminationHooksDispatchedAt: model.TerminationHooksDispatchedAt,
 		RelatedResources:             relatedResources,

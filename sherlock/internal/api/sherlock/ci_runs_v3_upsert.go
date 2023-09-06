@@ -9,6 +9,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
+	"github.com/broadinstitute/sherlock/sherlock/internal/slack"
 	"github.com/creasty/defaults"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
@@ -360,9 +361,24 @@ addingToDeduplicatedRelatedResources:
 		}
 	}
 
-	// If it looks like we have a deploy, claim that we're dispatching deploy hooks
+	// If the request added any Slack channels for us to notify, record those
+	if len(body.NotifySlackChannelsUponSuccess) > 0 || len(body.NotifySlackChannelsUponFailure) > 0 {
+		var channelUpdates models.CiRun
+		if len(body.NotifySlackChannelsUponSuccess) > 0 {
+			channelUpdates.NotifySlackChannelsUponSuccess = utils.Dedupe(append(result.NotifySlackChannelsUponSuccess, body.NotifySlackChannelsUponSuccess...))
+		}
+		if len(body.NotifySlackChannelsUponFailure) > 0 {
+			channelUpdates.NotifySlackChannelsUponFailure = utils.Dedupe(append(result.NotifySlackChannelsUponFailure, body.NotifySlackChannelsUponFailure...))
+		}
+		if err = db.Model(&result).Updates(&channelUpdates).Error; err != nil {
+			errors.AbortRequest(ctx, err)
+			return
+		}
+	}
+
+	// If this workflow finished, claim that we're dispatching any hooks
 	var dispatchedAt string
-	if result.TerminalAt != nil && deployhooks.CiRunIsDeploy(result) && result.TerminationHooksDispatchedAt == nil {
+	if result.TerminalAt != nil && result.TerminationHooksDispatchedAt == nil {
 		dispatchedAt = time.Now().Format(time.RFC3339Nano)
 		if err = db.Model(&result).Update("termination_hooks_dispatched_at", gorm.Expr("COALESCE(termination_hooks_dispatched_at, ?)", dispatchedAt)).Error; err != nil {
 			log.Warn().Err(err).Msgf("HOOK | failed to claim dispatch on CiRun %d: %v", result.ID, err)
@@ -377,8 +393,8 @@ addingToDeduplicatedRelatedResources:
 		return
 	}
 
-	// If our claim to TerminationHooksDispatchedAt held, that means no one beat us to the punch:
-	// now we actually do the dispatch.
+	// If we said we were going to dispatch this workflow, check that our claim held and then
+	// do the dispatch
 	if dispatchedAt != "" {
 		if result.TerminationHooksDispatchedAt == nil {
 			log.Warn().Msgf("HOOK | claimed dispatch on CiRun %d but the field wasn't set when re-queried?", result.ID)
@@ -390,11 +406,34 @@ addingToDeduplicatedRelatedResources:
 			// exit, so the difference between local dev and remove shouldn't be
 			// a cause of issues. If it is, that's what we've got error reporting
 			// for.
-			deployhooks.DispatchCiRun(db, result)
+			dispatchTerminatedCiRun(db, result)
 		} else {
-			go deployhooks.DispatchCiRun(db, result)
+			go dispatchTerminatedCiRun(db, result)
 		}
 	}
 
 	ctx.JSON(http.StatusCreated, ciRunFromModel(result))
+}
+
+// dispatchTerminatedCiRun is abstracted from ciRunsV3Upsert so that it can be easily called
+// synchronously in debug mode and asynchronously otherwise.
+func dispatchTerminatedCiRun(db *gorm.DB, ciRun models.CiRun) {
+	if deployhooks.CiRunIsDeploy(ciRun) {
+		deployhooks.DispatchCiRun(db, ciRun)
+	}
+	if ciRun.Status != nil {
+		if ciRun.Succeeded() {
+			for _, channel := range ciRun.NotifySlackChannelsUponSuccess {
+				slack.SendMessage(db.Statement.Context, channel, "", slack.GreenBlock{
+					Text: fmt.Sprintf("%s: %s", ciRun.Nickname(), slack.LinkHelper(ciRun.WebURL(), *ciRun.Status)),
+				})
+			}
+		} else {
+			for _, channel := range ciRun.NotifySlackChannelsUponFailure {
+				slack.SendMessage(db.Statement.Context, channel, "", slack.RedBlock{
+					Text: fmt.Sprintf("%s: %s", ciRun.Nickname(), slack.LinkHelper(ciRun.WebURL(), *ciRun.Status)),
+				})
+			}
+		}
+	}
 }
