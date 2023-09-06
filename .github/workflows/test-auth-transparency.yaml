@@ -63,7 +63,7 @@ jobs:
           echo '```' >> $GITHUB_STEP_SUMMARY
 
   report-workflow:
-    uses: .github/workflows/client-report-workflow.yaml
+    uses: ./.github/workflows/client-report-workflow.yaml
     with:
       notify-slack-channels-upon-workflow-completion: "D04BFUBR4SE" # Jack <-> Beehive
     permissions:
