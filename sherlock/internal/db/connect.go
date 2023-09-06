@@ -104,7 +104,8 @@ func openGorm(db *sql.DB) (*gorm.DB, error) {
 	}
 	return gorm.Open(
 		gormpg.New(gormpg.Config{
-			Conn: db,
+			Conn:                 db,
+			PreferSimpleProtocol: !config.Config.Bool("db.preparedStatementCache"),
 		}),
 
 		&gorm.Config{
