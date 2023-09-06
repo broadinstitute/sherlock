@@ -61,10 +61,3 @@ jobs:
             -H 'Authorization: Bearer ${{ steps.iap_auth.outputs.id_token }}' \
             -H 'X-GHA-OIDC-JWT: ${{ steps.gha_auth.outputs.id_token }}' | jq >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
-
-  report-workflow:
-    uses: ./.github/workflows/client-report-workflow.yaml
-    with:
-      notify-slack-channels-upon-workflow-completion: "D04BFUBR4SE" # Jack <-> Beehive
-    permissions:
-      id-token: write
