@@ -601,6 +601,7 @@ func (s *handlerSuite) TestCiRunsV3Upsert_slackNotifications() {
 			s.Equal(http.StatusCreated, code)
 			s.Equal([]string{"#my-success-channel"}, got.NotifySlackChannelsUponSuccess)
 			s.Equal([]string{"#my-failure-channel"}, got.NotifySlackChannelsUponFailure)
+			s.NotNil(got.TerminationHooksDispatchedAt)
 		})
 	})
 	s.Run("success", func() {
@@ -630,6 +631,7 @@ func (s *handlerSuite) TestCiRunsV3Upsert_slackNotifications() {
 			s.Equal(http.StatusCreated, code)
 			s.Equal([]string{"#my-success-channel"}, got.NotifySlackChannelsUponSuccess)
 			s.Equal([]string{"#my-failure-channel"}, got.NotifySlackChannelsUponFailure)
+			s.NotNil(got.TerminationHooksDispatchedAt)
 		})
 	})
 }
