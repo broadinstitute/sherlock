@@ -11,7 +11,7 @@ github_checks:
   annotations: false
 
 comment:
-  layout: "header, diff, reach"
+  layout: "header, diff, files"
   behavior: default
 
 ignore:
