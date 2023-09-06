@@ -116,6 +116,18 @@ export interface SherlockCiRunV3Upsert {
      */
     ignoreBadSelectors?: boolean;
     /**
+     * Slack channels to notify if this CiRun fails. This field is always appended to when mutated.
+     * @type {Array<string>}
+     * @memberof SherlockCiRunV3Upsert
+     */
+    notifySlackChannelsUponFailure?: Array<string>;
+    /**
+     * Slack channels to notify if this CiRun succeeds. This field is always appended to when mutated.
+     * @type {Array<string>}
+     * @memberof SherlockCiRunV3Upsert
+     */
+    notifySlackChannelsUponSuccess?: Array<string>;
+    /**
      * 
      * @type {string}
      * @memberof SherlockCiRunV3Upsert
@@ -194,6 +206,8 @@ export function SherlockCiRunV3UpsertFromJSONTyped(json: any, ignoreDiscriminato
         'githubActionsRunID': !exists(json, 'githubActionsRunID') ? undefined : json['githubActionsRunID'],
         'githubActionsWorkflowPath': !exists(json, 'githubActionsWorkflowPath') ? undefined : json['githubActionsWorkflowPath'],
         'ignoreBadSelectors': !exists(json, 'ignoreBadSelectors') ? undefined : json['ignoreBadSelectors'],
+        'notifySlackChannelsUponFailure': !exists(json, 'notifySlackChannelsUponFailure') ? undefined : json['notifySlackChannelsUponFailure'],
+        'notifySlackChannelsUponSuccess': !exists(json, 'notifySlackChannelsUponSuccess') ? undefined : json['notifySlackChannelsUponSuccess'],
         'platform': !exists(json, 'platform') ? undefined : json['platform'],
         'relateToChangesetNewVersions': !exists(json, 'relateToChangesetNewVersions') ? undefined : json['relateToChangesetNewVersions'],
         'startedAt': !exists(json, 'startedAt') ? undefined : json['startedAt'],
@@ -227,6 +241,8 @@ export function SherlockCiRunV3UpsertToJSON(value?: SherlockCiRunV3Upsert | null
         'githubActionsRunID': value.githubActionsRunID,
         'githubActionsWorkflowPath': value.githubActionsWorkflowPath,
         'ignoreBadSelectors': value.ignoreBadSelectors,
+        'notifySlackChannelsUponFailure': value.notifySlackChannelsUponFailure,
+        'notifySlackChannelsUponSuccess': value.notifySlackChannelsUponSuccess,
         'platform': value.platform,
         'relateToChangesetNewVersions': value.relateToChangesetNewVersions,
         'startedAt': value.startedAt,

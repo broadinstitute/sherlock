@@ -8,6 +8,9 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_controllers/v2controllers"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
+	"github.com/broadinstitute/sherlock/sherlock/internal/slack"
+	"github.com/broadinstitute/sherlock/sherlock/internal/slack/slack_mocks"
+	"github.com/stretchr/testify/mock"
 	"gorm.io/gorm"
 	"net/http"
 	"time"
@@ -567,5 +570,68 @@ func (s *handlerSuite) TestCiRunsV3Upsert_identifiersInvalidIgnore() {
 		s.Len(got.RelatedResources, 1)
 		s.Equal(chart.ID, got.RelatedResources[0].ResourceID)
 		s.NotZero(got.ID)
+	})
+}
+
+func (s *handlerSuite) TestCiRunsV3Upsert_slackNotifications() {
+	s.Run("failure", func() {
+		slack.UseMockedClient(s.T(), func(c *slack_mocks.MockMockableClient) {
+			c.EXPECT().
+				SendMessageContext(mock.Anything, "#my-failure-channel", mock.AnythingOfType("slack.MsgOption")).
+				Return("", "", "", nil)
+		}, func() {
+			var got CiRunV3
+			code := s.HandleRequest(
+				s.NewRequest("PUT", "/api/ci-runs/v3", CiRunV3Upsert{
+					ciRunFields: ciRunFields{
+						Platform:                       "github-actions",
+						GithubActionsOwner:             "owner",
+						GithubActionsRepo:              "repo",
+						GithubActionsRunID:             1,
+						GithubActionsAttemptNumber:     1,
+						GithubActionsWorkflowPath:      "workflow",
+						StartedAt:                      testutils.PointerTo(time.Now().Add(-time.Minute)),
+						TerminalAt:                     testutils.PointerTo(time.Now()),
+						Status:                         testutils.PointerTo("failure"),
+						NotifySlackChannelsUponSuccess: []string{"#my-success-channel"},
+						NotifySlackChannelsUponFailure: []string{"#my-failure-channel"},
+					},
+				}),
+				&got)
+			s.Equal(http.StatusCreated, code)
+			s.Equal([]string{"#my-success-channel"}, got.NotifySlackChannelsUponSuccess)
+			s.Equal([]string{"#my-failure-channel"}, got.NotifySlackChannelsUponFailure)
+			s.NotNil(got.TerminationHooksDispatchedAt)
+		})
+	})
+	s.Run("success", func() {
+		slack.UseMockedClient(s.T(), func(c *slack_mocks.MockMockableClient) {
+			c.EXPECT().
+				SendMessageContext(mock.Anything, "#my-success-channel", mock.AnythingOfType("slack.MsgOption")).
+				Return("", "", "", nil)
+		}, func() {
+			var got CiRunV3
+			code := s.HandleRequest(
+				s.NewRequest("PUT", "/api/ci-runs/v3", CiRunV3Upsert{
+					ciRunFields: ciRunFields{
+						Platform:                       "github-actions",
+						GithubActionsOwner:             "owner",
+						GithubActionsRepo:              "repo",
+						GithubActionsRunID:             1,
+						GithubActionsAttemptNumber:     2,
+						GithubActionsWorkflowPath:      "workflow",
+						StartedAt:                      testutils.PointerTo(time.Now().Add(-time.Minute)),
+						TerminalAt:                     testutils.PointerTo(time.Now()),
+						Status:                         testutils.PointerTo("success"),
+						NotifySlackChannelsUponSuccess: []string{"#my-success-channel"},
+						NotifySlackChannelsUponFailure: []string{"#my-failure-channel"},
+					},
+				}),
+				&got)
+			s.Equal(http.StatusCreated, code)
+			s.Equal([]string{"#my-success-channel"}, got.NotifySlackChannelsUponSuccess)
+			s.Equal([]string{"#my-failure-channel"}, got.NotifySlackChannelsUponFailure)
+			s.NotNil(got.TerminationHooksDispatchedAt)
+		})
 	})
 }

@@ -48,6 +48,8 @@ export interface ApiCiRunsV3GetRequest {
     githubActionsRunID?: number;
     githubActionsWorkflowPath?: string;
     id?: number;
+    notifySlackChannelsUponFailure?: Array<string>;
+    notifySlackChannelsUponSuccess?: Array<string>;
     platform?: string;
     startedAt?: string;
     status?: string;
@@ -189,6 +191,14 @@ export class CiRunsApi extends runtime.BaseAPI {
 
         if (requestParameters.id !== undefined) {
             queryParameters['id'] = requestParameters.id;
+        }
+
+        if (requestParameters.notifySlackChannelsUponFailure) {
+            queryParameters['notifySlackChannelsUponFailure'] = requestParameters.notifySlackChannelsUponFailure.join(runtime.COLLECTION_FORMATS["csv"]);
+        }
+
+        if (requestParameters.notifySlackChannelsUponSuccess) {
+            queryParameters['notifySlackChannelsUponSuccess'] = requestParameters.notifySlackChannelsUponSuccess.join(runtime.COLLECTION_FORMATS["csv"]);
         }
 
         if (requestParameters.platform !== undefined) {

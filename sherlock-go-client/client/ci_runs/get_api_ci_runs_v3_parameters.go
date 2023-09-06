@@ -98,6 +98,18 @@ type GetAPICiRunsV3Params struct {
 	*/
 	Limit *int64
 
+	/* NotifySlackChannelsUponFailure.
+
+	   Slack channels to notify if this CiRun fails. This field is always appended to when mutated.
+	*/
+	NotifySlackChannelsUponFailure []string
+
+	/* NotifySlackChannelsUponSuccess.
+
+	   Slack channels to notify if this CiRun succeeds. This field is always appended to when mutated.
+	*/
+	NotifySlackChannelsUponSuccess []string
+
 	/* Offset.
 
 	   Control the offset for the returned CiRuns (default 0)
@@ -298,6 +310,28 @@ func (o *GetAPICiRunsV3Params) WithLimit(limit *int64) *GetAPICiRunsV3Params {
 // SetLimit adds the limit to the get API ci runs v3 params
 func (o *GetAPICiRunsV3Params) SetLimit(limit *int64) {
 	o.Limit = limit
+}
+
+// WithNotifySlackChannelsUponFailure adds the notifySlackChannelsUponFailure to the get API ci runs v3 params
+func (o *GetAPICiRunsV3Params) WithNotifySlackChannelsUponFailure(notifySlackChannelsUponFailure []string) *GetAPICiRunsV3Params {
+	o.SetNotifySlackChannelsUponFailure(notifySlackChannelsUponFailure)
+	return o
+}
+
+// SetNotifySlackChannelsUponFailure adds the notifySlackChannelsUponFailure to the get API ci runs v3 params
+func (o *GetAPICiRunsV3Params) SetNotifySlackChannelsUponFailure(notifySlackChannelsUponFailure []string) {
+	o.NotifySlackChannelsUponFailure = notifySlackChannelsUponFailure
+}
+
+// WithNotifySlackChannelsUponSuccess adds the notifySlackChannelsUponSuccess to the get API ci runs v3 params
+func (o *GetAPICiRunsV3Params) WithNotifySlackChannelsUponSuccess(notifySlackChannelsUponSuccess []string) *GetAPICiRunsV3Params {
+	o.SetNotifySlackChannelsUponSuccess(notifySlackChannelsUponSuccess)
+	return o
+}
+
+// SetNotifySlackChannelsUponSuccess adds the notifySlackChannelsUponSuccess to the get API ci runs v3 params
+func (o *GetAPICiRunsV3Params) SetNotifySlackChannelsUponSuccess(notifySlackChannelsUponSuccess []string) {
+	o.NotifySlackChannelsUponSuccess = notifySlackChannelsUponSuccess
 }
 
 // WithOffset adds the offset to the get API ci runs v3 params
@@ -572,6 +606,28 @@ func (o *GetAPICiRunsV3Params) WriteToRequest(r runtime.ClientRequest, reg strfm
 		}
 	}
 
+	if o.NotifySlackChannelsUponFailure != nil {
+
+		// binding items for notifySlackChannelsUponFailure
+		joinedNotifySlackChannelsUponFailure := o.bindParamNotifySlackChannelsUponFailure(reg)
+
+		// query array param notifySlackChannelsUponFailure
+		if err := r.SetQueryParam("notifySlackChannelsUponFailure", joinedNotifySlackChannelsUponFailure...); err != nil {
+			return err
+		}
+	}
+
+	if o.NotifySlackChannelsUponSuccess != nil {
+
+		// binding items for notifySlackChannelsUponSuccess
+		joinedNotifySlackChannelsUponSuccess := o.bindParamNotifySlackChannelsUponSuccess(reg)
+
+		// query array param notifySlackChannelsUponSuccess
+		if err := r.SetQueryParam("notifySlackChannelsUponSuccess", joinedNotifySlackChannelsUponSuccess...); err != nil {
+			return err
+		}
+	}
+
 	if o.Offset != nil {
 
 		// query param offset
@@ -695,4 +751,38 @@ func (o *GetAPICiRunsV3Params) WriteToRequest(r runtime.ClientRequest, reg strfm
 		return errors.CompositeValidationError(res...)
 	}
 	return nil
+}
+
+// bindParamGetAPICiRunsV3 binds the parameter notifySlackChannelsUponFailure
+func (o *GetAPICiRunsV3Params) bindParamNotifySlackChannelsUponFailure(formats strfmt.Registry) []string {
+	notifySlackChannelsUponFailureIR := o.NotifySlackChannelsUponFailure
+
+	var notifySlackChannelsUponFailureIC []string
+	for _, notifySlackChannelsUponFailureIIR := range notifySlackChannelsUponFailureIR { // explode []string
+
+		notifySlackChannelsUponFailureIIV := notifySlackChannelsUponFailureIIR // string as string
+		notifySlackChannelsUponFailureIC = append(notifySlackChannelsUponFailureIC, notifySlackChannelsUponFailureIIV)
+	}
+
+	// items.CollectionFormat: "csv"
+	notifySlackChannelsUponFailureIS := swag.JoinByFormat(notifySlackChannelsUponFailureIC, "csv")
+
+	return notifySlackChannelsUponFailureIS
+}
+
+// bindParamGetAPICiRunsV3 binds the parameter notifySlackChannelsUponSuccess
+func (o *GetAPICiRunsV3Params) bindParamNotifySlackChannelsUponSuccess(formats strfmt.Registry) []string {
+	notifySlackChannelsUponSuccessIR := o.NotifySlackChannelsUponSuccess
+
+	var notifySlackChannelsUponSuccessIC []string
+	for _, notifySlackChannelsUponSuccessIIR := range notifySlackChannelsUponSuccessIR { // explode []string
+
+		notifySlackChannelsUponSuccessIIV := notifySlackChannelsUponSuccessIIR // string as string
+		notifySlackChannelsUponSuccessIC = append(notifySlackChannelsUponSuccessIC, notifySlackChannelsUponSuccessIIV)
+	}
+
+	// items.CollectionFormat: "csv"
+	notifySlackChannelsUponSuccessIS := swag.JoinByFormat(notifySlackChannelsUponSuccessIC, "csv")
+
+	return notifySlackChannelsUponSuccessIS
 }
