@@ -38,6 +38,11 @@ type Changeset struct {
 	ToAppVersionReference   string     `json:"toAppVersionReference,omitempty" form:"toAppVersionReference"`
 	ToChartVersionReference string     `json:"toChartVersionReference,omitempty" form:"toChartVersionReference"`
 
+	PlannedBy     *string `json:"plannedBy,omitempty" form:"plannedBy"`
+	PlannedByInfo *User   `json:"plannedByInfo,omitempty" form:"-"`
+	AppliedBy     *string `json:"appliedBy,omitempty" form:"appliedBy"`
+	AppliedByInfo *User   `json:"appliedByInfo,omitempty" form:"-"`
+
 	CreatableChangeset
 }
 
@@ -137,6 +142,23 @@ func (c Changeset) toModel(storeSet *v2models.StoreSet) (v2models.Changeset, err
 		fromChartVersionFollowChartReleaseID = &fromChartVersionFollowChartRelease.ID
 	}
 
+	var plannedByID *uint
+	if c.PlannedBy != nil {
+		plannedBy, err := storeSet.UserStore.Get(*c.PlannedBy)
+		if err != nil {
+			return v2models.Changeset{}, err
+		}
+		plannedByID = &plannedBy.ID
+	}
+	var appliedByByID *uint
+	if c.AppliedBy != nil {
+		appliedByBy, err := storeSet.UserStore.Get(*c.AppliedBy)
+		if err != nil {
+			return v2models.Changeset{}, err
+		}
+		appliedByByID = &appliedByBy.ID
+	}
+
 	return v2models.Changeset{
 		Model: gorm.Model{
 			ID:        c.ID,
@@ -176,6 +198,8 @@ func (c Changeset) toModel(storeSet *v2models.StoreSet) (v2models.Changeset, err
 		},
 		AppliedAt:    c.AppliedAt,
 		SupersededAt: c.SupersededAt,
+		PlannedByID:  plannedByID,
+		AppliedByID:  appliedByByID,
 	}, nil
 }
 
@@ -344,6 +368,15 @@ func modelChangesetToChangeset(model *v2models.Changeset) *Changeset {
 		}
 	}
 
+	var plannedBy *string
+	if model.PlannedBy != nil {
+		plannedBy = &model.PlannedBy.Email
+	}
+	var appliedBy *string
+	if model.AppliedBy != nil {
+		appliedBy = &model.AppliedBy.Email
+	}
+
 	return &Changeset{
 		ReadableBaseType: ReadableBaseType{
 			ID:        model.ID,
@@ -354,6 +387,10 @@ func modelChangesetToChangeset(model *v2models.Changeset) *Changeset {
 		ChartReleaseInfo:                   chartRelease,
 		AppliedAt:                          model.AppliedAt,
 		SupersededAt:                       model.SupersededAt,
+		PlannedBy:                          plannedBy,
+		PlannedByInfo:                      modelUserToUser(model.PlannedBy),
+		AppliedBy:                          appliedBy,
+		AppliedByInfo:                      modelUserToUser(model.AppliedBy),
 		NewAppVersions:                     newAppVersions,
 		NewChartVersions:                   newChartVersions,
 		FromResolvedAt:                     model.From.ResolvedAt,

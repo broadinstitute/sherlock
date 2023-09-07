@@ -3,6 +3,7 @@ package v2controllers
 import (
 	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/testutils"
+	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/test_users"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_db"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
@@ -106,6 +107,12 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 	}, generateUser(suite.T(), suite.db, true))
 	assert.NoError(suite.T(), err)
 	assert.Len(suite.T(), applied, 1)
+	if assert.NotNil(suite.T(), applied[0].PlannedBy) {
+		assert.Equal(suite.T(), test_users.SuitableTestUserEmail, *applied[0].PlannedBy)
+	}
+	if assert.NotNil(suite.T(), applied[0].AppliedBy) {
+		assert.Equal(suite.T(), test_users.SuitableTestUserEmail, *applied[0].AppliedBy)
+	}
 
 	// Now the BEE's Sam will be tracking the PR branch--and it'll have the version the engineer just committed.
 	samInBee, err = suite.ChartReleaseController.Get(fmt.Sprintf("%s/%s", newBee.Name, "sam"))
@@ -226,6 +233,10 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 	assert.Len(suite.T(), planTo030, 1)
 	assert.Equal(suite.T(), "sam-terra-staging", planTo030[0].ChartRelease)
 	assert.Equal(suite.T(), "0.3.0", *planTo030[0].ToAppVersionExact)
+	if assert.NotNil(suite.T(), planTo030[0].PlannedBy) {
+		assert.Equal(suite.T(), test_users.SuitableTestUserEmail, *planTo030[0].PlannedBy)
+	}
+	assert.Nil(suite.T(), planTo030[0].AppliedBy)
 
 	// Rather than deploying immediately, maybe the engineer merges another PR to mainline:
 	sam040, created, err := suite.AppVersionController.Create(CreatableAppVersion{

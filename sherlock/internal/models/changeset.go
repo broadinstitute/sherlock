@@ -17,6 +17,11 @@ type Changeset struct {
 	SupersededAt     *time.Time
 	NewAppVersions   []*AppVersion   `gorm:"many2many:v2_changeset_new_app_versions;constraint:OnDelete:CASCADE,OnUpdate:CASCADE;"`
 	NewChartVersions []*ChartVersion `gorm:"many2many:v2_changeset_new_chart_versions;constraint:OnDelete:CASCADE,OnUpdate:CASCADE;"`
+
+	PlannedBy   *User
+	PlannedByID *uint
+	AppliedBy   *User
+	AppliedByID *uint
 }
 
 func (c Changeset) TableName() string {

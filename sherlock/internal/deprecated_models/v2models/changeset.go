@@ -29,6 +29,11 @@ type Changeset struct {
 	SupersededAt     *time.Time
 	NewAppVersions   []*AppVersion   `gorm:"many2many:v2_changeset_new_app_versions;constraint:OnDelete:CASCADE,OnUpdate:CASCADE;"`
 	NewChartVersions []*ChartVersion `gorm:"many2many:v2_changeset_new_chart_versions;constraint:OnDelete:CASCADE,OnUpdate:CASCADE;"`
+
+	PlannedBy   *User
+	PlannedByID *uint
+	AppliedBy   *User
+	AppliedByID *uint
 }
 
 func (c Changeset) TableName() string {
@@ -61,7 +66,7 @@ func init() {
 			validateModel:        validateChangeset,
 			preCreate:            preCreateChangeset,
 			customCreationAssociationsClause: func(db *gorm.DB) *gorm.DB {
-				return db.Omit("CiIdentifier", "ChartRelease")
+				return db.Omit("CiIdentifier", "ChartRelease", "PlannedBy", "AppliedBy")
 			},
 		},
 	}
@@ -104,8 +109,14 @@ func validateChangeset(changeset *Changeset) error {
 	return nil
 }
 
-func preCreateChangeset(db *gorm.DB, toCreate *Changeset, _ *models.User) error {
+func preCreateChangeset(db *gorm.DB, toCreate *Changeset, user *models.User) error {
 	if toCreate != nil {
+		if user != nil {
+			if toCreate.PlannedByID != nil {
+				log.Warn().Msgf("changeset being created already had a planned by ID (was %d, now setting for %d for %s)", *toCreate.PlannedByID, user.ID, user.Email)
+			}
+			toCreate.PlannedByID = &user.ID
+		}
 
 		// Resolve 'to' versions
 		if toCreate.To.ResolvedAt == nil {
@@ -251,7 +262,7 @@ func (s *internalChangesetStore) apply(db *gorm.DB, changesets []Changeset, user
 			}
 			for _, consumedChangeset := range consumedChangesets {
 				if consumedChangeset.ID == toApply.ID {
-					applied, err := s.Edit(tx, Changeset{Model: gorm.Model{ID: consumedChangeset.ID}}, Changeset{AppliedAt: &chartRelease.UpdatedAt}, user, false)
+					applied, err := s.Edit(tx, Changeset{Model: gorm.Model{ID: consumedChangeset.ID}}, Changeset{AppliedAt: &chartRelease.UpdatedAt, AppliedByID: &user.ID}, user, false)
 					if err != nil {
 						return fmt.Errorf("post-apply error on %T %d (ID: %d): couldn't mark it as applied: %v", changeset, index+1, toApply.ID, err)
 					}
