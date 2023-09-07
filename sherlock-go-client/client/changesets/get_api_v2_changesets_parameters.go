@@ -65,6 +65,9 @@ type GetAPIV2ChangesetsParams struct {
 	// Format: date-time
 	AppliedAt *strfmt.DateTime
 
+	// AppliedBy.
+	AppliedBy *string
+
 	// ChartRelease.
 	ChartRelease *string
 
@@ -122,6 +125,9 @@ type GetAPIV2ChangesetsParams struct {
 	   An optional limit to the number of entries returned
 	*/
 	Limit *int64
+
+	// PlannedBy.
+	PlannedBy *string
 
 	// SupersededAt.
 	//
@@ -236,6 +242,17 @@ func (o *GetAPIV2ChangesetsParams) WithAppliedAt(appliedAt *strfmt.DateTime) *Ge
 // SetAppliedAt adds the appliedAt to the get API v2 changesets params
 func (o *GetAPIV2ChangesetsParams) SetAppliedAt(appliedAt *strfmt.DateTime) {
 	o.AppliedAt = appliedAt
+}
+
+// WithAppliedBy adds the appliedBy to the get API v2 changesets params
+func (o *GetAPIV2ChangesetsParams) WithAppliedBy(appliedBy *string) *GetAPIV2ChangesetsParams {
+	o.SetAppliedBy(appliedBy)
+	return o
+}
+
+// SetAppliedBy adds the appliedBy to the get API v2 changesets params
+func (o *GetAPIV2ChangesetsParams) SetAppliedBy(appliedBy *string) {
+	o.AppliedBy = appliedBy
 }
 
 // WithChartRelease adds the chartRelease to the get API v2 changesets params
@@ -425,6 +442,17 @@ func (o *GetAPIV2ChangesetsParams) SetLimit(limit *int64) {
 	o.Limit = limit
 }
 
+// WithPlannedBy adds the plannedBy to the get API v2 changesets params
+func (o *GetAPIV2ChangesetsParams) WithPlannedBy(plannedBy *string) *GetAPIV2ChangesetsParams {
+	o.SetPlannedBy(plannedBy)
+	return o
+}
+
+// SetPlannedBy adds the plannedBy to the get API v2 changesets params
+func (o *GetAPIV2ChangesetsParams) SetPlannedBy(plannedBy *string) {
+	o.PlannedBy = plannedBy
+}
+
 // WithSupersededAt adds the supersededAt to the get API v2 changesets params
 func (o *GetAPIV2ChangesetsParams) WithSupersededAt(supersededAt *strfmt.DateTime) *GetAPIV2ChangesetsParams {
 	o.SetSupersededAt(supersededAt)
@@ -610,6 +638,23 @@ func (o *GetAPIV2ChangesetsParams) WriteToRequest(r runtime.ClientRequest, reg s
 		if qAppliedAt != "" {
 
 			if err := r.SetQueryParam("appliedAt", qAppliedAt); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.AppliedBy != nil {
+
+		// query param appliedBy
+		var qrAppliedBy string
+
+		if o.AppliedBy != nil {
+			qrAppliedBy = *o.AppliedBy
+		}
+		qAppliedBy := qrAppliedBy
+		if qAppliedBy != "" {
+
+			if err := r.SetQueryParam("appliedBy", qAppliedBy); err != nil {
 				return err
 			}
 		}
@@ -899,6 +944,23 @@ func (o *GetAPIV2ChangesetsParams) WriteToRequest(r runtime.ClientRequest, reg s
 		if qLimit != "" {
 
 			if err := r.SetQueryParam("limit", qLimit); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.PlannedBy != nil {
+
+		// query param plannedBy
+		var qrPlannedBy string
+
+		if o.PlannedBy != nil {
+			qrPlannedBy = *o.PlannedBy
+		}
+		qPlannedBy := qrPlannedBy
+		if qPlannedBy != "" {
+
+			if err := r.SetQueryParam("plannedBy", qPlannedBy); err != nil {
 				return err
 			}
 		}

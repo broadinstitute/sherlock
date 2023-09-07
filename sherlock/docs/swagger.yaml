@@ -464,6 +464,10 @@ definitions:
       appliedAt:
         format: date-time
         type: string
+      appliedBy:
+        type: string
+      appliedByInfo:
+        $ref: '#/definitions/v2controllers.User'
       chartRelease:
         type: string
       chartReleaseInfo:
@@ -510,6 +514,10 @@ definitions:
         items:
           $ref: '#/definitions/v2controllers.ChartVersion'
         type: array
+      plannedBy:
+        type: string
+      plannedByInfo:
+        $ref: '#/definitions/v2controllers.User'
       supersededAt:
         format: date-time
         type: string
@@ -3084,6 +3092,9 @@ paths:
         name: appliedAt
         type: string
       - in: query
+        name: appliedBy
+        type: string
+      - in: query
         name: chartRelease
         type: string
       - format: date-time
@@ -3133,6 +3144,9 @@ paths:
       - in: query
         name: id
         type: integer
+      - in: query
+        name: plannedBy
+        type: string
       - format: date-time
         in: query
         name: supersededAt

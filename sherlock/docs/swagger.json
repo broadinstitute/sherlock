@@ -2070,6 +2070,11 @@
                     },
                     {
                         "type": "string",
+                        "name": "appliedBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "name": "chartRelease",
                         "in": "query"
                     },
@@ -2148,6 +2153,11 @@
                     {
                         "type": "integer",
                         "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "plannedBy",
                         "in": "query"
                     },
                     {
@@ -9449,6 +9459,12 @@
                     "type": "string",
                     "format": "date-time"
                 },
+                "appliedBy": {
+                    "type": "string"
+                },
+                "appliedByInfo": {
+                    "$ref": "#/definitions/v2controllers.User"
+                },
                 "chartRelease": {
                     "type": "string"
                 },
@@ -9516,6 +9532,12 @@
                     "items": {
                         "$ref": "#/definitions/v2controllers.ChartVersion"
                     }
+                },
+                "plannedBy": {
+                    "type": "string"
+                },
+                "plannedByInfo": {
+                    "$ref": "#/definitions/v2controllers.User"
                 },
                 "supersededAt": {
                     "type": "string",

@@ -30,6 +30,7 @@ import {
 
 export interface ApiV2ChangesetsGetRequest {
     appliedAt?: Date;
+    appliedBy?: string;
     chartRelease?: string;
     createdAt?: Date;
     fromAppVersionBranch?: string;
@@ -46,6 +47,7 @@ export interface ApiV2ChangesetsGetRequest {
     fromHelmfileRef?: string;
     fromResolvedAt?: Date;
     id?: number;
+    plannedBy?: string;
     supersededAt?: Date;
     toAppVersionBranch?: string;
     toAppVersionCommit?: string;
@@ -112,6 +114,10 @@ export class ChangesetsApi extends runtime.BaseAPI {
             queryParameters['appliedAt'] = (requestParameters.appliedAt as any).toISOString();
         }
 
+        if (requestParameters.appliedBy !== undefined) {
+            queryParameters['appliedBy'] = requestParameters.appliedBy;
+        }
+
         if (requestParameters.chartRelease !== undefined) {
             queryParameters['chartRelease'] = requestParameters.chartRelease;
         }
@@ -174,6 +180,10 @@ export class ChangesetsApi extends runtime.BaseAPI {
 
         if (requestParameters.id !== undefined) {
             queryParameters['id'] = requestParameters.id;
+        }
+
+        if (requestParameters.plannedBy !== undefined) {
+            queryParameters['plannedBy'] = requestParameters.plannedBy;
         }
 
         if (requestParameters.supersededAt !== undefined) {

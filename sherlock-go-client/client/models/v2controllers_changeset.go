@@ -24,6 +24,12 @@ type V2controllersChangeset struct {
 	// Format: date-time
 	AppliedAt strfmt.DateTime `json:"appliedAt,omitempty"`
 
+	// applied by
+	AppliedBy string `json:"appliedBy,omitempty"`
+
+	// applied by info
+	AppliedByInfo *V2controllersUser `json:"appliedByInfo,omitempty"`
+
 	// chart release
 	ChartRelease string `json:"chartRelease,omitempty"`
 
@@ -86,6 +92,12 @@ type V2controllersChangeset struct {
 	// new chart versions
 	NewChartVersions []*V2controllersChartVersion `json:"newChartVersions"`
 
+	// planned by
+	PlannedBy string `json:"plannedBy,omitempty"`
+
+	// planned by info
+	PlannedByInfo *V2controllersUser `json:"plannedByInfo,omitempty"`
+
 	// superseded at
 	// Format: date-time
 	SupersededAt strfmt.DateTime `json:"supersededAt,omitempty"`
@@ -143,6 +155,10 @@ func (m *V2controllersChangeset) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateAppliedByInfo(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateChartReleaseInfo(formats); err != nil {
 		res = append(res, err)
 	}
@@ -164,6 +180,10 @@ func (m *V2controllersChangeset) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateNewChartVersions(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validatePlannedByInfo(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -192,6 +212,25 @@ func (m *V2controllersChangeset) validateAppliedAt(formats strfmt.Registry) erro
 
 	if err := validate.FormatOf("appliedAt", "body", "date-time", m.AppliedAt.String(), formats); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (m *V2controllersChangeset) validateAppliedByInfo(formats strfmt.Registry) error {
+	if swag.IsZero(m.AppliedByInfo) { // not required
+		return nil
+	}
+
+	if m.AppliedByInfo != nil {
+		if err := m.AppliedByInfo.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("appliedByInfo")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("appliedByInfo")
+			}
+			return err
+		}
 	}
 
 	return nil
@@ -311,6 +350,25 @@ func (m *V2controllersChangeset) validateNewChartVersions(formats strfmt.Registr
 	return nil
 }
 
+func (m *V2controllersChangeset) validatePlannedByInfo(formats strfmt.Registry) error {
+	if swag.IsZero(m.PlannedByInfo) { // not required
+		return nil
+	}
+
+	if m.PlannedByInfo != nil {
+		if err := m.PlannedByInfo.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("plannedByInfo")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("plannedByInfo")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (m *V2controllersChangeset) validateSupersededAt(formats strfmt.Registry) error {
 	if swag.IsZero(m.SupersededAt) { // not required
 		return nil
@@ -351,6 +409,10 @@ func (m *V2controllersChangeset) validateUpdatedAt(formats strfmt.Registry) erro
 func (m *V2controllersChangeset) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.contextValidateAppliedByInfo(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidateChartReleaseInfo(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -367,9 +429,29 @@ func (m *V2controllersChangeset) ContextValidate(ctx context.Context, formats st
 		res = append(res, err)
 	}
 
+	if err := m.contextValidatePlannedByInfo(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *V2controllersChangeset) contextValidateAppliedByInfo(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.AppliedByInfo != nil {
+		if err := m.AppliedByInfo.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("appliedByInfo")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("appliedByInfo")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -440,6 +522,22 @@ func (m *V2controllersChangeset) contextValidateNewChartVersions(ctx context.Con
 			}
 		}
 
+	}
+
+	return nil
+}
+
+func (m *V2controllersChangeset) contextValidatePlannedByInfo(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.PlannedByInfo != nil {
+		if err := m.PlannedByInfo.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("plannedByInfo")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("plannedByInfo")
+			}
+			return err
+		}
 	}
 
 	return nil

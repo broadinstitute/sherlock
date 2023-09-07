@@ -37,6 +37,12 @@ import {
     V2controllersCiIdentifierFromJSONTyped,
     V2controllersCiIdentifierToJSON,
 } from './V2controllersCiIdentifier';
+import type { V2controllersUser } from './V2controllersUser';
+import {
+    V2controllersUserFromJSON,
+    V2controllersUserFromJSONTyped,
+    V2controllersUserToJSON,
+} from './V2controllersUser';
 
 /**
  * 
@@ -50,6 +56,18 @@ export interface V2controllersChangeset {
      * @memberof V2controllersChangeset
      */
     appliedAt?: Date;
+    /**
+     * 
+     * @type {string}
+     * @memberof V2controllersChangeset
+     */
+    appliedBy?: string;
+    /**
+     * 
+     * @type {V2controllersUser}
+     * @memberof V2controllersChangeset
+     */
+    appliedByInfo?: V2controllersUser;
     /**
      * 
      * @type {string}
@@ -172,6 +190,18 @@ export interface V2controllersChangeset {
     newChartVersions?: Array<V2controllersChartVersion>;
     /**
      * 
+     * @type {string}
+     * @memberof V2controllersChangeset
+     */
+    plannedBy?: string;
+    /**
+     * 
+     * @type {V2controllersUser}
+     * @memberof V2controllersChangeset
+     */
+    plannedByInfo?: V2controllersUser;
+    /**
+     * 
      * @type {Date}
      * @memberof V2controllersChangeset
      */
@@ -282,6 +312,8 @@ export function V2controllersChangesetFromJSONTyped(json: any, ignoreDiscriminat
     return {
         
         'appliedAt': !exists(json, 'appliedAt') ? undefined : (new Date(json['appliedAt'])),
+        'appliedBy': !exists(json, 'appliedBy') ? undefined : json['appliedBy'],
+        'appliedByInfo': !exists(json, 'appliedByInfo') ? undefined : V2controllersUserFromJSON(json['appliedByInfo']),
         'chartRelease': !exists(json, 'chartRelease') ? undefined : json['chartRelease'],
         'chartReleaseInfo': !exists(json, 'chartReleaseInfo') ? undefined : V2controllersChartReleaseFromJSON(json['chartReleaseInfo']),
         'ciIdentifier': !exists(json, 'ciIdentifier') ? undefined : V2controllersCiIdentifierFromJSON(json['ciIdentifier']),
@@ -302,6 +334,8 @@ export function V2controllersChangesetFromJSONTyped(json: any, ignoreDiscriminat
         'id': !exists(json, 'id') ? undefined : json['id'],
         'newAppVersions': !exists(json, 'newAppVersions') ? undefined : ((json['newAppVersions'] as Array<any>).map(V2controllersAppVersionFromJSON)),
         'newChartVersions': !exists(json, 'newChartVersions') ? undefined : ((json['newChartVersions'] as Array<any>).map(V2controllersChartVersionFromJSON)),
+        'plannedBy': !exists(json, 'plannedBy') ? undefined : json['plannedBy'],
+        'plannedByInfo': !exists(json, 'plannedByInfo') ? undefined : V2controllersUserFromJSON(json['plannedByInfo']),
         'supersededAt': !exists(json, 'supersededAt') ? undefined : (new Date(json['supersededAt'])),
         'toAppVersionBranch': !exists(json, 'toAppVersionBranch') ? undefined : json['toAppVersionBranch'],
         'toAppVersionCommit': !exists(json, 'toAppVersionCommit') ? undefined : json['toAppVersionCommit'],
@@ -330,6 +364,8 @@ export function V2controllersChangesetToJSON(value?: V2controllersChangeset | nu
     return {
         
         'appliedAt': value.appliedAt === undefined ? undefined : (value.appliedAt.toISOString()),
+        'appliedBy': value.appliedBy,
+        'appliedByInfo': V2controllersUserToJSON(value.appliedByInfo),
         'chartRelease': value.chartRelease,
         'chartReleaseInfo': V2controllersChartReleaseToJSON(value.chartReleaseInfo),
         'ciIdentifier': V2controllersCiIdentifierToJSON(value.ciIdentifier),
@@ -350,6 +386,8 @@ export function V2controllersChangesetToJSON(value?: V2controllersChangeset | nu
         'id': value.id,
         'newAppVersions': value.newAppVersions === undefined ? undefined : ((value.newAppVersions as Array<any>).map(V2controllersAppVersionToJSON)),
         'newChartVersions': value.newChartVersions === undefined ? undefined : ((value.newChartVersions as Array<any>).map(V2controllersChartVersionToJSON)),
+        'plannedBy': value.plannedBy,
+        'plannedByInfo': V2controllersUserToJSON(value.plannedByInfo),
         'supersededAt': value.supersededAt === undefined ? undefined : (value.supersededAt.toISOString()),
         'toAppVersionBranch': value.toAppVersionBranch,
         'toAppVersionCommit': value.toAppVersionCommit,

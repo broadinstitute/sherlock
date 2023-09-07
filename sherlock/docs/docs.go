@@ -2074,6 +2074,11 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "appliedBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "name": "chartRelease",
                         "in": "query"
                     },
@@ -2152,6 +2157,11 @@ const docTemplate = `{
                     {
                         "type": "integer",
                         "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "plannedBy",
                         "in": "query"
                     },
                     {
@@ -9453,6 +9463,12 @@ const docTemplate = `{
                     "type": "string",
                     "format": "date-time"
                 },
+                "appliedBy": {
+                    "type": "string"
+                },
+                "appliedByInfo": {
+                    "$ref": "#/definitions/v2controllers.User"
+                },
                 "chartRelease": {
                     "type": "string"
                 },
@@ -9520,6 +9536,12 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/v2controllers.ChartVersion"
                     }
+                },
+                "plannedBy": {
+                    "type": "string"
+                },
+                "plannedByInfo": {
+                    "$ref": "#/definitions/v2controllers.User"
                 },
                 "supersededAt": {
                     "type": "string",
