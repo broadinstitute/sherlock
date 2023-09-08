@@ -139,7 +139,19 @@ jobs:
         if: ${{ inputs.use-git == true && inputs.override-branch == '' }}
         shell: bash
         run: |
-          export BRANCH="$(git rev-parse --abbrev-ref HEAD || true)"
+          export BRANCH="$(git branch --show-current || true)"
+          
+          # If $BRANCH is empty, we weren't directly on a branch. Presumably we're on a tag or commit.
+          # List branches containing the current commit and pick the first one.
+          # We have to filter out empty spaces (awk) and ones that say "detached at" (grep) and then
+          # pick the first option since there could be multiple (head).
+          # This is at least better than throwing our hands up.
+          if [ -z "$BRANCH" ]
+          then
+            export BRANCH="$((git branch --format='%(refname:short)' --list --contains $(git rev-parse HEAD) | awk '{$1=$1};NF' | grep -v -F " " | head -n 1) || true)"
+          fi
+          
+          # If $BRANCH is not empty, then we go and write it into the request body.
           if [ -n "$BRANCH" ]
           then
             cat <<< $(jq '.gitBranch = env.BRANCH' "$RUNNER_TEMP/body.json") > "$RUNNER_TEMP/body.json"
