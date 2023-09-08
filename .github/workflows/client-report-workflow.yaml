@@ -19,6 +19,9 @@ name: Report GitHub Actions Workflow
 #     permissions:
 #       id-token: write
 # ```
+#
+# The Slack notifications will link to the job and will reference chart releases or environments that the workflow is
+# specified as relating to.
 
 on:
   workflow_call:

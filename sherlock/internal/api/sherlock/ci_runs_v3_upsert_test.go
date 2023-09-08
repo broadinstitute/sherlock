@@ -8,6 +8,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_controllers/v2controllers"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/slack"
 	"github.com/broadinstitute/sherlock/sherlock/internal/slack/slack_mocks"
 	"github.com/stretchr/testify/mock"
@@ -634,4 +635,176 @@ func (s *handlerSuite) TestCiRunsV3Upsert_slackNotifications() {
 			s.NotNil(got.TerminationHooksDispatchedAt)
 		})
 	})
+	s.Run("with against string", func() {
+		user := s.SetSuitableTestUserForDB()
+
+		chart, created, err := v2models.InternalChartStore.Create(s.DB, v2models.Chart{
+			Name:      "leonardo",
+			ChartRepo: testutils.PointerTo("terra-helm"),
+		}, user)
+		s.NoError(err)
+		s.True(created)
+		cluster, created, err := v2models.InternalClusterStore.Create(s.DB, v2models.Cluster{
+			Name:                "terra-dev",
+			Provider:            "google",
+			GoogleProject:       "broad-dsde-dev",
+			Base:                testutils.PointerTo("live"),
+			Address:             testutils.PointerTo("0.0.0.0"),
+			RequiresSuitability: testutils.PointerTo(false),
+			Location:            "us-central1-a",
+			HelmfileRef:         testutils.PointerTo("HEAD"),
+		}, user)
+		s.NoError(err)
+		s.True(created)
+		environment, created, err := v2models.InternalEnvironmentStore.Create(s.DB, v2models.Environment{
+			Name:                       "dev",
+			Lifecycle:                  "static",
+			UniqueResourcePrefix:       "a1b2",
+			Base:                       "live",
+			DefaultClusterID:           &cluster.ID,
+			DefaultNamespace:           "terra-dev",
+			OwnerID:                    &user.ID,
+			RequiresSuitability:        testutils.PointerTo(false),
+			HelmfileRef:                testutils.PointerTo("HEAD"),
+			DefaultFirecloudDevelopRef: testutils.PointerTo("dev"),
+			PreventDeletion:            testutils.PointerTo(false),
+		}, user)
+		s.NoError(err)
+		s.True(created)
+		chartRelease, created, err := v2models.InternalChartReleaseStore.Create(s.DB, v2models.ChartRelease{
+			Name:          "leonardo-dev",
+			ChartID:       chart.ID,
+			ClusterID:     &cluster.ID,
+			EnvironmentID: &environment.ID,
+			Namespace:     environment.DefaultNamespace,
+			ChartReleaseVersion: v2models.ChartReleaseVersion{
+				AppVersionResolver:   testutils.PointerTo("exact"),
+				AppVersionExact:      testutils.PointerTo("app version blah"),
+				ChartVersionResolver: testutils.PointerTo("exact"),
+				ChartVersionExact:    testutils.PointerTo("chart version blah"),
+				HelmfileRef:          testutils.PointerTo("HEAD"),
+				FirecloudDevelopRef:  testutils.PointerTo("dev"),
+			},
+		}, user)
+		s.NoError(err)
+		s.True(created)
+		slack.UseMockedClient(s.T(), func(c *slack_mocks.MockMockableClient) {
+			c.EXPECT().
+				// Unfortunately mockery isn't smart enough for us to actually test the text output here but at least
+				// we can validate that this scenario doesn't blow things up.
+				SendMessageContext(mock.Anything, "#my-success-channel", mock.AnythingOfType("slack.MsgOption")).
+				Return("", "", "", nil)
+		}, func() {
+			var got CiRunV3
+			code := s.HandleRequest(
+				s.NewRequest("PUT", "/api/ci-runs/v3", CiRunV3Upsert{
+					ciRunFields: ciRunFields{
+						Platform:                       "github-actions",
+						GithubActionsOwner:             "owner",
+						GithubActionsRepo:              "repo",
+						GithubActionsRunID:             1,
+						GithubActionsAttemptNumber:     3,
+						GithubActionsWorkflowPath:      "workflow",
+						StartedAt:                      testutils.PointerTo(time.Now().Add(-time.Minute)),
+						TerminalAt:                     testutils.PointerTo(time.Now()),
+						Status:                         testutils.PointerTo("success"),
+						NotifySlackChannelsUponSuccess: []string{"#my-success-channel"},
+						NotifySlackChannelsUponFailure: []string{"#my-failure-channel"},
+					},
+					ChartReleases: []string{chartRelease.Name},
+				}),
+				&got)
+			s.Equal(http.StatusCreated, code)
+			s.Equal([]string{"#my-success-channel"}, got.NotifySlackChannelsUponSuccess)
+			s.Equal([]string{"#my-failure-channel"}, got.NotifySlackChannelsUponFailure)
+			s.NotNil(got.TerminationHooksDispatchedAt)
+		})
+	})
+}
+
+func (s *handlerSuite) TestCiRunsV3Upsert_makeSlackMessageTExt() {
+	user := s.SetSuitableTestUserForDB()
+
+	chart, created, err := v2models.InternalChartStore.Create(s.DB, v2models.Chart{
+		Name:      "leonardo",
+		ChartRepo: testutils.PointerTo("terra-helm"),
+	}, user)
+	s.NoError(err)
+	s.True(created)
+	cluster, created, err := v2models.InternalClusterStore.Create(s.DB, v2models.Cluster{
+		Name:                "terra-dev",
+		Provider:            "google",
+		GoogleProject:       "broad-dsde-dev",
+		Base:                testutils.PointerTo("live"),
+		Address:             testutils.PointerTo("0.0.0.0"),
+		RequiresSuitability: testutils.PointerTo(false),
+		Location:            "us-central1-a",
+		HelmfileRef:         testutils.PointerTo("HEAD"),
+	}, user)
+	s.NoError(err)
+	s.True(created)
+	environment, created, err := v2models.InternalEnvironmentStore.Create(s.DB, v2models.Environment{
+		Name:                       "dev",
+		Lifecycle:                  "static",
+		UniqueResourcePrefix:       "a1b2",
+		Base:                       "live",
+		DefaultClusterID:           &cluster.ID,
+		DefaultNamespace:           "terra-dev",
+		OwnerID:                    &user.ID,
+		RequiresSuitability:        testutils.PointerTo(false),
+		HelmfileRef:                testutils.PointerTo("HEAD"),
+		DefaultFirecloudDevelopRef: testutils.PointerTo("dev"),
+		PreventDeletion:            testutils.PointerTo(false),
+	}, user)
+	s.NoError(err)
+	s.True(created)
+	chartRelease, created, err := v2models.InternalChartReleaseStore.Create(s.DB, v2models.ChartRelease{
+		Name:          "leonardo-dev",
+		ChartID:       chart.ID,
+		ClusterID:     &cluster.ID,
+		EnvironmentID: &environment.ID,
+		Namespace:     environment.DefaultNamespace,
+		ChartReleaseVersion: v2models.ChartReleaseVersion{
+			AppVersionResolver:   testutils.PointerTo("exact"),
+			AppVersionExact:      testutils.PointerTo("app version blah"),
+			ChartVersionResolver: testutils.PointerTo("exact"),
+			ChartVersionExact:    testutils.PointerTo("chart version blah"),
+			HelmfileRef:          testutils.PointerTo("HEAD"),
+			FirecloudDevelopRef:  testutils.PointerTo("dev"),
+		},
+	}, user)
+	s.NoError(err)
+	s.True(created)
+
+	s.Equal("repo's workflow workflow against <https://beehive.dsp-devops.broadinstitute.org/r/chart-release/leonardo-dev|leonardo-dev>: <https://github.com/owner/repo/actions/runs/1/attempts/3|success>",
+		makeSlackMessageText(s.DB, models.CiRun{
+			Platform:                   "github-actions",
+			GithubActionsOwner:         "owner",
+			GithubActionsRepo:          "repo",
+			GithubActionsRunID:         1,
+			GithubActionsAttemptNumber: 3,
+			GithubActionsWorkflowPath:  "workflow",
+			StartedAt:                  testutils.PointerTo(time.Now().Add(-time.Minute)),
+			TerminalAt:                 testutils.PointerTo(time.Now()),
+			Status:                     testutils.PointerTo("success"),
+			RelatedResources: []models.CiIdentifier{
+				{ResourceType: "chart-release", ResourceID: chartRelease.ID},
+				{ResourceType: "environment", ResourceID: environment.ID},
+			},
+		}))
+	s.Equal("repo's workflow workflow against <https://beehive.dsp-devops.broadinstitute.org/r/environment/dev|dev>: <https://github.com/owner/repo/actions/runs/1/attempts/3|success>",
+		makeSlackMessageText(s.DB, models.CiRun{
+			Platform:                   "github-actions",
+			GithubActionsOwner:         "owner",
+			GithubActionsRepo:          "repo",
+			GithubActionsRunID:         1,
+			GithubActionsAttemptNumber: 3,
+			GithubActionsWorkflowPath:  "workflow",
+			StartedAt:                  testutils.PointerTo(time.Now().Add(-time.Minute)),
+			TerminalAt:                 testutils.PointerTo(time.Now()),
+			Status:                     testutils.PointerTo("success"),
+			RelatedResources: []models.CiIdentifier{
+				{ResourceType: "environment", ResourceID: environment.ID},
+			},
+		}))
 }

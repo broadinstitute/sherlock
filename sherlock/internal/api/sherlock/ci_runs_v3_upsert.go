@@ -16,6 +16,7 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -421,19 +422,48 @@ func dispatchTerminatedCiRun(db *gorm.DB, ciRun models.CiRun) {
 	if deployhooks.CiRunIsDeploy(ciRun) {
 		deployhooks.DispatchCiRun(db, ciRun)
 	}
-	if ciRun.Status != nil {
+	if ciRun.Status != nil && (len(ciRun.NotifySlackChannelsUponSuccess) > 0 || len(ciRun.NotifySlackChannelsUponFailure) > 0) {
+		text := makeSlackMessageText(db, ciRun)
 		if ciRun.Succeeded() {
 			for _, channel := range ciRun.NotifySlackChannelsUponSuccess {
-				slack.SendMessage(db.Statement.Context, channel, "", slack.GreenBlock{
-					Text: fmt.Sprintf("%s: %s", ciRun.Nickname(), slack.LinkHelper(ciRun.WebURL(), *ciRun.Status)),
-				})
+				slack.SendMessage(db.Statement.Context, channel, "", slack.GreenBlock{Text: text})
 			}
 		} else {
 			for _, channel := range ciRun.NotifySlackChannelsUponFailure {
-				slack.SendMessage(db.Statement.Context, channel, "", slack.RedBlock{
-					Text: fmt.Sprintf("%s: %s", ciRun.Nickname(), slack.LinkHelper(ciRun.WebURL(), *ciRun.Status)),
-				})
+				slack.SendMessage(db.Statement.Context, channel, "", slack.RedBlock{Text: text})
 			}
 		}
 	}
+}
+
+func makeSlackMessageText(db *gorm.DB, ciRun models.CiRun) string {
+	var relatedResourceSummaryParts []string
+	var chartReleaseIDs, environmentIDs []uint
+	for _, identifier := range ciRun.RelatedResources {
+		if identifier.ResourceType == "chart-release" {
+			chartReleaseIDs = append(chartReleaseIDs, identifier.ResourceID)
+		} else if identifier.ResourceType == "environment" {
+			environmentIDs = append(environmentIDs, identifier.ResourceID)
+		}
+	}
+	if len(chartReleaseIDs) > 0 {
+		var chartReleases []models.ChartRelease
+		if err := db.Model(&models.ChartRelease{}).Find(&chartReleases, chartReleaseIDs).Error; err == nil {
+			relatedResourceSummaryParts = append(relatedResourceSummaryParts, utils.Map(chartReleases, func(c models.ChartRelease) string {
+				return slack.LinkHelper(fmt.Sprintf(config.Config.String("beehive.chartReleaseUrlFormatString"), c.Name), c.Name)
+			})...)
+		}
+	} else if len(environmentIDs) > 0 {
+		var environments []models.Environment
+		if err := db.Model(&models.Environment{}).Find(&environments, environmentIDs).Error; err == nil {
+			relatedResourceSummaryParts = append(relatedResourceSummaryParts, utils.Map(environments, func(e models.Environment) string {
+				return slack.LinkHelper(fmt.Sprintf(config.Config.String("beehive.environmentUrlFormatString"), e.Name), e.Name)
+			})...)
+		}
+	}
+	var against string
+	if len(relatedResourceSummaryParts) > 0 {
+		against = fmt.Sprintf(" against %s", strings.Join(relatedResourceSummaryParts, ", "))
+	}
+	return fmt.Sprintf("%s%s: %s", ciRun.Nickname(), against, slack.LinkHelper(ciRun.WebURL(), *ciRun.Status))
 }
