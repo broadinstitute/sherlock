@@ -143,7 +143,7 @@ jobs:
           
           # If $BRANCH is empty, we weren't directly on a branch. Presumably we're on a tag or commit.
           # List branches containing the current commit and pick the first one.
-          # We have to filter out empty lines (awk) and ones that say "detached at" (grep) and then
+          # We have to filter out empty spaces (awk) and ones that say "detached at" (grep) and then
           # pick the first option since there could be multiple (head).
           # This is at least better than throwing our hands up.
           if [ -z "$BRANCH" ]
