@@ -188,7 +188,7 @@ func (s *internalChangesetStore) plan(db *gorm.DB, changesets []Changeset, user 
 			if err != nil && strings.Contains(err.Error(), "deadlock detected") {
 				planned, _, err = s.Create(db, changeset, user)
 				if err == nil {
-					go slack.SendMessage(db.Statement.Context, "#ap-k8s-monitor", "Sherlock encountered a deadlock during changeset creation but recovered")
+					go slack.SendMessage(db.Statement.Context, "#ap-k8s-monitor", fmt.Sprintf("Sherlock encountered a deadlock during changeset creation (index %d) but recovered", index+1))
 				}
 			}
 			if err != nil {
