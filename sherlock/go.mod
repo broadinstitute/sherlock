@@ -23,8 +23,8 @@ require (
 	github.com/swaggo/gin-swagger v1.6.0
 	github.com/swaggo/swag v1.16.2
 	go.opencensus.io v0.24.0
-	golang.org/x/net v0.14.0
-	golang.org/x/oauth2 v0.11.0
+	golang.org/x/net v0.15.0
+	golang.org/x/oauth2 v0.12.0
 	google.golang.org/api v0.138.0
 	gorm.io/datatypes v1.2.0
 	gorm.io/driver/postgres v1.5.2
@@ -101,9 +101,9 @@ require (
 	github.com/ugorji/go/codec v1.2.11 // indirect
 	go.uber.org/atomic v1.10.0 // indirect
 	golang.org/x/arch v0.3.0 // indirect
-	golang.org/x/crypto v0.12.0 // indirect
-	golang.org/x/sys v0.11.0 // indirect
-	golang.org/x/text v0.12.0 // indirect
+	golang.org/x/crypto v0.13.0 // indirect
+	golang.org/x/sys v0.12.0 // indirect
+	golang.org/x/text v0.13.0 // indirect
 	golang.org/x/tools v0.12.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20230807174057-1744710a1577 // indirect
