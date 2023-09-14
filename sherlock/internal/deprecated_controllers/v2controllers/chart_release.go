@@ -41,6 +41,7 @@ type CreatableChartRelease struct {
 	ChartVersionExact              *string `json:"chartVersionExact" form:"chartVersionExact"`
 	ChartVersionFollowChartRelease string  `json:"chartVersionFollowChartRelease" form:"chartVersionFollowChartRelease"`
 	HelmfileRef                    *string `json:"helmfileRef" form:"helmfileRef" default:"HEAD"`
+	HelmfileRefEnabled             *bool   `json:"helmfileRefEnabled" form:"helmfileRefEnabled"` // When creating, will default to false
 	FirecloudDevelopRef            *string `json:"firecloudDevelopRef" form:"firecloudDevelopRef"`
 	EditableChartRelease
 }
@@ -143,6 +144,7 @@ func (c ChartRelease) toModel(storeSet *v2models.StoreSet) (v2models.ChartReleas
 			ChartVersionFollowChartReleaseID: chartVersionFollowChartReleaseID,
 			ChartVersionID:                   chartVersionID,
 			HelmfileRef:                      c.HelmfileRef,
+			HelmfileRefEnabled:               c.HelmfileRefEnabled,
 			FirecloudDevelopRef:              c.FirecloudDevelopRef,
 		},
 		Subdomain:               c.Subdomain,

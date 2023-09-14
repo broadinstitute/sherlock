@@ -32,6 +32,7 @@ type ChartReleaseVersion struct {
 	ChartVersionID                   *uint
 
 	HelmfileRef         *string
+	HelmfileRefEnabled  *bool
 	FirecloudDevelopRef *string
 }
 
@@ -270,8 +271,10 @@ func (chartReleaseVersion *ChartReleaseVersion) validate() error {
 		}
 	}
 
-	if chartReleaseVersion.HelmfileRef == nil || *chartReleaseVersion.HelmfileRef == "" {
-		return fmt.Errorf("a %T must have a terra-helmfile git reference", chartReleaseVersion)
+	if chartReleaseVersion.HelmfileRefEnabled != nil && *chartReleaseVersion.HelmfileRefEnabled {
+		if chartReleaseVersion.HelmfileRef == nil || *chartReleaseVersion.HelmfileRef == "" {
+			return fmt.Errorf("a %T must have a terra-helmfile git reference if enabled", chartReleaseVersion)
+		}
 	}
 
 	return nil
@@ -311,6 +314,9 @@ func (chartReleaseVersion *ChartReleaseVersion) equalTo(other ChartReleaseVersio
 		((chartReleaseVersion.HelmfileRef == nil && other.HelmfileRef == nil) ||
 			(chartReleaseVersion.HelmfileRef != nil && other.HelmfileRef != nil &&
 				*chartReleaseVersion.HelmfileRef == *other.HelmfileRef)) &&
+		((chartReleaseVersion.HelmfileRefEnabled == nil && other.HelmfileRefEnabled == nil) ||
+			(chartReleaseVersion.HelmfileRefEnabled != nil && other.HelmfileRefEnabled != nil &&
+				*chartReleaseVersion.HelmfileRefEnabled == *other.HelmfileRefEnabled)) &&
 		((chartReleaseVersion.FirecloudDevelopRef == nil && other.FirecloudDevelopRef == nil) ||
 			(chartReleaseVersion.FirecloudDevelopRef != nil && other.FirecloudDevelopRef != nil &&
 				*chartReleaseVersion.FirecloudDevelopRef == *other.FirecloudDevelopRef))

@@ -1281,7 +1281,35 @@ func TestChartReleaseVersion_validate(t *testing.T) {
 			},
 		},
 		{
-			name:    "chartReleaseVersionInvalidNoHelmfileRef",
+			name:    "chartReleaseVersionValidNoHelmfileRef",
+			wantErr: false,
+			obj: ChartReleaseVersion{
+				ResolvedAt: testutils.PointerTo(time.Now()),
+
+				AppVersionResolver: testutils.PointerTo("branch"),
+				AppVersionExact:    testutils.PointerTo("v1.2.3"),
+				AppVersionCommit:   testutils.PointerTo("a1b2c3d4"),
+				AppVersionBranch:   testutils.PointerTo("main"),
+				AppVersion: &AppVersion{
+					Model:      gorm.Model{ID: 1},
+					AppVersion: "v1.2.3",
+					GitCommit:  "a1b2c3d4",
+					GitBranch:  "main",
+				},
+				AppVersionID: testutils.PointerTo[uint](1),
+
+				ChartVersionResolver: testutils.PointerTo("latest"),
+				ChartVersionExact:    testutils.PointerTo("v0.0.100"),
+				ChartVersion: &ChartVersion{
+					Model:        gorm.Model{ID: 2},
+					ChartVersion: "v0.0.100",
+				},
+				ChartVersionID:      testutils.PointerTo[uint](2),
+				FirecloudDevelopRef: testutils.PointerTo("dev"),
+			},
+		},
+		{
+			name:    "chartReleaseVersionInvalidHelmfileRefEnabledNoHelmfileRef",
 			wantErr: true,
 			obj: ChartReleaseVersion{
 				ResolvedAt: testutils.PointerTo(time.Now()),
@@ -1306,6 +1334,7 @@ func TestChartReleaseVersion_validate(t *testing.T) {
 				},
 				ChartVersionID:      testutils.PointerTo[uint](2),
 				FirecloudDevelopRef: testutils.PointerTo("dev"),
+				HelmfileRefEnabled:  testutils.PointerTo(true),
 			},
 		},
 	}
