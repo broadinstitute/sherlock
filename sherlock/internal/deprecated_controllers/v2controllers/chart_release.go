@@ -270,6 +270,7 @@ func modelChartReleaseToChartRelease(model *v2models.ChartRelease) *ChartRelease
 			ChartVersionExact:              model.ChartVersionExact,
 			ChartVersionFollowChartRelease: chartVersionFollowChartRelease,
 			HelmfileRef:                    model.HelmfileRef,
+			HelmfileRefEnabled:             model.HelmfileRefEnabled,
 			FirecloudDevelopRef:            model.FirecloudDevelopRef,
 			EditableChartRelease: EditableChartRelease{
 				Subdomain:               model.Subdomain,
@@ -362,6 +363,12 @@ func setChartReleaseDynamicDefaults(chartRelease *CreatableChartRelease, stores 
 			}
 		}
 	}
+
+	if chartRelease.HelmfileRefEnabled == nil {
+		var f bool
+		chartRelease.HelmfileRefEnabled = &f
+	}
+
 	return nil
 }
 
