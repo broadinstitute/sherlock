@@ -125,6 +125,7 @@ func (s *handlerSuite) Test_deployHookTriggerConfigV3_toModel_chartReleaseValid(
 			ChartVersionResolver: testutils.PointerTo("exact"),
 			ChartVersionExact:    testutils.PointerTo("chart version blah"),
 			HelmfileRef:          testutils.PointerTo("HEAD"),
+			HelmfileRefEnabled:   testutils.PointerTo(false),
 			FirecloudDevelopRef:  testutils.PointerTo("dev"),
 		},
 	}, user)
