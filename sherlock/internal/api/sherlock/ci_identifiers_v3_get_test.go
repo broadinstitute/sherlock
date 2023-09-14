@@ -189,6 +189,7 @@ func (s *handlerSuite) TestCiIdentifiersV3Get() {
 			ChartVersionResolver: testutils.PointerTo("exact"),
 			ChartVersionExact:    testutils.PointerTo("chart version blah"),
 			HelmfileRef:          testutils.PointerTo("HEAD"),
+			HelmfileRefEnabled:   testutils.PointerTo(false),
 			FirecloudDevelopRef:  testutils.PointerTo("dev"),
 		},
 	}, user)
