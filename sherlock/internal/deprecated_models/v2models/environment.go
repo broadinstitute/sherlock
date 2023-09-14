@@ -416,6 +416,7 @@ func postCreateEnvironment(db *gorm.DB, environment *Environment, user *models.U
 				latestString := "latest"
 				headString := "HEAD"
 				trueBoolean := true
+				falseBoolean := false
 				for index, chartEntry := range autoPopulateCharts {
 					if chartEntry.String("name") != "" {
 						chart, err := InternalChartStore.Get(db, Chart{Name: chartEntry.String("name")})
@@ -434,6 +435,7 @@ func postCreateEnvironment(db *gorm.DB, environment *Environment, user *models.U
 									AppVersionResolver:   &noneString,
 									ChartVersionResolver: &latestString,
 									HelmfileRef:          &headString,
+									HelmfileRefEnabled:   &falseBoolean,
 								},
 								Subdomain:               chart.DefaultSubdomain,
 								Protocol:                chart.DefaultProtocol,
