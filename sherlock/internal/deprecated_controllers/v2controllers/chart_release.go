@@ -41,7 +41,7 @@ type CreatableChartRelease struct {
 	ChartVersionExact              *string `json:"chartVersionExact" form:"chartVersionExact"`
 	ChartVersionFollowChartRelease string  `json:"chartVersionFollowChartRelease" form:"chartVersionFollowChartRelease"`
 	HelmfileRef                    *string `json:"helmfileRef" form:"helmfileRef" default:"HEAD"`
-	HelmfileRefEnabled             *bool   `json:"helmfileRefEnabled" form:"helmfileRefEnabled"`
+	HelmfileRefEnabled             *bool   `json:"helmfileRefEnabled" form:"helmfileRefEnabled" default:"false"`
 	FirecloudDevelopRef            *string `json:"firecloudDevelopRef" form:"firecloudDevelopRef"`
 	EditableChartRelease
 }
@@ -362,11 +362,6 @@ func setChartReleaseDynamicDefaults(chartRelease *CreatableChartRelease, stores 
 				chartRelease.Name = fmt.Sprintf("%s-%s-%s", chart.Name, chartRelease.Namespace, cluster.Name)
 			}
 		}
-	}
-
-	if chartRelease.HelmfileRefEnabled == nil {
-		var f bool
-		chartRelease.HelmfileRefEnabled = &f
 	}
 
 	return nil
