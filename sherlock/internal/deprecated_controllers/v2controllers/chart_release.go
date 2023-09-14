@@ -41,7 +41,7 @@ type CreatableChartRelease struct {
 	ChartVersionExact              *string `json:"chartVersionExact" form:"chartVersionExact"`
 	ChartVersionFollowChartRelease string  `json:"chartVersionFollowChartRelease" form:"chartVersionFollowChartRelease"`
 	HelmfileRef                    *string `json:"helmfileRef" form:"helmfileRef" default:"HEAD"`
-	HelmfileRefEnabled             *bool   `json:"helmfileRefEnabled" form:"helmfileRefEnabled"` // When creating, will default to false
+	HelmfileRefEnabled             *bool   `json:"helmfileRefEnabled" form:"helmfileRefEnabled"`
 	FirecloudDevelopRef            *string `json:"firecloudDevelopRef" form:"firecloudDevelopRef"`
 	EditableChartRelease
 }
