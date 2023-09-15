@@ -78,6 +78,7 @@ func (s *deployHooksSuite) Test_dispatchCiRun() {
 		DestinationType: "environment",
 		ChartReleaseVersion: models.ChartReleaseVersion{
 			HelmfileRef:          testutils.PointerTo("HEAD"),
+			HelmfileRefEnabled:   testutils.PointerTo(false),
 			AppVersionResolver:   testutils.PointerTo("exact"),
 			AppVersionExact:      testutils.PointerTo("v1.2.3"),
 			ChartVersionResolver: testutils.PointerTo("exact"),

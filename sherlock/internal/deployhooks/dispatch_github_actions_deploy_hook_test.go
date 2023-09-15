@@ -148,6 +148,7 @@ func (s *deployHooksSuite) Test_dispatchGithubActionsDeployHook_appVersionRefFro
 		DestinationType: "environment",
 		ChartReleaseVersion: models.ChartReleaseVersion{
 			HelmfileRef:          testutils.PointerTo("HEAD"),
+			HelmfileRefEnabled:   testutils.PointerTo(false),
 			AppVersionResolver:   testutils.PointerTo("exact"),
 			AppVersionExact:      testutils.PointerTo("v1.2.3"),
 			ChartVersionResolver: testutils.PointerTo("exact"),
@@ -161,6 +162,7 @@ func (s *deployHooksSuite) Test_dispatchGithubActionsDeployHook_appVersionRefFro
 		AppliedAt:      testutils.PointerTo(time.Now().Add(-time.Minute)),
 		From: models.ChartReleaseVersion{
 			HelmfileRef:          testutils.PointerTo("HEAD"),
+			HelmfileRefEnabled:   testutils.PointerTo(false),
 			AppVersionResolver:   testutils.PointerTo("exact"),
 			AppVersionExact:      testutils.PointerTo("v1.1.3"),
 			ChartVersionResolver: testutils.PointerTo("exact"),
@@ -168,6 +170,7 @@ func (s *deployHooksSuite) Test_dispatchGithubActionsDeployHook_appVersionRefFro
 		},
 		To: models.ChartReleaseVersion{
 			HelmfileRef:          testutils.PointerTo("HEAD"),
+			HelmfileRefEnabled:   testutils.PointerTo(false),
 			AppVersionResolver:   testutils.PointerTo("exact"),
 			AppVersionExact:      testutils.PointerTo("v1.1.4"),
 			ChartVersionResolver: testutils.PointerTo("exact"),
@@ -180,6 +183,7 @@ func (s *deployHooksSuite) Test_dispatchGithubActionsDeployHook_appVersionRefFro
 		AppliedAt:      testutils.PointerTo(time.Now()),
 		From: models.ChartReleaseVersion{
 			HelmfileRef:          testutils.PointerTo("HEAD"),
+			HelmfileRefEnabled:   testutils.PointerTo(false),
 			AppVersionResolver:   testutils.PointerTo("exact"),
 			AppVersionExact:      testutils.PointerTo("v1.1.4"),
 			ChartVersionResolver: testutils.PointerTo("exact"),
@@ -187,6 +191,7 @@ func (s *deployHooksSuite) Test_dispatchGithubActionsDeployHook_appVersionRefFro
 		},
 		To: models.ChartReleaseVersion{
 			HelmfileRef:          testutils.PointerTo("HEAD"),
+			HelmfileRefEnabled:   testutils.PointerTo(false),
 			AppVersionResolver:   testutils.PointerTo("exact"),
 			AppVersionExact:      testutils.PointerTo("v1.1.5"),
 			ChartVersionResolver: testutils.PointerTo("exact"),
@@ -264,6 +269,7 @@ func (s *deployHooksSuite) Test_dispatchGithubActionsDeployHook_appVersionCommit
 		DestinationType: "environment",
 		ChartReleaseVersion: models.ChartReleaseVersion{
 			HelmfileRef:          testutils.PointerTo("HEAD"),
+			HelmfileRefEnabled:   testutils.PointerTo(false),
 			AppVersionResolver:   testutils.PointerTo("exact"),
 			AppVersionExact:      testutils.PointerTo("v1.2.3"),
 			AppVersionCommit:     testutils.PointerTo("commit a"),
@@ -278,6 +284,7 @@ func (s *deployHooksSuite) Test_dispatchGithubActionsDeployHook_appVersionCommit
 		AppliedAt:      testutils.PointerTo(time.Now().Add(-time.Minute)),
 		From: models.ChartReleaseVersion{
 			HelmfileRef:          testutils.PointerTo("HEAD"),
+			HelmfileRefEnabled:   testutils.PointerTo(false),
 			AppVersionResolver:   testutils.PointerTo("exact"),
 			AppVersionExact:      testutils.PointerTo("v1.1.3"),
 			AppVersionCommit:     testutils.PointerTo("commit b"),
@@ -286,6 +293,7 @@ func (s *deployHooksSuite) Test_dispatchGithubActionsDeployHook_appVersionCommit
 		},
 		To: models.ChartReleaseVersion{
 			HelmfileRef:          testutils.PointerTo("HEAD"),
+			HelmfileRefEnabled:   testutils.PointerTo(false),
 			AppVersionResolver:   testutils.PointerTo("exact"),
 			AppVersionExact:      testutils.PointerTo("v1.1.4"),
 			AppVersionCommit:     testutils.PointerTo("commit c"),
@@ -299,6 +307,7 @@ func (s *deployHooksSuite) Test_dispatchGithubActionsDeployHook_appVersionCommit
 		AppliedAt:      testutils.PointerTo(time.Now()),
 		From: models.ChartReleaseVersion{
 			HelmfileRef:          testutils.PointerTo("HEAD"),
+			HelmfileRefEnabled:   testutils.PointerTo(false),
 			AppVersionResolver:   testutils.PointerTo("exact"),
 			AppVersionExact:      testutils.PointerTo("v1.1.4"),
 			AppVersionCommit:     testutils.PointerTo("commit d"),
@@ -307,6 +316,7 @@ func (s *deployHooksSuite) Test_dispatchGithubActionsDeployHook_appVersionCommit
 		},
 		To: models.ChartReleaseVersion{
 			HelmfileRef:          testutils.PointerTo("HEAD"),
+			HelmfileRefEnabled:   testutils.PointerTo(false),
 			AppVersionResolver:   testutils.PointerTo("exact"),
 			AppVersionExact:      testutils.PointerTo("v1.1.5"),
 			AppVersionCommit:     testutils.PointerTo("commit e"),
