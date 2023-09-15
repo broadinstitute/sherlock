@@ -176,6 +176,13 @@ model:
       # Uses appVersionResolver = "none", chartVersionResolver = "latest", and helmfileRef = "HEAD"
       autoPopulateCharts:
         - name: honeycomb
+  changesets:
+    #
+    # if true: set helmfile ref to chart release tag ("charts/sam-1.2.3") when promoting a chart release
+    # if false: set helmfile ref to "HEAD" when promoting a chart release
+    #
+    # this flag is temporary and should be removed when it is defaulted to true
+    helmfileRefDefaultToChartReleaseTags: false
   ciRuns:
     # A list of partial CiRuns where if any has a match on all non-zero fields with an actual CiRun,
     # the actual CiRun should be considered a deploy (and should dispatch deploy hooks upon completion).
