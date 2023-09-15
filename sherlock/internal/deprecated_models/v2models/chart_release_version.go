@@ -9,6 +9,14 @@ import (
 	"gorm.io/gorm"
 )
 
+// helmfileRefDefaultToChartReleaseTags
+//
+//	if true: set helmfile ref to chart release tag ("charts/sam-1.2.3") when promoting a chart release
+//	if false: set helmfile ref to "HEAD" when promoting a chart release
+//
+// this flag is temporary and will be removed when it is defaulted to true
+const helmfileRefDefaultToChartReleaseTags = false
+
 // ChartReleaseVersion isn't stored in the database on its own, it is included as a part of a ChartRelease or
 // Changeset. It has especially strict validation that requires it being fully loaded from the database. The resolve
 // method will help "load" it fully from the database so it can survive validation.
@@ -164,6 +172,16 @@ func (chartReleaseVersion *ChartReleaseVersion) resolve(db *gorm.DB, chartQuery 
 					chartReleaseVersion.ChartVersionFollowChartRelease = &chartReleases[0]
 				}
 			}
+		}
+	}
+	if chartReleaseVersion.HelmfileRefEnabled == nil || !*chartReleaseVersion.HelmfileRefEnabled || chartReleaseVersion.HelmfileRef == nil {
+		if helmfileRefDefaultToChartReleaseTags && chartReleaseVersion.ChartVersion != nil {
+			// eg. "charts/sam-0.102.0"
+			tag := "charts/" + chart.Name + "-" + chartReleaseVersion.ChartVersion.ChartVersion
+			chartReleaseVersion.HelmfileRef = &tag
+		} else {
+			head := "HEAD"
+			chartReleaseVersion.HelmfileRef = &head
 		}
 	}
 	now := time.Now()
