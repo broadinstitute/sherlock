@@ -68,9 +68,7 @@ src/models/V2controllersEditableCluster.ts
 src/models/V2controllersEditableDatabaseInstance.ts
 src/models/V2controllersEditableEnvironment.ts
 src/models/V2controllersEditablePagerdutyIntegration.ts
-src/models/V2controllersEditableUser.ts
 src/models/V2controllersEnvironment.ts
-src/models/V2controllersGithubAccessPayload.ts
 src/models/V2controllersPagerdutyIntegration.ts
 src/models/V2controllersUser.ts
 src/models/index.ts

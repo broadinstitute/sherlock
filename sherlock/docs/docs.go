@@ -1420,9 +1420,29 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "enum": [
+                            "sherlock",
+                            "github",
+                            "slack"
+                        ],
+                        "type": "string",
+                        "name": "nameFrom",
+                        "in": "query"
+                    },
+                    {
                         "type": "boolean",
                         "description": "Controls whether Sherlock should automatically update the user's name based on a connected GitHub identity.\nWill be set to true if the user account has no name and a GitHub account is linked.",
                         "name": "nameInferredFromGithub",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "slackID",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "slackUsername",
                         "in": "query"
                     },
                     {
@@ -7601,138 +7621,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v2/procedures/users/link-github": {
-            "post": {
-                "description": "Update the authenticated User's associated personal GitHub account",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Users"
-                ],
-                "summary": "Update the User's GitHub account link",
-                "parameters": [
-                    {
-                        "description": "Access to the GitHub account to link",
-                        "name": "github-access-payload-request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/v2controllers.GithubAccessPayload"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/v2controllers.User"
-                        }
-                    },
-                    "202": {
-                        "description": "Accepted",
-                        "schema": {
-                            "$ref": "#/definitions/v2controllers.User"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "407": {
-                        "description": "Proxy Authentication Required",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "409": {
-                        "description": "Conflict",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v2/procedures/users/me": {
-            "get": {
-                "description": "Get your own User entry",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Users"
-                ],
-                "summary": "Get your own User entry",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/v2controllers.User"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "407": {
-                        "description": "Proxy Authentication Required",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "409": {
-                        "description": "Conflict",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/api/v2/selectors/app-versions/{selector}": {
             "get": {
                 "description": "Validate a given AppVersion selector and provide any other selectors that would match the same AppVersion.",
@@ -8481,328 +8369,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v2/selectors/users/{selector}": {
-            "get": {
-                "description": "Validate a given User selector and provide any other selectors that would match the same User.",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Users"
-                ],
-                "summary": "List User selectors",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "The selector of the User to list other selectors for",
-                        "name": "selector",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "407": {
-                        "description": "Proxy Authentication Required",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "409": {
-                        "description": "Conflict",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v2/users": {
-            "get": {
-                "description": "List existing User entries, ordered by most recently updated.",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Users"
-                ],
-                "summary": "List User entries",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "format": "date-time",
-                        "name": "createdAt",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "email",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "githubID",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "githubUsername",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "googleID",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "id",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "name",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "name": "nameInferredFromGithub",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "format": "date-time",
-                        "name": "updatedAt",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "An optional limit to the number of entries returned",
-                        "name": "limit",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/v2controllers.User"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "407": {
-                        "description": "Proxy Authentication Required",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "409": {
-                        "description": "Conflict",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v2/users/{selector}": {
-            "get": {
-                "description": "Get an existing User entry via one of its \"selectors\": email, numeric id, 'github/' + GitHub username, 'github-id/' + GitHub numeric id, or 'google-id/' + Google numeric id.",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Users"
-                ],
-                "summary": "Get a User entry",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "The User to get's selector: email, numeric id, 'github/' + GitHub username, 'github-id/' + GitHub numeric id, or 'google-id/' + Google numeric id",
-                        "name": "selector",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/v2controllers.User"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "407": {
-                        "description": "Proxy Authentication Required",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "409": {
-                        "description": "Conflict",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    }
-                }
-            },
-            "patch": {
-                "description": "Edit an existing User entry via one of its \"selectors\": email, numeric id, 'github/' + GitHub username, 'github-id/' + GitHub numeric id, or 'google-id/' + Google numeric id. Note that only mutable fields are available here, immutable fields can only be set using /create.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Users"
-                ],
-                "summary": "Edit a User entry",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "The User to edit's selector: email, numeric id, 'github/' + GitHub username, 'github-id/' + GitHub numeric id, or 'google-id/' + Google numeric id",
-                        "name": "selector",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "The edits to make to the User",
-                        "name": "user",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/v2controllers.EditableUser"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/v2controllers.User"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "407": {
-                        "description": "Proxy Authentication Required",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "409": {
-                        "description": "Conflict",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/errors.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/connection-check": {
             "get": {
                 "description": "Get a static response from Sherlock to verify connection through proxies like IAP.",
@@ -9392,9 +8958,23 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
+                "nameFrom": {
+                    "type": "string",
+                    "enum": [
+                        "sherlock",
+                        "github",
+                        "slack"
+                    ]
+                },
                 "nameInferredFromGithub": {
                     "description": "Controls whether Sherlock should automatically update the user's name based on a connected GitHub identity.\nWill be set to true if the user account has no name and a GitHub account is linked.",
                     "type": "boolean"
+                },
+                "slackID": {
+                    "type": "string"
+                },
+                "slackUsername": {
+                    "type": "string"
                 },
                 "suitabilityDescription": {
                     "description": "Available only in responses; describes the user's production-suitability",
@@ -9419,6 +8999,14 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
+                },
+                "nameFrom": {
+                    "type": "string",
+                    "enum": [
+                        "sherlock",
+                        "github",
+                        "slack"
+                    ]
                 },
                 "nameInferredFromGithub": {
                     "description": "Controls whether Sherlock should automatically update the user's name based on a connected GitHub identity.\nWill be set to true if the user account has no name and a GitHub account is linked.",
@@ -10952,17 +10540,6 @@ const docTemplate = `{
                 }
             }
         },
-        "v2controllers.EditableUser": {
-            "type": "object",
-            "properties": {
-                "name": {
-                    "type": "string"
-                },
-                "nameInferredFromGithub": {
-                    "type": "boolean"
-                }
-            }
-        },
         "v2controllers.Environment": {
             "type": "object",
             "properties": {
@@ -11099,14 +10676,6 @@ const docTemplate = `{
                 },
                 "valuesName": {
                     "description": "When creating, defaults to template name or environment name",
-                    "type": "string"
-                }
-            }
-        },
-        "v2controllers.GithubAccessPayload": {
-            "type": "object",
-            "properties": {
-                "githubAccessToken": {
                     "type": "string"
                 }
             }

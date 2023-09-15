@@ -89,6 +89,9 @@ type GetAPIUsersV3Params struct {
 	// Name.
 	Name *string
 
+	// NameFrom.
+	NameFrom *string
+
 	/* NameInferredFromGithub.
 
 	     Controls whether Sherlock should automatically update the user's name based on a connected GitHub identity.
@@ -101,6 +104,12 @@ type GetAPIUsersV3Params struct {
 	   Control the offset for the returned Users (default 0)
 	*/
 	Offset *int64
+
+	// SlackID.
+	SlackID *string
+
+	// SlackUsername.
+	SlackUsername *string
 
 	/* SuitabilityDescription.
 
@@ -260,6 +269,17 @@ func (o *GetAPIUsersV3Params) SetName(name *string) {
 	o.Name = name
 }
 
+// WithNameFrom adds the nameFrom to the get API users v3 params
+func (o *GetAPIUsersV3Params) WithNameFrom(nameFrom *string) *GetAPIUsersV3Params {
+	o.SetNameFrom(nameFrom)
+	return o
+}
+
+// SetNameFrom adds the nameFrom to the get API users v3 params
+func (o *GetAPIUsersV3Params) SetNameFrom(nameFrom *string) {
+	o.NameFrom = nameFrom
+}
+
 // WithNameInferredFromGithub adds the nameInferredFromGithub to the get API users v3 params
 func (o *GetAPIUsersV3Params) WithNameInferredFromGithub(nameInferredFromGithub *bool) *GetAPIUsersV3Params {
 	o.SetNameInferredFromGithub(nameInferredFromGithub)
@@ -280,6 +300,28 @@ func (o *GetAPIUsersV3Params) WithOffset(offset *int64) *GetAPIUsersV3Params {
 // SetOffset adds the offset to the get API users v3 params
 func (o *GetAPIUsersV3Params) SetOffset(offset *int64) {
 	o.Offset = offset
+}
+
+// WithSlackID adds the slackID to the get API users v3 params
+func (o *GetAPIUsersV3Params) WithSlackID(slackID *string) *GetAPIUsersV3Params {
+	o.SetSlackID(slackID)
+	return o
+}
+
+// SetSlackID adds the slackId to the get API users v3 params
+func (o *GetAPIUsersV3Params) SetSlackID(slackID *string) {
+	o.SlackID = slackID
+}
+
+// WithSlackUsername adds the slackUsername to the get API users v3 params
+func (o *GetAPIUsersV3Params) WithSlackUsername(slackUsername *string) *GetAPIUsersV3Params {
+	o.SetSlackUsername(slackUsername)
+	return o
+}
+
+// SetSlackUsername adds the slackUsername to the get API users v3 params
+func (o *GetAPIUsersV3Params) SetSlackUsername(slackUsername *string) {
+	o.SlackUsername = slackUsername
 }
 
 // WithSuitabilityDescription adds the suitabilityDescription to the get API users v3 params
@@ -459,6 +501,23 @@ func (o *GetAPIUsersV3Params) WriteToRequest(r runtime.ClientRequest, reg strfmt
 		}
 	}
 
+	if o.NameFrom != nil {
+
+		// query param nameFrom
+		var qrNameFrom string
+
+		if o.NameFrom != nil {
+			qrNameFrom = *o.NameFrom
+		}
+		qNameFrom := qrNameFrom
+		if qNameFrom != "" {
+
+			if err := r.SetQueryParam("nameFrom", qNameFrom); err != nil {
+				return err
+			}
+		}
+	}
+
 	if o.NameInferredFromGithub != nil {
 
 		// query param nameInferredFromGithub
@@ -488,6 +547,40 @@ func (o *GetAPIUsersV3Params) WriteToRequest(r runtime.ClientRequest, reg strfmt
 		if qOffset != "" {
 
 			if err := r.SetQueryParam("offset", qOffset); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.SlackID != nil {
+
+		// query param slackID
+		var qrSlackID string
+
+		if o.SlackID != nil {
+			qrSlackID = *o.SlackID
+		}
+		qSlackID := qrSlackID
+		if qSlackID != "" {
+
+			if err := r.SetQueryParam("slackID", qSlackID); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.SlackUsername != nil {
+
+		// query param slackUsername
+		var qrSlackUsername string
+
+		if o.SlackUsername != nil {
+			qrSlackUsername = *o.SlackUsername
+		}
+		qSlackUsername := qrSlackUsername
+		if qSlackUsername != "" {
+
+			if err := r.SetQueryParam("slackUsername", qSlackUsername); err != nil {
 				return err
 			}
 		}

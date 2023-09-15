@@ -396,11 +396,21 @@ definitions:
         type: integer
       name:
         type: string
+      nameFrom:
+        enum:
+        - sherlock
+        - github
+        - slack
+        type: string
       nameInferredFromGithub:
         description: |-
           Controls whether Sherlock should automatically update the user's name based on a connected GitHub identity.
           Will be set to true if the user account has no name and a GitHub account is linked.
         type: boolean
+      slackID:
+        type: string
+      slackUsername:
+        type: string
       suitabilityDescription:
         description: Available only in responses; describes the user's production-suitability
         type: string
@@ -420,6 +430,12 @@ definitions:
           IAP and GitHub via this access token).
         type: string
       name:
+        type: string
+      nameFrom:
+        enum:
+        - sherlock
+        - github
+        - slack
         type: string
       nameInferredFromGithub:
         description: |-
@@ -1538,13 +1554,6 @@ definitions:
       type:
         type: string
     type: object
-  v2controllers.EditableUser:
-    properties:
-      name:
-        type: string
-      nameInferredFromGithub:
-        type: boolean
-    type: object
   v2controllers.Environment:
     properties:
       autoDelete:
@@ -1654,11 +1663,6 @@ definitions:
         type: string
       valuesName:
         description: When creating, defaults to template name or environment name
-        type: string
-    type: object
-  v2controllers.GithubAccessPayload:
-    properties:
-      githubAccessToken:
         type: string
     type: object
   v2controllers.PagerdutyIntegration:
@@ -2653,12 +2657,25 @@ paths:
       - in: query
         name: name
         type: string
+      - enum:
+        - sherlock
+        - github
+        - slack
+        in: query
+        name: nameFrom
+        type: string
       - description: |-
           Controls whether Sherlock should automatically update the user's name based on a connected GitHub identity.
           Will be set to true if the user account has no name and a GitHub account is linked.
         in: query
         name: nameInferredFromGithub
         type: boolean
+      - in: query
+        name: slackID
+        type: string
+      - in: query
+        name: slackUsername
+        type: string
       - description: Available only in responses; describes the user's production-suitability
         in: query
         name: suitabilityDescription
@@ -6877,93 +6894,6 @@ paths:
       summary: Trigger a Pagerduty incident for a given PagerdutyIntegration
       tags:
       - PagerdutyIntegrations
-  /api/v2/procedures/users/link-github:
-    post:
-      consumes:
-      - application/json
-      description: Update the authenticated User's associated personal GitHub account
-      parameters:
-      - description: Access to the GitHub account to link
-        in: body
-        name: github-access-payload-request
-        required: true
-        schema:
-          $ref: '#/definitions/v2controllers.GithubAccessPayload'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/v2controllers.User'
-        "202":
-          description: Accepted
-          schema:
-            $ref: '#/definitions/v2controllers.User'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "407":
-          description: Proxy Authentication Required
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "409":
-          description: Conflict
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-      summary: Update the User's GitHub account link
-      tags:
-      - Users
-  /api/v2/procedures/users/me:
-    get:
-      description: Get your own User entry
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/v2controllers.User'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "407":
-          description: Proxy Authentication Required
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "409":
-          description: Conflict
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-      summary: Get your own User entry
-      tags:
-      - Users
   /api/v2/selectors/app-versions/{selector}:
     get:
       description: Validate a given AppVersion selector and provide any other selectors
@@ -7472,227 +7402,6 @@ paths:
       summary: List PagerdutyIntegration selectors
       tags:
       - PagerdutyIntegrations
-  /api/v2/selectors/users/{selector}:
-    get:
-      description: Validate a given User selector and provide any other selectors
-        that would match the same User.
-      parameters:
-      - description: The selector of the User to list other selectors for
-        in: path
-        name: selector
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              type: string
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "407":
-          description: Proxy Authentication Required
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "409":
-          description: Conflict
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-      summary: List User selectors
-      tags:
-      - Users
-  /api/v2/users:
-    get:
-      description: List existing User entries, ordered by most recently updated.
-      parameters:
-      - format: date-time
-        in: query
-        name: createdAt
-        type: string
-      - in: query
-        name: email
-        type: string
-      - in: query
-        name: githubID
-        type: string
-      - in: query
-        name: githubUsername
-        type: string
-      - in: query
-        name: googleID
-        type: string
-      - in: query
-        name: id
-        type: integer
-      - in: query
-        name: name
-        type: string
-      - in: query
-        name: nameInferredFromGithub
-        type: boolean
-      - format: date-time
-        in: query
-        name: updatedAt
-        type: string
-      - description: An optional limit to the number of entries returned
-        in: query
-        name: limit
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/v2controllers.User'
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "407":
-          description: Proxy Authentication Required
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "409":
-          description: Conflict
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-      summary: List User entries
-      tags:
-      - Users
-  /api/v2/users/{selector}:
-    get:
-      description: 'Get an existing User entry via one of its "selectors": email,
-        numeric id, ''github/'' + GitHub username, ''github-id/'' + GitHub numeric
-        id, or ''google-id/'' + Google numeric id.'
-      parameters:
-      - description: 'The User to get''s selector: email, numeric id, ''github/''
-          + GitHub username, ''github-id/'' + GitHub numeric id, or ''google-id/''
-          + Google numeric id'
-        in: path
-        name: selector
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/v2controllers.User'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "407":
-          description: Proxy Authentication Required
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "409":
-          description: Conflict
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-      summary: Get a User entry
-      tags:
-      - Users
-    patch:
-      consumes:
-      - application/json
-      description: 'Edit an existing User entry via one of its "selectors": email,
-        numeric id, ''github/'' + GitHub username, ''github-id/'' + GitHub numeric
-        id, or ''google-id/'' + Google numeric id. Note that only mutable fields are
-        available here, immutable fields can only be set using /create.'
-      parameters:
-      - description: 'The User to edit''s selector: email, numeric id, ''github/''
-          + GitHub username, ''github-id/'' + GitHub numeric id, or ''google-id/''
-          + Google numeric id'
-        in: path
-        name: selector
-        required: true
-        type: string
-      - description: The edits to make to the User
-        in: body
-        name: user
-        required: true
-        schema:
-          $ref: '#/definitions/v2controllers.EditableUser'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/v2controllers.User'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "407":
-          description: Proxy Authentication Required
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "409":
-          description: Conflict
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-      summary: Edit a User entry
-      tags:
-      - Users
   /connection-check:
     get:
       description: Get a static response from Sherlock to verify connection through

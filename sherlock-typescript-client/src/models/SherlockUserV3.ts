@@ -62,12 +62,30 @@ export interface SherlockUserV3 {
      */
     name?: string;
     /**
+     * 
+     * @type {string}
+     * @memberof SherlockUserV3
+     */
+    nameFrom?: SherlockUserV3NameFromEnum;
+    /**
      * Controls whether Sherlock should automatically update the user's name based on a connected GitHub identity.
      * Will be set to true if the user account has no name and a GitHub account is linked.
      * @type {boolean}
      * @memberof SherlockUserV3
      */
     nameInferredFromGithub?: boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof SherlockUserV3
+     */
+    slackID?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SherlockUserV3
+     */
+    slackUsername?: string;
     /**
      * Available only in responses; describes the user's production-suitability
      * @type {string}
@@ -87,6 +105,18 @@ export interface SherlockUserV3 {
      */
     updatedAt?: Date;
 }
+
+
+/**
+ * @export
+ */
+export const SherlockUserV3NameFromEnum = {
+    Sherlock: 'sherlock',
+    Github: 'github',
+    Slack: 'slack'
+} as const;
+export type SherlockUserV3NameFromEnum = typeof SherlockUserV3NameFromEnum[keyof typeof SherlockUserV3NameFromEnum];
+
 
 /**
  * Check if a given object implements the SherlockUserV3 interface.
@@ -114,7 +144,10 @@ export function SherlockUserV3FromJSONTyped(json: any, ignoreDiscriminator: bool
         'googleID': !exists(json, 'googleID') ? undefined : json['googleID'],
         'id': !exists(json, 'id') ? undefined : json['id'],
         'name': !exists(json, 'name') ? undefined : json['name'],
+        'nameFrom': !exists(json, 'nameFrom') ? undefined : json['nameFrom'],
         'nameInferredFromGithub': !exists(json, 'nameInferredFromGithub') ? undefined : json['nameInferredFromGithub'],
+        'slackID': !exists(json, 'slackID') ? undefined : json['slackID'],
+        'slackUsername': !exists(json, 'slackUsername') ? undefined : json['slackUsername'],
         'suitabilityDescription': !exists(json, 'suitabilityDescription') ? undefined : json['suitabilityDescription'],
         'suitable': !exists(json, 'suitable') ? undefined : json['suitable'],
         'updatedAt': !exists(json, 'updatedAt') ? undefined : (new Date(json['updatedAt'])),
@@ -137,7 +170,10 @@ export function SherlockUserV3ToJSON(value?: SherlockUserV3 | null): any {
         'googleID': value.googleID,
         'id': value.id,
         'name': value.name,
+        'nameFrom': value.nameFrom,
         'nameInferredFromGithub': value.nameInferredFromGithub,
+        'slackID': value.slackID,
+        'slackUsername': value.slackUsername,
         'suitabilityDescription': value.suitabilityDescription,
         'suitable': value.suitable,
         'updatedAt': value.updatedAt === undefined ? undefined : (value.updatedAt.toISOString()),

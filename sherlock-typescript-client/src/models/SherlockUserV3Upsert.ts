@@ -34,6 +34,12 @@ export interface SherlockUserV3Upsert {
      */
     name?: string;
     /**
+     * 
+     * @type {string}
+     * @memberof SherlockUserV3Upsert
+     */
+    nameFrom?: SherlockUserV3UpsertNameFromEnum;
+    /**
      * Controls whether Sherlock should automatically update the user's name based on a connected GitHub identity.
      * Will be set to true if the user account has no name and a GitHub account is linked.
      * @type {boolean}
@@ -41,6 +47,18 @@ export interface SherlockUserV3Upsert {
      */
     nameInferredFromGithub?: boolean;
 }
+
+
+/**
+ * @export
+ */
+export const SherlockUserV3UpsertNameFromEnum = {
+    Sherlock: 'sherlock',
+    Github: 'github',
+    Slack: 'slack'
+} as const;
+export type SherlockUserV3UpsertNameFromEnum = typeof SherlockUserV3UpsertNameFromEnum[keyof typeof SherlockUserV3UpsertNameFromEnum];
+
 
 /**
  * Check if a given object implements the SherlockUserV3Upsert interface.
@@ -63,6 +81,7 @@ export function SherlockUserV3UpsertFromJSONTyped(json: any, ignoreDiscriminator
         
         'githubAccessToken': !exists(json, 'githubAccessToken') ? undefined : json['githubAccessToken'],
         'name': !exists(json, 'name') ? undefined : json['name'],
+        'nameFrom': !exists(json, 'nameFrom') ? undefined : json['nameFrom'],
         'nameInferredFromGithub': !exists(json, 'nameInferredFromGithub') ? undefined : json['nameInferredFromGithub'],
     };
 }
@@ -78,6 +97,7 @@ export function SherlockUserV3UpsertToJSON(value?: SherlockUserV3Upsert | null):
         
         'githubAccessToken': value.githubAccessToken,
         'name': value.name,
+        'nameFrom': value.nameFrom,
         'nameInferredFromGithub': value.nameInferredFromGithub,
     };
 }

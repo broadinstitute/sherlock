@@ -7,9 +7,12 @@ package models
 
 import (
 	"context"
+	"encoding/json"
 
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // SherlockUserV3Upsert sherlock user v3 upsert
@@ -25,6 +28,10 @@ type SherlockUserV3Upsert struct {
 	// name
 	Name string `json:"name,omitempty"`
 
+	// name from
+	// Enum: [sherlock github slack]
+	NameFrom string `json:"nameFrom,omitempty"`
+
 	// Controls whether Sherlock should automatically update the user's name based on a connected GitHub identity.
 	// Will be set to true if the user account has no name and a GitHub account is linked.
 	NameInferredFromGithub bool `json:"nameInferredFromGithub,omitempty"`
@@ -32,6 +39,60 @@ type SherlockUserV3Upsert struct {
 
 // Validate validates this sherlock user v3 upsert
 func (m *SherlockUserV3Upsert) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateNameFrom(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+var sherlockUserV3UpsertTypeNameFromPropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["sherlock","github","slack"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		sherlockUserV3UpsertTypeNameFromPropEnum = append(sherlockUserV3UpsertTypeNameFromPropEnum, v)
+	}
+}
+
+const (
+
+	// SherlockUserV3UpsertNameFromSherlock captures enum value "sherlock"
+	SherlockUserV3UpsertNameFromSherlock string = "sherlock"
+
+	// SherlockUserV3UpsertNameFromGithub captures enum value "github"
+	SherlockUserV3UpsertNameFromGithub string = "github"
+
+	// SherlockUserV3UpsertNameFromSlack captures enum value "slack"
+	SherlockUserV3UpsertNameFromSlack string = "slack"
+)
+
+// prop value enum
+func (m *SherlockUserV3Upsert) validateNameFromEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, sherlockUserV3UpsertTypeNameFromPropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *SherlockUserV3Upsert) validateNameFrom(formats strfmt.Registry) error {
+	if swag.IsZero(m.NameFrom) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateNameFromEnum("nameFrom", "body", m.NameFrom); err != nil {
+		return err
+	}
+
 	return nil
 }
 

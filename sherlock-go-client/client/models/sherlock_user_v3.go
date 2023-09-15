@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -41,9 +42,19 @@ type SherlockUserV3 struct {
 	// name
 	Name string `json:"name,omitempty"`
 
+	// name from
+	// Enum: [sherlock github slack]
+	NameFrom string `json:"nameFrom,omitempty"`
+
 	// Controls whether Sherlock should automatically update the user's name based on a connected GitHub identity.
 	// Will be set to true if the user account has no name and a GitHub account is linked.
 	NameInferredFromGithub bool `json:"nameInferredFromGithub,omitempty"`
+
+	// slack ID
+	SlackID string `json:"slackID,omitempty"`
+
+	// slack username
+	SlackUsername string `json:"slackUsername,omitempty"`
 
 	// Available only in responses; describes the user's production-suitability
 	SuitabilityDescription string `json:"suitabilityDescription,omitempty"`
@@ -64,6 +75,10 @@ func (m *SherlockUserV3) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateNameFrom(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateUpdatedAt(formats); err != nil {
 		res = append(res, err)
 	}
@@ -80,6 +95,51 @@ func (m *SherlockUserV3) validateCreatedAt(formats strfmt.Registry) error {
 	}
 
 	if err := validate.FormatOf("createdAt", "body", "date-time", m.CreatedAt.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var sherlockUserV3TypeNameFromPropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["sherlock","github","slack"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		sherlockUserV3TypeNameFromPropEnum = append(sherlockUserV3TypeNameFromPropEnum, v)
+	}
+}
+
+const (
+
+	// SherlockUserV3NameFromSherlock captures enum value "sherlock"
+	SherlockUserV3NameFromSherlock string = "sherlock"
+
+	// SherlockUserV3NameFromGithub captures enum value "github"
+	SherlockUserV3NameFromGithub string = "github"
+
+	// SherlockUserV3NameFromSlack captures enum value "slack"
+	SherlockUserV3NameFromSlack string = "slack"
+)
+
+// prop value enum
+func (m *SherlockUserV3) validateNameFromEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, sherlockUserV3TypeNameFromPropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *SherlockUserV3) validateNameFrom(formats strfmt.Registry) error {
+	if swag.IsZero(m.NameFrom) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateNameFromEnum("nameFrom", "body", m.NameFrom); err != nil {
 		return err
 	}
 
