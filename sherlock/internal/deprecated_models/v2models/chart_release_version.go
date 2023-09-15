@@ -3,19 +3,12 @@ package v2models
 import (
 	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
+	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"time"
 
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"gorm.io/gorm"
 )
-
-// helmfileRefDefaultToChartReleaseTags
-//
-//	if true: set helmfile ref to chart release tag ("charts/sam-1.2.3") when promoting a chart release
-//	if false: set helmfile ref to "HEAD" when promoting a chart release
-//
-// this flag is temporary and will be removed when it is defaulted to true
-const helmfileRefDefaultToChartReleaseTags = false
 
 // ChartReleaseVersion isn't stored in the database on its own, it is included as a part of a ChartRelease or
 // Changeset. It has especially strict validation that requires it being fully loaded from the database. The resolve
@@ -175,7 +168,7 @@ func (chartReleaseVersion *ChartReleaseVersion) resolve(db *gorm.DB, chartQuery 
 		}
 	}
 	if chartReleaseVersion.HelmfileRefEnabled == nil || !*chartReleaseVersion.HelmfileRefEnabled || chartReleaseVersion.HelmfileRef == nil {
-		if helmfileRefDefaultToChartReleaseTags && chartReleaseVersion.ChartVersion != nil {
+		if config.Config.Bool("model.changesets.helmfileRefDefaultToChartReleaseTags") && chartReleaseVersion.ChartVersion != nil {
 			// eg. "charts/sam-0.102.0"
 			tag := "charts/" + chart.Name + "-" + chartReleaseVersion.ChartVersion.ChartVersion
 			chartReleaseVersion.HelmfileRef = &tag
