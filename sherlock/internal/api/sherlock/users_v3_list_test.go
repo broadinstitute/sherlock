@@ -60,12 +60,12 @@ func (s *handlerSuite) TestUsersV3List() {
 		Name:     testutils.PointerTo("a name"),
 	}
 	user3 := models.User{
-		Email:                  "email3@example.com",
-		GoogleID:               "google-id-3",
-		Name:                   testutils.PointerTo("a name"),
-		NameInferredFromGithub: testutils.PointerTo(false),
-		GithubID:               testutils.PointerTo("github-id-3"),
-		GithubUsername:         testutils.PointerTo("github-username-3"),
+		Email:          "email3@example.com",
+		GoogleID:       "google-id-3",
+		Name:           testutils.PointerTo("a name"),
+		NameFrom:       testutils.PointerTo("sherlock"),
+		GithubID:       testutils.PointerTo("github-id-3"),
+		GithubUsername: testutils.PointerTo("github-username-3"),
 	}
 	for _, user := range []models.User{user1, user2, user3} {
 		s.NoError(s.DB.Create(&user).Error)

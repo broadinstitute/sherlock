@@ -6,5 +6,9 @@ import "github.com/broadinstitute/sherlock/sherlock/internal/config"
 // no rawClient (indicating that whatever client is, it isn't an actual connection to GitHub).
 // This doesn't check if any individual behaviors are enabled, just the top-level of if GitHub code can run at all.
 func isEnabled() bool {
-	return client != nil && (config.Config.Bool("github.enable") || (config.Config.Bool("github.enableMocked") && rawClient == nil))
+	return client != nil && (config.Config.Bool("github.enable") || isMocked())
+}
+
+func isMocked() bool {
+	return config.Config.Bool("github.enableMocked") && rawClient == nil
 }

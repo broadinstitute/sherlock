@@ -41,7 +41,9 @@ type mockableSCIMClient interface{}
 type mockableSearchClient interface{}
 type mockableSecretScanningClient interface{}
 type mockableTeamsClient interface{}
-type mockableUsersClient interface{}
+type mockableUsersClient interface {
+	Get(ctx context.Context, user string) (*github.User, *github.Response, error)
+}
 
 // mockableClient exposes subsets of github.Client's various API categories
 // (like Actions being mockableActionsClient is a subset of github.ActionsService)

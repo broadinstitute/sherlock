@@ -1,15 +1,21 @@
 package sherlock
 
 import (
+	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/testutils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/test_users"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
+	"github.com/broadinstitute/sherlock/sherlock/internal/github"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
+	"github.com/broadinstitute/sherlock/sherlock/internal/slack"
+	"github.com/broadinstitute/sherlock/sherlock/internal/slack/slack_mocks"
 	"github.com/gin-gonic/gin"
-	"github.com/google/go-github/v50/github"
+	github2 "github.com/google/go-github/v50/github"
+	"github.com/rs/zerolog"
+	slack2 "github.com/slack-go/slack"
 	"github.com/stretchr/testify/assert"
-	"gorm.io/gorm"
+	"github.com/stretchr/testify/mock"
 	"net/http"
 	"testing"
 )
@@ -42,7 +48,7 @@ func (s *handlerSuite) TestUserV3Upsert_empty() {
 	})
 }
 
-func (s *handlerSuite) TestUserV3Upsert_name() {
+func (s *handlerSuite) TestUserV3Upsert_name_minimal() {
 
 	var got UserV3
 	code := s.HandleRequest(
@@ -55,6 +61,7 @@ func (s *handlerSuite) TestUserV3Upsert_name() {
 	s.Equal(http.StatusCreated, code)
 	s.Equal(test_users.SuitableTestUserEmail, got.Email)
 	s.Equal("a name", *got.Name)
+	s.Equal("sherlock", *got.NameFrom)
 	s.False(*got.NameInferredFromGithub)
 
 	s.Run("update name", func() {
@@ -68,6 +75,7 @@ func (s *handlerSuite) TestUserV3Upsert_name() {
 		s.Equal(http.StatusCreated, code)
 		s.Equal(test_users.SuitableTestUserEmail, got.Email)
 		s.Equal("a different name", *got.Name)
+		s.Equal("sherlock", *got.NameFrom)
 		s.False(*got.NameInferredFromGithub)
 	})
 }
@@ -127,293 +135,249 @@ func (s *handlerSuite) TestUserV3Upsert_nameInferredFromGithub() {
 	})
 }
 
+func (s *handlerSuite) TestUserV3Upsert_maximal_sherlockName() {
+	slack.UseMockedClient(s.T(), func(c *slack_mocks.MockMockableClient) {
+		c.EXPECT().GetUserByEmailContext(mock.Anything, test_users.SuitableTestUserEmail).Return(&slack2.User{
+			ID:       "slack ID",
+			Name:     "slack username",
+			RealName: "name from slack",
+		}, nil)
+	}, func() {
+		github.UseMockedClient(s.T(), func(c *github.MockClient) {
+			c.Users.EXPECT().Get(mock.Anything, "").Return(&github2.User{
+				ID:    testutils.PointerTo[int64](123),
+				Login: testutils.PointerTo("github username"),
+				Name:  testutils.PointerTo("name from github"),
+			}, nil, nil)
+		}, func() {
+			var got UserV3
+			code := s.HandleRequest(
+				s.NewRequest("PUT", "/api/users/v3", UserV3Upsert{
+					GithubAccessToken: testutils.PointerTo("fake token"),
+					userDirectlyEditableFields: userDirectlyEditableFields{
+						Name: testutils.PointerTo("directly set name"),
+					},
+				}),
+				&got)
+			s.Equal(http.StatusCreated, code)
+			s.Equal(test_users.SuitableTestUserEmail, got.Email)
+			if s.NotNil(got.NameFrom) {
+				s.Equal("sherlock", *got.NameFrom)
+			}
+			if s.NotNil(got.Name) {
+				s.Equal("directly set name", *got.Name)
+			}
+			if s.NotNil(got.SlackID) {
+				s.Equal("slack ID", *got.SlackID)
+			}
+			if s.NotNil(got.SlackUsername) {
+				s.Equal("slack username", *got.SlackUsername)
+			}
+			if s.NotNil(got.GithubID) {
+				s.Equal("123", *got.GithubID)
+			}
+			if s.NotNil(got.GithubUsername) {
+				s.Equal("github username", *got.GithubUsername)
+			}
+		})
+	})
+}
+
+func (s *handlerSuite) TestUserV3Upsert_maximal_slackName() {
+	slack.UseMockedClient(s.T(), func(c *slack_mocks.MockMockableClient) {
+		c.EXPECT().GetUserByEmailContext(mock.Anything, test_users.SuitableTestUserEmail).Return(&slack2.User{
+			ID:       "slack ID",
+			Name:     "slack username",
+			RealName: "name from slack",
+		}, nil)
+	}, func() {
+		github.UseMockedClient(s.T(), func(c *github.MockClient) {
+			c.Users.EXPECT().Get(mock.Anything, "").Return(&github2.User{
+				ID:    testutils.PointerTo[int64](123),
+				Login: testutils.PointerTo("github username"),
+				Name:  testutils.PointerTo("name from github"),
+			}, nil, nil)
+		}, func() {
+			var got UserV3
+			code := s.HandleRequest(
+				s.NewRequest("PUT", "/api/users/v3", UserV3Upsert{
+					GithubAccessToken: testutils.PointerTo("fake token"),
+				}),
+				&got)
+			s.Equal(http.StatusCreated, code)
+			s.Equal(test_users.SuitableTestUserEmail, got.Email)
+			if s.NotNil(got.NameFrom) {
+				s.Equal("slack", *got.NameFrom)
+			}
+			if s.NotNil(got.Name) {
+				s.Equal("name from slack", *got.Name)
+			}
+			if s.NotNil(got.SlackID) {
+				s.Equal("slack ID", *got.SlackID)
+			}
+			if s.NotNil(got.SlackUsername) {
+				s.Equal("slack username", *got.SlackUsername)
+			}
+			if s.NotNil(got.GithubID) {
+				s.Equal("123", *got.GithubID)
+			}
+			if s.NotNil(got.GithubUsername) {
+				s.Equal("github username", *got.GithubUsername)
+			}
+		})
+	})
+}
+
+func (s *handlerSuite) TestUserV3Upsert_maximal_githubName() {
+	slack.UseMockedClient(s.T(), func(c *slack_mocks.MockMockableClient) {
+		c.EXPECT().GetUserByEmailContext(mock.Anything, test_users.SuitableTestUserEmail).Return(&slack2.User{
+			ID:       "slack ID",
+			Name:     "slack username",
+			RealName: "name from slack",
+		}, nil)
+	}, func() {
+		github.UseMockedClient(s.T(), func(c *github.MockClient) {
+			c.Users.EXPECT().Get(mock.Anything, "").Return(&github2.User{
+				ID:    testutils.PointerTo[int64](123),
+				Login: testutils.PointerTo("github username"),
+				Name:  testutils.PointerTo("name from github"),
+			}, nil, nil)
+		}, func() {
+			var got UserV3
+			code := s.HandleRequest(
+				s.NewRequest("PUT", "/api/users/v3", UserV3Upsert{
+					GithubAccessToken: testutils.PointerTo("fake token"),
+					userDirectlyEditableFields: userDirectlyEditableFields{
+						NameFrom: testutils.PointerTo("github"),
+					},
+				}),
+				&got)
+			s.Equal(http.StatusCreated, code)
+			s.Equal(test_users.SuitableTestUserEmail, got.Email)
+			if s.NotNil(got.NameFrom) {
+				s.Equal("github", *got.NameFrom)
+			}
+			if s.NotNil(got.Name) {
+				s.Equal("name from github", *got.Name)
+			}
+			if s.NotNil(got.SlackID) {
+				s.Equal("slack ID", *got.SlackID)
+			}
+			if s.NotNil(got.SlackUsername) {
+				s.Equal("slack username", *got.SlackUsername)
+			}
+			if s.NotNil(got.GithubID) {
+				s.Equal("123", *got.GithubID)
+			}
+			if s.NotNil(got.GithubUsername) {
+				s.Equal("github username", *got.GithubUsername)
+			}
+		})
+	})
+}
+
+func (s *handlerSuite) TestUserV3Upsert_dbConflict() {
+	github.UseMockedClient(s.T(), func(c *github.MockClient) {
+		c.Users.EXPECT().Get(mock.Anything, "").Return(&github2.User{
+			ID:    testutils.PointerTo[int64](123),
+			Login: testutils.PointerTo("github username"),
+			Name:  testutils.PointerTo("name from github"),
+		}, nil, nil)
+		c.Users.EXPECT().Get(mock.Anything, "").Return(&github2.User{
+			ID:    testutils.PointerTo[int64](123),
+			Login: testutils.PointerTo("github username"),
+			Name:  testutils.PointerTo("name from github"),
+		}, nil, nil)
+	}, func() {
+		var got UserV3
+		request := s.NewRequest("PUT", "/api/users/v3", UserV3Upsert{
+			GithubAccessToken: testutils.PointerTo("fake token"),
+		})
+		s.UseSuitableUserFor(request)
+		code := s.HandleRequest(request, &got)
+		s.Equal(http.StatusCreated, code)
+
+		var gotError errors.ErrorResponse
+		request = s.NewRequest("PUT", "/api/users/v3", UserV3Upsert{
+			GithubAccessToken: testutils.PointerTo("fake token"),
+		})
+		s.UseNonSuitableUserFor(request)
+		code = s.HandleRequest(request, &gotError)
+		s.Equal(http.StatusConflict, code)
+		s.Equal(errors.Conflict, gotError.Type)
+	})
+}
+
+func (s *handlerSuite) TestUserV3Upsert_maximal_swallowThirdPartyErrors() {
+	zerolog.SetGlobalLevel(zerolog.Disabled)
+	slack.UseMockedClient(s.T(), func(c *slack_mocks.MockMockableClient) {
+		c.EXPECT().GetUserByEmailContext(mock.Anything, test_users.SuitableTestUserEmail).Return(nil, fmt.Errorf("some error"))
+	}, func() {
+		github.UseMockedClient(s.T(), func(c *github.MockClient) {
+			c.Users.EXPECT().Get(mock.Anything, "").Return(nil, nil, fmt.Errorf("some other error"))
+		}, func() {
+			var got UserV3
+			code := s.HandleRequest(
+				s.NewRequest("PUT", "/api/users/v3", UserV3Upsert{
+					GithubAccessToken: testutils.PointerTo("fake token"),
+					userDirectlyEditableFields: userDirectlyEditableFields{
+						Name: testutils.PointerTo("directly set name"),
+					},
+				}),
+				&got)
+			s.Equal(http.StatusCreated, code)
+			s.Equal(test_users.SuitableTestUserEmail, got.Email)
+			if s.NotNil(got.NameFrom) {
+				s.Equal("sherlock", *got.NameFrom)
+			}
+			if s.NotNil(got.Name) {
+				s.Equal("directly set name", *got.Name)
+			}
+			s.Nil(got.SlackID)
+			s.Nil(got.SlackUsername)
+			s.Nil(got.GithubID)
+			s.Nil(got.GithubUsername)
+		})
+	})
+}
+
 func Test_processUserEdits(t *testing.T) {
-	// Load the test config to make sure we silence the log messages here
 	config.LoadTestConfig()
 	type args struct {
-		callingUser *models.User
-		githubUser  *github.User
-		directEdits userDirectlyEditableFields
+		callingUser     *models.User
+		directEdits     userDirectlyEditableFields
+		userGithubToken *string
 	}
 	tests := []struct {
-		name        string
-		args        args
-		want        *models.User
-		wantChanged bool
+		name              string
+		args              args
+		slackMockConfig   func(c *slack_mocks.MockMockableClient)
+		githubMockConfig  func(c *github.MockClient)
+		wantResultingUser *models.User
+		wantHasUpdates    bool
 	}{
 		{
-			name:        "keeps same model",
-			args:        args{callingUser: &models.User{Model: gorm.Model{ID: 123}, Email: "foo@bar.com"}},
-			want:        &models.User{Model: gorm.Model{ID: 123}, Email: "foo@bar.com"},
-			wantChanged: false,
-		},
-		{
-			name: "set name inferred from github when empty",
+			name: "can do nothing",
 			args: args{
-				callingUser: &models.User{},
-				directEdits: userDirectlyEditableFields{NameInferredFromGithub: testutils.PointerTo(true)},
+				callingUser: &models.User{Email: test_users.SuitableTestUserEmail},
 			},
-			want:        &models.User{NameInferredFromGithub: testutils.PointerTo(true)},
-			wantChanged: true,
-		},
-		{
-			name: "set name inferred from github when different value",
-			args: args{
-				callingUser: &models.User{NameInferredFromGithub: testutils.PointerTo(true)},
-				directEdits: userDirectlyEditableFields{NameInferredFromGithub: testutils.PointerTo(false)},
+			slackMockConfig: func(c *slack_mocks.MockMockableClient) {
+				c.EXPECT().GetUserByEmailContext(mock.Anything, test_users.SuitableTestUserEmail).Return(nil, nil)
 			},
-			want:        &models.User{NameInferredFromGithub: testutils.PointerTo(false)},
-			wantChanged: true,
-		},
-		{
-			name: "keeps name inferred from github setting when same",
-			args: args{
-				callingUser: &models.User{NameInferredFromGithub: testutils.PointerTo(true)},
-				directEdits: userDirectlyEditableFields{NameInferredFromGithub: testutils.PointerTo(true)},
-			},
-			want:        &models.User{NameInferredFromGithub: testutils.PointerTo(true)},
-			wantChanged: false,
-		},
-		{
-			name: "set name when empty",
-			args: args{
-				callingUser: &models.User{},
-				directEdits: userDirectlyEditableFields{Name: testutils.PointerTo("name")},
-			},
-			want: &models.User{
-				Name:                   testutils.PointerTo("name"),
-				NameInferredFromGithub: testutils.PointerTo(false),
-			},
-			wantChanged: true,
-		},
-		{
-			name: "set name when different value",
-			args: args{
-				callingUser: &models.User{Name: testutils.PointerTo("different name")},
-				directEdits: userDirectlyEditableFields{Name: testutils.PointerTo("name")},
-			},
-			want: &models.User{
-				Name:                   testutils.PointerTo("name"),
-				NameInferredFromGithub: testutils.PointerTo(false),
-			},
-			wantChanged: true,
-		},
-		{
-			name: "keep name when same",
-			args: args{
-				callingUser: &models.User{Name: testutils.PointerTo("name")},
-				directEdits: userDirectlyEditableFields{Name: testutils.PointerTo("name")},
-			},
-			want:        &models.User{Name: testutils.PointerTo("name")},
-			wantChanged: false,
-		},
-		{
-			name: "ignores name change when inferred from github",
-			args: args{
-				callingUser: &models.User{
-					Name:                   testutils.PointerTo("different name"),
-					NameInferredFromGithub: testutils.PointerTo(true),
-				},
-				directEdits: userDirectlyEditableFields{Name: testutils.PointerTo("name")},
-			},
-			want: &models.User{
-				Name:                   testutils.PointerTo("different name"),
-				NameInferredFromGithub: testutils.PointerTo(true),
-			},
-			wantChanged: false,
-		},
-		{
-			name: "ignores name change when also setting inferred from github",
-			args: args{
-				callingUser: &models.User{
-					Name: testutils.PointerTo("different name"),
-				},
-				directEdits: userDirectlyEditableFields{
-					Name:                   testutils.PointerTo("name"),
-					NameInferredFromGithub: testutils.PointerTo(true),
-				},
-			},
-			want: &models.User{
-				Name:                   testutils.PointerTo("different name"),
-				NameInferredFromGithub: testutils.PointerTo(true),
-			},
-			wantChanged: true,
-		},
-		{
-			name: "respects name change when also setting inferred from github",
-			args: args{
-				callingUser: &models.User{
-					Name:                   testutils.PointerTo("different name"),
-					NameInferredFromGithub: testutils.PointerTo(true),
-				},
-				directEdits: userDirectlyEditableFields{
-					Name:                   testutils.PointerTo("name"),
-					NameInferredFromGithub: testutils.PointerTo(false),
-				},
-			},
-			want: &models.User{
-				Name:                   testutils.PointerTo("name"),
-				NameInferredFromGithub: testutils.PointerTo(false),
-			},
-			wantChanged: true,
-		},
-		{
-			name: "sets github info with name inference to true when name absent",
-			args: args{
-				callingUser: &models.User{},
-				githubUser: &github.User{
-					ID:    testutils.PointerTo[int64](123),
-					Login: testutils.PointerTo("username"),
-				},
-			},
-			want: &models.User{
-				GithubID:               testutils.PointerTo("123"),
-				GithubUsername:         testutils.PointerTo("username"),
-				NameInferredFromGithub: testutils.PointerTo(true),
-			},
-			wantChanged: true,
-		},
-		{
-			name: "sets github info with name inference to false when name present",
-			args: args{
-				callingUser: &models.User{
-					Name: testutils.PointerTo("name"),
-				},
-				githubUser: &github.User{
-					ID:    testutils.PointerTo[int64](123),
-					Login: testutils.PointerTo("username"),
-				},
-			},
-			want: &models.User{
-				Name:                   testutils.PointerTo("name"),
-				GithubID:               testutils.PointerTo("123"),
-				GithubUsername:         testutils.PointerTo("username"),
-				NameInferredFromGithub: testutils.PointerTo(false),
-			},
-			wantChanged: true,
-		},
-		{
-			name: "sets name from github",
-			args: args{
-				callingUser: &models.User{},
-				githubUser: &github.User{
-					ID:    testutils.PointerTo[int64](123),
-					Login: testutils.PointerTo("username"),
-					Name:  testutils.PointerTo("name"),
-				},
-			},
-			want: &models.User{
-				Name:                   testutils.PointerTo("name"),
-				GithubID:               testutils.PointerTo("123"),
-				GithubUsername:         testutils.PointerTo("username"),
-				NameInferredFromGithub: testutils.PointerTo(true),
-			},
-			wantChanged: true,
-		},
-		{
-			name: "ignores name from github if disabled",
-			args: args{
-				callingUser: &models.User{
-					NameInferredFromGithub: testutils.PointerTo(false),
-				},
-				githubUser: &github.User{
-					ID:    testutils.PointerTo[int64](123),
-					Login: testutils.PointerTo("username"),
-					Name:  testutils.PointerTo("name"),
-				},
-			},
-			want: &models.User{
-				GithubID:               testutils.PointerTo("123"),
-				GithubUsername:         testutils.PointerTo("username"),
-				NameInferredFromGithub: testutils.PointerTo(false),
-			},
-			wantChanged: true,
-		},
-		{
-			name: "updates name from github",
-			args: args{
-				callingUser: &models.User{
-					Name:                   testutils.PointerTo("different name"),
-					NameInferredFromGithub: testutils.PointerTo(true),
-				},
-				githubUser: &github.User{
-					ID:    testutils.PointerTo[int64](123),
-					Login: testutils.PointerTo("username"),
-					Name:  testutils.PointerTo("name"),
-				},
-			},
-			want: &models.User{
-				Name:                   testutils.PointerTo("name"),
-				GithubID:               testutils.PointerTo("123"),
-				GithubUsername:         testutils.PointerTo("username"),
-				NameInferredFromGithub: testutils.PointerTo(true),
-			},
-			wantChanged: true,
-		},
-		{
-			name: "updates github info if account changes",
-			args: args{
-				callingUser: &models.User{
-					GithubID:       testutils.PointerTo("old ID"),
-					GithubUsername: testutils.PointerTo("old username"),
-				},
-				githubUser: &github.User{
-					ID:    testutils.PointerTo[int64](123),
-					Login: testutils.PointerTo("username"),
-				},
-			},
-			want: &models.User{
-				GithubID:               testutils.PointerTo("123"),
-				GithubUsername:         testutils.PointerTo("username"),
-				NameInferredFromGithub: testutils.PointerTo(true),
-			},
-			wantChanged: true,
-		},
-		{
-			name: "updates github info if just username changes",
-			args: args{
-				callingUser: &models.User{
-					GithubID:       testutils.PointerTo("123"),
-					GithubUsername: testutils.PointerTo("old username"),
-				},
-				githubUser: &github.User{
-					ID:    testutils.PointerTo[int64](123),
-					Login: testutils.PointerTo("username"),
-				},
-			},
-			want: &models.User{
-				GithubID:               testutils.PointerTo("123"),
-				GithubUsername:         testutils.PointerTo("username"),
-				NameInferredFromGithub: testutils.PointerTo(true),
-			},
-			wantChanged: true,
-		},
-		{
-			name: "doesn't update if github info equivalent",
-			args: args{
-				callingUser: &models.User{
-					GithubID:               testutils.PointerTo("123"),
-					GithubUsername:         testutils.PointerTo("username"),
-					NameInferredFromGithub: testutils.PointerTo(true),
-				},
-				githubUser: &github.User{
-					ID:    testutils.PointerTo[int64](123),
-					Login: testutils.PointerTo("username"),
-				},
-			},
-			want: &models.User{
-				GithubID:               testutils.PointerTo("123"),
-				GithubUsername:         testutils.PointerTo("username"),
-				NameInferredFromGithub: testutils.PointerTo(true),
-			},
-			wantChanged: false,
+			githubMockConfig:  func(c *github.MockClient) {},
+			wantResultingUser: &models.User{Email: test_users.SuitableTestUserEmail},
+			wantHasUpdates:    false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, got1 := processUserEdits(tt.args.callingUser, tt.args.githubUser, tt.args.directEdits)
-			assert.Equalf(t, tt.want, got, "processUserEdits(%v, %v, %v)", tt.args.callingUser, tt.args.githubUser, tt.args.directEdits)
-			assert.Equalf(t, tt.wantChanged, got1, "processUserEdits(%v, %v, %v)", tt.args.callingUser, tt.args.githubUser, tt.args.directEdits)
+			slack.UseMockedClient(t, tt.slackMockConfig, func() {
+				github.UseMockedClient(t, tt.githubMockConfig, func() {
+					gotResultingUser, gotHasUpdates := processUserEdits(tt.args.callingUser, tt.args.directEdits, tt.args.userGithubToken)
+					assert.Equalf(t, tt.wantResultingUser, gotResultingUser, "processUserEdits(%v, %v, %v)", tt.args.callingUser, tt.args.directEdits, tt.args.userGithubToken)
+					assert.Equalf(t, tt.wantHasUpdates, gotHasUpdates, "processUserEdits(%v, %v, %v)", tt.args.callingUser, tt.args.directEdits, tt.args.userGithubToken)
+				})
+			})
 		})
 	}
 }

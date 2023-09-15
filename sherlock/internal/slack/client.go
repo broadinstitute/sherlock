@@ -15,6 +15,7 @@ import (
 type mockableClient interface {
 	SendMessageContext(ctx context.Context, channelID string, options ...slack.MsgOption) (_channel string, _timestamp string, _text string, err error)
 	AddReaction(name string, item slack.ItemRef) error
+	GetUserByEmailContext(ctx context.Context, email string) (*slack.User, error)
 }
 
 var (
