@@ -90,9 +90,14 @@ github:
 
   behaviors:
 
-    # github.outgoing.deployHooks controls whether Sherlock
+    # github.behaviors.deployHooks controls whether Sherlock
     # should act upon GitHub-based deploy hooks.
     deployHooks:
+      enable: true
+
+    # github.behaviors.collectUserInfo controls whether Sherlock
+    # will look up and store GitHub user info
+    collectUserInfo:
       enable: true
 
 slack:
@@ -122,12 +127,12 @@ slack:
 
   behaviors:
 
-    # slack.outgoing.deployHooks controls whether Sherlock
+    # slack.behaviors.deployHooks controls whether Sherlock
     # should act upon Slack-based deploy hooks.
     deployHooks:
       enable: true
 
-    # slack.outgoing.errors controls whether Sherlock should
+    # slack.behaviors.errors controls whether Sherlock should
     # notify a list of channels upon a 500 error.
     errors:
       enable: true
@@ -147,6 +152,13 @@ slack:
     reactToMentionsWithEmoji:
       enable: true
       emoji: dsp-beehive
+
+    # slack.behaviors.collectUserInfo controls whether Sherlock
+    # should look up and store Slack user info
+    collectUserInfo:
+      enable: true
+      restrictToEmailDomains:
+        - "broadinstitute.org"
 
 pactbroker:
   url: https://pact-broker.dsp-eng-tools.broadinstitute.org

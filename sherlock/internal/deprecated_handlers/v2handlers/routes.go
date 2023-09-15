@@ -18,7 +18,6 @@ func ConfigureRoutes(v2apiRouter *gin.RouterGroup, db *gorm.DB) {
 	registerChangesetHandlers(v2apiRouter, v2ControllerSet.ChangesetController)
 	registerPagerdutyIntegrationHandlers(v2apiRouter, v2ControllerSet.PagerdutyIntegrationController)
 	registerDatabaseInstanceHandlers(v2apiRouter, v2ControllerSet.DatabaseInstanceController)
-	registerUserHandlers(v2apiRouter, v2ControllerSet.UserController)
 	registerCiIdentifierHandlers(v2apiRouter, v2ControllerSet.CiIdentifierController)
 	registerCiRunHandlers(v2apiRouter, v2ControllerSet.CiRunController)
 }

@@ -3,15 +3,18 @@ package sherlock
 import (
 	"context"
 	"fmt"
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/authentication"
+	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
+	"github.com/broadinstitute/sherlock/sherlock/internal/github"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
+	"github.com/broadinstitute/sherlock/sherlock/internal/slack"
 	"github.com/gin-gonic/gin"
-	"github.com/google/go-github/v50/github"
 	"github.com/rs/zerolog/log"
-	"golang.org/x/oauth2"
 	"net/http"
-	"strconv"
+	"strings"
+	"sync"
 	"time"
 )
 
@@ -47,32 +50,12 @@ func usersV3Upsert(ctx *gin.Context) {
 		return
 	}
 
-	var githubUser *github.User
-	if body.GithubAccessToken != nil {
-		tokenSource := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: *body.GithubAccessToken})
-		timeoutContext, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		defer cancel()
-		githubClient := github.NewClient(oauth2.NewClient(timeoutContext, tokenSource))
-		githubUser, _, err = githubClient.Users.Get(timeoutContext, "")
-		cancel()
-		if err != nil {
-			errors.AbortRequest(ctx, fmt.Errorf("(%s) GitHub API responded to getting access token's identity with an error: %v", errors.BadRequest, err))
-			return
-		} else if githubUser == nil {
-			errors.AbortRequest(ctx, fmt.Errorf("(%s) GitHub API responded to getting access token's identity with an empty response but no error", errors.BadRequest))
-			return
-		} else if githubUser.ID == nil || githubUser.Login == nil {
-			errors.AbortRequest(ctx, fmt.Errorf("(%s) GitHub API responded to getting access token's identity without providing an ID and/or username", errors.InternalServerError))
-			return
-		}
-	}
-
 	callingUser, err := authentication.MustUseUser(ctx)
 	if err != nil {
 		return
 	}
 
-	callingUser, hasUpdates := processUserEdits(callingUser, githubUser, body.userDirectlyEditableFields)
+	callingUser, hasUpdates := processUserEdits(callingUser, body.userDirectlyEditableFields, body.GithubAccessToken)
 	if hasUpdates {
 		if err = db.Save(callingUser).Error; err != nil {
 			errors.AbortRequest(ctx, err)
@@ -84,72 +67,103 @@ func usersV3Upsert(ctx *gin.Context) {
 	}
 }
 
-func processUserEdits(callingUser *models.User, githubUser *github.User, directEdits userDirectlyEditableFields) (*models.User, bool) {
-	hasUpdates := false
+func processUserEdits(callingUser *models.User, directEdits userDirectlyEditableFields, userGithubToken *string) (resultingUser *models.User, hasUpdates bool) {
+	githubString := "github"
+	sherlockString := "sherlock"
+	slackString := "slack"
+	var githubID, githubUsername, githubName, slackID, slackUsername, slackName string
+	var wg sync.WaitGroup
+	timeoutContext, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
-	// If direct edits set NameInferredFromGithub and callingUser lacks it or has a different value, set it
-	if directEdits.NameInferredFromGithub != nil &&
-		(callingUser.NameInferredFromGithub == nil || *directEdits.NameInferredFromGithub != *callingUser.NameInferredFromGithub) {
-		callingUser.NameInferredFromGithub = directEdits.NameInferredFromGithub
+	if config.Config.Bool("github.behaviors.collectUserInfo.enable") && userGithubToken != nil {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			var err error
+			githubID, githubUsername, githubName, err = github.GetCurrentUser(timeoutContext, *userGithubToken)
+			if err != nil {
+				log.Warn().Err(err).Msgf("error using %s's github auth to collect user info", callingUser.Email)
+			}
+		}()
+	}
+
+	if config.Config.Bool("slack.behaviors.collectUserInfo.enable") {
+		emailDomains := config.Config.Strings("slack.behaviors.collectUserInfo.restrictToEmailDomains")
+		callingUserEmailParts := strings.Split(callingUser.Email, "@")
+		if len(emailDomains) == 0 || utils.Contains(emailDomains, callingUserEmailParts[len(callingUserEmailParts)-1]) {
+			wg.Add(1)
+			go func() {
+				defer wg.Done()
+				var err error
+				slackID, slackUsername, slackName, err = slack.GetUser(timeoutContext, callingUser.Email)
+				if err != nil {
+					log.Warn().Err(err).Msgf("error getting %s's slack info", callingUser.Email)
+				}
+			}()
+		}
+	}
+
+	wg.Wait()
+
+	// If nameFrom wasn't set but nameInferredFromGithub was, be compatible and convert it to nameFrom
+	if directEdits.NameFrom == nil && directEdits.NameInferredFromGithub != nil {
+		if *directEdits.NameInferredFromGithub {
+			directEdits.NameFrom = &githubString
+		} else {
+			directEdits.NameFrom = &sherlockString
+		}
+	}
+
+	// Set nameFrom if it was provided and is different from what we already have
+	if directEdits.NameFrom != nil && (callingUser.NameFrom == nil || *directEdits.NameFrom != *callingUser.NameFrom) {
+		callingUser.NameFrom = directEdits.NameFrom
 		hasUpdates = true
 	}
 
-	// If callingUser lacks NameInferredFromGithub or has it false, and direct edits set Name, and callingUser lacks it or has a different value, set it
-	if (callingUser.NameInferredFromGithub == nil || !*callingUser.NameInferredFromGithub) &&
-		directEdits.Name != nil &&
-		(callingUser.Name == nil || *directEdits.Name != *callingUser.Name) {
+	// Set name directly if we should, it was provided, and is different from what we already have
+	if (callingUser.NameFrom == nil || *callingUser.NameFrom == "sherlock") && directEdits.Name != nil && (callingUser.Name == nil || *directEdits.Name != *callingUser.Name) {
 		callingUser.Name = directEdits.Name
+		callingUser.NameFrom = &sherlockString
 		hasUpdates = true
-
-		// If callingUser lacks NameInferredFromGithub but we just set Name directly, set it to false
-		if callingUser.NameInferredFromGithub == nil {
-			falseValue := false
-			callingUser.NameInferredFromGithub = &falseValue
-		}
 	}
 
-	// If we have a githubUser:
-	if githubUser != nil {
+	// Set Slack ID if we got it and it is different from what we already have
+	if slackID != "" && (callingUser.SlackID == nil || slackID != *callingUser.SlackID) {
+		callingUser.SlackID = &slackID
+		hasUpdates = true
+	}
 
-		githubUserIdString := strconv.FormatInt(*githubUser.ID, 10)
+	// Set Slack username if we got it and it is different from what we already have
+	if slackUsername != "" && (callingUser.SlackUsername == nil || slackUsername != *callingUser.SlackUsername) {
+		callingUser.SlackUsername = &slackUsername
+		hasUpdates = true
+	}
 
-		// If callingUser lacks GitHub info, set it and log
-		if callingUser.GithubID == nil || callingUser.GithubUsername == nil {
-			callingUser.GithubID = &githubUserIdString
-			callingUser.GithubUsername = githubUser.Login
-			hasUpdates = true
-			log.Info().Msgf("GH   | first-time github account linking from %s to github account %s (ID: %s)", callingUser.Email, *githubUser.Login, githubUserIdString)
-		}
+	// Set name from Slack if we should, it was provided, and is different from what we already have
+	if (callingUser.NameFrom == nil || *callingUser.NameFrom == "slack") && slackName != "" && (callingUser.Name == nil || slackName != *callingUser.Name) {
+		callingUser.Name = &slackName
+		callingUser.NameFrom = &slackString
+		hasUpdates = true
+	}
 
-		// If callingUser has different IDed GitHub info stored, update it and log
-		if *callingUser.GithubID != githubUserIdString {
-			callingUser.GithubID = &githubUserIdString
-			callingUser.GithubUsername = githubUser.Login
-			hasUpdates = true
-			log.Info().Msgf("GH   | github account linking from %s changing from github account %s (ID: %s) to %s (ID: %s)", callingUser.Email, *callingUser.GithubUsername, *callingUser.GithubID, *githubUser.Login, githubUserIdString)
-		}
+	// Set Github ID if we got it and it is different from what we already have
+	if githubID != "" && (callingUser.GithubID == nil || githubID != *callingUser.GithubID) {
+		callingUser.GithubID = &githubID
+		hasUpdates = true
+	}
 
-		// If callingUser has same IDed GitHub info stored but new name, update it and log
-		if *callingUser.GithubID == githubUserIdString && *callingUser.GithubUsername != *githubUser.Login {
-			callingUser.GithubUsername = githubUser.Login
-			hasUpdates = true
-			log.Info().Msgf("GH   | github account linking from %s had new username for same github account (ID: %s), %s to %s", callingUser.Email, githubUserIdString, *callingUser.GithubUsername, *githubUser.Login)
-		}
+	// Set Github username if we got it and it is different from what we already have
+	if githubUsername != "" && (callingUser.GithubUsername == nil || githubUsername != *callingUser.GithubUsername) {
+		callingUser.GithubUsername = &githubUsername
+		hasUpdates = true
+	}
 
-		// If callingUser lacks NameInferredFromGithub, default it to whether or not the callingUser already has a name
-		if callingUser.NameInferredFromGithub == nil {
-			shouldInferFromGithub := callingUser.Name == nil
-			callingUser.NameInferredFromGithub = &shouldInferFromGithub
-			hasUpdates = true
-		}
-
-		// If githubUser has Name, and callingUser has true NameInferredFromGithub, and callingUser lacks Name or has a different value, set it
-		if githubUser.Name != nil &&
-			callingUser.NameInferredFromGithub != nil && *callingUser.NameInferredFromGithub &&
-			(callingUser.Name == nil || *githubUser.Name != *callingUser.Name) {
-			callingUser.Name = githubUser.Name
-			hasUpdates = true
-		}
+	// Set name from Github if we should, it was provided, and is different from what we already have
+	if (callingUser.NameFrom == nil || *callingUser.NameFrom == "github") && githubName != "" && (callingUser.Name == nil || githubName != *callingUser.Name) {
+		callingUser.Name = &githubName
+		callingUser.NameFrom = &githubString
+		hasUpdates = true
 	}
 	return callingUser, hasUpdates
 }

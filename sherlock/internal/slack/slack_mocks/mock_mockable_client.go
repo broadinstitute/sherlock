@@ -66,6 +66,61 @@ func (_c *MockMockableClient_AddReaction_Call) RunAndReturn(run func(string, sla
 	return _c
 }
 
+// GetUserByEmailContext provides a mock function with given fields: ctx, email
+func (_m *MockMockableClient) GetUserByEmailContext(ctx context.Context, email string) (*slack.User, error) {
+	ret := _m.Called(ctx, email)
+
+	var r0 *slack.User
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, string) (*slack.User, error)); ok {
+		return rf(ctx, email)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, string) *slack.User); ok {
+		r0 = rf(ctx, email)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*slack.User)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = rf(ctx, email)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// MockMockableClient_GetUserByEmailContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetUserByEmailContext'
+type MockMockableClient_GetUserByEmailContext_Call struct {
+	*mock.Call
+}
+
+// GetUserByEmailContext is a helper method to define mock.On call
+//   - ctx context.Context
+//   - email string
+func (_e *MockMockableClient_Expecter) GetUserByEmailContext(ctx interface{}, email interface{}) *MockMockableClient_GetUserByEmailContext_Call {
+	return &MockMockableClient_GetUserByEmailContext_Call{Call: _e.mock.On("GetUserByEmailContext", ctx, email)}
+}
+
+func (_c *MockMockableClient_GetUserByEmailContext_Call) Run(run func(ctx context.Context, email string)) *MockMockableClient_GetUserByEmailContext_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(context.Context), args[1].(string))
+	})
+	return _c
+}
+
+func (_c *MockMockableClient_GetUserByEmailContext_Call) Return(_a0 *slack.User, _a1 error) *MockMockableClient_GetUserByEmailContext_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *MockMockableClient_GetUserByEmailContext_Call) RunAndReturn(run func(context.Context, string) (*slack.User, error)) *MockMockableClient_GetUserByEmailContext_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // SendMessageContext provides a mock function with given fields: ctx, channelID, options
 func (_m *MockMockableClient) SendMessageContext(ctx context.Context, channelID string, options ...slack.MsgOption) (string, string, string, error) {
 	_va := make([]interface{}, len(options))

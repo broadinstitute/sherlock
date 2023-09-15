@@ -38,12 +38,16 @@ func GetCurrentUserForDB(db *gorm.DB) (*User, error) {
 // authentication and authorization.
 type User struct {
 	gorm.Model
-	Email                  string
-	GoogleID               string
-	GithubUsername         *string
-	GithubID               *string
-	Name                   *string
-	NameInferredFromGithub *bool
+	Email          string
+	GoogleID       string
+	GithubUsername *string
+	GithubID       *string
+	SlackUsername  *string
+	SlackID        *string
+
+	Name *string
+	// NameFrom must be either "sherlock", "github", or "slack"
+	NameFrom *string
 
 	// Via is ignored by Gorm and isn't stored in the database -- it should be set at the application layer
 	// when the User is changed for a given request to represent the previous User.
