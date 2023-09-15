@@ -61,6 +61,9 @@ type V2controllersCreatableChartRelease struct {
 	// helmfile ref
 	HelmfileRef *string `json:"helmfileRef,omitempty"`
 
+	// helmfile ref enabled
+	HelmfileRefEnabled *bool `json:"helmfileRefEnabled,omitempty"`
+
 	// included in bulk changesets
 	IncludedInBulkChangesets *bool `json:"includedInBulkChangesets,omitempty"`
 

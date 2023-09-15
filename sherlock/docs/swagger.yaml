@@ -501,6 +501,8 @@ definitions:
         type: string
       fromHelmfileRef:
         type: string
+      fromHelmfileRefEnabled:
+        type: boolean
       fromResolvedAt:
         format: date-time
         type: string
@@ -545,6 +547,8 @@ definitions:
         type: string
       toHelmfileRef:
         type: string
+      toHelmfileRefEnabled:
+        type: boolean
       toResolvedAt:
         format: date-time
         type: string
@@ -592,6 +596,8 @@ definitions:
         type: string
       toHelmfileRef:
         type: string
+      toHelmfileRefEnabled:
+        type: boolean
       useExactVersionsFromOtherChartRelease:
         type: string
       useOthersFirecloudDevelopRef:
@@ -745,6 +751,9 @@ definitions:
       helmfileRef:
         default: HEAD
         type: string
+      helmfileRefEnabled:
+        default: false
+        type: boolean
       id:
         type: integer
       includedInBulkChangesets:
@@ -1010,6 +1019,9 @@ definitions:
       helmfileRef:
         default: HEAD
         type: string
+      helmfileRefEnabled:
+        default: false
+        type: boolean
       includedInBulkChangesets:
         default: true
         type: boolean
@@ -3137,6 +3149,9 @@ paths:
       - in: query
         name: fromHelmfileRef
         type: string
+      - in: query
+        name: fromHelmfileRefEnabled
+        type: boolean
       - format: date-time
         in: query
         name: fromResolvedAt
@@ -3187,6 +3202,9 @@ paths:
       - in: query
         name: toHelmfileRef
         type: string
+      - in: query
+        name: toHelmfileRefEnabled
+        type: boolean
       - format: date-time
         in: query
         name: toResolvedAt
@@ -3357,6 +3375,10 @@ paths:
         in: query
         name: helmfileRef
         type: string
+      - default: false
+        in: query
+        name: helmfileRefEnabled
+        type: boolean
       - in: query
         name: id
         type: integer
