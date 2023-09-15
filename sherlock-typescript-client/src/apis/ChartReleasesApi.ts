@@ -55,6 +55,7 @@ export interface ApiV2ChartReleasesGetRequest {
     environment?: string;
     firecloudDevelopRef?: string;
     helmfileRef?: string;
+    helmfileRefEnabled?: boolean;
     id?: number;
     includedInBulkChangesets?: boolean;
     name?: string;
@@ -176,6 +177,10 @@ export class ChartReleasesApi extends runtime.BaseAPI {
 
         if (requestParameters.helmfileRef !== undefined) {
             queryParameters['helmfileRef'] = requestParameters.helmfileRef;
+        }
+
+        if (requestParameters.helmfileRefEnabled !== undefined) {
+            queryParameters['helmfileRefEnabled'] = requestParameters.helmfileRefEnabled;
         }
 
         if (requestParameters.id !== undefined) {

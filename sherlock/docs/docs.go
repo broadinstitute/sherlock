@@ -2149,6 +2149,11 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "boolean",
+                        "name": "fromHelmfileRefEnabled",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "format": "date-time",
                         "name": "fromResolvedAt",
@@ -2228,6 +2233,11 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "name": "toHelmfileRef",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "toHelmfileRefEnabled",
                         "in": "query"
                     },
                     {
@@ -2478,6 +2488,12 @@ const docTemplate = `{
                         "type": "string",
                         "default": "HEAD",
                         "name": "helmfileRef",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "default": false,
+                        "name": "helmfileRefEnabled",
                         "in": "query"
                     },
                     {
@@ -9518,6 +9534,9 @@ const docTemplate = `{
                 "fromHelmfileRef": {
                     "type": "string"
                 },
+                "fromHelmfileRefEnabled": {
+                    "type": "boolean"
+                },
                 "fromResolvedAt": {
                     "type": "string",
                     "format": "date-time"
@@ -9582,6 +9601,9 @@ const docTemplate = `{
                 },
                 "toHelmfileRef": {
                     "type": "string"
+                },
+                "toHelmfileRefEnabled": {
+                    "type": "boolean"
                 },
                 "toResolvedAt": {
                     "type": "string",
@@ -9652,6 +9674,9 @@ const docTemplate = `{
                 },
                 "toHelmfileRef": {
                     "type": "string"
+                },
+                "toHelmfileRefEnabled": {
+                    "type": "boolean"
                 },
                 "useExactVersionsFromOtherChartRelease": {
                     "type": "string"
@@ -9858,6 +9883,10 @@ const docTemplate = `{
                 "helmfileRef": {
                     "type": "string",
                     "default": "HEAD"
+                },
+                "helmfileRefEnabled": {
+                    "type": "boolean",
+                    "default": false
                 },
                 "id": {
                     "type": "integer"
@@ -10221,6 +10250,10 @@ const docTemplate = `{
                 "helmfileRef": {
                     "type": "string",
                     "default": "HEAD"
+                },
+                "helmfileRefEnabled": {
+                    "type": "boolean",
+                    "default": false
                 },
                 "includedInBulkChangesets": {
                     "type": "boolean",

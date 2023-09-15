@@ -45,6 +45,7 @@ export interface ApiV2ChangesetsGetRequest {
     fromChartVersionResolver?: string;
     fromFirecloudDevelopRef?: string;
     fromHelmfileRef?: string;
+    fromHelmfileRefEnabled?: boolean;
     fromResolvedAt?: Date;
     id?: number;
     plannedBy?: string;
@@ -61,6 +62,7 @@ export interface ApiV2ChangesetsGetRequest {
     toChartVersionResolver?: string;
     toFirecloudDevelopRef?: string;
     toHelmfileRef?: string;
+    toHelmfileRefEnabled?: boolean;
     toResolvedAt?: Date;
     updatedAt?: Date;
     limit?: number;
@@ -174,6 +176,10 @@ export class ChangesetsApi extends runtime.BaseAPI {
             queryParameters['fromHelmfileRef'] = requestParameters.fromHelmfileRef;
         }
 
+        if (requestParameters.fromHelmfileRefEnabled !== undefined) {
+            queryParameters['fromHelmfileRefEnabled'] = requestParameters.fromHelmfileRefEnabled;
+        }
+
         if (requestParameters.fromResolvedAt !== undefined) {
             queryParameters['fromResolvedAt'] = (requestParameters.fromResolvedAt as any).toISOString();
         }
@@ -236,6 +242,10 @@ export class ChangesetsApi extends runtime.BaseAPI {
 
         if (requestParameters.toHelmfileRef !== undefined) {
             queryParameters['toHelmfileRef'] = requestParameters.toHelmfileRef;
+        }
+
+        if (requestParameters.toHelmfileRefEnabled !== undefined) {
+            queryParameters['toHelmfileRefEnabled'] = requestParameters.toHelmfileRefEnabled;
         }
 
         if (requestParameters.toResolvedAt !== undefined) {

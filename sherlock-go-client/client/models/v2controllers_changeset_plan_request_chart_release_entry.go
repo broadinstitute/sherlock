@@ -50,6 +50,9 @@ type V2controllersChangesetPlanRequestChartReleaseEntry struct {
 	// to helmfile ref
 	ToHelmfileRef string `json:"toHelmfileRef,omitempty"`
 
+	// to helmfile ref enabled
+	ToHelmfileRefEnabled bool `json:"toHelmfileRefEnabled,omitempty"`
+
 	// use exact versions from other chart release
 	UseExactVersionsFromOtherChartRelease string `json:"useExactVersionsFromOtherChartRelease,omitempty"`
 

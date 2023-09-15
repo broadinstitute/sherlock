@@ -136,6 +136,9 @@ type GetAPIV2ChartReleasesParams struct {
 	// Default: "HEAD"
 	HelmfileRef *string
 
+	// HelmfileRefEnabled.
+	HelmfileRefEnabled *bool
+
 	// ID.
 	ID *int64
 
@@ -208,11 +211,14 @@ func (o *GetAPIV2ChartReleasesParams) SetDefaults() {
 	var (
 		helmfileRefDefault = string("HEAD")
 
+		helmfileRefEnabledDefault = bool(false)
+
 		includedInBulkChangesetsDefault = bool(true)
 	)
 
 	val := GetAPIV2ChartReleasesParams{
 		HelmfileRef:              &helmfileRefDefault,
+		HelmfileRefEnabled:       &helmfileRefEnabledDefault,
 		IncludedInBulkChangesets: &includedInBulkChangesetsDefault,
 	}
 
@@ -440,6 +446,17 @@ func (o *GetAPIV2ChartReleasesParams) WithHelmfileRef(helmfileRef *string) *GetA
 // SetHelmfileRef adds the helmfileRef to the get API v2 chart releases params
 func (o *GetAPIV2ChartReleasesParams) SetHelmfileRef(helmfileRef *string) {
 	o.HelmfileRef = helmfileRef
+}
+
+// WithHelmfileRefEnabled adds the helmfileRefEnabled to the get API v2 chart releases params
+func (o *GetAPIV2ChartReleasesParams) WithHelmfileRefEnabled(helmfileRefEnabled *bool) *GetAPIV2ChartReleasesParams {
+	o.SetHelmfileRefEnabled(helmfileRefEnabled)
+	return o
+}
+
+// SetHelmfileRefEnabled adds the helmfileRefEnabled to the get API v2 chart releases params
+func (o *GetAPIV2ChartReleasesParams) SetHelmfileRefEnabled(helmfileRefEnabled *bool) {
+	o.HelmfileRefEnabled = helmfileRefEnabled
 }
 
 // WithID adds the id to the get API v2 chart releases params
@@ -844,6 +861,23 @@ func (o *GetAPIV2ChartReleasesParams) WriteToRequest(r runtime.ClientRequest, re
 		if qHelmfileRef != "" {
 
 			if err := r.SetQueryParam("helmfileRef", qHelmfileRef); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.HelmfileRefEnabled != nil {
+
+		// query param helmfileRefEnabled
+		var qrHelmfileRefEnabled bool
+
+		if o.HelmfileRefEnabled != nil {
+			qrHelmfileRefEnabled = *o.HelmfileRefEnabled
+		}
+		qHelmfileRefEnabled := swag.FormatBool(qrHelmfileRefEnabled)
+		if qHelmfileRefEnabled != "" {
+
+			if err := r.SetQueryParam("helmfileRefEnabled", qHelmfileRefEnabled); err != nil {
 				return err
 			}
 		}

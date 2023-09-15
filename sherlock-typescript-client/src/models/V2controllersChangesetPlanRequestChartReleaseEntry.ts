@@ -87,6 +87,12 @@ export interface V2controllersChangesetPlanRequestChartReleaseEntry {
     toHelmfileRef?: string;
     /**
      * 
+     * @type {boolean}
+     * @memberof V2controllersChangesetPlanRequestChartReleaseEntry
+     */
+    toHelmfileRefEnabled?: boolean;
+    /**
+     * 
      * @type {string}
      * @memberof V2controllersChangesetPlanRequestChartReleaseEntry
      */
@@ -135,6 +141,7 @@ export function V2controllersChangesetPlanRequestChartReleaseEntryFromJSONTyped(
         'toChartVersionResolver': !exists(json, 'toChartVersionResolver') ? undefined : json['toChartVersionResolver'],
         'toFirecloudDevelopRef': !exists(json, 'toFirecloudDevelopRef') ? undefined : json['toFirecloudDevelopRef'],
         'toHelmfileRef': !exists(json, 'toHelmfileRef') ? undefined : json['toHelmfileRef'],
+        'toHelmfileRefEnabled': !exists(json, 'toHelmfileRefEnabled') ? undefined : json['toHelmfileRefEnabled'],
         'useExactVersionsFromOtherChartRelease': !exists(json, 'useExactVersionsFromOtherChartRelease') ? undefined : json['useExactVersionsFromOtherChartRelease'],
         'useOthersFirecloudDevelopRef': !exists(json, 'useOthersFirecloudDevelopRef') ? undefined : json['useOthersFirecloudDevelopRef'],
         'useOthersHelmfileRef': !exists(json, 'useOthersHelmfileRef') ? undefined : json['useOthersHelmfileRef'],
@@ -161,6 +168,7 @@ export function V2controllersChangesetPlanRequestChartReleaseEntryToJSON(value?:
         'toChartVersionResolver': value.toChartVersionResolver,
         'toFirecloudDevelopRef': value.toFirecloudDevelopRef,
         'toHelmfileRef': value.toHelmfileRef,
+        'toHelmfileRefEnabled': value.toHelmfileRefEnabled,
         'useExactVersionsFromOtherChartRelease': value.useExactVersionsFromOtherChartRelease,
         'useOthersFirecloudDevelopRef': value.useOthersFirecloudDevelopRef,
         'useOthersHelmfileRef': value.useOthersHelmfileRef,

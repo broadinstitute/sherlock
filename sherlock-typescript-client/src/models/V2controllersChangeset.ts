@@ -166,6 +166,12 @@ export interface V2controllersChangeset {
     fromHelmfileRef?: string;
     /**
      * 
+     * @type {boolean}
+     * @memberof V2controllersChangeset
+     */
+    fromHelmfileRefEnabled?: boolean;
+    /**
+     * 
      * @type {Date}
      * @memberof V2controllersChangeset
      */
@@ -280,6 +286,12 @@ export interface V2controllersChangeset {
     toHelmfileRef?: string;
     /**
      * 
+     * @type {boolean}
+     * @memberof V2controllersChangeset
+     */
+    toHelmfileRefEnabled?: boolean;
+    /**
+     * 
      * @type {Date}
      * @memberof V2controllersChangeset
      */
@@ -330,6 +342,7 @@ export function V2controllersChangesetFromJSONTyped(json: any, ignoreDiscriminat
         'fromChartVersionResolver': !exists(json, 'fromChartVersionResolver') ? undefined : json['fromChartVersionResolver'],
         'fromFirecloudDevelopRef': !exists(json, 'fromFirecloudDevelopRef') ? undefined : json['fromFirecloudDevelopRef'],
         'fromHelmfileRef': !exists(json, 'fromHelmfileRef') ? undefined : json['fromHelmfileRef'],
+        'fromHelmfileRefEnabled': !exists(json, 'fromHelmfileRefEnabled') ? undefined : json['fromHelmfileRefEnabled'],
         'fromResolvedAt': !exists(json, 'fromResolvedAt') ? undefined : (new Date(json['fromResolvedAt'])),
         'id': !exists(json, 'id') ? undefined : json['id'],
         'newAppVersions': !exists(json, 'newAppVersions') ? undefined : ((json['newAppVersions'] as Array<any>).map(V2controllersAppVersionFromJSON)),
@@ -349,6 +362,7 @@ export function V2controllersChangesetFromJSONTyped(json: any, ignoreDiscriminat
         'toChartVersionResolver': !exists(json, 'toChartVersionResolver') ? undefined : json['toChartVersionResolver'],
         'toFirecloudDevelopRef': !exists(json, 'toFirecloudDevelopRef') ? undefined : json['toFirecloudDevelopRef'],
         'toHelmfileRef': !exists(json, 'toHelmfileRef') ? undefined : json['toHelmfileRef'],
+        'toHelmfileRefEnabled': !exists(json, 'toHelmfileRefEnabled') ? undefined : json['toHelmfileRefEnabled'],
         'toResolvedAt': !exists(json, 'toResolvedAt') ? undefined : (new Date(json['toResolvedAt'])),
         'updatedAt': !exists(json, 'updatedAt') ? undefined : (new Date(json['updatedAt'])),
     };
@@ -382,6 +396,7 @@ export function V2controllersChangesetToJSON(value?: V2controllersChangeset | nu
         'fromChartVersionResolver': value.fromChartVersionResolver,
         'fromFirecloudDevelopRef': value.fromFirecloudDevelopRef,
         'fromHelmfileRef': value.fromHelmfileRef,
+        'fromHelmfileRefEnabled': value.fromHelmfileRefEnabled,
         'fromResolvedAt': value.fromResolvedAt === undefined ? undefined : (value.fromResolvedAt.toISOString()),
         'id': value.id,
         'newAppVersions': value.newAppVersions === undefined ? undefined : ((value.newAppVersions as Array<any>).map(V2controllersAppVersionToJSON)),
@@ -401,6 +416,7 @@ export function V2controllersChangesetToJSON(value?: V2controllersChangeset | nu
         'toChartVersionResolver': value.toChartVersionResolver,
         'toFirecloudDevelopRef': value.toFirecloudDevelopRef,
         'toHelmfileRef': value.toHelmfileRef,
+        'toHelmfileRefEnabled': value.toHelmfileRefEnabled,
         'toResolvedAt': value.toResolvedAt === undefined ? undefined : (value.toResolvedAt.toISOString()),
         'updatedAt': value.updatedAt === undefined ? undefined : (value.updatedAt.toISOString()),
     };

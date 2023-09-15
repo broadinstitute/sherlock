@@ -79,6 +79,9 @@ type V2controllersChangeset struct {
 	// from helmfile ref
 	FromHelmfileRef string `json:"fromHelmfileRef,omitempty"`
 
+	// from helmfile ref enabled
+	FromHelmfileRefEnabled bool `json:"fromHelmfileRefEnabled,omitempty"`
+
 	// from resolved at
 	// Format: date-time
 	FromResolvedAt strfmt.DateTime `json:"fromResolvedAt,omitempty"`
@@ -137,6 +140,9 @@ type V2controllersChangeset struct {
 
 	// to helmfile ref
 	ToHelmfileRef string `json:"toHelmfileRef,omitempty"`
+
+	// to helmfile ref enabled
+	ToHelmfileRefEnabled bool `json:"toHelmfileRefEnabled,omitempty"`
 
 	// to resolved at
 	// Format: date-time

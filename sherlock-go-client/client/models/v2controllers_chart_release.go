@@ -92,6 +92,9 @@ type V2controllersChartRelease struct {
 	// helmfile ref
 	HelmfileRef *string `json:"helmfileRef,omitempty"`
 
+	// helmfile ref enabled
+	HelmfileRefEnabled *bool `json:"helmfileRefEnabled,omitempty"`
+
 	// id
 	ID int64 `json:"id,omitempty"`
 

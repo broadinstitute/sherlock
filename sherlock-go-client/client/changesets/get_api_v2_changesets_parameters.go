@@ -112,6 +112,9 @@ type GetAPIV2ChangesetsParams struct {
 	// FromHelmfileRef.
 	FromHelmfileRef *string
 
+	// FromHelmfileRefEnabled.
+	FromHelmfileRefEnabled *bool
+
 	// FromResolvedAt.
 	//
 	// Format: date-time
@@ -169,6 +172,9 @@ type GetAPIV2ChangesetsParams struct {
 
 	// ToHelmfileRef.
 	ToHelmfileRef *string
+
+	// ToHelmfileRefEnabled.
+	ToHelmfileRefEnabled *bool
 
 	// ToResolvedAt.
 	//
@@ -409,6 +415,17 @@ func (o *GetAPIV2ChangesetsParams) SetFromHelmfileRef(fromHelmfileRef *string) {
 	o.FromHelmfileRef = fromHelmfileRef
 }
 
+// WithFromHelmfileRefEnabled adds the fromHelmfileRefEnabled to the get API v2 changesets params
+func (o *GetAPIV2ChangesetsParams) WithFromHelmfileRefEnabled(fromHelmfileRefEnabled *bool) *GetAPIV2ChangesetsParams {
+	o.SetFromHelmfileRefEnabled(fromHelmfileRefEnabled)
+	return o
+}
+
+// SetFromHelmfileRefEnabled adds the fromHelmfileRefEnabled to the get API v2 changesets params
+func (o *GetAPIV2ChangesetsParams) SetFromHelmfileRefEnabled(fromHelmfileRefEnabled *bool) {
+	o.FromHelmfileRefEnabled = fromHelmfileRefEnabled
+}
+
 // WithFromResolvedAt adds the fromResolvedAt to the get API v2 changesets params
 func (o *GetAPIV2ChangesetsParams) WithFromResolvedAt(fromResolvedAt *strfmt.DateTime) *GetAPIV2ChangesetsParams {
 	o.SetFromResolvedAt(fromResolvedAt)
@@ -594,6 +611,17 @@ func (o *GetAPIV2ChangesetsParams) WithToHelmfileRef(toHelmfileRef *string) *Get
 // SetToHelmfileRef adds the toHelmfileRef to the get API v2 changesets params
 func (o *GetAPIV2ChangesetsParams) SetToHelmfileRef(toHelmfileRef *string) {
 	o.ToHelmfileRef = toHelmfileRef
+}
+
+// WithToHelmfileRefEnabled adds the toHelmfileRefEnabled to the get API v2 changesets params
+func (o *GetAPIV2ChangesetsParams) WithToHelmfileRefEnabled(toHelmfileRefEnabled *bool) *GetAPIV2ChangesetsParams {
+	o.SetToHelmfileRefEnabled(toHelmfileRefEnabled)
+	return o
+}
+
+// SetToHelmfileRefEnabled adds the toHelmfileRefEnabled to the get API v2 changesets params
+func (o *GetAPIV2ChangesetsParams) SetToHelmfileRefEnabled(toHelmfileRefEnabled *bool) {
+	o.ToHelmfileRefEnabled = toHelmfileRefEnabled
 }
 
 // WithToResolvedAt adds the toResolvedAt to the get API v2 changesets params
@@ -898,6 +926,23 @@ func (o *GetAPIV2ChangesetsParams) WriteToRequest(r runtime.ClientRequest, reg s
 		}
 	}
 
+	if o.FromHelmfileRefEnabled != nil {
+
+		// query param fromHelmfileRefEnabled
+		var qrFromHelmfileRefEnabled bool
+
+		if o.FromHelmfileRefEnabled != nil {
+			qrFromHelmfileRefEnabled = *o.FromHelmfileRefEnabled
+		}
+		qFromHelmfileRefEnabled := swag.FormatBool(qrFromHelmfileRefEnabled)
+		if qFromHelmfileRefEnabled != "" {
+
+			if err := r.SetQueryParam("fromHelmfileRefEnabled", qFromHelmfileRefEnabled); err != nil {
+				return err
+			}
+		}
+	}
+
 	if o.FromResolvedAt != nil {
 
 		// query param fromResolvedAt
@@ -1182,6 +1227,23 @@ func (o *GetAPIV2ChangesetsParams) WriteToRequest(r runtime.ClientRequest, reg s
 		if qToHelmfileRef != "" {
 
 			if err := r.SetQueryParam("toHelmfileRef", qToHelmfileRef); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.ToHelmfileRefEnabled != nil {
+
+		// query param toHelmfileRefEnabled
+		var qrToHelmfileRefEnabled bool
+
+		if o.ToHelmfileRefEnabled != nil {
+			qrToHelmfileRefEnabled = *o.ToHelmfileRefEnabled
+		}
+		qToHelmfileRefEnabled := swag.FormatBool(qrToHelmfileRefEnabled)
+		if qToHelmfileRefEnabled != "" {
+
+			if err := r.SetQueryParam("toHelmfileRefEnabled", qToHelmfileRefEnabled); err != nil {
 				return err
 			}
 		}

@@ -102,6 +102,12 @@ export interface V2controllersCreatableChartRelease {
      * @type {boolean}
      * @memberof V2controllersCreatableChartRelease
      */
+    helmfileRefEnabled?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof V2controllersCreatableChartRelease
+     */
     includedInBulkChangesets?: boolean;
     /**
      * When creating, will be calculated if left empty
@@ -197,6 +203,7 @@ export function V2controllersCreatableChartReleaseFromJSONTyped(json: any, ignor
         'environment': !exists(json, 'environment') ? undefined : json['environment'],
         'firecloudDevelopRef': !exists(json, 'firecloudDevelopRef') ? undefined : json['firecloudDevelopRef'],
         'helmfileRef': !exists(json, 'helmfileRef') ? undefined : json['helmfileRef'],
+        'helmfileRefEnabled': !exists(json, 'helmfileRefEnabled') ? undefined : json['helmfileRefEnabled'],
         'includedInBulkChangesets': !exists(json, 'includedInBulkChangesets') ? undefined : json['includedInBulkChangesets'],
         'name': !exists(json, 'name') ? undefined : json['name'],
         'namespace': !exists(json, 'namespace') ? undefined : json['namespace'],
@@ -229,6 +236,7 @@ export function V2controllersCreatableChartReleaseToJSON(value?: V2controllersCr
         'environment': value.environment,
         'firecloudDevelopRef': value.firecloudDevelopRef,
         'helmfileRef': value.helmfileRef,
+        'helmfileRefEnabled': value.helmfileRefEnabled,
         'includedInBulkChangesets': value.includedInBulkChangesets,
         'name': value.name,
         'namespace': value.namespace,
