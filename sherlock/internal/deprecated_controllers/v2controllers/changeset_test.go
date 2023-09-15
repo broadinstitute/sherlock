@@ -350,7 +350,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 	// If we set a helmfile ref, that won't get copied unless we explicitly ask for it
 	_, err = suite.ChangesetController.PlanAndApply(ChangesetPlanRequest{
 		ChartReleases: []ChangesetPlanRequestChartReleaseEntry{
-			{CreatableChangeset: CreatableChangeset{ChartRelease: "terra-dev/sam", ToHelmfileRef: testutils.PointerTo("a-branch")}},
+			{CreatableChangeset: CreatableChangeset{ChartRelease: "terra-dev/sam", ToHelmfileRef: testutils.PointerTo("a-branch"), ToHelmfileRefEnabled: testutils.PointerTo(true)}},
 		},
 	}, generateUser(suite.T(), suite.db, true))
 	assert.NoError(suite.T(), err)
@@ -385,6 +385,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 	samInProd, err = suite.ChartReleaseController.Get("terra-prod/sam")
 	assert.NoError(suite.T(), err)
 	assert.Equal(suite.T(), "a-branch", *samInProd.HelmfileRef)
+	assert.True(suite.T(), *samInProd.HelmfileRefEnabled)
 
 	// Plans can't get created if there's chart mismatches:
 	_, err = suite.ChangesetController.Plan(ChangesetPlanRequest{

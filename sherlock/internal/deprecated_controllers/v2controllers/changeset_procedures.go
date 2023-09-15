@@ -64,6 +64,7 @@ func (c ChangesetController) changesetPlanRequestToModelChangesets(request Chang
 			fullChangesetRequest.ToChartVersionExact = otherChartRelease.ChartVersionExact
 			if chartReleaseRequestEntry.UseOthersHelmfileRef != nil && *chartReleaseRequestEntry.UseOthersHelmfileRef {
 				fullChangesetRequest.ToHelmfileRef = otherChartRelease.HelmfileRef
+				fullChangesetRequest.ToHelmfileRefEnabled = otherChartRelease.HelmfileRefEnabled
 			}
 			if chartReleaseRequestEntry.UseOthersFirecloudDevelopRef != nil && *chartReleaseRequestEntry.UseOthersFirecloudDevelopRef {
 				fullChangesetRequest.ToFirecloudDevelopRef = otherChartRelease.FirecloudDevelopRef
@@ -167,6 +168,7 @@ func (c ChangesetController) changesetPlanRequestToModelChangesets(request Chang
 				generatedChangeset.ToChartVersionExact = otherChartRelease.ChartVersionExact
 				if environmentRequestEntry.UseOthersHelmfileRef != nil && *environmentRequestEntry.UseOthersHelmfileRef {
 					generatedChangeset.ToHelmfileRef = otherChartRelease.HelmfileRef
+					generatedChangeset.ToHelmfileRefEnabled = otherChartRelease.HelmfileRefEnabled
 				}
 				if environmentRequestEntry.UseOthersFirecloudDevelopRef != nil && *environmentRequestEntry.UseOthersFirecloudDevelopRef {
 					generatedChangeset.ToFirecloudDevelopRef = otherChartRelease.FirecloudDevelopRef

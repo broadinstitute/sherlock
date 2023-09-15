@@ -25,5 +25,6 @@ type ChartReleaseVersion struct {
 	ChartVersionID                   *uint
 
 	HelmfileRef         *string
+	HelmfileRefEnabled  *bool
 	FirecloudDevelopRef *string
 }

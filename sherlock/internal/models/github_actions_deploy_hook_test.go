@@ -32,7 +32,7 @@ func (s *modelSuite) TestGithubActionsDeployHookChartRelease() {
 	s.NoError(s.DB.Create(&chart).Error)
 	chartRelease := ChartRelease{Name: "leonardo-dev", ChartID: chart.ID, EnvironmentID: &environment.ID, ClusterID: &cluster.ID, Namespace: "terra-dev",
 		ChartReleaseVersion: ChartReleaseVersion{AppVersionResolver: testutils.PointerTo("exact"), AppVersionExact: testutils.PointerTo("v1.2.3"),
-			ChartVersionResolver: testutils.PointerTo("exact"), ChartVersionExact: testutils.PointerTo("v2.3.4"), HelmfileRef: testutils.PointerTo("HEAD")}}
+			ChartVersionResolver: testutils.PointerTo("exact"), ChartVersionExact: testutils.PointerTo("v2.3.4"), HelmfileRef: testutils.PointerTo("HEAD"), HelmfileRefEnabled: testutils.PointerTo(false)}}
 	s.NoError(s.DB.Create(&chartRelease).Error)
 
 	hook := GithubActionsDeployHook{

@@ -41,6 +41,7 @@ type CreatableChartRelease struct {
 	ChartVersionExact              *string `json:"chartVersionExact" form:"chartVersionExact"`
 	ChartVersionFollowChartRelease string  `json:"chartVersionFollowChartRelease" form:"chartVersionFollowChartRelease"`
 	HelmfileRef                    *string `json:"helmfileRef" form:"helmfileRef" default:"HEAD"`
+	HelmfileRefEnabled             *bool   `json:"helmfileRefEnabled" form:"helmfileRefEnabled" default:"false"`
 	FirecloudDevelopRef            *string `json:"firecloudDevelopRef" form:"firecloudDevelopRef"`
 	EditableChartRelease
 }
@@ -143,6 +144,7 @@ func (c ChartRelease) toModel(storeSet *v2models.StoreSet) (v2models.ChartReleas
 			ChartVersionFollowChartReleaseID: chartVersionFollowChartReleaseID,
 			ChartVersionID:                   chartVersionID,
 			HelmfileRef:                      c.HelmfileRef,
+			HelmfileRefEnabled:               c.HelmfileRefEnabled,
 			FirecloudDevelopRef:              c.FirecloudDevelopRef,
 		},
 		Subdomain:               c.Subdomain,
@@ -268,6 +270,7 @@ func modelChartReleaseToChartRelease(model *v2models.ChartRelease) *ChartRelease
 			ChartVersionExact:              model.ChartVersionExact,
 			ChartVersionFollowChartRelease: chartVersionFollowChartRelease,
 			HelmfileRef:                    model.HelmfileRef,
+			HelmfileRefEnabled:             model.HelmfileRefEnabled,
 			FirecloudDevelopRef:            model.FirecloudDevelopRef,
 			EditableChartRelease: EditableChartRelease{
 				Subdomain:               model.Subdomain,
@@ -360,6 +363,7 @@ func setChartReleaseDynamicDefaults(chartRelease *CreatableChartRelease, stores 
 			}
 		}
 	}
+
 	return nil
 }
 

@@ -3,6 +3,7 @@ package v2models
 import (
 	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
+	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"time"
 
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
@@ -32,6 +33,7 @@ type ChartReleaseVersion struct {
 	ChartVersionID                   *uint
 
 	HelmfileRef         *string
+	HelmfileRefEnabled  *bool
 	FirecloudDevelopRef *string
 }
 
@@ -165,6 +167,16 @@ func (chartReleaseVersion *ChartReleaseVersion) resolve(db *gorm.DB, chartQuery 
 			}
 		}
 	}
+	if chartReleaseVersion.HelmfileRefEnabled == nil || !*chartReleaseVersion.HelmfileRefEnabled || chartReleaseVersion.HelmfileRef == nil {
+		if config.Config.Bool("model.changesets.helmfileRefDefaultToChartReleaseTags") && chartReleaseVersion.ChartVersion != nil {
+			// eg. "charts/sam-0.102.0"
+			tag := "charts/" + chart.Name + "-" + chartReleaseVersion.ChartVersion.ChartVersion
+			chartReleaseVersion.HelmfileRef = &tag
+		} else {
+			head := "HEAD"
+			chartReleaseVersion.HelmfileRef = &head
+		}
+	}
 	now := time.Now()
 	chartReleaseVersion.ResolvedAt = &now
 	return nil
@@ -270,8 +282,10 @@ func (chartReleaseVersion *ChartReleaseVersion) validate() error {
 		}
 	}
 
-	if chartReleaseVersion.HelmfileRef == nil || *chartReleaseVersion.HelmfileRef == "" {
-		return fmt.Errorf("a %T must have a terra-helmfile git reference", chartReleaseVersion)
+	if chartReleaseVersion.HelmfileRefEnabled != nil && *chartReleaseVersion.HelmfileRefEnabled {
+		if chartReleaseVersion.HelmfileRef == nil || *chartReleaseVersion.HelmfileRef == "" {
+			return fmt.Errorf("a %T must have a terra-helmfile git reference if enabled", chartReleaseVersion)
+		}
 	}
 
 	return nil
@@ -311,6 +325,9 @@ func (chartReleaseVersion *ChartReleaseVersion) equalTo(other ChartReleaseVersio
 		((chartReleaseVersion.HelmfileRef == nil && other.HelmfileRef == nil) ||
 			(chartReleaseVersion.HelmfileRef != nil && other.HelmfileRef != nil &&
 				*chartReleaseVersion.HelmfileRef == *other.HelmfileRef)) &&
+		((chartReleaseVersion.HelmfileRefEnabled == nil && other.HelmfileRefEnabled == nil) ||
+			(chartReleaseVersion.HelmfileRefEnabled != nil && other.HelmfileRefEnabled != nil &&
+				*chartReleaseVersion.HelmfileRefEnabled == *other.HelmfileRefEnabled)) &&
 		((chartReleaseVersion.FirecloudDevelopRef == nil && other.FirecloudDevelopRef == nil) ||
 			(chartReleaseVersion.FirecloudDevelopRef != nil && other.FirecloudDevelopRef != nil &&
 				*chartReleaseVersion.FirecloudDevelopRef == *other.FirecloudDevelopRef))

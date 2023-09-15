@@ -180,6 +180,7 @@ func (s *handlerSuite) TestCiRunsV3UpsertIdentifiers() {
 			ChartVersionResolver: testutils.PointerTo("exact"),
 			ChartVersionExact:    testutils.PointerTo("chart version blah"),
 			HelmfileRef:          testutils.PointerTo("HEAD"),
+			HelmfileRefEnabled:   testutils.PointerTo(false),
 			FirecloudDevelopRef:  testutils.PointerTo("dev"),
 		},
 	}, user)
@@ -197,6 +198,7 @@ func (s *handlerSuite) TestCiRunsV3UpsertIdentifiers() {
 			ChartVersionResolver: testutils.PointerTo("exact"),
 			ChartVersionExact:    testutils.PointerTo("chart version blah"),
 			HelmfileRef:          testutils.PointerTo("HEAD"),
+			HelmfileRefEnabled:   testutils.PointerTo(false),
 			FirecloudDevelopRef:  testutils.PointerTo("dev"),
 		},
 	}, user)
@@ -683,6 +685,7 @@ func (s *handlerSuite) TestCiRunsV3Upsert_slackNotifications() {
 				ChartVersionResolver: testutils.PointerTo("exact"),
 				ChartVersionExact:    testutils.PointerTo("chart version blah"),
 				HelmfileRef:          testutils.PointerTo("HEAD"),
+				HelmfileRefEnabled:   testutils.PointerTo(false),
 				FirecloudDevelopRef:  testutils.PointerTo("dev"),
 			},
 		}, user)
@@ -770,6 +773,7 @@ func (s *handlerSuite) TestCiRunsV3Upsert_makeSlackMessageTExt() {
 			ChartVersionResolver: testutils.PointerTo("exact"),
 			ChartVersionExact:    testutils.PointerTo("chart version blah"),
 			HelmfileRef:          testutils.PointerTo("HEAD"),
+			HelmfileRefEnabled:   testutils.PointerTo(false),
 			FirecloudDevelopRef:  testutils.PointerTo("dev"),
 		},
 	}, user)

@@ -32,6 +32,7 @@ type Changeset struct {
 	FromChartVersionFollowChartRelease string     `json:"fromChartVersionFollowChartRelease,omitempty" form:"fromChartVersionFollowChartRelease"`
 	FromChartVersionReference          string     `json:"fromChartVersionReference,omitempty" form:"fromChartVersionReference"`
 	FromHelmfileRef                    *string    `json:"fromHelmfileRef,omitempty" form:"fromHelmfileRef"`
+	FromHelmfileRefEnabled             *bool      `json:"fromHelmfileRefEnabled,omitempty" form:"fromHelmfileRefEnabled"`
 	FromFirecloudDevelopRef            *string    `json:"fromFirecloudDevelopRef,omitempty" form:"fromFirecloudDevelopRef"`
 
 	ToResolvedAt            *time.Time `json:"toResolvedAt,omitempty" from:"toResolvedAt"  format:"date-time"`
@@ -56,6 +57,7 @@ type CreatableChangeset struct {
 	ToChartVersionExact              *string `json:"toChartVersionExact,omitempty" form:"toChartVersionExact"`
 	ToChartVersionFollowChartRelease string  `json:"toChartVersionFollowChartRelease,omitempty" form:"toChartVersionFollowChartRelease"`
 	ToHelmfileRef                    *string `json:"toHelmfileRef,omitempty" form:"toHelmfileRef"`
+	ToHelmfileRefEnabled             *bool   `json:"toHelmfileRefEnabled,omitempty" form:"toHelmfileRefEnabled"`
 	ToFirecloudDevelopRef            *string `json:"toFirecloudDevelopRef,omitempty" form:"toFirecloudDevelopRef"`
 
 	ChartRelease string `json:"chartRelease" form:"chartRelease"`
@@ -179,6 +181,7 @@ func (c Changeset) toModel(storeSet *v2models.StoreSet) (v2models.Changeset, err
 			ChartVersionFollowChartReleaseID: fromChartVersionFollowChartReleaseID,
 			ChartVersionID:                   fromChartVersionID,
 			HelmfileRef:                      c.FromHelmfileRef,
+			HelmfileRefEnabled:               c.FromHelmfileRefEnabled,
 			FirecloudDevelopRef:              c.FromFirecloudDevelopRef,
 		},
 		To: v2models.ChartReleaseVersion{
@@ -194,6 +197,7 @@ func (c Changeset) toModel(storeSet *v2models.StoreSet) (v2models.Changeset, err
 			ChartVersionFollowChartReleaseID: toChartVersionFollowChartReleaseID,
 			ChartVersionID:                   toChartVersionID,
 			HelmfileRef:                      c.ToHelmfileRef,
+			HelmfileRefEnabled:               c.ToHelmfileRefEnabled,
 			FirecloudDevelopRef:              c.ToFirecloudDevelopRef,
 		},
 		AppliedAt:    c.AppliedAt,
@@ -234,6 +238,7 @@ func (c CreatableChangeset) toReadable(storeSet *v2models.StoreSet) (Changeset, 
 		changeset.FromChartVersionReference = strconv.FormatUint(uint64(*chartRelease.ChartVersionID), 10)
 	}
 	changeset.FromHelmfileRef = chartRelease.HelmfileRef
+	changeset.FromHelmfileRefEnabled = chartRelease.HelmfileRefEnabled
 	changeset.FromFirecloudDevelopRef = chartRelease.FirecloudDevelopRef
 
 	if changeset.ToAppVersionResolver == nil {
@@ -262,6 +267,9 @@ func (c CreatableChangeset) toReadable(storeSet *v2models.StoreSet) (Changeset, 
 	}
 	if changeset.ToHelmfileRef == nil {
 		changeset.ToHelmfileRef = changeset.FromHelmfileRef
+	}
+	if changeset.ToHelmfileRefEnabled == nil {
+		changeset.ToHelmfileRefEnabled = changeset.FromHelmfileRefEnabled
 	}
 	if changeset.ToFirecloudDevelopRef == nil {
 		changeset.ToFirecloudDevelopRef = changeset.FromFirecloudDevelopRef
@@ -405,6 +413,7 @@ func modelChangesetToChangeset(model *v2models.Changeset) *Changeset {
 		FromChartVersionFollowChartRelease: fromChartVersionFollowChartRelease,
 		FromChartVersionReference:          fromChartVersionReference,
 		FromHelmfileRef:                    model.From.HelmfileRef,
+		FromHelmfileRefEnabled:             model.From.HelmfileRefEnabled,
 		FromFirecloudDevelopRef:            model.From.FirecloudDevelopRef,
 		ToResolvedAt:                       model.To.ResolvedAt,
 		ToAppVersionReference:              toAppVersionReference,
@@ -419,6 +428,7 @@ func modelChangesetToChangeset(model *v2models.Changeset) *Changeset {
 			ToChartVersionExact:              model.To.ChartVersionExact,
 			ToChartVersionFollowChartRelease: toChartVersionFollowChartRelease,
 			ToHelmfileRef:                    model.To.HelmfileRef,
+			ToHelmfileRefEnabled:             model.To.HelmfileRefEnabled,
 			ToFirecloudDevelopRef:            model.To.FirecloudDevelopRef,
 			ChartRelease:                     chartReleaseName,
 			EditableChangeset:                EditableChangeset{},
