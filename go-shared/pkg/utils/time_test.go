@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"github.com/broadinstitute/sherlock/go-shared/pkg/testutils"
 	"reflect"
 	"testing"
 	"time"
@@ -30,17 +29,17 @@ func TestISO8601PtrToTime(t *testing.T) {
 		},
 		{
 			name: "empty",
-			args: args{s: utils.PointerTo("")},
+			args: args{s: PointerTo("")},
 			want: nil,
 		},
 		{
 			name: "8601",
-			args: args{s: utils.PointerTo(example)},
+			args: args{s: PointerTo(example)},
 			want: &parsedExample,
 		},
 		{
 			name:    "invalid",
-			args:    args{s: utils.PointerTo("abc")},
+			args:    args{s: PointerTo("abc")},
 			want:    nil,
 			wantErr: true,
 		},
