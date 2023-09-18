@@ -13,7 +13,6 @@ require (
 	github.com/golang-migrate/migrate/v4 v4.16.2
 	github.com/google/go-github/v50 v50.2.0
 	github.com/google/uuid v1.3.1
-	github.com/jackc/pgerrcode v0.0.0-20220416144525-469b46aa5efa
 	github.com/jackc/pgx/v5 v5.4.3
 	github.com/knadh/koanf v1.5.0
 	github.com/rs/zerolog v1.30.0
@@ -25,7 +24,7 @@ require (
 	go.opencensus.io v0.24.0
 	golang.org/x/net v0.15.0
 	golang.org/x/oauth2 v0.12.0
-	google.golang.org/api v0.140.0
+	google.golang.org/api v0.141.0
 	gorm.io/datatypes v1.2.0
 	gorm.io/driver/postgres v1.5.2
 	gorm.io/gorm v1.25.4
