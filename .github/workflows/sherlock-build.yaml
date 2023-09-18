@@ -143,7 +143,7 @@ jobs:
           npm run build
 
       - name: Assemble Docker tags
-        uses: docker/metadata-action@v4
+        uses: docker/metadata-action@v5
         id: meta
         with:
           # server image for backwards compatibility with old build behavior
