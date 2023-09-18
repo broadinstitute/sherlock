@@ -53,6 +53,92 @@ definitions:
       status:
         type: string
     type: object
+  sherlock.ChartV3:
+    properties:
+      appImageGitMainBranch:
+        type: string
+      appImageGitRepo:
+        type: string
+      chartExposesEndpoint:
+        default: false
+        description: Indicates if the default subdomain, protocol, and port fields
+          are relevant for this chart
+        type: boolean
+      chartRepo:
+        default: terra-helm
+        type: string
+      ciIdentifier:
+        $ref: '#/definitions/sherlock.CiIdentifierV3'
+      createdAt:
+        format: date-time
+        type: string
+      defaultPort:
+        default: 443
+        type: integer
+      defaultProtocol:
+        default: https
+        type: string
+      defaultSubdomain:
+        description: When creating, will default to the name of the chart
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      legacyConfigsEnabled:
+        default: false
+        description: Indicates whether a chart requires config rendering from firecloud-develop
+        type: boolean
+      name:
+        description: Required when creating
+        type: string
+      pactParticipant:
+        default: false
+        type: boolean
+      playbookURL:
+        type: string
+      updatedAt:
+        format: date-time
+        type: string
+    type: object
+  sherlock.ChartV3Create:
+    properties:
+      appImageGitMainBranch:
+        type: string
+      appImageGitRepo:
+        type: string
+      chartExposesEndpoint:
+        default: false
+        description: Indicates if the default subdomain, protocol, and port fields
+          are relevant for this chart
+        type: boolean
+      chartRepo:
+        default: terra-helm
+        type: string
+      defaultPort:
+        default: 443
+        type: integer
+      defaultProtocol:
+        default: https
+        type: string
+      defaultSubdomain:
+        description: When creating, will default to the name of the chart
+        type: string
+      description:
+        type: string
+      legacyConfigsEnabled:
+        default: false
+        description: Indicates whether a chart requires config rendering from firecloud-develop
+        type: boolean
+      name:
+        description: Required when creating
+        type: string
+      pactParticipant:
+        default: false
+        type: boolean
+      playbookURL:
+        type: string
+    type: object
   sherlock.CiIdentifierV3:
     properties:
       ciRuns:
@@ -1719,6 +1805,96 @@ info:
   title: Sherlock
   version: development
 paths:
+  /api/charts/v3:
+    post:
+      consumes:
+      - application/json
+      description: Create a Chart.
+      parameters:
+      - description: The Chart to create
+        in: body
+        name: chart
+        required: true
+        schema:
+          $ref: '#/definitions/sherlock.ChartV3Create'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/sherlock.ChartV3'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Create a Chart
+      tags:
+      - Charts
+  /api/charts/v3/{selector}:
+    get:
+      description: Get an individual Chart.
+      parameters:
+      - description: The selector of the Chart, which can be either a numeric ID or
+          the name.
+        in: path
+        name: selector
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/sherlock.ChartV3'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Get an individual Chart
+      tags:
+      - Charts
   /api/ci-identifiers/v3:
     get:
       description: |-

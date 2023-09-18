@@ -2,7 +2,7 @@ package v2controllers
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/go-shared/pkg/testutils"
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_db"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
@@ -48,30 +48,30 @@ var (
 	datarepoDevDatabaseInstance = CreatableDatabaseInstance{
 		ChartRelease: datarepoDevChartRelease.Name,
 		EditableDatabaseInstance: EditableDatabaseInstance{
-			Platform:      testutils.PointerTo("google"),
-			GoogleProject: testutils.PointerTo("broad-datarepo-dev"),
-			InstanceName:  testutils.PointerTo("datarepo-abcdef"),
+			Platform:      utils.PointerTo("google"),
+			GoogleProject: utils.PointerTo("broad-datarepo-dev"),
+			InstanceName:  utils.PointerTo("datarepo-abcdef"),
 		},
 	}
 	datarepoProdDatabaseInstance = CreatableDatabaseInstance{
 		ChartRelease: datarepoProdChartRelease.Name,
 		EditableDatabaseInstance: EditableDatabaseInstance{
-			Platform:        testutils.PointerTo("google"),
-			GoogleProject:   testutils.PointerTo("broad-datarepo-prod"),
-			InstanceName:    testutils.PointerTo("datarepo-abcdef"),
-			DefaultDatabase: testutils.PointerTo("datarepo-2"),
+			Platform:        utils.PointerTo("google"),
+			GoogleProject:   utils.PointerTo("broad-datarepo-prod"),
+			InstanceName:    utils.PointerTo("datarepo-abcdef"),
+			DefaultDatabase: utils.PointerTo("datarepo-2"),
 		},
 	}
 	datarepoSwatomationDatabaseInstance = CreatableDatabaseInstance{
 		ChartRelease: fmt.Sprintf("%s-%s", datarepoChart.Name, swatomationEnvironment.Name),
 		EditableDatabaseInstance: EditableDatabaseInstance{
-			Platform: testutils.PointerTo("kubernetes"),
+			Platform: utils.PointerTo("kubernetes"),
 		},
 	}
 	datarepoDynamicSwatomationDatabaseInstance = CreatableDatabaseInstance{
 		ChartRelease: fmt.Sprintf("%s-%s", datarepoChart.Name, dynamicSwatomationEnvironment.Name),
 		EditableDatabaseInstance: EditableDatabaseInstance{
-			Platform: testutils.PointerTo("kubernetes"),
+			Platform: utils.PointerTo("kubernetes"),
 		},
 	}
 
@@ -124,8 +124,8 @@ func (suite *databaseInstanceControllerSuite) TestDatabaseInstanceCreate() {
 			instance, created, err := suite.DatabaseInstanceController.Create(CreatableDatabaseInstance{
 				ChartRelease: fmt.Sprintf("%s-%s", yaleChart.Name, terraDevEnvironment.Name),
 				EditableDatabaseInstance: EditableDatabaseInstance{
-					Platform:     testutils.PointerTo("azure"),
-					InstanceName: testutils.PointerTo("ghi"),
+					Platform:     utils.PointerTo("azure"),
+					InstanceName: utils.PointerTo("ghi"),
 				},
 			}, generateUser(suite.T(), suite.db, false))
 			assert.NoError(suite.T(), err)
@@ -162,9 +162,9 @@ func (suite *databaseInstanceControllerSuite) TestDatabaseInstanceCreate() {
 		suite.Run("no associations", func() {
 			_, created, err := suite.DatabaseInstanceController.Create(CreatableDatabaseInstance{
 				EditableDatabaseInstance: EditableDatabaseInstance{
-					Platform:      testutils.PointerTo("google"),
-					GoogleProject: testutils.PointerTo("broad-datarepo-dev"),
-					InstanceName:  testutils.PointerTo("datarepo-abcdef"),
+					Platform:      utils.PointerTo("google"),
+					GoogleProject: utils.PointerTo("broad-datarepo-dev"),
+					InstanceName:  utils.PointerTo("datarepo-abcdef"),
 				},
 			}, generateUser(suite.T(), suite.db, false))
 			assert.ErrorContains(suite.T(), err, errors.BadRequest)
@@ -174,7 +174,7 @@ func (suite *databaseInstanceControllerSuite) TestDatabaseInstanceCreate() {
 			_, created, err := suite.DatabaseInstanceController.Create(CreatableDatabaseInstance{
 				ChartRelease: datarepoDevChartRelease.Name,
 				EditableDatabaseInstance: EditableDatabaseInstance{
-					Platform: testutils.PointerTo("google"),
+					Platform: utils.PointerTo("google"),
 				},
 			}, generateUser(suite.T(), suite.db, false))
 			assert.ErrorContains(suite.T(), err, errors.BadRequest)
@@ -244,7 +244,7 @@ func (suite *chartReleaseControllerSuite) TestDatabaseInstanceListAllMatching() 
 		matching, err := suite.DatabaseInstanceController.ListAllMatching(
 			DatabaseInstance{CreatableDatabaseInstance: CreatableDatabaseInstance{
 				EditableDatabaseInstance: EditableDatabaseInstance{
-					Platform: testutils.PointerTo("google"),
+					Platform: utils.PointerTo("google"),
 				},
 			}}, 0)
 		assert.NoError(suite.T(), err)
@@ -257,7 +257,7 @@ func (suite *chartReleaseControllerSuite) TestDatabaseInstanceListAllMatching() 
 		matching, err := suite.DatabaseInstanceController.ListAllMatching(
 			DatabaseInstance{CreatableDatabaseInstance: CreatableDatabaseInstance{
 				EditableDatabaseInstance: EditableDatabaseInstance{
-					InstanceName: testutils.PointerTo("blah"),
+					InstanceName: utils.PointerTo("blah"),
 				},
 			}}, 0)
 		assert.NoError(suite.T(), err)
@@ -334,7 +334,7 @@ func (suite *databaseInstanceControllerSuite) TestDatabaseInstanceEdit() {
 		before, err := suite.DatabaseInstanceController.Get(fmt.Sprintf("chart-release/%s", datarepoDevDatabaseInstance.ChartRelease))
 		assert.NoError(suite.T(), err)
 		assert.Equal(suite.T(), datarepoDevDatabaseInstance.InstanceName, before.InstanceName)
-		newInstanceName := testutils.PointerTo("new")
+		newInstanceName := utils.PointerTo("new")
 		edited, err := suite.DatabaseInstanceController.Edit(fmt.Sprintf("chart-release/%s", datarepoDevDatabaseInstance.ChartRelease), EditableDatabaseInstance{
 			InstanceName: newInstanceName,
 		}, generateUser(suite.T(), suite.db, false))
@@ -354,7 +354,7 @@ func (suite *databaseInstanceControllerSuite) TestDatabaseInstanceEdit() {
 		suite.seedChartReleases(suite.T(), suite.db)
 		suite.seedDatabaseInstances(suite.T(), suite.db)
 
-		newInstanceName := testutils.PointerTo("new")
+		newInstanceName := utils.PointerTo("new")
 		suite.Run("unsuccessfully if not suitable", func() {
 			_, err := suite.DatabaseInstanceController.Edit(fmt.Sprintf("chart-release/%s", datarepoProdDatabaseInstance.ChartRelease), EditableDatabaseInstance{
 				InstanceName: newInstanceName,

@@ -2,7 +2,6 @@ package sherlock
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/go-shared/pkg/testutils"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deployhooks"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_controllers/v2controllers"
@@ -54,7 +53,7 @@ func (s *handlerSuite) TestCiRunsV3Upsert() {
 				GithubActionsRunID:         1,
 				GithubActionsAttemptNumber: 1,
 				GithubActionsWorkflowPath:  "workflow",
-				Status:                     testutils.PointerTo("in_progress"),
+				Status:                     utils.PointerTo("in_progress"),
 			},
 		}),
 		&got2)
@@ -89,7 +88,7 @@ func (s *handlerSuite) TestCiRunsV3UpsertIdentifiers() {
 
 	chart, created, err := v2models.InternalChartStore.Create(s.DB, v2models.Chart{
 		Name:      "leonardo",
-		ChartRepo: testutils.PointerTo("terra-helm"),
+		ChartRepo: utils.PointerTo("terra-helm"),
 	}, user)
 	s.NoError(err)
 	s.True(created)
@@ -130,11 +129,11 @@ func (s *handlerSuite) TestCiRunsV3UpsertIdentifiers() {
 		Name:                "terra-dev",
 		Provider:            "google",
 		GoogleProject:       "broad-dsde-dev",
-		Base:                testutils.PointerTo("live"),
-		Address:             testutils.PointerTo("0.0.0.0"),
-		RequiresSuitability: testutils.PointerTo(false),
+		Base:                utils.PointerTo("live"),
+		Address:             utils.PointerTo("0.0.0.0"),
+		RequiresSuitability: utils.PointerTo(false),
 		Location:            "us-central1-a",
-		HelmfileRef:         testutils.PointerTo("HEAD"),
+		HelmfileRef:         utils.PointerTo("HEAD"),
 	}, user)
 	s.NoError(err)
 	s.True(created)
@@ -146,10 +145,10 @@ func (s *handlerSuite) TestCiRunsV3UpsertIdentifiers() {
 		DefaultClusterID:           &cluster.ID,
 		DefaultNamespace:           "terra-dev",
 		OwnerID:                    &user.ID,
-		RequiresSuitability:        testutils.PointerTo(false),
-		HelmfileRef:                testutils.PointerTo("HEAD"),
-		DefaultFirecloudDevelopRef: testutils.PointerTo("dev"),
-		PreventDeletion:            testutils.PointerTo(false),
+		RequiresSuitability:        utils.PointerTo(false),
+		HelmfileRef:                utils.PointerTo("HEAD"),
+		DefaultFirecloudDevelopRef: utils.PointerTo("dev"),
+		PreventDeletion:            utils.PointerTo(false),
 	}, user)
 	s.NoError(err)
 	s.True(created)
@@ -161,10 +160,10 @@ func (s *handlerSuite) TestCiRunsV3UpsertIdentifiers() {
 		DefaultClusterID:           &cluster.ID,
 		DefaultNamespace:           "terra-bee-template",
 		OwnerID:                    &user.ID,
-		RequiresSuitability:        testutils.PointerTo(false),
-		HelmfileRef:                testutils.PointerTo("HEAD"),
-		DefaultFirecloudDevelopRef: testutils.PointerTo("dev"),
-		PreventDeletion:            testutils.PointerTo(false),
+		RequiresSuitability:        utils.PointerTo(false),
+		HelmfileRef:                utils.PointerTo("HEAD"),
+		DefaultFirecloudDevelopRef: utils.PointerTo("dev"),
+		PreventDeletion:            utils.PointerTo(false),
 	}, user)
 	s.NoError(err)
 	s.True(created)
@@ -175,13 +174,13 @@ func (s *handlerSuite) TestCiRunsV3UpsertIdentifiers() {
 		EnvironmentID: &environment.ID,
 		Namespace:     environment.DefaultNamespace,
 		ChartReleaseVersion: v2models.ChartReleaseVersion{
-			AppVersionResolver:   testutils.PointerTo("exact"),
-			AppVersionExact:      testutils.PointerTo("app version blah"),
-			ChartVersionResolver: testutils.PointerTo("exact"),
-			ChartVersionExact:    testutils.PointerTo("chart version blah"),
-			HelmfileRef:          testutils.PointerTo("HEAD"),
-			HelmfileRefEnabled:   testutils.PointerTo(false),
-			FirecloudDevelopRef:  testutils.PointerTo("dev"),
+			AppVersionResolver:   utils.PointerTo("exact"),
+			AppVersionExact:      utils.PointerTo("app version blah"),
+			ChartVersionResolver: utils.PointerTo("exact"),
+			ChartVersionExact:    utils.PointerTo("chart version blah"),
+			HelmfileRef:          utils.PointerTo("HEAD"),
+			HelmfileRefEnabled:   utils.PointerTo(false),
+			FirecloudDevelopRef:  utils.PointerTo("dev"),
 		},
 	}, user)
 	s.NoError(err)
@@ -193,13 +192,13 @@ func (s *handlerSuite) TestCiRunsV3UpsertIdentifiers() {
 		EnvironmentID: &templateEnvironment.ID,
 		Namespace:     templateEnvironment.DefaultNamespace,
 		ChartReleaseVersion: v2models.ChartReleaseVersion{
-			AppVersionResolver:   testutils.PointerTo("exact"),
-			AppVersionExact:      testutils.PointerTo("app version blah"),
-			ChartVersionResolver: testutils.PointerTo("exact"),
-			ChartVersionExact:    testutils.PointerTo("chart version blah"),
-			HelmfileRef:          testutils.PointerTo("HEAD"),
-			HelmfileRefEnabled:   testutils.PointerTo(false),
-			FirecloudDevelopRef:  testutils.PointerTo("dev"),
+			AppVersionResolver:   utils.PointerTo("exact"),
+			AppVersionExact:      utils.PointerTo("app version blah"),
+			ChartVersionResolver: utils.PointerTo("exact"),
+			ChartVersionExact:    utils.PointerTo("chart version blah"),
+			HelmfileRef:          utils.PointerTo("HEAD"),
+			HelmfileRefEnabled:   utils.PointerTo(false),
+			FirecloudDevelopRef:  utils.PointerTo("dev"),
 		},
 	}, user)
 	s.NoError(err)
@@ -484,8 +483,8 @@ func (s *handlerSuite) TestCiRunsV3UpsertIdentifiers() {
 						GithubActionsRunID:         1,
 						GithubActionsAttemptNumber: 1,
 						GithubActionsWorkflowPath:  ".github/workflows/sync-release.yaml",
-						TerminalAt:                 testutils.PointerTo(time.Now()),
-						Status:                     testutils.PointerTo("status"),
+						TerminalAt:                 utils.PointerTo(time.Now()),
+						Status:                     utils.PointerTo("status"),
 					},
 				}),
 				&got)
@@ -500,7 +499,7 @@ func (s *handlerSuite) TestCiRunsV3Upsert_identifiersInvalid() {
 
 	_, created, err := v2models.InternalChartStore.Create(s.DB, v2models.Chart{
 		Name:      "leonardo",
-		ChartRepo: testutils.PointerTo("terra-helm"),
+		ChartRepo: utils.PointerTo("terra-helm"),
 	}, user)
 	s.NoError(err)
 	s.True(created)
@@ -528,7 +527,7 @@ func (s *handlerSuite) TestCiRunsV3Upsert_identifiersInvalidIgnore() {
 
 	chart, created, err := v2models.InternalChartStore.Create(s.DB, v2models.Chart{
 		Name:      "leonardo",
-		ChartRepo: testutils.PointerTo("terra-helm"),
+		ChartRepo: utils.PointerTo("terra-helm"),
 	}, user)
 	s.NoError(err)
 	s.True(created)
@@ -593,9 +592,9 @@ func (s *handlerSuite) TestCiRunsV3Upsert_slackNotifications() {
 						GithubActionsRunID:             1,
 						GithubActionsAttemptNumber:     1,
 						GithubActionsWorkflowPath:      "workflow",
-						StartedAt:                      testutils.PointerTo(time.Now().Add(-time.Minute)),
-						TerminalAt:                     testutils.PointerTo(time.Now()),
-						Status:                         testutils.PointerTo("failure"),
+						StartedAt:                      utils.PointerTo(time.Now().Add(-time.Minute)),
+						TerminalAt:                     utils.PointerTo(time.Now()),
+						Status:                         utils.PointerTo("failure"),
 						NotifySlackChannelsUponSuccess: []string{"#my-success-channel"},
 						NotifySlackChannelsUponFailure: []string{"#my-failure-channel"},
 					},
@@ -623,9 +622,9 @@ func (s *handlerSuite) TestCiRunsV3Upsert_slackNotifications() {
 						GithubActionsRunID:             1,
 						GithubActionsAttemptNumber:     2,
 						GithubActionsWorkflowPath:      "workflow",
-						StartedAt:                      testutils.PointerTo(time.Now().Add(-time.Minute)),
-						TerminalAt:                     testutils.PointerTo(time.Now()),
-						Status:                         testutils.PointerTo("success"),
+						StartedAt:                      utils.PointerTo(time.Now().Add(-time.Minute)),
+						TerminalAt:                     utils.PointerTo(time.Now()),
+						Status:                         utils.PointerTo("success"),
 						NotifySlackChannelsUponSuccess: []string{"#my-success-channel"},
 						NotifySlackChannelsUponFailure: []string{"#my-failure-channel"},
 					},
@@ -642,7 +641,7 @@ func (s *handlerSuite) TestCiRunsV3Upsert_slackNotifications() {
 
 		chart, created, err := v2models.InternalChartStore.Create(s.DB, v2models.Chart{
 			Name:      "leonardo",
-			ChartRepo: testutils.PointerTo("terra-helm"),
+			ChartRepo: utils.PointerTo("terra-helm"),
 		}, user)
 		s.NoError(err)
 		s.True(created)
@@ -650,11 +649,11 @@ func (s *handlerSuite) TestCiRunsV3Upsert_slackNotifications() {
 			Name:                "terra-dev",
 			Provider:            "google",
 			GoogleProject:       "broad-dsde-dev",
-			Base:                testutils.PointerTo("live"),
-			Address:             testutils.PointerTo("0.0.0.0"),
-			RequiresSuitability: testutils.PointerTo(false),
+			Base:                utils.PointerTo("live"),
+			Address:             utils.PointerTo("0.0.0.0"),
+			RequiresSuitability: utils.PointerTo(false),
 			Location:            "us-central1-a",
-			HelmfileRef:         testutils.PointerTo("HEAD"),
+			HelmfileRef:         utils.PointerTo("HEAD"),
 		}, user)
 		s.NoError(err)
 		s.True(created)
@@ -666,10 +665,10 @@ func (s *handlerSuite) TestCiRunsV3Upsert_slackNotifications() {
 			DefaultClusterID:           &cluster.ID,
 			DefaultNamespace:           "terra-dev",
 			OwnerID:                    &user.ID,
-			RequiresSuitability:        testutils.PointerTo(false),
-			HelmfileRef:                testutils.PointerTo("HEAD"),
-			DefaultFirecloudDevelopRef: testutils.PointerTo("dev"),
-			PreventDeletion:            testutils.PointerTo(false),
+			RequiresSuitability:        utils.PointerTo(false),
+			HelmfileRef:                utils.PointerTo("HEAD"),
+			DefaultFirecloudDevelopRef: utils.PointerTo("dev"),
+			PreventDeletion:            utils.PointerTo(false),
 		}, user)
 		s.NoError(err)
 		s.True(created)
@@ -680,13 +679,13 @@ func (s *handlerSuite) TestCiRunsV3Upsert_slackNotifications() {
 			EnvironmentID: &environment.ID,
 			Namespace:     environment.DefaultNamespace,
 			ChartReleaseVersion: v2models.ChartReleaseVersion{
-				AppVersionResolver:   testutils.PointerTo("exact"),
-				AppVersionExact:      testutils.PointerTo("app version blah"),
-				ChartVersionResolver: testutils.PointerTo("exact"),
-				ChartVersionExact:    testutils.PointerTo("chart version blah"),
-				HelmfileRef:          testutils.PointerTo("HEAD"),
-				HelmfileRefEnabled:   testutils.PointerTo(false),
-				FirecloudDevelopRef:  testutils.PointerTo("dev"),
+				AppVersionResolver:   utils.PointerTo("exact"),
+				AppVersionExact:      utils.PointerTo("app version blah"),
+				ChartVersionResolver: utils.PointerTo("exact"),
+				ChartVersionExact:    utils.PointerTo("chart version blah"),
+				HelmfileRef:          utils.PointerTo("HEAD"),
+				HelmfileRefEnabled:   utils.PointerTo(false),
+				FirecloudDevelopRef:  utils.PointerTo("dev"),
 			},
 		}, user)
 		s.NoError(err)
@@ -708,9 +707,9 @@ func (s *handlerSuite) TestCiRunsV3Upsert_slackNotifications() {
 						GithubActionsRunID:             1,
 						GithubActionsAttemptNumber:     3,
 						GithubActionsWorkflowPath:      "workflow",
-						StartedAt:                      testutils.PointerTo(time.Now().Add(-time.Minute)),
-						TerminalAt:                     testutils.PointerTo(time.Now()),
-						Status:                         testutils.PointerTo("success"),
+						StartedAt:                      utils.PointerTo(time.Now().Add(-time.Minute)),
+						TerminalAt:                     utils.PointerTo(time.Now()),
+						Status:                         utils.PointerTo("success"),
 						NotifySlackChannelsUponSuccess: []string{"#my-success-channel"},
 						NotifySlackChannelsUponFailure: []string{"#my-failure-channel"},
 					},
@@ -730,7 +729,7 @@ func (s *handlerSuite) TestCiRunsV3Upsert_makeSlackMessageTExt() {
 
 	chart, created, err := v2models.InternalChartStore.Create(s.DB, v2models.Chart{
 		Name:      "leonardo",
-		ChartRepo: testutils.PointerTo("terra-helm"),
+		ChartRepo: utils.PointerTo("terra-helm"),
 	}, user)
 	s.NoError(err)
 	s.True(created)
@@ -738,11 +737,11 @@ func (s *handlerSuite) TestCiRunsV3Upsert_makeSlackMessageTExt() {
 		Name:                "terra-dev",
 		Provider:            "google",
 		GoogleProject:       "broad-dsde-dev",
-		Base:                testutils.PointerTo("live"),
-		Address:             testutils.PointerTo("0.0.0.0"),
-		RequiresSuitability: testutils.PointerTo(false),
+		Base:                utils.PointerTo("live"),
+		Address:             utils.PointerTo("0.0.0.0"),
+		RequiresSuitability: utils.PointerTo(false),
 		Location:            "us-central1-a",
-		HelmfileRef:         testutils.PointerTo("HEAD"),
+		HelmfileRef:         utils.PointerTo("HEAD"),
 	}, user)
 	s.NoError(err)
 	s.True(created)
@@ -754,10 +753,10 @@ func (s *handlerSuite) TestCiRunsV3Upsert_makeSlackMessageTExt() {
 		DefaultClusterID:           &cluster.ID,
 		DefaultNamespace:           "terra-dev",
 		OwnerID:                    &user.ID,
-		RequiresSuitability:        testutils.PointerTo(false),
-		HelmfileRef:                testutils.PointerTo("HEAD"),
-		DefaultFirecloudDevelopRef: testutils.PointerTo("dev"),
-		PreventDeletion:            testutils.PointerTo(false),
+		RequiresSuitability:        utils.PointerTo(false),
+		HelmfileRef:                utils.PointerTo("HEAD"),
+		DefaultFirecloudDevelopRef: utils.PointerTo("dev"),
+		PreventDeletion:            utils.PointerTo(false),
 	}, user)
 	s.NoError(err)
 	s.True(created)
@@ -768,13 +767,13 @@ func (s *handlerSuite) TestCiRunsV3Upsert_makeSlackMessageTExt() {
 		EnvironmentID: &environment.ID,
 		Namespace:     environment.DefaultNamespace,
 		ChartReleaseVersion: v2models.ChartReleaseVersion{
-			AppVersionResolver:   testutils.PointerTo("exact"),
-			AppVersionExact:      testutils.PointerTo("app version blah"),
-			ChartVersionResolver: testutils.PointerTo("exact"),
-			ChartVersionExact:    testutils.PointerTo("chart version blah"),
-			HelmfileRef:          testutils.PointerTo("HEAD"),
-			HelmfileRefEnabled:   testutils.PointerTo(false),
-			FirecloudDevelopRef:  testutils.PointerTo("dev"),
+			AppVersionResolver:   utils.PointerTo("exact"),
+			AppVersionExact:      utils.PointerTo("app version blah"),
+			ChartVersionResolver: utils.PointerTo("exact"),
+			ChartVersionExact:    utils.PointerTo("chart version blah"),
+			HelmfileRef:          utils.PointerTo("HEAD"),
+			HelmfileRefEnabled:   utils.PointerTo(false),
+			FirecloudDevelopRef:  utils.PointerTo("dev"),
 		},
 	}, user)
 	s.NoError(err)
@@ -788,9 +787,9 @@ func (s *handlerSuite) TestCiRunsV3Upsert_makeSlackMessageTExt() {
 			GithubActionsRunID:         1,
 			GithubActionsAttemptNumber: 3,
 			GithubActionsWorkflowPath:  "workflow",
-			StartedAt:                  testutils.PointerTo(time.Now().Add(-time.Minute)),
-			TerminalAt:                 testutils.PointerTo(time.Now()),
-			Status:                     testutils.PointerTo("success"),
+			StartedAt:                  utils.PointerTo(time.Now().Add(-time.Minute)),
+			TerminalAt:                 utils.PointerTo(time.Now()),
+			Status:                     utils.PointerTo("success"),
 			RelatedResources: []models.CiIdentifier{
 				{ResourceType: "chart-release", ResourceID: chartRelease.ID},
 				{ResourceType: "environment", ResourceID: environment.ID},
@@ -804,9 +803,9 @@ func (s *handlerSuite) TestCiRunsV3Upsert_makeSlackMessageTExt() {
 			GithubActionsRunID:         1,
 			GithubActionsAttemptNumber: 3,
 			GithubActionsWorkflowPath:  "workflow",
-			StartedAt:                  testutils.PointerTo(time.Now().Add(-time.Minute)),
-			TerminalAt:                 testutils.PointerTo(time.Now()),
-			Status:                     testutils.PointerTo("success"),
+			StartedAt:                  utils.PointerTo(time.Now().Add(-time.Minute)),
+			TerminalAt:                 utils.PointerTo(time.Now()),
+			Status:                     utils.PointerTo("success"),
 			RelatedResources: []models.CiIdentifier{
 				{ResourceType: "environment", ResourceID: environment.ID},
 			},

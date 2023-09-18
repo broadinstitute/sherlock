@@ -2,6 +2,7 @@ package v2models
 
 import (
 	"github.com/broadinstitute/sherlock/go-shared/pkg/testutils"
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"gorm.io/gorm"
 	"reflect"
 	"testing"
@@ -218,7 +219,7 @@ func Test_rejectDuplicateAppVersion(t *testing.T) {
 		{
 			name: "only existing has parent",
 			args: args{
-				existing: &AppVersion{ParentAppVersionID: testutils.PointerTo[uint](123)},
+				existing: &AppVersion{ParentAppVersionID: utils.PointerTo[uint](123)},
 				new:      &AppVersion{},
 			},
 			wantErr: true,
@@ -227,15 +228,15 @@ func Test_rejectDuplicateAppVersion(t *testing.T) {
 			name: "only new has parent",
 			args: args{
 				existing: &AppVersion{},
-				new:      &AppVersion{ParentAppVersionID: testutils.PointerTo[uint](456)},
+				new:      &AppVersion{ParentAppVersionID: utils.PointerTo[uint](456)},
 			},
 			wantErr: true,
 		},
 		{
 			name: "mismatch parent",
 			args: args{
-				existing: &AppVersion{ParentAppVersionID: testutils.PointerTo[uint](123)},
-				new:      &AppVersion{ParentAppVersionID: testutils.PointerTo[uint](456)},
+				existing: &AppVersion{ParentAppVersionID: utils.PointerTo[uint](123)},
+				new:      &AppVersion{ParentAppVersionID: utils.PointerTo[uint](456)},
 			},
 			wantErr: true,
 		},

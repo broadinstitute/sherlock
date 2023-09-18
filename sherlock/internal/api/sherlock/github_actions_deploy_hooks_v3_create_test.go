@@ -1,7 +1,7 @@
 package sherlock
 
 import (
-	"github.com/broadinstitute/sherlock/go-shared/pkg/testutils"
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/gin-gonic/gin"
@@ -25,13 +25,13 @@ func (s *handlerSuite) TestGithubActionsDeployHooksV3Create_notFoundBody() {
 	code := s.HandleRequest(
 		s.NewRequest("POST", "/api/deploy-hooks/github-actions/v3", GithubActionsDeployHookV3Create{
 			DeployHookTriggerConfigV3: DeployHookTriggerConfigV3{
-				OnEnvironment: testutils.PointerTo("foo"),
+				OnEnvironment: utils.PointerTo("foo"),
 			},
 			GithubActionsDeployHookFields: GithubActionsDeployHookFields{
-				GithubActionsOwner:        testutils.PointerTo("owner"),
-				GithubActionsRepo:         testutils.PointerTo("repo"),
-				GithubActionsWorkflowPath: testutils.PointerTo("path"),
-				GithubActionsDefaultRef:   testutils.PointerTo("head"),
+				GithubActionsOwner:        utils.PointerTo("owner"),
+				GithubActionsRepo:         utils.PointerTo("repo"),
+				GithubActionsWorkflowPath: utils.PointerTo("path"),
+				GithubActionsDefaultRef:   utils.PointerTo("head"),
 			},
 		}),
 		&got)
@@ -45,11 +45,11 @@ func (s *handlerSuite) TestGithubActionsDeployHooksV3Create_sqlValidation() {
 		Name:                "terra-dev",
 		Provider:            "google",
 		GoogleProject:       "broad-dsde-dev",
-		Base:                testutils.PointerTo("live"),
-		Address:             testutils.PointerTo("0.0.0.0"),
-		RequiresSuitability: testutils.PointerTo(false),
+		Base:                utils.PointerTo("live"),
+		Address:             utils.PointerTo("0.0.0.0"),
+		RequiresSuitability: utils.PointerTo(false),
 		Location:            "us-central1-a",
-		HelmfileRef:         testutils.PointerTo("HEAD"),
+		HelmfileRef:         utils.PointerTo("HEAD"),
 	}, user)
 	s.NoError(err)
 	s.True(created)
@@ -61,10 +61,10 @@ func (s *handlerSuite) TestGithubActionsDeployHooksV3Create_sqlValidation() {
 		DefaultClusterID:           &cluster.ID,
 		DefaultNamespace:           "terra-dev",
 		OwnerID:                    &user.ID,
-		RequiresSuitability:        testutils.PointerTo(false),
-		HelmfileRef:                testutils.PointerTo("HEAD"),
-		DefaultFirecloudDevelopRef: testutils.PointerTo("dev"),
-		PreventDeletion:            testutils.PointerTo(false),
+		RequiresSuitability:        utils.PointerTo(false),
+		HelmfileRef:                utils.PointerTo("HEAD"),
+		DefaultFirecloudDevelopRef: utils.PointerTo("dev"),
+		PreventDeletion:            utils.PointerTo(false),
 	}, user)
 	s.NoError(err)
 	s.True(created)
@@ -76,9 +76,9 @@ func (s *handlerSuite) TestGithubActionsDeployHooksV3Create_sqlValidation() {
 				OnEnvironment: &environment.Name,
 			},
 			GithubActionsDeployHookFields: GithubActionsDeployHookFields{
-				GithubActionsRepo:         testutils.PointerTo("repo"),
-				GithubActionsWorkflowPath: testutils.PointerTo("path"),
-				GithubActionsDefaultRef:   testutils.PointerTo("head"),
+				GithubActionsRepo:         utils.PointerTo("repo"),
+				GithubActionsWorkflowPath: utils.PointerTo("path"),
+				GithubActionsDefaultRef:   utils.PointerTo("head"),
 			},
 		}),
 		&got)
@@ -93,11 +93,11 @@ func (s *handlerSuite) TestGithubActionsDeployHooksV3Create_forbidden() {
 		Name:                "terra-dev",
 		Provider:            "google",
 		GoogleProject:       "broad-dsde-dev",
-		Base:                testutils.PointerTo("live"),
-		Address:             testutils.PointerTo("0.0.0.0"),
-		RequiresSuitability: testutils.PointerTo(false),
+		Base:                utils.PointerTo("live"),
+		Address:             utils.PointerTo("0.0.0.0"),
+		RequiresSuitability: utils.PointerTo(false),
 		Location:            "us-central1-a",
-		HelmfileRef:         testutils.PointerTo("HEAD"),
+		HelmfileRef:         utils.PointerTo("HEAD"),
 	}, user)
 	s.NoError(err)
 	s.True(created)
@@ -109,10 +109,10 @@ func (s *handlerSuite) TestGithubActionsDeployHooksV3Create_forbidden() {
 		DefaultClusterID:           &cluster.ID,
 		DefaultNamespace:           "terra-dev",
 		OwnerID:                    &user.ID,
-		RequiresSuitability:        testutils.PointerTo(true), // <- requires suitability
-		HelmfileRef:                testutils.PointerTo("HEAD"),
-		DefaultFirecloudDevelopRef: testutils.PointerTo("dev"),
-		PreventDeletion:            testutils.PointerTo(false),
+		RequiresSuitability:        utils.PointerTo(true), // <- requires suitability
+		HelmfileRef:                utils.PointerTo("HEAD"),
+		DefaultFirecloudDevelopRef: utils.PointerTo("dev"),
+		PreventDeletion:            utils.PointerTo(false),
 	}, user)
 	s.NoError(err)
 	s.True(created)
@@ -124,10 +124,10 @@ func (s *handlerSuite) TestGithubActionsDeployHooksV3Create_forbidden() {
 				OnEnvironment: &environment.Name,
 			},
 			GithubActionsDeployHookFields: GithubActionsDeployHookFields{
-				GithubActionsOwner:        testutils.PointerTo("owner"),
-				GithubActionsRepo:         testutils.PointerTo("repo"),
-				GithubActionsWorkflowPath: testutils.PointerTo("path"),
-				GithubActionsDefaultRef:   testutils.PointerTo("head"),
+				GithubActionsOwner:        utils.PointerTo("owner"),
+				GithubActionsRepo:         utils.PointerTo("repo"),
+				GithubActionsWorkflowPath: utils.PointerTo("path"),
+				GithubActionsDefaultRef:   utils.PointerTo("head"),
 			},
 		}),
 		&got)
@@ -141,11 +141,11 @@ func (s *handlerSuite) TestGithubActionsDeployHooksV3Create() {
 		Name:                "terra-dev",
 		Provider:            "google",
 		GoogleProject:       "broad-dsde-dev",
-		Base:                testutils.PointerTo("live"),
-		Address:             testutils.PointerTo("0.0.0.0"),
-		RequiresSuitability: testutils.PointerTo(false),
+		Base:                utils.PointerTo("live"),
+		Address:             utils.PointerTo("0.0.0.0"),
+		RequiresSuitability: utils.PointerTo(false),
 		Location:            "us-central1-a",
-		HelmfileRef:         testutils.PointerTo("HEAD"),
+		HelmfileRef:         utils.PointerTo("HEAD"),
 	}, user)
 	s.NoError(err)
 	s.True(created)
@@ -157,10 +157,10 @@ func (s *handlerSuite) TestGithubActionsDeployHooksV3Create() {
 		DefaultClusterID:           &cluster.ID,
 		DefaultNamespace:           "terra-dev",
 		OwnerID:                    &user.ID,
-		RequiresSuitability:        testutils.PointerTo(false),
-		HelmfileRef:                testutils.PointerTo("HEAD"),
-		DefaultFirecloudDevelopRef: testutils.PointerTo("dev"),
-		PreventDeletion:            testutils.PointerTo(false),
+		RequiresSuitability:        utils.PointerTo(false),
+		HelmfileRef:                utils.PointerTo("HEAD"),
+		DefaultFirecloudDevelopRef: utils.PointerTo("dev"),
+		PreventDeletion:            utils.PointerTo(false),
 	}, user)
 	s.NoError(err)
 	s.True(created)
@@ -173,10 +173,10 @@ func (s *handlerSuite) TestGithubActionsDeployHooksV3Create() {
 					OnEnvironment: &environment.Name,
 				},
 				GithubActionsDeployHookFields: GithubActionsDeployHookFields{
-					GithubActionsOwner:        testutils.PointerTo("owner"),
-					GithubActionsRepo:         testutils.PointerTo("repo"),
-					GithubActionsWorkflowPath: testutils.PointerTo("path"),
-					GithubActionsDefaultRef:   testutils.PointerTo("head"),
+					GithubActionsOwner:        utils.PointerTo("owner"),
+					GithubActionsRepo:         utils.PointerTo("repo"),
+					GithubActionsWorkflowPath: utils.PointerTo("path"),
+					GithubActionsDefaultRef:   utils.PointerTo("head"),
 				},
 			}),
 			&got)

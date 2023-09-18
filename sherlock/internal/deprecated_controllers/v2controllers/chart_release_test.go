@@ -2,7 +2,7 @@ package v2controllers
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/go-shared/pkg/testutils"
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_db"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
 	"testing"
@@ -55,8 +55,8 @@ var (
 		Chart:             datarepoChart.Name,
 		Environment:       terraDevEnvironment.Name,
 		Cluster:           datarepoDevCluster.Name,
-		AppVersionExact:   testutils.PointerTo("a1b2c3d4"),
-		ChartVersionExact: testutils.PointerTo("1.2.3"),
+		AppVersionExact:   utils.PointerTo("a1b2c3d4"),
+		ChartVersionExact: utils.PointerTo("1.2.3"),
 	}
 	samDevChartRelease = CreatableChartRelease{
 		Chart:       samChart.Name,
@@ -76,16 +76,16 @@ var (
 	leonardoProdChartRelease = CreatableChartRelease{
 		Chart:             leonardoChart.Name,
 		Environment:       terraProdEnvironment.Name,
-		AppVersionExact:   testutils.PointerTo("a1b2c3d4"),
-		ChartVersionExact: testutils.PointerTo("1.2.3"),
+		AppVersionExact:   utils.PointerTo("a1b2c3d4"),
+		ChartVersionExact: utils.PointerTo("1.2.3"),
 	}
 	datarepoProdChartRelease = CreatableChartRelease{
 		Name:              "datarepo-prod",
 		Chart:             datarepoChart.Name,
 		Environment:       terraProdEnvironment.Name,
 		Cluster:           datarepoProdCluster.Name,
-		AppVersionExact:   testutils.PointerTo("2.200.1"),
-		ChartVersionExact: testutils.PointerTo("0.10.0"),
+		AppVersionExact:   utils.PointerTo("2.200.1"),
+		ChartVersionExact: utils.PointerTo("0.10.0"),
 	}
 	samProdChartRelease = CreatableChartRelease{
 		Chart:             samChart.Name,
@@ -97,8 +97,8 @@ var (
 		Chart:             yaleChart.Name,
 		Environment:       terraProdEnvironment.Name,
 		Namespace:         "yale",
-		AppVersionExact:   testutils.PointerTo("0.0.18"),
-		ChartVersionExact: testutils.PointerTo("1.15.0"),
+		AppVersionExact:   utils.PointerTo("0.0.18"),
+		ChartVersionExact: utils.PointerTo("1.15.0"),
 	}
 	storageProdChartRelease = CreatableChartRelease{
 		Chart:     terraClusterStorageChart.Name,
@@ -109,8 +109,8 @@ var (
 	leonardoStagingChartRelease = CreatableChartRelease{
 		Chart:             leonardoChart.Name,
 		Environment:       terraStagingEnvironment.Name,
-		AppVersionExact:   testutils.PointerTo("a1b2c3d4"),
-		ChartVersionExact: testutils.PointerTo("1.2.3"),
+		AppVersionExact:   utils.PointerTo("a1b2c3d4"),
+		ChartVersionExact: utils.PointerTo("1.2.3"),
 	}
 	samStagingChartRelease = CreatableChartRelease{
 		Chart:             samChart.Name,
@@ -122,8 +122,8 @@ var (
 		Chart:             yaleChart.Name,
 		Environment:       terraStagingEnvironment.Name,
 		Namespace:         "yale",
-		AppVersionExact:   testutils.PointerTo("0.0.18"),
-		ChartVersionExact: testutils.PointerTo("1.15.0"),
+		AppVersionExact:   utils.PointerTo("0.0.18"),
+		ChartVersionExact: utils.PointerTo("1.15.0"),
 	}
 	storageStagingChartRelease = CreatableChartRelease{
 		Chart:     terraClusterStorageChart.Name,
@@ -223,13 +223,13 @@ func (suite *chartReleaseControllerSuite) TestChartReleaseCreate() {
 				assert.Equal(suite.T(), leonardoChart.AppImageGitMainBranch, release.AppVersionBranch)
 			})
 			suite.Run("defaults target app version use to branch when nothing else set", func() {
-				assert.Equal(suite.T(), testutils.PointerTo("branch"), release.AppVersionResolver)
+				assert.Equal(suite.T(), utils.PointerTo("branch"), release.AppVersionResolver)
 				suite.Run("automatically derives exact version", func() {
 					assert.Equal(suite.T(), leonardoMain3AppVersion.AppVersion, *release.AppVersionExact)
 				})
 			})
 			suite.Run("defaults target chart version use to latest", func() {
-				assert.Equal(suite.T(), testutils.PointerTo("latest"), release.ChartVersionResolver)
+				assert.Equal(suite.T(), utils.PointerTo("latest"), release.ChartVersionResolver)
 				suite.Run("automatically derives exact version", func() {
 					assert.Equal(suite.T(), leonardo3ChartVersion.ChartVersion, *release.ChartVersionExact)
 				})
@@ -370,7 +370,7 @@ func (suite *chartReleaseControllerSuite) TestChartReleaseCreate() {
 				_, created, err := suite.ChartReleaseController.Create(CreatableChartRelease{
 					Chart:                leonardoChart.Name,
 					Environment:          terraDevEnvironment.Name,
-					ChartVersionResolver: testutils.PointerTo("something obviously incorrect"),
+					ChartVersionResolver: utils.PointerTo("something obviously incorrect"),
 				}, generateUser(suite.T(), suite.db, false))
 				assert.ErrorContains(suite.T(), err, errors.BadRequest)
 				assert.False(suite.T(), created)
@@ -551,7 +551,7 @@ func (suite *chartReleaseControllerSuite) TestChartReleaseEdit() {
 		assert.NoError(suite.T(), err)
 		assert.Equal(suite.T(), "datarepo", *before.Subdomain)
 		edited, err := suite.ChartReleaseController.Edit(datarepoDevChartRelease.Name, EditableChartRelease{
-			Subdomain: testutils.PointerTo("data"),
+			Subdomain: utils.PointerTo("data"),
 		}, generateUser(suite.T(), suite.db, false))
 		assert.NoError(suite.T(), err)
 		assert.Equal(suite.T(), "data", *edited.Subdomain)
@@ -572,7 +572,7 @@ func (suite *chartReleaseControllerSuite) TestChartReleaseEdit() {
 			before, err := suite.ChartReleaseController.Get(datarepoProdChartRelease.Name)
 			assert.NoError(suite.T(), err)
 			_, err = suite.ChartReleaseController.Edit(datarepoProdChartRelease.Name, EditableChartRelease{
-				Subdomain: testutils.PointerTo("data"),
+				Subdomain: utils.PointerTo("data"),
 			}, generateUser(suite.T(), suite.db, false))
 			assert.ErrorContains(suite.T(), err, errors.Forbidden)
 			notEdited, err := suite.ChartReleaseController.Get(datarepoProdChartRelease.Name)
@@ -581,7 +581,7 @@ func (suite *chartReleaseControllerSuite) TestChartReleaseEdit() {
 		})
 		suite.Run("successfully if suitable", func() {
 			edited, err := suite.ChartReleaseController.Edit(datarepoProdChartRelease.Name, EditableChartRelease{
-				Subdomain: testutils.PointerTo("data"),
+				Subdomain: utils.PointerTo("data"),
 			}, generateUser(suite.T(), suite.db, true))
 			assert.NoError(suite.T(), err)
 			assert.Equal(suite.T(), "data", *edited.Subdomain)

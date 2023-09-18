@@ -2,7 +2,7 @@ package v2controllers
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/go-shared/pkg/testutils"
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_db"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
 	"github.com/google/uuid"
@@ -63,7 +63,7 @@ var (
 		Lifecycle: "static",
 		EditableEnvironment: EditableEnvironment{
 			DefaultCluster:      &terraStagingCluster.Name,
-			RequiresSuitability: testutils.PointerTo(true),
+			RequiresSuitability: utils.PointerTo(true),
 		},
 	}
 	terraProdEnvironment = CreatableEnvironment{
@@ -72,14 +72,14 @@ var (
 		Lifecycle: "static",
 		EditableEnvironment: EditableEnvironment{
 			DefaultCluster:      &terraProdCluster.Name,
-			RequiresSuitability: testutils.PointerTo(true),
+			RequiresSuitability: utils.PointerTo(true),
 		},
 	}
 	swatomationEnvironment = CreatableEnvironment{
 		Name:                      "swatomation",
 		Base:                      "bee",
 		Lifecycle:                 "template",
-		AutoPopulateChartReleases: testutils.PointerTo(false),
+		AutoPopulateChartReleases: utils.PointerTo(false),
 		EditableEnvironment: EditableEnvironment{
 			DefaultCluster: &terraQaBeesCluster.Name,
 		},
@@ -92,10 +92,10 @@ var (
 		Name:                      "prodlike",
 		Base:                      "bee",
 		Lifecycle:                 "template",
-		AutoPopulateChartReleases: testutils.PointerTo(false),
+		AutoPopulateChartReleases: utils.PointerTo(false),
 		EditableEnvironment: EditableEnvironment{
 			DefaultCluster:             &terraQaBeesCluster.Name,
-			DefaultFirecloudDevelopRef: testutils.PointerTo("prod"),
+			DefaultFirecloudDevelopRef: utils.PointerTo("prod"),
 		},
 	}
 	dynamicProdlikeEnvironment = CreatableEnvironment{
@@ -273,7 +273,7 @@ func (suite *environmentControllerSuite) TestEnvironmentCreate() {
 			DefaultNamespace: "terra-dev-2",
 			EditableEnvironment: EditableEnvironment{
 				DefaultCluster: &terraDevCluster.Name,
-				Owner:          testutils.PointerTo("some-email-not-in-the-database@broadinstitute.ogr"),
+				Owner:          utils.PointerTo("some-email-not-in-the-database@broadinstitute.ogr"),
 			},
 		}, generateUser(suite.T(), suite.db, false))
 		suite.Assert().ErrorContains(err, errors.NotFound)
@@ -311,7 +311,7 @@ func (suite *environmentControllerSuite) TestEnvironmentCreate() {
 		assert.True(suite.T(), created)
 		assert.False(suite.T(), *env1.RequiresSuitability)
 
-		swat, err = suite.EnvironmentController.Edit(swatomationEnvironment.Name, EditableEnvironment{RequiresSuitability: testutils.PointerTo(true)}, generateUser(suite.T(), suite.db, true))
+		swat, err = suite.EnvironmentController.Edit(swatomationEnvironment.Name, EditableEnvironment{RequiresSuitability: utils.PointerTo(true)}, generateUser(suite.T(), suite.db, true))
 		assert.NoError(suite.T(), err)
 		assert.True(suite.T(), *swat.RequiresSuitability)
 		assert.False(suite.T(), *env1.RequiresSuitability)
@@ -589,8 +589,8 @@ func (suite *environmentControllerSuite) TestEnvironmentEdit() {
 		assert.NoError(suite.T(), err)
 		assert.Equal(suite.T(), terraDevEnvironment.Description, before.Description)
 		assert.Equal(suite.T(), terraDevEnvironment.PactIdentifier, before.PactIdentifier)
-		newDescription := testutils.PointerTo("some description")
-		pactUuid := testutils.PointerTo(uuid.MustParse("7b95b0d1-407a-4e35-a95e-e867139d49b4"))
+		newDescription := utils.PointerTo("some description")
+		pactUuid := utils.PointerTo(uuid.MustParse("7b95b0d1-407a-4e35-a95e-e867139d49b4"))
 		assert.NoError(suite.T(), err)
 
 		edited, err := suite.EnvironmentController.Edit(terraDevEnvironment.Name, EditableEnvironment{
@@ -610,7 +610,7 @@ func (suite *environmentControllerSuite) TestEnvironmentEdit() {
 		deprecated_db.Truncate(suite.T(), suite.db)
 		suite.seedClusters(suite.T(), suite.db)
 		suite.seedEnvironments(suite.T(), suite.db)
-		newDescription := testutils.PointerTo("some description")
+		newDescription := utils.PointerTo("some description")
 
 		suite.Run("unsuccessfully if not suitable", func() {
 			_, err := suite.EnvironmentController.Edit(terraProdEnvironment.Name, EditableEnvironment{Description: newDescription}, generateUser(suite.T(), suite.db, false))
@@ -631,14 +631,14 @@ func (suite *environmentControllerSuite) TestEnvironmentEdit() {
 		suite.seedEnvironments(suite.T(), suite.db)
 
 		suite.Run("unsuccessfully if not suitable", func() {
-			_, err := suite.EnvironmentController.Edit(terraDevEnvironment.Name, EditableEnvironment{RequiresSuitability: testutils.PointerTo(true)}, generateUser(suite.T(), suite.db, false))
+			_, err := suite.EnvironmentController.Edit(terraDevEnvironment.Name, EditableEnvironment{RequiresSuitability: utils.PointerTo(true)}, generateUser(suite.T(), suite.db, false))
 			assert.ErrorContains(suite.T(), err, errors.Forbidden)
 			notEdited, err := suite.EnvironmentController.Get(terraDevEnvironment.Name)
 			assert.NoError(suite.T(), err)
 			assert.False(suite.T(), *notEdited.RequiresSuitability)
 		})
 		suite.Run("successfully if suitable", func() {
-			edited, err := suite.EnvironmentController.Edit(terraDevEnvironment.Name, EditableEnvironment{RequiresSuitability: testutils.PointerTo(true)}, generateUser(suite.T(), suite.db, true))
+			edited, err := suite.EnvironmentController.Edit(terraDevEnvironment.Name, EditableEnvironment{RequiresSuitability: utils.PointerTo(true)}, generateUser(suite.T(), suite.db, true))
 			assert.NoError(suite.T(), err)
 			assert.True(suite.T(), *edited.RequiresSuitability)
 		})
@@ -648,7 +648,7 @@ func (suite *environmentControllerSuite) TestEnvironmentEdit() {
 		suite.seedClusters(suite.T(), suite.db)
 		suite.seedEnvironments(suite.T(), suite.db)
 
-		_, err := suite.EnvironmentController.Edit(terraDevEnvironment.Name, EditableEnvironment{Owner: testutils.PointerTo("")}, generateUser(suite.T(), suite.db, false))
+		_, err := suite.EnvironmentController.Edit(terraDevEnvironment.Name, EditableEnvironment{Owner: utils.PointerTo("")}, generateUser(suite.T(), suite.db, false))
 		assert.ErrorContains(suite.T(), err, errors.BadRequest)
 	})
 }

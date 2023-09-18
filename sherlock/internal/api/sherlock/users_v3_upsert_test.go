@@ -2,7 +2,7 @@ package sherlock
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/go-shared/pkg/testutils"
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/test_users"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
@@ -54,7 +54,7 @@ func (s *handlerSuite) TestUserV3Upsert_name_minimal() {
 	code := s.HandleRequest(
 		s.NewRequest("PUT", "/api/users/v3", UserV3Upsert{
 			userDirectlyEditableFields: userDirectlyEditableFields{
-				Name: testutils.PointerTo("a name"),
+				Name: utils.PointerTo("a name"),
 			},
 		}),
 		&got)
@@ -68,7 +68,7 @@ func (s *handlerSuite) TestUserV3Upsert_name_minimal() {
 		code = s.HandleRequest(
 			s.NewRequest("PUT", "/api/users/v3", UserV3Upsert{
 				userDirectlyEditableFields: userDirectlyEditableFields{
-					Name: testutils.PointerTo("a different name"),
+					Name: utils.PointerTo("a different name"),
 				},
 			}),
 			&got)
@@ -85,7 +85,7 @@ func (s *handlerSuite) TestUserV3Upsert_nameInferredFromGithub() {
 	code := s.HandleRequest(
 		s.NewRequest("PUT", "/api/users/v3", UserV3Upsert{
 			userDirectlyEditableFields: userDirectlyEditableFields{
-				NameInferredFromGithub: testutils.PointerTo(true),
+				NameInferredFromGithub: utils.PointerTo(true),
 			},
 		}),
 		&got)
@@ -97,7 +97,7 @@ func (s *handlerSuite) TestUserV3Upsert_nameInferredFromGithub() {
 		code = s.HandleRequest(
 			s.NewRequest("PUT", "/api/users/v3", UserV3Upsert{
 				userDirectlyEditableFields: userDirectlyEditableFields{
-					Name: testutils.PointerTo("a different name"),
+					Name: utils.PointerTo("a different name"),
 				},
 			}),
 			&got)
@@ -111,7 +111,7 @@ func (s *handlerSuite) TestUserV3Upsert_nameInferredFromGithub() {
 		code = s.HandleRequest(
 			s.NewRequest("PUT", "/api/users/v3", UserV3Upsert{
 				userDirectlyEditableFields: userDirectlyEditableFields{
-					NameInferredFromGithub: testutils.PointerTo(false),
+					NameInferredFromGithub: utils.PointerTo(false),
 				},
 			}),
 			&got)
@@ -123,7 +123,7 @@ func (s *handlerSuite) TestUserV3Upsert_nameInferredFromGithub() {
 			code = s.HandleRequest(
 				s.NewRequest("PUT", "/api/users/v3", UserV3Upsert{
 					userDirectlyEditableFields: userDirectlyEditableFields{
-						Name: testutils.PointerTo("a different name"),
+						Name: utils.PointerTo("a different name"),
 					},
 				}),
 				&got)
@@ -145,17 +145,17 @@ func (s *handlerSuite) TestUserV3Upsert_maximal_sherlockName() {
 	}, func() {
 		github.UseMockedClient(s.T(), func(c *github.MockClient) {
 			c.Users.EXPECT().Get(mock.Anything, "").Return(&github2.User{
-				ID:    testutils.PointerTo[int64](123),
-				Login: testutils.PointerTo("github username"),
-				Name:  testutils.PointerTo("name from github"),
+				ID:    utils.PointerTo[int64](123),
+				Login: utils.PointerTo("github username"),
+				Name:  utils.PointerTo("name from github"),
 			}, nil, nil)
 		}, func() {
 			var got UserV3
 			code := s.HandleRequest(
 				s.NewRequest("PUT", "/api/users/v3", UserV3Upsert{
-					GithubAccessToken: testutils.PointerTo("fake token"),
+					GithubAccessToken: utils.PointerTo("fake token"),
 					userDirectlyEditableFields: userDirectlyEditableFields{
-						Name: testutils.PointerTo("directly set name"),
+						Name: utils.PointerTo("directly set name"),
 					},
 				}),
 				&got)
@@ -193,15 +193,15 @@ func (s *handlerSuite) TestUserV3Upsert_maximal_slackName() {
 	}, func() {
 		github.UseMockedClient(s.T(), func(c *github.MockClient) {
 			c.Users.EXPECT().Get(mock.Anything, "").Return(&github2.User{
-				ID:    testutils.PointerTo[int64](123),
-				Login: testutils.PointerTo("github username"),
-				Name:  testutils.PointerTo("name from github"),
+				ID:    utils.PointerTo[int64](123),
+				Login: utils.PointerTo("github username"),
+				Name:  utils.PointerTo("name from github"),
 			}, nil, nil)
 		}, func() {
 			var got UserV3
 			code := s.HandleRequest(
 				s.NewRequest("PUT", "/api/users/v3", UserV3Upsert{
-					GithubAccessToken: testutils.PointerTo("fake token"),
+					GithubAccessToken: utils.PointerTo("fake token"),
 				}),
 				&got)
 			s.Equal(http.StatusCreated, code)
@@ -238,17 +238,17 @@ func (s *handlerSuite) TestUserV3Upsert_maximal_githubName() {
 	}, func() {
 		github.UseMockedClient(s.T(), func(c *github.MockClient) {
 			c.Users.EXPECT().Get(mock.Anything, "").Return(&github2.User{
-				ID:    testutils.PointerTo[int64](123),
-				Login: testutils.PointerTo("github username"),
-				Name:  testutils.PointerTo("name from github"),
+				ID:    utils.PointerTo[int64](123),
+				Login: utils.PointerTo("github username"),
+				Name:  utils.PointerTo("name from github"),
 			}, nil, nil)
 		}, func() {
 			var got UserV3
 			code := s.HandleRequest(
 				s.NewRequest("PUT", "/api/users/v3", UserV3Upsert{
-					GithubAccessToken: testutils.PointerTo("fake token"),
+					GithubAccessToken: utils.PointerTo("fake token"),
 					userDirectlyEditableFields: userDirectlyEditableFields{
-						NameFrom: testutils.PointerTo("github"),
+						NameFrom: utils.PointerTo("github"),
 					},
 				}),
 				&got)
@@ -279,19 +279,19 @@ func (s *handlerSuite) TestUserV3Upsert_maximal_githubName() {
 func (s *handlerSuite) TestUserV3Upsert_dbConflict() {
 	github.UseMockedClient(s.T(), func(c *github.MockClient) {
 		c.Users.EXPECT().Get(mock.Anything, "").Return(&github2.User{
-			ID:    testutils.PointerTo[int64](123),
-			Login: testutils.PointerTo("github username"),
-			Name:  testutils.PointerTo("name from github"),
+			ID:    utils.PointerTo[int64](123),
+			Login: utils.PointerTo("github username"),
+			Name:  utils.PointerTo("name from github"),
 		}, nil, nil)
 		c.Users.EXPECT().Get(mock.Anything, "").Return(&github2.User{
-			ID:    testutils.PointerTo[int64](123),
-			Login: testutils.PointerTo("github username"),
-			Name:  testutils.PointerTo("name from github"),
+			ID:    utils.PointerTo[int64](123),
+			Login: utils.PointerTo("github username"),
+			Name:  utils.PointerTo("name from github"),
 		}, nil, nil)
 	}, func() {
 		var got UserV3
 		request := s.NewRequest("PUT", "/api/users/v3", UserV3Upsert{
-			GithubAccessToken: testutils.PointerTo("fake token"),
+			GithubAccessToken: utils.PointerTo("fake token"),
 		})
 		s.UseSuitableUserFor(request)
 		code := s.HandleRequest(request, &got)
@@ -299,7 +299,7 @@ func (s *handlerSuite) TestUserV3Upsert_dbConflict() {
 
 		var gotError errors.ErrorResponse
 		request = s.NewRequest("PUT", "/api/users/v3", UserV3Upsert{
-			GithubAccessToken: testutils.PointerTo("fake token"),
+			GithubAccessToken: utils.PointerTo("fake token"),
 		})
 		s.UseNonSuitableUserFor(request)
 		code = s.HandleRequest(request, &gotError)
@@ -319,9 +319,9 @@ func (s *handlerSuite) TestUserV3Upsert_maximal_swallowThirdPartyErrors() {
 			var got UserV3
 			code := s.HandleRequest(
 				s.NewRequest("PUT", "/api/users/v3", UserV3Upsert{
-					GithubAccessToken: testutils.PointerTo("fake token"),
+					GithubAccessToken: utils.PointerTo("fake token"),
 					userDirectlyEditableFields: userDirectlyEditableFields{
-						Name: testutils.PointerTo("directly set name"),
+						Name: utils.PointerTo("directly set name"),
 					},
 				}),
 				&got)

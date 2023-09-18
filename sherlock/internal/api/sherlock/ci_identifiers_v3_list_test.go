@@ -1,7 +1,7 @@
 package sherlock
 
 import (
-	"github.com/broadinstitute/sherlock/go-shared/pkg/testutils"
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"net/http"
@@ -48,7 +48,7 @@ func (s *handlerSuite) TestCiIdentifiersV3List() {
 
 	chart, created, err := v2models.InternalChartStore.Create(s.DB, v2models.Chart{
 		Name:      "leonardo",
-		ChartRepo: testutils.PointerTo("terra-helm"),
+		ChartRepo: utils.PointerTo("terra-helm"),
 	}, user)
 	s.NoError(err)
 	s.True(created)
@@ -71,7 +71,7 @@ func (s *handlerSuite) TestCiIdentifiersV3List() {
 	chartVersion2, created, err := v2models.InternalChartVersionStore.Create(s.DB, v2models.ChartVersion{
 		ChartVersion:         "v1.2.4",
 		ChartID:              chart.ID,
-		ParentChartVersionID: testutils.PointerTo(chartVersion1.ID),
+		ParentChartVersionID: utils.PointerTo(chartVersion1.ID),
 	}, user)
 	s.NoError(err)
 	s.True(created)

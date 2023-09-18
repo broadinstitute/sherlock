@@ -2,6 +2,7 @@ package v2models
 
 import (
 	"github.com/broadinstitute/sherlock/go-shared/pkg/testutils"
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"reflect"
 	"testing"
 
@@ -107,9 +108,9 @@ func Test_validateChart(t *testing.T) {
 		{
 			name: "no name",
 			args: args{chart: &Chart{
-				ChartRepo:             testutils.PointerTo("terra-helm"),
-				AppImageGitRepo:       testutils.PointerTo("broadinstitute/leonardo"),
-				AppImageGitMainBranch: testutils.PointerTo("main"),
+				ChartRepo:             utils.PointerTo("terra-helm"),
+				AppImageGitRepo:       utils.PointerTo("broadinstitute/leonardo"),
+				AppImageGitMainBranch: utils.PointerTo("main"),
 			}},
 			wantErr: true,
 		},
@@ -117,8 +118,8 @@ func Test_validateChart(t *testing.T) {
 			name: "no chart repo",
 			args: args{chart: &Chart{
 				Name:                  "leonardo",
-				AppImageGitRepo:       testutils.PointerTo("broadinstitute/leonardo"),
-				AppImageGitMainBranch: testutils.PointerTo("main"),
+				AppImageGitRepo:       utils.PointerTo("broadinstitute/leonardo"),
+				AppImageGitMainBranch: utils.PointerTo("main"),
 			}},
 			wantErr: true,
 		},
@@ -126,9 +127,9 @@ func Test_validateChart(t *testing.T) {
 			name: "valid with git info",
 			args: args{chart: &Chart{
 				Name:                  "leonardo",
-				ChartRepo:             testutils.PointerTo("terra-helm"),
-				AppImageGitRepo:       testutils.PointerTo("broadinstitute/leonardo"),
-				AppImageGitMainBranch: testutils.PointerTo("main"),
+				ChartRepo:             utils.PointerTo("terra-helm"),
+				AppImageGitRepo:       utils.PointerTo("broadinstitute/leonardo"),
+				AppImageGitMainBranch: utils.PointerTo("main"),
 			}},
 			wantErr: false,
 		},
@@ -136,7 +137,7 @@ func Test_validateChart(t *testing.T) {
 			name: "valid without git info",
 			args: args{chart: &Chart{
 				Name:      "leonardo",
-				ChartRepo: testutils.PointerTo("terra-helm"),
+				ChartRepo: utils.PointerTo("terra-helm"),
 			}},
 			wantErr: false,
 		},
@@ -144,8 +145,8 @@ func Test_validateChart(t *testing.T) {
 			name: "valid with legacy configs enabled",
 			args: args{chart: &Chart{
 				Name:                 "leonardo",
-				ChartRepo:            testutils.PointerTo("terra-helm"),
-				LegacyConfigsEnabled: testutils.PointerTo(true),
+				ChartRepo:            utils.PointerTo("terra-helm"),
+				LegacyConfigsEnabled: utils.PointerTo(true),
 			}},
 			wantErr: false,
 		},
@@ -153,7 +154,7 @@ func Test_validateChart(t *testing.T) {
 			name: "valid without legacy configs set",
 			args: args{chart: &Chart{
 				Name:      "leonardo",
-				ChartRepo: testutils.PointerTo("terra-helm"),
+				ChartRepo: utils.PointerTo("terra-helm"),
 			}},
 			wantErr: false,
 		},

@@ -1,7 +1,7 @@
 package sherlock
 
 import (
-	"github.com/broadinstitute/sherlock/go-shared/pkg/testutils"
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/stretchr/testify/assert"
@@ -11,8 +11,8 @@ import (
 func (s *handlerSuite) Test_deployHookTriggerConfigV3_toModel_simple() {
 	ret, err := DeployHookTriggerConfigV3{
 		deployHookTriggerConfigV3EditableFields: deployHookTriggerConfigV3EditableFields{
-			OnFailure: testutils.PointerTo(true),
-			OnSuccess: testutils.PointerTo(true),
+			OnFailure: utils.PointerTo(true),
+			OnSuccess: utils.PointerTo(true),
 		},
 	}.toModel(nil)
 	s.NoError(err)
@@ -26,7 +26,7 @@ func (s *handlerSuite) Test_deployHookTriggerConfigV3_toModel_simple() {
 
 func (s *handlerSuite) Test_deployHookTriggerConfigV3_toModel_environmentError() {
 	ret, err := DeployHookTriggerConfigV3{
-		OnEnvironment: testutils.PointerTo("bad selector"),
+		OnEnvironment: utils.PointerTo("bad selector"),
 	}.toModel(s.DB)
 	s.ErrorContains(err, "invalid environment selector")
 	s.Zero(ret)
@@ -38,11 +38,11 @@ func (s *handlerSuite) Test_deployHookTriggerConfigV3_toModel_environmentValid()
 		Name:                "terra-dev",
 		Provider:            "google",
 		GoogleProject:       "broad-dsde-dev",
-		Base:                testutils.PointerTo("live"),
-		Address:             testutils.PointerTo("0.0.0.0"),
-		RequiresSuitability: testutils.PointerTo(false),
+		Base:                utils.PointerTo("live"),
+		Address:             utils.PointerTo("0.0.0.0"),
+		RequiresSuitability: utils.PointerTo(false),
 		Location:            "us-central1-a",
-		HelmfileRef:         testutils.PointerTo("HEAD"),
+		HelmfileRef:         utils.PointerTo("HEAD"),
 	}, user)
 	s.NoError(err)
 	s.True(created)
@@ -54,10 +54,10 @@ func (s *handlerSuite) Test_deployHookTriggerConfigV3_toModel_environmentValid()
 		DefaultClusterID:           &cluster.ID,
 		DefaultNamespace:           "terra-dev",
 		OwnerID:                    &user.ID,
-		RequiresSuitability:        testutils.PointerTo(false),
-		HelmfileRef:                testutils.PointerTo("HEAD"),
-		DefaultFirecloudDevelopRef: testutils.PointerTo("dev"),
-		PreventDeletion:            testutils.PointerTo(false),
+		RequiresSuitability:        utils.PointerTo(false),
+		HelmfileRef:                utils.PointerTo("HEAD"),
+		DefaultFirecloudDevelopRef: utils.PointerTo("dev"),
+		PreventDeletion:            utils.PointerTo(false),
 	}, user)
 	s.NoError(err)
 	s.True(created)
@@ -72,7 +72,7 @@ func (s *handlerSuite) Test_deployHookTriggerConfigV3_toModel_environmentValid()
 
 func (s *handlerSuite) Test_deployHookTriggerConfigV3_toModel_chartReleaseError() {
 	ret, err := DeployHookTriggerConfigV3{
-		OnChartRelease: testutils.PointerTo("bad selector"),
+		OnChartRelease: utils.PointerTo("bad selector"),
 	}.toModel(s.DB)
 	s.ErrorContains(err, "invalid chart release selector")
 	s.Zero(ret)
@@ -82,7 +82,7 @@ func (s *handlerSuite) Test_deployHookTriggerConfigV3_toModel_chartReleaseValid(
 	user := s.SetSuitableTestUserForDB()
 	chart, created, err := v2models.InternalChartStore.Create(s.DB, v2models.Chart{
 		Name:      "leonardo",
-		ChartRepo: testutils.PointerTo("terra-helm"),
+		ChartRepo: utils.PointerTo("terra-helm"),
 	}, user)
 	s.NoError(err)
 	s.True(created)
@@ -90,11 +90,11 @@ func (s *handlerSuite) Test_deployHookTriggerConfigV3_toModel_chartReleaseValid(
 		Name:                "terra-dev",
 		Provider:            "google",
 		GoogleProject:       "broad-dsde-dev",
-		Base:                testutils.PointerTo("live"),
-		Address:             testutils.PointerTo("0.0.0.0"),
-		RequiresSuitability: testutils.PointerTo(false),
+		Base:                utils.PointerTo("live"),
+		Address:             utils.PointerTo("0.0.0.0"),
+		RequiresSuitability: utils.PointerTo(false),
 		Location:            "us-central1-a",
-		HelmfileRef:         testutils.PointerTo("HEAD"),
+		HelmfileRef:         utils.PointerTo("HEAD"),
 	}, user)
 	s.NoError(err)
 	s.True(created)
@@ -106,10 +106,10 @@ func (s *handlerSuite) Test_deployHookTriggerConfigV3_toModel_chartReleaseValid(
 		DefaultClusterID:           &cluster.ID,
 		DefaultNamespace:           "terra-dev",
 		OwnerID:                    &user.ID,
-		RequiresSuitability:        testutils.PointerTo(false),
-		HelmfileRef:                testutils.PointerTo("HEAD"),
-		DefaultFirecloudDevelopRef: testutils.PointerTo("dev"),
-		PreventDeletion:            testutils.PointerTo(false),
+		RequiresSuitability:        utils.PointerTo(false),
+		HelmfileRef:                utils.PointerTo("HEAD"),
+		DefaultFirecloudDevelopRef: utils.PointerTo("dev"),
+		PreventDeletion:            utils.PointerTo(false),
 	}, user)
 	s.NoError(err)
 	s.True(created)
@@ -120,13 +120,13 @@ func (s *handlerSuite) Test_deployHookTriggerConfigV3_toModel_chartReleaseValid(
 		EnvironmentID: &environment.ID,
 		Namespace:     environment.DefaultNamespace,
 		ChartReleaseVersion: v2models.ChartReleaseVersion{
-			AppVersionResolver:   testutils.PointerTo("exact"),
-			AppVersionExact:      testutils.PointerTo("app version blah"),
-			ChartVersionResolver: testutils.PointerTo("exact"),
-			ChartVersionExact:    testutils.PointerTo("chart version blah"),
-			HelmfileRef:          testutils.PointerTo("HEAD"),
-			HelmfileRefEnabled:   testutils.PointerTo(false),
-			FirecloudDevelopRef:  testutils.PointerTo("dev"),
+			AppVersionResolver:   utils.PointerTo("exact"),
+			AppVersionExact:      utils.PointerTo("app version blah"),
+			ChartVersionResolver: utils.PointerTo("exact"),
+			ChartVersionExact:    utils.PointerTo("chart version blah"),
+			HelmfileRef:          utils.PointerTo("HEAD"),
+			HelmfileRefEnabled:   utils.PointerTo(false),
+			FirecloudDevelopRef:  utils.PointerTo("dev"),
 		},
 	}, user)
 	s.NoError(err)
@@ -152,61 +152,61 @@ func Test_deployHookTriggerConfigFromModel(t *testing.T) {
 		{
 			name: "on failure",
 			args: args{model: models.DeployHookTriggerConfig{
-				OnFailure: testutils.PointerTo(true),
+				OnFailure: utils.PointerTo(true),
 			}},
 			want: DeployHookTriggerConfigV3{
 				deployHookTriggerConfigV3EditableFields: deployHookTriggerConfigV3EditableFields{
-					OnFailure: testutils.PointerTo(true),
+					OnFailure: utils.PointerTo(true),
 				},
 			},
 		},
 		{
 			name: "on success",
 			args: args{model: models.DeployHookTriggerConfig{
-				OnSuccess: testutils.PointerTo(true),
+				OnSuccess: utils.PointerTo(true),
 			}},
 			want: DeployHookTriggerConfigV3{
 				deployHookTriggerConfigV3EditableFields: deployHookTriggerConfigV3EditableFields{
-					OnSuccess: testutils.PointerTo(true),
+					OnSuccess: utils.PointerTo(true),
 				},
 			},
 		},
 		{
 			name: "on env by name",
 			args: args{model: models.DeployHookTriggerConfig{
-				OnEnvironmentID: testutils.PointerTo[uint](1),
+				OnEnvironmentID: utils.PointerTo[uint](1),
 				OnEnvironment:   &models.Environment{Name: "name"},
 			}},
 			want: DeployHookTriggerConfigV3{
-				OnEnvironment: testutils.PointerTo("name"),
+				OnEnvironment: utils.PointerTo("name"),
 			},
 		},
 		{
 			name: "on env by id",
 			args: args{model: models.DeployHookTriggerConfig{
-				OnEnvironmentID: testutils.PointerTo[uint](1),
+				OnEnvironmentID: utils.PointerTo[uint](1),
 			}},
 			want: DeployHookTriggerConfigV3{
-				OnEnvironment: testutils.PointerTo("1"),
+				OnEnvironment: utils.PointerTo("1"),
 			},
 		},
 		{
 			name: "on chart release by name",
 			args: args{model: models.DeployHookTriggerConfig{
-				OnChartReleaseID: testutils.PointerTo[uint](1),
+				OnChartReleaseID: utils.PointerTo[uint](1),
 				OnChartRelease:   &models.ChartRelease{Name: "name"},
 			}},
 			want: DeployHookTriggerConfigV3{
-				OnChartRelease: testutils.PointerTo("name"),
+				OnChartRelease: utils.PointerTo("name"),
 			},
 		},
 		{
 			name: "on chart release by id",
 			args: args{model: models.DeployHookTriggerConfig{
-				OnChartReleaseID: testutils.PointerTo[uint](1),
+				OnChartReleaseID: utils.PointerTo[uint](1),
 			}},
 			want: DeployHookTriggerConfigV3{
-				OnChartRelease: testutils.PointerTo("1"),
+				OnChartRelease: utils.PointerTo("1"),
 			},
 		},
 	}

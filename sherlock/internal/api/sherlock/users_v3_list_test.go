@@ -1,7 +1,7 @@
 package sherlock
 
 import (
-	"github.com/broadinstitute/sherlock/go-shared/pkg/testutils"
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/test_users"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
@@ -57,15 +57,15 @@ func (s *handlerSuite) TestUsersV3List() {
 	user2 := models.User{
 		Email:    "email2@example.com",
 		GoogleID: "google-id-2",
-		Name:     testutils.PointerTo("a name"),
+		Name:     utils.PointerTo("a name"),
 	}
 	user3 := models.User{
 		Email:          "email3@example.com",
 		GoogleID:       "google-id-3",
-		Name:           testutils.PointerTo("a name"),
-		NameFrom:       testutils.PointerTo("sherlock"),
-		GithubID:       testutils.PointerTo("github-id-3"),
-		GithubUsername: testutils.PointerTo("github-username-3"),
+		Name:           utils.PointerTo("a name"),
+		NameFrom:       utils.PointerTo("sherlock"),
+		GithubID:       utils.PointerTo("github-id-3"),
+		GithubUsername: utils.PointerTo("github-username-3"),
 	}
 	for _, user := range []models.User{user1, user2, user3} {
 		s.NoError(s.DB.Create(&user).Error)

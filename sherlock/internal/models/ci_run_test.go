@@ -1,7 +1,7 @@
 package models
 
 import (
-	"github.com/broadinstitute/sherlock/go-shared/pkg/testutils"
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"gorm.io/datatypes"
 	"gorm.io/gorm"
 	"testing"
@@ -80,7 +80,7 @@ func (s *modelSuite) TestCiRunTerminalValidationInvalid() {
 		GithubActionsRunID:         123,
 		GithubActionsAttemptNumber: 123,
 		GithubActionsWorkflowPath:  "path",
-		TerminalAt:                 testutils.PointerTo(time.Now()),
+		TerminalAt:                 utils.PointerTo(time.Now()),
 	}
 	err := s.DB.Create(&run).Error
 	s.ErrorContains(err, "violates check constraint \"terminal_status_present\"")
@@ -94,8 +94,8 @@ func (s *modelSuite) TestCiRunTerminalValidationValid() {
 		GithubActionsRunID:         123,
 		GithubActionsAttemptNumber: 123,
 		GithubActionsWorkflowPath:  "path",
-		TerminalAt:                 testutils.PointerTo(time.Now()),
-		Status:                     testutils.PointerTo("status"),
+		TerminalAt:                 utils.PointerTo(time.Now()),
+		Status:                     utils.PointerTo("status"),
 	}).Error
 	s.NoError(err)
 }
@@ -253,30 +253,30 @@ func TestCiRun_Succeeded(t *testing.T) {
 		{
 			name: "success",
 			fields: fields{
-				TerminalAt: testutils.PointerTo(time.Now()),
-				Status:     testutils.PointerTo("success"),
+				TerminalAt: utils.PointerTo(time.Now()),
+				Status:     utils.PointerTo("success"),
 			},
 			want: true,
 		},
 		{
 			name: "not success",
 			fields: fields{
-				TerminalAt: testutils.PointerTo(time.Now()),
-				Status:     testutils.PointerTo("something else"),
+				TerminalAt: utils.PointerTo(time.Now()),
+				Status:     utils.PointerTo("something else"),
 			},
 			want: false,
 		},
 		{
 			name: "no status",
 			fields: fields{
-				TerminalAt: testutils.PointerTo(time.Now()),
+				TerminalAt: utils.PointerTo(time.Now()),
 			},
 			want: false,
 		},
 		{
 			name: "not terminal",
 			fields: fields{
-				Status: testutils.PointerTo("success"),
+				Status: utils.PointerTo("success"),
 			},
 			want: false,
 		},

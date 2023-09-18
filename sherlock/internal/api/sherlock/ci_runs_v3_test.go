@@ -1,7 +1,7 @@
 package sherlock
 
 import (
-	"github.com/broadinstitute/sherlock/go-shared/pkg/testutils"
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/gorm"
@@ -44,7 +44,7 @@ func TestCiRunV3_toModel(t *testing.T) {
 					ArgoWorkflowsTemplate:      "template",
 					StartedAt:                  &t3,
 					TerminalAt:                 &t4,
-					Status:                     testutils.PointerTo("status"),
+					Status:                     utils.PointerTo("status"),
 				},
 				RelatedResources: nil,
 			},
@@ -65,7 +65,7 @@ func TestCiRunV3_toModel(t *testing.T) {
 				ArgoWorkflowsTemplate:      "template",
 				StartedAt:                  &t3,
 				TerminalAt:                 &t4,
-				Status:                     testutils.PointerTo("status"),
+				Status:                     utils.PointerTo("status"),
 				RelatedResources:           nil,
 			},
 		},
@@ -89,7 +89,7 @@ func TestCiRunV3_toModel(t *testing.T) {
 					ArgoWorkflowsTemplate:      "template",
 					StartedAt:                  &t3,
 					TerminalAt:                 &t4,
-					Status:                     testutils.PointerTo("status"),
+					Status:                     utils.PointerTo("status"),
 				},
 				RelatedResources: []CiIdentifierV3{
 					{
@@ -116,7 +116,7 @@ func TestCiRunV3_toModel(t *testing.T) {
 				ArgoWorkflowsTemplate:      "template",
 				StartedAt:                  &t3,
 				TerminalAt:                 &t4,
-				Status:                     testutils.PointerTo("status"),
+				Status:                     utils.PointerTo("status"),
 				RelatedResources:           nil,
 			},
 		},
@@ -169,7 +169,7 @@ func Test_ciRunFromModel(t *testing.T) {
 				ArgoWorkflowsTemplate:      "template",
 				StartedAt:                  &t3,
 				TerminalAt:                 &t4,
-				Status:                     testutils.PointerTo("status"),
+				Status:                     utils.PointerTo("status"),
 				RelatedResources:           nil,
 			}},
 			want: CiRunV3{
@@ -190,7 +190,7 @@ func Test_ciRunFromModel(t *testing.T) {
 					ArgoWorkflowsTemplate:      "template",
 					StartedAt:                  &t3,
 					TerminalAt:                 &t4,
-					Status:                     testutils.PointerTo("status"),
+					Status:                     utils.PointerTo("status"),
 				},
 				RelatedResources: nil,
 			},
@@ -214,7 +214,7 @@ func Test_ciRunFromModel(t *testing.T) {
 				ArgoWorkflowsTemplate:      "template",
 				StartedAt:                  &t3,
 				TerminalAt:                 &t4,
-				Status:                     testutils.PointerTo("status"),
+				Status:                     utils.PointerTo("status"),
 				RelatedResources: []models.CiIdentifier{
 					{
 						Model: gorm.Model{
@@ -241,7 +241,7 @@ func Test_ciRunFromModel(t *testing.T) {
 					ArgoWorkflowsTemplate:      "template",
 					StartedAt:                  &t3,
 					TerminalAt:                 &t4,
-					Status:                     testutils.PointerTo("status"),
+					Status:                     utils.PointerTo("status"),
 				},
 				RelatedResources: []CiIdentifierV3{
 					{

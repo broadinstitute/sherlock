@@ -2,6 +2,7 @@ package v2models
 
 import (
 	"github.com/broadinstitute/sherlock/go-shared/pkg/testutils"
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"gorm.io/gorm"
 	"testing"
 )
@@ -116,9 +117,9 @@ func Test_validatePagerdutyIntegration(t *testing.T) {
 			name: "valid with type",
 			args: args{pagerdutyIntegration: &PagerdutyIntegration{
 				PagerdutyID: "a1B2c3d",
-				Name:        testutils.PointerTo("foo"),
-				Key:         testutils.PointerTo("foo"),
-				Type:        testutils.PointerTo("service"),
+				Name:        utils.PointerTo("foo"),
+				Key:         utils.PointerTo("foo"),
+				Type:        utils.PointerTo("service"),
 			}},
 			wantErr: false,
 		},
@@ -126,16 +127,16 @@ func Test_validatePagerdutyIntegration(t *testing.T) {
 			name: "no type",
 			args: args{pagerdutyIntegration: &PagerdutyIntegration{
 				PagerdutyID: "a1B2c3d",
-				Name:        testutils.PointerTo("foo"),
-				Key:         testutils.PointerTo("foo"),
+				Name:        utils.PointerTo("foo"),
+				Key:         utils.PointerTo("foo"),
 			}},
 			wantErr: true,
 		},
 		{
 			name: "no pd id",
 			args: args{pagerdutyIntegration: &PagerdutyIntegration{
-				Name: testutils.PointerTo("foo"),
-				Key:  testutils.PointerTo("foo"),
+				Name: utils.PointerTo("foo"),
+				Key:  utils.PointerTo("foo"),
 			}},
 			wantErr: true,
 		},
@@ -143,7 +144,7 @@ func Test_validatePagerdutyIntegration(t *testing.T) {
 			name: "no name",
 			args: args{pagerdutyIntegration: &PagerdutyIntegration{
 				PagerdutyID: "a1B2c3d",
-				Key:         testutils.PointerTo("foo"),
+				Key:         utils.PointerTo("foo"),
 			}},
 			wantErr: true,
 		},
@@ -151,7 +152,7 @@ func Test_validatePagerdutyIntegration(t *testing.T) {
 			name: "no key",
 			args: args{pagerdutyIntegration: &PagerdutyIntegration{
 				PagerdutyID: "a1B2c3d",
-				Name:        testutils.PointerTo("foo"),
+				Name:        utils.PointerTo("foo"),
 			}},
 			wantErr: true,
 		},

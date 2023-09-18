@@ -3,6 +3,7 @@ package v2models
 import (
 	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/testutils"
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"gorm.io/gorm"
 	"reflect"
 	"testing"
@@ -416,8 +417,8 @@ func Test_validateCiRun(t *testing.T) {
 				GithubActionsRunID:         123,
 				GithubActionsAttemptNumber: 1,
 				GithubActionsWorkflowPath:  ".github/workflows/build.yaml",
-				TerminalAt:                 testutils.PointerTo(time.Now()),
-				Status:                     testutils.PointerTo("failed"),
+				TerminalAt:                 utils.PointerTo(time.Now()),
+				Status:                     utils.PointerTo("failed"),
 			}},
 			wantErr: false,
 		},
@@ -428,8 +429,8 @@ func Test_validateCiRun(t *testing.T) {
 				ArgoWorkflowsNamespace: "namespace",
 				ArgoWorkflowsName:      "name",
 				ArgoWorkflowsTemplate:  "template",
-				TerminalAt:             testutils.PointerTo(time.Now()),
-				Status:                 testutils.PointerTo("failed"),
+				TerminalAt:             utils.PointerTo(time.Now()),
+				Status:                 utils.PointerTo("failed"),
 			}},
 			wantErr: false,
 		},
@@ -442,7 +443,7 @@ func Test_validateCiRun(t *testing.T) {
 				GithubActionsRunID:         123,
 				GithubActionsAttemptNumber: 1,
 				GithubActionsWorkflowPath:  ".github/workflows/build.yaml",
-				TerminalAt:                 testutils.PointerTo(time.Now()),
+				TerminalAt:                 utils.PointerTo(time.Now()),
 			}},
 			wantErr: true,
 		},
@@ -453,7 +454,7 @@ func Test_validateCiRun(t *testing.T) {
 				ArgoWorkflowsNamespace: "namespace",
 				ArgoWorkflowsName:      "name",
 				ArgoWorkflowsTemplate:  "template",
-				TerminalAt:             testutils.PointerTo(time.Now()),
+				TerminalAt:             utils.PointerTo(time.Now()),
 			}},
 			wantErr: true,
 		},

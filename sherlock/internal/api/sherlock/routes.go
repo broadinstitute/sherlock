@@ -42,6 +42,9 @@ import "github.com/gin-gonic/gin"
 //
 //     - If they do this, the endpoints should categorize themselves by their shared group, instead of their type.
 func ConfigureRoutes(apiRouter *gin.RouterGroup) {
+	apiRouter.GET("charts/v3/*selector", chartsV3Get)
+	apiRouter.POST("charts/v3", chartsV3Create)
+
 	apiRouter.GET("ci-identifiers/v3", ciIdentifiersV3List)
 	apiRouter.GET("ci-identifiers/v3/*selector", ciIdentifiersV3Get)
 
@@ -64,5 +67,4 @@ func ConfigureRoutes(apiRouter *gin.RouterGroup) {
 	apiRouter.POST("deploy-hooks/github-actions/v3", githubActionsDeployHooksV3Create)
 	apiRouter.PATCH("deploy-hooks/github-actions/v3/*selector", githubActionsDeployHooksV3Edit)
 	apiRouter.DELETE("deploy-hooks/github-actions/v3/*selector", githubActionsDeployHooksV3Delete)
-	//apiRouter.POST("deploy-hooks/:type/procedures/v3/trigger/*selector", deployHooksV3Trigger)
 }

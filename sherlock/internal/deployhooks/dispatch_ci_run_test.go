@@ -2,7 +2,7 @@ package deployhooks
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/go-shared/pkg/testutils"
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"gorm.io/gorm"
 )
@@ -12,19 +12,19 @@ func (s *deployHooksSuite) Test_dispatchCiRun() {
 
 	chart := models.Chart{
 		Name:      "leonardo",
-		ChartRepo: testutils.PointerTo("terra-helm"),
+		ChartRepo: utils.PointerTo("terra-helm"),
 	}
 	s.NoError(s.DB.Create(&chart).Error)
 
 	cluster := models.Cluster{
 		Name:                "terra-prod",
-		HelmfileRef:         testutils.PointerTo("HEAD"),
-		RequiresSuitability: testutils.PointerTo(true),
+		HelmfileRef:         utils.PointerTo("HEAD"),
+		RequiresSuitability: utils.PointerTo(true),
 		Provider:            "google",
 		GoogleProject:       "broad-dsde-prod",
 		Location:            "us-central1-a",
-		Base:                testutils.PointerTo("terra"),
-		Address:             testutils.PointerTo("0.0.0.0"),
+		Base:                utils.PointerTo("terra"),
+		Address:             utils.PointerTo("0.0.0.0"),
 	}
 	s.NoError(s.DB.Create(&cluster).Error)
 
@@ -32,13 +32,13 @@ func (s *deployHooksSuite) Test_dispatchCiRun() {
 		Name:                 "prod",
 		ValuesName:           "prod",
 		UniqueResourcePrefix: "a123",
-		HelmfileRef:          testutils.PointerTo("HEAD"),
-		RequiresSuitability:  testutils.PointerTo(true),
+		HelmfileRef:          utils.PointerTo("HEAD"),
+		RequiresSuitability:  utils.PointerTo(true),
 		Base:                 "live",
 		DefaultClusterID:     &cluster.ID,
 		DefaultNamespace:     "terra-prod",
 		Lifecycle:            "static",
-		PreventDeletion:      testutils.PointerTo(true),
+		PreventDeletion:      utils.PointerTo(true),
 		OwnerID:              &user.ID,
 	}
 	s.NoError(s.DB.Create(&environment).Error)
@@ -48,24 +48,24 @@ func (s *deployHooksSuite) Test_dispatchCiRun() {
 	environmentGithubHook := models.GithubActionsDeployHook{
 		Trigger: models.DeployHookTriggerConfig{
 			OnEnvironmentID: &environment.ID,
-			OnSuccess:       testutils.PointerTo(true),
-			OnFailure:       testutils.PointerTo(true),
+			OnSuccess:       utils.PointerTo(true),
+			OnFailure:       utils.PointerTo(true),
 		},
-		GithubActionsOwner:        testutils.PointerTo("broadinstitute"),
-		GithubActionsRepo:         testutils.PointerTo("terra-github-workflows"),
-		GithubActionsWorkflowPath: testutils.PointerTo(".github/workflows/some-workflow.yaml"),
-		GithubActionsDefaultRef:   testutils.PointerTo("HEAD"),
-		GithubActionsRefBehavior:  testutils.PointerTo("always-use-default-ref"),
+		GithubActionsOwner:        utils.PointerTo("broadinstitute"),
+		GithubActionsRepo:         utils.PointerTo("terra-github-workflows"),
+		GithubActionsWorkflowPath: utils.PointerTo(".github/workflows/some-workflow.yaml"),
+		GithubActionsDefaultRef:   utils.PointerTo("HEAD"),
+		GithubActionsRefBehavior:  utils.PointerTo("always-use-default-ref"),
 	}
 	s.NoError(s.DB.Create(&environmentGithubHook).Error)
 
 	environmentSlackHook := models.SlackDeployHook{
 		Trigger: models.DeployHookTriggerConfig{
 			OnEnvironmentID: &environment.ID,
-			OnSuccess:       testutils.PointerTo(true),
-			OnFailure:       testutils.PointerTo(true),
+			OnSuccess:       utils.PointerTo(true),
+			OnFailure:       utils.PointerTo(true),
 		},
-		SlackChannel: testutils.PointerTo("#workbench-release"),
+		SlackChannel: utils.PointerTo("#workbench-release"),
 	}
 	s.NoError(s.DB.Create(&environmentSlackHook).Error)
 
@@ -77,12 +77,12 @@ func (s *deployHooksSuite) Test_dispatchCiRun() {
 		Namespace:       "terra-prod",
 		DestinationType: "environment",
 		ChartReleaseVersion: models.ChartReleaseVersion{
-			HelmfileRef:          testutils.PointerTo("HEAD"),
-			HelmfileRefEnabled:   testutils.PointerTo(false),
-			AppVersionResolver:   testutils.PointerTo("exact"),
-			AppVersionExact:      testutils.PointerTo("v1.2.3"),
-			ChartVersionResolver: testutils.PointerTo("exact"),
-			ChartVersionExact:    testutils.PointerTo("v2.3.4"),
+			HelmfileRef:          utils.PointerTo("HEAD"),
+			HelmfileRefEnabled:   utils.PointerTo(false),
+			AppVersionResolver:   utils.PointerTo("exact"),
+			AppVersionExact:      utils.PointerTo("v1.2.3"),
+			ChartVersionResolver: utils.PointerTo("exact"),
+			ChartVersionExact:    utils.PointerTo("v2.3.4"),
 		},
 	}
 	s.NoError(s.DB.Create(&chartRelease).Error)
@@ -92,24 +92,24 @@ func (s *deployHooksSuite) Test_dispatchCiRun() {
 	chartReleaseGithubHook := models.GithubActionsDeployHook{
 		Trigger: models.DeployHookTriggerConfig{
 			OnChartReleaseID: &chartRelease.ID,
-			OnSuccess:        testutils.PointerTo(true),
-			OnFailure:        testutils.PointerTo(true),
+			OnSuccess:        utils.PointerTo(true),
+			OnFailure:        utils.PointerTo(true),
 		},
-		GithubActionsOwner:        testutils.PointerTo("broadinstitute"),
-		GithubActionsRepo:         testutils.PointerTo("sam"),
-		GithubActionsWorkflowPath: testutils.PointerTo(".github/workflows/some-workflow.yaml"),
-		GithubActionsDefaultRef:   testutils.PointerTo("HEAD"),
-		GithubActionsRefBehavior:  testutils.PointerTo("always-use-default-ref"),
+		GithubActionsOwner:        utils.PointerTo("broadinstitute"),
+		GithubActionsRepo:         utils.PointerTo("sam"),
+		GithubActionsWorkflowPath: utils.PointerTo(".github/workflows/some-workflow.yaml"),
+		GithubActionsDefaultRef:   utils.PointerTo("HEAD"),
+		GithubActionsRefBehavior:  utils.PointerTo("always-use-default-ref"),
 	}
 	s.NoError(s.DB.Create(&chartReleaseGithubHook).Error)
 
 	chartReleaseSlackHook := models.SlackDeployHook{
 		Trigger: models.DeployHookTriggerConfig{
 			OnChartReleaseID: &chartRelease.ID,
-			OnSuccess:        testutils.PointerTo(true),
-			OnFailure:        testutils.PointerTo(true),
+			OnSuccess:        utils.PointerTo(true),
+			OnFailure:        utils.PointerTo(true),
 		},
-		SlackChannel: testutils.PointerTo("#dsp-identiteam"),
+		SlackChannel: utils.PointerTo("#dsp-identiteam"),
 	}
 	s.NoError(s.DB.Create(&chartReleaseSlackHook).Error)
 

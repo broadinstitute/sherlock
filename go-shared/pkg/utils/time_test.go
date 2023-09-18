@@ -30,17 +30,17 @@ func TestISO8601PtrToTime(t *testing.T) {
 		},
 		{
 			name: "empty",
-			args: args{s: testutils.PointerTo("")},
+			args: args{s: utils.PointerTo("")},
 			want: nil,
 		},
 		{
 			name: "8601",
-			args: args{s: testutils.PointerTo(example)},
+			args: args{s: utils.PointerTo(example)},
 			want: &parsedExample,
 		},
 		{
 			name:    "invalid",
-			args:    args{s: testutils.PointerTo("abc")},
+			args:    args{s: utils.PointerTo("abc")},
 			want:    nil,
 			wantErr: true,
 		},
