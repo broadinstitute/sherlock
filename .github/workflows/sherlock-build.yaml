@@ -156,7 +156,7 @@ jobs:
             type=semver,pattern=v{{major}}.{{minor}},value=${{ steps.tag.outputs.new_tag }},enable={{is_default_branch}}
 
       - name: Build image
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           context: .
           file: sherlock/Dockerfile
