@@ -41,6 +41,9 @@ func (s *handlerSuite) TestChartsV3Create_defaults() {
 	if s.NotNil(got.ChartRepo) {
 		s.Equal("terra-helm", *got.ChartRepo)
 	}
+	if s.NotNil(got.DefaultSubdomain) {
+		s.Equal("chart-name", *got.DefaultSubdomain)
+	}
 }
 
 func (s *handlerSuite) TestChartsV3Create_overrideDefaults() {
@@ -49,7 +52,8 @@ func (s *handlerSuite) TestChartsV3Create_overrideDefaults() {
 		s.NewRequest("POST", "/api/charts/v3", ChartV3Create{
 			Name: "chart-name",
 			ChartV3Edit: ChartV3Edit{
-				ChartRepo: utils.PointerTo("different-chart-repo"),
+				ChartRepo:        utils.PointerTo("different-chart-repo"),
+				DefaultSubdomain: utils.PointerTo("different-subdomain"),
 			},
 		}),
 		&got)
@@ -57,5 +61,8 @@ func (s *handlerSuite) TestChartsV3Create_overrideDefaults() {
 	s.Equal("chart-name", got.Name)
 	if s.NotNil(got.ChartRepo) {
 		s.Equal("different-chart-repo", *got.ChartRepo)
+	}
+	if s.NotNil(got.DefaultSubdomain) {
+		s.Equal("different-subdomain", *got.DefaultSubdomain)
 	}
 }

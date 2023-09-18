@@ -2,6 +2,7 @@ package sherlock
 
 import (
 	"fmt"
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/authentication"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
@@ -37,6 +38,10 @@ func chartsV3Create(ctx *gin.Context) {
 	if err = defaults.Set(&body); err != nil {
 		errors.AbortRequest(ctx, fmt.Errorf("error setting defaults: %v", err))
 		return
+	}
+
+	if body.DefaultSubdomain == nil {
+		body.DefaultSubdomain = utils.PointerTo(body.Name)
 	}
 
 	toCreate := body.toModel()

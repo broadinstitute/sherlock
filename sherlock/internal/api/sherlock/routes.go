@@ -44,6 +44,9 @@ import "github.com/gin-gonic/gin"
 func ConfigureRoutes(apiRouter *gin.RouterGroup) {
 	apiRouter.GET("charts/v3/*selector", chartsV3Get)
 	apiRouter.POST("charts/v3", chartsV3Create)
+	apiRouter.DELETE("charts/v3/*selector", chartsV3Delete)
+	apiRouter.GET("charts/v3", chartsV3List)
+	apiRouter.PATCH("charts/v3/*selector", chartsV3Edit)
 
 	apiRouter.GET("ci-identifiers/v3", ciIdentifiersV3List)
 	apiRouter.GET("ci-identifiers/v3/*selector", ciIdentifiersV3Get)
