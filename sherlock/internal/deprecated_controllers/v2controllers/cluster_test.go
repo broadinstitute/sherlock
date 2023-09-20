@@ -2,7 +2,7 @@ package v2controllers
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/go-shared/pkg/testutils"
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_db"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
 	"testing"
@@ -51,8 +51,8 @@ var (
 		GoogleProject: "broad-dsde-dev",
 		Location:      "us-central1-a",
 		EditableCluster: EditableCluster{
-			Base:    testutils.PointerTo("terra"),
-			Address: testutils.PointerTo("0.0.0.0"),
+			Base:    utils.PointerTo("terra"),
+			Address: utils.PointerTo("0.0.0.0"),
 		},
 	}
 	datarepoDevCluster = CreatableCluster{
@@ -60,8 +60,8 @@ var (
 		GoogleProject: "datarepo-dev",
 		Location:      "us-central1-a",
 		EditableCluster: EditableCluster{
-			Base:    testutils.PointerTo("datarepo"),
-			Address: testutils.PointerTo("0.0.0.0"),
+			Base:    utils.PointerTo("datarepo"),
+			Address: utils.PointerTo("0.0.0.0"),
 		},
 	}
 	terraStagingCluster = CreatableCluster{
@@ -69,9 +69,9 @@ var (
 		GoogleProject: "broad-dsde-staging",
 		Location:      "us-central1-a",
 		EditableCluster: EditableCluster{
-			Base:                testutils.PointerTo("terra"),
-			Address:             testutils.PointerTo("0.0.0.0"),
-			RequiresSuitability: testutils.PointerTo(true),
+			Base:                utils.PointerTo("terra"),
+			Address:             utils.PointerTo("0.0.0.0"),
+			RequiresSuitability: utils.PointerTo(true),
 		},
 	}
 	terraProdCluster = CreatableCluster{
@@ -79,9 +79,9 @@ var (
 		GoogleProject: "broad-dsde-prod",
 		Location:      "us-central1",
 		EditableCluster: EditableCluster{
-			Base:                testutils.PointerTo("terra"),
-			Address:             testutils.PointerTo("0.0.0.0"),
-			RequiresSuitability: testutils.PointerTo(true),
+			Base:                utils.PointerTo("terra"),
+			Address:             utils.PointerTo("0.0.0.0"),
+			RequiresSuitability: utils.PointerTo(true),
 		},
 	}
 	datarepoProdCluster = CreatableCluster{
@@ -89,9 +89,9 @@ var (
 		GoogleProject: "datarepo-prod",
 		Location:      "us-central1",
 		EditableCluster: EditableCluster{
-			Base:                testutils.PointerTo("datarepo"),
-			Address:             testutils.PointerTo("0.0.0.0"),
-			RequiresSuitability: testutils.PointerTo(true),
+			Base:                utils.PointerTo("datarepo"),
+			Address:             utils.PointerTo("0.0.0.0"),
+			RequiresSuitability: utils.PointerTo(true),
 		},
 	}
 	terraDevBeesCluster = CreatableCluster{
@@ -99,8 +99,8 @@ var (
 		GoogleProject: "broad-dsde-dev",
 		Location:      "us-central1-a",
 		EditableCluster: EditableCluster{
-			Base:    testutils.PointerTo("bee-cluster"),
-			Address: testutils.PointerTo("0.0.0.0"),
+			Base:    utils.PointerTo("bee-cluster"),
+			Address: utils.PointerTo("0.0.0.0"),
 		},
 	}
 	terraQaBeesCluster = CreatableCluster{
@@ -108,8 +108,8 @@ var (
 		GoogleProject: "broad-dsde-qa",
 		Location:      "us-central1-a",
 		EditableCluster: EditableCluster{
-			Base:    testutils.PointerTo("bee-cluster"),
-			Address: testutils.PointerTo("0.0.0.0"),
+			Base:    utils.PointerTo("bee-cluster"),
+			Address: utils.PointerTo("0.0.0.0"),
 		},
 	}
 	terraDevAzureCluster = CreatableCluster{
@@ -118,8 +118,8 @@ var (
 		AzureSubscription: "some-uuid",
 		Location:          "US-EAST",
 		EditableCluster: EditableCluster{
-			Base:    testutils.PointerTo("terra-azure"),
-			Address: testutils.PointerTo("0.0.0.0"),
+			Base:    utils.PointerTo("terra-azure"),
+			Address: utils.PointerTo("0.0.0.0"),
 		},
 	}
 	clusterSeedList = []CreatableCluster{
@@ -239,11 +239,11 @@ func (suite *clusterControllerSuite) TestClusterListAllMatching() {
 	})
 	suite.Run("filters multiple", func() {
 		matching, err := suite.ClusterController.ListAllMatching(
-			Cluster{CreatableCluster: CreatableCluster{EditableCluster: EditableCluster{Base: testutils.PointerTo("terra")}}}, 0)
+			Cluster{CreatableCluster: CreatableCluster{EditableCluster: EditableCluster{Base: utils.PointerTo("terra")}}}, 0)
 		assert.NoError(suite.T(), err)
 		assert.True(suite.T(), len(matching) > 1)
 		for _, cluster := range matching {
-			assert.Equal(suite.T(), testutils.PointerTo("terra"), cluster.Base)
+			assert.Equal(suite.T(), utils.PointerTo("terra"), cluster.Base)
 		}
 	})
 	suite.Run("none is an empty list, not null", func() {
@@ -305,7 +305,7 @@ func (suite *clusterControllerSuite) TestClusterEdit() {
 		before, err := suite.ClusterController.Get(terraDevCluster.Name)
 		assert.NoError(suite.T(), err)
 		assert.Equal(suite.T(), terraDevCluster.Base, before.Base)
-		newBase := testutils.PointerTo("new")
+		newBase := utils.PointerTo("new")
 		edited, err := suite.ClusterController.Edit(terraDevCluster.Name, EditableCluster{Base: newBase}, generateUser(suite.T(), suite.db, false))
 		assert.NoError(suite.T(), err)
 		assert.Equal(suite.T(), newBase, edited.Base)
@@ -316,7 +316,7 @@ func (suite *clusterControllerSuite) TestClusterEdit() {
 	suite.Run("edit to suitable cluster", func() {
 		deprecated_db.Truncate(suite.T(), suite.db)
 		suite.seedClusters(suite.T(), suite.db)
-		newBase := testutils.PointerTo("new")
+		newBase := utils.PointerTo("new")
 
 		suite.Run("unsuccessfully if not suitable", func() {
 			_, err := suite.ClusterController.Edit(terraProdCluster.Name, EditableCluster{Base: newBase}, generateUser(suite.T(), suite.db, false))
@@ -336,14 +336,14 @@ func (suite *clusterControllerSuite) TestClusterEdit() {
 		suite.seedClusters(suite.T(), suite.db)
 
 		suite.Run("unsuccessfully if not suitable", func() {
-			_, err := suite.ClusterController.Edit(terraDevCluster.Name, EditableCluster{RequiresSuitability: testutils.PointerTo(true)}, generateUser(suite.T(), suite.db, false))
+			_, err := suite.ClusterController.Edit(terraDevCluster.Name, EditableCluster{RequiresSuitability: utils.PointerTo(true)}, generateUser(suite.T(), suite.db, false))
 			assert.ErrorContains(suite.T(), err, errors.Forbidden)
 			notEdited, err := suite.ClusterController.Get(terraDevCluster.Name)
 			assert.NoError(suite.T(), err)
 			assert.False(suite.T(), *notEdited.RequiresSuitability)
 		})
 		suite.Run("successfully if suitable", func() {
-			edited, err := suite.ClusterController.Edit(terraDevCluster.Name, EditableCluster{RequiresSuitability: testutils.PointerTo(true)}, generateUser(suite.T(), suite.db, true))
+			edited, err := suite.ClusterController.Edit(terraDevCluster.Name, EditableCluster{RequiresSuitability: utils.PointerTo(true)}, generateUser(suite.T(), suite.db, true))
 			assert.NoError(suite.T(), err)
 			assert.True(suite.T(), *edited.RequiresSuitability)
 		})
@@ -352,7 +352,7 @@ func (suite *clusterControllerSuite) TestClusterEdit() {
 		deprecated_db.Truncate(suite.T(), suite.db)
 		suite.seedClusters(suite.T(), suite.db)
 
-		_, err := suite.ClusterController.Edit(terraDevCluster.Name, EditableCluster{Base: testutils.PointerTo("")}, generateUser(suite.T(), suite.db, false))
+		_, err := suite.ClusterController.Edit(terraDevCluster.Name, EditableCluster{Base: utils.PointerTo("")}, generateUser(suite.T(), suite.db, false))
 		assert.ErrorContains(suite.T(), err, errors.BadRequest)
 	})
 }

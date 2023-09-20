@@ -1,14 +1,16 @@
 package models
 
-import "github.com/broadinstitute/sherlock/go-shared/pkg/testutils"
+import (
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
+)
 
 func (s *modelSuite) TestChartNameValidationSqlMissing() {
-	err := s.DB.Create(&Chart{ChartRepo: testutils.PointerTo("repo")}).Error
+	err := s.DB.Create(&Chart{ChartRepo: utils.PointerTo("repo")}).Error
 	s.ErrorContains(err, "name")
 }
 
 func (s *modelSuite) TestChartNameValidationSqlEmpty() {
-	err := s.DB.Create(&Chart{ChartRepo: testutils.PointerTo("repo"), Name: ""}).Error
+	err := s.DB.Create(&Chart{ChartRepo: utils.PointerTo("repo"), Name: ""}).Error
 	s.ErrorContains(err, "name")
 }
 
@@ -18,19 +20,19 @@ func (s *modelSuite) TestChartRepoValidationSqlMissing() {
 }
 
 func (s *modelSuite) TestChartRepoValidationSqlEmpty() {
-	err := s.DB.Create(&Chart{Name: "name", ChartRepo: testutils.PointerTo("")}).Error
+	err := s.DB.Create(&Chart{Name: "name", ChartRepo: utils.PointerTo("")}).Error
 	s.ErrorContains(err, "chart_repo")
 }
 
 func (s *modelSuite) TestChartValidationSqlValid() {
-	chart := Chart{Name: "name", ChartRepo: testutils.PointerTo("repo")}
+	chart := Chart{Name: "name", ChartRepo: utils.PointerTo("repo")}
 	err := s.DB.Create(&chart).Error
 	s.NoError(err)
 	s.NotZero(chart.ID)
 }
 
 func (s *modelSuite) TestChartCiIdentifiers() {
-	chart := Chart{Name: "name", ChartRepo: testutils.PointerTo("repo")}
+	chart := Chart{Name: "name", ChartRepo: utils.PointerTo("repo")}
 	s.NoError(s.DB.Create(&chart).Error)
 	ciIdentifier := chart.GetCiIdentifier()
 	s.NoError(s.DB.Create(&ciIdentifier).Error)

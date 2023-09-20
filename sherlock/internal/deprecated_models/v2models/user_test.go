@@ -2,6 +2,7 @@ package v2models
 
 import (
 	"github.com/broadinstitute/sherlock/go-shared/pkg/testutils"
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/authentication_method"
 	auth_models2 "github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/auth_models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/model_actions"
@@ -53,12 +54,12 @@ func Test_userSelectorToQuery(t *testing.T) {
 		{
 			name: "github username",
 			args: args{selector: "github/blah"},
-			want: User{StoredControlledUserFields: auth_models2.StoredControlledUserFields{GithubUsername: testutils.PointerTo("blah")}},
+			want: User{StoredControlledUserFields: auth_models2.StoredControlledUserFields{GithubUsername: utils.PointerTo("blah")}},
 		},
 		{
 			name: "github id",
 			args: args{selector: "github-id/blah"},
-			want: User{StoredControlledUserFields: auth_models2.StoredControlledUserFields{GithubID: testutils.PointerTo("blah")}},
+			want: User{StoredControlledUserFields: auth_models2.StoredControlledUserFields{GithubID: utils.PointerTo("blah")}},
 		},
 	}
 	for _, tt := range tests {
@@ -130,7 +131,7 @@ func Test_userToSelectors(t *testing.T) {
 				StoredControlledUserFields: auth_models2.StoredControlledUserFields{
 					Email:    "fake@example.com",
 					GoogleID: "some google id here",
-					GithubID: testutils.PointerTo("some github id here"),
+					GithubID: utils.PointerTo("some github id here"),
 				},
 			}},
 			want: []string{"123", "fake@example.com", "google-id/some google id here", "github-id/some github id here"},
@@ -142,7 +143,7 @@ func Test_userToSelectors(t *testing.T) {
 				StoredControlledUserFields: auth_models2.StoredControlledUserFields{
 					Email:          "fake@example.com",
 					GoogleID:       "some google id here",
-					GithubUsername: testutils.PointerTo("fake-github"),
+					GithubUsername: utils.PointerTo("fake-github"),
 				},
 			}},
 			want: []string{"123", "fake@example.com", "google-id/some google id here", "github/fake-github"},
@@ -154,8 +155,8 @@ func Test_userToSelectors(t *testing.T) {
 				StoredControlledUserFields: auth_models2.StoredControlledUserFields{
 					Email:          "fake@example.com",
 					GoogleID:       "some google id here",
-					GithubUsername: testutils.PointerTo("fake-github"),
-					GithubID:       testutils.PointerTo("some github id here"),
+					GithubUsername: utils.PointerTo("fake-github"),
+					GithubID:       utils.PointerTo("some github id here"),
 				},
 			}},
 			want: []string{"123", "fake@example.com", "google-id/some google id here", "github/fake-github", "github-id/some github id here"},
@@ -318,7 +319,7 @@ func Test_validateUser(t *testing.T) {
 				StoredControlledUserFields: auth_models2.StoredControlledUserFields{
 					Email:          "fake@broadinstitute.org",
 					GoogleID:       "some id here",
-					GithubUsername: testutils.PointerTo("blah"),
+					GithubUsername: utils.PointerTo("blah"),
 				},
 			}},
 			wantErr: true,
@@ -329,7 +330,7 @@ func Test_validateUser(t *testing.T) {
 				StoredControlledUserFields: auth_models2.StoredControlledUserFields{
 					Email:    "fake@broadinstitute.org",
 					GoogleID: "some id here",
-					GithubID: testutils.PointerTo("bleh"),
+					GithubID: utils.PointerTo("bleh"),
 				},
 			}},
 			wantErr: true,
@@ -340,8 +341,8 @@ func Test_validateUser(t *testing.T) {
 				StoredControlledUserFields: auth_models2.StoredControlledUserFields{
 					Email:          "fake@broadinstitute.org",
 					GoogleID:       "some id here",
-					GithubUsername: testutils.PointerTo("blah"),
-					GithubID:       testutils.PointerTo("bleh"),
+					GithubUsername: utils.PointerTo("blah"),
+					GithubID:       utils.PointerTo("bleh"),
 				},
 			}},
 			wantErr: false,

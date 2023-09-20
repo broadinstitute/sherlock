@@ -3,7 +3,7 @@ package deployhooks
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/broadinstitute/sherlock/go-shared/pkg/testutils"
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/github"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	github2 "github.com/google/go-github/v50/github"
@@ -38,10 +38,10 @@ func (s *deployHooksSuite) Test_dispatchGithubActionsDeployHook_basic() {
 			}).Return(nil, nil)
 	}, func() {
 		s.NoError(dispatchGithubActionsDeployHook(s.DB, models.GithubActionsDeployHook{
-			GithubActionsOwner:        testutils.PointerTo("owner"),
-			GithubActionsRepo:         testutils.PointerTo("repo"),
-			GithubActionsWorkflowPath: testutils.PointerTo("path"),
-			GithubActionsDefaultRef:   testutils.PointerTo("main"),
+			GithubActionsOwner:        utils.PointerTo("owner"),
+			GithubActionsRepo:         utils.PointerTo("repo"),
+			GithubActionsWorkflowPath: utils.PointerTo("path"),
+			GithubActionsDefaultRef:   utils.PointerTo("main"),
 		}, models.CiRun{}))
 	})
 }
@@ -55,10 +55,10 @@ func (s *deployHooksSuite) Test_dispatchGithubActionsDeployHook_passesThroughErr
 			}).Return(nil, err)
 	}, func() {
 		s.ErrorIs(dispatchGithubActionsDeployHook(s.DB, models.GithubActionsDeployHook{
-			GithubActionsOwner:        testutils.PointerTo("owner"),
-			GithubActionsRepo:         testutils.PointerTo("repo"),
-			GithubActionsWorkflowPath: testutils.PointerTo("path"),
-			GithubActionsDefaultRef:   testutils.PointerTo("main"),
+			GithubActionsOwner:        utils.PointerTo("owner"),
+			GithubActionsRepo:         utils.PointerTo("repo"),
+			GithubActionsWorkflowPath: utils.PointerTo("path"),
+			GithubActionsDefaultRef:   utils.PointerTo("main"),
 		}, models.CiRun{}), err)
 	})
 }
@@ -71,13 +71,13 @@ func (s *deployHooksSuite) Test_dispatchGithubActionsDeployHook_appVersionRef() 
 			}).Return(nil, nil)
 	}, func() {
 		s.NoError(dispatchGithubActionsDeployHook(s.DB, models.GithubActionsDeployHook{
-			GithubActionsOwner:        testutils.PointerTo("owner"),
-			GithubActionsRepo:         testutils.PointerTo("repo"),
-			GithubActionsWorkflowPath: testutils.PointerTo("path"),
-			GithubActionsDefaultRef:   testutils.PointerTo("custom ref"),
-			GithubActionsRefBehavior:  testutils.PointerTo("use-app-version-as-ref"),
+			GithubActionsOwner:        utils.PointerTo("owner"),
+			GithubActionsRepo:         utils.PointerTo("repo"),
+			GithubActionsWorkflowPath: utils.PointerTo("path"),
+			GithubActionsDefaultRef:   utils.PointerTo("custom ref"),
+			GithubActionsRefBehavior:  utils.PointerTo("use-app-version-as-ref"),
 			Trigger: models.DeployHookTriggerConfig{
-				OnChartRelease: &models.ChartRelease{ChartReleaseVersion: models.ChartReleaseVersion{AppVersionExact: testutils.PointerTo("app version")}},
+				OnChartRelease: &models.ChartRelease{ChartReleaseVersion: models.ChartReleaseVersion{AppVersionExact: utils.PointerTo("app version")}},
 			},
 		}, models.CiRun{}))
 	})
@@ -91,13 +91,13 @@ func (s *deployHooksSuite) Test_dispatchGithubActionsDeployHook_appVersionCommit
 			}).Return(nil, nil)
 	}, func() {
 		s.NoError(dispatchGithubActionsDeployHook(s.DB, models.GithubActionsDeployHook{
-			GithubActionsOwner:        testutils.PointerTo("owner"),
-			GithubActionsRepo:         testutils.PointerTo("repo"),
-			GithubActionsWorkflowPath: testutils.PointerTo("path"),
-			GithubActionsDefaultRef:   testutils.PointerTo("custom ref"),
-			GithubActionsRefBehavior:  testutils.PointerTo("use-app-version-commit-as-ref"),
+			GithubActionsOwner:        utils.PointerTo("owner"),
+			GithubActionsRepo:         utils.PointerTo("repo"),
+			GithubActionsWorkflowPath: utils.PointerTo("path"),
+			GithubActionsDefaultRef:   utils.PointerTo("custom ref"),
+			GithubActionsRefBehavior:  utils.PointerTo("use-app-version-commit-as-ref"),
 			Trigger: models.DeployHookTriggerConfig{
-				OnChartRelease: &models.ChartRelease{ChartReleaseVersion: models.ChartReleaseVersion{AppVersionCommit: testutils.PointerTo("app version commit")}},
+				OnChartRelease: &models.ChartRelease{ChartReleaseVersion: models.ChartReleaseVersion{AppVersionCommit: utils.PointerTo("app version commit")}},
 			},
 		}, models.CiRun{}))
 	})
@@ -108,19 +108,19 @@ func (s *deployHooksSuite) Test_dispatchGithubActionsDeployHook_appVersionRefFro
 
 	chart := models.Chart{
 		Name:      "leonardo",
-		ChartRepo: testutils.PointerTo("terra-helm"),
+		ChartRepo: utils.PointerTo("terra-helm"),
 	}
 	s.NoError(s.DB.Create(&chart).Error)
 
 	cluster := models.Cluster{
 		Name:                "terra-prod",
-		HelmfileRef:         testutils.PointerTo("HEAD"),
-		RequiresSuitability: testutils.PointerTo(true),
+		HelmfileRef:         utils.PointerTo("HEAD"),
+		RequiresSuitability: utils.PointerTo(true),
 		Provider:            "google",
 		GoogleProject:       "broad-dsde-prod",
 		Location:            "us-central1-a",
-		Base:                testutils.PointerTo("terra"),
-		Address:             testutils.PointerTo("0.0.0.0"),
+		Base:                utils.PointerTo("terra"),
+		Address:             utils.PointerTo("0.0.0.0"),
 	}
 	s.NoError(s.DB.Create(&cluster).Error)
 
@@ -128,13 +128,13 @@ func (s *deployHooksSuite) Test_dispatchGithubActionsDeployHook_appVersionRefFro
 		Name:                 "prod",
 		ValuesName:           "prod",
 		UniqueResourcePrefix: "a123",
-		HelmfileRef:          testutils.PointerTo("HEAD"),
-		RequiresSuitability:  testutils.PointerTo(true),
+		HelmfileRef:          utils.PointerTo("HEAD"),
+		RequiresSuitability:  utils.PointerTo(true),
 		Base:                 "live",
 		DefaultClusterID:     &cluster.ID,
 		DefaultNamespace:     "terra-prod",
 		Lifecycle:            "static",
-		PreventDeletion:      testutils.PointerTo(true),
+		PreventDeletion:      utils.PointerTo(true),
 		OwnerID:              &user.ID,
 	}
 	s.NoError(s.DB.Create(&environment).Error)
@@ -147,55 +147,55 @@ func (s *deployHooksSuite) Test_dispatchGithubActionsDeployHook_appVersionRefFro
 		Namespace:       "terra-prod",
 		DestinationType: "environment",
 		ChartReleaseVersion: models.ChartReleaseVersion{
-			HelmfileRef:          testutils.PointerTo("HEAD"),
-			HelmfileRefEnabled:   testutils.PointerTo(false),
-			AppVersionResolver:   testutils.PointerTo("exact"),
-			AppVersionExact:      testutils.PointerTo("v1.2.3"),
-			ChartVersionResolver: testutils.PointerTo("exact"),
-			ChartVersionExact:    testutils.PointerTo("v2.3.4"),
+			HelmfileRef:          utils.PointerTo("HEAD"),
+			HelmfileRefEnabled:   utils.PointerTo(false),
+			AppVersionResolver:   utils.PointerTo("exact"),
+			AppVersionExact:      utils.PointerTo("v1.2.3"),
+			ChartVersionResolver: utils.PointerTo("exact"),
+			ChartVersionExact:    utils.PointerTo("v2.3.4"),
 		},
 	}
 	s.NoError(s.DB.Create(&chartRelease).Error)
 
 	changeset1 := models.Changeset{
 		ChartReleaseID: chartRelease.ID,
-		AppliedAt:      testutils.PointerTo(time.Now().Add(-time.Minute)),
+		AppliedAt:      utils.PointerTo(time.Now().Add(-time.Minute)),
 		From: models.ChartReleaseVersion{
-			HelmfileRef:          testutils.PointerTo("HEAD"),
-			HelmfileRefEnabled:   testutils.PointerTo(false),
-			AppVersionResolver:   testutils.PointerTo("exact"),
-			AppVersionExact:      testutils.PointerTo("v1.1.3"),
-			ChartVersionResolver: testutils.PointerTo("exact"),
-			ChartVersionExact:    testutils.PointerTo("v2.3.4"),
+			HelmfileRef:          utils.PointerTo("HEAD"),
+			HelmfileRefEnabled:   utils.PointerTo(false),
+			AppVersionResolver:   utils.PointerTo("exact"),
+			AppVersionExact:      utils.PointerTo("v1.1.3"),
+			ChartVersionResolver: utils.PointerTo("exact"),
+			ChartVersionExact:    utils.PointerTo("v2.3.4"),
 		},
 		To: models.ChartReleaseVersion{
-			HelmfileRef:          testutils.PointerTo("HEAD"),
-			HelmfileRefEnabled:   testutils.PointerTo(false),
-			AppVersionResolver:   testutils.PointerTo("exact"),
-			AppVersionExact:      testutils.PointerTo("v1.1.4"),
-			ChartVersionResolver: testutils.PointerTo("exact"),
-			ChartVersionExact:    testutils.PointerTo("v2.3.4"),
+			HelmfileRef:          utils.PointerTo("HEAD"),
+			HelmfileRefEnabled:   utils.PointerTo(false),
+			AppVersionResolver:   utils.PointerTo("exact"),
+			AppVersionExact:      utils.PointerTo("v1.1.4"),
+			ChartVersionResolver: utils.PointerTo("exact"),
+			ChartVersionExact:    utils.PointerTo("v2.3.4"),
 		},
 	}
 	s.NoError(s.DB.Create(&changeset1).Error)
 	changeset2 := models.Changeset{
 		ChartReleaseID: chartRelease.ID,
-		AppliedAt:      testutils.PointerTo(time.Now()),
+		AppliedAt:      utils.PointerTo(time.Now()),
 		From: models.ChartReleaseVersion{
-			HelmfileRef:          testutils.PointerTo("HEAD"),
-			HelmfileRefEnabled:   testutils.PointerTo(false),
-			AppVersionResolver:   testutils.PointerTo("exact"),
-			AppVersionExact:      testutils.PointerTo("v1.1.4"),
-			ChartVersionResolver: testutils.PointerTo("exact"),
-			ChartVersionExact:    testutils.PointerTo("v2.3.4"),
+			HelmfileRef:          utils.PointerTo("HEAD"),
+			HelmfileRefEnabled:   utils.PointerTo(false),
+			AppVersionResolver:   utils.PointerTo("exact"),
+			AppVersionExact:      utils.PointerTo("v1.1.4"),
+			ChartVersionResolver: utils.PointerTo("exact"),
+			ChartVersionExact:    utils.PointerTo("v2.3.4"),
 		},
 		To: models.ChartReleaseVersion{
-			HelmfileRef:          testutils.PointerTo("HEAD"),
-			HelmfileRefEnabled:   testutils.PointerTo(false),
-			AppVersionResolver:   testutils.PointerTo("exact"),
-			AppVersionExact:      testutils.PointerTo("v1.1.5"),
-			ChartVersionResolver: testutils.PointerTo("exact"),
-			ChartVersionExact:    testutils.PointerTo("v2.3.4"),
+			HelmfileRef:          utils.PointerTo("HEAD"),
+			HelmfileRefEnabled:   utils.PointerTo(false),
+			AppVersionResolver:   utils.PointerTo("exact"),
+			AppVersionExact:      utils.PointerTo("v1.1.5"),
+			ChartVersionResolver: utils.PointerTo("exact"),
+			ChartVersionExact:    utils.PointerTo("v2.3.4"),
 		},
 	}
 	s.NoError(s.DB.Create(&changeset2).Error)
@@ -207,11 +207,11 @@ func (s *deployHooksSuite) Test_dispatchGithubActionsDeployHook_appVersionRefFro
 			}).Return(nil, nil)
 	}, func() {
 		s.NoError(dispatchGithubActionsDeployHook(s.DB, models.GithubActionsDeployHook{
-			GithubActionsOwner:        testutils.PointerTo("owner"),
-			GithubActionsRepo:         testutils.PointerTo("repo"),
-			GithubActionsWorkflowPath: testutils.PointerTo("path"),
-			GithubActionsDefaultRef:   testutils.PointerTo("custom ref"),
-			GithubActionsRefBehavior:  testutils.PointerTo("use-app-version-as-ref"),
+			GithubActionsOwner:        utils.PointerTo("owner"),
+			GithubActionsRepo:         utils.PointerTo("repo"),
+			GithubActionsWorkflowPath: utils.PointerTo("path"),
+			GithubActionsDefaultRef:   utils.PointerTo("custom ref"),
+			GithubActionsRefBehavior:  utils.PointerTo("use-app-version-as-ref"),
 			Trigger: models.DeployHookTriggerConfig{
 				OnChartRelease: &chartRelease,
 			},
@@ -229,19 +229,19 @@ func (s *deployHooksSuite) Test_dispatchGithubActionsDeployHook_appVersionCommit
 
 	chart := models.Chart{
 		Name:      "leonardo",
-		ChartRepo: testutils.PointerTo("terra-helm"),
+		ChartRepo: utils.PointerTo("terra-helm"),
 	}
 	s.NoError(s.DB.Create(&chart).Error)
 
 	cluster := models.Cluster{
 		Name:                "terra-prod",
-		HelmfileRef:         testutils.PointerTo("HEAD"),
-		RequiresSuitability: testutils.PointerTo(true),
+		HelmfileRef:         utils.PointerTo("HEAD"),
+		RequiresSuitability: utils.PointerTo(true),
 		Provider:            "google",
 		GoogleProject:       "broad-dsde-prod",
 		Location:            "us-central1-a",
-		Base:                testutils.PointerTo("terra"),
-		Address:             testutils.PointerTo("0.0.0.0"),
+		Base:                utils.PointerTo("terra"),
+		Address:             utils.PointerTo("0.0.0.0"),
 	}
 	s.NoError(s.DB.Create(&cluster).Error)
 
@@ -249,13 +249,13 @@ func (s *deployHooksSuite) Test_dispatchGithubActionsDeployHook_appVersionCommit
 		Name:                 "prod",
 		ValuesName:           "prod",
 		UniqueResourcePrefix: "a123",
-		HelmfileRef:          testutils.PointerTo("HEAD"),
-		RequiresSuitability:  testutils.PointerTo(true),
+		HelmfileRef:          utils.PointerTo("HEAD"),
+		RequiresSuitability:  utils.PointerTo(true),
 		Base:                 "live",
 		DefaultClusterID:     &cluster.ID,
 		DefaultNamespace:     "terra-prod",
 		Lifecycle:            "static",
-		PreventDeletion:      testutils.PointerTo(true),
+		PreventDeletion:      utils.PointerTo(true),
 		OwnerID:              &user.ID,
 	}
 	s.NoError(s.DB.Create(&environment).Error)
@@ -268,60 +268,60 @@ func (s *deployHooksSuite) Test_dispatchGithubActionsDeployHook_appVersionCommit
 		Namespace:       "terra-prod",
 		DestinationType: "environment",
 		ChartReleaseVersion: models.ChartReleaseVersion{
-			HelmfileRef:          testutils.PointerTo("HEAD"),
-			HelmfileRefEnabled:   testutils.PointerTo(false),
-			AppVersionResolver:   testutils.PointerTo("exact"),
-			AppVersionExact:      testutils.PointerTo("v1.2.3"),
-			AppVersionCommit:     testutils.PointerTo("commit a"),
-			ChartVersionResolver: testutils.PointerTo("exact"),
-			ChartVersionExact:    testutils.PointerTo("v2.3.4"),
+			HelmfileRef:          utils.PointerTo("HEAD"),
+			HelmfileRefEnabled:   utils.PointerTo(false),
+			AppVersionResolver:   utils.PointerTo("exact"),
+			AppVersionExact:      utils.PointerTo("v1.2.3"),
+			AppVersionCommit:     utils.PointerTo("commit a"),
+			ChartVersionResolver: utils.PointerTo("exact"),
+			ChartVersionExact:    utils.PointerTo("v2.3.4"),
 		},
 	}
 	s.NoError(s.DB.Create(&chartRelease).Error)
 
 	changeset1 := models.Changeset{
 		ChartReleaseID: chartRelease.ID,
-		AppliedAt:      testutils.PointerTo(time.Now().Add(-time.Minute)),
+		AppliedAt:      utils.PointerTo(time.Now().Add(-time.Minute)),
 		From: models.ChartReleaseVersion{
-			HelmfileRef:          testutils.PointerTo("HEAD"),
-			HelmfileRefEnabled:   testutils.PointerTo(false),
-			AppVersionResolver:   testutils.PointerTo("exact"),
-			AppVersionExact:      testutils.PointerTo("v1.1.3"),
-			AppVersionCommit:     testutils.PointerTo("commit b"),
-			ChartVersionResolver: testutils.PointerTo("exact"),
-			ChartVersionExact:    testutils.PointerTo("v2.3.4"),
+			HelmfileRef:          utils.PointerTo("HEAD"),
+			HelmfileRefEnabled:   utils.PointerTo(false),
+			AppVersionResolver:   utils.PointerTo("exact"),
+			AppVersionExact:      utils.PointerTo("v1.1.3"),
+			AppVersionCommit:     utils.PointerTo("commit b"),
+			ChartVersionResolver: utils.PointerTo("exact"),
+			ChartVersionExact:    utils.PointerTo("v2.3.4"),
 		},
 		To: models.ChartReleaseVersion{
-			HelmfileRef:          testutils.PointerTo("HEAD"),
-			HelmfileRefEnabled:   testutils.PointerTo(false),
-			AppVersionResolver:   testutils.PointerTo("exact"),
-			AppVersionExact:      testutils.PointerTo("v1.1.4"),
-			AppVersionCommit:     testutils.PointerTo("commit c"),
-			ChartVersionResolver: testutils.PointerTo("exact"),
-			ChartVersionExact:    testutils.PointerTo("v2.3.4"),
+			HelmfileRef:          utils.PointerTo("HEAD"),
+			HelmfileRefEnabled:   utils.PointerTo(false),
+			AppVersionResolver:   utils.PointerTo("exact"),
+			AppVersionExact:      utils.PointerTo("v1.1.4"),
+			AppVersionCommit:     utils.PointerTo("commit c"),
+			ChartVersionResolver: utils.PointerTo("exact"),
+			ChartVersionExact:    utils.PointerTo("v2.3.4"),
 		},
 	}
 	s.NoError(s.DB.Create(&changeset1).Error)
 	changeset2 := models.Changeset{
 		ChartReleaseID: chartRelease.ID,
-		AppliedAt:      testutils.PointerTo(time.Now()),
+		AppliedAt:      utils.PointerTo(time.Now()),
 		From: models.ChartReleaseVersion{
-			HelmfileRef:          testutils.PointerTo("HEAD"),
-			HelmfileRefEnabled:   testutils.PointerTo(false),
-			AppVersionResolver:   testutils.PointerTo("exact"),
-			AppVersionExact:      testutils.PointerTo("v1.1.4"),
-			AppVersionCommit:     testutils.PointerTo("commit d"),
-			ChartVersionResolver: testutils.PointerTo("exact"),
-			ChartVersionExact:    testutils.PointerTo("v2.3.4"),
+			HelmfileRef:          utils.PointerTo("HEAD"),
+			HelmfileRefEnabled:   utils.PointerTo(false),
+			AppVersionResolver:   utils.PointerTo("exact"),
+			AppVersionExact:      utils.PointerTo("v1.1.4"),
+			AppVersionCommit:     utils.PointerTo("commit d"),
+			ChartVersionResolver: utils.PointerTo("exact"),
+			ChartVersionExact:    utils.PointerTo("v2.3.4"),
 		},
 		To: models.ChartReleaseVersion{
-			HelmfileRef:          testutils.PointerTo("HEAD"),
-			HelmfileRefEnabled:   testutils.PointerTo(false),
-			AppVersionResolver:   testutils.PointerTo("exact"),
-			AppVersionExact:      testutils.PointerTo("v1.1.5"),
-			AppVersionCommit:     testutils.PointerTo("commit e"),
-			ChartVersionResolver: testutils.PointerTo("exact"),
-			ChartVersionExact:    testutils.PointerTo("v2.3.4"),
+			HelmfileRef:          utils.PointerTo("HEAD"),
+			HelmfileRefEnabled:   utils.PointerTo(false),
+			AppVersionResolver:   utils.PointerTo("exact"),
+			AppVersionExact:      utils.PointerTo("v1.1.5"),
+			AppVersionCommit:     utils.PointerTo("commit e"),
+			ChartVersionResolver: utils.PointerTo("exact"),
+			ChartVersionExact:    utils.PointerTo("v2.3.4"),
 		},
 	}
 	s.NoError(s.DB.Create(&changeset2).Error)
@@ -333,11 +333,11 @@ func (s *deployHooksSuite) Test_dispatchGithubActionsDeployHook_appVersionCommit
 			}).Return(nil, nil)
 	}, func() {
 		s.NoError(dispatchGithubActionsDeployHook(s.DB, models.GithubActionsDeployHook{
-			GithubActionsOwner:        testutils.PointerTo("owner"),
-			GithubActionsRepo:         testutils.PointerTo("repo"),
-			GithubActionsWorkflowPath: testutils.PointerTo("path"),
-			GithubActionsDefaultRef:   testutils.PointerTo("custom ref"),
-			GithubActionsRefBehavior:  testutils.PointerTo("use-app-version-commit-as-ref"),
+			GithubActionsOwner:        utils.PointerTo("owner"),
+			GithubActionsRepo:         utils.PointerTo("repo"),
+			GithubActionsWorkflowPath: utils.PointerTo("path"),
+			GithubActionsDefaultRef:   utils.PointerTo("custom ref"),
+			GithubActionsRefBehavior:  utils.PointerTo("use-app-version-commit-as-ref"),
 			Trigger: models.DeployHookTriggerConfig{
 				OnChartRelease: &chartRelease,
 			},

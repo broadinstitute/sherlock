@@ -2,7 +2,7 @@ package sherlock
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/go-shared/pkg/testutils"
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
@@ -36,7 +36,7 @@ func (s *handlerSuite) TestSlackDeployHooksV3Edit_notFound() {
 	code := s.HandleRequest(
 		s.NewRequest("PATCH", "/api/deploy-hooks/slack/v3/123", SlackDeployHookV3Edit{
 			SlackDeployHookFields: SlackDeployHookFields{
-				SlackChannel: testutils.PointerTo("some channel"),
+				SlackChannel: utils.PointerTo("some channel"),
 			},
 		}),
 		&got)
@@ -50,11 +50,11 @@ func (s *handlerSuite) TestSlackDeployHooksV3Edit_sqlValidation() {
 		Name:                "terra-dev",
 		Provider:            "google",
 		GoogleProject:       "broad-dsde-dev",
-		Base:                testutils.PointerTo("live"),
-		Address:             testutils.PointerTo("0.0.0.0"),
-		RequiresSuitability: testutils.PointerTo(false),
+		Base:                utils.PointerTo("live"),
+		Address:             utils.PointerTo("0.0.0.0"),
+		RequiresSuitability: utils.PointerTo(false),
 		Location:            "us-central1-a",
-		HelmfileRef:         testutils.PointerTo("HEAD"),
+		HelmfileRef:         utils.PointerTo("HEAD"),
 	}, user)
 	s.NoError(err)
 	s.True(created)
@@ -66,10 +66,10 @@ func (s *handlerSuite) TestSlackDeployHooksV3Edit_sqlValidation() {
 		DefaultClusterID:           &cluster.ID,
 		DefaultNamespace:           "terra-dev",
 		OwnerID:                    &user.ID,
-		RequiresSuitability:        testutils.PointerTo(false),
-		HelmfileRef:                testutils.PointerTo("HEAD"),
-		DefaultFirecloudDevelopRef: testutils.PointerTo("dev"),
-		PreventDeletion:            testutils.PointerTo(false),
+		RequiresSuitability:        utils.PointerTo(false),
+		HelmfileRef:                utils.PointerTo("HEAD"),
+		DefaultFirecloudDevelopRef: utils.PointerTo("dev"),
+		PreventDeletion:            utils.PointerTo(false),
 	}, user)
 	s.NoError(err)
 	s.True(created)
@@ -78,7 +78,7 @@ func (s *handlerSuite) TestSlackDeployHooksV3Edit_sqlValidation() {
 		Trigger: models.DeployHookTriggerConfig{
 			OnEnvironmentID: &environment.ID,
 		},
-		SlackChannel: testutils.PointerTo("channel"),
+		SlackChannel: utils.PointerTo("channel"),
 	}
 	s.NoError(s.DB.Create(&hook).Error)
 
@@ -86,7 +86,7 @@ func (s *handlerSuite) TestSlackDeployHooksV3Edit_sqlValidation() {
 	code := s.HandleRequest(
 		s.NewRequest("PATCH", fmt.Sprintf("/api/deploy-hooks/slack/v3/%d", hook.ID), SlackDeployHookV3Edit{
 			SlackDeployHookFields: SlackDeployHookFields{
-				SlackChannel: testutils.PointerTo(""),
+				SlackChannel: utils.PointerTo(""),
 			},
 		}),
 		&got)
@@ -101,11 +101,11 @@ func (s *handlerSuite) TestSlackDeployHooksV3Edit_forbidden() {
 		Name:                "terra-dev",
 		Provider:            "google",
 		GoogleProject:       "broad-dsde-dev",
-		Base:                testutils.PointerTo("live"),
-		Address:             testutils.PointerTo("0.0.0.0"),
-		RequiresSuitability: testutils.PointerTo(false),
+		Base:                utils.PointerTo("live"),
+		Address:             utils.PointerTo("0.0.0.0"),
+		RequiresSuitability: utils.PointerTo(false),
 		Location:            "us-central1-a",
-		HelmfileRef:         testutils.PointerTo("HEAD"),
+		HelmfileRef:         utils.PointerTo("HEAD"),
 	}, user)
 	s.NoError(err)
 	s.True(created)
@@ -117,10 +117,10 @@ func (s *handlerSuite) TestSlackDeployHooksV3Edit_forbidden() {
 		DefaultClusterID:           &cluster.ID,
 		DefaultNamespace:           "terra-dev",
 		OwnerID:                    &user.ID,
-		RequiresSuitability:        testutils.PointerTo(true), // <- requires suitability
-		HelmfileRef:                testutils.PointerTo("HEAD"),
-		DefaultFirecloudDevelopRef: testutils.PointerTo("dev"),
-		PreventDeletion:            testutils.PointerTo(false),
+		RequiresSuitability:        utils.PointerTo(true), // <- requires suitability
+		HelmfileRef:                utils.PointerTo("HEAD"),
+		DefaultFirecloudDevelopRef: utils.PointerTo("dev"),
+		PreventDeletion:            utils.PointerTo(false),
 	}, user)
 	s.NoError(err)
 	s.True(created)
@@ -129,7 +129,7 @@ func (s *handlerSuite) TestSlackDeployHooksV3Edit_forbidden() {
 		Trigger: models.DeployHookTriggerConfig{
 			OnEnvironmentID: &environment.ID,
 		},
-		SlackChannel: testutils.PointerTo("channel"),
+		SlackChannel: utils.PointerTo("channel"),
 	}
 	s.NoError(s.DB.Create(&hook).Error)
 
@@ -147,11 +147,11 @@ func (s *handlerSuite) TestSlackDeployHooksV3Edit() {
 		Name:                "terra-dev",
 		Provider:            "google",
 		GoogleProject:       "broad-dsde-dev",
-		Base:                testutils.PointerTo("live"),
-		Address:             testutils.PointerTo("0.0.0.0"),
-		RequiresSuitability: testutils.PointerTo(false),
+		Base:                utils.PointerTo("live"),
+		Address:             utils.PointerTo("0.0.0.0"),
+		RequiresSuitability: utils.PointerTo(false),
 		Location:            "us-central1-a",
-		HelmfileRef:         testutils.PointerTo("HEAD"),
+		HelmfileRef:         utils.PointerTo("HEAD"),
 	}, user)
 	s.NoError(err)
 	s.True(created)
@@ -163,10 +163,10 @@ func (s *handlerSuite) TestSlackDeployHooksV3Edit() {
 		DefaultClusterID:           &cluster.ID,
 		DefaultNamespace:           "terra-dev",
 		OwnerID:                    &user.ID,
-		RequiresSuitability:        testutils.PointerTo(false),
-		HelmfileRef:                testutils.PointerTo("HEAD"),
-		DefaultFirecloudDevelopRef: testutils.PointerTo("dev"),
-		PreventDeletion:            testutils.PointerTo(false),
+		RequiresSuitability:        utils.PointerTo(false),
+		HelmfileRef:                utils.PointerTo("HEAD"),
+		DefaultFirecloudDevelopRef: utils.PointerTo("dev"),
+		PreventDeletion:            utils.PointerTo(false),
 	}, user)
 	s.NoError(err)
 	s.True(created)
@@ -175,7 +175,7 @@ func (s *handlerSuite) TestSlackDeployHooksV3Edit() {
 		Trigger: models.DeployHookTriggerConfig{
 			OnEnvironmentID: &environment.ID,
 		},
-		SlackChannel: testutils.PointerTo("channel"),
+		SlackChannel: utils.PointerTo("channel"),
 	}
 	s.NoError(s.DB.Create(&hook).Error)
 
@@ -184,10 +184,10 @@ func (s *handlerSuite) TestSlackDeployHooksV3Edit() {
 		code := s.HandleRequest(
 			s.NewRequest("PATCH", fmt.Sprintf("/api/deploy-hooks/slack/v3/%d", hook.ID), SlackDeployHookV3Edit{
 				deployHookTriggerConfigV3EditableFields: deployHookTriggerConfigV3EditableFields{
-					OnSuccess: testutils.PointerTo(true),
+					OnSuccess: utils.PointerTo(true),
 				},
 				SlackDeployHookFields: SlackDeployHookFields{
-					SlackChannel: testutils.PointerTo("different channel"),
+					SlackChannel: utils.PointerTo("different channel"),
 				},
 			}),
 			&got)

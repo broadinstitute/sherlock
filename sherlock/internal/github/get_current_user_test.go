@@ -3,7 +3,7 @@ package github
 import (
 	"context"
 	"fmt"
-	"github.com/broadinstitute/sherlock/go-shared/pkg/testutils"
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/google/go-github/v50/github"
 	"github.com/stretchr/testify/assert"
@@ -30,9 +30,9 @@ func TestGetCurrentUser(t *testing.T) {
 			args: args{authTokenOverride: "some token"},
 			mockConfig: func(c *MockClient) {
 				c.Users.EXPECT().Get(ctx, "").Return(&github.User{
-					ID:    testutils.PointerTo[int64](123),
-					Login: testutils.PointerTo("username"),
-					Name:  testutils.PointerTo("name"),
+					ID:    utils.PointerTo[int64](123),
+					Login: utils.PointerTo("username"),
+					Name:  utils.PointerTo("name"),
 				}, nil, nil)
 			},
 			wantGithubID: "123",
@@ -45,9 +45,9 @@ func TestGetCurrentUser(t *testing.T) {
 			args: args{},
 			mockConfig: func(c *MockClient) {
 				c.Users.EXPECT().Get(ctx, "").Return(&github.User{
-					ID:    testutils.PointerTo[int64](123),
-					Login: testutils.PointerTo("username"),
-					Name:  testutils.PointerTo("name"),
+					ID:    utils.PointerTo[int64](123),
+					Login: utils.PointerTo("username"),
+					Name:  utils.PointerTo("name"),
 				}, nil, nil)
 			},
 			wantGithubID: "123",

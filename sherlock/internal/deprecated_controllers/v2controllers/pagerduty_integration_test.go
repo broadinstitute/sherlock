@@ -2,7 +2,7 @@ package v2controllers
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/go-shared/pkg/testutils"
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_db"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
@@ -48,17 +48,17 @@ var (
 	pagerdutyIntegration1 = CreatablePagerdutyIntegration{
 		PagerdutyID: "abcd1234",
 		EditablePagerdutyIntegration: EditablePagerdutyIntegration{
-			Name: testutils.PointerTo("ABC service"),
-			Key:  testutils.PointerTo("a1b2c3d4"),
-			Type: testutils.PointerTo("service"),
+			Name: utils.PointerTo("ABC service"),
+			Key:  utils.PointerTo("a1b2c3d4"),
+			Type: utils.PointerTo("service"),
 		},
 	}
 	pagerdutyIntegration2 = CreatablePagerdutyIntegration{
 		PagerdutyID: "abcde12345",
 		EditablePagerdutyIntegration: EditablePagerdutyIntegration{
-			Name: testutils.PointerTo("ABC service 2"),
-			Key:  testutils.PointerTo("a1b2c3d4e5"),
-			Type: testutils.PointerTo("service"),
+			Name: utils.PointerTo("ABC service 2"),
+			Key:  utils.PointerTo("a1b2c3d4e5"),
+			Type: utils.PointerTo("service"),
 		},
 	}
 	pagerdutyIntgrationSeedList = []CreatablePagerdutyIntegration{
@@ -127,11 +127,11 @@ func (suite *pagerdutyIntegrationControllerSuite) TestPagerdutyIntegrationListAl
 	})
 	suite.Run("filters multiple", func() {
 		matching, err := suite.PagerdutyIntegrationController.ListAllMatching(
-			PagerdutyIntegration{Type: testutils.PointerTo("service")}, 0)
+			PagerdutyIntegration{Type: utils.PointerTo("service")}, 0)
 		assert.NoError(suite.T(), err)
 		assert.True(suite.T(), len(matching) > 1)
 		for _, match := range matching {
-			assert.Equal(suite.T(), testutils.PointerTo("service"), match.Type)
+			assert.Equal(suite.T(), utils.PointerTo("service"), match.Type)
 		}
 	})
 	suite.Run("none is an empty list, not null", func() {
@@ -193,7 +193,7 @@ func (suite *pagerdutyIntegrationControllerSuite) TestPagerdutyIntegrationEdit()
 		before, err := suite.PagerdutyIntegrationController.Get(fmt.Sprintf("pd-id/%s", pagerdutyIntegration1.PagerdutyID))
 		assert.NoError(suite.T(), err)
 		assert.Equal(suite.T(), pagerdutyIntegration1.Name, before.Name)
-		newName := testutils.PointerTo("new")
+		newName := utils.PointerTo("new")
 		edited, err := suite.PagerdutyIntegrationController.Edit(fmt.Sprintf("pd-id/%s", pagerdutyIntegration1.PagerdutyID), EditablePagerdutyIntegration{Name: newName}, generateUser(suite.T(), suite.db, true))
 		assert.NoError(suite.T(), err)
 		assert.Equal(suite.T(), newName, edited.Name)
@@ -205,14 +205,14 @@ func (suite *pagerdutyIntegrationControllerSuite) TestPagerdutyIntegrationEdit()
 		deprecated_db.Truncate(suite.T(), suite.db)
 		suite.seedPagerdutyIntegrations(suite.T(), suite.db)
 
-		_, err := suite.PagerdutyIntegrationController.Edit(fmt.Sprintf("pd-id/%s", pagerdutyIntegration1.PagerdutyID), EditablePagerdutyIntegration{Name: testutils.PointerTo("")}, generateUser(suite.T(), suite.db, true))
+		_, err := suite.PagerdutyIntegrationController.Edit(fmt.Sprintf("pd-id/%s", pagerdutyIntegration1.PagerdutyID), EditablePagerdutyIntegration{Name: utils.PointerTo("")}, generateUser(suite.T(), suite.db, true))
 		assert.ErrorContains(suite.T(), err, errors.BadRequest)
 	})
 	suite.Run("unsuccessfully if forbidden", func() {
 		deprecated_db.Truncate(suite.T(), suite.db)
 		suite.seedPagerdutyIntegrations(suite.T(), suite.db)
 
-		_, err := suite.PagerdutyIntegrationController.Edit(fmt.Sprintf("pd-id/%s", pagerdutyIntegration1.PagerdutyID), EditablePagerdutyIntegration{Name: testutils.PointerTo("foo")}, generateUser(suite.T(), suite.db, false))
+		_, err := suite.PagerdutyIntegrationController.Edit(fmt.Sprintf("pd-id/%s", pagerdutyIntegration1.PagerdutyID), EditablePagerdutyIntegration{Name: utils.PointerTo("foo")}, generateUser(suite.T(), suite.db, false))
 		assert.ErrorContains(suite.T(), err, errors.Forbidden)
 	})
 }
@@ -238,7 +238,7 @@ func (suite *pagerdutyIntegrationControllerSuite) TestPagerdutyIntegrationUpsert
 		matches, err = suite.PagerdutyIntegrationController.ListAllMatching(PagerdutyIntegration{}, 0)
 		assert.NoError(suite.T(), err)
 		assert.Len(suite.T(), matches, 1)
-		newName := testutils.PointerTo("new")
+		newName := utils.PointerTo("new")
 		edited := CreatablePagerdutyIntegration{
 			PagerdutyID: pagerdutyIntegration1.PagerdutyID,
 			EditablePagerdutyIntegration: EditablePagerdutyIntegration{
@@ -252,7 +252,7 @@ func (suite *pagerdutyIntegrationControllerSuite) TestPagerdutyIntegrationUpsert
 		assert.False(suite.T(), created)
 		assert.Equal(suite.T(), newName, put.Name)
 		suite.Run("edits without all fields being set", func() {
-			newName = testutils.PointerTo("new again")
+			newName = utils.PointerTo("new again")
 			editedAgain := CreatablePagerdutyIntegration{
 				PagerdutyID: pagerdutyIntegration1.PagerdutyID,
 				EditablePagerdutyIntegration: EditablePagerdutyIntegration{

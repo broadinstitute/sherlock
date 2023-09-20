@@ -3,6 +3,7 @@ package v2controllers
 import (
 	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/testutils"
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_db"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
@@ -62,7 +63,7 @@ func (suite *ciRunControllerSuite) TestCiFlow() {
 	// or something tells Sherlock about the workflow being requested:
 	payload := CreatableCiRun{
 		CiRunDataFields: ciRunData,
-		EditableCiRun:   EditableCiRun{CiRunStatusFields: CiRunStatusFields{Status: testutils.PointerTo("requested")}},
+		EditableCiRun:   EditableCiRun{CiRunStatusFields: CiRunStatusFields{Status: utils.PointerTo("requested")}},
 	}
 	ciRun, created, err := suite.CiRunController.Upsert(
 		ciRunSelector,
@@ -79,8 +80,8 @@ func (suite *ciRunControllerSuite) TestCiFlow() {
 	payload = CreatableCiRun{
 		CiRunDataFields: ciRunData,
 		EditableCiRun: EditableCiRun{CiRunStatusFields: CiRunStatusFields{
-			StartedAt: testutils.PointerTo(time.Now()),
-			Status:    testutils.PointerTo("running")},
+			StartedAt: utils.PointerTo(time.Now()),
+			Status:    utils.PointerTo("running")},
 		},
 	}
 	ciRun, created, err = suite.CiRunController.Upsert(
@@ -141,8 +142,8 @@ func (suite *ciRunControllerSuite) TestCiFlow() {
 	payload = CreatableCiRun{
 		CiRunDataFields: ciRunData,
 		EditableCiRun: EditableCiRun{CiRunStatusFields: CiRunStatusFields{
-			Status:     testutils.PointerTo("succeeded"),
-			TerminalAt: testutils.PointerTo(time.Now()),
+			Status:     utils.PointerTo("succeeded"),
+			TerminalAt: utils.PointerTo(time.Now()),
 		}},
 	}
 	ciRun, created, err = suite.CiRunController.Upsert(
@@ -163,8 +164,8 @@ func (suite *ciRunControllerSuite) TestCiFlow() {
 	payload = CreatableCiRun{
 		CiRunDataFields: ciRunData,
 		EditableCiRun: EditableCiRun{CiRunStatusFields: CiRunStatusFields{
-			Status:     testutils.PointerTo("failed"),
-			TerminalAt: testutils.PointerTo(time.Now()),
+			Status:     utils.PointerTo("failed"),
+			TerminalAt: utils.PointerTo(time.Now()),
 		}},
 	}
 	ciRun, created, err = suite.CiRunController.Upsert(
@@ -245,11 +246,11 @@ func (suite *ciRunControllerSuite) TestComplexCiFlow() {
 	_, err = suite.ChangesetController.PlanAndApply(ChangesetPlanRequest{
 		ChartReleases: []ChangesetPlanRequestChartReleaseEntry{
 			{CreatableChangeset: CreatableChangeset{ChartRelease: "leonardo-terra-staging",
-				ToAppVersionExact: testutils.PointerTo("A"), ToAppVersionResolver: testutils.PointerTo("exact"),
-				ToChartVersionExact: testutils.PointerTo("X"), ToChartVersionResolver: testutils.PointerTo("exact")}},
+				ToAppVersionExact: utils.PointerTo("A"), ToAppVersionResolver: utils.PointerTo("exact"),
+				ToChartVersionExact: utils.PointerTo("X"), ToChartVersionResolver: utils.PointerTo("exact")}},
 			{CreatableChangeset: CreatableChangeset{ChartRelease: "leonardo-terra-dev",
-				ToAppVersionExact: testutils.PointerTo("D"), ToAppVersionResolver: testutils.PointerTo("exact"),
-				ToChartVersionExact: testutils.PointerTo("Z"), ToChartVersionResolver: testutils.PointerTo("exact")}},
+				ToAppVersionExact: utils.PointerTo("D"), ToAppVersionResolver: utils.PointerTo("exact"),
+				ToChartVersionExact: utils.PointerTo("Z"), ToChartVersionResolver: utils.PointerTo("exact")}},
 		}}, generateUser(suite.T(), suite.db, true))
 	suite.Assert().NoError(err)
 
@@ -269,7 +270,7 @@ func (suite *ciRunControllerSuite) TestComplexCiFlow() {
 	changesets, err := suite.ChangesetController.Plan(ChangesetPlanRequest{
 		ChartReleases: []ChangesetPlanRequestChartReleaseEntry{{
 			CreatableChangeset:                    CreatableChangeset{ChartRelease: "leonardo-terra-staging"},
-			UseExactVersionsFromOtherChartRelease: testutils.PointerTo("leonardo-terra-dev"),
+			UseExactVersionsFromOtherChartRelease: utils.PointerTo("leonardo-terra-dev"),
 		}}}, generateUser(suite.T(), suite.db, true))
 	suite.Assert().NoError(err)
 	suite.Assert().Len(changesets, 1)
@@ -317,7 +318,7 @@ func (suite *ciRunControllerSuite) TestComplexCiFlow() {
 
 	payload := CreatableCiRun{
 		CiRunDataFields: ciRunData,
-		EditableCiRun:   EditableCiRun{CiRunStatusFields: CiRunStatusFields{Status: testutils.PointerTo("requested")}},
+		EditableCiRun:   EditableCiRun{CiRunStatusFields: CiRunStatusFields{Status: utils.PointerTo("requested")}},
 	}
 	ciRun, created, err := suite.CiRunController.Upsert(
 		ciRunSelector,
@@ -333,8 +334,8 @@ func (suite *ciRunControllerSuite) TestComplexCiFlow() {
 	payload = CreatableCiRun{
 		CiRunDataFields: ciRunData,
 		EditableCiRun: EditableCiRun{CiRunStatusFields: CiRunStatusFields{
-			StartedAt: testutils.PointerTo(time.Now()),
-			Status:    testutils.PointerTo("running")},
+			StartedAt: utils.PointerTo(time.Now()),
+			Status:    utils.PointerTo("running")},
 		},
 	}
 	ciRun, created, err = suite.CiRunController.Upsert(
@@ -432,8 +433,8 @@ func (suite *ciRunControllerSuite) TestComplexCiFlow() {
 	payload = CreatableCiRun{
 		CiRunDataFields: ciRunData,
 		EditableCiRun: EditableCiRun{CiRunStatusFields: CiRunStatusFields{
-			Status:     testutils.PointerTo("succeeded"),
-			TerminalAt: testutils.PointerTo(time.Now()),
+			Status:     utils.PointerTo("succeeded"),
+			TerminalAt: utils.PointerTo(time.Now()),
 		}},
 	}
 	ciRun, created, err = suite.CiRunController.Upsert(

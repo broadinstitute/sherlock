@@ -2,7 +2,7 @@ package sherlock
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/go-shared/pkg/testutils"
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_controllers/v2controllers"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
@@ -34,7 +34,7 @@ func (s *handlerSuite) TestCiIdentifiersV3Get() {
 
 	chart, created, err := v2models.InternalChartStore.Create(s.DB, v2models.Chart{
 		Name:      "leonardo",
-		ChartRepo: testutils.PointerTo("terra-helm"),
+		ChartRepo: utils.PointerTo("terra-helm"),
 	}, user)
 	s.NoError(err)
 	s.True(created)
@@ -111,11 +111,11 @@ func (s *handlerSuite) TestCiIdentifiersV3Get() {
 		Name:                "terra-dev",
 		Provider:            "google",
 		GoogleProject:       "broad-dsde-dev",
-		Base:                testutils.PointerTo("live"),
-		Address:             testutils.PointerTo("0.0.0.0"),
-		RequiresSuitability: testutils.PointerTo(false),
+		Base:                utils.PointerTo("live"),
+		Address:             utils.PointerTo("0.0.0.0"),
+		RequiresSuitability: utils.PointerTo(false),
 		Location:            "us-central1-a",
-		HelmfileRef:         testutils.PointerTo("HEAD"),
+		HelmfileRef:         utils.PointerTo("HEAD"),
 	}, user)
 	s.NoError(err)
 	s.True(created)
@@ -146,10 +146,10 @@ func (s *handlerSuite) TestCiIdentifiersV3Get() {
 		DefaultClusterID:           &cluster.ID,
 		DefaultNamespace:           "terra-dev",
 		OwnerID:                    &user.ID,
-		RequiresSuitability:        testutils.PointerTo(false),
-		HelmfileRef:                testutils.PointerTo("HEAD"),
-		DefaultFirecloudDevelopRef: testutils.PointerTo("dev"),
-		PreventDeletion:            testutils.PointerTo(false),
+		RequiresSuitability:        utils.PointerTo(false),
+		HelmfileRef:                utils.PointerTo("HEAD"),
+		DefaultFirecloudDevelopRef: utils.PointerTo("dev"),
+		PreventDeletion:            utils.PointerTo(false),
 	}, user)
 	s.NoError(err)
 	s.True(created)
@@ -184,13 +184,13 @@ func (s *handlerSuite) TestCiIdentifiersV3Get() {
 		EnvironmentID: &environment.ID,
 		Namespace:     environment.DefaultNamespace,
 		ChartReleaseVersion: v2models.ChartReleaseVersion{
-			AppVersionResolver:   testutils.PointerTo("exact"),
-			AppVersionExact:      testutils.PointerTo("app version blah"),
-			ChartVersionResolver: testutils.PointerTo("exact"),
-			ChartVersionExact:    testutils.PointerTo("chart version blah"),
-			HelmfileRef:          testutils.PointerTo("HEAD"),
-			HelmfileRefEnabled:   testutils.PointerTo(false),
-			FirecloudDevelopRef:  testutils.PointerTo("dev"),
+			AppVersionResolver:   utils.PointerTo("exact"),
+			AppVersionExact:      utils.PointerTo("app version blah"),
+			ChartVersionResolver: utils.PointerTo("exact"),
+			ChartVersionExact:    utils.PointerTo("chart version blah"),
+			HelmfileRef:          utils.PointerTo("HEAD"),
+			HelmfileRefEnabled:   utils.PointerTo(false),
+			FirecloudDevelopRef:  utils.PointerTo("dev"),
 		},
 	}, user)
 	s.NoError(err)
@@ -264,7 +264,7 @@ func (s *handlerSuite) TestCiIdentifiersV3GetLimitRuns() {
 
 	_, created, err := v2models.InternalChartStore.Create(s.DB, v2models.Chart{
 		Name:      "leonardo",
-		ChartRepo: testutils.PointerTo("terra-helm"),
+		ChartRepo: utils.PointerTo("terra-helm"),
 	}, user)
 	s.NoError(err)
 	s.True(created)
@@ -282,7 +282,7 @@ func (s *handlerSuite) TestCiIdentifiersV3GetLimitRuns() {
 					GithubActionsAttemptNumber: 1,
 					GithubActionsWorkflowPath:  "workflow",
 					// Higher IDs started more recently, just for convenience in testing
-					StartedAt: testutils.PointerTo(time.Now().Add(-time.Hour).Add(time.Minute * time.Duration(iteration))),
+					StartedAt: utils.PointerTo(time.Now().Add(-time.Hour).Add(time.Minute * time.Duration(iteration))),
 				},
 				Charts: []string{"leonardo"},
 			}),

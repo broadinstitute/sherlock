@@ -2,7 +2,7 @@ package v2controllers
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/go-shared/pkg/testutils"
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_db"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
 	"testing"
@@ -50,29 +50,29 @@ var (
 	leonardoChart = CreatableChart{
 		Name: "leonardo",
 		EditableChart: EditableChart{
-			AppImageGitRepo:       testutils.PointerTo("DataBiosphere/leonardo"),
-			AppImageGitMainBranch: testutils.PointerTo("main"),
-			ChartExposesEndpoint:  testutils.PointerTo(true),
-			LegacyConfigsEnabled:  testutils.PointerTo(true),
+			AppImageGitRepo:       utils.PointerTo("DataBiosphere/leonardo"),
+			AppImageGitMainBranch: utils.PointerTo("main"),
+			ChartExposesEndpoint:  utils.PointerTo(true),
+			LegacyConfigsEnabled:  utils.PointerTo(true),
 		},
 	}
 	samChart = CreatableChart{
 		Name: "sam",
 		EditableChart: EditableChart{
-			AppImageGitRepo:       testutils.PointerTo("broadinstitute/sam"),
-			AppImageGitMainBranch: testutils.PointerTo("develop"),
-			ChartExposesEndpoint:  testutils.PointerTo(true),
-			LegacyConfigsEnabled:  testutils.PointerTo(true),
+			AppImageGitRepo:       utils.PointerTo("broadinstitute/sam"),
+			AppImageGitMainBranch: utils.PointerTo("develop"),
+			ChartExposesEndpoint:  utils.PointerTo(true),
+			LegacyConfigsEnabled:  utils.PointerTo(true),
 		},
 	}
 	datarepoChart = CreatableChart{
 		Name: "datarepo",
 		EditableChart: EditableChart{
-			ChartRepo:             testutils.PointerTo("datarepo-helm"),
-			AppImageGitRepo:       testutils.PointerTo("DataBiosphere/jade-data-repo"),
-			AppImageGitMainBranch: testutils.PointerTo("develop"),
-			ChartExposesEndpoint:  testutils.PointerTo(true),
-			LegacyConfigsEnabled:  testutils.PointerTo(false),
+			ChartRepo:             utils.PointerTo("datarepo-helm"),
+			AppImageGitRepo:       utils.PointerTo("DataBiosphere/jade-data-repo"),
+			AppImageGitMainBranch: utils.PointerTo("develop"),
+			ChartExposesEndpoint:  utils.PointerTo(true),
+			LegacyConfigsEnabled:  utils.PointerTo(false),
 		},
 	}
 	// "app release" (per environment), but doesn't actually have an application
@@ -87,8 +87,8 @@ var (
 	yaleChart = CreatableChart{
 		Name: "yale",
 		EditableChart: EditableChart{
-			AppImageGitRepo:       testutils.PointerTo("broadinstitute/yale"),
-			AppImageGitMainBranch: testutils.PointerTo("main"),
+			AppImageGitRepo:       utils.PointerTo("broadinstitute/yale"),
+			AppImageGitMainBranch: utils.PointerTo("main"),
 		},
 	}
 	// library sub-chart
@@ -205,11 +205,11 @@ func (suite *chartControllerSuite) TestChartListAllMatching() {
 	})
 	suite.Run("filters multiple", func() {
 		matching, err := suite.ChartController.ListAllMatching(
-			Chart{CreatableChart: CreatableChart{EditableChart: EditableChart{ChartRepo: testutils.PointerTo("terra-helm")}}}, 0)
+			Chart{CreatableChart: CreatableChart{EditableChart: EditableChart{ChartRepo: utils.PointerTo("terra-helm")}}}, 0)
 		assert.NoError(suite.T(), err)
 		assert.True(suite.T(), len(matching) > 1)
 		for _, chart := range matching {
-			assert.Equal(suite.T(), testutils.PointerTo("terra-helm"), chart.ChartRepo)
+			assert.Equal(suite.T(), utils.PointerTo("terra-helm"), chart.ChartRepo)
 		}
 	})
 	suite.Run("none is an empty list, not null", func() {
@@ -273,8 +273,8 @@ func (suite *chartControllerSuite) TestChartEdit() {
 		assert.Equal(suite.T(), yaleChart.AppImageGitMainBranch, before.AppImageGitMainBranch)
 		assert.Empty(suite.T(), before.Description)
 		assert.Empty(suite.T(), before.PlaybookURL)
-		newValue := testutils.PointerTo("new")
-		newPactParticipant := testutils.PointerTo(true)
+		newValue := utils.PointerTo("new")
+		newPactParticipant := utils.PointerTo(true)
 		edited, err := suite.ChartController.Edit(yaleChart.Name, EditableChart{AppImageGitMainBranch: newValue, Description: newValue, PlaybookURL: newValue, PactParticipant: newPactParticipant}, generateUser(suite.T(), suite.db, false))
 		assert.NoError(suite.T(), err)
 		assert.Equal(suite.T(), newValue, edited.AppImageGitMainBranch)
@@ -292,7 +292,7 @@ func (suite *chartControllerSuite) TestChartEdit() {
 		deprecated_db.Truncate(suite.T(), suite.db)
 		suite.seedCharts(suite.T(), suite.db)
 
-		_, err := suite.ChartController.Edit(yaleLibChart.Name, EditableChart{ChartRepo: testutils.PointerTo("")}, generateUser(suite.T(), suite.db, false))
+		_, err := suite.ChartController.Edit(yaleLibChart.Name, EditableChart{ChartRepo: utils.PointerTo("")}, generateUser(suite.T(), suite.db, false))
 		assert.ErrorContains(suite.T(), err, "violates check constraint")
 	})
 }

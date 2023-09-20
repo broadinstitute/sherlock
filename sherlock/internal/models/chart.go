@@ -17,6 +17,7 @@ type Chart struct {
 	LegacyConfigsEnabled  *bool
 	Description           *string
 	PlaybookURL           *string
+	PactParticipant       *bool
 }
 
 func (c Chart) TableName() string {

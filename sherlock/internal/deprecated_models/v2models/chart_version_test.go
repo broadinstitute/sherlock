@@ -2,6 +2,7 @@ package v2models
 
 import (
 	"github.com/broadinstitute/sherlock/go-shared/pkg/testutils"
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"gorm.io/gorm"
 	"reflect"
 	"testing"
@@ -170,7 +171,7 @@ func Test_rejectDuplicateChartVersion(t *testing.T) {
 		{
 			name: "only existing has parent",
 			args: args{
-				existing: &ChartVersion{ParentChartVersionID: testutils.PointerTo[uint](123)},
+				existing: &ChartVersion{ParentChartVersionID: utils.PointerTo[uint](123)},
 				new:      &ChartVersion{},
 			},
 			wantErr: true,
@@ -179,15 +180,15 @@ func Test_rejectDuplicateChartVersion(t *testing.T) {
 			name: "only new has parent",
 			args: args{
 				existing: &ChartVersion{},
-				new:      &ChartVersion{ParentChartVersionID: testutils.PointerTo[uint](456)},
+				new:      &ChartVersion{ParentChartVersionID: utils.PointerTo[uint](456)},
 			},
 			wantErr: true,
 		},
 		{
 			name: "mismatch parent",
 			args: args{
-				existing: &ChartVersion{ParentChartVersionID: testutils.PointerTo[uint](123)},
-				new:      &ChartVersion{ParentChartVersionID: testutils.PointerTo[uint](456)},
+				existing: &ChartVersion{ParentChartVersionID: utils.PointerTo[uint](123)},
+				new:      &ChartVersion{ParentChartVersionID: utils.PointerTo[uint](456)},
 			},
 			wantErr: true,
 		},

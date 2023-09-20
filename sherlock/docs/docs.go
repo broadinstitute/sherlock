@@ -28,6 +28,436 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/chart/v3/{selector}": {
+            "delete": {
+                "description": "Delete an individual Chart by its ID.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Charts"
+                ],
+                "summary": "Delete an individual Chart",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The selector of the Chart, which can be either a numeric ID or the name.",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.ChartV3"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/charts/v3": {
+            "get": {
+                "description": "List Charts matching a filter.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Charts"
+                ],
+                "summary": "List Charts matching a filter",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "appImageGitMainBranch",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "appImageGitRepo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "Indicates if the default subdomain, protocol, and port fields are relevant for this chart",
+                        "name": "chartExposesEndpoint",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "default": "terra-helm",
+                        "name": "chartRepo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "format": "date-time",
+                        "name": "createdAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 443,
+                        "name": "defaultPort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "default": "https",
+                        "name": "defaultProtocol",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "When creating, will default to the name of the chart",
+                        "name": "defaultSubdomain",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "description",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "Indicates whether a chart requires config rendering from firecloud-develop",
+                        "name": "legacyConfigsEnabled",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Required when creating",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "default": false,
+                        "name": "pactParticipant",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "playbookURL",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "format": "date-time",
+                        "name": "updatedAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Control how many Charts are returned (default 100)",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Control the offset for the returned Charts (default 0)",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/sherlock.ChartV3"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a Chart.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Charts"
+                ],
+                "summary": "Create a Chart",
+                "parameters": [
+                    {
+                        "description": "The Chart to create",
+                        "name": "chart",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.ChartV3Create"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.ChartV3"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/charts/v3/{selector}": {
+            "get": {
+                "description": "Get an individual Chart.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Charts"
+                ],
+                "summary": "Get an individual Chart",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The selector of the Chart, which can be either a numeric ID or the name.",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.ChartV3"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Edit an individual Chart.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Charts"
+                ],
+                "summary": "Edit an individual Chart",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The selector of the Chart, which can be either a numeric ID or the name.",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "The edits to make to the Chart",
+                        "name": "chart",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.ChartV3Edit"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.ChartV3"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/ci-identifiers/v3": {
             "get": {
                 "description": "List CiIdentifiers matching a filter. The CiRuns would have to re-queried directly to load the CiRuns.\nThis is mainly helpful for debugging and directly querying the existence of a CiIdentifier. Results are\nordered by creation date, starting at most recent.",
@@ -8507,6 +8937,169 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "sherlock.ChartV3": {
+            "type": "object",
+            "properties": {
+                "appImageGitMainBranch": {
+                    "type": "string"
+                },
+                "appImageGitRepo": {
+                    "type": "string"
+                },
+                "chartExposesEndpoint": {
+                    "description": "Indicates if the default subdomain, protocol, and port fields are relevant for this chart",
+                    "type": "boolean",
+                    "default": false
+                },
+                "chartRepo": {
+                    "type": "string",
+                    "default": "terra-helm"
+                },
+                "ciIdentifier": {
+                    "$ref": "#/definitions/sherlock.CiIdentifierV3"
+                },
+                "createdAt": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "defaultPort": {
+                    "type": "integer",
+                    "default": 443
+                },
+                "defaultProtocol": {
+                    "type": "string",
+                    "default": "https"
+                },
+                "defaultSubdomain": {
+                    "description": "When creating, will default to the name of the chart",
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "legacyConfigsEnabled": {
+                    "description": "Indicates whether a chart requires config rendering from firecloud-develop",
+                    "type": "boolean",
+                    "default": false
+                },
+                "name": {
+                    "description": "Required when creating",
+                    "type": "string"
+                },
+                "pactParticipant": {
+                    "type": "boolean",
+                    "default": false
+                },
+                "playbookURL": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string",
+                    "format": "date-time"
+                }
+            }
+        },
+        "sherlock.ChartV3Create": {
+            "type": "object",
+            "properties": {
+                "appImageGitMainBranch": {
+                    "type": "string"
+                },
+                "appImageGitRepo": {
+                    "type": "string"
+                },
+                "chartExposesEndpoint": {
+                    "description": "Indicates if the default subdomain, protocol, and port fields are relevant for this chart",
+                    "type": "boolean",
+                    "default": false
+                },
+                "chartRepo": {
+                    "type": "string",
+                    "default": "terra-helm"
+                },
+                "defaultPort": {
+                    "type": "integer",
+                    "default": 443
+                },
+                "defaultProtocol": {
+                    "type": "string",
+                    "default": "https"
+                },
+                "defaultSubdomain": {
+                    "description": "When creating, will default to the name of the chart",
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "legacyConfigsEnabled": {
+                    "description": "Indicates whether a chart requires config rendering from firecloud-develop",
+                    "type": "boolean",
+                    "default": false
+                },
+                "name": {
+                    "description": "Required when creating",
+                    "type": "string"
+                },
+                "pactParticipant": {
+                    "type": "boolean",
+                    "default": false
+                },
+                "playbookURL": {
+                    "type": "string"
+                }
+            }
+        },
+        "sherlock.ChartV3Edit": {
+            "type": "object",
+            "properties": {
+                "appImageGitMainBranch": {
+                    "type": "string"
+                },
+                "appImageGitRepo": {
+                    "type": "string"
+                },
+                "chartExposesEndpoint": {
+                    "description": "Indicates if the default subdomain, protocol, and port fields are relevant for this chart",
+                    "type": "boolean",
+                    "default": false
+                },
+                "chartRepo": {
+                    "type": "string",
+                    "default": "terra-helm"
+                },
+                "defaultPort": {
+                    "type": "integer",
+                    "default": 443
+                },
+                "defaultProtocol": {
+                    "type": "string",
+                    "default": "https"
+                },
+                "defaultSubdomain": {
+                    "description": "When creating, will default to the name of the chart",
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "legacyConfigsEnabled": {
+                    "description": "Indicates whether a chart requires config rendering from firecloud-develop",
+                    "type": "boolean",
+                    "default": false
+                },
+                "pactParticipant": {
+                    "type": "boolean",
+                    "default": false
+                },
+                "playbookURL": {
                     "type": "string"
                 }
             }

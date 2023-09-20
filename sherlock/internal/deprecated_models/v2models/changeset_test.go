@@ -2,6 +2,7 @@ package v2models
 
 import (
 	"github.com/broadinstitute/sherlock/go-shared/pkg/testutils"
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"reflect"
 	"testing"
 	"time"
@@ -99,30 +100,30 @@ func Test_validateChangeset(t *testing.T) {
 			name: "empty from; there is no validation on from",
 			args: args{changeset: &Changeset{
 				To: ChartReleaseVersion{
-					ResolvedAt: testutils.PointerTo(time.Now()),
+					ResolvedAt: utils.PointerTo(time.Now()),
 
-					AppVersionResolver: testutils.PointerTo("branch"),
-					AppVersionExact:    testutils.PointerTo("v1.2.3"),
-					AppVersionCommit:   testutils.PointerTo("a1b2c3d4"),
-					AppVersionBranch:   testutils.PointerTo("main"),
+					AppVersionResolver: utils.PointerTo("branch"),
+					AppVersionExact:    utils.PointerTo("v1.2.3"),
+					AppVersionCommit:   utils.PointerTo("a1b2c3d4"),
+					AppVersionBranch:   utils.PointerTo("main"),
 					AppVersion: &AppVersion{
 						Model:      gorm.Model{ID: 1},
 						AppVersion: "v1.2.3",
 						GitCommit:  "a1b2c3d4",
 						GitBranch:  "main",
 					},
-					AppVersionID: testutils.PointerTo[uint](1),
+					AppVersionID: utils.PointerTo[uint](1),
 
-					ChartVersionResolver: testutils.PointerTo("latest"),
-					ChartVersionExact:    testutils.PointerTo("v0.0.100"),
+					ChartVersionResolver: utils.PointerTo("latest"),
+					ChartVersionExact:    utils.PointerTo("v0.0.100"),
 					ChartVersion: &ChartVersion{
 						Model:        gorm.Model{ID: 2},
 						ChartVersion: "v0.0.100",
 					},
-					ChartVersionID: testutils.PointerTo[uint](2),
+					ChartVersionID: utils.PointerTo[uint](2),
 
-					HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
-					FirecloudDevelopRef: testutils.PointerTo("dev"),
+					HelmfileRef:         utils.PointerTo("e5f6g7h8"),
+					FirecloudDevelopRef: utils.PointerTo("dev"),
 				},
 			}},
 			wantErr: false,
@@ -131,47 +132,47 @@ func Test_validateChangeset(t *testing.T) {
 			name: "invalid from; there is no validation on from",
 			args: args{changeset: &Changeset{
 				From: ChartReleaseVersion{
-					ResolvedAt: testutils.PointerTo(time.Now()),
+					ResolvedAt: utils.PointerTo(time.Now()),
 
-					AppVersionResolver: testutils.PointerTo("none"),
-					AppVersionCommit:   testutils.PointerTo("a1b2c3d4"),
+					AppVersionResolver: utils.PointerTo("none"),
+					AppVersionCommit:   utils.PointerTo("a1b2c3d4"),
 
-					ChartVersionResolver: testutils.PointerTo("latest"),
-					ChartVersionExact:    testutils.PointerTo("v0.0.100"),
+					ChartVersionResolver: utils.PointerTo("latest"),
+					ChartVersionExact:    utils.PointerTo("v0.0.100"),
 					ChartVersion: &ChartVersion{
 						Model:        gorm.Model{ID: 2},
 						ChartVersion: "v0.0.100",
 					},
-					ChartVersionID: testutils.PointerTo[uint](2),
+					ChartVersionID: utils.PointerTo[uint](2),
 
-					HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
-					FirecloudDevelopRef: testutils.PointerTo("dev"),
+					HelmfileRef:         utils.PointerTo("e5f6g7h8"),
+					FirecloudDevelopRef: utils.PointerTo("dev"),
 				},
 				To: ChartReleaseVersion{
-					ResolvedAt: testutils.PointerTo(time.Now()),
+					ResolvedAt: utils.PointerTo(time.Now()),
 
-					AppVersionResolver: testutils.PointerTo("branch"),
-					AppVersionExact:    testutils.PointerTo("v1.2.3"),
-					AppVersionCommit:   testutils.PointerTo("a1b2c3d4"),
-					AppVersionBranch:   testutils.PointerTo("main"),
+					AppVersionResolver: utils.PointerTo("branch"),
+					AppVersionExact:    utils.PointerTo("v1.2.3"),
+					AppVersionCommit:   utils.PointerTo("a1b2c3d4"),
+					AppVersionBranch:   utils.PointerTo("main"),
 					AppVersion: &AppVersion{
 						Model:      gorm.Model{ID: 1},
 						AppVersion: "v1.2.3",
 						GitCommit:  "a1b2c3d4",
 						GitBranch:  "main",
 					},
-					AppVersionID: testutils.PointerTo[uint](1),
+					AppVersionID: utils.PointerTo[uint](1),
 
-					ChartVersionResolver: testutils.PointerTo("latest"),
-					ChartVersionExact:    testutils.PointerTo("v0.0.100"),
+					ChartVersionResolver: utils.PointerTo("latest"),
+					ChartVersionExact:    utils.PointerTo("v0.0.100"),
 					ChartVersion: &ChartVersion{
 						Model:        gorm.Model{ID: 2},
 						ChartVersion: "v0.0.100",
 					},
-					ChartVersionID: testutils.PointerTo[uint](2),
+					ChartVersionID: utils.PointerTo[uint](2),
 
-					HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
-					FirecloudDevelopRef: testutils.PointerTo("dev"),
+					HelmfileRef:         utils.PointerTo("e5f6g7h8"),
+					FirecloudDevelopRef: utils.PointerTo("dev"),
 				},
 			}},
 			wantErr: false,
@@ -180,30 +181,30 @@ func Test_validateChangeset(t *testing.T) {
 			name: "empty to",
 			args: args{changeset: &Changeset{
 				From: ChartReleaseVersion{
-					ResolvedAt: testutils.PointerTo(time.Now()),
+					ResolvedAt: utils.PointerTo(time.Now()),
 
-					AppVersionResolver: testutils.PointerTo("branch"),
-					AppVersionExact:    testutils.PointerTo("v1.2.3"),
-					AppVersionCommit:   testutils.PointerTo("a1b2c3d4"),
-					AppVersionBranch:   testutils.PointerTo("main"),
+					AppVersionResolver: utils.PointerTo("branch"),
+					AppVersionExact:    utils.PointerTo("v1.2.3"),
+					AppVersionCommit:   utils.PointerTo("a1b2c3d4"),
+					AppVersionBranch:   utils.PointerTo("main"),
 					AppVersion: &AppVersion{
 						Model:      gorm.Model{ID: 1},
 						AppVersion: "v1.2.3",
 						GitCommit:  "a1b2c3d4",
 						GitBranch:  "main",
 					},
-					AppVersionID: testutils.PointerTo[uint](1),
+					AppVersionID: utils.PointerTo[uint](1),
 
-					ChartVersionResolver: testutils.PointerTo("latest"),
-					ChartVersionExact:    testutils.PointerTo("v0.0.100"),
+					ChartVersionResolver: utils.PointerTo("latest"),
+					ChartVersionExact:    utils.PointerTo("v0.0.100"),
 					ChartVersion: &ChartVersion{
 						Model:        gorm.Model{ID: 2},
 						ChartVersion: "v0.0.100",
 					},
-					ChartVersionID: testutils.PointerTo[uint](2),
+					ChartVersionID: utils.PointerTo[uint](2),
 
-					HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
-					FirecloudDevelopRef: testutils.PointerTo("dev"),
+					HelmfileRef:         utils.PointerTo("e5f6g7h8"),
+					FirecloudDevelopRef: utils.PointerTo("dev"),
 				},
 			}},
 			wantErr: true,
@@ -212,47 +213,47 @@ func Test_validateChangeset(t *testing.T) {
 			name: "invalid to",
 			args: args{changeset: &Changeset{
 				From: ChartReleaseVersion{
-					ResolvedAt: testutils.PointerTo(time.Now()),
+					ResolvedAt: utils.PointerTo(time.Now()),
 
-					AppVersionResolver: testutils.PointerTo("branch"),
-					AppVersionExact:    testutils.PointerTo("v1.2.3"),
-					AppVersionCommit:   testutils.PointerTo("a1b2c3d4"),
-					AppVersionBranch:   testutils.PointerTo("main"),
+					AppVersionResolver: utils.PointerTo("branch"),
+					AppVersionExact:    utils.PointerTo("v1.2.3"),
+					AppVersionCommit:   utils.PointerTo("a1b2c3d4"),
+					AppVersionBranch:   utils.PointerTo("main"),
 					AppVersion: &AppVersion{
 						Model:      gorm.Model{ID: 1},
 						AppVersion: "v1.2.3",
 						GitCommit:  "a1b2c3d4",
 						GitBranch:  "main",
 					},
-					AppVersionID: testutils.PointerTo[uint](1),
+					AppVersionID: utils.PointerTo[uint](1),
 
-					ChartVersionResolver: testutils.PointerTo("latest"),
-					ChartVersionExact:    testutils.PointerTo("v0.0.100"),
+					ChartVersionResolver: utils.PointerTo("latest"),
+					ChartVersionExact:    utils.PointerTo("v0.0.100"),
 					ChartVersion: &ChartVersion{
 						Model:        gorm.Model{ID: 2},
 						ChartVersion: "v0.0.100",
 					},
-					ChartVersionID: testutils.PointerTo[uint](2),
+					ChartVersionID: utils.PointerTo[uint](2),
 
-					HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
-					FirecloudDevelopRef: testutils.PointerTo("dev"),
+					HelmfileRef:         utils.PointerTo("e5f6g7h8"),
+					FirecloudDevelopRef: utils.PointerTo("dev"),
 				},
 				To: ChartReleaseVersion{
-					ResolvedAt: testutils.PointerTo(time.Now()),
+					ResolvedAt: utils.PointerTo(time.Now()),
 
-					AppVersionResolver: testutils.PointerTo("none"),
-					AppVersionCommit:   testutils.PointerTo("a1b2c3d4"),
+					AppVersionResolver: utils.PointerTo("none"),
+					AppVersionCommit:   utils.PointerTo("a1b2c3d4"),
 
-					ChartVersionResolver: testutils.PointerTo("latest"),
-					ChartVersionExact:    testutils.PointerTo("v0.0.100"),
+					ChartVersionResolver: utils.PointerTo("latest"),
+					ChartVersionExact:    utils.PointerTo("v0.0.100"),
 					ChartVersion: &ChartVersion{
 						Model:        gorm.Model{ID: 2},
 						ChartVersion: "v0.0.100",
 					},
-					ChartVersionID: testutils.PointerTo[uint](2),
+					ChartVersionID: utils.PointerTo[uint](2),
 
-					HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
-					FirecloudDevelopRef: testutils.PointerTo("dev"),
+					HelmfileRef:         utils.PointerTo("e5f6g7h8"),
+					FirecloudDevelopRef: utils.PointerTo("dev"),
 				},
 			}},
 			wantErr: true,
@@ -261,56 +262,56 @@ func Test_validateChangeset(t *testing.T) {
 			name: "valid",
 			args: args{changeset: &Changeset{
 				From: ChartReleaseVersion{
-					ResolvedAt: testutils.PointerTo(time.Now()),
+					ResolvedAt: utils.PointerTo(time.Now()),
 
-					AppVersionResolver: testutils.PointerTo("branch"),
-					AppVersionExact:    testutils.PointerTo("v1.2.3"),
-					AppVersionCommit:   testutils.PointerTo("a1b2c3d4"),
-					AppVersionBranch:   testutils.PointerTo("main"),
+					AppVersionResolver: utils.PointerTo("branch"),
+					AppVersionExact:    utils.PointerTo("v1.2.3"),
+					AppVersionCommit:   utils.PointerTo("a1b2c3d4"),
+					AppVersionBranch:   utils.PointerTo("main"),
 					AppVersion: &AppVersion{
 						Model:      gorm.Model{ID: 1},
 						AppVersion: "v1.2.3",
 						GitCommit:  "a1b2c3d4",
 						GitBranch:  "main",
 					},
-					AppVersionID: testutils.PointerTo[uint](1),
+					AppVersionID: utils.PointerTo[uint](1),
 
-					ChartVersionResolver: testutils.PointerTo("latest"),
-					ChartVersionExact:    testutils.PointerTo("v0.0.100"),
+					ChartVersionResolver: utils.PointerTo("latest"),
+					ChartVersionExact:    utils.PointerTo("v0.0.100"),
 					ChartVersion: &ChartVersion{
 						Model:        gorm.Model{ID: 2},
 						ChartVersion: "v0.0.100",
 					},
-					ChartVersionID: testutils.PointerTo[uint](2),
+					ChartVersionID: utils.PointerTo[uint](2),
 
-					HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
-					FirecloudDevelopRef: testutils.PointerTo("dev"),
+					HelmfileRef:         utils.PointerTo("e5f6g7h8"),
+					FirecloudDevelopRef: utils.PointerTo("dev"),
 				},
 				To: ChartReleaseVersion{
-					ResolvedAt: testutils.PointerTo(time.Now()),
+					ResolvedAt: utils.PointerTo(time.Now()),
 
-					AppVersionResolver: testutils.PointerTo("branch"),
-					AppVersionExact:    testutils.PointerTo("v1.2.3"),
-					AppVersionCommit:   testutils.PointerTo("a1b2c3d4"),
-					AppVersionBranch:   testutils.PointerTo("main"),
+					AppVersionResolver: utils.PointerTo("branch"),
+					AppVersionExact:    utils.PointerTo("v1.2.3"),
+					AppVersionCommit:   utils.PointerTo("a1b2c3d4"),
+					AppVersionBranch:   utils.PointerTo("main"),
 					AppVersion: &AppVersion{
 						Model:      gorm.Model{ID: 1},
 						AppVersion: "v1.2.3",
 						GitCommit:  "a1b2c3d4",
 						GitBranch:  "main",
 					},
-					AppVersionID: testutils.PointerTo[uint](1),
+					AppVersionID: utils.PointerTo[uint](1),
 
-					ChartVersionResolver: testutils.PointerTo("latest"),
-					ChartVersionExact:    testutils.PointerTo("v0.0.100"),
+					ChartVersionResolver: utils.PointerTo("latest"),
+					ChartVersionExact:    utils.PointerTo("v0.0.100"),
 					ChartVersion: &ChartVersion{
 						Model:        gorm.Model{ID: 2},
 						ChartVersion: "v0.0.100",
 					},
-					ChartVersionID: testutils.PointerTo[uint](2),
+					ChartVersionID: utils.PointerTo[uint](2),
 
-					HelmfileRef:         testutils.PointerTo("e5f6g7h8"),
-					FirecloudDevelopRef: testutils.PointerTo("dev"),
+					HelmfileRef:         utils.PointerTo("e5f6g7h8"),
+					FirecloudDevelopRef: utils.PointerTo("dev"),
 				},
 			}},
 			wantErr: false,

@@ -2,7 +2,7 @@ package v2controllers
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/go-shared/pkg/testutils"
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/test_users"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_db"
@@ -101,7 +101,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 		ChartReleases: []ChangesetPlanRequestChartReleaseEntry{
 			{CreatableChangeset: CreatableChangeset{
 				ChartRelease:       fmt.Sprintf("%s/%s", newBee.Name, "sam"),
-				ToAppVersionBranch: testutils.PointerTo("ID-123-my-new-feature"),
+				ToAppVersionBranch: utils.PointerTo("ID-123-my-new-feature"),
 			}},
 		},
 	}, generateUser(suite.T(), suite.db, true))
@@ -225,7 +225,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 		ChartReleases: []ChangesetPlanRequestChartReleaseEntry{
 			{CreatableChangeset: CreatableChangeset{
 				ChartRelease:      "terra-staging/sam",
-				ToAppVersionExact: testutils.PointerTo("0.3.0"),
+				ToAppVersionExact: utils.PointerTo("0.3.0"),
 			}},
 		},
 	}, generateUser(suite.T(), suite.db, true))
@@ -254,7 +254,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 		ChartReleases: []ChangesetPlanRequestChartReleaseEntry{
 			{CreatableChangeset: CreatableChangeset{
 				ChartRelease:      "terra-staging/sam",
-				ToAppVersionExact: testutils.PointerTo("0.4.0"),
+				ToAppVersionExact: utils.PointerTo("0.4.0"),
 			}},
 		},
 	}, generateUser(suite.T(), suite.db, true))
@@ -301,7 +301,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 		Environments: []ChangesetPlanRequestEnvironmentEntry{
 			{
 				Environment:                          "terra-prod",
-				UseExactVersionsFromOtherEnvironment: testutils.PointerTo("terra-staging"),
+				UseExactVersionsFromOtherEnvironment: utils.PointerTo("terra-staging"),
 			},
 			{Environment: "terra-dev"},
 		},
@@ -334,11 +334,11 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 		Environments: []ChangesetPlanRequestEnvironmentEntry{
 			{
 				Environment:                          "terra-staging",
-				UseExactVersionsFromOtherEnvironment: testutils.PointerTo("terra-dev"),
+				UseExactVersionsFromOtherEnvironment: utils.PointerTo("terra-dev"),
 			},
 			{
 				Environment:                          "terra-prod",
-				UseExactVersionsFromOtherEnvironment: testutils.PointerTo("terra-dev"),
+				UseExactVersionsFromOtherEnvironment: utils.PointerTo("terra-dev"),
 			},
 		},
 	}, generateUser(suite.T(), suite.db, true))
@@ -350,7 +350,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 	// If we set a helmfile ref, that won't get copied unless we explicitly ask for it
 	_, err = suite.ChangesetController.PlanAndApply(ChangesetPlanRequest{
 		ChartReleases: []ChangesetPlanRequestChartReleaseEntry{
-			{CreatableChangeset: CreatableChangeset{ChartRelease: "terra-dev/sam", ToHelmfileRef: testutils.PointerTo("a-branch"), ToHelmfileRefEnabled: testutils.PointerTo(true)}},
+			{CreatableChangeset: CreatableChangeset{ChartRelease: "terra-dev/sam", ToHelmfileRef: utils.PointerTo("a-branch"), ToHelmfileRefEnabled: utils.PointerTo(true)}},
 		},
 	}, generateUser(suite.T(), suite.db, true))
 	assert.NoError(suite.T(), err)
@@ -358,7 +358,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 		Environments: []ChangesetPlanRequestEnvironmentEntry{
 			{
 				Environment:                          "terra-prod",
-				UseExactVersionsFromOtherEnvironment: testutils.PointerTo("terra-dev"),
+				UseExactVersionsFromOtherEnvironment: utils.PointerTo("terra-dev"),
 			},
 		},
 	}, generateUser(suite.T(), suite.db, true))
@@ -368,7 +368,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 	assert.Equal(suite.T(), "HEAD", *samInProd.HelmfileRef)
 	_, err = suite.ChangesetController.PlanAndApply(ChangesetPlanRequest{
 		ChartReleases: []ChangesetPlanRequestChartReleaseEntry{
-			{CreatableChangeset: CreatableChangeset{ChartRelease: "terra-dev/sam", ToHelmfileRef: testutils.PointerTo("a-branch")}},
+			{CreatableChangeset: CreatableChangeset{ChartRelease: "terra-dev/sam", ToHelmfileRef: utils.PointerTo("a-branch")}},
 		},
 	}, generateUser(suite.T(), suite.db, true))
 	assert.NoError(suite.T(), err)
@@ -376,8 +376,8 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 		Environments: []ChangesetPlanRequestEnvironmentEntry{
 			{
 				Environment:                          "terra-prod",
-				UseExactVersionsFromOtherEnvironment: testutils.PointerTo("terra-dev"),
-				UseOthersHelmfileRef:                 testutils.PointerTo(true),
+				UseExactVersionsFromOtherEnvironment: utils.PointerTo("terra-dev"),
+				UseOthersHelmfileRef:                 utils.PointerTo(true),
 			},
 		},
 	}, generateUser(suite.T(), suite.db, true))
@@ -392,7 +392,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 		ChartReleases: []ChangesetPlanRequestChartReleaseEntry{
 			{
 				CreatableChangeset:                    CreatableChangeset{ChartRelease: "terra-dev/sam"},
-				UseExactVersionsFromOtherChartRelease: testutils.PointerTo("terra-staging/leonardo"),
+				UseExactVersionsFromOtherChartRelease: utils.PointerTo("terra-staging/leonardo"),
 			},
 		},
 	}, generateUser(suite.T(), suite.db, true))
@@ -403,10 +403,10 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 		ChartReleases: []ChangesetPlanRequestChartReleaseEntry{
 			{CreatableChangeset: CreatableChangeset{
 				ChartRelease:           fmt.Sprintf("%s/%s", newBee.Name, "sam"),
-				ToAppVersionResolver:   testutils.PointerTo("exact"),
-				ToAppVersionExact:      testutils.PointerTo("7.7.7"),
-				ToChartVersionResolver: testutils.PointerTo("exact"),
-				ToChartVersionExact:    testutils.PointerTo("8.8.8"),
+				ToAppVersionResolver:   utils.PointerTo("exact"),
+				ToAppVersionExact:      utils.PointerTo("7.7.7"),
+				ToChartVersionResolver: utils.PointerTo("exact"),
+				ToChartVersionExact:    utils.PointerTo("8.8.8"),
 			}},
 		},
 	}, generateUser(suite.T(), suite.db, true))
@@ -421,8 +421,8 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 		ChartReleases: []ChangesetPlanRequestChartReleaseEntry{
 			{CreatableChangeset: CreatableChangeset{
 				ChartRelease:         fmt.Sprintf("%s/%s", newBee.Name, "sam"),
-				ToAppVersionResolver: testutils.PointerTo("branch"),
-				ToAppVersionBranch:   testutils.PointerTo("develop"),
+				ToAppVersionResolver: utils.PointerTo("branch"),
+				ToAppVersionBranch:   utils.PointerTo("develop"),
 			}},
 		},
 	}, generateUser(suite.T(), suite.db, true))
@@ -432,7 +432,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 		ChartReleases: []ChangesetPlanRequestChartReleaseEntry{
 			{CreatableChangeset: CreatableChangeset{
 				ChartRelease:       fmt.Sprintf("%s/%s", newBee.Name, "sam"),
-				ToAppVersionBranch: testutils.PointerTo("ID-123-my-new-feature"),
+				ToAppVersionBranch: utils.PointerTo("ID-123-my-new-feature"),
 			}},
 		},
 	}, generateUser(suite.T(), suite.db, true))
@@ -444,7 +444,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 		Environments: []ChangesetPlanRequestEnvironmentEntry{
 			{
 				Environment:                        newBee.Name,
-				FollowVersionsFromOtherEnvironment: testutils.PointerTo("terra-dev"),
+				FollowVersionsFromOtherEnvironment: utils.PointerTo("terra-dev"),
 			},
 		},
 	}, generateUser(suite.T(), suite.db, true))
@@ -454,8 +454,8 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 		ChartReleases: []ChangesetPlanRequestChartReleaseEntry{
 			{CreatableChangeset: CreatableChangeset{
 				ChartRelease:         "terra-dev/sam",
-				ToAppVersionResolver: testutils.PointerTo("exact"),
-				ToAppVersionExact:    testutils.PointerTo("my-new-version"),
+				ToAppVersionResolver: utils.PointerTo("exact"),
+				ToAppVersionExact:    utils.PointerTo("my-new-version"),
 			}},
 		},
 	}, generateUser(suite.T(), suite.db, true))
@@ -480,8 +480,8 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 		ChartReleases: []ChangesetPlanRequestChartReleaseEntry{
 			{CreatableChangeset: CreatableChangeset{
 				ChartRelease:         "terra-dev/sam",
-				ToAppVersionResolver: testutils.PointerTo("exact"),
-				ToAppVersionExact:    testutils.PointerTo("some fake version"),
+				ToAppVersionResolver: utils.PointerTo("exact"),
+				ToAppVersionExact:    utils.PointerTo("some fake version"),
 			}},
 		},
 	}, generateUser(suite.T(), suite.db, true))
@@ -495,7 +495,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 
 	// It's also possible to exclude a chart release from the bulk update by default.
 	_, err = suite.ChartReleaseController.Edit(fmt.Sprintf("%s/%s", newBee.Name, "sam"),
-		EditableChartRelease{IncludeInBulkChangesets: testutils.PointerTo(false)},
+		EditableChartRelease{IncludeInBulkChangesets: utils.PointerTo(false)},
 		generateUser(suite.T(), suite.db, true))
 	assert.NoError(suite.T(), err)
 	// If we make a change to the upstream...
@@ -503,8 +503,8 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 		ChartReleases: []ChangesetPlanRequestChartReleaseEntry{
 			{CreatableChangeset: CreatableChangeset{
 				ChartRelease:         "terra-dev/sam",
-				ToAppVersionResolver: testutils.PointerTo("exact"),
-				ToAppVersionExact:    testutils.PointerTo("yet-another-new-version"),
+				ToAppVersionResolver: utils.PointerTo("exact"),
+				ToAppVersionExact:    utils.PointerTo("yet-another-new-version"),
 			}},
 		},
 	}, generateUser(suite.T(), suite.db, true))
@@ -564,8 +564,8 @@ func (suite *changesetControllerSuite) TestChangesetRecreate() {
 		ChartReleases: []ChangesetPlanRequestChartReleaseEntry{
 			{CreatableChangeset: CreatableChangeset{
 				ChartRelease:         "terra-dev/leonardo",
-				ToAppVersionResolver: testutils.PointerTo("branch"),
-				ToAppVersionBranch:   testutils.PointerTo("my-branch"),
+				ToAppVersionResolver: utils.PointerTo("branch"),
+				ToAppVersionBranch:   utils.PointerTo("my-branch"),
 			}},
 		},
 	}, generateUser(suite.T(), suite.db, false))

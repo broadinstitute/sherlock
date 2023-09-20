@@ -49,8 +49,8 @@ func (s *handlerSuite) TestUserV3Get_others() {
 	dummyUser := models.User{
 		Email:          "dummy@example.com",
 		GoogleID:       "some-fake-google-id",
-		GithubUsername: testutils.PointerTo("some-fake-github-username"),
-		GithubID:       testutils.PointerTo("some-fake-github-id"),
+		GithubUsername: utils.PointerTo("some-fake-github-username"),
+		GithubID:       utils.PointerTo("some-fake-github-id"),
 	}
 	s.NoError(s.DB.Create(&dummyUser).Error)
 	s.NotZero(dummyUser.ID)
@@ -120,7 +120,7 @@ func Test_userModelFromSelector(t *testing.T) {
 		{
 			name:      "github username",
 			args:      args{selector: "github/foo"},
-			wantQuery: models.User{GithubUsername: testutils.PointerTo("foo")},
+			wantQuery: models.User{GithubUsername: utils.PointerTo("foo")},
 			wantErr:   assert.NoError,
 		},
 		{
@@ -131,7 +131,7 @@ func Test_userModelFromSelector(t *testing.T) {
 		{
 			name:      "github id",
 			args:      args{selector: "github-id/foo"},
-			wantQuery: models.User{GithubID: testutils.PointerTo("foo")},
+			wantQuery: models.User{GithubID: utils.PointerTo("foo")},
 			wantErr:   assert.NoError,
 		},
 		{
