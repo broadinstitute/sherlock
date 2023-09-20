@@ -40,10 +40,6 @@ import {
     V2controllersEditableChartToJSON,
 } from '../models/index';
 
-export interface ApiChartV3SelectorDeleteRequest {
-    selector: string;
-}
-
 export interface ApiChartsV3GetRequest {
     appImageGitMainBranch?: string;
     appImageGitRepo?: string;
@@ -66,6 +62,10 @@ export interface ApiChartsV3GetRequest {
 
 export interface ApiChartsV3PostRequest {
     chart: SherlockChartV3Create;
+}
+
+export interface ApiChartsV3SelectorDeleteRequest {
+    selector: string;
 }
 
 export interface ApiChartsV3SelectorGetRequest {
@@ -126,38 +126,6 @@ export interface ApiV2SelectorsChartsSelectorGetRequest {
  * 
  */
 export class ChartsApi extends runtime.BaseAPI {
-
-    /**
-     * Delete an individual Chart by its ID.
-     * Delete an individual Chart
-     */
-    async apiChartV3SelectorDeleteRaw(requestParameters: ApiChartV3SelectorDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockChartV3>> {
-        if (requestParameters.selector === null || requestParameters.selector === undefined) {
-            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiChartV3SelectorDelete.');
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        const response = await this.request({
-            path: `/api/chart/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
-            method: 'DELETE',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => SherlockChartV3FromJSON(jsonValue));
-    }
-
-    /**
-     * Delete an individual Chart by its ID.
-     * Delete an individual Chart
-     */
-    async apiChartV3SelectorDelete(requestParameters: ApiChartV3SelectorDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockChartV3> {
-        const response = await this.apiChartV3SelectorDeleteRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
 
     /**
      * List Charts matching a filter.
@@ -287,6 +255,38 @@ export class ChartsApi extends runtime.BaseAPI {
      */
     async apiChartsV3Post(requestParameters: ApiChartsV3PostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockChartV3> {
         const response = await this.apiChartsV3PostRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Delete an individual Chart by its ID.
+     * Delete an individual Chart
+     */
+    async apiChartsV3SelectorDeleteRaw(requestParameters: ApiChartsV3SelectorDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockChartV3>> {
+        if (requestParameters.selector === null || requestParameters.selector === undefined) {
+            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiChartsV3SelectorDelete.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/charts/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            method: 'DELETE',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => SherlockChartV3FromJSON(jsonValue));
+    }
+
+    /**
+     * Delete an individual Chart by its ID.
+     * Delete an individual Chart
+     */
+    async apiChartsV3SelectorDelete(requestParameters: ApiChartsV3SelectorDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockChartV3> {
+        const response = await this.apiChartsV3SelectorDeleteRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
