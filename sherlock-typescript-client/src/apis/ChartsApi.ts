@@ -16,6 +16,9 @@
 import * as runtime from '../runtime';
 import type {
   ErrorsErrorResponse,
+  SherlockChartV3,
+  SherlockChartV3Create,
+  SherlockChartV3Edit,
   V2controllersChart,
   V2controllersCreatableChart,
   V2controllersEditableChart,
@@ -23,6 +26,12 @@ import type {
 import {
     ErrorsErrorResponseFromJSON,
     ErrorsErrorResponseToJSON,
+    SherlockChartV3FromJSON,
+    SherlockChartV3ToJSON,
+    SherlockChartV3CreateFromJSON,
+    SherlockChartV3CreateToJSON,
+    SherlockChartV3EditFromJSON,
+    SherlockChartV3EditToJSON,
     V2controllersChartFromJSON,
     V2controllersChartToJSON,
     V2controllersCreatableChartFromJSON,
@@ -30,6 +39,43 @@ import {
     V2controllersEditableChartFromJSON,
     V2controllersEditableChartToJSON,
 } from '../models/index';
+
+export interface ApiChartV3SelectorDeleteRequest {
+    selector: string;
+}
+
+export interface ApiChartsV3GetRequest {
+    appImageGitMainBranch?: string;
+    appImageGitRepo?: string;
+    chartExposesEndpoint?: boolean;
+    chartRepo?: string;
+    createdAt?: Date;
+    defaultPort?: number;
+    defaultProtocol?: string;
+    defaultSubdomain?: string;
+    description?: string;
+    id?: number;
+    legacyConfigsEnabled?: boolean;
+    name?: string;
+    pactParticipant?: boolean;
+    playbookURL?: string;
+    updatedAt?: Date;
+    limit?: number;
+    offset?: number;
+}
+
+export interface ApiChartsV3PostRequest {
+    chart: SherlockChartV3Create;
+}
+
+export interface ApiChartsV3SelectorGetRequest {
+    selector: string;
+}
+
+export interface ApiChartsV3SelectorPatchRequest {
+    selector: string;
+    chart: SherlockChartV3Edit;
+}
 
 export interface ApiV2ChartsGetRequest {
     appImageGitMainBranch?: string;
@@ -80,6 +126,240 @@ export interface ApiV2SelectorsChartsSelectorGetRequest {
  * 
  */
 export class ChartsApi extends runtime.BaseAPI {
+
+    /**
+     * Delete an individual Chart by its ID.
+     * Delete an individual Chart
+     */
+    async apiChartV3SelectorDeleteRaw(requestParameters: ApiChartV3SelectorDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockChartV3>> {
+        if (requestParameters.selector === null || requestParameters.selector === undefined) {
+            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiChartV3SelectorDelete.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/chart/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            method: 'DELETE',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => SherlockChartV3FromJSON(jsonValue));
+    }
+
+    /**
+     * Delete an individual Chart by its ID.
+     * Delete an individual Chart
+     */
+    async apiChartV3SelectorDelete(requestParameters: ApiChartV3SelectorDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockChartV3> {
+        const response = await this.apiChartV3SelectorDeleteRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * List Charts matching a filter.
+     * List Charts matching a filter
+     */
+    async apiChartsV3GetRaw(requestParameters: ApiChartsV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockChartV3>>> {
+        const queryParameters: any = {};
+
+        if (requestParameters.appImageGitMainBranch !== undefined) {
+            queryParameters['appImageGitMainBranch'] = requestParameters.appImageGitMainBranch;
+        }
+
+        if (requestParameters.appImageGitRepo !== undefined) {
+            queryParameters['appImageGitRepo'] = requestParameters.appImageGitRepo;
+        }
+
+        if (requestParameters.chartExposesEndpoint !== undefined) {
+            queryParameters['chartExposesEndpoint'] = requestParameters.chartExposesEndpoint;
+        }
+
+        if (requestParameters.chartRepo !== undefined) {
+            queryParameters['chartRepo'] = requestParameters.chartRepo;
+        }
+
+        if (requestParameters.createdAt !== undefined) {
+            queryParameters['createdAt'] = (requestParameters.createdAt as any).toISOString();
+        }
+
+        if (requestParameters.defaultPort !== undefined) {
+            queryParameters['defaultPort'] = requestParameters.defaultPort;
+        }
+
+        if (requestParameters.defaultProtocol !== undefined) {
+            queryParameters['defaultProtocol'] = requestParameters.defaultProtocol;
+        }
+
+        if (requestParameters.defaultSubdomain !== undefined) {
+            queryParameters['defaultSubdomain'] = requestParameters.defaultSubdomain;
+        }
+
+        if (requestParameters.description !== undefined) {
+            queryParameters['description'] = requestParameters.description;
+        }
+
+        if (requestParameters.id !== undefined) {
+            queryParameters['id'] = requestParameters.id;
+        }
+
+        if (requestParameters.legacyConfigsEnabled !== undefined) {
+            queryParameters['legacyConfigsEnabled'] = requestParameters.legacyConfigsEnabled;
+        }
+
+        if (requestParameters.name !== undefined) {
+            queryParameters['name'] = requestParameters.name;
+        }
+
+        if (requestParameters.pactParticipant !== undefined) {
+            queryParameters['pactParticipant'] = requestParameters.pactParticipant;
+        }
+
+        if (requestParameters.playbookURL !== undefined) {
+            queryParameters['playbookURL'] = requestParameters.playbookURL;
+        }
+
+        if (requestParameters.updatedAt !== undefined) {
+            queryParameters['updatedAt'] = (requestParameters.updatedAt as any).toISOString();
+        }
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.offset !== undefined) {
+            queryParameters['offset'] = requestParameters.offset;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/charts/v3`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(SherlockChartV3FromJSON));
+    }
+
+    /**
+     * List Charts matching a filter.
+     * List Charts matching a filter
+     */
+    async apiChartsV3Get(requestParameters: ApiChartsV3GetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<SherlockChartV3>> {
+        const response = await this.apiChartsV3GetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Create a Chart.
+     * Create a Chart
+     */
+    async apiChartsV3PostRaw(requestParameters: ApiChartsV3PostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockChartV3>> {
+        if (requestParameters.chart === null || requestParameters.chart === undefined) {
+            throw new runtime.RequiredError('chart','Required parameter requestParameters.chart was null or undefined when calling apiChartsV3Post.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/api/charts/v3`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: SherlockChartV3CreateToJSON(requestParameters.chart),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => SherlockChartV3FromJSON(jsonValue));
+    }
+
+    /**
+     * Create a Chart.
+     * Create a Chart
+     */
+    async apiChartsV3Post(requestParameters: ApiChartsV3PostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockChartV3> {
+        const response = await this.apiChartsV3PostRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Get an individual Chart.
+     * Get an individual Chart
+     */
+    async apiChartsV3SelectorGetRaw(requestParameters: ApiChartsV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockChartV3>> {
+        if (requestParameters.selector === null || requestParameters.selector === undefined) {
+            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiChartsV3SelectorGet.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/charts/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => SherlockChartV3FromJSON(jsonValue));
+    }
+
+    /**
+     * Get an individual Chart.
+     * Get an individual Chart
+     */
+    async apiChartsV3SelectorGet(requestParameters: ApiChartsV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockChartV3> {
+        const response = await this.apiChartsV3SelectorGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Edit an individual Chart.
+     * Edit an individual Chart
+     */
+    async apiChartsV3SelectorPatchRaw(requestParameters: ApiChartsV3SelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockChartV3>> {
+        if (requestParameters.selector === null || requestParameters.selector === undefined) {
+            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiChartsV3SelectorPatch.');
+        }
+
+        if (requestParameters.chart === null || requestParameters.chart === undefined) {
+            throw new runtime.RequiredError('chart','Required parameter requestParameters.chart was null or undefined when calling apiChartsV3SelectorPatch.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/api/charts/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            method: 'PATCH',
+            headers: headerParameters,
+            query: queryParameters,
+            body: SherlockChartV3EditToJSON(requestParameters.chart),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => SherlockChartV3FromJSON(jsonValue));
+    }
+
+    /**
+     * Edit an individual Chart.
+     * Edit an individual Chart
+     */
+    async apiChartsV3SelectorPatch(requestParameters: ApiChartsV3SelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockChartV3> {
+        const response = await this.apiChartsV3SelectorPatchRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
 
     /**
      * List existing Chart entries, ordered by most recently updated.
