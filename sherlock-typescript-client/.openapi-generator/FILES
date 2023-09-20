@@ -25,6 +25,9 @@ src/models/MiscStatusResponse.ts
 src/models/MiscVersionResponse.ts
 src/models/PagerdutyAlertSummary.ts
 src/models/PagerdutySendAlertResponse.ts
+src/models/SherlockChartV3.ts
+src/models/SherlockChartV3Create.ts
+src/models/SherlockChartV3Edit.ts
 src/models/SherlockCiIdentifierV3.ts
 src/models/SherlockCiRunV3.ts
 src/models/SherlockCiRunV3Upsert.ts

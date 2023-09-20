@@ -9,8 +9,8 @@ import (
 	"net/http"
 )
 
+
 // chartsV3Delete godoc
-//
 //	@summary		Delete an individual Chart
 //	@description	Delete an individual Chart by its ID.
 //	@tags			Charts
@@ -40,3 +40,4 @@ func chartsV3Delete(ctx *gin.Context) {
 	}
 	ctx.JSON(http.StatusOK, chartFromModel(result))
 }
+
