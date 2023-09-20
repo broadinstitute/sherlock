@@ -9,7 +9,6 @@ import (
 	"net/http"
 )
 
-
 // chartsV3Delete godoc
 //	@summary		Delete an individual Chart
 //	@description	Delete an individual Chart by its ID.
@@ -18,7 +17,7 @@ import (
 //	@param			selector				path		string	true	"The selector of the Chart, which can be either a numeric ID or the name."
 //	@success		200						{object}	ChartV3
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
-//	@router			/api/chart/v3/{selector} [delete]
+//	@router			/api/charts/v3/{selector} [delete]
 func chartsV3Delete(ctx *gin.Context) {
 	db, err := authentication.MustUseDB(ctx)
 	if err != nil {
@@ -40,4 +39,3 @@ func chartsV3Delete(ctx *gin.Context) {
 	}
 	ctx.JSON(http.StatusOK, chartFromModel(result))
 }
-
