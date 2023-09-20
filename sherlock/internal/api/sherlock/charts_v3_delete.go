@@ -9,7 +9,7 @@ import (
 	"net/http"
 )
 
-// chartV3Delete godoc
+// chartsV3Delete godoc
 //
 //	@summary		Delete an individual Chart
 //	@description	Delete an individual Chart by its ID.
