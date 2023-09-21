@@ -21,7 +21,7 @@ var Config = koanf.New(".")
 func init() {
 	var infoMessages []string
 	if err := Config.Load(fs.Provider(embeddedFiles.EmbeddedFiles, "default_config.yaml"), yaml.Parser()); err != nil {
-		panic(fmt.Sprintf("failed to load default_config.yaml, panicking due to likely embedding issue: %w", err))
+		panic(fmt.Sprintf("failed to load default_config.yaml, panicking due to likely embedding issue: %v", err))
 	}
 
 	if err := Config.Load(file.Provider("/etc/sherlock/sherlock.yaml"), yaml.Parser()); err == nil {
@@ -32,7 +32,7 @@ func init() {
 		return strings.Replace(strings.ToLower(
 			strings.TrimPrefix(s, "SHERLOCK_")), "_", ".", -1)
 	}), nil); err != nil {
-		panic(fmt.Sprintf("failed to load config from environment, panicking due to likely runtime issue: %w", err))
+		panic(fmt.Sprintf("failed to load config from environment, panicking due to likely runtime issue: %v", err))
 	}
 
 	// We handle environment variables both case-insensitively (transformed to lowercase) and case-sensitively.
@@ -41,7 +41,7 @@ func init() {
 	if err := Config.Load(env.Provider("SHERLOCK_", ".", func(s string) string {
 		return strings.Replace(strings.TrimPrefix(s, "SHERLOCK_"), "_", ".", -1)
 	}), nil); err != nil {
-		panic(fmt.Sprintf("failed to load config from environment, panicking due to likely runtime issue: %w", err))
+		panic(fmt.Sprintf("failed to load config from environment, panicking due to likely runtime issue: %v", err))
 	}
 
 	if Config.MustString("mode") != "debug" && Config.MustString("mode") != "release" {

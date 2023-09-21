@@ -97,7 +97,7 @@ func TestGetSuitabilityFor(t *testing.T) {
 		{
 			name: "local user",
 			args: args{email: local_user.LocalUserEmail},
-			want: &Suitability{suitable: local_user.LocalUserSuitable, source: CONFIG, description: fmt.Sprintf("local user; suitable: %w",
+			want: &Suitability{suitable: local_user.LocalUserSuitable, source: CONFIG, description: fmt.Sprintf("local user; suitable: %v",
 				local_user.LocalUserSuitable)},
 		},
 	}

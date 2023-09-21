@@ -118,7 +118,7 @@ func convert(err error) (int, ErrorResponse) {
 		return http.StatusBadRequest, ErrorResponse{
 			ToBlame: "client",
 			Type:    BadRequest,
-			Message: fmt.Sprintf("(%s) string conversion error: %w", BadRequest, err),
+			Message: fmt.Sprintf("(%s) string conversion error: %v", BadRequest, err),
 		}
 	}
 
