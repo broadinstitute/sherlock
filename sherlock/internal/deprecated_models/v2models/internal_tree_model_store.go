@@ -32,11 +32,11 @@ search:
 		if (*currentChild).getParentID() != nil {
 			potentialNewHeadQuery, err := s.selectorToQueryModel(db, strconv.FormatUint(uint64(*(*currentChild).getParentID()), 10))
 			if err != nil {
-				return nil, false, fmt.Errorf("(%s) failed to build query for next %T tree node: %v", errors.InternalServerError, originChild, err)
+				return nil, false, fmt.Errorf("(%s) failed to build query for next %T tree node: %w", errors.InternalServerError, originChild, err)
 			}
 			potentialNewHead, err := s.GetIfExists(db, potentialNewHeadQuery)
 			if err != nil {
-				return nil, false, fmt.Errorf("(%s) failed to query next %T tree node: %v", errors.InternalServerError, originChild, err)
+				return nil, false, fmt.Errorf("(%s) failed to query next %T tree node: %w", errors.InternalServerError, originChild, err)
 			} else if potentialNewHead != nil {
 				currentChild = potentialNewHead
 			} else {

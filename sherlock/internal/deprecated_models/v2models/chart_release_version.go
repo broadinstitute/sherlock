@@ -40,7 +40,7 @@ type ChartReleaseVersion struct {
 func (chartReleaseVersion *ChartReleaseVersion) resolve(db *gorm.DB, chartQuery Chart) error {
 	chart, err := InternalChartStore.Get(db, chartQuery)
 	if err != nil {
-		return fmt.Errorf("failed to get %T: %v", chartQuery, err)
+		return fmt.Errorf("failed to get %T: %w", chartQuery, err)
 	}
 	if chartReleaseVersion.AppVersionResolver != nil {
 		switch *chartReleaseVersion.AppVersionResolver {
@@ -48,7 +48,7 @@ func (chartReleaseVersion *ChartReleaseVersion) resolve(db *gorm.DB, chartQuery 
 			if chartReleaseVersion.AppVersionBranch != nil {
 				appVersions, err := InternalAppVersionStore.ListAllMatchingByCreated(db, 1, AppVersion{ChartID: chart.ID, GitBranch: *chartReleaseVersion.AppVersionBranch})
 				if err != nil {
-					return fmt.Errorf("(%s) failed to get matching app versions for branch '%s': %v", errors.InternalServerError, *chartReleaseVersion.AppVersionBranch, err)
+					return fmt.Errorf("(%s) failed to get matching app versions for branch '%s': %w", errors.InternalServerError, *chartReleaseVersion.AppVersionBranch, err)
 				} else if len(appVersions) == 0 {
 					return fmt.Errorf("(%s) no app versions for the %s chart match a branch name of '%s'", errors.BadRequest, chart.Name, *chartReleaseVersion.AppVersionBranch)
 				}
@@ -68,7 +68,7 @@ func (chartReleaseVersion *ChartReleaseVersion) resolve(db *gorm.DB, chartQuery 
 				// to specify commits with less than the full hash.
 				appVersions, err := InternalAppVersionStore.ListAllMatchingByCreated(db, 1, "chart_id = ? and git_commit LIKE ?", chart.ID, fmt.Sprintf("%s%%", *chartReleaseVersion.AppVersionCommit))
 				if err != nil {
-					return fmt.Errorf("(%s) failed to get matching app versions for commit '%s': %v", errors.InternalServerError, *chartReleaseVersion.AppVersionCommit, err)
+					return fmt.Errorf("(%s) failed to get matching app versions for commit '%s': %w", errors.InternalServerError, *chartReleaseVersion.AppVersionCommit, err)
 				} else if len(appVersions) == 0 {
 					return fmt.Errorf("(%s) no app versions for the %s chart match a commit hash of '%s'", errors.BadRequest, chart.Name, *chartReleaseVersion.AppVersionBranch)
 				}
@@ -102,7 +102,7 @@ func (chartReleaseVersion *ChartReleaseVersion) resolve(db *gorm.DB, chartQuery 
 			if chartReleaseVersion.AppVersionFollowChartReleaseID != nil {
 				chartReleases, err := InternalChartReleaseStore.ListAllMatchingByCreated(db, 1, ChartRelease{ChartID: chart.ID, Model: gorm.Model{ID: *chartReleaseVersion.AppVersionFollowChartReleaseID}})
 				if err != nil {
-					return fmt.Errorf("(%s) failed to follow app version of chart release %d: %v", errors.InternalServerError, *chartReleaseVersion.AppVersionFollowChartReleaseID, err)
+					return fmt.Errorf("(%s) failed to follow app version of chart release %d: %w", errors.InternalServerError, *chartReleaseVersion.AppVersionFollowChartReleaseID, err)
 				} else if len(chartReleases) == 0 {
 					return fmt.Errorf("(%s) failed to follow app version of chart release %d: not found", errors.NotFound, *chartReleaseVersion.AppVersionFollowChartReleaseID)
 				} else {
@@ -155,7 +155,7 @@ func (chartReleaseVersion *ChartReleaseVersion) resolve(db *gorm.DB, chartQuery 
 			if chartReleaseVersion.ChartVersionFollowChartReleaseID != nil {
 				chartReleases, err := InternalChartReleaseStore.ListAllMatchingByCreated(db, 1, ChartRelease{ChartID: chart.ID, Model: gorm.Model{ID: *chartReleaseVersion.ChartVersionFollowChartReleaseID}})
 				if err != nil {
-					return fmt.Errorf("(%s) failed to follow chart version of chart release %d: %v", errors.InternalServerError, *chartReleaseVersion.ChartVersionFollowChartReleaseID, err)
+					return fmt.Errorf("(%s) failed to follow chart version of chart release %d: %w", errors.InternalServerError, *chartReleaseVersion.ChartVersionFollowChartReleaseID, err)
 				} else if len(chartReleases) == 0 {
 					return fmt.Errorf("(%s) failed to follow chart version of chart release %d: not found", errors.NotFound, *chartReleaseVersion.ChartVersionFollowChartReleaseID)
 				} else {

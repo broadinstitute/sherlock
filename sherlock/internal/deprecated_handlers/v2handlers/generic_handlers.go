@@ -30,7 +30,7 @@ func handleCreate[M v2models.Model, R v2controllers.Readable[M], C v2controllers
 		}
 		var creatable C
 		if err := ctx.ShouldBindJSON(&creatable); err != nil {
-			errors.AbortRequest(ctx, fmt.Errorf("(%s) JSON error parsing to %T: %v", errors.BadRequest, creatable, err))
+			errors.AbortRequest(ctx, fmt.Errorf("(%s) JSON error parsing to %T: %w", errors.BadRequest, creatable, err))
 			return
 		}
 		result, created, err := controller.Create(creatable, user)
@@ -50,7 +50,7 @@ func handleList[M v2models.Model, R v2controllers.Readable[M], C v2controllers.C
 	return func(ctx *gin.Context) {
 		var filter R
 		if err := ctx.ShouldBindQuery(&filter); err != nil {
-			errors.AbortRequest(ctx, fmt.Errorf("(%s) error parsing a filtering %T from the query parameters: %v", errors.BadRequest, filter, err))
+			errors.AbortRequest(ctx, fmt.Errorf("(%s) error parsing a filtering %T from the query parameters: %w", errors.BadRequest, filter, err))
 			return
 		} else {
 			log.Trace().Msgf("parsing query params to %T: '%s' => %+v", filter, ctx.Request.URL.RawQuery, filter)
@@ -58,7 +58,7 @@ func handleList[M v2models.Model, R v2controllers.Readable[M], C v2controllers.C
 		limitString := ctx.DefaultQuery("limit", "0")
 		limit, err := strconv.Atoi(limitString)
 		if err != nil {
-			errors.AbortRequest(ctx, fmt.Errorf("(%s) error parsing limit parameter: %v", errors.BadRequest, err))
+			errors.AbortRequest(ctx, fmt.Errorf("(%s) error parsing limit parameter: %w", errors.BadRequest, err))
 			return
 		}
 		result, err := controller.ListAllMatching(filter, limit)
@@ -90,7 +90,7 @@ func handleEdit[M v2models.Model, R v2controllers.Readable[M], C v2controllers.C
 		}
 		var editable E
 		if err := ctx.ShouldBindJSON(&editable); err != nil {
-			errors.AbortRequest(ctx, fmt.Errorf("(%s) JSON error parsing to %T: %v", errors.BadRequest, editable, err))
+			errors.AbortRequest(ctx, fmt.Errorf("(%s) JSON error parsing to %T: %w", errors.BadRequest, editable, err))
 			return
 		}
 		result, err := controller.Edit(formatSelector(ctx.Param("selector")), editable, user)
@@ -111,12 +111,12 @@ func handleUpsert[M v2models.Model, R v2controllers.Readable[M], C v2controllers
 		}
 		var creatable C
 		if err := ctx.ShouldBindBodyWith(&creatable, binding.JSON); err != nil {
-			errors.AbortRequest(ctx, fmt.Errorf("(%s) JSON error parsing to %T: %v", errors.BadRequest, creatable, err))
+			errors.AbortRequest(ctx, fmt.Errorf("(%s) JSON error parsing to %T: %w", errors.BadRequest, creatable, err))
 			return
 		}
 		var editable E
 		if err := ctx.ShouldBindBodyWith(&editable, binding.JSON); err != nil {
-			errors.AbortRequest(ctx, fmt.Errorf("(%s) JSON error parsing to %T: %v", errors.BadRequest, editable, err))
+			errors.AbortRequest(ctx, fmt.Errorf("(%s) JSON error parsing to %T: %w", errors.BadRequest, editable, err))
 			return
 		}
 		result, created, err := controller.Upsert(formatSelector(ctx.Param("selector")), creatable, editable, user)
@@ -168,7 +168,7 @@ func handleTriggerPagerdutyIncident[M v2models.Model, R v2controllers.Readable[M
 		}
 		var request pagerduty.AlertSummary
 		if err := ctx.ShouldBindJSON(&request); err != nil {
-			errors.AbortRequest(ctx, fmt.Errorf("(%s) JSON error parsing to %T: %v", errors.BadRequest, request, err))
+			errors.AbortRequest(ctx, fmt.Errorf("(%s) JSON error parsing to %T: %w", errors.BadRequest, request, err))
 			return
 		}
 		result, err := controller.TriggerPagerdutyIncident(formatSelector(ctx.Param("selector")), request)

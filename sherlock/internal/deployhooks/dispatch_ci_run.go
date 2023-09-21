@@ -14,7 +14,7 @@ func DispatchCiRun(db *gorm.DB, ciRun models.CiRun) {
 	if len(errs) > 0 {
 		log.Error().Msgf("HOOK | encountered %d errors handling deploy hooks for CiRun %d", len(errs), ciRun.ID)
 		for index, err := range errs {
-			log.Error().Err(err).Msgf("HOOK | error %d of %d: %v", index+1, len(errs), err)
+			log.Error().Err(err).Msgf("HOOK | error %d of %d: %w", index+1, len(errs), err)
 		}
 		slack.ReportError(db.Statement.Context, append([]error{fmt.Errorf("encountered %d errors handling deploy hooks for CiRun %d", len(errs), ciRun.ID)}, errs...)...)
 	}
@@ -45,7 +45,7 @@ func dispatchCiRun(db *gorm.DB, ciRun models.CiRun,
 			if err := db.Where(models.DeployHookTriggerConfig{
 				OnEnvironmentID: &resourceIdentifier.ResourceID,
 			}).Find(&resourceDeployHookTriggers).Error; err != nil {
-				errs = append(errs, fmt.Errorf("failed to query DeployHookTriggerConfig with Environment ID %d (CiIdentifier %d): %v", resourceIdentifier.ResourceID, resourceIdentifier.ID, err))
+				errs = append(errs, fmt.Errorf("failed to query DeployHookTriggerConfig with Environment ID %d (CiIdentifier %d): %w", resourceIdentifier.ResourceID, resourceIdentifier.ID, err))
 				continue
 			}
 		} else if resourceIdentifier.ResourceType == "chart-release" {
@@ -53,7 +53,7 @@ func dispatchCiRun(db *gorm.DB, ciRun models.CiRun,
 			if err := db.Where(models.DeployHookTriggerConfig{
 				OnChartReleaseID: &resourceIdentifier.ResourceID,
 			}).Find(&resourceDeployHookTriggers).Error; err != nil {
-				errs = append(errs, fmt.Errorf("failed to query DeployHookTriggerConfig with ChartRelease ID %d (CiIdentifier %d): %v", resourceIdentifier.ResourceID, resourceIdentifier.ID, err))
+				errs = append(errs, fmt.Errorf("failed to query DeployHookTriggerConfig with ChartRelease ID %d (CiIdentifier %d): %w", resourceIdentifier.ResourceID, resourceIdentifier.ID, err))
 				continue
 			}
 		}
@@ -89,7 +89,7 @@ addingToDeduplicatedDeployHookTriggers:
 				Preload("Trigger.OnChartRelease").
 				First(&hook, deployHookTrigger.HookID).Error; err != nil {
 				errsMutex.Lock()
-				errs = append(errs, fmt.Errorf("failed to get SlackDeployHook for DeployHookTriggerConfig ID %d: %v", deployHookTrigger.ID, err))
+				errs = append(errs, fmt.Errorf("failed to get SlackDeployHook for DeployHookTriggerConfig ID %d: %w", deployHookTrigger.ID, err))
 				errsMutex.Unlock()
 				continue
 			}
@@ -98,7 +98,7 @@ addingToDeduplicatedDeployHookTriggers:
 				defer waitGroup.Done()
 				if err := dispatchSlackCallback(db, hook, ciRun); err != nil {
 					errsMutex.Lock()
-					errs = append(errs, fmt.Errorf("failed to dispatch SlackDeployHook %d: %v", hook.ID, err))
+					errs = append(errs, fmt.Errorf("failed to dispatch SlackDeployHook %d: %w", hook.ID, err))
 					errsMutex.Unlock()
 				}
 			}()
@@ -110,7 +110,7 @@ addingToDeduplicatedDeployHookTriggers:
 				Preload("Trigger.OnChartRelease").
 				First(&hook, deployHookTrigger.HookID).Error; err != nil {
 				errsMutex.Lock()
-				errs = append(errs, fmt.Errorf("failed to get GithubActionsDeployHook for DeployHookTriggerConfig ID %d: %v", deployHookTrigger.ID, err))
+				errs = append(errs, fmt.Errorf("failed to get GithubActionsDeployHook for DeployHookTriggerConfig ID %d: %w", deployHookTrigger.ID, err))
 				errsMutex.Unlock()
 				continue
 			}
@@ -119,7 +119,7 @@ addingToDeduplicatedDeployHookTriggers:
 				defer waitGroup.Done()
 				if err := dispatchGithubActionsCallback(db, hook, ciRun); err != nil {
 					errsMutex.Lock()
-					errs = append(errs, fmt.Errorf("failed to dispatch GithubActionsDeployHook %d: %v", hook.ID, err))
+					errs = append(errs, fmt.Errorf("failed to dispatch GithubActionsDeployHook %d: %w", hook.ID, err))
 					errsMutex.Unlock()
 				}
 			}()

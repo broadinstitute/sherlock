@@ -16,6 +16,6 @@ func main() {
 		port = envPort
 	}
 	if err := funcframework.Start(port); err != nil {
-		log.Fatalf("funcframework.Start: %v\n", err)
+		log.Fatalf("funcframework.Start: %w\n", err)
 	}
 }

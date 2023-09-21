@@ -40,15 +40,15 @@ func (c ChangesetController) changesetPlanRequestToModelChangesets(request Chang
 	for index, chartReleaseRequestEntry := range request.ChartReleases {
 		fullChangesetRequest, err := chartReleaseRequestEntry.CreatableChangeset.toReadable(c.allStores)
 		if err != nil {
-			return nil, fmt.Errorf("error interpolating chart release entry %d, '%s': %v", index+1, fullChangesetRequest.ChartRelease, err)
+			return nil, fmt.Errorf("error interpolating chart release entry %d, '%s': %w", index+1, fullChangesetRequest.ChartRelease, err)
 		}
 		if chartReleaseRequestEntry.UseExactVersionsFromOtherChartRelease != nil {
 			otherChartRelease, err := c.allStores.ChartReleaseStore.Get(*chartReleaseRequestEntry.UseExactVersionsFromOtherChartRelease)
 			if err != nil {
-				return nil, fmt.Errorf("error getting referenced other chart release '%s' for chart release entry %d, '%s': %v", *chartReleaseRequestEntry.UseExactVersionsFromOtherChartRelease, index+1, fullChangesetRequest.ChartRelease, err)
+				return nil, fmt.Errorf("error getting referenced other chart release '%s' for chart release entry %d, '%s': %w", *chartReleaseRequestEntry.UseExactVersionsFromOtherChartRelease, index+1, fullChangesetRequest.ChartRelease, err)
 			}
 			if chartRelease, err := c.allStores.ChartReleaseStore.Get(fullChangesetRequest.ChartRelease); err != nil {
-				return nil, fmt.Errorf("error getting referenced chart release '%s' for chart release entry %d: %v", fullChangesetRequest.ChartRelease, index+1, err)
+				return nil, fmt.Errorf("error getting referenced chart release '%s' for chart release entry %d: %w", fullChangesetRequest.ChartRelease, index+1, err)
 			} else if chartRelease.ChartID != otherChartRelease.ChartID {
 				return nil, fmt.Errorf("validation error on chart release entry %d: chart release has chart '%s' but referenced other chart release has mismatched chart '%s'", index+1, chartRelease.Chart.Name, otherChartRelease.Chart.Name)
 			}
@@ -72,7 +72,7 @@ func (c ChangesetController) changesetPlanRequestToModelChangesets(request Chang
 		}
 		model, err := fullChangesetRequest.toModel(c.allStores)
 		if err != nil {
-			return nil, fmt.Errorf("error parsing chart release entry %d, '%s': %v", index+1, fullChangesetRequest.ChartRelease, err)
+			return nil, fmt.Errorf("error parsing chart release entry %d, '%s': %w", index+1, fullChangesetRequest.ChartRelease, err)
 		}
 		if _, alreadyTargeted := modelChangesets[model.ChartReleaseID]; alreadyTargeted {
 			return nil, fmt.Errorf("(%s) a chart release (ID: %d) is targeted by multiple chart release entries: entry %d, '%s' was a duplicate", errors.BadRequest, model.ChartReleaseID, index+1, fullChangesetRequest.ChartRelease)
@@ -85,13 +85,13 @@ func (c ChangesetController) changesetPlanRequestToModelChangesets(request Chang
 	for index, environmentRequestEntry := range request.Environments {
 		environment, err := c.allStores.EnvironmentStore.Get(environmentRequestEntry.Environment)
 		if err != nil {
-			return nil, fmt.Errorf("error getting referenced environment '%s' for environment entry %d: %v", environmentRequestEntry.Environment, index+1, err)
+			return nil, fmt.Errorf("error getting referenced environment '%s' for environment entry %d: %w", environmentRequestEntry.Environment, index+1, err)
 		}
 		chartsToExplicitlyInclude := make(map[uint]struct{})
 		for _, chartSelector := range environmentRequestEntry.IncludeCharts {
 			chart, err := c.allStores.ChartStore.Get(chartSelector)
 			if err != nil {
-				return nil, fmt.Errorf("error getting referenced chart to include '%s' for environment entry %d, '%s': %v", chartSelector, index+1, environmentRequestEntry.Environment, err)
+				return nil, fmt.Errorf("error getting referenced chart to include '%s' for environment entry %d, '%s': %w", chartSelector, index+1, environmentRequestEntry.Environment, err)
 			}
 			chartsToExplicitlyInclude[chart.ID] = struct{}{}
 		}
@@ -99,13 +99,13 @@ func (c ChangesetController) changesetPlanRequestToModelChangesets(request Chang
 		for _, chartSelector := range environmentRequestEntry.ExcludeCharts {
 			chart, err := c.allStores.ChartStore.Get(chartSelector)
 			if err != nil {
-				return nil, fmt.Errorf("error getting referenced chart to exclude '%s' for environment entry %d, '%s': %v", chartSelector, index+1, environmentRequestEntry.Environment, err)
+				return nil, fmt.Errorf("error getting referenced chart to exclude '%s' for environment entry %d, '%s': %w", chartSelector, index+1, environmentRequestEntry.Environment, err)
 			}
 			chartsToExplicitlyExclude[chart.ID] = struct{}{}
 		}
 		environmentChartReleases, err := c.allStores.ChartReleaseStore.ListAllMatchingByUpdated(v2models.ChartRelease{EnvironmentID: &environment.ID}, 0)
 		if err != nil {
-			return nil, fmt.Errorf("error getting chart releases in environment '%s' for environment entry %d: %v", environmentRequestEntry.Environment, index+1, err)
+			return nil, fmt.Errorf("error getting chart releases in environment '%s' for environment entry %d: %w", environmentRequestEntry.Environment, index+1, err)
 		}
 		var targetChartReleases []v2models.ChartRelease
 		for _, potentialTargetChartRelease := range environmentChartReleases {
@@ -134,11 +134,11 @@ func (c ChangesetController) changesetPlanRequestToModelChangesets(request Chang
 				otherEnvironment, err = c.allStores.EnvironmentStore.Get(*environmentRequestEntry.FollowVersionsFromOtherEnvironment)
 			}
 			if err != nil {
-				return nil, fmt.Errorf("error getting referenced other environment '%s' for environment entry %d, '%s': %v", *environmentRequestEntry.UseExactVersionsFromOtherEnvironment, index+1, environmentRequestEntry.Environment, err)
+				return nil, fmt.Errorf("error getting referenced other environment '%s' for environment entry %d, '%s': %w", *environmentRequestEntry.UseExactVersionsFromOtherEnvironment, index+1, environmentRequestEntry.Environment, err)
 			}
 			otherChartReleases, err := c.allStores.ChartReleaseStore.ListAllMatchingByUpdated(v2models.ChartRelease{EnvironmentID: &otherEnvironment.ID}, 0)
 			if err != nil {
-				return nil, fmt.Errorf("error getting chart releases in referenced other environment '%s' for environment entry %d, '%s': %v", *environmentRequestEntry.UseExactVersionsFromOtherEnvironment, index+1, environmentRequestEntry.Environment, err)
+				return nil, fmt.Errorf("error getting chart releases in referenced other environment '%s' for environment entry %d, '%s': %w", *environmentRequestEntry.UseExactVersionsFromOtherEnvironment, index+1, environmentRequestEntry.Environment, err)
 			}
 			for _, otherChartRelease := range otherChartReleases {
 				chartReleasesToUseVersionsFrom[otherChartRelease.ChartID] = otherChartRelease
@@ -147,7 +147,7 @@ func (c ChangesetController) changesetPlanRequestToModelChangesets(request Chang
 		for _, targetChartRelease := range targetChartReleases {
 			generatedChangeset, err := CreatableChangeset{ChartRelease: targetChartRelease.Name}.toReadable(c.allStores)
 			if err != nil {
-				return nil, fmt.Errorf("error setting dynamic default values for generated changeset for chart release '%s' for environment entry %d, '%s': %v", targetChartRelease.Name, index+1, environmentRequestEntry.Environment, err)
+				return nil, fmt.Errorf("error setting dynamic default values for generated changeset for chart release '%s' for environment entry %d, '%s': %w", targetChartRelease.Name, index+1, environmentRequestEntry.Environment, err)
 			}
 			if otherChartRelease, present := chartReleasesToUseVersionsFrom[targetChartRelease.ChartID]; present {
 				if otherChartRelease.AppVersionResolver != nil && *otherChartRelease.AppVersionResolver == "none" {
@@ -176,7 +176,7 @@ func (c ChangesetController) changesetPlanRequestToModelChangesets(request Chang
 			}
 			model, err := generatedChangeset.toModel(c.allStores)
 			if err != nil {
-				return nil, fmt.Errorf("error parsing generated changeset for chart release '%s' for environment entry %d, '%s': %v", targetChartRelease.Name, index+1, environmentRequestEntry.Environment, err)
+				return nil, fmt.Errorf("error parsing generated changeset for chart release '%s' for environment entry %d, '%s': %w", targetChartRelease.Name, index+1, environmentRequestEntry.Environment, err)
 			}
 			if _, alreadyTargeted := modelChangesets[model.ChartReleaseID]; alreadyTargeted {
 				return nil, fmt.Errorf("(%s) a chart release '%s' (ID: %d) is targeted multiple times, including by environment entry %d, '%s' (perhaps add this chart to excludedCharts?)", errors.BadRequest, targetChartRelease.Name, model.ChartReleaseID, index+1, environmentRequestEntry.Environment)
@@ -190,12 +190,12 @@ func (c ChangesetController) changesetPlanRequestToModelChangesets(request Chang
 	for _, existingChangesetID := range request.RecreateChangesets {
 		changesetToRecreate, err := c.Get(strconv.FormatUint(uint64(existingChangesetID), 10))
 		if err != nil {
-			return nil, fmt.Errorf("error recreating changeset %d: %v", existingChangesetID, err)
+			return nil, fmt.Errorf("error recreating changeset %d: %w", existingChangesetID, err)
 		}
 		// Strip out all the non-Creatable fields, so we replay the exact changeset that was used
 		generatedChangeset, err := changesetToRecreate.CreatableChangeset.toReadable(c.allStores)
 		if err != nil {
-			return nil, fmt.Errorf("error recreating changeset %d: %v", existingChangesetID, err)
+			return nil, fmt.Errorf("error recreating changeset %d: %w", existingChangesetID, err)
 		}
 		// If we're going to attempt to change the app version, set the resolver to exact to make sure it sticks
 		if changesetToRecreate.ChartReleaseInfo.AppVersionExact != nil && generatedChangeset.ToAppVersionExact != nil && *changesetToRecreate.ChartReleaseInfo.AppVersionExact != *generatedChangeset.ToAppVersionExact {
@@ -207,7 +207,7 @@ func (c ChangesetController) changesetPlanRequestToModelChangesets(request Chang
 		}
 		model, err := generatedChangeset.toModel(c.allStores)
 		if err != nil {
-			return nil, fmt.Errorf("error parsing generated recreated changeset from changeset %d: %v", existingChangesetID, err)
+			return nil, fmt.Errorf("error parsing generated recreated changeset from changeset %d: %w", existingChangesetID, err)
 		}
 		if _, alreadyTargeted := modelChangesets[model.ChartReleaseID]; alreadyTargeted {
 			return nil, fmt.Errorf("(%s) a chart release '%s' is targeted twice, including by the request to recreate changeset %d", errors.BadRequest, model.ChartRelease.Name, existingChangesetID)

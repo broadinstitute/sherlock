@@ -59,13 +59,13 @@ func GetSuitabilityFor(email string) *Suitability {
 		// the test users themselves (but sometimes they want to).
 		return &Suitability{
 			suitable:    email == test_users.SuitableTestUserEmail,
-			description: fmt.Sprintf("test user; email %s equal to suitable %s: %v", email, test_users.SuitableTestUserEmail, email == test_users.SuitableTestUserEmail),
+			description: fmt.Sprintf("test user; email %s equal to suitable %s: %w", email, test_users.SuitableTestUserEmail, email == test_users.SuitableTestUserEmail),
 			source:      CONFIG,
 		}
 	} else if config.Config.MustString("mode") == "debug" && email == local_user.LocalUserEmail {
 		return &Suitability{
 			suitable:    local_user.LocalUserSuitable,
-			description: fmt.Sprintf("local user; suitable: %v", local_user.LocalUserSuitable),
+			description: fmt.Sprintf("local user; suitable: %w", local_user.LocalUserSuitable),
 			source:      CONFIG,
 		}
 	}

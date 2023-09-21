@@ -50,7 +50,7 @@ func databaseInstanceSelectorToQuery(db *gorm.DB, selector string) (DatabaseInst
 	if utils.IsNumeric(selector) { // ID
 		id, err := strconv.Atoi(selector)
 		if err != nil {
-			return DatabaseInstance{}, fmt.Errorf("(%s) string to int conversion error of '%s': %v", errors.BadRequest, selector, err)
+			return DatabaseInstance{}, fmt.Errorf("(%s) string to int conversion error of '%s': %w", errors.BadRequest, selector, err)
 		}
 		query.ID = uint(id)
 		return query, nil
@@ -58,7 +58,7 @@ func databaseInstanceSelectorToQuery(db *gorm.DB, selector string) (DatabaseInst
 		chartReleaseSubSelector := strings.TrimPrefix(selector, "chart-release/")
 		chartReleaseID, err := InternalChartReleaseStore.ResolveSelector(db, chartReleaseSubSelector)
 		if err != nil {
-			return DatabaseInstance{}, fmt.Errorf("error handling database instance subselector %s: %v", chartReleaseSubSelector, err)
+			return DatabaseInstance{}, fmt.Errorf("error handling database instance subselector %s: %w", chartReleaseSubSelector, err)
 		}
 		query.ChartReleaseID = chartReleaseID
 		return query, nil

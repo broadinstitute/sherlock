@@ -65,7 +65,7 @@ func ciIdentifierSelectorToQuery(db *gorm.DB, selector string) (CiIdentifier, er
 		// ID
 		id, err := strconv.Atoi(selector)
 		if err != nil {
-			return CiIdentifier{}, fmt.Errorf("(%s) string to int conversion error of '%s': %v", errors.BadRequest, selector, err)
+			return CiIdentifier{}, fmt.Errorf("(%s) string to int conversion error of '%s': %w", errors.BadRequest, selector, err)
 		}
 		query.ID = uint(id)
 		return query, nil
@@ -95,7 +95,7 @@ func ciIdentifierSelectorToQuery(db *gorm.DB, selector string) (CiIdentifier, er
 		}
 		id, err := resolver.ResolveSelector(db, resourceSelector)
 		if err != nil {
-			return CiIdentifier{}, fmt.Errorf("invalid CI identifier selector '%s', resource sub-selector '%s' had an error: %v", selector, resourceSelector, err)
+			return CiIdentifier{}, fmt.Errorf("invalid CI identifier selector '%s', resource sub-selector '%s' had an error: %w", selector, resourceSelector, err)
 		}
 		query.ResourceID = id
 		return query, nil

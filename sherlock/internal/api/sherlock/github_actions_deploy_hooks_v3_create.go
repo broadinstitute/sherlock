@@ -34,12 +34,12 @@ func githubActionsDeployHooksV3Create(ctx *gin.Context) {
 
 	var body GithubActionsDeployHookV3Create
 	if err = ctx.ShouldBindJSON(&body); err != nil {
-		errors.AbortRequest(ctx, fmt.Errorf("(%s) request validation error: %v", errors.BadRequest, err))
+		errors.AbortRequest(ctx, fmt.Errorf("(%s) request validation error: %w", errors.BadRequest, err))
 		return
 	}
 
 	if err = defaults.Set(&body); err != nil {
-		errors.AbortRequest(ctx, fmt.Errorf("error setting defaults: %v", err))
+		errors.AbortRequest(ctx, fmt.Errorf("error setting defaults: %w", err))
 		return
 	}
 

@@ -42,14 +42,14 @@ func ConnectAndConfigureFromTest(t *testing.T) *gorm.DB {
 		defer _mutexExistingTestDB.Unlock()
 		sqlDB, err := db.Connect()
 		if err != nil {
-			t.Errorf("failed to connect to database during test: %v", err)
+			t.Errorf("failed to connect to database during test: %w", err)
 			return nil
 		}
 		_existingTestDB = sqlDB
 	}
 	gormDB, err := db.Configure(_existingTestDB)
 	if err != nil {
-		t.Errorf("failed to configure database during test: %v", err)
+		t.Errorf("failed to configure database during test: %w", err)
 	}
 	return gormDB
 }
@@ -71,7 +71,7 @@ func Truncate(t *testing.T, gormDB *gorm.DB) {
 		return
 	}
 	if sqlDB, err := gormDB.DB(); err != nil {
-		log.Fatal().Msgf("refusing to truncate, failed to get sql.DB from gorm.DB: %v", err)
+		log.Fatal().Msgf("refusing to truncate, failed to get sql.DB from gorm.DB: %w", err)
 	} else {
 		db.PanicIfLooksLikeCloudSQL(sqlDB)
 	}
@@ -95,6 +95,6 @@ func Truncate(t *testing.T, gormDB *gorm.DB) {
 	}
 	statements = append(statements, "COMMIT")
 	if err := gormDB.Exec(strings.Join(statements, ";\n")).Error; err != nil {
-		t.Errorf("failed to clean/truncate database: %v", err)
+		t.Errorf("failed to clean/truncate database: %w", err)
 	}
 }

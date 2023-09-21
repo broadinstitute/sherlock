@@ -116,7 +116,7 @@ var (
 func (controllerSet *ControllerSet) seedEnvironments(t *testing.T, db *gorm.DB) {
 	for _, creatable := range environmentSeedList {
 		if _, _, err := controllerSet.EnvironmentController.Create(creatable, generateUser(t, db, true)); err != nil {
-			t.Errorf("error seeding environment %s: %v", creatable.Name, err)
+			t.Errorf("error seeding environment %s: %w", creatable.Name, err)
 		}
 	}
 }

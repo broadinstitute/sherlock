@@ -14,7 +14,7 @@ func dispatchSlackDeployHook(db *gorm.DB, hook models.SlackDeployHook, ciRun mod
 	if hook.SlackChannel == nil {
 		return fmt.Errorf("slack channel was nil on SlackDeployHook %d, shouldn't be possible", hook.ID)
 	} else if attachment, err := generateSlackAttachment(db, hook, ciRun); err != nil {
-		return fmt.Errorf("failed to generate summary of CiRun %d for SlackDeployHook %d: %v", ciRun.ID, hook.ID, err)
+		return fmt.Errorf("failed to generate summary of CiRun %d for SlackDeployHook %d: %w", ciRun.ID, hook.ID, err)
 	} else if config.Config.Bool("slack.behaviors.deployHooks.enable") {
 		slack.SendMessage(db.Statement.Context, *hook.SlackChannel, "", attachment)
 	}

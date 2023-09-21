@@ -75,7 +75,7 @@ func (s internalModelStore[M]) wrappedErrorIfForbidden(db *gorm.DB, model *M, ac
 	if s.errorIfForbidden == nil {
 		return nil
 	} else if err := s.errorIfForbidden(db, model, action, user); err != nil {
-		return fmt.Errorf("%s permissions error for %T (%s): %v", model_actions.ActionTypeToString(action), *model, errors.Forbidden, err)
+		return fmt.Errorf("%s permissions error for %T (%s): %w", model_actions.ActionTypeToString(action), *model, errors.Forbidden, err)
 	} else {
 		return nil
 	}
@@ -95,11 +95,11 @@ func (s internalModelStore[M]) enforceSelectorUniqueness(db *gorm.DB, model *M, 
 	for _, selector := range s.modelToSelectors(model) {
 		query, err := s.selectorToQueryModel(db, selector)
 		if err != nil {
-			return nil, fmt.Errorf("selector validation error: resulting model has invalid selector '%s': %v", selector, err)
+			return nil, fmt.Errorf("selector validation error: resulting model has invalid selector '%s': %w", selector, err)
 		}
 		var results []M
 		if err := db.Where(&query).Find(&results).Error; err != nil {
-			return nil, fmt.Errorf("(%s) unexpected selector validation error: failed to query possible selector conflicts: %v", errors.InternalServerError, err)
+			return nil, fmt.Errorf("(%s) unexpected selector validation error: failed to query possible selector conflicts: %w", errors.InternalServerError, err)
 		} else {
 			for _, result := range results {
 				if handleConflicts == nil { // if we can't handle conflicts
@@ -121,16 +121,16 @@ func (s internalModelStore[M]) enforceSelectorUniqueness(db *gorm.DB, model *M, 
 func (s internalModelStore[M]) Create(db *gorm.DB, model M, user *models.User) (M, bool, error) {
 	if s.preCreate != nil {
 		if err := s.preCreate(db, &model, user); err != nil {
-			return model, false, fmt.Errorf("pre-create error: %v", err)
+			return model, false, fmt.Errorf("pre-create error: %w", err)
 		}
 	}
 	if s.validateModel != nil {
 		if err := s.validateModel(&model); err != nil {
-			return model, false, fmt.Errorf("creation validation error: (%s) new %T: %v", errors.BadRequest, model, err)
+			return model, false, fmt.Errorf("creation validation error: (%s) new %T: %w", errors.BadRequest, model, err)
 		}
 	}
 	if allowedDuplicate, err := s.enforceSelectorUniqueness(db, &model, s.handleIncomingDuplicate); err != nil {
-		return model, false, fmt.Errorf("create validation error: %v", err)
+		return model, false, fmt.Errorf("create validation error: %w", err)
 	} else if allowedDuplicate != nil {
 		return *allowedDuplicate, false, nil
 	}
@@ -144,13 +144,13 @@ func (s internalModelStore[M]) Create(db *gorm.DB, model M, user *models.User) (
 		}
 		if err := chain.Create(&model).Error; err != nil {
 			if strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
-				return fmt.Errorf("creation error: (%s) new %T violated a database uniqueness constraint (are you recreating something with the same name? Contact DevOps) original error: %v", errors.BadRequest, model, err)
+				return fmt.Errorf("creation error: (%s) new %T violated a database uniqueness constraint (are you recreating something with the same name? Contact DevOps) original error: %w", errors.BadRequest, model, err)
 			}
-			return fmt.Errorf("creation error: new %T couldn't be created in the database due to an error: %v", model, err)
+			return fmt.Errorf("creation error: new %T couldn't be created in the database due to an error: %w", model, err)
 		}
 		result, err := s.Get(tx, model)
 		if err != nil {
-			return fmt.Errorf("(%s) unexpected creation error: mid-transaction validation on %T failed: %v", errors.InternalServerError, model, err)
+			return fmt.Errorf("(%s) unexpected creation error: mid-transaction validation on %T failed: %w", errors.InternalServerError, model, err)
 		}
 		// Use db instead of tx here because tx is dirty and user-modified. Determination of permissions should
 		// never be recursive, so this is safer.
@@ -162,7 +162,7 @@ func (s internalModelStore[M]) Create(db *gorm.DB, model M, user *models.User) (
 		}
 		if s.postCreate != nil {
 			if err = s.postCreate(tx, &result, user); err != nil {
-				return fmt.Errorf("post-create error: the %T itself was valid but an error occured running post-creation actions so creation was rolled back: %v", model, err)
+				return fmt.Errorf("post-create error: the %T itself was valid but an error occured running post-creation actions so creation was rolled back: %w", model, err)
 			}
 		}
 		ret = result
@@ -189,7 +189,7 @@ func (s internalModelStore[M]) ListAllMatchingOrdered(db *gorm.DB, limit int, or
 		tx = tx.Limit(limit)
 	}
 	if err := tx.Find(&matching).Error; err != nil {
-		return matching, fmt.Errorf("(%s) unexpected list-all-matching error: %v", errors.InternalServerError, err)
+		return matching, fmt.Errorf("(%s) unexpected list-all-matching error: %w", errors.InternalServerError, err)
 	}
 	return matching, nil
 }
@@ -198,7 +198,7 @@ func (s internalModelStore[M]) GetIfExists(db *gorm.DB, query M) (*M, error) {
 	var matching []M
 	tx := db.Where(&query).Preload(clause.Associations)
 	if err := tx.Find(&matching).Error; err != nil {
-		return nil, fmt.Errorf("(%s) unexpected query error: failed to run query %T %+v against the database: %v", errors.InternalServerError, query, query, err)
+		return nil, fmt.Errorf("(%s) unexpected query error: failed to run query %T %+v against the database: %w", errors.InternalServerError, query, query, err)
 	} else if len(matching) > 1 {
 		return nil, fmt.Errorf("query result error: (%s) more than one entry (%d total) matched non-zero values of %T %+v", errors.BadRequest, len(matching), query, query)
 	} else if len(matching) == 1 {
@@ -222,11 +222,11 @@ func (s internalModelStore[M]) Get(db *gorm.DB, query M) (M, error) {
 func (s internalModelStore[M]) GetBySelector(db *gorm.DB, selector string) (M, error) {
 	query, err := s.selectorToQueryModel(db, selector)
 	if err != nil {
-		return query, fmt.Errorf("query error parsing %T selector '%s': %v", query, selector, err)
+		return query, fmt.Errorf("query error parsing %T selector '%s': %w", query, selector, err)
 	}
 	ret, err := s.Get(db, query)
 	if err != nil {
-		return query, fmt.Errorf("query error using %T selector '%s': %v", query, selector, err)
+		return query, fmt.Errorf("query error using %T selector '%s': %w", query, selector, err)
 	}
 	return ret, nil
 }
@@ -241,7 +241,7 @@ func (s internalModelStore[M]) Edit(db *gorm.DB, query M, editsToMake M, user *m
 	}
 	if s.preEdit != nil {
 		if err = s.preEdit(db, &toEdit, &editsToMake, user); err != nil {
-			return toEdit, fmt.Errorf("pre-edit error: %v", err)
+			return toEdit, fmt.Errorf("pre-edit error: %w", err)
 		}
 	}
 	var ret M
@@ -251,7 +251,7 @@ func (s internalModelStore[M]) Edit(db *gorm.DB, query M, editsToMake M, user *m
 			chain.Select("*")
 		}
 		if err = chain.Updates(&editsToMake).Error; err != nil {
-			return fmt.Errorf("edit error editing %T: %v", toEdit, err)
+			return fmt.Errorf("edit error editing %T: %w", toEdit, err)
 		}
 		if s.editsAppendManyToMany != nil {
 			for associationName, accessor := range s.editsAppendManyToMany {
@@ -275,17 +275,17 @@ func (s internalModelStore[M]) Edit(db *gorm.DB, query M, editsToMake M, user *m
 					Omit(fmt.Sprintf("%s.*", associationName)).
 					Association(associationName).
 					Append(accessor(&editsToMake)); err != nil {
-					return fmt.Errorf("edit error applying association for %s: %v", associationName, err)
+					return fmt.Errorf("edit error applying association for %s: %w", associationName, err)
 				}
 			}
 		}
 		result, err := s.Get(tx, toEdit)
 		if err != nil {
-			return fmt.Errorf("(%s) unexpected edit error: mid-transaction validation on %T failed: %v", errors.InternalServerError, toEdit, err)
+			return fmt.Errorf("(%s) unexpected edit error: mid-transaction validation on %T failed: %w", errors.InternalServerError, toEdit, err)
 		}
 		if s.validateModel != nil {
 			if err := s.validateModel(&result); err != nil {
-				return fmt.Errorf("edit validation error: (%s) resulting %T: %v", errors.BadRequest, result, err)
+				return fmt.Errorf("edit validation error: (%s) resulting %T: %w", errors.BadRequest, result, err)
 			}
 		}
 		// We check permissions *again* to prevent a user from editing an entry in a way that makes it require
@@ -295,7 +295,7 @@ func (s internalModelStore[M]) Edit(db *gorm.DB, query M, editsToMake M, user *m
 		}
 		if s.editsMayChangeSelectors {
 			if _, err := s.enforceSelectorUniqueness(tx, &result, s.requireSameModel); err != nil {
-				return fmt.Errorf("edit validation error: %v", err)
+				return fmt.Errorf("edit validation error: %w", err)
 			}
 		}
 		ret = result
@@ -307,11 +307,11 @@ func (s internalModelStore[M]) Edit(db *gorm.DB, query M, editsToMake M, user *m
 func (s internalModelStore[M]) EditBySelector(db *gorm.DB, selector string, editsToMake M, user *models.User) (M, error) {
 	query, err := s.selectorToQueryModel(db, selector)
 	if err != nil {
-		return query, fmt.Errorf("query error parsing %T selector '%s': %v", query, selector, err)
+		return query, fmt.Errorf("query error parsing %T selector '%s': %w", query, selector, err)
 	}
 	ret, err := s.Edit(db, query, editsToMake, user, false)
 	if err != nil {
-		return query, fmt.Errorf("edit error using %T selector '%s': %v", query, selector, err)
+		return query, fmt.Errorf("edit error using %T selector '%s': %w", query, selector, err)
 	}
 	return ret, nil
 }
@@ -326,13 +326,13 @@ func (s internalModelStore[M]) DeleteIfExists(db *gorm.DB, query M, user *models
 		err = db.Transaction(func(tx *gorm.DB) error {
 			if s.preDeletePostValidate != nil {
 				if err := s.preDeletePostValidate(tx, toDelete, user); err != nil {
-					return fmt.Errorf("pre-delete post-validate error: %v", err)
+					return fmt.Errorf("pre-delete post-validate error: %w", err)
 				}
 			}
 			return db.Delete(&toDelete).Error
 		})
 		if err != nil {
-			return toDelete, fmt.Errorf("delete error deleting %T: %v", toDelete, err)
+			return toDelete, fmt.Errorf("delete error deleting %T: %w", toDelete, err)
 		}
 		return toDelete, nil
 	}
@@ -352,11 +352,11 @@ func (s internalModelStore[M]) Delete(db *gorm.DB, query M, user *models.User) (
 func (s internalModelStore[M]) DeleteBySelector(db *gorm.DB, selector string, user *models.User) (M, error) {
 	query, err := s.selectorToQueryModel(db, selector)
 	if err != nil {
-		return query, fmt.Errorf("query error parsing %T selector '%s': %v", query, selector, err)
+		return query, fmt.Errorf("query error parsing %T selector '%s': %w", query, selector, err)
 	}
 	ret, err := s.Delete(db, query, user)
 	if err != nil {
-		return query, fmt.Errorf("delete error using %T selector '%s': %v", query, selector, err)
+		return query, fmt.Errorf("delete error using %T selector '%s': %w", query, selector, err)
 	}
 	return ret, nil
 }
@@ -372,11 +372,11 @@ type SelectorResolver interface {
 func (s internalModelStore[M]) ResolveSelector(db *gorm.DB, selector string) (uint, error) {
 	query, err := s.selectorToQueryModel(db, selector)
 	if err != nil {
-		return 0, fmt.Errorf("invalid: %v", err)
+		return 0, fmt.Errorf("invalid: %w", err)
 	}
 	result, err := s.Get(db, query)
 	if err != nil {
-		return 0, fmt.Errorf("not found: %v", err)
+		return 0, fmt.Errorf("not found: %w", err)
 	}
 	return result.getID(), nil
 }

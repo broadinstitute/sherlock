@@ -39,7 +39,7 @@ func githubActionsDeployHooksV3Edit(ctx *gin.Context) {
 
 	var body GithubActionsDeployHookV3Edit
 	if err = ctx.ShouldBindJSON(&body); err != nil {
-		errors.AbortRequest(ctx, fmt.Errorf("(%s) request validation error: %v", errors.BadRequest, err))
+		errors.AbortRequest(ctx, fmt.Errorf("(%s) request validation error: %w", errors.BadRequest, err))
 		return
 	}
 

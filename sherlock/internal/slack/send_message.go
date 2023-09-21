@@ -46,7 +46,7 @@ func SendMessage(ctx context.Context, channel string, text string, attachments .
 			))
 		}
 		if _, _, _, err := client.SendMessageContext(ctx, channel, options...); err != nil {
-			log.Warn().Err(err).Msgf("SLCK | unable to send message to %s: %v", channel, err)
+			log.Warn().Err(err).Msgf("SLCK | unable to send message to %s: %w", channel, err)
 		}
 	}
 }

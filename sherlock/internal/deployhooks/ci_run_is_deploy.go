@@ -19,7 +19,7 @@ func Init() error {
 	for index, k := range config.Config.Slices("model.ciRuns.deployMatchers") {
 		var partial models.CiRun
 		if err := k.UnmarshalWithConf("", &partial, koanf.UnmarshalConf{Tag: "koanf"}); err != nil {
-			return fmt.Errorf("error parsing model.ciRuns.deployMatchers[%d]: %v", index+1, err)
+			return fmt.Errorf("error parsing model.ciRuns.deployMatchers[%d]: %w", index+1, err)
 		} else {
 			matchers = append(matchers, partial)
 		}

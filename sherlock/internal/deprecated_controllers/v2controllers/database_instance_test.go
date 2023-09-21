@@ -86,7 +86,7 @@ var (
 func (controllerSet *ControllerSet) seedDatabaseInstances(t *testing.T, db *gorm.DB) {
 	for _, creatable := range databaseInstanceSeedList {
 		if _, _, err := controllerSet.DatabaseInstanceController.Create(creatable, generateUser(t, db, true)); err != nil {
-			t.Errorf("error seeding database instance for %s: %v", creatable.ChartRelease, err)
+			t.Errorf("error seeding database instance for %s: %w", creatable.ChartRelease, err)
 		}
 	}
 }

@@ -37,7 +37,7 @@ func Init(ctx context.Context) error {
 		}
 
 		if response, err := api.AuthTestContext(ctx); err != nil {
-			return fmt.Errorf("slack authentication failed self-test, see https://api.slack.com/methods/auth.test#errors for more information: %v", err)
+			return fmt.Errorf("slack authentication failed self-test, see https://api.slack.com/methods/auth.test#errors for more information: %w", err)
 		} else {
 			log.Info().Msgf("SLCK | successfully authenticated to Slack as \"%s\" in the \"%s\" workspace", response.User, response.Team)
 		}
@@ -63,7 +63,7 @@ func Start(ctx context.Context) {
 		socketmodeHandler.Handle(socketmode.EventTypeEventsAPI, handleEvents)
 
 		if err := socketmodeHandler.RunEventLoopContext(ctx); err != nil && !errors.Is(err, context.Canceled) {
-			log.Error().Err(err).Msgf("SLCK | INCOMING | socket event loop exited with error: %v", err)
+			log.Error().Err(err).Msgf("SLCK | INCOMING | socket event loop exited with error: %w", err)
 		}
 	}
 }

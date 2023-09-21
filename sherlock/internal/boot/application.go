@@ -41,7 +41,7 @@ type Application struct {
 func (a *Application) Start() {
 	log.Info().Msgf("BOOT | connecting to database...")
 	if sqlDB, err := db.Connect(); err != nil {
-		log.Fatal().Msgf("db.Connect() err: %v", err)
+		log.Fatal().Msgf("db.Connect() err: %w", err)
 	} else {
 		a.sqlDB = sqlDB
 	}
@@ -55,7 +55,7 @@ func (a *Application) Start() {
 	gormDB, err := db.Configure(a.sqlDB)
 	a.dbMigrationLock.Unlock()
 	if err != nil {
-		log.Fatal().Msgf("db.Configure() err: %v", err)
+		log.Fatal().Msgf("db.Configure() err: %w", err)
 	} else {
 		a.gormDB = gormDB
 	}
@@ -70,36 +70,36 @@ func (a *Application) Start() {
 
 	log.Info().Msgf("BOOT | initializing deploy detection...")
 	if err = deployhooks.Init(); err != nil {
-		log.Fatal().Msgf("deployhooks.Init() err: %v", err)
+		log.Fatal().Msgf("deployhooks.Init() err: %w", err)
 	}
 
 	if config.Config.MustString("mode") != "debug" {
 		log.Info().Msgf("BOOT | caching Firecloud accounts...")
 		if err = authorization.CacheFirecloudSuitability(ctx); err != nil {
-			log.Fatal().Msgf("authorization.CacheFirecloudSuitability() err: %v", err)
+			log.Fatal().Msgf("authorization.CacheFirecloudSuitability() err: %w", err)
 		}
 		go authorization.KeepFirecloudCacheUpdated(ctx)
 	}
 
 	log.Info().Msgf("BOOT | reading extra permissions defined in configuration...")
 	if err = authorization.CacheConfigSuitability(); err != nil {
-		log.Fatal().Msgf("authorization.CacheConfigSuitability() err: %v", err)
+		log.Fatal().Msgf("authorization.CacheConfigSuitability() err: %w", err)
 	}
 
 	log.Info().Msgf("BOOT | initializing GitHub Actions OIDC token verification...")
 	if err = gha_oidc.InitVerifier(ctx); err != nil {
-		log.Fatal().Msgf("gha_oidc_auth.InitVerifier() err: %v", err)
+		log.Fatal().Msgf("gha_oidc_auth.InitVerifier() err: %w", err)
 	}
 
 	if config.Config.Bool("metrics.v2.enable") {
 		log.Info().Msgf("BOOT | registering metric views...")
 		if err = metrics.RegisterViews(); err != nil {
-			log.Fatal().Msgf("v2metrics.RegisterViews() err: %v", err)
+			log.Fatal().Msgf("v2metrics.RegisterViews() err: %w", err)
 		}
 
 		log.Info().Msgf("BOOT | calculating metric values...")
 		if err = v2models.UpdateMetrics(ctx, a.gormDB); err != nil {
-			log.Fatal().Msgf("v2models.UpdateMetrics() err: %v", err)
+			log.Fatal().Msgf("v2models.UpdateMetrics() err: %w", err)
 		}
 
 		go v2models.KeepMetricsUpdated(ctx, a.gormDB)
@@ -108,7 +108,7 @@ func (a *Application) Start() {
 	if config.Config.Bool("slack.enable") {
 		log.Info().Msgf("BOOT | initializing Slack socket...")
 		if err = slack.Init(ctx); err != nil {
-			log.Fatal().Msgf("slack.Init() err: %v", err)
+			log.Fatal().Msgf("slack.Init() err: %w", err)
 		}
 		go slack.Start(ctx)
 	}
@@ -116,7 +116,7 @@ func (a *Application) Start() {
 	if config.Config.Bool("github.enable") {
 		log.Info().Msgf("BOOT | initializing GitHub client...")
 		if err = github.Init(ctx); err != nil {
-			log.Fatal().Msgf("githubz.Init() err: %v", err)
+			log.Fatal().Msgf("githubz.Init() err: %w", err)
 		}
 	}
 
@@ -128,7 +128,7 @@ func (a *Application) Start() {
 
 	log.Info().Msgf("BOOT | boot complete; now serving...")
 	if err = a.server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-		log.Fatal().Msgf("server.ListenAndServe() err: %v", err)
+		log.Fatal().Msgf("server.ListenAndServe() err: %w", err)
 	}
 }
 
@@ -138,7 +138,7 @@ func (a *Application) Stop() {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
 		if err := a.server.Shutdown(ctx); err != nil {
-			log.Warn().Msgf("BOOT | server shutdown error: %v", err)
+			log.Warn().Msgf("BOOT | server shutdown error: %w", err)
 		}
 	} else {
 		log.Info().Msgf("BOOT | no server; skipping shutting down server")
@@ -170,7 +170,7 @@ func (a *Application) Stop() {
 			log.Info().Msgf("BOOT | database migration complete, proceeding with connection close...")
 		}
 		if err := a.sqlDB.Close(); err != nil {
-			log.Warn().Msgf("BOOT | database connection close error: %v", err)
+			log.Warn().Msgf("BOOT | database connection close error: %w", err)
 		}
 		a.dbMigrationLock.Unlock()
 	} else {

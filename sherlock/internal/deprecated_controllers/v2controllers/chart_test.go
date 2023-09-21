@@ -114,7 +114,7 @@ var (
 func (controllerSet *ControllerSet) seedCharts(t *testing.T, db *gorm.DB) {
 	for _, creatable := range chartSeedList {
 		if _, _, err := controllerSet.ChartController.Create(creatable, generateUser(t, db, false)); err != nil {
-			t.Errorf("error seeding chart %s: %v", creatable.Name, err)
+			t.Errorf("error seeding chart %s: %w", creatable.Name, err)
 		}
 	}
 }

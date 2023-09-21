@@ -48,7 +48,7 @@ func (s ModelStore[M]) Delete(selector string, user *models.User) (M, error) {
 func (s ModelStore[M]) GetOtherValidSelectors(selector string) ([]string, error) {
 	query, err := s.Get(selector)
 	if err != nil {
-		return []string{}, fmt.Errorf("query error parsing %T selector '%s': %v", query, selector, err)
+		return []string{}, fmt.Errorf("query error parsing %T selector '%s': %w", query, selector, err)
 	}
 	return s.internal.modelToSelectors(&query), nil
 }

@@ -69,7 +69,7 @@ func handleAppMentionEvent(client mockableClient, event *slackevents.AppMentionE
 			},
 		)
 		if err != nil {
-			log.Error().Err(err).Msgf("SLCK | error handling slackevents.AppMentionEvent: %v", err)
+			log.Error().Err(err).Msgf("SLCK | error handling slackevents.AppMentionEvent: %w", err)
 		} else {
 			log.Info().Msgf("SLCK | handled slackevents.AppMentionEvent in %s", event.Channel)
 		}

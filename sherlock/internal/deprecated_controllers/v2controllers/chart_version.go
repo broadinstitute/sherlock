@@ -42,7 +42,7 @@ func (c ChartVersion) toModel(storeSet *v2models.StoreSet) (v2models.ChartVersio
 	if c.ParentChartVersion != "" {
 		parentChartVersion, err := storeSet.ChartVersionStore.Get(c.ParentChartVersion)
 		if err != nil {
-			log.Debug().Msgf("while handling %T was given parent %s that didn't have a match, ignoring: %v", c, c.ParentChartVersion, err)
+			log.Debug().Msgf("while handling %T was given parent %s that didn't have a match, ignoring: %w", c, c.ParentChartVersion, err)
 		} else {
 			if chartID != 0 && parentChartVersion.ChartID != chartID {
 				return v2models.ChartVersion{}, fmt.Errorf("(%s) given parent matches a different chart (%s, ID %d) than this one does (%s, ID %d)", errors.BadRequest, parentChartVersion.Chart.Name, parentChartVersion.ChartID, c.Chart, chartID)

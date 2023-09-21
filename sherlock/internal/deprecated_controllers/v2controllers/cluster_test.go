@@ -136,7 +136,7 @@ var (
 func (controllerSet *ControllerSet) seedClusters(t *testing.T, db *gorm.DB) {
 	for _, creatable := range clusterSeedList {
 		if _, _, err := controllerSet.ClusterController.Create(creatable, generateUser(t, db, true)); err != nil {
-			t.Errorf("error seeding cluster %s: %v", creatable.Name, err)
+			t.Errorf("error seeding cluster %s: %w", creatable.Name, err)
 		}
 	}
 }
