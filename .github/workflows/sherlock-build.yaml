@@ -103,8 +103,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DRY_RUN: true
 
-
-
       - name: Generate Swagger source
         run: make generate-swagger
 
