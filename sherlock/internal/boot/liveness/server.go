@@ -42,7 +42,7 @@ func (s *Server) Start(sqlDB *sql.DB) {
 	}
 	go s.repeatedlyPingDatabase()
 	if err := s.server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-		log.Fatal().Msgf("LIVE | liveness.Server.server.ListenAndServe() err: %w", err)
+		log.Fatal().Msgf("LIVE | liveness.Server.server.ListenAndServe() err: %v", err)
 	}
 }
 
@@ -55,7 +55,7 @@ func (s *Server) repeatedlyPingDatabase() {
 			s.handler.returnOK = true
 		} else {
 			s.handler.returnOK = false
-			log.Error().Msgf("LIVE | liveness.Server.sqlDB.PingContext(liveness.Server.pingCtx) err: %w", err)
+			log.Error().Msgf("LIVE | liveness.Server.sqlDB.PingContext(liveness.Server.pingCtx) err: %v", err)
 		}
 		s.handler.mutex.Unlock()
 		select {
@@ -90,7 +90,7 @@ func (s *Server) Stop() {
 		ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 		defer cancel()
 		if err := s.server.Shutdown(ctx); err != nil {
-			log.Fatal().Msgf("LIVE | liveness.Server.server.Shutdown() err: %w", err)
+			log.Fatal().Msgf("LIVE | liveness.Server.server.Shutdown() err: %v", err)
 		}
 	}
 }

@@ -52,7 +52,7 @@ func Connect() (*sql.DB, error) {
 				log.Info().Msgf("DB   | will attempt database connection %d more times; waiting %s", attemptsRemaining-1, interval)
 				time.Sleep(duration)
 			} else {
-				log.Warn().Msgf("DB   | while retrying database connection, couldn't parse sleep interval duration %s: %w", interval, durationErr)
+				log.Warn().Msgf("DB   | while retrying database connection, couldn't parse sleep interval duration %s: %v", interval, durationErr)
 			}
 		}
 	}

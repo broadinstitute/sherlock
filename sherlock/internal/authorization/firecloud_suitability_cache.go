@@ -102,11 +102,11 @@ func CacheFirecloudSuitability(ctx context.Context) error {
 					// In theory, this madness will be somewhat short-lived, because Sherlock will become the source
 					// of truth and will be more concerned with pushing info to Google Workspace than reading from it.
 					if emailsJson, emailsParseErr := json.Marshal(workspaceUser.Emails); emailsParseErr != nil {
-						log.Debug().Err(err).Msgf("AUTH | wasn't able to marshal %s's `emails` field back to JSON: %w", workspaceUser.PrimaryEmail, err)
+						log.Debug().Err(err).Msgf("AUTH | wasn't able to marshal %s's `emails` field back to JSON: %v", workspaceUser.PrimaryEmail, err)
 					} else {
 						var parsedEmails []admin.UserEmail
 						if emailsParseErr = json.Unmarshal(emailsJson, &parsedEmails); emailsParseErr != nil {
-							log.Debug().Err(err).Msgf("AUTH | wasn't able to unmarshal %s's `emails` field to %T: %w", workspaceUser.PrimaryEmail, parsedEmails, err)
+							log.Debug().Err(err).Msgf("AUTH | wasn't able to unmarshal %s's `emails` field to %T: %v", workspaceUser.PrimaryEmail, parsedEmails, err)
 						} else {
 							for _, parsedEmail := range parsedEmails {
 								if len(parsedEmail.Address) == 0 {

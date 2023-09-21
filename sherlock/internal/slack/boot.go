@@ -63,7 +63,7 @@ func Start(ctx context.Context) {
 		socketmodeHandler.Handle(socketmode.EventTypeEventsAPI, handleEvents)
 
 		if err := socketmodeHandler.RunEventLoopContext(ctx); err != nil && !errors.Is(err, context.Canceled) {
-			log.Error().Err(err).Msgf("SLCK | INCOMING | socket event loop exited with error: %w", err)
+			log.Error().Err(err).Msgf("SLCK | INCOMING | socket event loop exited with error: %v", err)
 		}
 	}
 }

@@ -15,10 +15,10 @@ func ReportError(ctx context.Context, errs ...error) {
 		var messageText string
 		if len(errs) == 1 {
 			messageText = "Sherlock encountered an unexpected error:"
-			log.Info().Err(errs[0]).Msgf("SLCK | reporting error: %w", errs[0])
+			log.Info().Err(errs[0]).Msgf("SLCK | reporting error: %v", errs[0])
 		} else {
 			messageText = fmt.Sprintf("Sherlock encountered %d unexpected errors:", len(errs))
-			log.Info().Err(errs[0]).Msgf("SLCK | reporting %d errors, starting with: %w", len(errs), errs[0])
+			log.Info().Err(errs[0]).Msgf("SLCK | reporting %d errors, starting with: %v", len(errs), errs[0])
 		}
 
 		attachments := utils.Map(errs, func(e error) Attachment { return RedBlock{Text: e.Error()} })

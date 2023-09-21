@@ -71,7 +71,7 @@ func Truncate(t *testing.T, gormDB *gorm.DB) {
 		return
 	}
 	if sqlDB, err := gormDB.DB(); err != nil {
-		log.Fatal().Msgf("refusing to truncate, failed to get sql.DB from gorm.DB: %w", err)
+		log.Fatal().Msgf("refusing to truncate, failed to get sql.DB from gorm.DB: %v", err)
 	} else {
 		db.PanicIfLooksLikeCloudSQL(sqlDB)
 	}

@@ -184,11 +184,11 @@ func modelEnvironmentToEnvironment(model *v2models.Environment) *Environment {
 	}
 	offlineScheduleBeginTime, err := utils.ISO8601PtrToTime(model.OfflineScheduleBeginTime)
 	if err != nil {
-		log.Error().Err(err).Msgf("couldn't parse %s's offlineScheduleBeginTime coming from the database, swallowing: %w", model.Name, err)
+		log.Error().Err(err).Msgf("couldn't parse %s's offlineScheduleBeginTime coming from the database, swallowing: %v", model.Name, err)
 	}
 	offlineScheduleEndTime, err := utils.ISO8601PtrToTime(model.OfflineScheduleEndTime)
 	if err != nil {
-		log.Error().Err(err).Msgf("couldn't parse %s's offlineScheduleEndTime coming from the database, swallowing: %w", model.Name, err)
+		log.Error().Err(err).Msgf("couldn't parse %s's offlineScheduleEndTime coming from the database, swallowing: %v", model.Name, err)
 	}
 
 	var ownerEmail string

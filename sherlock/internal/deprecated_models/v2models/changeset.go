@@ -136,7 +136,7 @@ func preCreateChangeset(db *gorm.DB, toCreate *Changeset, user *models.User) err
 		// List new app versions
 		appVersionPath, _, err := InternalAppVersionStore.getChildrenPathToParent(db, toCreate.To.AppVersion, toCreate.From.AppVersionID)
 		if err != nil {
-			log.Error().Msgf("swallowing %T path error during changeset creation: %w", toCreate.To.AppVersion, err)
+			log.Error().Msgf("swallowing %T path error during changeset creation: %v", toCreate.To.AppVersion, err)
 		} else {
 			// This is really dumb, but we're going to go through the returned app versions and remove their relations so that Gorm doesn't try to upsert them
 			// in a moment. I will try to document what I think is going on later but I need to stop the bleeding.
@@ -151,7 +151,7 @@ func preCreateChangeset(db *gorm.DB, toCreate *Changeset, user *models.User) err
 		// List new chart versions
 		chartVersionPath, _, err := InternalChartVersionStore.getChildrenPathToParent(db, toCreate.To.ChartVersion, toCreate.From.ChartVersionID)
 		if err != nil {
-			log.Error().Msgf("swallowing %T path error during changeset creation: %w", toCreate.From.ChartVersion, err)
+			log.Error().Msgf("swallowing %T path error during changeset creation: %v", toCreate.From.ChartVersion, err)
 		} else {
 			// This is really dumb, but we're going to go through the returned app versions and remove their relations so that Gorm doesn't try to upsert them
 			// in a moment. I will try to document what I think is going on later but I need to stop the bleeding.

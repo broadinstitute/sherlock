@@ -57,7 +57,7 @@ func init() {
 	}
 	parsedSherlockUrl, err := url.Parse(sherlockUrl)
 	if err != nil {
-		log.Fatalf("url.Parse(%s): %w\n", sherlockUrl, err)
+		log.Fatalf("url.Parse(%s): %v\n", sherlockUrl, err)
 	}
 	sherlockHostname = parsedSherlockUrl.Hostname()
 	if parsedSherlockUrl.Port() != "" {
@@ -99,7 +99,7 @@ func setup() (mac hash.Hash, hook *github.Webhook, transport *httptransport.Runt
 
 	hook, err := github.New(github.Options.Secret(githubWebhookSecret))
 	if err != nil {
-		log.Fatalf("github.New: %w\n", err)
+		log.Fatalf("github.New: %v\n", err)
 	}
 
 	return mac, hook, transport
@@ -150,7 +150,7 @@ func HandleWebhook(w http.ResponseWriter, r *http.Request) {
 				return
 			default:
 				w.WriteHeader(http.StatusInternalServerError)
-				log.Printf("library had an unknown error handling the hook: %w\n", err)
+				log.Printf("library had an unknown error handling the hook: %v\n", err)
 				return
 			}
 		}
@@ -192,14 +192,14 @@ func HandleWebhook(w http.ResponseWriter, r *http.Request) {
 				req, err := http.NewRequest(http.MethodGet, formedIdTokenUrl, nil)
 				if err != nil {
 					w.WriteHeader(http.StatusInternalServerError)
-					log.Printf("http.NewRequest(%s, %s): %w\n", http.MethodGet, formedIdTokenUrl, err)
+					log.Printf("http.NewRequest(%s, %s): %v\n", http.MethodGet, formedIdTokenUrl, err)
 					return
 				}
 				req.Header.Set("Metadata-Flavor", "Google")
 				resp, err := (&http.Client{}).Do(req)
 				if err != nil {
 					w.WriteHeader(http.StatusInternalServerError)
-					log.Printf("(&http.Client{}).Do(%s): %w\n", formedIdTokenUrl, err)
+					log.Printf("(&http.Client{}).Do(%s): %v\n", formedIdTokenUrl, err)
 					return
 				} else if resp.StatusCode != http.StatusOK {
 					w.WriteHeader(http.StatusInternalServerError)
@@ -210,7 +210,7 @@ func HandleWebhook(w http.ResponseWriter, r *http.Request) {
 				_ = resp.Body.Close()
 				if err != nil {
 					w.WriteHeader(http.StatusInternalServerError)
-					log.Printf("io.ReadAll(resp.Body): %w\n", err)
+					log.Printf("io.ReadAll(resp.Body): %v\n", err)
 					return
 				}
 				transport.DefaultAuthentication = httptransport.BearerToken(string(idToken[:]))

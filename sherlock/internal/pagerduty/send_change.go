@@ -44,6 +44,6 @@ func SendChange(integrationKey string, summary string, sourceLink string) error 
 func SendChangeSwallowErrors(integrationKey string, summary string, sourceLink string) {
 	err := SendChange(integrationKey, summary, sourceLink)
 	if err != nil {
-		log.Warn().Msgf("PDTY | error sending change: %w", err)
+		log.Warn().Msgf("PDTY | error sending change: %v", err)
 	}
 }

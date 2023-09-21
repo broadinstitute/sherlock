@@ -34,7 +34,7 @@ func Logger() gin.HandlerFunc {
 
 		if len(ctx.Errors) > 1 {
 			for i, err := range ctx.Errors {
-				log.Error().Err(err).Msgf("GIN  | request incurred a surprising number of errors (can't attach them all to a single log line), %d of %d: %w", i+1, len(ctx.Errors), err)
+				log.Error().Err(err).Msgf("GIN  | request incurred a surprising number of errors (can't attach them all to a single log line), %d of %d: %v", i+1, len(ctx.Errors), err)
 			}
 		}
 		if len(ctx.Errors) > 0 {

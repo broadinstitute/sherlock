@@ -14,7 +14,7 @@ func DispatchCiRun(db *gorm.DB, ciRun models.CiRun) {
 	if len(errs) > 0 {
 		log.Error().Msgf("HOOK | encountered %d errors handling deploy hooks for CiRun %d", len(errs), ciRun.ID)
 		for index, err := range errs {
-			log.Error().Err(err).Msgf("HOOK | error %d of %d: %w", index+1, len(errs), err)
+			log.Error().Err(err).Msgf("HOOK | error %d of %d: %v", index+1, len(errs), err)
 		}
 		slack.ReportError(db.Statement.Context, append([]error{fmt.Errorf("encountered %d errors handling deploy hooks for CiRun %d", len(errs), ciRun.ID)}, errs...)...)
 	}
