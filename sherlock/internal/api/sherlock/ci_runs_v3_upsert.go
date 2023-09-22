@@ -58,12 +58,12 @@ func ciRunsV3Upsert(ctx *gin.Context) {
 	}
 	var body CiRunV3Upsert
 	if err = ctx.ShouldBindJSON(&body); err != nil {
-		errors.AbortRequest(ctx, fmt.Errorf("(%s) request validation error: %v", errors.BadRequest, err))
+		errors.AbortRequest(ctx, fmt.Errorf("(%s) request validation error: %w", errors.BadRequest, err))
 		return
 	}
 
 	if err = defaults.Set(&body); err != nil {
-		errors.AbortRequest(ctx, fmt.Errorf("error setting defaults: %v", err))
+		errors.AbortRequest(ctx, fmt.Errorf("error setting defaults: %w", err))
 		return
 	}
 
@@ -382,7 +382,7 @@ addingToDeduplicatedRelatedResources:
 	if result.TerminalAt != nil && result.TerminationHooksDispatchedAt == nil {
 		dispatchedAt = time.Now().Format(time.RFC3339Nano)
 		if err = db.Model(&result).Update("termination_hooks_dispatched_at", gorm.Expr("COALESCE(termination_hooks_dispatched_at, ?)", dispatchedAt)).Error; err != nil {
-			log.Warn().Err(err).Msgf("HOOK | failed to claim dispatch on CiRun %d: %v", result.ID, err)
+			log.Warn().Err(err).Msgf("HOOK | failed to claim dispatch on CiRun %d", result.ID)
 			dispatchedAt = ""
 		}
 	}

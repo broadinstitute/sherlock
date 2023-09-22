@@ -34,7 +34,7 @@ func dbConnectionString() string {
 func Connect() (*sql.DB, error) {
 	sqlDB, err := sql.Open("pgx", dbConnectionString())
 	if err != nil {
-		return nil, fmt.Errorf("error building SQL connection: %v", err)
+		return nil, fmt.Errorf("error building SQL connection: %w", err)
 	}
 
 	sqlDB.SetMaxOpenConns(config.Config.MustInt("db.maxOpenConnections"))
@@ -61,7 +61,7 @@ func Connect() (*sql.DB, error) {
 		PanicIfLooksLikeCloudSQL(sqlDB)
 	}
 
-	return nil, fmt.Errorf("unable to connect to the database after %d attempts: %v", initialAttempts, err)
+	return nil, fmt.Errorf("unable to connect to the database after %d attempts: %w", initialAttempts, err)
 }
 
 func applyMigrations(db *sql.DB) error {
@@ -73,11 +73,11 @@ func applyMigrations(db *sql.DB) error {
 	log.Info().Msg("DB   | executing database migration")
 	directory, err := iofs.New(migrationFiles.MigrationFiles, "migrations")
 	if err != nil {
-		return fmt.Errorf("error accessing embedded migration files: %v", err)
+		return fmt.Errorf("error accessing embedded migration files: %w", err)
 	}
 	driver, err := postgres.WithInstance(db, &postgres.Config{})
 	if err != nil {
-		return fmt.Errorf("error building postgres driver instance for migration: %v", err)
+		return fmt.Errorf("error building postgres driver instance for migration: %w", err)
 	}
 	migrationPlan, err := migrate.NewWithInstance(
 		"iofs", directory,
@@ -85,12 +85,12 @@ func applyMigrations(db *sql.DB) error {
 	)
 
 	if err != nil {
-		return fmt.Errorf("error building migration plan: %v", err)
+		return fmt.Errorf("error building migration plan: %w", err)
 	}
 	if err = migrationPlan.Up(); err == migrate.ErrNoChange {
 		log.Info().Msg("DB   | no migration to apply, continuing")
 	} else if err != nil {
-		return fmt.Errorf("error applying migration plan: %v", err)
+		return fmt.Errorf("error applying migration plan: %w", err)
 	}
 
 	log.Info().Msg("DB   | database migration complete")
@@ -143,11 +143,11 @@ func parseGormLogLevel(logLevel string) (logger.LogLevel, error) {
 
 func Configure(sqlDB *sql.DB) (*gorm.DB, error) {
 	if err := applyMigrations(sqlDB); err != nil {
-		return nil, fmt.Errorf("error migrating database: %v", err)
+		return nil, fmt.Errorf("error migrating database: %w", err)
 	}
 	gormDB, err := openGorm(sqlDB)
 	if err != nil {
-		return nil, fmt.Errorf("error opening gorm: %v", err)
+		return nil, fmt.Errorf("error opening gorm: %w", err)
 	}
 	return gormDB, nil
 }
@@ -159,7 +159,7 @@ func PanicIfLooksLikeCloudSQL(db *sql.DB) {
 	var cloudSqlAdminRoleExists bool
 	err := db.QueryRow("SELECT 1 FROM pg_roles WHERE rolname='cloudsqladmin'").Scan(&cloudSqlAdminRoleExists)
 	if err != nil && err != sql.ErrNoRows {
-		panic(fmt.Errorf("failed to double-check that the database wasn't running in Cloud SQL: %v", err))
+		panic(fmt.Errorf("failed to double-check that the database wasn't running in Cloud SQL: %w", err))
 	}
 	if cloudSqlAdminRoleExists {
 		panic(fmt.Errorf("this database looks like it is running in Cloud SQL, refusing to proceed with test harness"))

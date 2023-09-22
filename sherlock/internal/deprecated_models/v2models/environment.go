@@ -95,7 +95,7 @@ func environmentSelectorToQuery(_ *gorm.DB, selector string) (Environment, error
 	if utils.IsNumeric(selector) { // ID
 		id, err := strconv.Atoi(selector)
 		if err != nil {
-			return Environment{}, fmt.Errorf("(%s) string to int conversion error of '%s': %v", errors.BadRequest, selector, err)
+			return Environment{}, fmt.Errorf("(%s) string to int conversion error of '%s': %w", errors.BadRequest, selector, err)
 		}
 		query.ID = uint(id)
 		return query, nil
@@ -308,7 +308,7 @@ func preCreateEnvironment(db *gorm.DB, environment *Environment, _ *models.User)
 			err := db.Where(candidate).First(&firstMatch).Error
 			// check for unexpected errors from DB
 			if err != nil && err != gorm.ErrRecordNotFound {
-				return fmt.Errorf("(%s) could not check other existing environments to verify prefix uniqueness: %v", errors.InternalServerError, err)
+				return fmt.Errorf("(%s) could not check other existing environments to verify prefix uniqueness: %w", errors.InternalServerError, err)
 			}
 			// no other environments with the same resource prefix exist in DB
 			if err == gorm.ErrRecordNotFound {
@@ -371,7 +371,7 @@ func postCreateEnvironment(db *gorm.DB, environment *Environment, user *models.U
 			// This is a dynamic environment that is getting created right now, let's copy the chart releases from the template too
 			templateChartReleases, err := InternalChartReleaseStore.ListAllMatchingByUpdated(db, 0, ChartRelease{EnvironmentID: environment.TemplateEnvironmentID})
 			if err != nil {
-				return fmt.Errorf("wasn't able to list chart releases of template %s (disable autoPopulateChartReleases to skip): %v", environment.TemplateEnvironment.Name, err)
+				return fmt.Errorf("wasn't able to list chart releases of template %s (disable autoPopulateChartReleases to skip): %w", environment.TemplateEnvironment.Name, err)
 			}
 			for _, templateChartRelease := range templateChartReleases {
 				chartRelease, _, err := InternalChartReleaseStore.Create(db,
@@ -389,11 +389,11 @@ func postCreateEnvironment(db *gorm.DB, environment *Environment, user *models.U
 						IncludeInBulkChangesets: templateChartRelease.IncludeInBulkChangesets,
 					}, user)
 				if err != nil {
-					return fmt.Errorf("wasn't able to copy template's release of the %s chart (disable autoPopulateChartReleases to skip): %v", templateChartRelease.Chart.Name, err)
+					return fmt.Errorf("wasn't able to copy template's release of the %s chart (disable autoPopulateChartReleases to skip): %w", templateChartRelease.Chart.Name, err)
 				}
 				templateDatabaseInstance, err := InternalDatabaseInstanceStore.GetIfExists(db, DatabaseInstance{ChartReleaseID: templateChartRelease.ID})
 				if err != nil {
-					return fmt.Errorf("wasn't able to get possible database instance of template's %s chart instance (disable autoPopulateChartReleases to skip): %v", templateChartRelease.Chart.Name, err)
+					return fmt.Errorf("wasn't able to get possible database instance of template's %s chart instance (disable autoPopulateChartReleases to skip): %w", templateChartRelease.Chart.Name, err)
 				}
 				if templateDatabaseInstance != nil {
 					_, _, err := InternalDatabaseInstanceStore.Create(db,
@@ -405,7 +405,7 @@ func postCreateEnvironment(db *gorm.DB, environment *Environment, user *models.U
 							DefaultDatabase: templateDatabaseInstance.DefaultDatabase,
 						}, user)
 					if err != nil {
-						return fmt.Errorf("wasn't able to copy database instance of template's %s chart instance (disable autoPopulateChartReleases to skip): %v", templateChartRelease.Chart.Name, err)
+						return fmt.Errorf("wasn't able to copy database instance of template's %s chart instance (disable autoPopulateChartReleases to skip): %w", templateChartRelease.Chart.Name, err)
 					}
 				}
 			}
@@ -421,7 +421,7 @@ func postCreateEnvironment(db *gorm.DB, environment *Environment, user *models.U
 					if chartEntry.String("name") != "" {
 						chart, err := InternalChartStore.Get(db, Chart{Name: chartEntry.String("name")})
 						if err != nil {
-							return fmt.Errorf("wasn't able to get the honeycomb chart (disable autoPopulateChartReleases to skip): %v", err)
+							return fmt.Errorf("wasn't able to get the honeycomb chart (disable autoPopulateChartReleases to skip): %w", err)
 						}
 						_, _, err = InternalChartReleaseStore.Create(db,
 							ChartRelease{
@@ -443,7 +443,7 @@ func postCreateEnvironment(db *gorm.DB, environment *Environment, user *models.U
 								IncludeInBulkChangesets: &trueBoolean,
 							}, user)
 						if err != nil {
-							return fmt.Errorf("wasn't able to insert model.environments.templates.autoPopulateCharts entry %d, '%s' (disable autoPopulateChartReleases to skip): %v", index, chart.Name, err)
+							return fmt.Errorf("wasn't able to insert model.environments.templates.autoPopulateCharts entry %d, '%s' (disable autoPopulateChartReleases to skip): %w", index, chart.Name, err)
 						}
 					} else {
 						log.Debug().Msgf("couldn't parse model.environments.templates.autoPopulateCharts entry %d", index)
@@ -458,14 +458,14 @@ func postCreateEnvironment(db *gorm.DB, environment *Environment, user *models.U
 func preDeletePostValidateEnvironment(db *gorm.DB, environment *Environment, user *models.User) error {
 	chartReleases, err := InternalChartReleaseStore.ListAllMatchingByUpdated(db, 0, ChartRelease{EnvironmentID: &environment.ID})
 	if err != nil {
-		return fmt.Errorf("wasn't able to list chart releases: %v", err)
+		return fmt.Errorf("wasn't able to list chart releases: %w", err)
 	}
 	for _, chartRelease := range chartReleases {
 		_, err = InternalChartReleaseStore.Delete(db, ChartRelease{
 			Model: gorm.Model{ID: chartRelease.ID},
 		}, user)
 		if err != nil {
-			return fmt.Errorf("wasn't able to delete chart release %s: %v", chartRelease.Name, err)
+			return fmt.Errorf("wasn't able to delete chart release %s: %w", chartRelease.Name, err)
 		}
 	}
 	return nil

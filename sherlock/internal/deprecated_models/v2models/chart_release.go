@@ -69,7 +69,7 @@ func chartReleaseSelectorToQuery(db *gorm.DB, selector string) (ChartRelease, er
 	if utils.IsNumeric(selector) { // ID
 		id, err := strconv.Atoi(selector)
 		if err != nil {
-			return ChartRelease{}, fmt.Errorf("(%s) string to int conversion error of '%s': %v", errors.BadRequest, selector, err)
+			return ChartRelease{}, fmt.Errorf("(%s) string to int conversion error of '%s': %w", errors.BadRequest, selector, err)
 		}
 		query.ID = uint(id)
 		return query, nil
@@ -79,14 +79,14 @@ func chartReleaseSelectorToQuery(db *gorm.DB, selector string) (ChartRelease, er
 		// environment
 		environmentID, err := InternalEnvironmentStore.ResolveSelector(db, parts[0])
 		if err != nil {
-			return ChartRelease{}, fmt.Errorf("error handling environment sub-selector %s: %v", parts[0], err)
+			return ChartRelease{}, fmt.Errorf("error handling environment sub-selector %s: %w", parts[0], err)
 		}
 		query.EnvironmentID = &environmentID
 
 		// chart
 		chartID, err := InternalChartStore.ResolveSelector(db, parts[1])
 		if err != nil {
-			return ChartRelease{}, fmt.Errorf("error handling chart sub-selector %s: %v", parts[1], err)
+			return ChartRelease{}, fmt.Errorf("error handling chart sub-selector %s: %w", parts[1], err)
 		}
 		query.ChartID = chartID
 
@@ -97,7 +97,7 @@ func chartReleaseSelectorToQuery(db *gorm.DB, selector string) (ChartRelease, er
 		// cluster
 		clusterID, err := InternalClusterStore.ResolveSelector(db, parts[0])
 		if err != nil {
-			return ChartRelease{}, fmt.Errorf("error handling cluster sub-selector %s: %v", parts[0], err)
+			return ChartRelease{}, fmt.Errorf("error handling cluster sub-selector %s: %w", parts[0], err)
 		}
 		query.ClusterID = &clusterID
 
@@ -114,7 +114,7 @@ func chartReleaseSelectorToQuery(db *gorm.DB, selector string) (ChartRelease, er
 		// chart
 		chartID, err := InternalChartStore.ResolveSelector(db, parts[2])
 		if err != nil {
-			return ChartRelease{}, fmt.Errorf("error handling chart sub-selector %s: %v", parts[1], err)
+			return ChartRelease{}, fmt.Errorf("error handling chart sub-selector %s: %w", parts[1], err)
 		}
 		query.ChartID = chartID
 

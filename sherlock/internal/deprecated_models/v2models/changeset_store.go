@@ -32,7 +32,7 @@ func (s *ChangesetStore) Apply(selectors []string, user *models.User) ([]Changes
 	for index, selector := range selectors {
 		query, err := InternalChangesetStore.selectorToQueryModel(s.db, selector)
 		if err != nil {
-			return []Changeset{}, fmt.Errorf("pre-apply error parsing selector %d '%s': %v", index+1, selector, err)
+			return []Changeset{}, fmt.Errorf("pre-apply error parsing selector %d '%s': %w", index+1, selector, err)
 		}
 		queries = append(queries, query)
 	}

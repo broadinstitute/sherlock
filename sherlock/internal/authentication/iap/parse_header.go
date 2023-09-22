@@ -24,7 +24,7 @@ func ParseHeader(ctx *gin.Context) (email string, googleID string, err error) {
 	// this is just the easiest way to decode the JWT payload.
 	payload, err := idtoken.Validate(ctx, iapJWT, "")
 	if err != nil {
-		return "", "", fmt.Errorf("(%s) failed to validate IAP JWT in '%s' header: %v", errors.ProxyAuthenticationRequired, iapHeader, err)
+		return "", "", fmt.Errorf("(%s) failed to validate IAP JWT in '%s' header: %w", errors.ProxyAuthenticationRequired, iapHeader, err)
 	} else if payload == nil {
 		return "", "", fmt.Errorf("(%s) IAP JWT seemed to pass validation but payload was nil", errors.ProxyAuthenticationRequired)
 	}

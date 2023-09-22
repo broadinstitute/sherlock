@@ -27,14 +27,14 @@ func ParseHeader(ctx *gin.Context) (present bool, githubUsername string, githubI
 	}
 	payload, err := verifier.Verify(ctx, ghaOidcJwt)
 	if err != nil {
-		return true, "", "", fmt.Errorf("(%s) failed to validate GHA OIDC JWT in '%s' header: %v", errors.BadRequest, ghaOidcHeader, err)
+		return true, "", "", fmt.Errorf("(%s) failed to validate GHA OIDC JWT in '%s' header: %w", errors.BadRequest, ghaOidcHeader, err)
 	} else if payload == nil {
 		return true, "", "", fmt.Errorf("(%s) GHA OIDC JWT seemed to pass validation but payload was nil", errors.BadRequest)
 	}
 
 	var claims extraClaims
 	if err = payload.Claims(&claims); err != nil {
-		return true, "", "", fmt.Errorf("(%s) GHA OIDC JWT seemed to pass validation but couldn't be unmarshalled to %T: %v", errors.BadRequest, claims, err)
+		return true, "", "", fmt.Errorf("(%s) GHA OIDC JWT seemed to pass validation but couldn't be unmarshalled to %T: %w", errors.BadRequest, claims, err)
 	}
 
 	var repositoryOwnerAccepted bool

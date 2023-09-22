@@ -66,7 +66,7 @@ func ciRunSelectorToQuery(_ *gorm.DB, selector string) (CiRun, error) {
 		// ID
 		id, err := strconv.Atoi(selector)
 		if err != nil {
-			return CiRun{}, fmt.Errorf("(%s) string to int conversion error of '%s': %v", errors.BadRequest, selector, err)
+			return CiRun{}, fmt.Errorf("(%s) string to int conversion error of '%s': %w", errors.BadRequest, selector, err)
 		}
 		query.ID = uint(id)
 		return query, nil
@@ -86,12 +86,12 @@ func ciRunSelectorToQuery(_ *gorm.DB, selector string) (CiRun, error) {
 
 		runID, err := strconv.Atoi(parts[3])
 		if err != nil {
-			return CiRun{}, fmt.Errorf("(%s) invalid CI run selector %s, run ID sub-selector '%s' had string to int conversion error: %v", errors.BadRequest, selector, parts[3], err)
+			return CiRun{}, fmt.Errorf("(%s) invalid CI run selector %s, run ID sub-selector '%s' had string to int conversion error: %w", errors.BadRequest, selector, parts[3], err)
 		}
 
 		attemptNumber, err := strconv.Atoi(parts[4])
 		if err != nil {
-			return CiRun{}, fmt.Errorf("(%s) invalid CI run selector %s, attempt number sub-selector '%s' had string to int conversion error: %v", errors.BadRequest, selector, parts[3], err)
+			return CiRun{}, fmt.Errorf("(%s) invalid CI run selector %s, attempt number sub-selector '%s' had string to int conversion error: %w", errors.BadRequest, selector, parts[3], err)
 		}
 
 		query.Platform = "github-actions"

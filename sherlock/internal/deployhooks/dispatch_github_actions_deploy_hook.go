@@ -18,9 +18,9 @@ func dispatchGithubActionsDeployHook(db *gorm.DB, hook models.GithubActionsDeplo
 	var workflowInputs map[string]any
 	if hook.GithubActionsWorkflowInputs != nil {
 		if bytes, err := hook.GithubActionsWorkflowInputs.MarshalJSON(); err != nil {
-			return fmt.Errorf("couldn't marshall input bytes from GithubActionsDeployHook %d: %v", hook.ID, err)
+			return fmt.Errorf("couldn't marshall input bytes from GithubActionsDeployHook %d: %w", hook.ID, err)
 		} else if err = json.Unmarshal(bytes, &workflowInputs); err != nil {
-			return fmt.Errorf("couldn't unmarshall inputs to map[string]any from GithubActionsDeployHook %d: %v", hook.ID, err)
+			return fmt.Errorf("couldn't unmarshall inputs to map[string]any from GithubActionsDeployHook %d: %w", hook.ID, err)
 		}
 	}
 

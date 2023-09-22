@@ -60,11 +60,11 @@ func ciRunModelFromSelector(selector string) (query models.CiRun, err error) {
 		}
 		query.GithubActionsRunID, err = utils.ParseUint(parts[3])
 		if err != nil {
-			return models.CiRun{}, fmt.Errorf("(%s) invalid CI run selector %s, run ID sub-selector '%s' had string to int conversion error: %v", errors.BadRequest, selector, parts[3], err)
+			return models.CiRun{}, fmt.Errorf("(%s) invalid CI run selector %s, run ID sub-selector '%s' had string to int conversion error: %w", errors.BadRequest, selector, parts[3], err)
 		}
 		query.GithubActionsAttemptNumber, err = utils.ParseUint(parts[4])
 		if err != nil {
-			return models.CiRun{}, fmt.Errorf("(%s) invalid CI run selector %s, attempt number sub-selector '%s' had string to int conversion error: %v", errors.BadRequest, selector, parts[3], err)
+			return models.CiRun{}, fmt.Errorf("(%s) invalid CI run selector %s, attempt number sub-selector '%s' had string to int conversion error: %w", errors.BadRequest, selector, parts[3], err)
 		}
 		return query, nil
 	} else if strings.HasPrefix(selector, "argo-workflows/") && strings.Count(selector, "/") == 2 {

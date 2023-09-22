@@ -69,7 +69,7 @@ func (d *DeployHookTriggerConfig) ErrorIfForbidden(tx *gorm.DB) error {
 	}
 	if requiresSuitability {
 		if err = user.Suitability().SuitableOrError(); err != nil {
-			return fmt.Errorf("(%s) suitability required: %v", errors.Forbidden, err)
+			return fmt.Errorf("(%s) suitability required: %w", errors.Forbidden, err)
 		}
 	}
 	return nil

@@ -81,12 +81,12 @@ func (c ModelController[M, R, C, E]) Create(creatable C, user *models.User) (R, 
 	// Handle dynamic defaults, like making an environment from a template
 	if c.setDynamicDefaults != nil {
 		if err := c.setDynamicDefaults(&creatable, c.allStores, user); err != nil {
-			return empty, false, fmt.Errorf("error setting dynamic default values for %T: %v", creatable, err)
+			return empty, false, fmt.Errorf("error setting dynamic default values for %T: %w", creatable, err)
 		}
 	}
 	// Handle static struct default tags, which both swaggo/swag and this creasty/defaults.Set function respect
 	if err := defaults.Set(&creatable); err != nil {
-		return empty, false, fmt.Errorf("(%s) error setting static default values for %T: %v", errors.InternalServerError, creatable, err)
+		return empty, false, fmt.Errorf("(%s) error setting static default values for %T: %w", errors.InternalServerError, creatable, err)
 	}
 	model, err := creatable.toModel(c.allStores)
 	if err != nil {
@@ -99,7 +99,7 @@ func (c ModelController[M, R, C, E]) Create(creatable C, user *models.User) (R, 
 func (c ModelController[M, R, C, E]) ListAllMatching(filter R, limit int) ([]R, error) {
 	model, err := filter.toModel(c.allStores)
 	if err != nil {
-		return []R{}, fmt.Errorf("error parsing filter to a %T that can be queried against the database: %v", model, err)
+		return []R{}, fmt.Errorf("error parsing filter to a %T that can be queried against the database: %w", model, err)
 	}
 	results, err := c.primaryStore.ListAllMatchingByUpdated(model, limit)
 	readables := make([]R, 0)

@@ -84,7 +84,7 @@ func planAndApplyChangeset(controller *v2controllers2.ChangesetController) func(
 		}
 		var request v2controllers2.ChangesetPlanRequest
 		if err := ctx.ShouldBindJSON(&request); err != nil {
-			errors.AbortRequest(ctx, fmt.Errorf("(%s) JSON error parsing to %T: %v", errors.BadRequest, request, err))
+			errors.AbortRequest(ctx, fmt.Errorf("(%s) JSON error parsing to %T: %w", errors.BadRequest, request, err))
 			return
 		}
 		result, err := controller.PlanAndApply(request, user)
@@ -121,7 +121,7 @@ func planChangeset(controller *v2controllers2.ChangesetController) func(ctx *gin
 		}
 		var request v2controllers2.ChangesetPlanRequest
 		if err := ctx.ShouldBindJSON(&request); err != nil {
-			errors.AbortRequest(ctx, fmt.Errorf("(%s) JSON error parsing to %T: %v", errors.BadRequest, request, err))
+			errors.AbortRequest(ctx, fmt.Errorf("(%s) JSON error parsing to %T: %w", errors.BadRequest, request, err))
 			return
 		}
 		result, err := controller.Plan(request, user)
@@ -158,7 +158,7 @@ func applyChangeset(controller *v2controllers2.ChangesetController) func(ctx *gi
 		}
 		var request []string
 		if err := ctx.ShouldBindJSON(&request); err != nil {
-			errors.AbortRequest(ctx, fmt.Errorf("(%s) JSON error parsing to %T: %v", errors.BadRequest, request, err))
+			errors.AbortRequest(ctx, fmt.Errorf("(%s) JSON error parsing to %T: %w", errors.BadRequest, request, err))
 			return
 		}
 		result, err := controller.Apply(request, user)
@@ -187,13 +187,13 @@ func queryAppliedChangesetForChartRelease(controller *v2controllers2.ChangesetCo
 		offsetString := ctx.DefaultQuery("offset", "0")
 		offset, err := strconv.Atoi(offsetString)
 		if err != nil {
-			errors.AbortRequest(ctx, fmt.Errorf("(%s) error parsing offset parameter: %v", errors.BadRequest, err))
+			errors.AbortRequest(ctx, fmt.Errorf("(%s) error parsing offset parameter: %w", errors.BadRequest, err))
 			return
 		}
 		limitString := ctx.DefaultQuery("limit", "0")
 		limit, err := strconv.Atoi(limitString)
 		if err != nil {
-			errors.AbortRequest(ctx, fmt.Errorf("(%s) error parsing limit parameter: %v", errors.BadRequest, err))
+			errors.AbortRequest(ctx, fmt.Errorf("(%s) error parsing limit parameter: %w", errors.BadRequest, err))
 			return
 		}
 		result, err := controller.QueryAppliedForChartRelease(formatSelector(ctx.Param("selector")), offset, limit)

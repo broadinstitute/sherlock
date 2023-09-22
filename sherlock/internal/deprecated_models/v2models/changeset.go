@@ -81,7 +81,7 @@ func changesetSelectorToQuery(_ *gorm.DB, selector string) (Changeset, error) {
 	if utils.IsNumeric(selector) { // ID
 		id, err := strconv.Atoi(selector)
 		if err != nil {
-			return Changeset{}, fmt.Errorf("(%s) string to int conversion error of '%s': %v", errors.BadRequest, selector, err)
+			return Changeset{}, fmt.Errorf("(%s) string to int conversion error of '%s': %w", errors.BadRequest, selector, err)
 		}
 		query.ID = uint(id)
 		return query, nil
@@ -104,7 +104,7 @@ func validateChangeset(changeset *Changeset) error {
 	// We intentionally don't validate the From because we don't want to re-resolve it, and maybe it became invalid due
 	// to manual database changes.
 	if err := changeset.To.validate(); err != nil {
-		return fmt.Errorf("'to' %T on %T was invalid: %v", changeset.To, changeset, err)
+		return fmt.Errorf("'to' %T on %T was invalid: %w", changeset.To, changeset, err)
 	}
 	return nil
 }
@@ -173,11 +173,11 @@ func (s *internalChangesetStore) plan(db *gorm.DB, changesets []Changeset, user 
 		var chartRelease ChartRelease
 		chartRelease, err = InternalChartReleaseStore.Get(db, ChartRelease{Model: gorm.Model{ID: changeset.ChartReleaseID}})
 		if err != nil {
-			err = fmt.Errorf("plan error on %T %d: failed to get %T: %v", changeset, index+1, chartRelease, err)
+			err = fmt.Errorf("plan error on %T %d: failed to get %T: %w", changeset, index+1, chartRelease, err)
 			break
 		}
 		if err = changeset.To.resolve(db, Chart{Model: gorm.Model{ID: chartRelease.ChartID}}); err != nil {
-			err = fmt.Errorf("plan error on %T %d: failed to resolve 'to' version: %v", changeset, index+1, err)
+			err = fmt.Errorf("plan error on %T %d: failed to resolve 'to' version: %w", changeset, index+1, err)
 			break
 		}
 		if changeset.To.equalTo(changeset.From) {
@@ -192,7 +192,7 @@ func (s *internalChangesetStore) plan(db *gorm.DB, changesets []Changeset, user 
 				}
 			}
 			if err != nil {
-				err = fmt.Errorf("plan error on %T %d: failed to create %T: %v", changeset, index+1, changeset, err)
+				err = fmt.Errorf("plan error on %T %d: failed to create %T: %w", changeset, index+1, changeset, err)
 				break
 			}
 			ret = append(ret, planned)
@@ -208,7 +208,7 @@ func (s *internalChangesetStore) apply(db *gorm.DB, changesets []Changeset, user
 		for index, changeset := range changesets {
 			toApply, err := s.Get(tx, changeset)
 			if err != nil {
-				return fmt.Errorf("apply error on %T %d: failed to query referenced %T: %v", changeset, index+1, changeset, err)
+				return fmt.Errorf("apply error on %T %d: failed to query referenced %T: %w", changeset, index+1, changeset, err)
 			}
 			if toApply.AppliedAt != nil {
 				return fmt.Errorf("(%s) apply validation error on %T %d (ID %d): this has already been applied", errors.BadRequest, changeset, index+1, toApply.ID)
@@ -221,7 +221,7 @@ func (s *internalChangesetStore) apply(db *gorm.DB, changesets []Changeset, user
 			}
 			chartRelease, err := InternalChartReleaseStore.Get(tx, ChartRelease{Model: gorm.Model{ID: toApply.ChartReleaseID}})
 			if err != nil {
-				return fmt.Errorf("apply error on %T %d (ID: %d): failed to get %T: %v", changeset, index+1, toApply.ID, chartRelease, err)
+				return fmt.Errorf("apply error on %T %d (ID: %d): failed to get %T: %w", changeset, index+1, toApply.ID, chartRelease, err)
 			}
 			if _, alreadyAffected := affectedChartReleases[chartRelease.ID]; alreadyAffected {
 				return fmt.Errorf("(%s) apply validation error: multiple changesets were against %T '%s'", errors.BadRequest, chartRelease, chartRelease.Name)
@@ -252,25 +252,25 @@ func (s *internalChangesetStore) apply(db *gorm.DB, changesets []Changeset, user
 			// Now save what we have--*all* of it, including zero fields--back into the database
 			chartRelease, err = InternalChartReleaseStore.Edit(tx, ChartRelease{Model: gorm.Model{ID: toApply.ChartReleaseID}}, chartRelease, user, true)
 			if err != nil {
-				return fmt.Errorf("apply error on %T %d (ID: %d): failed to modify %T (ID: %d): %v", changeset, index+1, toApply.ID, chartRelease, toApply.ChartReleaseID, err)
+				return fmt.Errorf("apply error on %T %d (ID: %d): failed to modify %T (ID: %d): %w", changeset, index+1, toApply.ID, chartRelease, toApply.ChartReleaseID, err)
 			}
 			// Forcibly include AppliedAt and SupersededAt in the match criteria so we only find things where both of those
 			// fields are empty.
 			consumedChangesets, err := s.ListAllMatchingByUpdated(tx, 0, Changeset{ChartReleaseID: toApply.ChartReleaseID}, "ChartReleaseID", "AppliedAt", "SupersededAt")
 			if err != nil {
-				return fmt.Errorf("post-apply error on %T %d (ID: %d): couldn't query consumed %T: %v", changeset, index+1, toApply.ID, changeset, err)
+				return fmt.Errorf("post-apply error on %T %d (ID: %d): couldn't query consumed %T: %w", changeset, index+1, toApply.ID, changeset, err)
 			}
 			for _, consumedChangeset := range consumedChangesets {
 				if consumedChangeset.ID == toApply.ID {
 					applied, err := s.Edit(tx, Changeset{Model: gorm.Model{ID: consumedChangeset.ID}}, Changeset{AppliedAt: &chartRelease.UpdatedAt, AppliedByID: &user.ID}, user, false)
 					if err != nil {
-						return fmt.Errorf("post-apply error on %T %d (ID: %d): couldn't mark it as applied: %v", changeset, index+1, toApply.ID, err)
+						return fmt.Errorf("post-apply error on %T %d (ID: %d): couldn't mark it as applied: %w", changeset, index+1, toApply.ID, err)
 					}
 					ret = append(ret, applied)
 				} else {
 					_, err := s.Edit(tx, Changeset{Model: gorm.Model{ID: consumedChangeset.ID}}, Changeset{SupersededAt: &chartRelease.UpdatedAt}, user, false)
 					if err != nil {
-						return fmt.Errorf("post-apply error on %T %d (ID: %d): couldn't mark superseded %T (ID: %d) as superseded: %v", changeset, index+1, toApply.ID, changeset, consumedChangeset.ID, err)
+						return fmt.Errorf("post-apply error on %T %d (ID: %d): couldn't mark superseded %T (ID: %d) as superseded: %w", changeset, index+1, toApply.ID, changeset, consumedChangeset.ID, err)
 					}
 				}
 			}

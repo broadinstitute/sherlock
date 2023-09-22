@@ -48,7 +48,7 @@ func userSelectorToQuery(_ *gorm.DB, selector string) (User, error) {
 	if utils.IsNumeric(selector) { // ID
 		id, err := strconv.Atoi(selector)
 		if err != nil {
-			return User{}, fmt.Errorf("(%s) string to int conversion error of '%s': %v", errors.BadRequest, selector, err)
+			return User{}, fmt.Errorf("(%s) string to int conversion error of '%s': %w", errors.BadRequest, selector, err)
 		}
 		query.ID = uint(id)
 		return query, nil

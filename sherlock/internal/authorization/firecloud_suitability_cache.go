@@ -28,7 +28,7 @@ func KeepFirecloudCacheUpdated(ctx context.Context) {
 func CacheFirecloudSuitability(ctx context.Context) error {
 	adminService, err := admin.NewService(ctx, option.WithScopes(admin.AdminDirectoryUserReadonlyScope, admin.AdminDirectoryGroupMemberReadonlyScope))
 	if err != nil {
-		return fmt.Errorf("failed to authenticate to Google Workspace: %v", err)
+		return fmt.Errorf("failed to authenticate to Google Workspace: %w", err)
 	}
 
 	var fcAdminsGroupEmails []string

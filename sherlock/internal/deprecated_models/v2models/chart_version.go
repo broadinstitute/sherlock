@@ -61,7 +61,7 @@ func chartVersionSelectorToQuery(db *gorm.DB, selector string) (ChartVersion, er
 	if utils.IsNumeric(selector) { // ID
 		id, err := strconv.Atoi(selector)
 		if err != nil {
-			return ChartVersion{}, fmt.Errorf("(%s) string to int conversion error of '%s': %v", errors.BadRequest, selector, err)
+			return ChartVersion{}, fmt.Errorf("(%s) string to int conversion error of '%s': %w", errors.BadRequest, selector, err)
 		}
 		query.ID = uint(id)
 		return query, nil
@@ -71,7 +71,7 @@ func chartVersionSelectorToQuery(db *gorm.DB, selector string) (ChartVersion, er
 		// chart
 		chartID, err := InternalChartStore.ResolveSelector(db, parts[0])
 		if err != nil {
-			return ChartVersion{}, fmt.Errorf("error handling chart sub-selector %s: %v", parts[0], err)
+			return ChartVersion{}, fmt.Errorf("error handling chart sub-selector %s: %w", parts[0], err)
 		}
 		query.ChartID = chartID
 

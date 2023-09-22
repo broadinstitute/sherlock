@@ -47,7 +47,7 @@ func pagerdutyIntegrationSelectorToQuery(_ *gorm.DB, selector string) (Pagerduty
 	if utils.IsNumeric(selector) { // ID
 		id, err := strconv.Atoi(selector)
 		if err != nil {
-			return PagerdutyIntegration{}, fmt.Errorf("(%s) string to int conversion error of '%s': %v", errors.BadRequest, selector, err)
+			return PagerdutyIntegration{}, fmt.Errorf("(%s) string to int conversion error of '%s': %w", errors.BadRequest, selector, err)
 		}
 		query.ID = uint(id)
 		return query, nil
@@ -114,13 +114,13 @@ func validatePagerdutyIntegration(pagerdutyIntegration *PagerdutyIntegration) er
 func preDeletePostValidatePagerdutyIntegration(db *gorm.DB, pagerdutyIntegration *PagerdutyIntegration, _ *models.User) error {
 	chartReleases, err := InternalChartReleaseStore.ListAllMatchingByUpdated(db, 0, ChartRelease{PagerdutyIntegrationID: &pagerdutyIntegration.ID})
 	if err != nil {
-		return fmt.Errorf("wasn't able to check for chart releases that use this integration: %v", err)
+		return fmt.Errorf("wasn't able to check for chart releases that use this integration: %w", err)
 	} else if len(chartReleases) > 0 {
 		return fmt.Errorf("the following chart release uses this integration: %s", chartReleases[0].Name)
 	}
 	environments, err := InternalEnvironmentStore.ListAllMatchingByUpdated(db, 0, Environment{PagerdutyIntegrationID: &pagerdutyIntegration.ID})
 	if err != nil {
-		return fmt.Errorf("wasn't able to check for environments that use this integration: %v", err)
+		return fmt.Errorf("wasn't able to check for environments that use this integration: %w", err)
 	} else if len(environments) > 0 {
 		return fmt.Errorf("the following environment uses this integration: %s", environments[0].Name)
 	}
