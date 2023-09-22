@@ -28,6 +28,71 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/app-versions/v3/{selector}": {
+            "get": {
+                "description": "Get an individual AppVersion.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AppVersions"
+                ],
+                "summary": "Get an individual AppVersion",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The selector of the AppVersion, which can be either a numeric ID or chart/version.",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.AppVersionV3"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/charts/v3": {
             "get": {
                 "description": "List Charts matching a filter.",
@@ -8936,6 +9001,52 @@ const docTemplate = `{
                 },
                 "status": {
                     "type": "string"
+                }
+            }
+        },
+        "sherlock.AppVersionV3": {
+            "type": "object",
+            "properties": {
+                "appVersion": {
+                    "description": "Required when creating",
+                    "type": "string"
+                },
+                "chart": {
+                    "description": "Required when creating",
+                    "type": "string"
+                },
+                "chartInfo": {
+                    "$ref": "#/definitions/sherlock.ChartV3"
+                },
+                "ciIdentifier": {
+                    "$ref": "#/definitions/sherlock.CiIdentifierV3"
+                },
+                "createdAt": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "description": {
+                    "description": "Generally the Git commit message",
+                    "type": "string"
+                },
+                "gitBranch": {
+                    "type": "string"
+                },
+                "gitCommit": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "parentAppVersion": {
+                    "type": "string"
+                },
+                "parentAppVersionInfo": {
+                    "type": "object"
+                },
+                "updatedAt": {
+                    "type": "string",
+                    "format": "date-time"
                 }
             }
         },

@@ -16,6 +16,7 @@
 import * as runtime from '../runtime';
 import type {
   ErrorsErrorResponse,
+  SherlockAppVersionV3,
   V2controllersAppVersion,
   V2controllersCreatableAppVersion,
   V2controllersEditableAppVersion,
@@ -23,6 +24,8 @@ import type {
 import {
     ErrorsErrorResponseFromJSON,
     ErrorsErrorResponseToJSON,
+    SherlockAppVersionV3FromJSON,
+    SherlockAppVersionV3ToJSON,
     V2controllersAppVersionFromJSON,
     V2controllersAppVersionToJSON,
     V2controllersCreatableAppVersionFromJSON,
@@ -30,6 +33,10 @@ import {
     V2controllersEditableAppVersionFromJSON,
     V2controllersEditableAppVersionToJSON,
 } from '../models/index';
+
+export interface ApiAppVersionsV3SelectorGetRequest {
+    selector: string;
+}
 
 export interface ApiV2AppVersionsGetRequest {
     appVersion?: string;
@@ -75,6 +82,38 @@ export interface ApiV2SelectorsAppVersionsSelectorGetRequest {
  * 
  */
 export class AppVersionsApi extends runtime.BaseAPI {
+
+    /**
+     * Get an individual AppVersion.
+     * Get an individual AppVersion
+     */
+    async apiAppVersionsV3SelectorGetRaw(requestParameters: ApiAppVersionsV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockAppVersionV3>> {
+        if (requestParameters.selector === null || requestParameters.selector === undefined) {
+            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiAppVersionsV3SelectorGet.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/app-versions/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => SherlockAppVersionV3FromJSON(jsonValue));
+    }
+
+    /**
+     * Get an individual AppVersion.
+     * Get an individual AppVersion
+     */
+    async apiAppVersionsV3SelectorGet(requestParameters: ApiAppVersionsV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockAppVersionV3> {
+        const response = await this.apiAppVersionsV3SelectorGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
 
     /**
      * List existing AppVersion entries, ordered by most recently updated.
