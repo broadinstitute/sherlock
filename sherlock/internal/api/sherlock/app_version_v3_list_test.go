@@ -7,43 +7,43 @@ import (
 	"net/http"
 )
 
-func (s *handlerSuite) TestChartsV3List_none() {
-	var got []ChartV3
+func (s *handlerSuite) TestAppVersionsV3List_none() {
+	var got []AppVersionV3
 	code := s.HandleRequest(
-		s.NewRequest("GET", "/api/charts/v3", nil),
+		s.NewRequest("GET", "/api/app-versions/v3", nil),
 		&got)
 	s.Equal(http.StatusOK, code)
 	s.Len(got, 0)
 }
 
-func (s *handlerSuite) TestChartsV3List_badFilter() {
+func (s *handlerSuite) TestAppVersionsV3List_badFilter() {
 	var got errors.ErrorResponse
 	code := s.HandleRequest(
-		s.NewRequest("GET", "/api/charts/v3?id=foo", nil),
+		s.NewRequest("GET", "/api/app-versions/v3?id=foo", nil),
 		&got)
 	s.Equal(http.StatusBadRequest, code)
 	s.Equal(errors.BadRequest, got.Type)
 }
 
-func (s *handlerSuite) TestChartsV3List_badLimit() {
+func (s *handlerSuite) TestAppVersionsV3List_badLimit() {
 	var got errors.ErrorResponse
 	code := s.HandleRequest(
-		s.NewRequest("GET", "/api/charts/v3?limit=foo", nil),
+		s.NewRequest("GET", "/api/app-versions/v3?limit=foo", nil),
 		&got)
 	s.Equal(http.StatusBadRequest, code)
 	s.Equal(errors.BadRequest, got.Type)
 }
 
-func (s *handlerSuite) TestChartsV3List_badOffset() {
+func (s *handlerSuite) TestAppVersionsV3List_badOffset() {
 	var got errors.ErrorResponse
 	code := s.HandleRequest(
-		s.NewRequest("GET", "/api/charts/v3?offset=foo", nil),
+		s.NewRequest("GET", "/api/app-versions/v3?offset=foo", nil),
 		&got)
 	s.Equal(http.StatusBadRequest, code)
 	s.Equal(errors.BadRequest, got.Type)
 }
 
-func (s *handlerSuite) TestChartsV3List() {
+func (s *handlerSuite) TestAppVersionsV3List() {
 	chart1 := models.Chart{
 		Name:      "name1",
 		ChartRepo: utils.PointerTo("terra-helm"),
@@ -56,45 +56,56 @@ func (s *handlerSuite) TestChartsV3List() {
 		Name:      "name3",
 		ChartRepo: utils.PointerTo("terra-helm"),
 	}
+
 	for _, chart := range []*models.Chart{&chart1, &chart2, &chart3} {
 		s.NoError(s.DB.Create(chart).Error)
 		s.NotZero(chart.ID)
 	}
 
+	println("Chart1", chart1.ID)
+	appVersion1 := models.AppVersion{ChartID: chart1.ID, AppVersion: "1"}
+	appVersion2 := models.AppVersion{ChartID: chart2.ID, AppVersion: "2"}
+	appVersion3 := models.AppVersion{ChartID: chart3.ID, AppVersion: "3"}
+
+	for _, appVersion := range []models.AppVersion{appVersion1, appVersion2, appVersion3} {
+		s.NoError(s.DB.Create(&appVersion).Error)
+		s.NotZero(appVersion.ID)
+	}
+
 	s.Run("all", func() {
-		var got []ChartV3
+		var got []AppVersionV3
 		code := s.HandleRequest(
-			s.NewRequest("GET", "/api/charts/v3", nil),
+			s.NewRequest("GET", "/api/app-versions/v3", nil),
 			&got)
 		s.Equal(http.StatusOK, code)
 		s.Len(got, 3)
 	})
 	s.Run("none", func() {
-		var got []ChartV3
+		var got []AppVersionV3
 		code := s.HandleRequest(
-			s.NewRequest("GET", "/api/charts/v3?name=foo", nil),
+			s.NewRequest("GET", "/api/app-versions/v3?appVersion=foo", nil),
 			&got)
 		s.Equal(http.StatusOK, code)
 		s.Len(got, 0)
 	})
 	s.Run("some", func() {
-		var got []ChartV3
+		var got []AppVersionV3
 		code := s.HandleRequest(
-			s.NewRequest("GET", "/api/charts/v3?name=name1", nil),
+			s.NewRequest("GET", "/api/app-versions/v3?appVersion=1", nil),
 			&got)
 		s.Equal(http.StatusOK, code)
 		s.Len(got, 1)
 	})
 	s.Run("limit and offset", func() {
-		var got1 []ChartV3
+		var got1 []AppVersionV3
 		code := s.HandleRequest(
-			s.NewRequest("GET", "/api/charts/v3?limit=1", nil),
+			s.NewRequest("GET", "/api/app-versions/v3?limit=1", nil),
 			&got1)
 		s.Equal(http.StatusOK, code)
 		s.Len(got1, 1)
-		var got2 []ChartV3
+		var got2 []AppVersionV3
 		code = s.HandleRequest(
-			s.NewRequest("GET", "/api/charts/v3?limit=1&offset=1", nil),
+			s.NewRequest("GET", "/api/app-versions/v3?limit=1&offset=1", nil),
 			&got2)
 		s.Equal(http.StatusOK, code)
 		s.Len(got2, 1)
