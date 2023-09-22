@@ -33,6 +33,10 @@ func appVersionsV3List(ctx *gin.Context) {
 		return
 	}
 	modelFilter, err := filter.toModel(db, true)
+	if err != nil {
+		errors.AbortRequest(ctx, fmt.Errorf("(%s) %v", errors.BadRequest, err))
+		return
+	}
 
 	limit, err := utils.ParseInt(ctx.DefaultQuery("limit", "100"))
 	if err != nil {
