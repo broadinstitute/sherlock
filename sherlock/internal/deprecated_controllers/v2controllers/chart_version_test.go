@@ -99,7 +99,7 @@ var (
 func (controllerSet *ControllerSet) seedChartVersions(t *testing.T, db *gorm.DB) {
 	for _, creatable := range chartVersionSeedList {
 		if _, _, err := controllerSet.ChartVersionController.Create(creatable, generateUser(t, db, false)); err != nil {
-			t.Errorf("error seeding app version %s for chart %s: %w", creatable.ChartVersion, creatable.Chart, err)
+			t.Errorf("error seeding app version %s for chart %s: %v", creatable.ChartVersion, creatable.Chart, err)
 		}
 	}
 }

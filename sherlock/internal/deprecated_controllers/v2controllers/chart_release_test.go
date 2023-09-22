@@ -196,7 +196,7 @@ var (
 func (controllerSet *ControllerSet) seedChartReleases(t *testing.T, db *gorm.DB) {
 	for _, creatable := range chartReleaseSeedList {
 		if _, _, err := controllerSet.ChartReleaseController.Create(creatable, generateUser(t, db, true)); err != nil {
-			t.Errorf("error seeding chart release for %s, environment=%s cluster=%s : %w", creatable.Chart, creatable.Environment, creatable.Cluster, err)
+			t.Errorf("error seeding chart release for %s, environment=%s cluster=%s : %v", creatable.Chart, creatable.Environment, creatable.Cluster, err)
 		}
 	}
 }

@@ -70,7 +70,7 @@ var (
 func (controllerSet *ControllerSet) seedPagerdutyIntegrations(t *testing.T, db *gorm.DB) {
 	for _, creatable := range pagerdutyIntgrationSeedList {
 		if _, _, err := controllerSet.PagerdutyIntegrationController.Create(creatable, generateUser(t, db, true)); err != nil {
-			t.Errorf("error seeding pagerduty integration %s: %w", creatable.PagerdutyID, err)
+			t.Errorf("error seeding pagerduty integration %s: %v", creatable.PagerdutyID, err)
 		}
 	}
 }

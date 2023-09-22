@@ -42,14 +42,14 @@ func ConnectAndConfigureFromTest(t *testing.T) *gorm.DB {
 		defer _mutexExistingTestDB.Unlock()
 		sqlDB, err := db.Connect()
 		if err != nil {
-			t.Errorf("failed to connect to database during test: %w", err)
+			t.Errorf("failed to connect to database during test: %v", err)
 			return nil
 		}
 		_existingTestDB = sqlDB
 	}
 	gormDB, err := db.Configure(_existingTestDB)
 	if err != nil {
-		t.Errorf("failed to configure database during test: %w", err)
+		t.Errorf("failed to configure database during test: %v", err)
 	}
 	return gormDB
 }
@@ -95,6 +95,6 @@ func Truncate(t *testing.T, gormDB *gorm.DB) {
 	}
 	statements = append(statements, "COMMIT")
 	if err := gormDB.Exec(strings.Join(statements, ";\n")).Error; err != nil {
-		t.Errorf("failed to clean/truncate database: %w", err)
+		t.Errorf("failed to clean/truncate database: %v", err)
 	}
 }
