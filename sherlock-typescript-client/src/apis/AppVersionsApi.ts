@@ -34,6 +34,20 @@ import {
     V2controllersEditableAppVersionToJSON,
 } from '../models/index';
 
+export interface ApiAppVersionsV3GetRequest {
+    appVersion?: string;
+    chart?: string;
+    createdAt?: Date;
+    description?: string;
+    gitBranch?: string;
+    gitCommit?: string;
+    id?: number;
+    parentAppVersion?: string;
+    updatedAt?: Date;
+    limit?: number;
+    offset?: number;
+}
+
 export interface ApiAppVersionsV3SelectorGetRequest {
     selector: string;
 }
@@ -82,6 +96,78 @@ export interface ApiV2SelectorsAppVersionsSelectorGetRequest {
  * 
  */
 export class AppVersionsApi extends runtime.BaseAPI {
+
+    /**
+     * List AppVersions matching a filter.
+     * List AppVersions matching a filter
+     */
+    async apiAppVersionsV3GetRaw(requestParameters: ApiAppVersionsV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockAppVersionV3>>> {
+        const queryParameters: any = {};
+
+        if (requestParameters.appVersion !== undefined) {
+            queryParameters['appVersion'] = requestParameters.appVersion;
+        }
+
+        if (requestParameters.chart !== undefined) {
+            queryParameters['chart'] = requestParameters.chart;
+        }
+
+        if (requestParameters.createdAt !== undefined) {
+            queryParameters['createdAt'] = (requestParameters.createdAt as any).toISOString();
+        }
+
+        if (requestParameters.description !== undefined) {
+            queryParameters['description'] = requestParameters.description;
+        }
+
+        if (requestParameters.gitBranch !== undefined) {
+            queryParameters['gitBranch'] = requestParameters.gitBranch;
+        }
+
+        if (requestParameters.gitCommit !== undefined) {
+            queryParameters['gitCommit'] = requestParameters.gitCommit;
+        }
+
+        if (requestParameters.id !== undefined) {
+            queryParameters['id'] = requestParameters.id;
+        }
+
+        if (requestParameters.parentAppVersion !== undefined) {
+            queryParameters['parentAppVersion'] = requestParameters.parentAppVersion;
+        }
+
+        if (requestParameters.updatedAt !== undefined) {
+            queryParameters['updatedAt'] = (requestParameters.updatedAt as any).toISOString();
+        }
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.offset !== undefined) {
+            queryParameters['offset'] = requestParameters.offset;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/app-versions/v3`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(SherlockAppVersionV3FromJSON));
+    }
+
+    /**
+     * List AppVersions matching a filter.
+     * List AppVersions matching a filter
+     */
+    async apiAppVersionsV3Get(requestParameters: ApiAppVersionsV3GetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<SherlockAppVersionV3>> {
+        const response = await this.apiAppVersionsV3GetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
 
     /**
      * Get an individual AppVersion.

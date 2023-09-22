@@ -17,8 +17,8 @@ import (
 //	@tags			AppVersions
 //	@produce		json
 //	@param			filter					query		AppVersionV3	false	"Filter the returned AppVersions"
-//	@param			limit					query		int		false	"Control how many AppVersions are returned (default 100)"
-//	@param			offset					query		int		false	"Control the offset for the returned AppVersions (default 0)"
+//	@param			limit					query		int				false	"Control how many AppVersions are returned (default 100)"
+//	@param			offset					query		int				false	"Control the offset for the returned AppVersions (default 0)"
 //	@success		200						{array}		AppVersionV3
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/app-versions/v3 [get]

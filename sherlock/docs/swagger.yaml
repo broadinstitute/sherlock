@@ -1872,6 +1872,86 @@ info:
   title: Sherlock
   version: development
 paths:
+  /api/app-versions/v3:
+    get:
+      description: List AppVersions matching a filter.
+      parameters:
+      - description: Required when creating
+        in: query
+        name: appVersion
+        type: string
+      - description: Required when creating
+        in: query
+        name: chart
+        type: string
+      - format: date-time
+        in: query
+        name: createdAt
+        type: string
+      - description: Generally the Git commit message
+        in: query
+        name: description
+        type: string
+      - in: query
+        name: gitBranch
+        type: string
+      - in: query
+        name: gitCommit
+        type: string
+      - in: query
+        name: id
+        type: integer
+      - in: query
+        name: parentAppVersion
+        type: string
+      - format: date-time
+        in: query
+        name: updatedAt
+        type: string
+      - description: Control how many AppVersions are returned (default 100)
+        in: query
+        name: limit
+        type: integer
+      - description: Control the offset for the returned AppVersions (default 0)
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/sherlock.AppVersionV3'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: List AppVersions matching a filter
+      tags:
+      - AppVersions
   /api/app-versions/v3/{selector}:
     get:
       description: Get an individual AppVersion.
