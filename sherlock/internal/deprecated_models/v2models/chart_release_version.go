@@ -3,7 +3,6 @@ package v2models
 import (
 	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
-	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"time"
 
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
@@ -168,7 +167,7 @@ func (chartReleaseVersion *ChartReleaseVersion) resolve(db *gorm.DB, chartQuery 
 		}
 	}
 	if chartReleaseVersion.HelmfileRefEnabled == nil || !*chartReleaseVersion.HelmfileRefEnabled || chartReleaseVersion.HelmfileRef == nil {
-		if config.Config.Bool("model.changesets.helmfileRefDefaultToChartReleaseTags") && chartReleaseVersion.ChartVersion != nil {
+		if chartReleaseVersion.ChartVersion != nil {
 			// eg. "charts/sam-0.102.0"
 			tag := "charts/" + chart.Name + "-" + chartReleaseVersion.ChartVersion.ChartVersion
 			chartReleaseVersion.HelmfileRef = &tag

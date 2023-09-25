@@ -365,7 +365,7 @@ func (suite *changesetControllerSuite) TestChangesetFlow() {
 	assert.NoError(suite.T(), err)
 	samInProd, err = suite.ChartReleaseController.Get("terra-prod/sam")
 	assert.NoError(suite.T(), err)
-	assert.Equal(suite.T(), "HEAD", *samInProd.HelmfileRef)
+	assert.Equal(suite.T(), "charts/sam-0.0.3", *samInProd.HelmfileRef)
 	_, err = suite.ChangesetController.PlanAndApply(ChangesetPlanRequest{
 		ChartReleases: []ChangesetPlanRequestChartReleaseEntry{
 			{CreatableChangeset: CreatableChangeset{ChartRelease: "terra-dev/sam", ToHelmfileRef: utils.PointerTo("a-branch")}},
