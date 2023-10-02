@@ -198,6 +198,7 @@ jobs:
         # go mod is actually going to look for a tag of sherlock-go-client/v1.2.3.
         # https://github.com/golang/go/issues/31045
         run: |
+          ssh -vT git@github.com
           git tag "${{ steps.tag.outputs.new_tag }}"
           git tag "sherlock/${{ steps.tag.outputs.new_tag }}"
           git tag "go-shared/${{ steps.tag.outputs.new_tag }}"
