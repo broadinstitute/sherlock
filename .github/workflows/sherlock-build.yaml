@@ -100,7 +100,7 @@ jobs:
           DEFAULT_BUMP: patch
           RELEASE_BRANCHES: ${{ github.event.repository.default_branch }}
           WITH_V: true
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ (github.actor != 'dependabot[bot]' && secrets.BROADBOT_TOKEN) || secrets.GITHUB_TOKEN }}
           DRY_RUN: true
 
       - name: Generate Swagger source
@@ -203,11 +203,10 @@ jobs:
           git tag "go-shared/${{ steps.tag.outputs.new_tag }}"
           git tag "sherlock-go-client/${{ steps.tag.outputs.new_tag }}"
 
-      - name: Push to main with retry
+      - name: Push to main
         if: ${{ github.event_name != 'pull_request' }}
-        uses: ./.github/actions/push-with-retry
-        with:
-          tags: true
+        run: |
+          git push --atomic --tags
 
       - name: Publish typescript client
         if: ${{ github.event_name != 'pull_request' }}
