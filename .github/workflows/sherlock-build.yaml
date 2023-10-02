@@ -67,6 +67,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           token: ${{ (github.actor != 'dependabot[bot]' && secrets.BROADBOT_TOKEN) || secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
 
       - name: Set up Git
         if: ${{ github.actor != 'dependabot[bot]' }}
