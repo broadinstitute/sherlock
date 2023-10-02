@@ -5,6 +5,7 @@ import (
 )
 
 func (s *modelSuite) TestClusterNameValidationSqlMissing() {
+	s.SetNonSuitableTestUserForDB()
 	err := s.DB.Create(&Cluster{
 		Provider:            "google",
 		GoogleProject:       "some-project",
@@ -19,6 +20,7 @@ func (s *modelSuite) TestClusterNameValidationSqlMissing() {
 }
 
 func (s *modelSuite) TestClusterProviderValidationSqlMissing() {
+	s.SetNonSuitableTestUserForDB()
 	err := s.DB.Create(&Cluster{
 		Name:                "some-name",
 		Location:            "some-location",
@@ -31,6 +33,7 @@ func (s *modelSuite) TestClusterProviderValidationSqlMissing() {
 }
 
 func (s *modelSuite) TestClusterProviderValidationSqlGoogleProjectMissing() {
+	s.SetNonSuitableTestUserForDB()
 	err := s.DB.Create(&Cluster{
 		Name:                "some-name",
 		Location:            "some-location",
@@ -45,6 +48,7 @@ func (s *modelSuite) TestClusterProviderValidationSqlGoogleProjectMissing() {
 }
 
 func (s *modelSuite) TestClusterProviderValidationSqlAzureSubscriptionMissing() {
+	s.SetNonSuitableTestUserForDB()
 	err := s.DB.Create(&Cluster{
 		Name:                "some-name",
 		Location:            "some-location",
@@ -59,6 +63,7 @@ func (s *modelSuite) TestClusterProviderValidationSqlAzureSubscriptionMissing() 
 }
 
 func (s *modelSuite) TestClusterBaseValidationSqlMissing() {
+	s.SetNonSuitableTestUserForDB()
 	err := s.DB.Create(&Cluster{
 		Name:                "some-name",
 		Provider:            "google",
@@ -73,6 +78,7 @@ func (s *modelSuite) TestClusterBaseValidationSqlMissing() {
 }
 
 func (s *modelSuite) TestClusterBaseValidationSqlEmpty() {
+	s.SetNonSuitableTestUserForDB()
 	err := s.DB.Create(&Cluster{
 		Name:                "some-name",
 		Provider:            "google",
@@ -88,6 +94,7 @@ func (s *modelSuite) TestClusterBaseValidationSqlEmpty() {
 }
 
 func (s *modelSuite) TestClusterAddressValidationSqlMissing() {
+	s.SetNonSuitableTestUserForDB()
 	err := s.DB.Create(&Cluster{
 		Name:                "some-name",
 		Provider:            "google",
@@ -102,6 +109,7 @@ func (s *modelSuite) TestClusterAddressValidationSqlMissing() {
 }
 
 func (s *modelSuite) TestClusterAddressValidationSqlEmpty() {
+	s.SetNonSuitableTestUserForDB()
 	err := s.DB.Create(&Cluster{
 		Name:                "some-name",
 		Provider:            "google",
@@ -117,6 +125,7 @@ func (s *modelSuite) TestClusterAddressValidationSqlEmpty() {
 }
 
 func (s *modelSuite) TestClusterLocationValidationSqlMissing() {
+	s.SetNonSuitableTestUserForDB()
 	err := s.DB.Create(&Cluster{
 		Name:                "some-name",
 		Provider:            "google",
@@ -131,6 +140,7 @@ func (s *modelSuite) TestClusterLocationValidationSqlMissing() {
 }
 
 func (s *modelSuite) TestClusterRequiresSuitabilityValidationSqlMissing() {
+	s.SetNonSuitableTestUserForDB()
 	err := s.DB.Create(&Cluster{
 		Name:              "some-name",
 		Provider:          "google",
@@ -145,6 +155,7 @@ func (s *modelSuite) TestClusterRequiresSuitabilityValidationSqlMissing() {
 }
 
 func (s *modelSuite) TestClusterHelmfileRefValidationSqlMissing() {
+	s.SetNonSuitableTestUserForDB()
 	err := s.DB.Create(&Cluster{
 		Name:                "some-name",
 		Provider:            "google",
@@ -159,6 +170,7 @@ func (s *modelSuite) TestClusterHelmfileRefValidationSqlMissing() {
 }
 
 func (s *modelSuite) TestClusterHelmfileRefValidationSqlEmpty() {
+	s.SetNonSuitableTestUserForDB()
 	err := s.DB.Create(&Cluster{
 		Name:                "some-name",
 		Provider:            "google",
@@ -174,6 +186,7 @@ func (s *modelSuite) TestClusterHelmfileRefValidationSqlEmpty() {
 }
 
 func (s *modelSuite) TestClusterValidationSqlValidGoogle() {
+	s.SetNonSuitableTestUserForDB()
 	err := s.DB.Create(&Cluster{
 		Name:                "some-name",
 		Provider:            "google",
@@ -188,6 +201,7 @@ func (s *modelSuite) TestClusterValidationSqlValidGoogle() {
 }
 
 func (s *modelSuite) TestClusterValidationSqlValidAzure() {
+	s.SetNonSuitableTestUserForDB()
 	err := s.DB.Create(&Cluster{
 		Name:                "some-name",
 		Provider:            "azure",
@@ -202,6 +216,7 @@ func (s *modelSuite) TestClusterValidationSqlValidAzure() {
 }
 
 func (s *modelSuite) TestClusterCiIdentifiers() {
+	s.SetNonSuitableTestUserForDB()
 	cluster := Cluster{
 		Name:                "some-name",
 		Provider:            "google",
