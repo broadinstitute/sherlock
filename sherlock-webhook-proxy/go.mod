@@ -3,7 +3,7 @@ module github.com/broadinstitute/sherlock/sherlock-webhook-proxy
 go 1.19
 
 require (
-	github.com/GoogleCloudPlatform/functions-framework-go v1.7.4
+	github.com/GoogleCloudPlatform/functions-framework-go v1.8.0
 	github.com/broadinstitute/sherlock/go-shared v0.0.0
 	github.com/broadinstitute/sherlock/sherlock-go-client v0.0.0
 	github.com/go-openapi/runtime v0.26.0
@@ -16,7 +16,7 @@ replace github.com/broadinstitute/sherlock/go-shared => ../go-shared
 replace github.com/broadinstitute/sherlock/sherlock-go-client => ../sherlock-go-client
 
 require (
-	cloud.google.com/go/functions v1.13.0 // indirect
+	cloud.google.com/go/functions v1.15.1 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 // indirect
 	github.com/cloudevents/sdk-go/v2 v2.14.0 // indirect
 	github.com/go-logr/logr v1.2.3 // indirect
