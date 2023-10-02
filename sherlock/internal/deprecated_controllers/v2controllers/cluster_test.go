@@ -353,7 +353,7 @@ func (suite *clusterControllerSuite) TestClusterEdit() {
 		suite.seedClusters(suite.T(), suite.db)
 
 		_, err := suite.ClusterController.Edit(terraDevCluster.Name, EditableCluster{Base: utils.PointerTo("")}, generateUser(suite.T(), suite.db, false))
-		assert.ErrorContains(suite.T(), err, errors.BadRequest)
+		assert.ErrorContains(suite.T(), err, "violates check constraint")
 	})
 }
 
