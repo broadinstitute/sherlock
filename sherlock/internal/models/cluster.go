@@ -1,6 +1,10 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"fmt"
+	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
+	"gorm.io/gorm"
+)
 
 type Cluster struct {
 	gorm.Model
@@ -17,14 +21,35 @@ type Cluster struct {
 	HelmfileRef         *string
 }
 
-func (c Cluster) TableName() string {
+func (c *Cluster) TableName() string {
 	return "v2_clusters"
 }
 
-func (c Cluster) GetCiIdentifier() CiIdentifier {
+func (c *Cluster) GetCiIdentifier() CiIdentifier {
 	if c.CiIdentifier != nil {
 		return *c.CiIdentifier
 	} else {
 		return CiIdentifier{ResourceType: "cluster", ResourceID: c.ID}
 	}
+}
+
+func (c *Cluster) ErrorIfForbidden(tx *gorm.DB) error {
+	user, err := GetCurrentUserForDB(tx)
+	if err != nil {
+		return err
+	}
+	if c.RequiresSuitability == nil || *c.RequiresSuitability {
+		if err = user.Suitability().SuitableOrError(); err != nil {
+			return fmt.Errorf("(%s) suitability required: %w", errors.Forbidden, err)
+		}
+	}
+	return nil
+}
+
+func (c *Cluster) AfterSave(tx *gorm.DB) error {
+	return c.ErrorIfForbidden(tx)
+}
+
+func (c *Cluster) AfterDelete(tx *gorm.DB) error {
+	return c.ErrorIfForbidden(tx)
 }
