@@ -30,6 +30,10 @@ type ClientOption func(*runtime.ClientOperation)
 
 // ClientService is the interface for Client methods
 type ClientService interface {
+	GetAPIAppVersionsV3(params *GetAPIAppVersionsV3Params, opts ...ClientOption) (*GetAPIAppVersionsV3OK, error)
+
+	GetAPIAppVersionsV3Selector(params *GetAPIAppVersionsV3SelectorParams, opts ...ClientOption) (*GetAPIAppVersionsV3SelectorOK, error)
+
 	GetAPIV2AppVersions(params *GetAPIV2AppVersionsParams, opts ...ClientOption) (*GetAPIV2AppVersionsOK, error)
 
 	GetAPIV2AppVersionsSelector(params *GetAPIV2AppVersionsSelectorParams, opts ...ClientOption) (*GetAPIV2AppVersionsSelectorOK, error)
@@ -45,6 +49,86 @@ type ClientService interface {
 	PutAPIV2AppVersionsSelector(params *PutAPIV2AppVersionsSelectorParams, opts ...ClientOption) (*PutAPIV2AppVersionsSelectorOK, *PutAPIV2AppVersionsSelectorCreated, error)
 
 	SetTransport(transport runtime.ClientTransport)
+}
+
+/*
+  GetAPIAppVersionsV3 lists app versions matching a filter
+
+  List AppVersions matching a filter.
+*/
+func (a *Client) GetAPIAppVersionsV3(params *GetAPIAppVersionsV3Params, opts ...ClientOption) (*GetAPIAppVersionsV3OK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetAPIAppVersionsV3Params()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "GetAPIAppVersionsV3",
+		Method:             "GET",
+		PathPattern:        "/api/app-versions/v3",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &GetAPIAppVersionsV3Reader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*GetAPIAppVersionsV3OK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for GetAPIAppVersionsV3: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+  GetAPIAppVersionsV3Selector gets an individual app version
+
+  Get an individual AppVersion.
+*/
+func (a *Client) GetAPIAppVersionsV3Selector(params *GetAPIAppVersionsV3SelectorParams, opts ...ClientOption) (*GetAPIAppVersionsV3SelectorOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetAPIAppVersionsV3SelectorParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "GetAPIAppVersionsV3Selector",
+		Method:             "GET",
+		PathPattern:        "/api/app-versions/v3/{selector}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &GetAPIAppVersionsV3SelectorReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*GetAPIAppVersionsV3SelectorOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for GetAPIAppVersionsV3Selector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
 }
 
 /*

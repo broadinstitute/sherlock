@@ -43,6 +43,7 @@ import "github.com/gin-gonic/gin"
 //     - If they do this, the endpoints should categorize themselves by their shared group, instead of their type.
 func ConfigureRoutes(apiRouter *gin.RouterGroup) {
 	apiRouter.GET("app-versions/v3/*selector", appVersionsV3Get)
+	apiRouter.GET("app-versions/v3", appVersionsV3List)
 
 	apiRouter.GET("charts/v3/*selector", chartsV3Get)
 	apiRouter.POST("charts/v3", chartsV3Create)
