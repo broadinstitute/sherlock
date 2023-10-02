@@ -20,6 +20,7 @@ func (s *modelSuite) TestDeployHookTriggerConfigHookTypeMissing() {
 }
 
 func (s *modelSuite) TestDeployHookTriggerConfigEnvironmentAndChartRelease() {
+	s.SetNonSuitableTestUserForDB()
 	cluster := Cluster{
 		Name:                "terra-dev",
 		Address:             utils.PointerTo("0.0.0.0"),
@@ -59,6 +60,7 @@ func (s *modelSuite) TestDeployHookTriggerConfigEnvironmentSuitable() {
 }
 
 func (s *modelSuite) TestDeployHookTriggerConfigChartReleaseSuitableViaEnvironment() {
+	s.SetNonSuitableTestUserForDB()
 	cluster := Cluster{
 		Name:                "terra-dev",
 		Address:             utils.PointerTo("0.0.0.0"),
@@ -90,6 +92,7 @@ func (s *modelSuite) TestDeployHookTriggerConfigChartReleaseSuitableViaEnvironme
 }
 
 func (s *modelSuite) TestDeployHookTriggerConfigChartReleaseSuitableViaCluster() {
+	s.SetSuitableTestUserForDB()
 	cluster := Cluster{
 		Name:                "terra-dev",
 		Address:             utils.PointerTo("0.0.0.0"),
