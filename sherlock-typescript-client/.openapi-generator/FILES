@@ -32,6 +32,9 @@ src/models/SherlockChartV3Edit.ts
 src/models/SherlockCiIdentifierV3.ts
 src/models/SherlockCiRunV3.ts
 src/models/SherlockCiRunV3Upsert.ts
+src/models/SherlockClusterV3.ts
+src/models/SherlockClusterV3Create.ts
+src/models/SherlockClusterV3Edit.ts
 src/models/SherlockGithubActionsDeployHookV3.ts
 src/models/SherlockGithubActionsDeployHookV3Create.ts
 src/models/SherlockGithubActionsDeployHookV3Edit.ts

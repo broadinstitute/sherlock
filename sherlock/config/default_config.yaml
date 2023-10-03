@@ -185,6 +185,10 @@ model:
         githubActionsOwner: broadinstitute
         githubActionsRepo: terra-github-workflows
         githubActionsWorkflowPath: .github/workflows/sync-release.yaml
+      - platform: github-actions
+        githubActionsOwner: broadinstitute
+        githubActionsRepo: terra-github-workflows
+        githubActionsWorkflowPath: .github/workflows/sync-environment.yaml
 
 beehive:
     chartReleaseUrlFormatString: https://beehive.dsp-devops.broadinstitute.org/r/chart-release/%s

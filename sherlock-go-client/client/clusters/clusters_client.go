@@ -30,7 +30,13 @@ type ClientOption func(*runtime.ClientOperation)
 
 // ClientService is the interface for Client methods
 type ClientService interface {
+	DeleteAPIClustersV3Selector(params *DeleteAPIClustersV3SelectorParams, opts ...ClientOption) (*DeleteAPIClustersV3SelectorOK, error)
+
 	DeleteAPIV2ClustersSelector(params *DeleteAPIV2ClustersSelectorParams, opts ...ClientOption) (*DeleteAPIV2ClustersSelectorOK, error)
+
+	GetAPIClustersV3(params *GetAPIClustersV3Params, opts ...ClientOption) (*GetAPIClustersV3OK, error)
+
+	GetAPIClustersV3Selector(params *GetAPIClustersV3SelectorParams, opts ...ClientOption) (*GetAPIClustersV3SelectorOK, error)
 
 	GetAPIV2Clusters(params *GetAPIV2ClustersParams, opts ...ClientOption) (*GetAPIV2ClustersOK, error)
 
@@ -38,13 +44,57 @@ type ClientService interface {
 
 	GetAPIV2SelectorsClustersSelector(params *GetAPIV2SelectorsClustersSelectorParams, opts ...ClientOption) (*GetAPIV2SelectorsClustersSelectorOK, error)
 
+	PatchAPIClustersV3Selector(params *PatchAPIClustersV3SelectorParams, opts ...ClientOption) (*PatchAPIClustersV3SelectorOK, error)
+
 	PatchAPIV2ClustersSelector(params *PatchAPIV2ClustersSelectorParams, opts ...ClientOption) (*PatchAPIV2ClustersSelectorOK, error)
+
+	PostAPIClustersV3(params *PostAPIClustersV3Params, opts ...ClientOption) (*PostAPIClustersV3Created, error)
 
 	PostAPIV2Clusters(params *PostAPIV2ClustersParams, opts ...ClientOption) (*PostAPIV2ClustersOK, *PostAPIV2ClustersCreated, error)
 
 	PutAPIV2ClustersSelector(params *PutAPIV2ClustersSelectorParams, opts ...ClientOption) (*PutAPIV2ClustersSelectorOK, *PutAPIV2ClustersSelectorCreated, error)
 
 	SetTransport(transport runtime.ClientTransport)
+}
+
+/*
+  DeleteAPIClustersV3Selector deletes an individual cluster
+
+  Delete an individual Cluster by its ID.
+*/
+func (a *Client) DeleteAPIClustersV3Selector(params *DeleteAPIClustersV3SelectorParams, opts ...ClientOption) (*DeleteAPIClustersV3SelectorOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDeleteAPIClustersV3SelectorParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "DeleteAPIClustersV3Selector",
+		Method:             "DELETE",
+		PathPattern:        "/api/clusters/v3/{selector}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &DeleteAPIClustersV3SelectorReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*DeleteAPIClustersV3SelectorOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for DeleteAPIClustersV3Selector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
 }
 
 /*
@@ -84,6 +134,86 @@ func (a *Client) DeleteAPIV2ClustersSelector(params *DeleteAPIV2ClustersSelector
 	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for DeleteAPIV2ClustersSelector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+  GetAPIClustersV3 lists clusters matching a filter
+
+  List Clusters matching a filter.
+*/
+func (a *Client) GetAPIClustersV3(params *GetAPIClustersV3Params, opts ...ClientOption) (*GetAPIClustersV3OK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetAPIClustersV3Params()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "GetAPIClustersV3",
+		Method:             "GET",
+		PathPattern:        "/api/clusters/v3",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &GetAPIClustersV3Reader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*GetAPIClustersV3OK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for GetAPIClustersV3: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+  GetAPIClustersV3Selector gets an individual cluster
+
+  Get an individual Cluster.
+*/
+func (a *Client) GetAPIClustersV3Selector(params *GetAPIClustersV3SelectorParams, opts ...ClientOption) (*GetAPIClustersV3SelectorOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetAPIClustersV3SelectorParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "GetAPIClustersV3Selector",
+		Method:             "GET",
+		PathPattern:        "/api/clusters/v3/{selector}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &GetAPIClustersV3SelectorReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*GetAPIClustersV3SelectorOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for GetAPIClustersV3Selector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 
@@ -208,6 +338,46 @@ func (a *Client) GetAPIV2SelectorsClustersSelector(params *GetAPIV2SelectorsClus
 }
 
 /*
+  PatchAPIClustersV3Selector edits an individual cluster
+
+  Edit an individual Cluster.
+*/
+func (a *Client) PatchAPIClustersV3Selector(params *PatchAPIClustersV3SelectorParams, opts ...ClientOption) (*PatchAPIClustersV3SelectorOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewPatchAPIClustersV3SelectorParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "PatchAPIClustersV3Selector",
+		Method:             "PATCH",
+		PathPattern:        "/api/clusters/v3/{selector}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &PatchAPIClustersV3SelectorReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*PatchAPIClustersV3SelectorOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for PatchAPIClustersV3Selector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
   PatchAPIV2ClustersSelector edits a cluster entry
 
   Edit an existing Cluster entry via one of its "selectors": name or numeric ID. Note that only mutable fields are available here, immutable fields can only be set using /create.
@@ -244,6 +414,46 @@ func (a *Client) PatchAPIV2ClustersSelector(params *PatchAPIV2ClustersSelectorPa
 	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for PatchAPIV2ClustersSelector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+  PostAPIClustersV3 creates a cluster
+
+  Create a Cluster.
+*/
+func (a *Client) PostAPIClustersV3(params *PostAPIClustersV3Params, opts ...ClientOption) (*PostAPIClustersV3Created, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewPostAPIClustersV3Params()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "PostAPIClustersV3",
+		Method:             "POST",
+		PathPattern:        "/api/clusters/v3",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &PostAPIClustersV3Reader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*PostAPIClustersV3Created)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for PostAPIClustersV3: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 

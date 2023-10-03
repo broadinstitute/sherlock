@@ -10,24 +10,24 @@ import (
 	"net/http"
 )
 
-// chartsV3List godoc
+// clustersV3List godoc
 //
-//	@summary		List Charts matching a filter
-//	@description	List Charts matching a filter.
-//	@tags			Charts
+//	@summary		List Clusters matching a filter
+//	@description	List Clusters matching a filter.
+//	@tags			Clusters
 //	@produce		json
-//	@param			filter					query		ChartV3	false	"Filter the returned Charts"
-//	@param			limit					query		int		false	"Control how many Charts are returned (default 0, meaning all)"
-//	@param			offset					query		int		false	"Control the offset for the returned Charts (default 0)"
-//	@success		200						{array}		ChartV3
+//	@param			filter					query		ClusterV3	false	"Filter the returned Clusters"
+//	@param			limit					query		int			false	"Control how many Clusters are returned (default 0, meaning all)"
+//	@param			offset					query		int			false	"Control the offset for the returned Clusters (default 0)"
+//	@success		200						{array}		ClusterV3
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
-//	@router			/api/charts/v3 [get]
-func chartsV3List(ctx *gin.Context) {
+//	@router			/api/clusters/v3 [get]
+func clustersV3List(ctx *gin.Context) {
 	db, err := authentication.MustUseDB(ctx)
 	if err != nil {
 		return
 	}
-	var filter ChartV3
+	var filter ClusterV3
 	if err = ctx.ShouldBindQuery(&filter); err != nil {
 		errors.AbortRequest(ctx, err)
 		return
@@ -44,7 +44,7 @@ func chartsV3List(ctx *gin.Context) {
 		errors.AbortRequest(ctx, fmt.Errorf("(%s) %v", errors.BadRequest, err))
 		return
 	}
-	var results []models.Chart
+	var results []models.Cluster
 	chain := db.
 		Where(&modelFilter)
 	if limit > 0 {
@@ -57,5 +57,5 @@ func chartsV3List(ctx *gin.Context) {
 		errors.AbortRequest(ctx, err)
 		return
 	}
-	ctx.JSON(http.StatusOK, utils.Map(results, chartFromModel))
+	ctx.JSON(http.StatusOK, utils.Map(results, clusterFromModel))
 }

@@ -19,7 +19,16 @@ func (s *modelSuite) TestSlackDeployHookEnvironment() {
 
 func (s *modelSuite) TestSlackDeployHookChartRelease() {
 	s.SetSuitableTestUserForDB()
-	cluster := Cluster{Name: "terra-dev", Address: utils.PointerTo("0.0.0.0"), Base: utils.PointerTo("terra"), RequiresSuitability: utils.PointerTo(false), HelmfileRef: utils.PointerTo("HEAD")}
+	cluster := Cluster{
+		Name:                "terra-dev",
+		Address:             utils.PointerTo("0.0.0.0"),
+		Base:                utils.PointerTo("terra"),
+		Location:            "some-location",
+		Provider:            "google",
+		GoogleProject:       "some-google-project",
+		RequiresSuitability: utils.PointerTo(false),
+		HelmfileRef:         utils.PointerTo("HEAD"),
+	}
 	s.NoError(s.DB.Create(&cluster).Error)
 	environment := Environment{Name: "dev", Base: "live", Lifecycle: "static", RequiresSuitability: utils.PointerTo(false), HelmfileRef: utils.PointerTo("HEAD"), PreventDeletion: utils.PointerTo(false)}
 	s.NoError(s.DB.Create(&environment).Error)
