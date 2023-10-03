@@ -2,6 +2,7 @@ package deployhooks
 
 import (
 	"fmt"
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/slack"
 	"github.com/rs/zerolog/log"
@@ -35,30 +36,43 @@ func dispatchCiRun(db *gorm.DB, ciRun models.CiRun,
 		return nil
 	}
 
+	// Set up filters so we only look for hooks that should trigger based on the CiRun's actual outcome.
+	// (Nil will be ignored by Gorm, so as if we weren't filtering on that field at all)
+	var onSuccessFilter, onFailureFilter *bool
+	if ciRun.Succeeded() {
+		onSuccessFilter = utils.PointerTo(true)
+	} else {
+		onFailureFilter = utils.PointerTo(true)
+	}
+
 	// Collect hooks to trigger across all environments and chart releases the CiRun affected
 	var deployHookTriggers []models.DeployHookTriggerConfig
 	for _, resourceIdentifier := range ciRun.RelatedResources {
 		var resourceDeployHookTriggers []models.DeployHookTriggerConfig
 
 		if resourceIdentifier.ResourceType == "environment" {
-			// If the resource was an environment, query hooks to trigger on that environment
+			// If the resource was an environment, query hooks to trigger on that environment (filtering for ones that should run on this outcome)
 			if err := db.Where(models.DeployHookTriggerConfig{
 				OnEnvironmentID: &resourceIdentifier.ResourceID,
+				OnSuccess:       onSuccessFilter,
+				OnFailure:       onFailureFilter,
 			}).Find(&resourceDeployHookTriggers).Error; err != nil {
 				errs = append(errs, fmt.Errorf("failed to query DeployHookTriggerConfig with Environment ID %d (CiIdentifier %d): %w", resourceIdentifier.ResourceID, resourceIdentifier.ID, err))
 				continue
 			}
 		} else if resourceIdentifier.ResourceType == "chart-release" {
-			// If the resource was a chart release, query hooks to trigger on that chart release
+			// If the resource was a chart release, query hooks to trigger on that chart release (filtering for ones that should run on this outcome)
 			if err := db.Where(models.DeployHookTriggerConfig{
 				OnChartReleaseID: &resourceIdentifier.ResourceID,
+				OnSuccess:        onSuccessFilter,
+				OnFailure:        onFailureFilter,
 			}).Find(&resourceDeployHookTriggers).Error; err != nil {
 				errs = append(errs, fmt.Errorf("failed to query DeployHookTriggerConfig with ChartRelease ID %d (CiIdentifier %d): %w", resourceIdentifier.ResourceID, resourceIdentifier.ID, err))
 				continue
 			}
 		}
 
-		// If we found any hooks for this resource, add them to the list
+		// If we found any hooks we should run for this resource, add them to the list
 		if len(resourceDeployHookTriggers) > 0 {
 			deployHookTriggers = append(deployHookTriggers, resourceDeployHookTriggers...)
 		}
