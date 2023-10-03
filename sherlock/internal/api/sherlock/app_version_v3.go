@@ -64,10 +64,12 @@ func (v AppVersionV3) toModel(db *gorm.DB, failIfParentInvalid bool) (models.App
 	}, nil
 }
 
+//nolint:unused
 func (v AppVersionV3Create) toModel(db *gorm.DB, failIfParentInvalid bool) (models.AppVersion, error) {
 	return AppVersionV3{AppVersionV3Create: v}.toModel(db, failIfParentInvalid)
 }
 
+//nolint:unused
 func (v AppVersionV3Edit) toModel(db *gorm.DB, failIfParentInvalid bool) (models.AppVersion, error) {
 	return AppVersionV3Create{AppVersionV3Edit: v}.toModel(db, failIfParentInvalid)
 }

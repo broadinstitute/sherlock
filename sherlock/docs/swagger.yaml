@@ -374,6 +374,97 @@ definitions:
       terminalAt:
         type: string
     type: object
+  sherlock.ClusterV3:
+    properties:
+      address:
+        description: Required when creating
+        type: string
+      azureSubscription:
+        description: Required when creating if provider is 'azure'
+        type: string
+      base:
+        description: Required when creating
+        type: string
+      ciIdentifier:
+        $ref: '#/definitions/sherlock.CiIdentifierV3'
+      createdAt:
+        format: date-time
+        type: string
+      googleProject:
+        description: Required when creating if provider is 'google'
+        type: string
+      helmfileRef:
+        default: HEAD
+        type: string
+      id:
+        type: integer
+      location:
+        default: us-central1-a
+        type: string
+      name:
+        description: Required when creating
+        type: string
+      provider:
+        default: google
+        enum:
+        - google
+        - azure
+        type: string
+      requiresSuitability:
+        default: false
+        type: boolean
+      updatedAt:
+        format: date-time
+        type: string
+    type: object
+  sherlock.ClusterV3Create:
+    properties:
+      address:
+        description: Required when creating
+        type: string
+      azureSubscription:
+        description: Required when creating if provider is 'azure'
+        type: string
+      base:
+        description: Required when creating
+        type: string
+      googleProject:
+        description: Required when creating if provider is 'google'
+        type: string
+      helmfileRef:
+        default: HEAD
+        type: string
+      location:
+        default: us-central1-a
+        type: string
+      name:
+        description: Required when creating
+        type: string
+      provider:
+        default: google
+        enum:
+        - google
+        - azure
+        type: string
+      requiresSuitability:
+        default: false
+        type: boolean
+    type: object
+  sherlock.ClusterV3Edit:
+    properties:
+      address:
+        description: Required when creating
+        type: string
+      base:
+        description: Required when creating
+        type: string
+      helmfileRef:
+        default: HEAD
+        type: string
+      requiresSuitability:
+        default: false
+        type: boolean
+    type: object
   sherlock.GithubActionsDeployHookV3:
     properties:
       createdAt:
@@ -2058,7 +2149,7 @@ paths:
         in: query
         name: updatedAt
         type: string
-      - description: Control how many Charts are returned (default 100)
+      - description: Control how many Charts are returned (default 0, meaning all)
         in: query
         name: limit
         type: integer
@@ -2663,6 +2754,285 @@ paths:
       summary: Get a CiRun, including CiIdentifiers for related resources
       tags:
       - CiRuns
+  /api/clusters/v3:
+    get:
+      description: List Clusters matching a filter.
+      parameters:
+      - description: Required when creating
+        in: query
+        name: address
+        type: string
+      - description: Required when creating if provider is 'azure'
+        in: query
+        name: azureSubscription
+        type: string
+      - description: Required when creating
+        in: query
+        name: base
+        type: string
+      - format: date-time
+        in: query
+        name: createdAt
+        type: string
+      - description: Required when creating if provider is 'google'
+        in: query
+        name: googleProject
+        type: string
+      - default: HEAD
+        in: query
+        name: helmfileRef
+        type: string
+      - in: query
+        name: id
+        type: integer
+      - default: us-central1-a
+        in: query
+        name: location
+        type: string
+      - description: Required when creating
+        in: query
+        name: name
+        type: string
+      - default: google
+        enum:
+        - google
+        - azure
+        in: query
+        name: provider
+        type: string
+      - default: false
+        in: query
+        name: requiresSuitability
+        type: boolean
+      - format: date-time
+        in: query
+        name: updatedAt
+        type: string
+      - description: Control how many Clusters are returned (default 0, meaning all)
+        in: query
+        name: limit
+        type: integer
+      - description: Control the offset for the returned Clusters (default 0)
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/sherlock.ClusterV3'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: List Clusters matching a filter
+      tags:
+      - Clusters
+    post:
+      consumes:
+      - application/json
+      description: Create a Cluster.
+      parameters:
+      - description: The Cluster to create
+        in: body
+        name: cluster
+        required: true
+        schema:
+          $ref: '#/definitions/sherlock.ClusterV3Create'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/sherlock.ClusterV3'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Create a Cluster
+      tags:
+      - Clusters
+  /api/clusters/v3/{selector}:
+    delete:
+      description: Delete an individual Cluster by its ID.
+      parameters:
+      - description: The selector of the Cluster, which can be either a numeric ID
+          or the name.
+        in: path
+        name: selector
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/sherlock.ClusterV3'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Delete an individual Cluster
+      tags:
+      - Clusters
+    get:
+      description: Get an individual Cluster.
+      parameters:
+      - description: The selector of the Cluster, which can be either a numeric ID
+          or the name.
+        in: path
+        name: selector
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/sherlock.ClusterV3'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Get an individual Cluster
+      tags:
+      - Clusters
+    patch:
+      description: Edit an individual Cluster.
+      parameters:
+      - description: The selector of the Cluster, which can be either a numeric ID
+          or the name.
+        in: path
+        name: selector
+        required: true
+        type: string
+      - description: The edits to make to the Cluster
+        in: body
+        name: cluster
+        required: true
+        schema:
+          $ref: '#/definitions/sherlock.ClusterV3Edit'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/sherlock.ClusterV3'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Edit an individual Cluster
+      tags:
+      - Clusters
   /api/deploy-hooks/github-actions/v3:
     get:
       description: List GithubActionsDeployHooks matching a filter.

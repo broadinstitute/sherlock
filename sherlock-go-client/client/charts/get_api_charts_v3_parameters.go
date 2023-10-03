@@ -112,7 +112,7 @@ type GetAPIChartsV3Params struct {
 
 	/* Limit.
 
-	   Control how many Charts are returned (default 100)
+	   Control how many Charts are returned (default 0, meaning all)
 	*/
 	Limit *int64
 
