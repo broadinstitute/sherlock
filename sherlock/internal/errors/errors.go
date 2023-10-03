@@ -103,7 +103,7 @@ func convert(err error) (int, ErrorResponse) {
 			Message: errorString,
 		}
 	}
-	if strings.Contains(err.Error(), "violates check constraint") {
+	if strings.Contains(err.Error(), "violates check constraint") || strings.Contains(err.Error(), "violates not-null constraint") {
 		return http.StatusBadRequest, ErrorResponse{
 			ToBlame: "client",
 			Type:    BadRequest,

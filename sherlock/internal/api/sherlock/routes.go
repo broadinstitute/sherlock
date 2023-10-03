@@ -51,6 +51,12 @@ func ConfigureRoutes(apiRouter *gin.RouterGroup) {
 	apiRouter.GET("charts/v3", chartsV3List)
 	apiRouter.PATCH("charts/v3/*selector", chartsV3Edit)
 
+	apiRouter.GET("clusters/v3/*selector", clustersV3Get)
+	apiRouter.POST("clusters/v3", clustersV3Create)
+	apiRouter.DELETE("clusters/v3/*selector", clustersV3Delete)
+	apiRouter.GET("clusters/v3", clustersV3List)
+	apiRouter.PATCH("clusters/v3/*selector", clustersV3Edit)
+
 	apiRouter.GET("ci-identifiers/v3", ciIdentifiersV3List)
 	apiRouter.GET("ci-identifiers/v3/*selector", ciIdentifiersV3Get)
 

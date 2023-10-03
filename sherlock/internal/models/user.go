@@ -25,7 +25,7 @@ func SetCurrentUserForDB(db *gorm.DB, user *User) *gorm.DB {
 func GetCurrentUserForDB(db *gorm.DB) (*User, error) {
 	user, ok := db.Statement.Context.Value(dbUserField).(*User)
 	if !ok {
-		return nil, fmt.Errorf("(%s) database user not available (was %T)", errors.InternalServerError, user)
+		return nil, fmt.Errorf("(%s) database user not available (was %T)", errors.InternalServerError, db.Statement.Context.Value(dbUserField))
 	}
 	if user == nil {
 		return nil, fmt.Errorf("(%s) database user was nil", errors.InternalServerError)
