@@ -46,6 +46,11 @@ func (c *Cluster) ErrorIfForbidden(tx *gorm.DB) error {
 	return nil
 }
 
+func (c *Cluster) BeforeUpdate(tx *gorm.DB) error {
+	// Updates could potentially set suitability lower, so we check before updates too
+	return c.ErrorIfForbidden(tx)
+}
+
 func (c *Cluster) AfterSave(tx *gorm.DB) error {
 	return c.ErrorIfForbidden(tx)
 }
