@@ -17,7 +17,7 @@ import (
 //	@tags			Charts
 //	@produce		json
 //	@param			filter					query		ChartV3	false	"Filter the returned Charts"
-//	@param			limit					query		int		false	"Control how many Charts are returned (default 100)"
+//	@param			limit					query		int		false	"Control how many Charts are returned (default 0, meaning all)"
 //	@param			offset					query		int		false	"Control the offset for the returned Charts (default 0)"
 //	@success		200						{array}		ChartV3
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
@@ -34,7 +34,7 @@ func chartsV3List(ctx *gin.Context) {
 	}
 	modelFilter := filter.toModel()
 
-	limit, err := utils.ParseInt(ctx.DefaultQuery("limit", "100"))
+	limit, err := utils.ParseInt(ctx.DefaultQuery("limit", "0"))
 	if err != nil {
 		errors.AbortRequest(ctx, fmt.Errorf("(%s) %v", errors.BadRequest, err))
 		return
@@ -45,9 +45,12 @@ func chartsV3List(ctx *gin.Context) {
 		return
 	}
 	var results []models.Chart
-	if err = db.
-		Where(&modelFilter).
-		Limit(limit).
+	chain := db.
+		Where(&modelFilter)
+	if limit > 0 {
+		chain = chain.Limit(limit)
+	}
+	if err = chain.
 		Offset(offset).
 		Order("name asc").
 		Find(&results).Error; err != nil {
