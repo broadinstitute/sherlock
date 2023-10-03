@@ -47,3 +47,24 @@ func (s *handlerSuite) TestClusterV3Delete() {
 		s.Equal("some base", *got.Base)
 	}
 }
+
+func (s *handlerSuite) TestClusterV3Delete_suitability() {
+	s.SetSuitableTestUserForDB()
+	s.NoError(s.DB.Create(&models.Cluster{
+		Name:                "some-name",
+		Provider:            "azure",
+		AzureSubscription:   "some-subscription",
+		Location:            "some-location",
+		Base:                utils.PointerTo("some base"),
+		Address:             utils.PointerTo("0.0.0.0"),
+		RequiresSuitability: utils.PointerTo(true),
+		HelmfileRef:         utils.PointerTo("some-ref"),
+	}).Error)
+
+	var got errors.ErrorResponse
+	code := s.HandleRequest(
+		s.UseNonSuitableUserFor(s.NewRequest("DELETE", "/api/clusters/v3/some-name", nil)),
+		&got)
+	s.Equal(http.StatusForbidden, code)
+	s.Equal(errors.Forbidden, got.Type)
+}

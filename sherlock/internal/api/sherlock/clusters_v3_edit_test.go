@@ -94,3 +94,80 @@ func (s *handlerSuite) TestClustersV3Edit() {
 		s.Equal("some other base", *got.Base)
 	}
 }
+
+func (s *handlerSuite) TestClustersV3Edit_suitability() {
+	s.SetSuitableTestUserForDB()
+	edit := models.Cluster{
+		Name:                "some-name",
+		Provider:            "azure",
+		AzureSubscription:   "some-subscription",
+		Location:            "some-location",
+		Base:                utils.PointerTo("some base"),
+		Address:             utils.PointerTo("0.0.0.0"),
+		RequiresSuitability: utils.PointerTo(true),
+		HelmfileRef:         utils.PointerTo("some-ref"),
+	}
+	s.NoError(s.DB.Create(&edit).Error)
+
+	var got errors.ErrorResponse
+	code := s.HandleRequest(
+		s.UseNonSuitableUserFor(s.NewRequest("PATCH", fmt.Sprintf("/api/clusters/v3/%d", edit.ID), ClusterV3Edit{
+			Base:    utils.PointerTo("some other base"),
+			Address: utils.PointerTo("0.0.0.0"),
+		})),
+		&got)
+	s.Equal(http.StatusForbidden, code)
+	s.Equal(errors.Forbidden, got.Type)
+}
+
+func (s *handlerSuite) TestClustersV3Edit_suitabilityBefore() {
+	s.SetSuitableTestUserForDB()
+	edit := models.Cluster{
+		Name:                "some-name",
+		Provider:            "azure",
+		AzureSubscription:   "some-subscription",
+		Location:            "some-location",
+		Base:                utils.PointerTo("some base"),
+		Address:             utils.PointerTo("0.0.0.0"),
+		RequiresSuitability: utils.PointerTo(true),
+		HelmfileRef:         utils.PointerTo("some-ref"),
+	}
+	s.NoError(s.DB.Create(&edit).Error)
+
+	var got errors.ErrorResponse
+	code := s.HandleRequest(
+		s.UseNonSuitableUserFor(s.NewRequest("PATCH", fmt.Sprintf("/api/clusters/v3/%d", edit.ID), ClusterV3Edit{
+			Base:                utils.PointerTo("some other base"),
+			Address:             utils.PointerTo("0.0.0.0"),
+			RequiresSuitability: utils.PointerTo(false),
+		})),
+		&got)
+	s.Equal(http.StatusForbidden, code)
+	s.Equal(errors.Forbidden, got.Type)
+}
+
+func (s *handlerSuite) TestClustersV3Edit_suitabilityAfter() {
+	s.SetNonSuitableTestUserForDB()
+	edit := models.Cluster{
+		Name:                "some-name",
+		Provider:            "azure",
+		AzureSubscription:   "some-subscription",
+		Location:            "some-location",
+		Base:                utils.PointerTo("some base"),
+		Address:             utils.PointerTo("0.0.0.0"),
+		RequiresSuitability: utils.PointerTo(false),
+		HelmfileRef:         utils.PointerTo("some-ref"),
+	}
+	s.NoError(s.DB.Create(&edit).Error)
+
+	var got errors.ErrorResponse
+	code := s.HandleRequest(
+		s.UseNonSuitableUserFor(s.NewRequest("PATCH", fmt.Sprintf("/api/clusters/v3/%d", edit.ID), ClusterV3Edit{
+			Base:                utils.PointerTo("some other base"),
+			Address:             utils.PointerTo("0.0.0.0"),
+			RequiresSuitability: utils.PointerTo(true),
+		})),
+		&got)
+	s.Equal(http.StatusForbidden, code)
+	s.Equal(errors.Forbidden, got.Type)
+}

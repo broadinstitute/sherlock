@@ -78,3 +78,23 @@ func (s *handlerSuite) TestClustersV3Create_overrideDefaults() {
 		s.Equal("some-ref", *got.HelmfileRef)
 	}
 }
+
+func (s *handlerSuite) TestClustersV3Create_suitability() {
+	var got errors.ErrorResponse
+	code := s.HandleRequest(
+		s.UseNonSuitableUserFor(s.NewRequest("POST", "/api/clusters/v3", ClusterV3Create{
+			Name:          "cluster-name",
+			Provider:      "google",
+			GoogleProject: "google-project",
+			Location:      "some location",
+			ClusterV3Edit: ClusterV3Edit{
+				Base:                utils.PointerTo("some-base"),
+				Address:             utils.PointerTo("0.0.0.0"),
+				RequiresSuitability: utils.PointerTo(true),
+				HelmfileRef:         utils.PointerTo("some-ref"),
+			},
+		})),
+		&got)
+	s.Equal(http.StatusForbidden, code)
+	s.Equal(errors.Forbidden, got.Type)
+}
