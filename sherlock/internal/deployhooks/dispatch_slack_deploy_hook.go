@@ -7,6 +7,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/slack"
 	"gorm.io/gorm"
+	"sort"
 	"strings"
 )
 
@@ -44,6 +45,7 @@ func generateSlackAttachment(db *gorm.DB, hook models.SlackDeployHook, ciRun mod
 		}
 
 		if len(chartReleaseNames) > 0 {
+			sort.Strings(chartReleaseNames)
 			sb.WriteString(" (")
 			sb.WriteString(strings.Join(utils.Map(chartReleaseNames, func(name string) string {
 				return slack.LinkHelper(
