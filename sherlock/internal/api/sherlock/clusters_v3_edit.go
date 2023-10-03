@@ -16,7 +16,7 @@ import (
 //	@description	Edit an individual Cluster.
 //	@tags			Clusters
 //	@produce		json
-//	@param			selector				path		string		true	"The selector of the Cluster, which can be either a numeric ID or the name."
+//	@param			selector				path		string			true	"The selector of the Cluster, which can be either a numeric ID or the name."
 //	@param			cluster					body		ClusterV3Edit	true	"The edits to make to the Cluster"
 //	@success		200						{object}	ClusterV3
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse

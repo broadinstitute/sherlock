@@ -316,7 +316,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
-                        "description": "Control how many Charts are returned (default 100)",
+                        "description": "Control how many Charts are returned (default 0, meaning all)",
                         "name": "limit",
                         "in": "query"
                     },
@@ -1154,6 +1154,422 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/sherlock.CiRunV3"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/clusters/v3": {
+            "get": {
+                "description": "List Clusters matching a filter.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Clusters"
+                ],
+                "summary": "List Clusters matching a filter",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Required when creating",
+                        "name": "address",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Required when creating if provider is 'azure'",
+                        "name": "azureSubscription",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Required when creating",
+                        "name": "base",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "format": "date-time",
+                        "name": "createdAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Required when creating if provider is 'google'",
+                        "name": "googleProject",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "default": "HEAD",
+                        "name": "helmfileRef",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "default": "us-central1-a",
+                        "name": "location",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Required when creating",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "google",
+                            "azure"
+                        ],
+                        "type": "string",
+                        "default": "google",
+                        "name": "provider",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "default": false,
+                        "name": "requiresSuitability",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "format": "date-time",
+                        "name": "updatedAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Control how many Clusters are returned (default 0, meaning all)",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Control the offset for the returned Clusters (default 0)",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/sherlock.ClusterV3"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a Cluster.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Clusters"
+                ],
+                "summary": "Create a Cluster",
+                "parameters": [
+                    {
+                        "description": "The Cluster to create",
+                        "name": "cluster",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.ClusterV3Create"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.ClusterV3"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/clusters/v3/{selector}": {
+            "get": {
+                "description": "Get an individual Cluster.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Clusters"
+                ],
+                "summary": "Get an individual Cluster",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The selector of the Cluster, which can be either a numeric ID or the name.",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.ClusterV3"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete an individual Cluster by its ID.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Clusters"
+                ],
+                "summary": "Delete an individual Cluster",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The selector of the Cluster, which can be either a numeric ID or the name.",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.ClusterV3"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Edit an individual Cluster.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Clusters"
+                ],
+                "summary": "Edit an individual Cluster",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The selector of the Cluster, which can be either a numeric ID or the name.",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "The edits to make to the Cluster",
+                        "name": "cluster",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.ClusterV3Edit"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.ClusterV3"
                         }
                     },
                     "400": {
@@ -9556,6 +9972,131 @@ const docTemplate = `{
                 },
                 "terminalAt": {
                     "type": "string"
+                }
+            }
+        },
+        "sherlock.ClusterV3": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "description": "Required when creating",
+                    "type": "string"
+                },
+                "azureSubscription": {
+                    "description": "Required when creating if provider is 'azure'",
+                    "type": "string"
+                },
+                "base": {
+                    "description": "Required when creating",
+                    "type": "string"
+                },
+                "ciIdentifier": {
+                    "$ref": "#/definitions/sherlock.CiIdentifierV3"
+                },
+                "createdAt": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "googleProject": {
+                    "description": "Required when creating if provider is 'google'",
+                    "type": "string"
+                },
+                "helmfileRef": {
+                    "type": "string",
+                    "default": "HEAD"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "location": {
+                    "type": "string",
+                    "default": "us-central1-a"
+                },
+                "name": {
+                    "description": "Required when creating",
+                    "type": "string"
+                },
+                "provider": {
+                    "type": "string",
+                    "default": "google",
+                    "enum": [
+                        "google",
+                        "azure"
+                    ]
+                },
+                "requiresSuitability": {
+                    "type": "boolean",
+                    "default": false
+                },
+                "updatedAt": {
+                    "type": "string",
+                    "format": "date-time"
+                }
+            }
+        },
+        "sherlock.ClusterV3Create": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "description": "Required when creating",
+                    "type": "string"
+                },
+                "azureSubscription": {
+                    "description": "Required when creating if provider is 'azure'",
+                    "type": "string"
+                },
+                "base": {
+                    "description": "Required when creating",
+                    "type": "string"
+                },
+                "googleProject": {
+                    "description": "Required when creating if provider is 'google'",
+                    "type": "string"
+                },
+                "helmfileRef": {
+                    "type": "string",
+                    "default": "HEAD"
+                },
+                "location": {
+                    "type": "string",
+                    "default": "us-central1-a"
+                },
+                "name": {
+                    "description": "Required when creating",
+                    "type": "string"
+                },
+                "provider": {
+                    "type": "string",
+                    "default": "google",
+                    "enum": [
+                        "google",
+                        "azure"
+                    ]
+                },
+                "requiresSuitability": {
+                    "type": "boolean",
+                    "default": false
+                }
+            }
+        },
+        "sherlock.ClusterV3Edit": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "description": "Required when creating",
+                    "type": "string"
+                },
+                "base": {
+                    "description": "Required when creating",
+                    "type": "string"
+                },
+                "helmfileRef": {
+                    "type": "string",
+                    "default": "HEAD"
+                },
+                "requiresSuitability": {
+                    "type": "boolean",
+                    "default": false
                 }
             }
         },

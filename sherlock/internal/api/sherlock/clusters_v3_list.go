@@ -17,8 +17,8 @@ import (
 //	@tags			Clusters
 //	@produce		json
 //	@param			filter					query		ClusterV3	false	"Filter the returned Clusters"
-//	@param			limit					query		int		false	"Control how many Clusters are returned (default 0, meaning all)"
-//	@param			offset					query		int		false	"Control the offset for the returned Clusters (default 0)"
+//	@param			limit					query		int			false	"Control how many Clusters are returned (default 0, meaning all)"
+//	@param			offset					query		int			false	"Control the offset for the returned Clusters (default 0)"
 //	@success		200						{array}		ClusterV3
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/clusters/v3 [get]
