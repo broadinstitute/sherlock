@@ -214,6 +214,148 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "patch": {
+                "description": "Edit an individual AppVersion.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AppVersions"
+                ],
+                "summary": "Edit an individual AppVersion",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The selector of the AppVersion, which can be either a numeric ID or chart/version.",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "The edits to make to the AppVersion",
+                        "name": "appVersion",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.AppVersionV3Edit"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.AppVersionV3"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/appVersions/v3": {
+            "post": {
+                "description": "Upsert a AppVersion.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AppVersions"
+                ],
+                "summary": "Upsert a AppVersion",
+                "parameters": [
+                    {
+                        "description": "The AppVersion to upsert",
+                        "name": "appVersion",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.AppVersionV3Create"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.AppVersionV3"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
             }
         },
         "/api/charts/v3": {
@@ -9586,6 +9728,41 @@ const docTemplate = `{
                 "updatedAt": {
                     "type": "string",
                     "format": "date-time"
+                }
+            }
+        },
+        "sherlock.AppVersionV3Create": {
+            "type": "object",
+            "properties": {
+                "appVersion": {
+                    "description": "Required when creating",
+                    "type": "string"
+                },
+                "chart": {
+                    "description": "Required when creating",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "Generally the Git commit message",
+                    "type": "string"
+                },
+                "gitBranch": {
+                    "type": "string"
+                },
+                "gitCommit": {
+                    "type": "string"
+                },
+                "parentAppVersion": {
+                    "type": "string"
+                }
+            }
+        },
+        "sherlock.AppVersionV3Edit": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "description": "Generally the Git commit message",
+                    "type": "string"
                 }
             }
         },

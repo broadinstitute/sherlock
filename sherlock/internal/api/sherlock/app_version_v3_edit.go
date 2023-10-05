@@ -16,8 +16,8 @@ import (
 //	@description	Edit an individual AppVersion.
 //	@tags			AppVersions
 //	@produce		json
-//	@param			selector				path		string		true	"The selector of the AppVersion, which can be either a numeric ID or chart/version."
-//	@param			appVersion					body		AppVersionV3Edit	true	"The edits to make to the AppVersion"
+//	@param			selector				path		string				true	"The selector of the AppVersion, which can be either a numeric ID or chart/version."
+//	@param			appVersion				body		AppVersionV3Edit	true	"The edits to make to the AppVersion"
 //	@success		200						{object}	AppVersionV3
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/app-versions/v3/{selector} [patch]

@@ -85,6 +85,30 @@ definitions:
         format: date-time
         type: string
     type: object
+  sherlock.AppVersionV3Create:
+    properties:
+      appVersion:
+        description: Required when creating
+        type: string
+      chart:
+        description: Required when creating
+        type: string
+      description:
+        description: Generally the Git commit message
+        type: string
+      gitBranch:
+        type: string
+      gitCommit:
+        type: string
+      parentAppVersion:
+        type: string
+    type: object
+  sherlock.AppVersionV3Edit:
+    properties:
+      description:
+        description: Generally the Git commit message
+        type: string
+    type: object
   sherlock.ChartV3:
     properties:
       appImageGitMainBranch:
@@ -2085,6 +2109,101 @@ paths:
           schema:
             $ref: '#/definitions/errors.ErrorResponse'
       summary: Get an individual AppVersion
+      tags:
+      - AppVersions
+    patch:
+      description: Edit an individual AppVersion.
+      parameters:
+      - description: The selector of the AppVersion, which can be either a numeric
+          ID or chart/version.
+        in: path
+        name: selector
+        required: true
+        type: string
+      - description: The edits to make to the AppVersion
+        in: body
+        name: appVersion
+        required: true
+        schema:
+          $ref: '#/definitions/sherlock.AppVersionV3Edit'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/sherlock.AppVersionV3'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Edit an individual AppVersion
+      tags:
+      - AppVersions
+  /api/appVersions/v3:
+    post:
+      consumes:
+      - application/json
+      description: Upsert a AppVersion.
+      parameters:
+      - description: The AppVersion to upsert
+        in: body
+        name: appVersion
+        required: true
+        schema:
+          $ref: '#/definitions/sherlock.AppVersionV3Create'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/sherlock.AppVersionV3'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Upsert a AppVersion
       tags:
       - AppVersions
   /api/charts/v3:

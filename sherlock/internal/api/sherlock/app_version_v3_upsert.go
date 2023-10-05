@@ -18,7 +18,7 @@ import (
 //	@tags			AppVersions
 //	@accept			json
 //	@produce		json
-//	@param			appVersion					body		AppVersionV3Create	true	"The AppVersion to upsert"
+//	@param			appVersion				body		AppVersionV3Create	true	"The AppVersion to upsert"
 //	@success		201						{object}	AppVersionV3
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/appVersions/v3 [post]

@@ -8,6 +8,8 @@ export * from './MiscVersionResponse';
 export * from './PagerdutyAlertSummary';
 export * from './PagerdutySendAlertResponse';
 export * from './SherlockAppVersionV3';
+export * from './SherlockAppVersionV3Create';
+export * from './SherlockAppVersionV3Edit';
 export * from './SherlockChartV3';
 export * from './SherlockChartV3Create';
 export * from './SherlockChartV3Edit';

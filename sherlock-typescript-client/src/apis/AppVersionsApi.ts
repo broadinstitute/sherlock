@@ -17,6 +17,8 @@ import * as runtime from '../runtime';
 import type {
   ErrorsErrorResponse,
   SherlockAppVersionV3,
+  SherlockAppVersionV3Create,
+  SherlockAppVersionV3Edit,
   V2controllersAppVersion,
   V2controllersCreatableAppVersion,
   V2controllersEditableAppVersion,
@@ -26,6 +28,10 @@ import {
     ErrorsErrorResponseToJSON,
     SherlockAppVersionV3FromJSON,
     SherlockAppVersionV3ToJSON,
+    SherlockAppVersionV3CreateFromJSON,
+    SherlockAppVersionV3CreateToJSON,
+    SherlockAppVersionV3EditFromJSON,
+    SherlockAppVersionV3EditToJSON,
     V2controllersAppVersionFromJSON,
     V2controllersAppVersionToJSON,
     V2controllersCreatableAppVersionFromJSON,
@@ -48,8 +54,17 @@ export interface ApiAppVersionsV3GetRequest {
     offset?: number;
 }
 
+export interface ApiAppVersionsV3PostRequest {
+    appVersion: SherlockAppVersionV3Create;
+}
+
 export interface ApiAppVersionsV3SelectorGetRequest {
     selector: string;
+}
+
+export interface ApiAppVersionsV3SelectorPatchRequest {
+    selector: string;
+    appVersion: SherlockAppVersionV3Edit;
 }
 
 export interface ApiV2AppVersionsGetRequest {
@@ -170,6 +185,41 @@ export class AppVersionsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Upsert a AppVersion.
+     * Upsert a AppVersion
+     */
+    async apiAppVersionsV3PostRaw(requestParameters: ApiAppVersionsV3PostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockAppVersionV3>> {
+        if (requestParameters.appVersion === null || requestParameters.appVersion === undefined) {
+            throw new runtime.RequiredError('appVersion','Required parameter requestParameters.appVersion was null or undefined when calling apiAppVersionsV3Post.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/api/appVersions/v3`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: SherlockAppVersionV3CreateToJSON(requestParameters.appVersion),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => SherlockAppVersionV3FromJSON(jsonValue));
+    }
+
+    /**
+     * Upsert a AppVersion.
+     * Upsert a AppVersion
+     */
+    async apiAppVersionsV3Post(requestParameters: ApiAppVersionsV3PostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockAppVersionV3> {
+        const response = await this.apiAppVersionsV3PostRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
      * Get an individual AppVersion.
      * Get an individual AppVersion
      */
@@ -198,6 +248,45 @@ export class AppVersionsApi extends runtime.BaseAPI {
      */
     async apiAppVersionsV3SelectorGet(requestParameters: ApiAppVersionsV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockAppVersionV3> {
         const response = await this.apiAppVersionsV3SelectorGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Edit an individual AppVersion.
+     * Edit an individual AppVersion
+     */
+    async apiAppVersionsV3SelectorPatchRaw(requestParameters: ApiAppVersionsV3SelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockAppVersionV3>> {
+        if (requestParameters.selector === null || requestParameters.selector === undefined) {
+            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiAppVersionsV3SelectorPatch.');
+        }
+
+        if (requestParameters.appVersion === null || requestParameters.appVersion === undefined) {
+            throw new runtime.RequiredError('appVersion','Required parameter requestParameters.appVersion was null or undefined when calling apiAppVersionsV3SelectorPatch.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/api/app-versions/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            method: 'PATCH',
+            headers: headerParameters,
+            query: queryParameters,
+            body: SherlockAppVersionV3EditToJSON(requestParameters.appVersion),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => SherlockAppVersionV3FromJSON(jsonValue));
+    }
+
+    /**
+     * Edit an individual AppVersion.
+     * Edit an individual AppVersion
+     */
+    async apiAppVersionsV3SelectorPatch(requestParameters: ApiAppVersionsV3SelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockAppVersionV3> {
+        const response = await this.apiAppVersionsV3SelectorPatchRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
