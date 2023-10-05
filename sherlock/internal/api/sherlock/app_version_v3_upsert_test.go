@@ -87,6 +87,6 @@ func (s *handlerSuite) TestAppVersionsV3Upsert() {
 		s.Equal("edited description", got2.Description)
 	}
 	if s.NotNil(got2.GitCommit) {
-		s.Equal("123", got2.GitCommit)
+		s.Equal(got.GitCommit, got2.GitCommit)
 	}
 }
