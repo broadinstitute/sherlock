@@ -10,24 +10,24 @@ import (
 	"net/http"
 )
 
-// appVersionsV3List godoc
+// chartVersionsV3List godoc
 //
-//	@summary		List AppVersions matching a filter
-//	@description	List AppVersions matching a filter.
-//	@tags			AppVersions
+//	@summary		List ChartVersions matching a filter
+//	@description	List ChartVersions matching a filter.
+//	@tags			ChartVersions
 //	@produce		json
-//	@param			filter					query		AppVersionV3	false	"Filter the returned AppVersions"
-//	@param			limit					query		int				false	"Control how many AppVersions are returned (default 100)"
-//	@param			offset					query		int				false	"Control the offset for the returned AppVersions (default 0)"
-//	@success		200						{array}		AppVersionV3
+//	@param			filter					query		ChartVersionV3	false	"Filter the returned ChartVersions"
+//	@param			limit					query		int		false	"Control how many ChartVersions are returned (default 100)"
+//	@param			offset					query		int		false	"Control the offset for the returned ChartVersions (default 0)"
+//	@success		200						{array}		ChartVersionV3
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
-//	@router			/api/app-versions/v3 [get]
-func appVersionsV3List(ctx *gin.Context) {
+//	@router			/api/chart-versions/v3 [get]
+func chartVersionsV3List(ctx *gin.Context) {
 	db, err := authentication.MustUseDB(ctx)
 	if err != nil {
 		return
 	}
-	var filter AppVersionV3
+	var filter ChartVersionV3
 	if err = ctx.ShouldBindQuery(&filter); err != nil {
 		errors.AbortRequest(ctx, err)
 		return
@@ -48,7 +48,7 @@ func appVersionsV3List(ctx *gin.Context) {
 		errors.AbortRequest(ctx, fmt.Errorf("(%s) %v", errors.BadRequest, err))
 		return
 	}
-	var results []models.AppVersion
+	var results []models.ChartVersion
 	if err = db.
 		Where(&modelFilter).
 		Limit(limit).
@@ -58,5 +58,5 @@ func appVersionsV3List(ctx *gin.Context) {
 		errors.AbortRequest(ctx, err)
 		return
 	}
-	ctx.JSON(http.StatusOK, utils.Map(results, appVersionFromModel))
+	ctx.JSON(http.StatusOK, utils.Map(results, chartVersionFromModel))
 }

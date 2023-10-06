@@ -54,6 +54,12 @@ func ConfigureRoutes(apiRouter *gin.RouterGroup) {
 	apiRouter.GET("charts/v3", chartsV3List)
 	apiRouter.PATCH("charts/v3/*selector", chartsV3Edit)
 
+	apiRouter.GET("chart-versions/v3/*selector", chartVersionsV3Get)
+	apiRouter.GET("chart-versions/v3", chartVersionsV3List)
+	apiRouter.PATCH("chart-versions/v3/*selector", chartVersionsV3Edit)
+	apiRouter.PUT("chart-versions/v3", chartVersionsV3Upsert)
+	apiRouter.GET("chart-versions/procedures/v3/changelog", chartVersionsProceduresV3Changelog)
+
 	apiRouter.GET("clusters/v3/*selector", clustersV3Get)
 	apiRouter.POST("clusters/v3", clustersV3Create)
 	apiRouter.DELETE("clusters/v3/*selector", clustersV3Delete)
