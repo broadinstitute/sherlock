@@ -81,9 +81,7 @@ func chartVersionFromModel(model models.ChartVersion) ChartVersionV3 {
 	}
 	var parentChartVersion *ChartVersionV3
 	var parentChartVersionString string
-	println("OUTSIDE")
 	if model.ParentChartVersion != nil {
-		println("INSIDE")
 		parentChartVersion = utils.PointerTo(chartVersionFromModel(*model.ParentChartVersion))
 		if chartName != "" {
 			parentChartVersionString = fmt.Sprintf("%s/%s", chartName, parentChartVersion.ChartVersion)

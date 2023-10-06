@@ -53,7 +53,7 @@ func chartVersionsV3List(ctx *gin.Context) {
 		Where(&modelFilter).
 		Limit(limit).
 		Offset(offset).
-		Order("id asc").
+		Order("created_at desc").
 		Find(&results).Error; err != nil {
 		errors.AbortRequest(ctx, err)
 		return
