@@ -18,7 +18,7 @@ import (
 //	@tags			ChartVersions
 //	@accept			json
 //	@produce		json
-//	@param			chartVersion					body		ChartVersionV3Create	true	"The ChartVersion to upsert"
+//	@param			chartVersion			body		ChartVersionV3Create	true	"The ChartVersion to upsert"
 //	@success		201						{object}	ChartVersionV3
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/chartVersions/v3 [post]

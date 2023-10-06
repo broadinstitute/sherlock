@@ -17,8 +17,8 @@ import (
 //	@tags			ChartVersions
 //	@produce		json
 //	@param			filter					query		ChartVersionV3	false	"Filter the returned ChartVersions"
-//	@param			limit					query		int		false	"Control how many ChartVersions are returned (default 100)"
-//	@param			offset					query		int		false	"Control the offset for the returned ChartVersions (default 0)"
+//	@param			limit					query		int				false	"Control how many ChartVersions are returned (default 100)"
+//	@param			offset					query		int				false	"Control the offset for the returned ChartVersions (default 0)"
 //	@success		200						{array}		ChartVersionV3
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/chart-versions/v3 [get]

@@ -239,6 +239,63 @@ definitions:
       playbookURL:
         type: string
     type: object
+  sherlock.ChartVersionV3:
+    properties:
+      chart:
+        description: Required when creating
+        type: string
+      chartInfo:
+        $ref: '#/definitions/sherlock.ChartV3'
+      chartVersion:
+        description: Required when creating
+        type: string
+      ciIdentifier:
+        $ref: '#/definitions/sherlock.CiIdentifierV3'
+      createdAt:
+        format: date-time
+        type: string
+      description:
+        description: Generally the Git commit message
+        type: string
+      id:
+        type: integer
+      parentChartVersion:
+        type: string
+      parentChartVersionInfo:
+        type: object
+      updatedAt:
+        format: date-time
+        type: string
+    type: object
+  sherlock.ChartVersionV3ChangelogResponse:
+    properties:
+      changelog:
+        items:
+          $ref: '#/definitions/sherlock.ChartVersionV3'
+        type: array
+      complete:
+        type: boolean
+    type: object
+  sherlock.ChartVersionV3Create:
+    properties:
+      chart:
+        description: Required when creating
+        type: string
+      chartVersion:
+        description: Required when creating
+        type: string
+      description:
+        description: Generally the Git commit message
+        type: string
+      parentChartVersion:
+        type: string
+    type: object
+  sherlock.ChartVersionV3Edit:
+    properties:
+      description:
+        description: Generally the Git commit message
+        type: string
+    type: object
   sherlock.CiIdentifierV3:
     properties:
       ciRuns:
@@ -2266,6 +2323,270 @@ paths:
       summary: Upsert a AppVersion
       tags:
       - AppVersions
+  /api/chart-versions/procedures/v3/changelog:
+    get:
+      description: Get the path through parent references from a child ChartVersion
+        (inclusive) to a parent ChartVersion (exclusive), if possible. Because parent
+        references point from newer children to older parents, the newer ChartVersion
+        should be the child. The result will always exclude the parent.
+      parameters:
+      - description: The selector of the newer ChartVersion for the changelog
+        in: query
+        name: child
+        required: true
+        type: string
+      - description: The selector of the older ChartVersion for the changelog
+        in: query
+        name: parent
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/sherlock.ChartVersionV3ChangelogResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Get a changelog between two ChartVersions
+      tags:
+      - ChartVersions
+  /api/chart-versions/v3:
+    get:
+      description: List ChartVersions matching a filter.
+      parameters:
+      - description: Required when creating
+        in: query
+        name: chart
+        type: string
+      - description: Required when creating
+        in: query
+        name: chartVersion
+        type: string
+      - format: date-time
+        in: query
+        name: createdAt
+        type: string
+      - description: Generally the Git commit message
+        in: query
+        name: description
+        type: string
+      - in: query
+        name: id
+        type: integer
+      - in: query
+        name: parentChartVersion
+        type: string
+      - format: date-time
+        in: query
+        name: updatedAt
+        type: string
+      - description: Control how many ChartVersions are returned (default 100)
+        in: query
+        name: limit
+        type: integer
+      - description: Control the offset for the returned ChartVersions (default 0)
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/sherlock.ChartVersionV3'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: List ChartVersions matching a filter
+      tags:
+      - ChartVersions
+  /api/chart-versions/v3/{selector}:
+    get:
+      description: Get an individual ChartVersion.
+      parameters:
+      - description: The selector of the ChartVersion, which can be either a numeric
+          ID or chart/version.
+        in: path
+        name: selector
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/sherlock.ChartVersionV3'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Get an individual ChartVersion
+      tags:
+      - ChartVersions
+    patch:
+      description: Edit an individual ChartVersion.
+      parameters:
+      - description: The selector of the ChartVersion, which can be either a numeric
+          ID or chart/version.
+        in: path
+        name: selector
+        required: true
+        type: string
+      - description: The edits to make to the ChartVersion
+        in: body
+        name: chartVersion
+        required: true
+        schema:
+          $ref: '#/definitions/sherlock.ChartVersionV3Edit'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/sherlock.ChartVersionV3'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Edit an individual ChartVersion
+      tags:
+      - ChartVersions
+  /api/chartVersions/v3:
+    post:
+      consumes:
+      - application/json
+      description: Upsert a ChartVersion.
+      parameters:
+      - description: The ChartVersion to upsert
+        in: body
+        name: chartVersion
+        required: true
+        schema:
+          $ref: '#/definitions/sherlock.ChartVersionV3Create'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/sherlock.ChartVersionV3'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Upsert a ChartVersion
+      tags:
+      - ChartVersions
   /api/charts/v3:
     get:
       description: List Charts matching a filter.

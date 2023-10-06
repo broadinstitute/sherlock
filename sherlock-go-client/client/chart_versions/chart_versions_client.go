@@ -30,6 +30,12 @@ type ClientOption func(*runtime.ClientOperation)
 
 // ClientService is the interface for Client methods
 type ClientService interface {
+	GetAPIChartVersionsProceduresV3Changelog(params *GetAPIChartVersionsProceduresV3ChangelogParams, opts ...ClientOption) (*GetAPIChartVersionsProceduresV3ChangelogOK, error)
+
+	GetAPIChartVersionsV3(params *GetAPIChartVersionsV3Params, opts ...ClientOption) (*GetAPIChartVersionsV3OK, error)
+
+	GetAPIChartVersionsV3Selector(params *GetAPIChartVersionsV3SelectorParams, opts ...ClientOption) (*GetAPIChartVersionsV3SelectorOK, error)
+
 	GetAPIV2ChartVersions(params *GetAPIV2ChartVersionsParams, opts ...ClientOption) (*GetAPIV2ChartVersionsOK, error)
 
 	GetAPIV2ChartVersionsSelector(params *GetAPIV2ChartVersionsSelectorParams, opts ...ClientOption) (*GetAPIV2ChartVersionsSelectorOK, error)
@@ -38,13 +44,137 @@ type ClientService interface {
 
 	GetAPIV2SelectorsChartVersionsSelector(params *GetAPIV2SelectorsChartVersionsSelectorParams, opts ...ClientOption) (*GetAPIV2SelectorsChartVersionsSelectorOK, error)
 
+	PatchAPIChartVersionsV3Selector(params *PatchAPIChartVersionsV3SelectorParams, opts ...ClientOption) (*PatchAPIChartVersionsV3SelectorOK, error)
+
 	PatchAPIV2ChartVersionsSelector(params *PatchAPIV2ChartVersionsSelectorParams, opts ...ClientOption) (*PatchAPIV2ChartVersionsSelectorOK, error)
+
+	PostAPIChartVersionsV3(params *PostAPIChartVersionsV3Params, opts ...ClientOption) (*PostAPIChartVersionsV3Created, error)
 
 	PostAPIV2ChartVersions(params *PostAPIV2ChartVersionsParams, opts ...ClientOption) (*PostAPIV2ChartVersionsOK, *PostAPIV2ChartVersionsCreated, error)
 
 	PutAPIV2ChartVersionsSelector(params *PutAPIV2ChartVersionsSelectorParams, opts ...ClientOption) (*PutAPIV2ChartVersionsSelectorOK, *PutAPIV2ChartVersionsSelectorCreated, error)
 
 	SetTransport(transport runtime.ClientTransport)
+}
+
+/*
+  GetAPIChartVersionsProceduresV3Changelog gets a changelog between two chart versions
+
+  Get the path through parent references from a child ChartVersion (inclusive) to a parent ChartVersion (exclusive), if possible. Because parent references point from newer children to older parents, the newer ChartVersion should be the child. The result will always exclude the parent.
+*/
+func (a *Client) GetAPIChartVersionsProceduresV3Changelog(params *GetAPIChartVersionsProceduresV3ChangelogParams, opts ...ClientOption) (*GetAPIChartVersionsProceduresV3ChangelogOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetAPIChartVersionsProceduresV3ChangelogParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "GetAPIChartVersionsProceduresV3Changelog",
+		Method:             "GET",
+		PathPattern:        "/api/chart-versions/procedures/v3/changelog",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &GetAPIChartVersionsProceduresV3ChangelogReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*GetAPIChartVersionsProceduresV3ChangelogOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for GetAPIChartVersionsProceduresV3Changelog: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+  GetAPIChartVersionsV3 lists chart versions matching a filter
+
+  List ChartVersions matching a filter.
+*/
+func (a *Client) GetAPIChartVersionsV3(params *GetAPIChartVersionsV3Params, opts ...ClientOption) (*GetAPIChartVersionsV3OK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetAPIChartVersionsV3Params()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "GetAPIChartVersionsV3",
+		Method:             "GET",
+		PathPattern:        "/api/chart-versions/v3",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &GetAPIChartVersionsV3Reader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*GetAPIChartVersionsV3OK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for GetAPIChartVersionsV3: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+  GetAPIChartVersionsV3Selector gets an individual chart version
+
+  Get an individual ChartVersion.
+*/
+func (a *Client) GetAPIChartVersionsV3Selector(params *GetAPIChartVersionsV3SelectorParams, opts ...ClientOption) (*GetAPIChartVersionsV3SelectorOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetAPIChartVersionsV3SelectorParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "GetAPIChartVersionsV3Selector",
+		Method:             "GET",
+		PathPattern:        "/api/chart-versions/v3/{selector}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &GetAPIChartVersionsV3SelectorReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*GetAPIChartVersionsV3SelectorOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for GetAPIChartVersionsV3Selector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
 }
 
 /*
@@ -209,6 +339,46 @@ func (a *Client) GetAPIV2SelectorsChartVersionsSelector(params *GetAPIV2Selector
 }
 
 /*
+  PatchAPIChartVersionsV3Selector edits an individual chart version
+
+  Edit an individual ChartVersion.
+*/
+func (a *Client) PatchAPIChartVersionsV3Selector(params *PatchAPIChartVersionsV3SelectorParams, opts ...ClientOption) (*PatchAPIChartVersionsV3SelectorOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewPatchAPIChartVersionsV3SelectorParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "PatchAPIChartVersionsV3Selector",
+		Method:             "PATCH",
+		PathPattern:        "/api/chart-versions/v3/{selector}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &PatchAPIChartVersionsV3SelectorReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*PatchAPIChartVersionsV3SelectorOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for PatchAPIChartVersionsV3Selector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
   PatchAPIV2ChartVersionsSelector edits a chart version entry
 
   Edit an existing ChartVersion entry via one its "selectors": chart/version or numeric ID. Note that only mutable fields are available here, immutable fields can only be set using /create.
@@ -245,6 +415,46 @@ func (a *Client) PatchAPIV2ChartVersionsSelector(params *PatchAPIV2ChartVersions
 	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for PatchAPIV2ChartVersionsSelector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+  PostAPIChartVersionsV3 upserts a chart version
+
+  Upsert a ChartVersion.
+*/
+func (a *Client) PostAPIChartVersionsV3(params *PostAPIChartVersionsV3Params, opts ...ClientOption) (*PostAPIChartVersionsV3Created, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewPostAPIChartVersionsV3Params()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "PostAPIChartVersionsV3",
+		Method:             "POST",
+		PathPattern:        "/api/chartVersions/v3",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &PostAPIChartVersionsV3Reader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*PostAPIChartVersionsV3Created)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for PostAPIChartVersionsV3: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 

@@ -32,6 +32,10 @@ src/models/SherlockAppVersionV3Edit.ts
 src/models/SherlockChartV3.ts
 src/models/SherlockChartV3Create.ts
 src/models/SherlockChartV3Edit.ts
+src/models/SherlockChartVersionV3.ts
+src/models/SherlockChartVersionV3ChangelogResponse.ts
+src/models/SherlockChartVersionV3Create.ts
+src/models/SherlockChartVersionV3Edit.ts
 src/models/SherlockCiIdentifierV3.ts
 src/models/SherlockCiRunV3.ts
 src/models/SherlockCiRunV3Upsert.ts

@@ -24,7 +24,7 @@ type ChartVersionV3ChangelogResponse struct {
 //	@produce		json
 //	@param			child					query		string	true	"The selector of the newer ChartVersion for the changelog"
 //	@param			parent					query		string	true	"The selector of the older ChartVersion for the changelog"
-//	@success		200  					{object}	ChartVersionV3ChangelogResponse
+//	@success		200						{object}	ChartVersionV3ChangelogResponse
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/chart-versions/procedures/v3/changelog [get]
 func chartVersionsProceduresV3Changelog(ctx *gin.Context) {

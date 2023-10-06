@@ -430,6 +430,398 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/chart-versions/procedures/v3/changelog": {
+            "get": {
+                "description": "Get the path through parent references from a child ChartVersion (inclusive) to a parent ChartVersion (exclusive), if possible. Because parent references point from newer children to older parents, the newer ChartVersion should be the child. The result will always exclude the parent.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ChartVersions"
+                ],
+                "summary": "Get a changelog between two ChartVersions",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The selector of the newer ChartVersion for the changelog",
+                        "name": "child",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "The selector of the older ChartVersion for the changelog",
+                        "name": "parent",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.ChartVersionV3ChangelogResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/chart-versions/v3": {
+            "get": {
+                "description": "List ChartVersions matching a filter.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ChartVersions"
+                ],
+                "summary": "List ChartVersions matching a filter",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Required when creating",
+                        "name": "chart",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Required when creating",
+                        "name": "chartVersion",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "format": "date-time",
+                        "name": "createdAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Generally the Git commit message",
+                        "name": "description",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "parentChartVersion",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "format": "date-time",
+                        "name": "updatedAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Control how many ChartVersions are returned (default 100)",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Control the offset for the returned ChartVersions (default 0)",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/sherlock.ChartVersionV3"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/chart-versions/v3/{selector}": {
+            "get": {
+                "description": "Get an individual ChartVersion.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ChartVersions"
+                ],
+                "summary": "Get an individual ChartVersion",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The selector of the ChartVersion, which can be either a numeric ID or chart/version.",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.ChartVersionV3"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Edit an individual ChartVersion.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ChartVersions"
+                ],
+                "summary": "Edit an individual ChartVersion",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The selector of the ChartVersion, which can be either a numeric ID or chart/version.",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "The edits to make to the ChartVersion",
+                        "name": "chartVersion",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.ChartVersionV3Edit"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.ChartVersionV3"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/chartVersions/v3": {
+            "post": {
+                "description": "Upsert a ChartVersion.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ChartVersions"
+                ],
+                "summary": "Upsert a ChartVersion",
+                "parameters": [
+                    {
+                        "description": "The ChartVersion to upsert",
+                        "name": "chartVersion",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.ChartVersionV3Create"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.ChartVersionV3"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/charts/v3": {
             "get": {
                 "description": "List Charts matching a filter.",
@@ -10011,6 +10403,89 @@ const docTemplate = `{
                     "default": false
                 },
                 "playbookURL": {
+                    "type": "string"
+                }
+            }
+        },
+        "sherlock.ChartVersionV3": {
+            "type": "object",
+            "properties": {
+                "chart": {
+                    "description": "Required when creating",
+                    "type": "string"
+                },
+                "chartInfo": {
+                    "$ref": "#/definitions/sherlock.ChartV3"
+                },
+                "chartVersion": {
+                    "description": "Required when creating",
+                    "type": "string"
+                },
+                "ciIdentifier": {
+                    "$ref": "#/definitions/sherlock.CiIdentifierV3"
+                },
+                "createdAt": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "description": {
+                    "description": "Generally the Git commit message",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "parentChartVersion": {
+                    "type": "string"
+                },
+                "parentChartVersionInfo": {
+                    "type": "object"
+                },
+                "updatedAt": {
+                    "type": "string",
+                    "format": "date-time"
+                }
+            }
+        },
+        "sherlock.ChartVersionV3ChangelogResponse": {
+            "type": "object",
+            "properties": {
+                "changelog": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/sherlock.ChartVersionV3"
+                    }
+                },
+                "complete": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "sherlock.ChartVersionV3Create": {
+            "type": "object",
+            "properties": {
+                "chart": {
+                    "description": "Required when creating",
+                    "type": "string"
+                },
+                "chartVersion": {
+                    "description": "Required when creating",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "Generally the Git commit message",
+                    "type": "string"
+                },
+                "parentChartVersion": {
+                    "type": "string"
+                }
+            }
+        },
+        "sherlock.ChartVersionV3Edit": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "description": "Generally the Git commit message",
                     "type": "string"
                 }
             }
