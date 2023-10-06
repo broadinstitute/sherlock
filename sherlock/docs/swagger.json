@@ -24,6 +24,78 @@
     },
     "host": "sherlock.dsp-devops.broadinstitute.org",
     "paths": {
+        "/api/app-versions/procedures/v3/changelog": {
+            "get": {
+                "description": "Get the path through parent references from a child AppVersion (inclusive) to a parent AppVersion (exclusive), if possible. Because parent references point from newer children to older parents, the newer AppVersion should be the child. The result will always exclude the parent.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AppVersions"
+                ],
+                "summary": "Get a changelog between two AppVersions",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The selector of the newer AppVersion for the changelog",
+                        "name": "child",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "The selector of the older AppVersion for the changelog",
+                        "name": "parent",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.AppVersionV3ChangelogResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/app-versions/v3": {
             "get": {
                 "description": "List AppVersions matching a filter.",
@@ -9724,6 +9796,20 @@
                 "updatedAt": {
                     "type": "string",
                     "format": "date-time"
+                }
+            }
+        },
+        "sherlock.AppVersionV3ChangelogResponse": {
+            "type": "object",
+            "properties": {
+                "changelog": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/sherlock.AppVersionV3"
+                    }
+                },
+                "complete": {
+                    "type": "boolean"
                 }
             }
         },

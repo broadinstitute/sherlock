@@ -17,6 +17,7 @@ import * as runtime from '../runtime';
 import type {
   ErrorsErrorResponse,
   SherlockAppVersionV3,
+  SherlockAppVersionV3ChangelogResponse,
   SherlockAppVersionV3Create,
   SherlockAppVersionV3Edit,
   V2controllersAppVersion,
@@ -28,6 +29,8 @@ import {
     ErrorsErrorResponseToJSON,
     SherlockAppVersionV3FromJSON,
     SherlockAppVersionV3ToJSON,
+    SherlockAppVersionV3ChangelogResponseFromJSON,
+    SherlockAppVersionV3ChangelogResponseToJSON,
     SherlockAppVersionV3CreateFromJSON,
     SherlockAppVersionV3CreateToJSON,
     SherlockAppVersionV3EditFromJSON,
@@ -39,6 +42,11 @@ import {
     V2controllersEditableAppVersionFromJSON,
     V2controllersEditableAppVersionToJSON,
 } from '../models/index';
+
+export interface ApiAppVersionsProceduresV3ChangelogGetRequest {
+    child: string;
+    parent: string;
+}
 
 export interface ApiAppVersionsV3GetRequest {
     appVersion?: string;
@@ -111,6 +119,50 @@ export interface ApiV2SelectorsAppVersionsSelectorGetRequest {
  * 
  */
 export class AppVersionsApi extends runtime.BaseAPI {
+
+    /**
+     * Get the path through parent references from a child AppVersion (inclusive) to a parent AppVersion (exclusive), if possible. Because parent references point from newer children to older parents, the newer AppVersion should be the child. The result will always exclude the parent.
+     * Get a changelog between two AppVersions
+     */
+    async apiAppVersionsProceduresV3ChangelogGetRaw(requestParameters: ApiAppVersionsProceduresV3ChangelogGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockAppVersionV3ChangelogResponse>> {
+        if (requestParameters.child === null || requestParameters.child === undefined) {
+            throw new runtime.RequiredError('child','Required parameter requestParameters.child was null or undefined when calling apiAppVersionsProceduresV3ChangelogGet.');
+        }
+
+        if (requestParameters.parent === null || requestParameters.parent === undefined) {
+            throw new runtime.RequiredError('parent','Required parameter requestParameters.parent was null or undefined when calling apiAppVersionsProceduresV3ChangelogGet.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.child !== undefined) {
+            queryParameters['child'] = requestParameters.child;
+        }
+
+        if (requestParameters.parent !== undefined) {
+            queryParameters['parent'] = requestParameters.parent;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/app-versions/procedures/v3/changelog`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => SherlockAppVersionV3ChangelogResponseFromJSON(jsonValue));
+    }
+
+    /**
+     * Get the path through parent references from a child AppVersion (inclusive) to a parent AppVersion (exclusive), if possible. Because parent references point from newer children to older parents, the newer AppVersion should be the child. The result will always exclude the parent.
+     * Get a changelog between two AppVersions
+     */
+    async apiAppVersionsProceduresV3ChangelogGet(requestParameters: ApiAppVersionsProceduresV3ChangelogGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockAppVersionV3ChangelogResponse> {
+        const response = await this.apiAppVersionsProceduresV3ChangelogGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
 
     /**
      * List AppVersions matching a filter.

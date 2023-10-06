@@ -24,7 +24,7 @@ type AppVersionV3ChangelogResponse struct {
 //	@produce		json
 //	@param			child					query		string	true	"The selector of the newer AppVersion for the changelog"
 //	@param			parent					query		string	true	"The selector of the older AppVersion for the changelog"
-//	@success		200  					{object}	AppVersionV3ChangelogResponse
+//	@success		200						{object}	AppVersionV3ChangelogResponse
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/app-versions/procedures/v3/changelog [get]
 func appVersionsProceduresV3Changelog(ctx *gin.Context) {

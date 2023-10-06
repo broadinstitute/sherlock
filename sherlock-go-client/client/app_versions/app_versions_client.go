@@ -30,6 +30,8 @@ type ClientOption func(*runtime.ClientOperation)
 
 // ClientService is the interface for Client methods
 type ClientService interface {
+	GetAPIAppVersionsProceduresV3Changelog(params *GetAPIAppVersionsProceduresV3ChangelogParams, opts ...ClientOption) (*GetAPIAppVersionsProceduresV3ChangelogOK, error)
+
 	GetAPIAppVersionsV3(params *GetAPIAppVersionsV3Params, opts ...ClientOption) (*GetAPIAppVersionsV3OK, error)
 
 	GetAPIAppVersionsV3Selector(params *GetAPIAppVersionsV3SelectorParams, opts ...ClientOption) (*GetAPIAppVersionsV3SelectorOK, error)
@@ -53,6 +55,46 @@ type ClientService interface {
 	PutAPIV2AppVersionsSelector(params *PutAPIV2AppVersionsSelectorParams, opts ...ClientOption) (*PutAPIV2AppVersionsSelectorOK, *PutAPIV2AppVersionsSelectorCreated, error)
 
 	SetTransport(transport runtime.ClientTransport)
+}
+
+/*
+  GetAPIAppVersionsProceduresV3Changelog gets a changelog between two app versions
+
+  Get the path through parent references from a child AppVersion (inclusive) to a parent AppVersion (exclusive), if possible. Because parent references point from newer children to older parents, the newer AppVersion should be the child. The result will always exclude the parent.
+*/
+func (a *Client) GetAPIAppVersionsProceduresV3Changelog(params *GetAPIAppVersionsProceduresV3ChangelogParams, opts ...ClientOption) (*GetAPIAppVersionsProceduresV3ChangelogOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetAPIAppVersionsProceduresV3ChangelogParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "GetAPIAppVersionsProceduresV3Changelog",
+		Method:             "GET",
+		PathPattern:        "/api/app-versions/procedures/v3/changelog",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &GetAPIAppVersionsProceduresV3ChangelogReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*GetAPIAppVersionsProceduresV3ChangelogOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for GetAPIAppVersionsProceduresV3Changelog: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
 }
 
 /*
