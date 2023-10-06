@@ -46,6 +46,7 @@ func ConfigureRoutes(apiRouter *gin.RouterGroup) {
 	apiRouter.GET("app-versions/v3", appVersionsV3List)
 	apiRouter.PATCH("app-versions/v3/*selector", appVersionsV3Edit)
 	apiRouter.PUT("app-versions/v3", appVersionsV3Upsert)
+	apiRouter.GET("app-versions/procedures/v3/changelog", appVersionsProceduresV3Changelog)
 
 	apiRouter.GET("charts/v3/*selector", chartsV3Get)
 	apiRouter.POST("charts/v3", chartsV3Create)
