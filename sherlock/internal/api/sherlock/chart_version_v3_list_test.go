@@ -44,6 +44,7 @@ func (s *handlerSuite) TestChartVersionsV3List_badOffset() {
 }
 
 func (s *handlerSuite) TestChartVersionsV3List() {
+	s.SetNonSuitableTestUserForDB()
 	chart1 := models.Chart{
 		Name:      "name1",
 		ChartRepo: utils.PointerTo("terra-helm"),

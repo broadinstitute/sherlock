@@ -16,18 +16,29 @@ type AppVersion struct {
 	Description        string
 	ParentAppVersion   *AppVersion
 	ParentAppVersionID *uint
+	AuthoredBy         *User
+	AuthoredByID       *uint
 }
 
-func (a AppVersion) TableName() string {
+func (a *AppVersion) TableName() string {
 	return "v2_app_versions"
 }
 
-func (a AppVersion) GetCiIdentifier() CiIdentifier {
+func (a *AppVersion) GetCiIdentifier() CiIdentifier {
 	if a.CiIdentifier != nil {
 		return *a.CiIdentifier
 	} else {
 		return CiIdentifier{ResourceType: "app-version", ResourceID: a.ID}
 	}
+}
+
+func (a *AppVersion) BeforeCreate(tx *gorm.DB) error {
+	if user, err := GetCurrentUserForDB(tx); err != nil {
+		return err
+	} else {
+		a.AuthoredByID = &user.ID
+	}
+	return nil
 }
 
 // GetAppVersionPathIDs iterates from one AppVersion to another, treating each one's parent like a linked list.

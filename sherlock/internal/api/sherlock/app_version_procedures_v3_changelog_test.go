@@ -26,6 +26,7 @@ func (s *handlerSuite) TestAppVersionsProceduresV3Changelog_badParentSelector() 
 }
 
 func (s *handlerSuite) TestAppVersionsProceduresV3Changelog_childNotFound() {
+	s.SetNonSuitableTestUserForDB()
 	chart := models.Chart{Name: "my-chart", ChartRepo: utils.PointerTo("some-repo")}
 	s.NoError(s.DB.Create(&chart).Error)
 	appVersion := models.AppVersion{ChartID: chart.ID, AppVersion: "1"}
@@ -41,6 +42,7 @@ func (s *handlerSuite) TestAppVersionsProceduresV3Changelog_childNotFound() {
 }
 
 func (s *handlerSuite) TestAppVersionsProceduresV3Changelog_parentNotFound() {
+	s.SetNonSuitableTestUserForDB()
 	chart := models.Chart{Name: "my-chart", ChartRepo: utils.PointerTo("some-repo")}
 	s.NoError(s.DB.Create(&chart).Error)
 	appVersion := models.AppVersion{ChartID: chart.ID, AppVersion: "1"}
@@ -56,6 +58,7 @@ func (s *handlerSuite) TestAppVersionsProceduresV3Changelog_parentNotFound() {
 }
 
 func (s *handlerSuite) TestAppVersionsProceduresV3Changelog_sameChildAndParent() {
+	s.SetNonSuitableTestUserForDB()
 	chart := models.Chart{Name: "my-chart", ChartRepo: utils.PointerTo("some-repo")}
 	s.NoError(s.DB.Create(&chart).Error)
 	appVersion := models.AppVersion{ChartID: chart.ID, AppVersion: "1"}
@@ -71,6 +74,7 @@ func (s *handlerSuite) TestAppVersionsProceduresV3Changelog_sameChildAndParent()
 }
 
 func (s *handlerSuite) TestAppVersionsProceduresV3Changelog_noPathFound() {
+	s.SetNonSuitableTestUserForDB()
 	chart := models.Chart{Name: "my-chart", ChartRepo: utils.PointerTo("some-repo")}
 	s.NoError(s.DB.Create(&chart).Error)
 	appVersion1 := models.AppVersion{ChartID: chart.ID, AppVersion: "1"}
@@ -99,6 +103,7 @@ func (s *handlerSuite) TestAppVersionsProceduresV3Changelog_noPathFound() {
 }
 
 func (s *handlerSuite) TestAppVersionsProceduresV3Changelog_findsPath() {
+	s.SetNonSuitableTestUserForDB()
 	chart := models.Chart{Name: "my-chart", ChartRepo: utils.PointerTo("some-repo")}
 	s.NoError(s.DB.Create(&chart).Error)
 	appVersion1 := models.AppVersion{ChartID: chart.ID, AppVersion: "1"}

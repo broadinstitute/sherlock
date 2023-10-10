@@ -14,18 +14,29 @@ type ChartVersion struct {
 	Description          string
 	ParentChartVersion   *ChartVersion
 	ParentChartVersionID *uint
+	AuthoredBy           *User
+	AuthoredByID         *uint
 }
 
-func (c ChartVersion) TableName() string {
+func (c *ChartVersion) TableName() string {
 	return "v2_chart_versions"
 }
 
-func (c ChartVersion) GetCiIdentifier() CiIdentifier {
+func (c *ChartVersion) GetCiIdentifier() CiIdentifier {
 	if c.CiIdentifier != nil {
 		return *c.CiIdentifier
 	} else {
 		return CiIdentifier{ResourceType: "chart-version", ResourceID: c.ID}
 	}
+}
+
+func (c *ChartVersion) BeforeCreate(tx *gorm.DB) error {
+	if user, err := GetCurrentUserForDB(tx); err != nil {
+		return err
+	} else {
+		c.AuthoredByID = &user.ID
+	}
+	return nil
 }
 
 // GetChartVersionPathIDs iterates from one ChartVersion to another, treating each one's parent like a linked list.
