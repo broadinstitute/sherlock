@@ -1,7 +1,9 @@
 package sherlock
 
 import (
+	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
+	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/test_users"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"net/http"
@@ -77,6 +79,14 @@ func (s *handlerSuite) TestChartVersionsV3List() {
 		var got []ChartVersionV3
 		code := s.HandleRequest(
 			s.NewRequest("GET", "/api/chart-versions/v3", nil),
+			&got)
+		s.Equal(http.StatusOK, code)
+		s.Len(got, 3)
+	})
+	s.Run("all via user filter", func() {
+		var got []ChartVersionV3
+		code := s.HandleRequest(
+			s.NewRequest("GET", fmt.Sprintf("/api/chart-versions/v3?authoredBy=%s", test_users.NonSuitableTestUserEmail), nil),
 			&got)
 		s.Equal(http.StatusOK, code)
 		s.Len(got, 3)
