@@ -2,6 +2,7 @@ package sherlock
 
 import (
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
+	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/test_users"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/gin-gonic/gin"
@@ -40,6 +41,7 @@ func (s *handlerSuite) TestChartVersionsV3Upsert_error() {
 }
 
 func (s *handlerSuite) TestChartVersionsV3Upsert() {
+	s.SetNonSuitableTestUserForDB()
 	chart := models.Chart{
 		Name:      "chart-name",
 		ChartRepo: utils.PointerTo("terra-helm"),
@@ -69,6 +71,9 @@ func (s *handlerSuite) TestChartVersionsV3Upsert() {
 	}
 	if s.NotNil(got.Description) {
 		s.Equal("original description", got.Description)
+	}
+	if s.NotNil(got.AuthoredByInfo) {
+		s.Equal(test_users.SuitableTestUserEmail, got.AuthoredByInfo.Email)
 	}
 
 	var got2 ChartVersionV3

@@ -1,13 +1,18 @@
 package models
 
-import "github.com/broadinstitute/sherlock/go-shared/pkg/utils"
+import (
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
+	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/test_users"
+)
 
 func (s *modelSuite) TestChartVersionChartIdValidationSqlMissing() {
+	s.SetNonSuitableTestUserForDB()
 	err := s.DB.Create(&ChartVersion{ChartVersion: "version"}).Error
 	s.ErrorContains(err, "fk_v2_chart_versions_chart")
 }
 
 func (s *modelSuite) TestChartVersionVersionValidationSqlMissing() {
+	s.SetNonSuitableTestUserForDB()
 	chart := Chart{Name: "name", ChartRepo: utils.PointerTo("repo")}
 	err := s.DB.Create(&chart).Error
 	s.NoError(err)
@@ -16,6 +21,7 @@ func (s *modelSuite) TestChartVersionVersionValidationSqlMissing() {
 }
 
 func (s *modelSuite) TestChartVersionVersionValidationSqlEmpty() {
+	s.SetNonSuitableTestUserForDB()
 	chart := Chart{Name: "name", ChartRepo: utils.PointerTo("repo")}
 	err := s.DB.Create(&chart).Error
 	s.NoError(err)
@@ -24,6 +30,7 @@ func (s *modelSuite) TestChartVersionVersionValidationSqlEmpty() {
 }
 
 func (s *modelSuite) TestChartVersionUniquenessSql() {
+	s.SetNonSuitableTestUserForDB()
 	chart := Chart{Name: "name", ChartRepo: utils.PointerTo("repo")}
 	err := s.DB.Create(&chart).Error
 	s.NoError(err)
@@ -34,6 +41,7 @@ func (s *modelSuite) TestChartVersionUniquenessSql() {
 }
 
 func (s *modelSuite) TestChartVersionValid() {
+	s.SetNonSuitableTestUserForDB()
 	chart := Chart{Name: "name", ChartRepo: utils.PointerTo("repo")}
 	err := s.DB.Create(&chart).Error
 	s.NoError(err)
@@ -42,6 +50,7 @@ func (s *modelSuite) TestChartVersionValid() {
 }
 
 func (s *modelSuite) TestChartVersionCiIdentifiers() {
+	s.SetNonSuitableTestUserForDB()
 	chart := Chart{Name: "name", ChartRepo: utils.PointerTo("repo")}
 	s.NoError(s.DB.Create(&chart).Error)
 	chartVersion := ChartVersion{ChartID: chart.ID, ChartVersion: "version"}
@@ -62,6 +71,7 @@ func (s *modelSuite) TestChartVersionCiIdentifiers() {
 }
 
 func (s *modelSuite) TestGetChartVersionPathIDs() {
+	s.SetNonSuitableTestUserForDB()
 	/*
 		Here's the layout of the chart versions we're creating for this test.
 		A, B, C, D are linear. B and E both point at C. Nothing points at F.
@@ -173,4 +183,36 @@ func (s *modelSuite) TestGetChartVersionPathIDs() {
 		s.False(foundPath)
 		s.NoError(err)
 	})
+}
+
+func (s *modelSuite) TestChartVersionRecordsUser() {
+	s.SetNonSuitableTestUserForDB()
+	chart := Chart{Name: "name", ChartRepo: utils.PointerTo("repo")}
+	s.NoError(s.DB.Create(&chart).Error)
+	s.Run("via db.Create", func() {
+		version := ChartVersion{ChartID: chart.ID, ChartVersion: "a"}
+		s.NoError(s.DB.Create(&version).Error)
+		s.NotNil(version.AuthoredByID)
+		s.NoError(s.DB.Preload("AuthoredBy").First(&version, version.ID).Error)
+		if s.NotNil(version.AuthoredBy) {
+			s.Equal(test_users.NonSuitableTestUserEmail, version.AuthoredBy.Email)
+		}
+	})
+	s.Run("via db.FirstOrCreate", func() {
+		version := ChartVersion{ChartID: chart.ID, ChartVersion: "b"}
+		s.NoError(s.DB.FirstOrCreate(&version).Error)
+		s.NotNil(version.AuthoredByID)
+		s.NoError(s.DB.Preload("AuthoredBy").First(&version, version.ID).Error)
+		if s.NotNil(version.AuthoredBy) {
+			s.Equal(test_users.NonSuitableTestUserEmail, version.AuthoredBy.Email)
+		}
+	})
+}
+
+func (s *modelSuite) TestChartVersionErrorsWithoutUser() {
+	chart := Chart{Name: "name", ChartRepo: utils.PointerTo("repo")}
+	err := s.DB.Create(&chart).Error
+	s.NoError(err)
+	err = s.DB.Create(&ChartVersion{ChartID: chart.ID, ChartVersion: "version"}).Error
+	s.ErrorContains(err, "database user")
 }

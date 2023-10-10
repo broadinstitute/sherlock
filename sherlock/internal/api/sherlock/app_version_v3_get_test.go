@@ -2,6 +2,7 @@ package sherlock
 
 import (
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
+	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/test_users"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"net/http"
@@ -26,6 +27,7 @@ func (s *handlerSuite) TestAppVersionV3Get_notFound() {
 }
 
 func (s *handlerSuite) TestAppVersionV3Get() {
+	s.SetNonSuitableTestUserForDB()
 	chart := models.Chart{Name: "my-chart", ChartRepo: utils.PointerTo("some-repo")}
 	s.NoError(s.DB.Create(&chart).Error)
 	appVersion := models.AppVersion{ChartID: chart.ID, AppVersion: "1"}
@@ -38,6 +40,9 @@ func (s *handlerSuite) TestAppVersionV3Get() {
 	s.Equal(http.StatusOK, code)
 	if s.NotNil(got.ChartInfo) {
 		s.NotZero(got.ChartInfo.ID)
+	}
+	if s.NotNil(got.AuthoredByInfo) {
+		s.Equal(test_users.NonSuitableTestUserEmail, got.AuthoredByInfo.Email)
 	}
 	s.Equal("1", got.AppVersion)
 }

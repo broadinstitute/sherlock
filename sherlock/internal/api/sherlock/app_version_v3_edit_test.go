@@ -40,6 +40,7 @@ func (s *handlerSuite) TestAppVersionsV3Edit_notFound() {
 }
 
 func (s *handlerSuite) TestAppVersionsV3Edit() {
+	s.SetNonSuitableTestUserForDB()
 	chart := models.Chart{
 		Name:      "name",
 		ChartRepo: utils.PointerTo("terra-helm"),

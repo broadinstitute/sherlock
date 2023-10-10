@@ -1,7 +1,9 @@
 package sherlock
 
 import (
+	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
+	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/test_users"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"net/http"
@@ -44,6 +46,7 @@ func (s *handlerSuite) TestChartVersionsV3List_badOffset() {
 }
 
 func (s *handlerSuite) TestChartVersionsV3List() {
+	s.SetNonSuitableTestUserForDB()
 	chart1 := models.Chart{
 		Name:      "name1",
 		ChartRepo: utils.PointerTo("terra-helm"),
@@ -62,7 +65,6 @@ func (s *handlerSuite) TestChartVersionsV3List() {
 		s.NotZero(chart.ID)
 	}
 
-	println("Chart1", chart1.ID)
 	chartVersion1 := models.ChartVersion{ChartID: chart1.ID, ChartVersion: "1"}
 	chartVersion2 := models.ChartVersion{ChartID: chart2.ID, ChartVersion: "2"}
 	chartVersion3 := models.ChartVersion{ChartID: chart3.ID, ChartVersion: "3"}
@@ -76,6 +78,14 @@ func (s *handlerSuite) TestChartVersionsV3List() {
 		var got []ChartVersionV3
 		code := s.HandleRequest(
 			s.NewRequest("GET", "/api/chart-versions/v3", nil),
+			&got)
+		s.Equal(http.StatusOK, code)
+		s.Len(got, 3)
+	})
+	s.Run("all via user filter", func() {
+		var got []ChartVersionV3
+		code := s.HandleRequest(
+			s.NewRequest("GET", fmt.Sprintf("/api/chart-versions/v3?authoredBy=%s", test_users.NonSuitableTestUserEmail), nil),
 			&got)
 		s.Equal(http.StatusOK, code)
 		s.Len(got, 3)

@@ -12,6 +12,8 @@ type ChartVersionV3 struct {
 	CiIdentifier           *CiIdentifierV3 `json:"ciIdentifier,omitempty" form:"-"`
 	ChartInfo              *ChartV3        `json:"chartInfo,omitempty" form:"-"`
 	ParentChartVersionInfo *ChartVersionV3 `json:"parentChartVersionInfo,omitempty" swaggertype:"object" form:"-"`
+	AuthoredBy             string          `json:"authoredBy,omitempty" form:"authoredBy"`
+	AuthoredByInfo         *UserV3         `json:"authoredByInfo,omitempty" form:"-"`
 	ChartVersionV3Create
 }
 
@@ -51,12 +53,27 @@ func (v ChartVersionV3) toModel(db *gorm.DB, failIfParentInvalid bool) (models.C
 			parentChartVersionID = &parentChartVersionResult.ID
 		}
 	}
+
+	var authoredByID *uint
+	if v.AuthoredBy != "" {
+		userQuery, err := userModelFromSelector(v.AuthoredBy)
+		if err != nil {
+			return models.ChartVersion{}, err
+		}
+		var userResult models.User
+		if err = db.Where(&userQuery).First(&userResult).Error; err != nil {
+			return models.ChartVersion{}, err
+		} else {
+			authoredByID = &userResult.ID
+		}
+	}
 	return models.ChartVersion{
 		Model:                v.toGormModel(),
 		ChartID:              chartResult.ID,
 		ChartVersion:         v.ChartVersion,
 		Description:          v.Description,
 		ParentChartVersionID: parentChartVersionID,
+		AuthoredByID:         authoredByID,
 	}, nil
 }
 
@@ -91,11 +108,21 @@ func chartVersionFromModel(model models.ChartVersion) ChartVersionV3 {
 			parentChartVersionString = utils.UintToString(parentChartVersion.ID)
 		}
 	}
+	var authoredBy *UserV3
+	var authoredByString string
+	if model.AuthoredBy != nil {
+		authoredBy = utils.PointerTo(userFromModel(*model.AuthoredBy))
+		authoredByString = model.AuthoredBy.Email
+	} else if model.AuthoredByID != nil {
+		authoredByString = utils.UintToString(*model.AuthoredByID)
+	}
 	return ChartVersionV3{
 		CommonFields:           commonFieldsFromGormModel(model.Model),
 		CiIdentifier:           ciIdentifier,
 		ChartInfo:              chart,
 		ParentChartVersionInfo: parentChartVersion,
+		AuthoredBy:             authoredByString,
+		AuthoredByInfo:         authoredBy,
 		ChartVersionV3Create: ChartVersionV3Create{
 			Chart:              chartName,
 			ChartVersion:       model.ChartVersion,
