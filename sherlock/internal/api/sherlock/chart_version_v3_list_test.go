@@ -65,7 +65,6 @@ func (s *handlerSuite) TestChartVersionsV3List() {
 		s.NotZero(chart.ID)
 	}
 
-	println("Chart1", chart1.ID)
 	chartVersion1 := models.ChartVersion{ChartID: chart1.ID, ChartVersion: "1"}
 	chartVersion2 := models.ChartVersion{ChartID: chart2.ID, ChartVersion: "2"}
 	chartVersion3 := models.ChartVersion{ChartID: chart3.ID, ChartVersion: "3"}
