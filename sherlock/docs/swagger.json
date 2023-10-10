@@ -115,6 +115,11 @@
                     },
                     {
                         "type": "string",
+                        "name": "authoredBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "Required when creating",
                         "name": "chart",
                         "in": "query"
@@ -509,6 +514,11 @@
                 ],
                 "summary": "List ChartVersions matching a filter",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "name": "authoredBy",
+                        "in": "query"
+                    },
                     {
                         "type": "string",
                         "description": "Required when creating",
@@ -10152,6 +10162,12 @@
                     "description": "Required when creating",
                     "type": "string"
                 },
+                "authoredBy": {
+                    "type": "string"
+                },
+                "authoredByInfo": {
+                    "$ref": "#/definitions/sherlock.UserV3"
+                },
                 "chart": {
                     "description": "Required when creating",
                     "type": "string"
@@ -10406,6 +10422,12 @@
         "sherlock.ChartVersionV3": {
             "type": "object",
             "properties": {
+                "authoredBy": {
+                    "type": "string"
+                },
+                "authoredByInfo": {
+                    "$ref": "#/definitions/sherlock.UserV3"
+                },
                 "chart": {
                     "description": "Required when creating",
                     "type": "string"

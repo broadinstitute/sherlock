@@ -58,6 +58,10 @@ definitions:
       appVersion:
         description: Required when creating
         type: string
+      authoredBy:
+        type: string
+      authoredByInfo:
+        $ref: '#/definitions/sherlock.UserV3'
       chart:
         description: Required when creating
         type: string
@@ -241,6 +245,10 @@ definitions:
     type: object
   sherlock.ChartVersionV3:
     properties:
+      authoredBy:
+        type: string
+      authoredByInfo:
+        $ref: '#/definitions/sherlock.UserV3'
       chart:
         description: Required when creating
         type: string
@@ -2112,6 +2120,9 @@ paths:
         in: query
         name: appVersion
         type: string
+      - in: query
+        name: authoredBy
+        type: string
       - description: Required when creating
         in: query
         name: chart
@@ -2378,6 +2389,9 @@ paths:
     get:
       description: List ChartVersions matching a filter.
       parameters:
+      - in: query
+        name: authoredBy
+        type: string
       - description: Required when creating
         in: query
         name: chart

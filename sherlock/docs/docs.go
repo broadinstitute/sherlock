@@ -119,6 +119,11 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "authoredBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "Required when creating",
                         "name": "chart",
                         "in": "query"
@@ -513,6 +518,11 @@ const docTemplate = `{
                 ],
                 "summary": "List ChartVersions matching a filter",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "name": "authoredBy",
+                        "in": "query"
+                    },
                     {
                         "type": "string",
                         "description": "Required when creating",
@@ -10156,6 +10166,12 @@ const docTemplate = `{
                     "description": "Required when creating",
                     "type": "string"
                 },
+                "authoredBy": {
+                    "type": "string"
+                },
+                "authoredByInfo": {
+                    "$ref": "#/definitions/sherlock.UserV3"
+                },
                 "chart": {
                     "description": "Required when creating",
                     "type": "string"
@@ -10410,6 +10426,12 @@ const docTemplate = `{
         "sherlock.ChartVersionV3": {
             "type": "object",
             "properties": {
+                "authoredBy": {
+                    "type": "string"
+                },
+                "authoredByInfo": {
+                    "$ref": "#/definitions/sherlock.UserV3"
+                },
                 "chart": {
                     "description": "Required when creating",
                     "type": "string"

@@ -60,6 +60,9 @@ func NewGetAPIChartVersionsV3ParamsWithHTTPClient(client *http.Client) *GetAPICh
 */
 type GetAPIChartVersionsV3Params struct {
 
+	// AuthoredBy.
+	AuthoredBy *string
+
 	/* Chart.
 
 	   Required when creating
@@ -157,6 +160,17 @@ func (o *GetAPIChartVersionsV3Params) WithHTTPClient(client *http.Client) *GetAP
 // SetHTTPClient adds the HTTPClient to the get API chart versions v3 params
 func (o *GetAPIChartVersionsV3Params) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
+}
+
+// WithAuthoredBy adds the authoredBy to the get API chart versions v3 params
+func (o *GetAPIChartVersionsV3Params) WithAuthoredBy(authoredBy *string) *GetAPIChartVersionsV3Params {
+	o.SetAuthoredBy(authoredBy)
+	return o
+}
+
+// SetAuthoredBy adds the authoredBy to the get API chart versions v3 params
+func (o *GetAPIChartVersionsV3Params) SetAuthoredBy(authoredBy *string) {
+	o.AuthoredBy = authoredBy
 }
 
 // WithChart adds the chart to the get API chart versions v3 params
@@ -265,6 +279,23 @@ func (o *GetAPIChartVersionsV3Params) WriteToRequest(r runtime.ClientRequest, re
 		return err
 	}
 	var res []error
+
+	if o.AuthoredBy != nil {
+
+		// query param authoredBy
+		var qrAuthoredBy string
+
+		if o.AuthoredBy != nil {
+			qrAuthoredBy = *o.AuthoredBy
+		}
+		qAuthoredBy := qrAuthoredBy
+		if qAuthoredBy != "" {
+
+			if err := r.SetQueryParam("authoredBy", qAuthoredBy); err != nil {
+				return err
+			}
+		}
+	}
 
 	if o.Chart != nil {
 

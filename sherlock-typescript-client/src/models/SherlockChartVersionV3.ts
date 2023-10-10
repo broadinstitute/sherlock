@@ -25,6 +25,12 @@ import {
     SherlockCiIdentifierV3FromJSONTyped,
     SherlockCiIdentifierV3ToJSON,
 } from './SherlockCiIdentifierV3';
+import type { SherlockUserV3 } from './SherlockUserV3';
+import {
+    SherlockUserV3FromJSON,
+    SherlockUserV3FromJSONTyped,
+    SherlockUserV3ToJSON,
+} from './SherlockUserV3';
 
 /**
  * 
@@ -32,6 +38,18 @@ import {
  * @interface SherlockChartVersionV3
  */
 export interface SherlockChartVersionV3 {
+    /**
+     * 
+     * @type {string}
+     * @memberof SherlockChartVersionV3
+     */
+    authoredBy?: string;
+    /**
+     * 
+     * @type {SherlockUserV3}
+     * @memberof SherlockChartVersionV3
+     */
+    authoredByInfo?: SherlockUserV3;
     /**
      * Required when creating
      * @type {string}
@@ -113,6 +131,8 @@ export function SherlockChartVersionV3FromJSONTyped(json: any, ignoreDiscriminat
     }
     return {
         
+        'authoredBy': !exists(json, 'authoredBy') ? undefined : json['authoredBy'],
+        'authoredByInfo': !exists(json, 'authoredByInfo') ? undefined : SherlockUserV3FromJSON(json['authoredByInfo']),
         'chart': !exists(json, 'chart') ? undefined : json['chart'],
         'chartInfo': !exists(json, 'chartInfo') ? undefined : SherlockChartV3FromJSON(json['chartInfo']),
         'chartVersion': !exists(json, 'chartVersion') ? undefined : json['chartVersion'],
@@ -135,6 +155,8 @@ export function SherlockChartVersionV3ToJSON(value?: SherlockChartVersionV3 | nu
     }
     return {
         
+        'authoredBy': value.authoredBy,
+        'authoredByInfo': SherlockUserV3ToJSON(value.authoredByInfo),
         'chart': value.chart,
         'chartInfo': SherlockChartV3ToJSON(value.chartInfo),
         'chartVersion': value.chartVersion,

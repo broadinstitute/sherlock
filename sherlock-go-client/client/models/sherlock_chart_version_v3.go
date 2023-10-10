@@ -19,6 +19,12 @@ import (
 // swagger:model sherlock.ChartVersionV3
 type SherlockChartVersionV3 struct {
 
+	// authored by
+	AuthoredBy string `json:"authoredBy,omitempty"`
+
+	// authored by info
+	AuthoredByInfo *SherlockUserV3 `json:"authoredByInfo,omitempty"`
+
 	// Required when creating
 	Chart string `json:"chart,omitempty"`
 
@@ -56,6 +62,10 @@ type SherlockChartVersionV3 struct {
 func (m *SherlockChartVersionV3) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateAuthoredByInfo(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateChartInfo(formats); err != nil {
 		res = append(res, err)
 	}
@@ -75,6 +85,25 @@ func (m *SherlockChartVersionV3) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *SherlockChartVersionV3) validateAuthoredByInfo(formats strfmt.Registry) error {
+	if swag.IsZero(m.AuthoredByInfo) { // not required
+		return nil
+	}
+
+	if m.AuthoredByInfo != nil {
+		if err := m.AuthoredByInfo.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("authoredByInfo")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("authoredByInfo")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -144,6 +173,10 @@ func (m *SherlockChartVersionV3) validateUpdatedAt(formats strfmt.Registry) erro
 func (m *SherlockChartVersionV3) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.contextValidateAuthoredByInfo(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidateChartInfo(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -155,6 +188,22 @@ func (m *SherlockChartVersionV3) ContextValidate(ctx context.Context, formats st
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *SherlockChartVersionV3) contextValidateAuthoredByInfo(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.AuthoredByInfo != nil {
+		if err := m.AuthoredByInfo.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("authoredByInfo")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("authoredByInfo")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 

@@ -66,6 +66,9 @@ type GetAPIAppVersionsV3Params struct {
 	*/
 	AppVersion *string
 
+	// AuthoredBy.
+	AuthoredBy *string
+
 	/* Chart.
 
 	   Required when creating
@@ -174,6 +177,17 @@ func (o *GetAPIAppVersionsV3Params) WithAppVersion(appVersion *string) *GetAPIAp
 // SetAppVersion adds the appVersion to the get API app versions v3 params
 func (o *GetAPIAppVersionsV3Params) SetAppVersion(appVersion *string) {
 	o.AppVersion = appVersion
+}
+
+// WithAuthoredBy adds the authoredBy to the get API app versions v3 params
+func (o *GetAPIAppVersionsV3Params) WithAuthoredBy(authoredBy *string) *GetAPIAppVersionsV3Params {
+	o.SetAuthoredBy(authoredBy)
+	return o
+}
+
+// SetAuthoredBy adds the authoredBy to the get API app versions v3 params
+func (o *GetAPIAppVersionsV3Params) SetAuthoredBy(authoredBy *string) {
+	o.AuthoredBy = authoredBy
 }
 
 // WithChart adds the chart to the get API app versions v3 params
@@ -306,6 +320,23 @@ func (o *GetAPIAppVersionsV3Params) WriteToRequest(r runtime.ClientRequest, reg 
 		if qAppVersion != "" {
 
 			if err := r.SetQueryParam("appVersion", qAppVersion); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.AuthoredBy != nil {
+
+		// query param authoredBy
+		var qrAuthoredBy string
+
+		if o.AuthoredBy != nil {
+			qrAuthoredBy = *o.AuthoredBy
+		}
+		qAuthoredBy := qrAuthoredBy
+		if qAuthoredBy != "" {
+
+			if err := r.SetQueryParam("authoredBy", qAuthoredBy); err != nil {
 				return err
 			}
 		}

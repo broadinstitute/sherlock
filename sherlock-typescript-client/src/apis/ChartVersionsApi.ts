@@ -49,6 +49,7 @@ export interface ApiChartVersionsProceduresV3ChangelogGetRequest {
 }
 
 export interface ApiChartVersionsV3GetRequest {
+    authoredBy?: string;
     chart?: string;
     chartVersion?: string;
     createdAt?: Date;
@@ -166,6 +167,10 @@ export class ChartVersionsApi extends runtime.BaseAPI {
      */
     async apiChartVersionsV3GetRaw(requestParameters: ApiChartVersionsV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockChartVersionV3>>> {
         const queryParameters: any = {};
+
+        if (requestParameters.authoredBy !== undefined) {
+            queryParameters['authoredBy'] = requestParameters.authoredBy;
+        }
 
         if (requestParameters.chart !== undefined) {
             queryParameters['chart'] = requestParameters.chart;

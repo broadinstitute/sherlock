@@ -50,6 +50,7 @@ export interface ApiAppVersionsProceduresV3ChangelogGetRequest {
 
 export interface ApiAppVersionsV3GetRequest {
     appVersion?: string;
+    authoredBy?: string;
     chart?: string;
     createdAt?: Date;
     description?: string;
@@ -173,6 +174,10 @@ export class AppVersionsApi extends runtime.BaseAPI {
 
         if (requestParameters.appVersion !== undefined) {
             queryParameters['appVersion'] = requestParameters.appVersion;
+        }
+
+        if (requestParameters.authoredBy !== undefined) {
+            queryParameters['authoredBy'] = requestParameters.authoredBy;
         }
 
         if (requestParameters.chart !== undefined) {
