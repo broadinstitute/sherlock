@@ -21,7 +21,7 @@ import (
 //	@param			appVersion				body		AppVersionV3Create	true	"The AppVersion to upsert"
 //	@success		201						{object}	AppVersionV3
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
-//	@router			/api/appVersions/v3 [post]
+//	@router			/api/app-versions/v3 [post]
 func appVersionsV3Upsert(ctx *gin.Context) {
 	db, err := authentication.MustUseDB(ctx)
 	if err != nil {
