@@ -10,7 +10,7 @@ import (
 
 //go:embed *
 var apiFiles embed.FS
-var capsInApiPathRegex = regexp.MustCompile("/api/\\w*[A-Z]")
+var capsInApiPathRegex = regexp.MustCompile(`/api/\w*[A-Z]`)
 
 func TestApiFiles(t *testing.T) {
 	validateApiPathsInDirectory(t, ".")
