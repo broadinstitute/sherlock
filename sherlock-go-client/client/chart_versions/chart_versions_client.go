@@ -431,7 +431,7 @@ func (a *Client) PostAPIChartVersionsV3(params *PostAPIChartVersionsV3Params, op
 	op := &runtime.ClientOperation{
 		ID:                 "PostAPIChartVersionsV3",
 		Method:             "POST",
-		PathPattern:        "/api/chartVersions/v3",
+		PathPattern:        "/api/chart-versions/v3",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"https"},

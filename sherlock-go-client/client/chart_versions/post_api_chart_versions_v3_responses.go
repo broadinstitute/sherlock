@@ -84,7 +84,7 @@ type PostAPIChartVersionsV3Created struct {
 }
 
 func (o *PostAPIChartVersionsV3Created) Error() string {
-	return fmt.Sprintf("[POST /api/chartVersions/v3][%d] postApiChartVersionsV3Created  %+v", 201, o.Payload)
+	return fmt.Sprintf("[POST /api/chart-versions/v3][%d] postApiChartVersionsV3Created  %+v", 201, o.Payload)
 }
 func (o *PostAPIChartVersionsV3Created) GetPayload() *models.SherlockChartVersionV3 {
 	return o.Payload
@@ -116,7 +116,7 @@ type PostAPIChartVersionsV3BadRequest struct {
 }
 
 func (o *PostAPIChartVersionsV3BadRequest) Error() string {
-	return fmt.Sprintf("[POST /api/chartVersions/v3][%d] postApiChartVersionsV3BadRequest  %+v", 400, o.Payload)
+	return fmt.Sprintf("[POST /api/chart-versions/v3][%d] postApiChartVersionsV3BadRequest  %+v", 400, o.Payload)
 }
 func (o *PostAPIChartVersionsV3BadRequest) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
@@ -148,7 +148,7 @@ type PostAPIChartVersionsV3Forbidden struct {
 }
 
 func (o *PostAPIChartVersionsV3Forbidden) Error() string {
-	return fmt.Sprintf("[POST /api/chartVersions/v3][%d] postApiChartVersionsV3Forbidden  %+v", 403, o.Payload)
+	return fmt.Sprintf("[POST /api/chart-versions/v3][%d] postApiChartVersionsV3Forbidden  %+v", 403, o.Payload)
 }
 func (o *PostAPIChartVersionsV3Forbidden) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
@@ -180,7 +180,7 @@ type PostAPIChartVersionsV3NotFound struct {
 }
 
 func (o *PostAPIChartVersionsV3NotFound) Error() string {
-	return fmt.Sprintf("[POST /api/chartVersions/v3][%d] postApiChartVersionsV3NotFound  %+v", 404, o.Payload)
+	return fmt.Sprintf("[POST /api/chart-versions/v3][%d] postApiChartVersionsV3NotFound  %+v", 404, o.Payload)
 }
 func (o *PostAPIChartVersionsV3NotFound) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
@@ -212,7 +212,7 @@ type PostAPIChartVersionsV3ProxyAuthenticationRequired struct {
 }
 
 func (o *PostAPIChartVersionsV3ProxyAuthenticationRequired) Error() string {
-	return fmt.Sprintf("[POST /api/chartVersions/v3][%d] postApiChartVersionsV3ProxyAuthenticationRequired  %+v", 407, o.Payload)
+	return fmt.Sprintf("[POST /api/chart-versions/v3][%d] postApiChartVersionsV3ProxyAuthenticationRequired  %+v", 407, o.Payload)
 }
 func (o *PostAPIChartVersionsV3ProxyAuthenticationRequired) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
@@ -244,7 +244,7 @@ type PostAPIChartVersionsV3Conflict struct {
 }
 
 func (o *PostAPIChartVersionsV3Conflict) Error() string {
-	return fmt.Sprintf("[POST /api/chartVersions/v3][%d] postApiChartVersionsV3Conflict  %+v", 409, o.Payload)
+	return fmt.Sprintf("[POST /api/chart-versions/v3][%d] postApiChartVersionsV3Conflict  %+v", 409, o.Payload)
 }
 func (o *PostAPIChartVersionsV3Conflict) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
@@ -276,7 +276,7 @@ type PostAPIChartVersionsV3InternalServerError struct {
 }
 
 func (o *PostAPIChartVersionsV3InternalServerError) Error() string {
-	return fmt.Sprintf("[POST /api/chartVersions/v3][%d] postApiChartVersionsV3InternalServerError  %+v", 500, o.Payload)
+	return fmt.Sprintf("[POST /api/chart-versions/v3][%d] postApiChartVersionsV3InternalServerError  %+v", 500, o.Payload)
 }
 func (o *PostAPIChartVersionsV3InternalServerError) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload

@@ -84,7 +84,7 @@ type PostAPIAppVersionsV3Created struct {
 }
 
 func (o *PostAPIAppVersionsV3Created) Error() string {
-	return fmt.Sprintf("[POST /api/appVersions/v3][%d] postApiAppVersionsV3Created  %+v", 201, o.Payload)
+	return fmt.Sprintf("[POST /api/app-versions/v3][%d] postApiAppVersionsV3Created  %+v", 201, o.Payload)
 }
 func (o *PostAPIAppVersionsV3Created) GetPayload() *models.SherlockAppVersionV3 {
 	return o.Payload
@@ -116,7 +116,7 @@ type PostAPIAppVersionsV3BadRequest struct {
 }
 
 func (o *PostAPIAppVersionsV3BadRequest) Error() string {
-	return fmt.Sprintf("[POST /api/appVersions/v3][%d] postApiAppVersionsV3BadRequest  %+v", 400, o.Payload)
+	return fmt.Sprintf("[POST /api/app-versions/v3][%d] postApiAppVersionsV3BadRequest  %+v", 400, o.Payload)
 }
 func (o *PostAPIAppVersionsV3BadRequest) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
@@ -148,7 +148,7 @@ type PostAPIAppVersionsV3Forbidden struct {
 }
 
 func (o *PostAPIAppVersionsV3Forbidden) Error() string {
-	return fmt.Sprintf("[POST /api/appVersions/v3][%d] postApiAppVersionsV3Forbidden  %+v", 403, o.Payload)
+	return fmt.Sprintf("[POST /api/app-versions/v3][%d] postApiAppVersionsV3Forbidden  %+v", 403, o.Payload)
 }
 func (o *PostAPIAppVersionsV3Forbidden) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
@@ -180,7 +180,7 @@ type PostAPIAppVersionsV3NotFound struct {
 }
 
 func (o *PostAPIAppVersionsV3NotFound) Error() string {
-	return fmt.Sprintf("[POST /api/appVersions/v3][%d] postApiAppVersionsV3NotFound  %+v", 404, o.Payload)
+	return fmt.Sprintf("[POST /api/app-versions/v3][%d] postApiAppVersionsV3NotFound  %+v", 404, o.Payload)
 }
 func (o *PostAPIAppVersionsV3NotFound) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
@@ -212,7 +212,7 @@ type PostAPIAppVersionsV3ProxyAuthenticationRequired struct {
 }
 
 func (o *PostAPIAppVersionsV3ProxyAuthenticationRequired) Error() string {
-	return fmt.Sprintf("[POST /api/appVersions/v3][%d] postApiAppVersionsV3ProxyAuthenticationRequired  %+v", 407, o.Payload)
+	return fmt.Sprintf("[POST /api/app-versions/v3][%d] postApiAppVersionsV3ProxyAuthenticationRequired  %+v", 407, o.Payload)
 }
 func (o *PostAPIAppVersionsV3ProxyAuthenticationRequired) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
@@ -244,7 +244,7 @@ type PostAPIAppVersionsV3Conflict struct {
 }
 
 func (o *PostAPIAppVersionsV3Conflict) Error() string {
-	return fmt.Sprintf("[POST /api/appVersions/v3][%d] postApiAppVersionsV3Conflict  %+v", 409, o.Payload)
+	return fmt.Sprintf("[POST /api/app-versions/v3][%d] postApiAppVersionsV3Conflict  %+v", 409, o.Payload)
 }
 func (o *PostAPIAppVersionsV3Conflict) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload
@@ -276,7 +276,7 @@ type PostAPIAppVersionsV3InternalServerError struct {
 }
 
 func (o *PostAPIAppVersionsV3InternalServerError) Error() string {
-	return fmt.Sprintf("[POST /api/appVersions/v3][%d] postApiAppVersionsV3InternalServerError  %+v", 500, o.Payload)
+	return fmt.Sprintf("[POST /api/app-versions/v3][%d] postApiAppVersionsV3InternalServerError  %+v", 500, o.Payload)
 }
 func (o *PostAPIAppVersionsV3InternalServerError) GetPayload() *models.ErrorsErrorResponse {
 	return o.Payload

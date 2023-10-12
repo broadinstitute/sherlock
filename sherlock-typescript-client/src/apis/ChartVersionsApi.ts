@@ -245,7 +245,7 @@ export class ChartVersionsApi extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/api/chartVersions/v3`,
+            path: `/api/chart-versions/v3`,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,

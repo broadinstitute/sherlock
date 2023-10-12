@@ -2195,6 +2195,51 @@ paths:
       summary: List AppVersions matching a filter
       tags:
       - AppVersions
+    post:
+      consumes:
+      - application/json
+      description: Upsert a AppVersion.
+      parameters:
+      - description: The AppVersion to upsert
+        in: body
+        name: appVersion
+        required: true
+        schema:
+          $ref: '#/definitions/sherlock.AppVersionV3Create'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/sherlock.AppVersionV3'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Upsert a AppVersion
+      tags:
+      - AppVersions
   /api/app-versions/v3/{selector}:
     get:
       description: Get an individual AppVersion.
@@ -2286,52 +2331,6 @@ paths:
           schema:
             $ref: '#/definitions/errors.ErrorResponse'
       summary: Edit an individual AppVersion
-      tags:
-      - AppVersions
-  /api/appVersions/v3:
-    post:
-      consumes:
-      - application/json
-      description: Upsert a AppVersion.
-      parameters:
-      - description: The AppVersion to upsert
-        in: body
-        name: appVersion
-        required: true
-        schema:
-          $ref: '#/definitions/sherlock.AppVersionV3Create'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/sherlock.AppVersionV3'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "407":
-          description: Proxy Authentication Required
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "409":
-          description: Conflict
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-      summary: Upsert a AppVersion
       tags:
       - AppVersions
   /api/chart-versions/procedures/v3/changelog:
@@ -2462,6 +2461,51 @@ paths:
       summary: List ChartVersions matching a filter
       tags:
       - ChartVersions
+    post:
+      consumes:
+      - application/json
+      description: Upsert a ChartVersion.
+      parameters:
+      - description: The ChartVersion to upsert
+        in: body
+        name: chartVersion
+        required: true
+        schema:
+          $ref: '#/definitions/sherlock.ChartVersionV3Create'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/sherlock.ChartVersionV3'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Upsert a ChartVersion
+      tags:
+      - ChartVersions
   /api/chart-versions/v3/{selector}:
     get:
       description: Get an individual ChartVersion.
@@ -2553,52 +2597,6 @@ paths:
           schema:
             $ref: '#/definitions/errors.ErrorResponse'
       summary: Edit an individual ChartVersion
-      tags:
-      - ChartVersions
-  /api/chartVersions/v3:
-    post:
-      consumes:
-      - application/json
-      description: Upsert a ChartVersion.
-      parameters:
-      - description: The ChartVersion to upsert
-        in: body
-        name: chartVersion
-        required: true
-        schema:
-          $ref: '#/definitions/sherlock.ChartVersionV3Create'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/sherlock.ChartVersionV3'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "407":
-          description: Proxy Authentication Required
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "409":
-          description: Conflict
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/errors.ErrorResponse'
-      summary: Upsert a ChartVersion
       tags:
       - ChartVersions
   /api/charts/v3:

@@ -257,7 +257,7 @@ export class AppVersionsApi extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/api/appVersions/v3`,
+            path: `/api/app-versions/v3`,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
