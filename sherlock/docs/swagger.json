@@ -223,7 +223,7 @@
                     }
                 }
             },
-            "post": {
+            "put": {
                 "description": "Upsert a AppVersion.",
                 "consumes": [
                     "application/json"
@@ -618,7 +618,7 @@
                     }
                 }
             },
-            "post": {
+            "put": {
                 "description": "Upsert a ChartVersion.",
                 "consumes": [
                     "application/json"

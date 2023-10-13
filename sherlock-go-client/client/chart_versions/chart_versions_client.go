@@ -48,9 +48,9 @@ type ClientService interface {
 
 	PatchAPIV2ChartVersionsSelector(params *PatchAPIV2ChartVersionsSelectorParams, opts ...ClientOption) (*PatchAPIV2ChartVersionsSelectorOK, error)
 
-	PostAPIChartVersionsV3(params *PostAPIChartVersionsV3Params, opts ...ClientOption) (*PostAPIChartVersionsV3Created, error)
-
 	PostAPIV2ChartVersions(params *PostAPIV2ChartVersionsParams, opts ...ClientOption) (*PostAPIV2ChartVersionsOK, *PostAPIV2ChartVersionsCreated, error)
+
+	PutAPIChartVersionsV3(params *PutAPIChartVersionsV3Params, opts ...ClientOption) (*PutAPIChartVersionsV3Created, error)
 
 	PutAPIV2ChartVersionsSelector(params *PutAPIV2ChartVersionsSelectorParams, opts ...ClientOption) (*PutAPIV2ChartVersionsSelectorOK, *PutAPIV2ChartVersionsSelectorCreated, error)
 
@@ -419,46 +419,6 @@ func (a *Client) PatchAPIV2ChartVersionsSelector(params *PatchAPIV2ChartVersions
 }
 
 /*
-  PostAPIChartVersionsV3 upserts a chart version
-
-  Upsert a ChartVersion.
-*/
-func (a *Client) PostAPIChartVersionsV3(params *PostAPIChartVersionsV3Params, opts ...ClientOption) (*PostAPIChartVersionsV3Created, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewPostAPIChartVersionsV3Params()
-	}
-	op := &runtime.ClientOperation{
-		ID:                 "PostAPIChartVersionsV3",
-		Method:             "POST",
-		PathPattern:        "/api/chart-versions/v3",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"https"},
-		Params:             params,
-		Reader:             &PostAPIChartVersionsV3Reader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
-	if err != nil {
-		return nil, err
-	}
-	success, ok := result.(*PostAPIChartVersionsV3Created)
-	if ok {
-		return success, nil
-	}
-	// unexpected success response
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
-	msg := fmt.Sprintf("unexpected success response for PostAPIChartVersionsV3: API contract not enforced by server. Client expected to get an error, but got: %T", result)
-	panic(msg)
-}
-
-/*
   PostAPIV2ChartVersions creates a new chart version entry
 
   Create a new ChartVersion entry. Note that fields are immutable after creation.
@@ -497,6 +457,46 @@ func (a *Client) PostAPIV2ChartVersions(params *PostAPIV2ChartVersionsParams, op
 	}
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for chart_versions: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+  PutAPIChartVersionsV3 upserts a chart version
+
+  Upsert a ChartVersion.
+*/
+func (a *Client) PutAPIChartVersionsV3(params *PutAPIChartVersionsV3Params, opts ...ClientOption) (*PutAPIChartVersionsV3Created, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewPutAPIChartVersionsV3Params()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "PutAPIChartVersionsV3",
+		Method:             "PUT",
+		PathPattern:        "/api/chart-versions/v3",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &PutAPIChartVersionsV3Reader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*PutAPIChartVersionsV3Created)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for PutAPIChartVersionsV3: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 

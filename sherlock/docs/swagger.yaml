@@ -2195,7 +2195,7 @@ paths:
       summary: List AppVersions matching a filter
       tags:
       - AppVersions
-    post:
+    put:
       consumes:
       - application/json
       description: Upsert a AppVersion.
@@ -2461,7 +2461,7 @@ paths:
       summary: List ChartVersions matching a filter
       tags:
       - ChartVersions
-    post:
+    put:
       consumes:
       - application/json
       description: Upsert a ChartVersion.

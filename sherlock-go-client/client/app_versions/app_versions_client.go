@@ -48,9 +48,9 @@ type ClientService interface {
 
 	PatchAPIV2AppVersionsSelector(params *PatchAPIV2AppVersionsSelectorParams, opts ...ClientOption) (*PatchAPIV2AppVersionsSelectorOK, error)
 
-	PostAPIAppVersionsV3(params *PostAPIAppVersionsV3Params, opts ...ClientOption) (*PostAPIAppVersionsV3Created, error)
-
 	PostAPIV2AppVersions(params *PostAPIV2AppVersionsParams, opts ...ClientOption) (*PostAPIV2AppVersionsOK, *PostAPIV2AppVersionsCreated, error)
+
+	PutAPIAppVersionsV3(params *PutAPIAppVersionsV3Params, opts ...ClientOption) (*PutAPIAppVersionsV3Created, error)
 
 	PutAPIV2AppVersionsSelector(params *PutAPIV2AppVersionsSelectorParams, opts ...ClientOption) (*PutAPIV2AppVersionsSelectorOK, *PutAPIV2AppVersionsSelectorCreated, error)
 
@@ -419,46 +419,6 @@ func (a *Client) PatchAPIV2AppVersionsSelector(params *PatchAPIV2AppVersionsSele
 }
 
 /*
-  PostAPIAppVersionsV3 upserts a app version
-
-  Upsert a AppVersion.
-*/
-func (a *Client) PostAPIAppVersionsV3(params *PostAPIAppVersionsV3Params, opts ...ClientOption) (*PostAPIAppVersionsV3Created, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewPostAPIAppVersionsV3Params()
-	}
-	op := &runtime.ClientOperation{
-		ID:                 "PostAPIAppVersionsV3",
-		Method:             "POST",
-		PathPattern:        "/api/app-versions/v3",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"https"},
-		Params:             params,
-		Reader:             &PostAPIAppVersionsV3Reader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
-	if err != nil {
-		return nil, err
-	}
-	success, ok := result.(*PostAPIAppVersionsV3Created)
-	if ok {
-		return success, nil
-	}
-	// unexpected success response
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
-	msg := fmt.Sprintf("unexpected success response for PostAPIAppVersionsV3: API contract not enforced by server. Client expected to get an error, but got: %T", result)
-	panic(msg)
-}
-
-/*
   PostAPIV2AppVersions creates a new app version entry
 
   Create a new AppVersion entry. Note that fields are immutable after creation.
@@ -497,6 +457,46 @@ func (a *Client) PostAPIV2AppVersions(params *PostAPIV2AppVersionsParams, opts .
 	}
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for app_versions: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+  PutAPIAppVersionsV3 upserts a app version
+
+  Upsert a AppVersion.
+*/
+func (a *Client) PutAPIAppVersionsV3(params *PutAPIAppVersionsV3Params, opts ...ClientOption) (*PutAPIAppVersionsV3Created, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewPutAPIAppVersionsV3Params()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "PutAPIAppVersionsV3",
+		Method:             "PUT",
+		PathPattern:        "/api/app-versions/v3",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &PutAPIAppVersionsV3Reader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*PutAPIAppVersionsV3Created)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for PutAPIAppVersionsV3: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 

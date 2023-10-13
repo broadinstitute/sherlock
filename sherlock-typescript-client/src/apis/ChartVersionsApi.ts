@@ -61,7 +61,7 @@ export interface ApiChartVersionsV3GetRequest {
     offset?: number;
 }
 
-export interface ApiChartVersionsV3PostRequest {
+export interface ApiChartVersionsV3PutRequest {
     chartVersion: SherlockChartVersionV3Create;
 }
 
@@ -233,9 +233,9 @@ export class ChartVersionsApi extends runtime.BaseAPI {
      * Upsert a ChartVersion.
      * Upsert a ChartVersion
      */
-    async apiChartVersionsV3PostRaw(requestParameters: ApiChartVersionsV3PostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockChartVersionV3>> {
+    async apiChartVersionsV3PutRaw(requestParameters: ApiChartVersionsV3PutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockChartVersionV3>> {
         if (requestParameters.chartVersion === null || requestParameters.chartVersion === undefined) {
-            throw new runtime.RequiredError('chartVersion','Required parameter requestParameters.chartVersion was null or undefined when calling apiChartVersionsV3Post.');
+            throw new runtime.RequiredError('chartVersion','Required parameter requestParameters.chartVersion was null or undefined when calling apiChartVersionsV3Put.');
         }
 
         const queryParameters: any = {};
@@ -246,7 +246,7 @@ export class ChartVersionsApi extends runtime.BaseAPI {
 
         const response = await this.request({
             path: `/api/chart-versions/v3`,
-            method: 'POST',
+            method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
             body: SherlockChartVersionV3CreateToJSON(requestParameters.chartVersion),
@@ -259,8 +259,8 @@ export class ChartVersionsApi extends runtime.BaseAPI {
      * Upsert a ChartVersion.
      * Upsert a ChartVersion
      */
-    async apiChartVersionsV3Post(requestParameters: ApiChartVersionsV3PostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockChartVersionV3> {
-        const response = await this.apiChartVersionsV3PostRaw(requestParameters, initOverrides);
+    async apiChartVersionsV3Put(requestParameters: ApiChartVersionsV3PutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockChartVersionV3> {
+        const response = await this.apiChartVersionsV3PutRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

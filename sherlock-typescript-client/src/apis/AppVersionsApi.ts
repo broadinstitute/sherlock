@@ -63,7 +63,7 @@ export interface ApiAppVersionsV3GetRequest {
     offset?: number;
 }
 
-export interface ApiAppVersionsV3PostRequest {
+export interface ApiAppVersionsV3PutRequest {
     appVersion: SherlockAppVersionV3Create;
 }
 
@@ -245,9 +245,9 @@ export class AppVersionsApi extends runtime.BaseAPI {
      * Upsert a AppVersion.
      * Upsert a AppVersion
      */
-    async apiAppVersionsV3PostRaw(requestParameters: ApiAppVersionsV3PostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockAppVersionV3>> {
+    async apiAppVersionsV3PutRaw(requestParameters: ApiAppVersionsV3PutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockAppVersionV3>> {
         if (requestParameters.appVersion === null || requestParameters.appVersion === undefined) {
-            throw new runtime.RequiredError('appVersion','Required parameter requestParameters.appVersion was null or undefined when calling apiAppVersionsV3Post.');
+            throw new runtime.RequiredError('appVersion','Required parameter requestParameters.appVersion was null or undefined when calling apiAppVersionsV3Put.');
         }
 
         const queryParameters: any = {};
@@ -258,7 +258,7 @@ export class AppVersionsApi extends runtime.BaseAPI {
 
         const response = await this.request({
             path: `/api/app-versions/v3`,
-            method: 'POST',
+            method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
             body: SherlockAppVersionV3CreateToJSON(requestParameters.appVersion),
@@ -271,8 +271,8 @@ export class AppVersionsApi extends runtime.BaseAPI {
      * Upsert a AppVersion.
      * Upsert a AppVersion
      */
-    async apiAppVersionsV3Post(requestParameters: ApiAppVersionsV3PostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockAppVersionV3> {
-        const response = await this.apiAppVersionsV3PostRaw(requestParameters, initOverrides);
+    async apiAppVersionsV3Put(requestParameters: ApiAppVersionsV3PutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockAppVersionV3> {
+        const response = await this.apiAppVersionsV3PutRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

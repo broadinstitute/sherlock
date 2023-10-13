@@ -227,7 +227,7 @@ const docTemplate = `{
                     }
                 }
             },
-            "post": {
+            "put": {
                 "description": "Upsert a AppVersion.",
                 "consumes": [
                     "application/json"
@@ -622,7 +622,7 @@ const docTemplate = `{
                     }
                 }
             },
-            "post": {
+            "put": {
                 "description": "Upsert a ChartVersion.",
                 "consumes": [
                     "application/json"
