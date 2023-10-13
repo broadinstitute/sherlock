@@ -5,6 +5,11 @@ mockname: "Mock{{ .InterfaceNameCamel }}"
 outpkg: "{{ .PackageName }}_mocks"
 
 packages:
+  github.com/gin-gonic/gin:
+    interfaces:
+      IRoutes:
+        config:
+          dir: ./internal/api/gin_mocks
   github.com/broadinstitute/sherlock/sherlock/internal/github:
     interfaces:
       mockableActionsClient:

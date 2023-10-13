@@ -21,7 +21,7 @@ import (
 //	@param			chartVersion			body		ChartVersionV3Create	true	"The ChartVersion to upsert"
 //	@success		201						{object}	ChartVersionV3
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
-//	@router			/api/chart-versions/v3 [post]
+//	@router			/api/chart-versions/v3 [put]
 func chartVersionsV3Upsert(ctx *gin.Context) {
 	db, err := authentication.MustUseDB(ctx)
 	if err != nil {

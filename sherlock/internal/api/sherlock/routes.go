@@ -41,7 +41,7 @@ import "github.com/gin-gonic/gin"
 //     `<group>/<type>/procedures/<version>/<behavior>`.
 //
 //     - If they do this, the endpoints should categorize themselves by their shared group, instead of their type.
-func ConfigureRoutes(apiRouter *gin.RouterGroup) {
+func ConfigureRoutes(apiRouter gin.IRoutes) {
 	apiRouter.GET("app-versions/v3/*selector", appVersionsV3Get)
 	apiRouter.GET("app-versions/v3", appVersionsV3List)
 	apiRouter.PATCH("app-versions/v3/*selector", appVersionsV3Edit)

@@ -35,7 +35,7 @@ generate-swagger:
 # To install mockery, `brew install mockery`
 # 	(As a backup, use `go install github.com/vektra/mockery/v2@v2.32.4` but check https://github.com/vektra/mockery/releases for versions)
 generate-mocks:
-	cd sherlock && go generate ./...
+	cd sherlock && mockery
 
 # We use `go mod vendor` to package local dependencies in a way that the gcloud CLI can upload, but
 # we don't keep that directory around because it'll confuse GoLand (we want our source of truth to be

@@ -7,10 +7,7 @@ import (
 	"testing"
 )
 
-// If you're using GoLand you can use the gutter annotation to the left of the line below to regenerate the mocks.
-// Otherwise, `make generate-mocks` from the root of the repo. In either case, you'll need to `brew install mockery`.
-//
-//go:generate mockery
+// `make generate-mocks` from the root of the repo to regenerate (you'll need to `brew install mockery`)
 type mockableActionsClient interface {
 	CreateWorkflowDispatchEventByFileName(ctx context.Context, owner, repo, workflowFileName string, event github.CreateWorkflowDispatchEventRequest) (*github.Response, error)
 }
