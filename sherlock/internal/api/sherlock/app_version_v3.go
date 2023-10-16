@@ -30,7 +30,7 @@ type AppVersionV3Edit struct {
 	Description string `json:"description" form:"description"` // Generally the Git commit message
 }
 
-func (v AppVersionV3) toModel(db *gorm.DB, failIfParentInvalid bool) (models.AppVersion, error) {
+func (v AppVersionV3) toModel(db *gorm.DB, failIfParentMissing bool) (models.AppVersion, error) {
 	var chartResult models.Chart
 	if v.Chart != "" {
 		chartQuery, err := chartModelFromSelector(v.Chart)
@@ -49,7 +49,7 @@ func (v AppVersionV3) toModel(db *gorm.DB, failIfParentInvalid bool) (models.App
 			return models.AppVersion{}, err
 		}
 		var parentAppVersionResult models.AppVersion
-		if err = db.Where(&parentAppVersionQuery).First(&parentAppVersionResult).Error; failIfParentInvalid && err != nil {
+		if err = db.Where(&parentAppVersionQuery).First(&parentAppVersionResult).Error; failIfParentMissing && err != nil {
 			return models.AppVersion{}, err
 		} else if err == nil {
 			parentAppVersionID = &parentAppVersionResult.ID
