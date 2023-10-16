@@ -18,6 +18,7 @@ on:
     paths:
       - ".github/workflows/sherlock-build.yaml"
       - ".github/workflows/client-report-app-version.yaml"
+      - ".github/workflows/client-report-workflow.yaml"
       - "sherlock/**"
       - "!sherlock/docs/**"
       - "go-shared/**"
@@ -27,6 +28,7 @@ on:
     paths:
       - ".github/workflows/sherlock-build.yaml"
       - ".github/workflows/client-report-app-version.yaml"
+      - ".github/workflows/client-report-workflow.yaml"
       - "sherlock/**"
       - "!sherlock/docs/**"
       - "go-shared/**"
