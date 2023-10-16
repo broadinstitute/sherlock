@@ -255,7 +255,7 @@ jobs:
             ```
 
   report-to-sherlock:
-    uses: ./.github/workflows/client-report-app-version.yaml@main
+    uses: ./.github/workflows/client-report-app-version.yaml
     needs: [generate-tag, build-and-publish]
     if: ${{ needs.generate-tag.outputs.tag != '' && github.actor != 'dependabot[bot]' }}
     with:
