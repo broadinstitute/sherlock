@@ -212,7 +212,7 @@ jobs:
         if: ${{ inputs.use-git == true && inputs.no-parent == false && inputs.override-parent == '' }}
         shell: bash
         run: |
-          export PARENT="$(git describe --tags --abbrev=0 HEAD^ || true)"
+          export PARENT="$(git describe --tags --abbrev=0 --exclude='*/**' HEAD^ || true)"
           if [ -n "$PARENT" ]
           then
             export PARENT="${{ inputs.chart-name }}/$PARENT"
