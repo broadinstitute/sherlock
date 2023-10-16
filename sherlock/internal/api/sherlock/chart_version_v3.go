@@ -28,7 +28,7 @@ type ChartVersionV3Edit struct {
 	Description string `json:"description" form:"description"` // Generally the Git commit message
 }
 
-func (v ChartVersionV3) toModel(db *gorm.DB, failIfParentInvalid bool) (models.ChartVersion, error) {
+func (v ChartVersionV3) toModel(db *gorm.DB, failIfParentMissing bool) (models.ChartVersion, error) {
 	var chartResult models.Chart
 	if v.Chart != "" {
 		chartQuery, err := chartModelFromSelector(v.Chart)
@@ -47,7 +47,7 @@ func (v ChartVersionV3) toModel(db *gorm.DB, failIfParentInvalid bool) (models.C
 			return models.ChartVersion{}, err
 		}
 		var parentChartVersionResult models.ChartVersion
-		if err = db.Where(&parentChartVersionQuery).First(&parentChartVersionResult).Error; failIfParentInvalid && err != nil {
+		if err = db.Where(&parentChartVersionQuery).First(&parentChartVersionResult).Error; failIfParentMissing && err != nil {
 			return models.ChartVersion{}, err
 		} else if err == nil {
 			parentChartVersionID = &parentChartVersionResult.ID

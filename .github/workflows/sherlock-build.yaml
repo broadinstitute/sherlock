@@ -17,6 +17,8 @@ on:
       - main
     paths:
       - ".github/workflows/sherlock-build.yaml"
+      - ".github/workflows/client-report-app-version.yaml"
+      - ".github/workflows/client-report-workflow.yaml"
       - "sherlock/**"
       - "!sherlock/docs/**"
       - "go-shared/**"
@@ -25,6 +27,8 @@ on:
       - main
     paths:
       - ".github/workflows/sherlock-build.yaml"
+      - ".github/workflows/client-report-app-version.yaml"
+      - ".github/workflows/client-report-workflow.yaml"
       - "sherlock/**"
       - "!sherlock/docs/**"
       - "go-shared/**"
@@ -53,21 +57,43 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
-  tag-build-publish:
+  generate-tag:
     runs-on: ubuntu-latest
     permissions:
-      # We'll use Broadbot to push changed tag
-      contents: "read"
-      # Use OIDC for workload identity
-      id-token: "write"
-      # Make comments
-      pull-requests: "write"
+      contents: 'read'
+    outputs:
+      tag: ${{ steps.tag.outputs.new_tag }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           token: ${{ (github.actor != 'dependabot[bot]' && secrets.BROADBOT_TOKEN) || secrets.GITHUB_TOKEN }}
           fetch-depth: 0
+
+      # We use DRY_RUN so we don't push to the repo prematurely -- we may
+      # have code-gen changes, or we might not end up pushing at all.
+      - name: Generate Tag
+        uses: databiosphere/github-actions/actions/bumper@bumper-0.2.0
+        id: tag
+        env:
+          DEFAULT_BUMP: patch
+          RELEASE_BRANCHES: ${{ github.event.repository.default_branch }}
+          WITH_V: true
+          GITHUB_TOKEN: ${{ (github.actor != 'dependabot[bot]' && secrets.BROADBOT_TOKEN) || secrets.GITHUB_TOKEN }}
+          DRY_RUN: true
+
+  build-and-publish:
+    needs: [generate-tag]
+    if: ${{ needs.generate-tag.outputs.tag != '' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ (github.actor != 'dependabot[bot]' && secrets.BROADBOT_TOKEN) || secrets.GITHUB_TOKEN }}
 
       - name: Set up Git
         if: ${{ github.actor != 'dependabot[bot]' }}
@@ -91,18 +117,6 @@ jobs:
 
       - name: Set up Swag
         run: go install github.com/swaggo/swag/cmd/swag@latest
-
-      # We use DRY_RUN so we don't push to the repo prematurely -- we may
-      # have code-gen changes, or we might not end up pushing at all.
-      - name: Generate Tag
-        uses: databiosphere/github-actions/actions/bumper@bumper-0.2.0
-        id: tag
-        env:
-          DEFAULT_BUMP: patch
-          RELEASE_BRANCHES: ${{ github.event.repository.default_branch }}
-          WITH_V: true
-          GITHUB_TOKEN: ${{ (github.actor != 'dependabot[bot]' && secrets.BROADBOT_TOKEN) || secrets.GITHUB_TOKEN }}
-          DRY_RUN: true
 
       - name: Generate Swagger source
         run: make generate-swagger
@@ -134,7 +148,7 @@ jobs:
             --additional-properties=disallowAdditionalPropertiesIfNotPresent=false \
             --additional-properties=supportsES6=true \
             --additional-properties=npmName=@sherlock-js-client/sherlock \
-            --additional-properties=npmVersion=${{ steps.tag.outputs.new_tag }}
+            --additional-properties=npmVersion=${{ needs.generate-tag.outputs.tag }}
 
       - name: Build Typescript client
         if: ${{ github.event_name != 'pull_request' }}
@@ -152,9 +166,9 @@ jobs:
             ${{ env.GOOGLE_DOCKER_REPOSITORY }}/${{ env.GOOGLE_PROJECT }}/${{ env.REPOSITORY_NAME }}/${{ env.IMAGE_NAME }}
           tags: |
             type=raw,value=latest,enable={{is_default_branch}}
-            type=raw,value=${{ steps.tag.outputs.new_tag }}
-            type=semver,pattern=v{{major}},value=${{ steps.tag.outputs.new_tag }},enable={{is_default_branch}}
-            type=semver,pattern=v{{major}}.{{minor}},value=${{ steps.tag.outputs.new_tag }},enable={{is_default_branch}}
+            type=raw,value=${{ needs.generate-tag.outputs.tag }}
+            type=semver,pattern=v{{major}},value=${{ needs.generate-tag.outputs.tag }},enable={{is_default_branch}}
+            type=semver,pattern=v{{major}}.{{minor}},value=${{ needs.generate-tag.outputs.tag }},enable={{is_default_branch}}
 
       - name: Build image
         uses: docker/build-push-action@v5
@@ -165,14 +179,14 @@ jobs:
           load: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          build-args: BUILD_VERSION=${{ steps.tag.outputs.new_tag }}
+          build-args: BUILD_VERSION=${{ needs.generate-tag.outputs.tag }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
       - name: Run Trivy vulnerability scanner
         uses: broadinstitute/dsp-appsec-trivy-action@v1
         with:
-          image: ${{ env.GOOGLE_DOCKER_REPOSITORY }}/${{ env.GOOGLE_PROJECT }}/${{ env.REPOSITORY_NAME }}/${{ env.IMAGE_NAME }}:${{ steps.tag.outputs.new_tag }}
+          image: ${{ env.GOOGLE_DOCKER_REPOSITORY }}/${{ env.GOOGLE_PROJECT }}/${{ env.REPOSITORY_NAME }}/${{ env.IMAGE_NAME }}:${{ needs.generate-tag.outputs.tag }}
 
       - name: Auth to GCP
         if: ${{ github.actor != 'dependabot[bot]' }}
@@ -199,10 +213,10 @@ jobs:
         # go mod is actually going to look for a tag of sherlock-go-client/v1.2.3.
         # https://github.com/golang/go/issues/31045
         run: |
-          git tag "${{ steps.tag.outputs.new_tag }}"
-          git tag "sherlock/${{ steps.tag.outputs.new_tag }}"
-          git tag "go-shared/${{ steps.tag.outputs.new_tag }}"
-          git tag "sherlock-go-client/${{ steps.tag.outputs.new_tag }}"
+          git tag "${{ needs.generate-tag.outputs.tag }}"
+          git tag "sherlock/${{ needs.generate-tag.outputs.tag }}"
+          git tag "go-shared/${{ needs.generate-tag.outputs.tag }}"
+          git tag "sherlock-go-client/${{ needs.generate-tag.outputs.tag }}"
 
       - name: Push to main
         if: ${{ github.event_name != 'pull_request' }}
@@ -225,14 +239,31 @@ jobs:
         run: |
           docker push --all-tags ${{ env.GOOGLE_DOCKER_REPOSITORY }}/${{ env.GOOGLE_PROJECT }}/${{ env.REPOSITORY_NAME }}/${{ env.IMAGE_NAME }}
 
+  comment-published-image:
+    needs: [ generate-tag, build-and-publish ]
+    runs-on: ubuntu-latest
+    if: ${{ needs.generate-tag.outputs.tag != '' && github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' }}
+    permissions:
+      pull-requests: 'write'
+    steps:
       - name: Comment published image
-        if: ${{ github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' }}
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           header: image
           message: |
             Published image from ${{ github.event.pull_request.head.sha }} (merge ${{ github.sha }}):
-            
+
             ```
-            ${{ env.GOOGLE_DOCKER_REPOSITORY }}/${{ env.GOOGLE_PROJECT }}/${{ env.REPOSITORY_NAME }}/${{ env.IMAGE_NAME }}:${{ steps.tag.outputs.new_tag }}
+            ${{ env.GOOGLE_DOCKER_REPOSITORY }}/${{ env.GOOGLE_PROJECT }}/${{ env.REPOSITORY_NAME }}/${{ env.IMAGE_NAME }}:${{ needs.generate-tag.outputs.tag }}
             ```
+
+  report-to-sherlock:
+    uses: ./.github/workflows/client-report-app-version.yaml
+    needs: [generate-tag, build-and-publish]
+    if: ${{ needs.generate-tag.outputs.tag != '' && github.actor != 'dependabot[bot]' }}
+    with:
+      new-version: ${{ needs.generate-tag.outputs.tag }}
+      chart-name: 'sherlock'
+    permissions:
+      contents: 'read'
+      id-token: 'write'
