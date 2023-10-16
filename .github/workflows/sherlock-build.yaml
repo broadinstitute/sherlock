@@ -58,8 +58,7 @@ jobs:
   generate-tag:
     runs-on: ubuntu-latest
     permissions:
-      # We actually push the tag later
-      contents: "read"
+      contents: 'read'
     outputs:
       tag: ${{ steps.tag.outputs.new_tag }}
     steps:
@@ -86,12 +85,8 @@ jobs:
     if: ${{ needs.generate-tag.outputs.tag != '' }}
     runs-on: ubuntu-latest
     permissions:
-      # We'll use Broadbot to push changed tag
-      contents: "read"
-      # Use OIDC for workload identity
-      id-token: "write"
-      # Make comments
-      pull-requests: "write"
+      contents: 'read'
+      id-token: 'write'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -242,14 +237,20 @@ jobs:
         run: |
           docker push --all-tags ${{ env.GOOGLE_DOCKER_REPOSITORY }}/${{ env.GOOGLE_PROJECT }}/${{ env.REPOSITORY_NAME }}/${{ env.IMAGE_NAME }}
 
+  comment-published-image:
+    needs: [ generate-tag, build-and-publish ]
+    runs-on: ubuntu-latest
+    if: ${{ needs.generate-tag.outputs.tag != '' && github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' }}
+    permissions:
+      pull-requests: 'write'
+    steps:
       - name: Comment published image
-        if: ${{ github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' }}
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           header: image
           message: |
             Published image from ${{ github.event.pull_request.head.sha }} (merge ${{ github.sha }}):
-            
+
             ```
             ${{ env.GOOGLE_DOCKER_REPOSITORY }}/${{ env.GOOGLE_PROJECT }}/${{ env.REPOSITORY_NAME }}/${{ env.IMAGE_NAME }}:${{ needs.generate-tag.outputs.tag }}
             ```
