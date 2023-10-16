@@ -256,8 +256,8 @@ jobs:
         shell: bash
         run: |
           set -ex
-          curl --fail-with-body -X 'POST' \
-            "$SHERLOCK_PROD_URL/api/v2/app-versions" \
+          curl --fail-with-body -X 'PUT' \
+            "$SHERLOCK_PROD_URL/api/app-versions/v3" \
             -H 'Content-Type: application/json' \
             -H 'Authorization: Bearer ${{ steps.iap_auth.outputs.id_token }}' \
             -H 'X-GHA-OIDC-JWT: ${{ steps.gha_auth.outputs.id_token }}' \
