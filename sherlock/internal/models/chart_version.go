@@ -19,7 +19,7 @@ type ChartVersion struct {
 }
 
 func (c *ChartVersion) TableName() string {
-	return "v2_chart_versions"
+	return "chart_versions"
 }
 
 func (c *ChartVersion) GetCiIdentifier() CiIdentifier {
@@ -60,25 +60,25 @@ func GetChartVersionPathIDs(db *gorm.DB, inclusiveStartID uint, exclusiveEndID u
 		`
 WITH RECURSIVE search_path(id, parent_chart_version_id) AS (
         -- Initially, get the ID and parent ID where:
-        SELECT v2_chart_versions.id, v2_chart_versions.parent_chart_version_id
-        FROM v2_chart_versions
+        SELECT chart_versions.id, chart_versions.parent_chart_version_id
+        FROM chart_versions
         WHERE
             -- The chart version is the one we're starting at
-            v2_chart_versions.id = ? AND
+            chart_versions.id = ? AND
             -- The chart version has a parent reference, so we don't start looking for a null parent (we'd rather bail with no results)
-            v2_chart_versions.parent_chart_version_id IS NOT NULL
+            chart_versions.parent_chart_version_id IS NOT NULL
     -- UNION, not UNION ALL, so that duplicate rows in search_path are dropped and we automatically avoid cycles
     UNION
         -- Recursively, get the ID and parent ID where:
-        SELECT v2_chart_versions.id, v2_chart_versions.parent_chart_version_id
-        FROM v2_chart_versions, search_path
+        SELECT chart_versions.id, chart_versions.parent_chart_version_id
+        FROM chart_versions, search_path
         WHERE
             -- The chart version isn't the end of the path (if it is, bail because we want to stop searching then)
-            v2_chart_versions.id != ? AND
+            chart_versions.id != ? AND
             -- The chart version is the parent we're currently looking for
-            v2_chart_versions.id = search_path.parent_chart_version_id AND
+            chart_versions.id = search_path.parent_chart_version_id AND
             -- The chart version has a parent reference, so we don't start looking for a null parent (we'd rather bail)
-            v2_chart_versions.parent_chart_version_id IS NOT NULL
+            chart_versions.parent_chart_version_id IS NOT NULL
 )
 SELECT * FROM search_path
           -- Postgres evaluates search_path lazily, so this LIMIT is an extra safeguard against lengthy recursion

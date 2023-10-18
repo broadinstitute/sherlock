@@ -11,5 +11,5 @@ type PagerdutyIntegration struct {
 }
 
 func (p PagerdutyIntegration) TableName() string {
-	return "v2_pagerduty_integrations"
+	return "pagerduty_integrations"
 }

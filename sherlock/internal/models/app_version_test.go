@@ -8,7 +8,7 @@ import (
 func (s *modelSuite) TestAppVersionChartIdValidationSqlMissing() {
 	s.SetNonSuitableTestUserForDB()
 	err := s.DB.Create(&AppVersion{AppVersion: "version"}).Error
-	s.ErrorContains(err, "fk_v2_app_versions_chart")
+	s.ErrorContains(err, "fk_app_versions_chart")
 }
 
 func (s *modelSuite) TestAppVersionVersionValidationSqlMissing() {

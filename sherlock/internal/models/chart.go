@@ -21,7 +21,7 @@ type Chart struct {
 }
 
 func (c Chart) TableName() string {
-	return "v2_charts"
+	return "charts"
 }
 
 func (c Chart) GetCiIdentifier() CiIdentifier {

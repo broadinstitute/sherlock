@@ -23,7 +23,7 @@ type AppVersion struct {
 }
 
 func (a AppVersion) TableName() string {
-	return "v2_app_versions"
+	return "app_versions"
 }
 
 func (a AppVersion) getID() uint {
