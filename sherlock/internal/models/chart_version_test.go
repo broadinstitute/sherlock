@@ -8,7 +8,7 @@ import (
 func (s *modelSuite) TestChartVersionChartIdValidationSqlMissing() {
 	s.SetNonSuitableTestUserForDB()
 	err := s.DB.Create(&ChartVersion{ChartVersion: "version"}).Error
-	s.ErrorContains(err, "fk_v2_chart_versions_chart")
+	s.ErrorContains(err, "fk_chart_versions_chart")
 }
 
 func (s *modelSuite) TestChartVersionVersionValidationSqlMissing() {
