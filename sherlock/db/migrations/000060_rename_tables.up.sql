@@ -16,8 +16,6 @@ alter table app_versions
     rename constraint fk_v2_app_versions_parent_app_version to fk_app_versions_parent_app_version;
 
 -- indexes
-alter index v2_app_versions_pkey rename to app_versions_pkey;
-
 alter index idx_v2_app_versions_deleted_at rename to idx_app_versions_deleted_at;
 
 /*
@@ -37,9 +35,6 @@ alter table changeset_new_app_versions
 alter table changeset_new_app_versions
     rename constraint fk_v2_changeset_new_app_versions_changeset to fk_changeset_new_app_versions_changeset;
 
--- indexes
-alter index v2_changeset_new_app_versions_pkey rename to changeset_new_app_versions_pkey;
-
 /*
  * changeset_new_chart_versions
  */
@@ -56,9 +51,6 @@ alter table changeset_new_chart_versions
 
 alter table changeset_new_chart_versions
     rename constraint fk_v2_changeset_new_chart_versions_chart_version to fk_changeset_new_chart_versions_chart_version;
-
--- indexes
-alter index v2_changeset_new_chart_versions_pkey rename to changeset_new_chart_versions_pkey;
 
 /*
  * changesets
@@ -99,8 +91,6 @@ alter table changesets
     rename constraint fk_v2_changesets_to_follow_chart_release_chart_version to fk_changesets_to_follow_chart_release_chart_version;
 
 -- indexes
-alter index v2_changesets_pkey rename to changesets_pkey;
-
 alter index idx_v2_changesets_deleted_at rename to idx_changesets_deleted_at;
 
 /*
@@ -139,8 +129,6 @@ alter table chart_releases
     rename constraint fk_v2_chart_releases_pagerduty_integration to fk_chart_releases_pagerduty_integration;
 
 -- indexes
-alter index v2_chart_releases_pkey rename to chart_releases_pkey;
-
 alter index idx_v2_chart_releases_deleted_at rename to idx_chart_releases_deleted_at;
 
 /*
@@ -161,8 +149,6 @@ alter table chart_versions
     rename constraint fk_v2_chart_versions_parent_chart_version to fk_chart_versions_parent_chart_version;
 
 -- indexes
-alter index v2_chart_versions_pkey rename to chart_versions_pkey;
-
 alter index idx_v2_chart_versions_deleted_at rename to idx_chart_versions_deleted_at;
 
 /*
@@ -179,10 +165,6 @@ alter table charts
     rename constraint v2_charts_name_key to charts_name_key;
 
 -- indexes
-alter index v2_charts_name_key rename to charts_name_key;
-
-alter index v2_charts_pkey rename to charts_pkey;
-
 alter index idx_v2_charts_deleted_at rename to idx_charts_deleted_at;
 
 /*
@@ -196,8 +178,6 @@ alter table ci_identifiers
     rename constraint v2_ci_identifiers_pkey to ci_identifiers_pkey;
 
 -- indexes
-alter index v2_ci_identifiers_pkey rename to ci_identifiers_pkey;
-
 alter index idx_v2_ci_identifiers_deleted_at rename to idx_ci_identifiers_deleted_at;
 
 alter index idx_v2_ci_identifiers_polymorphic_index rename to idx_ci_identifiers_polymorphic_index;
@@ -213,8 +193,6 @@ alter table ci_runs
     rename constraint v2_ci_runs_pkey to ci_runs_pkey;
 
 -- indexes
-alter index v2_ci_runs_pkey rename to ci_runs_pkey;
-
 alter index idx_v2_ci_runs_deleted_at rename to idx_ci_runs_deleted_at;
 
 /*
@@ -234,9 +212,6 @@ alter table ci_runs_for_identifiers
 alter table ci_runs_for_identifiers
     rename constraint fk_v2_ci_runs_for_identifiers_ci_run to fk_ci_runs_for_identifiers_ci_run;
 
--- indexes
-alter index v2_ci_runs_for_identifiers_pkey rename to ci_runs_for_identifiers_pkey;
-
 /*
  * clusters
  */
@@ -251,10 +226,6 @@ alter table clusters
     rename constraint v2_clusters_name_key to clusters_name_key;
 
 -- indexes
-alter index v2_clusters_name_key rename to clusters_name_key;
-
-alter index v2_clusters_pkey rename to clusters_pkey;
-
 alter index idx_v2_clusters_deleted_at rename to idx_clusters_deleted_at;
 
 /*
@@ -272,8 +243,6 @@ alter table database_instances
     rename constraint fk_v2_database_instances_chart_release to fk_database_instances_chart_release;
 
 -- indexes
-alter index v2_database_instances_pkey rename to database_instances_pkey;
-
 alter index idx_v2_database_instances_deleted_at rename to idx_database_instances_deleted_at;
 
 /*
@@ -300,8 +269,6 @@ alter table environments
     rename constraint fk_v2_environments_template_environment to fk_environments_template_environment;
 
 -- indexes
-alter index v2_environments_pkey rename to environments_pkey;
-
 alter index idx_v2_environments_deleted_at rename to idx_environments_deleted_at;
 
 /*
@@ -315,8 +282,6 @@ alter table pagerduty_integrations
     rename constraint v2_pagerduty_integrations_pkey to pagerduty_integrations_pkey;
 
 -- indexes
-alter index v2_pagerduty_integrations_pkey rename to pagerduty_integrations_pkey;
-
 alter index idx_v2_pagerduty_integrations_deleted_at rename to idx_pagerduty_integrations_deleted_at;
 
 /*
@@ -336,12 +301,6 @@ alter table users
     rename constraint v2_users_google_id_key to users_google_id_key;
 
 -- indexes
-alter index v2_users_email_key rename to users_email_key;
-
-alter index v2_users_google_id_key rename to users_google_id_key;
-
-alter index v2_users_pkey rename to users_pkey;
-
 alter index idx_v2_users_deleted_at rename to idx_users_deleted_at;
 
 /*
