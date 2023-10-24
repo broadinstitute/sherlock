@@ -246,6 +246,26 @@ alter table database_instances
 alter index idx_v2_database_instances_deleted_at rename to idx_database_instances_deleted_at;
 
 /*
+ * deploy_hook_trigger_configs
+ */
+alter table v2_deploy_hook_trigger_configs
+    rename to deploy_hook_trigger_configs;
+
+-- keys
+alter table deploy_hook_trigger_configs
+    rename constraint v2_deploy_hook_trigger_configs_pkey to deploy_hook_trigger_configs_pkey;
+
+-- foreign keys
+alter table deploy_hook_trigger_configs
+    rename constraint fk_v2_deploy_hook_trigger_configs_on_chart_release to fk_deploy_hook_trigger_configs_on_chart_release;
+
+alter table deploy_hook_trigger_configs
+    rename constraint fk_v2_deploy_hook_trigger_configs_on_environment to fk_deploy_hook_trigger_configs_on_environment;
+
+--indexes
+alter index idx_v2_deploy_hook_trigger_configs_deleted_at rename to idx_deploy_hook_trigger_configs_deleted_at;
+
+/*
  * environments
  */
 alter table v2_environments
@@ -272,6 +292,19 @@ alter table environments
 alter index idx_v2_environments_deleted_at rename to idx_environments_deleted_at;
 
 /*
+ * github_actions_deploy_hooks
+ */
+alter table v2_github_actions_deploy_hooks
+    rename to github_actions_deploy_hooks;
+
+-- keys
+alter table github_actions_deploy_hooks
+    rename constraint v2_github_actions_deploy_hooks_pkey to github_actions_deploy_hooks_pkey;
+
+-- indexes
+alter index idx_v2_github_actions_deploy_hooks_deleted_at rename to idx_github_actions_deploy_hooks_deleted_at;
+
+/*
  * pagerduty_integration
  */
 alter table v2_pagerduty_integrations
@@ -283,6 +316,19 @@ alter table pagerduty_integrations
 
 -- indexes
 alter index idx_v2_pagerduty_integrations_deleted_at rename to idx_pagerduty_integrations_deleted_at;
+
+/*
+ * slack_deploy_hooks
+ */
+alter table v2_slack_deploy_hooks
+    rename to slack_deploy_hooks;
+
+-- keys
+alter table slack_deploy_hooks
+    rename constraint v2_slack_deploy_hooks_pkey to slack_deploy_hooks_pkey;
+
+-- indexes
+alter index idx_v2_slack_deploy_hooks_deleted_at rename to idx_slack_deploy_hooks_deleted_at;
 
 /*
  * users

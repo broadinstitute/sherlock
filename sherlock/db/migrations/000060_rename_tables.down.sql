@@ -246,6 +246,26 @@ alter table v2_database_instances
 alter index idx_database_instances_deleted_at rename to idx_v2_database_instances_deleted_at;
 
 /*
+ * deploy_hook_trigger_configs
+ */
+alter table deploy_hook_trigger_configs
+    rename to v2_deploy_hook_trigger_configs;
+
+-- keys
+alter table v2_deploy_hook_trigger_configs
+    rename constraint deploy_hook_trigger_configs_pkey to v2_deploy_hook_trigger_configs_pkey;
+
+-- foreign keys
+alter table v2_deploy_hook_trigger_configs
+    rename constraint fk_deploy_hook_trigger_configs_on_chart_release to fk_v2_deploy_hook_trigger_configs_on_chart_release;
+
+alter table v2_deploy_hook_trigger_configs
+    rename constraint fk_deploy_hook_trigger_configs_on_environment to fk_v2_deploy_hook_trigger_configs_on_environment;
+
+--indexes
+alter index idx_deploy_hook_trigger_configs_deleted_at rename to idx_v2_deploy_hook_trigger_configs_deleted_at;
+
+/*
  * environments
  */
 alter table environments
@@ -272,6 +292,19 @@ alter table v2_environments
 alter index idx_environments_deleted_at rename to idx_v2_environments_deleted_at;
 
 /*
+ * github_actions_deploy_hooks
+ */
+alter table github_actions_deploy_hooks
+    rename to v2_github_actions_deploy_hooks;
+
+-- keys
+alter table v2_github_actions_deploy_hooks
+    rename constraint github_actions_deploy_hooks_pkey to v2_github_actions_deploy_hooks_pkey;
+
+-- indexes
+alter index idx_github_actions_deploy_hooks_deleted_at rename to idx_v2_github_actions_deploy_hooks_deleted_at;
+
+/*
  * pagerduty_integration
  */
 alter table pagerduty_integrations
@@ -283,6 +316,19 @@ alter table v2_pagerduty_integrations
 
 -- indexes
 alter index idx_pagerduty_integrations_deleted_at rename to idx_v2_pagerduty_integrations_deleted_at;
+
+/*
+ * slack_deploy_hooks
+ */
+alter table slack_deploy_hooks
+    rename to v2_slack_deploy_hooks;
+
+-- keys
+alter table v2_slack_deploy_hooks
+    rename constraint slack_deploy_hooks_pkey to v2_slack_deploy_hooks_pkey;
+
+-- indexes
+alter index idx_slack_deploy_hooks_deleted_at rename to idx_v2_slack_deploy_hooks_deleted_at;
 
 /*
  * users
