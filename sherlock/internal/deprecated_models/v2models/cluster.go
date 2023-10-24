@@ -27,7 +27,7 @@ type Cluster struct {
 }
 
 func (c Cluster) TableName() string {
-	return "v2_clusters"
+	return "clusters"
 }
 
 func (c Cluster) getID() uint {

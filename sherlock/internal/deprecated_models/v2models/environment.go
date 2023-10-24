@@ -58,7 +58,7 @@ type Environment struct {
 }
 
 func (e Environment) TableName() string {
-	return "v2_environments"
+	return "environments"
 }
 
 func (e Environment) getID() uint {

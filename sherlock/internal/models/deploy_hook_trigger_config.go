@@ -19,7 +19,7 @@ type DeployHookTriggerConfig struct {
 }
 
 func (d *DeployHookTriggerConfig) TableName() string {
-	return "v2_deploy_hook_trigger_configs"
+	return "deploy_hook_trigger_configs"
 }
 
 // ErrorIfForbidden looks at the environment or chart release's environment/cluster to determine

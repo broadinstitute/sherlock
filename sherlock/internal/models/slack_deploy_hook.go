@@ -11,7 +11,7 @@ type SlackDeployHook struct {
 }
 
 func (s *SlackDeployHook) TableName() string {
-	return "v2_slack_deploy_hooks"
+	return "slack_deploy_hooks"
 }
 
 func (s *SlackDeployHook) AfterSave(tx *gorm.DB) error {

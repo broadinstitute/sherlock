@@ -20,7 +20,7 @@ type PagerdutyIntegration struct {
 }
 
 func (p PagerdutyIntegration) TableName() string {
-	return "v2_pagerduty_integrations"
+	return "pagerduty_integrations"
 }
 
 func (p PagerdutyIntegration) getID() uint {

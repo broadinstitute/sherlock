@@ -27,14 +27,14 @@ type CiIdentifiable interface {
 
 type CiIdentifier struct {
 	gorm.Model
-	ResourceType string `gorm:"index:idx_v2_ci_identifiers_polymorphic_index,priority:1"`
-	ResourceID   uint   `gorm:"index:idx_v2_ci_identifiers_polymorphic_index,priority:2"`
+	ResourceType string `gorm:"index:idx_ci_identifiers_polymorphic_index,priority:1"`
+	ResourceID   uint   `gorm:"index:idx_ci_identifiers_polymorphic_index,priority:2"`
 	// Mutable
-	CiRuns []*CiRun `gorm:"many2many:v2_ci_runs_for_identifiers; constraint:OnDelete:CASCADE,OnUpdate:CASCADE;"`
+	CiRuns []*CiRun `gorm:"many2many:ci_runs_for_identifiers; constraint:OnDelete:CASCADE,OnUpdate:CASCADE;"`
 }
 
 func (c CiIdentifier) TableName() string {
-	return "v2_ci_identifiers"
+	return "ci_identifiers"
 }
 
 func (c CiIdentifier) getID() uint {

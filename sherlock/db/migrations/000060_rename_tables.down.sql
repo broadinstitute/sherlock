@@ -16,7 +16,7 @@ alter table v2_app_versions
     rename constraint fk_app_versions_parent_app_version to fk_v2_app_versions_parent_app_version;
 
 -- indexes
-alter index idx_app_versions_deleted_at rename to v2_idx_app_versions_deleted_at;
+alter index idx_app_versions_deleted_at rename to idx_v2_app_versions_deleted_at;
 
 /*
  * changeset_new_app_versions
@@ -91,7 +91,7 @@ alter table v2_changesets
     rename constraint fk_changesets_to_follow_chart_release_chart_version to fk_v2_changesets_to_follow_chart_release_chart_version;
 
 -- indexes
-alter index idx_changesets_deleted_at rename to v2_idx_changesets_deleted_at;
+alter index idx_changesets_deleted_at rename to idx_v2_changesets_deleted_at;
 
 /*
  * chart_releases
@@ -129,7 +129,7 @@ alter table v2_chart_releases
     rename constraint fk_chart_releases_pagerduty_integration to fk_v2_chart_releases_pagerduty_integration;
 
 -- indexes
-alter index idx_chart_releases_deleted_at rename to v2_idx_chart_releases_deleted_at;
+alter index idx_chart_releases_deleted_at rename to idx_v2_chart_releases_deleted_at;
 
 /*
  * chart_versions
@@ -149,7 +149,7 @@ alter table v2_chart_versions
     rename constraint fk_chart_versions_parent_chart_version to fk_v2_chart_versions_parent_chart_version;
 
 -- indexes
-alter index idx_chart_versions_deleted_at rename to v2_idx_chart_versions_deleted_at;
+alter index idx_chart_versions_deleted_at rename to idx_v2_chart_versions_deleted_at;
 
 /*
  * charts
@@ -165,7 +165,7 @@ alter table v2_charts
     rename constraint charts_name_key to v2_charts_name_key;
 
 -- indexes
-alter index idx_charts_deleted_at rename to v2_idx_charts_deleted_at;
+alter index idx_charts_deleted_at rename to idx_v2_charts_deleted_at;
 
 /*
  * ci_identifiers
@@ -178,9 +178,9 @@ alter table v2_ci_identifiers
     rename constraint ci_identifiers_pkey to v2_ci_identifiers_pkey;
 
 -- indexes
-alter index idx_ci_identifiers_deleted_at rename to v2_idx_ci_identifiers_deleted_at;
+alter index idx_ci_identifiers_deleted_at rename to idx_v2_ci_identifiers_deleted_at;
 
-alter index idx_ci_identifiers_polymorphic_index rename to v2_idx_ci_identifiers_polymorphic_index;
+alter index idx_ci_identifiers_polymorphic_index rename to idx_v2_ci_identifiers_polymorphic_index;
 
 /*
  * ci_runs
@@ -193,7 +193,7 @@ alter table v2_ci_runs
     rename constraint ci_runs_pkey to v2_ci_runs_pkey;
 
 -- indexes
-alter index idx_ci_runs_deleted_at rename to v2_idx_ci_runs_deleted_at;
+alter index idx_ci_runs_deleted_at rename to idx_v2_ci_runs_deleted_at;
 
 /*
  * ci_runs_for_identifiers
@@ -226,7 +226,7 @@ alter table v2_clusters
     rename constraint clusters_name_key to v2_clusters_name_key;
 
 -- indexes
-alter index idx_clusters_deleted_at rename to v2_idx_clusters_deleted_at;
+alter index idx_clusters_deleted_at rename to idx_v2_clusters_deleted_at;
 
 /*
  * database_instances
@@ -243,7 +243,7 @@ alter table v2_database_instances
     rename constraint fk_database_instances_chart_release to fk_v2_database_instances_chart_release;
 
 -- indexes
-alter index idx_database_instances_deleted_at rename to v2_idx_database_instances_deleted_at;
+alter index idx_database_instances_deleted_at rename to idx_v2_database_instances_deleted_at;
 
 /*
  * environments
@@ -269,7 +269,7 @@ alter table v2_environments
     rename constraint fk_environments_template_environment to fk_v2_environments_template_environment;
 
 -- indexes
-alter index idx_environments_deleted_at rename to v2_idx_environments_deleted_at;
+alter index idx_environments_deleted_at rename to idx_v2_environments_deleted_at;
 
 /*
  * pagerduty_integration
@@ -282,7 +282,7 @@ alter table v2_pagerduty_integrations
     rename constraint pagerduty_integrations_pkey to v2_pagerduty_integrations_pkey;
 
 -- indexes
-alter index idx_pagerduty_integrations_deleted_at rename to v2_idx_pagerduty_integrations_deleted_at;
+alter index idx_pagerduty_integrations_deleted_at rename to idx_v2_pagerduty_integrations_deleted_at;
 
 /*
  * users
@@ -301,7 +301,7 @@ alter table v2_users
     rename constraint users_google_id_key to v2_users_google_id_key;
 
 -- indexes
-alter index idx_users_deleted_at rename to v2_idx_users_deleted_at;
+alter index idx_users_deleted_at rename to idx_v2_users_deleted_at;
 
 /*
  * sequences
