@@ -375,3 +375,9 @@ alter sequence v2_environments_id_seq rename to environments_id_seq;
 alter sequence v2_pagerduty_integrations_id_seq rename to pagerduty_integrations_id_seq;
 
 alter sequence v2_users_id_seq rename to users_id_seq;
+
+alter sequence v2_deploy_hook_trigger_configs_id_seq rename to deploy_hook_trigger_configs_id_seq;
+
+alter sequence v2_github_actions_deploy_hooks_id_seq rename to github_actions_deploy_hooks_id_seq;
+
+alter sequence v2_slack_deploy_hooks_id_seq rename to slack_deploy_hooks_id_seq;
