@@ -1,6 +1,6 @@
 alter table database_instances
     add constraint chart_release_id_present
-        check (chart_release_id != 0);
+        check (chart_release_id is not null and chart_release_id != 0);
 
 alter table database_instances
     add constraint platform_present
