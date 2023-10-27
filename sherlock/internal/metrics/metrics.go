@@ -61,7 +61,7 @@ var (
 
 // Unique per replica
 var (
-	PagerdutyRequestCount = stats.Int64(
+	PagerdutyRequestCountMeasure = stats.Int64(
 		"sherlock/v2_pagerduty_request_count",
 		"count of outgoing requests to pagerduty",
 		"requests")
@@ -135,9 +135,9 @@ var (
 	}
 	PagerdutyRequestCountView = &view.View{
 		Name:        "v2_pagerduty_request_count",
-		Measure:     PagerdutyRequestCount,
+		Measure:     PagerdutyRequestCountMeasure,
 		TagKeys:     []tag.Key{PagerdutyRequestTypeKey, PagerdutyResponseCodeKey},
-		Description: PagerdutyRequestCount.Description(),
+		Description: PagerdutyRequestCountMeasure.Description(),
 		Aggregation: view.Count(),
 	}
 	EnvironmentStateCountView = &view.View{

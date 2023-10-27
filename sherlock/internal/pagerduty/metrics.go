@@ -23,5 +23,5 @@ func recordMetrics(ctx context.Context, requestType string, err error) {
 	} else {
 		ctx, _ = tag.New(ctx, tag.Upsert(metrics.PagerdutyResponseCodeKey, strconv.Itoa(http.StatusAccepted)))
 	}
-	stats.Record(ctx, metrics.PagerdutyRequestCount.M(1))
+	stats.Record(ctx, metrics.PagerdutyRequestCountMeasure.M(1))
 }
