@@ -1,10 +1,15 @@
 package middleware
 
 import (
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/authentication"
+	"github.com/broadinstitute/sherlock/sherlock/internal/metrics"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
+	"go.opencensus.io/stats"
+	"go.opencensus.io/tag"
+	"strconv"
 	"time"
 )
 
@@ -14,14 +19,20 @@ func Logger() gin.HandlerFunc {
 
 		ctx.Next()
 
+		latency := time.Since(t)
+
 		path := ctx.Request.URL.Path
 		if ctx.Request.URL.RawQuery != "" {
 			path = path + "?" + ctx.Request.URL.RawQuery
 		}
-		identity := "client not identified"
+
+		var principal string
 		if user, err := authentication.ShouldUseUser(ctx); err == nil {
-			identity = user.Email
+			principal = user.Email
+		} else {
+			principal = "unevaluated"
 		}
+
 		var event *zerolog.Event
 		switch code := ctx.Writer.Status(); {
 		case code >= 500:
@@ -32,16 +43,25 @@ func Logger() gin.HandlerFunc {
 			event = log.Info()
 		}
 
-		if len(ctx.Errors) > 1 {
-			for i, err := range ctx.Errors {
-				log.Error().Err(err).Msgf("GIN  | request incurred a surprising number of errors (can't attach them all to a single log line), %d of %d: %v", i+1, len(ctx.Errors), err)
-			}
-		}
 		if len(ctx.Errors) > 0 {
-			event.Err(ctx.Errors[0])
+			event.Errs("errors", utils.Map(ctx.Errors, func(e *gin.Error) error { return e }))
 		}
 
-		event.Msgf("GIN  | %3d | %14s | %15s | %30s | %-7s %s",
-			ctx.Writer.Status(), time.Since(t).String(), ctx.ClientIP(), identity, ctx.Request.Method, path)
+		event.Int("status", ctx.Writer.Status())
+		event.Dur("latency", latency)
+		event.Str("principal", principal)
+		event.Str("client", ctx.ClientIP())
+		event.Str("method", ctx.Request.Method)
+		event.Str("route", ctx.FullPath())
+		event.Msgf("GIN  | %s", path)
+
+		if tagCtx, err := tag.New(ctx,
+			tag.Upsert(metrics.StatusKey, strconv.Itoa(ctx.Writer.Status())),
+			tag.Upsert(metrics.MethodKey, ctx.Request.Method),
+			tag.Upsert(metrics.RouteKey, ctx.FullPath())); err == nil {
+			stats.Record(tagCtx, metrics.ResponseLatencyMeasure.M(latency.Milliseconds()))
+		} else {
+			log.Warn().Err(err).Msg("unable to record latency")
+		}
 	}
 }
