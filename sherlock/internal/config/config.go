@@ -13,6 +13,7 @@ import (
 	stdlog "log"
 	"os"
 	"strings"
+	"time"
 )
 
 // Config holds Sherlock's global configuration
@@ -84,16 +85,24 @@ func configureLogging(infoMessages ...string) {
 	var logBuilder zerolog.Context
 	if Config.String("mode") == "debug" {
 		// Colored text for CLI
-		logBuilder = log.Output(zerolog.ConsoleWriter{Out: os.Stderr}).With()
+		output := zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: time.Kitchen}
+		output.FormatCaller = func(i interface{}) string {
+			if i == nil {
+				return ""
+			} else {
+				return fmt.Sprintf("%-50s |", strings.TrimPrefix(fmt.Sprintf("%s", i), "/build/sherlock/internal"))
+			}
+		}
+		logBuilder = log.Output(output).With()
 	} else {
 		// JSON for GCP
 		logBuilder = zerolog.New(os.Stderr).With()
 		zerolog.TimeFieldFormat = zerolog.TimeFormatUnixMs
 	}
-	if Config.Bool("log.timestamp") {
+	if Config.String("mode") != "debug" || Config.Bool("log.timestamp") {
 		logBuilder = logBuilder.Timestamp()
 	}
-	if Config.Bool("log.caller") {
+	if Config.String("mode") != "debug" || Config.Bool("log.caller") {
 		logBuilder = logBuilder.Caller()
 	}
 	log.Logger = logBuilder.Logger()
