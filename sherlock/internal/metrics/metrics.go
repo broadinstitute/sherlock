@@ -61,10 +61,14 @@ var (
 
 // Unique per replica
 var (
-	PagerdutyRequestCount = stats.Int64(
+	PagerdutyRequestCountMeasure = stats.Int64(
 		"sherlock/v2_pagerduty_request_count",
 		"count of outgoing requests to pagerduty",
 		"requests")
+	ResponseLatencyMeasure = stats.Int64(
+		"sherlock/response_latency",
+		"the latency of responses served from sherlock",
+		"ms")
 )
 
 var (
@@ -83,6 +87,9 @@ var (
 	GithubActionsWorkflowFileKey  = tag.MustNewKey("gha_workflow_file")
 	GithubActionsOutcomeKey       = tag.MustNewKey("gha_outcome")
 	GithubActionsRetryKey         = tag.MustNewKey("gha_retry")
+	RouteKey                      = tag.MustNewKey("route")
+	MethodKey                     = tag.MustNewKey("method")
+	StatusKey                     = tag.MustNewKey("status")
 
 	ChangesetCountView = &view.View{
 		Name:        "v2_changeset_count",
@@ -135,9 +142,9 @@ var (
 	}
 	PagerdutyRequestCountView = &view.View{
 		Name:        "v2_pagerduty_request_count",
-		Measure:     PagerdutyRequestCount,
+		Measure:     PagerdutyRequestCountMeasure,
 		TagKeys:     []tag.Key{PagerdutyRequestTypeKey, PagerdutyResponseCodeKey},
-		Description: PagerdutyRequestCount.Description(),
+		Description: PagerdutyRequestCountMeasure.Description(),
 		Aggregation: view.Count(),
 	}
 	EnvironmentStateCountView = &view.View{
@@ -175,6 +182,22 @@ var (
 		Description: GithubActions7DayTotalDurationMeasure.Description(),
 		Aggregation: view.LastValue(),
 	}
+	ResponseCountView = &view.View{
+		Name:        "response_count",
+		Measure:     ResponseLatencyMeasure,
+		TagKeys:     []tag.Key{RouteKey, MethodKey, StatusKey},
+		Description: "The number of responses served from Sherlock",
+		Aggregation: view.Count(),
+	}
+	ResponseLatencyView = &view.View{
+		Name:        "response_latency",
+		Measure:     ResponseLatencyMeasure,
+		TagKeys:     []tag.Key{RouteKey, MethodKey, StatusKey},
+		Description: "The distribution of the latencies of responses served from Sherlock",
+		// Latency in buckets:
+		// [>=0ms, >=25ms, >=50ms, >=75ms, >=100ms, >=200ms, >=400ms, >=600ms, >=800ms, >=1s, >=2s, >=4s, >=6s, >=8s, >=10s]
+		Aggregation: view.Distribution(0, 25, 50, 75, 100, 200, 400, 600, 800, 1000, 2000, 4000, 6000, 8000, 10000),
+	}
 )
 
 func RegisterViews() error {
@@ -192,5 +215,7 @@ func RegisterViews() error {
 		GithubActions7DayCompletionCountView,
 		GithubActions1HourTotalDurationView,
 		GithubActions7DayTotalDurationView,
+		ResponseCountView,
+		ResponseLatencyView,
 	)
 }
