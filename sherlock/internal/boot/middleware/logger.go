@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-func Logger() gin.HandlerFunc {
+func Logger(consoleLogging bool) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		t := time.Now()
 
@@ -48,12 +48,17 @@ func Logger() gin.HandlerFunc {
 		}
 
 		event.Int("status", ctx.Writer.Status())
-		event.Dur("latency", latency)
 		event.Str("principal", principal)
-		event.Str("client", ctx.ClientIP())
 		event.Str("method", ctx.Request.Method)
-		event.Str("route", ctx.FullPath())
-		event.Msgf("GIN  | %s", path)
+		if consoleLogging {
+			event.Stringer("latency", latency)
+			event.Msgf("GIN  | %-50s", path)
+		} else {
+			event.Dur("latency", latency)
+			event.Str("route", ctx.FullPath())
+			event.Str("client", ctx.ClientIP())
+			event.Msgf("GIN  | %s", path)
+		}
 
 		if tagCtx, err := tag.New(ctx,
 			tag.Upsert(metrics.StatusKey, strconv.Itoa(ctx.Writer.Status())),
