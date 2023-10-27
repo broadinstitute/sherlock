@@ -86,6 +86,7 @@ func configureLogging(infoMessages ...string) {
 	if Config.String("mode") == "debug" {
 		// Colored text for CLI
 		output := zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: time.Kitchen}
+		// If the call-site of the log message is included, format it nicely for human consumption
 		output.FormatCaller = func(i interface{}) string {
 			if i == nil {
 				return ""
