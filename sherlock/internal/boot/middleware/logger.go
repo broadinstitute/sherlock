@@ -57,7 +57,8 @@ func Logger(consoleLogging bool) gin.HandlerFunc {
 			event.Dur("latency", latency)
 			event.Str("route", ctx.FullPath())
 			event.Str("client", ctx.ClientIP())
-			event.Msgf("GIN  | %s", path)
+			event.Msgf("GIN  | %3d | %14s | %40s | %-7s %s",
+				ctx.Writer.Status(), time.Since(t).String(), principal, ctx.Request.Method, path)
 		}
 
 		if tagCtx, err := tag.New(ctx,
