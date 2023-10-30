@@ -33,7 +33,7 @@ func (c *Cluster) GetCiIdentifier() CiIdentifier {
 	}
 }
 
-func (c *Cluster) ErrorIfForbidden(tx *gorm.DB) error {
+func (c *Cluster) errorIfForbidden(tx *gorm.DB) error {
 	user, err := GetCurrentUserForDB(tx)
 	if err != nil {
 		return err
@@ -46,15 +46,22 @@ func (c *Cluster) ErrorIfForbidden(tx *gorm.DB) error {
 	return nil
 }
 
+// BeforeCreate checks permissions
+func (c *Cluster) BeforeCreate(tx *gorm.DB) error {
+	return c.errorIfForbidden(tx)
+}
+
+// BeforeUpdate checks permissions
 func (c *Cluster) BeforeUpdate(tx *gorm.DB) error {
-	// Updates could potentially set suitability lower, so we check before updates too
-	return c.ErrorIfForbidden(tx)
+	return c.errorIfForbidden(tx)
 }
 
-func (c *Cluster) AfterSave(tx *gorm.DB) error {
-	return c.ErrorIfForbidden(tx)
+// AfterUpdate checks permissions. This is necessary because mutations can change permissions.
+func (c *Cluster) AfterUpdate(tx *gorm.DB) error {
+	return c.errorIfForbidden(tx)
 }
 
-func (c *Cluster) AfterDelete(tx *gorm.DB) error {
-	return c.ErrorIfForbidden(tx)
+// BeforeDelete checks permissions
+func (c *Cluster) BeforeDelete(tx *gorm.DB) error {
+	return c.errorIfForbidden(tx)
 }

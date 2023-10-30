@@ -2,6 +2,7 @@ package models
 
 import (
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
+	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 )
 
 func (s *modelSuite) TestClusterNameValidationSqlMissing() {
@@ -241,4 +242,77 @@ func (s *modelSuite) TestClusterCiIdentifiers() {
 		s.Equal(cluster.ID, result.CiIdentifier.ResourceID)
 		s.Equal("cluster", result.CiIdentifier.ResourceType)
 	})
+}
+
+func (s *modelSuite) TestClusterCreationForbidden() {
+	s.SetNonSuitableTestUserForDB()
+	cluster := Cluster{
+		Name:                "some-name",
+		Provider:            "google",
+		GoogleProject:       "some-project",
+		Location:            "some-location",
+		Base:                utils.PointerTo("some base"),
+		Address:             utils.PointerTo("0.0.0.0"),
+		RequiresSuitability: utils.PointerTo(true),
+		HelmfileRef:         utils.PointerTo("some-ref"),
+	}
+	s.ErrorContains(s.DB.Create(&cluster).Error, errors.Forbidden)
+}
+
+func (s *modelSuite) TestClusterEditEscalateForbidden() {
+	s.SetNonSuitableTestUserForDB()
+	cluster := Cluster{
+		Name:                "some-name",
+		Provider:            "google",
+		GoogleProject:       "some-project",
+		Location:            "some-location",
+		Base:                utils.PointerTo("some base"),
+		Address:             utils.PointerTo("0.0.0.0"),
+		RequiresSuitability: utils.PointerTo(false),
+		HelmfileRef:         utils.PointerTo("some-ref"),
+	}
+	s.NoError(s.DB.Create(&cluster).Error)
+	s.ErrorContains(s.DB.
+		Model(&cluster).
+		Updates(&Cluster{RequiresSuitability: utils.PointerTo(true)}).
+		Error, errors.Forbidden)
+}
+
+func (s *modelSuite) TestClusterEditDeescalateForbidden() {
+	s.SetSuitableTestUserForDB()
+	cluster := Cluster{
+		Name:                "some-name",
+		Provider:            "google",
+		GoogleProject:       "some-project",
+		Location:            "some-location",
+		Base:                utils.PointerTo("some base"),
+		Address:             utils.PointerTo("0.0.0.0"),
+		RequiresSuitability: utils.PointerTo(true),
+		HelmfileRef:         utils.PointerTo("some-ref"),
+	}
+	s.NoError(s.DB.Create(&cluster).Error)
+	s.SetNonSuitableTestUserForDB()
+	s.ErrorContains(s.DB.
+		Model(&cluster).
+		Updates(&Cluster{RequiresSuitability: utils.PointerTo(false)}).
+		Error, errors.Forbidden)
+}
+
+func (s *modelSuite) TestClusterDeleteForbidden() {
+	s.SetSuitableTestUserForDB()
+	cluster := Cluster{
+		Name:                "some-name",
+		Provider:            "google",
+		GoogleProject:       "some-project",
+		Location:            "some-location",
+		Base:                utils.PointerTo("some base"),
+		Address:             utils.PointerTo("0.0.0.0"),
+		RequiresSuitability: utils.PointerTo(true),
+		HelmfileRef:         utils.PointerTo("some-ref"),
+	}
+	s.NoError(s.DB.Create(&cluster).Error)
+	s.SetNonSuitableTestUserForDB()
+	s.ErrorContains(s.DB.
+		Delete(&cluster).
+		Error, errors.Forbidden)
 }
