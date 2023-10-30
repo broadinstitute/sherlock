@@ -1,4 +1,4 @@
-package v2models
+package models
 
 import (
 	"context"
@@ -189,7 +189,7 @@ group by result_per_version.chart_release_id
 }
 
 func reportDataTypeCounts(ctx context.Context, db *gorm.DB) error {
-	for dataType, model := range map[string]Model{
+	for dataType, model := range map[string]any{
 		"chart":         Chart{},
 		"environment":   Environment{},
 		"cluster":       Cluster{},
@@ -359,7 +359,10 @@ func UpdateMetrics(ctx context.Context, db *gorm.DB) error {
 		return err
 	}
 
-	charts, err := InternalChartStore.ListAllMatchingByUpdated(db, 0, &Chart{})
+	var charts []Chart
+	if err = db.Model(&Chart{}).Order("updated_at desc").Find(&charts).Error; err != nil {
+		return err
+	}
 	if err != nil {
 		return err
 	}
@@ -392,7 +395,10 @@ func UpdateMetrics(ctx context.Context, db *gorm.DB) error {
 			stats.Record(ctx, metrics.AppVersionCountMeasure.M(count))
 		}
 
-		chartReleases, err := InternalChartReleaseStore.ListAllMatchingByUpdated(db, 0, &ChartRelease{ChartID: chart.ID})
+		var chartReleases []ChartRelease
+		if err = db.Model(&ChartRelease{}).Where(&ChartRelease{ChartID: chart.ID}).Order("updated_at desc").Find(&chartReleases).Error; err != nil {
+			return err
+		}
 		if err != nil {
 			return err
 		}
@@ -462,7 +468,7 @@ func UpdateMetrics(ctx context.Context, db *gorm.DB) error {
 	}
 
 	lastUpdateTime = time.Now()
-	log.Info().Msgf("MTRC | v2 metrics updated, took %s", lastUpdateTime.Sub(updateStartTime).String())
+	log.Info().Msgf("MTRC | metrics updated, took %s", lastUpdateTime.Sub(updateStartTime).String())
 	return nil
 }
 
@@ -471,7 +477,7 @@ func KeepMetricsUpdated(ctx context.Context, db *gorm.DB) {
 	for {
 		time.Sleep(interval)
 		if err := UpdateMetrics(ctx, db); err != nil {
-			log.Warn().Err(err).Msgf("failed to update v2 metrics, now %s stale", time.Since(lastUpdateTime).String())
+			log.Warn().Err(err).Msgf("MTRC | failed to update metrics, now %s stale", time.Since(lastUpdateTime).String())
 		}
 	}
 }

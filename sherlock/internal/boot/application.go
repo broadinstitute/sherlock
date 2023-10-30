@@ -10,9 +10,9 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/db"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deployhooks"
-	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/github"
 	"github.com/broadinstitute/sherlock/sherlock/internal/metrics"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/slack"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
@@ -94,15 +94,15 @@ func (a *Application) Start() {
 	if config.Config.Bool("metrics.v2.enable") {
 		log.Info().Msgf("BOOT | registering metric views...")
 		if err = metrics.RegisterViews(); err != nil {
-			log.Fatal().Msgf("v2metrics.RegisterViews() err: %v", err)
+			log.Fatal().Msgf("metrics.RegisterViews() err: %v", err)
 		}
 
 		log.Info().Msgf("BOOT | calculating metric values...")
-		if err = v2models.UpdateMetrics(ctx, a.gormDB); err != nil {
-			log.Fatal().Msgf("v2models.UpdateMetrics() err: %v", err)
+		if err = models.UpdateMetrics(ctx, a.gormDB); err != nil {
+			log.Fatal().Msgf("models.UpdateMetrics() err: %v", err)
 		}
 
-		go v2models.KeepMetricsUpdated(ctx, a.gormDB)
+		go models.KeepMetricsUpdated(ctx, a.gormDB)
 	}
 
 	if config.Config.Bool("slack.enable") {
@@ -116,7 +116,7 @@ func (a *Application) Start() {
 	if config.Config.Bool("github.enable") {
 		log.Info().Msgf("BOOT | initializing GitHub client...")
 		if err = github.Init(ctx); err != nil {
-			log.Fatal().Msgf("githubz.Init() err: %v", err)
+			log.Fatal().Msgf("github.Init() err: %v", err)
 		}
 	}
 
