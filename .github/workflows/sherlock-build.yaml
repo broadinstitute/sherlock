@@ -108,7 +108,7 @@ jobs:
 
       - name: Set up Node/NPM
         if: ${{ github.event_name != 'pull_request' }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 18
 
