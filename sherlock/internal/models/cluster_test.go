@@ -141,7 +141,7 @@ func (s *modelSuite) TestClusterLocationValidationSqlMissing() {
 }
 
 func (s *modelSuite) TestClusterRequiresSuitabilityValidationSqlMissing() {
-	s.SetNonSuitableTestUserForDB()
+	s.SetSuitableTestUserForDB() // To actually prompt the SQL error we have to be suitable to get past the permissions
 	err := s.DB.Create(&Cluster{
 		Name:              "some-name",
 		Provider:          "google",
