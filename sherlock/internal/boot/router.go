@@ -51,7 +51,11 @@ func buildRouter(ctx context.Context, db *gorm.DB) *gin.Engine {
 
 	router := gin.New()
 
-	router.Use(gin.Recovery(), middleware.Logger(), slack.ErrorReportingMiddleware(ctx), middleware.Headers())
+	router.Use(
+		gin.Recovery(),
+		middleware.Logger(config.Config.String("mode") == "debug"),
+		slack.ErrorReportingMiddleware(ctx),
+		middleware.Headers())
 
 	// /status, /version
 	misc.ConfigureRoutes(&router.RouterGroup)
