@@ -1,8 +1,8 @@
 package models
 
 import (
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/authentication_method"
-	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/test_users"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/db"
 	"gorm.io/gorm"
@@ -14,6 +14,7 @@ import (
 type TestSuiteHelper struct {
 	DB         *gorm.DB
 	internalDB *gorm.DB
+	TestData   TestData
 }
 
 // SetupSuite runs once before all tests. It connects to the
@@ -64,39 +65,28 @@ func (h *TestSuiteHelper) SetupSuite() {
 // changes.
 func (h *TestSuiteHelper) SetupTest() {
 	h.DB = h.internalDB.Begin()
+	h.TestData = &testDataImpl{h: h}
 }
 
-// SetUserForDB is intended to be called from within a test function.
-// It will upsert a User with the given email and googleID and
-// set it as the DB's current user.
-func (h *TestSuiteHelper) SetUserForDB(email, googleID string) *User {
-	var user User
-	if err := h.DB.
-		Where(&User{Email: email, GoogleID: googleID}).
-		FirstOrCreate(&user).Error; err != nil {
-		panic(err)
-	} else {
-		user.AuthenticationMethod = authentication_method.TEST
-		h.DB = SetCurrentUserForDB(h.DB, &user)
-		return &user
-	}
+// SetUserForDB is a low-level helper function, setting with given user as
+// the current principal for the database. You'll usually want to call
+// SetSuitableTestUserForDB or SetNonSuitableTestUserForDB instead.
+func (h *TestSuiteHelper) SetUserForDB(user *User) *User {
+	user.AuthenticationMethod = authentication_method.TEST
+	h.DB = SetCurrentUserForDB(h.DB, user)
+	return user
 }
 
-// SetSuitableTestUserForDB is intended to be called from within
-// a test function. It calls UseUser with the suitable test user
-// info from the test_users package, which will be recognized
-// as suitable by the authorization package.
+// SetSuitableTestUserForDB is a helper function, calling SetUserForDB with
+// TestData.User_Suitable
 func (h *TestSuiteHelper) SetSuitableTestUserForDB() *User {
-	return h.SetUserForDB(test_users.SuitableTestUserEmail, test_users.SuitableTestUserGoogleID)
+	return h.SetUserForDB(utils.PointerTo(h.TestData.User_Suitable()))
 }
 
-// SetNonSuitableTestUserForDB is intended to be called from
-// within a test function. It calls UseUser with the
-// non-suitable test user from the test_users package, which
-// will be recognized but considered non-suitable by the
-// authorization package.
+// SetNonSuitableTestUserForDB is a helper function, calling SetUserForDB with
+// TestData.User_NonSuitable
 func (h *TestSuiteHelper) SetNonSuitableTestUserForDB() *User {
-	return h.SetUserForDB(test_users.NonSuitableTestUserEmail, test_users.NonSuitableTestUserGoogleID)
+	return h.SetUserForDB(utils.PointerTo(h.TestData.User_NonSuitable()))
 }
 
 // TearDownTest takes advantage of SetupTest having begun a
@@ -104,6 +94,7 @@ func (h *TestSuiteHelper) SetNonSuitableTestUserForDB() *User {
 // sets the modelSuite's main database reference to nil to
 // help surface any concurrency issues.
 func (h *TestSuiteHelper) TearDownTest() {
+	h.TestData = nil
 	h.DB.Rollback()
 	h.DB = nil
 }

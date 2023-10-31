@@ -32,8 +32,7 @@ func (s *modelSuite) TestChartValidationSqlValid() {
 }
 
 func (s *modelSuite) TestChartCiIdentifiers() {
-	chart := Chart{Name: "name", ChartRepo: utils.PointerTo("repo")}
-	s.NoError(s.DB.Create(&chart).Error)
+	chart := s.TestData.Chart_Leonardo()
 	ciIdentifier := chart.GetCiIdentifier()
 	s.NoError(s.DB.Create(&ciIdentifier).Error)
 	s.NotZero(ciIdentifier.ID)
