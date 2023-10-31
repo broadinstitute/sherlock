@@ -116,7 +116,7 @@ func (td *testDataImpl) create(pointer any) {
 	// We do FirstOrCreate on the off-chance that what we're inserting already exists.
 	// That'll basically never happen... except for when Sherlock is trying to be helpful.
 	// Middleware will upsert users, the database layer will auto-populate resources, etc.
-	if err := td.h.DB.FirstOrCreate(pointer).Error; err != nil {
+	if err := td.h.DB.Where(pointer).FirstOrCreate(pointer).Error; err != nil {
 		err = fmt.Errorf("error creating %T in TestData: %w", pointer, err)
 		log.Error().Err(err).Caller(2).Send()
 		panic(err)
