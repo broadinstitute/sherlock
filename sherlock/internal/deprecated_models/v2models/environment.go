@@ -2,6 +2,7 @@ package v2models
 
 import (
 	"fmt"
+	"github.com/broadinstitute/sherlock/go-shared/pkg/resource_prefix"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/model_actions"
@@ -9,7 +10,6 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
-	"math/bits"
 	"regexp"
 	"strconv"
 	"strings"
@@ -299,7 +299,7 @@ func preCreateEnvironment(db *gorm.DB, environment *Environment, _ *models.User)
 			// Write the letter bytes into the strings.Builder, from our starting count plus
 			// however many iterations we've already used. We modulo that down inside the
 			// function to encapsulate the part that cares about the string.
-			generateUniqueResourcePrefix(&sb, unsignedCountOfAllEnvironmentsEver+iterations)
+			resource_prefix.GenerateResourcePrefix(&sb, unsignedCountOfAllEnvironmentsEver+iterations)
 			candidate.UniqueResourcePrefix = sb.String()
 			// Check the database for this candidate prefix existing. Note that we do not use
 			// Unscoped here like we did above, because now we don't care if there is a
@@ -333,36 +333,6 @@ func preCreateEnvironment(db *gorm.DB, environment *Environment, _ *models.User)
 		}
 	}
 	return nil
-}
-
-// Go strings are UTF-8, and these characters all map to single bytes, so this is like a `const`
-// slice of bytes for the possible characters (a normal slice can't be a constant).
-const (
-	characterBytes       = "abcdefghijklmnopqrstuvwxyz0123456789"
-	possibleCombinations = uint64(26 * 36 * 36 * 36)
-)
-
-func generateUniqueResourcePrefix(sb *strings.Builder, number uint64) {
-	// We're assembling a string like `[r3][r2][r1][r0]`. r0 through r2 are in
-	// base 36, while r3 is in base 26 so the string always starts with a letter.
-	// r0 is the "lowest" digit, and the string is a bit similar to a hexadecimal
-	// number with letters taking on numeral values. The result is a string-y
-	// modulo representation of the input number that achieves full coverage of
-	// the domain to minimize conflicts.
-	// Example (remember that input is always modulo possibleCombinations):
-	// possibleCombinations-2 => z998
-	// possibleCombinations-1 => z999
-	// possibleCombinations   => aaaa
-	// possibleCombinations+1 => aaab
-	// possibleCombinations+2 => aaac
-	number, r0 := bits.Div64(0, number%possibleCombinations, 36)
-	number, r1 := bits.Div64(0, number, 36)
-	number, r2 := bits.Div64(0, number, 36)
-	_, r3 := bits.Div64(0, number, 26)
-	sb.WriteByte(characterBytes[r3])
-	sb.WriteByte(characterBytes[r2])
-	sb.WriteByte(characterBytes[r1])
-	sb.WriteByte(characterBytes[r0])
 }
 
 func postCreateEnvironment(db *gorm.DB, environment *Environment, user *models.User) error {

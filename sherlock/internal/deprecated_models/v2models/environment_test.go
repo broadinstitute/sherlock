@@ -1,12 +1,10 @@
 package v2models
 
 import (
-	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/testutils"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models/environment"
 	"reflect"
-	"strings"
 	"testing"
 	"time"
 
@@ -804,31 +802,6 @@ func Test_validateEnvironment(t *testing.T) {
 			if err := validateEnvironment(tt.args.environment); (err != nil) != tt.wantErr {
 				t.Errorf("validateEnvironment() error = %v, wantErr %v", err, tt.wantErr)
 			}
-		})
-	}
-}
-
-func Test_generateUniqueResourcePrefix(t *testing.T) {
-	sb := strings.Builder{}
-	sb.Grow(4)
-	tests := []struct {
-		input  uint64
-		output string
-	}{
-		{0, "aaaa"},
-		{1, "aaab"},
-		{2, "aaac"},
-		{possibleCombinations - 2, "z998"},
-		{possibleCombinations - 1, "z999"},
-		{possibleCombinations, "aaaa"},
-		{possibleCombinations + 1, "aaab"},
-		{possibleCombinations + 2, "aaac"},
-	}
-	for _, tt := range tests {
-		t.Run(fmt.Sprintf("%d to %s", tt.input, tt.output), func(t *testing.T) {
-			generateUniqueResourcePrefix(&sb, tt.input)
-			testutils.AssertNoDiff(t, tt.output, sb.String())
-			sb.Reset()
 		})
 	}
 }
