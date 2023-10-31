@@ -6,7 +6,9 @@
 mode: debug
 
 log:
+  # Always true when mode="release"
   timestamp: true
+  # Always true when mode="release"
   caller: false
   level: debug
 
