@@ -21,7 +21,7 @@ type ChartVersion struct {
 }
 
 func (c ChartVersion) TableName() string {
-	return "v2_chart_versions"
+	return "chart_versions"
 }
 
 func (c ChartVersion) getID() uint {

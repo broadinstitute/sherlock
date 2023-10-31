@@ -122,9 +122,9 @@ func calculateVersionLeadTimes(db *gorm.DB) (map[uint]int64, map[uint]int64, err
 	// version diff is known to Sherlock--it ignores custom/unreported versions that we wouldn't have timestamps for
 	// anyway.
 	//
-	// This means that the underlying many2many table, v2_changeset_new_app_versions, is a treasure trove of "what
-	// app versions were deployed by what changesets". We use this many2many relation to associate v2_changesets's
-	// chart_release_id and applied_at time to v2_app_versions's created_at time (filtering for Changesets that
+	// This means that the underlying many2many table, changeset_new_app_versions, is a treasure trove of "what
+	// app versions were deployed by what changesets". We use this many2many relation to associate changesets's
+	// chart_release_id and applied_at time to app_versions's created_at time (filtering for Changesets that
 	// were actually applied and AppVersions from the past 30 days). Those two times are the interval that we care about
 	// for lead time--we can subtract them to get the duration between an app version being created and being deployed
 	// to that particular chart release. Knowing that interval associated to a given ChartRelease ID is enough for us
@@ -147,14 +147,14 @@ func calculateVersionLeadTimes(db *gorm.DB) (map[uint]int64, map[uint]int64, err
 	// final lead time--the average lead time to deploy to it over the last 30 days.
 	if err := db.Raw(`
 select result_per_version.chart_release_id, round(avg(result_per_version.lead_time_seconds))::bigint as lead_time_seconds
-from (select v2_changesets.chart_release_id,
-             extract(epoch from (min(v2_changesets.applied_at) - min(v2_app_versions.created_at))) as lead_time_seconds
-      from v2_changesets
-               inner join v2_changeset_new_app_versions on v2_changesets.id = v2_changeset_new_app_versions.changeset_id
-               inner join v2_app_versions on v2_changeset_new_app_versions.app_version_id = v2_app_versions.id
-      where v2_changesets.applied_at is not null
-        and v2_app_versions.created_at >= current_timestamp - '30 days'::interval
-      group by v2_changesets.chart_release_id, v2_app_versions.id) as result_per_version
+from (select changesets.chart_release_id,
+             extract(epoch from (min(changesets.applied_at) - min(app_versions.created_at))) as lead_time_seconds
+      from changesets
+               inner join changeset_new_app_versions on changesets.id = changeset_new_app_versions.changeset_id
+               inner join app_versions on changeset_new_app_versions.app_version_id = app_versions.id
+      where changesets.applied_at is not null
+        and app_versions.created_at >= current_timestamp - '30 days'::interval
+      group by changesets.chart_release_id, app_versions.id) as result_per_version
 group by result_per_version.chart_release_id
 `).Scan(&appVersionResults).Error; err != nil {
 		return nil, nil, err
@@ -169,14 +169,14 @@ group by result_per_version.chart_release_id
 	chartVersionLeadTimes := make(map[uint]int64)
 	if err := db.Raw(`
 select result_per_version.chart_release_id, round(avg(result_per_version.lead_time_seconds))::bigint as lead_time_seconds
-from (select v2_changesets.chart_release_id,
-             extract(epoch from (min(v2_changesets.applied_at) - min(v2_chart_versions.created_at))) as lead_time_seconds
-      from v2_changesets
-               inner join v2_changeset_new_chart_versions on v2_changesets.id = v2_changeset_new_chart_versions.changeset_id
-               inner join v2_chart_versions on v2_changeset_new_chart_versions.chart_version_id = v2_chart_versions.id
-      where v2_changesets.applied_at is not null
-        and v2_chart_versions.created_at >= current_timestamp - '30 days'::interval
-      group by v2_changesets.chart_release_id, v2_chart_versions.id) as result_per_version
+from (select changesets.chart_release_id,
+             extract(epoch from (min(changesets.applied_at) - min(chart_versions.created_at))) as lead_time_seconds
+      from changesets
+               inner join changeset_new_chart_versions on changesets.id = changeset_new_chart_versions.changeset_id
+               inner join chart_versions on changeset_new_chart_versions.chart_version_id = chart_versions.id
+      where changesets.applied_at is not null
+        and chart_versions.created_at >= current_timestamp - '30 days'::interval
+      group by changesets.chart_release_id, chart_versions.id) as result_per_version
 group by result_per_version.chart_release_id
 `).Scan(&chartVersionResults).Error; err != nil {
 		return nil, nil, err
@@ -257,61 +257,61 @@ func reportGitHubActionMetrics(ctx context.Context, db *gorm.DB) error {
 	}
 	var results []CompletionResult
 	if err := db.Raw(`
-select v2_ci_runs.github_actions_owner,
-       v2_ci_runs.github_actions_repo,
-       v2_ci_runs.github_actions_workflow_path,
-       v2_ci_runs.status,
+select ci_runs.github_actions_owner,
+       ci_runs.github_actions_repo,
+       ci_runs.github_actions_workflow_path,
+       ci_runs.status,
 
        count(1)
-       filter (where v2_ci_runs.github_actions_attempt_number = 1
-           and v2_ci_runs.terminal_at >= current_timestamp - '1 hour'::interval)
+       filter (where ci_runs.github_actions_attempt_number = 1
+           and ci_runs.terminal_at >= current_timestamp - '1 hour'::interval)
            as hourly_first_attempts,
 
-       coalesce(round(sum(extract(epoch from v2_ci_runs.terminal_at - v2_ci_runs.started_at))
-                      filter (where v2_ci_runs.github_actions_attempt_number = 1
-                          and v2_ci_runs.terminal_at >= current_timestamp - '1 hour'::interval))::bigint, 0)
+       coalesce(round(sum(extract(epoch from ci_runs.terminal_at - ci_runs.started_at))
+                      filter (where ci_runs.github_actions_attempt_number = 1
+                          and ci_runs.terminal_at >= current_timestamp - '1 hour'::interval))::bigint, 0)
            as hourly_first_attempts_duration,
 
        count(1)
-       filter (where v2_ci_runs.github_actions_attempt_number > 1
-           and v2_ci_runs.terminal_at >= current_timestamp - '1 hour'::interval)
+       filter (where ci_runs.github_actions_attempt_number > 1
+           and ci_runs.terminal_at >= current_timestamp - '1 hour'::interval)
            as hourly_retries,
 
-       coalesce(round(sum(extract(epoch from v2_ci_runs.terminal_at - v2_ci_runs.started_at))
-                      filter (where v2_ci_runs.github_actions_attempt_number > 1
-                          and v2_ci_runs.terminal_at >= current_timestamp - '1 hour'::interval))::bigint, 0)
+       coalesce(round(sum(extract(epoch from ci_runs.terminal_at - ci_runs.started_at))
+                      filter (where ci_runs.github_actions_attempt_number > 1
+                          and ci_runs.terminal_at >= current_timestamp - '1 hour'::interval))::bigint, 0)
            as hourly_retries_duration,
 
        count(1)
-       filter (where v2_ci_runs.github_actions_attempt_number = 1
-           and v2_ci_runs.terminal_at >= current_timestamp - '7 days'::interval)
+       filter (where ci_runs.github_actions_attempt_number = 1
+           and ci_runs.terminal_at >= current_timestamp - '7 days'::interval)
            as weekly_first_attempts,
 
-       coalesce(round(sum(extract(epoch from v2_ci_runs.terminal_at - v2_ci_runs.started_at))
-                      filter (where v2_ci_runs.github_actions_attempt_number = 1
-                          and v2_ci_runs.terminal_at >= current_timestamp - '7 days'::interval))::bigint, 0)
+       coalesce(round(sum(extract(epoch from ci_runs.terminal_at - ci_runs.started_at))
+                      filter (where ci_runs.github_actions_attempt_number = 1
+                          and ci_runs.terminal_at >= current_timestamp - '7 days'::interval))::bigint, 0)
            as weekly_first_attempts_duration,
 
        count(1)
-       filter (where v2_ci_runs.github_actions_attempt_number > 1
-           and v2_ci_runs.terminal_at >= current_timestamp - '7 days'::interval)
+       filter (where ci_runs.github_actions_attempt_number > 1
+           and ci_runs.terminal_at >= current_timestamp - '7 days'::interval)
            as weekly_retries,
     
-       coalesce(round(sum(extract(epoch from v2_ci_runs.terminal_at - v2_ci_runs.started_at))
-                      filter (where v2_ci_runs.github_actions_attempt_number > 1
-                          and v2_ci_runs.terminal_at >= current_timestamp - '7 days'::interval))::bigint, 0)
+       coalesce(round(sum(extract(epoch from ci_runs.terminal_at - ci_runs.started_at))
+                      filter (where ci_runs.github_actions_attempt_number > 1
+                          and ci_runs.terminal_at >= current_timestamp - '7 days'::interval))::bigint, 0)
            as weekly_retries_duration
 
-from v2_ci_runs
-where v2_ci_runs.platform = 'github-actions'
+from ci_runs
+where ci_runs.platform = 'github-actions'
   -- After two weeks, let metrics drop off to null.
   -- This strikes a balance between tracking seldom-run actions and cleaning up after a workflow file is renamed.
-  and v2_ci_runs.terminal_at >= current_timestamp - '14 days'::interval
-  and v2_ci_runs.started_at is not null
-group by v2_ci_runs.github_actions_owner,
-         v2_ci_runs.github_actions_repo,
-         v2_ci_runs.github_actions_workflow_path,
-         v2_ci_runs.status
+  and ci_runs.terminal_at >= current_timestamp - '14 days'::interval
+  and ci_runs.started_at is not null
+group by ci_runs.github_actions_owner,
+         ci_runs.github_actions_repo,
+         ci_runs.github_actions_workflow_path,
+         ci_runs.status
 `).Scan(&results).Error; err != nil {
 		return err
 	}

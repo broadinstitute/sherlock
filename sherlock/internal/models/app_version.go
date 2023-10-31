@@ -21,7 +21,7 @@ type AppVersion struct {
 }
 
 func (a *AppVersion) TableName() string {
-	return "v2_app_versions"
+	return "app_versions"
 }
 
 func (a *AppVersion) GetCiIdentifier() CiIdentifier {
@@ -62,25 +62,25 @@ func GetAppVersionPathIDs(db *gorm.DB, inclusiveStartID uint, exclusiveEndID uin
 		`
 WITH RECURSIVE search_path(id, parent_app_version_id) AS (
         -- Initially, get the ID and parent ID where:
-        SELECT v2_app_versions.id, v2_app_versions.parent_app_version_id
-        FROM v2_app_versions
+        SELECT app_versions.id, app_versions.parent_app_version_id
+        FROM app_versions
         WHERE
             -- The app version is the one we're starting at
-            v2_app_versions.id = ? AND
+            app_versions.id = ? AND
             -- The app version has a parent reference, so we don't start looking for a null parent (we'd rather bail with no results)
-            v2_app_versions.parent_app_version_id IS NOT NULL
+            app_versions.parent_app_version_id IS NOT NULL
     -- UNION, not UNION ALL, so that duplicate rows in search_path are dropped and we automatically avoid cycles
     UNION
         -- Recursively, get the ID and parent ID where:
-        SELECT v2_app_versions.id, v2_app_versions.parent_app_version_id
-        FROM v2_app_versions, search_path
+        SELECT app_versions.id, app_versions.parent_app_version_id
+        FROM app_versions, search_path
         WHERE
             -- The app version isn't the end of the path (if it is, bail because we want to stop searching then)
-            v2_app_versions.id != ? AND
+            app_versions.id != ? AND
             -- The app version is the parent we're currently looking for
-            v2_app_versions.id = search_path.parent_app_version_id AND
+            app_versions.id = search_path.parent_app_version_id AND
             -- The app version has a parent reference, so we don't start looking for a null parent (we'd rather bail)
-            v2_app_versions.parent_app_version_id IS NOT NULL
+            app_versions.parent_app_version_id IS NOT NULL
 )
 SELECT * FROM search_path
           -- Postgres evaluates search_path lazily, so this LIMIT is an extra safeguard against lengthy recursion

@@ -9,9 +9,9 @@ type CiIdentifier struct {
 	ResourceType string
 	ResourceID   uint
 	// Mutable
-	CiRuns []CiRun `gorm:"many2many:v2_ci_runs_for_identifiers"`
+	CiRuns []CiRun `gorm:"many2many:ci_runs_for_identifiers"`
 }
 
 func (c *CiIdentifier) TableName() string {
-	return "v2_ci_identifiers"
+	return "ci_identifiers"
 }

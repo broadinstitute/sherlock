@@ -33,7 +33,7 @@ type ChartRelease struct {
 }
 
 func (c ChartRelease) TableName() string {
-	return "v2_chart_releases"
+	return "chart_releases"
 }
 
 func (c ChartRelease) getID() uint {

@@ -72,7 +72,7 @@ type User struct {
 }
 
 func (u *User) TableName() string {
-	return "v2_users"
+	return "users"
 }
 
 func (u *User) BeforeUpdate(tx *gorm.DB) error {

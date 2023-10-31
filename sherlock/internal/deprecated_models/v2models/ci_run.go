@@ -24,14 +24,14 @@ type CiRun struct {
 	ArgoWorkflowsName          string
 	ArgoWorkflowsTemplate      string
 	// Mutable
-	RelatedResources []*CiIdentifier `gorm:"many2many:v2_ci_runs_for_identifiers; constraint:OnDelete:CASCADE,OnUpdate:CASCADE;"`
+	RelatedResources []*CiIdentifier `gorm:"many2many:ci_runs_for_identifiers; constraint:OnDelete:CASCADE,OnUpdate:CASCADE;"`
 	StartedAt        *time.Time
 	TerminalAt       *time.Time
 	Status           *string
 }
 
 func (c CiRun) TableName() string {
-	return "v2_ci_runs"
+	return "ci_runs"
 }
 
 func (c CiRun) getID() uint {

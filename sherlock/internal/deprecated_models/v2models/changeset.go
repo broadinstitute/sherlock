@@ -27,8 +27,8 @@ type Changeset struct {
 	To               ChartReleaseVersion `gorm:"embedded;embeddedPrefix:to_"`
 	AppliedAt        *time.Time
 	SupersededAt     *time.Time
-	NewAppVersions   []*AppVersion   `gorm:"many2many:v2_changeset_new_app_versions;constraint:OnDelete:CASCADE,OnUpdate:CASCADE;"`
-	NewChartVersions []*ChartVersion `gorm:"many2many:v2_changeset_new_chart_versions;constraint:OnDelete:CASCADE,OnUpdate:CASCADE;"`
+	NewAppVersions   []*AppVersion   `gorm:"many2many:changeset_new_app_versions;constraint:OnDelete:CASCADE,OnUpdate:CASCADE;"`
+	NewChartVersions []*ChartVersion `gorm:"many2many:changeset_new_chart_versions;constraint:OnDelete:CASCADE,OnUpdate:CASCADE;"`
 
 	PlannedBy   *User
 	PlannedByID *uint
@@ -37,7 +37,7 @@ type Changeset struct {
 }
 
 func (c Changeset) TableName() string {
-	return "v2_changesets"
+	return "changesets"
 }
 
 func (c Changeset) getID() uint {
@@ -346,42 +346,42 @@ func (s *internalChangesetStore) queryAppliedForVersion(db *gorm.DB, chartID uin
 			// If we have record of the version, it would show up in the "new versions" introduced by a changeset.
 			// Use that to match so we have a shot at catching deployments where this version was an intermediary.
 			if err = db.Raw(`
-select v2_changesets.id
-from v2_changesets
+select changesets.id
+from changesets
          -- Join through changelog table to the app version we care about
-         inner join v2_changeset_new_app_versions
-                    on v2_changeset_new_app_versions.changeset_id = v2_changesets.id
-                        and v2_changeset_new_app_versions.app_version_id = ?
+         inner join changeset_new_app_versions
+                    on changeset_new_app_versions.changeset_id = changesets.id
+                        and changeset_new_app_versions.app_version_id = ?
 
          -- Join through to chart releases to filter out deleted/irrelevant ones
-         inner join v2_chart_releases
-                    on v2_chart_releases.id = v2_changesets.chart_release_id
-                        and v2_chart_releases.deleted_at is null
-                        and v2_chart_releases.chart_id = ?
+         inner join chart_releases
+                    on chart_releases.id = changesets.chart_release_id
+                        and chart_releases.deleted_at is null
+                        and chart_releases.chart_id = ?
 
 -- Filter to changes that actually got applied
-where v2_changesets.applied_at is not null
+where changesets.applied_at is not null
 
-order by v2_changesets.applied_at desc`, appVersionIfExists.ID, chartID).Scan(&changesetIDs).Error; err != nil {
+order by changesets.applied_at desc`, appVersionIfExists.ID, chartID).Scan(&changesetIDs).Error; err != nil {
 				return ret, err
 			}
 		} else {
 			// If we have no record of the version at all, it might just be a custom string that was entered
 			// into the API. All we can do is match based on changesets that specifically deployed that version.
 			if err = db.Raw(`
-select v2_changesets.id
-from v2_changesets
+select changesets.id
+from changesets
          -- Join through to chart releases to filter out deleted/irrelevant ones
-         inner join v2_chart_releases
-                    on v2_chart_releases.id = v2_changesets.chart_release_id
-                        and v2_chart_releases.deleted_at is null
-                        and v2_chart_releases.chart_id = ?
+         inner join chart_releases
+                    on chart_releases.id = changesets.chart_release_id
+                        and chart_releases.deleted_at is null
+                        and chart_releases.chart_id = ?
 
 -- Filter to changes that actually got applied and target our version
-where v2_changesets.applied_at is not null
-  and v2_changesets.to_app_version_exact = ?
+where changesets.applied_at is not null
+  and changesets.to_app_version_exact = ?
 
-order by v2_changesets.applied_at desc
+order by changesets.applied_at desc
 `, chartID, version).Error; err != nil {
 				return ret, err
 			}
@@ -394,42 +394,42 @@ order by v2_changesets.applied_at desc
 			// If we have record of the version, it would show up in the "new versions" introduced by a changeset.
 			// Use that to match so we have a shot at catching deployments where this version was an intermediary.
 			if err = db.Raw(`
-select v2_changesets.id
-from v2_changesets
+select changesets.id
+from changesets
          -- Join through changelog table to the chart version we care about
-         inner join v2_changeset_new_chart_versions
-                    on v2_changeset_new_chart_versions.changeset_id = v2_changesets.id
-                        and v2_changeset_new_chart_versions.chart_version_id = ?
+         inner join changeset_new_chart_versions
+                    on changeset_new_chart_versions.changeset_id = changesets.id
+                        and changeset_new_chart_versions.chart_version_id = ?
 
          -- Join through to chart releases to filter out deleted/irrelevant ones
-         inner join v2_chart_releases
-                    on v2_chart_releases.id = v2_changesets.chart_release_id
-                        and v2_chart_releases.deleted_at is null
-                        and v2_chart_releases.chart_id = ?
+         inner join chart_releases
+                    on chart_releases.id = changesets.chart_release_id
+                        and chart_releases.deleted_at is null
+                        and chart_releases.chart_id = ?
 
 -- Filter to changes that actually got applied
-where v2_changesets.applied_at is not null
+where changesets.applied_at is not null
 
-order by v2_changesets.applied_at desc`, chartVersionIfExists.ID, chartID).Scan(&changesetIDs).Error; err != nil {
+order by changesets.applied_at desc`, chartVersionIfExists.ID, chartID).Scan(&changesetIDs).Error; err != nil {
 				return ret, err
 			}
 		} else {
 			// If we have no record of the version at all, it might just be a custom string that was entered
 			// into the API. All we can do is match based on changesets that specifically deployed that version.
 			if err = db.Raw(`
-select v2_changesets.id
-from v2_changesets
+select changesets.id
+from changesets
          -- Join through to chart releases to filter out deleted/irrelevant ones
-         inner join v2_chart_releases
-                    on v2_chart_releases.id = v2_changesets.chart_release_id
-                        and v2_chart_releases.deleted_at is null
-                        and v2_chart_releases.chart_id = ?
+         inner join chart_releases
+                    on chart_releases.id = changesets.chart_release_id
+                        and chart_releases.deleted_at is null
+                        and chart_releases.chart_id = ?
 
 -- Filter to changes that actually got applied and target our version
-where v2_changesets.applied_at is not null
-  and v2_changesets.to_chart_version_exact = ?
+where changesets.applied_at is not null
+  and changesets.to_chart_version_exact = ?
 
-order by v2_changesets.applied_at desc
+order by changesets.applied_at desc
 `, chartID, version).Error; err != nil {
 				return ret, err
 			}

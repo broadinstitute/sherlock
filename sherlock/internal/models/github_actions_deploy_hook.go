@@ -17,7 +17,7 @@ type GithubActionsDeployHook struct {
 }
 
 func (g *GithubActionsDeployHook) TableName() string {
-	return "v2_github_actions_deploy_hooks"
+	return "github_actions_deploy_hooks"
 }
 
 func (g *GithubActionsDeployHook) AfterSave(tx *gorm.DB) error {

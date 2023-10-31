@@ -24,7 +24,7 @@ type DatabaseInstance struct {
 }
 
 func (d DatabaseInstance) TableName() string {
-	return "v2_database_instances"
+	return "database_instances"
 }
 
 func (d DatabaseInstance) getID() uint {
