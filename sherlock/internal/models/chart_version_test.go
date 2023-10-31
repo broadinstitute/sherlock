@@ -50,11 +50,7 @@ func (s *modelSuite) TestChartVersionValid() {
 }
 
 func (s *modelSuite) TestChartVersionCiIdentifiers() {
-	s.SetNonSuitableTestUserForDB()
-	chart := Chart{Name: "name", ChartRepo: utils.PointerTo("repo")}
-	s.NoError(s.DB.Create(&chart).Error)
-	chartVersion := ChartVersion{ChartID: chart.ID, ChartVersion: "version"}
-	s.NoError(s.DB.Create(&chartVersion).Error)
+	chartVersion := s.TestData.ChartVersion_Leonardo_V1()
 	ciIdentifier := chartVersion.GetCiIdentifier()
 	s.NoError(s.DB.Create(&ciIdentifier).Error)
 	s.NotZero(ciIdentifier.ID)
