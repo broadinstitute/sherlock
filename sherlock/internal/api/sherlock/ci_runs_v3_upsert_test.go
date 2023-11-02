@@ -724,7 +724,7 @@ func (s *handlerSuite) TestCiRunsV3Upsert_slackNotifications() {
 	})
 }
 
-func (s *handlerSuite) TestCiRunsV3Upsert_makeSlackMessageTExt() {
+func (s *handlerSuite) TestCiRunsV3Upsert_makeSlackMessageText() {
 	user := s.SetSuitableTestUserForDB()
 
 	chart, created, err := v2models.InternalChartStore.Create(s.DB, v2models.Chart{

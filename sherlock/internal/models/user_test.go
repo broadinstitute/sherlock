@@ -5,8 +5,10 @@ import (
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/authentication_method"
 	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/test_users"
+	"github.com/broadinstitute/sherlock/sherlock/internal/authorization"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"gorm.io/gorm"
+	"testing"
 )
 
 func (s *modelSuite) TestUserRejectEditImmutableField() {
@@ -184,4 +186,72 @@ func (s *modelSuite) TestUserGithubIdUniquenessSql() {
 		GithubID:       utils.PointerTo("some value"),
 	}).Error
 	s.ErrorContains(err, "violates unique constraint")
+}
+
+func TestUser_SlackReference(t *testing.T) {
+	type fields struct {
+		Model                gorm.Model
+		Email                string
+		GoogleID             string
+		GithubUsername       *string
+		GithubID             *string
+		SlackUsername        *string
+		SlackID              *string
+		Name                 *string
+		NameFrom             *string
+		Via                  *User
+		AuthenticationMethod authentication_method.Method
+		cachedSuitability    *authorization.Suitability
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   string
+	}{
+		{
+			name: "when ID is present",
+			fields: fields{
+				SlackID: utils.PointerTo("123"),
+				Name:    utils.PointerTo("name"),
+				Email:   "email",
+			},
+			want: "<@123>",
+		},
+		{
+			name: "when name is present",
+			fields: fields{
+				Name:  utils.PointerTo("name"),
+				Email: "email",
+			},
+			want: "<https://broad.io/beehive/r/user/email|name>",
+		},
+		{
+			name: "when only email is present",
+			fields: fields{
+				Email: "email",
+			},
+			want: "<https://broad.io/beehive/r/user/email|email>",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			u := &User{
+				Model:                tt.fields.Model,
+				Email:                tt.fields.Email,
+				GoogleID:             tt.fields.GoogleID,
+				GithubUsername:       tt.fields.GithubUsername,
+				GithubID:             tt.fields.GithubID,
+				SlackUsername:        tt.fields.SlackUsername,
+				SlackID:              tt.fields.SlackID,
+				Name:                 tt.fields.Name,
+				NameFrom:             tt.fields.NameFrom,
+				Via:                  tt.fields.Via,
+				AuthenticationMethod: tt.fields.AuthenticationMethod,
+				cachedSuitability:    tt.fields.cachedSuitability,
+			}
+			if got := u.SlackReference(); got != tt.want {
+				t.Errorf("SlackReference() = %v, want %v", got, tt.want)
+			}
+		})
+	}
 }

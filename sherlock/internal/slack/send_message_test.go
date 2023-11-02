@@ -23,6 +23,7 @@ func TestSendMessage(t *testing.T) {
 		name       string
 		args       args
 		mockConfig func(c *slack_mocks.MockMockableClient)
+		wantErr    bool
 	}{
 		{
 			name:       "doesn't do anything when empty",
@@ -59,7 +60,7 @@ func TestSendMessage(t *testing.T) {
 			},
 		},
 		{
-			name: "swallows errors",
+			name: "handles errors",
 			args: args{channel: "foo", text: "text", attachments: []Attachment{
 				GreenBlock{Text: "blah"}, RedBlock{"bleh"},
 			}},
@@ -68,12 +69,22 @@ func TestSendMessage(t *testing.T) {
 					mock.AnythingOfType("slack.MsgOption"),
 					mock.AnythingOfType("slack.MsgOption")).Return("", "", "", fmt.Errorf("some error"))
 			},
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			UseMockedClient(t, tt.mockConfig, func() {
-				SendMessage(ctx, tt.args.channel, tt.args.text, tt.args.attachments...)
+			t.Run("swallow errors", func(t *testing.T) {
+				UseMockedClient(t, tt.mockConfig, func() {
+					SendMessage(ctx, tt.args.channel, tt.args.text, tt.args.attachments...)
+				})
+			})
+			t.Run("return errors", func(t *testing.T) {
+				UseMockedClient(t, tt.mockConfig, func() {
+					if err := SendMessageReturnError(ctx, tt.args.channel, tt.args.text, tt.args.attachments...); (err != nil) != tt.wantErr {
+						t.Errorf("error result unexpected: %v", err)
+					}
+				})
 			})
 		})
 	}
