@@ -15,16 +15,28 @@ import (
 func (s *handlerSuite) TestGithubActionsDeployHooksV3TestRun_badSelector() {
 	var got errors.ErrorResponse
 	code := s.HandleRequest(
-		s.NewRequest("POST", "/api/deploy-hooks/github-actions/procedures/v3/test/foo-bar", nil),
+		s.NewRequest("POST", "/api/deploy-hooks/github-actions/procedures/v3/test/foo-bar",
+			GithubActionsDeployHookTestRunRequest{Execute: utils.PointerTo(true)}),
 		&got)
 	s.Equal(http.StatusBadRequest, code)
 	s.Equal(errors.BadRequest, got.Type)
 }
 
-func (s *handlerSuite) TestGithubActionsDeployHooksV3TestRun_notFound() {
+func (s *handlerSuite) TestGithubActionsDeployHooksV3TestRun_missingBody() {
 	var got errors.ErrorResponse
 	code := s.HandleRequest(
 		s.NewRequest("POST", "/api/deploy-hooks/github-actions/procedures/v3/test/0", nil),
+		&got)
+	s.Equal(http.StatusBadRequest, code)
+	s.Equal(errors.BadRequest, got.Type)
+	s.Contains(got.Message, "execute")
+}
+
+func (s *handlerSuite) TestGithubActionsDeployHooksV3TestRun_notFound() {
+	var got errors.ErrorResponse
+	code := s.HandleRequest(
+		s.NewRequest("POST", "/api/deploy-hooks/github-actions/procedures/v3/test/0",
+			GithubActionsDeployHookTestRunRequest{Execute: utils.PointerTo(true)}),
 		&got)
 	s.Equal(http.StatusNotFound, code)
 	s.Equal(errors.NotFound, got.Type)
@@ -81,7 +93,18 @@ func (s *handlerSuite) TestGithubActionsDeployHooksV3TestRun() {
 				}).Return(nil, nil)
 		}, func() {
 			code := s.HandleRequest(
-				s.NewRequest("POST", fmt.Sprintf("/api/deploy-hooks/github-actions/procedures/v3/test/%d", hook.ID), nil),
+				s.NewRequest("POST", fmt.Sprintf("/api/deploy-hooks/github-actions/procedures/v3/test/%d", hook.ID),
+					GithubActionsDeployHookTestRunRequest{Execute: utils.PointerTo(true)}),
+				&got)
+			s.Equal(http.StatusOK, code)
+		})
+	})
+	s.Run("don't execute", func() {
+		var got GithubActionsDeployHookTestRunResponse
+		github.UseMockedClient(s.T(), func(c *github.MockClient) {}, func() {
+			code := s.HandleRequest(
+				s.NewRequest("POST", fmt.Sprintf("/api/deploy-hooks/github-actions/procedures/v3/test/%d", hook.ID),
+					GithubActionsDeployHookTestRunRequest{Execute: utils.PointerTo(false)}),
 				&got)
 			s.Equal(http.StatusOK, code)
 		})
@@ -96,7 +119,8 @@ func (s *handlerSuite) TestGithubActionsDeployHooksV3TestRun() {
 				}).Return(nil, fmt.Errorf(errors.BadRequest))
 		}, func() {
 			code := s.HandleRequest(
-				s.NewRequest("POST", fmt.Sprintf("/api/deploy-hooks/github-actions/procedures/v3/test/%d", hook.ID), nil),
+				s.NewRequest("POST", fmt.Sprintf("/api/deploy-hooks/github-actions/procedures/v3/test/%d", hook.ID),
+					GithubActionsDeployHookTestRunRequest{Execute: utils.PointerTo(true)}),
 				&got)
 			s.Equal(http.StatusBadRequest, code)
 			s.Equal(errors.BadRequest, got.Message)

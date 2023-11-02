@@ -10,6 +10,10 @@ import (
 	"net/http"
 )
 
+type SlackDeployHookTestRunRequest struct {
+	Execute *bool `json:"execute"` // Required, whether to actually send the Slack message
+}
+
 type SlackDeployHookTestRunResponse struct {
 	OK bool `json:"ok"`
 }
@@ -21,6 +25,7 @@ type SlackDeployHookTestRunResponse struct {
 //	@tags			DeployHooks
 //	@produce		json
 //	@param			selector				path		string	true	"The ID of the SlackDeployHook to test"
+//	@param			request                 body SlackDeployHookTestRunRequest true "Whether to fully execute the hook (JSON body helps with CSRF protection)"
 //	@success		200						{object}	SlackDeployHookTestResponse
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/deploy-hooks/slack/procedures/v3/test/{selector} [post]
@@ -33,6 +38,16 @@ func slackDeployHooksV3TestRun(ctx *gin.Context) {
 	if err != nil {
 		return
 	}
+
+	var body SlackDeployHookTestRunRequest
+	if err = ctx.ShouldBindJSON(&body); err != nil {
+		errors.AbortRequest(ctx, fmt.Errorf("(%s) request validation error: %w", errors.BadRequest, err))
+		return
+	} else if body.Execute == nil {
+		errors.AbortRequest(ctx, fmt.Errorf("(%s) 'execute' is required", errors.BadRequest))
+		return
+	}
+
 	query, err := slackDeployHookModelFromSelector(canonicalizeSelector(ctx.Param("selector")))
 	if err != nil {
 		errors.AbortRequest(ctx, err)
@@ -43,6 +58,10 @@ func slackDeployHooksV3TestRun(ctx *gin.Context) {
 		Where(&query).
 		First(&hook).Error; err != nil {
 		errors.AbortRequest(ctx, err)
+		return
+	}
+	if !*body.Execute {
+		ctx.JSON(http.StatusOK, SlackDeployHookTestRunResponse{OK: true})
 		return
 	}
 	if err = slack.SendMessageReturnError(ctx, *hook.SlackChannel,

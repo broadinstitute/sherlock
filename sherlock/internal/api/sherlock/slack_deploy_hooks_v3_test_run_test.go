@@ -15,16 +15,28 @@ import (
 func (s *handlerSuite) TestSlackDeployHooksV3TestRun_badSelector() {
 	var got errors.ErrorResponse
 	code := s.HandleRequest(
-		s.NewRequest("POST", "/api/deploy-hooks/slack/procedures/v3/test/foo-bar", nil),
+		s.NewRequest("POST", "/api/deploy-hooks/slack/procedures/v3/test/foo-bar",
+			SlackDeployHookTestRunRequest{Execute: utils.PointerTo(true)}),
 		&got)
 	s.Equal(http.StatusBadRequest, code)
 	s.Equal(errors.BadRequest, got.Type)
 }
 
-func (s *handlerSuite) TestSlackDeployHooksV3TestRun_notFound() {
+func (s *handlerSuite) TestSlackDeployHooksV3TestRun_missingBody() {
 	var got errors.ErrorResponse
 	code := s.HandleRequest(
 		s.NewRequest("POST", "/api/deploy-hooks/slack/procedures/v3/test/0", nil),
+		&got)
+	s.Equal(http.StatusBadRequest, code)
+	s.Equal(errors.BadRequest, got.Type)
+	s.Contains(got.Message, "execute")
+}
+
+func (s *handlerSuite) TestSlackDeployHooksV3TestRun_notFound() {
+	var got errors.ErrorResponse
+	code := s.HandleRequest(
+		s.NewRequest("POST", "/api/deploy-hooks/slack/procedures/v3/test/0",
+			SlackDeployHookTestRunRequest{Execute: utils.PointerTo(true)}),
 		&got)
 	s.Equal(http.StatusNotFound, code)
 	s.Equal(errors.NotFound, got.Type)
@@ -75,7 +87,18 @@ func (s *handlerSuite) TestSlackDeployHooksV3TestRun() {
 				mock.AnythingOfType("slack.MsgOption")).Return("", "", "", nil)
 		}, func() {
 			code := s.HandleRequest(
-				s.NewRequest("POST", fmt.Sprintf("/api/deploy-hooks/slack/procedures/v3/test/%d", hook.ID), nil),
+				s.NewRequest("POST", fmt.Sprintf("/api/deploy-hooks/slack/procedures/v3/test/%d", hook.ID),
+					SlackDeployHookTestRunRequest{Execute: utils.PointerTo(true)}),
+				&got)
+			s.Equal(http.StatusOK, code)
+		})
+	})
+	s.Run("don't execute", func() {
+		var got SlackDeployHookTestRunResponse
+		slack.UseMockedClient(s.T(), func(c *slack_mocks.MockMockableClient) {}, func() {
+			code := s.HandleRequest(
+				s.NewRequest("POST", fmt.Sprintf("/api/deploy-hooks/slack/procedures/v3/test/%d", hook.ID),
+					SlackDeployHookTestRunRequest{Execute: utils.PointerTo(false)}),
 				&got)
 			s.Equal(http.StatusOK, code)
 		})
@@ -88,7 +111,8 @@ func (s *handlerSuite) TestSlackDeployHooksV3TestRun() {
 				mock.AnythingOfType("slack.MsgOption")).Return("", "", "", fmt.Errorf(errors.BadRequest))
 		}, func() {
 			code := s.HandleRequest(
-				s.NewRequest("POST", fmt.Sprintf("/api/deploy-hooks/slack/procedures/v3/test/%d", hook.ID), nil),
+				s.NewRequest("POST", fmt.Sprintf("/api/deploy-hooks/slack/procedures/v3/test/%d", hook.ID),
+					SlackDeployHookTestRunRequest{Execute: utils.PointerTo(true)}),
 				&got)
 			s.Equal(http.StatusBadRequest, code)
 			s.Equal(errors.BadRequest, got.Message)
