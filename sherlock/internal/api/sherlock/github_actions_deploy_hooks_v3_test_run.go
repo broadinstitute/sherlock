@@ -26,8 +26,8 @@ type GithubActionsDeployHookTestRunResponse struct {
 //	@description	Run a GitHub Action to simulate a GithubActionsDeployHook
 //	@tags			DeployHooks
 //	@produce		json
-//	@param			selector				path		string	true	"The ID of the GithubActionsDeployHook"
-//	@param			request                 body GithubActionsDeployHookTestRunRequest true "Whether to fully execute the hook (JSON body helps with CSRF protection)"
+//	@param			selector				path		string									true	"The ID of the GithubActionsDeployHook"
+//	@param			request					body		GithubActionsDeployHookTestRunRequest	true	"Whether to fully execute the hook (JSON body helps with CSRF protection)"
 //	@success		200						{object}	GithubActionsDeployHookTestRunResponse
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/deploy-hooks/github-actions/procedures/v3/test/{selector} [post]

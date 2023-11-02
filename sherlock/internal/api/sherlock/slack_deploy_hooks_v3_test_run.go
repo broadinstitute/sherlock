@@ -24,8 +24,8 @@ type SlackDeployHookTestRunResponse struct {
 //	@description	Send a Slack message to simulate a SlackDeployHook
 //	@tags			DeployHooks
 //	@produce		json
-//	@param			selector				path		string	true	"The ID of the SlackDeployHook to test"
-//	@param			request                 body SlackDeployHookTestRunRequest true "Whether to fully execute the hook (JSON body helps with CSRF protection)"
+//	@param			selector				path		string							true	"The ID of the SlackDeployHook to test"
+//	@param			request					body		SlackDeployHookTestRunRequest	true	"Whether to fully execute the hook (JSON body helps with CSRF protection)"
 //	@success		200						{object}	SlackDeployHookTestResponse
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/deploy-hooks/slack/procedures/v3/test/{selector} [post]
