@@ -35,6 +35,12 @@ func (g RedBlock) toSlackAttachment() slack.Attachment {
 }
 
 func SendMessage(ctx context.Context, channel string, text string, attachments ...Attachment) {
+	if err := SendMessageReturnError(ctx, channel, text, attachments...); err != nil {
+		log.Warn().Err(err).Msgf("SLCK | unable to send message to %s: %v", channel, err)
+	}
+}
+
+func SendMessageReturnError(ctx context.Context, channel string, text string, attachments ...Attachment) error {
 	if isEnabled() && (text != "" || len(attachments) > 0) {
 		var options []slack.MsgOption
 		if text != "" {
@@ -45,8 +51,8 @@ func SendMessage(ctx context.Context, channel string, text string, attachments .
 				utils.Map(attachments, func(a Attachment) slack.Attachment { return a.toSlackAttachment() })...,
 			))
 		}
-		if _, _, _, err := client.SendMessageContext(ctx, channel, options...); err != nil {
-			log.Warn().Err(err).Msgf("SLCK | unable to send message to %s: %v", channel, err)
-		}
+		_, _, _, err := client.SendMessageContext(ctx, channel, options...)
+		return err
 	}
+	return nil
 }

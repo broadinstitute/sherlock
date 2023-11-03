@@ -83,9 +83,11 @@ func ConfigureRoutes(apiRouter gin.IRoutes) {
 	apiRouter.POST("deploy-hooks/slack/v3", slackDeployHooksV3Create)
 	apiRouter.PATCH("deploy-hooks/slack/v3/*selector", slackDeployHooksV3Edit)
 	apiRouter.DELETE("deploy-hooks/slack/v3/*selector", slackDeployHooksV3Delete)
+	apiRouter.POST("deploy-hooks/slack/procedures/v3/test/*selector", slackDeployHooksV3TestRun)
 	apiRouter.GET("deploy-hooks/github-actions/v3", githubActionsDeployHooksV3List)
 	apiRouter.GET("deploy-hooks/github-actions/v3/*selector", githubActionsDeployHooksV3Get)
 	apiRouter.POST("deploy-hooks/github-actions/v3", githubActionsDeployHooksV3Create)
 	apiRouter.PATCH("deploy-hooks/github-actions/v3/*selector", githubActionsDeployHooksV3Edit)
 	apiRouter.DELETE("deploy-hooks/github-actions/v3/*selector", githubActionsDeployHooksV3Delete)
+	apiRouter.POST("deploy-hooks/github-actions/procedures/v3/test/*selector", githubActionsDeployHooksV3TestRun)
 }

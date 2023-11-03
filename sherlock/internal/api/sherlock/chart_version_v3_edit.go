@@ -16,8 +16,8 @@ import (
 //	@description	Edit an individual ChartVersion.
 //	@tags			ChartVersions
 //	@produce		json
-//	@param			selector				path		string		true	"The selector of the ChartVersion, which can be either a numeric ID or chart/version."
-//	@param			chartVersion					body		ChartVersionV3Edit	true	"The edits to make to the ChartVersion"
+//	@param			selector				path		string				true	"The selector of the ChartVersion, which can be either a numeric ID or chart/version."
+//	@param			chartVersion			body		ChartVersionV3Edit	true	"The edits to make to the ChartVersion"
 //	@success		200						{object}	ChartVersionV3
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/chart-versions/v3/{selector} [patch]
