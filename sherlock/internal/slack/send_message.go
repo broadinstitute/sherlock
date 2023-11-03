@@ -44,7 +44,7 @@ func SendMessageReturnError(ctx context.Context, channel string, text string, at
 	if isEnabled() && (text != "" || len(attachments) > 0) {
 		var options []slack.MsgOption
 		if text != "" {
-			options = append(options, slack.MsgOptionText(text, true))
+			options = append(options, slack.MsgOptionText(text, false))
 		}
 		if len(attachments) > 0 {
 			options = append(options, slack.MsgOptionAttachments(
