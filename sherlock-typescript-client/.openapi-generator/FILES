@@ -42,9 +42,13 @@ src/models/SherlockCiRunV3Upsert.ts
 src/models/SherlockClusterV3.ts
 src/models/SherlockClusterV3Create.ts
 src/models/SherlockClusterV3Edit.ts
+src/models/SherlockGithubActionsDeployHookTestRunRequest.ts
+src/models/SherlockGithubActionsDeployHookTestRunResponse.ts
 src/models/SherlockGithubActionsDeployHookV3.ts
 src/models/SherlockGithubActionsDeployHookV3Create.ts
 src/models/SherlockGithubActionsDeployHookV3Edit.ts
+src/models/SherlockSlackDeployHookTestRunRequest.ts
+src/models/SherlockSlackDeployHookTestRunResponse.ts
 src/models/SherlockSlackDeployHookV3.ts
 src/models/SherlockSlackDeployHookV3Create.ts
 src/models/SherlockSlackDeployHookV3Edit.ts

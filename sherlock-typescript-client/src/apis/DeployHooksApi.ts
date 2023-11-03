@@ -16,9 +16,13 @@
 import * as runtime from '../runtime';
 import type {
   ErrorsErrorResponse,
+  SherlockGithubActionsDeployHookTestRunRequest,
+  SherlockGithubActionsDeployHookTestRunResponse,
   SherlockGithubActionsDeployHookV3,
   SherlockGithubActionsDeployHookV3Create,
   SherlockGithubActionsDeployHookV3Edit,
+  SherlockSlackDeployHookTestRunRequest,
+  SherlockSlackDeployHookTestRunResponse,
   SherlockSlackDeployHookV3,
   SherlockSlackDeployHookV3Create,
   SherlockSlackDeployHookV3Edit,
@@ -26,12 +30,20 @@ import type {
 import {
     ErrorsErrorResponseFromJSON,
     ErrorsErrorResponseToJSON,
+    SherlockGithubActionsDeployHookTestRunRequestFromJSON,
+    SherlockGithubActionsDeployHookTestRunRequestToJSON,
+    SherlockGithubActionsDeployHookTestRunResponseFromJSON,
+    SherlockGithubActionsDeployHookTestRunResponseToJSON,
     SherlockGithubActionsDeployHookV3FromJSON,
     SherlockGithubActionsDeployHookV3ToJSON,
     SherlockGithubActionsDeployHookV3CreateFromJSON,
     SherlockGithubActionsDeployHookV3CreateToJSON,
     SherlockGithubActionsDeployHookV3EditFromJSON,
     SherlockGithubActionsDeployHookV3EditToJSON,
+    SherlockSlackDeployHookTestRunRequestFromJSON,
+    SherlockSlackDeployHookTestRunRequestToJSON,
+    SherlockSlackDeployHookTestRunResponseFromJSON,
+    SherlockSlackDeployHookTestRunResponseToJSON,
     SherlockSlackDeployHookV3FromJSON,
     SherlockSlackDeployHookV3ToJSON,
     SherlockSlackDeployHookV3CreateFromJSON,
@@ -39,6 +51,11 @@ import {
     SherlockSlackDeployHookV3EditFromJSON,
     SherlockSlackDeployHookV3EditToJSON,
 } from '../models/index';
+
+export interface ApiDeployHooksGithubActionsProceduresV3TestSelectorPostRequest {
+    selector: string;
+    request: SherlockGithubActionsDeployHookTestRunRequest;
+}
 
 export interface ApiDeployHooksGithubActionsV3GetRequest {
     createdAt?: Date;
@@ -72,6 +89,11 @@ export interface ApiDeployHooksGithubActionsV3SelectorGetRequest {
 export interface ApiDeployHooksGithubActionsV3SelectorPatchRequest {
     selector: string;
     githubActionsDeployHook: SherlockGithubActionsDeployHookV3Edit;
+}
+
+export interface ApiDeployHooksSlackProceduresV3TestSelectorPostRequest {
+    selector: string;
+    request: SherlockSlackDeployHookTestRunRequest;
 }
 
 export interface ApiDeployHooksSlackV3GetRequest {
@@ -108,6 +130,45 @@ export interface ApiDeployHooksSlackV3SelectorPatchRequest {
  * 
  */
 export class DeployHooksApi extends runtime.BaseAPI {
+
+    /**
+     * Run a GitHub Action to simulate a GithubActionsDeployHook
+     * Test a GithubActionsDeployHook
+     */
+    async apiDeployHooksGithubActionsProceduresV3TestSelectorPostRaw(requestParameters: ApiDeployHooksGithubActionsProceduresV3TestSelectorPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockGithubActionsDeployHookTestRunResponse>> {
+        if (requestParameters.selector === null || requestParameters.selector === undefined) {
+            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiDeployHooksGithubActionsProceduresV3TestSelectorPost.');
+        }
+
+        if (requestParameters.request === null || requestParameters.request === undefined) {
+            throw new runtime.RequiredError('request','Required parameter requestParameters.request was null or undefined when calling apiDeployHooksGithubActionsProceduresV3TestSelectorPost.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/api/deploy-hooks/github-actions/procedures/v3/test/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: SherlockGithubActionsDeployHookTestRunRequestToJSON(requestParameters.request),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => SherlockGithubActionsDeployHookTestRunResponseFromJSON(jsonValue));
+    }
+
+    /**
+     * Run a GitHub Action to simulate a GithubActionsDeployHook
+     * Test a GithubActionsDeployHook
+     */
+    async apiDeployHooksGithubActionsProceduresV3TestSelectorPost(requestParameters: ApiDeployHooksGithubActionsProceduresV3TestSelectorPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockGithubActionsDeployHookTestRunResponse> {
+        const response = await this.apiDeployHooksGithubActionsProceduresV3TestSelectorPostRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
 
     /**
      * List GithubActionsDeployHooks matching a filter.
@@ -328,6 +389,45 @@ export class DeployHooksApi extends runtime.BaseAPI {
      */
     async apiDeployHooksGithubActionsV3SelectorPatch(requestParameters: ApiDeployHooksGithubActionsV3SelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockGithubActionsDeployHookV3> {
         const response = await this.apiDeployHooksGithubActionsV3SelectorPatchRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Send a Slack message to simulate a SlackDeployHook
+     * Test a SlackDeployHook
+     */
+    async apiDeployHooksSlackProceduresV3TestSelectorPostRaw(requestParameters: ApiDeployHooksSlackProceduresV3TestSelectorPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockSlackDeployHookTestRunResponse>> {
+        if (requestParameters.selector === null || requestParameters.selector === undefined) {
+            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiDeployHooksSlackProceduresV3TestSelectorPost.');
+        }
+
+        if (requestParameters.request === null || requestParameters.request === undefined) {
+            throw new runtime.RequiredError('request','Required parameter requestParameters.request was null or undefined when calling apiDeployHooksSlackProceduresV3TestSelectorPost.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/api/deploy-hooks/slack/procedures/v3/test/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: SherlockSlackDeployHookTestRunRequestToJSON(requestParameters.request),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => SherlockSlackDeployHookTestRunResponseFromJSON(jsonValue));
+    }
+
+    /**
+     * Send a Slack message to simulate a SlackDeployHook
+     * Test a SlackDeployHook
+     */
+    async apiDeployHooksSlackProceduresV3TestSelectorPost(requestParameters: ApiDeployHooksSlackProceduresV3TestSelectorPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockSlackDeployHookTestRunResponse> {
+        const response = await this.apiDeployHooksSlackProceduresV3TestSelectorPostRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

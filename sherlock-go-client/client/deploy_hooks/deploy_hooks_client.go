@@ -46,7 +46,11 @@ type ClientService interface {
 
 	PatchAPIDeployHooksSlackV3Selector(params *PatchAPIDeployHooksSlackV3SelectorParams, opts ...ClientOption) (*PatchAPIDeployHooksSlackV3SelectorOK, error)
 
+	PostAPIDeployHooksGithubActionsProceduresV3TestSelector(params *PostAPIDeployHooksGithubActionsProceduresV3TestSelectorParams, opts ...ClientOption) (*PostAPIDeployHooksGithubActionsProceduresV3TestSelectorOK, error)
+
 	PostAPIDeployHooksGithubActionsV3(params *PostAPIDeployHooksGithubActionsV3Params, opts ...ClientOption) (*PostAPIDeployHooksGithubActionsV3Created, error)
+
+	PostAPIDeployHooksSlackProceduresV3TestSelector(params *PostAPIDeployHooksSlackProceduresV3TestSelectorParams, opts ...ClientOption) (*PostAPIDeployHooksSlackProceduresV3TestSelectorOK, error)
 
 	PostAPIDeployHooksSlackV3(params *PostAPIDeployHooksSlackV3Params, opts ...ClientOption) (*PostAPIDeployHooksSlackV3Created, error)
 
@@ -374,6 +378,46 @@ func (a *Client) PatchAPIDeployHooksSlackV3Selector(params *PatchAPIDeployHooksS
 }
 
 /*
+  PostAPIDeployHooksGithubActionsProceduresV3TestSelector tests a github actions deploy hook
+
+  Run a GitHub Action to simulate a GithubActionsDeployHook
+*/
+func (a *Client) PostAPIDeployHooksGithubActionsProceduresV3TestSelector(params *PostAPIDeployHooksGithubActionsProceduresV3TestSelectorParams, opts ...ClientOption) (*PostAPIDeployHooksGithubActionsProceduresV3TestSelectorOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewPostAPIDeployHooksGithubActionsProceduresV3TestSelectorParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "PostAPIDeployHooksGithubActionsProceduresV3TestSelector",
+		Method:             "POST",
+		PathPattern:        "/api/deploy-hooks/github-actions/procedures/v3/test/{selector}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &PostAPIDeployHooksGithubActionsProceduresV3TestSelectorReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*PostAPIDeployHooksGithubActionsProceduresV3TestSelectorOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for PostAPIDeployHooksGithubActionsProceduresV3TestSelector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
   PostAPIDeployHooksGithubActionsV3 creates a github actions deploy hook
 
   Create a GithubActionsDeployHook.
@@ -410,6 +454,46 @@ func (a *Client) PostAPIDeployHooksGithubActionsV3(params *PostAPIDeployHooksGit
 	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for PostAPIDeployHooksGithubActionsV3: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+  PostAPIDeployHooksSlackProceduresV3TestSelector tests a slack deploy hook
+
+  Send a Slack message to simulate a SlackDeployHook
+*/
+func (a *Client) PostAPIDeployHooksSlackProceduresV3TestSelector(params *PostAPIDeployHooksSlackProceduresV3TestSelectorParams, opts ...ClientOption) (*PostAPIDeployHooksSlackProceduresV3TestSelectorOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewPostAPIDeployHooksSlackProceduresV3TestSelectorParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "PostAPIDeployHooksSlackProceduresV3TestSelector",
+		Method:             "POST",
+		PathPattern:        "/api/deploy-hooks/slack/procedures/v3/test/{selector}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &PostAPIDeployHooksSlackProceduresV3TestSelectorReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*PostAPIDeployHooksSlackProceduresV3TestSelectorOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for PostAPIDeployHooksSlackProceduresV3TestSelector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 

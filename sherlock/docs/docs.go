@@ -2223,6 +2223,80 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/deploy-hooks/github-actions/procedures/v3/test/{selector}": {
+            "post": {
+                "description": "Run a GitHub Action to simulate a GithubActionsDeployHook",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DeployHooks"
+                ],
+                "summary": "Test a GithubActionsDeployHook",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The ID of the GithubActionsDeployHook",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Whether to fully execute the hook (JSON body helps with CSRF protection)",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.GithubActionsDeployHookTestRunRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.GithubActionsDeployHookTestRunResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/deploy-hooks/github-actions/v3": {
             "get": {
                 "description": "List GithubActionsDeployHooks matching a filter.",
@@ -2592,6 +2666,80 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/sherlock.GithubActionsDeployHookV3"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/deploy-hooks/slack/procedures/v3/test/{selector}": {
+            "post": {
+                "description": "Send a Slack message to simulate a SlackDeployHook",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DeployHooks"
+                ],
+                "summary": "Test a SlackDeployHook",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The ID of the SlackDeployHook to test",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Whether to fully execute the hook (JSON body helps with CSRF protection)",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.SlackDeployHookTestRunRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.SlackDeployHookTestRunResponse"
                         }
                     },
                     "400": {
@@ -10856,6 +11004,26 @@ const docTemplate = `{
                 }
             }
         },
+        "sherlock.GithubActionsDeployHookTestRunRequest": {
+            "type": "object",
+            "properties": {
+                "execute": {
+                    "description": "Required, whether to fully run the GHA",
+                    "type": "boolean"
+                }
+            }
+        },
+        "sherlock.GithubActionsDeployHookTestRunResponse": {
+            "type": "object",
+            "properties": {
+                "ok": {
+                    "type": "boolean"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
         "sherlock.GithubActionsDeployHookV3": {
             "type": "object",
             "properties": {
@@ -10986,6 +11154,23 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "onSuccess": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "sherlock.SlackDeployHookTestRunRequest": {
+            "type": "object",
+            "properties": {
+                "execute": {
+                    "description": "Required, whether to actually send the Slack message",
+                    "type": "boolean"
+                }
+            }
+        },
+        "sherlock.SlackDeployHookTestRunResponse": {
+            "type": "object",
+            "properties": {
+                "ok": {
                     "type": "boolean"
                 }
             }

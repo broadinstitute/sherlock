@@ -563,6 +563,19 @@ definitions:
         default: false
         type: boolean
     type: object
+  sherlock.GithubActionsDeployHookTestRunRequest:
+    properties:
+      execute:
+        description: Required, whether to fully run the GHA
+        type: boolean
+    type: object
+  sherlock.GithubActionsDeployHookTestRunResponse:
+    properties:
+      ok:
+        type: boolean
+      url:
+        type: string
+    type: object
   sherlock.GithubActionsDeployHookV3:
     properties:
       createdAt:
@@ -676,6 +689,17 @@ definitions:
       onFailure:
         type: boolean
       onSuccess:
+        type: boolean
+    type: object
+  sherlock.SlackDeployHookTestRunRequest:
+    properties:
+      execute:
+        description: Required, whether to actually send the Slack message
+        type: boolean
+    type: object
+  sherlock.SlackDeployHookTestRunResponse:
+    properties:
+      ok:
         type: boolean
     type: object
   sherlock.SlackDeployHookV3:
@@ -3545,6 +3569,56 @@ paths:
       summary: Edit an individual Cluster
       tags:
       - Clusters
+  /api/deploy-hooks/github-actions/procedures/v3/test/{selector}:
+    post:
+      description: Run a GitHub Action to simulate a GithubActionsDeployHook
+      parameters:
+      - description: The ID of the GithubActionsDeployHook
+        in: path
+        name: selector
+        required: true
+        type: string
+      - description: Whether to fully execute the hook (JSON body helps with CSRF
+          protection)
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/sherlock.GithubActionsDeployHookTestRunRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/sherlock.GithubActionsDeployHookTestRunResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Test a GithubActionsDeployHook
+      tags:
+      - DeployHooks
   /api/deploy-hooks/github-actions/v3:
     get:
       description: List GithubActionsDeployHooks matching a filter.
@@ -3820,6 +3894,56 @@ paths:
           schema:
             $ref: '#/definitions/errors.ErrorResponse'
       summary: Edit an individual GithubActionsDeployHook
+      tags:
+      - DeployHooks
+  /api/deploy-hooks/slack/procedures/v3/test/{selector}:
+    post:
+      description: Send a Slack message to simulate a SlackDeployHook
+      parameters:
+      - description: The ID of the SlackDeployHook to test
+        in: path
+        name: selector
+        required: true
+        type: string
+      - description: Whether to fully execute the hook (JSON body helps with CSRF
+          protection)
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/sherlock.SlackDeployHookTestRunRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/sherlock.SlackDeployHookTestRunResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Test a SlackDeployHook
       tags:
       - DeployHooks
   /api/deploy-hooks/slack/v3:
