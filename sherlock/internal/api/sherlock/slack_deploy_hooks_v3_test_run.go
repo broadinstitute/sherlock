@@ -66,7 +66,7 @@ func slackDeployHooksV3TestRun(ctx *gin.Context) {
 	}
 	if err = slack.SendMessageReturnError(ctx, *hook.SlackChannel,
 		fmt.Sprintf("This is a deploy hook test message from Beehive, triggered by %s", user.SlackReference())); err != nil {
-		errors.AbortRequest(ctx, err)
+		errors.AbortRequest(ctx, fmt.Errorf("error between Sherlock and Slack: %w", err))
 		return
 	}
 	ctx.JSON(http.StatusOK, SlackDeployHookTestRunResponse{OK: true})

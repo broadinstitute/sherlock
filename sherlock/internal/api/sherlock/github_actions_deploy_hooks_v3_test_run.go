@@ -80,7 +80,7 @@ func githubActionsDeployHooksV3TestRun(ctx *gin.Context) {
 		*hook.GithubActionsWorkflowPath,
 		*hook.GithubActionsDefaultRef,
 		workflowInputs); err != nil {
-		errors.AbortRequest(ctx, err)
+		errors.AbortRequest(ctx, fmt.Errorf("error between Sherlock and GitHub: %w", err))
 		return
 	}
 	ctx.JSON(http.StatusOK, GithubActionsDeployHookTestRunResponse{
