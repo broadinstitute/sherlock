@@ -123,7 +123,7 @@ func (s *handlerSuite) TestGithubActionsDeployHooksV3TestRun() {
 					GithubActionsDeployHookTestRunRequest{Execute: utils.PointerTo(true)}),
 				&got)
 			s.Equal(http.StatusBadRequest, code)
-			s.Equal(errors.BadRequest, got.Message)
+			s.Equal(fmt.Sprintf("error between Sherlock and GitHub: %s", errors.BadRequest), got.Message)
 		})
 	})
 }
