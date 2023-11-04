@@ -217,18 +217,7 @@ func (s *modelSuite) TestClusterValidationSqlValidAzure() {
 }
 
 func (s *modelSuite) TestClusterCiIdentifiers() {
-	s.SetNonSuitableTestUserForDB()
-	cluster := Cluster{
-		Name:                "some-name",
-		Provider:            "google",
-		GoogleProject:       "some-project",
-		Location:            "some-location",
-		Base:                utils.PointerTo("some base"),
-		Address:             utils.PointerTo("0.0.0.0"),
-		RequiresSuitability: utils.PointerTo(false),
-		HelmfileRef:         utils.PointerTo("some-ref"),
-	}
-	s.NoError(s.DB.Create(&cluster).Error)
+	cluster := s.TestData.Cluster_TerraDev()
 	ciIdentifier := cluster.GetCiIdentifier()
 	s.NoError(s.DB.Create(&ciIdentifier).Error)
 	s.NotZero(ciIdentifier.ID)
@@ -260,18 +249,8 @@ func (s *modelSuite) TestClusterCreationForbidden() {
 }
 
 func (s *modelSuite) TestClusterEditEscalateForbidden() {
+	cluster := s.TestData.Cluster_TerraDev()
 	s.SetNonSuitableTestUserForDB()
-	cluster := Cluster{
-		Name:                "some-name",
-		Provider:            "google",
-		GoogleProject:       "some-project",
-		Location:            "some-location",
-		Base:                utils.PointerTo("some base"),
-		Address:             utils.PointerTo("0.0.0.0"),
-		RequiresSuitability: utils.PointerTo(false),
-		HelmfileRef:         utils.PointerTo("some-ref"),
-	}
-	s.NoError(s.DB.Create(&cluster).Error)
 	s.ErrorContains(s.DB.
 		Model(&cluster).
 		Updates(&Cluster{RequiresSuitability: utils.PointerTo(true)}).
@@ -279,18 +258,7 @@ func (s *modelSuite) TestClusterEditEscalateForbidden() {
 }
 
 func (s *modelSuite) TestClusterEditDeescalateForbidden() {
-	s.SetSuitableTestUserForDB()
-	cluster := Cluster{
-		Name:                "some-name",
-		Provider:            "google",
-		GoogleProject:       "some-project",
-		Location:            "some-location",
-		Base:                utils.PointerTo("some base"),
-		Address:             utils.PointerTo("0.0.0.0"),
-		RequiresSuitability: utils.PointerTo(true),
-		HelmfileRef:         utils.PointerTo("some-ref"),
-	}
-	s.NoError(s.DB.Create(&cluster).Error)
+	cluster := s.TestData.Cluster_TerraProd()
 	s.SetNonSuitableTestUserForDB()
 	s.ErrorContains(s.DB.
 		Model(&cluster).
@@ -299,18 +267,7 @@ func (s *modelSuite) TestClusterEditDeescalateForbidden() {
 }
 
 func (s *modelSuite) TestClusterDeleteForbidden() {
-	s.SetSuitableTestUserForDB()
-	cluster := Cluster{
-		Name:                "some-name",
-		Provider:            "google",
-		GoogleProject:       "some-project",
-		Location:            "some-location",
-		Base:                utils.PointerTo("some base"),
-		Address:             utils.PointerTo("0.0.0.0"),
-		RequiresSuitability: utils.PointerTo(true),
-		HelmfileRef:         utils.PointerTo("some-ref"),
-	}
-	s.NoError(s.DB.Create(&cluster).Error)
+	cluster := s.TestData.Cluster_TerraProd()
 	s.SetNonSuitableTestUserForDB()
 	s.ErrorContains(s.DB.
 		Delete(&cluster).
