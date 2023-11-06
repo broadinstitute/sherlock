@@ -314,7 +314,7 @@ func (td *testDataImpl) Cluster_TerraProd() Cluster {
 			GoogleProject:       "broad-dsde-prod",
 			Location:            "us-central1",
 			Base:                utils.PointerTo("terra"),
-			Address:             utils.PointerTo("https://192.168.1.0"),
+			Address:             utils.PointerTo("https://192.0.2.128"),
 			RequiresSuitability: utils.PointerTo(true),
 			HelmfileRef:         utils.PointerTo("HEAD"),
 		}
@@ -332,7 +332,7 @@ func (td *testDataImpl) Cluster_TerraStaging() Cluster {
 			GoogleProject:       "broad-dsde-staging",
 			Location:            "us-central1",
 			Base:                utils.PointerTo("terra"),
-			Address:             utils.PointerTo("https://192.168.2.0"),
+			Address:             utils.PointerTo("https://192.0.2.129"),
 			RequiresSuitability: utils.PointerTo(false),
 			HelmfileRef:         utils.PointerTo("HEAD"),
 		}
@@ -350,7 +350,7 @@ func (td *testDataImpl) Cluster_TerraDev() Cluster {
 			GoogleProject:       "broad-dsde-dev",
 			Location:            "us-central1",
 			Base:                utils.PointerTo("terra"),
-			Address:             utils.PointerTo("https://192.168.3.0"),
+			Address:             utils.PointerTo("https://192.0.2.130"),
 			RequiresSuitability: utils.PointerTo(false),
 			HelmfileRef:         utils.PointerTo("HEAD"),
 		}
@@ -368,7 +368,7 @@ func (td *testDataImpl) Cluster_TerraQaBees() Cluster {
 			GoogleProject:       "broad-dsde-qa",
 			Location:            "us-central1",
 			Base:                utils.PointerTo("bee-cluster"),
-			Address:             utils.PointerTo("https://192.168.4.0"),
+			Address:             utils.PointerTo("https://192.0.2.131"),
 			RequiresSuitability: utils.PointerTo(false),
 			HelmfileRef:         utils.PointerTo("HEAD"),
 		}
@@ -386,7 +386,7 @@ func (td *testDataImpl) Cluster_DdpAksProd() Cluster {
 			AzureSubscription:   uuid.New().String(),
 			Location:            "East US",
 			Base:                utils.PointerTo("ddp"),
-			Address:             utils.PointerTo("https://192.168.5.0"),
+			Address:             utils.PointerTo("https://192.0.2.132"),
 			RequiresSuitability: utils.PointerTo(true),
 			HelmfileRef:         utils.PointerTo("HEAD"),
 		}
@@ -404,7 +404,7 @@ func (td *testDataImpl) Cluster_DdpAksDev() Cluster {
 			AzureSubscription:   uuid.New().String(),
 			Location:            "East US",
 			Base:                utils.PointerTo("ddp"),
-			Address:             utils.PointerTo("https://192.168.6.0"),
+			Address:             utils.PointerTo("https://192.0.2.133"),
 			RequiresSuitability: utils.PointerTo(false),
 			HelmfileRef:         utils.PointerTo("HEAD"),
 		}
