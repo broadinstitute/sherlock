@@ -2,7 +2,7 @@ ARG GO_VERSION='1.19'
 ARG ALPINE_VERSION='3.16'
 
 FROM golang:${GO_VERSION}-alpine${ALPINE_VERSION} as build
-ARG BUILD_VERSION='test'
+ARG BUILD_VERSION='development'
 WORKDIR /build/sherlock
 ENV CGO_ENABLED=0
 ENV GOBIN=/bin
