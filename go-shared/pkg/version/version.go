@@ -9,8 +9,10 @@ import "runtime/debug"
 const DevelopmentVersionString = "development"
 
 // BuildVersion is used to embed Sherlock's semver in the
-// binary using compiler flags. We mutate this value from
-// the application entrypoint.
+// binary using compiler flags. For example:
+// ```bash
+// -ldflags="-X 'github.com/broadinstitute/sherlock/go-shared/pkg/version.BuildVersion=${BUILD_VERSION}'"
+// ```
 var BuildVersion = DevelopmentVersionString
 
 // BuildInfo thinly wraps the hidden-in-the-documentation
