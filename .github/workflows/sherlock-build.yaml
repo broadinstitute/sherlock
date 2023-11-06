@@ -116,7 +116,10 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Set up Swag
-        run: go install github.com/swaggo/swag/cmd/swag@latest
+        run: make install-swagger
+
+      - name: Format Swagger comments
+        run: make format-swagger
 
       - name: Generate Swagger source
         run: make generate-swagger

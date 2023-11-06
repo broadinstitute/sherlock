@@ -1,5 +1,7 @@
 BUILD_VERSION ?= development
 
+## Local development
+
 local-up:
 	docker-compose -f dev/local-with-pg.yaml up --build
 
@@ -8,6 +10,8 @@ local-stop:
 
 local-down:
 	docker-compose -f dev/local-with-pg.yaml down --volumes
+
+## Normal testing (depends on install-pact)
 
 test:
 	docker run --name test-postgres -e POSTGRES_PASSWORD=password -e POSTGRES_USER=sherlock -d -p 5431:5432 postgres:13 -c max_connections=200
@@ -23,6 +27,8 @@ test-with-coverage:
 	docker stop test-postgres
 	docker rm -f -v test-postgres
 
+## Pact testing
+
 install-pact:
 	cd sherlock && go install $$(grep 'github.com/pact-foundation/pact-go/v2' go.mod | sed -ne 's/^[[:blank:]]*//p' | sed -ne 's/[[:blank:]]/@/p')
 	sudo -s $$(which pact-go) -l DEBUG install -f
@@ -37,7 +43,8 @@ document-pact-provider:
 	sed -nr 's/.*stateHandlers\["([^"]+)"\].*/- `\1`/p' sherlock/internal/pact/provider_test.go >> sherlock/internal/pact/README.md
 	sed -nr 's/^\t*\s*([a-zA-Z_0-9]+)\(\).+/- `\1 exists`/p' sherlock/internal/models/test_data.go >> sherlock/internal/pact/README.md
 
-# Enables running tests from GoLand
+## Long running test database (so tests can be run from GoLand)
+
 pg-up:
 	docker run --name test-postgres -e POSTGRES_PASSWORD=password -e POSTGRES_USER=sherlock -d -p 5431:5432 postgres:13 -c max_connections=200
 
@@ -45,14 +52,27 @@ pg-down:
 	docker stop test-postgres
 	docker rm -f -v test-postgres
 
-# To install swag, `go install github.com/swaggo/swag/cmd/swag@latest`
-generate-swagger:
-	cd sherlock && swag fmt -d ./ -g internal/boot/router.go && swag init -d ./ -g internal/boot/router.go
+## Swagger generation
 
-# To install mockery, `brew install mockery`
+install-swagger:
+	cd sherlock && go install $$(grep 'github.com/swaggo/swag' go.mod | sed -ne 's/^[[:blank:]]*//p' | sed -ne 's/[[:blank:]]/@/p')
+
+format-swagger:
+	cd sherlock && swag fmt -d ./ -g internal/boot/router.go
+
+generate-swagger:
+	cd sherlock && swag init -d ./ -g internal/boot/router.go
+
+## Mock generation
+
+install-mockery:
 # 	(As a backup, use `go install github.com/vektra/mockery/v2@v2.32.4` but check https://github.com/vektra/mockery/releases for versions)
+	brew install mockery
+
 generate-mocks:
 	cd sherlock && mockery
+
+## Cloud function deployment
 
 # We use `go mod vendor` to package local dependencies in a way that the gcloud CLI can upload, but
 # we don't keep that directory around because it'll confuse GoLand (we want our source of truth to be
