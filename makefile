@@ -1,3 +1,5 @@
+BUILD_VERSION ?= development
+
 local-up:
 	docker-compose -f dev/local-with-pg.yaml up --build
 
@@ -21,9 +23,13 @@ test-with-coverage:
 	docker stop test-postgres
 	docker rm -f -v test-postgres
 
+install-pact:
+	cd sherlock && go install $$(grep 'github.com/pact-foundation/pact-go/v2' go.mod | sed -ne 's/^[[:blank:]]*//p' | sed -ne 's/[[:blank:]]/@/p')
+	sudo -s $$(which pact-go) -l DEBUG install -f
+
 test-pact-provider:
 	docker run --name test-postgres -e POSTGRES_PASSWORD=password -e POSTGRES_USER=sherlock -d -p 5431:5432 postgres:13 -c max_connections=200
-	cd sherlock && go test -p 1 -v -race -ldflags="-X 'github.com/broadinstitute/sherlock/go-shared/pkg/version.BuildVersion=${BUILD_VERSION:-development}'" ./internal/pact/...
+	cd sherlock && go test -p 1 -v -race -ldflags="-X 'github.com/broadinstitute/sherlock/go-shared/pkg/version.BuildVersion=${BUILD_VERSION}'" ./internal/pact/...
 
 document-pact-provider:
 	echo "# Sherlock Provider State Handlers" > sherlock/internal/pact/README.md
