@@ -21,15 +21,17 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-    - name: checkout code
+    - name: Checkout
       uses: actions/checkout@v4
     - name: Set up Go
       uses: actions/setup-go@v4
       with:
         go-version-file: "sherlock/go.mod"
-    - name: run all tests
+    - name: Install pact-go
+      run: make install-pact
+    - name: Run tests
       run: make test-with-coverage
-    - name: upload test coverage report
+    - name: Upload coverage
       uses: codecov/codecov-action@v3
       with:
         files: go-shared/cover.out,sherlock/cover.out

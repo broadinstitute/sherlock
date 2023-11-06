@@ -36,10 +36,7 @@ import (
 //	@license.name	BSD-3-Clause
 //	@license.url	https://github.com/broadinstitute/sherlock/blob/main/LICENSE.txt
 
-func buildRouter(ctx context.Context, db *gorm.DB) *gin.Engine {
-	// gin.DebugMode spews console output but can help resolve routing issues
-	gin.SetMode(gin.ReleaseMode)
-
+func BuildRouter(ctx context.Context, db *gorm.DB) *gin.Engine {
 	// At runtime, we want Sherlock's own hosted Swagger page to refer to itself, however/wherever it's deployed
 	// (setting the host to an empty string achieves that behavior, like if we didn't specify a host at all)
 	docs.SwaggerInfo.Host = ""

@@ -50,11 +50,7 @@ func (s *modelSuite) TestAppVersionValid() {
 }
 
 func (s *modelSuite) TestAppVersionCiIdentifiers() {
-	s.SetNonSuitableTestUserForDB()
-	chart := Chart{Name: "name", ChartRepo: utils.PointerTo("repo")}
-	s.NoError(s.DB.Create(&chart).Error)
-	appVersion := AppVersion{ChartID: chart.ID, AppVersion: "version"}
-	s.NoError(s.DB.Create(&appVersion).Error)
+	appVersion := s.TestData.AppVersion_Leonardo_V1()
 	ciIdentifier := appVersion.GetCiIdentifier()
 	s.NoError(s.DB.Create(&ciIdentifier).Error)
 	s.NotZero(ciIdentifier.ID)

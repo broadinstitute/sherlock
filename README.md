@@ -16,7 +16,7 @@ An overview of interactions:
 
 | Sherlock                  |                                                                                                                |
 |---------------------------|----------------------------------------------------------------------------------------------------------------|
-| API Endpoint              | :8080/api/v2                                                                                                   |
+| API Endpoint              | :8080/api                                                                                                      |
 | Swagger Endpoint          | :8080/swagger/index.html                                                                                       |
 | Prometheus Endpoint       | :8080/metrics                                                                                                  |
 | Go Client Library         | [./sherlock-go-client](./sherlock-go-client)                                                                   |
@@ -26,8 +26,19 @@ An overview of interactions:
 | UI                        | Via [Beehive](https://github.com/broadinstitute/beehive)                                                       |
 
 Sherlock is meant to be deployed behind [Google Cloud's Identity-Aware Proxy](https://cloud.google.com/iap). 
-The V2 API connects to Google Workspace's Admin API to evaluate permissions of the calling users.
+It connects to Google Workspace's Admin API to evaluate permissions of the calling users.
 
 ### Developing Locally
 
-There's a makefile that calls out to a docker-compose to help spin up Sherlock and a database locally. `make local-up` will get you started. `make local-stop` or Ctrl+C will stop it, while `make local-down` will wipe the data in the database.
+GoLand should be able to understand the monorepo structure and should download dependencies appropriately.
+
+Some key [makefile](./makefile) commands:
+
+- `make install-pact` will ask for sudo credentials to install the Pact FFI library necessary for running those tests
+- `make pg-up` will run a blank local database so that GoLand can run tests for you
+  - `make pg-down` will tear it down if it gets in a bad state
+- `make local-up` will run Sherlock locally (different database from `make pg-up`'s, so you can add state there)
+  - `make local-stop` will shut down Sherlock so you can rebuild it **without wiping your database state**
+  - `make local-down` **will wipe your database state**
+
+There's more in the [makefile](./makefile).

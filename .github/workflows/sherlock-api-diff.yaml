@@ -46,7 +46,7 @@ jobs:
 
       - name: Set up Swag
         working-directory: head
-        run: go install github.com/swaggo/swag/cmd/swag@latest
+        run: make install-swagger
 
       - name: Generate Swagger source
         working-directory: head
