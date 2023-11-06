@@ -163,10 +163,15 @@ slack:
         - "broadinstitute.org"
 
 pactbroker:
+  # This URL is used both to contact the broker at runtime and for Sherlock's own testing
   url: https://pact-broker.dsp-eng-tools.broadinstitute.org
+  # This auth is only used to contact the broker at runtime. Test-time authentication should be done
+  # with the Pact library's standard `PACT_BROKER_USERNAME`, `PACT_BROKER_PASSWORD`, and/or
+  # `PACT_BROKER_TOKEN` environment variables.
   auth:
     username: replace-username
     password: replace-password
+  # Whether to enable contacting the broker at runtime. Has no impact on Sherlock's own testing.
   enable: false
 
 argoWorkflows:
