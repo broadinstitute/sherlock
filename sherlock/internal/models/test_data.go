@@ -84,8 +84,6 @@ type testDataImpl struct {
 	environment_staging     Environment
 	environment_dev         Environment
 	environment_swatomation Environment
-
-	chartRelease_leonardoProd ChartRelease
 }
 
 // create is a helper function for creating TestData entries in the database.
