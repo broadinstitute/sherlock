@@ -13,7 +13,7 @@ require (
 	github.com/golang-migrate/migrate/v4 v4.16.2
 	github.com/google/go-github/v50 v50.2.0
 	github.com/google/uuid v1.4.0
-	github.com/jackc/pgx/v5 v5.4.3
+	github.com/jackc/pgx/v5 v5.5.0
 	github.com/knadh/koanf v1.5.0
 	github.com/pact-foundation/pact-go/v2 v2.0.2
 	github.com/rs/zerolog v1.31.0
@@ -81,6 +81,7 @@ require (
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect
+	github.com/jackc/puddle/v2 v2.2.1 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
