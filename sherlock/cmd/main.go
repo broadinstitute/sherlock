@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"github.com/broadinstitute/sherlock/go-shared/pkg/version"
 	"github.com/broadinstitute/sherlock/sherlock/internal/boot"
 	"github.com/rs/zerolog/log"
 	"os"
@@ -11,13 +10,13 @@ import (
 	"time"
 )
 
-// BuildVersion is intended for use with Go's LDFlags compiler option, to
-// set this value at compile time
-var BuildVersion = "development"
-
-func init() {
-	version.BuildVersion = BuildVersion
-}
+//// BuildVersion is intended for use with Go's LDFlags compiler option, to
+//// set this value at compile time
+//var BuildVersion = "development"
+//
+//func init() {
+//	version.BuildVersion = BuildVersion
+//}
 
 func main() {
 	// We'll handle SIGINT and SIGTERM ourselves

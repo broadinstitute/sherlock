@@ -121,6 +121,9 @@ jobs:
       - name: Generate Swagger source
         run: make generate-swagger
 
+      - name: Update Pact provider documentation
+        run: make document-pact-provider
+
       - name: Generate Go client library
         if: ${{ github.event_name != 'pull_request' }}
         run: |

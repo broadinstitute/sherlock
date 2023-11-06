@@ -40,6 +40,7 @@ slack:
 
 pactbroker:
   enable: false
+  url: "https://pact-broker.dsp-eng-tools.broadinstitute.org"
 
 model:
   environments:

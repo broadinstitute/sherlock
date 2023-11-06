@@ -21,7 +21,18 @@ test-with-coverage:
 	docker stop test-postgres
 	docker rm -f -v test-postgres
 
-make pg-up:
+test-pact-provider:
+	docker run --name test-postgres -e POSTGRES_PASSWORD=password -e POSTGRES_USER=sherlock -d -p 5431:5432 postgres:13 -c max_connections=200
+	cd sherlock && go test -p 1 -v -race -ldflags="-X 'github.com/broadinstitute/sherlock/go-shared/pkg/version.BuildVersion=${BUILD_VERSION:-development}'" ./internal/pact/...
+
+document-pact-provider:
+	echo "# Sherlock Provider State Handlers" > sherlock/internal/pact/README.md
+	echo "### [More Information](https://docs.pact.io/getting_started/provider_states)" >> sherlock/internal/pact/README.md
+	sed -nr 's/.*stateHandlers\["([^"]+)"\].*/- `\1`/p' sherlock/internal/pact/provider_test.go >> sherlock/internal/pact/README.md
+	sed -nr 's/^\t*\s*([a-zA-Z_0-9]+)\(\).+/- `\1 exists`/p' sherlock/internal/models/test_data.go >> sherlock/internal/pact/README.md
+
+# Enables running tests from GoLand
+pg-up:
 	docker run --name test-postgres -e POSTGRES_PASSWORD=password -e POSTGRES_USER=sherlock -d -p 5431:5432 postgres:13 -c max_connections=200
 
 pg-down:

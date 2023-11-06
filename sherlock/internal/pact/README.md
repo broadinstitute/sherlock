@@ -1,0 +1,29 @@
+# Sherlock Provider State Handlers
+### [More Information](https://docs.pact.io/getting_started/provider_states)
+- `caller is suitable`
+- `caller is non-suitable`
+- `User_Suitable exists`
+- `User_NonSuitable exists`
+- `PagerdutyIntegration_ManuallyTriggeredTerraIncident exists`
+- `Chart_Leonardo exists`
+- `Chart_D2P exists`
+- `Chart_Honeycomb exists`
+- `ChartVersion_Leonardo_V1 exists`
+- `ChartVersion_Leonardo_V2 exists`
+- `ChartVersion_Leonardo_V3 exists`
+- `ChartVersion_D2P_V1 exists`
+- `ChartVersion_Honeycomb_V1 exists`
+- `AppVersion_Leonardo_V1 exists`
+- `AppVersion_Leonardo_V2 exists`
+- `AppVersion_Leonardo_V3 exists`
+- `AppVersion_D2P_V1 exists`
+- `Cluster_TerraProd exists`
+- `Cluster_TerraStaging exists`
+- `Cluster_TerraDev exists`
+- `Cluster_TerraQaBees exists`
+- `Cluster_DdpAksProd exists`
+- `Cluster_DdpAksDev exists`
+- `Environment_Prod exists`
+- `Environment_Staging exists`
+- `Environment_Dev exists`
+- `Environment_Swatomation exists`

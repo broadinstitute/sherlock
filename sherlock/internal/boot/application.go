@@ -14,6 +14,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/metrics"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/slack"
+	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
 	"net/http"
@@ -121,9 +122,10 @@ func (a *Application) Start() {
 	}
 
 	log.Info().Msgf("BOOT | building Gin router...")
+	gin.SetMode(gin.ReleaseMode) // gin.DebugMode can help resolve routing issues
 	a.server = &http.Server{
 		Addr:    ":8080",
-		Handler: buildRouter(ctx, a.gormDB),
+		Handler: BuildRouter(ctx, a.gormDB),
 	}
 
 	log.Info().Msgf("BOOT | boot complete; now serving...")
