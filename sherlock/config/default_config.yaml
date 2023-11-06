@@ -156,14 +156,14 @@ slack:
       emoji: dsp-beehive
 
     # slack.behaviors.collectUserInfo controls whether Sherlock
-    # should look up and store Slack user info
+    # should look up and store Slack user info.
     collectUserInfo:
       enable: true
       restrictToEmailDomains:
         - "broadinstitute.org"
 
 pactbroker:
-  # This URL is used both to contact the broker at runtime and for Sherlock's own testing
+  # This URL is used both to contact the broker at runtime and for Sherlock's own testing.
   url: https://pact-broker.dsp-eng-tools.broadinstitute.org
   # This auth is only used to contact the broker at runtime. Test-time authentication should be done
   # with the Pact library's standard `PACT_BROKER_USERNAME`, `PACT_BROKER_PASSWORD`, and/or
