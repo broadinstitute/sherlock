@@ -55,7 +55,7 @@ pg-down:
 ## Swagger generation
 
 install-swagger:
-	cd sherlock && go install $$(grep 'github.com/swaggo/swag' go.mod | sed -ne 's/^[[:blank:]]*//p' | sed -ne 's/[[:blank:]]/@/p')
+	cd sherlock && go install $$(grep 'github.com/swaggo/swag' go.mod | sed -ne 's/^[[:blank:]]*//p' | sed -ne 's/.*[[:blank:]]/github.com\/swaggo\/swag\/cmd\/swag@/p')
 
 format-swagger:
 	cd sherlock && swag fmt -d ./ -g internal/boot/router.go
