@@ -194,41 +194,37 @@ func (e *Environment) autoPopulateChartReleases(tx *gorm.DB) error {
 				}
 			}
 		}
-		break
 	case "template":
 		chartsToAutoPopulateInTemplates := config.Config.Slices("model.environments.templates.autoPopulateCharts")
-		if chartsToAutoPopulateInTemplates != nil {
-			for index, chartToAutoPopulateInTemplate := range chartsToAutoPopulateInTemplates {
-				if chartToAutoPopulateInTemplate.String("name") == "" {
-					return fmt.Errorf("(%s) unable to parse model.environments.templates.autoPopulateCharts entry %d", errors.InternalServerError, index+1)
-				}
-				var chart Chart
-				if err := tx.Where(&Chart{Name: chartToAutoPopulateInTemplate.String("name")}).Take(&chart).Error; err != nil {
-					return fmt.Errorf("(%s) wasn't able to insert model.environments.templates.autoPopulateCharts entry %d, '%s': %w", errors.InternalServerError, index+1, chartToAutoPopulateInTemplate.String("name"), err)
-				}
-				if err := tx.Session(&gorm.Session{SkipHooks: true}).Model(&ChartRelease{}).Create(&ChartRelease{
-					ChartID:         chart.ID,
-					ClusterID:       e.DefaultClusterID,
-					DestinationType: "environment",
-					EnvironmentID:   &e.ID,
-					Name:            fmt.Sprintf("%s-%s", chart.Name, e.Name),
-					Namespace:       e.DefaultNamespace,
-					ChartReleaseVersion: ChartReleaseVersion{
-						AppVersionResolver:   utils.PointerTo("none"),
-						ChartVersionResolver: utils.PointerTo("latest"),
-						HelmfileRef:          utils.PointerTo("HEAD"),
-						HelmfileRefEnabled:   utils.PointerTo(false),
-					},
-					Subdomain:               chart.DefaultSubdomain,
-					Protocol:                chart.DefaultProtocol,
-					Port:                    chart.DefaultPort,
-					IncludeInBulkChangesets: utils.PointerTo(true),
-				}).Error; err != nil {
-					return fmt.Errorf("wasn't able to create instance of %s: %w", chart.Name, err)
-				}
+		for index, chartToAutoPopulateInTemplate := range chartsToAutoPopulateInTemplates {
+			if chartToAutoPopulateInTemplate.String("name") == "" {
+				return fmt.Errorf("(%s) unable to parse model.environments.templates.autoPopulateCharts entry %d", errors.InternalServerError, index+1)
+			}
+			var chart Chart
+			if err := tx.Where(&Chart{Name: chartToAutoPopulateInTemplate.String("name")}).Take(&chart).Error; err != nil {
+				return fmt.Errorf("(%s) wasn't able to insert model.environments.templates.autoPopulateCharts entry %d, '%s': %w", errors.InternalServerError, index+1, chartToAutoPopulateInTemplate.String("name"), err)
+			}
+			if err := tx.Session(&gorm.Session{SkipHooks: true}).Model(&ChartRelease{}).Create(&ChartRelease{
+				ChartID:         chart.ID,
+				ClusterID:       e.DefaultClusterID,
+				DestinationType: "environment",
+				EnvironmentID:   &e.ID,
+				Name:            fmt.Sprintf("%s-%s", chart.Name, e.Name),
+				Namespace:       e.DefaultNamespace,
+				ChartReleaseVersion: ChartReleaseVersion{
+					AppVersionResolver:   utils.PointerTo("none"),
+					ChartVersionResolver: utils.PointerTo("latest"),
+					HelmfileRef:          utils.PointerTo("HEAD"),
+					HelmfileRefEnabled:   utils.PointerTo(false),
+				},
+				Subdomain:               chart.DefaultSubdomain,
+				Protocol:                chart.DefaultProtocol,
+				Port:                    chart.DefaultPort,
+				IncludeInBulkChangesets: utils.PointerTo(true),
+			}).Error; err != nil {
+				return fmt.Errorf("wasn't able to create instance of %s: %w", chart.Name, err)
 			}
 		}
-		break
 	}
 	return nil
 }
