@@ -34,7 +34,6 @@ alter table environments
 
 alter table environments
     add constraint prevent_deletion_valid
-<<<<<<< HEAD
         check (prevent_deletion is null or prevent_deletion is false or lifecycle = 'dynamic');
 
 alter table environments
@@ -45,20 +44,17 @@ alter table environments
 
 alter table environments
     add constraint offline_valid
-        check (lifecycle = 'dynamic' or
-=======
-        check (prevent_deletion is null or prevent_deletion is false or lifecycle == 'dynamic');
+        check (prevent_deletion is null or prevent_deletion is false or lifecycle = 'dynamic');
 
 alter table environments
     add constraint delete_after_valid
         check (delete_after is not null and
-               lifecycle == 'dynamic' and
+               lifecycle = 'dynamic' and
                (prevent_deletion is null or prevent_deletion is false));
 
 alter table environments
     add constraint offline_valid
-        check (lifecycle == 'dynamic' or
->>>>>>> 516be51 (environment sql migrations)
+        check (lifecycle = 'dynamic' or
                (offline is null or offline is false) and
                (offline_schedule_begin_enabled is null or offline_schedule_begin_enabled is false) and
                (offline_schedule_end_enabled is null or offline_schedule_end_enabled is false));
