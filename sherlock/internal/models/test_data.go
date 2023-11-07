@@ -1,11 +1,13 @@
 package models
 
 import (
+	"database/sql"
 	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/test_users"
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
+	"time"
 )
 
 // TestData offers convenience methods for example data for usage in testing.
@@ -46,6 +48,9 @@ type TestData interface {
 	Environment_Staging() Environment
 	Environment_Dev() Environment
 	Environment_Swatomation() Environment
+	Environment_Swatomation_TestBee() Environment
+	Environment_Swatomation_DevBee() Environment
+	Environment_Swatomation_LongBee() Environment
 	Environment_DdpAzureProd() Environment
 	Environment_DdpAzureDev() Environment
 
@@ -99,12 +104,15 @@ type testDataImpl struct {
 	cluster_ddpAksProd   Cluster
 	cluster_ddpAksDev    Cluster
 
-	environment_prod         Environment
-	environment_staging      Environment
-	environment_dev          Environment
-	environment_swatomation  Environment
-	environment_ddpAzureProd Environment
-	environment_ddpAzureDev  Environment
+	environment_prod                Environment
+	environment_staging             Environment
+	environment_dev                 Environment
+	environment_swatomation         Environment
+	environment_swatomation_testBee Environment
+	environment_swatomation_devBee  Environment
+	environment_swatomation_longBee Environment
+	environment_ddpAzureProd        Environment
+	environment_ddpAzureDev         Environment
 
 	chartRelease_leonardoProd           ChartRelease
 	chartRelease_leonardoStaging        ChartRelease
@@ -556,12 +564,92 @@ func (td *testDataImpl) Environment_Swatomation() Environment {
 			Description:                utils.PointerTo("The software-automation testing template, with all of Terra"),
 			Offline:                    utils.PointerTo(false),
 		}
-		td.h.SetSuitableTestUserForDB()
 		// Config defines honeycomb as being auto-populated in template environments
 		td.Chart_Honeycomb()
+		td.ChartVersion_Honeycomb_V1()
+		td.h.SetSuitableTestUserForDB()
 		td.create(&td.environment_swatomation)
 	}
 	return td.environment_swatomation
+}
+
+func (td *testDataImpl) Environment_Swatomation_TestBee() Environment {
+	if td.environment_swatomation_testBee.ID == 0 {
+		td.environment_swatomation_testBee = Environment{
+			Base:                      "bee",
+			Lifecycle:                 "dynamic",
+			Name:                      "swatomation-test-bee",
+			ValuesName:                "swatomation",
+			TemplateEnvironmentID:     utils.PointerTo(td.Environment_Swatomation().ID),
+			AutoPopulateChartReleases: utils.PointerTo(true),
+			DefaultNamespace:          "terra-swatomation-test-bee",
+			DefaultClusterID:          utils.PointerTo(td.Cluster_TerraQaBees().ID),
+			RequiresSuitability:       utils.PointerTo(false),
+			BaseDomain:                utils.PointerTo("bee.envs-terra.bio"),
+			NamePrefixesDomain:        utils.PointerTo(true),
+			HelmfileRef:               utils.PointerTo("HEAD"),
+			PreventDeletion:           utils.PointerTo(false),
+			DeleteAfter:               sql.NullTime{Time: time.Now().Add(6 * time.Hour)},
+			Offline:                   utils.PointerTo(false),
+		}
+		td.h.SetSuitableTestUserForDB()
+		td.create(&td.environment_swatomation_testBee)
+	}
+	return td.environment_swatomation_testBee
+}
+
+func (td *testDataImpl) Environment_Swatomation_DevBee() Environment {
+	if td.environment_swatomation_devBee.ID == 0 {
+		td.environment_swatomation_devBee = Environment{
+			Base:                        "bee",
+			Lifecycle:                   "dynamic",
+			Name:                        "swatomation-dev-bee",
+			ValuesName:                  "swatomation",
+			TemplateEnvironmentID:       utils.PointerTo(td.Environment_Swatomation().ID),
+			AutoPopulateChartReleases:   utils.PointerTo(true),
+			DefaultNamespace:            "terra-swatomation-dev-bee",
+			DefaultClusterID:            utils.PointerTo(td.Cluster_TerraQaBees().ID),
+			RequiresSuitability:         utils.PointerTo(false),
+			BaseDomain:                  utils.PointerTo("bee.envs-terra.bio"),
+			NamePrefixesDomain:          utils.PointerTo(true),
+			HelmfileRef:                 utils.PointerTo("HEAD"),
+			PreventDeletion:             utils.PointerTo(false),
+			Offline:                     utils.PointerTo(false),
+			OfflineScheduleBeginEnabled: utils.PointerTo(true),
+			OfflineScheduleBeginTime:    utils.PointerTo(time.Now().Add(3 * time.Hour).Format(time.RFC3339)),
+			OfflineScheduleEndEnabled:   utils.PointerTo(true),
+			OfflineScheduleEndTime:      utils.PointerTo(time.Now().Add(-3 * time.Hour).Format(time.RFC3339)),
+			OfflineScheduleEndWeekends:  utils.PointerTo(false),
+		}
+		td.h.SetSuitableTestUserForDB()
+		td.create(&td.environment_swatomation_devBee)
+	}
+	return td.environment_swatomation_devBee
+}
+
+func (td *testDataImpl) Environment_Swatomation_LongBee() Environment {
+	if td.environment_swatomation_longBee.ID == 0 {
+		td.environment_swatomation_longBee = Environment{
+			Base:                      "bee",
+			Lifecycle:                 "dynamic",
+			Name:                      "swatomation-long-bee",
+			ValuesName:                "swatomation",
+			TemplateEnvironmentID:     utils.PointerTo(td.Environment_Swatomation().ID),
+			AutoPopulateChartReleases: utils.PointerTo(true),
+			DefaultNamespace:          "terra-swatomation-long-bee",
+			DefaultClusterID:          utils.PointerTo(td.Cluster_TerraQaBees().ID),
+			RequiresSuitability:       utils.PointerTo(false),
+			BaseDomain:                utils.PointerTo("bee.envs-terra.bio"),
+			NamePrefixesDomain:        utils.PointerTo(true),
+			HelmfileRef:               utils.PointerTo("HEAD"),
+			PreventDeletion:           utils.PointerTo(true),
+			Offline:                   utils.PointerTo(false),
+			Description:               utils.PointerTo("A long lived BEE used as a persistent test environment"),
+		}
+		td.h.SetSuitableTestUserForDB()
+		td.create(&td.environment_swatomation_longBee)
+	}
+	return td.environment_swatomation_longBee
 }
 
 func (td *testDataImpl) Environment_DdpAzureProd() Environment {

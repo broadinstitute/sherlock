@@ -40,25 +40,24 @@ func (c *ChartRelease) GetCiIdentifier() CiIdentifier {
 }
 
 func (c *ChartRelease) errorIfForbidden(tx *gorm.DB) error {
+	if c.EnvironmentID == nil && c.ClusterID == nil {
+		return fmt.Errorf("(%s) chart release wasn't properly loaded, wasn't able to check permissions", errors.InternalServerError)
+	}
 	if c.EnvironmentID != nil {
-		if c.Environment == nil {
-			// Yes, you actually do need to &c.Environment even though c.Environment is *Environment. This makes Gorm happy.
-			if err := tx.Take(&c.Environment, *c.EnvironmentID).Error; err != nil {
-				return fmt.Errorf("(%s) failed to read chart release's environment to evaluate permissions: %w", errors.InternalServerError, err)
-			}
+		var environment Environment
+		if err := tx.Take(&environment, *c.EnvironmentID).Error; err != nil {
+			return fmt.Errorf("(%s) failed to read chart release's environment to evaluate permissions: %w", errors.InternalServerError, err)
 		}
-		if err := c.Environment.errorIfForbidden(tx); err != nil {
+		if err := environment.errorIfForbidden(tx); err != nil {
 			return fmt.Errorf("forbidden based on chart release's environment: %w", err)
 		}
 	}
 	if c.ClusterID != nil {
-		if c.Cluster == nil {
-			// Same as above, need to &c.Cluster
-			if err := tx.Take(&c.Cluster, *c.ClusterID).Error; err != nil {
-				return fmt.Errorf("(%s) failed to read chart release's cluster to evaluate permissions: %w", errors.InternalServerError, err)
-			}
+		var cluster Cluster
+		if err := tx.Take(&cluster, *c.ClusterID).Error; err != nil {
+			return fmt.Errorf("(%s) failed to read chart release's cluster to evaluate permissions: %w", errors.InternalServerError, err)
 		}
-		if err := c.Cluster.errorIfForbidden(tx); err != nil {
+		if err := cluster.errorIfForbidden(tx); err != nil {
 			return fmt.Errorf("forbidden based on chart release's cluster: %w", err)
 		}
 	}
@@ -102,7 +101,6 @@ func (c *ChartRelease) autoPopulateDatabaseInstance(tx *gorm.DB) error {
 				if len(templateDatabaseInstances) == 1 {
 					// If there was one, make a copy of it here
 					if err := tx.
-						Session(&gorm.Session{SkipHooks: true}).
 						Create(&DatabaseInstance{
 							ChartReleaseID:  c.ID,
 							Platform:        templateDatabaseInstances[0].Platform,
@@ -120,11 +118,17 @@ func (c *ChartRelease) autoPopulateDatabaseInstance(tx *gorm.DB) error {
 }
 
 func (c *ChartRelease) propagateDeletion(tx *gorm.DB) error {
+	var databaseInstancesToDelete []DatabaseInstance
 	if err := tx.
-		Session(&gorm.Session{SkipHooks: true}).
 		Where(&DatabaseInstance{ChartReleaseID: c.ID}).
-		Delete(&DatabaseInstance{}).Error; err != nil {
-		return fmt.Errorf("(%s) error propagating delete to database instance: %w", errors.InternalServerError, err)
+		Select("id").
+		Find(&databaseInstancesToDelete).Error; err != nil {
+		return fmt.Errorf("(%s) error finding potential database instances to delete: %w", errors.InternalServerError, err)
+	}
+	if len(databaseInstancesToDelete) > 0 {
+		if err := tx.Delete(&databaseInstancesToDelete).Error; err != nil {
+			return fmt.Errorf("(%s) error propagating delete to database instance: %w", errors.InternalServerError, err)
+		}
 	}
 	return nil
 }

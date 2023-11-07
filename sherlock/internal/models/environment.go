@@ -153,7 +153,7 @@ func (e *Environment) autoPopulateChartReleases(tx *gorm.DB) error {
 			return fmt.Errorf("(%s) dynamic environment lacked template", errors.BadRequest)
 		}
 		var templateChartReleases []ChartRelease
-		if err := tx.Where(&ChartRelease{EnvironmentID: e.TemplateEnvironmentID}).Find(&templateChartReleases).Error; err != nil {
+		if err := tx.Preload("Chart").Where(&ChartRelease{EnvironmentID: e.TemplateEnvironmentID}).Find(&templateChartReleases).Error; err != nil {
 			return fmt.Errorf("wasn't able to list chart releases of template %d: %w", *e.TemplateEnvironmentID, err)
 		}
 		for _, templateChartRelease := range templateChartReleases {
@@ -173,7 +173,7 @@ func (e *Environment) autoPopulateChartReleases(tx *gorm.DB) error {
 			if err := chartRelease.resolve(tx); err != nil {
 				return fmt.Errorf("error resolving versions for %s: %w", chartRelease.Name, err)
 			}
-			if err := tx.Session(&gorm.Session{SkipHooks: true}).Model(&ChartRelease{}).Create(&chartRelease).Error; err != nil {
+			if err := tx.Model(&ChartRelease{}).Create(&chartRelease).Error; err != nil {
 				return fmt.Errorf("wasn't able to copy template's %s release: %w", templateChartRelease.Name, err)
 			}
 
@@ -183,7 +183,7 @@ func (e *Environment) autoPopulateChartReleases(tx *gorm.DB) error {
 				return fmt.Errorf("wasn't able to get possible database instance of %s release: %w", templateChartRelease.Name, err)
 			}
 			for _, templateDatabaseInstance := range templateDatabaseInstances {
-				if err := tx.Session(&gorm.Session{SkipHooks: true}).Model(&DatabaseInstance{}).Create(&DatabaseInstance{
+				if err := tx.Model(&DatabaseInstance{}).Create(&DatabaseInstance{
 					ChartReleaseID:  chartRelease.ID,
 					Platform:        templateDatabaseInstance.Platform,
 					GoogleProject:   templateDatabaseInstance.GoogleProject,
@@ -204,7 +204,7 @@ func (e *Environment) autoPopulateChartReleases(tx *gorm.DB) error {
 			if err := tx.Where(&Chart{Name: chartToAutoPopulateInTemplate.String("name")}).Take(&chart).Error; err != nil {
 				return fmt.Errorf("(%s) wasn't able to insert model.environments.templates.autoPopulateCharts entry %d, '%s': %w", errors.InternalServerError, index+1, chartToAutoPopulateInTemplate.String("name"), err)
 			}
-			if err := tx.Session(&gorm.Session{SkipHooks: true}).Model(&ChartRelease{}).Create(&ChartRelease{
+			if err := tx.Model(&ChartRelease{}).Create(&ChartRelease{
 				ChartID:         chart.ID,
 				ClusterID:       e.DefaultClusterID,
 				DestinationType: "environment",
@@ -230,30 +230,48 @@ func (e *Environment) autoPopulateChartReleases(tx *gorm.DB) error {
 }
 
 func (e *Environment) propagateDeletion(tx *gorm.DB) error {
+	if e.Lifecycle == "template" {
+		var environmentsBasedOnTemplate []Environment
+		if err := tx.
+			Model(&Environment{}).
+			Where(&Environment{TemplateEnvironmentID: &e.ID}).
+			Select("name").
+			Find(&environmentsBasedOnTemplate).Error; err != nil {
+			return fmt.Errorf("(%s) wasn't able to query possible environments based on %s", errors.InternalServerError, e.Name)
+		}
+		if len(environmentsBasedOnTemplate) > 0 {
+			return fmt.Errorf("(%s) can't delete %s, %d environments are still based on it: %v", errors.BadRequest, e.Name, len(environmentsBasedOnTemplate),
+				utils.Map(environmentsBasedOnTemplate, func(env Environment) string {
+					return env.Name
+				}))
+		}
+	}
 	var chartReleases []ChartRelease
 	if err := tx.
 		Model(&ChartRelease{}).
 		Where(&ChartRelease{EnvironmentID: &e.ID}).
-		Select("id", "name").
+		Select("id", "name", "cluster_id", "environment_id").
 		Find(&chartReleases).Error; err != nil {
 		return fmt.Errorf("(%s) wasn't able to query chart releases for propagation: %w", errors.InternalServerError, err)
 	}
 	if len(chartReleases) > 0 {
-		switch e.Lifecycle {
-		case "static":
+		if e.Lifecycle == "static" {
 			return fmt.Errorf("(%s) cannot delete %s, %d chart releases are still inside this static environment", errors.BadRequest, e.Name, len(chartReleases))
-		default:
-			chartReleaseIDs := utils.Map(chartReleases, func(cr ChartRelease) uint {
-				return cr.ID
-			})
+		} else {
+			var databaseInstancesToDelete []DatabaseInstance
 			if err := tx.
-				Session(&gorm.Session{SkipHooks: true}).
-				Where("chart_release_id IN ?", chartReleaseIDs).
-				Delete(&DatabaseInstance{}).Error; err != nil {
-				return fmt.Errorf("(%s) wasn't able to delete database instances associated to chart releases: %w", errors.InternalServerError, err)
+				Where("chart_release_id IN ?", utils.Map(chartReleases, func(cr ChartRelease) uint { return cr.ID })).
+				Select("id", "chart_release_id").
+				Find(&databaseInstancesToDelete).Error; err != nil {
+				return fmt.Errorf("(%s) wasn't able to check for database instances inside environment: %w", errors.InternalServerError, err)
+			}
+			if len(databaseInstancesToDelete) > 0 {
+				if err := tx.
+					Delete(&databaseInstancesToDelete).Error; err != nil {
+					return fmt.Errorf("(%s) wasn't able to delete database instances: %w", errors.InternalServerError, err)
+				}
 			}
 			if err := tx.
-				Session(&gorm.Session{SkipHooks: true}).
 				Delete(&chartReleases).Error; err != nil {
 				return fmt.Errorf("(%s) wasn't able to delete chart releases: %w", errors.InternalServerError, err)
 			}
@@ -262,7 +280,7 @@ func (e *Environment) propagateDeletion(tx *gorm.DB) error {
 	return nil
 }
 
-// BeforeCreate checks permissions and assign the unique resource prefix
+// BeforeCreate checks permissions, assigns the unique resource prefix, and makes extra sure that the owner is filled
 func (e *Environment) BeforeCreate(tx *gorm.DB) error {
 	if err := e.errorIfForbidden(tx); err != nil {
 		return err
@@ -270,6 +288,13 @@ func (e *Environment) BeforeCreate(tx *gorm.DB) error {
 	if e.UniqueResourcePrefix == "" {
 		if err := e.assignUniqueResourcePrefix(tx); err != nil {
 			return err
+		}
+	}
+	if e.OwnerID == nil {
+		if user, err := GetCurrentUserForDB(tx); err != nil {
+			return err
+		} else {
+			e.OwnerID = &user.ID
 		}
 	}
 	return nil
@@ -297,6 +322,9 @@ func (e *Environment) AfterUpdate(tx *gorm.DB) error {
 
 // BeforeDelete checks permissions and propagates deletions
 func (e *Environment) BeforeDelete(tx *gorm.DB) error {
+	if e.PreventDeletion != nil && *e.PreventDeletion {
+		return fmt.Errorf("(%s) %s has deletion protection enabled, it cannot be deleted", errors.BadRequest, e.Name)
+	}
 	if err := e.errorIfForbidden(tx); err != nil {
 		return err
 	}

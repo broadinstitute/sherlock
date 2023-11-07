@@ -2,7 +2,6 @@ package models
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"gorm.io/gorm"
 )
 
@@ -33,44 +32,18 @@ func (d *DeployHookTriggerConfig) TableName() string {
 // If those hooks return an error the whole transaction will be rolled back, so it'll still do
 // its job.
 func (d *DeployHookTriggerConfig) ErrorIfForbidden(tx *gorm.DB) error {
-	user, err := GetCurrentUserForDB(tx)
-	if err != nil {
-		return err
-	}
-	var requiresSuitability bool
-	var clusterIDToCheck, environmentIDToCheck *uint
 	if d.OnChartReleaseID != nil {
 		var chartRelease ChartRelease
-		if err = tx.First(&chartRelease, *d.OnChartReleaseID).Error; err != nil {
-			return err
+		if err := tx.Take(&chartRelease, *d.OnChartReleaseID).Error; err != nil {
+			return fmt.Errorf("error querying suitability on chart release: %w", err)
 		}
-		clusterIDToCheck = chartRelease.ClusterID
-		environmentIDToCheck = chartRelease.EnvironmentID
+		return chartRelease.errorIfForbidden(tx)
 	} else if d.OnEnvironmentID != nil {
-		environmentIDToCheck = d.OnEnvironmentID
-	}
-	if clusterIDToCheck != nil {
-		var cluster Cluster
-		if err = tx.First(&cluster, *clusterIDToCheck).Error; err != nil {
-			return err
-		}
-		if cluster.RequiresSuitability != nil {
-			requiresSuitability = requiresSuitability || *cluster.RequiresSuitability
-		}
-	}
-	if environmentIDToCheck != nil {
 		var environment Environment
-		if err = tx.First(&environment, *environmentIDToCheck).Error; err != nil {
-			return err
+		if err := tx.Take(&environment, *d.OnEnvironmentID).Error; err != nil {
+			return fmt.Errorf("error querying suitability on environment: %w", err)
 		}
-		if environment.RequiresSuitability != nil {
-			requiresSuitability = requiresSuitability || *environment.RequiresSuitability
-		}
-	}
-	if requiresSuitability {
-		if err = user.Suitability().SuitableOrError(); err != nil {
-			return fmt.Errorf("(%s) suitability required: %w", errors.Forbidden, err)
-		}
+		return environment.errorIfForbidden(tx)
 	}
 	return nil
 }

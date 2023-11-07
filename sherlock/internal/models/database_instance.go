@@ -1,6 +1,10 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"fmt"
+	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
+	"gorm.io/gorm"
+)
 
 type DatabaseInstance struct {
 	gorm.Model
@@ -19,12 +23,14 @@ func (d *DatabaseInstance) TableName() string {
 }
 
 func (d *DatabaseInstance) errorIfForbidden(tx *gorm.DB) error {
-	if d.ChartRelease == nil {
-		if err := tx.Take(&d.ChartRelease, d.ChartReleaseID).Error; err != nil {
-			return err
-		}
+	if d.ChartReleaseID == 0 {
+		return fmt.Errorf("(%s) database instance wasn't properly loaded, unable to check permissions on chart release", errors.InternalServerError)
 	}
-	return d.ChartRelease.errorIfForbidden(tx)
+	var chartRelease ChartRelease
+	if err := tx.Take(&chartRelease, d.ChartReleaseID).Error; err != nil {
+		return fmt.Errorf("unable to get chart release to determine permissions on database instance: %w", err)
+	}
+	return chartRelease.errorIfForbidden(tx)
 }
 
 // BeforeCreate checks permissions
