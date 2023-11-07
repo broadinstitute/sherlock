@@ -1,6 +1,9 @@
 package models
 
-import "github.com/broadinstitute/sherlock/go-shared/pkg/utils"
+import (
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
+	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
+)
 
 func (s *modelSuite) TestEnvironmentUniqueResourcePrefixAssigning() {
 	s.NotEmpty(s.TestData.Environment_Dev().UniqueResourcePrefix)
@@ -162,4 +165,56 @@ func (s *modelSuite) TestEnvironmentDeletionPropagateToDatabaseInstances() {
 	err = s.DB.Model(&DatabaseInstance{}).Where("id IN ?", utils.Map(databaseInstances, func(di DatabaseInstance) uint { return di.ID })).Find(&databaseInstances).Error
 	s.NoError(err)
 	s.Empty(databaseInstances)
+}
+
+func (s *modelSuite) TestEnvironmentCreationForbidden() {
+	s.SetNonSuitableTestUserForDB()
+	environment := Environment{
+		Base:                       "live",
+		Lifecycle:                  "static",
+		Name:                       "prod",
+		ValuesName:                 "prod",
+		AutoPopulateChartReleases:  utils.PointerTo(false),
+		DefaultNamespace:           "terra-prod",
+		DefaultFirecloudDevelopRef: utils.PointerTo("prod"),
+		RequiresSuitability:        utils.PointerTo(true),
+		BaseDomain:                 utils.PointerTo("dsde-prod.broadinstitute.org"),
+		NamePrefixesDomain:         utils.PointerTo(false),
+		HelmfileRef:                utils.PointerTo("HEAD"),
+		PreventDeletion:            utils.PointerTo(true),
+		Description:                utils.PointerTo("Terra's production environment"),
+		Offline:                    utils.PointerTo(false),
+	}
+	s.ErrorContains(s.DB.Create(&environment).Error, errors.Forbidden)
+}
+
+func (s *modelSuite) TestEnvironmentEditEscalateForbidden() {
+	environment := s.TestData.Environment_Dev()
+	s.SetNonSuitableTestUserForDB()
+	s.ErrorContains(s.DB.
+		Model(&environment).
+		Updates(&Environment{RequiresSuitability: utils.PointerTo(true)}).
+		Error, errors.Forbidden)
+}
+
+func (s *modelSuite) TestEnvironmentEditDeescalateForbidden() {
+	environment := s.TestData.Environment_Prod()
+	s.SetNonSuitableTestUserForDB()
+	s.ErrorContains(s.DB.
+		Model(&environment).
+		Updates(&Environment{RequiresSuitability: utils.PointerTo(false)}).
+		Error, errors.Forbidden)
+}
+
+func (s *modelSuite) TestEnvironmentDeleteForbidden() {
+	environment := s.TestData.Environment_Prod()
+	if s.NotNil(environment.PreventDeletion) {
+		s.True(*environment.PreventDeletion)
+	}
+	err := s.DB.Model(&environment).Updates(&Environment{PreventDeletion: utils.PointerTo(false)}).Error
+	s.NoError(err)
+	s.SetNonSuitableTestUserForDB()
+	s.ErrorContains(s.DB.
+		Delete(&environment).
+		Error, errors.Forbidden)
 }
