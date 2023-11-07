@@ -38,9 +38,9 @@ alter table environments
 
 alter table environments
     add constraint delete_after_valid
-        check (delete_after is not null and
-               lifecycle = 'dynamic' and
-               (prevent_deletion is null or prevent_deletion is false));
+        check (delete_after is null or
+               (lifecycle = 'dynamic' and
+               (prevent_deletion is null or prevent_deletion is false)));
 
 alter table environments
     add constraint offline_valid
