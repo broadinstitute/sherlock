@@ -1,7 +1,7 @@
 package sherlock
 
 import (
-	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
+	"fmt"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"net/http"
@@ -26,47 +26,32 @@ func (s *handlerSuite) TestAppVersionsProceduresV3Changelog_badParentSelector() 
 }
 
 func (s *handlerSuite) TestAppVersionsProceduresV3Changelog_childNotFound() {
-	s.SetNonSuitableTestUserForDB()
-	chart := models.Chart{Name: "my-chart", ChartRepo: utils.PointerTo("some-repo")}
-	s.NoError(s.DB.Create(&chart).Error)
-	appVersion := models.AppVersion{ChartID: chart.ID, AppVersion: "1"}
-	s.NoError(s.DB.Create(&appVersion).Error)
-
+	appVersion := s.TestData.AppVersion_Leonardo_V1()
 	var got errors.ErrorResponse
 	code := s.HandleRequest(
-		s.NewRequest("GET", "/api/app-versions/procedures/v3/changelog?child=123&parent=my-chart%2F1", nil),
+		s.NewRequest("GET", fmt.Sprintf("/api/app-versions/procedures/v3/changelog?child=leonardo/abc&parent=%d", appVersion.ID), nil),
 		&got)
 	s.Equal(http.StatusNotFound, code)
 	s.Equal(errors.NotFound, got.Type)
-	s.Contains(got.Message, "123")
+	s.Contains(got.Message, "leonardo/abc")
 }
 
 func (s *handlerSuite) TestAppVersionsProceduresV3Changelog_parentNotFound() {
-	s.SetNonSuitableTestUserForDB()
-	chart := models.Chart{Name: "my-chart", ChartRepo: utils.PointerTo("some-repo")}
-	s.NoError(s.DB.Create(&chart).Error)
-	appVersion := models.AppVersion{ChartID: chart.ID, AppVersion: "1"}
-	s.NoError(s.DB.Create(&appVersion).Error)
-
+	appVersion := s.TestData.AppVersion_Leonardo_V1()
 	var got errors.ErrorResponse
 	code := s.HandleRequest(
-		s.NewRequest("GET", "/api/app-versions/procedures/v3/changelog?child=my-chart%2F1&parent=123", nil),
+		s.NewRequest("GET", fmt.Sprintf("/api/app-versions/procedures/v3/changelog?child=%d&parent=leonardo/abc", appVersion.ID), nil),
 		&got)
 	s.Equal(http.StatusNotFound, code)
 	s.Equal(errors.NotFound, got.Type)
-	s.Contains(got.Message, "123")
+	s.Contains(got.Message, "leonardo/abc")
 }
 
 func (s *handlerSuite) TestAppVersionsProceduresV3Changelog_sameChildAndParent() {
-	s.SetNonSuitableTestUserForDB()
-	chart := models.Chart{Name: "my-chart", ChartRepo: utils.PointerTo("some-repo")}
-	s.NoError(s.DB.Create(&chart).Error)
-	appVersion := models.AppVersion{ChartID: chart.ID, AppVersion: "1"}
-	s.NoError(s.DB.Create(&appVersion).Error)
-
+	appVersion := s.TestData.AppVersion_Leonardo_V1()
 	var got AppVersionV3ChangelogResponse
 	code := s.HandleRequest(
-		s.NewRequest("GET", "/api/app-versions/procedures/v3/changelog?child=my-chart%2F1&parent=my-chart%2F1", nil),
+		s.NewRequest("GET", fmt.Sprintf("/api/app-versions/procedures/v3/changelog?child=%d&parent=%d", appVersion.ID, appVersion.ID), nil),
 		&got)
 	s.Equal(http.StatusOK, code)
 	s.True(got.Complete)
@@ -75,8 +60,7 @@ func (s *handlerSuite) TestAppVersionsProceduresV3Changelog_sameChildAndParent()
 
 func (s *handlerSuite) TestAppVersionsProceduresV3Changelog_noPathFound() {
 	s.SetNonSuitableTestUserForDB()
-	chart := models.Chart{Name: "my-chart", ChartRepo: utils.PointerTo("some-repo")}
-	s.NoError(s.DB.Create(&chart).Error)
+	chart := s.TestData.Chart_Leonardo()
 	appVersion1 := models.AppVersion{ChartID: chart.ID, AppVersion: "1"}
 	s.NoError(s.DB.Create(&appVersion1).Error)
 	appVersion2 := models.AppVersion{ChartID: chart.ID, AppVersion: "2"}
@@ -84,7 +68,7 @@ func (s *handlerSuite) TestAppVersionsProceduresV3Changelog_noPathFound() {
 
 	var got AppVersionV3ChangelogResponse
 	code := s.HandleRequest(
-		s.NewRequest("GET", "/api/app-versions/procedures/v3/changelog?child=my-chart%2F1&parent=my-chart%2F2", nil),
+		s.NewRequest("GET", "/api/app-versions/procedures/v3/changelog?child=leonardo%2F1&parent=leonardo%2F2", nil),
 		&got)
 	s.Equal(http.StatusOK, code)
 	s.False(got.Complete)
@@ -93,7 +77,7 @@ func (s *handlerSuite) TestAppVersionsProceduresV3Changelog_noPathFound() {
 	}
 
 	code = s.HandleRequest(
-		s.NewRequest("GET", "/api/app-versions/procedures/v3/changelog?child=my-chart%2F2&parent=my-chart%2F1", nil),
+		s.NewRequest("GET", "/api/app-versions/procedures/v3/changelog?child=leonardo%2F2&parent=leonardo%2F1", nil),
 		&got)
 	s.Equal(http.StatusOK, code)
 	s.False(got.Complete)
@@ -104,18 +88,13 @@ func (s *handlerSuite) TestAppVersionsProceduresV3Changelog_noPathFound() {
 
 func (s *handlerSuite) TestAppVersionsProceduresV3Changelog_findsPath() {
 	s.SetNonSuitableTestUserForDB()
-	chart := models.Chart{Name: "my-chart", ChartRepo: utils.PointerTo("some-repo")}
-	s.NoError(s.DB.Create(&chart).Error)
-	appVersion1 := models.AppVersion{ChartID: chart.ID, AppVersion: "1"}
-	s.NoError(s.DB.Create(&appVersion1).Error)
-	appVersion2 := models.AppVersion{ChartID: chart.ID, AppVersion: "2", ParentAppVersionID: &appVersion1.ID}
-	s.NoError(s.DB.Create(&appVersion2).Error)
-	appVersion3 := models.AppVersion{ChartID: chart.ID, AppVersion: "3", ParentAppVersionID: &appVersion2.ID}
-	s.NoError(s.DB.Create(&appVersion3).Error)
+	appVersion1 := s.TestData.AppVersion_Leonardo_V1()
+	appVersion2 := s.TestData.AppVersion_Leonardo_V2()
+	appVersion3 := s.TestData.AppVersion_Leonardo_V3()
 
 	var got AppVersionV3ChangelogResponse
 	code := s.HandleRequest(
-		s.NewRequest("GET", "/api/app-versions/procedures/v3/changelog?child=my-chart/3&parent=my-chart/1", nil),
+		s.NewRequest("GET", fmt.Sprintf("/api/app-versions/procedures/v3/changelog?child=%d&parent=%d", appVersion3.ID, appVersion1.ID), nil),
 		&got)
 	s.Equal(http.StatusOK, code)
 	s.True(got.Complete)

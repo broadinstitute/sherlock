@@ -8,6 +8,7 @@ on:
       - ".github/workflows/sherlock-webhook-proxy-deploy.yaml"
       - "sherlock-webhook-proxy/**"
       - "sherlock-go-client/**"
+      - "!**/*.md"
   workflow_dispatch:
 
 concurrency:

@@ -9,6 +9,7 @@ on:
       - "sherlock/**"
       - "!sherlock/docs/**"
       - "go-shared/**"
+      - "!**/*.md"
 
 concurrency:
   # Don't run this workflow concurrently on the same branch

@@ -104,58 +104,7 @@ func (s *deployHooksSuite) Test_dispatchGithubActionsDeployHook_appVersionCommit
 }
 
 func (s *deployHooksSuite) Test_dispatchGithubActionsDeployHook_appVersionRefFromChangesets() {
-	user := s.SetSuitableTestUserForDB()
-
-	chart := models.Chart{
-		Name:      "leonardo",
-		ChartRepo: utils.PointerTo("terra-helm"),
-	}
-	s.NoError(s.DB.Create(&chart).Error)
-
-	cluster := models.Cluster{
-		Name:                "terra-prod",
-		HelmfileRef:         utils.PointerTo("HEAD"),
-		RequiresSuitability: utils.PointerTo(true),
-		Provider:            "google",
-		GoogleProject:       "broad-dsde-prod",
-		Location:            "us-central1-a",
-		Base:                utils.PointerTo("terra"),
-		Address:             utils.PointerTo("0.0.0.0"),
-	}
-	s.NoError(s.DB.Create(&cluster).Error)
-
-	environment := models.Environment{
-		Name:                 "prod",
-		ValuesName:           "prod",
-		UniqueResourcePrefix: "a123",
-		HelmfileRef:          utils.PointerTo("HEAD"),
-		RequiresSuitability:  utils.PointerTo(true),
-		Base:                 "live",
-		DefaultClusterID:     &cluster.ID,
-		DefaultNamespace:     "terra-prod",
-		Lifecycle:            "static",
-		PreventDeletion:      utils.PointerTo(true),
-		OwnerID:              &user.ID,
-	}
-	s.NoError(s.DB.Create(&environment).Error)
-
-	chartRelease := models.ChartRelease{
-		Name:            "leonardo-prod",
-		ChartID:         chart.ID,
-		ClusterID:       &cluster.ID,
-		EnvironmentID:   &environment.ID,
-		Namespace:       "terra-prod",
-		DestinationType: "environment",
-		ChartReleaseVersion: models.ChartReleaseVersion{
-			HelmfileRef:          utils.PointerTo("HEAD"),
-			HelmfileRefEnabled:   utils.PointerTo(false),
-			AppVersionResolver:   utils.PointerTo("exact"),
-			AppVersionExact:      utils.PointerTo("v1.2.3"),
-			ChartVersionResolver: utils.PointerTo("exact"),
-			ChartVersionExact:    utils.PointerTo("v2.3.4"),
-		},
-	}
-	s.NoError(s.DB.Create(&chartRelease).Error)
+	chartRelease := s.TestData.ChartRelease_LeonardoDev()
 
 	changeset1 := models.Changeset{
 		ChartReleaseID: chartRelease.ID,
@@ -225,59 +174,7 @@ func (s *deployHooksSuite) Test_dispatchGithubActionsDeployHook_appVersionRefFro
 }
 
 func (s *deployHooksSuite) Test_dispatchGithubActionsDeployHook_appVersionCommitRefFromChangesets() {
-	user := s.SetSuitableTestUserForDB()
-
-	chart := models.Chart{
-		Name:      "leonardo",
-		ChartRepo: utils.PointerTo("terra-helm"),
-	}
-	s.NoError(s.DB.Create(&chart).Error)
-
-	cluster := models.Cluster{
-		Name:                "terra-prod",
-		HelmfileRef:         utils.PointerTo("HEAD"),
-		RequiresSuitability: utils.PointerTo(true),
-		Provider:            "google",
-		GoogleProject:       "broad-dsde-prod",
-		Location:            "us-central1-a",
-		Base:                utils.PointerTo("terra"),
-		Address:             utils.PointerTo("0.0.0.0"),
-	}
-	s.NoError(s.DB.Create(&cluster).Error)
-
-	environment := models.Environment{
-		Name:                 "prod",
-		ValuesName:           "prod",
-		UniqueResourcePrefix: "a123",
-		HelmfileRef:          utils.PointerTo("HEAD"),
-		RequiresSuitability:  utils.PointerTo(true),
-		Base:                 "live",
-		DefaultClusterID:     &cluster.ID,
-		DefaultNamespace:     "terra-prod",
-		Lifecycle:            "static",
-		PreventDeletion:      utils.PointerTo(true),
-		OwnerID:              &user.ID,
-	}
-	s.NoError(s.DB.Create(&environment).Error)
-
-	chartRelease := models.ChartRelease{
-		Name:            "leonardo-prod",
-		ChartID:         chart.ID,
-		ClusterID:       &cluster.ID,
-		EnvironmentID:   &environment.ID,
-		Namespace:       "terra-prod",
-		DestinationType: "environment",
-		ChartReleaseVersion: models.ChartReleaseVersion{
-			HelmfileRef:          utils.PointerTo("HEAD"),
-			HelmfileRefEnabled:   utils.PointerTo(false),
-			AppVersionResolver:   utils.PointerTo("exact"),
-			AppVersionExact:      utils.PointerTo("v1.2.3"),
-			AppVersionCommit:     utils.PointerTo("commit a"),
-			ChartVersionResolver: utils.PointerTo("exact"),
-			ChartVersionExact:    utils.PointerTo("v2.3.4"),
-		},
-	}
-	s.NoError(s.DB.Create(&chartRelease).Error)
+	chartRelease := s.TestData.ChartRelease_LeonardoDev()
 
 	changeset1 := models.Changeset{
 		ChartReleaseID: chartRelease.ID,

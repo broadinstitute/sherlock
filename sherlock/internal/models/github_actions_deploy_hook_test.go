@@ -8,10 +8,7 @@ import (
 )
 
 func (s *modelSuite) TestGithubActionsDeployHookEnvironment() {
-	s.SetSuitableTestUserForDB()
-	environment := Environment{Name: "dev", Base: "live", Lifecycle: "static", RequiresSuitability: utils.PointerTo(false), HelmfileRef: utils.PointerTo("HEAD"), PreventDeletion: utils.PointerTo(false)}
-	s.NoError(s.DB.Create(&environment).Error)
-
+	environment := s.TestData.Environment_Dev()
 	hook := GithubActionsDeployHook{
 		GithubActionsOwner:        utils.PointerTo("owner"),
 		GithubActionsRepo:         utils.PointerTo("repo"),
@@ -23,27 +20,7 @@ func (s *modelSuite) TestGithubActionsDeployHookEnvironment() {
 }
 
 func (s *modelSuite) TestGithubActionsDeployHookChartRelease() {
-	s.SetSuitableTestUserForDB()
-	cluster := Cluster{
-		Name:                "terra-dev",
-		Address:             utils.PointerTo("0.0.0.0"),
-		Base:                utils.PointerTo("terra"),
-		Location:            "some-location",
-		Provider:            "google",
-		GoogleProject:       "some-google-project",
-		RequiresSuitability: utils.PointerTo(false),
-		HelmfileRef:         utils.PointerTo("HEAD"),
-	}
-	s.NoError(s.DB.Create(&cluster).Error)
-	environment := Environment{Name: "dev", Base: "live", Lifecycle: "static", RequiresSuitability: utils.PointerTo(false), HelmfileRef: utils.PointerTo("HEAD"), PreventDeletion: utils.PointerTo(false)}
-	s.NoError(s.DB.Create(&environment).Error)
-	chart := Chart{Name: "leonardo", ChartRepo: utils.PointerTo("terra-helm")}
-	s.NoError(s.DB.Create(&chart).Error)
-	chartRelease := ChartRelease{Name: "leonardo-dev", ChartID: chart.ID, EnvironmentID: &environment.ID, ClusterID: &cluster.ID, Namespace: "terra-dev",
-		ChartReleaseVersion: ChartReleaseVersion{AppVersionResolver: utils.PointerTo("exact"), AppVersionExact: utils.PointerTo("v1.2.3"),
-			ChartVersionResolver: utils.PointerTo("exact"), ChartVersionExact: utils.PointerTo("v2.3.4"), HelmfileRef: utils.PointerTo("HEAD"), HelmfileRefEnabled: utils.PointerTo(false)}}
-	s.NoError(s.DB.Create(&chartRelease).Error)
-
+	chartRelease := s.TestData.ChartRelease_LeonardoDev()
 	hook := GithubActionsDeployHook{
 		GithubActionsOwner:        utils.PointerTo("owner"),
 		GithubActionsRepo:         utils.PointerTo("repo"),
@@ -55,10 +32,7 @@ func (s *modelSuite) TestGithubActionsDeployHookChartRelease() {
 }
 
 func (s *modelSuite) TestGithubActionsDeployHookNoOwner() {
-	s.SetSuitableTestUserForDB()
-	environment := Environment{Name: "dev", Base: "live", Lifecycle: "static", RequiresSuitability: utils.PointerTo(false), HelmfileRef: utils.PointerTo("HEAD"), PreventDeletion: utils.PointerTo(false)}
-	s.NoError(s.DB.Create(&environment).Error)
-
+	environment := s.TestData.Environment_Dev()
 	hook := GithubActionsDeployHook{
 		GithubActionsRepo:         utils.PointerTo("repo"),
 		GithubActionsWorkflowPath: utils.PointerTo("path"),
@@ -69,10 +43,7 @@ func (s *modelSuite) TestGithubActionsDeployHookNoOwner() {
 }
 
 func (s *modelSuite) TestGithubActionsDeployHookNoRepo() {
-	s.SetSuitableTestUserForDB()
-	environment := Environment{Name: "dev", Base: "live", Lifecycle: "static", RequiresSuitability: utils.PointerTo(false), HelmfileRef: utils.PointerTo("HEAD"), PreventDeletion: utils.PointerTo(false)}
-	s.NoError(s.DB.Create(&environment).Error)
-
+	environment := s.TestData.Environment_Dev()
 	hook := GithubActionsDeployHook{
 		GithubActionsOwner:        utils.PointerTo("owner"),
 		GithubActionsWorkflowPath: utils.PointerTo("path"),
@@ -83,10 +54,7 @@ func (s *modelSuite) TestGithubActionsDeployHookNoRepo() {
 }
 
 func (s *modelSuite) TestGithubActionsDeployHookNoWorkflowPath() {
-	s.SetSuitableTestUserForDB()
-	environment := Environment{Name: "dev", Base: "live", Lifecycle: "static", RequiresSuitability: utils.PointerTo(false), HelmfileRef: utils.PointerTo("HEAD"), PreventDeletion: utils.PointerTo(false)}
-	s.NoError(s.DB.Create(&environment).Error)
-
+	environment := s.TestData.Environment_Dev()
 	hook := GithubActionsDeployHook{
 		GithubActionsOwner:       utils.PointerTo("owner"),
 		GithubActionsRepo:        utils.PointerTo("repo"),
@@ -97,10 +65,7 @@ func (s *modelSuite) TestGithubActionsDeployHookNoWorkflowPath() {
 }
 
 func (s *modelSuite) TestGithubActionsDeployHookNoDefaultRef() {
-	s.SetSuitableTestUserForDB()
-	environment := Environment{Name: "dev", Base: "live", Lifecycle: "static", RequiresSuitability: utils.PointerTo(false), HelmfileRef: utils.PointerTo("HEAD"), PreventDeletion: utils.PointerTo(false)}
-	s.NoError(s.DB.Create(&environment).Error)
-
+	environment := s.TestData.Environment_Dev()
 	hook := GithubActionsDeployHook{
 		GithubActionsOwner:        utils.PointerTo("owner"),
 		GithubActionsRepo:         utils.PointerTo("repo"),
@@ -111,10 +76,7 @@ func (s *modelSuite) TestGithubActionsDeployHookNoDefaultRef() {
 }
 
 func (s *modelSuite) TestGithubActionsDeployHookNoRefBehavior() {
-	s.SetSuitableTestUserForDB()
-	environment := Environment{Name: "dev", Base: "live", Lifecycle: "static", RequiresSuitability: utils.PointerTo(false), HelmfileRef: utils.PointerTo("HEAD"), PreventDeletion: utils.PointerTo(false)}
-	s.NoError(s.DB.Create(&environment).Error)
-
+	environment := s.TestData.Environment_Dev()
 	hook := GithubActionsDeployHook{
 		GithubActionsOwner:        utils.PointerTo("owner"),
 		GithubActionsRepo:         utils.PointerTo("repo"),
@@ -125,10 +87,7 @@ func (s *modelSuite) TestGithubActionsDeployHookNoRefBehavior() {
 }
 
 func (s *modelSuite) TestGithubActionsDeployHookBadRefBehavior() {
-	s.SetSuitableTestUserForDB()
-	environment := Environment{Name: "dev", Base: "live", Lifecycle: "static", RequiresSuitability: utils.PointerTo(false), HelmfileRef: utils.PointerTo("HEAD"), PreventDeletion: utils.PointerTo(false)}
-	s.NoError(s.DB.Create(&environment).Error)
-
+	environment := s.TestData.Environment_Dev()
 	hook := GithubActionsDeployHook{
 		GithubActionsOwner:        utils.PointerTo("owner"),
 		GithubActionsRepo:         utils.PointerTo("repo"),
@@ -140,10 +99,7 @@ func (s *modelSuite) TestGithubActionsDeployHookBadRefBehavior() {
 }
 
 func (s *modelSuite) TestGithubActionsDeployHookSuitability() {
-	s.SetSuitableTestUserForDB()
-	environment := Environment{Name: "prod", Base: "live", Lifecycle: "static", RequiresSuitability: utils.PointerTo(true), HelmfileRef: utils.PointerTo("HEAD"), PreventDeletion: utils.PointerTo(false)}
-	s.NoError(s.DB.Create(&environment).Error)
-
+	environment := s.TestData.Environment_Prod()
 	s.Run("when suitable", func() {
 		s.SetSuitableTestUserForDB()
 		hook := GithubActionsDeployHook{
@@ -169,10 +125,7 @@ func (s *modelSuite) TestGithubActionsDeployHookSuitability() {
 }
 
 func (s *modelSuite) TestGithubActionsDeployHookFlow() {
-	s.SetSuitableTestUserForDB()
-	environment := Environment{Name: "dev", Base: "live", Lifecycle: "static", RequiresSuitability: utils.PointerTo(false), HelmfileRef: utils.PointerTo("HEAD"), PreventDeletion: utils.PointerTo(false)}
-	s.NoError(s.DB.Create(&environment).Error)
-
+	environment := s.TestData.Environment_Dev()
 	hook := GithubActionsDeployHook{
 		GithubActionsOwner:        utils.PointerTo("owner"),
 		GithubActionsRepo:         utils.PointerTo("repo"),

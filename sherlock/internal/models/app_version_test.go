@@ -12,20 +12,16 @@ func (s *modelSuite) TestAppVersionChartIdValidationSqlMissing() {
 }
 
 func (s *modelSuite) TestAppVersionVersionValidationSqlMissing() {
+	chart := s.TestData.Chart_Leonardo()
 	s.SetNonSuitableTestUserForDB()
-	chart := Chart{Name: "name", ChartRepo: utils.PointerTo("repo")}
-	err := s.DB.Create(&chart).Error
-	s.NoError(err)
-	err = s.DB.Create(&AppVersion{ChartID: chart.ID}).Error
+	err := s.DB.Create(&AppVersion{ChartID: chart.ID}).Error
 	s.ErrorContains(err, "app_version")
 }
 
 func (s *modelSuite) TestAppVersionVersionValidationSqlEmpty() {
+	chart := s.TestData.Chart_Leonardo()
 	s.SetNonSuitableTestUserForDB()
-	chart := Chart{Name: "name", ChartRepo: utils.PointerTo("repo")}
-	err := s.DB.Create(&chart).Error
-	s.NoError(err)
-	err = s.DB.Create(&AppVersion{ChartID: chart.ID, AppVersion: ""}).Error
+	err := s.DB.Create(&AppVersion{ChartID: chart.ID, AppVersion: ""}).Error
 	s.ErrorContains(err, "app_version")
 }
 
@@ -38,15 +34,6 @@ func (s *modelSuite) TestAppVersionUniquenessSql() {
 	s.NoError(err)
 	err = s.DB.Create(&AppVersion{ChartID: chart.ID, AppVersion: "version"}).Error
 	s.ErrorContains(err, "app_versions_selector_unique_constraint")
-}
-
-func (s *modelSuite) TestAppVersionValid() {
-	s.SetNonSuitableTestUserForDB()
-	chart := Chart{Name: "name", ChartRepo: utils.PointerTo("repo")}
-	err := s.DB.Create(&chart).Error
-	s.NoError(err)
-	err = s.DB.Create(&AppVersion{ChartID: chart.ID, AppVersion: "version"}).Error
-	s.NoError(err)
 }
 
 func (s *modelSuite) TestAppVersionCiIdentifiers() {
@@ -185,8 +172,7 @@ func (s *modelSuite) TestGetAppVersionPathIDs() {
 
 func (s *modelSuite) TestAppVersionRecordsUser() {
 	s.SetNonSuitableTestUserForDB()
-	chart := Chart{Name: "name", ChartRepo: utils.PointerTo("repo")}
-	s.NoError(s.DB.Create(&chart).Error)
+	chart := s.TestData.Chart_Leonardo()
 	s.Run("via db.Create", func() {
 		version := AppVersion{ChartID: chart.ID, AppVersion: "a"}
 		s.NoError(s.DB.Create(&version).Error)
@@ -208,9 +194,7 @@ func (s *modelSuite) TestAppVersionRecordsUser() {
 }
 
 func (s *modelSuite) TestAppVersionErrorsWithoutUser() {
-	chart := Chart{Name: "name", ChartRepo: utils.PointerTo("repo")}
-	err := s.DB.Create(&chart).Error
-	s.NoError(err)
-	err = s.DB.Create(&AppVersion{ChartID: chart.ID, AppVersion: "version"}).Error
+	chart := s.TestData.Chart_Leonardo()
+	err := s.DB.Create(&AppVersion{ChartID: chart.ID, AppVersion: "version"}).Error
 	s.ErrorContains(err, "database user")
 }

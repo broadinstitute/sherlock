@@ -8,56 +8,27 @@ import (
 )
 
 func (s *modelSuite) TestSlackDeployHookEnvironment() {
-	s.SetSuitableTestUserForDB()
-	environment := Environment{Name: "dev", Base: "live", Lifecycle: "static", RequiresSuitability: utils.PointerTo(false), HelmfileRef: utils.PointerTo("HEAD"), PreventDeletion: utils.PointerTo(false)}
-	s.NoError(s.DB.Create(&environment).Error)
-
+	environment := s.TestData.Environment_Dev()
 	hook := SlackDeployHook{SlackChannel: utils.PointerTo("channel"),
 		Trigger: DeployHookTriggerConfig{OnEnvironmentID: &environment.ID}}
 	s.NoError(s.DB.Create(&hook).Error)
 }
 
 func (s *modelSuite) TestSlackDeployHookChartRelease() {
-	s.SetSuitableTestUserForDB()
-	cluster := Cluster{
-		Name:                "terra-dev",
-		Address:             utils.PointerTo("0.0.0.0"),
-		Base:                utils.PointerTo("terra"),
-		Location:            "some-location",
-		Provider:            "google",
-		GoogleProject:       "some-google-project",
-		RequiresSuitability: utils.PointerTo(false),
-		HelmfileRef:         utils.PointerTo("HEAD"),
-	}
-	s.NoError(s.DB.Create(&cluster).Error)
-	environment := Environment{Name: "dev", Base: "live", Lifecycle: "static", RequiresSuitability: utils.PointerTo(false), HelmfileRef: utils.PointerTo("HEAD"), PreventDeletion: utils.PointerTo(false)}
-	s.NoError(s.DB.Create(&environment).Error)
-	chart := Chart{Name: "leonardo", ChartRepo: utils.PointerTo("terra-helm")}
-	s.NoError(s.DB.Create(&chart).Error)
-	chartRelease := ChartRelease{Name: "leonardo-dev", ChartID: chart.ID, EnvironmentID: &environment.ID, ClusterID: &cluster.ID, Namespace: "terra-dev",
-		ChartReleaseVersion: ChartReleaseVersion{AppVersionResolver: utils.PointerTo("exact"), AppVersionExact: utils.PointerTo("v1.2.3"),
-			ChartVersionResolver: utils.PointerTo("exact"), ChartVersionExact: utils.PointerTo("v2.3.4"), HelmfileRef: utils.PointerTo("HEAD"), HelmfileRefEnabled: utils.PointerTo(false)}}
-	s.NoError(s.DB.Create(&chartRelease).Error)
-
+	chartRelease := s.TestData.ChartRelease_LeonardoDev()
 	hook := SlackDeployHook{SlackChannel: utils.PointerTo("channel"),
 		Trigger: DeployHookTriggerConfig{OnChartReleaseID: &chartRelease.ID}}
 	s.NoError(s.DB.Create(&hook).Error)
 }
 
 func (s *modelSuite) TestSlackDeployHookNoChannel() {
-	s.SetSuitableTestUserForDB()
-	environment := Environment{Name: "dev", Base: "live", Lifecycle: "static", RequiresSuitability: utils.PointerTo(false), HelmfileRef: utils.PointerTo("HEAD"), PreventDeletion: utils.PointerTo(false)}
-	s.NoError(s.DB.Create(&environment).Error)
-
+	environment := s.TestData.Environment_Dev()
 	hook := SlackDeployHook{Trigger: DeployHookTriggerConfig{OnEnvironmentID: &environment.ID}}
 	s.ErrorContains(s.DB.Create(&hook).Error, "slack_channel_present")
 }
 
 func (s *modelSuite) TestSlackDeployHookSuitability() {
-	s.SetSuitableTestUserForDB()
-	environment := Environment{Name: "prod", Base: "live", Lifecycle: "static", RequiresSuitability: utils.PointerTo(true), HelmfileRef: utils.PointerTo("HEAD"), PreventDeletion: utils.PointerTo(false)}
-	s.NoError(s.DB.Create(&environment).Error)
-
+	environment := s.TestData.Environment_Prod()
 	s.Run("when suitable", func() {
 		s.SetSuitableTestUserForDB()
 		hook := SlackDeployHook{SlackChannel: utils.PointerTo("channel"), Trigger: DeployHookTriggerConfig{OnEnvironmentID: &environment.ID}}
@@ -71,10 +42,7 @@ func (s *modelSuite) TestSlackDeployHookSuitability() {
 }
 
 func (s *modelSuite) TestSlackDeployHookFlow() {
-	s.SetSuitableTestUserForDB()
-	environment := Environment{Name: "dev", Base: "live", Lifecycle: "static", RequiresSuitability: utils.PointerTo(false), HelmfileRef: utils.PointerTo("HEAD"), PreventDeletion: utils.PointerTo(false)}
-	s.NoError(s.DB.Create(&environment).Error)
-
+	environment := s.TestData.Environment_Dev()
 	hook := SlackDeployHook{SlackChannel: utils.PointerTo("channel"), Trigger: DeployHookTriggerConfig{OnEnvironmentID: &environment.ID}}
 	s.NoError(s.DB.Create(&hook).Error)
 	s.NotZero(hook.ID)

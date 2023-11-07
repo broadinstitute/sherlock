@@ -24,13 +24,6 @@ func (s *modelSuite) TestChartRepoValidationSqlEmpty() {
 	s.ErrorContains(err, "chart_repo")
 }
 
-func (s *modelSuite) TestChartValidationSqlValid() {
-	chart := Chart{Name: "name", ChartRepo: utils.PointerTo("repo")}
-	err := s.DB.Create(&chart).Error
-	s.NoError(err)
-	s.NotZero(chart.ID)
-}
-
 func (s *modelSuite) TestChartCiIdentifiers() {
 	chart := s.TestData.Chart_Leonardo()
 	ciIdentifier := chart.GetCiIdentifier()

@@ -20,46 +20,52 @@ import (
 	"testing"
 )
 
-// TestProvider validates all Sherlock provider pacts. Do any of those exist? Not right now.
+// TestProvider validates all Sherlock provider pacts.
 //
-// Between Beehive and Sherlock, frankly a better check would be if a new Sherlock's client
-// library caused any new type errors in Beehive... but we'll cross that bridge if we need
-// to.
+// Sherlock's entire HTTP surface is available for consumers to test against.
 //
-// This test exists mostly as dogfooding for Pact. The goal is meaningful dogfooding, too:
-// we're not mocking just a few endpoints. We're wiring up Sherlock's entire API surface,
-// backed by an ephemeral in-memory database identical to how Sherlock's own functional
-// tests are run, plus full access to all models.TestData.
+// Provider states can be composed and are documented in ./README.md. They include control over caller permissions
+// courtesy of test_users.TestUserHelper and creation of sample data courtesy of models.TestData.
 //
 // In theory, here's the kind of interaction that Sherlock is enabling  (forgive the
 // formatting, we're awkwardly embedding indented Go code into comments):
 //
-// ```golang
+// ```go
 //
 //	pact.
 //	AddInteraction().
 //	Given("ChartRelease_LeonardoProd exists").
 //	Given("caller is non-suitable").
 //	UponReceiving("a delete request for leonardo-prod").
-//	WithRequest("DELETE", S("/api/chart-releases/v3/leonardo-prod")).
+//	WithRequest("DELETE", "/api/chart-releases/v3/leonardo-prod").
 //	WillRespondWith(403).
-//	WithJSONBody(Like(...))
+//	WithJSONBody(...)
 //
 // ```
+//
+// Sherlock doesn't currently have any consumers, making this test a bit of a dogfooding exercise.
 func TestProvider(t *testing.T) {
-	// "Suite"-level one-time setup
+	// Quiet down logging and load config
 	gin.SetMode(gin.TestMode)
 	config.LoadTestConfig()
+
+	// If you don't disable tracking, the library will log a lot of messages about it
 	oldPactDoNotTrackSetting := os.Getenv("PACT_DO_NOT_TRACK")
-	assert.NoError(t, os.Setenv("PACT_DO_NOT_TRACK", "true")) // I'd care less about their tracking if it didn't log so much
+	assert.NoError(t, os.Setenv("PACT_DO_NOT_TRACK", "true"))
+
+	// This does way more than just check the version, it'll actually try to repair installations, but it does
+	// some helpful compatibility checks for the FFI library.
 	pactversion.CheckVersion()
-	// We're smarter than the linter here. GoLand will complain that this is always false because
-	// version.BuildVersion == version.DevelopmentVersionString, but we actually replace the former from the linker
-	// at compile time.
+
+	// Decide whether to publish results back to the broker, "if we have a real version and are auth'ed."
+	// We're being smarter than the linter here -- we change version.BuildVersion at link-time, so this won't
+	// short-circuit to false.
 	//goland:noinspection GoBoolExpressions
 	publishPacts := version.BuildVersion != version.DevelopmentVersionString &&
 		((os.Getenv("PACT_BROKER_USERNAME") != "" && os.Getenv("PACT_BROKER_PASSWORD") != "") ||
 			(os.Getenv("PACT_BROKER_TOKEN") != ""))
+
+	// No usage of testify's suite.Suite here, so we initialize helpers inline.
 	ctx := context.Background()
 	testUserHelper := test_users.TestUserHelper{}
 	modelTestSuiteHelper := models.TestSuiteHelper{}
@@ -68,26 +74,30 @@ func TestProvider(t *testing.T) {
 	// Prepare the state handlers available for interactions
 	var explicitlySetSuitableUser, explicitlySetNonSuitableUser bool
 	stateHandlers := make(map[string]pactmodels.StateHandler)
+
 	// 1. We expose test_users.TestUserHelper's header helpers here. We just set some local state and actually call
 	//    out to test_users.TestUserHelper later when handling each request.
-	stateHandlers["caller is suitable"] = func(setup bool, _ pactmodels.ProviderState) (pactmodels.ProviderStateResponse, error) {
-		if setup {
-			if explicitlySetNonSuitableUser {
-				return nil, fmt.Errorf("both 'caller is suitable' and 'caller is non-suitable' set")
+	stateHandlers["caller is suitable"] =
+		func(setup bool, _ pactmodels.ProviderState) (pactmodels.ProviderStateResponse, error) {
+			if setup {
+				if explicitlySetNonSuitableUser {
+					return nil, fmt.Errorf("both 'caller is suitable' and 'caller is non-suitable' set")
+				}
+				explicitlySetSuitableUser = true
 			}
-			explicitlySetSuitableUser = true
+			return nil, nil
 		}
-		return nil, nil
-	}
-	stateHandlers["caller is non-suitable"] = func(setup bool, _ pactmodels.ProviderState) (pactmodels.ProviderStateResponse, error) {
-		if setup {
-			if explicitlySetSuitableUser {
-				return nil, fmt.Errorf("both 'caller is suitable' and 'caller is non-suitable' set")
+	stateHandlers["caller is non-suitable"] =
+		func(setup bool, _ pactmodels.ProviderState) (pactmodels.ProviderStateResponse, error) {
+			if setup {
+				if explicitlySetSuitableUser {
+					return nil, fmt.Errorf("both 'caller is suitable' and 'caller is non-suitable' set")
+				}
+				explicitlySetNonSuitableUser = true
 			}
-			explicitlySetNonSuitableUser = true
+			return nil, nil
 		}
-		return nil, nil
-	}
+
 	// 2. We expose models.TestSuiteHelper's TestData helpers here. We blank-fire a test, reflect on the TestData,
 	//    and iterate over its methods, making a state handler for each one. Ex: "Chart_Leonardo exists"
 	modelTestSuiteHelper.SetupTest()
@@ -97,27 +107,30 @@ func TestProvider(t *testing.T) {
 		// Method receivers count as an argument, so we filter for methods with 1, not 0, arguments
 		if methodTypeValue.Type.NumIn() == 1 {
 			methodName := methodTypeValue.Name
-			stateHandlers[fmt.Sprintf("%s exists", methodName)] = func(setup bool, _ pactmodels.ProviderState) (pactmodels.ProviderStateResponse, error) {
-				if setup {
-					// When running the state handler, reflect on whatever TestData exists then and call the
-					// method we want on it
-					reflect.ValueOf(modelTestSuiteHelper.TestData).MethodByName(methodName).Call([]reflect.Value{})
+			stateHandlers[fmt.Sprintf("%s exists", methodName)] =
+				func(setup bool, _ pactmodels.ProviderState) (pactmodels.ProviderStateResponse, error) {
+					if setup {
+						// When running the state handler, reflect on whatever TestData exists then and call the
+						// method we want on it
+						reflect.ValueOf(modelTestSuiteHelper.TestData).MethodByName(methodName).Call([]reflect.Value{})
+					}
+					return nil, nil
 				}
-				return nil, nil
-			}
 		}
 	}
+	// We have to tear down the test we blank-fired -- this was just the cleanest way to safely list the methods of
+	// a TestData
 	modelTestSuiteHelper.TearDownTest()
+
+	// Log without a level so that it shows up amidst test output (info etc. gets filtered)
 	stateHandlerNames := make([]string, 0, len(stateHandlers))
 	for name := range stateHandlers {
 		stateHandlerNames = append(stateHandlerNames, name)
 	}
-	// Log without a level so that it shows up amidst test output (info etc. gets filtered)
 	log.Log().Strs("state-handlers", stateHandlerNames).Int("state-handler-count", len(stateHandlers)).Msg("pact provider state handlers computed")
 
 	var sherlockRouter *gin.Engine
-	verifier := provider.NewVerifier()
-	err := verifier.VerifyProvider(t, provider.VerifyRequest{
+	err := provider.NewVerifier().VerifyProvider(t, provider.VerifyRequest{
 		BrokerURL: config.Config.String("pactbroker.url"),
 		Provider:  "sherlock",
 		// ProviderBaseURL is set to an empty string intentionally, because we aren't actually going to run Sherlock's
@@ -127,14 +140,14 @@ func TestProvider(t *testing.T) {
 		PublishVerificationResults: publishPacts,
 		// FailIfNoPactsFound is false right now because there aren't any Pact consumers of Sherlock
 		FailIfNoPactsFound: false,
-		// BeforeEach interaction, run "test"-level each-time setup
+		// BeforeEach interaction, run test-level each-time setup
 		BeforeEach: func() error {
 			explicitlySetSuitableUser = false
 			explicitlySetNonSuitableUser = false
 			// Heavy-lifting here: modelTestSuiteHelper.DB is now an active-transaction database reference we
 			// can build a disposable router from. Sherlock's own API test suite does something very similar
 			// to this, the only real difference is that we build a much more complete router here to make
-			// Sherlock's entire HTTP surface available.
+			// Sherlock's entire HTTP surface available (down to redirects, Swagger page, everything).
 			modelTestSuiteHelper.SetupTest()
 			sherlockRouter = boot.BuildRouter(ctx, modelTestSuiteHelper.DB)
 			return nil
@@ -142,26 +155,37 @@ func TestProvider(t *testing.T) {
 		// StateHandlers are executed between BeforeEach and RequestFilter
 		StateHandlers: stateHandlers,
 		// RequestFilter directly handles requests, ignoring the http.Handler argument that would normally lob the
-		// request at the ProviderBaseURL. Gin also directly implements http.Handler, so we just call it instead.
+		// request at the ProviderBaseURL. The Gin server library also directly implements http.Handler, so we just
+		// hand the request to the router directly.
 		RequestFilter: func(_ http.Handler) http.Handler {
 			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				// Sherlock's test-time user middleware will default to treating requests as suitable, but it exposes
+				// explicit controls for it to make tests clear and stable so we respect that here.
 				if explicitlySetSuitableUser {
 					testUserHelper.UseSuitableUserFor(r)
 				} else if explicitlySetNonSuitableUser {
 					testUserHelper.UseNonSuitableUserFor(r)
 				}
+
+				// Heavy-lifting here: you're sorta not supposed to do this, but we short-circuit Pact's middleware
+				// chain right near the end here by handling the request in-memory directly with Sherlock's router.
+				// We don't have to worry about actually running a server and this follows the pattern of how the
+				// rest of Sherlock's tests are run.
 				sherlockRouter.ServeHTTP(w, r)
 			})
 		},
-		// AfterEach interaction, run "test"-level each-time teardown
+		// AfterEach interaction, run test-level each-time teardown
 		AfterEach: func() error {
+			sherlockRouter = nil
 			modelTestSuiteHelper.TearDownTest()
 			return nil
 		},
 	})
 	assert.NoError(t, err)
 
-	// "Suite"-level one-time teardown
+	// We run any suite-level one-time teardown functions inline, since there's no actual suite to do so for us
 	modelTestSuiteHelper.TearDownSuite()
+
+	// Set PACT_DO_NOT_TRACK back to whatever it was before to minimize the test's side effects
 	assert.NoError(t, os.Setenv("PACT_DO_NOT_TRACK", oldPactDoNotTrackSetting))
 }

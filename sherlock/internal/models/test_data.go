@@ -20,19 +20,20 @@ type TestData interface {
 	PagerdutyIntegration_ManuallyTriggeredTerraIncident() PagerdutyIntegration
 
 	Chart_Leonardo() Chart
-	Chart_D2P() Chart
+	Chart_D2p() Chart
 	Chart_Honeycomb() Chart
+	Chart_ExternalDns() Chart
 
 	ChartVersion_Leonardo_V1() ChartVersion
 	ChartVersion_Leonardo_V2() ChartVersion
 	ChartVersion_Leonardo_V3() ChartVersion
-	ChartVersion_D2P_V1() ChartVersion
+	ChartVersion_D2p_V1() ChartVersion
 	ChartVersion_Honeycomb_V1() ChartVersion
 
 	AppVersion_Leonardo_V1() AppVersion
 	AppVersion_Leonardo_V2() AppVersion
 	AppVersion_Leonardo_V3() AppVersion
-	AppVersion_D2P_V1() AppVersion
+	AppVersion_D2p_V1() AppVersion
 
 	Cluster_TerraProd() Cluster
 	Cluster_TerraStaging() Cluster
@@ -45,6 +46,23 @@ type TestData interface {
 	Environment_Staging() Environment
 	Environment_Dev() Environment
 	Environment_Swatomation() Environment
+	Environment_DdpAzureProd() Environment
+	Environment_DdpAzureDev() Environment
+
+	ChartRelease_LeonardoProd() ChartRelease
+	ChartRelease_LeonardoStaging() ChartRelease
+	ChartRelease_LeonardoDev() ChartRelease
+	ChartRelease_LeonardoSwatomation() ChartRelease
+	ChartRelease_D2pDdpAzureProd() ChartRelease
+	ChartRelease_D2pDdpAzureDev() ChartRelease
+	ChartRelease_ExternalDnsTerraQaBees() ChartRelease
+	ChartRelease_ExternalDnsDdpAksProd() ChartRelease
+	ChartRelease_ExternalDnsDdpAksDev() ChartRelease
+
+	DatabaseInstance_LeonardoProd() DatabaseInstance
+	DatabaseInstance_LeonardoStaging() DatabaseInstance
+	DatabaseInstance_LeonardoDev() DatabaseInstance
+	DatabaseInstance_LeonardoSwatomation() DatabaseInstance
 }
 
 // testDataImpl contains the caching for TestData and a (back-)reference to
@@ -58,9 +76,10 @@ type testDataImpl struct {
 
 	pagerdutyIntegration_manuallyTriggeredTerraIncident PagerdutyIntegration
 
-	chart_leonardo  Chart
-	chart_d2p       Chart
-	chart_honeycomb Chart
+	chart_leonardo    Chart
+	chart_d2p         Chart
+	chart_honeycomb   Chart
+	chart_externalDns Chart
 
 	chartVersion_leonardo_v1  ChartVersion
 	chartVersion_leonardo_v2  ChartVersion
@@ -80,10 +99,27 @@ type testDataImpl struct {
 	cluster_ddpAksProd   Cluster
 	cluster_ddpAksDev    Cluster
 
-	environment_prod        Environment
-	environment_staging     Environment
-	environment_dev         Environment
-	environment_swatomation Environment
+	environment_prod         Environment
+	environment_staging      Environment
+	environment_dev          Environment
+	environment_swatomation  Environment
+	environment_ddpAzureProd Environment
+	environment_ddpAzureDev  Environment
+
+	chartRelease_leonardoProd           ChartRelease
+	chartRelease_leonardoStaging        ChartRelease
+	chartRelease_leonardoDev            ChartRelease
+	chartRelease_leonardoSwatomation    ChartRelease
+	chartRelease_d2pDdpAzureProd        ChartRelease
+	chartRelease_d2pDdpAzureDev         ChartRelease
+	chartRelease_externalDnsTerraQaBees ChartRelease
+	chartRelease_externalDnsDdpAksProd  ChartRelease
+	chartRelease_externalDnsDdpAksDev   ChartRelease
+
+	databaseInstance_leonardoProd        DatabaseInstance
+	databaseInstance_leonardoStaging     DatabaseInstance
+	databaseInstance_leonardoDev         DatabaseInstance
+	databaseInstance_leonardoSwatomation DatabaseInstance
 }
 
 // create is a helper function for creating TestData entries in the database.
@@ -160,7 +196,7 @@ func (td *testDataImpl) Chart_Leonardo() Chart {
 	return td.chart_leonardo
 }
 
-func (td *testDataImpl) Chart_D2P() Chart {
+func (td *testDataImpl) Chart_D2p() Chart {
 	if td.chart_d2p.ID == 0 {
 		td.chart_d2p = Chart{
 			Name:                  "d2p",
@@ -184,6 +220,17 @@ func (td *testDataImpl) Chart_Honeycomb() Chart {
 		td.create(&td.chart_honeycomb)
 	}
 	return td.chart_honeycomb
+}
+
+func (td *testDataImpl) Chart_ExternalDns() Chart {
+	if td.chart_externalDns.ID == 0 {
+		td.chart_externalDns = Chart{
+			Name:      "external-dns",
+			ChartRepo: utils.PointerTo("terra-helm-thirdparty"),
+		}
+		td.create(&td.chart_externalDns)
+	}
+	return td.chart_externalDns
 }
 
 func (td *testDataImpl) ChartVersion_Leonardo_V1() ChartVersion {
@@ -224,10 +271,10 @@ func (td *testDataImpl) ChartVersion_Leonardo_V3() ChartVersion {
 	return td.chartVersion_leonardo_v3
 }
 
-func (td *testDataImpl) ChartVersion_D2P_V1() ChartVersion {
+func (td *testDataImpl) ChartVersion_D2p_V1() ChartVersion {
 	if td.chartVersion_d2p_v1.ID == 0 {
 		td.chartVersion_d2p_v1 = ChartVersion{
-			ChartID:      td.Chart_D2P().ID,
+			ChartID:      td.Chart_D2p().ID,
 			ChartVersion: "0.1.0",
 		}
 		td.h.SetSuitableTestUserForDB()
@@ -292,10 +339,10 @@ func (td *testDataImpl) AppVersion_Leonardo_V3() AppVersion {
 	return td.appVersion_leonardo_v3
 }
 
-func (td *testDataImpl) AppVersion_D2P_V1() AppVersion {
+func (td *testDataImpl) AppVersion_D2p_V1() AppVersion {
 	if td.appVersion_d2p_v1.ID == 0 {
 		td.appVersion_d2p_v1 = AppVersion{
-			ChartID:    td.Chart_D2P().ID,
+			ChartID:    td.Chart_D2p().ID,
 			AppVersion: "v1.0.0",
 			GitBranch:  "development",
 			GitCommit:  "abcd1234",
@@ -494,9 +541,8 @@ func (td *testDataImpl) Environment_Swatomation() Environment {
 	if td.environment_swatomation.ID == 0 {
 		td.environment_swatomation = Environment{
 			Base:                       "bee",
-			Lifecycle:                  "dynamic",
+			Lifecycle:                  "template",
 			Name:                       "swatomation",
-			NamePrefix:                 "swatomation",
 			ValuesName:                 "swatomation",
 			AutoPopulateChartReleases:  utils.PointerTo(true),
 			DefaultNamespace:           "terra-swatomation",
@@ -511,7 +557,311 @@ func (td *testDataImpl) Environment_Swatomation() Environment {
 			Offline:                    utils.PointerTo(false),
 		}
 		td.h.SetSuitableTestUserForDB()
+		// Config defines honeycomb as being auto-populated in template environments
+		td.Chart_Honeycomb()
 		td.create(&td.environment_swatomation)
 	}
 	return td.environment_swatomation
+}
+
+func (td *testDataImpl) Environment_DdpAzureProd() Environment {
+	if td.environment_ddpAzureProd.ID == 0 {
+		td.environment_ddpAzureProd = Environment{
+			Base:                "live",
+			Lifecycle:           "static",
+			Name:                "ddp-azure-prod",
+			ValuesName:          "ddp-azure-prod",
+			DefaultNamespace:    "ddp-prod",
+			DefaultClusterID:    utils.PointerTo(td.Cluster_DdpAksProd().ID),
+			RequiresSuitability: utils.PointerTo(true),
+			HelmfileRef:         utils.PointerTo("HEAD"),
+			PreventDeletion:     utils.PointerTo(true),
+			Offline:             utils.PointerTo(false),
+		}
+		td.h.SetSuitableTestUserForDB()
+		td.create(&td.environment_ddpAzureProd)
+	}
+	return td.environment_ddpAzureProd
+}
+
+func (td *testDataImpl) Environment_DdpAzureDev() Environment {
+	if td.environment_ddpAzureDev.ID == 0 {
+		td.environment_ddpAzureDev = Environment{
+			Base:                "live",
+			Lifecycle:           "static",
+			Name:                "ddp-azure-dev",
+			ValuesName:          "ddp-azure-dev",
+			DefaultNamespace:    "ddp-dev",
+			DefaultClusterID:    utils.PointerTo(td.Cluster_DdpAksDev().ID),
+			RequiresSuitability: utils.PointerTo(false),
+			HelmfileRef:         utils.PointerTo("HEAD"),
+			PreventDeletion:     utils.PointerTo(true),
+			Offline:             utils.PointerTo(false),
+		}
+		td.h.SetSuitableTestUserForDB()
+		td.create(&td.environment_ddpAzureDev)
+	}
+	return td.environment_ddpAzureDev
+}
+
+func (td *testDataImpl) ChartRelease_LeonardoProd() ChartRelease {
+	if td.chartRelease_leonardoProd.ID == 0 {
+		td.chartRelease_leonardoProd = ChartRelease{
+			ChartID:         td.Chart_Leonardo().ID,
+			ClusterID:       utils.PointerTo(td.Cluster_TerraProd().ID),
+			DestinationType: "environment",
+			EnvironmentID:   utils.PointerTo(td.Environment_Prod().ID),
+			Name:            "leonardo-prod",
+			Namespace:       "terra-prod",
+			ChartReleaseVersion: ChartReleaseVersion{
+				AppVersionResolver:   utils.PointerTo("exact"),
+				AppVersionExact:      utils.PointerTo(td.AppVersion_Leonardo_V1().AppVersion),
+				ChartVersionResolver: utils.PointerTo("exact"),
+				ChartVersionExact:    utils.PointerTo(td.ChartVersion_Leonardo_V1().ChartVersion),
+			},
+			Subdomain: utils.PointerTo("leonardo"),
+			Protocol:  utils.PointerTo("https"),
+			Port:      utils.PointerTo[uint](443),
+		}
+		td.h.SetSuitableTestUserForDB()
+		td.create(&td.chartRelease_leonardoProd)
+	}
+	return td.chartRelease_leonardoProd
+}
+
+func (td *testDataImpl) ChartRelease_LeonardoStaging() ChartRelease {
+	if td.chartRelease_leonardoStaging.ID == 0 {
+		td.chartRelease_leonardoStaging = ChartRelease{
+			ChartID:         td.Chart_Leonardo().ID,
+			ClusterID:       utils.PointerTo(td.Cluster_TerraStaging().ID),
+			DestinationType: "environment",
+			EnvironmentID:   utils.PointerTo(td.Environment_Staging().ID),
+			Name:            "leonardo-staging",
+			Namespace:       "terra-staging",
+			ChartReleaseVersion: ChartReleaseVersion{
+				AppVersionResolver:   utils.PointerTo("exact"),
+				AppVersionExact:      utils.PointerTo(td.AppVersion_Leonardo_V2().AppVersion),
+				ChartVersionResolver: utils.PointerTo("exact"),
+				ChartVersionExact:    utils.PointerTo(td.ChartVersion_Leonardo_V2().ChartVersion),
+			},
+			Subdomain: utils.PointerTo("leonardo"),
+			Protocol:  utils.PointerTo("https"),
+			Port:      utils.PointerTo[uint](443),
+		}
+		td.h.SetSuitableTestUserForDB()
+		td.create(&td.chartRelease_leonardoStaging)
+	}
+	return td.chartRelease_leonardoStaging
+}
+
+func (td *testDataImpl) ChartRelease_LeonardoDev() ChartRelease {
+	if td.chartRelease_leonardoDev.ID == 0 {
+		td.chartRelease_leonardoDev = ChartRelease{
+			ChartID:         td.Chart_Leonardo().ID,
+			ClusterID:       utils.PointerTo(td.Cluster_TerraDev().ID),
+			DestinationType: "environment",
+			EnvironmentID:   utils.PointerTo(td.Environment_Dev().ID),
+			Name:            "leonardo-dev",
+			Namespace:       "terra-dev",
+			ChartReleaseVersion: ChartReleaseVersion{
+				AppVersionResolver:   utils.PointerTo("exact"),
+				AppVersionExact:      utils.PointerTo(td.AppVersion_Leonardo_V3().AppVersion),
+				ChartVersionResolver: utils.PointerTo("exact"),
+				ChartVersionExact:    utils.PointerTo(td.ChartVersion_Leonardo_V3().ChartVersion),
+			},
+			Subdomain: utils.PointerTo("leonardo"),
+			Protocol:  utils.PointerTo("https"),
+			Port:      utils.PointerTo[uint](443),
+		}
+		td.h.SetSuitableTestUserForDB()
+		td.create(&td.chartRelease_leonardoDev)
+	}
+	return td.chartRelease_leonardoDev
+}
+
+func (td *testDataImpl) ChartRelease_LeonardoSwatomation() ChartRelease {
+	if td.chartRelease_leonardoSwatomation.ID == 0 {
+		td.chartRelease_leonardoSwatomation = ChartRelease{
+			ChartID:         td.Chart_Leonardo().ID,
+			ClusterID:       utils.PointerTo(td.Cluster_TerraQaBees().ID),
+			DestinationType: "environment",
+			EnvironmentID:   utils.PointerTo(td.Environment_Swatomation().ID),
+			Name:            "leonardo-swatomation",
+			Namespace:       "terra-swatomation",
+			ChartReleaseVersion: ChartReleaseVersion{
+				AppVersionResolver:               utils.PointerTo("follow"),
+				AppVersionFollowChartReleaseID:   utils.PointerTo(td.ChartRelease_LeonardoDev().ID),
+				ChartVersionResolver:             utils.PointerTo("follow"),
+				ChartVersionFollowChartReleaseID: utils.PointerTo(td.ChartRelease_LeonardoDev().ID),
+			},
+			Subdomain: utils.PointerTo("leonardo"),
+			Protocol:  utils.PointerTo("https"),
+			Port:      utils.PointerTo[uint](443),
+		}
+		td.h.SetSuitableTestUserForDB()
+		td.create(&td.chartRelease_leonardoSwatomation)
+	}
+	return td.chartRelease_leonardoSwatomation
+}
+
+func (td *testDataImpl) ChartRelease_D2pDdpAzureProd() ChartRelease {
+	if td.chartRelease_d2pDdpAzureProd.ID == 0 {
+		td.chartRelease_d2pDdpAzureProd = ChartRelease{
+			ChartID:         td.Chart_D2p().ID,
+			ClusterID:       utils.PointerTo(td.Cluster_DdpAksProd().ID),
+			DestinationType: "environment",
+			EnvironmentID:   utils.PointerTo(td.Environment_DdpAzureProd().ID),
+			Name:            "d2p-ddp-azure-prod",
+			Namespace:       "ddp-prod",
+			ChartReleaseVersion: ChartReleaseVersion{
+				AppVersionResolver:   utils.PointerTo("exact"),
+				AppVersionExact:      utils.PointerTo(td.AppVersion_D2p_V1().AppVersion),
+				ChartVersionResolver: utils.PointerTo("exact"),
+				ChartVersionExact:    utils.PointerTo(td.ChartVersion_D2p_V1().ChartVersion),
+			},
+		}
+		td.h.SetSuitableTestUserForDB()
+		td.create(&td.chartRelease_d2pDdpAzureProd)
+	}
+	return td.chartRelease_d2pDdpAzureProd
+}
+
+func (td *testDataImpl) ChartRelease_D2pDdpAzureDev() ChartRelease {
+	if td.chartRelease_d2pDdpAzureDev.ID == 0 {
+		td.chartRelease_d2pDdpAzureDev = ChartRelease{
+			ChartID:         td.Chart_D2p().ID,
+			ClusterID:       utils.PointerTo(td.Cluster_DdpAksDev().ID),
+			DestinationType: "environment",
+			EnvironmentID:   utils.PointerTo(td.Environment_DdpAzureDev().ID),
+			Name:            "d2p-ddp-azure-dev",
+			Namespace:       "ddp-dev",
+			ChartReleaseVersion: ChartReleaseVersion{
+				AppVersionResolver:   utils.PointerTo("exact"),
+				AppVersionExact:      utils.PointerTo(td.AppVersion_D2p_V1().AppVersion),
+				ChartVersionResolver: utils.PointerTo("exact"),
+				ChartVersionExact:    utils.PointerTo(td.ChartVersion_D2p_V1().ChartVersion),
+			},
+		}
+		td.h.SetSuitableTestUserForDB()
+		td.create(&td.chartRelease_d2pDdpAzureDev)
+	}
+	return td.chartRelease_d2pDdpAzureDev
+}
+
+func (td *testDataImpl) ChartRelease_ExternalDnsTerraQaBees() ChartRelease {
+	if td.chartRelease_externalDnsTerraQaBees.ID == 0 {
+		td.chartRelease_externalDnsTerraQaBees = ChartRelease{
+			ChartID:         td.Chart_ExternalDns().ID,
+			ClusterID:       utils.PointerTo(td.Cluster_TerraQaBees().ID),
+			DestinationType: "cluster",
+			Name:            "external-dns-terra-qa-bees",
+			Namespace:       "external-dns",
+			ChartReleaseVersion: ChartReleaseVersion{
+				AppVersionResolver:   utils.PointerTo("none"),
+				ChartVersionResolver: utils.PointerTo("exact"),
+				ChartVersionExact:    utils.PointerTo("6.3.1"),
+			},
+		}
+		td.h.SetSuitableTestUserForDB()
+		td.create(&td.chartRelease_externalDnsTerraQaBees)
+	}
+	return td.chartRelease_externalDnsTerraQaBees
+}
+
+func (td *testDataImpl) ChartRelease_ExternalDnsDdpAksProd() ChartRelease {
+	if td.chartRelease_externalDnsDdpAksProd.ID == 0 {
+		td.chartRelease_externalDnsDdpAksProd = ChartRelease{
+			ChartID:         td.Chart_ExternalDns().ID,
+			ClusterID:       utils.PointerTo(td.Cluster_DdpAksProd().ID),
+			DestinationType: "cluster",
+			Name:            "external-dns-ddp-aks-prod",
+			Namespace:       "external-dns",
+			ChartReleaseVersion: ChartReleaseVersion{
+				AppVersionResolver:   utils.PointerTo("none"),
+				ChartVersionResolver: utils.PointerTo("exact"),
+				ChartVersionExact:    utils.PointerTo("6.13.1"),
+			},
+		}
+		td.h.SetSuitableTestUserForDB()
+		td.create(&td.chartRelease_externalDnsDdpAksProd)
+	}
+	return td.chartRelease_externalDnsDdpAksProd
+}
+
+func (td *testDataImpl) ChartRelease_ExternalDnsDdpAksDev() ChartRelease {
+	if td.chartRelease_externalDnsDdpAksDev.ID == 0 {
+		td.chartRelease_externalDnsDdpAksDev = ChartRelease{
+			ChartID:         td.Chart_ExternalDns().ID,
+			ClusterID:       utils.PointerTo(td.Cluster_DdpAksDev().ID),
+			DestinationType: "cluster",
+			Name:            "external-dns-ddp-aks-dev",
+			Namespace:       "external-dns",
+			ChartReleaseVersion: ChartReleaseVersion{
+				AppVersionResolver:   utils.PointerTo("none"),
+				ChartVersionResolver: utils.PointerTo("exact"),
+				ChartVersionExact:    utils.PointerTo("6.13.1"),
+			},
+		}
+		td.h.SetSuitableTestUserForDB()
+		td.create(&td.chartRelease_externalDnsDdpAksDev)
+	}
+	return td.chartRelease_externalDnsDdpAksDev
+}
+
+func (td *testDataImpl) DatabaseInstance_LeonardoProd() DatabaseInstance {
+	if td.databaseInstance_leonardoProd.ID == 0 {
+		td.databaseInstance_leonardoProd = DatabaseInstance{
+			ChartReleaseID:  td.ChartRelease_LeonardoProd().ID,
+			Platform:        utils.PointerTo("google"),
+			GoogleProject:   utils.PointerTo("broad-dsde-prod"),
+			InstanceName:    utils.PointerTo(uuid.NewString()),
+			DefaultDatabase: utils.PointerTo("leonardo"),
+		}
+		td.h.SetSuitableTestUserForDB()
+		td.create(&td.databaseInstance_leonardoProd)
+	}
+	return td.databaseInstance_leonardoProd
+}
+
+func (td *testDataImpl) DatabaseInstance_LeonardoStaging() DatabaseInstance {
+	if td.databaseInstance_leonardoStaging.ID == 0 {
+		td.databaseInstance_leonardoStaging = DatabaseInstance{
+			ChartReleaseID:  td.ChartRelease_LeonardoStaging().ID,
+			Platform:        utils.PointerTo("google"),
+			GoogleProject:   utils.PointerTo("broad-dsde-staging"),
+			InstanceName:    utils.PointerTo(uuid.NewString()),
+			DefaultDatabase: utils.PointerTo("leonardo"),
+		}
+		td.h.SetSuitableTestUserForDB()
+		td.create(&td.databaseInstance_leonardoStaging)
+	}
+	return td.databaseInstance_leonardoStaging
+}
+
+func (td *testDataImpl) DatabaseInstance_LeonardoDev() DatabaseInstance {
+	if td.databaseInstance_leonardoDev.ID == 0 {
+		td.databaseInstance_leonardoDev = DatabaseInstance{
+			ChartReleaseID:  td.ChartRelease_LeonardoDev().ID,
+			Platform:        utils.PointerTo("google"),
+			GoogleProject:   utils.PointerTo("broad-dsde-dev"),
+			InstanceName:    utils.PointerTo(uuid.NewString()),
+			DefaultDatabase: utils.PointerTo("leonardo"),
+		}
+		td.h.SetSuitableTestUserForDB()
+		td.create(&td.databaseInstance_leonardoDev)
+	}
+	return td.databaseInstance_leonardoDev
+}
+
+func (td *testDataImpl) DatabaseInstance_LeonardoSwatomation() DatabaseInstance {
+	if td.databaseInstance_leonardoSwatomation.ID == 0 {
+		td.databaseInstance_leonardoSwatomation = DatabaseInstance{
+			ChartReleaseID:  td.ChartRelease_LeonardoSwatomation().ID,
+			Platform:        utils.PointerTo("kubernetes"),
+			DefaultDatabase: utils.PointerTo("leonardo"),
+		}
+		td.h.SetSuitableTestUserForDB()
+		td.create(&td.databaseInstance_leonardoSwatomation)
+	}
+	return td.databaseInstance_leonardoSwatomation
 }

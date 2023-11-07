@@ -22,6 +22,7 @@ on:
       - "sherlock/**"
       - "!sherlock/docs/**"
       - "go-shared/**"
+      - "!**/*.md"
   pull_request:
     branches:
       - main
@@ -32,6 +33,7 @@ on:
       - "sherlock/**"
       - "!sherlock/docs/**"
       - "go-shared/**"
+      - "!**/*.md"
   workflow_dispatch:
 
 env:
