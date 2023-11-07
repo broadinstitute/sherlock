@@ -13,8 +13,8 @@ alter table environments
                (lifecycle = 'dynamic' and template_environment_id is not null) or
                (lifecycle = 'static' and
                 base != '' and
-                default_cluter_id is not null and
-                requires_sutibility is not null));
+                default_cluster_id is not null and
+                requires_suitability is not null));
 
 alter table environments
     add constraint default_namespace_present
@@ -34,17 +34,17 @@ alter table environments
 
 alter table environments
     add constraint prevent_deletion_valid
-        check (prevent_deletion is null or prevent_deletion is false or lifecycle == 'dynamic');
+        check (prevent_deletion is null or prevent_deletion is false or lifecycle = 'dynamic');
 
 alter table environments
     add constraint delete_after_valid
         check (delete_after is not null and
-               lifecycle == 'dynamic' and
+               lifecycle = 'dynamic' and
                (prevent_deletion is null or prevent_deletion is false));
 
 alter table environments
     add constraint offline_valid
-        check (lifecycle == 'dynamic' or
+        check (lifecycle = 'dynamic' or
                (offline is null or offline is false) and
                (offline_schedule_begin_enabled is null or offline_schedule_begin_enabled is false) and
                (offline_schedule_end_enabled is null or offline_schedule_end_enabled is false));
