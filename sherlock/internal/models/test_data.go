@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/test_users"
-	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"time"
 )
@@ -68,6 +67,23 @@ type TestData interface {
 	DatabaseInstance_LeonardoStaging() DatabaseInstance
 	DatabaseInstance_LeonardoDev() DatabaseInstance
 	DatabaseInstance_LeonardoSwatomation() DatabaseInstance
+
+	CiIdentifier_Chart_Leonardo() CiIdentifier
+	CiIdentifier_ChartVersion_Leonardo_V1() CiIdentifier
+	CiIdentifier_ChartVersion_Leonardo_V2() CiIdentifier
+	CiIdentifier_ChartVersion_Leonardo_V3() CiIdentifier
+	CiIdentifier_AppVersion_Leonardo_V1() CiIdentifier
+	CiIdentifier_AppVersion_Leonardo_V2() CiIdentifier
+	CiIdentifier_AppVersion_Leonardo_V3() CiIdentifier
+	CiIdentifier_Cluster_TerraProd() CiIdentifier
+	CiIdentifier_Cluster_TerraStaging() CiIdentifier
+	CiIdentifier_Cluster_TerraDev() CiIdentifier
+	CiIdentifier_Environment_Prod() CiIdentifier
+	CiIdentifier_Environment_Staging() CiIdentifier
+	CiIdentifier_Environment_Dev() CiIdentifier
+	CiIdentifier_ChartRelease_LeonardoProd() CiIdentifier
+	CiIdentifier_ChartRelease_LeonardoStaging() CiIdentifier
+	CiIdentifier_ChartRelease_LeonardoDev() CiIdentifier
 }
 
 // testDataImpl contains the caching for TestData and a (back-)reference to
@@ -128,6 +144,23 @@ type testDataImpl struct {
 	databaseInstance_leonardoStaging     DatabaseInstance
 	databaseInstance_leonardoDev         DatabaseInstance
 	databaseInstance_leonardoSwatomation DatabaseInstance
+
+	ciIdentifier_chart_leonardo               CiIdentifier
+	ciIdentifier_chartVersion_leonardo_v1     CiIdentifier
+	ciIdentifier_chartVersion_leonardo_v2     CiIdentifier
+	ciIdentifier_chartVersion_leonardo_v3     CiIdentifier
+	ciIdentifier_appVersion_leonardo_v1       CiIdentifier
+	ciIdentifier_appVersion_leonardo_v2       CiIdentifier
+	ciIdentifier_appVersion_leonardo_v3       CiIdentifier
+	ciIdentifier_cluster_terraProd            CiIdentifier
+	ciIdentifier_cluster_terraStaging         CiIdentifier
+	ciIdentifier_cluster_terraDev             CiIdentifier
+	ciIdentifier_environment_prod             CiIdentifier
+	ciIdentifier_environment_staging          CiIdentifier
+	ciIdentifier_environment_dev              CiIdentifier
+	ciIdentifier_chartRelease_leonardoProd    CiIdentifier
+	ciIdentifier_chartRelease_leonardoStaging CiIdentifier
+	ciIdentifier_chartRelease_leonardoDev     CiIdentifier
 }
 
 // create is a helper function for creating TestData entries in the database.
@@ -178,7 +211,7 @@ func (td *testDataImpl) PagerdutyIntegration_ManuallyTriggeredTerraIncident() Pa
 		td.pagerdutyIntegration_manuallyTriggeredTerraIncident = PagerdutyIntegration{
 			PagerdutyID: "P123ABC",
 			Name:        utils.PointerTo("Manually Triggered Terra Incident"),
-			Key:         utils.PointerTo(uuid.NewString()),
+			Key:         utils.PointerTo("some secret key"),
 			Type:        utils.PointerTo("service"),
 		}
 		td.h.SetSuitableTestUserForDB()
@@ -438,7 +471,7 @@ func (td *testDataImpl) Cluster_DdpAksProd() Cluster {
 		td.cluster_ddpAksProd = Cluster{
 			Name:                "ddp-aks-prod",
 			Provider:            "azure",
-			AzureSubscription:   uuid.New().String(),
+			AzureSubscription:   "some Azure subscription",
 			Location:            "East US",
 			Base:                utils.PointerTo("ddp"),
 			Address:             utils.PointerTo("https://192.0.2.132"),
@@ -456,7 +489,7 @@ func (td *testDataImpl) Cluster_DdpAksDev() Cluster {
 		td.cluster_ddpAksDev = Cluster{
 			Name:                "ddp-aks-dev",
 			Provider:            "azure",
-			AzureSubscription:   uuid.New().String(),
+			AzureSubscription:   "some Azure subscription",
 			Location:            "East US",
 			Base:                utils.PointerTo("ddp"),
 			Address:             utils.PointerTo("https://192.0.2.133"),
@@ -902,7 +935,7 @@ func (td *testDataImpl) DatabaseInstance_LeonardoProd() DatabaseInstance {
 			ChartReleaseID:  td.ChartRelease_LeonardoProd().ID,
 			Platform:        utils.PointerTo("google"),
 			GoogleProject:   utils.PointerTo("broad-dsde-prod"),
-			InstanceName:    utils.PointerTo(uuid.NewString()),
+			InstanceName:    utils.PointerTo("some instance name"),
 			DefaultDatabase: utils.PointerTo("leonardo"),
 		}
 		td.h.SetSuitableTestUserForDB()
@@ -917,7 +950,7 @@ func (td *testDataImpl) DatabaseInstance_LeonardoStaging() DatabaseInstance {
 			ChartReleaseID:  td.ChartRelease_LeonardoStaging().ID,
 			Platform:        utils.PointerTo("google"),
 			GoogleProject:   utils.PointerTo("broad-dsde-staging"),
-			InstanceName:    utils.PointerTo(uuid.NewString()),
+			InstanceName:    utils.PointerTo("some instance name"),
 			DefaultDatabase: utils.PointerTo("leonardo"),
 		}
 		td.h.SetSuitableTestUserForDB()
@@ -932,7 +965,7 @@ func (td *testDataImpl) DatabaseInstance_LeonardoDev() DatabaseInstance {
 			ChartReleaseID:  td.ChartRelease_LeonardoDev().ID,
 			Platform:        utils.PointerTo("google"),
 			GoogleProject:   utils.PointerTo("broad-dsde-dev"),
-			InstanceName:    utils.PointerTo(uuid.NewString()),
+			InstanceName:    utils.PointerTo("some instance name"),
 			DefaultDatabase: utils.PointerTo("leonardo"),
 		}
 		td.h.SetSuitableTestUserForDB()
@@ -952,4 +985,148 @@ func (td *testDataImpl) DatabaseInstance_LeonardoSwatomation() DatabaseInstance 
 		td.create(&td.databaseInstance_leonardoSwatomation)
 	}
 	return td.databaseInstance_leonardoSwatomation
+}
+
+func (td *testDataImpl) CiIdentifier_Chart_Leonardo() CiIdentifier {
+	if td.ciIdentifier_chart_leonardo.ID == 0 {
+		chart := td.Chart_Leonardo()
+		td.ciIdentifier_chart_leonardo = chart.GetCiIdentifier()
+		td.create(&td.ciIdentifier_chart_leonardo)
+	}
+	return td.ciIdentifier_chart_leonardo
+}
+
+func (td *testDataImpl) CiIdentifier_ChartVersion_Leonardo_V1() CiIdentifier {
+	if td.ciIdentifier_chartVersion_leonardo_v1.ID == 0 {
+		v1 := td.ChartVersion_Leonardo_V1()
+		td.ciIdentifier_chartVersion_leonardo_v1 = v1.GetCiIdentifier()
+		td.create(&td.ciIdentifier_chartVersion_leonardo_v1)
+	}
+	return td.ciIdentifier_chartVersion_leonardo_v1
+}
+
+func (td *testDataImpl) CiIdentifier_ChartVersion_Leonardo_V2() CiIdentifier {
+	if td.ciIdentifier_chartVersion_leonardo_v2.ID == 0 {
+		v2 := td.ChartVersion_Leonardo_V2()
+		td.ciIdentifier_chartVersion_leonardo_v2 = v2.GetCiIdentifier()
+		td.create(&td.ciIdentifier_chartVersion_leonardo_v2)
+	}
+	return td.ciIdentifier_chartVersion_leonardo_v2
+}
+
+func (td *testDataImpl) CiIdentifier_ChartVersion_Leonardo_V3() CiIdentifier {
+	if td.ciIdentifier_chartVersion_leonardo_v3.ID == 0 {
+		v3 := td.ChartVersion_Leonardo_V3()
+		td.ciIdentifier_chartVersion_leonardo_v3 = v3.GetCiIdentifier()
+		td.create(&td.ciIdentifier_chartVersion_leonardo_v3)
+	}
+	return td.ciIdentifier_chartVersion_leonardo_v3
+}
+
+func (td *testDataImpl) CiIdentifier_AppVersion_Leonardo_V1() CiIdentifier {
+	if td.ciIdentifier_appVersion_leonardo_v1.ID == 0 {
+		v1 := td.AppVersion_Leonardo_V1()
+		td.ciIdentifier_appVersion_leonardo_v1 = v1.GetCiIdentifier()
+		td.create(&td.ciIdentifier_appVersion_leonardo_v1)
+	}
+	return td.ciIdentifier_appVersion_leonardo_v1
+}
+
+func (td *testDataImpl) CiIdentifier_AppVersion_Leonardo_V2() CiIdentifier {
+	if td.ciIdentifier_appVersion_leonardo_v2.ID == 0 {
+		v2 := td.AppVersion_Leonardo_V2()
+		td.ciIdentifier_appVersion_leonardo_v2 = v2.GetCiIdentifier()
+		td.create(&td.ciIdentifier_appVersion_leonardo_v2)
+	}
+	return td.ciIdentifier_appVersion_leonardo_v2
+}
+
+func (td *testDataImpl) CiIdentifier_AppVersion_Leonardo_V3() CiIdentifier {
+	if td.ciIdentifier_appVersion_leonardo_v3.ID == 0 {
+		v3 := td.AppVersion_Leonardo_V3()
+		td.ciIdentifier_appVersion_leonardo_v3 = v3.GetCiIdentifier()
+		td.create(&td.ciIdentifier_appVersion_leonardo_v3)
+	}
+	return td.ciIdentifier_appVersion_leonardo_v3
+}
+
+func (td *testDataImpl) CiIdentifier_Cluster_TerraProd() CiIdentifier {
+	if td.ciIdentifier_cluster_terraProd.ID == 0 {
+		temp := td.Cluster_TerraProd()
+		td.ciIdentifier_cluster_terraProd = temp.GetCiIdentifier()
+		td.create(&td.ciIdentifier_cluster_terraProd)
+	}
+	return td.ciIdentifier_cluster_terraProd
+}
+
+func (td *testDataImpl) CiIdentifier_Cluster_TerraStaging() CiIdentifier {
+	if td.ciIdentifier_cluster_terraStaging.ID == 0 {
+		temp := td.Cluster_TerraStaging()
+		td.ciIdentifier_cluster_terraStaging = temp.GetCiIdentifier()
+		td.create(&td.ciIdentifier_cluster_terraStaging)
+	}
+	return td.ciIdentifier_cluster_terraStaging
+}
+
+func (td *testDataImpl) CiIdentifier_Cluster_TerraDev() CiIdentifier {
+	if td.ciIdentifier_cluster_terraDev.ID == 0 {
+		temp := td.Cluster_TerraDev()
+		td.ciIdentifier_cluster_terraDev = temp.GetCiIdentifier()
+		td.create(&td.ciIdentifier_cluster_terraDev)
+	}
+	return td.ciIdentifier_cluster_terraDev
+}
+
+func (td *testDataImpl) CiIdentifier_Environment_Prod() CiIdentifier {
+	if td.ciIdentifier_environment_prod.ID == 0 {
+		temp := td.Environment_Prod()
+		td.ciIdentifier_environment_prod = temp.GetCiIdentifier()
+		td.create(&td.ciIdentifier_environment_prod)
+	}
+	return td.ciIdentifier_environment_prod
+}
+
+func (td *testDataImpl) CiIdentifier_Environment_Staging() CiIdentifier {
+	if td.ciIdentifier_environment_staging.ID == 0 {
+		temp := td.Environment_Staging()
+		td.ciIdentifier_environment_staging = temp.GetCiIdentifier()
+		td.create(&td.ciIdentifier_environment_staging)
+	}
+	return td.ciIdentifier_environment_staging
+}
+
+func (td *testDataImpl) CiIdentifier_Environment_Dev() CiIdentifier {
+	if td.ciIdentifier_environment_dev.ID == 0 {
+		temp := td.Environment_Dev()
+		td.ciIdentifier_environment_dev = temp.GetCiIdentifier()
+		td.create(&td.ciIdentifier_environment_dev)
+	}
+	return td.ciIdentifier_environment_dev
+}
+
+func (td *testDataImpl) CiIdentifier_ChartRelease_LeonardoProd() CiIdentifier {
+	if td.ciIdentifier_chartRelease_leonardoProd.ID == 0 {
+		temp := td.ChartRelease_LeonardoProd()
+		td.ciIdentifier_chartRelease_leonardoProd = temp.GetCiIdentifier()
+		td.create(&td.ciIdentifier_chartRelease_leonardoProd)
+	}
+	return td.ciIdentifier_chartRelease_leonardoProd
+}
+
+func (td *testDataImpl) CiIdentifier_ChartRelease_LeonardoStaging() CiIdentifier {
+	if td.ciIdentifier_chartRelease_leonardoStaging.ID == 0 {
+		temp := td.ChartRelease_LeonardoStaging()
+		td.ciIdentifier_chartRelease_leonardoStaging = temp.GetCiIdentifier()
+		td.create(&td.ciIdentifier_chartRelease_leonardoStaging)
+	}
+	return td.ciIdentifier_chartRelease_leonardoStaging
+}
+
+func (td *testDataImpl) CiIdentifier_ChartRelease_LeonardoDev() CiIdentifier {
+	if td.ciIdentifier_chartRelease_leonardoDev.ID == 0 {
+		temp := td.ChartRelease_LeonardoDev()
+		td.ciIdentifier_chartRelease_leonardoDev = temp.GetCiIdentifier()
+		td.create(&td.ciIdentifier_chartRelease_leonardoDev)
+	}
+	return td.ciIdentifier_chartRelease_leonardoDev
 }
