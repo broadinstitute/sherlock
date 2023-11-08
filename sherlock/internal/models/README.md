@@ -32,3 +32,9 @@ func (m *MyType) myFunction(tx *gorm.DB) error {
 You might think that because `m.Association` is `*MyAssociation`, it is already a pointer you can pass to Gorm.
 
 You'd be wrong, unfortunately. You need to do `&m.Association`, effectively passing `**MyAssociation` to Gorm (!). Gorm will work as expected from here on out, it'll pierce through the pointers to load values into the struct.
+
+#### Gorm functions seem to have no effect
+
+You're probably doing something that's changing the Gorm session from a hook. This breaks Gorm, unfortunately.
+
+This means you can't change the context/user or begin skipping hooks from a hook.

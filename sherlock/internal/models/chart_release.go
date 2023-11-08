@@ -121,7 +121,7 @@ func (c *ChartRelease) propagateDeletion(tx *gorm.DB) error {
 	var databaseInstancesToDelete []DatabaseInstance
 	if err := tx.
 		Where(&DatabaseInstance{ChartReleaseID: c.ID}).
-		Select("id").
+		Select("id", "chart_release_id").
 		Find(&databaseInstancesToDelete).Error; err != nil {
 		return fmt.Errorf("(%s) error finding potential database instances to delete: %w", errors.InternalServerError, err)
 	}
