@@ -17,9 +17,6 @@ alter table environments
     drop constraint if exists unique_resource_prefix_present;
 
 alter table environments
-    drop constraint if exists prevent_deletion_valid;
-
-alter table environments
     drop constraint if exists delete_after_valid;
 
 alter table environments

@@ -29,10 +29,6 @@ alter table environments
         check (unique_resource_prefix != '');
 
 alter table environments
-    add constraint prevent_deletion_valid
-        check (prevent_deletion is null or prevent_deletion is false or lifecycle = 'dynamic');
-
-alter table environments
     add constraint delete_after_valid
         check (delete_after is null or
                (lifecycle = 'dynamic' and
