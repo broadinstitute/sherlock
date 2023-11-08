@@ -25,10 +25,6 @@ alter table environments
         check (helmfile_ref is not null and helmfile_ref != '');
 
 alter table environments
-    add constraint default_firecloud_develop_ref_present
-        check (default_firecloud_develop_ref is not null and default_firecloud_develop_ref != '');
-
-alter table environments
     add constraint unique_resource_prefix_present
         check (unique_resource_prefix != '');
 

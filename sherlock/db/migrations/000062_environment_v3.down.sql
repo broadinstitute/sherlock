@@ -14,9 +14,6 @@ alter table environments
     drop constraint if exists helmfile_ref_present;
 
 alter table environments
-    drop constraint if exists default_firecloud_develop_ref_present;
-
-alter table environments
     drop constraint if exists unique_resource_prefix_present;
 
 alter table environments
