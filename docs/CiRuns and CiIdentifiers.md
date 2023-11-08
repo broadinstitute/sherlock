@@ -32,7 +32,7 @@ We'll need a Sherlock data type to represent these workflows. Since we're here, 
 
 A CiRun can only be created or updated via a PUT to `/api/ci-runs/v3` -- it edits the existing CiRun with new status info if it exists, or creates it if it doesn't.
 
-GitHub obviously won't conform to our input spec, and we don't want to expose Sherlock endpoints directly to the open internet either (it's behind Identity-Aware Proxy), so that's where the [sherlock-webhook-proxy](../sherlock-webhook-proxy) comes in. It's a cloud function that eats GitHub webhook payloads, validates them, massages the JSON, and then lobs them to Sherlock's `/api/ci-runs/v3` will basic IAP auth.
+GitHub obviously won't conform to our input spec, and we don't want to expose Sherlock endpoints directly to the open internet either (it's behind Identity-Aware Proxy), so that's where the [sherlock-webhook-proxy](../sherlock-webhook-proxy) comes in. It's a cloud function that eats GitHub webhook payloads, validates them, massages the JSON, and then lobs them to Sherlock's `/api/ci-runs/v3` with basic IAP auth.
 
 The last piece here is that we need to roll out an appropriate webhook config to a _ton_ of repos. [Terraform to the rescue.](https://github.com/broadinstitute/terraform-ap-deployments/blob/master/github/webhook.tf)
 

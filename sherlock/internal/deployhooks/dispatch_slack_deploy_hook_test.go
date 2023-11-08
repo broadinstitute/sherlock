@@ -313,40 +313,7 @@ func (s *deployHooksSuite) Test_generateSlackAttachment_environmentChangesets_ch
 }
 
 func (s *deployHooksSuite) Test_generateSlackAttachment_environmentChangesets_chartReleaseNames() {
-	user := s.SetSuitableTestUserForDB()
-
-	chart := models.Chart{
-		Name:      "leonardo",
-		ChartRepo: utils.PointerTo("terra-helm"),
-	}
-	s.NoError(s.DB.Create(&chart).Error)
-
-	cluster := models.Cluster{
-		Name:                "terra-prod",
-		HelmfileRef:         utils.PointerTo("HEAD"),
-		RequiresSuitability: utils.PointerTo(true),
-		Provider:            "google",
-		GoogleProject:       "broad-dsde-prod",
-		Location:            "us-central1-a",
-		Base:                utils.PointerTo("terra"),
-		Address:             utils.PointerTo("0.0.0.0"),
-	}
-	s.NoError(s.DB.Create(&cluster).Error)
-
-	environment := models.Environment{
-		Name:                 "prod",
-		ValuesName:           "prod",
-		UniqueResourcePrefix: "a123",
-		HelmfileRef:          utils.PointerTo("HEAD"),
-		RequiresSuitability:  utils.PointerTo(true),
-		Base:                 "live",
-		DefaultClusterID:     &cluster.ID,
-		DefaultNamespace:     "terra-prod",
-		Lifecycle:            "static",
-		PreventDeletion:      utils.PointerTo(true),
-		OwnerID:              &user.ID,
-	}
-	s.NoError(s.DB.Create(&environment).Error)
+	environment := s.TestData.Environment_Dev()
 	environmentCiIdentifier := environment.GetCiIdentifier()
 	s.NoError(s.DB.Create(&environmentCiIdentifier).Error)
 
@@ -374,23 +341,7 @@ func (s *deployHooksSuite) Test_generateSlackAttachment_environmentChangesets_ch
 	}
 	s.NoError(s.DB.Create(&environmentSlackHook).Error)
 
-	chartRelease := models.ChartRelease{
-		Name:            "leonardo-prod",
-		ChartID:         chart.ID,
-		ClusterID:       &cluster.ID,
-		EnvironmentID:   &environment.ID,
-		Namespace:       "terra-prod",
-		DestinationType: "environment",
-		ChartReleaseVersion: models.ChartReleaseVersion{
-			HelmfileRef:          utils.PointerTo("HEAD"),
-			HelmfileRefEnabled:   utils.PointerTo(false),
-			AppVersionResolver:   utils.PointerTo("exact"),
-			AppVersionExact:      utils.PointerTo("v1.2.3"),
-			ChartVersionResolver: utils.PointerTo("exact"),
-			ChartVersionExact:    utils.PointerTo("v2.3.4"),
-		},
-	}
-	s.NoError(s.DB.Create(&chartRelease).Error)
+	chartRelease := s.TestData.ChartRelease_LeonardoDev()
 	chartReleaseCiIdentifier := chartRelease.GetCiIdentifier()
 	s.NoError(s.DB.Create(&chartReleaseCiIdentifier).Error)
 
@@ -416,5 +367,5 @@ func (s *deployHooksSuite) Test_generateSlackAttachment_environmentChangesets_ch
 		},
 	})
 	s.NoError(err)
-	s.Equal(slack.GreenBlock{Text: "Deployment to <https://beehive.dsp-devops.broadinstitute.org/r/environment/dev|dev> (<https://beehive.dsp-devops.broadinstitute.org/r/chart-release/leonardo-prod|leonardo-prod>): <https://github.com/broadinstitute/terra-github-workflows/actions/runs/123123/attempts/1|success>. Review all changes made by this deployment <https://beehive.dsp-devops.broadinstitute.org/review-changesets?changeset=1122|here>."}, result)
+	s.Equal(slack.GreenBlock{Text: "Deployment to <https://beehive.dsp-devops.broadinstitute.org/r/environment/dev|dev> (<https://beehive.dsp-devops.broadinstitute.org/r/chart-release/leonardo-dev|leonardo-dev>): <https://github.com/broadinstitute/terra-github-workflows/actions/runs/123123/attempts/1|success>. Review all changes made by this deployment <https://beehive.dsp-devops.broadinstitute.org/review-changesets?changeset=1122|here>."}, result)
 }

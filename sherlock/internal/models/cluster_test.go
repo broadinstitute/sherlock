@@ -186,36 +186,6 @@ func (s *modelSuite) TestClusterHelmfileRefValidationSqlEmpty() {
 	s.ErrorContains(err, "helmfile_ref")
 }
 
-func (s *modelSuite) TestClusterValidationSqlValidGoogle() {
-	s.SetNonSuitableTestUserForDB()
-	err := s.DB.Create(&Cluster{
-		Name:                "some-name",
-		Provider:            "google",
-		GoogleProject:       "some-project",
-		Location:            "some-location",
-		Base:                utils.PointerTo("some base"),
-		Address:             utils.PointerTo("0.0.0.0"),
-		RequiresSuitability: utils.PointerTo(false),
-		HelmfileRef:         utils.PointerTo("some-ref"),
-	}).Error
-	s.NoError(err)
-}
-
-func (s *modelSuite) TestClusterValidationSqlValidAzure() {
-	s.SetNonSuitableTestUserForDB()
-	err := s.DB.Create(&Cluster{
-		Name:                "some-name",
-		Provider:            "azure",
-		AzureSubscription:   "some-subscription",
-		Location:            "some-location",
-		Base:                utils.PointerTo("some base"),
-		Address:             utils.PointerTo("0.0.0.0"),
-		RequiresSuitability: utils.PointerTo(false),
-		HelmfileRef:         utils.PointerTo("some-ref"),
-	}).Error
-	s.NoError(err)
-}
-
 func (s *modelSuite) TestClusterCiIdentifiers() {
 	cluster := s.TestData.Cluster_TerraDev()
 	ciIdentifier := cluster.GetCiIdentifier()
