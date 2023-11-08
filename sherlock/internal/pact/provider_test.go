@@ -45,6 +45,11 @@ import (
 //
 // Sherlock doesn't currently have any consumers, making this test a bit of a dogfooding exercise.
 func TestProvider(t *testing.T) {
+	// Pact broker requires authentication. Sherlock's tests don't otherwise require authentication, so we skip this.
+	if (os.Getenv("PACT_BROKER_USERNAME") == "" || os.Getenv("PACT_BROKER_PASSWORD") == "") && os.Getenv("PACT_BROKER_TOKEN") == "" {
+		t.Skip("No authenticated connection to Pact, skipping Pact contract testing")
+	}
+
 	// Quiet down logging and load config
 	gin.SetMode(gin.TestMode)
 	config.LoadTestConfig()
@@ -57,13 +62,11 @@ func TestProvider(t *testing.T) {
 	// some helpful compatibility checks for the FFI library.
 	pactversion.CheckVersion()
 
-	// Decide whether to publish results back to the broker, "if we have a real version and are auth'ed."
+	// Decide whether to publish results back to the broker, "if we have a real version."
 	// We're being smarter than the linter here -- we change version.BuildVersion at link-time, so this won't
 	// short-circuit to false.
 	//goland:noinspection GoBoolExpressions
-	publishPacts := version.BuildVersion != version.DevelopmentVersionString &&
-		((os.Getenv("PACT_BROKER_USERNAME") != "" && os.Getenv("PACT_BROKER_PASSWORD") != "") ||
-			(os.Getenv("PACT_BROKER_TOKEN") != ""))
+	publishPacts := version.BuildVersion != version.DevelopmentVersionString
 
 	// No usage of testify's suite.Suite here, so we initialize helpers inline.
 	ctx := context.Background()
