@@ -1,6 +1,6 @@
 alter table environments
     add constraint name_valid
-        check (name != ''  and name like '[a-z0-9]([-a-z0-9]*[a-z0-9])?');
+        check (name != ''  and name similar to '[a-z0-9]([-a-z0-9]*[a-z0-9])?');
 
 alter table environments
     add constraint owner_id_present
