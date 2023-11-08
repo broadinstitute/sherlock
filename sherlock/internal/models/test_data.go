@@ -89,6 +89,14 @@ type TestData interface {
 // testDataImpl contains the caching for TestData and a (back-)reference to
 // TestSuiteHelper to actually interact with the database. TestSuiteHelper
 // uses testDataImpl to provide TestData in the context of a test function.
+//
+// One note for this implementation is that it's important that the example
+// data not be random. Sometimes Sherlock will be helpful and propagate
+// creations, and that doesn't conflict with TestData unless the TestData
+// is unpredictable (e.g. generates a random UUID for an instance name or
+// something). Since create uses gorm's FirstOrCreate, the randomness will
+// throw it off and it'll accidentally try to create something that might
+// already exist in the database.
 type testDataImpl struct {
 	h *TestSuiteHelper
 
