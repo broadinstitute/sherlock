@@ -10,8 +10,7 @@ import (
 
 const ctxDbFieldName = "SherlockDB"
 
-// DbMiddleware must strictly come after UserMiddleware, its call to MustUseUser will fail otherwise.
-func DbMiddleware(db *gorm.DB) gin.HandlerFunc {
+func setDatabaseWithUser(db *gorm.DB) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		user, err := MustUseUser(ctx)
 		if err != nil {
@@ -22,21 +21,24 @@ func DbMiddleware(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
+// ShouldUseDB returns a non-nil *gorm.DB with the calling user accessible via models.GetCurrentUserForDB, or an error
+// if that isn't possible.
 func ShouldUseDB(ctx *gin.Context) (*gorm.DB, error) {
 	dbValue, exists := ctx.Get(ctxDbFieldName)
 	if !exists {
-		return nil, fmt.Errorf("(%s) database authentication middleware not present", errors.InternalServerError)
+		return nil, fmt.Errorf("(%s) database reference not present; database authentication middleware likely not present", errors.InternalServerError)
 	}
 	db, ok := dbValue.(*gorm.DB)
 	if !ok {
-		return nil, fmt.Errorf("(%s) database authentication middleware misconfigured: db represented as %T", errors.InternalServerError, dbValue)
+		return nil, fmt.Errorf("(%s) database authentication middleware likely misconfigured: represented as %T", errors.InternalServerError, dbValue)
 	}
 	if db == nil {
-		return nil, fmt.Errorf("(%s) database reference was nil", errors.InternalServerError)
+		return nil, fmt.Errorf("(%s) database authentication middleware likely misconfigured: database reference was nil", errors.InternalServerError)
 	}
 	return db, nil
 }
 
+// MustUseDB is like ShouldUseDB except it calls errors.AbortRequest if there was an error so the caller doesn't have to.
 func MustUseDB(ctx *gin.Context) (*gorm.DB, error) {
 	db, err := ShouldUseDB(ctx)
 	if err != nil {

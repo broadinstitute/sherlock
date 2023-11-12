@@ -1,6 +1,7 @@
 package test_users
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"strconv"
 )
@@ -13,18 +14,14 @@ const (
 	NonSuitableTestUserGoogleID = "67896789"
 )
 
-func ParseHeader(ctx *gin.Context) (email string, googleID string) {
-	header := ctx.GetHeader(SuitabilityControlHeader)
-	if header == "" {
-		return SuitableTestUserEmail, SuitableTestUserGoogleID
-	}
-	suitable, err := strconv.ParseBool(header)
-	if err != nil {
-		panic(err)
-	}
-	if suitable {
-		return SuitableTestUserEmail, SuitableTestUserGoogleID
+func ParseHeader(ctx *gin.Context) (email string, googleID string, err error) {
+	if header := ctx.GetHeader(SuitabilityControlHeader); header == "" {
+		return SuitableTestUserEmail, SuitableTestUserGoogleID, nil
+	} else if suitable, err := strconv.ParseBool(header); err != nil {
+		return "", "", fmt.Errorf("failed to parse boolean from %s header: %w", SuitabilityControlHeader, err)
+	} else if suitable {
+		return SuitableTestUserEmail, SuitableTestUserGoogleID, nil
 	} else {
-		return NonSuitableTestUserEmail, NonSuitableTestUserGoogleID
+		return NonSuitableTestUserEmail, NonSuitableTestUserGoogleID, nil
 	}
 }
