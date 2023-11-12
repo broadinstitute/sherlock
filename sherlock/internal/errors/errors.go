@@ -19,6 +19,7 @@ const (
 	BadRequest                  = "HTTP Bad Request"                   // 400
 	Forbidden                   = "HTTP Forbidden"                     // 403
 	NotFound                    = "HTTP Not Found"                     // 404
+	MethodNotAllowed            = "HTTP Method Not Allowed"            // 405
 	ProxyAuthenticationRequired = "HTTP Proxy Authentication Required" // 407
 	Conflict                    = "HTTP Conflict"                      // 409
 	InternalServerError         = "HTTP Internal Server Error"         // 500
@@ -69,6 +70,13 @@ func convert(err error) (int, ErrorResponse) {
 		return http.StatusNotFound, ErrorResponse{
 			ToBlame: "client",
 			Type:    NotFound,
+			Message: errorString,
+		}
+	}
+	if strings.Contains(errorString, MethodNotAllowed) {
+		return http.StatusMethodNotAllowed, ErrorResponse{
+			ToBlame: "client",
+			Type:    MethodNotAllowed,
 			Message: errorString,
 		}
 	}
