@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/authentication"
-	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/gha_oidc"
+	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/gha_oidc/gha_oidc_claims"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deployhooks"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
@@ -70,7 +70,7 @@ func ciRunsV3Upsert(ctx *gin.Context) {
 
 	// Opportunistically fill empty fields with information passed in the GHA OIDC JWT
 	if body.Platform == "" || body.Platform == "github-actions" {
-		var claims *gha_oidc.Claims
+		var claims *gha_oidc_claims.Claims
 		if claims, err = authentication.ShouldUseGithubClaims(ctx); err == nil {
 			body.Platform = "github-actions"
 			if body.GithubActionsOwner == "" {

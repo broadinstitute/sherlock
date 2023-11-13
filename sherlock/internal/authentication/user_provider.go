@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/authentication_method"
 	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/gha_oidc"
+	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/gha_oidc/gha_oidc_claims"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/gin-gonic/gin"
@@ -58,22 +59,26 @@ func setGithubClaimsAndEscalateUser(db *gorm.DB) gin.HandlerFunc {
 		} else if claims != nil {
 			ctx.Set(ctxGithubClaimsFieldName, claims)
 
-			var matchingGithubUsers []models.User
-			if err = db.Where(&models.User{GithubID: &claims.ActorID}).Limit(1).Find(&matchingGithubUsers).Error; err != nil {
-				errors.AbortRequest(ctx, fmt.Errorf("failed to query for users matching GitHub Actions claims: %w", err))
-				return
-			} else if len(matchingGithubUsers) > 0 {
-				user := matchingGithubUsers[0]
-				if oldUser, err := ShouldUseUser(ctx); err != nil {
-					log.Warn().Err(err).Msg("AUTH | was unable to read old user to escalate user based on GitHub claims")
+			if claims.ActorID != "" {
+				var matchingGithubUsers []models.User
+				if err = db.Where(&models.User{GithubID: &claims.ActorID}).Limit(1).Find(&matchingGithubUsers).Error; err != nil {
+					errors.AbortRequest(ctx, fmt.Errorf("failed to query for users matching GitHub Actions claims: %w", err))
+					return
+				} else if len(matchingGithubUsers) > 0 {
+					user := matchingGithubUsers[0]
+					if oldUser, err := ShouldUseUser(ctx); err != nil {
+						log.Warn().Err(err).Msg("AUTH | was unable to read old user to escalate user based on GitHub claims")
+					} else {
+						user.AuthenticationMethod = authentication_method.GHA
+						user.Via = oldUser
+						ctx.Set(ctxUserFieldName, &user)
+						log.Debug().Str("workflow", claims.WorkflowURL()).Msgf("AUTH | recognized %s connecting through GitHub Actions via %s", user.Email, oldUser.Email)
+					}
 				} else {
-					user.AuthenticationMethod = authentication_method.GHA
-					user.Via = oldUser
-					ctx.Set(ctxUserFieldName, &user)
-					log.Debug().Str("workflow", claims.WorkflowURL()).Msgf("AUTH | recognized %s connecting through GitHub Actions via %s", user.Email, oldUser.Email)
+					log.Debug().Str("workflow", claims.WorkflowURL()).Msgf("AUTH | ignoring unknown user '%s' referenced by GitHub Actions claims", claims.Actor)
 				}
 			} else {
-				log.Debug().Str("workflow", claims.WorkflowURL()).Msgf("AUTH | ignoring unknown user %s referenced by GitHub Actions claims", claims.Actor)
+				log.Debug().Str("workflow", claims.WorkflowURL()).Msgf("AUTH | ignoring GitHub Actions claims for user escalation since actor ID was empty")
 			}
 		}
 	}
@@ -111,12 +116,12 @@ func MustUseUser(ctx *gin.Context) (*models.User, error) {
 // Note that the Actor/ActorID fields of the gha_oidc.Claims must not be correlated to a models.User. That correlation
 // is the responsibility of the authentication package; use ShouldUseUser or MustUseUser to access the models.User
 // associated with the request.
-func ShouldUseGithubClaims(ctx *gin.Context) (*gha_oidc.Claims, error) {
+func ShouldUseGithubClaims(ctx *gin.Context) (*gha_oidc_claims.Claims, error) {
 	claimsValue, exists := ctx.Get(ctxGithubClaimsFieldName)
 	if !exists {
 		return nil, fmt.Errorf("(%s) GitHub OIDC claims were not present", errors.InternalServerError)
 	}
-	claims, ok := claimsValue.(*gha_oidc.Claims)
+	claims, ok := claimsValue.(*gha_oidc_claims.Claims)
 	if !ok {
 		return nil, fmt.Errorf("(%s) GitHub OIDC claims middleware may be misconfigured: represented as %T", errors.InternalServerError, claimsValue)
 	}
