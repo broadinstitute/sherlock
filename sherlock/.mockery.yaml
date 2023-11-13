@@ -10,6 +10,9 @@ packages:
       IRoutes:
         config:
           dir: ./internal/api/gin_mocks
+  github.com/broadinstitute/sherlock/sherlock/internal/authentication/gha_oidc:
+    interfaces:
+      mockableVerifier:
   github.com/broadinstitute/sherlock/sherlock/internal/github:
     interfaces:
       mockableActionsClient:

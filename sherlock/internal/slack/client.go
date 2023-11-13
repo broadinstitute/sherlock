@@ -29,6 +29,10 @@ var (
 )
 
 func UseMockedClient(t *testing.T, config func(c *slack_mocks.MockMockableClient), callback func()) {
+	if config == nil {
+		callback()
+		return
+	}
 	c := slack_mocks.NewMockMockableClient(t)
 	config(c)
 	temp := client
