@@ -3,6 +3,9 @@ package sherlock
 import (
 	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
+	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/gha_oidc"
+	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/gha_oidc/gha_oidc_claims"
+	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/gha_oidc/gha_oidc_mocks"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deployhooks"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_controllers/v2controllers"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
@@ -810,4 +813,35 @@ func (s *handlerSuite) TestCiRunsV3Upsert_makeSlackMessageText() {
 				{ResourceType: "environment", ResourceID: environment.ID},
 			},
 		}))
+}
+
+func (s *handlerSuite) TestCiRunsV3Upsert_GithubActionsClaimDefaults() {
+	// Note that the request body is empty!
+	// Normally this would result in an error due to missing fields, but suppose a GHA OIDC JWT was passed...
+	request := s.NewRequest(http.MethodPut, "/api/ci-runs/v3", CiRunV3Upsert{})
+	request.Header.Set(gha_oidc.Header, "some GHA OIDC token")
+
+	var got CiRunV3
+	var code int
+	gha_oidc.UseMockedVerifier(s.T(), func(v *gha_oidc_mocks.MockMockableVerifier) {
+		v.EXPECT().VerifyAndParseClaims(mock.AnythingOfType("*gin.Context"), "some GHA OIDC token").
+			Return(gha_oidc_claims.Claims{
+				RepositoryOwner: "broadinstitute",
+				Repository:      "broadinstitute/terra-github-workflows",
+				WorkflowRef:     "broadinstitute/terra-github-workflows/.github/workflows/bee-create.yaml@refs/heads/main",
+				RunID:           "123456",
+				RunAttempt:      "1",
+			}, nil)
+	}, func() {
+		code = s.HandleRequest(request, &got)
+	})
+
+	s.Equal(http.StatusCreated, code)
+	s.NotZero(got.ID)
+	s.Equal(got.Platform, "github-actions")
+	s.Equal(got.GithubActionsOwner, "broadinstitute")
+	s.Equal(got.GithubActionsRepo, "terra-github-workflows")
+	s.Equal(got.GithubActionsRunID, uint(123456))
+	s.Equal(got.GithubActionsAttemptNumber, uint(1))
+	s.Equal(got.GithubActionsWorkflowPath, ".github/workflows/bee-create.yaml")
 }
