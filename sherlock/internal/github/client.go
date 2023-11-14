@@ -234,6 +234,10 @@ func (c *MockClient) assertExpectations(t *testing.T) {
 // UseMockedClient lets both internal and external callers take advantage of this
 // package's mocking capabilities by running tests inside the callback.
 func UseMockedClient(t *testing.T, config func(c *MockClient), callback func()) {
+	if config == nil {
+		callback()
+		return
+	}
 	c := MockClient{
 		Actions:        github_mocks.NewMockMockableActionsClient(t),
 		Activity:       github_mocks.NewMockMockableActivityClient(t),

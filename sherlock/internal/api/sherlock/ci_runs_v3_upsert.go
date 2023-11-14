@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/authentication"
+	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/gha_oidc/gha_oidc_claims"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deployhooks"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
@@ -65,6 +66,29 @@ func ciRunsV3Upsert(ctx *gin.Context) {
 	if err = defaults.Set(&body); err != nil {
 		errors.AbortRequest(ctx, fmt.Errorf("error setting defaults: %w", err))
 		return
+	}
+
+	// Opportunistically fill empty fields with information passed in the GHA OIDC JWT
+	if body.Platform == "" || body.Platform == "github-actions" {
+		var claims *gha_oidc_claims.Claims
+		if claims, err = authentication.ShouldUseGithubClaims(ctx); err == nil {
+			body.Platform = "github-actions"
+			if body.GithubActionsOwner == "" {
+				body.GithubActionsOwner = claims.RepositoryOwner
+			}
+			if body.GithubActionsRepo == "" {
+				body.GithubActionsRepo = claims.TrimmedRepositoryName()
+			}
+			if body.GithubActionsRunID == 0 {
+				body.GithubActionsRunID, _ = utils.ParseUint(claims.RunID)
+			}
+			if body.GithubActionsAttemptNumber == 0 {
+				body.GithubActionsAttemptNumber, _ = utils.ParseUint(claims.RunAttempt)
+			}
+			if body.GithubActionsWorkflowPath == "" {
+				body.GithubActionsWorkflowPath = claims.TrimmedWorkflowPath()
+			}
+		}
 	}
 
 	// We want to handle the "spreading" mechanic that some of the fields have. To do that, we'll literally just re-assemble

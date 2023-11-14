@@ -2,6 +2,7 @@ package boot
 
 import (
 	"context"
+	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/version"
 	"github.com/broadinstitute/sherlock/sherlock/docs"
 	"github.com/broadinstitute/sherlock/sherlock/html"
@@ -11,6 +12,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/boot/middleware"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_handlers/v2handlers"
+	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/metrics"
 	"github.com/broadinstitute/sherlock/sherlock/internal/slack"
 	"github.com/gin-gonic/gin"
@@ -54,6 +56,14 @@ func BuildRouter(ctx context.Context, db *gorm.DB) *gin.Engine {
 		slack.ErrorReportingMiddleware(ctx),
 		middleware.Headers())
 
+	// Replace Gin's standard fallback responses with our standard error format for friendlier client behavior
+	router.NoRoute(func(ctx *gin.Context) {
+		errors.AbortRequest(ctx, fmt.Errorf("(%s) no handler for %s found", errors.NotFound, ctx.Request.URL.Path))
+	})
+	router.NoMethod(func(ctx *gin.Context) {
+		errors.AbortRequest(ctx, fmt.Errorf("(%s) method %s not allowed for %s", errors.MethodNotAllowed, ctx.Request.Method, ctx.Request.URL.Path))
+	})
+
 	// /status, /version
 	misc.ConfigureRoutes(&router.RouterGroup)
 
@@ -68,7 +78,7 @@ func BuildRouter(ctx context.Context, db *gorm.DB) *gin.Engine {
 	router.GET("", func(ctx *gin.Context) { ctx.Redirect(http.StatusMovedPermanently, "/swagger/index.html") })
 
 	// routes under /api require authentication and may use the database
-	apiRouter := router.Group("api", authentication.UserMiddleware(db), authentication.DbMiddleware(db))
+	apiRouter := router.Group("api", authentication.Middleware(db)...)
 
 	// refactored sherlock API, under /api/{type}/v3
 	sherlock.ConfigureRoutes(apiRouter)

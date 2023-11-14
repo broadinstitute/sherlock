@@ -13,19 +13,19 @@ import (
 // headers from tests)
 type TestUserHelper struct{}
 
-// UseSuitableUserFor sets SuitabilityControlHeader such that ParseHeader will supply SuitableTestUserEmail.
+// UseSuitableUserFor sets suitableControlHeader such that ParseHeader will supply SuitableTestUserEmail.
 // This is ParseHeader's default behavior, but this function can be helpful for clarity or undoing
 // UseNonSuitableUserFor.
 func (h TestUserHelper) UseSuitableUserFor(req *http.Request) *http.Request {
 	return h.selectUserForRequestBySuitability(req, true)
 }
 
-// UseNonSuitableUserFor sets SuitabilityControlHeader such that ParseHeader will supply NonSuitableTestUserEmail.
+// UseNonSuitableUserFor sets suitableControlHeader such that ParseHeader will supply NonSuitableTestUserEmail.
 func (h TestUserHelper) UseNonSuitableUserFor(req *http.Request) *http.Request {
 	return h.selectUserForRequestBySuitability(req, false)
 }
 
 func (_ TestUserHelper) selectUserForRequestBySuitability(req *http.Request, suitable bool) *http.Request {
-	req.Header.Set(SuitabilityControlHeader, strconv.FormatBool(suitable))
+	req.Header.Set(suitableControlHeader, strconv.FormatBool(suitable))
 	return req
 }
