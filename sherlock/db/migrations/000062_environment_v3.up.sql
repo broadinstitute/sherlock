@@ -5,7 +5,7 @@ alter table environments
 alter table environments
     add constraint owner_id_present
         check (owner_id is not null or
-               (legacy_owner is not null or legacy_owner != ''));
+               (legacy_owner is not null and legacy_owner != ''));
 
 alter table environments
     add constraint lifecycle_valid

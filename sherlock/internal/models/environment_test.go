@@ -218,3 +218,45 @@ func (s *modelSuite) TestEnvironmentDeleteForbidden() {
 		Delete(&environment).
 		Error, errors.Forbidden)
 }
+
+func (s *modelSuite) TestEnvironmentValidationSqlName() {
+	//TODO add more
+	s.SetNonSuitableTestUserForDB()
+	environment := Environment{
+		Base:                       "live",
+		Lifecycle:                  "template",
+		Name:                       "prod_env",
+		ValuesName:                 "prod",
+		AutoPopulateChartReleases:  utils.PointerTo(false),
+		DefaultNamespace:           "terra-prod",
+		DefaultFirecloudDevelopRef: utils.PointerTo("prod"),
+		RequiresSuitability:        utils.PointerTo(false),
+		BaseDomain:                 utils.PointerTo("dsde-prod.broadinstitute.org"),
+		NamePrefixesDomain:         utils.PointerTo(false),
+		HelmfileRef:                utils.PointerTo("HEAD"),
+		PreventDeletion:            utils.PointerTo(true),
+		Description:                utils.PointerTo("Terra's production environment"),
+		Offline:                    utils.PointerTo(false),
+	}
+	s.ErrorContains(s.DB.Create(&environment).Error, "violates check constraint \"name_valid\"")
+}
+
+func (s *modelSuite) TestEnvironmentValidationSqlOwnerID() {
+	s.SetSuitableTestUserForDB()
+	environment := s.TestData.Environment_Prod()
+	err := s.DB.Model(&environment).Updates(&Environment{OwnerID: nil}).Error
+	println(err)
+}
+
+func (s *modelSuite) TestEnvironmentValidationSqlLifecycle() {
+	s.SetSuitableTestUserForDB()
+	environment := s.TestData.Environment_Staging()
+	err := s.DB.Model(&environment).Updates(&Environment{RequiresSuitability: nil}).Error
+	//	s.ErrorContains(err, "violates check constraint \"lifecycle_valid\"")
+	err = s.DB.Model(&environment).Updates(&Environment{TemplateEnvironmentID: nil, Lifecycle: "dynamic"}).Error
+	s.ErrorContains(err, "violates check constraint \"lifecycle_valid\"")
+	templateID := uint(2)
+	err = s.DB.Model(&environment).Updates(&Environment{TemplateEnvironmentID: &templateID, Lifecycle: "template"}).Error
+	//s.ErrorContains(err, "violates check constraint \"lifecycle_valid\"")
+
+}
