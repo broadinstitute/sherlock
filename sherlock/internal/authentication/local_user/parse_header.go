@@ -1,40 +1,41 @@
 package local_user
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
-	"strings"
+	"strconv"
 )
 
 // TODO (Jack): Make this package actually grab and cache the ADC credentials, so we use the user's real email/ID
 
 const (
-	EmailControlHeader       = "X-SHERLOCK-DEBUG-EMAIL"
-	FallbackEmail            = "fallback-fake-sherlock-user@broadinstitute.org"
-	GoogleIDControlHeader    = "X-SHERLOCK-DEBUG-GOOGLE-ID"
-	FallbackGoogleID         = "1234fallback1234"
-	SuitabilityControlHeader = "X-SHERLOCK-DEBUG-SUITABLE"
+	emailControlHeader       = "X-SHERLOCK-DEBUG-EMAIL"
+	fallbackEmail            = "fallback-fake-sherlock-user@broadinstitute.org"
+	googleIDControlHeader    = "X-SHERLOCK-DEBUG-GOOGLE-ID"
+	fallbackGoogleID         = "1234fallback1234"
+	suitabilityControlHeader = "X-SHERLOCK-DEBUG-SUITABLE"
 )
 
 var (
-	LocalUserEmail    = FallbackEmail
-	LocalUserGoogleID = FallbackGoogleID
+	LocalUserEmail    = fallbackEmail
+	LocalUserGoogleID = fallbackGoogleID
 	LocalUserSuitable = true
 )
 
-func ParseHeader(ctx *gin.Context) (email string, googleID string) {
-	emailHeader := ctx.GetHeader(EmailControlHeader)
-	if emailHeader != "" {
+func ParseHeader(ctx *gin.Context) (email string, googleID string, err error) {
+	if emailHeader := ctx.GetHeader(emailControlHeader); emailHeader != "" {
 		LocalUserEmail = emailHeader
 	}
-	googleIDHeader := ctx.GetHeader(GoogleIDControlHeader)
-	if googleIDHeader != "" {
+
+	if googleIDHeader := ctx.GetHeader(googleIDControlHeader); googleIDHeader != "" {
 		LocalUserGoogleID = googleIDHeader
 	}
-	suitabilityHeader := ctx.GetHeader(SuitabilityControlHeader)
-	if strings.ToLower(suitabilityHeader) == "false" {
-		LocalUserSuitable = false
-	} else {
+
+	if suitabilityHeader := ctx.GetHeader(suitabilityControlHeader); suitabilityHeader == "" {
 		LocalUserSuitable = true
+	} else if LocalUserSuitable, err = strconv.ParseBool(suitabilityHeader); err != nil {
+		return "", "", fmt.Errorf("failed to parse boolean from %s header: %w", suitabilityControlHeader, err)
 	}
-	return LocalUserEmail, LocalUserGoogleID
+
+	return LocalUserEmail, LocalUserGoogleID, nil
 }

@@ -2,39 +2,29 @@ package gha_oidc
 
 import (
 	"fmt"
+	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/gha_oidc/gha_oidc_claims"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
-	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
+	"github.com/broadinstitute/sherlock/sherlock/internal/slack"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
 )
 
 const (
-	ghaOidcHeader = "X-GHA-OIDC-JWT"
+	Header = "X-GHA-OIDC-JWT"
 )
 
-type extraClaims struct {
-	Actor           string `json:"actor"`
-	ActorID         string `json:"actor_id"`
-	Repository      string `json:"repository"`
-	RepositoryOwner string `json:"repository_owner"`
-	JobWorkflowRef  string `json:"job_workflow_ref"`
-}
-
-func ParseHeader(ctx *gin.Context) (present bool, githubUsername string, githubID string, err error) {
-	ghaOidcJwt := ctx.GetHeader(ghaOidcHeader)
+func ParseHeader(ctx *gin.Context) (*gha_oidc_claims.Claims, error) {
+	ghaOidcJwt := ctx.GetHeader(Header)
 	if ghaOidcJwt == "" {
-		return false, "", "", nil
+		return nil, nil
 	}
-	payload, err := verifier.Verify(ctx, ghaOidcJwt)
+	if verifier == nil {
+		log.Info().Msgf("AUTH | GHA OIDC JWT observed in '%s' header but no verifier had been initialized", Header)
+		return nil, nil
+	}
+	claims, err := verifier.VerifyAndParseClaims(ctx, ghaOidcJwt)
 	if err != nil {
-		return true, "", "", fmt.Errorf("(%s) failed to validate GHA OIDC JWT in '%s' header: %w", errors.BadRequest, ghaOidcHeader, err)
-	} else if payload == nil {
-		return true, "", "", fmt.Errorf("(%s) GHA OIDC JWT seemed to pass validation but payload was nil", errors.BadRequest)
-	}
-
-	var claims extraClaims
-	if err = payload.Claims(&claims); err != nil {
-		return true, "", "", fmt.Errorf("(%s) GHA OIDC JWT seemed to pass validation but couldn't be unmarshalled to %T: %w", errors.BadRequest, claims, err)
+		return nil, err
 	}
 
 	var repositoryOwnerAccepted bool
@@ -44,11 +34,9 @@ func ParseHeader(ctx *gin.Context) (present bool, githubUsername string, githubI
 			break
 		}
 	}
-	if repositoryOwnerAccepted {
-		log.Info().Msgf("GHA  | parsed GHA OIDC JWT from %s (ID %s) in %s via %s", claims.Actor, claims.ActorID, claims.Repository, claims.JobWorkflowRef)
-		return true, claims.Actor, claims.ActorID, nil
-	} else {
-		log.Warn().Msgf("GHA  | rejected un-allowed organization GHA OIDC JWT from %s (ID %s) in %s via %s", claims.Actor, claims.ActorID, claims.Repository, claims.JobWorkflowRef)
-		return true, "", "", fmt.Errorf("(%s) GHA OIDC JWT was from an organization '%s' not allowed in Sherlock's config", errors.Forbidden, claims.RepositoryOwner)
+	if !repositoryOwnerAccepted {
+		slack.ReportError(ctx, fmt.Errorf("observed a GHA OIDC JWT from %s and ignored it because %s was not an allowed organization in Sherlock's config", claims.Repository, claims.RepositoryOwner))
+		return nil, nil
 	}
+	return &claims, nil
 }
