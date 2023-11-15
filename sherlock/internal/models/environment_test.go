@@ -263,6 +263,27 @@ func (s *modelSuite) TestEnvironmentValidationSqlDynamicLifecycle() {
 	s.ErrorContains(err, "violates check constraint \"lifecycle_valid\"")
 }
 
+func (s *modelSuite) TestEnvironmentValidationSqlDynamicLifecycleBase() {
+	s.SetSuitableTestUserForDB()
+	staticEnv := s.TestData.Environment_Swatomation_LongBee()
+	err := s.DB.Model(&staticEnv).Select("Base").Updates(&Environment{Base: ""}).Error
+	s.ErrorContains(err, "violates check constraint \"lifecycle_valid\"")
+}
+
+func (s *modelSuite) TestEnvironmentValidationSqlDynamicLifecycleDefaultClusterID() {
+	s.SetSuitableTestUserForDB()
+	staticEnv := s.TestData.Environment_Swatomation_DevBee()
+	err := s.DB.Model(&staticEnv).Select("DefaultClusterID").Updates(&Environment{DefaultClusterID: nil}).Error
+	s.ErrorContains(err, "violates check constraint \"lifecycle_valid\"")
+}
+
+func (s *modelSuite) TestEnvironmentValidationSqlDynamicLifecycleRequiresSuitability() {
+	s.SetSuitableTestUserForDB()
+	staticEnv := s.TestData.Environment_Swatomation_TestBee()
+	err := s.DB.Model(&staticEnv).Select("RequiresSuitability").Updates(&Environment{RequiresSuitability: nil}).Error
+	s.ErrorContains(err, "violates check constraint \"lifecycle_valid\"")
+}
+
 func (s *modelSuite) TestEnvironmentValidationSqlStaticLifecycleBase() {
 	s.SetSuitableTestUserForDB()
 	staticEnv := s.TestData.Environment_Prod()

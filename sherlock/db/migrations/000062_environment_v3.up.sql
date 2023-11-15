@@ -1,6 +1,6 @@
 alter table environments
     add constraint name_valid
-        check (name != ''  and name similar to '[a-z0-9]([-a-z0-9]*[a-z0-9])?');
+        check (name is not null and name != ''  and name similar to '[a-z0-9]([-a-z0-9]*[a-z0-9])?');
 
 alter table environments
     add constraint owner_id_present
@@ -10,15 +10,19 @@ alter table environments
 alter table environments
     add constraint lifecycle_valid
         check ((lifecycle = 'template' and template_environment_id is null) or
-               (lifecycle = 'dynamic' and template_environment_id is not null) or
+               (lifecycle = 'dynamic' and
+                template_environment_id is not null and
+                base is not null and base != '' and
+                default_cluster_id is not null and
+                requires_suitability is not null) or
                (lifecycle = 'static' and
-                base != '' and
+                base is not null and base != '' and
                 default_cluster_id is not null and
                 requires_suitability is not null));
 
 alter table environments
     add constraint default_namespace_present
-        check (default_namespace != '');
+        check (default_namespace is not null and default_namespace != '');
 
 alter table environments
     add constraint helmfile_ref_present
@@ -26,7 +30,7 @@ alter table environments
 
 alter table environments
     add constraint unique_resource_prefix_present
-        check (unique_resource_prefix != '');
+        check (unique_resource_prefix is not null and unique_resource_prefix != '');
 
 alter table environments
     add constraint delete_after_valid
