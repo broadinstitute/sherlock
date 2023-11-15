@@ -1,8 +1,10 @@
 package models
 
 import (
+	"database/sql"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
+	"time"
 )
 
 func (s *modelSuite) TestEnvironmentUniqueResourcePrefixAssigning() {
@@ -219,44 +221,128 @@ func (s *modelSuite) TestEnvironmentDeleteForbidden() {
 		Error, errors.Forbidden)
 }
 
-func (s *modelSuite) TestEnvironmentValidationSqlName() {
-	//TODO add more
+func (s *modelSuite) TestEnvironmentValidationSqlNameInvalid() {
 	s.SetNonSuitableTestUserForDB()
-	environment := Environment{
-		Base:                       "live",
-		Lifecycle:                  "template",
-		Name:                       "prod_env",
-		ValuesName:                 "prod",
-		AutoPopulateChartReleases:  utils.PointerTo(false),
-		DefaultNamespace:           "terra-prod",
-		DefaultFirecloudDevelopRef: utils.PointerTo("prod"),
-		RequiresSuitability:        utils.PointerTo(false),
-		BaseDomain:                 utils.PointerTo("dsde-prod.broadinstitute.org"),
-		NamePrefixesDomain:         utils.PointerTo(false),
-		HelmfileRef:                utils.PointerTo("HEAD"),
-		PreventDeletion:            utils.PointerTo(true),
-		Description:                utils.PointerTo("Terra's production environment"),
-		Offline:                    utils.PointerTo(false),
-	}
-	s.ErrorContains(s.DB.Create(&environment).Error, "violates check constraint \"name_valid\"")
+	environment := s.TestData.Environment_Swatomation_TestBee()
+	err := s.DB.Model(&environment).Select("Name").Updates(&Environment{Name: "prod_env"}).Error
+	s.ErrorContains(err, "violates check constraint \"name_valid\"")
 }
 
-func (s *modelSuite) TestEnvironmentValidationSqlOwnerID() {
+func (s *modelSuite) TestEnvironmentValidationSqlNameEmpty() {
+	s.SetNonSuitableTestUserForDB()
+	environment := s.TestData.Environment_Swatomation_TestBee()
+	err := s.DB.Model(&environment).Select("Name").Updates(&Environment{Name: ""}).Error
+	s.ErrorContains(err, "violates check constraint \"name_valid\"")
+}
+
+func (s *modelSuite) TestEnvironmentValidationSqlOwnerIDEmpty() {
 	s.SetSuitableTestUserForDB()
 	environment := s.TestData.Environment_Prod()
-	err := s.DB.Model(&environment).Updates(&Environment{OwnerID: nil}).Error
-	println(err)
+	err := s.DB.Model(&environment).Select("OwnerID", "LegacyOwner").Updates(&Environment{OwnerID: nil, LegacyOwner: utils.PointerTo("")}).Error
+	s.ErrorContains(err, "violates check constraint \"owner_id_present\"")
 }
 
-func (s *modelSuite) TestEnvironmentValidationSqlLifecycle() {
+func (s *modelSuite) TestEnvironmentValidationSqlOwnerIDNull() {
+	s.SetSuitableTestUserForDB()
+	environment := s.TestData.Environment_Prod()
+	err := s.DB.Model(&environment).Select("OwnerID", "LegacyOwner").Updates(&Environment{OwnerID: nil, LegacyOwner: nil}).Error
+	s.ErrorContains(err, "violates check constraint \"owner_id_present\"")
+}
+
+func (s *modelSuite) TestEnvironmentValidationSqlTemplateLifecycle() {
+	s.SetSuitableTestUserForDB()
+	templateEnv := s.TestData.Environment_Swatomation()
+	err := s.DB.Model(&templateEnv).Updates(&Environment{TemplateEnvironmentID: utils.PointerTo(uint(1))}).Error
+	s.ErrorContains(err, "violates check constraint \"lifecycle_valid\"")
+}
+
+func (s *modelSuite) TestEnvironmentValidationSqlDynamicLifecycle() {
+	s.SetSuitableTestUserForDB()
+	dynamicEnv := s.TestData.Environment_Swatomation_TestBee()
+	err := s.DB.Model(&dynamicEnv).Select("TemplateEnvironmentID").Updates(&Environment{TemplateEnvironmentID: nil}).Error
+	s.ErrorContains(err, "violates check constraint \"lifecycle_valid\"")
+}
+
+func (s *modelSuite) TestEnvironmentValidationSqlStaticLifecycleBase() {
+	s.SetSuitableTestUserForDB()
+	staticEnv := s.TestData.Environment_Prod()
+	err := s.DB.Model(&staticEnv).Select("Base").Updates(&Environment{Base: ""}).Error
+	s.ErrorContains(err, "violates check constraint \"lifecycle_valid\"")
+}
+
+func (s *modelSuite) TestEnvironmentValidationSqlStaticLifecycleDefaultClusterID() {
+	s.SetSuitableTestUserForDB()
+	staticEnv := s.TestData.Environment_Prod()
+	err := s.DB.Model(&staticEnv).Select("DefaultClusterID").Updates(&Environment{DefaultClusterID: nil}).Error
+	s.ErrorContains(err, "violates check constraint \"lifecycle_valid\"")
+}
+
+func (s *modelSuite) TestEnvironmentValidationSqlStaticLifecycleRequiresSuitability() {
+	s.SetSuitableTestUserForDB()
+	staticEnv := s.TestData.Environment_Prod()
+	err := s.DB.Model(&staticEnv).Select("RequiresSuitability").Updates(&Environment{RequiresSuitability: nil}).Error
+	s.ErrorContains(err, "violates check constraint \"lifecycle_valid\"")
+}
+
+func (s *modelSuite) TestEnvironmentValidationSqlDefaultNamespace() {
+	s.SetSuitableTestUserForDB()
+	environment := s.TestData.Environment_DdpAzureDev()
+	err := s.DB.Model(&environment).Select("DefaultNamespace").Updates(&Environment{DefaultNamespace: ""}).Error
+	s.ErrorContains(err, "violates check constraint \"default_namespace_present\"")
+}
+
+func (s *modelSuite) TestEnvironmentValidationSqlUniqueResourcePrefix() {
+	s.SetSuitableTestUserForDB()
+	environment := s.TestData.Environment_DdpAzureProd()
+	err := s.DB.Model(&environment).Select("UniqueResourcePrefix").Updates(&Environment{UniqueResourcePrefix: ""}).Error
+	s.ErrorContains(err, "violates check constraint \"unique_resource_prefix_present\"")
+}
+
+func (s *modelSuite) TestEnvironmentValidationSqlDeleteAfterNotDynamic() {
 	s.SetSuitableTestUserForDB()
 	environment := s.TestData.Environment_Staging()
-	err := s.DB.Model(&environment).Updates(&Environment{RequiresSuitability: nil}).Error
-	//	s.ErrorContains(err, "violates check constraint \"lifecycle_valid\"")
-	err = s.DB.Model(&environment).Updates(&Environment{TemplateEnvironmentID: nil, Lifecycle: "dynamic"}).Error
-	s.ErrorContains(err, "violates check constraint \"lifecycle_valid\"")
-	templateID := uint(2)
-	err = s.DB.Model(&environment).Updates(&Environment{TemplateEnvironmentID: &templateID, Lifecycle: "template"}).Error
-	//s.ErrorContains(err, "violates check constraint \"lifecycle_valid\"")
+	err := s.DB.Model(&environment).Select("DeleteAfter").Updates(&Environment{DeleteAfter: sql.NullTime{Time: time.Now().Add(6 * time.Hour), Valid: true}}).Error
+	s.ErrorContains(err, "violates check constraint \"delete_after_valid\"")
+}
 
+func (s *modelSuite) TestEnvironmentValidationSqlDeleteAfterPreventDeletion() {
+	s.SetSuitableTestUserForDB()
+	environment := s.TestData.Environment_Swatomation_TestBee()
+	err := s.DB.Model(&environment).Select("PreventDeletion").Updates(&Environment{PreventDeletion: utils.PointerTo(true)}).Error
+	s.ErrorContains(err, "violates check constraint \"delete_after_valid\"")
+}
+
+func (s *modelSuite) TestEnvironmentValidationSqlOfflineNotDynamic() {
+	s.SetSuitableTestUserForDB()
+	environment := s.TestData.Environment_Prod()
+	err := s.DB.Model(&environment).Select("Offline").Updates(&Environment{Offline: utils.PointerTo(true)}).Error
+	s.ErrorContains(err, "violates check constraint \"offline_valid\"")
+}
+
+func (s *modelSuite) TestEnvironmentValidationSqlOfflineBegin() {
+	s.SetSuitableTestUserForDB()
+	environment := s.TestData.Environment_Dev()
+	err := s.DB.Model(&environment).Select("OfflineScheduleBeginEnabled", "OfflineScheduleBeginTime").Updates(&Environment{OfflineScheduleBeginEnabled: utils.PointerTo(true), OfflineScheduleBeginTime: utils.PointerTo("begin time")}).Error
+	s.ErrorContains(err, "violates check constraint \"offline_valid\"")
+}
+
+func (s *modelSuite) TestEnvironmentValidationSqlOfflineEnd() {
+	s.SetSuitableTestUserForDB()
+	environment := s.TestData.Environment_Staging()
+	err := s.DB.Model(&environment).Select("OfflineScheduleEndEnabled", "OfflineScheduleEndTime").Updates(&Environment{OfflineScheduleEndEnabled: utils.PointerTo(true), OfflineScheduleEndTime: utils.PointerTo("end time")}).Error
+	s.ErrorContains(err, "violates check constraint \"offline_valid\"")
+}
+
+func (s *modelSuite) TestEnvironmentValidationSqlOfflineBeginPresent() {
+	s.SetSuitableTestUserForDB()
+	environment := s.TestData.Environment_Swatomation_DevBee()
+	err := s.DB.Model(&environment).Select("OfflineScheduleBeginTime").Updates(&Environment{OfflineScheduleBeginTime: nil}).Error
+	s.ErrorContains(err, "violates check constraint \"offline_schedule_begin_time_present\"")
+}
+
+func (s *modelSuite) TestEnvironmentValidationSqlOfflineEndPresent() {
+	s.SetSuitableTestUserForDB()
+	environment := s.TestData.Environment_Swatomation_DevBee()
+	err := s.DB.Model(&environment).Select("OfflineScheduleEndTime").Updates(&Environment{OfflineScheduleEndTime: nil}).Error
+	s.ErrorContains(err, "violates check constraint \"offline_schedule_end_time_present\"")
 }

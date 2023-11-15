@@ -37,9 +37,9 @@ alter table environments
 alter table environments
     add constraint offline_valid
         check (lifecycle = 'dynamic' or
-               (offline is null or offline is false) and
+               ((offline is null or offline is false) and
                (offline_schedule_begin_enabled is null or offline_schedule_begin_enabled is false) and
-               (offline_schedule_end_enabled is null or offline_schedule_end_enabled is false));
+               (offline_schedule_end_enabled is null or offline_schedule_end_enabled is false)));
 
 alter table environments
     add constraint offline_schedule_begin_time_present
