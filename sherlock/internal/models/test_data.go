@@ -630,7 +630,7 @@ func (td *testDataImpl) Environment_Swatomation_TestBee() Environment {
 			NamePrefixesDomain:        utils.PointerTo(true),
 			HelmfileRef:               utils.PointerTo("HEAD"),
 			PreventDeletion:           utils.PointerTo(false),
-			DeleteAfter:               sql.NullTime{Time: time.Now().Add(6 * time.Hour)},
+			DeleteAfter:               sql.NullTime{Time: time.Now().Add(6 * time.Hour), Valid: true},
 			Offline:                   utils.PointerTo(false),
 		}
 		td.h.SetSuitableTestUserForDB()

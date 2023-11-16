@@ -217,9 +217,6 @@ func validateEnvironment(environment *Environment) error {
 		return fmt.Errorf("a %T must have a non-empty unique resource prefix", environment)
 	}
 
-	if environment.PreventDeletion != nil && *environment.PreventDeletion && environment.Lifecycle != "dynamic" {
-		return fmt.Errorf("preventDeletion is only valid for dynamic environments")
-	}
 	if environment.AutoDelete != nil {
 		if err := environment.AutoDelete.Validate(); err != nil {
 			return err
