@@ -26,6 +26,8 @@ func ReportError(ctx context.Context, errs ...error) {
 		for _, channel := range config.Config.Strings("slack.behaviors.errors.channels") {
 			SendMessage(ctx, channel, messageText, attachments...)
 		}
+	} else if config.Config.String("mode") == "debug" {
+		log.Warn().Errs("errors", errs).Msg("Slack disabled in debug mode; would've reported errors if enabled")
 	}
 }
 

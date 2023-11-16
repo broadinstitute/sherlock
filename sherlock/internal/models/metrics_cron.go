@@ -146,7 +146,7 @@ func calculateVersionLeadTimes(db *gorm.DB) (map[uint]int64, map[uint]int64, err
 	// they belong to. We group by chart releases and average the lead times, so each chart release just has one
 	// final lead time--the average lead time to deploy to it over the last 30 days.
 	if err := db.Raw(`
-select result_per_version.chart_release_id, round(avg(result_per_version.lead_time_seconds))::bigint as lead_time_seconds
+select result_per_version.chart_release_id, greatest(round(avg(result_per_version.lead_time_seconds))::bigint, 0) as lead_time_seconds
 from (select changesets.chart_release_id,
              extract(epoch from (min(changesets.applied_at) - min(app_versions.created_at))) as lead_time_seconds
       from changesets
@@ -168,7 +168,7 @@ group by result_per_version.chart_release_id
 	// of Sherlock's schema.
 	chartVersionLeadTimes := make(map[uint]int64)
 	if err := db.Raw(`
-select result_per_version.chart_release_id, round(avg(result_per_version.lead_time_seconds))::bigint as lead_time_seconds
+select result_per_version.chart_release_id, greatest(round(avg(result_per_version.lead_time_seconds))::bigint, 0) as lead_time_seconds
 from (select changesets.chart_release_id,
              extract(epoch from (min(changesets.applied_at) - min(chart_versions.created_at))) as lead_time_seconds
       from changesets

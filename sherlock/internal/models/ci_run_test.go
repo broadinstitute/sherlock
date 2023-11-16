@@ -149,6 +149,25 @@ func (s *modelSuite) TestCiRunUniquenessSqlValid() {
 	s.NotEqual(run1.ID, run2.ID)
 }
 
+func (s *modelSuite) TestCiRun_FillRelatedResourceStatuses() {
+	ciRun := s.TestData.CiRun_Deploy_LeonardoDev_V1toV3()
+	resourcesWithStatusSet := 0
+	for _, rr := range ciRun.RelatedResources {
+		if rr.ResourceStatus != nil {
+			resourcesWithStatusSet++
+		}
+	}
+	s.Zero(resourcesWithStatusSet)
+	s.NoError(ciRun.FillRelatedResourceStatuses(s.DB))
+	resourcesWithStatusSet = 0
+	for _, rr := range ciRun.RelatedResources {
+		if rr.ResourceStatus != nil {
+			resourcesWithStatusSet++
+		}
+	}
+	s.NotZero(resourcesWithStatusSet)
+}
+
 func TestCiRun_WebURL(t *testing.T) {
 	type fields struct {
 		Model                      gorm.Model

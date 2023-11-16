@@ -10,6 +10,9 @@ type CiRunV3 struct {
 	ciRunFields
 	TerminationHooksDispatchedAt *string          `json:"terminationHooksDispatchedAt,omitempty" form:"terminationHooksDispatchedAt" format:"date-time"`
 	RelatedResources             []CiIdentifierV3 `json:"relatedResources" form:"-"`
+
+	// Available only when querying a CiRun via a CiIdentifier, indicates the status of the run for that resource
+	ResourceStatus *string `json:"resourceStatus,omitempty" form:"resourceStatus"`
 }
 
 type ciRunFields struct {
@@ -78,5 +81,6 @@ func ciRunFromModel(model models.CiRun) CiRunV3 {
 		},
 		TerminationHooksDispatchedAt: model.TerminationHooksDispatchedAt,
 		RelatedResources:             relatedResources,
+		ResourceStatus:               model.ResourceStatus,
 	}
 }

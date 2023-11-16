@@ -30,33 +30,9 @@ func (h *TestSuiteHelper) SetupSuite() {
 		panic(err)
 	}
 
-	// If you're working on a new model and want to have
-	// Gorm basically fudge the database schema from your
-	// struct, here's a good place to do that. This is
-	// useful in two ways:
-	// 1. You can write tests and play with your model
-	//    before going and writing actual SQL to do the
-	//    migration.
-	// 2. This isn't cleaned up, so you can inspect the
-	//    database structure after tests to get a head
-	//    start on writing the migration SQL. Tools
-	//    like DataGrip and GoLand can diff two database
-	//    structures and generate migration SQL, for
-	//    example.
-	// Right now, you will still have to write migration
-	// SQL for Sherlock to use your new model when run
-	// outside tests. You'll run into circular
-	// dependency issues if you try to import something
-	// from this package into the db package. You might
-	// be able to run this auto-migrate process from
-	// the boot package, but at that point you should
-	// consider just going ahead and writing proper SQL
-	// to represent your model.
-	//
-	//err = h.internalDB.AutoMigrate(&SomeNewModel{})
-	//if err != nil {
-	//	panic(err)
-	//}
+	if err = Init(h.internalDB); err != nil {
+		panic(err)
+	}
 }
 
 // SetupTest begins a transaction and sets the main database

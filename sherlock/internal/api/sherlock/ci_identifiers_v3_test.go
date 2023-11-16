@@ -1,6 +1,7 @@
 package sherlock
 
 import (
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/stretchr/testify/assert"
@@ -112,9 +113,10 @@ func Test_ciIdentifierFromModel(t *testing.T) {
 						Time:  time.Now(),
 					},
 				},
-				ResourceType: "type",
-				ResourceID:   2,
-				CiRuns:       nil,
+				ResourceType:   "type",
+				ResourceID:     2,
+				CiRuns:         nil,
+				ResourceStatus: utils.PointerTo("some status"),
 			}},
 			want: CiIdentifierV3{
 				CommonFields: CommonFields{
@@ -122,9 +124,10 @@ func Test_ciIdentifierFromModel(t *testing.T) {
 					CreatedAt: t1,
 					UpdatedAt: t2,
 				},
-				CiRuns:       nil,
-				ResourceType: "type",
-				ResourceID:   2,
+				CiRuns:         nil,
+				ResourceType:   "type",
+				ResourceID:     2,
+				ResourceStatus: utils.PointerTo("some status"),
 			},
 		},
 		{
