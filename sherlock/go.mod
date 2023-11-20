@@ -25,7 +25,7 @@ require (
 	go.opencensus.io v0.24.0
 	golang.org/x/net v0.18.0
 	golang.org/x/oauth2 v0.14.0
-	google.golang.org/api v0.150.0
+	google.golang.org/api v0.151.0
 	gorm.io/datatypes v1.2.0
 	gorm.io/driver/postgres v1.5.4
 	gorm.io/gorm v1.25.5
