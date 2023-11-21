@@ -36,10 +36,6 @@ type Changeset struct {
 	AppliedByID *uint
 }
 
-func (c Changeset) TableName() string {
-	return "changesets"
-}
-
 func (c Changeset) getID() uint {
 	return c.ID
 }

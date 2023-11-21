@@ -57,10 +57,6 @@ type Environment struct {
 	PactIdentifier              *uuid.UUID
 }
 
-func (e Environment) TableName() string {
-	return "environments"
-}
-
 func (e Environment) getID() uint {
 	return e.ID
 }

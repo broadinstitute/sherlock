@@ -19,10 +19,6 @@ type PagerdutyIntegration struct {
 	Type        *string
 }
 
-func (p PagerdutyIntegration) TableName() string {
-	return "pagerduty_integrations"
-}
-
 func (p PagerdutyIntegration) getID() uint {
 	return p.ID
 }

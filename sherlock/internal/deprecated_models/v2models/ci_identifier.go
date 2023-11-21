@@ -33,10 +33,6 @@ type CiIdentifier struct {
 	CiRuns []*CiRun `gorm:"many2many:ci_runs_for_identifiers; constraint:OnDelete:CASCADE,OnUpdate:CASCADE;"`
 }
 
-func (c CiIdentifier) TableName() string {
-	return "ci_identifiers"
-}
-
 func (c CiIdentifier) getID() uint {
 	return c.ID
 }

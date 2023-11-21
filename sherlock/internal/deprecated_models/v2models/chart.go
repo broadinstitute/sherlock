@@ -27,10 +27,6 @@ type Chart struct {
 	PactParticipant       *bool
 }
 
-func (c Chart) TableName() string {
-	return "charts"
-}
-
 func (c Chart) getID() uint {
 	return c.ID
 }
