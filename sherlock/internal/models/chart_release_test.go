@@ -88,3 +88,69 @@ func (s *modelSuite) TestChartReleaseSuitableViaCluster() {
 		s.ErrorContains(chartRelease.errorIfForbidden(s.DB), errors.Forbidden)
 	})
 }
+
+func (s *modelSuite) TestChartReleaseValidationSqlNameEmpty() {
+	s.SetSuitableTestUserForDB()
+	chartRelease := s.TestData.ChartRelease_LeonardoDev()
+	err := s.DB.Model(&chartRelease).Select("Name").Updates(&ChartRelease{Name: ""}).Error
+	s.ErrorContains(err, "violates check constraint \"name_present\"")
+}
+
+func (s *modelSuite) TestChartReleaseValidationSqlChartIDZero() {
+	s.SetSuitableTestUserForDB()
+	chartRelease := s.TestData.ChartRelease_LeonardoProd()
+	err := s.DB.Model(&chartRelease).Select("ChartID").Updates(&ChartRelease{ChartID: 0}).Error
+	s.ErrorContains(err, "violates check constraint \"chart_id_present\"")
+}
+
+func (s *modelSuite) TestChartReleaseValidationSqlDestinationTypeEnvironmentIDNull() {
+	s.SetSuitableTestUserForDB()
+	chartRelease := s.TestData.ChartRelease_LeonardoStaging()
+	err := s.DB.Model(&chartRelease).Select("EnvironmentID").Updates(&ChartRelease{EnvironmentID: nil}).Error
+	s.ErrorContains(err, "violates check constraint \"destination_type_valid\"")
+}
+
+func (s *modelSuite) TestChartReleaseValidationSqlDestinationTypeEnvironmentIDZero() {
+	s.SetSuitableTestUserForDB()
+	chartRelease := s.TestData.ChartRelease_D2pDdpAzureProd()
+	err := s.DB.Model(&chartRelease).Select("EnvironmentID").Updates(&ChartRelease{EnvironmentID: utils.PointerTo(uint(0))}).Error
+	s.ErrorContains(err, "violates check constraint \"destination_type_valid\"")
+}
+
+func (s *modelSuite) TestChartReleaseValidationSqlDestinationTypeEnvironmentIDCluster() {
+	s.SetSuitableTestUserForDB()
+	chartRelease := s.TestData.ChartRelease_LeonardoStaging()
+	err := s.DB.Model(&chartRelease).Select("DestinationType").Updates(&ChartRelease{DestinationType: "cluster"}).Error
+	s.ErrorContains(err, "violates check constraint \"destination_type_valid\"")
+}
+
+func (s *modelSuite) TestChartReleaseValidationSqlDestinationTypeClusterIDNull() {
+	s.SetSuitableTestUserForDB()
+	chartRelease := s.TestData.ChartRelease_ExternalDnsDdpAksDev()
+	err := s.DB.Model(&chartRelease).Select("ClusterID").Updates(&ChartRelease{ClusterID: nil}).Error
+	//fails on cluster_id_namespace_valid before destination_type_valid
+	s.ErrorContains(err, "violates check constraint \"cluster_id_namespace_valid\"")
+}
+
+func (s *modelSuite) TestChartReleaseValidationSqlDestinationTypeClusterIDZero() {
+	s.SetSuitableTestUserForDB()
+	chartRelease := s.TestData.ChartRelease_ExternalDnsTerraQaBees()
+	err := s.DB.Model(&chartRelease).Select("ClusterID").Updates(&ChartRelease{ClusterID: utils.PointerTo(uint(0))}).Error
+	s.ErrorContains(err, "violates check constraint \"destination_type_valid\"")
+}
+
+func (s *modelSuite) TestChartReleaseValidationSqlDestinationTypeClusterEnvironmentID() {
+	s.SetSuitableTestUserForDB()
+	s.DB.Table("users")
+	chartRelease := s.TestData.ChartRelease_ExternalDnsTerraQaBees()
+	err := s.DB.Model(&chartRelease).Select("EnvironmentID").Updates(&ChartRelease{EnvironmentID: utils.PointerTo(uint(2))}).Error
+	s.ErrorContains(err, "violates check constraint \"destination_type_valid\"")
+}
+
+func (s *modelSuite) TestChartReleaseValidationSqlDestinationTypeInvalidDestination() {
+	s.SetSuitableTestUserForDB()
+	s.DB.Table("users")
+	chartRelease := s.TestData.ChartRelease_ExternalDnsTerraQaBees()
+	err := s.DB.Model(&chartRelease).Select("DestinationType").Updates(&ChartRelease{DestinationType: "thebroadinstitute"}).Error
+	s.ErrorContains(err, "violates check constraint \"destination_type_valid\"")
+}

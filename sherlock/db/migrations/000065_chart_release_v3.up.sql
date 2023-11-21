@@ -4,12 +4,15 @@ alter table chart_releases
 
 alter table chart_releases
     add constraint chart_id_present
-        check (chart_id != 0 and chart_id is not null);
+        check (chart_id != 0);
 
 alter table  chart_releases
     add constraint destination_type_valid
-        check ((destination_type = 'environment' and environment_id is not null) or
-               (destination_type = 'cluster' and cluster_id is not null and environment_id is null));
+        check ((destination_type = 'environment' and
+                environment_id is not null and environment_id != 0) or
+               (destination_type = 'cluster' and
+                cluster_id is not null and cluster_id != 0 and
+                environment_id is null));
 
 alter table chart_releases
     add constraint cluster_id_namespace_valid
