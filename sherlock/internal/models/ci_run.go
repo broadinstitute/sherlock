@@ -43,10 +43,6 @@ type CiRun struct {
 	NotifySlackChannelsUponFailure datatypes.JSONSlice[string]
 }
 
-func (c *CiRun) TableName() string {
-	return "ci_runs"
-}
-
 func (c *CiRun) WebURL() string {
 	switch c.Platform {
 	case "github-actions":

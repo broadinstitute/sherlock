@@ -17,10 +17,6 @@ type DeployHookTriggerConfig struct {
 	OnSuccess        *bool
 }
 
-func (d *DeployHookTriggerConfig) TableName() string {
-	return "deploy_hook_trigger_configs"
-}
-
 // ErrorIfForbidden looks at the environment or chart release's environment/cluster to determine
 // if this entry requires suitability, and then errors if the caller lacks it. This is a little
 // bit inefficient because we ignore potentially already-loaded associations on

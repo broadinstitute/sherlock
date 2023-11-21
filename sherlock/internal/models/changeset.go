@@ -24,10 +24,6 @@ type Changeset struct {
 	AppliedByID *uint
 }
 
-func (c Changeset) TableName() string {
-	return "changesets"
-}
-
 func (c Changeset) GetCiIdentifier() CiIdentifier {
 	if c.CiIdentifier != nil {
 		return *c.CiIdentifier

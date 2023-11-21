@@ -71,10 +71,6 @@ type User struct {
 	cachedSuitability *authorization.Suitability `gorm:"-:all"`
 }
 
-func (u *User) TableName() string {
-	return "users"
-}
-
 func (u *User) BeforeUpdate(tx *gorm.DB) error {
 	if tx.Statement.Changed("ID", "Email", "GoogleID") {
 		// (Jack) I don't think it's possible to hit this case unless some internal code tried it,

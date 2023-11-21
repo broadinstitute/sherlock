@@ -11,7 +11,3 @@ type CiIdentifier struct {
 	// Mutable
 	CiRuns []CiRun `gorm:"many2many:ci_runs_for_identifiers"`
 }
-
-func (c *CiIdentifier) TableName() string {
-	return "ci_identifiers"
-}

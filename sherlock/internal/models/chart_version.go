@@ -18,10 +18,6 @@ type ChartVersion struct {
 	AuthoredByID         *uint
 }
 
-func (c *ChartVersion) TableName() string {
-	return "chart_versions"
-}
-
 func (c *ChartVersion) GetCiIdentifier() CiIdentifier {
 	if c.CiIdentifier != nil {
 		return *c.CiIdentifier

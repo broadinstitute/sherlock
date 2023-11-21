@@ -21,10 +21,6 @@ type Cluster struct {
 	HelmfileRef         *string
 }
 
-func (c *Cluster) TableName() string {
-	return "clusters"
-}
-
 func (c *Cluster) GetCiIdentifier() CiIdentifier {
 	if c.CiIdentifier != nil {
 		return *c.CiIdentifier

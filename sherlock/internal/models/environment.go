@@ -49,10 +49,6 @@ type Environment struct {
 	OfflineScheduleEndWeekends  *bool
 }
 
-func (e *Environment) TableName() string {
-	return "environments"
-}
-
 func (e *Environment) GetCiIdentifier() CiIdentifier {
 	if e.CiIdentifier != nil {
 		return *e.CiIdentifier
