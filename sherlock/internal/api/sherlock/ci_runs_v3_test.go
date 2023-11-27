@@ -171,6 +171,7 @@ func Test_ciRunFromModel(t *testing.T) {
 				TerminalAt:                 &t4,
 				Status:                     utils.PointerTo("status"),
 				RelatedResources:           nil,
+				ResourceStatus:             utils.PointerTo("different status"),
 			}},
 			want: CiRunV3{
 				CommonFields: CommonFields{
@@ -193,6 +194,7 @@ func Test_ciRunFromModel(t *testing.T) {
 					Status:                     utils.PointerTo("status"),
 				},
 				RelatedResources: nil,
+				ResourceStatus:   utils.PointerTo("different status"),
 			},
 		},
 		{

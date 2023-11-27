@@ -51,6 +51,12 @@ export interface SherlockCiIdentifierV3 {
      */
     resourceID?: number;
     /**
+     * Available only when querying a CiIdentifier via a CiRun, indicates the status of the run for that resource
+     * @type {string}
+     * @memberof SherlockCiIdentifierV3
+     */
+    resourceStatus?: string;
+    /**
      * 
      * @type {string}
      * @memberof SherlockCiIdentifierV3
@@ -87,6 +93,7 @@ export function SherlockCiIdentifierV3FromJSONTyped(json: any, ignoreDiscriminat
         'createdAt': !exists(json, 'createdAt') ? undefined : (new Date(json['createdAt'])),
         'id': !exists(json, 'id') ? undefined : json['id'],
         'resourceID': !exists(json, 'resourceID') ? undefined : json['resourceID'],
+        'resourceStatus': !exists(json, 'resourceStatus') ? undefined : json['resourceStatus'],
         'resourceType': !exists(json, 'resourceType') ? undefined : json['resourceType'],
         'updatedAt': !exists(json, 'updatedAt') ? undefined : (new Date(json['updatedAt'])),
     };
@@ -105,6 +112,7 @@ export function SherlockCiIdentifierV3ToJSON(value?: SherlockCiIdentifierV3 | nu
         'createdAt': value.createdAt === undefined ? undefined : (value.createdAt.toISOString()),
         'id': value.id,
         'resourceID': value.resourceID,
+        'resourceStatus': value.resourceStatus,
         'resourceType': value.resourceType,
         'updatedAt': value.updatedAt === undefined ? undefined : (value.updatedAt.toISOString()),
     };

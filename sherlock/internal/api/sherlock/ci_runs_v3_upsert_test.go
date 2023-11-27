@@ -845,3 +845,58 @@ func (s *handlerSuite) TestCiRunsV3Upsert_GithubActionsClaimDefaults() {
 	s.Equal(got.GithubActionsAttemptNumber, uint(1))
 	s.Equal(got.GithubActionsWorkflowPath, ".github/workflows/bee-create.yaml")
 }
+
+func (s *handlerSuite) TestCiRunsV3Upsert_ChartReleaseStatuses() {
+	chartRelease := s.TestData.ChartRelease_LeonardoDev()
+	changeset := s.TestData.Changeset_LeonardoDev_V1toV3()
+
+	var got CiRunV3
+	code := s.HandleRequest(
+		s.NewRequest(http.MethodPut, "/api/ci-runs/v3", CiRunV3Upsert{
+			ciRunFields: ciRunFields{
+				Platform:                   "github-actions",
+				GithubActionsOwner:         "broadinstitute",
+				GithubActionsRepo:          "terra-github-workflows",
+				GithubActionsRunID:         123,
+				GithubActionsAttemptNumber: 1,
+				GithubActionsWorkflowPath:  ".github/workflows/bee-create.yaml",
+			},
+			Changesets: []string{utils.UintToString(changeset.ID)},
+			ChartReleaseStatuses: map[string]string{
+				chartRelease.Name: "success",
+			},
+		}),
+		&got)
+	s.Equal(http.StatusCreated, code)
+
+	// Ugly assertions but we want to check that there were at least chart release and changeset
+	// resources referenced and they had their statuses (and nothing else did)
+	var chartReleaseHadStatus, changesetHadStatus, appVersionHadStatus, chartVersionHadStatus bool
+	if s.GreaterOrEqual(len(got.RelatedResources), 4) {
+		for _, rr := range got.RelatedResources {
+			if rr.ResourceType == "chart-release" {
+				if s.NotNil(rr.ResourceStatus) && s.Equal("success", *rr.ResourceStatus) {
+					chartReleaseHadStatus = true
+				}
+			} else if rr.ResourceType == "changeset" {
+				if s.NotNil(rr.ResourceStatus) && s.Equal("success", *rr.ResourceStatus) {
+					changesetHadStatus = true
+				}
+			} else if rr.ResourceType == "app-version" {
+				if s.NotNil(rr.ResourceStatus) && s.Equal("success", *rr.ResourceStatus) {
+					appVersionHadStatus = true
+				}
+			} else if rr.ResourceType == "chart-version" {
+				if s.NotNil(rr.ResourceStatus) && s.Equal("success", *rr.ResourceStatus) {
+					chartVersionHadStatus = true
+				}
+			} else {
+				s.Nil(rr.ResourceStatus)
+			}
+		}
+	}
+	s.True(chartReleaseHadStatus)
+	s.True(changesetHadStatus)
+	s.True(appVersionHadStatus)
+	s.True(chartVersionHadStatus)
+}

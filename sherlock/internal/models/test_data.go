@@ -68,6 +68,8 @@ type TestData interface {
 	DatabaseInstance_LeonardoDev() DatabaseInstance
 	DatabaseInstance_LeonardoSwatomation() DatabaseInstance
 
+	Changeset_LeonardoDev_V1toV3() Changeset
+
 	CiIdentifier_Chart_Leonardo() CiIdentifier
 	CiIdentifier_ChartVersion_Leonardo_V1() CiIdentifier
 	CiIdentifier_ChartVersion_Leonardo_V2() CiIdentifier
@@ -84,6 +86,9 @@ type TestData interface {
 	CiIdentifier_ChartRelease_LeonardoProd() CiIdentifier
 	CiIdentifier_ChartRelease_LeonardoStaging() CiIdentifier
 	CiIdentifier_ChartRelease_LeonardoDev() CiIdentifier
+	CiIdentifier_Changeset_LeonardoDev_V1toV3() CiIdentifier
+
+	CiRun_Deploy_LeonardoDev_V1toV3() CiRun
 }
 
 // testDataImpl contains the caching for TestData and a (back-)reference to
@@ -153,6 +158,8 @@ type testDataImpl struct {
 	databaseInstance_leonardoDev         DatabaseInstance
 	databaseInstance_leonardoSwatomation DatabaseInstance
 
+	changeset_leonardoDev_v1toV3 Changeset
+
 	ciIdentifier_chart_leonardo               CiIdentifier
 	ciIdentifier_chartVersion_leonardo_v1     CiIdentifier
 	ciIdentifier_chartVersion_leonardo_v2     CiIdentifier
@@ -169,6 +176,9 @@ type testDataImpl struct {
 	ciIdentifier_chartRelease_leonardoProd    CiIdentifier
 	ciIdentifier_chartRelease_leonardoStaging CiIdentifier
 	ciIdentifier_chartRelease_leonardoDev     CiIdentifier
+	ciIdentifier_changeset_leonardoDev_v1toV3 CiIdentifier
+
+	ciRun_deploy_leonardoDev_v1toV3 CiRun
 }
 
 // create is a helper function for creating TestData entries in the database.
@@ -995,6 +1005,55 @@ func (td *testDataImpl) DatabaseInstance_LeonardoSwatomation() DatabaseInstance 
 	return td.databaseInstance_leonardoSwatomation
 }
 
+func (td *testDataImpl) Changeset_LeonardoDev_V1toV3() Changeset {
+	if td.changeset_leonardoDev_v1toV3.ID == 0 {
+		td.changeset_leonardoDev_v1toV3 = Changeset{
+			ChartReleaseID: td.ChartRelease_LeonardoDev().ID,
+			From: ChartReleaseVersion{
+				ResolvedAt:           utils.PointerTo(time.Now().Add(-(24 * time.Hour))),
+				AppVersionResolver:   utils.PointerTo("exact"),
+				AppVersionExact:      utils.PointerTo(td.AppVersion_Leonardo_V1().AppVersion),
+				AppVersionBranch:     utils.PointerTo(td.AppVersion_Leonardo_V1().GitBranch),
+				AppVersionCommit:     utils.PointerTo(td.AppVersion_Leonardo_V1().GitCommit),
+				AppVersionID:         utils.PointerTo(td.AppVersion_Leonardo_V1().ID),
+				ChartVersionResolver: utils.PointerTo("latest"),
+				ChartVersionExact:    utils.PointerTo(td.ChartVersion_Leonardo_V1().ChartVersion),
+				ChartVersionID:       utils.PointerTo(td.ChartVersion_Leonardo_V1().ID),
+				HelmfileRef:          utils.PointerTo(fmt.Sprintf("charts/leonardo-%s", td.ChartVersion_Leonardo_V1().ChartVersion)),
+				HelmfileRefEnabled:   utils.PointerTo(false),
+			},
+			To: ChartReleaseVersion{
+				ResolvedAt:           utils.PointerTo(time.Now().Add(-(19 * time.Hour))),
+				AppVersionResolver:   utils.PointerTo("exact"),
+				AppVersionExact:      utils.PointerTo(td.AppVersion_Leonardo_V3().AppVersion),
+				AppVersionBranch:     utils.PointerTo(td.AppVersion_Leonardo_V3().GitBranch),
+				AppVersionCommit:     utils.PointerTo(td.AppVersion_Leonardo_V3().GitCommit),
+				AppVersionID:         utils.PointerTo(td.AppVersion_Leonardo_V3().ID),
+				ChartVersionResolver: utils.PointerTo("latest"),
+				ChartVersionExact:    utils.PointerTo(td.ChartVersion_Leonardo_V3().ChartVersion),
+				ChartVersionID:       utils.PointerTo(td.ChartVersion_Leonardo_V3().ID),
+				HelmfileRef:          utils.PointerTo(fmt.Sprintf("charts/leonardo-%s", td.ChartVersion_Leonardo_V3().ChartVersion)),
+				HelmfileRefEnabled:   utils.PointerTo(false),
+			},
+			AppliedAt:    utils.PointerTo(time.Now().Add(-(18 * time.Hour))),
+			SupersededAt: nil,
+			NewAppVersions: []*AppVersion{
+				utils.PointerTo(td.AppVersion_Leonardo_V2()),
+				utils.PointerTo(td.AppVersion_Leonardo_V3()),
+			},
+			NewChartVersions: []*ChartVersion{
+				utils.PointerTo(td.ChartVersion_Leonardo_V2()),
+				utils.PointerTo(td.ChartVersion_Leonardo_V3()),
+			},
+			PlannedByID: utils.PointerTo(td.User_Suitable().ID),
+			AppliedByID: utils.PointerTo(td.User_Suitable().ID),
+		}
+		td.h.SetSuitableTestUserForDB()
+		td.create(&td.changeset_leonardoDev_v1toV3)
+	}
+	return td.changeset_leonardoDev_v1toV3
+}
+
 func (td *testDataImpl) CiIdentifier_Chart_Leonardo() CiIdentifier {
 	if td.ciIdentifier_chart_leonardo.ID == 0 {
 		chart := td.Chart_Leonardo()
@@ -1137,4 +1196,63 @@ func (td *testDataImpl) CiIdentifier_ChartRelease_LeonardoDev() CiIdentifier {
 		td.create(&td.ciIdentifier_chartRelease_leonardoDev)
 	}
 	return td.ciIdentifier_chartRelease_leonardoDev
+}
+
+func (td *testDataImpl) CiIdentifier_Changeset_LeonardoDev_V1toV3() CiIdentifier {
+	if td.ciIdentifier_changeset_leonardoDev_v1toV3.ID == 0 {
+		temp := td.Changeset_LeonardoDev_V1toV3()
+		td.ciIdentifier_changeset_leonardoDev_v1toV3 = temp.GetCiIdentifier()
+		td.create(&td.ciIdentifier_changeset_leonardoDev_v1toV3)
+	}
+	return td.ciIdentifier_changeset_leonardoDev_v1toV3
+}
+
+func (td *testDataImpl) CiRun_Deploy_LeonardoDev_V1toV3() CiRun {
+	if td.ciRun_deploy_leonardoDev_v1toV3.ID == 0 {
+		td.ciRun_deploy_leonardoDev_v1toV3 = CiRun{
+			Platform:                     "github-actions",
+			GithubActionsOwner:           "broadinstitute",
+			GithubActionsRepo:            "terra-github-workflows",
+			GithubActionsRunID:           12345,
+			GithubActionsAttemptNumber:   1,
+			GithubActionsWorkflowPath:    ".github/workflows/sync-release.yaml",
+			TerminationHooksDispatchedAt: utils.PointerTo(td.Changeset_LeonardoDev_V1toV3().AppliedAt.Add(10 * time.Minute).Format(time.RFC3339Nano)),
+			RelatedResources: []CiIdentifier{
+				td.CiIdentifier_Cluster_TerraDev(),
+				td.CiIdentifier_Environment_Dev(),
+				td.CiIdentifier_ChartRelease_LeonardoDev(),
+				td.CiIdentifier_Changeset_LeonardoDev_V1toV3(),
+				td.CiIdentifier_AppVersion_Leonardo_V2(),
+				td.CiIdentifier_AppVersion_Leonardo_V3(),
+				td.CiIdentifier_ChartVersion_Leonardo_V2(),
+				td.CiIdentifier_ChartVersion_Leonardo_V3(),
+			},
+			StartedAt:                      utils.PointerTo(td.Changeset_LeonardoDev_V1toV3().AppliedAt.Add(30 * time.Second)),
+			TerminalAt:                     utils.PointerTo(td.Changeset_LeonardoDev_V1toV3().AppliedAt.Add(10 * time.Minute)),
+			Status:                         utils.PointerTo("success"),
+			NotifySlackChannelsUponSuccess: []string{"#workbench-resilience-dev"},
+			NotifySlackChannelsUponFailure: []string{"#workbench-resilience-dev"},
+		}
+		td.create(&td.ciRun_deploy_leonardoDev_v1toV3)
+
+		// These join table entries are easiest to just modify from here
+		for _, ciIdentifier := range []CiIdentifier{
+			td.CiIdentifier_ChartRelease_LeonardoDev(),
+			td.CiIdentifier_Changeset_LeonardoDev_V1toV3(),
+			td.CiIdentifier_AppVersion_Leonardo_V2(),
+			td.CiIdentifier_AppVersion_Leonardo_V3(),
+			td.CiIdentifier_ChartVersion_Leonardo_V2(),
+			td.CiIdentifier_ChartVersion_Leonardo_V3(),
+		} {
+			if err := td.h.DB.
+				Model(&CiRunIdentifierJoin{CiRunID: td.ciRun_deploy_leonardoDev_v1toV3.ID, CiIdentifierID: ciIdentifier.ID}).
+				Updates(&CiRunIdentifierJoin{ResourceStatus: utils.PointerTo("success")}).
+				Error; err != nil {
+				err = fmt.Errorf("error editing %T for %T %d in TestData.CiRun_Deploy_LeonardoDev_V1toV3(): %w", &CiRunIdentifierJoin{}, ciIdentifier, ciIdentifier.ID, err)
+				log.Error().Err(err).Caller(1).Send()
+				panic(err)
+			}
+		}
+	}
+	return td.ciRun_deploy_leonardoDev_v1toV3
 }

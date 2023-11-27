@@ -14,6 +14,7 @@ import (
 	"github.com/creasty/defaults"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
+	"golang.org/x/exp/maps"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 	"net/http"
@@ -30,6 +31,10 @@ type CiRunV3Upsert struct {
 	Environments  []string `json:"environments"`  // Always appends; will eliminate duplicates. Spreads to contained chart releases and their clusters.
 	ChartReleases []string `json:"chartReleases"` // Always appends; will eliminate duplicates. Spreads to associated environments and clusters.
 	Changesets    []string `json:"changesets"`    // Always appends; will eliminate duplicates. Spreads to associated chart releases, environments, and clusters.
+
+	// Keys treated like chartReleases. Values set resource-specific statuses for chart releases and associated changesets, new app versions, and new chart versions.
+	ChartReleaseStatuses map[string]string `json:"chartReleaseStatuses"`
+
 	// Makes entries in the changesets field also spread to new app versions and chart versions deployed by the changeset. 'when-static' is the default and does this spreading only when the chart release is in a static environment.
 	RelateToChangesetNewVersions string `json:"relateToChangesetNewVersions" enums:"always,when-static,never" default:"when-static" binding:"oneof=always when-static never ''"`
 	// If set to true, errors handling selectors for relations should be ignored. Normally, passing an unknown chart, cluster, etc. will abort the request, but they won't if this is true.
@@ -95,6 +100,10 @@ func ciRunsV3Upsert(ctx *gin.Context) {
 	// the body we got into one post-spread. Then we'll handle that body and de-dupe the resulting CiIdentifiers before
 	// adding to the database (the SQL gets messed up if there's duplicates in what we give to Gorm).
 
+	// As a bit of pre-processing, treat the keys of body.ChartReleaseStatuses like they were also passed in
+	// body.ChartReleases. We already dedupe later so this is harmless.
+	body.ChartReleases = append(body.ChartReleases, maps.Keys(body.ChartReleaseStatuses)...)
+
 	// First, a new body, starting from the old one.
 	bodyAfterSpreading := CiRunV3Upsert{
 		Charts:        body.Charts,
@@ -105,9 +114,14 @@ func ciRunsV3Upsert(ctx *gin.Context) {
 		ChartReleases: body.ChartReleases,
 		Changesets:    body.Changesets,
 	}
+
+	// We know we'll want to handle the ChartReleaseStatuses later by chart release ID,
+	// and we're about to happen to query them all, so we'll go ahead and build that mapping.
+	chartReleaseIDStatuses := make(map[uint]string, len(body.ChartReleaseStatuses))
+
 	// Environments in the original body should add all their chart releases to the new body, along with the clusters those
 	// chart releases belong to.
-	for _, environmentSelector := range body.Environments {
+	for _, environmentSelector := range utils.Dedupe(body.Environments) {
 		environmentID, err := v2models.InternalEnvironmentStore.ResolveSelector(db, environmentSelector)
 		if err != nil {
 			if body.IgnoreBadSelectors {
@@ -137,7 +151,7 @@ func ciRunsV3Upsert(ctx *gin.Context) {
 	}
 	// Same goes for clusters in the original body; we add their chart releases and any environments those chart releases
 	// belong to.
-	for _, clusterSelector := range body.Clusters {
+	for _, clusterSelector := range utils.Dedupe(body.Clusters) {
 		clusterID, err := v2models.InternalClusterStore.ResolveSelector(db, clusterSelector)
 		if err != nil {
 			if body.IgnoreBadSelectors {
@@ -167,7 +181,7 @@ func ciRunsV3Upsert(ctx *gin.Context) {
 	}
 	// Now for changesets in the original body. They spread to chart releases (and to environments/clusters from there) but they can also
 	// spread to new versions they deploy based on the RelateToChangesetNewVersions field.
-	for _, changesetSelector := range body.Changesets {
+	for _, changesetSelector := range utils.Dedupe(body.Changesets) {
 		changeset, err := v2models.InternalChangesetStore.GetBySelector(db, changesetSelector)
 		if err != nil {
 			if body.IgnoreBadSelectors {
@@ -208,9 +222,8 @@ func ciRunsV3Upsert(ctx *gin.Context) {
 		}
 		bodyAfterSpreading.ChartReleases = append(bodyAfterSpreading.ChartReleases, utils.UintToString(changeset.ChartReleaseID))
 	}
-	// Finally we handle the spreading of chart releases to their environment and cluster. We care about chart releases in the original
-	// body and also ones we just pulled from changesets above, so we concatenate those lists for the loop here.
-	for _, chartReleaseSelector := range body.ChartReleases {
+	// Finally we handle the spreading of chart releases to their environment and cluster.
+	for _, chartReleaseSelector := range utils.Dedupe(body.ChartReleases) {
 		chartRelease, err := v2models.InternalChartReleaseStore.GetBySelector(db, chartReleaseSelector)
 		if err != nil {
 			if body.IgnoreBadSelectors {
@@ -225,6 +238,9 @@ func ciRunsV3Upsert(ctx *gin.Context) {
 		}
 		if chartRelease.ClusterID != nil {
 			bodyAfterSpreading.Clusters = append(bodyAfterSpreading.Clusters, utils.UintToString(*chartRelease.ClusterID))
+		}
+		if status, present := body.ChartReleaseStatuses[chartReleaseSelector]; present {
+			chartReleaseIDStatuses[chartRelease.ID] = status
 		}
 	}
 
@@ -386,6 +402,81 @@ addingToDeduplicatedRelatedResources:
 		}
 	}
 
+	// If we have any resource-specific statuses, add those
+	for chartReleaseID, status := range chartReleaseIDStatuses {
+		// We want to update the join table ci_runs_for_identifiers's resource_status for ci_identifiers where:
+		// 1. The identifier is for a "chart-release" matching our chart release ID
+		if err = db.Exec(
+			//language=SQL
+			`
+UPDATE ci_runs_for_identifiers
+SET resource_status = ?
+FROM ci_identifiers
+WHERE
+    ci_identifiers.id = ci_runs_for_identifiers.ci_identifier_id
+    AND ci_runs_for_identifiers.ci_run_id = ?
+    AND ci_identifiers.resource_type = 'chart-release' 
+    AND ci_identifiers.resource_id = ?
+`, status, result.ID, chartReleaseID).Error; err != nil {
+			slack.ReportError(ctx, fmt.Errorf("error recording chart release status in ci_runs_for_identifiers table for CiRun %d and ChartRelease %d: %w", result.ID, chartReleaseID, err))
+		}
+		// 2. The identifier is for a "changeset" where the changeset's chart release ID matches our chart release ID
+		//		(We have to do this one separately because this one needs a join, and the operation above shouldn't
+		//      be limited to identifiers that can join with changesets)
+		var changesetIDs []uint
+		if err = db.Raw(
+			//language=SQL
+			`
+UPDATE ci_runs_for_identifiers
+SET resource_status = ?
+FROM ci_identifiers
+    JOIN changesets ON changesets.id = ci_identifiers.resource_id
+WHERE
+    ci_identifiers.id = ci_runs_for_identifiers.ci_identifier_id
+    AND ci_runs_for_identifiers.ci_run_id = ?
+    AND ci_identifiers.resource_type = 'changeset' 
+    AND changesets.chart_release_id = ?
+RETURNING changesets.id
+`, status, result.ID, chartReleaseID).Scan(&changesetIDs).Error; err != nil {
+			slack.ReportError(ctx, fmt.Errorf("error recording changeset status in ci_runs_for_identifiers table for CiRun %d and ChartRelease %d: %w", result.ID, chartReleaseID, err))
+		}
+		for _, changesetID := range changesetIDs {
+			// If there were changesets from step 2:
+			// 3. The identifier is for a new app version on that changeset
+			if err = db.Exec(
+				//language=SQL
+				`
+UPDATE ci_runs_for_identifiers
+SET resource_status = ?
+FROM ci_identifiers
+    JOIN changeset_new_app_versions ON ci_identifiers.resource_id = changeset_new_app_versions.app_version_id
+WHERE
+    ci_runs_for_identifiers.ci_run_id = ?
+    AND ci_runs_for_identifiers.ci_identifier_id = ci_identifiers.id
+    AND ci_identifiers.resource_type = 'app-version'
+    AND changeset_new_app_versions.changeset_id = ?
+`, status, result.ID, changesetID).Error; err != nil {
+				slack.ReportError(ctx, fmt.Errorf("error recording app version status in ci_runs_for_identifiers table for CiRun %d and ChartRelease %d via Changeset %d: %w", result.ID, chartReleaseID, changesetID, err))
+			}
+			// 4. The identifier is for a new chart version on that changeset
+			if err = db.Exec(
+				//language=SQL
+				`
+UPDATE ci_runs_for_identifiers
+SET resource_status = ?
+FROM ci_identifiers
+    JOIN changeset_new_chart_versions ON ci_identifiers.resource_id = changeset_new_chart_versions.chart_version_id
+WHERE
+    ci_runs_for_identifiers.ci_run_id = ?
+    AND ci_runs_for_identifiers.ci_identifier_id = ci_identifiers.id
+    AND ci_identifiers.resource_type = 'chart-version'
+    AND changeset_new_chart_versions.changeset_id = ?
+`, status, result.ID, changesetID).Error; err != nil {
+				slack.ReportError(ctx, fmt.Errorf("error recording chart version status in ci_runs_for_identifiers table for CiRun %d and ChartRelease %d via Changeset %d: %w", result.ID, chartReleaseID, changesetID, err))
+			}
+		}
+	}
+
 	// If the request added any Slack channels for us to notify, record those
 	if len(body.NotifySlackChannelsUponSuccess) > 0 || len(body.NotifySlackChannelsUponFailure) > 0 {
 		var channelUpdates models.CiRun
@@ -414,6 +505,10 @@ addingToDeduplicatedRelatedResources:
 	// Re-query so we load all the CiIdentifiers, including any added by previous requests
 	// This also gets TerminationHooksDispatchedAt back out of the database
 	if err = db.Preload(clause.Associations).First(&result, result.ID).Error; err != nil {
+		errors.AbortRequest(ctx, err)
+		return
+	}
+	if err = result.FillRelatedResourceStatuses(db); err != nil {
 		errors.AbortRequest(ctx, err)
 		return
 	}

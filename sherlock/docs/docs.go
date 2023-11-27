@@ -1285,6 +1285,12 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "Available only when querying a CiIdentifier via a CiRun, indicates the status of the run for that resource",
+                        "name": "resourceStatus",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "name": "resourceType",
                         "in": "query"
                     },
@@ -1583,6 +1589,12 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "name": "platform",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Available only when querying a CiRun via a CiIdentifier, indicates the status of the run for that resource",
+                        "name": "resourceStatus",
                         "in": "query"
                     },
                     {
@@ -10675,6 +10687,10 @@ const docTemplate = `{
                 "resourceID": {
                     "type": "integer"
                 },
+                "resourceStatus": {
+                    "description": "Available only when querying a CiIdentifier via a CiRun, indicates the status of the run for that resource",
+                    "type": "string"
+                },
                 "resourceType": {
                     "type": "string"
                 },
@@ -10741,6 +10757,10 @@ const docTemplate = `{
                         "$ref": "#/definitions/sherlock.CiIdentifierV3"
                     }
                 },
+                "resourceStatus": {
+                    "description": "Available only when querying a CiRun via a CiIdentifier, indicates the status of the run for that resource",
+                    "type": "string"
+                },
                 "startedAt": {
                     "type": "string"
                 },
@@ -10783,6 +10803,13 @@ const docTemplate = `{
                     "description": "Always appends; will eliminate duplicates. Spreads to associated chart releases, environments, and clusters.",
                     "type": "array",
                     "items": {
+                        "type": "string"
+                    }
+                },
+                "chartReleaseStatuses": {
+                    "description": "Keys treated like chartReleases. Values set resource-specific statuses for chart releases and associated changesets, new app versions, and new chart versions.",
+                    "type": "object",
+                    "additionalProperties": {
                         "type": "string"
                     }
                 },

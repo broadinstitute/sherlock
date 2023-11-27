@@ -46,6 +46,7 @@
 - `DatabaseInstance_LeonardoStaging exists`
 - `DatabaseInstance_LeonardoDev exists`
 - `DatabaseInstance_LeonardoSwatomation exists`
+- `Changeset_LeonardoDev_V1toV3 exists`
 - `CiIdentifier_Chart_Leonardo exists`
 - `CiIdentifier_ChartVersion_Leonardo_V1 exists`
 - `CiIdentifier_ChartVersion_Leonardo_V2 exists`
@@ -62,3 +63,5 @@
 - `CiIdentifier_ChartRelease_LeonardoProd exists`
 - `CiIdentifier_ChartRelease_LeonardoStaging exists`
 - `CiIdentifier_ChartRelease_LeonardoDev exists`
+- `CiIdentifier_Changeset_LeonardoDev_V1toV3 exists`
+- `CiRun_Deploy_LeonardoDev_V1toV3 exists`

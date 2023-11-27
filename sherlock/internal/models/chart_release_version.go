@@ -50,7 +50,7 @@ func (crv *ChartReleaseVersion) resolve(tx *gorm.DB, chartID uint) error {
 	if err := crv.resolveChartVersion(tx, chart); err != nil {
 		return fmt.Errorf("failed to resolve chart version: %w", err)
 	}
-	crv.resolveHelmfileRef(tx, chart)
+	crv.resolveHelmfileRef(chart)
 	crv.ResolvedAt = utils.PointerTo(time.Now())
 	return nil
 }
@@ -224,7 +224,7 @@ func (crv *ChartReleaseVersion) resolveChartVersion(tx *gorm.DB, chart Chart) er
 // resolveHelmfileRef sets the git ref that ArgoCD should use for looking at the terra-helmfile repo.
 // This function relies on the chart version fields of the ChartReleaseVersion being self-consistent
 // (so this function should be called after resolveChartVersion, not before)
-func (crv *ChartReleaseVersion) resolveHelmfileRef(tx *gorm.DB, chart Chart) {
+func (crv *ChartReleaseVersion) resolveHelmfileRef(chart Chart) {
 	// If there's no flag indicating a custom helmfile ref, or if there's no helmfile ref at all, generate one
 	if crv.HelmfileRefEnabled == nil || !*crv.HelmfileRefEnabled || crv.HelmfileRef == nil {
 

@@ -52,6 +52,10 @@ func ciIdentifiersV3Get(ctx *gin.Context) {
 		errors.AbortRequest(ctx, err)
 		return
 	}
+	if err = result.FillCiRunResourceStatuses(db); err != nil {
+		errors.AbortRequest(ctx, err)
+		return
+	}
 	ctx.JSON(http.StatusOK, ciIdentifierFromModel(result))
 }
 

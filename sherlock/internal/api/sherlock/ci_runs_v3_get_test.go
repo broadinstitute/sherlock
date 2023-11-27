@@ -84,3 +84,20 @@ func (s *handlerSuite) TestCiRunsV3Get() {
 		s.Equal(argoCiRun.ID, got.ID)
 	})
 }
+
+func (s *handlerSuite) TestCiRunsV3Get_ResourceStatus() {
+	ciRun := s.TestData.CiRun_Deploy_LeonardoDev_V1toV3()
+	var got CiRunV3
+	code := s.HandleRequest(
+		s.NewRequest(http.MethodGet, fmt.Sprintf("/api/ci-runs/v3/%d", ciRun.ID), nil),
+		&got)
+	s.Equal(http.StatusOK, code)
+	s.Equal(ciRun.ID, got.ID)
+	resourcesWithStatus := 0
+	for _, rr := range got.RelatedResources {
+		if rr.ResourceStatus != nil {
+			resourcesWithStatus++
+		}
+	}
+	s.NotZero(resourcesWithStatus)
+}
