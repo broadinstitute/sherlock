@@ -44,3 +44,28 @@ func (c *CiIdentifier) FillCiRunResourceStatuses(db *gorm.DB) error {
 	}
 	return nil
 }
+
+func (c *CiIdentifier) FillCiRunResourceStatuses(db *gorm.DB) error {
+	var joinEntries []CiRunIdentifierJoin
+	if err := db.
+		Model(&CiRunIdentifierJoin{}).
+		Where("ci_identifier_id = ? AND ci_run_id IN ? AND resource_status IS NOT NULL",
+			c.ID, utils.Map(c.CiRuns, func(cr CiRun) uint { return cr.ID })).
+		Limit(len(c.CiRuns)).
+		Find(&joinEntries).
+		Error; err != nil {
+		return fmt.Errorf("failed to query join table for ci run resource statuses: %w", err)
+	}
+	for _, joinEntry := range joinEntries {
+		if joinEntry.ResourceStatus != nil {
+			for index, ciRun := range c.CiRuns {
+				if ciRun.ID == joinEntry.CiRunID && c.ID == joinEntry.CiIdentifierID {
+					// dereference and reference so we are extra sure we don't cross wires while iterating
+					ciRun.ResourceStatus = utils.PointerTo(*joinEntry.ResourceStatus)
+					c.CiRuns[index] = ciRun
+				}
+			}
+		}
+	}
+	return nil
+}
