@@ -15,7 +15,7 @@ const slackTextBlockLengthLimit = 3000
 func chunkLinesToMrkdwnBlocks(lines []string) []slack.Block {
 	var chunks []string
 	for _, line := range lines {
-		if chunks == nil || len(chunks) == 0 {
+		if len(chunks) == 0 {
 			// If no chunks so far, begin with the first line
 			chunks = []string{line}
 		} else if len(chunks[len(chunks)-1])+len("\n")+len(line) < slackTextBlockLengthLimit {

@@ -7,6 +7,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/slack"
+	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
 	"sort"
 	"strings"
@@ -42,12 +43,15 @@ func (_ *dispatcherImpl) DispatchSlackDeployHook(db *gorm.DB, hook models.SlackD
 	}
 
 	// TODO: Send the main message
+	log.Debug().Msg("TODO: Send the main message")
 
 	if ciRun.TerminalAt != nil {
 		// TODO: Send a message with the changelog
+		log.Debug().Msg("TODO: Send a message with the changelog")
 
 		if !ciRun.Succeeded() {
 			// TODO: Send a message into the channel alerting to the failure
+			log.Debug().Msg("TODO: Send a message into the channel alerting to the failure")
 		}
 	}
 

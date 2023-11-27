@@ -1290,8 +1290,7 @@ func (td *testDataImpl) GithubActionsDeployHook_LeonardoDev() GithubActionsDeplo
 		if err != nil {
 			panic(fmt.Errorf("failed to marshall inputs: %w", err))
 		}
-		var inputs datatypes.JSON
-		inputs = inputBytes
+		var inputs datatypes.JSON = inputBytes
 		td.githubActionsDeployHook_leonardoDev = GithubActionsDeployHook{
 			Trigger: DeployHookTriggerConfig{
 				OnChartReleaseID: utils.PointerTo(td.ChartRelease_LeonardoDev().ID),
