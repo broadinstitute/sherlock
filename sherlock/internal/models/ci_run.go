@@ -51,10 +51,6 @@ type CiRun struct {
 	ResourceStatus *string `gorm:"-:all"`
 }
 
-func (c *CiRun) TableName() string {
-	return "ci_runs"
-}
-
 func (c *CiRun) FillRelatedResourceStatuses(db *gorm.DB) error {
 	var joinEntries []CiRunIdentifierJoin
 	if err := db.

@@ -10,10 +10,6 @@ type SlackDeployHook struct {
 	SlackChannel *string
 }
 
-func (s *SlackDeployHook) TableName() string {
-	return "slack_deploy_hooks"
-}
-
 func (s *SlackDeployHook) AfterSave(tx *gorm.DB) error {
 	return s.Trigger.ErrorIfForbidden(tx)
 }

@@ -20,10 +20,6 @@ type Chart struct {
 	PactParticipant       *bool
 }
 
-func (c Chart) TableName() string {
-	return "charts"
-}
-
 func (c Chart) GetCiIdentifier() CiIdentifier {
 	if c.CiIdentifier != nil {
 		return *c.CiIdentifier

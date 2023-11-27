@@ -20,10 +20,6 @@ type AppVersion struct {
 	AuthoredByID       *uint
 }
 
-func (a *AppVersion) TableName() string {
-	return "app_versions"
-}
-
 func (a *AppVersion) GetCiIdentifier() CiIdentifier {
 	if a.CiIdentifier != nil {
 		return *a.CiIdentifier
