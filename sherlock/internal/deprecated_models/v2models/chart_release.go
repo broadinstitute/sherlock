@@ -32,10 +32,6 @@ type ChartRelease struct {
 	IncludeInBulkChangesets *bool
 }
 
-func (c ChartRelease) TableName() string {
-	return "chart_releases"
-}
-
 func (c ChartRelease) getID() uint {
 	return c.ID
 }

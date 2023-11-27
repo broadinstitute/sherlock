@@ -30,10 +30,6 @@ type CiRun struct {
 	Status           *string
 }
 
-func (c CiRun) TableName() string {
-	return "ci_runs"
-}
-
 func (c CiRun) getID() uint {
 	return c.ID
 }

@@ -7,7 +7,6 @@ import (
 )
 
 type Model interface {
-	TableName() string
 	getID() uint
 }
 

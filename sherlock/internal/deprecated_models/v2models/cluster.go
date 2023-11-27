@@ -26,10 +26,6 @@ type Cluster struct {
 	HelmfileRef         *string `gorm:"not null; default:null"`
 }
 
-func (c Cluster) TableName() string {
-	return "clusters"
-}
-
 func (c Cluster) getID() uint {
 	return c.ID
 }

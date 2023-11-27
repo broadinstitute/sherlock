@@ -20,10 +20,6 @@ type ChartVersion struct {
 	ParentChartVersionID *uint
 }
 
-func (c ChartVersion) TableName() string {
-	return "chart_versions"
-}
-
 func (c ChartVersion) getID() uint {
 	return c.ID
 }
