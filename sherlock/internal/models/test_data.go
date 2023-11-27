@@ -2,10 +2,12 @@ package models
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/test_users"
 	"github.com/rs/zerolog/log"
+	"gorm.io/datatypes"
 	"time"
 )
 
@@ -89,6 +91,10 @@ type TestData interface {
 	CiIdentifier_Changeset_LeonardoDev_V1toV3() CiIdentifier
 
 	CiRun_Deploy_LeonardoDev_V1toV3() CiRun
+
+	SlackDeployHook_Dev() SlackDeployHook
+
+	GithubActionsDeployHook_LeonardoDev() GithubActionsDeployHook
 }
 
 // testDataImpl contains the caching for TestData and a (back-)reference to
@@ -179,6 +185,10 @@ type testDataImpl struct {
 	ciIdentifier_changeset_leonardoDev_v1toV3 CiIdentifier
 
 	ciRun_deploy_leonardoDev_v1toV3 CiRun
+
+	slackDeployHook_dev SlackDeployHook
+
+	githubActionsDeployHook_leonardoDev GithubActionsDeployHook
 }
 
 // create is a helper function for creating TestData entries in the database.
@@ -1230,8 +1240,8 @@ func (td *testDataImpl) CiRun_Deploy_LeonardoDev_V1toV3() CiRun {
 			StartedAt:                      utils.PointerTo(td.Changeset_LeonardoDev_V1toV3().AppliedAt.Add(30 * time.Second)),
 			TerminalAt:                     utils.PointerTo(td.Changeset_LeonardoDev_V1toV3().AppliedAt.Add(10 * time.Minute)),
 			Status:                         utils.PointerTo("success"),
-			NotifySlackChannelsUponSuccess: []string{"#workbench-resilience-dev"},
-			NotifySlackChannelsUponFailure: []string{"#workbench-resilience-dev"},
+			NotifySlackChannelsUponSuccess: []string{"#ap-k8s-monitor"},
+			NotifySlackChannelsUponFailure: []string{"#ap-k8s-monitor"},
 		}
 		td.create(&td.ciRun_deploy_leonardoDev_v1toV3)
 
@@ -1246,7 +1256,7 @@ func (td *testDataImpl) CiRun_Deploy_LeonardoDev_V1toV3() CiRun {
 		} {
 			if err := td.h.DB.
 				Model(&CiRunIdentifierJoin{CiRunID: td.ciRun_deploy_leonardoDev_v1toV3.ID, CiIdentifierID: ciIdentifier.ID}).
-				Updates(&CiRunIdentifierJoin{ResourceStatus: utils.PointerTo("success")}).
+				Updates(&CiRunIdentifierJoin{ResourceStatus: utils.PointerTo("success: healthy")}).
 				Error; err != nil {
 				err = fmt.Errorf("error editing %T for %T %d in TestData.CiRun_Deploy_LeonardoDev_V1toV3(): %w", &CiRunIdentifierJoin{}, ciIdentifier, ciIdentifier.ID, err)
 				log.Error().Err(err).Caller(1).Send()
@@ -1255,4 +1265,47 @@ func (td *testDataImpl) CiRun_Deploy_LeonardoDev_V1toV3() CiRun {
 		}
 	}
 	return td.ciRun_deploy_leonardoDev_v1toV3
+}
+
+func (td *testDataImpl) SlackDeployHook_Dev() SlackDeployHook {
+	if td.slackDeployHook_dev.ID == 0 {
+		td.slackDeployHook_dev = SlackDeployHook{
+			Trigger: DeployHookTriggerConfig{
+				OnEnvironmentID: utils.PointerTo(td.Environment_Dev().ID),
+				OnSuccess:       utils.PointerTo(true),
+				OnFailure:       utils.PointerTo(true),
+			},
+			SlackChannel:  utils.PointerTo("#workbench-dev"),
+			Beta:          utils.PointerTo(true),
+			MentionPeople: utils.PointerTo(false),
+		}
+		td.create(&td.slackDeployHook_dev)
+	}
+	return td.slackDeployHook_dev
+}
+
+func (td *testDataImpl) GithubActionsDeployHook_LeonardoDev() GithubActionsDeployHook {
+	if td.githubActionsDeployHook_leonardoDev.ID == 0 {
+		inputBytes, err := json.Marshal(map[string]string{"environment": "dev"})
+		if err != nil {
+			panic(fmt.Errorf("failed to marshall inputs: %w", err))
+		}
+		var inputs datatypes.JSON
+		inputs = inputBytes
+		td.githubActionsDeployHook_leonardoDev = GithubActionsDeployHook{
+			Trigger: DeployHookTriggerConfig{
+				OnChartReleaseID: utils.PointerTo(td.ChartRelease_LeonardoDev().ID),
+				OnSuccess:        utils.PointerTo(true),
+				OnFailure:        utils.PointerTo(false),
+			},
+			GithubActionsOwner:          utils.PointerTo("DataBiosphere"),
+			GithubActionsRepo:           utils.PointerTo("leonardo"),
+			GithubActionsWorkflowPath:   utils.PointerTo(".github/workflows/integration-test.yaml"),
+			GithubActionsDefaultRef:     utils.PointerTo("develop"),
+			GithubActionsRefBehavior:    utils.PointerTo("use-app-version-commit-as-ref"),
+			GithubActionsWorkflowInputs: utils.PointerTo(inputs),
+		}
+		td.create(&td.githubActionsDeployHook_leonardoDev)
+	}
+	return td.githubActionsDeployHook_leonardoDev
 }

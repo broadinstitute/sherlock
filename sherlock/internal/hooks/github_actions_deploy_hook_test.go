@@ -1,4 +1,4 @@
-package deployhooks
+package hooks
 
 import (
 	"encoding/json"
@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-func (s *deployHooksSuite) Test_dispatchGithubActionsDeployHook_jsonFailure() {
+func (s *hooksSuite) Test_dispatchGithubActionsDeployHook_jsonFailure() {
 	arrayRatherThanObject := []any{1, "hi"}
 	bytes, err := json.Marshal(arrayRatherThanObject)
 	s.NoError(err)
@@ -19,25 +19,25 @@ func (s *deployHooksSuite) Test_dispatchGithubActionsDeployHook_jsonFailure() {
 	err = json.Unmarshal(bytes, &inputs)
 	s.NoError(err)
 
-	err = dispatchGithubActionsDeployHook(nil, models.GithubActionsDeployHook{
+	err = dispatcher.DispatchGithubActionsDeployHook(nil, models.GithubActionsDeployHook{
 		GithubActionsWorkflowInputs: &inputs,
 	}, models.CiRun{})
 	s.ErrorContains(err, "couldn't unmarshall inputs")
 }
 
-func (s *deployHooksSuite) Test_dispatchGithubActionsDeployHook_missingFields() {
-	err := dispatchGithubActionsDeployHook(nil, models.GithubActionsDeployHook{}, models.CiRun{})
+func (s *hooksSuite) Test_dispatchGithubActionsDeployHook_missingFields() {
+	err := dispatcher.DispatchGithubActionsDeployHook(nil, models.GithubActionsDeployHook{}, models.CiRun{})
 	s.ErrorContains(err, "GithubActionsDeployHook 0 lacked fields")
 }
 
-func (s *deployHooksSuite) Test_dispatchGithubActionsDeployHook_basic() {
+func (s *hooksSuite) Test_dispatchGithubActionsDeployHook_basic() {
 	github.UseMockedClient(s.T(), func(c *github.MockClient) {
 		c.Actions.EXPECT().CreateWorkflowDispatchEventByFileName(
 			s.DB.Statement.Context, "owner", "repo", "path", github2.CreateWorkflowDispatchEventRequest{
 				Ref: "main",
 			}).Return(nil, nil)
 	}, func() {
-		s.NoError(dispatchGithubActionsDeployHook(s.DB, models.GithubActionsDeployHook{
+		s.NoError(dispatcher.DispatchGithubActionsDeployHook(s.DB, models.GithubActionsDeployHook{
 			GithubActionsOwner:        utils.PointerTo("owner"),
 			GithubActionsRepo:         utils.PointerTo("repo"),
 			GithubActionsWorkflowPath: utils.PointerTo("path"),
@@ -46,7 +46,7 @@ func (s *deployHooksSuite) Test_dispatchGithubActionsDeployHook_basic() {
 	})
 }
 
-func (s *deployHooksSuite) Test_dispatchGithubActionsDeployHook_passesThroughErrors() {
+func (s *hooksSuite) Test_dispatchGithubActionsDeployHook_passesThroughErrors() {
 	err := fmt.Errorf("some error")
 	github.UseMockedClient(s.T(), func(c *github.MockClient) {
 		c.Actions.EXPECT().CreateWorkflowDispatchEventByFileName(
@@ -54,7 +54,7 @@ func (s *deployHooksSuite) Test_dispatchGithubActionsDeployHook_passesThroughErr
 				Ref: "main",
 			}).Return(nil, err)
 	}, func() {
-		s.ErrorIs(dispatchGithubActionsDeployHook(s.DB, models.GithubActionsDeployHook{
+		s.ErrorIs(dispatcher.DispatchGithubActionsDeployHook(s.DB, models.GithubActionsDeployHook{
 			GithubActionsOwner:        utils.PointerTo("owner"),
 			GithubActionsRepo:         utils.PointerTo("repo"),
 			GithubActionsWorkflowPath: utils.PointerTo("path"),
@@ -63,14 +63,14 @@ func (s *deployHooksSuite) Test_dispatchGithubActionsDeployHook_passesThroughErr
 	})
 }
 
-func (s *deployHooksSuite) Test_dispatchGithubActionsDeployHook_appVersionRef() {
+func (s *hooksSuite) Test_dispatchGithubActionsDeployHook_appVersionRef() {
 	github.UseMockedClient(s.T(), func(c *github.MockClient) {
 		c.Actions.EXPECT().CreateWorkflowDispatchEventByFileName(
 			s.DB.Statement.Context, "owner", "repo", "path", github2.CreateWorkflowDispatchEventRequest{
 				Ref: "app version",
 			}).Return(nil, nil)
 	}, func() {
-		s.NoError(dispatchGithubActionsDeployHook(s.DB, models.GithubActionsDeployHook{
+		s.NoError(dispatcher.DispatchGithubActionsDeployHook(s.DB, models.GithubActionsDeployHook{
 			GithubActionsOwner:        utils.PointerTo("owner"),
 			GithubActionsRepo:         utils.PointerTo("repo"),
 			GithubActionsWorkflowPath: utils.PointerTo("path"),
@@ -83,14 +83,14 @@ func (s *deployHooksSuite) Test_dispatchGithubActionsDeployHook_appVersionRef() 
 	})
 }
 
-func (s *deployHooksSuite) Test_dispatchGithubActionsDeployHook_appVersionCommitRef() {
+func (s *hooksSuite) Test_dispatchGithubActionsDeployHook_appVersionCommitRef() {
 	github.UseMockedClient(s.T(), func(c *github.MockClient) {
 		c.Actions.EXPECT().CreateWorkflowDispatchEventByFileName(
 			s.DB.Statement.Context, "owner", "repo", "path", github2.CreateWorkflowDispatchEventRequest{
 				Ref: "app version commit",
 			}).Return(nil, nil)
 	}, func() {
-		s.NoError(dispatchGithubActionsDeployHook(s.DB, models.GithubActionsDeployHook{
+		s.NoError(dispatcher.DispatchGithubActionsDeployHook(s.DB, models.GithubActionsDeployHook{
 			GithubActionsOwner:        utils.PointerTo("owner"),
 			GithubActionsRepo:         utils.PointerTo("repo"),
 			GithubActionsWorkflowPath: utils.PointerTo("path"),
@@ -103,7 +103,7 @@ func (s *deployHooksSuite) Test_dispatchGithubActionsDeployHook_appVersionCommit
 	})
 }
 
-func (s *deployHooksSuite) Test_dispatchGithubActionsDeployHook_appVersionRefFromChangesets() {
+func (s *hooksSuite) Test_dispatchGithubActionsDeployHook_appVersionRefFromChangesets() {
 	chartRelease := s.TestData.ChartRelease_LeonardoDev()
 
 	changeset1 := models.Changeset{
@@ -155,7 +155,7 @@ func (s *deployHooksSuite) Test_dispatchGithubActionsDeployHook_appVersionRefFro
 				Ref: "v1.1.5",
 			}).Return(nil, nil)
 	}, func() {
-		s.NoError(dispatchGithubActionsDeployHook(s.DB, models.GithubActionsDeployHook{
+		s.NoError(dispatcher.DispatchGithubActionsDeployHook(s.DB, models.GithubActionsDeployHook{
 			GithubActionsOwner:        utils.PointerTo("owner"),
 			GithubActionsRepo:         utils.PointerTo("repo"),
 			GithubActionsWorkflowPath: utils.PointerTo("path"),
@@ -173,7 +173,7 @@ func (s *deployHooksSuite) Test_dispatchGithubActionsDeployHook_appVersionRefFro
 	})
 }
 
-func (s *deployHooksSuite) Test_dispatchGithubActionsDeployHook_appVersionCommitRefFromChangesets() {
+func (s *hooksSuite) Test_dispatchGithubActionsDeployHook_appVersionCommitRefFromChangesets() {
 	chartRelease := s.TestData.ChartRelease_LeonardoDev()
 
 	changeset1 := models.Changeset{
@@ -229,7 +229,7 @@ func (s *deployHooksSuite) Test_dispatchGithubActionsDeployHook_appVersionCommit
 				Ref: "commit e",
 			}).Return(nil, nil)
 	}, func() {
-		s.NoError(dispatchGithubActionsDeployHook(s.DB, models.GithubActionsDeployHook{
+		s.NoError(dispatcher.DispatchGithubActionsDeployHook(s.DB, models.GithubActionsDeployHook{
 			GithubActionsOwner:        utils.PointerTo("owner"),
 			GithubActionsRepo:         utils.PointerTo("repo"),
 			GithubActionsWorkflowPath: utils.PointerTo("path"),

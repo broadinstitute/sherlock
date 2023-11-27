@@ -1,4 +1,4 @@
-package deployhooks
+package hooks
 
 import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
@@ -6,11 +6,11 @@ import (
 	"testing"
 )
 
-type deployHooksSuite struct {
+type hooksSuite struct {
 	suite.Suite
 	models.TestSuiteHelper
 }
 
 func TestDeployHooksSuite(t *testing.T) {
-	suite.Run(t, new(deployHooksSuite))
+	suite.Run(t, new(hooksSuite))
 }

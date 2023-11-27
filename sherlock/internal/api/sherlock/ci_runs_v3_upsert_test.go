@@ -6,11 +6,11 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/gha_oidc"
 	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/gha_oidc/gha_oidc_claims"
 	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/gha_oidc/gha_oidc_mocks"
-	"github.com/broadinstitute/sherlock/sherlock/internal/deployhooks"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_controllers/v2controllers"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
-	"github.com/broadinstitute/sherlock/sherlock/internal/models"
+	"github.com/broadinstitute/sherlock/sherlock/internal/hooks"
+	"github.com/broadinstitute/sherlock/sherlock/internal/hooks/hooks_mocks"
 	"github.com/broadinstitute/sherlock/sherlock/internal/slack"
 	"github.com/broadinstitute/sherlock/sherlock/internal/slack/slack_mocks"
 	"github.com/stretchr/testify/mock"
@@ -28,7 +28,7 @@ func (s *handlerSuite) TestCiRunsV3Upsert_error() {
 	s.Equal(errors.BadRequest, got.Type)
 }
 
-func (s *handlerSuite) TestCiRunsV3Upsert() {
+func (s *handlerSuite) TestCiRunsV3Upsert_edits() {
 	startedAt := time.Now().Add(-time.Minute)
 	var got1 CiRunV3
 	code := s.HandleRequest(
@@ -67,7 +67,7 @@ func (s *handlerSuite) TestCiRunsV3Upsert() {
 	s.NotEqual(got1.UpdatedAt, got2.UpdatedAt)
 }
 
-func (s *handlerSuite) TestCiRunsV3UpsertFieldValidation() {
+func (s *handlerSuite) TestCiRunsV3Upsert_fieldValidation() {
 	var got errors.ErrorResponse
 	code := s.HandleRequest(
 		s.NewRequest("PUT", "/api/ci-runs/v3", CiRunV3Upsert{
@@ -86,15 +86,10 @@ func (s *handlerSuite) TestCiRunsV3UpsertFieldValidation() {
 	s.Contains(got.Message, "RelateToChangesetNewVersions")
 }
 
-func (s *handlerSuite) TestCiRunsV3UpsertIdentifiers() {
+func (s *handlerSuite) TestCiRunsV3Upsert_identifiers() {
 	user := s.SetSuitableTestUserForDB()
 
-	chart, created, err := v2models.InternalChartStore.Create(s.DB, v2models.Chart{
-		Name:      "leonardo",
-		ChartRepo: utils.PointerTo("terra-helm"),
-	}, user)
-	s.NoError(err)
-	s.True(created)
+	chart := s.TestData.Chart_Leonardo()
 	chartVersion, created, err := v2models.InternalChartVersionStore.Create(s.DB, v2models.ChartVersion{
 		ChartVersion: "v1.2.3",
 		ChartID:      chart.ID,
@@ -457,55 +452,10 @@ func (s *handlerSuite) TestCiRunsV3UpsertIdentifiers() {
 		s.True(chartReleasePresent)
 		s.True(clusterPresent)
 	})
-	s.Run("dispatches if deploy", func() {
-		s.NoError(deployhooks.Init())
-		var got CiRunV3
-		s.Run("not until finished", func() {
-			code := s.HandleRequest(
-				s.NewRequest("PUT", "/api/ci-runs/v3", CiRunV3Upsert{
-					ciRunFields: ciRunFields{
-						Platform:                   "github-actions",
-						GithubActionsOwner:         "broadinstitute",
-						GithubActionsRepo:          "terra-github-workflows",
-						GithubActionsRunID:         1,
-						GithubActionsAttemptNumber: 1,
-						GithubActionsWorkflowPath:  ".github/workflows/sync-release.yaml",
-					},
-				}),
-				&got)
-			s.Equal(http.StatusCreated, code)
-			s.Empty(got.TerminationHooksDispatchedAt)
-		})
-		s.Run("when finished", func() {
-			code := s.HandleRequest(
-				s.NewRequest("PUT", "/api/ci-runs/v3", CiRunV3Upsert{
-					ciRunFields: ciRunFields{
-						Platform:                   "github-actions",
-						GithubActionsOwner:         "broadinstitute",
-						GithubActionsRepo:          "terra-github-workflows",
-						GithubActionsRunID:         1,
-						GithubActionsAttemptNumber: 1,
-						GithubActionsWorkflowPath:  ".github/workflows/sync-release.yaml",
-						TerminalAt:                 utils.PointerTo(time.Now()),
-						Status:                     utils.PointerTo("status"),
-					},
-				}),
-				&got)
-			s.Equal(http.StatusCreated, code)
-			s.NotNil(got.TerminationHooksDispatchedAt)
-		})
-	})
 }
 
 func (s *handlerSuite) TestCiRunsV3Upsert_identifiersInvalid() {
-	user := s.SetSuitableTestUserForDB()
-
-	_, created, err := v2models.InternalChartStore.Create(s.DB, v2models.Chart{
-		Name:      "leonardo",
-		ChartRepo: utils.PointerTo("terra-helm"),
-	}, user)
-	s.NoError(err)
-	s.True(created)
+	s.TestData.Chart_Leonardo()
 
 	var got errors.ErrorResponse
 	code := s.HandleRequest(
@@ -526,14 +476,7 @@ func (s *handlerSuite) TestCiRunsV3Upsert_identifiersInvalid() {
 }
 
 func (s *handlerSuite) TestCiRunsV3Upsert_identifiersInvalidIgnore() {
-	user := s.SetSuitableTestUserForDB()
-
-	chart, created, err := v2models.InternalChartStore.Create(s.DB, v2models.Chart{
-		Name:      "leonardo",
-		ChartRepo: utils.PointerTo("terra-helm"),
-	}, user)
-	s.NoError(err)
-	s.True(created)
+	chart := s.TestData.Chart_Leonardo()
 
 	s.Run("flat ignore", func() {
 		var got CiRunV3
@@ -640,59 +583,7 @@ func (s *handlerSuite) TestCiRunsV3Upsert_slackNotifications() {
 		})
 	})
 	s.Run("with against string", func() {
-		user := s.SetSuitableTestUserForDB()
-
-		chart, created, err := v2models.InternalChartStore.Create(s.DB, v2models.Chart{
-			Name:      "leonardo",
-			ChartRepo: utils.PointerTo("terra-helm"),
-		}, user)
-		s.NoError(err)
-		s.True(created)
-		cluster, created, err := v2models.InternalClusterStore.Create(s.DB, v2models.Cluster{
-			Name:                "terra-dev",
-			Provider:            "google",
-			GoogleProject:       "broad-dsde-dev",
-			Base:                utils.PointerTo("live"),
-			Address:             utils.PointerTo("0.0.0.0"),
-			RequiresSuitability: utils.PointerTo(false),
-			Location:            "us-central1-a",
-			HelmfileRef:         utils.PointerTo("HEAD"),
-		}, user)
-		s.NoError(err)
-		s.True(created)
-		environment, created, err := v2models.InternalEnvironmentStore.Create(s.DB, v2models.Environment{
-			Name:                       "dev",
-			Lifecycle:                  "static",
-			UniqueResourcePrefix:       "a1b2",
-			Base:                       "live",
-			DefaultClusterID:           &cluster.ID,
-			DefaultNamespace:           "terra-dev",
-			OwnerID:                    &user.ID,
-			RequiresSuitability:        utils.PointerTo(false),
-			HelmfileRef:                utils.PointerTo("HEAD"),
-			DefaultFirecloudDevelopRef: utils.PointerTo("dev"),
-			PreventDeletion:            utils.PointerTo(false),
-		}, user)
-		s.NoError(err)
-		s.True(created)
-		chartRelease, created, err := v2models.InternalChartReleaseStore.Create(s.DB, v2models.ChartRelease{
-			Name:          "leonardo-dev",
-			ChartID:       chart.ID,
-			ClusterID:     &cluster.ID,
-			EnvironmentID: &environment.ID,
-			Namespace:     environment.DefaultNamespace,
-			ChartReleaseVersion: v2models.ChartReleaseVersion{
-				AppVersionResolver:   utils.PointerTo("exact"),
-				AppVersionExact:      utils.PointerTo("app version blah"),
-				ChartVersionResolver: utils.PointerTo("exact"),
-				ChartVersionExact:    utils.PointerTo("chart version blah"),
-				HelmfileRef:          utils.PointerTo("HEAD"),
-				HelmfileRefEnabled:   utils.PointerTo(false),
-				FirecloudDevelopRef:  utils.PointerTo("dev"),
-			},
-		}, user)
-		s.NoError(err)
-		s.True(created)
+		chartRelease := s.TestData.ChartRelease_LeonardoDev()
 		slack.UseMockedClient(s.T(), func(c *slack_mocks.MockMockableClient) {
 			c.EXPECT().
 				// Unfortunately mockery isn't smart enough for us to actually test the text output here but at least
@@ -727,95 +618,7 @@ func (s *handlerSuite) TestCiRunsV3Upsert_slackNotifications() {
 	})
 }
 
-func (s *handlerSuite) TestCiRunsV3Upsert_makeSlackMessageText() {
-	user := s.SetSuitableTestUserForDB()
-
-	chart, created, err := v2models.InternalChartStore.Create(s.DB, v2models.Chart{
-		Name:      "leonardo",
-		ChartRepo: utils.PointerTo("terra-helm"),
-	}, user)
-	s.NoError(err)
-	s.True(created)
-	cluster, created, err := v2models.InternalClusterStore.Create(s.DB, v2models.Cluster{
-		Name:                "terra-dev",
-		Provider:            "google",
-		GoogleProject:       "broad-dsde-dev",
-		Base:                utils.PointerTo("live"),
-		Address:             utils.PointerTo("0.0.0.0"),
-		RequiresSuitability: utils.PointerTo(false),
-		Location:            "us-central1-a",
-		HelmfileRef:         utils.PointerTo("HEAD"),
-	}, user)
-	s.NoError(err)
-	s.True(created)
-	environment, created, err := v2models.InternalEnvironmentStore.Create(s.DB, v2models.Environment{
-		Name:                       "dev",
-		Lifecycle:                  "static",
-		UniqueResourcePrefix:       "a1b2",
-		Base:                       "live",
-		DefaultClusterID:           &cluster.ID,
-		DefaultNamespace:           "terra-dev",
-		OwnerID:                    &user.ID,
-		RequiresSuitability:        utils.PointerTo(false),
-		HelmfileRef:                utils.PointerTo("HEAD"),
-		DefaultFirecloudDevelopRef: utils.PointerTo("dev"),
-		PreventDeletion:            utils.PointerTo(false),
-	}, user)
-	s.NoError(err)
-	s.True(created)
-	chartRelease, created, err := v2models.InternalChartReleaseStore.Create(s.DB, v2models.ChartRelease{
-		Name:          "leonardo-dev",
-		ChartID:       chart.ID,
-		ClusterID:     &cluster.ID,
-		EnvironmentID: &environment.ID,
-		Namespace:     environment.DefaultNamespace,
-		ChartReleaseVersion: v2models.ChartReleaseVersion{
-			AppVersionResolver:   utils.PointerTo("exact"),
-			AppVersionExact:      utils.PointerTo("app version blah"),
-			ChartVersionResolver: utils.PointerTo("exact"),
-			ChartVersionExact:    utils.PointerTo("chart version blah"),
-			HelmfileRef:          utils.PointerTo("HEAD"),
-			HelmfileRefEnabled:   utils.PointerTo(false),
-			FirecloudDevelopRef:  utils.PointerTo("dev"),
-		},
-	}, user)
-	s.NoError(err)
-	s.True(created)
-
-	s.Equal("repo's workflow workflow against <https://beehive.dsp-devops.broadinstitute.org/r/chart-release/leonardo-dev|leonardo-dev>: <https://github.com/owner/repo/actions/runs/1/attempts/3|success>",
-		makeSlackMessageText(s.DB, models.CiRun{
-			Platform:                   "github-actions",
-			GithubActionsOwner:         "owner",
-			GithubActionsRepo:          "repo",
-			GithubActionsRunID:         1,
-			GithubActionsAttemptNumber: 3,
-			GithubActionsWorkflowPath:  "workflow",
-			StartedAt:                  utils.PointerTo(time.Now().Add(-time.Minute)),
-			TerminalAt:                 utils.PointerTo(time.Now()),
-			Status:                     utils.PointerTo("success"),
-			RelatedResources: []models.CiIdentifier{
-				{ResourceType: "chart-release", ResourceID: chartRelease.ID},
-				{ResourceType: "environment", ResourceID: environment.ID},
-			},
-		}))
-	s.Equal("repo's workflow workflow against <https://beehive.dsp-devops.broadinstitute.org/r/environment/dev|dev>: <https://github.com/owner/repo/actions/runs/1/attempts/3|success>",
-		makeSlackMessageText(s.DB, models.CiRun{
-			Platform:                   "github-actions",
-			GithubActionsOwner:         "owner",
-			GithubActionsRepo:          "repo",
-			GithubActionsRunID:         1,
-			GithubActionsAttemptNumber: 3,
-			GithubActionsWorkflowPath:  "workflow",
-			StartedAt:                  utils.PointerTo(time.Now().Add(-time.Minute)),
-			TerminalAt:                 utils.PointerTo(time.Now()),
-			Status:                     utils.PointerTo("success"),
-			RelatedResources: []models.CiIdentifier{
-				{ResourceType: "environment", ResourceID: environment.ID},
-			},
-		}))
-}
-
-func (s *handlerSuite) TestCiRunsV3Upsert_GithubActionsClaimDefaults() {
+func (s *handlerSuite) TestCiRunsV3Upsert_githubActionsClaimDefaults() {
 	// Note that the request body is empty!
 	// Normally this would result in an error due to missing fields, but suppose a GHA OIDC JWT was passed...
 	request := s.NewRequest(http.MethodPut, "/api/ci-runs/v3", CiRunV3Upsert{})
@@ -846,57 +649,134 @@ func (s *handlerSuite) TestCiRunsV3Upsert_GithubActionsClaimDefaults() {
 	s.Equal(got.GithubActionsWorkflowPath, ".github/workflows/bee-create.yaml")
 }
 
-func (s *handlerSuite) TestCiRunsV3Upsert_ChartReleaseStatuses() {
+func (s *handlerSuite) TestCiRunsV3Upsert_dispatch() {
 	chartRelease := s.TestData.ChartRelease_LeonardoDev()
 	changeset := s.TestData.Changeset_LeonardoDev_V1toV3()
+	s.TestData.SlackDeployHook_Dev()
+	s.TestData.GithubActionsDeployHook_LeonardoDev()
 
 	var got CiRunV3
-	code := s.HandleRequest(
-		s.NewRequest(http.MethodPut, "/api/ci-runs/v3", CiRunV3Upsert{
-			ciRunFields: ciRunFields{
-				Platform:                   "github-actions",
-				GithubActionsOwner:         "broadinstitute",
-				GithubActionsRepo:          "terra-github-workflows",
-				GithubActionsRunID:         123,
-				GithubActionsAttemptNumber: 1,
-				GithubActionsWorkflowPath:  ".github/workflows/bee-create.yaml",
-			},
-			Changesets: []string{utils.UintToString(changeset.ID)},
-			ChartReleaseStatuses: map[string]string{
-				chartRelease.Name: "success",
-			},
-		}),
-		&got)
+	var code int
+
+	// 1. Suppose a CiRun is upserted via webhook
+	hooks.UseMockedDispatcher(s.T(), func(d *hooks_mocks.MockMockableDispatcher) {}, func() {
+		code = s.HandleRequest(
+			s.NewRequest(http.MethodPut, "/api/ci-runs/v3", CiRunV3Upsert{
+				ciRunFields: ciRunFields{
+					Platform:                   "github-actions",
+					GithubActionsOwner:         "broadinstitute",
+					GithubActionsRepo:          "terra-github-workflows",
+					GithubActionsRunID:         123,
+					GithubActionsAttemptNumber: 1,
+					GithubActionsWorkflowPath:  ".github/workflows/sync-release.yaml",
+					StartedAt:                  utils.PointerTo(changeset.AppliedAt.Add(30 * time.Second)),
+					Status:                     utils.PointerTo("in_progress"),
+				},
+			}),
+			&got)
+	})
+	s.Equal(http.StatusCreated, code)
+	if s.NotNil(got.Status) {
+		s.Equal("in_progress", *got.Status)
+	}
+
+	// 2. Suppose the relation to the changeset is reported by the action itself, plus a notification channel
+	//    (now deploy hooks start firing because we can match the resources)
+	hooks.UseMockedDispatcher(s.T(), func(d *hooks_mocks.MockMockableDispatcher) {
+		d.EXPECT().DispatchSlackDeployHook(mock.Anything, mock.Anything, mock.Anything).Return(nil).Once()
+	}, func() {
+		code = s.HandleRequest(
+			s.NewRequest(http.MethodPut, "/api/ci-runs/v3", CiRunV3Upsert{
+				ciRunFields: ciRunFields{
+					Platform:                       "github-actions",
+					GithubActionsOwner:             "broadinstitute",
+					GithubActionsRepo:              "terra-github-workflows",
+					GithubActionsRunID:             123,
+					GithubActionsAttemptNumber:     1,
+					GithubActionsWorkflowPath:      ".github/workflows/sync-release.yaml",
+					NotifySlackChannelsUponSuccess: []string{"#workbench-resilience-dev"},
+					NotifySlackChannelsUponFailure: []string{"#workbench-resilience-dev", "#ap-k8s-monitor"},
+				},
+				Changesets: []string{utils.UintToString(changeset.ID)},
+			}),
+			&got)
+	})
 	s.Equal(http.StatusCreated, code)
 
-	// Ugly assertions but we want to check that there were at least chart release and changeset
-	// resources referenced and they had their statuses (and nothing else did)
-	var chartReleaseHadStatus, changesetHadStatus, appVersionHadStatus, chartVersionHadStatus bool
-	if s.GreaterOrEqual(len(got.RelatedResources), 4) {
+	s.Run("check CiIdentifier creation", func() {
+		relatedResourceCounts := map[string]int{}
 		for _, rr := range got.RelatedResources {
-			if rr.ResourceType == "chart-release" {
-				if s.NotNil(rr.ResourceStatus) && s.Equal("success", *rr.ResourceStatus) {
-					chartReleaseHadStatus = true
-				}
-			} else if rr.ResourceType == "changeset" {
-				if s.NotNil(rr.ResourceStatus) && s.Equal("success", *rr.ResourceStatus) {
-					changesetHadStatus = true
-				}
-			} else if rr.ResourceType == "app-version" {
-				if s.NotNil(rr.ResourceStatus) && s.Equal("success", *rr.ResourceStatus) {
-					appVersionHadStatus = true
-				}
-			} else if rr.ResourceType == "chart-version" {
-				if s.NotNil(rr.ResourceStatus) && s.Equal("success", *rr.ResourceStatus) {
-					chartVersionHadStatus = true
+			if s.NotZero(rr.ResourceType) && s.NotZero(rr.ResourceID) && s.NotZero(rr.ID) {
+				relatedResourceCounts[rr.ResourceType]++
+			}
+			s.Nil(rr.ResourceStatus)
+		}
+		s.Equal(1, relatedResourceCounts["changeset"])
+		s.Equal(1, relatedResourceCounts["chart-release"])
+		s.Equal(1, relatedResourceCounts["cluster"])
+		s.Equal(1, relatedResourceCounts["environment"])
+		s.Equal(len(changeset.NewAppVersions), relatedResourceCounts["app-version"])
+		s.Equal(len(changeset.NewChartVersions), relatedResourceCounts["chart-version"])
+	})
+
+	// 3. Suppose Thelma reported the status for the chart release itself
+	hooks.UseMockedDispatcher(s.T(), func(d *hooks_mocks.MockMockableDispatcher) {
+		d.EXPECT().DispatchSlackDeployHook(mock.Anything, mock.Anything, mock.Anything).Return(nil).Once()
+	}, func() {
+		code = s.HandleRequest(
+			s.NewRequest(http.MethodPut, "/api/ci-runs/v3", CiRunV3Upsert{
+				ciRunFields: ciRunFields{
+					Platform:                   "github-actions",
+					GithubActionsOwner:         "broadinstitute",
+					GithubActionsRepo:          "terra-github-workflows",
+					GithubActionsRunID:         123,
+					GithubActionsAttemptNumber: 1,
+					GithubActionsWorkflowPath:  ".github/workflows/sync-release.yaml",
+				},
+				ChartReleaseStatuses: map[string]string{
+					chartRelease.Name: "success: healthy",
+				},
+			}),
+			&got)
+	})
+	s.Equal(http.StatusCreated, code)
+
+	s.Run("check resource statuses", func() {
+		for _, rr := range got.RelatedResources {
+			if rr.ResourceType == "chart-release" || rr.ResourceType == "changeset" || rr.ResourceType == "app-version" || rr.ResourceType == "chart-version" {
+				if s.NotNil(rr.ResourceStatus) {
+					s.Equal("success: healthy", *rr.ResourceStatus)
 				}
 			} else {
 				s.Nil(rr.ResourceStatus)
 			}
 		}
+	})
+
+	// 4. Suppose CiRun marked as completed by via webhook
+	hooks.UseMockedDispatcher(s.T(), func(d *hooks_mocks.MockMockableDispatcher) {
+		d.EXPECT().DispatchSlackDeployHook(mock.Anything, mock.Anything, mock.Anything).Return(nil).Once()
+		d.EXPECT().DispatchGithubActionsDeployHook(mock.Anything, mock.Anything, mock.Anything).Return(nil).Once()
+		d.EXPECT().DispatchSlackCompletionNotification(mock.Anything, "#workbench-resilience-dev", mock.Anything, true).Return(nil).Once()
+	}, func() {
+		code = s.HandleRequest(
+			s.NewRequest(http.MethodPut, "/api/ci-runs/v3", CiRunV3Upsert{
+				ciRunFields: ciRunFields{
+					Platform:                   "github-actions",
+					GithubActionsOwner:         "broadinstitute",
+					GithubActionsRepo:          "terra-github-workflows",
+					GithubActionsRunID:         123,
+					GithubActionsAttemptNumber: 1,
+					GithubActionsWorkflowPath:  ".github/workflows/sync-release.yaml",
+					TerminalAt:                 utils.PointerTo(changeset.AppliedAt.Add(time.Minute)),
+					Status:                     utils.PointerTo("success"),
+				},
+			}),
+			&got)
+	})
+	s.Equal(http.StatusCreated, code)
+	if s.NotNil(got.Status) {
+		s.Equal("success", *got.Status)
 	}
-	s.True(chartReleaseHadStatus)
-	s.True(changesetHadStatus)
-	s.True(appVersionHadStatus)
-	s.True(chartVersionHadStatus)
+	s.NotNil(got.TerminationHooksDispatchedAt)
 }

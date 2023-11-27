@@ -5,6 +5,16 @@
 #   It will use mock authentication and authorization.
 mode: debug
 
+hooks:
+  # If Sherlock should act on CiRun state transitions. Hooks are still subject
+  # to the third-party-specific flags elsewhere in this file.
+  enable: true
+  # If true, hooks will be run asynchronously after the initial call into the
+  # hooks package. This flag doesn't affect parallelism within the hooks package,
+  # it just changes whether hooks will be run before or possibly after the initial
+  # call returns.
+  asynchronous: true
+
 log:
   # Always true when mode="release"
   timestamp: true

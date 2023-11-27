@@ -2,6 +2,8 @@ package models
 
 import (
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
+	"github.com/broadinstitute/sherlock/sherlock/internal/config"
+	"github.com/stretchr/testify/assert"
 	"gorm.io/datatypes"
 	"gorm.io/gorm"
 	"testing"
@@ -401,6 +403,226 @@ func TestCiRun_Nickname(t *testing.T) {
 			if got := c.Nickname(); got != tt.want {
 				t.Errorf("Nickname() = %v, want %v", got, tt.want)
 			}
+		})
+	}
+}
+
+func TestCiRun_IsDeploy(t *testing.T) {
+	config.LoadTestConfig()
+	assert.NoError(t, initDeployMatchers())
+	type fields struct {
+		Model                          gorm.Model
+		Platform                       string
+		GithubActionsOwner             string
+		GithubActionsRepo              string
+		GithubActionsRunID             uint
+		GithubActionsAttemptNumber     uint
+		GithubActionsWorkflowPath      string
+		ArgoWorkflowsNamespace         string
+		ArgoWorkflowsName              string
+		ArgoWorkflowsTemplate          string
+		TerminationHooksDispatchedAt   *string
+		RelatedResources               []CiIdentifier
+		StartedAt                      *time.Time
+		TerminalAt                     *time.Time
+		Status                         *string
+		NotifySlackChannelsUponSuccess datatypes.JSONSlice[string]
+		NotifySlackChannelsUponFailure datatypes.JSONSlice[string]
+		ResourceStatus                 *string
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   bool
+	}{
+		{
+			name: "matches",
+			fields: fields{
+				Platform:                   "github-actions",
+				GithubActionsOwner:         "broadinstitute",
+				GithubActionsRepo:          "terra-github-workflows",
+				GithubActionsRunID:         123123,
+				GithubActionsAttemptNumber: 1,
+				GithubActionsWorkflowPath:  ".github/workflows/sync-release.yaml",
+			},
+			want: true,
+		},
+		{
+			name: "no platform match",
+			fields: fields{
+				Platform:               "argo-workflows",
+				ArgoWorkflowsNamespace: "namespace",
+				ArgoWorkflowsName:      "name",
+				ArgoWorkflowsTemplate:  "template",
+			},
+			want: false,
+		},
+		{
+			name: "no owner match",
+			fields: fields{
+				Platform:                   "github-actions",
+				GithubActionsOwner:         "DataBiosphere",
+				GithubActionsRepo:          "terra-github-workflows",
+				GithubActionsRunID:         123123,
+				GithubActionsAttemptNumber: 1,
+				GithubActionsWorkflowPath:  ".github/workflows/sync-release.yaml",
+			},
+			want: false,
+		},
+		{
+			name: "no repo match",
+			fields: fields{
+				Platform:                   "github-actions",
+				GithubActionsOwner:         "broadinstitute",
+				GithubActionsRepo:          "terra-helmfile",
+				GithubActionsRunID:         123123,
+				GithubActionsAttemptNumber: 1,
+				GithubActionsWorkflowPath:  ".github/workflows/sync-release.yaml",
+			},
+			want: false,
+		},
+		{
+			name: "no path match",
+			fields: fields{
+				Platform:                   "github-actions",
+				GithubActionsOwner:         "broadinstitute",
+				GithubActionsRepo:          "terra-github-workflows",
+				GithubActionsRunID:         123123,
+				GithubActionsAttemptNumber: 1,
+				GithubActionsWorkflowPath:  ".github/workflows/bee-create.yaml",
+			},
+			want: false,
+		},
+		{
+			name: "matches even if otherwise required fields are missing",
+			fields: fields{
+				Platform:                  "github-actions",
+				GithubActionsOwner:        "broadinstitute",
+				GithubActionsRepo:         "terra-github-workflows",
+				GithubActionsWorkflowPath: ".github/workflows/sync-release.yaml",
+			},
+			want: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := &CiRun{
+				Model:                          tt.fields.Model,
+				Platform:                       tt.fields.Platform,
+				GithubActionsOwner:             tt.fields.GithubActionsOwner,
+				GithubActionsRepo:              tt.fields.GithubActionsRepo,
+				GithubActionsRunID:             tt.fields.GithubActionsRunID,
+				GithubActionsAttemptNumber:     tt.fields.GithubActionsAttemptNumber,
+				GithubActionsWorkflowPath:      tt.fields.GithubActionsWorkflowPath,
+				ArgoWorkflowsNamespace:         tt.fields.ArgoWorkflowsNamespace,
+				ArgoWorkflowsName:              tt.fields.ArgoWorkflowsName,
+				ArgoWorkflowsTemplate:          tt.fields.ArgoWorkflowsTemplate,
+				TerminationHooksDispatchedAt:   tt.fields.TerminationHooksDispatchedAt,
+				RelatedResources:               tt.fields.RelatedResources,
+				StartedAt:                      tt.fields.StartedAt,
+				TerminalAt:                     tt.fields.TerminalAt,
+				Status:                         tt.fields.Status,
+				NotifySlackChannelsUponSuccess: tt.fields.NotifySlackChannelsUponSuccess,
+				NotifySlackChannelsUponFailure: tt.fields.NotifySlackChannelsUponFailure,
+				ResourceStatus:                 tt.fields.ResourceStatus,
+			}
+			if got := c.IsDeploy(); got != tt.want {
+				t.Errorf("IsDeploy() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func (s *modelSuite) TestCiRun_MakeCompletionNotificationText() {
+	environment := s.TestData.Environment_Dev()
+	chartRelease := s.TestData.ChartRelease_LeonardoDev()
+
+	type fields struct {
+		Model                          gorm.Model
+		Platform                       string
+		GithubActionsOwner             string
+		GithubActionsRepo              string
+		GithubActionsRunID             uint
+		GithubActionsAttemptNumber     uint
+		GithubActionsWorkflowPath      string
+		ArgoWorkflowsNamespace         string
+		ArgoWorkflowsName              string
+		ArgoWorkflowsTemplate          string
+		TerminationHooksDispatchedAt   *string
+		RelatedResources               []CiIdentifier
+		StartedAt                      *time.Time
+		TerminalAt                     *time.Time
+		Status                         *string
+		NotifySlackChannelsUponSuccess datatypes.JSONSlice[string]
+		NotifySlackChannelsUponFailure datatypes.JSONSlice[string]
+		ResourceStatus                 *string
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   string
+	}{
+		{
+			name: "chart release",
+			fields: fields{
+				Platform:                   "github-actions",
+				GithubActionsOwner:         "owner",
+				GithubActionsRepo:          "repo",
+				GithubActionsRunID:         1,
+				GithubActionsAttemptNumber: 3,
+				GithubActionsWorkflowPath:  "workflow",
+				StartedAt:                  utils.PointerTo(time.Now().Add(-time.Minute)),
+				TerminalAt:                 utils.PointerTo(time.Now()),
+				Status:                     utils.PointerTo("success"),
+				RelatedResources: []CiIdentifier{
+					{ResourceType: "chart-release", ResourceID: chartRelease.ID},
+					{ResourceType: "environment", ResourceID: environment.ID},
+				},
+			},
+			want: "repo's workflow workflow against <https://beehive.dsp-devops.broadinstitute.org/r/chart-release/leonardo-dev|leonardo-dev>: <https://github.com/owner/repo/actions/runs/1/attempts/3|success>",
+		},
+		{
+			name: "environment",
+			fields: fields{
+				Platform:                   "github-actions",
+				GithubActionsOwner:         "owner",
+				GithubActionsRepo:          "repo",
+				GithubActionsRunID:         1,
+				GithubActionsAttemptNumber: 3,
+				GithubActionsWorkflowPath:  "workflow",
+				StartedAt:                  utils.PointerTo(time.Now().Add(-time.Minute)),
+				TerminalAt:                 utils.PointerTo(time.Now()),
+				Status:                     utils.PointerTo("success"),
+				RelatedResources: []CiIdentifier{
+					{ResourceType: "environment", ResourceID: environment.ID},
+				},
+			},
+			want: "repo's workflow workflow against <https://beehive.dsp-devops.broadinstitute.org/r/environment/dev|dev>: <https://github.com/owner/repo/actions/runs/1/attempts/3|success>",
+		},
+	}
+	for _, tt := range tests {
+		s.Run(tt.name, func() {
+			c := &CiRun{
+				Model:                          tt.fields.Model,
+				Platform:                       tt.fields.Platform,
+				GithubActionsOwner:             tt.fields.GithubActionsOwner,
+				GithubActionsRepo:              tt.fields.GithubActionsRepo,
+				GithubActionsRunID:             tt.fields.GithubActionsRunID,
+				GithubActionsAttemptNumber:     tt.fields.GithubActionsAttemptNumber,
+				GithubActionsWorkflowPath:      tt.fields.GithubActionsWorkflowPath,
+				ArgoWorkflowsNamespace:         tt.fields.ArgoWorkflowsNamespace,
+				ArgoWorkflowsName:              tt.fields.ArgoWorkflowsName,
+				ArgoWorkflowsTemplate:          tt.fields.ArgoWorkflowsTemplate,
+				TerminationHooksDispatchedAt:   tt.fields.TerminationHooksDispatchedAt,
+				RelatedResources:               tt.fields.RelatedResources,
+				StartedAt:                      tt.fields.StartedAt,
+				TerminalAt:                     tt.fields.TerminalAt,
+				Status:                         tt.fields.Status,
+				NotifySlackChannelsUponSuccess: tt.fields.NotifySlackChannelsUponSuccess,
+				NotifySlackChannelsUponFailure: tt.fields.NotifySlackChannelsUponFailure,
+				ResourceStatus:                 tt.fields.ResourceStatus,
+			}
+			s.Equalf(tt.want, c.SlackCompletionText(s.DB), "SlackCompletionText()")
 		})
 	}
 }

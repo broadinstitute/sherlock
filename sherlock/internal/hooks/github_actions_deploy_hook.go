@@ -1,4 +1,4 @@
-package deployhooks
+package hooks
 
 import (
 	"encoding/json"
@@ -10,7 +10,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func dispatchGithubActionsDeployHook(db *gorm.DB, hook models.GithubActionsDeployHook, ciRun models.CiRun) error {
+func (_ *dispatcherImpl) DispatchGithubActionsDeployHook(db *gorm.DB, hook models.GithubActionsDeployHook, ciRun models.CiRun) error {
 	if !config.Config.Bool("github.behaviors.deployHooks.enable") {
 		return nil
 	}

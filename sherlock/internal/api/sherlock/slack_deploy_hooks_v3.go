@@ -12,13 +12,17 @@ type SlackDeployHookV3 struct {
 }
 
 type SlackDeployHookFields struct {
-	SlackChannel *string `json:"slackChannel,omitempty" form:"slackChannel"`
+	SlackChannel  *string `json:"slackChannel,omitempty" form:"slackChannel"`
+	MentionPeople *bool   `json:"mentionPeople,omitempty" form:"mentionPeople"`
+	Beta          *bool   `json:"beta,omitempty" form:"beta"`
 }
 
 func (s SlackDeployHookV3) toModel(db *gorm.DB) (models.SlackDeployHook, error) {
 	ret := models.SlackDeployHook{
-		Model:        s.CommonFields.toGormModel(),
-		SlackChannel: s.SlackChannel,
+		Model:         s.CommonFields.toGormModel(),
+		SlackChannel:  s.SlackChannel,
+		MentionPeople: s.MentionPeople,
+		Beta:          s.Beta,
 	}
 	var err error
 	ret.Trigger, err = s.DeployHookTriggerConfigV3.toModel(db)
@@ -29,6 +33,10 @@ func slackDeployHookFromModel(model models.SlackDeployHook) SlackDeployHookV3 {
 	return SlackDeployHookV3{
 		CommonFields:              commonFieldsFromGormModel(model.Model),
 		DeployHookTriggerConfigV3: deployHookTriggerConfigFromModel(model.Trigger),
-		SlackDeployHookFields:     SlackDeployHookFields{SlackChannel: model.SlackChannel},
+		SlackDeployHookFields: SlackDeployHookFields{
+			SlackChannel:  model.SlackChannel,
+			MentionPeople: model.MentionPeople,
+			Beta:          model.Beta,
+		},
 	}
 }

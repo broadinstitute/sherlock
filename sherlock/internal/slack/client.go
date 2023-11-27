@@ -11,6 +11,7 @@ import (
 // `make generate-mocks` from the root of the repo to regenerate (you'll need to `brew install mockery`)
 type mockableClient interface {
 	SendMessageContext(ctx context.Context, channelID string, options ...slack.MsgOption) (_channel string, _timestamp string, _text string, err error)
+	UpdateMessageContext(ctx context.Context, channelID, timestamp string, options ...slack.MsgOption) (_channel string, _timestamp string, _text string, err error)
 	AddReaction(name string, item slack.ItemRef) error
 	GetUserByEmailContext(ctx context.Context, email string) (*slack.User, error)
 }
