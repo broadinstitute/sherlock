@@ -366,5 +366,4 @@ func (s *modelSuite) TestEnvironmentValidationSqlOfflineEndPresent() {
 	environment := s.TestData.Environment_Swatomation_DevBee()
 	err := s.DB.Model(&environment).Select("OfflineScheduleEndTime").Updates(&Environment{OfflineScheduleEndTime: nil}).Error
 	s.ErrorContains(err, "violates check constraint \"offline_schedule_end_time_present\"")
-
 }
