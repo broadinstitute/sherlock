@@ -77,10 +77,22 @@ func slackDeployHooksV3Edit(ctx *gin.Context) {
 	}
 
 	if toEdit.SlackChannel != nil {
+		var triggerDescription string
 		if toEdit.Trigger.OnEnvironment != nil {
-			go slack.SendMessage(db.Statement.Context, *toEdit.SlackChannel, fmt.Sprintf("This channel is set to receive notifications for Beehive deployments in %s", toEdit.Trigger.OnEnvironment.Name))
+			triggerDescription = toEdit.Trigger.OnEnvironment.Name
 		} else if toEdit.Trigger.OnChartRelease != nil {
-			go slack.SendMessage(db.Statement.Context, *toEdit.SlackChannel, fmt.Sprintf("This channel is set to receive notifications for Beehive deployments to %s", toEdit.Trigger.OnChartRelease.Name))
+			triggerDescription = toEdit.Trigger.OnChartRelease.Name
+		}
+		var message string
+		if body.Beta != nil && *body.Beta {
+			message = fmt.Sprintf("This channel is now enrolled in beta notifications for %s deployments; please direct any feedback to <#C029LTN5L80>", triggerDescription)
+		} else if body.Beta != nil && !*body.Beta {
+			message = fmt.Sprintf("This channel is no longer enrolled in beta notifications for %s deployments", triggerDescription)
+		} else {
+			message = fmt.Sprintf("This channel is set to receive notifications for Beehive deployments to %s", triggerDescription)
+		}
+		if message != "" {
+			go slack.SendMessage(db.Statement.Context, *toEdit.SlackChannel, message)
 		}
 	}
 

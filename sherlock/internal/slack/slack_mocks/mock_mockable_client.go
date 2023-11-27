@@ -203,6 +203,89 @@ func (_c *MockMockableClient_SendMessageContext_Call) RunAndReturn(run func(cont
 	return _c
 }
 
+// UpdateMessageContext provides a mock function with given fields: ctx, channelID, timestamp, options
+func (_m *MockMockableClient) UpdateMessageContext(ctx context.Context, channelID string, timestamp string, options ...slack.MsgOption) (string, string, string, error) {
+	_va := make([]interface{}, len(options))
+	for _i := range options {
+		_va[_i] = options[_i]
+	}
+	var _ca []interface{}
+	_ca = append(_ca, ctx, channelID, timestamp)
+	_ca = append(_ca, _va...)
+	ret := _m.Called(_ca...)
+
+	var r0 string
+	var r1 string
+	var r2 string
+	var r3 error
+	if rf, ok := ret.Get(0).(func(context.Context, string, string, ...slack.MsgOption) (string, string, string, error)); ok {
+		return rf(ctx, channelID, timestamp, options...)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, string, string, ...slack.MsgOption) string); ok {
+		r0 = rf(ctx, channelID, timestamp, options...)
+	} else {
+		r0 = ret.Get(0).(string)
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, string, string, ...slack.MsgOption) string); ok {
+		r1 = rf(ctx, channelID, timestamp, options...)
+	} else {
+		r1 = ret.Get(1).(string)
+	}
+
+	if rf, ok := ret.Get(2).(func(context.Context, string, string, ...slack.MsgOption) string); ok {
+		r2 = rf(ctx, channelID, timestamp, options...)
+	} else {
+		r2 = ret.Get(2).(string)
+	}
+
+	if rf, ok := ret.Get(3).(func(context.Context, string, string, ...slack.MsgOption) error); ok {
+		r3 = rf(ctx, channelID, timestamp, options...)
+	} else {
+		r3 = ret.Error(3)
+	}
+
+	return r0, r1, r2, r3
+}
+
+// MockMockableClient_UpdateMessageContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdateMessageContext'
+type MockMockableClient_UpdateMessageContext_Call struct {
+	*mock.Call
+}
+
+// UpdateMessageContext is a helper method to define mock.On call
+//   - ctx context.Context
+//   - channelID string
+//   - timestamp string
+//   - options ...slack.MsgOption
+func (_e *MockMockableClient_Expecter) UpdateMessageContext(ctx interface{}, channelID interface{}, timestamp interface{}, options ...interface{}) *MockMockableClient_UpdateMessageContext_Call {
+	return &MockMockableClient_UpdateMessageContext_Call{Call: _e.mock.On("UpdateMessageContext",
+		append([]interface{}{ctx, channelID, timestamp}, options...)...)}
+}
+
+func (_c *MockMockableClient_UpdateMessageContext_Call) Run(run func(ctx context.Context, channelID string, timestamp string, options ...slack.MsgOption)) *MockMockableClient_UpdateMessageContext_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		variadicArgs := make([]slack.MsgOption, len(args)-3)
+		for i, a := range args[3:] {
+			if a != nil {
+				variadicArgs[i] = a.(slack.MsgOption)
+			}
+		}
+		run(args[0].(context.Context), args[1].(string), args[2].(string), variadicArgs...)
+	})
+	return _c
+}
+
+func (_c *MockMockableClient_UpdateMessageContext_Call) Return(_channel string, _timestamp string, _text string, err error) *MockMockableClient_UpdateMessageContext_Call {
+	_c.Call.Return(_channel, _timestamp, _text, err)
+	return _c
+}
+
+func (_c *MockMockableClient_UpdateMessageContext_Call) RunAndReturn(run func(context.Context, string, string, ...slack.MsgOption) (string, string, string, error)) *MockMockableClient_UpdateMessageContext_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // NewMockMockableClient creates a new instance of MockMockableClient. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
 // The first argument is typically a *testing.T value.
 func NewMockMockableClient(t interface {

@@ -1,17 +1,76 @@
-package deployhooks
+package hooks
 
 import (
+	"errors"
 	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/slack"
+	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
 	"sort"
 	"strings"
 )
 
-func dispatchSlackDeployHook(db *gorm.DB, hook models.SlackDeployHook, ciRun models.CiRun) error {
+func (_ *dispatcherImpl) DispatchSlackDeployHook(db *gorm.DB, hook models.SlackDeployHook, ciRun models.CiRun) error {
+	// Bail out to the old behavior by default
+	if hook.Beta == nil || !*hook.Beta {
+		if ciRun.TerminalAt != nil {
+			return deprecatedSlackDeployHook(db, hook, ciRun)
+		} else {
+			return nil
+		}
+	}
+
+	if hook.SlackChannel == nil {
+		// Shouldn't ever hit this case, but better to error out than panic
+		return fmt.Errorf("slack channel was nil on SlackDeployHook %d, shouldn't be possible", hook.ID)
+	}
+
+	var messageState models.SlackDeployHookState
+	if err := db.
+		Where(&models.SlackDeployHookState{
+			SlackDeployHookID: hook.ID,
+			CiRunID:           ciRun.ID,
+		}).
+		Attrs(&models.SlackDeployHookState{
+			MessageChannel: *hook.SlackChannel,
+		}).
+		FirstOrInit(&messageState).
+		Error; err != nil {
+		return fmt.Errorf("failed to query SlackDeployHookState for SlackDeployHook %d and CiRun %d: %w", hook.ID, ciRun.ID, err)
+	}
+
+	// TODO: Send the main message
+	log.Debug().Msg("TODO: Send the main message")
+
+	if ciRun.TerminalAt != nil {
+		// TODO: Send a message with the changelog
+		log.Debug().Msg("TODO: Send a message with the changelog")
+
+		if !ciRun.Succeeded() {
+			// TODO: Send a message into the channel alerting to the failure
+			log.Debug().Msg("TODO: Send a message into the channel alerting to the failure")
+		}
+	}
+
+	// If the CiRun is ongoing, update the state, otherwise delete it if it exists
+	if ciRun.TerminalAt == nil {
+		if err := db.Save(&messageState).Error; err != nil {
+			return fmt.Errorf("failed to save SlackDeployHookState for SlackDeployHook %d and CiRun %d: %w", hook.ID, ciRun.ID, err)
+		}
+	} else if messageState.CiRunID != 0 && messageState.SlackDeployHookID != 0 {
+		if err := db.Delete(&messageState).Error; err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+			return fmt.Errorf("failed to delete SlackDeployHookState for SlackDeployHook %d and CiRun %d: %w", hook.ID, ciRun.ID, err)
+		}
+	}
+
+	return nil
+}
+
+// Deprecated
+func deprecatedSlackDeployHook(db *gorm.DB, hook models.SlackDeployHook, ciRun models.CiRun) error {
 	if hook.SlackChannel == nil {
 		return fmt.Errorf("slack channel was nil on SlackDeployHook %d, shouldn't be possible", hook.ID)
 	} else if attachment, err := generateSlackAttachment(db, hook, ciRun); err != nil {

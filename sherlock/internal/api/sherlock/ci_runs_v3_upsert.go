@@ -5,10 +5,9 @@ import (
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/authentication"
 	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/gha_oidc/gha_oidc_claims"
-	"github.com/broadinstitute/sherlock/sherlock/internal/config"
-	"github.com/broadinstitute/sherlock/sherlock/internal/deployhooks"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
+	"github.com/broadinstitute/sherlock/sherlock/internal/hooks"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/slack"
 	"github.com/creasty/defaults"
@@ -18,8 +17,6 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 	"net/http"
-	"strings"
-	"time"
 )
 
 type CiRunV3Upsert struct {
@@ -492,14 +489,10 @@ WHERE
 		}
 	}
 
-	// If this workflow finished, claim that we're dispatching any hooks
-	var dispatchedAt string
-	if result.TerminalAt != nil && result.TerminationHooksDispatchedAt == nil {
-		dispatchedAt = time.Now().Format(time.RFC3339Nano)
-		if err = db.Model(&result).Update("termination_hooks_dispatched_at", gorm.Expr("COALESCE(termination_hooks_dispatched_at, ?)", dispatchedAt)).Error; err != nil {
-			log.Warn().Err(err).Msgf("HOOK | failed to claim dispatch on CiRun %d", result.ID)
-			dispatchedAt = ""
-		}
+	// If this workflow finished, claim that we're doing the final dispatch of any hooks
+	var claim string
+	if result.TerminalAt != nil {
+		claim = result.AttemptToClaimTerminationDispatch(db)
 	}
 
 	// Re-query so we load all the CiIdentifiers, including any added by previous requests
@@ -513,76 +506,11 @@ WHERE
 		return
 	}
 
-	// If we said we were going to dispatch this workflow, check that our claim held and then
-	// do the dispatch
-	if dispatchedAt != "" {
-		if result.TerminationHooksDispatchedAt == nil {
-			log.Warn().Msgf("HOOK | claimed dispatch on CiRun %d but the field wasn't set when re-queried?", result.ID)
-		} else if dispatchedAt != *result.TerminationHooksDispatchedAt {
-			log.Info().Msgf("HOOK | parallelism detected; we claimed dispatch on CiRun %d at %s but it the claim in the database ended up being %s", result.ID, dispatchedAt, *result.TerminationHooksDispatchedAt)
-		} else if config.Config.String("mode") == "debug" {
-			// Locally we do this synchronously so it occurs during the request.
-			// We don't do anything to either the db or the result during request
-			// exit, so the difference between local dev and remove shouldn't be
-			// a cause of issues. If it is, that's what we've got error reporting
-			// for.
-			dispatchTerminatedCiRun(db, result)
-		} else {
-			go dispatchTerminatedCiRun(db, result)
-		}
+	// Dispatch either when the workflow hasn't finished or when it has but we claimed
+	// the final dispatch
+	if result.TerminalAt == nil || result.EvaluateIfTerminationClaimHeld(claim) {
+		hooks.Dispatch(db, result)
 	}
 
 	ctx.JSON(http.StatusCreated, ciRunFromModel(result))
-}
-
-// dispatchTerminatedCiRun is abstracted from ciRunsV3Upsert so that it can be easily called
-// synchronously in debug mode and asynchronously otherwise.
-func dispatchTerminatedCiRun(db *gorm.DB, ciRun models.CiRun) {
-	if deployhooks.CiRunIsDeploy(ciRun) {
-		deployhooks.DispatchCiRun(db, ciRun)
-	}
-	if ciRun.Status != nil && (len(ciRun.NotifySlackChannelsUponSuccess) > 0 || len(ciRun.NotifySlackChannelsUponFailure) > 0) {
-		text := makeSlackMessageText(db, ciRun)
-		if ciRun.Succeeded() {
-			for _, channel := range ciRun.NotifySlackChannelsUponSuccess {
-				slack.SendMessage(db.Statement.Context, channel, "", slack.GreenBlock{Text: text})
-			}
-		} else {
-			for _, channel := range ciRun.NotifySlackChannelsUponFailure {
-				slack.SendMessage(db.Statement.Context, channel, "", slack.RedBlock{Text: text})
-			}
-		}
-	}
-}
-
-func makeSlackMessageText(db *gorm.DB, ciRun models.CiRun) string {
-	var relatedResourceSummaryParts []string
-	var chartReleaseIDs, environmentIDs []uint
-	for _, identifier := range ciRun.RelatedResources {
-		if identifier.ResourceType == "chart-release" {
-			chartReleaseIDs = append(chartReleaseIDs, identifier.ResourceID)
-		} else if identifier.ResourceType == "environment" {
-			environmentIDs = append(environmentIDs, identifier.ResourceID)
-		}
-	}
-	if len(chartReleaseIDs) > 0 {
-		var chartReleases []models.ChartRelease
-		if err := db.Model(&models.ChartRelease{}).Find(&chartReleases, chartReleaseIDs).Error; err == nil {
-			relatedResourceSummaryParts = append(relatedResourceSummaryParts, utils.Map(chartReleases, func(c models.ChartRelease) string {
-				return slack.LinkHelper(fmt.Sprintf(config.Config.String("beehive.chartReleaseUrlFormatString"), c.Name), c.Name)
-			})...)
-		}
-	} else if len(environmentIDs) > 0 {
-		var environments []models.Environment
-		if err := db.Model(&models.Environment{}).Find(&environments, environmentIDs).Error; err == nil {
-			relatedResourceSummaryParts = append(relatedResourceSummaryParts, utils.Map(environments, func(e models.Environment) string {
-				return slack.LinkHelper(fmt.Sprintf(config.Config.String("beehive.environmentUrlFormatString"), e.Name), e.Name)
-			})...)
-		}
-	}
-	var against string
-	if len(relatedResourceSummaryParts) > 0 {
-		against = fmt.Sprintf(" against %s", strings.Join(relatedResourceSummaryParts, ", "))
-	}
-	return fmt.Sprintf("%s%s: %s", ciRun.Nickname(), against, slack.LinkHelper(ciRun.WebURL(), *ciRun.Status))
 }

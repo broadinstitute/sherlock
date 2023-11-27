@@ -3,6 +3,9 @@
 
 mode: debug
 
+hooks:
+  asynchronous: false
+
 log:
   level: warn
 

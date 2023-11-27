@@ -9,7 +9,6 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/boot/liveness"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/db"
-	"github.com/broadinstitute/sherlock/sherlock/internal/deployhooks"
 	"github.com/broadinstitute/sherlock/sherlock/internal/github"
 	"github.com/broadinstitute/sherlock/sherlock/internal/metrics"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
@@ -70,11 +69,6 @@ func (a *Application) Start() {
 	log.Info().Msgf("BOOT | creating global context...")
 	ctx, cancelCtx := context.WithCancel(context.Background())
 	a.cancelCtx = cancelCtx
-
-	log.Info().Msgf("BOOT | initializing deploy detection...")
-	if err = deployhooks.Init(); err != nil {
-		log.Fatal().Err(err).Msgf("deployhooks.Init() error")
-	}
 
 	if config.Config.MustString("mode") != "debug" {
 		log.Info().Msgf("BOOT | caching Firecloud accounts...")

@@ -2,6 +2,8 @@ package models
 
 import (
 	"fmt"
+	"github.com/broadinstitute/sherlock/sherlock/internal/config"
+	"github.com/knadh/koanf"
 	"gorm.io/gorm"
 )
 
@@ -20,6 +22,10 @@ func Init(db *gorm.DB) error {
 		}
 	}
 
+	if err := initDeployMatchers(); err != nil {
+		return err
+	}
+
 	// If you're working on a new model and want to have
 	// Gorm basically fudge the database schema from your
 	// struct, here's a good place to do that.
@@ -29,5 +35,18 @@ func Init(db *gorm.DB) error {
 	//	return err
 	//}
 
+	return nil
+}
+
+func initDeployMatchers() error {
+	deployMatchers = []CiRun{}
+	for index, k := range config.Config.Slices("model.ciRuns.deployMatchers") {
+		var partial CiRun
+		if err := k.UnmarshalWithConf("", &partial, koanf.UnmarshalConf{Tag: "koanf"}); err != nil {
+			return fmt.Errorf("error parsing model.ciRuns.deployMatchers[%d]: %w", index+1, err)
+		} else {
+			deployMatchers = append(deployMatchers, partial)
+		}
+	}
 	return nil
 }

@@ -4,11 +4,18 @@ import (
 	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
+	"github.com/broadinstitute/sherlock/sherlock/internal/slack"
+	"github.com/rs/zerolog/log"
 	"gorm.io/datatypes"
 	"gorm.io/gorm"
 	"strings"
 	"time"
 )
+
+// deployMatchers are partial CiRun structs, read out of config when Sherlock
+// starts. CiRun.IsDeploy will check if any of the matchers have all of their
+// nonzero fields equal to the CiRun. If so, it'll be considered a deploy.
+var deployMatchers []CiRun
 
 type CiRun struct {
 	gorm.Model
@@ -76,6 +83,73 @@ func (c *CiRun) FillRelatedResourceStatuses(db *gorm.DB) error {
 	return nil
 }
 
+// AttemptToClaimTerminationDispatch uses TerminationHooksDispatchedAt as a
+// mutex to avoid double-send. The caller should reload the CiRun from the
+// database and then call EvaluateIfTerminationClaimHeld before
+// truly dispatching hooks.
+// If the CiRun is already claimed, this method will return an empty string,
+// which EvaluateIfTerminationClaimHeld will treat as false.
+func (c *CiRun) AttemptToClaimTerminationDispatch(db *gorm.DB) (claimedTimestamp string) {
+	if c.TerminationHooksDispatchedAt == nil {
+		claimedTimestamp = time.Now().Format(time.RFC3339Nano)
+		if err := db.
+			Model(c).
+			Update("termination_hooks_dispatched_at",
+				gorm.Expr("COALESCE(termination_hooks_dispatched_at, ?)", claimedTimestamp)).
+			Error; err != nil {
+			log.Error().Err(err).Msgf("HOOK | failed to attempt to claim dispatch on CiRun %d", c.ID)
+			claimedTimestamp = ""
+		}
+	}
+	return
+}
+
+// EvaluateIfTerminationClaimHeld should be used strictly in conjunction with
+// AttemptToClaimTerminationDispatch, see that method for more information.
+// If the given claim is empty, this method will return false.
+func (c *CiRun) EvaluateIfTerminationClaimHeld(claimedTimestamp string) (claimHeld bool) {
+	claimHeld = claimedTimestamp != "" &&
+		c.TerminationHooksDispatchedAt != nil &&
+		*c.TerminationHooksDispatchedAt == claimedTimestamp
+	return
+}
+
+func (c *CiRun) SlackCompletionText(db *gorm.DB) string {
+	var relatedResourceSummaryParts []string
+	var chartReleaseIDs, environmentIDs []uint
+	for _, identifier := range c.RelatedResources {
+		if identifier.ResourceType == "chart-release" {
+			chartReleaseIDs = append(chartReleaseIDs, identifier.ResourceID)
+		} else if identifier.ResourceType == "environment" {
+			environmentIDs = append(environmentIDs, identifier.ResourceID)
+		}
+	}
+	if len(chartReleaseIDs) > 0 {
+		var chartReleases []ChartRelease
+		if err := db.Model(&ChartRelease{}).Find(&chartReleases, chartReleaseIDs).Error; err == nil {
+			relatedResourceSummaryParts = append(relatedResourceSummaryParts, utils.Map(chartReleases, func(c ChartRelease) string {
+				return slack.LinkHelper(fmt.Sprintf(config.Config.String("beehive.chartReleaseUrlFormatString"), c.Name), c.Name)
+			})...)
+		}
+	} else if len(environmentIDs) > 0 {
+		var environments []Environment
+		if err := db.Model(&Environment{}).Find(&environments, environmentIDs).Error; err == nil {
+			relatedResourceSummaryParts = append(relatedResourceSummaryParts, utils.Map(environments, func(e Environment) string {
+				return slack.LinkHelper(fmt.Sprintf(config.Config.String("beehive.environmentUrlFormatString"), e.Name), e.Name)
+			})...)
+		}
+	}
+	var against string
+	if len(relatedResourceSummaryParts) > 0 {
+		against = fmt.Sprintf(" against %s", strings.Join(relatedResourceSummaryParts, ", "))
+	}
+	status := "unknown"
+	if c.Status != nil {
+		status = *c.Status
+	}
+	return fmt.Sprintf("%s%s: %s", c.Nickname(), against, slack.LinkHelper(c.WebURL(), status))
+}
+
 func (c *CiRun) WebURL() string {
 	switch c.Platform {
 	case "github-actions":
@@ -105,4 +179,17 @@ func (c *CiRun) Nickname() string {
 // Argo Workflows.
 func (c *CiRun) Succeeded() bool {
 	return c.TerminalAt != nil && c.Status != nil && *c.Status == "success"
+}
+
+func (c *CiRun) IsDeploy() bool {
+	for _, matcher := range deployMatchers {
+		if (matcher.Platform == "" || matcher.Platform == c.Platform) &&
+			(matcher.GithubActionsOwner == "" || matcher.GithubActionsOwner == c.GithubActionsOwner) &&
+			(matcher.GithubActionsRepo == "" || matcher.GithubActionsRepo == c.GithubActionsRepo) &&
+			(matcher.GithubActionsWorkflowPath == "" || matcher.GithubActionsWorkflowPath == c.GithubActionsWorkflowPath) &&
+			(matcher.ArgoWorkflowsTemplate == "" || matcher.ArgoWorkflowsTemplate == c.ArgoWorkflowsTemplate) {
+			return true
+		}
+	}
+	return false
 }

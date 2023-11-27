@@ -44,6 +44,9 @@ packages:
       mockableSecretScanningClient:
       mockableTeamsClient:
       mockableUsersClient:
+  github.com/broadinstitute/sherlock/sherlock/internal/hooks:
+    interfaces:
+      mockableDispatcher:
   github.com/broadinstitute/sherlock/sherlock/internal/slack:
     interfaces:
       mockableClient:

@@ -1,4 +1,4 @@
-package deployhooks
+package hooks
 
 import (
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
@@ -10,25 +10,29 @@ import (
 	"time"
 )
 
-func (s *deployHooksSuite) Test_dispatchSlackDeployHook_channelNil() {
-	s.ErrorContains(dispatchSlackDeployHook(nil, models.SlackDeployHook{}, models.CiRun{}), "slack channel was nil")
+func (s *hooksSuite) Test_dispatchSlackDeployHook_channelNil() {
+	s.ErrorContains(dispatcher.DispatchSlackDeployHook(nil, models.SlackDeployHook{}, models.CiRun{
+		TerminalAt: utils.PointerTo(time.Now()),
+	}), "slack channel was nil")
 }
 
-func (s *deployHooksSuite) Test_dispatchSlackDeployHook_generateError() {
-	s.ErrorContains(dispatchSlackDeployHook(nil, models.SlackDeployHook{
+func (s *hooksSuite) Test_dispatchSlackDeployHook_generateError() {
+	s.ErrorContains(dispatcher.DispatchSlackDeployHook(nil, models.SlackDeployHook{
 		Model:        gorm.Model{ID: 123},
 		Trigger:      models.DeployHookTriggerConfig{},
 		SlackChannel: utils.PointerTo("channel"),
-	}, models.CiRun{}), "SlackDeployHook 123 didn't have Trigger fully loaded")
+	}, models.CiRun{
+		TerminalAt: utils.PointerTo(time.Now()),
+	}), "SlackDeployHook 123 didn't have Trigger fully loaded")
 }
 
-func (s *deployHooksSuite) Test_dispatchSlackDeployHook() {
+func (s *hooksSuite) Test_dispatchSlackDeployHook() {
 	slack.UseMockedClient(s.T(), func(c *slack_mocks.MockMockableClient) {
 		c.EXPECT().
 			SendMessageContext(s.DB.Statement.Context, "channel", mock.AnythingOfType("slack.MsgOption")).
 			Return("", "", "", nil)
 	}, func() {
-		s.NoError(dispatchSlackDeployHook(s.DB, models.SlackDeployHook{
+		s.NoError(dispatcher.DispatchSlackDeployHook(s.DB, models.SlackDeployHook{
 			Trigger: models.DeployHookTriggerConfig{
 				OnEnvironment: &models.Environment{Name: "dev"},
 			},
@@ -46,7 +50,7 @@ func (s *deployHooksSuite) Test_dispatchSlackDeployHook() {
 	})
 }
 
-func (s *deployHooksSuite) Test_generateSlackAttachment_triggerNotLoaded() {
+func (s *hooksSuite) Test_generateSlackAttachment_triggerNotLoaded() {
 	// Pass nil for the db because it shouldn't be used in this call
 	_, err := generateSlackAttachment(nil, models.SlackDeployHook{
 		Model:        gorm.Model{ID: 123},
@@ -56,7 +60,7 @@ func (s *deployHooksSuite) Test_generateSlackAttachment_triggerNotLoaded() {
 	s.ErrorContains(err, "SlackDeployHook 123 didn't have Trigger fully loaded")
 }
 
-func (s *deployHooksSuite) Test_generateSlackAttachment_statusNotPresent() {
+func (s *hooksSuite) Test_generateSlackAttachment_statusNotPresent() {
 	// Pass nil for the db because it shouldn't be used in this call
 	_, err := generateSlackAttachment(nil, models.SlackDeployHook{
 		Trigger: models.DeployHookTriggerConfig{
@@ -68,7 +72,7 @@ func (s *deployHooksSuite) Test_generateSlackAttachment_statusNotPresent() {
 	s.ErrorContains(err, "CiRun 123 didn't have status present")
 }
 
-func (s *deployHooksSuite) Test_generateSlackAttachment_environmentNoChangesets_success() {
+func (s *hooksSuite) Test_generateSlackAttachment_environmentNoChangesets_success() {
 	// Pass nil for the db because it shouldn't be used in this call
 	result, err := generateSlackAttachment(nil, models.SlackDeployHook{
 		Trigger: models.DeployHookTriggerConfig{
@@ -88,7 +92,7 @@ func (s *deployHooksSuite) Test_generateSlackAttachment_environmentNoChangesets_
 	s.Equal(slack.GreenBlock{Text: "Deployment to <https://beehive.dsp-devops.broadinstitute.org/r/environment/dev|dev>: <https://github.com/broadinstitute/terra-github-workflows/actions/runs/123123/attempts/1|success>."}, result)
 }
 
-func (s *deployHooksSuite) Test_generateSlackAttachment_environmentNoChangesets_failure() {
+func (s *hooksSuite) Test_generateSlackAttachment_environmentNoChangesets_failure() {
 	// Pass nil for the db because it shouldn't be used in this call
 	result, err := generateSlackAttachment(nil, models.SlackDeployHook{
 		Trigger: models.DeployHookTriggerConfig{
@@ -108,7 +112,7 @@ func (s *deployHooksSuite) Test_generateSlackAttachment_environmentNoChangesets_
 	s.Equal(slack.RedBlock{Text: "Deployment to <https://beehive.dsp-devops.broadinstitute.org/r/environment/dev|dev>: <https://github.com/broadinstitute/terra-github-workflows/actions/runs/123123/attempts/1|failure>."}, result)
 }
 
-func (s *deployHooksSuite) Test_generateSlackAttachment_chartReleaseNoChangesets_success() {
+func (s *hooksSuite) Test_generateSlackAttachment_chartReleaseNoChangesets_success() {
 	// Pass nil for the db because it shouldn't be used in this call
 	result, err := generateSlackAttachment(nil, models.SlackDeployHook{
 		Trigger: models.DeployHookTriggerConfig{
@@ -128,7 +132,7 @@ func (s *deployHooksSuite) Test_generateSlackAttachment_chartReleaseNoChangesets
 	s.Equal(slack.GreenBlock{Text: "Deployment to <https://beehive.dsp-devops.broadinstitute.org/r/chart-release/leonardo-dev|leonardo-dev>: <https://github.com/broadinstitute/terra-github-workflows/actions/runs/123123/attempts/1|success>."}, result)
 }
 
-func (s *deployHooksSuite) Test_generateSlackAttachment_chartReleaseNoChangesets_failure() {
+func (s *hooksSuite) Test_generateSlackAttachment_chartReleaseNoChangesets_failure() {
 	// Pass nil for the db because it shouldn't be used in this call
 	result, err := generateSlackAttachment(nil, models.SlackDeployHook{
 		Trigger: models.DeployHookTriggerConfig{
@@ -148,7 +152,7 @@ func (s *deployHooksSuite) Test_generateSlackAttachment_chartReleaseNoChangesets
 	s.Equal(slack.RedBlock{Text: "Deployment to <https://beehive.dsp-devops.broadinstitute.org/r/chart-release/leonardo-dev|leonardo-dev>: <https://github.com/broadinstitute/terra-github-workflows/actions/runs/123123/attempts/1|failure>."}, result)
 }
 
-func (s *deployHooksSuite) Test_generateSlackAttachment_environmentChangesets_success() {
+func (s *hooksSuite) Test_generateSlackAttachment_environmentChangesets_success() {
 	// Pass nil for the db because it shouldn't be used in this call
 	result, err := generateSlackAttachment(nil, models.SlackDeployHook{
 		Trigger: models.DeployHookTriggerConfig{
@@ -182,7 +186,7 @@ func (s *deployHooksSuite) Test_generateSlackAttachment_environmentChangesets_su
 	s.Equal(slack.GreenBlock{Text: "Deployment to <https://beehive.dsp-devops.broadinstitute.org/r/environment/dev|dev>: <https://github.com/broadinstitute/terra-github-workflows/actions/runs/123123/attempts/1|success>. Review all changes made by this deployment <https://beehive.dsp-devops.broadinstitute.org/review-changesets?changeset=1122&changeset=1124|here>."}, result)
 }
 
-func (s *deployHooksSuite) Test_generateSlackAttachment_environmentChangesets_failure() {
+func (s *hooksSuite) Test_generateSlackAttachment_environmentChangesets_failure() {
 	// Pass nil for the db because it shouldn't be used in this call
 	result, err := generateSlackAttachment(nil, models.SlackDeployHook{
 		Trigger: models.DeployHookTriggerConfig{
@@ -216,7 +220,7 @@ func (s *deployHooksSuite) Test_generateSlackAttachment_environmentChangesets_fa
 	s.Equal(slack.RedBlock{Text: "Deployment to <https://beehive.dsp-devops.broadinstitute.org/r/environment/dev|dev>: <https://github.com/broadinstitute/terra-github-workflows/actions/runs/123123/attempts/1|failure>. Review all changes made by this deployment <https://beehive.dsp-devops.broadinstitute.org/review-changesets?changeset=1122&changeset=1124|here>."}, result)
 }
 
-func (s *deployHooksSuite) Test_generateSlackAttachment_chartReleaseChangesets_success() {
+func (s *hooksSuite) Test_generateSlackAttachment_chartReleaseChangesets_success() {
 	// Pass nil for the db because it shouldn't be used in this call
 	result, err := generateSlackAttachment(nil, models.SlackDeployHook{
 		Trigger: models.DeployHookTriggerConfig{
@@ -250,7 +254,7 @@ func (s *deployHooksSuite) Test_generateSlackAttachment_chartReleaseChangesets_s
 	s.Equal(slack.GreenBlock{Text: "Deployment to <https://beehive.dsp-devops.broadinstitute.org/r/chart-release/leonardo-dev|leonardo-dev>: <https://github.com/broadinstitute/terra-github-workflows/actions/runs/123123/attempts/1|success>. Review all changes made by this deployment <https://beehive.dsp-devops.broadinstitute.org/review-changesets?changeset=1122&changeset=1124|here>."}, result)
 }
 
-func (s *deployHooksSuite) Test_generateSlackAttachment_chartReleaseChangesets_failure() {
+func (s *hooksSuite) Test_generateSlackAttachment_chartReleaseChangesets_failure() {
 	// Pass nil for the db because it shouldn't be used in this call
 	result, err := generateSlackAttachment(nil, models.SlackDeployHook{
 		Trigger: models.DeployHookTriggerConfig{
@@ -284,7 +288,7 @@ func (s *deployHooksSuite) Test_generateSlackAttachment_chartReleaseChangesets_f
 	s.Equal(slack.RedBlock{Text: "Deployment to <https://beehive.dsp-devops.broadinstitute.org/r/chart-release/leonardo-dev|leonardo-dev>: <https://github.com/broadinstitute/terra-github-workflows/actions/runs/123123/attempts/1|failure>. Review all changes made by this deployment <https://beehive.dsp-devops.broadinstitute.org/review-changesets?changeset=1122&changeset=1124|here>."}, result)
 }
 
-func (s *deployHooksSuite) Test_generateSlackAttachment_environmentChangesets_chartReleaseNotFound() {
+func (s *hooksSuite) Test_generateSlackAttachment_environmentChangesets_chartReleaseNotFound() {
 	_, err := generateSlackAttachment(s.DB, models.SlackDeployHook{
 		Trigger: models.DeployHookTriggerConfig{
 			OnEnvironment: &models.Environment{Name: "dev"},
@@ -312,7 +316,7 @@ func (s *deployHooksSuite) Test_generateSlackAttachment_environmentChangesets_ch
 	s.ErrorIs(err, gorm.ErrRecordNotFound)
 }
 
-func (s *deployHooksSuite) Test_generateSlackAttachment_environmentChangesets_chartReleaseNames() {
+func (s *hooksSuite) Test_generateSlackAttachment_environmentChangesets_chartReleaseNames() {
 	environment := s.TestData.Environment_Dev()
 	environmentCiIdentifier := environment.GetCiIdentifier()
 	s.NoError(s.DB.Create(&environmentCiIdentifier).Error)
