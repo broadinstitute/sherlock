@@ -111,6 +111,12 @@ export interface SherlockCiRunV3 {
      */
     relatedResources?: Array<SherlockCiIdentifierV3>;
     /**
+     * Available only when querying a CiRun via a CiIdentifier, indicates the status of the run for that resource
+     * @type {string}
+     * @memberof SherlockCiRunV3
+     */
+    resourceStatus?: string;
+    /**
      * 
      * @type {string}
      * @memberof SherlockCiRunV3
@@ -175,6 +181,7 @@ export function SherlockCiRunV3FromJSONTyped(json: any, ignoreDiscriminator: boo
         'notifySlackChannelsUponSuccess': !exists(json, 'notifySlackChannelsUponSuccess') ? undefined : json['notifySlackChannelsUponSuccess'],
         'platform': !exists(json, 'platform') ? undefined : json['platform'],
         'relatedResources': !exists(json, 'relatedResources') ? undefined : ((json['relatedResources'] as Array<any>).map(SherlockCiIdentifierV3FromJSON)),
+        'resourceStatus': !exists(json, 'resourceStatus') ? undefined : json['resourceStatus'],
         'startedAt': !exists(json, 'startedAt') ? undefined : json['startedAt'],
         'status': !exists(json, 'status') ? undefined : json['status'],
         'terminalAt': !exists(json, 'terminalAt') ? undefined : json['terminalAt'],
@@ -206,6 +213,7 @@ export function SherlockCiRunV3ToJSON(value?: SherlockCiRunV3 | null): any {
         'notifySlackChannelsUponSuccess': value.notifySlackChannelsUponSuccess,
         'platform': value.platform,
         'relatedResources': value.relatedResources === undefined ? undefined : ((value.relatedResources as Array<any>).map(SherlockCiIdentifierV3ToJSON)),
+        'resourceStatus': value.resourceStatus,
         'startedAt': value.startedAt,
         'status': value.status,
         'terminalAt': value.terminalAt,

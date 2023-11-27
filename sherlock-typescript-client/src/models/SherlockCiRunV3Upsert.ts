@@ -50,6 +50,12 @@ export interface SherlockCiRunV3Upsert {
      */
     changesets?: Array<string>;
     /**
+     * Keys treated like chartReleases. Values set resource-specific statuses for chart releases and associated changesets, new app versions, and new chart versions.
+     * @type {{ [key: string]: string; }}
+     * @memberof SherlockCiRunV3Upsert
+     */
+    chartReleaseStatuses?: { [key: string]: string; };
+    /**
      * Always appends; will eliminate duplicates. Spreads to associated environments and clusters.
      * @type {Array<string>}
      * @memberof SherlockCiRunV3Upsert
@@ -195,6 +201,7 @@ export function SherlockCiRunV3UpsertFromJSONTyped(json: any, ignoreDiscriminato
         'argoWorkflowsNamespace': !exists(json, 'argoWorkflowsNamespace') ? undefined : json['argoWorkflowsNamespace'],
         'argoWorkflowsTemplate': !exists(json, 'argoWorkflowsTemplate') ? undefined : json['argoWorkflowsTemplate'],
         'changesets': !exists(json, 'changesets') ? undefined : json['changesets'],
+        'chartReleaseStatuses': !exists(json, 'chartReleaseStatuses') ? undefined : json['chartReleaseStatuses'],
         'chartReleases': !exists(json, 'chartReleases') ? undefined : json['chartReleases'],
         'chartVersions': !exists(json, 'chartVersions') ? undefined : json['chartVersions'],
         'charts': !exists(json, 'charts') ? undefined : json['charts'],
@@ -230,6 +237,7 @@ export function SherlockCiRunV3UpsertToJSON(value?: SherlockCiRunV3Upsert | null
         'argoWorkflowsNamespace': value.argoWorkflowsNamespace,
         'argoWorkflowsTemplate': value.argoWorkflowsTemplate,
         'changesets': value.changesets,
+        'chartReleaseStatuses': value.chartReleaseStatuses,
         'chartReleases': value.chartReleases,
         'chartVersions': value.chartVersions,
         'charts': value.charts,

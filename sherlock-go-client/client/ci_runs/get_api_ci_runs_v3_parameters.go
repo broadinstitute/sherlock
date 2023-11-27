@@ -119,6 +119,12 @@ type GetAPICiRunsV3Params struct {
 	// Platform.
 	Platform *string
 
+	/* ResourceStatus.
+
+	   Available only when querying a CiRun via a CiIdentifier, indicates the status of the run for that resource
+	*/
+	ResourceStatus *string
+
 	// StartedAt.
 	StartedAt *string
 
@@ -354,6 +360,17 @@ func (o *GetAPICiRunsV3Params) WithPlatform(platform *string) *GetAPICiRunsV3Par
 // SetPlatform adds the platform to the get API ci runs v3 params
 func (o *GetAPICiRunsV3Params) SetPlatform(platform *string) {
 	o.Platform = platform
+}
+
+// WithResourceStatus adds the resourceStatus to the get API ci runs v3 params
+func (o *GetAPICiRunsV3Params) WithResourceStatus(resourceStatus *string) *GetAPICiRunsV3Params {
+	o.SetResourceStatus(resourceStatus)
+	return o
+}
+
+// SetResourceStatus adds the resourceStatus to the get API ci runs v3 params
+func (o *GetAPICiRunsV3Params) SetResourceStatus(resourceStatus *string) {
+	o.ResourceStatus = resourceStatus
 }
 
 // WithStartedAt adds the startedAt to the get API ci runs v3 params
@@ -657,6 +674,23 @@ func (o *GetAPICiRunsV3Params) WriteToRequest(r runtime.ClientRequest, reg strfm
 		if qPlatform != "" {
 
 			if err := r.SetQueryParam("platform", qPlatform); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.ResourceStatus != nil {
+
+		// query param resourceStatus
+		var qrResourceStatus string
+
+		if o.ResourceStatus != nil {
+			qrResourceStatus = *o.ResourceStatus
+		}
+		qResourceStatus := qrResourceStatus
+		if qResourceStatus != "" {
+
+			if err := r.SetQueryParam("resourceStatus", qResourceStatus); err != nil {
 				return err
 			}
 		}

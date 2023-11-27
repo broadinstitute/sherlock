@@ -63,6 +63,9 @@ type SherlockCiRunV3 struct {
 	// related resources
 	RelatedResources []*SherlockCiIdentifierV3 `json:"relatedResources"`
 
+	// Available only when querying a CiRun via a CiIdentifier, indicates the status of the run for that resource
+	ResourceStatus string `json:"resourceStatus,omitempty"`
+
 	// started at
 	StartedAt string `json:"startedAt,omitempty"`
 

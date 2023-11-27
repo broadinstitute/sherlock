@@ -51,6 +51,7 @@ export interface ApiCiRunsV3GetRequest {
     notifySlackChannelsUponFailure?: Array<string>;
     notifySlackChannelsUponSuccess?: Array<string>;
     platform?: string;
+    resourceStatus?: string;
     startedAt?: string;
     status?: string;
     terminalAt?: string;
@@ -203,6 +204,10 @@ export class CiRunsApi extends runtime.BaseAPI {
 
         if (requestParameters.platform !== undefined) {
             queryParameters['platform'] = requestParameters.platform;
+        }
+
+        if (requestParameters.resourceStatus !== undefined) {
+            queryParameters['resourceStatus'] = requestParameters.resourceStatus;
         }
 
         if (requestParameters.startedAt !== undefined) {

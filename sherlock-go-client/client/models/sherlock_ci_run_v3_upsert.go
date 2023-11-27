@@ -35,6 +35,9 @@ type SherlockCiRunV3Upsert struct {
 	// Always appends; will eliminate duplicates. Spreads to associated chart releases, environments, and clusters.
 	Changesets []string `json:"changesets"`
 
+	// Keys treated like chartReleases. Values set resource-specific statuses for chart releases and associated changesets, new app versions, and new chart versions.
+	ChartReleaseStatuses map[string]string `json:"chartReleaseStatuses,omitempty"`
+
 	// Always appends; will eliminate duplicates. Spreads to associated environments and clusters.
 	ChartReleases []string `json:"chartReleases"`
 

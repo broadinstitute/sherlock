@@ -38,6 +38,7 @@ export interface ApiCiIdentifiersV3GetRequest {
     createdAt?: Date;
     id?: number;
     resourceID?: number;
+    resourceStatus?: string;
     resourceType?: string;
     updatedAt?: Date;
     limit?: number;
@@ -103,6 +104,10 @@ export class CiIdentifiersApi extends runtime.BaseAPI {
 
         if (requestParameters.resourceID !== undefined) {
             queryParameters['resourceID'] = requestParameters.resourceID;
+        }
+
+        if (requestParameters.resourceStatus !== undefined) {
+            queryParameters['resourceStatus'] = requestParameters.resourceStatus;
         }
 
         if (requestParameters.resourceType !== undefined) {

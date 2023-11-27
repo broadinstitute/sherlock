@@ -33,6 +33,9 @@ type SherlockCiIdentifierV3 struct {
 	// resource ID
 	ResourceID int64 `json:"resourceID,omitempty"`
 
+	// Available only when querying a CiIdentifier via a CiRun, indicates the status of the run for that resource
+	ResourceStatus string `json:"resourceStatus,omitempty"`
+
 	// resource type
 	ResourceType string `json:"resourceType,omitempty"`
 
