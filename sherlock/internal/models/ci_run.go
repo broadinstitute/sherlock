@@ -76,56 +76,6 @@ func (c *CiRun) FillRelatedResourceStatuses(db *gorm.DB) error {
 	return nil
 }
 
-func (c *CiRun) FillRelatedResourceStatuses(db *gorm.DB) error {
-	var joinEntries []CiRunIdentifierJoin
-	if err := db.
-		Model(&CiRunIdentifierJoin{}).
-		Where("ci_run_id = ? AND ci_identifier_id IN ? AND resource_status IS NOT NULL",
-			c.ID, utils.Map(c.RelatedResources, func(rr CiIdentifier) uint { return rr.ID })).
-		Limit(len(c.RelatedResources)).
-		Find(&joinEntries).
-		Error; err != nil {
-		return fmt.Errorf("failed to query join table for related resource statuses: %w", err)
-	}
-	for _, joinEntry := range joinEntries {
-		if joinEntry.ResourceStatus != nil {
-			for index, relatedResource := range c.RelatedResources {
-				if relatedResource.ID == joinEntry.CiIdentifierID && c.ID == joinEntry.CiRunID {
-					// dereference and reference so we are extra sure we don't cross wires while iterating
-					relatedResource.ResourceStatus = utils.PointerTo(*joinEntry.ResourceStatus)
-					c.RelatedResources[index] = relatedResource
-				}
-			}
-		}
-	}
-	return nil
-}
-
-func (c *CiRun) FillRelatedResourceStatuses(db *gorm.DB) error {
-	var joinEntries []CiRunIdentifierJoin
-	if err := db.
-		Model(&CiRunIdentifierJoin{}).
-		Where("ci_run_id = ? AND ci_identifier_id IN ? AND resource_status IS NOT NULL",
-			c.ID, utils.Map(c.RelatedResources, func(rr CiIdentifier) uint { return rr.ID })).
-		Limit(len(c.RelatedResources)).
-		Find(&joinEntries).
-		Error; err != nil {
-		return fmt.Errorf("failed to query join table for related resource statuses: %w", err)
-	}
-	for _, joinEntry := range joinEntries {
-		if joinEntry.ResourceStatus != nil {
-			for index, relatedResource := range c.RelatedResources {
-				if relatedResource.ID == joinEntry.CiIdentifierID && c.ID == joinEntry.CiRunID {
-					// dereference and reference so we are extra sure we don't cross wires while iterating
-					relatedResource.ResourceStatus = utils.PointerTo(*joinEntry.ResourceStatus)
-					c.RelatedResources[index] = relatedResource
-				}
-			}
-		}
-	}
-	return nil
-}
-
 func (c *CiRun) WebURL() string {
 	switch c.Platform {
 	case "github-actions":
