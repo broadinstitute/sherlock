@@ -18,10 +18,6 @@ type DatabaseInstance struct {
 	DefaultDatabase *string
 }
 
-func (d *DatabaseInstance) TableName() string {
-	return "database_instances"
-}
-
 func (d *DatabaseInstance) errorIfForbidden(tx *gorm.DB) error {
 	if d.ChartReleaseID == 0 {
 		return fmt.Errorf("(%s) database instance wasn't properly loaded, unable to check permissions on chart release", errors.InternalServerError)

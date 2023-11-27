@@ -10,10 +10,6 @@ type PagerdutyIntegration struct {
 	Type        *string
 }
 
-func (p *PagerdutyIntegration) TableName() string {
-	return "pagerduty_integrations"
-}
-
 func (p *PagerdutyIntegration) errorIfForbidden(tx *gorm.DB) error {
 	if user, err := GetCurrentUserForDB(tx); err != nil {
 		return err

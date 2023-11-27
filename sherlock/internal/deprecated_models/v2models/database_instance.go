@@ -23,10 +23,6 @@ type DatabaseInstance struct {
 	DefaultDatabase *string
 }
 
-func (d DatabaseInstance) TableName() string {
-	return "database_instances"
-}
-
 func (d DatabaseInstance) getID() uint {
 	return d.ID
 }

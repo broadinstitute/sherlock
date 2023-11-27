@@ -20,10 +20,6 @@ type CiIdentifier struct {
 	ResourceStatus *string `gorm:"-:all"`
 }
 
-func (c *CiIdentifier) TableName() string {
-	return "ci_identifiers"
-}
-
 func (c *CiIdentifier) FillCiRunResourceStatuses(db *gorm.DB) error {
 	var joinEntries []CiRunIdentifierJoin
 	if err := db.

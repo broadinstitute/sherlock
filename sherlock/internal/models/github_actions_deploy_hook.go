@@ -16,10 +16,6 @@ type GithubActionsDeployHook struct {
 	GithubActionsWorkflowInputs *datatypes.JSON
 }
 
-func (g *GithubActionsDeployHook) TableName() string {
-	return "github_actions_deploy_hooks"
-}
-
 func (g *GithubActionsDeployHook) AfterSave(tx *gorm.DB) error {
 	return g.Trigger.ErrorIfForbidden(tx)
 }

@@ -20,10 +20,6 @@ type User struct {
 	auth_models.StoredMutableUserFields
 }
 
-func (u User) TableName() string {
-	return "users"
-}
-
 func (u User) getID() uint {
 	return u.ID
 }

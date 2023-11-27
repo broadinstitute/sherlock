@@ -22,10 +22,6 @@ type AppVersion struct {
 	ParentAppVersionID *uint
 }
 
-func (a AppVersion) TableName() string {
-	return "app_versions"
-}
-
 func (a AppVersion) getID() uint {
 	return a.ID
 }
