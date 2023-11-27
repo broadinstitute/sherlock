@@ -83,6 +83,12 @@ type GetAPICiIdentifiersV3Params struct {
 	// ResourceID.
 	ResourceID *int64
 
+	/* ResourceStatus.
+
+	   Available only when querying a CiIdentifier via a CiRun, indicates the status of the run for that resource
+	*/
+	ResourceStatus *string
+
 	// ResourceType.
 	ResourceType *string
 
@@ -199,6 +205,17 @@ func (o *GetAPICiIdentifiersV3Params) SetResourceID(resourceID *int64) {
 	o.ResourceID = resourceID
 }
 
+// WithResourceStatus adds the resourceStatus to the get API ci identifiers v3 params
+func (o *GetAPICiIdentifiersV3Params) WithResourceStatus(resourceStatus *string) *GetAPICiIdentifiersV3Params {
+	o.SetResourceStatus(resourceStatus)
+	return o
+}
+
+// SetResourceStatus adds the resourceStatus to the get API ci identifiers v3 params
+func (o *GetAPICiIdentifiersV3Params) SetResourceStatus(resourceStatus *string) {
+	o.ResourceStatus = resourceStatus
+}
+
 // WithResourceType adds the resourceType to the get API ci identifiers v3 params
 func (o *GetAPICiIdentifiersV3Params) WithResourceType(resourceType *string) *GetAPICiIdentifiersV3Params {
 	o.SetResourceType(resourceType)
@@ -309,6 +326,23 @@ func (o *GetAPICiIdentifiersV3Params) WriteToRequest(r runtime.ClientRequest, re
 		if qResourceID != "" {
 
 			if err := r.SetQueryParam("resourceID", qResourceID); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.ResourceStatus != nil {
+
+		// query param resourceStatus
+		var qrResourceStatus string
+
+		if o.ResourceStatus != nil {
+			qrResourceStatus = *o.ResourceStatus
+		}
+		qResourceStatus := qrResourceStatus
+		if qResourceStatus != "" {
+
+			if err := r.SetQueryParam("resourceStatus", qResourceStatus); err != nil {
 				return err
 			}
 		}

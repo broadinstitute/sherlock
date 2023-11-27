@@ -317,6 +317,10 @@ definitions:
         type: integer
       resourceID:
         type: integer
+      resourceStatus:
+        description: Available only when querying a CiIdentifier via a CiRun, indicates
+          the status of the run for that resource
+        type: string
       resourceType:
         type: string
       updatedAt:
@@ -364,6 +368,10 @@ definitions:
         items:
           $ref: '#/definitions/sherlock.CiIdentifierV3'
         type: array
+      resourceStatus:
+        description: Available only when querying a CiRun via a CiIdentifier, indicates
+          the status of the run for that resource
+        type: string
       startedAt:
         type: string
       status:
@@ -396,6 +404,13 @@ definitions:
         items:
           type: string
         type: array
+      chartReleaseStatuses:
+        additionalProperties:
+          type: string
+        description: Keys treated like chartReleases. Values set resource-specific
+          statuses for chart releases and associated changesets, new app versions,
+          and new chart versions.
+        type: object
       chartReleases:
         description: Always appends; will eliminate duplicates. Spreads to associated
           environments and clusters.
@@ -2927,6 +2942,11 @@ paths:
       - in: query
         name: resourceID
         type: integer
+      - description: Available only when querying a CiIdentifier via a CiRun, indicates
+          the status of the run for that resource
+        in: query
+        name: resourceStatus
+        type: string
       - in: query
         name: resourceType
         type: string
@@ -3132,6 +3152,11 @@ paths:
         type: array
       - in: query
         name: platform
+        type: string
+      - description: Available only when querying a CiRun via a CiIdentifier, indicates
+          the status of the run for that resource
+        in: query
+        name: resourceStatus
         type: string
       - in: query
         name: startedAt
