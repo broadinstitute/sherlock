@@ -37,6 +37,10 @@ func ciRunsV3Get(ctx *gin.Context) {
 		errors.AbortRequest(ctx, err)
 		return
 	}
+	if err = result.FillRelatedResourceStatuses(db); err != nil {
+		errors.AbortRequest(ctx, err)
+		return
+	}
 	ctx.JSON(http.StatusOK, ciRunFromModel(result))
 }
 

@@ -335,3 +335,16 @@ func (s *handlerSuite) TestCiIdentifiersV3GetLimitRuns() {
 	s.Equal(got.CiRuns[3].GithubActionsRunID, totalIterations-13)
 	s.Equal(got.CiRuns[4].GithubActionsRunID, totalIterations-14)
 }
+
+func (s *handlerSuite) TestCiIdentifiersV3Get_ResourceStatus() {
+	s.TestData.CiRun_Deploy_LeonardoDev_V1toV3()
+	var got CiIdentifierV3
+	code := s.HandleRequest(
+		s.NewRequest(http.MethodGet, "/api/ci-identifiers/v3/chart-release/dev/leonardo", nil),
+		&got)
+	s.Equal(http.StatusOK, code)
+	s.NotEmpty(got.CiRuns)
+	for _, cr := range got.CiRuns {
+		s.NotNil(cr.ResourceStatus)
+	}
+}
