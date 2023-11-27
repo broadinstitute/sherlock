@@ -60,6 +60,9 @@ func NewGetAPIDeployHooksSlackV3ParamsWithHTTPClient(client *http.Client) *GetAP
 */
 type GetAPIDeployHooksSlackV3Params struct {
 
+	// Beta.
+	Beta *bool
+
 	// CreatedAt.
 	//
 	// Format: date-time
@@ -73,6 +76,9 @@ type GetAPIDeployHooksSlackV3Params struct {
 	   Control how many SlackDeployHooks are returned (default 100)
 	*/
 	Limit *int64
+
+	// MentionPeople.
+	MentionPeople *bool
 
 	/* Offset.
 
@@ -153,6 +159,17 @@ func (o *GetAPIDeployHooksSlackV3Params) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
+// WithBeta adds the beta to the get API deploy hooks slack v3 params
+func (o *GetAPIDeployHooksSlackV3Params) WithBeta(beta *bool) *GetAPIDeployHooksSlackV3Params {
+	o.SetBeta(beta)
+	return o
+}
+
+// SetBeta adds the beta to the get API deploy hooks slack v3 params
+func (o *GetAPIDeployHooksSlackV3Params) SetBeta(beta *bool) {
+	o.Beta = beta
+}
+
 // WithCreatedAt adds the createdAt to the get API deploy hooks slack v3 params
 func (o *GetAPIDeployHooksSlackV3Params) WithCreatedAt(createdAt *strfmt.DateTime) *GetAPIDeployHooksSlackV3Params {
 	o.SetCreatedAt(createdAt)
@@ -184,6 +201,17 @@ func (o *GetAPIDeployHooksSlackV3Params) WithLimit(limit *int64) *GetAPIDeployHo
 // SetLimit adds the limit to the get API deploy hooks slack v3 params
 func (o *GetAPIDeployHooksSlackV3Params) SetLimit(limit *int64) {
 	o.Limit = limit
+}
+
+// WithMentionPeople adds the mentionPeople to the get API deploy hooks slack v3 params
+func (o *GetAPIDeployHooksSlackV3Params) WithMentionPeople(mentionPeople *bool) *GetAPIDeployHooksSlackV3Params {
+	o.SetMentionPeople(mentionPeople)
+	return o
+}
+
+// SetMentionPeople adds the mentionPeople to the get API deploy hooks slack v3 params
+func (o *GetAPIDeployHooksSlackV3Params) SetMentionPeople(mentionPeople *bool) {
+	o.MentionPeople = mentionPeople
 }
 
 // WithOffset adds the offset to the get API deploy hooks slack v3 params
@@ -271,6 +299,23 @@ func (o *GetAPIDeployHooksSlackV3Params) WriteToRequest(r runtime.ClientRequest,
 	}
 	var res []error
 
+	if o.Beta != nil {
+
+		// query param beta
+		var qrBeta bool
+
+		if o.Beta != nil {
+			qrBeta = *o.Beta
+		}
+		qBeta := swag.FormatBool(qrBeta)
+		if qBeta != "" {
+
+			if err := r.SetQueryParam("beta", qBeta); err != nil {
+				return err
+			}
+		}
+	}
+
 	if o.CreatedAt != nil {
 
 		// query param createdAt
@@ -317,6 +362,23 @@ func (o *GetAPIDeployHooksSlackV3Params) WriteToRequest(r runtime.ClientRequest,
 		if qLimit != "" {
 
 			if err := r.SetQueryParam("limit", qLimit); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.MentionPeople != nil {
+
+		// query param mentionPeople
+		var qrMentionPeople bool
+
+		if o.MentionPeople != nil {
+			qrMentionPeople = *o.MentionPeople
+		}
+		qMentionPeople := swag.FormatBool(qrMentionPeople)
+		if qMentionPeople != "" {
+
+			if err := r.SetQueryParam("mentionPeople", qMentionPeople); err != nil {
 				return err
 			}
 		}

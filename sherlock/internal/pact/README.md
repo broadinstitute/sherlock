@@ -65,3 +65,5 @@
 - `CiIdentifier_ChartRelease_LeonardoDev exists`
 - `CiIdentifier_Changeset_LeonardoDev_V1toV3 exists`
 - `CiRun_Deploy_LeonardoDev_V1toV3 exists`
+- `SlackDeployHook_Dev exists`
+- `GithubActionsDeployHook_LeonardoDev exists`

@@ -2805,6 +2805,11 @@ const docTemplate = `{
                 "summary": "List SlackDeployHooks matching a filter",
                 "parameters": [
                     {
+                        "type": "boolean",
+                        "name": "beta",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "format": "date-time",
                         "name": "createdAt",
@@ -2813,6 +2818,11 @@ const docTemplate = `{
                     {
                         "type": "integer",
                         "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "mentionPeople",
                         "in": "query"
                     },
                     {
@@ -11205,12 +11215,18 @@ const docTemplate = `{
         "sherlock.SlackDeployHookV3": {
             "type": "object",
             "properties": {
+                "beta": {
+                    "type": "boolean"
+                },
                 "createdAt": {
                     "type": "string",
                     "format": "date-time"
                 },
                 "id": {
                     "type": "integer"
+                },
+                "mentionPeople": {
+                    "type": "boolean"
                 },
                 "onChartRelease": {
                     "type": "string"
@@ -11236,6 +11252,12 @@ const docTemplate = `{
         "sherlock.SlackDeployHookV3Create": {
             "type": "object",
             "properties": {
+                "beta": {
+                    "type": "boolean"
+                },
+                "mentionPeople": {
+                    "type": "boolean"
+                },
                 "onChartRelease": {
                     "type": "string"
                 },
@@ -11256,6 +11278,12 @@ const docTemplate = `{
         "sherlock.SlackDeployHookV3Edit": {
             "type": "object",
             "properties": {
+                "beta": {
+                    "type": "boolean"
+                },
+                "mentionPeople": {
+                    "type": "boolean"
+                },
                 "onFailure": {
                     "type": "boolean"
                 },

@@ -21,6 +21,12 @@ import { exists, mapValues } from '../runtime';
 export interface SherlockSlackDeployHookV3 {
     /**
      * 
+     * @type {boolean}
+     * @memberof SherlockSlackDeployHookV3
+     */
+    beta?: boolean;
+    /**
+     * 
      * @type {Date}
      * @memberof SherlockSlackDeployHookV3
      */
@@ -31,6 +37,12 @@ export interface SherlockSlackDeployHookV3 {
      * @memberof SherlockSlackDeployHookV3
      */
     id?: number;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof SherlockSlackDeployHookV3
+     */
+    mentionPeople?: boolean;
     /**
      * 
      * @type {string}
@@ -88,8 +100,10 @@ export function SherlockSlackDeployHookV3FromJSONTyped(json: any, ignoreDiscrimi
     }
     return {
         
+        'beta': !exists(json, 'beta') ? undefined : json['beta'],
         'createdAt': !exists(json, 'createdAt') ? undefined : (new Date(json['createdAt'])),
         'id': !exists(json, 'id') ? undefined : json['id'],
+        'mentionPeople': !exists(json, 'mentionPeople') ? undefined : json['mentionPeople'],
         'onChartRelease': !exists(json, 'onChartRelease') ? undefined : json['onChartRelease'],
         'onEnvironment': !exists(json, 'onEnvironment') ? undefined : json['onEnvironment'],
         'onFailure': !exists(json, 'onFailure') ? undefined : json['onFailure'],
@@ -108,8 +122,10 @@ export function SherlockSlackDeployHookV3ToJSON(value?: SherlockSlackDeployHookV
     }
     return {
         
+        'beta': value.beta,
         'createdAt': value.createdAt === undefined ? undefined : (value.createdAt.toISOString()),
         'id': value.id,
+        'mentionPeople': value.mentionPeople,
         'onChartRelease': value.onChartRelease,
         'onEnvironment': value.onEnvironment,
         'onFailure': value.onFailure,

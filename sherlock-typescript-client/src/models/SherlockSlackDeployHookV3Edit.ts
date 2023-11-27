@@ -24,6 +24,18 @@ export interface SherlockSlackDeployHookV3Edit {
      * @type {boolean}
      * @memberof SherlockSlackDeployHookV3Edit
      */
+    beta?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof SherlockSlackDeployHookV3Edit
+     */
+    mentionPeople?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof SherlockSlackDeployHookV3Edit
+     */
     onFailure?: boolean;
     /**
      * 
@@ -58,6 +70,8 @@ export function SherlockSlackDeployHookV3EditFromJSONTyped(json: any, ignoreDisc
     }
     return {
         
+        'beta': !exists(json, 'beta') ? undefined : json['beta'],
+        'mentionPeople': !exists(json, 'mentionPeople') ? undefined : json['mentionPeople'],
         'onFailure': !exists(json, 'onFailure') ? undefined : json['onFailure'],
         'onSuccess': !exists(json, 'onSuccess') ? undefined : json['onSuccess'],
         'slackChannel': !exists(json, 'slackChannel') ? undefined : json['slackChannel'],
@@ -73,6 +87,8 @@ export function SherlockSlackDeployHookV3EditToJSON(value?: SherlockSlackDeployH
     }
     return {
         
+        'beta': value.beta,
+        'mentionPeople': value.mentionPeople,
         'onFailure': value.onFailure,
         'onSuccess': value.onSuccess,
         'slackChannel': value.slackChannel,

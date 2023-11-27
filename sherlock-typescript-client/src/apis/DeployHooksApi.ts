@@ -97,8 +97,10 @@ export interface ApiDeployHooksSlackProceduresV3TestSelectorPostRequest {
 }
 
 export interface ApiDeployHooksSlackV3GetRequest {
+    beta?: boolean;
     createdAt?: Date;
     id?: number;
+    mentionPeople?: boolean;
     onChartRelease?: string;
     onEnvironment?: string;
     onFailure?: boolean;
@@ -438,12 +440,20 @@ export class DeployHooksApi extends runtime.BaseAPI {
     async apiDeployHooksSlackV3GetRaw(requestParameters: ApiDeployHooksSlackV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockSlackDeployHookV3>>> {
         const queryParameters: any = {};
 
+        if (requestParameters.beta !== undefined) {
+            queryParameters['beta'] = requestParameters.beta;
+        }
+
         if (requestParameters.createdAt !== undefined) {
             queryParameters['createdAt'] = (requestParameters.createdAt as any).toISOString();
         }
 
         if (requestParameters.id !== undefined) {
             queryParameters['id'] = requestParameters.id;
+        }
+
+        if (requestParameters.mentionPeople !== undefined) {
+            queryParameters['mentionPeople'] = requestParameters.mentionPeople;
         }
 
         if (requestParameters.onChartRelease !== undefined) {

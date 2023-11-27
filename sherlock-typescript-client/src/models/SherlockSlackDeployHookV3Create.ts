@@ -21,6 +21,18 @@ import { exists, mapValues } from '../runtime';
 export interface SherlockSlackDeployHookV3Create {
     /**
      * 
+     * @type {boolean}
+     * @memberof SherlockSlackDeployHookV3Create
+     */
+    beta?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof SherlockSlackDeployHookV3Create
+     */
+    mentionPeople?: boolean;
+    /**
+     * 
      * @type {string}
      * @memberof SherlockSlackDeployHookV3Create
      */
@@ -70,6 +82,8 @@ export function SherlockSlackDeployHookV3CreateFromJSONTyped(json: any, ignoreDi
     }
     return {
         
+        'beta': !exists(json, 'beta') ? undefined : json['beta'],
+        'mentionPeople': !exists(json, 'mentionPeople') ? undefined : json['mentionPeople'],
         'onChartRelease': !exists(json, 'onChartRelease') ? undefined : json['onChartRelease'],
         'onEnvironment': !exists(json, 'onEnvironment') ? undefined : json['onEnvironment'],
         'onFailure': !exists(json, 'onFailure') ? undefined : json['onFailure'],
@@ -87,6 +101,8 @@ export function SherlockSlackDeployHookV3CreateToJSON(value?: SherlockSlackDeplo
     }
     return {
         
+        'beta': value.beta,
+        'mentionPeople': value.mentionPeople,
         'onChartRelease': value.onChartRelease,
         'onEnvironment': value.onEnvironment,
         'onFailure': value.onFailure,

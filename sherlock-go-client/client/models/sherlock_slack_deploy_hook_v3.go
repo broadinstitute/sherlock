@@ -19,12 +19,18 @@ import (
 // swagger:model sherlock.SlackDeployHookV3
 type SherlockSlackDeployHookV3 struct {
 
+	// beta
+	Beta bool `json:"beta,omitempty"`
+
 	// created at
 	// Format: date-time
 	CreatedAt strfmt.DateTime `json:"createdAt,omitempty"`
 
 	// id
 	ID int64 `json:"id,omitempty"`
+
+	// mention people
+	MentionPeople bool `json:"mentionPeople,omitempty"`
 
 	// on chart release
 	OnChartRelease string `json:"onChartRelease,omitempty"`

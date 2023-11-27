@@ -719,11 +719,15 @@ definitions:
     type: object
   sherlock.SlackDeployHookV3:
     properties:
+      beta:
+        type: boolean
       createdAt:
         format: date-time
         type: string
       id:
         type: integer
+      mentionPeople:
+        type: boolean
       onChartRelease:
         type: string
       onEnvironment:
@@ -740,6 +744,10 @@ definitions:
     type: object
   sherlock.SlackDeployHookV3Create:
     properties:
+      beta:
+        type: boolean
+      mentionPeople:
+        type: boolean
       onChartRelease:
         type: string
       onEnvironment:
@@ -753,6 +761,10 @@ definitions:
     type: object
   sherlock.SlackDeployHookV3Edit:
     properties:
+      beta:
+        type: boolean
+      mentionPeople:
+        type: boolean
       onFailure:
         type: boolean
       onSuccess:
@@ -3975,6 +3987,9 @@ paths:
     get:
       description: List SlackDeployHooks matching a filter.
       parameters:
+      - in: query
+        name: beta
+        type: boolean
       - format: date-time
         in: query
         name: createdAt
@@ -3982,6 +3997,9 @@ paths:
       - in: query
         name: id
         type: integer
+      - in: query
+        name: mentionPeople
+        type: boolean
       - in: query
         name: onChartRelease
         type: string
