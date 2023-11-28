@@ -59,6 +59,7 @@ func collectSlackNotificationCallbacks(db *gorm.DB, ciRun models.CiRun) (callbac
 		}
 		var text string
 		text, errs = ciRun.SlackCompletionText(db)
+		// Even if we got errors, if we have text then send it
 		if len(channelsToNotify) > 0 && text != "" {
 			for _, unsafeChannel := range channelsToNotify {
 				channel := unsafeChannel
