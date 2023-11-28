@@ -114,7 +114,8 @@ func (c *CiRun) EvaluateIfTerminationClaimHeld(claimedTimestamp string) (claimHe
 	return
 }
 
-func (c *CiRun) SlackCompletionText(db *gorm.DB) string {
+func (c *CiRun) SlackCompletionText(db *gorm.DB) (string, []error) {
+	errs := make([]error, 0)
 	var relatedResourceSummaryParts []string
 	var chartReleaseIDs, environmentIDs []uint
 	for _, identifier := range c.RelatedResources {
@@ -130,6 +131,8 @@ func (c *CiRun) SlackCompletionText(db *gorm.DB) string {
 			relatedResourceSummaryParts = append(relatedResourceSummaryParts, utils.Map(chartReleases, func(c ChartRelease) string {
 				return slack.LinkHelper(fmt.Sprintf(config.Config.String("beehive.chartReleaseUrlFormatString"), c.Name), c.Name)
 			})...)
+		} else {
+			errs = append(errs, fmt.Errorf("failed to query chart releases for completion notification for CiRun %d: %w", c.ID, err))
 		}
 	} else if len(environmentIDs) > 0 {
 		var environments []Environment
@@ -137,6 +140,8 @@ func (c *CiRun) SlackCompletionText(db *gorm.DB) string {
 			relatedResourceSummaryParts = append(relatedResourceSummaryParts, utils.Map(environments, func(e Environment) string {
 				return slack.LinkHelper(fmt.Sprintf(config.Config.String("beehive.environmentUrlFormatString"), e.Name), e.Name)
 			})...)
+		} else {
+			errs = append(errs, fmt.Errorf("failed to query environments for completion notification for CiRun %d: %w", c.ID, err))
 		}
 	}
 	var against string
@@ -147,7 +152,7 @@ func (c *CiRun) SlackCompletionText(db *gorm.DB) string {
 	if c.Status != nil {
 		status = *c.Status
 	}
-	return fmt.Sprintf("%s%s: %s", c.Nickname(), against, slack.LinkHelper(c.WebURL(), status))
+	return fmt.Sprintf("%s%s: %s", c.Nickname(), against, slack.LinkHelper(c.WebURL(), status)), errs
 }
 
 func (c *CiRun) WebURL() string {

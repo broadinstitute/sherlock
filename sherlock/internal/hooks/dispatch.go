@@ -7,7 +7,6 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/slack"
 	"gorm.io/gorm"
-	"sync"
 )
 
 // Dispatch runs hooks or other actions based on the given models.CiRun.
@@ -30,25 +29,18 @@ func Dispatch(db *gorm.DB, ciRun models.CiRun) {
 }
 
 func dispatch(db *gorm.DB, ciRun models.CiRun) {
-	slackCallbacks := collectSlackNotificationCallbacks(db, ciRun)
-	deployHookCallbacks, errs := collectDeployHookCallbacks(db, ciRun)
-	callbacks := append(slackCallbacks, deployHookCallbacks...)
+	slackCallbacks, slackCollectCallbackErrors := collectSlackNotificationCallbacks(db, ciRun)
+	deployHookCallbacks, deployHookCollectCallbackErrors := collectDeployHookCallbacks(db, ciRun)
+	errs := append(slackCollectCallbackErrors, deployHookCollectCallbackErrors...)
 
-	if len(callbacks) > 0 {
-		var waitGroup sync.WaitGroup
-		var errsMutex sync.Mutex
-		waitGroup.Add(len(callbacks))
-		for _, callback := range callbacks {
-			go func(callback func() error) {
-				defer waitGroup.Done()
-				if err := callback(); err != nil {
-					errsMutex.Lock()
-					errs = append(errs, err)
-					errsMutex.Unlock()
-				}
-			}(callback)
+	// You'd think that we could do this in parallel with Goroutines. You'd be mostly correct -- Gorm is
+	// Goroutine-safe -- except when we run tests, the *gorm.DB is actually a transaction, and transactions
+	// are not Goroutine-safe. PGX is what will actually complain, saying "conn busy". So we do this
+	// serially, which isn't a huge deal since Dispatch above will already be asynchronous.
+	for _, callback := range append(slackCallbacks, deployHookCallbacks...) {
+		if err := callback(); err != nil {
+			errs = append(errs, err)
 		}
-		waitGroup.Wait()
 	}
 
 	if len(errs) > 0 {
@@ -56,7 +48,7 @@ func dispatch(db *gorm.DB, ciRun models.CiRun) {
 	}
 }
 
-func collectSlackNotificationCallbacks(db *gorm.DB, ciRun models.CiRun) (callbacks []func() error) {
+func collectSlackNotificationCallbacks(db *gorm.DB, ciRun models.CiRun) (callbacks []func() error, errs []error) {
 	callbacks = make([]func() error, 0)
 	if ciRun.TerminalAt != nil {
 		var channelsToNotify []string
@@ -65,16 +57,20 @@ func collectSlackNotificationCallbacks(db *gorm.DB, ciRun models.CiRun) (callbac
 		} else {
 			channelsToNotify = ciRun.NotifySlackChannelsUponFailure
 		}
-		if len(channelsToNotify) > 0 {
-			for _, channel := range channelsToNotify {
+		var text string
+		text, errs = ciRun.SlackCompletionText(db)
+		// Even if we got errors, if we have text then send it
+		if len(channelsToNotify) > 0 && text != "" {
+			for _, unsafeChannel := range channelsToNotify {
+				channel := unsafeChannel
 				callbacks = append(callbacks, func() error {
 					return dispatcher.DispatchSlackCompletionNotification(
-						db.Statement.Context, channel, ciRun.SlackCompletionText(db), ciRun.Succeeded())
+						db.Statement.Context, channel, text, ciRun.Succeeded())
 				})
 			}
 		}
 	}
-	return callbacks
+	return callbacks, errs
 }
 
 func collectDeployHookCallbacks(db *gorm.DB, ciRun models.CiRun) (callbacks []func() error, errs []error) {
