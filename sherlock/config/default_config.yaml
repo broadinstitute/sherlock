@@ -10,9 +10,7 @@ hooks:
   # to the third-party-specific flags elsewhere in this file.
   enable: true
   # If true, hooks will be run asynchronously after the initial call into the
-  # hooks package. This flag doesn't affect parallelism within the hooks package,
-  # it just changes whether hooks will be run before or possibly after the initial
-  # call returns.
+  # hooks package.
   asynchronous: true
 
 log:

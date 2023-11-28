@@ -1240,8 +1240,8 @@ func (td *testDataImpl) CiRun_Deploy_LeonardoDev_V1toV3() CiRun {
 			StartedAt:                      utils.PointerTo(td.Changeset_LeonardoDev_V1toV3().AppliedAt.Add(30 * time.Second)),
 			TerminalAt:                     utils.PointerTo(td.Changeset_LeonardoDev_V1toV3().AppliedAt.Add(10 * time.Minute)),
 			Status:                         utils.PointerTo("success"),
-			NotifySlackChannelsUponSuccess: []string{"#ap-k8s-monitor"},
-			NotifySlackChannelsUponFailure: []string{"#ap-k8s-monitor"},
+			NotifySlackChannelsUponSuccess: []string{"#dsde-qa", "#ap-k8s-monitor"},
+			NotifySlackChannelsUponFailure: []string{"#dsde-qa", "#ap-k8s-monitor"},
 		}
 		td.create(&td.ciRun_deploy_leonardoDev_v1toV3)
 

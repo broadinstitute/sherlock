@@ -622,7 +622,9 @@ func (s *modelSuite) TestCiRun_MakeCompletionNotificationText() {
 				NotifySlackChannelsUponFailure: tt.fields.NotifySlackChannelsUponFailure,
 				ResourceStatus:                 tt.fields.ResourceStatus,
 			}
-			s.Equalf(tt.want, c.SlackCompletionText(s.DB), "SlackCompletionText()")
+			got, errs := c.SlackCompletionText(s.DB)
+			s.Empty(errs)
+			s.Equalf(tt.want, got, "SlackCompletionText()")
 		})
 	}
 }
