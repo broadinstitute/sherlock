@@ -250,6 +250,8 @@ func (s *internalChangesetStore) apply(db *gorm.DB, changesets []Changeset, user
 			if err != nil {
 				return fmt.Errorf("apply error on %T %d (ID: %d): failed to modify %T (ID: %d): %w", changeset, index+1, toApply.ID, chartRelease, toApply.ChartReleaseID, err)
 			}
+			// Add chart update to affectedChartReleases
+			affectedChartReleases[chartRelease.ID] = chartRelease
 			// Forcibly include AppliedAt and SupersededAt in the match criteria so we only find things where both of those
 			// fields are empty.
 			consumedChangesets, err := s.ListAllMatchingByUpdated(tx, 0, Changeset{ChartReleaseID: toApply.ChartReleaseID}, "ChartReleaseID", "AppliedAt", "SupersededAt")
