@@ -7,7 +7,7 @@ require (
 	github.com/broadinstitute/sherlock/go-shared v0.0.0
 	github.com/broadinstitute/sherlock/sherlock-go-client v0.0.0
 	github.com/go-openapi/runtime v0.26.0
-	github.com/go-openapi/strfmt v0.21.7
+	github.com/go-openapi/strfmt v0.21.8
 	github.com/go-playground/webhooks/v6 v6.3.0
 )
 
