@@ -247,6 +247,7 @@ func HandleWebhook(w http.ResponseWriter, r *http.Request) {
 			}
 
 			created, err := sherlockClient.GitCommits.PutAPIGitCommitsV3(&git_commits.PutAPIGitCommitsV3Params{
+				Context: context.Background(),
 				GitCommit: &models.SherlockGitCommitV3Upsert{
 					CommittedAt:  payload.Commits[0].Timestamp,
 					GitBranch:    strings.TrimPrefix(*payload.BaseRef, "refs/heads/"),
