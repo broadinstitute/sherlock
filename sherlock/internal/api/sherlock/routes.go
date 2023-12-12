@@ -90,4 +90,6 @@ func ConfigureRoutes(apiRouter gin.IRoutes) {
 	apiRouter.PATCH("deploy-hooks/github-actions/v3/*selector", githubActionsDeployHooksV3Edit)
 	apiRouter.DELETE("deploy-hooks/github-actions/v3/*selector", githubActionsDeployHooksV3Delete)
 	apiRouter.POST("deploy-hooks/github-actions/procedures/v3/test/*selector", githubActionsDeployHooksV3TestRun)
+
+	apiRouter.PUT("git-commits/v3", gitCommitsV3Upsert)
 }
