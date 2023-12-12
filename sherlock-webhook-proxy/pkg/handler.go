@@ -235,14 +235,11 @@ func HandleWebhook(w http.ResponseWriter, r *http.Request) {
 			} else if payload.After == payload.Before {
 				log.Printf("bailed out of handling push event because before and after are the same\n")
 				return
-			} else if payload.BaseRef == nil {
-				log.Printf("bailed out of handling push event because base ref was nil\n")
-				return
 			} else if payload.Deleted {
 				log.Printf("bailed out of handing push event because it was a delete\n")
 				return
-			} else if !payload.Created {
-				log.Printf("bailed out of handling push event because it wasn't a create\n")
+			} else if !strings.HasPrefix(payload.Ref, "refs/heads/") {
+				log.Printf("bailed out of handling push event because it wasn't a branch\n")
 				return
 			}
 
@@ -250,10 +247,10 @@ func HandleWebhook(w http.ResponseWriter, r *http.Request) {
 				Context: context.Background(),
 				GitCommit: &models.SherlockGitCommitV3Upsert{
 					CommittedAt:  payload.Commits[0].Timestamp,
-					GitBranch:    strings.TrimPrefix(*payload.BaseRef, "refs/heads/"),
+					GitBranch:    strings.TrimPrefix(payload.Ref, "refs/heads/"),
 					GitCommit:    payload.After,
 					GitRepo:      payload.Repository.Name,
-					IsMainBranch: strings.TrimPrefix(*payload.BaseRef, "refs/heads/") == payload.Repository.DefaultBranch,
+					IsMainBranch: strings.TrimPrefix(payload.Ref, "refs/heads/") == payload.Repository.DefaultBranch,
 				},
 			})
 
