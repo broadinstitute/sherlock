@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/broadinstitute/sherlock/sherlock-go-client/client/ci_runs"
+	"github.com/broadinstitute/sherlock/sherlock-go-client/client/git_commits"
 	"github.com/broadinstitute/sherlock/sherlock-go-client/client/models"
 	httptransport "github.com/go-openapi/runtime/client"
 	"github.com/go-playground/webhooks/v6/github"
@@ -126,7 +127,7 @@ func HandleWebhook(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Call the library and handle its errors (it does try to check signature, but using a more insecure method)
-		rawPayload, err := hook.Parse(r, github.WorkflowRunEvent, github.PingEvent)
+		rawPayload, err := hook.Parse(r, github.WorkflowRunEvent, github.PingEvent, github.PushEvent)
 		if err != nil {
 			switch {
 			case errors.Is(err, github.ErrMissingHubSignatureHeader):
@@ -222,6 +223,24 @@ func HandleWebhook(w http.ResponseWriter, r *http.Request) {
 				w.WriteHeader(http.StatusInternalServerError)
 				log.Printf("authenticateSherlockClient.CiRuns.PutAPICiRunsV3(): error and response both nil")
 			}
+
+		case github.PushPayload:
+			if !isAllowedGithubOrg(w, payload.Repository.Owner.Login) {
+				return
+			}
+
+			if len(payload.Commits) == 0 || payload.After == payload.Before || payload.BaseRef == nil || payload.Deleted || !payload.Created {
+				log.Printf("")
+			}
+			created, err := sherlockClient.GitCommits.PutAPIGitCommitsV3(&git_commits.PutAPIGitCommitsV3Params{
+				GitCommit: &models.SherlockGitCommitV3Upsert{
+					CommittedAt:  payload.Commits[0].Timestamp,
+					GitBranch:    strings.TrimPrefix(*payload.BaseRef, "refs/heads/"),
+					GitCommit:    payload.After,
+					GitRepo:      payload.Repository.Name,
+					IsMainBranch: strings.TrimPrefix(*payload.BaseRef, "refs/heads/") == payload.Repository.DefaultBranch,
+				},
+			})
 
 		// Some payload we don't handle
 		default:
