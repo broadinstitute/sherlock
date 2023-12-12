@@ -578,6 +578,42 @@ definitions:
         default: false
         type: boolean
     type: object
+  sherlock.GitCommitV3:
+    properties:
+      committedAt:
+        type: string
+      createdAt:
+        format: date-time
+        type: string
+      gitBranch:
+        type: string
+      gitCommit:
+        type: string
+      gitRepo:
+        type: string
+      id:
+        type: integer
+      isMainBranch:
+        type: boolean
+      secSincePrev:
+        type: integer
+      updatedAt:
+        format: date-time
+        type: string
+    type: object
+  sherlock.GitCommitV3Upsert:
+    properties:
+      committedAt:
+        type: string
+      gitBranch:
+        type: string
+      gitCommit:
+        type: string
+      gitRepo:
+        type: string
+      isMainBranch:
+        type: boolean
+    type: object
   sherlock.GithubActionsDeployHookTestRunRequest:
     properties:
       execute:
@@ -4242,6 +4278,52 @@ paths:
       summary: Edit an individual SlackDeployHook
       tags:
       - DeployHooks
+  /api/git-commits/v3:
+    put:
+      consumes:
+      - application/json
+      description: Upsert a GitCommit.
+      parameters:
+      - description: The GitCommit to upsert
+        in: body
+        name: gitCommit
+        required: true
+        schema:
+          $ref: '#/definitions/sherlock.GitCommitV3Upsert'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/sherlock.GitCommitV3'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Upsert a GitCommit
+      tags:
+      - GitCommits
   /api/users/v3:
     get:
       description: |-
