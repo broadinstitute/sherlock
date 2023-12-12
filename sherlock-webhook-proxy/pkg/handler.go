@@ -7,12 +7,9 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
-	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
-	"github.com/broadinstitute/sherlock/sherlock-go-client/client"
 	"github.com/broadinstitute/sherlock/sherlock-go-client/client/ci_runs"
 	"github.com/broadinstitute/sherlock/sherlock-go-client/client/models"
 	httptransport "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-playground/webhooks/v6/github"
 	"hash"
 	"io"
@@ -163,60 +160,26 @@ func HandleWebhook(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		sherlockClient, sherlockClientOk := authenticateSherlockClient(w, transport)
+		if !sherlockClientOk || sherlockClient == nil {
+			return
+		}
+
 		// Handle parsed payloads from the library
 		switch payload := rawPayload.(type) {
 
 		// ping issued upon the webhook being added to a new repo; might as well respond with 200
 		case github.PingPayload:
-			if !utils.Contains(allowedGithubOrgs, payload.Repository.Owner.Login) {
-				w.WriteHeader(http.StatusForbidden)
-			} else {
+			if isAllowedGithubOrg(w, payload.Repository.Owner.Login) {
 				w.WriteHeader(http.StatusOK)
+				log.Printf("received ping from repo %s", payload.Repository.FullName)
 			}
-			log.Printf("received ping from repo %s", payload.Repository.FullName)
 
 		// workflow_run issued upon workflow request, running, and completion
 		case github.WorkflowRunPayload:
-			if !utils.Contains(allowedGithubOrgs, payload.Repository.Owner.Login) {
-				w.WriteHeader(http.StatusForbidden)
-				log.Printf("bailing out, workflow run from %s", payload.Repository.FullName)
+			if !isAllowedGithubOrg(w, payload.Repository.Owner.Login) {
 				return
 			}
-
-			if token, present := os.LookupEnv(iapTokenOverrideEnvVar); present {
-				// If we have a token, just use that
-				transport.DefaultAuthentication = httptransport.BearerToken(token)
-			} else {
-				// Otherwise, do the dance to get it from the metadata server
-				formedIdTokenUrl := fmt.Sprintf("%s?audience=%s", idTokenUrl, iapAudience)
-				req, err := http.NewRequest(http.MethodGet, formedIdTokenUrl, nil)
-				if err != nil {
-					w.WriteHeader(http.StatusInternalServerError)
-					log.Printf("http.NewRequest(%s, %s): %v\n", http.MethodGet, formedIdTokenUrl, err)
-					return
-				}
-				req.Header.Set("Metadata-Flavor", "Google")
-				resp, err := (&http.Client{}).Do(req)
-				if err != nil {
-					w.WriteHeader(http.StatusInternalServerError)
-					log.Printf("(&http.Client{}).Do(%s): %v\n", formedIdTokenUrl, err)
-					return
-				} else if resp.StatusCode != http.StatusOK {
-					w.WriteHeader(http.StatusInternalServerError)
-					log.Printf("(&http.Client{}).Do(%s): non-200: %d", formedIdTokenUrl, resp.StatusCode)
-					return
-				}
-				idToken, err := io.ReadAll(resp.Body)
-				_ = resp.Body.Close()
-				if err != nil {
-					w.WriteHeader(http.StatusInternalServerError)
-					log.Printf("io.ReadAll(resp.Body): %v\n", err)
-					return
-				}
-				transport.DefaultAuthentication = httptransport.BearerToken(string(idToken[:]))
-			}
-
-			sherlockClient := client.New(transport, strfmt.Default)
 
 			// Convert webhook fields into what we'll store in Sherlock
 			var startedAt, status, terminalAt string
@@ -251,13 +214,13 @@ func HandleWebhook(w http.ResponseWriter, r *http.Request) {
 			// Handle response cases
 			if err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
-				log.Printf("sherlockClient.CiRuns.PutAPICiRunsV3(): error %v", err)
+				log.Printf("authenticateSherlockClient.CiRuns.PutAPICiRunsV3(): error %v", err)
 			} else if created != nil {
 				w.WriteHeader(http.StatusCreated)
-				log.Printf("sherlockClient.CiRuns.PutAPICiRunsV3(): upserted CiRun %d, '%s'", created.Payload.ID, created.Payload.Status)
+				log.Printf("authenticateSherlockClient.CiRuns.PutAPICiRunsV3(): upserted CiRun %d, '%s'", created.Payload.ID, created.Payload.Status)
 			} else {
 				w.WriteHeader(http.StatusInternalServerError)
-				log.Printf("sherlockClient.CiRuns.PutAPICiRunsV3(): error and response both nil")
+				log.Printf("authenticateSherlockClient.CiRuns.PutAPICiRunsV3(): error and response both nil")
 			}
 
 		// Some payload we don't handle
