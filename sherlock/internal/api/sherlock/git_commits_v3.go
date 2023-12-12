@@ -15,6 +15,7 @@ type GitCommitV3 struct {
 	CommittedAt  time.Time `json:"committedAt"`
 }
 
+//nolint:unused
 func (g GitCommitV3) toModel() models.GitCommit {
 	return models.GitCommit{
 		Model:        g.toGormModel(),
