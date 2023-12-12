@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/broadinstitute/sherlock/sherlock-go-client/client/ci_runs"
+	"github.com/broadinstitute/sherlock/sherlock-go-client/client/git_commits"
 	"github.com/broadinstitute/sherlock/sherlock-go-client/client/models"
 	httptransport "github.com/go-openapi/runtime/client"
 	"github.com/go-playground/webhooks/v6/github"
@@ -126,7 +127,7 @@ func HandleWebhook(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Call the library and handle its errors (it does try to check signature, but using a more insecure method)
-		rawPayload, err := hook.Parse(r, github.WorkflowRunEvent, github.PingEvent)
+		rawPayload, err := hook.Parse(r, github.WorkflowRunEvent, github.PingEvent, github.PushEvent)
 		if err != nil {
 			switch {
 			case errors.Is(err, github.ErrMissingHubSignatureHeader):
@@ -214,13 +215,55 @@ func HandleWebhook(w http.ResponseWriter, r *http.Request) {
 			// Handle response cases
 			if err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
-				log.Printf("authenticateSherlockClient.CiRuns.PutAPICiRunsV3(): error %v", err)
+				log.Printf("sherlockClient.CiRuns.PutAPICiRunsV3(): error %v", err)
 			} else if created != nil {
 				w.WriteHeader(http.StatusCreated)
-				log.Printf("authenticateSherlockClient.CiRuns.PutAPICiRunsV3(): upserted CiRun %d, '%s'", created.Payload.ID, created.Payload.Status)
+				log.Printf("sherlockClient.CiRuns.PutAPICiRunsV3(): upserted CiRun %d, '%s'", created.Payload.ID, created.Payload.Status)
 			} else {
 				w.WriteHeader(http.StatusInternalServerError)
-				log.Printf("authenticateSherlockClient.CiRuns.PutAPICiRunsV3(): error and response both nil")
+				log.Printf("sherlockClient.CiRuns.PutAPICiRunsV3(): error and response both nil")
+			}
+
+		case github.PushPayload:
+			if !isAllowedGithubOrg(w, payload.Repository.Owner.Login) {
+				return
+			}
+
+			if len(payload.Commits) == 0 {
+				log.Printf("bailed out of handling push event because it had no commits\n")
+				return
+			} else if payload.After == payload.Before {
+				log.Printf("bailed out of handling push event because before and after are the same\n")
+				return
+			} else if payload.Deleted {
+				log.Printf("bailed out of handing push event because it was a delete\n")
+				return
+			} else if !strings.HasPrefix(payload.Ref, "refs/heads/") {
+				log.Printf("bailed out of handling push event because it wasn't a branch\n")
+				return
+			}
+
+			created, err := sherlockClient.GitCommits.PutAPIGitCommitsV3(&git_commits.PutAPIGitCommitsV3Params{
+				Context: context.Background(),
+				GitCommit: &models.SherlockGitCommitV3Upsert{
+					CommittedAt:  payload.Commits[0].Timestamp,
+					GitBranch:    strings.TrimPrefix(payload.Ref, "refs/heads/"),
+					GitCommit:    payload.After,
+					GitRepo:      payload.Repository.Name,
+					IsMainBranch: strings.TrimPrefix(payload.Ref, "refs/heads/") == payload.Repository.DefaultBranch,
+				},
+			})
+
+			// Handle response cases
+			if err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+				log.Printf("sherlockClient.GitCommits.PutAPIGitCommitsV3(): error %v", err)
+			} else if created != nil {
+				w.WriteHeader(http.StatusCreated)
+				log.Printf("sherlockClient.GitCommits.PutAPIGitCommitsV3(): upserted GitCommit %d, '%s'", created.Payload.ID, payload.After)
+			} else {
+				w.WriteHeader(http.StatusInternalServerError)
+				log.Printf("sherlockClient.GitCommits.PutAPIGitCommitsV3(): error and response both nil")
 			}
 
 		// Some payload we don't handle
