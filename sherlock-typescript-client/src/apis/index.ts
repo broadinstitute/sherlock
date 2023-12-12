@@ -11,6 +11,7 @@ export * from './ClustersApi';
 export * from './DatabaseInstancesApi';
 export * from './DeployHooksApi';
 export * from './EnvironmentsApi';
+export * from './GitCommitsApi';
 export * from './MiscApi';
 export * from './PagerdutyIntegrationsApi';
 export * from './UsersApi';

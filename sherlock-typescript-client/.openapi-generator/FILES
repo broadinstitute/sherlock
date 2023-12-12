@@ -13,6 +13,7 @@ src/apis/ClustersApi.ts
 src/apis/DatabaseInstancesApi.ts
 src/apis/DeployHooksApi.ts
 src/apis/EnvironmentsApi.ts
+src/apis/GitCommitsApi.ts
 src/apis/MiscApi.ts
 src/apis/PagerdutyIntegrationsApi.ts
 src/apis/UsersApi.ts
@@ -42,6 +43,8 @@ src/models/SherlockCiRunV3Upsert.ts
 src/models/SherlockClusterV3.ts
 src/models/SherlockClusterV3Create.ts
 src/models/SherlockClusterV3Edit.ts
+src/models/SherlockGitCommitV3.ts
+src/models/SherlockGitCommitV3Upsert.ts
 src/models/SherlockGithubActionsDeployHookTestRunRequest.ts
 src/models/SherlockGithubActionsDeployHookTestRunResponse.ts
 src/models/SherlockGithubActionsDeployHookV3.ts
