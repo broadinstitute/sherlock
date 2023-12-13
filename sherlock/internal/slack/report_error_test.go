@@ -36,9 +36,14 @@ func TestReportError(t *testing.T) {
 			},
 		},
 		{
-			name:       "sends no errors",
-			args:       args{errs: []error{}},
-			mockConfig: func(c *slack_mocks.MockMockableClient) {},
+			name: "sends no errors",
+			args: args{errs: []error{}},
+			mockConfig: func(c *slack_mocks.MockMockableClient) {
+				c.On("SendMessageContext", ctx, "channel 1",
+					mock.AnythingOfType("slack.MsgOption")).Return("", "", "", nil)
+				c.On("SendMessageContext", ctx, "channel 2",
+					mock.AnythingOfType("slack.MsgOption")).Return("", "", "", nil)
+			},
 		},
 		{
 			name: "sends multiple errors",
