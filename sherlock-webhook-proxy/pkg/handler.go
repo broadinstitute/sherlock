@@ -257,7 +257,7 @@ func HandleWebhook(w http.ResponseWriter, r *http.Request) {
 
 			// Handle response cases
 			payloadPretty, err2 := json.MarshalIndent(payload, "", "    ")
-			payloadPrettyString := ""
+			var payloadPrettyString string
 			if err2 == nil {
 				payloadPrettyString = string(payloadPretty)
 			}
