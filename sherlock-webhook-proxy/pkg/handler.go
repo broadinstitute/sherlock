@@ -5,6 +5,7 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/broadinstitute/sherlock/sherlock-go-client/client/ci_runs"
@@ -255,9 +256,15 @@ func HandleWebhook(w http.ResponseWriter, r *http.Request) {
 			})
 
 			// Handle response cases
+			payloadPretty, err2 := json.MarshalIndent(payload, "", "    ")
+			payloadPrettyString := ""
+			if err2 == nil {
+				payloadPrettyString = string(payloadPretty)
+			}
+
 			if err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
-				log.Printf("sherlockClient.GitCommits.PutAPIGitCommitsV3(): error %v", err)
+				log.Printf("sherlockClient.GitCommits.PutAPIGitCommitsV3(): error %v\npayload:\n%v", err, payloadPrettyString)
 			} else if created != nil {
 				w.WriteHeader(http.StatusCreated)
 				log.Printf("sherlockClient.GitCommits.PutAPIGitCommitsV3(): upserted GitCommit %d, '%s'", created.Payload.ID, payload.After)
