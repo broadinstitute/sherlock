@@ -44,7 +44,7 @@ func dispatch(db *gorm.DB, ciRun models.CiRun) {
 	}
 
 	if len(errs) > 0 {
-		slack.ReportError(db.Statement.Context, append([]error{fmt.Errorf("encountered %d errors dispatching for CiRun %d", len(errs), ciRun.ID)}, errs...)...)
+		slack.ReportError(db.Statement.Context, fmt.Sprintf("encountered %d errors dispatching for CiRun %d", len(errs), ciRun.ID), errs...)
 	}
 }
 

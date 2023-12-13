@@ -35,7 +35,7 @@ func ParseHeader(ctx *gin.Context) (*gha_oidc_claims.Claims, error) {
 		}
 	}
 	if !repositoryOwnerAccepted {
-		slack.ReportError(ctx, fmt.Errorf("observed a GHA OIDC JWT from %s and ignored it because %s was not an allowed organization in Sherlock's config", claims.Repository, claims.RepositoryOwner))
+		slack.ReportError[error](ctx, fmt.Sprintf("observed a GHA OIDC JWT from %s and ignored it because %s was not an allowed organization in Sherlock's config", claims.Repository, claims.RepositoryOwner))
 		return nil, nil
 	}
 	return &claims, nil
