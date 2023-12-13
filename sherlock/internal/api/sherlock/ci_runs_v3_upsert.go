@@ -415,7 +415,7 @@ WHERE
     AND ci_identifiers.resource_type = 'chart-release' 
     AND ci_identifiers.resource_id = ?
 `, status, result.ID, chartReleaseID).Error; err != nil {
-			slack.ReportError(ctx, fmt.Errorf("error recording chart release status in ci_runs_for_identifiers table for CiRun %d and ChartRelease %d: %w", result.ID, chartReleaseID, err))
+			slack.ReportError(ctx, fmt.Sprintf("error recording chart release status in ci_runs_for_identifiers table for CiRun %d and ChartRelease %d", result.ID, chartReleaseID), err)
 		}
 		// 2. The identifier is for a "changeset" where the changeset's chart release ID matches our chart release ID
 		//		(We have to do this one separately because this one needs a join, and the operation above shouldn't
@@ -435,7 +435,7 @@ WHERE
     AND changesets.chart_release_id = ?
 RETURNING changesets.id
 `, status, result.ID, chartReleaseID).Scan(&changesetIDs).Error; err != nil {
-			slack.ReportError(ctx, fmt.Errorf("error recording changeset status in ci_runs_for_identifiers table for CiRun %d and ChartRelease %d: %w", result.ID, chartReleaseID, err))
+			slack.ReportError(ctx, fmt.Sprintf("error recording changeset status in ci_runs_for_identifiers table for CiRun %d and ChartRelease %d", result.ID, chartReleaseID), err)
 		}
 		for _, changesetID := range changesetIDs {
 			// If there were changesets from step 2:
@@ -453,7 +453,7 @@ WHERE
     AND ci_identifiers.resource_type = 'app-version'
     AND changeset_new_app_versions.changeset_id = ?
 `, status, result.ID, changesetID).Error; err != nil {
-				slack.ReportError(ctx, fmt.Errorf("error recording app version status in ci_runs_for_identifiers table for CiRun %d and ChartRelease %d via Changeset %d: %w", result.ID, chartReleaseID, changesetID, err))
+				slack.ReportError(ctx, fmt.Sprintf("error recording app version status in ci_runs_for_identifiers table for CiRun %d and ChartRelease %d via Changeset %d", result.ID, chartReleaseID, changesetID), err)
 			}
 			// 4. The identifier is for a new chart version on that changeset
 			if err = db.Exec(
@@ -469,7 +469,7 @@ WHERE
     AND ci_identifiers.resource_type = 'chart-version'
     AND changeset_new_chart_versions.changeset_id = ?
 `, status, result.ID, changesetID).Error; err != nil {
-				slack.ReportError(ctx, fmt.Errorf("error recording chart version status in ci_runs_for_identifiers table for CiRun %d and ChartRelease %d via Changeset %d: %w", result.ID, chartReleaseID, changesetID, err))
+				slack.ReportError(ctx, fmt.Sprintf("error recording chart version status in ci_runs_for_identifiers table for CiRun %d and ChartRelease %d via Changeset %d", result.ID, chartReleaseID, changesetID), err)
 			}
 		}
 	}

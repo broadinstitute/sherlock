@@ -14,7 +14,6 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_handlers/v2handlers"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/metrics"
-	"github.com/broadinstitute/sherlock/sherlock/internal/slack"
 	"github.com/gin-gonic/gin"
 	swaggo_files "github.com/swaggo/files"
 	swaggo_gin "github.com/swaggo/gin-swagger"
@@ -52,8 +51,7 @@ func BuildRouter(ctx context.Context, db *gorm.DB) *gin.Engine {
 
 	router.Use(
 		gin.Recovery(),
-		middleware.Logger(config.Config.String("mode") == "debug"),
-		slack.ErrorReportingMiddleware(ctx),
+		middleware.Logger(),
 		middleware.Headers())
 
 	// Replace Gin's standard fallback responses with our standard error format for friendlier client behavior
