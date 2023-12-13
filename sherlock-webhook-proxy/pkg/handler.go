@@ -5,14 +5,13 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
+	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
-	"github.com/broadinstitute/sherlock/sherlock-go-client/client"
 	"github.com/broadinstitute/sherlock/sherlock-go-client/client/ci_runs"
+	"github.com/broadinstitute/sherlock/sherlock-go-client/client/git_commits"
 	"github.com/broadinstitute/sherlock/sherlock-go-client/client/models"
 	httptransport "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-playground/webhooks/v6/github"
 	"hash"
 	"io"
@@ -129,7 +128,7 @@ func HandleWebhook(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Call the library and handle its errors (it does try to check signature, but using a more insecure method)
-		rawPayload, err := hook.Parse(r, github.WorkflowRunEvent, github.PingEvent)
+		rawPayload, err := hook.Parse(r, github.WorkflowRunEvent, github.PingEvent, github.PushEvent)
 		if err != nil {
 			switch {
 			case errors.Is(err, github.ErrMissingHubSignatureHeader):
@@ -163,60 +162,26 @@ func HandleWebhook(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		sherlockClient, sherlockClientOk := authenticateSherlockClient(w, transport)
+		if !sherlockClientOk || sherlockClient == nil {
+			return
+		}
+
 		// Handle parsed payloads from the library
 		switch payload := rawPayload.(type) {
 
 		// ping issued upon the webhook being added to a new repo; might as well respond with 200
 		case github.PingPayload:
-			if !utils.Contains(allowedGithubOrgs, payload.Repository.Owner.Login) {
-				w.WriteHeader(http.StatusForbidden)
-			} else {
+			if isAllowedGithubOrg(w, payload.Repository.Owner.Login) {
 				w.WriteHeader(http.StatusOK)
+				log.Printf("received ping from repo %s", payload.Repository.FullName)
 			}
-			log.Printf("received ping from repo %s", payload.Repository.FullName)
 
 		// workflow_run issued upon workflow request, running, and completion
 		case github.WorkflowRunPayload:
-			if !utils.Contains(allowedGithubOrgs, payload.Repository.Owner.Login) {
-				w.WriteHeader(http.StatusForbidden)
-				log.Printf("bailing out, workflow run from %s", payload.Repository.FullName)
+			if !isAllowedGithubOrg(w, payload.Repository.Owner.Login) {
 				return
 			}
-
-			if token, present := os.LookupEnv(iapTokenOverrideEnvVar); present {
-				// If we have a token, just use that
-				transport.DefaultAuthentication = httptransport.BearerToken(token)
-			} else {
-				// Otherwise, do the dance to get it from the metadata server
-				formedIdTokenUrl := fmt.Sprintf("%s?audience=%s", idTokenUrl, iapAudience)
-				req, err := http.NewRequest(http.MethodGet, formedIdTokenUrl, nil)
-				if err != nil {
-					w.WriteHeader(http.StatusInternalServerError)
-					log.Printf("http.NewRequest(%s, %s): %v\n", http.MethodGet, formedIdTokenUrl, err)
-					return
-				}
-				req.Header.Set("Metadata-Flavor", "Google")
-				resp, err := (&http.Client{}).Do(req)
-				if err != nil {
-					w.WriteHeader(http.StatusInternalServerError)
-					log.Printf("(&http.Client{}).Do(%s): %v\n", formedIdTokenUrl, err)
-					return
-				} else if resp.StatusCode != http.StatusOK {
-					w.WriteHeader(http.StatusInternalServerError)
-					log.Printf("(&http.Client{}).Do(%s): non-200: %d", formedIdTokenUrl, resp.StatusCode)
-					return
-				}
-				idToken, err := io.ReadAll(resp.Body)
-				_ = resp.Body.Close()
-				if err != nil {
-					w.WriteHeader(http.StatusInternalServerError)
-					log.Printf("io.ReadAll(resp.Body): %v\n", err)
-					return
-				}
-				transport.DefaultAuthentication = httptransport.BearerToken(string(idToken[:]))
-			}
-
-			sherlockClient := client.New(transport, strfmt.Default)
 
 			// Convert webhook fields into what we'll store in Sherlock
 			var startedAt, status, terminalAt string
@@ -258,6 +223,54 @@ func HandleWebhook(w http.ResponseWriter, r *http.Request) {
 			} else {
 				w.WriteHeader(http.StatusInternalServerError)
 				log.Printf("sherlockClient.CiRuns.PutAPICiRunsV3(): error and response both nil")
+			}
+
+		case github.PushPayload:
+			if !isAllowedGithubOrg(w, payload.Repository.Owner.Login) {
+				return
+			}
+
+			if len(payload.Commits) == 0 {
+				log.Printf("bailed out of handling push event because it had no commits\n")
+				return
+			} else if payload.After == payload.Before {
+				log.Printf("bailed out of handling push event because before and after are the same\n")
+				return
+			} else if payload.Deleted {
+				log.Printf("bailed out of handing push event because it was a delete\n")
+				return
+			} else if !strings.HasPrefix(payload.Ref, "refs/heads/") {
+				log.Printf("bailed out of handling push event because it wasn't a branch\n")
+				return
+			}
+
+			created, err := sherlockClient.GitCommits.PutAPIGitCommitsV3(&git_commits.PutAPIGitCommitsV3Params{
+				Context: context.Background(),
+				GitCommit: &models.SherlockGitCommitV3Upsert{
+					CommittedAt:  payload.Commits[0].Timestamp,
+					GitBranch:    strings.TrimPrefix(payload.Ref, "refs/heads/"),
+					GitCommit:    payload.After,
+					GitRepo:      payload.Repository.Name,
+					IsMainBranch: strings.TrimPrefix(payload.Ref, "refs/heads/") == payload.Repository.DefaultBranch,
+				},
+			})
+
+			// Handle response cases
+			payloadPretty, err2 := json.MarshalIndent(payload, "", "    ")
+			var payloadPrettyString string
+			if err2 == nil {
+				payloadPrettyString = string(payloadPretty)
+			}
+
+			if err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+				log.Printf("sherlockClient.GitCommits.PutAPIGitCommitsV3(): error %v\npayload:\n%v", err, payloadPrettyString)
+			} else if created != nil {
+				w.WriteHeader(http.StatusCreated)
+				log.Printf("sherlockClient.GitCommits.PutAPIGitCommitsV3(): upserted GitCommit %d, '%s'", created.Payload.ID, payload.After)
+			} else {
+				w.WriteHeader(http.StatusInternalServerError)
+				log.Printf("sherlockClient.GitCommits.PutAPIGitCommitsV3(): error and response both nil")
 			}
 
 		// Some payload we don't handle

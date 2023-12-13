@@ -1,9 +1,13 @@
 package middleware
 
 import (
+	"context"
+	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/authentication"
+	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/metrics"
+	"github.com/broadinstitute/sherlock/sherlock/internal/slack"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -13,7 +17,15 @@ import (
 	"time"
 )
 
-func Logger(consoleLogging bool) gin.HandlerFunc {
+func Logger() gin.HandlerFunc {
+	// We're breaking a bit of encapsulation by reaching into config like this, but
+	// we're providing a speed-up for an extremely hot path by making the logger
+	// simply not have to check the config each time.
+	debugMode := config.Config.String("mode") == "debug"
+	var errorCodesToReport []int
+	if config.Config.Bool("slack.behaviors.errors.enable") {
+		errorCodesToReport = config.Config.Ints("slack.behaviors.errors.statusCodes")
+	}
 	return func(ctx *gin.Context) {
 		t := time.Now()
 
@@ -33,6 +45,8 @@ func Logger(consoleLogging bool) gin.HandlerFunc {
 			principal = "unevaluated"
 		}
 
+		errs := utils.Map(ctx.Errors, func(e *gin.Error) error { return e })
+
 		var event *zerolog.Event
 		switch code := ctx.Writer.Status(); {
 		case code >= 500:
@@ -43,14 +57,13 @@ func Logger(consoleLogging bool) gin.HandlerFunc {
 			event = log.Info()
 		}
 
-		if len(ctx.Errors) > 0 {
-			event.Errs("errors", utils.Map(ctx.Errors, func(e *gin.Error) error { return e }))
+		if len(errs) > 0 {
+			event.Errs("errors", errs)
 		}
-
 		event.Int("status", ctx.Writer.Status())
 		event.Str("principal", principal)
 		event.Str("method", ctx.Request.Method)
-		if consoleLogging {
+		if debugMode {
 			event.Stringer("latency", latency)
 			event.Msgf("GIN  | %-50s", path)
 		} else {
@@ -68,6 +81,15 @@ func Logger(consoleLogging bool) gin.HandlerFunc {
 			stats.Record(tagCtx, metrics.ResponseLatencyMeasure.M(latency.Milliseconds()))
 		} else {
 			log.Warn().Err(err).Msg("unable to record latency")
+		}
+
+		if utils.Contains(errorCodesToReport, ctx.Writer.Status()) {
+			description := fmt.Sprintf("%s's %s %s returned %d", principal, ctx.Request.Method, ctx.Request.URL.Path, ctx.Writer.Status())
+			if debugMode {
+				slack.ReportError(context.Background(), description, errs...)
+			} else {
+				go slack.ReportError(context.Background(), description, errs...)
+			}
 		}
 	}
 }

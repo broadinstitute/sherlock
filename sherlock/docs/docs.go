@@ -3186,6 +3186,76 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/git-commits/v3": {
+            "put": {
+                "description": "Upsert a GitCommit.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GitCommits"
+                ],
+                "summary": "Upsert a GitCommit",
+                "parameters": [
+                    {
+                        "description": "The GitCommit to upsert",
+                        "name": "gitCommit",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.GitCommitV3Upsert"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.GitCommitV3"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/users/v3": {
             "get": {
                 "description": "List Users matching a filter. The results will include suitability and other information.\nNote that the suitability info can't directly be filtered for at this time.",
@@ -11038,6 +11108,60 @@ const docTemplate = `{
                 "requiresSuitability": {
                     "type": "boolean",
                     "default": false
+                }
+            }
+        },
+        "sherlock.GitCommitV3": {
+            "type": "object",
+            "properties": {
+                "committedAt": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "gitBranch": {
+                    "type": "string"
+                },
+                "gitCommit": {
+                    "type": "string"
+                },
+                "gitRepo": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "isMainBranch": {
+                    "type": "boolean"
+                },
+                "secSincePrev": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string",
+                    "format": "date-time"
+                }
+            }
+        },
+        "sherlock.GitCommitV3Upsert": {
+            "type": "object",
+            "properties": {
+                "committedAt": {
+                    "type": "string"
+                },
+                "gitBranch": {
+                    "type": "string"
+                },
+                "gitCommit": {
+                    "type": "string"
+                },
+                "gitRepo": {
+                    "type": "string"
+                },
+                "isMainBranch": {
+                    "type": "boolean"
                 }
             }
         },
