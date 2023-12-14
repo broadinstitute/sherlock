@@ -292,7 +292,9 @@ func (s *internalChangesetStore) apply(db *gorm.DB, changesets []Changeset, user
 				)
 			}
 			// Record app version to Pact broker
-			if chartRelease.Environment != nil && chartRelease.Chart.PactParticipant != nil && *chartRelease.Chart.PactParticipant && chartRelease.Environment.PactIdentifier != nil {
+			if chartRelease.Environment != nil && chartRelease.Environment.PactIdentifier != nil &&
+				chartRelease.Chart != nil && chartRelease.Chart.PactParticipant != nil && *chartRelease.Chart.PactParticipant &&
+				chartRelease.AppVersion != nil && chartRelease.AppVersion.AppVersion != "" {
 				go pactbroker.RecordDeployment(
 					chartRelease.Chart.Name,
 					chartRelease.AppVersion.AppVersion,
