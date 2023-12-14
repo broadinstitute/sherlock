@@ -53,7 +53,7 @@ func gitCommitsV3Upsert(ctx *gin.Context) {
 	var timeSince *uint
 
 	if len(previous) > 0 {
-		timeSince = utils.PointerTo(uint(time.Now().Sub(previous[0].CreatedAt).Seconds()))
+		timeSince = utils.PointerTo(uint(time.Since(previous[0].CreatedAt).Seconds()))
 	}
 
 	var result models.GitCommit
