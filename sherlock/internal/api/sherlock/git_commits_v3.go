@@ -2,15 +2,17 @@ package sherlock
 
 import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
+	"time"
 )
 
 type GitCommitV3 struct {
 	CommonFields
-	GitRepo      string `json:"gitRepo"`
-	GitCommit    string `json:"gitCommit"`
-	GitBranch    string `json:"gitBranch"`
-	IsMainBranch bool   `json:"isMainBranch"`
-	SecSincePrev *uint  `json:"secSincePrev"`
+	GitRepo      string    `json:"gitRepo"`
+	GitCommit    string    `json:"gitCommit"`
+	GitBranch    string    `json:"gitBranch"`
+	IsMainBranch bool      `json:"isMainBranch"`
+	SecSincePrev *uint     `json:"secSincePrev"`
+	CreatedAt    time.Time `json:"createdAt" form:"createdAt" format:"date-time"`
 }
 
 //nolint:unused
