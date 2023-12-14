@@ -8,15 +8,14 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"time"
 )
 
 type GitCommitV3Upsert struct {
-	GitRepo      string    `json:"gitRepo"`
-	GitCommit    string    `json:"gitCommit"`
-	GitBranch    string    `json:"gitBranch"`
-	IsMainBranch bool      `json:"isMainBranch"`
-	CreatedAt    time.Time `json:"createdAt" form:"createdAt" format:"date-time"`
+	CommonFields
+	GitRepo      string `json:"gitRepo"`
+	GitCommit    string `json:"gitCommit"`
+	GitBranch    string `json:"gitBranch"`
+	IsMainBranch bool   `json:"isMainBranch"`
 }
 
 // gitCommitsV3Upsert godoc
