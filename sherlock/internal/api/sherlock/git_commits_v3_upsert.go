@@ -8,10 +8,10 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"time"
 )
 
 type GitCommitV3Upsert struct {
-	CommonFields
 	GitRepo      string `json:"gitRepo"`
 	GitCommit    string `json:"gitCommit"`
 	GitBranch    string `json:"gitBranch"`
@@ -53,7 +53,7 @@ func gitCommitsV3Upsert(ctx *gin.Context) {
 	var timeSince *uint
 
 	if len(previous) > 0 {
-		timeSince = utils.PointerTo(uint(body.CreatedAt.Sub(previous[0].CreatedAt).Seconds()))
+		timeSince = utils.PointerTo(uint(time.Now().Sub(previous[0].CreatedAt).Seconds()))
 	}
 
 	var result models.GitCommit
