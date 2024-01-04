@@ -51,8 +51,10 @@ func slackDeployHooksV3Edit(ctx *gin.Context) {
 	}
 
 	edits := models.SlackDeployHook{
-		Trigger:      trigger,
-		SlackChannel: body.SlackChannel,
+		Trigger:       trigger,
+		SlackChannel:  body.SlackChannel,
+		MentionPeople: body.MentionPeople,
+		Beta:          body.Beta,
 	}
 
 	var toEdit models.SlackDeployHook
