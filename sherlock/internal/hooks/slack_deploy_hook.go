@@ -48,6 +48,8 @@ func (_ *dispatcherImpl) DispatchSlackDeployHook(db *gorm.DB, hook models.SlackD
 		Model(&models.Changeset{}).
 		Where("id IN ?", changesetIDs).
 		Preload(clause.Associations).
+		Preload("NewAppVersions.AuthoredBy").
+		Preload("NewChartVersions.AuthoredBy").
 		Find(&changesets).
 		Error; err != nil {
 		return fmt.Errorf("failed to query Changesets for CiRun %d: %w", ciRun.ID, err)
