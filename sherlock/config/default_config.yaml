@@ -135,6 +135,15 @@ slack:
     red: "#ef4444" # tailwind's red-500
     green: "#22c55e" # tailwind's green-500
 
+  emoji:
+    beehive: dsp-beehive
+    beehiveLoading: dsp-beehive-loading
+    beehiveWaiting: dsp-beehive-waiting
+    succeeded: white_check_mark
+    failed: x
+    unknown: question
+    alert: exclamation
+
   behaviors:
 
     # slack.behaviors.deployHooks controls whether Sherlock
@@ -184,6 +193,12 @@ pactbroker:
 
 argoWorkflows:
   url: https://workflows.dsp-devops.broadinstitute.org
+
+argoCd:
+  url: https://ap-argocd.dsp-devops.broadinstitute.org
+  chartReleaseUrlFormatString: https://ap-argocd.dsp-devops.broadinstitute.org/applications/ap-argocd/%s
+  # Note the double %% in the string, escaping the % that appears naturally in the URL (for %253D, the URL-encoded version of =).
+  environmentUrlFormatString: https://ap-argocd.dsp-devops.broadinstitute.org/applications?showFavorites=false&proj=&sync=&health=&namespace=&cluster=&labels=env%%253D%s
 
 model:
   environments:

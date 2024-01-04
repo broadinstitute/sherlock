@@ -1,7 +1,7 @@
 package hooks
 
 import (
-	"errors"
+	"cmp"
 	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
@@ -9,9 +9,14 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/slack"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
+	"regexp"
+	"slices"
 	"sort"
 	"strings"
 )
+
+var numericProgressRegex = regexp.MustCompile(`(\d+)/(\d+)`)
 
 func (_ *dispatcherImpl) DispatchSlackDeployHook(db *gorm.DB, hook models.SlackDeployHook, ciRun models.CiRun) error {
 	// Bail out to the old behavior by default
@@ -28,6 +33,149 @@ func (_ *dispatcherImpl) DispatchSlackDeployHook(db *gorm.DB, hook models.SlackD
 		return fmt.Errorf("slack channel was nil on SlackDeployHook %d, shouldn't be possible", hook.ID)
 	}
 
+	changesetStatuses := make(map[uint]string)
+	var changesetIDs []uint
+	for _, ciIdentifier := range ciRun.RelatedResources {
+		if ciIdentifier.ResourceType == "changeset" {
+			changesetIDs = append(changesetIDs, ciIdentifier.ResourceID)
+			if ciIdentifier.ResourceStatus != nil {
+				changesetStatuses[ciIdentifier.ResourceID] = *ciIdentifier.ResourceStatus
+			}
+		}
+	}
+	var changesets []models.Changeset
+	if err := db.
+		Model(&models.Changeset{}).
+		Where("id IN ?", changesetIDs).
+		Preload(clause.Associations).
+		Find(&changesets).
+		Error; err != nil {
+		return fmt.Errorf("failed to query Changesets for CiRun %d: %w", ciRun.ID, err)
+	}
+	slices.SortFunc(changesets, func(a, b models.Changeset) int {
+		if a.ChartRelease == nil && b.ChartRelease == nil {
+			return 0
+		} else if a.ChartRelease == nil {
+			return -1
+		} else if b.ChartRelease == nil {
+			return 1
+		} else {
+			return cmp.Compare(a.ChartRelease.Name, b.ChartRelease.Name)
+		}
+	})
+	var deploymentByUsers []models.User
+	for _, changeset := range changesets {
+		if changeset.AppliedBy != nil {
+			var exists bool
+			for _, existing := range deploymentByUsers {
+				if existing.ID == changeset.AppliedBy.ID {
+					exists = true
+					break
+				}
+			}
+			if !exists {
+				deploymentByUsers = append(deploymentByUsers, *changeset.AppliedBy)
+			}
+		}
+		if changeset.PlannedBy != nil && (changeset.AppliedBy == nil || changeset.PlannedBy.ID != changeset.AppliedBy.ID) {
+			var exists bool
+			for _, existing := range deploymentByUsers {
+				if existing.ID == changeset.PlannedBy.ID {
+					exists = true
+					break
+				}
+			}
+			if !exists {
+				deploymentByUsers = append(deploymentByUsers, *changeset.PlannedBy)
+			}
+		}
+	}
+
+	// Has failures starts out true if and only if the overall workflow has finished and failed.
+	// As we assemble the message, we'll also set it to true if any of the individual changesets have failed.
+	hasFailure := ciRun.TerminalAt != nil && !ciRun.Succeeded()
+	var mainMessage slack.DeploymentNotificationInputs
+	mainMessage.Title = fmt.Sprintf("Deployment to *%s* %s:", hook.Trigger.SlackBeehiveLink(), ciRun.DoneOrUnderway())
+	for _, changeset := range changesets {
+		var rawStatus string
+		if changesetStatus, ok := changesetStatuses[changeset.ID]; ok {
+			rawStatus = changesetStatus
+		} else if ciRun.Status != nil {
+			rawStatus = *ciRun.Status
+		}
+
+		emoji := config.Config.String("slack.emoji.unknown")
+		status := rawStatus
+		if strings.HasPrefix(rawStatus, "queued") {
+			// "queued" is both a GHA status and a Thelma phase
+			emoji = config.Config.String("slack.emoji.beehiveWaiting")
+			status = "Waiting..."
+		} else if strings.HasPrefix(rawStatus, "running") || rawStatus == "in_progress" {
+			// "running" is a Thelma phase, "in_progress" is a GHA status
+			emoji = config.Config.String("slack.emoji.beehiveLoading")
+			status = "Progressing..."
+			if numericProgress := numericProgressRegex.FindStringSubmatch(rawStatus); len(numericProgress) >= 3 {
+				// If there's something like "1/3" in the rawStatus, set status to "Progressing... 33%"
+				numerator, numeratorErr := utils.ParseInt(numericProgress[1])
+				denominator, denominatorErr := utils.ParseInt(numericProgress[2])
+				if numeratorErr == nil && denominatorErr == nil && denominator != 0 {
+					status = fmt.Sprintf("Progressing... %d%%", int(float64(numerator)/float64(denominator)*100))
+				}
+			}
+		} else if strings.HasPrefix(rawStatus, "success") {
+			// "success" is both a GHA status and a Thelma phase
+			emoji = config.Config.String("slack.emoji.succeeded")
+			status = "Success"
+		} else if strings.HasPrefix(rawStatus, "error") || rawStatus == "failure" {
+			// "error" is a Thelma phase, "failure" is a GHA status
+			emoji = config.Config.String("slack.emoji.failed")
+			status = "Failed"
+			hasFailure = true
+		}
+		mainMessage.EntryLines = append(mainMessage.EntryLines,
+			fmt.Sprintf("*:%s: %s* [%s]: %s",
+				emoji,
+				changeset.ChartRelease.Name,
+				changeset.Summarize(false),
+				status))
+	}
+	if len(deploymentByUsers) > 0 {
+		mainMessage.FooterText = append(mainMessage.FooterText, fmt.Sprintf("By %s", strings.Join(
+			utils.Map(deploymentByUsers, func(u models.User) string {
+				if hook.MentionPeople != nil && *hook.MentionPeople {
+					return u.SlackReference()
+				} else {
+					return u.NameOrEmailHandle()
+				}
+			}),
+			", ")))
+	}
+	var beehiveUrl string
+	if len(changesets) > 0 {
+		beehiveUrl = fmt.Sprintf("%s?%s",
+			config.Config.String("beehive.reviewChangesetsUrl"),
+			strings.Join(
+				utils.Map(changesets, func(c models.Changeset) string { return fmt.Sprintf("changeset=%d", c.ID) }),
+				"&"))
+		mainMessage.FooterText = append(mainMessage.FooterText, slack.LinkHelper(
+			beehiveUrl,
+			"Beehive"))
+	}
+	if ciRun.Platform == "github-actions" {
+		mainMessage.FooterText = append(mainMessage.FooterText, slack.LinkHelper(
+			ciRun.WebURL(),
+			"GitHub Actions"))
+	} else {
+		mainMessage.FooterText = append(mainMessage.FooterText, slack.LinkHelper(
+			ciRun.WebURL(),
+			"Workflow"))
+	}
+	if argoCdUrl, ok := hook.Trigger.ArgoCdUrl(); ok {
+		mainMessage.FooterText = append(mainMessage.FooterText, slack.LinkHelper(
+			argoCdUrl,
+			"Argo CD"))
+	}
+
 	var messageState models.SlackDeployHookState
 	if err := db.
 		Where(&models.SlackDeployHookState{
@@ -41,31 +189,64 @@ func (_ *dispatcherImpl) DispatchSlackDeployHook(db *gorm.DB, hook models.SlackD
 		Error; err != nil {
 		return fmt.Errorf("failed to query SlackDeployHookState for SlackDeployHook %d and CiRun %d: %w", hook.ID, ciRun.ID, err)
 	}
+	var err error
+	messageState.MessageChannel, messageState.MessageTimestamp, err = slack.SendDeploymentNotification(
+		db.Statement.Context, messageState.MessageChannel, messageState.MessageTimestamp, mainMessage)
+	if err != nil {
+		return fmt.Errorf("failed to send deployment notification for CiRun %d: %w", ciRun.ID, err)
+	}
+	if recoverableErr := db.Save(&messageState).Error; recoverableErr != nil {
+		log.Error().Err(err).Msgf("failed to save in-progress SlackDeployHookState for SlackDeployHook %d and CiRun %d but continuing anyway", hook.ID, ciRun.ID)
+	}
 
-	// TODO: Send the main message
-	log.Debug().Msg("TODO: Send the main message")
-
-	if ciRun.TerminalAt != nil {
-		// TODO: Send a message with the changelog
-		log.Debug().Msg("TODO: Send a message with the changelog")
-
-		if !ciRun.Succeeded() {
-			// TODO: Send a message into the channel alerting to the failure
-			log.Debug().Msg("TODO: Send a message into the channel alerting to the failure")
+	// If the run is complete or there's already a failure, send a changelog to @ everyone who had changes go out
+	if !messageState.ChangelogSent && (ciRun.TerminalAt != nil || hasFailure) {
+		sectionsPerChart := make([][]string, 0)
+		for _, changeset := range changesets {
+			sections := make([]string, 0)
+			sections = append(sections, fmt.Sprintf("*%s* [%s]", changeset.ChartRelease.SlackBeehiveLink(), changeset.Summarize(true)))
+			for _, version := range models.InterleaveVersions(changeset.NewAppVersions, changeset.NewChartVersions) {
+				sections = append(sections, version.SlackChangelogEntry(hook.MentionPeople != nil && *hook.MentionPeople))
+			}
+			if len(sections) == 1 {
+				sections = append(sections, fmt.Sprintf("- *No changelog entries found;* %s", slack.LinkHelper(beehiveUrl, "Beehive might have more information")))
+			}
+			sectionsPerChart = append(sectionsPerChart, sections)
+		}
+		var title string
+		if hasFailure {
+			title = fmt.Sprintf("Failures deploying to *%s*, changelog:", hook.Trigger.SlackBeehiveLink())
+		} else {
+			title = fmt.Sprintf("Successfully deployed to *%s*, changelog:", hook.Trigger.SlackBeehiveLink())
+		}
+		if err = slack.SendDeploymentChangelogNotification(
+			db.Statement.Context, messageState.MessageChannel, messageState.MessageTimestamp,
+			title, sectionsPerChart); err != nil {
+			return fmt.Errorf("failed to send deployment changelog notification for CiRun %d: %w", ciRun.ID, err)
+		} else {
+			messageState.ChangelogSent = true
+			if recoverableErr := db.Save(&messageState).Error; recoverableErr != nil {
+				log.Error().Err(err).Msgf("failed to save in-progress SlackDeployHookState for SlackDeployHook %d and CiRun %d but continuing anyway", hook.ID, ciRun.ID)
+			}
 		}
 	}
 
-	// If the CiRun is ongoing, update the state, otherwise delete it if it exists
-	if ciRun.TerminalAt == nil {
-		if err := db.Save(&messageState).Error; err != nil {
-			return fmt.Errorf("failed to save SlackDeployHookState for SlackDeployHook %d and CiRun %d: %w", hook.ID, ciRun.ID, err)
-		}
-	} else if messageState.CiRunID != 0 && messageState.SlackDeployHookID != 0 {
-		if err := db.Delete(&messageState).Error; err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
-			return fmt.Errorf("failed to delete SlackDeployHookState for SlackDeployHook %d and CiRun %d: %w", hook.ID, ciRun.ID, err)
+	// If there's a failure, send an alert in the thread/channel
+	if !messageState.FailureAlertSent && hasFailure {
+		if err = slack.SendDeploymentFailureNotification(
+			db.Statement.Context, messageState.MessageChannel, messageState.MessageTimestamp,
+			fmt.Sprintf(":%s: Errors deploying to *%s*, please %s",
+				config.Config.String("slack.emoji.alert"),
+				hook.Trigger.SlackBeehiveLink(),
+				slack.LinkHelper(ciRun.WebURL(), "take a look"))); err != nil {
+			return fmt.Errorf("failed to send deployment failure notification for CiRun %d: %w", ciRun.ID, err)
+		} else {
+			messageState.FailureAlertSent = true
+			if recoverableErr := db.Save(&messageState).Error; recoverableErr != nil {
+				log.Error().Err(err).Msgf("failed to save in-progress SlackDeployHookState for SlackDeployHook %d and CiRun %d but continuing anyway", hook.ID, ciRun.ID)
+			}
 		}
 	}
-
 	return nil
 }
 

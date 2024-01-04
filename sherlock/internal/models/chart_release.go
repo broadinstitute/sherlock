@@ -2,7 +2,9 @@ package models
 
 import (
 	"fmt"
+	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
+	"github.com/broadinstitute/sherlock/sherlock/internal/slack"
 	"gorm.io/gorm"
 )
 
@@ -173,4 +175,20 @@ func (c *ChartRelease) BeforeDelete(tx *gorm.DB) error {
 		return err
 	}
 	return nil
+}
+
+func (c *ChartRelease) SlackBeehiveLink() string {
+	if c.Name == "" {
+		return "(unknown chart release)"
+	} else {
+		return slack.LinkHelper(fmt.Sprintf(config.Config.String("beehive.chartReleaseUrlFormatString"), c.Name), c.Name)
+	}
+}
+
+func (c *ChartRelease) ArgoCdUrl() (string, bool) {
+	if c.Name == "" {
+		return "", false
+	} else {
+		return fmt.Sprintf(config.Config.String("argoCd.chartReleaseUrlFormatString"), c.Name), true
+	}
 }

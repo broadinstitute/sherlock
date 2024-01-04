@@ -8,6 +8,7 @@ import (
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
+	"github.com/broadinstitute/sherlock/sherlock/internal/slack"
 	"gorm.io/gorm"
 	"strings"
 	"time"
@@ -328,4 +329,20 @@ func (e *Environment) BeforeDelete(tx *gorm.DB) error {
 		return err
 	}
 	return nil
+}
+
+func (e *Environment) SlackBeehiveLink() string {
+	if e.Name == "" {
+		return "(unknown environment)"
+	} else {
+		return slack.LinkHelper(fmt.Sprintf(config.Config.String("beehive.environmentUrlFormatString"), e.Name), e.Name)
+	}
+}
+
+func (e *Environment) ArgoCdUrl() (string, bool) {
+	if e.Name == "" {
+		return "", false
+	} else {
+		return fmt.Sprintf(config.Config.String("argoCd.environmentUrlFormatString"), e.Name), true
+	}
 }

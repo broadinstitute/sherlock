@@ -198,3 +198,17 @@ func (c *CiRun) IsDeploy() bool {
 	}
 	return false
 }
+
+func (c *CiRun) DoneOrUnderway() string {
+	if c.TerminalAt == nil {
+		return "underway"
+	} else if c.Status != nil {
+		if *c.Status == "success" || *c.Status == "failure" {
+			return "done"
+		} else {
+			return *c.Status
+		}
+	} else {
+		return "waiting for status"
+	}
+}
