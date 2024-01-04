@@ -235,7 +235,7 @@ func (_ *dispatcherImpl) DispatchSlackDeployHook(db *gorm.DB, hook models.SlackD
 	if !messageState.FailureAlertSent && hasFailure {
 		if err = slack.SendDeploymentFailureNotification(
 			db.Statement.Context, messageState.MessageChannel, messageState.MessageTimestamp,
-			fmt.Sprintf(":%s: Errors deploying to *%s*, please %s",
+			fmt.Sprintf(":%s: Failures deploying to *%s*, please %s",
 				config.Config.String("slack.emoji.alert"),
 				hook.Trigger.SlackBeehiveLink(),
 				slack.LinkHelper(ciRun.WebURL(), "take a look"))); err != nil {
