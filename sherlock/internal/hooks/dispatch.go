@@ -38,7 +38,17 @@ func dispatch(db *gorm.DB, ciRun models.CiRun) {
 	// are not Goroutine-safe. PGX is what will actually complain, saying "conn busy". So we do this
 	// serially, which isn't a huge deal since Dispatch above will already be asynchronous.
 	for _, callback := range append(slackCallbacks, deployHookCallbacks...) {
-		if err := callback(); err != nil {
+		// If one hook somehow panics, we don't want to stop the rest from running
+		var err error
+		func() {
+			defer func() {
+				if r := recover(); r != nil {
+					err = fmt.Errorf("panic in callback: %v", r)
+				}
+			}()
+			err = callback()
+		}()
+		if err != nil {
 			errs = append(errs, err)
 		}
 	}

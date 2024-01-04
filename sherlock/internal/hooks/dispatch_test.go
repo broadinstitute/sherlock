@@ -96,3 +96,41 @@ func (s *hooksSuite) TestDispatch_errors() {
 		})
 	})
 }
+
+func (s *hooksSuite) TestDispatch_panics() {
+	ciRun := s.TestData.CiRun_Deploy_LeonardoDev_V1toV3()
+	s.TestData.SlackDeployHook_Dev()
+	s.TestData.GithubActionsDeployHook_LeonardoDev()
+	completionText, errs := ciRun.SlackCompletionText(s.DB)
+	s.Empty(errs)
+	slack.UseMockedClient(s.T(), func(c *slack_mocks.MockMockableClient) {
+		c.EXPECT().SendMessageContext(
+			mock.Anything,
+			mock.Anything,
+			mock.Anything,
+			mock.Anything).
+			Return("", "", "", nil).
+			Times(len(config.Config.Strings("slack.behaviors.errors.channels")))
+	}, func() {
+		UseMockedDispatcher(s.T(), func(d *hooks_mocks.MockMockableDispatcher) {
+			for _, channel := range ciRun.NotifySlackChannelsUponSuccess {
+				d.EXPECT().DispatchSlackCompletionNotification(
+					mock.Anything,
+					channel,
+					completionText,
+					ciRun.Succeeded()).
+					Panic("error 1").Once()
+			}
+			d.EXPECT().DispatchSlackDeployHook(
+				mock.Anything,
+				mock.Anything,
+				ciRun).Panic("error 2").Once()
+			d.EXPECT().DispatchGithubActionsDeployHook(
+				mock.Anything,
+				mock.Anything,
+				ciRun).Panic("error 3").Once()
+		}, func() {
+			Dispatch(s.DB, ciRun)
+		})
+	})
+}
