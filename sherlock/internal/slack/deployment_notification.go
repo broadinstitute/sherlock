@@ -19,15 +19,15 @@ type DeploymentNotificationInputs struct {
 func makeDeploymentNotificationBlocks(inputs DeploymentNotificationInputs) []slack.Block {
 	blocks := make([]slack.Block, 0)
 	if inputs.Title != "" {
-		blocks = append(blocks, slack.NewTextBlockObject("mrkdwn", inputs.Title, true, true))
+		blocks = append(blocks, slack.NewSectionBlock(slack.NewTextBlockObject("mrkdwn", inputs.Title, false, true), nil, nil))
 	}
 	blocks = append(blocks, utils.Map(inputs.EntryLines, func(text string) slack.Block {
-		return slack.NewTextBlockObject("mrkdwn", text, true, true)
+		return slack.NewSectionBlock(slack.NewTextBlockObject("mrkdwn", text, false, true), nil, nil)
 	})...)
 	if len(inputs.FooterText) > 0 {
 		blocks = append(blocks, slack.NewContextBlock("",
 			utils.Map(inputs.FooterText, func(text string) slack.MixedElement {
-				return slack.NewTextBlockObject("mrkdwn", text, true, true)
+				return slack.NewTextBlockObject("mrkdwn", text, false, true)
 			})...))
 	}
 	return blocks
@@ -57,11 +57,11 @@ func SendDeploymentNotification(ctx context.Context, channel, timestamp string, 
 
 func SendDeploymentChangelogNotification(ctx context.Context, channel, timestamp, title string, sections [][]string) error {
 	blocks := []slack.Block{
-		slack.NewTextBlockObject("mrkdwn", title, true, true),
+		slack.NewSectionBlock(slack.NewTextBlockObject("mrkdwn", title, false, true), nil, nil),
 	}
 	for sectionIdx, section := range sections {
 		for _, textBlob := range section {
-			blocks = append(blocks, slack.NewTextBlockObject("mrkdwn", textBlob, true, true))
+			blocks = append(blocks, slack.NewSectionBlock(slack.NewTextBlockObject("mrkdwn", textBlob, false, true), nil, nil))
 		}
 		if sectionIdx < len(sections)-1 {
 			blocks = append(blocks, slack.NewDividerBlock())
@@ -90,7 +90,7 @@ func SendDeploymentFailureNotification(ctx context.Context, channel, timestamp, 
 		_, _, _, err := client.SendMessageContext(ctx, channel,
 			slack.MsgOptionTS(timestamp),
 			slack.MsgOptionBroadcast(),
-			slack.MsgOptionBlocks(slack.NewTextBlockObject("mrkdwn", text, true, true)))
+			slack.MsgOptionBlocks(slack.NewSectionBlock(slack.NewTextBlockObject("mrkdwn", text, false, true), nil, nil)))
 		return err
 	}
 	return nil
