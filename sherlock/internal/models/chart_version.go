@@ -1,8 +1,11 @@
 package models
 
 import (
+	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
+	"github.com/broadinstitute/sherlock/sherlock/internal/slack"
 	"gorm.io/gorm"
+	"time"
 )
 
 type ChartVersion struct {
@@ -90,4 +93,26 @@ SELECT * FROM search_path
 		// Path not connected, return nothing
 		return []uint{}, false, nil
 	}
+}
+
+func (c *ChartVersion) VersionInterleaveTimestamp() time.Time {
+	return c.CreatedAt
+}
+
+func (c *ChartVersion) SlackChangelogEntry(mentionUsers bool) string {
+	user := "an unknown user"
+	if c.AuthoredBy != nil {
+		if mentionUsers {
+			user = c.AuthoredBy.SlackReference()
+		} else {
+			user = c.AuthoredBy.NameOrEmailHandle()
+		}
+	} else if c.AuthoredByID != nil {
+		user += fmt.Sprintf(" (ID %d)", *c.AuthoredByID)
+	}
+	description := c.Description
+	if len(description) > 100 {
+		description = description[:100] + "..."
+	}
+	return fmt.Sprintf("- *chart %s* by %s: %s", c.ChartVersion, user, slack.EscapeText(description))
 }

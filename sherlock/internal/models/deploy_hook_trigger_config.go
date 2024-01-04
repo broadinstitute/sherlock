@@ -51,3 +51,23 @@ func (d *DeployHookTriggerConfig) AfterSave(tx *gorm.DB) error {
 func (d *DeployHookTriggerConfig) AfterDelete(tx *gorm.DB) error {
 	return d.ErrorIfForbidden(tx)
 }
+
+func (d *DeployHookTriggerConfig) SlackBeehiveLink() string {
+	if d.OnEnvironment != nil {
+		return d.OnEnvironment.SlackBeehiveLink()
+	} else if d.OnChartRelease != nil {
+		return d.OnChartRelease.SlackBeehiveLink()
+	} else {
+		return fmt.Sprintf("(orphaned deploy hook trigger config %d)", d.ID)
+	}
+}
+
+func (d *DeployHookTriggerConfig) ArgoCdUrl() (string, bool) {
+	if d.OnEnvironment != nil {
+		return d.OnEnvironment.ArgoCdUrl()
+	} else if d.OnChartRelease != nil {
+		return d.OnChartRelease.ArgoCdUrl()
+	} else {
+		return "", false
+	}
+}
