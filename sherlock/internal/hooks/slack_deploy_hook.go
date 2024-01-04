@@ -169,11 +169,16 @@ func (_ *dispatcherImpl) DispatchSlackDeployHook(db *gorm.DB, hook models.SlackD
 	if len(deploymentByUsers) > 0 {
 		mainMessage.FooterText = append(mainMessage.FooterText, fmt.Sprintf("By %s", strings.Join(
 			utils.Map(deploymentByUsers, func(u models.User) string {
+				var handle string
 				if hook.MentionPeople != nil && *hook.MentionPeople {
-					return u.SlackReference()
+					handle = u.SlackReference()
 				} else {
-					return u.NameOrEmailHandle()
+					handle = u.NameOrEmailHandle()
 				}
+				if strings.HasSuffix(u.Email, "gserviceaccount.com") {
+					handle += " (service account)"
+				}
+				return handle
 			}),
 			", ")))
 	}
