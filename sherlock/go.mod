@@ -1,6 +1,6 @@
 module github.com/broadinstitute/sherlock/sherlock
 
-go 1.19
+go 1.21
 
 require (
 	contrib.go.opencensus.io/exporter/prometheus v0.4.2

@@ -84,7 +84,7 @@ deploy-webhook-proxy:
 			--gen2 \
 			--project=dsp-tools-k8s \
 			--region us-central1 \
-			--runtime go119 \
+			--runtime go121 \
 			--trigger-http \
 			--allow-unauthenticated \
 			--source . \

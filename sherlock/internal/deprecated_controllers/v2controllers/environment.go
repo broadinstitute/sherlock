@@ -9,7 +9,6 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
-	"math/rand"
 	"strconv"
 	"strings"
 	"time"
@@ -272,7 +271,6 @@ func setEnvironmentDynamicDefaults(environment *CreatableEnvironment, stores *v2
 			if namePrefix == "" {
 				namePrefix = fmt.Sprintf("%s-%s", user.AlphaNumericHyphenatedUsername(), templateEnvironment.Name)
 			}
-			rand.Seed(time.Now().UnixNano())
 			for suffixLength := 3; suffixLength >= 1; suffixLength-- {
 				environment.Name = fmt.Sprintf("%s-%s", namePrefix, petname.Generate(suffixLength, "-"))
 				if len(environment.Name) <= 32 {
