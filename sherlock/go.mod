@@ -12,7 +12,7 @@ require (
 	github.com/gin-gonic/gin v1.9.1
 	github.com/golang-migrate/migrate/v4 v4.16.2
 	github.com/google/go-github/v50 v50.2.0
-	github.com/google/uuid v1.4.0
+	github.com/google/uuid v1.5.0
 	github.com/jackc/pgx/v5 v5.5.0
 	github.com/knadh/koanf v1.5.0
 	github.com/pact-foundation/pact-go/v2 v2.0.2
