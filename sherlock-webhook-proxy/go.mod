@@ -1,6 +1,6 @@
 module github.com/broadinstitute/sherlock/sherlock-webhook-proxy
 
-go 1.19
+go 1.21
 
 require (
 	github.com/GoogleCloudPlatform/functions-framework-go v1.8.0
