@@ -113,8 +113,8 @@ func (a *AppVersion) SlackChangelogEntry(mentionUsers bool) string {
 		user += fmt.Sprintf(" (ID %d)", *a.AuthoredByID)
 	}
 	description := a.Description
-	if len(description) > 100 {
-		description = description[:100] + "..."
+	if len(description) > 400 {
+		description = description[:400] + "..."
 	}
 	return fmt.Sprintf("• *app %s* by %s: %s", a.AppVersion, user, slack.EscapeText(description))
 }
