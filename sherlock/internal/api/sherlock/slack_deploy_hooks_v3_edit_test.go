@@ -187,13 +187,21 @@ func (s *handlerSuite) TestSlackDeployHooksV3Edit() {
 					OnSuccess: utils.PointerTo(true),
 				},
 				SlackDeployHookFields: SlackDeployHookFields{
-					SlackChannel: utils.PointerTo("different channel"),
+					SlackChannel:  utils.PointerTo("different channel"),
+					MentionPeople: utils.PointerTo(true),
+					Beta:          utils.PointerTo(true),
 				},
 			}),
 			&got)
 		s.Equal(http.StatusOK, code)
 		if s.NotNil(got.SlackChannel) {
 			s.Equal("different channel", *got.SlackChannel)
+		}
+		if s.NotNil(got.MentionPeople) {
+			s.True(*got.MentionPeople)
+		}
+		if s.NotNil(got.Beta) {
+			s.True(*got.Beta)
 		}
 		if s.NotNil(got.OnSuccess) {
 			s.True(*got.OnSuccess)
