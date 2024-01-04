@@ -5,6 +5,7 @@ import (
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/slack"
 	"gorm.io/gorm"
+	"strings"
 	"time"
 )
 
@@ -102,19 +103,21 @@ func (a *AppVersion) VersionInterleaveTimestamp() time.Time {
 }
 
 func (a *AppVersion) SlackChangelogEntry(mentionUsers bool) string {
-	user := "an unknown user"
+	var byUser string
 	if a.AuthoredBy != nil {
-		if mentionUsers {
-			user = a.AuthoredBy.SlackReference()
+		if strings.HasSuffix(a.AuthoredBy.Email, "gserviceaccount.com") {
+			byUser = ""
+		} else if mentionUsers {
+			byUser = fmt.Sprintf(" by %s", a.AuthoredBy.SlackReference())
 		} else {
-			user = a.AuthoredBy.NameOrEmailHandle()
+			byUser = fmt.Sprintf(" by %s", a.AuthoredBy.NameOrEmailHandle())
 		}
 	} else if a.AuthoredByID != nil {
-		user += fmt.Sprintf(" (ID %d)", *a.AuthoredByID)
+		byUser = fmt.Sprintf("by an unknown user (ID %d)", *a.AuthoredByID)
 	}
 	description := a.Description
-	if len(description) > 100 {
-		description = description[:100] + "..."
+	if len(description) > 400 {
+		description = description[:400] + "..."
 	}
-	return fmt.Sprintf("- *app %s* by %s: %s", a.AppVersion, user, slack.EscapeText(description))
+	return fmt.Sprintf("• *app %s*%s: %s", a.AppVersion, byUser, slack.EscapeText(description))
 }

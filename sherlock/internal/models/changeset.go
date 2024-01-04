@@ -36,14 +36,14 @@ func (c *Changeset) GetCiIdentifier() CiIdentifier {
 
 func (c *Changeset) Summarize(includeFrom bool) string {
 	summaryParts := make([]string, 0, 3)
-	if c.From.AppVersionExact != c.To.AppVersionExact && c.To.AppVersionExact != nil {
+	if c.To.AppVersionExact != nil && (c.From.AppVersionExact == nil || *c.From.AppVersionExact != *c.To.AppVersionExact) {
 		if includeFrom && c.From.AppVersionExact != nil {
 			summaryParts = append(summaryParts, fmt.Sprintf("app %s⭢%s", *c.From.AppVersionExact, *c.To.AppVersionExact))
 		} else {
 			summaryParts = append(summaryParts, fmt.Sprintf("app⭢%s", *c.To.AppVersionExact))
 		}
 	}
-	if c.From.ChartVersionExact != c.To.ChartVersionExact && c.To.ChartVersionExact != nil {
+	if c.To.ChartVersionExact != nil && (c.From.ChartVersionExact == nil || *c.From.ChartVersionExact != *c.To.ChartVersionExact) {
 		if includeFrom && c.From.ChartVersionExact != nil {
 			summaryParts = append(summaryParts, fmt.Sprintf("chart %s⭢%s", *c.From.ChartVersionExact, *c.To.ChartVersionExact))
 		} else {

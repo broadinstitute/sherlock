@@ -48,6 +48,8 @@ func (_ *dispatcherImpl) DispatchSlackDeployHook(db *gorm.DB, hook models.SlackD
 		Model(&models.Changeset{}).
 		Where("id IN ?", changesetIDs).
 		Preload(clause.Associations).
+		Preload("NewAppVersions.AuthoredBy").
+		Preload("NewChartVersions.AuthoredBy").
 		Find(&changesets).
 		Error; err != nil {
 		return fmt.Errorf("failed to query Changesets for CiRun %d: %w", ciRun.ID, err)
@@ -139,17 +141,6 @@ func (_ *dispatcherImpl) DispatchSlackDeployHook(db *gorm.DB, hook models.SlackD
 				changeset.Summarize(false),
 				status))
 	}
-	if len(deploymentByUsers) > 0 {
-		mainMessage.FooterText = append(mainMessage.FooterText, fmt.Sprintf("By %s", strings.Join(
-			utils.Map(deploymentByUsers, func(u models.User) string {
-				if hook.MentionPeople != nil && *hook.MentionPeople {
-					return u.SlackReference()
-				} else {
-					return u.NameOrEmailHandle()
-				}
-			}),
-			", ")))
-	}
 	var beehiveUrl string
 	if len(changesets) > 0 {
 		beehiveUrl = fmt.Sprintf("%s?%s",
@@ -174,6 +165,22 @@ func (_ *dispatcherImpl) DispatchSlackDeployHook(db *gorm.DB, hook models.SlackD
 		mainMessage.FooterText = append(mainMessage.FooterText, slack.LinkHelper(
 			argoCdUrl,
 			"Argo CD"))
+	}
+	if len(deploymentByUsers) > 0 {
+		mainMessage.FooterText = append(mainMessage.FooterText, fmt.Sprintf("By %s", strings.Join(
+			utils.Map(deploymentByUsers, func(u models.User) string {
+				var handle string
+				if hook.MentionPeople != nil && *hook.MentionPeople {
+					handle = u.SlackReference()
+				} else {
+					handle = u.NameOrEmailHandle()
+				}
+				if strings.HasSuffix(u.Email, "gserviceaccount.com") {
+					handle += " (service account)"
+				}
+				return handle
+			}),
+			", ")))
 	}
 
 	var messageState models.SlackDeployHookState
@@ -215,9 +222,9 @@ func (_ *dispatcherImpl) DispatchSlackDeployHook(db *gorm.DB, hook models.SlackD
 		}
 		var title string
 		if hasFailure {
-			title = fmt.Sprintf("Failures deploying to *%s*, changelog:", hook.Trigger.SlackBeehiveLink())
+			title = fmt.Sprintf("Failures deploying to *%s*; changelog:", hook.Trigger.SlackBeehiveLink())
 		} else {
-			title = fmt.Sprintf("Successfully deployed to *%s*, changelog:", hook.Trigger.SlackBeehiveLink())
+			title = fmt.Sprintf("Successfully deployed to *%s*; changelog:", hook.Trigger.SlackBeehiveLink())
 		}
 		if err = slack.SendDeploymentChangelogNotification(
 			db.Statement.Context, messageState.MessageChannel, messageState.MessageTimestamp,
@@ -235,7 +242,7 @@ func (_ *dispatcherImpl) DispatchSlackDeployHook(db *gorm.DB, hook models.SlackD
 	if !messageState.FailureAlertSent && hasFailure {
 		if err = slack.SendDeploymentFailureNotification(
 			db.Statement.Context, messageState.MessageChannel, messageState.MessageTimestamp,
-			fmt.Sprintf(":%s: Errors deploying to *%s*, please %s",
+			fmt.Sprintf(":%s: Failures deploying to *%s*, please %s",
 				config.Config.String("slack.emoji.alert"),
 				hook.Trigger.SlackBeehiveLink(),
 				slack.LinkHelper(ciRun.WebURL(), "take a look"))); err != nil {
