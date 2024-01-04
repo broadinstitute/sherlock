@@ -114,5 +114,5 @@ func (c *ChartVersion) SlackChangelogEntry(mentionUsers bool) string {
 	if len(description) > 100 {
 		description = description[:100] + "..."
 	}
-	return fmt.Sprintf("- *chart %s* by %s: %s", c.ChartVersion, user, slack.EscapeText(description))
+	return fmt.Sprintf("• *chart %s* by %s: %s", c.ChartVersion, user, slack.EscapeText(description))
 }
