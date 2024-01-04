@@ -43,7 +43,7 @@ func dispatch(db *gorm.DB, ciRun models.CiRun) {
 		func() {
 			defer func() {
 				if r := recover(); r != nil {
-					err = fmt.Errorf("panic in callback: %v", r)
+					err = fmt.Errorf("recovered from panic in callback: %v", r)
 				}
 			}()
 			err = callback()
