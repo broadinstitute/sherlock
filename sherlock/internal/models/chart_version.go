@@ -5,6 +5,7 @@ import (
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/slack"
 	"gorm.io/gorm"
+	"strings"
 	"time"
 )
 
@@ -100,19 +101,21 @@ func (c *ChartVersion) VersionInterleaveTimestamp() time.Time {
 }
 
 func (c *ChartVersion) SlackChangelogEntry(mentionUsers bool) string {
-	user := "an unknown user"
+	var byUser string
 	if c.AuthoredBy != nil {
-		if mentionUsers {
-			user = c.AuthoredBy.SlackReference()
+		if strings.HasSuffix(c.AuthoredBy.Email, "gserviceaccount.com") {
+			byUser = ""
+		} else if mentionUsers {
+			byUser = fmt.Sprintf(" by %s", c.AuthoredBy.SlackReference())
 		} else {
-			user = c.AuthoredBy.NameOrEmailHandle()
+			byUser = fmt.Sprintf(" by %s", c.AuthoredBy.NameOrEmailHandle())
 		}
 	} else if c.AuthoredByID != nil {
-		user += fmt.Sprintf(" (ID %d)", *c.AuthoredByID)
+		byUser = fmt.Sprintf("by an unknown user (ID %d)", *c.AuthoredByID)
 	}
 	description := c.Description
 	if len(description) > 400 {
 		description = description[:400] + "..."
 	}
-	return fmt.Sprintf("• *chart %s* by %s: %s", c.ChartVersion, user, slack.EscapeText(description))
+	return fmt.Sprintf("• *chart %s* by %s: %s", c.ChartVersion, byUser, slack.EscapeText(description))
 }
