@@ -2,8 +2,12 @@ package slack
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
+	"github.com/rs/zerolog/log"
 	"github.com/slack-go/slack"
+	"math/rand"
 )
 
 type DeploymentNotificationInputs struct {
@@ -39,6 +43,15 @@ func SendDeploymentNotification(ctx context.Context, channel, timestamp string, 
 			_channel, _timestamp, _, err = client.SendMessageContext(ctx, channel, opts...)
 		}
 	}
+	if err != nil {
+		if bytes, jsonErr := json.Marshal(blocks); jsonErr != nil {
+			err = fmt.Errorf("(also failed to marshal blocks to JSON: %v) %v", jsonErr, err)
+		} else {
+			identifier := rand.Int()
+			log.Warn().Bytes("blocks", bytes).Int("identifier", identifier).Msg("failed to send deployment notification, embedding blocks in log")
+			err = fmt.Errorf("(embedded blocks in log, seek identifier %d) %v", identifier, err)
+		}
+	}
 	return
 }
 
@@ -58,6 +71,15 @@ func SendDeploymentChangelogNotification(ctx context.Context, channel, timestamp
 		_, _, _, err := client.SendMessageContext(ctx, channel,
 			slack.MsgOptionTS(timestamp),
 			slack.MsgOptionBlocks(blocks...))
+		if err != nil {
+			if bytes, jsonErr := json.Marshal(blocks); jsonErr != nil {
+				err = fmt.Errorf("(also failed to marshal blocks to JSON: %v) %v", jsonErr, err)
+			} else {
+				identifier := rand.Int()
+				log.Warn().Bytes("blocks", bytes).Int("identifier", identifier).Msg("failed to send deployment changelog notification, embedding blocks in log")
+				err = fmt.Errorf("(embedded blocks in log, seek identifier %d) %v", identifier, err)
+			}
+		}
 		return err
 	}
 	return nil
