@@ -141,17 +141,6 @@ func (_ *dispatcherImpl) DispatchSlackDeployHook(db *gorm.DB, hook models.SlackD
 				changeset.Summarize(false),
 				status))
 	}
-	if len(deploymentByUsers) > 0 {
-		mainMessage.FooterText = append(mainMessage.FooterText, fmt.Sprintf("By %s", strings.Join(
-			utils.Map(deploymentByUsers, func(u models.User) string {
-				if hook.MentionPeople != nil && *hook.MentionPeople {
-					return u.SlackReference()
-				} else {
-					return u.NameOrEmailHandle()
-				}
-			}),
-			", ")))
-	}
 	var beehiveUrl string
 	if len(changesets) > 0 {
 		beehiveUrl = fmt.Sprintf("%s?%s",
@@ -176,6 +165,17 @@ func (_ *dispatcherImpl) DispatchSlackDeployHook(db *gorm.DB, hook models.SlackD
 		mainMessage.FooterText = append(mainMessage.FooterText, slack.LinkHelper(
 			argoCdUrl,
 			"Argo CD"))
+	}
+	if len(deploymentByUsers) > 0 {
+		mainMessage.FooterText = append(mainMessage.FooterText, fmt.Sprintf("By %s", strings.Join(
+			utils.Map(deploymentByUsers, func(u models.User) string {
+				if hook.MentionPeople != nil && *hook.MentionPeople {
+					return u.SlackReference()
+				} else {
+					return u.NameOrEmailHandle()
+				}
+			}),
+			", ")))
 	}
 
 	var messageState models.SlackDeployHookState
