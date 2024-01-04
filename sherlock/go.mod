@@ -1,6 +1,6 @@
 module github.com/broadinstitute/sherlock/sherlock
 
-go 1.19
+go 1.21
 
 require (
 	contrib.go.opencensus.io/exporter/prometheus v0.4.2
@@ -23,6 +23,7 @@ require (
 	github.com/swaggo/gin-swagger v1.6.0
 	github.com/swaggo/swag v1.16.2
 	go.opencensus.io v0.24.0
+	golang.org/x/exp v0.0.0-20231110203233-9a3e6036ecaa
 	golang.org/x/net v0.18.0
 	golang.org/x/oauth2 v0.14.0
 	google.golang.org/api v0.150.0
@@ -122,7 +123,6 @@ require (
 	go.uber.org/atomic v1.10.0 // indirect
 	golang.org/x/arch v0.3.0 // indirect
 	golang.org/x/crypto v0.15.0 // indirect
-	golang.org/x/exp v0.0.0-20231110203233-9a3e6036ecaa // indirect
 	golang.org/x/sync v0.5.0 // indirect
 	golang.org/x/sys v0.14.0 // indirect
 	golang.org/x/text v0.14.0 // indirect

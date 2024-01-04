@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"math/rand"
 	"reflect"
-	"time"
 )
 
 // TestBulkData uses reflection to iterate through all available methods on TestData, followed
@@ -15,7 +14,6 @@ func (s *modelSuite) TestBulkData() {
 	// Rather than iterating through the methods in order, use rand.Perm to effectively
 	// shuffle the order we process each index.
 	// https://pkg.go.dev/math/rand#Rand.Perm
-	rand.Seed(time.Now().UnixNano())
 	for _, i := range rand.Perm(testDataValue.NumMethod()) {
 		methodTypeValue := testDataValue.Type().Method(i)
 		// Method's receiver counts as an argument
