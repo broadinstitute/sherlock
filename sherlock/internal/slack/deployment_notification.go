@@ -82,8 +82,8 @@ func SendDeploymentChangelogNotification(ctx context.Context, channel, timestamp
 					log.Warn().Bytes("blocks", bytes).Int("identifier", identifier).Msg("failed to send deployment changelog notification, embedding blocks in log")
 					err = fmt.Errorf("(embedded blocks in log, seek identifier %d) %v", identifier, err)
 				}
+				return err
 			}
-			return err
 		}
 	}
 	return nil
