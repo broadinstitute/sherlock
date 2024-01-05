@@ -12,7 +12,7 @@ func LinkHelper(url string, text string) string {
 
 const slackTextBlockLengthLimit = 3000
 
-func chunkLinesToMrkdwnBlocks(lines []string) []slack.Block {
+func chunkLinesToSectionMrkdwnBlocks(lines []string) []slack.Block {
 	var chunks []string
 	for _, line := range lines {
 		if len(chunks) == 0 {
@@ -27,6 +27,6 @@ func chunkLinesToMrkdwnBlocks(lines []string) []slack.Block {
 		}
 	}
 	return utils.Map(chunks, func(chunk string) slack.Block {
-		return slack.NewTextBlockObject("mrkdwn", chunk, true, true)
+		return slack.NewSectionBlock(slack.NewTextBlockObject("mrkdwn", chunk, false, true), nil, nil)
 	})
 }
