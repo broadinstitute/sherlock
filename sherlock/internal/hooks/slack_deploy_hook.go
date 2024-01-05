@@ -222,9 +222,9 @@ func (_ *dispatcherImpl) DispatchSlackDeployHook(db *gorm.DB, hook models.SlackD
 		}
 		var title string
 		if hasFailure {
-			title = fmt.Sprintf("Failures deploying to *%s*; changelog:", hook.Trigger.SlackBeehiveLink())
+			title = fmt.Sprintf("Failures deploying to *%s*; changelog preview:", hook.Trigger.SlackBeehiveLink())
 		} else {
-			title = fmt.Sprintf("Successfully deployed to *%s*; changelog:", hook.Trigger.SlackBeehiveLink())
+			title = fmt.Sprintf("Successfully deployed to *%s*; changelog preview:", hook.Trigger.SlackBeehiveLink())
 		}
 		if err = slack.SendDeploymentChangelogNotification(
 			db.Statement.Context, messageState.MessageChannel, messageState.MessageTimestamp,
