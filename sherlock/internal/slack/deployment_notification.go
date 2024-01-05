@@ -79,7 +79,7 @@ func SendDeploymentChangelogNotification(ctx context.Context, channel, timestamp
 					err = fmt.Errorf("(also failed to marshal blocks to JSON: %v) %v", jsonErr, err)
 				} else {
 					identifier := rand.Int()
-					log.Warn().Bytes("blocks", bytes).Int("identifier", identifier).Msg("failed to send deployment changelog notification, embedding blocks in log")
+					log.Warn().Bytes("blocks", bytes).Int("identifier", identifier).Msgf("failed to send deployment changelog notification, embedding blocks in log with identifier %d", identifier)
 					err = fmt.Errorf("(embedded blocks in log, seek identifier %d) %v", identifier, err)
 				}
 				return err
