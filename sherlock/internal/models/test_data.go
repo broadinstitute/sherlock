@@ -91,6 +91,7 @@ type TestData interface {
 	CiIdentifier_Changeset_LeonardoDev_V1toV3() CiIdentifier
 
 	CiRun_Deploy_LeonardoDev_V1toV3() CiRun
+	CiRun_Stub_LeonardoDev() CiRun
 
 	SlackDeployHook_Dev() SlackDeployHook
 
@@ -185,6 +186,7 @@ type testDataImpl struct {
 	ciIdentifier_changeset_leonardoDev_v1toV3 CiIdentifier
 
 	ciRun_deploy_leonardoDev_v1toV3 CiRun
+	ciRun_stub_leonardoDev          CiRun
 
 	slackDeployHook_dev SlackDeployHook
 
@@ -1265,6 +1267,26 @@ func (td *testDataImpl) CiRun_Deploy_LeonardoDev_V1toV3() CiRun {
 		}
 	}
 	return td.ciRun_deploy_leonardoDev_v1toV3
+}
+
+func (td *testDataImpl) CiRun_Stub_LeonardoDev() CiRun {
+	if td.ciRun_stub_leonardoDev.ID == 0 {
+		td.ciRun_stub_leonardoDev = CiRun{
+			Platform:                   "github-actions",
+			GithubActionsOwner:         "broadinstitute",
+			GithubActionsRepo:          "terra-github-workflows",
+			GithubActionsRunID:         111111111,
+			GithubActionsAttemptNumber: 1,
+			GithubActionsWorkflowPath:  ".github/workflows/some-weird-workflow.yaml",
+			RelatedResources: []CiIdentifier{
+				td.CiIdentifier_Cluster_TerraDev(),
+				td.CiIdentifier_Environment_Dev(),
+				td.CiIdentifier_ChartRelease_LeonardoDev(),
+			},
+		}
+		td.create(&td.ciRun_stub_leonardoDev)
+	}
+	return td.ciRun_stub_leonardoDev
 }
 
 func (td *testDataImpl) SlackDeployHook_Dev() SlackDeployHook {
