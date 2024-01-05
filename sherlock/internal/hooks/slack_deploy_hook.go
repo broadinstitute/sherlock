@@ -16,7 +16,7 @@ import (
 	"strings"
 )
 
-var numericProgressRegex = regexp.MustCompile(`(\d+)/(\d+)`)
+var numericProgressRegex = regexp.MustCompile(`(\d+)(/| out of )(\d+)`)
 
 func (_ *dispatcherImpl) DispatchSlackDeployHook(db *gorm.DB, hook models.SlackDeployHook, ciRun models.CiRun) error {
 	// Bail out to the old behavior by default
@@ -116,10 +116,10 @@ func (_ *dispatcherImpl) DispatchSlackDeployHook(db *gorm.DB, hook models.SlackD
 			// "running" is a Thelma phase, "in_progress" is a GHA status
 			emoji = config.Config.String("slack.emoji.beehiveLoading")
 			status = "Progressing..."
-			if numericProgress := numericProgressRegex.FindStringSubmatch(rawStatus); len(numericProgress) >= 3 {
-				// If there's something like "1/3" in the rawStatus, set status to "Progressing... 33%"
+			if numericProgress := numericProgressRegex.FindStringSubmatch(rawStatus); len(numericProgress) >= 4 {
+				// If there's something like "1/3" or "1 out of 3" in the rawStatus, set status to "Progressing... 33%"
 				numerator, numeratorErr := utils.ParseInt(numericProgress[1])
-				denominator, denominatorErr := utils.ParseInt(numericProgress[2])
+				denominator, denominatorErr := utils.ParseInt(numericProgress[3])
 				if numeratorErr == nil && denominatorErr == nil && denominator != 0 {
 					status = fmt.Sprintf("Progressing... %d%%", int(float64(numerator)/float64(denominator)*100))
 				}
