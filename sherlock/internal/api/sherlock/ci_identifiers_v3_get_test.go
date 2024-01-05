@@ -362,9 +362,11 @@ func (s *handlerSuite) TestCiIdentifiersV3Get_allowStubCiRuns() {
 	code = s.HandleRequest(
 		s.NewRequest(http.MethodGet, "/api/ci-identifiers/v3/chart-release/dev/leonardo?allowStubCiRuns=false", nil),
 		&got)
+	s.Equal(http.StatusOK, code)
 	s.Len(got.CiRuns, 1)
 	code = s.HandleRequest(
 		s.NewRequest(http.MethodGet, "/api/ci-identifiers/v3/chart-release/dev/leonardo", nil),
 		&got)
+	s.Equal(http.StatusOK, code)
 	s.Len(got.CiRuns, 1)
 }
