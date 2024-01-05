@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/slack-go/slack"
+	"strings"
 )
 
 func LinkHelper(url string, text string) string {
@@ -12,7 +13,7 @@ func LinkHelper(url string, text string) string {
 
 const slackTextBlockLengthLimit = 3000
 
-func chunkLinesToMrkdwnBlocks(lines []string) []slack.Block {
+func chunkLinesToSectionMrkdwnBlocks(lines []string) []slack.Block {
 	var chunks []string
 	for _, line := range lines {
 		if len(chunks) == 0 {
@@ -27,6 +28,18 @@ func chunkLinesToMrkdwnBlocks(lines []string) []slack.Block {
 		}
 	}
 	return utils.Map(chunks, func(chunk string) slack.Block {
-		return slack.NewTextBlockObject("mrkdwn", chunk, true, true)
+		return slack.NewSectionBlock(slack.NewTextBlockObject("mrkdwn", chunk, false, true), nil, nil)
 	})
+}
+
+func EscapeText(text string) string {
+	replacements := map[string]string{
+		"&": "&amp;",
+		"<": "&lt;",
+		">": "&gt;",
+	}
+	for k, v := range replacements {
+		text = strings.ReplaceAll(text, k, v)
+	}
+	return text
 }

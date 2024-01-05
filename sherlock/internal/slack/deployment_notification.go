@@ -60,27 +60,31 @@ func SendDeploymentChangelogNotification(ctx context.Context, channel, timestamp
 		slack.NewSectionBlock(slack.NewTextBlockObject("mrkdwn", title, false, true), nil, nil),
 	}
 	for sectionIdx, section := range sections {
-		for _, textBlob := range section {
-			blocks = append(blocks, slack.NewSectionBlock(slack.NewTextBlockObject("mrkdwn", textBlob, false, true), nil, nil))
-		}
+		blocks = append(blocks, chunkLinesToSectionMrkdwnBlocks(section)...)
 		if sectionIdx < len(sections)-1 {
 			blocks = append(blocks, slack.NewDividerBlock())
 		}
 	}
 	if isEnabled() && len(blocks) > 1 {
-		_, _, _, err := client.SendMessageContext(ctx, channel,
-			slack.MsgOptionTS(timestamp),
-			slack.MsgOptionBlocks(blocks...))
-		if err != nil {
-			if bytes, jsonErr := json.Marshal(blocks); jsonErr != nil {
-				err = fmt.Errorf("(also failed to marshal blocks to JSON: %v) %v", jsonErr, err)
-			} else {
-				identifier := rand.Int()
-				log.Warn().Bytes("blocks", bytes).Int("identifier", identifier).Msg("failed to send deployment changelog notification, embedding blocks in log")
-				err = fmt.Errorf("(embedded blocks in log, seek identifier %d) %v", identifier, err)
+		var chunks [][]slack.Block
+		for 50 < len(blocks) {
+			blocks, chunks = blocks[50:], append(chunks, blocks[0:50:50])
+		}
+		for _, chunk := range append(chunks, blocks) {
+			_, _, _, err := client.SendMessageContext(ctx, channel,
+				slack.MsgOptionTS(timestamp),
+				slack.MsgOptionBlocks(chunk...))
+			if err != nil {
+				if bytes, jsonErr := json.Marshal(blocks); jsonErr != nil {
+					err = fmt.Errorf("(also failed to marshal blocks to JSON: %v) %v", jsonErr, err)
+				} else {
+					identifier := rand.Int()
+					log.Warn().Bytes("blocks", bytes).Int("identifier", identifier).Msgf("failed to send deployment changelog notification, embedding blocks in log with identifier %d", identifier)
+					err = fmt.Errorf("(embedded blocks in log, seek identifier %d) %v", identifier, err)
+				}
+				return err
 			}
 		}
-		return err
 	}
 	return nil
 }

@@ -58,7 +58,7 @@ func Test_chunkLinesToMrkdwnBlocks(t *testing.T) {
 			name: "normal case",
 			args: args{lines: []string{"foo", "bar", "baz"}},
 			want: []slack.Block{
-				slack.NewTextBlockObject("mrkdwn", "foo\nbar\nbaz", true, true),
+				slack.NewSectionBlock(slack.NewTextBlockObject("mrkdwn", "foo\nbar\nbaz", false, true), nil, nil),
 			},
 		},
 		{
@@ -68,14 +68,14 @@ func Test_chunkLinesToMrkdwnBlocks(t *testing.T) {
 				strings.Repeat("b", slackTextBlockLengthLimit-100),
 			}},
 			want: []slack.Block{
-				slack.NewTextBlockObject("mrkdwn", strings.Repeat("a", slackTextBlockLengthLimit-100), true, true),
-				slack.NewTextBlockObject("mrkdwn", strings.Repeat("b", slackTextBlockLengthLimit-100), true, true),
+				slack.NewSectionBlock(slack.NewTextBlockObject("mrkdwn", strings.Repeat("a", slackTextBlockLengthLimit-100), false, true), nil, nil),
+				slack.NewSectionBlock(slack.NewTextBlockObject("mrkdwn", strings.Repeat("b", slackTextBlockLengthLimit-100), false, true), nil, nil),
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			assert.Equalf(t, tt.want, chunkLinesToMrkdwnBlocks(tt.args.lines), "chunkLinesToMrkdwnBlocks(%v)", tt.args.lines)
+			assert.Equalf(t, tt.want, chunkLinesToSectionMrkdwnBlocks(tt.args.lines), "chunkLinesToMrkdwnBlocks(%v)", tt.args.lines)
 		})
 	}
 }
