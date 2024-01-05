@@ -348,3 +348,23 @@ func (s *handlerSuite) TestCiIdentifiersV3Get_ResourceStatus() {
 		s.NotNil(cr.ResourceStatus)
 	}
 }
+
+func (s *handlerSuite) TestCiIdentifiersV3Get_allowStubCiRuns() {
+	s.TestData.CiRun_Deploy_LeonardoDev_V1toV3()
+	// Stub doesn't have status or started_at info
+	s.TestData.CiRun_Stub_LeonardoDev()
+	var got CiIdentifierV3
+	code := s.HandleRequest(
+		s.NewRequest(http.MethodGet, "/api/ci-identifiers/v3/chart-release/dev/leonardo?allowStubCiRuns=true", nil),
+		&got)
+	s.Equal(http.StatusOK, code)
+	s.Len(got.CiRuns, 2)
+	code = s.HandleRequest(
+		s.NewRequest(http.MethodGet, "/api/ci-identifiers/v3/chart-release/dev/leonardo?allowStubCiRuns=false", nil),
+		&got)
+	s.Len(got.CiRuns, 1)
+	code = s.HandleRequest(
+		s.NewRequest(http.MethodGet, "/api/ci-identifiers/v3/chart-release/dev/leonardo", nil),
+		&got)
+	s.Len(got.CiRuns, 1)
+}
