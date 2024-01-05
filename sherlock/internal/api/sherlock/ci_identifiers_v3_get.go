@@ -22,6 +22,7 @@ import (
 //	@param			selector				path		string	true	"The selector of CiIdentifier, which can be referenced either by numeric ID or indirectly by '{type}/{selector...}'"
 //	@param			limitCiRuns				query		int		false	"Control how many CiRuns are returned (default 10)"
 //	@param			offsetCiRuns			query		int		false	"Control the offset for the returned CiRuns (default 0)"
+//	@param			allowStubCiRuns			query		bool	false	"Allow stub CiRuns potentially lacking fields like status or startedAt to be returned (default false)"
 //	@success		200						{object}	CiIdentifierV3
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/ci-identifiers/v3/{selector} [get]
@@ -45,9 +46,14 @@ func ciIdentifiersV3Get(ctx *gin.Context) {
 		errors.AbortRequest(ctx, fmt.Errorf("(%s) %v", errors.BadRequest, err))
 		return
 	}
+	allowStubCiRuns := ctx.DefaultQuery("allowStubCiRuns", "false") == "true"
 	var result models.CiIdentifier
 	if err = db.Preload("CiRuns", func(tx *gorm.DB) *gorm.DB {
-		return tx.Limit(limitCiRuns).Offset(offsetCiRuns).Order("started_at desc")
+		if allowStubCiRuns {
+			return tx.Limit(limitCiRuns).Offset(offsetCiRuns).Order("created_at desc")
+		} else {
+			return tx.Where("status != '' AND status IS NOT NULL AND started_at IS NOT NULL").Limit(limitCiRuns).Offset(offsetCiRuns).Order("started_at desc")
+		}
 	}).Where(&query).First(&result).Error; err != nil {
 		errors.AbortRequest(ctx, err)
 		return
