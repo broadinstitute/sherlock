@@ -15,17 +15,17 @@ import (
 
 // ciIdentifiersV3Get godoc
 //
-//		@summary		Get CiRuns for a resource by its CiIdentifier
-//		@description	Get CiRuns for a resource by its CiIdentifier, which can be referenced by '{type}/{selector...}'.
-//		@tags			CiIdentifiers
-//		@produce		json
-//		@param			selector				path		string	true	"The selector of CiIdentifier, which can be referenced either by numeric ID or indirectly by '{type}/{selector...}'"
-//		@param			limitCiRuns				query		int		false	"Control how many CiRuns are returned (default 10)"
-//		@param			offsetCiRuns			query		int		false	"Control the offset for the returned CiRuns (default 0)"
-//	    @param          allowStubCiRuns         query       bool    false   "Allow stub CiRuns potentially lacking fields like status or startedAt to be returned (default false)"
-//		@success		200						{object}	CiIdentifierV3
-//		@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
-//		@router			/api/ci-identifiers/v3/{selector} [get]
+//	@summary		Get CiRuns for a resource by its CiIdentifier
+//	@description	Get CiRuns for a resource by its CiIdentifier, which can be referenced by '{type}/{selector...}'.
+//	@tags			CiIdentifiers
+//	@produce		json
+//	@param			selector				path		string	true	"The selector of CiIdentifier, which can be referenced either by numeric ID or indirectly by '{type}/{selector...}'"
+//	@param			limitCiRuns				query		int		false	"Control how many CiRuns are returned (default 10)"
+//	@param			offsetCiRuns			query		int		false	"Control the offset for the returned CiRuns (default 0)"
+//	@param			allowStubCiRuns			query		bool	false	"Allow stub CiRuns potentially lacking fields like status or startedAt to be returned (default false)"
+//	@success		200						{object}	CiIdentifierV3
+//	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
+//	@router			/api/ci-identifiers/v3/{selector} [get]
 func ciIdentifiersV3Get(ctx *gin.Context) {
 	db, err := authentication.MustUseDB(ctx)
 	if err != nil {
