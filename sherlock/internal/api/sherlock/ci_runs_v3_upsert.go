@@ -483,7 +483,7 @@ WHERE
 		if len(body.NotifySlackChannelsUponFailure) > 0 {
 			channelUpdates.NotifySlackChannelsUponFailure = utils.Dedupe(append(result.NotifySlackChannelsUponFailure, body.NotifySlackChannelsUponFailure...))
 		}
-		if err = db.Model(&result).Updates(&channelUpdates).Error; err != nil {
+		if err = db.Model(&result).Omit(clause.Associations).Updates(&channelUpdates).Error; err != nil {
 			errors.AbortRequest(ctx, err)
 			return
 		}
