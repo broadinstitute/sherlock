@@ -283,6 +283,7 @@ func (s *handlerSuite) TestCiIdentifiersV3GetLimitRuns() {
 					GithubActionsWorkflowPath:  "workflow",
 					// Higher IDs started more recently, just for convenience in testing
 					StartedAt: utils.PointerTo(time.Now().Add(-time.Hour).Add(time.Minute * time.Duration(iteration))),
+					Status:    utils.PointerTo("in progress"),
 				},
 				Charts: []string{"leonardo"},
 			}),
