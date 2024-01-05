@@ -49,6 +49,7 @@ export interface ApiCiIdentifiersV3SelectorGetRequest {
     selector: string;
     limitCiRuns?: number;
     offsetCiRuns?: number;
+    allowStubCiRuns?: boolean;
 }
 
 export interface ApiV2CiIdentifiersGetRequest {
@@ -164,6 +165,10 @@ export class CiIdentifiersApi extends runtime.BaseAPI {
 
         if (requestParameters.offsetCiRuns !== undefined) {
             queryParameters['offsetCiRuns'] = requestParameters.offsetCiRuns;
+        }
+
+        if (requestParameters.allowStubCiRuns !== undefined) {
+            queryParameters['allowStubCiRuns'] = requestParameters.allowStubCiRuns;
         }
 
         const headerParameters: runtime.HTTPHeaders = {};

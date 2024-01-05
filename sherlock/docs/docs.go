@@ -1391,6 +1391,12 @@ const docTemplate = `{
                         "description": "Control the offset for the returned CiRuns (default 0)",
                         "name": "offsetCiRuns",
                         "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Allow stub CiRuns potentially lacking fields like status or startedAt to be returned (default false)",
+                        "name": "allowStubCiRuns",
+                        "in": "query"
                     }
                 ],
                 "responses": {

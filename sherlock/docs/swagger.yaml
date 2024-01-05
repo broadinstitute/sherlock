@@ -3065,6 +3065,11 @@ paths:
         in: query
         name: offsetCiRuns
         type: integer
+      - description: Allow stub CiRuns potentially lacking fields like status or startedAt
+          to be returned (default false)
+        in: query
+        name: allowStubCiRuns
+        type: boolean
       produces:
       - application/json
       responses:
