@@ -79,3 +79,35 @@ func Test_chunkLinesToMrkdwnBlocks(t *testing.T) {
 		})
 	}
 }
+
+func TestEscapeText(t *testing.T) {
+	type args struct {
+		text string
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			name: "simple",
+			args: args{text: "foo & bar"},
+			want: "foo &amp; bar",
+		},
+		{
+			name: "complex",
+			args: args{text: "foo & bar < baz > qux"},
+			want: "foo &amp; bar &lt; baz &gt; qux",
+		},
+		{
+			name: "no replacements",
+			args: args{text: "foo bar baz qux"},
+			want: "foo bar baz qux",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equalf(t, tt.want, EscapeText(tt.args.text), "EscapeText(%v)", tt.args.text)
+		})
+	}
+}

@@ -33,13 +33,13 @@ func chunkLinesToSectionMrkdwnBlocks(lines []string) []slack.Block {
 }
 
 func EscapeText(text string) string {
-	replacements := map[string]string{
-		"&": "&amp;",
-		"<": "&lt;",
-		">": "&gt;",
-	}
-	for k, v := range replacements {
-		text = strings.ReplaceAll(text, k, v)
+	// It's important that these be ordered, because we want ">" to be escaped as "&gt;" and not "&amp;gt;"
+	for _, pair := range [][]string{
+		{"&", "&amp;"},
+		{"<", "&lt;"},
+		{">", "&gt;"},
+	} {
+		text = strings.ReplaceAll(text, pair[0], pair[1])
 	}
 	return text
 }
