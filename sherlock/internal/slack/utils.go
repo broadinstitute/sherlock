@@ -16,14 +16,17 @@ const slackTextBlockLengthLimit = 3000
 func chunkLinesToSectionMrkdwnBlocks(lines []string) []slack.Block {
 	var chunks []string
 	for _, line := range lines {
-		if len(chunks) == 0 {
-			// If no chunks so far, begin with the first line
-			chunks = []string{line}
-		} else if len(chunks[len(chunks)-1])+len("\n")+len(line) < slackTextBlockLengthLimit {
+		if chunks == nil {
+			chunks = make([]string, 0)
+		}
+		if len(chunks) > 0 && len(chunks[len(chunks)-1])+len("\n")+len(line) <= slackTextBlockLengthLimit {
 			// If we can add the next line without going over the limit, do so
 			chunks[len(chunks)-1] = chunks[len(chunks)-1] + "\n" + line
 		} else {
-			// Otherwise, split to a new chunk
+			// Add the line in 3000 character chunks
+			for slackTextBlockLengthLimit < len(line) {
+				line, chunks = line[slackTextBlockLengthLimit:], append(chunks, line[:slackTextBlockLengthLimit])
+			}
 			chunks = append(chunks, line)
 		}
 	}

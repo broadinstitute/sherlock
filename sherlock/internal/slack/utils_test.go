@@ -72,6 +72,14 @@ func Test_chunkLinesToMrkdwnBlocks(t *testing.T) {
 				slack.NewSectionBlock(slack.NewTextBlockObject("mrkdwn", strings.Repeat("b", slackTextBlockLengthLimit-100), false, true), nil, nil),
 			},
 		},
+		{
+			name: "split one line",
+			args: args{lines: []string{strings.Repeat("a", slackTextBlockLengthLimit+100)}},
+			want: []slack.Block{
+				slack.NewSectionBlock(slack.NewTextBlockObject("mrkdwn", strings.Repeat("a", slackTextBlockLengthLimit), false, true), nil, nil),
+				slack.NewSectionBlock(slack.NewTextBlockObject("mrkdwn", strings.Repeat("a", 100), false, true), nil, nil),
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
