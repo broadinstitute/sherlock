@@ -105,10 +105,8 @@ func (c *ChartVersion) SlackChangelogEntry(mentionUsers bool) string {
 	if c.AuthoredBy != nil {
 		if strings.HasSuffix(c.AuthoredBy.Email, "gserviceaccount.com") {
 			byUser = ""
-		} else if mentionUsers {
-			byUser = fmt.Sprintf(" by %s", c.AuthoredBy.SlackReference())
 		} else {
-			byUser = fmt.Sprintf(" by %s", c.AuthoredBy.NameOrEmailHandle())
+			byUser = fmt.Sprintf(" by %s", c.AuthoredBy.SlackReference(mentionUsers))
 		}
 	} else if c.AuthoredByID != nil {
 		byUser = fmt.Sprintf(" by an unknown user (ID %d)", *c.AuthoredByID)

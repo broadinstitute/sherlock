@@ -189,6 +189,9 @@ func (s *modelSuite) TestUserGithubIdUniquenessSql() {
 }
 
 func TestUser_SlackReference(t *testing.T) {
+	type args struct {
+		mention bool
+	}
 	type fields struct {
 		Model                gorm.Model
 		Email                string
@@ -206,6 +209,7 @@ func TestUser_SlackReference(t *testing.T) {
 	tests := []struct {
 		name   string
 		fields fields
+		args   args
 		want   string
 	}{
 		{
@@ -215,7 +219,18 @@ func TestUser_SlackReference(t *testing.T) {
 				Name:    utils.PointerTo("name"),
 				Email:   "email",
 			},
+			args: args{mention: true},
 			want: "<@123>",
+		},
+		{
+			name: "when ID is present but mention is false",
+			fields: fields{
+				SlackID: utils.PointerTo("123"),
+				Name:    utils.PointerTo("name"),
+				Email:   "email",
+			},
+			args: args{mention: false},
+			want: "<https://broad.io/beehive/r/user/email|name>",
 		},
 		{
 			name: "when name is present",
@@ -223,6 +238,7 @@ func TestUser_SlackReference(t *testing.T) {
 				Name:  utils.PointerTo("name"),
 				Email: "email",
 			},
+			args: args{mention: true},
 			want: "<https://broad.io/beehive/r/user/email|name>",
 		},
 		{
@@ -230,6 +246,7 @@ func TestUser_SlackReference(t *testing.T) {
 			fields: fields{
 				Email: "email",
 			},
+			args: args{mention: true},
 			want: "<https://broad.io/beehive/r/user/email|email>",
 		},
 	}
@@ -249,7 +266,7 @@ func TestUser_SlackReference(t *testing.T) {
 				AuthenticationMethod: tt.fields.AuthenticationMethod,
 				cachedSuitability:    tt.fields.cachedSuitability,
 			}
-			if got := u.SlackReference(); got != tt.want {
+			if got := u.SlackReference(tt.args.mention); got != tt.want {
 				t.Errorf("SlackReference() = %v, want %v", got, tt.want)
 			}
 		})

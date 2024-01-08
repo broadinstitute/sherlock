@@ -261,7 +261,7 @@ func TestChartVersion_SlackChangelogEntry(t *testing.T) {
 				ChartVersion: "1.2.3",
 			},
 			args: args{mentionUsers: false},
-			want: "• *chart 1.2.3* by test: description <https://example.com|link>",
+			want: "• *chart 1.2.3* by <https://broad.io/beehive/r/user/test@example.com|test>: description <https://example.com|link>",
 		},
 		{
 			name: "normal case, mention",

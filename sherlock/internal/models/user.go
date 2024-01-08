@@ -133,8 +133,8 @@ func (u *User) NameOrEmailHandle() string {
 	}
 }
 
-func (u *User) SlackReference() string {
-	if u.SlackID != nil {
+func (u *User) SlackReference(mention bool) string {
+	if u.SlackID != nil && mention {
 		return fmt.Sprintf("<@%s>", *u.SlackID)
 	} else {
 		return fmt.Sprintf("<https://broad.io/beehive/r/user/%s|%s>", u.Email, u.NameOrEmailHandle())

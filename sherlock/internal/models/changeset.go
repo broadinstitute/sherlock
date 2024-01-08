@@ -1,6 +1,7 @@
 package models
 
 import (
+	"cmp"
 	"fmt"
 	"gorm.io/gorm"
 	"strings"
@@ -54,4 +55,49 @@ func (c *Changeset) Summarize(includeFrom bool) string {
 		summaryParts = append(summaryParts, "configuration change")
 	}
 	return strings.Join(summaryParts, ", ")
+}
+
+func CompareChangesetsByName(a, b Changeset) int {
+	if a.ChartRelease == nil && b.ChartRelease == nil {
+		return 0
+	} else if a.ChartRelease == nil {
+		return -1
+	} else if b.ChartRelease == nil {
+		return 1
+	} else {
+		return cmp.Compare(a.ChartRelease.Name, b.ChartRelease.Name)
+	}
+}
+
+func UsersFromChangesets(changesets []Changeset) []User {
+	var users []User
+	for _, changeset := range changesets {
+		if changeset.AppliedBy != nil {
+			// Check if this user is already in our list before adding it
+			var exists bool
+			for _, existing := range users {
+				if existing.ID == changeset.AppliedBy.ID {
+					exists = true
+					break
+				}
+			}
+			if !exists {
+				users = append(users, *changeset.AppliedBy)
+			}
+		}
+		// Only go through the planned by if it's different from the applied by
+		if changeset.PlannedBy != nil && (changeset.AppliedBy == nil || changeset.PlannedBy.ID != changeset.AppliedBy.ID) {
+			var exists bool
+			for _, existing := range users {
+				if existing.ID == changeset.PlannedBy.ID {
+					exists = true
+					break
+				}
+			}
+			if !exists {
+				users = append(users, *changeset.PlannedBy)
+			}
+		}
+	}
+	return users
 }

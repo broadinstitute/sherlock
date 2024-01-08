@@ -10,7 +10,7 @@ type InterleavableVersion interface {
 	SlackChangelogEntry(mentionUsers bool) string
 }
 
-func CompareInterleavableVersion(a InterleavableVersion, b InterleavableVersion) int {
+func compareInterleavableVersion(a InterleavableVersion, b InterleavableVersion) int {
 	if a.VersionInterleaveTimestamp().Before(b.VersionInterleaveTimestamp()) {
 		return -1
 	} else if a.VersionInterleaveTimestamp().After(b.VersionInterleaveTimestamp()) {
@@ -28,6 +28,6 @@ func InterleaveVersions(appVersions []*AppVersion, chartVersions []*ChartVersion
 	for _, chartVersion := range chartVersions {
 		interleavableVersions = append(interleavableVersions, chartVersion)
 	}
-	slices.SortFunc(interleavableVersions, CompareInterleavableVersion)
+	slices.SortFunc(interleavableVersions, compareInterleavableVersion)
 	return interleavableVersions
 }

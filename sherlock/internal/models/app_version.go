@@ -107,10 +107,8 @@ func (a *AppVersion) SlackChangelogEntry(mentionUsers bool) string {
 	if a.AuthoredBy != nil {
 		if strings.HasSuffix(a.AuthoredBy.Email, "gserviceaccount.com") {
 			byUser = ""
-		} else if mentionUsers {
-			byUser = fmt.Sprintf(" by %s", a.AuthoredBy.SlackReference())
 		} else {
-			byUser = fmt.Sprintf(" by %s", a.AuthoredBy.NameOrEmailHandle())
+			byUser = fmt.Sprintf(" by %s", a.AuthoredBy.SlackReference(mentionUsers))
 		}
 	} else if a.AuthoredByID != nil {
 		byUser = fmt.Sprintf(" by an unknown user (ID %d)", *a.AuthoredByID)
