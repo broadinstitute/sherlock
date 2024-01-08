@@ -72,10 +72,82 @@ func Test_chunkLinesToMrkdwnBlocks(t *testing.T) {
 				slack.NewSectionBlock(slack.NewTextBlockObject("mrkdwn", strings.Repeat("b", slackTextBlockLengthLimit-100), false, true), nil, nil),
 			},
 		},
+		{
+			name: "split one line",
+			args: args{lines: []string{strings.Repeat("a", slackTextBlockLengthLimit+100)}},
+			want: []slack.Block{
+				slack.NewSectionBlock(slack.NewTextBlockObject("mrkdwn", strings.Repeat("a", slackTextBlockLengthLimit), false, true), nil, nil),
+				slack.NewSectionBlock(slack.NewTextBlockObject("mrkdwn", strings.Repeat("a", 100), false, true), nil, nil),
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			assert.Equalf(t, tt.want, chunkLinesToSectionMrkdwnBlocks(tt.args.lines), "chunkLinesToMrkdwnBlocks(%v)", tt.args.lines)
+		})
+	}
+}
+
+func TestEscapeText(t *testing.T) {
+	type args struct {
+		text string
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			name: "simple",
+			args: args{text: "foo & bar"},
+			want: "foo &amp; bar",
+		},
+		{
+			name: "complex",
+			args: args{text: "foo & bar < baz > qux"},
+			want: "foo &amp; bar &lt; baz &gt; qux",
+		},
+		{
+			name: "no replacements",
+			args: args{text: "foo bar baz qux"},
+			want: "foo bar baz qux",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equalf(t, tt.want, EscapeText(tt.args.text), "EscapeText(%v)", tt.args.text)
+		})
+	}
+}
+
+func TestMarkdownLinksToSlackLinks(t *testing.T) {
+	type args struct {
+		text string
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			name: "simple",
+			args: args{text: "foo [bar](https://example.com) baz"},
+			want: "foo <https://example.com|bar> baz",
+		},
+		{
+			name: "complex",
+			args: args{text: "foo [bar](https://example.com?a=b#ee) baz [qux](https://example.com/qux) quux"},
+			want: "foo <https://example.com?a=b#ee|bar> baz <https://example.com/qux|qux> quux",
+		},
+		{
+			name: "no replacements",
+			args: args{text: "foo [bar](http://insecure.link.com) baz qux"},
+			want: "foo [bar](http://insecure.link.com) baz qux",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equalf(t, tt.want, MarkdownLinksToSlackLinks(tt.args.text), "MarkdownLinksToSlackLinks(%v)", tt.args.text)
 		})
 	}
 }

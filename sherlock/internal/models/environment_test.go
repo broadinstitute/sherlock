@@ -2,8 +2,12 @@ package models
 
 import (
 	"database/sql"
+	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
+	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
+	"github.com/stretchr/testify/assert"
+	"testing"
 	"time"
 )
 
@@ -366,4 +370,69 @@ func (s *modelSuite) TestEnvironmentValidationSqlOfflineEndPresent() {
 	environment := s.TestData.Environment_Swatomation_DevBee()
 	err := s.DB.Model(&environment).Select("OfflineScheduleEndTime").Updates(&Environment{OfflineScheduleEndTime: nil}).Error
 	s.ErrorContains(err, "violates check constraint \"offline_schedule_end_time_present\"")
+}
+
+func TestEnvironment_SlackBeehiveLink(t *testing.T) {
+	type fields struct {
+		Name string
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   string
+	}{
+		{
+			name:   "no name",
+			fields: fields{},
+			want:   "(unknown environment)",
+		},
+		{
+			name:   "with name",
+			fields: fields{Name: "example"},
+			want:   "<" + fmt.Sprintf(config.Config.String("beehive.environmentUrlFormatString"), "example") + "|example>",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			e := &Environment{
+				Name: tt.fields.Name,
+			}
+			assert.Equalf(t, tt.want, e.SlackBeehiveLink(), "SlackBeehiveLink()")
+		})
+	}
+}
+
+func TestEnvironment_ArgoCdUrl(t *testing.T) {
+	type fields struct {
+		Name string
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   string
+		wantOk bool
+	}{
+		{
+			name:   "no name",
+			fields: fields{},
+			want:   "",
+			wantOk: false,
+		},
+		{
+			name:   "with name",
+			fields: fields{Name: "example"},
+			want:   fmt.Sprintf(config.Config.String("argoCd.environmentUrlFormatString"), "example"),
+			wantOk: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			e := &Environment{
+				Name: tt.fields.Name,
+			}
+			got, gotOk := e.ArgoCdUrl()
+			assert.Equalf(t, tt.want, got, "ArgoCdUrl()")
+			assert.Equalf(t, tt.wantOk, gotOk, "ArgoCdUrl()")
+		})
+	}
 }

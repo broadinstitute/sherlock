@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/rs/zerolog/log"
 	"github.com/slack-go/slack"
 	"math/rand"
@@ -19,16 +18,24 @@ type DeploymentNotificationInputs struct {
 func makeDeploymentNotificationBlocks(inputs DeploymentNotificationInputs) []slack.Block {
 	blocks := make([]slack.Block, 0)
 	if inputs.Title != "" {
-		blocks = append(blocks, slack.NewSectionBlock(slack.NewTextBlockObject("mrkdwn", inputs.Title, false, true), nil, nil))
+		// We don't expect these to be multiple blocks, but better safe than sorry
+		blocks = append(blocks, chunkLinesToSectionMrkdwnBlocks([]string{inputs.Title})...)
 	}
-	blocks = append(blocks, utils.Map(inputs.EntryLines, func(text string) slack.Block {
-		return slack.NewSectionBlock(slack.NewTextBlockObject("mrkdwn", text, false, true), nil, nil)
-	})...)
+	for _, line := range inputs.EntryLines {
+		// We put each line through manually because we want each line as its own section for spacing
+		blocks = append(blocks, chunkLinesToSectionMrkdwnBlocks([]string{line})...)
+	}
 	if len(inputs.FooterText) > 0 {
-		blocks = append(blocks, slack.NewContextBlock("",
-			utils.Map(inputs.FooterText, func(text string) slack.MixedElement {
-				return slack.NewTextBlockObject("mrkdwn", text, false, true)
-			})...))
+		contextBlocks := make([]slack.MixedElement, 0, len(inputs.FooterText))
+		for _, text := range inputs.FooterText {
+			if len(text) > slackTextBlockLengthLimit {
+				text = text[:slackTextBlockLengthLimit-3] + "..."
+			}
+			contextBlocks = append(contextBlocks, slack.NewTextBlockObject("mrkdwn", text, false, true))
+		}
+		if len(contextBlocks) > 0 {
+			blocks = append(blocks, slack.NewContextBlock("", contextBlocks...))
+		}
 	}
 	return blocks
 }
@@ -42,13 +49,17 @@ func SendDeploymentNotification(ctx context.Context, channel, timestamp string, 
 		} else {
 			_channel, _timestamp, _, err = client.SendMessageContext(ctx, channel, opts...)
 		}
+	} else {
+		// Make sure we don't return emptier channel/timestamp than we were given, even if we did nothing in this case
+		_channel = channel
+		_timestamp = timestamp
 	}
 	if err != nil {
 		if bytes, jsonErr := json.Marshal(blocks); jsonErr != nil {
 			err = fmt.Errorf("(also failed to marshal blocks to JSON: %v) %v", jsonErr, err)
 		} else {
 			identifier := rand.Int()
-			log.Warn().Bytes("blocks", bytes).Int("identifier", identifier).Msg("failed to send deployment notification, embedding blocks in log")
+			log.Warn().Bytes("blocks", bytes).Int("identifier", identifier).Msgf("failed to send deployment notification, embedding blocks in log (identifier %d)", identifier)
 			err = fmt.Errorf("(embedded blocks in log, seek identifier %d) %v", identifier, err)
 		}
 	}
@@ -56,16 +67,14 @@ func SendDeploymentNotification(ctx context.Context, channel, timestamp string, 
 }
 
 func SendDeploymentChangelogNotification(ctx context.Context, channel, timestamp, title string, sections [][]string) error {
-	blocks := []slack.Block{
-		slack.NewSectionBlock(slack.NewTextBlockObject("mrkdwn", title, false, true), nil, nil),
-	}
+	blocks := chunkLinesToSectionMrkdwnBlocks([]string{title})
 	for sectionIdx, section := range sections {
 		blocks = append(blocks, chunkLinesToSectionMrkdwnBlocks(section)...)
 		if sectionIdx < len(sections)-1 {
 			blocks = append(blocks, slack.NewDividerBlock())
 		}
 	}
-	if isEnabled() && len(blocks) > 1 {
+	if isEnabled() && timestamp != "" && len(sections) > 0 && len(blocks) > 0 {
 		var chunks [][]slack.Block
 		for 50 < len(blocks) {
 			blocks, chunks = blocks[50:], append(chunks, blocks[0:50:50])
@@ -79,7 +88,7 @@ func SendDeploymentChangelogNotification(ctx context.Context, channel, timestamp
 					err = fmt.Errorf("(also failed to marshal blocks to JSON: %v) %v", jsonErr, err)
 				} else {
 					identifier := rand.Int()
-					log.Warn().Bytes("blocks", bytes).Int("identifier", identifier).Msgf("failed to send deployment changelog notification, embedding blocks in log with identifier %d", identifier)
+					log.Warn().Bytes("blocks", bytes).Int("identifier", identifier).Msgf("failed to send deployment changelog notification, embedding blocks in log (identifier %d)", identifier)
 					err = fmt.Errorf("(embedded blocks in log, seek identifier %d) %v", identifier, err)
 				}
 				return err
@@ -94,7 +103,7 @@ func SendDeploymentFailureNotification(ctx context.Context, channel, timestamp, 
 		_, _, _, err := client.SendMessageContext(ctx, channel,
 			slack.MsgOptionTS(timestamp),
 			slack.MsgOptionBroadcast(),
-			slack.MsgOptionBlocks(slack.NewSectionBlock(slack.NewTextBlockObject("mrkdwn", text, false, true), nil, nil)))
+			slack.MsgOptionBlocks(chunkLinesToSectionMrkdwnBlocks([]string{text})...))
 		return err
 	}
 	return nil

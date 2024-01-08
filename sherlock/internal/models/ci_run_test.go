@@ -628,3 +628,60 @@ func (s *modelSuite) TestCiRun_MakeCompletionNotificationText() {
 		})
 	}
 }
+
+func TestCiRun_DoneOrUnderway(t *testing.T) {
+	type fields struct {
+		TerminalAt *time.Time
+		Status     *string
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   string
+	}{
+		{
+			name: "not terminal",
+			want: "underway",
+		},
+		{
+			name: "success",
+			fields: fields{
+				TerminalAt: utils.PointerTo(time.Now()),
+				Status:     utils.PointerTo("success"),
+			},
+			want: "done",
+		},
+		{
+			name: "failure",
+			fields: fields{
+				TerminalAt: utils.PointerTo(time.Now()),
+				Status:     utils.PointerTo("failure"),
+			},
+			want: "done",
+		},
+		{
+			name: "some other finished status",
+			fields: fields{
+				TerminalAt: utils.PointerTo(time.Now()),
+				Status:     utils.PointerTo("cancelled"),
+			},
+			want: "cancelled",
+		},
+		{
+			name: "terminal but no status yet",
+			fields: fields{
+				TerminalAt: utils.PointerTo(time.Now()),
+			},
+			want: "waiting for status",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := &CiRun{
+				TerminalAt: tt.fields.TerminalAt,
+				Status:     tt.fields.Status,
+			}
+			assert.Equalf(t, tt.want, c.DoneOrUnderway(), "DoneOrUnderway()")
+		})
+	}
+}
