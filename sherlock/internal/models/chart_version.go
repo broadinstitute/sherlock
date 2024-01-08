@@ -111,11 +111,11 @@ func (c *ChartVersion) SlackChangelogEntry(mentionUsers bool) string {
 			byUser = fmt.Sprintf(" by %s", c.AuthoredBy.NameOrEmailHandle())
 		}
 	} else if c.AuthoredByID != nil {
-		byUser = fmt.Sprintf("by an unknown user (ID %d)", *c.AuthoredByID)
+		byUser = fmt.Sprintf(" by an unknown user (ID %d)", *c.AuthoredByID)
 	}
 	description := c.Description
 	if len(description) > 400 {
 		description = description[:400] + "..."
 	}
-	return fmt.Sprintf("• *chart %s*%s: %s", c.ChartVersion, byUser, slack.EscapeText(description))
+	return fmt.Sprintf("• *chart %s*%s: %s", c.ChartVersion, byUser, slack.MarkdownLinksToSlackLinks(slack.EscapeText(description)))
 }

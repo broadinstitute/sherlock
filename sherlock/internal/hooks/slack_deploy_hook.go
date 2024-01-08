@@ -16,7 +16,7 @@ import (
 	"strings"
 )
 
-var numericProgressRegex = regexp.MustCompile(`(\d+)(/| out of )(\d+)`)
+var numericProgressRegex = regexp.MustCompile(`(\d+)(/| out of | of )(\d+)`)
 
 func (_ *dispatcherImpl) DispatchSlackDeployHook(db *gorm.DB, hook models.SlackDeployHook, ciRun models.CiRun) error {
 	// Bail out to the old behavior by default

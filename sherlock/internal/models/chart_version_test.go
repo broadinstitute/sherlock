@@ -3,6 +3,11 @@ package models
 import (
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/test_users"
+	"github.com/stretchr/testify/assert"
+	"gorm.io/gorm"
+	"strings"
+	"testing"
+	"time"
 )
 
 func (s *modelSuite) TestChartVersionChartIdValidationSqlMissing() {
@@ -193,4 +198,127 @@ func (s *modelSuite) TestChartVersionErrorsWithoutUser() {
 	chart := s.TestData.Chart_Leonardo()
 	err := s.DB.Create(&ChartVersion{ChartID: chart.ID, ChartVersion: "version"}).Error
 	s.ErrorContains(err, "database user")
+}
+
+func TestChartVersion_VersionInterleaveTimestamp(t *testing.T) {
+	now := time.Now()
+	type fields struct {
+		Model gorm.Model
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   time.Time
+	}{
+		{
+			name:   "now",
+			fields: fields{Model: gorm.Model{CreatedAt: now}},
+			want:   now,
+		},
+		{
+			name:   "zero",
+			fields: fields{},
+			want:   time.Time{},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := &ChartVersion{
+				Model: tt.fields.Model,
+			}
+			assert.Equalf(t, tt.want, c.VersionInterleaveTimestamp(), "VersionInterleaveTimestamp()")
+		})
+	}
+}
+
+func TestChartVersion_SlackChangelogEntry(t *testing.T) {
+	type fields struct {
+		Model                gorm.Model
+		CiIdentifier         *CiIdentifier
+		Chart                *Chart
+		ChartID              uint
+		ChartVersion         string
+		Description          string
+		ParentChartVersion   *ChartVersion
+		ParentChartVersionID *uint
+		AuthoredBy           *User
+		AuthoredByID         *uint
+	}
+	type args struct {
+		mentionUsers bool
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want   string
+	}{
+		{
+			name: "normal case, no mention",
+			fields: fields{
+				AuthoredBy:   &User{Email: "test@example.com", SlackID: utils.PointerTo("slack-id")},
+				Description:  "description [link](https://example.com)",
+				ChartVersion: "1.2.3",
+			},
+			args: args{mentionUsers: false},
+			want: "• *chart 1.2.3* by test: description <https://example.com|link>",
+		},
+		{
+			name: "normal case, mention",
+			fields: fields{
+				AuthoredBy:   &User{Email: "test@example.com", SlackID: utils.PointerTo("slack-id")},
+				Description:  "description [link](https://example.com)",
+				ChartVersion: "1.2.3",
+			},
+			args: args{mentionUsers: true},
+			want: "• *chart 1.2.3* by <@slack-id>: description <https://example.com|link>",
+		},
+		{
+			name: "service account",
+			fields: fields{
+				AuthoredBy:   &User{Email: "gserviceaccount.com", SlackID: utils.PointerTo("slack-id")},
+				Description:  "description [link](https://example.com)",
+				ChartVersion: "1.2.3",
+			},
+			args: args{mentionUsers: true},
+			want: "• *chart 1.2.3*: description <https://example.com|link>",
+		},
+		{
+			name: "unloaded user",
+			fields: fields{
+				AuthoredByID: utils.PointerTo[uint](123),
+				Description:  "description [link](https://example.com)",
+				ChartVersion: "1.2.3",
+			},
+			args: args{mentionUsers: true},
+			want: "• *chart 1.2.3* by an unknown user (ID 123): description <https://example.com|link>",
+		},
+		{
+			name: "long description",
+			fields: fields{
+				AuthoredBy:   &User{Email: "test@example.com", SlackID: utils.PointerTo("slack-id")},
+				Description:  strings.Repeat("a", 5000),
+				ChartVersion: "1.2.3",
+			},
+			args: args{mentionUsers: true},
+			want: "• *chart 1.2.3* by <@slack-id>: " + strings.Repeat("a", 400) + "...",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := &ChartVersion{
+				Model:                tt.fields.Model,
+				CiIdentifier:         tt.fields.CiIdentifier,
+				Chart:                tt.fields.Chart,
+				ChartID:              tt.fields.ChartID,
+				ChartVersion:         tt.fields.ChartVersion,
+				Description:          tt.fields.Description,
+				ParentChartVersion:   tt.fields.ParentChartVersion,
+				ParentChartVersionID: tt.fields.ParentChartVersionID,
+				AuthoredBy:           tt.fields.AuthoredBy,
+				AuthoredByID:         tt.fields.AuthoredByID,
+			}
+			assert.Equalf(t, tt.want, c.SlackChangelogEntry(tt.args.mentionUsers), "SlackChangelogEntry(%v)", tt.args.mentionUsers)
+		})
+	}
 }

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/slack-go/slack"
+	"regexp"
 	"strings"
 )
 
@@ -45,4 +46,15 @@ func EscapeText(text string) string {
 		text = strings.ReplaceAll(text, pair[0], pair[1])
 	}
 	return text
+}
+
+var markdownLinkRegex = regexp.MustCompile(`\[(.*?)]\((https://.*?)\)`)
+
+func MarkdownLinksToSlackLinks(text string) string {
+	// Slack doesn't support markdown links, so we have to convert them to slack links
+	// https://api.slack.com/reference/surfaces/formatting#linking-urls
+	return markdownLinkRegex.ReplaceAllStringFunc(text, func(match string) string {
+		parts := markdownLinkRegex.FindStringSubmatch(match)
+		return LinkHelper(parts[2], parts[1])
+	})
 }

@@ -119,3 +119,35 @@ func TestEscapeText(t *testing.T) {
 		})
 	}
 }
+
+func TestMarkdownLinksToSlackLinks(t *testing.T) {
+	type args struct {
+		text string
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			name: "simple",
+			args: args{text: "foo [bar](https://example.com) baz"},
+			want: "foo <https://example.com|bar> baz",
+		},
+		{
+			name: "complex",
+			args: args{text: "foo [bar](https://example.com?a=b#ee) baz [qux](https://example.com/qux) quux"},
+			want: "foo <https://example.com?a=b#ee|bar> baz <https://example.com/qux|qux> quux",
+		},
+		{
+			name: "no replacements",
+			args: args{text: "foo [bar](http://insecure.link.com) baz qux"},
+			want: "foo [bar](http://insecure.link.com) baz qux",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equalf(t, tt.want, MarkdownLinksToSlackLinks(tt.args.text), "MarkdownLinksToSlackLinks(%v)", tt.args.text)
+		})
+	}
+}
