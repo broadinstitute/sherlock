@@ -57,6 +57,24 @@ func Test_slackDeployHookParseStatus(t *testing.T) {
 			wantHasFailure: false,
 		},
 		{
+			name: "running with slash progress",
+			args: args{
+				rawStatus: "running: Progressing: blah blah 1/3 replicas are good to go pal",
+			},
+			wantStatus:     "Progressing... 33%",
+			wantEmoji:      config.Config.String("slack.emoji.beehiveLoading"),
+			wantHasFailure: false,
+		},
+		{
+			name: "running with 'of' progress",
+			args: args{
+				rawStatus: "running: Progressing: blah blah 1 of 3 replicas are good to go pal",
+			},
+			wantStatus:     "Progressing... 33%",
+			wantEmoji:      config.Config.String("slack.emoji.beehiveLoading"),
+			wantHasFailure: false,
+		},
+		{
 			name: "running with a division by zero progress",
 			args: args{
 				rawStatus: "running: Progressing: putting garbage in 3 out of 0 times",
