@@ -2,7 +2,6 @@ package models
 
 import (
 	"gorm.io/gorm"
-	"time"
 )
 
 type GitCommit struct {
@@ -12,5 +11,4 @@ type GitCommit struct {
 	GitBranch    string
 	IsMainBranch bool
 	SecSincePrev *uint
-	CommittedAt  time.Time
 }

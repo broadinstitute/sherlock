@@ -12,11 +12,10 @@ import (
 )
 
 type GitCommitV3Upsert struct {
-	GitRepo      string    `json:"gitRepo"`
-	GitCommit    string    `json:"gitCommit"`
-	GitBranch    string    `json:"gitBranch"`
-	IsMainBranch bool      `json:"isMainBranch"`
-	CommittedAt  time.Time `json:"committedAt"`
+	GitRepo      string `json:"gitRepo"`
+	GitCommit    string `json:"gitCommit"`
+	GitBranch    string `json:"gitBranch"`
+	IsMainBranch bool   `json:"isMainBranch"`
 }
 
 // gitCommitsV3Upsert godoc
@@ -54,7 +53,7 @@ func gitCommitsV3Upsert(ctx *gin.Context) {
 	var timeSince *uint
 
 	if len(previous) > 0 {
-		timeSince = utils.PointerTo(uint(body.CommittedAt.Sub(previous[0].CommittedAt).Seconds()))
+		timeSince = utils.PointerTo(uint(time.Since(previous[0].CreatedAt).Seconds()))
 	}
 
 	var result models.GitCommit
@@ -62,7 +61,6 @@ func gitCommitsV3Upsert(ctx *gin.Context) {
 		Attrs(&models.GitCommit{
 			IsMainBranch: body.IsMainBranch,
 			SecSincePrev: timeSince,
-			CommittedAt:  body.CommittedAt,
 		}).FirstOrCreate(&result).Error; err != nil {
 		errors.AbortRequest(ctx, err)
 		return
