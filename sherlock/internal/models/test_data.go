@@ -1298,7 +1298,6 @@ func (td *testDataImpl) SlackDeployHook_Dev() SlackDeployHook {
 				OnFailure:       utils.PointerTo(true),
 			},
 			SlackChannel:  utils.PointerTo("#workbench-dev"),
-			Beta:          utils.PointerTo(true),
 			MentionPeople: utils.PointerTo(false),
 		}
 		td.create(&td.slackDeployHook_dev)
