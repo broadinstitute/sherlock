@@ -6,8 +6,11 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/slack"
+	"regexp"
 	"strings"
 )
+
+var numericProgressRegex = regexp.MustCompile(`(\d+)(/| out of | of )(\d+)`)
 
 func slackDeployHookParseStatus(rawStatus string) (status string, emoji string, hasFailure bool) {
 	emoji = config.Config.String("slack.emoji.unknown")

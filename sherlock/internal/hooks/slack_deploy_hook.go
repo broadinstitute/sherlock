@@ -8,22 +8,10 @@ import (
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
-	"regexp"
 	"slices"
 )
 
-var numericProgressRegex = regexp.MustCompile(`(\d+)(/| out of | of )(\d+)`)
-
 func (_ *dispatcherImpl) DispatchSlackDeployHook(db *gorm.DB, hook models.SlackDeployHook, ciRun models.CiRun) error {
-	// Bail out to the old behavior by default
-	if hook.Beta == nil || !*hook.Beta {
-		if ciRun.TerminalAt != nil {
-			return deprecatedSlackDeployHook(db, hook, ciRun)
-		} else {
-			return nil
-		}
-	}
-
 	if hook.SlackChannel == nil {
 		// Shouldn't ever hit this case, but better to error out than panic
 		return fmt.Errorf("slack channel was nil on SlackDeployHook %d, shouldn't be possible", hook.ID)
