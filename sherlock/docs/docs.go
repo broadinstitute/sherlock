@@ -2811,11 +2811,6 @@ const docTemplate = `{
                 "summary": "List SlackDeployHooks matching a filter",
                 "parameters": [
                     {
-                        "type": "boolean",
-                        "name": "beta",
-                        "in": "query"
-                    },
-                    {
                         "type": "string",
                         "format": "date-time",
                         "name": "createdAt",
@@ -11345,9 +11340,6 @@ const docTemplate = `{
         "sherlock.SlackDeployHookV3": {
             "type": "object",
             "properties": {
-                "beta": {
-                    "type": "boolean"
-                },
                 "createdAt": {
                     "type": "string",
                     "format": "date-time"
@@ -11382,9 +11374,6 @@ const docTemplate = `{
         "sherlock.SlackDeployHookV3Create": {
             "type": "object",
             "properties": {
-                "beta": {
-                    "type": "boolean"
-                },
                 "mentionPeople": {
                     "type": "boolean"
                 },
@@ -11408,9 +11397,6 @@ const docTemplate = `{
         "sherlock.SlackDeployHookV3Edit": {
             "type": "object",
             "properties": {
-                "beta": {
-                    "type": "boolean"
-                },
                 "mentionPeople": {
                     "type": "boolean"
                 },

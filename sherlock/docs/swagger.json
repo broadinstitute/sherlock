@@ -2807,11 +2807,6 @@
                 "summary": "List SlackDeployHooks matching a filter",
                 "parameters": [
                     {
-                        "type": "boolean",
-                        "name": "beta",
-                        "in": "query"
-                    },
-                    {
                         "type": "string",
                         "format": "date-time",
                         "name": "createdAt",
@@ -11341,9 +11336,6 @@
         "sherlock.SlackDeployHookV3": {
             "type": "object",
             "properties": {
-                "beta": {
-                    "type": "boolean"
-                },
                 "createdAt": {
                     "type": "string",
                     "format": "date-time"
@@ -11378,9 +11370,6 @@
         "sherlock.SlackDeployHookV3Create": {
             "type": "object",
             "properties": {
-                "beta": {
-                    "type": "boolean"
-                },
                 "mentionPeople": {
                     "type": "boolean"
                 },
@@ -11404,9 +11393,6 @@
         "sherlock.SlackDeployHookV3Edit": {
             "type": "object",
             "properties": {
-                "beta": {
-                    "type": "boolean"
-                },
                 "mentionPeople": {
                     "type": "boolean"
                 },

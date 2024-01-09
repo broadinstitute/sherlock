@@ -755,8 +755,6 @@ definitions:
     type: object
   sherlock.SlackDeployHookV3:
     properties:
-      beta:
-        type: boolean
       createdAt:
         format: date-time
         type: string
@@ -780,8 +778,6 @@ definitions:
     type: object
   sherlock.SlackDeployHookV3Create:
     properties:
-      beta:
-        type: boolean
       mentionPeople:
         type: boolean
       onChartRelease:
@@ -797,8 +793,6 @@ definitions:
     type: object
   sherlock.SlackDeployHookV3Edit:
     properties:
-      beta:
-        type: boolean
       mentionPeople:
         type: boolean
       onFailure:
@@ -4028,9 +4022,6 @@ paths:
     get:
       description: List SlackDeployHooks matching a filter.
       parameters:
-      - in: query
-        name: beta
-        type: boolean
       - format: date-time
         in: query
         name: createdAt

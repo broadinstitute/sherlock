@@ -60,9 +60,6 @@ func NewGetAPIDeployHooksSlackV3ParamsWithHTTPClient(client *http.Client) *GetAP
 */
 type GetAPIDeployHooksSlackV3Params struct {
 
-	// Beta.
-	Beta *bool
-
 	// CreatedAt.
 	//
 	// Format: date-time
@@ -157,17 +154,6 @@ func (o *GetAPIDeployHooksSlackV3Params) WithHTTPClient(client *http.Client) *Ge
 // SetHTTPClient adds the HTTPClient to the get API deploy hooks slack v3 params
 func (o *GetAPIDeployHooksSlackV3Params) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
-}
-
-// WithBeta adds the beta to the get API deploy hooks slack v3 params
-func (o *GetAPIDeployHooksSlackV3Params) WithBeta(beta *bool) *GetAPIDeployHooksSlackV3Params {
-	o.SetBeta(beta)
-	return o
-}
-
-// SetBeta adds the beta to the get API deploy hooks slack v3 params
-func (o *GetAPIDeployHooksSlackV3Params) SetBeta(beta *bool) {
-	o.Beta = beta
 }
 
 // WithCreatedAt adds the createdAt to the get API deploy hooks slack v3 params
@@ -298,23 +284,6 @@ func (o *GetAPIDeployHooksSlackV3Params) WriteToRequest(r runtime.ClientRequest,
 		return err
 	}
 	var res []error
-
-	if o.Beta != nil {
-
-		// query param beta
-		var qrBeta bool
-
-		if o.Beta != nil {
-			qrBeta = *o.Beta
-		}
-		qBeta := swag.FormatBool(qrBeta)
-		if qBeta != "" {
-
-			if err := r.SetQueryParam("beta", qBeta); err != nil {
-				return err
-			}
-		}
-	}
 
 	if o.CreatedAt != nil {
 
