@@ -18,7 +18,7 @@ import (
 //	@tags			PagerdutyIntegrations
 //	@accept			json
 //	@produce		json
-//	@param			pagerdutyIntegration					body		PagerdutyIntegrationV3Create	true	"The PagerdutyIntegration to create"
+//	@param			pagerdutyIntegration	body		PagerdutyIntegrationV3Create	true	"The PagerdutyIntegration to create"
 //	@success		201						{object}	PagerdutyIntegrationV3
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/pagerduty-integrations/v3 [post]

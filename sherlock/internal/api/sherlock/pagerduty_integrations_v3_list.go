@@ -17,8 +17,8 @@ import (
 //	@tags			PagerdutyIntegrations
 //	@produce		json
 //	@param			filter					query		PagerdutyIntegrationV3	false	"Filter the returned PagerdutyIntegrations"
-//	@param			limit					query		int			false	"Control how many PagerdutyIntegrations are returned (default 0, meaning all)"
-//	@param			offset					query		int			false	"Control the offset for the returned PagerdutyIntegrations (default 0)"
+//	@param			limit					query		int						false	"Control how many PagerdutyIntegrations are returned (default 0, meaning all)"
+//	@param			offset					query		int						false	"Control the offset for the returned PagerdutyIntegrations (default 0)"
 //	@success		200						{array}		PagerdutyIntegrationV3
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/pagerduty-integrations/v3 [get]
