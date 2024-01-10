@@ -25,12 +25,16 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        directory: ["sherlock", "go-shared", "sherlock-webhook-proxy"]
+        directory:
+          - "sherlock"
+          - "go-shared"
+          # Broken only in CI, "no go files to analyze", as of 01/10/2024
+          # - "sherlock-webhook-proxy"
     steps:
       - uses: actions/checkout@v4
 
       - name: Set up Go
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v4
         with:
           go-version-file: ${{ matrix.directory }}/go.mod
 
