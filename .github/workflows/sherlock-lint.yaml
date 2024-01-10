@@ -28,8 +28,7 @@ jobs:
         directory:
           - "sherlock"
           - "go-shared"
-          # Broken only in CI, "no go files to analyze", as of 01/10/2024
-          # - "sherlock-webhook-proxy"
+          - "sherlock-webhook-proxy"
     steps:
       - uses: actions/checkout@v4
 
@@ -38,6 +37,8 @@ jobs:
         with:
           go-version-file: ${{ matrix.directory }}/go.mod
 
+      # If this fails saying "no go files to analyze", that error is lying
+      # Make sure your branch is updated and run `go mod tidy` in every directory with a go.mod in it
       - name: Lint
         uses: golangci/golangci-lint-action@v3
         with:
