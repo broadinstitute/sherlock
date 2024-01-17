@@ -50,6 +50,9 @@ src/models/SherlockGithubActionsDeployHookTestRunResponse.ts
 src/models/SherlockGithubActionsDeployHookV3.ts
 src/models/SherlockGithubActionsDeployHookV3Create.ts
 src/models/SherlockGithubActionsDeployHookV3Edit.ts
+src/models/SherlockPagerdutyIntegrationV3.ts
+src/models/SherlockPagerdutyIntegrationV3Create.ts
+src/models/SherlockPagerdutyIntegrationV3Edit.ts
 src/models/SherlockSlackDeployHookTestRunRequest.ts
 src/models/SherlockSlackDeployHookTestRunResponse.ts
 src/models/SherlockSlackDeployHookV3.ts

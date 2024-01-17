@@ -30,7 +30,13 @@ type ClientOption func(*runtime.ClientOperation)
 
 // ClientService is the interface for Client methods
 type ClientService interface {
+	DeleteAPIPagerdutyIntegrationsV3Selector(params *DeleteAPIPagerdutyIntegrationsV3SelectorParams, opts ...ClientOption) (*DeleteAPIPagerdutyIntegrationsV3SelectorOK, error)
+
 	DeleteAPIV2PagerdutyIntegrationsSelector(params *DeleteAPIV2PagerdutyIntegrationsSelectorParams, opts ...ClientOption) (*DeleteAPIV2PagerdutyIntegrationsSelectorOK, error)
+
+	GetAPIPagerdutyIntegrationsV3(params *GetAPIPagerdutyIntegrationsV3Params, opts ...ClientOption) (*GetAPIPagerdutyIntegrationsV3OK, error)
+
+	GetAPIPagerdutyIntegrationsV3Selector(params *GetAPIPagerdutyIntegrationsV3SelectorParams, opts ...ClientOption) (*GetAPIPagerdutyIntegrationsV3SelectorOK, error)
 
 	GetAPIV2PagerdutyIntegrations(params *GetAPIV2PagerdutyIntegrationsParams, opts ...ClientOption) (*GetAPIV2PagerdutyIntegrationsOK, error)
 
@@ -38,7 +44,11 @@ type ClientService interface {
 
 	GetAPIV2SelectorsPagerdutyIntegrationsSelector(params *GetAPIV2SelectorsPagerdutyIntegrationsSelectorParams, opts ...ClientOption) (*GetAPIV2SelectorsPagerdutyIntegrationsSelectorOK, error)
 
+	PatchAPIPagerdutyIntegrationsV3Selector(params *PatchAPIPagerdutyIntegrationsV3SelectorParams, opts ...ClientOption) (*PatchAPIPagerdutyIntegrationsV3SelectorOK, error)
+
 	PatchAPIV2PagerdutyIntegrationsSelector(params *PatchAPIV2PagerdutyIntegrationsSelectorParams, opts ...ClientOption) (*PatchAPIV2PagerdutyIntegrationsSelectorOK, error)
+
+	PostAPIPagerdutyIntegrationsV3(params *PostAPIPagerdutyIntegrationsV3Params, opts ...ClientOption) (*PostAPIPagerdutyIntegrationsV3Created, error)
 
 	PostAPIV2PagerdutyIntegrations(params *PostAPIV2PagerdutyIntegrationsParams, opts ...ClientOption) (*PostAPIV2PagerdutyIntegrationsOK, *PostAPIV2PagerdutyIntegrationsCreated, error)
 
@@ -47,6 +57,46 @@ type ClientService interface {
 	PutAPIV2PagerdutyIntegrationsSelector(params *PutAPIV2PagerdutyIntegrationsSelectorParams, opts ...ClientOption) (*PutAPIV2PagerdutyIntegrationsSelectorOK, *PutAPIV2PagerdutyIntegrationsSelectorCreated, error)
 
 	SetTransport(transport runtime.ClientTransport)
+}
+
+/*
+  DeleteAPIPagerdutyIntegrationsV3Selector deletes an individual pagerduty integration
+
+  Delete an individual PagerdutyIntegration by its ID.
+*/
+func (a *Client) DeleteAPIPagerdutyIntegrationsV3Selector(params *DeleteAPIPagerdutyIntegrationsV3SelectorParams, opts ...ClientOption) (*DeleteAPIPagerdutyIntegrationsV3SelectorOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDeleteAPIPagerdutyIntegrationsV3SelectorParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "DeleteAPIPagerdutyIntegrationsV3Selector",
+		Method:             "DELETE",
+		PathPattern:        "/api/pagerduty-integrations/v3/{selector}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &DeleteAPIPagerdutyIntegrationsV3SelectorReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*DeleteAPIPagerdutyIntegrationsV3SelectorOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for DeleteAPIPagerdutyIntegrationsV3Selector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
 }
 
 /*
@@ -86,6 +136,86 @@ func (a *Client) DeleteAPIV2PagerdutyIntegrationsSelector(params *DeleteAPIV2Pag
 	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for DeleteAPIV2PagerdutyIntegrationsSelector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+  GetAPIPagerdutyIntegrationsV3 lists pagerduty integrations matching a filter
+
+  List PagerdutyIntegrations matching a filter.
+*/
+func (a *Client) GetAPIPagerdutyIntegrationsV3(params *GetAPIPagerdutyIntegrationsV3Params, opts ...ClientOption) (*GetAPIPagerdutyIntegrationsV3OK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetAPIPagerdutyIntegrationsV3Params()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "GetAPIPagerdutyIntegrationsV3",
+		Method:             "GET",
+		PathPattern:        "/api/pagerduty-integrations/v3",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &GetAPIPagerdutyIntegrationsV3Reader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*GetAPIPagerdutyIntegrationsV3OK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for GetAPIPagerdutyIntegrationsV3: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+  GetAPIPagerdutyIntegrationsV3Selector gets an individual pagerduty integration
+
+  Get an individual PagerdutyIntegration.
+*/
+func (a *Client) GetAPIPagerdutyIntegrationsV3Selector(params *GetAPIPagerdutyIntegrationsV3SelectorParams, opts ...ClientOption) (*GetAPIPagerdutyIntegrationsV3SelectorOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetAPIPagerdutyIntegrationsV3SelectorParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "GetAPIPagerdutyIntegrationsV3Selector",
+		Method:             "GET",
+		PathPattern:        "/api/pagerduty-integrations/v3/{selector}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &GetAPIPagerdutyIntegrationsV3SelectorReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*GetAPIPagerdutyIntegrationsV3SelectorOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for GetAPIPagerdutyIntegrationsV3Selector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 
@@ -210,6 +340,46 @@ func (a *Client) GetAPIV2SelectorsPagerdutyIntegrationsSelector(params *GetAPIV2
 }
 
 /*
+  PatchAPIPagerdutyIntegrationsV3Selector edits an individual pagerduty integration
+
+  Edit an individual PagerdutyIntegration.
+*/
+func (a *Client) PatchAPIPagerdutyIntegrationsV3Selector(params *PatchAPIPagerdutyIntegrationsV3SelectorParams, opts ...ClientOption) (*PatchAPIPagerdutyIntegrationsV3SelectorOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewPatchAPIPagerdutyIntegrationsV3SelectorParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "PatchAPIPagerdutyIntegrationsV3Selector",
+		Method:             "PATCH",
+		PathPattern:        "/api/pagerduty-integrations/v3/{selector}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &PatchAPIPagerdutyIntegrationsV3SelectorReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*PatchAPIPagerdutyIntegrationsV3SelectorOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for PatchAPIPagerdutyIntegrationsV3Selector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
   PatchAPIV2PagerdutyIntegrationsSelector edits a pagerduty integration entry
 
   Edit an existing PagerdutyIntegration entry via one its "selectors": "pd-id/" + Pagerduty ID or numeric Sherlock ID. Note that only mutable fields are available here, immutable fields can only be set using /create.
@@ -246,6 +416,46 @@ func (a *Client) PatchAPIV2PagerdutyIntegrationsSelector(params *PatchAPIV2Pager
 	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for PatchAPIV2PagerdutyIntegrationsSelector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+  PostAPIPagerdutyIntegrationsV3 creates a pagerduty integration
+
+  Create a PagerdutyIntegration.
+*/
+func (a *Client) PostAPIPagerdutyIntegrationsV3(params *PostAPIPagerdutyIntegrationsV3Params, opts ...ClientOption) (*PostAPIPagerdutyIntegrationsV3Created, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewPostAPIPagerdutyIntegrationsV3Params()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "PostAPIPagerdutyIntegrationsV3",
+		Method:             "POST",
+		PathPattern:        "/api/pagerduty-integrations/v3",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &PostAPIPagerdutyIntegrationsV3Reader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*PostAPIPagerdutyIntegrationsV3Created)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for PostAPIPagerdutyIntegrationsV3: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 
