@@ -47,7 +47,7 @@ func gitCommitsV3Upsert(ctx *gin.Context) {
 		Limit(1).
 		Order("created_at desc").
 		Find(&previous).Error; err != nil {
-		errors.AbortRequest(ctx, err)
+		errors.AbortRequest(ctx, fmt.Errorf("failed to query for previous GitCommit: %w", err))
 		return
 	}
 
@@ -58,13 +58,10 @@ func gitCommitsV3Upsert(ctx *gin.Context) {
 	}
 
 	var result models.GitCommit
-	if err = db.Where(&models.GitCommit{GitRepo: body.GitRepo, GitBranch: body.GitBranch, GitCommit: body.GitCommit}).
-		Attrs(&models.GitCommit{
-			IsMainBranch: body.IsMainBranch,
-			SecSincePrev: timeSince,
-			CommittedAt:  body.CommittedAt,
-		}).FirstOrCreate(&result).Error; err != nil {
-		errors.AbortRequest(ctx, err)
+	where := models.GitCommit{GitRepo: body.GitRepo, GitBranch: body.GitBranch, GitCommit: body.GitCommit}
+	attrs := models.GitCommit{IsMainBranch: body.IsMainBranch, SecSincePrev: timeSince, CommittedAt: body.CommittedAt}
+	if err = db.Where(&where).Attrs(&attrs).FirstOrCreate(&result).Error; err != nil {
+		errors.AbortRequest(ctx, fmt.Errorf("failed to upsert GitCommit (WHERE %+v, ATTRS %+v): %w", where, attrs, err))
 		return
 	}
 
