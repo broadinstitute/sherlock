@@ -92,4 +92,10 @@ func ConfigureRoutes(apiRouter gin.IRoutes) {
 	apiRouter.POST("deploy-hooks/github-actions/procedures/v3/test/*selector", githubActionsDeployHooksV3TestRun)
 
 	apiRouter.PUT("git-commits/v3", gitCommitsV3Upsert)
+
+	apiRouter.GET("pagerduty-integrations/v3/*selector", pagerdutyIntegrationsV3Get)
+	apiRouter.GET("pagerduty-integrations/v3", pagerdutyIntegrationsV3List)
+	apiRouter.PATCH("pagerduty-integrations/v3/*selector", pagerdutyIntegrationsV3Edit)
+	apiRouter.DELETE("pagerduty-integrations/v3/*selector", pagerdutyIntegrationsV3Delete)
+	apiRouter.POST("pagerduty-integrations/v3", pagerdutyIntegrationsV3Create)
 }
