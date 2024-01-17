@@ -28,7 +28,6 @@ jobs:
       - name: Checkout Base
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.base_ref }}
           path: base
           persist-credentials: false
 
