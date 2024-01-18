@@ -7,7 +7,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/github"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
-	github2 "github.com/google/go-github/v50/github"
+	github2 "github.com/google/go-github/v58/github"
 	"github.com/stretchr/testify/mock"
 	"net/http"
 )

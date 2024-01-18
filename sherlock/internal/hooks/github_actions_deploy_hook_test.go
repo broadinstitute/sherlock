@@ -6,7 +6,7 @@ import (
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/github"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
-	github2 "github.com/google/go-github/v50/github"
+	github2 "github.com/google/go-github/v58/github"
 	"gorm.io/datatypes"
 	"time"
 )

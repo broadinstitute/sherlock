@@ -1,11 +1,16 @@
 package models
 
 import (
+	"context"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
+	"github.com/broadinstitute/sherlock/sherlock/internal/github"
+	github2 "github.com/google/go-github/v58/github"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 	"gorm.io/datatypes"
 	"gorm.io/gorm"
+	"net/http"
 	"testing"
 	"time"
 )
@@ -533,7 +538,7 @@ func TestCiRun_IsDeploy(t *testing.T) {
 	}
 }
 
-func (s *modelSuite) TestCiRun_MakeCompletionNotificationText() {
+func (s *modelSuite) TestCiRun_SlackCompletionTextt() {
 	environment := s.TestData.Environment_Dev()
 	chartRelease := s.TestData.ChartRelease_LeonardoDev()
 
@@ -558,9 +563,10 @@ func (s *modelSuite) TestCiRun_MakeCompletionNotificationText() {
 		ResourceStatus                 *string
 	}
 	tests := []struct {
-		name   string
-		fields fields
-		want   string
+		name             string
+		fields           fields
+		githubMockConfig func(c *github.MockClient)
+		want             string
 	}{
 		{
 			name: "chart release",
@@ -599,32 +605,83 @@ func (s *modelSuite) TestCiRun_MakeCompletionNotificationText() {
 			},
 			want: "repo's workflow workflow against <https://beehive.dsp-devops.broadinstitute.org/r/environment/dev|dev>: <https://github.com/owner/repo/actions/runs/1/attempts/3|success>",
 		},
+		{
+			name: "with jobs",
+			fields: fields{
+				Platform:                   "github-actions",
+				GithubActionsOwner:         "owner",
+				GithubActionsRepo:          "repo",
+				GithubActionsRunID:         1,
+				GithubActionsAttemptNumber: 3,
+				GithubActionsWorkflowPath:  "workflow",
+				StartedAt:                  utils.PointerTo(time.Now().Add(-time.Minute)),
+				TerminalAt:                 utils.PointerTo(time.Now()),
+				Status:                     utils.PointerTo("success"),
+				RelatedResources: []CiIdentifier{
+					{ResourceType: "environment", ResourceID: environment.ID},
+				},
+			},
+			githubMockConfig: func(c *github.MockClient) {
+				request, err := http.NewRequest(http.MethodGet, "repos/owner/repo/actions/runs/1/attempts/3/jobs", nil)
+				if err != nil {
+					panic(err)
+				}
+				c.EXPECT().NewRequest(http.MethodGet, "repos/owner/repo/actions/runs/1/attempts/3/jobs", nil).Return(request, nil).Once()
+				c.EXPECT().Do(mock.Anything, request, mock.AnythingOfType("*github.Jobs")).Run(
+					func(ctx context.Context, req *http.Request, v interface{}) {
+						jobs := v.(*github2.Jobs)
+						jobs.Jobs = []*github2.WorkflowJob{
+							{
+								ID:         utils.PointerTo(int64(1)),
+								Name:       utils.PointerTo("job1"),
+								Conclusion: utils.PointerTo("success"),
+							},
+							{
+								ID:     utils.PointerTo(int64(2)),
+								Name:   utils.PointerTo("job2"),
+								Status: utils.PointerTo("in_progress"),
+							},
+							{
+								ID:         utils.PointerTo(int64(3)),
+								Name:       utils.PointerTo("job3"),
+								Conclusion: utils.PointerTo("failure"),
+							},
+						}
+					},
+				).Return(&github2.Response{
+					Response: &http.Response{StatusCode: http.StatusOK},
+				}, nil).Once()
+			},
+			want: "repo's workflow workflow against <https://beehive.dsp-devops.broadinstitute.org/r/environment/dev|dev>: <https://github.com/owner/repo/actions/runs/1/attempts/3|success> (job3: <https://github.com/owner/repo/actions/runs/1/job/3|failure>)",
+		},
 	}
 	for _, tt := range tests {
 		s.Run(tt.name, func() {
-			c := &CiRun{
-				Model:                          tt.fields.Model,
-				Platform:                       tt.fields.Platform,
-				GithubActionsOwner:             tt.fields.GithubActionsOwner,
-				GithubActionsRepo:              tt.fields.GithubActionsRepo,
-				GithubActionsRunID:             tt.fields.GithubActionsRunID,
-				GithubActionsAttemptNumber:     tt.fields.GithubActionsAttemptNumber,
-				GithubActionsWorkflowPath:      tt.fields.GithubActionsWorkflowPath,
-				ArgoWorkflowsNamespace:         tt.fields.ArgoWorkflowsNamespace,
-				ArgoWorkflowsName:              tt.fields.ArgoWorkflowsName,
-				ArgoWorkflowsTemplate:          tt.fields.ArgoWorkflowsTemplate,
-				TerminationHooksDispatchedAt:   tt.fields.TerminationHooksDispatchedAt,
-				RelatedResources:               tt.fields.RelatedResources,
-				StartedAt:                      tt.fields.StartedAt,
-				TerminalAt:                     tt.fields.TerminalAt,
-				Status:                         tt.fields.Status,
-				NotifySlackChannelsUponSuccess: tt.fields.NotifySlackChannelsUponSuccess,
-				NotifySlackChannelsUponFailure: tt.fields.NotifySlackChannelsUponFailure,
-				ResourceStatus:                 tt.fields.ResourceStatus,
-			}
-			got, errs := c.SlackCompletionText(s.DB)
-			s.Empty(errs)
-			s.Equalf(tt.want, got, "SlackCompletionText()")
+			github.UseMockedClient(s.T(), tt.githubMockConfig, func() {
+				c := &CiRun{
+					Model:                          tt.fields.Model,
+					Platform:                       tt.fields.Platform,
+					GithubActionsOwner:             tt.fields.GithubActionsOwner,
+					GithubActionsRepo:              tt.fields.GithubActionsRepo,
+					GithubActionsRunID:             tt.fields.GithubActionsRunID,
+					GithubActionsAttemptNumber:     tt.fields.GithubActionsAttemptNumber,
+					GithubActionsWorkflowPath:      tt.fields.GithubActionsWorkflowPath,
+					ArgoWorkflowsNamespace:         tt.fields.ArgoWorkflowsNamespace,
+					ArgoWorkflowsName:              tt.fields.ArgoWorkflowsName,
+					ArgoWorkflowsTemplate:          tt.fields.ArgoWorkflowsTemplate,
+					TerminationHooksDispatchedAt:   tt.fields.TerminationHooksDispatchedAt,
+					RelatedResources:               tt.fields.RelatedResources,
+					StartedAt:                      tt.fields.StartedAt,
+					TerminalAt:                     tt.fields.TerminalAt,
+					Status:                         tt.fields.Status,
+					NotifySlackChannelsUponSuccess: tt.fields.NotifySlackChannelsUponSuccess,
+					NotifySlackChannelsUponFailure: tt.fields.NotifySlackChannelsUponFailure,
+					ResourceStatus:                 tt.fields.ResourceStatus,
+				}
+				got, errs := c.SlackCompletionText(s.DB)
+				s.Empty(errs)
+				s.Equalf(tt.want, got, "SlackCompletionText()")
+			})
 		})
 	}
 }

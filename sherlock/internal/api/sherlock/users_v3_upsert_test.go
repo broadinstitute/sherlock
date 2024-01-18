@@ -11,7 +11,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/slack"
 	"github.com/broadinstitute/sherlock/sherlock/internal/slack/slack_mocks"
 	"github.com/gin-gonic/gin"
-	github2 "github.com/google/go-github/v50/github"
+	github2 "github.com/google/go-github/v58/github"
 	"github.com/rs/zerolog"
 	slack2 "github.com/slack-go/slack"
 	"github.com/stretchr/testify/assert"
