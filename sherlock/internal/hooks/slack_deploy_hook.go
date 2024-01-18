@@ -63,6 +63,9 @@ func (_ *dispatcherImpl) DispatchSlackDeployHook(db *gorm.DB, hook models.SlackD
 				changeset.Summarize(false),
 				status))
 	}
+	if len(mainMessage.EntryLines) == 0 {
+		mainMessage.EntryLines = append(mainMessage.EntryLines, "(No changes listed`)")
+	}
 	var beehiveUrl string
 	if len(changesets) > 0 {
 		beehiveUrl = slackDeployHookBeehiveLink(changesets)
