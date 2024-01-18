@@ -3,11 +3,16 @@ package github
 import (
 	"context"
 	"github.com/broadinstitute/sherlock/sherlock/internal/github/github_mocks"
-	"github.com/google/go-github/v50/github"
+	"github.com/google/go-github/v58/github"
+	"net/http"
 	"testing"
 )
 
 // `make generate-mocks` from the root of the repo to regenerate (you'll need to `brew install mockery`)
+type mockableTopLevelClient interface {
+	NewRequest(method, urlStr string, body interface{}, opts ...github.RequestOption) (*http.Request, error)
+	Do(ctx context.Context, req *http.Request, v interface{}) (*github.Response, error)
+}
 type mockableActionsClient interface {
 	CreateWorkflowDispatchEventByFileName(ctx context.Context, owner, repo, workflowFileName string, event github.CreateWorkflowDispatchEventRequest) (*github.Response, error)
 }
@@ -47,6 +52,7 @@ type mockableUsersClient interface {
 // We have to jump through these hoops because github.Client uses struct
 // fields in a way that makes mocking very difficult.
 type mockableClient struct {
+	mockableTopLevelClient
 	Actions        mockableActionsClient
 	Activity       mockableActivityClient
 	Admin          mockableAdminClient
@@ -95,35 +101,36 @@ var (
 // are necessary because of Go's lackluster type system.
 func setClientFromRawClient() {
 	client = &mockableClient{
-		Actions:        rawClient.Actions,
-		Activity:       rawClient.Activity,
-		Admin:          rawClient.Admin,
-		Apps:           rawClient.Apps,
-		Authorizations: rawClient.Authorizations,
-		Billing:        rawClient.Billing,
-		Checks:         rawClient.Checks,
-		CodeScanning:   rawClient.CodeScanning,
-		Dependabot:     rawClient.Dependabot,
-		Enterprise:     rawClient.Enterprise,
-		Gists:          rawClient.Gists,
-		Git:            rawClient.Git,
-		Gitignores:     rawClient.Gitignores,
-		Interactions:   rawClient.Interactions,
-		IssueImport:    rawClient.IssueImport,
-		Issues:         rawClient.Issues,
-		Licenses:       rawClient.Licenses,
-		Marketplace:    rawClient.Marketplace,
-		Migrations:     rawClient.Migrations,
-		Organizations:  rawClient.Organizations,
-		Projects:       rawClient.Projects,
-		PullRequests:   rawClient.PullRequests,
-		Reactions:      rawClient.Reactions,
-		Repositories:   rawClient.Repositories,
-		SCIM:           rawClient.SCIM,
-		Search:         rawClient.Search,
-		SecretScanning: rawClient.SecretScanning,
-		Teams:          rawClient.Teams,
-		Users:          rawClient.Users,
+		mockableTopLevelClient: rawClient,
+		Actions:                rawClient.Actions,
+		Activity:               rawClient.Activity,
+		Admin:                  rawClient.Admin,
+		Apps:                   rawClient.Apps,
+		Authorizations:         rawClient.Authorizations,
+		Billing:                rawClient.Billing,
+		Checks:                 rawClient.Checks,
+		CodeScanning:           rawClient.CodeScanning,
+		Dependabot:             rawClient.Dependabot,
+		Enterprise:             rawClient.Enterprise,
+		Gists:                  rawClient.Gists,
+		Git:                    rawClient.Git,
+		Gitignores:             rawClient.Gitignores,
+		Interactions:           rawClient.Interactions,
+		IssueImport:            rawClient.IssueImport,
+		Issues:                 rawClient.Issues,
+		Licenses:               rawClient.Licenses,
+		Marketplace:            rawClient.Marketplace,
+		Migrations:             rawClient.Migrations,
+		Organizations:          rawClient.Organizations,
+		Projects:               rawClient.Projects,
+		PullRequests:           rawClient.PullRequests,
+		Reactions:              rawClient.Reactions,
+		Repositories:           rawClient.Repositories,
+		SCIM:                   rawClient.SCIM,
+		Search:                 rawClient.Search,
+		SecretScanning:         rawClient.SecretScanning,
+		Teams:                  rawClient.Teams,
+		Users:                  rawClient.Users,
 	}
 }
 
@@ -131,6 +138,7 @@ func setClientFromRawClient() {
 // Having this as a type helps configure the mocks (see
 // UseMockedClient)
 type MockClient struct {
+	*github_mocks.MockMockableTopLevelClient
 	Actions        *github_mocks.MockMockableActionsClient
 	Activity       *github_mocks.MockMockableActivityClient
 	Admin          *github_mocks.MockMockableAdminClient
@@ -166,40 +174,42 @@ type MockClient struct {
 // exhaustively assign the fields because of Go's type system.
 func (c *MockClient) toClient() *mockableClient {
 	return &mockableClient{
-		Actions:        c.Actions,
-		Activity:       c.Activity,
-		Admin:          c.Admin,
-		Apps:           c.Apps,
-		Authorizations: c.Authorizations,
-		Billing:        c.Billing,
-		Checks:         c.Checks,
-		CodeScanning:   c.CodeScanning,
-		Dependabot:     c.Dependabot,
-		Enterprise:     c.Enterprise,
-		Gists:          c.Gists,
-		Git:            c.Git,
-		Gitignores:     c.Gitignores,
-		Interactions:   c.Interactions,
-		IssueImport:    c.IssueImport,
-		Issues:         c.Issues,
-		Licenses:       c.Licenses,
-		Marketplace:    c.Marketplace,
-		Migrations:     c.Migrations,
-		Organizations:  c.Organizations,
-		Projects:       c.Projects,
-		PullRequests:   c.PullRequests,
-		Reactions:      c.Reactions,
-		Repositories:   c.Repositories,
-		SCIM:           c.SCIM,
-		Search:         c.Search,
-		SecretScanning: c.SecretScanning,
-		Teams:          c.Teams,
-		Users:          c.Users,
+		mockableTopLevelClient: c.MockMockableTopLevelClient,
+		Actions:                c.Actions,
+		Activity:               c.Activity,
+		Admin:                  c.Admin,
+		Apps:                   c.Apps,
+		Authorizations:         c.Authorizations,
+		Billing:                c.Billing,
+		Checks:                 c.Checks,
+		CodeScanning:           c.CodeScanning,
+		Dependabot:             c.Dependabot,
+		Enterprise:             c.Enterprise,
+		Gists:                  c.Gists,
+		Git:                    c.Git,
+		Gitignores:             c.Gitignores,
+		Interactions:           c.Interactions,
+		IssueImport:            c.IssueImport,
+		Issues:                 c.Issues,
+		Licenses:               c.Licenses,
+		Marketplace:            c.Marketplace,
+		Migrations:             c.Migrations,
+		Organizations:          c.Organizations,
+		Projects:               c.Projects,
+		PullRequests:           c.PullRequests,
+		Reactions:              c.Reactions,
+		Repositories:           c.Repositories,
+		SCIM:                   c.SCIM,
+		Search:                 c.Search,
+		SecretScanning:         c.SecretScanning,
+		Teams:                  c.Teams,
+		Users:                  c.Users,
 	}
 }
 
 // assertExpectations spreads out over all the mocks in MockClient
 func (c *MockClient) assertExpectations(t *testing.T) {
+	c.MockMockableTopLevelClient.AssertExpectations(t)
 	c.Actions.AssertExpectations(t)
 	c.Activity.AssertExpectations(t)
 	c.Admin.AssertExpectations(t)
@@ -239,35 +249,36 @@ func UseMockedClient(t *testing.T, config func(c *MockClient), callback func()) 
 		return
 	}
 	c := MockClient{
-		Actions:        github_mocks.NewMockMockableActionsClient(t),
-		Activity:       github_mocks.NewMockMockableActivityClient(t),
-		Admin:          github_mocks.NewMockMockableAdminClient(t),
-		Apps:           github_mocks.NewMockMockableAppsClient(t),
-		Authorizations: github_mocks.NewMockMockableAuthorizationsClient(t),
-		Billing:        github_mocks.NewMockMockableBillingClient(t),
-		Checks:         github_mocks.NewMockMockableChecksClient(t),
-		CodeScanning:   github_mocks.NewMockMockableCodeScanningClient(t),
-		Dependabot:     github_mocks.NewMockMockableDependabotClient(t),
-		Enterprise:     github_mocks.NewMockMockableEnterpriseClient(t),
-		Gists:          github_mocks.NewMockMockableGistsClient(t),
-		Git:            github_mocks.NewMockMockableGitClient(t),
-		Gitignores:     github_mocks.NewMockMockableGitignoresClient(t),
-		Interactions:   github_mocks.NewMockMockableInteractionsClient(t),
-		IssueImport:    github_mocks.NewMockMockableIssueImportClient(t),
-		Issues:         github_mocks.NewMockMockableIssuesClient(t),
-		Licenses:       github_mocks.NewMockMockableLicensesClient(t),
-		Marketplace:    github_mocks.NewMockMockableMarketplaceClient(t),
-		Migrations:     github_mocks.NewMockMockableMigrationsClient(t),
-		Organizations:  github_mocks.NewMockMockableOrganizationsClient(t),
-		Projects:       github_mocks.NewMockMockableProjectsClient(t),
-		PullRequests:   github_mocks.NewMockMockablePullRequestsClient(t),
-		Reactions:      github_mocks.NewMockMockableReactionsClient(t),
-		Repositories:   github_mocks.NewMockMockableRepositoriesClient(t),
-		SCIM:           github_mocks.NewMockMockableSCIMClient(t),
-		Search:         github_mocks.NewMockMockableSearchClient(t),
-		SecretScanning: github_mocks.NewMockMockableSecretScanningClient(t),
-		Teams:          github_mocks.NewMockMockableTeamsClient(t),
-		Users:          github_mocks.NewMockMockableUsersClient(t),
+		MockMockableTopLevelClient: github_mocks.NewMockMockableTopLevelClient(t),
+		Actions:                    github_mocks.NewMockMockableActionsClient(t),
+		Activity:                   github_mocks.NewMockMockableActivityClient(t),
+		Admin:                      github_mocks.NewMockMockableAdminClient(t),
+		Apps:                       github_mocks.NewMockMockableAppsClient(t),
+		Authorizations:             github_mocks.NewMockMockableAuthorizationsClient(t),
+		Billing:                    github_mocks.NewMockMockableBillingClient(t),
+		Checks:                     github_mocks.NewMockMockableChecksClient(t),
+		CodeScanning:               github_mocks.NewMockMockableCodeScanningClient(t),
+		Dependabot:                 github_mocks.NewMockMockableDependabotClient(t),
+		Enterprise:                 github_mocks.NewMockMockableEnterpriseClient(t),
+		Gists:                      github_mocks.NewMockMockableGistsClient(t),
+		Git:                        github_mocks.NewMockMockableGitClient(t),
+		Gitignores:                 github_mocks.NewMockMockableGitignoresClient(t),
+		Interactions:               github_mocks.NewMockMockableInteractionsClient(t),
+		IssueImport:                github_mocks.NewMockMockableIssueImportClient(t),
+		Issues:                     github_mocks.NewMockMockableIssuesClient(t),
+		Licenses:                   github_mocks.NewMockMockableLicensesClient(t),
+		Marketplace:                github_mocks.NewMockMockableMarketplaceClient(t),
+		Migrations:                 github_mocks.NewMockMockableMigrationsClient(t),
+		Organizations:              github_mocks.NewMockMockableOrganizationsClient(t),
+		Projects:                   github_mocks.NewMockMockableProjectsClient(t),
+		PullRequests:               github_mocks.NewMockMockablePullRequestsClient(t),
+		Reactions:                  github_mocks.NewMockMockableReactionsClient(t),
+		Repositories:               github_mocks.NewMockMockableRepositoriesClient(t),
+		SCIM:                       github_mocks.NewMockMockableSCIMClient(t),
+		Search:                     github_mocks.NewMockMockableSearchClient(t),
+		SecretScanning:             github_mocks.NewMockMockableSecretScanningClient(t),
+		Teams:                      github_mocks.NewMockMockableTeamsClient(t),
+		Users:                      github_mocks.NewMockMockableUsersClient(t),
 	}
 	config(&c)
 	temp := client

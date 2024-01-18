@@ -15,6 +15,7 @@ packages:
       mockableVerifier:
   github.com/broadinstitute/sherlock/sherlock/internal/github:
     interfaces:
+      mockableTopLevelClient:
       mockableActionsClient:
       mockableActivityClient:
       mockableAdminClient:
