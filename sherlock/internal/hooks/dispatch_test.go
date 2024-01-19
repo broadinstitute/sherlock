@@ -82,7 +82,8 @@ func (s *hooksSuite) TestDispatch_duplicateHooks() {
 					mock.Anything,
 					channel,
 					completionText,
-					ciRun.Succeeded()).
+					ciRun.Succeeded(),
+					ciRun.NotifySlackCustomIcon).
 					Return(nil).Once()
 			}
 			d.EXPECT().DispatchSlackDeployHook(
