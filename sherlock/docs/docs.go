@@ -1594,6 +1594,12 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "Icon to use for success or failure Slack notifications. Can be given either as a URL to an image or as a Slack emoji (using colon shortcodes, like :smiley:).\nAn empty string is ignored to facilitate calling from GitHub Actions (where it's easier to pass an empty string than not send the field at all).",
+                        "name": "notifySlackCustomIcon",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "name": "platform",
                         "in": "query"
                     },
@@ -11202,6 +11208,10 @@ const docTemplate = `{
                         "type": "string"
                     }
                 },
+                "notifySlackCustomIcon": {
+                    "description": "Icon to use for success or failure Slack notifications. Can be given either as a URL to an image or as a Slack emoji (using colon shortcodes, like :smiley:).\nAn empty string is ignored to facilitate calling from GitHub Actions (where it's easier to pass an empty string than not send the field at all).",
+                    "type": "string"
+                },
                 "platform": {
                     "type": "string"
                 },
@@ -11335,6 +11345,10 @@ const docTemplate = `{
                     "items": {
                         "type": "string"
                     }
+                },
+                "notifySlackCustomIcon": {
+                    "description": "Icon to use for success or failure Slack notifications. Can be given either as a URL to an image or as a Slack emoji (using colon shortcodes, like :smiley:).\nAn empty string is ignored to facilitate calling from GitHub Actions (where it's easier to pass an empty string than not send the field at all).",
+                    "type": "string"
                 },
                 "platform": {
                     "type": "string"

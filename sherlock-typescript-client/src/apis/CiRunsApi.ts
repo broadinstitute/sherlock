@@ -50,6 +50,7 @@ export interface ApiCiRunsV3GetRequest {
     id?: number;
     notifySlackChannelsUponFailure?: Array<string>;
     notifySlackChannelsUponSuccess?: Array<string>;
+    notifySlackCustomIcon?: string;
     platform?: string;
     resourceStatus?: string;
     startedAt?: string;
@@ -200,6 +201,10 @@ export class CiRunsApi extends runtime.BaseAPI {
 
         if (requestParameters.notifySlackChannelsUponSuccess) {
             queryParameters['notifySlackChannelsUponSuccess'] = requestParameters.notifySlackChannelsUponSuccess.join(runtime.COLLECTION_FORMATS["csv"]);
+        }
+
+        if (requestParameters.notifySlackCustomIcon !== undefined) {
+            queryParameters['notifySlackCustomIcon'] = requestParameters.notifySlackCustomIcon;
         }
 
         if (requestParameters.platform !== undefined) {
