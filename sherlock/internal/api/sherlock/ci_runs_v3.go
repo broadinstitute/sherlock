@@ -32,6 +32,9 @@ type ciRunFields struct {
 	NotifySlackChannelsUponSuccess []string `json:"notifySlackChannelsUponSuccess,omitempty" form:"notifySlackChannelsUponSuccess"`
 	// Slack channels to notify if this CiRun fails. This field is always appended to when mutated.
 	NotifySlackChannelsUponFailure []string `json:"notifySlackChannelsUponFailure,omitempty" form:"notifySlackChannelsUponFailure"`
+	// Icon to use for success or failure Slack notifications. Can be given either as a URL to an image or as a Slack emoji (using colon shortcodes, like :smiley:).
+	// An empty string is ignored to facilitate calling from GitHub Actions (where it's easier to pass an empty string than not send the field at all).
+	NotifySlackCustomIcon *string `json:"notifySlackCustomIcon,omitempty" form:"notifySlackCustomIcon"`
 }
 
 func (c CiRunV3) toModel() models.CiRun {
@@ -50,6 +53,7 @@ func (c CiRunV3) toModel() models.CiRun {
 		StartedAt:                    c.StartedAt,
 		TerminalAt:                   c.TerminalAt,
 		Status:                       c.Status,
+		NotifySlackCustomIcon:        c.NotifySlackCustomIcon,
 	}
 }
 
@@ -78,6 +82,7 @@ func ciRunFromModel(model models.CiRun) CiRunV3 {
 			Status:                         model.Status,
 			NotifySlackChannelsUponSuccess: model.NotifySlackChannelsUponSuccess,
 			NotifySlackChannelsUponFailure: model.NotifySlackChannelsUponFailure,
+			NotifySlackCustomIcon:          model.NotifySlackCustomIcon,
 		},
 		TerminationHooksDispatchedAt: model.TerminationHooksDispatchedAt,
 		RelatedResources:             relatedResources,

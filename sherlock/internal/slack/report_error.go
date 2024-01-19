@@ -22,7 +22,7 @@ func ReportError[E interface {
 		messageText := fmt.Sprintf("Sherlock error: %s", description)
 		attachments := utils.Map(strings, func(s string) Attachment { return RedBlock{Text: s} })
 		for _, channel := range config.Config.Strings("slack.behaviors.errors.channels") {
-			SendMessage(ctx, channel, messageText, attachments...)
+			SendMessage(ctx, channel, messageText, nil, attachments...)
 		}
 	} else if config.Config.String("mode") == "debug" {
 		log.Warn().Strs("errors", strings).Str("description", description).Msg("Slack disabled in debug mode; would've reported errors if enabled")
