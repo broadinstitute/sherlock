@@ -69,13 +69,13 @@ func (_c *MockMockableDispatcher_DispatchGithubActionsDeployHook_Call) RunAndRet
 	return _c
 }
 
-// DispatchSlackCompletionNotification provides a mock function with given fields: ctx, channel, text, succeeded
-func (_m *MockMockableDispatcher) DispatchSlackCompletionNotification(ctx context.Context, channel string, text string, succeeded bool) error {
-	ret := _m.Called(ctx, channel, text, succeeded)
+// DispatchSlackCompletionNotification provides a mock function with given fields: ctx, channel, text, succeeded, icon
+func (_m *MockMockableDispatcher) DispatchSlackCompletionNotification(ctx context.Context, channel string, text string, succeeded bool, icon *string) error {
+	ret := _m.Called(ctx, channel, text, succeeded, icon)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, string, string, bool) error); ok {
-		r0 = rf(ctx, channel, text, succeeded)
+	if rf, ok := ret.Get(0).(func(context.Context, string, string, bool, *string) error); ok {
+		r0 = rf(ctx, channel, text, succeeded, icon)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -93,13 +93,14 @@ type MockMockableDispatcher_DispatchSlackCompletionNotification_Call struct {
 //   - channel string
 //   - text string
 //   - succeeded bool
-func (_e *MockMockableDispatcher_Expecter) DispatchSlackCompletionNotification(ctx interface{}, channel interface{}, text interface{}, succeeded interface{}) *MockMockableDispatcher_DispatchSlackCompletionNotification_Call {
-	return &MockMockableDispatcher_DispatchSlackCompletionNotification_Call{Call: _e.mock.On("DispatchSlackCompletionNotification", ctx, channel, text, succeeded)}
+//   - icon *string
+func (_e *MockMockableDispatcher_Expecter) DispatchSlackCompletionNotification(ctx interface{}, channel interface{}, text interface{}, succeeded interface{}, icon interface{}) *MockMockableDispatcher_DispatchSlackCompletionNotification_Call {
+	return &MockMockableDispatcher_DispatchSlackCompletionNotification_Call{Call: _e.mock.On("DispatchSlackCompletionNotification", ctx, channel, text, succeeded, icon)}
 }
 
-func (_c *MockMockableDispatcher_DispatchSlackCompletionNotification_Call) Run(run func(ctx context.Context, channel string, text string, succeeded bool)) *MockMockableDispatcher_DispatchSlackCompletionNotification_Call {
+func (_c *MockMockableDispatcher_DispatchSlackCompletionNotification_Call) Run(run func(ctx context.Context, channel string, text string, succeeded bool, icon *string)) *MockMockableDispatcher_DispatchSlackCompletionNotification_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(string), args[2].(string), args[3].(bool))
+		run(args[0].(context.Context), args[1].(string), args[2].(string), args[3].(bool), args[4].(*string))
 	})
 	return _c
 }
@@ -109,7 +110,7 @@ func (_c *MockMockableDispatcher_DispatchSlackCompletionNotification_Call) Retur
 	return _c
 }
 
-func (_c *MockMockableDispatcher_DispatchSlackCompletionNotification_Call) RunAndReturn(run func(context.Context, string, string, bool) error) *MockMockableDispatcher_DispatchSlackCompletionNotification_Call {
+func (_c *MockMockableDispatcher_DispatchSlackCompletionNotification_Call) RunAndReturn(run func(context.Context, string, string, bool, *string) error) *MockMockableDispatcher_DispatchSlackCompletionNotification_Call {
 	_c.Call.Return(run)
 	return _c
 }

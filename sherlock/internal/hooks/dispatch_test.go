@@ -2,8 +2,10 @@ package hooks
 
 import (
 	"fmt"
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/hooks/hooks_mocks"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/slack"
 	"github.com/broadinstitute/sherlock/sherlock/internal/slack/slack_mocks"
 	"github.com/stretchr/testify/mock"
@@ -22,7 +24,8 @@ func (s *hooksSuite) TestDispatch_hooks() {
 					mock.Anything,
 					channel,
 					completionText,
-					ciRun.Succeeded()).
+					ciRun.Succeeded(),
+					ciRun.NotifySlackCustomIcon).
 					Return(nil).Once()
 			}
 			d.EXPECT().DispatchSlackDeployHook(
@@ -33,6 +36,28 @@ func (s *hooksSuite) TestDispatch_hooks() {
 				mock.Anything,
 				mock.Anything,
 				ciRun).Return(nil).Once()
+		}, func() {
+			Dispatch(s.DB, ciRun)
+		})
+	})
+}
+
+func (s *hooksSuite) TestDispatch_completionMessageWithIcon() {
+	ciRun := s.TestData.CiRun_Deploy_LeonardoDev_V1toV3()
+	s.NoError(s.DB.Model(&ciRun).Updates(&models.CiRun{NotifySlackCustomIcon: utils.PointerTo(":smiley:")}).Error)
+	completionText, errs := ciRun.SlackCompletionText(s.DB)
+	s.Empty(errs)
+	slack.UseMockedClient(s.T(), func(c *slack_mocks.MockMockableClient) {}, func() {
+		UseMockedDispatcher(s.T(), func(d *hooks_mocks.MockMockableDispatcher) {
+			for _, channel := range ciRun.NotifySlackChannelsUponSuccess {
+				d.EXPECT().DispatchSlackCompletionNotification(
+					mock.Anything,
+					channel,
+					completionText,
+					ciRun.Succeeded(),
+					utils.PointerTo(":smiley:")).
+					Return(nil).Once()
+			}
 		}, func() {
 			Dispatch(s.DB, ciRun)
 		})
@@ -50,7 +75,8 @@ func (s *hooksSuite) TestDispatch_noHooks() {
 					mock.Anything,
 					channel,
 					completionText,
-					ciRun.Succeeded()).
+					ciRun.Succeeded(),
+					ciRun.NotifySlackCustomIcon).
 					Return(nil).Once()
 			}
 		}, func() {
@@ -80,7 +106,8 @@ func (s *hooksSuite) TestDispatch_errors() {
 					mock.Anything,
 					channel,
 					completionText,
-					ciRun.Succeeded()).
+					ciRun.Succeeded(),
+					ciRun.NotifySlackCustomIcon).
 					Return(fmt.Errorf("error 1")).Once()
 			}
 			d.EXPECT().DispatchSlackDeployHook(
@@ -118,7 +145,8 @@ func (s *hooksSuite) TestDispatch_panics() {
 					mock.Anything,
 					channel,
 					completionText,
-					ciRun.Succeeded()).
+					ciRun.Succeeded(),
+					ciRun.NotifySlackCustomIcon).
 					Panic("error 1").Once()
 			}
 			d.EXPECT().DispatchSlackDeployHook(
