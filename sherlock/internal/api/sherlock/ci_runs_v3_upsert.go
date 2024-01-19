@@ -383,9 +383,10 @@ addingToDeduplicatedRelatedResources:
 		ArgoWorkflowsName:          body.ArgoWorkflowsName,
 		ArgoWorkflowsTemplate:      body.ArgoWorkflowsTemplate,
 	}).Assign(&models.CiRun{
-		StartedAt:  body.StartedAt,
-		TerminalAt: body.TerminalAt,
-		Status:     body.Status,
+		StartedAt:             body.StartedAt,
+		TerminalAt:            body.TerminalAt,
+		Status:                body.Status,
+		NotifySlackCustomIcon: body.NotifySlackCustomIcon,
 	}).FirstOrCreate(&result).Error; err != nil {
 		errors.AbortRequest(ctx, err)
 		return

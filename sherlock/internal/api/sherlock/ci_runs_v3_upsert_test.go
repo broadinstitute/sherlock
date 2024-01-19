@@ -46,6 +46,7 @@ func (s *handlerSuite) TestCiRunsV3Upsert_edits() {
 		&got1)
 	s.Equal(http.StatusCreated, code)
 	s.WithinDuration(startedAt, *got1.StartedAt, time.Second) // Database stores with less precision
+	s.Nil(got1.NotifySlackCustomIcon)
 	var got2 CiRunV3
 	code = s.HandleRequest(
 		s.NewRequest("PUT", "/api/ci-runs/v3", CiRunV3Upsert{
@@ -57,6 +58,7 @@ func (s *handlerSuite) TestCiRunsV3Upsert_edits() {
 				GithubActionsAttemptNumber: 1,
 				GithubActionsWorkflowPath:  "workflow",
 				Status:                     utils.PointerTo("in_progress"),
+				NotifySlackCustomIcon:      utils.PointerTo(":smiley:"),
 			},
 		}),
 		&got2)
@@ -65,6 +67,9 @@ func (s *handlerSuite) TestCiRunsV3Upsert_edits() {
 	s.Equal(got1.StartedAt, got2.StartedAt)
 	s.Equal(got1.ID, got2.ID)
 	s.NotEqual(got1.UpdatedAt, got2.UpdatedAt)
+	if s.NotNil(got2.NotifySlackCustomIcon) {
+		s.Equal(":smiley:", *got2.NotifySlackCustomIcon)
+	}
 }
 
 func (s *handlerSuite) TestCiRunsV3Upsert_fieldValidation() {
@@ -757,7 +762,7 @@ func (s *handlerSuite) TestCiRunsV3Upsert_dispatch() {
 	hooks.UseMockedDispatcher(s.T(), func(d *hooks_mocks.MockMockableDispatcher) {
 		d.EXPECT().DispatchSlackDeployHook(mock.Anything, mock.Anything, mock.Anything).Return(nil).Once()
 		d.EXPECT().DispatchGithubActionsDeployHook(mock.Anything, mock.Anything, mock.Anything).Return(nil).Once()
-		d.EXPECT().DispatchSlackCompletionNotification(mock.Anything, "#workbench-resilience-dev", mock.Anything, true).Return(nil).Once()
+		d.EXPECT().DispatchSlackCompletionNotification(mock.Anything, "#workbench-resilience-dev", mock.Anything, true, mock.AnythingOfType("*string")).Return(nil).Once()
 	}, func() {
 		code = s.HandleRequest(
 			s.NewRequest(http.MethodPut, "/api/ci-runs/v3", CiRunV3Upsert{
