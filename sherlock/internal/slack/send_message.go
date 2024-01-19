@@ -55,7 +55,7 @@ func SendMessageReturnError(ctx context.Context, channel string, text string, ic
 		if icon != nil {
 			if strings.HasPrefix(*icon, ":") && strings.HasSuffix(*icon, ":") {
 				options = append(options, slack.MsgOptionIconEmoji(*icon))
-			} else {
+			} else if *icon != "" {
 				options = append(options, slack.MsgOptionIconURL(*icon))
 			}
 		}

@@ -97,6 +97,17 @@ func TestSendMessage(t *testing.T) {
 					mock.AnythingOfType("slack.MsgOption")).Return("", "", "", nil)
 			},
 		},
+		{
+			name: "doesn't send empty icon",
+			args: args{channel: "foo", text: "text", icon: utils.PointerTo(""), attachments: []Attachment{
+				GreenBlock{Text: "blah"}, RedBlock{"bleh"},
+			}},
+			mockConfig: func(c *slack_mocks.MockMockableClient) {
+				c.On("SendMessageContext", ctx, "foo",
+					mock.AnythingOfType("slack.MsgOption"),
+					mock.AnythingOfType("slack.MsgOption")).Return("", "", "", nil)
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
