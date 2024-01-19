@@ -41,6 +41,7 @@ func (s *handlerSuite) TestCiRunsV3Upsert_edits() {
 				GithubActionsAttemptNumber: 1,
 				GithubActionsWorkflowPath:  "workflow",
 				StartedAt:                  &startedAt,
+				NotifySlackCustomIcon:      utils.PointerTo(""),
 			},
 		}),
 		&got1)

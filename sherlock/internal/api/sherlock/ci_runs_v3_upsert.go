@@ -70,6 +70,13 @@ func ciRunsV3Upsert(ctx *gin.Context) {
 		return
 	}
 
+	// The notifySlackCustomIcon has some special handling noted in the API docs -- if it's empty, we ignore it here,
+	// so that GitHub Actions etc. can just always send the field and don't have to worry about doing conditional
+	// stuff to omit the field entirely.
+	if body.NotifySlackCustomIcon != nil && *body.NotifySlackCustomIcon == "" {
+		body.NotifySlackCustomIcon = nil
+	}
+
 	// Opportunistically fill empty fields with information passed in the GHA OIDC JWT
 	if body.Platform == "" || body.Platform == "github-actions" {
 		var claims *gha_oidc_claims.Claims
