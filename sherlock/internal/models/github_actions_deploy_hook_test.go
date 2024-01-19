@@ -3,8 +3,11 @@ package models
 import (
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
+	"github.com/stretchr/testify/assert"
+	"gorm.io/datatypes"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
+	"testing"
 )
 
 func (s *modelSuite) TestGithubActionsDeployHookEnvironment() {
@@ -196,4 +199,466 @@ func (s *modelSuite) TestGithubActionsDeployHookFlow() {
 			s.Len(matchingTriggers, 0)
 		})
 	})
+}
+
+func TestDeduplicateGithubActionsDeployHooks(t *testing.T) {
+	type args struct {
+		hooks []GithubActionsDeployHook
+	}
+	tests := []struct {
+		name string
+		args args
+		want []GithubActionsDeployHook
+	}{
+		{
+			name: "empty",
+			args: args{hooks: []GithubActionsDeployHook{}},
+			want: []GithubActionsDeployHook{},
+		},
+		{
+			name: "one",
+			args: args{hooks: []GithubActionsDeployHook{
+				{
+					GithubActionsOwner:        utils.PointerTo("owner1"),
+					GithubActionsRepo:         utils.PointerTo("repo1"),
+					GithubActionsWorkflowPath: utils.PointerTo("path1"),
+					GithubActionsDefaultRef:   utils.PointerTo("head1"),
+					GithubActionsRefBehavior:  utils.PointerTo("always-use-default-ref"),
+				},
+			}},
+			want: []GithubActionsDeployHook{
+				{
+					GithubActionsOwner:        utils.PointerTo("owner1"),
+					GithubActionsRepo:         utils.PointerTo("repo1"),
+					GithubActionsWorkflowPath: utils.PointerTo("path1"),
+					GithubActionsDefaultRef:   utils.PointerTo("head1"),
+					GithubActionsRefBehavior:  utils.PointerTo("always-use-default-ref"),
+				},
+			},
+		},
+		{
+			name: "duplicates",
+			args: args{hooks: []GithubActionsDeployHook{
+				{
+					GithubActionsOwner:        utils.PointerTo("owner1"),
+					GithubActionsRepo:         utils.PointerTo("repo1"),
+					GithubActionsWorkflowPath: utils.PointerTo("path1"),
+					GithubActionsDefaultRef:   utils.PointerTo("head1"),
+					GithubActionsRefBehavior:  utils.PointerTo("always-use-default-ref"),
+				},
+				{
+					GithubActionsOwner:        utils.PointerTo("owner1"),
+					GithubActionsRepo:         utils.PointerTo("repo1"),
+					GithubActionsWorkflowPath: utils.PointerTo("path1"),
+					GithubActionsDefaultRef:   utils.PointerTo("head1"),
+					GithubActionsRefBehavior:  utils.PointerTo("always-use-default-ref"),
+				},
+			}},
+			want: []GithubActionsDeployHook{
+				{
+					GithubActionsOwner:        utils.PointerTo("owner1"),
+					GithubActionsRepo:         utils.PointerTo("repo1"),
+					GithubActionsWorkflowPath: utils.PointerTo("path1"),
+					GithubActionsDefaultRef:   utils.PointerTo("head1"),
+					GithubActionsRefBehavior:  utils.PointerTo("always-use-default-ref"),
+				},
+			},
+		},
+		{
+			name: "a bit different",
+			args: args{hooks: []GithubActionsDeployHook{
+				{
+					GithubActionsOwner:        utils.PointerTo("owner1"),
+					GithubActionsRepo:         utils.PointerTo("repo1"),
+					GithubActionsWorkflowPath: utils.PointerTo("path1"),
+					GithubActionsDefaultRef:   utils.PointerTo("head1"),
+					GithubActionsRefBehavior:  utils.PointerTo("always-use-default-ref"),
+				},
+				{
+					GithubActionsOwner:        utils.PointerTo("owner1"),
+					GithubActionsRepo:         utils.PointerTo("repo1"),
+					GithubActionsWorkflowPath: utils.PointerTo("path2"),
+					GithubActionsDefaultRef:   utils.PointerTo("head1"),
+					GithubActionsRefBehavior:  utils.PointerTo("always-use-default-ref"),
+				},
+			}},
+			want: []GithubActionsDeployHook{
+				{
+					GithubActionsOwner:        utils.PointerTo("owner1"),
+					GithubActionsRepo:         utils.PointerTo("repo1"),
+					GithubActionsWorkflowPath: utils.PointerTo("path1"),
+					GithubActionsDefaultRef:   utils.PointerTo("head1"),
+					GithubActionsRefBehavior:  utils.PointerTo("always-use-default-ref"),
+				},
+				{
+					GithubActionsOwner:        utils.PointerTo("owner1"),
+					GithubActionsRepo:         utils.PointerTo("repo1"),
+					GithubActionsWorkflowPath: utils.PointerTo("path2"),
+					GithubActionsDefaultRef:   utils.PointerTo("head1"),
+					GithubActionsRefBehavior:  utils.PointerTo("always-use-default-ref"),
+				},
+			},
+		},
+		{
+			name: "cares about ref, no triggers loaded somehow",
+			args: args{hooks: []GithubActionsDeployHook{
+				{
+					GithubActionsOwner:        utils.PointerTo("owner1"),
+					GithubActionsRepo:         utils.PointerTo("repo1"),
+					GithubActionsWorkflowPath: utils.PointerTo("path1"),
+					GithubActionsDefaultRef:   utils.PointerTo("head1"),
+					GithubActionsRefBehavior:  utils.PointerTo("use-app-version-as-ref"),
+				},
+				{
+					GithubActionsOwner:        utils.PointerTo("owner1"),
+					GithubActionsRepo:         utils.PointerTo("repo1"),
+					GithubActionsWorkflowPath: utils.PointerTo("path1"),
+					GithubActionsDefaultRef:   utils.PointerTo("head1"),
+					GithubActionsRefBehavior:  utils.PointerTo("use-app-version-as-ref"),
+				},
+			}},
+			want: []GithubActionsDeployHook{
+				{
+					GithubActionsOwner:        utils.PointerTo("owner1"),
+					GithubActionsRepo:         utils.PointerTo("repo1"),
+					GithubActionsWorkflowPath: utils.PointerTo("path1"),
+					GithubActionsDefaultRef:   utils.PointerTo("head1"),
+					GithubActionsRefBehavior:  utils.PointerTo("use-app-version-as-ref"),
+				},
+				{
+					GithubActionsOwner:        utils.PointerTo("owner1"),
+					GithubActionsRepo:         utils.PointerTo("repo1"),
+					GithubActionsWorkflowPath: utils.PointerTo("path1"),
+					GithubActionsDefaultRef:   utils.PointerTo("head1"),
+					GithubActionsRefBehavior:  utils.PointerTo("use-app-version-as-ref"),
+				},
+			},
+		},
+		{
+			name: "cares about ref, triggers don't match",
+			args: args{hooks: []GithubActionsDeployHook{
+				{
+					GithubActionsOwner:        utils.PointerTo("owner1"),
+					GithubActionsRepo:         utils.PointerTo("repo1"),
+					GithubActionsWorkflowPath: utils.PointerTo("path1"),
+					GithubActionsDefaultRef:   utils.PointerTo("head1"),
+					GithubActionsRefBehavior:  utils.PointerTo("use-app-version-as-ref"),
+					Trigger: DeployHookTriggerConfig{
+						OnEnvironmentID: utils.PointerTo[uint](1),
+					},
+				},
+				{
+					GithubActionsOwner:        utils.PointerTo("owner1"),
+					GithubActionsRepo:         utils.PointerTo("repo1"),
+					GithubActionsWorkflowPath: utils.PointerTo("path1"),
+					GithubActionsDefaultRef:   utils.PointerTo("head1"),
+					GithubActionsRefBehavior:  utils.PointerTo("use-app-version-as-ref"),
+					Trigger: DeployHookTriggerConfig{
+						OnEnvironmentID: utils.PointerTo[uint](2),
+					},
+				},
+			}},
+			want: []GithubActionsDeployHook{
+				{
+					GithubActionsOwner:        utils.PointerTo("owner1"),
+					GithubActionsRepo:         utils.PointerTo("repo1"),
+					GithubActionsWorkflowPath: utils.PointerTo("path1"),
+					GithubActionsDefaultRef:   utils.PointerTo("head1"),
+					GithubActionsRefBehavior:  utils.PointerTo("use-app-version-as-ref"),
+					Trigger: DeployHookTriggerConfig{
+						OnEnvironmentID: utils.PointerTo[uint](1),
+					},
+				},
+				{
+					GithubActionsOwner:        utils.PointerTo("owner1"),
+					GithubActionsRepo:         utils.PointerTo("repo1"),
+					GithubActionsWorkflowPath: utils.PointerTo("path1"),
+					GithubActionsDefaultRef:   utils.PointerTo("head1"),
+					GithubActionsRefBehavior:  utils.PointerTo("use-app-version-as-ref"),
+					Trigger: DeployHookTriggerConfig{
+						OnEnvironmentID: utils.PointerTo[uint](2),
+					},
+				},
+			},
+		},
+		{
+			name: "cares about ref, triggers match",
+			args: args{hooks: []GithubActionsDeployHook{
+				{
+					GithubActionsOwner:        utils.PointerTo("owner1"),
+					GithubActionsRepo:         utils.PointerTo("repo1"),
+					GithubActionsWorkflowPath: utils.PointerTo("path1"),
+					GithubActionsDefaultRef:   utils.PointerTo("head1"),
+					GithubActionsRefBehavior:  utils.PointerTo("use-app-version-as-ref"),
+					Trigger: DeployHookTriggerConfig{
+						OnEnvironmentID: utils.PointerTo[uint](1),
+					},
+				},
+				{
+					GithubActionsOwner:        utils.PointerTo("owner1"),
+					GithubActionsRepo:         utils.PointerTo("repo1"),
+					GithubActionsWorkflowPath: utils.PointerTo("path1"),
+					GithubActionsDefaultRef:   utils.PointerTo("head1"),
+					GithubActionsRefBehavior:  utils.PointerTo("use-app-version-as-ref"),
+					Trigger: DeployHookTriggerConfig{
+						OnEnvironmentID: utils.PointerTo[uint](1),
+					},
+				},
+			}},
+			want: []GithubActionsDeployHook{
+				{
+					GithubActionsOwner:        utils.PointerTo("owner1"),
+					GithubActionsRepo:         utils.PointerTo("repo1"),
+					GithubActionsWorkflowPath: utils.PointerTo("path1"),
+					GithubActionsDefaultRef:   utils.PointerTo("head1"),
+					GithubActionsRefBehavior:  utils.PointerTo("use-app-version-as-ref"),
+					Trigger: DeployHookTriggerConfig{
+						OnEnvironmentID: utils.PointerTo[uint](1),
+					},
+				},
+			},
+		},
+		{
+			name: "one has inputs",
+			args: args{hooks: []GithubActionsDeployHook{
+				{
+					GithubActionsOwner:          utils.PointerTo("owner1"),
+					GithubActionsRepo:           utils.PointerTo("repo1"),
+					GithubActionsWorkflowPath:   utils.PointerTo("path1"),
+					GithubActionsDefaultRef:     utils.PointerTo("head1"),
+					GithubActionsRefBehavior:    utils.PointerTo("always-use-default-ref"),
+					GithubActionsWorkflowInputs: &datatypes.JSON{},
+				},
+				{
+					GithubActionsOwner:        utils.PointerTo("owner1"),
+					GithubActionsRepo:         utils.PointerTo("repo1"),
+					GithubActionsWorkflowPath: utils.PointerTo("path1"),
+					GithubActionsDefaultRef:   utils.PointerTo("head1"),
+					GithubActionsRefBehavior:  utils.PointerTo("always-use-default-ref"),
+				},
+			}},
+			want: []GithubActionsDeployHook{
+				{
+					GithubActionsOwner:          utils.PointerTo("owner1"),
+					GithubActionsRepo:           utils.PointerTo("repo1"),
+					GithubActionsWorkflowPath:   utils.PointerTo("path1"),
+					GithubActionsDefaultRef:     utils.PointerTo("head1"),
+					GithubActionsRefBehavior:    utils.PointerTo("always-use-default-ref"),
+					GithubActionsWorkflowInputs: &datatypes.JSON{},
+				},
+				{
+					GithubActionsOwner:        utils.PointerTo("owner1"),
+					GithubActionsRepo:         utils.PointerTo("repo1"),
+					GithubActionsWorkflowPath: utils.PointerTo("path1"),
+					GithubActionsDefaultRef:   utils.PointerTo("head1"),
+					GithubActionsRefBehavior:  utils.PointerTo("always-use-default-ref"),
+				},
+			},
+		},
+		{
+			name: "both have empty inputs",
+			args: args{hooks: []GithubActionsDeployHook{
+				{
+					GithubActionsOwner:          utils.PointerTo("owner1"),
+					GithubActionsRepo:           utils.PointerTo("repo1"),
+					GithubActionsWorkflowPath:   utils.PointerTo("path1"),
+					GithubActionsDefaultRef:     utils.PointerTo("head1"),
+					GithubActionsRefBehavior:    utils.PointerTo("always-use-default-ref"),
+					GithubActionsWorkflowInputs: &datatypes.JSON{},
+				},
+				{
+					GithubActionsOwner:          utils.PointerTo("owner1"),
+					GithubActionsRepo:           utils.PointerTo("repo1"),
+					GithubActionsWorkflowPath:   utils.PointerTo("path1"),
+					GithubActionsDefaultRef:     utils.PointerTo("head1"),
+					GithubActionsRefBehavior:    utils.PointerTo("always-use-default-ref"),
+					GithubActionsWorkflowInputs: &datatypes.JSON{},
+				},
+			}},
+			want: []GithubActionsDeployHook{
+				{
+					GithubActionsOwner:          utils.PointerTo("owner1"),
+					GithubActionsRepo:           utils.PointerTo("repo1"),
+					GithubActionsWorkflowPath:   utils.PointerTo("path1"),
+					GithubActionsDefaultRef:     utils.PointerTo("head1"),
+					GithubActionsRefBehavior:    utils.PointerTo("always-use-default-ref"),
+					GithubActionsWorkflowInputs: &datatypes.JSON{},
+				},
+			},
+		},
+		{
+			name: "both have same blank inputs",
+			args: args{hooks: []GithubActionsDeployHook{
+				{
+					GithubActionsOwner:          utils.PointerTo("owner1"),
+					GithubActionsRepo:           utils.PointerTo("repo1"),
+					GithubActionsWorkflowPath:   utils.PointerTo("path1"),
+					GithubActionsDefaultRef:     utils.PointerTo("head1"),
+					GithubActionsRefBehavior:    utils.PointerTo("always-use-default-ref"),
+					GithubActionsWorkflowInputs: utils.PointerTo[datatypes.JSON]([]byte("{}")),
+				},
+				{
+					GithubActionsOwner:          utils.PointerTo("owner1"),
+					GithubActionsRepo:           utils.PointerTo("repo1"),
+					GithubActionsWorkflowPath:   utils.PointerTo("path1"),
+					GithubActionsDefaultRef:     utils.PointerTo("head1"),
+					GithubActionsRefBehavior:    utils.PointerTo("always-use-default-ref"),
+					GithubActionsWorkflowInputs: utils.PointerTo[datatypes.JSON]([]byte("{}")),
+				},
+			}},
+			want: []GithubActionsDeployHook{
+				{
+					GithubActionsOwner:          utils.PointerTo("owner1"),
+					GithubActionsRepo:           utils.PointerTo("repo1"),
+					GithubActionsWorkflowPath:   utils.PointerTo("path1"),
+					GithubActionsDefaultRef:     utils.PointerTo("head1"),
+					GithubActionsRefBehavior:    utils.PointerTo("always-use-default-ref"),
+					GithubActionsWorkflowInputs: utils.PointerTo[datatypes.JSON]([]byte("{}")),
+				},
+			},
+		},
+		{
+			name: "both have same inputs",
+			args: args{hooks: []GithubActionsDeployHook{
+				{
+					GithubActionsOwner:          utils.PointerTo("owner1"),
+					GithubActionsRepo:           utils.PointerTo("repo1"),
+					GithubActionsWorkflowPath:   utils.PointerTo("path1"),
+					GithubActionsDefaultRef:     utils.PointerTo("head1"),
+					GithubActionsRefBehavior:    utils.PointerTo("always-use-default-ref"),
+					GithubActionsWorkflowInputs: utils.PointerTo[datatypes.JSON]([]byte("{\"a\": 1}")),
+				},
+				{
+					GithubActionsOwner:          utils.PointerTo("owner1"),
+					GithubActionsRepo:           utils.PointerTo("repo1"),
+					GithubActionsWorkflowPath:   utils.PointerTo("path1"),
+					GithubActionsDefaultRef:     utils.PointerTo("head1"),
+					GithubActionsRefBehavior:    utils.PointerTo("always-use-default-ref"),
+					GithubActionsWorkflowInputs: utils.PointerTo[datatypes.JSON]([]byte("{\"a\": 1}")),
+				},
+			}},
+			want: []GithubActionsDeployHook{
+				{
+					GithubActionsOwner:          utils.PointerTo("owner1"),
+					GithubActionsRepo:           utils.PointerTo("repo1"),
+					GithubActionsWorkflowPath:   utils.PointerTo("path1"),
+					GithubActionsDefaultRef:     utils.PointerTo("head1"),
+					GithubActionsRefBehavior:    utils.PointerTo("always-use-default-ref"),
+					GithubActionsWorkflowInputs: utils.PointerTo[datatypes.JSON]([]byte("{\"a\": 1}")),
+				},
+			},
+		},
+		{
+			name: "both have same longer inputs",
+			args: args{hooks: []GithubActionsDeployHook{
+				{
+					GithubActionsOwner:          utils.PointerTo("owner1"),
+					GithubActionsRepo:           utils.PointerTo("repo1"),
+					GithubActionsWorkflowPath:   utils.PointerTo("path1"),
+					GithubActionsDefaultRef:     utils.PointerTo("head1"),
+					GithubActionsRefBehavior:    utils.PointerTo("always-use-default-ref"),
+					GithubActionsWorkflowInputs: utils.PointerTo[datatypes.JSON]([]byte("{\"a\": 1, \"b\": \"c\"}")),
+				},
+				{
+					GithubActionsOwner:          utils.PointerTo("owner1"),
+					GithubActionsRepo:           utils.PointerTo("repo1"),
+					GithubActionsWorkflowPath:   utils.PointerTo("path1"),
+					GithubActionsDefaultRef:     utils.PointerTo("head1"),
+					GithubActionsRefBehavior:    utils.PointerTo("always-use-default-ref"),
+					GithubActionsWorkflowInputs: utils.PointerTo[datatypes.JSON]([]byte("{\"b\": \"c\", \"a\": 1}")),
+				},
+			}},
+			want: []GithubActionsDeployHook{
+				{
+					GithubActionsOwner:          utils.PointerTo("owner1"),
+					GithubActionsRepo:           utils.PointerTo("repo1"),
+					GithubActionsWorkflowPath:   utils.PointerTo("path1"),
+					GithubActionsDefaultRef:     utils.PointerTo("head1"),
+					GithubActionsRefBehavior:    utils.PointerTo("always-use-default-ref"),
+					GithubActionsWorkflowInputs: utils.PointerTo[datatypes.JSON]([]byte("{\"a\": 1, \"b\": \"c\"}")),
+				},
+			},
+		},
+		{
+			name: "different inputs",
+			args: args{hooks: []GithubActionsDeployHook{
+				{
+					GithubActionsOwner:          utils.PointerTo("owner1"),
+					GithubActionsRepo:           utils.PointerTo("repo1"),
+					GithubActionsWorkflowPath:   utils.PointerTo("path1"),
+					GithubActionsDefaultRef:     utils.PointerTo("head1"),
+					GithubActionsRefBehavior:    utils.PointerTo("always-use-default-ref"),
+					GithubActionsWorkflowInputs: utils.PointerTo[datatypes.JSON]([]byte("{\"a\": 1, \"b\": \"c\"}")),
+				},
+				{
+					GithubActionsOwner:          utils.PointerTo("owner1"),
+					GithubActionsRepo:           utils.PointerTo("repo1"),
+					GithubActionsWorkflowPath:   utils.PointerTo("path1"),
+					GithubActionsDefaultRef:     utils.PointerTo("head1"),
+					GithubActionsRefBehavior:    utils.PointerTo("always-use-default-ref"),
+					GithubActionsWorkflowInputs: utils.PointerTo[datatypes.JSON]([]byte("{\"a\": 1}")),
+				},
+			}},
+			want: []GithubActionsDeployHook{
+				{
+					GithubActionsOwner:          utils.PointerTo("owner1"),
+					GithubActionsRepo:           utils.PointerTo("repo1"),
+					GithubActionsWorkflowPath:   utils.PointerTo("path1"),
+					GithubActionsDefaultRef:     utils.PointerTo("head1"),
+					GithubActionsRefBehavior:    utils.PointerTo("always-use-default-ref"),
+					GithubActionsWorkflowInputs: utils.PointerTo[datatypes.JSON]([]byte("{\"a\": 1, \"b\": \"c\"}")),
+				},
+				{
+					GithubActionsOwner:          utils.PointerTo("owner1"),
+					GithubActionsRepo:           utils.PointerTo("repo1"),
+					GithubActionsWorkflowPath:   utils.PointerTo("path1"),
+					GithubActionsDefaultRef:     utils.PointerTo("head1"),
+					GithubActionsRefBehavior:    utils.PointerTo("always-use-default-ref"),
+					GithubActionsWorkflowInputs: utils.PointerTo[datatypes.JSON]([]byte("{\"a\": 1}")),
+				},
+			},
+		},
+		{
+			name: "one has real inputs",
+			args: args{hooks: []GithubActionsDeployHook{
+				{
+					GithubActionsOwner:          utils.PointerTo("owner1"),
+					GithubActionsRepo:           utils.PointerTo("repo1"),
+					GithubActionsWorkflowPath:   utils.PointerTo("path1"),
+					GithubActionsDefaultRef:     utils.PointerTo("head1"),
+					GithubActionsRefBehavior:    utils.PointerTo("always-use-default-ref"),
+					GithubActionsWorkflowInputs: utils.PointerTo[datatypes.JSON]([]byte("{\"a\": 1, \"b\": \"c\"}")),
+				},
+				{
+					GithubActionsOwner:        utils.PointerTo("owner1"),
+					GithubActionsRepo:         utils.PointerTo("repo1"),
+					GithubActionsWorkflowPath: utils.PointerTo("path1"),
+					GithubActionsDefaultRef:   utils.PointerTo("head1"),
+					GithubActionsRefBehavior:  utils.PointerTo("always-use-default-ref"),
+				},
+			}},
+			want: []GithubActionsDeployHook{
+				{
+					GithubActionsOwner:          utils.PointerTo("owner1"),
+					GithubActionsRepo:           utils.PointerTo("repo1"),
+					GithubActionsWorkflowPath:   utils.PointerTo("path1"),
+					GithubActionsDefaultRef:     utils.PointerTo("head1"),
+					GithubActionsRefBehavior:    utils.PointerTo("always-use-default-ref"),
+					GithubActionsWorkflowInputs: utils.PointerTo[datatypes.JSON]([]byte("{\"a\": 1, \"b\": \"c\"}")),
+				},
+				{
+					GithubActionsOwner:        utils.PointerTo("owner1"),
+					GithubActionsRepo:         utils.PointerTo("repo1"),
+					GithubActionsWorkflowPath: utils.PointerTo("path1"),
+					GithubActionsDefaultRef:   utils.PointerTo("head1"),
+					GithubActionsRefBehavior:  utils.PointerTo("always-use-default-ref"),
+				},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.ElementsMatchf(t, tt.want, DeduplicateGithubActionsDeployHooks(tt.args.hooks), "DeduplicateGithubActionsDeployHooks(%v)", tt.args.hooks)
+		})
+	}
 }

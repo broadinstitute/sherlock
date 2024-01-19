@@ -3,8 +3,12 @@ package models
 import (
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
+	"github.com/stretchr/testify/assert"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
+	"slices"
+	"testing"
+	"time"
 )
 
 func (s *modelSuite) TestSlackDeployHookEnvironment() {
@@ -107,4 +111,105 @@ func (s *modelSuite) TestSlackDeployHookFlow() {
 			s.Len(matchingTriggers, 0)
 		})
 	})
+}
+
+func TestDeduplicateSlackDeployHooks(t *testing.T) {
+	now := time.Now()
+	type args struct {
+		hooks []SlackDeployHook
+	}
+	tests := []struct {
+		name string
+		args args
+		want []SlackDeployHook
+	}{
+		{
+			name: "empty",
+			args: args{hooks: []SlackDeployHook{}},
+			want: []SlackDeployHook{},
+		},
+		{
+			name: "one",
+			args: args{hooks: []SlackDeployHook{{SlackChannel: utils.PointerTo("channel")}}},
+			want: []SlackDeployHook{{SlackChannel: utils.PointerTo("channel")}},
+		},
+		{
+			name: "two different",
+			args: args{hooks: []SlackDeployHook{
+				{SlackChannel: utils.PointerTo("channel")},
+				{SlackChannel: utils.PointerTo("different channel")},
+			}},
+			want: []SlackDeployHook{
+				{SlackChannel: utils.PointerTo("channel")},
+				{SlackChannel: utils.PointerTo("different channel")},
+			},
+		},
+		{
+			name: "two same",
+			args: args{hooks: []SlackDeployHook{
+				{SlackChannel: utils.PointerTo("channel")},
+				{SlackChannel: utils.PointerTo("channel")},
+			}},
+			want: []SlackDeployHook{
+				{SlackChannel: utils.PointerTo("channel")},
+			},
+		},
+		{
+			name: "prioritizes environments",
+			args: args{hooks: []SlackDeployHook{
+				{SlackChannel: utils.PointerTo("channel"), Trigger: DeployHookTriggerConfig{OnEnvironmentID: utils.PointerTo[uint](1)}},
+				{SlackChannel: utils.PointerTo("channel"), Trigger: DeployHookTriggerConfig{OnChartReleaseID: utils.PointerTo[uint](2)}},
+				{SlackChannel: utils.PointerTo("channel")},
+			}},
+			want: []SlackDeployHook{
+				{SlackChannel: utils.PointerTo("channel"), Trigger: DeployHookTriggerConfig{OnEnvironmentID: utils.PointerTo[uint](1)}},
+			},
+		},
+		{
+			name: "prioritizes mentioning people",
+			args: args{hooks: []SlackDeployHook{
+				{SlackChannel: utils.PointerTo("channel"), MentionPeople: utils.PointerTo(true), Model: gorm.Model{ID: 1}},
+				{SlackChannel: utils.PointerTo("channel"), MentionPeople: utils.PointerTo(false), Model: gorm.Model{ID: 2}},
+				{SlackChannel: utils.PointerTo("channel"), Model: gorm.Model{ID: 3}},
+			}},
+			want: []SlackDeployHook{
+				{SlackChannel: utils.PointerTo("channel"), MentionPeople: utils.PointerTo(true), Model: gorm.Model{ID: 1}},
+			},
+		},
+		{
+			name: "prioritizes createdAt",
+			args: args{hooks: []SlackDeployHook{
+				{SlackChannel: utils.PointerTo("channel"), Model: gorm.Model{CreatedAt: now.Add(-time.Hour * 3)}},
+				{SlackChannel: utils.PointerTo("channel"), Model: gorm.Model{CreatedAt: now.Add(-time.Hour * 2)}},
+				{SlackChannel: utils.PointerTo("channel")},
+			}},
+			want: []SlackDeployHook{
+				{SlackChannel: utils.PointerTo("channel"), Model: gorm.Model{CreatedAt: now.Add(-time.Hour * 2)}},
+			},
+		},
+		{
+			name: "prioritizes environments, then mentioning people, then createdAt",
+			args: args{hooks: []SlackDeployHook{
+				{SlackChannel: utils.PointerTo("channel"), MentionPeople: utils.PointerTo(true), Model: gorm.Model{ID: 1}},
+				{SlackChannel: utils.PointerTo("channel"), Trigger: DeployHookTriggerConfig{OnEnvironmentID: utils.PointerTo[uint](1)}, Model: gorm.Model{ID: 2}},
+				{SlackChannel: utils.PointerTo("channel"), Model: gorm.Model{CreatedAt: now.Add(-time.Hour * 2), ID: 3}},
+				{SlackChannel: utils.PointerTo("channel"), MentionPeople: utils.PointerTo(true), Trigger: DeployHookTriggerConfig{OnEnvironmentID: utils.PointerTo[uint](1)}, Model: gorm.Model{ID: 2}},
+				{SlackChannel: utils.PointerTo("channel"), MentionPeople: utils.PointerTo(true), Model: gorm.Model{CreatedAt: now.Add(-time.Hour * 2), ID: 3}},
+				{SlackChannel: utils.PointerTo("channel"), MentionPeople: utils.PointerTo(true), Trigger: DeployHookTriggerConfig{OnEnvironmentID: utils.PointerTo[uint](1)}, Model: gorm.Model{CreatedAt: now.Add(-time.Hour * 2), ID: 2}},
+				{SlackChannel: utils.PointerTo("channel"), MentionPeople: utils.PointerTo(true), Trigger: DeployHookTriggerConfig{OnEnvironmentID: utils.PointerTo[uint](1)}, Model: gorm.Model{CreatedAt: now.Add(-time.Hour * 1), ID: 2}},
+			}},
+			want: []SlackDeployHook{
+				{SlackChannel: utils.PointerTo("channel"), MentionPeople: utils.PointerTo(true), Trigger: DeployHookTriggerConfig{OnEnvironmentID: utils.PointerTo[uint](1)}, Model: gorm.Model{CreatedAt: now.Add(-time.Hour * 1), ID: 2}},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.ElementsMatchf(t, tt.want, DeduplicateSlackDeployHooks(tt.args.hooks), "DeduplicateSlackDeployHooks(%v)", tt.args.hooks)
+		})
+		slices.Reverse(tt.args.hooks)
+		t.Run(tt.name+" STABLE", func(t *testing.T) {
+			assert.ElementsMatchf(t, tt.want, DeduplicateSlackDeployHooks(tt.args.hooks), "DeduplicateSlackDeployHooks(%v)", tt.args.hooks)
+		})
+	}
 }
