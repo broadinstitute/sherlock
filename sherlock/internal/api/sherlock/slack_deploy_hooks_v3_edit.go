@@ -88,7 +88,7 @@ func slackDeployHooksV3Edit(ctx *gin.Context) {
 			triggerDescription = toEdit.Trigger.OnChartRelease.Name
 		}
 		message := fmt.Sprintf("This channel is set to receive notifications for Beehive deployments to %s", triggerDescription)
-		go slack.SendMessage(db.Statement.Context, *toEdit.SlackChannel, message)
+		go slack.SendMessage(db.Statement.Context, *toEdit.SlackChannel, message, nil)
 	}
 
 	ctx.JSON(http.StatusOK, slackDeployHookFromModel(toEdit))

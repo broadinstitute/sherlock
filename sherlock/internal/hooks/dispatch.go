@@ -75,7 +75,7 @@ func collectSlackNotificationCallbacks(db *gorm.DB, ciRun models.CiRun) (callbac
 				channel := unsafeChannel
 				callbacks = append(callbacks, func() error {
 					return dispatcher.DispatchSlackCompletionNotification(
-						db.Statement.Context, channel, text, ciRun.Succeeded())
+						db.Statement.Context, channel, text, ciRun.Succeeded(), ciRun.NotifySlackCustomIcon)
 				})
 			}
 		}

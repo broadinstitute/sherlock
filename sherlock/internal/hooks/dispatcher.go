@@ -9,7 +9,7 @@ import (
 )
 
 type mockableDispatcher interface {
-	DispatchSlackCompletionNotification(ctx context.Context, channel string, text string, succeeded bool) error
+	DispatchSlackCompletionNotification(ctx context.Context, channel string, text string, succeeded bool, icon *string) error
 	DispatchSlackDeployHook(db *gorm.DB, hook models.SlackDeployHook, ciRun models.CiRun) error
 	DispatchGithubActionsDeployHook(db *gorm.DB, hook models.GithubActionsDeployHook, ciRun models.CiRun) error
 }

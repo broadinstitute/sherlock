@@ -50,6 +50,7 @@ type CiRun struct {
 	Status                         *string
 	NotifySlackChannelsUponSuccess datatypes.JSONSlice[string]
 	NotifySlackChannelsUponFailure datatypes.JSONSlice[string]
+	NotifySlackCustomIcon          *string
 
 	// ResourceStatus is ignored by Gorm and isn't stored in the database -- at least, not
 	// on the CiRun type itself. The data is actually stored on CiRunIdentifierJoin, and this
