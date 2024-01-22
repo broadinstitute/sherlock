@@ -55,7 +55,7 @@ func gitCommitsV3Upsert(ctx *gin.Context) {
 	var durationSeconds float64
 	var uintDurationSeconds uint
 
-	if len(previous) > 0 && !previous[0].CommittedAt.IsZero() && !body.CommittedAt.IsZero() {
+	if len(previous) > 0 && !previous[0].CommittedAt.IsZero() && !body.CommittedAt.IsZero() && previous[0].CommittedAt.Before(body.CommittedAt) {
 		previousCommittedAt = previous[0].CommittedAt.Format(time.DateTime)
 		incomingCommittedAt = body.CommittedAt.Format(time.DateTime)
 		duration := body.CommittedAt.Sub(previous[0].CommittedAt)
