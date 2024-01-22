@@ -1,6 +1,6 @@
 {
   "name": "@sherlock-js-client/sherlock",
-  "version": "v0.4.10",
+  "version": "v0.4.11",
   "description": "OpenAPI client for @sherlock-js-client/sherlock",
   "author": "OpenAPI-Generator",
   "repository": {
