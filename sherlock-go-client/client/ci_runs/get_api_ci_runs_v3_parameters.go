@@ -110,6 +110,13 @@ type GetAPICiRunsV3Params struct {
 	*/
 	NotifySlackChannelsUponSuccess []string
 
+	/* NotifySlackCustomIcon.
+
+	     Icon to use for success or failure Slack notifications. Can be given either as a URL to an image or as a Slack emoji (using colon shortcodes, like :smiley:).
+	An empty string is ignored to facilitate calling from GitHub Actions (where it's easier to pass an empty string than not send the field at all).
+	*/
+	NotifySlackCustomIcon *string
+
 	/* Offset.
 
 	   Control the offset for the returned CiRuns (default 0)
@@ -338,6 +345,17 @@ func (o *GetAPICiRunsV3Params) WithNotifySlackChannelsUponSuccess(notifySlackCha
 // SetNotifySlackChannelsUponSuccess adds the notifySlackChannelsUponSuccess to the get API ci runs v3 params
 func (o *GetAPICiRunsV3Params) SetNotifySlackChannelsUponSuccess(notifySlackChannelsUponSuccess []string) {
 	o.NotifySlackChannelsUponSuccess = notifySlackChannelsUponSuccess
+}
+
+// WithNotifySlackCustomIcon adds the notifySlackCustomIcon to the get API ci runs v3 params
+func (o *GetAPICiRunsV3Params) WithNotifySlackCustomIcon(notifySlackCustomIcon *string) *GetAPICiRunsV3Params {
+	o.SetNotifySlackCustomIcon(notifySlackCustomIcon)
+	return o
+}
+
+// SetNotifySlackCustomIcon adds the notifySlackCustomIcon to the get API ci runs v3 params
+func (o *GetAPICiRunsV3Params) SetNotifySlackCustomIcon(notifySlackCustomIcon *string) {
+	o.NotifySlackCustomIcon = notifySlackCustomIcon
 }
 
 // WithOffset adds the offset to the get API ci runs v3 params
@@ -642,6 +660,23 @@ func (o *GetAPICiRunsV3Params) WriteToRequest(r runtime.ClientRequest, reg strfm
 		// query array param notifySlackChannelsUponSuccess
 		if err := r.SetQueryParam("notifySlackChannelsUponSuccess", joinedNotifySlackChannelsUponSuccess...); err != nil {
 			return err
+		}
+	}
+
+	if o.NotifySlackCustomIcon != nil {
+
+		// query param notifySlackCustomIcon
+		var qrNotifySlackCustomIcon string
+
+		if o.NotifySlackCustomIcon != nil {
+			qrNotifySlackCustomIcon = *o.NotifySlackCustomIcon
+		}
+		qNotifySlackCustomIcon := qrNotifySlackCustomIcon
+		if qNotifySlackCustomIcon != "" {
+
+			if err := r.SetQueryParam("notifySlackCustomIcon", qNotifySlackCustomIcon); err != nil {
+				return err
+			}
 		}
 	}
 

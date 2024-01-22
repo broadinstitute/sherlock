@@ -70,9 +70,9 @@ func slackDeployHooksV3Create(ctx *gin.Context) {
 	}
 	if result.SlackChannel != nil {
 		if result.Trigger.OnEnvironment != nil {
-			go slack.SendMessage(db.Statement.Context, *result.SlackChannel, fmt.Sprintf("This channel will now receive notifications for Beehive deployments in %s", result.Trigger.OnEnvironment.Name))
+			go slack.SendMessage(db.Statement.Context, *result.SlackChannel, fmt.Sprintf("This channel will now receive notifications for Beehive deployments in %s", result.Trigger.OnEnvironment.Name), nil)
 		} else if result.Trigger.OnChartRelease != nil {
-			go slack.SendMessage(db.Statement.Context, *result.SlackChannel, fmt.Sprintf("This channel will now receive notifications for Beehive deployments to %s", result.Trigger.OnChartRelease.Name))
+			go slack.SendMessage(db.Statement.Context, *result.SlackChannel, fmt.Sprintf("This channel will now receive notifications for Beehive deployments to %s", result.Trigger.OnChartRelease.Name), nil)
 		}
 	}
 	ctx.JSON(http.StatusCreated, slackDeployHookFromModel(result))

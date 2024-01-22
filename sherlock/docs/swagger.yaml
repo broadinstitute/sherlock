@@ -362,6 +362,11 @@ definitions:
         items:
           type: string
         type: array
+      notifySlackCustomIcon:
+        description: |-
+          Icon to use for success or failure Slack notifications. Can be given either as a URL to an image or as a Slack emoji (using colon shortcodes, like :smiley:).
+          An empty string is ignored to facilitate calling from GitHub Actions (where it's easier to pass an empty string than not send the field at all).
+        type: string
       platform:
         type: string
       relatedResources:
@@ -467,6 +472,11 @@ definitions:
         items:
           type: string
         type: array
+      notifySlackCustomIcon:
+        description: |-
+          Icon to use for success or failure Slack notifications. Can be given either as a URL to an image or as a Slack emoji (using colon shortcodes, like :smiley:).
+          An empty string is ignored to facilitate calling from GitHub Actions (where it's easier to pass an empty string than not send the field at all).
+        type: string
       platform:
         type: string
       relateToChangesetNewVersions:
@@ -3234,6 +3244,12 @@ paths:
           type: string
         name: notifySlackChannelsUponSuccess
         type: array
+      - description: |-
+          Icon to use for success or failure Slack notifications. Can be given either as a URL to an image or as a Slack emoji (using colon shortcodes, like :smiley:).
+          An empty string is ignored to facilitate calling from GitHub Actions (where it's easier to pass an empty string than not send the field at all).
+        in: query
+        name: notifySlackCustomIcon
+        type: string
       - in: query
         name: platform
         type: string

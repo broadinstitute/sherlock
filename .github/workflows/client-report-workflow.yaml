@@ -7,7 +7,7 @@ name: Report GitHub Actions Workflow
 # "dsp-tools-iap-access@dsp-tools-k8s.iam.gserviceaccount.com" service account; steps 1 and 2 of the documentation:
 # https://docs.google.com/document/d/1bnhDmWQHAMat_Saoa_z28FHwXmGWw6kywjdbKf208h4/edit
 #
-# With that configured, here's an example of how you can call this workflow:
+# With that configured, here's an example of how you can call this workflow (all fields optional and many more available):
 # ```yaml
 # jobs:
 #
@@ -16,6 +16,7 @@ name: Report GitHub Actions Workflow
 #     with:
 #       relates-to-chart-releases: leonardo-dev
 #       notify-slack-channels-upon-workflow-completion: "#workbench-resilience-dev"
+#       notify-slack-custom-icon: ":terra:"
 #     permissions:
 #       id-token: write
 # ```
@@ -53,6 +54,15 @@ on:
           Slack channels that Beehive should notify when this workflow fails.
           
           Multiple slack channels can be provided by separating them with whitespace and/or commas.
+
+      notify-slack-custom-icon:
+        required: false
+        type: string
+        description: |
+          A custom icon to use for any of the above Slack notifications. Can be given either as a
+          public image URL or as a Slack emoji in colon-shortcode format (e.g. ":smiley:").
+          
+          If not provided, Beehive's icon will be used.
 
       #
       # Workflow relations
@@ -223,6 +233,7 @@ jobs:
               charts: process.env.CHARTS.split(/[\s,]+/).filter(Boolean),
               changesets: process.env.CHANGESETS.split(/[\s,]+/).filter(Boolean),
 
+              notifySlackCustomIcon: "${{ inputs.notify-slack-custom-icon }}",
               relateToChangesetNewVersions: "${{ inputs.relate-to-changeset-new-versions }}",
               ignoreBadSelectors: ${{ inputs.ignore-bad-selectors }},
 
