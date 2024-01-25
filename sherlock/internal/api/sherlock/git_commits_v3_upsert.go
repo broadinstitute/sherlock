@@ -2,7 +2,6 @@ package sherlock
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/authentication"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
@@ -47,24 +46,30 @@ func gitCommitsV3Upsert(ctx *gin.Context) {
 		Limit(1).
 		Order("created_at desc").
 		Find(&previous).Error; err != nil {
-		errors.AbortRequest(ctx, err)
+		errors.AbortRequest(ctx, fmt.Errorf("failed to query for previous GitCommit: %w", err))
 		return
 	}
 
 	var timeSince *uint
+	var previousCommittedAt, incomingCommittedAt, durationString string
+	var durationSeconds float64
+	var uintDurationSeconds uint
 
-	if len(previous) > 0 {
-		timeSince = utils.PointerTo(uint(body.CommittedAt.Sub(previous[0].CommittedAt).Seconds()))
+	if len(previous) > 0 && !previous[0].CommittedAt.IsZero() && !body.CommittedAt.IsZero() && previous[0].CommittedAt.Before(body.CommittedAt) {
+		previousCommittedAt = previous[0].CommittedAt.Format(time.DateTime)
+		incomingCommittedAt = body.CommittedAt.Format(time.DateTime)
+		duration := body.CommittedAt.Sub(previous[0].CommittedAt)
+		durationString = duration.String()
+		durationSeconds = duration.Seconds()
+		uintDurationSeconds = uint(durationSeconds)
+		timeSince = &uintDurationSeconds
 	}
 
 	var result models.GitCommit
-	if err = db.Where(&models.GitCommit{GitRepo: body.GitRepo, GitBranch: body.GitBranch, GitCommit: body.GitCommit}).
-		Attrs(&models.GitCommit{
-			IsMainBranch: body.IsMainBranch,
-			SecSincePrev: timeSince,
-			CommittedAt:  body.CommittedAt,
-		}).FirstOrCreate(&result).Error; err != nil {
-		errors.AbortRequest(ctx, err)
+	where := models.GitCommit{GitRepo: body.GitRepo, GitBranch: body.GitBranch, GitCommit: body.GitCommit}
+	attrs := models.GitCommit{IsMainBranch: body.IsMainBranch, SecSincePrev: timeSince, CommittedAt: body.CommittedAt}
+	if err = db.Where(&where).Attrs(&attrs).FirstOrCreate(&result).Error; err != nil {
+		errors.AbortRequest(ctx, fmt.Errorf("failed to upsert GitCommit (previous at %s, incoming at %s, duration between of %s, in seconds is %f, as uint is %d): %w", previousCommittedAt, incomingCommittedAt, durationString, durationSeconds, uintDurationSeconds, err))
 		return
 	}
 

@@ -134,6 +134,13 @@ export interface SherlockCiRunV3Upsert {
      */
     notifySlackChannelsUponSuccess?: Array<string>;
     /**
+     * Icon to use for success or failure Slack notifications. Can be given either as a URL to an image or as a Slack emoji (using colon shortcodes, like :smiley:).
+     * An empty string is ignored to facilitate calling from GitHub Actions (where it's easier to pass an empty string than not send the field at all).
+     * @type {string}
+     * @memberof SherlockCiRunV3Upsert
+     */
+    notifySlackCustomIcon?: string;
+    /**
      * 
      * @type {string}
      * @memberof SherlockCiRunV3Upsert
@@ -215,6 +222,7 @@ export function SherlockCiRunV3UpsertFromJSONTyped(json: any, ignoreDiscriminato
         'ignoreBadSelectors': !exists(json, 'ignoreBadSelectors') ? undefined : json['ignoreBadSelectors'],
         'notifySlackChannelsUponFailure': !exists(json, 'notifySlackChannelsUponFailure') ? undefined : json['notifySlackChannelsUponFailure'],
         'notifySlackChannelsUponSuccess': !exists(json, 'notifySlackChannelsUponSuccess') ? undefined : json['notifySlackChannelsUponSuccess'],
+        'notifySlackCustomIcon': !exists(json, 'notifySlackCustomIcon') ? undefined : json['notifySlackCustomIcon'],
         'platform': !exists(json, 'platform') ? undefined : json['platform'],
         'relateToChangesetNewVersions': !exists(json, 'relateToChangesetNewVersions') ? undefined : json['relateToChangesetNewVersions'],
         'startedAt': !exists(json, 'startedAt') ? undefined : json['startedAt'],
@@ -251,6 +259,7 @@ export function SherlockCiRunV3UpsertToJSON(value?: SherlockCiRunV3Upsert | null
         'ignoreBadSelectors': value.ignoreBadSelectors,
         'notifySlackChannelsUponFailure': value.notifySlackChannelsUponFailure,
         'notifySlackChannelsUponSuccess': value.notifySlackChannelsUponSuccess,
+        'notifySlackCustomIcon': value.notifySlackCustomIcon,
         'platform': value.platform,
         'relateToChangesetNewVersions': value.relateToChangesetNewVersions,
         'startedAt': value.startedAt,

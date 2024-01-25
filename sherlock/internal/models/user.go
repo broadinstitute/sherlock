@@ -125,12 +125,18 @@ func (u *User) AlphaNumericHyphenatedUsername() string {
 	return string(ret)
 }
 
-func (u *User) SlackReference() string {
-	if u.SlackID != nil {
-		return fmt.Sprintf("<@%s>", *u.SlackID)
-	} else if u.Name != nil {
-		return fmt.Sprintf("<https://broad.io/beehive/r/user/%s|%s>", u.Email, *u.Name)
+func (u *User) NameOrEmailHandle() string {
+	if u.Name != nil {
+		return *u.Name
 	} else {
-		return fmt.Sprintf("<https://broad.io/beehive/r/user/%s|%s>", u.Email, u.Email)
+		return strings.Split(u.Email, "@")[0]
+	}
+}
+
+func (u *User) SlackReference(mention bool) string {
+	if u.SlackID != nil && mention {
+		return fmt.Sprintf("<@%s>", *u.SlackID)
+	} else {
+		return fmt.Sprintf("<https://broad.io/beehive/r/user/%s|%s>", u.Email, u.NameOrEmailHandle())
 	}
 }

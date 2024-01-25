@@ -99,6 +99,13 @@ export interface SherlockCiRunV3 {
      */
     notifySlackChannelsUponSuccess?: Array<string>;
     /**
+     * Icon to use for success or failure Slack notifications. Can be given either as a URL to an image or as a Slack emoji (using colon shortcodes, like :smiley:).
+     * An empty string is ignored to facilitate calling from GitHub Actions (where it's easier to pass an empty string than not send the field at all).
+     * @type {string}
+     * @memberof SherlockCiRunV3
+     */
+    notifySlackCustomIcon?: string;
+    /**
      * 
      * @type {string}
      * @memberof SherlockCiRunV3
@@ -179,6 +186,7 @@ export function SherlockCiRunV3FromJSONTyped(json: any, ignoreDiscriminator: boo
         'id': !exists(json, 'id') ? undefined : json['id'],
         'notifySlackChannelsUponFailure': !exists(json, 'notifySlackChannelsUponFailure') ? undefined : json['notifySlackChannelsUponFailure'],
         'notifySlackChannelsUponSuccess': !exists(json, 'notifySlackChannelsUponSuccess') ? undefined : json['notifySlackChannelsUponSuccess'],
+        'notifySlackCustomIcon': !exists(json, 'notifySlackCustomIcon') ? undefined : json['notifySlackCustomIcon'],
         'platform': !exists(json, 'platform') ? undefined : json['platform'],
         'relatedResources': !exists(json, 'relatedResources') ? undefined : ((json['relatedResources'] as Array<any>).map(SherlockCiIdentifierV3FromJSON)),
         'resourceStatus': !exists(json, 'resourceStatus') ? undefined : json['resourceStatus'],
@@ -211,6 +219,7 @@ export function SherlockCiRunV3ToJSON(value?: SherlockCiRunV3 | null): any {
         'id': value.id,
         'notifySlackChannelsUponFailure': value.notifySlackChannelsUponFailure,
         'notifySlackChannelsUponSuccess': value.notifySlackChannelsUponSuccess,
+        'notifySlackCustomIcon': value.notifySlackCustomIcon,
         'platform': value.platform,
         'relatedResources': value.relatedResources === undefined ? undefined : ((value.relatedResources as Array<any>).map(SherlockCiIdentifierV3ToJSON)),
         'resourceStatus': value.resourceStatus,

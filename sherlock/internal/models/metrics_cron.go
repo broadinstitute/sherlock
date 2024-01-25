@@ -190,15 +190,20 @@ group by result_per_version.chart_release_id
 
 func reportDataTypeCounts(ctx context.Context, db *gorm.DB) error {
 	for dataType, model := range map[string]any{
-		"chart":         Chart{},
-		"environment":   Environment{},
-		"cluster":       Cluster{},
-		"app_version":   AppVersion{},
-		"chart_version": ChartVersion{},
-		"changeset":     Changeset{},
-		"chart_release": ChartRelease{},
-		"ci_identifier": CiIdentifier{},
-		"ci_run":        CiRun{},
+		"chart":                      Chart{},
+		"environment":                Environment{},
+		"cluster":                    Cluster{},
+		"app_version":                AppVersion{},
+		"chart_version":              ChartVersion{},
+		"changeset":                  Changeset{},
+		"chart_release":              ChartRelease{},
+		"ci_identifier":              CiIdentifier{},
+		"ci_run":                     CiRun{},
+		"github_actions_deploy_hook": GithubActionsDeployHook{},
+		"slack_deploy_hook":          SlackDeployHook{},
+		"deploy_hook_trigger_config": DeployHookTriggerConfig{},
+		"user":                       User{},
+		"pagerduty_integration":      PagerdutyIntegration{},
 	} {
 		var count int64
 		if err := db.
@@ -396,7 +401,7 @@ func UpdateMetrics(ctx context.Context, db *gorm.DB) error {
 		}
 
 		var chartReleases []ChartRelease
-		if err = db.Model(&ChartRelease{}).Where(&ChartRelease{ChartID: chart.ID}).Order("updated_at desc").Find(&chartReleases).Error; err != nil {
+		if err = db.Model(&ChartRelease{}).Preload("Environment").Where(&ChartRelease{ChartID: chart.ID}).Order("updated_at desc").Find(&chartReleases).Error; err != nil {
 			return err
 		}
 		if err != nil {

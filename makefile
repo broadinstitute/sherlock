@@ -84,12 +84,12 @@ deploy-webhook-proxy:
 			--gen2 \
 			--project=dsp-tools-k8s \
 			--region us-central1 \
-			--runtime go119 \
+			--runtime go121 \
 			--trigger-http \
 			--allow-unauthenticated \
 			--source . \
 			--entry-point HandleWebhook \
-			--set-env-vars SHERLOCK_URL='https://sherlock.dsp-devops.broadinstitute.org',IAP_AUDIENCE='1038484894585-k8qvf7l876733laev0lm8kenfa2lj6bn.apps.googleusercontent.com',ALLOWED_GITHUB_ORGS='broadinstitute DataBiosphere CancerDataAggregator' \
+			--set-env-vars SHERLOCK_URL='https://sherlock.dsp-devops.broadinstitute.org',IAP_AUDIENCE='1038484894585-k8qvf7l876733laev0lm8kenfa2lj6bn.apps.googleusercontent.com',ALLOWED_GITHUB_ORGS='broadinstitute DataBiosphere CancerDataAggregator hcholab' \
 			--set-secrets GITHUB_WEBHOOK_SECRET=sherlock-prod-webhook-secret:latest \
 			--service-account sherlock-webhook-proxy@dsp-tools-k8s.iam.gserviceaccount.com \
 		; rm -rf vendor

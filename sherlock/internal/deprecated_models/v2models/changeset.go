@@ -6,7 +6,6 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
-	"github.com/broadinstitute/sherlock/sherlock/internal/pactbroker"
 	"github.com/broadinstitute/sherlock/sherlock/internal/pagerduty"
 	"github.com/broadinstitute/sherlock/sherlock/internal/slack"
 	"github.com/rs/zerolog/log"
@@ -184,7 +183,7 @@ func (s *internalChangesetStore) plan(db *gorm.DB, changesets []Changeset, user 
 			if err != nil && strings.Contains(err.Error(), "deadlock detected") {
 				planned, _, err = s.Create(db, changeset, user)
 				if err == nil {
-					go slack.SendMessage(db.Statement.Context, "#ap-k8s-monitor", fmt.Sprintf("Sherlock encountered a deadlock during changeset creation (index %d) but recovered", index+1))
+					go slack.SendMessage(db.Statement.Context, "#ap-k8s-monitor", fmt.Sprintf("Sherlock encountered a deadlock during changeset creation (index %d) but recovered", index+1), nil)
 				}
 			}
 			if err != nil {
@@ -291,14 +290,20 @@ func (s *internalChangesetStore) apply(db *gorm.DB, changesets []Changeset, user
 					fmt.Sprintf(config.Config.MustString("beehive.chartReleaseUrlFormatString"), chartRelease.Name),
 				)
 			}
+			// Disabled pending test coverage
+			// TODO: DDO-3385
+			//
+			//
 			// Record app version to Pact broker
-			if chartRelease.Environment != nil && chartRelease.Chart.PactParticipant != nil && *chartRelease.Chart.PactParticipant && chartRelease.Environment.PactIdentifier != nil {
-				go pactbroker.RecordDeployment(
-					chartRelease.Chart.Name,
-					chartRelease.AppVersion.AppVersion,
-					*chartRelease.Environment.PactIdentifier,
-				)
-			}
+			//if chartRelease.Environment != nil && chartRelease.Environment.PactIdentifier != nil &&
+			//	chartRelease.Chart != nil && chartRelease.Chart.PactParticipant != nil && *chartRelease.Chart.PactParticipant &&
+			//	chartRelease.AppVersion != nil && chartRelease.AppVersion.AppVersion != "" {
+			//	go pactbroker.RecordDeployment(
+			//		chartRelease.Chart.Name,
+			//		chartRelease.AppVersion.AppVersion,
+			//		*chartRelease.Environment.PactIdentifier,
+			//	)
+			//}
 		}
 
 		for environmentID, chartReleaseNames := range environmentReleases {

@@ -50,7 +50,7 @@ func appVersionsV3Edit(ctx *gin.Context) {
 		return
 	}
 
-	if err = db.Model(&toEdit).Updates(&edits).Error; err != nil {
+	if err = db.Model(&toEdit).Omit(clause.Associations).Updates(&edits).Error; err != nil {
 		errors.AbortRequest(ctx, err)
 		return
 	}

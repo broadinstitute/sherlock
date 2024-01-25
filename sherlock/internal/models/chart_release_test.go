@@ -1,8 +1,12 @@
 package models
 
 import (
+	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
+	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
+	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 func (s *modelSuite) TestChartReleaseAutopopulateDatabaseInstance() {
@@ -153,4 +157,69 @@ func (s *modelSuite) TestChartReleaseValidationSqlDestinationTypeInvalidDestinat
 	chartRelease := s.TestData.ChartRelease_ExternalDnsTerraQaBees()
 	err := s.DB.Model(&chartRelease).Select("DestinationType").Updates(&ChartRelease{DestinationType: "thebroadinstitute"}).Error
 	s.ErrorContains(err, "violates check constraint \"destination_type_valid\"")
+}
+
+func TestChartRelease_SlackBeehiveLink(t *testing.T) {
+	type fields struct {
+		Name string
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   string
+	}{
+		{
+			name:   "no name",
+			fields: fields{},
+			want:   "(unknown chart release)",
+		},
+		{
+			name:   "with name",
+			fields: fields{Name: "example"},
+			want:   "<" + fmt.Sprintf(config.Config.String("beehive.chartReleaseUrlFormatString"), "example") + "|example>",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := &ChartRelease{
+				Name: tt.fields.Name,
+			}
+			assert.Equalf(t, tt.want, c.SlackBeehiveLink(), "SlackBeehiveLink()")
+		})
+	}
+}
+
+func TestChartRelease_ArgoCdUrl(t *testing.T) {
+	type fields struct {
+		Name string
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   string
+		wantOk bool
+	}{
+		{
+			name:   "no name",
+			fields: fields{},
+			want:   "",
+			wantOk: false,
+		},
+		{
+			name:   "with name",
+			fields: fields{Name: "example"},
+			want:   fmt.Sprintf(config.Config.String("argoCd.chartReleaseUrlFormatString"), "example"),
+			wantOk: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := &ChartRelease{
+				Name: tt.fields.Name,
+			}
+			got, gotOk := c.ArgoCdUrl()
+			assert.Equalf(t, tt.want, got, "ArgoCdUrl()")
+			assert.Equalf(t, tt.wantOk, gotOk, "ArgoCdUrl()")
+		})
+	}
 }

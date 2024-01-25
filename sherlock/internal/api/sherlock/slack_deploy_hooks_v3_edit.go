@@ -7,6 +7,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/slack"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm/clause"
 	"net/http"
 )
 
@@ -51,8 +52,9 @@ func slackDeployHooksV3Edit(ctx *gin.Context) {
 	}
 
 	edits := models.SlackDeployHook{
-		Trigger:      trigger,
-		SlackChannel: body.SlackChannel,
+		Trigger:       trigger,
+		SlackChannel:  body.SlackChannel,
+		MentionPeople: body.MentionPeople,
 	}
 
 	var toEdit models.SlackDeployHook
@@ -66,34 +68,27 @@ func slackDeployHooksV3Edit(ctx *gin.Context) {
 		return
 	}
 
-	if err = db.Model(&toEdit).Updates(&edits).Error; err != nil {
+	editedChannel := body.SlackChannel != nil && toEdit.SlackChannel != nil && *body.SlackChannel != *toEdit.SlackChannel
+
+	if err = db.Model(&toEdit).Omit(clause.Associations).Updates(&edits).Error; err != nil {
 		errors.AbortRequest(ctx, err)
 		return
 	}
 
-	if err = db.Model(&toEdit.Trigger).Updates(&edits.Trigger).Error; err != nil {
+	if err = db.Model(&toEdit.Trigger).Omit(clause.Associations).Updates(&edits.Trigger).Error; err != nil {
 		errors.AbortRequest(ctx, err)
 		return
 	}
 
-	if toEdit.SlackChannel != nil {
+	if toEdit.SlackChannel != nil && editedChannel {
 		var triggerDescription string
 		if toEdit.Trigger.OnEnvironment != nil {
 			triggerDescription = toEdit.Trigger.OnEnvironment.Name
 		} else if toEdit.Trigger.OnChartRelease != nil {
 			triggerDescription = toEdit.Trigger.OnChartRelease.Name
 		}
-		var message string
-		if body.Beta != nil && *body.Beta {
-			message = fmt.Sprintf("This channel is now enrolled in beta notifications for %s deployments; please direct any feedback to <#C029LTN5L80>", triggerDescription)
-		} else if body.Beta != nil && !*body.Beta {
-			message = fmt.Sprintf("This channel is no longer enrolled in beta notifications for %s deployments", triggerDescription)
-		} else {
-			message = fmt.Sprintf("This channel is set to receive notifications for Beehive deployments to %s", triggerDescription)
-		}
-		if message != "" {
-			go slack.SendMessage(db.Statement.Context, *toEdit.SlackChannel, message)
-		}
+		message := fmt.Sprintf("This channel is set to receive notifications for Beehive deployments to %s", triggerDescription)
+		go slack.SendMessage(db.Statement.Context, *toEdit.SlackChannel, message, nil)
 	}
 
 	ctx.JSON(http.StatusOK, slackDeployHookFromModel(toEdit))

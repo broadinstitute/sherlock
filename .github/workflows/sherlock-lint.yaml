@@ -25,7 +25,10 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        directory: ["sherlock", "go-shared", "sherlock-webhook-proxy"]
+        directory:
+          - "sherlock"
+          - "go-shared"
+          - "sherlock-webhook-proxy"
     steps:
       - uses: actions/checkout@v4
 
@@ -34,6 +37,8 @@ jobs:
         with:
           go-version-file: ${{ matrix.directory }}/go.mod
 
+      # If this fails saying "no go files to analyze", that error is lying
+      # Make sure your branch is updated and run `go mod tidy` in every directory with a go.mod in it
       - name: Lint
         uses: golangci/golangci-lint-action@v3
         with:
@@ -51,7 +56,7 @@ jobs:
 
           # Optional: if set to true then the all caching functionality will be complete disabled,
           #           takes precedence over all other caching options.
-          # skip-cache: true
+          skip-cache: true
 
           # Optional: if set to true then the action don't cache or restore ~/go/pkg.
           # skip-pkg-cache: true

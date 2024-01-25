@@ -9,6 +9,9 @@ import (
 
 func Test_isEnabled(t *testing.T) {
 	t.Run("false in default config", func(t *testing.T) {
+		// This can potentially fail with race conditions
+		// Jack's potentially seen that once but there were other weird things going on
+		// If we see it more, maybe remove this test case
 		assert.False(t, isEnabled())
 	})
 	t.Run("false if no client in test config", func(t *testing.T) {

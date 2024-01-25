@@ -17,9 +17,6 @@ import (
 // swagger:model sherlock.SlackDeployHookV3Edit
 type SherlockSlackDeployHookV3Edit struct {
 
-	// beta
-	Beta bool `json:"beta,omitempty"`
-
 	// mention people
 	MentionPeople bool `json:"mentionPeople,omitempty"`
 

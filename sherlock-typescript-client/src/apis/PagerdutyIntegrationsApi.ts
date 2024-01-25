@@ -18,6 +18,9 @@ import type {
   ErrorsErrorResponse,
   PagerdutyAlertSummary,
   PagerdutySendAlertResponse,
+  SherlockPagerdutyIntegrationV3,
+  SherlockPagerdutyIntegrationV3Create,
+  SherlockPagerdutyIntegrationV3Edit,
   V2controllersCreatablePagerdutyIntegration,
   V2controllersEditablePagerdutyIntegration,
   V2controllersPagerdutyIntegration,
@@ -29,6 +32,12 @@ import {
     PagerdutyAlertSummaryToJSON,
     PagerdutySendAlertResponseFromJSON,
     PagerdutySendAlertResponseToJSON,
+    SherlockPagerdutyIntegrationV3FromJSON,
+    SherlockPagerdutyIntegrationV3ToJSON,
+    SherlockPagerdutyIntegrationV3CreateFromJSON,
+    SherlockPagerdutyIntegrationV3CreateToJSON,
+    SherlockPagerdutyIntegrationV3EditFromJSON,
+    SherlockPagerdutyIntegrationV3EditToJSON,
     V2controllersCreatablePagerdutyIntegrationFromJSON,
     V2controllersCreatablePagerdutyIntegrationToJSON,
     V2controllersEditablePagerdutyIntegrationFromJSON,
@@ -36,6 +45,34 @@ import {
     V2controllersPagerdutyIntegrationFromJSON,
     V2controllersPagerdutyIntegrationToJSON,
 } from '../models/index';
+
+export interface ApiPagerdutyIntegrationsV3GetRequest {
+    createdAt?: Date;
+    id?: number;
+    name?: string;
+    pagerdutyID?: string;
+    type?: string;
+    updatedAt?: Date;
+    limit?: number;
+    offset?: number;
+}
+
+export interface ApiPagerdutyIntegrationsV3PostRequest {
+    pagerdutyIntegration: SherlockPagerdutyIntegrationV3Create;
+}
+
+export interface ApiPagerdutyIntegrationsV3SelectorDeleteRequest {
+    selector: string;
+}
+
+export interface ApiPagerdutyIntegrationsV3SelectorGetRequest {
+    selector: string;
+}
+
+export interface ApiPagerdutyIntegrationsV3SelectorPatchRequest {
+    selector: string;
+    pagerdutyIntegration: SherlockPagerdutyIntegrationV3Edit;
+}
 
 export interface ApiV2PagerdutyIntegrationsGetRequest {
     createdAt?: Date;
@@ -82,6 +119,204 @@ export interface ApiV2SelectorsPagerdutyIntegrationsSelectorGetRequest {
  * 
  */
 export class PagerdutyIntegrationsApi extends runtime.BaseAPI {
+
+    /**
+     * List PagerdutyIntegrations matching a filter.
+     * List PagerdutyIntegrations matching a filter
+     */
+    async apiPagerdutyIntegrationsV3GetRaw(requestParameters: ApiPagerdutyIntegrationsV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockPagerdutyIntegrationV3>>> {
+        const queryParameters: any = {};
+
+        if (requestParameters.createdAt !== undefined) {
+            queryParameters['createdAt'] = (requestParameters.createdAt as any).toISOString();
+        }
+
+        if (requestParameters.id !== undefined) {
+            queryParameters['id'] = requestParameters.id;
+        }
+
+        if (requestParameters.name !== undefined) {
+            queryParameters['name'] = requestParameters.name;
+        }
+
+        if (requestParameters.pagerdutyID !== undefined) {
+            queryParameters['pagerdutyID'] = requestParameters.pagerdutyID;
+        }
+
+        if (requestParameters.type !== undefined) {
+            queryParameters['type'] = requestParameters.type;
+        }
+
+        if (requestParameters.updatedAt !== undefined) {
+            queryParameters['updatedAt'] = (requestParameters.updatedAt as any).toISOString();
+        }
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.offset !== undefined) {
+            queryParameters['offset'] = requestParameters.offset;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/pagerduty-integrations/v3`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(SherlockPagerdutyIntegrationV3FromJSON));
+    }
+
+    /**
+     * List PagerdutyIntegrations matching a filter.
+     * List PagerdutyIntegrations matching a filter
+     */
+    async apiPagerdutyIntegrationsV3Get(requestParameters: ApiPagerdutyIntegrationsV3GetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<SherlockPagerdutyIntegrationV3>> {
+        const response = await this.apiPagerdutyIntegrationsV3GetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Create a PagerdutyIntegration.
+     * Create a PagerdutyIntegration
+     */
+    async apiPagerdutyIntegrationsV3PostRaw(requestParameters: ApiPagerdutyIntegrationsV3PostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockPagerdutyIntegrationV3>> {
+        if (requestParameters.pagerdutyIntegration === null || requestParameters.pagerdutyIntegration === undefined) {
+            throw new runtime.RequiredError('pagerdutyIntegration','Required parameter requestParameters.pagerdutyIntegration was null or undefined when calling apiPagerdutyIntegrationsV3Post.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/api/pagerduty-integrations/v3`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: SherlockPagerdutyIntegrationV3CreateToJSON(requestParameters.pagerdutyIntegration),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => SherlockPagerdutyIntegrationV3FromJSON(jsonValue));
+    }
+
+    /**
+     * Create a PagerdutyIntegration.
+     * Create a PagerdutyIntegration
+     */
+    async apiPagerdutyIntegrationsV3Post(requestParameters: ApiPagerdutyIntegrationsV3PostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockPagerdutyIntegrationV3> {
+        const response = await this.apiPagerdutyIntegrationsV3PostRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Delete an individual PagerdutyIntegration by its ID.
+     * Delete an individual PagerdutyIntegration
+     */
+    async apiPagerdutyIntegrationsV3SelectorDeleteRaw(requestParameters: ApiPagerdutyIntegrationsV3SelectorDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockPagerdutyIntegrationV3>> {
+        if (requestParameters.selector === null || requestParameters.selector === undefined) {
+            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiPagerdutyIntegrationsV3SelectorDelete.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/pagerduty-integrations/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            method: 'DELETE',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => SherlockPagerdutyIntegrationV3FromJSON(jsonValue));
+    }
+
+    /**
+     * Delete an individual PagerdutyIntegration by its ID.
+     * Delete an individual PagerdutyIntegration
+     */
+    async apiPagerdutyIntegrationsV3SelectorDelete(requestParameters: ApiPagerdutyIntegrationsV3SelectorDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockPagerdutyIntegrationV3> {
+        const response = await this.apiPagerdutyIntegrationsV3SelectorDeleteRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Get an individual PagerdutyIntegration.
+     * Get an individual PagerdutyIntegration
+     */
+    async apiPagerdutyIntegrationsV3SelectorGetRaw(requestParameters: ApiPagerdutyIntegrationsV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockPagerdutyIntegrationV3>> {
+        if (requestParameters.selector === null || requestParameters.selector === undefined) {
+            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiPagerdutyIntegrationsV3SelectorGet.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/pagerduty-integrations/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => SherlockPagerdutyIntegrationV3FromJSON(jsonValue));
+    }
+
+    /**
+     * Get an individual PagerdutyIntegration.
+     * Get an individual PagerdutyIntegration
+     */
+    async apiPagerdutyIntegrationsV3SelectorGet(requestParameters: ApiPagerdutyIntegrationsV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockPagerdutyIntegrationV3> {
+        const response = await this.apiPagerdutyIntegrationsV3SelectorGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Edit an individual PagerdutyIntegration.
+     * Edit an individual PagerdutyIntegration
+     */
+    async apiPagerdutyIntegrationsV3SelectorPatchRaw(requestParameters: ApiPagerdutyIntegrationsV3SelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockPagerdutyIntegrationV3>> {
+        if (requestParameters.selector === null || requestParameters.selector === undefined) {
+            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiPagerdutyIntegrationsV3SelectorPatch.');
+        }
+
+        if (requestParameters.pagerdutyIntegration === null || requestParameters.pagerdutyIntegration === undefined) {
+            throw new runtime.RequiredError('pagerdutyIntegration','Required parameter requestParameters.pagerdutyIntegration was null or undefined when calling apiPagerdutyIntegrationsV3SelectorPatch.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/api/pagerduty-integrations/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            method: 'PATCH',
+            headers: headerParameters,
+            query: queryParameters,
+            body: SherlockPagerdutyIntegrationV3EditToJSON(requestParameters.pagerdutyIntegration),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => SherlockPagerdutyIntegrationV3FromJSON(jsonValue));
+    }
+
+    /**
+     * Edit an individual PagerdutyIntegration.
+     * Edit an individual PagerdutyIntegration
+     */
+    async apiPagerdutyIntegrationsV3SelectorPatch(requestParameters: ApiPagerdutyIntegrationsV3SelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockPagerdutyIntegrationV3> {
+        const response = await this.apiPagerdutyIntegrationsV3SelectorPatchRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
 
     /**
      * List existing PagerdutyIntegration entries, ordered by most recently updated.

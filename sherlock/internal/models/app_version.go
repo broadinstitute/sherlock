@@ -1,8 +1,12 @@
 package models
 
 import (
+	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
+	"github.com/broadinstitute/sherlock/sherlock/internal/slack"
 	"gorm.io/gorm"
+	"strings"
+	"time"
 )
 
 type AppVersion struct {
@@ -92,4 +96,26 @@ SELECT * FROM search_path
 		// Path not connected, return nothing
 		return []uint{}, false, nil
 	}
+}
+
+func (a *AppVersion) VersionInterleaveTimestamp() time.Time {
+	return a.CreatedAt
+}
+
+func (a *AppVersion) SlackChangelogEntry(mentionUsers bool) string {
+	var byUser string
+	if a.AuthoredBy != nil {
+		if strings.HasSuffix(a.AuthoredBy.Email, "gserviceaccount.com") {
+			byUser = ""
+		} else {
+			byUser = fmt.Sprintf(" by %s", a.AuthoredBy.SlackReference(mentionUsers))
+		}
+	} else if a.AuthoredByID != nil {
+		byUser = fmt.Sprintf(" by an unknown user (ID %d)", *a.AuthoredByID)
+	}
+	description := a.Description
+	if len(description) > 400 {
+		description = description[:400] + "..."
+	}
+	return fmt.Sprintf("• *app %s*%s: %s", a.AppVersion, byUser, slack.MarkdownLinksToSlackLinks(slack.EscapeText(description)))
 }

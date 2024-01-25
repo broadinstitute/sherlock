@@ -35,8 +35,6 @@ jobs:
       - name: Checkout Head
         uses: actions/checkout@v4
         with:
-          # Technically superfluous but clearer to be explicit
-          ref: ${{ github.head_ref }}
           path: head
           persist-credentials: false
 

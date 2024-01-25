@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
+	"github.com/broadinstitute/sherlock/sherlock/internal/github"
 	"github.com/broadinstitute/sherlock/sherlock/internal/slack"
 	"github.com/rs/zerolog/log"
 	"gorm.io/datatypes"
@@ -49,6 +50,7 @@ type CiRun struct {
 	Status                         *string
 	NotifySlackChannelsUponSuccess datatypes.JSONSlice[string]
 	NotifySlackChannelsUponFailure datatypes.JSONSlice[string]
+	NotifySlackCustomIcon          *string
 
 	// ResourceStatus is ignored by Gorm and isn't stored in the database -- at least, not
 	// on the CiRun type itself. The data is actually stored on CiRunIdentifierJoin, and this
@@ -152,7 +154,23 @@ func (c *CiRun) SlackCompletionText(db *gorm.DB) (string, []error) {
 	if c.Status != nil {
 		status = *c.Status
 	}
-	return fmt.Sprintf("%s%s: %s", c.Nickname(), against, slack.LinkHelper(c.WebURL(), status)), errs
+	status = slack.LinkHelper(c.WebURL(), status)
+	if c.Platform == "github-actions" {
+		jobs, err := github.GetWorkflowJobStatuses(db.Statement.Context, c.GithubActionsOwner, c.GithubActionsRepo, c.GithubActionsRunID, c.GithubActionsAttemptNumber)
+		if err != nil {
+			slack.ReportError(db.Statement.Context, fmt.Sprintf("failed to get job statuses for CiRun %d", c.ID), err)
+		} else if problematicStatuses := github.FilterToProblematicJobStatuses(jobs); len(problematicStatuses) > 0 {
+			jobStatuses := make([]string, 0, len(problematicStatuses))
+			for jobID, job := range problematicStatuses {
+				jobStatuses = append(jobStatuses,
+					fmt.Sprintf("%s: %s",
+						job.Name,
+						slack.LinkHelper(c.JobWebUrl(uint(jobID)), job.Status)))
+			}
+			status = fmt.Sprintf("%s (%s)", status, strings.Join(jobStatuses, ", "))
+		}
+	}
+	return fmt.Sprintf("%s%s: %s", c.Nickname(), against, status), errs
 }
 
 func (c *CiRun) WebURL() string {
@@ -164,6 +182,16 @@ func (c *CiRun) WebURL() string {
 	default:
 		// c.Platform is an enum so we should never be able to hit this case
 		return fmt.Sprintf("https://sherlock.dsp-devops.broadinstitute.org/api/ci-runs/v3/%d", c.ID)
+	}
+}
+
+func (c *CiRun) JobWebUrl(jobID uint) string {
+	switch c.Platform {
+	case "github-actions":
+		return fmt.Sprintf("https://github.com/%s/%s/actions/runs/%d/job/%d",
+			c.GithubActionsOwner, c.GithubActionsRepo, c.GithubActionsRunID, jobID)
+	default:
+		return c.WebURL()
 	}
 }
 
@@ -197,4 +225,18 @@ func (c *CiRun) IsDeploy() bool {
 		}
 	}
 	return false
+}
+
+func (c *CiRun) DoneOrUnderway() string {
+	if c.TerminalAt == nil {
+		return "underway"
+	} else if c.Status != nil {
+		if *c.Status == "success" || *c.Status == "failure" {
+			return "done"
+		} else {
+			return *c.Status
+		}
+	} else {
+		return "waiting for status"
+	}
 }

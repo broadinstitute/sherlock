@@ -187,13 +187,17 @@ func (s *handlerSuite) TestSlackDeployHooksV3Edit() {
 					OnSuccess: utils.PointerTo(true),
 				},
 				SlackDeployHookFields: SlackDeployHookFields{
-					SlackChannel: utils.PointerTo("different channel"),
+					SlackChannel:  utils.PointerTo("different channel"),
+					MentionPeople: utils.PointerTo(true),
 				},
 			}),
 			&got)
 		s.Equal(http.StatusOK, code)
 		if s.NotNil(got.SlackChannel) {
 			s.Equal("different channel", *got.SlackChannel)
+		}
+		if s.NotNil(got.MentionPeople) {
+			s.True(*got.MentionPeople)
 		}
 		if s.NotNil(got.OnSuccess) {
 			s.True(*got.OnSuccess)
@@ -202,4 +206,36 @@ func (s *handlerSuite) TestSlackDeployHooksV3Edit() {
 			s.Equal(environment.Name, *got.OnEnvironment)
 		}
 	})
+}
+
+func (s *handlerSuite) TestSlackDeployHooksV3Edit_SpuriousDuplicates() {
+	// DDO-3402
+
+	bee := s.TestData.Environment_Swatomation_DevBee()
+
+	// Create a deploy hook on the BEE
+	hook := models.SlackDeployHook{
+		Trigger: models.DeployHookTriggerConfig{
+			OnEnvironmentID: &bee.ID,
+		},
+		SlackChannel: utils.PointerTo("channel"),
+	}
+	s.NoError(s.DB.Create(&hook).Error)
+
+	// Number of chart releases in the BEE
+	var chartReleasesInBee []models.ChartRelease
+	s.NoError(s.DB.Unscoped().Where(&models.ChartRelease{EnvironmentID: &bee.ID}).Find(&chartReleasesInBee).Error)
+	startingChartReleases := len(chartReleasesInBee)
+	s.Greater(startingChartReleases, 0)
+
+	// No-op deploy hook edit
+	var got SlackDeployHookV3
+	code := s.HandleRequest(
+		s.NewRequest("PATCH", fmt.Sprintf("/api/deploy-hooks/slack/v3/%d", hook.ID), SlackDeployHookV3Edit{}),
+		&got)
+	s.Equal(http.StatusOK, code)
+
+	// No duplicate chart releases
+	s.NoError(s.DB.Unscoped().Where(&models.ChartRelease{EnvironmentID: &bee.ID}).Find(&chartReleasesInBee).Error)
+	s.Len(chartReleasesInBee, startingChartReleases)
 }

@@ -1391,6 +1391,12 @@ const docTemplate = `{
                         "description": "Control the offset for the returned CiRuns (default 0)",
                         "name": "offsetCiRuns",
                         "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Allow stub CiRuns potentially lacking fields like status or startedAt to be returned (default false)",
+                        "name": "allowStubCiRuns",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -1584,6 +1590,12 @@ const docTemplate = `{
                         "collectionFormat": "csv",
                         "description": "Slack channels to notify if this CiRun succeeds. This field is always appended to when mutated.",
                         "name": "notifySlackChannelsUponSuccess",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Icon to use for success or failure Slack notifications. Can be given either as a URL to an image or as a Slack emoji (using colon shortcodes, like :smiley:).\nAn empty string is ignored to facilitate calling from GitHub Actions (where it's easier to pass an empty string than not send the field at all).",
+                        "name": "notifySlackCustomIcon",
                         "in": "query"
                     },
                     {
@@ -2805,11 +2817,6 @@ const docTemplate = `{
                 "summary": "List SlackDeployHooks matching a filter",
                 "parameters": [
                     {
-                        "type": "boolean",
-                        "name": "beta",
-                        "in": "query"
-                    },
-                    {
                         "type": "string",
                         "format": "date-time",
                         "name": "createdAt",
@@ -3215,6 +3222,379 @@ const docTemplate = `{
                         "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/sherlock.GitCommitV3"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/pagerduty-integrations/v3": {
+            "get": {
+                "description": "List PagerdutyIntegrations matching a filter.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PagerdutyIntegrations"
+                ],
+                "summary": "List PagerdutyIntegrations matching a filter",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "date-time",
+                        "name": "createdAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "pagerdutyID",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "type",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "format": "date-time",
+                        "name": "updatedAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Control how many PagerdutyIntegrations are returned (default 0, meaning all)",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Control the offset for the returned PagerdutyIntegrations (default 0)",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/sherlock.PagerdutyIntegrationV3"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a PagerdutyIntegration.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PagerdutyIntegrations"
+                ],
+                "summary": "Create a PagerdutyIntegration",
+                "parameters": [
+                    {
+                        "description": "The PagerdutyIntegration to create",
+                        "name": "pagerdutyIntegration",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.PagerdutyIntegrationV3Create"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.PagerdutyIntegrationV3"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/pagerduty-integrations/v3/{selector}": {
+            "get": {
+                "description": "Get an individual PagerdutyIntegration.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PagerdutyIntegrations"
+                ],
+                "summary": "Get an individual PagerdutyIntegration",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The selector of the PagerdutyIntegration, which can be either a numeric ID or the name.",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.PagerdutyIntegrationV3"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete an individual PagerdutyIntegration by its ID.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PagerdutyIntegrations"
+                ],
+                "summary": "Delete an individual PagerdutyIntegration",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The selector of the PagerdutyIntegration, which can be either a numeric ID or pd-id/\u003cpagerduty-id\u003e.",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.PagerdutyIntegrationV3"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Edit an individual PagerdutyIntegration.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PagerdutyIntegrations"
+                ],
+                "summary": "Edit an individual PagerdutyIntegration",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The selector of the PagerdutyIntegration, which can be either a numeric ID or pd-id/\u003cpagerduty-id\u003e.",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "The edits to make to the PagerdutyIntegration",
+                        "name": "pagerdutyIntegration",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.PagerdutyIntegrationV3Edit"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.PagerdutyIntegrationV3"
                         }
                     },
                     "400": {
@@ -10828,6 +11208,10 @@ const docTemplate = `{
                         "type": "string"
                     }
                 },
+                "notifySlackCustomIcon": {
+                    "description": "Icon to use for success or failure Slack notifications. Can be given either as a URL to an image or as a Slack emoji (using colon shortcodes, like :smiley:).\nAn empty string is ignored to facilitate calling from GitHub Actions (where it's easier to pass an empty string than not send the field at all).",
+                    "type": "string"
+                },
                 "platform": {
                     "type": "string"
                 },
@@ -10961,6 +11345,10 @@ const docTemplate = `{
                     "items": {
                         "type": "string"
                     }
+                },
+                "notifySlackCustomIcon": {
+                    "description": "Icon to use for success or failure Slack notifications. Can be given either as a URL to an image or as a Slack emoji (using colon shortcodes, like :smiley:).\nAn empty string is ignored to facilitate calling from GitHub Actions (where it's easier to pass an empty string than not send the field at all).",
+                    "type": "string"
                 },
                 "platform": {
                     "type": "string"
@@ -11319,6 +11707,62 @@ const docTemplate = `{
                 }
             }
         },
+        "sherlock.PagerdutyIntegrationV3": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "pagerdutyID": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string",
+                    "format": "date-time"
+                }
+            }
+        },
+        "sherlock.PagerdutyIntegrationV3Create": {
+            "type": "object",
+            "properties": {
+                "key": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "pagerdutyID": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "sherlock.PagerdutyIntegrationV3Edit": {
+            "type": "object",
+            "properties": {
+                "key": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
         "sherlock.SlackDeployHookTestRunRequest": {
             "type": "object",
             "properties": {
@@ -11339,9 +11783,6 @@ const docTemplate = `{
         "sherlock.SlackDeployHookV3": {
             "type": "object",
             "properties": {
-                "beta": {
-                    "type": "boolean"
-                },
                 "createdAt": {
                     "type": "string",
                     "format": "date-time"
@@ -11376,9 +11817,6 @@ const docTemplate = `{
         "sherlock.SlackDeployHookV3Create": {
             "type": "object",
             "properties": {
-                "beta": {
-                    "type": "boolean"
-                },
                 "mentionPeople": {
                     "type": "boolean"
                 },
@@ -11402,9 +11840,6 @@ const docTemplate = `{
         "sherlock.SlackDeployHookV3Edit": {
             "type": "object",
             "properties": {
-                "beta": {
-                    "type": "boolean"
-                },
                 "mentionPeople": {
                     "type": "boolean"
                 },

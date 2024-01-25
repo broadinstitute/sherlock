@@ -60,6 +60,12 @@ func NewGetAPICiIdentifiersV3SelectorParamsWithHTTPClient(client *http.Client) *
 */
 type GetAPICiIdentifiersV3SelectorParams struct {
 
+	/* AllowStubCiRuns.
+
+	   Allow stub CiRuns potentially lacking fields like status or startedAt to be returned (default false)
+	*/
+	AllowStubCiRuns *bool
+
 	/* LimitCiRuns.
 
 	   Control how many CiRuns are returned (default 10)
@@ -131,6 +137,17 @@ func (o *GetAPICiIdentifiersV3SelectorParams) SetHTTPClient(client *http.Client)
 	o.HTTPClient = client
 }
 
+// WithAllowStubCiRuns adds the allowStubCiRuns to the get API ci identifiers v3 selector params
+func (o *GetAPICiIdentifiersV3SelectorParams) WithAllowStubCiRuns(allowStubCiRuns *bool) *GetAPICiIdentifiersV3SelectorParams {
+	o.SetAllowStubCiRuns(allowStubCiRuns)
+	return o
+}
+
+// SetAllowStubCiRuns adds the allowStubCiRuns to the get API ci identifiers v3 selector params
+func (o *GetAPICiIdentifiersV3SelectorParams) SetAllowStubCiRuns(allowStubCiRuns *bool) {
+	o.AllowStubCiRuns = allowStubCiRuns
+}
+
 // WithLimitCiRuns adds the limitCiRuns to the get API ci identifiers v3 selector params
 func (o *GetAPICiIdentifiersV3SelectorParams) WithLimitCiRuns(limitCiRuns *int64) *GetAPICiIdentifiersV3SelectorParams {
 	o.SetLimitCiRuns(limitCiRuns)
@@ -171,6 +188,23 @@ func (o *GetAPICiIdentifiersV3SelectorParams) WriteToRequest(r runtime.ClientReq
 		return err
 	}
 	var res []error
+
+	if o.AllowStubCiRuns != nil {
+
+		// query param allowStubCiRuns
+		var qrAllowStubCiRuns bool
+
+		if o.AllowStubCiRuns != nil {
+			qrAllowStubCiRuns = *o.AllowStubCiRuns
+		}
+		qAllowStubCiRuns := swag.FormatBool(qrAllowStubCiRuns)
+		if qAllowStubCiRuns != "" {
+
+			if err := r.SetQueryParam("allowStubCiRuns", qAllowStubCiRuns); err != nil {
+				return err
+			}
+		}
+	}
 
 	if o.LimitCiRuns != nil {
 

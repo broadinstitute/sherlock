@@ -70,6 +70,13 @@ func ciRunsV3Upsert(ctx *gin.Context) {
 		return
 	}
 
+	// The notifySlackCustomIcon has some special handling noted in the API docs -- if it's empty, we ignore it here,
+	// so that GitHub Actions etc. can just always send the field and don't have to worry about doing conditional
+	// stuff to omit the field entirely.
+	if body.NotifySlackCustomIcon != nil && *body.NotifySlackCustomIcon == "" {
+		body.NotifySlackCustomIcon = nil
+	}
+
 	// Opportunistically fill empty fields with information passed in the GHA OIDC JWT
 	if body.Platform == "" || body.Platform == "github-actions" {
 		var claims *gha_oidc_claims.Claims
@@ -383,9 +390,10 @@ addingToDeduplicatedRelatedResources:
 		ArgoWorkflowsName:          body.ArgoWorkflowsName,
 		ArgoWorkflowsTemplate:      body.ArgoWorkflowsTemplate,
 	}).Assign(&models.CiRun{
-		StartedAt:  body.StartedAt,
-		TerminalAt: body.TerminalAt,
-		Status:     body.Status,
+		StartedAt:             body.StartedAt,
+		TerminalAt:            body.TerminalAt,
+		Status:                body.Status,
+		NotifySlackCustomIcon: body.NotifySlackCustomIcon,
 	}).FirstOrCreate(&result).Error; err != nil {
 		errors.AbortRequest(ctx, err)
 		return
@@ -483,7 +491,7 @@ WHERE
 		if len(body.NotifySlackChannelsUponFailure) > 0 {
 			channelUpdates.NotifySlackChannelsUponFailure = utils.Dedupe(append(result.NotifySlackChannelsUponFailure, body.NotifySlackChannelsUponFailure...))
 		}
-		if err = db.Model(&result).Updates(&channelUpdates).Error; err != nil {
+		if err = db.Model(&result).Omit(clause.Associations).Updates(&channelUpdates).Error; err != nil {
 			errors.AbortRequest(ctx, err)
 			return
 		}

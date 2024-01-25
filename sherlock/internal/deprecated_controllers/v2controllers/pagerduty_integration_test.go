@@ -206,7 +206,7 @@ func (suite *pagerdutyIntegrationControllerSuite) TestPagerdutyIntegrationEdit()
 		suite.seedPagerdutyIntegrations(suite.T(), suite.db)
 
 		_, err := suite.PagerdutyIntegrationController.Edit(fmt.Sprintf("pd-id/%s", pagerdutyIntegration1.PagerdutyID), EditablePagerdutyIntegration{Name: utils.PointerTo("")}, generateUser(suite.T(), suite.db, true))
-		assert.ErrorContains(suite.T(), err, errors.BadRequest)
+		assert.ErrorContains(suite.T(), err, "pagerduty_name_present")
 	})
 	suite.Run("unsuccessfully if forbidden", func() {
 		deprecated_db.Truncate(suite.T(), suite.db)

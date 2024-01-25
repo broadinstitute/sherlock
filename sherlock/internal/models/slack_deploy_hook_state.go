@@ -10,4 +10,6 @@ type SlackDeployHookState struct {
 	SlackDeployHookID uint            `gorm:"primaryKey"`
 	MessageTimestamp  string
 	MessageChannel    string
+	FailureAlertSent  bool
+	ChangelogSent     bool
 }

@@ -38,7 +38,17 @@ func dispatch(db *gorm.DB, ciRun models.CiRun) {
 	// are not Goroutine-safe. PGX is what will actually complain, saying "conn busy". So we do this
 	// serially, which isn't a huge deal since Dispatch above will already be asynchronous.
 	for _, callback := range append(slackCallbacks, deployHookCallbacks...) {
-		if err := callback(); err != nil {
+		// If one hook somehow panics, we don't want to stop the rest from running
+		var err error
+		func() {
+			defer func() {
+				if r := recover(); r != nil {
+					err = fmt.Errorf("recovered from panic in callback: %v", r)
+				}
+			}()
+			err = callback()
+		}()
+		if err != nil {
 			errs = append(errs, err)
 		}
 	}
@@ -65,7 +75,7 @@ func collectSlackNotificationCallbacks(db *gorm.DB, ciRun models.CiRun) (callbac
 				channel := unsafeChannel
 				callbacks = append(callbacks, func() error {
 					return dispatcher.DispatchSlackCompletionNotification(
-						db.Statement.Context, channel, text, ciRun.Succeeded())
+						db.Statement.Context, channel, text, ciRun.Succeeded(), ciRun.NotifySlackCustomIcon)
 				})
 			}
 		}
@@ -134,6 +144,8 @@ func collectDeployHookCallbacks(db *gorm.DB, ciRun models.CiRun) (callbacks []fu
 			deduplicatedDeployHookTriggers = append(deduplicatedDeployHookTriggers, potentialDeployHookTrigger)
 		}
 
+		slackHooks := make([]models.SlackDeployHook, 0)
+		githubActionsHooks := make([]models.GithubActionsDeployHook, 0)
 		for _, deployHookTrigger := range deduplicatedDeployHookTriggers {
 			if deployHookTrigger.HookType == "slack" {
 				var hook models.SlackDeployHook
@@ -145,9 +157,7 @@ func collectDeployHookCallbacks(db *gorm.DB, ciRun models.CiRun) (callbacks []fu
 					errs = append(errs, fmt.Errorf("failed to get SlackDeployHook for DeployHookTriggerConfig ID %d: %w", deployHookTrigger.ID, err))
 					continue
 				}
-				callbacks = append(callbacks, func() error {
-					return dispatcher.DispatchSlackDeployHook(db, hook, ciRun)
-				})
+				slackHooks = append(slackHooks, hook)
 			} else if deployHookTrigger.HookType == "github-actions" {
 				var hook models.GithubActionsDeployHook
 				if err := db.
@@ -158,12 +168,22 @@ func collectDeployHookCallbacks(db *gorm.DB, ciRun models.CiRun) (callbacks []fu
 					errs = append(errs, fmt.Errorf("failed to get GithubActionsDeployHook for DeployHookTriggerConfig ID %d: %w", deployHookTrigger.ID, err))
 					continue
 				}
-				callbacks = append(callbacks, func() error {
-					return dispatcher.DispatchGithubActionsDeployHook(db, hook, ciRun)
-				})
+				githubActionsHooks = append(githubActionsHooks, hook)
 			} else {
 				errs = append(errs, fmt.Errorf("unknown DeployHookTriggerConfig %d hook type '%s'", deployHookTrigger.ID, deployHookTrigger.HookType))
 			}
+		}
+		for _, unsafe := range models.DeduplicateSlackDeployHooks(slackHooks) {
+			slackHook := unsafe
+			callbacks = append(callbacks, func() error {
+				return dispatcher.DispatchSlackDeployHook(db, slackHook, ciRun)
+			})
+		}
+		for _, unsafe := range models.DeduplicateGithubActionsDeployHooks(githubActionsHooks) {
+			githubActionsHook := unsafe
+			callbacks = append(callbacks, func() error {
+				return dispatcher.DispatchGithubActionsDeployHook(db, githubActionsHook, ciRun)
+			})
 		}
 	}
 	return callbacks, errs
