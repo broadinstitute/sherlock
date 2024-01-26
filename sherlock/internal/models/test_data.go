@@ -96,6 +96,12 @@ type TestData interface {
 	SlackDeployHook_Dev() SlackDeployHook
 
 	GithubActionsDeployHook_LeonardoDev() GithubActionsDeployHook
+
+	Incident_1() Incident
+	Incident_2() Incident
+	Incident_3() Incident
+	Incident_4() Incident
+	Incident_5() Incident
 }
 
 // testDataImpl contains the caching for TestData and a (back-)reference to
@@ -191,6 +197,12 @@ type testDataImpl struct {
 	slackDeployHook_dev SlackDeployHook
 
 	githubActionsDeployHook_leonardoDev GithubActionsDeployHook
+
+	incident_1 Incident
+	incident_2 Incident
+	incident_3 Incident
+	incident_4 Incident
+	incident_5 Incident
 }
 
 // create is a helper function for creating TestData entries in the database.
@@ -1328,4 +1340,71 @@ func (td *testDataImpl) GithubActionsDeployHook_LeonardoDev() GithubActionsDeplo
 		td.create(&td.githubActionsDeployHook_leonardoDev)
 	}
 	return td.githubActionsDeployHook_leonardoDev
+}
+
+func (td *testDataImpl) Incident_1() Incident {
+	if td.incident_1.ID == 0 {
+		td.incident_1 = Incident{
+			Ticket:            utils.PointerTo("PROD-1"),
+			Description:       utils.PointerTo("An incident last month"),
+			StartedAt:         utils.PointerTo(time.Now().Add(-(24*time.Hour + 40*(24*time.Hour)))),
+			RemediatedAt:      utils.PointerTo(time.Now().Add(-(23*time.Hour + 40*(24*time.Hour)))),
+			ReviewCompletedAt: utils.PointerTo(time.Now().Add(-(22*time.Hour + 38*(24*time.Hour)))),
+		}
+		td.create(&td.incident_1)
+	}
+	return td.incident_1
+}
+
+func (td *testDataImpl) Incident_2() Incident {
+	if td.incident_2.ID == 0 {
+		td.incident_2 = Incident{
+			Ticket:            utils.PointerTo("PROD-2"),
+			Description:       utils.PointerTo("An incident last week"),
+			StartedAt:         utils.PointerTo(time.Now().Add(-(24*time.Hour + 7*(24*time.Hour)))),
+			RemediatedAt:      utils.PointerTo(time.Now().Add(-(23*time.Hour + 7*(24*time.Hour)))),
+			ReviewCompletedAt: utils.PointerTo(time.Now().Add(-(22*time.Hour + 6*(24*time.Hour)))),
+		}
+		td.create(&td.incident_2)
+	}
+	return td.incident_2
+}
+
+func (td *testDataImpl) Incident_3() Incident {
+	if td.incident_3.ID == 0 {
+		td.incident_3 = Incident{
+			Ticket:            utils.PointerTo("PROD-3"),
+			Description:       utils.PointerTo("An incident yesterday"),
+			StartedAt:         utils.PointerTo(time.Now().Add(-(24*time.Hour + 24*time.Hour))),
+			RemediatedAt:      utils.PointerTo(time.Now().Add(-(23*time.Hour + 24*time.Hour))),
+			ReviewCompletedAt: utils.PointerTo(time.Now().Add(-(2 * time.Hour))),
+		}
+		td.create(&td.incident_3)
+	}
+	return td.incident_3
+}
+
+func (td *testDataImpl) Incident_4() Incident {
+	if td.incident_4.ID == 0 {
+		td.incident_4 = Incident{
+			Ticket:       utils.PointerTo("PROD-4"),
+			Description:  utils.PointerTo("An incident today, no review yet"),
+			StartedAt:    utils.PointerTo(time.Now().Add(-(12 * time.Hour))),
+			RemediatedAt: utils.PointerTo(time.Now().Add(-(4 * time.Hour))),
+		}
+		td.create(&td.incident_4)
+	}
+	return td.incident_4
+}
+
+func (td *testDataImpl) Incident_5() Incident {
+	if td.incident_5.ID == 0 {
+		td.incident_5 = Incident{
+			Ticket:      utils.PointerTo("PROD-5"),
+			Description: utils.PointerTo("An incident today, no remediation yet"),
+			StartedAt:   utils.PointerTo(time.Now().Add(-(2 * time.Hour))),
+		}
+		td.create(&td.incident_5)
+	}
+	return td.incident_5
 }
