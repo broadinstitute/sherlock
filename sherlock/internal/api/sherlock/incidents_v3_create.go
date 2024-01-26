@@ -18,7 +18,7 @@ import (
 //	@tags			Incidents
 //	@accept			json
 //	@produce		json
-//	@param			incident					body		IncidentV3Create	true	"The Incident to create"
+//	@param			incident				body		IncidentV3Create	true	"The Incident to create"
 //	@success		201						{object}	IncidentV3
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/incidents/v3 [post]

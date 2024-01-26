@@ -17,7 +17,7 @@ import (
 //	@tags			Incidents
 //	@produce		json
 //	@param			selector				path		string			true	"The ID of the Incident"
-//	@param			incident					body		IncidentV3Edit	true	"The edits to make to the Incident"
+//	@param			incident				body		IncidentV3Edit	true	"The edits to make to the Incident"
 //	@success		200						{object}	IncidentV3
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/incidents/v3/{selector} [patch]
