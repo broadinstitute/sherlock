@@ -22,6 +22,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock-go-client/client/deploy_hooks"
 	"github.com/broadinstitute/sherlock/sherlock-go-client/client/environments"
 	"github.com/broadinstitute/sherlock/sherlock-go-client/client/git_commits"
+	"github.com/broadinstitute/sherlock/sherlock-go-client/client/incidents"
 	"github.com/broadinstitute/sherlock/sherlock-go-client/client/misc"
 	"github.com/broadinstitute/sherlock/sherlock-go-client/client/pagerduty_integrations"
 	"github.com/broadinstitute/sherlock/sherlock-go-client/client/users"
@@ -81,6 +82,7 @@ func New(transport runtime.ClientTransport, formats strfmt.Registry) *Sherlock {
 	cli.DeployHooks = deploy_hooks.New(transport, formats)
 	cli.Environments = environments.New(transport, formats)
 	cli.GitCommits = git_commits.New(transport, formats)
+	cli.Incidents = incidents.New(transport, formats)
 	cli.Misc = misc.New(transport, formats)
 	cli.PagerdutyIntegrations = pagerduty_integrations.New(transport, formats)
 	cli.Users = users.New(transport, formats)
@@ -152,6 +154,8 @@ type Sherlock struct {
 
 	GitCommits git_commits.ClientService
 
+	Incidents incidents.ClientService
+
 	Misc misc.ClientService
 
 	PagerdutyIntegrations pagerduty_integrations.ClientService
@@ -176,6 +180,7 @@ func (c *Sherlock) SetTransport(transport runtime.ClientTransport) {
 	c.DeployHooks.SetTransport(transport)
 	c.Environments.SetTransport(transport)
 	c.GitCommits.SetTransport(transport)
+	c.Incidents.SetTransport(transport)
 	c.Misc.SetTransport(transport)
 	c.PagerdutyIntegrations.SetTransport(transport)
 	c.Users.SetTransport(transport)

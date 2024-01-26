@@ -12,6 +12,7 @@ export * from './DatabaseInstancesApi';
 export * from './DeployHooksApi';
 export * from './EnvironmentsApi';
 export * from './GitCommitsApi';
+export * from './IncidentsApi';
 export * from './MiscApi';
 export * from './PagerdutyIntegrationsApi';
 export * from './UsersApi';

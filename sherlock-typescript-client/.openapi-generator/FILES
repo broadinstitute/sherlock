@@ -14,6 +14,7 @@ src/apis/DatabaseInstancesApi.ts
 src/apis/DeployHooksApi.ts
 src/apis/EnvironmentsApi.ts
 src/apis/GitCommitsApi.ts
+src/apis/IncidentsApi.ts
 src/apis/MiscApi.ts
 src/apis/PagerdutyIntegrationsApi.ts
 src/apis/UsersApi.ts
@@ -50,6 +51,9 @@ src/models/SherlockGithubActionsDeployHookTestRunResponse.ts
 src/models/SherlockGithubActionsDeployHookV3.ts
 src/models/SherlockGithubActionsDeployHookV3Create.ts
 src/models/SherlockGithubActionsDeployHookV3Edit.ts
+src/models/SherlockIncidentV3.ts
+src/models/SherlockIncidentV3Create.ts
+src/models/SherlockIncidentV3Edit.ts
 src/models/SherlockPagerdutyIntegrationV3.ts
 src/models/SherlockPagerdutyIntegrationV3Create.ts
 src/models/SherlockPagerdutyIntegrationV3Edit.ts
