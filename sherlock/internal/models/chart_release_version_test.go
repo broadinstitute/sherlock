@@ -16,12 +16,103 @@ func (s *modelSuite) TestChartReleaseVersionAppVersionResolverEmpty() {
 	s.ErrorContains(err, "violates check constraint \"app_version_resolver_valid\"")
 }
 
-func (s *modelSuite) TestChartReleaseVersionAppVersionResolverBranch() {
-	//TODO
+func (s *modelSuite) TestChartReleaseVersionAppVersionResolverBranchBranchNull() {
+	s.SetSuitableTestUserForDB()
+	chartRelease := s.TestData.ChartRelease_LeonardoStaging()
+	err := s.DB.Model(&chartRelease).Select("AppVersionResolver").Updates(&ChartReleaseVersion{AppVersionResolver: utils.PointerTo("branch")}).Error
+	s.NoError(err)
+	err = s.DB.Model(&chartRelease).Select("AppVersionBranch").Updates(&ChartReleaseVersion{AppVersionBranch: nil}).Error
+	s.ErrorContains(err, "violates check constraint \"app_version_resolver_valid\"")
 }
 
-func (s *modelSuite) TestChartReleaseVersionAppVersionResolverCommit() {
-	//TODO
+func (s *modelSuite) TestChartReleaseVersionAppVersionResolverBranchBranchEmpty() {
+	s.SetSuitableTestUserForDB()
+	chartRelease := s.TestData.ChartRelease_LeonardoStaging()
+	err := s.DB.Model(&chartRelease).Select("AppVersionResolver").Updates(&ChartReleaseVersion{AppVersionResolver: utils.PointerTo("branch")}).Error
+	s.NoError(err)
+	err = s.DB.Model(&chartRelease).Select("AppVersionBranch").Updates(&ChartReleaseVersion{AppVersionBranch: utils.PointerTo("")}).Error
+	s.ErrorContains(err, "violates check constraint \"app_version_resolver_valid\"")
+}
+
+func (s *modelSuite) TestChartReleaseVersionAppVersionResolverBranchAppVersionIDNull() {
+	s.SetSuitableTestUserForDB()
+	chartRelease := s.TestData.ChartRelease_LeonardoStaging()
+	err := s.DB.Model(&chartRelease).Select("AppVersionResolver").Updates(&ChartReleaseVersion{AppVersionResolver: utils.PointerTo("branch")}).Error
+	s.NoError(err)
+	err = s.DB.Model(&chartRelease).Select("AppVersionID").Updates(&ChartReleaseVersion{AppVersionID: nil}).Error
+	s.ErrorContains(err, "violates check constraint \"app_version_resolver_valid\"")
+}
+
+func (s *modelSuite) TestChartReleaseVersionAppVersionResolverBranchCommitNull() {
+	s.SetSuitableTestUserForDB()
+	chartRelease := s.TestData.ChartRelease_LeonardoStaging()
+	err := s.DB.Model(&chartRelease).Select("AppVersionResolver").Updates(&ChartReleaseVersion{AppVersionResolver: utils.PointerTo("branch")}).Error
+	s.NoError(err)
+	err = s.DB.Model(&chartRelease).Select("AppVersionCommit").Updates(&ChartReleaseVersion{AppVersionCommit: nil}).Error
+	s.ErrorContains(err, "violates check constraint \"app_version_resolver_valid\"")
+}
+
+func (s *modelSuite) TestChartReleaseVersionAppVersionResolverBranchCommitEmpty() {
+	s.SetSuitableTestUserForDB()
+	chartRelease := s.TestData.ChartRelease_LeonardoStaging()
+	err := s.DB.Model(&chartRelease).Select("AppVersionResolver").Updates(&ChartReleaseVersion{AppVersionResolver: utils.PointerTo("branch")}).Error
+	s.NoError(err)
+	err = s.DB.Model(&chartRelease).Select("AppVersionCommit").Updates(&ChartReleaseVersion{AppVersionCommit: utils.PointerTo("")}).Error
+	s.ErrorContains(err, "violates check constraint \"app_version_resolver_valid\"")
+}
+
+func (s *modelSuite) TestChartReleaseVersionAppVersionResolverBranchExactNull() {
+	s.SetSuitableTestUserForDB()
+	chartRelease := s.TestData.ChartRelease_LeonardoStaging()
+	err := s.DB.Model(&chartRelease).Select("AppVersionResolver").Updates(&ChartReleaseVersion{AppVersionResolver: utils.PointerTo("branch")}).Error
+	s.NoError(err)
+	err = s.DB.Model(&chartRelease).Select("AppVersionExact").Updates(&ChartReleaseVersion{AppVersionExact: nil}).Error
+	s.ErrorContains(err, "violates check constraint \"app_version_resolver_valid\"")
+}
+
+func (s *modelSuite) TestChartReleaseVersionAppVersionResolverBranchExactEmpty() {
+	s.SetSuitableTestUserForDB()
+	chartRelease := s.TestData.ChartRelease_LeonardoStaging()
+	err := s.DB.Model(&chartRelease).Select("AppVersionResolver").Updates(&ChartReleaseVersion{AppVersionResolver: utils.PointerTo("branch")}).Error
+	s.NoError(err)
+	err = s.DB.Model(&chartRelease).Select("AppVersionExact").Updates(&ChartReleaseVersion{AppVersionExact: utils.PointerTo("")}).Error
+	s.ErrorContains(err, "violates check constraint \"app_version_resolver_valid\"")
+}
+
+func (s *modelSuite) TestChartReleaseVersionAppVersionResolverCommitCommitNull() {
+	s.SetSuitableTestUserForDB()
+	chartRelease := s.TestData.ChartRelease_LeonardoStaging()
+	err := s.DB.Model(&chartRelease).Select("AppVersionResolver").Updates(&ChartReleaseVersion{AppVersionResolver: utils.PointerTo("commit")}).Error
+	s.NoError(err)
+	err = s.DB.Model(&chartRelease).Select("AppVersionCommit").Updates(&ChartReleaseVersion{AppVersionCommit: nil}).Error
+	s.ErrorContains(err, "violates check constraint \"app_version_resolver_valid\"")
+}
+
+func (s *modelSuite) TestChartReleaseVersionAppVersionResolverCommitCommitEmpty() {
+	s.SetSuitableTestUserForDB()
+	chartRelease := s.TestData.ChartRelease_LeonardoStaging()
+	err := s.DB.Model(&chartRelease).Select("AppVersionResolver").Updates(&ChartReleaseVersion{AppVersionResolver: utils.PointerTo("commit")}).Error
+	s.NoError(err)
+	err = s.DB.Model(&chartRelease).Select("AppVersionCommit").Updates(&ChartReleaseVersion{AppVersionCommit: utils.PointerTo("")}).Error
+	s.ErrorContains(err, "violates check constraint \"app_version_resolver_valid\"")
+}
+
+func (s *modelSuite) TestChartReleaseVersionAppVersionResolverCommitExactNull() {
+	s.SetSuitableTestUserForDB()
+	chartRelease := s.TestData.ChartRelease_LeonardoStaging()
+	err := s.DB.Model(&chartRelease).Select("AppVersionResolver").Updates(&ChartReleaseVersion{AppVersionResolver: utils.PointerTo("commit")}).Error
+	s.NoError(err)
+	err = s.DB.Model(&chartRelease).Select("AppVersionExact").Updates(&ChartReleaseVersion{AppVersionExact: nil}).Error
+	s.ErrorContains(err, "violates check constraint \"app_version_resolver_valid\"")
+}
+
+func (s *modelSuite) TestChartReleaseVersionAppVersionResolverCommitExactEmpty() {
+	s.SetSuitableTestUserForDB()
+	chartRelease := s.TestData.ChartRelease_LeonardoStaging()
+	err := s.DB.Model(&chartRelease).Select("AppVersionResolver").Updates(&ChartReleaseVersion{AppVersionResolver: utils.PointerTo("commit")}).Error
+	s.NoError(err)
+	err = s.DB.Model(&chartRelease).Select("AppVersionExact").Updates(&ChartReleaseVersion{AppVersionExact: utils.PointerTo("")}).Error
+	s.ErrorContains(err, "violates check constraint \"app_version_resolver_valid\"")
 }
 
 func (s *modelSuite) TestChartReleaseVersionAppVersionResolverExactNull() {
@@ -108,16 +199,11 @@ func (s *modelSuite) TestChartReleaseVersionChartVersionExactNotEmpty() {
 	s.ErrorContains(err, "violates check constraint \"chart_version_resolver_valid\"")
 }
 
-func (s *modelSuite) TestChartReleaseVersionChartVersionResolverLatestNull() {
-	//TODO
-}
-
 func (s *modelSuite) TestChartReleaseVersionChartVersionResolverExactNotNull() {
-	//fk restraint
 	s.SetSuitableTestUserForDB()
 	chartRelease := s.TestData.ChartRelease_LeonardoProd()
 	err := s.DB.Model(&chartRelease).Select("ChartVersionID").Updates(&ChartReleaseVersion{ChartVersionID: utils.PointerTo(uint(1))}).Error
-	s.ErrorContains(err, "violates check constraint \"chart_version_resolver_valid\"")
+	s.ErrorContains(err, "violates foreign key constraint \"fk_chart_releases_chart_version\"")
 }
 
 func (s *modelSuite) TestChartReleaseVersionHelmfileRefValidRefNull() {
