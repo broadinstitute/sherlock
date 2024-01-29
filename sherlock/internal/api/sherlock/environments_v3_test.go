@@ -2,7 +2,6 @@ package sherlock
 
 import (
 	"database/sql"
-	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/google/uuid"
@@ -222,7 +221,7 @@ func (s *handlerSuite) TestEnvironmentV3_toModel() {
 				EnvironmentV3Create: tt.fields.EnvironmentV3Create,
 			}
 			got, err := e.toModel(s.DB)
-			if !tt.wantErr(s.T(), err, fmt.Sprintf("toModel()")) {
+			if !tt.wantErr(s.T(), err, "toModel()") {
 				return
 			}
 			s.Equalf(tt.want, got, "toModel()")

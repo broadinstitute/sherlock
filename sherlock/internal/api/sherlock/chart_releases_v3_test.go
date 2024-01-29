@@ -266,7 +266,7 @@ func (s *handlerSuite) TestChartReleaseV3_toModel() {
 				ChartReleaseV3Create:  tt.fields.ChartReleaseV3Create,
 			}
 			got, err := c.toModel(s.DB)
-			if !tt.wantErr(s.T(), err, fmt.Sprintf("toModel()")) {
+			if !tt.wantErr(s.T(), err, "toModel()") {
 				return
 			}
 			s.Equalf(tt.want, got, "toModel()")
