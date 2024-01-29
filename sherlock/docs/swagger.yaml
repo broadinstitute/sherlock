@@ -122,6 +122,112 @@ definitions:
         description: Generally the Git commit message
         type: string
     type: object
+  sherlock.ChartReleaseV3:
+    properties:
+      appVersionBranch:
+        description: When creating, will default to the app's mainline branch if no
+          other app version info is present
+        type: string
+      appVersionCommit:
+        type: string
+      appVersionExact:
+        type: string
+      appVersionFollowChartRelease:
+        type: string
+      appVersionInfo:
+        $ref: '#/definitions/sherlock.AppVersionV3'
+      appVersionReference:
+        type: string
+      appVersionResolver:
+        description: // When creating, will default to automatically reference any
+          provided app version fields
+        enum:
+        - branch
+        - commit
+        - exact
+        - follow
+        - none
+        type: string
+      chart:
+        description: Required when creating
+        type: string
+      chartInfo:
+        $ref: '#/definitions/sherlock.ChartV3'
+      chartVersionExact:
+        type: string
+      chartVersionFollowChartRelease:
+        type: string
+      chartVersionInfo:
+        $ref: '#/definitions/sherlock.ChartVersionV3'
+      chartVersionReference:
+        type: string
+      chartVersionResolver:
+        description: When creating, will default to automatically reference any provided
+          chart version
+        enum:
+        - latest
+        - exact
+        - follow
+        type: string
+      ciIdentifier:
+        $ref: '#/definitions/sherlock.CiIdentifierV3'
+      cluster:
+        description: When creating, will default the environment's default cluster,
+          if provided. Either this or environment must be provided.
+        type: string
+      clusterInfo:
+        $ref: '#/definitions/sherlock.ClusterV3'
+      createdAt:
+        format: date-time
+        type: string
+      destinationType:
+        description: Calculated field
+        type: string
+      environment:
+        description: Either this or cluster must be provided.
+        type: string
+      environmentInfo:
+        $ref: '#/definitions/sherlock.EnvironmentV3'
+      firecloudDevelopRef:
+        type: string
+      helmfileRef:
+        default: HEAD
+        type: string
+      helmfileRefEnabled:
+        default: false
+        type: boolean
+      id:
+        type: integer
+      includedInBulkChangesets:
+        default: true
+        type: boolean
+      name:
+        description: When creating, will be calculated if left empty
+        type: string
+      namespace:
+        description: When creating, will default to the environment's default namespace,
+          if provided
+        type: string
+      pagerdutyIntegration:
+        type: string
+      pagerdutyIntegrationInfo:
+        $ref: '#/definitions/sherlock.PagerdutyIntegrationV3'
+      port:
+        description: When creating, will use the chart's default if left empty
+        type: integer
+      protocol:
+        description: When creating, will use the chart's default if left empty
+        type: string
+      resolvedAt:
+        format: date-time
+        type: string
+      subdomain:
+        description: When creating, will use the chart's default if left empty
+        type: string
+      updatedAt:
+        format: date-time
+        type: string
+    type: object
   sherlock.ChartV3:
     properties:
       appImageGitMainBranch:
@@ -587,6 +693,117 @@ definitions:
       requiresSuitability:
         default: false
         type: boolean
+    type: object
+  sherlock.EnvironmentV3:
+    properties:
+      autoPopulateChartReleases:
+        default: true
+        description: If true when creating, dynamic environments copy from template
+          and template environments get the honeycomb chart
+        type: boolean
+      base:
+        description: Required when creating
+        type: string
+      baseDomain:
+        default: bee.envs-terra.bio
+        type: string
+      ciIdentifier:
+        $ref: '#/definitions/sherlock.CiIdentifierV3'
+      createdAt:
+        format: date-time
+        type: string
+      defaultCluster:
+        type: string
+      defaultClusterInfo:
+        $ref: '#/definitions/sherlock.ClusterV3'
+      defaultFirecloudDevelopRef:
+        default: dev
+        description: should be the environment branch for live envs. Is usually dev
+          for template/dynamic but not necessarily
+        type: string
+      defaultNamespace:
+        description: When creating, will be calculated if left empty
+        type: string
+      deleteAfter:
+        description: If set, the BEE will be automatically deleted after this time
+          (thelma checks this field)
+        type: string
+      description:
+        type: string
+      helmfileRef:
+        default: HEAD
+        type: string
+      id:
+        type: integer
+      lifecycle:
+        default: dynamic
+        type: string
+      name:
+        description: When creating, will be calculated if dynamic, required otherwise
+        type: string
+      namePrefix:
+        description: Used for dynamic environment name generation only, to override
+          using the owner email handle and template name
+        type: string
+      namePrefixesDomain:
+        default: true
+        type: boolean
+      offline:
+        default: false
+        description: Applicable for BEEs only, whether Thelma should render the BEE
+          as "offline" zero replicas (this field is a target state, not a status)
+        type: boolean
+      offlineScheduleBeginEnabled:
+        description: When enabled, the BEE will be slated to go offline around the
+          begin time each day
+        type: boolean
+      offlineScheduleBeginTime:
+        description: Stored with timezone to determine day of the week
+        format: date-time
+        type: string
+      offlineScheduleEndEnabled:
+        description: When enabled, the BEE will be slated to come online around the
+          end time each weekday (each day if weekends enabled)
+        type: boolean
+      offlineScheduleEndTime:
+        description: Stored with timezone to determine day of the week
+        format: date-time
+        type: string
+      offlineScheduleEndWeekends:
+        type: boolean
+      owner:
+        description: When creating, will default to you
+        type: string
+      ownerInfo:
+        $ref: '#/definitions/sherlock.UserV3'
+      pactIdentifier:
+        type: string
+      pagerdutyIntegration:
+        type: string
+      pagerdutyIntegrationInfo:
+        $ref: '#/definitions/sherlock.PagerdutyIntegrationV3'
+      preventDeletion:
+        default: false
+        description: Used to protect specific BEEs from deletion (thelma checks this
+          field)
+        type: boolean
+      requiresSuitability:
+        default: false
+        type: boolean
+      templateEnvironment:
+        description: Required for dynamic environments
+        type: string
+      templateEnvironmentInfo:
+        type: object
+      uniqueResourcePrefix:
+        description: When creating, will be calculated if left empty
+        type: string
+      updatedAt:
+        format: date-time
+        type: string
+      valuesName:
+        description: When creating, defaults to template name or environment name
+        type: string
     type: object
   sherlock.GitCommitV3:
     properties:
@@ -2508,6 +2725,217 @@ paths:
       summary: Edit an individual AppVersion
       tags:
       - AppVersions
+  /api/chart-releases/v3:
+    get:
+      description: List ChartReleases matching a filter.
+      parameters:
+      - description: When creating, will default to the app's mainline branch if no
+          other app version info is present
+        in: query
+        name: appVersionBranch
+        type: string
+      - in: query
+        name: appVersionCommit
+        type: string
+      - in: query
+        name: appVersionExact
+        type: string
+      - in: query
+        name: appVersionFollowChartRelease
+        type: string
+      - in: query
+        name: appVersionReference
+        type: string
+      - description: // When creating, will default to automatically reference any
+          provided app version fields
+        enum:
+        - branch
+        - commit
+        - exact
+        - follow
+        - none
+        in: query
+        name: appVersionResolver
+        type: string
+      - description: Required when creating
+        in: query
+        name: chart
+        type: string
+      - in: query
+        name: chartVersionExact
+        type: string
+      - in: query
+        name: chartVersionFollowChartRelease
+        type: string
+      - in: query
+        name: chartVersionReference
+        type: string
+      - description: When creating, will default to automatically reference any provided
+          chart version
+        enum:
+        - latest
+        - exact
+        - follow
+        in: query
+        name: chartVersionResolver
+        type: string
+      - description: When creating, will default the environment's default cluster,
+          if provided. Either this or environment must be provided.
+        in: query
+        name: cluster
+        type: string
+      - format: date-time
+        in: query
+        name: createdAt
+        type: string
+      - description: Calculated field
+        in: query
+        name: destinationType
+        type: string
+      - description: Either this or cluster must be provided.
+        in: query
+        name: environment
+        type: string
+      - in: query
+        name: firecloudDevelopRef
+        type: string
+      - default: HEAD
+        in: query
+        name: helmfileRef
+        type: string
+      - default: false
+        in: query
+        name: helmfileRefEnabled
+        type: boolean
+      - in: query
+        name: id
+        type: integer
+      - default: true
+        in: query
+        name: includedInBulkChangesets
+        type: boolean
+      - description: When creating, will be calculated if left empty
+        in: query
+        name: name
+        type: string
+      - description: When creating, will default to the environment's default namespace,
+          if provided
+        in: query
+        name: namespace
+        type: string
+      - in: query
+        name: pagerdutyIntegration
+        type: string
+      - description: When creating, will use the chart's default if left empty
+        in: query
+        name: port
+        type: integer
+      - description: When creating, will use the chart's default if left empty
+        in: query
+        name: protocol
+        type: string
+      - format: date-time
+        in: query
+        name: resolvedAt
+        type: string
+      - description: When creating, will use the chart's default if left empty
+        in: query
+        name: subdomain
+        type: string
+      - format: date-time
+        in: query
+        name: updatedAt
+        type: string
+      - description: Control how many ChartReleases are returned (default 0, meaning
+          all)
+        in: query
+        name: limit
+        type: integer
+      - description: Control the offset for the returned ChartReleases (default 0)
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/sherlock.ChartReleaseV3'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: List ChartReleases matching a filter
+      tags:
+      - ChartReleases
+  /api/chart-releases/v3/{selector}:
+    get:
+      description: Get an individual ChartRelease.
+      parameters:
+      - description: The selector of the ChartRelease, which can be either a numeric
+          ID, the name, environment + '/' + chart, or cluster + '/' + namespace +
+          '/' + chart.
+        in: path
+        name: selector
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/sherlock.ChartReleaseV3'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Get an individual ChartRelease
+      tags:
+      - ChartReleases
   /api/chart-versions/procedures/v3/changelog:
     get:
       description: Get the path through parent references from a child ChartVersion
@@ -4374,6 +4802,227 @@ paths:
       summary: Edit an individual SlackDeployHook
       tags:
       - DeployHooks
+  /api/environments/v3:
+    get:
+      description: List Environments matching a filter.
+      parameters:
+      - default: true
+        description: If true when creating, dynamic environments copy from template
+          and template environments get the honeycomb chart
+        in: query
+        name: autoPopulateChartReleases
+        type: boolean
+      - description: Required when creating
+        in: query
+        name: base
+        type: string
+      - default: bee.envs-terra.bio
+        in: query
+        name: baseDomain
+        type: string
+      - format: date-time
+        in: query
+        name: createdAt
+        type: string
+      - in: query
+        name: defaultCluster
+        type: string
+      - default: dev
+        description: should be the environment branch for live envs. Is usually dev
+          for template/dynamic but not necessarily
+        in: query
+        name: defaultFirecloudDevelopRef
+        type: string
+      - description: When creating, will be calculated if left empty
+        in: query
+        name: defaultNamespace
+        type: string
+      - description: If set, the BEE will be automatically deleted after this time
+          (thelma checks this field)
+        in: query
+        name: deleteAfter
+        type: string
+      - in: query
+        name: description
+        type: string
+      - default: HEAD
+        in: query
+        name: helmfileRef
+        type: string
+      - in: query
+        name: id
+        type: integer
+      - default: dynamic
+        in: query
+        name: lifecycle
+        type: string
+      - description: When creating, will be calculated if dynamic, required otherwise
+        in: query
+        name: name
+        type: string
+      - description: Used for dynamic environment name generation only, to override
+          using the owner email handle and template name
+        in: query
+        name: namePrefix
+        type: string
+      - default: true
+        in: query
+        name: namePrefixesDomain
+        type: boolean
+      - default: false
+        description: Applicable for BEEs only, whether Thelma should render the BEE
+          as "offline" zero replicas (this field is a target state, not a status)
+        in: query
+        name: offline
+        type: boolean
+      - description: When enabled, the BEE will be slated to go offline around the
+          begin time each day
+        in: query
+        name: offlineScheduleBeginEnabled
+        type: boolean
+      - description: Stored with timezone to determine day of the week
+        format: date-time
+        in: query
+        name: offlineScheduleBeginTime
+        type: string
+      - description: When enabled, the BEE will be slated to come online around the
+          end time each weekday (each day if weekends enabled)
+        in: query
+        name: offlineScheduleEndEnabled
+        type: boolean
+      - description: Stored with timezone to determine day of the week
+        format: date-time
+        in: query
+        name: offlineScheduleEndTime
+        type: string
+      - in: query
+        name: offlineScheduleEndWeekends
+        type: boolean
+      - description: When creating, will default to you
+        in: query
+        name: owner
+        type: string
+      - in: query
+        name: PactIdentifier
+        type: string
+      - in: query
+        name: pagerdutyIntegration
+        type: string
+      - default: false
+        description: Used to protect specific BEEs from deletion (thelma checks this
+          field)
+        in: query
+        name: preventDeletion
+        type: boolean
+      - default: false
+        in: query
+        name: requiresSuitability
+        type: boolean
+      - description: Required for dynamic environments
+        in: query
+        name: templateEnvironment
+        type: string
+      - description: When creating, will be calculated if left empty
+        in: query
+        name: uniqueResourcePrefix
+        type: string
+      - format: date-time
+        in: query
+        name: updatedAt
+        type: string
+      - description: When creating, defaults to template name or environment name
+        in: query
+        name: valuesName
+        type: string
+      - description: Control how many Environments are returned (default 0, meaning
+          all)
+        in: query
+        name: limit
+        type: integer
+      - description: Control the offset for the returned Environments (default 0)
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/sherlock.EnvironmentV3'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: List Environments matching a filter
+      tags:
+      - Environments
+  /api/environments/v3/{selector}:
+    get:
+      description: Get an individual Environment.
+      parameters:
+      - description: The selector of the Environment, which can be either a numeric
+          ID, the name, or 'resource-prefix' + / + the unique resource prefix.
+        in: path
+        name: selector
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/sherlock.EnvironmentV3'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Get an individual Environment
+      tags:
+      - Environments
   /api/git-commits/v3:
     put:
       consumes:

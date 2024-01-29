@@ -18,6 +18,7 @@ import type {
   ErrorsErrorResponse,
   PagerdutyAlertSummary,
   PagerdutySendAlertResponse,
+  SherlockChartReleaseV3,
   V2controllersChartRelease,
   V2controllersCreatableChartRelease,
   V2controllersEditableChartRelease,
@@ -29,6 +30,8 @@ import {
     PagerdutyAlertSummaryToJSON,
     PagerdutySendAlertResponseFromJSON,
     PagerdutySendAlertResponseToJSON,
+    SherlockChartReleaseV3FromJSON,
+    SherlockChartReleaseV3ToJSON,
     V2controllersChartReleaseFromJSON,
     V2controllersChartReleaseToJSON,
     V2controllersCreatableChartReleaseFromJSON,
@@ -36,6 +39,43 @@ import {
     V2controllersEditableChartReleaseFromJSON,
     V2controllersEditableChartReleaseToJSON,
 } from '../models/index';
+
+export interface ApiChartReleasesV3GetRequest {
+    appVersionBranch?: string;
+    appVersionCommit?: string;
+    appVersionExact?: string;
+    appVersionFollowChartRelease?: string;
+    appVersionReference?: string;
+    appVersionResolver?: ApiChartReleasesV3GetAppVersionResolverEnum;
+    chart?: string;
+    chartVersionExact?: string;
+    chartVersionFollowChartRelease?: string;
+    chartVersionReference?: string;
+    chartVersionResolver?: ApiChartReleasesV3GetChartVersionResolverEnum;
+    cluster?: string;
+    createdAt?: Date;
+    destinationType?: string;
+    environment?: string;
+    firecloudDevelopRef?: string;
+    helmfileRef?: string;
+    helmfileRefEnabled?: boolean;
+    id?: number;
+    includedInBulkChangesets?: boolean;
+    name?: string;
+    namespace?: string;
+    pagerdutyIntegration?: string;
+    port?: number;
+    protocol?: string;
+    resolvedAt?: Date;
+    subdomain?: string;
+    updatedAt?: Date;
+    limit?: number;
+    offset?: number;
+}
+
+export interface ApiChartReleasesV3SelectorGetRequest {
+    selector: string;
+}
 
 export interface ApiV2ChartReleasesGetRequest {
     appVersionBranch?: string;
@@ -103,6 +143,186 @@ export interface ApiV2SelectorsChartReleasesSelectorGetRequest {
  * 
  */
 export class ChartReleasesApi extends runtime.BaseAPI {
+
+    /**
+     * List ChartReleases matching a filter.
+     * List ChartReleases matching a filter
+     */
+    async apiChartReleasesV3GetRaw(requestParameters: ApiChartReleasesV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockChartReleaseV3>>> {
+        const queryParameters: any = {};
+
+        if (requestParameters.appVersionBranch !== undefined) {
+            queryParameters['appVersionBranch'] = requestParameters.appVersionBranch;
+        }
+
+        if (requestParameters.appVersionCommit !== undefined) {
+            queryParameters['appVersionCommit'] = requestParameters.appVersionCommit;
+        }
+
+        if (requestParameters.appVersionExact !== undefined) {
+            queryParameters['appVersionExact'] = requestParameters.appVersionExact;
+        }
+
+        if (requestParameters.appVersionFollowChartRelease !== undefined) {
+            queryParameters['appVersionFollowChartRelease'] = requestParameters.appVersionFollowChartRelease;
+        }
+
+        if (requestParameters.appVersionReference !== undefined) {
+            queryParameters['appVersionReference'] = requestParameters.appVersionReference;
+        }
+
+        if (requestParameters.appVersionResolver !== undefined) {
+            queryParameters['appVersionResolver'] = requestParameters.appVersionResolver;
+        }
+
+        if (requestParameters.chart !== undefined) {
+            queryParameters['chart'] = requestParameters.chart;
+        }
+
+        if (requestParameters.chartVersionExact !== undefined) {
+            queryParameters['chartVersionExact'] = requestParameters.chartVersionExact;
+        }
+
+        if (requestParameters.chartVersionFollowChartRelease !== undefined) {
+            queryParameters['chartVersionFollowChartRelease'] = requestParameters.chartVersionFollowChartRelease;
+        }
+
+        if (requestParameters.chartVersionReference !== undefined) {
+            queryParameters['chartVersionReference'] = requestParameters.chartVersionReference;
+        }
+
+        if (requestParameters.chartVersionResolver !== undefined) {
+            queryParameters['chartVersionResolver'] = requestParameters.chartVersionResolver;
+        }
+
+        if (requestParameters.cluster !== undefined) {
+            queryParameters['cluster'] = requestParameters.cluster;
+        }
+
+        if (requestParameters.createdAt !== undefined) {
+            queryParameters['createdAt'] = (requestParameters.createdAt as any).toISOString();
+        }
+
+        if (requestParameters.destinationType !== undefined) {
+            queryParameters['destinationType'] = requestParameters.destinationType;
+        }
+
+        if (requestParameters.environment !== undefined) {
+            queryParameters['environment'] = requestParameters.environment;
+        }
+
+        if (requestParameters.firecloudDevelopRef !== undefined) {
+            queryParameters['firecloudDevelopRef'] = requestParameters.firecloudDevelopRef;
+        }
+
+        if (requestParameters.helmfileRef !== undefined) {
+            queryParameters['helmfileRef'] = requestParameters.helmfileRef;
+        }
+
+        if (requestParameters.helmfileRefEnabled !== undefined) {
+            queryParameters['helmfileRefEnabled'] = requestParameters.helmfileRefEnabled;
+        }
+
+        if (requestParameters.id !== undefined) {
+            queryParameters['id'] = requestParameters.id;
+        }
+
+        if (requestParameters.includedInBulkChangesets !== undefined) {
+            queryParameters['includedInBulkChangesets'] = requestParameters.includedInBulkChangesets;
+        }
+
+        if (requestParameters.name !== undefined) {
+            queryParameters['name'] = requestParameters.name;
+        }
+
+        if (requestParameters.namespace !== undefined) {
+            queryParameters['namespace'] = requestParameters.namespace;
+        }
+
+        if (requestParameters.pagerdutyIntegration !== undefined) {
+            queryParameters['pagerdutyIntegration'] = requestParameters.pagerdutyIntegration;
+        }
+
+        if (requestParameters.port !== undefined) {
+            queryParameters['port'] = requestParameters.port;
+        }
+
+        if (requestParameters.protocol !== undefined) {
+            queryParameters['protocol'] = requestParameters.protocol;
+        }
+
+        if (requestParameters.resolvedAt !== undefined) {
+            queryParameters['resolvedAt'] = (requestParameters.resolvedAt as any).toISOString();
+        }
+
+        if (requestParameters.subdomain !== undefined) {
+            queryParameters['subdomain'] = requestParameters.subdomain;
+        }
+
+        if (requestParameters.updatedAt !== undefined) {
+            queryParameters['updatedAt'] = (requestParameters.updatedAt as any).toISOString();
+        }
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.offset !== undefined) {
+            queryParameters['offset'] = requestParameters.offset;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/chart-releases/v3`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(SherlockChartReleaseV3FromJSON));
+    }
+
+    /**
+     * List ChartReleases matching a filter.
+     * List ChartReleases matching a filter
+     */
+    async apiChartReleasesV3Get(requestParameters: ApiChartReleasesV3GetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<SherlockChartReleaseV3>> {
+        const response = await this.apiChartReleasesV3GetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Get an individual ChartRelease.
+     * Get an individual ChartRelease
+     */
+    async apiChartReleasesV3SelectorGetRaw(requestParameters: ApiChartReleasesV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockChartReleaseV3>> {
+        if (requestParameters.selector === null || requestParameters.selector === undefined) {
+            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiChartReleasesV3SelectorGet.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/chart-releases/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => SherlockChartReleaseV3FromJSON(jsonValue));
+    }
+
+    /**
+     * Get an individual ChartRelease.
+     * Get an individual ChartRelease
+     */
+    async apiChartReleasesV3SelectorGet(requestParameters: ApiChartReleasesV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockChartReleaseV3> {
+        const response = await this.apiChartReleasesV3SelectorGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
 
     /**
      * List existing ChartRelease entries, ordered by most recently updated.
@@ -494,6 +714,26 @@ export class ChartReleasesApi extends runtime.BaseAPI {
 
 }
 
+/**
+ * @export
+ */
+export const ApiChartReleasesV3GetAppVersionResolverEnum = {
+    Branch: 'branch',
+    Commit: 'commit',
+    Exact: 'exact',
+    Follow: 'follow',
+    None: 'none'
+} as const;
+export type ApiChartReleasesV3GetAppVersionResolverEnum = typeof ApiChartReleasesV3GetAppVersionResolverEnum[keyof typeof ApiChartReleasesV3GetAppVersionResolverEnum];
+/**
+ * @export
+ */
+export const ApiChartReleasesV3GetChartVersionResolverEnum = {
+    Latest: 'latest',
+    Exact: 'exact',
+    Follow: 'follow'
+} as const;
+export type ApiChartReleasesV3GetChartVersionResolverEnum = typeof ApiChartReleasesV3GetChartVersionResolverEnum[keyof typeof ApiChartReleasesV3GetChartVersionResolverEnum];
 /**
  * @export
  */

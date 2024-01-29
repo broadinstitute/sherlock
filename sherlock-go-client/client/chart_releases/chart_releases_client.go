@@ -32,6 +32,10 @@ type ClientOption func(*runtime.ClientOperation)
 type ClientService interface {
 	DeleteAPIV2ChartReleasesSelector(params *DeleteAPIV2ChartReleasesSelectorParams, opts ...ClientOption) (*DeleteAPIV2ChartReleasesSelectorOK, error)
 
+	GetAPIChartReleasesV3(params *GetAPIChartReleasesV3Params, opts ...ClientOption) (*GetAPIChartReleasesV3OK, error)
+
+	GetAPIChartReleasesV3Selector(params *GetAPIChartReleasesV3SelectorParams, opts ...ClientOption) (*GetAPIChartReleasesV3SelectorOK, error)
+
 	GetAPIV2ChartReleases(params *GetAPIV2ChartReleasesParams, opts ...ClientOption) (*GetAPIV2ChartReleasesOK, error)
 
 	GetAPIV2ChartReleasesSelector(params *GetAPIV2ChartReleasesSelectorParams, opts ...ClientOption) (*GetAPIV2ChartReleasesSelectorOK, error)
@@ -86,6 +90,86 @@ func (a *Client) DeleteAPIV2ChartReleasesSelector(params *DeleteAPIV2ChartReleas
 	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for DeleteAPIV2ChartReleasesSelector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+  GetAPIChartReleasesV3 lists chart releases matching a filter
+
+  List ChartReleases matching a filter.
+*/
+func (a *Client) GetAPIChartReleasesV3(params *GetAPIChartReleasesV3Params, opts ...ClientOption) (*GetAPIChartReleasesV3OK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetAPIChartReleasesV3Params()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "GetAPIChartReleasesV3",
+		Method:             "GET",
+		PathPattern:        "/api/chart-releases/v3",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &GetAPIChartReleasesV3Reader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*GetAPIChartReleasesV3OK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for GetAPIChartReleasesV3: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+  GetAPIChartReleasesV3Selector gets an individual chart release
+
+  Get an individual ChartRelease.
+*/
+func (a *Client) GetAPIChartReleasesV3Selector(params *GetAPIChartReleasesV3SelectorParams, opts ...ClientOption) (*GetAPIChartReleasesV3SelectorOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetAPIChartReleasesV3SelectorParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "GetAPIChartReleasesV3Selector",
+		Method:             "GET",
+		PathPattern:        "/api/chart-releases/v3/{selector}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &GetAPIChartReleasesV3SelectorReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*GetAPIChartReleasesV3SelectorOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for GetAPIChartReleasesV3Selector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 

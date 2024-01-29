@@ -18,6 +18,7 @@ import type {
   ErrorsErrorResponse,
   PagerdutyAlertSummary,
   PagerdutySendAlertResponse,
+  SherlockEnvironmentV3,
   V2controllersCreatableEnvironment,
   V2controllersEditableEnvironment,
   V2controllersEnvironment,
@@ -29,6 +30,8 @@ import {
     PagerdutyAlertSummaryToJSON,
     PagerdutySendAlertResponseFromJSON,
     PagerdutySendAlertResponseToJSON,
+    SherlockEnvironmentV3FromJSON,
+    SherlockEnvironmentV3ToJSON,
     V2controllersCreatableEnvironmentFromJSON,
     V2controllersCreatableEnvironmentToJSON,
     V2controllersEditableEnvironmentFromJSON,
@@ -36,6 +39,45 @@ import {
     V2controllersEnvironmentFromJSON,
     V2controllersEnvironmentToJSON,
 } from '../models/index';
+
+export interface ApiEnvironmentsV3GetRequest {
+    autoPopulateChartReleases?: boolean;
+    base?: string;
+    baseDomain?: string;
+    createdAt?: Date;
+    defaultCluster?: string;
+    defaultFirecloudDevelopRef?: string;
+    defaultNamespace?: string;
+    deleteAfter?: string;
+    description?: string;
+    helmfileRef?: string;
+    id?: number;
+    lifecycle?: string;
+    name?: string;
+    namePrefix?: string;
+    namePrefixesDomain?: boolean;
+    offline?: boolean;
+    offlineScheduleBeginEnabled?: boolean;
+    offlineScheduleBeginTime?: Date;
+    offlineScheduleEndEnabled?: boolean;
+    offlineScheduleEndTime?: Date;
+    offlineScheduleEndWeekends?: boolean;
+    owner?: string;
+    pactIdentifier?: string;
+    pagerdutyIntegration?: string;
+    preventDeletion?: boolean;
+    requiresSuitability?: boolean;
+    templateEnvironment?: string;
+    uniqueResourcePrefix?: string;
+    updatedAt?: Date;
+    valuesName?: string;
+    limit?: number;
+    offset?: number;
+}
+
+export interface ApiEnvironmentsV3SelectorGetRequest {
+    selector: string;
+}
 
 export interface ApiV2EnvironmentsGetRequest {
     autoPopulateChartReleases?: boolean;
@@ -105,6 +147,194 @@ export interface ApiV2SelectorsEnvironmentsSelectorGetRequest {
  * 
  */
 export class EnvironmentsApi extends runtime.BaseAPI {
+
+    /**
+     * List Environments matching a filter.
+     * List Environments matching a filter
+     */
+    async apiEnvironmentsV3GetRaw(requestParameters: ApiEnvironmentsV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockEnvironmentV3>>> {
+        const queryParameters: any = {};
+
+        if (requestParameters.autoPopulateChartReleases !== undefined) {
+            queryParameters['autoPopulateChartReleases'] = requestParameters.autoPopulateChartReleases;
+        }
+
+        if (requestParameters.base !== undefined) {
+            queryParameters['base'] = requestParameters.base;
+        }
+
+        if (requestParameters.baseDomain !== undefined) {
+            queryParameters['baseDomain'] = requestParameters.baseDomain;
+        }
+
+        if (requestParameters.createdAt !== undefined) {
+            queryParameters['createdAt'] = (requestParameters.createdAt as any).toISOString();
+        }
+
+        if (requestParameters.defaultCluster !== undefined) {
+            queryParameters['defaultCluster'] = requestParameters.defaultCluster;
+        }
+
+        if (requestParameters.defaultFirecloudDevelopRef !== undefined) {
+            queryParameters['defaultFirecloudDevelopRef'] = requestParameters.defaultFirecloudDevelopRef;
+        }
+
+        if (requestParameters.defaultNamespace !== undefined) {
+            queryParameters['defaultNamespace'] = requestParameters.defaultNamespace;
+        }
+
+        if (requestParameters.deleteAfter !== undefined) {
+            queryParameters['deleteAfter'] = requestParameters.deleteAfter;
+        }
+
+        if (requestParameters.description !== undefined) {
+            queryParameters['description'] = requestParameters.description;
+        }
+
+        if (requestParameters.helmfileRef !== undefined) {
+            queryParameters['helmfileRef'] = requestParameters.helmfileRef;
+        }
+
+        if (requestParameters.id !== undefined) {
+            queryParameters['id'] = requestParameters.id;
+        }
+
+        if (requestParameters.lifecycle !== undefined) {
+            queryParameters['lifecycle'] = requestParameters.lifecycle;
+        }
+
+        if (requestParameters.name !== undefined) {
+            queryParameters['name'] = requestParameters.name;
+        }
+
+        if (requestParameters.namePrefix !== undefined) {
+            queryParameters['namePrefix'] = requestParameters.namePrefix;
+        }
+
+        if (requestParameters.namePrefixesDomain !== undefined) {
+            queryParameters['namePrefixesDomain'] = requestParameters.namePrefixesDomain;
+        }
+
+        if (requestParameters.offline !== undefined) {
+            queryParameters['offline'] = requestParameters.offline;
+        }
+
+        if (requestParameters.offlineScheduleBeginEnabled !== undefined) {
+            queryParameters['offlineScheduleBeginEnabled'] = requestParameters.offlineScheduleBeginEnabled;
+        }
+
+        if (requestParameters.offlineScheduleBeginTime !== undefined) {
+            queryParameters['offlineScheduleBeginTime'] = (requestParameters.offlineScheduleBeginTime as any).toISOString();
+        }
+
+        if (requestParameters.offlineScheduleEndEnabled !== undefined) {
+            queryParameters['offlineScheduleEndEnabled'] = requestParameters.offlineScheduleEndEnabled;
+        }
+
+        if (requestParameters.offlineScheduleEndTime !== undefined) {
+            queryParameters['offlineScheduleEndTime'] = (requestParameters.offlineScheduleEndTime as any).toISOString();
+        }
+
+        if (requestParameters.offlineScheduleEndWeekends !== undefined) {
+            queryParameters['offlineScheduleEndWeekends'] = requestParameters.offlineScheduleEndWeekends;
+        }
+
+        if (requestParameters.owner !== undefined) {
+            queryParameters['owner'] = requestParameters.owner;
+        }
+
+        if (requestParameters.pactIdentifier !== undefined) {
+            queryParameters['PactIdentifier'] = requestParameters.pactIdentifier;
+        }
+
+        if (requestParameters.pagerdutyIntegration !== undefined) {
+            queryParameters['pagerdutyIntegration'] = requestParameters.pagerdutyIntegration;
+        }
+
+        if (requestParameters.preventDeletion !== undefined) {
+            queryParameters['preventDeletion'] = requestParameters.preventDeletion;
+        }
+
+        if (requestParameters.requiresSuitability !== undefined) {
+            queryParameters['requiresSuitability'] = requestParameters.requiresSuitability;
+        }
+
+        if (requestParameters.templateEnvironment !== undefined) {
+            queryParameters['templateEnvironment'] = requestParameters.templateEnvironment;
+        }
+
+        if (requestParameters.uniqueResourcePrefix !== undefined) {
+            queryParameters['uniqueResourcePrefix'] = requestParameters.uniqueResourcePrefix;
+        }
+
+        if (requestParameters.updatedAt !== undefined) {
+            queryParameters['updatedAt'] = (requestParameters.updatedAt as any).toISOString();
+        }
+
+        if (requestParameters.valuesName !== undefined) {
+            queryParameters['valuesName'] = requestParameters.valuesName;
+        }
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.offset !== undefined) {
+            queryParameters['offset'] = requestParameters.offset;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/environments/v3`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(SherlockEnvironmentV3FromJSON));
+    }
+
+    /**
+     * List Environments matching a filter.
+     * List Environments matching a filter
+     */
+    async apiEnvironmentsV3Get(requestParameters: ApiEnvironmentsV3GetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<SherlockEnvironmentV3>> {
+        const response = await this.apiEnvironmentsV3GetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Get an individual Environment.
+     * Get an individual Environment
+     */
+    async apiEnvironmentsV3SelectorGetRaw(requestParameters: ApiEnvironmentsV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockEnvironmentV3>> {
+        if (requestParameters.selector === null || requestParameters.selector === undefined) {
+            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiEnvironmentsV3SelectorGet.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/environments/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => SherlockEnvironmentV3FromJSON(jsonValue));
+    }
+
+    /**
+     * Get an individual Environment.
+     * Get an individual Environment
+     */
+    async apiEnvironmentsV3SelectorGet(requestParameters: ApiEnvironmentsV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockEnvironmentV3> {
+        const response = await this.apiEnvironmentsV3SelectorGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
 
     /**
      * List existing Environment entries, ordered by most recently updated.

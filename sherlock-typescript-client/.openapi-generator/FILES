@@ -31,6 +31,7 @@ src/models/SherlockAppVersionV3.ts
 src/models/SherlockAppVersionV3ChangelogResponse.ts
 src/models/SherlockAppVersionV3Create.ts
 src/models/SherlockAppVersionV3Edit.ts
+src/models/SherlockChartReleaseV3.ts
 src/models/SherlockChartV3.ts
 src/models/SherlockChartV3Create.ts
 src/models/SherlockChartV3Edit.ts
@@ -44,6 +45,7 @@ src/models/SherlockCiRunV3Upsert.ts
 src/models/SherlockClusterV3.ts
 src/models/SherlockClusterV3Create.ts
 src/models/SherlockClusterV3Edit.ts
+src/models/SherlockEnvironmentV3.ts
 src/models/SherlockGitCommitV3.ts
 src/models/SherlockGitCommitV3Upsert.ts
 src/models/SherlockGithubActionsDeployHookTestRunRequest.ts

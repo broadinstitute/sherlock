@@ -32,6 +32,10 @@ type ClientOption func(*runtime.ClientOperation)
 type ClientService interface {
 	DeleteAPIV2EnvironmentsSelector(params *DeleteAPIV2EnvironmentsSelectorParams, opts ...ClientOption) (*DeleteAPIV2EnvironmentsSelectorOK, error)
 
+	GetAPIEnvironmentsV3(params *GetAPIEnvironmentsV3Params, opts ...ClientOption) (*GetAPIEnvironmentsV3OK, error)
+
+	GetAPIEnvironmentsV3Selector(params *GetAPIEnvironmentsV3SelectorParams, opts ...ClientOption) (*GetAPIEnvironmentsV3SelectorOK, error)
+
 	GetAPIV2Environments(params *GetAPIV2EnvironmentsParams, opts ...ClientOption) (*GetAPIV2EnvironmentsOK, error)
 
 	GetAPIV2EnvironmentsSelector(params *GetAPIV2EnvironmentsSelectorParams, opts ...ClientOption) (*GetAPIV2EnvironmentsSelectorOK, error)
@@ -86,6 +90,86 @@ func (a *Client) DeleteAPIV2EnvironmentsSelector(params *DeleteAPIV2Environments
 	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for DeleteAPIV2EnvironmentsSelector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+  GetAPIEnvironmentsV3 lists environments matching a filter
+
+  List Environments matching a filter.
+*/
+func (a *Client) GetAPIEnvironmentsV3(params *GetAPIEnvironmentsV3Params, opts ...ClientOption) (*GetAPIEnvironmentsV3OK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetAPIEnvironmentsV3Params()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "GetAPIEnvironmentsV3",
+		Method:             "GET",
+		PathPattern:        "/api/environments/v3",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &GetAPIEnvironmentsV3Reader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*GetAPIEnvironmentsV3OK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for GetAPIEnvironmentsV3: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+  GetAPIEnvironmentsV3Selector gets an individual environment
+
+  Get an individual Environment.
+*/
+func (a *Client) GetAPIEnvironmentsV3Selector(params *GetAPIEnvironmentsV3SelectorParams, opts ...ClientOption) (*GetAPIEnvironmentsV3SelectorOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetAPIEnvironmentsV3SelectorParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "GetAPIEnvironmentsV3Selector",
+		Method:             "GET",
+		PathPattern:        "/api/environments/v3/{selector}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &GetAPIEnvironmentsV3SelectorReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*GetAPIEnvironmentsV3SelectorOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for GetAPIEnvironmentsV3Selector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 
