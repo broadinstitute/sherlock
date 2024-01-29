@@ -3259,6 +3259,389 @@
                 }
             }
         },
+        "/api/incidents/v3": {
+            "get": {
+                "description": "List Incidents matching a filter.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Incidents"
+                ],
+                "summary": "List Incidents matching a filter",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "date-time",
+                        "name": "createdAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "description",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "remediatedAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "reviewCompletedAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "startedAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ticket",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "format": "date-time",
+                        "name": "updatedAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Control how many Incidents are returned (default 0, meaning all)",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Control the offset for the returned Incidents (default 0)",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/sherlock.IncidentV3"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a Incident.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Incidents"
+                ],
+                "summary": "Create a Incident",
+                "parameters": [
+                    {
+                        "description": "The Incident to create",
+                        "name": "incident",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.IncidentV3Create"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.IncidentV3"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/incidents/v3/{selector}": {
+            "get": {
+                "description": "Get an individual Incident.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Incidents"
+                ],
+                "summary": "Get an individual Incident",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The ID of the Incident",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.IncidentV3"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete an individual Incident by its ID.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Incidents"
+                ],
+                "summary": "Delete an individual Incident",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The ID of the Incident",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.IncidentV3"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Edit an individual Incident.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Incidents"
+                ],
+                "summary": "Edit an individual Incident",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The ID of the Incident",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "The edits to make to the Incident",
+                        "name": "incident",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.IncidentV3Edit"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.IncidentV3"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/pagerduty-integrations/v3": {
             "get": {
                 "description": "List PagerdutyIntegrations matching a filter.",
@@ -11700,6 +12083,77 @@
                 },
                 "onSuccess": {
                     "type": "boolean"
+                }
+            }
+        },
+        "sherlock.IncidentV3": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "remediatedAt": {
+                    "type": "string"
+                },
+                "reviewCompletedAt": {
+                    "type": "string"
+                },
+                "startedAt": {
+                    "type": "string"
+                },
+                "ticket": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string",
+                    "format": "date-time"
+                }
+            }
+        },
+        "sherlock.IncidentV3Create": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "remediatedAt": {
+                    "type": "string"
+                },
+                "reviewCompletedAt": {
+                    "type": "string"
+                },
+                "startedAt": {
+                    "type": "string"
+                },
+                "ticket": {
+                    "type": "string"
+                }
+            }
+        },
+        "sherlock.IncidentV3Edit": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "remediatedAt": {
+                    "type": "string"
+                },
+                "reviewCompletedAt": {
+                    "type": "string"
+                },
+                "startedAt": {
+                    "type": "string"
+                },
+                "ticket": {
+                    "type": "string"
                 }
             }
         },
