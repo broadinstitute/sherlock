@@ -199,13 +199,6 @@ func (s *modelSuite) TestChartReleaseVersionChartVersionExactNotEmpty() {
 	s.ErrorContains(err, "violates check constraint \"chart_version_resolver_valid\"")
 }
 
-func (s *modelSuite) TestChartReleaseVersionChartVersionResolverExactNotNull() {
-	s.SetSuitableTestUserForDB()
-	chartRelease := s.TestData.ChartRelease_LeonardoProd()
-	err := s.DB.Model(&chartRelease).Select("ChartVersionID").Updates(&ChartReleaseVersion{ChartVersionID: utils.PointerTo(uint(1))}).Error
-	s.ErrorContains(err, "violates foreign key constraint \"fk_chart_releases_chart_version\"")
-}
-
 func (s *modelSuite) TestChartReleaseVersionHelmfileRefValidRefNull() {
 	s.SetSuitableTestUserForDB()
 	chartRelease := s.TestData.ChartRelease_LeonardoDev()

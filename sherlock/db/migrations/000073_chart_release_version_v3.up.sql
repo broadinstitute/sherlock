@@ -36,9 +36,6 @@ alter table chart_releases
                ((chart_version_resolver = 'latest' and
                  chart_version_id is not null) or
 
-                (chart_version_resolver = 'exact' and
-                 chart_version_id is null) or
-
                 (chart_version_resolver = 'follow' and
                  chart_version_follow_chart_release_id is not null)));
 
