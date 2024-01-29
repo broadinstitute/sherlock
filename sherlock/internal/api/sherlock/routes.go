@@ -104,4 +104,10 @@ func ConfigureRoutes(apiRouter gin.IRoutes) {
 	apiRouter.PATCH("pagerduty-integrations/v3/*selector", pagerdutyIntegrationsV3Edit)
 	apiRouter.DELETE("pagerduty-integrations/v3/*selector", pagerdutyIntegrationsV3Delete)
 	apiRouter.POST("pagerduty-integrations/v3", pagerdutyIntegrationsV3Create)
+
+	apiRouter.GET("environments/v3/*selector", environmentsV3Get)
+	apiRouter.GET("environments/v3", environmentsV3List)
+
+	apiRouter.GET("chart-releases/v3/*selector", chartReleasesV3Get)
+	apiRouter.GET("chart-releases/v3", chartReleasesV3List)
 }

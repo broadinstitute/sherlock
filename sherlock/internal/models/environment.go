@@ -9,6 +9,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/slack"
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 	"strings"
 	"time"
@@ -48,6 +49,7 @@ type Environment struct {
 	OfflineScheduleEndEnabled   *bool
 	OfflineScheduleEndTime      *string
 	OfflineScheduleEndWeekends  *bool
+	PactIdentifier              *uuid.UUID
 }
 
 func (e *Environment) GetCiIdentifier() CiIdentifier {
