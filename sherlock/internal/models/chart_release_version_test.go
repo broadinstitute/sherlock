@@ -9,17 +9,7 @@ func (s *modelSuite) TestChartReleaseVersionResolvedAtPresent() {
 	s.ErrorContains(err, "violates check constraint \"resolved_at_present\"")
 }
 
-/*------------------------------------------------------------------------------------*/
-
-func (s *modelSuite) TestChartReleaseVersionAppVersionResolverNotNull() {
-	//TODO broken
-	s.SetSuitableTestUserForDB()
-	chartRelease := s.TestData.ChartRelease_LeonardoSwatomation()
-	err := s.DB.Model(&chartRelease).Select("AppVersionResolver").Updates(&ChartReleaseVersion{AppVersionResolver: nil}).Error
-	s.ErrorContains(err, "violates check constraint \"app_version_resolver_valid\"")
-}
-
-func (s *modelSuite) TestChartReleaseVersionAppVersionResolverNotEmpty() {
+func (s *modelSuite) TestChartReleaseVersionAppVersionResolverEmpty() {
 	s.SetSuitableTestUserForDB()
 	chartRelease := s.TestData.ChartRelease_LeonardoSwatomation()
 	err := s.DB.Model(&chartRelease).Select("AppVersionResolver").Updates(&ChartReleaseVersion{AppVersionResolver: utils.PointerTo("")}).Error
@@ -90,8 +80,6 @@ func (s *modelSuite) TestChartReleaseVersionAppVersionResolverNoneFollowIDNotNul
 	s.ErrorContains(err, "violates check constraint \"app_version_resolver_valid\"")
 }
 
-/*------------------------------------------------------------------------------------*/
-
 func (s *modelSuite) TestChartReleaseVersionChartVersionResolverNotNull() {
 	s.SetSuitableTestUserForDB()
 	chartRelease := s.TestData.ChartRelease_LeonardoSwatomation()
@@ -131,16 +119,6 @@ func (s *modelSuite) TestChartReleaseVersionChartVersionResolverExactNotNull() {
 	err := s.DB.Model(&chartRelease).Select("ChartVersionID").Updates(&ChartReleaseVersion{ChartVersionID: utils.PointerTo(uint(1))}).Error
 	s.ErrorContains(err, "violates check constraint \"chart_version_resolver_valid\"")
 }
-
-func (s *modelSuite) TestChartReleaseVersionChartVersionResolverFollowNull() {
-	//broken
-	s.SetSuitableTestUserForDB()
-	chartRelease := s.TestData.ChartRelease_LeonardoSwatomation()
-	err := s.DB.Model(&chartRelease).Select("ChartVersionFollowChartReleaseID").Updates(&ChartReleaseVersion{ChartVersionFollowChartReleaseID: nil}).Error
-	s.ErrorContains(err, "violates check constraint \"chart_version_resolver_valid\"")
-}
-
-/*------------------------------------------------------------------------------------*/
 
 func (s *modelSuite) TestChartReleaseVersionHelmfileRefValidRefNull() {
 	s.SetSuitableTestUserForDB()

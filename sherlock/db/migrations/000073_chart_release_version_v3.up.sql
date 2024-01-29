@@ -46,3 +46,4 @@ alter table chart_releases
     add constraint helmfile_ref_valid
         check ((helmfile_ref_enabled is null or helmfile_ref_enabled is false) or
                (helmfile_ref is not null and helmfile_ref != ''));
+
