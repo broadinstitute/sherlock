@@ -134,10 +134,12 @@ func (e EnvironmentV3) toModel(db *gorm.DB) (models.Environment, error) {
 	return ret, nil
 }
 
+//nolint:unused
 func (e EnvironmentV3Create) toModel(db *gorm.DB) (models.Environment, error) {
 	return EnvironmentV3{EnvironmentV3Create: e}.toModel(db)
 }
 
+//nolint:unused
 func (e EnvironmentV3Edit) toModel(db *gorm.DB) (models.Environment, error) {
 	return EnvironmentV3Create{EnvironmentV3Edit: e}.toModel(db)
 }

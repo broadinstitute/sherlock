@@ -176,10 +176,12 @@ func (c ChartReleaseV3) toModel(db *gorm.DB) (models.ChartRelease, error) {
 	return ret, nil
 }
 
+//nolint:unused
 func (c ChartReleaseV3Create) toModel(db *gorm.DB) (models.ChartRelease, error) {
 	return ChartReleaseV3{ChartReleaseV3Create: c}.toModel(db)
 }
 
+//nolint:unused
 func (c ChartReleaseV3Edit) toModel(db *gorm.DB) (models.ChartRelease, error) {
 	return ChartReleaseV3Create{ChartReleaseV3Edit: c}.toModel(db)
 }
