@@ -282,7 +282,7 @@ func Test_environmentFromModel(t *testing.T) {
 					Valid: true,
 				},
 				Description:                 utils.PointerTo("description"),
-				PagerdutyIntegration:        &models.PagerdutyIntegration{Model: gorm.Model{ID: 6}, PagerdutyID: "pagerduty-id"},
+				PagerdutyIntegration:        &models.PagerdutyIntegration{Model: gorm.Model{ID: 6}, PagerdutyID: "blah"},
 				PagerdutyIntegrationID:      utils.PointerTo[uint](6),
 				Offline:                     utils.PointerTo(true),
 				OfflineScheduleBeginEnabled: utils.PointerTo(true),
@@ -301,7 +301,7 @@ func Test_environmentFromModel(t *testing.T) {
 				CiIdentifier:             &CiIdentifierV3{CommonFields: CommonFields{ID: 2}},
 				TemplateEnvironmentInfo:  &EnvironmentV3{CommonFields: CommonFields{ID: 3}, EnvironmentV3Create: EnvironmentV3Create{Name: "name-3"}},
 				DefaultClusterInfo:       &ClusterV3{CommonFields: CommonFields{ID: 4}, ClusterV3Create: ClusterV3Create{Name: "name-4"}},
-				PagerdutyIntegrationInfo: &PagerdutyIntegrationV3{CommonFields: CommonFields{ID: 6}, PagerdutyID: "pagerduty-id"},
+				PagerdutyIntegrationInfo: &PagerdutyIntegrationV3{CommonFields: CommonFields{ID: 6}, PagerdutyID: "blah"},
 				OwnerInfo: &UserV3{CommonFields: CommonFields{ID: 5}, Email: "example@example.com", Suitable: utils.PointerTo(false),
 					SuitabilityDescription: utils.PointerTo("user example@example.com lacks production suitability")},
 				EnvironmentV3Create: EnvironmentV3Create{
@@ -326,13 +326,26 @@ func Test_environmentFromModel(t *testing.T) {
 						DeleteAfter:                 utils.PointerTo(now),
 						Description:                 utils.PointerTo("description"),
 						PactIdentifier:              utils.PointerTo(pactUuid),
-						PagerdutyIntegration:        utils.PointerTo("6"),
+						PagerdutyIntegration:        utils.PointerTo("pd-id/blah"),
 						Offline:                     utils.PointerTo(true),
 						OfflineScheduleBeginEnabled: utils.PointerTo(true),
 						OfflineScheduleBeginTime:    nowTimeParsedAgain,
 						OfflineScheduleEndEnabled:   utils.PointerTo(true),
 						OfflineScheduleEndTime:      nowTimeParsedAgain,
 						OfflineScheduleEndWeekends:  utils.PointerTo(true),
+					},
+				},
+			},
+		},
+		{
+			name: "pagerduty ID case",
+			args: args{model: models.Environment{
+				PagerdutyIntegrationID: utils.PointerTo[uint](6),
+			}},
+			want: EnvironmentV3{
+				EnvironmentV3Create: EnvironmentV3Create{
+					EnvironmentV3Edit: EnvironmentV3Edit{
+						PagerdutyIntegration: utils.PointerTo("6"),
 					},
 				},
 			},

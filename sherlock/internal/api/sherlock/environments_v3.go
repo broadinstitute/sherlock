@@ -2,6 +2,7 @@ package sherlock
 
 import (
 	"database/sql"
+	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/google/uuid"
@@ -185,8 +186,10 @@ func environmentFromModel(model models.Environment) EnvironmentV3 {
 	if model.DeleteAfter.Valid {
 		ret.DeleteAfter = &model.DeleteAfter.Time
 	}
-	if model.PagerdutyIntegration != nil {
-		ret.PagerdutyIntegration = utils.PointerTo(utils.UintToString(model.PagerdutyIntegration.ID))
+	if model.PagerdutyIntegration != nil && model.PagerdutyIntegration.PagerdutyID != "" {
+		ret.PagerdutyIntegration = utils.PointerTo(fmt.Sprintf("pd-id/%s", model.PagerdutyIntegration.PagerdutyID))
+	} else if model.PagerdutyIntegrationID != nil {
+		ret.PagerdutyIntegration = utils.PointerTo(utils.UintToString(*model.PagerdutyIntegrationID))
 	}
 	var err error
 	if ret.OfflineScheduleBeginTime, err = utils.ISO8601PtrToTime(model.OfflineScheduleBeginTime); err != nil {
