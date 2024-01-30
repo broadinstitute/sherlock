@@ -44,6 +44,8 @@ type ClientService interface {
 
 	GetAPIV2SelectorsEnvironmentsSelector(params *GetAPIV2SelectorsEnvironmentsSelectorParams, opts ...ClientOption) (*GetAPIV2SelectorsEnvironmentsSelectorOK, error)
 
+	PatchAPIEnvironmentsV3Selector(params *PatchAPIEnvironmentsV3SelectorParams, opts ...ClientOption) (*PatchAPIEnvironmentsV3SelectorOK, error)
+
 	PatchAPIV2EnvironmentsSelector(params *PatchAPIV2EnvironmentsSelectorParams, opts ...ClientOption) (*PatchAPIV2EnvironmentsSelectorOK, error)
 
 	PostAPIV2Environments(params *PostAPIV2EnvironmentsParams, opts ...ClientOption) (*PostAPIV2EnvironmentsOK, *PostAPIV2EnvironmentsCreated, error)
@@ -332,6 +334,46 @@ func (a *Client) GetAPIV2SelectorsEnvironmentsSelector(params *GetAPIV2Selectors
 	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for GetAPIV2SelectorsEnvironmentsSelector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+  PatchAPIEnvironmentsV3Selector edits an individual environment
+
+  Edit an individual Environment.
+*/
+func (a *Client) PatchAPIEnvironmentsV3Selector(params *PatchAPIEnvironmentsV3SelectorParams, opts ...ClientOption) (*PatchAPIEnvironmentsV3SelectorOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewPatchAPIEnvironmentsV3SelectorParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "PatchAPIEnvironmentsV3Selector",
+		Method:             "PATCH",
+		PathPattern:        "/api/environments/v3/{selector}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &PatchAPIEnvironmentsV3SelectorReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*PatchAPIEnvironmentsV3SelectorOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for PatchAPIEnvironmentsV3Selector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 

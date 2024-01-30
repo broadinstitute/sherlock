@@ -46,6 +46,7 @@ src/models/SherlockClusterV3.ts
 src/models/SherlockClusterV3Create.ts
 src/models/SherlockClusterV3Edit.ts
 src/models/SherlockEnvironmentV3.ts
+src/models/SherlockEnvironmentV3Edit.ts
 src/models/SherlockGitCommitV3.ts
 src/models/SherlockGitCommitV3Upsert.ts
 src/models/SherlockGithubActionsDeployHookTestRunRequest.ts

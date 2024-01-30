@@ -805,6 +805,69 @@ definitions:
         description: When creating, defaults to template name or environment name
         type: string
     type: object
+  sherlock.EnvironmentV3Edit:
+    properties:
+      baseDomain:
+        default: bee.envs-terra.bio
+        type: string
+      defaultCluster:
+        type: string
+      defaultFirecloudDevelopRef:
+        default: dev
+        description: should be the environment branch for live envs. Is usually dev
+          for template/dynamic but not necessarily
+        type: string
+      deleteAfter:
+        description: If set, the BEE will be automatically deleted after this time
+          (thelma checks this field)
+        type: string
+      description:
+        type: string
+      helmfileRef:
+        default: HEAD
+        type: string
+      namePrefixesDomain:
+        default: true
+        type: boolean
+      offline:
+        default: false
+        description: Applicable for BEEs only, whether Thelma should render the BEE
+          as "offline" zero replicas (this field is a target state, not a status)
+        type: boolean
+      offlineScheduleBeginEnabled:
+        description: When enabled, the BEE will be slated to go offline around the
+          begin time each day
+        type: boolean
+      offlineScheduleBeginTime:
+        description: Stored with timezone to determine day of the week
+        format: date-time
+        type: string
+      offlineScheduleEndEnabled:
+        description: When enabled, the BEE will be slated to come online around the
+          end time each weekday (each day if weekends enabled)
+        type: boolean
+      offlineScheduleEndTime:
+        description: Stored with timezone to determine day of the week
+        format: date-time
+        type: string
+      offlineScheduleEndWeekends:
+        type: boolean
+      owner:
+        description: When creating, will default to you
+        type: string
+      pactIdentifier:
+        type: string
+      pagerdutyIntegration:
+        type: string
+      preventDeletion:
+        default: false
+        description: Used to protect specific BEEs from deletion (thelma checks this
+          field)
+        type: boolean
+      requiresSuitability:
+        default: false
+        type: boolean
+    type: object
   sherlock.GitCommitV3:
     properties:
       committedAt:
@@ -5108,6 +5171,55 @@ paths:
           schema:
             $ref: '#/definitions/errors.ErrorResponse'
       summary: Get an individual Environment
+      tags:
+      - Environments
+    patch:
+      description: Edit an individual Environment.
+      parameters:
+      - description: The selector of the Environment, which can be either a numeric
+          ID, the name, or 'resource-prefix' + / + the unique resource prefix.
+        in: path
+        name: selector
+        required: true
+        type: string
+      - description: The edits to make to the Environment
+        in: body
+        name: environment
+        required: true
+        schema:
+          $ref: '#/definitions/sherlock.EnvironmentV3Edit'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/sherlock.EnvironmentV3'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Edit an individual Environment
       tags:
       - Environments
   /api/git-commits/v3:

@@ -3939,6 +3939,78 @@
                         }
                     }
                 }
+            },
+            "patch": {
+                "description": "Edit an individual Environment.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Environments"
+                ],
+                "summary": "Edit an individual Environment",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The selector of the Environment, which can be either a numeric ID, the name, or 'resource-prefix' + / + the unique resource prefix.",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "The edits to make to the Environment",
+                        "name": "environment",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.EnvironmentV3Edit"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.EnvironmentV3"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
             }
         },
         "/api/git-commits/v3": {
@@ -12907,6 +12979,83 @@
                 "valuesName": {
                     "description": "When creating, defaults to template name or environment name",
                     "type": "string"
+                }
+            }
+        },
+        "sherlock.EnvironmentV3Edit": {
+            "type": "object",
+            "properties": {
+                "baseDomain": {
+                    "type": "string",
+                    "default": "bee.envs-terra.bio"
+                },
+                "defaultCluster": {
+                    "type": "string"
+                },
+                "defaultFirecloudDevelopRef": {
+                    "description": "should be the environment branch for live envs. Is usually dev for template/dynamic but not necessarily",
+                    "type": "string",
+                    "default": "dev"
+                },
+                "deleteAfter": {
+                    "description": "If set, the BEE will be automatically deleted after this time (thelma checks this field)",
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "helmfileRef": {
+                    "type": "string",
+                    "default": "HEAD"
+                },
+                "namePrefixesDomain": {
+                    "type": "boolean",
+                    "default": true
+                },
+                "offline": {
+                    "description": "Applicable for BEEs only, whether Thelma should render the BEE as \"offline\" zero replicas (this field is a target state, not a status)",
+                    "type": "boolean",
+                    "default": false
+                },
+                "offlineScheduleBeginEnabled": {
+                    "description": "When enabled, the BEE will be slated to go offline around the begin time each day",
+                    "type": "boolean"
+                },
+                "offlineScheduleBeginTime": {
+                    "description": "Stored with timezone to determine day of the week",
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "offlineScheduleEndEnabled": {
+                    "description": "When enabled, the BEE will be slated to come online around the end time each weekday (each day if weekends enabled)",
+                    "type": "boolean"
+                },
+                "offlineScheduleEndTime": {
+                    "description": "Stored with timezone to determine day of the week",
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "offlineScheduleEndWeekends": {
+                    "type": "boolean"
+                },
+                "owner": {
+                    "description": "When creating, will default to you",
+                    "type": "string"
+                },
+                "pactIdentifier": {
+                    "type": "string"
+                },
+                "pagerdutyIntegration": {
+                    "type": "string"
+                },
+                "preventDeletion": {
+                    "description": "Used to protect specific BEEs from deletion (thelma checks this field)",
+                    "type": "boolean",
+                    "default": false
+                },
+                "requiresSuitability": {
+                    "type": "boolean",
+                    "default": false
                 }
             }
         },

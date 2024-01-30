@@ -26,6 +26,7 @@ export * from './SherlockClusterV3';
 export * from './SherlockClusterV3Create';
 export * from './SherlockClusterV3Edit';
 export * from './SherlockEnvironmentV3';
+export * from './SherlockEnvironmentV3Edit';
 export * from './SherlockGitCommitV3';
 export * from './SherlockGitCommitV3Upsert';
 export * from './SherlockGithubActionsDeployHookTestRunRequest';

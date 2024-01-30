@@ -19,6 +19,7 @@ import type {
   PagerdutyAlertSummary,
   PagerdutySendAlertResponse,
   SherlockEnvironmentV3,
+  SherlockEnvironmentV3Edit,
   V2controllersCreatableEnvironment,
   V2controllersEditableEnvironment,
   V2controllersEnvironment,
@@ -32,6 +33,8 @@ import {
     PagerdutySendAlertResponseToJSON,
     SherlockEnvironmentV3FromJSON,
     SherlockEnvironmentV3ToJSON,
+    SherlockEnvironmentV3EditFromJSON,
+    SherlockEnvironmentV3EditToJSON,
     V2controllersCreatableEnvironmentFromJSON,
     V2controllersCreatableEnvironmentToJSON,
     V2controllersEditableEnvironmentFromJSON,
@@ -81,6 +84,11 @@ export interface ApiEnvironmentsV3SelectorDeleteRequest {
 
 export interface ApiEnvironmentsV3SelectorGetRequest {
     selector: string;
+}
+
+export interface ApiEnvironmentsV3SelectorPatchRequest {
+    selector: string;
+    environment: SherlockEnvironmentV3Edit;
 }
 
 export interface ApiV2EnvironmentsGetRequest {
@@ -369,6 +377,45 @@ export class EnvironmentsApi extends runtime.BaseAPI {
      */
     async apiEnvironmentsV3SelectorGet(requestParameters: ApiEnvironmentsV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockEnvironmentV3> {
         const response = await this.apiEnvironmentsV3SelectorGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Edit an individual Environment.
+     * Edit an individual Environment
+     */
+    async apiEnvironmentsV3SelectorPatchRaw(requestParameters: ApiEnvironmentsV3SelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockEnvironmentV3>> {
+        if (requestParameters.selector === null || requestParameters.selector === undefined) {
+            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiEnvironmentsV3SelectorPatch.');
+        }
+
+        if (requestParameters.environment === null || requestParameters.environment === undefined) {
+            throw new runtime.RequiredError('environment','Required parameter requestParameters.environment was null or undefined when calling apiEnvironmentsV3SelectorPatch.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/api/environments/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            method: 'PATCH',
+            headers: headerParameters,
+            query: queryParameters,
+            body: SherlockEnvironmentV3EditToJSON(requestParameters.environment),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => SherlockEnvironmentV3FromJSON(jsonValue));
+    }
+
+    /**
+     * Edit an individual Environment.
+     * Edit an individual Environment
+     */
+    async apiEnvironmentsV3SelectorPatch(requestParameters: ApiEnvironmentsV3SelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockEnvironmentV3> {
+        const response = await this.apiEnvironmentsV3SelectorPatchRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
