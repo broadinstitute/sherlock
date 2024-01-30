@@ -114,4 +114,10 @@ func ConfigureRoutes(apiRouter gin.IRoutes) {
 	apiRouter.DELETE("chart-releases/v3/*selector", chartReleasesV3Delete)
 	apiRouter.GET("chart-releases/v3", chartReleasesV3List)
 	apiRouter.PATCH("chart-releases/v3/*selector", chartReleasesV3Edit)
+
+	apiRouter.GET("database-instances/v3/*selector", databaseInstancesV3Get)
+	apiRouter.POST("database-instances/v3", databaseInstancesV3Create)
+	apiRouter.DELETE("database-instances/v3/*selector", databaseInstancesV3Delete)
+	apiRouter.GET("database-instances/v3", databaseInstancesV3List)
+	apiRouter.PATCH("database-instances/v3/*selector", databaseInstancesV3Edit)
 }
