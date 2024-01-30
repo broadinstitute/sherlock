@@ -2892,6 +2892,50 @@ paths:
       tags:
       - ChartReleases
   /api/chart-releases/v3/{selector}:
+    delete:
+      description: Delete an individual ChartRelease by its ID.
+      parameters:
+      - description: The selector of the ChartRelease, which can be either a numeric
+          ID, the name, environment + '/' + chart, or cluster + '/' + namespace +
+          '/' + chart.
+        in: path
+        name: selector
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/sherlock.ChartReleaseV3'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Delete an individual ChartRelease
+      tags:
+      - ChartReleases
     get:
       description: Get an individual ChartRelease.
       parameters:

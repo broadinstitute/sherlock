@@ -30,6 +30,8 @@ type ClientOption func(*runtime.ClientOperation)
 
 // ClientService is the interface for Client methods
 type ClientService interface {
+	DeleteAPIChartReleasesV3Selector(params *DeleteAPIChartReleasesV3SelectorParams, opts ...ClientOption) (*DeleteAPIChartReleasesV3SelectorOK, error)
+
 	DeleteAPIV2ChartReleasesSelector(params *DeleteAPIV2ChartReleasesSelectorParams, opts ...ClientOption) (*DeleteAPIV2ChartReleasesSelectorOK, error)
 
 	GetAPIChartReleasesV3(params *GetAPIChartReleasesV3Params, opts ...ClientOption) (*GetAPIChartReleasesV3OK, error)
@@ -51,6 +53,46 @@ type ClientService interface {
 	PutAPIV2ChartReleasesSelector(params *PutAPIV2ChartReleasesSelectorParams, opts ...ClientOption) (*PutAPIV2ChartReleasesSelectorOK, *PutAPIV2ChartReleasesSelectorCreated, error)
 
 	SetTransport(transport runtime.ClientTransport)
+}
+
+/*
+  DeleteAPIChartReleasesV3Selector deletes an individual chart release
+
+  Delete an individual ChartRelease by its ID.
+*/
+func (a *Client) DeleteAPIChartReleasesV3Selector(params *DeleteAPIChartReleasesV3SelectorParams, opts ...ClientOption) (*DeleteAPIChartReleasesV3SelectorOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDeleteAPIChartReleasesV3SelectorParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "DeleteAPIChartReleasesV3Selector",
+		Method:             "DELETE",
+		PathPattern:        "/api/chart-releases/v3/{selector}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &DeleteAPIChartReleasesV3SelectorReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*DeleteAPIChartReleasesV3SelectorOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for DeleteAPIChartReleasesV3Selector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
 }
 
 /*

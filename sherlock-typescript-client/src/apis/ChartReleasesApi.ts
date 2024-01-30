@@ -73,6 +73,10 @@ export interface ApiChartReleasesV3GetRequest {
     offset?: number;
 }
 
+export interface ApiChartReleasesV3SelectorDeleteRequest {
+    selector: string;
+}
+
 export interface ApiChartReleasesV3SelectorGetRequest {
     selector: string;
 }
@@ -289,6 +293,38 @@ export class ChartReleasesApi extends runtime.BaseAPI {
      */
     async apiChartReleasesV3Get(requestParameters: ApiChartReleasesV3GetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<SherlockChartReleaseV3>> {
         const response = await this.apiChartReleasesV3GetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Delete an individual ChartRelease by its ID.
+     * Delete an individual ChartRelease
+     */
+    async apiChartReleasesV3SelectorDeleteRaw(requestParameters: ApiChartReleasesV3SelectorDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockChartReleaseV3>> {
+        if (requestParameters.selector === null || requestParameters.selector === undefined) {
+            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiChartReleasesV3SelectorDelete.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/chart-releases/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            method: 'DELETE',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => SherlockChartReleaseV3FromJSON(jsonValue));
+    }
+
+    /**
+     * Delete an individual ChartRelease by its ID.
+     * Delete an individual ChartRelease
+     */
+    async apiChartReleasesV3SelectorDelete(requestParameters: ApiChartReleasesV3SelectorDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockChartReleaseV3> {
+        const response = await this.apiChartReleasesV3SelectorDeleteRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
