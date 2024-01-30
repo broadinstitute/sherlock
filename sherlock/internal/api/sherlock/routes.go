@@ -108,6 +108,7 @@ func ConfigureRoutes(apiRouter gin.IRoutes) {
 	apiRouter.GET("environments/v3/*selector", environmentsV3Get)
 	apiRouter.DELETE("environments/v3/*selector", environmentsV3Delete)
 	apiRouter.GET("environments/v3", environmentsV3List)
+	apiRouter.PATCH("environments/v3/*selector", environmentsV3Edit)
 
 	apiRouter.GET("chart-releases/v3/*selector", chartReleasesV3Get)
 	apiRouter.DELETE("chart-releases/v3/*selector", chartReleasesV3Delete)
