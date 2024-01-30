@@ -19,7 +19,7 @@ import (
 //	@tags			DatabaseInstances
 //	@accept			json
 //	@produce		json
-//	@param			databaseInstance			body		DatabaseInstanceV3Create	true	"The DatabaseInstance to create"
+//	@param			databaseInstance		body		DatabaseInstanceV3Create	true	"The DatabaseInstance to create"
 //	@success		201						{object}	DatabaseInstanceV3
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/database-instances/v3 [post]

@@ -17,8 +17,8 @@ import (
 //	@tags			DatabaseInstances
 //	@produce		json
 //	@param			filter					query		DatabaseInstanceV3	false	"Filter the returned DatabaseInstances"
-//	@param			limit					query		int				false	"Control how many DatabaseInstances are returned (default 0, meaning all)"
-//	@param			offset					query		int				false	"Control the offset for the returned DatabaseInstances (default 0)"
+//	@param			limit					query		int					false	"Control how many DatabaseInstances are returned (default 0, meaning all)"
+//	@param			offset					query		int					false	"Control the offset for the returned DatabaseInstances (default 0)"
 //	@success		200						{array}		DatabaseInstanceV3
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/database-instances/v3 [get]
