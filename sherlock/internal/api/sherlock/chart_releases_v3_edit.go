@@ -16,7 +16,7 @@ import (
 //	@description	Edit an individual ChartRelease.
 //	@tags			ChartReleases
 //	@produce		json
-//	@param			selector				path		string				true	"The selector of the ChartRelease, which can be either a numeric ID, the name, or 'resource-prefix' + / + the unique resource prefix."
+//	@param			selector				path		string				true	"The selector of the ChartRelease, which can be either a numeric ID, the name, environment + '/' + chart, or cluster + '/' + namespace + '/' + chart."
 //	@param			chartRelease			body		ChartReleaseV3Edit	true	"The edits to make to the ChartRelease"
 //	@success		200						{object}	ChartReleaseV3
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
