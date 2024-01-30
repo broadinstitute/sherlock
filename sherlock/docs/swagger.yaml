@@ -4980,6 +4980,49 @@ paths:
       tags:
       - Environments
   /api/environments/v3/{selector}:
+    delete:
+      description: Delete an individual Environment by its ID.
+      parameters:
+      - description: The selector of the Environment, which can be either a numeric
+          ID, the name, or 'resource-prefix' + / + the unique resource prefix.
+        in: path
+        name: selector
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/sherlock.EnvironmentV3'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Delete an individual Environment
+      tags:
+      - Environments
     get:
       description: Get an individual Environment.
       parameters:

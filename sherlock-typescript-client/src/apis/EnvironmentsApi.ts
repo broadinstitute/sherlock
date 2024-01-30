@@ -75,6 +75,10 @@ export interface ApiEnvironmentsV3GetRequest {
     offset?: number;
 }
 
+export interface ApiEnvironmentsV3SelectorDeleteRequest {
+    selector: string;
+}
+
 export interface ApiEnvironmentsV3SelectorGetRequest {
     selector: string;
 }
@@ -301,6 +305,38 @@ export class EnvironmentsApi extends runtime.BaseAPI {
      */
     async apiEnvironmentsV3Get(requestParameters: ApiEnvironmentsV3GetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<SherlockEnvironmentV3>> {
         const response = await this.apiEnvironmentsV3GetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Delete an individual Environment by its ID.
+     * Delete an individual Environment
+     */
+    async apiEnvironmentsV3SelectorDeleteRaw(requestParameters: ApiEnvironmentsV3SelectorDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockEnvironmentV3>> {
+        if (requestParameters.selector === null || requestParameters.selector === undefined) {
+            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiEnvironmentsV3SelectorDelete.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/environments/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            method: 'DELETE',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => SherlockEnvironmentV3FromJSON(jsonValue));
+    }
+
+    /**
+     * Delete an individual Environment by its ID.
+     * Delete an individual Environment
+     */
+    async apiEnvironmentsV3SelectorDelete(requestParameters: ApiEnvironmentsV3SelectorDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockEnvironmentV3> {
+        const response = await this.apiEnvironmentsV3SelectorDeleteRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
