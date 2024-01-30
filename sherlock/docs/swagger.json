@@ -798,6 +798,78 @@
                         }
                     }
                 }
+            },
+            "patch": {
+                "description": "Edit an individual ChartRelease.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ChartReleases"
+                ],
+                "summary": "Edit an individual ChartRelease",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The selector of the ChartRelease, which can be either a numeric ID, the name, environment + '/' + chart, or cluster + '/' + namespace + '/' + chart.",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "The edits to make to the ChartRelease",
+                        "name": "chartRelease",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.ChartReleaseV3Edit"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.ChartReleaseV3"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
             }
         },
         "/api/chart-versions/procedures/v3/changelog": {
@@ -12216,6 +12288,30 @@
                 "updatedAt": {
                     "type": "string",
                     "format": "date-time"
+                }
+            }
+        },
+        "sherlock.ChartReleaseV3Edit": {
+            "type": "object",
+            "properties": {
+                "includedInBulkChangesets": {
+                    "type": "boolean",
+                    "default": true
+                },
+                "pagerdutyIntegration": {
+                    "type": "string"
+                },
+                "port": {
+                    "description": "When creating, will use the chart's default if left empty",
+                    "type": "integer"
+                },
+                "protocol": {
+                    "description": "When creating, will use the chart's default if left empty",
+                    "type": "string"
+                },
+                "subdomain": {
+                    "description": "When creating, will use the chart's default if left empty",
+                    "type": "string"
                 }
             }
         },

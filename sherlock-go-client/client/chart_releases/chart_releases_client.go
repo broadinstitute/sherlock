@@ -44,6 +44,8 @@ type ClientService interface {
 
 	GetAPIV2SelectorsChartReleasesSelector(params *GetAPIV2SelectorsChartReleasesSelectorParams, opts ...ClientOption) (*GetAPIV2SelectorsChartReleasesSelectorOK, error)
 
+	PatchAPIChartReleasesV3Selector(params *PatchAPIChartReleasesV3SelectorParams, opts ...ClientOption) (*PatchAPIChartReleasesV3SelectorOK, error)
+
 	PatchAPIV2ChartReleasesSelector(params *PatchAPIV2ChartReleasesSelectorParams, opts ...ClientOption) (*PatchAPIV2ChartReleasesSelectorOK, error)
 
 	PostAPIV2ChartReleases(params *PostAPIV2ChartReleasesParams, opts ...ClientOption) (*PostAPIV2ChartReleasesOK, *PostAPIV2ChartReleasesCreated, error)
@@ -332,6 +334,46 @@ func (a *Client) GetAPIV2SelectorsChartReleasesSelector(params *GetAPIV2Selector
 	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for GetAPIV2SelectorsChartReleasesSelector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+  PatchAPIChartReleasesV3Selector edits an individual chart release
+
+  Edit an individual ChartRelease.
+*/
+func (a *Client) PatchAPIChartReleasesV3Selector(params *PatchAPIChartReleasesV3SelectorParams, opts ...ClientOption) (*PatchAPIChartReleasesV3SelectorOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewPatchAPIChartReleasesV3SelectorParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "PatchAPIChartReleasesV3Selector",
+		Method:             "PATCH",
+		PathPattern:        "/api/chart-releases/v3/{selector}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &PatchAPIChartReleasesV3SelectorReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*PatchAPIChartReleasesV3SelectorOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for PatchAPIChartReleasesV3Selector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 

@@ -19,6 +19,7 @@ import type {
   PagerdutyAlertSummary,
   PagerdutySendAlertResponse,
   SherlockChartReleaseV3,
+  SherlockChartReleaseV3Edit,
   V2controllersChartRelease,
   V2controllersCreatableChartRelease,
   V2controllersEditableChartRelease,
@@ -32,6 +33,8 @@ import {
     PagerdutySendAlertResponseToJSON,
     SherlockChartReleaseV3FromJSON,
     SherlockChartReleaseV3ToJSON,
+    SherlockChartReleaseV3EditFromJSON,
+    SherlockChartReleaseV3EditToJSON,
     V2controllersChartReleaseFromJSON,
     V2controllersChartReleaseToJSON,
     V2controllersCreatableChartReleaseFromJSON,
@@ -79,6 +82,11 @@ export interface ApiChartReleasesV3SelectorDeleteRequest {
 
 export interface ApiChartReleasesV3SelectorGetRequest {
     selector: string;
+}
+
+export interface ApiChartReleasesV3SelectorPatchRequest {
+    selector: string;
+    chartRelease: SherlockChartReleaseV3Edit;
 }
 
 export interface ApiV2ChartReleasesGetRequest {
@@ -357,6 +365,45 @@ export class ChartReleasesApi extends runtime.BaseAPI {
      */
     async apiChartReleasesV3SelectorGet(requestParameters: ApiChartReleasesV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockChartReleaseV3> {
         const response = await this.apiChartReleasesV3SelectorGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Edit an individual ChartRelease.
+     * Edit an individual ChartRelease
+     */
+    async apiChartReleasesV3SelectorPatchRaw(requestParameters: ApiChartReleasesV3SelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockChartReleaseV3>> {
+        if (requestParameters.selector === null || requestParameters.selector === undefined) {
+            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiChartReleasesV3SelectorPatch.');
+        }
+
+        if (requestParameters.chartRelease === null || requestParameters.chartRelease === undefined) {
+            throw new runtime.RequiredError('chartRelease','Required parameter requestParameters.chartRelease was null or undefined when calling apiChartReleasesV3SelectorPatch.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/api/chart-releases/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            method: 'PATCH',
+            headers: headerParameters,
+            query: queryParameters,
+            body: SherlockChartReleaseV3EditToJSON(requestParameters.chartRelease),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => SherlockChartReleaseV3FromJSON(jsonValue));
+    }
+
+    /**
+     * Edit an individual ChartRelease.
+     * Edit an individual ChartRelease
+     */
+    async apiChartReleasesV3SelectorPatch(requestParameters: ApiChartReleasesV3SelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockChartReleaseV3> {
+        const response = await this.apiChartReleasesV3SelectorPatchRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
