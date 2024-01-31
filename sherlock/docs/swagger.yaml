@@ -711,6 +711,70 @@ definitions:
         default: false
         type: boolean
     type: object
+  sherlock.DatabaseInstanceV3:
+    properties:
+      chartRelease:
+        description: Required when creating
+        type: string
+      chartReleaseInfo:
+        $ref: '#/definitions/sherlock.ChartReleaseV3'
+      createdAt:
+        format: date-time
+        type: string
+      defaultDatabase:
+        description: When creating, defaults to the chart name
+        type: string
+      googleProject:
+        description: Required if platform is 'google'
+        type: string
+      id:
+        type: integer
+      instanceName:
+        description: Required if platform is 'google' or 'azure'
+        type: string
+      platform:
+        default: kubernetes
+        description: '''google'', ''azure'', or default ''kubernetes'''
+        type: string
+      updatedAt:
+        format: date-time
+        type: string
+    type: object
+  sherlock.DatabaseInstanceV3Create:
+    properties:
+      chartRelease:
+        description: Required when creating
+        type: string
+      defaultDatabase:
+        description: When creating, defaults to the chart name
+        type: string
+      googleProject:
+        description: Required if platform is 'google'
+        type: string
+      instanceName:
+        description: Required if platform is 'google' or 'azure'
+        type: string
+      platform:
+        default: kubernetes
+        description: '''google'', ''azure'', or default ''kubernetes'''
+        type: string
+    type: object
+  sherlock.DatabaseInstanceV3Edit:
+    properties:
+      defaultDatabase:
+        description: When creating, defaults to the chart name
+        type: string
+      googleProject:
+        description: Required if platform is 'google'
+        type: string
+      instanceName:
+        description: Required if platform is 'google' or 'azure'
+        type: string
+      platform:
+        default: kubernetes
+        description: '''google'', ''azure'', or default ''kubernetes'''
+        type: string
+    type: object
   sherlock.EnvironmentV3:
     properties:
       autoPopulateChartReleases:
@@ -4343,6 +4407,269 @@ paths:
       summary: Edit an individual Cluster
       tags:
       - Clusters
+  /api/database-instances/v3:
+    get:
+      description: List DatabaseInstances matching a filter.
+      parameters:
+      - description: Required when creating
+        in: query
+        name: chartRelease
+        type: string
+      - format: date-time
+        in: query
+        name: createdAt
+        type: string
+      - description: When creating, defaults to the chart name
+        in: query
+        name: defaultDatabase
+        type: string
+      - description: Required if platform is 'google'
+        in: query
+        name: googleProject
+        type: string
+      - in: query
+        name: id
+        type: integer
+      - description: Required if platform is 'google' or 'azure'
+        in: query
+        name: instanceName
+        type: string
+      - default: kubernetes
+        description: '''google'', ''azure'', or default ''kubernetes'''
+        in: query
+        name: platform
+        type: string
+      - format: date-time
+        in: query
+        name: updatedAt
+        type: string
+      - description: Control how many DatabaseInstances are returned (default 0, meaning
+          all)
+        in: query
+        name: limit
+        type: integer
+      - description: Control the offset for the returned DatabaseInstances (default
+          0)
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/sherlock.DatabaseInstanceV3'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: List DatabaseInstances matching a filter
+      tags:
+      - DatabaseInstances
+    post:
+      consumes:
+      - application/json
+      description: Create a DatabaseInstance.
+      parameters:
+      - description: The DatabaseInstance to create
+        in: body
+        name: databaseInstance
+        required: true
+        schema:
+          $ref: '#/definitions/sherlock.DatabaseInstanceV3Create'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/sherlock.DatabaseInstanceV3'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Create a DatabaseInstance
+      tags:
+      - DatabaseInstances
+  /api/database-instances/v3/{selector}:
+    delete:
+      description: Delete an individual DatabaseInstance by its selector.
+      parameters:
+      - description: The selector of the DatabaseInstance, which can be either a numeric
+          ID or 'chart-release/' followed by a chart release selector.
+        in: path
+        name: selector
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/sherlock.DatabaseInstanceV3'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Delete an individual DatabaseInstance
+      tags:
+      - DatabaseInstances
+    get:
+      description: Get an individual DatabaseInstance by its selector.
+      parameters:
+      - description: The selector of the DatabaseInstance, which can be either a numeric
+          ID or 'chart-release/' followed by a chart release selector.
+        in: path
+        name: selector
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/sherlock.DatabaseInstanceV3'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Get an individual DatabaseInstance
+      tags:
+      - DatabaseInstances
+    patch:
+      description: Edit an individual DatabaseInstance by its selector.
+      parameters:
+      - description: The selector of the DatabaseInstance, which can be either a numeric
+          ID or 'chart-release/' followed by a chart release selector.
+        in: path
+        name: selector
+        required: true
+        type: string
+      - description: The edits to make to the DatabaseInstance
+        in: body
+        name: databaseInstance
+        required: true
+        schema:
+          $ref: '#/definitions/sherlock.DatabaseInstanceV3Edit'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/sherlock.DatabaseInstanceV3'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Edit an individual DatabaseInstance
+      tags:
+      - DatabaseInstances
   /api/deploy-hooks/github-actions/procedures/v3/test/{selector}:
     post:
       description: Run a GitHub Action to simulate a GithubActionsDeployHook

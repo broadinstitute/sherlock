@@ -2686,6 +2686,395 @@
                 }
             }
         },
+        "/api/database-instances/v3": {
+            "get": {
+                "description": "List DatabaseInstances matching a filter.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DatabaseInstances"
+                ],
+                "summary": "List DatabaseInstances matching a filter",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Required when creating",
+                        "name": "chartRelease",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "format": "date-time",
+                        "name": "createdAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "When creating, defaults to the chart name",
+                        "name": "defaultDatabase",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Required if platform is 'google'",
+                        "name": "googleProject",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Required if platform is 'google' or 'azure'",
+                        "name": "instanceName",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "default": "kubernetes",
+                        "description": "'google', 'azure', or default 'kubernetes'",
+                        "name": "platform",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "format": "date-time",
+                        "name": "updatedAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Control how many DatabaseInstances are returned (default 0, meaning all)",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Control the offset for the returned DatabaseInstances (default 0)",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/sherlock.DatabaseInstanceV3"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a DatabaseInstance.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DatabaseInstances"
+                ],
+                "summary": "Create a DatabaseInstance",
+                "parameters": [
+                    {
+                        "description": "The DatabaseInstance to create",
+                        "name": "databaseInstance",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.DatabaseInstanceV3Create"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.DatabaseInstanceV3"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/database-instances/v3/{selector}": {
+            "get": {
+                "description": "Get an individual DatabaseInstance by its selector.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DatabaseInstances"
+                ],
+                "summary": "Get an individual DatabaseInstance",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The selector of the DatabaseInstance, which can be either a numeric ID or 'chart-release/' followed by a chart release selector.",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.DatabaseInstanceV3"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete an individual DatabaseInstance by its selector.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DatabaseInstances"
+                ],
+                "summary": "Delete an individual DatabaseInstance",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The selector of the DatabaseInstance, which can be either a numeric ID or 'chart-release/' followed by a chart release selector.",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.DatabaseInstanceV3"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Edit an individual DatabaseInstance by its selector.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DatabaseInstances"
+                ],
+                "summary": "Edit an individual DatabaseInstance",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The selector of the DatabaseInstance, which can be either a numeric ID or 'chart-release/' followed by a chart release selector.",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "The edits to make to the DatabaseInstance",
+                        "name": "databaseInstance",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.DatabaseInstanceV3Edit"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.DatabaseInstanceV3"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/deploy-hooks/github-actions/procedures/v3/test/{selector}": {
             "post": {
                 "description": "Run a GitHub Action to simulate a GithubActionsDeployHook",
@@ -12935,6 +13324,94 @@
                 "requiresSuitability": {
                     "type": "boolean",
                     "default": false
+                }
+            }
+        },
+        "sherlock.DatabaseInstanceV3": {
+            "type": "object",
+            "properties": {
+                "chartRelease": {
+                    "description": "Required when creating",
+                    "type": "string"
+                },
+                "chartReleaseInfo": {
+                    "$ref": "#/definitions/sherlock.ChartReleaseV3"
+                },
+                "createdAt": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "defaultDatabase": {
+                    "description": "When creating, defaults to the chart name",
+                    "type": "string"
+                },
+                "googleProject": {
+                    "description": "Required if platform is 'google'",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "instanceName": {
+                    "description": "Required if platform is 'google' or 'azure'",
+                    "type": "string"
+                },
+                "platform": {
+                    "description": "'google', 'azure', or default 'kubernetes'",
+                    "type": "string",
+                    "default": "kubernetes"
+                },
+                "updatedAt": {
+                    "type": "string",
+                    "format": "date-time"
+                }
+            }
+        },
+        "sherlock.DatabaseInstanceV3Create": {
+            "type": "object",
+            "properties": {
+                "chartRelease": {
+                    "description": "Required when creating",
+                    "type": "string"
+                },
+                "defaultDatabase": {
+                    "description": "When creating, defaults to the chart name",
+                    "type": "string"
+                },
+                "googleProject": {
+                    "description": "Required if platform is 'google'",
+                    "type": "string"
+                },
+                "instanceName": {
+                    "description": "Required if platform is 'google' or 'azure'",
+                    "type": "string"
+                },
+                "platform": {
+                    "description": "'google', 'azure', or default 'kubernetes'",
+                    "type": "string",
+                    "default": "kubernetes"
+                }
+            }
+        },
+        "sherlock.DatabaseInstanceV3Edit": {
+            "type": "object",
+            "properties": {
+                "defaultDatabase": {
+                    "description": "When creating, defaults to the chart name",
+                    "type": "string"
+                },
+                "googleProject": {
+                    "description": "Required if platform is 'google'",
+                    "type": "string"
+                },
+                "instanceName": {
+                    "description": "Required if platform is 'google' or 'azure'",
+                    "type": "string"
+                },
+                "platform": {
+                    "description": "'google', 'azure', or default 'kubernetes'",
+                    "type": "string",
+                    "default": "kubernetes"
                 }
             }
         },

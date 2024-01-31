@@ -30,7 +30,13 @@ type ClientOption func(*runtime.ClientOperation)
 
 // ClientService is the interface for Client methods
 type ClientService interface {
+	DeleteAPIDatabaseInstancesV3Selector(params *DeleteAPIDatabaseInstancesV3SelectorParams, opts ...ClientOption) (*DeleteAPIDatabaseInstancesV3SelectorOK, error)
+
 	DeleteAPIV2DatabaseInstancesSelector(params *DeleteAPIV2DatabaseInstancesSelectorParams, opts ...ClientOption) (*DeleteAPIV2DatabaseInstancesSelectorOK, error)
+
+	GetAPIDatabaseInstancesV3(params *GetAPIDatabaseInstancesV3Params, opts ...ClientOption) (*GetAPIDatabaseInstancesV3OK, error)
+
+	GetAPIDatabaseInstancesV3Selector(params *GetAPIDatabaseInstancesV3SelectorParams, opts ...ClientOption) (*GetAPIDatabaseInstancesV3SelectorOK, error)
 
 	GetAPIV2DatabaseInstances(params *GetAPIV2DatabaseInstancesParams, opts ...ClientOption) (*GetAPIV2DatabaseInstancesOK, error)
 
@@ -38,13 +44,57 @@ type ClientService interface {
 
 	GetAPIV2SelectorsDatabaseInstancesSelector(params *GetAPIV2SelectorsDatabaseInstancesSelectorParams, opts ...ClientOption) (*GetAPIV2SelectorsDatabaseInstancesSelectorOK, error)
 
+	PatchAPIDatabaseInstancesV3Selector(params *PatchAPIDatabaseInstancesV3SelectorParams, opts ...ClientOption) (*PatchAPIDatabaseInstancesV3SelectorOK, error)
+
 	PatchAPIV2DatabaseInstancesSelector(params *PatchAPIV2DatabaseInstancesSelectorParams, opts ...ClientOption) (*PatchAPIV2DatabaseInstancesSelectorOK, error)
+
+	PostAPIDatabaseInstancesV3(params *PostAPIDatabaseInstancesV3Params, opts ...ClientOption) (*PostAPIDatabaseInstancesV3Created, error)
 
 	PostAPIV2DatabaseInstances(params *PostAPIV2DatabaseInstancesParams, opts ...ClientOption) (*PostAPIV2DatabaseInstancesOK, *PostAPIV2DatabaseInstancesCreated, error)
 
 	PutAPIV2DatabaseInstancesSelector(params *PutAPIV2DatabaseInstancesSelectorParams, opts ...ClientOption) (*PutAPIV2DatabaseInstancesSelectorOK, *PutAPIV2DatabaseInstancesSelectorCreated, error)
 
 	SetTransport(transport runtime.ClientTransport)
+}
+
+/*
+  DeleteAPIDatabaseInstancesV3Selector deletes an individual database instance
+
+  Delete an individual DatabaseInstance by its selector.
+*/
+func (a *Client) DeleteAPIDatabaseInstancesV3Selector(params *DeleteAPIDatabaseInstancesV3SelectorParams, opts ...ClientOption) (*DeleteAPIDatabaseInstancesV3SelectorOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDeleteAPIDatabaseInstancesV3SelectorParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "DeleteAPIDatabaseInstancesV3Selector",
+		Method:             "DELETE",
+		PathPattern:        "/api/database-instances/v3/{selector}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &DeleteAPIDatabaseInstancesV3SelectorReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*DeleteAPIDatabaseInstancesV3SelectorOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for DeleteAPIDatabaseInstancesV3Selector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
 }
 
 /*
@@ -84,6 +134,86 @@ func (a *Client) DeleteAPIV2DatabaseInstancesSelector(params *DeleteAPIV2Databas
 	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for DeleteAPIV2DatabaseInstancesSelector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+  GetAPIDatabaseInstancesV3 lists database instances matching a filter
+
+  List DatabaseInstances matching a filter.
+*/
+func (a *Client) GetAPIDatabaseInstancesV3(params *GetAPIDatabaseInstancesV3Params, opts ...ClientOption) (*GetAPIDatabaseInstancesV3OK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetAPIDatabaseInstancesV3Params()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "GetAPIDatabaseInstancesV3",
+		Method:             "GET",
+		PathPattern:        "/api/database-instances/v3",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &GetAPIDatabaseInstancesV3Reader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*GetAPIDatabaseInstancesV3OK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for GetAPIDatabaseInstancesV3: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+  GetAPIDatabaseInstancesV3Selector gets an individual database instance
+
+  Get an individual DatabaseInstance by its selector.
+*/
+func (a *Client) GetAPIDatabaseInstancesV3Selector(params *GetAPIDatabaseInstancesV3SelectorParams, opts ...ClientOption) (*GetAPIDatabaseInstancesV3SelectorOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetAPIDatabaseInstancesV3SelectorParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "GetAPIDatabaseInstancesV3Selector",
+		Method:             "GET",
+		PathPattern:        "/api/database-instances/v3/{selector}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &GetAPIDatabaseInstancesV3SelectorReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*GetAPIDatabaseInstancesV3SelectorOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for GetAPIDatabaseInstancesV3Selector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 
@@ -208,6 +338,46 @@ func (a *Client) GetAPIV2SelectorsDatabaseInstancesSelector(params *GetAPIV2Sele
 }
 
 /*
+  PatchAPIDatabaseInstancesV3Selector edits an individual database instance
+
+  Edit an individual DatabaseInstance by its selector.
+*/
+func (a *Client) PatchAPIDatabaseInstancesV3Selector(params *PatchAPIDatabaseInstancesV3SelectorParams, opts ...ClientOption) (*PatchAPIDatabaseInstancesV3SelectorOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewPatchAPIDatabaseInstancesV3SelectorParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "PatchAPIDatabaseInstancesV3Selector",
+		Method:             "PATCH",
+		PathPattern:        "/api/database-instances/v3/{selector}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &PatchAPIDatabaseInstancesV3SelectorReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*PatchAPIDatabaseInstancesV3SelectorOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for PatchAPIDatabaseInstancesV3Selector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
   PatchAPIV2DatabaseInstancesSelector edits a database instance entry
 
   Edit an existing DatabaseInstance entry via one of its "selectors": numeric ID or 'chart-release/' followed by a chart release selector. Note that only mutable fields are available here, immutable fields can only be set using /create.
@@ -244,6 +414,46 @@ func (a *Client) PatchAPIV2DatabaseInstancesSelector(params *PatchAPIV2DatabaseI
 	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for PatchAPIV2DatabaseInstancesSelector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+  PostAPIDatabaseInstancesV3 creates a database instance
+
+  Create a DatabaseInstance.
+*/
+func (a *Client) PostAPIDatabaseInstancesV3(params *PostAPIDatabaseInstancesV3Params, opts ...ClientOption) (*PostAPIDatabaseInstancesV3Created, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewPostAPIDatabaseInstancesV3Params()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "PostAPIDatabaseInstancesV3",
+		Method:             "POST",
+		PathPattern:        "/api/database-instances/v3",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &PostAPIDatabaseInstancesV3Reader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*PostAPIDatabaseInstancesV3Created)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for PostAPIDatabaseInstancesV3: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 
