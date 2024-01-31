@@ -172,25 +172,10 @@ func (e *Environment) autoPopulateChartReleases(tx *gorm.DB) error {
 			if err := chartRelease.resolve(tx); err != nil {
 				return fmt.Errorf("error resolving versions for %s: %w", chartRelease.Name, err)
 			}
+			// We don't worry about database instance, because the chart release's hooks will handle that.
+			// It's slightly inefficient, because it has to load back the template info, but it's clearly correct.
 			if err := tx.Model(&ChartRelease{}).Create(&chartRelease).Error; err != nil {
 				return fmt.Errorf("wasn't able to copy template's %s release: %w", templateChartRelease.Name, err)
-			}
-
-			// We use a list here just to handle there being 0 or 1 DatabaseInstances
-			var templateDatabaseInstances []DatabaseInstance
-			if err := tx.Where(&DatabaseInstance{ChartReleaseID: templateChartRelease.ID}).Limit(1).Find(&templateDatabaseInstances).Error; err != nil {
-				return fmt.Errorf("wasn't able to get possible database instance of %s release: %w", templateChartRelease.Name, err)
-			}
-			for _, templateDatabaseInstance := range templateDatabaseInstances {
-				if err := tx.Model(&DatabaseInstance{}).Create(&DatabaseInstance{
-					ChartReleaseID:  chartRelease.ID,
-					Platform:        templateDatabaseInstance.Platform,
-					GoogleProject:   templateDatabaseInstance.GoogleProject,
-					InstanceName:    templateDatabaseInstance.InstanceName,
-					DefaultDatabase: templateDatabaseInstance.DefaultDatabase,
-				}).Error; err != nil {
-					return fmt.Errorf("wasn't able to copy database instance of %s release: %w", templateChartRelease.Name, err)
-				}
 			}
 		}
 	case "template":
