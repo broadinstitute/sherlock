@@ -383,7 +383,7 @@ func (td *testDataImpl) AppVersion_Leonardo_V1() AppVersion {
 		td.appVersion_leonardo_v1 = AppVersion{
 			ChartID:    td.Chart_Leonardo().ID,
 			AppVersion: "v0.0.1",
-			GitBranch:  "develop",
+			GitBranch:  *td.Chart_Leonardo().AppImageGitMainBranch,
 			GitCommit:  "a1b2c3d4",
 		}
 		td.h.SetSuitableTestUserForDB()
@@ -397,7 +397,7 @@ func (td *testDataImpl) AppVersion_Leonardo_V2() AppVersion {
 		td.appVersion_leonardo_v2 = AppVersion{
 			ChartID:            td.Chart_Leonardo().ID,
 			AppVersion:         "v0.0.2",
-			GitBranch:          "develop",
+			GitBranch:          *td.Chart_Leonardo().AppImageGitMainBranch,
 			GitCommit:          "e5f6g7h8",
 			ParentAppVersionID: utils.PointerTo(td.AppVersion_Leonardo_V1().ID),
 		}
@@ -412,7 +412,7 @@ func (td *testDataImpl) AppVersion_Leonardo_V3() AppVersion {
 		td.appVersion_leonardo_v3 = AppVersion{
 			ChartID:            td.Chart_Leonardo().ID,
 			AppVersion:         "v0.0.3",
-			GitBranch:          "develop",
+			GitBranch:          *td.Chart_Leonardo().AppImageGitMainBranch,
 			GitCommit:          "i1j2k3l4",
 			ParentAppVersionID: utils.PointerTo(td.AppVersion_Leonardo_V2().ID),
 		}
