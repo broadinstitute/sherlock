@@ -159,6 +159,27 @@ func (s *modelSuite) TestChartReleaseValidationSqlDestinationTypeInvalidDestinat
 	s.ErrorContains(err, "violates check constraint \"destination_type_valid\"")
 }
 
+func (s *modelSuite) TestChartReleaseValidationSqlNameUnique() {
+	a := s.TestData.ChartRelease_LeonardoProd()
+	b := s.TestData.ChartRelease_LeonardoStaging()
+	err := s.DB.Model(&b).Updates(&ChartRelease{Name: a.Name}).Error
+	s.ErrorContains(err, "violates unique constraint \"chart_releases_name_unique\"")
+}
+
+func (s *modelSuite) TestChartReleaseValidationSqlEnvironmentChartUnique() {
+	a := s.TestData.ChartRelease_LeonardoProd()
+	b := s.TestData.ChartRelease_LeonardoStaging()
+	err := s.DB.Model(&b).Updates(&ChartRelease{EnvironmentID: a.EnvironmentID}).Error
+	s.ErrorContains(err, "violates unique constraint \"chart_releases_environment_chart_unique\"")
+}
+
+func (s *modelSuite) TestChartReleaseValidationSqlClusterNamespaceChartUnique() {
+	a := s.TestData.ChartRelease_LeonardoProd()
+	b := s.TestData.ChartRelease_LeonardoStaging()
+	err := s.DB.Model(&b).Updates(&ChartRelease{ClusterID: a.ClusterID, Namespace: a.Namespace}).Error
+	s.ErrorContains(err, "violates unique constraint \"chart_releases_cluster_namespace_chart_unique\"")
+}
+
 func TestChartRelease_SlackBeehiveLink(t *testing.T) {
 	type fields struct {
 		Name string
