@@ -169,12 +169,10 @@ func (e *Environment) autoPopulateChartReleases(tx *gorm.DB) error {
 				Port:                    templateChartRelease.Port,
 				IncludeInBulkChangesets: templateChartRelease.IncludeInBulkChangesets,
 			}
-			if err := chartRelease.resolve(tx); err != nil {
-				return fmt.Errorf("error resolving versions for %s: %w", chartRelease.Name, err)
-			}
 			// We don't worry about database instance, because the chart release's hooks will handle that.
 			// It's slightly inefficient, because it has to load back the template info, but it's clearly correct.
-			if err := tx.Model(&ChartRelease{}).Create(&chartRelease).Error; err != nil {
+			// Similarly, we don't worry about resolving the versions, because the hooks do that too.
+			if err := tx.Create(&chartRelease).Error; err != nil {
 				return fmt.Errorf("wasn't able to copy template's %s release: %w", templateChartRelease.Name, err)
 			}
 		}
