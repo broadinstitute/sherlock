@@ -3,6 +3,7 @@ package v2controllers
 import (
 	"fmt"
 	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
+	"sort"
 	"strconv"
 	"time"
 
@@ -366,6 +367,16 @@ func modelChangesetToChangeset(model *v2models.Changeset) *Changeset {
 		if newAppVersion != nil {
 			newAppVersions = append(newAppVersions, *newAppVersion)
 		}
+		// In all cases, we want earlier versions to appear first in the list.
+		// Building v3 refactored versions of this code put increased load on the
+		// database during tests, revealing that v2 changesets could potentially
+		// be returned with different sort orders for newAppVersions and newChartVersions.
+		// We're very close to removing v2 entirely, so we simply manually sort by createdAt
+		// as a "close enough" bug fix. A more efficient mechanism would be to do this sorting
+		// in the database, but v2 doesn't allow us to easily do that.
+		sort.Slice(newAppVersions, func(i, j int) bool {
+			return newAppVersions[i].CreatedAt.Before(newAppVersions[j].CreatedAt)
+		})
 	}
 
 	var newChartVersions []ChartVersion
@@ -374,6 +385,9 @@ func modelChangesetToChangeset(model *v2models.Changeset) *Changeset {
 		if newChartVersion != nil {
 			newChartVersions = append(newChartVersions, *newChartVersion)
 		}
+		sort.SliceIsSorted(newChartVersions, func(i, j int) bool {
+			return newChartVersions[i].CreatedAt.Before(newChartVersions[j].CreatedAt)
+		})
 	}
 
 	var plannedBy *string
