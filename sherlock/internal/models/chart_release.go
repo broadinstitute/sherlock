@@ -2,6 +2,7 @@ package models
 
 import (
 	"fmt"
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/slack"
@@ -59,6 +60,118 @@ func (c *ChartRelease) errorIfForbidden(tx *gorm.DB) error {
 			return fmt.Errorf("forbidden based on chart release's cluster: %w", err)
 		}
 	}
+	return nil
+}
+
+func (c *ChartRelease) setCreationDefaults(tx *gorm.DB) error {
+	var chart Chart
+	if err := tx.Take(&chart, c.ChartID).Error; err != nil {
+		return fmt.Errorf("failed to read chart to evaluate defaults: %w", err)
+	}
+
+	// If the chart has a branch and c doesn't, use the chart's branch.
+	// We may end up ignoring this if the branch resolver doesn't end up being chosen.
+	if chart.AppImageGitMainBranch != nil && *chart.AppImageGitMainBranch != "" && c.AppVersionBranch == nil {
+		c.AppVersionBranch = chart.AppImageGitMainBranch
+	}
+
+	// If the chart is marked as exposing an endpoint, copy fields from it.
+	if chart.ChartExposesEndpoint != nil && *chart.ChartExposesEndpoint {
+		if c.Subdomain == nil {
+			c.Subdomain = chart.DefaultSubdomain
+		}
+		if c.Protocol == nil {
+			c.Protocol = chart.DefaultProtocol
+		}
+		if c.Port == nil {
+			c.Port = chart.DefaultPort
+		}
+	}
+
+	// If c doesn't have a set app version resolver, set it based on what's available.
+	// Branch takes last priority because we always try to fill that from the chart.
+	if c.AppVersionResolver == nil {
+		resolver := "none"
+		if c.AppVersionExact != nil {
+			resolver = "exact"
+		} else if c.AppVersionCommit != nil {
+			resolver = "commit"
+		} else if c.AppVersionFollowChartReleaseID != nil {
+			resolver = "follow"
+		} else if c.AppVersionBranch != nil {
+			resolver = "branch"
+		}
+		c.AppVersionResolver = &resolver
+	}
+
+	// If c doesn't have a set chart version resolver, set it based on what's available.
+	if c.ChartVersionResolver == nil {
+		resolver := "latest"
+		if c.ChartVersionExact != nil {
+			resolver = "exact"
+		} else if c.ChartVersionFollowChartReleaseID != nil {
+			resolver = "follow"
+		}
+		c.ChartVersionResolver = &resolver
+	}
+
+	// If we have an environment, use it to fill in defaults.
+	if c.EnvironmentID != nil {
+		var environment Environment
+		if err := tx.Take(&environment, *c.EnvironmentID).Error; err != nil {
+			return fmt.Errorf("failed to read environment to evaluate defaults: %w", err)
+		}
+
+		// Name like "leonardo-prod"
+		if c.Name == "" {
+			c.Name = fmt.Sprintf("%s-%s", chart.Name, environment.Name)
+		}
+
+		// If there's no cluster, add it
+		if c.ClusterID == nil && environment.DefaultClusterID != nil {
+			c.ClusterID = environment.DefaultClusterID
+		}
+
+		// If there's no namespace, add it
+		if c.Namespace == "" && environment.DefaultNamespace != "" {
+			c.Namespace = environment.DefaultNamespace
+		}
+
+		// If there's no firecloud develop ref, add it
+		// (We'll remove this shortly because fc-dev is no more, but keeping behavioral parity makes sense for the moment)
+		if c.FirecloudDevelopRef == nil && environment.DefaultFirecloudDevelopRef != nil &&
+			chart.LegacyConfigsEnabled != nil && *chart.LegacyConfigsEnabled {
+			c.FirecloudDevelopRef = environment.DefaultFirecloudDevelopRef
+		}
+	}
+
+	// If we have a cluster, use it to fill in defaults.
+	// The only one we care about is name, so we dodge the whole block if the name is already filled.
+	// This also means that when the cluster got filled from the environment, we won't run this, because the name
+	// would've been filled from the environment too.
+	if c.ClusterID != nil && c.Name == "" {
+		var cluster Cluster
+		if err := tx.Take(&cluster, *c.ClusterID).Error; err != nil {
+			return fmt.Errorf("failed to read cluster to evaluate defaults: %w", err)
+		}
+		if c.Namespace == "" || c.Namespace == cluster.Name {
+			c.Name = fmt.Sprintf("%s-%s", chart.Name, cluster.Name)
+		} else {
+			c.Name = fmt.Sprintf("%s-%s-%s", chart.Name, c.Namespace, cluster.Name)
+		}
+	}
+
+	if c.IncludeInBulkChangesets == nil {
+		c.IncludeInBulkChangesets = utils.PointerTo(true)
+	}
+
+	// Always fill the destination
+	if c.EnvironmentID != nil {
+		c.DestinationType = "environment"
+	} else if c.ClusterID != nil {
+		c.DestinationType = "cluster"
+	}
+
 	return nil
 }
 
@@ -142,10 +255,8 @@ func (c *ChartRelease) BeforeCreate(tx *gorm.DB) error {
 	if err := c.errorIfForbidden(tx); err != nil {
 		return err
 	}
-	if c.EnvironmentID != nil {
-		c.DestinationType = "environment"
-	} else if c.ClusterID != nil {
-		c.DestinationType = "cluster"
+	if err := c.setCreationDefaults(tx); err != nil {
+		return fmt.Errorf("error setting creation defaults for %s: %w", c.Name, err)
 	}
 	if err := c.resolve(tx); err != nil {
 		return fmt.Errorf("error resolving versions for %s: %w", c.Name, err)

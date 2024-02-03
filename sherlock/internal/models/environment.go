@@ -159,9 +159,7 @@ func (e *Environment) autoPopulateChartReleases(tx *gorm.DB) error {
 			chartRelease := ChartRelease{
 				ChartID:                 templateChartRelease.ChartID,
 				ClusterID:               e.DefaultClusterID,
-				DestinationType:         "environment",
 				EnvironmentID:           &e.ID,
-				Name:                    fmt.Sprintf("%s-%s", templateChartRelease.Chart.Name, e.Name),
 				Namespace:               e.DefaultNamespace,
 				ChartReleaseVersion:     templateChartRelease.ChartReleaseVersion,
 				Subdomain:               templateChartRelease.Subdomain,
@@ -186,23 +184,10 @@ func (e *Environment) autoPopulateChartReleases(tx *gorm.DB) error {
 			if err := tx.Where(&Chart{Name: chartToAutoPopulateInTemplate.String("name")}).Take(&chart).Error; err != nil {
 				return fmt.Errorf("(%s) wasn't able to insert model.environments.templates.autoPopulateCharts entry %d, '%s': %w", errors.InternalServerError, index+1, chartToAutoPopulateInTemplate.String("name"), err)
 			}
-			if err := tx.Model(&ChartRelease{}).Create(&ChartRelease{
-				ChartID:         chart.ID,
-				ClusterID:       e.DefaultClusterID,
-				DestinationType: "environment",
-				EnvironmentID:   &e.ID,
-				Name:            fmt.Sprintf("%s-%s", chart.Name, e.Name),
-				Namespace:       e.DefaultNamespace,
-				ChartReleaseVersion: ChartReleaseVersion{
-					AppVersionResolver:   utils.PointerTo("none"),
-					ChartVersionResolver: utils.PointerTo("latest"),
-					HelmfileRef:          utils.PointerTo("HEAD"),
-					HelmfileRefEnabled:   utils.PointerTo(false),
-				},
-				Subdomain:               chart.DefaultSubdomain,
-				Protocol:                chart.DefaultProtocol,
-				Port:                    chart.DefaultPort,
-				IncludeInBulkChangesets: utils.PointerTo(true),
+			if err := tx.Create(&ChartRelease{
+				ChartID:       chart.ID,
+				ClusterID:     e.DefaultClusterID,
+				EnvironmentID: &e.ID,
 			}).Error; err != nil {
 				return fmt.Errorf("wasn't able to create instance of %s: %w", chart.Name, err)
 			}
