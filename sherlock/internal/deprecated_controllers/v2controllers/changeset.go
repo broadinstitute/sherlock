@@ -385,7 +385,7 @@ func modelChangesetToChangeset(model *v2models.Changeset) *Changeset {
 		if newChartVersion != nil {
 			newChartVersions = append(newChartVersions, *newChartVersion)
 		}
-		sort.SliceIsSorted(newChartVersions, func(i, j int) bool {
+		sort.Slice(newChartVersions, func(i, j int) bool {
 			return newChartVersions[i].CreatedAt.Before(newChartVersions[j].CreatedAt)
 		})
 	}
