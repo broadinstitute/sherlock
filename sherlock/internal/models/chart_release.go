@@ -250,7 +250,7 @@ func (c *ChartRelease) resolve(tx *gorm.DB) error {
 	return c.ChartReleaseVersion.resolve(tx, c.ChartID)
 }
 
-// BeforeCreate checks permissions
+// BeforeCreate checks permissions, sets defaults, and resolves the versions
 func (c *ChartRelease) BeforeCreate(tx *gorm.DB) error {
 	if err := c.errorIfForbidden(tx); err != nil {
 		return err
