@@ -132,8 +132,9 @@ func (c *ChartRelease) setCreationDefaults(tx *gorm.DB) error {
 			c.ClusterID = environment.DefaultClusterID
 		}
 
-		// If there's no namespace, add it
-		if c.Namespace == "" && environment.DefaultNamespace != "" {
+		// If there's no namespace and we have a cluster, add it
+		// (If there's no cluster, validation says we shouldn't have a namespace either)
+		if c.Namespace == "" && environment.DefaultNamespace != "" && c.ClusterID != nil {
 			c.Namespace = environment.DefaultNamespace
 		}
 

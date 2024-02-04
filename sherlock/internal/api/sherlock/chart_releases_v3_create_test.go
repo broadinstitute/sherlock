@@ -211,3 +211,35 @@ func (s *handlerSuite) TestChartReleasesV3Create_blocksDuplicates() {
 	s.Equal(http.StatusConflict, code)
 	s.Equal(errors.Conflict, got2.Type)
 }
+
+func (s *handlerSuite) TestChartReleasesV3Create_suitability() {
+	s.TestData.Chart_Leonardo()
+	s.TestData.AppVersion_Leonardo_V1()
+	s.TestData.ChartVersion_Leonardo_V1()
+	s.TestData.Environment_Prod()
+	var got errors.ErrorResponse
+	code := s.HandleRequest(
+		s.UseNonSuitableUserFor(s.NewRequest("POST", "/api/chart-releases/v3", ChartReleaseV3Create{
+			Chart:       "leonardo",
+			Environment: "prod",
+		})),
+		&got)
+	s.Equal(http.StatusForbidden, code)
+	s.Equal(errors.Forbidden, got.Type)
+}
+
+func (s *handlerSuite) TestChartReleasesV3Create_suitabilityAllowed() {
+	s.TestData.Chart_Leonardo()
+	s.TestData.AppVersion_Leonardo_V1()
+	s.TestData.ChartVersion_Leonardo_V1()
+	s.TestData.Environment_Prod()
+	var got ChartReleaseV3
+	code := s.HandleRequest(
+		s.UseSuitableUserFor(s.NewRequest("POST", "/api/chart-releases/v3", ChartReleaseV3Create{
+			Chart:       "leonardo",
+			Environment: "prod",
+		})),
+		&got)
+	s.Equal(http.StatusCreated, code)
+	s.NotEmpty(got.ID)
+}
