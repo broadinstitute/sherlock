@@ -9,6 +9,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/slack"
+	petname "github.com/dustinkirkland/golang-petname"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 	"strings"
@@ -152,7 +153,7 @@ func (e *Environment) autoPopulateChartReleases(tx *gorm.DB) error {
 			return fmt.Errorf("(%s) dynamic environment lacked template", errors.BadRequest)
 		}
 		var templateChartReleases []ChartRelease
-		if err := tx.Preload("Chart").Where(&ChartRelease{EnvironmentID: e.TemplateEnvironmentID}).Find(&templateChartReleases).Error; err != nil {
+		if err := tx.Where(&ChartRelease{EnvironmentID: e.TemplateEnvironmentID}).Find(&templateChartReleases).Error; err != nil {
 			return fmt.Errorf("wasn't able to list chart releases of template %d: %w", *e.TemplateEnvironmentID, err)
 		}
 		for _, templateChartRelease := range templateChartReleases {
@@ -247,22 +248,102 @@ func (e *Environment) propagateDeletion(tx *gorm.DB) error {
 	return nil
 }
 
-// BeforeCreate checks permissions, assigns the unique resource prefix, and makes extra sure that the owner is filled
-func (e *Environment) BeforeCreate(tx *gorm.DB) error {
-	if err := e.errorIfForbidden(tx); err != nil {
-		return err
+func (e *Environment) setCreationDefaults(tx *gorm.DB) error {
+	// If there's a template, sets lots of defaults based on it. Otherwise, just make sure the values name is the name.
+	if e.TemplateEnvironmentID != nil {
+		var template Environment
+		if err := tx.Take(&template, *e.TemplateEnvironmentID).Error; err != nil {
+			return fmt.Errorf("failed to read template environment to evaluate defaults: %w", err)
+		}
+
+		if e.ValuesName == "" {
+			e.ValuesName = template.Name
+		}
+
+		if e.Base == "" {
+			e.Base = template.Base
+		}
+
+		if e.DefaultClusterID == nil {
+			e.DefaultClusterID = template.DefaultClusterID
+		}
+
+		if e.RequiresSuitability == nil {
+			e.RequiresSuitability = template.RequiresSuitability
+		}
+
+		if e.BaseDomain == nil {
+			e.BaseDomain = template.BaseDomain
+		}
+
+		if e.NamePrefixesDomain == nil {
+			e.NamePrefixesDomain = template.NamePrefixesDomain
+		}
+
+		if e.DefaultFirecloudDevelopRef == nil {
+			e.DefaultFirecloudDevelopRef = template.DefaultFirecloudDevelopRef
+		}
+
+		if e.Name == "" {
+			if user, err := GetCurrentUserForDB(tx); err != nil {
+				return err
+			} else {
+				for suffixLength := 3; suffixLength >= 1; suffixLength-- {
+					e.Name = fmt.Sprintf("%s-%s-%s", user.AlphaNumericHyphenatedUsername(), template.Name, petname.Generate(suffixLength, "-"))
+					if len(e.Name) <= 32 {
+						break
+					}
+				}
+				if len(e.Name) > 32 {
+					e.Name = strings.TrimSuffix(e.Name[0:31], "-")
+				}
+			}
+		}
+	} else {
+		if e.ValuesName == "" {
+			e.ValuesName = e.Name
+		}
 	}
+
+	if e.DefaultNamespace == "" {
+		e.DefaultNamespace = fmt.Sprintf("terra-%s", e.Name)
+	}
+
+	// Below this point, the fields will almost always be empty, but could still theoretically be set by the requester
+	// for legacy reasons
+
+	// If there's no fc-dev ref and we're making a live env, set it.
+	// fc-dev is no more and we'll remove this soon but for right now it's easiest inside this codebase to just
+	// keep the behavior
+	if e.DefaultFirecloudDevelopRef == nil && e.Lifecycle == "static" && e.Base == "live" {
+		e.DefaultFirecloudDevelopRef = &e.Name
+	}
+
+	// If there's no unique resource prefix, generate one
 	if e.UniqueResourcePrefix == "" {
 		if err := e.assignUniqueResourcePrefix(tx); err != nil {
 			return err
 		}
 	}
+
+	// If there's no owner, set it to the current user
 	if e.OwnerID == nil {
 		if user, err := GetCurrentUserForDB(tx); err != nil {
 			return err
 		} else {
 			e.OwnerID = &user.ID
 		}
+	}
+	return nil
+}
+
+// BeforeCreate checks permissions and sets defaults
+func (e *Environment) BeforeCreate(tx *gorm.DB) error {
+	if err := e.errorIfForbidden(tx); err != nil {
+		return err
+	}
+	if err := e.setCreationDefaults(tx); err != nil {
+		return fmt.Errorf("error setting creation defaults for %s: %w", e.Name, err)
 	}
 	return nil
 }
