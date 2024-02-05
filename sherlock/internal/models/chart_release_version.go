@@ -78,11 +78,11 @@ func (crv *ChartReleaseVersion) resolveAppVersion(tx *gorm.DB, chart Chart) erro
 			First(&appVersion).Error; err != nil {
 			if goerrors.Is(err, gorm.ErrRecordNotFound) {
 				if chart.AppImageGitRepo != nil {
-					return fmt.Errorf("(%s) no recorded app versions for %s come from a '%s' branch: check that GitHub Actions are building, publishing, and reporting the app versions on the branch: https://github.com/%s/commits/%s", errors.NotFound, chart.Name, *crv.AppVersionCommit, *chart.AppImageGitRepo, *crv.AppVersionBranch)
+					return fmt.Errorf("(%s) no recorded app versions for %s come from a '%s' branch: check that GitHub Actions are building, publishing, and reporting the app versions on the branch: https://github.com/%s/commits/%s", errors.NotFound, chart.Name, *crv.AppVersionBranch, *chart.AppImageGitRepo, *crv.AppVersionBranch)
 				}
-				return fmt.Errorf("(%s) no recorded app versions for %s come from a '%s' branch: check that GitHub Actions are building, publishing, and reporting the app versions on the branch", errors.NotFound, chart.Name, *crv.AppVersionCommit)
+				return fmt.Errorf("(%s) no recorded app versions for %s come from a '%s' branch: check that GitHub Actions are building, publishing, and reporting the app versions on the branch", errors.NotFound, chart.Name, *crv.AppVersionBranch)
 			}
-			return fmt.Errorf("failed to find an app version for %s built on a commit starting with '%s': %w", chart.Name, *crv.AppVersionCommit, err)
+			return fmt.Errorf("failed to find an app version for %s built on a branch of '%s': %w", chart.Name, *crv.AppVersionBranch, err)
 		}
 		crv.AppVersionExact = &appVersion.AppVersion
 		crv.AppVersionID = &appVersion.ID

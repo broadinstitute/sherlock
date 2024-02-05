@@ -159,9 +159,7 @@ func (e *Environment) autoPopulateChartReleases(tx *gorm.DB) error {
 			chartRelease := ChartRelease{
 				ChartID:                 templateChartRelease.ChartID,
 				ClusterID:               e.DefaultClusterID,
-				DestinationType:         "environment",
 				EnvironmentID:           &e.ID,
-				Name:                    fmt.Sprintf("%s-%s", templateChartRelease.Chart.Name, e.Name),
 				Namespace:               e.DefaultNamespace,
 				ChartReleaseVersion:     templateChartRelease.ChartReleaseVersion,
 				Subdomain:               templateChartRelease.Subdomain,
@@ -169,12 +167,10 @@ func (e *Environment) autoPopulateChartReleases(tx *gorm.DB) error {
 				Port:                    templateChartRelease.Port,
 				IncludeInBulkChangesets: templateChartRelease.IncludeInBulkChangesets,
 			}
-			if err := chartRelease.resolve(tx); err != nil {
-				return fmt.Errorf("error resolving versions for %s: %w", chartRelease.Name, err)
-			}
 			// We don't worry about database instance, because the chart release's hooks will handle that.
 			// It's slightly inefficient, because it has to load back the template info, but it's clearly correct.
-			if err := tx.Model(&ChartRelease{}).Create(&chartRelease).Error; err != nil {
+			// Similarly, we don't worry about resolving the versions, because the hooks do that too.
+			if err := tx.Create(&chartRelease).Error; err != nil {
 				return fmt.Errorf("wasn't able to copy template's %s release: %w", templateChartRelease.Name, err)
 			}
 		}
@@ -188,23 +184,10 @@ func (e *Environment) autoPopulateChartReleases(tx *gorm.DB) error {
 			if err := tx.Where(&Chart{Name: chartToAutoPopulateInTemplate.String("name")}).Take(&chart).Error; err != nil {
 				return fmt.Errorf("(%s) wasn't able to insert model.environments.templates.autoPopulateCharts entry %d, '%s': %w", errors.InternalServerError, index+1, chartToAutoPopulateInTemplate.String("name"), err)
 			}
-			if err := tx.Model(&ChartRelease{}).Create(&ChartRelease{
-				ChartID:         chart.ID,
-				ClusterID:       e.DefaultClusterID,
-				DestinationType: "environment",
-				EnvironmentID:   &e.ID,
-				Name:            fmt.Sprintf("%s-%s", chart.Name, e.Name),
-				Namespace:       e.DefaultNamespace,
-				ChartReleaseVersion: ChartReleaseVersion{
-					AppVersionResolver:   utils.PointerTo("none"),
-					ChartVersionResolver: utils.PointerTo("latest"),
-					HelmfileRef:          utils.PointerTo("HEAD"),
-					HelmfileRefEnabled:   utils.PointerTo(false),
-				},
-				Subdomain:               chart.DefaultSubdomain,
-				Protocol:                chart.DefaultProtocol,
-				Port:                    chart.DefaultPort,
-				IncludeInBulkChangesets: utils.PointerTo(true),
+			if err := tx.Create(&ChartRelease{
+				ChartID:       chart.ID,
+				ClusterID:     e.DefaultClusterID,
+				EnvironmentID: &e.ID,
 			}).Error; err != nil {
 				return fmt.Errorf("wasn't able to create instance of %s: %w", chart.Name, err)
 			}

@@ -84,7 +84,7 @@ func (c ChartReleaseV3) toModel(db *gorm.DB) (models.ChartRelease, error) {
 		}
 		var chart models.Chart
 		if err = db.Where(&chartModel).Select("id").First(&chart).Error; err != nil {
-			return models.ChartRelease{}, err
+			return models.ChartRelease{}, fmt.Errorf("couldn't load chart '%s': %w", c.Chart, err)
 		} else {
 			ret.ChartID = chart.ID
 		}
@@ -96,7 +96,7 @@ func (c ChartReleaseV3) toModel(db *gorm.DB) (models.ChartRelease, error) {
 		}
 		var cluster models.Cluster
 		if err = db.Where(&clusterModel).Select("id").First(&cluster).Error; err != nil {
-			return models.ChartRelease{}, err
+			return models.ChartRelease{}, fmt.Errorf("couldn't load cluster '%s': %w", c.Cluster, err)
 		} else {
 			ret.ClusterID = &cluster.ID
 		}
@@ -108,7 +108,7 @@ func (c ChartReleaseV3) toModel(db *gorm.DB) (models.ChartRelease, error) {
 		}
 		var environment models.Environment
 		if err = db.Where(&environmentModel).Select("id").First(&environment).Error; err != nil {
-			return models.ChartRelease{}, err
+			return models.ChartRelease{}, fmt.Errorf("couldn't load environment '%s': %w", c.Environment, err)
 		} else {
 			ret.EnvironmentID = &environment.ID
 		}
@@ -120,7 +120,7 @@ func (c ChartReleaseV3) toModel(db *gorm.DB) (models.ChartRelease, error) {
 		}
 		var chartRelease models.ChartRelease
 		if err = db.Where(&chartReleaseModel).Select("id").First(&chartRelease).Error; err != nil {
-			return models.ChartRelease{}, err
+			return models.ChartRelease{}, fmt.Errorf("couldn't load chart release '%s': %w", c.AppVersionFollowChartRelease, err)
 		} else {
 			ret.AppVersionFollowChartReleaseID = &chartRelease.ID
 		}
@@ -132,7 +132,7 @@ func (c ChartReleaseV3) toModel(db *gorm.DB) (models.ChartRelease, error) {
 		}
 		var appVersion models.AppVersion
 		if err = db.Where(&appVersionModel).Select("id").First(&appVersion).Error; err != nil {
-			return models.ChartRelease{}, err
+			return models.ChartRelease{}, fmt.Errorf("couldn't load app version '%s': %w", c.AppVersionReference, err)
 		} else {
 			ret.AppVersionID = &appVersion.ID
 		}
@@ -144,7 +144,7 @@ func (c ChartReleaseV3) toModel(db *gorm.DB) (models.ChartRelease, error) {
 		}
 		var chartRelease models.ChartRelease
 		if err = db.Where(&chartReleaseModel).Select("id").First(&chartRelease).Error; err != nil {
-			return models.ChartRelease{}, err
+			return models.ChartRelease{}, fmt.Errorf("couldn't load chart release '%s': %w", c.ChartVersionFollowChartRelease, err)
 		} else {
 			ret.ChartVersionFollowChartReleaseID = &chartRelease.ID
 		}
@@ -156,7 +156,7 @@ func (c ChartReleaseV3) toModel(db *gorm.DB) (models.ChartRelease, error) {
 		}
 		var chartVersion models.ChartVersion
 		if err = db.Where(&chartVersionModel).Select("id").First(&chartVersion).Error; err != nil {
-			return models.ChartRelease{}, err
+			return models.ChartRelease{}, fmt.Errorf("couldn't load chart version '%s': %w", c.ChartVersionReference, err)
 		} else {
 			ret.ChartVersionID = &chartVersion.ID
 		}
@@ -168,7 +168,7 @@ func (c ChartReleaseV3) toModel(db *gorm.DB) (models.ChartRelease, error) {
 		}
 		var pagerdutyIntegration models.PagerdutyIntegration
 		if err = db.Where(&pagerdutyIntegrationModel).Select("id").First(&pagerdutyIntegration).Error; err != nil {
-			return models.ChartRelease{}, err
+			return models.ChartRelease{}, fmt.Errorf("couldn't load pagerduty integration '%s': %w", *c.PagerdutyIntegration, err)
 		} else {
 			ret.PagerdutyIntegrationID = &pagerdutyIntegration.ID
 		}
