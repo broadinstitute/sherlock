@@ -48,6 +48,8 @@ type ClientService interface {
 
 	PatchAPIV2ChartReleasesSelector(params *PatchAPIV2ChartReleasesSelectorParams, opts ...ClientOption) (*PatchAPIV2ChartReleasesSelectorOK, error)
 
+	PostAPIChartReleasesV3(params *PostAPIChartReleasesV3Params, opts ...ClientOption) (*PostAPIChartReleasesV3Created, error)
+
 	PostAPIV2ChartReleases(params *PostAPIV2ChartReleasesParams, opts ...ClientOption) (*PostAPIV2ChartReleasesOK, *PostAPIV2ChartReleasesCreated, error)
 
 	PostAPIV2ProceduresChartReleasesTriggerIncidentSelector(params *PostAPIV2ProceduresChartReleasesTriggerIncidentSelectorParams, opts ...ClientOption) (*PostAPIV2ProceduresChartReleasesTriggerIncidentSelectorAccepted, error)
@@ -414,6 +416,46 @@ func (a *Client) PatchAPIV2ChartReleasesSelector(params *PatchAPIV2ChartReleases
 	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for PatchAPIV2ChartReleasesSelector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+  PostAPIChartReleasesV3 creates a chart release
+
+  Create a ChartRelease.
+*/
+func (a *Client) PostAPIChartReleasesV3(params *PostAPIChartReleasesV3Params, opts ...ClientOption) (*PostAPIChartReleasesV3Created, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewPostAPIChartReleasesV3Params()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "PostAPIChartReleasesV3",
+		Method:             "POST",
+		PathPattern:        "/api/chart-releases/v3",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &PostAPIChartReleasesV3Reader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*PostAPIChartReleasesV3Created)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for PostAPIChartReleasesV3: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 

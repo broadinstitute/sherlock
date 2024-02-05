@@ -674,6 +674,74 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "post": {
+                "description": "Create a ChartRelease.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ChartReleases"
+                ],
+                "summary": "Create a ChartRelease",
+                "parameters": [
+                    {
+                        "description": "The ChartRelease to create",
+                        "name": "chartRelease",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.ChartReleaseV3Create"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.ChartReleaseV3"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
             }
         },
         "/api/chart-releases/v3/{selector}": {
@@ -12681,6 +12749,100 @@ const docTemplate = `{
                 "updatedAt": {
                     "type": "string",
                     "format": "date-time"
+                }
+            }
+        },
+        "sherlock.ChartReleaseV3Create": {
+            "type": "object",
+            "properties": {
+                "appVersionBranch": {
+                    "description": "When creating, will default to the app's mainline branch if no other app version info is present",
+                    "type": "string"
+                },
+                "appVersionCommit": {
+                    "type": "string"
+                },
+                "appVersionExact": {
+                    "type": "string"
+                },
+                "appVersionFollowChartRelease": {
+                    "type": "string"
+                },
+                "appVersionResolver": {
+                    "description": "// When creating, will default to automatically reference any provided app version fields",
+                    "type": "string",
+                    "enum": [
+                        "branch",
+                        "commit",
+                        "exact",
+                        "follow",
+                        "none"
+                    ]
+                },
+                "chart": {
+                    "description": "Required when creating",
+                    "type": "string"
+                },
+                "chartVersionExact": {
+                    "type": "string"
+                },
+                "chartVersionFollowChartRelease": {
+                    "type": "string"
+                },
+                "chartVersionResolver": {
+                    "description": "When creating, will default to automatically reference any provided chart version",
+                    "type": "string",
+                    "enum": [
+                        "latest",
+                        "exact",
+                        "follow"
+                    ]
+                },
+                "cluster": {
+                    "description": "When creating, will default the environment's default cluster, if provided. Either this or environment must be provided.",
+                    "type": "string"
+                },
+                "environment": {
+                    "description": "Either this or cluster must be provided.",
+                    "type": "string"
+                },
+                "firecloudDevelopRef": {
+                    "type": "string"
+                },
+                "helmfileRef": {
+                    "type": "string",
+                    "default": "HEAD"
+                },
+                "helmfileRefEnabled": {
+                    "type": "boolean",
+                    "default": false
+                },
+                "includedInBulkChangesets": {
+                    "type": "boolean",
+                    "default": true
+                },
+                "name": {
+                    "description": "When creating, will be calculated if left empty",
+                    "type": "string"
+                },
+                "namespace": {
+                    "description": "When creating, will default to the environment's default namespace, if provided",
+                    "type": "string"
+                },
+                "pagerdutyIntegration": {
+                    "type": "string"
+                },
+                "port": {
+                    "description": "When creating, will use the chart's default if left empty",
+                    "type": "integer"
+                },
+                "protocol": {
+                    "description": "When creating, will use the chart's default if left empty",
+                    "type": "string"
+                },
+                "subdomain": {
+                    "description": "When creating, will use the chart's default if left empty",
+                    "type": "string"
                 }
             }
         },

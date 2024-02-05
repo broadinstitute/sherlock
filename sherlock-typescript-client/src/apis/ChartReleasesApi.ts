@@ -19,6 +19,7 @@ import type {
   PagerdutyAlertSummary,
   PagerdutySendAlertResponse,
   SherlockChartReleaseV3,
+  SherlockChartReleaseV3Create,
   SherlockChartReleaseV3Edit,
   V2controllersChartRelease,
   V2controllersCreatableChartRelease,
@@ -33,6 +34,8 @@ import {
     PagerdutySendAlertResponseToJSON,
     SherlockChartReleaseV3FromJSON,
     SherlockChartReleaseV3ToJSON,
+    SherlockChartReleaseV3CreateFromJSON,
+    SherlockChartReleaseV3CreateToJSON,
     SherlockChartReleaseV3EditFromJSON,
     SherlockChartReleaseV3EditToJSON,
     V2controllersChartReleaseFromJSON,
@@ -74,6 +77,10 @@ export interface ApiChartReleasesV3GetRequest {
     updatedAt?: Date;
     limit?: number;
     offset?: number;
+}
+
+export interface ApiChartReleasesV3PostRequest {
+    chartRelease: SherlockChartReleaseV3Create;
 }
 
 export interface ApiChartReleasesV3SelectorDeleteRequest {
@@ -301,6 +308,41 @@ export class ChartReleasesApi extends runtime.BaseAPI {
      */
     async apiChartReleasesV3Get(requestParameters: ApiChartReleasesV3GetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<SherlockChartReleaseV3>> {
         const response = await this.apiChartReleasesV3GetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Create a ChartRelease.
+     * Create a ChartRelease
+     */
+    async apiChartReleasesV3PostRaw(requestParameters: ApiChartReleasesV3PostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockChartReleaseV3>> {
+        if (requestParameters.chartRelease === null || requestParameters.chartRelease === undefined) {
+            throw new runtime.RequiredError('chartRelease','Required parameter requestParameters.chartRelease was null or undefined when calling apiChartReleasesV3Post.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/api/chart-releases/v3`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: SherlockChartReleaseV3CreateToJSON(requestParameters.chartRelease),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => SherlockChartReleaseV3FromJSON(jsonValue));
+    }
+
+    /**
+     * Create a ChartRelease.
+     * Create a ChartRelease
+     */
+    async apiChartReleasesV3Post(requestParameters: ApiChartReleasesV3PostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockChartReleaseV3> {
+        const response = await this.apiChartReleasesV3PostRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

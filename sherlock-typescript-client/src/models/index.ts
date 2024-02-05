@@ -12,6 +12,7 @@ export * from './SherlockAppVersionV3ChangelogResponse';
 export * from './SherlockAppVersionV3Create';
 export * from './SherlockAppVersionV3Edit';
 export * from './SherlockChartReleaseV3';
+export * from './SherlockChartReleaseV3Create';
 export * from './SherlockChartReleaseV3Edit';
 export * from './SherlockChartV3';
 export * from './SherlockChartV3Create';

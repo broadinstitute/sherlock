@@ -32,6 +32,7 @@ src/models/SherlockAppVersionV3ChangelogResponse.ts
 src/models/SherlockAppVersionV3Create.ts
 src/models/SherlockAppVersionV3Edit.ts
 src/models/SherlockChartReleaseV3.ts
+src/models/SherlockChartReleaseV3Create.ts
 src/models/SherlockChartReleaseV3Edit.ts
 src/models/SherlockChartV3.ts
 src/models/SherlockChartV3Create.ts
