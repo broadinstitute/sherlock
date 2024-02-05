@@ -48,6 +48,8 @@ type ClientService interface {
 
 	PatchAPIV2EnvironmentsSelector(params *PatchAPIV2EnvironmentsSelectorParams, opts ...ClientOption) (*PatchAPIV2EnvironmentsSelectorOK, error)
 
+	PostAPIEnvironmentsV3(params *PostAPIEnvironmentsV3Params, opts ...ClientOption) (*PostAPIEnvironmentsV3Created, error)
+
 	PostAPIV2Environments(params *PostAPIV2EnvironmentsParams, opts ...ClientOption) (*PostAPIV2EnvironmentsOK, *PostAPIV2EnvironmentsCreated, error)
 
 	PostAPIV2ProceduresEnvironmentsTriggerIncidentSelector(params *PostAPIV2ProceduresEnvironmentsTriggerIncidentSelectorParams, opts ...ClientOption) (*PostAPIV2ProceduresEnvironmentsTriggerIncidentSelectorAccepted, error)
@@ -414,6 +416,46 @@ func (a *Client) PatchAPIV2EnvironmentsSelector(params *PatchAPIV2EnvironmentsSe
 	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for PatchAPIV2EnvironmentsSelector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+  PostAPIEnvironmentsV3 creates a environment
+
+  Create a Environment.
+*/
+func (a *Client) PostAPIEnvironmentsV3(params *PostAPIEnvironmentsV3Params, opts ...ClientOption) (*PostAPIEnvironmentsV3Created, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewPostAPIEnvironmentsV3Params()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "PostAPIEnvironmentsV3",
+		Method:             "POST",
+		PathPattern:        "/api/environments/v3",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &PostAPIEnvironmentsV3Reader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*PostAPIEnvironmentsV3Created)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for PostAPIEnvironmentsV3: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 
