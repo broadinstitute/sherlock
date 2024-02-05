@@ -29,7 +29,6 @@ type EnvironmentV3Create struct {
 	TemplateEnvironment       string `json:"templateEnvironment" form:"templateEnvironment"`   // Required for dynamic environments
 	UniqueResourcePrefix      string `json:"uniqueResourcePrefix" form:"uniqueResourcePrefix"` // When creating, will be calculated if left empty
 	DefaultNamespace          string `json:"defaultNamespace" form:"defaultNamespace"`         // When creating, will be calculated if left empty
-	NamePrefix                string `json:"namePrefix" form:"namePrefix"`                     // Used for dynamic environment name generation only, to override using the owner email handle and template name
 	ValuesName                string `json:"valuesName" form:"valuesName"`                     // When creating, defaults to template name or environment name
 	EnvironmentV3Edit
 }
@@ -90,7 +89,7 @@ func (e EnvironmentV3) toModel(db *gorm.DB) (models.Environment, error) {
 		}
 		var templateEnvironment models.Environment
 		if err = db.Where(&templateEnvironmentModel).Select("id").First(&templateEnvironment).Error; err != nil {
-			return models.Environment{}, err
+			return models.Environment{}, fmt.Errorf("template environment '%s' not found: %w", e.TemplateEnvironment, err)
 		} else {
 			ret.TemplateEnvironmentID = &templateEnvironment.ID
 		}
@@ -102,7 +101,7 @@ func (e EnvironmentV3) toModel(db *gorm.DB) (models.Environment, error) {
 		}
 		var defaultCluster models.Cluster
 		if err = db.Where(&defaultClusterModel).Select("id").First(&defaultCluster).Error; err != nil {
-			return models.Environment{}, err
+			return models.Environment{}, fmt.Errorf("default cluster '%s' not found: %w", *e.DefaultCluster, err)
 		} else {
 			ret.DefaultClusterID = &defaultCluster.ID
 		}
@@ -114,7 +113,7 @@ func (e EnvironmentV3) toModel(db *gorm.DB) (models.Environment, error) {
 		}
 		var pagerdutyIntegration models.PagerdutyIntegration
 		if err = db.Where(&pagerdutyIntegrationModel).Select("id").First(&pagerdutyIntegration).Error; err != nil {
-			return models.Environment{}, err
+			return models.Environment{}, fmt.Errorf("pagerduty integration '%s' not found: %w", *e.PagerdutyIntegration, err)
 		} else {
 			ret.PagerdutyIntegrationID = &pagerdutyIntegration.ID
 		}
@@ -126,7 +125,7 @@ func (e EnvironmentV3) toModel(db *gorm.DB) (models.Environment, error) {
 		}
 		var owner models.User
 		if err = db.Where(&ownerModel).Select("id").First(&owner).Error; err != nil {
-			return models.Environment{}, err
+			return models.Environment{}, fmt.Errorf("owner '%s' not found: %w", *e.Owner, err)
 		} else {
 			ret.OwnerID = &owner.ID
 		}

@@ -151,7 +151,6 @@ func (s *handlerSuite) TestEnvironmentV3_toModel() {
 					TemplateEnvironment:       templateEnvironment.Name,
 					UniqueResourcePrefix:      "unique-resource-prefix",
 					DefaultNamespace:          "default-namespace",
-					NamePrefix:                "name-prefix",
 					ValuesName:                "values-name",
 					EnvironmentV3Edit: EnvironmentV3Edit{
 						DefaultCluster:              utils.PointerTo(defaultCluster.Name),
@@ -311,7 +310,6 @@ func Test_environmentFromModel(t *testing.T) {
 					TemplateEnvironment:       "name-3",
 					UniqueResourcePrefix:      "unique-resource-prefix",
 					DefaultNamespace:          "default-namespace",
-					NamePrefix:                "",
 					ValuesName:                "values-name",
 					EnvironmentV3Edit: EnvironmentV3Edit{
 						DefaultCluster:              utils.PointerTo("name-4"),

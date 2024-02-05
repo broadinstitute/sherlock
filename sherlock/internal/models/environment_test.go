@@ -372,6 +372,22 @@ func (s *modelSuite) TestEnvironmentValidationSqlOfflineEndPresent() {
 	s.ErrorContains(err, "violates check constraint \"offline_schedule_end_time_present\"")
 }
 
+func (s *modelSuite) TestEnvironmentValidationSqlNameUnique() {
+	s.SetSuitableTestUserForDB()
+	a := s.TestData.Environment_Dev()
+	b := s.TestData.Environment_Staging()
+	err := s.DB.Model(&b).Updates(&Environment{Name: a.Name}).Error
+	s.ErrorContains(err, "violates unique constraint \"environments_name_unique\"")
+}
+
+func (s *modelSuite) TestEnvironmentValidationSqlUrpUnique() {
+	s.SetSuitableTestUserForDB()
+	a := s.TestData.Environment_Dev()
+	b := s.TestData.Environment_Staging()
+	err := s.DB.Model(&b).Updates(&Environment{UniqueResourcePrefix: a.UniqueResourcePrefix}).Error
+	s.ErrorContains(err, "violates unique constraint \"environments_urp_unique\"")
+}
+
 func TestEnvironment_SlackBeehiveLink(t *testing.T) {
 	type fields struct {
 		Name string
