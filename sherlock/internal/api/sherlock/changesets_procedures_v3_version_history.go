@@ -19,7 +19,7 @@ import (
 //	@param			version-type			path		string	true	"The type of the version, either 'app' or 'chart'"	Enums(app, chart)
 //	@param			chart					path		string	true	"The chart the version belongs to"
 //	@param			version					path		string	true	"The version to look for"
-//	@success		200						{array}		V3Changeset
+//	@success		200						{array}		ChangesetV3
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/changesets/procedures/v3/version-history/{version-type}/{chart}/{version} [get]
 func changesetsProceduresV3VersionHistory(ctx *gin.Context) {
