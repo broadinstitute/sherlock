@@ -19,6 +19,7 @@ import type {
   PagerdutyAlertSummary,
   PagerdutySendAlertResponse,
   SherlockEnvironmentV3,
+  SherlockEnvironmentV3Create,
   SherlockEnvironmentV3Edit,
   V2controllersCreatableEnvironment,
   V2controllersEditableEnvironment,
@@ -33,6 +34,8 @@ import {
     PagerdutySendAlertResponseToJSON,
     SherlockEnvironmentV3FromJSON,
     SherlockEnvironmentV3ToJSON,
+    SherlockEnvironmentV3CreateFromJSON,
+    SherlockEnvironmentV3CreateToJSON,
     SherlockEnvironmentV3EditFromJSON,
     SherlockEnvironmentV3EditToJSON,
     V2controllersCreatableEnvironmentFromJSON,
@@ -57,7 +60,6 @@ export interface ApiEnvironmentsV3GetRequest {
     id?: number;
     lifecycle?: string;
     name?: string;
-    namePrefix?: string;
     namePrefixesDomain?: boolean;
     offline?: boolean;
     offlineScheduleBeginEnabled?: boolean;
@@ -76,6 +78,10 @@ export interface ApiEnvironmentsV3GetRequest {
     valuesName?: string;
     limit?: number;
     offset?: number;
+}
+
+export interface ApiEnvironmentsV3PostRequest {
+    environment: SherlockEnvironmentV3Create;
 }
 
 export interface ApiEnvironmentsV3SelectorDeleteRequest {
@@ -219,10 +225,6 @@ export class EnvironmentsApi extends runtime.BaseAPI {
             queryParameters['name'] = requestParameters.name;
         }
 
-        if (requestParameters.namePrefix !== undefined) {
-            queryParameters['namePrefix'] = requestParameters.namePrefix;
-        }
-
         if (requestParameters.namePrefixesDomain !== undefined) {
             queryParameters['namePrefixesDomain'] = requestParameters.namePrefixesDomain;
         }
@@ -313,6 +315,41 @@ export class EnvironmentsApi extends runtime.BaseAPI {
      */
     async apiEnvironmentsV3Get(requestParameters: ApiEnvironmentsV3GetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<SherlockEnvironmentV3>> {
         const response = await this.apiEnvironmentsV3GetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Create a Environment.
+     * Create a Environment
+     */
+    async apiEnvironmentsV3PostRaw(requestParameters: ApiEnvironmentsV3PostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockEnvironmentV3>> {
+        if (requestParameters.environment === null || requestParameters.environment === undefined) {
+            throw new runtime.RequiredError('environment','Required parameter requestParameters.environment was null or undefined when calling apiEnvironmentsV3Post.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/api/environments/v3`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: SherlockEnvironmentV3CreateToJSON(requestParameters.environment),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => SherlockEnvironmentV3FromJSON(jsonValue));
+    }
+
+    /**
+     * Create a Environment.
+     * Create a Environment
+     */
+    async apiEnvironmentsV3Post(requestParameters: ApiEnvironmentsV3PostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockEnvironmentV3> {
+        const response = await this.apiEnvironmentsV3PostRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

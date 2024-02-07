@@ -4182,12 +4182,6 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
-                        "type": "string",
-                        "description": "Used for dynamic environment name generation only, to override using the owner email handle and template name",
-                        "name": "namePrefix",
-                        "in": "query"
-                    },
-                    {
                         "type": "boolean",
                         "default": true,
                         "name": "namePrefixesDomain",
@@ -4305,6 +4299,74 @@ const docTemplate = `{
                             "items": {
                                 "$ref": "#/definitions/sherlock.EnvironmentV3"
                             }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a Environment.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Environments"
+                ],
+                "summary": "Create a Environment",
+                "parameters": [
+                    {
+                        "description": "The Environment to create",
+                        "name": "environment",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.EnvironmentV3Create"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.EnvironmentV3"
                         }
                     },
                     "400": {
@@ -13641,10 +13703,6 @@ const docTemplate = `{
                     "description": "When creating, will be calculated if dynamic, required otherwise",
                     "type": "string"
                 },
-                "namePrefix": {
-                    "description": "Used for dynamic environment name generation only, to override using the owner email handle and template name",
-                    "type": "string"
-                },
                 "namePrefixesDomain": {
                     "type": "boolean",
                     "default": true
@@ -13714,6 +13772,116 @@ const docTemplate = `{
                 "updatedAt": {
                     "type": "string",
                     "format": "date-time"
+                },
+                "valuesName": {
+                    "description": "When creating, defaults to template name or environment name",
+                    "type": "string"
+                }
+            }
+        },
+        "sherlock.EnvironmentV3Create": {
+            "type": "object",
+            "properties": {
+                "autoPopulateChartReleases": {
+                    "description": "If true when creating, dynamic environments copy from template and template environments get the honeycomb chart",
+                    "type": "boolean",
+                    "default": true
+                },
+                "base": {
+                    "description": "Required when creating",
+                    "type": "string"
+                },
+                "baseDomain": {
+                    "type": "string",
+                    "default": "bee.envs-terra.bio"
+                },
+                "defaultCluster": {
+                    "type": "string"
+                },
+                "defaultFirecloudDevelopRef": {
+                    "description": "should be the environment branch for live envs. Is usually dev for template/dynamic but not necessarily",
+                    "type": "string",
+                    "default": "dev"
+                },
+                "defaultNamespace": {
+                    "description": "When creating, will be calculated if left empty",
+                    "type": "string"
+                },
+                "deleteAfter": {
+                    "description": "If set, the BEE will be automatically deleted after this time (thelma checks this field)",
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "helmfileRef": {
+                    "type": "string",
+                    "default": "HEAD"
+                },
+                "lifecycle": {
+                    "type": "string",
+                    "default": "dynamic"
+                },
+                "name": {
+                    "description": "When creating, will be calculated if dynamic, required otherwise",
+                    "type": "string"
+                },
+                "namePrefixesDomain": {
+                    "type": "boolean",
+                    "default": true
+                },
+                "offline": {
+                    "description": "Applicable for BEEs only, whether Thelma should render the BEE as \"offline\" zero replicas (this field is a target state, not a status)",
+                    "type": "boolean",
+                    "default": false
+                },
+                "offlineScheduleBeginEnabled": {
+                    "description": "When enabled, the BEE will be slated to go offline around the begin time each day",
+                    "type": "boolean"
+                },
+                "offlineScheduleBeginTime": {
+                    "description": "Stored with timezone to determine day of the week",
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "offlineScheduleEndEnabled": {
+                    "description": "When enabled, the BEE will be slated to come online around the end time each weekday (each day if weekends enabled)",
+                    "type": "boolean"
+                },
+                "offlineScheduleEndTime": {
+                    "description": "Stored with timezone to determine day of the week",
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "offlineScheduleEndWeekends": {
+                    "type": "boolean"
+                },
+                "owner": {
+                    "description": "When creating, will default to you",
+                    "type": "string"
+                },
+                "pactIdentifier": {
+                    "type": "string"
+                },
+                "pagerdutyIntegration": {
+                    "type": "string"
+                },
+                "preventDeletion": {
+                    "description": "Used to protect specific BEEs from deletion (thelma checks this field)",
+                    "type": "boolean",
+                    "default": false
+                },
+                "requiresSuitability": {
+                    "type": "boolean",
+                    "default": false
+                },
+                "templateEnvironment": {
+                    "description": "Required for dynamic environments",
+                    "type": "string"
+                },
+                "uniqueResourcePrefix": {
+                    "description": "When creating, will be calculated if left empty",
+                    "type": "string"
                 },
                 "valuesName": {
                     "description": "When creating, defaults to template name or environment name",

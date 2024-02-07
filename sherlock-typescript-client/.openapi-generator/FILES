@@ -51,6 +51,7 @@ src/models/SherlockDatabaseInstanceV3.ts
 src/models/SherlockDatabaseInstanceV3Create.ts
 src/models/SherlockDatabaseInstanceV3Edit.ts
 src/models/SherlockEnvironmentV3.ts
+src/models/SherlockEnvironmentV3Create.ts
 src/models/SherlockEnvironmentV3Edit.ts
 src/models/SherlockGitCommitV3.ts
 src/models/SherlockGitCommitV3Upsert.ts
