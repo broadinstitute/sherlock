@@ -243,6 +243,17 @@ func (s *modelSuite) TestChangesetToHelmfileRefValidRefFalse() {
 	s.ErrorContains(err, "violates check constraint \"to_helmfile_ref_valid\"")
 }
 
+func (s *modelSuite) TestChangeset_fillEmptyFieldsBasedOnFrom() {
+	changeset := Changeset{
+		From: s.TestData.ChartRelease_LeonardoDev().ChartReleaseVersion,
+	}
+	emptyCrv := ChartReleaseVersion{}
+	s.Equal(emptyCrv, changeset.To)
+	s.True(changeset.hasDiff())
+	changeset.fillEmptyToFieldsBasedOnFrom()
+	s.False(changeset.hasDiff())
+}
+
 func TestChangeset_Summarize(t *testing.T) {
 	type fields struct {
 		Model            gorm.Model

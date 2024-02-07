@@ -122,4 +122,12 @@ func ConfigureRoutes(apiRouter gin.IRoutes) {
 	apiRouter.DELETE("database-instances/v3/*selector", databaseInstancesV3Delete)
 	apiRouter.GET("database-instances/v3", databaseInstancesV3List)
 	apiRouter.PATCH("database-instances/v3/*selector", databaseInstancesV3Edit)
+
+	apiRouter.GET("changesets/procedures/v3/version-history/:version-type/:chart/:version", changesetsProceduresV3VersionHistory)
+	apiRouter.GET("changesets/procedures/v3/chart-release-history/*chart-release", changesetsProceduresV3ChartReleaseHistory)
+	apiRouter.POST("changesets/procedures/v3/apply", changesetsProceduresV3Apply)
+	apiRouter.POST("changesets/procedures/v3/plan", changesetsProceduresV3Plan)
+	apiRouter.POST("changesets/procedures/v3/plan-and-apply", changesetsProceduresV3PlanAndApply)
+	apiRouter.GET("changesets/v3/:id", changesetsV3Get)
+	apiRouter.GET("changesets/v3", changesetsV3List)
 }

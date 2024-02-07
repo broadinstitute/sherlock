@@ -71,6 +71,7 @@ type TestData interface {
 	DatabaseInstance_LeonardoSwatomation() DatabaseInstance
 
 	Changeset_LeonardoDev_V1toV3() Changeset
+	Changeset_LeonardoDev_V1toV2Superseded() Changeset
 
 	CiIdentifier_Chart_Leonardo() CiIdentifier
 	CiIdentifier_ChartVersion_Leonardo_V1() CiIdentifier
@@ -171,7 +172,8 @@ type testDataImpl struct {
 	databaseInstance_leonardoDev         DatabaseInstance
 	databaseInstance_leonardoSwatomation DatabaseInstance
 
-	changeset_leonardoDev_v1toV3 Changeset
+	changeset_leonardoDev_v1toV3           Changeset
+	changeset_leonardoDev_v1toV2Superseded Changeset
 
 	ciIdentifier_chart_leonardo               CiIdentifier
 	ciIdentifier_chartVersion_leonardo_v1     CiIdentifier
@@ -1061,6 +1063,11 @@ func (td *testDataImpl) Changeset_LeonardoDev_V1toV3() Changeset {
 			},
 			AppliedAt:    utils.PointerTo(time.Now().Add(-(18 * time.Hour))),
 			SupersededAt: nil,
+			// We manually specify these so that they're stable when this test data is accessed.
+			// Changeset's AfterCreate hook is what builds these associations normally, but when it
+			// does so it doesn't rehydrate the struct. For simplicty's sake we just create it
+			// fully hydrated already, and the hook will on-conflict-do-nothing when it tries to
+			// add the associations again.
 			NewAppVersions: []*AppVersion{
 				utils.PointerTo(td.AppVersion_Leonardo_V2()),
 				utils.PointerTo(td.AppVersion_Leonardo_V3()),
@@ -1076,6 +1083,57 @@ func (td *testDataImpl) Changeset_LeonardoDev_V1toV3() Changeset {
 		td.create(&td.changeset_leonardoDev_v1toV3)
 	}
 	return td.changeset_leonardoDev_v1toV3
+}
+
+func (td *testDataImpl) Changeset_LeonardoDev_V1toV2Superseded() Changeset {
+	if td.changeset_leonardoDev_v1toV2Superseded.ID == 0 {
+		td.changeset_leonardoDev_v1toV2Superseded = Changeset{
+			ChartReleaseID: td.ChartRelease_LeonardoDev().ID,
+			From: ChartReleaseVersion{
+				ResolvedAt:           utils.PointerTo(time.Now().Add(-(24 * time.Hour))),
+				AppVersionResolver:   utils.PointerTo("exact"),
+				AppVersionExact:      utils.PointerTo(td.AppVersion_Leonardo_V1().AppVersion),
+				AppVersionBranch:     utils.PointerTo(td.AppVersion_Leonardo_V1().GitBranch),
+				AppVersionCommit:     utils.PointerTo(td.AppVersion_Leonardo_V1().GitCommit),
+				AppVersionID:         utils.PointerTo(td.AppVersion_Leonardo_V1().ID),
+				ChartVersionResolver: utils.PointerTo("exact"),
+				ChartVersionExact:    utils.PointerTo(td.ChartVersion_Leonardo_V1().ChartVersion),
+				ChartVersionID:       utils.PointerTo(td.ChartVersion_Leonardo_V1().ID),
+				HelmfileRef:          utils.PointerTo(fmt.Sprintf("charts/leonardo-%s", td.ChartVersion_Leonardo_V1().ChartVersion)),
+				HelmfileRefEnabled:   utils.PointerTo(false),
+			},
+			To: ChartReleaseVersion{
+				ResolvedAt:           utils.PointerTo(time.Now().Add(-(19 * time.Hour))),
+				AppVersionResolver:   utils.PointerTo("exact"),
+				AppVersionExact:      utils.PointerTo(td.AppVersion_Leonardo_V2().AppVersion),
+				AppVersionBranch:     utils.PointerTo(td.AppVersion_Leonardo_V2().GitBranch),
+				AppVersionCommit:     utils.PointerTo(td.AppVersion_Leonardo_V2().GitCommit),
+				AppVersionID:         utils.PointerTo(td.AppVersion_Leonardo_V2().ID),
+				ChartVersionResolver: utils.PointerTo("exact"),
+				ChartVersionExact:    utils.PointerTo(td.ChartVersion_Leonardo_V2().ChartVersion),
+				ChartVersionID:       utils.PointerTo(td.ChartVersion_Leonardo_V2().ID),
+				HelmfileRef:          utils.PointerTo(fmt.Sprintf("charts/leonardo-%s", td.ChartVersion_Leonardo_V2().ChartVersion)),
+				HelmfileRefEnabled:   utils.PointerTo(false),
+			},
+			AppliedAt:    nil,
+			SupersededAt: utils.PointerTo(time.Now().Add(-(18 * time.Hour))),
+			// We manually specify these so that they're stable when this test data is accessed.
+			// Changeset's AfterCreate hook is what builds these associations normally, but when it
+			// does so it doesn't rehydrate the struct. For simplicty's sake we just create it
+			// fully hydrated already, and the hook will on-conflict-do-nothing when it tries to
+			// add the associations again.
+			NewAppVersions: []*AppVersion{
+				utils.PointerTo(td.AppVersion_Leonardo_V2()),
+			},
+			NewChartVersions: []*ChartVersion{
+				utils.PointerTo(td.ChartVersion_Leonardo_V2()),
+			},
+			PlannedByID: utils.PointerTo(td.User_Suitable().ID),
+		}
+		td.h.SetSuitableTestUserForDB()
+		td.create(&td.changeset_leonardoDev_v1toV2Superseded)
+	}
+	return td.changeset_leonardoDev_v1toV2Superseded
 }
 
 func (td *testDataImpl) CiIdentifier_Chart_Leonardo() CiIdentifier {

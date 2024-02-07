@@ -243,3 +243,19 @@ func (crv *ChartReleaseVersion) resolveHelmfileRef(chart Chart) {
 		}
 	}
 }
+
+func (crv *ChartReleaseVersion) hasDiffWith(other *ChartReleaseVersion) bool {
+	return !utils.PointerValuesEqual(crv.AppVersionResolver, other.AppVersionResolver) ||
+		!utils.PointerValuesEqual(crv.AppVersionExact, other.AppVersionExact) ||
+		!utils.PointerValuesEqual(crv.AppVersionBranch, other.AppVersionBranch) ||
+		!utils.PointerValuesEqual(crv.AppVersionCommit, other.AppVersionCommit) ||
+		!utils.PointerValuesEqual(crv.AppVersionFollowChartReleaseID, other.AppVersionFollowChartReleaseID) ||
+		!utils.PointerValuesEqual(crv.AppVersionID, other.AppVersionID) ||
+		!utils.PointerValuesEqual(crv.ChartVersionResolver, other.ChartVersionResolver) ||
+		!utils.PointerValuesEqual(crv.ChartVersionExact, other.ChartVersionExact) ||
+		!utils.PointerValuesEqual(crv.ChartVersionFollowChartReleaseID, other.ChartVersionFollowChartReleaseID) ||
+		!utils.PointerValuesEqual(crv.ChartVersionID, other.ChartVersionID) ||
+		!utils.PointerValuesEqual(crv.HelmfileRef, other.HelmfileRef) ||
+		!utils.PointerValuesEqual(crv.HelmfileRefEnabled, other.HelmfileRefEnabled) ||
+		!utils.PointerValuesEqual(crv.FirecloudDevelopRef, other.FirecloudDevelopRef)
+}

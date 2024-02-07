@@ -176,6 +176,32 @@ func (s *hooksSuite) Test_dispatchGithubActionsDeployHook_appVersionRefFromChang
 func (s *hooksSuite) Test_dispatchGithubActionsDeployHook_appVersionCommitRefFromChangesets() {
 	chartRelease := s.TestData.ChartRelease_LeonardoDev()
 
+	// The changeset creation hooks will resolve away arbitrary commits if we try to just shove them into the
+	// changeset, so we actually need to create app versions first so they can be referenced when resolved
+	b := models.AppVersion{
+		ChartID:    s.TestData.Chart_Leonardo().ID,
+		AppVersion: "v1.1.3",
+		GitCommit:  "commit b",
+	}
+	c := models.AppVersion{
+		ChartID:    s.TestData.Chart_Leonardo().ID,
+		AppVersion: "v1.1.4",
+		GitCommit:  "commit c",
+	}
+	d := models.AppVersion{
+		ChartID:    s.TestData.Chart_Leonardo().ID,
+		AppVersion: "v1.1.5",
+		GitCommit:  "commit d",
+	}
+	e := models.AppVersion{
+		ChartID:    s.TestData.Chart_Leonardo().ID,
+		AppVersion: "v1.1.6",
+		GitCommit:  "commit e",
+	}
+	for _, av := range []models.AppVersion{b, c, d, e} {
+		s.NoError(s.DB.Create(&av).Error)
+	}
+
 	changeset1 := models.Changeset{
 		ChartReleaseID: chartRelease.ID,
 		AppliedAt:      utils.PointerTo(time.Now().Add(-time.Minute)),
@@ -183,8 +209,7 @@ func (s *hooksSuite) Test_dispatchGithubActionsDeployHook_appVersionCommitRefFro
 			HelmfileRef:          utils.PointerTo("HEAD"),
 			HelmfileRefEnabled:   utils.PointerTo(false),
 			AppVersionResolver:   utils.PointerTo("exact"),
-			AppVersionExact:      utils.PointerTo("v1.1.3"),
-			AppVersionCommit:     utils.PointerTo("commit b"),
+			AppVersionExact:      &b.AppVersion,
 			ChartVersionResolver: utils.PointerTo("exact"),
 			ChartVersionExact:    utils.PointerTo("v2.3.4"),
 		},
@@ -192,8 +217,7 @@ func (s *hooksSuite) Test_dispatchGithubActionsDeployHook_appVersionCommitRefFro
 			HelmfileRef:          utils.PointerTo("HEAD"),
 			HelmfileRefEnabled:   utils.PointerTo(false),
 			AppVersionResolver:   utils.PointerTo("exact"),
-			AppVersionExact:      utils.PointerTo("v1.1.4"),
-			AppVersionCommit:     utils.PointerTo("commit c"),
+			AppVersionExact:      &c.AppVersion,
 			ChartVersionResolver: utils.PointerTo("exact"),
 			ChartVersionExact:    utils.PointerTo("v2.3.4"),
 		},
@@ -206,8 +230,7 @@ func (s *hooksSuite) Test_dispatchGithubActionsDeployHook_appVersionCommitRefFro
 			HelmfileRef:          utils.PointerTo("HEAD"),
 			HelmfileRefEnabled:   utils.PointerTo(false),
 			AppVersionResolver:   utils.PointerTo("exact"),
-			AppVersionExact:      utils.PointerTo("v1.1.4"),
-			AppVersionCommit:     utils.PointerTo("commit d"),
+			AppVersionExact:      &d.AppVersion,
 			ChartVersionResolver: utils.PointerTo("exact"),
 			ChartVersionExact:    utils.PointerTo("v2.3.4"),
 		},
@@ -215,8 +238,7 @@ func (s *hooksSuite) Test_dispatchGithubActionsDeployHook_appVersionCommitRefFro
 			HelmfileRef:          utils.PointerTo("HEAD"),
 			HelmfileRefEnabled:   utils.PointerTo(false),
 			AppVersionResolver:   utils.PointerTo("exact"),
-			AppVersionExact:      utils.PointerTo("v1.1.5"),
-			AppVersionCommit:     utils.PointerTo("commit e"),
+			AppVersionExact:      &e.AppVersion,
 			ChartVersionResolver: utils.PointerTo("exact"),
 			ChartVersionExact:    utils.PointerTo("v2.3.4"),
 		},
@@ -226,7 +248,7 @@ func (s *hooksSuite) Test_dispatchGithubActionsDeployHook_appVersionCommitRefFro
 	github.UseMockedClient(s.T(), func(c *github.MockClient) {
 		c.Actions.EXPECT().CreateWorkflowDispatchEventByFileName(
 			s.DB.Statement.Context, "owner", "repo", "path", github2.CreateWorkflowDispatchEventRequest{
-				Ref: "commit e",
+				Ref: e.GitCommit,
 			}).Return(nil, nil)
 	}, func() {
 		s.NoError(dispatcher.DispatchGithubActionsDeployHook(s.DB, models.GithubActionsDeployHook{
