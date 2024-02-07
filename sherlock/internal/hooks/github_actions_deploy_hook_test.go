@@ -126,7 +126,6 @@ func (s *hooksSuite) Test_dispatchGithubActionsDeployHook_appVersionRefFromChang
 			ChartVersionExact:    utils.PointerTo("v2.3.4"),
 		},
 	}
-	s.NoError(s.DB.Create(&changeset1).Error)
 	changeset2 := models.Changeset{
 		ChartReleaseID: chartRelease.ID,
 		AppliedAt:      utils.PointerTo(time.Now()),
@@ -147,7 +146,13 @@ func (s *hooksSuite) Test_dispatchGithubActionsDeployHook_appVersionRefFromChang
 			ChartVersionExact:    utils.PointerTo("v2.3.4"),
 		},
 	}
-	s.NoError(s.DB.Create(&changeset2).Error)
+	created, err := models.PlanChangesets(s.DB, []models.Changeset{changeset1, changeset2})
+	s.NoError(err)
+	s.Len(created, 2)
+	var changesets []models.Changeset
+	err = s.DB.Scopes(models.ReadChangesetScope).Find(&changesets, created).Error
+	s.NoError(err)
+	s.Len(changesets, 2)
 
 	github.UseMockedClient(s.T(), func(c *github.MockClient) {
 		c.Actions.EXPECT().CreateWorkflowDispatchEventByFileName(
@@ -166,8 +171,8 @@ func (s *hooksSuite) Test_dispatchGithubActionsDeployHook_appVersionRefFromChang
 			},
 		}, models.CiRun{
 			RelatedResources: []models.CiIdentifier{
-				{ResourceType: "changeset", ResourceID: changeset2.ID},
-				{ResourceType: "changeset", ResourceID: changeset1.ID},
+				{ResourceType: "changeset", ResourceID: changesets[0].ID},
+				{ResourceType: "changeset", ResourceID: changesets[1].ID},
 			},
 		}))
 	})
@@ -222,7 +227,6 @@ func (s *hooksSuite) Test_dispatchGithubActionsDeployHook_appVersionCommitRefFro
 			ChartVersionExact:    utils.PointerTo("v2.3.4"),
 		},
 	}
-	s.NoError(s.DB.Create(&changeset1).Error)
 	changeset2 := models.Changeset{
 		ChartReleaseID: chartRelease.ID,
 		AppliedAt:      utils.PointerTo(time.Now()),
@@ -243,7 +247,13 @@ func (s *hooksSuite) Test_dispatchGithubActionsDeployHook_appVersionCommitRefFro
 			ChartVersionExact:    utils.PointerTo("v2.3.4"),
 		},
 	}
-	s.NoError(s.DB.Create(&changeset2).Error)
+	created, err := models.PlanChangesets(s.DB, []models.Changeset{changeset1, changeset2})
+	s.NoError(err)
+	s.Len(created, 2)
+	var changesets []models.Changeset
+	err = s.DB.Scopes(models.ReadChangesetScope).Find(&changesets, created).Error
+	s.NoError(err)
+	s.Len(changesets, 2)
 
 	github.UseMockedClient(s.T(), func(c *github.MockClient) {
 		c.Actions.EXPECT().CreateWorkflowDispatchEventByFileName(
@@ -262,8 +272,8 @@ func (s *hooksSuite) Test_dispatchGithubActionsDeployHook_appVersionCommitRefFro
 			},
 		}, models.CiRun{
 			RelatedResources: []models.CiIdentifier{
-				{ResourceType: "changeset", ResourceID: changeset2.ID},
-				{ResourceType: "changeset", ResourceID: changeset1.ID},
+				{ResourceType: "changeset", ResourceID: changesets[0].ID},
+				{ResourceType: "changeset", ResourceID: changesets[1].ID},
 			},
 		}))
 	})
