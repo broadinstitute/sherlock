@@ -31,6 +31,7 @@ export * from './SherlockDatabaseInstanceV3';
 export * from './SherlockDatabaseInstanceV3Create';
 export * from './SherlockDatabaseInstanceV3Edit';
 export * from './SherlockEnvironmentV3';
+export * from './SherlockEnvironmentV3Create';
 export * from './SherlockEnvironmentV3Edit';
 export * from './SherlockGitCommitV3';
 export * from './SherlockGitCommitV3Upsert';
