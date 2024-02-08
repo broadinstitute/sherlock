@@ -10,7 +10,10 @@ import (
 
 type ChangesetV3 struct {
 	CommonFields
+	ChangesetV3Query
+}
 
+type ChangesetV3Query struct {
 	CiIdentifier     *CiIdentifierV3 `json:"ciIdentifier,omitempty" form:"-"`
 	ChartReleaseInfo *ChartReleaseV3 `json:"chartReleaseInfo,omitempty" form:"-"`
 
@@ -228,40 +231,46 @@ func (c ChangesetV3) toModel(db *gorm.DB) (models.Changeset, error) {
 	return ret, nil
 }
 
+func (c ChangesetV3Query) toModel(db *gorm.DB) (models.Changeset, error) {
+	return ChangesetV3{ChangesetV3Query: c}.toModel(db)
+}
+
 func (c ChangesetV3Create) toModel(db *gorm.DB) (models.Changeset, error) {
-	return ChangesetV3{ChangesetV3Create: c}.toModel(db)
+	return ChangesetV3Query{ChangesetV3Create: c}.toModel(db)
 }
 
 func changesetFromModel(model models.Changeset) ChangesetV3 {
 	ret := ChangesetV3{
-		CommonFields:             commonFieldsFromGormModel(model.Model),
-		CiIdentifier:             utils.NilOrCall(ciIdentifierFromModel, model.CiIdentifier),
-		ChartReleaseInfo:         utils.NilOrCall(chartReleaseFromModel, model.ChartRelease),
-		AppliedAt:                model.AppliedAt,
-		SupersededAt:             model.SupersededAt,
-		PlannedByInfo:            utils.NilOrCall(userFromModel, model.PlannedBy),
-		AppliedByInfo:            utils.NilOrCall(userFromModel, model.AppliedBy),
-		FromResolvedAt:           model.From.ResolvedAt,
-		FromAppVersionResolver:   model.From.AppVersionResolver,
-		FromAppVersionExact:      model.From.AppVersionExact,
-		FromAppVersionBranch:     model.From.AppVersionBranch,
-		FromAppVersionCommit:     model.From.AppVersionCommit,
-		FromChartVersionResolver: model.From.ChartVersionResolver,
-		FromChartVersionExact:    model.From.ChartVersionExact,
-		FromHelmfileRef:          model.From.HelmfileRef,
-		FromHelmfileRefEnabled:   model.From.HelmfileRefEnabled,
-		FromFirecloudDevelopRef:  model.From.FirecloudDevelopRef,
-		ToResolvedAt:             model.To.ResolvedAt,
-		ChangesetV3Create: ChangesetV3Create{
-			ToAppVersionResolver:   model.To.AppVersionResolver,
-			ToAppVersionExact:      model.To.AppVersionExact,
-			ToAppVersionBranch:     model.To.AppVersionBranch,
-			ToAppVersionCommit:     model.To.AppVersionCommit,
-			ToChartVersionResolver: model.To.ChartVersionResolver,
-			ToChartVersionExact:    model.To.ChartVersionExact,
-			ToHelmfileRef:          model.To.HelmfileRef,
-			ToHelmfileRefEnabled:   model.To.HelmfileRefEnabled,
-			ToFirecloudDevelopRef:  model.To.FirecloudDevelopRef,
+		CommonFields: commonFieldsFromGormModel(model.Model),
+		ChangesetV3Query: ChangesetV3Query{
+			CiIdentifier:             utils.NilOrCall(ciIdentifierFromModel, model.CiIdentifier),
+			ChartReleaseInfo:         utils.NilOrCall(chartReleaseFromModel, model.ChartRelease),
+			AppliedAt:                model.AppliedAt,
+			SupersededAt:             model.SupersededAt,
+			PlannedByInfo:            utils.NilOrCall(userFromModel, model.PlannedBy),
+			AppliedByInfo:            utils.NilOrCall(userFromModel, model.AppliedBy),
+			FromResolvedAt:           model.From.ResolvedAt,
+			FromAppVersionResolver:   model.From.AppVersionResolver,
+			FromAppVersionExact:      model.From.AppVersionExact,
+			FromAppVersionBranch:     model.From.AppVersionBranch,
+			FromAppVersionCommit:     model.From.AppVersionCommit,
+			FromChartVersionResolver: model.From.ChartVersionResolver,
+			FromChartVersionExact:    model.From.ChartVersionExact,
+			FromHelmfileRef:          model.From.HelmfileRef,
+			FromHelmfileRefEnabled:   model.From.HelmfileRefEnabled,
+			FromFirecloudDevelopRef:  model.From.FirecloudDevelopRef,
+			ToResolvedAt:             model.To.ResolvedAt,
+			ChangesetV3Create: ChangesetV3Create{
+				ToAppVersionResolver:   model.To.AppVersionResolver,
+				ToAppVersionExact:      model.To.AppVersionExact,
+				ToAppVersionBranch:     model.To.AppVersionBranch,
+				ToAppVersionCommit:     model.To.AppVersionCommit,
+				ToChartVersionResolver: model.To.ChartVersionResolver,
+				ToChartVersionExact:    model.To.ChartVersionExact,
+				ToHelmfileRef:          model.To.HelmfileRef,
+				ToHelmfileRefEnabled:   model.To.HelmfileRefEnabled,
+				ToFirecloudDevelopRef:  model.To.FirecloudDevelopRef,
+			},
 		},
 	}
 	if len(model.NewAppVersions) > 0 {
