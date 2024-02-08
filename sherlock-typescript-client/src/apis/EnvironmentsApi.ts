@@ -54,7 +54,7 @@ export interface ApiEnvironmentsV3GetRequest {
     defaultCluster?: string;
     defaultFirecloudDevelopRef?: string;
     defaultNamespace?: string;
-    deleteAfter?: string;
+    deleteAfter?: Date;
     description?: string;
     helmfileRef?: string;
     id?: number;
@@ -202,7 +202,7 @@ export class EnvironmentsApi extends runtime.BaseAPI {
         }
 
         if (requestParameters.deleteAfter !== undefined) {
-            queryParameters['deleteAfter'] = requestParameters.deleteAfter;
+            queryParameters['deleteAfter'] = (requestParameters.deleteAfter as any).toISOString();
         }
 
         if (requestParameters.description !== undefined) {

@@ -433,6 +433,747 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/changesets/procedures/v3/apply": {
+            "post": {
+                "description": "Looks up and applies previously-planned version diffs given by the ID. Other stored plans against the same Chart Releases are marked as superseded.\nMultiple Changesets can be specified simply by passing multiple IDs in the list.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Changesets"
+                ],
+                "summary": "Apply previously planned version changes to Chart Releases",
+                "parameters": [
+                    {
+                        "description": "String IDs of the Changesets to apply",
+                        "name": "apply-request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "If full information about the changesets should be returned, defaults to true. If false, only the IDs will be returned.",
+                        "name": "verbose-output",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/sherlock.ChangesetV3"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/changesets/procedures/v3/chart-release-history/{chart-release}": {
+            "get": {
+                "description": "List existing applied Changesets for a particular Chart Release, ordered by most recently applied.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Changesets"
+                ],
+                "summary": "List applied Changesets for a Chart Release",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Selector of the Chart Release to find applied Changesets for",
+                        "name": "chart-release",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "An optional offset to skip a number of latest Changesets",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "An optional limit to the number of entries returned",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/sherlock.ChangesetV3"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/changesets/procedures/v3/plan": {
+            "post": {
+                "description": "Refreshes and calculates version diffs for Chart Releases. If there's a diff, the plan is stored and returned so it can be applied later.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Changesets"
+                ],
+                "summary": "Plan--but do not apply--version changes to Chart Releases",
+                "parameters": [
+                    {
+                        "description": "Info on what version changes or refreshes to plan",
+                        "name": "changeset-plan-request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.ChangesetV3PlanRequest"
+                        }
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "If full information about the changesets should be returned, defaults to true. If false, only the IDs will be returned.",
+                        "name": "verbose-output",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/sherlock.ChangesetV3"
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/sherlock.ChangesetV3"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/changesets/procedures/v3/plan-and-apply": {
+            "post": {
+                "description": "Like calling the plan procedure immediately followed by the apply procedure. See those endpoints for more information.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Changesets"
+                ],
+                "summary": "Plan and apply version changes in one step",
+                "parameters": [
+                    {
+                        "description": "Info on what version changes or refreshes to apply.",
+                        "name": "changeset-plan-request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.ChangesetV3PlanRequest"
+                        }
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "If full information about the changesets should be returned, defaults to true. If false, only the IDs will be returned.",
+                        "name": "verbose-output",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/sherlock.ChangesetV3"
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/sherlock.ChangesetV3"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/changesets/procedures/v3/version-history/{version-type}/{chart}/{version}": {
+            "get": {
+                "description": "List existing applied Changesets that newly deployed a given App Version or Chart Version, ordered by most recently applied.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Changesets"
+                ],
+                "summary": "List applied Changesets for an App or Chart Version",
+                "parameters": [
+                    {
+                        "enum": [
+                            "app",
+                            "chart"
+                        ],
+                        "type": "string",
+                        "description": "The type of the version, either 'app' or 'chart'",
+                        "name": "version-type",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "The chart the version belongs to",
+                        "name": "chart",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "The version to look for",
+                        "name": "version",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/sherlock.ChangesetV3"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/changesets/v3": {
+            "get": {
+                "description": "List Changesets matching a filter.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Changesets"
+                ],
+                "summary": "List Changesets matching a filter",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "date-time",
+                        "name": "appliedAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "appliedBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "chartRelease",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "fromAppVersionBranch",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "fromAppVersionCommit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "fromAppVersionExact",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "fromAppVersionFollowChartRelease",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "fromAppVersionReference",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "fromAppVersionResolver",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "fromChartVersionExact",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "fromChartVersionFollowChartRelease",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "fromChartVersionReference",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "fromChartVersionResolver",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "fromFirecloudDevelopRef",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "fromHelmfileRef",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "fromHelmfileRefEnabled",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "format": "date-time",
+                        "name": "fromResolvedAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "plannedBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "format": "date-time",
+                        "name": "supersededAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "toAppVersionBranch",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "toAppVersionCommit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "toAppVersionExact",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "toAppVersionFollowChartRelease",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "toAppVersionReference",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "toAppVersionResolver",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "toChartVersionExact",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "toChartVersionFollowChartRelease",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "toChartVersionReference",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "toChartVersionResolver",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "toFirecloudDevelopRef",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "toHelmfileRef",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "toHelmfileRefEnabled",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "format": "date-time",
+                        "name": "toResolvedAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "Get specific changesets by their IDs, can be passed multiple times",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Control how many Changesets are returned (default 100), ignored if specific IDs are passed",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Control the offset for the returned Changesets (default 0), ignored if specific IDs are passed",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/sherlock.ChangesetV3"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/changesets/v3/{id}": {
+            "get": {
+                "description": "Get an individual Changeset.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Changesets"
+                ],
+                "summary": "Get an individual Changeset",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "The numeric ID of the changeset",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.ChangesetV3"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/chart-releases/v3": {
             "get": {
                 "description": "List ChartReleases matching a filter.",
@@ -4149,6 +4890,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "format": "date-time",
                         "description": "If set, the BEE will be automatically deleted after this time (thelma checks this field)",
                         "name": "deleteAfter",
                         "in": "query"
@@ -12674,6 +13416,246 @@ const docTemplate = `{
                 }
             }
         },
+        "sherlock.ChangesetV3": {
+            "type": "object",
+            "properties": {
+                "appliedAt": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "appliedBy": {
+                    "type": "string"
+                },
+                "appliedByInfo": {
+                    "$ref": "#/definitions/sherlock.UserV3"
+                },
+                "chartRelease": {
+                    "type": "string"
+                },
+                "chartReleaseInfo": {
+                    "$ref": "#/definitions/sherlock.ChartReleaseV3"
+                },
+                "ciIdentifier": {
+                    "$ref": "#/definitions/sherlock.CiIdentifierV3"
+                },
+                "createdAt": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "fromAppVersionBranch": {
+                    "type": "string"
+                },
+                "fromAppVersionCommit": {
+                    "type": "string"
+                },
+                "fromAppVersionExact": {
+                    "type": "string"
+                },
+                "fromAppVersionFollowChartRelease": {
+                    "type": "string"
+                },
+                "fromAppVersionReference": {
+                    "type": "string"
+                },
+                "fromAppVersionResolver": {
+                    "type": "string"
+                },
+                "fromChartVersionExact": {
+                    "type": "string"
+                },
+                "fromChartVersionFollowChartRelease": {
+                    "type": "string"
+                },
+                "fromChartVersionReference": {
+                    "type": "string"
+                },
+                "fromChartVersionResolver": {
+                    "type": "string"
+                },
+                "fromFirecloudDevelopRef": {
+                    "type": "string"
+                },
+                "fromHelmfileRef": {
+                    "type": "string"
+                },
+                "fromHelmfileRefEnabled": {
+                    "type": "boolean"
+                },
+                "fromResolvedAt": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "newAppVersions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/sherlock.AppVersionV3"
+                    }
+                },
+                "newChartVersions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/sherlock.ChartVersionV3"
+                    }
+                },
+                "plannedBy": {
+                    "type": "string"
+                },
+                "plannedByInfo": {
+                    "$ref": "#/definitions/sherlock.UserV3"
+                },
+                "supersededAt": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "toAppVersionBranch": {
+                    "type": "string"
+                },
+                "toAppVersionCommit": {
+                    "type": "string"
+                },
+                "toAppVersionExact": {
+                    "type": "string"
+                },
+                "toAppVersionFollowChartRelease": {
+                    "type": "string"
+                },
+                "toAppVersionReference": {
+                    "type": "string"
+                },
+                "toAppVersionResolver": {
+                    "type": "string"
+                },
+                "toChartVersionExact": {
+                    "type": "string"
+                },
+                "toChartVersionFollowChartRelease": {
+                    "type": "string"
+                },
+                "toChartVersionReference": {
+                    "type": "string"
+                },
+                "toChartVersionResolver": {
+                    "type": "string"
+                },
+                "toFirecloudDevelopRef": {
+                    "type": "string"
+                },
+                "toHelmfileRef": {
+                    "type": "string"
+                },
+                "toHelmfileRefEnabled": {
+                    "type": "boolean"
+                },
+                "toResolvedAt": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "updatedAt": {
+                    "type": "string",
+                    "format": "date-time"
+                }
+            }
+        },
+        "sherlock.ChangesetV3PlanRequest": {
+            "type": "object",
+            "properties": {
+                "chartReleases": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/sherlock.ChangesetV3PlanRequestChartReleaseEntry"
+                    }
+                },
+                "environments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/sherlock.ChangesetV3PlanRequestEnvironmentEntry"
+                    }
+                },
+                "recreateChangesets": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "sherlock.ChangesetV3PlanRequestChartReleaseEntry": {
+            "type": "object",
+            "properties": {
+                "chartRelease": {
+                    "type": "string"
+                },
+                "followVersionsFromOtherChartRelease": {
+                    "type": "string"
+                },
+                "toAppVersionBranch": {
+                    "type": "string"
+                },
+                "toAppVersionCommit": {
+                    "type": "string"
+                },
+                "toAppVersionExact": {
+                    "type": "string"
+                },
+                "toAppVersionFollowChartRelease": {
+                    "type": "string"
+                },
+                "toAppVersionResolver": {
+                    "type": "string"
+                },
+                "toChartVersionExact": {
+                    "type": "string"
+                },
+                "toChartVersionFollowChartRelease": {
+                    "type": "string"
+                },
+                "toChartVersionResolver": {
+                    "type": "string"
+                },
+                "toFirecloudDevelopRef": {
+                    "type": "string"
+                },
+                "toHelmfileRef": {
+                    "type": "string"
+                },
+                "toHelmfileRefEnabled": {
+                    "type": "boolean"
+                },
+                "useExactVersionsFromOtherChartRelease": {
+                    "type": "string"
+                }
+            }
+        },
+        "sherlock.ChangesetV3PlanRequestEnvironmentEntry": {
+            "type": "object",
+            "properties": {
+                "environment": {
+                    "type": "string"
+                },
+                "excludeCharts": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "followVersionsFromOtherEnvironment": {
+                    "type": "string"
+                },
+                "includeCharts": {
+                    "description": "If omitted, will include all chart releases that haven't opted out of bulk updates",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "useExactVersionsFromOtherEnvironment": {
+                    "type": "string"
+                }
+            }
+        },
         "sherlock.ChartReleaseV3": {
             "type": "object",
             "properties": {
@@ -13683,7 +14665,8 @@ const docTemplate = `{
                 },
                 "deleteAfter": {
                     "description": "If set, the BEE will be automatically deleted after this time (thelma checks this field)",
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "description": {
                     "type": "string"
@@ -13809,7 +14792,8 @@ const docTemplate = `{
                 },
                 "deleteAfter": {
                     "description": "If set, the BEE will be automatically deleted after this time (thelma checks this field)",
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "description": {
                     "type": "string"
@@ -13906,7 +14890,8 @@ const docTemplate = `{
                 },
                 "deleteAfter": {
                     "description": "If set, the BEE will be automatically deleted after this time (thelma checks this field)",
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "description": {
                     "type": "string"

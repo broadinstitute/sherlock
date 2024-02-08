@@ -39,10 +39,10 @@ export interface SherlockEnvironmentV3Edit {
     defaultFirecloudDevelopRef?: string;
     /**
      * If set, the BEE will be automatically deleted after this time (thelma checks this field)
-     * @type {string}
+     * @type {Date}
      * @memberof SherlockEnvironmentV3Edit
      */
-    deleteAfter?: string;
+    deleteAfter?: Date;
     /**
      * 
      * @type {string}
@@ -151,7 +151,7 @@ export function SherlockEnvironmentV3EditFromJSONTyped(json: any, ignoreDiscrimi
         'baseDomain': !exists(json, 'baseDomain') ? undefined : json['baseDomain'],
         'defaultCluster': !exists(json, 'defaultCluster') ? undefined : json['defaultCluster'],
         'defaultFirecloudDevelopRef': !exists(json, 'defaultFirecloudDevelopRef') ? undefined : json['defaultFirecloudDevelopRef'],
-        'deleteAfter': !exists(json, 'deleteAfter') ? undefined : json['deleteAfter'],
+        'deleteAfter': !exists(json, 'deleteAfter') ? undefined : (new Date(json['deleteAfter'])),
         'description': !exists(json, 'description') ? undefined : json['description'],
         'helmfileRef': !exists(json, 'helmfileRef') ? undefined : json['helmfileRef'],
         'namePrefixesDomain': !exists(json, 'namePrefixesDomain') ? undefined : json['namePrefixesDomain'],
@@ -181,7 +181,7 @@ export function SherlockEnvironmentV3EditToJSON(value?: SherlockEnvironmentV3Edi
         'baseDomain': value.baseDomain,
         'defaultCluster': value.defaultCluster,
         'defaultFirecloudDevelopRef': value.defaultFirecloudDevelopRef,
-        'deleteAfter': value.deleteAfter,
+        'deleteAfter': value.deleteAfter === undefined ? undefined : (value.deleteAfter.toISOString()),
         'description': value.description,
         'helmfileRef': value.helmfileRef,
         'namePrefixesDomain': value.namePrefixesDomain,

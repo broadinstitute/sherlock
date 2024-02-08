@@ -30,6 +30,14 @@ type ClientOption func(*runtime.ClientOperation)
 
 // ClientService is the interface for Client methods
 type ClientService interface {
+	GetAPIChangesetsProceduresV3ChartReleaseHistoryChartRelease(params *GetAPIChangesetsProceduresV3ChartReleaseHistoryChartReleaseParams, opts ...ClientOption) (*GetAPIChangesetsProceduresV3ChartReleaseHistoryChartReleaseOK, error)
+
+	GetAPIChangesetsProceduresV3VersionHistoryVersionTypeChartVersion(params *GetAPIChangesetsProceduresV3VersionHistoryVersionTypeChartVersionParams, opts ...ClientOption) (*GetAPIChangesetsProceduresV3VersionHistoryVersionTypeChartVersionOK, error)
+
+	GetAPIChangesetsV3(params *GetAPIChangesetsV3Params, opts ...ClientOption) (*GetAPIChangesetsV3OK, error)
+
+	GetAPIChangesetsV3ID(params *GetAPIChangesetsV3IDParams, opts ...ClientOption) (*GetAPIChangesetsV3IDOK, error)
+
 	GetAPIV2Changesets(params *GetAPIV2ChangesetsParams, opts ...ClientOption) (*GetAPIV2ChangesetsOK, error)
 
 	GetAPIV2ChangesetsSelector(params *GetAPIV2ChangesetsSelectorParams, opts ...ClientOption) (*GetAPIV2ChangesetsSelectorOK, error)
@@ -40,6 +48,12 @@ type ClientService interface {
 
 	GetAPIV2SelectorsChangesetsSelector(params *GetAPIV2SelectorsChangesetsSelectorParams, opts ...ClientOption) (*GetAPIV2SelectorsChangesetsSelectorOK, error)
 
+	PostAPIChangesetsProceduresV3Apply(params *PostAPIChangesetsProceduresV3ApplyParams, opts ...ClientOption) (*PostAPIChangesetsProceduresV3ApplyOK, error)
+
+	PostAPIChangesetsProceduresV3Plan(params *PostAPIChangesetsProceduresV3PlanParams, opts ...ClientOption) (*PostAPIChangesetsProceduresV3PlanOK, *PostAPIChangesetsProceduresV3PlanCreated, error)
+
+	PostAPIChangesetsProceduresV3PlanAndApply(params *PostAPIChangesetsProceduresV3PlanAndApplyParams, opts ...ClientOption) (*PostAPIChangesetsProceduresV3PlanAndApplyOK, *PostAPIChangesetsProceduresV3PlanAndApplyCreated, error)
+
 	PostAPIV2ProceduresChangesetsApply(params *PostAPIV2ProceduresChangesetsApplyParams, opts ...ClientOption) (*PostAPIV2ProceduresChangesetsApplyOK, error)
 
 	PostAPIV2ProceduresChangesetsPlan(params *PostAPIV2ProceduresChangesetsPlanParams, opts ...ClientOption) (*PostAPIV2ProceduresChangesetsPlanOK, *PostAPIV2ProceduresChangesetsPlanCreated, error)
@@ -47,6 +61,166 @@ type ClientService interface {
 	PostAPIV2ProceduresChangesetsPlanAndApply(params *PostAPIV2ProceduresChangesetsPlanAndApplyParams, opts ...ClientOption) (*PostAPIV2ProceduresChangesetsPlanAndApplyOK, *PostAPIV2ProceduresChangesetsPlanAndApplyCreated, error)
 
 	SetTransport(transport runtime.ClientTransport)
+}
+
+/*
+  GetAPIChangesetsProceduresV3ChartReleaseHistoryChartRelease lists applied changesets for a chart release
+
+  List existing applied Changesets for a particular Chart Release, ordered by most recently applied.
+*/
+func (a *Client) GetAPIChangesetsProceduresV3ChartReleaseHistoryChartRelease(params *GetAPIChangesetsProceduresV3ChartReleaseHistoryChartReleaseParams, opts ...ClientOption) (*GetAPIChangesetsProceduresV3ChartReleaseHistoryChartReleaseOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetAPIChangesetsProceduresV3ChartReleaseHistoryChartReleaseParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "GetAPIChangesetsProceduresV3ChartReleaseHistoryChartRelease",
+		Method:             "GET",
+		PathPattern:        "/api/changesets/procedures/v3/chart-release-history/{chart-release}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &GetAPIChangesetsProceduresV3ChartReleaseHistoryChartReleaseReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*GetAPIChangesetsProceduresV3ChartReleaseHistoryChartReleaseOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for GetAPIChangesetsProceduresV3ChartReleaseHistoryChartRelease: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+  GetAPIChangesetsProceduresV3VersionHistoryVersionTypeChartVersion lists applied changesets for an app or chart version
+
+  List existing applied Changesets that newly deployed a given App Version or Chart Version, ordered by most recently applied.
+*/
+func (a *Client) GetAPIChangesetsProceduresV3VersionHistoryVersionTypeChartVersion(params *GetAPIChangesetsProceduresV3VersionHistoryVersionTypeChartVersionParams, opts ...ClientOption) (*GetAPIChangesetsProceduresV3VersionHistoryVersionTypeChartVersionOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetAPIChangesetsProceduresV3VersionHistoryVersionTypeChartVersionParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "GetAPIChangesetsProceduresV3VersionHistoryVersionTypeChartVersion",
+		Method:             "GET",
+		PathPattern:        "/api/changesets/procedures/v3/version-history/{version-type}/{chart}/{version}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &GetAPIChangesetsProceduresV3VersionHistoryVersionTypeChartVersionReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*GetAPIChangesetsProceduresV3VersionHistoryVersionTypeChartVersionOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for GetAPIChangesetsProceduresV3VersionHistoryVersionTypeChartVersion: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+  GetAPIChangesetsV3 lists changesets matching a filter
+
+  List Changesets matching a filter.
+*/
+func (a *Client) GetAPIChangesetsV3(params *GetAPIChangesetsV3Params, opts ...ClientOption) (*GetAPIChangesetsV3OK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetAPIChangesetsV3Params()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "GetAPIChangesetsV3",
+		Method:             "GET",
+		PathPattern:        "/api/changesets/v3",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &GetAPIChangesetsV3Reader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*GetAPIChangesetsV3OK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for GetAPIChangesetsV3: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+  GetAPIChangesetsV3ID gets an individual changeset
+
+  Get an individual Changeset.
+*/
+func (a *Client) GetAPIChangesetsV3ID(params *GetAPIChangesetsV3IDParams, opts ...ClientOption) (*GetAPIChangesetsV3IDOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetAPIChangesetsV3IDParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "GetAPIChangesetsV3ID",
+		Method:             "GET",
+		PathPattern:        "/api/changesets/v3/{id}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &GetAPIChangesetsV3IDReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*GetAPIChangesetsV3IDOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for GetAPIChangesetsV3ID: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
 }
 
 /*
@@ -246,6 +420,129 @@ func (a *Client) GetAPIV2SelectorsChangesetsSelector(params *GetAPIV2SelectorsCh
 	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for GetAPIV2SelectorsChangesetsSelector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+  PostAPIChangesetsProceduresV3Apply applies previously planned version changes to chart releases
+
+  Looks up and applies previously-planned version diffs given by the ID. Other stored plans against the same Chart Releases are marked as superseded.
+Multiple Changesets can be specified simply by passing multiple IDs in the list.
+*/
+func (a *Client) PostAPIChangesetsProceduresV3Apply(params *PostAPIChangesetsProceduresV3ApplyParams, opts ...ClientOption) (*PostAPIChangesetsProceduresV3ApplyOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewPostAPIChangesetsProceduresV3ApplyParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "PostAPIChangesetsProceduresV3Apply",
+		Method:             "POST",
+		PathPattern:        "/api/changesets/procedures/v3/apply",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &PostAPIChangesetsProceduresV3ApplyReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*PostAPIChangesetsProceduresV3ApplyOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for PostAPIChangesetsProceduresV3Apply: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+  PostAPIChangesetsProceduresV3Plan plans but do not apply version changes to chart releases
+
+  Refreshes and calculates version diffs for Chart Releases. If there's a diff, the plan is stored and returned so it can be applied later.
+*/
+func (a *Client) PostAPIChangesetsProceduresV3Plan(params *PostAPIChangesetsProceduresV3PlanParams, opts ...ClientOption) (*PostAPIChangesetsProceduresV3PlanOK, *PostAPIChangesetsProceduresV3PlanCreated, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewPostAPIChangesetsProceduresV3PlanParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "PostAPIChangesetsProceduresV3Plan",
+		Method:             "POST",
+		PathPattern:        "/api/changesets/procedures/v3/plan",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &PostAPIChangesetsProceduresV3PlanReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, nil, err
+	}
+	switch value := result.(type) {
+	case *PostAPIChangesetsProceduresV3PlanOK:
+		return value, nil, nil
+	case *PostAPIChangesetsProceduresV3PlanCreated:
+		return nil, value, nil
+	}
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for changesets: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+  PostAPIChangesetsProceduresV3PlanAndApply plans and apply version changes in one step
+
+  Like calling the plan procedure immediately followed by the apply procedure. See those endpoints for more information.
+*/
+func (a *Client) PostAPIChangesetsProceduresV3PlanAndApply(params *PostAPIChangesetsProceduresV3PlanAndApplyParams, opts ...ClientOption) (*PostAPIChangesetsProceduresV3PlanAndApplyOK, *PostAPIChangesetsProceduresV3PlanAndApplyCreated, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewPostAPIChangesetsProceduresV3PlanAndApplyParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "PostAPIChangesetsProceduresV3PlanAndApply",
+		Method:             "POST",
+		PathPattern:        "/api/changesets/procedures/v3/plan-and-apply",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &PostAPIChangesetsProceduresV3PlanAndApplyReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, nil, err
+	}
+	switch value := result.(type) {
+	case *PostAPIChangesetsProceduresV3PlanAndApplyOK:
+		return value, nil, nil
+	case *PostAPIChangesetsProceduresV3PlanAndApplyCreated:
+		return nil, value, nil
+	}
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for changesets: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 

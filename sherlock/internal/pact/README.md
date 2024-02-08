@@ -47,6 +47,7 @@
 - `DatabaseInstance_LeonardoDev exists`
 - `DatabaseInstance_LeonardoSwatomation exists`
 - `Changeset_LeonardoDev_V1toV3 exists`
+- `Changeset_LeonardoDev_V1toV2Superseded exists`
 - `CiIdentifier_Chart_Leonardo exists`
 - `CiIdentifier_ChartVersion_Leonardo_V1 exists`
 - `CiIdentifier_ChartVersion_Leonardo_V2 exists`

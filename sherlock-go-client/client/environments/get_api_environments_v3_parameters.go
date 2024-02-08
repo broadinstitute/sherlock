@@ -107,8 +107,10 @@ type GetAPIEnvironmentsV3Params struct {
 	/* DeleteAfter.
 
 	   If set, the BEE will be automatically deleted after this time (thelma checks this field)
+
+	   Format: date-time
 	*/
-	DeleteAfter *string
+	DeleteAfter *strfmt.DateTime
 
 	// Description.
 	Description *string
@@ -404,13 +406,13 @@ func (o *GetAPIEnvironmentsV3Params) SetDefaultNamespace(defaultNamespace *strin
 }
 
 // WithDeleteAfter adds the deleteAfter to the get API environments v3 params
-func (o *GetAPIEnvironmentsV3Params) WithDeleteAfter(deleteAfter *string) *GetAPIEnvironmentsV3Params {
+func (o *GetAPIEnvironmentsV3Params) WithDeleteAfter(deleteAfter *strfmt.DateTime) *GetAPIEnvironmentsV3Params {
 	o.SetDeleteAfter(deleteAfter)
 	return o
 }
 
 // SetDeleteAfter adds the deleteAfter to the get API environments v3 params
-func (o *GetAPIEnvironmentsV3Params) SetDeleteAfter(deleteAfter *string) {
+func (o *GetAPIEnvironmentsV3Params) SetDeleteAfter(deleteAfter *strfmt.DateTime) {
 	o.DeleteAfter = deleteAfter
 }
 
@@ -803,12 +805,12 @@ func (o *GetAPIEnvironmentsV3Params) WriteToRequest(r runtime.ClientRequest, reg
 	if o.DeleteAfter != nil {
 
 		// query param deleteAfter
-		var qrDeleteAfter string
+		var qrDeleteAfter strfmt.DateTime
 
 		if o.DeleteAfter != nil {
 			qrDeleteAfter = *o.DeleteAfter
 		}
-		qDeleteAfter := qrDeleteAfter
+		qDeleteAfter := qrDeleteAfter.String()
 		if qDeleteAfter != "" {
 
 			if err := r.SetQueryParam("deleteAfter", qDeleteAfter); err != nil {

@@ -38,7 +38,8 @@ type SherlockEnvironmentV3Create struct {
 	DefaultNamespace string `json:"defaultNamespace,omitempty"`
 
 	// If set, the BEE will be automatically deleted after this time (thelma checks this field)
-	DeleteAfter string `json:"deleteAfter,omitempty"`
+	// Format: date-time
+	DeleteAfter strfmt.DateTime `json:"deleteAfter,omitempty"`
 
 	// description
 	Description string `json:"description,omitempty"`
@@ -104,6 +105,10 @@ type SherlockEnvironmentV3Create struct {
 func (m *SherlockEnvironmentV3Create) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateDeleteAfter(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateOfflineScheduleBeginTime(formats); err != nil {
 		res = append(res, err)
 	}
@@ -115,6 +120,18 @@ func (m *SherlockEnvironmentV3Create) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *SherlockEnvironmentV3Create) validateDeleteAfter(formats strfmt.Registry) error {
+	if swag.IsZero(m.DeleteAfter) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("deleteAfter", "body", "date-time", m.DeleteAfter.String(), formats); err != nil {
+		return err
+	}
+
 	return nil
 }
 

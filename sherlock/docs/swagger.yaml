@@ -122,6 +122,168 @@ definitions:
         description: Generally the Git commit message
         type: string
     type: object
+  sherlock.ChangesetV3:
+    properties:
+      appliedAt:
+        format: date-time
+        type: string
+      appliedBy:
+        type: string
+      appliedByInfo:
+        $ref: '#/definitions/sherlock.UserV3'
+      chartRelease:
+        type: string
+      chartReleaseInfo:
+        $ref: '#/definitions/sherlock.ChartReleaseV3'
+      ciIdentifier:
+        $ref: '#/definitions/sherlock.CiIdentifierV3'
+      createdAt:
+        format: date-time
+        type: string
+      fromAppVersionBranch:
+        type: string
+      fromAppVersionCommit:
+        type: string
+      fromAppVersionExact:
+        type: string
+      fromAppVersionFollowChartRelease:
+        type: string
+      fromAppVersionReference:
+        type: string
+      fromAppVersionResolver:
+        type: string
+      fromChartVersionExact:
+        type: string
+      fromChartVersionFollowChartRelease:
+        type: string
+      fromChartVersionReference:
+        type: string
+      fromChartVersionResolver:
+        type: string
+      fromFirecloudDevelopRef:
+        type: string
+      fromHelmfileRef:
+        type: string
+      fromHelmfileRefEnabled:
+        type: boolean
+      fromResolvedAt:
+        format: date-time
+        type: string
+      id:
+        type: integer
+      newAppVersions:
+        items:
+          $ref: '#/definitions/sherlock.AppVersionV3'
+        type: array
+      newChartVersions:
+        items:
+          $ref: '#/definitions/sherlock.ChartVersionV3'
+        type: array
+      plannedBy:
+        type: string
+      plannedByInfo:
+        $ref: '#/definitions/sherlock.UserV3'
+      supersededAt:
+        format: date-time
+        type: string
+      toAppVersionBranch:
+        type: string
+      toAppVersionCommit:
+        type: string
+      toAppVersionExact:
+        type: string
+      toAppVersionFollowChartRelease:
+        type: string
+      toAppVersionReference:
+        type: string
+      toAppVersionResolver:
+        type: string
+      toChartVersionExact:
+        type: string
+      toChartVersionFollowChartRelease:
+        type: string
+      toChartVersionReference:
+        type: string
+      toChartVersionResolver:
+        type: string
+      toFirecloudDevelopRef:
+        type: string
+      toHelmfileRef:
+        type: string
+      toHelmfileRefEnabled:
+        type: boolean
+      toResolvedAt:
+        format: date-time
+        type: string
+      updatedAt:
+        format: date-time
+        type: string
+    type: object
+  sherlock.ChangesetV3PlanRequest:
+    properties:
+      chartReleases:
+        items:
+          $ref: '#/definitions/sherlock.ChangesetV3PlanRequestChartReleaseEntry'
+        type: array
+      environments:
+        items:
+          $ref: '#/definitions/sherlock.ChangesetV3PlanRequestEnvironmentEntry'
+        type: array
+      recreateChangesets:
+        items:
+          type: integer
+        type: array
+    type: object
+  sherlock.ChangesetV3PlanRequestChartReleaseEntry:
+    properties:
+      chartRelease:
+        type: string
+      followVersionsFromOtherChartRelease:
+        type: string
+      toAppVersionBranch:
+        type: string
+      toAppVersionCommit:
+        type: string
+      toAppVersionExact:
+        type: string
+      toAppVersionFollowChartRelease:
+        type: string
+      toAppVersionResolver:
+        type: string
+      toChartVersionExact:
+        type: string
+      toChartVersionFollowChartRelease:
+        type: string
+      toChartVersionResolver:
+        type: string
+      toFirecloudDevelopRef:
+        type: string
+      toHelmfileRef:
+        type: string
+      toHelmfileRefEnabled:
+        type: boolean
+      useExactVersionsFromOtherChartRelease:
+        type: string
+    type: object
+  sherlock.ChangesetV3PlanRequestEnvironmentEntry:
+    properties:
+      environment:
+        type: string
+      excludeCharts:
+        items:
+          type: string
+        type: array
+      followVersionsFromOtherEnvironment:
+        type: string
+      includeCharts:
+        description: If omitted, will include all chart releases that haven't opted
+          out of bulk updates
+        items:
+          type: string
+        type: array
+      useExactVersionsFromOtherEnvironment:
+        type: string
+    type: object
   sherlock.ChartReleaseV3:
     properties:
       appVersionBranch:
@@ -882,6 +1044,7 @@ definitions:
       deleteAfter:
         description: If set, the BEE will be automatically deleted after this time
           (thelma checks this field)
+        format: date-time
         type: string
       description:
         type: string
@@ -982,6 +1145,7 @@ definitions:
       deleteAfter:
         description: If set, the BEE will be automatically deleted after this time
           (thelma checks this field)
+        format: date-time
         type: string
       description:
         type: string
@@ -1060,6 +1224,7 @@ definitions:
       deleteAfter:
         description: If set, the BEE will be automatically deleted after this time
           (thelma checks this field)
+        format: date-time
         type: string
       description:
         type: string
@@ -3028,6 +3193,500 @@ paths:
       summary: Edit an individual AppVersion
       tags:
       - AppVersions
+  /api/changesets/procedures/v3/apply:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Looks up and applies previously-planned version diffs given by the ID. Other stored plans against the same Chart Releases are marked as superseded.
+        Multiple Changesets can be specified simply by passing multiple IDs in the list.
+      parameters:
+      - description: String IDs of the Changesets to apply
+        in: body
+        name: apply-request
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      - description: If full information about the changesets should be returned,
+          defaults to true. If false, only the IDs will be returned.
+        in: query
+        name: verbose-output
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/sherlock.ChangesetV3'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Apply previously planned version changes to Chart Releases
+      tags:
+      - Changesets
+  /api/changesets/procedures/v3/chart-release-history/{chart-release}:
+    get:
+      description: List existing applied Changesets for a particular Chart Release,
+        ordered by most recently applied.
+      parameters:
+      - description: Selector of the Chart Release to find applied Changesets for
+        in: path
+        name: chart-release
+        required: true
+        type: string
+      - description: An optional offset to skip a number of latest Changesets
+        in: query
+        name: offset
+        type: integer
+      - description: An optional limit to the number of entries returned
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/sherlock.ChangesetV3'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: List applied Changesets for a Chart Release
+      tags:
+      - Changesets
+  /api/changesets/procedures/v3/plan:
+    post:
+      consumes:
+      - application/json
+      description: Refreshes and calculates version diffs for Chart Releases. If there's
+        a diff, the plan is stored and returned so it can be applied later.
+      parameters:
+      - description: Info on what version changes or refreshes to plan
+        in: body
+        name: changeset-plan-request
+        required: true
+        schema:
+          $ref: '#/definitions/sherlock.ChangesetV3PlanRequest'
+      - description: If full information about the changesets should be returned,
+          defaults to true. If false, only the IDs will be returned.
+        in: query
+        name: verbose-output
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/sherlock.ChangesetV3'
+            type: array
+        "201":
+          description: Created
+          schema:
+            items:
+              $ref: '#/definitions/sherlock.ChangesetV3'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Plan--but do not apply--version changes to Chart Releases
+      tags:
+      - Changesets
+  /api/changesets/procedures/v3/plan-and-apply:
+    post:
+      consumes:
+      - application/json
+      description: Like calling the plan procedure immediately followed by the apply
+        procedure. See those endpoints for more information.
+      parameters:
+      - description: Info on what version changes or refreshes to apply.
+        in: body
+        name: changeset-plan-request
+        required: true
+        schema:
+          $ref: '#/definitions/sherlock.ChangesetV3PlanRequest'
+      - description: If full information about the changesets should be returned,
+          defaults to true. If false, only the IDs will be returned.
+        in: query
+        name: verbose-output
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/sherlock.ChangesetV3'
+            type: array
+        "201":
+          description: Created
+          schema:
+            items:
+              $ref: '#/definitions/sherlock.ChangesetV3'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Plan and apply version changes in one step
+      tags:
+      - Changesets
+  /api/changesets/procedures/v3/version-history/{version-type}/{chart}/{version}:
+    get:
+      description: List existing applied Changesets that newly deployed a given App
+        Version or Chart Version, ordered by most recently applied.
+      parameters:
+      - description: The type of the version, either 'app' or 'chart'
+        enum:
+        - app
+        - chart
+        in: path
+        name: version-type
+        required: true
+        type: string
+      - description: The chart the version belongs to
+        in: path
+        name: chart
+        required: true
+        type: string
+      - description: The version to look for
+        in: path
+        name: version
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/sherlock.ChangesetV3'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: List applied Changesets for an App or Chart Version
+      tags:
+      - Changesets
+  /api/changesets/v3:
+    get:
+      description: List Changesets matching a filter.
+      parameters:
+      - format: date-time
+        in: query
+        name: appliedAt
+        type: string
+      - in: query
+        name: appliedBy
+        type: string
+      - in: query
+        name: chartRelease
+        type: string
+      - in: query
+        name: fromAppVersionBranch
+        type: string
+      - in: query
+        name: fromAppVersionCommit
+        type: string
+      - in: query
+        name: fromAppVersionExact
+        type: string
+      - in: query
+        name: fromAppVersionFollowChartRelease
+        type: string
+      - in: query
+        name: fromAppVersionReference
+        type: string
+      - in: query
+        name: fromAppVersionResolver
+        type: string
+      - in: query
+        name: fromChartVersionExact
+        type: string
+      - in: query
+        name: fromChartVersionFollowChartRelease
+        type: string
+      - in: query
+        name: fromChartVersionReference
+        type: string
+      - in: query
+        name: fromChartVersionResolver
+        type: string
+      - in: query
+        name: fromFirecloudDevelopRef
+        type: string
+      - in: query
+        name: fromHelmfileRef
+        type: string
+      - in: query
+        name: fromHelmfileRefEnabled
+        type: boolean
+      - format: date-time
+        in: query
+        name: fromResolvedAt
+        type: string
+      - in: query
+        name: plannedBy
+        type: string
+      - format: date-time
+        in: query
+        name: supersededAt
+        type: string
+      - in: query
+        name: toAppVersionBranch
+        type: string
+      - in: query
+        name: toAppVersionCommit
+        type: string
+      - in: query
+        name: toAppVersionExact
+        type: string
+      - in: query
+        name: toAppVersionFollowChartRelease
+        type: string
+      - in: query
+        name: toAppVersionReference
+        type: string
+      - in: query
+        name: toAppVersionResolver
+        type: string
+      - in: query
+        name: toChartVersionExact
+        type: string
+      - in: query
+        name: toChartVersionFollowChartRelease
+        type: string
+      - in: query
+        name: toChartVersionReference
+        type: string
+      - in: query
+        name: toChartVersionResolver
+        type: string
+      - in: query
+        name: toFirecloudDevelopRef
+        type: string
+      - in: query
+        name: toHelmfileRef
+        type: string
+      - in: query
+        name: toHelmfileRefEnabled
+        type: boolean
+      - format: date-time
+        in: query
+        name: toResolvedAt
+        type: string
+      - collectionFormat: csv
+        description: Get specific changesets by their IDs, can be passed multiple
+          times
+        in: query
+        items:
+          type: integer
+        name: id
+        type: array
+      - description: Control how many Changesets are returned (default 100), ignored
+          if specific IDs are passed
+        in: query
+        name: limit
+        type: integer
+      - description: Control the offset for the returned Changesets (default 0), ignored
+          if specific IDs are passed
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/sherlock.ChangesetV3'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: List Changesets matching a filter
+      tags:
+      - Changesets
+  /api/changesets/v3/{id}:
+    get:
+      description: Get an individual Changeset.
+      parameters:
+      - description: The numeric ID of the changeset
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/sherlock.ChangesetV3'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Get an individual Changeset
+      tags:
+      - Changesets
   /api/chart-releases/v3:
     get:
       description: List ChartReleases matching a filter.
@@ -5544,6 +6203,7 @@ paths:
         type: string
       - description: If set, the BEE will be automatically deleted after this time
           (thelma checks this field)
+        format: date-time
         in: query
         name: deleteAfter
         type: string
