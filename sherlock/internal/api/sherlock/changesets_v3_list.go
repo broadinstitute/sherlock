@@ -16,8 +16,8 @@ import (
 //	@description	List Changesets matching a filter.
 //	@tags			Changesets
 //	@produce		json
-//	@param			filter					query		ChangesetV3	false	"Filter the returned Changesets"
-//	@param			id						query		[]int		false	"Get specific changesets by their IDs, can be passed multiple times"
+//	@param			filter					query		ChangesetV3Query	false	"Filter the returned Changesets"
+//	@param			id 						query		[]int		false	"Get specific changesets by their IDs, can be passed multiple times"
 //	@param			limit					query		int			false	"Control how many Changesets are returned (default 100), ignored if specific IDs are passed"
 //	@param			offset					query		int			false	"Control the offset for the returned Changesets (default 0), ignored if specific IDs are passed"
 //	@success		200						{array}		ChangesetV3
@@ -28,7 +28,7 @@ func changesetsV3List(ctx *gin.Context) {
 	if err != nil {
 		return
 	}
-	var filter ChangesetV3
+	var filter ChangesetV3Query
 	if err = ctx.ShouldBindQuery(&filter); err != nil {
 		errors.AbortRequest(ctx, err)
 		return
@@ -52,8 +52,8 @@ func changesetsV3List(ctx *gin.Context) {
 			}
 		}
 
-		// We wipe out the ID field of the modelFilter. Either we have one ID and it being in the filter is superfluous,
-		// or we have multiple and it being in the filter is actually a problem (because the filter would have just one ID)
+		// The ID of the model filter should always be 0 because ChangesetV3Query lacks that field, but we set it to 0
+		// explicitly here to make extra sure and to have a good excuse to explain why we're doing it.
 		modelFilter.ID = 0
 
 		if err = db.

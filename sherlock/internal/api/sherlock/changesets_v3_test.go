@@ -312,35 +312,37 @@ func (s *handlerSuite) TestChangesetV3_toModel() {
 	for _, tt := range tests {
 		s.Run(tt.name, func() {
 			c := ChangesetV3{
-				CommonFields:                       tt.fields.CommonFields,
-				CiIdentifier:                       tt.fields.CiIdentifier,
-				ChartReleaseInfo:                   tt.fields.ChartReleaseInfo,
-				AppliedAt:                          tt.fields.AppliedAt,
-				SupersededAt:                       tt.fields.SupersededAt,
-				NewAppVersions:                     tt.fields.NewAppVersions,
-				NewChartVersions:                   tt.fields.NewChartVersions,
-				FromResolvedAt:                     tt.fields.FromResolvedAt,
-				FromAppVersionResolver:             tt.fields.FromAppVersionResolver,
-				FromAppVersionExact:                tt.fields.FromAppVersionExact,
-				FromAppVersionBranch:               tt.fields.FromAppVersionBranch,
-				FromAppVersionCommit:               tt.fields.FromAppVersionCommit,
-				FromAppVersionFollowChartRelease:   tt.fields.FromAppVersionFollowChartRelease,
-				FromAppVersionReference:            tt.fields.FromAppVersionReference,
-				FromChartVersionResolver:           tt.fields.FromChartVersionResolver,
-				FromChartVersionExact:              tt.fields.FromChartVersionExact,
-				FromChartVersionFollowChartRelease: tt.fields.FromChartVersionFollowChartRelease,
-				FromChartVersionReference:          tt.fields.FromChartVersionReference,
-				FromHelmfileRef:                    tt.fields.FromHelmfileRef,
-				FromHelmfileRefEnabled:             tt.fields.FromHelmfileRefEnabled,
-				FromFirecloudDevelopRef:            tt.fields.FromFirecloudDevelopRef,
-				ToResolvedAt:                       tt.fields.ToResolvedAt,
-				ToAppVersionReference:              tt.fields.ToAppVersionReference,
-				ToChartVersionReference:            tt.fields.ToChartVersionReference,
-				PlannedBy:                          tt.fields.PlannedBy,
-				PlannedByInfo:                      tt.fields.PlannedByInfo,
-				AppliedBy:                          tt.fields.AppliedBy,
-				AppliedByInfo:                      tt.fields.AppliedByInfo,
-				ChangesetV3Create:                  tt.fields.ChangesetV3Create,
+				CommonFields: tt.fields.CommonFields,
+				ChangesetV3Query: ChangesetV3Query{
+					CiIdentifier:                       tt.fields.CiIdentifier,
+					ChartReleaseInfo:                   tt.fields.ChartReleaseInfo,
+					AppliedAt:                          tt.fields.AppliedAt,
+					SupersededAt:                       tt.fields.SupersededAt,
+					NewAppVersions:                     tt.fields.NewAppVersions,
+					NewChartVersions:                   tt.fields.NewChartVersions,
+					FromResolvedAt:                     tt.fields.FromResolvedAt,
+					FromAppVersionResolver:             tt.fields.FromAppVersionResolver,
+					FromAppVersionExact:                tt.fields.FromAppVersionExact,
+					FromAppVersionBranch:               tt.fields.FromAppVersionBranch,
+					FromAppVersionCommit:               tt.fields.FromAppVersionCommit,
+					FromAppVersionFollowChartRelease:   tt.fields.FromAppVersionFollowChartRelease,
+					FromAppVersionReference:            tt.fields.FromAppVersionReference,
+					FromChartVersionResolver:           tt.fields.FromChartVersionResolver,
+					FromChartVersionExact:              tt.fields.FromChartVersionExact,
+					FromChartVersionFollowChartRelease: tt.fields.FromChartVersionFollowChartRelease,
+					FromChartVersionReference:          tt.fields.FromChartVersionReference,
+					FromHelmfileRef:                    tt.fields.FromHelmfileRef,
+					FromHelmfileRefEnabled:             tt.fields.FromHelmfileRefEnabled,
+					FromFirecloudDevelopRef:            tt.fields.FromFirecloudDevelopRef,
+					ToResolvedAt:                       tt.fields.ToResolvedAt,
+					ToAppVersionReference:              tt.fields.ToAppVersionReference,
+					ToChartVersionReference:            tt.fields.ToChartVersionReference,
+					PlannedBy:                          tt.fields.PlannedBy,
+					PlannedByInfo:                      tt.fields.PlannedByInfo,
+					AppliedBy:                          tt.fields.AppliedBy,
+					AppliedByInfo:                      tt.fields.AppliedByInfo,
+					ChangesetV3Create:                  tt.fields.ChangesetV3Create,
+				},
 			}
 			got, err := c.toModel(s.DB)
 			if !tt.wantErr(s.T(), err, "toModel()") {
@@ -382,8 +384,10 @@ func Test_changesetFromModel(t *testing.T) {
 				},
 			},
 			want: ChangesetV3{
-				NewAppVersions: []AppVersionV3{
-					{CommonFields: CommonFields{ID: 1}},
+				ChangesetV3Query: ChangesetV3Query{
+					NewAppVersions: []AppVersionV3{
+						{CommonFields: CommonFields{ID: 1}},
+					},
 				},
 			},
 		},
@@ -403,8 +407,10 @@ func Test_changesetFromModel(t *testing.T) {
 				},
 			},
 			want: ChangesetV3{
-				NewChartVersions: []ChartVersionV3{
-					{CommonFields: CommonFields{ID: 1}},
+				ChangesetV3Query: ChangesetV3Query{
+					NewChartVersions: []ChartVersionV3{
+						{CommonFields: CommonFields{ID: 1}},
+					},
 				},
 			},
 		},
@@ -420,7 +426,9 @@ func Test_changesetFromModel(t *testing.T) {
 				},
 			},
 			want: ChangesetV3{
-				FromAppVersionFollowChartRelease: "name",
+				ChangesetV3Query: ChangesetV3Query{
+					FromAppVersionFollowChartRelease: "name",
+				},
 			},
 		},
 		{
@@ -433,7 +441,9 @@ func Test_changesetFromModel(t *testing.T) {
 				},
 			},
 			want: ChangesetV3{
-				FromAppVersionFollowChartRelease: "1",
+				ChangesetV3Query: ChangesetV3Query{
+					FromAppVersionFollowChartRelease: "1",
+				},
 			},
 		},
 		{
@@ -451,7 +461,9 @@ func Test_changesetFromModel(t *testing.T) {
 				},
 			},
 			want: ChangesetV3{
-				FromAppVersionReference: "name/version",
+				ChangesetV3Query: ChangesetV3Query{
+					FromAppVersionReference: "name/version",
+				},
 			},
 		},
 		{
@@ -467,7 +479,9 @@ func Test_changesetFromModel(t *testing.T) {
 				},
 			},
 			want: ChangesetV3{
-				FromAppVersionReference: "1/version",
+				ChangesetV3Query: ChangesetV3Query{
+					FromAppVersionReference: "1/version",
+				},
 			},
 		},
 		{
@@ -480,7 +494,9 @@ func Test_changesetFromModel(t *testing.T) {
 				},
 			},
 			want: ChangesetV3{
-				FromAppVersionReference: "1",
+				ChangesetV3Query: ChangesetV3Query{
+					FromAppVersionReference: "1",
+				},
 			},
 		},
 		{
@@ -495,7 +511,9 @@ func Test_changesetFromModel(t *testing.T) {
 				},
 			},
 			want: ChangesetV3{
-				FromChartVersionFollowChartRelease: "name",
+				ChangesetV3Query: ChangesetV3Query{
+					FromChartVersionFollowChartRelease: "name",
+				},
 			},
 		},
 		{
@@ -508,7 +526,9 @@ func Test_changesetFromModel(t *testing.T) {
 				},
 			},
 			want: ChangesetV3{
-				FromChartVersionFollowChartRelease: "1",
+				ChangesetV3Query: ChangesetV3Query{
+					FromChartVersionFollowChartRelease: "1",
+				},
 			},
 		},
 		{
@@ -526,7 +546,9 @@ func Test_changesetFromModel(t *testing.T) {
 				},
 			},
 			want: ChangesetV3{
-				FromChartVersionReference: "name/version",
+				ChangesetV3Query: ChangesetV3Query{
+					FromChartVersionReference: "name/version",
+				},
 			},
 		},
 		{
@@ -542,7 +564,9 @@ func Test_changesetFromModel(t *testing.T) {
 				},
 			},
 			want: ChangesetV3{
-				FromChartVersionReference: "1/version",
+				ChangesetV3Query: ChangesetV3Query{
+					FromChartVersionReference: "1/version",
+				},
 			},
 		},
 		{
@@ -555,7 +579,9 @@ func Test_changesetFromModel(t *testing.T) {
 				},
 			},
 			want: ChangesetV3{
-				FromChartVersionReference: "1",
+				ChangesetV3Query: ChangesetV3Query{
+					FromChartVersionReference: "1",
+				},
 			},
 		},
 
@@ -571,8 +597,10 @@ func Test_changesetFromModel(t *testing.T) {
 				},
 			},
 			want: ChangesetV3{
-				ChangesetV3Create: ChangesetV3Create{
-					ToAppVersionFollowChartRelease: "name",
+				ChangesetV3Query: ChangesetV3Query{
+					ChangesetV3Create: ChangesetV3Create{
+						ToAppVersionFollowChartRelease: "name",
+					},
 				},
 			},
 		},
@@ -586,8 +614,10 @@ func Test_changesetFromModel(t *testing.T) {
 				},
 			},
 			want: ChangesetV3{
-				ChangesetV3Create: ChangesetV3Create{
-					ToAppVersionFollowChartRelease: "1",
+				ChangesetV3Query: ChangesetV3Query{
+					ChangesetV3Create: ChangesetV3Create{
+						ToAppVersionFollowChartRelease: "1",
+					},
 				},
 			},
 		},
@@ -606,7 +636,9 @@ func Test_changesetFromModel(t *testing.T) {
 				},
 			},
 			want: ChangesetV3{
-				ToAppVersionReference: "name/version",
+				ChangesetV3Query: ChangesetV3Query{
+					ToAppVersionReference: "name/version",
+				},
 			},
 		},
 		{
@@ -622,7 +654,9 @@ func Test_changesetFromModel(t *testing.T) {
 				},
 			},
 			want: ChangesetV3{
-				ToAppVersionReference: "1/version",
+				ChangesetV3Query: ChangesetV3Query{
+					ToAppVersionReference: "1/version",
+				},
 			},
 		},
 		{
@@ -635,7 +669,9 @@ func Test_changesetFromModel(t *testing.T) {
 				},
 			},
 			want: ChangesetV3{
-				ToAppVersionReference: "1",
+				ChangesetV3Query: ChangesetV3Query{
+					ToAppVersionReference: "1",
+				},
 			},
 		},
 		{
@@ -650,8 +686,10 @@ func Test_changesetFromModel(t *testing.T) {
 				},
 			},
 			want: ChangesetV3{
-				ChangesetV3Create: ChangesetV3Create{
-					ToChartVersionFollowChartRelease: "name",
+				ChangesetV3Query: ChangesetV3Query{
+					ChangesetV3Create: ChangesetV3Create{
+						ToChartVersionFollowChartRelease: "name",
+					},
 				},
 			},
 		},
@@ -665,8 +703,10 @@ func Test_changesetFromModel(t *testing.T) {
 				},
 			},
 			want: ChangesetV3{
-				ChangesetV3Create: ChangesetV3Create{
-					ToChartVersionFollowChartRelease: "1",
+				ChangesetV3Query: ChangesetV3Query{
+					ChangesetV3Create: ChangesetV3Create{
+						ToChartVersionFollowChartRelease: "1",
+					},
 				},
 			},
 		},
@@ -685,7 +725,9 @@ func Test_changesetFromModel(t *testing.T) {
 				},
 			},
 			want: ChangesetV3{
-				ToChartVersionReference: "name/version",
+				ChangesetV3Query: ChangesetV3Query{
+					ToChartVersionReference: "name/version",
+				},
 			},
 		},
 		{
@@ -701,7 +743,9 @@ func Test_changesetFromModel(t *testing.T) {
 				},
 			},
 			want: ChangesetV3{
-				ToChartVersionReference: "1/version",
+				ChangesetV3Query: ChangesetV3Query{
+					ToChartVersionReference: "1/version",
+				},
 			},
 		},
 		{
@@ -714,7 +758,9 @@ func Test_changesetFromModel(t *testing.T) {
 				},
 			},
 			want: ChangesetV3{
-				ToChartVersionReference: "1",
+				ChangesetV3Query: ChangesetV3Query{
+					ToChartVersionReference: "1",
+				},
 			},
 		},
 		{
@@ -727,11 +773,13 @@ func Test_changesetFromModel(t *testing.T) {
 				},
 			},
 			want: ChangesetV3{
-				PlannedBy: utils.PointerTo("email"),
-				PlannedByInfo: &UserV3{
-					Email:                  "email",
-					SuitabilityDescription: utils.PointerTo("user email lacks production suitability"),
-					Suitable:               utils.PointerTo(false),
+				ChangesetV3Query: ChangesetV3Query{
+					PlannedBy: utils.PointerTo("email"),
+					PlannedByInfo: &UserV3{
+						Email:                  "email",
+						SuitabilityDescription: utils.PointerTo("user email lacks production suitability"),
+						Suitable:               utils.PointerTo(false),
+					},
 				},
 			},
 		},
@@ -743,7 +791,9 @@ func Test_changesetFromModel(t *testing.T) {
 				},
 			},
 			want: ChangesetV3{
-				PlannedBy: utils.PointerTo("1"),
+				ChangesetV3Query: ChangesetV3Query{
+					PlannedBy: utils.PointerTo("1"),
+				},
 			},
 		},
 		{
@@ -756,11 +806,13 @@ func Test_changesetFromModel(t *testing.T) {
 				},
 			},
 			want: ChangesetV3{
-				AppliedBy: utils.PointerTo("email"),
-				AppliedByInfo: &UserV3{
-					Email:                  "email",
-					SuitabilityDescription: utils.PointerTo("user email lacks production suitability"),
-					Suitable:               utils.PointerTo(false),
+				ChangesetV3Query: ChangesetV3Query{
+					AppliedBy: utils.PointerTo("email"),
+					AppliedByInfo: &UserV3{
+						Email:                  "email",
+						SuitabilityDescription: utils.PointerTo("user email lacks production suitability"),
+						Suitable:               utils.PointerTo(false),
+					},
 				},
 			},
 		},
@@ -772,7 +824,9 @@ func Test_changesetFromModel(t *testing.T) {
 				},
 			},
 			want: ChangesetV3{
-				AppliedBy: utils.PointerTo("1"),
+				ChangesetV3Query: ChangesetV3Query{
+					AppliedBy: utils.PointerTo("1"),
+				},
 			},
 		},
 		{
@@ -785,12 +839,14 @@ func Test_changesetFromModel(t *testing.T) {
 				},
 			},
 			want: ChangesetV3{
-				ChangesetV3Create: ChangesetV3Create{
-					ChartRelease: "name",
-				},
-				ChartReleaseInfo: &ChartReleaseV3{
-					ChartReleaseV3Create: ChartReleaseV3Create{
-						Name: "name",
+				ChangesetV3Query: ChangesetV3Query{
+					ChangesetV3Create: ChangesetV3Create{
+						ChartRelease: "name",
+					},
+					ChartReleaseInfo: &ChartReleaseV3{
+						ChartReleaseV3Create: ChartReleaseV3Create{
+							Name: "name",
+						},
 					},
 				},
 			},
@@ -803,8 +859,10 @@ func Test_changesetFromModel(t *testing.T) {
 				},
 			},
 			want: ChangesetV3{
-				ChangesetV3Create: ChangesetV3Create{
-					ChartRelease: "1",
+				ChangesetV3Query: ChangesetV3Query{
+					ChangesetV3Create: ChangesetV3Create{
+						ChartRelease: "1",
+					},
 				},
 			},
 		},
@@ -847,31 +905,33 @@ func Test_changesetFromModel(t *testing.T) {
 				},
 			},
 			want: ChangesetV3{
-				CommonFields:             CommonFields{ID: 1},
-				CiIdentifier:             &CiIdentifierV3{CommonFields: CommonFields{ID: 2}},
-				AppliedAt:                utils.PointerTo(now.Add(time.Hour)),
-				SupersededAt:             utils.PointerTo(now.Add(time.Minute)),
-				FromResolvedAt:           utils.PointerTo(now.Add(-time.Hour)),
-				FromAppVersionResolver:   utils.PointerTo("resolver"),
-				FromAppVersionExact:      utils.PointerTo("exact"),
-				FromAppVersionBranch:     utils.PointerTo("branch"),
-				FromAppVersionCommit:     utils.PointerTo("commit"),
-				FromChartVersionResolver: utils.PointerTo("resolver"),
-				FromChartVersionExact:    utils.PointerTo("exact"),
-				FromHelmfileRef:          utils.PointerTo("helmfile-ref"),
-				FromHelmfileRefEnabled:   utils.PointerTo(true),
-				FromFirecloudDevelopRef:  utils.PointerTo("firecloud-develop-ref"),
-				ToResolvedAt:             utils.PointerTo(now.Add(time.Hour)),
-				ChangesetV3Create: ChangesetV3Create{
-					ToAppVersionResolver:   utils.PointerTo("resolver"),
-					ToAppVersionExact:      utils.PointerTo("exact"),
-					ToAppVersionBranch:     utils.PointerTo("branch"),
-					ToAppVersionCommit:     utils.PointerTo("commit"),
-					ToChartVersionResolver: utils.PointerTo("resolver"),
-					ToChartVersionExact:    utils.PointerTo("exact"),
-					ToHelmfileRef:          utils.PointerTo("helmfile-ref"),
-					ToHelmfileRefEnabled:   utils.PointerTo(true),
-					ToFirecloudDevelopRef:  utils.PointerTo("firecloud-develop-ref"),
+				CommonFields: CommonFields{ID: 1},
+				ChangesetV3Query: ChangesetV3Query{
+					CiIdentifier:             &CiIdentifierV3{CommonFields: CommonFields{ID: 2}},
+					AppliedAt:                utils.PointerTo(now.Add(time.Hour)),
+					SupersededAt:             utils.PointerTo(now.Add(time.Minute)),
+					FromResolvedAt:           utils.PointerTo(now.Add(-time.Hour)),
+					FromAppVersionResolver:   utils.PointerTo("resolver"),
+					FromAppVersionExact:      utils.PointerTo("exact"),
+					FromAppVersionBranch:     utils.PointerTo("branch"),
+					FromAppVersionCommit:     utils.PointerTo("commit"),
+					FromChartVersionResolver: utils.PointerTo("resolver"),
+					FromChartVersionExact:    utils.PointerTo("exact"),
+					FromHelmfileRef:          utils.PointerTo("helmfile-ref"),
+					FromHelmfileRefEnabled:   utils.PointerTo(true),
+					FromFirecloudDevelopRef:  utils.PointerTo("firecloud-develop-ref"),
+					ToResolvedAt:             utils.PointerTo(now.Add(time.Hour)),
+					ChangesetV3Create: ChangesetV3Create{
+						ToAppVersionResolver:   utils.PointerTo("resolver"),
+						ToAppVersionExact:      utils.PointerTo("exact"),
+						ToAppVersionBranch:     utils.PointerTo("branch"),
+						ToAppVersionCommit:     utils.PointerTo("commit"),
+						ToChartVersionResolver: utils.PointerTo("resolver"),
+						ToChartVersionExact:    utils.PointerTo("exact"),
+						ToHelmfileRef:          utils.PointerTo("helmfile-ref"),
+						ToHelmfileRefEnabled:   utils.PointerTo(true),
+						ToFirecloudDevelopRef:  utils.PointerTo("firecloud-develop-ref"),
+					},
 				},
 			},
 		},

@@ -16,7 +16,7 @@ import (
 //	@description	List existing applied Changesets for a particular Chart Release, ordered by most recently applied.
 //	@tags			Changesets
 //	@produce		json
-//	@param			selector				path		string	true	"Selector of the Chart Release to find applied Changesets for"
+//	@param			chart-release			path		string	true	"Selector of the Chart Release to find applied Changesets for"
 //	@param			offset					query		int		false	"An optional offset to skip a number of latest Changesets"
 //	@param			limit					query		int		false	"An optional limit to the number of entries returned"
 //	@success		200						{array}		ChangesetV3

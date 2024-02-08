@@ -41,7 +41,7 @@ type ChangesetV3PlanRequestEnvironmentEntry struct {
 //	@accept			json
 //	@produce		json
 //	@param			changeset-plan-request	body		ChangesetV3PlanRequest	true	"Info on what version changes or refreshes to plan"
-//	@param			verbose-output			query		bool		false	"If full information about the changesets should be returned, defaults to true. If false, only the IDs will be returned."
+//	@param			verbose-output			query		bool					false	"If full information about the changesets should be returned, defaults to true. If false, only the IDs will be returned."
 //	@success		200,201					{array}		ChangesetV3
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/changesets/procedures/v3/plan [post]
