@@ -41,8 +41,8 @@ type EnvironmentV3Edit struct {
 	BaseDomain                  *string    `json:"baseDomain" form:"baseDomain" default:"bee.envs-terra.bio"`
 	NamePrefixesDomain          *bool      `json:"namePrefixesDomain" form:"namePrefixesDomain" default:"true"`
 	HelmfileRef                 *string    `json:"helmfileRef" form:"helmfileRef" default:"HEAD"`
-	PreventDeletion             *bool      `json:"preventDeletion" form:"preventDeletion" default:"false"` // Used to protect specific BEEs from deletion (thelma checks this field)
-	DeleteAfter                 *time.Time `json:"deleteAfter,omitempty" form:"deleteAfter"`               // If set, the BEE will be automatically deleted after this time (thelma checks this field)
+	PreventDeletion             *bool      `json:"preventDeletion" form:"preventDeletion" default:"false"`      // Used to protect specific BEEs from deletion (thelma checks this field)
+	DeleteAfter                 *time.Time `json:"deleteAfter,omitempty" form:"deleteAfter" format:"date-time"` // If set, the BEE will be automatically deleted after this time (thelma checks this field)
 	Description                 *string    `json:"description" form:"description"`
 	PactIdentifier              *uuid.UUID `json:"pactIdentifier" form:"PactIdentifier"`
 	PagerdutyIntegration        *string    `json:"pagerdutyIntegration,omitempty" form:"pagerdutyIntegration"`
