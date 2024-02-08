@@ -15,6 +15,8 @@ func Init(db *gorm.DB) error {
 	}{
 		{&CiRun{}, "RelatedResources", &CiRunIdentifierJoin{}},
 		{&CiIdentifier{}, "CiRuns", &CiRunIdentifierJoin{}},
+		{&Changeset{}, "NewAppVersions", &ChangesetNewAppVersion{}},
+		{&Changeset{}, "NewChartVersions", &ChangesetNewChartVersion{}},
 	}
 	for _, r := range explicitJoinTableRelationships {
 		if err := db.SetupJoinTable(r.model, r.relationFieldName, r.joinTableModel); err != nil {
