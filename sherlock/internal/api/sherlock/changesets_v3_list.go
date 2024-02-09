@@ -18,7 +18,7 @@ import (
 //	@tags			Changesets
 //	@produce		json
 //	@param			filter					query		ChangesetV3Query	false	"Filter the returned Changesets"
-//	@param			id						query		[]int				false	"Get specific changesets by their IDs, can be passed multiple times"
+//	@param			id						query		[]int				false	"Get specific changesets by their IDs, can be passed multiple times and/or be comma-separated"
 //	@param			limit					query		int					false	"Control how many Changesets are returned (default 100), ignored if specific IDs are passed"
 //	@param			offset					query		int					false	"Control the offset for the returned Changesets (default 0), ignored if specific IDs are passed"
 //	@success		200						{array}		ChangesetV3
