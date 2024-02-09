@@ -62,3 +62,24 @@ func (s *handlerSuite) TestPagerdutyIntegrationsV3Create() {
 		s.Equal("pagerduty-integration-name", *got.Name)
 	}
 }
+
+func (s *handlerSuite) TestPagerdutyIntegrationsV3Create_duplicate() {
+	pdi := s.TestData.PagerdutyIntegration_ManuallyTriggeredTerraIncident()
+	var got PagerdutyIntegrationV3
+	code := s.HandleRequest(
+		s.NewSuitableRequest("POST", "/api/pagerduty-integrations/v3", PagerdutyIntegrationV3Create{
+			PagerdutyID: pdi.PagerdutyID,
+			PagerdutyIntegrationV3Edit: PagerdutyIntegrationV3Edit{
+				Name: utils.PointerTo("pagerduty-integration-name"),
+				Key:  utils.PointerTo("pagerduty-integration-key"),
+				Type: utils.PointerTo("pagerduty-integration-type"),
+			},
+		}),
+		&got)
+	s.Equal(http.StatusCreated, code)
+	s.NotZero(got.ID)
+	if s.NotNil(got.Name) {
+		s.Equal("pagerduty-integration-name", *got.Name)
+	}
+	s.Equal(pdi.ID, got.ID)
+}
