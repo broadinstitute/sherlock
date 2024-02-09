@@ -17,6 +17,9 @@ import (
 // swagger:model pagerduty.AlertSummary
 type PagerdutyAlertSummary struct {
 
+	// source link
+	SourceLink string `json:"sourceLink,omitempty"`
+
 	// summary
 	Summary string `json:"summary,omitempty"`
 }

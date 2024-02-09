@@ -61,7 +61,7 @@ type GetAPIPagerdutyIntegrationsV3SelectorParams struct {
 
 	/* Selector.
 
-	   The selector of the PagerdutyIntegration, which can be either a numeric ID or the name.
+	   The selector of the PagerdutyIntegration, which can be either a numeric ID or pd-id/<pagerduty-id>.
 	*/
 	Selector string
 

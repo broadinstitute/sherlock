@@ -43,6 +43,8 @@ definitions:
     type: object
   pagerduty.AlertSummary:
     properties:
+      sourceLink:
+        type: string
       summary:
         type: string
     type: object
@@ -6869,6 +6871,56 @@ paths:
       summary: Edit an individual Incident
       tags:
       - Incidents
+  /api/pagerduty-integrations/procedures/v3/trigger-incident/{selector}:
+    post:
+      description: Get an individual PagerdutyIntegration.
+      parameters:
+      - description: The selector of the PagerdutyIntegration, which can be either
+          a numeric ID or pd-id/<pagerduty-id>.
+        in: path
+        name: selector
+        required: true
+        type: string
+      - description: Summary of the incident
+        in: body
+        name: summary
+        required: true
+        schema:
+          $ref: '#/definitions/pagerduty.AlertSummary'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/pagerduty.SendAlertResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Get an individual PagerdutyIntegration
+      tags:
+      - PagerdutyIntegrations
   /api/pagerduty-integrations/v3:
     get:
       description: List PagerdutyIntegrations matching a filter.
@@ -7032,7 +7084,7 @@ paths:
       description: Get an individual PagerdutyIntegration.
       parameters:
       - description: The selector of the PagerdutyIntegration, which can be either
-          a numeric ID or the name.
+          a numeric ID or pd-id/<pagerduty-id>.
         in: path
         name: selector
         required: true

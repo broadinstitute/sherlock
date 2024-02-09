@@ -46,6 +46,11 @@ import {
     V2controllersPagerdutyIntegrationToJSON,
 } from '../models/index';
 
+export interface ApiPagerdutyIntegrationsProceduresV3TriggerIncidentSelectorPostRequest {
+    selector: string;
+    summary: PagerdutyAlertSummary;
+}
+
 export interface ApiPagerdutyIntegrationsV3GetRequest {
     createdAt?: Date;
     id?: number;
@@ -119,6 +124,45 @@ export interface ApiV2SelectorsPagerdutyIntegrationsSelectorGetRequest {
  * 
  */
 export class PagerdutyIntegrationsApi extends runtime.BaseAPI {
+
+    /**
+     * Get an individual PagerdutyIntegration.
+     * Get an individual PagerdutyIntegration
+     */
+    async apiPagerdutyIntegrationsProceduresV3TriggerIncidentSelectorPostRaw(requestParameters: ApiPagerdutyIntegrationsProceduresV3TriggerIncidentSelectorPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<PagerdutySendAlertResponse>> {
+        if (requestParameters.selector === null || requestParameters.selector === undefined) {
+            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiPagerdutyIntegrationsProceduresV3TriggerIncidentSelectorPost.');
+        }
+
+        if (requestParameters.summary === null || requestParameters.summary === undefined) {
+            throw new runtime.RequiredError('summary','Required parameter requestParameters.summary was null or undefined when calling apiPagerdutyIntegrationsProceduresV3TriggerIncidentSelectorPost.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/api/pagerduty-integrations/procedures/v3/trigger-incident/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: PagerdutyAlertSummaryToJSON(requestParameters.summary),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => PagerdutySendAlertResponseFromJSON(jsonValue));
+    }
+
+    /**
+     * Get an individual PagerdutyIntegration.
+     * Get an individual PagerdutyIntegration
+     */
+    async apiPagerdutyIntegrationsProceduresV3TriggerIncidentSelectorPost(requestParameters: ApiPagerdutyIntegrationsProceduresV3TriggerIncidentSelectorPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PagerdutySendAlertResponse> {
+        const response = await this.apiPagerdutyIntegrationsProceduresV3TriggerIncidentSelectorPostRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
 
     /**
      * List PagerdutyIntegrations matching a filter.

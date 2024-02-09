@@ -48,6 +48,8 @@ type ClientService interface {
 
 	PatchAPIV2PagerdutyIntegrationsSelector(params *PatchAPIV2PagerdutyIntegrationsSelectorParams, opts ...ClientOption) (*PatchAPIV2PagerdutyIntegrationsSelectorOK, error)
 
+	PostAPIPagerdutyIntegrationsProceduresV3TriggerIncidentSelector(params *PostAPIPagerdutyIntegrationsProceduresV3TriggerIncidentSelectorParams, opts ...ClientOption) (*PostAPIPagerdutyIntegrationsProceduresV3TriggerIncidentSelectorOK, error)
+
 	PostAPIPagerdutyIntegrationsV3(params *PostAPIPagerdutyIntegrationsV3Params, opts ...ClientOption) (*PostAPIPagerdutyIntegrationsV3Created, error)
 
 	PostAPIV2PagerdutyIntegrations(params *PostAPIV2PagerdutyIntegrationsParams, opts ...ClientOption) (*PostAPIV2PagerdutyIntegrationsOK, *PostAPIV2PagerdutyIntegrationsCreated, error)
@@ -416,6 +418,46 @@ func (a *Client) PatchAPIV2PagerdutyIntegrationsSelector(params *PatchAPIV2Pager
 	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for PatchAPIV2PagerdutyIntegrationsSelector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+  PostAPIPagerdutyIntegrationsProceduresV3TriggerIncidentSelector gets an individual pagerduty integration
+
+  Get an individual PagerdutyIntegration.
+*/
+func (a *Client) PostAPIPagerdutyIntegrationsProceduresV3TriggerIncidentSelector(params *PostAPIPagerdutyIntegrationsProceduresV3TriggerIncidentSelectorParams, opts ...ClientOption) (*PostAPIPagerdutyIntegrationsProceduresV3TriggerIncidentSelectorOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewPostAPIPagerdutyIntegrationsProceduresV3TriggerIncidentSelectorParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "PostAPIPagerdutyIntegrationsProceduresV3TriggerIncidentSelector",
+		Method:             "POST",
+		PathPattern:        "/api/pagerduty-integrations/procedures/v3/trigger-incident/{selector}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &PostAPIPagerdutyIntegrationsProceduresV3TriggerIncidentSelectorReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*PostAPIPagerdutyIntegrationsProceduresV3TriggerIncidentSelectorOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for PostAPIPagerdutyIntegrationsProceduresV3TriggerIncidentSelector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 

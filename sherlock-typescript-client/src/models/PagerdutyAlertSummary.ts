@@ -24,6 +24,12 @@ export interface PagerdutyAlertSummary {
      * @type {string}
      * @memberof PagerdutyAlertSummary
      */
+    sourceLink?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PagerdutyAlertSummary
+     */
     summary?: string;
 }
 
@@ -46,6 +52,7 @@ export function PagerdutyAlertSummaryFromJSONTyped(json: any, ignoreDiscriminato
     }
     return {
         
+        'sourceLink': !exists(json, 'sourceLink') ? undefined : json['sourceLink'],
         'summary': !exists(json, 'summary') ? undefined : json['summary'],
     };
 }
@@ -59,6 +66,7 @@ export function PagerdutyAlertSummaryToJSON(value?: PagerdutyAlertSummary | null
     }
     return {
         
+        'sourceLink': value.sourceLink,
         'summary': value.summary,
     };
 }

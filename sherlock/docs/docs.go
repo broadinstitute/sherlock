@@ -5877,6 +5877,80 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/pagerduty-integrations/procedures/v3/trigger-incident/{selector}": {
+            "post": {
+                "description": "Get an individual PagerdutyIntegration.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PagerdutyIntegrations"
+                ],
+                "summary": "Get an individual PagerdutyIntegration",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The selector of the PagerdutyIntegration, which can be either a numeric ID or pd-id/\u003cpagerduty-id\u003e.",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Summary of the incident",
+                        "name": "summary",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pagerduty.AlertSummary"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/pagerduty.SendAlertResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/pagerduty-integrations/v3": {
             "get": {
                 "description": "List PagerdutyIntegrations matching a filter.",
@@ -6063,7 +6137,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "The selector of the PagerdutyIntegration, which can be either a numeric ID or the name.",
+                        "description": "The selector of the PagerdutyIntegration, which can be either a numeric ID or pd-id/\u003cpagerduty-id\u003e.",
                         "name": "selector",
                         "in": "path",
                         "required": true
@@ -13373,6 +13447,9 @@ const docTemplate = `{
         "pagerduty.AlertSummary": {
             "type": "object",
             "properties": {
+                "sourceLink": {
+                    "type": "string"
+                },
                 "summary": {
                     "type": "string"
                 }
