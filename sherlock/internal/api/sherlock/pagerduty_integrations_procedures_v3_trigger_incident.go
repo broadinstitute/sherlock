@@ -18,7 +18,7 @@ import (
 //	@produce		json
 //	@param			selector				path		string					true	"The selector of the PagerdutyIntegration, which can be either a numeric ID or pd-id/<pagerduty-id>."
 //	@param			summary					body		pagerduty.AlertSummary	true	"Summary of the incident"
-//	@success		200						{object}	pagerduty.AlertResponse
+//	@success		200						{object}	pagerduty.SendAlertResponse
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/pagerduty-integrations/procedures/v3/trigger-incident/{selector} [post]
 func pagerdutyIntegrationsProceduresV3TriggerIncident(ctx *gin.Context) {
