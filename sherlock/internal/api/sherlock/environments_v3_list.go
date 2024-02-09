@@ -7,6 +7,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm/clause"
 	"net/http"
 )
 
@@ -57,6 +58,7 @@ func environmentsV3List(ctx *gin.Context) {
 	if err = chain.
 		Offset(offset).
 		Order("name asc").
+		Preload(clause.Associations).
 		Find(&results).Error; err != nil {
 		errors.AbortRequest(ctx, err)
 		return

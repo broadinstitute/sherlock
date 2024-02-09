@@ -53,6 +53,12 @@ func (s *handlerSuite) TestChartReleasesV3List() {
 			&got)
 		s.Equal(http.StatusOK, code)
 		s.Len(got, 3)
+		s.Run("associations", func() {
+			for _, release := range got {
+				s.NotNil(release.ChartInfo)
+				s.NotNil(release.EnvironmentInfo)
+			}
+		})
 	})
 	s.Run("none", func() {
 		var got []ChartReleaseV3

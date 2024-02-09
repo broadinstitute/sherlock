@@ -82,6 +82,11 @@ func (s *handlerSuite) TestAppVersionsV3List() {
 			&got)
 		s.Equal(http.StatusOK, code)
 		s.Len(got, 3)
+		s.Run("associations", func() {
+			for _, chartVersion := range got {
+				s.NotNil(chartVersion.ChartInfo)
+			}
+		})
 	})
 	s.Run("all via user filter", func() {
 		var got []AppVersionV3

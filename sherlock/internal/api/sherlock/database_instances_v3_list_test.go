@@ -53,6 +53,11 @@ func (s *handlerSuite) TestDatabaseInstancesV3List() {
 			&got)
 		s.Equal(http.StatusOK, code)
 		s.Len(got, 3)
+		s.Run("associations", func() {
+			for _, instance := range got {
+				s.NotNil(instance.ChartReleaseInfo)
+			}
+		})
 	})
 	s.Run("none", func() {
 		var got []DatabaseInstanceV3
