@@ -81,10 +81,27 @@ func (s *handlerSuite) TestChangesetsV3List() {
 		s.Equal(http.StatusOK, code)
 		s.Len(got, 2)
 	})
+	s.Run("both via one id parameter", func() {
+		var got []ChangesetV3
+		code := s.HandleRequest(
+			s.NewRequest("GET", fmt.Sprintf("/api/changesets/v3?id=%d,%d", a.ID, b.ID), nil),
+			&got)
+		s.Equal(http.StatusOK, code)
+		s.Len(got, 2)
+	})
 	s.Run("filter when id also used", func() {
 		var got []ChangesetV3
 		code := s.HandleRequest(
 			s.NewRequest("GET", fmt.Sprintf("/api/changesets/v3?id=%d&id=%d&toAppVersionExact=%s", a.ID, b.ID, s.TestData.AppVersion_Leonardo_V3().AppVersion), nil),
+			&got)
+		s.Equal(http.StatusOK, code)
+		s.Len(got, 1)
+		s.Equal(a.ID, got[0].ID)
+	})
+	s.Run("filter when id via one parameter also used", func() {
+		var got []ChangesetV3
+		code := s.HandleRequest(
+			s.NewRequest("GET", fmt.Sprintf("/api/changesets/v3?id=%d,%d&toAppVersionExact=%s", a.ID, b.ID, s.TestData.AppVersion_Leonardo_V3().AppVersion), nil),
 			&got)
 		s.Equal(http.StatusOK, code)
 		s.Len(got, 1)
