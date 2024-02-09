@@ -7,6 +7,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/creasty/defaults"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm/clause"
 	"net/http"
 )
 
@@ -47,7 +48,7 @@ func pagerdutyIntegrationsV3Create(ctx *gin.Context) {
 		Name: toCreate.Name,
 		Key:  toCreate.Key,
 		Type: toCreate.Type,
-	}).FirstOrCreate(&result).Error; err != nil {
+	}).Preload(clause.Associations).FirstOrCreate(&result).Error; err != nil {
 		errors.AbortRequest(ctx, err)
 		return
 	}
