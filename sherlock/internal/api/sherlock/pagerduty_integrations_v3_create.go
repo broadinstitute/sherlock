@@ -7,14 +7,13 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/creasty/defaults"
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm/clause"
 	"net/http"
 )
 
 // pagerdutyIntegrationsV3Create godoc
 //
 //	@summary		Create a PagerdutyIntegration
-//	@description	Create a PagerdutyIntegration.
+//	@description	Create a PagerdutyIntegration. Duplicate Pagerduty IDs will be gracefully handled by editing the existing entry. This is partially opaque because some fields are writable but not readable.
 //	@tags			PagerdutyIntegrations
 //	@accept			json
 //	@produce		json
@@ -40,13 +39,15 @@ func pagerdutyIntegrationsV3Create(ctx *gin.Context) {
 	}
 
 	toCreate := body.toModel()
-	if err = db.Create(&toCreate).Error; err != nil {
-		errors.AbortRequest(ctx, err)
-		return
-	}
 
 	var result models.PagerdutyIntegration
-	if err = db.Preload(clause.Associations).First(&result, toCreate.ID).Error; err != nil {
+	if err = db.Where(&models.PagerdutyIntegration{
+		PagerdutyID: toCreate.PagerdutyID,
+	}).Assign(&models.PagerdutyIntegration{
+		Name: toCreate.Name,
+		Key:  toCreate.Key,
+		Type: toCreate.Type,
+	}).FirstOrCreate(&result).Error; err != nil {
 		errors.AbortRequest(ctx, err)
 		return
 	}
