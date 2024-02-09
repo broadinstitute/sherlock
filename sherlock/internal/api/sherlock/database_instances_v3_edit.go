@@ -6,6 +6,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 	"gorm.io/gorm/clause"
 	"net/http"
 )
@@ -33,7 +34,8 @@ func databaseInstancesV3Edit(ctx *gin.Context) {
 	}
 
 	var body DatabaseInstanceV3Edit
-	if err = ctx.ShouldBindJSON(&body); err != nil {
+	// ShouldBindBodyWith used to handle double-reading body when redirected from databaseInstancesV3Upsert
+	if err = ctx.ShouldBindBodyWith(&body, binding.JSON); err != nil {
 		errors.AbortRequest(ctx, fmt.Errorf("(%s) request validation error: %w", errors.BadRequest, err))
 		return
 	}
