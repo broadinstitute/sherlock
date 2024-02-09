@@ -157,16 +157,19 @@ func (c ModelController[M, R, C, E]) TriggerPagerdutyIncident(selector string, s
 		var empty R
 		return pagerduty.SendAlertResponse{}, fmt.Errorf("(%s) Pagerduty incidents can't be triggered via %Ts, no extractPagerdutyIntegrationKey functionality configured", errors.InternalServerError, empty)
 	}
-	if c.beehiveUrlFormatString == "" {
-		var empty R
-		return pagerduty.SendAlertResponse{}, fmt.Errorf("(%s) Pagerduty incidents can't be triggered via %Ts, no beehiveUrlFormatString configured", errors.InternalServerError, empty)
+	if summary.SourceLink == "" {
+		if c.beehiveUrlFormatString == "" {
+			var empty R
+			return pagerduty.SendAlertResponse{}, fmt.Errorf("(%s) Pagerduty incidents can't be triggered via %Ts, no beehiveUrlFormatString configured", errors.InternalServerError, empty)
+		}
+		summary.SourceLink = fmt.Sprintf(c.beehiveUrlFormatString, selector)
 	}
 	match, err := c.primaryStore.Get(selector)
 	if err != nil {
 		return pagerduty.SendAlertResponse{}, err
 	}
 	if key := c.extractPagerdutyIntegrationKey(&match); key != nil {
-		return pagerduty.SendAlert(*key, summary, fmt.Sprintf(c.beehiveUrlFormatString, selector))
+		return pagerduty.SendAlert(*key, summary)
 	} else {
 		return pagerduty.SendAlertResponse{}, fmt.Errorf("(%s) no Pagerduty integration configured for %T '%s'", errors.BadRequest, match, selector)
 	}

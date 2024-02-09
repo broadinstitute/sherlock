@@ -10,7 +10,8 @@ import (
 )
 
 type AlertSummary struct {
-	Summary string `json:"summary"`
+	Summary    string `json:"summary"`
+	SourceLink string `json:"sourceLink"`
 }
 
 type SendAlertResponse struct {
@@ -18,7 +19,7 @@ type SendAlertResponse struct {
 	Status  string `json:"status,omitempty"`
 }
 
-func SendAlert(integrationKey string, summary AlertSummary, sourceLink string) (SendAlertResponse, error) {
+func SendAlert(integrationKey string, summary AlertSummary) (SendAlertResponse, error) {
 	summaryText := summary.Summary
 	if len(summaryText) > 1024 {
 		summaryText = summaryText[:1024]
@@ -31,14 +32,14 @@ func SendAlert(integrationKey string, summary AlertSummary, sourceLink string) (
 			Action:     "trigger",
 			Payload: &pagerduty.V2Payload{
 				Summary:   summaryText,
-				Source:    sourceLink,
+				Source:    summary.SourceLink,
 				Severity:  "critical",
 				Timestamp: time.Now().Format(time.RFC3339),
 			},
 			// For some reason this isn't typed, so we borrow the struct from ChangeEvent so we get the right JSON
 			Links: []any{
 				pagerduty.ChangeEventLink{
-					Href: sourceLink,
+					Href: summary.SourceLink,
 					Text: "Beehive Link",
 				},
 			},

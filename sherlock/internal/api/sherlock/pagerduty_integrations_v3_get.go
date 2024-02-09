@@ -18,7 +18,7 @@ import (
 //	@description	Get an individual PagerdutyIntegration.
 //	@tags			PagerdutyIntegrations
 //	@produce		json
-//	@param			selector				path		string	true	"The selector of the PagerdutyIntegration, which can be either a numeric ID or the name."
+//	@param			selector				path		string	true	"The selector of the PagerdutyIntegration, which can be either a numeric ID or pd-id/<pagerduty-id>."
 //	@success		200						{object}	PagerdutyIntegrationV3
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/pagerduty-integrations/v3/{selector} [get]
