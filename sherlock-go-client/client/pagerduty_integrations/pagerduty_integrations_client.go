@@ -464,7 +464,7 @@ func (a *Client) PostAPIPagerdutyIntegrationsProceduresV3TriggerIncidentSelector
 /*
   PostAPIPagerdutyIntegrationsV3 creates a pagerduty integration
 
-  Create a PagerdutyIntegration.
+  Create a PagerdutyIntegration. Duplicate Pagerduty IDs will be gracefully handled by editing the existing entry. This is partially opaque because some fields are writable but not readable.
 */
 func (a *Client) PostAPIPagerdutyIntegrationsV3(params *PostAPIPagerdutyIntegrationsV3Params, opts ...ClientOption) (*PostAPIPagerdutyIntegrationsV3Created, error) {
 	// TODO: Validate the params before sending

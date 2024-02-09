@@ -6056,7 +6056,7 @@ const docTemplate = `{
                 }
             },
             "post": {
-                "description": "Create a PagerdutyIntegration.",
+                "description": "Create a PagerdutyIntegration. Duplicate Pagerduty IDs will be gracefully handled by editing the existing entry. This is partially opaque because some fields are writable but not readable.",
                 "consumes": [
                     "application/json"
                 ],

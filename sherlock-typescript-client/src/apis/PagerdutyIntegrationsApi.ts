@@ -225,7 +225,7 @@ export class PagerdutyIntegrationsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Create a PagerdutyIntegration.
+     * Create a PagerdutyIntegration. Duplicate Pagerduty IDs will be gracefully handled by editing the existing entry. This is partially opaque because some fields are writable but not readable.
      * Create a PagerdutyIntegration
      */
     async apiPagerdutyIntegrationsV3PostRaw(requestParameters: ApiPagerdutyIntegrationsV3PostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockPagerdutyIntegrationV3>> {
@@ -251,7 +251,7 @@ export class PagerdutyIntegrationsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Create a PagerdutyIntegration.
+     * Create a PagerdutyIntegration. Duplicate Pagerduty IDs will be gracefully handled by editing the existing entry. This is partially opaque because some fields are writable but not readable.
      * Create a PagerdutyIntegration
      */
     async apiPagerdutyIntegrationsV3Post(requestParameters: ApiPagerdutyIntegrationsV3PostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockPagerdutyIntegrationV3> {
