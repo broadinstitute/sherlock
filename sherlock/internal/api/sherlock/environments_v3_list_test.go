@@ -54,6 +54,11 @@ func (s *handlerSuite) TestEnvironmentsV3List() {
 			&got)
 		s.Equal(http.StatusOK, code)
 		s.Len(got, 4)
+		s.Run("associations", func() {
+			for _, env := range got {
+				s.NotNil(env.DefaultCluster)
+			}
+		})
 	})
 	s.Run("none", func() {
 		var got []EnvironmentV3

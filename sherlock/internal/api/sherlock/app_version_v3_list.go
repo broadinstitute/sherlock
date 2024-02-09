@@ -7,6 +7,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm/clause"
 	"net/http"
 )
 
@@ -54,6 +55,7 @@ func appVersionsV3List(ctx *gin.Context) {
 		Limit(limit).
 		Offset(offset).
 		Order("created_at desc").
+		Preload(clause.Associations).
 		Find(&results).Error; err != nil {
 		errors.AbortRequest(ctx, err)
 		return

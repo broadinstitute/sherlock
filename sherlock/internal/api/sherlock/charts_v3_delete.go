@@ -10,6 +10,7 @@ import (
 )
 
 // chartsV3Delete godoc
+//
 //	@summary		Delete an individual Chart
 //	@description	Delete an individual Chart by its ID.
 //	@tags			Charts
@@ -33,7 +34,7 @@ func chartsV3Delete(ctx *gin.Context) {
 		errors.AbortRequest(ctx, err)
 		return
 	}
-	if err = db.Delete(&result).Error; err != nil {
+	if err = db.Omit(clause.Associations).Delete(&result).Error; err != nil {
 		errors.AbortRequest(ctx, err)
 		return
 	}

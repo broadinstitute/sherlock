@@ -34,7 +34,7 @@ func incidentsV3Delete(ctx *gin.Context) {
 		errors.AbortRequest(ctx, err)
 		return
 	}
-	if err = db.Delete(&result).Error; err != nil {
+	if err = db.Omit(clause.Associations).Delete(&result).Error; err != nil {
 		errors.AbortRequest(ctx, err)
 		return
 	}

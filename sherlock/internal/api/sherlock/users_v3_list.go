@@ -7,6 +7,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm/clause"
 	"net/http"
 )
 
@@ -49,7 +50,11 @@ func usersV3List(ctx *gin.Context) {
 	if limit > 0 {
 		chain = chain.Limit(limit)
 	}
-	if err = chain.Offset(offset).Order("email asc").Find(&results).Error; err != nil {
+	if err = chain.
+		Offset(offset).
+		Order("email asc").
+		Preload(clause.Associations).
+		Find(&results).Error; err != nil {
 		errors.AbortRequest(ctx, err)
 		return
 	}
