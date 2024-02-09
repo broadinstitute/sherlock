@@ -117,7 +117,7 @@ type GetAPIChangesetsV3Params struct {
 
 	/* ID.
 
-	   Get specific changesets by their IDs, can be passed multiple times
+	   Get specific changesets by their IDs, can be passed multiple times and/or be comma-separated
 	*/
 	ID []int64
 

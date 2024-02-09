@@ -3594,7 +3594,7 @@ paths:
         type: string
       - collectionFormat: csv
         description: Get specific changesets by their IDs, can be passed multiple
-          times
+          times and/or be comma-separated
         in: query
         items:
           type: integer
