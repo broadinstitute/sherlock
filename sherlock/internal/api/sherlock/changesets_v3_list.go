@@ -8,6 +8,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strings"
 )
 
 // changesetsV3List godoc
@@ -44,11 +45,18 @@ func changesetsV3List(ctx *gin.Context) {
 
 	idStrings := ctx.QueryArray("id")
 	if len(idStrings) > 0 {
-		ids := make([]uint, len(idStrings))
-		for i, idString := range idStrings {
-			if ids[i], err = utils.ParseUint(idString); err != nil {
-				errors.AbortRequest(ctx, fmt.Errorf("(%s) couldn't parse '%s' to an ID: %v", errors.BadRequest, idString, err))
-				return
+		ids := make([]uint, 0, len(idStrings))
+		for _, unsplitIdString := range idStrings {
+			for _, splitIdString := range strings.Split(unsplitIdString, ",") {
+				if id, err := utils.ParseUint(splitIdString); err != nil {
+					errors.AbortRequest(ctx, fmt.Errorf("(%s) couldn't parse '%s' to an ID: %v", errors.BadRequest, splitIdString, err))
+					return
+				} else if id <= 0 {
+					errors.AbortRequest(ctx, fmt.Errorf("(%s) ID must be a positive integer, but got %d", errors.BadRequest, id))
+					return
+				} else {
+					ids = append(ids, id)
+				}
 			}
 		}
 
