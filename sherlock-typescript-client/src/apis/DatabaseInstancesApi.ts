@@ -57,6 +57,10 @@ export interface ApiDatabaseInstancesV3PostRequest {
     databaseInstance: SherlockDatabaseInstanceV3Create;
 }
 
+export interface ApiDatabaseInstancesV3PutRequest {
+    databaseInstance: SherlockDatabaseInstanceV3Create;
+}
+
 export interface ApiDatabaseInstancesV3SelectorDeleteRequest {
     selector: string;
 }
@@ -213,6 +217,41 @@ export class DatabaseInstancesApi extends runtime.BaseAPI {
      */
     async apiDatabaseInstancesV3Post(requestParameters: ApiDatabaseInstancesV3PostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockDatabaseInstanceV3> {
         const response = await this.apiDatabaseInstancesV3PostRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Create or edit a DatabaseInstance, depending on whether one already exists for the chart release
+     * Create or edit a DatabaseInstance
+     */
+    async apiDatabaseInstancesV3PutRaw(requestParameters: ApiDatabaseInstancesV3PutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockDatabaseInstanceV3>> {
+        if (requestParameters.databaseInstance === null || requestParameters.databaseInstance === undefined) {
+            throw new runtime.RequiredError('databaseInstance','Required parameter requestParameters.databaseInstance was null or undefined when calling apiDatabaseInstancesV3Put.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/api/database-instances/v3`,
+            method: 'PUT',
+            headers: headerParameters,
+            query: queryParameters,
+            body: SherlockDatabaseInstanceV3CreateToJSON(requestParameters.databaseInstance),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => SherlockDatabaseInstanceV3FromJSON(jsonValue));
+    }
+
+    /**
+     * Create or edit a DatabaseInstance, depending on whether one already exists for the chart release
+     * Create or edit a DatabaseInstance
+     */
+    async apiDatabaseInstancesV3Put(requestParameters: ApiDatabaseInstancesV3PutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockDatabaseInstanceV3> {
+        const response = await this.apiDatabaseInstancesV3PutRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

@@ -5397,6 +5397,57 @@ paths:
       summary: Create a DatabaseInstance
       tags:
       - DatabaseInstances
+    put:
+      consumes:
+      - application/json
+      description: Create or edit a DatabaseInstance, depending on whether one already
+        exists for the chart release
+      parameters:
+      - description: The DatabaseInstance to create or edit. Defaults will only be
+          set if creating.
+        in: body
+        name: databaseInstance
+        required: true
+        schema:
+          $ref: '#/definitions/sherlock.DatabaseInstanceV3Create'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/sherlock.DatabaseInstanceV3'
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/sherlock.DatabaseInstanceV3'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Create or edit a DatabaseInstance
+      tags:
+      - DatabaseInstances
   /api/database-instances/v3/{selector}:
     delete:
       description: Delete an individual DatabaseInstance by its selector.

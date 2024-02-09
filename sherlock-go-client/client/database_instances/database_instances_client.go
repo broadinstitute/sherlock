@@ -52,6 +52,8 @@ type ClientService interface {
 
 	PostAPIV2DatabaseInstances(params *PostAPIV2DatabaseInstancesParams, opts ...ClientOption) (*PostAPIV2DatabaseInstancesOK, *PostAPIV2DatabaseInstancesCreated, error)
 
+	PutAPIDatabaseInstancesV3(params *PutAPIDatabaseInstancesV3Params, opts ...ClientOption) (*PutAPIDatabaseInstancesV3OK, *PutAPIDatabaseInstancesV3Created, error)
+
 	PutAPIV2DatabaseInstancesSelector(params *PutAPIV2DatabaseInstancesSelectorParams, opts ...ClientOption) (*PutAPIV2DatabaseInstancesSelectorOK, *PutAPIV2DatabaseInstancesSelectorCreated, error)
 
 	SetTransport(transport runtime.ClientTransport)
@@ -491,6 +493,47 @@ func (a *Client) PostAPIV2DatabaseInstances(params *PostAPIV2DatabaseInstancesPa
 	case *PostAPIV2DatabaseInstancesOK:
 		return value, nil, nil
 	case *PostAPIV2DatabaseInstancesCreated:
+		return nil, value, nil
+	}
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for database_instances: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+  PutAPIDatabaseInstancesV3 creates or edit a database instance
+
+  Create or edit a DatabaseInstance, depending on whether one already exists for the chart release
+*/
+func (a *Client) PutAPIDatabaseInstancesV3(params *PutAPIDatabaseInstancesV3Params, opts ...ClientOption) (*PutAPIDatabaseInstancesV3OK, *PutAPIDatabaseInstancesV3Created, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewPutAPIDatabaseInstancesV3Params()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "PutAPIDatabaseInstancesV3",
+		Method:             "PUT",
+		PathPattern:        "/api/database-instances/v3",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &PutAPIDatabaseInstancesV3Reader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, nil, err
+	}
+	switch value := result.(type) {
+	case *PutAPIDatabaseInstancesV3OK:
+		return value, nil, nil
+	case *PutAPIDatabaseInstancesV3Created:
 		return nil, value, nil
 	}
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
