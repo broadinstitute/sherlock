@@ -8,6 +8,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strings"
 )
 
 // changesetsV3List godoc
@@ -17,7 +18,7 @@ import (
 //	@tags			Changesets
 //	@produce		json
 //	@param			filter					query		ChangesetV3Query	false	"Filter the returned Changesets"
-//	@param			id						query		[]int				false	"Get specific changesets by their IDs, can be passed multiple times"
+//	@param			id						query		[]int				false	"Get specific changesets by their IDs, can be passed multiple times and/or be comma-separated"
 //	@param			limit					query		int					false	"Control how many Changesets are returned (default 100), ignored if specific IDs are passed"
 //	@param			offset					query		int					false	"Control the offset for the returned Changesets (default 0), ignored if specific IDs are passed"
 //	@success		200						{array}		ChangesetV3
@@ -44,11 +45,18 @@ func changesetsV3List(ctx *gin.Context) {
 
 	idStrings := ctx.QueryArray("id")
 	if len(idStrings) > 0 {
-		ids := make([]uint, len(idStrings))
-		for i, idString := range idStrings {
-			if ids[i], err = utils.ParseUint(idString); err != nil {
-				errors.AbortRequest(ctx, fmt.Errorf("(%s) couldn't parse '%s' to an ID: %v", errors.BadRequest, idString, err))
-				return
+		ids := make([]uint, 0, len(idStrings))
+		for _, unsplitIdString := range idStrings {
+			for _, splitIdString := range strings.Split(unsplitIdString, ",") {
+				if id, err := utils.ParseUint(splitIdString); err != nil {
+					errors.AbortRequest(ctx, fmt.Errorf("(%s) couldn't parse '%s' to an ID: %v", errors.BadRequest, splitIdString, err))
+					return
+				} else if id <= 0 {
+					errors.AbortRequest(ctx, fmt.Errorf("(%s) ID must be a positive integer, but got %d", errors.BadRequest, id))
+					return
+				} else {
+					ids = append(ids, id)
+				}
 			}
 		}
 
