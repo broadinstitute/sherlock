@@ -6,15 +6,13 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/gha_oidc"
 	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/gha_oidc/gha_oidc_claims"
 	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/gha_oidc/gha_oidc_mocks"
-	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_controllers/v2controllers"
-	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/hooks"
 	"github.com/broadinstitute/sherlock/sherlock/internal/hooks/hooks_mocks"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/slack"
 	"github.com/broadinstitute/sherlock/sherlock/internal/slack/slack_mocks"
 	"github.com/stretchr/testify/mock"
-	"gorm.io/gorm"
 	"net/http"
 	"time"
 )
@@ -93,15 +91,6 @@ func (s *handlerSuite) TestCiRunsV3Upsert_fieldValidation() {
 }
 
 func (s *handlerSuite) TestCiRunsV3Upsert_identifiers() {
-	user := s.SetSuitableTestUserForDB()
-
-	chart := s.TestData.Chart_Leonardo()
-	chartVersion, created, err := v2models.InternalChartVersionStore.Create(s.DB, v2models.ChartVersion{
-		ChartVersion: "v1.2.3",
-		ChartID:      chart.ID,
-	}, user)
-	s.NoError(err)
-	s.True(created)
 
 	s.Run("basic upsert of identifiers", func() {
 		var got CiRunV3
@@ -115,98 +104,18 @@ func (s *handlerSuite) TestCiRunsV3Upsert_identifiers() {
 					GithubActionsAttemptNumber: 1,
 					GithubActionsWorkflowPath:  "workflow",
 				},
-				Charts:        []string{"leonardo"},
-				ChartVersions: []string{"leonardo/v1.2.3"},
+				Charts:        []string{s.TestData.Chart_Leonardo().Name},
+				ChartVersions: []string{s.TestData.Chart_Leonardo().Name + "/" + s.TestData.ChartVersion_Leonardo_V1().ChartVersion},
 			}),
 			&got)
 		s.Equal(http.StatusCreated, code)
 		s.Len(got.RelatedResources, 2)
 	})
 
-	appVersion, created, err := v2models.InternalAppVersionStore.Create(s.DB, v2models.AppVersion{
-		AppVersion: "v2.3.4",
-		ChartID:    chart.ID,
-	}, user)
-	s.NoError(err)
-	s.True(created)
-	cluster, created, err := v2models.InternalClusterStore.Create(s.DB, v2models.Cluster{
-		Name:                "terra-dev",
-		Provider:            "google",
-		GoogleProject:       "broad-dsde-dev",
-		Base:                utils.PointerTo("live"),
-		Address:             utils.PointerTo("0.0.0.0"),
-		RequiresSuitability: utils.PointerTo(false),
-		Location:            "us-central1-a",
-		HelmfileRef:         utils.PointerTo("HEAD"),
-	}, user)
-	s.NoError(err)
-	s.True(created)
-	environment, created, err := v2models.InternalEnvironmentStore.Create(s.DB, v2models.Environment{
-		Name:                       "dev",
-		Lifecycle:                  "static",
-		UniqueResourcePrefix:       "a1b2",
-		Base:                       "live",
-		DefaultClusterID:           &cluster.ID,
-		DefaultNamespace:           "terra-dev",
-		OwnerID:                    &user.ID,
-		RequiresSuitability:        utils.PointerTo(false),
-		HelmfileRef:                utils.PointerTo("HEAD"),
-		DefaultFirecloudDevelopRef: utils.PointerTo("dev"),
-		PreventDeletion:            utils.PointerTo(false),
-	}, user)
-	s.NoError(err)
-	s.True(created)
-	templateEnvironment, created, err := v2models.InternalEnvironmentStore.Create(s.DB, v2models.Environment{
-		Name:                       "bee-template",
-		Lifecycle:                  "template",
-		UniqueResourcePrefix:       "a1b3",
-		Base:                       "bee",
-		DefaultClusterID:           &cluster.ID,
-		DefaultNamespace:           "terra-bee-template",
-		OwnerID:                    &user.ID,
-		RequiresSuitability:        utils.PointerTo(false),
-		HelmfileRef:                utils.PointerTo("HEAD"),
-		DefaultFirecloudDevelopRef: utils.PointerTo("dev"),
-		PreventDeletion:            utils.PointerTo(false),
-	}, user)
-	s.NoError(err)
-	s.True(created)
-	chartRelease, created, err := v2models.InternalChartReleaseStore.Create(s.DB, v2models.ChartRelease{
-		Name:          "leonardo-dev",
-		ChartID:       chart.ID,
-		ClusterID:     &cluster.ID,
-		EnvironmentID: &environment.ID,
-		Namespace:     environment.DefaultNamespace,
-		ChartReleaseVersion: v2models.ChartReleaseVersion{
-			AppVersionResolver:   utils.PointerTo("exact"),
-			AppVersionExact:      utils.PointerTo("app version blah"),
-			ChartVersionResolver: utils.PointerTo("exact"),
-			ChartVersionExact:    utils.PointerTo("chart version blah"),
-			HelmfileRef:          utils.PointerTo("HEAD"),
-			HelmfileRefEnabled:   utils.PointerTo(false),
-			FirecloudDevelopRef:  utils.PointerTo("dev"),
-		},
-	}, user)
-	s.NoError(err)
-	s.True(created)
-	templateChartRelease, created, err := v2models.InternalChartReleaseStore.Create(s.DB, v2models.ChartRelease{
-		Name:          "leonardo-bee-template",
-		ChartID:       chart.ID,
-		ClusterID:     &cluster.ID,
-		EnvironmentID: &templateEnvironment.ID,
-		Namespace:     templateEnvironment.DefaultNamespace,
-		ChartReleaseVersion: v2models.ChartReleaseVersion{
-			AppVersionResolver:   utils.PointerTo("exact"),
-			AppVersionExact:      utils.PointerTo("app version blah"),
-			ChartVersionResolver: utils.PointerTo("exact"),
-			ChartVersionExact:    utils.PointerTo("chart version blah"),
-			HelmfileRef:          utils.PointerTo("HEAD"),
-			HelmfileRefEnabled:   utils.PointerTo(false),
-			FirecloudDevelopRef:  utils.PointerTo("dev"),
-		},
-	}, user)
-	s.NoError(err)
-	s.True(created)
+	cluster := s.TestData.Cluster_TerraDev()
+	environment := s.TestData.Environment_Dev()
+	chartRelease := s.TestData.ChartRelease_LeonardoDev()
+	templateChartRelease := s.TestData.ChartRelease_LeonardoSwatomation()
 
 	s.Run("chart release identifiers", func() {
 		var got CiRunV3
@@ -220,53 +129,53 @@ func (s *handlerSuite) TestCiRunsV3Upsert_identifiers() {
 					GithubActionsAttemptNumber: 1,
 					GithubActionsWorkflowPath:  "workflow",
 				},
-				ChartReleases: []string{chartRelease.Name},
+				ChartReleases: []string{s.TestData.ChartRelease_LeonardoDev().Name},
 			}),
 			&got)
 		s.Equal(http.StatusCreated, code)
 		s.Len(got.RelatedResources, 3)
 	})
 
-	controllerChangesets, err := v2controllers.NewControllerSet(v2models.NewStoreSet(s.DB)).ChangesetController.PlanAndApply(v2controllers.ChangesetPlanRequest{
-		ChartReleases: []v2controllers.ChangesetPlanRequestChartReleaseEntry{
+	changesetReq := &ChangesetV3PlanRequest{
+		ChartReleases: []ChangesetV3PlanRequestChartReleaseEntry{
 			{
-				CreatableChangeset: v2controllers.CreatableChangeset{
-					ChartRelease:        chartRelease.Name,
-					ToAppVersionExact:   &appVersion.AppVersion,
-					ToChartVersionExact: &chartVersion.ChartVersion,
+				ChangesetV3Create: ChangesetV3Create{
+					ChartRelease:           s.TestData.ChartRelease_LeonardoDev().Name,
+					ToAppVersionResolver:   utils.PointerTo("exact"),
+					ToAppVersionExact:      utils.PointerTo(s.TestData.AppVersion_Leonardo_V1().AppVersion),
+					ToChartVersionResolver: utils.PointerTo("exact"),
+					ToChartVersionExact:    utils.PointerTo(s.TestData.ChartVersion_Leonardo_V1().ChartVersion),
 				},
 			},
 			{
-				CreatableChangeset: v2controllers.CreatableChangeset{
-					ChartRelease:        templateChartRelease.Name,
-					ToAppVersionExact:   &appVersion.AppVersion,
-					ToChartVersionExact: &chartVersion.ChartVersion,
+				ChangesetV3Create: ChangesetV3Create{
+					ChartRelease:           s.TestData.ChartRelease_LeonardoSwatomation().Name,
+					ToAppVersionResolver:   utils.PointerTo("exact"),
+					ToAppVersionExact:      utils.PointerTo(s.TestData.AppVersion_Leonardo_V1().AppVersion),
+					ToChartVersionResolver: utils.PointerTo("exact"),
+					ToChartVersionExact:    utils.PointerTo(s.TestData.ChartVersion_Leonardo_V1().ChartVersion),
 				},
 			},
 		},
-	}, user)
-	s.NoError(err)
-	s.Len(controllerChangesets, 2)
-
-	// The changesets are in a somewhat unpredictable order when they come back, so we do this just to make sure
-	// that we know which one is which when we get their database form
-	var staticEnvironmentChangesetID, templateEnvironmentChangesetID uint
-	if controllerChangesets[0].ChartReleaseInfo.ID == chartRelease.ID {
-		staticEnvironmentChangesetID = controllerChangesets[0].ID
-		templateEnvironmentChangesetID = controllerChangesets[1].ID
-	} else {
-		staticEnvironmentChangesetID = controllerChangesets[1].ID
-		templateEnvironmentChangesetID = controllerChangesets[0].ID
 	}
-
-	changeset, err := v2models.InternalChangesetStore.Get(s.DB, v2models.Changeset{Model: gorm.Model{ID: staticEnvironmentChangesetID}})
+	changesets, err := changesetReq.parseChartReleaseEntries(s.DB)
 	s.NoError(err)
-	s.Equal(chartRelease.ID, changeset.ChartReleaseID)
+	createdIDs, err := models.PlanChangesets(s.DB, changesets)
+	s.NoError(err)
+	s.Len(createdIDs, 2)
+
+	var changeset, templateChangeset models.Changeset
+	err = s.DB.Scopes(models.ReadChangesetScope).Find(&changesets, createdIDs).Error
+	s.NoError(err)
+	for _, c := range changesets {
+		if c.ChartReleaseID == chartRelease.ID {
+			changeset = c
+		} else if c.ChartReleaseID == templateChartRelease.ID {
+			templateChangeset = c
+		}
+	}
 	s.Len(changeset.NewAppVersions, 1)
 	s.Len(changeset.NewChartVersions, 1)
-	templateChangeset, err := v2models.InternalChangesetStore.Get(s.DB, v2models.Changeset{Model: gorm.Model{ID: templateEnvironmentChangesetID}})
-	s.NoError(err)
-	s.Equal(templateChartRelease.ID, templateChangeset.ChartReleaseID)
 	s.Len(templateChangeset.NewAppVersions, 1)
 	s.Len(templateChangeset.NewChartVersions, 1)
 

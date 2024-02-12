@@ -3,10 +3,7 @@ package sherlock
 import (
 	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
-	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_controllers/v2controllers"
-	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
-	"gorm.io/gorm"
 	"net/http"
 	"time"
 )
@@ -30,16 +27,9 @@ func (s *handlerSuite) TestCiIdentifiersV3Get_notFound() {
 }
 
 func (s *handlerSuite) TestCiIdentifiersV3Get() {
-	user := s.SetSuitableTestUserForDB()
-
-	chart, created, err := v2models.InternalChartStore.Create(s.DB, v2models.Chart{
-		Name:      "leonardo",
-		ChartRepo: utils.PointerTo("terra-helm"),
-	}, user)
-	s.NoError(err)
-	s.True(created)
-	chartIdentifier := ciIdentifierModelFromOldModel(chart)
-	err = s.DB.Create(&chartIdentifier).Error
+	chart := s.TestData.Chart_Leonardo()
+	chartIdentifier := chart.GetCiIdentifier()
+	err := s.DB.Create(&chartIdentifier).Error
 	s.NoError(err)
 	s.Equal(chart.ID, chartIdentifier.ResourceID)
 
@@ -57,13 +47,8 @@ func (s *handlerSuite) TestCiIdentifiersV3Get() {
 		s.Equal(chartIdentifier.ID, gotByName.ID)
 	})
 
-	chartVersion, created, err := v2models.InternalChartVersionStore.Create(s.DB, v2models.ChartVersion{
-		ChartVersion: "v1.2.3",
-		ChartID:      chart.ID,
-	}, user)
-	s.NoError(err)
-	s.True(created)
-	chartVersionIdentifier := ciIdentifierModelFromOldModel(chartVersion)
+	chartVersion := s.TestData.ChartVersion_Leonardo_V1()
+	chartVersionIdentifier := chartVersion.GetCiIdentifier()
 	err = s.DB.Create(&chartVersionIdentifier).Error
 	s.NoError(err)
 	s.Equal(chartVersion.ID, chartVersionIdentifier.ResourceID)
@@ -76,19 +61,14 @@ func (s *handlerSuite) TestCiIdentifiersV3Get() {
 		s.Equal(http.StatusOK, code)
 		s.Equal(chartVersionIdentifier.ID, gotByID.ID)
 		code = s.HandleRequest(
-			s.NewRequest("GET", "/api/ci-identifiers/v3/chart-version/leonardo/v1.2.3", nil),
+			s.NewRequest("GET", "/api/ci-identifiers/v3/chart-version/leonardo/"+chartVersion.ChartVersion, nil),
 			&gotByVersion)
 		s.Equal(http.StatusOK, code)
 		s.Equal(chartVersionIdentifier.ID, gotByVersion.ID)
 	})
 
-	appVersion, created, err := v2models.InternalAppVersionStore.Create(s.DB, v2models.AppVersion{
-		AppVersion: "v2.3.4",
-		ChartID:    chart.ID,
-	}, user)
-	s.NoError(err)
-	s.True(created)
-	appVersionIdentifier := ciIdentifierModelFromOldModel(appVersion)
+	appVersion := s.TestData.AppVersion_Leonardo_V1()
+	appVersionIdentifier := appVersion.GetCiIdentifier()
 	err = s.DB.Create(&appVersionIdentifier).Error
 	s.NoError(err)
 	s.Equal(appVersion.ID, appVersionIdentifier.ResourceID)
@@ -101,25 +81,14 @@ func (s *handlerSuite) TestCiIdentifiersV3Get() {
 		s.Equal(http.StatusOK, code)
 		s.Equal(appVersionIdentifier.ID, gotByID.ID)
 		code = s.HandleRequest(
-			s.NewRequest("GET", "/api/ci-identifiers/v3/app-version/leonardo/v2.3.4", nil),
+			s.NewRequest("GET", "/api/ci-identifiers/v3/app-version/leonardo/"+appVersion.AppVersion, nil),
 			&gotByVersion)
 		s.Equal(http.StatusOK, code)
 		s.Equal(appVersionIdentifier.ID, gotByVersion.ID)
 	})
 
-	cluster, created, err := v2models.InternalClusterStore.Create(s.DB, v2models.Cluster{
-		Name:                "terra-dev",
-		Provider:            "google",
-		GoogleProject:       "broad-dsde-dev",
-		Base:                utils.PointerTo("live"),
-		Address:             utils.PointerTo("0.0.0.0"),
-		RequiresSuitability: utils.PointerTo(false),
-		Location:            "us-central1-a",
-		HelmfileRef:         utils.PointerTo("HEAD"),
-	}, user)
-	s.NoError(err)
-	s.True(created)
-	clusterIdentifier := ciIdentifierModelFromOldModel(cluster)
+	cluster := s.TestData.Cluster_TerraDev()
+	clusterIdentifier := cluster.GetCiIdentifier()
 	err = s.DB.Create(&clusterIdentifier).Error
 	s.NoError(err)
 	s.Equal(cluster.ID, clusterIdentifier.ResourceID)
@@ -138,22 +107,8 @@ func (s *handlerSuite) TestCiIdentifiersV3Get() {
 		s.Equal(clusterIdentifier.ID, gotByName.ID)
 	})
 
-	environment, created, err := v2models.InternalEnvironmentStore.Create(s.DB, v2models.Environment{
-		Name:                       "dev",
-		Lifecycle:                  "static",
-		UniqueResourcePrefix:       "a1b2",
-		Base:                       "live",
-		DefaultClusterID:           &cluster.ID,
-		DefaultNamespace:           "terra-dev",
-		OwnerID:                    &user.ID,
-		RequiresSuitability:        utils.PointerTo(false),
-		HelmfileRef:                utils.PointerTo("HEAD"),
-		DefaultFirecloudDevelopRef: utils.PointerTo("dev"),
-		PreventDeletion:            utils.PointerTo(false),
-	}, user)
-	s.NoError(err)
-	s.True(created)
-	environmentIdentifier := ciIdentifierModelFromOldModel(environment)
+	environment := s.TestData.Environment_Dev()
+	environmentIdentifier := environment.GetCiIdentifier()
 	err = s.DB.Create(&environmentIdentifier).Error
 	s.NoError(err)
 	s.Equal(environment.ID, environmentIdentifier.ResourceID)
@@ -171,31 +126,14 @@ func (s *handlerSuite) TestCiIdentifiersV3Get() {
 		s.Equal(http.StatusOK, code)
 		s.Equal(environmentIdentifier.ID, gotByName.ID)
 		code = s.HandleRequest(
-			s.NewRequest("GET", "/api/ci-identifiers/v3/environment/resource-prefix/a1b2", nil),
+			s.NewRequest("GET", "/api/ci-identifiers/v3/environment/resource-prefix/"+environment.UniqueResourcePrefix, nil),
 			&gotByPrefixSelector)
 		s.Equal(http.StatusOK, code)
 		s.Equal(environmentIdentifier.ID, gotByPrefixSelector.ID)
 	})
 
-	chartRelease, created, err := v2models.InternalChartReleaseStore.Create(s.DB, v2models.ChartRelease{
-		Name:          "leonardo-dev",
-		ChartID:       chart.ID,
-		ClusterID:     &cluster.ID,
-		EnvironmentID: &environment.ID,
-		Namespace:     environment.DefaultNamespace,
-		ChartReleaseVersion: v2models.ChartReleaseVersion{
-			AppVersionResolver:   utils.PointerTo("exact"),
-			AppVersionExact:      utils.PointerTo("app version blah"),
-			ChartVersionResolver: utils.PointerTo("exact"),
-			ChartVersionExact:    utils.PointerTo("chart version blah"),
-			HelmfileRef:          utils.PointerTo("HEAD"),
-			HelmfileRefEnabled:   utils.PointerTo(false),
-			FirecloudDevelopRef:  utils.PointerTo("dev"),
-		},
-	}, user)
-	s.NoError(err)
-	s.True(created)
-	chartReleaseIdentifier := ciIdentifierModelFromOldModel(chartRelease)
+	chartRelease := s.TestData.ChartRelease_LeonardoDev()
+	chartReleaseIdentifier := chartRelease.GetCiIdentifier()
 	err = s.DB.Create(&chartReleaseIdentifier).Error
 	s.NoError(err)
 	s.Equal(chartRelease.ID, chartReleaseIdentifier.ResourceID)
@@ -224,22 +162,8 @@ func (s *handlerSuite) TestCiIdentifiersV3Get() {
 		s.Equal(chartReleaseIdentifier.ID, gotByCluster.ID)
 	})
 
-	controllerChangesets, err := v2controllers.NewControllerSet(v2models.NewStoreSet(s.DB)).ChangesetController.PlanAndApply(v2controllers.ChangesetPlanRequest{
-		ChartReleases: []v2controllers.ChangesetPlanRequestChartReleaseEntry{
-			{
-				CreatableChangeset: v2controllers.CreatableChangeset{
-					ChartRelease:        chartRelease.Name,
-					ToAppVersionExact:   &appVersion.AppVersion,
-					ToChartVersionExact: &chartVersion.ChartVersion,
-				},
-			},
-		},
-	}, user)
-	s.NoError(err)
-	s.Len(controllerChangesets, 1)
-	changeset, err := v2models.InternalChangesetStore.Get(s.DB, v2models.Changeset{Model: gorm.Model{ID: controllerChangesets[0].ID}})
-	s.NoError(err)
-	changesetIdentifier := ciIdentifierModelFromOldModel(changeset)
+	changeset := s.TestData.Changeset_LeonardoDev_V1toV3()
+	changesetIdentifier := changeset.GetCiIdentifier()
 	err = s.DB.Create(&changesetIdentifier).Error
 	s.NoError(err)
 	s.Equal(changeset.ID, changesetIdentifier.ResourceID)
@@ -260,14 +184,7 @@ func (s *handlerSuite) TestCiIdentifiersV3Get() {
 }
 
 func (s *handlerSuite) TestCiIdentifiersV3GetLimitRuns() {
-	user := s.SetSuitableTestUserForDB()
-
-	_, created, err := v2models.InternalChartStore.Create(s.DB, v2models.Chart{
-		Name:      "leonardo",
-		ChartRepo: utils.PointerTo("terra-helm"),
-	}, user)
-	s.NoError(err)
-	s.True(created)
+	s.TestData.Chart_Leonardo()
 
 	totalIterations := uint(15)
 	for iteration := uint(1); iteration <= totalIterations; iteration++ {

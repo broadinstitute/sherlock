@@ -1,8 +1,8 @@
 package sherlock
 
 import (
+	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
-	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"gorm.io/gorm"
 )
@@ -27,18 +27,26 @@ func (d DeployHookTriggerConfigV3) toModel(db *gorm.DB) (models.DeployHookTrigge
 		OnSuccess: d.OnSuccess,
 	}
 	if d.OnEnvironment != nil {
-		if environmentID, err := v2models.InternalEnvironmentStore.ResolveSelector(db, *d.OnEnvironment); err != nil {
-			return models.DeployHookTriggerConfig{}, err
-		} else {
-			ret.OnEnvironmentID = &environmentID
+		environmentQuery, err := environmentModelFromSelector(*d.OnEnvironment)
+		if err != nil {
+			return models.DeployHookTriggerConfig{}, fmt.Errorf("error parsing environment selector '%s': %w", *d.OnEnvironment, err)
 		}
+		var result models.Environment
+		if err = db.Where(&environmentQuery).Select("id").First(&result).Error; err != nil {
+			return models.DeployHookTriggerConfig{}, fmt.Errorf("error fetching environment '%s': %w", *d.OnEnvironment, err)
+		}
+		ret.OnEnvironmentID = &result.ID
 	}
 	if d.OnChartRelease != nil {
-		if chartReleaseID, err := v2models.InternalChartReleaseStore.ResolveSelector(db, *d.OnChartRelease); err != nil {
-			return models.DeployHookTriggerConfig{}, err
-		} else {
-			ret.OnChartReleaseID = &chartReleaseID
+		chartReleaseQuery, err := chartReleaseModelFromSelector(db, *d.OnChartRelease)
+		if err != nil {
+			return models.DeployHookTriggerConfig{}, fmt.Errorf("error parsing chart release selector '%s': %w", *d.OnChartRelease, err)
 		}
+		var result models.ChartRelease
+		if err = db.Where(&chartReleaseQuery).Select("id").First(&result).Error; err != nil {
+			return models.DeployHookTriggerConfig{}, fmt.Errorf("error fetching chart release '%s': %w", *d.OnChartRelease, err)
+		}
+		ret.OnChartReleaseID = &result.ID
 	}
 	return ret, nil
 }

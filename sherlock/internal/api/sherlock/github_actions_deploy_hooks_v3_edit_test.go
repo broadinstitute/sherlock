@@ -3,7 +3,6 @@ package sherlock
 import (
 	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
-	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/gin-gonic/gin"
@@ -45,38 +44,9 @@ func (s *handlerSuite) TestGithubActionsDeployHooksV3Edit_notFound() {
 }
 
 func (s *handlerSuite) TestGithubActionsDeployHooksV3Edit_sqlValidation() {
-	user := s.SetSuitableTestUserForDB()
-	cluster, created, err := v2models.InternalClusterStore.Create(s.DB, v2models.Cluster{
-		Name:                "terra-dev",
-		Provider:            "google",
-		GoogleProject:       "broad-dsde-dev",
-		Base:                utils.PointerTo("live"),
-		Address:             utils.PointerTo("0.0.0.0"),
-		RequiresSuitability: utils.PointerTo(false),
-		Location:            "us-central1-a",
-		HelmfileRef:         utils.PointerTo("HEAD"),
-	}, user)
-	s.NoError(err)
-	s.True(created)
-	environment, created, err := v2models.InternalEnvironmentStore.Create(s.DB, v2models.Environment{
-		Name:                       "dev",
-		Lifecycle:                  "static",
-		UniqueResourcePrefix:       "a1b2",
-		Base:                       "live",
-		DefaultClusterID:           &cluster.ID,
-		DefaultNamespace:           "terra-dev",
-		OwnerID:                    &user.ID,
-		RequiresSuitability:        utils.PointerTo(false),
-		HelmfileRef:                utils.PointerTo("HEAD"),
-		DefaultFirecloudDevelopRef: utils.PointerTo("dev"),
-		PreventDeletion:            utils.PointerTo(false),
-	}, user)
-	s.NoError(err)
-	s.True(created)
-
 	hook := models.GithubActionsDeployHook{
 		Trigger: models.DeployHookTriggerConfig{
-			OnEnvironmentID: &environment.ID,
+			OnEnvironmentID: utils.PointerTo(s.TestData.Environment_Dev().ID),
 		},
 		GithubActionsOwner:        utils.PointerTo("owner"),
 		GithubActionsRepo:         utils.PointerTo("repo"),
@@ -100,38 +70,9 @@ func (s *handlerSuite) TestGithubActionsDeployHooksV3Edit_sqlValidation() {
 }
 
 func (s *handlerSuite) TestGithubActionsDeployHooksV3Edit_forbidden() {
-	user := s.SetSuitableTestUserForDB()
-	cluster, created, err := v2models.InternalClusterStore.Create(s.DB, v2models.Cluster{
-		Name:                "terra-dev",
-		Provider:            "google",
-		GoogleProject:       "broad-dsde-dev",
-		Base:                utils.PointerTo("live"),
-		Address:             utils.PointerTo("0.0.0.0"),
-		RequiresSuitability: utils.PointerTo(false),
-		Location:            "us-central1-a",
-		HelmfileRef:         utils.PointerTo("HEAD"),
-	}, user)
-	s.NoError(err)
-	s.True(created)
-	environment, created, err := v2models.InternalEnvironmentStore.Create(s.DB, v2models.Environment{
-		Name:                       "dev",
-		Lifecycle:                  "static",
-		UniqueResourcePrefix:       "a1b2",
-		Base:                       "live",
-		DefaultClusterID:           &cluster.ID,
-		DefaultNamespace:           "terra-dev",
-		OwnerID:                    &user.ID,
-		RequiresSuitability:        utils.PointerTo(true), // <- requires suitability
-		HelmfileRef:                utils.PointerTo("HEAD"),
-		DefaultFirecloudDevelopRef: utils.PointerTo("dev"),
-		PreventDeletion:            utils.PointerTo(false),
-	}, user)
-	s.NoError(err)
-	s.True(created)
-
 	hook := models.GithubActionsDeployHook{
 		Trigger: models.DeployHookTriggerConfig{
-			OnEnvironmentID: &environment.ID,
+			OnEnvironmentID: utils.PointerTo(s.TestData.Environment_Prod().ID),
 		},
 		GithubActionsOwner:        utils.PointerTo("owner"),
 		GithubActionsRepo:         utils.PointerTo("repo"),
@@ -150,38 +91,9 @@ func (s *handlerSuite) TestGithubActionsDeployHooksV3Edit_forbidden() {
 }
 
 func (s *handlerSuite) TestGithubActionsDeployHooksV3Edit() {
-	user := s.SetSuitableTestUserForDB()
-	cluster, created, err := v2models.InternalClusterStore.Create(s.DB, v2models.Cluster{
-		Name:                "terra-dev",
-		Provider:            "google",
-		GoogleProject:       "broad-dsde-dev",
-		Base:                utils.PointerTo("live"),
-		Address:             utils.PointerTo("0.0.0.0"),
-		RequiresSuitability: utils.PointerTo(false),
-		Location:            "us-central1-a",
-		HelmfileRef:         utils.PointerTo("HEAD"),
-	}, user)
-	s.NoError(err)
-	s.True(created)
-	environment, created, err := v2models.InternalEnvironmentStore.Create(s.DB, v2models.Environment{
-		Name:                       "dev",
-		Lifecycle:                  "static",
-		UniqueResourcePrefix:       "a1b2",
-		Base:                       "live",
-		DefaultClusterID:           &cluster.ID,
-		DefaultNamespace:           "terra-dev",
-		OwnerID:                    &user.ID,
-		RequiresSuitability:        utils.PointerTo(false),
-		HelmfileRef:                utils.PointerTo("HEAD"),
-		DefaultFirecloudDevelopRef: utils.PointerTo("dev"),
-		PreventDeletion:            utils.PointerTo(false),
-	}, user)
-	s.NoError(err)
-	s.True(created)
-
 	hook := models.GithubActionsDeployHook{
 		Trigger: models.DeployHookTriggerConfig{
-			OnEnvironmentID: &environment.ID,
+			OnEnvironmentID: utils.PointerTo(s.TestData.Environment_Dev().ID),
 		},
 		GithubActionsOwner:        utils.PointerTo("owner"),
 		GithubActionsRepo:         utils.PointerTo("repo"),
@@ -211,7 +123,7 @@ func (s *handlerSuite) TestGithubActionsDeployHooksV3Edit() {
 			s.True(*got.OnSuccess)
 		}
 		if s.NotNil(got.OnEnvironment) {
-			s.Equal(environment.Name, *got.OnEnvironment)
+			s.Equal(s.TestData.Environment_Dev().Name, *got.OnEnvironment)
 		}
 	})
 
@@ -226,7 +138,7 @@ func (s *handlerSuite) TestGithubActionsDeployHooksV3Edit() {
 			&got)
 		s.Equal(http.StatusOK, code)
 		if s.NotNil(got.OnEnvironment) {
-			s.Equal(environment.Name, *got.OnEnvironment)
+			s.Equal(s.TestData.Environment_Dev().Name, *got.OnEnvironment)
 		}
 		if s.NotNil(got.GithubActionsWorkflowInputs) {
 			s.Equal("{\"input-1\":\"foo\"}", got.GithubActionsWorkflowInputs.String())
@@ -240,7 +152,7 @@ func (s *handlerSuite) TestGithubActionsDeployHooksV3Edit() {
 			&got)
 		s.Equal(http.StatusOK, code)
 		if s.NotNil(got.OnEnvironment) {
-			s.Equal(environment.Name, *got.OnEnvironment)
+			s.Equal(s.TestData.Environment_Dev().Name, *got.OnEnvironment)
 		}
 		if s.NotNil(got.GithubActionsWorkflowInputs) {
 			s.Equal("{\"input-2\":\"bar\"}", got.GithubActionsWorkflowInputs.String())
