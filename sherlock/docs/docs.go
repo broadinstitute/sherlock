@@ -1043,7 +1043,7 @@ const docTemplate = `{
                             "type": "integer"
                         },
                         "collectionFormat": "csv",
-                        "description": "Get specific changesets by their IDs, can be passed multiple times",
+                        "description": "Get specific changesets by their IDs, can be passed multiple times and/or be comma-separated",
                         "name": "id",
                         "in": "query"
                     },
