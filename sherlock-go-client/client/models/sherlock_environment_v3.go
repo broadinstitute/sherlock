@@ -41,9 +41,6 @@ type SherlockEnvironmentV3 struct {
 	// default cluster info
 	DefaultClusterInfo *SherlockClusterV3 `json:"defaultClusterInfo,omitempty"`
 
-	// should be the environment branch for live envs. Is usually dev for template/dynamic but not necessarily
-	DefaultFirecloudDevelopRef *string `json:"defaultFirecloudDevelopRef,omitempty"`
-
 	// When creating, will be calculated if left empty
 	DefaultNamespace string `json:"defaultNamespace,omitempty"`
 

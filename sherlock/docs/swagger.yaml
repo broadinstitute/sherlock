@@ -162,8 +162,6 @@ definitions:
         type: string
       fromChartVersionResolver:
         type: string
-      fromFirecloudDevelopRef:
-        type: string
       fromHelmfileRef:
         type: string
       fromHelmfileRefEnabled:
@@ -207,8 +205,6 @@ definitions:
       toChartVersionReference:
         type: string
       toChartVersionResolver:
-        type: string
-      toFirecloudDevelopRef:
         type: string
       toHelmfileRef:
         type: string
@@ -257,8 +253,6 @@ definitions:
       toChartVersionFollowChartRelease:
         type: string
       toChartVersionResolver:
-        type: string
-      toFirecloudDevelopRef:
         type: string
       toHelmfileRef:
         type: string
@@ -352,8 +346,6 @@ definitions:
         type: string
       environmentInfo:
         $ref: '#/definitions/sherlock.EnvironmentV3'
-      firecloudDevelopRef:
-        type: string
       helmfileRef:
         default: HEAD
         type: string
@@ -436,8 +428,6 @@ definitions:
       environment:
         description: Either this or cluster must be provided.
         type: string
-      firecloudDevelopRef:
-        type: string
       helmfileRef:
         default: HEAD
         type: string
@@ -515,10 +505,6 @@ definitions:
         type: string
       id:
         type: integer
-      legacyConfigsEnabled:
-        default: false
-        description: Indicates whether a chart requires config rendering from firecloud-develop
-        type: boolean
       name:
         description: Required when creating
         type: string
@@ -556,10 +542,6 @@ definitions:
         type: string
       description:
         type: string
-      legacyConfigsEnabled:
-        default: false
-        description: Indicates whether a chart requires config rendering from firecloud-develop
-        type: boolean
       name:
         description: Required when creating
         type: string
@@ -594,10 +576,6 @@ definitions:
         type: string
       description:
         type: string
-      legacyConfigsEnabled:
-        default: false
-        description: Indicates whether a chart requires config rendering from firecloud-develop
-        type: boolean
       pactParticipant:
         default: false
         type: boolean
@@ -1035,11 +1013,6 @@ definitions:
         type: string
       defaultClusterInfo:
         $ref: '#/definitions/sherlock.ClusterV3'
-      defaultFirecloudDevelopRef:
-        default: dev
-        description: should be the environment branch for live envs. Is usually dev
-          for template/dynamic but not necessarily
-        type: string
       defaultNamespace:
         description: When creating, will be calculated if left empty
         type: string
@@ -1136,11 +1109,6 @@ definitions:
         type: string
       defaultCluster:
         type: string
-      defaultFirecloudDevelopRef:
-        default: dev
-        description: should be the environment branch for live envs. Is usually dev
-          for template/dynamic but not necessarily
-        type: string
       defaultNamespace:
         description: When creating, will be calculated if left empty
         type: string
@@ -1217,11 +1185,6 @@ definitions:
         default: bee.envs-terra.bio
         type: string
       defaultCluster:
-        type: string
-      defaultFirecloudDevelopRef:
-        default: dev
-        description: should be the environment branch for live envs. Is usually dev
-          for template/dynamic but not necessarily
         type: string
       deleteAfter:
         description: If set, the BEE will be automatically deleted after this time
@@ -3530,9 +3493,6 @@ paths:
         name: fromChartVersionResolver
         type: string
       - in: query
-        name: fromFirecloudDevelopRef
-        type: string
-      - in: query
         name: fromHelmfileRef
         type: string
       - in: query
@@ -3578,9 +3538,6 @@ paths:
         type: string
       - in: query
         name: toChartVersionResolver
-        type: string
-      - in: query
-        name: toFirecloudDevelopRef
         type: string
       - in: query
         name: toHelmfileRef
@@ -3759,9 +3716,6 @@ paths:
       - description: Either this or cluster must be provided.
         in: query
         name: environment
-        type: string
-      - in: query
-        name: firecloudDevelopRef
         type: string
       - default: HEAD
         in: query
@@ -4347,11 +4301,6 @@ paths:
       - in: query
         name: id
         type: integer
-      - default: false
-        description: Indicates whether a chart requires config rendering from firecloud-develop
-        in: query
-        name: legacyConfigsEnabled
-        type: boolean
       - description: Required when creating
         in: query
         name: name
@@ -6243,12 +6192,6 @@ paths:
         type: string
       - in: query
         name: defaultCluster
-        type: string
-      - default: dev
-        description: should be the environment branch for live envs. Is usually dev
-          for template/dynamic but not necessarily
-        in: query
-        name: defaultFirecloudDevelopRef
         type: string
       - description: When creating, will be calculated if left empty
         in: query

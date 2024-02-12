@@ -53,9 +53,6 @@ type SherlockChartV3 struct {
 	// id
 	ID int64 `json:"id,omitempty"`
 
-	// Indicates whether a chart requires config rendering from firecloud-develop
-	LegacyConfigsEnabled *bool `json:"legacyConfigsEnabled,omitempty"`
-
 	// Required when creating
 	Name string `json:"name,omitempty"`
 

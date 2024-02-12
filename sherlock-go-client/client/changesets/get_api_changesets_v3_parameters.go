@@ -101,9 +101,6 @@ type GetAPIChangesetsV3Params struct {
 	// FromChartVersionResolver.
 	FromChartVersionResolver *string
 
-	// FromFirecloudDevelopRef.
-	FromFirecloudDevelopRef *string
-
 	// FromHelmfileRef.
 	FromHelmfileRef *string
 
@@ -170,9 +167,6 @@ type GetAPIChangesetsV3Params struct {
 
 	// ToChartVersionResolver.
 	ToChartVersionResolver *string
-
-	// ToFirecloudDevelopRef.
-	ToFirecloudDevelopRef *string
 
 	// ToHelmfileRef.
 	ToHelmfileRef *string
@@ -381,17 +375,6 @@ func (o *GetAPIChangesetsV3Params) SetFromChartVersionResolver(fromChartVersionR
 	o.FromChartVersionResolver = fromChartVersionResolver
 }
 
-// WithFromFirecloudDevelopRef adds the fromFirecloudDevelopRef to the get API changesets v3 params
-func (o *GetAPIChangesetsV3Params) WithFromFirecloudDevelopRef(fromFirecloudDevelopRef *string) *GetAPIChangesetsV3Params {
-	o.SetFromFirecloudDevelopRef(fromFirecloudDevelopRef)
-	return o
-}
-
-// SetFromFirecloudDevelopRef adds the fromFirecloudDevelopRef to the get API changesets v3 params
-func (o *GetAPIChangesetsV3Params) SetFromFirecloudDevelopRef(fromFirecloudDevelopRef *string) {
-	o.FromFirecloudDevelopRef = fromFirecloudDevelopRef
-}
-
 // WithFromHelmfileRef adds the fromHelmfileRef to the get API changesets v3 params
 func (o *GetAPIChangesetsV3Params) WithFromHelmfileRef(fromHelmfileRef *string) *GetAPIChangesetsV3Params {
 	o.SetFromHelmfileRef(fromHelmfileRef)
@@ -588,17 +571,6 @@ func (o *GetAPIChangesetsV3Params) WithToChartVersionResolver(toChartVersionReso
 // SetToChartVersionResolver adds the toChartVersionResolver to the get API changesets v3 params
 func (o *GetAPIChangesetsV3Params) SetToChartVersionResolver(toChartVersionResolver *string) {
 	o.ToChartVersionResolver = toChartVersionResolver
-}
-
-// WithToFirecloudDevelopRef adds the toFirecloudDevelopRef to the get API changesets v3 params
-func (o *GetAPIChangesetsV3Params) WithToFirecloudDevelopRef(toFirecloudDevelopRef *string) *GetAPIChangesetsV3Params {
-	o.SetToFirecloudDevelopRef(toFirecloudDevelopRef)
-	return o
-}
-
-// SetToFirecloudDevelopRef adds the toFirecloudDevelopRef to the get API changesets v3 params
-func (o *GetAPIChangesetsV3Params) SetToFirecloudDevelopRef(toFirecloudDevelopRef *string) {
-	o.ToFirecloudDevelopRef = toFirecloudDevelopRef
 }
 
 // WithToHelmfileRef adds the toHelmfileRef to the get API changesets v3 params
@@ -858,23 +830,6 @@ func (o *GetAPIChangesetsV3Params) WriteToRequest(r runtime.ClientRequest, reg s
 		if qFromChartVersionResolver != "" {
 
 			if err := r.SetQueryParam("fromChartVersionResolver", qFromChartVersionResolver); err != nil {
-				return err
-			}
-		}
-	}
-
-	if o.FromFirecloudDevelopRef != nil {
-
-		// query param fromFirecloudDevelopRef
-		var qrFromFirecloudDevelopRef string
-
-		if o.FromFirecloudDevelopRef != nil {
-			qrFromFirecloudDevelopRef = *o.FromFirecloudDevelopRef
-		}
-		qFromFirecloudDevelopRef := qrFromFirecloudDevelopRef
-		if qFromFirecloudDevelopRef != "" {
-
-			if err := r.SetQueryParam("fromFirecloudDevelopRef", qFromFirecloudDevelopRef); err != nil {
 				return err
 			}
 		}
@@ -1175,23 +1130,6 @@ func (o *GetAPIChangesetsV3Params) WriteToRequest(r runtime.ClientRequest, reg s
 		if qToChartVersionResolver != "" {
 
 			if err := r.SetQueryParam("toChartVersionResolver", qToChartVersionResolver); err != nil {
-				return err
-			}
-		}
-	}
-
-	if o.ToFirecloudDevelopRef != nil {
-
-		// query param toFirecloudDevelopRef
-		var qrToFirecloudDevelopRef string
-
-		if o.ToFirecloudDevelopRef != nil {
-			qrToFirecloudDevelopRef = *o.ToFirecloudDevelopRef
-		}
-		qToFirecloudDevelopRef := qrToFirecloudDevelopRef
-		if qToFirecloudDevelopRef != "" {
-
-			if err := r.SetQueryParam("toFirecloudDevelopRef", qToFirecloudDevelopRef); err != nil {
 				return err
 			}
 		}

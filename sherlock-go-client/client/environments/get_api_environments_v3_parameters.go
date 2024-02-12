@@ -90,14 +90,6 @@ type GetAPIEnvironmentsV3Params struct {
 	// DefaultCluster.
 	DefaultCluster *string
 
-	/* DefaultFirecloudDevelopRef.
-
-	   should be the environment branch for live envs. Is usually dev for template/dynamic but not necessarily
-
-	   Default: "dev"
-	*/
-	DefaultFirecloudDevelopRef *string
-
 	/* DefaultNamespace.
 
 	   When creating, will be calculated if left empty
@@ -251,8 +243,6 @@ func (o *GetAPIEnvironmentsV3Params) SetDefaults() {
 
 		baseDomainDefault = string("bee.envs-terra.bio")
 
-		defaultFirecloudDevelopRefDefault = string("dev")
-
 		helmfileRefDefault = string("HEAD")
 
 		lifecycleDefault = string("dynamic")
@@ -267,15 +257,14 @@ func (o *GetAPIEnvironmentsV3Params) SetDefaults() {
 	)
 
 	val := GetAPIEnvironmentsV3Params{
-		AutoPopulateChartReleases:  &autoPopulateChartReleasesDefault,
-		BaseDomain:                 &baseDomainDefault,
-		DefaultFirecloudDevelopRef: &defaultFirecloudDevelopRefDefault,
-		HelmfileRef:                &helmfileRefDefault,
-		Lifecycle:                  &lifecycleDefault,
-		NamePrefixesDomain:         &namePrefixesDomainDefault,
-		Offline:                    &offlineDefault,
-		PreventDeletion:            &preventDeletionDefault,
-		RequiresSuitability:        &requiresSuitabilityDefault,
+		AutoPopulateChartReleases: &autoPopulateChartReleasesDefault,
+		BaseDomain:                &baseDomainDefault,
+		HelmfileRef:               &helmfileRefDefault,
+		Lifecycle:                 &lifecycleDefault,
+		NamePrefixesDomain:        &namePrefixesDomainDefault,
+		Offline:                   &offlineDefault,
+		PreventDeletion:           &preventDeletionDefault,
+		RequiresSuitability:       &requiresSuitabilityDefault,
 	}
 
 	val.timeout = o.timeout
@@ -381,17 +370,6 @@ func (o *GetAPIEnvironmentsV3Params) WithDefaultCluster(defaultCluster *string) 
 // SetDefaultCluster adds the defaultCluster to the get API environments v3 params
 func (o *GetAPIEnvironmentsV3Params) SetDefaultCluster(defaultCluster *string) {
 	o.DefaultCluster = defaultCluster
-}
-
-// WithDefaultFirecloudDevelopRef adds the defaultFirecloudDevelopRef to the get API environments v3 params
-func (o *GetAPIEnvironmentsV3Params) WithDefaultFirecloudDevelopRef(defaultFirecloudDevelopRef *string) *GetAPIEnvironmentsV3Params {
-	o.SetDefaultFirecloudDevelopRef(defaultFirecloudDevelopRef)
-	return o
-}
-
-// SetDefaultFirecloudDevelopRef adds the defaultFirecloudDevelopRef to the get API environments v3 params
-func (o *GetAPIEnvironmentsV3Params) SetDefaultFirecloudDevelopRef(defaultFirecloudDevelopRef *string) {
-	o.DefaultFirecloudDevelopRef = defaultFirecloudDevelopRef
 }
 
 // WithDefaultNamespace adds the defaultNamespace to the get API environments v3 params
@@ -763,23 +741,6 @@ func (o *GetAPIEnvironmentsV3Params) WriteToRequest(r runtime.ClientRequest, reg
 		if qDefaultCluster != "" {
 
 			if err := r.SetQueryParam("defaultCluster", qDefaultCluster); err != nil {
-				return err
-			}
-		}
-	}
-
-	if o.DefaultFirecloudDevelopRef != nil {
-
-		// query param defaultFirecloudDevelopRef
-		var qrDefaultFirecloudDevelopRef string
-
-		if o.DefaultFirecloudDevelopRef != nil {
-			qrDefaultFirecloudDevelopRef = *o.DefaultFirecloudDevelopRef
-		}
-		qDefaultFirecloudDevelopRef := qrDefaultFirecloudDevelopRef
-		if qDefaultFirecloudDevelopRef != "" {
-
-			if err := r.SetQueryParam("defaultFirecloudDevelopRef", qDefaultFirecloudDevelopRef); err != nil {
 				return err
 			}
 		}

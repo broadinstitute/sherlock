@@ -84,12 +84,6 @@ export interface SherlockChangesetV3PlanRequestChartReleaseEntry {
      * @type {string}
      * @memberof SherlockChangesetV3PlanRequestChartReleaseEntry
      */
-    toFirecloudDevelopRef?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof SherlockChangesetV3PlanRequestChartReleaseEntry
-     */
     toHelmfileRef?: string;
     /**
      * 
@@ -134,7 +128,6 @@ export function SherlockChangesetV3PlanRequestChartReleaseEntryFromJSONTyped(jso
         'toChartVersionExact': !exists(json, 'toChartVersionExact') ? undefined : json['toChartVersionExact'],
         'toChartVersionFollowChartRelease': !exists(json, 'toChartVersionFollowChartRelease') ? undefined : json['toChartVersionFollowChartRelease'],
         'toChartVersionResolver': !exists(json, 'toChartVersionResolver') ? undefined : json['toChartVersionResolver'],
-        'toFirecloudDevelopRef': !exists(json, 'toFirecloudDevelopRef') ? undefined : json['toFirecloudDevelopRef'],
         'toHelmfileRef': !exists(json, 'toHelmfileRef') ? undefined : json['toHelmfileRef'],
         'toHelmfileRefEnabled': !exists(json, 'toHelmfileRefEnabled') ? undefined : json['toHelmfileRefEnabled'],
         'useExactVersionsFromOtherChartRelease': !exists(json, 'useExactVersionsFromOtherChartRelease') ? undefined : json['useExactVersionsFromOtherChartRelease'],
@@ -160,7 +153,6 @@ export function SherlockChangesetV3PlanRequestChartReleaseEntryToJSON(value?: Sh
         'toChartVersionExact': value.toChartVersionExact,
         'toChartVersionFollowChartRelease': value.toChartVersionFollowChartRelease,
         'toChartVersionResolver': value.toChartVersionResolver,
-        'toFirecloudDevelopRef': value.toFirecloudDevelopRef,
         'toHelmfileRef': value.toHelmfileRef,
         'toHelmfileRefEnabled': value.toHelmfileRefEnabled,
         'useExactVersionsFromOtherChartRelease': value.useExactVersionsFromOtherChartRelease,

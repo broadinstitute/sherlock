@@ -90,12 +90,6 @@ export interface SherlockChartReleaseV3Create {
      * @type {string}
      * @memberof SherlockChartReleaseV3Create
      */
-    firecloudDevelopRef?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof SherlockChartReleaseV3Create
-     */
     helmfileRef?: string;
     /**
      * 
@@ -201,7 +195,6 @@ export function SherlockChartReleaseV3CreateFromJSONTyped(json: any, ignoreDiscr
         'chartVersionResolver': !exists(json, 'chartVersionResolver') ? undefined : json['chartVersionResolver'],
         'cluster': !exists(json, 'cluster') ? undefined : json['cluster'],
         'environment': !exists(json, 'environment') ? undefined : json['environment'],
-        'firecloudDevelopRef': !exists(json, 'firecloudDevelopRef') ? undefined : json['firecloudDevelopRef'],
         'helmfileRef': !exists(json, 'helmfileRef') ? undefined : json['helmfileRef'],
         'helmfileRefEnabled': !exists(json, 'helmfileRefEnabled') ? undefined : json['helmfileRefEnabled'],
         'includedInBulkChangesets': !exists(json, 'includedInBulkChangesets') ? undefined : json['includedInBulkChangesets'],
@@ -234,7 +227,6 @@ export function SherlockChartReleaseV3CreateToJSON(value?: SherlockChartReleaseV
         'chartVersionResolver': value.chartVersionResolver,
         'cluster': value.cluster,
         'environment': value.environment,
-        'firecloudDevelopRef': value.firecloudDevelopRef,
         'helmfileRef': value.helmfileRef,
         'helmfileRefEnabled': value.helmfileRefEnabled,
         'includedInBulkChangesets': value.includedInBulkChangesets,

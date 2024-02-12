@@ -68,12 +68,6 @@ export interface SherlockChartV3Edit {
      */
     description?: string;
     /**
-     * Indicates whether a chart requires config rendering from firecloud-develop
-     * @type {boolean}
-     * @memberof SherlockChartV3Edit
-     */
-    legacyConfigsEnabled?: boolean;
-    /**
      * 
      * @type {boolean}
      * @memberof SherlockChartV3Edit
@@ -114,7 +108,6 @@ export function SherlockChartV3EditFromJSONTyped(json: any, ignoreDiscriminator:
         'defaultProtocol': !exists(json, 'defaultProtocol') ? undefined : json['defaultProtocol'],
         'defaultSubdomain': !exists(json, 'defaultSubdomain') ? undefined : json['defaultSubdomain'],
         'description': !exists(json, 'description') ? undefined : json['description'],
-        'legacyConfigsEnabled': !exists(json, 'legacyConfigsEnabled') ? undefined : json['legacyConfigsEnabled'],
         'pactParticipant': !exists(json, 'pactParticipant') ? undefined : json['pactParticipant'],
         'playbookURL': !exists(json, 'playbookURL') ? undefined : json['playbookURL'],
     };
@@ -137,7 +130,6 @@ export function SherlockChartV3EditToJSON(value?: SherlockChartV3Edit | null): a
         'defaultProtocol': value.defaultProtocol,
         'defaultSubdomain': value.defaultSubdomain,
         'description': value.description,
-        'legacyConfigsEnabled': value.legacyConfigsEnabled,
         'pactParticipant': value.pactParticipant,
         'playbookURL': value.playbookURL,
     };

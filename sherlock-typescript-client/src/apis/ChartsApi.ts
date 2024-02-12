@@ -51,7 +51,6 @@ export interface ApiChartsV3GetRequest {
     defaultSubdomain?: string;
     description?: string;
     id?: number;
-    legacyConfigsEnabled?: boolean;
     name?: string;
     pactParticipant?: boolean;
     playbookURL?: string;
@@ -172,10 +171,6 @@ export class ChartsApi extends runtime.BaseAPI {
 
         if (requestParameters.id !== undefined) {
             queryParameters['id'] = requestParameters.id;
-        }
-
-        if (requestParameters.legacyConfigsEnabled !== undefined) {
-            queryParameters['legacyConfigsEnabled'] = requestParameters.legacyConfigsEnabled;
         }
 
         if (requestParameters.name !== undefined) {

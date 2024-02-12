@@ -87,12 +87,6 @@ export interface SherlockEnvironmentV3 {
      */
     defaultClusterInfo?: SherlockClusterV3;
     /**
-     * should be the environment branch for live envs. Is usually dev for template/dynamic but not necessarily
-     * @type {string}
-     * @memberof SherlockEnvironmentV3
-     */
-    defaultFirecloudDevelopRef?: string;
-    /**
      * When creating, will be calculated if left empty
      * @type {string}
      * @memberof SherlockEnvironmentV3
@@ -276,7 +270,6 @@ export function SherlockEnvironmentV3FromJSONTyped(json: any, ignoreDiscriminato
         'createdAt': !exists(json, 'createdAt') ? undefined : (new Date(json['createdAt'])),
         'defaultCluster': !exists(json, 'defaultCluster') ? undefined : json['defaultCluster'],
         'defaultClusterInfo': !exists(json, 'defaultClusterInfo') ? undefined : SherlockClusterV3FromJSON(json['defaultClusterInfo']),
-        'defaultFirecloudDevelopRef': !exists(json, 'defaultFirecloudDevelopRef') ? undefined : json['defaultFirecloudDevelopRef'],
         'defaultNamespace': !exists(json, 'defaultNamespace') ? undefined : json['defaultNamespace'],
         'deleteAfter': !exists(json, 'deleteAfter') ? undefined : (new Date(json['deleteAfter'])),
         'description': !exists(json, 'description') ? undefined : json['description'],
@@ -322,7 +315,6 @@ export function SherlockEnvironmentV3ToJSON(value?: SherlockEnvironmentV3 | null
         'createdAt': value.createdAt === undefined ? undefined : (value.createdAt.toISOString()),
         'defaultCluster': value.defaultCluster,
         'defaultClusterInfo': SherlockClusterV3ToJSON(value.defaultClusterInfo),
-        'defaultFirecloudDevelopRef': value.defaultFirecloudDevelopRef,
         'defaultNamespace': value.defaultNamespace,
         'deleteAfter': value.deleteAfter === undefined ? undefined : (value.deleteAfter.toISOString()),
         'description': value.description,

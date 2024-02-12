@@ -41,9 +41,6 @@ type SherlockChartV3Edit struct {
 	// description
 	Description string `json:"description,omitempty"`
 
-	// Indicates whether a chart requires config rendering from firecloud-develop
-	LegacyConfigsEnabled *bool `json:"legacyConfigsEnabled,omitempty"`
-
 	// pact participant
 	PactParticipant *bool `json:"pactParticipant,omitempty"`
 

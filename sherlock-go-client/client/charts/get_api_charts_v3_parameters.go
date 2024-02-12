@@ -104,12 +104,6 @@ type GetAPIChartsV3Params struct {
 	// ID.
 	ID *int64
 
-	/* LegacyConfigsEnabled.
-
-	   Indicates whether a chart requires config rendering from firecloud-develop
-	*/
-	LegacyConfigsEnabled *bool
-
 	/* Limit.
 
 	   Control how many Charts are returned (default 0, meaning all)
@@ -165,8 +159,6 @@ func (o *GetAPIChartsV3Params) SetDefaults() {
 
 		defaultProtocolDefault = string("https")
 
-		legacyConfigsEnabledDefault = bool(false)
-
 		pactParticipantDefault = bool(false)
 	)
 
@@ -175,7 +167,6 @@ func (o *GetAPIChartsV3Params) SetDefaults() {
 		ChartRepo:            &chartRepoDefault,
 		DefaultPort:          &defaultPortDefault,
 		DefaultProtocol:      &defaultProtocolDefault,
-		LegacyConfigsEnabled: &legacyConfigsEnabledDefault,
 		PactParticipant:      &pactParticipantDefault,
 	}
 
@@ -326,17 +317,6 @@ func (o *GetAPIChartsV3Params) WithID(id *int64) *GetAPIChartsV3Params {
 // SetID adds the id to the get API charts v3 params
 func (o *GetAPIChartsV3Params) SetID(id *int64) {
 	o.ID = id
-}
-
-// WithLegacyConfigsEnabled adds the legacyConfigsEnabled to the get API charts v3 params
-func (o *GetAPIChartsV3Params) WithLegacyConfigsEnabled(legacyConfigsEnabled *bool) *GetAPIChartsV3Params {
-	o.SetLegacyConfigsEnabled(legacyConfigsEnabled)
-	return o
-}
-
-// SetLegacyConfigsEnabled adds the legacyConfigsEnabled to the get API charts v3 params
-func (o *GetAPIChartsV3Params) SetLegacyConfigsEnabled(legacyConfigsEnabled *bool) {
-	o.LegacyConfigsEnabled = legacyConfigsEnabled
 }
 
 // WithLimit adds the limit to the get API charts v3 params
@@ -578,23 +558,6 @@ func (o *GetAPIChartsV3Params) WriteToRequest(r runtime.ClientRequest, reg strfm
 		if qID != "" {
 
 			if err := r.SetQueryParam("id", qID); err != nil {
-				return err
-			}
-		}
-	}
-
-	if o.LegacyConfigsEnabled != nil {
-
-		// query param legacyConfigsEnabled
-		var qrLegacyConfigsEnabled bool
-
-		if o.LegacyConfigsEnabled != nil {
-			qrLegacyConfigsEnabled = *o.LegacyConfigsEnabled
-		}
-		qLegacyConfigsEnabled := swag.FormatBool(qrLegacyConfigsEnabled)
-		if qLegacyConfigsEnabled != "" {
-
-			if err := r.SetQueryParam("legacyConfigsEnabled", qLegacyConfigsEnabled); err != nil {
 				return err
 			}
 		}

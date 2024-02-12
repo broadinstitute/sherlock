@@ -86,9 +86,6 @@ type SherlockChartReleaseV3 struct {
 	// environment info
 	EnvironmentInfo *SherlockEnvironmentV3 `json:"environmentInfo,omitempty"`
 
-	// firecloud develop ref
-	FirecloudDevelopRef string `json:"firecloudDevelopRef,omitempty"`
-
 	// helmfile ref
 	HelmfileRef *string `json:"helmfileRef,omitempty"`
 

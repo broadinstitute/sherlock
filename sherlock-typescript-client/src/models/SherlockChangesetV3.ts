@@ -157,12 +157,6 @@ export interface SherlockChangesetV3 {
      * @type {string}
      * @memberof SherlockChangesetV3
      */
-    fromFirecloudDevelopRef?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof SherlockChangesetV3
-     */
     fromHelmfileRef?: string;
     /**
      * 
@@ -277,12 +271,6 @@ export interface SherlockChangesetV3 {
      * @type {string}
      * @memberof SherlockChangesetV3
      */
-    toFirecloudDevelopRef?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof SherlockChangesetV3
-     */
     toHelmfileRef?: string;
     /**
      * 
@@ -340,7 +328,6 @@ export function SherlockChangesetV3FromJSONTyped(json: any, ignoreDiscriminator:
         'fromChartVersionFollowChartRelease': !exists(json, 'fromChartVersionFollowChartRelease') ? undefined : json['fromChartVersionFollowChartRelease'],
         'fromChartVersionReference': !exists(json, 'fromChartVersionReference') ? undefined : json['fromChartVersionReference'],
         'fromChartVersionResolver': !exists(json, 'fromChartVersionResolver') ? undefined : json['fromChartVersionResolver'],
-        'fromFirecloudDevelopRef': !exists(json, 'fromFirecloudDevelopRef') ? undefined : json['fromFirecloudDevelopRef'],
         'fromHelmfileRef': !exists(json, 'fromHelmfileRef') ? undefined : json['fromHelmfileRef'],
         'fromHelmfileRefEnabled': !exists(json, 'fromHelmfileRefEnabled') ? undefined : json['fromHelmfileRefEnabled'],
         'fromResolvedAt': !exists(json, 'fromResolvedAt') ? undefined : (new Date(json['fromResolvedAt'])),
@@ -360,7 +347,6 @@ export function SherlockChangesetV3FromJSONTyped(json: any, ignoreDiscriminator:
         'toChartVersionFollowChartRelease': !exists(json, 'toChartVersionFollowChartRelease') ? undefined : json['toChartVersionFollowChartRelease'],
         'toChartVersionReference': !exists(json, 'toChartVersionReference') ? undefined : json['toChartVersionReference'],
         'toChartVersionResolver': !exists(json, 'toChartVersionResolver') ? undefined : json['toChartVersionResolver'],
-        'toFirecloudDevelopRef': !exists(json, 'toFirecloudDevelopRef') ? undefined : json['toFirecloudDevelopRef'],
         'toHelmfileRef': !exists(json, 'toHelmfileRef') ? undefined : json['toHelmfileRef'],
         'toHelmfileRefEnabled': !exists(json, 'toHelmfileRefEnabled') ? undefined : json['toHelmfileRefEnabled'],
         'toResolvedAt': !exists(json, 'toResolvedAt') ? undefined : (new Date(json['toResolvedAt'])),
@@ -394,7 +380,6 @@ export function SherlockChangesetV3ToJSON(value?: SherlockChangesetV3 | null): a
         'fromChartVersionFollowChartRelease': value.fromChartVersionFollowChartRelease,
         'fromChartVersionReference': value.fromChartVersionReference,
         'fromChartVersionResolver': value.fromChartVersionResolver,
-        'fromFirecloudDevelopRef': value.fromFirecloudDevelopRef,
         'fromHelmfileRef': value.fromHelmfileRef,
         'fromHelmfileRefEnabled': value.fromHelmfileRefEnabled,
         'fromResolvedAt': value.fromResolvedAt === undefined ? undefined : (value.fromResolvedAt.toISOString()),
@@ -414,7 +399,6 @@ export function SherlockChangesetV3ToJSON(value?: SherlockChangesetV3 | null): a
         'toChartVersionFollowChartRelease': value.toChartVersionFollowChartRelease,
         'toChartVersionReference': value.toChartVersionReference,
         'toChartVersionResolver': value.toChartVersionResolver,
-        'toFirecloudDevelopRef': value.toFirecloudDevelopRef,
         'toHelmfileRef': value.toHelmfileRef,
         'toHelmfileRefEnabled': value.toHelmfileRefEnabled,
         'toResolvedAt': value.toResolvedAt === undefined ? undefined : (value.toResolvedAt.toISOString()),

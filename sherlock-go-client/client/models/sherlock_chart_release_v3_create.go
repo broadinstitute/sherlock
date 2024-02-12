@@ -55,9 +55,6 @@ type SherlockChartReleaseV3Create struct {
 	// Either this or cluster must be provided.
 	Environment string `json:"environment,omitempty"`
 
-	// firecloud develop ref
-	FirecloudDevelopRef string `json:"firecloudDevelopRef,omitempty"`
-
 	// helmfile ref
 	HelmfileRef *string `json:"helmfileRef,omitempty"`
 

@@ -25,9 +25,6 @@ type SherlockEnvironmentV3Edit struct {
 	// default cluster
 	DefaultCluster string `json:"defaultCluster,omitempty"`
 
-	// should be the environment branch for live envs. Is usually dev for template/dynamic but not necessarily
-	DefaultFirecloudDevelopRef *string `json:"defaultFirecloudDevelopRef,omitempty"`
-
 	// If set, the BEE will be automatically deleted after this time (thelma checks this field)
 	// Format: date-time
 	DeleteAfter strfmt.DateTime `json:"deleteAfter,omitempty"`

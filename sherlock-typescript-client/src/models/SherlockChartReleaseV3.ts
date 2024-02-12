@@ -193,12 +193,6 @@ export interface SherlockChartReleaseV3 {
      * @type {string}
      * @memberof SherlockChartReleaseV3
      */
-    firecloudDevelopRef?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof SherlockChartReleaseV3
-     */
     helmfileRef?: string;
     /**
      * 
@@ -338,7 +332,6 @@ export function SherlockChartReleaseV3FromJSONTyped(json: any, ignoreDiscriminat
         'destinationType': !exists(json, 'destinationType') ? undefined : json['destinationType'],
         'environment': !exists(json, 'environment') ? undefined : json['environment'],
         'environmentInfo': !exists(json, 'environmentInfo') ? undefined : SherlockEnvironmentV3FromJSON(json['environmentInfo']),
-        'firecloudDevelopRef': !exists(json, 'firecloudDevelopRef') ? undefined : json['firecloudDevelopRef'],
         'helmfileRef': !exists(json, 'helmfileRef') ? undefined : json['helmfileRef'],
         'helmfileRefEnabled': !exists(json, 'helmfileRefEnabled') ? undefined : json['helmfileRefEnabled'],
         'id': !exists(json, 'id') ? undefined : json['id'],
@@ -385,7 +378,6 @@ export function SherlockChartReleaseV3ToJSON(value?: SherlockChartReleaseV3 | nu
         'destinationType': value.destinationType,
         'environment': value.environment,
         'environmentInfo': SherlockEnvironmentV3ToJSON(value.environmentInfo),
-        'firecloudDevelopRef': value.firecloudDevelopRef,
         'helmfileRef': value.helmfileRef,
         'helmfileRefEnabled': value.helmfileRefEnabled,
         'id': value.id,

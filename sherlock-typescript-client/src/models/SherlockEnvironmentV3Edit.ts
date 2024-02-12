@@ -32,12 +32,6 @@ export interface SherlockEnvironmentV3Edit {
      */
     defaultCluster?: string;
     /**
-     * should be the environment branch for live envs. Is usually dev for template/dynamic but not necessarily
-     * @type {string}
-     * @memberof SherlockEnvironmentV3Edit
-     */
-    defaultFirecloudDevelopRef?: string;
-    /**
      * If set, the BEE will be automatically deleted after this time (thelma checks this field)
      * @type {Date}
      * @memberof SherlockEnvironmentV3Edit
@@ -150,7 +144,6 @@ export function SherlockEnvironmentV3EditFromJSONTyped(json: any, ignoreDiscrimi
         
         'baseDomain': !exists(json, 'baseDomain') ? undefined : json['baseDomain'],
         'defaultCluster': !exists(json, 'defaultCluster') ? undefined : json['defaultCluster'],
-        'defaultFirecloudDevelopRef': !exists(json, 'defaultFirecloudDevelopRef') ? undefined : json['defaultFirecloudDevelopRef'],
         'deleteAfter': !exists(json, 'deleteAfter') ? undefined : (new Date(json['deleteAfter'])),
         'description': !exists(json, 'description') ? undefined : json['description'],
         'helmfileRef': !exists(json, 'helmfileRef') ? undefined : json['helmfileRef'],
@@ -180,7 +173,6 @@ export function SherlockEnvironmentV3EditToJSON(value?: SherlockEnvironmentV3Edi
         
         'baseDomain': value.baseDomain,
         'defaultCluster': value.defaultCluster,
-        'defaultFirecloudDevelopRef': value.defaultFirecloudDevelopRef,
         'deleteAfter': value.deleteAfter === undefined ? undefined : (value.deleteAfter.toISOString()),
         'description': value.description,
         'helmfileRef': value.helmfileRef,

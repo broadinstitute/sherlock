@@ -47,9 +47,6 @@ type SherlockChangesetV3PlanRequestChartReleaseEntry struct {
 	// to chart version resolver
 	ToChartVersionResolver string `json:"toChartVersionResolver,omitempty"`
 
-	// to firecloud develop ref
-	ToFirecloudDevelopRef string `json:"toFirecloudDevelopRef,omitempty"`
-
 	// to helmfile ref
 	ToHelmfileRef string `json:"toHelmfileRef,omitempty"`
 

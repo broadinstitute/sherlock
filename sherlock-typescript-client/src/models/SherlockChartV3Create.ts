@@ -68,12 +68,6 @@ export interface SherlockChartV3Create {
      */
     description?: string;
     /**
-     * Indicates whether a chart requires config rendering from firecloud-develop
-     * @type {boolean}
-     * @memberof SherlockChartV3Create
-     */
-    legacyConfigsEnabled?: boolean;
-    /**
      * Required when creating
      * @type {string}
      * @memberof SherlockChartV3Create
@@ -120,7 +114,6 @@ export function SherlockChartV3CreateFromJSONTyped(json: any, ignoreDiscriminato
         'defaultProtocol': !exists(json, 'defaultProtocol') ? undefined : json['defaultProtocol'],
         'defaultSubdomain': !exists(json, 'defaultSubdomain') ? undefined : json['defaultSubdomain'],
         'description': !exists(json, 'description') ? undefined : json['description'],
-        'legacyConfigsEnabled': !exists(json, 'legacyConfigsEnabled') ? undefined : json['legacyConfigsEnabled'],
         'name': !exists(json, 'name') ? undefined : json['name'],
         'pactParticipant': !exists(json, 'pactParticipant') ? undefined : json['pactParticipant'],
         'playbookURL': !exists(json, 'playbookURL') ? undefined : json['playbookURL'],
@@ -144,7 +137,6 @@ export function SherlockChartV3CreateToJSON(value?: SherlockChartV3Create | null
         'defaultProtocol': value.defaultProtocol,
         'defaultSubdomain': value.defaultSubdomain,
         'description': value.description,
-        'legacyConfigsEnabled': value.legacyConfigsEnabled,
         'name': value.name,
         'pactParticipant': value.pactParticipant,
         'playbookURL': value.playbookURL,

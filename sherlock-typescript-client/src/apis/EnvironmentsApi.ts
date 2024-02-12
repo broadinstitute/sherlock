@@ -52,7 +52,6 @@ export interface ApiEnvironmentsV3GetRequest {
     baseDomain?: string;
     createdAt?: Date;
     defaultCluster?: string;
-    defaultFirecloudDevelopRef?: string;
     defaultNamespace?: string;
     deleteAfter?: Date;
     description?: string;
@@ -191,10 +190,6 @@ export class EnvironmentsApi extends runtime.BaseAPI {
 
         if (requestParameters.defaultCluster !== undefined) {
             queryParameters['defaultCluster'] = requestParameters.defaultCluster;
-        }
-
-        if (requestParameters.defaultFirecloudDevelopRef !== undefined) {
-            queryParameters['defaultFirecloudDevelopRef'] = requestParameters.defaultFirecloudDevelopRef;
         }
 
         if (requestParameters.defaultNamespace !== undefined) {
