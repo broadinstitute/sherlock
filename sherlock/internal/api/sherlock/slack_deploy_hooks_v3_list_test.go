@@ -2,7 +2,6 @@ package sherlock
 
 import (
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
-	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"net/http"
@@ -54,50 +53,8 @@ func (s *handlerSuite) TestSlackDeployHooksV3List_badOffset() {
 }
 
 func (s *handlerSuite) TestSlackDeployHooksV3List() {
-	user := s.SetSuitableTestUserForDB()
-	cluster, created, err := v2models.InternalClusterStore.Create(s.DB, v2models.Cluster{
-		Name:                "terra-dev",
-		Provider:            "google",
-		GoogleProject:       "broad-dsde-dev",
-		Base:                utils.PointerTo("live"),
-		Address:             utils.PointerTo("0.0.0.0"),
-		RequiresSuitability: utils.PointerTo(false),
-		Location:            "us-central1-a",
-		HelmfileRef:         utils.PointerTo("HEAD"),
-	}, user)
-	s.NoError(err)
-	s.True(created)
-	environment, created, err := v2models.InternalEnvironmentStore.Create(s.DB, v2models.Environment{
-		Name:                       "dev",
-		Lifecycle:                  "static",
-		UniqueResourcePrefix:       "a1b2",
-		Base:                       "live",
-		DefaultClusterID:           &cluster.ID,
-		DefaultNamespace:           "terra-dev",
-		OwnerID:                    &user.ID,
-		RequiresSuitability:        utils.PointerTo(false),
-		HelmfileRef:                utils.PointerTo("HEAD"),
-		DefaultFirecloudDevelopRef: utils.PointerTo("dev"),
-		PreventDeletion:            utils.PointerTo(false),
-	}, user)
-	s.NoError(err)
-	s.True(created)
-	environment2, created, err := v2models.InternalEnvironmentStore.Create(s.DB, v2models.Environment{
-		Name:                       "alpha",
-		Lifecycle:                  "static",
-		UniqueResourcePrefix:       "a1b3",
-		Base:                       "live",
-		DefaultClusterID:           &cluster.ID,
-		DefaultNamespace:           "terra-alpha",
-		OwnerID:                    &user.ID,
-		RequiresSuitability:        utils.PointerTo(false),
-		HelmfileRef:                utils.PointerTo("HEAD"),
-		DefaultFirecloudDevelopRef: utils.PointerTo("alpha"),
-		PreventDeletion:            utils.PointerTo(false),
-	}, user)
-	s.NoError(err)
-	s.True(created)
-
+	environment := s.TestData.Environment_Dev()
+	environment2 := s.TestData.Environment_Staging()
 	hook1 := models.SlackDeployHook{
 		Trigger: models.DeployHookTriggerConfig{
 			OnEnvironmentID: &environment.ID,

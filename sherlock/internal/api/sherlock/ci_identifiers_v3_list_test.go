@@ -1,8 +1,6 @@
 package sherlock
 
 import (
-	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
-	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"net/http"
 )
@@ -44,38 +42,21 @@ func (s *handlerSuite) TestCiIdentifiersV3List_badOffset() {
 }
 
 func (s *handlerSuite) TestCiIdentifiersV3List() {
-	user := s.SetSuitableTestUserForDB()
 
-	chart, created, err := v2models.InternalChartStore.Create(s.DB, v2models.Chart{
-		Name:      "leonardo",
-		ChartRepo: utils.PointerTo("terra-helm"),
-	}, user)
-	s.NoError(err)
-	s.True(created)
-	chartIdentifier := ciIdentifierModelFromOldModel(chart)
-	err = s.DB.Create(&chartIdentifier).Error
+	chart := s.TestData.Chart_Leonardo()
+	chartIdentifier := chart.GetCiIdentifier()
+	err := s.DB.Create(&chartIdentifier).Error
 	s.NoError(err)
 	s.Equal(chart.ID, chartIdentifier.ResourceID)
 
-	chartVersion1, created, err := v2models.InternalChartVersionStore.Create(s.DB, v2models.ChartVersion{
-		ChartVersion: "v1.2.3",
-		ChartID:      chart.ID,
-	}, user)
-	s.NoError(err)
-	s.True(created)
-	chartVersion1Identifier := ciIdentifierModelFromOldModel(chartVersion1)
+	chartVersion1 := s.TestData.ChartVersion_Leonardo_V1()
+	chartVersion1Identifier := chartVersion1.GetCiIdentifier()
 	err = s.DB.Create(&chartVersion1Identifier).Error
 	s.NoError(err)
 	s.Equal(chartVersion1.ID, chartVersion1Identifier.ResourceID)
 
-	chartVersion2, created, err := v2models.InternalChartVersionStore.Create(s.DB, v2models.ChartVersion{
-		ChartVersion:         "v1.2.4",
-		ChartID:              chart.ID,
-		ParentChartVersionID: utils.PointerTo(chartVersion1.ID),
-	}, user)
-	s.NoError(err)
-	s.True(created)
-	chartVersion2Identifier := ciIdentifierModelFromOldModel(chartVersion2)
+	chartVersion2 := s.TestData.ChartVersion_Leonardo_V2()
+	chartVersion2Identifier := chartVersion2.GetCiIdentifier()
 	err = s.DB.Create(&chartVersion2Identifier).Error
 	s.NoError(err)
 	s.Equal(chartVersion2.ID, chartVersion2Identifier.ResourceID)

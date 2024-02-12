@@ -2,7 +2,6 @@ package sherlock
 
 import (
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
-	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -40,40 +39,11 @@ func (s *handlerSuite) TestGithubActionsDeployHooksV3Create_notFoundBody() {
 }
 
 func (s *handlerSuite) TestGithubActionsDeployHooksV3Create_sqlValidation() {
-	user := s.SetSuitableTestUserForDB()
-	cluster, created, err := v2models.InternalClusterStore.Create(s.DB, v2models.Cluster{
-		Name:                "terra-dev",
-		Provider:            "google",
-		GoogleProject:       "broad-dsde-dev",
-		Base:                utils.PointerTo("live"),
-		Address:             utils.PointerTo("0.0.0.0"),
-		RequiresSuitability: utils.PointerTo(false),
-		Location:            "us-central1-a",
-		HelmfileRef:         utils.PointerTo("HEAD"),
-	}, user)
-	s.NoError(err)
-	s.True(created)
-	environment, created, err := v2models.InternalEnvironmentStore.Create(s.DB, v2models.Environment{
-		Name:                       "dev",
-		Lifecycle:                  "static",
-		UniqueResourcePrefix:       "a1b2",
-		Base:                       "live",
-		DefaultClusterID:           &cluster.ID,
-		DefaultNamespace:           "terra-dev",
-		OwnerID:                    &user.ID,
-		RequiresSuitability:        utils.PointerTo(false),
-		HelmfileRef:                utils.PointerTo("HEAD"),
-		DefaultFirecloudDevelopRef: utils.PointerTo("dev"),
-		PreventDeletion:            utils.PointerTo(false),
-	}, user)
-	s.NoError(err)
-	s.True(created)
-
 	var got errors.ErrorResponse
 	code := s.HandleRequest(
 		s.NewRequest("POST", "/api/deploy-hooks/github-actions/v3", GithubActionsDeployHookV3Create{
 			DeployHookTriggerConfigV3: DeployHookTriggerConfigV3{
-				OnEnvironment: &environment.Name,
+				OnEnvironment: utils.PointerTo(s.TestData.Environment_Dev().Name),
 			},
 			GithubActionsDeployHookFields: GithubActionsDeployHookFields{
 				GithubActionsRepo:         utils.PointerTo("repo"),
@@ -88,40 +58,11 @@ func (s *handlerSuite) TestGithubActionsDeployHooksV3Create_sqlValidation() {
 }
 
 func (s *handlerSuite) TestGithubActionsDeployHooksV3Create_forbidden() {
-	user := s.SetSuitableTestUserForDB()
-	cluster, created, err := v2models.InternalClusterStore.Create(s.DB, v2models.Cluster{
-		Name:                "terra-dev",
-		Provider:            "google",
-		GoogleProject:       "broad-dsde-dev",
-		Base:                utils.PointerTo("live"),
-		Address:             utils.PointerTo("0.0.0.0"),
-		RequiresSuitability: utils.PointerTo(false),
-		Location:            "us-central1-a",
-		HelmfileRef:         utils.PointerTo("HEAD"),
-	}, user)
-	s.NoError(err)
-	s.True(created)
-	environment, created, err := v2models.InternalEnvironmentStore.Create(s.DB, v2models.Environment{
-		Name:                       "dev",
-		Lifecycle:                  "static",
-		UniqueResourcePrefix:       "a1b2",
-		Base:                       "live",
-		DefaultClusterID:           &cluster.ID,
-		DefaultNamespace:           "terra-dev",
-		OwnerID:                    &user.ID,
-		RequiresSuitability:        utils.PointerTo(true), // <- requires suitability
-		HelmfileRef:                utils.PointerTo("HEAD"),
-		DefaultFirecloudDevelopRef: utils.PointerTo("dev"),
-		PreventDeletion:            utils.PointerTo(false),
-	}, user)
-	s.NoError(err)
-	s.True(created)
-
 	var got errors.ErrorResponse
 	code := s.HandleRequest(
 		s.NewNonSuitableRequest("POST", "/api/deploy-hooks/github-actions/v3", GithubActionsDeployHookV3Create{
 			DeployHookTriggerConfigV3: DeployHookTriggerConfigV3{
-				OnEnvironment: &environment.Name,
+				OnEnvironment: utils.PointerTo(s.TestData.Environment_Prod().Name),
 			},
 			GithubActionsDeployHookFields: GithubActionsDeployHookFields{
 				GithubActionsOwner:        utils.PointerTo("owner"),
@@ -136,41 +77,12 @@ func (s *handlerSuite) TestGithubActionsDeployHooksV3Create_forbidden() {
 }
 
 func (s *handlerSuite) TestGithubActionsDeployHooksV3Create() {
-	user := s.SetSuitableTestUserForDB()
-	cluster, created, err := v2models.InternalClusterStore.Create(s.DB, v2models.Cluster{
-		Name:                "terra-dev",
-		Provider:            "google",
-		GoogleProject:       "broad-dsde-dev",
-		Base:                utils.PointerTo("live"),
-		Address:             utils.PointerTo("0.0.0.0"),
-		RequiresSuitability: utils.PointerTo(false),
-		Location:            "us-central1-a",
-		HelmfileRef:         utils.PointerTo("HEAD"),
-	}, user)
-	s.NoError(err)
-	s.True(created)
-	environment, created, err := v2models.InternalEnvironmentStore.Create(s.DB, v2models.Environment{
-		Name:                       "dev",
-		Lifecycle:                  "static",
-		UniqueResourcePrefix:       "a1b2",
-		Base:                       "live",
-		DefaultClusterID:           &cluster.ID,
-		DefaultNamespace:           "terra-dev",
-		OwnerID:                    &user.ID,
-		RequiresSuitability:        utils.PointerTo(false),
-		HelmfileRef:                utils.PointerTo("HEAD"),
-		DefaultFirecloudDevelopRef: utils.PointerTo("dev"),
-		PreventDeletion:            utils.PointerTo(false),
-	}, user)
-	s.NoError(err)
-	s.True(created)
-
 	s.Run("simple case", func() {
 		var got GithubActionsDeployHookV3
 		code := s.HandleRequest(
 			s.NewRequest("POST", "/api/deploy-hooks/github-actions/v3", GithubActionsDeployHookV3Create{
 				DeployHookTriggerConfigV3: DeployHookTriggerConfigV3{
-					OnEnvironment: &environment.Name,
+					OnEnvironment: utils.PointerTo(s.TestData.Environment_Dev().Name),
 				},
 				GithubActionsDeployHookFields: GithubActionsDeployHookFields{
 					GithubActionsOwner:        utils.PointerTo("owner"),
@@ -185,7 +97,7 @@ func (s *handlerSuite) TestGithubActionsDeployHooksV3Create() {
 			s.Equal("owner", *got.GithubActionsOwner)
 		}
 		if s.NotNil(got.OnEnvironment) {
-			s.Equal(environment.Name, *got.OnEnvironment)
+			s.Equal(s.TestData.Environment_Dev().Name, *got.OnEnvironment)
 		}
 	})
 
@@ -193,7 +105,7 @@ func (s *handlerSuite) TestGithubActionsDeployHooksV3Create() {
 		var got GithubActionsDeployHookV3
 		code := s.HandleRequest(
 			s.NewRequest("POST", "/api/deploy-hooks/github-actions/v3", gin.H{
-				"onEnvironment":             environment.Name,
+				"onEnvironment":             s.TestData.Environment_Dev().Name,
 				"githubActionsOwner":        "owner",
 				"githubActionsRepo":         "repo",
 				"githubActionsWorkflowPath": "path",
@@ -208,7 +120,7 @@ func (s *handlerSuite) TestGithubActionsDeployHooksV3Create() {
 			s.Equal("owner", *got.GithubActionsOwner)
 		}
 		if s.NotNil(got.OnEnvironment) {
-			s.Equal(environment.Name, *got.OnEnvironment)
+			s.Equal(s.TestData.Environment_Dev().Name, *got.OnEnvironment)
 		}
 		if s.NotNil(got.GithubActionsWorkflowInputs) {
 			s.Equal("{\"input-1\":\"foo\"}", got.GithubActionsWorkflowInputs.String())

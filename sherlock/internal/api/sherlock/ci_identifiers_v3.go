@@ -1,7 +1,6 @@
 package sherlock
 
 import (
-	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 )
 
@@ -37,18 +36,5 @@ func ciIdentifierFromModel(model models.CiIdentifier) CiIdentifierV3 {
 		ResourceType:   model.ResourceType,
 		ResourceID:     model.ResourceID,
 		ResourceStatus: model.ResourceStatus,
-	}
-}
-
-// This function is an absolute hack. There's some other places where we want to read the CiIdentifiers
-// from un-refactored models (v2models.CiIdentifiable) as the refactored models.CiIdentifier type.
-// To help avoid circular package dependencies, we put that function here. Once this package doesn't
-// rely on un-refactored code we can summarily throw this out.
-func ciIdentifierModelFromOldModel(source v2models.CiIdentifiable) models.CiIdentifier {
-	oldIdentifier := source.GetCiIdentifier()
-	return models.CiIdentifier{
-		Model:        oldIdentifier.Model,
-		ResourceType: oldIdentifier.ResourceType,
-		ResourceID:   oldIdentifier.ResourceID,
 	}
 }

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/authentication"
-	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/gin-gonic/gin"
@@ -77,22 +76,77 @@ func ciIdentifierModelFromSelector(db *gorm.DB, selector string) (query models.C
 		query.ResourceType = parts[0]
 		resourceSelector := strings.Join(parts[1:], "/")
 		switch query.ResourceType {
-		// We're calling out to the "old code" here to handle resolving the selectors.
-		// Not horribly inelegant but we'll want to call refactored mechanisms here when they're available.
 		case "chart":
-			query.ResourceID, err = v2models.InternalChartStore.ResolveSelector(db, resourceSelector)
+			chartQuery, err := chartModelFromSelector(resourceSelector)
+			if err != nil {
+				return models.CiIdentifier{}, fmt.Errorf("error parsing chart selector '%s': %w", resourceSelector, err)
+			}
+			var result models.Chart
+			if err = db.Where(&chartQuery).Select("id").First(&result).Error; err != nil {
+				return models.CiIdentifier{}, fmt.Errorf("error fetching chart '%s': %w", resourceSelector, err)
+			}
+			query.ResourceID = result.ID
 		case "chart-version":
-			query.ResourceID, err = v2models.InternalChartVersionStore.ResolveSelector(db, resourceSelector)
+			chartVersionQuery, err := chartVersionModelFromSelector(db, resourceSelector)
+			if err != nil {
+				return models.CiIdentifier{}, fmt.Errorf("error parsing chart version selector '%s': %w", resourceSelector, err)
+			}
+			var result models.ChartVersion
+			if err = db.Where(&chartVersionQuery).Select("id").First(&result).Error; err != nil {
+				return models.CiIdentifier{}, fmt.Errorf("error fetching chart version '%s': %w", resourceSelector, err)
+			}
+			query.ResourceID = result.ID
 		case "app-version":
-			query.ResourceID, err = v2models.InternalAppVersionStore.ResolveSelector(db, resourceSelector)
+			appVersionQuery, err := appVersionModelFromSelector(db, resourceSelector)
+			if err != nil {
+				return models.CiIdentifier{}, fmt.Errorf("error parsing app version selector '%s': %w", resourceSelector, err)
+			}
+			var result models.AppVersion
+			if err = db.Where(&appVersionQuery).Select("id").First(&result).Error; err != nil {
+				return models.CiIdentifier{}, fmt.Errorf("error fetching app version '%s': %w", resourceSelector, err)
+			}
+			query.ResourceID = result.ID
 		case "cluster":
-			query.ResourceID, err = v2models.InternalClusterStore.ResolveSelector(db, resourceSelector)
+			clusterQuery, err := clusterModelFromSelector(resourceSelector)
+			if err != nil {
+				return models.CiIdentifier{}, fmt.Errorf("error parsing cluster selector '%s': %w", resourceSelector, err)
+			}
+			var result models.Cluster
+			if err = db.Where(&clusterQuery).Select("id").First(&result).Error; err != nil {
+				return models.CiIdentifier{}, fmt.Errorf("error fetching cluster '%s': %w", resourceSelector, err)
+			}
+			query.ResourceID = result.ID
 		case "environment":
-			query.ResourceID, err = v2models.InternalEnvironmentStore.ResolveSelector(db, resourceSelector)
+			environmentQuery, err := environmentModelFromSelector(resourceSelector)
+			if err != nil {
+				return models.CiIdentifier{}, fmt.Errorf("error parsing environment selector '%s': %w", resourceSelector, err)
+			}
+			var result models.Environment
+			if err = db.Where(&environmentQuery).Select("id").First(&result).Error; err != nil {
+				return models.CiIdentifier{}, fmt.Errorf("error fetching environment '%s': %w", resourceSelector, err)
+			}
+			query.ResourceID = result.ID
 		case "chart-release":
-			query.ResourceID, err = v2models.InternalChartReleaseStore.ResolveSelector(db, resourceSelector)
+			chartReleaseQuery, err := chartReleaseModelFromSelector(db, resourceSelector)
+			if err != nil {
+				return models.CiIdentifier{}, fmt.Errorf("error parsing chart release selector '%s': %w", resourceSelector, err)
+			}
+			var result models.ChartRelease
+			if err = db.Where(&chartReleaseQuery).Select("id").First(&result).Error; err != nil {
+				return models.CiIdentifier{}, fmt.Errorf("error fetching chart release '%s': %w", resourceSelector, err)
+			}
+			query.ResourceID = result.ID
 		case "changeset":
-			query.ResourceID, err = v2models.InternalChangesetStore.ResolveSelector(db, resourceSelector)
+			// To match the behavior of the other resource types, we actually do check that the changeset ID exists
+			queryID, err := utils.ParseUint(resourceSelector)
+			if err != nil {
+				return models.CiIdentifier{}, fmt.Errorf("error parsing changeset ID '%s': %w", resourceSelector, err)
+			}
+			var result models.Changeset
+			if err = db.Select("id").First(&result, queryID).Error; err != nil {
+				return models.CiIdentifier{}, fmt.Errorf("error fetching changeset ID '%s': %w", resourceSelector, err)
+			}
+			query.ResourceID = result.ID
 		default:
 			err = fmt.Errorf("(%s) invalid CI identifier selector '%s', resource type sub-selector '%s' wasn't recognized", errors.BadRequest, selector, query.ResourceType)
 		}
