@@ -38,3 +38,29 @@ You'd be wrong, unfortunately. You need to do `&m.Association`, effectively pass
 You're probably doing something that's changing the Gorm session from a hook. This breaks Gorm, unfortunately.
 
 This means you can't change the context/user or begin skipping hooks from a hook.
+
+#### Human error with `Select`
+
+`Select` lets you selectively load columns from the database.
+
+That's great, but you specify arguments with strings. If you're expecting to, say, read a ChartRelease's AppVersionBranch field, but `Select` some columns and forget to specify `app_version_branch`, you'll get a zero value for the field and no error. That can be tough to track down.
+
+A slightly better mechanism in some circumstances is to use what Gorm calls "smart select." The idea is basically this:
+
+```go
+func myFunction(db *gorm.DB) {
+	var chartRelease struct {
+		AppVersionBranch string
+	}
+	err := db.
+		Model(&ChartRelease{}).
+		Where(&ChartRelease{ID: 123}).
+		First(&chartRelease).
+		Error
+	println(chartRelease.AppVersionBranch)
+}
+```
+
+Essentially, rather than explicitly adding a `Select` to the chain, you simply parse the result into a struct with just the fields you need. Gorm will automatically only select those fields. 
+
+You'll get a runtime error if your custom struct includes a field that isn't a column in the table you're looking for (which would happen for `Select` too) but the big thing is that you'll get compile-time errors if you access any fields that aren't on the struct. This prevents you from unexpectedly getting zero values for fields that are actually present in the table.

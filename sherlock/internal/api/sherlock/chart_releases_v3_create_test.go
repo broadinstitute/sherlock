@@ -82,7 +82,7 @@ func (s *handlerSuite) TestChartReleasesV3Create_cannotFindLatestChartVersion() 
 		&got)
 	s.Equal(http.StatusNotFound, code)
 	s.Equal(errors.NotFound, got.Type)
-	s.Contains(got.Message, "unable to query latest chart version for leonardo")
+	s.Contains(got.Message, "no recorded chart versions for leonardo: check that chart versions are reported to Sherlock")
 }
 
 func (s *handlerSuite) TestChartReleasesV3Create_normalCase() {
