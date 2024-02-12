@@ -176,20 +176,19 @@ func (s *modelSuite) TestEnvironmentDeletionPropagateToDatabaseInstances() {
 func (s *modelSuite) TestEnvironmentCreationForbidden() {
 	s.SetNonSuitableTestUserForDB()
 	environment := Environment{
-		Base:                       "live",
-		Lifecycle:                  "static",
-		Name:                       "prod",
-		ValuesName:                 "prod",
-		AutoPopulateChartReleases:  utils.PointerTo(false),
-		DefaultNamespace:           "terra-prod",
-		DefaultFirecloudDevelopRef: utils.PointerTo("prod"),
-		RequiresSuitability:        utils.PointerTo(true),
-		BaseDomain:                 utils.PointerTo("dsde-prod.broadinstitute.org"),
-		NamePrefixesDomain:         utils.PointerTo(false),
-		HelmfileRef:                utils.PointerTo("HEAD"),
-		PreventDeletion:            utils.PointerTo(true),
-		Description:                utils.PointerTo("Terra's production environment"),
-		Offline:                    utils.PointerTo(false),
+		Base:                      "live",
+		Lifecycle:                 "static",
+		Name:                      "prod",
+		ValuesName:                "prod",
+		AutoPopulateChartReleases: utils.PointerTo(false),
+		DefaultNamespace:          "terra-prod",
+		RequiresSuitability:       utils.PointerTo(true),
+		BaseDomain:                utils.PointerTo("dsde-prod.broadinstitute.org"),
+		NamePrefixesDomain:        utils.PointerTo(false),
+		HelmfileRef:               utils.PointerTo("HEAD"),
+		PreventDeletion:           utils.PointerTo(true),
+		Description:               utils.PointerTo("Terra's production environment"),
+		Offline:                   utils.PointerTo(false),
 	}
 	s.ErrorContains(s.DB.Create(&environment).Error, errors.Forbidden)
 }

@@ -31,9 +31,9 @@ type ChartReleaseVersion struct {
 	ChartVersion                     *ChartVersion
 	ChartVersionID                   *uint
 
-	HelmfileRef         *string
-	HelmfileRefEnabled  *bool
-	FirecloudDevelopRef *string
+	HelmfileRef        *string
+	HelmfileRefEnabled *bool
+	// TODO: drop FirecloudDevelopRef
 }
 
 // resolve uses what's currently in the ChartReleaseVersion to fill in as many of the rest of the fields as possible.
@@ -276,6 +276,5 @@ func (crv *ChartReleaseVersion) hasDiffWith(other *ChartReleaseVersion) bool {
 		!utils.PointerValuesEqual(crv.ChartVersionFollowChartReleaseID, other.ChartVersionFollowChartReleaseID) ||
 		!utils.PointerValuesEqual(crv.ChartVersionID, other.ChartVersionID) ||
 		!utils.PointerValuesEqual(crv.HelmfileRef, other.HelmfileRef) ||
-		!utils.PointerValuesEqual(crv.HelmfileRefEnabled, other.HelmfileRefEnabled) ||
-		!utils.PointerValuesEqual(crv.FirecloudDevelopRef, other.FirecloudDevelopRef)
+		!utils.PointerValuesEqual(crv.HelmfileRefEnabled, other.HelmfileRefEnabled)
 }

@@ -29,9 +29,9 @@ type Environment struct {
 	UniqueResourcePrefix      string
 	DefaultNamespace          string
 	// Mutable
-	DefaultCluster              *Cluster
-	DefaultClusterID            *uint
-	DefaultFirecloudDevelopRef  *string
+	DefaultCluster   *Cluster
+	DefaultClusterID *uint
+	// TODO: drop DefaultFirecloudDevelopRef
 	Owner                       *User
 	OwnerID                     *uint
 	LegacyOwner                 *string
@@ -280,10 +280,6 @@ func (e *Environment) setCreationDefaults(tx *gorm.DB) error {
 			e.NamePrefixesDomain = template.NamePrefixesDomain
 		}
 
-		if e.DefaultFirecloudDevelopRef == nil {
-			e.DefaultFirecloudDevelopRef = template.DefaultFirecloudDevelopRef
-		}
-
 		if e.Name == "" {
 			if user, err := GetCurrentUserForDB(tx); err != nil {
 				return err
@@ -311,13 +307,6 @@ func (e *Environment) setCreationDefaults(tx *gorm.DB) error {
 
 	// Below this point, the fields will almost always be empty, but could still theoretically be set by the requester
 	// for legacy reasons
-
-	// If there's no fc-dev ref and we're making a live env, set it.
-	// fc-dev is no more and we'll remove this soon but for right now it's easiest inside this codebase to just
-	// keep the behavior
-	if e.DefaultFirecloudDevelopRef == nil && e.Lifecycle == "static" && e.Base == "live" {
-		e.DefaultFirecloudDevelopRef = &e.Name
-	}
 
 	// If there's no unique resource prefix, generate one
 	if e.UniqueResourcePrefix == "" {

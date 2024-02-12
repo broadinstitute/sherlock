@@ -143,9 +143,6 @@ func (c *Changeset) fillEmptyToFieldsBasedOnFrom() {
 	if c.To.HelmfileRefEnabled == nil {
 		c.To.HelmfileRefEnabled = c.From.HelmfileRefEnabled
 	}
-	if c.To.FirecloudDevelopRef == nil {
-		c.To.FirecloudDevelopRef = c.From.FirecloudDevelopRef
-	}
 }
 
 func CompareChangesetsByName(a, b Changeset) int {

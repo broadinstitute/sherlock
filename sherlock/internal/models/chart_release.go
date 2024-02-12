@@ -137,13 +137,6 @@ func (c *ChartRelease) setCreationDefaults(tx *gorm.DB) error {
 		if c.Namespace == "" && environment.DefaultNamespace != "" && c.ClusterID != nil {
 			c.Namespace = environment.DefaultNamespace
 		}
-
-		// If there's no firecloud develop ref, add it
-		// (We'll remove this shortly because fc-dev is no more, but keeping behavioral parity makes sense for the moment)
-		if c.FirecloudDevelopRef == nil && environment.DefaultFirecloudDevelopRef != nil &&
-			chart.LegacyConfigsEnabled != nil && *chart.LegacyConfigsEnabled {
-			c.FirecloudDevelopRef = environment.DefaultFirecloudDevelopRef
-		}
 	}
 
 	// If we have a cluster, use it to fill in defaults.
