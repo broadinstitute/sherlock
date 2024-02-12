@@ -69,12 +69,15 @@ func (crv *ChartReleaseVersion) resolveAppVersion(tx *gorm.DB, chart Chart) erro
 		if crv.AppVersionBranch == nil || *crv.AppVersionBranch == "" {
 			return fmt.Errorf("(%s) appVersionResolver was set to 'branch' but no app branch was supplied", errors.BadRequest)
 		}
-		var appVersion AppVersion
+		var appVersion struct {
+			ID         uint
+			AppVersion string
+			GitCommit  string
+		}
 		if err := tx.
 			Model(&AppVersion{}).
 			Where(&AppVersion{ChartID: chart.ID, GitBranch: *crv.AppVersionBranch}).
 			Order("created_at desc").
-			Select("id", "app_version", "git_commit").
 			First(&appVersion).Error; err != nil {
 			if goerrors.Is(err, gorm.ErrRecordNotFound) {
 				if chart.AppImageGitRepo != nil {
@@ -94,18 +97,22 @@ func (crv *ChartReleaseVersion) resolveAppVersion(tx *gorm.DB, chart Chart) erro
 		} else if !utils.IsAlphaNumeric(*crv.AppVersionCommit) {
 			return fmt.Errorf("(%s) app commit '%s' appears to have invalid characters in it", errors.BadRequest, *crv.AppVersionCommit)
 		}
-		var appVersion AppVersion
+		var appVersion struct {
+			ID         uint
+			AppVersion string
+			GitBranch  string
+			GitCommit  string
+		}
 		if err := tx.
 			Model(&AppVersion{}).
 			Where("chart_id = ? AND git_commit LIKE ?", chart.ID, fmt.Sprintf("%s%%", *crv.AppVersionCommit)).
 			Order("created_at desc").
-			Select("id", "app_version", "git_branch", "git_commit").
 			First(&appVersion).Error; err != nil {
 			if goerrors.Is(err, gorm.ErrRecordNotFound) {
 				if chart.AppImageGitRepo != nil {
-					return fmt.Errorf("(%s) no recorded app versions for %s have a commit starting with %s: check that GitHub Actions are building, publishing, and reporting the app version on the commit: https://github.com/%s/commit/%s", errors.NotFound, chart.Name, *crv.AppVersionCommit, *chart.AppImageGitRepo, *crv.AppVersionCommit)
+					return fmt.Errorf("(%s) no recorded app versions for %s have a commit starting with '%s': check that GitHub Actions are building, publishing, and reporting the app version on the commit: https://github.com/%s/commit/%s", errors.NotFound, chart.Name, *crv.AppVersionCommit, *chart.AppImageGitRepo, *crv.AppVersionCommit)
 				}
-				return fmt.Errorf("(%s) no recorded app versions for %s have a commit starting with %s: check that GitHub Actions are building, publishing, and reporting the app version on the commit", errors.NotFound, chart.Name, *crv.AppVersionCommit)
+				return fmt.Errorf("(%s) no recorded app versions for %s have a commit starting with '%s': check that GitHub Actions are building, publishing, and reporting the app version on the commit", errors.NotFound, chart.Name, *crv.AppVersionCommit)
 			}
 			return fmt.Errorf("failed to find an app version for %s built on a commit starting with '%s': %w", chart.Name, *crv.AppVersionCommit, err)
 		}
@@ -118,10 +125,14 @@ func (crv *ChartReleaseVersion) resolveAppVersion(tx *gorm.DB, chart Chart) erro
 		if crv.AppVersionExact == nil || *crv.AppVersionExact == "" {
 			return fmt.Errorf("(%s) appVersionResolver was set to 'exact' but no exact chart version was supplied", errors.BadRequest)
 		}
-		var matchingAppVersions []AppVersion
+		var matchingAppVersions []struct {
+			ID        uint
+			GitBranch string
+			GitCommit string
+		}
 		if err := tx.
+			Model(&AppVersion{}).
 			Where(&AppVersion{ChartID: chart.ID, AppVersion: *crv.AppVersionExact}).
-			Select("id", "git_branch", "git_commit").
 			Limit(1).
 			Find(&matchingAppVersions).Error; err != nil {
 			return fmt.Errorf("unable to query possible matching recorded app versions for %s/%s: %w", chart.Name, *crv.AppVersionExact, err)
@@ -140,9 +151,14 @@ func (crv *ChartReleaseVersion) resolveAppVersion(tx *gorm.DB, chart Chart) erro
 		if crv.AppVersionFollowChartReleaseID == nil {
 			return fmt.Errorf("(%s) appVersionResolver was set to 'follow' but no chart release ID was given to follow", errors.BadRequest)
 		}
-		var chartRelease ChartRelease
+		var chartRelease struct {
+			AppVersionID     *uint
+			AppVersionExact  *string
+			AppVersionBranch *string
+			AppVersionCommit *string
+		}
 		if err := tx.
-			Select("app_version_id", "app_version_exact", "app_version_exact", "app_version_commit").
+			Model(&ChartRelease{}).
 			Take(&chartRelease, *crv.AppVersionFollowChartReleaseID).Error; err != nil {
 			return fmt.Errorf("unable to query referenced chart release to follow for app version: %w", err)
 		}
@@ -180,7 +196,11 @@ func (crv *ChartReleaseVersion) resolveChartVersion(tx *gorm.DB, chart Chart) er
 			Order("created_at desc").
 			Select("id", "chart_version").
 			First(&chartVersion).Error; err != nil {
-			return fmt.Errorf("unable to query latest chart version for %s: %w", chart.Name, err)
+			if goerrors.Is(err, gorm.ErrRecordNotFound) {
+				return fmt.Errorf("(%s) no recorded chart versions for %s: check that chart versions are reported to Sherlock", errors.NotFound, chart.Name)
+			} else {
+				return fmt.Errorf("unable to query latest chart version for %s: %w", chart.Name, err)
+			}
 		}
 		crv.ChartVersionID = &chartVersion.ID
 		crv.ChartVersionExact = &chartVersion.ChartVersion
