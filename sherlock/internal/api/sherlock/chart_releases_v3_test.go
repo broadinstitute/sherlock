@@ -208,7 +208,6 @@ func (s *handlerSuite) TestChartReleaseV3_toModel() {
 					ChartVersionFollowChartRelease: chartReleaseStaging.Name,
 					HelmfileRef:                    utils.PointerTo("HEAD"),
 					HelmfileRefEnabled:             utils.PointerTo(true),
-					FirecloudDevelopRef:            utils.PointerTo("develop"),
 					ChartReleaseV3Edit: ChartReleaseV3Edit{
 						Subdomain:               utils.PointerTo("subdomain"),
 						Protocol:                utils.PointerTo("https"),
@@ -245,7 +244,6 @@ func (s *handlerSuite) TestChartReleaseV3_toModel() {
 					ChartVersionID:                   &chartVersion.ID,
 					HelmfileRef:                      utils.PointerTo("HEAD"),
 					HelmfileRefEnabled:               utils.PointerTo(true),
-					FirecloudDevelopRef:              utils.PointerTo("develop"),
 				},
 				Subdomain:               utils.PointerTo("subdomain"),
 				Protocol:                utils.PointerTo("https"),
@@ -331,7 +329,6 @@ func Test_chartReleaseFromModel(t *testing.T) {
 					ChartVersionID:                   utils.PointerTo[uint](10),
 					HelmfileRef:                      utils.PointerTo("HEAD"),
 					HelmfileRefEnabled:               utils.PointerTo(true),
-					FirecloudDevelopRef:              utils.PointerTo("develop"),
 				},
 			}},
 			want: ChartReleaseV3{
@@ -367,7 +364,6 @@ func Test_chartReleaseFromModel(t *testing.T) {
 					ChartVersionFollowChartRelease: "leonardo-staging",
 					HelmfileRef:                    utils.PointerTo("HEAD"),
 					HelmfileRefEnabled:             utils.PointerTo(true),
-					FirecloudDevelopRef:            utils.PointerTo("develop"),
 					ChartReleaseV3Edit: ChartReleaseV3Edit{
 						Subdomain:               utils.PointerTo("subdomain"),
 						Protocol:                utils.PointerTo("https"),

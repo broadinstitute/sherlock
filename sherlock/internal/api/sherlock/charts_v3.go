@@ -21,7 +21,6 @@ type ChartV3Edit struct {
 	AppImageGitRepo       *string `json:"appImageGitRepo" form:"appImageGitRepo"`
 	AppImageGitMainBranch *string `json:"appImageGitMainBranch" form:"appImageGitMainBranch"`
 	ChartExposesEndpoint  *bool   `json:"chartExposesEndpoint" form:"chartExposesEndpoint" default:"false"` // Indicates if the default subdomain, protocol, and port fields are relevant for this chart
-	LegacyConfigsEnabled  *bool   `json:"legacyConfigsEnabled" form:"legacyConfigsEnabled" default:"false"` // Indicates whether a chart requires config rendering from firecloud-develop
 	DefaultSubdomain      *string `json:"defaultSubdomain" form:"defaultSubdomain"`                         // When creating, will default to the name of the chart
 	DefaultProtocol       *string `json:"defaultProtocol" form:"defaultProtocol" default:"https"`
 	DefaultPort           *uint   `json:"defaultPort" form:"defaultPort" default:"443"`
@@ -38,7 +37,6 @@ func (c ChartV3) toModel() models.Chart {
 		AppImageGitRepo:       c.AppImageGitRepo,
 		AppImageGitMainBranch: c.AppImageGitMainBranch,
 		ChartExposesEndpoint:  c.ChartExposesEndpoint,
-		LegacyConfigsEnabled:  c.LegacyConfigsEnabled,
 		DefaultSubdomain:      c.DefaultSubdomain,
 		DefaultProtocol:       c.DefaultProtocol,
 		DefaultPort:           c.DefaultPort,
@@ -71,7 +69,6 @@ func chartFromModel(model models.Chart) ChartV3 {
 				AppImageGitRepo:       model.AppImageGitRepo,
 				AppImageGitMainBranch: model.AppImageGitMainBranch,
 				ChartExposesEndpoint:  model.ChartExposesEndpoint,
-				LegacyConfigsEnabled:  model.LegacyConfigsEnabled,
 				DefaultSubdomain:      model.DefaultSubdomain,
 				DefaultProtocol:       model.DefaultProtocol,
 				DefaultPort:           model.DefaultPort,

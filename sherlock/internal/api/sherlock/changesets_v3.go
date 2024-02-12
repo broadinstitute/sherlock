@@ -36,7 +36,6 @@ type ChangesetV3Query struct {
 	FromChartVersionReference          string     `json:"fromChartVersionReference,omitempty" form:"fromChartVersionReference"`
 	FromHelmfileRef                    *string    `json:"fromHelmfileRef,omitempty" form:"fromHelmfileRef"`
 	FromHelmfileRefEnabled             *bool      `json:"fromHelmfileRefEnabled,omitempty" form:"fromHelmfileRefEnabled"`
-	FromFirecloudDevelopRef            *string    `json:"fromFirecloudDevelopRef,omitempty" form:"fromFirecloudDevelopRef"`
 
 	ToResolvedAt            *time.Time `json:"toResolvedAt,omitempty" from:"toResolvedAt"  format:"date-time"`
 	ToAppVersionReference   string     `json:"toAppVersionReference,omitempty" form:"toAppVersionReference"`
@@ -61,7 +60,6 @@ type ChangesetV3Create struct {
 	ToChartVersionFollowChartRelease string  `json:"toChartVersionFollowChartRelease,omitempty" form:"toChartVersionFollowChartRelease"`
 	ToHelmfileRef                    *string `json:"toHelmfileRef,omitempty" form:"toHelmfileRef"`
 	ToHelmfileRefEnabled             *bool   `json:"toHelmfileRefEnabled,omitempty" form:"toHelmfileRefEnabled"`
-	ToFirecloudDevelopRef            *string `json:"toFirecloudDevelopRef,omitempty" form:"toFirecloudDevelopRef"`
 
 	ChartRelease string `json:"chartRelease" form:"chartRelease"`
 }
@@ -79,7 +77,6 @@ func (c ChangesetV3) toModel(db *gorm.DB) (models.Changeset, error) {
 			ChartVersionExact:    c.FromChartVersionExact,
 			HelmfileRef:          c.FromHelmfileRef,
 			HelmfileRefEnabled:   c.FromHelmfileRefEnabled,
-			FirecloudDevelopRef:  c.FromFirecloudDevelopRef,
 		},
 		To: models.ChartReleaseVersion{
 			ResolvedAt:           c.ToResolvedAt,
@@ -91,7 +88,6 @@ func (c ChangesetV3) toModel(db *gorm.DB) (models.Changeset, error) {
 			ChartVersionExact:    c.ToChartVersionExact,
 			HelmfileRef:          c.ToHelmfileRef,
 			HelmfileRefEnabled:   c.ToHelmfileRefEnabled,
-			FirecloudDevelopRef:  c.ToFirecloudDevelopRef,
 		},
 		AppliedAt:    c.AppliedAt,
 		SupersededAt: c.SupersededAt,
@@ -258,7 +254,6 @@ func changesetFromModel(model models.Changeset) ChangesetV3 {
 			FromChartVersionExact:    model.From.ChartVersionExact,
 			FromHelmfileRef:          model.From.HelmfileRef,
 			FromHelmfileRefEnabled:   model.From.HelmfileRefEnabled,
-			FromFirecloudDevelopRef:  model.From.FirecloudDevelopRef,
 			ToResolvedAt:             model.To.ResolvedAt,
 			ChangesetV3Create: ChangesetV3Create{
 				ToAppVersionResolver:   model.To.AppVersionResolver,
@@ -269,7 +264,6 @@ func changesetFromModel(model models.Changeset) ChangesetV3 {
 				ToChartVersionExact:    model.To.ChartVersionExact,
 				ToHelmfileRef:          model.To.HelmfileRef,
 				ToHelmfileRefEnabled:   model.To.HelmfileRefEnabled,
-				ToFirecloudDevelopRef:  model.To.FirecloudDevelopRef,
 			},
 		},
 	}

@@ -35,8 +35,7 @@ type EnvironmentV3Create struct {
 
 type EnvironmentV3Edit struct {
 	DefaultCluster              *string    `json:"defaultCluster" form:"defaultCluster"`
-	DefaultFirecloudDevelopRef  *string    `json:"defaultFirecloudDevelopRef" form:"defaultFirecloudDevelopRef" default:"dev"` // should be the environment branch for live envs. Is usually dev for template/dynamic but not necessarily
-	Owner                       *string    `json:"owner" form:"owner"`                                                         // When creating, will default to you
+	Owner                       *string    `json:"owner" form:"owner"` // When creating, will default to you
 	RequiresSuitability         *bool      `json:"requiresSuitability" form:"requiresSuitability" default:"false"`
 	BaseDomain                  *string    `json:"baseDomain" form:"baseDomain" default:"bee.envs-terra.bio"`
 	NamePrefixesDomain          *bool      `json:"namePrefixesDomain" form:"namePrefixesDomain" default:"true"`
@@ -64,7 +63,6 @@ func (e EnvironmentV3) toModel(db *gorm.DB) (models.Environment, error) {
 		AutoPopulateChartReleases:   e.AutoPopulateChartReleases,
 		UniqueResourcePrefix:        e.UniqueResourcePrefix,
 		DefaultNamespace:            e.DefaultNamespace,
-		DefaultFirecloudDevelopRef:  e.DefaultFirecloudDevelopRef,
 		RequiresSuitability:         e.RequiresSuitability,
 		BaseDomain:                  e.BaseDomain,
 		NamePrefixesDomain:          e.NamePrefixesDomain,
@@ -160,7 +158,6 @@ func environmentFromModel(model models.Environment) EnvironmentV3 {
 			DefaultNamespace:          model.DefaultNamespace,
 			ValuesName:                model.ValuesName,
 			EnvironmentV3Edit: EnvironmentV3Edit{
-				DefaultFirecloudDevelopRef:  model.DefaultFirecloudDevelopRef,
 				RequiresSuitability:         model.RequiresSuitability,
 				BaseDomain:                  model.BaseDomain,
 				NamePrefixesDomain:          model.NamePrefixesDomain,

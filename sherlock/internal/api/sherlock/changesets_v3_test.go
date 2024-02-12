@@ -32,7 +32,6 @@ func (s *handlerSuite) TestChangesetV3_toModel() {
 		FromChartVersionReference          string
 		FromHelmfileRef                    *string
 		FromHelmfileRefEnabled             *bool
-		FromFirecloudDevelopRef            *string
 		ToResolvedAt                       *time.Time
 		ToAppVersionReference              string
 		ToChartVersionReference            string
@@ -241,7 +240,6 @@ func (s *handlerSuite) TestChangesetV3_toModel() {
 				FromChartVersionReference:          s.TestData.Chart_Leonardo().Name + "/" + s.TestData.ChartVersion_Leonardo_V3().ChartVersion,
 				FromHelmfileRef:                    utils.PointerTo("helmfile-ref"),
 				FromHelmfileRefEnabled:             utils.PointerTo(true),
-				FromFirecloudDevelopRef:            utils.PointerTo("firecloud-develop-ref"),
 				ToResolvedAt:                       utils.PointerTo(now.Add(time.Hour)),
 				ToAppVersionReference:              s.TestData.Chart_Leonardo().Name + "/" + s.TestData.AppVersion_Leonardo_V2().AppVersion,
 				ToChartVersionReference:            s.TestData.Chart_Leonardo().Name + "/" + s.TestData.ChartVersion_Leonardo_V2().ChartVersion,
@@ -258,7 +256,6 @@ func (s *handlerSuite) TestChangesetV3_toModel() {
 					ToChartVersionFollowChartRelease: s.TestData.ChartRelease_LeonardoProd().Name,
 					ToHelmfileRef:                    utils.PointerTo("helmfile-ref"),
 					ToHelmfileRefEnabled:             utils.PointerTo(true),
-					ToFirecloudDevelopRef:            utils.PointerTo("firecloud-develop-ref"),
 					ChartRelease:                     s.TestData.ChartRelease_LeonardoDev().Name,
 				},
 			},
@@ -284,7 +281,6 @@ func (s *handlerSuite) TestChangesetV3_toModel() {
 					ChartVersionID:                   utils.PointerTo(s.TestData.ChartVersion_Leonardo_V3().ID),
 					HelmfileRef:                      utils.PointerTo("helmfile-ref"),
 					HelmfileRefEnabled:               utils.PointerTo(true),
-					FirecloudDevelopRef:              utils.PointerTo("firecloud-develop-ref"),
 				},
 				To: models.ChartReleaseVersion{
 					ResolvedAt:                       utils.PointerTo(now.Add(time.Hour)),
@@ -300,7 +296,6 @@ func (s *handlerSuite) TestChangesetV3_toModel() {
 					ChartVersionID:                   utils.PointerTo(s.TestData.ChartVersion_Leonardo_V2().ID),
 					HelmfileRef:                      utils.PointerTo("helmfile-ref"),
 					HelmfileRefEnabled:               utils.PointerTo(true),
-					FirecloudDevelopRef:              utils.PointerTo("firecloud-develop-ref"),
 				},
 				AppliedAt:    utils.PointerTo(now.Add(time.Hour)),
 				SupersededAt: utils.PointerTo(now.Add(time.Minute)),
@@ -333,7 +328,6 @@ func (s *handlerSuite) TestChangesetV3_toModel() {
 					FromChartVersionReference:          tt.fields.FromChartVersionReference,
 					FromHelmfileRef:                    tt.fields.FromHelmfileRef,
 					FromHelmfileRefEnabled:             tt.fields.FromHelmfileRefEnabled,
-					FromFirecloudDevelopRef:            tt.fields.FromFirecloudDevelopRef,
 					ToResolvedAt:                       tt.fields.ToResolvedAt,
 					ToAppVersionReference:              tt.fields.ToAppVersionReference,
 					ToChartVersionReference:            tt.fields.ToChartVersionReference,
@@ -886,7 +880,6 @@ func Test_changesetFromModel(t *testing.T) {
 						ChartVersionExact:    utils.PointerTo("exact"),
 						HelmfileRef:          utils.PointerTo("helmfile-ref"),
 						HelmfileRefEnabled:   utils.PointerTo(true),
-						FirecloudDevelopRef:  utils.PointerTo("firecloud-develop-ref"),
 					},
 					To: models.ChartReleaseVersion{
 						ResolvedAt:           utils.PointerTo(now.Add(time.Hour)),
@@ -898,7 +891,6 @@ func Test_changesetFromModel(t *testing.T) {
 						ChartVersionExact:    utils.PointerTo("exact"),
 						HelmfileRef:          utils.PointerTo("helmfile-ref"),
 						HelmfileRefEnabled:   utils.PointerTo(true),
-						FirecloudDevelopRef:  utils.PointerTo("firecloud-develop-ref"),
 					},
 					AppliedAt:    utils.PointerTo(now.Add(time.Hour)),
 					SupersededAt: utils.PointerTo(now.Add(time.Minute)),
@@ -919,7 +911,6 @@ func Test_changesetFromModel(t *testing.T) {
 					FromChartVersionExact:    utils.PointerTo("exact"),
 					FromHelmfileRef:          utils.PointerTo("helmfile-ref"),
 					FromHelmfileRefEnabled:   utils.PointerTo(true),
-					FromFirecloudDevelopRef:  utils.PointerTo("firecloud-develop-ref"),
 					ToResolvedAt:             utils.PointerTo(now.Add(time.Hour)),
 					ChangesetV3Create: ChangesetV3Create{
 						ToAppVersionResolver:   utils.PointerTo("resolver"),
@@ -930,7 +921,6 @@ func Test_changesetFromModel(t *testing.T) {
 						ToChartVersionExact:    utils.PointerTo("exact"),
 						ToHelmfileRef:          utils.PointerTo("helmfile-ref"),
 						ToHelmfileRefEnabled:   utils.PointerTo(true),
-						ToFirecloudDevelopRef:  utils.PointerTo("firecloud-develop-ref"),
 					},
 				},
 			},

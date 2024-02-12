@@ -41,7 +41,6 @@ type ChartReleaseV3Create struct {
 	ChartVersionFollowChartRelease string  `json:"chartVersionFollowChartRelease" form:"chartVersionFollowChartRelease"`
 	HelmfileRef                    *string `json:"helmfileRef" form:"helmfileRef" default:"HEAD"`
 	HelmfileRefEnabled             *bool   `json:"helmfileRefEnabled" form:"helmfileRefEnabled" default:"false"`
-	FirecloudDevelopRef            *string `json:"firecloudDevelopRef" form:"firecloudDevelopRef"`
 	ChartReleaseV3Edit
 }
 
@@ -69,7 +68,6 @@ func (c ChartReleaseV3) toModel(db *gorm.DB) (models.ChartRelease, error) {
 			ChartVersionExact:    c.ChartVersionExact,
 			HelmfileRef:          c.HelmfileRef,
 			HelmfileRefEnabled:   c.HelmfileRefEnabled,
-			FirecloudDevelopRef:  c.FirecloudDevelopRef,
 		},
 		Subdomain:               c.Subdomain,
 		Protocol:                c.Protocol,
@@ -209,7 +207,6 @@ func chartReleaseFromModel(model models.ChartRelease) ChartReleaseV3 {
 			ChartVersionExact:    model.ChartVersionExact,
 			HelmfileRef:          model.HelmfileRef,
 			HelmfileRefEnabled:   model.HelmfileRefEnabled,
-			FirecloudDevelopRef:  model.FirecloudDevelopRef,
 			ChartReleaseV3Edit: ChartReleaseV3Edit{
 				Subdomain:               model.Subdomain,
 				Protocol:                model.Protocol,

@@ -157,7 +157,6 @@ func (s *handlerSuite) TestChartReleasesV3Create_noDefaults() {
 			ChartVersionExact:    utils.PointerTo(s.TestData.ChartVersion_Leonardo_V1().ChartVersion),
 			HelmfileRef:          utils.PointerTo("HEAD"),
 			HelmfileRefEnabled:   utils.PointerTo(true),
-			FirecloudDevelopRef:  utils.PointerTo("develop"),
 			ChartReleaseV3Edit: ChartReleaseV3Edit{
 				Subdomain:               utils.PointerTo("subdomain"),
 				Protocol:                utils.PointerTo("protocol"),
@@ -179,7 +178,6 @@ func (s *handlerSuite) TestChartReleasesV3Create_noDefaults() {
 	s.Equal(s.TestData.ChartVersion_Leonardo_V1().ChartVersion, *got.ChartVersionExact)
 	s.Equal("HEAD", *got.HelmfileRef)
 	s.Equal(true, *got.HelmfileRefEnabled)
-	s.Equal("develop", *got.FirecloudDevelopRef)
 	s.Equal("subdomain", *got.Subdomain)
 	s.Equal("protocol", *got.Protocol)
 	s.Equal(uint(123), *got.Port)
