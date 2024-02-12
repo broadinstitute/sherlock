@@ -60,7 +60,7 @@ func chartVersionsProceduresV3Changelog(ctx *gin.Context) {
 	var path []uint
 	var foundPath bool
 
-	if path, foundPath, err = models.GetChartVersionPathIDs(db, child.ID, parent.ID); err != nil {
+	if path, foundPath, err = models.GetChartVersionPathIDs(db, parent.ID, child.ID); err != nil {
 		errors.AbortRequest(ctx, fmt.Errorf("(%s) error calculating changelog components: %w", errors.InternalServerError, err))
 		return
 	}

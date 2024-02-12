@@ -101,63 +101,70 @@ func (s *modelSuite) TestGetAppVersionPathIDs() {
 	})
 
 	s.Run("B to C (normal)", func() {
-		path, foundPath, err := GetAppVersionPathIDs(s.DB, b.ID, c.ID)
+		path, foundPath, err := GetAppVersionPathIDs(s.DB, c.ID, b.ID)
 		s.Equal([]uint{b.ID}, path)
 		s.True(foundPath)
 		s.NoError(err)
 	})
 
 	s.Run("A to D (normal)", func() {
-		path, foundPath, err := GetAppVersionPathIDs(s.DB, a.ID, d.ID)
+		path, foundPath, err := GetAppVersionPathIDs(s.DB, d.ID, a.ID)
 		s.Equal([]uint{a.ID, b.ID, c.ID}, path)
 		s.True(foundPath)
 		s.NoError(err)
 	})
 
+	s.Run("D to A (no path, reverse from normal)", func() {
+		path, foundPath, err := GetAppVersionPathIDs(s.DB, a.ID, d.ID)
+		s.Empty(path)
+		s.False(foundPath)
+		s.NoError(err)
+	})
+
 	s.Run("E to D (normal)", func() {
-		path, foundPath, err := GetAppVersionPathIDs(s.DB, e.ID, d.ID)
+		path, foundPath, err := GetAppVersionPathIDs(s.DB, d.ID, e.ID)
 		s.Equal([]uint{e.ID, c.ID}, path)
 		s.True(foundPath)
 		s.NoError(err)
 	})
 
 	s.Run("C to B (no path)", func() {
-		path, foundPath, err := GetAppVersionPathIDs(s.DB, c.ID, b.ID)
+		path, foundPath, err := GetAppVersionPathIDs(s.DB, b.ID, c.ID)
 		s.Empty(path)
 		s.False(foundPath)
 		s.NoError(err)
 	})
 
 	s.Run("A to F (no path)", func() {
-		path, foundPath, err := GetAppVersionPathIDs(s.DB, a.ID, f.ID)
-		s.Empty(path)
-		s.False(foundPath)
-		s.NoError(err)
-	})
-
-	s.Run("F to A (no path)", func() {
 		path, foundPath, err := GetAppVersionPathIDs(s.DB, f.ID, a.ID)
 		s.Empty(path)
 		s.False(foundPath)
 		s.NoError(err)
 	})
 
+	s.Run("F to A (no path)", func() {
+		path, foundPath, err := GetAppVersionPathIDs(s.DB, a.ID, f.ID)
+		s.Empty(path)
+		s.False(foundPath)
+		s.NoError(err)
+	})
+
 	s.Run("F to non-existent (no path, doesn't error)", func() {
-		path, foundPath, err := GetAppVersionPathIDs(s.DB, f.ID, 0)
+		path, foundPath, err := GetAppVersionPathIDs(s.DB, 0, f.ID)
 		s.Empty(path)
 		s.False(foundPath)
 		s.NoError(err)
 	})
 
 	s.Run("A to non-existent (no path, doesn't error)", func() {
-		path, foundPath, err := GetAppVersionPathIDs(s.DB, a.ID, 0)
+		path, foundPath, err := GetAppVersionPathIDs(s.DB, 0, a.ID)
 		s.Empty(path)
 		s.False(foundPath)
 		s.NoError(err)
 	})
 
 	s.Run("non-existent to A (no path, doesn't error)", func() {
-		path, foundPath, err := GetAppVersionPathIDs(s.DB, 0, a.ID)
+		path, foundPath, err := GetAppVersionPathIDs(s.DB, a.ID, 0)
 		s.Empty(path)
 		s.False(foundPath)
 		s.NoError(err)
@@ -168,7 +175,7 @@ func (s *modelSuite) TestGetAppVersionPathIDs() {
 		deleted := AppVersion{ChartID: chart.ID, AppVersion: "deleted"}
 		s.NoError(s.DB.Create(&deleted).Error)
 		s.NoError(s.DB.Unscoped().Delete(&deleted).Error)
-		path, foundPath, err := GetAppVersionPathIDs(s.DB, 0, deleted.ID)
+		path, foundPath, err := GetAppVersionPathIDs(s.DB, deleted.ID, 0)
 		s.Empty(path)
 		s.False(foundPath)
 		s.NoError(err)

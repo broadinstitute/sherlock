@@ -69,6 +69,54 @@ func (s *modelSuite) TestPlanChangesets() {
 	s.NotEqual(changeset.From.ResolvedAt, changeset.To.ResolvedAt)
 }
 
+func (s *modelSuite) TestPlanChangesets_changelogNotConnected() {
+	chartRelease := s.TestData.ChartRelease_LeonardoDev()
+	s.NoError(s.DB.First(&chartRelease, chartRelease.ID).Error)
+	changeset := Changeset{
+		ChartReleaseID: chartRelease.ID,
+		To: ChartReleaseVersion{
+			AppVersionExact:   utils.PointerTo(s.TestData.AppVersion_Leonardo_V1().AppVersion),
+			ChartVersionExact: utils.PointerTo(s.TestData.ChartVersion_Leonardo_V1().ChartVersion),
+		},
+	}
+	ids, err := PlanChangesets(s.DB, []Changeset{changeset})
+	s.NoError(err)
+	s.Len(ids, 1)
+	s.NoError(s.DB.Scopes(ReadChangesetScope).First(&changeset, ids[0]).Error)
+	// Changelogs not connected, we went from v3 to v1
+	if s.Len(changeset.NewAppVersions, 1) {
+		s.Equal(s.TestData.AppVersion_Leonardo_V1().AppVersion, changeset.NewAppVersions[0].AppVersion)
+	}
+	if s.Len(changeset.NewChartVersions, 1) {
+		s.Equal(s.TestData.ChartVersion_Leonardo_V1().ChartVersion, changeset.NewChartVersions[0].ChartVersion)
+	}
+}
+
+func (s *modelSuite) TestPlanChangesets_changelogConnected() {
+	chartRelease := s.TestData.ChartRelease_LeonardoProd()
+	s.NoError(s.DB.First(&chartRelease, chartRelease.ID).Error)
+	changeset := Changeset{
+		ChartReleaseID: chartRelease.ID,
+		To: ChartReleaseVersion{
+			AppVersionExact:   utils.PointerTo(s.TestData.AppVersion_Leonardo_V3().AppVersion),
+			ChartVersionExact: utils.PointerTo(s.TestData.ChartVersion_Leonardo_V3().ChartVersion),
+		},
+	}
+	ids, err := PlanChangesets(s.DB, []Changeset{changeset})
+	s.NoError(err)
+	s.Len(ids, 1)
+	s.NoError(s.DB.Scopes(ReadChangesetScope).First(&changeset, ids[0]).Error)
+	// Changelogs connected, we went from v1 to v3
+	if s.Len(changeset.NewAppVersions, 2) {
+		s.Equal(s.TestData.AppVersion_Leonardo_V2().AppVersion, changeset.NewAppVersions[0].AppVersion)
+		s.Equal(s.TestData.AppVersion_Leonardo_V3().AppVersion, changeset.NewAppVersions[1].AppVersion)
+	}
+	if s.Len(changeset.NewChartVersions, 2) {
+		s.Equal(s.TestData.ChartVersion_Leonardo_V2().ChartVersion, changeset.NewChartVersions[0].ChartVersion)
+		s.Equal(s.TestData.ChartVersion_Leonardo_V3().ChartVersion, changeset.NewChartVersions[1].ChartVersion)
+	}
+}
+
 func (s *modelSuite) TestApplyChangesets_userNotSet() {
 	err := ApplyChangesets(s.DB, []uint{})
 	s.ErrorContains(err, "unable to get current user for changeset applying")

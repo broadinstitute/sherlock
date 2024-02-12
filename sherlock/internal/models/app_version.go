@@ -46,7 +46,7 @@ func (a *AppVersion) BeforeCreate(tx *gorm.DB) error {
 // - It will always be exclusive of the end AppVersion
 // - It will be inclusive of the start AppVersion when possible
 // - It will be ordered by iteration (the last entry in the path is the one whose parent is the end AppVersion)
-func GetAppVersionPathIDs(db *gorm.DB, inclusiveStartID uint, exclusiveEndID uint) (path []uint, foundPath bool, err error) {
+func GetAppVersionPathIDs(db *gorm.DB, exclusiveEndID uint, inclusiveStartID uint) (path []uint, foundPath bool, err error) {
 	if inclusiveStartID == exclusiveEndID {
 		// If the start and end are the same, there's no path to calculate
 		return []uint{}, true, nil
