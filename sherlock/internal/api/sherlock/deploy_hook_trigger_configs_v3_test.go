@@ -2,7 +2,6 @@ package sherlock
 
 import (
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
-	"github.com/broadinstitute/sherlock/sherlock/internal/deprecated_models/v2models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -33,40 +32,12 @@ func (s *handlerSuite) Test_deployHookTriggerConfigV3_toModel_environmentError()
 }
 
 func (s *handlerSuite) Test_deployHookTriggerConfigV3_toModel_environmentValid() {
-	user := s.SetSuitableTestUserForDB()
-	cluster, created, err := v2models.InternalClusterStore.Create(s.DB, v2models.Cluster{
-		Name:                "terra-dev",
-		Provider:            "google",
-		GoogleProject:       "broad-dsde-dev",
-		Base:                utils.PointerTo("live"),
-		Address:             utils.PointerTo("0.0.0.0"),
-		RequiresSuitability: utils.PointerTo(false),
-		Location:            "us-central1-a",
-		HelmfileRef:         utils.PointerTo("HEAD"),
-	}, user)
-	s.NoError(err)
-	s.True(created)
-	environment, created, err := v2models.InternalEnvironmentStore.Create(s.DB, v2models.Environment{
-		Name:                       "dev",
-		Lifecycle:                  "static",
-		UniqueResourcePrefix:       "a1b2",
-		Base:                       "live",
-		DefaultClusterID:           &cluster.ID,
-		DefaultNamespace:           "terra-dev",
-		OwnerID:                    &user.ID,
-		RequiresSuitability:        utils.PointerTo(false),
-		HelmfileRef:                utils.PointerTo("HEAD"),
-		DefaultFirecloudDevelopRef: utils.PointerTo("dev"),
-		PreventDeletion:            utils.PointerTo(false),
-	}, user)
-	s.NoError(err)
-	s.True(created)
 	ret, err := DeployHookTriggerConfigV3{
-		OnEnvironment: &environment.Name,
+		OnEnvironment: utils.PointerTo(s.TestData.Environment_Dev().Name),
 	}.toModel(s.DB)
 	s.NoError(err)
 	if s.NotNil(ret.OnEnvironmentID) {
-		s.Equal(environment.ID, *ret.OnEnvironmentID)
+		s.Equal(s.TestData.Environment_Dev().ID, *ret.OnEnvironmentID)
 	}
 }
 
@@ -79,64 +50,12 @@ func (s *handlerSuite) Test_deployHookTriggerConfigV3_toModel_chartReleaseError(
 }
 
 func (s *handlerSuite) Test_deployHookTriggerConfigV3_toModel_chartReleaseValid() {
-	user := s.SetSuitableTestUserForDB()
-	chart, created, err := v2models.InternalChartStore.Create(s.DB, v2models.Chart{
-		Name:      "leonardo",
-		ChartRepo: utils.PointerTo("terra-helm"),
-	}, user)
-	s.NoError(err)
-	s.True(created)
-	cluster, created, err := v2models.InternalClusterStore.Create(s.DB, v2models.Cluster{
-		Name:                "terra-dev",
-		Provider:            "google",
-		GoogleProject:       "broad-dsde-dev",
-		Base:                utils.PointerTo("live"),
-		Address:             utils.PointerTo("0.0.0.0"),
-		RequiresSuitability: utils.PointerTo(false),
-		Location:            "us-central1-a",
-		HelmfileRef:         utils.PointerTo("HEAD"),
-	}, user)
-	s.NoError(err)
-	s.True(created)
-	environment, created, err := v2models.InternalEnvironmentStore.Create(s.DB, v2models.Environment{
-		Name:                       "dev",
-		Lifecycle:                  "static",
-		UniqueResourcePrefix:       "a1b2",
-		Base:                       "live",
-		DefaultClusterID:           &cluster.ID,
-		DefaultNamespace:           "terra-dev",
-		OwnerID:                    &user.ID,
-		RequiresSuitability:        utils.PointerTo(false),
-		HelmfileRef:                utils.PointerTo("HEAD"),
-		DefaultFirecloudDevelopRef: utils.PointerTo("dev"),
-		PreventDeletion:            utils.PointerTo(false),
-	}, user)
-	s.NoError(err)
-	s.True(created)
-	chartRelease, created, err := v2models.InternalChartReleaseStore.Create(s.DB, v2models.ChartRelease{
-		Name:          "leonardo-dev",
-		ChartID:       chart.ID,
-		ClusterID:     &cluster.ID,
-		EnvironmentID: &environment.ID,
-		Namespace:     environment.DefaultNamespace,
-		ChartReleaseVersion: v2models.ChartReleaseVersion{
-			AppVersionResolver:   utils.PointerTo("exact"),
-			AppVersionExact:      utils.PointerTo("app version blah"),
-			ChartVersionResolver: utils.PointerTo("exact"),
-			ChartVersionExact:    utils.PointerTo("chart version blah"),
-			HelmfileRef:          utils.PointerTo("HEAD"),
-			HelmfileRefEnabled:   utils.PointerTo(false),
-			FirecloudDevelopRef:  utils.PointerTo("dev"),
-		},
-	}, user)
-	s.NoError(err)
-	s.True(created)
 	ret, err := DeployHookTriggerConfigV3{
-		OnChartRelease: &chartRelease.Name,
+		OnChartRelease: utils.PointerTo(s.TestData.ChartRelease_LeonardoDev().Name),
 	}.toModel(s.DB)
 	s.NoError(err)
 	if s.NotNil(ret.OnChartReleaseID) {
-		s.Equal(chartRelease.ID, *ret.OnChartReleaseID)
+		s.Equal(s.TestData.ChartRelease_LeonardoDev().ID, *ret.OnChartReleaseID)
 	}
 }
 
