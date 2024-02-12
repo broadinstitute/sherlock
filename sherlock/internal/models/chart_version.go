@@ -44,7 +44,7 @@ func (c *ChartVersion) BeforeCreate(tx *gorm.DB) error {
 // - It will always be exclusive of the end ChartVersion
 // - It will be inclusive of the start ChartVersion when possible
 // - It will be ordered by iteration (the last entry in the path is the one whose parent is the end ChartVersion)
-func GetChartVersionPathIDs(db *gorm.DB, inclusiveStartID uint, exclusiveEndID uint) (path []uint, foundPath bool, err error) {
+func GetChartVersionPathIDs(db *gorm.DB, exclusiveEndID uint, inclusiveStartID uint) (path []uint, foundPath bool, err error) {
 	if inclusiveStartID == exclusiveEndID {
 		// If the start and end are the same, there's no path to calculate
 		return []uint{}, true, nil

@@ -1063,24 +1063,23 @@ func (td *testDataImpl) Changeset_LeonardoDev_V1toV3() Changeset {
 			},
 			AppliedAt:    utils.PointerTo(time.Now().Add(-(18 * time.Hour))),
 			SupersededAt: nil,
-			// We manually specify these so that they're stable when this test data is accessed.
-			// Changeset's AfterCreate hook is what builds these associations normally, but when it
-			// does so it doesn't rehydrate the struct. For simplicty's sake we just create it
-			// fully hydrated already, and the hook will on-conflict-do-nothing when it tries to
-			// add the associations again.
-			NewAppVersions: []*AppVersion{
-				utils.PointerTo(td.AppVersion_Leonardo_V2()),
-				utils.PointerTo(td.AppVersion_Leonardo_V3()),
-			},
-			NewChartVersions: []*ChartVersion{
-				utils.PointerTo(td.ChartVersion_Leonardo_V2()),
-				utils.PointerTo(td.ChartVersion_Leonardo_V3()),
-			},
-			PlannedByID: utils.PointerTo(td.User_Suitable().ID),
-			AppliedByID: utils.PointerTo(td.User_Suitable().ID),
+			PlannedByID:  utils.PointerTo(td.User_Suitable().ID),
+			AppliedByID:  utils.PointerTo(td.User_Suitable().ID),
 		}
 		td.h.SetSuitableTestUserForDB()
 		td.create(&td.changeset_leonardoDev_v1toV3)
+		// Reload from the database so we get data from hooks and everything
+		td.h.DB.Scopes(ReadChangesetScope).Take(&td.changeset_leonardoDev_v1toV3, td.changeset_leonardoDev_v1toV3.ID)
+		// We don't typically want to run assertions from the test data package, but if the hooks didn't work properly,
+		// you'll be in for a hell of a time debugging. We panic if any of the changelog entries aren't as expected
+		if len(td.changeset_leonardoDev_v1toV3.NewAppVersions) != 2 ||
+			td.changeset_leonardoDev_v1toV3.NewAppVersions[0].AppVersion != td.AppVersion_Leonardo_V2().AppVersion ||
+			td.changeset_leonardoDev_v1toV3.NewAppVersions[1].AppVersion != td.AppVersion_Leonardo_V3().AppVersion ||
+			len(td.changeset_leonardoDev_v1toV3.NewChartVersions) != 2 ||
+			td.changeset_leonardoDev_v1toV3.NewChartVersions[0].ChartVersion != td.ChartVersion_Leonardo_V2().ChartVersion ||
+			td.changeset_leonardoDev_v1toV3.NewChartVersions[1].ChartVersion != td.ChartVersion_Leonardo_V3().ChartVersion {
+			panic("Changeset's AfterCreate hook didn't work properly")
+		}
 	}
 	return td.changeset_leonardoDev_v1toV3
 }
@@ -1117,21 +1116,20 @@ func (td *testDataImpl) Changeset_LeonardoDev_V1toV2Superseded() Changeset {
 			},
 			AppliedAt:    nil,
 			SupersededAt: utils.PointerTo(time.Now().Add(-(18 * time.Hour))),
-			// We manually specify these so that they're stable when this test data is accessed.
-			// Changeset's AfterCreate hook is what builds these associations normally, but when it
-			// does so it doesn't rehydrate the struct. For simplicty's sake we just create it
-			// fully hydrated already, and the hook will on-conflict-do-nothing when it tries to
-			// add the associations again.
-			NewAppVersions: []*AppVersion{
-				utils.PointerTo(td.AppVersion_Leonardo_V2()),
-			},
-			NewChartVersions: []*ChartVersion{
-				utils.PointerTo(td.ChartVersion_Leonardo_V2()),
-			},
-			PlannedByID: utils.PointerTo(td.User_Suitable().ID),
+			PlannedByID:  utils.PointerTo(td.User_Suitable().ID),
 		}
 		td.h.SetSuitableTestUserForDB()
 		td.create(&td.changeset_leonardoDev_v1toV2Superseded)
+		// Reload from the database so we get data from hooks and everything
+		td.h.DB.Scopes(ReadChangesetScope).Take(&td.changeset_leonardoDev_v1toV2Superseded, td.changeset_leonardoDev_v1toV2Superseded.ID)
+		// We don't typically want to run assertions from the test data package, but if the hooks didn't work properly,
+		// you'll be in for a hell of a time debugging. We panic if any of the changelog entries aren't as expected
+		if len(td.changeset_leonardoDev_v1toV2Superseded.NewAppVersions) != 1 ||
+			td.changeset_leonardoDev_v1toV2Superseded.NewAppVersions[0].AppVersion != td.AppVersion_Leonardo_V2().AppVersion ||
+			len(td.changeset_leonardoDev_v1toV2Superseded.NewChartVersions) != 1 ||
+			td.changeset_leonardoDev_v1toV2Superseded.NewChartVersions[0].ChartVersion != td.ChartVersion_Leonardo_V2().ChartVersion {
+			panic("Changeset's AfterCreate hook didn't work properly")
+		}
 	}
 	return td.changeset_leonardoDev_v1toV2Superseded
 }
