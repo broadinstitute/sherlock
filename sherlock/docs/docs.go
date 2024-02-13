@@ -4936,7 +4936,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "format": "date-time",
-                        "description": "If set, the BEE will be automatically deleted after this time (thelma checks this field)",
+                        "description": "If set, the BEE will be automatically deleted after this time. Can be set to \"\" or Go's zero time value to clear the field.",
                         "name": "deleteAfter",
                         "in": "query"
                     },
@@ -14751,7 +14751,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "deleteAfter": {
-                    "description": "If set, the BEE will be automatically deleted after this time (thelma checks this field)",
+                    "description": "If set, the BEE will be automatically deleted after this time. Can be set to \"\" or Go's zero time value to clear the field.",
                     "type": "string",
                     "format": "date-time"
                 },
@@ -14873,7 +14873,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "deleteAfter": {
-                    "description": "If set, the BEE will be automatically deleted after this time (thelma checks this field)",
+                    "description": "If set, the BEE will be automatically deleted after this time. Can be set to \"\" or Go's zero time value to clear the field.",
                     "type": "string",
                     "format": "date-time"
                 },
@@ -14966,7 +14966,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "deleteAfter": {
-                    "description": "If set, the BEE will be automatically deleted after this time (thelma checks this field)",
+                    "description": "If set, the BEE will be automatically deleted after this time. Can be set to \"\" or Go's zero time value to clear the field.",
                     "type": "string",
                     "format": "date-time"
                 },
