@@ -122,6 +122,7 @@ func (s *modelSuite) TestPlanChangesets_none() {
 	// Gorm's annoying behavior happens with both `Find(&ret, nil)` and `Find(&ret, []uint{})` -- but in the course
 	// of debugging I decided to make this function never return `nil, nil`, which is what it would do before it
 	// created nothing.
+	s.SetNonSuitableTestUserForDB()
 	ids, err := PlanChangesets(s.DB, []Changeset{})
 	s.NoError(err)
 	s.NotNil(ids)
