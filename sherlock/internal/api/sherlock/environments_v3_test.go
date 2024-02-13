@@ -12,7 +12,9 @@ import (
 )
 
 func (s *handlerSuite) TestEnvironmentV3_toModel() {
-	now := time.Now()
+	nowString := time.Now().Truncate(time.Second).Format(time.RFC3339)
+	now, err := time.Parse(time.RFC3339, nowString)
+	s.NoError(err)
 	templateEnvironment := s.TestData.Environment_Swatomation()
 	defaultCluster := s.TestData.Cluster_TerraQaBees()
 	pagerdutyIntegration := s.TestData.PagerdutyIntegration_ManuallyTriggeredTerraIncident()
@@ -39,7 +41,7 @@ func (s *handlerSuite) TestEnvironmentV3_toModel() {
 			fields: fields{
 				EnvironmentV3Create: EnvironmentV3Create{
 					EnvironmentV3Edit: EnvironmentV3Edit{
-						DeleteAfter: &now,
+						DeleteAfter: utils.PointerTo(now.Format(time.RFC3339)),
 					},
 				},
 			},
@@ -160,7 +162,7 @@ func (s *handlerSuite) TestEnvironmentV3_toModel() {
 						NamePrefixesDomain:          utils.PointerTo(true),
 						HelmfileRef:                 utils.PointerTo("HEAD"),
 						PreventDeletion:             utils.PointerTo(true),
-						DeleteAfter:                 utils.PointerTo(now),
+						DeleteAfter:                 utils.PointerTo(nowString),
 						Description:                 utils.PointerTo("description"),
 						PactIdentifier:              utils.PointerTo(pactUuid),
 						PagerdutyIntegration:        utils.PointerTo(utils.UintToString(pagerdutyIntegration.ID)),
@@ -316,7 +318,7 @@ func Test_environmentFromModel(t *testing.T) {
 						NamePrefixesDomain:          utils.PointerTo(true),
 						HelmfileRef:                 utils.PointerTo("HEAD"),
 						PreventDeletion:             utils.PointerTo(true),
-						DeleteAfter:                 utils.PointerTo(now),
+						DeleteAfter:                 utils.PointerTo(now.Format(time.RFC3339)),
 						Description:                 utils.PointerTo("description"),
 						PactIdentifier:              utils.PointerTo(pactUuid),
 						PagerdutyIntegration:        utils.PointerTo("pd-id/blah"),

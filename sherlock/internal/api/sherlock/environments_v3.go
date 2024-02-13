@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
+	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
@@ -41,7 +42,7 @@ type EnvironmentV3Edit struct {
 	NamePrefixesDomain          *bool      `json:"namePrefixesDomain" form:"namePrefixesDomain" default:"true"`
 	HelmfileRef                 *string    `json:"helmfileRef" form:"helmfileRef" default:"HEAD"`
 	PreventDeletion             *bool      `json:"preventDeletion" form:"preventDeletion" default:"false"`      // Used to protect specific BEEs from deletion (thelma checks this field)
-	DeleteAfter                 *time.Time `json:"deleteAfter,omitempty" form:"deleteAfter" format:"date-time"` // If set, the BEE will be automatically deleted after this time (thelma checks this field)
+	DeleteAfter                 *string    `json:"deleteAfter,omitempty" form:"deleteAfter" format:"date-time"` // If set, the BEE will be automatically deleted after this time. Can be set to "" or Go's zero time value to clear the field.
 	Description                 *string    `json:"description" form:"description"`
 	PactIdentifier              *uuid.UUID `json:"pactIdentifier" form:"PactIdentifier"`
 	PagerdutyIntegration        *string    `json:"pagerdutyIntegration,omitempty" form:"pagerdutyIntegration"`
@@ -78,7 +79,17 @@ func (e EnvironmentV3) toModel(db *gorm.DB) (models.Environment, error) {
 		PactIdentifier:              e.PactIdentifier,
 	}
 	if e.DeleteAfter != nil {
-		ret.DeleteAfter = sql.NullTime{Time: *e.DeleteAfter, Valid: true}
+		if *e.DeleteAfter == "" {
+			// DeleteAfter explicitly set to an empty string; this means the field should be cleared.
+			// We do that by explicitly storing the zero timestamp in the database
+			ret.DeleteAfter = sql.NullTime{Time: time.Time{}, Valid: true}
+		} else {
+			deleteAfter, err := time.Parse(time.RFC3339, *e.DeleteAfter)
+			if err != nil {
+				return models.Environment{}, fmt.Errorf("(%s) failed to parse deleteAfter '%s': %w", errors.BadRequest, *e.DeleteAfter, err)
+			}
+			ret.DeleteAfter = sql.NullTime{Time: deleteAfter, Valid: true}
+		}
 	}
 	if e.TemplateEnvironment != "" {
 		templateEnvironmentModel, err := environmentModelFromSelector(e.TemplateEnvironment)
@@ -181,8 +192,8 @@ func environmentFromModel(model models.Environment) EnvironmentV3 {
 	if model.Owner != nil {
 		ret.Owner = &model.Owner.Email
 	}
-	if model.DeleteAfter.Valid {
-		ret.DeleteAfter = &model.DeleteAfter.Time
+	if !model.DeleteAfter.Time.IsZero() {
+		ret.DeleteAfter = utils.PointerTo(model.DeleteAfter.Time.Format(time.RFC3339))
 	}
 	if model.PagerdutyIntegration != nil && model.PagerdutyIntegration.PagerdutyID != "" {
 		ret.PagerdutyIntegration = utils.PointerTo(fmt.Sprintf("pd-id/%s", model.PagerdutyIntegration.PagerdutyID))

@@ -1017,8 +1017,8 @@ definitions:
         description: When creating, will be calculated if left empty
         type: string
       deleteAfter:
-        description: If set, the BEE will be automatically deleted after this time
-          (thelma checks this field)
+        description: If set, the BEE will be automatically deleted after this time.
+          Can be set to "" or Go's zero time value to clear the field.
         format: date-time
         type: string
       description:
@@ -1113,8 +1113,8 @@ definitions:
         description: When creating, will be calculated if left empty
         type: string
       deleteAfter:
-        description: If set, the BEE will be automatically deleted after this time
-          (thelma checks this field)
+        description: If set, the BEE will be automatically deleted after this time.
+          Can be set to "" or Go's zero time value to clear the field.
         format: date-time
         type: string
       description:
@@ -1187,8 +1187,8 @@ definitions:
       defaultCluster:
         type: string
       deleteAfter:
-        description: If set, the BEE will be automatically deleted after this time
-          (thelma checks this field)
+        description: If set, the BEE will be automatically deleted after this time.
+          Can be set to "" or Go's zero time value to clear the field.
         format: date-time
         type: string
       description:
@@ -6197,8 +6197,8 @@ paths:
         in: query
         name: defaultNamespace
         type: string
-      - description: If set, the BEE will be automatically deleted after this time
-          (thelma checks this field)
+      - description: If set, the BEE will be automatically deleted after this time.
+          Can be set to "" or Go's zero time value to clear the field.
         format: date-time
         in: query
         name: deleteAfter

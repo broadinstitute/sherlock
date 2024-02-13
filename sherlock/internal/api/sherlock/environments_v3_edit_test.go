@@ -6,6 +6,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"time"
 )
 
 func (s *handlerSuite) TestEnvironmentsV3Edit_badSelector() {
@@ -115,4 +116,71 @@ func (s *handlerSuite) TestEnvironmentsV3Edit_suitabilityAfter() {
 		&got)
 	s.Equal(http.StatusForbidden, code)
 	s.Equal(errors.Forbidden, got.Type)
+}
+
+func (s *handlerSuite) TestEnvironmentsV3Edit_deleteAfter() {
+	edit := s.TestData.Environment_Swatomation_DevBee()
+	now := time.Now().Truncate(time.Second)
+	var got EnvironmentV3
+	code := s.HandleRequest(
+		s.NewRequest("PATCH", fmt.Sprintf("/api/environments/v3/%d", edit.ID), EnvironmentV3Edit{
+			DeleteAfter: utils.PointerTo(now.Add(4 * time.Hour).Format(time.RFC3339)),
+		}),
+		&got)
+	s.Equal(http.StatusOK, code)
+	if s.NotNil(got.DeleteAfter) {
+		ti, err := time.Parse(time.RFC3339, *got.DeleteAfter)
+		s.NoError(err)
+		s.True(now.Add(4 * time.Hour).Truncate(time.Second).Equal(ti))
+	}
+	var got2 EnvironmentV3
+	code = s.HandleRequest(
+		s.NewRequest("PATCH", fmt.Sprintf("/api/environments/v3/%d", edit.ID), EnvironmentV3Edit{
+			DeleteAfter: utils.PointerTo(""),
+		}),
+		&got2)
+	s.Equal(http.StatusOK, code)
+	if !s.Nil(got2.DeleteAfter) {
+		println(*got2.DeleteAfter)
+	}
+}
+
+func (s *handlerSuite) TestEnvironmentsV3Edit_deleteAfter_setToZeroTimestamp() {
+	edit := s.TestData.Environment_Swatomation_DevBee()
+	now := time.Now().Truncate(time.Second)
+	var got EnvironmentV3
+	code := s.HandleRequest(
+		s.NewRequest("PATCH", fmt.Sprintf("/api/environments/v3/%d", edit.ID), EnvironmentV3Edit{
+			DeleteAfter: utils.PointerTo(now.Add(4 * time.Hour).Format(time.RFC3339)),
+		}),
+		&got)
+	s.Equal(http.StatusOK, code)
+	if s.NotNil(got.DeleteAfter) {
+		ti, err := time.Parse(time.RFC3339, *got.DeleteAfter)
+		s.NoError(err)
+		s.True(now.Add(4 * time.Hour).Truncate(time.Second).Equal(ti))
+	}
+	var got2 EnvironmentV3
+	code = s.HandleRequest(
+		s.NewRequest("PATCH", fmt.Sprintf("/api/environments/v3/%d", edit.ID), EnvironmentV3Edit{
+			DeleteAfter: utils.PointerTo(time.Time{}.Format(time.RFC3339)),
+		}),
+		&got2)
+	s.Equal(http.StatusOK, code)
+	if !s.Nil(got2.DeleteAfter) {
+		println(*got2.DeleteAfter)
+	}
+}
+
+func (s *handlerSuite) TestEnvironmentsV3Edit_deleteAfter_failToParse() {
+	edit := s.TestData.Environment_Swatomation_DevBee()
+	var got errors.ErrorResponse
+	code := s.HandleRequest(
+		s.NewRequest("PATCH", fmt.Sprintf("/api/environments/v3/%d", edit.ID), EnvironmentV3Edit{
+			DeleteAfter: utils.PointerTo("foobar"),
+		}),
+		&got)
+	s.Equal(http.StatusBadRequest, code)
+	s.Equal(errors.BadRequest, got.Type)
+	s.Contains(got.Message, "foobar")
 }
