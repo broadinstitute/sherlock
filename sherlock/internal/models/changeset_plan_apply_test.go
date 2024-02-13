@@ -117,6 +117,17 @@ func (s *modelSuite) TestPlanChangesets_changelogConnected() {
 	}
 }
 
+func (s *modelSuite) TestPlanChangesets_none() {
+	// This isn't the error discussed in https://broadinstitute.slack.com/archives/CQ6SL4N5T/p1707836110299439 --
+	// Gorm's annoying behavior happens with both `Find(&ret, nil)` and `Find(&ret, []uint{})` -- but in the course
+	// of debugging I decided to make this function never return `nil, nil`, which is what it would do before it
+	// created nothing.
+	ids, err := PlanChangesets(s.DB, []Changeset{})
+	s.NoError(err)
+	s.NotNil(ids)
+	s.Len(ids, 0)
+}
+
 func (s *modelSuite) TestApplyChangesets_userNotSet() {
 	err := ApplyChangesets(s.DB, []uint{})
 	s.ErrorContains(err, "unable to get current user for changeset applying")

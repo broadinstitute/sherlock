@@ -160,6 +160,32 @@ func (s *handlerSuite) TestChangesetsProceduresV3PlanAndApply() {
 	}
 }
 
+func (s *handlerSuite) TestChangesetProceduresV3PlanAndApply_noneGiven() {
+	var got []ChangesetV3
+	code := s.HandleRequest(
+		s.NewRequest("POST", "/api/changesets/procedures/v3/plan-and-apply", ChangesetV3PlanRequest{}),
+		&got)
+	s.Equal(http.StatusOK, code)
+	s.NotNil(got)
+	s.Empty(got)
+}
+
+func (s *handlerSuite) TestChangesetsProceduresV3PlanAndApply_nonePlanned() {
+	var got []ChangesetV3
+	code := s.HandleRequest(
+		s.NewRequest("POST", "/api/changesets/procedures/v3/plan-and-apply", ChangesetV3PlanRequest{
+			Environments: []ChangesetV3PlanRequestEnvironmentEntry{
+				{
+					Environment: s.TestData.Environment_Staging().Name,
+				},
+			},
+		}),
+		&got)
+	s.Equal(http.StatusOK, code)
+	s.NotNil(got)
+	s.Empty(got)
+}
+
 func (s *handlerSuite) TestChangesetsProceduresV3PlanAndApply_notVerbose() {
 	changesetToRecreate := s.TestData.Changeset_LeonardoDev_V1toV2Superseded()
 	chartReleaseToUpdate := s.TestData.ChartRelease_LeonardoProd()

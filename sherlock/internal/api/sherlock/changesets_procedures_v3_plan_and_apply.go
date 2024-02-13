@@ -67,6 +67,9 @@ func changesetsProceduresV3PlanAndApply(ctx *gin.Context) {
 	if createdChangesetIDs, err = models.PlanChangesets(db, changesets); err != nil {
 		errors.AbortRequest(ctx, fmt.Errorf("error planning changesets: %w", err))
 		return
+	} else if len(createdChangesetIDs) == 0 {
+		ctx.JSON(http.StatusOK, []ChangesetV3{})
+		return
 	} else if err = models.ApplyChangesets(db, createdChangesetIDs); err != nil {
 		errors.AbortRequest(ctx, fmt.Errorf("error applying changesets: %w", err))
 		return

@@ -88,6 +88,9 @@ func changesetsProceduresV3Plan(ctx *gin.Context) {
 	if createdChangesetIDs, err = models.PlanChangesets(db, changesets); err != nil {
 		errors.AbortRequest(ctx, fmt.Errorf("error planning changesets: %w", err))
 		return
+	} else if len(createdChangesetIDs) == 0 {
+		ctx.JSON(http.StatusOK, []ChangesetV3{})
+		return
 	} else if verboseOutput {
 		if err = db.Scopes(models.ReadChangesetScope).Find(&ret, createdChangesetIDs).Error; err != nil {
 			errors.AbortRequest(ctx, fmt.Errorf("error querying planned changesets: %w", err))

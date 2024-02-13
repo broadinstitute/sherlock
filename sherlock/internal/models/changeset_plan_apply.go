@@ -45,6 +45,7 @@ func PlanChangesets(db *gorm.DB, changesets []Changeset) (created []uint, err er
 			changesetsToCreate = append(changesetsToCreate, changeset)
 		}
 	}
+	created = make([]uint, 0, len(changesetsToCreate))
 	if len(changesetsToCreate) > 0 {
 		err = db.Transaction(func(tx *gorm.DB) error {
 			for _, changeset := range changesetsToCreate {
