@@ -220,3 +220,29 @@ func (s *handlerSuite) TestChangesetsProceduresV3PlanAndApply_notVerbose() {
 		s.Nil(changeset.ChartReleaseInfo)
 	}
 }
+
+func (s *handlerSuite) TestChangesetsProceduresV3PlanAndApply_newBee() {
+	template := s.TestData.Environment_Swatomation()
+	s.TestData.ChartRelease_LeonardoSwatomation()
+
+	var got EnvironmentV3
+	code := s.HandleRequest(
+		s.NewRequest("POST", "/api/environments/v3", EnvironmentV3Create{
+			TemplateEnvironment: template.Name,
+		}),
+		&got)
+	s.Equal(http.StatusCreated, code)
+
+	var gotChangesets []ChangesetV3
+	code = s.HandleRequest(
+		s.NewRequest("POST", "/api/changesets/procedures/v3/plan-and-apply", ChangesetV3PlanRequest{
+			Environments: []ChangesetV3PlanRequestEnvironmentEntry{
+				{
+					Environment: got.Name,
+				},
+			},
+		}),
+		&gotChangesets)
+	s.Equal(http.StatusOK, code)
+	s.Len(gotChangesets, 0)
+}
