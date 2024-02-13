@@ -84,7 +84,7 @@ jobs:
         run: |
           set -ex
           curl --fail-with-body \
-            "$SHERLOCK_PROD_URL/api/v2/chart-releases/${{ inputs.chart-release-name }}" \
+            "$SHERLOCK_PROD_URL/api/chart-releases/v3/${{ inputs.chart-release-name }}" \
             -H 'Content-Type: application/json' \
             -H 'Authorization: Bearer ${{ steps.iap_auth.outputs.id_token }}' \
             -H 'X-GHA-OIDC-JWT: ${{ steps.gha_auth.outputs.id_token }}' \
