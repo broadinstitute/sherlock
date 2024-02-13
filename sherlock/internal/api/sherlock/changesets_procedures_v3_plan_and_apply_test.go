@@ -245,4 +245,18 @@ func (s *handlerSuite) TestChangesetsProceduresV3PlanAndApply_newBee() {
 		&gotChangesets)
 	s.Equal(http.StatusOK, code)
 	s.Len(gotChangesets, 0)
+
+	code = s.HandleRequest(
+		s.NewRequest("POST", "/api/changesets/procedures/v3/plan-and-apply", ChangesetV3PlanRequest{
+			ChartReleases: []ChangesetV3PlanRequestChartReleaseEntry{
+				{
+					ChangesetV3Create: ChangesetV3Create{
+						ChartRelease: got.Name + "/" + "leonardo",
+					},
+				},
+			},
+		}),
+		&gotChangesets)
+	s.Equal(http.StatusOK, code)
+	s.Len(gotChangesets, 0)
 }
