@@ -98,7 +98,7 @@ type GetAPIEnvironmentsV3Params struct {
 
 	/* DeleteAfter.
 
-	   If set, the BEE will be automatically deleted after this time (thelma checks this field)
+	   If set, the BEE will be automatically deleted after this time. Can be set to "" or Go's zero time value to clear the field.
 
 	   Format: date-time
 	*/

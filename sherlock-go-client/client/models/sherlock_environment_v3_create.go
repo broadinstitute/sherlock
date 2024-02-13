@@ -34,7 +34,7 @@ type SherlockEnvironmentV3Create struct {
 	// When creating, will be calculated if left empty
 	DefaultNamespace string `json:"defaultNamespace,omitempty"`
 
-	// If set, the BEE will be automatically deleted after this time (thelma checks this field)
+	// If set, the BEE will be automatically deleted after this time. Can be set to "" or Go's zero time value to clear the field.
 	// Format: date-time
 	DeleteAfter strfmt.DateTime `json:"deleteAfter,omitempty"`
 
