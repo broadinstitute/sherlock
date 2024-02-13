@@ -160,6 +160,32 @@ func (s *handlerSuite) TestChangesetsProceduresV3PlanAndApply() {
 	}
 }
 
+func (s *handlerSuite) TestChangesetProceduresV3PlanAndApply_noneGiven() {
+	var got []ChangesetV3
+	code := s.HandleRequest(
+		s.NewRequest("POST", "/api/changesets/procedures/v3/plan-and-apply", ChangesetV3PlanRequest{}),
+		&got)
+	s.Equal(http.StatusOK, code)
+	s.NotNil(got)
+	s.Empty(got)
+}
+
+func (s *handlerSuite) TestChangesetsProceduresV3PlanAndApply_nonePlanned() {
+	var got []ChangesetV3
+	code := s.HandleRequest(
+		s.NewRequest("POST", "/api/changesets/procedures/v3/plan-and-apply", ChangesetV3PlanRequest{
+			Environments: []ChangesetV3PlanRequestEnvironmentEntry{
+				{
+					Environment: s.TestData.Environment_Staging().Name,
+				},
+			},
+		}),
+		&got)
+	s.Equal(http.StatusOK, code)
+	s.NotNil(got)
+	s.Empty(got)
+}
+
 func (s *handlerSuite) TestChangesetsProceduresV3PlanAndApply_notVerbose() {
 	changesetToRecreate := s.TestData.Changeset_LeonardoDev_V1toV2Superseded()
 	chartReleaseToUpdate := s.TestData.ChartRelease_LeonardoProd()
@@ -193,4 +219,44 @@ func (s *handlerSuite) TestChangesetsProceduresV3PlanAndApply_notVerbose() {
 		s.NotEmpty(changeset.ID)
 		s.Nil(changeset.ChartReleaseInfo)
 	}
+}
+
+func (s *handlerSuite) TestChangesetsProceduresV3PlanAndApply_newBee() {
+	template := s.TestData.Environment_Swatomation()
+	s.TestData.ChartRelease_LeonardoSwatomation()
+
+	var got EnvironmentV3
+	code := s.HandleRequest(
+		s.NewRequest("POST", "/api/environments/v3", EnvironmentV3Create{
+			TemplateEnvironment: template.Name,
+		}),
+		&got)
+	s.Equal(http.StatusCreated, code)
+
+	var gotChangesets []ChangesetV3
+	code = s.HandleRequest(
+		s.NewRequest("POST", "/api/changesets/procedures/v3/plan-and-apply", ChangesetV3PlanRequest{
+			Environments: []ChangesetV3PlanRequestEnvironmentEntry{
+				{
+					Environment: got.Name,
+				},
+			},
+		}),
+		&gotChangesets)
+	s.Equal(http.StatusOK, code)
+	s.Len(gotChangesets, 0)
+
+	code = s.HandleRequest(
+		s.NewRequest("POST", "/api/changesets/procedures/v3/plan-and-apply", ChangesetV3PlanRequest{
+			ChartReleases: []ChangesetV3PlanRequestChartReleaseEntry{
+				{
+					ChangesetV3Create: ChangesetV3Create{
+						ChartRelease: got.Name + "/" + "leonardo",
+					},
+				},
+			},
+		}),
+		&gotChangesets)
+	s.Equal(http.StatusOK, code)
+	s.Len(gotChangesets, 0)
 }
