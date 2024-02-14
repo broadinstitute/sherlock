@@ -32,27 +32,13 @@ type ClientOption func(*runtime.ClientOperation)
 type ClientService interface {
 	DeleteAPIChartsV3Selector(params *DeleteAPIChartsV3SelectorParams, opts ...ClientOption) (*DeleteAPIChartsV3SelectorOK, error)
 
-	DeleteAPIV2ChartsSelector(params *DeleteAPIV2ChartsSelectorParams, opts ...ClientOption) (*DeleteAPIV2ChartsSelectorOK, error)
-
 	GetAPIChartsV3(params *GetAPIChartsV3Params, opts ...ClientOption) (*GetAPIChartsV3OK, error)
 
 	GetAPIChartsV3Selector(params *GetAPIChartsV3SelectorParams, opts ...ClientOption) (*GetAPIChartsV3SelectorOK, error)
 
-	GetAPIV2Charts(params *GetAPIV2ChartsParams, opts ...ClientOption) (*GetAPIV2ChartsOK, error)
-
-	GetAPIV2ChartsSelector(params *GetAPIV2ChartsSelectorParams, opts ...ClientOption) (*GetAPIV2ChartsSelectorOK, error)
-
-	GetAPIV2SelectorsChartsSelector(params *GetAPIV2SelectorsChartsSelectorParams, opts ...ClientOption) (*GetAPIV2SelectorsChartsSelectorOK, error)
-
 	PatchAPIChartsV3Selector(params *PatchAPIChartsV3SelectorParams, opts ...ClientOption) (*PatchAPIChartsV3SelectorOK, error)
 
-	PatchAPIV2ChartsSelector(params *PatchAPIV2ChartsSelectorParams, opts ...ClientOption) (*PatchAPIV2ChartsSelectorOK, error)
-
 	PostAPIChartsV3(params *PostAPIChartsV3Params, opts ...ClientOption) (*PostAPIChartsV3Created, error)
-
-	PostAPIV2Charts(params *PostAPIV2ChartsParams, opts ...ClientOption) (*PostAPIV2ChartsOK, *PostAPIV2ChartsCreated, error)
-
-	PutAPIV2ChartsSelector(params *PutAPIV2ChartsSelectorParams, opts ...ClientOption) (*PutAPIV2ChartsSelectorOK, *PutAPIV2ChartsSelectorCreated, error)
 
 	SetTransport(transport runtime.ClientTransport)
 }
@@ -94,46 +80,6 @@ func (a *Client) DeleteAPIChartsV3Selector(params *DeleteAPIChartsV3SelectorPara
 	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for DeleteAPIChartsV3Selector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
-	panic(msg)
-}
-
-/*
-  DeleteAPIV2ChartsSelector deletes a chart entry
-
-  Delete an existing Chart entry via one of its "selectors": name or numeric ID.
-*/
-func (a *Client) DeleteAPIV2ChartsSelector(params *DeleteAPIV2ChartsSelectorParams, opts ...ClientOption) (*DeleteAPIV2ChartsSelectorOK, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewDeleteAPIV2ChartsSelectorParams()
-	}
-	op := &runtime.ClientOperation{
-		ID:                 "DeleteAPIV2ChartsSelector",
-		Method:             "DELETE",
-		PathPattern:        "/api/v2/charts/{selector}",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"https"},
-		Params:             params,
-		Reader:             &DeleteAPIV2ChartsSelectorReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
-	if err != nil {
-		return nil, err
-	}
-	success, ok := result.(*DeleteAPIV2ChartsSelectorOK)
-	if ok {
-		return success, nil
-	}
-	// unexpected success response
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
-	msg := fmt.Sprintf("unexpected success response for DeleteAPIV2ChartsSelector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 
@@ -218,126 +164,6 @@ func (a *Client) GetAPIChartsV3Selector(params *GetAPIChartsV3SelectorParams, op
 }
 
 /*
-  GetAPIV2Charts lists chart entries
-
-  List existing Chart entries, ordered by most recently updated.
-*/
-func (a *Client) GetAPIV2Charts(params *GetAPIV2ChartsParams, opts ...ClientOption) (*GetAPIV2ChartsOK, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewGetAPIV2ChartsParams()
-	}
-	op := &runtime.ClientOperation{
-		ID:                 "GetAPIV2Charts",
-		Method:             "GET",
-		PathPattern:        "/api/v2/charts",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"https"},
-		Params:             params,
-		Reader:             &GetAPIV2ChartsReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
-	if err != nil {
-		return nil, err
-	}
-	success, ok := result.(*GetAPIV2ChartsOK)
-	if ok {
-		return success, nil
-	}
-	// unexpected success response
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
-	msg := fmt.Sprintf("unexpected success response for GetAPIV2Charts: API contract not enforced by server. Client expected to get an error, but got: %T", result)
-	panic(msg)
-}
-
-/*
-  GetAPIV2ChartsSelector gets a chart entry
-
-  Get an existing Chart entry via one of its "selectors": name or numeric ID.
-*/
-func (a *Client) GetAPIV2ChartsSelector(params *GetAPIV2ChartsSelectorParams, opts ...ClientOption) (*GetAPIV2ChartsSelectorOK, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewGetAPIV2ChartsSelectorParams()
-	}
-	op := &runtime.ClientOperation{
-		ID:                 "GetAPIV2ChartsSelector",
-		Method:             "GET",
-		PathPattern:        "/api/v2/charts/{selector}",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"https"},
-		Params:             params,
-		Reader:             &GetAPIV2ChartsSelectorReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
-	if err != nil {
-		return nil, err
-	}
-	success, ok := result.(*GetAPIV2ChartsSelectorOK)
-	if ok {
-		return success, nil
-	}
-	// unexpected success response
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
-	msg := fmt.Sprintf("unexpected success response for GetAPIV2ChartsSelector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
-	panic(msg)
-}
-
-/*
-  GetAPIV2SelectorsChartsSelector lists chart selectors
-
-  Validate a given Chart selector and provide any other selectors that would match the same Chart.
-*/
-func (a *Client) GetAPIV2SelectorsChartsSelector(params *GetAPIV2SelectorsChartsSelectorParams, opts ...ClientOption) (*GetAPIV2SelectorsChartsSelectorOK, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewGetAPIV2SelectorsChartsSelectorParams()
-	}
-	op := &runtime.ClientOperation{
-		ID:                 "GetAPIV2SelectorsChartsSelector",
-		Method:             "GET",
-		PathPattern:        "/api/v2/selectors/charts/{selector}",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"https"},
-		Params:             params,
-		Reader:             &GetAPIV2SelectorsChartsSelectorReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
-	if err != nil {
-		return nil, err
-	}
-	success, ok := result.(*GetAPIV2SelectorsChartsSelectorOK)
-	if ok {
-		return success, nil
-	}
-	// unexpected success response
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
-	msg := fmt.Sprintf("unexpected success response for GetAPIV2SelectorsChartsSelector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
-	panic(msg)
-}
-
-/*
   PatchAPIChartsV3Selector edits an individual chart
 
   Edit an individual Chart.
@@ -378,46 +204,6 @@ func (a *Client) PatchAPIChartsV3Selector(params *PatchAPIChartsV3SelectorParams
 }
 
 /*
-  PatchAPIV2ChartsSelector edits a chart entry
-
-  Edit an existing Chart entry via one of its "selectors": name or numeric ID. Note that only mutable fields are available here, immutable fields can only be set using /create.
-*/
-func (a *Client) PatchAPIV2ChartsSelector(params *PatchAPIV2ChartsSelectorParams, opts ...ClientOption) (*PatchAPIV2ChartsSelectorOK, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewPatchAPIV2ChartsSelectorParams()
-	}
-	op := &runtime.ClientOperation{
-		ID:                 "PatchAPIV2ChartsSelector",
-		Method:             "PATCH",
-		PathPattern:        "/api/v2/charts/{selector}",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"https"},
-		Params:             params,
-		Reader:             &PatchAPIV2ChartsSelectorReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
-	if err != nil {
-		return nil, err
-	}
-	success, ok := result.(*PatchAPIV2ChartsSelectorOK)
-	if ok {
-		return success, nil
-	}
-	// unexpected success response
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
-	msg := fmt.Sprintf("unexpected success response for PatchAPIV2ChartsSelector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
-	panic(msg)
-}
-
-/*
   PostAPIChartsV3 creates a chart
 
   Create a Chart.
@@ -454,89 +240,6 @@ func (a *Client) PostAPIChartsV3(params *PostAPIChartsV3Params, opts ...ClientOp
 	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for PostAPIChartsV3: API contract not enforced by server. Client expected to get an error, but got: %T", result)
-	panic(msg)
-}
-
-/*
-  PostAPIV2Charts creates a new chart entry
-
-  Create a new Chart entry. Note that some fields are immutable after creation; /edit lists mutable fields.
-*/
-func (a *Client) PostAPIV2Charts(params *PostAPIV2ChartsParams, opts ...ClientOption) (*PostAPIV2ChartsOK, *PostAPIV2ChartsCreated, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewPostAPIV2ChartsParams()
-	}
-	op := &runtime.ClientOperation{
-		ID:                 "PostAPIV2Charts",
-		Method:             "POST",
-		PathPattern:        "/api/v2/charts",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"https"},
-		Params:             params,
-		Reader:             &PostAPIV2ChartsReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
-	if err != nil {
-		return nil, nil, err
-	}
-	switch value := result.(type) {
-	case *PostAPIV2ChartsOK:
-		return value, nil, nil
-	case *PostAPIV2ChartsCreated:
-		return nil, value, nil
-	}
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
-	msg := fmt.Sprintf("unexpected success response for charts: API contract not enforced by server. Client expected to get an error, but got: %T", result)
-	panic(msg)
-}
-
-/*
-  PutAPIV2ChartsSelector creates or edit a chart entry
-
-  Create or edit a Chart entry. Attempts to edit and will attempt to create upon an error.
-If an edit was made or the creation process de-duplicates, this method will return normally with a 200.
-*/
-func (a *Client) PutAPIV2ChartsSelector(params *PutAPIV2ChartsSelectorParams, opts ...ClientOption) (*PutAPIV2ChartsSelectorOK, *PutAPIV2ChartsSelectorCreated, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewPutAPIV2ChartsSelectorParams()
-	}
-	op := &runtime.ClientOperation{
-		ID:                 "PutAPIV2ChartsSelector",
-		Method:             "PUT",
-		PathPattern:        "/api/v2/charts/{selector}",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"https"},
-		Params:             params,
-		Reader:             &PutAPIV2ChartsSelectorReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
-	if err != nil {
-		return nil, nil, err
-	}
-	switch value := result.(type) {
-	case *PutAPIV2ChartsSelectorOK:
-		return value, nil, nil
-	case *PutAPIV2ChartsSelectorCreated:
-		return nil, value, nil
-	}
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
-	msg := fmt.Sprintf("unexpected success response for charts: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 
