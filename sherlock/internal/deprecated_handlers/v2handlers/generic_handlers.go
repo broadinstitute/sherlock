@@ -15,8 +15,6 @@ import (
 	"strings"
 )
 
-// formatSelector standardizes the input string so the rest of Sherlock doesn't need to worry about, for instance,
-// Gin including a leading slash when parsing a selector out of the URL.
 func formatSelector(selector string) string {
 	return strings.Trim(selector, "/")
 }
