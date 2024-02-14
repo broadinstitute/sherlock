@@ -67,6 +67,12 @@ func Logger() gin.HandlerFunc {
 			event.Stringer("latency", latency)
 			event.Msgf("GIN  | %-50s", path)
 		} else {
+			if claims, err := authentication.ShouldUseGithubClaims(ctx); err == nil {
+				// If we have GitHub claims -- meaning this request definitely came from GitHub Actions --
+				// we might as well log some info from it to help with debugging.
+				event.Str("githubWorkflowFile", claims.WorkflowRef)
+				event.Str("githubWorkflowLink", claims.WorkflowURL())
+			}
 			event.Dur("latency", latency)
 			event.Str("route", ctx.FullPath())
 			event.Str("client", ctx.ClientIP())
