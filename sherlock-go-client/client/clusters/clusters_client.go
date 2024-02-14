@@ -32,27 +32,13 @@ type ClientOption func(*runtime.ClientOperation)
 type ClientService interface {
 	DeleteAPIClustersV3Selector(params *DeleteAPIClustersV3SelectorParams, opts ...ClientOption) (*DeleteAPIClustersV3SelectorOK, error)
 
-	DeleteAPIV2ClustersSelector(params *DeleteAPIV2ClustersSelectorParams, opts ...ClientOption) (*DeleteAPIV2ClustersSelectorOK, error)
-
 	GetAPIClustersV3(params *GetAPIClustersV3Params, opts ...ClientOption) (*GetAPIClustersV3OK, error)
 
 	GetAPIClustersV3Selector(params *GetAPIClustersV3SelectorParams, opts ...ClientOption) (*GetAPIClustersV3SelectorOK, error)
 
-	GetAPIV2Clusters(params *GetAPIV2ClustersParams, opts ...ClientOption) (*GetAPIV2ClustersOK, error)
-
-	GetAPIV2ClustersSelector(params *GetAPIV2ClustersSelectorParams, opts ...ClientOption) (*GetAPIV2ClustersSelectorOK, error)
-
-	GetAPIV2SelectorsClustersSelector(params *GetAPIV2SelectorsClustersSelectorParams, opts ...ClientOption) (*GetAPIV2SelectorsClustersSelectorOK, error)
-
 	PatchAPIClustersV3Selector(params *PatchAPIClustersV3SelectorParams, opts ...ClientOption) (*PatchAPIClustersV3SelectorOK, error)
 
-	PatchAPIV2ClustersSelector(params *PatchAPIV2ClustersSelectorParams, opts ...ClientOption) (*PatchAPIV2ClustersSelectorOK, error)
-
 	PostAPIClustersV3(params *PostAPIClustersV3Params, opts ...ClientOption) (*PostAPIClustersV3Created, error)
-
-	PostAPIV2Clusters(params *PostAPIV2ClustersParams, opts ...ClientOption) (*PostAPIV2ClustersOK, *PostAPIV2ClustersCreated, error)
-
-	PutAPIV2ClustersSelector(params *PutAPIV2ClustersSelectorParams, opts ...ClientOption) (*PutAPIV2ClustersSelectorOK, *PutAPIV2ClustersSelectorCreated, error)
 
 	SetTransport(transport runtime.ClientTransport)
 }
@@ -94,46 +80,6 @@ func (a *Client) DeleteAPIClustersV3Selector(params *DeleteAPIClustersV3Selector
 	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for DeleteAPIClustersV3Selector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
-	panic(msg)
-}
-
-/*
-  DeleteAPIV2ClustersSelector deletes a cluster entry
-
-  Delete an existing Cluster entry via one of its "selectors": name or numeric ID.
-*/
-func (a *Client) DeleteAPIV2ClustersSelector(params *DeleteAPIV2ClustersSelectorParams, opts ...ClientOption) (*DeleteAPIV2ClustersSelectorOK, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewDeleteAPIV2ClustersSelectorParams()
-	}
-	op := &runtime.ClientOperation{
-		ID:                 "DeleteAPIV2ClustersSelector",
-		Method:             "DELETE",
-		PathPattern:        "/api/v2/clusters/{selector}",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"https"},
-		Params:             params,
-		Reader:             &DeleteAPIV2ClustersSelectorReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
-	if err != nil {
-		return nil, err
-	}
-	success, ok := result.(*DeleteAPIV2ClustersSelectorOK)
-	if ok {
-		return success, nil
-	}
-	// unexpected success response
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
-	msg := fmt.Sprintf("unexpected success response for DeleteAPIV2ClustersSelector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 
@@ -218,126 +164,6 @@ func (a *Client) GetAPIClustersV3Selector(params *GetAPIClustersV3SelectorParams
 }
 
 /*
-  GetAPIV2Clusters lists cluster entries
-
-  List existing Cluster entries, ordered by most recently updated.
-*/
-func (a *Client) GetAPIV2Clusters(params *GetAPIV2ClustersParams, opts ...ClientOption) (*GetAPIV2ClustersOK, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewGetAPIV2ClustersParams()
-	}
-	op := &runtime.ClientOperation{
-		ID:                 "GetAPIV2Clusters",
-		Method:             "GET",
-		PathPattern:        "/api/v2/clusters",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"https"},
-		Params:             params,
-		Reader:             &GetAPIV2ClustersReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
-	if err != nil {
-		return nil, err
-	}
-	success, ok := result.(*GetAPIV2ClustersOK)
-	if ok {
-		return success, nil
-	}
-	// unexpected success response
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
-	msg := fmt.Sprintf("unexpected success response for GetAPIV2Clusters: API contract not enforced by server. Client expected to get an error, but got: %T", result)
-	panic(msg)
-}
-
-/*
-  GetAPIV2ClustersSelector gets a cluster entry
-
-  Get an existing Cluster entry via one of its "selectors": name or numeric ID.
-*/
-func (a *Client) GetAPIV2ClustersSelector(params *GetAPIV2ClustersSelectorParams, opts ...ClientOption) (*GetAPIV2ClustersSelectorOK, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewGetAPIV2ClustersSelectorParams()
-	}
-	op := &runtime.ClientOperation{
-		ID:                 "GetAPIV2ClustersSelector",
-		Method:             "GET",
-		PathPattern:        "/api/v2/clusters/{selector}",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"https"},
-		Params:             params,
-		Reader:             &GetAPIV2ClustersSelectorReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
-	if err != nil {
-		return nil, err
-	}
-	success, ok := result.(*GetAPIV2ClustersSelectorOK)
-	if ok {
-		return success, nil
-	}
-	// unexpected success response
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
-	msg := fmt.Sprintf("unexpected success response for GetAPIV2ClustersSelector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
-	panic(msg)
-}
-
-/*
-  GetAPIV2SelectorsClustersSelector lists cluster selectors
-
-  Validate a given Cluster selector and provide any other selectors that would match the same Cluster.
-*/
-func (a *Client) GetAPIV2SelectorsClustersSelector(params *GetAPIV2SelectorsClustersSelectorParams, opts ...ClientOption) (*GetAPIV2SelectorsClustersSelectorOK, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewGetAPIV2SelectorsClustersSelectorParams()
-	}
-	op := &runtime.ClientOperation{
-		ID:                 "GetAPIV2SelectorsClustersSelector",
-		Method:             "GET",
-		PathPattern:        "/api/v2/selectors/clusters/{selector}",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"https"},
-		Params:             params,
-		Reader:             &GetAPIV2SelectorsClustersSelectorReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
-	if err != nil {
-		return nil, err
-	}
-	success, ok := result.(*GetAPIV2SelectorsClustersSelectorOK)
-	if ok {
-		return success, nil
-	}
-	// unexpected success response
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
-	msg := fmt.Sprintf("unexpected success response for GetAPIV2SelectorsClustersSelector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
-	panic(msg)
-}
-
-/*
   PatchAPIClustersV3Selector edits an individual cluster
 
   Edit an individual Cluster.
@@ -378,46 +204,6 @@ func (a *Client) PatchAPIClustersV3Selector(params *PatchAPIClustersV3SelectorPa
 }
 
 /*
-  PatchAPIV2ClustersSelector edits a cluster entry
-
-  Edit an existing Cluster entry via one of its "selectors": name or numeric ID. Note that only mutable fields are available here, immutable fields can only be set using /create.
-*/
-func (a *Client) PatchAPIV2ClustersSelector(params *PatchAPIV2ClustersSelectorParams, opts ...ClientOption) (*PatchAPIV2ClustersSelectorOK, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewPatchAPIV2ClustersSelectorParams()
-	}
-	op := &runtime.ClientOperation{
-		ID:                 "PatchAPIV2ClustersSelector",
-		Method:             "PATCH",
-		PathPattern:        "/api/v2/clusters/{selector}",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"https"},
-		Params:             params,
-		Reader:             &PatchAPIV2ClustersSelectorReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
-	if err != nil {
-		return nil, err
-	}
-	success, ok := result.(*PatchAPIV2ClustersSelectorOK)
-	if ok {
-		return success, nil
-	}
-	// unexpected success response
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
-	msg := fmt.Sprintf("unexpected success response for PatchAPIV2ClustersSelector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
-	panic(msg)
-}
-
-/*
   PostAPIClustersV3 creates a cluster
 
   Create a Cluster.
@@ -454,89 +240,6 @@ func (a *Client) PostAPIClustersV3(params *PostAPIClustersV3Params, opts ...Clie
 	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for PostAPIClustersV3: API contract not enforced by server. Client expected to get an error, but got: %T", result)
-	panic(msg)
-}
-
-/*
-  PostAPIV2Clusters creates a new cluster entry
-
-  Create a new Cluster entry. Note that some fields are immutable after creation; /edit lists mutable fields.
-*/
-func (a *Client) PostAPIV2Clusters(params *PostAPIV2ClustersParams, opts ...ClientOption) (*PostAPIV2ClustersOK, *PostAPIV2ClustersCreated, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewPostAPIV2ClustersParams()
-	}
-	op := &runtime.ClientOperation{
-		ID:                 "PostAPIV2Clusters",
-		Method:             "POST",
-		PathPattern:        "/api/v2/clusters",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"https"},
-		Params:             params,
-		Reader:             &PostAPIV2ClustersReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
-	if err != nil {
-		return nil, nil, err
-	}
-	switch value := result.(type) {
-	case *PostAPIV2ClustersOK:
-		return value, nil, nil
-	case *PostAPIV2ClustersCreated:
-		return nil, value, nil
-	}
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
-	msg := fmt.Sprintf("unexpected success response for clusters: API contract not enforced by server. Client expected to get an error, but got: %T", result)
-	panic(msg)
-}
-
-/*
-  PutAPIV2ClustersSelector creates or edit a cluster entry
-
-  Create or edit a Cluster entry. Attempts to edit and will attempt to create upon an error.
-If an edit was made or the creation process de-duplicates, this method will return normally with a 200.
-*/
-func (a *Client) PutAPIV2ClustersSelector(params *PutAPIV2ClustersSelectorParams, opts ...ClientOption) (*PutAPIV2ClustersSelectorOK, *PutAPIV2ClustersSelectorCreated, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewPutAPIV2ClustersSelectorParams()
-	}
-	op := &runtime.ClientOperation{
-		ID:                 "PutAPIV2ClustersSelector",
-		Method:             "PUT",
-		PathPattern:        "/api/v2/clusters/{selector}",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"https"},
-		Params:             params,
-		Reader:             &PutAPIV2ClustersSelectorReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
-	if err != nil {
-		return nil, nil, err
-	}
-	switch value := result.(type) {
-	case *PutAPIV2ClustersSelectorOK:
-		return value, nil, nil
-	case *PutAPIV2ClustersSelectorCreated:
-		return nil, value, nil
-	}
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
-	msg := fmt.Sprintf("unexpected success response for clusters: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 
