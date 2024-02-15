@@ -2,6 +2,8 @@ package hooks
 
 import (
 	"context"
+	"fmt"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/slack"
 	"github.com/broadinstitute/sherlock/sherlock/internal/slack/slack_mocks"
 	slack2 "github.com/slack-go/slack"
@@ -110,4 +112,19 @@ func (s *hooksSuite) Test_dispatcherImpl_DispatchSlackDeployHook_initialMessageR
 
 	wg.Wait()
 	s.False(secondDispatchTalkedToSlack, "second dispatch talked to Slack API, it shouldn't have")
+}
+
+func (s *hooksSuite) Test_dispatcherImpl_DispatchSlackDeployHook_stateDeletedUponInitialFailure() {
+	hook := s.TestData.SlackDeployHook_Dev()
+	ciRun := s.TestData.CiRun_Deploy_LeonardoDev_V1toV3()
+	slack.UseMockedClient(s.T(), func(c *slack_mocks.MockMockableClient) {
+		c.EXPECT().SendMessageContext(s.DB.Statement.Context, *hook.SlackChannel, mock.AnythingOfType("slack.MsgOption")).
+			Return(*hook.SlackChannel+"-different", "123", "some text", fmt.Errorf("some error")).Once()
+	}, func() {
+		s.Error((&dispatcherImpl{}).DispatchSlackDeployHook(s.DB, hook, ciRun))
+	})
+
+	var messageStates []models.SlackDeployHookState
+	s.NoError(s.DB.Find(&messageStates).Error)
+	s.Empty(messageStates)
 }
