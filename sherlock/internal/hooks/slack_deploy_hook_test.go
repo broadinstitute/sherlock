@@ -128,3 +128,25 @@ func (s *hooksSuite) Test_dispatcherImpl_DispatchSlackDeployHook_stateDeletedUpo
 	s.NoError(s.DB.Find(&messageStates).Error)
 	s.Empty(messageStates)
 }
+
+func (s *hooksSuite) Test_dispatcherImpl_DispatchSlackDeployHook_stateNotDeletedUponUpdateFailure() {
+	hook := s.TestData.SlackDeployHook_Dev()
+	ciRun := s.TestData.CiRun_Deploy_LeonardoDev_V1toV3()
+	// We create the state here because we want to pretend that a message was already sent.
+	s.NoError(s.DB.Create(&models.SlackDeployHookState{
+		SlackDeployHookID: hook.ID,
+		CiRunID:           ciRun.ID,
+		MessageChannel:    *hook.SlackChannel,
+		MessageTimestamp:  "1234",
+	}).Error)
+	slack.UseMockedClient(s.T(), func(c *slack_mocks.MockMockableClient) {
+		c.EXPECT().UpdateMessageContext(s.DB.Statement.Context, *hook.SlackChannel, "1234", mock.AnythingOfType("slack.MsgOption")).
+			Return(*hook.SlackChannel+"-different", "123", "some text", fmt.Errorf("some error")).Once()
+	}, func() {
+		s.Error((&dispatcherImpl{}).DispatchSlackDeployHook(s.DB, hook, ciRun))
+	})
+
+	var messageStates []models.SlackDeployHookState
+	s.NoError(s.DB.Find(&messageStates).Error)
+	s.Len(messageStates, 1)
+}

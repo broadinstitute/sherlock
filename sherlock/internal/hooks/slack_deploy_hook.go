@@ -118,9 +118,11 @@ func (_ *dispatcherImpl) DispatchSlackDeployHook(db *gorm.DB, hook models.SlackD
 	messageState.MessageChannel, messageState.MessageTimestamp, err = slack.SendDeploymentNotification(
 		db.Statement.Context, messageState.MessageChannel, messageState.MessageTimestamp, mainMessage)
 	if err != nil {
-		// If we errored sending the message, we should actually delete the state record so the next instance can try again.
-		if recoverableErr := db.Delete(&messageState).Error; recoverableErr != nil {
-			log.Error().Err(err).Msgf("failed to delete in-progress SlackDeployHookState for SlackDeployHook %d and CiRun %d (was erroring out after initial send)", hook.ID, ciRun.ID)
+		// If we errored sending the message, and we were sending rather than updating, we should actually delete the state record so the next instance can try again.
+		if messageState.MessageTimestamp == "" {
+			if recoverableErr := db.Delete(&messageState).Error; recoverableErr != nil {
+				log.Error().Err(err).Msgf("failed to delete in-progress SlackDeployHookState for SlackDeployHook %d and CiRun %d (was erroring out on initial send)", hook.ID, ciRun.ID)
+			}
 		}
 		return fmt.Errorf("failed to send deployment notification for CiRun %d: %w", ciRun.ID, err)
 	}
