@@ -119,7 +119,7 @@ func (s *hooksSuite) Test_dispatcherImpl_DispatchSlackDeployHook_stateDeletedUpo
 	ciRun := s.TestData.CiRun_Deploy_LeonardoDev_V1toV3()
 	slack.UseMockedClient(s.T(), func(c *slack_mocks.MockMockableClient) {
 		c.EXPECT().SendMessageContext(s.DB.Statement.Context, *hook.SlackChannel, mock.AnythingOfType("slack.MsgOption")).
-			Return(*hook.SlackChannel+"-different", "123", "some text", fmt.Errorf("some error")).Once()
+			Return("", "", "", fmt.Errorf("some error")).Once()
 	}, func() {
 		s.Error((&dispatcherImpl{}).DispatchSlackDeployHook(s.DB, hook, ciRun))
 	})
@@ -141,7 +141,7 @@ func (s *hooksSuite) Test_dispatcherImpl_DispatchSlackDeployHook_stateNotDeleted
 	}).Error)
 	slack.UseMockedClient(s.T(), func(c *slack_mocks.MockMockableClient) {
 		c.EXPECT().UpdateMessageContext(s.DB.Statement.Context, *hook.SlackChannel, "1234", mock.AnythingOfType("slack.MsgOption")).
-			Return(*hook.SlackChannel+"-different", "123", "some text", fmt.Errorf("some error")).Once()
+			Return("", "", "", fmt.Errorf("some error")).Once()
 	}, func() {
 		s.Error((&dispatcherImpl{}).DispatchSlackDeployHook(s.DB, hook, ciRun))
 	})
