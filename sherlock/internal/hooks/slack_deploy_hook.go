@@ -93,7 +93,7 @@ func (_ *dispatcherImpl) DispatchSlackDeployHook(db *gorm.DB, hook models.SlackD
 	}
 
 	var messageState models.SlackDeployHookState
-	if err := db.
+	if tx := db.
 		Where(&models.SlackDeployHookState{
 			SlackDeployHookID: hook.ID,
 			CiRunID:           ciRun.ID,
@@ -101,14 +101,27 @@ func (_ *dispatcherImpl) DispatchSlackDeployHook(db *gorm.DB, hook models.SlackD
 		Attrs(&models.SlackDeployHookState{
 			MessageChannel: *hook.SlackChannel,
 		}).
-		FirstOrInit(&messageState).
-		Error; err != nil {
-		return fmt.Errorf("failed to query SlackDeployHookState for SlackDeployHook %d and CiRun %d: %w", hook.ID, ciRun.ID, err)
+		FirstOrCreate(&messageState); tx.Error != nil {
+		return fmt.Errorf("failed to query SlackDeployHookState for SlackDeployHook %d and CiRun %d: %w", hook.ID, ciRun.ID, tx.Error)
+	} else if tx.RowsAffected == 0 && messageState.MessageTimestamp == "" {
+		// If rows affected is 0, we found a record rather than creating one.
+		// If message timestamp is empty, there's not been a message fully sent for this run yet.
+		// That means we should actually not send a message at all, because some other instance is in between initializing
+		// the state and sending the message. If we were to send one too, we'd be a duplicate send.
+		log.Info().
+			Uint("CiRun", ciRun.ID).
+			Uint("SlackDeployHook", hook.ID).
+			Msg("Skipping SlackDeployHook dispatch because another instance is already sending the first message")
+		return nil
 	}
 	var err error
 	messageState.MessageChannel, messageState.MessageTimestamp, err = slack.SendDeploymentNotification(
 		db.Statement.Context, messageState.MessageChannel, messageState.MessageTimestamp, mainMessage)
 	if err != nil {
+		// If we errored sending the message, we should actually delete the state record so the next instance can try again.
+		if recoverableErr := db.Delete(&messageState).Error; recoverableErr != nil {
+			log.Error().Err(err).Msgf("failed to delete in-progress SlackDeployHookState for SlackDeployHook %d and CiRun %d (was erroring out after initial send)", hook.ID, ciRun.ID)
+		}
 		return fmt.Errorf("failed to send deployment notification for CiRun %d: %w", ciRun.ID, err)
 	}
 	if recoverableErr := db.Save(&messageState).Error; recoverableErr != nil {
