@@ -80,5 +80,10 @@ func BuildRouter(ctx context.Context, db *gorm.DB) *gin.Engine {
 	// refactored sherlock API, under /api/{type}/v3
 	sherlock.ConfigureRoutes(apiRouter)
 
+	// special error for the removed "v2" API, under /api/v2/{type}
+	apiRouter.Any("v2/*path", func(ctx *gin.Context) {
+		errors.AbortRequest(ctx, fmt.Errorf("(%s) sherlock's v2 API has been removed; reach out to #dsp-devops-champions for help updating your client", errors.NotFound))
+	})
+
 	return router
 }
