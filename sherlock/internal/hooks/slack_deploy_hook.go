@@ -93,7 +93,7 @@ func (_ *dispatcherImpl) DispatchSlackDeployHook(db *gorm.DB, hook models.SlackD
 	}
 
 	var messageState models.SlackDeployHookState
-	if err := db.
+	if tx := db.
 		Where(&models.SlackDeployHookState{
 			SlackDeployHookID: hook.ID,
 			CiRunID:           ciRun.ID,
@@ -101,25 +101,42 @@ func (_ *dispatcherImpl) DispatchSlackDeployHook(db *gorm.DB, hook models.SlackD
 		Attrs(&models.SlackDeployHookState{
 			MessageChannel: *hook.SlackChannel,
 		}).
-		FirstOrInit(&messageState).
-		Error; err != nil {
-		return fmt.Errorf("failed to query SlackDeployHookState for SlackDeployHook %d and CiRun %d: %w", hook.ID, ciRun.ID, err)
+		FirstOrCreate(&messageState); tx.Error != nil {
+		return fmt.Errorf("failed to query SlackDeployHookState for SlackDeployHook %d and CiRun %d: %w", hook.ID, ciRun.ID, tx.Error)
+	} else if tx.RowsAffected == 0 && messageState.MessageTimestamp == "" {
+		// If rows affected is 0, we found a record rather than creating one.
+		// If message timestamp is empty, there's not been a message fully sent for this run yet.
+		// That means we should actually not send a message at all, because some other instance is in between initializing
+		// the state and sending the message. If we were to send one too, we'd be a duplicate send.
+		log.Info().
+			Uint("CiRun", ciRun.ID).
+			Uint("SlackDeployHook", hook.ID).
+			Msg("Skipping SlackDeployHook dispatch because another instance is already sending the first message")
+		return nil
 	}
-	var err error
-	messageState.MessageChannel, messageState.MessageTimestamp, err = slack.SendDeploymentNotification(
-		db.Statement.Context, messageState.MessageChannel, messageState.MessageTimestamp, mainMessage)
-	if err != nil {
+
+	if channelFromResponse, timestampFromResponse, err := slack.SendDeploymentNotification(
+		db.Statement.Context, messageState.MessageChannel, messageState.MessageTimestamp, mainMessage); err != nil {
+		// If we errored sending the message, and we were sending rather than updating, we should actually delete the state record so the next instance can try again.
+		if messageState.MessageTimestamp == "" {
+			if recoverableErr := db.Delete(&messageState).Error; recoverableErr != nil {
+				log.Error().Err(err).Msgf("failed to delete in-progress SlackDeployHookState for SlackDeployHook %d and CiRun %d (was erroring out on initial send)", hook.ID, ciRun.ID)
+			}
+		}
 		return fmt.Errorf("failed to send deployment notification for CiRun %d: %w", ciRun.ID, err)
-	}
-	if recoverableErr := db.Save(&messageState).Error; recoverableErr != nil {
-		log.Error().Err(err).Msgf("failed to save in-progress SlackDeployHookState for SlackDeployHook %d and CiRun %d but continuing anyway", hook.ID, ciRun.ID)
+	} else {
+		messageState.MessageChannel = channelFromResponse
+		messageState.MessageTimestamp = timestampFromResponse
+		if recoverableErr := db.Save(&messageState).Error; recoverableErr != nil {
+			log.Error().Err(err).Msgf("failed to save in-progress SlackDeployHookState for SlackDeployHook %d and CiRun %d but continuing anyway", hook.ID, ciRun.ID)
+		}
 	}
 
 	// If the run is complete or there's already a failure, send a changelog to @ everyone who had changes go out
 	if !messageState.ChangelogSent && (ciRun.TerminalAt != nil || hasFailure) {
 		sectionsPerChart := slackDeployHookChangesetsToChangelogSections(changesets, hook.MentionPeople != nil && *hook.MentionPeople, beehiveUrl)
 		title := slackDeployHookChangelogTitle(hasFailure, hook.Trigger.SlackBeehiveLink())
-		if err = slack.SendDeploymentChangelogNotification(
+		if err := slack.SendDeploymentChangelogNotification(
 			db.Statement.Context, messageState.MessageChannel, messageState.MessageTimestamp,
 			title, sectionsPerChart); err != nil {
 			return fmt.Errorf("failed to send deployment changelog notification for CiRun %d: %w", ciRun.ID, err)
@@ -133,7 +150,7 @@ func (_ *dispatcherImpl) DispatchSlackDeployHook(db *gorm.DB, hook models.SlackD
 
 	// If there's a failure, send an alert in the thread/channel
 	if !messageState.FailureAlertSent && hasFailure {
-		if err = slack.SendDeploymentFailureNotification(
+		if err := slack.SendDeploymentFailureNotification(
 			db.Statement.Context, messageState.MessageChannel, messageState.MessageTimestamp,
 			fmt.Sprintf(":%s: Failures deploying to *%s*, please %s",
 				config.Config.String("slack.emoji.alert"),
