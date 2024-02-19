@@ -3,7 +3,7 @@ module github.com/broadinstitute/sherlock/sherlock-webhook-proxy
 go 1.21
 
 require (
-	github.com/GoogleCloudPlatform/functions-framework-go v1.8.0
+	github.com/GoogleCloudPlatform/functions-framework-go v1.8.1
 	github.com/broadinstitute/sherlock/go-shared v0.0.0
 	github.com/broadinstitute/sherlock/sherlock-go-client v0.0.0
 	github.com/go-openapi/runtime v0.26.2
@@ -16,7 +16,7 @@ replace github.com/broadinstitute/sherlock/go-shared => ../go-shared
 replace github.com/broadinstitute/sherlock/sherlock-go-client => ../sherlock-go-client
 
 require (
-	cloud.google.com/go/functions v1.15.1 // indirect
+	cloud.google.com/go/functions v1.15.3 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 // indirect
 	github.com/cloudevents/sdk-go/v2 v2.14.0 // indirect
 	github.com/go-logr/logr v1.3.0 // indirect
@@ -29,7 +29,7 @@ require (
 	github.com/go-openapi/spec v0.20.11 // indirect
 	github.com/go-openapi/swag v0.22.4 // indirect
 	github.com/go-openapi/validate v0.22.3 // indirect
-	github.com/google/uuid v1.3.0 // indirect
+	github.com/google/uuid v1.4.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.10 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
