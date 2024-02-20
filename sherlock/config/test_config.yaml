@@ -10,6 +10,7 @@ log:
   level: warn
 
 db:
+  driver: pgx
   host: localhost
   user: sherlock
   password: password

@@ -1,13 +1,16 @@
 package db
 
 import (
+	"cloud.google.com/go/cloudsqlconn"
 	"database/sql"
 	"errors"
 	"fmt"
 	"github.com/golang-migrate/migrate/v4"
 	"gorm.io/gorm/logger"
+	"strings"
 	"time"
 
+	"cloud.google.com/go/cloudsqlconn/postgres/pgxv5"
 	migrationFiles "github.com/broadinstitute/sherlock/sherlock/db"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
@@ -20,20 +23,40 @@ import (
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
+// RegisterDriver handles setup for the cloudsql-postgres driver, if it's what'll be used.
+// That driver can't be used for tests (as a Cloud SQL database can't be used for tests)
+// so it is safe for tests to skip calling this and handling the resulting cleanup function.
+func RegisterDriver() (cleanup func() error, err error) {
+	if config.Config.MustString("db.driver") == "cloudsql-postgres" {
+		opts := make([]cloudsqlconn.Option, 0)
+		if config.Config.Bool("db.cloudSql.automaticIamAuthEnabled") {
+			opts = append(opts, cloudsqlconn.WithIAMAuthN())
+		}
+		return pgxv5.RegisterDriver("cloudsql-postgres", opts...)
+	} else {
+		return nil, nil
+	}
+}
+
 func dbConnectionString() string {
-	return fmt.Sprintf(
-		"postgres://%s:%s@%s:%s/%s?sslmode=%s",
-		config.Config.MustString("db.user"),
-		config.Config.MustString("db.password"),
-		config.Config.MustString("db.host"),
-		config.Config.MustString("db.port"),
-		config.Config.MustString("db.name"),
-		config.Config.MustString("db.ssl"),
-	)
+	parts := make([]string, 3, 6)
+	parts[0] = fmt.Sprintf("host=%s", config.Config.MustString("db.host"))
+	parts[1] = fmt.Sprintf("user=%s", config.Config.MustString("db.user"))
+	parts[2] = fmt.Sprintf("dbname=%s", config.Config.MustString("db.name"))
+	if config.Config.String("db.password") != "" {
+		parts = append(parts, fmt.Sprintf("password=%s", config.Config.MustString("db.password")))
+	}
+	if config.Config.String("db.port") != "" {
+		parts = append(parts, fmt.Sprintf("port=%s", config.Config.MustString("db.port")))
+	}
+	if config.Config.String("db.ssl") != "" {
+		parts = append(parts, fmt.Sprintf("sslmode=%s", config.Config.MustString("db.ssl")))
+	}
+	return strings.Join(parts, " ")
 }
 
 func Connect() (*sql.DB, error) {
-	sqlDB, err := sql.Open("pgx", dbConnectionString())
+	sqlDB, err := sql.Open(config.Config.MustString("db.driver"), dbConnectionString())
 	if err != nil {
 		return nil, fmt.Errorf("error building SQL connection: %w", err)
 	}
@@ -59,7 +82,7 @@ func Connect() (*sql.DB, error) {
 	}
 
 	if config.Config.MustString("mode") == "debug" {
-		PanicIfLooksLikeCloudSQL(sqlDB)
+		panicIfLooksLikeCloudSQL(sqlDB)
 	}
 
 	return nil, fmt.Errorf("unable to connect to the database after %d attempts: %w", initialAttempts, err)
@@ -153,10 +176,10 @@ func Configure(sqlDB *sql.DB) (*gorm.DB, error) {
 	return gormDB, nil
 }
 
-// PanicIfLooksLikeCloudSQL does what it says on the tin -- it exits fast and hard if the database has a 'cloudsqladmin'
+// panicIfLooksLikeCloudSQL does what it says on the tin -- it exits fast and hard if the database has a 'cloudsqladmin'
 // role in it. That's not something Sherlock's migration would ever add but it's there by default on Cloud SQL, so
 // it's an extra gate to make sure we don't accidentally run tests against a remote database.
-func PanicIfLooksLikeCloudSQL(db *sql.DB) {
+func panicIfLooksLikeCloudSQL(db *sql.DB) {
 	var cloudSqlAdminRoleExists bool
 	err := db.QueryRow("SELECT 1 FROM pg_roles WHERE rolname='cloudsqladmin'").Scan(&cloudSqlAdminRoleExists)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
