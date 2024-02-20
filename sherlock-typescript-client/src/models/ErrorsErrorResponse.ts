@@ -43,9 +43,7 @@ export interface ErrorsErrorResponse {
  * Check if a given object implements the ErrorsErrorResponse interface.
  */
 export function instanceOfErrorsErrorResponse(value: object): boolean {
-    let isInstance = true;
-
-    return isInstance;
+    return true;
 }
 
 export function ErrorsErrorResponseFromJSON(json: any): ErrorsErrorResponse {
@@ -53,7 +51,7 @@ export function ErrorsErrorResponseFromJSON(json: any): ErrorsErrorResponse {
 }
 
 export function ErrorsErrorResponseFromJSONTyped(json: any, ignoreDiscriminator: boolean): ErrorsErrorResponse {
-    if ((json === undefined) || (json === null)) {
+    if (json === undefined || json === null) {
         return json;
     }
     return {
@@ -73,9 +71,9 @@ export function ErrorsErrorResponseToJSON(value?: ErrorsErrorResponse | null): a
     }
     return {
         
-        'message': value.message,
-        'toBlame': value.toBlame,
-        'type': value.type,
+        'message': value['message'],
+        'toBlame': value['toBlame'],
+        'type': value['type'],
     };
 }
 

@@ -159,9 +159,7 @@ export interface SherlockCiRunV3 {
  * Check if a given object implements the SherlockCiRunV3 interface.
  */
 export function instanceOfSherlockCiRunV3(value: object): boolean {
-    let isInstance = true;
-
-    return isInstance;
+    return true;
 }
 
 export function SherlockCiRunV3FromJSON(json: any): SherlockCiRunV3 {
@@ -169,7 +167,7 @@ export function SherlockCiRunV3FromJSON(json: any): SherlockCiRunV3 {
 }
 
 export function SherlockCiRunV3FromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockCiRunV3 {
-    if ((json === undefined) || (json === null)) {
+    if (json === undefined || json === null) {
         return json;
     }
     return {
@@ -207,27 +205,27 @@ export function SherlockCiRunV3ToJSON(value?: SherlockCiRunV3 | null): any {
     }
     return {
         
-        'argoWorkflowsName': value.argoWorkflowsName,
-        'argoWorkflowsNamespace': value.argoWorkflowsNamespace,
-        'argoWorkflowsTemplate': value.argoWorkflowsTemplate,
-        'createdAt': value.createdAt === undefined ? undefined : (value.createdAt.toISOString()),
-        'githubActionsAttemptNumber': value.githubActionsAttemptNumber,
-        'githubActionsOwner': value.githubActionsOwner,
-        'githubActionsRepo': value.githubActionsRepo,
-        'githubActionsRunID': value.githubActionsRunID,
-        'githubActionsWorkflowPath': value.githubActionsWorkflowPath,
-        'id': value.id,
-        'notifySlackChannelsUponFailure': value.notifySlackChannelsUponFailure,
-        'notifySlackChannelsUponSuccess': value.notifySlackChannelsUponSuccess,
-        'notifySlackCustomIcon': value.notifySlackCustomIcon,
-        'platform': value.platform,
-        'relatedResources': value.relatedResources === undefined ? undefined : ((value.relatedResources as Array<any>).map(SherlockCiIdentifierV3ToJSON)),
-        'resourceStatus': value.resourceStatus,
-        'startedAt': value.startedAt,
-        'status': value.status,
-        'terminalAt': value.terminalAt,
-        'terminationHooksDispatchedAt': value.terminationHooksDispatchedAt === undefined ? undefined : (value.terminationHooksDispatchedAt.toISOString()),
-        'updatedAt': value.updatedAt === undefined ? undefined : (value.updatedAt.toISOString()),
+        'argoWorkflowsName': value['argoWorkflowsName'],
+        'argoWorkflowsNamespace': value['argoWorkflowsNamespace'],
+        'argoWorkflowsTemplate': value['argoWorkflowsTemplate'],
+        'createdAt': !exists(value, 'createdAt') ? undefined : ((value['createdAt']).toISOString()),
+        'githubActionsAttemptNumber': value['githubActionsAttemptNumber'],
+        'githubActionsOwner': value['githubActionsOwner'],
+        'githubActionsRepo': value['githubActionsRepo'],
+        'githubActionsRunID': value['githubActionsRunID'],
+        'githubActionsWorkflowPath': value['githubActionsWorkflowPath'],
+        'id': value['id'],
+        'notifySlackChannelsUponFailure': value['notifySlackChannelsUponFailure'],
+        'notifySlackChannelsUponSuccess': value['notifySlackChannelsUponSuccess'],
+        'notifySlackCustomIcon': value['notifySlackCustomIcon'],
+        'platform': value['platform'],
+        'relatedResources': !exists(value, 'relatedResources') ? undefined : ((value['relatedResources'] as Array<any>).map(SherlockCiIdentifierV3ToJSON)),
+        'resourceStatus': value['resourceStatus'],
+        'startedAt': value['startedAt'],
+        'status': value['status'],
+        'terminalAt': value['terminalAt'],
+        'terminationHooksDispatchedAt': !exists(value, 'terminationHooksDispatchedAt') ? undefined : ((value['terminationHooksDispatchedAt']).toISOString()),
+        'updatedAt': !exists(value, 'updatedAt') ? undefined : ((value['updatedAt']).toISOString()),
     };
 }
 

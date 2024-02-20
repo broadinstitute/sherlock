@@ -55,9 +55,7 @@ export interface SherlockChangesetV3PlanRequestEnvironmentEntry {
  * Check if a given object implements the SherlockChangesetV3PlanRequestEnvironmentEntry interface.
  */
 export function instanceOfSherlockChangesetV3PlanRequestEnvironmentEntry(value: object): boolean {
-    let isInstance = true;
-
-    return isInstance;
+    return true;
 }
 
 export function SherlockChangesetV3PlanRequestEnvironmentEntryFromJSON(json: any): SherlockChangesetV3PlanRequestEnvironmentEntry {
@@ -65,7 +63,7 @@ export function SherlockChangesetV3PlanRequestEnvironmentEntryFromJSON(json: any
 }
 
 export function SherlockChangesetV3PlanRequestEnvironmentEntryFromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockChangesetV3PlanRequestEnvironmentEntry {
-    if ((json === undefined) || (json === null)) {
+    if (json === undefined || json === null) {
         return json;
     }
     return {
@@ -87,11 +85,11 @@ export function SherlockChangesetV3PlanRequestEnvironmentEntryToJSON(value?: She
     }
     return {
         
-        'environment': value.environment,
-        'excludeCharts': value.excludeCharts,
-        'followVersionsFromOtherEnvironment': value.followVersionsFromOtherEnvironment,
-        'includeCharts': value.includeCharts,
-        'useExactVersionsFromOtherEnvironment': value.useExactVersionsFromOtherEnvironment,
+        'environment': value['environment'],
+        'excludeCharts': value['excludeCharts'],
+        'followVersionsFromOtherEnvironment': value['followVersionsFromOtherEnvironment'],
+        'includeCharts': value['includeCharts'],
+        'useExactVersionsFromOtherEnvironment': value['useExactVersionsFromOtherEnvironment'],
     };
 }
 

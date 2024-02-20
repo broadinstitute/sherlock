@@ -43,9 +43,7 @@ export interface MiscVersionResponse {
  * Check if a given object implements the MiscVersionResponse interface.
  */
 export function instanceOfMiscVersionResponse(value: object): boolean {
-    let isInstance = true;
-
-    return isInstance;
+    return true;
 }
 
 export function MiscVersionResponseFromJSON(json: any): MiscVersionResponse {
@@ -53,7 +51,7 @@ export function MiscVersionResponseFromJSON(json: any): MiscVersionResponse {
 }
 
 export function MiscVersionResponseFromJSONTyped(json: any, ignoreDiscriminator: boolean): MiscVersionResponse {
-    if ((json === undefined) || (json === null)) {
+    if (json === undefined || json === null) {
         return json;
     }
     return {
@@ -73,9 +71,9 @@ export function MiscVersionResponseToJSON(value?: MiscVersionResponse | null): a
     }
     return {
         
-        'buildInfo': value.buildInfo,
-        'goVersion': value.goVersion,
-        'version': value.version,
+        'buildInfo': value['buildInfo'],
+        'goVersion': value['goVersion'],
+        'version': value['version'],
     };
 }
 

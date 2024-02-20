@@ -79,9 +79,7 @@ export interface SherlockGitCommitV3 {
  * Check if a given object implements the SherlockGitCommitV3 interface.
  */
 export function instanceOfSherlockGitCommitV3(value: object): boolean {
-    let isInstance = true;
-
-    return isInstance;
+    return true;
 }
 
 export function SherlockGitCommitV3FromJSON(json: any): SherlockGitCommitV3 {
@@ -89,7 +87,7 @@ export function SherlockGitCommitV3FromJSON(json: any): SherlockGitCommitV3 {
 }
 
 export function SherlockGitCommitV3FromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockGitCommitV3 {
-    if ((json === undefined) || (json === null)) {
+    if (json === undefined || json === null) {
         return json;
     }
     return {
@@ -115,15 +113,15 @@ export function SherlockGitCommitV3ToJSON(value?: SherlockGitCommitV3 | null): a
     }
     return {
         
-        'committedAt': value.committedAt,
-        'createdAt': value.createdAt === undefined ? undefined : (value.createdAt.toISOString()),
-        'gitBranch': value.gitBranch,
-        'gitCommit': value.gitCommit,
-        'gitRepo': value.gitRepo,
-        'id': value.id,
-        'isMainBranch': value.isMainBranch,
-        'secSincePrev': value.secSincePrev,
-        'updatedAt': value.updatedAt === undefined ? undefined : (value.updatedAt.toISOString()),
+        'committedAt': value['committedAt'],
+        'createdAt': !exists(value, 'createdAt') ? undefined : ((value['createdAt']).toISOString()),
+        'gitBranch': value['gitBranch'],
+        'gitCommit': value['gitCommit'],
+        'gitRepo': value['gitRepo'],
+        'id': value['id'],
+        'isMainBranch': value['isMainBranch'],
+        'secSincePrev': value['secSincePrev'],
+        'updatedAt': !exists(value, 'updatedAt') ? undefined : ((value['updatedAt']).toISOString()),
     };
 }
 

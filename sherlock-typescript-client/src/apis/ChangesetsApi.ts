@@ -106,14 +106,17 @@ export class ChangesetsApi extends runtime.BaseAPI {
      * Apply previously planned version changes to Chart Releases
      */
     async apiChangesetsProceduresV3ApplyPostRaw(requestParameters: ApiChangesetsProceduresV3ApplyPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockChangesetV3>>> {
-        if (requestParameters.applyRequest === null || requestParameters.applyRequest === undefined) {
-            throw new runtime.RequiredError('applyRequest','Required parameter requestParameters.applyRequest was null or undefined when calling apiChangesetsProceduresV3ApplyPost.');
+        if (!runtime.exists(requestParameters, 'applyRequest')) {
+            throw new runtime.RequiredError(
+                'applyRequest',
+                'Required parameter "applyRequest" was null or undefined when calling apiChangesetsProceduresV3ApplyPost().'
+            );
         }
 
         const queryParameters: any = {};
 
-        if (requestParameters.verboseOutput !== undefined) {
-            queryParameters['verbose-output'] = requestParameters.verboseOutput;
+        if (runtime.exists(requestParameters, 'verboseOutput')) {
+            queryParameters['verbose-output'] = requestParameters['verboseOutput'];
         }
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -125,7 +128,7 @@ export class ChangesetsApi extends runtime.BaseAPI {
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: requestParameters.applyRequest,
+            body: requestParameters['applyRequest'],
         }, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(SherlockChangesetV3FromJSON));
@@ -145,24 +148,27 @@ export class ChangesetsApi extends runtime.BaseAPI {
      * List applied Changesets for a Chart Release
      */
     async apiChangesetsProceduresV3ChartReleaseHistoryChartReleaseGetRaw(requestParameters: ApiChangesetsProceduresV3ChartReleaseHistoryChartReleaseGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockChangesetV3>>> {
-        if (requestParameters.chartRelease === null || requestParameters.chartRelease === undefined) {
-            throw new runtime.RequiredError('chartRelease','Required parameter requestParameters.chartRelease was null or undefined when calling apiChangesetsProceduresV3ChartReleaseHistoryChartReleaseGet.');
+        if (!runtime.exists(requestParameters, 'chartRelease')) {
+            throw new runtime.RequiredError(
+                'chartRelease',
+                'Required parameter "chartRelease" was null or undefined when calling apiChangesetsProceduresV3ChartReleaseHistoryChartReleaseGet().'
+            );
         }
 
         const queryParameters: any = {};
 
-        if (requestParameters.offset !== undefined) {
-            queryParameters['offset'] = requestParameters.offset;
+        if (runtime.exists(requestParameters, 'offset')) {
+            queryParameters['offset'] = requestParameters['offset'];
         }
 
-        if (requestParameters.limit !== undefined) {
-            queryParameters['limit'] = requestParameters.limit;
+        if (runtime.exists(requestParameters, 'limit')) {
+            queryParameters['limit'] = requestParameters['limit'];
         }
 
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/api/changesets/procedures/v3/chart-release-history/{chart-release}`.replace(`{${"chart-release"}}`, encodeURIComponent(String(requestParameters.chartRelease))),
+            path: `/api/changesets/procedures/v3/chart-release-history/{chart-release}`.replace(`{${"chart-release"}}`, encodeURIComponent(String(requestParameters['chartRelease']))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -185,14 +191,17 @@ export class ChangesetsApi extends runtime.BaseAPI {
      * Plan and apply version changes in one step
      */
     async apiChangesetsProceduresV3PlanAndApplyPostRaw(requestParameters: ApiChangesetsProceduresV3PlanAndApplyPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockChangesetV3>>> {
-        if (requestParameters.changesetPlanRequest === null || requestParameters.changesetPlanRequest === undefined) {
-            throw new runtime.RequiredError('changesetPlanRequest','Required parameter requestParameters.changesetPlanRequest was null or undefined when calling apiChangesetsProceduresV3PlanAndApplyPost.');
+        if (!runtime.exists(requestParameters, 'changesetPlanRequest')) {
+            throw new runtime.RequiredError(
+                'changesetPlanRequest',
+                'Required parameter "changesetPlanRequest" was null or undefined when calling apiChangesetsProceduresV3PlanAndApplyPost().'
+            );
         }
 
         const queryParameters: any = {};
 
-        if (requestParameters.verboseOutput !== undefined) {
-            queryParameters['verbose-output'] = requestParameters.verboseOutput;
+        if (runtime.exists(requestParameters, 'verboseOutput')) {
+            queryParameters['verbose-output'] = requestParameters['verboseOutput'];
         }
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -204,7 +213,7 @@ export class ChangesetsApi extends runtime.BaseAPI {
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: SherlockChangesetV3PlanRequestToJSON(requestParameters.changesetPlanRequest),
+            body: SherlockChangesetV3PlanRequestToJSON(requestParameters['changesetPlanRequest']),
         }, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(SherlockChangesetV3FromJSON));
@@ -224,14 +233,17 @@ export class ChangesetsApi extends runtime.BaseAPI {
      * Plan--but do not apply--version changes to Chart Releases
      */
     async apiChangesetsProceduresV3PlanPostRaw(requestParameters: ApiChangesetsProceduresV3PlanPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockChangesetV3>>> {
-        if (requestParameters.changesetPlanRequest === null || requestParameters.changesetPlanRequest === undefined) {
-            throw new runtime.RequiredError('changesetPlanRequest','Required parameter requestParameters.changesetPlanRequest was null or undefined when calling apiChangesetsProceduresV3PlanPost.');
+        if (!runtime.exists(requestParameters, 'changesetPlanRequest')) {
+            throw new runtime.RequiredError(
+                'changesetPlanRequest',
+                'Required parameter "changesetPlanRequest" was null or undefined when calling apiChangesetsProceduresV3PlanPost().'
+            );
         }
 
         const queryParameters: any = {};
 
-        if (requestParameters.verboseOutput !== undefined) {
-            queryParameters['verbose-output'] = requestParameters.verboseOutput;
+        if (runtime.exists(requestParameters, 'verboseOutput')) {
+            queryParameters['verbose-output'] = requestParameters['verboseOutput'];
         }
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -243,7 +255,7 @@ export class ChangesetsApi extends runtime.BaseAPI {
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: SherlockChangesetV3PlanRequestToJSON(requestParameters.changesetPlanRequest),
+            body: SherlockChangesetV3PlanRequestToJSON(requestParameters['changesetPlanRequest']),
         }, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(SherlockChangesetV3FromJSON));
@@ -263,16 +275,25 @@ export class ChangesetsApi extends runtime.BaseAPI {
      * List applied Changesets for an App or Chart Version
      */
     async apiChangesetsProceduresV3VersionHistoryVersionTypeChartVersionGetRaw(requestParameters: ApiChangesetsProceduresV3VersionHistoryVersionTypeChartVersionGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockChangesetV3>>> {
-        if (requestParameters.versionType === null || requestParameters.versionType === undefined) {
-            throw new runtime.RequiredError('versionType','Required parameter requestParameters.versionType was null or undefined when calling apiChangesetsProceduresV3VersionHistoryVersionTypeChartVersionGet.');
+        if (!runtime.exists(requestParameters, 'versionType')) {
+            throw new runtime.RequiredError(
+                'versionType',
+                'Required parameter "versionType" was null or undefined when calling apiChangesetsProceduresV3VersionHistoryVersionTypeChartVersionGet().'
+            );
         }
 
-        if (requestParameters.chart === null || requestParameters.chart === undefined) {
-            throw new runtime.RequiredError('chart','Required parameter requestParameters.chart was null or undefined when calling apiChangesetsProceduresV3VersionHistoryVersionTypeChartVersionGet.');
+        if (!runtime.exists(requestParameters, 'chart')) {
+            throw new runtime.RequiredError(
+                'chart',
+                'Required parameter "chart" was null or undefined when calling apiChangesetsProceduresV3VersionHistoryVersionTypeChartVersionGet().'
+            );
         }
 
-        if (requestParameters.version === null || requestParameters.version === undefined) {
-            throw new runtime.RequiredError('version','Required parameter requestParameters.version was null or undefined when calling apiChangesetsProceduresV3VersionHistoryVersionTypeChartVersionGet.');
+        if (!runtime.exists(requestParameters, 'version')) {
+            throw new runtime.RequiredError(
+                'version',
+                'Required parameter "version" was null or undefined when calling apiChangesetsProceduresV3VersionHistoryVersionTypeChartVersionGet().'
+            );
         }
 
         const queryParameters: any = {};
@@ -280,7 +301,7 @@ export class ChangesetsApi extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/api/changesets/procedures/v3/version-history/{version-type}/{chart}/{version}`.replace(`{${"version-type"}}`, encodeURIComponent(String(requestParameters.versionType))).replace(`{${"chart"}}`, encodeURIComponent(String(requestParameters.chart))).replace(`{${"version"}}`, encodeURIComponent(String(requestParameters.version))),
+            path: `/api/changesets/procedures/v3/version-history/{version-type}/{chart}/{version}`.replace(`{${"version-type"}}`, encodeURIComponent(String(requestParameters['versionType']))).replace(`{${"chart"}}`, encodeURIComponent(String(requestParameters['chart']))).replace(`{${"version"}}`, encodeURIComponent(String(requestParameters['version']))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -305,140 +326,140 @@ export class ChangesetsApi extends runtime.BaseAPI {
     async apiChangesetsV3GetRaw(requestParameters: ApiChangesetsV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockChangesetV3>>> {
         const queryParameters: any = {};
 
-        if (requestParameters.appliedAt !== undefined) {
-            queryParameters['appliedAt'] = (requestParameters.appliedAt as any).toISOString();
+        if (runtime.exists(requestParameters, 'appliedAt')) {
+            queryParameters['appliedAt'] = (requestParameters['appliedAt'] as any).toISOString();
         }
 
-        if (requestParameters.appliedBy !== undefined) {
-            queryParameters['appliedBy'] = requestParameters.appliedBy;
+        if (runtime.exists(requestParameters, 'appliedBy')) {
+            queryParameters['appliedBy'] = requestParameters['appliedBy'];
         }
 
-        if (requestParameters.chartRelease !== undefined) {
-            queryParameters['chartRelease'] = requestParameters.chartRelease;
+        if (runtime.exists(requestParameters, 'chartRelease')) {
+            queryParameters['chartRelease'] = requestParameters['chartRelease'];
         }
 
-        if (requestParameters.fromAppVersionBranch !== undefined) {
-            queryParameters['fromAppVersionBranch'] = requestParameters.fromAppVersionBranch;
+        if (runtime.exists(requestParameters, 'fromAppVersionBranch')) {
+            queryParameters['fromAppVersionBranch'] = requestParameters['fromAppVersionBranch'];
         }
 
-        if (requestParameters.fromAppVersionCommit !== undefined) {
-            queryParameters['fromAppVersionCommit'] = requestParameters.fromAppVersionCommit;
+        if (runtime.exists(requestParameters, 'fromAppVersionCommit')) {
+            queryParameters['fromAppVersionCommit'] = requestParameters['fromAppVersionCommit'];
         }
 
-        if (requestParameters.fromAppVersionExact !== undefined) {
-            queryParameters['fromAppVersionExact'] = requestParameters.fromAppVersionExact;
+        if (runtime.exists(requestParameters, 'fromAppVersionExact')) {
+            queryParameters['fromAppVersionExact'] = requestParameters['fromAppVersionExact'];
         }
 
-        if (requestParameters.fromAppVersionFollowChartRelease !== undefined) {
-            queryParameters['fromAppVersionFollowChartRelease'] = requestParameters.fromAppVersionFollowChartRelease;
+        if (runtime.exists(requestParameters, 'fromAppVersionFollowChartRelease')) {
+            queryParameters['fromAppVersionFollowChartRelease'] = requestParameters['fromAppVersionFollowChartRelease'];
         }
 
-        if (requestParameters.fromAppVersionReference !== undefined) {
-            queryParameters['fromAppVersionReference'] = requestParameters.fromAppVersionReference;
+        if (runtime.exists(requestParameters, 'fromAppVersionReference')) {
+            queryParameters['fromAppVersionReference'] = requestParameters['fromAppVersionReference'];
         }
 
-        if (requestParameters.fromAppVersionResolver !== undefined) {
-            queryParameters['fromAppVersionResolver'] = requestParameters.fromAppVersionResolver;
+        if (runtime.exists(requestParameters, 'fromAppVersionResolver')) {
+            queryParameters['fromAppVersionResolver'] = requestParameters['fromAppVersionResolver'];
         }
 
-        if (requestParameters.fromChartVersionExact !== undefined) {
-            queryParameters['fromChartVersionExact'] = requestParameters.fromChartVersionExact;
+        if (runtime.exists(requestParameters, 'fromChartVersionExact')) {
+            queryParameters['fromChartVersionExact'] = requestParameters['fromChartVersionExact'];
         }
 
-        if (requestParameters.fromChartVersionFollowChartRelease !== undefined) {
-            queryParameters['fromChartVersionFollowChartRelease'] = requestParameters.fromChartVersionFollowChartRelease;
+        if (runtime.exists(requestParameters, 'fromChartVersionFollowChartRelease')) {
+            queryParameters['fromChartVersionFollowChartRelease'] = requestParameters['fromChartVersionFollowChartRelease'];
         }
 
-        if (requestParameters.fromChartVersionReference !== undefined) {
-            queryParameters['fromChartVersionReference'] = requestParameters.fromChartVersionReference;
+        if (runtime.exists(requestParameters, 'fromChartVersionReference')) {
+            queryParameters['fromChartVersionReference'] = requestParameters['fromChartVersionReference'];
         }
 
-        if (requestParameters.fromChartVersionResolver !== undefined) {
-            queryParameters['fromChartVersionResolver'] = requestParameters.fromChartVersionResolver;
+        if (runtime.exists(requestParameters, 'fromChartVersionResolver')) {
+            queryParameters['fromChartVersionResolver'] = requestParameters['fromChartVersionResolver'];
         }
 
-        if (requestParameters.fromHelmfileRef !== undefined) {
-            queryParameters['fromHelmfileRef'] = requestParameters.fromHelmfileRef;
+        if (runtime.exists(requestParameters, 'fromHelmfileRef')) {
+            queryParameters['fromHelmfileRef'] = requestParameters['fromHelmfileRef'];
         }
 
-        if (requestParameters.fromHelmfileRefEnabled !== undefined) {
-            queryParameters['fromHelmfileRefEnabled'] = requestParameters.fromHelmfileRefEnabled;
+        if (runtime.exists(requestParameters, 'fromHelmfileRefEnabled')) {
+            queryParameters['fromHelmfileRefEnabled'] = requestParameters['fromHelmfileRefEnabled'];
         }
 
-        if (requestParameters.fromResolvedAt !== undefined) {
-            queryParameters['fromResolvedAt'] = (requestParameters.fromResolvedAt as any).toISOString();
+        if (runtime.exists(requestParameters, 'fromResolvedAt')) {
+            queryParameters['fromResolvedAt'] = (requestParameters['fromResolvedAt'] as any).toISOString();
         }
 
-        if (requestParameters.plannedBy !== undefined) {
-            queryParameters['plannedBy'] = requestParameters.plannedBy;
+        if (runtime.exists(requestParameters, 'plannedBy')) {
+            queryParameters['plannedBy'] = requestParameters['plannedBy'];
         }
 
-        if (requestParameters.supersededAt !== undefined) {
-            queryParameters['supersededAt'] = (requestParameters.supersededAt as any).toISOString();
+        if (runtime.exists(requestParameters, 'supersededAt')) {
+            queryParameters['supersededAt'] = (requestParameters['supersededAt'] as any).toISOString();
         }
 
-        if (requestParameters.toAppVersionBranch !== undefined) {
-            queryParameters['toAppVersionBranch'] = requestParameters.toAppVersionBranch;
+        if (runtime.exists(requestParameters, 'toAppVersionBranch')) {
+            queryParameters['toAppVersionBranch'] = requestParameters['toAppVersionBranch'];
         }
 
-        if (requestParameters.toAppVersionCommit !== undefined) {
-            queryParameters['toAppVersionCommit'] = requestParameters.toAppVersionCommit;
+        if (runtime.exists(requestParameters, 'toAppVersionCommit')) {
+            queryParameters['toAppVersionCommit'] = requestParameters['toAppVersionCommit'];
         }
 
-        if (requestParameters.toAppVersionExact !== undefined) {
-            queryParameters['toAppVersionExact'] = requestParameters.toAppVersionExact;
+        if (runtime.exists(requestParameters, 'toAppVersionExact')) {
+            queryParameters['toAppVersionExact'] = requestParameters['toAppVersionExact'];
         }
 
-        if (requestParameters.toAppVersionFollowChartRelease !== undefined) {
-            queryParameters['toAppVersionFollowChartRelease'] = requestParameters.toAppVersionFollowChartRelease;
+        if (runtime.exists(requestParameters, 'toAppVersionFollowChartRelease')) {
+            queryParameters['toAppVersionFollowChartRelease'] = requestParameters['toAppVersionFollowChartRelease'];
         }
 
-        if (requestParameters.toAppVersionReference !== undefined) {
-            queryParameters['toAppVersionReference'] = requestParameters.toAppVersionReference;
+        if (runtime.exists(requestParameters, 'toAppVersionReference')) {
+            queryParameters['toAppVersionReference'] = requestParameters['toAppVersionReference'];
         }
 
-        if (requestParameters.toAppVersionResolver !== undefined) {
-            queryParameters['toAppVersionResolver'] = requestParameters.toAppVersionResolver;
+        if (runtime.exists(requestParameters, 'toAppVersionResolver')) {
+            queryParameters['toAppVersionResolver'] = requestParameters['toAppVersionResolver'];
         }
 
-        if (requestParameters.toChartVersionExact !== undefined) {
-            queryParameters['toChartVersionExact'] = requestParameters.toChartVersionExact;
+        if (runtime.exists(requestParameters, 'toChartVersionExact')) {
+            queryParameters['toChartVersionExact'] = requestParameters['toChartVersionExact'];
         }
 
-        if (requestParameters.toChartVersionFollowChartRelease !== undefined) {
-            queryParameters['toChartVersionFollowChartRelease'] = requestParameters.toChartVersionFollowChartRelease;
+        if (runtime.exists(requestParameters, 'toChartVersionFollowChartRelease')) {
+            queryParameters['toChartVersionFollowChartRelease'] = requestParameters['toChartVersionFollowChartRelease'];
         }
 
-        if (requestParameters.toChartVersionReference !== undefined) {
-            queryParameters['toChartVersionReference'] = requestParameters.toChartVersionReference;
+        if (runtime.exists(requestParameters, 'toChartVersionReference')) {
+            queryParameters['toChartVersionReference'] = requestParameters['toChartVersionReference'];
         }
 
-        if (requestParameters.toChartVersionResolver !== undefined) {
-            queryParameters['toChartVersionResolver'] = requestParameters.toChartVersionResolver;
+        if (runtime.exists(requestParameters, 'toChartVersionResolver')) {
+            queryParameters['toChartVersionResolver'] = requestParameters['toChartVersionResolver'];
         }
 
-        if (requestParameters.toHelmfileRef !== undefined) {
-            queryParameters['toHelmfileRef'] = requestParameters.toHelmfileRef;
+        if (runtime.exists(requestParameters, 'toHelmfileRef')) {
+            queryParameters['toHelmfileRef'] = requestParameters['toHelmfileRef'];
         }
 
-        if (requestParameters.toHelmfileRefEnabled !== undefined) {
-            queryParameters['toHelmfileRefEnabled'] = requestParameters.toHelmfileRefEnabled;
+        if (runtime.exists(requestParameters, 'toHelmfileRefEnabled')) {
+            queryParameters['toHelmfileRefEnabled'] = requestParameters['toHelmfileRefEnabled'];
         }
 
-        if (requestParameters.toResolvedAt !== undefined) {
-            queryParameters['toResolvedAt'] = (requestParameters.toResolvedAt as any).toISOString();
+        if (runtime.exists(requestParameters, 'toResolvedAt')) {
+            queryParameters['toResolvedAt'] = (requestParameters['toResolvedAt'] as any).toISOString();
         }
 
-        if (requestParameters.id) {
-            queryParameters['id'] = requestParameters.id.join(runtime.COLLECTION_FORMATS["csv"]);
+        if (runtime.exists(requestParameters, 'id')) {
+            queryParameters['id'] = requestParameters['id']!.join(runtime.COLLECTION_FORMATS["csv"]);
         }
 
-        if (requestParameters.limit !== undefined) {
-            queryParameters['limit'] = requestParameters.limit;
+        if (runtime.exists(requestParameters, 'limit')) {
+            queryParameters['limit'] = requestParameters['limit'];
         }
 
-        if (requestParameters.offset !== undefined) {
-            queryParameters['offset'] = requestParameters.offset;
+        if (runtime.exists(requestParameters, 'offset')) {
+            queryParameters['offset'] = requestParameters['offset'];
         }
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -467,8 +488,11 @@ export class ChangesetsApi extends runtime.BaseAPI {
      * Get an individual Changeset
      */
     async apiChangesetsV3IdGetRaw(requestParameters: ApiChangesetsV3IdGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockChangesetV3>> {
-        if (requestParameters.id === null || requestParameters.id === undefined) {
-            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling apiChangesetsV3IdGet.');
+        if (!runtime.exists(requestParameters, 'id')) {
+            throw new runtime.RequiredError(
+                'id',
+                'Required parameter "id" was null or undefined when calling apiChangesetsV3IdGet().'
+            );
         }
 
         const queryParameters: any = {};
@@ -476,7 +500,7 @@ export class ChangesetsApi extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/api/changesets/v3/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+            path: `/api/changesets/v3/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id']))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,

@@ -64,9 +64,7 @@ export type SherlockUserV3UpsertNameFromEnum = typeof SherlockUserV3UpsertNameFr
  * Check if a given object implements the SherlockUserV3Upsert interface.
  */
 export function instanceOfSherlockUserV3Upsert(value: object): boolean {
-    let isInstance = true;
-
-    return isInstance;
+    return true;
 }
 
 export function SherlockUserV3UpsertFromJSON(json: any): SherlockUserV3Upsert {
@@ -74,7 +72,7 @@ export function SherlockUserV3UpsertFromJSON(json: any): SherlockUserV3Upsert {
 }
 
 export function SherlockUserV3UpsertFromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockUserV3Upsert {
-    if ((json === undefined) || (json === null)) {
+    if (json === undefined || json === null) {
         return json;
     }
     return {
@@ -95,10 +93,10 @@ export function SherlockUserV3UpsertToJSON(value?: SherlockUserV3Upsert | null):
     }
     return {
         
-        'githubAccessToken': value.githubAccessToken,
-        'name': value.name,
-        'nameFrom': value.nameFrom,
-        'nameInferredFromGithub': value.nameInferredFromGithub,
+        'githubAccessToken': value['githubAccessToken'],
+        'name': value['name'],
+        'nameFrom': value['nameFrom'],
+        'nameInferredFromGithub': value['nameInferredFromGithub'],
     };
 }
 

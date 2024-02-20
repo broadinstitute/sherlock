@@ -61,9 +61,7 @@ export interface SherlockPagerdutyIntegrationV3 {
  * Check if a given object implements the SherlockPagerdutyIntegrationV3 interface.
  */
 export function instanceOfSherlockPagerdutyIntegrationV3(value: object): boolean {
-    let isInstance = true;
-
-    return isInstance;
+    return true;
 }
 
 export function SherlockPagerdutyIntegrationV3FromJSON(json: any): SherlockPagerdutyIntegrationV3 {
@@ -71,7 +69,7 @@ export function SherlockPagerdutyIntegrationV3FromJSON(json: any): SherlockPager
 }
 
 export function SherlockPagerdutyIntegrationV3FromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockPagerdutyIntegrationV3 {
-    if ((json === undefined) || (json === null)) {
+    if (json === undefined || json === null) {
         return json;
     }
     return {
@@ -94,12 +92,12 @@ export function SherlockPagerdutyIntegrationV3ToJSON(value?: SherlockPagerdutyIn
     }
     return {
         
-        'createdAt': value.createdAt === undefined ? undefined : (value.createdAt.toISOString()),
-        'id': value.id,
-        'name': value.name,
-        'pagerdutyID': value.pagerdutyID,
-        'type': value.type,
-        'updatedAt': value.updatedAt === undefined ? undefined : (value.updatedAt.toISOString()),
+        'createdAt': !exists(value, 'createdAt') ? undefined : ((value['createdAt']).toISOString()),
+        'id': value['id'],
+        'name': value['name'],
+        'pagerdutyID': value['pagerdutyID'],
+        'type': value['type'],
+        'updatedAt': !exists(value, 'updatedAt') ? undefined : ((value['updatedAt']).toISOString()),
     };
 }
 

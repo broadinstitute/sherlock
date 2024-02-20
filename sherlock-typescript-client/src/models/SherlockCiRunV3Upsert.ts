@@ -188,9 +188,7 @@ export type SherlockCiRunV3UpsertRelateToChangesetNewVersionsEnum = typeof Sherl
  * Check if a given object implements the SherlockCiRunV3Upsert interface.
  */
 export function instanceOfSherlockCiRunV3Upsert(value: object): boolean {
-    let isInstance = true;
-
-    return isInstance;
+    return true;
 }
 
 export function SherlockCiRunV3UpsertFromJSON(json: any): SherlockCiRunV3Upsert {
@@ -198,7 +196,7 @@ export function SherlockCiRunV3UpsertFromJSON(json: any): SherlockCiRunV3Upsert 
 }
 
 export function SherlockCiRunV3UpsertFromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockCiRunV3Upsert {
-    if ((json === undefined) || (json === null)) {
+    if (json === undefined || json === null) {
         return json;
     }
     return {
@@ -240,31 +238,31 @@ export function SherlockCiRunV3UpsertToJSON(value?: SherlockCiRunV3Upsert | null
     }
     return {
         
-        'appVersions': value.appVersions,
-        'argoWorkflowsName': value.argoWorkflowsName,
-        'argoWorkflowsNamespace': value.argoWorkflowsNamespace,
-        'argoWorkflowsTemplate': value.argoWorkflowsTemplate,
-        'changesets': value.changesets,
-        'chartReleaseStatuses': value.chartReleaseStatuses,
-        'chartReleases': value.chartReleases,
-        'chartVersions': value.chartVersions,
-        'charts': value.charts,
-        'clusters': value.clusters,
-        'environments': value.environments,
-        'githubActionsAttemptNumber': value.githubActionsAttemptNumber,
-        'githubActionsOwner': value.githubActionsOwner,
-        'githubActionsRepo': value.githubActionsRepo,
-        'githubActionsRunID': value.githubActionsRunID,
-        'githubActionsWorkflowPath': value.githubActionsWorkflowPath,
-        'ignoreBadSelectors': value.ignoreBadSelectors,
-        'notifySlackChannelsUponFailure': value.notifySlackChannelsUponFailure,
-        'notifySlackChannelsUponSuccess': value.notifySlackChannelsUponSuccess,
-        'notifySlackCustomIcon': value.notifySlackCustomIcon,
-        'platform': value.platform,
-        'relateToChangesetNewVersions': value.relateToChangesetNewVersions,
-        'startedAt': value.startedAt,
-        'status': value.status,
-        'terminalAt': value.terminalAt,
+        'appVersions': value['appVersions'],
+        'argoWorkflowsName': value['argoWorkflowsName'],
+        'argoWorkflowsNamespace': value['argoWorkflowsNamespace'],
+        'argoWorkflowsTemplate': value['argoWorkflowsTemplate'],
+        'changesets': value['changesets'],
+        'chartReleaseStatuses': value['chartReleaseStatuses'],
+        'chartReleases': value['chartReleases'],
+        'chartVersions': value['chartVersions'],
+        'charts': value['charts'],
+        'clusters': value['clusters'],
+        'environments': value['environments'],
+        'githubActionsAttemptNumber': value['githubActionsAttemptNumber'],
+        'githubActionsOwner': value['githubActionsOwner'],
+        'githubActionsRepo': value['githubActionsRepo'],
+        'githubActionsRunID': value['githubActionsRunID'],
+        'githubActionsWorkflowPath': value['githubActionsWorkflowPath'],
+        'ignoreBadSelectors': value['ignoreBadSelectors'],
+        'notifySlackChannelsUponFailure': value['notifySlackChannelsUponFailure'],
+        'notifySlackChannelsUponSuccess': value['notifySlackChannelsUponSuccess'],
+        'notifySlackCustomIcon': value['notifySlackCustomIcon'],
+        'platform': value['platform'],
+        'relateToChangesetNewVersions': value['relateToChangesetNewVersions'],
+        'startedAt': value['startedAt'],
+        'status': value['status'],
+        'terminalAt': value['terminalAt'],
     };
 }
 

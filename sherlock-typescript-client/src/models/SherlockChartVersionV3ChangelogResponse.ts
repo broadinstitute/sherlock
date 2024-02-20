@@ -44,9 +44,7 @@ export interface SherlockChartVersionV3ChangelogResponse {
  * Check if a given object implements the SherlockChartVersionV3ChangelogResponse interface.
  */
 export function instanceOfSherlockChartVersionV3ChangelogResponse(value: object): boolean {
-    let isInstance = true;
-
-    return isInstance;
+    return true;
 }
 
 export function SherlockChartVersionV3ChangelogResponseFromJSON(json: any): SherlockChartVersionV3ChangelogResponse {
@@ -54,7 +52,7 @@ export function SherlockChartVersionV3ChangelogResponseFromJSON(json: any): Sher
 }
 
 export function SherlockChartVersionV3ChangelogResponseFromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockChartVersionV3ChangelogResponse {
-    if ((json === undefined) || (json === null)) {
+    if (json === undefined || json === null) {
         return json;
     }
     return {
@@ -73,8 +71,8 @@ export function SherlockChartVersionV3ChangelogResponseToJSON(value?: SherlockCh
     }
     return {
         
-        'changelog': value.changelog === undefined ? undefined : ((value.changelog as Array<any>).map(SherlockChartVersionV3ToJSON)),
-        'complete': value.complete,
+        'changelog': !exists(value, 'changelog') ? undefined : ((value['changelog'] as Array<any>).map(SherlockChartVersionV3ToJSON)),
+        'complete': value['complete'],
     };
 }
 

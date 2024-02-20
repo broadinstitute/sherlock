@@ -77,60 +77,60 @@ export class ClustersApi extends runtime.BaseAPI {
     async apiClustersV3GetRaw(requestParameters: ApiClustersV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockClusterV3>>> {
         const queryParameters: any = {};
 
-        if (requestParameters.address !== undefined) {
-            queryParameters['address'] = requestParameters.address;
+        if (runtime.exists(requestParameters, 'address')) {
+            queryParameters['address'] = requestParameters['address'];
         }
 
-        if (requestParameters.azureSubscription !== undefined) {
-            queryParameters['azureSubscription'] = requestParameters.azureSubscription;
+        if (runtime.exists(requestParameters, 'azureSubscription')) {
+            queryParameters['azureSubscription'] = requestParameters['azureSubscription'];
         }
 
-        if (requestParameters.base !== undefined) {
-            queryParameters['base'] = requestParameters.base;
+        if (runtime.exists(requestParameters, 'base')) {
+            queryParameters['base'] = requestParameters['base'];
         }
 
-        if (requestParameters.createdAt !== undefined) {
-            queryParameters['createdAt'] = (requestParameters.createdAt as any).toISOString();
+        if (runtime.exists(requestParameters, 'createdAt')) {
+            queryParameters['createdAt'] = (requestParameters['createdAt'] as any).toISOString();
         }
 
-        if (requestParameters.googleProject !== undefined) {
-            queryParameters['googleProject'] = requestParameters.googleProject;
+        if (runtime.exists(requestParameters, 'googleProject')) {
+            queryParameters['googleProject'] = requestParameters['googleProject'];
         }
 
-        if (requestParameters.helmfileRef !== undefined) {
-            queryParameters['helmfileRef'] = requestParameters.helmfileRef;
+        if (runtime.exists(requestParameters, 'helmfileRef')) {
+            queryParameters['helmfileRef'] = requestParameters['helmfileRef'];
         }
 
-        if (requestParameters.id !== undefined) {
-            queryParameters['id'] = requestParameters.id;
+        if (runtime.exists(requestParameters, 'id')) {
+            queryParameters['id'] = requestParameters['id'];
         }
 
-        if (requestParameters.location !== undefined) {
-            queryParameters['location'] = requestParameters.location;
+        if (runtime.exists(requestParameters, 'location')) {
+            queryParameters['location'] = requestParameters['location'];
         }
 
-        if (requestParameters.name !== undefined) {
-            queryParameters['name'] = requestParameters.name;
+        if (runtime.exists(requestParameters, 'name')) {
+            queryParameters['name'] = requestParameters['name'];
         }
 
-        if (requestParameters.provider !== undefined) {
-            queryParameters['provider'] = requestParameters.provider;
+        if (runtime.exists(requestParameters, 'provider')) {
+            queryParameters['provider'] = requestParameters['provider'];
         }
 
-        if (requestParameters.requiresSuitability !== undefined) {
-            queryParameters['requiresSuitability'] = requestParameters.requiresSuitability;
+        if (runtime.exists(requestParameters, 'requiresSuitability')) {
+            queryParameters['requiresSuitability'] = requestParameters['requiresSuitability'];
         }
 
-        if (requestParameters.updatedAt !== undefined) {
-            queryParameters['updatedAt'] = (requestParameters.updatedAt as any).toISOString();
+        if (runtime.exists(requestParameters, 'updatedAt')) {
+            queryParameters['updatedAt'] = (requestParameters['updatedAt'] as any).toISOString();
         }
 
-        if (requestParameters.limit !== undefined) {
-            queryParameters['limit'] = requestParameters.limit;
+        if (runtime.exists(requestParameters, 'limit')) {
+            queryParameters['limit'] = requestParameters['limit'];
         }
 
-        if (requestParameters.offset !== undefined) {
-            queryParameters['offset'] = requestParameters.offset;
+        if (runtime.exists(requestParameters, 'offset')) {
+            queryParameters['offset'] = requestParameters['offset'];
         }
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -159,8 +159,11 @@ export class ClustersApi extends runtime.BaseAPI {
      * Create a Cluster
      */
     async apiClustersV3PostRaw(requestParameters: ApiClustersV3PostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockClusterV3>> {
-        if (requestParameters.cluster === null || requestParameters.cluster === undefined) {
-            throw new runtime.RequiredError('cluster','Required parameter requestParameters.cluster was null or undefined when calling apiClustersV3Post.');
+        if (!runtime.exists(requestParameters, 'cluster')) {
+            throw new runtime.RequiredError(
+                'cluster',
+                'Required parameter "cluster" was null or undefined when calling apiClustersV3Post().'
+            );
         }
 
         const queryParameters: any = {};
@@ -174,7 +177,7 @@ export class ClustersApi extends runtime.BaseAPI {
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: SherlockClusterV3CreateToJSON(requestParameters.cluster),
+            body: SherlockClusterV3CreateToJSON(requestParameters['cluster']),
         }, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockClusterV3FromJSON(jsonValue));
@@ -194,8 +197,11 @@ export class ClustersApi extends runtime.BaseAPI {
      * Delete an individual Cluster
      */
     async apiClustersV3SelectorDeleteRaw(requestParameters: ApiClustersV3SelectorDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockClusterV3>> {
-        if (requestParameters.selector === null || requestParameters.selector === undefined) {
-            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiClustersV3SelectorDelete.');
+        if (!runtime.exists(requestParameters, 'selector')) {
+            throw new runtime.RequiredError(
+                'selector',
+                'Required parameter "selector" was null or undefined when calling apiClustersV3SelectorDelete().'
+            );
         }
 
         const queryParameters: any = {};
@@ -203,7 +209,7 @@ export class ClustersApi extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/api/clusters/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            path: `/api/clusters/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector']))),
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
@@ -226,8 +232,11 @@ export class ClustersApi extends runtime.BaseAPI {
      * Get an individual Cluster
      */
     async apiClustersV3SelectorGetRaw(requestParameters: ApiClustersV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockClusterV3>> {
-        if (requestParameters.selector === null || requestParameters.selector === undefined) {
-            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiClustersV3SelectorGet.');
+        if (!runtime.exists(requestParameters, 'selector')) {
+            throw new runtime.RequiredError(
+                'selector',
+                'Required parameter "selector" was null or undefined when calling apiClustersV3SelectorGet().'
+            );
         }
 
         const queryParameters: any = {};
@@ -235,7 +244,7 @@ export class ClustersApi extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/api/clusters/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            path: `/api/clusters/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector']))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -258,12 +267,18 @@ export class ClustersApi extends runtime.BaseAPI {
      * Edit an individual Cluster
      */
     async apiClustersV3SelectorPatchRaw(requestParameters: ApiClustersV3SelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockClusterV3>> {
-        if (requestParameters.selector === null || requestParameters.selector === undefined) {
-            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiClustersV3SelectorPatch.');
+        if (!runtime.exists(requestParameters, 'selector')) {
+            throw new runtime.RequiredError(
+                'selector',
+                'Required parameter "selector" was null or undefined when calling apiClustersV3SelectorPatch().'
+            );
         }
 
-        if (requestParameters.cluster === null || requestParameters.cluster === undefined) {
-            throw new runtime.RequiredError('cluster','Required parameter requestParameters.cluster was null or undefined when calling apiClustersV3SelectorPatch.');
+        if (!runtime.exists(requestParameters, 'cluster')) {
+            throw new runtime.RequiredError(
+                'cluster',
+                'Required parameter "cluster" was null or undefined when calling apiClustersV3SelectorPatch().'
+            );
         }
 
         const queryParameters: any = {};
@@ -273,11 +288,11 @@ export class ClustersApi extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/api/clusters/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            path: `/api/clusters/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector']))),
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
-            body: SherlockClusterV3EditToJSON(requestParameters.cluster),
+            body: SherlockClusterV3EditToJSON(requestParameters['cluster']),
         }, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockClusterV3FromJSON(jsonValue));

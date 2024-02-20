@@ -77,22 +77,28 @@ export class AppVersionsApi extends runtime.BaseAPI {
      * Get a changelog between two AppVersions
      */
     async apiAppVersionsProceduresV3ChangelogGetRaw(requestParameters: ApiAppVersionsProceduresV3ChangelogGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockAppVersionV3ChangelogResponse>> {
-        if (requestParameters.child === null || requestParameters.child === undefined) {
-            throw new runtime.RequiredError('child','Required parameter requestParameters.child was null or undefined when calling apiAppVersionsProceduresV3ChangelogGet.');
+        if (!runtime.exists(requestParameters, 'child')) {
+            throw new runtime.RequiredError(
+                'child',
+                'Required parameter "child" was null or undefined when calling apiAppVersionsProceduresV3ChangelogGet().'
+            );
         }
 
-        if (requestParameters.parent === null || requestParameters.parent === undefined) {
-            throw new runtime.RequiredError('parent','Required parameter requestParameters.parent was null or undefined when calling apiAppVersionsProceduresV3ChangelogGet.');
+        if (!runtime.exists(requestParameters, 'parent')) {
+            throw new runtime.RequiredError(
+                'parent',
+                'Required parameter "parent" was null or undefined when calling apiAppVersionsProceduresV3ChangelogGet().'
+            );
         }
 
         const queryParameters: any = {};
 
-        if (requestParameters.child !== undefined) {
-            queryParameters['child'] = requestParameters.child;
+        if (runtime.exists(requestParameters, 'child')) {
+            queryParameters['child'] = requestParameters['child'];
         }
 
-        if (requestParameters.parent !== undefined) {
-            queryParameters['parent'] = requestParameters.parent;
+        if (runtime.exists(requestParameters, 'parent')) {
+            queryParameters['parent'] = requestParameters['parent'];
         }
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -123,52 +129,52 @@ export class AppVersionsApi extends runtime.BaseAPI {
     async apiAppVersionsV3GetRaw(requestParameters: ApiAppVersionsV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockAppVersionV3>>> {
         const queryParameters: any = {};
 
-        if (requestParameters.appVersion !== undefined) {
-            queryParameters['appVersion'] = requestParameters.appVersion;
+        if (runtime.exists(requestParameters, 'appVersion')) {
+            queryParameters['appVersion'] = requestParameters['appVersion'];
         }
 
-        if (requestParameters.authoredBy !== undefined) {
-            queryParameters['authoredBy'] = requestParameters.authoredBy;
+        if (runtime.exists(requestParameters, 'authoredBy')) {
+            queryParameters['authoredBy'] = requestParameters['authoredBy'];
         }
 
-        if (requestParameters.chart !== undefined) {
-            queryParameters['chart'] = requestParameters.chart;
+        if (runtime.exists(requestParameters, 'chart')) {
+            queryParameters['chart'] = requestParameters['chart'];
         }
 
-        if (requestParameters.createdAt !== undefined) {
-            queryParameters['createdAt'] = (requestParameters.createdAt as any).toISOString();
+        if (runtime.exists(requestParameters, 'createdAt')) {
+            queryParameters['createdAt'] = (requestParameters['createdAt'] as any).toISOString();
         }
 
-        if (requestParameters.description !== undefined) {
-            queryParameters['description'] = requestParameters.description;
+        if (runtime.exists(requestParameters, 'description')) {
+            queryParameters['description'] = requestParameters['description'];
         }
 
-        if (requestParameters.gitBranch !== undefined) {
-            queryParameters['gitBranch'] = requestParameters.gitBranch;
+        if (runtime.exists(requestParameters, 'gitBranch')) {
+            queryParameters['gitBranch'] = requestParameters['gitBranch'];
         }
 
-        if (requestParameters.gitCommit !== undefined) {
-            queryParameters['gitCommit'] = requestParameters.gitCommit;
+        if (runtime.exists(requestParameters, 'gitCommit')) {
+            queryParameters['gitCommit'] = requestParameters['gitCommit'];
         }
 
-        if (requestParameters.id !== undefined) {
-            queryParameters['id'] = requestParameters.id;
+        if (runtime.exists(requestParameters, 'id')) {
+            queryParameters['id'] = requestParameters['id'];
         }
 
-        if (requestParameters.parentAppVersion !== undefined) {
-            queryParameters['parentAppVersion'] = requestParameters.parentAppVersion;
+        if (runtime.exists(requestParameters, 'parentAppVersion')) {
+            queryParameters['parentAppVersion'] = requestParameters['parentAppVersion'];
         }
 
-        if (requestParameters.updatedAt !== undefined) {
-            queryParameters['updatedAt'] = (requestParameters.updatedAt as any).toISOString();
+        if (runtime.exists(requestParameters, 'updatedAt')) {
+            queryParameters['updatedAt'] = (requestParameters['updatedAt'] as any).toISOString();
         }
 
-        if (requestParameters.limit !== undefined) {
-            queryParameters['limit'] = requestParameters.limit;
+        if (runtime.exists(requestParameters, 'limit')) {
+            queryParameters['limit'] = requestParameters['limit'];
         }
 
-        if (requestParameters.offset !== undefined) {
-            queryParameters['offset'] = requestParameters.offset;
+        if (runtime.exists(requestParameters, 'offset')) {
+            queryParameters['offset'] = requestParameters['offset'];
         }
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -197,8 +203,11 @@ export class AppVersionsApi extends runtime.BaseAPI {
      * Upsert a AppVersion
      */
     async apiAppVersionsV3PutRaw(requestParameters: ApiAppVersionsV3PutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockAppVersionV3>> {
-        if (requestParameters.appVersion === null || requestParameters.appVersion === undefined) {
-            throw new runtime.RequiredError('appVersion','Required parameter requestParameters.appVersion was null or undefined when calling apiAppVersionsV3Put.');
+        if (!runtime.exists(requestParameters, 'appVersion')) {
+            throw new runtime.RequiredError(
+                'appVersion',
+                'Required parameter "appVersion" was null or undefined when calling apiAppVersionsV3Put().'
+            );
         }
 
         const queryParameters: any = {};
@@ -212,7 +221,7 @@ export class AppVersionsApi extends runtime.BaseAPI {
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
-            body: SherlockAppVersionV3CreateToJSON(requestParameters.appVersion),
+            body: SherlockAppVersionV3CreateToJSON(requestParameters['appVersion']),
         }, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockAppVersionV3FromJSON(jsonValue));
@@ -232,8 +241,11 @@ export class AppVersionsApi extends runtime.BaseAPI {
      * Get an individual AppVersion
      */
     async apiAppVersionsV3SelectorGetRaw(requestParameters: ApiAppVersionsV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockAppVersionV3>> {
-        if (requestParameters.selector === null || requestParameters.selector === undefined) {
-            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiAppVersionsV3SelectorGet.');
+        if (!runtime.exists(requestParameters, 'selector')) {
+            throw new runtime.RequiredError(
+                'selector',
+                'Required parameter "selector" was null or undefined when calling apiAppVersionsV3SelectorGet().'
+            );
         }
 
         const queryParameters: any = {};
@@ -241,7 +253,7 @@ export class AppVersionsApi extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/api/app-versions/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            path: `/api/app-versions/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector']))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -264,12 +276,18 @@ export class AppVersionsApi extends runtime.BaseAPI {
      * Edit an individual AppVersion
      */
     async apiAppVersionsV3SelectorPatchRaw(requestParameters: ApiAppVersionsV3SelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockAppVersionV3>> {
-        if (requestParameters.selector === null || requestParameters.selector === undefined) {
-            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiAppVersionsV3SelectorPatch.');
+        if (!runtime.exists(requestParameters, 'selector')) {
+            throw new runtime.RequiredError(
+                'selector',
+                'Required parameter "selector" was null or undefined when calling apiAppVersionsV3SelectorPatch().'
+            );
         }
 
-        if (requestParameters.appVersion === null || requestParameters.appVersion === undefined) {
-            throw new runtime.RequiredError('appVersion','Required parameter requestParameters.appVersion was null or undefined when calling apiAppVersionsV3SelectorPatch.');
+        if (!runtime.exists(requestParameters, 'appVersion')) {
+            throw new runtime.RequiredError(
+                'appVersion',
+                'Required parameter "appVersion" was null or undefined when calling apiAppVersionsV3SelectorPatch().'
+            );
         }
 
         const queryParameters: any = {};
@@ -279,11 +297,11 @@ export class AppVersionsApi extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/api/app-versions/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            path: `/api/app-versions/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector']))),
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
-            body: SherlockAppVersionV3EditToJSON(requestParameters.appVersion),
+            body: SherlockAppVersionV3EditToJSON(requestParameters['appVersion']),
         }, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockAppVersionV3FromJSON(jsonValue));

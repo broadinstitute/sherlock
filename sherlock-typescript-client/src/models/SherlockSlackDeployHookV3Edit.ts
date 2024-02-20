@@ -49,9 +49,7 @@ export interface SherlockSlackDeployHookV3Edit {
  * Check if a given object implements the SherlockSlackDeployHookV3Edit interface.
  */
 export function instanceOfSherlockSlackDeployHookV3Edit(value: object): boolean {
-    let isInstance = true;
-
-    return isInstance;
+    return true;
 }
 
 export function SherlockSlackDeployHookV3EditFromJSON(json: any): SherlockSlackDeployHookV3Edit {
@@ -59,7 +57,7 @@ export function SherlockSlackDeployHookV3EditFromJSON(json: any): SherlockSlackD
 }
 
 export function SherlockSlackDeployHookV3EditFromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockSlackDeployHookV3Edit {
-    if ((json === undefined) || (json === null)) {
+    if (json === undefined || json === null) {
         return json;
     }
     return {
@@ -80,10 +78,10 @@ export function SherlockSlackDeployHookV3EditToJSON(value?: SherlockSlackDeployH
     }
     return {
         
-        'mentionPeople': value.mentionPeople,
-        'onFailure': value.onFailure,
-        'onSuccess': value.onSuccess,
-        'slackChannel': value.slackChannel,
+        'mentionPeople': value['mentionPeople'],
+        'onFailure': value['onFailure'],
+        'onSuccess': value['onSuccess'],
+        'slackChannel': value['slackChannel'],
     };
 }
 

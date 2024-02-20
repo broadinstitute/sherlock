@@ -93,124 +93,124 @@ export class EnvironmentsApi extends runtime.BaseAPI {
     async apiEnvironmentsV3GetRaw(requestParameters: ApiEnvironmentsV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockEnvironmentV3>>> {
         const queryParameters: any = {};
 
-        if (requestParameters.autoPopulateChartReleases !== undefined) {
-            queryParameters['autoPopulateChartReleases'] = requestParameters.autoPopulateChartReleases;
+        if (runtime.exists(requestParameters, 'autoPopulateChartReleases')) {
+            queryParameters['autoPopulateChartReleases'] = requestParameters['autoPopulateChartReleases'];
         }
 
-        if (requestParameters.base !== undefined) {
-            queryParameters['base'] = requestParameters.base;
+        if (runtime.exists(requestParameters, 'base')) {
+            queryParameters['base'] = requestParameters['base'];
         }
 
-        if (requestParameters.baseDomain !== undefined) {
-            queryParameters['baseDomain'] = requestParameters.baseDomain;
+        if (runtime.exists(requestParameters, 'baseDomain')) {
+            queryParameters['baseDomain'] = requestParameters['baseDomain'];
         }
 
-        if (requestParameters.createdAt !== undefined) {
-            queryParameters['createdAt'] = (requestParameters.createdAt as any).toISOString();
+        if (runtime.exists(requestParameters, 'createdAt')) {
+            queryParameters['createdAt'] = (requestParameters['createdAt'] as any).toISOString();
         }
 
-        if (requestParameters.defaultCluster !== undefined) {
-            queryParameters['defaultCluster'] = requestParameters.defaultCluster;
+        if (runtime.exists(requestParameters, 'defaultCluster')) {
+            queryParameters['defaultCluster'] = requestParameters['defaultCluster'];
         }
 
-        if (requestParameters.defaultNamespace !== undefined) {
-            queryParameters['defaultNamespace'] = requestParameters.defaultNamespace;
+        if (runtime.exists(requestParameters, 'defaultNamespace')) {
+            queryParameters['defaultNamespace'] = requestParameters['defaultNamespace'];
         }
 
-        if (requestParameters.deleteAfter !== undefined) {
-            queryParameters['deleteAfter'] = (requestParameters.deleteAfter as any).toISOString();
+        if (runtime.exists(requestParameters, 'deleteAfter')) {
+            queryParameters['deleteAfter'] = (requestParameters['deleteAfter'] as any).toISOString();
         }
 
-        if (requestParameters.description !== undefined) {
-            queryParameters['description'] = requestParameters.description;
+        if (runtime.exists(requestParameters, 'description')) {
+            queryParameters['description'] = requestParameters['description'];
         }
 
-        if (requestParameters.helmfileRef !== undefined) {
-            queryParameters['helmfileRef'] = requestParameters.helmfileRef;
+        if (runtime.exists(requestParameters, 'helmfileRef')) {
+            queryParameters['helmfileRef'] = requestParameters['helmfileRef'];
         }
 
-        if (requestParameters.id !== undefined) {
-            queryParameters['id'] = requestParameters.id;
+        if (runtime.exists(requestParameters, 'id')) {
+            queryParameters['id'] = requestParameters['id'];
         }
 
-        if (requestParameters.lifecycle !== undefined) {
-            queryParameters['lifecycle'] = requestParameters.lifecycle;
+        if (runtime.exists(requestParameters, 'lifecycle')) {
+            queryParameters['lifecycle'] = requestParameters['lifecycle'];
         }
 
-        if (requestParameters.name !== undefined) {
-            queryParameters['name'] = requestParameters.name;
+        if (runtime.exists(requestParameters, 'name')) {
+            queryParameters['name'] = requestParameters['name'];
         }
 
-        if (requestParameters.namePrefixesDomain !== undefined) {
-            queryParameters['namePrefixesDomain'] = requestParameters.namePrefixesDomain;
+        if (runtime.exists(requestParameters, 'namePrefixesDomain')) {
+            queryParameters['namePrefixesDomain'] = requestParameters['namePrefixesDomain'];
         }
 
-        if (requestParameters.offline !== undefined) {
-            queryParameters['offline'] = requestParameters.offline;
+        if (runtime.exists(requestParameters, 'offline')) {
+            queryParameters['offline'] = requestParameters['offline'];
         }
 
-        if (requestParameters.offlineScheduleBeginEnabled !== undefined) {
-            queryParameters['offlineScheduleBeginEnabled'] = requestParameters.offlineScheduleBeginEnabled;
+        if (runtime.exists(requestParameters, 'offlineScheduleBeginEnabled')) {
+            queryParameters['offlineScheduleBeginEnabled'] = requestParameters['offlineScheduleBeginEnabled'];
         }
 
-        if (requestParameters.offlineScheduleBeginTime !== undefined) {
-            queryParameters['offlineScheduleBeginTime'] = (requestParameters.offlineScheduleBeginTime as any).toISOString();
+        if (runtime.exists(requestParameters, 'offlineScheduleBeginTime')) {
+            queryParameters['offlineScheduleBeginTime'] = (requestParameters['offlineScheduleBeginTime'] as any).toISOString();
         }
 
-        if (requestParameters.offlineScheduleEndEnabled !== undefined) {
-            queryParameters['offlineScheduleEndEnabled'] = requestParameters.offlineScheduleEndEnabled;
+        if (runtime.exists(requestParameters, 'offlineScheduleEndEnabled')) {
+            queryParameters['offlineScheduleEndEnabled'] = requestParameters['offlineScheduleEndEnabled'];
         }
 
-        if (requestParameters.offlineScheduleEndTime !== undefined) {
-            queryParameters['offlineScheduleEndTime'] = (requestParameters.offlineScheduleEndTime as any).toISOString();
+        if (runtime.exists(requestParameters, 'offlineScheduleEndTime')) {
+            queryParameters['offlineScheduleEndTime'] = (requestParameters['offlineScheduleEndTime'] as any).toISOString();
         }
 
-        if (requestParameters.offlineScheduleEndWeekends !== undefined) {
-            queryParameters['offlineScheduleEndWeekends'] = requestParameters.offlineScheduleEndWeekends;
+        if (runtime.exists(requestParameters, 'offlineScheduleEndWeekends')) {
+            queryParameters['offlineScheduleEndWeekends'] = requestParameters['offlineScheduleEndWeekends'];
         }
 
-        if (requestParameters.owner !== undefined) {
-            queryParameters['owner'] = requestParameters.owner;
+        if (runtime.exists(requestParameters, 'owner')) {
+            queryParameters['owner'] = requestParameters['owner'];
         }
 
-        if (requestParameters.pactIdentifier !== undefined) {
-            queryParameters['PactIdentifier'] = requestParameters.pactIdentifier;
+        if (runtime.exists(requestParameters, 'pactIdentifier')) {
+            queryParameters['PactIdentifier'] = requestParameters['pactIdentifier'];
         }
 
-        if (requestParameters.pagerdutyIntegration !== undefined) {
-            queryParameters['pagerdutyIntegration'] = requestParameters.pagerdutyIntegration;
+        if (runtime.exists(requestParameters, 'pagerdutyIntegration')) {
+            queryParameters['pagerdutyIntegration'] = requestParameters['pagerdutyIntegration'];
         }
 
-        if (requestParameters.preventDeletion !== undefined) {
-            queryParameters['preventDeletion'] = requestParameters.preventDeletion;
+        if (runtime.exists(requestParameters, 'preventDeletion')) {
+            queryParameters['preventDeletion'] = requestParameters['preventDeletion'];
         }
 
-        if (requestParameters.requiresSuitability !== undefined) {
-            queryParameters['requiresSuitability'] = requestParameters.requiresSuitability;
+        if (runtime.exists(requestParameters, 'requiresSuitability')) {
+            queryParameters['requiresSuitability'] = requestParameters['requiresSuitability'];
         }
 
-        if (requestParameters.templateEnvironment !== undefined) {
-            queryParameters['templateEnvironment'] = requestParameters.templateEnvironment;
+        if (runtime.exists(requestParameters, 'templateEnvironment')) {
+            queryParameters['templateEnvironment'] = requestParameters['templateEnvironment'];
         }
 
-        if (requestParameters.uniqueResourcePrefix !== undefined) {
-            queryParameters['uniqueResourcePrefix'] = requestParameters.uniqueResourcePrefix;
+        if (runtime.exists(requestParameters, 'uniqueResourcePrefix')) {
+            queryParameters['uniqueResourcePrefix'] = requestParameters['uniqueResourcePrefix'];
         }
 
-        if (requestParameters.updatedAt !== undefined) {
-            queryParameters['updatedAt'] = (requestParameters.updatedAt as any).toISOString();
+        if (runtime.exists(requestParameters, 'updatedAt')) {
+            queryParameters['updatedAt'] = (requestParameters['updatedAt'] as any).toISOString();
         }
 
-        if (requestParameters.valuesName !== undefined) {
-            queryParameters['valuesName'] = requestParameters.valuesName;
+        if (runtime.exists(requestParameters, 'valuesName')) {
+            queryParameters['valuesName'] = requestParameters['valuesName'];
         }
 
-        if (requestParameters.limit !== undefined) {
-            queryParameters['limit'] = requestParameters.limit;
+        if (runtime.exists(requestParameters, 'limit')) {
+            queryParameters['limit'] = requestParameters['limit'];
         }
 
-        if (requestParameters.offset !== undefined) {
-            queryParameters['offset'] = requestParameters.offset;
+        if (runtime.exists(requestParameters, 'offset')) {
+            queryParameters['offset'] = requestParameters['offset'];
         }
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -239,8 +239,11 @@ export class EnvironmentsApi extends runtime.BaseAPI {
      * Create a Environment
      */
     async apiEnvironmentsV3PostRaw(requestParameters: ApiEnvironmentsV3PostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockEnvironmentV3>> {
-        if (requestParameters.environment === null || requestParameters.environment === undefined) {
-            throw new runtime.RequiredError('environment','Required parameter requestParameters.environment was null or undefined when calling apiEnvironmentsV3Post.');
+        if (!runtime.exists(requestParameters, 'environment')) {
+            throw new runtime.RequiredError(
+                'environment',
+                'Required parameter "environment" was null or undefined when calling apiEnvironmentsV3Post().'
+            );
         }
 
         const queryParameters: any = {};
@@ -254,7 +257,7 @@ export class EnvironmentsApi extends runtime.BaseAPI {
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: SherlockEnvironmentV3CreateToJSON(requestParameters.environment),
+            body: SherlockEnvironmentV3CreateToJSON(requestParameters['environment']),
         }, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockEnvironmentV3FromJSON(jsonValue));
@@ -274,8 +277,11 @@ export class EnvironmentsApi extends runtime.BaseAPI {
      * Delete an individual Environment
      */
     async apiEnvironmentsV3SelectorDeleteRaw(requestParameters: ApiEnvironmentsV3SelectorDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockEnvironmentV3>> {
-        if (requestParameters.selector === null || requestParameters.selector === undefined) {
-            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiEnvironmentsV3SelectorDelete.');
+        if (!runtime.exists(requestParameters, 'selector')) {
+            throw new runtime.RequiredError(
+                'selector',
+                'Required parameter "selector" was null or undefined when calling apiEnvironmentsV3SelectorDelete().'
+            );
         }
 
         const queryParameters: any = {};
@@ -283,7 +289,7 @@ export class EnvironmentsApi extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/api/environments/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            path: `/api/environments/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector']))),
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
@@ -306,8 +312,11 @@ export class EnvironmentsApi extends runtime.BaseAPI {
      * Get an individual Environment
      */
     async apiEnvironmentsV3SelectorGetRaw(requestParameters: ApiEnvironmentsV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockEnvironmentV3>> {
-        if (requestParameters.selector === null || requestParameters.selector === undefined) {
-            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiEnvironmentsV3SelectorGet.');
+        if (!runtime.exists(requestParameters, 'selector')) {
+            throw new runtime.RequiredError(
+                'selector',
+                'Required parameter "selector" was null or undefined when calling apiEnvironmentsV3SelectorGet().'
+            );
         }
 
         const queryParameters: any = {};
@@ -315,7 +324,7 @@ export class EnvironmentsApi extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/api/environments/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            path: `/api/environments/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector']))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -338,12 +347,18 @@ export class EnvironmentsApi extends runtime.BaseAPI {
      * Edit an individual Environment
      */
     async apiEnvironmentsV3SelectorPatchRaw(requestParameters: ApiEnvironmentsV3SelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockEnvironmentV3>> {
-        if (requestParameters.selector === null || requestParameters.selector === undefined) {
-            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiEnvironmentsV3SelectorPatch.');
+        if (!runtime.exists(requestParameters, 'selector')) {
+            throw new runtime.RequiredError(
+                'selector',
+                'Required parameter "selector" was null or undefined when calling apiEnvironmentsV3SelectorPatch().'
+            );
         }
 
-        if (requestParameters.environment === null || requestParameters.environment === undefined) {
-            throw new runtime.RequiredError('environment','Required parameter requestParameters.environment was null or undefined when calling apiEnvironmentsV3SelectorPatch.');
+        if (!runtime.exists(requestParameters, 'environment')) {
+            throw new runtime.RequiredError(
+                'environment',
+                'Required parameter "environment" was null or undefined when calling apiEnvironmentsV3SelectorPatch().'
+            );
         }
 
         const queryParameters: any = {};
@@ -353,11 +368,11 @@ export class EnvironmentsApi extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/api/environments/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            path: `/api/environments/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector']))),
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
-            body: SherlockEnvironmentV3EditToJSON(requestParameters.environment),
+            body: SherlockEnvironmentV3EditToJSON(requestParameters['environment']),
         }, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockEnvironmentV3FromJSON(jsonValue));

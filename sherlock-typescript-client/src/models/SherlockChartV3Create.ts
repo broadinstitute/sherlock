@@ -91,9 +91,7 @@ export interface SherlockChartV3Create {
  * Check if a given object implements the SherlockChartV3Create interface.
  */
 export function instanceOfSherlockChartV3Create(value: object): boolean {
-    let isInstance = true;
-
-    return isInstance;
+    return true;
 }
 
 export function SherlockChartV3CreateFromJSON(json: any): SherlockChartV3Create {
@@ -101,7 +99,7 @@ export function SherlockChartV3CreateFromJSON(json: any): SherlockChartV3Create 
 }
 
 export function SherlockChartV3CreateFromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockChartV3Create {
-    if ((json === undefined) || (json === null)) {
+    if (json === undefined || json === null) {
         return json;
     }
     return {
@@ -129,17 +127,17 @@ export function SherlockChartV3CreateToJSON(value?: SherlockChartV3Create | null
     }
     return {
         
-        'appImageGitMainBranch': value.appImageGitMainBranch,
-        'appImageGitRepo': value.appImageGitRepo,
-        'chartExposesEndpoint': value.chartExposesEndpoint,
-        'chartRepo': value.chartRepo,
-        'defaultPort': value.defaultPort,
-        'defaultProtocol': value.defaultProtocol,
-        'defaultSubdomain': value.defaultSubdomain,
-        'description': value.description,
-        'name': value.name,
-        'pactParticipant': value.pactParticipant,
-        'playbookURL': value.playbookURL,
+        'appImageGitMainBranch': value['appImageGitMainBranch'],
+        'appImageGitRepo': value['appImageGitRepo'],
+        'chartExposesEndpoint': value['chartExposesEndpoint'],
+        'chartRepo': value['chartRepo'],
+        'defaultPort': value['defaultPort'],
+        'defaultProtocol': value['defaultProtocol'],
+        'defaultSubdomain': value['defaultSubdomain'],
+        'description': value['description'],
+        'name': value['name'],
+        'pactParticipant': value['pactParticipant'],
+        'playbookURL': value['playbookURL'],
     };
 }
 

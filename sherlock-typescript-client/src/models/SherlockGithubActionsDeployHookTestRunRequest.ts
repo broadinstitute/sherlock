@@ -31,9 +31,7 @@ export interface SherlockGithubActionsDeployHookTestRunRequest {
  * Check if a given object implements the SherlockGithubActionsDeployHookTestRunRequest interface.
  */
 export function instanceOfSherlockGithubActionsDeployHookTestRunRequest(value: object): boolean {
-    let isInstance = true;
-
-    return isInstance;
+    return true;
 }
 
 export function SherlockGithubActionsDeployHookTestRunRequestFromJSON(json: any): SherlockGithubActionsDeployHookTestRunRequest {
@@ -41,7 +39,7 @@ export function SherlockGithubActionsDeployHookTestRunRequestFromJSON(json: any)
 }
 
 export function SherlockGithubActionsDeployHookTestRunRequestFromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockGithubActionsDeployHookTestRunRequest {
-    if ((json === undefined) || (json === null)) {
+    if (json === undefined || json === null) {
         return json;
     }
     return {
@@ -59,7 +57,7 @@ export function SherlockGithubActionsDeployHookTestRunRequestToJSON(value?: Sher
     }
     return {
         
-        'execute': value.execute,
+        'execute': value['execute'],
     };
 }
 

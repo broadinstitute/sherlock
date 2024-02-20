@@ -127,9 +127,7 @@ export interface SherlockEnvironmentV3Edit {
  * Check if a given object implements the SherlockEnvironmentV3Edit interface.
  */
 export function instanceOfSherlockEnvironmentV3Edit(value: object): boolean {
-    let isInstance = true;
-
-    return isInstance;
+    return true;
 }
 
 export function SherlockEnvironmentV3EditFromJSON(json: any): SherlockEnvironmentV3Edit {
@@ -137,7 +135,7 @@ export function SherlockEnvironmentV3EditFromJSON(json: any): SherlockEnvironmen
 }
 
 export function SherlockEnvironmentV3EditFromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockEnvironmentV3Edit {
-    if ((json === undefined) || (json === null)) {
+    if (json === undefined || json === null) {
         return json;
     }
     return {
@@ -171,23 +169,23 @@ export function SherlockEnvironmentV3EditToJSON(value?: SherlockEnvironmentV3Edi
     }
     return {
         
-        'baseDomain': value.baseDomain,
-        'defaultCluster': value.defaultCluster,
-        'deleteAfter': value.deleteAfter === undefined ? undefined : (value.deleteAfter.toISOString()),
-        'description': value.description,
-        'helmfileRef': value.helmfileRef,
-        'namePrefixesDomain': value.namePrefixesDomain,
-        'offline': value.offline,
-        'offlineScheduleBeginEnabled': value.offlineScheduleBeginEnabled,
-        'offlineScheduleBeginTime': value.offlineScheduleBeginTime === undefined ? undefined : (value.offlineScheduleBeginTime.toISOString()),
-        'offlineScheduleEndEnabled': value.offlineScheduleEndEnabled,
-        'offlineScheduleEndTime': value.offlineScheduleEndTime === undefined ? undefined : (value.offlineScheduleEndTime.toISOString()),
-        'offlineScheduleEndWeekends': value.offlineScheduleEndWeekends,
-        'owner': value.owner,
-        'pactIdentifier': value.pactIdentifier,
-        'pagerdutyIntegration': value.pagerdutyIntegration,
-        'preventDeletion': value.preventDeletion,
-        'requiresSuitability': value.requiresSuitability,
+        'baseDomain': value['baseDomain'],
+        'defaultCluster': value['defaultCluster'],
+        'deleteAfter': !exists(value, 'deleteAfter') ? undefined : ((value['deleteAfter']).toISOString()),
+        'description': value['description'],
+        'helmfileRef': value['helmfileRef'],
+        'namePrefixesDomain': value['namePrefixesDomain'],
+        'offline': value['offline'],
+        'offlineScheduleBeginEnabled': value['offlineScheduleBeginEnabled'],
+        'offlineScheduleBeginTime': !exists(value, 'offlineScheduleBeginTime') ? undefined : ((value['offlineScheduleBeginTime']).toISOString()),
+        'offlineScheduleEndEnabled': value['offlineScheduleEndEnabled'],
+        'offlineScheduleEndTime': !exists(value, 'offlineScheduleEndTime') ? undefined : ((value['offlineScheduleEndTime']).toISOString()),
+        'offlineScheduleEndWeekends': value['offlineScheduleEndWeekends'],
+        'owner': value['owner'],
+        'pactIdentifier': value['pactIdentifier'],
+        'pagerdutyIntegration': value['pagerdutyIntegration'],
+        'preventDeletion': value['preventDeletion'],
+        'requiresSuitability': value['requiresSuitability'],
     };
 }
 

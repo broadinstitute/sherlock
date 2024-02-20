@@ -31,9 +31,7 @@ export interface MiscStatusResponse {
  * Check if a given object implements the MiscStatusResponse interface.
  */
 export function instanceOfMiscStatusResponse(value: object): boolean {
-    let isInstance = true;
-
-    return isInstance;
+    return true;
 }
 
 export function MiscStatusResponseFromJSON(json: any): MiscStatusResponse {
@@ -41,7 +39,7 @@ export function MiscStatusResponseFromJSON(json: any): MiscStatusResponse {
 }
 
 export function MiscStatusResponseFromJSONTyped(json: any, ignoreDiscriminator: boolean): MiscStatusResponse {
-    if ((json === undefined) || (json === null)) {
+    if (json === undefined || json === null) {
         return json;
     }
     return {
@@ -59,7 +57,7 @@ export function MiscStatusResponseToJSON(value?: MiscStatusResponse | null): any
     }
     return {
         
-        'ok': value.ok,
+        'ok': value['ok'],
     };
 }
 

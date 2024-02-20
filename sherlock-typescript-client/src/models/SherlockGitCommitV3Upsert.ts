@@ -55,9 +55,7 @@ export interface SherlockGitCommitV3Upsert {
  * Check if a given object implements the SherlockGitCommitV3Upsert interface.
  */
 export function instanceOfSherlockGitCommitV3Upsert(value: object): boolean {
-    let isInstance = true;
-
-    return isInstance;
+    return true;
 }
 
 export function SherlockGitCommitV3UpsertFromJSON(json: any): SherlockGitCommitV3Upsert {
@@ -65,7 +63,7 @@ export function SherlockGitCommitV3UpsertFromJSON(json: any): SherlockGitCommitV
 }
 
 export function SherlockGitCommitV3UpsertFromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockGitCommitV3Upsert {
-    if ((json === undefined) || (json === null)) {
+    if (json === undefined || json === null) {
         return json;
     }
     return {
@@ -87,11 +85,11 @@ export function SherlockGitCommitV3UpsertToJSON(value?: SherlockGitCommitV3Upser
     }
     return {
         
-        'committedAt': value.committedAt,
-        'gitBranch': value.gitBranch,
-        'gitCommit': value.gitCommit,
-        'gitRepo': value.gitRepo,
-        'isMainBranch': value.isMainBranch,
+        'committedAt': value['committedAt'],
+        'gitBranch': value['gitBranch'],
+        'gitCommit': value['gitCommit'],
+        'gitRepo': value['gitRepo'],
+        'isMainBranch': value['isMainBranch'],
     };
 }
 

@@ -31,9 +31,7 @@ export interface SherlockSlackDeployHookTestRunRequest {
  * Check if a given object implements the SherlockSlackDeployHookTestRunRequest interface.
  */
 export function instanceOfSherlockSlackDeployHookTestRunRequest(value: object): boolean {
-    let isInstance = true;
-
-    return isInstance;
+    return true;
 }
 
 export function SherlockSlackDeployHookTestRunRequestFromJSON(json: any): SherlockSlackDeployHookTestRunRequest {
@@ -41,7 +39,7 @@ export function SherlockSlackDeployHookTestRunRequestFromJSON(json: any): Sherlo
 }
 
 export function SherlockSlackDeployHookTestRunRequestFromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockSlackDeployHookTestRunRequest {
-    if ((json === undefined) || (json === null)) {
+    if (json === undefined || json === null) {
         return json;
     }
     return {
@@ -59,7 +57,7 @@ export function SherlockSlackDeployHookTestRunRequestToJSON(value?: SherlockSlac
     }
     return {
         
-        'execute': value.execute,
+        'execute': value['execute'],
     };
 }
 

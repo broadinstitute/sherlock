@@ -85,9 +85,7 @@ export type SherlockGithubActionsDeployHookV3EditGithubActionsRefBehaviorEnum = 
  * Check if a given object implements the SherlockGithubActionsDeployHookV3Edit interface.
  */
 export function instanceOfSherlockGithubActionsDeployHookV3Edit(value: object): boolean {
-    let isInstance = true;
-
-    return isInstance;
+    return true;
 }
 
 export function SherlockGithubActionsDeployHookV3EditFromJSON(json: any): SherlockGithubActionsDeployHookV3Edit {
@@ -95,7 +93,7 @@ export function SherlockGithubActionsDeployHookV3EditFromJSON(json: any): Sherlo
 }
 
 export function SherlockGithubActionsDeployHookV3EditFromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockGithubActionsDeployHookV3Edit {
-    if ((json === undefined) || (json === null)) {
+    if (json === undefined || json === null) {
         return json;
     }
     return {
@@ -120,14 +118,14 @@ export function SherlockGithubActionsDeployHookV3EditToJSON(value?: SherlockGith
     }
     return {
         
-        'githubActionsDefaultRef': value.githubActionsDefaultRef,
-        'githubActionsOwner': value.githubActionsOwner,
-        'githubActionsRefBehavior': value.githubActionsRefBehavior,
-        'githubActionsRepo': value.githubActionsRepo,
-        'githubActionsWorkflowInputs': value.githubActionsWorkflowInputs,
-        'githubActionsWorkflowPath': value.githubActionsWorkflowPath,
-        'onFailure': value.onFailure,
-        'onSuccess': value.onSuccess,
+        'githubActionsDefaultRef': value['githubActionsDefaultRef'],
+        'githubActionsOwner': value['githubActionsOwner'],
+        'githubActionsRefBehavior': value['githubActionsRefBehavior'],
+        'githubActionsRepo': value['githubActionsRepo'],
+        'githubActionsWorkflowInputs': value['githubActionsWorkflowInputs'],
+        'githubActionsWorkflowPath': value['githubActionsWorkflowPath'],
+        'onFailure': value['onFailure'],
+        'onSuccess': value['onSuccess'],
     };
 }
 

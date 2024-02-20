@@ -49,9 +49,7 @@ export interface SherlockDatabaseInstanceV3Edit {
  * Check if a given object implements the SherlockDatabaseInstanceV3Edit interface.
  */
 export function instanceOfSherlockDatabaseInstanceV3Edit(value: object): boolean {
-    let isInstance = true;
-
-    return isInstance;
+    return true;
 }
 
 export function SherlockDatabaseInstanceV3EditFromJSON(json: any): SherlockDatabaseInstanceV3Edit {
@@ -59,7 +57,7 @@ export function SherlockDatabaseInstanceV3EditFromJSON(json: any): SherlockDatab
 }
 
 export function SherlockDatabaseInstanceV3EditFromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockDatabaseInstanceV3Edit {
-    if ((json === undefined) || (json === null)) {
+    if (json === undefined || json === null) {
         return json;
     }
     return {
@@ -80,10 +78,10 @@ export function SherlockDatabaseInstanceV3EditToJSON(value?: SherlockDatabaseIns
     }
     return {
         
-        'defaultDatabase': value.defaultDatabase,
-        'googleProject': value.googleProject,
-        'instanceName': value.instanceName,
-        'platform': value.platform,
+        'defaultDatabase': value['defaultDatabase'],
+        'googleProject': value['googleProject'],
+        'instanceName': value['instanceName'],
+        'platform': value['platform'],
     };
 }
 

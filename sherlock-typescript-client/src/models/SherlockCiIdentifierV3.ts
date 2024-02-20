@@ -74,9 +74,7 @@ export interface SherlockCiIdentifierV3 {
  * Check if a given object implements the SherlockCiIdentifierV3 interface.
  */
 export function instanceOfSherlockCiIdentifierV3(value: object): boolean {
-    let isInstance = true;
-
-    return isInstance;
+    return true;
 }
 
 export function SherlockCiIdentifierV3FromJSON(json: any): SherlockCiIdentifierV3 {
@@ -84,7 +82,7 @@ export function SherlockCiIdentifierV3FromJSON(json: any): SherlockCiIdentifierV
 }
 
 export function SherlockCiIdentifierV3FromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockCiIdentifierV3 {
-    if ((json === undefined) || (json === null)) {
+    if (json === undefined || json === null) {
         return json;
     }
     return {
@@ -108,13 +106,13 @@ export function SherlockCiIdentifierV3ToJSON(value?: SherlockCiIdentifierV3 | nu
     }
     return {
         
-        'ciRuns': value.ciRuns === undefined ? undefined : ((value.ciRuns as Array<any>).map(SherlockCiRunV3ToJSON)),
-        'createdAt': value.createdAt === undefined ? undefined : (value.createdAt.toISOString()),
-        'id': value.id,
-        'resourceID': value.resourceID,
-        'resourceStatus': value.resourceStatus,
-        'resourceType': value.resourceType,
-        'updatedAt': value.updatedAt === undefined ? undefined : (value.updatedAt.toISOString()),
+        'ciRuns': !exists(value, 'ciRuns') ? undefined : ((value['ciRuns'] as Array<any>).map(SherlockCiRunV3ToJSON)),
+        'createdAt': !exists(value, 'createdAt') ? undefined : ((value['createdAt']).toISOString()),
+        'id': value['id'],
+        'resourceID': value['resourceID'],
+        'resourceStatus': value['resourceStatus'],
+        'resourceType': value['resourceType'],
+        'updatedAt': !exists(value, 'updatedAt') ? undefined : ((value['updatedAt']).toISOString()),
     };
 }
 

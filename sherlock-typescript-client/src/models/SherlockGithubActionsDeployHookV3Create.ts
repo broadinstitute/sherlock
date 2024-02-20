@@ -97,9 +97,7 @@ export type SherlockGithubActionsDeployHookV3CreateGithubActionsRefBehaviorEnum 
  * Check if a given object implements the SherlockGithubActionsDeployHookV3Create interface.
  */
 export function instanceOfSherlockGithubActionsDeployHookV3Create(value: object): boolean {
-    let isInstance = true;
-
-    return isInstance;
+    return true;
 }
 
 export function SherlockGithubActionsDeployHookV3CreateFromJSON(json: any): SherlockGithubActionsDeployHookV3Create {
@@ -107,7 +105,7 @@ export function SherlockGithubActionsDeployHookV3CreateFromJSON(json: any): Sher
 }
 
 export function SherlockGithubActionsDeployHookV3CreateFromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockGithubActionsDeployHookV3Create {
-    if ((json === undefined) || (json === null)) {
+    if (json === undefined || json === null) {
         return json;
     }
     return {
@@ -134,16 +132,16 @@ export function SherlockGithubActionsDeployHookV3CreateToJSON(value?: SherlockGi
     }
     return {
         
-        'githubActionsDefaultRef': value.githubActionsDefaultRef,
-        'githubActionsOwner': value.githubActionsOwner,
-        'githubActionsRefBehavior': value.githubActionsRefBehavior,
-        'githubActionsRepo': value.githubActionsRepo,
-        'githubActionsWorkflowInputs': value.githubActionsWorkflowInputs,
-        'githubActionsWorkflowPath': value.githubActionsWorkflowPath,
-        'onChartRelease': value.onChartRelease,
-        'onEnvironment': value.onEnvironment,
-        'onFailure': value.onFailure,
-        'onSuccess': value.onSuccess,
+        'githubActionsDefaultRef': value['githubActionsDefaultRef'],
+        'githubActionsOwner': value['githubActionsOwner'],
+        'githubActionsRefBehavior': value['githubActionsRefBehavior'],
+        'githubActionsRepo': value['githubActionsRepo'],
+        'githubActionsWorkflowInputs': value['githubActionsWorkflowInputs'],
+        'githubActionsWorkflowPath': value['githubActionsWorkflowPath'],
+        'onChartRelease': value['onChartRelease'],
+        'onEnvironment': value['onEnvironment'],
+        'onFailure': value['onFailure'],
+        'onSuccess': value['onSuccess'],
     };
 }
 

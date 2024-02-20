@@ -90,9 +90,7 @@ export type SherlockClusterV3CreateProviderEnum = typeof SherlockClusterV3Create
  * Check if a given object implements the SherlockClusterV3Create interface.
  */
 export function instanceOfSherlockClusterV3Create(value: object): boolean {
-    let isInstance = true;
-
-    return isInstance;
+    return true;
 }
 
 export function SherlockClusterV3CreateFromJSON(json: any): SherlockClusterV3Create {
@@ -100,7 +98,7 @@ export function SherlockClusterV3CreateFromJSON(json: any): SherlockClusterV3Cre
 }
 
 export function SherlockClusterV3CreateFromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockClusterV3Create {
-    if ((json === undefined) || (json === null)) {
+    if (json === undefined || json === null) {
         return json;
     }
     return {
@@ -126,15 +124,15 @@ export function SherlockClusterV3CreateToJSON(value?: SherlockClusterV3Create | 
     }
     return {
         
-        'address': value.address,
-        'azureSubscription': value.azureSubscription,
-        'base': value.base,
-        'googleProject': value.googleProject,
-        'helmfileRef': value.helmfileRef,
-        'location': value.location,
-        'name': value.name,
-        'provider': value.provider,
-        'requiresSuitability': value.requiresSuitability,
+        'address': value['address'],
+        'azureSubscription': value['azureSubscription'],
+        'base': value['base'],
+        'googleProject': value['googleProject'],
+        'helmfileRef': value['helmfileRef'],
+        'location': value['location'],
+        'name': value['name'],
+        'provider': value['provider'],
+        'requiresSuitability': value['requiresSuitability'],
     };
 }
 

@@ -55,9 +55,7 @@ export interface SherlockIncidentV3Create {
  * Check if a given object implements the SherlockIncidentV3Create interface.
  */
 export function instanceOfSherlockIncidentV3Create(value: object): boolean {
-    let isInstance = true;
-
-    return isInstance;
+    return true;
 }
 
 export function SherlockIncidentV3CreateFromJSON(json: any): SherlockIncidentV3Create {
@@ -65,7 +63,7 @@ export function SherlockIncidentV3CreateFromJSON(json: any): SherlockIncidentV3C
 }
 
 export function SherlockIncidentV3CreateFromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockIncidentV3Create {
-    if ((json === undefined) || (json === null)) {
+    if (json === undefined || json === null) {
         return json;
     }
     return {
@@ -87,11 +85,11 @@ export function SherlockIncidentV3CreateToJSON(value?: SherlockIncidentV3Create 
     }
     return {
         
-        'description': value.description,
-        'remediatedAt': value.remediatedAt,
-        'reviewCompletedAt': value.reviewCompletedAt,
-        'startedAt': value.startedAt,
-        'ticket': value.ticket,
+        'description': value['description'],
+        'remediatedAt': value['remediatedAt'],
+        'reviewCompletedAt': value['reviewCompletedAt'],
+        'startedAt': value['startedAt'],
+        'ticket': value['ticket'],
     };
 }
 

@@ -101,92 +101,92 @@ export class CiRunsApi extends runtime.BaseAPI {
     async apiCiRunsV3GetRaw(requestParameters: ApiCiRunsV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockCiRunV3>>> {
         const queryParameters: any = {};
 
-        if (requestParameters.argoWorkflowsName !== undefined) {
-            queryParameters['argoWorkflowsName'] = requestParameters.argoWorkflowsName;
+        if (runtime.exists(requestParameters, 'argoWorkflowsName')) {
+            queryParameters['argoWorkflowsName'] = requestParameters['argoWorkflowsName'];
         }
 
-        if (requestParameters.argoWorkflowsNamespace !== undefined) {
-            queryParameters['argoWorkflowsNamespace'] = requestParameters.argoWorkflowsNamespace;
+        if (runtime.exists(requestParameters, 'argoWorkflowsNamespace')) {
+            queryParameters['argoWorkflowsNamespace'] = requestParameters['argoWorkflowsNamespace'];
         }
 
-        if (requestParameters.argoWorkflowsTemplate !== undefined) {
-            queryParameters['argoWorkflowsTemplate'] = requestParameters.argoWorkflowsTemplate;
+        if (runtime.exists(requestParameters, 'argoWorkflowsTemplate')) {
+            queryParameters['argoWorkflowsTemplate'] = requestParameters['argoWorkflowsTemplate'];
         }
 
-        if (requestParameters.createdAt !== undefined) {
-            queryParameters['createdAt'] = (requestParameters.createdAt as any).toISOString();
+        if (runtime.exists(requestParameters, 'createdAt')) {
+            queryParameters['createdAt'] = (requestParameters['createdAt'] as any).toISOString();
         }
 
-        if (requestParameters.githubActionsAttemptNumber !== undefined) {
-            queryParameters['githubActionsAttemptNumber'] = requestParameters.githubActionsAttemptNumber;
+        if (runtime.exists(requestParameters, 'githubActionsAttemptNumber')) {
+            queryParameters['githubActionsAttemptNumber'] = requestParameters['githubActionsAttemptNumber'];
         }
 
-        if (requestParameters.githubActionsOwner !== undefined) {
-            queryParameters['githubActionsOwner'] = requestParameters.githubActionsOwner;
+        if (runtime.exists(requestParameters, 'githubActionsOwner')) {
+            queryParameters['githubActionsOwner'] = requestParameters['githubActionsOwner'];
         }
 
-        if (requestParameters.githubActionsRepo !== undefined) {
-            queryParameters['githubActionsRepo'] = requestParameters.githubActionsRepo;
+        if (runtime.exists(requestParameters, 'githubActionsRepo')) {
+            queryParameters['githubActionsRepo'] = requestParameters['githubActionsRepo'];
         }
 
-        if (requestParameters.githubActionsRunID !== undefined) {
-            queryParameters['githubActionsRunID'] = requestParameters.githubActionsRunID;
+        if (runtime.exists(requestParameters, 'githubActionsRunID')) {
+            queryParameters['githubActionsRunID'] = requestParameters['githubActionsRunID'];
         }
 
-        if (requestParameters.githubActionsWorkflowPath !== undefined) {
-            queryParameters['githubActionsWorkflowPath'] = requestParameters.githubActionsWorkflowPath;
+        if (runtime.exists(requestParameters, 'githubActionsWorkflowPath')) {
+            queryParameters['githubActionsWorkflowPath'] = requestParameters['githubActionsWorkflowPath'];
         }
 
-        if (requestParameters.id !== undefined) {
-            queryParameters['id'] = requestParameters.id;
+        if (runtime.exists(requestParameters, 'id')) {
+            queryParameters['id'] = requestParameters['id'];
         }
 
-        if (requestParameters.notifySlackChannelsUponFailure) {
-            queryParameters['notifySlackChannelsUponFailure'] = requestParameters.notifySlackChannelsUponFailure.join(runtime.COLLECTION_FORMATS["csv"]);
+        if (runtime.exists(requestParameters, 'notifySlackChannelsUponFailure')) {
+            queryParameters['notifySlackChannelsUponFailure'] = requestParameters['notifySlackChannelsUponFailure']!.join(runtime.COLLECTION_FORMATS["csv"]);
         }
 
-        if (requestParameters.notifySlackChannelsUponSuccess) {
-            queryParameters['notifySlackChannelsUponSuccess'] = requestParameters.notifySlackChannelsUponSuccess.join(runtime.COLLECTION_FORMATS["csv"]);
+        if (runtime.exists(requestParameters, 'notifySlackChannelsUponSuccess')) {
+            queryParameters['notifySlackChannelsUponSuccess'] = requestParameters['notifySlackChannelsUponSuccess']!.join(runtime.COLLECTION_FORMATS["csv"]);
         }
 
-        if (requestParameters.notifySlackCustomIcon !== undefined) {
-            queryParameters['notifySlackCustomIcon'] = requestParameters.notifySlackCustomIcon;
+        if (runtime.exists(requestParameters, 'notifySlackCustomIcon')) {
+            queryParameters['notifySlackCustomIcon'] = requestParameters['notifySlackCustomIcon'];
         }
 
-        if (requestParameters.platform !== undefined) {
-            queryParameters['platform'] = requestParameters.platform;
+        if (runtime.exists(requestParameters, 'platform')) {
+            queryParameters['platform'] = requestParameters['platform'];
         }
 
-        if (requestParameters.resourceStatus !== undefined) {
-            queryParameters['resourceStatus'] = requestParameters.resourceStatus;
+        if (runtime.exists(requestParameters, 'resourceStatus')) {
+            queryParameters['resourceStatus'] = requestParameters['resourceStatus'];
         }
 
-        if (requestParameters.startedAt !== undefined) {
-            queryParameters['startedAt'] = requestParameters.startedAt;
+        if (runtime.exists(requestParameters, 'startedAt')) {
+            queryParameters['startedAt'] = requestParameters['startedAt'];
         }
 
-        if (requestParameters.status !== undefined) {
-            queryParameters['status'] = requestParameters.status;
+        if (runtime.exists(requestParameters, 'status')) {
+            queryParameters['status'] = requestParameters['status'];
         }
 
-        if (requestParameters.terminalAt !== undefined) {
-            queryParameters['terminalAt'] = requestParameters.terminalAt;
+        if (runtime.exists(requestParameters, 'terminalAt')) {
+            queryParameters['terminalAt'] = requestParameters['terminalAt'];
         }
 
-        if (requestParameters.terminationHooksDispatchedAt !== undefined) {
-            queryParameters['terminationHooksDispatchedAt'] = (requestParameters.terminationHooksDispatchedAt as any).toISOString();
+        if (runtime.exists(requestParameters, 'terminationHooksDispatchedAt')) {
+            queryParameters['terminationHooksDispatchedAt'] = (requestParameters['terminationHooksDispatchedAt'] as any).toISOString();
         }
 
-        if (requestParameters.updatedAt !== undefined) {
-            queryParameters['updatedAt'] = (requestParameters.updatedAt as any).toISOString();
+        if (runtime.exists(requestParameters, 'updatedAt')) {
+            queryParameters['updatedAt'] = (requestParameters['updatedAt'] as any).toISOString();
         }
 
-        if (requestParameters.limit !== undefined) {
-            queryParameters['limit'] = requestParameters.limit;
+        if (runtime.exists(requestParameters, 'limit')) {
+            queryParameters['limit'] = requestParameters['limit'];
         }
 
-        if (requestParameters.offset !== undefined) {
-            queryParameters['offset'] = requestParameters.offset;
+        if (runtime.exists(requestParameters, 'offset')) {
+            queryParameters['offset'] = requestParameters['offset'];
         }
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -215,8 +215,11 @@ export class CiRunsApi extends runtime.BaseAPI {
      * Create or update a CiRun
      */
     async apiCiRunsV3PutRaw(requestParameters: ApiCiRunsV3PutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockCiRunV3>> {
-        if (requestParameters.ciRun === null || requestParameters.ciRun === undefined) {
-            throw new runtime.RequiredError('ciRun','Required parameter requestParameters.ciRun was null or undefined when calling apiCiRunsV3Put.');
+        if (!runtime.exists(requestParameters, 'ciRun')) {
+            throw new runtime.RequiredError(
+                'ciRun',
+                'Required parameter "ciRun" was null or undefined when calling apiCiRunsV3Put().'
+            );
         }
 
         const queryParameters: any = {};
@@ -230,7 +233,7 @@ export class CiRunsApi extends runtime.BaseAPI {
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
-            body: SherlockCiRunV3UpsertToJSON(requestParameters.ciRun),
+            body: SherlockCiRunV3UpsertToJSON(requestParameters['ciRun']),
         }, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockCiRunV3FromJSON(jsonValue));
@@ -250,8 +253,11 @@ export class CiRunsApi extends runtime.BaseAPI {
      * Get a CiRun, including CiIdentifiers for related resources
      */
     async apiCiRunsV3SelectorGetRaw(requestParameters: ApiCiRunsV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockCiRunV3>> {
-        if (requestParameters.selector === null || requestParameters.selector === undefined) {
-            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiCiRunsV3SelectorGet.');
+        if (!runtime.exists(requestParameters, 'selector')) {
+            throw new runtime.RequiredError(
+                'selector',
+                'Required parameter "selector" was null or undefined when calling apiCiRunsV3SelectorGet().'
+            );
         }
 
         const queryParameters: any = {};
@@ -259,7 +265,7 @@ export class CiRunsApi extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/api/ci-runs/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            path: `/api/ci-runs/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector']))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,

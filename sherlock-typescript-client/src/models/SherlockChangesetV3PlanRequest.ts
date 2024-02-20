@@ -56,9 +56,7 @@ export interface SherlockChangesetV3PlanRequest {
  * Check if a given object implements the SherlockChangesetV3PlanRequest interface.
  */
 export function instanceOfSherlockChangesetV3PlanRequest(value: object): boolean {
-    let isInstance = true;
-
-    return isInstance;
+    return true;
 }
 
 export function SherlockChangesetV3PlanRequestFromJSON(json: any): SherlockChangesetV3PlanRequest {
@@ -66,7 +64,7 @@ export function SherlockChangesetV3PlanRequestFromJSON(json: any): SherlockChang
 }
 
 export function SherlockChangesetV3PlanRequestFromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockChangesetV3PlanRequest {
-    if ((json === undefined) || (json === null)) {
+    if (json === undefined || json === null) {
         return json;
     }
     return {
@@ -86,9 +84,9 @@ export function SherlockChangesetV3PlanRequestToJSON(value?: SherlockChangesetV3
     }
     return {
         
-        'chartReleases': value.chartReleases === undefined ? undefined : ((value.chartReleases as Array<any>).map(SherlockChangesetV3PlanRequestChartReleaseEntryToJSON)),
-        'environments': value.environments === undefined ? undefined : ((value.environments as Array<any>).map(SherlockChangesetV3PlanRequestEnvironmentEntryToJSON)),
-        'recreateChangesets': value.recreateChangesets,
+        'chartReleases': !exists(value, 'chartReleases') ? undefined : ((value['chartReleases'] as Array<any>).map(SherlockChangesetV3PlanRequestChartReleaseEntryToJSON)),
+        'environments': !exists(value, 'environments') ? undefined : ((value['environments'] as Array<any>).map(SherlockChangesetV3PlanRequestEnvironmentEntryToJSON)),
+        'recreateChangesets': value['recreateChangesets'],
     };
 }
 

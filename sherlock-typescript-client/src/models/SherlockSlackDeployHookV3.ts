@@ -79,9 +79,7 @@ export interface SherlockSlackDeployHookV3 {
  * Check if a given object implements the SherlockSlackDeployHookV3 interface.
  */
 export function instanceOfSherlockSlackDeployHookV3(value: object): boolean {
-    let isInstance = true;
-
-    return isInstance;
+    return true;
 }
 
 export function SherlockSlackDeployHookV3FromJSON(json: any): SherlockSlackDeployHookV3 {
@@ -89,7 +87,7 @@ export function SherlockSlackDeployHookV3FromJSON(json: any): SherlockSlackDeplo
 }
 
 export function SherlockSlackDeployHookV3FromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockSlackDeployHookV3 {
-    if ((json === undefined) || (json === null)) {
+    if (json === undefined || json === null) {
         return json;
     }
     return {
@@ -115,15 +113,15 @@ export function SherlockSlackDeployHookV3ToJSON(value?: SherlockSlackDeployHookV
     }
     return {
         
-        'createdAt': value.createdAt === undefined ? undefined : (value.createdAt.toISOString()),
-        'id': value.id,
-        'mentionPeople': value.mentionPeople,
-        'onChartRelease': value.onChartRelease,
-        'onEnvironment': value.onEnvironment,
-        'onFailure': value.onFailure,
-        'onSuccess': value.onSuccess,
-        'slackChannel': value.slackChannel,
-        'updatedAt': value.updatedAt === undefined ? undefined : (value.updatedAt.toISOString()),
+        'createdAt': !exists(value, 'createdAt') ? undefined : ((value['createdAt']).toISOString()),
+        'id': value['id'],
+        'mentionPeople': value['mentionPeople'],
+        'onChartRelease': value['onChartRelease'],
+        'onEnvironment': value['onEnvironment'],
+        'onFailure': value['onFailure'],
+        'onSuccess': value['onSuccess'],
+        'slackChannel': value['slackChannel'],
+        'updatedAt': !exists(value, 'updatedAt') ? undefined : ((value['updatedAt']).toISOString()),
     };
 }
 

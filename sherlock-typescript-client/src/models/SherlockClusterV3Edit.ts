@@ -49,9 +49,7 @@ export interface SherlockClusterV3Edit {
  * Check if a given object implements the SherlockClusterV3Edit interface.
  */
 export function instanceOfSherlockClusterV3Edit(value: object): boolean {
-    let isInstance = true;
-
-    return isInstance;
+    return true;
 }
 
 export function SherlockClusterV3EditFromJSON(json: any): SherlockClusterV3Edit {
@@ -59,7 +57,7 @@ export function SherlockClusterV3EditFromJSON(json: any): SherlockClusterV3Edit 
 }
 
 export function SherlockClusterV3EditFromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockClusterV3Edit {
-    if ((json === undefined) || (json === null)) {
+    if (json === undefined || json === null) {
         return json;
     }
     return {
@@ -80,10 +78,10 @@ export function SherlockClusterV3EditToJSON(value?: SherlockClusterV3Edit | null
     }
     return {
         
-        'address': value.address,
-        'base': value.base,
-        'helmfileRef': value.helmfileRef,
-        'requiresSuitability': value.requiresSuitability,
+        'address': value['address'],
+        'base': value['base'],
+        'helmfileRef': value['helmfileRef'],
+        'requiresSuitability': value['requiresSuitability'],
     };
 }
 

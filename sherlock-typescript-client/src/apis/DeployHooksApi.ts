@@ -137,12 +137,18 @@ export class DeployHooksApi extends runtime.BaseAPI {
      * Test a GithubActionsDeployHook
      */
     async apiDeployHooksGithubActionsProceduresV3TestSelectorPostRaw(requestParameters: ApiDeployHooksGithubActionsProceduresV3TestSelectorPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockGithubActionsDeployHookTestRunResponse>> {
-        if (requestParameters.selector === null || requestParameters.selector === undefined) {
-            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiDeployHooksGithubActionsProceduresV3TestSelectorPost.');
+        if (!runtime.exists(requestParameters, 'selector')) {
+            throw new runtime.RequiredError(
+                'selector',
+                'Required parameter "selector" was null or undefined when calling apiDeployHooksGithubActionsProceduresV3TestSelectorPost().'
+            );
         }
 
-        if (requestParameters.request === null || requestParameters.request === undefined) {
-            throw new runtime.RequiredError('request','Required parameter requestParameters.request was null or undefined when calling apiDeployHooksGithubActionsProceduresV3TestSelectorPost.');
+        if (!runtime.exists(requestParameters, 'request')) {
+            throw new runtime.RequiredError(
+                'request',
+                'Required parameter "request" was null or undefined when calling apiDeployHooksGithubActionsProceduresV3TestSelectorPost().'
+            );
         }
 
         const queryParameters: any = {};
@@ -152,11 +158,11 @@ export class DeployHooksApi extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/api/deploy-hooks/github-actions/procedures/v3/test/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            path: `/api/deploy-hooks/github-actions/procedures/v3/test/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector']))),
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: SherlockGithubActionsDeployHookTestRunRequestToJSON(requestParameters.request),
+            body: SherlockGithubActionsDeployHookTestRunRequestToJSON(requestParameters['request']),
         }, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockGithubActionsDeployHookTestRunResponseFromJSON(jsonValue));
@@ -178,60 +184,60 @@ export class DeployHooksApi extends runtime.BaseAPI {
     async apiDeployHooksGithubActionsV3GetRaw(requestParameters: ApiDeployHooksGithubActionsV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockGithubActionsDeployHookV3>>> {
         const queryParameters: any = {};
 
-        if (requestParameters.createdAt !== undefined) {
-            queryParameters['createdAt'] = (requestParameters.createdAt as any).toISOString();
+        if (runtime.exists(requestParameters, 'createdAt')) {
+            queryParameters['createdAt'] = (requestParameters['createdAt'] as any).toISOString();
         }
 
-        if (requestParameters.githubActionsDefaultRef !== undefined) {
-            queryParameters['githubActionsDefaultRef'] = requestParameters.githubActionsDefaultRef;
+        if (runtime.exists(requestParameters, 'githubActionsDefaultRef')) {
+            queryParameters['githubActionsDefaultRef'] = requestParameters['githubActionsDefaultRef'];
         }
 
-        if (requestParameters.githubActionsOwner !== undefined) {
-            queryParameters['githubActionsOwner'] = requestParameters.githubActionsOwner;
+        if (runtime.exists(requestParameters, 'githubActionsOwner')) {
+            queryParameters['githubActionsOwner'] = requestParameters['githubActionsOwner'];
         }
 
-        if (requestParameters.githubActionsRefBehavior !== undefined) {
-            queryParameters['githubActionsRefBehavior'] = requestParameters.githubActionsRefBehavior;
+        if (runtime.exists(requestParameters, 'githubActionsRefBehavior')) {
+            queryParameters['githubActionsRefBehavior'] = requestParameters['githubActionsRefBehavior'];
         }
 
-        if (requestParameters.githubActionsRepo !== undefined) {
-            queryParameters['githubActionsRepo'] = requestParameters.githubActionsRepo;
+        if (runtime.exists(requestParameters, 'githubActionsRepo')) {
+            queryParameters['githubActionsRepo'] = requestParameters['githubActionsRepo'];
         }
 
-        if (requestParameters.githubActionsWorkflowPath !== undefined) {
-            queryParameters['githubActionsWorkflowPath'] = requestParameters.githubActionsWorkflowPath;
+        if (runtime.exists(requestParameters, 'githubActionsWorkflowPath')) {
+            queryParameters['githubActionsWorkflowPath'] = requestParameters['githubActionsWorkflowPath'];
         }
 
-        if (requestParameters.id !== undefined) {
-            queryParameters['id'] = requestParameters.id;
+        if (runtime.exists(requestParameters, 'id')) {
+            queryParameters['id'] = requestParameters['id'];
         }
 
-        if (requestParameters.onChartRelease !== undefined) {
-            queryParameters['onChartRelease'] = requestParameters.onChartRelease;
+        if (runtime.exists(requestParameters, 'onChartRelease')) {
+            queryParameters['onChartRelease'] = requestParameters['onChartRelease'];
         }
 
-        if (requestParameters.onEnvironment !== undefined) {
-            queryParameters['onEnvironment'] = requestParameters.onEnvironment;
+        if (runtime.exists(requestParameters, 'onEnvironment')) {
+            queryParameters['onEnvironment'] = requestParameters['onEnvironment'];
         }
 
-        if (requestParameters.onFailure !== undefined) {
-            queryParameters['onFailure'] = requestParameters.onFailure;
+        if (runtime.exists(requestParameters, 'onFailure')) {
+            queryParameters['onFailure'] = requestParameters['onFailure'];
         }
 
-        if (requestParameters.onSuccess !== undefined) {
-            queryParameters['onSuccess'] = requestParameters.onSuccess;
+        if (runtime.exists(requestParameters, 'onSuccess')) {
+            queryParameters['onSuccess'] = requestParameters['onSuccess'];
         }
 
-        if (requestParameters.updatedAt !== undefined) {
-            queryParameters['updatedAt'] = (requestParameters.updatedAt as any).toISOString();
+        if (runtime.exists(requestParameters, 'updatedAt')) {
+            queryParameters['updatedAt'] = (requestParameters['updatedAt'] as any).toISOString();
         }
 
-        if (requestParameters.limit !== undefined) {
-            queryParameters['limit'] = requestParameters.limit;
+        if (runtime.exists(requestParameters, 'limit')) {
+            queryParameters['limit'] = requestParameters['limit'];
         }
 
-        if (requestParameters.offset !== undefined) {
-            queryParameters['offset'] = requestParameters.offset;
+        if (runtime.exists(requestParameters, 'offset')) {
+            queryParameters['offset'] = requestParameters['offset'];
         }
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -260,8 +266,11 @@ export class DeployHooksApi extends runtime.BaseAPI {
      * Create a GithubActionsDeployHook
      */
     async apiDeployHooksGithubActionsV3PostRaw(requestParameters: ApiDeployHooksGithubActionsV3PostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockGithubActionsDeployHookV3>> {
-        if (requestParameters.githubActionsDeployHook === null || requestParameters.githubActionsDeployHook === undefined) {
-            throw new runtime.RequiredError('githubActionsDeployHook','Required parameter requestParameters.githubActionsDeployHook was null or undefined when calling apiDeployHooksGithubActionsV3Post.');
+        if (!runtime.exists(requestParameters, 'githubActionsDeployHook')) {
+            throw new runtime.RequiredError(
+                'githubActionsDeployHook',
+                'Required parameter "githubActionsDeployHook" was null or undefined when calling apiDeployHooksGithubActionsV3Post().'
+            );
         }
 
         const queryParameters: any = {};
@@ -275,7 +284,7 @@ export class DeployHooksApi extends runtime.BaseAPI {
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: SherlockGithubActionsDeployHookV3CreateToJSON(requestParameters.githubActionsDeployHook),
+            body: SherlockGithubActionsDeployHookV3CreateToJSON(requestParameters['githubActionsDeployHook']),
         }, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockGithubActionsDeployHookV3FromJSON(jsonValue));
@@ -295,8 +304,11 @@ export class DeployHooksApi extends runtime.BaseAPI {
      * Delete an individual GithubActionsDeployHook
      */
     async apiDeployHooksGithubActionsV3SelectorDeleteRaw(requestParameters: ApiDeployHooksGithubActionsV3SelectorDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockGithubActionsDeployHookV3>> {
-        if (requestParameters.selector === null || requestParameters.selector === undefined) {
-            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiDeployHooksGithubActionsV3SelectorDelete.');
+        if (!runtime.exists(requestParameters, 'selector')) {
+            throw new runtime.RequiredError(
+                'selector',
+                'Required parameter "selector" was null or undefined when calling apiDeployHooksGithubActionsV3SelectorDelete().'
+            );
         }
 
         const queryParameters: any = {};
@@ -304,7 +316,7 @@ export class DeployHooksApi extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/api/deploy-hooks/github-actions/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            path: `/api/deploy-hooks/github-actions/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector']))),
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
@@ -327,8 +339,11 @@ export class DeployHooksApi extends runtime.BaseAPI {
      * Get an individual GithubActionsDeployHook
      */
     async apiDeployHooksGithubActionsV3SelectorGetRaw(requestParameters: ApiDeployHooksGithubActionsV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockGithubActionsDeployHookV3>> {
-        if (requestParameters.selector === null || requestParameters.selector === undefined) {
-            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiDeployHooksGithubActionsV3SelectorGet.');
+        if (!runtime.exists(requestParameters, 'selector')) {
+            throw new runtime.RequiredError(
+                'selector',
+                'Required parameter "selector" was null or undefined when calling apiDeployHooksGithubActionsV3SelectorGet().'
+            );
         }
 
         const queryParameters: any = {};
@@ -336,7 +351,7 @@ export class DeployHooksApi extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/api/deploy-hooks/github-actions/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            path: `/api/deploy-hooks/github-actions/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector']))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -359,12 +374,18 @@ export class DeployHooksApi extends runtime.BaseAPI {
      * Edit an individual GithubActionsDeployHook
      */
     async apiDeployHooksGithubActionsV3SelectorPatchRaw(requestParameters: ApiDeployHooksGithubActionsV3SelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockGithubActionsDeployHookV3>> {
-        if (requestParameters.selector === null || requestParameters.selector === undefined) {
-            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiDeployHooksGithubActionsV3SelectorPatch.');
+        if (!runtime.exists(requestParameters, 'selector')) {
+            throw new runtime.RequiredError(
+                'selector',
+                'Required parameter "selector" was null or undefined when calling apiDeployHooksGithubActionsV3SelectorPatch().'
+            );
         }
 
-        if (requestParameters.githubActionsDeployHook === null || requestParameters.githubActionsDeployHook === undefined) {
-            throw new runtime.RequiredError('githubActionsDeployHook','Required parameter requestParameters.githubActionsDeployHook was null or undefined when calling apiDeployHooksGithubActionsV3SelectorPatch.');
+        if (!runtime.exists(requestParameters, 'githubActionsDeployHook')) {
+            throw new runtime.RequiredError(
+                'githubActionsDeployHook',
+                'Required parameter "githubActionsDeployHook" was null or undefined when calling apiDeployHooksGithubActionsV3SelectorPatch().'
+            );
         }
 
         const queryParameters: any = {};
@@ -374,11 +395,11 @@ export class DeployHooksApi extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/api/deploy-hooks/github-actions/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            path: `/api/deploy-hooks/github-actions/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector']))),
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
-            body: SherlockGithubActionsDeployHookV3EditToJSON(requestParameters.githubActionsDeployHook),
+            body: SherlockGithubActionsDeployHookV3EditToJSON(requestParameters['githubActionsDeployHook']),
         }, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockGithubActionsDeployHookV3FromJSON(jsonValue));
@@ -398,12 +419,18 @@ export class DeployHooksApi extends runtime.BaseAPI {
      * Test a SlackDeployHook
      */
     async apiDeployHooksSlackProceduresV3TestSelectorPostRaw(requestParameters: ApiDeployHooksSlackProceduresV3TestSelectorPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockSlackDeployHookTestRunResponse>> {
-        if (requestParameters.selector === null || requestParameters.selector === undefined) {
-            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiDeployHooksSlackProceduresV3TestSelectorPost.');
+        if (!runtime.exists(requestParameters, 'selector')) {
+            throw new runtime.RequiredError(
+                'selector',
+                'Required parameter "selector" was null or undefined when calling apiDeployHooksSlackProceduresV3TestSelectorPost().'
+            );
         }
 
-        if (requestParameters.request === null || requestParameters.request === undefined) {
-            throw new runtime.RequiredError('request','Required parameter requestParameters.request was null or undefined when calling apiDeployHooksSlackProceduresV3TestSelectorPost.');
+        if (!runtime.exists(requestParameters, 'request')) {
+            throw new runtime.RequiredError(
+                'request',
+                'Required parameter "request" was null or undefined when calling apiDeployHooksSlackProceduresV3TestSelectorPost().'
+            );
         }
 
         const queryParameters: any = {};
@@ -413,11 +440,11 @@ export class DeployHooksApi extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/api/deploy-hooks/slack/procedures/v3/test/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            path: `/api/deploy-hooks/slack/procedures/v3/test/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector']))),
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: SherlockSlackDeployHookTestRunRequestToJSON(requestParameters.request),
+            body: SherlockSlackDeployHookTestRunRequestToJSON(requestParameters['request']),
         }, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockSlackDeployHookTestRunResponseFromJSON(jsonValue));
@@ -439,48 +466,48 @@ export class DeployHooksApi extends runtime.BaseAPI {
     async apiDeployHooksSlackV3GetRaw(requestParameters: ApiDeployHooksSlackV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockSlackDeployHookV3>>> {
         const queryParameters: any = {};
 
-        if (requestParameters.createdAt !== undefined) {
-            queryParameters['createdAt'] = (requestParameters.createdAt as any).toISOString();
+        if (runtime.exists(requestParameters, 'createdAt')) {
+            queryParameters['createdAt'] = (requestParameters['createdAt'] as any).toISOString();
         }
 
-        if (requestParameters.id !== undefined) {
-            queryParameters['id'] = requestParameters.id;
+        if (runtime.exists(requestParameters, 'id')) {
+            queryParameters['id'] = requestParameters['id'];
         }
 
-        if (requestParameters.mentionPeople !== undefined) {
-            queryParameters['mentionPeople'] = requestParameters.mentionPeople;
+        if (runtime.exists(requestParameters, 'mentionPeople')) {
+            queryParameters['mentionPeople'] = requestParameters['mentionPeople'];
         }
 
-        if (requestParameters.onChartRelease !== undefined) {
-            queryParameters['onChartRelease'] = requestParameters.onChartRelease;
+        if (runtime.exists(requestParameters, 'onChartRelease')) {
+            queryParameters['onChartRelease'] = requestParameters['onChartRelease'];
         }
 
-        if (requestParameters.onEnvironment !== undefined) {
-            queryParameters['onEnvironment'] = requestParameters.onEnvironment;
+        if (runtime.exists(requestParameters, 'onEnvironment')) {
+            queryParameters['onEnvironment'] = requestParameters['onEnvironment'];
         }
 
-        if (requestParameters.onFailure !== undefined) {
-            queryParameters['onFailure'] = requestParameters.onFailure;
+        if (runtime.exists(requestParameters, 'onFailure')) {
+            queryParameters['onFailure'] = requestParameters['onFailure'];
         }
 
-        if (requestParameters.onSuccess !== undefined) {
-            queryParameters['onSuccess'] = requestParameters.onSuccess;
+        if (runtime.exists(requestParameters, 'onSuccess')) {
+            queryParameters['onSuccess'] = requestParameters['onSuccess'];
         }
 
-        if (requestParameters.slackChannel !== undefined) {
-            queryParameters['slackChannel'] = requestParameters.slackChannel;
+        if (runtime.exists(requestParameters, 'slackChannel')) {
+            queryParameters['slackChannel'] = requestParameters['slackChannel'];
         }
 
-        if (requestParameters.updatedAt !== undefined) {
-            queryParameters['updatedAt'] = (requestParameters.updatedAt as any).toISOString();
+        if (runtime.exists(requestParameters, 'updatedAt')) {
+            queryParameters['updatedAt'] = (requestParameters['updatedAt'] as any).toISOString();
         }
 
-        if (requestParameters.limit !== undefined) {
-            queryParameters['limit'] = requestParameters.limit;
+        if (runtime.exists(requestParameters, 'limit')) {
+            queryParameters['limit'] = requestParameters['limit'];
         }
 
-        if (requestParameters.offset !== undefined) {
-            queryParameters['offset'] = requestParameters.offset;
+        if (runtime.exists(requestParameters, 'offset')) {
+            queryParameters['offset'] = requestParameters['offset'];
         }
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -509,8 +536,11 @@ export class DeployHooksApi extends runtime.BaseAPI {
      * Create a SlackDeployHook
      */
     async apiDeployHooksSlackV3PostRaw(requestParameters: ApiDeployHooksSlackV3PostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockSlackDeployHookV3>> {
-        if (requestParameters.slackDeployHook === null || requestParameters.slackDeployHook === undefined) {
-            throw new runtime.RequiredError('slackDeployHook','Required parameter requestParameters.slackDeployHook was null or undefined when calling apiDeployHooksSlackV3Post.');
+        if (!runtime.exists(requestParameters, 'slackDeployHook')) {
+            throw new runtime.RequiredError(
+                'slackDeployHook',
+                'Required parameter "slackDeployHook" was null or undefined when calling apiDeployHooksSlackV3Post().'
+            );
         }
 
         const queryParameters: any = {};
@@ -524,7 +554,7 @@ export class DeployHooksApi extends runtime.BaseAPI {
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: SherlockSlackDeployHookV3CreateToJSON(requestParameters.slackDeployHook),
+            body: SherlockSlackDeployHookV3CreateToJSON(requestParameters['slackDeployHook']),
         }, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockSlackDeployHookV3FromJSON(jsonValue));
@@ -544,8 +574,11 @@ export class DeployHooksApi extends runtime.BaseAPI {
      * Delete an individual SlackDeployHook
      */
     async apiDeployHooksSlackV3SelectorDeleteRaw(requestParameters: ApiDeployHooksSlackV3SelectorDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockSlackDeployHookV3>> {
-        if (requestParameters.selector === null || requestParameters.selector === undefined) {
-            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiDeployHooksSlackV3SelectorDelete.');
+        if (!runtime.exists(requestParameters, 'selector')) {
+            throw new runtime.RequiredError(
+                'selector',
+                'Required parameter "selector" was null or undefined when calling apiDeployHooksSlackV3SelectorDelete().'
+            );
         }
 
         const queryParameters: any = {};
@@ -553,7 +586,7 @@ export class DeployHooksApi extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/api/deploy-hooks/slack/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            path: `/api/deploy-hooks/slack/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector']))),
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
@@ -576,8 +609,11 @@ export class DeployHooksApi extends runtime.BaseAPI {
      * Get an individual SlackDeployHook
      */
     async apiDeployHooksSlackV3SelectorGetRaw(requestParameters: ApiDeployHooksSlackV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockSlackDeployHookV3>> {
-        if (requestParameters.selector === null || requestParameters.selector === undefined) {
-            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiDeployHooksSlackV3SelectorGet.');
+        if (!runtime.exists(requestParameters, 'selector')) {
+            throw new runtime.RequiredError(
+                'selector',
+                'Required parameter "selector" was null or undefined when calling apiDeployHooksSlackV3SelectorGet().'
+            );
         }
 
         const queryParameters: any = {};
@@ -585,7 +621,7 @@ export class DeployHooksApi extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/api/deploy-hooks/slack/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            path: `/api/deploy-hooks/slack/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector']))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -608,12 +644,18 @@ export class DeployHooksApi extends runtime.BaseAPI {
      * Edit an individual SlackDeployHook
      */
     async apiDeployHooksSlackV3SelectorPatchRaw(requestParameters: ApiDeployHooksSlackV3SelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockSlackDeployHookV3>> {
-        if (requestParameters.selector === null || requestParameters.selector === undefined) {
-            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiDeployHooksSlackV3SelectorPatch.');
+        if (!runtime.exists(requestParameters, 'selector')) {
+            throw new runtime.RequiredError(
+                'selector',
+                'Required parameter "selector" was null or undefined when calling apiDeployHooksSlackV3SelectorPatch().'
+            );
         }
 
-        if (requestParameters.slackDeployHook === null || requestParameters.slackDeployHook === undefined) {
-            throw new runtime.RequiredError('slackDeployHook','Required parameter requestParameters.slackDeployHook was null or undefined when calling apiDeployHooksSlackV3SelectorPatch.');
+        if (!runtime.exists(requestParameters, 'slackDeployHook')) {
+            throw new runtime.RequiredError(
+                'slackDeployHook',
+                'Required parameter "slackDeployHook" was null or undefined when calling apiDeployHooksSlackV3SelectorPatch().'
+            );
         }
 
         const queryParameters: any = {};
@@ -623,11 +665,11 @@ export class DeployHooksApi extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/api/deploy-hooks/slack/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            path: `/api/deploy-hooks/slack/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector']))),
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
-            body: SherlockSlackDeployHookV3EditToJSON(requestParameters.slackDeployHook),
+            body: SherlockSlackDeployHookV3EditToJSON(requestParameters['slackDeployHook']),
         }, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockSlackDeployHookV3FromJSON(jsonValue));

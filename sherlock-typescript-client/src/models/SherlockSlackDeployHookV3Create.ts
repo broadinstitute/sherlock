@@ -61,9 +61,7 @@ export interface SherlockSlackDeployHookV3Create {
  * Check if a given object implements the SherlockSlackDeployHookV3Create interface.
  */
 export function instanceOfSherlockSlackDeployHookV3Create(value: object): boolean {
-    let isInstance = true;
-
-    return isInstance;
+    return true;
 }
 
 export function SherlockSlackDeployHookV3CreateFromJSON(json: any): SherlockSlackDeployHookV3Create {
@@ -71,7 +69,7 @@ export function SherlockSlackDeployHookV3CreateFromJSON(json: any): SherlockSlac
 }
 
 export function SherlockSlackDeployHookV3CreateFromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockSlackDeployHookV3Create {
-    if ((json === undefined) || (json === null)) {
+    if (json === undefined || json === null) {
         return json;
     }
     return {
@@ -94,12 +92,12 @@ export function SherlockSlackDeployHookV3CreateToJSON(value?: SherlockSlackDeplo
     }
     return {
         
-        'mentionPeople': value.mentionPeople,
-        'onChartRelease': value.onChartRelease,
-        'onEnvironment': value.onEnvironment,
-        'onFailure': value.onFailure,
-        'onSuccess': value.onSuccess,
-        'slackChannel': value.slackChannel,
+        'mentionPeople': value['mentionPeople'],
+        'onChartRelease': value['onChartRelease'],
+        'onEnvironment': value['onEnvironment'],
+        'onFailure': value['onFailure'],
+        'onSuccess': value['onSuccess'],
+        'slackChannel': value['slackChannel'],
     };
 }
 

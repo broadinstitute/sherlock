@@ -37,9 +37,7 @@ export interface PagerdutyAlertSummary {
  * Check if a given object implements the PagerdutyAlertSummary interface.
  */
 export function instanceOfPagerdutyAlertSummary(value: object): boolean {
-    let isInstance = true;
-
-    return isInstance;
+    return true;
 }
 
 export function PagerdutyAlertSummaryFromJSON(json: any): PagerdutyAlertSummary {
@@ -47,7 +45,7 @@ export function PagerdutyAlertSummaryFromJSON(json: any): PagerdutyAlertSummary 
 }
 
 export function PagerdutyAlertSummaryFromJSONTyped(json: any, ignoreDiscriminator: boolean): PagerdutyAlertSummary {
-    if ((json === undefined) || (json === null)) {
+    if (json === undefined || json === null) {
         return json;
     }
     return {
@@ -66,8 +64,8 @@ export function PagerdutyAlertSummaryToJSON(value?: PagerdutyAlertSummary | null
     }
     return {
         
-        'sourceLink': value.sourceLink,
-        'summary': value.summary,
+        'sourceLink': value['sourceLink'],
+        'summary': value['summary'],
     };
 }
 
