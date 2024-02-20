@@ -5,7 +5,7 @@ go 1.21
 require (
 	cloud.google.com/go/cloudsqlconn v1.7.0
 	contrib.go.opencensus.io/exporter/prometheus v0.4.2
-	github.com/PagerDuty/go-pagerduty v1.7.0
+	github.com/PagerDuty/go-pagerduty v1.8.0
 	github.com/broadinstitute/sherlock/go-shared v0.0.0
 	github.com/coreos/go-oidc v2.2.1+incompatible
 	github.com/creasty/defaults v1.7.0
@@ -97,7 +97,7 @@ require (
 	github.com/lib/pq v1.10.7 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
-	github.com/mattn/go-isatty v0.0.19 // indirect
+	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.4 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
