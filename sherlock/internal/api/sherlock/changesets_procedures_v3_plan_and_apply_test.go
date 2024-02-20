@@ -156,8 +156,10 @@ func (s *handlerSuite) TestChangesetsProceduresV3PlanAndApply() {
 	for _, changeset := range got {
 		s.NotEmpty(changeset.ID)
 		s.NotEmpty(changeset.ChartReleaseInfo.Name)
-		s.Equal(changeset.ChartReleaseInfo.AppVersionExact, changeset.ToAppVersionExact)
-		s.Equal("some new version", changeset.ToAppVersionExact, "(perhaps unexpected whitespace?)")
+		if changeset.ChartReleaseInfo.Name == chartReleaseToUpdate.Name {
+			s.Equal(changeset.ChartReleaseInfo.AppVersionExact, changeset.ToAppVersionExact)
+			s.Equal("some new version", *changeset.ToAppVersionExact, "(perhaps unexpected whitespace?)")
+		}
 	}
 }
 
