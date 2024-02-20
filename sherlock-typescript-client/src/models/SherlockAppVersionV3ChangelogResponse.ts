@@ -44,9 +44,7 @@ export interface SherlockAppVersionV3ChangelogResponse {
  * Check if a given object implements the SherlockAppVersionV3ChangelogResponse interface.
  */
 export function instanceOfSherlockAppVersionV3ChangelogResponse(value: object): boolean {
-    let isInstance = true;
-
-    return isInstance;
+    return true;
 }
 
 export function SherlockAppVersionV3ChangelogResponseFromJSON(json: any): SherlockAppVersionV3ChangelogResponse {
@@ -54,7 +52,7 @@ export function SherlockAppVersionV3ChangelogResponseFromJSON(json: any): Sherlo
 }
 
 export function SherlockAppVersionV3ChangelogResponseFromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockAppVersionV3ChangelogResponse {
-    if ((json === undefined) || (json === null)) {
+    if (json === undefined || json === null) {
         return json;
     }
     return {
@@ -73,8 +71,8 @@ export function SherlockAppVersionV3ChangelogResponseToJSON(value?: SherlockAppV
     }
     return {
         
-        'changelog': value.changelog === undefined ? undefined : ((value.changelog as Array<any>).map(SherlockAppVersionV3ToJSON)),
-        'complete': value.complete,
+        'changelog': !exists(value, 'changelog') ? undefined : ((value['changelog'] as Array<any>).map(SherlockAppVersionV3ToJSON)),
+        'complete': value['complete'],
     };
 }
 

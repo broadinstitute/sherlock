@@ -77,44 +77,44 @@ export class DatabaseInstancesApi extends runtime.BaseAPI {
     async apiDatabaseInstancesV3GetRaw(requestParameters: ApiDatabaseInstancesV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockDatabaseInstanceV3>>> {
         const queryParameters: any = {};
 
-        if (requestParameters.chartRelease !== undefined) {
-            queryParameters['chartRelease'] = requestParameters.chartRelease;
+        if (runtime.exists(requestParameters, 'chartRelease')) {
+            queryParameters['chartRelease'] = requestParameters['chartRelease'];
         }
 
-        if (requestParameters.createdAt !== undefined) {
-            queryParameters['createdAt'] = (requestParameters.createdAt as any).toISOString();
+        if (runtime.exists(requestParameters, 'createdAt')) {
+            queryParameters['createdAt'] = (requestParameters['createdAt'] as any).toISOString();
         }
 
-        if (requestParameters.defaultDatabase !== undefined) {
-            queryParameters['defaultDatabase'] = requestParameters.defaultDatabase;
+        if (runtime.exists(requestParameters, 'defaultDatabase')) {
+            queryParameters['defaultDatabase'] = requestParameters['defaultDatabase'];
         }
 
-        if (requestParameters.googleProject !== undefined) {
-            queryParameters['googleProject'] = requestParameters.googleProject;
+        if (runtime.exists(requestParameters, 'googleProject')) {
+            queryParameters['googleProject'] = requestParameters['googleProject'];
         }
 
-        if (requestParameters.id !== undefined) {
-            queryParameters['id'] = requestParameters.id;
+        if (runtime.exists(requestParameters, 'id')) {
+            queryParameters['id'] = requestParameters['id'];
         }
 
-        if (requestParameters.instanceName !== undefined) {
-            queryParameters['instanceName'] = requestParameters.instanceName;
+        if (runtime.exists(requestParameters, 'instanceName')) {
+            queryParameters['instanceName'] = requestParameters['instanceName'];
         }
 
-        if (requestParameters.platform !== undefined) {
-            queryParameters['platform'] = requestParameters.platform;
+        if (runtime.exists(requestParameters, 'platform')) {
+            queryParameters['platform'] = requestParameters['platform'];
         }
 
-        if (requestParameters.updatedAt !== undefined) {
-            queryParameters['updatedAt'] = (requestParameters.updatedAt as any).toISOString();
+        if (runtime.exists(requestParameters, 'updatedAt')) {
+            queryParameters['updatedAt'] = (requestParameters['updatedAt'] as any).toISOString();
         }
 
-        if (requestParameters.limit !== undefined) {
-            queryParameters['limit'] = requestParameters.limit;
+        if (runtime.exists(requestParameters, 'limit')) {
+            queryParameters['limit'] = requestParameters['limit'];
         }
 
-        if (requestParameters.offset !== undefined) {
-            queryParameters['offset'] = requestParameters.offset;
+        if (runtime.exists(requestParameters, 'offset')) {
+            queryParameters['offset'] = requestParameters['offset'];
         }
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -143,8 +143,11 @@ export class DatabaseInstancesApi extends runtime.BaseAPI {
      * Create a DatabaseInstance
      */
     async apiDatabaseInstancesV3PostRaw(requestParameters: ApiDatabaseInstancesV3PostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockDatabaseInstanceV3>> {
-        if (requestParameters.databaseInstance === null || requestParameters.databaseInstance === undefined) {
-            throw new runtime.RequiredError('databaseInstance','Required parameter requestParameters.databaseInstance was null or undefined when calling apiDatabaseInstancesV3Post.');
+        if (!runtime.exists(requestParameters, 'databaseInstance')) {
+            throw new runtime.RequiredError(
+                'databaseInstance',
+                'Required parameter "databaseInstance" was null or undefined when calling apiDatabaseInstancesV3Post().'
+            );
         }
 
         const queryParameters: any = {};
@@ -158,7 +161,7 @@ export class DatabaseInstancesApi extends runtime.BaseAPI {
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: SherlockDatabaseInstanceV3CreateToJSON(requestParameters.databaseInstance),
+            body: SherlockDatabaseInstanceV3CreateToJSON(requestParameters['databaseInstance']),
         }, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockDatabaseInstanceV3FromJSON(jsonValue));
@@ -178,8 +181,11 @@ export class DatabaseInstancesApi extends runtime.BaseAPI {
      * Create or edit a DatabaseInstance
      */
     async apiDatabaseInstancesV3PutRaw(requestParameters: ApiDatabaseInstancesV3PutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockDatabaseInstanceV3>> {
-        if (requestParameters.databaseInstance === null || requestParameters.databaseInstance === undefined) {
-            throw new runtime.RequiredError('databaseInstance','Required parameter requestParameters.databaseInstance was null or undefined when calling apiDatabaseInstancesV3Put.');
+        if (!runtime.exists(requestParameters, 'databaseInstance')) {
+            throw new runtime.RequiredError(
+                'databaseInstance',
+                'Required parameter "databaseInstance" was null or undefined when calling apiDatabaseInstancesV3Put().'
+            );
         }
 
         const queryParameters: any = {};
@@ -193,7 +199,7 @@ export class DatabaseInstancesApi extends runtime.BaseAPI {
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
-            body: SherlockDatabaseInstanceV3CreateToJSON(requestParameters.databaseInstance),
+            body: SherlockDatabaseInstanceV3CreateToJSON(requestParameters['databaseInstance']),
         }, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockDatabaseInstanceV3FromJSON(jsonValue));
@@ -213,8 +219,11 @@ export class DatabaseInstancesApi extends runtime.BaseAPI {
      * Delete an individual DatabaseInstance
      */
     async apiDatabaseInstancesV3SelectorDeleteRaw(requestParameters: ApiDatabaseInstancesV3SelectorDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockDatabaseInstanceV3>> {
-        if (requestParameters.selector === null || requestParameters.selector === undefined) {
-            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiDatabaseInstancesV3SelectorDelete.');
+        if (!runtime.exists(requestParameters, 'selector')) {
+            throw new runtime.RequiredError(
+                'selector',
+                'Required parameter "selector" was null or undefined when calling apiDatabaseInstancesV3SelectorDelete().'
+            );
         }
 
         const queryParameters: any = {};
@@ -222,7 +231,7 @@ export class DatabaseInstancesApi extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/api/database-instances/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            path: `/api/database-instances/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector']))),
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
@@ -245,8 +254,11 @@ export class DatabaseInstancesApi extends runtime.BaseAPI {
      * Get an individual DatabaseInstance
      */
     async apiDatabaseInstancesV3SelectorGetRaw(requestParameters: ApiDatabaseInstancesV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockDatabaseInstanceV3>> {
-        if (requestParameters.selector === null || requestParameters.selector === undefined) {
-            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiDatabaseInstancesV3SelectorGet.');
+        if (!runtime.exists(requestParameters, 'selector')) {
+            throw new runtime.RequiredError(
+                'selector',
+                'Required parameter "selector" was null or undefined when calling apiDatabaseInstancesV3SelectorGet().'
+            );
         }
 
         const queryParameters: any = {};
@@ -254,7 +266,7 @@ export class DatabaseInstancesApi extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/api/database-instances/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            path: `/api/database-instances/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector']))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -277,12 +289,18 @@ export class DatabaseInstancesApi extends runtime.BaseAPI {
      * Edit an individual DatabaseInstance
      */
     async apiDatabaseInstancesV3SelectorPatchRaw(requestParameters: ApiDatabaseInstancesV3SelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockDatabaseInstanceV3>> {
-        if (requestParameters.selector === null || requestParameters.selector === undefined) {
-            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiDatabaseInstancesV3SelectorPatch.');
+        if (!runtime.exists(requestParameters, 'selector')) {
+            throw new runtime.RequiredError(
+                'selector',
+                'Required parameter "selector" was null or undefined when calling apiDatabaseInstancesV3SelectorPatch().'
+            );
         }
 
-        if (requestParameters.databaseInstance === null || requestParameters.databaseInstance === undefined) {
-            throw new runtime.RequiredError('databaseInstance','Required parameter requestParameters.databaseInstance was null or undefined when calling apiDatabaseInstancesV3SelectorPatch.');
+        if (!runtime.exists(requestParameters, 'databaseInstance')) {
+            throw new runtime.RequiredError(
+                'databaseInstance',
+                'Required parameter "databaseInstance" was null or undefined when calling apiDatabaseInstancesV3SelectorPatch().'
+            );
         }
 
         const queryParameters: any = {};
@@ -292,11 +310,11 @@ export class DatabaseInstancesApi extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/api/database-instances/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            path: `/api/database-instances/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector']))),
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
-            body: SherlockDatabaseInstanceV3EditToJSON(requestParameters.databaseInstance),
+            body: SherlockDatabaseInstanceV3EditToJSON(requestParameters['databaseInstance']),
         }, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockDatabaseInstanceV3FromJSON(jsonValue));

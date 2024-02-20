@@ -37,9 +37,7 @@ export interface PagerdutySendAlertResponse {
  * Check if a given object implements the PagerdutySendAlertResponse interface.
  */
 export function instanceOfPagerdutySendAlertResponse(value: object): boolean {
-    let isInstance = true;
-
-    return isInstance;
+    return true;
 }
 
 export function PagerdutySendAlertResponseFromJSON(json: any): PagerdutySendAlertResponse {
@@ -47,7 +45,7 @@ export function PagerdutySendAlertResponseFromJSON(json: any): PagerdutySendAler
 }
 
 export function PagerdutySendAlertResponseFromJSONTyped(json: any, ignoreDiscriminator: boolean): PagerdutySendAlertResponse {
-    if ((json === undefined) || (json === null)) {
+    if (json === undefined || json === null) {
         return json;
     }
     return {
@@ -66,8 +64,8 @@ export function PagerdutySendAlertResponseToJSON(value?: PagerdutySendAlertRespo
     }
     return {
         
-        'message': value.message,
-        'status': value.status,
+        'message': value['message'],
+        'status': value['status'],
     };
 }
 

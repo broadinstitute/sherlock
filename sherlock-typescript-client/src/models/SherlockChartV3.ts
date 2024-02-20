@@ -122,9 +122,7 @@ export interface SherlockChartV3 {
  * Check if a given object implements the SherlockChartV3 interface.
  */
 export function instanceOfSherlockChartV3(value: object): boolean {
-    let isInstance = true;
-
-    return isInstance;
+    return true;
 }
 
 export function SherlockChartV3FromJSON(json: any): SherlockChartV3 {
@@ -132,7 +130,7 @@ export function SherlockChartV3FromJSON(json: any): SherlockChartV3 {
 }
 
 export function SherlockChartV3FromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockChartV3 {
-    if ((json === undefined) || (json === null)) {
+    if (json === undefined || json === null) {
         return json;
     }
     return {
@@ -164,21 +162,21 @@ export function SherlockChartV3ToJSON(value?: SherlockChartV3 | null): any {
     }
     return {
         
-        'appImageGitMainBranch': value.appImageGitMainBranch,
-        'appImageGitRepo': value.appImageGitRepo,
-        'chartExposesEndpoint': value.chartExposesEndpoint,
-        'chartRepo': value.chartRepo,
-        'ciIdentifier': SherlockCiIdentifierV3ToJSON(value.ciIdentifier),
-        'createdAt': value.createdAt === undefined ? undefined : (value.createdAt.toISOString()),
-        'defaultPort': value.defaultPort,
-        'defaultProtocol': value.defaultProtocol,
-        'defaultSubdomain': value.defaultSubdomain,
-        'description': value.description,
-        'id': value.id,
-        'name': value.name,
-        'pactParticipant': value.pactParticipant,
-        'playbookURL': value.playbookURL,
-        'updatedAt': value.updatedAt === undefined ? undefined : (value.updatedAt.toISOString()),
+        'appImageGitMainBranch': value['appImageGitMainBranch'],
+        'appImageGitRepo': value['appImageGitRepo'],
+        'chartExposesEndpoint': value['chartExposesEndpoint'],
+        'chartRepo': value['chartRepo'],
+        'ciIdentifier': SherlockCiIdentifierV3ToJSON(value['ciIdentifier']),
+        'createdAt': !exists(value, 'createdAt') ? undefined : ((value['createdAt']).toISOString()),
+        'defaultPort': value['defaultPort'],
+        'defaultProtocol': value['defaultProtocol'],
+        'defaultSubdomain': value['defaultSubdomain'],
+        'description': value['description'],
+        'id': value['id'],
+        'name': value['name'],
+        'pactParticipant': value['pactParticipant'],
+        'playbookURL': value['playbookURL'],
+        'updatedAt': !exists(value, 'updatedAt') ? undefined : ((value['updatedAt']).toISOString()),
     };
 }
 

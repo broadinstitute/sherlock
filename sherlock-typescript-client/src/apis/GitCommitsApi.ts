@@ -42,8 +42,11 @@ export class GitCommitsApi extends runtime.BaseAPI {
      * Upsert a GitCommit
      */
     async apiGitCommitsV3PutRaw(requestParameters: ApiGitCommitsV3PutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockGitCommitV3>> {
-        if (requestParameters.gitCommit === null || requestParameters.gitCommit === undefined) {
-            throw new runtime.RequiredError('gitCommit','Required parameter requestParameters.gitCommit was null or undefined when calling apiGitCommitsV3Put.');
+        if (!runtime.exists(requestParameters, 'gitCommit')) {
+            throw new runtime.RequiredError(
+                'gitCommit',
+                'Required parameter "gitCommit" was null or undefined when calling apiGitCommitsV3Put().'
+            );
         }
 
         const queryParameters: any = {};
@@ -57,7 +60,7 @@ export class GitCommitsApi extends runtime.BaseAPI {
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
-            body: SherlockGitCommitV3UpsertToJSON(requestParameters.gitCommit),
+            body: SherlockGitCommitV3UpsertToJSON(requestParameters['gitCommit']),
         }, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockGitCommitV3FromJSON(jsonValue));

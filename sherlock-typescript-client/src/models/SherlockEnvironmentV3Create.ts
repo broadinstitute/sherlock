@@ -175,9 +175,7 @@ export interface SherlockEnvironmentV3Create {
  * Check if a given object implements the SherlockEnvironmentV3Create interface.
  */
 export function instanceOfSherlockEnvironmentV3Create(value: object): boolean {
-    let isInstance = true;
-
-    return isInstance;
+    return true;
 }
 
 export function SherlockEnvironmentV3CreateFromJSON(json: any): SherlockEnvironmentV3Create {
@@ -185,7 +183,7 @@ export function SherlockEnvironmentV3CreateFromJSON(json: any): SherlockEnvironm
 }
 
 export function SherlockEnvironmentV3CreateFromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockEnvironmentV3Create {
-    if ((json === undefined) || (json === null)) {
+    if (json === undefined || json === null) {
         return json;
     }
     return {
@@ -227,31 +225,31 @@ export function SherlockEnvironmentV3CreateToJSON(value?: SherlockEnvironmentV3C
     }
     return {
         
-        'autoPopulateChartReleases': value.autoPopulateChartReleases,
-        'base': value.base,
-        'baseDomain': value.baseDomain,
-        'defaultCluster': value.defaultCluster,
-        'defaultNamespace': value.defaultNamespace,
-        'deleteAfter': value.deleteAfter === undefined ? undefined : (value.deleteAfter.toISOString()),
-        'description': value.description,
-        'helmfileRef': value.helmfileRef,
-        'lifecycle': value.lifecycle,
-        'name': value.name,
-        'namePrefixesDomain': value.namePrefixesDomain,
-        'offline': value.offline,
-        'offlineScheduleBeginEnabled': value.offlineScheduleBeginEnabled,
-        'offlineScheduleBeginTime': value.offlineScheduleBeginTime === undefined ? undefined : (value.offlineScheduleBeginTime.toISOString()),
-        'offlineScheduleEndEnabled': value.offlineScheduleEndEnabled,
-        'offlineScheduleEndTime': value.offlineScheduleEndTime === undefined ? undefined : (value.offlineScheduleEndTime.toISOString()),
-        'offlineScheduleEndWeekends': value.offlineScheduleEndWeekends,
-        'owner': value.owner,
-        'pactIdentifier': value.pactIdentifier,
-        'pagerdutyIntegration': value.pagerdutyIntegration,
-        'preventDeletion': value.preventDeletion,
-        'requiresSuitability': value.requiresSuitability,
-        'templateEnvironment': value.templateEnvironment,
-        'uniqueResourcePrefix': value.uniqueResourcePrefix,
-        'valuesName': value.valuesName,
+        'autoPopulateChartReleases': value['autoPopulateChartReleases'],
+        'base': value['base'],
+        'baseDomain': value['baseDomain'],
+        'defaultCluster': value['defaultCluster'],
+        'defaultNamespace': value['defaultNamespace'],
+        'deleteAfter': !exists(value, 'deleteAfter') ? undefined : ((value['deleteAfter']).toISOString()),
+        'description': value['description'],
+        'helmfileRef': value['helmfileRef'],
+        'lifecycle': value['lifecycle'],
+        'name': value['name'],
+        'namePrefixesDomain': value['namePrefixesDomain'],
+        'offline': value['offline'],
+        'offlineScheduleBeginEnabled': value['offlineScheduleBeginEnabled'],
+        'offlineScheduleBeginTime': !exists(value, 'offlineScheduleBeginTime') ? undefined : ((value['offlineScheduleBeginTime']).toISOString()),
+        'offlineScheduleEndEnabled': value['offlineScheduleEndEnabled'],
+        'offlineScheduleEndTime': !exists(value, 'offlineScheduleEndTime') ? undefined : ((value['offlineScheduleEndTime']).toISOString()),
+        'offlineScheduleEndWeekends': value['offlineScheduleEndWeekends'],
+        'owner': value['owner'],
+        'pactIdentifier': value['pactIdentifier'],
+        'pagerdutyIntegration': value['pagerdutyIntegration'],
+        'preventDeletion': value['preventDeletion'],
+        'requiresSuitability': value['requiresSuitability'],
+        'templateEnvironment': value['templateEnvironment'],
+        'uniqueResourcePrefix': value['uniqueResourcePrefix'],
+        'valuesName': value['valuesName'],
     };
 }
 

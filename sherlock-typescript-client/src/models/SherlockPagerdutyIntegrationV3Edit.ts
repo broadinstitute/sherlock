@@ -43,9 +43,7 @@ export interface SherlockPagerdutyIntegrationV3Edit {
  * Check if a given object implements the SherlockPagerdutyIntegrationV3Edit interface.
  */
 export function instanceOfSherlockPagerdutyIntegrationV3Edit(value: object): boolean {
-    let isInstance = true;
-
-    return isInstance;
+    return true;
 }
 
 export function SherlockPagerdutyIntegrationV3EditFromJSON(json: any): SherlockPagerdutyIntegrationV3Edit {
@@ -53,7 +51,7 @@ export function SherlockPagerdutyIntegrationV3EditFromJSON(json: any): SherlockP
 }
 
 export function SherlockPagerdutyIntegrationV3EditFromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockPagerdutyIntegrationV3Edit {
-    if ((json === undefined) || (json === null)) {
+    if (json === undefined || json === null) {
         return json;
     }
     return {
@@ -73,9 +71,9 @@ export function SherlockPagerdutyIntegrationV3EditToJSON(value?: SherlockPagerdu
     }
     return {
         
-        'key': value.key,
-        'name': value.name,
-        'type': value.type,
+        'key': value['key'],
+        'name': value['name'],
+        'type': value['type'],
     };
 }
 

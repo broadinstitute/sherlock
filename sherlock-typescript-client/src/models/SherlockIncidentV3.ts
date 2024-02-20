@@ -73,9 +73,7 @@ export interface SherlockIncidentV3 {
  * Check if a given object implements the SherlockIncidentV3 interface.
  */
 export function instanceOfSherlockIncidentV3(value: object): boolean {
-    let isInstance = true;
-
-    return isInstance;
+    return true;
 }
 
 export function SherlockIncidentV3FromJSON(json: any): SherlockIncidentV3 {
@@ -83,7 +81,7 @@ export function SherlockIncidentV3FromJSON(json: any): SherlockIncidentV3 {
 }
 
 export function SherlockIncidentV3FromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockIncidentV3 {
-    if ((json === undefined) || (json === null)) {
+    if (json === undefined || json === null) {
         return json;
     }
     return {
@@ -108,14 +106,14 @@ export function SherlockIncidentV3ToJSON(value?: SherlockIncidentV3 | null): any
     }
     return {
         
-        'createdAt': value.createdAt === undefined ? undefined : (value.createdAt.toISOString()),
-        'description': value.description,
-        'id': value.id,
-        'remediatedAt': value.remediatedAt,
-        'reviewCompletedAt': value.reviewCompletedAt,
-        'startedAt': value.startedAt,
-        'ticket': value.ticket,
-        'updatedAt': value.updatedAt === undefined ? undefined : (value.updatedAt.toISOString()),
+        'createdAt': !exists(value, 'createdAt') ? undefined : ((value['createdAt']).toISOString()),
+        'description': value['description'],
+        'id': value['id'],
+        'remediatedAt': value['remediatedAt'],
+        'reviewCompletedAt': value['reviewCompletedAt'],
+        'startedAt': value['startedAt'],
+        'ticket': value['ticket'],
+        'updatedAt': !exists(value, 'updatedAt') ? undefined : ((value['updatedAt']).toISOString()),
     };
 }
 

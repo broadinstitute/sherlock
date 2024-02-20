@@ -67,68 +67,68 @@ export class UsersApi extends runtime.BaseAPI {
     async apiUsersV3GetRaw(requestParameters: ApiUsersV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockUserV3>>> {
         const queryParameters: any = {};
 
-        if (requestParameters.createdAt !== undefined) {
-            queryParameters['createdAt'] = (requestParameters.createdAt as any).toISOString();
+        if (runtime.exists(requestParameters, 'createdAt')) {
+            queryParameters['createdAt'] = (requestParameters['createdAt'] as any).toISOString();
         }
 
-        if (requestParameters.email !== undefined) {
-            queryParameters['email'] = requestParameters.email;
+        if (runtime.exists(requestParameters, 'email')) {
+            queryParameters['email'] = requestParameters['email'];
         }
 
-        if (requestParameters.githubID !== undefined) {
-            queryParameters['githubID'] = requestParameters.githubID;
+        if (runtime.exists(requestParameters, 'githubID')) {
+            queryParameters['githubID'] = requestParameters['githubID'];
         }
 
-        if (requestParameters.githubUsername !== undefined) {
-            queryParameters['githubUsername'] = requestParameters.githubUsername;
+        if (runtime.exists(requestParameters, 'githubUsername')) {
+            queryParameters['githubUsername'] = requestParameters['githubUsername'];
         }
 
-        if (requestParameters.googleID !== undefined) {
-            queryParameters['googleID'] = requestParameters.googleID;
+        if (runtime.exists(requestParameters, 'googleID')) {
+            queryParameters['googleID'] = requestParameters['googleID'];
         }
 
-        if (requestParameters.id !== undefined) {
-            queryParameters['id'] = requestParameters.id;
+        if (runtime.exists(requestParameters, 'id')) {
+            queryParameters['id'] = requestParameters['id'];
         }
 
-        if (requestParameters.name !== undefined) {
-            queryParameters['name'] = requestParameters.name;
+        if (runtime.exists(requestParameters, 'name')) {
+            queryParameters['name'] = requestParameters['name'];
         }
 
-        if (requestParameters.nameFrom !== undefined) {
-            queryParameters['nameFrom'] = requestParameters.nameFrom;
+        if (runtime.exists(requestParameters, 'nameFrom')) {
+            queryParameters['nameFrom'] = requestParameters['nameFrom'];
         }
 
-        if (requestParameters.nameInferredFromGithub !== undefined) {
-            queryParameters['nameInferredFromGithub'] = requestParameters.nameInferredFromGithub;
+        if (runtime.exists(requestParameters, 'nameInferredFromGithub')) {
+            queryParameters['nameInferredFromGithub'] = requestParameters['nameInferredFromGithub'];
         }
 
-        if (requestParameters.slackID !== undefined) {
-            queryParameters['slackID'] = requestParameters.slackID;
+        if (runtime.exists(requestParameters, 'slackID')) {
+            queryParameters['slackID'] = requestParameters['slackID'];
         }
 
-        if (requestParameters.slackUsername !== undefined) {
-            queryParameters['slackUsername'] = requestParameters.slackUsername;
+        if (runtime.exists(requestParameters, 'slackUsername')) {
+            queryParameters['slackUsername'] = requestParameters['slackUsername'];
         }
 
-        if (requestParameters.suitabilityDescription !== undefined) {
-            queryParameters['suitabilityDescription'] = requestParameters.suitabilityDescription;
+        if (runtime.exists(requestParameters, 'suitabilityDescription')) {
+            queryParameters['suitabilityDescription'] = requestParameters['suitabilityDescription'];
         }
 
-        if (requestParameters.suitable !== undefined) {
-            queryParameters['suitable'] = requestParameters.suitable;
+        if (runtime.exists(requestParameters, 'suitable')) {
+            queryParameters['suitable'] = requestParameters['suitable'];
         }
 
-        if (requestParameters.updatedAt !== undefined) {
-            queryParameters['updatedAt'] = (requestParameters.updatedAt as any).toISOString();
+        if (runtime.exists(requestParameters, 'updatedAt')) {
+            queryParameters['updatedAt'] = (requestParameters['updatedAt'] as any).toISOString();
         }
 
-        if (requestParameters.limit !== undefined) {
-            queryParameters['limit'] = requestParameters.limit;
+        if (runtime.exists(requestParameters, 'limit')) {
+            queryParameters['limit'] = requestParameters['limit'];
         }
 
-        if (requestParameters.offset !== undefined) {
-            queryParameters['offset'] = requestParameters.offset;
+        if (runtime.exists(requestParameters, 'offset')) {
+            queryParameters['offset'] = requestParameters['offset'];
         }
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -168,7 +168,7 @@ export class UsersApi extends runtime.BaseAPI {
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
-            body: SherlockUserV3UpsertToJSON(requestParameters.user),
+            body: SherlockUserV3UpsertToJSON(requestParameters['user']),
         }, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockUserV3FromJSON(jsonValue));
@@ -188,8 +188,11 @@ export class UsersApi extends runtime.BaseAPI {
      * Get an individual User
      */
     async apiUsersV3SelectorGetRaw(requestParameters: ApiUsersV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockUserV3>> {
-        if (requestParameters.selector === null || requestParameters.selector === undefined) {
-            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiUsersV3SelectorGet.');
+        if (!runtime.exists(requestParameters, 'selector')) {
+            throw new runtime.RequiredError(
+                'selector',
+                'Required parameter "selector" was null or undefined when calling apiUsersV3SelectorGet().'
+            );
         }
 
         const queryParameters: any = {};
@@ -197,7 +200,7 @@ export class UsersApi extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/api/users/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            path: `/api/users/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector']))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,

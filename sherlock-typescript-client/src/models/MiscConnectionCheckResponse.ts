@@ -31,9 +31,7 @@ export interface MiscConnectionCheckResponse {
  * Check if a given object implements the MiscConnectionCheckResponse interface.
  */
 export function instanceOfMiscConnectionCheckResponse(value: object): boolean {
-    let isInstance = true;
-
-    return isInstance;
+    return true;
 }
 
 export function MiscConnectionCheckResponseFromJSON(json: any): MiscConnectionCheckResponse {
@@ -41,7 +39,7 @@ export function MiscConnectionCheckResponseFromJSON(json: any): MiscConnectionCh
 }
 
 export function MiscConnectionCheckResponseFromJSONTyped(json: any, ignoreDiscriminator: boolean): MiscConnectionCheckResponse {
-    if ((json === undefined) || (json === null)) {
+    if (json === undefined || json === null) {
         return json;
     }
     return {
@@ -59,7 +57,7 @@ export function MiscConnectionCheckResponseToJSON(value?: MiscConnectionCheckRes
     }
     return {
         
-        'ok': value.ok,
+        'ok': value['ok'],
     };
 }
 

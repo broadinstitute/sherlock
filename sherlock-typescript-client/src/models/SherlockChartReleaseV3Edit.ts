@@ -55,9 +55,7 @@ export interface SherlockChartReleaseV3Edit {
  * Check if a given object implements the SherlockChartReleaseV3Edit interface.
  */
 export function instanceOfSherlockChartReleaseV3Edit(value: object): boolean {
-    let isInstance = true;
-
-    return isInstance;
+    return true;
 }
 
 export function SherlockChartReleaseV3EditFromJSON(json: any): SherlockChartReleaseV3Edit {
@@ -65,7 +63,7 @@ export function SherlockChartReleaseV3EditFromJSON(json: any): SherlockChartRele
 }
 
 export function SherlockChartReleaseV3EditFromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockChartReleaseV3Edit {
-    if ((json === undefined) || (json === null)) {
+    if (json === undefined || json === null) {
         return json;
     }
     return {
@@ -87,11 +85,11 @@ export function SherlockChartReleaseV3EditToJSON(value?: SherlockChartReleaseV3E
     }
     return {
         
-        'includedInBulkChangesets': value.includedInBulkChangesets,
-        'pagerdutyIntegration': value.pagerdutyIntegration,
-        'port': value.port,
-        'protocol': value.protocol,
-        'subdomain': value.subdomain,
+        'includedInBulkChangesets': value['includedInBulkChangesets'],
+        'pagerdutyIntegration': value['pagerdutyIntegration'],
+        'port': value['port'],
+        'protocol': value['protocol'],
+        'subdomain': value['subdomain'],
     };
 }
 

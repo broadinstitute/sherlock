@@ -296,9 +296,7 @@ export type SherlockChartReleaseV3ChartVersionResolverEnum = typeof SherlockChar
  * Check if a given object implements the SherlockChartReleaseV3 interface.
  */
 export function instanceOfSherlockChartReleaseV3(value: object): boolean {
-    let isInstance = true;
-
-    return isInstance;
+    return true;
 }
 
 export function SherlockChartReleaseV3FromJSON(json: any): SherlockChartReleaseV3 {
@@ -306,7 +304,7 @@ export function SherlockChartReleaseV3FromJSON(json: any): SherlockChartReleaseV
 }
 
 export function SherlockChartReleaseV3FromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockChartReleaseV3 {
-    if ((json === undefined) || (json === null)) {
+    if (json === undefined || json === null) {
         return json;
     }
     return {
@@ -357,40 +355,40 @@ export function SherlockChartReleaseV3ToJSON(value?: SherlockChartReleaseV3 | nu
     }
     return {
         
-        'appVersionBranch': value.appVersionBranch,
-        'appVersionCommit': value.appVersionCommit,
-        'appVersionExact': value.appVersionExact,
-        'appVersionFollowChartRelease': value.appVersionFollowChartRelease,
-        'appVersionInfo': SherlockAppVersionV3ToJSON(value.appVersionInfo),
-        'appVersionReference': value.appVersionReference,
-        'appVersionResolver': value.appVersionResolver,
-        'chart': value.chart,
-        'chartInfo': SherlockChartV3ToJSON(value.chartInfo),
-        'chartVersionExact': value.chartVersionExact,
-        'chartVersionFollowChartRelease': value.chartVersionFollowChartRelease,
-        'chartVersionInfo': SherlockChartVersionV3ToJSON(value.chartVersionInfo),
-        'chartVersionReference': value.chartVersionReference,
-        'chartVersionResolver': value.chartVersionResolver,
-        'ciIdentifier': SherlockCiIdentifierV3ToJSON(value.ciIdentifier),
-        'cluster': value.cluster,
-        'clusterInfo': SherlockClusterV3ToJSON(value.clusterInfo),
-        'createdAt': value.createdAt === undefined ? undefined : (value.createdAt.toISOString()),
-        'destinationType': value.destinationType,
-        'environment': value.environment,
-        'environmentInfo': SherlockEnvironmentV3ToJSON(value.environmentInfo),
-        'helmfileRef': value.helmfileRef,
-        'helmfileRefEnabled': value.helmfileRefEnabled,
-        'id': value.id,
-        'includedInBulkChangesets': value.includedInBulkChangesets,
-        'name': value.name,
-        'namespace': value.namespace,
-        'pagerdutyIntegration': value.pagerdutyIntegration,
-        'pagerdutyIntegrationInfo': SherlockPagerdutyIntegrationV3ToJSON(value.pagerdutyIntegrationInfo),
-        'port': value.port,
-        'protocol': value.protocol,
-        'resolvedAt': value.resolvedAt === undefined ? undefined : (value.resolvedAt.toISOString()),
-        'subdomain': value.subdomain,
-        'updatedAt': value.updatedAt === undefined ? undefined : (value.updatedAt.toISOString()),
+        'appVersionBranch': value['appVersionBranch'],
+        'appVersionCommit': value['appVersionCommit'],
+        'appVersionExact': value['appVersionExact'],
+        'appVersionFollowChartRelease': value['appVersionFollowChartRelease'],
+        'appVersionInfo': SherlockAppVersionV3ToJSON(value['appVersionInfo']),
+        'appVersionReference': value['appVersionReference'],
+        'appVersionResolver': value['appVersionResolver'],
+        'chart': value['chart'],
+        'chartInfo': SherlockChartV3ToJSON(value['chartInfo']),
+        'chartVersionExact': value['chartVersionExact'],
+        'chartVersionFollowChartRelease': value['chartVersionFollowChartRelease'],
+        'chartVersionInfo': SherlockChartVersionV3ToJSON(value['chartVersionInfo']),
+        'chartVersionReference': value['chartVersionReference'],
+        'chartVersionResolver': value['chartVersionResolver'],
+        'ciIdentifier': SherlockCiIdentifierV3ToJSON(value['ciIdentifier']),
+        'cluster': value['cluster'],
+        'clusterInfo': SherlockClusterV3ToJSON(value['clusterInfo']),
+        'createdAt': !exists(value, 'createdAt') ? undefined : ((value['createdAt']).toISOString()),
+        'destinationType': value['destinationType'],
+        'environment': value['environment'],
+        'environmentInfo': SherlockEnvironmentV3ToJSON(value['environmentInfo']),
+        'helmfileRef': value['helmfileRef'],
+        'helmfileRefEnabled': value['helmfileRefEnabled'],
+        'id': value['id'],
+        'includedInBulkChangesets': value['includedInBulkChangesets'],
+        'name': value['name'],
+        'namespace': value['namespace'],
+        'pagerdutyIntegration': value['pagerdutyIntegration'],
+        'pagerdutyIntegrationInfo': SherlockPagerdutyIntegrationV3ToJSON(value['pagerdutyIntegrationInfo']),
+        'port': value['port'],
+        'protocol': value['protocol'],
+        'resolvedAt': !exists(value, 'resolvedAt') ? undefined : ((value['resolvedAt']).toISOString()),
+        'subdomain': value['subdomain'],
+        'updatedAt': !exists(value, 'updatedAt') ? undefined : ((value['updatedAt']).toISOString()),
     };
 }
 

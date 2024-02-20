@@ -75,22 +75,28 @@ export class ChartVersionsApi extends runtime.BaseAPI {
      * Get a changelog between two ChartVersions
      */
     async apiChartVersionsProceduresV3ChangelogGetRaw(requestParameters: ApiChartVersionsProceduresV3ChangelogGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockChartVersionV3ChangelogResponse>> {
-        if (requestParameters.child === null || requestParameters.child === undefined) {
-            throw new runtime.RequiredError('child','Required parameter requestParameters.child was null or undefined when calling apiChartVersionsProceduresV3ChangelogGet.');
+        if (!runtime.exists(requestParameters, 'child')) {
+            throw new runtime.RequiredError(
+                'child',
+                'Required parameter "child" was null or undefined when calling apiChartVersionsProceduresV3ChangelogGet().'
+            );
         }
 
-        if (requestParameters.parent === null || requestParameters.parent === undefined) {
-            throw new runtime.RequiredError('parent','Required parameter requestParameters.parent was null or undefined when calling apiChartVersionsProceduresV3ChangelogGet.');
+        if (!runtime.exists(requestParameters, 'parent')) {
+            throw new runtime.RequiredError(
+                'parent',
+                'Required parameter "parent" was null or undefined when calling apiChartVersionsProceduresV3ChangelogGet().'
+            );
         }
 
         const queryParameters: any = {};
 
-        if (requestParameters.child !== undefined) {
-            queryParameters['child'] = requestParameters.child;
+        if (runtime.exists(requestParameters, 'child')) {
+            queryParameters['child'] = requestParameters['child'];
         }
 
-        if (requestParameters.parent !== undefined) {
-            queryParameters['parent'] = requestParameters.parent;
+        if (runtime.exists(requestParameters, 'parent')) {
+            queryParameters['parent'] = requestParameters['parent'];
         }
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -121,44 +127,44 @@ export class ChartVersionsApi extends runtime.BaseAPI {
     async apiChartVersionsV3GetRaw(requestParameters: ApiChartVersionsV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockChartVersionV3>>> {
         const queryParameters: any = {};
 
-        if (requestParameters.authoredBy !== undefined) {
-            queryParameters['authoredBy'] = requestParameters.authoredBy;
+        if (runtime.exists(requestParameters, 'authoredBy')) {
+            queryParameters['authoredBy'] = requestParameters['authoredBy'];
         }
 
-        if (requestParameters.chart !== undefined) {
-            queryParameters['chart'] = requestParameters.chart;
+        if (runtime.exists(requestParameters, 'chart')) {
+            queryParameters['chart'] = requestParameters['chart'];
         }
 
-        if (requestParameters.chartVersion !== undefined) {
-            queryParameters['chartVersion'] = requestParameters.chartVersion;
+        if (runtime.exists(requestParameters, 'chartVersion')) {
+            queryParameters['chartVersion'] = requestParameters['chartVersion'];
         }
 
-        if (requestParameters.createdAt !== undefined) {
-            queryParameters['createdAt'] = (requestParameters.createdAt as any).toISOString();
+        if (runtime.exists(requestParameters, 'createdAt')) {
+            queryParameters['createdAt'] = (requestParameters['createdAt'] as any).toISOString();
         }
 
-        if (requestParameters.description !== undefined) {
-            queryParameters['description'] = requestParameters.description;
+        if (runtime.exists(requestParameters, 'description')) {
+            queryParameters['description'] = requestParameters['description'];
         }
 
-        if (requestParameters.id !== undefined) {
-            queryParameters['id'] = requestParameters.id;
+        if (runtime.exists(requestParameters, 'id')) {
+            queryParameters['id'] = requestParameters['id'];
         }
 
-        if (requestParameters.parentChartVersion !== undefined) {
-            queryParameters['parentChartVersion'] = requestParameters.parentChartVersion;
+        if (runtime.exists(requestParameters, 'parentChartVersion')) {
+            queryParameters['parentChartVersion'] = requestParameters['parentChartVersion'];
         }
 
-        if (requestParameters.updatedAt !== undefined) {
-            queryParameters['updatedAt'] = (requestParameters.updatedAt as any).toISOString();
+        if (runtime.exists(requestParameters, 'updatedAt')) {
+            queryParameters['updatedAt'] = (requestParameters['updatedAt'] as any).toISOString();
         }
 
-        if (requestParameters.limit !== undefined) {
-            queryParameters['limit'] = requestParameters.limit;
+        if (runtime.exists(requestParameters, 'limit')) {
+            queryParameters['limit'] = requestParameters['limit'];
         }
 
-        if (requestParameters.offset !== undefined) {
-            queryParameters['offset'] = requestParameters.offset;
+        if (runtime.exists(requestParameters, 'offset')) {
+            queryParameters['offset'] = requestParameters['offset'];
         }
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -187,8 +193,11 @@ export class ChartVersionsApi extends runtime.BaseAPI {
      * Upsert a ChartVersion
      */
     async apiChartVersionsV3PutRaw(requestParameters: ApiChartVersionsV3PutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockChartVersionV3>> {
-        if (requestParameters.chartVersion === null || requestParameters.chartVersion === undefined) {
-            throw new runtime.RequiredError('chartVersion','Required parameter requestParameters.chartVersion was null or undefined when calling apiChartVersionsV3Put.');
+        if (!runtime.exists(requestParameters, 'chartVersion')) {
+            throw new runtime.RequiredError(
+                'chartVersion',
+                'Required parameter "chartVersion" was null or undefined when calling apiChartVersionsV3Put().'
+            );
         }
 
         const queryParameters: any = {};
@@ -202,7 +211,7 @@ export class ChartVersionsApi extends runtime.BaseAPI {
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
-            body: SherlockChartVersionV3CreateToJSON(requestParameters.chartVersion),
+            body: SherlockChartVersionV3CreateToJSON(requestParameters['chartVersion']),
         }, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockChartVersionV3FromJSON(jsonValue));
@@ -222,8 +231,11 @@ export class ChartVersionsApi extends runtime.BaseAPI {
      * Get an individual ChartVersion
      */
     async apiChartVersionsV3SelectorGetRaw(requestParameters: ApiChartVersionsV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockChartVersionV3>> {
-        if (requestParameters.selector === null || requestParameters.selector === undefined) {
-            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiChartVersionsV3SelectorGet.');
+        if (!runtime.exists(requestParameters, 'selector')) {
+            throw new runtime.RequiredError(
+                'selector',
+                'Required parameter "selector" was null or undefined when calling apiChartVersionsV3SelectorGet().'
+            );
         }
 
         const queryParameters: any = {};
@@ -231,7 +243,7 @@ export class ChartVersionsApi extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/api/chart-versions/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            path: `/api/chart-versions/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector']))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -254,12 +266,18 @@ export class ChartVersionsApi extends runtime.BaseAPI {
      * Edit an individual ChartVersion
      */
     async apiChartVersionsV3SelectorPatchRaw(requestParameters: ApiChartVersionsV3SelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockChartVersionV3>> {
-        if (requestParameters.selector === null || requestParameters.selector === undefined) {
-            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiChartVersionsV3SelectorPatch.');
+        if (!runtime.exists(requestParameters, 'selector')) {
+            throw new runtime.RequiredError(
+                'selector',
+                'Required parameter "selector" was null or undefined when calling apiChartVersionsV3SelectorPatch().'
+            );
         }
 
-        if (requestParameters.chartVersion === null || requestParameters.chartVersion === undefined) {
-            throw new runtime.RequiredError('chartVersion','Required parameter requestParameters.chartVersion was null or undefined when calling apiChartVersionsV3SelectorPatch.');
+        if (!runtime.exists(requestParameters, 'chartVersion')) {
+            throw new runtime.RequiredError(
+                'chartVersion',
+                'Required parameter "chartVersion" was null or undefined when calling apiChartVersionsV3SelectorPatch().'
+            );
         }
 
         const queryParameters: any = {};
@@ -269,11 +287,11 @@ export class ChartVersionsApi extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/api/chart-versions/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            path: `/api/chart-versions/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector']))),
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
-            body: SherlockChartVersionV3EditToJSON(requestParameters.chartVersion),
+            body: SherlockChartVersionV3EditToJSON(requestParameters['chartVersion']),
         }, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockChartVersionV3FromJSON(jsonValue));

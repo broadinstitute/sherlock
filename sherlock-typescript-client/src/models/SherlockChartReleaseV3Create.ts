@@ -169,9 +169,7 @@ export type SherlockChartReleaseV3CreateChartVersionResolverEnum = typeof Sherlo
  * Check if a given object implements the SherlockChartReleaseV3Create interface.
  */
 export function instanceOfSherlockChartReleaseV3Create(value: object): boolean {
-    let isInstance = true;
-
-    return isInstance;
+    return true;
 }
 
 export function SherlockChartReleaseV3CreateFromJSON(json: any): SherlockChartReleaseV3Create {
@@ -179,7 +177,7 @@ export function SherlockChartReleaseV3CreateFromJSON(json: any): SherlockChartRe
 }
 
 export function SherlockChartReleaseV3CreateFromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockChartReleaseV3Create {
-    if ((json === undefined) || (json === null)) {
+    if (json === undefined || json === null) {
         return json;
     }
     return {
@@ -216,26 +214,26 @@ export function SherlockChartReleaseV3CreateToJSON(value?: SherlockChartReleaseV
     }
     return {
         
-        'appVersionBranch': value.appVersionBranch,
-        'appVersionCommit': value.appVersionCommit,
-        'appVersionExact': value.appVersionExact,
-        'appVersionFollowChartRelease': value.appVersionFollowChartRelease,
-        'appVersionResolver': value.appVersionResolver,
-        'chart': value.chart,
-        'chartVersionExact': value.chartVersionExact,
-        'chartVersionFollowChartRelease': value.chartVersionFollowChartRelease,
-        'chartVersionResolver': value.chartVersionResolver,
-        'cluster': value.cluster,
-        'environment': value.environment,
-        'helmfileRef': value.helmfileRef,
-        'helmfileRefEnabled': value.helmfileRefEnabled,
-        'includedInBulkChangesets': value.includedInBulkChangesets,
-        'name': value.name,
-        'namespace': value.namespace,
-        'pagerdutyIntegration': value.pagerdutyIntegration,
-        'port': value.port,
-        'protocol': value.protocol,
-        'subdomain': value.subdomain,
+        'appVersionBranch': value['appVersionBranch'],
+        'appVersionCommit': value['appVersionCommit'],
+        'appVersionExact': value['appVersionExact'],
+        'appVersionFollowChartRelease': value['appVersionFollowChartRelease'],
+        'appVersionResolver': value['appVersionResolver'],
+        'chart': value['chart'],
+        'chartVersionExact': value['chartVersionExact'],
+        'chartVersionFollowChartRelease': value['chartVersionFollowChartRelease'],
+        'chartVersionResolver': value['chartVersionResolver'],
+        'cluster': value['cluster'],
+        'environment': value['environment'],
+        'helmfileRef': value['helmfileRef'],
+        'helmfileRefEnabled': value['helmfileRefEnabled'],
+        'includedInBulkChangesets': value['includedInBulkChangesets'],
+        'name': value['name'],
+        'namespace': value['namespace'],
+        'pagerdutyIntegration': value['pagerdutyIntegration'],
+        'port': value['port'],
+        'protocol': value['protocol'],
+        'subdomain': value['subdomain'],
     };
 }
 

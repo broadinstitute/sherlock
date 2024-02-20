@@ -31,9 +31,7 @@ export interface SherlockAppVersionV3Edit {
  * Check if a given object implements the SherlockAppVersionV3Edit interface.
  */
 export function instanceOfSherlockAppVersionV3Edit(value: object): boolean {
-    let isInstance = true;
-
-    return isInstance;
+    return true;
 }
 
 export function SherlockAppVersionV3EditFromJSON(json: any): SherlockAppVersionV3Edit {
@@ -41,7 +39,7 @@ export function SherlockAppVersionV3EditFromJSON(json: any): SherlockAppVersionV
 }
 
 export function SherlockAppVersionV3EditFromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockAppVersionV3Edit {
-    if ((json === undefined) || (json === null)) {
+    if (json === undefined || json === null) {
         return json;
     }
     return {
@@ -59,7 +57,7 @@ export function SherlockAppVersionV3EditToJSON(value?: SherlockAppVersionV3Edit 
     }
     return {
         
-        'description': value.description,
+        'description': value['description'],
     };
 }
 

@@ -55,36 +55,36 @@ export class CiIdentifiersApi extends runtime.BaseAPI {
     async apiCiIdentifiersV3GetRaw(requestParameters: ApiCiIdentifiersV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockCiIdentifierV3>>> {
         const queryParameters: any = {};
 
-        if (requestParameters.createdAt !== undefined) {
-            queryParameters['createdAt'] = (requestParameters.createdAt as any).toISOString();
+        if (runtime.exists(requestParameters, 'createdAt')) {
+            queryParameters['createdAt'] = (requestParameters['createdAt'] as any).toISOString();
         }
 
-        if (requestParameters.id !== undefined) {
-            queryParameters['id'] = requestParameters.id;
+        if (runtime.exists(requestParameters, 'id')) {
+            queryParameters['id'] = requestParameters['id'];
         }
 
-        if (requestParameters.resourceID !== undefined) {
-            queryParameters['resourceID'] = requestParameters.resourceID;
+        if (runtime.exists(requestParameters, 'resourceID')) {
+            queryParameters['resourceID'] = requestParameters['resourceID'];
         }
 
-        if (requestParameters.resourceStatus !== undefined) {
-            queryParameters['resourceStatus'] = requestParameters.resourceStatus;
+        if (runtime.exists(requestParameters, 'resourceStatus')) {
+            queryParameters['resourceStatus'] = requestParameters['resourceStatus'];
         }
 
-        if (requestParameters.resourceType !== undefined) {
-            queryParameters['resourceType'] = requestParameters.resourceType;
+        if (runtime.exists(requestParameters, 'resourceType')) {
+            queryParameters['resourceType'] = requestParameters['resourceType'];
         }
 
-        if (requestParameters.updatedAt !== undefined) {
-            queryParameters['updatedAt'] = (requestParameters.updatedAt as any).toISOString();
+        if (runtime.exists(requestParameters, 'updatedAt')) {
+            queryParameters['updatedAt'] = (requestParameters['updatedAt'] as any).toISOString();
         }
 
-        if (requestParameters.limit !== undefined) {
-            queryParameters['limit'] = requestParameters.limit;
+        if (runtime.exists(requestParameters, 'limit')) {
+            queryParameters['limit'] = requestParameters['limit'];
         }
 
-        if (requestParameters.offset !== undefined) {
-            queryParameters['offset'] = requestParameters.offset;
+        if (runtime.exists(requestParameters, 'offset')) {
+            queryParameters['offset'] = requestParameters['offset'];
         }
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -113,28 +113,31 @@ export class CiIdentifiersApi extends runtime.BaseAPI {
      * Get CiRuns for a resource by its CiIdentifier
      */
     async apiCiIdentifiersV3SelectorGetRaw(requestParameters: ApiCiIdentifiersV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockCiIdentifierV3>> {
-        if (requestParameters.selector === null || requestParameters.selector === undefined) {
-            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiCiIdentifiersV3SelectorGet.');
+        if (!runtime.exists(requestParameters, 'selector')) {
+            throw new runtime.RequiredError(
+                'selector',
+                'Required parameter "selector" was null or undefined when calling apiCiIdentifiersV3SelectorGet().'
+            );
         }
 
         const queryParameters: any = {};
 
-        if (requestParameters.limitCiRuns !== undefined) {
-            queryParameters['limitCiRuns'] = requestParameters.limitCiRuns;
+        if (runtime.exists(requestParameters, 'limitCiRuns')) {
+            queryParameters['limitCiRuns'] = requestParameters['limitCiRuns'];
         }
 
-        if (requestParameters.offsetCiRuns !== undefined) {
-            queryParameters['offsetCiRuns'] = requestParameters.offsetCiRuns;
+        if (runtime.exists(requestParameters, 'offsetCiRuns')) {
+            queryParameters['offsetCiRuns'] = requestParameters['offsetCiRuns'];
         }
 
-        if (requestParameters.allowStubCiRuns !== undefined) {
-            queryParameters['allowStubCiRuns'] = requestParameters.allowStubCiRuns;
+        if (runtime.exists(requestParameters, 'allowStubCiRuns')) {
+            queryParameters['allowStubCiRuns'] = requestParameters['allowStubCiRuns'];
         }
 
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/api/ci-identifiers/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            path: `/api/ci-identifiers/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector']))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,

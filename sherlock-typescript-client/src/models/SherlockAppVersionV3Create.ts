@@ -61,9 +61,7 @@ export interface SherlockAppVersionV3Create {
  * Check if a given object implements the SherlockAppVersionV3Create interface.
  */
 export function instanceOfSherlockAppVersionV3Create(value: object): boolean {
-    let isInstance = true;
-
-    return isInstance;
+    return true;
 }
 
 export function SherlockAppVersionV3CreateFromJSON(json: any): SherlockAppVersionV3Create {
@@ -71,7 +69,7 @@ export function SherlockAppVersionV3CreateFromJSON(json: any): SherlockAppVersio
 }
 
 export function SherlockAppVersionV3CreateFromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockAppVersionV3Create {
-    if ((json === undefined) || (json === null)) {
+    if (json === undefined || json === null) {
         return json;
     }
     return {
@@ -94,12 +92,12 @@ export function SherlockAppVersionV3CreateToJSON(value?: SherlockAppVersionV3Cre
     }
     return {
         
-        'appVersion': value.appVersion,
-        'chart': value.chart,
-        'description': value.description,
-        'gitBranch': value.gitBranch,
-        'gitCommit': value.gitCommit,
-        'parentAppVersion': value.parentAppVersion,
+        'appVersion': value['appVersion'],
+        'chart': value['chart'],
+        'description': value['description'],
+        'gitBranch': value['gitBranch'],
+        'gitCommit': value['gitCommit'],
+        'parentAppVersion': value['parentAppVersion'],
     };
 }
 

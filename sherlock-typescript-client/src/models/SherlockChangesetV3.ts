@@ -296,9 +296,7 @@ export interface SherlockChangesetV3 {
  * Check if a given object implements the SherlockChangesetV3 interface.
  */
 export function instanceOfSherlockChangesetV3(value: object): boolean {
-    let isInstance = true;
-
-    return isInstance;
+    return true;
 }
 
 export function SherlockChangesetV3FromJSON(json: any): SherlockChangesetV3 {
@@ -306,7 +304,7 @@ export function SherlockChangesetV3FromJSON(json: any): SherlockChangesetV3 {
 }
 
 export function SherlockChangesetV3FromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockChangesetV3 {
-    if ((json === undefined) || (json === null)) {
+    if (json === undefined || json === null) {
         return json;
     }
     return {
@@ -363,46 +361,46 @@ export function SherlockChangesetV3ToJSON(value?: SherlockChangesetV3 | null): a
     }
     return {
         
-        'appliedAt': value.appliedAt === undefined ? undefined : (value.appliedAt.toISOString()),
-        'appliedBy': value.appliedBy,
-        'appliedByInfo': SherlockUserV3ToJSON(value.appliedByInfo),
-        'chartRelease': value.chartRelease,
-        'chartReleaseInfo': SherlockChartReleaseV3ToJSON(value.chartReleaseInfo),
-        'ciIdentifier': SherlockCiIdentifierV3ToJSON(value.ciIdentifier),
-        'createdAt': value.createdAt === undefined ? undefined : (value.createdAt.toISOString()),
-        'fromAppVersionBranch': value.fromAppVersionBranch,
-        'fromAppVersionCommit': value.fromAppVersionCommit,
-        'fromAppVersionExact': value.fromAppVersionExact,
-        'fromAppVersionFollowChartRelease': value.fromAppVersionFollowChartRelease,
-        'fromAppVersionReference': value.fromAppVersionReference,
-        'fromAppVersionResolver': value.fromAppVersionResolver,
-        'fromChartVersionExact': value.fromChartVersionExact,
-        'fromChartVersionFollowChartRelease': value.fromChartVersionFollowChartRelease,
-        'fromChartVersionReference': value.fromChartVersionReference,
-        'fromChartVersionResolver': value.fromChartVersionResolver,
-        'fromHelmfileRef': value.fromHelmfileRef,
-        'fromHelmfileRefEnabled': value.fromHelmfileRefEnabled,
-        'fromResolvedAt': value.fromResolvedAt === undefined ? undefined : (value.fromResolvedAt.toISOString()),
-        'id': value.id,
-        'newAppVersions': value.newAppVersions === undefined ? undefined : ((value.newAppVersions as Array<any>).map(SherlockAppVersionV3ToJSON)),
-        'newChartVersions': value.newChartVersions === undefined ? undefined : ((value.newChartVersions as Array<any>).map(SherlockChartVersionV3ToJSON)),
-        'plannedBy': value.plannedBy,
-        'plannedByInfo': SherlockUserV3ToJSON(value.plannedByInfo),
-        'supersededAt': value.supersededAt === undefined ? undefined : (value.supersededAt.toISOString()),
-        'toAppVersionBranch': value.toAppVersionBranch,
-        'toAppVersionCommit': value.toAppVersionCommit,
-        'toAppVersionExact': value.toAppVersionExact,
-        'toAppVersionFollowChartRelease': value.toAppVersionFollowChartRelease,
-        'toAppVersionReference': value.toAppVersionReference,
-        'toAppVersionResolver': value.toAppVersionResolver,
-        'toChartVersionExact': value.toChartVersionExact,
-        'toChartVersionFollowChartRelease': value.toChartVersionFollowChartRelease,
-        'toChartVersionReference': value.toChartVersionReference,
-        'toChartVersionResolver': value.toChartVersionResolver,
-        'toHelmfileRef': value.toHelmfileRef,
-        'toHelmfileRefEnabled': value.toHelmfileRefEnabled,
-        'toResolvedAt': value.toResolvedAt === undefined ? undefined : (value.toResolvedAt.toISOString()),
-        'updatedAt': value.updatedAt === undefined ? undefined : (value.updatedAt.toISOString()),
+        'appliedAt': !exists(value, 'appliedAt') ? undefined : ((value['appliedAt']).toISOString()),
+        'appliedBy': value['appliedBy'],
+        'appliedByInfo': SherlockUserV3ToJSON(value['appliedByInfo']),
+        'chartRelease': value['chartRelease'],
+        'chartReleaseInfo': SherlockChartReleaseV3ToJSON(value['chartReleaseInfo']),
+        'ciIdentifier': SherlockCiIdentifierV3ToJSON(value['ciIdentifier']),
+        'createdAt': !exists(value, 'createdAt') ? undefined : ((value['createdAt']).toISOString()),
+        'fromAppVersionBranch': value['fromAppVersionBranch'],
+        'fromAppVersionCommit': value['fromAppVersionCommit'],
+        'fromAppVersionExact': value['fromAppVersionExact'],
+        'fromAppVersionFollowChartRelease': value['fromAppVersionFollowChartRelease'],
+        'fromAppVersionReference': value['fromAppVersionReference'],
+        'fromAppVersionResolver': value['fromAppVersionResolver'],
+        'fromChartVersionExact': value['fromChartVersionExact'],
+        'fromChartVersionFollowChartRelease': value['fromChartVersionFollowChartRelease'],
+        'fromChartVersionReference': value['fromChartVersionReference'],
+        'fromChartVersionResolver': value['fromChartVersionResolver'],
+        'fromHelmfileRef': value['fromHelmfileRef'],
+        'fromHelmfileRefEnabled': value['fromHelmfileRefEnabled'],
+        'fromResolvedAt': !exists(value, 'fromResolvedAt') ? undefined : ((value['fromResolvedAt']).toISOString()),
+        'id': value['id'],
+        'newAppVersions': !exists(value, 'newAppVersions') ? undefined : ((value['newAppVersions'] as Array<any>).map(SherlockAppVersionV3ToJSON)),
+        'newChartVersions': !exists(value, 'newChartVersions') ? undefined : ((value['newChartVersions'] as Array<any>).map(SherlockChartVersionV3ToJSON)),
+        'plannedBy': value['plannedBy'],
+        'plannedByInfo': SherlockUserV3ToJSON(value['plannedByInfo']),
+        'supersededAt': !exists(value, 'supersededAt') ? undefined : ((value['supersededAt']).toISOString()),
+        'toAppVersionBranch': value['toAppVersionBranch'],
+        'toAppVersionCommit': value['toAppVersionCommit'],
+        'toAppVersionExact': value['toAppVersionExact'],
+        'toAppVersionFollowChartRelease': value['toAppVersionFollowChartRelease'],
+        'toAppVersionReference': value['toAppVersionReference'],
+        'toAppVersionResolver': value['toAppVersionResolver'],
+        'toChartVersionExact': value['toChartVersionExact'],
+        'toChartVersionFollowChartRelease': value['toChartVersionFollowChartRelease'],
+        'toChartVersionReference': value['toChartVersionReference'],
+        'toChartVersionResolver': value['toChartVersionResolver'],
+        'toHelmfileRef': value['toHelmfileRef'],
+        'toHelmfileRefEnabled': value['toHelmfileRefEnabled'],
+        'toResolvedAt': !exists(value, 'toResolvedAt') ? undefined : ((value['toResolvedAt']).toISOString()),
+        'updatedAt': !exists(value, 'updatedAt') ? undefined : ((value['updatedAt']).toISOString()),
     };
 }
 

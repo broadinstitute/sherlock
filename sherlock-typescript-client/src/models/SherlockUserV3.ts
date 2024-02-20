@@ -122,9 +122,7 @@ export type SherlockUserV3NameFromEnum = typeof SherlockUserV3NameFromEnum[keyof
  * Check if a given object implements the SherlockUserV3 interface.
  */
 export function instanceOfSherlockUserV3(value: object): boolean {
-    let isInstance = true;
-
-    return isInstance;
+    return true;
 }
 
 export function SherlockUserV3FromJSON(json: any): SherlockUserV3 {
@@ -132,7 +130,7 @@ export function SherlockUserV3FromJSON(json: any): SherlockUserV3 {
 }
 
 export function SherlockUserV3FromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockUserV3 {
-    if ((json === undefined) || (json === null)) {
+    if (json === undefined || json === null) {
         return json;
     }
     return {
@@ -163,20 +161,20 @@ export function SherlockUserV3ToJSON(value?: SherlockUserV3 | null): any {
     }
     return {
         
-        'createdAt': value.createdAt === undefined ? undefined : (value.createdAt.toISOString()),
-        'email': value.email,
-        'githubID': value.githubID,
-        'githubUsername': value.githubUsername,
-        'googleID': value.googleID,
-        'id': value.id,
-        'name': value.name,
-        'nameFrom': value.nameFrom,
-        'nameInferredFromGithub': value.nameInferredFromGithub,
-        'slackID': value.slackID,
-        'slackUsername': value.slackUsername,
-        'suitabilityDescription': value.suitabilityDescription,
-        'suitable': value.suitable,
-        'updatedAt': value.updatedAt === undefined ? undefined : (value.updatedAt.toISOString()),
+        'createdAt': !exists(value, 'createdAt') ? undefined : ((value['createdAt']).toISOString()),
+        'email': value['email'],
+        'githubID': value['githubID'],
+        'githubUsername': value['githubUsername'],
+        'googleID': value['googleID'],
+        'id': value['id'],
+        'name': value['name'],
+        'nameFrom': value['nameFrom'],
+        'nameInferredFromGithub': value['nameInferredFromGithub'],
+        'slackID': value['slackID'],
+        'slackUsername': value['slackUsername'],
+        'suitabilityDescription': value['suitabilityDescription'],
+        'suitable': value['suitable'],
+        'updatedAt': !exists(value, 'updatedAt') ? undefined : ((value['updatedAt']).toISOString()),
     };
 }
 

@@ -115,9 +115,7 @@ export type SherlockGithubActionsDeployHookV3GithubActionsRefBehaviorEnum = type
  * Check if a given object implements the SherlockGithubActionsDeployHookV3 interface.
  */
 export function instanceOfSherlockGithubActionsDeployHookV3(value: object): boolean {
-    let isInstance = true;
-
-    return isInstance;
+    return true;
 }
 
 export function SherlockGithubActionsDeployHookV3FromJSON(json: any): SherlockGithubActionsDeployHookV3 {
@@ -125,7 +123,7 @@ export function SherlockGithubActionsDeployHookV3FromJSON(json: any): SherlockGi
 }
 
 export function SherlockGithubActionsDeployHookV3FromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockGithubActionsDeployHookV3 {
-    if ((json === undefined) || (json === null)) {
+    if (json === undefined || json === null) {
         return json;
     }
     return {
@@ -155,19 +153,19 @@ export function SherlockGithubActionsDeployHookV3ToJSON(value?: SherlockGithubAc
     }
     return {
         
-        'createdAt': value.createdAt === undefined ? undefined : (value.createdAt.toISOString()),
-        'githubActionsDefaultRef': value.githubActionsDefaultRef,
-        'githubActionsOwner': value.githubActionsOwner,
-        'githubActionsRefBehavior': value.githubActionsRefBehavior,
-        'githubActionsRepo': value.githubActionsRepo,
-        'githubActionsWorkflowInputs': value.githubActionsWorkflowInputs,
-        'githubActionsWorkflowPath': value.githubActionsWorkflowPath,
-        'id': value.id,
-        'onChartRelease': value.onChartRelease,
-        'onEnvironment': value.onEnvironment,
-        'onFailure': value.onFailure,
-        'onSuccess': value.onSuccess,
-        'updatedAt': value.updatedAt === undefined ? undefined : (value.updatedAt.toISOString()),
+        'createdAt': !exists(value, 'createdAt') ? undefined : ((value['createdAt']).toISOString()),
+        'githubActionsDefaultRef': value['githubActionsDefaultRef'],
+        'githubActionsOwner': value['githubActionsOwner'],
+        'githubActionsRefBehavior': value['githubActionsRefBehavior'],
+        'githubActionsRepo': value['githubActionsRepo'],
+        'githubActionsWorkflowInputs': value['githubActionsWorkflowInputs'],
+        'githubActionsWorkflowPath': value['githubActionsWorkflowPath'],
+        'id': value['id'],
+        'onChartRelease': value['onChartRelease'],
+        'onEnvironment': value['onEnvironment'],
+        'onFailure': value['onFailure'],
+        'onSuccess': value['onSuccess'],
+        'updatedAt': !exists(value, 'updatedAt') ? undefined : ((value['updatedAt']).toISOString()),
     };
 }
 

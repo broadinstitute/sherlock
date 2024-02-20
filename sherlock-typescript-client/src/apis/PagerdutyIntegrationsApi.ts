@@ -80,12 +80,18 @@ export class PagerdutyIntegrationsApi extends runtime.BaseAPI {
      * Get an individual PagerdutyIntegration
      */
     async apiPagerdutyIntegrationsProceduresV3TriggerIncidentSelectorPostRaw(requestParameters: ApiPagerdutyIntegrationsProceduresV3TriggerIncidentSelectorPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<PagerdutySendAlertResponse>> {
-        if (requestParameters.selector === null || requestParameters.selector === undefined) {
-            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiPagerdutyIntegrationsProceduresV3TriggerIncidentSelectorPost.');
+        if (!runtime.exists(requestParameters, 'selector')) {
+            throw new runtime.RequiredError(
+                'selector',
+                'Required parameter "selector" was null or undefined when calling apiPagerdutyIntegrationsProceduresV3TriggerIncidentSelectorPost().'
+            );
         }
 
-        if (requestParameters.summary === null || requestParameters.summary === undefined) {
-            throw new runtime.RequiredError('summary','Required parameter requestParameters.summary was null or undefined when calling apiPagerdutyIntegrationsProceduresV3TriggerIncidentSelectorPost.');
+        if (!runtime.exists(requestParameters, 'summary')) {
+            throw new runtime.RequiredError(
+                'summary',
+                'Required parameter "summary" was null or undefined when calling apiPagerdutyIntegrationsProceduresV3TriggerIncidentSelectorPost().'
+            );
         }
 
         const queryParameters: any = {};
@@ -95,11 +101,11 @@ export class PagerdutyIntegrationsApi extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/api/pagerduty-integrations/procedures/v3/trigger-incident/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            path: `/api/pagerduty-integrations/procedures/v3/trigger-incident/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector']))),
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: PagerdutyAlertSummaryToJSON(requestParameters.summary),
+            body: PagerdutyAlertSummaryToJSON(requestParameters['summary']),
         }, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => PagerdutySendAlertResponseFromJSON(jsonValue));
@@ -121,36 +127,36 @@ export class PagerdutyIntegrationsApi extends runtime.BaseAPI {
     async apiPagerdutyIntegrationsV3GetRaw(requestParameters: ApiPagerdutyIntegrationsV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockPagerdutyIntegrationV3>>> {
         const queryParameters: any = {};
 
-        if (requestParameters.createdAt !== undefined) {
-            queryParameters['createdAt'] = (requestParameters.createdAt as any).toISOString();
+        if (runtime.exists(requestParameters, 'createdAt')) {
+            queryParameters['createdAt'] = (requestParameters['createdAt'] as any).toISOString();
         }
 
-        if (requestParameters.id !== undefined) {
-            queryParameters['id'] = requestParameters.id;
+        if (runtime.exists(requestParameters, 'id')) {
+            queryParameters['id'] = requestParameters['id'];
         }
 
-        if (requestParameters.name !== undefined) {
-            queryParameters['name'] = requestParameters.name;
+        if (runtime.exists(requestParameters, 'name')) {
+            queryParameters['name'] = requestParameters['name'];
         }
 
-        if (requestParameters.pagerdutyID !== undefined) {
-            queryParameters['pagerdutyID'] = requestParameters.pagerdutyID;
+        if (runtime.exists(requestParameters, 'pagerdutyID')) {
+            queryParameters['pagerdutyID'] = requestParameters['pagerdutyID'];
         }
 
-        if (requestParameters.type !== undefined) {
-            queryParameters['type'] = requestParameters.type;
+        if (runtime.exists(requestParameters, 'type')) {
+            queryParameters['type'] = requestParameters['type'];
         }
 
-        if (requestParameters.updatedAt !== undefined) {
-            queryParameters['updatedAt'] = (requestParameters.updatedAt as any).toISOString();
+        if (runtime.exists(requestParameters, 'updatedAt')) {
+            queryParameters['updatedAt'] = (requestParameters['updatedAt'] as any).toISOString();
         }
 
-        if (requestParameters.limit !== undefined) {
-            queryParameters['limit'] = requestParameters.limit;
+        if (runtime.exists(requestParameters, 'limit')) {
+            queryParameters['limit'] = requestParameters['limit'];
         }
 
-        if (requestParameters.offset !== undefined) {
-            queryParameters['offset'] = requestParameters.offset;
+        if (runtime.exists(requestParameters, 'offset')) {
+            queryParameters['offset'] = requestParameters['offset'];
         }
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -179,8 +185,11 @@ export class PagerdutyIntegrationsApi extends runtime.BaseAPI {
      * Create a PagerdutyIntegration
      */
     async apiPagerdutyIntegrationsV3PostRaw(requestParameters: ApiPagerdutyIntegrationsV3PostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockPagerdutyIntegrationV3>> {
-        if (requestParameters.pagerdutyIntegration === null || requestParameters.pagerdutyIntegration === undefined) {
-            throw new runtime.RequiredError('pagerdutyIntegration','Required parameter requestParameters.pagerdutyIntegration was null or undefined when calling apiPagerdutyIntegrationsV3Post.');
+        if (!runtime.exists(requestParameters, 'pagerdutyIntegration')) {
+            throw new runtime.RequiredError(
+                'pagerdutyIntegration',
+                'Required parameter "pagerdutyIntegration" was null or undefined when calling apiPagerdutyIntegrationsV3Post().'
+            );
         }
 
         const queryParameters: any = {};
@@ -194,7 +203,7 @@ export class PagerdutyIntegrationsApi extends runtime.BaseAPI {
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: SherlockPagerdutyIntegrationV3CreateToJSON(requestParameters.pagerdutyIntegration),
+            body: SherlockPagerdutyIntegrationV3CreateToJSON(requestParameters['pagerdutyIntegration']),
         }, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockPagerdutyIntegrationV3FromJSON(jsonValue));
@@ -214,8 +223,11 @@ export class PagerdutyIntegrationsApi extends runtime.BaseAPI {
      * Delete an individual PagerdutyIntegration
      */
     async apiPagerdutyIntegrationsV3SelectorDeleteRaw(requestParameters: ApiPagerdutyIntegrationsV3SelectorDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockPagerdutyIntegrationV3>> {
-        if (requestParameters.selector === null || requestParameters.selector === undefined) {
-            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiPagerdutyIntegrationsV3SelectorDelete.');
+        if (!runtime.exists(requestParameters, 'selector')) {
+            throw new runtime.RequiredError(
+                'selector',
+                'Required parameter "selector" was null or undefined when calling apiPagerdutyIntegrationsV3SelectorDelete().'
+            );
         }
 
         const queryParameters: any = {};
@@ -223,7 +235,7 @@ export class PagerdutyIntegrationsApi extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/api/pagerduty-integrations/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            path: `/api/pagerduty-integrations/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector']))),
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
@@ -246,8 +258,11 @@ export class PagerdutyIntegrationsApi extends runtime.BaseAPI {
      * Get an individual PagerdutyIntegration
      */
     async apiPagerdutyIntegrationsV3SelectorGetRaw(requestParameters: ApiPagerdutyIntegrationsV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockPagerdutyIntegrationV3>> {
-        if (requestParameters.selector === null || requestParameters.selector === undefined) {
-            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiPagerdutyIntegrationsV3SelectorGet.');
+        if (!runtime.exists(requestParameters, 'selector')) {
+            throw new runtime.RequiredError(
+                'selector',
+                'Required parameter "selector" was null or undefined when calling apiPagerdutyIntegrationsV3SelectorGet().'
+            );
         }
 
         const queryParameters: any = {};
@@ -255,7 +270,7 @@ export class PagerdutyIntegrationsApi extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/api/pagerduty-integrations/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            path: `/api/pagerduty-integrations/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector']))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -278,12 +293,18 @@ export class PagerdutyIntegrationsApi extends runtime.BaseAPI {
      * Edit an individual PagerdutyIntegration
      */
     async apiPagerdutyIntegrationsV3SelectorPatchRaw(requestParameters: ApiPagerdutyIntegrationsV3SelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockPagerdutyIntegrationV3>> {
-        if (requestParameters.selector === null || requestParameters.selector === undefined) {
-            throw new runtime.RequiredError('selector','Required parameter requestParameters.selector was null or undefined when calling apiPagerdutyIntegrationsV3SelectorPatch.');
+        if (!runtime.exists(requestParameters, 'selector')) {
+            throw new runtime.RequiredError(
+                'selector',
+                'Required parameter "selector" was null or undefined when calling apiPagerdutyIntegrationsV3SelectorPatch().'
+            );
         }
 
-        if (requestParameters.pagerdutyIntegration === null || requestParameters.pagerdutyIntegration === undefined) {
-            throw new runtime.RequiredError('pagerdutyIntegration','Required parameter requestParameters.pagerdutyIntegration was null or undefined when calling apiPagerdutyIntegrationsV3SelectorPatch.');
+        if (!runtime.exists(requestParameters, 'pagerdutyIntegration')) {
+            throw new runtime.RequiredError(
+                'pagerdutyIntegration',
+                'Required parameter "pagerdutyIntegration" was null or undefined when calling apiPagerdutyIntegrationsV3SelectorPatch().'
+            );
         }
 
         const queryParameters: any = {};
@@ -293,11 +314,11 @@ export class PagerdutyIntegrationsApi extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/api/pagerduty-integrations/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters.selector))),
+            path: `/api/pagerduty-integrations/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector']))),
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
-            body: SherlockPagerdutyIntegrationV3EditToJSON(requestParameters.pagerdutyIntegration),
+            body: SherlockPagerdutyIntegrationV3EditToJSON(requestParameters['pagerdutyIntegration']),
         }, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SherlockPagerdutyIntegrationV3FromJSON(jsonValue));

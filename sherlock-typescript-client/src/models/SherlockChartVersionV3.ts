@@ -116,9 +116,7 @@ export interface SherlockChartVersionV3 {
  * Check if a given object implements the SherlockChartVersionV3 interface.
  */
 export function instanceOfSherlockChartVersionV3(value: object): boolean {
-    let isInstance = true;
-
-    return isInstance;
+    return true;
 }
 
 export function SherlockChartVersionV3FromJSON(json: any): SherlockChartVersionV3 {
@@ -126,7 +124,7 @@ export function SherlockChartVersionV3FromJSON(json: any): SherlockChartVersionV
 }
 
 export function SherlockChartVersionV3FromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockChartVersionV3 {
-    if ((json === undefined) || (json === null)) {
+    if (json === undefined || json === null) {
         return json;
     }
     return {
@@ -155,18 +153,18 @@ export function SherlockChartVersionV3ToJSON(value?: SherlockChartVersionV3 | nu
     }
     return {
         
-        'authoredBy': value.authoredBy,
-        'authoredByInfo': SherlockUserV3ToJSON(value.authoredByInfo),
-        'chart': value.chart,
-        'chartInfo': SherlockChartV3ToJSON(value.chartInfo),
-        'chartVersion': value.chartVersion,
-        'ciIdentifier': SherlockCiIdentifierV3ToJSON(value.ciIdentifier),
-        'createdAt': value.createdAt === undefined ? undefined : (value.createdAt.toISOString()),
-        'description': value.description,
-        'id': value.id,
-        'parentChartVersion': value.parentChartVersion,
-        'parentChartVersionInfo': value.parentChartVersionInfo,
-        'updatedAt': value.updatedAt === undefined ? undefined : (value.updatedAt.toISOString()),
+        'authoredBy': value['authoredBy'],
+        'authoredByInfo': SherlockUserV3ToJSON(value['authoredByInfo']),
+        'chart': value['chart'],
+        'chartInfo': SherlockChartV3ToJSON(value['chartInfo']),
+        'chartVersion': value['chartVersion'],
+        'ciIdentifier': SherlockCiIdentifierV3ToJSON(value['ciIdentifier']),
+        'createdAt': !exists(value, 'createdAt') ? undefined : ((value['createdAt']).toISOString()),
+        'description': value['description'],
+        'id': value['id'],
+        'parentChartVersion': value['parentChartVersion'],
+        'parentChartVersionInfo': value['parentChartVersionInfo'],
+        'updatedAt': !exists(value, 'updatedAt') ? undefined : ((value['updatedAt']).toISOString()),
     };
 }
 

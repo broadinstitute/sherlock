@@ -86,9 +86,7 @@ export interface SherlockDatabaseInstanceV3 {
  * Check if a given object implements the SherlockDatabaseInstanceV3 interface.
  */
 export function instanceOfSherlockDatabaseInstanceV3(value: object): boolean {
-    let isInstance = true;
-
-    return isInstance;
+    return true;
 }
 
 export function SherlockDatabaseInstanceV3FromJSON(json: any): SherlockDatabaseInstanceV3 {
@@ -96,7 +94,7 @@ export function SherlockDatabaseInstanceV3FromJSON(json: any): SherlockDatabaseI
 }
 
 export function SherlockDatabaseInstanceV3FromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockDatabaseInstanceV3 {
-    if ((json === undefined) || (json === null)) {
+    if (json === undefined || json === null) {
         return json;
     }
     return {
@@ -122,15 +120,15 @@ export function SherlockDatabaseInstanceV3ToJSON(value?: SherlockDatabaseInstanc
     }
     return {
         
-        'chartRelease': value.chartRelease,
-        'chartReleaseInfo': SherlockChartReleaseV3ToJSON(value.chartReleaseInfo),
-        'createdAt': value.createdAt === undefined ? undefined : (value.createdAt.toISOString()),
-        'defaultDatabase': value.defaultDatabase,
-        'googleProject': value.googleProject,
-        'id': value.id,
-        'instanceName': value.instanceName,
-        'platform': value.platform,
-        'updatedAt': value.updatedAt === undefined ? undefined : (value.updatedAt.toISOString()),
+        'chartRelease': value['chartRelease'],
+        'chartReleaseInfo': SherlockChartReleaseV3ToJSON(value['chartReleaseInfo']),
+        'createdAt': !exists(value, 'createdAt') ? undefined : ((value['createdAt']).toISOString()),
+        'defaultDatabase': value['defaultDatabase'],
+        'googleProject': value['googleProject'],
+        'id': value['id'],
+        'instanceName': value['instanceName'],
+        'platform': value['platform'],
+        'updatedAt': !exists(value, 'updatedAt') ? undefined : ((value['updatedAt']).toISOString()),
     };
 }
 

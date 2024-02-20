@@ -85,9 +85,7 @@ export interface SherlockChartV3Edit {
  * Check if a given object implements the SherlockChartV3Edit interface.
  */
 export function instanceOfSherlockChartV3Edit(value: object): boolean {
-    let isInstance = true;
-
-    return isInstance;
+    return true;
 }
 
 export function SherlockChartV3EditFromJSON(json: any): SherlockChartV3Edit {
@@ -95,7 +93,7 @@ export function SherlockChartV3EditFromJSON(json: any): SherlockChartV3Edit {
 }
 
 export function SherlockChartV3EditFromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockChartV3Edit {
-    if ((json === undefined) || (json === null)) {
+    if (json === undefined || json === null) {
         return json;
     }
     return {
@@ -122,16 +120,16 @@ export function SherlockChartV3EditToJSON(value?: SherlockChartV3Edit | null): a
     }
     return {
         
-        'appImageGitMainBranch': value.appImageGitMainBranch,
-        'appImageGitRepo': value.appImageGitRepo,
-        'chartExposesEndpoint': value.chartExposesEndpoint,
-        'chartRepo': value.chartRepo,
-        'defaultPort': value.defaultPort,
-        'defaultProtocol': value.defaultProtocol,
-        'defaultSubdomain': value.defaultSubdomain,
-        'description': value.description,
-        'pactParticipant': value.pactParticipant,
-        'playbookURL': value.playbookURL,
+        'appImageGitMainBranch': value['appImageGitMainBranch'],
+        'appImageGitRepo': value['appImageGitRepo'],
+        'chartExposesEndpoint': value['chartExposesEndpoint'],
+        'chartRepo': value['chartRepo'],
+        'defaultPort': value['defaultPort'],
+        'defaultProtocol': value['defaultProtocol'],
+        'defaultSubdomain': value['defaultSubdomain'],
+        'description': value['description'],
+        'pactParticipant': value['pactParticipant'],
+        'playbookURL': value['playbookURL'],
     };
 }
 

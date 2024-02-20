@@ -49,9 +49,7 @@ export interface SherlockChartVersionV3Create {
  * Check if a given object implements the SherlockChartVersionV3Create interface.
  */
 export function instanceOfSherlockChartVersionV3Create(value: object): boolean {
-    let isInstance = true;
-
-    return isInstance;
+    return true;
 }
 
 export function SherlockChartVersionV3CreateFromJSON(json: any): SherlockChartVersionV3Create {
@@ -59,7 +57,7 @@ export function SherlockChartVersionV3CreateFromJSON(json: any): SherlockChartVe
 }
 
 export function SherlockChartVersionV3CreateFromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockChartVersionV3Create {
-    if ((json === undefined) || (json === null)) {
+    if (json === undefined || json === null) {
         return json;
     }
     return {
@@ -80,10 +78,10 @@ export function SherlockChartVersionV3CreateToJSON(value?: SherlockChartVersionV
     }
     return {
         
-        'chart': value.chart,
-        'chartVersion': value.chartVersion,
-        'description': value.description,
-        'parentChartVersion': value.parentChartVersion,
+        'chart': value['chart'],
+        'chartVersion': value['chartVersion'],
+        'description': value['description'],
+        'parentChartVersion': value['parentChartVersion'],
     };
 }
 

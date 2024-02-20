@@ -121,9 +121,7 @@ export type SherlockClusterV3ProviderEnum = typeof SherlockClusterV3ProviderEnum
  * Check if a given object implements the SherlockClusterV3 interface.
  */
 export function instanceOfSherlockClusterV3(value: object): boolean {
-    let isInstance = true;
-
-    return isInstance;
+    return true;
 }
 
 export function SherlockClusterV3FromJSON(json: any): SherlockClusterV3 {
@@ -131,7 +129,7 @@ export function SherlockClusterV3FromJSON(json: any): SherlockClusterV3 {
 }
 
 export function SherlockClusterV3FromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockClusterV3 {
-    if ((json === undefined) || (json === null)) {
+    if (json === undefined || json === null) {
         return json;
     }
     return {
@@ -161,19 +159,19 @@ export function SherlockClusterV3ToJSON(value?: SherlockClusterV3 | null): any {
     }
     return {
         
-        'address': value.address,
-        'azureSubscription': value.azureSubscription,
-        'base': value.base,
-        'ciIdentifier': SherlockCiIdentifierV3ToJSON(value.ciIdentifier),
-        'createdAt': value.createdAt === undefined ? undefined : (value.createdAt.toISOString()),
-        'googleProject': value.googleProject,
-        'helmfileRef': value.helmfileRef,
-        'id': value.id,
-        'location': value.location,
-        'name': value.name,
-        'provider': value.provider,
-        'requiresSuitability': value.requiresSuitability,
-        'updatedAt': value.updatedAt === undefined ? undefined : (value.updatedAt.toISOString()),
+        'address': value['address'],
+        'azureSubscription': value['azureSubscription'],
+        'base': value['base'],
+        'ciIdentifier': SherlockCiIdentifierV3ToJSON(value['ciIdentifier']),
+        'createdAt': !exists(value, 'createdAt') ? undefined : ((value['createdAt']).toISOString()),
+        'googleProject': value['googleProject'],
+        'helmfileRef': value['helmfileRef'],
+        'id': value['id'],
+        'location': value['location'],
+        'name': value['name'],
+        'provider': value['provider'],
+        'requiresSuitability': value['requiresSuitability'],
+        'updatedAt': !exists(value, 'updatedAt') ? undefined : ((value['updatedAt']).toISOString()),
     };
 }
 

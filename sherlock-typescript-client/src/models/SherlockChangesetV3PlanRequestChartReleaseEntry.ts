@@ -103,9 +103,7 @@ export interface SherlockChangesetV3PlanRequestChartReleaseEntry {
  * Check if a given object implements the SherlockChangesetV3PlanRequestChartReleaseEntry interface.
  */
 export function instanceOfSherlockChangesetV3PlanRequestChartReleaseEntry(value: object): boolean {
-    let isInstance = true;
-
-    return isInstance;
+    return true;
 }
 
 export function SherlockChangesetV3PlanRequestChartReleaseEntryFromJSON(json: any): SherlockChangesetV3PlanRequestChartReleaseEntry {
@@ -113,7 +111,7 @@ export function SherlockChangesetV3PlanRequestChartReleaseEntryFromJSON(json: an
 }
 
 export function SherlockChangesetV3PlanRequestChartReleaseEntryFromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockChangesetV3PlanRequestChartReleaseEntry {
-    if ((json === undefined) || (json === null)) {
+    if (json === undefined || json === null) {
         return json;
     }
     return {
@@ -143,19 +141,19 @@ export function SherlockChangesetV3PlanRequestChartReleaseEntryToJSON(value?: Sh
     }
     return {
         
-        'chartRelease': value.chartRelease,
-        'followVersionsFromOtherChartRelease': value.followVersionsFromOtherChartRelease,
-        'toAppVersionBranch': value.toAppVersionBranch,
-        'toAppVersionCommit': value.toAppVersionCommit,
-        'toAppVersionExact': value.toAppVersionExact,
-        'toAppVersionFollowChartRelease': value.toAppVersionFollowChartRelease,
-        'toAppVersionResolver': value.toAppVersionResolver,
-        'toChartVersionExact': value.toChartVersionExact,
-        'toChartVersionFollowChartRelease': value.toChartVersionFollowChartRelease,
-        'toChartVersionResolver': value.toChartVersionResolver,
-        'toHelmfileRef': value.toHelmfileRef,
-        'toHelmfileRefEnabled': value.toHelmfileRefEnabled,
-        'useExactVersionsFromOtherChartRelease': value.useExactVersionsFromOtherChartRelease,
+        'chartRelease': value['chartRelease'],
+        'followVersionsFromOtherChartRelease': value['followVersionsFromOtherChartRelease'],
+        'toAppVersionBranch': value['toAppVersionBranch'],
+        'toAppVersionCommit': value['toAppVersionCommit'],
+        'toAppVersionExact': value['toAppVersionExact'],
+        'toAppVersionFollowChartRelease': value['toAppVersionFollowChartRelease'],
+        'toAppVersionResolver': value['toAppVersionResolver'],
+        'toChartVersionExact': value['toChartVersionExact'],
+        'toChartVersionFollowChartRelease': value['toChartVersionFollowChartRelease'],
+        'toChartVersionResolver': value['toChartVersionResolver'],
+        'toHelmfileRef': value['toHelmfileRef'],
+        'toHelmfileRefEnabled': value['toHelmfileRefEnabled'],
+        'useExactVersionsFromOtherChartRelease': value['useExactVersionsFromOtherChartRelease'],
     };
 }
 

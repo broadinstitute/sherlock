@@ -128,9 +128,7 @@ export interface SherlockAppVersionV3 {
  * Check if a given object implements the SherlockAppVersionV3 interface.
  */
 export function instanceOfSherlockAppVersionV3(value: object): boolean {
-    let isInstance = true;
-
-    return isInstance;
+    return true;
 }
 
 export function SherlockAppVersionV3FromJSON(json: any): SherlockAppVersionV3 {
@@ -138,7 +136,7 @@ export function SherlockAppVersionV3FromJSON(json: any): SherlockAppVersionV3 {
 }
 
 export function SherlockAppVersionV3FromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockAppVersionV3 {
-    if ((json === undefined) || (json === null)) {
+    if (json === undefined || json === null) {
         return json;
     }
     return {
@@ -169,20 +167,20 @@ export function SherlockAppVersionV3ToJSON(value?: SherlockAppVersionV3 | null):
     }
     return {
         
-        'appVersion': value.appVersion,
-        'authoredBy': value.authoredBy,
-        'authoredByInfo': SherlockUserV3ToJSON(value.authoredByInfo),
-        'chart': value.chart,
-        'chartInfo': SherlockChartV3ToJSON(value.chartInfo),
-        'ciIdentifier': SherlockCiIdentifierV3ToJSON(value.ciIdentifier),
-        'createdAt': value.createdAt === undefined ? undefined : (value.createdAt.toISOString()),
-        'description': value.description,
-        'gitBranch': value.gitBranch,
-        'gitCommit': value.gitCommit,
-        'id': value.id,
-        'parentAppVersion': value.parentAppVersion,
-        'parentAppVersionInfo': value.parentAppVersionInfo,
-        'updatedAt': value.updatedAt === undefined ? undefined : (value.updatedAt.toISOString()),
+        'appVersion': value['appVersion'],
+        'authoredBy': value['authoredBy'],
+        'authoredByInfo': SherlockUserV3ToJSON(value['authoredByInfo']),
+        'chart': value['chart'],
+        'chartInfo': SherlockChartV3ToJSON(value['chartInfo']),
+        'ciIdentifier': SherlockCiIdentifierV3ToJSON(value['ciIdentifier']),
+        'createdAt': !exists(value, 'createdAt') ? undefined : ((value['createdAt']).toISOString()),
+        'description': value['description'],
+        'gitBranch': value['gitBranch'],
+        'gitCommit': value['gitCommit'],
+        'id': value['id'],
+        'parentAppVersion': value['parentAppVersion'],
+        'parentAppVersionInfo': value['parentAppVersionInfo'],
+        'updatedAt': !exists(value, 'updatedAt') ? undefined : ((value['updatedAt']).toISOString()),
     };
 }
 
