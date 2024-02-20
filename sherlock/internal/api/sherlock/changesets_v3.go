@@ -5,6 +5,7 @@ import (
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"gorm.io/gorm"
+	"strings"
 	"time"
 )
 
@@ -70,23 +71,23 @@ func (c ChangesetV3) toModel(db *gorm.DB) (models.Changeset, error) {
 		From: models.ChartReleaseVersion{
 			ResolvedAt:           c.FromResolvedAt,
 			AppVersionResolver:   c.FromAppVersionResolver,
-			AppVersionExact:      c.FromAppVersionExact,
-			AppVersionBranch:     c.FromAppVersionBranch,
-			AppVersionCommit:     c.FromAppVersionCommit,
+			AppVersionExact:      utils.NilOrCall(strings.TrimSpace, c.FromAppVersionExact),
+			AppVersionBranch:     utils.NilOrCall(strings.TrimSpace, c.FromAppVersionBranch),
+			AppVersionCommit:     utils.NilOrCall(strings.TrimSpace, c.FromAppVersionCommit),
 			ChartVersionResolver: c.FromChartVersionResolver,
-			ChartVersionExact:    c.FromChartVersionExact,
-			HelmfileRef:          c.FromHelmfileRef,
+			ChartVersionExact:    utils.NilOrCall(strings.TrimSpace, c.FromChartVersionExact),
+			HelmfileRef:          utils.NilOrCall(strings.TrimSpace, c.FromHelmfileRef),
 			HelmfileRefEnabled:   c.FromHelmfileRefEnabled,
 		},
 		To: models.ChartReleaseVersion{
 			ResolvedAt:           c.ToResolvedAt,
 			AppVersionResolver:   c.ToAppVersionResolver,
-			AppVersionExact:      c.ToAppVersionExact,
-			AppVersionBranch:     c.ToAppVersionBranch,
-			AppVersionCommit:     c.ToAppVersionCommit,
+			AppVersionExact:      utils.NilOrCall(strings.TrimSpace, c.ToAppVersionExact),
+			AppVersionBranch:     utils.NilOrCall(strings.TrimSpace, c.ToAppVersionBranch),
+			AppVersionCommit:     utils.NilOrCall(strings.TrimSpace, c.ToAppVersionCommit),
 			ChartVersionResolver: c.ToChartVersionResolver,
-			ChartVersionExact:    c.ToChartVersionExact,
-			HelmfileRef:          c.ToHelmfileRef,
+			ChartVersionExact:    utils.NilOrCall(strings.TrimSpace, c.ToChartVersionExact),
+			HelmfileRef:          utils.NilOrCall(strings.TrimSpace, c.ToHelmfileRef),
 			HelmfileRefEnabled:   c.ToHelmfileRefEnabled,
 		},
 		AppliedAt:    c.AppliedAt,
