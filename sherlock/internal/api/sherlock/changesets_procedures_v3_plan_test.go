@@ -119,7 +119,7 @@ func (s *handlerSuite) TestChangesetsProceduresV3Plan() {
 					ChangesetV3Create: ChangesetV3Create{
 						ChartRelease:         chartReleaseToUpdate.Name,
 						ToAppVersionResolver: utils.PointerTo("exact"),
-						ToAppVersionExact:    utils.PointerTo("some new version"),
+						ToAppVersionExact:    utils.PointerTo(" some new version "),
 					},
 				},
 			},
@@ -137,6 +137,10 @@ func (s *handlerSuite) TestChangesetsProceduresV3Plan() {
 	for _, changeset := range got {
 		s.NotEmpty(changeset.ID)
 		s.NotEmpty(changeset.ChartReleaseInfo.Name)
+		if changeset.ChartReleaseInfo.Name == chartReleaseToUpdate.Name {
+			s.Equal("some new version", changeset.ToAppVersionExact, "(perhaps unexpected whitespace?)")
+			s.Equal("exact", *changeset.ToAppVersionResolver)
+		}
 	}
 }
 

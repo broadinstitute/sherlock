@@ -51,9 +51,9 @@ func (s *handlerSuite) TestAppVersionsV3Upsert() {
 	code := s.HandleRequest(
 		s.NewRequest("PUT", "/api/app-versions/v3", AppVersionV3Create{
 			Chart:            "chart-name",
-			AppVersion:       "2",
-			GitCommit:        "123",
-			GitBranch:        "branch",
+			AppVersion:       "2 ",
+			GitCommit:        "123 ",
+			GitBranch:        "branch ",
 			ParentAppVersion: "1",
 			AppVersionV3Edit: AppVersionV3Edit{
 				Description: "original description",
@@ -85,7 +85,7 @@ func (s *handlerSuite) TestAppVersionsV3Upsert() {
 	code = s.HandleRequest(
 		s.NewRequest("PUT", "/api/app-versions/v3", AppVersionV3Create{
 			Chart:     "chart-name",
-			GitCommit: "456",
+			GitCommit: "456 ",
 			AppVersionV3Edit: AppVersionV3Edit{
 				Description: "edited description",
 			},
