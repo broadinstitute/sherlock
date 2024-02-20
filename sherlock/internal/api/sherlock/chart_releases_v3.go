@@ -5,6 +5,7 @@ import (
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"gorm.io/gorm"
+	"strings"
 	"time"
 )
 
@@ -61,18 +62,17 @@ func (c ChartReleaseV3) toModel(db *gorm.DB) (models.ChartRelease, error) {
 		ChartReleaseVersion: models.ChartReleaseVersion{
 			ResolvedAt:           c.ResolvedAt,
 			AppVersionResolver:   c.AppVersionResolver,
-			AppVersionExact:      c.AppVersionExact,
-			AppVersionBranch:     c.AppVersionBranch,
-			AppVersionCommit:     c.AppVersionCommit,
+			AppVersionExact:      utils.NilOrCall(strings.TrimSpace, c.AppVersionExact),
+			AppVersionBranch:     utils.NilOrCall(strings.TrimSpace, c.AppVersionBranch),
+			AppVersionCommit:     utils.NilOrCall(strings.TrimSpace, c.AppVersionCommit),
 			ChartVersionResolver: c.ChartVersionResolver,
-			ChartVersionExact:    c.ChartVersionExact,
-			HelmfileRef:          c.HelmfileRef,
+			ChartVersionExact:    utils.NilOrCall(strings.TrimSpace, c.ChartVersionExact),
+			HelmfileRef:          utils.NilOrCall(strings.TrimSpace, c.HelmfileRef),
 			HelmfileRefEnabled:   c.HelmfileRefEnabled,
 		},
 		Subdomain:               c.Subdomain,
 		Protocol:                c.Protocol,
 		Port:                    c.Port,
-		PagerdutyIntegrationID:  nil, //
 		IncludeInBulkChangesets: c.IncludeInBulkChangesets,
 	}
 	if c.Chart != "" {

@@ -5,6 +5,7 @@ import (
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"gorm.io/gorm"
+	"strings"
 )
 
 type ChartVersionV3 struct {
@@ -70,7 +71,7 @@ func (v ChartVersionV3) toModel(db *gorm.DB, failIfParentMissing bool) (models.C
 	return models.ChartVersion{
 		Model:                v.toGormModel(),
 		ChartID:              chartResult.ID,
-		ChartVersion:         v.ChartVersion,
+		ChartVersion:         strings.TrimSpace(v.ChartVersion),
 		Description:          v.Description,
 		ParentChartVersionID: parentChartVersionID,
 		AuthoredByID:         authoredByID,

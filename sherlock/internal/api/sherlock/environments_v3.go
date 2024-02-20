@@ -9,6 +9,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
+	"strings"
 	"time"
 )
 
@@ -67,7 +68,7 @@ func (e EnvironmentV3) toModel(db *gorm.DB) (models.Environment, error) {
 		RequiresSuitability:         e.RequiresSuitability,
 		BaseDomain:                  e.BaseDomain,
 		NamePrefixesDomain:          e.NamePrefixesDomain,
-		HelmfileRef:                 e.HelmfileRef,
+		HelmfileRef:                 utils.NilOrCall(strings.TrimSpace, e.HelmfileRef),
 		PreventDeletion:             e.PreventDeletion,
 		Description:                 e.Description,
 		Offline:                     e.Offline,

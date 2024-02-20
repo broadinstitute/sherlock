@@ -54,7 +54,7 @@ func (s *handlerSuite) TestChartVersionsV3Upsert() {
 	code := s.HandleRequest(
 		s.NewRequest("PUT", "/api/chart-versions/v3", ChartVersionV3Create{
 			Chart:              "chart-name",
-			ChartVersion:       "2",
+			ChartVersion:       " 2 ",
 			ParentChartVersion: utils.UintToString(chartVersion.ID),
 			ChartVersionV3Edit: ChartVersionV3Edit{
 				Description: "original description",
