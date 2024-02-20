@@ -33,7 +33,6 @@ type ChartReleaseVersion struct {
 
 	HelmfileRef        *string
 	HelmfileRefEnabled *bool
-	// TODO: drop FirecloudDevelopRef
 }
 
 // resolve uses what's currently in the ChartReleaseVersion to fill in as many of the rest of the fields as possible.

@@ -14,10 +14,9 @@ type Chart struct {
 	DefaultSubdomain      *string
 	DefaultProtocol       *string
 	DefaultPort           *uint
-	// TODO: drop LegacyConfigsEnabled
-	Description     *string
-	PlaybookURL     *string
-	PactParticipant *bool
+	Description           *string
+	PlaybookURL           *string
+	PactParticipant       *bool
 }
 
 func (c Chart) GetCiIdentifier() CiIdentifier {

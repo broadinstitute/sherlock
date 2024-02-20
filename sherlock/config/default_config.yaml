@@ -21,12 +21,34 @@ log:
   level: debug
 
 db:
+  # Can be "pgx" or "cloudsql-postgres". "cloudsql-postgres" won't work in debug mode.
+  driver: pgx
+  # When using "pgx", should be the host name of the database server.
+  # When using "cloudsql-postgres", should be the Cloud SQL instance connection name.
   host: localhost
+  # Database user to connect as.
+  # When using "cloudsql-postgres" with automatic IAM authentication, this should be the
+  # email of the IAM principal without any .gserviceaccount.com suffix.
   user: sherlock
+  # Password for the database user to connect as.
+  # When using "cloudsql-postgres" with automatic IAM authentication, this should be empty.
+  password:
+  # The name of the database to connect to.
   name: sherlock
+  # When using "pgx", should be the port number the database server is listening on.
+  # When using "cloudsql-postgres", should be empty.
   port: 5432
+  # The value of the sslmode parameter to use when connecting to the database.
+  # When using "pgx" with Cloud SQL proxy, should be "disable".
+  # When using "cloudsql-postgres", should be "disable".
   ssl: disable
-  preparedStatementCache: true
+
+  cloudSql:
+    # When using "pgx", has no effect.
+    # When using "cloudsql-postgres", can be enabled to use automatic IAM authentication in place of a password.
+    automaticIamAuthEnabled: false
+
+  preparedStatementCache: false
   maxIdleConnections: 50
   maxOpenConnections: 75
   connectionMaxIdleTime: 0s
@@ -48,11 +70,6 @@ db:
     slowThreshold: 200ms
     ignoreNotFoundWarning: true
     level: warn
-
-  # autoMigrate will have Gorm align the database schema with its understanding of model structs post-init.
-  # It should not be enabled in merged code but can be useful for development, to iterate before adding
-  # SQL migration files.
-  autoMigrateV2: false
 
 auth:
   updateIntervalMinutes: 15

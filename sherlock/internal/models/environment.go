@@ -29,9 +29,8 @@ type Environment struct {
 	UniqueResourcePrefix      string
 	DefaultNamespace          string
 	// Mutable
-	DefaultCluster   *Cluster
-	DefaultClusterID *uint
-	// TODO: drop DefaultFirecloudDevelopRef
+	DefaultCluster              *Cluster
+	DefaultClusterID            *uint
 	Owner                       *User
 	OwnerID                     *uint
 	LegacyOwner                 *string
