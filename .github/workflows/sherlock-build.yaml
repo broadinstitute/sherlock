@@ -75,7 +75,7 @@ jobs:
       # We use DRY_RUN so we don't push to the repo prematurely -- we may
       # have code-gen changes, or we might not end up pushing at all.
       - name: Generate Tag
-        uses: databiosphere/github-actions/actions/bumper@bumper-0.2.0
+        uses: databiosphere/github-actions/actions/bumper@bumper-0.3.0
         id: tag
         env:
           DEFAULT_BUMP: patch
