@@ -70,7 +70,9 @@ func BuildRouter(ctx context.Context, db *gorm.DB) *gin.Engine {
 
 	router.GET("/swagger/*any", swaggo_gin.WrapHandler(swaggo_files.Handler, func(c *swaggo_gin.Config) {
 		c.Title = "Sherlock Swagger UI"
+		c.URL = "/swagger/doc.json"
 		c.DefaultModelsExpandDepth = 2
+		c.DocExpansion = "none"
 	}))
 	router.GET("", func(ctx *gin.Context) { ctx.Redirect(http.StatusMovedPermanently, "/swagger/index.html") })
 
