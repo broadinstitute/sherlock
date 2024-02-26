@@ -19,7 +19,7 @@ require (
 	github.com/knadh/koanf v1.5.0
 	github.com/pact-foundation/pact-go/v2 v2.0.2
 	github.com/rs/zerolog v1.31.0
-	github.com/slack-go/slack v0.12.3
+	github.com/slack-go/slack v0.12.4
 	github.com/stretchr/testify v1.8.4
 	github.com/swaggo/files v1.0.1
 	github.com/swaggo/gin-swagger v1.6.0
