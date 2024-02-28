@@ -17,7 +17,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/jackc/pgx/v5 v5.5.3
 	github.com/knadh/koanf v1.5.0
-	github.com/pact-foundation/pact-go/v2 v2.0.2
+	github.com/pact-foundation/pact-go/v2 v2.0.4
 	github.com/rs/zerolog v1.31.0
 	github.com/slack-go/slack v0.12.3
 	github.com/stretchr/testify v1.8.4
@@ -76,7 +76,7 @@ require (
 	github.com/gorilla/websocket v1.4.2 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
-	github.com/hashicorp/go-getter v1.7.2 // indirect
+	github.com/hashicorp/go-getter v1.7.3 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/hashicorp/go-safetemp v1.0.0 // indirect
 	github.com/hashicorp/go-version v1.6.0 // indirect
@@ -115,8 +115,8 @@ require (
 	github.com/prometheus/procfs v0.8.0 // indirect
 	github.com/prometheus/statsd_exporter v0.22.8 // indirect
 	github.com/rogpeppe/go-internal v1.10.0 // indirect
-	github.com/spf13/afero v1.9.5 // indirect
-	github.com/spf13/cobra v1.7.0 // indirect
+	github.com/spf13/afero v1.11.0 // indirect
+	github.com/spf13/cobra v1.8.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/stretchr/objx v0.5.0 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
