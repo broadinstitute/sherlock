@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from '../runtime';
+import { mapValues } from '../runtime';
 import type { SherlockChangesetV3PlanRequestChartReleaseEntry } from './SherlockChangesetV3PlanRequestChartReleaseEntry';
 import {
     SherlockChangesetV3PlanRequestChartReleaseEntryFromJSON,
@@ -64,28 +64,25 @@ export function SherlockChangesetV3PlanRequestFromJSON(json: any): SherlockChang
 }
 
 export function SherlockChangesetV3PlanRequestFromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockChangesetV3PlanRequest {
-    if (json === undefined || json === null) {
+    if (json == null) {
         return json;
     }
     return {
         
-        'chartReleases': !exists(json, 'chartReleases') ? undefined : ((json['chartReleases'] as Array<any>).map(SherlockChangesetV3PlanRequestChartReleaseEntryFromJSON)),
-        'environments': !exists(json, 'environments') ? undefined : ((json['environments'] as Array<any>).map(SherlockChangesetV3PlanRequestEnvironmentEntryFromJSON)),
-        'recreateChangesets': !exists(json, 'recreateChangesets') ? undefined : json['recreateChangesets'],
+        'chartReleases': json['chartReleases'] == null ? undefined : ((json['chartReleases'] as Array<any>).map(SherlockChangesetV3PlanRequestChartReleaseEntryFromJSON)),
+        'environments': json['environments'] == null ? undefined : ((json['environments'] as Array<any>).map(SherlockChangesetV3PlanRequestEnvironmentEntryFromJSON)),
+        'recreateChangesets': json['recreateChangesets'] == null ? undefined : json['recreateChangesets'],
     };
 }
 
 export function SherlockChangesetV3PlanRequestToJSON(value?: SherlockChangesetV3PlanRequest | null): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    if (value === null) {
-        return null;
+    if (value == null) {
+        return value;
     }
     return {
         
-        'chartReleases': !exists(value, 'chartReleases') ? undefined : ((value['chartReleases'] as Array<any>).map(SherlockChangesetV3PlanRequestChartReleaseEntryToJSON)),
-        'environments': !exists(value, 'environments') ? undefined : ((value['environments'] as Array<any>).map(SherlockChangesetV3PlanRequestEnvironmentEntryToJSON)),
+        'chartReleases': value['chartReleases'] == null ? undefined : ((value['chartReleases'] as Array<any>).map(SherlockChangesetV3PlanRequestChartReleaseEntryToJSON)),
+        'environments': value['environments'] == null ? undefined : ((value['environments'] as Array<any>).map(SherlockChangesetV3PlanRequestEnvironmentEntryToJSON)),
         'recreateChangesets': value['recreateChangesets'],
     };
 }

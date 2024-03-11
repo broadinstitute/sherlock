@@ -80,14 +80,14 @@ export class PagerdutyIntegrationsApi extends runtime.BaseAPI {
      * Get an individual PagerdutyIntegration
      */
     async apiPagerdutyIntegrationsProceduresV3TriggerIncidentSelectorPostRaw(requestParameters: ApiPagerdutyIntegrationsProceduresV3TriggerIncidentSelectorPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<PagerdutySendAlertResponse>> {
-        if (!runtime.exists(requestParameters, 'selector')) {
+        if (requestParameters['selector'] == null) {
             throw new runtime.RequiredError(
                 'selector',
                 'Required parameter "selector" was null or undefined when calling apiPagerdutyIntegrationsProceduresV3TriggerIncidentSelectorPost().'
             );
         }
 
-        if (!runtime.exists(requestParameters, 'summary')) {
+        if (requestParameters['summary'] == null) {
             throw new runtime.RequiredError(
                 'summary',
                 'Required parameter "summary" was null or undefined when calling apiPagerdutyIntegrationsProceduresV3TriggerIncidentSelectorPost().'
@@ -127,35 +127,35 @@ export class PagerdutyIntegrationsApi extends runtime.BaseAPI {
     async apiPagerdutyIntegrationsV3GetRaw(requestParameters: ApiPagerdutyIntegrationsV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockPagerdutyIntegrationV3>>> {
         const queryParameters: any = {};
 
-        if (runtime.exists(requestParameters, 'createdAt')) {
+        if (requestParameters['createdAt'] != null) {
             queryParameters['createdAt'] = (requestParameters['createdAt'] as any).toISOString();
         }
 
-        if (runtime.exists(requestParameters, 'id')) {
+        if (requestParameters['id'] != null) {
             queryParameters['id'] = requestParameters['id'];
         }
 
-        if (runtime.exists(requestParameters, 'name')) {
+        if (requestParameters['name'] != null) {
             queryParameters['name'] = requestParameters['name'];
         }
 
-        if (runtime.exists(requestParameters, 'pagerdutyID')) {
+        if (requestParameters['pagerdutyID'] != null) {
             queryParameters['pagerdutyID'] = requestParameters['pagerdutyID'];
         }
 
-        if (runtime.exists(requestParameters, 'type')) {
+        if (requestParameters['type'] != null) {
             queryParameters['type'] = requestParameters['type'];
         }
 
-        if (runtime.exists(requestParameters, 'updatedAt')) {
+        if (requestParameters['updatedAt'] != null) {
             queryParameters['updatedAt'] = (requestParameters['updatedAt'] as any).toISOString();
         }
 
-        if (runtime.exists(requestParameters, 'limit')) {
+        if (requestParameters['limit'] != null) {
             queryParameters['limit'] = requestParameters['limit'];
         }
 
-        if (runtime.exists(requestParameters, 'offset')) {
+        if (requestParameters['offset'] != null) {
             queryParameters['offset'] = requestParameters['offset'];
         }
 
@@ -185,7 +185,7 @@ export class PagerdutyIntegrationsApi extends runtime.BaseAPI {
      * Create a PagerdutyIntegration
      */
     async apiPagerdutyIntegrationsV3PostRaw(requestParameters: ApiPagerdutyIntegrationsV3PostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockPagerdutyIntegrationV3>> {
-        if (!runtime.exists(requestParameters, 'pagerdutyIntegration')) {
+        if (requestParameters['pagerdutyIntegration'] == null) {
             throw new runtime.RequiredError(
                 'pagerdutyIntegration',
                 'Required parameter "pagerdutyIntegration" was null or undefined when calling apiPagerdutyIntegrationsV3Post().'
@@ -223,7 +223,7 @@ export class PagerdutyIntegrationsApi extends runtime.BaseAPI {
      * Delete an individual PagerdutyIntegration
      */
     async apiPagerdutyIntegrationsV3SelectorDeleteRaw(requestParameters: ApiPagerdutyIntegrationsV3SelectorDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockPagerdutyIntegrationV3>> {
-        if (!runtime.exists(requestParameters, 'selector')) {
+        if (requestParameters['selector'] == null) {
             throw new runtime.RequiredError(
                 'selector',
                 'Required parameter "selector" was null or undefined when calling apiPagerdutyIntegrationsV3SelectorDelete().'
@@ -258,7 +258,7 @@ export class PagerdutyIntegrationsApi extends runtime.BaseAPI {
      * Get an individual PagerdutyIntegration
      */
     async apiPagerdutyIntegrationsV3SelectorGetRaw(requestParameters: ApiPagerdutyIntegrationsV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockPagerdutyIntegrationV3>> {
-        if (!runtime.exists(requestParameters, 'selector')) {
+        if (requestParameters['selector'] == null) {
             throw new runtime.RequiredError(
                 'selector',
                 'Required parameter "selector" was null or undefined when calling apiPagerdutyIntegrationsV3SelectorGet().'
@@ -293,14 +293,14 @@ export class PagerdutyIntegrationsApi extends runtime.BaseAPI {
      * Edit an individual PagerdutyIntegration
      */
     async apiPagerdutyIntegrationsV3SelectorPatchRaw(requestParameters: ApiPagerdutyIntegrationsV3SelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockPagerdutyIntegrationV3>> {
-        if (!runtime.exists(requestParameters, 'selector')) {
+        if (requestParameters['selector'] == null) {
             throw new runtime.RequiredError(
                 'selector',
                 'Required parameter "selector" was null or undefined when calling apiPagerdutyIntegrationsV3SelectorPatch().'
             );
         }
 
-        if (!runtime.exists(requestParameters, 'pagerdutyIntegration')) {
+        if (requestParameters['pagerdutyIntegration'] == null) {
             throw new runtime.RequiredError(
                 'pagerdutyIntegration',
                 'Required parameter "pagerdutyIntegration" was null or undefined when calling apiPagerdutyIntegrationsV3SelectorPatch().'

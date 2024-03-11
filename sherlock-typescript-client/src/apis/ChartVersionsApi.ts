@@ -75,14 +75,14 @@ export class ChartVersionsApi extends runtime.BaseAPI {
      * Get a changelog between two ChartVersions
      */
     async apiChartVersionsProceduresV3ChangelogGetRaw(requestParameters: ApiChartVersionsProceduresV3ChangelogGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockChartVersionV3ChangelogResponse>> {
-        if (!runtime.exists(requestParameters, 'child')) {
+        if (requestParameters['child'] == null) {
             throw new runtime.RequiredError(
                 'child',
                 'Required parameter "child" was null or undefined when calling apiChartVersionsProceduresV3ChangelogGet().'
             );
         }
 
-        if (!runtime.exists(requestParameters, 'parent')) {
+        if (requestParameters['parent'] == null) {
             throw new runtime.RequiredError(
                 'parent',
                 'Required parameter "parent" was null or undefined when calling apiChartVersionsProceduresV3ChangelogGet().'
@@ -91,11 +91,11 @@ export class ChartVersionsApi extends runtime.BaseAPI {
 
         const queryParameters: any = {};
 
-        if (runtime.exists(requestParameters, 'child')) {
+        if (requestParameters['child'] != null) {
             queryParameters['child'] = requestParameters['child'];
         }
 
-        if (runtime.exists(requestParameters, 'parent')) {
+        if (requestParameters['parent'] != null) {
             queryParameters['parent'] = requestParameters['parent'];
         }
 
@@ -127,43 +127,43 @@ export class ChartVersionsApi extends runtime.BaseAPI {
     async apiChartVersionsV3GetRaw(requestParameters: ApiChartVersionsV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockChartVersionV3>>> {
         const queryParameters: any = {};
 
-        if (runtime.exists(requestParameters, 'authoredBy')) {
+        if (requestParameters['authoredBy'] != null) {
             queryParameters['authoredBy'] = requestParameters['authoredBy'];
         }
 
-        if (runtime.exists(requestParameters, 'chart')) {
+        if (requestParameters['chart'] != null) {
             queryParameters['chart'] = requestParameters['chart'];
         }
 
-        if (runtime.exists(requestParameters, 'chartVersion')) {
+        if (requestParameters['chartVersion'] != null) {
             queryParameters['chartVersion'] = requestParameters['chartVersion'];
         }
 
-        if (runtime.exists(requestParameters, 'createdAt')) {
+        if (requestParameters['createdAt'] != null) {
             queryParameters['createdAt'] = (requestParameters['createdAt'] as any).toISOString();
         }
 
-        if (runtime.exists(requestParameters, 'description')) {
+        if (requestParameters['description'] != null) {
             queryParameters['description'] = requestParameters['description'];
         }
 
-        if (runtime.exists(requestParameters, 'id')) {
+        if (requestParameters['id'] != null) {
             queryParameters['id'] = requestParameters['id'];
         }
 
-        if (runtime.exists(requestParameters, 'parentChartVersion')) {
+        if (requestParameters['parentChartVersion'] != null) {
             queryParameters['parentChartVersion'] = requestParameters['parentChartVersion'];
         }
 
-        if (runtime.exists(requestParameters, 'updatedAt')) {
+        if (requestParameters['updatedAt'] != null) {
             queryParameters['updatedAt'] = (requestParameters['updatedAt'] as any).toISOString();
         }
 
-        if (runtime.exists(requestParameters, 'limit')) {
+        if (requestParameters['limit'] != null) {
             queryParameters['limit'] = requestParameters['limit'];
         }
 
-        if (runtime.exists(requestParameters, 'offset')) {
+        if (requestParameters['offset'] != null) {
             queryParameters['offset'] = requestParameters['offset'];
         }
 
@@ -193,7 +193,7 @@ export class ChartVersionsApi extends runtime.BaseAPI {
      * Upsert a ChartVersion
      */
     async apiChartVersionsV3PutRaw(requestParameters: ApiChartVersionsV3PutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockChartVersionV3>> {
-        if (!runtime.exists(requestParameters, 'chartVersion')) {
+        if (requestParameters['chartVersion'] == null) {
             throw new runtime.RequiredError(
                 'chartVersion',
                 'Required parameter "chartVersion" was null or undefined when calling apiChartVersionsV3Put().'
@@ -231,7 +231,7 @@ export class ChartVersionsApi extends runtime.BaseAPI {
      * Get an individual ChartVersion
      */
     async apiChartVersionsV3SelectorGetRaw(requestParameters: ApiChartVersionsV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockChartVersionV3>> {
-        if (!runtime.exists(requestParameters, 'selector')) {
+        if (requestParameters['selector'] == null) {
             throw new runtime.RequiredError(
                 'selector',
                 'Required parameter "selector" was null or undefined when calling apiChartVersionsV3SelectorGet().'
@@ -266,14 +266,14 @@ export class ChartVersionsApi extends runtime.BaseAPI {
      * Edit an individual ChartVersion
      */
     async apiChartVersionsV3SelectorPatchRaw(requestParameters: ApiChartVersionsV3SelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockChartVersionV3>> {
-        if (!runtime.exists(requestParameters, 'selector')) {
+        if (requestParameters['selector'] == null) {
             throw new runtime.RequiredError(
                 'selector',
                 'Required parameter "selector" was null or undefined when calling apiChartVersionsV3SelectorPatch().'
             );
         }
 
-        if (!runtime.exists(requestParameters, 'chartVersion')) {
+        if (requestParameters['chartVersion'] == null) {
             throw new runtime.RequiredError(
                 'chartVersion',
                 'Required parameter "chartVersion" was null or undefined when calling apiChartVersionsV3SelectorPatch().'

@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from '../runtime';
+import { mapValues } from '../runtime';
 /**
  * 
  * @export
@@ -87,33 +87,30 @@ export function SherlockSlackDeployHookV3FromJSON(json: any): SherlockSlackDeplo
 }
 
 export function SherlockSlackDeployHookV3FromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockSlackDeployHookV3 {
-    if (json === undefined || json === null) {
+    if (json == null) {
         return json;
     }
     return {
         
-        'createdAt': !exists(json, 'createdAt') ? undefined : (new Date(json['createdAt'])),
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'mentionPeople': !exists(json, 'mentionPeople') ? undefined : json['mentionPeople'],
-        'onChartRelease': !exists(json, 'onChartRelease') ? undefined : json['onChartRelease'],
-        'onEnvironment': !exists(json, 'onEnvironment') ? undefined : json['onEnvironment'],
-        'onFailure': !exists(json, 'onFailure') ? undefined : json['onFailure'],
-        'onSuccess': !exists(json, 'onSuccess') ? undefined : json['onSuccess'],
-        'slackChannel': !exists(json, 'slackChannel') ? undefined : json['slackChannel'],
-        'updatedAt': !exists(json, 'updatedAt') ? undefined : (new Date(json['updatedAt'])),
+        'createdAt': json['createdAt'] == null ? undefined : (new Date(json['createdAt'])),
+        'id': json['id'] == null ? undefined : json['id'],
+        'mentionPeople': json['mentionPeople'] == null ? undefined : json['mentionPeople'],
+        'onChartRelease': json['onChartRelease'] == null ? undefined : json['onChartRelease'],
+        'onEnvironment': json['onEnvironment'] == null ? undefined : json['onEnvironment'],
+        'onFailure': json['onFailure'] == null ? undefined : json['onFailure'],
+        'onSuccess': json['onSuccess'] == null ? undefined : json['onSuccess'],
+        'slackChannel': json['slackChannel'] == null ? undefined : json['slackChannel'],
+        'updatedAt': json['updatedAt'] == null ? undefined : (new Date(json['updatedAt'])),
     };
 }
 
 export function SherlockSlackDeployHookV3ToJSON(value?: SherlockSlackDeployHookV3 | null): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    if (value === null) {
-        return null;
+    if (value == null) {
+        return value;
     }
     return {
         
-        'createdAt': !exists(value, 'createdAt') ? undefined : ((value['createdAt']).toISOString()),
+        'createdAt': value['createdAt'] == null ? undefined : ((value['createdAt']).toISOString()),
         'id': value['id'],
         'mentionPeople': value['mentionPeople'],
         'onChartRelease': value['onChartRelease'],
@@ -121,7 +118,7 @@ export function SherlockSlackDeployHookV3ToJSON(value?: SherlockSlackDeployHookV
         'onFailure': value['onFailure'],
         'onSuccess': value['onSuccess'],
         'slackChannel': value['slackChannel'],
-        'updatedAt': !exists(value, 'updatedAt') ? undefined : ((value['updatedAt']).toISOString()),
+        'updatedAt': value['updatedAt'] == null ? undefined : ((value['updatedAt']).toISOString()),
     };
 }
 

@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from '../runtime';
+import { mapValues } from '../runtime';
 /**
  * 
  * @export
@@ -57,24 +57,21 @@ export function SherlockDatabaseInstanceV3EditFromJSON(json: any): SherlockDatab
 }
 
 export function SherlockDatabaseInstanceV3EditFromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockDatabaseInstanceV3Edit {
-    if (json === undefined || json === null) {
+    if (json == null) {
         return json;
     }
     return {
         
-        'defaultDatabase': !exists(json, 'defaultDatabase') ? undefined : json['defaultDatabase'],
-        'googleProject': !exists(json, 'googleProject') ? undefined : json['googleProject'],
-        'instanceName': !exists(json, 'instanceName') ? undefined : json['instanceName'],
-        'platform': !exists(json, 'platform') ? undefined : json['platform'],
+        'defaultDatabase': json['defaultDatabase'] == null ? undefined : json['defaultDatabase'],
+        'googleProject': json['googleProject'] == null ? undefined : json['googleProject'],
+        'instanceName': json['instanceName'] == null ? undefined : json['instanceName'],
+        'platform': json['platform'] == null ? undefined : json['platform'],
     };
 }
 
 export function SherlockDatabaseInstanceV3EditToJSON(value?: SherlockDatabaseInstanceV3Edit | null): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    if (value === null) {
-        return null;
+    if (value == null) {
+        return value;
     }
     return {
         

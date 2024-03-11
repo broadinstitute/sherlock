@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from '../runtime';
+import { mapValues } from '../runtime';
 /**
  * 
  * @export
@@ -51,23 +51,20 @@ export function ErrorsErrorResponseFromJSON(json: any): ErrorsErrorResponse {
 }
 
 export function ErrorsErrorResponseFromJSONTyped(json: any, ignoreDiscriminator: boolean): ErrorsErrorResponse {
-    if (json === undefined || json === null) {
+    if (json == null) {
         return json;
     }
     return {
         
-        'message': !exists(json, 'message') ? undefined : json['message'],
-        'toBlame': !exists(json, 'toBlame') ? undefined : json['toBlame'],
-        'type': !exists(json, 'type') ? undefined : json['type'],
+        'message': json['message'] == null ? undefined : json['message'],
+        'toBlame': json['toBlame'] == null ? undefined : json['toBlame'],
+        'type': json['type'] == null ? undefined : json['type'],
     };
 }
 
 export function ErrorsErrorResponseToJSON(value?: ErrorsErrorResponse | null): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    if (value === null) {
-        return null;
+    if (value == null) {
+        return value;
     }
     return {
         

@@ -73,43 +73,43 @@ export class IncidentsApi extends runtime.BaseAPI {
     async apiIncidentsV3GetRaw(requestParameters: ApiIncidentsV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockIncidentV3>>> {
         const queryParameters: any = {};
 
-        if (runtime.exists(requestParameters, 'createdAt')) {
+        if (requestParameters['createdAt'] != null) {
             queryParameters['createdAt'] = (requestParameters['createdAt'] as any).toISOString();
         }
 
-        if (runtime.exists(requestParameters, 'description')) {
+        if (requestParameters['description'] != null) {
             queryParameters['description'] = requestParameters['description'];
         }
 
-        if (runtime.exists(requestParameters, 'id')) {
+        if (requestParameters['id'] != null) {
             queryParameters['id'] = requestParameters['id'];
         }
 
-        if (runtime.exists(requestParameters, 'remediatedAt')) {
+        if (requestParameters['remediatedAt'] != null) {
             queryParameters['remediatedAt'] = requestParameters['remediatedAt'];
         }
 
-        if (runtime.exists(requestParameters, 'reviewCompletedAt')) {
+        if (requestParameters['reviewCompletedAt'] != null) {
             queryParameters['reviewCompletedAt'] = requestParameters['reviewCompletedAt'];
         }
 
-        if (runtime.exists(requestParameters, 'startedAt')) {
+        if (requestParameters['startedAt'] != null) {
             queryParameters['startedAt'] = requestParameters['startedAt'];
         }
 
-        if (runtime.exists(requestParameters, 'ticket')) {
+        if (requestParameters['ticket'] != null) {
             queryParameters['ticket'] = requestParameters['ticket'];
         }
 
-        if (runtime.exists(requestParameters, 'updatedAt')) {
+        if (requestParameters['updatedAt'] != null) {
             queryParameters['updatedAt'] = (requestParameters['updatedAt'] as any).toISOString();
         }
 
-        if (runtime.exists(requestParameters, 'limit')) {
+        if (requestParameters['limit'] != null) {
             queryParameters['limit'] = requestParameters['limit'];
         }
 
-        if (runtime.exists(requestParameters, 'offset')) {
+        if (requestParameters['offset'] != null) {
             queryParameters['offset'] = requestParameters['offset'];
         }
 
@@ -139,7 +139,7 @@ export class IncidentsApi extends runtime.BaseAPI {
      * Create a Incident
      */
     async apiIncidentsV3PostRaw(requestParameters: ApiIncidentsV3PostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockIncidentV3>> {
-        if (!runtime.exists(requestParameters, 'incident')) {
+        if (requestParameters['incident'] == null) {
             throw new runtime.RequiredError(
                 'incident',
                 'Required parameter "incident" was null or undefined when calling apiIncidentsV3Post().'
@@ -177,7 +177,7 @@ export class IncidentsApi extends runtime.BaseAPI {
      * Delete an individual Incident
      */
     async apiIncidentsV3SelectorDeleteRaw(requestParameters: ApiIncidentsV3SelectorDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockIncidentV3>> {
-        if (!runtime.exists(requestParameters, 'selector')) {
+        if (requestParameters['selector'] == null) {
             throw new runtime.RequiredError(
                 'selector',
                 'Required parameter "selector" was null or undefined when calling apiIncidentsV3SelectorDelete().'
@@ -212,7 +212,7 @@ export class IncidentsApi extends runtime.BaseAPI {
      * Get an individual Incident
      */
     async apiIncidentsV3SelectorGetRaw(requestParameters: ApiIncidentsV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockIncidentV3>> {
-        if (!runtime.exists(requestParameters, 'selector')) {
+        if (requestParameters['selector'] == null) {
             throw new runtime.RequiredError(
                 'selector',
                 'Required parameter "selector" was null or undefined when calling apiIncidentsV3SelectorGet().'
@@ -247,14 +247,14 @@ export class IncidentsApi extends runtime.BaseAPI {
      * Edit an individual Incident
      */
     async apiIncidentsV3SelectorPatchRaw(requestParameters: ApiIncidentsV3SelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockIncidentV3>> {
-        if (!runtime.exists(requestParameters, 'selector')) {
+        if (requestParameters['selector'] == null) {
             throw new runtime.RequiredError(
                 'selector',
                 'Required parameter "selector" was null or undefined when calling apiIncidentsV3SelectorPatch().'
             );
         }
 
-        if (!runtime.exists(requestParameters, 'incident')) {
+        if (requestParameters['incident'] == null) {
             throw new runtime.RequiredError(
                 'incident',
                 'Required parameter "incident" was null or undefined when calling apiIncidentsV3SelectorPatch().'

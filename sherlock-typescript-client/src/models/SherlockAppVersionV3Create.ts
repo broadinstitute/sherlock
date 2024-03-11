@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from '../runtime';
+import { mapValues } from '../runtime';
 /**
  * 
  * @export
@@ -69,26 +69,23 @@ export function SherlockAppVersionV3CreateFromJSON(json: any): SherlockAppVersio
 }
 
 export function SherlockAppVersionV3CreateFromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockAppVersionV3Create {
-    if (json === undefined || json === null) {
+    if (json == null) {
         return json;
     }
     return {
         
-        'appVersion': !exists(json, 'appVersion') ? undefined : json['appVersion'],
-        'chart': !exists(json, 'chart') ? undefined : json['chart'],
-        'description': !exists(json, 'description') ? undefined : json['description'],
-        'gitBranch': !exists(json, 'gitBranch') ? undefined : json['gitBranch'],
-        'gitCommit': !exists(json, 'gitCommit') ? undefined : json['gitCommit'],
-        'parentAppVersion': !exists(json, 'parentAppVersion') ? undefined : json['parentAppVersion'],
+        'appVersion': json['appVersion'] == null ? undefined : json['appVersion'],
+        'chart': json['chart'] == null ? undefined : json['chart'],
+        'description': json['description'] == null ? undefined : json['description'],
+        'gitBranch': json['gitBranch'] == null ? undefined : json['gitBranch'],
+        'gitCommit': json['gitCommit'] == null ? undefined : json['gitCommit'],
+        'parentAppVersion': json['parentAppVersion'] == null ? undefined : json['parentAppVersion'],
     };
 }
 
 export function SherlockAppVersionV3CreateToJSON(value?: SherlockAppVersionV3Create | null): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    if (value === null) {
-        return null;
+    if (value == null) {
+        return value;
     }
     return {
         

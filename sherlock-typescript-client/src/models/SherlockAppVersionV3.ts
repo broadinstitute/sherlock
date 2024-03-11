@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from '../runtime';
+import { mapValues } from '../runtime';
 import type { SherlockChartV3 } from './SherlockChartV3';
 import {
     SherlockChartV3FromJSON,
@@ -136,34 +136,31 @@ export function SherlockAppVersionV3FromJSON(json: any): SherlockAppVersionV3 {
 }
 
 export function SherlockAppVersionV3FromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockAppVersionV3 {
-    if (json === undefined || json === null) {
+    if (json == null) {
         return json;
     }
     return {
         
-        'appVersion': !exists(json, 'appVersion') ? undefined : json['appVersion'],
-        'authoredBy': !exists(json, 'authoredBy') ? undefined : json['authoredBy'],
-        'authoredByInfo': !exists(json, 'authoredByInfo') ? undefined : SherlockUserV3FromJSON(json['authoredByInfo']),
-        'chart': !exists(json, 'chart') ? undefined : json['chart'],
-        'chartInfo': !exists(json, 'chartInfo') ? undefined : SherlockChartV3FromJSON(json['chartInfo']),
-        'ciIdentifier': !exists(json, 'ciIdentifier') ? undefined : SherlockCiIdentifierV3FromJSON(json['ciIdentifier']),
-        'createdAt': !exists(json, 'createdAt') ? undefined : (new Date(json['createdAt'])),
-        'description': !exists(json, 'description') ? undefined : json['description'],
-        'gitBranch': !exists(json, 'gitBranch') ? undefined : json['gitBranch'],
-        'gitCommit': !exists(json, 'gitCommit') ? undefined : json['gitCommit'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'parentAppVersion': !exists(json, 'parentAppVersion') ? undefined : json['parentAppVersion'],
-        'parentAppVersionInfo': !exists(json, 'parentAppVersionInfo') ? undefined : json['parentAppVersionInfo'],
-        'updatedAt': !exists(json, 'updatedAt') ? undefined : (new Date(json['updatedAt'])),
+        'appVersion': json['appVersion'] == null ? undefined : json['appVersion'],
+        'authoredBy': json['authoredBy'] == null ? undefined : json['authoredBy'],
+        'authoredByInfo': json['authoredByInfo'] == null ? undefined : SherlockUserV3FromJSON(json['authoredByInfo']),
+        'chart': json['chart'] == null ? undefined : json['chart'],
+        'chartInfo': json['chartInfo'] == null ? undefined : SherlockChartV3FromJSON(json['chartInfo']),
+        'ciIdentifier': json['ciIdentifier'] == null ? undefined : SherlockCiIdentifierV3FromJSON(json['ciIdentifier']),
+        'createdAt': json['createdAt'] == null ? undefined : (new Date(json['createdAt'])),
+        'description': json['description'] == null ? undefined : json['description'],
+        'gitBranch': json['gitBranch'] == null ? undefined : json['gitBranch'],
+        'gitCommit': json['gitCommit'] == null ? undefined : json['gitCommit'],
+        'id': json['id'] == null ? undefined : json['id'],
+        'parentAppVersion': json['parentAppVersion'] == null ? undefined : json['parentAppVersion'],
+        'parentAppVersionInfo': json['parentAppVersionInfo'] == null ? undefined : json['parentAppVersionInfo'],
+        'updatedAt': json['updatedAt'] == null ? undefined : (new Date(json['updatedAt'])),
     };
 }
 
 export function SherlockAppVersionV3ToJSON(value?: SherlockAppVersionV3 | null): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    if (value === null) {
-        return null;
+    if (value == null) {
+        return value;
     }
     return {
         
@@ -173,14 +170,14 @@ export function SherlockAppVersionV3ToJSON(value?: SherlockAppVersionV3 | null):
         'chart': value['chart'],
         'chartInfo': SherlockChartV3ToJSON(value['chartInfo']),
         'ciIdentifier': SherlockCiIdentifierV3ToJSON(value['ciIdentifier']),
-        'createdAt': !exists(value, 'createdAt') ? undefined : ((value['createdAt']).toISOString()),
+        'createdAt': value['createdAt'] == null ? undefined : ((value['createdAt']).toISOString()),
         'description': value['description'],
         'gitBranch': value['gitBranch'],
         'gitCommit': value['gitCommit'],
         'id': value['id'],
         'parentAppVersion': value['parentAppVersion'],
         'parentAppVersionInfo': value['parentAppVersionInfo'],
-        'updatedAt': !exists(value, 'updatedAt') ? undefined : ((value['updatedAt']).toISOString()),
+        'updatedAt': value['updatedAt'] == null ? undefined : ((value['updatedAt']).toISOString()),
     };
 }
 

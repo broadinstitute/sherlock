@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from '../runtime';
+import { mapValues } from '../runtime';
 /**
  * 
  * @export
@@ -57,24 +57,21 @@ export function SherlockSlackDeployHookV3EditFromJSON(json: any): SherlockSlackD
 }
 
 export function SherlockSlackDeployHookV3EditFromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockSlackDeployHookV3Edit {
-    if (json === undefined || json === null) {
+    if (json == null) {
         return json;
     }
     return {
         
-        'mentionPeople': !exists(json, 'mentionPeople') ? undefined : json['mentionPeople'],
-        'onFailure': !exists(json, 'onFailure') ? undefined : json['onFailure'],
-        'onSuccess': !exists(json, 'onSuccess') ? undefined : json['onSuccess'],
-        'slackChannel': !exists(json, 'slackChannel') ? undefined : json['slackChannel'],
+        'mentionPeople': json['mentionPeople'] == null ? undefined : json['mentionPeople'],
+        'onFailure': json['onFailure'] == null ? undefined : json['onFailure'],
+        'onSuccess': json['onSuccess'] == null ? undefined : json['onSuccess'],
+        'slackChannel': json['slackChannel'] == null ? undefined : json['slackChannel'],
     };
 }
 
 export function SherlockSlackDeployHookV3EditToJSON(value?: SherlockSlackDeployHookV3Edit | null): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    if (value === null) {
-        return null;
+    if (value == null) {
+        return value;
     }
     return {
         

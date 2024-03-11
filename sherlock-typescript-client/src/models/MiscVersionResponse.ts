@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from '../runtime';
+import { mapValues } from '../runtime';
 /**
  * 
  * @export
@@ -51,23 +51,20 @@ export function MiscVersionResponseFromJSON(json: any): MiscVersionResponse {
 }
 
 export function MiscVersionResponseFromJSONTyped(json: any, ignoreDiscriminator: boolean): MiscVersionResponse {
-    if (json === undefined || json === null) {
+    if (json == null) {
         return json;
     }
     return {
         
-        'buildInfo': !exists(json, 'buildInfo') ? undefined : json['buildInfo'],
-        'goVersion': !exists(json, 'goVersion') ? undefined : json['goVersion'],
-        'version': !exists(json, 'version') ? undefined : json['version'],
+        'buildInfo': json['buildInfo'] == null ? undefined : json['buildInfo'],
+        'goVersion': json['goVersion'] == null ? undefined : json['goVersion'],
+        'version': json['version'] == null ? undefined : json['version'],
     };
 }
 
 export function MiscVersionResponseToJSON(value?: MiscVersionResponse | null): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    if (value === null) {
-        return null;
+    if (value == null) {
+        return value;
     }
     return {
         

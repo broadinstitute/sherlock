@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from '../runtime';
+import { mapValues } from '../runtime';
 /**
  * 
  * @export
@@ -87,41 +87,38 @@ export function SherlockGitCommitV3FromJSON(json: any): SherlockGitCommitV3 {
 }
 
 export function SherlockGitCommitV3FromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockGitCommitV3 {
-    if (json === undefined || json === null) {
+    if (json == null) {
         return json;
     }
     return {
         
-        'committedAt': !exists(json, 'committedAt') ? undefined : json['committedAt'],
-        'createdAt': !exists(json, 'createdAt') ? undefined : (new Date(json['createdAt'])),
-        'gitBranch': !exists(json, 'gitBranch') ? undefined : json['gitBranch'],
-        'gitCommit': !exists(json, 'gitCommit') ? undefined : json['gitCommit'],
-        'gitRepo': !exists(json, 'gitRepo') ? undefined : json['gitRepo'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'isMainBranch': !exists(json, 'isMainBranch') ? undefined : json['isMainBranch'],
-        'secSincePrev': !exists(json, 'secSincePrev') ? undefined : json['secSincePrev'],
-        'updatedAt': !exists(json, 'updatedAt') ? undefined : (new Date(json['updatedAt'])),
+        'committedAt': json['committedAt'] == null ? undefined : json['committedAt'],
+        'createdAt': json['createdAt'] == null ? undefined : (new Date(json['createdAt'])),
+        'gitBranch': json['gitBranch'] == null ? undefined : json['gitBranch'],
+        'gitCommit': json['gitCommit'] == null ? undefined : json['gitCommit'],
+        'gitRepo': json['gitRepo'] == null ? undefined : json['gitRepo'],
+        'id': json['id'] == null ? undefined : json['id'],
+        'isMainBranch': json['isMainBranch'] == null ? undefined : json['isMainBranch'],
+        'secSincePrev': json['secSincePrev'] == null ? undefined : json['secSincePrev'],
+        'updatedAt': json['updatedAt'] == null ? undefined : (new Date(json['updatedAt'])),
     };
 }
 
 export function SherlockGitCommitV3ToJSON(value?: SherlockGitCommitV3 | null): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    if (value === null) {
-        return null;
+    if (value == null) {
+        return value;
     }
     return {
         
         'committedAt': value['committedAt'],
-        'createdAt': !exists(value, 'createdAt') ? undefined : ((value['createdAt']).toISOString()),
+        'createdAt': value['createdAt'] == null ? undefined : ((value['createdAt']).toISOString()),
         'gitBranch': value['gitBranch'],
         'gitCommit': value['gitCommit'],
         'gitRepo': value['gitRepo'],
         'id': value['id'],
         'isMainBranch': value['isMainBranch'],
         'secSincePrev': value['secSincePrev'],
-        'updatedAt': !exists(value, 'updatedAt') ? undefined : ((value['updatedAt']).toISOString()),
+        'updatedAt': value['updatedAt'] == null ? undefined : ((value['updatedAt']).toISOString()),
     };
 }
 

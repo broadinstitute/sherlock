@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from '../runtime';
+import { mapValues } from '../runtime';
 /**
  * 
  * @export
@@ -81,39 +81,36 @@ export function SherlockIncidentV3FromJSON(json: any): SherlockIncidentV3 {
 }
 
 export function SherlockIncidentV3FromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockIncidentV3 {
-    if (json === undefined || json === null) {
+    if (json == null) {
         return json;
     }
     return {
         
-        'createdAt': !exists(json, 'createdAt') ? undefined : (new Date(json['createdAt'])),
-        'description': !exists(json, 'description') ? undefined : json['description'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'remediatedAt': !exists(json, 'remediatedAt') ? undefined : json['remediatedAt'],
-        'reviewCompletedAt': !exists(json, 'reviewCompletedAt') ? undefined : json['reviewCompletedAt'],
-        'startedAt': !exists(json, 'startedAt') ? undefined : json['startedAt'],
-        'ticket': !exists(json, 'ticket') ? undefined : json['ticket'],
-        'updatedAt': !exists(json, 'updatedAt') ? undefined : (new Date(json['updatedAt'])),
+        'createdAt': json['createdAt'] == null ? undefined : (new Date(json['createdAt'])),
+        'description': json['description'] == null ? undefined : json['description'],
+        'id': json['id'] == null ? undefined : json['id'],
+        'remediatedAt': json['remediatedAt'] == null ? undefined : json['remediatedAt'],
+        'reviewCompletedAt': json['reviewCompletedAt'] == null ? undefined : json['reviewCompletedAt'],
+        'startedAt': json['startedAt'] == null ? undefined : json['startedAt'],
+        'ticket': json['ticket'] == null ? undefined : json['ticket'],
+        'updatedAt': json['updatedAt'] == null ? undefined : (new Date(json['updatedAt'])),
     };
 }
 
 export function SherlockIncidentV3ToJSON(value?: SherlockIncidentV3 | null): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    if (value === null) {
-        return null;
+    if (value == null) {
+        return value;
     }
     return {
         
-        'createdAt': !exists(value, 'createdAt') ? undefined : ((value['createdAt']).toISOString()),
+        'createdAt': value['createdAt'] == null ? undefined : ((value['createdAt']).toISOString()),
         'description': value['description'],
         'id': value['id'],
         'remediatedAt': value['remediatedAt'],
         'reviewCompletedAt': value['reviewCompletedAt'],
         'startedAt': value['startedAt'],
         'ticket': value['ticket'],
-        'updatedAt': !exists(value, 'updatedAt') ? undefined : ((value['updatedAt']).toISOString()),
+        'updatedAt': value['updatedAt'] == null ? undefined : ((value['updatedAt']).toISOString()),
     };
 }
 

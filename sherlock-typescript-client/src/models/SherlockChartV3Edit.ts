@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from '../runtime';
+import { mapValues } from '../runtime';
 /**
  * 
  * @export
@@ -93,30 +93,27 @@ export function SherlockChartV3EditFromJSON(json: any): SherlockChartV3Edit {
 }
 
 export function SherlockChartV3EditFromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockChartV3Edit {
-    if (json === undefined || json === null) {
+    if (json == null) {
         return json;
     }
     return {
         
-        'appImageGitMainBranch': !exists(json, 'appImageGitMainBranch') ? undefined : json['appImageGitMainBranch'],
-        'appImageGitRepo': !exists(json, 'appImageGitRepo') ? undefined : json['appImageGitRepo'],
-        'chartExposesEndpoint': !exists(json, 'chartExposesEndpoint') ? undefined : json['chartExposesEndpoint'],
-        'chartRepo': !exists(json, 'chartRepo') ? undefined : json['chartRepo'],
-        'defaultPort': !exists(json, 'defaultPort') ? undefined : json['defaultPort'],
-        'defaultProtocol': !exists(json, 'defaultProtocol') ? undefined : json['defaultProtocol'],
-        'defaultSubdomain': !exists(json, 'defaultSubdomain') ? undefined : json['defaultSubdomain'],
-        'description': !exists(json, 'description') ? undefined : json['description'],
-        'pactParticipant': !exists(json, 'pactParticipant') ? undefined : json['pactParticipant'],
-        'playbookURL': !exists(json, 'playbookURL') ? undefined : json['playbookURL'],
+        'appImageGitMainBranch': json['appImageGitMainBranch'] == null ? undefined : json['appImageGitMainBranch'],
+        'appImageGitRepo': json['appImageGitRepo'] == null ? undefined : json['appImageGitRepo'],
+        'chartExposesEndpoint': json['chartExposesEndpoint'] == null ? undefined : json['chartExposesEndpoint'],
+        'chartRepo': json['chartRepo'] == null ? undefined : json['chartRepo'],
+        'defaultPort': json['defaultPort'] == null ? undefined : json['defaultPort'],
+        'defaultProtocol': json['defaultProtocol'] == null ? undefined : json['defaultProtocol'],
+        'defaultSubdomain': json['defaultSubdomain'] == null ? undefined : json['defaultSubdomain'],
+        'description': json['description'] == null ? undefined : json['description'],
+        'pactParticipant': json['pactParticipant'] == null ? undefined : json['pactParticipant'],
+        'playbookURL': json['playbookURL'] == null ? undefined : json['playbookURL'],
     };
 }
 
 export function SherlockChartV3EditToJSON(value?: SherlockChartV3Edit | null): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    if (value === null) {
-        return null;
+    if (value == null) {
+        return value;
     }
     return {
         

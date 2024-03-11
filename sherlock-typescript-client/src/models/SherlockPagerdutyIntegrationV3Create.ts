@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from '../runtime';
+import { mapValues } from '../runtime';
 /**
  * 
  * @export
@@ -57,24 +57,21 @@ export function SherlockPagerdutyIntegrationV3CreateFromJSON(json: any): Sherloc
 }
 
 export function SherlockPagerdutyIntegrationV3CreateFromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockPagerdutyIntegrationV3Create {
-    if (json === undefined || json === null) {
+    if (json == null) {
         return json;
     }
     return {
         
-        'key': !exists(json, 'key') ? undefined : json['key'],
-        'name': !exists(json, 'name') ? undefined : json['name'],
-        'pagerdutyID': !exists(json, 'pagerdutyID') ? undefined : json['pagerdutyID'],
-        'type': !exists(json, 'type') ? undefined : json['type'],
+        'key': json['key'] == null ? undefined : json['key'],
+        'name': json['name'] == null ? undefined : json['name'],
+        'pagerdutyID': json['pagerdutyID'] == null ? undefined : json['pagerdutyID'],
+        'type': json['type'] == null ? undefined : json['type'],
     };
 }
 
 export function SherlockPagerdutyIntegrationV3CreateToJSON(value?: SherlockPagerdutyIntegrationV3Create | null): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    if (value === null) {
-        return null;
+    if (value == null) {
+        return value;
     }
     return {
         

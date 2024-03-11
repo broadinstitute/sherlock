@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from '../runtime';
+import { mapValues } from '../runtime';
 /**
  * 
  * @export
@@ -57,24 +57,21 @@ export function SherlockChartVersionV3CreateFromJSON(json: any): SherlockChartVe
 }
 
 export function SherlockChartVersionV3CreateFromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockChartVersionV3Create {
-    if (json === undefined || json === null) {
+    if (json == null) {
         return json;
     }
     return {
         
-        'chart': !exists(json, 'chart') ? undefined : json['chart'],
-        'chartVersion': !exists(json, 'chartVersion') ? undefined : json['chartVersion'],
-        'description': !exists(json, 'description') ? undefined : json['description'],
-        'parentChartVersion': !exists(json, 'parentChartVersion') ? undefined : json['parentChartVersion'],
+        'chart': json['chart'] == null ? undefined : json['chart'],
+        'chartVersion': json['chartVersion'] == null ? undefined : json['chartVersion'],
+        'description': json['description'] == null ? undefined : json['description'],
+        'parentChartVersion': json['parentChartVersion'] == null ? undefined : json['parentChartVersion'],
     };
 }
 
 export function SherlockChartVersionV3CreateToJSON(value?: SherlockChartVersionV3Create | null): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    if (value === null) {
-        return null;
+    if (value == null) {
+        return value;
     }
     return {
         

@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from '../runtime';
+import { mapValues } from '../runtime';
 import type { SherlockAppVersionV3 } from './SherlockAppVersionV3';
 import {
     SherlockAppVersionV3FromJSON,
@@ -304,54 +304,51 @@ export function SherlockChartReleaseV3FromJSON(json: any): SherlockChartReleaseV
 }
 
 export function SherlockChartReleaseV3FromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockChartReleaseV3 {
-    if (json === undefined || json === null) {
+    if (json == null) {
         return json;
     }
     return {
         
-        'appVersionBranch': !exists(json, 'appVersionBranch') ? undefined : json['appVersionBranch'],
-        'appVersionCommit': !exists(json, 'appVersionCommit') ? undefined : json['appVersionCommit'],
-        'appVersionExact': !exists(json, 'appVersionExact') ? undefined : json['appVersionExact'],
-        'appVersionFollowChartRelease': !exists(json, 'appVersionFollowChartRelease') ? undefined : json['appVersionFollowChartRelease'],
-        'appVersionInfo': !exists(json, 'appVersionInfo') ? undefined : SherlockAppVersionV3FromJSON(json['appVersionInfo']),
-        'appVersionReference': !exists(json, 'appVersionReference') ? undefined : json['appVersionReference'],
-        'appVersionResolver': !exists(json, 'appVersionResolver') ? undefined : json['appVersionResolver'],
-        'chart': !exists(json, 'chart') ? undefined : json['chart'],
-        'chartInfo': !exists(json, 'chartInfo') ? undefined : SherlockChartV3FromJSON(json['chartInfo']),
-        'chartVersionExact': !exists(json, 'chartVersionExact') ? undefined : json['chartVersionExact'],
-        'chartVersionFollowChartRelease': !exists(json, 'chartVersionFollowChartRelease') ? undefined : json['chartVersionFollowChartRelease'],
-        'chartVersionInfo': !exists(json, 'chartVersionInfo') ? undefined : SherlockChartVersionV3FromJSON(json['chartVersionInfo']),
-        'chartVersionReference': !exists(json, 'chartVersionReference') ? undefined : json['chartVersionReference'],
-        'chartVersionResolver': !exists(json, 'chartVersionResolver') ? undefined : json['chartVersionResolver'],
-        'ciIdentifier': !exists(json, 'ciIdentifier') ? undefined : SherlockCiIdentifierV3FromJSON(json['ciIdentifier']),
-        'cluster': !exists(json, 'cluster') ? undefined : json['cluster'],
-        'clusterInfo': !exists(json, 'clusterInfo') ? undefined : SherlockClusterV3FromJSON(json['clusterInfo']),
-        'createdAt': !exists(json, 'createdAt') ? undefined : (new Date(json['createdAt'])),
-        'destinationType': !exists(json, 'destinationType') ? undefined : json['destinationType'],
-        'environment': !exists(json, 'environment') ? undefined : json['environment'],
-        'environmentInfo': !exists(json, 'environmentInfo') ? undefined : SherlockEnvironmentV3FromJSON(json['environmentInfo']),
-        'helmfileRef': !exists(json, 'helmfileRef') ? undefined : json['helmfileRef'],
-        'helmfileRefEnabled': !exists(json, 'helmfileRefEnabled') ? undefined : json['helmfileRefEnabled'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'includedInBulkChangesets': !exists(json, 'includedInBulkChangesets') ? undefined : json['includedInBulkChangesets'],
-        'name': !exists(json, 'name') ? undefined : json['name'],
-        'namespace': !exists(json, 'namespace') ? undefined : json['namespace'],
-        'pagerdutyIntegration': !exists(json, 'pagerdutyIntegration') ? undefined : json['pagerdutyIntegration'],
-        'pagerdutyIntegrationInfo': !exists(json, 'pagerdutyIntegrationInfo') ? undefined : SherlockPagerdutyIntegrationV3FromJSON(json['pagerdutyIntegrationInfo']),
-        'port': !exists(json, 'port') ? undefined : json['port'],
-        'protocol': !exists(json, 'protocol') ? undefined : json['protocol'],
-        'resolvedAt': !exists(json, 'resolvedAt') ? undefined : (new Date(json['resolvedAt'])),
-        'subdomain': !exists(json, 'subdomain') ? undefined : json['subdomain'],
-        'updatedAt': !exists(json, 'updatedAt') ? undefined : (new Date(json['updatedAt'])),
+        'appVersionBranch': json['appVersionBranch'] == null ? undefined : json['appVersionBranch'],
+        'appVersionCommit': json['appVersionCommit'] == null ? undefined : json['appVersionCommit'],
+        'appVersionExact': json['appVersionExact'] == null ? undefined : json['appVersionExact'],
+        'appVersionFollowChartRelease': json['appVersionFollowChartRelease'] == null ? undefined : json['appVersionFollowChartRelease'],
+        'appVersionInfo': json['appVersionInfo'] == null ? undefined : SherlockAppVersionV3FromJSON(json['appVersionInfo']),
+        'appVersionReference': json['appVersionReference'] == null ? undefined : json['appVersionReference'],
+        'appVersionResolver': json['appVersionResolver'] == null ? undefined : json['appVersionResolver'],
+        'chart': json['chart'] == null ? undefined : json['chart'],
+        'chartInfo': json['chartInfo'] == null ? undefined : SherlockChartV3FromJSON(json['chartInfo']),
+        'chartVersionExact': json['chartVersionExact'] == null ? undefined : json['chartVersionExact'],
+        'chartVersionFollowChartRelease': json['chartVersionFollowChartRelease'] == null ? undefined : json['chartVersionFollowChartRelease'],
+        'chartVersionInfo': json['chartVersionInfo'] == null ? undefined : SherlockChartVersionV3FromJSON(json['chartVersionInfo']),
+        'chartVersionReference': json['chartVersionReference'] == null ? undefined : json['chartVersionReference'],
+        'chartVersionResolver': json['chartVersionResolver'] == null ? undefined : json['chartVersionResolver'],
+        'ciIdentifier': json['ciIdentifier'] == null ? undefined : SherlockCiIdentifierV3FromJSON(json['ciIdentifier']),
+        'cluster': json['cluster'] == null ? undefined : json['cluster'],
+        'clusterInfo': json['clusterInfo'] == null ? undefined : SherlockClusterV3FromJSON(json['clusterInfo']),
+        'createdAt': json['createdAt'] == null ? undefined : (new Date(json['createdAt'])),
+        'destinationType': json['destinationType'] == null ? undefined : json['destinationType'],
+        'environment': json['environment'] == null ? undefined : json['environment'],
+        'environmentInfo': json['environmentInfo'] == null ? undefined : SherlockEnvironmentV3FromJSON(json['environmentInfo']),
+        'helmfileRef': json['helmfileRef'] == null ? undefined : json['helmfileRef'],
+        'helmfileRefEnabled': json['helmfileRefEnabled'] == null ? undefined : json['helmfileRefEnabled'],
+        'id': json['id'] == null ? undefined : json['id'],
+        'includedInBulkChangesets': json['includedInBulkChangesets'] == null ? undefined : json['includedInBulkChangesets'],
+        'name': json['name'] == null ? undefined : json['name'],
+        'namespace': json['namespace'] == null ? undefined : json['namespace'],
+        'pagerdutyIntegration': json['pagerdutyIntegration'] == null ? undefined : json['pagerdutyIntegration'],
+        'pagerdutyIntegrationInfo': json['pagerdutyIntegrationInfo'] == null ? undefined : SherlockPagerdutyIntegrationV3FromJSON(json['pagerdutyIntegrationInfo']),
+        'port': json['port'] == null ? undefined : json['port'],
+        'protocol': json['protocol'] == null ? undefined : json['protocol'],
+        'resolvedAt': json['resolvedAt'] == null ? undefined : (new Date(json['resolvedAt'])),
+        'subdomain': json['subdomain'] == null ? undefined : json['subdomain'],
+        'updatedAt': json['updatedAt'] == null ? undefined : (new Date(json['updatedAt'])),
     };
 }
 
 export function SherlockChartReleaseV3ToJSON(value?: SherlockChartReleaseV3 | null): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    if (value === null) {
-        return null;
+    if (value == null) {
+        return value;
     }
     return {
         
@@ -372,7 +369,7 @@ export function SherlockChartReleaseV3ToJSON(value?: SherlockChartReleaseV3 | nu
         'ciIdentifier': SherlockCiIdentifierV3ToJSON(value['ciIdentifier']),
         'cluster': value['cluster'],
         'clusterInfo': SherlockClusterV3ToJSON(value['clusterInfo']),
-        'createdAt': !exists(value, 'createdAt') ? undefined : ((value['createdAt']).toISOString()),
+        'createdAt': value['createdAt'] == null ? undefined : ((value['createdAt']).toISOString()),
         'destinationType': value['destinationType'],
         'environment': value['environment'],
         'environmentInfo': SherlockEnvironmentV3ToJSON(value['environmentInfo']),
@@ -386,9 +383,9 @@ export function SherlockChartReleaseV3ToJSON(value?: SherlockChartReleaseV3 | nu
         'pagerdutyIntegrationInfo': SherlockPagerdutyIntegrationV3ToJSON(value['pagerdutyIntegrationInfo']),
         'port': value['port'],
         'protocol': value['protocol'],
-        'resolvedAt': !exists(value, 'resolvedAt') ? undefined : ((value['resolvedAt']).toISOString()),
+        'resolvedAt': value['resolvedAt'] == null ? undefined : ((value['resolvedAt']).toISOString()),
         'subdomain': value['subdomain'],
-        'updatedAt': !exists(value, 'updatedAt') ? undefined : ((value['updatedAt']).toISOString()),
+        'updatedAt': value['updatedAt'] == null ? undefined : ((value['updatedAt']).toISOString()),
     };
 }
 

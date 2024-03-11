@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from '../runtime';
+import { mapValues } from '../runtime';
 /**
  * 
  * @export
@@ -63,25 +63,22 @@ export function SherlockChangesetV3PlanRequestEnvironmentEntryFromJSON(json: any
 }
 
 export function SherlockChangesetV3PlanRequestEnvironmentEntryFromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockChangesetV3PlanRequestEnvironmentEntry {
-    if (json === undefined || json === null) {
+    if (json == null) {
         return json;
     }
     return {
         
-        'environment': !exists(json, 'environment') ? undefined : json['environment'],
-        'excludeCharts': !exists(json, 'excludeCharts') ? undefined : json['excludeCharts'],
-        'followVersionsFromOtherEnvironment': !exists(json, 'followVersionsFromOtherEnvironment') ? undefined : json['followVersionsFromOtherEnvironment'],
-        'includeCharts': !exists(json, 'includeCharts') ? undefined : json['includeCharts'],
-        'useExactVersionsFromOtherEnvironment': !exists(json, 'useExactVersionsFromOtherEnvironment') ? undefined : json['useExactVersionsFromOtherEnvironment'],
+        'environment': json['environment'] == null ? undefined : json['environment'],
+        'excludeCharts': json['excludeCharts'] == null ? undefined : json['excludeCharts'],
+        'followVersionsFromOtherEnvironment': json['followVersionsFromOtherEnvironment'] == null ? undefined : json['followVersionsFromOtherEnvironment'],
+        'includeCharts': json['includeCharts'] == null ? undefined : json['includeCharts'],
+        'useExactVersionsFromOtherEnvironment': json['useExactVersionsFromOtherEnvironment'] == null ? undefined : json['useExactVersionsFromOtherEnvironment'],
     };
 }
 
 export function SherlockChangesetV3PlanRequestEnvironmentEntryToJSON(value?: SherlockChangesetV3PlanRequestEnvironmentEntry | null): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    if (value === null) {
-        return null;
+    if (value == null) {
+        return value;
     }
     return {
         

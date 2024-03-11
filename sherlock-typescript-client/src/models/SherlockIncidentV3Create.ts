@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from '../runtime';
+import { mapValues } from '../runtime';
 /**
  * 
  * @export
@@ -63,25 +63,22 @@ export function SherlockIncidentV3CreateFromJSON(json: any): SherlockIncidentV3C
 }
 
 export function SherlockIncidentV3CreateFromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockIncidentV3Create {
-    if (json === undefined || json === null) {
+    if (json == null) {
         return json;
     }
     return {
         
-        'description': !exists(json, 'description') ? undefined : json['description'],
-        'remediatedAt': !exists(json, 'remediatedAt') ? undefined : json['remediatedAt'],
-        'reviewCompletedAt': !exists(json, 'reviewCompletedAt') ? undefined : json['reviewCompletedAt'],
-        'startedAt': !exists(json, 'startedAt') ? undefined : json['startedAt'],
-        'ticket': !exists(json, 'ticket') ? undefined : json['ticket'],
+        'description': json['description'] == null ? undefined : json['description'],
+        'remediatedAt': json['remediatedAt'] == null ? undefined : json['remediatedAt'],
+        'reviewCompletedAt': json['reviewCompletedAt'] == null ? undefined : json['reviewCompletedAt'],
+        'startedAt': json['startedAt'] == null ? undefined : json['startedAt'],
+        'ticket': json['ticket'] == null ? undefined : json['ticket'],
     };
 }
 
 export function SherlockIncidentV3CreateToJSON(value?: SherlockIncidentV3Create | null): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    if (value === null) {
-        return null;
+    if (value == null) {
+        return value;
     }
     return {
         

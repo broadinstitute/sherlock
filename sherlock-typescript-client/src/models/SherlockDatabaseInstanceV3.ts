@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from '../runtime';
+import { mapValues } from '../runtime';
 import type { SherlockChartReleaseV3 } from './SherlockChartReleaseV3';
 import {
     SherlockChartReleaseV3FromJSON,
@@ -94,41 +94,38 @@ export function SherlockDatabaseInstanceV3FromJSON(json: any): SherlockDatabaseI
 }
 
 export function SherlockDatabaseInstanceV3FromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockDatabaseInstanceV3 {
-    if (json === undefined || json === null) {
+    if (json == null) {
         return json;
     }
     return {
         
-        'chartRelease': !exists(json, 'chartRelease') ? undefined : json['chartRelease'],
-        'chartReleaseInfo': !exists(json, 'chartReleaseInfo') ? undefined : SherlockChartReleaseV3FromJSON(json['chartReleaseInfo']),
-        'createdAt': !exists(json, 'createdAt') ? undefined : (new Date(json['createdAt'])),
-        'defaultDatabase': !exists(json, 'defaultDatabase') ? undefined : json['defaultDatabase'],
-        'googleProject': !exists(json, 'googleProject') ? undefined : json['googleProject'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'instanceName': !exists(json, 'instanceName') ? undefined : json['instanceName'],
-        'platform': !exists(json, 'platform') ? undefined : json['platform'],
-        'updatedAt': !exists(json, 'updatedAt') ? undefined : (new Date(json['updatedAt'])),
+        'chartRelease': json['chartRelease'] == null ? undefined : json['chartRelease'],
+        'chartReleaseInfo': json['chartReleaseInfo'] == null ? undefined : SherlockChartReleaseV3FromJSON(json['chartReleaseInfo']),
+        'createdAt': json['createdAt'] == null ? undefined : (new Date(json['createdAt'])),
+        'defaultDatabase': json['defaultDatabase'] == null ? undefined : json['defaultDatabase'],
+        'googleProject': json['googleProject'] == null ? undefined : json['googleProject'],
+        'id': json['id'] == null ? undefined : json['id'],
+        'instanceName': json['instanceName'] == null ? undefined : json['instanceName'],
+        'platform': json['platform'] == null ? undefined : json['platform'],
+        'updatedAt': json['updatedAt'] == null ? undefined : (new Date(json['updatedAt'])),
     };
 }
 
 export function SherlockDatabaseInstanceV3ToJSON(value?: SherlockDatabaseInstanceV3 | null): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    if (value === null) {
-        return null;
+    if (value == null) {
+        return value;
     }
     return {
         
         'chartRelease': value['chartRelease'],
         'chartReleaseInfo': SherlockChartReleaseV3ToJSON(value['chartReleaseInfo']),
-        'createdAt': !exists(value, 'createdAt') ? undefined : ((value['createdAt']).toISOString()),
+        'createdAt': value['createdAt'] == null ? undefined : ((value['createdAt']).toISOString()),
         'defaultDatabase': value['defaultDatabase'],
         'googleProject': value['googleProject'],
         'id': value['id'],
         'instanceName': value['instanceName'],
         'platform': value['platform'],
-        'updatedAt': !exists(value, 'updatedAt') ? undefined : ((value['updatedAt']).toISOString()),
+        'updatedAt': value['updatedAt'] == null ? undefined : ((value['updatedAt']).toISOString()),
     };
 }
 

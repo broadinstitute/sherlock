@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from '../runtime';
+import { mapValues } from '../runtime';
 /**
  * 
  * @export
@@ -177,40 +177,37 @@ export function SherlockChartReleaseV3CreateFromJSON(json: any): SherlockChartRe
 }
 
 export function SherlockChartReleaseV3CreateFromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockChartReleaseV3Create {
-    if (json === undefined || json === null) {
+    if (json == null) {
         return json;
     }
     return {
         
-        'appVersionBranch': !exists(json, 'appVersionBranch') ? undefined : json['appVersionBranch'],
-        'appVersionCommit': !exists(json, 'appVersionCommit') ? undefined : json['appVersionCommit'],
-        'appVersionExact': !exists(json, 'appVersionExact') ? undefined : json['appVersionExact'],
-        'appVersionFollowChartRelease': !exists(json, 'appVersionFollowChartRelease') ? undefined : json['appVersionFollowChartRelease'],
-        'appVersionResolver': !exists(json, 'appVersionResolver') ? undefined : json['appVersionResolver'],
-        'chart': !exists(json, 'chart') ? undefined : json['chart'],
-        'chartVersionExact': !exists(json, 'chartVersionExact') ? undefined : json['chartVersionExact'],
-        'chartVersionFollowChartRelease': !exists(json, 'chartVersionFollowChartRelease') ? undefined : json['chartVersionFollowChartRelease'],
-        'chartVersionResolver': !exists(json, 'chartVersionResolver') ? undefined : json['chartVersionResolver'],
-        'cluster': !exists(json, 'cluster') ? undefined : json['cluster'],
-        'environment': !exists(json, 'environment') ? undefined : json['environment'],
-        'helmfileRef': !exists(json, 'helmfileRef') ? undefined : json['helmfileRef'],
-        'helmfileRefEnabled': !exists(json, 'helmfileRefEnabled') ? undefined : json['helmfileRefEnabled'],
-        'includedInBulkChangesets': !exists(json, 'includedInBulkChangesets') ? undefined : json['includedInBulkChangesets'],
-        'name': !exists(json, 'name') ? undefined : json['name'],
-        'namespace': !exists(json, 'namespace') ? undefined : json['namespace'],
-        'pagerdutyIntegration': !exists(json, 'pagerdutyIntegration') ? undefined : json['pagerdutyIntegration'],
-        'port': !exists(json, 'port') ? undefined : json['port'],
-        'protocol': !exists(json, 'protocol') ? undefined : json['protocol'],
-        'subdomain': !exists(json, 'subdomain') ? undefined : json['subdomain'],
+        'appVersionBranch': json['appVersionBranch'] == null ? undefined : json['appVersionBranch'],
+        'appVersionCommit': json['appVersionCommit'] == null ? undefined : json['appVersionCommit'],
+        'appVersionExact': json['appVersionExact'] == null ? undefined : json['appVersionExact'],
+        'appVersionFollowChartRelease': json['appVersionFollowChartRelease'] == null ? undefined : json['appVersionFollowChartRelease'],
+        'appVersionResolver': json['appVersionResolver'] == null ? undefined : json['appVersionResolver'],
+        'chart': json['chart'] == null ? undefined : json['chart'],
+        'chartVersionExact': json['chartVersionExact'] == null ? undefined : json['chartVersionExact'],
+        'chartVersionFollowChartRelease': json['chartVersionFollowChartRelease'] == null ? undefined : json['chartVersionFollowChartRelease'],
+        'chartVersionResolver': json['chartVersionResolver'] == null ? undefined : json['chartVersionResolver'],
+        'cluster': json['cluster'] == null ? undefined : json['cluster'],
+        'environment': json['environment'] == null ? undefined : json['environment'],
+        'helmfileRef': json['helmfileRef'] == null ? undefined : json['helmfileRef'],
+        'helmfileRefEnabled': json['helmfileRefEnabled'] == null ? undefined : json['helmfileRefEnabled'],
+        'includedInBulkChangesets': json['includedInBulkChangesets'] == null ? undefined : json['includedInBulkChangesets'],
+        'name': json['name'] == null ? undefined : json['name'],
+        'namespace': json['namespace'] == null ? undefined : json['namespace'],
+        'pagerdutyIntegration': json['pagerdutyIntegration'] == null ? undefined : json['pagerdutyIntegration'],
+        'port': json['port'] == null ? undefined : json['port'],
+        'protocol': json['protocol'] == null ? undefined : json['protocol'],
+        'subdomain': json['subdomain'] == null ? undefined : json['subdomain'],
     };
 }
 
 export function SherlockChartReleaseV3CreateToJSON(value?: SherlockChartReleaseV3Create | null): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    if (value === null) {
-        return null;
+    if (value == null) {
+        return value;
     }
     return {
         

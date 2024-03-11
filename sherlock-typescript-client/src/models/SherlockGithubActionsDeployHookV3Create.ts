@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from '../runtime';
+import { mapValues } from '../runtime';
 /**
  * 
  * @export
@@ -105,30 +105,27 @@ export function SherlockGithubActionsDeployHookV3CreateFromJSON(json: any): Sher
 }
 
 export function SherlockGithubActionsDeployHookV3CreateFromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockGithubActionsDeployHookV3Create {
-    if (json === undefined || json === null) {
+    if (json == null) {
         return json;
     }
     return {
         
-        'githubActionsDefaultRef': !exists(json, 'githubActionsDefaultRef') ? undefined : json['githubActionsDefaultRef'],
-        'githubActionsOwner': !exists(json, 'githubActionsOwner') ? undefined : json['githubActionsOwner'],
-        'githubActionsRefBehavior': !exists(json, 'githubActionsRefBehavior') ? undefined : json['githubActionsRefBehavior'],
-        'githubActionsRepo': !exists(json, 'githubActionsRepo') ? undefined : json['githubActionsRepo'],
-        'githubActionsWorkflowInputs': !exists(json, 'githubActionsWorkflowInputs') ? undefined : json['githubActionsWorkflowInputs'],
-        'githubActionsWorkflowPath': !exists(json, 'githubActionsWorkflowPath') ? undefined : json['githubActionsWorkflowPath'],
-        'onChartRelease': !exists(json, 'onChartRelease') ? undefined : json['onChartRelease'],
-        'onEnvironment': !exists(json, 'onEnvironment') ? undefined : json['onEnvironment'],
-        'onFailure': !exists(json, 'onFailure') ? undefined : json['onFailure'],
-        'onSuccess': !exists(json, 'onSuccess') ? undefined : json['onSuccess'],
+        'githubActionsDefaultRef': json['githubActionsDefaultRef'] == null ? undefined : json['githubActionsDefaultRef'],
+        'githubActionsOwner': json['githubActionsOwner'] == null ? undefined : json['githubActionsOwner'],
+        'githubActionsRefBehavior': json['githubActionsRefBehavior'] == null ? undefined : json['githubActionsRefBehavior'],
+        'githubActionsRepo': json['githubActionsRepo'] == null ? undefined : json['githubActionsRepo'],
+        'githubActionsWorkflowInputs': json['githubActionsWorkflowInputs'] == null ? undefined : json['githubActionsWorkflowInputs'],
+        'githubActionsWorkflowPath': json['githubActionsWorkflowPath'] == null ? undefined : json['githubActionsWorkflowPath'],
+        'onChartRelease': json['onChartRelease'] == null ? undefined : json['onChartRelease'],
+        'onEnvironment': json['onEnvironment'] == null ? undefined : json['onEnvironment'],
+        'onFailure': json['onFailure'] == null ? undefined : json['onFailure'],
+        'onSuccess': json['onSuccess'] == null ? undefined : json['onSuccess'],
     };
 }
 
 export function SherlockGithubActionsDeployHookV3CreateToJSON(value?: SherlockGithubActionsDeployHookV3Create | null): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    if (value === null) {
-        return null;
+    if (value == null) {
+        return value;
     }
     return {
         

@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from '../runtime';
+import { mapValues } from '../runtime';
 /**
  * 
  * @export
@@ -57,24 +57,21 @@ export function SherlockClusterV3EditFromJSON(json: any): SherlockClusterV3Edit 
 }
 
 export function SherlockClusterV3EditFromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockClusterV3Edit {
-    if (json === undefined || json === null) {
+    if (json == null) {
         return json;
     }
     return {
         
-        'address': !exists(json, 'address') ? undefined : json['address'],
-        'base': !exists(json, 'base') ? undefined : json['base'],
-        'helmfileRef': !exists(json, 'helmfileRef') ? undefined : json['helmfileRef'],
-        'requiresSuitability': !exists(json, 'requiresSuitability') ? undefined : json['requiresSuitability'],
+        'address': json['address'] == null ? undefined : json['address'],
+        'base': json['base'] == null ? undefined : json['base'],
+        'helmfileRef': json['helmfileRef'] == null ? undefined : json['helmfileRef'],
+        'requiresSuitability': json['requiresSuitability'] == null ? undefined : json['requiresSuitability'],
     };
 }
 
 export function SherlockClusterV3EditToJSON(value?: SherlockClusterV3Edit | null): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    if (value === null) {
-        return null;
+    if (value == null) {
+        return value;
     }
     return {
         

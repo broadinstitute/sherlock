@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from '../runtime';
+import { mapValues } from '../runtime';
 /**
  * 
  * @export
@@ -39,21 +39,18 @@ export function SherlockChartVersionV3EditFromJSON(json: any): SherlockChartVers
 }
 
 export function SherlockChartVersionV3EditFromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockChartVersionV3Edit {
-    if (json === undefined || json === null) {
+    if (json == null) {
         return json;
     }
     return {
         
-        'description': !exists(json, 'description') ? undefined : json['description'],
+        'description': json['description'] == null ? undefined : json['description'],
     };
 }
 
 export function SherlockChartVersionV3EditToJSON(value?: SherlockChartVersionV3Edit | null): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    if (value === null) {
-        return null;
+    if (value == null) {
+        return value;
     }
     return {
         

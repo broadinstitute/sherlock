@@ -77,59 +77,59 @@ export class ClustersApi extends runtime.BaseAPI {
     async apiClustersV3GetRaw(requestParameters: ApiClustersV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockClusterV3>>> {
         const queryParameters: any = {};
 
-        if (runtime.exists(requestParameters, 'address')) {
+        if (requestParameters['address'] != null) {
             queryParameters['address'] = requestParameters['address'];
         }
 
-        if (runtime.exists(requestParameters, 'azureSubscription')) {
+        if (requestParameters['azureSubscription'] != null) {
             queryParameters['azureSubscription'] = requestParameters['azureSubscription'];
         }
 
-        if (runtime.exists(requestParameters, 'base')) {
+        if (requestParameters['base'] != null) {
             queryParameters['base'] = requestParameters['base'];
         }
 
-        if (runtime.exists(requestParameters, 'createdAt')) {
+        if (requestParameters['createdAt'] != null) {
             queryParameters['createdAt'] = (requestParameters['createdAt'] as any).toISOString();
         }
 
-        if (runtime.exists(requestParameters, 'googleProject')) {
+        if (requestParameters['googleProject'] != null) {
             queryParameters['googleProject'] = requestParameters['googleProject'];
         }
 
-        if (runtime.exists(requestParameters, 'helmfileRef')) {
+        if (requestParameters['helmfileRef'] != null) {
             queryParameters['helmfileRef'] = requestParameters['helmfileRef'];
         }
 
-        if (runtime.exists(requestParameters, 'id')) {
+        if (requestParameters['id'] != null) {
             queryParameters['id'] = requestParameters['id'];
         }
 
-        if (runtime.exists(requestParameters, 'location')) {
+        if (requestParameters['location'] != null) {
             queryParameters['location'] = requestParameters['location'];
         }
 
-        if (runtime.exists(requestParameters, 'name')) {
+        if (requestParameters['name'] != null) {
             queryParameters['name'] = requestParameters['name'];
         }
 
-        if (runtime.exists(requestParameters, 'provider')) {
+        if (requestParameters['provider'] != null) {
             queryParameters['provider'] = requestParameters['provider'];
         }
 
-        if (runtime.exists(requestParameters, 'requiresSuitability')) {
+        if (requestParameters['requiresSuitability'] != null) {
             queryParameters['requiresSuitability'] = requestParameters['requiresSuitability'];
         }
 
-        if (runtime.exists(requestParameters, 'updatedAt')) {
+        if (requestParameters['updatedAt'] != null) {
             queryParameters['updatedAt'] = (requestParameters['updatedAt'] as any).toISOString();
         }
 
-        if (runtime.exists(requestParameters, 'limit')) {
+        if (requestParameters['limit'] != null) {
             queryParameters['limit'] = requestParameters['limit'];
         }
 
-        if (runtime.exists(requestParameters, 'offset')) {
+        if (requestParameters['offset'] != null) {
             queryParameters['offset'] = requestParameters['offset'];
         }
 
@@ -159,7 +159,7 @@ export class ClustersApi extends runtime.BaseAPI {
      * Create a Cluster
      */
     async apiClustersV3PostRaw(requestParameters: ApiClustersV3PostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockClusterV3>> {
-        if (!runtime.exists(requestParameters, 'cluster')) {
+        if (requestParameters['cluster'] == null) {
             throw new runtime.RequiredError(
                 'cluster',
                 'Required parameter "cluster" was null or undefined when calling apiClustersV3Post().'
@@ -197,7 +197,7 @@ export class ClustersApi extends runtime.BaseAPI {
      * Delete an individual Cluster
      */
     async apiClustersV3SelectorDeleteRaw(requestParameters: ApiClustersV3SelectorDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockClusterV3>> {
-        if (!runtime.exists(requestParameters, 'selector')) {
+        if (requestParameters['selector'] == null) {
             throw new runtime.RequiredError(
                 'selector',
                 'Required parameter "selector" was null or undefined when calling apiClustersV3SelectorDelete().'
@@ -232,7 +232,7 @@ export class ClustersApi extends runtime.BaseAPI {
      * Get an individual Cluster
      */
     async apiClustersV3SelectorGetRaw(requestParameters: ApiClustersV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockClusterV3>> {
-        if (!runtime.exists(requestParameters, 'selector')) {
+        if (requestParameters['selector'] == null) {
             throw new runtime.RequiredError(
                 'selector',
                 'Required parameter "selector" was null or undefined when calling apiClustersV3SelectorGet().'
@@ -267,14 +267,14 @@ export class ClustersApi extends runtime.BaseAPI {
      * Edit an individual Cluster
      */
     async apiClustersV3SelectorPatchRaw(requestParameters: ApiClustersV3SelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockClusterV3>> {
-        if (!runtime.exists(requestParameters, 'selector')) {
+        if (requestParameters['selector'] == null) {
             throw new runtime.RequiredError(
                 'selector',
                 'Required parameter "selector" was null or undefined when calling apiClustersV3SelectorPatch().'
             );
         }
 
-        if (!runtime.exists(requestParameters, 'cluster')) {
+        if (requestParameters['cluster'] == null) {
             throw new runtime.RequiredError(
                 'cluster',
                 'Required parameter "cluster" was null or undefined when calling apiClustersV3SelectorPatch().'

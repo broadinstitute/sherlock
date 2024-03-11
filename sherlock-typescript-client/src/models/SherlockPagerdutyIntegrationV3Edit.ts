@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from '../runtime';
+import { mapValues } from '../runtime';
 /**
  * 
  * @export
@@ -51,23 +51,20 @@ export function SherlockPagerdutyIntegrationV3EditFromJSON(json: any): SherlockP
 }
 
 export function SherlockPagerdutyIntegrationV3EditFromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockPagerdutyIntegrationV3Edit {
-    if (json === undefined || json === null) {
+    if (json == null) {
         return json;
     }
     return {
         
-        'key': !exists(json, 'key') ? undefined : json['key'],
-        'name': !exists(json, 'name') ? undefined : json['name'],
-        'type': !exists(json, 'type') ? undefined : json['type'],
+        'key': json['key'] == null ? undefined : json['key'],
+        'name': json['name'] == null ? undefined : json['name'],
+        'type': json['type'] == null ? undefined : json['type'],
     };
 }
 
 export function SherlockPagerdutyIntegrationV3EditToJSON(value?: SherlockPagerdutyIntegrationV3Edit | null): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    if (value === null) {
-        return null;
+    if (value == null) {
+        return value;
     }
     return {
         

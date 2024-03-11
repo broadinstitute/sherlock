@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from '../runtime';
+import { mapValues } from '../runtime';
 /**
  * 
  * @export
@@ -196,45 +196,42 @@ export function SherlockCiRunV3UpsertFromJSON(json: any): SherlockCiRunV3Upsert 
 }
 
 export function SherlockCiRunV3UpsertFromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockCiRunV3Upsert {
-    if (json === undefined || json === null) {
+    if (json == null) {
         return json;
     }
     return {
         
-        'appVersions': !exists(json, 'appVersions') ? undefined : json['appVersions'],
-        'argoWorkflowsName': !exists(json, 'argoWorkflowsName') ? undefined : json['argoWorkflowsName'],
-        'argoWorkflowsNamespace': !exists(json, 'argoWorkflowsNamespace') ? undefined : json['argoWorkflowsNamespace'],
-        'argoWorkflowsTemplate': !exists(json, 'argoWorkflowsTemplate') ? undefined : json['argoWorkflowsTemplate'],
-        'changesets': !exists(json, 'changesets') ? undefined : json['changesets'],
-        'chartReleaseStatuses': !exists(json, 'chartReleaseStatuses') ? undefined : json['chartReleaseStatuses'],
-        'chartReleases': !exists(json, 'chartReleases') ? undefined : json['chartReleases'],
-        'chartVersions': !exists(json, 'chartVersions') ? undefined : json['chartVersions'],
-        'charts': !exists(json, 'charts') ? undefined : json['charts'],
-        'clusters': !exists(json, 'clusters') ? undefined : json['clusters'],
-        'environments': !exists(json, 'environments') ? undefined : json['environments'],
-        'githubActionsAttemptNumber': !exists(json, 'githubActionsAttemptNumber') ? undefined : json['githubActionsAttemptNumber'],
-        'githubActionsOwner': !exists(json, 'githubActionsOwner') ? undefined : json['githubActionsOwner'],
-        'githubActionsRepo': !exists(json, 'githubActionsRepo') ? undefined : json['githubActionsRepo'],
-        'githubActionsRunID': !exists(json, 'githubActionsRunID') ? undefined : json['githubActionsRunID'],
-        'githubActionsWorkflowPath': !exists(json, 'githubActionsWorkflowPath') ? undefined : json['githubActionsWorkflowPath'],
-        'ignoreBadSelectors': !exists(json, 'ignoreBadSelectors') ? undefined : json['ignoreBadSelectors'],
-        'notifySlackChannelsUponFailure': !exists(json, 'notifySlackChannelsUponFailure') ? undefined : json['notifySlackChannelsUponFailure'],
-        'notifySlackChannelsUponSuccess': !exists(json, 'notifySlackChannelsUponSuccess') ? undefined : json['notifySlackChannelsUponSuccess'],
-        'notifySlackCustomIcon': !exists(json, 'notifySlackCustomIcon') ? undefined : json['notifySlackCustomIcon'],
-        'platform': !exists(json, 'platform') ? undefined : json['platform'],
-        'relateToChangesetNewVersions': !exists(json, 'relateToChangesetNewVersions') ? undefined : json['relateToChangesetNewVersions'],
-        'startedAt': !exists(json, 'startedAt') ? undefined : json['startedAt'],
-        'status': !exists(json, 'status') ? undefined : json['status'],
-        'terminalAt': !exists(json, 'terminalAt') ? undefined : json['terminalAt'],
+        'appVersions': json['appVersions'] == null ? undefined : json['appVersions'],
+        'argoWorkflowsName': json['argoWorkflowsName'] == null ? undefined : json['argoWorkflowsName'],
+        'argoWorkflowsNamespace': json['argoWorkflowsNamespace'] == null ? undefined : json['argoWorkflowsNamespace'],
+        'argoWorkflowsTemplate': json['argoWorkflowsTemplate'] == null ? undefined : json['argoWorkflowsTemplate'],
+        'changesets': json['changesets'] == null ? undefined : json['changesets'],
+        'chartReleaseStatuses': json['chartReleaseStatuses'] == null ? undefined : json['chartReleaseStatuses'],
+        'chartReleases': json['chartReleases'] == null ? undefined : json['chartReleases'],
+        'chartVersions': json['chartVersions'] == null ? undefined : json['chartVersions'],
+        'charts': json['charts'] == null ? undefined : json['charts'],
+        'clusters': json['clusters'] == null ? undefined : json['clusters'],
+        'environments': json['environments'] == null ? undefined : json['environments'],
+        'githubActionsAttemptNumber': json['githubActionsAttemptNumber'] == null ? undefined : json['githubActionsAttemptNumber'],
+        'githubActionsOwner': json['githubActionsOwner'] == null ? undefined : json['githubActionsOwner'],
+        'githubActionsRepo': json['githubActionsRepo'] == null ? undefined : json['githubActionsRepo'],
+        'githubActionsRunID': json['githubActionsRunID'] == null ? undefined : json['githubActionsRunID'],
+        'githubActionsWorkflowPath': json['githubActionsWorkflowPath'] == null ? undefined : json['githubActionsWorkflowPath'],
+        'ignoreBadSelectors': json['ignoreBadSelectors'] == null ? undefined : json['ignoreBadSelectors'],
+        'notifySlackChannelsUponFailure': json['notifySlackChannelsUponFailure'] == null ? undefined : json['notifySlackChannelsUponFailure'],
+        'notifySlackChannelsUponSuccess': json['notifySlackChannelsUponSuccess'] == null ? undefined : json['notifySlackChannelsUponSuccess'],
+        'notifySlackCustomIcon': json['notifySlackCustomIcon'] == null ? undefined : json['notifySlackCustomIcon'],
+        'platform': json['platform'] == null ? undefined : json['platform'],
+        'relateToChangesetNewVersions': json['relateToChangesetNewVersions'] == null ? undefined : json['relateToChangesetNewVersions'],
+        'startedAt': json['startedAt'] == null ? undefined : json['startedAt'],
+        'status': json['status'] == null ? undefined : json['status'],
+        'terminalAt': json['terminalAt'] == null ? undefined : json['terminalAt'],
     };
 }
 
 export function SherlockCiRunV3UpsertToJSON(value?: SherlockCiRunV3Upsert | null): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    if (value === null) {
-        return null;
+    if (value == null) {
+        return value;
     }
     return {
         

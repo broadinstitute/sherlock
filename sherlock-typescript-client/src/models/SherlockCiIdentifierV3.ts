@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from '../runtime';
+import { mapValues } from '../runtime';
 import type { SherlockCiRunV3 } from './SherlockCiRunV3';
 import {
     SherlockCiRunV3FromJSON,
@@ -82,37 +82,34 @@ export function SherlockCiIdentifierV3FromJSON(json: any): SherlockCiIdentifierV
 }
 
 export function SherlockCiIdentifierV3FromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockCiIdentifierV3 {
-    if (json === undefined || json === null) {
+    if (json == null) {
         return json;
     }
     return {
         
-        'ciRuns': !exists(json, 'ciRuns') ? undefined : ((json['ciRuns'] as Array<any>).map(SherlockCiRunV3FromJSON)),
-        'createdAt': !exists(json, 'createdAt') ? undefined : (new Date(json['createdAt'])),
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'resourceID': !exists(json, 'resourceID') ? undefined : json['resourceID'],
-        'resourceStatus': !exists(json, 'resourceStatus') ? undefined : json['resourceStatus'],
-        'resourceType': !exists(json, 'resourceType') ? undefined : json['resourceType'],
-        'updatedAt': !exists(json, 'updatedAt') ? undefined : (new Date(json['updatedAt'])),
+        'ciRuns': json['ciRuns'] == null ? undefined : ((json['ciRuns'] as Array<any>).map(SherlockCiRunV3FromJSON)),
+        'createdAt': json['createdAt'] == null ? undefined : (new Date(json['createdAt'])),
+        'id': json['id'] == null ? undefined : json['id'],
+        'resourceID': json['resourceID'] == null ? undefined : json['resourceID'],
+        'resourceStatus': json['resourceStatus'] == null ? undefined : json['resourceStatus'],
+        'resourceType': json['resourceType'] == null ? undefined : json['resourceType'],
+        'updatedAt': json['updatedAt'] == null ? undefined : (new Date(json['updatedAt'])),
     };
 }
 
 export function SherlockCiIdentifierV3ToJSON(value?: SherlockCiIdentifierV3 | null): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    if (value === null) {
-        return null;
+    if (value == null) {
+        return value;
     }
     return {
         
-        'ciRuns': !exists(value, 'ciRuns') ? undefined : ((value['ciRuns'] as Array<any>).map(SherlockCiRunV3ToJSON)),
-        'createdAt': !exists(value, 'createdAt') ? undefined : ((value['createdAt']).toISOString()),
+        'ciRuns': value['ciRuns'] == null ? undefined : ((value['ciRuns'] as Array<any>).map(SherlockCiRunV3ToJSON)),
+        'createdAt': value['createdAt'] == null ? undefined : ((value['createdAt']).toISOString()),
         'id': value['id'],
         'resourceID': value['resourceID'],
         'resourceStatus': value['resourceStatus'],
         'resourceType': value['resourceType'],
-        'updatedAt': !exists(value, 'updatedAt') ? undefined : ((value['updatedAt']).toISOString()),
+        'updatedAt': value['updatedAt'] == null ? undefined : ((value['updatedAt']).toISOString()),
     };
 }
 

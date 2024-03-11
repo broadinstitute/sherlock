@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from '../runtime';
+import { mapValues } from '../runtime';
 /**
  * 
  * @export
@@ -63,25 +63,22 @@ export function SherlockGitCommitV3UpsertFromJSON(json: any): SherlockGitCommitV
 }
 
 export function SherlockGitCommitV3UpsertFromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockGitCommitV3Upsert {
-    if (json === undefined || json === null) {
+    if (json == null) {
         return json;
     }
     return {
         
-        'committedAt': !exists(json, 'committedAt') ? undefined : json['committedAt'],
-        'gitBranch': !exists(json, 'gitBranch') ? undefined : json['gitBranch'],
-        'gitCommit': !exists(json, 'gitCommit') ? undefined : json['gitCommit'],
-        'gitRepo': !exists(json, 'gitRepo') ? undefined : json['gitRepo'],
-        'isMainBranch': !exists(json, 'isMainBranch') ? undefined : json['isMainBranch'],
+        'committedAt': json['committedAt'] == null ? undefined : json['committedAt'],
+        'gitBranch': json['gitBranch'] == null ? undefined : json['gitBranch'],
+        'gitCommit': json['gitCommit'] == null ? undefined : json['gitCommit'],
+        'gitRepo': json['gitRepo'] == null ? undefined : json['gitRepo'],
+        'isMainBranch': json['isMainBranch'] == null ? undefined : json['isMainBranch'],
     };
 }
 
 export function SherlockGitCommitV3UpsertToJSON(value?: SherlockGitCommitV3Upsert | null): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    if (value === null) {
-        return null;
+    if (value == null) {
+        return value;
     }
     return {
         

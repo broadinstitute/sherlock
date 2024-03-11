@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from '../runtime';
+import { mapValues } from '../runtime';
 /**
  * 
  * @export
@@ -130,38 +130,35 @@ export function SherlockUserV3FromJSON(json: any): SherlockUserV3 {
 }
 
 export function SherlockUserV3FromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockUserV3 {
-    if (json === undefined || json === null) {
+    if (json == null) {
         return json;
     }
     return {
         
-        'createdAt': !exists(json, 'createdAt') ? undefined : (new Date(json['createdAt'])),
-        'email': !exists(json, 'email') ? undefined : json['email'],
-        'githubID': !exists(json, 'githubID') ? undefined : json['githubID'],
-        'githubUsername': !exists(json, 'githubUsername') ? undefined : json['githubUsername'],
-        'googleID': !exists(json, 'googleID') ? undefined : json['googleID'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'name': !exists(json, 'name') ? undefined : json['name'],
-        'nameFrom': !exists(json, 'nameFrom') ? undefined : json['nameFrom'],
-        'nameInferredFromGithub': !exists(json, 'nameInferredFromGithub') ? undefined : json['nameInferredFromGithub'],
-        'slackID': !exists(json, 'slackID') ? undefined : json['slackID'],
-        'slackUsername': !exists(json, 'slackUsername') ? undefined : json['slackUsername'],
-        'suitabilityDescription': !exists(json, 'suitabilityDescription') ? undefined : json['suitabilityDescription'],
-        'suitable': !exists(json, 'suitable') ? undefined : json['suitable'],
-        'updatedAt': !exists(json, 'updatedAt') ? undefined : (new Date(json['updatedAt'])),
+        'createdAt': json['createdAt'] == null ? undefined : (new Date(json['createdAt'])),
+        'email': json['email'] == null ? undefined : json['email'],
+        'githubID': json['githubID'] == null ? undefined : json['githubID'],
+        'githubUsername': json['githubUsername'] == null ? undefined : json['githubUsername'],
+        'googleID': json['googleID'] == null ? undefined : json['googleID'],
+        'id': json['id'] == null ? undefined : json['id'],
+        'name': json['name'] == null ? undefined : json['name'],
+        'nameFrom': json['nameFrom'] == null ? undefined : json['nameFrom'],
+        'nameInferredFromGithub': json['nameInferredFromGithub'] == null ? undefined : json['nameInferredFromGithub'],
+        'slackID': json['slackID'] == null ? undefined : json['slackID'],
+        'slackUsername': json['slackUsername'] == null ? undefined : json['slackUsername'],
+        'suitabilityDescription': json['suitabilityDescription'] == null ? undefined : json['suitabilityDescription'],
+        'suitable': json['suitable'] == null ? undefined : json['suitable'],
+        'updatedAt': json['updatedAt'] == null ? undefined : (new Date(json['updatedAt'])),
     };
 }
 
 export function SherlockUserV3ToJSON(value?: SherlockUserV3 | null): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    if (value === null) {
-        return null;
+    if (value == null) {
+        return value;
     }
     return {
         
-        'createdAt': !exists(value, 'createdAt') ? undefined : ((value['createdAt']).toISOString()),
+        'createdAt': value['createdAt'] == null ? undefined : ((value['createdAt']).toISOString()),
         'email': value['email'],
         'githubID': value['githubID'],
         'githubUsername': value['githubUsername'],
@@ -174,7 +171,7 @@ export function SherlockUserV3ToJSON(value?: SherlockUserV3 | null): any {
         'slackUsername': value['slackUsername'],
         'suitabilityDescription': value['suitabilityDescription'],
         'suitable': value['suitable'],
-        'updatedAt': !exists(value, 'updatedAt') ? undefined : ((value['updatedAt']).toISOString()),
+        'updatedAt': value['updatedAt'] == null ? undefined : ((value['updatedAt']).toISOString()),
     };
 }
 

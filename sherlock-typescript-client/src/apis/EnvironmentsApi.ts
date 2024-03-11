@@ -93,123 +93,123 @@ export class EnvironmentsApi extends runtime.BaseAPI {
     async apiEnvironmentsV3GetRaw(requestParameters: ApiEnvironmentsV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockEnvironmentV3>>> {
         const queryParameters: any = {};
 
-        if (runtime.exists(requestParameters, 'autoPopulateChartReleases')) {
+        if (requestParameters['autoPopulateChartReleases'] != null) {
             queryParameters['autoPopulateChartReleases'] = requestParameters['autoPopulateChartReleases'];
         }
 
-        if (runtime.exists(requestParameters, 'base')) {
+        if (requestParameters['base'] != null) {
             queryParameters['base'] = requestParameters['base'];
         }
 
-        if (runtime.exists(requestParameters, 'baseDomain')) {
+        if (requestParameters['baseDomain'] != null) {
             queryParameters['baseDomain'] = requestParameters['baseDomain'];
         }
 
-        if (runtime.exists(requestParameters, 'createdAt')) {
+        if (requestParameters['createdAt'] != null) {
             queryParameters['createdAt'] = (requestParameters['createdAt'] as any).toISOString();
         }
 
-        if (runtime.exists(requestParameters, 'defaultCluster')) {
+        if (requestParameters['defaultCluster'] != null) {
             queryParameters['defaultCluster'] = requestParameters['defaultCluster'];
         }
 
-        if (runtime.exists(requestParameters, 'defaultNamespace')) {
+        if (requestParameters['defaultNamespace'] != null) {
             queryParameters['defaultNamespace'] = requestParameters['defaultNamespace'];
         }
 
-        if (runtime.exists(requestParameters, 'deleteAfter')) {
+        if (requestParameters['deleteAfter'] != null) {
             queryParameters['deleteAfter'] = (requestParameters['deleteAfter'] as any).toISOString();
         }
 
-        if (runtime.exists(requestParameters, 'description')) {
+        if (requestParameters['description'] != null) {
             queryParameters['description'] = requestParameters['description'];
         }
 
-        if (runtime.exists(requestParameters, 'helmfileRef')) {
+        if (requestParameters['helmfileRef'] != null) {
             queryParameters['helmfileRef'] = requestParameters['helmfileRef'];
         }
 
-        if (runtime.exists(requestParameters, 'id')) {
+        if (requestParameters['id'] != null) {
             queryParameters['id'] = requestParameters['id'];
         }
 
-        if (runtime.exists(requestParameters, 'lifecycle')) {
+        if (requestParameters['lifecycle'] != null) {
             queryParameters['lifecycle'] = requestParameters['lifecycle'];
         }
 
-        if (runtime.exists(requestParameters, 'name')) {
+        if (requestParameters['name'] != null) {
             queryParameters['name'] = requestParameters['name'];
         }
 
-        if (runtime.exists(requestParameters, 'namePrefixesDomain')) {
+        if (requestParameters['namePrefixesDomain'] != null) {
             queryParameters['namePrefixesDomain'] = requestParameters['namePrefixesDomain'];
         }
 
-        if (runtime.exists(requestParameters, 'offline')) {
+        if (requestParameters['offline'] != null) {
             queryParameters['offline'] = requestParameters['offline'];
         }
 
-        if (runtime.exists(requestParameters, 'offlineScheduleBeginEnabled')) {
+        if (requestParameters['offlineScheduleBeginEnabled'] != null) {
             queryParameters['offlineScheduleBeginEnabled'] = requestParameters['offlineScheduleBeginEnabled'];
         }
 
-        if (runtime.exists(requestParameters, 'offlineScheduleBeginTime')) {
+        if (requestParameters['offlineScheduleBeginTime'] != null) {
             queryParameters['offlineScheduleBeginTime'] = (requestParameters['offlineScheduleBeginTime'] as any).toISOString();
         }
 
-        if (runtime.exists(requestParameters, 'offlineScheduleEndEnabled')) {
+        if (requestParameters['offlineScheduleEndEnabled'] != null) {
             queryParameters['offlineScheduleEndEnabled'] = requestParameters['offlineScheduleEndEnabled'];
         }
 
-        if (runtime.exists(requestParameters, 'offlineScheduleEndTime')) {
+        if (requestParameters['offlineScheduleEndTime'] != null) {
             queryParameters['offlineScheduleEndTime'] = (requestParameters['offlineScheduleEndTime'] as any).toISOString();
         }
 
-        if (runtime.exists(requestParameters, 'offlineScheduleEndWeekends')) {
+        if (requestParameters['offlineScheduleEndWeekends'] != null) {
             queryParameters['offlineScheduleEndWeekends'] = requestParameters['offlineScheduleEndWeekends'];
         }
 
-        if (runtime.exists(requestParameters, 'owner')) {
+        if (requestParameters['owner'] != null) {
             queryParameters['owner'] = requestParameters['owner'];
         }
 
-        if (runtime.exists(requestParameters, 'pactIdentifier')) {
+        if (requestParameters['pactIdentifier'] != null) {
             queryParameters['PactIdentifier'] = requestParameters['pactIdentifier'];
         }
 
-        if (runtime.exists(requestParameters, 'pagerdutyIntegration')) {
+        if (requestParameters['pagerdutyIntegration'] != null) {
             queryParameters['pagerdutyIntegration'] = requestParameters['pagerdutyIntegration'];
         }
 
-        if (runtime.exists(requestParameters, 'preventDeletion')) {
+        if (requestParameters['preventDeletion'] != null) {
             queryParameters['preventDeletion'] = requestParameters['preventDeletion'];
         }
 
-        if (runtime.exists(requestParameters, 'requiresSuitability')) {
+        if (requestParameters['requiresSuitability'] != null) {
             queryParameters['requiresSuitability'] = requestParameters['requiresSuitability'];
         }
 
-        if (runtime.exists(requestParameters, 'templateEnvironment')) {
+        if (requestParameters['templateEnvironment'] != null) {
             queryParameters['templateEnvironment'] = requestParameters['templateEnvironment'];
         }
 
-        if (runtime.exists(requestParameters, 'uniqueResourcePrefix')) {
+        if (requestParameters['uniqueResourcePrefix'] != null) {
             queryParameters['uniqueResourcePrefix'] = requestParameters['uniqueResourcePrefix'];
         }
 
-        if (runtime.exists(requestParameters, 'updatedAt')) {
+        if (requestParameters['updatedAt'] != null) {
             queryParameters['updatedAt'] = (requestParameters['updatedAt'] as any).toISOString();
         }
 
-        if (runtime.exists(requestParameters, 'valuesName')) {
+        if (requestParameters['valuesName'] != null) {
             queryParameters['valuesName'] = requestParameters['valuesName'];
         }
 
-        if (runtime.exists(requestParameters, 'limit')) {
+        if (requestParameters['limit'] != null) {
             queryParameters['limit'] = requestParameters['limit'];
         }
 
-        if (runtime.exists(requestParameters, 'offset')) {
+        if (requestParameters['offset'] != null) {
             queryParameters['offset'] = requestParameters['offset'];
         }
 
@@ -239,7 +239,7 @@ export class EnvironmentsApi extends runtime.BaseAPI {
      * Create a Environment
      */
     async apiEnvironmentsV3PostRaw(requestParameters: ApiEnvironmentsV3PostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockEnvironmentV3>> {
-        if (!runtime.exists(requestParameters, 'environment')) {
+        if (requestParameters['environment'] == null) {
             throw new runtime.RequiredError(
                 'environment',
                 'Required parameter "environment" was null or undefined when calling apiEnvironmentsV3Post().'
@@ -277,7 +277,7 @@ export class EnvironmentsApi extends runtime.BaseAPI {
      * Delete an individual Environment
      */
     async apiEnvironmentsV3SelectorDeleteRaw(requestParameters: ApiEnvironmentsV3SelectorDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockEnvironmentV3>> {
-        if (!runtime.exists(requestParameters, 'selector')) {
+        if (requestParameters['selector'] == null) {
             throw new runtime.RequiredError(
                 'selector',
                 'Required parameter "selector" was null or undefined when calling apiEnvironmentsV3SelectorDelete().'
@@ -312,7 +312,7 @@ export class EnvironmentsApi extends runtime.BaseAPI {
      * Get an individual Environment
      */
     async apiEnvironmentsV3SelectorGetRaw(requestParameters: ApiEnvironmentsV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockEnvironmentV3>> {
-        if (!runtime.exists(requestParameters, 'selector')) {
+        if (requestParameters['selector'] == null) {
             throw new runtime.RequiredError(
                 'selector',
                 'Required parameter "selector" was null or undefined when calling apiEnvironmentsV3SelectorGet().'
@@ -347,14 +347,14 @@ export class EnvironmentsApi extends runtime.BaseAPI {
      * Edit an individual Environment
      */
     async apiEnvironmentsV3SelectorPatchRaw(requestParameters: ApiEnvironmentsV3SelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockEnvironmentV3>> {
-        if (!runtime.exists(requestParameters, 'selector')) {
+        if (requestParameters['selector'] == null) {
             throw new runtime.RequiredError(
                 'selector',
                 'Required parameter "selector" was null or undefined when calling apiEnvironmentsV3SelectorPatch().'
             );
         }
 
-        if (!runtime.exists(requestParameters, 'environment')) {
+        if (requestParameters['environment'] == null) {
             throw new runtime.RequiredError(
                 'environment',
                 'Required parameter "environment" was null or undefined when calling apiEnvironmentsV3SelectorPatch().'

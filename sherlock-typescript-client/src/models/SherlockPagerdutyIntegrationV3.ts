@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from '../runtime';
+import { mapValues } from '../runtime';
 /**
  * 
  * @export
@@ -69,35 +69,32 @@ export function SherlockPagerdutyIntegrationV3FromJSON(json: any): SherlockPager
 }
 
 export function SherlockPagerdutyIntegrationV3FromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockPagerdutyIntegrationV3 {
-    if (json === undefined || json === null) {
+    if (json == null) {
         return json;
     }
     return {
         
-        'createdAt': !exists(json, 'createdAt') ? undefined : (new Date(json['createdAt'])),
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'name': !exists(json, 'name') ? undefined : json['name'],
-        'pagerdutyID': !exists(json, 'pagerdutyID') ? undefined : json['pagerdutyID'],
-        'type': !exists(json, 'type') ? undefined : json['type'],
-        'updatedAt': !exists(json, 'updatedAt') ? undefined : (new Date(json['updatedAt'])),
+        'createdAt': json['createdAt'] == null ? undefined : (new Date(json['createdAt'])),
+        'id': json['id'] == null ? undefined : json['id'],
+        'name': json['name'] == null ? undefined : json['name'],
+        'pagerdutyID': json['pagerdutyID'] == null ? undefined : json['pagerdutyID'],
+        'type': json['type'] == null ? undefined : json['type'],
+        'updatedAt': json['updatedAt'] == null ? undefined : (new Date(json['updatedAt'])),
     };
 }
 
 export function SherlockPagerdutyIntegrationV3ToJSON(value?: SherlockPagerdutyIntegrationV3 | null): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    if (value === null) {
-        return null;
+    if (value == null) {
+        return value;
     }
     return {
         
-        'createdAt': !exists(value, 'createdAt') ? undefined : ((value['createdAt']).toISOString()),
+        'createdAt': value['createdAt'] == null ? undefined : ((value['createdAt']).toISOString()),
         'id': value['id'],
         'name': value['name'],
         'pagerdutyID': value['pagerdutyID'],
         'type': value['type'],
-        'updatedAt': !exists(value, 'updatedAt') ? undefined : ((value['updatedAt']).toISOString()),
+        'updatedAt': value['updatedAt'] == null ? undefined : ((value['updatedAt']).toISOString()),
     };
 }
 

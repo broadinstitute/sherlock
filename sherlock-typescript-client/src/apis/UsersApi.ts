@@ -67,67 +67,67 @@ export class UsersApi extends runtime.BaseAPI {
     async apiUsersV3GetRaw(requestParameters: ApiUsersV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockUserV3>>> {
         const queryParameters: any = {};
 
-        if (runtime.exists(requestParameters, 'createdAt')) {
+        if (requestParameters['createdAt'] != null) {
             queryParameters['createdAt'] = (requestParameters['createdAt'] as any).toISOString();
         }
 
-        if (runtime.exists(requestParameters, 'email')) {
+        if (requestParameters['email'] != null) {
             queryParameters['email'] = requestParameters['email'];
         }
 
-        if (runtime.exists(requestParameters, 'githubID')) {
+        if (requestParameters['githubID'] != null) {
             queryParameters['githubID'] = requestParameters['githubID'];
         }
 
-        if (runtime.exists(requestParameters, 'githubUsername')) {
+        if (requestParameters['githubUsername'] != null) {
             queryParameters['githubUsername'] = requestParameters['githubUsername'];
         }
 
-        if (runtime.exists(requestParameters, 'googleID')) {
+        if (requestParameters['googleID'] != null) {
             queryParameters['googleID'] = requestParameters['googleID'];
         }
 
-        if (runtime.exists(requestParameters, 'id')) {
+        if (requestParameters['id'] != null) {
             queryParameters['id'] = requestParameters['id'];
         }
 
-        if (runtime.exists(requestParameters, 'name')) {
+        if (requestParameters['name'] != null) {
             queryParameters['name'] = requestParameters['name'];
         }
 
-        if (runtime.exists(requestParameters, 'nameFrom')) {
+        if (requestParameters['nameFrom'] != null) {
             queryParameters['nameFrom'] = requestParameters['nameFrom'];
         }
 
-        if (runtime.exists(requestParameters, 'nameInferredFromGithub')) {
+        if (requestParameters['nameInferredFromGithub'] != null) {
             queryParameters['nameInferredFromGithub'] = requestParameters['nameInferredFromGithub'];
         }
 
-        if (runtime.exists(requestParameters, 'slackID')) {
+        if (requestParameters['slackID'] != null) {
             queryParameters['slackID'] = requestParameters['slackID'];
         }
 
-        if (runtime.exists(requestParameters, 'slackUsername')) {
+        if (requestParameters['slackUsername'] != null) {
             queryParameters['slackUsername'] = requestParameters['slackUsername'];
         }
 
-        if (runtime.exists(requestParameters, 'suitabilityDescription')) {
+        if (requestParameters['suitabilityDescription'] != null) {
             queryParameters['suitabilityDescription'] = requestParameters['suitabilityDescription'];
         }
 
-        if (runtime.exists(requestParameters, 'suitable')) {
+        if (requestParameters['suitable'] != null) {
             queryParameters['suitable'] = requestParameters['suitable'];
         }
 
-        if (runtime.exists(requestParameters, 'updatedAt')) {
+        if (requestParameters['updatedAt'] != null) {
             queryParameters['updatedAt'] = (requestParameters['updatedAt'] as any).toISOString();
         }
 
-        if (runtime.exists(requestParameters, 'limit')) {
+        if (requestParameters['limit'] != null) {
             queryParameters['limit'] = requestParameters['limit'];
         }
 
-        if (runtime.exists(requestParameters, 'offset')) {
+        if (requestParameters['offset'] != null) {
             queryParameters['offset'] = requestParameters['offset'];
         }
 
@@ -188,7 +188,7 @@ export class UsersApi extends runtime.BaseAPI {
      * Get an individual User
      */
     async apiUsersV3SelectorGetRaw(requestParameters: ApiUsersV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockUserV3>> {
-        if (!runtime.exists(requestParameters, 'selector')) {
+        if (requestParameters['selector'] == null) {
             throw new runtime.RequiredError(
                 'selector',
                 'Required parameter "selector" was null or undefined when calling apiUsersV3SelectorGet().'

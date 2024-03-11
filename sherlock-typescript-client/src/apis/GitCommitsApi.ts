@@ -42,7 +42,7 @@ export class GitCommitsApi extends runtime.BaseAPI {
      * Upsert a GitCommit
      */
     async apiGitCommitsV3PutRaw(requestParameters: ApiGitCommitsV3PutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockGitCommitV3>> {
-        if (!runtime.exists(requestParameters, 'gitCommit')) {
+        if (requestParameters['gitCommit'] == null) {
             throw new runtime.RequiredError(
                 'gitCommit',
                 'Required parameter "gitCommit" was null or undefined when calling apiGitCommitsV3Put().'

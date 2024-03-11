@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from '../runtime';
+import { mapValues } from '../runtime';
 /**
  * 
  * @export
@@ -111,33 +111,30 @@ export function SherlockChangesetV3PlanRequestChartReleaseEntryFromJSON(json: an
 }
 
 export function SherlockChangesetV3PlanRequestChartReleaseEntryFromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockChangesetV3PlanRequestChartReleaseEntry {
-    if (json === undefined || json === null) {
+    if (json == null) {
         return json;
     }
     return {
         
-        'chartRelease': !exists(json, 'chartRelease') ? undefined : json['chartRelease'],
-        'followVersionsFromOtherChartRelease': !exists(json, 'followVersionsFromOtherChartRelease') ? undefined : json['followVersionsFromOtherChartRelease'],
-        'toAppVersionBranch': !exists(json, 'toAppVersionBranch') ? undefined : json['toAppVersionBranch'],
-        'toAppVersionCommit': !exists(json, 'toAppVersionCommit') ? undefined : json['toAppVersionCommit'],
-        'toAppVersionExact': !exists(json, 'toAppVersionExact') ? undefined : json['toAppVersionExact'],
-        'toAppVersionFollowChartRelease': !exists(json, 'toAppVersionFollowChartRelease') ? undefined : json['toAppVersionFollowChartRelease'],
-        'toAppVersionResolver': !exists(json, 'toAppVersionResolver') ? undefined : json['toAppVersionResolver'],
-        'toChartVersionExact': !exists(json, 'toChartVersionExact') ? undefined : json['toChartVersionExact'],
-        'toChartVersionFollowChartRelease': !exists(json, 'toChartVersionFollowChartRelease') ? undefined : json['toChartVersionFollowChartRelease'],
-        'toChartVersionResolver': !exists(json, 'toChartVersionResolver') ? undefined : json['toChartVersionResolver'],
-        'toHelmfileRef': !exists(json, 'toHelmfileRef') ? undefined : json['toHelmfileRef'],
-        'toHelmfileRefEnabled': !exists(json, 'toHelmfileRefEnabled') ? undefined : json['toHelmfileRefEnabled'],
-        'useExactVersionsFromOtherChartRelease': !exists(json, 'useExactVersionsFromOtherChartRelease') ? undefined : json['useExactVersionsFromOtherChartRelease'],
+        'chartRelease': json['chartRelease'] == null ? undefined : json['chartRelease'],
+        'followVersionsFromOtherChartRelease': json['followVersionsFromOtherChartRelease'] == null ? undefined : json['followVersionsFromOtherChartRelease'],
+        'toAppVersionBranch': json['toAppVersionBranch'] == null ? undefined : json['toAppVersionBranch'],
+        'toAppVersionCommit': json['toAppVersionCommit'] == null ? undefined : json['toAppVersionCommit'],
+        'toAppVersionExact': json['toAppVersionExact'] == null ? undefined : json['toAppVersionExact'],
+        'toAppVersionFollowChartRelease': json['toAppVersionFollowChartRelease'] == null ? undefined : json['toAppVersionFollowChartRelease'],
+        'toAppVersionResolver': json['toAppVersionResolver'] == null ? undefined : json['toAppVersionResolver'],
+        'toChartVersionExact': json['toChartVersionExact'] == null ? undefined : json['toChartVersionExact'],
+        'toChartVersionFollowChartRelease': json['toChartVersionFollowChartRelease'] == null ? undefined : json['toChartVersionFollowChartRelease'],
+        'toChartVersionResolver': json['toChartVersionResolver'] == null ? undefined : json['toChartVersionResolver'],
+        'toHelmfileRef': json['toHelmfileRef'] == null ? undefined : json['toHelmfileRef'],
+        'toHelmfileRefEnabled': json['toHelmfileRefEnabled'] == null ? undefined : json['toHelmfileRefEnabled'],
+        'useExactVersionsFromOtherChartRelease': json['useExactVersionsFromOtherChartRelease'] == null ? undefined : json['useExactVersionsFromOtherChartRelease'],
     };
 }
 
 export function SherlockChangesetV3PlanRequestChartReleaseEntryToJSON(value?: SherlockChangesetV3PlanRequestChartReleaseEntry | null): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    if (value === null) {
-        return null;
+    if (value == null) {
+        return value;
     }
     return {
         

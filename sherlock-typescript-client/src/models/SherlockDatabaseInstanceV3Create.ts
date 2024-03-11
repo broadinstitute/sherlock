@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from '../runtime';
+import { mapValues } from '../runtime';
 /**
  * 
  * @export
@@ -63,25 +63,22 @@ export function SherlockDatabaseInstanceV3CreateFromJSON(json: any): SherlockDat
 }
 
 export function SherlockDatabaseInstanceV3CreateFromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockDatabaseInstanceV3Create {
-    if (json === undefined || json === null) {
+    if (json == null) {
         return json;
     }
     return {
         
-        'chartRelease': !exists(json, 'chartRelease') ? undefined : json['chartRelease'],
-        'defaultDatabase': !exists(json, 'defaultDatabase') ? undefined : json['defaultDatabase'],
-        'googleProject': !exists(json, 'googleProject') ? undefined : json['googleProject'],
-        'instanceName': !exists(json, 'instanceName') ? undefined : json['instanceName'],
-        'platform': !exists(json, 'platform') ? undefined : json['platform'],
+        'chartRelease': json['chartRelease'] == null ? undefined : json['chartRelease'],
+        'defaultDatabase': json['defaultDatabase'] == null ? undefined : json['defaultDatabase'],
+        'googleProject': json['googleProject'] == null ? undefined : json['googleProject'],
+        'instanceName': json['instanceName'] == null ? undefined : json['instanceName'],
+        'platform': json['platform'] == null ? undefined : json['platform'],
     };
 }
 
 export function SherlockDatabaseInstanceV3CreateToJSON(value?: SherlockDatabaseInstanceV3Create | null): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    if (value === null) {
-        return null;
+    if (value == null) {
+        return value;
     }
     return {
         

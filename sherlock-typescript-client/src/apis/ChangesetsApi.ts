@@ -106,7 +106,7 @@ export class ChangesetsApi extends runtime.BaseAPI {
      * Apply previously planned version changes to Chart Releases
      */
     async apiChangesetsProceduresV3ApplyPostRaw(requestParameters: ApiChangesetsProceduresV3ApplyPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockChangesetV3>>> {
-        if (!runtime.exists(requestParameters, 'applyRequest')) {
+        if (requestParameters['applyRequest'] == null) {
             throw new runtime.RequiredError(
                 'applyRequest',
                 'Required parameter "applyRequest" was null or undefined when calling apiChangesetsProceduresV3ApplyPost().'
@@ -115,7 +115,7 @@ export class ChangesetsApi extends runtime.BaseAPI {
 
         const queryParameters: any = {};
 
-        if (runtime.exists(requestParameters, 'verboseOutput')) {
+        if (requestParameters['verboseOutput'] != null) {
             queryParameters['verbose-output'] = requestParameters['verboseOutput'];
         }
 
@@ -148,7 +148,7 @@ export class ChangesetsApi extends runtime.BaseAPI {
      * List applied Changesets for a Chart Release
      */
     async apiChangesetsProceduresV3ChartReleaseHistoryChartReleaseGetRaw(requestParameters: ApiChangesetsProceduresV3ChartReleaseHistoryChartReleaseGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockChangesetV3>>> {
-        if (!runtime.exists(requestParameters, 'chartRelease')) {
+        if (requestParameters['chartRelease'] == null) {
             throw new runtime.RequiredError(
                 'chartRelease',
                 'Required parameter "chartRelease" was null or undefined when calling apiChangesetsProceduresV3ChartReleaseHistoryChartReleaseGet().'
@@ -157,11 +157,11 @@ export class ChangesetsApi extends runtime.BaseAPI {
 
         const queryParameters: any = {};
 
-        if (runtime.exists(requestParameters, 'offset')) {
+        if (requestParameters['offset'] != null) {
             queryParameters['offset'] = requestParameters['offset'];
         }
 
-        if (runtime.exists(requestParameters, 'limit')) {
+        if (requestParameters['limit'] != null) {
             queryParameters['limit'] = requestParameters['limit'];
         }
 
@@ -191,7 +191,7 @@ export class ChangesetsApi extends runtime.BaseAPI {
      * Plan and apply version changes in one step
      */
     async apiChangesetsProceduresV3PlanAndApplyPostRaw(requestParameters: ApiChangesetsProceduresV3PlanAndApplyPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockChangesetV3>>> {
-        if (!runtime.exists(requestParameters, 'changesetPlanRequest')) {
+        if (requestParameters['changesetPlanRequest'] == null) {
             throw new runtime.RequiredError(
                 'changesetPlanRequest',
                 'Required parameter "changesetPlanRequest" was null or undefined when calling apiChangesetsProceduresV3PlanAndApplyPost().'
@@ -200,7 +200,7 @@ export class ChangesetsApi extends runtime.BaseAPI {
 
         const queryParameters: any = {};
 
-        if (runtime.exists(requestParameters, 'verboseOutput')) {
+        if (requestParameters['verboseOutput'] != null) {
             queryParameters['verbose-output'] = requestParameters['verboseOutput'];
         }
 
@@ -233,7 +233,7 @@ export class ChangesetsApi extends runtime.BaseAPI {
      * Plan--but do not apply--version changes to Chart Releases
      */
     async apiChangesetsProceduresV3PlanPostRaw(requestParameters: ApiChangesetsProceduresV3PlanPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockChangesetV3>>> {
-        if (!runtime.exists(requestParameters, 'changesetPlanRequest')) {
+        if (requestParameters['changesetPlanRequest'] == null) {
             throw new runtime.RequiredError(
                 'changesetPlanRequest',
                 'Required parameter "changesetPlanRequest" was null or undefined when calling apiChangesetsProceduresV3PlanPost().'
@@ -242,7 +242,7 @@ export class ChangesetsApi extends runtime.BaseAPI {
 
         const queryParameters: any = {};
 
-        if (runtime.exists(requestParameters, 'verboseOutput')) {
+        if (requestParameters['verboseOutput'] != null) {
             queryParameters['verbose-output'] = requestParameters['verboseOutput'];
         }
 
@@ -275,21 +275,21 @@ export class ChangesetsApi extends runtime.BaseAPI {
      * List applied Changesets for an App or Chart Version
      */
     async apiChangesetsProceduresV3VersionHistoryVersionTypeChartVersionGetRaw(requestParameters: ApiChangesetsProceduresV3VersionHistoryVersionTypeChartVersionGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockChangesetV3>>> {
-        if (!runtime.exists(requestParameters, 'versionType')) {
+        if (requestParameters['versionType'] == null) {
             throw new runtime.RequiredError(
                 'versionType',
                 'Required parameter "versionType" was null or undefined when calling apiChangesetsProceduresV3VersionHistoryVersionTypeChartVersionGet().'
             );
         }
 
-        if (!runtime.exists(requestParameters, 'chart')) {
+        if (requestParameters['chart'] == null) {
             throw new runtime.RequiredError(
                 'chart',
                 'Required parameter "chart" was null or undefined when calling apiChangesetsProceduresV3VersionHistoryVersionTypeChartVersionGet().'
             );
         }
 
-        if (!runtime.exists(requestParameters, 'version')) {
+        if (requestParameters['version'] == null) {
             throw new runtime.RequiredError(
                 'version',
                 'Required parameter "version" was null or undefined when calling apiChangesetsProceduresV3VersionHistoryVersionTypeChartVersionGet().'
@@ -326,139 +326,139 @@ export class ChangesetsApi extends runtime.BaseAPI {
     async apiChangesetsV3GetRaw(requestParameters: ApiChangesetsV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockChangesetV3>>> {
         const queryParameters: any = {};
 
-        if (runtime.exists(requestParameters, 'appliedAt')) {
+        if (requestParameters['appliedAt'] != null) {
             queryParameters['appliedAt'] = (requestParameters['appliedAt'] as any).toISOString();
         }
 
-        if (runtime.exists(requestParameters, 'appliedBy')) {
+        if (requestParameters['appliedBy'] != null) {
             queryParameters['appliedBy'] = requestParameters['appliedBy'];
         }
 
-        if (runtime.exists(requestParameters, 'chartRelease')) {
+        if (requestParameters['chartRelease'] != null) {
             queryParameters['chartRelease'] = requestParameters['chartRelease'];
         }
 
-        if (runtime.exists(requestParameters, 'fromAppVersionBranch')) {
+        if (requestParameters['fromAppVersionBranch'] != null) {
             queryParameters['fromAppVersionBranch'] = requestParameters['fromAppVersionBranch'];
         }
 
-        if (runtime.exists(requestParameters, 'fromAppVersionCommit')) {
+        if (requestParameters['fromAppVersionCommit'] != null) {
             queryParameters['fromAppVersionCommit'] = requestParameters['fromAppVersionCommit'];
         }
 
-        if (runtime.exists(requestParameters, 'fromAppVersionExact')) {
+        if (requestParameters['fromAppVersionExact'] != null) {
             queryParameters['fromAppVersionExact'] = requestParameters['fromAppVersionExact'];
         }
 
-        if (runtime.exists(requestParameters, 'fromAppVersionFollowChartRelease')) {
+        if (requestParameters['fromAppVersionFollowChartRelease'] != null) {
             queryParameters['fromAppVersionFollowChartRelease'] = requestParameters['fromAppVersionFollowChartRelease'];
         }
 
-        if (runtime.exists(requestParameters, 'fromAppVersionReference')) {
+        if (requestParameters['fromAppVersionReference'] != null) {
             queryParameters['fromAppVersionReference'] = requestParameters['fromAppVersionReference'];
         }
 
-        if (runtime.exists(requestParameters, 'fromAppVersionResolver')) {
+        if (requestParameters['fromAppVersionResolver'] != null) {
             queryParameters['fromAppVersionResolver'] = requestParameters['fromAppVersionResolver'];
         }
 
-        if (runtime.exists(requestParameters, 'fromChartVersionExact')) {
+        if (requestParameters['fromChartVersionExact'] != null) {
             queryParameters['fromChartVersionExact'] = requestParameters['fromChartVersionExact'];
         }
 
-        if (runtime.exists(requestParameters, 'fromChartVersionFollowChartRelease')) {
+        if (requestParameters['fromChartVersionFollowChartRelease'] != null) {
             queryParameters['fromChartVersionFollowChartRelease'] = requestParameters['fromChartVersionFollowChartRelease'];
         }
 
-        if (runtime.exists(requestParameters, 'fromChartVersionReference')) {
+        if (requestParameters['fromChartVersionReference'] != null) {
             queryParameters['fromChartVersionReference'] = requestParameters['fromChartVersionReference'];
         }
 
-        if (runtime.exists(requestParameters, 'fromChartVersionResolver')) {
+        if (requestParameters['fromChartVersionResolver'] != null) {
             queryParameters['fromChartVersionResolver'] = requestParameters['fromChartVersionResolver'];
         }
 
-        if (runtime.exists(requestParameters, 'fromHelmfileRef')) {
+        if (requestParameters['fromHelmfileRef'] != null) {
             queryParameters['fromHelmfileRef'] = requestParameters['fromHelmfileRef'];
         }
 
-        if (runtime.exists(requestParameters, 'fromHelmfileRefEnabled')) {
+        if (requestParameters['fromHelmfileRefEnabled'] != null) {
             queryParameters['fromHelmfileRefEnabled'] = requestParameters['fromHelmfileRefEnabled'];
         }
 
-        if (runtime.exists(requestParameters, 'fromResolvedAt')) {
+        if (requestParameters['fromResolvedAt'] != null) {
             queryParameters['fromResolvedAt'] = (requestParameters['fromResolvedAt'] as any).toISOString();
         }
 
-        if (runtime.exists(requestParameters, 'plannedBy')) {
+        if (requestParameters['plannedBy'] != null) {
             queryParameters['plannedBy'] = requestParameters['plannedBy'];
         }
 
-        if (runtime.exists(requestParameters, 'supersededAt')) {
+        if (requestParameters['supersededAt'] != null) {
             queryParameters['supersededAt'] = (requestParameters['supersededAt'] as any).toISOString();
         }
 
-        if (runtime.exists(requestParameters, 'toAppVersionBranch')) {
+        if (requestParameters['toAppVersionBranch'] != null) {
             queryParameters['toAppVersionBranch'] = requestParameters['toAppVersionBranch'];
         }
 
-        if (runtime.exists(requestParameters, 'toAppVersionCommit')) {
+        if (requestParameters['toAppVersionCommit'] != null) {
             queryParameters['toAppVersionCommit'] = requestParameters['toAppVersionCommit'];
         }
 
-        if (runtime.exists(requestParameters, 'toAppVersionExact')) {
+        if (requestParameters['toAppVersionExact'] != null) {
             queryParameters['toAppVersionExact'] = requestParameters['toAppVersionExact'];
         }
 
-        if (runtime.exists(requestParameters, 'toAppVersionFollowChartRelease')) {
+        if (requestParameters['toAppVersionFollowChartRelease'] != null) {
             queryParameters['toAppVersionFollowChartRelease'] = requestParameters['toAppVersionFollowChartRelease'];
         }
 
-        if (runtime.exists(requestParameters, 'toAppVersionReference')) {
+        if (requestParameters['toAppVersionReference'] != null) {
             queryParameters['toAppVersionReference'] = requestParameters['toAppVersionReference'];
         }
 
-        if (runtime.exists(requestParameters, 'toAppVersionResolver')) {
+        if (requestParameters['toAppVersionResolver'] != null) {
             queryParameters['toAppVersionResolver'] = requestParameters['toAppVersionResolver'];
         }
 
-        if (runtime.exists(requestParameters, 'toChartVersionExact')) {
+        if (requestParameters['toChartVersionExact'] != null) {
             queryParameters['toChartVersionExact'] = requestParameters['toChartVersionExact'];
         }
 
-        if (runtime.exists(requestParameters, 'toChartVersionFollowChartRelease')) {
+        if (requestParameters['toChartVersionFollowChartRelease'] != null) {
             queryParameters['toChartVersionFollowChartRelease'] = requestParameters['toChartVersionFollowChartRelease'];
         }
 
-        if (runtime.exists(requestParameters, 'toChartVersionReference')) {
+        if (requestParameters['toChartVersionReference'] != null) {
             queryParameters['toChartVersionReference'] = requestParameters['toChartVersionReference'];
         }
 
-        if (runtime.exists(requestParameters, 'toChartVersionResolver')) {
+        if (requestParameters['toChartVersionResolver'] != null) {
             queryParameters['toChartVersionResolver'] = requestParameters['toChartVersionResolver'];
         }
 
-        if (runtime.exists(requestParameters, 'toHelmfileRef')) {
+        if (requestParameters['toHelmfileRef'] != null) {
             queryParameters['toHelmfileRef'] = requestParameters['toHelmfileRef'];
         }
 
-        if (runtime.exists(requestParameters, 'toHelmfileRefEnabled')) {
+        if (requestParameters['toHelmfileRefEnabled'] != null) {
             queryParameters['toHelmfileRefEnabled'] = requestParameters['toHelmfileRefEnabled'];
         }
 
-        if (runtime.exists(requestParameters, 'toResolvedAt')) {
+        if (requestParameters['toResolvedAt'] != null) {
             queryParameters['toResolvedAt'] = (requestParameters['toResolvedAt'] as any).toISOString();
         }
 
-        if (runtime.exists(requestParameters, 'id')) {
+        if (requestParameters['id'] != null) {
             queryParameters['id'] = requestParameters['id']!.join(runtime.COLLECTION_FORMATS["csv"]);
         }
 
-        if (runtime.exists(requestParameters, 'limit')) {
+        if (requestParameters['limit'] != null) {
             queryParameters['limit'] = requestParameters['limit'];
         }
 
-        if (runtime.exists(requestParameters, 'offset')) {
+        if (requestParameters['offset'] != null) {
             queryParameters['offset'] = requestParameters['offset'];
         }
 
@@ -488,7 +488,7 @@ export class ChangesetsApi extends runtime.BaseAPI {
      * Get an individual Changeset
      */
     async apiChangesetsV3IdGetRaw(requestParameters: ApiChangesetsV3IdGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockChangesetV3>> {
-        if (!runtime.exists(requestParameters, 'id')) {
+        if (requestParameters['id'] == null) {
             throw new runtime.RequiredError(
                 'id',
                 'Required parameter "id" was null or undefined when calling apiChangesetsV3IdGet().'

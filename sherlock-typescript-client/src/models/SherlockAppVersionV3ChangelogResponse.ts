@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from '../runtime';
+import { mapValues } from '../runtime';
 import type { SherlockAppVersionV3 } from './SherlockAppVersionV3';
 import {
     SherlockAppVersionV3FromJSON,
@@ -52,26 +52,23 @@ export function SherlockAppVersionV3ChangelogResponseFromJSON(json: any): Sherlo
 }
 
 export function SherlockAppVersionV3ChangelogResponseFromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockAppVersionV3ChangelogResponse {
-    if (json === undefined || json === null) {
+    if (json == null) {
         return json;
     }
     return {
         
-        'changelog': !exists(json, 'changelog') ? undefined : ((json['changelog'] as Array<any>).map(SherlockAppVersionV3FromJSON)),
-        'complete': !exists(json, 'complete') ? undefined : json['complete'],
+        'changelog': json['changelog'] == null ? undefined : ((json['changelog'] as Array<any>).map(SherlockAppVersionV3FromJSON)),
+        'complete': json['complete'] == null ? undefined : json['complete'],
     };
 }
 
 export function SherlockAppVersionV3ChangelogResponseToJSON(value?: SherlockAppVersionV3ChangelogResponse | null): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    if (value === null) {
-        return null;
+    if (value == null) {
+        return value;
     }
     return {
         
-        'changelog': !exists(value, 'changelog') ? undefined : ((value['changelog'] as Array<any>).map(SherlockAppVersionV3ToJSON)),
+        'changelog': value['changelog'] == null ? undefined : ((value['changelog'] as Array<any>).map(SherlockAppVersionV3ToJSON)),
         'complete': value['complete'],
     };
 }

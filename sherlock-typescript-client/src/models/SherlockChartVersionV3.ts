@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from '../runtime';
+import { mapValues } from '../runtime';
 import type { SherlockChartV3 } from './SherlockChartV3';
 import {
     SherlockChartV3FromJSON,
@@ -124,32 +124,29 @@ export function SherlockChartVersionV3FromJSON(json: any): SherlockChartVersionV
 }
 
 export function SherlockChartVersionV3FromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockChartVersionV3 {
-    if (json === undefined || json === null) {
+    if (json == null) {
         return json;
     }
     return {
         
-        'authoredBy': !exists(json, 'authoredBy') ? undefined : json['authoredBy'],
-        'authoredByInfo': !exists(json, 'authoredByInfo') ? undefined : SherlockUserV3FromJSON(json['authoredByInfo']),
-        'chart': !exists(json, 'chart') ? undefined : json['chart'],
-        'chartInfo': !exists(json, 'chartInfo') ? undefined : SherlockChartV3FromJSON(json['chartInfo']),
-        'chartVersion': !exists(json, 'chartVersion') ? undefined : json['chartVersion'],
-        'ciIdentifier': !exists(json, 'ciIdentifier') ? undefined : SherlockCiIdentifierV3FromJSON(json['ciIdentifier']),
-        'createdAt': !exists(json, 'createdAt') ? undefined : (new Date(json['createdAt'])),
-        'description': !exists(json, 'description') ? undefined : json['description'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'parentChartVersion': !exists(json, 'parentChartVersion') ? undefined : json['parentChartVersion'],
-        'parentChartVersionInfo': !exists(json, 'parentChartVersionInfo') ? undefined : json['parentChartVersionInfo'],
-        'updatedAt': !exists(json, 'updatedAt') ? undefined : (new Date(json['updatedAt'])),
+        'authoredBy': json['authoredBy'] == null ? undefined : json['authoredBy'],
+        'authoredByInfo': json['authoredByInfo'] == null ? undefined : SherlockUserV3FromJSON(json['authoredByInfo']),
+        'chart': json['chart'] == null ? undefined : json['chart'],
+        'chartInfo': json['chartInfo'] == null ? undefined : SherlockChartV3FromJSON(json['chartInfo']),
+        'chartVersion': json['chartVersion'] == null ? undefined : json['chartVersion'],
+        'ciIdentifier': json['ciIdentifier'] == null ? undefined : SherlockCiIdentifierV3FromJSON(json['ciIdentifier']),
+        'createdAt': json['createdAt'] == null ? undefined : (new Date(json['createdAt'])),
+        'description': json['description'] == null ? undefined : json['description'],
+        'id': json['id'] == null ? undefined : json['id'],
+        'parentChartVersion': json['parentChartVersion'] == null ? undefined : json['parentChartVersion'],
+        'parentChartVersionInfo': json['parentChartVersionInfo'] == null ? undefined : json['parentChartVersionInfo'],
+        'updatedAt': json['updatedAt'] == null ? undefined : (new Date(json['updatedAt'])),
     };
 }
 
 export function SherlockChartVersionV3ToJSON(value?: SherlockChartVersionV3 | null): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    if (value === null) {
-        return null;
+    if (value == null) {
+        return value;
     }
     return {
         
@@ -159,12 +156,12 @@ export function SherlockChartVersionV3ToJSON(value?: SherlockChartVersionV3 | nu
         'chartInfo': SherlockChartV3ToJSON(value['chartInfo']),
         'chartVersion': value['chartVersion'],
         'ciIdentifier': SherlockCiIdentifierV3ToJSON(value['ciIdentifier']),
-        'createdAt': !exists(value, 'createdAt') ? undefined : ((value['createdAt']).toISOString()),
+        'createdAt': value['createdAt'] == null ? undefined : ((value['createdAt']).toISOString()),
         'description': value['description'],
         'id': value['id'],
         'parentChartVersion': value['parentChartVersion'],
         'parentChartVersionInfo': value['parentChartVersionInfo'],
-        'updatedAt': !exists(value, 'updatedAt') ? undefined : ((value['updatedAt']).toISOString()),
+        'updatedAt': value['updatedAt'] == null ? undefined : ((value['updatedAt']).toISOString()),
     };
 }
 

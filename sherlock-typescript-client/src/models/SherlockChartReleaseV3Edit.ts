@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from '../runtime';
+import { mapValues } from '../runtime';
 /**
  * 
  * @export
@@ -63,25 +63,22 @@ export function SherlockChartReleaseV3EditFromJSON(json: any): SherlockChartRele
 }
 
 export function SherlockChartReleaseV3EditFromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockChartReleaseV3Edit {
-    if (json === undefined || json === null) {
+    if (json == null) {
         return json;
     }
     return {
         
-        'includedInBulkChangesets': !exists(json, 'includedInBulkChangesets') ? undefined : json['includedInBulkChangesets'],
-        'pagerdutyIntegration': !exists(json, 'pagerdutyIntegration') ? undefined : json['pagerdutyIntegration'],
-        'port': !exists(json, 'port') ? undefined : json['port'],
-        'protocol': !exists(json, 'protocol') ? undefined : json['protocol'],
-        'subdomain': !exists(json, 'subdomain') ? undefined : json['subdomain'],
+        'includedInBulkChangesets': json['includedInBulkChangesets'] == null ? undefined : json['includedInBulkChangesets'],
+        'pagerdutyIntegration': json['pagerdutyIntegration'] == null ? undefined : json['pagerdutyIntegration'],
+        'port': json['port'] == null ? undefined : json['port'],
+        'protocol': json['protocol'] == null ? undefined : json['protocol'],
+        'subdomain': json['subdomain'] == null ? undefined : json['subdomain'],
     };
 }
 
 export function SherlockChartReleaseV3EditToJSON(value?: SherlockChartReleaseV3Edit | null): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    if (value === null) {
-        return null;
+    if (value == null) {
+        return value;
     }
     return {
         

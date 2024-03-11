@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from '../runtime';
+import { mapValues } from '../runtime';
 /**
  * 
  * @export
@@ -45,22 +45,19 @@ export function PagerdutyAlertSummaryFromJSON(json: any): PagerdutyAlertSummary 
 }
 
 export function PagerdutyAlertSummaryFromJSONTyped(json: any, ignoreDiscriminator: boolean): PagerdutyAlertSummary {
-    if (json === undefined || json === null) {
+    if (json == null) {
         return json;
     }
     return {
         
-        'sourceLink': !exists(json, 'sourceLink') ? undefined : json['sourceLink'],
-        'summary': !exists(json, 'summary') ? undefined : json['summary'],
+        'sourceLink': json['sourceLink'] == null ? undefined : json['sourceLink'],
+        'summary': json['summary'] == null ? undefined : json['summary'],
     };
 }
 
 export function PagerdutyAlertSummaryToJSON(value?: PagerdutyAlertSummary | null): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    if (value === null) {
-        return null;
+    if (value == null) {
+        return value;
     }
     return {
         

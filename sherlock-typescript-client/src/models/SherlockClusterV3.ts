@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from '../runtime';
+import { mapValues } from '../runtime';
 import type { SherlockCiIdentifierV3 } from './SherlockCiIdentifierV3';
 import {
     SherlockCiIdentifierV3FromJSON,
@@ -129,33 +129,30 @@ export function SherlockClusterV3FromJSON(json: any): SherlockClusterV3 {
 }
 
 export function SherlockClusterV3FromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockClusterV3 {
-    if (json === undefined || json === null) {
+    if (json == null) {
         return json;
     }
     return {
         
-        'address': !exists(json, 'address') ? undefined : json['address'],
-        'azureSubscription': !exists(json, 'azureSubscription') ? undefined : json['azureSubscription'],
-        'base': !exists(json, 'base') ? undefined : json['base'],
-        'ciIdentifier': !exists(json, 'ciIdentifier') ? undefined : SherlockCiIdentifierV3FromJSON(json['ciIdentifier']),
-        'createdAt': !exists(json, 'createdAt') ? undefined : (new Date(json['createdAt'])),
-        'googleProject': !exists(json, 'googleProject') ? undefined : json['googleProject'],
-        'helmfileRef': !exists(json, 'helmfileRef') ? undefined : json['helmfileRef'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'location': !exists(json, 'location') ? undefined : json['location'],
-        'name': !exists(json, 'name') ? undefined : json['name'],
-        'provider': !exists(json, 'provider') ? undefined : json['provider'],
-        'requiresSuitability': !exists(json, 'requiresSuitability') ? undefined : json['requiresSuitability'],
-        'updatedAt': !exists(json, 'updatedAt') ? undefined : (new Date(json['updatedAt'])),
+        'address': json['address'] == null ? undefined : json['address'],
+        'azureSubscription': json['azureSubscription'] == null ? undefined : json['azureSubscription'],
+        'base': json['base'] == null ? undefined : json['base'],
+        'ciIdentifier': json['ciIdentifier'] == null ? undefined : SherlockCiIdentifierV3FromJSON(json['ciIdentifier']),
+        'createdAt': json['createdAt'] == null ? undefined : (new Date(json['createdAt'])),
+        'googleProject': json['googleProject'] == null ? undefined : json['googleProject'],
+        'helmfileRef': json['helmfileRef'] == null ? undefined : json['helmfileRef'],
+        'id': json['id'] == null ? undefined : json['id'],
+        'location': json['location'] == null ? undefined : json['location'],
+        'name': json['name'] == null ? undefined : json['name'],
+        'provider': json['provider'] == null ? undefined : json['provider'],
+        'requiresSuitability': json['requiresSuitability'] == null ? undefined : json['requiresSuitability'],
+        'updatedAt': json['updatedAt'] == null ? undefined : (new Date(json['updatedAt'])),
     };
 }
 
 export function SherlockClusterV3ToJSON(value?: SherlockClusterV3 | null): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    if (value === null) {
-        return null;
+    if (value == null) {
+        return value;
     }
     return {
         
@@ -163,7 +160,7 @@ export function SherlockClusterV3ToJSON(value?: SherlockClusterV3 | null): any {
         'azureSubscription': value['azureSubscription'],
         'base': value['base'],
         'ciIdentifier': SherlockCiIdentifierV3ToJSON(value['ciIdentifier']),
-        'createdAt': !exists(value, 'createdAt') ? undefined : ((value['createdAt']).toISOString()),
+        'createdAt': value['createdAt'] == null ? undefined : ((value['createdAt']).toISOString()),
         'googleProject': value['googleProject'],
         'helmfileRef': value['helmfileRef'],
         'id': value['id'],
@@ -171,7 +168,7 @@ export function SherlockClusterV3ToJSON(value?: SherlockClusterV3 | null): any {
         'name': value['name'],
         'provider': value['provider'],
         'requiresSuitability': value['requiresSuitability'],
-        'updatedAt': !exists(value, 'updatedAt') ? undefined : ((value['updatedAt']).toISOString()),
+        'updatedAt': value['updatedAt'] == null ? undefined : ((value['updatedAt']).toISOString()),
     };
 }
 

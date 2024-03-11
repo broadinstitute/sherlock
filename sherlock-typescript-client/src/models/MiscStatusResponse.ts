@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from '../runtime';
+import { mapValues } from '../runtime';
 /**
  * 
  * @export
@@ -39,21 +39,18 @@ export function MiscStatusResponseFromJSON(json: any): MiscStatusResponse {
 }
 
 export function MiscStatusResponseFromJSONTyped(json: any, ignoreDiscriminator: boolean): MiscStatusResponse {
-    if (json === undefined || json === null) {
+    if (json == null) {
         return json;
     }
     return {
         
-        'ok': !exists(json, 'ok') ? undefined : json['ok'],
+        'ok': json['ok'] == null ? undefined : json['ok'],
     };
 }
 
 export function MiscStatusResponseToJSON(value?: MiscStatusResponse | null): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    if (value === null) {
-        return null;
+    if (value == null) {
+        return value;
     }
     return {
         

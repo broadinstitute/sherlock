@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from '../runtime';
+import { mapValues } from '../runtime';
 /**
  * 
  * @export
@@ -72,24 +72,21 @@ export function SherlockUserV3UpsertFromJSON(json: any): SherlockUserV3Upsert {
 }
 
 export function SherlockUserV3UpsertFromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockUserV3Upsert {
-    if (json === undefined || json === null) {
+    if (json == null) {
         return json;
     }
     return {
         
-        'githubAccessToken': !exists(json, 'githubAccessToken') ? undefined : json['githubAccessToken'],
-        'name': !exists(json, 'name') ? undefined : json['name'],
-        'nameFrom': !exists(json, 'nameFrom') ? undefined : json['nameFrom'],
-        'nameInferredFromGithub': !exists(json, 'nameInferredFromGithub') ? undefined : json['nameInferredFromGithub'],
+        'githubAccessToken': json['githubAccessToken'] == null ? undefined : json['githubAccessToken'],
+        'name': json['name'] == null ? undefined : json['name'],
+        'nameFrom': json['nameFrom'] == null ? undefined : json['nameFrom'],
+        'nameInferredFromGithub': json['nameInferredFromGithub'] == null ? undefined : json['nameInferredFromGithub'],
     };
 }
 
 export function SherlockUserV3UpsertToJSON(value?: SherlockUserV3Upsert | null): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    if (value === null) {
-        return null;
+    if (value == null) {
+        return value;
     }
     return {
         

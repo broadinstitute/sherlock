@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from '../runtime';
+import { mapValues } from '../runtime';
 import type { SherlockCiIdentifierV3 } from './SherlockCiIdentifierV3';
 import {
     SherlockCiIdentifierV3FromJSON,
@@ -130,35 +130,32 @@ export function SherlockChartV3FromJSON(json: any): SherlockChartV3 {
 }
 
 export function SherlockChartV3FromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockChartV3 {
-    if (json === undefined || json === null) {
+    if (json == null) {
         return json;
     }
     return {
         
-        'appImageGitMainBranch': !exists(json, 'appImageGitMainBranch') ? undefined : json['appImageGitMainBranch'],
-        'appImageGitRepo': !exists(json, 'appImageGitRepo') ? undefined : json['appImageGitRepo'],
-        'chartExposesEndpoint': !exists(json, 'chartExposesEndpoint') ? undefined : json['chartExposesEndpoint'],
-        'chartRepo': !exists(json, 'chartRepo') ? undefined : json['chartRepo'],
-        'ciIdentifier': !exists(json, 'ciIdentifier') ? undefined : SherlockCiIdentifierV3FromJSON(json['ciIdentifier']),
-        'createdAt': !exists(json, 'createdAt') ? undefined : (new Date(json['createdAt'])),
-        'defaultPort': !exists(json, 'defaultPort') ? undefined : json['defaultPort'],
-        'defaultProtocol': !exists(json, 'defaultProtocol') ? undefined : json['defaultProtocol'],
-        'defaultSubdomain': !exists(json, 'defaultSubdomain') ? undefined : json['defaultSubdomain'],
-        'description': !exists(json, 'description') ? undefined : json['description'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'name': !exists(json, 'name') ? undefined : json['name'],
-        'pactParticipant': !exists(json, 'pactParticipant') ? undefined : json['pactParticipant'],
-        'playbookURL': !exists(json, 'playbookURL') ? undefined : json['playbookURL'],
-        'updatedAt': !exists(json, 'updatedAt') ? undefined : (new Date(json['updatedAt'])),
+        'appImageGitMainBranch': json['appImageGitMainBranch'] == null ? undefined : json['appImageGitMainBranch'],
+        'appImageGitRepo': json['appImageGitRepo'] == null ? undefined : json['appImageGitRepo'],
+        'chartExposesEndpoint': json['chartExposesEndpoint'] == null ? undefined : json['chartExposesEndpoint'],
+        'chartRepo': json['chartRepo'] == null ? undefined : json['chartRepo'],
+        'ciIdentifier': json['ciIdentifier'] == null ? undefined : SherlockCiIdentifierV3FromJSON(json['ciIdentifier']),
+        'createdAt': json['createdAt'] == null ? undefined : (new Date(json['createdAt'])),
+        'defaultPort': json['defaultPort'] == null ? undefined : json['defaultPort'],
+        'defaultProtocol': json['defaultProtocol'] == null ? undefined : json['defaultProtocol'],
+        'defaultSubdomain': json['defaultSubdomain'] == null ? undefined : json['defaultSubdomain'],
+        'description': json['description'] == null ? undefined : json['description'],
+        'id': json['id'] == null ? undefined : json['id'],
+        'name': json['name'] == null ? undefined : json['name'],
+        'pactParticipant': json['pactParticipant'] == null ? undefined : json['pactParticipant'],
+        'playbookURL': json['playbookURL'] == null ? undefined : json['playbookURL'],
+        'updatedAt': json['updatedAt'] == null ? undefined : (new Date(json['updatedAt'])),
     };
 }
 
 export function SherlockChartV3ToJSON(value?: SherlockChartV3 | null): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    if (value === null) {
-        return null;
+    if (value == null) {
+        return value;
     }
     return {
         
@@ -167,7 +164,7 @@ export function SherlockChartV3ToJSON(value?: SherlockChartV3 | null): any {
         'chartExposesEndpoint': value['chartExposesEndpoint'],
         'chartRepo': value['chartRepo'],
         'ciIdentifier': SherlockCiIdentifierV3ToJSON(value['ciIdentifier']),
-        'createdAt': !exists(value, 'createdAt') ? undefined : ((value['createdAt']).toISOString()),
+        'createdAt': value['createdAt'] == null ? undefined : ((value['createdAt']).toISOString()),
         'defaultPort': value['defaultPort'],
         'defaultProtocol': value['defaultProtocol'],
         'defaultSubdomain': value['defaultSubdomain'],
@@ -176,7 +173,7 @@ export function SherlockChartV3ToJSON(value?: SherlockChartV3 | null): any {
         'name': value['name'],
         'pactParticipant': value['pactParticipant'],
         'playbookURL': value['playbookURL'],
-        'updatedAt': !exists(value, 'updatedAt') ? undefined : ((value['updatedAt']).toISOString()),
+        'updatedAt': value['updatedAt'] == null ? undefined : ((value['updatedAt']).toISOString()),
     };
 }
 

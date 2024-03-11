@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from '../runtime';
+import { mapValues } from '../runtime';
 /**
  * 
  * @export
@@ -93,28 +93,25 @@ export function SherlockGithubActionsDeployHookV3EditFromJSON(json: any): Sherlo
 }
 
 export function SherlockGithubActionsDeployHookV3EditFromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockGithubActionsDeployHookV3Edit {
-    if (json === undefined || json === null) {
+    if (json == null) {
         return json;
     }
     return {
         
-        'githubActionsDefaultRef': !exists(json, 'githubActionsDefaultRef') ? undefined : json['githubActionsDefaultRef'],
-        'githubActionsOwner': !exists(json, 'githubActionsOwner') ? undefined : json['githubActionsOwner'],
-        'githubActionsRefBehavior': !exists(json, 'githubActionsRefBehavior') ? undefined : json['githubActionsRefBehavior'],
-        'githubActionsRepo': !exists(json, 'githubActionsRepo') ? undefined : json['githubActionsRepo'],
-        'githubActionsWorkflowInputs': !exists(json, 'githubActionsWorkflowInputs') ? undefined : json['githubActionsWorkflowInputs'],
-        'githubActionsWorkflowPath': !exists(json, 'githubActionsWorkflowPath') ? undefined : json['githubActionsWorkflowPath'],
-        'onFailure': !exists(json, 'onFailure') ? undefined : json['onFailure'],
-        'onSuccess': !exists(json, 'onSuccess') ? undefined : json['onSuccess'],
+        'githubActionsDefaultRef': json['githubActionsDefaultRef'] == null ? undefined : json['githubActionsDefaultRef'],
+        'githubActionsOwner': json['githubActionsOwner'] == null ? undefined : json['githubActionsOwner'],
+        'githubActionsRefBehavior': json['githubActionsRefBehavior'] == null ? undefined : json['githubActionsRefBehavior'],
+        'githubActionsRepo': json['githubActionsRepo'] == null ? undefined : json['githubActionsRepo'],
+        'githubActionsWorkflowInputs': json['githubActionsWorkflowInputs'] == null ? undefined : json['githubActionsWorkflowInputs'],
+        'githubActionsWorkflowPath': json['githubActionsWorkflowPath'] == null ? undefined : json['githubActionsWorkflowPath'],
+        'onFailure': json['onFailure'] == null ? undefined : json['onFailure'],
+        'onSuccess': json['onSuccess'] == null ? undefined : json['onSuccess'],
     };
 }
 
 export function SherlockGithubActionsDeployHookV3EditToJSON(value?: SherlockGithubActionsDeployHookV3Edit | null): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    if (value === null) {
-        return null;
+    if (value == null) {
+        return value;
     }
     return {
         

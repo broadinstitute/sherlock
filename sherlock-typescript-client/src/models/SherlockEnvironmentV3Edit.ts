@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from '../runtime';
+import { mapValues } from '../runtime';
 /**
  * 
  * @export
@@ -135,51 +135,48 @@ export function SherlockEnvironmentV3EditFromJSON(json: any): SherlockEnvironmen
 }
 
 export function SherlockEnvironmentV3EditFromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockEnvironmentV3Edit {
-    if (json === undefined || json === null) {
+    if (json == null) {
         return json;
     }
     return {
         
-        'baseDomain': !exists(json, 'baseDomain') ? undefined : json['baseDomain'],
-        'defaultCluster': !exists(json, 'defaultCluster') ? undefined : json['defaultCluster'],
-        'deleteAfter': !exists(json, 'deleteAfter') ? undefined : (new Date(json['deleteAfter'])),
-        'description': !exists(json, 'description') ? undefined : json['description'],
-        'helmfileRef': !exists(json, 'helmfileRef') ? undefined : json['helmfileRef'],
-        'namePrefixesDomain': !exists(json, 'namePrefixesDomain') ? undefined : json['namePrefixesDomain'],
-        'offline': !exists(json, 'offline') ? undefined : json['offline'],
-        'offlineScheduleBeginEnabled': !exists(json, 'offlineScheduleBeginEnabled') ? undefined : json['offlineScheduleBeginEnabled'],
-        'offlineScheduleBeginTime': !exists(json, 'offlineScheduleBeginTime') ? undefined : (new Date(json['offlineScheduleBeginTime'])),
-        'offlineScheduleEndEnabled': !exists(json, 'offlineScheduleEndEnabled') ? undefined : json['offlineScheduleEndEnabled'],
-        'offlineScheduleEndTime': !exists(json, 'offlineScheduleEndTime') ? undefined : (new Date(json['offlineScheduleEndTime'])),
-        'offlineScheduleEndWeekends': !exists(json, 'offlineScheduleEndWeekends') ? undefined : json['offlineScheduleEndWeekends'],
-        'owner': !exists(json, 'owner') ? undefined : json['owner'],
-        'pactIdentifier': !exists(json, 'pactIdentifier') ? undefined : json['pactIdentifier'],
-        'pagerdutyIntegration': !exists(json, 'pagerdutyIntegration') ? undefined : json['pagerdutyIntegration'],
-        'preventDeletion': !exists(json, 'preventDeletion') ? undefined : json['preventDeletion'],
-        'requiresSuitability': !exists(json, 'requiresSuitability') ? undefined : json['requiresSuitability'],
+        'baseDomain': json['baseDomain'] == null ? undefined : json['baseDomain'],
+        'defaultCluster': json['defaultCluster'] == null ? undefined : json['defaultCluster'],
+        'deleteAfter': json['deleteAfter'] == null ? undefined : (new Date(json['deleteAfter'])),
+        'description': json['description'] == null ? undefined : json['description'],
+        'helmfileRef': json['helmfileRef'] == null ? undefined : json['helmfileRef'],
+        'namePrefixesDomain': json['namePrefixesDomain'] == null ? undefined : json['namePrefixesDomain'],
+        'offline': json['offline'] == null ? undefined : json['offline'],
+        'offlineScheduleBeginEnabled': json['offlineScheduleBeginEnabled'] == null ? undefined : json['offlineScheduleBeginEnabled'],
+        'offlineScheduleBeginTime': json['offlineScheduleBeginTime'] == null ? undefined : (new Date(json['offlineScheduleBeginTime'])),
+        'offlineScheduleEndEnabled': json['offlineScheduleEndEnabled'] == null ? undefined : json['offlineScheduleEndEnabled'],
+        'offlineScheduleEndTime': json['offlineScheduleEndTime'] == null ? undefined : (new Date(json['offlineScheduleEndTime'])),
+        'offlineScheduleEndWeekends': json['offlineScheduleEndWeekends'] == null ? undefined : json['offlineScheduleEndWeekends'],
+        'owner': json['owner'] == null ? undefined : json['owner'],
+        'pactIdentifier': json['pactIdentifier'] == null ? undefined : json['pactIdentifier'],
+        'pagerdutyIntegration': json['pagerdutyIntegration'] == null ? undefined : json['pagerdutyIntegration'],
+        'preventDeletion': json['preventDeletion'] == null ? undefined : json['preventDeletion'],
+        'requiresSuitability': json['requiresSuitability'] == null ? undefined : json['requiresSuitability'],
     };
 }
 
 export function SherlockEnvironmentV3EditToJSON(value?: SherlockEnvironmentV3Edit | null): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    if (value === null) {
-        return null;
+    if (value == null) {
+        return value;
     }
     return {
         
         'baseDomain': value['baseDomain'],
         'defaultCluster': value['defaultCluster'],
-        'deleteAfter': !exists(value, 'deleteAfter') ? undefined : ((value['deleteAfter']).toISOString()),
+        'deleteAfter': value['deleteAfter'] == null ? undefined : ((value['deleteAfter']).toISOString()),
         'description': value['description'],
         'helmfileRef': value['helmfileRef'],
         'namePrefixesDomain': value['namePrefixesDomain'],
         'offline': value['offline'],
         'offlineScheduleBeginEnabled': value['offlineScheduleBeginEnabled'],
-        'offlineScheduleBeginTime': !exists(value, 'offlineScheduleBeginTime') ? undefined : ((value['offlineScheduleBeginTime']).toISOString()),
+        'offlineScheduleBeginTime': value['offlineScheduleBeginTime'] == null ? undefined : ((value['offlineScheduleBeginTime']).toISOString()),
         'offlineScheduleEndEnabled': value['offlineScheduleEndEnabled'],
-        'offlineScheduleEndTime': !exists(value, 'offlineScheduleEndTime') ? undefined : ((value['offlineScheduleEndTime']).toISOString()),
+        'offlineScheduleEndTime': value['offlineScheduleEndTime'] == null ? undefined : ((value['offlineScheduleEndTime']).toISOString()),
         'offlineScheduleEndWeekends': value['offlineScheduleEndWeekends'],
         'owner': value['owner'],
         'pactIdentifier': value['pactIdentifier'],

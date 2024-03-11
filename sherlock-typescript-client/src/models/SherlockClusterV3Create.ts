@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from '../runtime';
+import { mapValues } from '../runtime';
 /**
  * 
  * @export
@@ -98,29 +98,26 @@ export function SherlockClusterV3CreateFromJSON(json: any): SherlockClusterV3Cre
 }
 
 export function SherlockClusterV3CreateFromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockClusterV3Create {
-    if (json === undefined || json === null) {
+    if (json == null) {
         return json;
     }
     return {
         
-        'address': !exists(json, 'address') ? undefined : json['address'],
-        'azureSubscription': !exists(json, 'azureSubscription') ? undefined : json['azureSubscription'],
-        'base': !exists(json, 'base') ? undefined : json['base'],
-        'googleProject': !exists(json, 'googleProject') ? undefined : json['googleProject'],
-        'helmfileRef': !exists(json, 'helmfileRef') ? undefined : json['helmfileRef'],
-        'location': !exists(json, 'location') ? undefined : json['location'],
-        'name': !exists(json, 'name') ? undefined : json['name'],
-        'provider': !exists(json, 'provider') ? undefined : json['provider'],
-        'requiresSuitability': !exists(json, 'requiresSuitability') ? undefined : json['requiresSuitability'],
+        'address': json['address'] == null ? undefined : json['address'],
+        'azureSubscription': json['azureSubscription'] == null ? undefined : json['azureSubscription'],
+        'base': json['base'] == null ? undefined : json['base'],
+        'googleProject': json['googleProject'] == null ? undefined : json['googleProject'],
+        'helmfileRef': json['helmfileRef'] == null ? undefined : json['helmfileRef'],
+        'location': json['location'] == null ? undefined : json['location'],
+        'name': json['name'] == null ? undefined : json['name'],
+        'provider': json['provider'] == null ? undefined : json['provider'],
+        'requiresSuitability': json['requiresSuitability'] == null ? undefined : json['requiresSuitability'],
     };
 }
 
 export function SherlockClusterV3CreateToJSON(value?: SherlockClusterV3Create | null): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    if (value === null) {
-        return null;
+    if (value == null) {
+        return value;
     }
     return {
         

@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from '../runtime';
+import { mapValues } from '../runtime';
 /**
  * 
  * @export
@@ -45,22 +45,19 @@ export function SherlockGithubActionsDeployHookTestRunResponseFromJSON(json: any
 }
 
 export function SherlockGithubActionsDeployHookTestRunResponseFromJSONTyped(json: any, ignoreDiscriminator: boolean): SherlockGithubActionsDeployHookTestRunResponse {
-    if (json === undefined || json === null) {
+    if (json == null) {
         return json;
     }
     return {
         
-        'ok': !exists(json, 'ok') ? undefined : json['ok'],
-        'url': !exists(json, 'url') ? undefined : json['url'],
+        'ok': json['ok'] == null ? undefined : json['ok'],
+        'url': json['url'] == null ? undefined : json['url'],
     };
 }
 
 export function SherlockGithubActionsDeployHookTestRunResponseToJSON(value?: SherlockGithubActionsDeployHookTestRunResponse | null): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    if (value === null) {
-        return null;
+    if (value == null) {
+        return value;
     }
     return {
         

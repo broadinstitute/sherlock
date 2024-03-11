@@ -77,14 +77,14 @@ export class AppVersionsApi extends runtime.BaseAPI {
      * Get a changelog between two AppVersions
      */
     async apiAppVersionsProceduresV3ChangelogGetRaw(requestParameters: ApiAppVersionsProceduresV3ChangelogGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockAppVersionV3ChangelogResponse>> {
-        if (!runtime.exists(requestParameters, 'child')) {
+        if (requestParameters['child'] == null) {
             throw new runtime.RequiredError(
                 'child',
                 'Required parameter "child" was null or undefined when calling apiAppVersionsProceduresV3ChangelogGet().'
             );
         }
 
-        if (!runtime.exists(requestParameters, 'parent')) {
+        if (requestParameters['parent'] == null) {
             throw new runtime.RequiredError(
                 'parent',
                 'Required parameter "parent" was null or undefined when calling apiAppVersionsProceduresV3ChangelogGet().'
@@ -93,11 +93,11 @@ export class AppVersionsApi extends runtime.BaseAPI {
 
         const queryParameters: any = {};
 
-        if (runtime.exists(requestParameters, 'child')) {
+        if (requestParameters['child'] != null) {
             queryParameters['child'] = requestParameters['child'];
         }
 
-        if (runtime.exists(requestParameters, 'parent')) {
+        if (requestParameters['parent'] != null) {
             queryParameters['parent'] = requestParameters['parent'];
         }
 
@@ -129,51 +129,51 @@ export class AppVersionsApi extends runtime.BaseAPI {
     async apiAppVersionsV3GetRaw(requestParameters: ApiAppVersionsV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockAppVersionV3>>> {
         const queryParameters: any = {};
 
-        if (runtime.exists(requestParameters, 'appVersion')) {
+        if (requestParameters['appVersion'] != null) {
             queryParameters['appVersion'] = requestParameters['appVersion'];
         }
 
-        if (runtime.exists(requestParameters, 'authoredBy')) {
+        if (requestParameters['authoredBy'] != null) {
             queryParameters['authoredBy'] = requestParameters['authoredBy'];
         }
 
-        if (runtime.exists(requestParameters, 'chart')) {
+        if (requestParameters['chart'] != null) {
             queryParameters['chart'] = requestParameters['chart'];
         }
 
-        if (runtime.exists(requestParameters, 'createdAt')) {
+        if (requestParameters['createdAt'] != null) {
             queryParameters['createdAt'] = (requestParameters['createdAt'] as any).toISOString();
         }
 
-        if (runtime.exists(requestParameters, 'description')) {
+        if (requestParameters['description'] != null) {
             queryParameters['description'] = requestParameters['description'];
         }
 
-        if (runtime.exists(requestParameters, 'gitBranch')) {
+        if (requestParameters['gitBranch'] != null) {
             queryParameters['gitBranch'] = requestParameters['gitBranch'];
         }
 
-        if (runtime.exists(requestParameters, 'gitCommit')) {
+        if (requestParameters['gitCommit'] != null) {
             queryParameters['gitCommit'] = requestParameters['gitCommit'];
         }
 
-        if (runtime.exists(requestParameters, 'id')) {
+        if (requestParameters['id'] != null) {
             queryParameters['id'] = requestParameters['id'];
         }
 
-        if (runtime.exists(requestParameters, 'parentAppVersion')) {
+        if (requestParameters['parentAppVersion'] != null) {
             queryParameters['parentAppVersion'] = requestParameters['parentAppVersion'];
         }
 
-        if (runtime.exists(requestParameters, 'updatedAt')) {
+        if (requestParameters['updatedAt'] != null) {
             queryParameters['updatedAt'] = (requestParameters['updatedAt'] as any).toISOString();
         }
 
-        if (runtime.exists(requestParameters, 'limit')) {
+        if (requestParameters['limit'] != null) {
             queryParameters['limit'] = requestParameters['limit'];
         }
 
-        if (runtime.exists(requestParameters, 'offset')) {
+        if (requestParameters['offset'] != null) {
             queryParameters['offset'] = requestParameters['offset'];
         }
 
@@ -203,7 +203,7 @@ export class AppVersionsApi extends runtime.BaseAPI {
      * Upsert a AppVersion
      */
     async apiAppVersionsV3PutRaw(requestParameters: ApiAppVersionsV3PutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockAppVersionV3>> {
-        if (!runtime.exists(requestParameters, 'appVersion')) {
+        if (requestParameters['appVersion'] == null) {
             throw new runtime.RequiredError(
                 'appVersion',
                 'Required parameter "appVersion" was null or undefined when calling apiAppVersionsV3Put().'
@@ -241,7 +241,7 @@ export class AppVersionsApi extends runtime.BaseAPI {
      * Get an individual AppVersion
      */
     async apiAppVersionsV3SelectorGetRaw(requestParameters: ApiAppVersionsV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockAppVersionV3>> {
-        if (!runtime.exists(requestParameters, 'selector')) {
+        if (requestParameters['selector'] == null) {
             throw new runtime.RequiredError(
                 'selector',
                 'Required parameter "selector" was null or undefined when calling apiAppVersionsV3SelectorGet().'
@@ -276,14 +276,14 @@ export class AppVersionsApi extends runtime.BaseAPI {
      * Edit an individual AppVersion
      */
     async apiAppVersionsV3SelectorPatchRaw(requestParameters: ApiAppVersionsV3SelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockAppVersionV3>> {
-        if (!runtime.exists(requestParameters, 'selector')) {
+        if (requestParameters['selector'] == null) {
             throw new runtime.RequiredError(
                 'selector',
                 'Required parameter "selector" was null or undefined when calling apiAppVersionsV3SelectorPatch().'
             );
         }
 
-        if (!runtime.exists(requestParameters, 'appVersion')) {
+        if (requestParameters['appVersion'] == null) {
             throw new runtime.RequiredError(
                 'appVersion',
                 'Required parameter "appVersion" was null or undefined when calling apiAppVersionsV3SelectorPatch().'
