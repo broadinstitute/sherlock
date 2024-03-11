@@ -72,9 +72,11 @@ func changesetsProceduresV3ChartReleaseHistory(ctx *gin.Context) {
 	}
 
 	var ret []models.Changeset
-	if err = db.Scopes(models.ReadChangesetScope).Order("applied_at desc").Find(&ret, changesetIDs).Error; err != nil {
-		errors.AbortRequest(ctx, fmt.Errorf("error querying changesets to return: %w", err))
-		return
+	if len(changesetIDs) > 0 {
+		if err = db.Scopes(models.ReadChangesetScope).Order("applied_at desc").Find(&ret, changesetIDs).Error; err != nil {
+			errors.AbortRequest(ctx, fmt.Errorf("error querying changesets to return: %w", err))
+			return
+		}
 	}
 	ctx.JSON(http.StatusOK, utils.Map(ret, changesetFromModel))
 }
