@@ -131,7 +131,7 @@ jobs:
 
       - name: Delete existing Go client library code
         if: ${{ github.event_name != 'pull_request' }}
-        # Just delete code, not config
+        # Just delete code, not config, so that no-longer-generated files will disappear
         run: rm -rf sherlock-go-client/client
 
       - name: Generate Go client library
@@ -151,7 +151,7 @@ jobs:
 
       - name: Delete existing Typescript client library code
         if: ${{ github.event_name != 'pull_request' }}
-        # Just delete code, not config
+        # Just delete code, not config, so that no-longer-generated files will disappear
         run: rm -rf sherlock-typescript-client/src
 
       - name: Generate Typescript client library
