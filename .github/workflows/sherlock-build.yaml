@@ -130,12 +130,12 @@ jobs:
         run: make document-pact-provider
 
       - name: Delete existing Go client library code
-        if: ${{ github.event_name != 'pull_request' }}
+#        if: ${{ github.event_name != 'pull_request' }}
         # Just delete code, not config
         run: rm -rf sherlock-go-client/client
 
       - name: Generate Go client library
-        if: ${{ github.event_name != 'pull_request' }}
+#        if: ${{ github.event_name != 'pull_request' }}
         run: |
           docker run --rm -e GOPATH=/go \
             -v $(go env GOPATH):/go \
@@ -145,17 +145,17 @@ jobs:
             generate client -f /local/sherlock/docs/swagger.json -A sherlock --default-scheme=https -m client/models -c client
 
       - name: Tidy Go client library dependencies
-        if: ${{ github.event_name != 'pull_request' }}
+#        if: ${{ github.event_name != 'pull_request' }}
         working-directory: sherlock-go-client
         run: go mod tidy
 
       - name: Delete existing Typescript client library code
-        if: ${{ github.event_name != 'pull_request' }}
+#        if: ${{ github.event_name != 'pull_request' }}
         # Just delete code, not config
         run: rm -rf sherlock-typescript-client/src
 
       - name: Generate Typescript client library
-        if: ${{ github.event_name != 'pull_request' }}
+#        if: ${{ github.event_name != 'pull_request' }}
         run: |
           docker run --rm -v "${PWD}:/local" openapitools/openapi-generator-cli generate \
             -i /local/sherlock/docs/swagger.json \
@@ -169,7 +169,7 @@ jobs:
             --additional-properties=npmVersion=${{ needs.generate-tag.outputs.tag }}
 
       - name: Build Typescript client
-        if: ${{ github.event_name != 'pull_request' }}
+#        if: ${{ github.event_name != 'pull_request' }}
         working-directory: sherlock-typescript-client
         run: |
           npm install --save-dev
