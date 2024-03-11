@@ -129,6 +129,11 @@ jobs:
       - name: Update Pact provider documentation
         run: make document-pact-provider
 
+      - name: Delete existing Go client library code
+        if: ${{ github.event_name != 'pull_request' }}
+        # Just delete code, not config
+        run: rm -rf sherlock-go-client/client
+
       - name: Generate Go client library
         if: ${{ github.event_name != 'pull_request' }}
         run: |
@@ -143,6 +148,11 @@ jobs:
         if: ${{ github.event_name != 'pull_request' }}
         working-directory: sherlock-go-client
         run: go mod tidy
+
+      - name: Delete existing Typescript client library code
+        if: ${{ github.event_name != 'pull_request' }}
+        # Just delete code, not config
+        run: rm -rf sherlock-typescript-client/src
 
       - name: Generate Typescript client library
         if: ${{ github.event_name != 'pull_request' }}
