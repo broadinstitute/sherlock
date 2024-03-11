@@ -46,3 +46,17 @@ func (s *handlerSuite) TestChangesetsProceduresV3ChartReleaseHistory() {
 		s.Equal(s.TestData.Changeset_LeonardoDev_V1toV3().ID, got[0].ID)
 	}
 }
+
+func (s *handlerSuite) TestChangesetsProceduresV3ChartReleaseHistory_notFound() {
+	s.TestData.Changeset_LeonardoDev_V1toV3()
+	s.TestData.Changeset_LeonardoDev_V1toV2Superseded()
+	s.TestData.Environment_Swatomation()
+	s.TestData.ChartRelease_LeonardoSwatomation()
+	s.TestData.Environment_Swatomation_DevBee()
+	var got []ChangesetV3
+	code := s.HandleRequest(
+		s.NewRequest("GET", "/api/changesets/procedures/v3/chart-release-history/leonardo-"+s.TestData.Environment_Swatomation_DevBee().Name, nil),
+		&got)
+	s.Equal(http.StatusOK, code)
+	s.Empty(got)
+}
