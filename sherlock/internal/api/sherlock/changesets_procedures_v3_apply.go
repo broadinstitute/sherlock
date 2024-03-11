@@ -46,10 +46,6 @@ func changesetsProceduresV3Apply(ctx *gin.Context) {
 			return
 		}
 	}
-	if len(changesetIDs) == 0 {
-		errors.AbortRequest(ctx, fmt.Errorf("(%s) no changesets specified", errors.BadRequest))
-		return
-	}
 
 	var verboseOutput bool
 	if verboseOutputString := ctx.DefaultQuery("verbose-output", "true"); verboseOutputString == "true" {
@@ -62,7 +58,10 @@ func changesetsProceduresV3Apply(ctx *gin.Context) {
 	}
 
 	var ret []models.Changeset
-	if err = models.ApplyChangesets(db, changesetIDs); err != nil {
+	if len(changesetIDs) == 0 {
+		errors.AbortRequest(ctx, fmt.Errorf("(%s) no changesets specified", errors.BadRequest))
+		return
+	} else if err = models.ApplyChangesets(db, changesetIDs); err != nil {
 		errors.AbortRequest(ctx, fmt.Errorf("error applying changesets: %w", err))
 		return
 	} else if verboseOutput {
