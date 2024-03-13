@@ -315,7 +315,7 @@ func (s *modelSuite) TestChangesetPostApplyActions_pact() {
 	})
 }
 
-func (s *modelSuite) Test_changesetPostApplyActions_pact_neverPanics() {
+func (s *modelSuite) Test_changesetPostApplyActions_pactbroker_neverPanics() {
 	changeset := s.TestData.Changeset_LeonardoDev_V1toV3()
 	// Set AppVersionExact to nil pointer to simulate a changeset that doesn't have a required field for RecordDeployment
 	changeset.To.AppVersionExact = nil
