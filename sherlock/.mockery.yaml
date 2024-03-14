@@ -51,3 +51,6 @@ packages:
   github.com/broadinstitute/sherlock/sherlock/internal/slack:
     interfaces:
       mockableClient:
+  github.com/broadinstitute/sherlock/sherlock/internal/pactbroker:
+    interfaces:
+      mockablePactBroker:

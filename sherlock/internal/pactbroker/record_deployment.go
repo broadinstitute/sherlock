@@ -3,9 +3,19 @@ package pactbroker
 import (
 	"fmt"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
+	"github.com/broadinstitute/sherlock/sherlock/internal/pactbroker/pactbroker_mocks"
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"net/http"
+	"testing"
+)
+
+type mockablePactBroker interface {
+	RecordDeployment(chartName string, appVersion string, eid uuid.UUID)
+}
+
+var (
+	pactbroker mockablePactBroker
 )
 
 // Record deployment to pact broker
@@ -38,4 +48,17 @@ func RecordDeployment(chartName string, appVersion string, eID uuid.UUID) {
 
 func swallowError(err error) {
 	log.Warn().Msgf("PACT | %v", err)
+}
+
+func UseMockedPactBroker(t *testing.T, config func(c *pactbroker_mocks.MockMockablePactBroker), callback func()) {
+	if config == nil {
+		callback()
+		return
+	}
+	c := pactbroker_mocks.NewMockMockablePactBroker(t)
+	config(c)
+	temp := pactbroker
+	pactbroker = c
+	callback()
+	pactbroker = temp
 }
