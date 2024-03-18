@@ -10,17 +10,34 @@ import (
 	"testing"
 )
 
+type ErrorResponse struct {
+	Errors []string `json:"errors"`
+}
+
 type mockablePactBroker interface {
 	RecordDeployment(chartName string, appVersion string, eid uuid.UUID)
+}
+
+type PactBrokerImpl struct{}
+
+func (p PactBrokerImpl) RecordDeployment(chartName string, appVersion string, eid uuid.UUID) {
+	RecordDeployment(chartName, appVersion, eid)
 }
 
 var (
 	pactbroker mockablePactBroker
 )
 
+func init() {
+	pactbroker = &PactBrokerImpl{}
+}
+
 // Record deployment to pact broker
 // https://docs.pact.io/pact_broker/recording_deployments_and_releases
 func RecordDeployment(chartName string, appVersion string, eID uuid.UUID) {
+	if chartName == "" || appVersion == "" || eID == uuid.Nil {
+		return
+	}
 	if config.Config.Bool("pactbroker.enable") {
 		request, err := http.NewRequest(http.MethodPost, config.Config.MustString("pactbroker.url")+"/pacticipants/"+chartName+
 			"/versions/"+appVersion+"/deployed-versions/environment/"+eID.String(), nil)
