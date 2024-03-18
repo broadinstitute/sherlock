@@ -14,18 +14,6 @@ import (
 	"testing"
 )
 
-// NonEmptyStringMatcher is a custom matcher function that matches non-empty strings.
-func NonEmptyStringMatcher(v interface{}) bool {
-	str, ok := v.(string)
-	return ok && str != ""
-}
-
-// UUIDMatcher is a custom matcher function that matches any UUID.
-func UUIDMatcher(v interface{}) bool {
-	_, ok := v.(uuid.UUID)
-	return ok
-}
-
 func handler(w http.ResponseWriter, r *http.Request) {
 	path := r.URL.Path
 
