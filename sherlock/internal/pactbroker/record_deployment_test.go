@@ -43,12 +43,12 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	if len(mChartName) == 0 || len(mAppVersion) == 0 || len(mEID) == 0 {
 		fmt.Println("Bad request")
 		w.WriteHeader(http.StatusBadRequest)
-		_ = json.NewEncoder(w).Encode(&PactBrokerErrorResponse{Errors: []string{"Bad request"}})
+		_ = json.NewEncoder(w).Encode(&ErrorResponse{Errors: []string{"Bad request"}})
 		return
 	} else if mEID[1] == uuid.Nil.String() {
 		fmt.Println("Environment ID " + mEID[1] + " is not a valid UUID")
 		w.WriteHeader(http.StatusNotFound)
-		_ = json.NewEncoder(w).Encode(&PactBrokerErrorResponse{Errors: []string{"Not found"}})
+		_ = json.NewEncoder(w).Encode(&ErrorResponse{Errors: []string{"Not found"}})
 		return
 	}
 
