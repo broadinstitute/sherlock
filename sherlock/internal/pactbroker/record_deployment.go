@@ -10,7 +10,8 @@ import (
 	"testing"
 )
 
-type ErrorResponse struct {
+// PactBrokerErrorResponse is a struct that represents the response from the Pact Broker
+type PactBrokerErrorResponse struct {
 	Errors []string `json:"errors"`
 }
 
