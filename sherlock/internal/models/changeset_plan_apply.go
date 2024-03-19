@@ -6,6 +6,7 @@ import (
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
+	"github.com/broadinstitute/sherlock/sherlock/internal/pactbroker"
 	"github.com/broadinstitute/sherlock/sherlock/internal/pagerduty"
 	"github.com/broadinstitute/sherlock/sherlock/internal/slack"
 	"github.com/rs/zerolog/log"
@@ -204,18 +205,18 @@ func changesetPostApplyActions(db *gorm.DB, appliedChangesets []Changeset) {
 				// here, so we should really test it.)
 				//
 				//// 3. Report to Pact
-				//if environment.PactIdentifier != nil {
-				//	var chart Chart
-				//	if errToSwallow := db.
-				//		Take(&chart, appliedChangeset.ChartRelease.ChartID).Error; errToSwallow != nil {
-				//		go slack.ReportError(context.Background(), fmt.Sprintf("unable to load chart %d after applying changeset %d", appliedChangeset.ChartRelease.ChartID, appliedChangeset.ID), errToSwallow)
-				//	} else if chart.PactParticipant != nil && *chart.PactParticipant && appliedChangeset.To.AppVersionExact != nil {
-				//		go pactbroker.RecordDeployment(
-				//			chart.Name,
-				//			*appliedChangeset.To.AppVersionExact,
-				//			*environment.PactIdentifier)
-				//	}
-				//}
+				if environment.PactIdentifier != nil {
+					var chart Chart
+					if errToSwallow := db.
+						Take(&chart, appliedChangeset.ChartRelease.ChartID).Error; errToSwallow != nil {
+						go slack.ReportError(context.Background(), fmt.Sprintf("unable to load chart %d after applying changeset %d", appliedChangeset.ChartRelease.ChartID, appliedChangeset.ID), errToSwallow)
+					} else if chart.PactParticipant != nil && *chart.PactParticipant && appliedChangeset.To.AppVersionExact != nil {
+						go pactbroker.RecordDeployment(
+							chart.Name,
+							*appliedChangeset.To.AppVersionExact,
+							*environment.PactIdentifier)
+					}
+				}
 			}
 		}
 	}

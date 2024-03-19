@@ -2,6 +2,7 @@ package models
 
 import (
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 	"time"
 )
@@ -279,5 +280,24 @@ func (s *modelSuite) TestApplyChangesets() {
 		err = s.DB.First(&chartRelease, someOtherChartRelease.ID).Error
 		s.NoError(err)
 		s.Equal(chartRelease.AppVersionExact, someOtherChartRelease.AppVersionExact)
+	})
+}
+
+func (s *modelSuite) Test_changesetPostApplyActions_pactbroker_neverPanics() {
+	changeset := s.TestData.Changeset_LeonardoDev_V1toV3()
+	// Set AppVersionExact to nil pointer to simulate a changeset that doesn't have a required field for RecordDeployment
+	changeset.To.AppVersionExact = nil
+	// Set any environment to have a PactIdentifier
+	environment := s.TestData.Environment_Dev()
+	err := s.DB.Model(&Environment{Model: gorm.Model{ID: environment.ID}}).Updates(&Environment{PactIdentifier: utils.PointerTo(uuid.New())}).Error
+	s.NoError(err)
+	// Set PactParticipant to true for a chart
+	chart := s.TestData.Chart_Leonardo()
+	err = s.DB.Model(&Chart{Model: gorm.Model{ID: chart.ID}}).Updates(&Chart{PactParticipant: utils.PointerTo(true)}).Error
+	s.NoError(err)
+
+	// Assert Report to Pact step in changeset_plan_apply.go never panics
+	s.NotPanics(func() {
+		changesetPostApplyActions(s.DB, []Changeset{changeset})
 	})
 }
