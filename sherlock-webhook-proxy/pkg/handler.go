@@ -1,6 +1,7 @@
 package pkg
 
 import (
+	"bytes"
 	"context"
 	"crypto/hmac"
 	"crypto/sha256"
@@ -10,8 +11,10 @@ import (
 	"fmt"
 	"github.com/broadinstitute/sherlock/sherlock-go-client/client/ci_runs"
 	"github.com/broadinstitute/sherlock/sherlock-go-client/client/git_commits"
+	"github.com/broadinstitute/sherlock/sherlock-go-client/client/github_actions_jobs"
 	"github.com/broadinstitute/sherlock/sherlock-go-client/client/models"
 	httptransport "github.com/go-openapi/runtime/client"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-playground/webhooks/v6/github"
 	"hash"
 	"io"
@@ -118,17 +121,22 @@ func HandleWebhook(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		// As r.Body is read, additionally synchronously write it into mac
+		var rawBodyBytes bytes.Buffer
+
+		// As r.Body is read, additionally synchronously write it both the mac hasher and a byte buffer,
+		// the former so we can do extra signature validation ourselves and the latter so we can play
+		// with the raw body later.
+		// We do this so the library can handle complexity around safely reading the body.
 		r.Body = struct {
 			io.Reader
 			io.Closer
 		}{
-			Reader: io.TeeReader(r.Body, mac),
+			Reader: io.TeeReader(r.Body, io.MultiWriter(mac, &rawBodyBytes)),
 			Closer: r.Body,
 		}
 
 		// Call the library and handle its errors (it does try to check signature, but using a more insecure method)
-		rawPayload, err := hook.Parse(r, github.WorkflowRunEvent, github.PingEvent, github.PushEvent)
+		rawPayload, err := hook.Parse(r, github.WorkflowRunEvent, github.WorkflowJobEvent, github.PingEvent, github.PushEvent)
 		if err != nil {
 			switch {
 			case errors.Is(err, github.ErrMissingHubSignatureHeader):
@@ -271,6 +279,58 @@ func HandleWebhook(w http.ResponseWriter, r *http.Request) {
 			} else {
 				w.WriteHeader(http.StatusInternalServerError)
 				log.Printf("sherlockClient.GitCommits.PutAPIGitCommitsV3(): error and response both nil")
+			}
+
+		case github.WorkflowJobPayload:
+			if !isAllowedGithubOrg(w, payload.Repository.Owner.Login) {
+				return
+			}
+			var status string
+			if payload.WorkflowJob.Conclusion != "" {
+				status = payload.WorkflowJob.Conclusion
+			} else {
+				status = payload.WorkflowJob.Status
+			}
+
+			// There is actually potentially a created_at field here! But the library is too out of date to expose it.
+			// So we manually reach into our handy copy of the body and pull it out ourselves.
+			var customPayloadParse struct {
+				WorkflowJob struct {
+					CreatedAt time.Time `json:"created_at"`
+				} `json:"workflow_job"`
+			}
+			var createdAt strfmt.DateTime
+			if recoverableErr := json.Unmarshal(rawBodyBytes.Bytes(), &customPayloadParse); recoverableErr != nil {
+				log.Printf("json.Unmarshal(rawBodyBytes.Bytes(), &customPayloadParse): %v\n", recoverableErr)
+			} else if !customPayloadParse.WorkflowJob.CreatedAt.IsZero() {
+				createdAt = strfmt.DateTime(customPayloadParse.WorkflowJob.CreatedAt)
+			}
+
+			created, err := sherlockClient.GithubActionsJobs.PutAPIGithubActionsJobsV3(&github_actions_jobs.PutAPIGithubActionsJobsV3Params{
+				Context: context.Background(),
+				GithubActionsJob: &models.SherlockGithubActionsJobV3Create{
+					GithubActionsAttemptNumber: payload.WorkflowJob.RunAttempt,
+					GithubActionsJobID:         payload.WorkflowJob.ID,
+					GithubActionsOwner:         payload.Repository.Owner.Login,
+					GithubActionsRepo:          payload.Repository.Name,
+					GithubActionsRunID:         payload.WorkflowJob.RunID,
+					JobCreatedAt:               createdAt,
+					JobStartedAt:               strfmt.DateTime(payload.WorkflowJob.StartedAt),
+					JobTerminalAt:              strfmt.DateTime(payload.WorkflowJob.CompletedAt),
+					Status:                     status,
+				},
+			})
+
+			// Handle response cases
+			if err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+				log.Printf("sherlockClient.GithubActionsJobs.PutAPIGithubActionsJobsV3(): error %v", err)
+			} else if created != nil {
+				w.WriteHeader(http.StatusCreated)
+				log.Printf("sherlockClient.GithubActionsJobs.PutAPIGithubActionsJobsV3(): upserted GithubActionsJob %d, '%s'", created.Payload.ID, created.Payload.Status)
+			} else {
+				w.WriteHeader(http.StatusInternalServerError)
+				log.Printf("sherlockClient.GithubActionsJobs.PutAPIGithubActionsJobsV3(): error and response both nil")
 			}
 
 		// Some payload we don't handle
