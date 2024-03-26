@@ -11,19 +11,19 @@ type GithubActionsJobV3 struct {
 }
 
 type GithubActionsJobV3Create struct {
-	GithubActionsOwner         string `json:"githubActionsOwner"`
-	GithubActionsRepo          string `json:"githubActionsRepo"`
-	GithubActionsRunID         uint   `json:"githubActionsRunID"`
-	GithubActionsAttemptNumber uint   `json:"githubActionsAttemptNumber"`
-	GithubActionsJobID         uint   `json:"githubActionsJobID"`
+	GithubActionsOwner         string `json:"githubActionsOwner" form:"githubActionsOwner"`
+	GithubActionsRepo          string `json:"githubActionsRepo" form:"githubActionsRepo"`
+	GithubActionsRunID         uint   `json:"githubActionsRunID" form:"githubActionsRunID"`
+	GithubActionsAttemptNumber uint   `json:"githubActionsAttemptNumber" form:"githubActionsAttemptNumber"`
+	GithubActionsJobID         uint   `json:"githubActionsJobID" form:"githubActionsJobID"`
 	GithubActionsJobV3Edit
 }
 
 type GithubActionsJobV3Edit struct {
-	JobCreatedAt  *time.Time `json:"jobCreatedAt"`
-	JobStartedAt  *time.Time `json:"jobStartedAt"`
-	JobTerminalAt *time.Time `json:"jobTerminalAt"`
-	Status        *string    `json:"status"`
+	JobCreatedAt  *time.Time `json:"jobCreatedAt"  format:"date-time" form:"jobCreatedAt"`
+	JobStartedAt  *time.Time `json:"jobStartedAt" format:"date-time" form:"jobStartedAt"`
+	JobTerminalAt *time.Time `json:"jobTerminalAt" format:"date-time" form:"jobTerminalAt"`
+	Status        *string    `json:"status" form:"status"`
 }
 
 func (j GithubActionsJobV3) toModel() models.GithubActionsJob {

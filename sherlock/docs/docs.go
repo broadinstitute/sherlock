@@ -5514,16 +5514,19 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "format": "date-time",
                         "name": "jobCreatedAt",
                         "in": "query"
                     },
                     {
                         "type": "string",
+                        "format": "date-time",
                         "name": "jobStartedAt",
                         "in": "query"
                     },
                     {
                         "type": "string",
+                        "format": "date-time",
                         "name": "jobTerminalAt",
                         "in": "query"
                     },
@@ -8808,13 +8811,16 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "jobCreatedAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "jobStartedAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "jobTerminalAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "status": {
                     "type": "string"
@@ -8844,13 +8850,16 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "jobCreatedAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "jobStartedAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "jobTerminalAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "status": {
                     "type": "string"

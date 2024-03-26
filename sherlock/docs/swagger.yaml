@@ -1411,10 +1411,13 @@ definitions:
       id:
         type: integer
       jobCreatedAt:
+        format: date-time
         type: string
       jobStartedAt:
+        format: date-time
         type: string
       jobTerminalAt:
+        format: date-time
         type: string
       status:
         type: string
@@ -1435,10 +1438,13 @@ definitions:
       githubActionsRunID:
         type: integer
       jobCreatedAt:
+        format: date-time
         type: string
       jobStartedAt:
+        format: date-time
         type: string
       jobTerminalAt:
+        format: date-time
         type: string
       status:
         type: string
@@ -5369,13 +5375,16 @@ paths:
       - in: query
         name: id
         type: integer
-      - in: query
+      - format: date-time
+        in: query
         name: jobCreatedAt
         type: string
-      - in: query
+      - format: date-time
+        in: query
         name: jobStartedAt
         type: string
-      - in: query
+      - format: date-time
+        in: query
         name: jobTerminalAt
         type: string
       - in: query
