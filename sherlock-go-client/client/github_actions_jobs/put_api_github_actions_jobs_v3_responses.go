@@ -23,8 +23,8 @@ type PutAPIGithubActionsJobsV3Reader struct {
 // ReadResponse reads a server response into the received o.
 func (o *PutAPIGithubActionsJobsV3Reader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
 	switch response.Code() {
-	case 200:
-		result := NewPutAPIGithubActionsJobsV3OK()
+	case 201:
+		result := NewPutAPIGithubActionsJobsV3Created()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
@@ -70,27 +70,27 @@ func (o *PutAPIGithubActionsJobsV3Reader) ReadResponse(response runtime.ClientRe
 	}
 }
 
-// NewPutAPIGithubActionsJobsV3OK creates a PutAPIGithubActionsJobsV3OK with default headers values
-func NewPutAPIGithubActionsJobsV3OK() *PutAPIGithubActionsJobsV3OK {
-	return &PutAPIGithubActionsJobsV3OK{}
+// NewPutAPIGithubActionsJobsV3Created creates a PutAPIGithubActionsJobsV3Created with default headers values
+func NewPutAPIGithubActionsJobsV3Created() *PutAPIGithubActionsJobsV3Created {
+	return &PutAPIGithubActionsJobsV3Created{}
 }
 
-/* PutAPIGithubActionsJobsV3OK describes a response with status code 200, with default header values.
+/* PutAPIGithubActionsJobsV3Created describes a response with status code 201, with default header values.
 
-OK
+Created
 */
-type PutAPIGithubActionsJobsV3OK struct {
+type PutAPIGithubActionsJobsV3Created struct {
 	Payload *models.SherlockGithubActionsJobV3
 }
 
-func (o *PutAPIGithubActionsJobsV3OK) Error() string {
-	return fmt.Sprintf("[PUT /api/github-actions-jobs/v3][%d] putApiGithubActionsJobsV3OK  %+v", 200, o.Payload)
+func (o *PutAPIGithubActionsJobsV3Created) Error() string {
+	return fmt.Sprintf("[PUT /api/github-actions-jobs/v3][%d] putApiGithubActionsJobsV3Created  %+v", 201, o.Payload)
 }
-func (o *PutAPIGithubActionsJobsV3OK) GetPayload() *models.SherlockGithubActionsJobV3 {
+func (o *PutAPIGithubActionsJobsV3Created) GetPayload() *models.SherlockGithubActionsJobV3 {
 	return o.Payload
 }
 
-func (o *PutAPIGithubActionsJobsV3OK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *PutAPIGithubActionsJobsV3Created) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	o.Payload = new(models.SherlockGithubActionsJobV3)
 

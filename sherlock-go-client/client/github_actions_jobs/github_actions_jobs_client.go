@@ -34,7 +34,7 @@ type ClientService interface {
 
 	GetAPIGithubActionsJobsV3Selector(params *GetAPIGithubActionsJobsV3SelectorParams, opts ...ClientOption) (*GetAPIGithubActionsJobsV3SelectorOK, error)
 
-	PutAPIGithubActionsJobsV3(params *PutAPIGithubActionsJobsV3Params, opts ...ClientOption) (*PutAPIGithubActionsJobsV3OK, error)
+	PutAPIGithubActionsJobsV3(params *PutAPIGithubActionsJobsV3Params, opts ...ClientOption) (*PutAPIGithubActionsJobsV3Created, error)
 
 	SetTransport(transport runtime.ClientTransport)
 }
@@ -125,7 +125,7 @@ func (a *Client) GetAPIGithubActionsJobsV3Selector(params *GetAPIGithubActionsJo
 
   Upsert GithubActionsJob.
 */
-func (a *Client) PutAPIGithubActionsJobsV3(params *PutAPIGithubActionsJobsV3Params, opts ...ClientOption) (*PutAPIGithubActionsJobsV3OK, error) {
+func (a *Client) PutAPIGithubActionsJobsV3(params *PutAPIGithubActionsJobsV3Params, opts ...ClientOption) (*PutAPIGithubActionsJobsV3Created, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewPutAPIGithubActionsJobsV3Params()
@@ -150,7 +150,7 @@ func (a *Client) PutAPIGithubActionsJobsV3(params *PutAPIGithubActionsJobsV3Para
 	if err != nil {
 		return nil, err
 	}
-	success, ok := result.(*PutAPIGithubActionsJobsV3OK)
+	success, ok := result.(*PutAPIGithubActionsJobsV3Created)
 	if ok {
 		return success, nil
 	}
