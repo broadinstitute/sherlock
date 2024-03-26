@@ -13,7 +13,7 @@ create table if not exists github_actions_jobs
 
     job_created_at                timestamp with time zone,
     job_started_at                timestamp with time zone,
-    job_completed_at              timestamp with time zone,
+    job_terminal_at               timestamp with time zone,
     status                        text
 );
 
