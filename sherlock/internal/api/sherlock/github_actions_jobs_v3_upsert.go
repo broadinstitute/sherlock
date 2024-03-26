@@ -17,7 +17,7 @@ import (
 //	@tags			GithubActionsJobs
 //	@produce		json
 //	@param			githubActionsJob		body		GithubActionsJobV3Create	true	"The GithubActionsJob to upsert"
-//	@success		200						{object}	GithubActionsJobV3
+//	@success		201						{object}	GithubActionsJobV3
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/github-actions-jobs/v3 [put]
 func githubActionsJobsV3Upsert(ctx *gin.Context) {
