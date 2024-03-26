@@ -54,5 +54,5 @@ func githubActionsJobsV3Upsert(ctx *gin.Context) {
 		errors.AbortRequest(ctx, err)
 		return
 	}
-	ctx.JSON(http.StatusOK, githubActionsJobFromModel(result))
+	ctx.JSON(http.StatusCreated, githubActionsJobFromModel(result))
 }
