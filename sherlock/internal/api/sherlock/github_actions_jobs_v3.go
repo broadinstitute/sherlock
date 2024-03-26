@@ -26,6 +26,7 @@ type GithubActionsJobV3Edit struct {
 	Status        *string    `json:"status" form:"status"`
 }
 
+//nolint:unused
 func (j GithubActionsJobV3) toModel() models.GithubActionsJob {
 	return models.GithubActionsJob{
 		Model:                      j.toGormModel(),
@@ -41,10 +42,12 @@ func (j GithubActionsJobV3) toModel() models.GithubActionsJob {
 	}
 }
 
+//nolint:unused
 func (j GithubActionsJobV3Create) toModel() models.GithubActionsJob {
 	return GithubActionsJobV3{GithubActionsJobV3Create: j}.toModel()
 }
 
+//nolint:unused
 func (j GithubActionsJobV3Edit) toModel() models.GithubActionsJob {
 	return GithubActionsJobV3Create{GithubActionsJobV3Edit: j}.toModel()
 }
