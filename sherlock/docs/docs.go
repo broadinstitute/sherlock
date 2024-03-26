@@ -5465,6 +5465,271 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/github-actions-jobs/v3": {
+            "get": {
+                "description": "List GithubActionsJobs matching a filter.\nResults are ordered by start time, starting at most recent.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GithubActionsJobs"
+                ],
+                "summary": "List GithubActionsJobs matching a filter",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "date-time",
+                        "name": "createdAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "githubActionsAttemptNumber",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "githubActionsJobID",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "githubActionsOwner",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "githubActionsRepo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "githubActionsRunID",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "jobCreatedAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "jobStartedAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "jobTerminalAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "format": "date-time",
+                        "name": "updatedAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Control how many GithubActionsJobs are returned (default 100)",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Control the offset for the returned GithubActionsJobs (default 0)",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/sherlock.GithubActionsJobV3"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Upsert GithubActionsJob.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GithubActionsJobs"
+                ],
+                "summary": "Upsert GithubActionsJob",
+                "parameters": [
+                    {
+                        "description": "The GithubActionsJob to upsert",
+                        "name": "githubActionsJob",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.GithubActionsJobV3Create"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.GithubActionsJobV3"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/github-actions-jobs/v3/{selector}": {
+            "get": {
+                "description": "Get an individual GithubActionsJob.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GithubActionsJobs"
+                ],
+                "summary": "Get an individual GithubActionsJob",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The selector of the GithubActionsJob, either Sherlock ID or '{owner}/{repo}/{job ID}'",
+                        "name": "selector",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.GithubActionsJobV3"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/incidents/v3": {
             "get": {
                 "description": "List Incidents matching a filter.",
@@ -8514,6 +8779,81 @@ const docTemplate = `{
                 },
                 "onSuccess": {
                     "type": "boolean"
+                }
+            }
+        },
+        "sherlock.GithubActionsJobV3": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "githubActionsAttemptNumber": {
+                    "type": "integer"
+                },
+                "githubActionsJobID": {
+                    "type": "integer"
+                },
+                "githubActionsOwner": {
+                    "type": "string"
+                },
+                "githubActionsRepo": {
+                    "type": "string"
+                },
+                "githubActionsRunID": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "jobCreatedAt": {
+                    "type": "string"
+                },
+                "jobStartedAt": {
+                    "type": "string"
+                },
+                "jobTerminalAt": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string",
+                    "format": "date-time"
+                }
+            }
+        },
+        "sherlock.GithubActionsJobV3Create": {
+            "type": "object",
+            "properties": {
+                "githubActionsAttemptNumber": {
+                    "type": "integer"
+                },
+                "githubActionsJobID": {
+                    "type": "integer"
+                },
+                "githubActionsOwner": {
+                    "type": "string"
+                },
+                "githubActionsRepo": {
+                    "type": "string"
+                },
+                "githubActionsRunID": {
+                    "type": "integer"
+                },
+                "jobCreatedAt": {
+                    "type": "string"
+                },
+                "jobStartedAt": {
+                    "type": "string"
+                },
+                "jobTerminalAt": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
                 }
             }
         },

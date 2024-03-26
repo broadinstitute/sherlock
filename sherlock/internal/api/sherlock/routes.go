@@ -114,6 +114,10 @@ func ConfigureRoutes(apiRouter gin.IRoutes) {
 	apiRouter.PATCH("environments/v3/*selector", environmentsV3Edit)
 	apiRouter.GET("environments/v3/*selector", environmentsV3Get)
 
+	apiRouter.GET("github-actions-jobs/v3", githubActionsJobsV3List)
+	apiRouter.GET("github-actions-jobs/v3/*selector", githubActionsJobsV3Get)
+	apiRouter.PUT("github-actions-jobs/v3", githubActionsJobsV3Upsert)
+
 	apiRouter.PUT("git-commits/v3", gitCommitsV3Upsert)
 
 	apiRouter.POST("incidents/v3", incidentsV3Create)

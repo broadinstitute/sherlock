@@ -1393,6 +1393,56 @@ definitions:
       onSuccess:
         type: boolean
     type: object
+  sherlock.GithubActionsJobV3:
+    properties:
+      createdAt:
+        format: date-time
+        type: string
+      githubActionsAttemptNumber:
+        type: integer
+      githubActionsJobID:
+        type: integer
+      githubActionsOwner:
+        type: string
+      githubActionsRepo:
+        type: string
+      githubActionsRunID:
+        type: integer
+      id:
+        type: integer
+      jobCreatedAt:
+        type: string
+      jobStartedAt:
+        type: string
+      jobTerminalAt:
+        type: string
+      status:
+        type: string
+      updatedAt:
+        format: date-time
+        type: string
+    type: object
+  sherlock.GithubActionsJobV3Create:
+    properties:
+      githubActionsAttemptNumber:
+        type: integer
+      githubActionsJobID:
+        type: integer
+      githubActionsOwner:
+        type: string
+      githubActionsRepo:
+        type: string
+      githubActionsRunID:
+        type: integer
+      jobCreatedAt:
+        type: string
+      jobStartedAt:
+        type: string
+      jobTerminalAt:
+        type: string
+      status:
+        type: string
+    type: object
   sherlock.IncidentV3:
     properties:
       createdAt:
@@ -5291,6 +5341,182 @@ paths:
       summary: Upsert a GitCommit
       tags:
       - GitCommits
+  /api/github-actions-jobs/v3:
+    get:
+      description: |-
+        List GithubActionsJobs matching a filter.
+        Results are ordered by start time, starting at most recent.
+      parameters:
+      - format: date-time
+        in: query
+        name: createdAt
+        type: string
+      - in: query
+        name: githubActionsAttemptNumber
+        type: integer
+      - in: query
+        name: githubActionsJobID
+        type: integer
+      - in: query
+        name: githubActionsOwner
+        type: string
+      - in: query
+        name: githubActionsRepo
+        type: string
+      - in: query
+        name: githubActionsRunID
+        type: integer
+      - in: query
+        name: id
+        type: integer
+      - in: query
+        name: jobCreatedAt
+        type: string
+      - in: query
+        name: jobStartedAt
+        type: string
+      - in: query
+        name: jobTerminalAt
+        type: string
+      - in: query
+        name: status
+        type: string
+      - format: date-time
+        in: query
+        name: updatedAt
+        type: string
+      - description: Control how many GithubActionsJobs are returned (default 100)
+        in: query
+        name: limit
+        type: integer
+      - description: Control the offset for the returned GithubActionsJobs (default
+          0)
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/sherlock.GithubActionsJobV3'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: List GithubActionsJobs matching a filter
+      tags:
+      - GithubActionsJobs
+    put:
+      description: Upsert GithubActionsJob.
+      parameters:
+      - description: The GithubActionsJob to upsert
+        in: body
+        name: githubActionsJob
+        required: true
+        schema:
+          $ref: '#/definitions/sherlock.GithubActionsJobV3Create'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/sherlock.GithubActionsJobV3'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Upsert GithubActionsJob
+      tags:
+      - GithubActionsJobs
+  /api/github-actions-jobs/v3/{selector}:
+    get:
+      description: Get an individual GithubActionsJob.
+      parameters:
+      - description: The selector of the GithubActionsJob, either Sherlock ID or '{owner}/{repo}/{job
+          ID}'
+        in: path
+        name: selector
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/sherlock.GithubActionsJobV3'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Get an individual GithubActionsJob
+      tags:
+      - GithubActionsJobs
   /api/incidents/v3:
     get:
       description: List Incidents matching a filter.
