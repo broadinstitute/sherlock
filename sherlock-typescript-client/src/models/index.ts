@@ -43,6 +43,8 @@ export * from './SherlockGithubActionsDeployHookTestRunResponse';
 export * from './SherlockGithubActionsDeployHookV3';
 export * from './SherlockGithubActionsDeployHookV3Create';
 export * from './SherlockGithubActionsDeployHookV3Edit';
+export * from './SherlockGithubActionsJobV3';
+export * from './SherlockGithubActionsJobV3Create';
 export * from './SherlockIncidentV3';
 export * from './SherlockIncidentV3Create';
 export * from './SherlockIncidentV3Edit';
