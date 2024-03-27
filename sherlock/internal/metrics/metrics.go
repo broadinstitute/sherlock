@@ -65,6 +65,11 @@ var (
 		"sherlock/response_latency",
 		"the latency of responses served from sherlock",
 		"ms")
+	GithubActionsJobLatencyMeasure = stats.Int64(
+		"sherlock/github_actions_job_latency",
+		"the latency of GitHub Actions jobs",
+		"seconds",
+	)
 )
 
 var (
@@ -80,9 +85,11 @@ var (
 	PagerdutyRequestTypeKey       = tag.MustNewKey("pd_request_type")
 	PagerdutyResponseCodeKey      = tag.MustNewKey("pd_response_code")
 	GithubActionsRepoKey          = tag.MustNewKey("gha_repo")
+	GithubActionsOrganizationKey  = tag.MustNewKey("gha_organization")
 	GithubActionsWorkflowFileKey  = tag.MustNewKey("gha_workflow_file")
 	GithubActionsOutcomeKey       = tag.MustNewKey("gha_outcome")
 	GithubActionsRetryKey         = tag.MustNewKey("gha_retry")
+	GithubActionsJobStageKey      = tag.MustNewKey("gha_job_stage")
 	RouteKey                      = tag.MustNewKey("route")
 	MethodKey                     = tag.MustNewKey("method")
 	StatusKey                     = tag.MustNewKey("status")
@@ -187,6 +194,22 @@ var (
 		// [>=0ms, >=25ms, >=50ms, >=75ms, >=100ms, >=200ms, >=400ms, >=600ms, >=800ms, >=1s, >=2s, >=4s, >=6s, >=8s, >=10s]
 		Aggregation: view.Distribution(0, 25, 50, 75, 100, 200, 400, 600, 800, 1000, 2000, 4000, 6000, 8000, 10000),
 	}
+	GithubActionsJobCountView = &view.View{
+		Name:        "github_actions_job_count",
+		Measure:     GithubActionsJobLatencyMeasure,
+		TagKeys:     []tag.Key{GithubActionsOrganizationKey, GithubActionsRepoKey, GithubActionsJobStageKey, GithubActionsWorkflowFileKey},
+		Description: "The number of GitHub Actions jobs",
+		Aggregation: view.Count(),
+	}
+	GithubActionsJobLatencyView = &view.View{
+		Name:        "github_actions_job_latency",
+		Measure:     GithubActionsJobLatencyMeasure,
+		TagKeys:     []tag.Key{GithubActionsOrganizationKey, GithubActionsRepoKey, GithubActionsJobStageKey, GithubActionsWorkflowFileKey},
+		Description: "The distribution of the latencies of GitHub Actions jobs",
+		// Latency in buckets:
+		// [>=0s, >=2s, >=4s, >=6s, >=8s, >=10s, >=20s, >=40s, >=60s, >=90s, >=2m, >=3m, >=4m, >=5m, >=10m, >=15m, >=20m, >=30m, >=40m, >=50m, >=70m, >=90m, >=120m]
+		Aggregation: view.Distribution(0, 2, 4, 6, 8, 10, 20, 40, 60, 90, 120, 180, 240, 300, 600, 900, 1200, 1800, 2400, 3000, 4200, 5400, 7200),
+	}
 )
 
 func RegisterViews() error {
@@ -205,5 +228,7 @@ func RegisterViews() error {
 		GithubActions7DayTotalDurationView,
 		ResponseCountView,
 		ResponseLatencyView,
+		GithubActionsJobCountView,
+		GithubActionsJobLatencyView,
 	)
 }
