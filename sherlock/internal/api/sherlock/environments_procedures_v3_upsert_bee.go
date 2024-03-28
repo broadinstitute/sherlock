@@ -2,26 +2,27 @@ package sherlock
 
 import (
 	"fmt"
+	"net/http"
+
 	"github.com/broadinstitute/sherlock/sherlock/internal/authentication"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/creasty/defaults"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm/clause"
-	"net/http"
 )
 
 // environmentsProceduresV3UpsertBee godoc
 //
-//	@summary		Create a Environment
-//	@description	Create a Environment.
-//	@tags			Environments
-//	@accept			json
-//	@produce		json
-//	@param			environment				body		EnvironmentV3Create	true	"The Environment to create"
-//	@success		201						{object}	EnvironmentV3
-//	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
-//	@router			/api/environments/procedures/v3/upsert-bee [put]
+//	@summary			Get a Bee, new or existing
+//	@description	Creates a Bee Environment, or retreives one that already exists.
+//	@tags					Environments
+//	@accept				json
+//	@produce			json
+//	@param				environment				body		EnvironmentV3Create	true	"The Environment to create"
+//	@success			201						{object}	EnvironmentV3
+//	@failure			400,403,404,407,409,500	{object}	errors.ErrorResponse
+//	@router				/api/environments/procedures/v3/upsert-bee [put]
 func environmentsProceduresV3UpsertBee(ctx *gin.Context) {
 	// force auth
 	db, err := authentication.MustUseDB(ctx)
