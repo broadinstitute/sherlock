@@ -113,6 +113,7 @@ func ConfigureRoutes(apiRouter gin.IRoutes) {
 	apiRouter.DELETE("environments/v3/*selector", environmentsV3Delete)
 	apiRouter.PATCH("environments/v3/*selector", environmentsV3Edit)
 	apiRouter.GET("environments/v3/*selector", environmentsV3Get)
+	apiRouter.PUT("environments/procedures/v3/upsert-bee", environmentsProceduresV3UpsertBee)
 
 	apiRouter.GET("github-actions-jobs/v3", githubActionsJobsV3List)
 	apiRouter.GET("github-actions-jobs/v3/*selector", githubActionsJobsV3Get)

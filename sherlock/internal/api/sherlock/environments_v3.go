@@ -35,6 +35,18 @@ type EnvironmentV3Create struct {
 	EnvironmentV3Edit
 }
 
+type EnvironmentProceduresV3UpsertBee struct {
+	Base                      string `json:"base" form:"base"`                                                          // Required when creating
+	AutoPopulateChartReleases *bool  `json:"autoPopulateChartReleases" form:"autoPopulateChartReleases" default:"true"` // If true when creating, dynamic environments copy from template and template environments get the honeycomb chart
+	Lifecycle                 string `json:"lifecycle" form:"lifecycle" default:"dynamic"`
+	Name                      string `json:"name" form:"name"`                                 // When creating, will be calculated if dynamic, required otherwise
+	TemplateEnvironment       string `json:"templateEnvironment" form:"templateEnvironment"`   // Required for dynamic environments
+	UniqueResourcePrefix      string `json:"uniqueResourcePrefix" form:"uniqueResourcePrefix"` // When creating, will be calculated if left empty
+	DefaultNamespace          string `json:"defaultNamespace" form:"defaultNamespace"`         // When creating, will be calculated if left empty
+	ValuesName                string `json:"valuesName" form:"valuesName"`                     // When creating, defaults to template name or environment name
+	EnvironmentV3Edit
+}
+
 type EnvironmentV3Edit struct {
 	DefaultCluster              *string    `json:"defaultCluster" form:"defaultCluster"`
 	Owner                       *string    `json:"owner" form:"owner"` // When creating, will default to you
