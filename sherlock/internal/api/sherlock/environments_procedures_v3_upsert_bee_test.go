@@ -84,7 +84,6 @@ func (s *handlerSuite) TestEnvironmentProceduresV3UpsertBee_static() {
 	code := s.HandleRequest(
 
 		s.NewRequest("PUT", "/api/environments/procedures/v3/upsert-bee", EnvironmentProceduresV3UpsertBee{
-			//s.NewRequest("PUT", "/api/environments/v3", EnvironmentProceduresV3UpsertBee{
 			Base:      "live",
 			Lifecycle: "static",
 			Name:      "staticy-static",

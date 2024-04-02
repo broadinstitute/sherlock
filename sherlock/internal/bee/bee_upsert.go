@@ -60,16 +60,27 @@ func updateBee(beeModel *models.Environment, beeEdits models.Environment, db *go
 }
 
 // somehow return a new-unused bee (maybe create it, maybe get from pool)
-func newBee(environmentCreateBody models.Environment, db *gorm.DB) {
-	// template given?
-	if environmentCreateBody.TemplateEnvironment == "" {
-		//	environmentCreateBody.TemplatEnvironment == beeDefaultTemplate
-	}
-	_, err := getEnvByName(environmentCreateBody.TemplateEnvironment.Name, db)
+func newBee(environmentCreateBody models.Environment, db *gorm.DB) (beeModel models.Environment, err error) {
+	var noBee models.Environment // just an empty model
 
-	//
-	if err != nil {
-		environmentCreateBody.TemplateEnvironment.Name = beeDefaultTemplate
+	// get bee if exists
+	if environmentCreateBody.Name != "" {
+		beeModel, err = getEnvByName(environmentCreateBody.Name, db)
+
+		// check if returned bee (no err) matches expected template
+		if err == nil && beeModel.TemplateEnvironment.Name != environmentCreateBody.TemplateEnvironment.Name {
+			err = fmt.Errorf("(%s) request validation error: Template Mismatch", errors.BadRequest)
+		}
+	} else {
+		// if bee does not exist, make it
+
+		// get pooled bee here
+		beeModel, err = getPooledBee(environmentCreateBody.TemplateEnvironment.Name, db)
+
+		// if no pooled bee
+		if beeModel == noBee {
+			err = db.Create(&environmentCreateBody).Error
+		}
 	}
 }
 
