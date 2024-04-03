@@ -1,4 +1,5 @@
-// Test Data Factory
+// Test Data Factories
+// While test_data will populate the the database and return models from database, factories returns only the models so they can be sent to code to... be created in the db.
 package models
 
 import (
