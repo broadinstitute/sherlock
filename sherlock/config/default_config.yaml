@@ -213,7 +213,7 @@ argoWorkflows:
 
 argoCd:
   url: https://argocd.dsp-devops-prod.broadinstitute.org
-  chartReleaseUrlFormatString: https://argocd.dsp-devops-prod.broadinstitute.org/applications/ap-argocd/%s
+  chartReleaseUrlFormatString: https://argocd.dsp-devops-prod.broadinstitute.org/applications/argocd/%s
   # Note the double %% in the string, escaping the % that appears naturally in the URL (for %253D, the URL-encoded version of =).
   environmentUrlFormatString: https://argocd.dsp-devops-prod.broadinstitute.org/applications?showFavorites=false&proj=&sync=&health=&namespace=&cluster=&labels=env%%253D%s
 
