@@ -39,7 +39,7 @@ func (s *handlerSuite) TestGithubActionsJobsV3Get() {
 		&got)
 	s.Equal(http.StatusOK, code)
 	if s.NotNil(got.JobCreatedAt) {
-		s.Equal(job1.JobCreatedAt.Second(), got.JobCreatedAt.Second())
+		s.Equal(job1.JobCreatedAt.Unix(), got.JobCreatedAt.Unix())
 	}
 }
 
@@ -53,7 +53,7 @@ func (s *handlerSuite) TestGithubActionsJobsV3Get_selector() {
 		&got)
 	s.Equal(http.StatusOK, code)
 	if s.NotNil(got.JobCreatedAt) {
-		s.Equal(job1.JobCreatedAt.Second(), got.JobCreatedAt.Second())
+		s.Equal(job1.JobCreatedAt.Unix(), got.JobCreatedAt.Unix())
 	}
 }
 
