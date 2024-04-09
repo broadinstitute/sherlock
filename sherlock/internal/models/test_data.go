@@ -103,6 +103,9 @@ type TestData interface {
 	Incident_3() Incident
 	Incident_4() Incident
 	Incident_5() Incident
+
+	GithubActionsJob_1() GithubActionsJob
+	GithubActionsJob_2() GithubActionsJob
 }
 
 // testDataImpl contains the caching for TestData and a (back-)reference to
@@ -205,6 +208,9 @@ type testDataImpl struct {
 	incident_3 Incident
 	incident_4 Incident
 	incident_5 Incident
+
+	githubActionsJob_1 GithubActionsJob
+	githubActionsJob_2 GithubActionsJob
 }
 
 // create is a helper function for creating TestData entries in the database.
@@ -1459,4 +1465,40 @@ func (td *testDataImpl) Incident_5() Incident {
 		td.create(&td.incident_5)
 	}
 	return td.incident_5
+}
+
+func (td *testDataImpl) GithubActionsJob_1() GithubActionsJob {
+	if td.githubActionsJob_1.ID == 0 {
+		td.githubActionsJob_1 = GithubActionsJob{
+			GithubActionsOwner:         td.CiRun_Deploy_LeonardoDev_V1toV3().GithubActionsOwner,
+			GithubActionsRepo:          td.CiRun_Deploy_LeonardoDev_V1toV3().GithubActionsRepo,
+			GithubActionsRunID:         td.CiRun_Deploy_LeonardoDev_V1toV3().GithubActionsRunID,
+			GithubActionsAttemptNumber: td.CiRun_Deploy_LeonardoDev_V1toV3().GithubActionsAttemptNumber,
+			GithubActionsJobID:         11223344,
+			JobCreatedAt:               utils.PointerTo(td.CiRun_Deploy_LeonardoDev_V1toV3().TerminalAt.Add(-50 * time.Second)),
+			JobStartedAt:               utils.PointerTo(td.CiRun_Deploy_LeonardoDev_V1toV3().TerminalAt.Add(-40 * time.Second)),
+			JobTerminalAt:              utils.PointerTo(td.CiRun_Deploy_LeonardoDev_V1toV3().TerminalAt.Add(-30 * time.Second)),
+			Status:                     utils.PointerTo("success"),
+		}
+		td.create(&td.githubActionsJob_1)
+	}
+	return td.githubActionsJob_1
+}
+
+func (td *testDataImpl) GithubActionsJob_2() GithubActionsJob {
+	if td.githubActionsJob_2.ID == 0 {
+		td.githubActionsJob_2 = GithubActionsJob{
+			GithubActionsOwner:         td.CiRun_Deploy_LeonardoDev_V1toV3().GithubActionsOwner,
+			GithubActionsRepo:          td.CiRun_Deploy_LeonardoDev_V1toV3().GithubActionsRepo,
+			GithubActionsRunID:         td.CiRun_Deploy_LeonardoDev_V1toV3().GithubActionsRunID,
+			GithubActionsAttemptNumber: td.CiRun_Deploy_LeonardoDev_V1toV3().GithubActionsAttemptNumber,
+			GithubActionsJobID:         22113344,
+			JobCreatedAt:               utils.PointerTo(td.CiRun_Deploy_LeonardoDev_V1toV3().TerminalAt.Add(-15 * time.Second)),
+			JobStartedAt:               utils.PointerTo(td.CiRun_Deploy_LeonardoDev_V1toV3().TerminalAt.Add(-10 * time.Second)),
+			JobTerminalAt:              utils.PointerTo(td.CiRun_Deploy_LeonardoDev_V1toV3().TerminalAt.Add(-5 * time.Second)),
+			Status:                     utils.PointerTo("success"),
+		}
+		td.create(&td.githubActionsJob_2)
+	}
+	return td.githubActionsJob_2
 }
