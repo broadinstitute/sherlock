@@ -117,3 +117,6 @@ func getEnvByName(envName string, db *gorm.DB) (envModel models.Environment, err
 	err = db.Preload(clause.Associations).First(&envModel, "environments.name = ?", envName).Error
 	return
 }
+
+// UNUSED allows unused variables to be included in Go programs
+func UNUSED(x ...interface{}) {}

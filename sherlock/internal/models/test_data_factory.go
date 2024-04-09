@@ -13,9 +13,9 @@ import (
 // AppVersion_Leonardo_V1, ChartVersionLeonardo_V1
 // AppVersion_Leonardo_V3, ChartVersionLeonardo_V3
 // ChartRelease_LeonardoSwatomation
-func (td *testDataImpl) Changeset_LeonardoSwatomation_V1toV3_factory() Changeset {
+func (td *testDataImpl) Changeset_LeonardoSwatomation_TestBee_V1toV3_factory(chartReleaseID uint) Changeset {
 	changeset_leonardoSwatomation_v1toV3_factory := Changeset{
-		ChartReleaseID: td.ChartRelease_LeonardoSwatomation().ID,
+		ChartReleaseID: chartReleaseID,
 		From: ChartReleaseVersion{
 			ResolvedAt:           utils.PointerTo(time.Now().Add(-(24 * time.Hour))),
 			AppVersionResolver:   utils.PointerTo("exact"),
@@ -42,10 +42,6 @@ func (td *testDataImpl) Changeset_LeonardoSwatomation_V1toV3_factory() Changeset
 			HelmfileRef:          utils.PointerTo(fmt.Sprintf("charts/leonardo-%s", td.ChartVersion_Leonardo_V3().ChartVersion)),
 			HelmfileRefEnabled:   utils.PointerTo(false),
 		},
-		AppliedAt:    utils.PointerTo(time.Now().Add(-(18 * time.Hour))),
-		SupersededAt: nil,
-		PlannedByID:  utils.PointerTo(td.User_Suitable().ID),
-		AppliedByID:  utils.PointerTo(td.User_Suitable().ID),
 	}
 	return changeset_leonardoSwatomation_v1toV3_factory
 }

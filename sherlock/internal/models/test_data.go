@@ -60,6 +60,7 @@ type TestData interface {
 	ChartRelease_LeonardoStaging() ChartRelease
 	ChartRelease_LeonardoDev() ChartRelease
 	ChartRelease_LeonardoSwatomation() ChartRelease
+	ChartRelease_LeonardoSwatomation_TestBee(environmentID uint) ChartRelease
 	ChartRelease_D2pDdpAzureProd() ChartRelease
 	ChartRelease_D2pDdpAzureDev() ChartRelease
 	ChartRelease_ExternalDnsTerraQaBees() ChartRelease
@@ -72,7 +73,8 @@ type TestData interface {
 	DatabaseInstance_LeonardoSwatomation() DatabaseInstance
 
 	Changeset_LeonardoDev_V1toV3() Changeset
-	Changeset_LeonardoSwatomation_V1toV3() Changeset
+	Changeset_LeonardoSwatomation_TestBee_V1toV3(chartReleaseID uint) Changeset
+	Changeset_LeonardoSwatomation_TestBee_V1toV3_factory(chartReleaseID uint) Changeset
 	Changeset_LeonardoDev_V1toV2Superseded() Changeset
 
 	CiIdentifier_Chart_Leonardo() CiIdentifier
@@ -868,6 +870,31 @@ func (td *testDataImpl) ChartRelease_LeonardoSwatomation() ChartRelease {
 	return td.chartRelease_leonardoSwatomation
 }
 
+func (td *testDataImpl) ChartRelease_LeonardoSwatomation_TestBee(environmentID uint) ChartRelease {
+	if td.chartRelease_leonardoSwatomation.ID == 0 {
+		td.chartRelease_leonardoSwatomation = ChartRelease{
+			ChartID:         td.Chart_Leonardo().ID,
+			ClusterID:       utils.PointerTo(td.Cluster_TerraQaBees().ID),
+			DestinationType: "environment",
+			EnvironmentID:   &environmentID,
+			Name:            "leonardo-swatomation",
+			Namespace:       "terra-swatomation",
+			ChartReleaseVersion: ChartReleaseVersion{
+				AppVersionResolver:               utils.PointerTo("follow"),
+				AppVersionFollowChartReleaseID:   utils.PointerTo(td.ChartRelease_LeonardoDev().ID),
+				ChartVersionResolver:             utils.PointerTo("follow"),
+				ChartVersionFollowChartReleaseID: utils.PointerTo(td.ChartRelease_LeonardoDev().ID),
+			},
+			Subdomain: utils.PointerTo("leonardo"),
+			Protocol:  utils.PointerTo("https"),
+			Port:      utils.PointerTo[uint](443),
+		}
+		td.h.SetSuitableTestUserForDB()
+		td.create(&td.chartRelease_leonardoSwatomation)
+	}
+	return td.chartRelease_leonardoSwatomation
+}
+
 func (td *testDataImpl) ChartRelease_D2pDdpAzureProd() ChartRelease {
 	if td.chartRelease_d2pDdpAzureProd.ID == 0 {
 		td.chartRelease_d2pDdpAzureProd = ChartRelease{
@@ -1083,10 +1110,10 @@ func (td *testDataImpl) Changeset_LeonardoDev_V1toV3() Changeset {
 	return td.changeset_leonardoDev_v1toV3
 }
 
-func (td *testDataImpl) Changeset_LeonardoSwatomation_V1toV3() Changeset {
+func (td *testDataImpl) Changeset_LeonardoSwatomation_TestBee_V1toV3(chartReleaseID uint) Changeset {
 	if td.changeset_leonardoSwatomation_v1toV3.ID == 0 {
 		td.changeset_leonardoSwatomation_v1toV3 = Changeset{
-			ChartReleaseID: td.ChartRelease_LeonardoSwatomation().ID,
+			ChartReleaseID: chartReleaseID,
 			From: ChartReleaseVersion{
 				ResolvedAt:           utils.PointerTo(time.Now().Add(-(24 * time.Hour))),
 				AppVersionResolver:   utils.PointerTo("exact"),
