@@ -84,9 +84,7 @@ func (s *handlerSuite) TestSlackDeployHooksV3Create() {
 	if s.NotNil(got.OnEnvironment) {
 		s.Equal(s.TestData.Environment_Dev().Name, *got.OnEnvironment)
 	}
-	if s.NotNil(got.MentionPeople) {
-		s.False(*got.MentionPeople)
-	}
+	s.Nil(got.MentionPeople)
 }
 
 func (s *handlerSuite) TestSlackDeployHooksV3Create_mentionPeople() {
