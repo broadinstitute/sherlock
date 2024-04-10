@@ -84,4 +84,32 @@ func (s *handlerSuite) TestSlackDeployHooksV3Create() {
 	if s.NotNil(got.OnEnvironment) {
 		s.Equal(s.TestData.Environment_Dev().Name, *got.OnEnvironment)
 	}
+	if s.NotNil(got.MentionPeople) {
+		s.False(*got.MentionPeople)
+	}
+}
+
+func (s *handlerSuite) TestSlackDeployHooksV3Create_mentionPeople() {
+	var got SlackDeployHookV3
+	code := s.HandleRequest(
+		s.NewRequest("POST", "/api/deploy-hooks/slack/v3", SlackDeployHookV3Create{
+			DeployHookTriggerConfigV3: DeployHookTriggerConfigV3{
+				OnEnvironment: utils.PointerTo(s.TestData.Environment_Dev().Name),
+			},
+			SlackDeployHookFields: SlackDeployHookFields{
+				SlackChannel:  utils.PointerTo("channel"),
+				MentionPeople: utils.PointerTo(true),
+			},
+		}),
+		&got)
+	s.Equal(http.StatusCreated, code)
+	if s.NotNil(got.SlackChannel) {
+		s.Equal("channel", *got.SlackChannel)
+	}
+	if s.NotNil(got.OnEnvironment) {
+		s.Equal(s.TestData.Environment_Dev().Name, *got.OnEnvironment)
+	}
+	if s.NotNil(got.MentionPeople) {
+		s.True(*got.MentionPeople)
+	}
 }
