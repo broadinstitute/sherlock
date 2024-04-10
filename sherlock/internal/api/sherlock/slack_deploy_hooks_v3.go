@@ -12,8 +12,8 @@ type SlackDeployHookV3 struct {
 }
 
 type SlackDeployHookFields struct {
-	SlackChannel  *string `json:"slackChannel,omitempty" form:"slackChannel"`
-	MentionPeople *bool   `json:"mentionPeople,omitempty" form:"mentionPeople"`
+	SlackChannel  *string `json:"slackChannel" form:"slackChannel"`
+	MentionPeople *bool   `json:"mentionPeople" form:"mentionPeople"`
 }
 
 func (s SlackDeployHookV3) toModel(db *gorm.DB) (models.SlackDeployHook, error) {
