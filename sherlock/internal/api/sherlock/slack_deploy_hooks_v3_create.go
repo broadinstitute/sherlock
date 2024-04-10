@@ -51,8 +51,9 @@ func slackDeployHooksV3Create(ctx *gin.Context) {
 	}
 
 	hook := models.SlackDeployHook{
-		Trigger:      trigger,
-		SlackChannel: body.SlackChannel,
+		Trigger:       trigger,
+		MentionPeople: body.MentionPeople,
+		SlackChannel:  body.SlackChannel,
 	}
 	if err = db.Create(&hook).Error; err != nil {
 		errors.AbortRequest(ctx, err)
