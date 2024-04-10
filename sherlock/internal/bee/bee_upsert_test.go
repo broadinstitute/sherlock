@@ -55,18 +55,6 @@ func (suite *BeeTestSuite) TestGetBee_nopanic() {
 	})
 }
 
-func (suite *BeeTestSuite) TestUpdateBee_brokentest() {
-	suite.Run("should correctly update a Bee Environment", func() {
-		beeModel := suite.TestData.Environment_Swatomation_TestBee()
-		var beeEdits []models.Changeset
-		beeEdits = append(beeEdits, suite.TestData.Changeset_LeonardoSwatomation_TestBee_V1toV3(beeModel.ID))
-
-		updateBee(beeEdits, suite.DB)
-
-		suite.Equal(beeModel, beeEdits[0].NewAppVersions[0].AppVersion)
-	})
-}
-
 func (suite *BeeTestSuite) TestGetEnvByName_err() {
 	suite.Run("should return empty Model and an error if no match", func() {
 		resultEnvModel, err := getEnvByName("swatomation", suite.DB)
@@ -78,82 +66,82 @@ func (suite *BeeTestSuite) TestGetEnvByName_err() {
 
 func (suite *BeeTestSuite) TestUpdateBee() {
 	suite.Run("should return an existing Bee and update it", func() {
-		var incomingChangesets []models.Changeset
 		myBee := suite.TestData.Environment_Swatomation_TestBee()
-		suite.TestData.AppVersion_Leonardo_V1()
+		toAppVersion := suite.TestData.AppVersion_Leonardo_V1()
 		suite.TestData.AppVersion_Leonardo_V3()
-		fromChartVersion := suite.TestData.ChartVersion_Leonardo_V1()
-		toChartVersion := suite.TestData.ChartVersion_Leonardo_V3()
-		UNUSED(toChartVersion)
+		toChartVersion := suite.TestData.ChartVersion_Leonardo_V1()
+		fromChartVersion := suite.TestData.ChartVersion_Leonardo_V3()
 		suite.TestData.ChartRelease_LeonardoSwatomation_TestBee(myBee.ID)
 
 		var leoChart models.Chart
 		_ = suite.DB.Find(&leoChart, fromChartVersion.ChartID)
 
 		var myQuery models.ChartRelease
-		myQuery.Environment = &myBee
-		myQuery.Chart = &leoChart
 		myQuery.EnvironmentID = &myBee.ID
 		myQuery.ChartID = leoChart.ID
-		//UNUSED(leoChart)
 
 		var myChartRelease models.ChartRelease
-		var myChartReleases []models.ChartRelease
-		//_ = suite.DB.Preload(clause.Associations).Where(&myQuery).First(&myChartRelease).Error
-		_ = suite.DB.Preload(clause.Associations).Where(&models.ChartRelease{
-			EnvironmentID: &myBee.ID,
-			//ChartID:       leoChart.ID,
-		}).Find(&myChartReleases).Error
-		ogChartReleaseVersion := myChartRelease.ChartReleaseVersion
+		suite.DB.Where(&myQuery).First(&myChartRelease)
+		suite.Equal("0.3.0", *myChartRelease.ChartReleaseVersion.ChartVersionExact)
+		suite.Equal("v0.0.3", *myChartRelease.ChartReleaseVersion.AppVersionExact)
 
-		myChangeSet := suite.TestData.Changeset_LeonardoSwatomation_TestBee_V1toV3_factory(myChartRelease.ID)
-
+		// manually build Changeset test data
+		var incomingChangesets []models.Changeset
+		myChangeSet := suite.TestData.Changeset_LeonardoSwatomation_TestBee_V3toV1_factory(myChartRelease.ID)
 		incomingChangesets = append(incomingChangesets, myChangeSet)
 
-		resultEnvModel, _ := getEnvByName("swatomation-test-bee", suite.DB)
-
 		// the actual update
-		_ = updateBee(incomingChangesets, suite.DB)
+		err := updateBee(incomingChangesets, suite.DB)
 
 		// grab the release from db again
-		_ = suite.DB.Where(&myQuery).First(&myChartRelease).Error
+		var finalChartRelease models.ChartRelease
+		_ = suite.DB.Preload(clause.Associations).Where(&myQuery).First(&finalChartRelease).Error
 
-		suite.Equal(resultEnvModel.ID, myBee.ID)
-		suite.NotEqual(ogChartReleaseVersion, myChartRelease.ChartVersion)
-		suite.Equal(toChartVersion.ChartVersion, *myChartRelease.ChartReleaseVersion.ChartVersionExact)
+		//assert
+		suite.Equal(nil, err)
+		suite.NotEqual(fromChartVersion.ChartVersion, toChartVersion.ChartVersion)
+		suite.Equal(toAppVersion.AppVersion, *finalChartRelease.ChartReleaseVersion.AppVersionExact)
+		suite.Equal(toChartVersion.ChartVersion, *finalChartRelease.ChartReleaseVersion.ChartVersionExact)
 	})
 }
 
 // Common Happy Path E2E Test (of the main package)
 func (suite *BeeTestSuite) TestBeeUpsert() {
 	suite.Run("should return an existing Bee and update it", func() {
-		var incomingChangesets []models.Changeset
 		myBee := suite.TestData.Environment_Swatomation_TestBee()
-		suite.TestData.AppVersion_Leonardo_V1()
+		toAppVersion := suite.TestData.AppVersion_Leonardo_V1()
 		suite.TestData.AppVersion_Leonardo_V3()
-		leoChart := suite.TestData.ChartVersion_Leonardo_V1().Chart
-		toChartVersion := suite.TestData.ChartVersion_Leonardo_V3()
+		toChartVersion := suite.TestData.ChartVersion_Leonardo_V1()
+		fromChartVersion := suite.TestData.ChartVersion_Leonardo_V3()
+		suite.TestData.ChartRelease_LeonardoSwatomation_TestBee(myBee.ID)
+
+		var leoChart models.Chart
+		_ = suite.DB.Find(&leoChart, fromChartVersion.ChartID)
 
 		var myQuery models.ChartRelease
-		myQuery.Environment = &myBee
-		myQuery.Chart = leoChart
+		myQuery.EnvironmentID = &myBee.ID
+		myQuery.ChartID = leoChart.ID
 
 		var myChartRelease models.ChartRelease
-		_ = suite.DB.Preload(clause.Associations).Where(&myQuery).First(&myChartRelease).Error
+		_ = suite.DB.Where(&myQuery).First(&myChartRelease)
+		suite.Equal(fromChartVersion.ChartVersion, *myChartRelease.ChartReleaseVersion.ChartVersionExact)
 
-		myChangeSet := suite.TestData.Changeset_LeonardoSwatomation_TestBee_V1toV3_factory(myChartRelease.ID)
-
+		// manually build Changset test data
+		var incomingChangesets []models.Changeset
+		myChangeSet := suite.TestData.Changeset_LeonardoSwatomation_TestBee_V3toV1_factory(myChartRelease.ID)
 		incomingChangesets = append(incomingChangesets, myChangeSet)
 
-		resultEnvModel, _ := getEnvByName("swatomation-test-bee", suite.DB)
-
 		// the actual update
-		modifiedBee, _ := BeeUpsert(resultEnvModel, incomingChangesets, suite.DB)
+		resultBee, _ := BeeUpsert(myBee, incomingChangesets, suite.DB)
 
 		// grab the release from db again
-		_ = suite.DB.Preload(clause.Associations).Where(&myQuery).First(&myChartRelease).Error
+		var finalChartRelease models.ChartRelease
+		_ = suite.DB.Where(&myQuery).First(&finalChartRelease).Error
 
-		suite.Equal(resultEnvModel.ID, modifiedBee.ID)
-		suite.Equal(toChartVersion.ChartVersion, myChartRelease.ChartVersion.ChartVersion)
+		//assert
+		suite.Equal(resultBee.ID, myBee.ID)
+		suite.NotEqual(fromChartVersion.ChartVersion, toChartVersion.ChartVersion)
+		suite.Equal(toAppVersion.AppVersion, *finalChartRelease.ChartReleaseVersion.AppVersionExact)
+		suite.Equal(toChartVersion.ChartVersion, *finalChartRelease.ChartReleaseVersion.ChartVersionExact)
 	})
 }

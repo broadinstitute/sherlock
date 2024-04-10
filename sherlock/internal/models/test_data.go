@@ -74,7 +74,7 @@ type TestData interface {
 
 	Changeset_LeonardoDev_V1toV3() Changeset
 	Changeset_LeonardoSwatomation_TestBee_V1toV3(chartReleaseID uint) Changeset
-	Changeset_LeonardoSwatomation_TestBee_V1toV3_factory(chartReleaseID uint) Changeset
+	Changeset_LeonardoSwatomation_TestBee_V3toV1_factory(chartReleaseID uint) Changeset
 	Changeset_LeonardoDev_V1toV2Superseded() Changeset
 
 	CiIdentifier_Chart_Leonardo() CiIdentifier

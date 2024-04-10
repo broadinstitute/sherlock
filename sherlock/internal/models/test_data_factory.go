@@ -13,23 +13,23 @@ import (
 // AppVersion_Leonardo_V1, ChartVersionLeonardo_V1
 // AppVersion_Leonardo_V3, ChartVersionLeonardo_V3
 // ChartRelease_LeonardoSwatomation
-func (td *testDataImpl) Changeset_LeonardoSwatomation_TestBee_V1toV3_factory(chartReleaseID uint) Changeset {
+func (td *testDataImpl) Changeset_LeonardoSwatomation_TestBee_V3toV1_factory(chartReleaseID uint) Changeset {
 	changeset_leonardoSwatomation_v1toV3_factory := Changeset{
 		ChartReleaseID: chartReleaseID,
-		From: ChartReleaseVersion{
+		To: ChartReleaseVersion{
 			ResolvedAt:           utils.PointerTo(time.Now().Add(-(24 * time.Hour))),
 			AppVersionResolver:   utils.PointerTo("exact"),
 			AppVersionExact:      utils.PointerTo(td.AppVersion_Leonardo_V1().AppVersion),
 			AppVersionBranch:     utils.PointerTo(td.AppVersion_Leonardo_V1().GitBranch),
 			AppVersionCommit:     utils.PointerTo(td.AppVersion_Leonardo_V1().GitCommit),
 			AppVersionID:         utils.PointerTo(td.AppVersion_Leonardo_V1().ID),
-			ChartVersionResolver: utils.PointerTo("latest"),
+			ChartVersionResolver: utils.PointerTo("exact"),
 			ChartVersionExact:    utils.PointerTo(td.ChartVersion_Leonardo_V1().ChartVersion),
 			ChartVersionID:       utils.PointerTo(td.ChartVersion_Leonardo_V1().ID),
 			HelmfileRef:          utils.PointerTo(fmt.Sprintf("charts/leonardo-%s", td.ChartVersion_Leonardo_V1().ChartVersion)),
 			HelmfileRefEnabled:   utils.PointerTo(false),
 		},
-		To: ChartReleaseVersion{
+		From: ChartReleaseVersion{
 			ResolvedAt:           utils.PointerTo(time.Now().Add(-(19 * time.Hour))),
 			AppVersionResolver:   utils.PointerTo("exact"),
 			AppVersionExact:      utils.PointerTo(td.AppVersion_Leonardo_V3().AppVersion),

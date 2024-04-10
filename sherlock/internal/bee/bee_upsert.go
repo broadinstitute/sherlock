@@ -83,6 +83,9 @@ func updateBee(beeChangesets []models.Changeset, db *gorm.DB) (err error) {
 		return
 	}
 
+	var myChangeSet models.Changeset
+	_ = db.Where(`changesets.id = ?`, createdChangesetIDs[0]).First(&myChangeSet)
+
 	// exit if nothing to update
 	if len(createdChangesetIDs) == 0 {
 		return
@@ -92,6 +95,7 @@ func updateBee(beeChangesets []models.Changeset, db *gorm.DB) (err error) {
 	if err = models.ApplyChangesets(db, createdChangesetIDs); err != nil {
 		err = fmt.Errorf("error applying changesets: %w", err)
 	}
+
 	return
 }
 
