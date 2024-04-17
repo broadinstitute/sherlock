@@ -56,7 +56,6 @@ func getBee(environmentCreateBody models.Environment, db *gorm.DB) (beeModel mod
 				return
 			}
 		} else {
-			err = nil
 			err = trySetDefaultTemplate(&environmentCreateBody, db)
 			if err != nil {
 				return
