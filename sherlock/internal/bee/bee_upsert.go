@@ -12,6 +12,12 @@ import (
 const beeDefaultTemplate = "swatomation" // TODO: configurize this
 
 func BeeUpsert(environmentCreateBody models.Environment, beeEdits []models.Changeset, db *gorm.DB) (beeModel models.Environment, err error) {
+	// validate struct
+	if environmentCreateBody.Lifecycle != "dynamic" {
+		err = fmt.Errorf("(%s) request validation error: Lifecycle is not \"dynamic\"", errors.BadRequest)
+		return
+	}
+
 	// get a new bee
 	beeModel, err = getBee(environmentCreateBody, db)
 
@@ -50,23 +56,35 @@ func getBee(environmentCreateBody models.Environment, db *gorm.DB) (beeModel mod
 				return
 			}
 		} else {
+			err = nil
 			err = trySetDefaultTemplate(&environmentCreateBody, db)
 			if err != nil {
 				return
 			}
 
-			err = db.Create(&environmentCreateBody).Error
+			err = db.Omit(clause.Associations).Create(&environmentCreateBody).Error
+			if err != nil {
+				return
+			}
+			//beeModel, err = getEnvByName(environmentCreateBody.Name, db)
+			err = db.Preload(clause.Associations).First(&beeModel, environmentCreateBody).Error
 		}
 	} else {
+		// no logic here.
 		err = trySetDefaultTemplate(&environmentCreateBody, db)
 		if err != nil {
 			return
 		}
 
-		beeModel, err = getPooledBee(environmentCreateBody.TemplateEnvironment.Name, db)
+		beeModel, err = getPooledBee(environmentCreateBody.TemplateEnvironmentID, db)
 
 		if beeModel == noBee {
-			err = db.Create(&environmentCreateBody).Error
+			err = db.Omit(clause.Associations).Create(&environmentCreateBody).Error
+			if err != nil {
+				return
+			}
+
+			err = db.Preload(clause.Associations).First(&beeModel, environmentCreateBody).Error
 		}
 	}
 
@@ -77,14 +95,15 @@ func getBee(environmentCreateBody models.Environment, db *gorm.DB) (beeModel mod
 func updateBee(beeChangesets []models.Changeset, db *gorm.DB) (err error) {
 	var createdChangesetIDs []uint
 
+	if len(beeChangesets) == 0 {
+		return
+	}
+
 	// exit if plan fails
 	if createdChangesetIDs, err = models.PlanChangesets(db, beeChangesets); err != nil {
 		err = fmt.Errorf("error planning changesets: %w", err)
 		return
 	}
-
-	var myChangeSet models.Changeset
-	_ = db.Where(`changesets.id = ?`, createdChangesetIDs[0]).First(&myChangeSet)
 
 	// exit if nothing to update
 	if len(createdChangesetIDs) == 0 {
@@ -100,7 +119,7 @@ func updateBee(beeChangesets []models.Changeset, db *gorm.DB) (err error) {
 }
 
 // placeholder method, will return pooled Bees one day.
-func getPooledBee(templateName string, db *gorm.DB) (envModel models.Environment, err error) {
+func getPooledBee(templateID *uint, db *gorm.DB) (envModel models.Environment, err error) {
 	//err = db.Preload(clause.Associations).Where().First(&envModel, templateName).Error
 	err = fmt.Errorf("bee pool error: feature not implemented yet")
 	return
@@ -108,10 +127,10 @@ func getPooledBee(templateName string, db *gorm.DB) (envModel models.Environment
 
 // try to set a default template, does nothing if template exists
 func trySetDefaultTemplate(environmentCreateBody *models.Environment, db *gorm.DB) (err error) {
-	if environmentCreateBody.TemplateEnvironment == nil {
+	if environmentCreateBody.TemplateEnvironmentID == nil {
 		var templateEnvironment models.Environment
 		templateEnvironment, err = getEnvByName(beeDefaultTemplate, db)
-		environmentCreateBody.TemplateEnvironment = &templateEnvironment
+		environmentCreateBody.TemplateEnvironmentID = &templateEnvironment.ID
 	}
 	return
 }

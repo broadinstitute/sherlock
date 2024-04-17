@@ -51,6 +51,8 @@ type TestData interface {
 	Environment_Dev() Environment
 	Environment_Swatomation() Environment
 	Environment_Swatomation_TestBee() Environment
+	Environment_Swatomation_TestBee_Factory() Environment
+	Environment_Swatomation_TestBee_Factory_Min() Environment
 	Environment_Swatomation_DevBee() Environment
 	Environment_Swatomation_LongBee() Environment
 	Environment_DdpAzureProd() Environment

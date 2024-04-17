@@ -1,11 +1,12 @@
 package sherlock
 
 import (
+	"net/http"
+
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 func (s *handlerSuite) TestEnvironmentsV3Create_badBody() {

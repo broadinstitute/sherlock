@@ -3,13 +3,52 @@
 package models
 
 import (
+	"database/sql"
 	"fmt"
 	"time"
 
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 )
 
-// updates leonardo from app version to V1 to V3. Relies on the existence of 2x chart version, 2x app version, 1x Chart Reelease, 1x Environment
+func (td *testDataImpl) Environment_Swatomation_TestBee_Factory() Environment {
+	td.environment_swatomation_testBee = Environment{
+		Base:                      "bee",
+		Lifecycle:                 "dynamic",
+		Name:                      "swatomation-test-bee",
+		ValuesName:                "swatomation",
+		TemplateEnvironmentID:     utils.PointerTo(td.Environment_Swatomation().ID),
+		AutoPopulateChartReleases: utils.PointerTo(true),
+		DefaultNamespace:          "terra-swatomation-test-bee",
+		DefaultClusterID:          utils.PointerTo(td.Cluster_TerraQaBees().ID),
+		RequiresSuitability:       utils.PointerTo(false),
+		BaseDomain:                utils.PointerTo("bee.envs-terra.bio"),
+		NamePrefixesDomain:        utils.PointerTo(true),
+		HelmfileRef:               utils.PointerTo("HEAD"),
+		PreventDeletion:           utils.PointerTo(false),
+		DeleteAfter:               sql.NullTime{Time: time.Now().Add(6 * time.Hour), Valid: true},
+		Offline:                   utils.PointerTo(false),
+	}
+	return td.environment_swatomation_testBee
+}
+
+// A TestBee with as little configs as possible
+func (td *testDataImpl) Environment_Swatomation_TestBee_Factory_Min() Environment {
+	td.environment_swatomation_testBee = Environment{
+		Lifecycle:                 "dynamic",
+		TemplateEnvironmentID:     utils.PointerTo(td.Environment_Swatomation().ID),
+		AutoPopulateChartReleases: utils.PointerTo(true),
+		RequiresSuitability:       utils.PointerTo(false),
+		BaseDomain:                utils.PointerTo("bee.envs-terra.bio"),
+		NamePrefixesDomain:        utils.PointerTo(true),
+		HelmfileRef:               utils.PointerTo("HEAD"),
+		PreventDeletion:           utils.PointerTo(false),
+		DeleteAfter:               sql.NullTime{Time: time.Now().Add(6 * time.Hour), Valid: true},
+		Offline:                   utils.PointerTo(false),
+	}
+	return td.environment_swatomation_testBee
+}
+
+// updates leonardo from app version to V3 to V1. Relies on the existence of 2x chart version, 2x app version, 1x Chart Reelease, 1x Environment
 // AppVersion_Leonardo_V1, ChartVersionLeonardo_V1
 // AppVersion_Leonardo_V3, ChartVersionLeonardo_V3
 // ChartRelease_LeonardoSwatomation

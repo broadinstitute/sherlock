@@ -3,14 +3,15 @@ package sherlock
 import (
 	"database/sql"
 	"fmt"
+	"strings"
+	"time"
+
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
-	"strings"
-	"time"
 )
 
 type EnvironmentV3 struct {
@@ -45,7 +46,16 @@ type EnvironmentProceduresV3UpsertBee struct {
 	DefaultNamespace          string `json:"defaultNamespace" form:"defaultNamespace"`         // When creating, will be calculated if left empty
 	ValuesName                string `json:"valuesName" form:"valuesName"`                     // When creating, defaults to template name or environment name
 	EnvironmentV3Edit
+	ChartReleases      []ChangesetV3PlanRequestChartReleaseEntry `json:"chartReleases"`
+	Environments       []ChangesetV3PlanRequestEnvironmentEntry  `json:"environments"`
+	RecreateChangesets []uint                                    `json:"recreateChangesets"`
 }
+
+/*
+type EnvironmentProceduresV3UpsertBee struct {
+	EnvironmentV3Create
+	ChangesetV3PlanRequest
+}*/
 
 type EnvironmentV3Edit struct {
 	DefaultCluster              *string    `json:"defaultCluster" form:"defaultCluster"`
