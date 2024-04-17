@@ -45,7 +45,6 @@ func (suite *BeeTestSuite) TestGetEnvByName_Default() {
 
 func (suite *BeeTestSuite) TestGetBee() {
 	suite.Run("should load get existing bee by name", func() {
-		//suite.TestData.Environment_Swatomation()
 		beeModel := suite.TestData.Environment_Swatomation_TestBee()
 
 		resultEnvModel, err := getBee(beeModel, suite.DB)
@@ -57,7 +56,6 @@ func (suite *BeeTestSuite) TestGetBee() {
 
 func (suite *BeeTestSuite) TestGetBeeNewNoName() {
 	suite.Run("should create a new bee with no name given", func() {
-		//suite.TestData.Environment_Swatomation()
 		beeModel := suite.TestData.Environment_Swatomation_TestBee_Factory_Min()
 
 		resultEnvModel, err := getBee(beeModel, suite.DB)
@@ -70,7 +68,6 @@ func (suite *BeeTestSuite) TestGetBeeNewNoName() {
 
 func (suite *BeeTestSuite) TestGetBeeNewName() {
 	suite.Run("should create a new bee with specified name given", func() {
-		//suite.TestData.Environment_Swatomation()
 		beeModel := suite.TestData.Environment_Swatomation_TestBee_Factory_Min()
 		beeModel.Name = "custom-name-swatomation-test-bee"
 
@@ -84,7 +81,6 @@ func (suite *BeeTestSuite) TestGetBeeNewName() {
 
 func (suite *BeeTestSuite) TestGetBeeNew_StaticFail() {
 	suite.Run("should fail to create a new bee if lifecycle not equals bee", func() {
-		//suite.TestData.Environment_Swatomation()
 		beeModel := suite.TestData.Environment_Swatomation_TestBee()
 
 		resultEnvModel, err := getBee(beeModel, suite.DB)

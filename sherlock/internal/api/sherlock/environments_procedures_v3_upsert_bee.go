@@ -31,20 +31,12 @@ func environmentsProceduresV3UpsertBee(ctx *gin.Context) {
 		return
 	}
 
-	// Environment Parsing
-	// make sure we can map the JSON to the go struct
-	//var parsedBody EnvironmentProceduresV3UpsertBee
-
 	var environmentBody EnvironmentV3Create
 	// ShouldBindBodyWith used to handle double-reading body
 	if err = ctx.ShouldBindBodyWith(&environmentBody, binding.JSON); err != nil {
-		//if err = ctx.ShouldBindJSON(&environmentBody); err != nil {
 		errors.AbortRequest(ctx, fmt.Errorf("(%s) request validation error: %w", errors.BadRequest, err))
 		return
 	}
-
-	//environmentBody := parsedBody.EnvironmentV3Create
-	//changesetBody := parsedBody.ChangesetV3PlanRequest
 
 	// set default values
 	if err = defaults.Set(&environmentBody); err != nil {
@@ -62,7 +54,6 @@ func environmentsProceduresV3UpsertBee(ctx *gin.Context) {
 	// changesetParsing
 	var changesetBody ChangesetV3PlanRequest
 	if err = ctx.ShouldBindBodyWith(&changesetBody, binding.JSON); err != nil {
-		//if err = ctx.ShouldBindJSON(&changesetBody); err != nil {
 		errors.AbortRequest(ctx, fmt.Errorf("(%s) JSON error parsing body to %T: %w", errors.BadRequest, changesetBody, err))
 		return
 	}
