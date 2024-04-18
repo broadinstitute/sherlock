@@ -450,7 +450,7 @@ func (s *handlerSuite) TestCiRunsV3Upsert_slackNotifications() {
 						Platform:                       "github-actions",
 						GithubActionsOwner:             "owner",
 						GithubActionsRepo:              "repo",
-						GithubActionsRunID:             1,
+						GithubActionsRunID:             1234,
 						GithubActionsAttemptNumber:     1,
 						GithubActionsWorkflowPath:      "workflow",
 						StartedAt:                      utils.PointerTo(time.Now().Add(-time.Minute)),
@@ -458,12 +458,14 @@ func (s *handlerSuite) TestCiRunsV3Upsert_slackNotifications() {
 						Status:                         utils.PointerTo("failure"),
 						NotifySlackChannelsUponSuccess: []string{"#my-success-channel"},
 						NotifySlackChannelsUponFailure: []string{"#my-failure-channel"},
+						NotifySlackChannelsUponRetry:   []string{"#my-retry-channel"},
 					},
 				}),
 				&got)
 			s.Equal(http.StatusCreated, code)
 			s.Equal([]string{"#my-success-channel"}, got.NotifySlackChannelsUponSuccess)
 			s.Equal([]string{"#my-failure-channel"}, got.NotifySlackChannelsUponFailure)
+			s.Equal([]string{"#my-retry-channel"}, got.NotifySlackChannelsUponRetry)
 			s.NotNil(got.TerminationHooksDispatchedAt)
 		})
 	})
@@ -480,7 +482,42 @@ func (s *handlerSuite) TestCiRunsV3Upsert_slackNotifications() {
 						Platform:                       "github-actions",
 						GithubActionsOwner:             "owner",
 						GithubActionsRepo:              "repo",
-						GithubActionsRunID:             1,
+						GithubActionsRunID:             1233,
+						GithubActionsAttemptNumber:     1,
+						GithubActionsWorkflowPath:      "workflow",
+						StartedAt:                      utils.PointerTo(time.Now().Add(-time.Minute)),
+						TerminalAt:                     utils.PointerTo(time.Now()),
+						Status:                         utils.PointerTo("success"),
+						NotifySlackChannelsUponSuccess: []string{"#my-success-channel"},
+						NotifySlackChannelsUponFailure: []string{"#my-failure-channel"},
+						NotifySlackChannelsUponRetry:   []string{"#my-retry-channel"},
+					},
+				}),
+				&got)
+			s.Equal(http.StatusCreated, code)
+			s.Equal([]string{"#my-success-channel"}, got.NotifySlackChannelsUponSuccess)
+			s.Equal([]string{"#my-failure-channel"}, got.NotifySlackChannelsUponFailure)
+			s.Equal([]string{"#my-retry-channel"}, got.NotifySlackChannelsUponRetry)
+			s.NotNil(got.TerminationHooksDispatchedAt)
+		})
+	})
+	s.Run("retry", func() {
+		slack.UseMockedClient(s.T(), func(c *slack_mocks.MockMockableClient) {
+			c.EXPECT().
+				SendMessageContext(mock.Anything, "#my-success-channel", mock.AnythingOfType("slack.MsgOption")).
+				Return("", "", "", nil)
+			c.EXPECT().
+				SendMessageContext(mock.Anything, "#my-retry-channel", mock.AnythingOfType("slack.MsgOption")).
+				Return("", "", "", nil)
+		}, func() {
+			var got CiRunV3
+			code := s.HandleRequest(
+				s.NewRequest("PUT", "/api/ci-runs/v3", CiRunV3Upsert{
+					ciRunFields: ciRunFields{
+						Platform:                       "github-actions",
+						GithubActionsOwner:             "owner",
+						GithubActionsRepo:              "repo",
+						GithubActionsRunID:             1232,
 						GithubActionsAttemptNumber:     2,
 						GithubActionsWorkflowPath:      "workflow",
 						StartedAt:                      utils.PointerTo(time.Now().Add(-time.Minute)),
@@ -488,12 +525,49 @@ func (s *handlerSuite) TestCiRunsV3Upsert_slackNotifications() {
 						Status:                         utils.PointerTo("success"),
 						NotifySlackChannelsUponSuccess: []string{"#my-success-channel"},
 						NotifySlackChannelsUponFailure: []string{"#my-failure-channel"},
+						NotifySlackChannelsUponRetry:   []string{"#my-retry-channel"},
 					},
 				}),
 				&got)
 			s.Equal(http.StatusCreated, code)
 			s.Equal([]string{"#my-success-channel"}, got.NotifySlackChannelsUponSuccess)
 			s.Equal([]string{"#my-failure-channel"}, got.NotifySlackChannelsUponFailure)
+			s.Equal([]string{"#my-retry-channel"}, got.NotifySlackChannelsUponRetry)
+			s.NotNil(got.TerminationHooksDispatchedAt)
+		})
+	})
+	s.Run("retry dedupe", func() {
+		slack.UseMockedClient(s.T(), func(c *slack_mocks.MockMockableClient) {
+			c.EXPECT().
+				SendMessageContext(mock.Anything, "#my-success-channel", mock.AnythingOfType("slack.MsgOption")).
+				Return("", "", "", nil)
+			c.EXPECT().
+				SendMessageContext(mock.Anything, "#my-retry-channel", mock.AnythingOfType("slack.MsgOption")).
+				Return("", "", "", nil)
+		}, func() {
+			var got CiRunV3
+			code := s.HandleRequest(
+				s.NewRequest("PUT", "/api/ci-runs/v3", CiRunV3Upsert{
+					ciRunFields: ciRunFields{
+						Platform:                       "github-actions",
+						GithubActionsOwner:             "owner",
+						GithubActionsRepo:              "repo",
+						GithubActionsRunID:             1239,
+						GithubActionsAttemptNumber:     2,
+						GithubActionsWorkflowPath:      "workflow",
+						StartedAt:                      utils.PointerTo(time.Now().Add(-time.Minute)),
+						TerminalAt:                     utils.PointerTo(time.Now()),
+						Status:                         utils.PointerTo("success"),
+						NotifySlackChannelsUponSuccess: []string{"#my-success-channel"},
+						NotifySlackChannelsUponFailure: []string{"#my-failure-channel"},
+						NotifySlackChannelsUponRetry:   []string{"#my-retry-channel", "#my-success-channel"},
+					},
+				}),
+				&got)
+			s.Equal(http.StatusCreated, code)
+			s.Equal([]string{"#my-success-channel"}, got.NotifySlackChannelsUponSuccess)
+			s.Equal([]string{"#my-failure-channel"}, got.NotifySlackChannelsUponFailure)
+			s.Equal([]string{"#my-retry-channel", "#my-success-channel"}, got.NotifySlackChannelsUponRetry)
 			s.NotNil(got.TerminationHooksDispatchedAt)
 		})
 	})
@@ -513,14 +587,15 @@ func (s *handlerSuite) TestCiRunsV3Upsert_slackNotifications() {
 						Platform:                       "github-actions",
 						GithubActionsOwner:             "owner",
 						GithubActionsRepo:              "repo",
-						GithubActionsRunID:             1,
-						GithubActionsAttemptNumber:     3,
+						GithubActionsRunID:             1231,
+						GithubActionsAttemptNumber:     1,
 						GithubActionsWorkflowPath:      "workflow",
 						StartedAt:                      utils.PointerTo(time.Now().Add(-time.Minute)),
 						TerminalAt:                     utils.PointerTo(time.Now()),
 						Status:                         utils.PointerTo("success"),
 						NotifySlackChannelsUponSuccess: []string{"#my-success-channel"},
 						NotifySlackChannelsUponFailure: []string{"#my-failure-channel"},
+						NotifySlackChannelsUponRetry:   []string{"#my-retry-channel"},
 					},
 					ChartReleases: []string{chartRelease.Name},
 				}),
@@ -528,6 +603,7 @@ func (s *handlerSuite) TestCiRunsV3Upsert_slackNotifications() {
 			s.Equal(http.StatusCreated, code)
 			s.Equal([]string{"#my-success-channel"}, got.NotifySlackChannelsUponSuccess)
 			s.Equal([]string{"#my-failure-channel"}, got.NotifySlackChannelsUponFailure)
+			s.Equal([]string{"#my-retry-channel"}, got.NotifySlackChannelsUponRetry)
 			s.NotNil(got.TerminationHooksDispatchedAt)
 		})
 	})

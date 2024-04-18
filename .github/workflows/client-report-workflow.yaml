@@ -40,6 +40,7 @@ on:
           Slack channels that Beehive should notify when this workflow completes, regardless of outcome.
           
           Multiple slack channels can be provided by separating them with whitespace and/or commas.
+
       notify-slack-channels-upon-workflow-success:
         required: false
         type: string
@@ -47,11 +48,24 @@ on:
           Slack channels that Beehive should notify when this workflow succeeds.
           
           Multiple slack channels can be provided by separating them with whitespace and/or commas.
+
       notify-slack-channels-upon-workflow-failure:
         required: false
         type: string
         description: |
           Slack channels that Beehive should notify when this workflow fails.
+          
+          Multiple slack channels can be provided by separating them with whitespace and/or commas.
+
+      notify-slack-channels-upon-workflow-retry:
+        required: false
+        type: string
+        description: |
+          Slack channels that Beehive should notify when this workflow completes on a retry, regardless
+          of outcome.
+          
+          Channels provided here will be deduplicated with any channels specified for completion,
+          success, or failure (when necessary).
           
           Multiple slack channels can be provided by separating them with whitespace and/or commas.
 
@@ -204,6 +218,7 @@ jobs:
           SLACK_CHANNELS_UPON_COMPLETION: ${{ inputs.notify-slack-channels-upon-workflow-completion }}
           SLACK_CHANNELS_UPON_SUCCESS: ${{ inputs.notify-slack-channels-upon-workflow-success }}
           SLACK_CHANNELS_UPON_FAILURE: ${{ inputs.notify-slack-channels-upon-workflow-failure }}
+          SLACK_CHANNELS_UPON_RETRY: ${{ inputs.notify-slack-channels-upon-workflow-retry }}
           APP_VERSIONS: ${{ inputs.relates-to-app-versions }}
           CHART_VERSIONS: ${{ inputs.relates-to-chart-versions }}
           CHART_RELEASES: ${{ inputs.relates-to-chart-releases }}
@@ -224,6 +239,10 @@ jobs:
               notifySlackChannelsUponFailure: [
                 ...process.env.SLACK_CHANNELS_UPON_COMPLETION.split(/[\s,]+/),
                 ...process.env.SLACK_CHANNELS_UPON_FAILURE.split(/[\s,]+/)
+              ].filter(Boolean),
+              notifySlackChannelsUponRetry: [
+                // We don't need to worry about _UPON_COMPLETION here because it's already in the other two
+                ...process.env.SLACK_CHANNELS_UPON_RETRY.split(/[\s,]+/)
               ].filter(Boolean),
               appVersions: process.env.APP_VERSIONS.split(/[\s,]+/).filter(Boolean),
               chartVersions: process.env.CHART_VERSIONS.split(/[\s,]+/).filter(Boolean),

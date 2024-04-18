@@ -569,13 +569,16 @@ WHERE
 	}
 
 	// If the request added any Slack channels for us to notify, record those
-	if len(body.NotifySlackChannelsUponSuccess) > 0 || len(body.NotifySlackChannelsUponFailure) > 0 {
+	if len(body.NotifySlackChannelsUponSuccess) > 0 || len(body.NotifySlackChannelsUponFailure) > 0 || len(body.NotifySlackChannelsUponRetry) > 0 {
 		var channelUpdates models.CiRun
 		if len(body.NotifySlackChannelsUponSuccess) > 0 {
 			channelUpdates.NotifySlackChannelsUponSuccess = utils.Dedupe(append(result.NotifySlackChannelsUponSuccess, body.NotifySlackChannelsUponSuccess...))
 		}
 		if len(body.NotifySlackChannelsUponFailure) > 0 {
 			channelUpdates.NotifySlackChannelsUponFailure = utils.Dedupe(append(result.NotifySlackChannelsUponFailure, body.NotifySlackChannelsUponFailure...))
+		}
+		if len(body.NotifySlackChannelsUponRetry) > 0 {
+			channelUpdates.NotifySlackChannelsUponRetry = utils.Dedupe(append(result.NotifySlackChannelsUponRetry, body.NotifySlackChannelsUponRetry...))
 		}
 		if err = db.Model(&result).Omit(clause.Associations).Updates(&channelUpdates).Error; err != nil {
 			errors.AbortRequest(ctx, err)
