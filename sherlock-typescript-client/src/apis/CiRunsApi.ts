@@ -40,6 +40,7 @@ export interface ApiCiRunsV3GetRequest {
     githubActionsWorkflowPath?: string;
     id?: number;
     notifySlackChannelsUponFailure?: Array<string>;
+    notifySlackChannelsUponRetry?: Array<string>;
     notifySlackChannelsUponSuccess?: Array<string>;
     notifySlackCustomIcon?: string;
     platform?: string;
@@ -143,6 +144,10 @@ export class CiRunsApi extends runtime.BaseAPI {
 
         if (requestParameters['notifySlackChannelsUponFailure'] != null) {
             queryParameters['notifySlackChannelsUponFailure'] = requestParameters['notifySlackChannelsUponFailure']!.join(runtime.COLLECTION_FORMATS["csv"]);
+        }
+
+        if (requestParameters['notifySlackChannelsUponRetry'] != null) {
+            queryParameters['notifySlackChannelsUponRetry'] = requestParameters['notifySlackChannelsUponRetry']!.join(runtime.COLLECTION_FORMATS["csv"]);
         }
 
         if (requestParameters['notifySlackChannelsUponSuccess'] != null) {

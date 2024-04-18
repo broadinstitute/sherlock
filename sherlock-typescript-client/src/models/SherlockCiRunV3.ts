@@ -93,6 +93,12 @@ export interface SherlockCiRunV3 {
      */
     notifySlackChannelsUponFailure?: Array<string>;
     /**
+     * Slack channels to notify if this CiRun is retried. This field is always appended to when mutated. It will de-dupe with the other notify fields.
+     * @type {Array<string>}
+     * @memberof SherlockCiRunV3
+     */
+    notifySlackChannelsUponRetry?: Array<string>;
+    /**
      * Slack channels to notify if this CiRun succeeds. This field is always appended to when mutated.
      * @type {Array<string>}
      * @memberof SherlockCiRunV3
@@ -183,6 +189,7 @@ export function SherlockCiRunV3FromJSONTyped(json: any, ignoreDiscriminator: boo
         'githubActionsWorkflowPath': json['githubActionsWorkflowPath'] == null ? undefined : json['githubActionsWorkflowPath'],
         'id': json['id'] == null ? undefined : json['id'],
         'notifySlackChannelsUponFailure': json['notifySlackChannelsUponFailure'] == null ? undefined : json['notifySlackChannelsUponFailure'],
+        'notifySlackChannelsUponRetry': json['notifySlackChannelsUponRetry'] == null ? undefined : json['notifySlackChannelsUponRetry'],
         'notifySlackChannelsUponSuccess': json['notifySlackChannelsUponSuccess'] == null ? undefined : json['notifySlackChannelsUponSuccess'],
         'notifySlackCustomIcon': json['notifySlackCustomIcon'] == null ? undefined : json['notifySlackCustomIcon'],
         'platform': json['platform'] == null ? undefined : json['platform'],
@@ -213,6 +220,7 @@ export function SherlockCiRunV3ToJSON(value?: SherlockCiRunV3 | null): any {
         'githubActionsWorkflowPath': value['githubActionsWorkflowPath'],
         'id': value['id'],
         'notifySlackChannelsUponFailure': value['notifySlackChannelsUponFailure'],
+        'notifySlackChannelsUponRetry': value['notifySlackChannelsUponRetry'],
         'notifySlackChannelsUponSuccess': value['notifySlackChannelsUponSuccess'],
         'notifySlackCustomIcon': value['notifySlackCustomIcon'],
         'platform': value['platform'],

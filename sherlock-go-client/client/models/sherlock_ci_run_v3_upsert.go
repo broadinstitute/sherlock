@@ -74,6 +74,9 @@ type SherlockCiRunV3Upsert struct {
 	// Slack channels to notify if this CiRun fails. This field is always appended to when mutated.
 	NotifySlackChannelsUponFailure []string `json:"notifySlackChannelsUponFailure"`
 
+	// Slack channels to notify if this CiRun is retried. This field is always appended to when mutated. It will de-dupe with the other notify fields.
+	NotifySlackChannelsUponRetry []string `json:"notifySlackChannelsUponRetry"`
+
 	// Slack channels to notify if this CiRun succeeds. This field is always appended to when mutated.
 	NotifySlackChannelsUponSuccess []string `json:"notifySlackChannelsUponSuccess"`
 

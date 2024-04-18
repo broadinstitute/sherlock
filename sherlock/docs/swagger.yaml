@@ -686,6 +686,13 @@ definitions:
         items:
           type: string
         type: array
+      notifySlackChannelsUponRetry:
+        description: Slack channels to notify if this CiRun is retried. This field
+          is always appended to when mutated. It will de-dupe with the other notify
+          fields.
+        items:
+          type: string
+        type: array
       notifySlackChannelsUponSuccess:
         description: Slack channels to notify if this CiRun succeeds. This field is
           always appended to when mutated.
@@ -793,6 +800,13 @@ definitions:
       notifySlackChannelsUponFailure:
         description: Slack channels to notify if this CiRun fails. This field is always
           appended to when mutated.
+        items:
+          type: string
+        type: array
+      notifySlackChannelsUponRetry:
+        description: Slack channels to notify if this CiRun is retried. This field
+          is always appended to when mutated. It will de-dupe with the other notify
+          fields.
         items:
           type: string
         type: array
@@ -3547,6 +3561,15 @@ paths:
         items:
           type: string
         name: notifySlackChannelsUponFailure
+        type: array
+      - collectionFormat: csv
+        description: Slack channels to notify if this CiRun is retried. This field
+          is always appended to when mutated. It will de-dupe with the other notify
+          fields.
+        in: query
+        items:
+          type: string
+        name: notifySlackChannelsUponRetry
         type: array
       - collectionFormat: csv
         description: Slack channels to notify if this CiRun succeeds. This field is

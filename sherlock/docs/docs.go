@@ -2818,6 +2818,16 @@ const docTemplate = `{
                             "type": "string"
                         },
                         "collectionFormat": "csv",
+                        "description": "Slack channels to notify if this CiRun is retried. This field is always appended to when mutated. It will de-dupe with the other notify fields.",
+                        "name": "notifySlackChannelsUponRetry",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
                         "description": "Slack channels to notify if this CiRun succeeds. This field is always appended to when mutated.",
                         "name": "notifySlackChannelsUponSuccess",
                         "in": "query"
@@ -7880,6 +7890,13 @@ const docTemplate = `{
                         "type": "string"
                     }
                 },
+                "notifySlackChannelsUponRetry": {
+                    "description": "Slack channels to notify if this CiRun is retried. This field is always appended to when mutated. It will de-dupe with the other notify fields.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "notifySlackChannelsUponSuccess": {
                     "description": "Slack channels to notify if this CiRun succeeds. This field is always appended to when mutated.",
                     "type": "array",
@@ -8013,6 +8030,13 @@ const docTemplate = `{
                 },
                 "notifySlackChannelsUponFailure": {
                     "description": "Slack channels to notify if this CiRun fails. This field is always appended to when mutated.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "notifySlackChannelsUponRetry": {
+                    "description": "Slack channels to notify if this CiRun is retried. This field is always appended to when mutated. It will de-dupe with the other notify fields.",
                     "type": "array",
                     "items": {
                         "type": "string"

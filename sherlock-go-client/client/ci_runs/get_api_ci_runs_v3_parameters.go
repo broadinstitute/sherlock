@@ -104,6 +104,12 @@ type GetAPICiRunsV3Params struct {
 	*/
 	NotifySlackChannelsUponFailure []string
 
+	/* NotifySlackChannelsUponRetry.
+
+	   Slack channels to notify if this CiRun is retried. This field is always appended to when mutated. It will de-dupe with the other notify fields.
+	*/
+	NotifySlackChannelsUponRetry []string
+
 	/* NotifySlackChannelsUponSuccess.
 
 	   Slack channels to notify if this CiRun succeeds. This field is always appended to when mutated.
@@ -334,6 +340,17 @@ func (o *GetAPICiRunsV3Params) WithNotifySlackChannelsUponFailure(notifySlackCha
 // SetNotifySlackChannelsUponFailure adds the notifySlackChannelsUponFailure to the get API ci runs v3 params
 func (o *GetAPICiRunsV3Params) SetNotifySlackChannelsUponFailure(notifySlackChannelsUponFailure []string) {
 	o.NotifySlackChannelsUponFailure = notifySlackChannelsUponFailure
+}
+
+// WithNotifySlackChannelsUponRetry adds the notifySlackChannelsUponRetry to the get API ci runs v3 params
+func (o *GetAPICiRunsV3Params) WithNotifySlackChannelsUponRetry(notifySlackChannelsUponRetry []string) *GetAPICiRunsV3Params {
+	o.SetNotifySlackChannelsUponRetry(notifySlackChannelsUponRetry)
+	return o
+}
+
+// SetNotifySlackChannelsUponRetry adds the notifySlackChannelsUponRetry to the get API ci runs v3 params
+func (o *GetAPICiRunsV3Params) SetNotifySlackChannelsUponRetry(notifySlackChannelsUponRetry []string) {
+	o.NotifySlackChannelsUponRetry = notifySlackChannelsUponRetry
 }
 
 // WithNotifySlackChannelsUponSuccess adds the notifySlackChannelsUponSuccess to the get API ci runs v3 params
@@ -652,6 +669,17 @@ func (o *GetAPICiRunsV3Params) WriteToRequest(r runtime.ClientRequest, reg strfm
 		}
 	}
 
+	if o.NotifySlackChannelsUponRetry != nil {
+
+		// binding items for notifySlackChannelsUponRetry
+		joinedNotifySlackChannelsUponRetry := o.bindParamNotifySlackChannelsUponRetry(reg)
+
+		// query array param notifySlackChannelsUponRetry
+		if err := r.SetQueryParam("notifySlackChannelsUponRetry", joinedNotifySlackChannelsUponRetry...); err != nil {
+			return err
+		}
+	}
+
 	if o.NotifySlackChannelsUponSuccess != nil {
 
 		// binding items for notifySlackChannelsUponSuccess
@@ -837,6 +865,23 @@ func (o *GetAPICiRunsV3Params) bindParamNotifySlackChannelsUponFailure(formats s
 	notifySlackChannelsUponFailureIS := swag.JoinByFormat(notifySlackChannelsUponFailureIC, "csv")
 
 	return notifySlackChannelsUponFailureIS
+}
+
+// bindParamGetAPICiRunsV3 binds the parameter notifySlackChannelsUponRetry
+func (o *GetAPICiRunsV3Params) bindParamNotifySlackChannelsUponRetry(formats strfmt.Registry) []string {
+	notifySlackChannelsUponRetryIR := o.NotifySlackChannelsUponRetry
+
+	var notifySlackChannelsUponRetryIC []string
+	for _, notifySlackChannelsUponRetryIIR := range notifySlackChannelsUponRetryIR { // explode []string
+
+		notifySlackChannelsUponRetryIIV := notifySlackChannelsUponRetryIIR // string as string
+		notifySlackChannelsUponRetryIC = append(notifySlackChannelsUponRetryIC, notifySlackChannelsUponRetryIIV)
+	}
+
+	// items.CollectionFormat: "csv"
+	notifySlackChannelsUponRetryIS := swag.JoinByFormat(notifySlackChannelsUponRetryIC, "csv")
+
+	return notifySlackChannelsUponRetryIS
 }
 
 // bindParamGetAPICiRunsV3 binds the parameter notifySlackChannelsUponSuccess
