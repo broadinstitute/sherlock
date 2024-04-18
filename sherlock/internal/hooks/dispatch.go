@@ -67,6 +67,9 @@ func collectSlackNotificationCallbacks(db *gorm.DB, ciRun models.CiRun) (callbac
 		} else {
 			channelsToNotify = ciRun.NotifySlackChannelsUponFailure
 		}
+		if ciRun.GithubActionsAttemptNumber > 1 {
+			channelsToNotify = utils.Dedupe(append(channelsToNotify, ciRun.NotifySlackChannelsUponRetry...))
+		}
 		var text string
 		text, errs = ciRun.SlackCompletionText(db)
 		// Even if we got errors, if we have text then send it
