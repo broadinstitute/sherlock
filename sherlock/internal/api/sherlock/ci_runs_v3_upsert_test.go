@@ -14,6 +14,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/slack/slack_mocks"
 	"github.com/stretchr/testify/mock"
 	"net/http"
+	"slices"
 	"time"
 )
 
@@ -606,6 +607,115 @@ func (s *handlerSuite) TestCiRunsV3Upsert_slackNotifications() {
 			s.Equal([]string{"#my-retry-channel"}, got.NotifySlackChannelsUponRetry)
 			s.NotNil(got.TerminationHooksDispatchedAt)
 		})
+	})
+}
+
+// TestCiRunsV3Upsert_retryChannelInheritance simulates a complex form of an issue described in [Slack].
+// We now inherit retry notification channels from previous runs (where possible) to smooth over this
+// UX snag.
+//
+// [Slack]: https://broadinstitute.slack.com/archives/C029LTN5L80/p1713879397983369?thread_ts=1713453869.706689&cid=C029LTN5L80
+func (s *handlerSuite) TestCiRunsV3Upsert_retryChannelInheritance() {
+	var got CiRunV3
+	var code int
+
+	// First attempt, no retry channels, *yet*
+	code = s.HandleRequest(
+		s.NewRequest("PUT", "/api/ci-runs/v3", CiRunV3Upsert{
+			ciRunFields: ciRunFields{
+				Platform:                       "github-actions",
+				GithubActionsOwner:             "owner",
+				GithubActionsRepo:              "repo",
+				GithubActionsRunID:             1234,
+				GithubActionsAttemptNumber:     1,
+				GithubActionsWorkflowPath:      "workflow",
+				StartedAt:                      utils.PointerTo(time.Now().Add(-time.Minute)),
+				Status:                         utils.PointerTo("in_progress"),
+				NotifySlackChannelsUponSuccess: []string{"#my-success-channel"},
+				NotifySlackChannelsUponFailure: []string{"#my-failure-channel"},
+				NotifySlackChannelsUponRetry:   []string{},
+			},
+		}),
+		&got)
+	s.Equal(http.StatusCreated, code)
+	s.Nil(got.NotifySlackChannelsUponRetry)
+
+	// Suppose a second attempt starts, has a retry channel
+	// No retry channels on the first yet, so we don't get any inherited
+	code = s.HandleRequest(
+		s.NewRequest("PUT", "/api/ci-runs/v3", CiRunV3Upsert{
+			ciRunFields: ciRunFields{
+				Platform:                       "github-actions",
+				GithubActionsOwner:             "owner",
+				GithubActionsRepo:              "repo",
+				GithubActionsRunID:             1234,
+				GithubActionsAttemptNumber:     2,
+				GithubActionsWorkflowPath:      "workflow",
+				StartedAt:                      utils.PointerTo(time.Now().Add(-time.Minute)),
+				Status:                         utils.PointerTo("in_progress"),
+				NotifySlackChannelsUponSuccess: []string{"#my-success-channel"},
+				NotifySlackChannelsUponFailure: []string{"#my-failure-channel"},
+				NotifySlackChannelsUponRetry:   []string{"#my-second-attempt-retry-channel"},
+			},
+		}),
+		&got)
+	s.Equal(http.StatusCreated, code)
+	s.Equal([]string{"#my-second-attempt-retry-channel"}, got.NotifySlackChannelsUponRetry)
+
+	// Suppose the first workflow progresses more and now does add a retry channel
+	code = s.HandleRequest(
+		s.NewRequest("PUT", "/api/ci-runs/v3", CiRunV3Upsert{
+			ciRunFields: ciRunFields{
+				Platform:                       "github-actions",
+				GithubActionsOwner:             "owner",
+				GithubActionsRepo:              "repo",
+				GithubActionsRunID:             1234,
+				GithubActionsAttemptNumber:     1,
+				GithubActionsWorkflowPath:      "workflow",
+				StartedAt:                      utils.PointerTo(time.Now().Add(-time.Minute)),
+				Status:                         utils.PointerTo("in_progress"),
+				NotifySlackChannelsUponSuccess: []string{"#my-success-channel"},
+				NotifySlackChannelsUponFailure: []string{"#my-failure-channel"},
+				NotifySlackChannelsUponRetry:   []string{"#my-first-attempt-retry-channel"},
+			},
+		}),
+		&got)
+	s.Equal(http.StatusCreated, code)
+	s.Equal([]string{"#my-first-attempt-retry-channel"}, got.NotifySlackChannelsUponRetry)
+
+	// Now suppose we have a third workflow, marked as completed as soon as we hear about it. It should
+	// send Slack messages to the retry channels from the first and second attempts in addition to its
+	// own.
+	slack.UseMockedClient(s.T(), func(c *slack_mocks.MockMockableClient) {
+		c.EXPECT().
+			SendMessageContext(mock.Anything, "#my-first-attempt-retry-channel", mock.AnythingOfType("slack.MsgOption")).
+			Return("", "", "", nil)
+		c.EXPECT().
+			SendMessageContext(mock.Anything, "#my-second-attempt-retry-channel", mock.AnythingOfType("slack.MsgOption")).
+			Return("", "", "", nil)
+		c.EXPECT().
+			SendMessageContext(mock.Anything, "#my-third-attempt-retry-channel", mock.AnythingOfType("slack.MsgOption")).
+			Return("", "", "", nil)
+	}, func() {
+		code = s.HandleRequest(
+			s.NewRequest("PUT", "/api/ci-runs/v3", CiRunV3Upsert{
+				ciRunFields: ciRunFields{
+					Platform:                     "github-actions",
+					GithubActionsOwner:           "owner",
+					GithubActionsRepo:            "repo",
+					GithubActionsRunID:           1234,
+					GithubActionsAttemptNumber:   3,
+					GithubActionsWorkflowPath:    "workflow",
+					StartedAt:                    utils.PointerTo(time.Now().Add(-time.Minute)),
+					TerminalAt:                   utils.PointerTo(time.Now()),
+					Status:                       utils.PointerTo("success"),
+					NotifySlackChannelsUponRetry: []string{"#my-third-attempt-retry-channel"},
+				},
+			}),
+			&got)
+		s.Equal(http.StatusCreated, code)
+		slices.Sort(got.NotifySlackChannelsUponRetry)
+		s.Equal([]string{"#my-first-attempt-retry-channel", "#my-second-attempt-retry-channel", "#my-third-attempt-retry-channel"}, got.NotifySlackChannelsUponRetry)
 	})
 }
 
