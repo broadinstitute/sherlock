@@ -98,6 +98,47 @@ func ciRunsV3Upsert(ctx *gin.Context) {
 		}
 	}
 
+	// If this is a retry, we can smooth over a UX snag by grabbing previous runs' "notify upon retry" channels.
+	// The snag is that some folks use "rerun failed jobs" in GitHub Actions, which *wouldn't* rerun the part that
+	// tells Sherlock which channels to notify for that run. It's possible that different parts would've run on
+	// different previous runs, so we just grab data on all of them.
+	if body.Platform == "github-actions" &&
+		body.GithubActionsOwner != "" &&
+		body.GithubActionsRepo != "" &&
+		body.GithubActionsRunID != 0 &&
+		body.GithubActionsAttemptNumber > 1 {
+
+		var previousRuns []models.CiRun
+		if recoverableErr := db.
+			Model(&models.CiRun{}).
+			// Filter for the same run ID, which are unique per owner and repo
+			Where(&models.CiRun{
+				Platform:           "github-actions",
+				GithubActionsOwner: body.GithubActionsOwner,
+				GithubActionsRepo:  body.GithubActionsRepo,
+				GithubActionsRunID: body.GithubActionsRunID,
+			}).
+			// Filter for an attempt number less than ours and non-empty notify upon retry channels
+			Where("github_actions_attempt_number < ? AND notify_slack_channels_upon_retry IS NOT NULL", body.GithubActionsAttemptNumber).
+			// Limit to the number of previous attempts there could've been, might as well get the speed boost
+			Limit(max(1, int(body.GithubActionsAttemptNumber)-1)).
+			Find(&previousRuns).Error; recoverableErr != nil {
+
+			// If there was an error, just Slack it, no need to blow up
+			slack.ReportError(ctx, "error fetching previous runs for notify upon retry", recoverableErr)
+
+		} else if len(previousRuns) > 0 {
+
+			// If we got previous runs matching our criteria, add all their retry channels to our current body.
+			// We dedupe later (for all fields of the body) so we don't worry about that here.
+			for _, previousRun := range previousRuns {
+				body.NotifySlackChannelsUponRetry = append(body.NotifySlackChannelsUponRetry, previousRun.NotifySlackChannelsUponRetry...)
+			}
+
+		}
+
+	}
+
 	// We want to handle the "spreading" mechanic that some of the fields have. To do that, we'll literally just re-assemble
 	// the body we got into one post-spread. Then we'll handle that body and de-dupe the resulting CiIdentifiers before
 	// adding to the database (the SQL gets messed up if there's duplicates in what we give to Gorm).
