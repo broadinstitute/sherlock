@@ -276,7 +276,8 @@ jobs:
             Published image from ${{ github.event.pull_request.head.sha }} (merge ${{ github.sha }}):
 
             ```
-            ${{ env.GOOGLE_DOCKER_REPOSITORY }}/${{ env.GOOGLE_PROJECT }}/${{ env.REPOSITORY_NAME }}/${{ env.IMAGE_NAME }}:${{ needs.generate-tag.outputs.tag }}
+            us-central1-docker.pkg.dev/dsp-artifact-registry/sherlock/sherlock:${{ needs.generate-tag.outputs.tag }}
+            us-central1-docker.pkg.dev/dsp-devops-super-prod/sherlock/sherlock:${{ needs.generate-tag.outputs.tag }}
             ```
 
   report-to-sherlock:
