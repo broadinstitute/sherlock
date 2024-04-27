@@ -1671,7 +1671,7 @@ definitions:
           Will be set to true if the user account has no name and a GitHub account is linked.
         type: boolean
     type: object
-host: sherlock.dsp-devops.broadinstitute.org
+host: sherlock.dsp-devops-prod.broadinstitute.org
 info:
   contact:
     email: dsp-devops@broadinstitute.org

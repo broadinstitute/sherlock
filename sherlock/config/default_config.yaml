@@ -238,7 +238,7 @@ model:
         githubActionsWorkflowPath: .github/workflows/sync-environment.yaml
 
 beehive:
-    chartReleaseUrlFormatString: https://beehive.dsp-devops.broadinstitute.org/r/chart-release/%s
-    environmentUrlFormatString: https://beehive.dsp-devops.broadinstitute.org/r/environment/%s
-    pagerdutyIntegrationUrlFormatString: https://beehive.dsp-devops.broadinstitute.org/r/pagerduty-integration/%s
-    reviewChangesetsUrl: https://beehive.dsp-devops.broadinstitute.org/review-changesets
+    chartReleaseUrlFormatString: https://beehive.dsp-devops-prod.broadinstitute.org/r/chart-release/%s
+    environmentUrlFormatString: https://beehive.dsp-devops-prod.broadinstitute.org/r/environment/%s
+    pagerdutyIntegrationUrlFormatString: https://beehive.dsp-devops-prod.broadinstitute.org/r/pagerduty-integration/%s
+    reviewChangesetsUrl: https://beehive.dsp-devops-prod.broadinstitute.org/review-changesets

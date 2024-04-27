@@ -224,7 +224,7 @@ func TestCiRun_WebURL(t *testing.T) {
 				Model:    gorm.Model{ID: 123},
 				Platform: "something invalid",
 			},
-			want: "https://sherlock.dsp-devops.broadinstitute.org/api/ci-runs/v3/123",
+			want: "https://sherlock.dsp-devops-prod.broadinstitute.org/api/ci-runs/v3/123",
 		},
 	}
 	for _, tt := range tests {
@@ -585,7 +585,7 @@ func (s *modelSuite) TestCiRun_SlackCompletionTextt() {
 					{ResourceType: "environment", ResourceID: environment.ID},
 				},
 			},
-			want: "repo's workflow workflow against <https://beehive.dsp-devops.broadinstitute.org/r/chart-release/leonardo-dev|leonardo-dev>: <https://github.com/owner/repo/actions/runs/1/attempts/3|success>",
+			want: "repo's workflow workflow against <https://beehive.dsp-devops-prod.broadinstitute.org/r/chart-release/leonardo-dev|leonardo-dev>: <https://github.com/owner/repo/actions/runs/1/attempts/3|success>",
 		},
 		{
 			name: "environment",
@@ -603,7 +603,7 @@ func (s *modelSuite) TestCiRun_SlackCompletionTextt() {
 					{ResourceType: "environment", ResourceID: environment.ID},
 				},
 			},
-			want: "repo's workflow workflow against <https://beehive.dsp-devops.broadinstitute.org/r/environment/dev|dev>: <https://github.com/owner/repo/actions/runs/1/attempts/3|success>",
+			want: "repo's workflow workflow against <https://beehive.dsp-devops-prod.broadinstitute.org/r/environment/dev|dev>: <https://github.com/owner/repo/actions/runs/1/attempts/3|success>",
 		},
 		{
 			name: "with jobs",
@@ -652,7 +652,7 @@ func (s *modelSuite) TestCiRun_SlackCompletionTextt() {
 					Response: &http.Response{StatusCode: http.StatusOK},
 				}, nil).Once()
 			},
-			want: "repo's workflow workflow against <https://beehive.dsp-devops.broadinstitute.org/r/environment/dev|dev>: <https://github.com/owner/repo/actions/runs/1/attempts/3|success> (job3: <https://github.com/owner/repo/actions/runs/1/job/3|failure>)",
+			want: "repo's workflow workflow against <https://beehive.dsp-devops-prod.broadinstitute.org/r/environment/dev|dev>: <https://github.com/owner/repo/actions/runs/1/attempts/3|success> (job3: <https://github.com/owner/repo/actions/runs/1/job/3|failure>)",
 		},
 	}
 	for _, tt := range tests {

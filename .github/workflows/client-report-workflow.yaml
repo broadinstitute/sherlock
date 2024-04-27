@@ -203,7 +203,7 @@ on:
           and you'd rather this step still succeed if it doesn't.
 
 env:
-  SHERLOCK_PROD_URL: "https://sherlock.dsp-devops.broadinstitute.org"
+  SHERLOCK_PROD_URL: "https://sherlock.dsp-devops-prod.broadinstitute.org"
 
 jobs:
   report-workflow-relations:

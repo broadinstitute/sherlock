@@ -94,8 +94,8 @@ on:
         description: "Optionally provide a custom description for the version instead of the commit message"
 
 env:
-  SHERLOCK_PROD_URL: 'https://sherlock.dsp-devops.broadinstitute.org'
-  BEEHIVE_PROD_URL: 'https://beehive.dsp-devops.broadinsitute.org'
+  SHERLOCK_PROD_URL: 'https://sherlock.dsp-devops-prod.broadinstitute.org'
+  BEEHIVE_PROD_URL: 'https://beehive.dsp-devops-prod.broadinsitute.org'
   BEEHIVE_PROD_VANITY_URL: 'https://broad.io/beehive'
 
 jobs:

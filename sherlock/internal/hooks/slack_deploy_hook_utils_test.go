@@ -153,7 +153,7 @@ func Test_slackDeployHookBeehiveLink(t *testing.T) {
 					{Model: gorm.Model{ID: 2}},
 				},
 			},
-			want: "https://beehive.dsp-devops.broadinstitute.org/review-changesets?changeset=1&changeset=2",
+			want: "https://beehive.dsp-devops-prod.broadinstitute.org/review-changesets?changeset=1&changeset=2",
 		},
 	}
 	for _, tt := range tests {
@@ -251,11 +251,11 @@ func Test_slackDeployHookChangesetsToChangelogSections(t *testing.T) {
 			},
 			want: [][]string{
 				{
-					"*<https://beehive.dsp-devops.broadinstitute.org/r/chart-release/cr-1|cr-1>* [app 1.0.0⭢1.0.1]",
+					"*<https://beehive.dsp-devops-prod.broadinstitute.org/r/chart-release/cr-1|cr-1>* [app 1.0.0⭢1.0.1]",
 					"• *app 1.0.1*: a description",
 				},
 				{
-					"*<https://beehive.dsp-devops.broadinstitute.org/r/chart-release/cr-2|cr-2>* [configuration change]",
+					"*<https://beehive.dsp-devops-prod.broadinstitute.org/r/chart-release/cr-2|cr-2>* [configuration change]",
 					"• *No changelog entries found;* <beehive URL|Beehive might have more information>",
 				},
 			},

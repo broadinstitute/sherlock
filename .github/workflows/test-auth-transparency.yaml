@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 env:
-  SHERLOCK_PROD_URL: 'https://sherlock.dsp-devops.broadinstitute.org'
+  SHERLOCK_PROD_URL: 'https://sherlock.dsp-devops-prod.broadinstitute.org'
   SHERLOCK_DEV_URL: 'https://sherlock-dev.dsp-devops.broadinstitute.org'
 
 jobs:

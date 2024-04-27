@@ -13,7 +13,7 @@
  */
 
 
-export const BASE_PATH = "https://sherlock.dsp-devops.broadinstitute.org".replace(/\/+$/, "");
+export const BASE_PATH = "https://sherlock.dsp-devops-prod.broadinstitute.org".replace(/\/+$/, "");
 
 export interface ConfigurationParameters {
     basePath?: string; // override base path
@@ -247,7 +247,7 @@ export class BaseAPI {
         next.middleware = this.middleware.slice();
         return next;
     }
-};
+}
 
 function isBlob(value: any): value is Blob {
     return typeof Blob !== 'undefined' && value instanceof Blob;
