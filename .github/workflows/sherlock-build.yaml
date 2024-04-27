@@ -197,6 +197,7 @@ jobs:
           image: us-central1-docker.pkg.dev/dsp-artifact-registry/sherlock/sherlock:${{ needs.generate-tag.outputs.tag }}
 
       - name: Auth to GCP
+        id: auth
         if: ${{ github.actor != 'dependabot[bot]' }}
         uses: google-github-actions/auth@v2
         with:
