@@ -14,14 +14,14 @@ local-down:
 ## Normal testing (depends on install-pact)
 
 test:
-	docker run --name test-postgres -e POSTGRES_PASSWORD=password -e POSTGRES_USER=sherlock -d -p 5431:5432 postgres:13 -c max_connections=200
+	docker run --name test-postgres -e POSTGRES_PASSWORD=password -e POSTGRES_USER=sherlock -d -p 5431:5432 postgres:15 -c max_connections=200
 	cd go-shared && go test -p 1 -race ./...
 	cd sherlock && go test -p 1 -race ./...
 	docker stop test-postgres
 	docker rm test-postgres
 
 test-with-coverage:
-	docker run --name test-postgres -e POSTGRES_PASSWORD=password -e POSTGRES_USER=sherlock -d -p 5431:5432 postgres:13 -c max_connections=200
+	docker run --name test-postgres -e POSTGRES_PASSWORD=password -e POSTGRES_USER=sherlock -d -p 5431:5432 postgres:15 -c max_connections=200
 	cd go-shared && go test -p 1 -race -coverprofile=cover.out -covermode=atomic ./...
 	cd sherlock && go test -p 1 -race -coverprofile=cover.out -covermode=atomic ./...
 	docker stop test-postgres
@@ -34,7 +34,7 @@ install-pact:
 	sudo -s $$(which pact-go) -l DEBUG install -f
 
 test-pact-provider:
-	docker run --name test-postgres -e POSTGRES_PASSWORD=password -e POSTGRES_USER=sherlock -d -p 5431:5432 postgres:13 -c max_connections=200
+	docker run --name test-postgres -e POSTGRES_PASSWORD=password -e POSTGRES_USER=sherlock -d -p 5431:5432 postgres:15 -c max_connections=200
 	cd sherlock && go test -p 1 -v -race -ldflags="-X 'github.com/broadinstitute/sherlock/go-shared/pkg/version.BuildVersion=${BUILD_VERSION}'" ./internal/pact/...
 
 document-pact-provider:
@@ -46,7 +46,7 @@ document-pact-provider:
 ## Long running test database (so tests can be run from GoLand)
 
 pg-up:
-	docker run --name test-postgres -e POSTGRES_PASSWORD=password -e POSTGRES_USER=sherlock -d -p 5431:5432 postgres:13 -c max_connections=200
+	docker run --name test-postgres -e POSTGRES_PASSWORD=password -e POSTGRES_USER=sherlock -d -p 5431:5432 postgres:15 -c max_connections=200
 
 pg-down:
 	docker stop test-postgres

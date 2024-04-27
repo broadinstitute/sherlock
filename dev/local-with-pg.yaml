@@ -22,7 +22,7 @@ services:
 
   database:
     container_name: postgres
-    image: postgres:13
+    image: postgres:15
     ports:
       - "5432:5432"
     expose: 
