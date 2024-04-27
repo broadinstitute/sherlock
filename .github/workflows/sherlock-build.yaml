@@ -37,18 +37,6 @@ on:
   workflow_dispatch:
 
 env:
-  # Google project where artifacts are uploaded.
-  GOOGLE_PROJECT: dsp-artifact-registry
-  # Name of the app-specific Docker repository configured in GOOGLE_PROJECT.
-  REPOSITORY_NAME: ${{ github.event.repository.name }}
-  # Name of the image we'll be uploading into the Docker repository.
-  # This is often equal to the GitHub repository name, but it might also be the
-  # name of the Helm Chart if that's different.
-  IMAGE_NAME: ${{ github.event.repository.name }}
-  # This is the region-specific top-level Google-managed domain where our
-  # GOOGLE_PROJECT/REPOSITORY_NAME can be found.
-  GOOGLE_DOCKER_REPOSITORY: us-central1-docker.pkg.dev
-
   # App-specific variables like versions of build tools:
   GO_SWAGGER_VERSION: v0.29.0
 
@@ -179,43 +167,42 @@ jobs:
         uses: docker/metadata-action@v5
         id: meta
         with:
-          # server image for backwards compatibility with old build behavior
           images: |
-            ${{ env.GOOGLE_DOCKER_REPOSITORY }}/${{ env.GOOGLE_PROJECT }}/${{ env.REPOSITORY_NAME }}/${{ env.IMAGE_NAME }}
+            us-central1-docker.pkg.dev/dsp-artifact-registry/sherlock/sherlock
+            us-central1-docker.pkg.dev/dsp-devops-super-prod/sherlock/sherlock
           tags: |
-            type=raw,value=latest,enable={{is_default_branch}}
             type=raw,value=${{ needs.generate-tag.outputs.tag }}
             type=semver,pattern=v{{major}},value=${{ needs.generate-tag.outputs.tag }},enable={{is_default_branch}}
             type=semver,pattern=v{{major}}.{{minor}},value=${{ needs.generate-tag.outputs.tag }},enable={{is_default_branch}}
+            type=raw,value=latest,enable={{is_default_branch}}
 
       - name: Build image
         uses: docker/build-push-action@v5
         with:
+          # Don't push, just build and load locally.
           context: .
           file: sherlock/Dockerfile
           push: false
           load: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          build-args: BUILD_VERSION=${{ needs.generate-tag.outputs.tag }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          build-args: |
+            BUILD_VERSION=${{ needs.generate-tag.outputs.tag }}
 
       - name: Run Trivy vulnerability scanner
         uses: broadinstitute/dsp-appsec-trivy-action@v1
         with:
-          image: ${{ env.GOOGLE_DOCKER_REPOSITORY }}/${{ env.GOOGLE_PROJECT }}/${{ env.REPOSITORY_NAME }}/${{ env.IMAGE_NAME }}:${{ needs.generate-tag.outputs.tag }}
+          image: us-central1-docker.pkg.dev/dsp-artifact-registry/sherlock/sherlock:${{ needs.generate-tag.outputs.tag }}
 
       - name: Auth to GCP
         if: ${{ github.actor != 'dependabot[bot]' }}
         uses: google-github-actions/auth@v2
         with:
-          workload_identity_provider: 'projects/1038484894585/locations/global/workloadIdentityPools/github-wi-pool/providers/github-wi-provider'
-          service_account: 'dsp-artifact-registry-push@dsp-artifact-registry.iam.gserviceaccount.com'
-
-      - name: Set up Cloud SDK
-        if: ${{ github.actor != 'dependabot[bot]' }}
-        uses: google-github-actions/setup-gcloud@v2
+          token_format: access_token
+          workload_identity_provider: projects/1038484894585/locations/global/workloadIdentityPools/github-wi-pool/providers/github-wi-provider
+          service_account: gha-gar-writer@dsp-devops-super-prod.iam.gserviceaccount.com
 
       - name: Commit changes
         if: ${{ github.event_name != 'pull_request' }}
@@ -248,14 +235,30 @@ jobs:
           npx google-artifactregistry-auth --yes
           npm publish
 
-      - name: Explicitly auth Docker for Artifact Registry
+      - name: Login to GAR
         if: ${{ github.actor != 'dependabot[bot]' }}
-        run: gcloud auth configure-docker ${{ env.GOOGLE_DOCKER_REPOSITORY }} --quiet
+        uses: docker/login-action@v3
+        with:
+          registry: us-central1-docker.pkg.dev
+          username: oauth2accesstoken
+          password: ${{ steps.auth.outputs.access_token }}
 
       - name: Push image
         if: ${{ github.actor != 'dependabot[bot]' }}
-        run: |
-          docker push --all-tags ${{ env.GOOGLE_DOCKER_REPOSITORY }}/${{ env.GOOGLE_PROJECT }}/${{ env.REPOSITORY_NAME }}/${{ env.IMAGE_NAME }}
+        uses: docker/build-push-action@v5
+        with:
+          # "Build" (instant, via local cache from earlier) and push images;
+          # we do have to repeat the earlier parameters here for the cache to work.
+          context: .
+          file: sherlock/Dockerfile
+          push: true
+          load: false
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            BUILD_VERSION=${{ needs.generate-tag.outputs.tag }}
 
   comment-published-image:
     needs: [ generate-tag, build-and-publish ]
