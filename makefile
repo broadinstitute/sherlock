@@ -82,14 +82,14 @@ deploy-webhook-proxy:
 		&& go mod vendor \
 		&& gcloud functions deploy sherlock-webhook-proxy \
 			--gen2 \
-			--project=dsp-tools-k8s \
+			--project=dsp-devops-super-prod \
 			--region us-central1 \
 			--runtime go121 \
 			--trigger-http \
 			--allow-unauthenticated \
 			--source . \
 			--entry-point HandleWebhook \
-			--set-env-vars SHERLOCK_URL='https://sherlock.dsp-devops.broadinstitute.org',IAP_AUDIENCE='1038484894585-k8qvf7l876733laev0lm8kenfa2lj6bn.apps.googleusercontent.com',ALLOWED_GITHUB_ORGS='broadinstitute DataBiosphere CancerDataAggregator hcholab' \
-			--set-secrets GITHUB_WEBHOOK_SECRET=sherlock-prod-webhook-secret:latest \
-			--service-account sherlock-webhook-proxy@dsp-tools-k8s.iam.gserviceaccount.com \
+			--set-env-vars SHERLOCK_URL='https://sherlock.dsp-devops-prod.broadinstitute.org',IAP_AUDIENCE='257801540345-1gqi6qi66bjbssbv01horu9243el2r8b.apps.googleusercontent.com',ALLOWED_GITHUB_ORGS='broadinstitute DataBiosphere CancerDataAggregator hcholab' \
+			--set-secrets GITHUB_WEBHOOK_SECRET=sherlock-github-webhook-secret:latest \
+			--service-account sherlock-webhook-proxy@dsp-devops-super-prod.iam.gserviceaccount.com \
 		; rm -rf vendor
