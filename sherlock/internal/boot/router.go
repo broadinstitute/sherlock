@@ -28,7 +28,7 @@ import (
 //	@accept			json
 //	@produce		json
 
-//	@host	sherlock.dsp-devops.broadinstitute.org
+//	@host	sherlock.dsp-devops-prod.broadinstitute.org
 
 //	@contact.name	DSP DevOps
 //	@contact.email	dsp-devops@broadinstitute.org

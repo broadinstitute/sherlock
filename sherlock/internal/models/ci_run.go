@@ -182,7 +182,7 @@ func (c *CiRun) WebURL() string {
 		return fmt.Sprintf("%s/workflows/%s/%s", config.Config.String("argoWorkflows.url"), c.ArgoWorkflowsNamespace, c.ArgoWorkflowsName)
 	default:
 		// c.Platform is an enum so we should never be able to hit this case
-		return fmt.Sprintf("https://sherlock.dsp-devops.broadinstitute.org/api/ci-runs/v3/%d", c.ID)
+		return fmt.Sprintf("https://sherlock.dsp-devops-prod.broadinstitute.org/api/ci-runs/v3/%d", c.ID)
 	}
 }
 

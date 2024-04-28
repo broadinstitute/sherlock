@@ -3,7 +3,7 @@ name: Get Chart Release
 # This workflow provides GitHub Actions native access to information about Sherlock chart releases (chart instances).
 #
 # The caller repository must have Workload Identity Federation configured to allow impersonation of the
-# "dsp-tools-iap-access@dsp-tools-k8s.iam.gserviceaccount.com" service account; steps 1 and 2 of the documentation:
+# "gha-iap-accessor@dsp-devops-super-prod.iam.gserviceaccount.com" service account; steps 1 and 2 of the documentation:
 # https://docs.google.com/document/d/1bnhDmWQHAMat_Saoa_z28FHwXmGWw6kywjdbKf208h4/edit
 #
 # With that configured, here's how you can call this workflow:
@@ -47,8 +47,8 @@ on:
         value: ${{ jobs.get-chart-release.outputs.cluster }}
 
 env:
-  SHERLOCK_PROD_URL: 'https://sherlock.dsp-devops.broadinstitute.org'
-  BEEHIVE_PROD_URL: 'https://beehive.dsp-devops.broadinsitute.org'
+  SHERLOCK_PROD_URL: 'https://sherlock.dsp-devops-prod.broadinstitute.org'
+  BEEHIVE_PROD_URL: 'https://beehive.dsp-devops-prod.broadinsitute.org'
   BEEHIVE_PROD_VANITY_URL: 'https://broad.io/beehive'
 
 jobs:
@@ -66,9 +66,9 @@ jobs:
         uses: google-github-actions/auth@v2
         with:
           workload_identity_provider: 'projects/1038484894585/locations/global/workloadIdentityPools/github-wi-pool/providers/github-wi-provider'
-          service_account: 'dsp-tools-iap-access@dsp-tools-k8s.iam.gserviceaccount.com'
+          service_account: 'gha-iap-accessor@dsp-devops-super-prod.iam.gserviceaccount.com'
           token_format: 'id_token'
-          id_token_audience: '1038484894585-k8qvf7l876733laev0lm8kenfa2lj6bn.apps.googleusercontent.com'
+          id_token_audience: '257801540345-1gqi6qi66bjbssbv01horu9243el2r8b.apps.googleusercontent.com'
           id_token_include_email: true
           create_credentials_file: false
           export_environment_variables: false

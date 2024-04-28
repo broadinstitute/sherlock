@@ -27,7 +27,7 @@ import (
 )
 
 const (
-	// sherlockUrlEnvVar should be set like "https://sherlock.dsp-devops.broadinstitute.org" or "http://localhost:8080"
+	// sherlockUrlEnvVar should be set like "https://sherlock.dsp-devops-prod.broadinstitute.org" or "http://localhost:8080"
 	sherlockUrlEnvVar = "SHERLOCK_URL"
 	// iapTokenOverrideEnvVar overrides IAP-token generating behavior, to allow local dev
 	iapTokenOverrideEnvVar = "IAP_TOKEN"

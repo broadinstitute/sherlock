@@ -35,7 +35,7 @@ var Default = NewHTTPClient(nil)
 const (
 	// DefaultHost is the default Host
 	// found in Meta (info) section of spec file
-	DefaultHost string = "sherlock.dsp-devops.broadinstitute.org"
+	DefaultHost string = "sherlock.dsp-devops-prod.broadinstitute.org"
 	// DefaultBasePath is the default BasePath
 	// found in Meta (info) section of spec file
 	DefaultBasePath string = "/"
