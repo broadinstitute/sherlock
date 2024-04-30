@@ -81,8 +81,7 @@ func environmentsV3Upsert(ctx *gin.Context) {
 
 	// Run the upsert transaction
 	var result models.Environment
-	upsertTransaction.FirstOrCreate(&result)
-	if err = upsertTransaction.Error; err != nil {
+	if err = upsertTransaction.FirstOrCreate(&result).Error; err != nil {
 		errors.AbortRequest(ctx, err)
 		return
 	}
