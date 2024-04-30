@@ -65,13 +65,13 @@ func environmentsV3Upsert(ctx *gin.Context) {
 	// 		Fun fact: Sherlock happens to enforce against null owners right now, so this'll always
 	//		fail to find a match, just for the moment. That's okay!
 	//
-	//      When we add pooling, I'm making a guess that we'll implement that by making owner a nullable
-	//      field, and unallocated BEEs will just have no owner yet. Maybe we'll make a separate field
-	//      to represent an unallocated BEE... if we do, we should update this query to match that field
-	//      instead.
+	// 		When we add pooling, I'm making a guess that we'll implement that by making owner a nullable
+	// 		field, and unallocated BEEs will just have no owner yet. Maybe we'll make a separate field
+	// 		to represent an unallocated BEE... if we do, we should update this query to match that field
+	// 		instead.
 	//
-	//      What does this query do right now since owner can't be null? It means we'll always fail to
-	//      find a match, so we'll always create a new BEE if a name isn't passed.
+	// 		What does this query do right now since owner can't be null? It means we'll always fail to
+	// 		find a match, so we'll always create a new BEE if a name isn't passed.
 	if toUpsert.Name == "" {
 		upsertTransaction = upsertTransaction.Where("owner_id IS NULL AND legacy_owner IS NULL")
 	}
@@ -90,8 +90,8 @@ func environmentsV3Upsert(ctx *gin.Context) {
 	// Now we load the environment, with all the associations, to return.
 	//
 	// 		We can reuse the same variable here because we're done with the upsert. The reason we don't
-	//      add a preload clause to that upsert is because it is potentially a mutation operation, and
-	//      we never want to have a preload and a mutation coexist (it can update the associations!)
+	// 		add a preload clause to that upsert is because it is potentially a mutation operation, and
+	// 		we never want to have a preload and a mutation coexist (it can update the associations!)
 	if err = db.Preload(clause.Associations).First(&result, result.ID).Error; err != nil {
 		errors.AbortRequest(ctx, err)
 		return
