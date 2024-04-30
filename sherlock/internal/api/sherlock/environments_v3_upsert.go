@@ -63,7 +63,7 @@ func environmentsV3Upsert(ctx *gin.Context) {
 	// If we're not upserting a specific BEE, only match ones that aren't allocated to someone.
 	//
 	// 		Fun fact: Sherlock happens to enforce against null owners right now, so this'll always
-	//		fail to find a match, just for the moment. That's okay!
+	// 		fail to find a match, just for the moment. That's okay!
 	//
 	// 		When we add pooling, I'm making a guess that we'll implement that by making owner a nullable
 	// 		field, and unallocated BEEs will just have no owner yet. Maybe we'll make a separate field
