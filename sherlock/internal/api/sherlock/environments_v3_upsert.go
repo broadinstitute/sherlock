@@ -13,8 +13,8 @@ import (
 
 // environmentsV3Upsert godoc
 //
-//	@summary		Upsert an Environment
-//	@description	Create or get an environment, depending on whether it already exists. If it already exists, you'll be marked as its owner.
+//	@summary		Upsert a dynamic Environment
+//	@description	Create or get a dynamic environment, depending on whether it already exists. If it already exists, you'll be marked as its owner. It refuses to work with non-dynamic environments (you can't specify a lifecycle of "static" or "template").
 //	@tags			Environments
 //	@accept			json
 //	@produce		json
