@@ -77,7 +77,7 @@ func environmentsV3Upsert(ctx *gin.Context) {
 	}
 
 	// Regardless of whether we're adding a BEE or finding one, we always want to claim ownership of it.
-	upsertTransaction.Assign(&models.Environment{OwnerID: &user.ID})
+	upsertTransaction = upsertTransaction.Assign(&models.Environment{OwnerID: &user.ID})
 
 	// Run the upsert transaction
 	var result models.Environment
