@@ -4,19 +4,29 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    commit-message:
+      prefix: "[DDO-3654]"
   - package-ecosystem: gomod
     directory: /go-shared
     schedule:
       interval: weekly
+    commit-message:
+      prefix: "[DDO-3654]"
   - package-ecosystem: gomod
     directory: /sherlock
     schedule:
       interval: weekly
+    commit-message:
+      prefix: "[DDO-3654]"
   - package-ecosystem: gomod
     directory: /sherlock-go-client
     schedule:
       interval: weekly
+    commit-message:
+      prefix: "[DDO-3654]"
   - package-ecosystem: gomod
     directory: /sherlock-webhook-proxy
     schedule:
       interval: weekly
+    commit-message:
+      prefix: "[DDO-3654]"
