@@ -48,7 +48,7 @@ func environmentsV3Upsert(ctx *gin.Context) {
 	// defaults.Set(&body) above. If the user specified "static" or "template", we definitely
 	// don't want them using upsert, so we bail out.
 	if body.Lifecycle != "dynamic" {
-		errors.AbortRequest(ctx, fmt.Errorf("lifecycle for upsert must be dynamic"))
+		errors.AbortRequest(ctx, fmt.Errorf("(%s) lifecycle for upsert must be dynamic", errors.BadRequest))
 		return
 	}
 
