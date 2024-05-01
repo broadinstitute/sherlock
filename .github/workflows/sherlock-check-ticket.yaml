@@ -8,9 +8,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 'Ticket Present in PR Title'
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
         run: |
           echo "Checking for ticket in PR title..."
-          if [[ ${{ github.event.pull_request.title }} =~ [A-Z]{2,}-[0-9]+ ]]; then
+          if [[ "$PR_TITLE" =~ [A-Z]{2,}-[0-9]+ ]]; then
             echo "Ticket found in PR title!"
             exit 0
           else
