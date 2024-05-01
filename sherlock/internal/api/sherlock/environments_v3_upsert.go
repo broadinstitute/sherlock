@@ -58,6 +58,8 @@ func environmentsV3Upsert(ctx *gin.Context) {
 		return
 	}
 
+	// We're just starting the Gorm "chain" here, not finishing it.
+	// See https://gorm.io/docs/method_chaining.html
 	upsertTransaction := db.Where(&toUpsert)
 
 	// If we're not upserting a specific BEE, only match ones that aren't allocated to someone.
