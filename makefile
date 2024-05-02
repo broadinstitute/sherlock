@@ -79,6 +79,7 @@ generate-mocks:
 # go.mod)
 deploy-webhook-proxy:
 	cd sherlock-webhook-proxy \
+		&& go mod tidy \
 		&& go mod vendor \
 		&& gcloud functions deploy sherlock-webhook-proxy \
 			--gen2 \
