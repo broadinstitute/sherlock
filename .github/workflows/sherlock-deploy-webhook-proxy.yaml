@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - ".github/workflows/sherlock-webhook-proxy-deploy.yaml"
+      - ".github/workflows/sherlock-deploy-webhook-proxy.yaml"
       - "sherlock-webhook-proxy/**"
       - "sherlock-go-client/**"
       - "!**/*.md"
@@ -20,7 +20,8 @@ jobs:
   tag-build-publish:
     runs-on: ubuntu-latest
     permissions:
-      contents: "read"
+      # Push to the main branch
+      contents: "write"
       # Use OIDC for workload identity
       id-token: "write"
     steps:
@@ -43,3 +44,11 @@ jobs:
 
       - name: Deploy
         run: make deploy-webhook-proxy
+
+      - name: Commit and push changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: |
+            [sherlock-deploy-webhook-proxy] generated from ${{ github.sha }}
+          commit_user_name: broadbot
+          commit_user_email: broadbot@broadinstitute.org
