@@ -13,12 +13,12 @@
  */
 
 import { mapValues } from '../runtime';
-import type { SherlockAppVersionV3 } from './SherlockAppVersionV3';
+import type { SherlockUserV3 } from './SherlockUserV3';
 import {
-    SherlockAppVersionV3FromJSON,
-    SherlockAppVersionV3FromJSONTyped,
-    SherlockAppVersionV3ToJSON,
-} from './SherlockAppVersionV3';
+    SherlockUserV3FromJSON,
+    SherlockUserV3FromJSONTyped,
+    SherlockUserV3ToJSON,
+} from './SherlockUserV3';
 import type { SherlockChartReleaseV3 } from './SherlockChartReleaseV3';
 import {
     SherlockChartReleaseV3FromJSON,
@@ -31,18 +31,18 @@ import {
     SherlockChartVersionV3FromJSONTyped,
     SherlockChartVersionV3ToJSON,
 } from './SherlockChartVersionV3';
+import type { SherlockAppVersionV3 } from './SherlockAppVersionV3';
+import {
+    SherlockAppVersionV3FromJSON,
+    SherlockAppVersionV3FromJSONTyped,
+    SherlockAppVersionV3ToJSON,
+} from './SherlockAppVersionV3';
 import type { SherlockCiIdentifierV3 } from './SherlockCiIdentifierV3';
 import {
     SherlockCiIdentifierV3FromJSON,
     SherlockCiIdentifierV3FromJSONTyped,
     SherlockCiIdentifierV3ToJSON,
 } from './SherlockCiIdentifierV3';
-import type { SherlockUserV3 } from './SherlockUserV3';
-import {
-    SherlockUserV3FromJSON,
-    SherlockUserV3FromJSONTyped,
-    SherlockUserV3ToJSON,
-} from './SherlockUserV3';
 
 /**
  * 
