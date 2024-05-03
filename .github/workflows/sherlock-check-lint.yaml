@@ -21,6 +21,15 @@ jobs:
         with:
           go-version-file: ${{ matrix.directory }}/go.mod
 
+      # The linter is extraordinarily susceptible to failures where the fix is merely running `go mod tidy` --
+      # it's more sensitive than Sherlock's literal build or test processes, or the webhook proxy deployment.
+      # We have checks for those other things (the webhook proxy even commits a tidy back to mainline), so we
+      # tidy here because we want the linter to shut up about it. That's better than this just failing on
+      # random dependabot PRs that are actually safe to merge.
+      - name: Go mod tidy
+        run: go mod tidy
+        working-directory: ${{ matrix.directory }}
+
       # If this fails saying "no go files to analyze", that error is lying
       # Make sure your branch is updated and run `go mod tidy` in every directory with a go.mod in it
       - name: Lint
