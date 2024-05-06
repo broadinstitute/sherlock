@@ -1,4 +1,4 @@
-name: Check Two Reviews
+name: Check for Two Reviews
 on:
   pull_request:
     types:
