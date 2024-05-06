@@ -1,13 +1,10 @@
 name: Check for Two Reviews
 on:
-  pull_request:
+  pull_request_review:
     types:
-      - opened
       - edited
-      - reopened
-      - synchronize
-      - ready_for_review
-      - converted_to_draft
+      - dismissed
+      - submitted
     branches:
       - main
 
@@ -23,7 +20,7 @@ jobs:
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Fail if insufficient reviews
-        if: github.actor != 'dependabot[bot]' && github.event.pull_request.draft == false && (steps.reviews.outputs.approved < 2 || steps.reviews.outputs.changes_requested > 0)
+        if: github.actor != 'dependabot[bot]' && (steps.reviews.outputs.approved < 2 || steps.reviews.outputs.changes_requested > 0)
         run: |
-          echo "Insufficient reviews"
+          echo "Needs at least 2 approvals and no changes requested (since you aren't Dependabot!)"
           exit 1
