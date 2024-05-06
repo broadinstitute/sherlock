@@ -1,5 +1,8 @@
 name: Review Check
 on:
+  pull_request:
+    branches:
+      - main
   pull_request_review:
     types:
       - edited
@@ -8,7 +11,7 @@ on:
     branches:
       - main
 jobs:
-  two-reviews:
+  check-reviews:
     runs-on: ubuntu-latest
     permissions:
       pull-requests: read
