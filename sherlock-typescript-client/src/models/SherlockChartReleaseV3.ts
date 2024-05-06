@@ -13,36 +13,36 @@
  */
 
 import { mapValues } from '../runtime';
-import type { SherlockAppVersionV3 } from './SherlockAppVersionV3';
-import {
-    SherlockAppVersionV3FromJSON,
-    SherlockAppVersionV3FromJSONTyped,
-    SherlockAppVersionV3ToJSON,
-} from './SherlockAppVersionV3';
-import type { SherlockChartV3 } from './SherlockChartV3';
-import {
-    SherlockChartV3FromJSON,
-    SherlockChartV3FromJSONTyped,
-    SherlockChartV3ToJSON,
-} from './SherlockChartV3';
-import type { SherlockChartVersionV3 } from './SherlockChartVersionV3';
-import {
-    SherlockChartVersionV3FromJSON,
-    SherlockChartVersionV3FromJSONTyped,
-    SherlockChartVersionV3ToJSON,
-} from './SherlockChartVersionV3';
-import type { SherlockCiIdentifierV3 } from './SherlockCiIdentifierV3';
-import {
-    SherlockCiIdentifierV3FromJSON,
-    SherlockCiIdentifierV3FromJSONTyped,
-    SherlockCiIdentifierV3ToJSON,
-} from './SherlockCiIdentifierV3';
 import type { SherlockClusterV3 } from './SherlockClusterV3';
 import {
     SherlockClusterV3FromJSON,
     SherlockClusterV3FromJSONTyped,
     SherlockClusterV3ToJSON,
 } from './SherlockClusterV3';
+import type { SherlockChartVersionV3 } from './SherlockChartVersionV3';
+import {
+    SherlockChartVersionV3FromJSON,
+    SherlockChartVersionV3FromJSONTyped,
+    SherlockChartVersionV3ToJSON,
+} from './SherlockChartVersionV3';
+import type { SherlockChartV3 } from './SherlockChartV3';
+import {
+    SherlockChartV3FromJSON,
+    SherlockChartV3FromJSONTyped,
+    SherlockChartV3ToJSON,
+} from './SherlockChartV3';
+import type { SherlockAppVersionV3 } from './SherlockAppVersionV3';
+import {
+    SherlockAppVersionV3FromJSON,
+    SherlockAppVersionV3FromJSONTyped,
+    SherlockAppVersionV3ToJSON,
+} from './SherlockAppVersionV3';
+import type { SherlockCiIdentifierV3 } from './SherlockCiIdentifierV3';
+import {
+    SherlockCiIdentifierV3FromJSON,
+    SherlockCiIdentifierV3FromJSONTyped,
+    SherlockCiIdentifierV3ToJSON,
+} from './SherlockCiIdentifierV3';
 import type { SherlockEnvironmentV3 } from './SherlockEnvironmentV3';
 import {
     SherlockEnvironmentV3FromJSON,
