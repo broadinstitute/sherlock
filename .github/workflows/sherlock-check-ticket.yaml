@@ -1,6 +1,13 @@
-name: 'Ticket Check'
+name: Ticket Check
 on:
   pull_request:
+    types:
+      - opened
+      - edited
+      - reopened
+      - synchronize
+      - ready_for_review
+      - converted_to_draft
     branches:
       - main
 jobs:
@@ -8,6 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 'Ticket Present in PR Title'
+        if: github.event.pull_request.draft == false
         env:
           PR_TITLE: ${{ github.event.pull_request.title }}
         run: |
