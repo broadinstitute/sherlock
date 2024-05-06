@@ -1,8 +1,6 @@
 name: Review Check
 on:
   pull_request:
-    types:
-      - ready_for_review
     branches:
       - main
   pull_request_review:
