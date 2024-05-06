@@ -18,15 +18,21 @@ jobs:
         uses: dependabot/fetch-metadata@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Approve PR
-        env:
-          PR_URL: ${{github.event.pull_request.html_url}}
-          GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
-        run: |
-          gh pr review --approve "$PR_URL"
-      - name: Enable auto-merge for PR
+      - name: Approve PR as Dependabot
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr review --approve "$PR_URL"
+      - name: Approve PR as Broadbot
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.BROADBOT_TOKEN }}
+        run: |
+          gh pr review --approve "$PR_URL"
+      - name: Enable auto-merge for PR as Broadbot
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.BROADBOT_TOKEN }}
         run: |
           gh pr merge --auto --merge "$PR_URL"
