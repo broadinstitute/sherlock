@@ -41,7 +41,7 @@ func usersV3Get(ctx *gin.Context) {
 			return
 		}
 		var result models.User
-		if err = db.Where(&query).First(&result).Error; err != nil {
+		if err = db.Where(&query).Scopes(models.ReadUserScope).First(&result).Error; err != nil {
 			errors.AbortRequest(ctx, err)
 			return
 		}

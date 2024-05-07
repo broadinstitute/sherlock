@@ -6,14 +6,15 @@ import (
 
 type UserV3 struct {
 	CommonFields
-	Email                  string  `json:"email" form:"email"`
-	GoogleID               string  `json:"googleID" form:"googleID"`
-	GithubUsername         *string `json:"githubUsername,omitempty" form:"githubUsername"`
-	GithubID               *string `json:"githubID,omitempty" form:"githubID"`
-	SlackUsername          *string `json:"slackUsername,omitempty" form:"slackUsername"`
-	SlackID                *string `json:"slackID,omitempty" form:"slackID"`
-	Suitable               *bool   `json:"suitable,omitempty" form:"suitable"`                             // Available only in responses; indicates whether the user is production-suitable
-	SuitabilityDescription *string `json:"suitabilityDescription,omitempty" form:"suitabilityDescription"` // Available only in responses; describes the user's production-suitability
+	Email                  string              `json:"email" form:"email"`
+	GoogleID               string              `json:"googleID" form:"googleID"`
+	GithubUsername         *string             `json:"githubUsername,omitempty" form:"githubUsername"`
+	GithubID               *string             `json:"githubID,omitempty" form:"githubID"`
+	SlackUsername          *string             `json:"slackUsername,omitempty" form:"slackUsername"`
+	SlackID                *string             `json:"slackID,omitempty" form:"slackID"`
+	Suitable               *bool               `json:"suitable,omitempty" form:"suitable"`                             // Available only in responses; indicates whether the user is production-suitable
+	SuitabilityDescription *string             `json:"suitabilityDescription,omitempty" form:"suitabilityDescription"` // Available only in responses; describes the user's production-suitability
+	Assignments            []*RoleAssignmentV3 `json:"assignments,omitempty" form:"-"`
 	userDirectlyEditableFields
 }
 

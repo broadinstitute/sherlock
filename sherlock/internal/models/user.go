@@ -49,6 +49,11 @@ type User struct {
 	// NameFrom must be either "sherlock", "github", or "slack"
 	NameFrom *string
 
+	// Assignments lists Role records that this User is assigned to. A RoleAssignment can potentially be suspended,
+	// which indicates that the User should not presently have any access commensurate with the corresponding Role.
+	// More information on this behavior is available on the Role type.
+	Assignments []*RoleAssignment
+
 	// Via is ignored by Gorm and isn't stored in the database -- it should be set at the application layer
 	// when the User is changed for a given request to represent the previous User.
 	// It won't be defined when the User is queried out of the database, only as they authenticate.
@@ -69,6 +74,14 @@ type User struct {
 	// In the future, Sherlock will become its own source of truth for suitability and other authorization, in
 	// which case this behavior will become database-persistent and may be entirely represented in the database.
 	cachedSuitability *authorization.Suitability `gorm:"-:all"`
+}
+
+// ReadUserScope should be used in place of `db.Preload(clause.Associations)` for reading User records, as it
+// properly loads the Role records opposite the many-to-many RoleAssignment relationship.
+func ReadUserScope(db *gorm.DB) *gorm.DB {
+	return db.
+		Preload("Assignments").
+		Preload("Assignments.Role")
 }
 
 func (u *User) BeforeUpdate(tx *gorm.DB) error {
@@ -139,4 +152,16 @@ func (u *User) SlackReference(mention bool) string {
 	} else {
 		return fmt.Sprintf("<https://broad.io/beehive/r/user/%s|%s>", u.Email, u.NameOrEmailHandle())
 	}
+}
+
+func (u *User) HasSuperAdmin() bool {
+	for _, assignment := range u.Assignments {
+		if assignment.Suspended != nil &&
+			*assignment.Suspended == false &&
+			assignment.Role.GrantsSherlockSuperAdmin != nil &&
+			*assignment.Role.GrantsSherlockSuperAdmin {
+			return true
+		}
+	}
+	return false
 }
