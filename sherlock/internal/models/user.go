@@ -157,7 +157,7 @@ func (u *User) SlackReference(mention bool) string {
 func (u *User) HasSuperAdmin() bool {
 	for _, assignment := range u.Assignments {
 		if assignment.Suspended != nil &&
-			*assignment.Suspended == false &&
+			!*assignment.Suspended &&
 			assignment.Role.GrantsSherlockSuperAdmin != nil &&
 			*assignment.Role.GrantsSherlockSuperAdmin {
 			return true
