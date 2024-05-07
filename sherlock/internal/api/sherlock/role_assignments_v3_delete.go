@@ -10,6 +10,7 @@ import (
 //
 //	@summary		Delete a RoleAssignment
 //	@description	Delete the RoleAssignment between a given Role and User.
+//	@description	Non-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role's default break-glass duration in the future.
 //	@tags			RoleAssignments
 //	@produce		json
 //	@param			role-id					path		uint	true	"The numeric ID of the role"

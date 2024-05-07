@@ -10,6 +10,7 @@ import (
 //
 //	@summary		Create a Role
 //	@description	Create an individual Role with no one assigned to it.
+//	@description	Only super-admins may mutate Roles.
 //	@tags			Roles
 //	@produce		json
 //	@param			role					body		RoleV3Edit	true	"The initial fields the Role should have set"

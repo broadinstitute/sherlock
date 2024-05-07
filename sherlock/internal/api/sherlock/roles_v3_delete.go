@@ -10,6 +10,7 @@ import (
 //
 //	@summary		Delete a Role
 //	@description	Delete an individual Role.
+//	@description	Only super-admins may mutate Roles.
 //	@tags			Roles
 //	@produce		json
 //	@param			id						path		uint	true	"The numeric ID of the role"

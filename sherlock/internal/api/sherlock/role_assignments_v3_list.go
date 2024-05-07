@@ -13,8 +13,8 @@ import (
 //	@tags			RoleAssignments
 //	@produce		json
 //	@param			filter					query		RoleAssignmentV3	false	"Filter the returned RoleAssignments"
-//	@param			limit					query		int		false	"Control how many RoleAssignments are returned (default 0, no limit)"
-//	@param			offset					query		int		false	"Control the offset for the returned RoleAssignments (default 0)"
+//	@param			limit					query		int					false	"Control how many RoleAssignments are returned (default 0, no limit)"
+//	@param			offset					query		int					false	"Control the offset for the returned RoleAssignments (default 0)"
 //	@success		200						{array}		RoleAssignmentV3
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/role-assignments/v3 [get]
