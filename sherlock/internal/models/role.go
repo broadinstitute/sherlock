@@ -20,8 +20,7 @@ type RoleFields struct {
 	DefaultGlassBreakDuration *string
 
 	// GrantsSherlockSuperAdmin indicates that any User with a RoleAssignment to this Role gets extra API access
-	// to Sherlock itself. This super-admin access confers full control over User and Role records (including
-	// Role grants and all related records).
+	// to Sherlock itself. This super-admin access confers full control over Role and RoleAssignment records.
 	GrantsSherlockSuperAdmin *bool
 
 	// GrantsDevFirecloudGroup, when not null, indicates that a User with an unsuspended RoleAssignment to this
