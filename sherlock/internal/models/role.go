@@ -1,6 +1,8 @@
 package models
 
 import (
+	"fmt"
+	"github.com/jinzhu/copier"
 	"gorm.io/gorm"
 )
 
@@ -74,4 +76,74 @@ func ReadRoleScope(db *gorm.DB) *gorm.DB {
 		Preload("Assignments").
 		Preload("Assignments.User").
 		Preload("CanBeGlassBrokenByRole")
+}
+
+func (r *Role) BeforeCreate(tx *gorm.DB) error {
+	if user, err := GetCurrentUserForDB(tx); err != nil {
+		return err
+	} else if err = user.ErrIfNotSuperAdmin(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *Role) AfterCreate(tx *gorm.DB) error {
+	if user, err := GetCurrentUserForDB(tx); err != nil {
+		return err
+	} else if err = tx.Create(&RoleOperation{
+		RoleID:    r.ID,
+		AuthorID:  user.ID,
+		Operation: "create",
+		To:        r.RoleFields,
+	}).Error; err != nil {
+		return fmt.Errorf("failed to create RoleOperation: %w", err)
+	}
+	return nil
+}
+
+func (r *Role) BeforeUpdate(tx *gorm.DB) error {
+	var current Role
+	// We want to accurately represent the full state of the new fields, so we do a dance with copying the current
+	// fields into this value and then copying the new ones over top, ignoring zero values. This approximates how
+	// the database will be updated without us needing to accumulate the true before and after state somehow.
+	var newFields RoleFields
+	if user, err := GetCurrentUserForDB(tx); err != nil {
+		return err
+	} else if err = user.ErrIfNotSuperAdmin(); err != nil {
+		return err
+	} else if err = tx.First(&current, r.ID).Error; err != nil {
+		return fmt.Errorf("failed to find current Role: %w", err)
+	} else if err = copier.CopyWithOption(&newFields, current.RoleFields, copier.Option{IgnoreEmpty: true, DeepCopy: true}); err != nil {
+		return fmt.Errorf("failed to make copy of current RoleFields: %w", err)
+	} else if err = copier.CopyWithOption(&newFields, r.RoleFields, copier.Option{IgnoreEmpty: true, DeepCopy: true}); err != nil {
+		return fmt.Errorf("failed to copy new RoleFields over current RoleFields: %w", err)
+	} else if err = tx.Create(&RoleOperation{
+		RoleID:    r.ID,
+		AuthorID:  user.ID,
+		Operation: "update",
+		From:      current.RoleFields,
+		To:        newFields,
+	}).Error; err != nil {
+		return fmt.Errorf("failed to create RoleOperation: %w", err)
+	}
+	return nil
+}
+
+func (r *Role) BeforeDelete(tx *gorm.DB) error {
+	var current Role
+	if user, err := GetCurrentUserForDB(tx); err != nil {
+		return err
+	} else if err = user.ErrIfNotSuperAdmin(); err != nil {
+		return err
+	} else if err = tx.First(&current, r.ID).Error; err != nil {
+		return fmt.Errorf("failed to find current Role: %w", err)
+	} else if err = tx.Create(&RoleOperation{
+		RoleID:    r.ID,
+		AuthorID:  user.ID,
+		Operation: "delete",
+		From:      current.RoleFields,
+	}).Error; err != nil {
+		return fmt.Errorf("failed to create RoleOperation: %w", err)
+	}
+	return nil
 }

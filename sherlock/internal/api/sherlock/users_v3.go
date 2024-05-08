@@ -1,6 +1,7 @@
 package sherlock
 
 import (
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 )
 
@@ -63,6 +64,9 @@ func userFromModel(model models.User) UserV3 {
 		SlackID:                model.SlackID,
 		Suitable:               &suitable,
 		SuitabilityDescription: &suitabilityDescription,
+		Assignments: utils.Map(model.Assignments, func(ra *models.RoleAssignment) *RoleAssignmentV3 {
+			return utils.NilOrCall(roleAssignmentFromModel, ra)
+		}),
 		userDirectlyEditableFields: userDirectlyEditableFields{
 			Name:     model.Name,
 			NameFrom: model.NameFrom,

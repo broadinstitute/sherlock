@@ -154,14 +154,14 @@ func (u *User) SlackReference(mention bool) string {
 	}
 }
 
-func (u *User) HasSuperAdmin() bool {
+func (u *User) ErrIfNotSuperAdmin() error {
 	for _, assignment := range u.Assignments {
 		if assignment.Suspended != nil &&
 			!*assignment.Suspended &&
 			assignment.Role.GrantsSherlockSuperAdmin != nil &&
 			*assignment.Role.GrantsSherlockSuperAdmin {
-			return true
+			return nil
 		}
 	}
-	return false
+	return fmt.Errorf("(%s) caller is not a super-admin", errors.Forbidden)
 }

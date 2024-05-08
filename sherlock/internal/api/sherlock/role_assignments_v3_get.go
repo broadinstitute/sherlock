@@ -1,9 +1,13 @@
 package sherlock
 
 import (
-	"fmt"
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
+	"github.com/broadinstitute/sherlock/sherlock/internal/authentication"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm/clause"
+	"net/http"
 )
 
 // roleAssignmentsV3Get godoc
@@ -18,5 +22,34 @@ import (
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/role-assignments/v3/{role-id}/{user-selector} [get]
 func roleAssignmentsV3Get(ctx *gin.Context) {
-	errors.AbortRequest(ctx, fmt.Errorf("not implemented"))
+	db, err := authentication.MustUseDB(ctx)
+	if err != nil {
+		return
+	}
+
+	roleID, err := utils.ParseUint(ctx.Param("role-id"))
+	if err != nil {
+		errors.AbortRequest(ctx, err)
+		return
+	}
+
+	userQuery, err := userModelFromSelector(canonicalizeSelector(ctx.Param("user-selector")))
+	if err != nil {
+		errors.AbortRequest(ctx, err)
+		return
+	}
+	var user models.User
+	if err = db.Where(&userQuery).Select("id").First(&user).Error; err != nil {
+		errors.AbortRequest(ctx, err)
+		return
+	}
+	userID := user.ID
+
+	var result models.RoleAssignment
+	if err = db.Preload(clause.Associations).Where(&models.RoleAssignment{RoleID: roleID, UserID: userID}).First(&result).Error; err != nil {
+		errors.AbortRequest(ctx, err)
+		return
+	}
+
+	ctx.JSON(http.StatusCreated, roleAssignmentFromModel(result))
 }

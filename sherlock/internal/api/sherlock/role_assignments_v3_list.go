@@ -2,8 +2,13 @@ package sherlock
 
 import (
 	"fmt"
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
+	"github.com/broadinstitute/sherlock/sherlock/internal/authentication"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm/clause"
+	"net/http"
 )
 
 // roleAssignmentsV3List godoc
@@ -19,5 +24,42 @@ import (
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/role-assignments/v3 [get]
 func roleAssignmentsV3List(ctx *gin.Context) {
-	errors.AbortRequest(ctx, fmt.Errorf("not implemented"))
+	db, err := authentication.MustUseDB(ctx)
+	if err != nil {
+		return
+	}
+	var filter RoleAssignmentV3
+	if err = ctx.ShouldBindQuery(&filter); err != nil {
+		errors.AbortRequest(ctx, err)
+		return
+	}
+	modelFilter := filter.toModel()
+
+	limit, err := utils.ParseInt(ctx.DefaultQuery("limit", "0"))
+	if err != nil {
+		errors.AbortRequest(ctx, fmt.Errorf("(%s) %v", errors.BadRequest, err))
+		return
+	}
+	offset, err := utils.ParseInt(ctx.DefaultQuery("offset", "0"))
+	if err != nil {
+		errors.AbortRequest(ctx, fmt.Errorf("(%s) %v", errors.BadRequest, err))
+		return
+	}
+	var results []models.Role
+	chain := db.
+		Where(&modelFilter)
+	if limit > 0 {
+		chain = chain.Limit(limit)
+	}
+	if err = chain.
+		Offset(offset).
+		Order("user_id asc").
+		Order("role_id asc").
+		Preload(clause.Associations).
+		Find(&results).Error; err != nil {
+		errors.AbortRequest(ctx, err)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, utils.Map(results, roleFromModel))
 }
