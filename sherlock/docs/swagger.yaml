@@ -1547,6 +1547,74 @@ definitions:
       type:
         type: string
     type: object
+  sherlock.RoleAssignmentV3:
+    properties:
+      expiresAt:
+        format: date-time
+        type: string
+      roleInfo:
+        type: object
+      suspended:
+        type: boolean
+      userInfo:
+        type: object
+    type: object
+  sherlock.RoleAssignmentV3Edit:
+    properties:
+      expiresAt:
+        format: date-time
+        type: string
+      suspended:
+        type: boolean
+    type: object
+  sherlock.RoleV3:
+    properties:
+      assignments:
+        items:
+          $ref: '#/definitions/sherlock.RoleAssignmentV3'
+        type: array
+      canBeGlassBrokenByRole:
+        type: integer
+      canBeGlassBrokenByRoleInfo:
+        type: object
+      createdAt:
+        format: date-time
+        type: string
+      defaultGlassBreakDuration:
+        type: string
+      grantsDevAzureGroup:
+        type: string
+      grantsDevFirecloudGroup:
+        type: string
+      grantsSherlockSuperAdmin:
+        type: boolean
+      id:
+        type: integer
+      name:
+        type: string
+      suspendNonSuitableUsers:
+        type: boolean
+      updatedAt:
+        format: date-time
+        type: string
+    type: object
+  sherlock.RoleV3Edit:
+    properties:
+      canBeGlassBrokenByRole:
+        type: integer
+      defaultGlassBreakDuration:
+        type: string
+      grantsDevAzureGroup:
+        type: string
+      grantsDevFirecloudGroup:
+        type: string
+      grantsSherlockSuperAdmin:
+        type: boolean
+      name:
+        type: string
+      suspendNonSuitableUsers:
+        type: boolean
+    type: object
   sherlock.SlackDeployHookTestRunRequest:
     properties:
       execute:
@@ -1609,6 +1677,10 @@ definitions:
     type: object
   sherlock.UserV3:
     properties:
+      assignments:
+        items:
+          $ref: '#/definitions/sherlock.RoleAssignmentV3'
+        type: array
       createdAt:
         format: date-time
         type: string
@@ -6104,6 +6176,542 @@ paths:
       summary: Edit an individual PagerdutyIntegration
       tags:
       - PagerdutyIntegrations
+  /api/role-assignments/v3:
+    get:
+      description: List RoleAssignments matching a filter. The correct way to list
+        RoleAssignments for a particular Role or User is to get that Role or User
+        specifically, not to use this endpoint.
+      parameters:
+      - format: date-time
+        in: query
+        name: expiresAt
+        type: string
+      - in: query
+        name: suspended
+        type: boolean
+      - description: Control how many RoleAssignments are returned (default 0, no
+          limit)
+        in: query
+        name: limit
+        type: integer
+      - description: Control the offset for the returned RoleAssignments (default
+          0)
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/sherlock.RoleAssignmentV3'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: List RoleAssignments matching a filter
+      tags:
+      - RoleAssignments
+  /api/role-assignments/v3/{role-id}/{user-selector}:
+    delete:
+      description: |-
+        Delete the RoleAssignment between a given Role and User.
+        Non-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role's default break-glass duration in the future.
+      parameters:
+      - description: The numeric ID of the role
+        in: path
+        name: role-id
+        required: true
+        type: integer
+      - description: The selector of the User, which can be either a numeric ID, the
+          email, 'google-id/{google subject ID}', 'github/{github username}', or 'github-id/{github
+          numeric ID}'.
+        in: path
+        name: user-selector
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/sherlock.RoleAssignmentV3'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Delete a RoleAssignment
+      tags:
+      - RoleAssignments
+    get:
+      description: Get the RoleAssignment between a given Role and User.
+      parameters:
+      - description: The numeric ID of the role
+        in: path
+        name: role-id
+        required: true
+        type: integer
+      - description: The selector of the User, which can be either a numeric ID, the
+          email, 'google-id/{google subject ID}', 'github/{github username}', or 'github-id/{github
+          numeric ID}'.
+        in: path
+        name: user-selector
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/sherlock.RoleAssignmentV3'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Get a RoleAssignment
+      tags:
+      - RoleAssignments
+    patch:
+      description: |-
+        Edit the RoleAssignment between a given Role and User.
+        Non-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role's default break-glass duration in the future.
+      parameters:
+      - description: The numeric ID of the role
+        in: path
+        name: role-id
+        required: true
+        type: integer
+      - description: The selector of the User, which can be either a numeric ID, the
+          email, 'google-id/{google subject ID}', 'github/{github username}', or 'github-id/{github
+          numeric ID}'.
+        in: path
+        name: user-selector
+        required: true
+        type: string
+      - description: The edits to make to the RoleAssignment
+        in: body
+        name: role-assignment
+        required: true
+        schema:
+          $ref: '#/definitions/sherlock.RoleAssignmentV3Edit'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/sherlock.RoleAssignmentV3'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Edit a RoleAssignment
+      tags:
+      - RoleAssignments
+    post:
+      description: |-
+        Create the RoleAssignment between a given Role and User.
+        Non-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role's default break-glass duration in the future.
+      parameters:
+      - description: The numeric ID of the role
+        in: path
+        name: role-id
+        required: true
+        type: integer
+      - description: The selector of the User, which can be either a numeric ID, the
+          email, 'google-id/{google subject ID}', 'github/{github username}', or 'github-id/{github
+          numeric ID}'.
+        in: path
+        name: user-selector
+        required: true
+        type: string
+      - description: The initial fields to set for the new RoleAssignment
+        in: body
+        name: role-assignment
+        required: true
+        schema:
+          $ref: '#/definitions/sherlock.RoleAssignmentV3Edit'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/sherlock.RoleAssignmentV3'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Create a RoleAssignment
+      tags:
+      - RoleAssignments
+  /api/roles/v3:
+    get:
+      description: List Roles matching a filter.
+      parameters:
+      - in: query
+        name: canBeGlassBrokenByRole
+        type: integer
+      - format: date-time
+        in: query
+        name: createdAt
+        type: string
+      - in: query
+        name: defaultGlassBreakDuration
+        type: string
+      - in: query
+        name: grantsDevAzureGroup
+        type: string
+      - in: query
+        name: grantsDevFirecloudGroup
+        type: string
+      - in: query
+        name: grantsSherlockSuperAdmin
+        type: boolean
+      - in: query
+        name: id
+        type: integer
+      - in: query
+        name: name
+        type: string
+      - in: query
+        name: suspendNonSuitableUsers
+        type: boolean
+      - format: date-time
+        in: query
+        name: updatedAt
+        type: string
+      - description: Control how many Roles are returned (default 0, no limit)
+        in: query
+        name: limit
+        type: integer
+      - description: Control the offset for the returned Roles (default 0)
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/sherlock.RoleV3'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: List Roles matching a filter
+      tags:
+      - Roles
+    post:
+      description: |-
+        Create an individual Role with no one assigned to it.
+        Only super-admins may mutate Roles.
+      parameters:
+      - description: The initial fields the Role should have set
+        in: body
+        name: role
+        required: true
+        schema:
+          $ref: '#/definitions/sherlock.RoleV3Edit'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/sherlock.RoleV3'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Create a Role
+      tags:
+      - Roles
+  /api/roles/v3/{id}:
+    delete:
+      description: |-
+        Delete an individual Role.
+        Only super-admins may mutate Roles.
+      parameters:
+      - description: The numeric ID of the role
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/sherlock.RoleV3'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Delete a Role
+      tags:
+      - Roles
+    get:
+      description: Get an individual Role and the Users assigned to it.
+      parameters:
+      - description: The numeric ID of the role
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/sherlock.RoleV3'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Get a Role
+      tags:
+      - Roles
+    patch:
+      description: |-
+        Edit an individual Role.
+        Only super-admins may mutate Roles.
+      parameters:
+      - description: The numeric ID of the role
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: The edits to make to the Role
+        in: body
+        name: role
+        required: true
+        schema:
+          $ref: '#/definitions/sherlock.RoleV3Edit'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/sherlock.RoleV3'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Edit a Role
+      tags:
+      - Roles
   /api/users/v3:
     get:
       description: |-

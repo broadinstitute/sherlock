@@ -13,12 +13,25 @@
  */
 
 import { mapValues } from '../runtime';
+import type { SherlockRoleAssignmentV3 } from './SherlockRoleAssignmentV3';
+import {
+    SherlockRoleAssignmentV3FromJSON,
+    SherlockRoleAssignmentV3FromJSONTyped,
+    SherlockRoleAssignmentV3ToJSON,
+} from './SherlockRoleAssignmentV3';
+
 /**
  * 
  * @export
  * @interface SherlockUserV3
  */
 export interface SherlockUserV3 {
+    /**
+     * 
+     * @type {Array<SherlockRoleAssignmentV3>}
+     * @memberof SherlockUserV3
+     */
+    assignments?: Array<SherlockRoleAssignmentV3>;
     /**
      * 
      * @type {Date}
@@ -135,6 +148,7 @@ export function SherlockUserV3FromJSONTyped(json: any, ignoreDiscriminator: bool
     }
     return {
         
+        'assignments': json['assignments'] == null ? undefined : ((json['assignments'] as Array<any>).map(SherlockRoleAssignmentV3FromJSON)),
         'createdAt': json['createdAt'] == null ? undefined : (new Date(json['createdAt'])),
         'email': json['email'] == null ? undefined : json['email'],
         'githubID': json['githubID'] == null ? undefined : json['githubID'],
@@ -158,6 +172,7 @@ export function SherlockUserV3ToJSON(value?: SherlockUserV3 | null): any {
     }
     return {
         
+        'assignments': value['assignments'] == null ? undefined : ((value['assignments'] as Array<any>).map(SherlockRoleAssignmentV3ToJSON)),
         'createdAt': value['createdAt'] == null ? undefined : ((value['createdAt']).toISOString()),
         'email': value['email'],
         'githubID': value['githubID'],

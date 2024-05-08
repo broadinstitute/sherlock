@@ -6573,6 +6573,780 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/role-assignments/v3": {
+            "get": {
+                "description": "List RoleAssignments matching a filter. The correct way to list RoleAssignments for a particular Role or User is to get that Role or User specifically, not to use this endpoint.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "RoleAssignments"
+                ],
+                "summary": "List RoleAssignments matching a filter",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "date-time",
+                        "name": "expiresAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "suspended",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Control how many RoleAssignments are returned (default 0, no limit)",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Control the offset for the returned RoleAssignments (default 0)",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/sherlock.RoleAssignmentV3"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/role-assignments/v3/{role-id}/{user-selector}": {
+            "get": {
+                "description": "Get the RoleAssignment between a given Role and User.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "RoleAssignments"
+                ],
+                "summary": "Get a RoleAssignment",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "The numeric ID of the role",
+                        "name": "role-id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "The selector of the User, which can be either a numeric ID, the email, 'google-id/{google subject ID}', 'github/{github username}', or 'github-id/{github numeric ID}'.",
+                        "name": "user-selector",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.RoleAssignmentV3"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create the RoleAssignment between a given Role and User.\nNon-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role's default break-glass duration in the future.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "RoleAssignments"
+                ],
+                "summary": "Create a RoleAssignment",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "The numeric ID of the role",
+                        "name": "role-id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "The selector of the User, which can be either a numeric ID, the email, 'google-id/{google subject ID}', 'github/{github username}', or 'github-id/{github numeric ID}'.",
+                        "name": "user-selector",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "The initial fields to set for the new RoleAssignment",
+                        "name": "role-assignment",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.RoleAssignmentV3Edit"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.RoleAssignmentV3"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete the RoleAssignment between a given Role and User.\nNon-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role's default break-glass duration in the future.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "RoleAssignments"
+                ],
+                "summary": "Delete a RoleAssignment",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "The numeric ID of the role",
+                        "name": "role-id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "The selector of the User, which can be either a numeric ID, the email, 'google-id/{google subject ID}', 'github/{github username}', or 'github-id/{github numeric ID}'.",
+                        "name": "user-selector",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.RoleAssignmentV3"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Edit the RoleAssignment between a given Role and User.\nNon-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role's default break-glass duration in the future.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "RoleAssignments"
+                ],
+                "summary": "Edit a RoleAssignment",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "The numeric ID of the role",
+                        "name": "role-id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "The selector of the User, which can be either a numeric ID, the email, 'google-id/{google subject ID}', 'github/{github username}', or 'github-id/{github numeric ID}'.",
+                        "name": "user-selector",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "The edits to make to the RoleAssignment",
+                        "name": "role-assignment",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.RoleAssignmentV3Edit"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.RoleAssignmentV3"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/roles/v3": {
+            "get": {
+                "description": "List Roles matching a filter.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "List Roles matching a filter",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "name": "canBeGlassBrokenByRole",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "format": "date-time",
+                        "name": "createdAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "defaultGlassBreakDuration",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "grantsDevAzureGroup",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "grantsDevFirecloudGroup",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "grantsSherlockSuperAdmin",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "suspendNonSuitableUsers",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "format": "date-time",
+                        "name": "updatedAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Control how many Roles are returned (default 0, no limit)",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Control the offset for the returned Roles (default 0)",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/sherlock.RoleV3"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create an individual Role with no one assigned to it.\nOnly super-admins may mutate Roles.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Create a Role",
+                "parameters": [
+                    {
+                        "description": "The initial fields the Role should have set",
+                        "name": "role",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.RoleV3Edit"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.RoleV3"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/roles/v3/{id}": {
+            "get": {
+                "description": "Get an individual Role and the Users assigned to it.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Get a Role",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "The numeric ID of the role",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.RoleV3"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete an individual Role.\nOnly super-admins may mutate Roles.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Delete a Role",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "The numeric ID of the role",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.RoleV3"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Edit an individual Role.\nOnly super-admins may mutate Roles.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Edit a Role",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "The numeric ID of the role",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "The edits to make to the Role",
+                        "name": "role",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.RoleV3Edit"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.RoleV3"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/users/v3": {
             "get": {
                 "description": "List Users matching a filter. The results will include suitability and other information.\nNote that the suitability info can't directly be filtered for at this time.",
@@ -9017,6 +9791,108 @@ const docTemplate = `{
                 }
             }
         },
+        "sherlock.RoleAssignmentV3": {
+            "type": "object",
+            "properties": {
+                "expiresAt": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "roleInfo": {
+                    "type": "object"
+                },
+                "suspended": {
+                    "type": "boolean"
+                },
+                "userInfo": {
+                    "type": "object"
+                }
+            }
+        },
+        "sherlock.RoleAssignmentV3Edit": {
+            "type": "object",
+            "properties": {
+                "expiresAt": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "suspended": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "sherlock.RoleV3": {
+            "type": "object",
+            "properties": {
+                "assignments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/sherlock.RoleAssignmentV3"
+                    }
+                },
+                "canBeGlassBrokenByRole": {
+                    "type": "integer"
+                },
+                "canBeGlassBrokenByRoleInfo": {
+                    "type": "object"
+                },
+                "createdAt": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "defaultGlassBreakDuration": {
+                    "type": "string"
+                },
+                "grantsDevAzureGroup": {
+                    "type": "string"
+                },
+                "grantsDevFirecloudGroup": {
+                    "type": "string"
+                },
+                "grantsSherlockSuperAdmin": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "suspendNonSuitableUsers": {
+                    "type": "boolean"
+                },
+                "updatedAt": {
+                    "type": "string",
+                    "format": "date-time"
+                }
+            }
+        },
+        "sherlock.RoleV3Edit": {
+            "type": "object",
+            "properties": {
+                "canBeGlassBrokenByRole": {
+                    "type": "integer"
+                },
+                "defaultGlassBreakDuration": {
+                    "type": "string"
+                },
+                "grantsDevAzureGroup": {
+                    "type": "string"
+                },
+                "grantsDevFirecloudGroup": {
+                    "type": "string"
+                },
+                "grantsSherlockSuperAdmin": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "suspendNonSuitableUsers": {
+                    "type": "boolean"
+                }
+            }
+        },
         "sherlock.SlackDeployHookTestRunRequest": {
             "type": "object",
             "properties": {
@@ -9111,6 +9987,12 @@ const docTemplate = `{
         "sherlock.UserV3": {
             "type": "object",
             "properties": {
+                "assignments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/sherlock.RoleAssignmentV3"
+                    }
+                },
                 "createdAt": {
                     "type": "string",
                     "format": "date-time"

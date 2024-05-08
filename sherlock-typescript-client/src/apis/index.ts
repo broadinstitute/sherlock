@@ -16,4 +16,6 @@ export * from './GithubActionsJobsApi';
 export * from './IncidentsApi';
 export * from './MiscApi';
 export * from './PagerdutyIntegrationsApi';
+export * from './RoleAssignmentsApi';
+export * from './RolesApi';
 export * from './UsersApi';

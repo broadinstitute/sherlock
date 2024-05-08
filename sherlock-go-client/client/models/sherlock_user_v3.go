@@ -8,6 +8,7 @@ package models
 import (
 	"context"
 	"encoding/json"
+	"strconv"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -19,6 +20,9 @@ import (
 //
 // swagger:model sherlock.UserV3
 type SherlockUserV3 struct {
+
+	// assignments
+	Assignments []*SherlockRoleAssignmentV3 `json:"assignments"`
 
 	// created at
 	// Format: date-time
@@ -71,6 +75,10 @@ type SherlockUserV3 struct {
 func (m *SherlockUserV3) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateAssignments(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateCreatedAt(formats); err != nil {
 		res = append(res, err)
 	}
@@ -86,6 +94,32 @@ func (m *SherlockUserV3) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *SherlockUserV3) validateAssignments(formats strfmt.Registry) error {
+	if swag.IsZero(m.Assignments) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.Assignments); i++ {
+		if swag.IsZero(m.Assignments[i]) { // not required
+			continue
+		}
+
+		if m.Assignments[i] != nil {
+			if err := m.Assignments[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("assignments" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("assignments" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
 	return nil
 }
 
@@ -158,8 +192,37 @@ func (m *SherlockUserV3) validateUpdatedAt(formats strfmt.Registry) error {
 	return nil
 }
 
-// ContextValidate validates this sherlock user v3 based on context it is used
+// ContextValidate validate this sherlock user v3 based on the context it is used
 func (m *SherlockUserV3) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateAssignments(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *SherlockUserV3) contextValidateAssignments(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Assignments); i++ {
+
+		if m.Assignments[i] != nil {
+			if err := m.Assignments[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("assignments" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("assignments" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
 	return nil
 }
 

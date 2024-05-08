@@ -18,6 +18,8 @@ src/apis/GithubActionsJobsApi.ts
 src/apis/IncidentsApi.ts
 src/apis/MiscApi.ts
 src/apis/PagerdutyIntegrationsApi.ts
+src/apis/RoleAssignmentsApi.ts
+src/apis/RolesApi.ts
 src/apis/UsersApi.ts
 src/apis/index.ts
 src/index.ts
@@ -72,6 +74,10 @@ src/models/SherlockIncidentV3Edit.ts
 src/models/SherlockPagerdutyIntegrationV3.ts
 src/models/SherlockPagerdutyIntegrationV3Create.ts
 src/models/SherlockPagerdutyIntegrationV3Edit.ts
+src/models/SherlockRoleAssignmentV3.ts
+src/models/SherlockRoleAssignmentV3Edit.ts
+src/models/SherlockRoleV3.ts
+src/models/SherlockRoleV3Edit.ts
 src/models/SherlockSlackDeployHookTestRunRequest.ts
 src/models/SherlockSlackDeployHookTestRunResponse.ts
 src/models/SherlockSlackDeployHookV3.ts
