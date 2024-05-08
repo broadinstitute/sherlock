@@ -1,19 +1,21 @@
 package sherlock
 
 import (
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 )
 
 type UserV3 struct {
 	CommonFields
-	Email                  string  `json:"email" form:"email"`
-	GoogleID               string  `json:"googleID" form:"googleID"`
-	GithubUsername         *string `json:"githubUsername,omitempty" form:"githubUsername"`
-	GithubID               *string `json:"githubID,omitempty" form:"githubID"`
-	SlackUsername          *string `json:"slackUsername,omitempty" form:"slackUsername"`
-	SlackID                *string `json:"slackID,omitempty" form:"slackID"`
-	Suitable               *bool   `json:"suitable,omitempty" form:"suitable"`                             // Available only in responses; indicates whether the user is production-suitable
-	SuitabilityDescription *string `json:"suitabilityDescription,omitempty" form:"suitabilityDescription"` // Available only in responses; describes the user's production-suitability
+	Email                  string              `json:"email" form:"email"`
+	GoogleID               string              `json:"googleID" form:"googleID"`
+	GithubUsername         *string             `json:"githubUsername,omitempty" form:"githubUsername"`
+	GithubID               *string             `json:"githubID,omitempty" form:"githubID"`
+	SlackUsername          *string             `json:"slackUsername,omitempty" form:"slackUsername"`
+	SlackID                *string             `json:"slackID,omitempty" form:"slackID"`
+	Suitable               *bool               `json:"suitable,omitempty" form:"suitable"`                             // Available only in responses; indicates whether the user is production-suitable
+	SuitabilityDescription *string             `json:"suitabilityDescription,omitempty" form:"suitabilityDescription"` // Available only in responses; describes the user's production-suitability
+	Assignments            []*RoleAssignmentV3 `json:"assignments,omitempty" form:"-"`
 	userDirectlyEditableFields
 }
 
@@ -66,6 +68,11 @@ func userFromModel(model models.User) UserV3 {
 			Name:     model.Name,
 			NameFrom: model.NameFrom,
 		},
+	}
+	if len(model.Assignments) > 0 {
+		ret.Assignments = utils.Map(model.Assignments, func(ra *models.RoleAssignment) *RoleAssignmentV3 {
+			return utils.NilOrCall(roleAssignmentFromModel, ra)
+		})
 	}
 	if model.NameFrom != nil {
 		if *model.NameFrom == "github" {

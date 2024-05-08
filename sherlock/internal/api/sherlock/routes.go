@@ -126,6 +126,18 @@ func ConfigureRoutes(apiRouter gin.IRoutes) {
 	apiRouter.PATCH("incidents/v3/*selector", incidentsV3Edit)
 	apiRouter.GET("incidents/v3/*selector", incidentsV3Get)
 
+	apiRouter.POST("role-assignments/v3/:role-id/*user-selector", roleAssignmentsV3Create)
+	apiRouter.GET("role-assignments/v3", roleAssignmentsV3List)
+	apiRouter.DELETE("role-assignments/v3/:role-id/*user-selector", roleAssignmentsV3Delete)
+	apiRouter.PATCH("role-assignments/v3/:role-id/*user-selector", roleAssignmentsV3Edit)
+	apiRouter.GET("role-assignments/v3/:role-id/*user-selector", roleAssignmentsV3Get)
+
+	apiRouter.POST("roles/v3", rolesV3Create)
+	apiRouter.GET("roles/v3", rolesV3List)
+	apiRouter.DELETE("roles/v3/:id", rolesV3Delete)
+	apiRouter.PATCH("roles/v3/:id", rolesV3Edit)
+	apiRouter.GET("roles/v3/:id", rolesV3Get)
+
 	apiRouter.POST("pagerduty-integrations/procedures/v3/trigger-incident/*selector", pagerdutyIntegrationsProceduresV3TriggerIncident)
 	apiRouter.POST("pagerduty-integrations/v3", pagerdutyIntegrationsV3Create)
 	apiRouter.GET("pagerduty-integrations/v3", pagerdutyIntegrationsV3List)

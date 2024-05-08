@@ -33,6 +33,9 @@ func setUserWhoConnected(db *gorm.DB, headerParser func(ctx *gin.Context) (email
 		} else if err = db.Where(&models.User{Email: email, GoogleID: googleID}).FirstOrCreate(&user).Error; err != nil {
 			errors.AbortRequest(ctx, fmt.Errorf("failed to find or insert the connecting user in database: %w", err))
 			return
+		} else if err = db.Scopes(models.ReadUserScope).First(&user, user.ID).Error; err != nil {
+			errors.AbortRequest(ctx, fmt.Errorf("failed to read the connecting user's associations from database: %w", err))
+			return
 		} else {
 			user.AuthenticationMethod = method
 			ctx.Set(ctxUserFieldName, &user)
@@ -64,9 +67,12 @@ func setGithubClaimsAndEscalateUser(db *gorm.DB) gin.HandlerFunc {
 				if err = db.Where(&models.User{GithubID: &claims.ActorID}).Limit(1).Find(&matchingGithubUsers).Error; err != nil {
 					errors.AbortRequest(ctx, fmt.Errorf("failed to query for users matching GitHub Actions claims: %w", err))
 					return
-				} else if len(matchingGithubUsers) > 0 {
-					user := matchingGithubUsers[0]
-					if oldUser, err := ShouldUseUser(ctx); err != nil {
+				} else if len(matchingGithubUsers) == 1 {
+					var user models.User
+					if err = db.Scopes(models.ReadUserScope).First(&user, matchingGithubUsers[0].ID).Error; err != nil {
+						errors.AbortRequest(ctx, fmt.Errorf("failed to read the GitHub Actions user's associations from database: %w", err))
+						return
+					} else if oldUser, err := ShouldUseUser(ctx); err != nil {
 						log.Warn().Err(err).Msg("AUTH | was unable to read old user to escalate user based on GitHub claims")
 					} else {
 						user.AuthenticationMethod = authentication_method.GHA

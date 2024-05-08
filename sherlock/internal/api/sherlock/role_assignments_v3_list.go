@@ -7,33 +7,34 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm/clause"
 	"net/http"
 )
 
-// usersV3List godoc
+// roleAssignmentsV3List godoc
 //
-//	@summary		List Users matching a filter
-//	@description	List Users matching a filter. The results will include suitability and other information.
-//	@description	Note that the suitability info can't directly be filtered for at this time.
-//	@tags			Users
+//	@summary		List RoleAssignments matching a filter
+//	@description	List RoleAssignments matching a filter. The correct way to list RoleAssignments for a particular Role or User is to get that Role or User specifically, not to use this endpoint.
+//	@tags			RoleAssignments
 //	@produce		json
-//	@param			filter					query		UserV3	false	"Filter the returned Users"
-//	@param			limit					query		int		false	"Control how many Users are returned (default 0, no limit)"
-//	@param			offset					query		int		false	"Control the offset for the returned Users (default 0)"
-//	@success		200						{array}		UserV3
+//	@param			filter					query		RoleAssignmentV3	false	"Filter the returned RoleAssignments"
+//	@param			limit					query		int					false	"Control how many RoleAssignments are returned (default 0, no limit)"
+//	@param			offset					query		int					false	"Control the offset for the returned RoleAssignments (default 0)"
+//	@success		200						{array}		RoleAssignmentV3
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
-//	@router			/api/users/v3 [get]
-func usersV3List(ctx *gin.Context) {
+//	@router			/api/role-assignments/v3 [get]
+func roleAssignmentsV3List(ctx *gin.Context) {
 	db, err := authentication.MustUseDB(ctx)
 	if err != nil {
 		return
 	}
-	var filter UserV3
+	var filter RoleAssignmentV3
 	if err = ctx.ShouldBindQuery(&filter); err != nil {
 		errors.AbortRequest(ctx, err)
 		return
 	}
 	modelFilter := filter.toModel()
+
 	limit, err := utils.ParseInt(ctx.DefaultQuery("limit", "0"))
 	if err != nil {
 		errors.AbortRequest(ctx, fmt.Errorf("(%s) %v", errors.BadRequest, err))
@@ -44,18 +45,21 @@ func usersV3List(ctx *gin.Context) {
 		errors.AbortRequest(ctx, fmt.Errorf("(%s) %v", errors.BadRequest, err))
 		return
 	}
-	var results []models.User
-	chain := db.Where(&modelFilter)
+	var results []models.Role
+	chain := db.
+		Where(&modelFilter)
 	if limit > 0 {
 		chain = chain.Limit(limit)
 	}
 	if err = chain.
 		Offset(offset).
-		Order("email asc").
-		Scopes(models.ReadUserScope).
+		Order("user_id asc").
+		Order("role_id asc").
+		Preload(clause.Associations).
 		Find(&results).Error; err != nil {
 		errors.AbortRequest(ctx, err)
 		return
 	}
-	ctx.JSON(http.StatusOK, utils.Map(results, userFromModel))
+
+	ctx.JSON(http.StatusOK, utils.Map(results, roleFromModel))
 }
