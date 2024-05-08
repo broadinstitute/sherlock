@@ -46,12 +46,9 @@ func (r RoleV3Edit) toModel() models.Role {
 }
 
 func roleFromModel(model models.Role) RoleV3 {
-	return RoleV3{
+	ret := RoleV3{
 		CommonFields:               commonFieldsFromGormModel(model.Model),
 		CanbeGlassBrokenByRoleInfo: utils.NilOrCall(roleFromModel, model.CanBeGlassBrokenByRole),
-		Assignments: utils.Map(model.Assignments, func(ra *models.RoleAssignment) *RoleAssignmentV3 {
-			return utils.NilOrCall(roleAssignmentFromModel, ra)
-		}),
 		RoleV3Edit: RoleV3Edit{
 			Name:                    model.Name,
 			SuspendNonSuitableUsers: model.SuspendNonSuitableUsers,
@@ -64,4 +61,10 @@ func roleFromModel(model models.Role) RoleV3 {
 			GrantsDevAzureGroup:      model.GrantsDevAzureGroup,
 		},
 	}
+	if len(model.Assignments) > 0 {
+		ret.Assignments = utils.Map(model.Assignments, func(ra *models.RoleAssignment) *RoleAssignmentV3 {
+			return utils.NilOrCall(roleAssignmentFromModel, ra)
+		})
+	}
+	return ret
 }

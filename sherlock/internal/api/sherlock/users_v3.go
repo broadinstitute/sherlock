@@ -64,13 +64,15 @@ func userFromModel(model models.User) UserV3 {
 		SlackID:                model.SlackID,
 		Suitable:               &suitable,
 		SuitabilityDescription: &suitabilityDescription,
-		Assignments: utils.Map(model.Assignments, func(ra *models.RoleAssignment) *RoleAssignmentV3 {
-			return utils.NilOrCall(roleAssignmentFromModel, ra)
-		}),
 		userDirectlyEditableFields: userDirectlyEditableFields{
 			Name:     model.Name,
 			NameFrom: model.NameFrom,
 		},
+	}
+	if len(model.Assignments) > 0 {
+		ret.Assignments = utils.Map(model.Assignments, func(ra *models.RoleAssignment) *RoleAssignmentV3 {
+			return utils.NilOrCall(roleAssignmentFromModel, ra)
+		})
 	}
 	if model.NameFrom != nil {
 		if *model.NameFrom == "github" {
