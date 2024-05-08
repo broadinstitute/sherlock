@@ -11,7 +11,7 @@ create table if not exists roles
     can_be_glass_broken_by_role_id bigint
         constraint fk_roles_can_be_glass_broken_by_role_id
             references roles,
-    default_glass_break_duration   text,
+    default_glass_break_duration   bigint,
     grants_sherlock_super_admin    boolean,
     grants_dev_firecloud_group     text,
     grants_dev_azure_group         text

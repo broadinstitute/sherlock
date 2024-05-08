@@ -15,9 +15,11 @@ type RoleFields struct {
 	// themselves a RoleAssignment to this Role, which will be removed after DefaultGlassBreakDuration. Such a
 	// RoleAssignment can last longer if the User either re-glass-breaks (refreshing the duration) or if a
 	// super-admin modifies the RoleAssignment's expiry directly.
-	CanBeGlassBrokenByRole    *Role
-	CanBeGlassBrokenByRoleID  *uint
-	DefaultGlassBreakDuration *string
+	CanBeGlassBrokenByRole   *Role
+	CanBeGlassBrokenByRoleID *uint
+	// DefaultGlassBreakDuration is represented by a nullable int64, as this is the underlying type for a
+	// time.Duration. The raw value is in nanoseconds.
+	DefaultGlassBreakDuration *int64
 
 	// GrantsSherlockSuperAdmin indicates that any User with a RoleAssignment to this Role gets extra API access
 	// to Sherlock itself. This super-admin access confers full control over Role and RoleAssignment records.
