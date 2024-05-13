@@ -3,6 +3,7 @@ package models
 import (
 	"fmt"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
+	"github.com/broadinstitute/sherlock/sherlock/internal/self"
 	"github.com/knadh/koanf"
 	"gorm.io/gorm"
 )
@@ -24,6 +25,10 @@ func Init(db *gorm.DB) error {
 		}
 	}
 
+	if err := initSelfUser(db); err != nil {
+		return err
+	}
+
 	if err := initDeployMatchers(); err != nil {
 		return err
 	}
@@ -37,6 +42,22 @@ func Init(db *gorm.DB) error {
 	//	return err
 	//}
 
+	return nil
+}
+
+func initSelfUser(db *gorm.DB) error {
+	if err := self.Load(db.Statement.Context); err != nil {
+		return err
+	}
+	if err := db.
+		Where(&User{
+			Email:    self.Email,
+			GoogleID: self.GoogleID,
+		}).
+		FirstOrCreate(&SelfUser).
+		Error; err != nil {
+		return fmt.Errorf("failed to upsert self user: %w", err)
+	}
 	return nil
 }
 

@@ -7,10 +7,20 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/authorization"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
+	"github.com/broadinstitute/sherlock/sherlock/internal/self"
 	"gorm.io/gorm"
 	"strings"
 	"unicode"
 )
+
+// SelfUser is the User that Sherlock itself is conceptually running as, as derived from
+// self.Email and self.GoogleID.
+//
+// This reference won't be updated during Sherlock's runtime, but that's okay because
+// the User.ErrIfNotSuperAdmin method short-circuits when the User.Email and
+// User.GoogleID match self.Email and self.GoogleID respectively, automatically
+// considering the User a super-admin.
+var SelfUser *User
 
 // sherlockDbContextField exists as a type to avoid collisions with other keys;
 // linting errors if you don't do this.
@@ -38,7 +48,7 @@ func GetCurrentUserForDB(db *gorm.DB) (*User, error) {
 // authentication and authorization.
 type User struct {
 	gorm.Model
-	Email          string
+	Email          string `gorm:"index"`
 	GoogleID       string
 	GithubUsername *string
 	GithubID       *string
@@ -48,6 +58,11 @@ type User struct {
 	Name *string
 	// NameFrom must be either "sherlock", "github", or "slack"
 	NameFrom *string
+
+	// Suitability is a potential reference to a matching Suitability record, which in turn
+	// potentially indicates that the User is "suitable" for production access. If this is
+	// nil the User should be assumed to be unsuitable.
+	Suitability *Suitability `gorm:"foreignKey:Email;references:Email"`
 
 	// Assignments lists Role records that this User is assigned to. A RoleAssignment can potentially be suspended,
 	// which indicates that the User should not presently have any access commensurate with the corresponding Role.
@@ -68,18 +83,19 @@ type User struct {
 	// See the authentication package for more information.
 	AuthenticationMethod authentication_method.Method `gorm:"-:all"`
 
-	// cachedSuitability is ignored by Gorm and isn't stored in the database -- it is used to cache calls to Suitability,
+	// deprecatedCachedSuitability is ignored by Gorm and isn't stored in the database -- it is used to cache calls to DeprecatedSuitability,
 	// which looks up the user's authorization.Suitability.
 	// See the authorization package for more information.
 	// In the future, Sherlock will become its own source of truth for suitability and other authorization, in
 	// which case this behavior will become database-persistent and may be entirely represented in the database.
-	cachedSuitability *authorization.Suitability `gorm:"-:all"`
+	deprecatedCachedSuitability *authorization.Suitability `gorm:"-:all"`
 }
 
 // ReadUserScope should be used in place of `db.Preload(clause.Associations)` for reading User records, as it
 // properly loads the Role records opposite the many-to-many RoleAssignment relationship.
 func ReadUserScope(db *gorm.DB) *gorm.DB {
 	return db.
+		Preload("Suitability").
 		Preload("Assignments").
 		Preload("Assignments.Role")
 }
@@ -119,11 +135,17 @@ func (u *User) BeforeDelete(_ *gorm.DB) error {
 	return fmt.Errorf("(%s) users cannot be deleted", errors.Forbidden)
 }
 
-func (u *User) Suitability() *authorization.Suitability {
-	if u.Email != "" && u.cachedSuitability == nil {
-		u.cachedSuitability = authorization.GetSuitabilityFor(u.Email)
+// DeprecatedSuitability is the old mechanism to do RBAC checks on a User. It
+// uses an in-memory store of suitability data. The new mechanism to is to use
+// User.Suitability instead.
+//
+// Deprecated: This method is deprecated in favor of the database-persistent
+// User.Suitability field (that we're rolling out slowly).
+func (u *User) DeprecatedSuitability() *authorization.Suitability {
+	if u.Email != "" && u.deprecatedCachedSuitability == nil {
+		u.deprecatedCachedSuitability = authorization.GetSuitabilityFor(u.Email)
 	}
-	return u.cachedSuitability
+	return u.deprecatedCachedSuitability
 }
 
 func (u *User) AlphaNumericHyphenatedUsername() string {
@@ -155,6 +177,10 @@ func (u *User) SlackReference(mention bool) string {
 }
 
 func (u *User) ErrIfNotSuperAdmin() error {
+	if u.Email == self.Email && u.GoogleID == self.GoogleID {
+		// Short-circuit to respect Sherlock's own user; see SelfUser.
+		return nil
+	}
 	for _, assignment := range u.Assignments {
 		if assignment.Suspended != nil &&
 			!*assignment.Suspended &&

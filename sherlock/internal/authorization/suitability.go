@@ -45,7 +45,7 @@ func (s *Suitability) SuitableOrError() error {
 }
 
 // GetSuitabilityFor does what it says on the tin, but you probably don't need to call it.
-// models.User has a .Suitability() method that you should use instead, it's more
+// models.User has a .DeprecatedSuitability() method that you should use instead, it's more
 // performant with less room for error (it calls this internally and caches the result).
 func GetSuitabilityFor(email string) *Suitability {
 	if suitability, present := cachedFirecloudSuitability[email]; present {

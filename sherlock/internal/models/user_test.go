@@ -68,15 +68,15 @@ func (s *modelSuite) TestUserNoDelete() {
 func (s *modelSuite) TestUserSuitabilityAccess() {
 	s.Run("suitable", func() {
 		suitable := &User{Email: test_users.SuitableTestUserEmail}
-		s.True(suitable.Suitability().Suitable())
-		s.NotZero(suitable.cachedSuitability)
-		s.True(suitable.cachedSuitability.Suitable())
+		s.True(suitable.DeprecatedSuitability().Suitable())
+		s.NotZero(suitable.deprecatedCachedSuitability)
+		s.True(suitable.deprecatedCachedSuitability.Suitable())
 	})
 	s.Run("not suitable", func() {
 		notSuitable := &User{Email: test_users.NonSuitableTestUserEmail}
-		s.False(notSuitable.Suitability().Suitable())
-		s.NotZero(notSuitable.cachedSuitability)
-		s.False(notSuitable.cachedSuitability.Suitable())
+		s.False(notSuitable.DeprecatedSuitability().Suitable())
+		s.NotZero(notSuitable.deprecatedCachedSuitability)
+		s.False(notSuitable.deprecatedCachedSuitability.Suitable())
 	})
 }
 
@@ -253,18 +253,18 @@ func TestUser_SlackReference(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			u := &User{
-				Model:                tt.fields.Model,
-				Email:                tt.fields.Email,
-				GoogleID:             tt.fields.GoogleID,
-				GithubUsername:       tt.fields.GithubUsername,
-				GithubID:             tt.fields.GithubID,
-				SlackUsername:        tt.fields.SlackUsername,
-				SlackID:              tt.fields.SlackID,
-				Name:                 tt.fields.Name,
-				NameFrom:             tt.fields.NameFrom,
-				Via:                  tt.fields.Via,
-				AuthenticationMethod: tt.fields.AuthenticationMethod,
-				cachedSuitability:    tt.fields.cachedSuitability,
+				Model:                       tt.fields.Model,
+				Email:                       tt.fields.Email,
+				GoogleID:                    tt.fields.GoogleID,
+				GithubUsername:              tt.fields.GithubUsername,
+				GithubID:                    tt.fields.GithubID,
+				SlackUsername:               tt.fields.SlackUsername,
+				SlackID:                     tt.fields.SlackID,
+				Name:                        tt.fields.Name,
+				NameFrom:                    tt.fields.NameFrom,
+				Via:                         tt.fields.Via,
+				AuthenticationMethod:        tt.fields.AuthenticationMethod,
+				deprecatedCachedSuitability: tt.fields.cachedSuitability,
 			}
 			if got := u.SlackReference(tt.args.mention); got != tt.want {
 				t.Errorf("SlackReference() = %v, want %v", got, tt.want)

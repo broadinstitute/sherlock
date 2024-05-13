@@ -17,7 +17,7 @@ func (s *modelSuite) TestTestHelperItself() {
 		s.NoError(err)
 		s.Equal(test_users.SuitableTestUserEmail, user.Email)
 		s.NotZero(user.ID)
-		s.True(user.Suitability().Suitable())
+		s.True(user.DeprecatedSuitability().Suitable())
 	})
 	s.Run("non-suitable test user", func() {
 		s.SetNonSuitableTestUserForDB()
@@ -25,6 +25,6 @@ func (s *modelSuite) TestTestHelperItself() {
 		s.NoError(err)
 		s.Equal(test_users.NonSuitableTestUserEmail, user.Email)
 		s.NotZero(user.ID)
-		s.False(user.Suitability().Suitable())
+		s.False(user.DeprecatedSuitability().Suitable())
 	})
 }

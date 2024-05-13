@@ -13,6 +13,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/metrics"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/slack"
+	"github.com/broadinstitute/sherlock/sherlock/internal/suitabilityloader"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
@@ -84,6 +85,11 @@ func (a *Application) Start() {
 			log.Fatal().Err(err).Msgf("authorization.CacheFirecloudSuitability() error")
 		}
 		go authorization.KeepFirecloudCacheUpdated(ctx)
+
+		if recoverableErr := suitabilityloader.SyncSuitabilitiesToDB(ctx, a.gormDB); recoverableErr != nil {
+			log.Warn().Err(recoverableErr).Msgf("suitabilityloader.SyncSuitabilitiesToDB() error")
+		}
+		go suitabilityloader.KeepSuitabilitiesInDBUpdated(ctx, a.gormDB)
 	}
 
 	log.Info().Msgf("BOOT | reading extra permissions defined in configuration...")
