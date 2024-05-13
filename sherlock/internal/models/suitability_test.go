@@ -86,3 +86,30 @@ func (s *modelSuite) TestSuitabilityAllowedDelete() {
 	}).Delete(&Suitability{}).Error
 	s.NoError(err)
 }
+
+func (s *modelSuite) TestSuitabilityCreateNullEmail() {
+	s.SetSelfSuperAdminForDB()
+	err := s.DB.Create(&Suitability{
+		Suitable:    utils.PointerTo(true),
+		Description: utils.PointerTo("description"),
+	}).Error
+	s.ErrorContains(err, "email")
+}
+
+func (s *modelSuite) TestSuitabilityCreateNullSuitable() {
+	s.SetSelfSuperAdminForDB()
+	err := s.DB.Create(&Suitability{
+		Email:       utils.PointerTo("email@example.com"),
+		Description: utils.PointerTo("description"),
+	}).Error
+	s.ErrorContains(err, "suitable")
+}
+
+func (s *modelSuite) TestSuitabilityCreateNullDescription() {
+	s.SetSelfSuperAdminForDB()
+	err := s.DB.Create(&Suitability{
+		Email:    utils.PointerTo("email@example.com"),
+		Suitable: utils.PointerTo(true),
+	}).Error
+	s.ErrorContains(err, "description")
+}
