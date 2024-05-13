@@ -3,6 +3,7 @@ package suitabilityloader
 import (
 	"context"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -30,7 +31,10 @@ func SyncSuitabilitiesToDB(ctx context.Context, db *gorm.DB) error {
 	}
 	suitabilities := append(suitabilitiesFromConfig, suitabilitiesFromFirecloud...)
 
-	if err = db.Clauses(clause.OnConflict{UpdateAll: true}).Create(&suitabilities).Error; err != nil {
+	// Assume super-user privileges for this operation (required to edit this table)
+	superUserDB := models.SetCurrentUserForDB(db, models.SelfUser)
+
+	if err = superUserDB.Clauses(clause.OnConflict{UpdateAll: true}).Create(&suitabilities).Error; err != nil {
 		return err
 	}
 
