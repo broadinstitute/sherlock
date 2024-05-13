@@ -17,8 +17,9 @@ import (
 //	@description	Non-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role's default break-glass duration in the future.
 //	@tags			RoleAssignments
 //	@produce		json
-//	@param			role-selector			path		string	true	"The selector of the Role, which can be either the numeric ID or the name"
-//	@param			user-selector			path		string	true	"The selector of the User, which can be either a numeric ID, the email, 'google-id/{google subject ID}', 'github/{github username}', or 'github-id/{github numeric ID}'."//	@param	role-assignment	body	RoleAssignmentV3Edit	true	"The edits to make to the RoleAssignment"
+//	@param			role-selector			path		string					true	"The selector of the Role, which can be either the numeric ID or the name"
+//	@param			user-selector			path		string					true	"The selector of the User, which can be either a numeric ID, the email, 'google-id/{google subject ID}', 'github/{github username}', or 'github-id/{github numeric ID}'."//	@param	role-assignment	body	RoleAssignmentV3Edit	true	"The edits to make to the RoleAssignment"
+//	@param			role-assignment			body		RoleAssignmentV3Edit	true	"The edits to make to the RoleAssignment"
 //	@success		200						{object}	RoleAssignmentV3
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/role-assignments/v3/{role-selector}/{user-selector} [patch]

@@ -6894,6 +6894,15 @@ const docTemplate = `{
                         "name": "user-selector",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "The edits to make to the RoleAssignment",
+                        "name": "role-assignment",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.RoleAssignmentV3Edit"
+                        }
                     }
                 ],
                 "responses": {
