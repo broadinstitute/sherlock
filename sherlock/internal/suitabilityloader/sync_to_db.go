@@ -36,7 +36,7 @@ func SyncSuitabilitiesToDB(ctx context.Context, db *gorm.DB) error {
 
 	for _, suitability := range suitabilities {
 		if err = superUserDB.Where("email = ?", suitability.Email).Assign(&suitability).FirstOrCreate(&suitability).Error; err != nil {
-			return fmt.Errorf("failed to update suitability for %s: %w", suitability.Email, err)
+			return fmt.Errorf("failed to update suitability for %s: %w", *suitability.Email, err)
 		}
 	}
 
