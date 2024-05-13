@@ -177,8 +177,10 @@ func (u *User) SlackReference(mention bool) string {
 }
 
 func (u *User) ErrIfNotSuperAdmin() error {
-	if u.Email == self.Email && u.GoogleID == self.GoogleID {
+	if u.Email == self.Email && u.GoogleID == self.GoogleID && u.AuthenticationMethod == authentication_method.SHERLOCK_INTERNAL {
 		// Short-circuit to respect Sherlock's own user; see SelfUser.
+		// We only respect this with an internal authentication method as defense-in-depth (it should be impossible to
+		// actually make a request as Sherlock, but we don't want to find out).
 		return nil
 	}
 	for _, assignment := range u.Assignments {
