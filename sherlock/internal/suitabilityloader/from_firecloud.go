@@ -56,7 +56,7 @@ func fromFirecloud(ctx context.Context) ([]models.Suitability, error) {
 		return nil, err
 	}
 
-	var result []models.Suitability
+	resultSet := make(map[string]models.Suitability)
 	err = adminService.Users.List().Domain(config.Config.MustString("auth.firecloud.domain")).Pages(ctx, func(workspaceUsers *admin.Users) error {
 		if workspaceUsers == nil {
 			return fmt.Errorf("cacheFirecloudSuitability got a nil user page from Google")
@@ -67,18 +67,18 @@ func fromFirecloud(ctx context.Context) ([]models.Suitability, error) {
 				} else {
 					suitable, description := parseFirecloudUser(workspaceUser, fcAdminsGroupEmails, firecloudProjectOwnersGroupEmails)
 					if workspaceUser.PrimaryEmail != "" {
-						result = append(result, models.Suitability{
+						resultSet[workspaceUser.PrimaryEmail] = models.Suitability{
 							Email:       &workspaceUser.PrimaryEmail,
 							Suitable:    &suitable,
 							Description: &description,
-						})
+						}
 					}
 					if workspaceUser.RecoveryEmail != "" {
-						result = append(result, models.Suitability{
+						resultSet[workspaceUser.RecoveryEmail] = models.Suitability{
 							Email:       &workspaceUser.RecoveryEmail,
 							Suitable:    &suitable,
 							Description: &description,
-						})
+						}
 					}
 
 					// Secondary emails on the user's account aren't `admin.User.RecoveryEmail`, they're under
@@ -108,11 +108,11 @@ func fromFirecloud(ctx context.Context) ([]models.Suitability, error) {
 									log.Debug().Msgf("AUTH | one of %s's `emails` had an empty address", workspaceUser.PrimaryEmail)
 								} else if parsedEmail.Address != workspaceUser.PrimaryEmail && parsedEmail.Address != workspaceUser.RecoveryEmail {
 									// Only bother with the assignment if it wasn't an email we would've already recorded.
-									result = append(result, models.Suitability{
+									resultSet[parsedEmail.Address] = models.Suitability{
 										Email:       &parsedEmail.Address,
 										Suitable:    &suitable,
 										Description: &description,
-									})
+									}
 								}
 							}
 						}
@@ -122,6 +122,10 @@ func fromFirecloud(ctx context.Context) ([]models.Suitability, error) {
 		}
 		return nil
 	})
+	result := make([]models.Suitability, 0, len(resultSet))
+	for _, suitability := range resultSet {
+		result = append(result, suitability)
+	}
 	return result, err
 }
 
