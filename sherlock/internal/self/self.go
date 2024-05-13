@@ -15,7 +15,9 @@ import (
 	"context"
 	"fmt"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
+	oauth2google "golang.org/x/oauth2/google"
 	googleoauth "google.golang.org/api/oauth2/v2"
+	"google.golang.org/api/option"
 )
 
 var (
@@ -36,7 +38,18 @@ func Load(ctx context.Context) error {
 		return nil
 	}
 
-	service, err := googleoauth.NewService(ctx)
+	// You might think we could rely on googleoauth.NewService to pick up ADC, but you'd actually be wrong
+	// for local usage. For whatever reason, doing that with local gcloud ADC fails, complaining about your
+	// permissions for whatever your quota project is configured as. This happens even if you try to pass
+	// an option to googleoauth to set the project to an empty string.
+	//
+	// The solution is to make a tokenSource based on ADC and pass it to googleoauth.NewService. This works
+	// because it loses the information about the project. It's a hack but it does work, so whatever.
+	tokenSource, err := oauth2google.DefaultTokenSource(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to get default token source: %w", err)
+	}
+	service, err := googleoauth.NewService(ctx, option.WithTokenSource(tokenSource))
 	if err != nil {
 		return fmt.Errorf("failed to create Google OAuth service: %w", err)
 	}
