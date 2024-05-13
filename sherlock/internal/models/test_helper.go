@@ -48,7 +48,9 @@ func (h *TestSuiteHelper) SetupTest() {
 // the current principal for the database. You'll usually want to call
 // SetSuitableTestUserForDB or SetNonSuitableTestUserForDB instead.
 func (h *TestSuiteHelper) SetUserForDB(user *User) *User {
-	user.AuthenticationMethod = authentication_method.TEST
+	if user.AuthenticationMethod != authentication_method.SHERLOCK_INTERNAL {
+		user.AuthenticationMethod = authentication_method.TEST
+	}
 	h.DB = SetCurrentUserForDB(h.DB, user)
 	return user
 }
@@ -63,6 +65,15 @@ func (h *TestSuiteHelper) SetSuitableTestUserForDB() *User {
 // TestData.User_NonSuitable
 func (h *TestSuiteHelper) SetNonSuitableTestUserForDB() *User {
 	return h.SetUserForDB(utils.PointerTo(h.TestData.User_NonSuitable()))
+}
+
+// SetSelfSuperAdminForDB is a helper function, calling SetUserForDB with
+// SelfUser. This is different from other similar helpers in that the user
+// being set isn't coming from TestData; this is a system-level user that
+// is necessary for Sherlock's actual runtime. In tests, it's a convenient
+// way to get super-user privileges when the "who" isn't important.
+func (h *TestSuiteHelper) SetSelfSuperAdminForDB() *User {
+	return h.SetUserForDB(SelfUser)
 }
 
 // TearDownTest takes advantage of SetupTest having begun a
