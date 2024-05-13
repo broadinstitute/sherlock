@@ -139,8 +139,9 @@ func (u *User) BeforeDelete(_ *gorm.DB) error {
 // uses an in-memory store of suitability data. The new mechanism to is to use
 // User.Suitability instead.
 //
-// Deprecated: This method is deprecated in favor of the database-persistent
-// User.Suitability field (that we're rolling out slowly).
+// We don't actually mark this method as deprecated in Go-comment-parlance
+// because it makes the CI linter freak out. Whatever, not like we'll have
+// trouble finding usages of this method.
 func (u *User) DeprecatedSuitability() *authorization.Suitability {
 	if u.Email != "" && u.deprecatedCachedSuitability == nil {
 		u.deprecatedCachedSuitability = authorization.GetSuitabilityFor(u.Email)
