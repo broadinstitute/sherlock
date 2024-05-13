@@ -2,11 +2,11 @@ package suitabilityloader
 
 import (
 	"context"
+	"fmt"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
-	"gorm.io/gorm/clause"
 	"time"
 )
 
@@ -34,13 +34,10 @@ func SyncSuitabilitiesToDB(ctx context.Context, db *gorm.DB) error {
 	// Assume super-user privileges for this operation (required to edit this table)
 	superUserDB := models.SetCurrentUserForDB(db, models.SelfUser)
 
-	//for _, suitability := range suitabilities {
-	//	if err = superUserDB.Where("email = ?", suitability.Email).Assign(&suitability).FirstOrCreate(&suitability).Error; err != nil {
-	//		return fmt.Errorf("failed to update suitability for %s: %w", suitability.Email, err)
-	//	}
-	//}
-	if err = superUserDB.Clauses(clause.OnConflict{UpdateAll: true}).Create(&suitabilities).Error; err != nil {
-		return err
+	for _, suitability := range suitabilities {
+		if err = superUserDB.Where("email = ?", suitability.Email).Assign(&suitability).FirstOrCreate(&suitability).Error; err != nil {
+			return fmt.Errorf("failed to update suitability for %s: %w", suitability.Email, err)
+		}
 	}
 
 	// TODO: once we know that the updatedAt field is being set properly, we'll want to add a step here
