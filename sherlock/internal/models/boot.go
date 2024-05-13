@@ -2,6 +2,7 @@ package models
 
 import (
 	"fmt"
+	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/authentication_method"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/self"
 	"github.com/knadh/koanf"
@@ -58,6 +59,7 @@ func initSelfUser(db *gorm.DB) error {
 		Error; err != nil {
 		return fmt.Errorf("failed to upsert self user: %w", err)
 	}
+	SelfUser.AuthenticationMethod = authentication_method.SHERLOCK_INTERNAL
 	return nil
 }
 
