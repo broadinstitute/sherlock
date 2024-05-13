@@ -6235,17 +6235,18 @@ paths:
       summary: List RoleAssignments matching a filter
       tags:
       - RoleAssignments
-  /api/role-assignments/v3/{role-id}/{user-selector}:
+  /api/role-assignments/v3/{role-selector}/{user-selector}:
     delete:
       description: |-
         Delete the RoleAssignment between a given Role and User.
         Non-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role's default break-glass duration in the future.
       parameters:
-      - description: The numeric ID of the role
+      - description: The selector of the Role, which can be either the numeric ID
+          or the name
         in: path
-        name: role-id
+        name: role-selector
         required: true
-        type: integer
+        type: string
       - description: The selector of the User, which can be either a numeric ID, the
           email, 'google-id/{google subject ID}', 'github/{github username}', or 'github-id/{github
           numeric ID}'.
@@ -6256,10 +6257,6 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/sherlock.RoleAssignmentV3'
         "400":
           description: Bad Request
           schema:
@@ -6290,11 +6287,12 @@ paths:
     get:
       description: Get the RoleAssignment between a given Role and User.
       parameters:
-      - description: The numeric ID of the role
+      - description: The selector of the Role, which can be either the numeric ID
+          or the name
         in: path
-        name: role-id
+        name: role-selector
         required: true
-        type: integer
+        type: string
       - description: The selector of the User, which can be either a numeric ID, the
           email, 'google-id/{google subject ID}', 'github/{github username}', or 'github-id/{github
           numeric ID}'.
@@ -6341,11 +6339,12 @@ paths:
         Edit the RoleAssignment between a given Role and User.
         Non-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role's default break-glass duration in the future.
       parameters:
-      - description: The numeric ID of the role
+      - description: The selector of the Role, which can be either the numeric ID
+          or the name
         in: path
-        name: role-id
+        name: role-selector
         required: true
-        type: integer
+        type: string
       - description: The selector of the User, which can be either a numeric ID, the
           email, 'google-id/{google subject ID}', 'github/{github username}', or 'github-id/{github
           numeric ID}'.
@@ -6398,11 +6397,12 @@ paths:
         Create the RoleAssignment between a given Role and User.
         Non-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role's default break-glass duration in the future.
       parameters:
-      - description: The numeric ID of the role
+      - description: The selector of the Role, which can be either the numeric ID
+          or the name
         in: path
-        name: role-id
+        name: role-selector
         required: true
-        type: integer
+        type: string
       - description: The selector of the User, which can be either a numeric ID, the
           email, 'google-id/{google subject ID}', 'github/{github username}', or 'github-id/{github
           numeric ID}'.
@@ -6575,17 +6575,18 @@ paths:
       summary: Create a Role
       tags:
       - Roles
-  /api/roles/v3/{id}:
+  /api/roles/v3/{selector}:
     delete:
       description: |-
         Delete an individual Role.
         Only super-admins may mutate Roles.
       parameters:
-      - description: The numeric ID of the role
+      - description: The selector of the Role, which can be either the numeric ID
+          or the name
         in: path
-        name: id
+        name: selector
         required: true
-        type: integer
+        type: string
       produces:
       - application/json
       responses:
@@ -6623,11 +6624,12 @@ paths:
     get:
       description: Get an individual Role and the Users assigned to it.
       parameters:
-      - description: The numeric ID of the role
+      - description: The selector of the Role, which can be either the numeric ID
+          or the name
         in: path
-        name: id
+        name: selector
         required: true
-        type: integer
+        type: string
       produces:
       - application/json
       responses:
@@ -6667,11 +6669,12 @@ paths:
         Edit an individual Role.
         Only super-admins may mutate Roles.
       parameters:
-      - description: The numeric ID of the role
+      - description: The selector of the Role, which can be either the numeric ID
+          or the name
         in: path
-        name: id
+        name: selector
         required: true
-        type: integer
+        type: string
       - description: The edits to make to the Role
         in: body
         name: role

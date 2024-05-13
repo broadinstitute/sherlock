@@ -6657,7 +6657,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/role-assignments/v3/{role-id}/{user-selector}": {
+        "/api/role-assignments/v3/{role-selector}/{user-selector}": {
             "get": {
                 "description": "Get the RoleAssignment between a given Role and User.",
                 "produces": [
@@ -6669,9 +6669,9 @@ const docTemplate = `{
                 "summary": "Get a RoleAssignment",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "The numeric ID of the role",
-                        "name": "role-id",
+                        "type": "string",
+                        "description": "The selector of the Role, which can be either the numeric ID or the name",
+                        "name": "role-selector",
                         "in": "path",
                         "required": true
                     },
@@ -6739,9 +6739,9 @@ const docTemplate = `{
                 "summary": "Create a RoleAssignment",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "The numeric ID of the role",
-                        "name": "role-id",
+                        "type": "string",
+                        "description": "The selector of the Role, which can be either the numeric ID or the name",
+                        "name": "role-selector",
                         "in": "path",
                         "required": true
                     },
@@ -6818,9 +6818,9 @@ const docTemplate = `{
                 "summary": "Delete a RoleAssignment",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "The numeric ID of the role",
-                        "name": "role-id",
+                        "type": "string",
+                        "description": "The selector of the Role, which can be either the numeric ID or the name",
+                        "name": "role-selector",
                         "in": "path",
                         "required": true
                     },
@@ -6833,12 +6833,6 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/sherlock.RoleAssignmentV3"
-                        }
-                    },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -6888,9 +6882,9 @@ const docTemplate = `{
                 "summary": "Edit a RoleAssignment",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "The numeric ID of the role",
-                        "name": "role-id",
+                        "type": "string",
+                        "description": "The selector of the Role, which can be either the numeric ID or the name",
+                        "name": "role-selector",
                         "in": "path",
                         "required": true
                     },
@@ -7147,7 +7141,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/roles/v3/{id}": {
+        "/api/roles/v3/{selector}": {
             "get": {
                 "description": "Get an individual Role and the Users assigned to it.",
                 "produces": [
@@ -7159,9 +7153,9 @@ const docTemplate = `{
                 "summary": "Get a Role",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "The numeric ID of the role",
-                        "name": "id",
+                        "type": "string",
+                        "description": "The selector of the Role, which can be either the numeric ID or the name",
+                        "name": "selector",
                         "in": "path",
                         "required": true
                     }
@@ -7222,9 +7216,9 @@ const docTemplate = `{
                 "summary": "Delete a Role",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "The numeric ID of the role",
-                        "name": "id",
+                        "type": "string",
+                        "description": "The selector of the Role, which can be either the numeric ID or the name",
+                        "name": "selector",
                         "in": "path",
                         "required": true
                     }
@@ -7285,9 +7279,9 @@ const docTemplate = `{
                 "summary": "Edit a Role",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "The numeric ID of the role",
-                        "name": "id",
+                        "type": "string",
+                        "description": "The selector of the Role, which can be either the numeric ID or the name",
+                        "name": "selector",
                         "in": "path",
                         "required": true
                     },

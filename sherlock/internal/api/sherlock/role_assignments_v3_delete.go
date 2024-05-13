@@ -1,7 +1,6 @@
 package sherlock
 
 import (
-	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/authentication"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
@@ -17,11 +16,10 @@ import (
 //	@description	Non-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role's default break-glass duration in the future.
 //	@tags			RoleAssignments
 //	@produce		json
-//	@param			role-id					path		uint	true	"The numeric ID of the role"
-//	@param			user-selector			path		string	true	"The selector of the User, which can be either a numeric ID, the email, 'google-id/{google subject ID}', 'github/{github username}', or 'github-id/{github numeric ID}'."
-//	@success		200						{object}	RoleAssignmentV3
+//	@param			role-selector			path		string	true	"The selector of the Role, which can be either the numeric ID or the name"
+//	@param			user-selector			path		string	true	"The selector of the User, which can be either a numeric ID, the email, 'google-id/{google subject ID}', 'github/{github username}', or 'github-id/{github numeric ID}'."//	@success	200	{object}	RoleAssignmentV3
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
-//	@router			/api/role-assignments/v3/{role-id}/{user-selector} [delete]
+//	@router			/api/role-assignments/v3/{role-selector}/{user-selector} [delete]
 func roleAssignmentsV3Delete(ctx *gin.Context) {
 	db, err := authentication.MustUseDB(ctx)
 	if err != nil {
@@ -29,11 +27,17 @@ func roleAssignmentsV3Delete(ctx *gin.Context) {
 	}
 
 	var toDelete models.RoleAssignment
-	toDelete.RoleID, err = utils.ParseUint(ctx.Param("role-id"))
+	roleQuery, err := roleModelFromSelector(canonicalizeSelector(ctx.Param("role-selector")))
 	if err != nil {
 		errors.AbortRequest(ctx, err)
 		return
 	}
+	var role models.Role
+	if err = db.Where(&roleQuery).Select("id").First(&role).Error; err != nil {
+		errors.AbortRequest(ctx, err)
+		return
+	}
+	toDelete.RoleID = role.ID
 
 	userQuery, err := userModelFromSelector(canonicalizeSelector(ctx.Param("user-selector")))
 	if err != nil {
