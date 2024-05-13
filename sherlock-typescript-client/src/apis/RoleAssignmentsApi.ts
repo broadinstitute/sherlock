@@ -35,24 +35,24 @@ export interface ApiRoleAssignmentsV3GetRequest {
     offset?: number;
 }
 
-export interface ApiRoleAssignmentsV3RoleIdUserSelectorDeleteRequest {
-    roleId: number;
+export interface ApiRoleAssignmentsV3RoleSelectorUserSelectorDeleteRequest {
+    roleSelector: string;
     userSelector: string;
 }
 
-export interface ApiRoleAssignmentsV3RoleIdUserSelectorGetRequest {
-    roleId: number;
+export interface ApiRoleAssignmentsV3RoleSelectorUserSelectorGetRequest {
+    roleSelector: string;
     userSelector: string;
 }
 
-export interface ApiRoleAssignmentsV3RoleIdUserSelectorPatchRequest {
-    roleId: number;
+export interface ApiRoleAssignmentsV3RoleSelectorUserSelectorPatchRequest {
+    roleSelector: string;
     userSelector: string;
     roleAssignment: SherlockRoleAssignmentV3Edit;
 }
 
-export interface ApiRoleAssignmentsV3RoleIdUserSelectorPostRequest {
-    roleId: number;
+export interface ApiRoleAssignmentsV3RoleSelectorUserSelectorPostRequest {
+    roleSelector: string;
     userSelector: string;
     roleAssignment: SherlockRoleAssignmentV3Edit;
 }
@@ -110,18 +110,18 @@ export class RoleAssignmentsApi extends runtime.BaseAPI {
      * Delete the RoleAssignment between a given Role and User. Non-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role\'s default break-glass duration in the future.
      * Delete a RoleAssignment
      */
-    async apiRoleAssignmentsV3RoleIdUserSelectorDeleteRaw(requestParameters: ApiRoleAssignmentsV3RoleIdUserSelectorDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockRoleAssignmentV3>> {
-        if (requestParameters['roleId'] == null) {
+    async apiRoleAssignmentsV3RoleSelectorUserSelectorDeleteRaw(requestParameters: ApiRoleAssignmentsV3RoleSelectorUserSelectorDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters['roleSelector'] == null) {
             throw new runtime.RequiredError(
-                'roleId',
-                'Required parameter "roleId" was null or undefined when calling apiRoleAssignmentsV3RoleIdUserSelectorDelete().'
+                'roleSelector',
+                'Required parameter "roleSelector" was null or undefined when calling apiRoleAssignmentsV3RoleSelectorUserSelectorDelete().'
             );
         }
 
         if (requestParameters['userSelector'] == null) {
             throw new runtime.RequiredError(
                 'userSelector',
-                'Required parameter "userSelector" was null or undefined when calling apiRoleAssignmentsV3RoleIdUserSelectorDelete().'
+                'Required parameter "userSelector" was null or undefined when calling apiRoleAssignmentsV3RoleSelectorUserSelectorDelete().'
             );
         }
 
@@ -130,40 +130,39 @@ export class RoleAssignmentsApi extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/api/role-assignments/v3/{role-id}/{user-selector}`.replace(`{${"role-id"}}`, encodeURIComponent(String(requestParameters['roleId']))).replace(`{${"user-selector"}}`, encodeURIComponent(String(requestParameters['userSelector']))),
+            path: `/api/role-assignments/v3/{role-selector}/{user-selector}`.replace(`{${"role-selector"}}`, encodeURIComponent(String(requestParameters['roleSelector']))).replace(`{${"user-selector"}}`, encodeURIComponent(String(requestParameters['userSelector']))),
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => SherlockRoleAssignmentV3FromJSON(jsonValue));
+        return new runtime.VoidApiResponse(response);
     }
 
     /**
      * Delete the RoleAssignment between a given Role and User. Non-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role\'s default break-glass duration in the future.
      * Delete a RoleAssignment
      */
-    async apiRoleAssignmentsV3RoleIdUserSelectorDelete(requestParameters: ApiRoleAssignmentsV3RoleIdUserSelectorDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockRoleAssignmentV3> {
-        const response = await this.apiRoleAssignmentsV3RoleIdUserSelectorDeleteRaw(requestParameters, initOverrides);
-        return await response.value();
+    async apiRoleAssignmentsV3RoleSelectorUserSelectorDelete(requestParameters: ApiRoleAssignmentsV3RoleSelectorUserSelectorDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.apiRoleAssignmentsV3RoleSelectorUserSelectorDeleteRaw(requestParameters, initOverrides);
     }
 
     /**
      * Get the RoleAssignment between a given Role and User.
      * Get a RoleAssignment
      */
-    async apiRoleAssignmentsV3RoleIdUserSelectorGetRaw(requestParameters: ApiRoleAssignmentsV3RoleIdUserSelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockRoleAssignmentV3>> {
-        if (requestParameters['roleId'] == null) {
+    async apiRoleAssignmentsV3RoleSelectorUserSelectorGetRaw(requestParameters: ApiRoleAssignmentsV3RoleSelectorUserSelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockRoleAssignmentV3>> {
+        if (requestParameters['roleSelector'] == null) {
             throw new runtime.RequiredError(
-                'roleId',
-                'Required parameter "roleId" was null or undefined when calling apiRoleAssignmentsV3RoleIdUserSelectorGet().'
+                'roleSelector',
+                'Required parameter "roleSelector" was null or undefined when calling apiRoleAssignmentsV3RoleSelectorUserSelectorGet().'
             );
         }
 
         if (requestParameters['userSelector'] == null) {
             throw new runtime.RequiredError(
                 'userSelector',
-                'Required parameter "userSelector" was null or undefined when calling apiRoleAssignmentsV3RoleIdUserSelectorGet().'
+                'Required parameter "userSelector" was null or undefined when calling apiRoleAssignmentsV3RoleSelectorUserSelectorGet().'
             );
         }
 
@@ -172,7 +171,7 @@ export class RoleAssignmentsApi extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/api/role-assignments/v3/{role-id}/{user-selector}`.replace(`{${"role-id"}}`, encodeURIComponent(String(requestParameters['roleId']))).replace(`{${"user-selector"}}`, encodeURIComponent(String(requestParameters['userSelector']))),
+            path: `/api/role-assignments/v3/{role-selector}/{user-selector}`.replace(`{${"role-selector"}}`, encodeURIComponent(String(requestParameters['roleSelector']))).replace(`{${"user-selector"}}`, encodeURIComponent(String(requestParameters['userSelector']))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -185,8 +184,8 @@ export class RoleAssignmentsApi extends runtime.BaseAPI {
      * Get the RoleAssignment between a given Role and User.
      * Get a RoleAssignment
      */
-    async apiRoleAssignmentsV3RoleIdUserSelectorGet(requestParameters: ApiRoleAssignmentsV3RoleIdUserSelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockRoleAssignmentV3> {
-        const response = await this.apiRoleAssignmentsV3RoleIdUserSelectorGetRaw(requestParameters, initOverrides);
+    async apiRoleAssignmentsV3RoleSelectorUserSelectorGet(requestParameters: ApiRoleAssignmentsV3RoleSelectorUserSelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockRoleAssignmentV3> {
+        const response = await this.apiRoleAssignmentsV3RoleSelectorUserSelectorGetRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
@@ -194,25 +193,25 @@ export class RoleAssignmentsApi extends runtime.BaseAPI {
      * Edit the RoleAssignment between a given Role and User. Non-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role\'s default break-glass duration in the future.
      * Edit a RoleAssignment
      */
-    async apiRoleAssignmentsV3RoleIdUserSelectorPatchRaw(requestParameters: ApiRoleAssignmentsV3RoleIdUserSelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockRoleAssignmentV3>> {
-        if (requestParameters['roleId'] == null) {
+    async apiRoleAssignmentsV3RoleSelectorUserSelectorPatchRaw(requestParameters: ApiRoleAssignmentsV3RoleSelectorUserSelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockRoleAssignmentV3>> {
+        if (requestParameters['roleSelector'] == null) {
             throw new runtime.RequiredError(
-                'roleId',
-                'Required parameter "roleId" was null or undefined when calling apiRoleAssignmentsV3RoleIdUserSelectorPatch().'
+                'roleSelector',
+                'Required parameter "roleSelector" was null or undefined when calling apiRoleAssignmentsV3RoleSelectorUserSelectorPatch().'
             );
         }
 
         if (requestParameters['userSelector'] == null) {
             throw new runtime.RequiredError(
                 'userSelector',
-                'Required parameter "userSelector" was null or undefined when calling apiRoleAssignmentsV3RoleIdUserSelectorPatch().'
+                'Required parameter "userSelector" was null or undefined when calling apiRoleAssignmentsV3RoleSelectorUserSelectorPatch().'
             );
         }
 
         if (requestParameters['roleAssignment'] == null) {
             throw new runtime.RequiredError(
                 'roleAssignment',
-                'Required parameter "roleAssignment" was null or undefined when calling apiRoleAssignmentsV3RoleIdUserSelectorPatch().'
+                'Required parameter "roleAssignment" was null or undefined when calling apiRoleAssignmentsV3RoleSelectorUserSelectorPatch().'
             );
         }
 
@@ -223,7 +222,7 @@ export class RoleAssignmentsApi extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/api/role-assignments/v3/{role-id}/{user-selector}`.replace(`{${"role-id"}}`, encodeURIComponent(String(requestParameters['roleId']))).replace(`{${"user-selector"}}`, encodeURIComponent(String(requestParameters['userSelector']))),
+            path: `/api/role-assignments/v3/{role-selector}/{user-selector}`.replace(`{${"role-selector"}}`, encodeURIComponent(String(requestParameters['roleSelector']))).replace(`{${"user-selector"}}`, encodeURIComponent(String(requestParameters['userSelector']))),
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
@@ -237,8 +236,8 @@ export class RoleAssignmentsApi extends runtime.BaseAPI {
      * Edit the RoleAssignment between a given Role and User. Non-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role\'s default break-glass duration in the future.
      * Edit a RoleAssignment
      */
-    async apiRoleAssignmentsV3RoleIdUserSelectorPatch(requestParameters: ApiRoleAssignmentsV3RoleIdUserSelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockRoleAssignmentV3> {
-        const response = await this.apiRoleAssignmentsV3RoleIdUserSelectorPatchRaw(requestParameters, initOverrides);
+    async apiRoleAssignmentsV3RoleSelectorUserSelectorPatch(requestParameters: ApiRoleAssignmentsV3RoleSelectorUserSelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockRoleAssignmentV3> {
+        const response = await this.apiRoleAssignmentsV3RoleSelectorUserSelectorPatchRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
@@ -246,25 +245,25 @@ export class RoleAssignmentsApi extends runtime.BaseAPI {
      * Create the RoleAssignment between a given Role and User. Non-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role\'s default break-glass duration in the future.
      * Create a RoleAssignment
      */
-    async apiRoleAssignmentsV3RoleIdUserSelectorPostRaw(requestParameters: ApiRoleAssignmentsV3RoleIdUserSelectorPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockRoleAssignmentV3>> {
-        if (requestParameters['roleId'] == null) {
+    async apiRoleAssignmentsV3RoleSelectorUserSelectorPostRaw(requestParameters: ApiRoleAssignmentsV3RoleSelectorUserSelectorPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockRoleAssignmentV3>> {
+        if (requestParameters['roleSelector'] == null) {
             throw new runtime.RequiredError(
-                'roleId',
-                'Required parameter "roleId" was null or undefined when calling apiRoleAssignmentsV3RoleIdUserSelectorPost().'
+                'roleSelector',
+                'Required parameter "roleSelector" was null or undefined when calling apiRoleAssignmentsV3RoleSelectorUserSelectorPost().'
             );
         }
 
         if (requestParameters['userSelector'] == null) {
             throw new runtime.RequiredError(
                 'userSelector',
-                'Required parameter "userSelector" was null or undefined when calling apiRoleAssignmentsV3RoleIdUserSelectorPost().'
+                'Required parameter "userSelector" was null or undefined when calling apiRoleAssignmentsV3RoleSelectorUserSelectorPost().'
             );
         }
 
         if (requestParameters['roleAssignment'] == null) {
             throw new runtime.RequiredError(
                 'roleAssignment',
-                'Required parameter "roleAssignment" was null or undefined when calling apiRoleAssignmentsV3RoleIdUserSelectorPost().'
+                'Required parameter "roleAssignment" was null or undefined when calling apiRoleAssignmentsV3RoleSelectorUserSelectorPost().'
             );
         }
 
@@ -275,7 +274,7 @@ export class RoleAssignmentsApi extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/api/role-assignments/v3/{role-id}/{user-selector}`.replace(`{${"role-id"}}`, encodeURIComponent(String(requestParameters['roleId']))).replace(`{${"user-selector"}}`, encodeURIComponent(String(requestParameters['userSelector']))),
+            path: `/api/role-assignments/v3/{role-selector}/{user-selector}`.replace(`{${"role-selector"}}`, encodeURIComponent(String(requestParameters['roleSelector']))).replace(`{${"user-selector"}}`, encodeURIComponent(String(requestParameters['userSelector']))),
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
@@ -289,8 +288,8 @@ export class RoleAssignmentsApi extends runtime.BaseAPI {
      * Create the RoleAssignment between a given Role and User. Non-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role\'s default break-glass duration in the future.
      * Create a RoleAssignment
      */
-    async apiRoleAssignmentsV3RoleIdUserSelectorPost(requestParameters: ApiRoleAssignmentsV3RoleIdUserSelectorPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockRoleAssignmentV3> {
-        const response = await this.apiRoleAssignmentsV3RoleIdUserSelectorPostRaw(requestParameters, initOverrides);
+    async apiRoleAssignmentsV3RoleSelectorUserSelectorPost(requestParameters: ApiRoleAssignmentsV3RoleSelectorUserSelectorPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockRoleAssignmentV3> {
+        const response = await this.apiRoleAssignmentsV3RoleSelectorUserSelectorPostRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

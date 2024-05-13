@@ -30,13 +30,13 @@ type ClientOption func(*runtime.ClientOperation)
 
 // ClientService is the interface for Client methods
 type ClientService interface {
-	DeleteAPIRolesV3ID(params *DeleteAPIRolesV3IDParams, opts ...ClientOption) (*DeleteAPIRolesV3IDOK, error)
+	DeleteAPIRolesV3Selector(params *DeleteAPIRolesV3SelectorParams, opts ...ClientOption) (*DeleteAPIRolesV3SelectorOK, error)
 
 	GetAPIRolesV3(params *GetAPIRolesV3Params, opts ...ClientOption) (*GetAPIRolesV3OK, error)
 
-	GetAPIRolesV3ID(params *GetAPIRolesV3IDParams, opts ...ClientOption) (*GetAPIRolesV3IDOK, error)
+	GetAPIRolesV3Selector(params *GetAPIRolesV3SelectorParams, opts ...ClientOption) (*GetAPIRolesV3SelectorOK, error)
 
-	PatchAPIRolesV3ID(params *PatchAPIRolesV3IDParams, opts ...ClientOption) (*PatchAPIRolesV3IDOK, error)
+	PatchAPIRolesV3Selector(params *PatchAPIRolesV3SelectorParams, opts ...ClientOption) (*PatchAPIRolesV3SelectorOK, error)
 
 	PostAPIRolesV3(params *PostAPIRolesV3Params, opts ...ClientOption) (*PostAPIRolesV3Created, error)
 
@@ -44,25 +44,25 @@ type ClientService interface {
 }
 
 /*
-  DeleteAPIRolesV3ID deletes a role
+  DeleteAPIRolesV3Selector deletes a role
 
   Delete an individual Role.
 Only super-admins may mutate Roles.
 */
-func (a *Client) DeleteAPIRolesV3ID(params *DeleteAPIRolesV3IDParams, opts ...ClientOption) (*DeleteAPIRolesV3IDOK, error) {
+func (a *Client) DeleteAPIRolesV3Selector(params *DeleteAPIRolesV3SelectorParams, opts ...ClientOption) (*DeleteAPIRolesV3SelectorOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
-		params = NewDeleteAPIRolesV3IDParams()
+		params = NewDeleteAPIRolesV3SelectorParams()
 	}
 	op := &runtime.ClientOperation{
-		ID:                 "DeleteAPIRolesV3ID",
+		ID:                 "DeleteAPIRolesV3Selector",
 		Method:             "DELETE",
-		PathPattern:        "/api/roles/v3/{id}",
+		PathPattern:        "/api/roles/v3/{selector}",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"https"},
 		Params:             params,
-		Reader:             &DeleteAPIRolesV3IDReader{formats: a.formats},
+		Reader:             &DeleteAPIRolesV3SelectorReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
@@ -74,13 +74,13 @@ func (a *Client) DeleteAPIRolesV3ID(params *DeleteAPIRolesV3IDParams, opts ...Cl
 	if err != nil {
 		return nil, err
 	}
-	success, ok := result.(*DeleteAPIRolesV3IDOK)
+	success, ok := result.(*DeleteAPIRolesV3SelectorOK)
 	if ok {
 		return success, nil
 	}
 	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
-	msg := fmt.Sprintf("unexpected success response for DeleteAPIRolesV3ID: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	msg := fmt.Sprintf("unexpected success response for DeleteAPIRolesV3Selector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 
@@ -125,24 +125,24 @@ func (a *Client) GetAPIRolesV3(params *GetAPIRolesV3Params, opts ...ClientOption
 }
 
 /*
-  GetAPIRolesV3ID gets a role
+  GetAPIRolesV3Selector gets a role
 
   Get an individual Role and the Users assigned to it.
 */
-func (a *Client) GetAPIRolesV3ID(params *GetAPIRolesV3IDParams, opts ...ClientOption) (*GetAPIRolesV3IDOK, error) {
+func (a *Client) GetAPIRolesV3Selector(params *GetAPIRolesV3SelectorParams, opts ...ClientOption) (*GetAPIRolesV3SelectorOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
-		params = NewGetAPIRolesV3IDParams()
+		params = NewGetAPIRolesV3SelectorParams()
 	}
 	op := &runtime.ClientOperation{
-		ID:                 "GetAPIRolesV3ID",
+		ID:                 "GetAPIRolesV3Selector",
 		Method:             "GET",
-		PathPattern:        "/api/roles/v3/{id}",
+		PathPattern:        "/api/roles/v3/{selector}",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"https"},
 		Params:             params,
-		Reader:             &GetAPIRolesV3IDReader{formats: a.formats},
+		Reader:             &GetAPIRolesV3SelectorReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
@@ -154,36 +154,36 @@ func (a *Client) GetAPIRolesV3ID(params *GetAPIRolesV3IDParams, opts ...ClientOp
 	if err != nil {
 		return nil, err
 	}
-	success, ok := result.(*GetAPIRolesV3IDOK)
+	success, ok := result.(*GetAPIRolesV3SelectorOK)
 	if ok {
 		return success, nil
 	}
 	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
-	msg := fmt.Sprintf("unexpected success response for GetAPIRolesV3ID: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	msg := fmt.Sprintf("unexpected success response for GetAPIRolesV3Selector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 
 /*
-  PatchAPIRolesV3ID edits a role
+  PatchAPIRolesV3Selector edits a role
 
   Edit an individual Role.
 Only super-admins may mutate Roles.
 */
-func (a *Client) PatchAPIRolesV3ID(params *PatchAPIRolesV3IDParams, opts ...ClientOption) (*PatchAPIRolesV3IDOK, error) {
+func (a *Client) PatchAPIRolesV3Selector(params *PatchAPIRolesV3SelectorParams, opts ...ClientOption) (*PatchAPIRolesV3SelectorOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
-		params = NewPatchAPIRolesV3IDParams()
+		params = NewPatchAPIRolesV3SelectorParams()
 	}
 	op := &runtime.ClientOperation{
-		ID:                 "PatchAPIRolesV3ID",
+		ID:                 "PatchAPIRolesV3Selector",
 		Method:             "PATCH",
-		PathPattern:        "/api/roles/v3/{id}",
+		PathPattern:        "/api/roles/v3/{selector}",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"https"},
 		Params:             params,
-		Reader:             &PatchAPIRolesV3IDReader{formats: a.formats},
+		Reader:             &PatchAPIRolesV3SelectorReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
@@ -195,13 +195,13 @@ func (a *Client) PatchAPIRolesV3ID(params *PatchAPIRolesV3IDParams, opts ...Clie
 	if err != nil {
 		return nil, err
 	}
-	success, ok := result.(*PatchAPIRolesV3IDOK)
+	success, ok := result.(*PatchAPIRolesV3SelectorOK)
 	if ok {
 		return success, nil
 	}
 	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
-	msg := fmt.Sprintf("unexpected success response for PatchAPIRolesV3ID: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	msg := fmt.Sprintf("unexpected success response for PatchAPIRolesV3Selector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 

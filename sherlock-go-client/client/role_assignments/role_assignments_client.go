@@ -30,39 +30,39 @@ type ClientOption func(*runtime.ClientOperation)
 
 // ClientService is the interface for Client methods
 type ClientService interface {
-	DeleteAPIRoleAssignmentsV3RoleIDUserSelector(params *DeleteAPIRoleAssignmentsV3RoleIDUserSelectorParams, opts ...ClientOption) (*DeleteAPIRoleAssignmentsV3RoleIDUserSelectorOK, error)
+	DeleteAPIRoleAssignmentsV3RoleSelectorUserSelector(params *DeleteAPIRoleAssignmentsV3RoleSelectorUserSelectorParams, opts ...ClientOption) error
 
 	GetAPIRoleAssignmentsV3(params *GetAPIRoleAssignmentsV3Params, opts ...ClientOption) (*GetAPIRoleAssignmentsV3OK, error)
 
-	GetAPIRoleAssignmentsV3RoleIDUserSelector(params *GetAPIRoleAssignmentsV3RoleIDUserSelectorParams, opts ...ClientOption) (*GetAPIRoleAssignmentsV3RoleIDUserSelectorOK, error)
+	GetAPIRoleAssignmentsV3RoleSelectorUserSelector(params *GetAPIRoleAssignmentsV3RoleSelectorUserSelectorParams, opts ...ClientOption) (*GetAPIRoleAssignmentsV3RoleSelectorUserSelectorOK, error)
 
-	PatchAPIRoleAssignmentsV3RoleIDUserSelector(params *PatchAPIRoleAssignmentsV3RoleIDUserSelectorParams, opts ...ClientOption) (*PatchAPIRoleAssignmentsV3RoleIDUserSelectorOK, error)
+	PatchAPIRoleAssignmentsV3RoleSelectorUserSelector(params *PatchAPIRoleAssignmentsV3RoleSelectorUserSelectorParams, opts ...ClientOption) (*PatchAPIRoleAssignmentsV3RoleSelectorUserSelectorOK, error)
 
-	PostAPIRoleAssignmentsV3RoleIDUserSelector(params *PostAPIRoleAssignmentsV3RoleIDUserSelectorParams, opts ...ClientOption) (*PostAPIRoleAssignmentsV3RoleIDUserSelectorCreated, error)
+	PostAPIRoleAssignmentsV3RoleSelectorUserSelector(params *PostAPIRoleAssignmentsV3RoleSelectorUserSelectorParams, opts ...ClientOption) (*PostAPIRoleAssignmentsV3RoleSelectorUserSelectorCreated, error)
 
 	SetTransport(transport runtime.ClientTransport)
 }
 
 /*
-  DeleteAPIRoleAssignmentsV3RoleIDUserSelector deletes a role assignment
+  DeleteAPIRoleAssignmentsV3RoleSelectorUserSelector deletes a role assignment
 
   Delete the RoleAssignment between a given Role and User.
 Non-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role's default break-glass duration in the future.
 */
-func (a *Client) DeleteAPIRoleAssignmentsV3RoleIDUserSelector(params *DeleteAPIRoleAssignmentsV3RoleIDUserSelectorParams, opts ...ClientOption) (*DeleteAPIRoleAssignmentsV3RoleIDUserSelectorOK, error) {
+func (a *Client) DeleteAPIRoleAssignmentsV3RoleSelectorUserSelector(params *DeleteAPIRoleAssignmentsV3RoleSelectorUserSelectorParams, opts ...ClientOption) error {
 	// TODO: Validate the params before sending
 	if params == nil {
-		params = NewDeleteAPIRoleAssignmentsV3RoleIDUserSelectorParams()
+		params = NewDeleteAPIRoleAssignmentsV3RoleSelectorUserSelectorParams()
 	}
 	op := &runtime.ClientOperation{
-		ID:                 "DeleteAPIRoleAssignmentsV3RoleIDUserSelector",
+		ID:                 "DeleteAPIRoleAssignmentsV3RoleSelectorUserSelector",
 		Method:             "DELETE",
-		PathPattern:        "/api/role-assignments/v3/{role-id}/{user-selector}",
+		PathPattern:        "/api/role-assignments/v3/{role-selector}/{user-selector}",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"https"},
 		Params:             params,
-		Reader:             &DeleteAPIRoleAssignmentsV3RoleIDUserSelectorReader{formats: a.formats},
+		Reader:             &DeleteAPIRoleAssignmentsV3RoleSelectorUserSelectorReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
@@ -70,18 +70,11 @@ func (a *Client) DeleteAPIRoleAssignmentsV3RoleIDUserSelector(params *DeleteAPIR
 		opt(op)
 	}
 
-	result, err := a.transport.Submit(op)
+	_, err := a.transport.Submit(op)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	success, ok := result.(*DeleteAPIRoleAssignmentsV3RoleIDUserSelectorOK)
-	if ok {
-		return success, nil
-	}
-	// unexpected success response
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
-	msg := fmt.Sprintf("unexpected success response for DeleteAPIRoleAssignmentsV3RoleIDUserSelector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
-	panic(msg)
+	return nil
 }
 
 /*
@@ -125,24 +118,24 @@ func (a *Client) GetAPIRoleAssignmentsV3(params *GetAPIRoleAssignmentsV3Params, 
 }
 
 /*
-  GetAPIRoleAssignmentsV3RoleIDUserSelector gets a role assignment
+  GetAPIRoleAssignmentsV3RoleSelectorUserSelector gets a role assignment
 
   Get the RoleAssignment between a given Role and User.
 */
-func (a *Client) GetAPIRoleAssignmentsV3RoleIDUserSelector(params *GetAPIRoleAssignmentsV3RoleIDUserSelectorParams, opts ...ClientOption) (*GetAPIRoleAssignmentsV3RoleIDUserSelectorOK, error) {
+func (a *Client) GetAPIRoleAssignmentsV3RoleSelectorUserSelector(params *GetAPIRoleAssignmentsV3RoleSelectorUserSelectorParams, opts ...ClientOption) (*GetAPIRoleAssignmentsV3RoleSelectorUserSelectorOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
-		params = NewGetAPIRoleAssignmentsV3RoleIDUserSelectorParams()
+		params = NewGetAPIRoleAssignmentsV3RoleSelectorUserSelectorParams()
 	}
 	op := &runtime.ClientOperation{
-		ID:                 "GetAPIRoleAssignmentsV3RoleIDUserSelector",
+		ID:                 "GetAPIRoleAssignmentsV3RoleSelectorUserSelector",
 		Method:             "GET",
-		PathPattern:        "/api/role-assignments/v3/{role-id}/{user-selector}",
+		PathPattern:        "/api/role-assignments/v3/{role-selector}/{user-selector}",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"https"},
 		Params:             params,
-		Reader:             &GetAPIRoleAssignmentsV3RoleIDUserSelectorReader{formats: a.formats},
+		Reader:             &GetAPIRoleAssignmentsV3RoleSelectorUserSelectorReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
@@ -154,36 +147,36 @@ func (a *Client) GetAPIRoleAssignmentsV3RoleIDUserSelector(params *GetAPIRoleAss
 	if err != nil {
 		return nil, err
 	}
-	success, ok := result.(*GetAPIRoleAssignmentsV3RoleIDUserSelectorOK)
+	success, ok := result.(*GetAPIRoleAssignmentsV3RoleSelectorUserSelectorOK)
 	if ok {
 		return success, nil
 	}
 	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
-	msg := fmt.Sprintf("unexpected success response for GetAPIRoleAssignmentsV3RoleIDUserSelector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	msg := fmt.Sprintf("unexpected success response for GetAPIRoleAssignmentsV3RoleSelectorUserSelector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 
 /*
-  PatchAPIRoleAssignmentsV3RoleIDUserSelector edits a role assignment
+  PatchAPIRoleAssignmentsV3RoleSelectorUserSelector edits a role assignment
 
   Edit the RoleAssignment between a given Role and User.
 Non-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role's default break-glass duration in the future.
 */
-func (a *Client) PatchAPIRoleAssignmentsV3RoleIDUserSelector(params *PatchAPIRoleAssignmentsV3RoleIDUserSelectorParams, opts ...ClientOption) (*PatchAPIRoleAssignmentsV3RoleIDUserSelectorOK, error) {
+func (a *Client) PatchAPIRoleAssignmentsV3RoleSelectorUserSelector(params *PatchAPIRoleAssignmentsV3RoleSelectorUserSelectorParams, opts ...ClientOption) (*PatchAPIRoleAssignmentsV3RoleSelectorUserSelectorOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
-		params = NewPatchAPIRoleAssignmentsV3RoleIDUserSelectorParams()
+		params = NewPatchAPIRoleAssignmentsV3RoleSelectorUserSelectorParams()
 	}
 	op := &runtime.ClientOperation{
-		ID:                 "PatchAPIRoleAssignmentsV3RoleIDUserSelector",
+		ID:                 "PatchAPIRoleAssignmentsV3RoleSelectorUserSelector",
 		Method:             "PATCH",
-		PathPattern:        "/api/role-assignments/v3/{role-id}/{user-selector}",
+		PathPattern:        "/api/role-assignments/v3/{role-selector}/{user-selector}",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"https"},
 		Params:             params,
-		Reader:             &PatchAPIRoleAssignmentsV3RoleIDUserSelectorReader{formats: a.formats},
+		Reader:             &PatchAPIRoleAssignmentsV3RoleSelectorUserSelectorReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
@@ -195,36 +188,36 @@ func (a *Client) PatchAPIRoleAssignmentsV3RoleIDUserSelector(params *PatchAPIRol
 	if err != nil {
 		return nil, err
 	}
-	success, ok := result.(*PatchAPIRoleAssignmentsV3RoleIDUserSelectorOK)
+	success, ok := result.(*PatchAPIRoleAssignmentsV3RoleSelectorUserSelectorOK)
 	if ok {
 		return success, nil
 	}
 	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
-	msg := fmt.Sprintf("unexpected success response for PatchAPIRoleAssignmentsV3RoleIDUserSelector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	msg := fmt.Sprintf("unexpected success response for PatchAPIRoleAssignmentsV3RoleSelectorUserSelector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 
 /*
-  PostAPIRoleAssignmentsV3RoleIDUserSelector creates a role assignment
+  PostAPIRoleAssignmentsV3RoleSelectorUserSelector creates a role assignment
 
   Create the RoleAssignment between a given Role and User.
 Non-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role's default break-glass duration in the future.
 */
-func (a *Client) PostAPIRoleAssignmentsV3RoleIDUserSelector(params *PostAPIRoleAssignmentsV3RoleIDUserSelectorParams, opts ...ClientOption) (*PostAPIRoleAssignmentsV3RoleIDUserSelectorCreated, error) {
+func (a *Client) PostAPIRoleAssignmentsV3RoleSelectorUserSelector(params *PostAPIRoleAssignmentsV3RoleSelectorUserSelectorParams, opts ...ClientOption) (*PostAPIRoleAssignmentsV3RoleSelectorUserSelectorCreated, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
-		params = NewPostAPIRoleAssignmentsV3RoleIDUserSelectorParams()
+		params = NewPostAPIRoleAssignmentsV3RoleSelectorUserSelectorParams()
 	}
 	op := &runtime.ClientOperation{
-		ID:                 "PostAPIRoleAssignmentsV3RoleIDUserSelector",
+		ID:                 "PostAPIRoleAssignmentsV3RoleSelectorUserSelector",
 		Method:             "POST",
-		PathPattern:        "/api/role-assignments/v3/{role-id}/{user-selector}",
+		PathPattern:        "/api/role-assignments/v3/{role-selector}/{user-selector}",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"https"},
 		Params:             params,
-		Reader:             &PostAPIRoleAssignmentsV3RoleIDUserSelectorReader{formats: a.formats},
+		Reader:             &PostAPIRoleAssignmentsV3RoleSelectorUserSelectorReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
@@ -236,13 +229,13 @@ func (a *Client) PostAPIRoleAssignmentsV3RoleIDUserSelector(params *PostAPIRoleA
 	if err != nil {
 		return nil, err
 	}
-	success, ok := result.(*PostAPIRoleAssignmentsV3RoleIDUserSelectorCreated)
+	success, ok := result.(*PostAPIRoleAssignmentsV3RoleSelectorUserSelectorCreated)
 	if ok {
 		return success, nil
 	}
 	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
-	msg := fmt.Sprintf("unexpected success response for PostAPIRoleAssignmentsV3RoleIDUserSelector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	msg := fmt.Sprintf("unexpected success response for PostAPIRoleAssignmentsV3RoleSelectorUserSelector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 

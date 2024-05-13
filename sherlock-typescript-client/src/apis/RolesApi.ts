@@ -43,20 +43,20 @@ export interface ApiRolesV3GetRequest {
     offset?: number;
 }
 
-export interface ApiRolesV3IdDeleteRequest {
-    id: number;
-}
-
-export interface ApiRolesV3IdGetRequest {
-    id: number;
-}
-
-export interface ApiRolesV3IdPatchRequest {
-    id: number;
+export interface ApiRolesV3PostRequest {
     role: SherlockRoleV3Edit;
 }
 
-export interface ApiRolesV3PostRequest {
+export interface ApiRolesV3SelectorDeleteRequest {
+    selector: string;
+}
+
+export interface ApiRolesV3SelectorGetRequest {
+    selector: string;
+}
+
+export interface ApiRolesV3SelectorPatchRequest {
+    selector: string;
     role: SherlockRoleV3Edit;
 }
 
@@ -142,121 +142,6 @@ export class RolesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Delete an individual Role. Only super-admins may mutate Roles.
-     * Delete a Role
-     */
-    async apiRolesV3IdDeleteRaw(requestParameters: ApiRolesV3IdDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockRoleV3>> {
-        if (requestParameters['id'] == null) {
-            throw new runtime.RequiredError(
-                'id',
-                'Required parameter "id" was null or undefined when calling apiRolesV3IdDelete().'
-            );
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        const response = await this.request({
-            path: `/api/roles/v3/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id']))),
-            method: 'DELETE',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => SherlockRoleV3FromJSON(jsonValue));
-    }
-
-    /**
-     * Delete an individual Role. Only super-admins may mutate Roles.
-     * Delete a Role
-     */
-    async apiRolesV3IdDelete(requestParameters: ApiRolesV3IdDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockRoleV3> {
-        const response = await this.apiRolesV3IdDeleteRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     * Get an individual Role and the Users assigned to it.
-     * Get a Role
-     */
-    async apiRolesV3IdGetRaw(requestParameters: ApiRolesV3IdGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockRoleV3>> {
-        if (requestParameters['id'] == null) {
-            throw new runtime.RequiredError(
-                'id',
-                'Required parameter "id" was null or undefined when calling apiRolesV3IdGet().'
-            );
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        const response = await this.request({
-            path: `/api/roles/v3/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id']))),
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => SherlockRoleV3FromJSON(jsonValue));
-    }
-
-    /**
-     * Get an individual Role and the Users assigned to it.
-     * Get a Role
-     */
-    async apiRolesV3IdGet(requestParameters: ApiRolesV3IdGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockRoleV3> {
-        const response = await this.apiRolesV3IdGetRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     * Edit an individual Role. Only super-admins may mutate Roles.
-     * Edit a Role
-     */
-    async apiRolesV3IdPatchRaw(requestParameters: ApiRolesV3IdPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockRoleV3>> {
-        if (requestParameters['id'] == null) {
-            throw new runtime.RequiredError(
-                'id',
-                'Required parameter "id" was null or undefined when calling apiRolesV3IdPatch().'
-            );
-        }
-
-        if (requestParameters['role'] == null) {
-            throw new runtime.RequiredError(
-                'role',
-                'Required parameter "role" was null or undefined when calling apiRolesV3IdPatch().'
-            );
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        headerParameters['Content-Type'] = 'application/json';
-
-        const response = await this.request({
-            path: `/api/roles/v3/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id']))),
-            method: 'PATCH',
-            headers: headerParameters,
-            query: queryParameters,
-            body: SherlockRoleV3EditToJSON(requestParameters['role']),
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => SherlockRoleV3FromJSON(jsonValue));
-    }
-
-    /**
-     * Edit an individual Role. Only super-admins may mutate Roles.
-     * Edit a Role
-     */
-    async apiRolesV3IdPatch(requestParameters: ApiRolesV3IdPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockRoleV3> {
-        const response = await this.apiRolesV3IdPatchRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
      * Create an individual Role with no one assigned to it. Only super-admins may mutate Roles.
      * Create a Role
      */
@@ -291,6 +176,121 @@ export class RolesApi extends runtime.BaseAPI {
      */
     async apiRolesV3Post(requestParameters: ApiRolesV3PostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockRoleV3> {
         const response = await this.apiRolesV3PostRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Delete an individual Role. Only super-admins may mutate Roles.
+     * Delete a Role
+     */
+    async apiRolesV3SelectorDeleteRaw(requestParameters: ApiRolesV3SelectorDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockRoleV3>> {
+        if (requestParameters['selector'] == null) {
+            throw new runtime.RequiredError(
+                'selector',
+                'Required parameter "selector" was null or undefined when calling apiRolesV3SelectorDelete().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/roles/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector']))),
+            method: 'DELETE',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => SherlockRoleV3FromJSON(jsonValue));
+    }
+
+    /**
+     * Delete an individual Role. Only super-admins may mutate Roles.
+     * Delete a Role
+     */
+    async apiRolesV3SelectorDelete(requestParameters: ApiRolesV3SelectorDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockRoleV3> {
+        const response = await this.apiRolesV3SelectorDeleteRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Get an individual Role and the Users assigned to it.
+     * Get a Role
+     */
+    async apiRolesV3SelectorGetRaw(requestParameters: ApiRolesV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockRoleV3>> {
+        if (requestParameters['selector'] == null) {
+            throw new runtime.RequiredError(
+                'selector',
+                'Required parameter "selector" was null or undefined when calling apiRolesV3SelectorGet().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/roles/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector']))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => SherlockRoleV3FromJSON(jsonValue));
+    }
+
+    /**
+     * Get an individual Role and the Users assigned to it.
+     * Get a Role
+     */
+    async apiRolesV3SelectorGet(requestParameters: ApiRolesV3SelectorGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockRoleV3> {
+        const response = await this.apiRolesV3SelectorGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Edit an individual Role. Only super-admins may mutate Roles.
+     * Edit a Role
+     */
+    async apiRolesV3SelectorPatchRaw(requestParameters: ApiRolesV3SelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockRoleV3>> {
+        if (requestParameters['selector'] == null) {
+            throw new runtime.RequiredError(
+                'selector',
+                'Required parameter "selector" was null or undefined when calling apiRolesV3SelectorPatch().'
+            );
+        }
+
+        if (requestParameters['role'] == null) {
+            throw new runtime.RequiredError(
+                'role',
+                'Required parameter "role" was null or undefined when calling apiRolesV3SelectorPatch().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/api/roles/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector']))),
+            method: 'PATCH',
+            headers: headerParameters,
+            query: queryParameters,
+            body: SherlockRoleV3EditToJSON(requestParameters['role']),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => SherlockRoleV3FromJSON(jsonValue));
+    }
+
+    /**
+     * Edit an individual Role. Only super-admins may mutate Roles.
+     * Edit a Role
+     */
+    async apiRolesV3SelectorPatch(requestParameters: ApiRolesV3SelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockRoleV3> {
+        const response = await this.apiRolesV3SelectorPatchRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
