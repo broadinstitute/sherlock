@@ -52,8 +52,8 @@ func (u UserV3) toModel() models.User {
 }
 
 func userFromModel(model models.User) UserV3 {
-	suitable := model.Suitability().Suitable()
-	suitabilityDescription := model.Suitability().Description()
+	suitable := model.DeprecatedSuitability().Suitable()
+	suitabilityDescription := model.DeprecatedSuitability().Description()
 	ret := UserV3{
 		CommonFields:           commonFieldsFromGormModel(model.Model),
 		Email:                  model.Email,

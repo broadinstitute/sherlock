@@ -15,6 +15,9 @@ services:
     environment:
       SHERLOCK_db_host: postgres
       SHERLOCK_db_password: password
+      GOOGLE_APPLICATION_CREDENTIALS: /home/.config/gcloud/application_default_credentials.json
+    volumes:
+      - ~/.config/gcloud/application_default_credentials.json:/home/.config/gcloud/application_default_credentials.json
     depends_on:
       - database
     networks: 

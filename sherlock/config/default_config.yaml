@@ -242,3 +242,9 @@ beehive:
     environmentUrlFormatString: https://beehive.dsp-devops-prod.broadinstitute.org/r/environment/%s
     pagerdutyIntegrationUrlFormatString: https://beehive.dsp-devops-prod.broadinstitute.org/r/pagerduty-integration/%s
     reviewChangesetsUrl: https://beehive.dsp-devops-prod.broadinstitute.org/review-changesets
+
+# self can be used to override the email and subject ID returned by the "self" package,
+# useful for testing or offline development to skip using ADC.
+self:
+    overrideEmail:
+    overrideSubjectID:

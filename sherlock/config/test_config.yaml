@@ -50,3 +50,7 @@ model:
     templates:
       autoPopulateCharts:
         - name: honeycomb
+
+self:
+  overrideEmail: sherlock-test@broadinstitute.org
+  overrideSubjectID: sherlock-test

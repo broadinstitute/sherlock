@@ -5,6 +5,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/test_users"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
+	"github.com/broadinstitute/sherlock/sherlock/internal/self"
 	"net/http"
 )
 
@@ -14,11 +15,15 @@ func (s *handlerSuite) TestUsersV3List_minimal() {
 		s.NewRequest("GET", "/api/users/v3", nil),
 		&got)
 	s.Equal(http.StatusOK, code)
-	s.Len(got, 1)
+	s.Len(got, 2) // suitable user + self
 	// This'll never return 0 because the calling user will be upserted, but
-	// we can check that the only entry here is ourselves
-	s.Run("inserted user is self", func() {
-		s.Equal(test_users.SuitableTestUserEmail, got[0].Email)
+	// we can check that the only entries here are ourselves and the self
+	// user
+	s.Run("first alphabetical user is Sherlock's own self", func() {
+		s.Equal(self.Email, got[0].Email)
+	})
+	s.Run("second alphabetical user is ourselves", func() {
+		s.Equal(test_users.SuitableTestUserEmail, got[1].Email)
 	})
 }
 
@@ -78,7 +83,7 @@ func (s *handlerSuite) TestUsersV3List() {
 			s.NewRequest("GET", "/api/users/v3", nil),
 			&got)
 		s.Equal(http.StatusOK, code)
-		s.Len(got, 4)
+		s.Len(got, 5) // built-in suitable user + self + 3
 		s.Run("each has suitability", func() {
 			for _, user := range got {
 				s.NotZero(user.Suitable)
