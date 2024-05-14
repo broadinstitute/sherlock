@@ -3,10 +3,12 @@ package suitabilityloader
 import (
 	"context"
 	"fmt"
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 	"time"
 )
 
@@ -35,17 +37,42 @@ func SyncSuitabilitiesToDB(ctx context.Context, db *gorm.DB) error {
 	superUserDB := models.SetCurrentUserForDB(db, models.SelfUser)
 
 	for _, suitability := range suitabilities {
-		if err = superUserDB.Where("email = ?", suitability.Email).Assign(&suitability).FirstOrCreate(&suitability).Error; err != nil {
+		if err = superUserDB.
+			Where(&models.Suitability{
+				Email: suitability.Email,
+			}).
+			Assign(&models.Suitability{
+				// We want to be explicit about this record being updated:
+				// below, we remove results that haven't been updated recently
+				UpdatedAt:   time.Now(),
+				Suitable:    suitability.Suitable,
+				Description: suitability.Description,
+			}).
+			FirstOrCreate(&suitability).Error; err != nil {
 			return fmt.Errorf("failed to update suitability for %s: %w", *suitability.Email, err)
 		}
 	}
 
-	// TODO: once we know that the updatedAt field is being set properly, we'll want to add a step here
-	// to drop anything from the database that hasn't been updated recently. That'll match the current
-	// functionality, where if someone completely disappears from firecloud.org (or more likely, from
-	// Sherlock's config file), they'll cached suitability will eventually expire. With the old
-	// in-memory solution we'd just replace the whole cache to do that, but since the database is
-	// persistent we'll have to manually delete those rows.
+	// We just set the updated_at time above. If there's any records that haven't been updated
+	// recently, we should remove them -- they were probably removed from config or firecloud.org
+	var removedSuitabilities []models.Suitability
+	if err = superUserDB.
+		Clauses(clause.Returning{}).
+		Where("updated_at < current_timestamp - '1 hour'::interval").
+		Delete(&removedSuitabilities).Error; err != nil {
+		return fmt.Errorf("failed to find removed suitabilities: %w", err)
+	}
+	if len(removedSuitabilities) > 0 {
+		log.Info().Msgf("removed %d suitabilities: %v",
+			len(removedSuitabilities),
+			utils.Map(removedSuitabilities, func(s models.Suitability) string {
+				if s.Email != nil {
+					return *s.Email
+				} else {
+					return "nil?"
+				}
+			}))
+	}
 
 	return nil
 }
