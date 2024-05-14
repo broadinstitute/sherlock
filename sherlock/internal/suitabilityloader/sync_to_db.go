@@ -54,11 +54,13 @@ func SyncSuitabilitiesToDB(ctx context.Context, db *gorm.DB) error {
 	}
 
 	// We just set the updated_at time above. If there's any records that haven't been updated
-	// recently, we should remove them -- they were probably removed from config or firecloud.org
+	// recently, we should remove them -- they were probably removed from config or firecloud.org.
+	// We calculate this based on the update interval -- if three intervals have passed since the
+	// record has been updated, we remove it.
 	var removedSuitabilities []models.Suitability
 	if err = superUserDB.
 		Clauses(clause.Returning{}).
-		Where("updated_at < current_timestamp - '1 hour'::interval").
+		Where("updated_at < ?", time.Now().Add(time.Duration(config.Config.MustInt("auth.updateIntervalMinutes"))*time.Minute*-3).Format(time.RFC3339)).
 		Delete(&removedSuitabilities).Error; err != nil {
 		return fmt.Errorf("failed to find removed suitabilities: %w", err)
 	}
