@@ -52,8 +52,12 @@ func (u UserV3) toModel() models.User {
 }
 
 func userFromModel(model models.User) UserV3 {
-	suitable := model.DeprecatedSuitability().Suitable()
-	suitabilityDescription := model.DeprecatedSuitability().Description()
+	suitable := false
+	suitabilityDescription := "no matching suitability record found or loaded; assuming unsuitable"
+	if model.Suitability != nil && model.Suitability.Suitable != nil && model.Suitability.Description != nil {
+		suitable = *model.Suitability.Suitable
+		suitabilityDescription = *model.Suitability.Description
+	}
 	ret := UserV3{
 		CommonFields:           commonFieldsFromGormModel(model.Model),
 		Email:                  model.Email,

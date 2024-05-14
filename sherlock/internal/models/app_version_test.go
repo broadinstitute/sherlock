@@ -2,7 +2,6 @@ package models
 
 import (
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
-	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/test_users"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/gorm"
 	"strings"
@@ -191,7 +190,7 @@ func (s *modelSuite) TestAppVersionRecordsUser() {
 		s.NotNil(version.AuthoredByID)
 		s.NoError(s.DB.Preload("AuthoredBy").First(&version, version.ID).Error)
 		if s.NotNil(version.AuthoredBy) {
-			s.Equal(test_users.NonSuitableTestUserEmail, version.AuthoredBy.Email)
+			s.Equal(s.TestData.User_NonSuitable().Email, version.AuthoredBy.Email)
 		}
 	})
 	s.Run("via db.FirstOrCreate", func() {
@@ -200,7 +199,7 @@ func (s *modelSuite) TestAppVersionRecordsUser() {
 		s.NotNil(version.AuthoredByID)
 		s.NoError(s.DB.Preload("AuthoredBy").First(&version, version.ID).Error)
 		if s.NotNil(version.AuthoredBy) {
-			s.Equal(test_users.NonSuitableTestUserEmail, version.AuthoredBy.Email)
+			s.Equal(s.TestData.User_NonSuitable().Email, version.AuthoredBy.Email)
 		}
 	})
 }

@@ -36,7 +36,7 @@ func (s *handlerSuite) SetupSuite() {
 func (s *handlerSuite) SetupTest() {
 	s.TestSuiteHelper.SetupTest()
 	s.internalRouter = gin.New()
-	apiRouter := s.internalRouter.Group("api", authentication.Middleware(s.DB)...)
+	apiRouter := s.internalRouter.Group("api", authentication.TestMiddleware(s.DB, s.TestData)...)
 	ConfigureRoutes(apiRouter)
 }
 

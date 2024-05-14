@@ -18,7 +18,7 @@ type PagerdutyIntegration struct {
 func (p *PagerdutyIntegration) errorIfForbidden(tx *gorm.DB) error {
 	if user, err := GetCurrentUserForDB(tx); err != nil {
 		return err
-	} else if err = user.DeprecatedSuitability().SuitableOrError(); err != nil {
+	} else if err = user.ErrIfNotSuitable(); err != nil {
 		return fmt.Errorf("(%s) suitability required: %w", errors.Forbidden, err)
 	} else {
 		return nil

@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
-	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/test_users"
 	"github.com/rs/zerolog/log"
 	"gorm.io/datatypes"
 	"time"
@@ -225,21 +224,28 @@ func (td *testDataImpl) create(pointer any) {
 	}
 }
 
-// User_Suitable essentially defers to the authentication and
-// authorization packages: it returns a User based on the
-// authentication package's test_users.SuitableTestUserEmail,
-// which the authorization package will recognize when appropriate.
-//
-// The benefit of this approach is the identity of the test suitable
-// user is kept consistent, regardless of whether it comes from here
-// or from mock authentication middleware
+// User_Suitable abstracts over the complexity of creating a general Terra-suitable user
+// for use in tests. It creates the user
 func (td *testDataImpl) User_Suitable() User {
 	if td.user_suitable.ID == 0 {
 		td.user_suitable = User{
-			Email:    test_users.SuitableTestUserEmail,
-			GoogleID: test_users.SuitableTestUserGoogleID,
+			Email:    "suitable-test-email@broadinstitute.org",
+			GoogleID: "12341234",
 		}
 		td.create(&td.user_suitable)
+
+		// Assume super-admin to set suitability
+		td.h.SetSelfSuperAdminForDB()
+		td.create(&Suitability{
+			Email:       &td.user_suitable.Email,
+			Suitable:    utils.PointerTo(true),
+			Description: utils.PointerTo("TestData.User_Suitable() is inherently suitable"),
+		})
+
+		// Reload user from the database so we get suitability and other records
+		if err := td.h.DB.Scopes(ReadUserScope).Take(&td.user_suitable, td.user_suitable.ID).Error; err != nil {
+			panic(err)
+		}
 	}
 	return td.user_suitable
 }
@@ -248,10 +254,23 @@ func (td *testDataImpl) User_Suitable() User {
 func (td *testDataImpl) User_NonSuitable() User {
 	if td.user_nonSuitable.ID == 0 {
 		td.user_nonSuitable = User{
-			Email:    test_users.NonSuitableTestUserEmail,
-			GoogleID: test_users.NonSuitableTestUserGoogleID,
+			Email:    "non-suitable-test-email@broadinstitute.org",
+			GoogleID: "67896789",
 		}
 		td.create(&td.user_nonSuitable)
+
+		// Assume super-admin to set suitability
+		td.h.SetSelfSuperAdminForDB()
+		td.create(&Suitability{
+			Email:       &td.user_nonSuitable.Email,
+			Suitable:    utils.PointerTo(false),
+			Description: utils.PointerTo("TestData.User_NonSuitable() is inherently non-suitable"),
+		})
+
+		// Reload user from the database so we get suitability and other records
+		if err := td.h.DB.Scopes(ReadUserScope).Take(&td.user_nonSuitable, td.user_nonSuitable.ID).Error; err != nil {
+			panic(err)
+		}
 	}
 	return td.user_nonSuitable
 }

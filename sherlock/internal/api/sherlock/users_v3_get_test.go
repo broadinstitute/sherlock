@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/testutils"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
-	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/test_users"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/stretchr/testify/assert"
@@ -32,14 +31,14 @@ func (s *handlerSuite) TestUserV3Get_notFound() {
 }
 
 func (s *handlerSuite) TestUsersV3Get_self() {
-	for _, selector := range []string{"self", "me", test_users.SuitableTestUserEmail, fmt.Sprintf("google-id/%s", test_users.SuitableTestUserGoogleID)} {
+	for _, selector := range []string{"self", "me", s.TestData.User_Suitable().Email, fmt.Sprintf("google-id/%s", s.TestData.User_Suitable().GoogleID)} {
 		s.Run(fmt.Sprintf("get own user via '%s'", selector), func() {
 			var got UserV3
 			code := s.HandleRequest(
 				s.NewRequest("GET", fmt.Sprintf("/api/users/v3/%s", selector), nil),
 				&got)
 			s.Equal(http.StatusOK, code)
-			s.Equal(test_users.SuitableTestUserEmail, got.Email)
+			s.Equal(s.TestData.User_Suitable().Email, got.Email)
 			s.True(*got.Suitable)
 		})
 	}

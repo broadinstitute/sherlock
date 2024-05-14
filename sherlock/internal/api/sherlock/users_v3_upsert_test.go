@@ -3,7 +3,6 @@ package sherlock
 import (
 	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
-	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/test_users"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/github"
@@ -17,7 +16,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"net/http"
-	"testing"
 )
 
 func (s *handlerSuite) TestUserV3Upsert_error() {
@@ -36,7 +34,7 @@ func (s *handlerSuite) TestUserV3Upsert_empty() {
 			s.NewRequest("PUT", "/api/users/v3", UserV3Upsert{}),
 			&got)
 		s.Equal(http.StatusOK, code)
-		s.Equal(test_users.SuitableTestUserEmail, got.Email)
+		s.Equal(s.TestData.User_Suitable().Email, got.Email)
 	})
 	s.Run("no body", func() {
 		var got UserV3
@@ -44,7 +42,7 @@ func (s *handlerSuite) TestUserV3Upsert_empty() {
 			s.NewRequest("PUT", "/api/users/v3", nil),
 			&got)
 		s.Equal(http.StatusOK, code)
-		s.Equal(test_users.SuitableTestUserEmail, got.Email)
+		s.Equal(s.TestData.User_Suitable().Email, got.Email)
 	})
 }
 
@@ -59,7 +57,7 @@ func (s *handlerSuite) TestUserV3Upsert_name_minimal() {
 		}),
 		&got)
 	s.Equal(http.StatusCreated, code)
-	s.Equal(test_users.SuitableTestUserEmail, got.Email)
+	s.Equal(s.TestData.User_Suitable().Email, got.Email)
 	s.Equal("a name", *got.Name)
 	s.Equal("sherlock", *got.NameFrom)
 	s.False(*got.NameInferredFromGithub)
@@ -73,7 +71,7 @@ func (s *handlerSuite) TestUserV3Upsert_name_minimal() {
 			}),
 			&got)
 		s.Equal(http.StatusCreated, code)
-		s.Equal(test_users.SuitableTestUserEmail, got.Email)
+		s.Equal(s.TestData.User_Suitable().Email, got.Email)
 		s.Equal("a different name", *got.Name)
 		s.Equal("sherlock", *got.NameFrom)
 		s.False(*got.NameInferredFromGithub)
@@ -90,7 +88,7 @@ func (s *handlerSuite) TestUserV3Upsert_nameInferredFromGithub() {
 		}),
 		&got)
 	s.Equal(http.StatusCreated, code)
-	s.Equal(test_users.SuitableTestUserEmail, got.Email)
+	s.Equal(s.TestData.User_Suitable().Email, got.Email)
 	s.True(*got.NameInferredFromGithub)
 
 	s.Run("then doesn't update name", func() {
@@ -102,7 +100,7 @@ func (s *handlerSuite) TestUserV3Upsert_nameInferredFromGithub() {
 			}),
 			&got)
 		s.Equal(http.StatusOK, code)
-		s.Equal(test_users.SuitableTestUserEmail, got.Email)
+		s.Equal(s.TestData.User_Suitable().Email, got.Email)
 		s.Nil(got.Name)
 		s.True(*got.NameInferredFromGithub)
 	})
@@ -116,7 +114,7 @@ func (s *handlerSuite) TestUserV3Upsert_nameInferredFromGithub() {
 			}),
 			&got)
 		s.Equal(http.StatusCreated, code)
-		s.Equal(test_users.SuitableTestUserEmail, got.Email)
+		s.Equal(s.TestData.User_Suitable().Email, got.Email)
 		s.False(*got.NameInferredFromGithub)
 
 		s.Run("then updates name", func() {
@@ -128,7 +126,7 @@ func (s *handlerSuite) TestUserV3Upsert_nameInferredFromGithub() {
 				}),
 				&got)
 			s.Equal(http.StatusCreated, code)
-			s.Equal(test_users.SuitableTestUserEmail, got.Email)
+			s.Equal(s.TestData.User_Suitable().Email, got.Email)
 			s.Equal("a different name", *got.Name)
 			s.False(*got.NameInferredFromGithub)
 		})
@@ -137,7 +135,7 @@ func (s *handlerSuite) TestUserV3Upsert_nameInferredFromGithub() {
 
 func (s *handlerSuite) TestUserV3Upsert_maximal_sherlockName() {
 	slack.UseMockedClient(s.T(), func(c *slack_mocks.MockMockableClient) {
-		c.EXPECT().GetUserByEmailContext(mock.Anything, test_users.SuitableTestUserEmail).Return(&slack2.User{
+		c.EXPECT().GetUserByEmailContext(mock.Anything, s.TestData.User_Suitable().Email).Return(&slack2.User{
 			ID:       "slack ID",
 			Name:     "slack username",
 			RealName: "name from slack",
@@ -160,7 +158,7 @@ func (s *handlerSuite) TestUserV3Upsert_maximal_sherlockName() {
 				}),
 				&got)
 			s.Equal(http.StatusCreated, code)
-			s.Equal(test_users.SuitableTestUserEmail, got.Email)
+			s.Equal(s.TestData.User_Suitable().Email, got.Email)
 			if s.NotNil(got.NameFrom) {
 				s.Equal("sherlock", *got.NameFrom)
 			}
@@ -185,7 +183,7 @@ func (s *handlerSuite) TestUserV3Upsert_maximal_sherlockName() {
 
 func (s *handlerSuite) TestUserV3Upsert_maximal_slackName() {
 	slack.UseMockedClient(s.T(), func(c *slack_mocks.MockMockableClient) {
-		c.EXPECT().GetUserByEmailContext(mock.Anything, test_users.SuitableTestUserEmail).Return(&slack2.User{
+		c.EXPECT().GetUserByEmailContext(mock.Anything, s.TestData.User_Suitable().Email).Return(&slack2.User{
 			ID:       "slack ID",
 			Name:     "slack username",
 			RealName: "name from slack",
@@ -205,7 +203,7 @@ func (s *handlerSuite) TestUserV3Upsert_maximal_slackName() {
 				}),
 				&got)
 			s.Equal(http.StatusCreated, code)
-			s.Equal(test_users.SuitableTestUserEmail, got.Email)
+			s.Equal(s.TestData.User_Suitable().Email, got.Email)
 			if s.NotNil(got.NameFrom) {
 				s.Equal("slack", *got.NameFrom)
 			}
@@ -230,7 +228,7 @@ func (s *handlerSuite) TestUserV3Upsert_maximal_slackName() {
 
 func (s *handlerSuite) TestUserV3Upsert_maximal_githubName() {
 	slack.UseMockedClient(s.T(), func(c *slack_mocks.MockMockableClient) {
-		c.EXPECT().GetUserByEmailContext(mock.Anything, test_users.SuitableTestUserEmail).Return(&slack2.User{
+		c.EXPECT().GetUserByEmailContext(mock.Anything, s.TestData.User_Suitable().Email).Return(&slack2.User{
 			ID:       "slack ID",
 			Name:     "slack username",
 			RealName: "name from slack",
@@ -253,7 +251,7 @@ func (s *handlerSuite) TestUserV3Upsert_maximal_githubName() {
 				}),
 				&got)
 			s.Equal(http.StatusCreated, code)
-			s.Equal(test_users.SuitableTestUserEmail, got.Email)
+			s.Equal(s.TestData.User_Suitable().Email, got.Email)
 			if s.NotNil(got.NameFrom) {
 				s.Equal("github", *got.NameFrom)
 			}
@@ -311,7 +309,7 @@ func (s *handlerSuite) TestUserV3Upsert_dbConflict() {
 func (s *handlerSuite) TestUserV3Upsert_maximal_swallowThirdPartyErrors() {
 	zerolog.SetGlobalLevel(zerolog.Disabled)
 	slack.UseMockedClient(s.T(), func(c *slack_mocks.MockMockableClient) {
-		c.EXPECT().GetUserByEmailContext(mock.Anything, test_users.SuitableTestUserEmail).Return(nil, fmt.Errorf("some error"))
+		c.EXPECT().GetUserByEmailContext(mock.Anything, s.TestData.User_Suitable().Email).Return(nil, fmt.Errorf("some error"))
 	}, func() {
 		github.UseMockedClient(s.T(), func(c *github.MockClient) {
 			c.Users.EXPECT().Get(mock.Anything, "").Return(nil, nil, fmt.Errorf("some other error"))
@@ -326,7 +324,7 @@ func (s *handlerSuite) TestUserV3Upsert_maximal_swallowThirdPartyErrors() {
 				}),
 				&got)
 			s.Equal(http.StatusCreated, code)
-			s.Equal(test_users.SuitableTestUserEmail, got.Email)
+			s.Equal(s.TestData.User_Suitable().Email, got.Email)
 			if s.NotNil(got.NameFrom) {
 				s.Equal("sherlock", *got.NameFrom)
 			}
@@ -341,7 +339,7 @@ func (s *handlerSuite) TestUserV3Upsert_maximal_swallowThirdPartyErrors() {
 	})
 }
 
-func Test_processUserEdits(t *testing.T) {
+func (s *handlerSuite) Test_processUserEdits() {
 	config.LoadTestConfig()
 	type args struct {
 		callingUser     *models.User
@@ -359,23 +357,23 @@ func Test_processUserEdits(t *testing.T) {
 		{
 			name: "can do nothing",
 			args: args{
-				callingUser: &models.User{Email: test_users.SuitableTestUserEmail},
+				callingUser: &models.User{Email: s.TestData.User_Suitable().Email},
 			},
 			slackMockConfig: func(c *slack_mocks.MockMockableClient) {
-				c.EXPECT().GetUserByEmailContext(mock.Anything, test_users.SuitableTestUserEmail).Return(nil, nil)
+				c.EXPECT().GetUserByEmailContext(mock.Anything, s.TestData.User_Suitable().Email).Return(nil, nil)
 			},
 			githubMockConfig:  func(c *github.MockClient) {},
-			wantResultingUser: &models.User{Email: test_users.SuitableTestUserEmail},
+			wantResultingUser: &models.User{Email: s.TestData.User_Suitable().Email},
 			wantHasUpdates:    false,
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			slack.UseMockedClient(t, tt.slackMockConfig, func() {
-				github.UseMockedClient(t, tt.githubMockConfig, func() {
+		s.Run(tt.name, func() {
+			slack.UseMockedClient(s.T(), tt.slackMockConfig, func() {
+				github.UseMockedClient(s.T(), tt.githubMockConfig, func() {
 					gotResultingUser, gotHasUpdates := processUserEdits(tt.args.callingUser, tt.args.directEdits, tt.args.userGithubToken)
-					assert.Equalf(t, tt.wantResultingUser, gotResultingUser, "processUserEdits(%v, %v, %v)", tt.args.callingUser, tt.args.directEdits, tt.args.userGithubToken)
-					assert.Equalf(t, tt.wantHasUpdates, gotHasUpdates, "processUserEdits(%v, %v, %v)", tt.args.callingUser, tt.args.directEdits, tt.args.userGithubToken)
+					assert.Equalf(s.T(), tt.wantResultingUser, gotResultingUser, "processUserEdits(%v, %v, %v)", tt.args.callingUser, tt.args.directEdits, tt.args.userGithubToken)
+					assert.Equalf(s.T(), tt.wantHasUpdates, gotHasUpdates, "processUserEdits(%v, %v, %v)", tt.args.callingUser, tt.args.directEdits, tt.args.userGithubToken)
 				})
 			})
 		})

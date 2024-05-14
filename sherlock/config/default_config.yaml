@@ -85,9 +85,6 @@ auth:
     allowedOrganizations:
       - broadinstitute
 
-  # createTestUsersInMiddleware tells debug-mode Sherlock to generate the test users at the middleware level to facilitate testing.
-  createTestUsersInMiddleware: false
-
   # extraPermissions can be used to grant an exact email address access to "suitable" actions inside Sherlock,
   # regardless of that email correlating to a Firecloud account. This functionality should only be used for
   # service accounts, and the justification for this functionality existing is that adding a service account

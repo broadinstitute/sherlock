@@ -11,7 +11,9 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/slack"
 	"github.com/gin-gonic/gin"
+	"github.com/jinzhu/copier"
 	"github.com/rs/zerolog/log"
+	"gorm.io/gorm/clause"
 	"net/http"
 	"strings"
 	"sync"
@@ -55,16 +57,33 @@ func usersV3Upsert(ctx *gin.Context) {
 		return
 	}
 
-	callingUser, hasUpdates := processUserEdits(callingUser, body.userDirectlyEditableFields, body.GithubAccessToken)
+	// Copying isn't *strictly* necessary, but it's defensive programming, since the
+	// callingUser is also used for authorization and we wouldn't want to accidentally
+	// mutate it in a way that impacts that behavior for this request.
+	copiedUser := &models.User{}
+	if err = copier.CopyWithOption(copiedUser, callingUser, copier.Option{DeepCopy: true}); err != nil {
+		errors.AbortRequest(ctx, fmt.Errorf("(%s) error copying user struct: %w", errors.InternalServerError, err))
+		return
+	}
+
+	copiedUser, hasUpdates := processUserEdits(copiedUser, body.userDirectlyEditableFields, body.GithubAccessToken)
+	var statusCode int
 	if hasUpdates {
-		if err = db.Save(callingUser).Error; err != nil {
+		if err = db.Omit(clause.Associations).Save(copiedUser).Error; err != nil {
 			errors.AbortRequest(ctx, err)
 			return
 		}
-		ctx.JSON(http.StatusCreated, userFromModel(*callingUser))
+		statusCode = http.StatusCreated
 	} else {
-		ctx.JSON(http.StatusOK, userFromModel(*callingUser))
+		statusCode = http.StatusOK
 	}
+
+	var result models.User
+	if err = db.Scopes(models.ReadUserScope).Take(&result, callingUser.ID).Error; err != nil {
+		errors.AbortRequest(ctx, err)
+		return
+	}
+	ctx.JSON(statusCode, userFromModel(result))
 }
 
 func processUserEdits(callingUser *models.User, directEdits userDirectlyEditableFields, userGithubToken *string) (resultingUser *models.User, hasUpdates bool) {

@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/gha_oidc"
-	"github.com/broadinstitute/sherlock/sherlock/internal/authorization"
 	"github.com/broadinstitute/sherlock/sherlock/internal/boot/liveness"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/db"
@@ -80,21 +79,11 @@ func (a *Application) Start() {
 	a.cancelCtx = cancelCtx
 
 	if config.Config.MustString("mode") != "debug" {
-		log.Info().Msgf("BOOT | caching Firecloud accounts...")
-		if err = authorization.CacheFirecloudSuitability(ctx); err != nil {
-			log.Fatal().Err(err).Msgf("authorization.CacheFirecloudSuitability() error")
-		}
-		go authorization.KeepFirecloudCacheUpdated(ctx)
-
-		if recoverableErr := suitabilityloader.SyncSuitabilitiesToDB(ctx, a.gormDB); recoverableErr != nil {
-			log.Warn().Err(recoverableErr).Msgf("suitabilityloader.SyncSuitabilitiesToDB() error")
+		log.Info().Msgf("BOOT | caching Firecloud accounts and config-based suitability...")
+		if err = suitabilityloader.SyncSuitabilitiesToDB(ctx, a.gormDB); err != nil {
+			log.Fatal().Err(err).Msgf("suitabilityloader.SyncSuitabilitiesToDB() error")
 		}
 		go suitabilityloader.KeepSuitabilitiesInDBUpdated(ctx, a.gormDB)
-	}
-
-	log.Info().Msgf("BOOT | reading extra permissions defined in configuration...")
-	if err = authorization.CacheConfigSuitability(); err != nil {
-		log.Fatal().Err(err).Msgf("authorization.CacheConfigSuitability() error")
 	}
 
 	log.Info().Msgf("BOOT | initializing GitHub Actions OIDC token verification...")

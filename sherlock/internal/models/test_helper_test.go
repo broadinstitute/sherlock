@@ -1,7 +1,5 @@
 package models
 
-import "github.com/broadinstitute/sherlock/sherlock/internal/authentication/test_users"
-
 // TestTestHelperItself checks that modelSuite's user helper
 // methods work properly (and thus also that the database
 // connection is working).
@@ -15,16 +13,24 @@ func (s *modelSuite) TestTestHelperItself() {
 		s.SetSuitableTestUserForDB()
 		user, err := GetCurrentUserForDB(s.DB)
 		s.NoError(err)
-		s.Equal(test_users.SuitableTestUserEmail, user.Email)
+		s.Equal(s.TestData.User_Suitable().Email, user.Email)
 		s.NotZero(user.ID)
-		s.True(user.DeprecatedSuitability().Suitable())
+		if s.NotNil(user.Suitability) {
+			if s.NotNil(user.Suitability.Suitable) {
+				s.True(*user.Suitability.Suitable)
+			}
+		}
 	})
 	s.Run("non-suitable test user", func() {
 		s.SetNonSuitableTestUserForDB()
 		user, err := GetCurrentUserForDB(s.DB)
 		s.NoError(err)
-		s.Equal(test_users.NonSuitableTestUserEmail, user.Email)
+		s.Equal(s.TestData.User_NonSuitable().Email, user.Email)
 		s.NotZero(user.ID)
-		s.False(user.DeprecatedSuitability().Suitable())
+		if s.NotNil(user.Suitability) {
+			if s.NotNil(user.Suitability.Suitable) {
+				s.False(*user.Suitability.Suitable)
+			}
+		}
 	})
 }
