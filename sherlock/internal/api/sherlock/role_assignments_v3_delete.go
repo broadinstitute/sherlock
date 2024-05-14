@@ -57,7 +57,7 @@ func roleAssignmentsV3Delete(ctx *gin.Context) {
 		return
 	}
 
-	if err = db.Where(&toDelete).Omit(clause.Associations).Delete(&models.RoleAssignment{}).Error; err != nil {
+	if err = db.Omit(clause.Associations).Delete(&result).Error; err != nil {
 		errors.AbortRequest(ctx, err)
 		return
 	}
