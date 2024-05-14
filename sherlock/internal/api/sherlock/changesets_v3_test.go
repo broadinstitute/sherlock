@@ -857,7 +857,7 @@ func Test_changesetFromModel(t *testing.T) {
 					PlannedBy: utils.PointerTo("email"),
 					PlannedByInfo: &UserV3{
 						Email:                  "email",
-						SuitabilityDescription: utils.PointerTo("user email lacks production suitability"),
+						SuitabilityDescription: utils.PointerTo("no matching suitability record found or loaded; assuming unsuitable"),
 						Suitable:               utils.PointerTo(false),
 					},
 				},
@@ -890,7 +890,7 @@ func Test_changesetFromModel(t *testing.T) {
 					AppliedBy: utils.PointerTo("email"),
 					AppliedByInfo: &UserV3{
 						Email:                  "email",
-						SuitabilityDescription: utils.PointerTo("user email lacks production suitability"),
+						SuitabilityDescription: utils.PointerTo("no matching suitability record found or loaded; assuming unsuitable"),
 						Suitable:               utils.PointerTo(false),
 					},
 				},

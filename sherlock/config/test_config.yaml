@@ -20,7 +20,6 @@ db:
   init: true
 
 auth:
-  createTestUsersInMiddleware: true
   # These are for testing our handling of this config; tests run fully off-line
   extraPermissions:
     - email: has-extra-permissions-suitable@example.com

@@ -66,7 +66,7 @@ func (e *Environment) errorIfForbidden(tx *gorm.DB) error {
 		return err
 	}
 	if e.RequiresSuitability == nil || *e.RequiresSuitability {
-		if err = user.DeprecatedSuitability().SuitableOrError(); err != nil {
+		if err = user.ErrIfNotSuitable(); err != nil {
 			return fmt.Errorf("(%s) suitability required: %w", errors.Forbidden, err)
 		}
 	}

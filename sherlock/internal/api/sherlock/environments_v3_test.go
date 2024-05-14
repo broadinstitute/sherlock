@@ -375,7 +375,7 @@ func Test_environmentFromModel(t *testing.T) {
 				DefaultClusterInfo:       &ClusterV3{CommonFields: CommonFields{ID: 4}, ClusterV3Create: ClusterV3Create{Name: "name-4"}},
 				PagerdutyIntegrationInfo: &PagerdutyIntegrationV3{CommonFields: CommonFields{ID: 6}, PagerdutyID: "blah"},
 				OwnerInfo: &UserV3{CommonFields: CommonFields{ID: 5}, Email: "example@example.com", Suitable: utils.PointerTo(false),
-					SuitabilityDescription: utils.PointerTo("user example@example.com lacks production suitability")},
+					SuitabilityDescription: utils.PointerTo("no matching suitability record found or loaded; assuming unsuitable")},
 				EnvironmentV3Create: EnvironmentV3Create{
 					Base:                      "base",
 					AutoPopulateChartReleases: utils.PointerTo(true),

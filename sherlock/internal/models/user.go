@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/authentication_method"
-	"github.com/broadinstitute/sherlock/sherlock/internal/authorization"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/self"
@@ -82,13 +81,6 @@ type User struct {
 	// It won't be defined when the User is queried out of the database, only as they authenticate.
 	// See the authentication package for more information.
 	AuthenticationMethod authentication_method.Method `gorm:"-:all"`
-
-	// deprecatedCachedSuitability is ignored by Gorm and isn't stored in the database -- it is used to cache calls to DeprecatedSuitability,
-	// which looks up the user's authorization.Suitability.
-	// See the authorization package for more information.
-	// In the future, Sherlock will become its own source of truth for suitability and other authorization, in
-	// which case this behavior will become database-persistent and may be entirely represented in the database.
-	deprecatedCachedSuitability *authorization.Suitability `gorm:"-:all"`
 }
 
 // ReadUserScope should be used in place of `db.Preload(clause.Associations)` for reading User records, as it
@@ -135,20 +127,6 @@ func (u *User) BeforeDelete(_ *gorm.DB) error {
 	return fmt.Errorf("(%s) users cannot be deleted", errors.Forbidden)
 }
 
-// DeprecatedSuitability is the old mechanism to do RBAC checks on a User. It
-// uses an in-memory store of suitability data. The new mechanism to is to use
-// User.Suitability instead.
-//
-// We don't actually mark this method as deprecated in Go-comment-parlance
-// because it makes the CI linter freak out. Whatever, not like we'll have
-// trouble finding usages of this method.
-func (u *User) DeprecatedSuitability() *authorization.Suitability {
-	if u.Email != "" && u.deprecatedCachedSuitability == nil {
-		u.deprecatedCachedSuitability = authorization.GetSuitabilityFor(u.Email)
-	}
-	return u.deprecatedCachedSuitability
-}
-
 func (u *User) AlphaNumericHyphenatedUsername() string {
 	var ret []rune
 	for _, r := range strings.Split(u.Email, "@")[0] {
@@ -174,6 +152,29 @@ func (u *User) SlackReference(mention bool) string {
 		return fmt.Sprintf("<@%s>", *u.SlackID)
 	} else {
 		return fmt.Sprintf("<https://broad.io/beehive/r/user/%s|%s>", u.Email, u.NameOrEmailHandle())
+	}
+}
+
+// ErrIfNotSuitable may be removed in the future: we'll want to be doing Sherlock's internal RBAC based on
+// Role and RoleAssignment instead of Suitability, and the only usage of Suitability *should* be for
+// suspending RoleAssignment entries. An error isn't really helpful for us there, so we may have no need
+// for this method. For the moment, though, it offers a very similar logical interface to the now-removed
+// `User.Suitable().SuitableOrError()` method, so it makes sense for now.
+func (u *User) ErrIfNotSuitable() error {
+	if u.Email == self.Email && u.GoogleID == self.GoogleID && u.AuthenticationMethod == authentication_method.SHERLOCK_INTERNAL {
+		// Short-circuit to respect Sherlock's own user; see SelfUser.
+		// We only respect this with an internal authentication method as defense-in-depth (it should be impossible to
+		// actually make a request as Sherlock, but we don't want to find out).
+		return nil
+	}
+	if u.Suitability != nil && u.Suitability.Suitable != nil && u.Suitability.Description != nil {
+		if *u.Suitability.Suitable {
+			return nil
+		} else {
+			return fmt.Errorf("(%s) user is unsuitable: %s", errors.Forbidden, *u.Suitability.Description)
+		}
+	} else {
+		return fmt.Errorf("(%s) no matching suitability record found or loaded; assuming unsuitable", errors.Forbidden)
 	}
 }
 
