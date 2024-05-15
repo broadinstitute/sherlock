@@ -103,7 +103,8 @@ func fromFirecloud(ctx context.Context) ([]models.Suitability, error) {
 						if emailsParseErr = json.Unmarshal(emailsJson, &parsedEmails); emailsParseErr != nil {
 							log.Debug().Err(err).Msgf("AUTH | wasn't able to unmarshal %s's `emails` field to %T: %v", workspaceUser.PrimaryEmail, parsedEmails, err)
 						} else {
-							for _, parsedEmail := range parsedEmails {
+							for _, unsafeEmail := range parsedEmails {
+								parsedEmail := unsafeEmail
 								if len(parsedEmail.Address) == 0 {
 									log.Debug().Msgf("AUTH | one of %s's `emails` had an empty address", workspaceUser.PrimaryEmail)
 								} else if parsedEmail.Address != workspaceUser.PrimaryEmail && parsedEmail.Address != workspaceUser.RecoveryEmail {
