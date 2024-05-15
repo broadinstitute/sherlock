@@ -19,6 +19,15 @@ type TestData interface {
 	User_Suitable() User
 	User_NonSuitable() User
 
+	Role_TerraEngineer() Role
+	Role_TerraSuitableEngineer() Role
+	Role_TerraGlassBrokenAdmin() Role
+	Role_SherlockSuperAdmin() Role
+
+	RoleAssignment_Suitable_TerraSuitableEngineer() RoleAssignment
+	RoleAssignment_Suitable_TerraEngineer() RoleAssignment
+	RoleAssignment_NonSuitable_TerraEngineer() RoleAssignment
+
 	PagerdutyIntegration_ManuallyTriggeredTerraIncident() PagerdutyIntegration
 
 	Chart_Leonardo() Chart
@@ -123,6 +132,15 @@ type testDataImpl struct {
 
 	user_suitable    User
 	user_nonSuitable User
+
+	role_terraEngineer         Role
+	role_terraSuitableEngineer Role
+	role_terraGlassBrokenAdmin Role
+	role_sherlockSuperAdmin    Role
+
+	roleAssignment_suitable_terraSuitableEngineer RoleAssignment
+	roleAssignment_suitable_terraEngineer         RoleAssignment
+	roleAssignment_nonSuitable_terraEngineer      RoleAssignment
 
 	pagerdutyIntegration_manuallyTriggeredTerraIncident PagerdutyIntegration
 
@@ -273,6 +291,111 @@ func (td *testDataImpl) User_NonSuitable() User {
 		}
 	}
 	return td.user_nonSuitable
+}
+
+func (td *testDataImpl) Role_TerraEngineer() Role {
+	if td.role_terraEngineer.ID == 0 {
+		td.role_terraEngineer = Role{
+			RoleFields: RoleFields{
+				Name: utils.PointerTo("terra-engineer"),
+			},
+		}
+		td.h.SetSelfSuperAdminForDB()
+		td.create(&td.role_terraEngineer)
+	}
+	return td.role_terraEngineer
+}
+
+func (td *testDataImpl) Role_TerraSuitableEngineer() Role {
+	if td.role_terraSuitableEngineer.ID == 0 {
+		td.role_terraSuitableEngineer = Role{
+			RoleFields: RoleFields{
+				Name:                    utils.PointerTo("terra-suitable-engineer"),
+				SuspendNonSuitableUsers: utils.PointerTo(true),
+				GrantsDevFirecloudGroup: utils.PointerTo("terra-suitable-engineer"),
+				GrantsDevAzureGroup:     utils.PointerTo("terra-suitable-engineer"),
+			},
+		}
+		td.h.SetSelfSuperAdminForDB()
+		td.create(&td.role_terraSuitableEngineer)
+	}
+	return td.role_terraSuitableEngineer
+}
+
+func (td *testDataImpl) Role_TerraGlassBrokenAdmin() Role {
+	if td.role_terraGlassBrokenAdmin.ID == 0 {
+		td.role_terraGlassBrokenAdmin = Role{
+			RoleFields: RoleFields{
+				Name:                      utils.PointerTo("terra-glass-broken-admin"),
+				SuspendNonSuitableUsers:   utils.PointerTo(true),
+				CanBeGlassBrokenByRoleID:  utils.PointerTo(td.Role_TerraSuitableEngineer().ID),
+				DefaultGlassBreakDuration: utils.PointerTo((time.Hour * 8).Nanoseconds()),
+			},
+		}
+		td.h.SetSelfSuperAdminForDB()
+		td.create(&td.role_terraGlassBrokenAdmin)
+	}
+	return td.role_terraGlassBrokenAdmin
+}
+
+func (td *testDataImpl) Role_SherlockSuperAdmin() Role {
+	if td.role_sherlockSuperAdmin.ID == 0 {
+		td.role_sherlockSuperAdmin = Role{
+			RoleFields: RoleFields{
+				Name:                     utils.PointerTo("sherlock-super-admin"),
+				SuspendNonSuitableUsers:  utils.PointerTo(true),
+				GrantsSherlockSuperAdmin: utils.PointerTo(true),
+			},
+		}
+		td.h.SetSelfSuperAdminForDB()
+		td.create(&td.role_sherlockSuperAdmin)
+	}
+	return td.role_sherlockSuperAdmin
+}
+
+func (td *testDataImpl) RoleAssignment_Suitable_TerraSuitableEngineer() RoleAssignment {
+	if td.roleAssignment_suitable_terraSuitableEngineer.RoleID == 0 && td.roleAssignment_suitable_terraSuitableEngineer.UserID == 0 {
+		td.roleAssignment_suitable_terraSuitableEngineer = RoleAssignment{
+			UserID: td.User_Suitable().ID,
+			RoleID: td.Role_TerraSuitableEngineer().ID,
+			RoleAssignmentFields: RoleAssignmentFields{
+				Suspended: utils.PointerTo(false),
+			},
+		}
+		td.h.SetSelfSuperAdminForDB()
+		td.create(&td.roleAssignment_suitable_terraSuitableEngineer)
+	}
+	return td.roleAssignment_suitable_terraSuitableEngineer
+}
+
+func (td *testDataImpl) RoleAssignment_Suitable_TerraEngineer() RoleAssignment {
+	if td.roleAssignment_suitable_terraEngineer.RoleID == 0 && td.roleAssignment_suitable_terraEngineer.UserID == 0 {
+		td.roleAssignment_suitable_terraEngineer = RoleAssignment{
+			UserID: td.User_Suitable().ID,
+			RoleID: td.Role_TerraEngineer().ID,
+			RoleAssignmentFields: RoleAssignmentFields{
+				Suspended: utils.PointerTo(false),
+			},
+		}
+		td.h.SetSelfSuperAdminForDB()
+		td.create(&td.roleAssignment_suitable_terraEngineer)
+	}
+	return td.roleAssignment_suitable_terraEngineer
+}
+
+func (td *testDataImpl) RoleAssignment_NonSuitable_TerraEngineer() RoleAssignment {
+	if td.roleAssignment_nonSuitable_terraEngineer.RoleID == 0 && td.roleAssignment_nonSuitable_terraEngineer.UserID == 0 {
+		td.roleAssignment_nonSuitable_terraEngineer = RoleAssignment{
+			UserID: td.User_NonSuitable().ID,
+			RoleID: td.Role_TerraEngineer().ID,
+			RoleAssignmentFields: RoleAssignmentFields{
+				Suspended: utils.PointerTo(false),
+			},
+		}
+		td.h.SetSelfSuperAdminForDB()
+		td.create(&td.roleAssignment_nonSuitable_terraEngineer)
+	}
+	return td.roleAssignment_nonSuitable_terraEngineer
 }
 
 func (td *testDataImpl) PagerdutyIntegration_ManuallyTriggeredTerraIncident() PagerdutyIntegration {

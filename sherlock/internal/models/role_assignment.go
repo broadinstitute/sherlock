@@ -20,6 +20,14 @@ type RoleAssignment struct {
 	UserID uint `gorm:"primaryKey"`
 
 	RoleAssignmentFields
+
+	// previousFields is an unexported field ignored by Gorm. It exists so that the BeforeUpdate hook can
+	// copy and store the current state so the AfterUpdate hook can correctly journal the change into a
+	// RoleAssignmentOperation record.
+	//
+	// (The struct tag to have Gorm ignore it is theoretically unnecessary because it's unexported, but
+	// it's included for clarity.)
+	previousFields RoleAssignmentFields `gorm:"-:all"`
 }
 
 type RoleAssignmentOperation struct {
@@ -69,7 +77,7 @@ func (ra *RoleAssignment) errorIfForbidden(tx *gorm.DB) error {
 		for _, userAssignment := range user.Assignments {
 			// If the user has the role that can break-glass the target role:
 			if userAssignment.RoleID == *targetRole.CanBeGlassBrokenByRoleID {
-				if userAssignment.Suspended != nil && *userAssignment.Suspended {
+				if userAssignment.Suspended == nil || *userAssignment.Suspended {
 					// If suspended, bail
 					return fmt.Errorf("(%s) role %s (%d) can only be glass-broken by role %s (%d) and the caller has that role but their assignment is suspended", errors.Forbidden, *targetRole.Name, current.RoleID, *targetRole.CanBeGlassBrokenByRole.Name, *targetRole.CanBeGlassBrokenByRoleID)
 				} else if current.ExpiresAt == nil {
@@ -110,38 +118,30 @@ func (ra *RoleAssignment) AfterCreate(tx *gorm.DB) error {
 }
 
 func (ra *RoleAssignment) BeforeUpdate(tx *gorm.DB) error {
-	var current RoleAssignment
-	// We want to accurately represent the full state of the new fields, so we do a dance with copying the current
-	// fields into this value and then copying the new ones over top, ignoring zero values. This approximates how
-	// the database will be updated without us needing to accumulate the true before and after state somehow.
-	var newFields RoleAssignmentFields
-	if user, err := GetCurrentUserForDB(tx); err != nil {
+	if err := ra.errorIfForbidden(tx); err != nil {
 		return err
-	} else if err = ra.errorIfForbidden(tx); err != nil {
-		return err
-	} else if err = tx.Where(&RoleAssignment{RoleID: ra.RoleID, UserID: ra.UserID}).First(&current).Error; err != nil {
-		return fmt.Errorf("failed to find current RoleAssignment: %w", err)
-	} else if err = copier.CopyWithOption(&newFields, current.RoleAssignmentFields, copier.Option{IgnoreEmpty: true, DeepCopy: true}); err != nil {
-		return fmt.Errorf("failed to make copy of current RoleAssignmentFields: %w", err)
-	} else if err = copier.CopyWithOption(&newFields, ra.RoleAssignmentFields, copier.Option{IgnoreEmpty: true, DeepCopy: true}); err != nil {
-		return fmt.Errorf("failed to copy new RoleAssignmentFields over current RoleAssignmentFields: %w", err)
-	} else if err = tx.Create(&RoleAssignmentOperation{
-		RoleID:    ra.RoleID,
-		UserID:    ra.UserID,
-		AuthorID:  user.ID,
-		Operation: "update",
-		From:      current.RoleAssignmentFields,
-		To:        newFields,
-	}).Error; err != nil {
-		return fmt.Errorf("failed to create RoleAssignmentOperation: %w", err)
+	} else if err = copier.CopyWithOption(&ra.previousFields, &ra.RoleAssignmentFields, copier.Option{DeepCopy: true}); err != nil {
+		return fmt.Errorf("failed to copy RoleAssignmentFields: %w", err)
 	}
 	return nil
 }
 
 func (ra *RoleAssignment) AfterUpdate(tx *gorm.DB) error {
-	// We run the RBAC check again in case the mutation changed the result -- we'd want the operation to be permitted
-	// both before and after
-	return ra.errorIfForbidden(tx)
+	if user, err := GetCurrentUserForDB(tx); err != nil {
+		return err
+	} else if err = ra.errorIfForbidden(tx); err != nil {
+		return err
+	} else if err = tx.Create(&RoleAssignmentOperation{
+		RoleID:    ra.RoleID,
+		UserID:    ra.UserID,
+		AuthorID:  user.ID,
+		Operation: "update",
+		From:      ra.previousFields,
+		To:        ra.RoleAssignmentFields,
+	}).Error; err != nil {
+		return fmt.Errorf("failed to create RoleAssignmentOperation: %w", err)
+	}
+	return nil
 }
 
 func (ra *RoleAssignment) BeforeDelete(tx *gorm.DB) error {

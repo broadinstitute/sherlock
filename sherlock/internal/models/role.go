@@ -48,6 +48,14 @@ type Role struct {
 	Assignments []*RoleAssignment
 
 	RoleFields
+
+	// previousFields is an unexported field ignored by Gorm. It exists so that the BeforeUpdate hook can
+	// copy and store the current state so the AfterUpdate hook can correctly journal the change into a
+	// RoleOperation record.
+	//
+	// (The struct tag to have Gorm ignore it is theoretically unnecessary because it's unexported, but
+	// it's included for clarity.)
+	previousFields RoleFields `gorm:"-:all"`
 }
 
 type RoleOperation struct {
@@ -102,27 +110,27 @@ func (r *Role) AfterCreate(tx *gorm.DB) error {
 }
 
 func (r *Role) BeforeUpdate(tx *gorm.DB) error {
-	var current Role
-	// We want to accurately represent the full state of the new fields, so we do a dance with copying the current
-	// fields into this value and then copying the new ones over top, ignoring zero values. This approximates how
-	// the database will be updated without us needing to accumulate the true before and after state somehow.
-	var newFields RoleFields
 	if user, err := GetCurrentUserForDB(tx); err != nil {
 		return err
 	} else if err = user.ErrIfNotSuperAdmin(); err != nil {
 		return err
-	} else if err = tx.First(&current, r.ID).Error; err != nil {
-		return fmt.Errorf("failed to find current Role: %w", err)
-	} else if err = copier.CopyWithOption(&newFields, current.RoleFields, copier.Option{IgnoreEmpty: true, DeepCopy: true}); err != nil {
-		return fmt.Errorf("failed to make copy of current RoleFields: %w", err)
-	} else if err = copier.CopyWithOption(&newFields, r.RoleFields, copier.Option{IgnoreEmpty: true, DeepCopy: true}); err != nil {
-		return fmt.Errorf("failed to copy new RoleFields over current RoleFields: %w", err)
+	} else if err = copier.CopyWithOption(&r.previousFields, &r.RoleFields, copier.Option{DeepCopy: true}); err != nil {
+		return fmt.Errorf("failed to copy RoleFields: %w", err)
+	}
+	return nil
+}
+
+func (r *Role) AfterUpdate(tx *gorm.DB) error {
+	if user, err := GetCurrentUserForDB(tx); err != nil {
+		return err
+	} else if err = user.ErrIfNotSuperAdmin(); err != nil {
+		return err
 	} else if err = tx.Create(&RoleOperation{
 		RoleID:    r.ID,
 		AuthorID:  user.ID,
 		Operation: "update",
-		From:      current.RoleFields,
-		To:        newFields,
+		From:      r.previousFields,
+		To:        r.RoleFields,
 	}).Error; err != nil {
 		return fmt.Errorf("failed to create RoleOperation: %w", err)
 	}
