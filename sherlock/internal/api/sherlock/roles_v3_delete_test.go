@@ -41,4 +41,5 @@ func (s *handlerSuite) TestRolesV3Delete() {
 		s.NewSuperAdminRequest("DELETE", "/api/roles/v3/"+*role.Name, nil),
 		&got)
 	s.Equal(http.StatusOK, code)
+	s.Equal(role.ID, got.ID)
 }
