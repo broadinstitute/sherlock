@@ -8,16 +8,31 @@ import (
 )
 
 const (
-	suitableControlHeader = "X-SHERLOCK-TEST-SUITABLE"
+	superAdminControlHeader = "X-SHERLOCK-TEST-SUPER-ADMIN"
+	suitableControlHeader   = "X-SHERLOCK-TEST-SUITABLE"
 )
 
-func MakeHeaderParser(suitableUser, nonSuitableUser models.User) func(ctx *gin.Context) (email string, googleID string, err error) {
+func MakeHeaderParser(superAdminUser, suitableUser, nonSuitableUser models.User) func(ctx *gin.Context) (email string, googleID string, err error) {
 	return func(ctx *gin.Context) (email string, googleID string, err error) {
-		if header := ctx.GetHeader(suitableControlHeader); header == "" {
-			return suitableUser.Email, suitableUser.GoogleID, nil
-		} else if suitable, err := strconv.ParseBool(header); err != nil {
-			return "", "", fmt.Errorf("failed to parse boolean from %v suitableControlHeader: %w", suitable, err)
-		} else if suitable {
+		var shouldBeSuperAdmin, shouldBeSuitable bool
+
+		if superAdminHeader := ctx.GetHeader(superAdminControlHeader); superAdminHeader == "" {
+			shouldBeSuperAdmin = false // Default
+		} else if shouldBeSuperAdmin, err = strconv.ParseBool(superAdminHeader); err != nil {
+			return "", "", fmt.Errorf("failed to parse boolean from %v superAdminControlHeader: %w", superAdminHeader, err)
+		}
+
+		if suitableHeader := ctx.GetHeader(suitableControlHeader); suitableHeader == "" {
+			shouldBeSuitable = true // Default
+		} else if shouldBeSuitable, err = strconv.ParseBool(suitableHeader); err != nil {
+			return "", "", fmt.Errorf("failed to parse boolean from %v suitableControlHeader: %w", suitableHeader, err)
+		}
+
+		if shouldBeSuperAdmin && shouldBeSuitable {
+			return superAdminUser.Email, superAdminUser.GoogleID, nil
+		} else if shouldBeSuperAdmin && !shouldBeSuitable {
+			return "", "", fmt.Errorf("super admin cannot be non-suitable (this case isn't implemented in the test middleware right now)")
+		} else if !shouldBeSuperAdmin && shouldBeSuitable {
 			return suitableUser.Email, suitableUser.GoogleID, nil
 		} else {
 			return nonSuitableUser.Email, nonSuitableUser.GoogleID, nil

@@ -13,16 +13,31 @@ import (
 // headers from tests)
 type TestUserHelper struct{}
 
-// UseSuitableUserFor sets suitableControlHeader such that ParseHeader will supply SuitableTestUserEmail.
-// This is ParseHeader's default behavior, but this function can be helpful for clarity or undoing
-// UseNonSuitableUserFor.
+// UseSuperAdminUserFor sets superAdminControlHeader such that ParseHeader will supply the email of a super admin user.
+func (h TestUserHelper) UseSuperAdminUserFor(req *http.Request) *http.Request {
+	return h.selectUserForRequestBySuperUser(req, true)
+}
+
+// UseNonSuperAdminUserFor sets superAdminControlHeader such that ParseHeader will supply the email of a non-super admin user.
+// This is ParseHeader's default behavior, but this function can be helpful for clarity or undoing UseSuperAdminUserFor.
+func (h TestUserHelper) UseNonSuperAdminUserFor(req *http.Request) *http.Request {
+	return h.selectUserForRequestBySuperUser(req, false)
+}
+
+// UseSuitableUserFor sets suitableControlHeader such that ParseHeader will supply the email of a suitable user.
+// This is ParseHeader's default behavior, but this function can be helpful for clarity or undoing UseNonSuitableUserFor.
 func (h TestUserHelper) UseSuitableUserFor(req *http.Request) *http.Request {
 	return h.selectUserForRequestBySuitability(req, true)
 }
 
-// UseNonSuitableUserFor sets suitableControlHeader such that ParseHeader will supply NonSuitableTestUserEmail.
+// UseNonSuitableUserFor sets suitableControlHeader such that ParseHeader will supply the email of a non-suitable user.
 func (h TestUserHelper) UseNonSuitableUserFor(req *http.Request) *http.Request {
 	return h.selectUserForRequestBySuitability(req, false)
+}
+
+func (_ TestUserHelper) selectUserForRequestBySuperUser(req *http.Request, superUser bool) *http.Request {
+	req.Header.Set(superAdminControlHeader, strconv.FormatBool(superUser))
+	return req
 }
 
 func (_ TestUserHelper) selectUserForRequestBySuitability(req *http.Request, suitable bool) *http.Request {

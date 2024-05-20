@@ -14,18 +14,21 @@ func (s *handlerSuite) TestUsersV3List_minimal() {
 		s.NewRequest("GET", "/api/users/v3", nil),
 		&got)
 	s.Equal(http.StatusOK, code)
-	s.Len(got, 3) // nonsuitable user + suitable user + self
+	s.Len(got, 4) // admin user + nonsuitable user + suitable user + self
 	// This'll never return 0 because the calling user will be upserted, but
 	// we can check that the only entries here are ourselves and the self
 	// user
 	s.Run("first alphabetical user is the nonsuitable user in the test data", func() {
 		s.Equal(s.TestData.User_NonSuitable().Email, got[0].Email)
 	})
-	s.Run("second alphabetical user is Sherlock's own self", func() {
-		s.Equal(self.Email, got[1].Email)
+	s.Run("second alphabetical user is the super admin user in the test data", func() {
+		s.Equal(s.TestData.User_SuperAdmin().Email, got[1].Email)
 	})
-	s.Run("third alphabetical user is the suitable user we made the request as", func() {
-		s.Equal(s.TestData.User_Suitable().Email, got[2].Email)
+	s.Run("third alphabetical user is Sherlock's own self", func() {
+		s.Equal(self.Email, got[2].Email)
+	})
+	s.Run("fourth alphabetical user is the suitable user we made the request as", func() {
+		s.Equal(s.TestData.User_Suitable().Email, got[3].Email)
 	})
 }
 
@@ -85,7 +88,7 @@ func (s *handlerSuite) TestUsersV3List() {
 			s.NewRequest("GET", "/api/users/v3", nil),
 			&got)
 		s.Equal(http.StatusOK, code)
-		s.Len(got, 6) // test suitable user + test nonsuitable user + self + 3
+		s.Len(got, 7) // test admin user + test suitable user + test nonsuitable user + self + 3
 		s.Run("each has suitability", func() {
 			for _, user := range got {
 				s.NotZero(user.Suitable)

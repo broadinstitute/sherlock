@@ -48,6 +48,12 @@ func (s *handlerSuite) NewRequest(method string, url string, toJsonBody any) *ht
 	return req
 }
 
+func (s *handlerSuite) NewSuperAdminRequest(method string, url string, toJsonBody any) *http.Request {
+	req := s.NewRequest(method, url, toJsonBody)
+	s.UseSuperAdminUserFor(req)
+	return req
+}
+
 func (s *handlerSuite) NewSuitableRequest(method string, url string, toJsonBody any) *http.Request {
 	req := s.NewRequest(method, url, toJsonBody)
 	s.UseSuitableUserFor(req)

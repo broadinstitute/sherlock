@@ -9,7 +9,7 @@ import (
 
 func (s *modelSuite) TestRoleAssignmentUnauthorizedCreate() {
 	roleAssignment := RoleAssignment{
-		RoleID: s.TestData.Role_TerraEngineer().ID,
+		RoleID: s.TestData.Role_SherlockSuperAdmin().ID,
 		UserID: s.TestData.User_NonSuitable().ID,
 		RoleAssignmentFields: RoleAssignmentFields{
 			Suspended: utils.PointerTo(false),
@@ -22,7 +22,7 @@ func (s *modelSuite) TestRoleAssignmentUnauthorizedCreate() {
 
 func (s *modelSuite) TestRoleAssignmentForbiddenCreate() {
 	roleAssignment := RoleAssignment{
-		RoleID: s.TestData.Role_TerraEngineer().ID,
+		RoleID: s.TestData.Role_SherlockSuperAdmin().ID,
 		UserID: s.TestData.User_NonSuitable().ID,
 		RoleAssignmentFields: RoleAssignmentFields{
 			Suspended: utils.PointerTo(false),
@@ -34,16 +34,7 @@ func (s *modelSuite) TestRoleAssignmentForbiddenCreate() {
 }
 
 func (s *modelSuite) TestRoleAssignmentAllowedCreate() {
-	roleAssignment := RoleAssignment{
-		RoleID: s.TestData.Role_TerraEngineer().ID,
-		UserID: s.TestData.User_NonSuitable().ID,
-		RoleAssignmentFields: RoleAssignmentFields{
-			Suspended: utils.PointerTo(false),
-		},
-	}
-	s.SetSelfSuperAdminForDB()
-	err := s.DB.Create(&roleAssignment).Error
-	s.NoError(err)
+	roleAssignment := s.TestData.RoleAssignment_NonSuitable_TerraEngineer()
 	s.Run("journaled", func() {
 		var roleAssignmentOperation RoleAssignmentOperation
 		err := s.DB.Where(&RoleAssignmentOperation{
@@ -59,13 +50,13 @@ func (s *modelSuite) TestRoleAssignmentAllowedCreate() {
 func (s *modelSuite) TestRoleAssignmentBreakGlassForbiddenLacksRole() {
 	breakGlassRoleAssignment := RoleAssignment{
 		RoleID: s.TestData.Role_TerraGlassBrokenAdmin().ID,
-		UserID: s.TestData.User_Suitable().ID,
+		UserID: s.TestData.User_NonSuitable().ID,
 		RoleAssignmentFields: RoleAssignmentFields{
 			Suspended: utils.PointerTo(false),
 			ExpiresAt: utils.PointerTo(time.Now().Add(time.Hour)),
 		},
 	}
-	s.SetSuitableTestUserForDB()
+	s.SetNonSuitableTestUserForDB()
 	err := s.DB.Create(&breakGlassRoleAssignment).Error
 	s.ErrorContains(err, errors.Forbidden)
 	s.ErrorContains(err, "caller has neither that role nor super-admin")
