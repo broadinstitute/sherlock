@@ -5,6 +5,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/authentication"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
+	"github.com/creasty/defaults"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm/clause"
 	"net/http"
@@ -32,6 +33,10 @@ func roleAssignmentsV3Create(ctx *gin.Context) {
 	var body RoleAssignmentV3Edit
 	if err = ctx.ShouldBindJSON(&body); err != nil {
 		errors.AbortRequest(ctx, fmt.Errorf("(%s) request validation error: %w", errors.BadRequest, err))
+		return
+	}
+	if err = defaults.Set(&body); err != nil {
+		errors.AbortRequest(ctx, fmt.Errorf("error setting defaults: %w", err))
 		return
 	}
 

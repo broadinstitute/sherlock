@@ -13,7 +13,7 @@ type RoleAssignmentV3 struct {
 }
 
 type RoleAssignmentV3Edit struct {
-	Suspended *bool      `json:"suspended,omitempty" form:"suspended"`
+	Suspended *bool      `json:"suspended,omitempty" form:"suspended" default:"false"`
 	ExpiresAt *time.Time `json:"expiresAt,omitempty" form:"expiresAt" format:"date-time"`
 }
 
