@@ -7,6 +7,24 @@ import (
 	"testing"
 )
 
+func TestUseSuperAdminUserFor(t *testing.T) {
+	req, err := http.NewRequest("GET", "/", nil)
+	assert.NoError(t, err)
+	TestUserHelper{}.UseSuperAdminUserFor(req)
+	superAdmin, err := strconv.ParseBool(req.Header.Get(superAdminControlHeader))
+	assert.NoError(t, err)
+	assert.True(t, superAdmin)
+}
+
+func TestUseNonSuperAdminUserFor(t *testing.T) {
+	req, err := http.NewRequest("GET", "/", nil)
+	assert.NoError(t, err)
+	TestUserHelper{}.UseNonSuperAdminUserFor(req)
+	superAdmin, err := strconv.ParseBool(req.Header.Get(superAdminControlHeader))
+	assert.NoError(t, err)
+	assert.False(t, superAdmin)
+}
+
 func TestUseSuitableUserFor(t *testing.T) {
 	req, err := http.NewRequest("GET", "/", nil)
 	assert.NoError(t, err)

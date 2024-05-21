@@ -8,7 +8,7 @@ import (
 
 type RoleV3 struct {
 	CommonFields
-	CanbeGlassBrokenByRoleInfo *RoleV3             `json:"canBeGlassBrokenByRoleInfo,omitempty" swaggertype:"object" form:"-"`
+	CanBeGlassBrokenByRoleInfo *RoleV3             `json:"canBeGlassBrokenByRoleInfo,omitempty" swaggertype:"object" form:"-"`
 	Assignments                []*RoleAssignmentV3 `json:"assignments,omitempty" form:"-"`
 	RoleV3Edit
 }
@@ -48,7 +48,7 @@ func (r RoleV3Edit) toModel() models.Role {
 func roleFromModel(model models.Role) RoleV3 {
 	ret := RoleV3{
 		CommonFields:               commonFieldsFromGormModel(model.Model),
-		CanbeGlassBrokenByRoleInfo: utils.NilOrCall(roleFromModel, model.CanBeGlassBrokenByRole),
+		CanBeGlassBrokenByRoleInfo: utils.NilOrCall(roleFromModel, model.CanBeGlassBrokenByRole),
 		RoleV3Edit: RoleV3Edit{
 			Name:                    model.Name,
 			SuspendNonSuitableUsers: model.SuspendNonSuitableUsers,

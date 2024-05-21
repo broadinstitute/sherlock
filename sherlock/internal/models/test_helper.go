@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/authentication_method"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
@@ -47,8 +48,14 @@ func (h *TestSuiteHelper) SetupTest() {
 // SetUserForDB is a low-level helper function, setting with given user as
 // the current principal for the database. You'll usually want to call
 // SetSuitableTestUserForDB or SetNonSuitableTestUserForDB instead.
-func (h *TestSuiteHelper) SetUserForDB(user *User) *User {
-	if user.AuthenticationMethod != authentication_method.SHERLOCK_INTERNAL {
+func (h *TestSuiteHelper) SetUserForDB(user *User, reload ...bool) *User {
+	if len(reload) > 0 && reload[0] {
+		err := h.DB.Scopes(ReadUserScope).First(&user, user.ID).Error
+		if err != nil {
+			panic(fmt.Errorf("failed to reload user: %w", err))
+		}
+	}
+	if user != nil && user.AuthenticationMethod != authentication_method.SHERLOCK_INTERNAL {
 		user.AuthenticationMethod = authentication_method.TEST
 	}
 	h.DB = SetCurrentUserForDB(h.DB, user)
@@ -57,14 +64,14 @@ func (h *TestSuiteHelper) SetUserForDB(user *User) *User {
 
 // SetSuitableTestUserForDB is a helper function, calling SetUserForDB with
 // TestData.User_Suitable
-func (h *TestSuiteHelper) SetSuitableTestUserForDB() *User {
-	return h.SetUserForDB(utils.PointerTo(h.TestData.User_Suitable()))
+func (h *TestSuiteHelper) SetSuitableTestUserForDB(reload ...bool) *User {
+	return h.SetUserForDB(utils.PointerTo(h.TestData.User_Suitable()), reload...)
 }
 
 // SetNonSuitableTestUserForDB is a helper function, calling SetUserForDB with
 // TestData.User_NonSuitable
-func (h *TestSuiteHelper) SetNonSuitableTestUserForDB() *User {
-	return h.SetUserForDB(utils.PointerTo(h.TestData.User_NonSuitable()))
+func (h *TestSuiteHelper) SetNonSuitableTestUserForDB(reload ...bool) *User {
+	return h.SetUserForDB(utils.PointerTo(h.TestData.User_NonSuitable()), reload...)
 }
 
 // SetSelfSuperAdminForDB is a helper function, calling SetUserForDB with

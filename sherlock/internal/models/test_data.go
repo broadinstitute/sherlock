@@ -16,8 +16,19 @@ import (
 //  2. These methods cache within the context of a test function. Subsequent
 //     calls to a method will not contact the database.
 type TestData interface {
+	User_SuperAdmin() User
 	User_Suitable() User
 	User_NonSuitable() User
+
+	Role_SherlockSuperAdmin() Role
+	Role_TerraEngineer() Role
+	Role_TerraSuitableEngineer() Role
+	Role_TerraGlassBrokenAdmin() Role
+
+	RoleAssignment_SuperAdmin_SherlockSuperAdmin() RoleAssignment
+	RoleAssignment_Suitable_TerraSuitableEngineer() RoleAssignment
+	RoleAssignment_Suitable_TerraEngineer() RoleAssignment
+	RoleAssignment_NonSuitable_TerraEngineer() RoleAssignment
 
 	PagerdutyIntegration_ManuallyTriggeredTerraIncident() PagerdutyIntegration
 
@@ -121,8 +132,19 @@ type TestData interface {
 type testDataImpl struct {
 	h *TestSuiteHelper
 
+	user_superAdmin  User
 	user_suitable    User
 	user_nonSuitable User
+
+	role_sherlockSuperAdmin    Role
+	role_terraEngineer         Role
+	role_terraSuitableEngineer Role
+	role_terraGlassBrokenAdmin Role
+
+	roleAssignment_superAdmin_sherlockSuperAdmin  RoleAssignment
+	roleAssignment_suitable_terraSuitableEngineer RoleAssignment
+	roleAssignment_suitable_terraEngineer         RoleAssignment
+	roleAssignment_nonSuitable_terraEngineer      RoleAssignment
 
 	pagerdutyIntegration_manuallyTriggeredTerraIncident PagerdutyIntegration
 
@@ -224,8 +246,32 @@ func (td *testDataImpl) create(pointer any) {
 	}
 }
 
-// User_Suitable abstracts over the complexity of creating a general Terra-suitable user
-// for use in tests. It creates the user
+func (td *testDataImpl) User_SuperAdmin() User {
+	if td.user_superAdmin.ID == 0 {
+		td.user_superAdmin = User{
+			Email:    "sherlock-super-admin-test-email@broadinstitute.org",
+			GoogleID: "999000999",
+		}
+		td.create(&td.user_superAdmin)
+
+		// Assume super-admin to set suitability
+		td.h.SetSelfSuperAdminForDB()
+		td.create(&Suitability{
+			Email:       &td.user_superAdmin.Email,
+			Suitable:    utils.PointerTo(false),
+			Description: utils.PointerTo("TestData.User_SuperAdmin() is inherently suitable"),
+		})
+
+		td.RoleAssignment_SuperAdmin_SherlockSuperAdmin()
+
+		// Reload user from the database so we get suitability and other records
+		if err := td.h.DB.Scopes(ReadUserScope).Take(&td.user_superAdmin, td.user_superAdmin.ID).Error; err != nil {
+			panic(err)
+		}
+	}
+	return td.user_superAdmin
+}
+
 func (td *testDataImpl) User_Suitable() User {
 	if td.user_suitable.ID == 0 {
 		td.user_suitable = User{
@@ -242,6 +288,9 @@ func (td *testDataImpl) User_Suitable() User {
 			Description: utils.PointerTo("TestData.User_Suitable() is inherently suitable"),
 		})
 
+		td.RoleAssignment_Suitable_TerraEngineer()
+		td.RoleAssignment_Suitable_TerraSuitableEngineer()
+
 		// Reload user from the database so we get suitability and other records
 		if err := td.h.DB.Scopes(ReadUserScope).Take(&td.user_suitable, td.user_suitable.ID).Error; err != nil {
 			panic(err)
@@ -250,7 +299,6 @@ func (td *testDataImpl) User_Suitable() User {
 	return td.user_suitable
 }
 
-// User_NonSuitable is like User_Suitable but for a non-suitable User
 func (td *testDataImpl) User_NonSuitable() User {
 	if td.user_nonSuitable.ID == 0 {
 		td.user_nonSuitable = User{
@@ -267,12 +315,134 @@ func (td *testDataImpl) User_NonSuitable() User {
 			Description: utils.PointerTo("TestData.User_NonSuitable() is inherently non-suitable"),
 		})
 
+		td.RoleAssignment_NonSuitable_TerraEngineer()
+
 		// Reload user from the database so we get suitability and other records
 		if err := td.h.DB.Scopes(ReadUserScope).Take(&td.user_nonSuitable, td.user_nonSuitable.ID).Error; err != nil {
 			panic(err)
 		}
 	}
 	return td.user_nonSuitable
+}
+
+func (td *testDataImpl) Role_SherlockSuperAdmin() Role {
+	if td.role_sherlockSuperAdmin.ID == 0 {
+		td.role_sherlockSuperAdmin = Role{
+			RoleFields: RoleFields{
+				Name:                     utils.PointerTo("sherlock-super-admin"),
+				SuspendNonSuitableUsers:  utils.PointerTo(true),
+				GrantsSherlockSuperAdmin: utils.PointerTo(true),
+			},
+		}
+		td.h.SetSelfSuperAdminForDB()
+		td.create(&td.role_sherlockSuperAdmin)
+	}
+	return td.role_sherlockSuperAdmin
+}
+
+func (td *testDataImpl) Role_TerraEngineer() Role {
+	if td.role_terraEngineer.ID == 0 {
+		td.role_terraEngineer = Role{
+			RoleFields: RoleFields{
+				Name: utils.PointerTo("terra-engineer"),
+			},
+		}
+		td.h.SetSelfSuperAdminForDB()
+		td.create(&td.role_terraEngineer)
+	}
+	return td.role_terraEngineer
+}
+
+func (td *testDataImpl) Role_TerraSuitableEngineer() Role {
+	if td.role_terraSuitableEngineer.ID == 0 {
+		td.role_terraSuitableEngineer = Role{
+			RoleFields: RoleFields{
+				Name:                    utils.PointerTo("terra-suitable-engineer"),
+				SuspendNonSuitableUsers: utils.PointerTo(true),
+				GrantsDevFirecloudGroup: utils.PointerTo("terra-suitable-engineer"),
+				GrantsDevAzureGroup:     utils.PointerTo("terra-suitable-engineer"),
+			},
+		}
+		td.h.SetSelfSuperAdminForDB()
+		td.create(&td.role_terraSuitableEngineer)
+	}
+	return td.role_terraSuitableEngineer
+}
+
+func (td *testDataImpl) Role_TerraGlassBrokenAdmin() Role {
+	if td.role_terraGlassBrokenAdmin.ID == 0 {
+		td.role_terraGlassBrokenAdmin = Role{
+			RoleFields: RoleFields{
+				Name:                      utils.PointerTo("terra-glass-broken-admin"),
+				SuspendNonSuitableUsers:   utils.PointerTo(true),
+				CanBeGlassBrokenByRoleID:  utils.PointerTo(td.Role_TerraSuitableEngineer().ID),
+				DefaultGlassBreakDuration: utils.PointerTo((time.Hour * 8).Nanoseconds()),
+			},
+		}
+		td.h.SetSelfSuperAdminForDB()
+		td.create(&td.role_terraGlassBrokenAdmin)
+	}
+	return td.role_terraGlassBrokenAdmin
+}
+
+func (td *testDataImpl) RoleAssignment_SuperAdmin_SherlockSuperAdmin() RoleAssignment {
+	if td.roleAssignment_superAdmin_sherlockSuperAdmin.RoleID == 0 && td.roleAssignment_superAdmin_sherlockSuperAdmin.UserID == 0 {
+		td.roleAssignment_superAdmin_sherlockSuperAdmin = RoleAssignment{
+			UserID: td.User_SuperAdmin().ID,
+			RoleID: td.Role_SherlockSuperAdmin().ID,
+			RoleAssignmentFields: RoleAssignmentFields{
+				Suspended: utils.PointerTo(false),
+			},
+		}
+		td.h.SetSelfSuperAdminForDB()
+		td.create(&td.roleAssignment_superAdmin_sherlockSuperAdmin)
+	}
+	return td.roleAssignment_superAdmin_sherlockSuperAdmin
+}
+
+func (td *testDataImpl) RoleAssignment_Suitable_TerraSuitableEngineer() RoleAssignment {
+	if td.roleAssignment_suitable_terraSuitableEngineer.RoleID == 0 && td.roleAssignment_suitable_terraSuitableEngineer.UserID == 0 {
+		td.roleAssignment_suitable_terraSuitableEngineer = RoleAssignment{
+			UserID: td.User_Suitable().ID,
+			RoleID: td.Role_TerraSuitableEngineer().ID,
+			RoleAssignmentFields: RoleAssignmentFields{
+				Suspended: utils.PointerTo(false),
+			},
+		}
+		td.h.SetSelfSuperAdminForDB()
+		td.create(&td.roleAssignment_suitable_terraSuitableEngineer)
+	}
+	return td.roleAssignment_suitable_terraSuitableEngineer
+}
+
+func (td *testDataImpl) RoleAssignment_Suitable_TerraEngineer() RoleAssignment {
+	if td.roleAssignment_suitable_terraEngineer.RoleID == 0 && td.roleAssignment_suitable_terraEngineer.UserID == 0 {
+		td.roleAssignment_suitable_terraEngineer = RoleAssignment{
+			UserID: td.User_Suitable().ID,
+			RoleID: td.Role_TerraEngineer().ID,
+			RoleAssignmentFields: RoleAssignmentFields{
+				Suspended: utils.PointerTo(false),
+			},
+		}
+		td.h.SetSelfSuperAdminForDB()
+		td.create(&td.roleAssignment_suitable_terraEngineer)
+	}
+	return td.roleAssignment_suitable_terraEngineer
+}
+
+func (td *testDataImpl) RoleAssignment_NonSuitable_TerraEngineer() RoleAssignment {
+	if td.roleAssignment_nonSuitable_terraEngineer.RoleID == 0 && td.roleAssignment_nonSuitable_terraEngineer.UserID == 0 {
+		td.roleAssignment_nonSuitable_terraEngineer = RoleAssignment{
+			UserID: td.User_NonSuitable().ID,
+			RoleID: td.Role_TerraEngineer().ID,
+			RoleAssignmentFields: RoleAssignmentFields{
+				Suspended: utils.PointerTo(false),
+			},
+		}
+		td.h.SetSelfSuperAdminForDB()
+		td.create(&td.roleAssignment_nonSuitable_terraEngineer)
+	}
+	return td.roleAssignment_nonSuitable_terraEngineer
 }
 
 func (td *testDataImpl) PagerdutyIntegration_ManuallyTriggeredTerraIncident() PagerdutyIntegration {

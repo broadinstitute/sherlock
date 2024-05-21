@@ -45,7 +45,7 @@ func roleAssignmentsV3List(ctx *gin.Context) {
 		errors.AbortRequest(ctx, fmt.Errorf("(%s) %v", errors.BadRequest, err))
 		return
 	}
-	var results []models.Role
+	var results []models.RoleAssignment
 	chain := db.
 		Where(&modelFilter)
 	if limit > 0 {
@@ -61,5 +61,5 @@ func roleAssignmentsV3List(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, utils.Map(results, roleFromModel))
+	ctx.JSON(http.StatusOK, utils.Map(results, roleAssignmentFromModel))
 }

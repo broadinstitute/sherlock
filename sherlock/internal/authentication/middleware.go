@@ -33,7 +33,7 @@ func Middleware(db *gorm.DB) gin.HandlersChain {
 // and references models.TestData's User_Suitable and User_NonSuitable instances of models.User.
 func TestMiddleware(db *gorm.DB, td models.TestData) gin.HandlersChain {
 	return gin.HandlersChain{
-		setUserWhoConnected(db, test_users.MakeHeaderParser(td.User_Suitable(), td.User_NonSuitable()), authentication_method.TEST),
+		setUserWhoConnected(db, test_users.MakeHeaderParser(td.User_SuperAdmin(), td.User_Suitable(), td.User_NonSuitable()), authentication_method.TEST),
 		setGithubClaimsAndEscalateUser(db),
 		setDatabaseWithUser(db),
 	}
