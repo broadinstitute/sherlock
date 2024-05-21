@@ -120,7 +120,7 @@ export type SherlockClusterV3ProviderEnum = typeof SherlockClusterV3ProviderEnum
 /**
  * Check if a given object implements the SherlockClusterV3 interface.
  */
-export function instanceOfSherlockClusterV3(value: object): boolean {
+export function instanceOfSherlockClusterV3(value: object): value is SherlockClusterV3 {
     return true;
 }
 

@@ -63,7 +63,7 @@ export type SherlockUserV3UpsertNameFromEnum = typeof SherlockUserV3UpsertNameFr
 /**
  * Check if a given object implements the SherlockUserV3Upsert interface.
  */
-export function instanceOfSherlockUserV3Upsert(value: object): boolean {
+export function instanceOfSherlockUserV3Upsert(value: object): value is SherlockUserV3Upsert {
     return true;
 }
 

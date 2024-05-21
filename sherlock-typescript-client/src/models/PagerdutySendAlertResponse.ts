@@ -36,7 +36,7 @@ export interface PagerdutySendAlertResponse {
 /**
  * Check if a given object implements the PagerdutySendAlertResponse interface.
  */
-export function instanceOfPagerdutySendAlertResponse(value: object): boolean {
+export function instanceOfPagerdutySendAlertResponse(value: object): value is PagerdutySendAlertResponse {
     return true;
 }
 

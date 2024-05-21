@@ -36,7 +36,7 @@ export interface PagerdutyAlertSummary {
 /**
  * Check if a given object implements the PagerdutyAlertSummary interface.
  */
-export function instanceOfPagerdutyAlertSummary(value: object): boolean {
+export function instanceOfPagerdutyAlertSummary(value: object): value is PagerdutyAlertSummary {
     return true;
 }
 

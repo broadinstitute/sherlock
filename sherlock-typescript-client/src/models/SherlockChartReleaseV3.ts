@@ -295,7 +295,7 @@ export type SherlockChartReleaseV3ChartVersionResolverEnum = typeof SherlockChar
 /**
  * Check if a given object implements the SherlockChartReleaseV3 interface.
  */
-export function instanceOfSherlockChartReleaseV3(value: object): boolean {
+export function instanceOfSherlockChartReleaseV3(value: object): value is SherlockChartReleaseV3 {
     return true;
 }
 

@@ -42,7 +42,7 @@ export interface ErrorsErrorResponse {
 /**
  * Check if a given object implements the ErrorsErrorResponse interface.
  */
-export function instanceOfErrorsErrorResponse(value: object): boolean {
+export function instanceOfErrorsErrorResponse(value: object): value is ErrorsErrorResponse {
     return true;
 }
 

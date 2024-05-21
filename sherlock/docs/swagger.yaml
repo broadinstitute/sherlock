@@ -1555,6 +1555,7 @@ definitions:
       roleInfo:
         type: object
       suspended:
+        default: false
         type: boolean
       userInfo:
         type: object
@@ -1565,6 +1566,7 @@ definitions:
         format: date-time
         type: string
       suspended:
+        default: false
         type: boolean
     type: object
   sherlock.RoleV3:
@@ -6186,7 +6188,8 @@ paths:
         in: query
         name: expiresAt
         type: string
-      - in: query
+      - default: false
+        in: query
         name: suspended
         type: boolean
       - description: Control how many RoleAssignments are returned (default 0, no

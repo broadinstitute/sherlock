@@ -48,7 +48,7 @@ export interface SherlockRoleAssignmentV3 {
 /**
  * Check if a given object implements the SherlockRoleAssignmentV3 interface.
  */
-export function instanceOfSherlockRoleAssignmentV3(value: object): boolean {
+export function instanceOfSherlockRoleAssignmentV3(value: object): value is SherlockRoleAssignmentV3 {
     return true;
 }
 

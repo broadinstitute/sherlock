@@ -247,7 +247,7 @@ export interface SherlockEnvironmentV3 {
 /**
  * Check if a given object implements the SherlockEnvironmentV3 interface.
  */
-export function instanceOfSherlockEnvironmentV3(value: object): boolean {
+export function instanceOfSherlockEnvironmentV3(value: object): value is SherlockEnvironmentV3 {
     return true;
 }
 

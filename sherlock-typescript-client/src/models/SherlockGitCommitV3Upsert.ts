@@ -54,7 +54,7 @@ export interface SherlockGitCommitV3Upsert {
 /**
  * Check if a given object implements the SherlockGitCommitV3Upsert interface.
  */
-export function instanceOfSherlockGitCommitV3Upsert(value: object): boolean {
+export function instanceOfSherlockGitCommitV3Upsert(value: object): value is SherlockGitCommitV3Upsert {
     return true;
 }
 

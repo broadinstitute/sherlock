@@ -30,7 +30,7 @@ export interface SherlockChartVersionV3Edit {
 /**
  * Check if a given object implements the SherlockChartVersionV3Edit interface.
  */
-export function instanceOfSherlockChartVersionV3Edit(value: object): boolean {
+export function instanceOfSherlockChartVersionV3Edit(value: object): value is SherlockChartVersionV3Edit {
     return true;
 }
 

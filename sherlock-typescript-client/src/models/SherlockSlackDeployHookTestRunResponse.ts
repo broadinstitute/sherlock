@@ -30,7 +30,7 @@ export interface SherlockSlackDeployHookTestRunResponse {
 /**
  * Check if a given object implements the SherlockSlackDeployHookTestRunResponse interface.
  */
-export function instanceOfSherlockSlackDeployHookTestRunResponse(value: object): boolean {
+export function instanceOfSherlockSlackDeployHookTestRunResponse(value: object): value is SherlockSlackDeployHookTestRunResponse {
     return true;
 }
 

@@ -6588,6 +6588,7 @@
                     },
                     {
                         "type": "boolean",
+                        "default": false,
                         "name": "suspended",
                         "in": "query"
                     },
@@ -9792,7 +9793,8 @@
                     "type": "object"
                 },
                 "suspended": {
-                    "type": "boolean"
+                    "type": "boolean",
+                    "default": false
                 },
                 "userInfo": {
                     "type": "object"
@@ -9807,7 +9809,8 @@
                     "format": "date-time"
                 },
                 "suspended": {
-                    "type": "boolean"
+                    "type": "boolean",
+                    "default": false
                 }
             }
         },

@@ -2,8 +2,17 @@
 ### [More Information](https://docs.pact.io/getting_started/provider_states)
 - `caller is suitable`
 - `caller is non-suitable`
+- `User_SuperAdmin exists`
 - `User_Suitable exists`
 - `User_NonSuitable exists`
+- `Role_SherlockSuperAdmin exists`
+- `Role_TerraEngineer exists`
+- `Role_TerraSuitableEngineer exists`
+- `Role_TerraGlassBrokenAdmin exists`
+- `RoleAssignment_SuperAdmin_SherlockSuperAdmin exists`
+- `RoleAssignment_Suitable_TerraSuitableEngineer exists`
+- `RoleAssignment_Suitable_TerraEngineer exists`
+- `RoleAssignment_NonSuitable_TerraEngineer exists`
 - `PagerdutyIntegration_ManuallyTriggeredTerraIncident exists`
 - `Chart_Leonardo exists`
 - `Chart_D2p exists`

@@ -30,7 +30,7 @@ export interface SherlockGithubActionsDeployHookTestRunRequest {
 /**
  * Check if a given object implements the SherlockGithubActionsDeployHookTestRunRequest interface.
  */
-export function instanceOfSherlockGithubActionsDeployHookTestRunRequest(value: object): boolean {
+export function instanceOfSherlockGithubActionsDeployHookTestRunRequest(value: object): value is SherlockGithubActionsDeployHookTestRunRequest {
     return true;
 }
 

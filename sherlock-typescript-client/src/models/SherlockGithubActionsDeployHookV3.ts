@@ -114,7 +114,7 @@ export type SherlockGithubActionsDeployHookV3GithubActionsRefBehaviorEnum = type
 /**
  * Check if a given object implements the SherlockGithubActionsDeployHookV3 interface.
  */
-export function instanceOfSherlockGithubActionsDeployHookV3(value: object): boolean {
+export function instanceOfSherlockGithubActionsDeployHookV3(value: object): value is SherlockGithubActionsDeployHookV3 {
     return true;
 }
 

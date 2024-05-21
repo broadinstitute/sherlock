@@ -6592,6 +6592,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "boolean",
+                        "default": false,
                         "name": "suspended",
                         "in": "query"
                     },
@@ -9796,7 +9797,8 @@ const docTemplate = `{
                     "type": "object"
                 },
                 "suspended": {
-                    "type": "boolean"
+                    "type": "boolean",
+                    "default": false
                 },
                 "userInfo": {
                     "type": "object"
@@ -9811,7 +9813,8 @@ const docTemplate = `{
                     "format": "date-time"
                 },
                 "suspended": {
-                    "type": "boolean"
+                    "type": "boolean",
+                    "default": false
                 }
             }
         },

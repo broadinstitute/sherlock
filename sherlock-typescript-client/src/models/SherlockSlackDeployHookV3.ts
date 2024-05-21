@@ -78,7 +78,7 @@ export interface SherlockSlackDeployHookV3 {
 /**
  * Check if a given object implements the SherlockSlackDeployHookV3 interface.
  */
-export function instanceOfSherlockSlackDeployHookV3(value: object): boolean {
+export function instanceOfSherlockSlackDeployHookV3(value: object): value is SherlockSlackDeployHookV3 {
     return true;
 }
 

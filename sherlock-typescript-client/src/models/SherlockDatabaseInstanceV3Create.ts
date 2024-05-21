@@ -54,7 +54,7 @@ export interface SherlockDatabaseInstanceV3Create {
 /**
  * Check if a given object implements the SherlockDatabaseInstanceV3Create interface.
  */
-export function instanceOfSherlockDatabaseInstanceV3Create(value: object): boolean {
+export function instanceOfSherlockDatabaseInstanceV3Create(value: object): value is SherlockDatabaseInstanceV3Create {
     return true;
 }
 

@@ -55,7 +55,7 @@ export interface SherlockChangesetV3PlanRequest {
 /**
  * Check if a given object implements the SherlockChangesetV3PlanRequest interface.
  */
-export function instanceOfSherlockChangesetV3PlanRequest(value: object): boolean {
+export function instanceOfSherlockChangesetV3PlanRequest(value: object): value is SherlockChangesetV3PlanRequest {
     return true;
 }
 

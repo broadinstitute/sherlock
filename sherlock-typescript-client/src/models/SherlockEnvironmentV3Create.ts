@@ -174,7 +174,7 @@ export interface SherlockEnvironmentV3Create {
 /**
  * Check if a given object implements the SherlockEnvironmentV3Create interface.
  */
-export function instanceOfSherlockEnvironmentV3Create(value: object): boolean {
+export function instanceOfSherlockEnvironmentV3Create(value: object): value is SherlockEnvironmentV3Create {
     return true;
 }
 

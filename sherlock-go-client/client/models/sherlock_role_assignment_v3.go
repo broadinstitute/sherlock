@@ -27,7 +27,7 @@ type SherlockRoleAssignmentV3 struct {
 	RoleInfo interface{} `json:"roleInfo,omitempty"`
 
 	// suspended
-	Suspended bool `json:"suspended,omitempty"`
+	Suspended *bool `json:"suspended,omitempty"`
 
 	// user info
 	UserInfo interface{} `json:"userInfo,omitempty"`

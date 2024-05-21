@@ -193,7 +193,7 @@ export type SherlockCiRunV3UpsertRelateToChangesetNewVersionsEnum = typeof Sherl
 /**
  * Check if a given object implements the SherlockCiRunV3Upsert interface.
  */
-export function instanceOfSherlockCiRunV3Upsert(value: object): boolean {
+export function instanceOfSherlockCiRunV3Upsert(value: object): value is SherlockCiRunV3Upsert {
     return true;
 }
 

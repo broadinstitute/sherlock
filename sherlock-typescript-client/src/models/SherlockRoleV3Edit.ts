@@ -66,7 +66,7 @@ export interface SherlockRoleV3Edit {
 /**
  * Check if a given object implements the SherlockRoleV3Edit interface.
  */
-export function instanceOfSherlockRoleV3Edit(value: object): boolean {
+export function instanceOfSherlockRoleV3Edit(value: object): value is SherlockRoleV3Edit {
     return true;
 }
 

@@ -48,7 +48,7 @@ export interface SherlockDatabaseInstanceV3Edit {
 /**
  * Check if a given object implements the SherlockDatabaseInstanceV3Edit interface.
  */
-export function instanceOfSherlockDatabaseInstanceV3Edit(value: object): boolean {
+export function instanceOfSherlockDatabaseInstanceV3Edit(value: object): value is SherlockDatabaseInstanceV3Edit {
     return true;
 }
 

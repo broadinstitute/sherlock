@@ -72,7 +72,7 @@ export interface SherlockIncidentV3 {
 /**
  * Check if a given object implements the SherlockIncidentV3 interface.
  */
-export function instanceOfSherlockIncidentV3(value: object): boolean {
+export function instanceOfSherlockIncidentV3(value: object): value is SherlockIncidentV3 {
     return true;
 }
 

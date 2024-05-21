@@ -295,7 +295,7 @@ export interface SherlockChangesetV3 {
 /**
  * Check if a given object implements the SherlockChangesetV3 interface.
  */
-export function instanceOfSherlockChangesetV3(value: object): boolean {
+export function instanceOfSherlockChangesetV3(value: object): value is SherlockChangesetV3 {
     return true;
 }
 

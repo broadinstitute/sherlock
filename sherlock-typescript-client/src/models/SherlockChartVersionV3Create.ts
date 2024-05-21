@@ -48,7 +48,7 @@ export interface SherlockChartVersionV3Create {
 /**
  * Check if a given object implements the SherlockChartVersionV3Create interface.
  */
-export function instanceOfSherlockChartVersionV3Create(value: object): boolean {
+export function instanceOfSherlockChartVersionV3Create(value: object): value is SherlockChartVersionV3Create {
     return true;
 }
 

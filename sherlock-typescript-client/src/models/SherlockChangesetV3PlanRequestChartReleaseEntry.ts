@@ -102,7 +102,7 @@ export interface SherlockChangesetV3PlanRequestChartReleaseEntry {
 /**
  * Check if a given object implements the SherlockChangesetV3PlanRequestChartReleaseEntry interface.
  */
-export function instanceOfSherlockChangesetV3PlanRequestChartReleaseEntry(value: object): boolean {
+export function instanceOfSherlockChangesetV3PlanRequestChartReleaseEntry(value: object): value is SherlockChangesetV3PlanRequestChartReleaseEntry {
     return true;
 }
 

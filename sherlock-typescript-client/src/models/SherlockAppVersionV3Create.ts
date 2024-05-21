@@ -60,7 +60,7 @@ export interface SherlockAppVersionV3Create {
 /**
  * Check if a given object implements the SherlockAppVersionV3Create interface.
  */
-export function instanceOfSherlockAppVersionV3Create(value: object): boolean {
+export function instanceOfSherlockAppVersionV3Create(value: object): value is SherlockAppVersionV3Create {
     return true;
 }
 

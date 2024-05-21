@@ -60,7 +60,7 @@ export interface SherlockPagerdutyIntegrationV3 {
 /**
  * Check if a given object implements the SherlockPagerdutyIntegrationV3 interface.
  */
-export function instanceOfSherlockPagerdutyIntegrationV3(value: object): boolean {
+export function instanceOfSherlockPagerdutyIntegrationV3(value: object): value is SherlockPagerdutyIntegrationV3 {
     return true;
 }
 

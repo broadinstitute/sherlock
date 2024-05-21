@@ -42,7 +42,7 @@ export interface SherlockPagerdutyIntegrationV3Edit {
 /**
  * Check if a given object implements the SherlockPagerdutyIntegrationV3Edit interface.
  */
-export function instanceOfSherlockPagerdutyIntegrationV3Edit(value: object): boolean {
+export function instanceOfSherlockPagerdutyIntegrationV3Edit(value: object): value is SherlockPagerdutyIntegrationV3Edit {
     return true;
 }
 

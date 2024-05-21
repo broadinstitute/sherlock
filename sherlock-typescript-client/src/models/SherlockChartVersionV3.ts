@@ -115,7 +115,7 @@ export interface SherlockChartVersionV3 {
 /**
  * Check if a given object implements the SherlockChartVersionV3 interface.
  */
-export function instanceOfSherlockChartVersionV3(value: object): boolean {
+export function instanceOfSherlockChartVersionV3(value: object): value is SherlockChartVersionV3 {
     return true;
 }
 

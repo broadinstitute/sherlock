@@ -78,7 +78,7 @@ export interface SherlockGitCommitV3 {
 /**
  * Check if a given object implements the SherlockGitCommitV3 interface.
  */
-export function instanceOfSherlockGitCommitV3(value: object): boolean {
+export function instanceOfSherlockGitCommitV3(value: object): value is SherlockGitCommitV3 {
     return true;
 }
 

@@ -48,7 +48,7 @@ export interface SherlockPagerdutyIntegrationV3Create {
 /**
  * Check if a given object implements the SherlockPagerdutyIntegrationV3Create interface.
  */
-export function instanceOfSherlockPagerdutyIntegrationV3Create(value: object): boolean {
+export function instanceOfSherlockPagerdutyIntegrationV3Create(value: object): value is SherlockPagerdutyIntegrationV3Create {
     return true;
 }
 

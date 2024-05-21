@@ -134,7 +134,7 @@ export type SherlockUserV3NameFromEnum = typeof SherlockUserV3NameFromEnum[keyof
 /**
  * Check if a given object implements the SherlockUserV3 interface.
  */
-export function instanceOfSherlockUserV3(value: object): boolean {
+export function instanceOfSherlockUserV3(value: object): value is SherlockUserV3 {
     return true;
 }
 

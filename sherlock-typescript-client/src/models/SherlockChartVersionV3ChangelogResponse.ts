@@ -43,7 +43,7 @@ export interface SherlockChartVersionV3ChangelogResponse {
 /**
  * Check if a given object implements the SherlockChartVersionV3ChangelogResponse interface.
  */
-export function instanceOfSherlockChartVersionV3ChangelogResponse(value: object): boolean {
+export function instanceOfSherlockChartVersionV3ChangelogResponse(value: object): value is SherlockChartVersionV3ChangelogResponse {
     return true;
 }
 

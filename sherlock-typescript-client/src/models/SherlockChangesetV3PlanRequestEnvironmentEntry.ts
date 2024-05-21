@@ -54,7 +54,7 @@ export interface SherlockChangesetV3PlanRequestEnvironmentEntry {
 /**
  * Check if a given object implements the SherlockChangesetV3PlanRequestEnvironmentEntry interface.
  */
-export function instanceOfSherlockChangesetV3PlanRequestEnvironmentEntry(value: object): boolean {
+export function instanceOfSherlockChangesetV3PlanRequestEnvironmentEntry(value: object): value is SherlockChangesetV3PlanRequestEnvironmentEntry {
     return true;
 }
 

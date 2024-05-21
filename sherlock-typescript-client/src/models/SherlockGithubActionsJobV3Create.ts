@@ -78,7 +78,7 @@ export interface SherlockGithubActionsJobV3Create {
 /**
  * Check if a given object implements the SherlockGithubActionsJobV3Create interface.
  */
-export function instanceOfSherlockGithubActionsJobV3Create(value: object): boolean {
+export function instanceOfSherlockGithubActionsJobV3Create(value: object): value is SherlockGithubActionsJobV3Create {
     return true;
 }
 

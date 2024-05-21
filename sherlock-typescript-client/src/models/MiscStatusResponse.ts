@@ -30,7 +30,7 @@ export interface MiscStatusResponse {
 /**
  * Check if a given object implements the MiscStatusResponse interface.
  */
-export function instanceOfMiscStatusResponse(value: object): boolean {
+export function instanceOfMiscStatusResponse(value: object): value is MiscStatusResponse {
     return true;
 }
 

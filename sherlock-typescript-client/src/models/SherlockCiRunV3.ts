@@ -164,7 +164,7 @@ export interface SherlockCiRunV3 {
 /**
  * Check if a given object implements the SherlockCiRunV3 interface.
  */
-export function instanceOfSherlockCiRunV3(value: object): boolean {
+export function instanceOfSherlockCiRunV3(value: object): value is SherlockCiRunV3 {
     return true;
 }
 

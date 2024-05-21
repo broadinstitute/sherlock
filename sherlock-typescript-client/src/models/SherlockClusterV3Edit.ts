@@ -48,7 +48,7 @@ export interface SherlockClusterV3Edit {
 /**
  * Check if a given object implements the SherlockClusterV3Edit interface.
  */
-export function instanceOfSherlockClusterV3Edit(value: object): boolean {
+export function instanceOfSherlockClusterV3Edit(value: object): value is SherlockClusterV3Edit {
     return true;
 }
 

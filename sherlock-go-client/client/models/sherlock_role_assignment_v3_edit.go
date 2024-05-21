@@ -24,7 +24,7 @@ type SherlockRoleAssignmentV3Edit struct {
 	ExpiresAt strfmt.DateTime `json:"expiresAt,omitempty"`
 
 	// suspended
-	Suspended bool `json:"suspended,omitempty"`
+	Suspended *bool `json:"suspended,omitempty"`
 }
 
 // Validate validates this sherlock role assignment v3 edit

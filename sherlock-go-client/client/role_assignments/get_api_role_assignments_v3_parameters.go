@@ -97,7 +97,18 @@ func (o *GetAPIRoleAssignmentsV3Params) WithDefaults() *GetAPIRoleAssignmentsV3P
 //
 // All values with no default are reset to their zero value.
 func (o *GetAPIRoleAssignmentsV3Params) SetDefaults() {
-	// no default values defined for this parameter
+	var (
+		suspendedDefault = bool(false)
+	)
+
+	val := GetAPIRoleAssignmentsV3Params{
+		Suspended: &suspendedDefault,
+	}
+
+	val.timeout = o.timeout
+	val.Context = o.Context
+	val.HTTPClient = o.HTTPClient
+	*o = val
 }
 
 // WithTimeout adds the timeout to the get API role assignments v3 params

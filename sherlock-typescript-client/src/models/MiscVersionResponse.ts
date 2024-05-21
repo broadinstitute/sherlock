@@ -42,7 +42,7 @@ export interface MiscVersionResponse {
 /**
  * Check if a given object implements the MiscVersionResponse interface.
  */
-export function instanceOfMiscVersionResponse(value: object): boolean {
+export function instanceOfMiscVersionResponse(value: object): value is MiscVersionResponse {
     return true;
 }
 
