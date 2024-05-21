@@ -69,5 +69,5 @@ func roleAssignmentsV3Edit(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, roleAssignmentFromModel(toEdit))
+	ctx.JSON(http.StatusOK, roleAssignmentFromModel(toEdit))
 }
