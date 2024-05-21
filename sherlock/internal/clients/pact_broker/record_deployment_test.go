@@ -3,8 +3,8 @@ package pact_broker
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/broadinstitute/sherlock/sherlock/internal/clients/pact_broker/pact_broker_mocks"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
-	"github.com/broadinstitute/sherlock/sherlock/internal/pact_broker/pact_broker_mocks"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/mock"
 	"io"
