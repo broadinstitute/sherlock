@@ -133,6 +133,22 @@ func (s *modelSuite) TestRoleAssignmentBreakGlassForbiddenExpiryTooFarFuture() {
 	s.ErrorContains(err, "the expiry on the break-glass assignment is too far in the future")
 }
 
+func (s *modelSuite) TestRoleAssignmentBreakGlassForbiddenSuspended() {
+	s.TestData.RoleAssignment_Suitable_TerraSuitableEngineer()
+	breakGlassRoleAssignment := RoleAssignment{
+		RoleID: s.TestData.Role_TerraGlassBrokenAdmin().ID,
+		UserID: s.TestData.User_Suitable().ID,
+		RoleAssignmentFields: RoleAssignmentFields{
+			Suspended: utils.PointerTo(true),
+			ExpiresAt: utils.PointerTo(time.Now().Add(time.Hour)),
+		},
+	}
+	s.SetSuitableTestUserForDB(true)
+	err := s.DB.Create(&breakGlassRoleAssignment).Error
+	s.ErrorContains(err, errors.Forbidden)
+	s.ErrorContains(err, "the break-glass assignment is suspended (break-glass and suspensions don't mix)")
+}
+
 func (s *modelSuite) TestRoleAssignmentBreakGlassAllowed() {
 	s.TestData.RoleAssignment_Suitable_TerraSuitableEngineer()
 	breakGlassRoleAssignment := RoleAssignment{

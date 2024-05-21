@@ -90,6 +90,9 @@ func (ra *RoleAssignment) errorIfForbidden(tx *gorm.DB) error {
 					// If the expiry is too far in the future, bail
 					// (We fudge the timing by a second to account for the fact that the expiry is inclusive)
 					return fmt.Errorf("(%s) role %s (%d) can be glass-broken by the caller but the expiry on the break-glass assignment is too far in the future (must be within %s of now)", errors.Forbidden, *targetRole.Name, current.RoleID, time.Duration(*targetRole.DefaultGlassBreakDuration).String())
+				} else if current.Suspended != nil && *current.Suspended {
+					// If the assigment is suspended, bail, break-glass and suspensions don't mix
+					return fmt.Errorf("(%s) role %s (%d) can be glass-broken by the caller but the break-glass assignment is suspended (break-glass and suspensions don't mix)", errors.Forbidden, *targetRole.Name, current.RoleID)
 				} else {
 					// If we get all the way here, the operation is valid
 					return nil
