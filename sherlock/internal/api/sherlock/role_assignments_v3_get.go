@@ -54,5 +54,5 @@ func roleAssignmentsV3Get(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, roleAssignmentFromModel(result))
+	ctx.JSON(http.StatusOK, roleAssignmentFromModel(result))
 }
