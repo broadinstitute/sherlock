@@ -8,11 +8,12 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/html"
 	"github.com/broadinstitute/sherlock/sherlock/internal/api/misc"
 	"github.com/broadinstitute/sherlock/sherlock/internal/api/sherlock"
-	"github.com/broadinstitute/sherlock/sherlock/internal/authentication"
-	"github.com/broadinstitute/sherlock/sherlock/internal/boot/middleware"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/metrics"
+	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/authentication"
+	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/headers"
+	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/logger"
 	"github.com/gin-gonic/gin"
 	swaggo_files "github.com/swaggo/files"
 	swaggo_gin "github.com/swaggo/gin-swagger"
@@ -50,8 +51,8 @@ func BuildRouter(ctx context.Context, db *gorm.DB) *gin.Engine {
 
 	router.Use(
 		gin.Recovery(),
-		middleware.Logger(),
-		middleware.Headers())
+		logger.Logger(),
+		headers.Headers())
 
 	// Replace Gin's standard fallback responses with our standard error format for friendlier client behavior
 	router.NoRoute(func(ctx *gin.Context) {

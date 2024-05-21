@@ -3,9 +3,9 @@ package models
 import (
 	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
-	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/authentication_method"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/db"
+	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/authentication/authentication_method"
 	"gorm.io/gorm"
 )
 

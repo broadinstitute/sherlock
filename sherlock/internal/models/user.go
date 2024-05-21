@@ -3,10 +3,10 @@ package models
 import (
 	"context"
 	"fmt"
-	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/authentication_method"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
-	"github.com/broadinstitute/sherlock/sherlock/internal/self"
+	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/authentication/authentication_method"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models/self"
 	"gorm.io/gorm"
 	"strings"
 	"unicode"

@@ -2,9 +2,9 @@ package models
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/authentication_method"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
-	"github.com/broadinstitute/sherlock/sherlock/internal/self"
+	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/authentication/authentication_method"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models/self"
 	"github.com/knadh/koanf"
 	"gorm.io/gorm"
 )

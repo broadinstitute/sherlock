@@ -3,10 +3,10 @@ package sherlock
 import (
 	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
-	"github.com/broadinstitute/sherlock/sherlock/internal/authentication"
-	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/gha_oidc/gha_oidc_claims"
+	"github.com/broadinstitute/sherlock/sherlock/internal/ci_hooks"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
-	"github.com/broadinstitute/sherlock/sherlock/internal/hooks"
+	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/authentication"
+	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/authentication/gha_oidc/gha_oidc_claims"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/slack"
 	"github.com/creasty/defaults"
@@ -647,7 +647,7 @@ WHERE
 	// Dispatch either when the workflow hasn't finished or when it has but we claimed
 	// the final dispatch
 	if result.TerminalAt == nil || result.EvaluateIfTerminationClaimHeld(claim) {
-		hooks.Dispatch(db, result)
+		ci_hooks.Dispatch(db, result)
 	}
 
 	ctx.JSON(http.StatusCreated, ciRunFromModel(result))
