@@ -3,7 +3,7 @@ module github.com/broadinstitute/sherlock/sherlock
 go 1.21
 
 require (
-	cloud.google.com/go/cloudsqlconn v1.10.0
+	cloud.google.com/go/cloudsqlconn v1.10.1
 	contrib.go.opencensus.io/exporter/prometheus v0.4.2
 	github.com/PagerDuty/go-pagerduty v1.8.0
 	github.com/broadinstitute/sherlock/go-shared v0.0.0
@@ -127,7 +127,7 @@ require (
 	golang.org/x/time v0.5.0 // indirect
 	golang.org/x/tools v0.15.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20240506185236-b8a5c65736ae // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20240513163218-0867130af1f8 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20240521202816-d264139d666e // indirect
 	google.golang.org/grpc v1.63.2 // indirect
 	google.golang.org/protobuf v1.34.1 // indirect
 	gopkg.in/square/go-jose.v2 v2.5.1 // indirect
