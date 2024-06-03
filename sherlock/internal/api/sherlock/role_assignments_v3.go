@@ -52,7 +52,7 @@ func roleAssignmentFromModel(model models.RoleAssignment) RoleAssignmentV3 {
 		},
 	}
 	if ret.ExpiresAt != nil {
-		expiresIn := ret.ExpiresAt.Sub(time.Now()).String()
+		expiresIn := time.Until(*ret.ExpiresAt).String()
 		ret.ExpiresIn = &expiresIn
 	}
 	return ret
