@@ -40,7 +40,11 @@ func roleAssignmentsV3Create(ctx *gin.Context) {
 		return
 	}
 
-	toCreate := body.toModel()
+	toCreate, err := body.toModel()
+	if err != nil {
+		errors.AbortRequest(ctx, err)
+		return
+	}
 	roleQuery, err := roleModelFromSelector(canonicalizeSelector(ctx.Param("role-selector")))
 	if err != nil {
 		errors.AbortRequest(ctx, err)

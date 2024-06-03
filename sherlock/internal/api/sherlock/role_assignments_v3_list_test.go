@@ -25,6 +25,16 @@ func (s *handlerSuite) TestRoleAssignmentsV3List_badFilter() {
 	s.Equal(errors.BadRequest, got.Type)
 }
 
+func (s *handlerSuite) TestRoleAssignmentsV3List_badFilter_expiresIn() {
+	var got errors.ErrorResponse
+	code := s.HandleRequest(
+		s.NewRequest("GET", "/api/role-assignments/v3?expiresIn=bad", nil),
+		&got)
+	s.Equal(http.StatusBadRequest, code)
+	s.Equal(errors.BadRequest, got.Type)
+	s.Contains(got.Message, "expiresIn")
+}
+
 func (s *handlerSuite) TestRoleAssignmentsV3List_badLimit() {
 	var got errors.ErrorResponse
 	code := s.HandleRequest(

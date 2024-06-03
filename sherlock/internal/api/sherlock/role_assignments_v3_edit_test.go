@@ -5,6 +5,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"time"
 )
 
 func (s *handlerSuite) TestRoleAssignmentsV3Edit_notFound() {
@@ -26,7 +27,20 @@ func (s *handlerSuite) TestRoleAssignmentsV3Edit_badSelector() {
 	s.Contains(got.Message, "selector")
 }
 
-func (s *handlerSuite) TestRoleAssignmentsV3Edit_badBody() {
+func (s *handlerSuite) TestRoleAssignmentsV3Edit_badBody_expiresIn() {
+	roleAssignment := s.TestData.RoleAssignment_Suitable_TerraEngineer()
+	var got errors.ErrorResponse
+	code := s.HandleRequest(
+		s.NewRequest("PATCH", "/api/role-assignments/v3/"+utils.UintToString(roleAssignment.RoleID)+"/"+utils.UintToString(roleAssignment.UserID), RoleAssignmentV3Edit{
+			ExpiresIn: utils.PointerTo("not-a-duration"),
+		}),
+		&got)
+	s.Equal(http.StatusBadRequest, code)
+	s.Equal(errors.BadRequest, got.Type)
+	s.Contains(got.Message, "expiresIn")
+}
+
+func (s *handlerSuite) TestRoleAssignmentsV3Edit_badBody_sql() {
 	roleAssignment := s.TestData.RoleAssignment_Suitable_TerraEngineer()
 	var got errors.ErrorResponse
 	code := s.HandleRequest(
@@ -63,4 +77,17 @@ func (s *handlerSuite) TestRoleAssignmentsV3Edit() {
 	s.Equal(roleAssignment.RoleID, got.RoleInfo.ID)
 	s.Equal(roleAssignment.UserID, got.UserInfo.ID)
 	s.True(*got.Suspended)
+}
+
+func (s *handlerSuite) TestRoleAssignmentsV3Edit_expiresIn() {
+	roleAssignment := s.TestData.RoleAssignment_NonSuitable_TerraEngineer()
+	var got RoleAssignmentV3
+	code := s.HandleRequest(
+		s.NewSuperAdminRequest("PATCH", "/api/role-assignments/v3/"+utils.UintToString(roleAssignment.RoleID)+"/"+utils.UintToString(roleAssignment.UserID), RoleAssignmentV3Edit{
+			ExpiresIn: utils.PointerTo(time.Minute.String()),
+		}),
+		&got)
+	s.Equal(http.StatusOK, code)
+	s.Equal(roleAssignment.RoleID, got.RoleInfo.ID)
+	s.Equal(roleAssignment.UserID, got.UserInfo.ID)
 }
