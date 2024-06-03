@@ -30,6 +30,7 @@ import {
 
 export interface ApiRoleAssignmentsV3GetRequest {
     expiresAt?: Date;
+    expiresIn?: string;
     suspended?: boolean;
     limit?: number;
     offset?: number;
@@ -71,6 +72,10 @@ export class RoleAssignmentsApi extends runtime.BaseAPI {
 
         if (requestParameters['expiresAt'] != null) {
             queryParameters['expiresAt'] = (requestParameters['expiresAt'] as any).toISOString();
+        }
+
+        if (requestParameters['expiresIn'] != null) {
+            queryParameters['expiresIn'] = requestParameters['expiresIn'];
         }
 
         if (requestParameters['suspended'] != null) {

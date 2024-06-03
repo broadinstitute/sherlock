@@ -1552,6 +1552,11 @@ definitions:
       expiresAt:
         format: date-time
         type: string
+      expiresIn:
+        description: A Go time.Duration string that will be added to the current time
+          to attempt to set expiresAt (this may be more convenient than setting expiresAt
+          directly)
+        type: string
       roleInfo:
         type: object
       suspended:
@@ -1564,6 +1569,11 @@ definitions:
     properties:
       expiresAt:
         format: date-time
+        type: string
+      expiresIn:
+        description: A Go time.Duration string that will be added to the current time
+          to attempt to set expiresAt (this may be more convenient than setting expiresAt
+          directly)
         type: string
       suspended:
         default: false
@@ -6187,6 +6197,12 @@ paths:
       - format: date-time
         in: query
         name: expiresAt
+        type: string
+      - description: A Go time.Duration string that will be added to the current time
+          to attempt to set expiresAt (this may be more convenient than setting expiresAt
+          directly)
+        in: query
+        name: expiresIn
         type: string
       - default: false
         in: query

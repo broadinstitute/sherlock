@@ -23,6 +23,9 @@ type SherlockRoleAssignmentV3Edit struct {
 	// Format: date-time
 	ExpiresAt strfmt.DateTime `json:"expiresAt,omitempty"`
 
+	// A Go time.Duration string that will be added to the current time to attempt to set expiresAt (this may be more convenient than setting expiresAt directly)
+	ExpiresIn string `json:"expiresIn,omitempty"`
+
 	// suspended
 	Suspended *bool `json:"suspended,omitempty"`
 }
