@@ -51,3 +51,6 @@ packages:
   github.com/broadinstitute/sherlock/sherlock/internal/clients/pact_broker:
     interfaces:
       mockablePactBroker:
+  github.com/broadinstitute/sherlock/sherlock/internal/middleware/authentication/gha_oidc:
+    interfaces:
+      mockableVerifier:
