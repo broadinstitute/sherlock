@@ -26,6 +26,18 @@ func (s *handlerSuite) TestRoleAssignmentsV3Create_badSelector() {
 	s.Contains(got.Message, "selector")
 }
 
+func (s *handlerSuite) TestRoleAssignmentsV3Create_badBodyExpiresIn() {
+	var got errors.ErrorResponse
+	code := s.HandleRequest(
+		s.NewRequest("POST", "/api/role-assignments/v3/!!!/!!!", RoleAssignmentV3Edit{
+			ExpiresIn: utils.PointerTo("not-a-duration"),
+		}),
+		&got)
+	s.Equal(http.StatusBadRequest, code)
+	s.Equal(errors.BadRequest, got.Type)
+	s.Contains(got.Message, "expiresIn")
+}
+
 func (s *handlerSuite) TestRoleAssignmentsV3Create_forbidden() {
 	user := s.TestData.User_NonSuitable()
 	role := s.TestData.Role_SherlockSuperAdmin()
@@ -67,6 +79,20 @@ func (s *handlerSuite) TestRoleAssignmentsV3Create_breakGlassAllowed() {
 	code := s.HandleRequest(
 		s.NewSuitableRequest("POST", "/api/role-assignments/v3/"+utils.UintToString(role.ID)+"/"+utils.UintToString(user.ID), RoleAssignmentV3Edit{
 			ExpiresAt: utils.PointerTo(time.Now().Add(time.Hour)),
+		}),
+		&got)
+	s.Equal(http.StatusCreated, code)
+	s.Equal(role.ID, got.RoleInfo.ID)
+	s.Equal(user.ID, got.UserInfo.ID)
+}
+
+func (s *handlerSuite) TestRoleAssignmentsV3Create_breakGlassAllowedExpiresIn() {
+	user := s.TestData.User_Suitable()
+	role := s.TestData.Role_TerraGlassBrokenAdmin()
+	var got RoleAssignmentV3
+	code := s.HandleRequest(
+		s.NewSuitableRequest("POST", "/api/role-assignments/v3/"+utils.UintToString(role.ID)+"/"+utils.UintToString(user.ID), RoleAssignmentV3Edit{
+			ExpiresIn: utils.PointerTo(time.Hour.String()),
 		}),
 		&got)
 	s.Equal(http.StatusCreated, code)

@@ -6591,6 +6591,12 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "description": "A Go time.Duration string that will be added to the current time to attempt to set expiresAt (this may be more convenient than setting expiresAt directly)",
+                        "name": "expiresIn",
+                        "in": "query"
+                    },
+                    {
                         "type": "boolean",
                         "default": false,
                         "name": "suspended",
@@ -9793,6 +9799,10 @@ const docTemplate = `{
                     "type": "string",
                     "format": "date-time"
                 },
+                "expiresIn": {
+                    "description": "A Go time.Duration string that will be added to the current time to attempt to set expiresAt (this may be more convenient than setting expiresAt directly)",
+                    "type": "string"
+                },
                 "roleInfo": {
                     "type": "object"
                 },
@@ -9811,6 +9821,10 @@ const docTemplate = `{
                 "expiresAt": {
                     "type": "string",
                     "format": "date-time"
+                },
+                "expiresIn": {
+                    "description": "A Go time.Duration string that will be added to the current time to attempt to set expiresAt (this may be more convenient than setting expiresAt directly)",
+                    "type": "string"
                 },
                 "suspended": {
                     "type": "boolean",

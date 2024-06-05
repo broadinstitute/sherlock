@@ -34,7 +34,11 @@ func roleAssignmentsV3Edit(ctx *gin.Context) {
 		errors.AbortRequest(ctx, fmt.Errorf("(%s) request validation error: %w", errors.BadRequest, err))
 		return
 	}
-	edits := body.toModel()
+	edits, err := body.toModel()
+	if err != nil {
+		errors.AbortRequest(ctx, err)
+		return
+	}
 
 	roleQuery, err := roleModelFromSelector(canonicalizeSelector(ctx.Param("role-selector")))
 	if err != nil {

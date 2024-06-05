@@ -26,6 +26,12 @@ export interface SherlockRoleAssignmentV3 {
      */
     expiresAt?: Date;
     /**
+     * A Go time.Duration string that will be added to the current time to attempt to set expiresAt (this may be more convenient than setting expiresAt directly)
+     * @type {string}
+     * @memberof SherlockRoleAssignmentV3
+     */
+    expiresIn?: string;
+    /**
      * 
      * @type {object}
      * @memberof SherlockRoleAssignmentV3
@@ -63,6 +69,7 @@ export function SherlockRoleAssignmentV3FromJSONTyped(json: any, ignoreDiscrimin
     return {
         
         'expiresAt': json['expiresAt'] == null ? undefined : (new Date(json['expiresAt'])),
+        'expiresIn': json['expiresIn'] == null ? undefined : json['expiresIn'],
         'roleInfo': json['roleInfo'] == null ? undefined : json['roleInfo'],
         'suspended': json['suspended'] == null ? undefined : json['suspended'],
         'userInfo': json['userInfo'] == null ? undefined : json['userInfo'],
@@ -76,6 +83,7 @@ export function SherlockRoleAssignmentV3ToJSON(value?: SherlockRoleAssignmentV3 
     return {
         
         'expiresAt': value['expiresAt'] == null ? undefined : ((value['expiresAt']).toISOString()),
+        'expiresIn': value['expiresIn'],
         'roleInfo': value['roleInfo'],
         'suspended': value['suspended'],
         'userInfo': value['userInfo'],

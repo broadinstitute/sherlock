@@ -65,6 +65,12 @@ type GetAPIRoleAssignmentsV3Params struct {
 	// Format: date-time
 	ExpiresAt *strfmt.DateTime
 
+	/* ExpiresIn.
+
+	   A Go time.Duration string that will be added to the current time to attempt to set expiresAt (this may be more convenient than setting expiresAt directly)
+	*/
+	ExpiresIn *string
+
 	/* Limit.
 
 	   Control how many RoleAssignments are returned (default 0, no limit)
@@ -155,6 +161,17 @@ func (o *GetAPIRoleAssignmentsV3Params) SetExpiresAt(expiresAt *strfmt.DateTime)
 	o.ExpiresAt = expiresAt
 }
 
+// WithExpiresIn adds the expiresIn to the get API role assignments v3 params
+func (o *GetAPIRoleAssignmentsV3Params) WithExpiresIn(expiresIn *string) *GetAPIRoleAssignmentsV3Params {
+	o.SetExpiresIn(expiresIn)
+	return o
+}
+
+// SetExpiresIn adds the expiresIn to the get API role assignments v3 params
+func (o *GetAPIRoleAssignmentsV3Params) SetExpiresIn(expiresIn *string) {
+	o.ExpiresIn = expiresIn
+}
+
 // WithLimit adds the limit to the get API role assignments v3 params
 func (o *GetAPIRoleAssignmentsV3Params) WithLimit(limit *int64) *GetAPIRoleAssignmentsV3Params {
 	o.SetLimit(limit)
@@ -208,6 +225,23 @@ func (o *GetAPIRoleAssignmentsV3Params) WriteToRequest(r runtime.ClientRequest, 
 		if qExpiresAt != "" {
 
 			if err := r.SetQueryParam("expiresAt", qExpiresAt); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.ExpiresIn != nil {
+
+		// query param expiresIn
+		var qrExpiresIn string
+
+		if o.ExpiresIn != nil {
+			qrExpiresIn = *o.ExpiresIn
+		}
+		qExpiresIn := qrExpiresIn
+		if qExpiresIn != "" {
+
+			if err := r.SetQueryParam("expiresIn", qExpiresIn); err != nil {
 				return err
 			}
 		}
