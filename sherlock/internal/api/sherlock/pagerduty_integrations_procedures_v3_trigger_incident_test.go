@@ -1,8 +1,8 @@
 package sherlock
 
 import (
+	"github.com/broadinstitute/sherlock/sherlock/internal/clients/pagerduty"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
-	"github.com/broadinstitute/sherlock/sherlock/internal/pagerduty"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )

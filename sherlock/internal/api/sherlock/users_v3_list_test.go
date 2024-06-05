@@ -4,7 +4,7 @@ import (
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
-	"github.com/broadinstitute/sherlock/sherlock/internal/self"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models/self"
 	"net/http"
 )
 

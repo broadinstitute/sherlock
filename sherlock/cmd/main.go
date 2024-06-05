@@ -10,14 +10,6 @@ import (
 	"time"
 )
 
-//// BuildVersion is intended for use with Go's LDFlags compiler option, to
-//// set this value at compile time
-//var BuildVersion = "development"
-//
-//func init() {
-//	version.BuildVersion = BuildVersion
-//}
-
 func main() {
 	// We'll handle SIGINT and SIGTERM ourselves
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)

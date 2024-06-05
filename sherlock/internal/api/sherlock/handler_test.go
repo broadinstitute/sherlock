@@ -3,9 +3,9 @@ package sherlock
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/broadinstitute/sherlock/sherlock/internal/authentication"
-	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/test_users"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
+	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/authentication"
+	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/authentication/test_users"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/suite"

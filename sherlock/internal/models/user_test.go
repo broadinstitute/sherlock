@@ -3,8 +3,8 @@ package models
 import (
 	"github.com/broadinstitute/sherlock/go-shared/pkg/testutils"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
-	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/authentication_method"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
+	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/authentication/authentication_method"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 	"testing"

@@ -3,15 +3,15 @@ package sherlock
 import (
 	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
-	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/gha_oidc"
-	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/gha_oidc/gha_oidc_claims"
-	"github.com/broadinstitute/sherlock/sherlock/internal/authentication/gha_oidc/gha_oidc_mocks"
+	"github.com/broadinstitute/sherlock/sherlock/internal/ci_hooks"
+	"github.com/broadinstitute/sherlock/sherlock/internal/ci_hooks/ci_hooks_mocks"
+	"github.com/broadinstitute/sherlock/sherlock/internal/clients/slack"
+	"github.com/broadinstitute/sherlock/sherlock/internal/clients/slack/slack_mocks"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
-	"github.com/broadinstitute/sherlock/sherlock/internal/hooks"
-	"github.com/broadinstitute/sherlock/sherlock/internal/hooks/hooks_mocks"
+	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/authentication/gha_oidc"
+	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/authentication/gha_oidc/gha_oidc_claims"
+	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/authentication/gha_oidc/gha_oidc_mocks"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
-	"github.com/broadinstitute/sherlock/sherlock/internal/slack"
-	"github.com/broadinstitute/sherlock/sherlock/internal/slack/slack_mocks"
 	"github.com/stretchr/testify/mock"
 	"net/http"
 	"slices"
@@ -760,7 +760,7 @@ func (s *handlerSuite) TestCiRunsV3Upsert_dispatch() {
 	var code int
 
 	// 1. Suppose a CiRun is upserted via webhook
-	hooks.UseMockedDispatcher(s.T(), func(d *hooks_mocks.MockMockableDispatcher) {}, func() {
+	ci_hooks.UseMockedDispatcher(s.T(), func(d *ci_hooks_mocks.MockMockableDispatcher) {}, func() {
 		code = s.HandleRequest(
 			s.NewRequest(http.MethodPut, "/api/ci-runs/v3", CiRunV3Upsert{
 				ciRunFields: ciRunFields{
@@ -783,7 +783,7 @@ func (s *handlerSuite) TestCiRunsV3Upsert_dispatch() {
 
 	// 2. Suppose the relation to the changeset is reported by the action itself, plus a notification channel
 	//    (now deploy hooks start firing because we can match the resources)
-	hooks.UseMockedDispatcher(s.T(), func(d *hooks_mocks.MockMockableDispatcher) {
+	ci_hooks.UseMockedDispatcher(s.T(), func(d *ci_hooks_mocks.MockMockableDispatcher) {
 		d.EXPECT().DispatchSlackDeployHook(mock.Anything, mock.Anything, mock.Anything).Return(nil).Once()
 	}, func() {
 		code = s.HandleRequest(
@@ -821,7 +821,7 @@ func (s *handlerSuite) TestCiRunsV3Upsert_dispatch() {
 	})
 
 	// 3. Suppose Thelma reported the status for the chart release itself
-	hooks.UseMockedDispatcher(s.T(), func(d *hooks_mocks.MockMockableDispatcher) {
+	ci_hooks.UseMockedDispatcher(s.T(), func(d *ci_hooks_mocks.MockMockableDispatcher) {
 		d.EXPECT().DispatchSlackDeployHook(mock.Anything, mock.Anything, mock.Anything).Return(nil).Once()
 	}, func() {
 		code = s.HandleRequest(
@@ -855,7 +855,7 @@ func (s *handlerSuite) TestCiRunsV3Upsert_dispatch() {
 	})
 
 	// 4. Suppose CiRun marked as completed by via webhook
-	hooks.UseMockedDispatcher(s.T(), func(d *hooks_mocks.MockMockableDispatcher) {
+	ci_hooks.UseMockedDispatcher(s.T(), func(d *ci_hooks_mocks.MockMockableDispatcher) {
 		d.EXPECT().DispatchSlackDeployHook(mock.Anything, mock.Anything, mock.Anything).Return(nil).Once()
 		d.EXPECT().DispatchGithubActionsDeployHook(mock.Anything, mock.Anything, mock.Anything).Return(nil).Once()
 		d.EXPECT().DispatchSlackCompletionNotification(mock.Anything, "#workbench-resilience-dev", mock.Anything, true, mock.AnythingOfType("*string")).Return(nil).Once()

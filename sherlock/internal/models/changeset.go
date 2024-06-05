@@ -5,7 +5,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
-	"github.com/broadinstitute/sherlock/sherlock/internal/slack"
+	"github.com/broadinstitute/sherlock/sherlock/internal/clients/slack"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 	"strings"

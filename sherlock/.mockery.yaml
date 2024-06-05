@@ -10,10 +10,10 @@ packages:
       IRoutes:
         config:
           dir: ./internal/api/gin_mocks
-  github.com/broadinstitute/sherlock/sherlock/internal/authentication/gha_oidc:
+  github.com/broadinstitute/sherlock/sherlock/internal/ci_hooks:
     interfaces:
-      mockableVerifier:
-  github.com/broadinstitute/sherlock/sherlock/internal/github:
+      mockableDispatcher:
+  github.com/broadinstitute/sherlock/sherlock/internal/clients/github:
     interfaces:
       mockableTopLevelClient:
       mockableActionsClient:
@@ -45,12 +45,12 @@ packages:
       mockableSecretScanningClient:
       mockableTeamsClient:
       mockableUsersClient:
-  github.com/broadinstitute/sherlock/sherlock/internal/hooks:
-    interfaces:
-      mockableDispatcher:
-  github.com/broadinstitute/sherlock/sherlock/internal/slack:
+  github.com/broadinstitute/sherlock/sherlock/internal/clients/slack:
     interfaces:
       mockableClient:
-  github.com/broadinstitute/sherlock/sherlock/internal/pactbroker:
+  github.com/broadinstitute/sherlock/sherlock/internal/clients/pact_broker:
     interfaces:
       mockablePactBroker:
+  github.com/broadinstitute/sherlock/sherlock/internal/middleware/authentication/gha_oidc:
+    interfaces:
+      mockableVerifier:
