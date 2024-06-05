@@ -3,8 +3,11 @@ package models
 import (
 	"database/sql"
 	"fmt"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models/advisory_locks"
+	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
 	"gorm.io/gorm"
+	"time"
 )
 
 type RoleFields struct {
@@ -89,6 +92,53 @@ func ReadRoleScope(db *gorm.DB) *gorm.DB {
 		Preload("Assignments").
 		Preload("Assignments.User").
 		Preload("CanBeGlassBrokenByRole")
+}
+
+func (r *Role) AssignmentsMap() map[uint]RoleAssignment {
+	roleAssignments := make(map[uint]RoleAssignment)
+	for _, ra := range r.Assignments {
+		if ra != nil && ra.UserID != 0 {
+			roleAssignments[ra.UserID] = *ra
+		}
+	}
+	return roleAssignments
+}
+
+// WaitPropagationLock blocks until a propagation lock can be acquired for the Role. This function
+// is only safe to call from a transaction. The lock will be released at the end of the transaction.
+//
+// See https://www.postgresql.org/docs/current/functions-admin.html#FUNCTIONS-ADVISORY-LOCKS
+func (r *Role) WaitPropagationLock(tx *gorm.DB) error {
+	if err := tx.Exec("SELECT pg_advisory_xact_lock(?, ?)", advisory_locks.ROLE_PROPAGATION, r.ID).Error; err != nil {
+		return fmt.Errorf("failed to lock Role %d for propagation: %w", r.ID, err)
+	}
+	return nil
+}
+
+// TryPropagationLock attempts to acquire a propagation lock for the Role. It returns a boolean for
+// whether the lock was obtained; it does not block. This function is only safe to call from a
+// transaction. The lock will be released at the end of the transaction.
+//
+// See https://www.postgresql.org/docs/current/functions-admin.html#FUNCTIONS-ADVISORY-LOCKS
+func (r *Role) TryPropagationLock(tx *gorm.DB) (bool, error) {
+	var locked bool
+	if err := tx.Raw("SELECT pg_try_advisory_xact_lock(?, ?)", advisory_locks.ROLE_PROPAGATION, r.ID).Scan(&locked).Error; err != nil {
+		return false, fmt.Errorf("failed to try lock Role %d for propagation: %w", r.ID, err)
+	}
+	return locked, nil
+}
+
+// UpdatePropagatedAt sets the Role's PropagatedAt field to the current time without triggering any
+// hooks or other Gorm behavior (like setting the gorm.Model UpdatedAt field) since we're not
+// semantically making a change to the Role.
+func (r *Role) UpdatePropagatedAt(tx *gorm.DB) error {
+	if err := tx.Model(&r).UpdateColumns(&Role{PropagatedAt: sql.NullTime{
+		Time:  time.Now(),
+		Valid: true,
+	}}).Error; err != nil {
+		return err
+	}
+	return nil
 }
 
 func (r *Role) BeforeCreate(tx *gorm.DB) error {
