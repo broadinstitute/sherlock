@@ -1,6 +1,7 @@
 package models
 
 import (
+	"database/sql"
 	"fmt"
 	"github.com/jinzhu/copier"
 	"gorm.io/gorm"
@@ -37,6 +38,10 @@ type RoleFields struct {
 
 type Role struct {
 	gorm.Model
+
+	// PropagatedAt stores the last time that this Role's grants were propagated to cloud providers. See
+	// the role_propagation package for more information.
+	PropagatedAt sql.NullTime
 
 	// Assignments lists User records who have this Role. A RoleAssignment can potentially be suspended,
 	// which indicates that the User should not presently have any access commensurate with the Role.
