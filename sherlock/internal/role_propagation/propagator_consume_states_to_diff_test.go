@@ -90,7 +90,7 @@ func Test_propagatorImpl_consumeStatesToDiff_empty(t *testing.T) {
 
 	// This is a sorta dumb test but we're checking that we don't somehow fail on empty inputs -- everything else
 	// is pretty thoroughly covered by the main test above
-	alignmentOperations := p.consumeStatesToDiff(nil, "", nil, nil)
+	alignmentOperations := p.consumeStatesToDiff(context.Background(), "", nil, nil)
 	for _, alignmentOperation := range alignmentOperations {
 		_, _ = alignmentOperation()
 	}

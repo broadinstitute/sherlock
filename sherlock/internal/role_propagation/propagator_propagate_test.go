@@ -48,7 +48,7 @@ func Test_propagatorImpl_Propagate_notEnabled(t *testing.T) {
 	var results []string
 	var errors []error
 	assert.NotPanics(t, func() {
-		results, errors = p.Propagate(nil, models.Role{})
+		results, errors = p.Propagate(context.Background(), models.Role{})
 	})
 	assert.Empty(t, results)
 	assert.Empty(t, errors)
