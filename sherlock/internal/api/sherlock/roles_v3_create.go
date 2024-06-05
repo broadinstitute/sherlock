@@ -5,6 +5,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/authentication"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
+	"github.com/broadinstitute/sherlock/sherlock/internal/role_propagation"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -14,6 +15,7 @@ import (
 //	@summary		Create a Role
 //	@description	Create an individual Role with no one assigned to it.
 //	@description	Only super-admins may mutate Roles.
+//	@description	Propagation will be triggered after this operation.
 //	@tags			Roles
 //	@produce		json
 //	@param			role					body		RoleV3Edit	true	"The initial fields the Role should have set"
@@ -44,4 +46,6 @@ func rolesV3Create(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusCreated, roleFromModel(toCreate))
+
+	go role_propagation.WaitToPropagate(ctx, db, toCreate.ID)
 }

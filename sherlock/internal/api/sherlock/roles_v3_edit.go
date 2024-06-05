@@ -5,6 +5,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/authentication"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
+	"github.com/broadinstitute/sherlock/sherlock/internal/role_propagation"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm/clause"
 	"net/http"
@@ -15,6 +16,7 @@ import (
 //	@summary		Edit a Role
 //	@description	Edit an individual Role.
 //	@description	Only super-admins may mutate Roles.
+//	@description	Propagation will be triggered after this operation.
 //	@tags			Roles
 //	@produce		json
 //	@param			selector				path		string		true	"The selector of the Role, which can be either the numeric ID or the name"
@@ -53,4 +55,6 @@ func rolesV3Edit(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, roleFromModel(toEdit))
+
+	go role_propagation.WaitToPropagate(ctx, db, toEdit.ID)
 }
