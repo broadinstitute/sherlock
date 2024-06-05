@@ -2,8 +2,8 @@ package slack
 
 import (
 	"fmt"
+	"github.com/broadinstitute/sherlock/sherlock/internal/clients/slack/slack_mocks"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
-	"github.com/broadinstitute/sherlock/sherlock/internal/slack/slack_mocks"
 	"github.com/rs/zerolog"
 	"github.com/slack-go/slack"
 	"github.com/slack-go/slack/slackevents"

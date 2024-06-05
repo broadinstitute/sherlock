@@ -3,9 +3,9 @@ package ci_hooks
 import (
 	"context"
 	"fmt"
+	"github.com/broadinstitute/sherlock/sherlock/internal/clients/slack"
+	"github.com/broadinstitute/sherlock/sherlock/internal/clients/slack/slack_mocks"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
-	"github.com/broadinstitute/sherlock/sherlock/internal/slack"
-	"github.com/broadinstitute/sherlock/sherlock/internal/slack/slack_mocks"
 	slack2 "github.com/slack-go/slack"
 	"github.com/stretchr/testify/mock"
 	"sync"

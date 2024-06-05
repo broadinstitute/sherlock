@@ -3,9 +3,9 @@ package models
 import (
 	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
+	"github.com/broadinstitute/sherlock/sherlock/internal/clients/slack"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
-	"github.com/broadinstitute/sherlock/sherlock/internal/slack"
 	"gorm.io/gorm"
 )
 

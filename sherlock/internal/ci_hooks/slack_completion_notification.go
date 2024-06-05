@@ -2,7 +2,7 @@ package ci_hooks
 
 import (
 	"context"
-	"github.com/broadinstitute/sherlock/sherlock/internal/slack"
+	"github.com/broadinstitute/sherlock/sherlock/internal/clients/slack"
 )
 
 // DispatchSlackCompletionNotification is pretty much a re-export of slack.SendMessageReturnError.

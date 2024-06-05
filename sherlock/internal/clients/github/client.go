@@ -2,7 +2,7 @@ package github
 
 import (
 	"context"
-	"github.com/broadinstitute/sherlock/sherlock/internal/github/github_mocks"
+	"github.com/broadinstitute/sherlock/sherlock/internal/clients/github/github_mocks"
 	"github.com/google/go-github/v58/github"
 	"net/http"
 	"testing"

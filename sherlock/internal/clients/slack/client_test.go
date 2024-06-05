@@ -1,7 +1,7 @@
 package slack
 
 import (
-	"github.com/broadinstitute/sherlock/sherlock/internal/slack/slack_mocks"
+	"github.com/broadinstitute/sherlock/sherlock/internal/clients/slack/slack_mocks"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
