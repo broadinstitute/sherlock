@@ -33,7 +33,7 @@ type RoleFields struct {
 	GrantsDevFirecloudGroup *string
 	// GrantsDevAzureGroup, when not null, indicates that a User with an unsuspended RoleAssignment to this Role
 	// should have their Azure account (if they have one) added to this group.
-	GrantsDevAzureGroup *string
+	GrantsDevAzureGroup *uuid.UUID
 }
 
 type Role struct {

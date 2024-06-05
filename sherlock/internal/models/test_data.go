@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
+	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"gorm.io/datatypes"
 	"time"
@@ -360,7 +361,7 @@ func (td *testDataImpl) Role_TerraSuitableEngineer() Role {
 				Name:                    utils.PointerTo("terra-suitable-engineer"),
 				SuspendNonSuitableUsers: utils.PointerTo(true),
 				GrantsDevFirecloudGroup: utils.PointerTo("terra-suitable-engineer"),
-				GrantsDevAzureGroup:     utils.PointerTo("terra-suitable-engineer"),
+				GrantsDevAzureGroup:     utils.PointerTo(uuid.MustParse("00000000-0000-0000-0000-000000000001")),
 			},
 		}
 		td.h.SetSelfSuperAdminForDB()
