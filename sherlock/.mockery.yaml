@@ -51,3 +51,7 @@ packages:
   github.com/broadinstitute/sherlock/sherlock/internal/clients/pact_broker:
     interfaces:
       mockablePactBroker:
+  github.com/broadinstitute/sherlock/sherlock/internal/role_propagation/intermediary_user:
+    interfaces:
+      Identifier:
+      Fields:
