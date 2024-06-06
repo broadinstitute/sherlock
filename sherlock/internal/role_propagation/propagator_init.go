@@ -34,7 +34,6 @@ func (p *propagatorImpl[Grant, Identifier, Fields]) initTimeout() {
 		timeout = config.Config.Duration("rolePropagation.defaultTimeout")
 	}
 	p._timeout = timeout
-	return
 }
 
 func (p *propagatorImpl[Grant, Identifier, Fields]) initToleratedUsers() error {
