@@ -117,6 +117,11 @@ func tryToPropagateStale(ctx context.Context, db *gorm.DB) {
 // naively stateful).
 func doNonConcurrentPropagation(ctx context.Context, role models.Role) {
 	for _, p := range propagators {
-		_, _ = p.Propagate(ctx, role) // TODO: something with this? send to slack i guess
+		results, errors := p.Propagate(ctx, role)
+		if len(errors) > 0 {
+			log.Error().Errs("errors", errors).Strs("results", results).Msgf("%s propagation failed for role %s (%d)", p.Name(), *role.Name, role.ID)
+		} else {
+			log.Info().Strs("results", results).Msgf("%s propagation succeeded for role %s (%d)", p.Name(), *role.Name, role.ID)
+		}
 	}
 }

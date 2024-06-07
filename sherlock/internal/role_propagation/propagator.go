@@ -13,6 +13,8 @@ import (
 // use a `var propagators []propagatorImpl[any, any]` because Go doesn't support covariance like that -- we call
 // it a `var propagators []propagator` instead.
 type propagator interface {
+	// Name is how the propagator should be referenced in logs and alerts.
+	Name() string
 	// Init loads configuration and initializes the engine (assuming the configuration doesn't say this
 	// propagator is disabled). It should be called once at startup, and an error here should abort startup.
 	Init(ctx context.Context) error
@@ -76,4 +78,8 @@ type propagatorImpl[
 	// deactivated *everyone* except its equivalent of this list. Sherlock seeks to prevent such issues with the
 	// power of "writing tests" but we keep the guardrails that have worked in the past.)
 	_toleratedUsers []Identifier
+}
+
+func (p propagatorImpl[Grant, Identifier, Fields]) Name() string {
+	return p.configKey
 }
