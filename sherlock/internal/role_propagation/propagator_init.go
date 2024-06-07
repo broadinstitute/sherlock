@@ -10,8 +10,8 @@ import (
 func (p *propagatorImpl[Grant, Identifier, Fields]) Init(ctx context.Context) error {
 	p._config = config.Config.Cut("rolePropagation.propagators." + p.configKey)
 
-	p._enabled = p._config.Bool("enabled")
-	if !p._enabled {
+	p._enable = p._config.Bool("enable")
+	if !p._enable {
 		return nil
 	}
 

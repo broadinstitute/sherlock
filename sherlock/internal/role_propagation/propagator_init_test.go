@@ -34,7 +34,7 @@ func Test_propagatorImpl_Init(t *testing.T) {
 			},
 			wantErr: false,
 			extraAssertions: func(t *testing.T, p propagatorImpl[string, propagation_engines.GoogleWorkspaceGroupIdentifier, propagation_engines.GoogleWorkspaceGroupFields]) {
-				assert.Falsef(t, p._enabled, "expected propagator to be disabled")
+				assert.Falsef(t, p._enable, "expected propagator to be disabled")
 			},
 		},
 		{
@@ -47,7 +47,7 @@ func Test_propagatorImpl_Init(t *testing.T) {
 			},
 			wantErr: false,
 			extraAssertions: func(t *testing.T, p propagatorImpl[string, propagation_engines.GoogleWorkspaceGroupIdentifier, propagation_engines.GoogleWorkspaceGroupFields]) {
-				assert.Truef(t, p._enabled, "expected propagator to be enabled")
+				assert.Truef(t, p._enable, "expected propagator to be enabled")
 				assert.Equalf(t, config.Config.Duration("rolePropagation.defaultTimeout"), p._timeout, "expected timeout to be the default")
 				assert.Emptyf(t, p._toleratedUsers, "expected no tolerated users")
 			},
@@ -72,7 +72,7 @@ func Test_propagatorImpl_Init(t *testing.T) {
 			},
 			wantErr: false,
 			extraAssertions: func(t *testing.T, p propagatorImpl[string, propagation_engines.GoogleWorkspaceGroupIdentifier, propagation_engines.GoogleWorkspaceGroupFields]) {
-				assert.Truef(t, p._enabled, "expected propagator to be enabled")
+				assert.Truef(t, p._enable, "expected propagator to be enabled")
 				assert.Equalf(t, config.Config.Duration("rolePropagation.propagators.devFirecloudGroupTestConfig.timeout"), p._timeout, "expected timeout to be the configured value")
 				if assert.Lenf(t, p._toleratedUsers, 1, "expected one tolerated user") {
 					assert.Equalf(t, "tolerated@test.firecloud.org", p._toleratedUsers[0].Email, "expected the correct tolerated user")

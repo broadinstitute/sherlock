@@ -250,7 +250,7 @@ rolePropagation:
   # If true, Sherlock's boot process will include configuring the standard array of role propagators
   # (configured in the "propagators" section below). If false, the array of propagators will typically
   # be empty, so propagation will have no effect.
-  enabled: false
+  enable: false
   # The duration that an individual propagator should be able to run for a single role before being
   # forcibly shut down with an error. This can be overridden for individual propagators by specifying
   # a "timeout" field in their configuration.
@@ -261,7 +261,7 @@ rolePropagation:
   propagators:
 
     devFirecloudGroup:
-      enabled: true
+      enable: true
       # The domain of the Google Workspace, assumed to be the email domain of all members.
       workspaceDomain: test.firecloud.org
       # Domains that should be swapped out with the workspaceDomain to match Sherlock users to Google
@@ -271,13 +271,13 @@ rolePropagation:
         - broadinstitute.org
 
     devAzureGroup:
-      enabled: true
+      enable: true
       # The client ID of the Azure AD app to use for authentication.
       clientID:
       # The UUID of the Azure AD tenant to work with.
-      tenantID:
+      tenantID: fd0bc0ef-1747-4ee6-ab3e-d4d6bb882d40
       # The path on disk that Sherlock should expect to find a token for federated workload identity.
-      tokenFilePath: /aks-federation/projected-ksa-token.jwt
+      tokenFilePath: /azure-federation/projected-ksa-token.jwt
       # The email domain of all members.
       memberEmailDomain: test.firecloud.org
       # Domains that should be swapped out with the memberEmailDomain to match Sherlock users to Azure

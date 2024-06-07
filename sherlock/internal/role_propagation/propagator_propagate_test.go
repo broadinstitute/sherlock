@@ -23,7 +23,7 @@ func Test_propagatorImpl_Propagate_panic(t *testing.T) {
 			return role.GrantsDevFirecloudGroup
 		},
 		engine:   engine,
-		_enabled: true,
+		_enable:  true,
 		_timeout: time.Minute,
 	}
 	var results []string
@@ -43,7 +43,7 @@ func Test_propagatorImpl_Propagate_panic(t *testing.T) {
 
 func Test_propagatorImpl_Propagate_notEnabled(t *testing.T) {
 	p := propagatorImpl[string, propagation_engines.GoogleWorkspaceGroupIdentifier, propagation_engines.GoogleWorkspaceGroupFields]{
-		_enabled: false,
+		_enable: false,
 	}
 	var results []string
 	var errors []error
@@ -59,7 +59,7 @@ func Test_propagatorImpl_Propagate_shouldNotPropagate(t *testing.T) {
 		getGrant: func(role models.Role) *string {
 			return role.GrantsDevFirecloudGroup
 		},
-		_enabled: true,
+		_enable:  true,
 		_timeout: time.Minute,
 	}
 	var results []string
@@ -97,7 +97,7 @@ func Test_propagatorImpl_Propagate_failToLoadCurrent(t *testing.T) {
 			return role.GrantsDevFirecloudGroup
 		},
 		engine:   engine,
-		_enabled: true,
+		_enable:  true,
 		_timeout: time.Minute,
 	}
 	var results []string
@@ -126,7 +126,7 @@ func Test_propagatorImpl_Propagate_failToGenerateDesired(t *testing.T) {
 			return role.GrantsDevFirecloudGroup
 		},
 		engine:   engine,
-		_enabled: true,
+		_enable:  true,
 		_timeout: time.Minute,
 	}
 	var results []string
@@ -177,7 +177,7 @@ func Test_propagatorImpl_Propagate(t *testing.T) {
 			return role.GrantsDevFirecloudGroup
 		},
 		engine:   engine,
-		_enabled: true,
+		_enable:  true,
 		_timeout: time.Minute,
 	}
 	var results []string

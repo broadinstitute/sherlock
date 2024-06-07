@@ -13,7 +13,7 @@ func (p *propagatorImpl[Grant, Identifier, Fields]) Propagate(ctx context.Contex
 		}
 	}()
 
-	if !p._enabled {
+	if !p._enable {
 		return nil, nil
 	}
 

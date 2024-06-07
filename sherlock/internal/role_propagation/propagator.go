@@ -60,9 +60,9 @@ type propagatorImpl[
 	// when instantiating a propagatorImpl; it's set by init().
 	_config *koanf.Koanf
 
-	// _enabled stores whether this propagator is enabled in the _config, from
+	// _enable stores whether this propagator is enabled in the _config, from
 	// rolePropagation.propagators.<configKey>.enabled.
-	_enabled bool
+	_enable bool
 
 	// _timeout is the amount of time the propagator will be allowed to run during Propagate. It's read from the
 	// configuration at rolePropagation.propagators.<configKey>.timeout, with a default read from the config at
