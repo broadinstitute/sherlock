@@ -57,15 +57,15 @@ self:
 rolePropagation:
   propagators:
     devFirecloudGroupTestDisabled:
-      enabled: false
+      enable: false
       workspaceDomain: test.firecloud.org
 
     devFirecloudGroupTestDefault:
-      enabled: true
+      enable: true
       workspaceDomain: test.firecloud.org
 
     devFirecloudGroupTestConfig:
-      enabled: true
+      enable: true
       workspaceDomain: test.firecloud.org
       timeout: 10s
       userEmailDomainsToReplace:
