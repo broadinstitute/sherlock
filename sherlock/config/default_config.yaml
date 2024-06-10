@@ -261,7 +261,7 @@ rolePropagation:
   propagators:
 
     devFirecloudGroup:
-      enable: true
+      enable: false
       # The domain of the Google Workspace, assumed to be the email domain of all members.
       workspaceDomain: test.firecloud.org
       # Domains that should be swapped out with the workspaceDomain to match Sherlock users to Google
@@ -271,7 +271,7 @@ rolePropagation:
         - broadinstitute.org
 
     devAzureGroup:
-      enable: true
+      enable: false
       # The client ID of the Azure AD app to use for authentication.
       clientID:
       # The UUID of the Azure AD tenant to work with.
@@ -285,3 +285,18 @@ rolePropagation:
       # Google Workspace than the one that Azure AD user emails are from.
       userEmailDomainsToReplace:
         - broadinstitute.org
+
+    devB2cAzureGroup:
+      enable: false
+      # The client ID of the Azure AD app to use for authentication.
+      clientID:
+      # The UUID of the Azure AD tenant to work with.
+      tenantID: fd0bc0ef-1747-4ee6-ab3e-d4d6bb882d40 # terradevb2c.onmicrosoft.com
+      # The path on disk that Sherlock should expect to find a token for federated workload identity.
+      tokenFilePath: /azure-federation/projected-ksa-token.jwt
+      # The email domain of all members.
+      memberEmailDomain: broadinstitute.org
+      # Domains that should be swapped out with the memberEmailDomain to match Sherlock users to Azure
+      # AD users. Here, this is empty because the members have broadinstitute.org emails, which is what
+      # Sherlock users have.
+      userEmailDomainsToReplace: []
