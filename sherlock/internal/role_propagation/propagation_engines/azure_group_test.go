@@ -130,8 +130,8 @@ func TestAzureGroupEngine_GenerateDesiredState_isActiveShortCircuit(t *testing.T
 // See also utils.SubstituteSuffix
 func TestAzureGroupEngine_GenerateDesiredState_emailShortCircuit(t *testing.T) {
 	engine := &AzureGroupEngine{
-		memberEmailDomain:         "example.com",
-		userEmailDomainsToReplace: []string{"example.org"},
+		memberEmailSuffix:          "@example.com",
+		userEmailSuffixesToReplace: []string{"@example.org"},
 	}
 	desiredState, err := engine.GenerateDesiredState(context.Background(), map[uint]models.RoleAssignment{
 		1: {

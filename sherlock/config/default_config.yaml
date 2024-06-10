@@ -264,11 +264,11 @@ rolePropagation:
       enable: false
       # The domain of the Google Workspace, assumed to be the email domain of all members. This should
       # not contain a leading "@".
-      workspaceDomain: test.firecloud.org
+      workspaceDomain: "test.firecloud.org"
       # Suffixes of Sherlock users' emails that should be swapped out with "@"+workspaceDomain to match
       # Sherlock users to Google Workspace users. This must contain a "@".
       userEmailSuffixesToReplace:
-        - @broadinstitute.org
+        - "@broadinstitute.org"
 
     devAzureGroup:
       enable: false
@@ -281,11 +281,11 @@ rolePropagation:
       # The suffix of all member emails. This can be thought of as a filter for what Azure users Sherlock
       # will attempt to propagate roles to. This may contain a "@" (especially useful for "#EXT#@" emails);
       # if it does, then the userEmailSuffixesToReplace must as well.
-      memberEmailSuffix: _broadinstitute.org#EXT#@devazureterra.onmicrosoft.com
+      memberEmailSuffix: "_broadinstitute.org#EXT#@devazureterra.onmicrosoft.com"
       # Suffixes of Sherlock users' emails that should be swapped out with the memberEmailSuffix to match
       # Sherlock users to Azure Entra ID users.
       userEmailSuffixesToReplace:
-        - @broadinstitute.org
+        - "@broadinstitute.org"
 
     devB2cAzureGroup:
       enable: false
@@ -298,8 +298,8 @@ rolePropagation:
       # The suffix of all member emails. This can be thought of as a filter for what Azure users Sherlock
       # will attempt to propagate roles to. This may contain a "@" (especially useful for "#EXT#@" emails);
       # if it does, then the userEmailSuffixesToReplace must as well.
-      memberEmailSuffix: _test.firecloud.org#EXT#@terradevb2c.onmicrosoft.com
+      memberEmailSuffix: "_test.firecloud.org#EXT#@terradevb2c.onmicrosoft.com"
       # Suffixes of Sherlock users' emails that should be swapped out with the memberEmailSuffix to match
       # Sherlock users to Azure Entra ID users.
       userEmailSuffixesToReplace:
-        - @broadinstitute.org
+        - "@broadinstitute.org"

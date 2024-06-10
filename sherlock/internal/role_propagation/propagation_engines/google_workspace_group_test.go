@@ -129,8 +129,8 @@ func TestGoogleWorkspaceGroupEngine_GenerateDesiredState_isActiveShortCircuit(t 
 // See also utils.SubstituteSuffix
 func TestGoogleWorkspaceGroupEngine_GenerateDesiredState_emailShortCircuit(t *testing.T) {
 	engine := &GoogleWorkspaceGroupEngine{
-		workspaceDomain:           "example.com",
-		userEmailDomainsToReplace: []string{"example.org"},
+		workspaceDomain:            "example.com",
+		userEmailSuffixesToReplace: []string{"@example.org"},
 	}
 	desiredState, err := engine.GenerateDesiredState(context.Background(), map[uint]models.RoleAssignment{
 		1: {
