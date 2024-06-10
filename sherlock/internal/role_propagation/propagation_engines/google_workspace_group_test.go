@@ -126,7 +126,7 @@ func TestGoogleWorkspaceGroupEngine_GenerateDesiredState_isActiveShortCircuit(t 
 // We can't easily test the actual cloud logic, but we can test that we short circuit correctly for
 // emails that aren't in the target domain.
 //
-// See also utils.SubstituteEmailDomain
+// See also utils.SubstituteSuffix
 func TestGoogleWorkspaceGroupEngine_GenerateDesiredState_emailShortCircuit(t *testing.T) {
 	engine := &GoogleWorkspaceGroupEngine{
 		workspaceDomain:           "example.com",

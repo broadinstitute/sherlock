@@ -42,14 +42,14 @@ func (a AzureGroupFields) EqualTo(other intermediary_user.Fields) bool {
 }
 
 type AzureGroupEngine struct {
-	memberEmailDomain         string
-	userEmailDomainsToReplace []string
-	client                    *msgraphsdk.GraphServiceClient
+	memberEmailSuffix          string
+	userEmailSuffixesToReplace []string
+	client                     *msgraphsdk.GraphServiceClient
 }
 
 func (a *AzureGroupEngine) Init(_ context.Context, k *koanf.Koanf) error {
-	a.memberEmailDomain = k.String("memberEmailDomain")
-	a.userEmailDomainsToReplace = k.Strings("userEmailDomainsToReplace")
+	a.memberEmailSuffix = k.String("memberEmailSuffix")
+	a.userEmailSuffixesToReplace = k.Strings("userEmailSuffixesToReplace")
 
 	credentials, err := azidentity.NewWorkloadIdentityCredential(&azidentity.WorkloadIdentityCredentialOptions{
 		ClientID:      k.String("clientID"),
@@ -90,8 +90,8 @@ func (a *AzureGroupEngine) GenerateDesiredState(ctx context.Context, roleAssignm
 			continue
 		}
 
-		email := utils.SubstituteEmailDomain(roleAssignment.User.Email, a.userEmailDomainsToReplace, a.memberEmailDomain)
-		if !strings.HasSuffix(email, a.memberEmailDomain) {
+		email := utils.SubstituteSuffix(roleAssignment.User.Email, a.userEmailSuffixesToReplace, a.memberEmailSuffix)
+		if !strings.HasSuffix(email, a.memberEmailSuffix) {
 			// We can short-circuit here, we know that the user is not in the expected member domain so we won't bother looking
 			continue
 		}
@@ -99,7 +99,7 @@ func (a *AzureGroupEngine) GenerateDesiredState(ctx context.Context, roleAssignm
 		usersResponse, err := a.client.Users().Get(ctx, &users.UsersRequestBuilderGetRequestConfiguration{
 			QueryParameters: &users.UsersRequestBuilderGetQueryParameters{
 				Select: []string{"id"},
-				Filter: utils.PointerTo(fmt.Sprintf("mail eq '%s'", email)),
+				Filter: utils.PointerTo(fmt.Sprintf("userPrincipalName eq '%s'", email)),
 				Top:    utils.PointerTo[int32](1),
 			},
 		})

@@ -127,7 +127,7 @@ func TestAzureGroupEngine_GenerateDesiredState_isActiveShortCircuit(t *testing.T
 // We can't easily test the actual cloud logic, but we can test that we short circuit correctly for
 // emails that aren't in the target domain.
 //
-// See also utils.SubstituteEmailDomain
+// See also utils.SubstituteSuffix
 func TestAzureGroupEngine_GenerateDesiredState_emailShortCircuit(t *testing.T) {
 	engine := &AzureGroupEngine{
 		memberEmailDomain:         "example.com",

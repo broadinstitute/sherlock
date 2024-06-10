@@ -262,13 +262,13 @@ rolePropagation:
 
     devFirecloudGroup:
       enable: false
-      # The domain of the Google Workspace, assumed to be the email domain of all members.
+      # The domain of the Google Workspace, assumed to be the email domain of all members. This should
+      # not contain a leading "@".
       workspaceDomain: test.firecloud.org
-      # Domains that should be swapped out with the workspaceDomain to match Sherlock users to Google
-      # Workspace users. This is necessary because Sherlock runs in and observes users from a different
-      # Google Workspace than the one it is propagating roles to.
-      userEmailDomainsToReplace:
-        - broadinstitute.org
+      # Suffixes of Sherlock users' emails that should be swapped out with "@"+workspaceDomain to match
+      # Sherlock users to Google Workspace users. This must contain a "@".
+      userEmailSuffixesToReplace:
+        - @broadinstitute.org
 
     devAzureGroup:
       enable: false
@@ -278,12 +278,14 @@ rolePropagation:
       tenantID: fad90753-2022-4456-9b0a-c7e5b934e408 # azure.dev.envs-terra.bio
       # The path on disk that Sherlock should expect to find a token for federated workload identity.
       tokenFilePath: /azure-federation/projected-ksa-token.jwt
-      # The email domain of all members.
-      memberEmailDomain: broadinstitute.org
-      # Domains that should be swapped out with the memberEmailDomain to match Sherlock users to Azure
-      # AD users. Here, this is empty because the members have broadinstitute.org emails, which is what
-      # Sherlock users have.
-      userEmailDomainsToReplace: []
+      # The suffix of all member emails. This can be thought of as a filter for what Azure users Sherlock
+      # will attempt to propagate roles to. This may contain a "@" (especially useful for "#EXT#@" emails);
+      # if it does, then the userEmailSuffixesToReplace must as well.
+      memberEmailSuffix: _broadinstitute.org#EXT#@devazureterra.onmicrosoft.com
+      # Suffixes of Sherlock users' emails that should be swapped out with the memberEmailSuffix to match
+      # Sherlock users to Azure Entra ID users.
+      userEmailSuffixesToReplace:
+        - @broadinstitute.org
 
     devB2cAzureGroup:
       enable: false
@@ -293,9 +295,11 @@ rolePropagation:
       tenantID: fd0bc0ef-1747-4ee6-ab3e-d4d6bb882d40 # terradevb2c.onmicrosoft.com
       # The path on disk that Sherlock should expect to find a token for federated workload identity.
       tokenFilePath: /azure-federation/projected-ksa-token.jwt
-      # The email domain of all members.
-      memberEmailDomain: broadinstitute.org
-      # Domains that should be swapped out with the memberEmailDomain to match Sherlock users to Azure
-      # AD users. Here, this is empty because the members have broadinstitute.org emails, which is what
-      # Sherlock users have.
-      userEmailDomainsToReplace: []
+      # The suffix of all member emails. This can be thought of as a filter for what Azure users Sherlock
+      # will attempt to propagate roles to. This may contain a "@" (especially useful for "#EXT#@" emails);
+      # if it does, then the userEmailSuffixesToReplace must as well.
+      memberEmailSuffix: _test.firecloud.org#EXT#@terradevb2c.onmicrosoft.com
+      # Suffixes of Sherlock users' emails that should be swapped out with the memberEmailSuffix to match
+      # Sherlock users to Azure Entra ID users.
+      userEmailSuffixesToReplace:
+        - @broadinstitute.org

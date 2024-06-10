@@ -37,14 +37,14 @@ func (f GoogleWorkspaceGroupFields) EqualTo(other intermediary_user.Fields) bool
 }
 
 type GoogleWorkspaceGroupEngine struct {
-	workspaceDomain           string
-	userEmailDomainsToReplace []string
-	adminService              *admin.Service
+	workspaceDomain            string
+	userEmailSuffixesToReplace []string
+	adminService               *admin.Service
 }
 
 func (f *GoogleWorkspaceGroupEngine) Init(ctx context.Context, k *koanf.Koanf) error {
 	f.workspaceDomain = k.String("workspaceDomain")
-	f.userEmailDomainsToReplace = k.Strings("userEmailDomainsToReplace")
+	f.userEmailSuffixesToReplace = k.Strings("userEmailSuffixesToReplace")
 	var err error
 	f.adminService, err = admin.NewService(ctx, option.WithScopes(admin.AdminDirectoryUserScope, admin.AdminDirectoryGroupMemberScope))
 	return err
@@ -72,8 +72,8 @@ func (f *GoogleWorkspaceGroupEngine) GenerateDesiredState(ctx context.Context, r
 			continue
 		}
 
-		email := utils.SubstituteEmailDomain(roleAssignment.User.Email, f.userEmailDomainsToReplace, f.workspaceDomain)
-		if !strings.HasSuffix(email, f.workspaceDomain) {
+		email := utils.SubstituteSuffix(roleAssignment.User.Email, f.userEmailSuffixesToReplace, "@"+f.workspaceDomain)
+		if !strings.HasSuffix(email, "@"+f.workspaceDomain) {
 			// We can short-circuit here, we know that the user is not in the workspace domain so we won't bother looking
 			continue
 		}
