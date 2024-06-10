@@ -60,7 +60,7 @@ func (a *AzureGroupEngine) Init(_ context.Context, k *koanf.Koanf) error {
 		return err
 	}
 
-	a.client, err = msgraphsdk.NewGraphServiceClientWithCredentials(credentials, []string{"Group.ReadWrite.All", "User.ReadWrite.All"})
+	a.client, err = msgraphsdk.NewGraphServiceClientWithCredentials(credentials, nil)
 	return err
 }
 
