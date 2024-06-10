@@ -275,7 +275,7 @@ rolePropagation:
       # The client ID of the Azure AD app to use for authentication.
       clientID:
       # The UUID of the Azure AD tenant to work with.
-      tenantID: fd0bc0ef-1747-4ee6-ab3e-d4d6bb882d40
+      tenantID: fad90753-2022-4456-9b0a-c7e5b934e408 # azure.dev.envs-terra.bio
       # The path on disk that Sherlock should expect to find a token for federated workload identity.
       tokenFilePath: /azure-federation/projected-ksa-token.jwt
       # The email domain of all members.
