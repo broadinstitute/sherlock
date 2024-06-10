@@ -279,12 +279,11 @@ rolePropagation:
       # The path on disk that Sherlock should expect to find a token for federated workload identity.
       tokenFilePath: /azure-federation/projected-ksa-token.jwt
       # The email domain of all members.
-      memberEmailDomain: test.firecloud.org
+      memberEmailDomain: broadinstitute.org
       # Domains that should be swapped out with the memberEmailDomain to match Sherlock users to Azure
-      # AD users. This is necessary because Sherlock runs in and observes users from a different
-      # Google Workspace than the one that Azure AD user emails are from.
-      userEmailDomainsToReplace:
-        - broadinstitute.org
+      # AD users. Here, this is empty because the members have broadinstitute.org emails, which is what
+      # Sherlock users have.
+      userEmailDomainsToReplace: []
 
     devB2cAzureGroup:
       enable: false

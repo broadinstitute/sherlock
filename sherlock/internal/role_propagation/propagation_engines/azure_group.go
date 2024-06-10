@@ -99,7 +99,7 @@ func (a *AzureGroupEngine) GenerateDesiredState(ctx context.Context, roleAssignm
 		usersResponse, err := a.client.Users().Get(ctx, &users.UsersRequestBuilderGetRequestConfiguration{
 			QueryParameters: &users.UsersRequestBuilderGetQueryParameters{
 				Select: []string{"id"},
-				Filter: utils.PointerTo(fmt.Sprintf("userPrincipalName eq '%s'", email)),
+				Filter: utils.PointerTo(fmt.Sprintf("mail eq '%s'", email)),
 				Top:    utils.PointerTo[int32](1),
 			},
 		})
