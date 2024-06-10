@@ -286,20 +286,3 @@ rolePropagation:
       # Sherlock users to Azure Entra ID users.
       userEmailSuffixesToReplace:
         - "@broadinstitute.org"
-
-    devB2cAzureGroup:
-      enable: false
-      # The client ID of the Azure AD app to use for authentication.
-      clientID:
-      # The UUID of the Azure AD tenant to work with.
-      tenantID: fd0bc0ef-1747-4ee6-ab3e-d4d6bb882d40 # terradevb2c.onmicrosoft.com
-      # The path on disk that Sherlock should expect to find a token for federated workload identity.
-      tokenFilePath: /azure-federation/projected-ksa-token.jwt
-      # The suffix of all member emails. This can be thought of as a filter for what Azure users Sherlock
-      # will attempt to propagate roles to. This may contain a "@" (especially useful for "#EXT#@" emails);
-      # if it does, then the userEmailSuffixesToReplace must as well.
-      memberEmailSuffix: "_test.firecloud.org#EXT#@terradevb2c.onmicrosoft.com"
-      # Suffixes of Sherlock users' emails that should be swapped out with the memberEmailSuffix to match
-      # Sherlock users to Azure Entra ID users.
-      userEmailSuffixesToReplace:
-        - "@broadinstitute.org"
