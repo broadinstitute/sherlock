@@ -48,6 +48,7 @@ type ClientService interface {
 
   Delete the RoleAssignment between a given Role and User.
 Non-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role's default break-glass duration in the future.
+Propagation will be triggered after this operation.
 */
 func (a *Client) DeleteAPIRoleAssignmentsV3RoleSelectorUserSelector(params *DeleteAPIRoleAssignmentsV3RoleSelectorUserSelectorParams, opts ...ClientOption) error {
 	// TODO: Validate the params before sending
@@ -162,6 +163,7 @@ func (a *Client) GetAPIRoleAssignmentsV3RoleSelectorUserSelector(params *GetAPIR
 
   Edit the RoleAssignment between a given Role and User.
 Non-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role's default break-glass duration in the future.
+Propagation will be triggered after this operation.
 */
 func (a *Client) PatchAPIRoleAssignmentsV3RoleSelectorUserSelector(params *PatchAPIRoleAssignmentsV3RoleSelectorUserSelectorParams, opts ...ClientOption) (*PatchAPIRoleAssignmentsV3RoleSelectorUserSelectorOK, error) {
 	// TODO: Validate the params before sending
@@ -203,6 +205,7 @@ func (a *Client) PatchAPIRoleAssignmentsV3RoleSelectorUserSelector(params *Patch
 
   Create the RoleAssignment between a given Role and User.
 Non-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role's default break-glass duration in the future.
+Propagation will be triggered after this operation.
 */
 func (a *Client) PostAPIRoleAssignmentsV3RoleSelectorUserSelector(params *PostAPIRoleAssignmentsV3RoleSelectorUserSelectorParams, opts ...ClientOption) (*PostAPIRoleAssignmentsV3RoleSelectorUserSelectorCreated, error) {
 	// TODO: Validate the params before sending

@@ -112,7 +112,7 @@ export class RoleAssignmentsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Delete the RoleAssignment between a given Role and User. Non-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role\'s default break-glass duration in the future.
+     * Delete the RoleAssignment between a given Role and User. Non-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role\'s default break-glass duration in the future. Propagation will be triggered after this operation.
      * Delete a RoleAssignment
      */
     async apiRoleAssignmentsV3RoleSelectorUserSelectorDeleteRaw(requestParameters: ApiRoleAssignmentsV3RoleSelectorUserSelectorDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
@@ -145,7 +145,7 @@ export class RoleAssignmentsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Delete the RoleAssignment between a given Role and User. Non-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role\'s default break-glass duration in the future.
+     * Delete the RoleAssignment between a given Role and User. Non-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role\'s default break-glass duration in the future. Propagation will be triggered after this operation.
      * Delete a RoleAssignment
      */
     async apiRoleAssignmentsV3RoleSelectorUserSelectorDelete(requestParameters: ApiRoleAssignmentsV3RoleSelectorUserSelectorDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
@@ -195,7 +195,7 @@ export class RoleAssignmentsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Edit the RoleAssignment between a given Role and User. Non-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role\'s default break-glass duration in the future.
+     * Edit the RoleAssignment between a given Role and User. Non-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role\'s default break-glass duration in the future. Propagation will be triggered after this operation.
      * Edit a RoleAssignment
      */
     async apiRoleAssignmentsV3RoleSelectorUserSelectorPatchRaw(requestParameters: ApiRoleAssignmentsV3RoleSelectorUserSelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockRoleAssignmentV3>> {
@@ -238,7 +238,7 @@ export class RoleAssignmentsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Edit the RoleAssignment between a given Role and User. Non-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role\'s default break-glass duration in the future.
+     * Edit the RoleAssignment between a given Role and User. Non-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role\'s default break-glass duration in the future. Propagation will be triggered after this operation.
      * Edit a RoleAssignment
      */
     async apiRoleAssignmentsV3RoleSelectorUserSelectorPatch(requestParameters: ApiRoleAssignmentsV3RoleSelectorUserSelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockRoleAssignmentV3> {
@@ -247,7 +247,7 @@ export class RoleAssignmentsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Create the RoleAssignment between a given Role and User. Non-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role\'s default break-glass duration in the future.
+     * Create the RoleAssignment between a given Role and User. Non-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role\'s default break-glass duration in the future. Propagation will be triggered after this operation.
      * Create a RoleAssignment
      */
     async apiRoleAssignmentsV3RoleSelectorUserSelectorPostRaw(requestParameters: ApiRoleAssignmentsV3RoleSelectorUserSelectorPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockRoleAssignmentV3>> {
@@ -290,7 +290,7 @@ export class RoleAssignmentsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Create the RoleAssignment between a given Role and User. Non-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role\'s default break-glass duration in the future.
+     * Create the RoleAssignment between a given Role and User. Non-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role\'s default break-glass duration in the future. Propagation will be triggered after this operation.
      * Create a RoleAssignment
      */
     async apiRoleAssignmentsV3RoleSelectorUserSelectorPost(requestParameters: ApiRoleAssignmentsV3RoleSelectorUserSelectorPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockRoleAssignmentV3> {

@@ -70,6 +70,24 @@ export interface SherlockRoleV3 {
     grantsDevFirecloudGroup?: string;
     /**
      * 
+     * @type {string}
+     * @memberof SherlockRoleV3
+     */
+    grantsProdAzureGroup?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SherlockRoleV3
+     */
+    grantsProdFirecloudGroup?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SherlockRoleV3
+     */
+    grantsQaFirecloudGroup?: string;
+    /**
+     * 
      * @type {boolean}
      * @memberof SherlockRoleV3
      */
@@ -124,6 +142,9 @@ export function SherlockRoleV3FromJSONTyped(json: any, ignoreDiscriminator: bool
         'defaultGlassBreakDuration': json['defaultGlassBreakDuration'] == null ? undefined : json['defaultGlassBreakDuration'],
         'grantsDevAzureGroup': json['grantsDevAzureGroup'] == null ? undefined : json['grantsDevAzureGroup'],
         'grantsDevFirecloudGroup': json['grantsDevFirecloudGroup'] == null ? undefined : json['grantsDevFirecloudGroup'],
+        'grantsProdAzureGroup': json['grantsProdAzureGroup'] == null ? undefined : json['grantsProdAzureGroup'],
+        'grantsProdFirecloudGroup': json['grantsProdFirecloudGroup'] == null ? undefined : json['grantsProdFirecloudGroup'],
+        'grantsQaFirecloudGroup': json['grantsQaFirecloudGroup'] == null ? undefined : json['grantsQaFirecloudGroup'],
         'grantsSherlockSuperAdmin': json['grantsSherlockSuperAdmin'] == null ? undefined : json['grantsSherlockSuperAdmin'],
         'id': json['id'] == null ? undefined : json['id'],
         'name': json['name'] == null ? undefined : json['name'],
@@ -145,6 +166,9 @@ export function SherlockRoleV3ToJSON(value?: SherlockRoleV3 | null): any {
         'defaultGlassBreakDuration': value['defaultGlassBreakDuration'],
         'grantsDevAzureGroup': value['grantsDevAzureGroup'],
         'grantsDevFirecloudGroup': value['grantsDevFirecloudGroup'],
+        'grantsProdAzureGroup': value['grantsProdAzureGroup'],
+        'grantsProdFirecloudGroup': value['grantsProdFirecloudGroup'],
+        'grantsQaFirecloudGroup': value['grantsQaFirecloudGroup'],
         'grantsSherlockSuperAdmin': value['grantsSherlockSuperAdmin'],
         'id': value['id'],
         'name': value['name'],

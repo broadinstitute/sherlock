@@ -1598,6 +1598,12 @@ definitions:
         type: string
       grantsDevFirecloudGroup:
         type: string
+      grantsProdAzureGroup:
+        type: string
+      grantsProdFirecloudGroup:
+        type: string
+      grantsQaFirecloudGroup:
+        type: string
       grantsSherlockSuperAdmin:
         type: boolean
       id:
@@ -1619,6 +1625,12 @@ definitions:
       grantsDevAzureGroup:
         type: string
       grantsDevFirecloudGroup:
+        type: string
+      grantsProdAzureGroup:
+        type: string
+      grantsProdFirecloudGroup:
+        type: string
+      grantsQaFirecloudGroup:
         type: string
       grantsSherlockSuperAdmin:
         type: boolean
@@ -6259,6 +6271,7 @@ paths:
       description: |-
         Delete the RoleAssignment between a given Role and User.
         Non-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role's default break-glass duration in the future.
+        Propagation will be triggered after this operation.
       parameters:
       - description: The selector of the Role, which can be either the numeric ID
           or the name
@@ -6357,6 +6370,7 @@ paths:
       description: |-
         Edit the RoleAssignment between a given Role and User.
         Non-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role's default break-glass duration in the future.
+        Propagation will be triggered after this operation.
       parameters:
       - description: The selector of the Role, which can be either the numeric ID
           or the name
@@ -6415,6 +6429,7 @@ paths:
       description: |-
         Create the RoleAssignment between a given Role and User.
         Non-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role's default break-glass duration in the future.
+        Propagation will be triggered after this operation.
       parameters:
       - description: The selector of the Role, which can be either the numeric ID
           or the name
@@ -6490,6 +6505,15 @@ paths:
         name: grantsDevFirecloudGroup
         type: string
       - in: query
+        name: grantsProdAzureGroup
+        type: string
+      - in: query
+        name: grantsProdFirecloudGroup
+        type: string
+      - in: query
+        name: grantsQaFirecloudGroup
+        type: string
+      - in: query
         name: grantsSherlockSuperAdmin
         type: boolean
       - in: query
@@ -6553,6 +6577,7 @@ paths:
       description: |-
         Create an individual Role with no one assigned to it.
         Only super-admins may mutate Roles.
+        Propagation will be triggered after this operation.
       parameters:
       - description: The initial fields the Role should have set
         in: body
@@ -6599,6 +6624,7 @@ paths:
       description: |-
         Delete an individual Role.
         Only super-admins may mutate Roles.
+        Propagation will NOT be triggered after this operation -- the grants will become un-managed by Sherlock and left as-is. Remove role assignments first to remove users from grants.
       parameters:
       - description: The selector of the Role, which can be either the numeric ID
           or the name
@@ -6687,6 +6713,7 @@ paths:
       description: |-
         Edit an individual Role.
         Only super-admins may mutate Roles.
+        Propagation will be triggered after this operation.
       parameters:
       - description: The selector of the Role, which can be either the numeric ID
           or the name

@@ -29,6 +29,15 @@ type SherlockRoleV3Edit struct {
 	// grants dev firecloud group
 	GrantsDevFirecloudGroup string `json:"grantsDevFirecloudGroup,omitempty"`
 
+	// grants prod azure group
+	GrantsProdAzureGroup string `json:"grantsProdAzureGroup,omitempty"`
+
+	// grants prod firecloud group
+	GrantsProdFirecloudGroup string `json:"grantsProdFirecloudGroup,omitempty"`
+
+	// grants qa firecloud group
+	GrantsQaFirecloudGroup string `json:"grantsQaFirecloudGroup,omitempty"`
+
 	// grants sherlock super admin
 	GrantsSherlockSuperAdmin bool `json:"grantsSherlockSuperAdmin,omitempty"`
 

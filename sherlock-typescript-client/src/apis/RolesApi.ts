@@ -34,6 +34,9 @@ export interface ApiRolesV3GetRequest {
     defaultGlassBreakDuration?: string;
     grantsDevAzureGroup?: string;
     grantsDevFirecloudGroup?: string;
+    grantsProdAzureGroup?: string;
+    grantsProdFirecloudGroup?: string;
+    grantsQaFirecloudGroup?: string;
     grantsSherlockSuperAdmin?: boolean;
     id?: number;
     name?: string;
@@ -92,6 +95,18 @@ export class RolesApi extends runtime.BaseAPI {
             queryParameters['grantsDevFirecloudGroup'] = requestParameters['grantsDevFirecloudGroup'];
         }
 
+        if (requestParameters['grantsProdAzureGroup'] != null) {
+            queryParameters['grantsProdAzureGroup'] = requestParameters['grantsProdAzureGroup'];
+        }
+
+        if (requestParameters['grantsProdFirecloudGroup'] != null) {
+            queryParameters['grantsProdFirecloudGroup'] = requestParameters['grantsProdFirecloudGroup'];
+        }
+
+        if (requestParameters['grantsQaFirecloudGroup'] != null) {
+            queryParameters['grantsQaFirecloudGroup'] = requestParameters['grantsQaFirecloudGroup'];
+        }
+
         if (requestParameters['grantsSherlockSuperAdmin'] != null) {
             queryParameters['grantsSherlockSuperAdmin'] = requestParameters['grantsSherlockSuperAdmin'];
         }
@@ -142,7 +157,7 @@ export class RolesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Create an individual Role with no one assigned to it. Only super-admins may mutate Roles.
+     * Create an individual Role with no one assigned to it. Only super-admins may mutate Roles. Propagation will be triggered after this operation.
      * Create a Role
      */
     async apiRolesV3PostRaw(requestParameters: ApiRolesV3PostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockRoleV3>> {
@@ -171,7 +186,7 @@ export class RolesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Create an individual Role with no one assigned to it. Only super-admins may mutate Roles.
+     * Create an individual Role with no one assigned to it. Only super-admins may mutate Roles. Propagation will be triggered after this operation.
      * Create a Role
      */
     async apiRolesV3Post(requestParameters: ApiRolesV3PostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockRoleV3> {
@@ -180,7 +195,7 @@ export class RolesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Delete an individual Role. Only super-admins may mutate Roles.
+     * Delete an individual Role. Only super-admins may mutate Roles. Propagation will NOT be triggered after this operation -- the grants will become un-managed by Sherlock and left as-is. Remove role assignments first to remove users from grants.
      * Delete a Role
      */
     async apiRolesV3SelectorDeleteRaw(requestParameters: ApiRolesV3SelectorDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockRoleV3>> {
@@ -206,7 +221,7 @@ export class RolesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Delete an individual Role. Only super-admins may mutate Roles.
+     * Delete an individual Role. Only super-admins may mutate Roles. Propagation will NOT be triggered after this operation -- the grants will become un-managed by Sherlock and left as-is. Remove role assignments first to remove users from grants.
      * Delete a Role
      */
     async apiRolesV3SelectorDelete(requestParameters: ApiRolesV3SelectorDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockRoleV3> {
@@ -250,7 +265,7 @@ export class RolesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Edit an individual Role. Only super-admins may mutate Roles.
+     * Edit an individual Role. Only super-admins may mutate Roles. Propagation will be triggered after this operation.
      * Edit a Role
      */
     async apiRolesV3SelectorPatchRaw(requestParameters: ApiRolesV3SelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockRoleV3>> {
@@ -286,7 +301,7 @@ export class RolesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Edit an individual Role. Only super-admins may mutate Roles.
+     * Edit an individual Role. Only super-admins may mutate Roles. Propagation will be triggered after this operation.
      * Edit a Role
      */
     async apiRolesV3SelectorPatch(requestParameters: ApiRolesV3SelectorPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockRoleV3> {

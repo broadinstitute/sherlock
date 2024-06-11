@@ -77,6 +77,15 @@ type GetAPIRolesV3Params struct {
 	// GrantsDevFirecloudGroup.
 	GrantsDevFirecloudGroup *string
 
+	// GrantsProdAzureGroup.
+	GrantsProdAzureGroup *string
+
+	// GrantsProdFirecloudGroup.
+	GrantsProdFirecloudGroup *string
+
+	// GrantsQaFirecloudGroup.
+	GrantsQaFirecloudGroup *string
+
 	// GrantsSherlockSuperAdmin.
 	GrantsSherlockSuperAdmin *bool
 
@@ -212,6 +221,39 @@ func (o *GetAPIRolesV3Params) WithGrantsDevFirecloudGroup(grantsDevFirecloudGrou
 // SetGrantsDevFirecloudGroup adds the grantsDevFirecloudGroup to the get API roles v3 params
 func (o *GetAPIRolesV3Params) SetGrantsDevFirecloudGroup(grantsDevFirecloudGroup *string) {
 	o.GrantsDevFirecloudGroup = grantsDevFirecloudGroup
+}
+
+// WithGrantsProdAzureGroup adds the grantsProdAzureGroup to the get API roles v3 params
+func (o *GetAPIRolesV3Params) WithGrantsProdAzureGroup(grantsProdAzureGroup *string) *GetAPIRolesV3Params {
+	o.SetGrantsProdAzureGroup(grantsProdAzureGroup)
+	return o
+}
+
+// SetGrantsProdAzureGroup adds the grantsProdAzureGroup to the get API roles v3 params
+func (o *GetAPIRolesV3Params) SetGrantsProdAzureGroup(grantsProdAzureGroup *string) {
+	o.GrantsProdAzureGroup = grantsProdAzureGroup
+}
+
+// WithGrantsProdFirecloudGroup adds the grantsProdFirecloudGroup to the get API roles v3 params
+func (o *GetAPIRolesV3Params) WithGrantsProdFirecloudGroup(grantsProdFirecloudGroup *string) *GetAPIRolesV3Params {
+	o.SetGrantsProdFirecloudGroup(grantsProdFirecloudGroup)
+	return o
+}
+
+// SetGrantsProdFirecloudGroup adds the grantsProdFirecloudGroup to the get API roles v3 params
+func (o *GetAPIRolesV3Params) SetGrantsProdFirecloudGroup(grantsProdFirecloudGroup *string) {
+	o.GrantsProdFirecloudGroup = grantsProdFirecloudGroup
+}
+
+// WithGrantsQaFirecloudGroup adds the grantsQaFirecloudGroup to the get API roles v3 params
+func (o *GetAPIRolesV3Params) WithGrantsQaFirecloudGroup(grantsQaFirecloudGroup *string) *GetAPIRolesV3Params {
+	o.SetGrantsQaFirecloudGroup(grantsQaFirecloudGroup)
+	return o
+}
+
+// SetGrantsQaFirecloudGroup adds the grantsQaFirecloudGroup to the get API roles v3 params
+func (o *GetAPIRolesV3Params) SetGrantsQaFirecloudGroup(grantsQaFirecloudGroup *string) {
+	o.GrantsQaFirecloudGroup = grantsQaFirecloudGroup
 }
 
 // WithGrantsSherlockSuperAdmin adds the grantsSherlockSuperAdmin to the get API roles v3 params
@@ -379,6 +421,57 @@ func (o *GetAPIRolesV3Params) WriteToRequest(r runtime.ClientRequest, reg strfmt
 		if qGrantsDevFirecloudGroup != "" {
 
 			if err := r.SetQueryParam("grantsDevFirecloudGroup", qGrantsDevFirecloudGroup); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.GrantsProdAzureGroup != nil {
+
+		// query param grantsProdAzureGroup
+		var qrGrantsProdAzureGroup string
+
+		if o.GrantsProdAzureGroup != nil {
+			qrGrantsProdAzureGroup = *o.GrantsProdAzureGroup
+		}
+		qGrantsProdAzureGroup := qrGrantsProdAzureGroup
+		if qGrantsProdAzureGroup != "" {
+
+			if err := r.SetQueryParam("grantsProdAzureGroup", qGrantsProdAzureGroup); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.GrantsProdFirecloudGroup != nil {
+
+		// query param grantsProdFirecloudGroup
+		var qrGrantsProdFirecloudGroup string
+
+		if o.GrantsProdFirecloudGroup != nil {
+			qrGrantsProdFirecloudGroup = *o.GrantsProdFirecloudGroup
+		}
+		qGrantsProdFirecloudGroup := qrGrantsProdFirecloudGroup
+		if qGrantsProdFirecloudGroup != "" {
+
+			if err := r.SetQueryParam("grantsProdFirecloudGroup", qGrantsProdFirecloudGroup); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.GrantsQaFirecloudGroup != nil {
+
+		// query param grantsQaFirecloudGroup
+		var qrGrantsQaFirecloudGroup string
+
+		if o.GrantsQaFirecloudGroup != nil {
+			qrGrantsQaFirecloudGroup = *o.GrantsQaFirecloudGroup
+		}
+		qGrantsQaFirecloudGroup := qrGrantsQaFirecloudGroup
+		if qGrantsQaFirecloudGroup != "" {
+
+			if err := r.SetQueryParam("grantsQaFirecloudGroup", qGrantsQaFirecloudGroup); err != nil {
 				return err
 			}
 		}

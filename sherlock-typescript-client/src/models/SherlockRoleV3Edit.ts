@@ -45,6 +45,24 @@ export interface SherlockRoleV3Edit {
     grantsDevFirecloudGroup?: string;
     /**
      * 
+     * @type {string}
+     * @memberof SherlockRoleV3Edit
+     */
+    grantsProdAzureGroup?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SherlockRoleV3Edit
+     */
+    grantsProdFirecloudGroup?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SherlockRoleV3Edit
+     */
+    grantsQaFirecloudGroup?: string;
+    /**
+     * 
      * @type {boolean}
      * @memberof SherlockRoleV3Edit
      */
@@ -84,6 +102,9 @@ export function SherlockRoleV3EditFromJSONTyped(json: any, ignoreDiscriminator: 
         'defaultGlassBreakDuration': json['defaultGlassBreakDuration'] == null ? undefined : json['defaultGlassBreakDuration'],
         'grantsDevAzureGroup': json['grantsDevAzureGroup'] == null ? undefined : json['grantsDevAzureGroup'],
         'grantsDevFirecloudGroup': json['grantsDevFirecloudGroup'] == null ? undefined : json['grantsDevFirecloudGroup'],
+        'grantsProdAzureGroup': json['grantsProdAzureGroup'] == null ? undefined : json['grantsProdAzureGroup'],
+        'grantsProdFirecloudGroup': json['grantsProdFirecloudGroup'] == null ? undefined : json['grantsProdFirecloudGroup'],
+        'grantsQaFirecloudGroup': json['grantsQaFirecloudGroup'] == null ? undefined : json['grantsQaFirecloudGroup'],
         'grantsSherlockSuperAdmin': json['grantsSherlockSuperAdmin'] == null ? undefined : json['grantsSherlockSuperAdmin'],
         'name': json['name'] == null ? undefined : json['name'],
         'suspendNonSuitableUsers': json['suspendNonSuitableUsers'] == null ? undefined : json['suspendNonSuitableUsers'],
@@ -100,6 +121,9 @@ export function SherlockRoleV3EditToJSON(value?: SherlockRoleV3Edit | null): any
         'defaultGlassBreakDuration': value['defaultGlassBreakDuration'],
         'grantsDevAzureGroup': value['grantsDevAzureGroup'],
         'grantsDevFirecloudGroup': value['grantsDevFirecloudGroup'],
+        'grantsProdAzureGroup': value['grantsProdAzureGroup'],
+        'grantsProdFirecloudGroup': value['grantsProdFirecloudGroup'],
+        'grantsQaFirecloudGroup': value['grantsQaFirecloudGroup'],
         'grantsSherlockSuperAdmin': value['grantsSherlockSuperAdmin'],
         'name': value['name'],
         'suspendNonSuitableUsers': value['suspendNonSuitableUsers'],

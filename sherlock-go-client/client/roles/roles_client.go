@@ -48,6 +48,7 @@ type ClientService interface {
 
   Delete an individual Role.
 Only super-admins may mutate Roles.
+Propagation will NOT be triggered after this operation -- the grants will become un-managed by Sherlock and left as-is. Remove role assignments first to remove users from grants.
 */
 func (a *Client) DeleteAPIRolesV3Selector(params *DeleteAPIRolesV3SelectorParams, opts ...ClientOption) (*DeleteAPIRolesV3SelectorOK, error) {
 	// TODO: Validate the params before sending
@@ -169,6 +170,7 @@ func (a *Client) GetAPIRolesV3Selector(params *GetAPIRolesV3SelectorParams, opts
 
   Edit an individual Role.
 Only super-admins may mutate Roles.
+Propagation will be triggered after this operation.
 */
 func (a *Client) PatchAPIRolesV3Selector(params *PatchAPIRolesV3SelectorParams, opts ...ClientOption) (*PatchAPIRolesV3SelectorOK, error) {
 	// TODO: Validate the params before sending
@@ -210,6 +212,7 @@ func (a *Client) PatchAPIRolesV3Selector(params *PatchAPIRolesV3SelectorParams, 
 
   Create an individual Role with no one assigned to it.
 Only super-admins may mutate Roles.
+Propagation will be triggered after this operation.
 */
 func (a *Client) PostAPIRolesV3(params *PostAPIRolesV3Params, opts ...ClientOption) (*PostAPIRolesV3Created, error) {
 	// TODO: Validate the params before sending

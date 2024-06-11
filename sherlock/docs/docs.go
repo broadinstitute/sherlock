@@ -6736,7 +6736,7 @@ const docTemplate = `{
                 }
             },
             "post": {
-                "description": "Create the RoleAssignment between a given Role and User.\nNon-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role's default break-glass duration in the future.",
+                "description": "Create the RoleAssignment between a given Role and User.\nNon-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role's default break-glass duration in the future.\nPropagation will be triggered after this operation.",
                 "produces": [
                     "application/json"
                 ],
@@ -6815,7 +6815,7 @@ const docTemplate = `{
                 }
             },
             "delete": {
-                "description": "Delete the RoleAssignment between a given Role and User.\nNon-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role's default break-glass duration in the future.",
+                "description": "Delete the RoleAssignment between a given Role and User.\nNon-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role's default break-glass duration in the future.\nPropagation will be triggered after this operation.",
                 "produces": [
                     "application/json"
                 ],
@@ -6879,7 +6879,7 @@ const docTemplate = `{
                 }
             },
             "patch": {
-                "description": "Edit the RoleAssignment between a given Role and User.\nNon-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role's default break-glass duration in the future.",
+                "description": "Edit the RoleAssignment between a given Role and User.\nNon-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role's default break-glass duration in the future.\nPropagation will be triggered after this operation.",
                 "produces": [
                     "application/json"
                 ],
@@ -6996,6 +6996,21 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "name": "grantsProdAzureGroup",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "grantsProdFirecloudGroup",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "grantsQaFirecloudGroup",
+                        "in": "query"
+                    },
+                    {
                         "type": "boolean",
                         "name": "grantsSherlockSuperAdmin",
                         "in": "query"
@@ -7083,7 +7098,7 @@ const docTemplate = `{
                 }
             },
             "post": {
-                "description": "Create an individual Role with no one assigned to it.\nOnly super-admins may mutate Roles.",
+                "description": "Create an individual Role with no one assigned to it.\nOnly super-admins may mutate Roles.\nPropagation will be triggered after this operation.",
                 "produces": [
                     "application/json"
                 ],
@@ -7213,7 +7228,7 @@ const docTemplate = `{
                 }
             },
             "delete": {
-                "description": "Delete an individual Role.\nOnly super-admins may mutate Roles.",
+                "description": "Delete an individual Role.\nOnly super-admins may mutate Roles.\nPropagation will NOT be triggered after this operation -- the grants will become un-managed by Sherlock and left as-is. Remove role assignments first to remove users from grants.",
                 "produces": [
                     "application/json"
                 ],
@@ -7276,7 +7291,7 @@ const docTemplate = `{
                 }
             },
             "patch": {
-                "description": "Edit an individual Role.\nOnly super-admins may mutate Roles.",
+                "description": "Edit an individual Role.\nOnly super-admins may mutate Roles.\nPropagation will be triggered after this operation.",
                 "produces": [
                     "application/json"
                 ],
@@ -9860,6 +9875,15 @@ const docTemplate = `{
                 "grantsDevFirecloudGroup": {
                     "type": "string"
                 },
+                "grantsProdAzureGroup": {
+                    "type": "string"
+                },
+                "grantsProdFirecloudGroup": {
+                    "type": "string"
+                },
+                "grantsQaFirecloudGroup": {
+                    "type": "string"
+                },
                 "grantsSherlockSuperAdmin": {
                     "type": "boolean"
                 },
@@ -9891,6 +9915,15 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "grantsDevFirecloudGroup": {
+                    "type": "string"
+                },
+                "grantsProdAzureGroup": {
+                    "type": "string"
+                },
+                "grantsProdFirecloudGroup": {
+                    "type": "string"
+                },
+                "grantsQaFirecloudGroup": {
                     "type": "string"
                 },
                 "grantsSherlockSuperAdmin": {
