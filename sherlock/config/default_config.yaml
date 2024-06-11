@@ -251,6 +251,9 @@ rolePropagation:
   # (configured in the "propagators" section below). If false, the array of propagators will typically
   # be empty, so propagation will have no effect.
   enable: false
+  # If true, roles will be propagated asynchronously after requests to the role and role assignment
+  # endpoints. If false, roles will be propagated synchronously before those requests are completed.
+  asynchronous: true
   # The duration that an individual propagator should be able to run for a single role before being
   # forcibly shut down with an error. This can be overridden for individual propagators by specifying
   # a "timeout" field in their configuration.
@@ -270,6 +273,26 @@ rolePropagation:
       userEmailSuffixesToReplace:
         - "@broadinstitute.org"
 
+    qaFirecloudGroup:
+      enable: false
+      # The domain of the Google Workspace, assumed to be the email domain of all members. This should
+      # not contain a leading "@".
+      workspaceDomain: "qa.firecloud.org"
+      # Suffixes of Sherlock users' emails that should be swapped out with "@"+workspaceDomain to match
+      # Sherlock users to Google Workspace users. This must contain a "@".
+      userEmailSuffixesToReplace:
+        - "@broadinstitute.org"
+
+    prodFirecloudGroup:
+      enable: false
+      # The domain of the Google Workspace, assumed to be the email domain of all members. This should
+      # not contain a leading "@".
+      workspaceDomain: "firecloud.org"
+      # Suffixes of Sherlock users' emails that should be swapped out with "@"+workspaceDomain to match
+      # Sherlock users to Google Workspace users. This must contain a "@".
+      userEmailSuffixesToReplace:
+        - "@broadinstitute.org"
+
     devAzureGroup:
       enable: false
       # The client ID of the Azure AD app to use for authentication.
@@ -282,6 +305,23 @@ rolePropagation:
       # will attempt to propagate roles to. This may contain a "@" (especially useful for "#EXT#@" emails);
       # if it does, then the userEmailSuffixesToReplace must as well.
       memberEmailSuffix: "_broadinstitute.org#EXT#@devazureterra.onmicrosoft.com"
+      # Suffixes of Sherlock users' emails that should be swapped out with the memberEmailSuffix to match
+      # Sherlock users to Azure Entra ID users.
+      userEmailSuffixesToReplace:
+        - "@broadinstitute.org"
+
+    prodAzureGroup:
+      enable: false
+      # The client ID of the Azure AD app to use for authentication.
+      clientID:
+      # The UUID of the Azure AD tenant to work with.
+      tenantID: 66bb90ac-8857-4a8a-aa0a-be2186dfa5f9 # firecloud.org
+      # The path on disk that Sherlock should expect to find a token for federated workload identity.
+      tokenFilePath: /azure-federation/projected-ksa-token.jwt
+      # The suffix of all member emails. This can be thought of as a filter for what Azure users Sherlock
+      # will attempt to propagate roles to. This may contain a "@" (especially useful for "#EXT#@" emails);
+      # if it does, then the userEmailSuffixesToReplace must as well.
+      memberEmailSuffix: "_broadinstitute.org#EXT#@terraazureprod.onmicrosoft.com"
       # Suffixes of Sherlock users' emails that should be swapped out with the memberEmailSuffix to match
       # Sherlock users to Azure Entra ID users.
       userEmailSuffixesToReplace:

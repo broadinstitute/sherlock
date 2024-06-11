@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models/advisory_locks"
-	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
 	"gorm.io/gorm"
 	"time"
@@ -32,11 +31,21 @@ type RoleFields struct {
 	GrantsSherlockSuperAdmin *bool
 
 	// GrantsDevFirecloudGroup, when not null, indicates that a User with an unsuspended RoleAssignment to this
-	// Role should have their Firecloud account (if they have one) added to this group.
+	// Role should have their dev Firecloud account (if they have one) added to this group.
 	GrantsDevFirecloudGroup *string
+	// GrantsQaFirecloudGroup, when not null, indicates that a User with an unsuspended RoleAssignment to this
+	// Role should have their qa Firecloud account (if they have one) added to this group.
+	GrantsQaFirecloudGroup *string
+	// GrantsProdFirecloudGroup, when not null, indicates that a User with an unsuspended RoleAssignment to this
+	// Role should have their prod Firecloud account (if they have one) added to this group.
+	GrantsProdFirecloudGroup *string
+
 	// GrantsDevAzureGroup, when not null, indicates that a User with an unsuspended RoleAssignment to this Role
 	// should have their Azure account (if they have one) added to this group.
-	GrantsDevAzureGroup *uuid.UUID
+	GrantsDevAzureGroup *string
+	// GrantsProdAzureGroup, when not null, indicates that a User with an unsuspended RoleAssignment to this Role
+	// should have their Azure account (if they have one) added to this group.
+	GrantsProdAzureGroup *string
 }
 
 type Role struct {

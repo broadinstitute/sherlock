@@ -7,7 +7,6 @@ import (
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/role_propagation/intermediary_user"
-	"github.com/google/uuid"
 	"github.com/knadh/koanf"
 	msgraphsdk "github.com/microsoftgraph/msgraph-sdk-go"
 	graphmodels "github.com/microsoftgraph/msgraph-sdk-go/models"
@@ -64,9 +63,9 @@ func (a *AzureGroupEngine) Init(_ context.Context, k *koanf.Koanf) error {
 	return err
 }
 
-func (a *AzureGroupEngine) LoadCurrentState(ctx context.Context, grant uuid.UUID) ([]intermediary_user.IntermediaryUser[AzureGroupIdentifier, AzureGroupFields], error) {
+func (a *AzureGroupEngine) LoadCurrentState(ctx context.Context, grant string) ([]intermediary_user.IntermediaryUser[AzureGroupIdentifier, AzureGroupFields], error) {
 	currentState := make([]intermediary_user.IntermediaryUser[AzureGroupIdentifier, AzureGroupFields], 0)
-	groupMembersResponse, err := a.client.Groups().ByGroupId(grant.String()).Members().Get(ctx, nil)
+	groupMembersResponse, err := a.client.Groups().ByGroupId(grant).Members().Get(ctx, nil)
 	if err != nil {
 		return nil, err
 	} else {
@@ -119,10 +118,10 @@ func (a *AzureGroupEngine) GenerateDesiredState(ctx context.Context, roleAssignm
 	return desiredState, nil
 }
 
-func (a *AzureGroupEngine) Add(ctx context.Context, grant uuid.UUID, identifier AzureGroupIdentifier, _ AzureGroupFields) (string, error) {
+func (a *AzureGroupEngine) Add(ctx context.Context, grant string, identifier AzureGroupIdentifier, _ AzureGroupFields) (string, error) {
 	body := graphmodels.NewReferenceCreate()
 	body.SetOdataId(utils.PointerTo(fmt.Sprintf("https://graph.microsoft.com/v1.0/directoryObjects/%s", identifier.ID)))
-	err := a.client.Groups().ByGroupId(grant.String()).Members().Ref().Post(ctx, body, nil)
+	err := a.client.Groups().ByGroupId(grant).Members().Ref().Post(ctx, body, nil)
 	if err != nil {
 		return "", fmt.Errorf("failed to add user %s to group %s: %w", identifier.ID, grant, err)
 	} else {
@@ -130,12 +129,12 @@ func (a *AzureGroupEngine) Add(ctx context.Context, grant uuid.UUID, identifier 
 	}
 }
 
-func (a *AzureGroupEngine) Update(_ context.Context, _ uuid.UUID, _ AzureGroupIdentifier, _ AzureGroupFields, _ AzureGroupFields) (string, error) {
+func (a *AzureGroupEngine) Update(_ context.Context, _ string, _ AzureGroupIdentifier, _ AzureGroupFields, _ AzureGroupFields) (string, error) {
 	return "", fmt.Errorf("%T.Update not implemented, %T.EqualTo should always return true", a, AzureGroupFields{})
 }
 
-func (a *AzureGroupEngine) Remove(ctx context.Context, grant uuid.UUID, identifier AzureGroupIdentifier) (string, error) {
-	err := a.client.Groups().ByGroupId(grant.String()).Members().ByDirectoryObjectId(identifier.ID).Ref().Delete(ctx, nil)
+func (a *AzureGroupEngine) Remove(ctx context.Context, grant string, identifier AzureGroupIdentifier) (string, error) {
+	err := a.client.Groups().ByGroupId(grant).Members().ByDirectoryObjectId(identifier.ID).Ref().Delete(ctx, nil)
 	if err != nil {
 		return "", fmt.Errorf("failed to remove user %s from group %s: %w", identifier.ID, grant, err)
 	} else {

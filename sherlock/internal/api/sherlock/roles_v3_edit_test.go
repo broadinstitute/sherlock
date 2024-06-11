@@ -65,3 +65,14 @@ func (s *handlerSuite) TestRolesV3Edit() {
 	s.Equal(http.StatusOK, code)
 	s.Equal("some-new-role-name", *got.Name)
 }
+
+func (s *handlerSuite) TestRolesV3Edit_wipeUuid() {
+	role := s.TestData.Role_TerraSuitableEngineer()
+	var got RoleV3
+	code := s.HandleRequest(
+		s.NewSuperAdminRequest("PATCH", "/api/roles/v3/"+*role.Name, gin.H{
+			"grantsDevAzureGroup": "",
+		}),
+		&got)
+	s.Equal(http.StatusOK, code)
+}

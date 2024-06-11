@@ -9,10 +9,19 @@ import (
 	"time"
 )
 
-// WaitToPropagate is a blocking function that will forcibly run propagation for
+func DoOnDemandPropagation(ctx context.Context, db *gorm.DB, roleID uint) {
+	if config.Config.Bool("rolePropagation.asynchronous") {
+		go waitToPropagate(ctx, db, roleID)
+	} else {
+		waitToPropagate(ctx, db, roleID)
+	}
+
+}
+
+// waitToPropagate is a blocking function that will forcibly run propagation for
 // the given role. It will wait until it can acquire a propagation lock on the
 // role.
-func WaitToPropagate(ctx context.Context, db *gorm.DB, roleID uint) {
+func waitToPropagate(ctx context.Context, db *gorm.DB, roleID uint) {
 
 	// Load the role so we can lock it
 	var role models.Role

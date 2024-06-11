@@ -21,7 +21,10 @@ func (s *handlerSuite) Test_roleFromModel() {
 			DefaultGlassBreakDuration: nil,
 			GrantsSherlockSuperAdmin:  model.GrantsSherlockSuperAdmin,
 			GrantsDevFirecloudGroup:   model.GrantsDevFirecloudGroup,
+			GrantsQaFirecloudGroup:    model.GrantsQaFirecloudGroup,
+			GrantsProdFirecloudGroup:  model.GrantsProdFirecloudGroup,
 			GrantsDevAzureGroup:       model.GrantsDevAzureGroup,
+			GrantsProdAzureGroup:      model.GrantsProdAzureGroup,
 		},
 	}
 	role := roleFromModel(model)

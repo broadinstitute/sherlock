@@ -3,7 +3,6 @@ package sherlock
 import (
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
-	"github.com/google/uuid"
 	"time"
 )
 
@@ -15,13 +14,16 @@ type RoleV3 struct {
 }
 
 type RoleV3Edit struct {
-	Name                      *string    `json:"name" form:"name"`
-	SuspendNonSuitableUsers   *bool      `json:"suspendNonSuitableUsers,omitempty" form:"suspendNonSuitableUsers"`
-	CanBeGlassBrokenByRole    *uint      `json:"canBeGlassBrokenByRole,omitempty" form:"canBeGlassBrokenByRole"`
-	DefaultGlassBreakDuration *Duration  `json:"defaultGlassBreakDuration,omitempty" swaggertype:"string" form:"defaultGlassBreakDuration"`
-	GrantsSherlockSuperAdmin  *bool      `json:"grantsSherlockSuperAdmin,omitempty" form:"grantsSherlockSuperAdmin"`
-	GrantsDevFirecloudGroup   *string    `json:"grantsDevFirecloudGroup,omitempty" form:"grantsDevFirecloudGroup"`
-	GrantsDevAzureGroup       *uuid.UUID `json:"grantsDevAzureGroup,omitempty" form:"grantsDevAzureGroup"`
+	Name                      *string   `json:"name" form:"name"`
+	SuspendNonSuitableUsers   *bool     `json:"suspendNonSuitableUsers,omitempty" form:"suspendNonSuitableUsers"`
+	CanBeGlassBrokenByRole    *uint     `json:"canBeGlassBrokenByRole,omitempty" form:"canBeGlassBrokenByRole"`
+	DefaultGlassBreakDuration *Duration `json:"defaultGlassBreakDuration,omitempty" swaggertype:"string" form:"defaultGlassBreakDuration"`
+	GrantsSherlockSuperAdmin  *bool     `json:"grantsSherlockSuperAdmin,omitempty" form:"grantsSherlockSuperAdmin"`
+	GrantsDevFirecloudGroup   *string   `json:"grantsDevFirecloudGroup,omitempty" form:"grantsDevFirecloudGroup"`
+	GrantsQaFirecloudGroup    *string   `json:"grantsQaFirecloudGroup,omitempty" form:"grantsQaFirecloudGroup"`
+	GrantsProdFirecloudGroup  *string   `json:"grantsProdFirecloudGroup,omitempty" form:"grantsProdFirecloudGroup"`
+	GrantsDevAzureGroup       *string   `json:"grantsDevAzureGroup,omitempty" form:"grantsDevAzureGroup"`
+	GrantsProdAzureGroup      *string   `json:"grantsProdAzureGroup,omitempty" form:"grantsProdAzureGroup"`
 }
 
 func (r RoleV3) toModel() models.Role {
@@ -33,7 +35,10 @@ func (r RoleV3) toModel() models.Role {
 			CanBeGlassBrokenByRoleID: r.CanBeGlassBrokenByRole,
 			GrantsSherlockSuperAdmin: r.GrantsSherlockSuperAdmin,
 			GrantsDevFirecloudGroup:  r.GrantsDevFirecloudGroup,
+			GrantsQaFirecloudGroup:   r.GrantsQaFirecloudGroup,
+			GrantsProdFirecloudGroup: r.GrantsProdFirecloudGroup,
 			GrantsDevAzureGroup:      r.GrantsDevAzureGroup,
+			GrantsProdAzureGroup:     r.GrantsProdAzureGroup,
 		},
 	}
 	if r.DefaultGlassBreakDuration != nil {
@@ -59,7 +64,10 @@ func roleFromModel(model models.Role) RoleV3 {
 			}, model.DefaultGlassBreakDuration),
 			GrantsSherlockSuperAdmin: model.GrantsSherlockSuperAdmin,
 			GrantsDevFirecloudGroup:  model.GrantsDevFirecloudGroup,
+			GrantsQaFirecloudGroup:   model.GrantsQaFirecloudGroup,
+			GrantsProdFirecloudGroup: model.GrantsProdFirecloudGroup,
 			GrantsDevAzureGroup:      model.GrantsDevAzureGroup,
+			GrantsProdAzureGroup:     model.GrantsProdAzureGroup,
 		},
 	}
 	if len(model.Assignments) > 0 {

@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/role_propagation/propagation_engines"
-	"github.com/google/uuid"
 )
 
 var propagators []propagator
@@ -20,10 +19,25 @@ func Init(ctx context.Context) error {
 			getGrant:  func(role models.Role) *string { return role.GrantsDevFirecloudGroup },
 			engine:    &propagation_engines.GoogleWorkspaceGroupEngine{},
 		},
+		&propagatorImpl[string, propagation_engines.GoogleWorkspaceGroupIdentifier, propagation_engines.GoogleWorkspaceGroupFields]{
+			configKey: "qaFirecloudGroup",
+			getGrant:  func(role models.Role) *string { return role.GrantsQaFirecloudGroup },
+			engine:    &propagation_engines.GoogleWorkspaceGroupEngine{},
+		},
+		&propagatorImpl[string, propagation_engines.GoogleWorkspaceGroupIdentifier, propagation_engines.GoogleWorkspaceGroupFields]{
+			configKey: "prodFirecloudGroup",
+			getGrant:  func(role models.Role) *string { return role.GrantsProdFirecloudGroup },
+			engine:    &propagation_engines.GoogleWorkspaceGroupEngine{},
+		},
 
-		&propagatorImpl[uuid.UUID, propagation_engines.AzureGroupIdentifier, propagation_engines.AzureGroupFields]{
+		&propagatorImpl[string, propagation_engines.AzureGroupIdentifier, propagation_engines.AzureGroupFields]{
 			configKey: "devAzureGroup",
-			getGrant:  func(role models.Role) *uuid.UUID { return role.GrantsDevAzureGroup },
+			getGrant:  func(role models.Role) *string { return role.GrantsDevAzureGroup },
+			engine:    &propagation_engines.AzureGroupEngine{},
+		},
+		&propagatorImpl[string, propagation_engines.AzureGroupIdentifier, propagation_engines.AzureGroupFields]{
+			configKey: "prodAzureGroup",
+			getGrant:  func(role models.Role) *string { return role.GrantsProdAzureGroup },
 			engine:    &propagation_engines.AzureGroupEngine{},
 		},
 	}

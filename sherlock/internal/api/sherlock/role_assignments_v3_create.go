@@ -83,5 +83,5 @@ func roleAssignmentsV3Create(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusCreated, roleAssignmentFromModel(toCreate))
 
-	go role_propagation.WaitToPropagate(ctx, db, role.ID)
+	role_propagation.DoOnDemandPropagation(ctx, db, role.ID)
 }

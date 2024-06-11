@@ -161,6 +161,26 @@ func (s *modelSuite) TestRoleUniqueGrantsDevFirecloudGroup() {
 	s.ErrorContains(err, "violates unique constraint")
 }
 
+func (s *modelSuite) TestRoleUniqueGrantsQaFirecloudGroup() {
+	s.SetSelfSuperAdminForDB()
+	a := s.TestData.Role_TerraSuitableEngineer()
+	b := s.TestData.Role_TerraEngineer()
+	b.GrantsQaFirecloudGroup = a.GrantsQaFirecloudGroup
+	err := s.DB.Save(&b).Error
+	s.ErrorContains(err, "grants_qa_firecloud_group")
+	s.ErrorContains(err, "violates unique constraint")
+}
+
+func (s *modelSuite) TestRoleUniqueGrantsProdFirecloudGroup() {
+	s.SetSelfSuperAdminForDB()
+	a := s.TestData.Role_TerraSuitableEngineer()
+	b := s.TestData.Role_TerraEngineer()
+	b.GrantsProdFirecloudGroup = a.GrantsProdFirecloudGroup
+	err := s.DB.Save(&b).Error
+	s.ErrorContains(err, "grants_prod_firecloud_group")
+	s.ErrorContains(err, "violates unique constraint")
+}
+
 func (s *modelSuite) TestRoleUniqueGrantsDevAzureGroup() {
 	s.SetSelfSuperAdminForDB()
 	a := s.TestData.Role_TerraSuitableEngineer()
@@ -168,6 +188,16 @@ func (s *modelSuite) TestRoleUniqueGrantsDevAzureGroup() {
 	b.GrantsDevAzureGroup = a.GrantsDevAzureGroup
 	err := s.DB.Save(&b).Error
 	s.ErrorContains(err, "grants_dev_azure_group")
+	s.ErrorContains(err, "violates unique constraint")
+}
+
+func (s *modelSuite) TestRoleUniqueGrantsProdAzureGroup() {
+	s.SetSelfSuperAdminForDB()
+	a := s.TestData.Role_TerraSuitableEngineer()
+	b := s.TestData.Role_TerraEngineer()
+	b.GrantsProdAzureGroup = a.GrantsProdAzureGroup
+	err := s.DB.Save(&b).Error
+	s.ErrorContains(err, "grants_prod_azure_group")
 	s.ErrorContains(err, "violates unique constraint")
 }
 

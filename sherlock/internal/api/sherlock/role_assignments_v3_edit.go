@@ -77,5 +77,5 @@ func roleAssignmentsV3Edit(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, roleAssignmentFromModel(toEdit))
 
-	go role_propagation.WaitToPropagate(ctx, db, role.ID)
+	role_propagation.DoOnDemandPropagation(ctx, db, role.ID)
 }

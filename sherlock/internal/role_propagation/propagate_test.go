@@ -19,7 +19,7 @@ func TestPropagateSuite(t *testing.T) {
 	suite.Run(t, new(propagateSuite))
 }
 
-func (s *propagateSuite) TestWaitToPropagate_notFound() {
+func (s *propagateSuite) Test_waitToPropagate_notFound() {
 	config.LoadTestConfig()
 	roleID := uint(0)
 
@@ -27,11 +27,11 @@ func (s *propagateSuite) TestWaitToPropagate_notFound() {
 		// No mock configuration -- calling anything will error
 	}, func() {
 		ctx := context.Background()
-		WaitToPropagate(ctx, s.DB, roleID) // This gets run asynchronously, so there's no return value
+		waitToPropagate(ctx, s.DB, roleID) // This gets run asynchronously, so there's no return value
 	})
 }
 
-func (s *propagateSuite) TestWaitToPropagate() {
+func (s *propagateSuite) Test_waitToPropagate() {
 	roleID := s.TestData.Role_TerraEngineer().ID
 
 	s.Run("propagatedAt null to start", func() {
@@ -49,7 +49,7 @@ func (s *propagateSuite) TestWaitToPropagate() {
 		c.EXPECT().Name().Return("mockedPropagator")
 	}, func() {
 		ctx := context.Background()
-		WaitToPropagate(ctx, s.DB, roleID)
+		waitToPropagate(ctx, s.DB, roleID)
 	})
 
 	s.Run("propagatedAt updated", func() {
@@ -70,7 +70,7 @@ func (s *propagateSuite) TestWaitToPropagate() {
 			c.EXPECT().Name().Return("mockedPropagator")
 		}, func() {
 			ctx := context.Background()
-			WaitToPropagate(ctx, s.DB, roleID)
+			waitToPropagate(ctx, s.DB, roleID)
 		})
 	})
 }

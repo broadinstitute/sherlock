@@ -55,6 +55,7 @@ self:
   overrideSubjectID: sherlock-test
 
 rolePropagation:
+  asynchronous: false
   propagators:
     devFirecloudGroupTestDisabled:
       enable: false

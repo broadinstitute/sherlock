@@ -5,7 +5,6 @@ import (
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/role_propagation/intermediary_user"
-	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
@@ -149,6 +148,6 @@ func TestAzureGroupEngine_GenerateDesiredState_emailShortCircuit(t *testing.T) {
 
 func TestAzureGroupEngine_Update_errors(t *testing.T) {
 	engine := &AzureGroupEngine{}
-	_, err := engine.Update(context.Background(), uuid.New(), AzureGroupIdentifier{}, AzureGroupFields{}, AzureGroupFields{})
+	_, err := engine.Update(context.Background(), "", AzureGroupIdentifier{}, AzureGroupFields{}, AzureGroupFields{})
 	assert.Error(t, err)
 }
