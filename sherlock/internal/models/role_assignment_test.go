@@ -4,6 +4,8 @@ import (
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/jinzhu/copier"
+	"github.com/stretchr/testify/assert"
+	"testing"
 	"time"
 )
 
@@ -278,4 +280,84 @@ func (s *modelSuite) TestRoleAssignmentInvalidMissingSuspended() {
 	s.SetSelfSuperAdminForDB()
 	err := s.DB.Create(&roleAssignment).Error
 	s.ErrorContains(err, "suspended")
+}
+
+func TestRoleAssignment_IsActive(t *testing.T) {
+	type fields struct {
+		Role                 *Role
+		RoleID               uint
+		User                 *User
+		UserID               uint
+		RoleAssignmentFields RoleAssignmentFields
+		previousFields       RoleAssignmentFields
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   bool
+	}{
+		{
+			name: "suspension nil",
+			fields: fields{
+				RoleAssignmentFields: RoleAssignmentFields{
+					Suspended: nil,
+					ExpiresAt: utils.PointerTo(time.Now().Add(time.Hour)),
+				},
+			},
+			want: false,
+		},
+		{
+			name: "suspended",
+			fields: fields{
+				RoleAssignmentFields: RoleAssignmentFields{
+					Suspended: utils.PointerTo(true),
+					ExpiresAt: utils.PointerTo(time.Now().Add(time.Hour)),
+				},
+			},
+			want: false,
+		},
+		{
+			name: "expiresAt nil",
+			fields: fields{
+				RoleAssignmentFields: RoleAssignmentFields{
+					Suspended: utils.PointerTo(false),
+					ExpiresAt: nil,
+				},
+			},
+			want: true,
+		},
+		{
+			name: "expiresAt future",
+			fields: fields{
+				RoleAssignmentFields: RoleAssignmentFields{
+					Suspended: utils.PointerTo(false),
+					ExpiresAt: utils.PointerTo(time.Now().Add(time.Hour)),
+				},
+			},
+			want: true,
+		},
+		{
+			name: "expiresAt past",
+			fields: fields{
+				RoleAssignmentFields: RoleAssignmentFields{
+					Suspended: utils.PointerTo(false),
+					ExpiresAt: utils.PointerTo(time.Now().Add(-time.Hour)),
+				},
+			},
+			want: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ra := &RoleAssignment{
+				Role:                 tt.fields.Role,
+				RoleID:               tt.fields.RoleID,
+				User:                 tt.fields.User,
+				UserID:               tt.fields.UserID,
+				RoleAssignmentFields: tt.fields.RoleAssignmentFields,
+				previousFields:       tt.fields.previousFields,
+			}
+			assert.Equalf(t, tt.want, ra.IsActive(), "IsActive()")
+		})
+	}
 }

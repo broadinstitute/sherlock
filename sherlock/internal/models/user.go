@@ -186,10 +186,9 @@ func (u *User) ErrIfNotSuperAdmin() error {
 		return nil
 	}
 	for _, assignment := range u.Assignments {
-		if assignment.Suspended != nil &&
-			!*assignment.Suspended &&
-			assignment.Role.GrantsSherlockSuperAdmin != nil &&
-			*assignment.Role.GrantsSherlockSuperAdmin {
+		if assignment.Role.GrantsSherlockSuperAdmin != nil &&
+			*assignment.Role.GrantsSherlockSuperAdmin &&
+			assignment.IsActive() {
 			return nil
 		}
 	}

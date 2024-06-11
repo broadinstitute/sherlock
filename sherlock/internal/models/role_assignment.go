@@ -48,6 +48,10 @@ type RoleAssignmentOperation struct {
 	To RoleAssignmentFields `gorm:"embedded;embeddedPrefix:to_"`
 }
 
+func (ra *RoleAssignment) IsActive() bool {
+	return ra.Suspended != nil && !*ra.Suspended && (ra.ExpiresAt == nil || ra.ExpiresAt.After(time.Now()))
+}
+
 func (ra *RoleAssignment) errorIfForbidden(tx *gorm.DB) error {
 	user, err := GetCurrentUserForDB(tx)
 	if err != nil {

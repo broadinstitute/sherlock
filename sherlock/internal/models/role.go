@@ -1,9 +1,12 @@
 package models
 
 import (
+	"database/sql"
 	"fmt"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models/advisory_locks"
 	"github.com/jinzhu/copier"
 	"gorm.io/gorm"
+	"time"
 )
 
 type RoleFields struct {
@@ -28,15 +31,29 @@ type RoleFields struct {
 	GrantsSherlockSuperAdmin *bool
 
 	// GrantsDevFirecloudGroup, when not null, indicates that a User with an unsuspended RoleAssignment to this
-	// Role should have their Firecloud account (if they have one) added to this group.
+	// Role should have their dev Firecloud account (if they have one) added to this group.
 	GrantsDevFirecloudGroup *string
+	// GrantsQaFirecloudGroup, when not null, indicates that a User with an unsuspended RoleAssignment to this
+	// Role should have their qa Firecloud account (if they have one) added to this group.
+	GrantsQaFirecloudGroup *string
+	// GrantsProdFirecloudGroup, when not null, indicates that a User with an unsuspended RoleAssignment to this
+	// Role should have their prod Firecloud account (if they have one) added to this group.
+	GrantsProdFirecloudGroup *string
+
 	// GrantsDevAzureGroup, when not null, indicates that a User with an unsuspended RoleAssignment to this Role
 	// should have their Azure account (if they have one) added to this group.
 	GrantsDevAzureGroup *string
+	// GrantsProdAzureGroup, when not null, indicates that a User with an unsuspended RoleAssignment to this Role
+	// should have their Azure account (if they have one) added to this group.
+	GrantsProdAzureGroup *string
 }
 
 type Role struct {
 	gorm.Model
+
+	// PropagatedAt stores the last time that this Role's grants were propagated to cloud providers. See
+	// the role_propagation package for more information.
+	PropagatedAt sql.NullTime
 
 	// Assignments lists User records who have this Role. A RoleAssignment can potentially be suspended,
 	// which indicates that the User should not presently have any access commensurate with the Role.
@@ -84,6 +101,53 @@ func ReadRoleScope(db *gorm.DB) *gorm.DB {
 		Preload("Assignments").
 		Preload("Assignments.User").
 		Preload("CanBeGlassBrokenByRole")
+}
+
+func (r *Role) AssignmentsMap() map[uint]RoleAssignment {
+	roleAssignments := make(map[uint]RoleAssignment)
+	for _, ra := range r.Assignments {
+		if ra != nil && ra.UserID != 0 {
+			roleAssignments[ra.UserID] = *ra
+		}
+	}
+	return roleAssignments
+}
+
+// WaitPropagationLock blocks until a propagation lock can be acquired for the Role. This function
+// is only safe to call from a transaction. The lock will be released at the end of the transaction.
+//
+// See https://www.postgresql.org/docs/current/functions-admin.html#FUNCTIONS-ADVISORY-LOCKS
+func (r *Role) WaitPropagationLock(tx *gorm.DB) error {
+	if err := tx.Exec("SELECT pg_advisory_xact_lock(?, ?)", advisory_locks.ROLE_PROPAGATION, r.ID).Error; err != nil {
+		return fmt.Errorf("failed to lock Role %d for propagation: %w", r.ID, err)
+	}
+	return nil
+}
+
+// TryPropagationLock attempts to acquire a propagation lock for the Role. It returns a boolean for
+// whether the lock was obtained; it does not block. This function is only safe to call from a
+// transaction. The lock will be released at the end of the transaction.
+//
+// See https://www.postgresql.org/docs/current/functions-admin.html#FUNCTIONS-ADVISORY-LOCKS
+func (r *Role) TryPropagationLock(tx *gorm.DB) (bool, error) {
+	var locked bool
+	if err := tx.Raw("SELECT pg_try_advisory_xact_lock(?, ?)", advisory_locks.ROLE_PROPAGATION, r.ID).Scan(&locked).Error; err != nil {
+		return false, fmt.Errorf("failed to try lock Role %d for propagation: %w", r.ID, err)
+	}
+	return locked, nil
+}
+
+// UpdatePropagatedAt sets the Role's PropagatedAt field to the current time without triggering any
+// hooks or other Gorm behavior (like setting the gorm.Model UpdatedAt field) since we're not
+// semantically making a change to the Role.
+func (r *Role) UpdatePropagatedAt(tx *gorm.DB) error {
+	if err := tx.Model(&r).UpdateColumns(&Role{PropagatedAt: sql.NullTime{
+		Time:  time.Now(),
+		Valid: true,
+	}}).Error; err != nil {
+		return err
+	}
+	return nil
 }
 
 func (r *Role) BeforeCreate(tx *gorm.DB) error {

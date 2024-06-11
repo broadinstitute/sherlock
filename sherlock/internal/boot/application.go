@@ -12,6 +12,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/metrics"
 	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/authentication/gha_oidc"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
+	"github.com/broadinstitute/sherlock/sherlock/internal/role_propagation"
 	"github.com/broadinstitute/sherlock/sherlock/internal/suitability_loader"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
@@ -118,6 +119,14 @@ func (a *Application) Start() {
 		if err = github.Init(ctx); err != nil {
 			log.Fatal().Err(err).Msgf("github.Init() error")
 		}
+	}
+
+	if config.Config.Bool("rolePropagation.enable") {
+		log.Info().Msgf("BOOT | initializing role propagators...")
+		if err = role_propagation.Init(ctx); err != nil {
+			log.Fatal().Err(err).Msgf("role_propagation.Init() error")
+		}
+		go role_propagation.KeepPropagatingStale(ctx, a.gormDB)
 	}
 
 	log.Info().Msgf("BOOT | building Gin router...")

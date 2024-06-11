@@ -5,6 +5,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/authentication"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
+	"github.com/broadinstitute/sherlock/sherlock/internal/role_propagation"
 	"github.com/creasty/defaults"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm/clause"
@@ -16,6 +17,7 @@ import (
 //	@summary		Create a RoleAssignment
 //	@description	Create the RoleAssignment between a given Role and User.
 //	@description	Non-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role's default break-glass duration in the future.
+//	@description	Propagation will be triggered after this operation.
 //	@tags			RoleAssignments
 //	@produce		json
 //	@param			role-selector			path		string					true	"The selector of the Role, which can be either the numeric ID or the name"
@@ -80,4 +82,6 @@ func roleAssignmentsV3Create(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusCreated, roleAssignmentFromModel(toCreate))
+
+	role_propagation.DoOnDemandPropagation(ctx, db, role.ID)
 }

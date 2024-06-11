@@ -54,3 +54,13 @@ packages:
   github.com/broadinstitute/sherlock/sherlock/internal/middleware/authentication/gha_oidc:
     interfaces:
       mockableVerifier:
+  github.com/broadinstitute/sherlock/sherlock/internal/role_propagation:
+    interfaces:
+      propagator:
+  github.com/broadinstitute/sherlock/sherlock/internal/role_propagation/intermediary_user:
+    interfaces:
+      Identifier:
+      Fields:
+  github.com/broadinstitute/sherlock/sherlock/internal/role_propagation/propagation_engines:
+    interfaces:
+      PropagationEngine:

@@ -1,9 +1,13 @@
 package models
 
 import (
+	"database/sql"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/jinzhu/copier"
+	"github.com/stretchr/testify/assert"
+	"gorm.io/gorm"
+	"testing"
 )
 
 func (s *modelSuite) TestRoleUnauthorizedCreate() {
@@ -157,6 +161,26 @@ func (s *modelSuite) TestRoleUniqueGrantsDevFirecloudGroup() {
 	s.ErrorContains(err, "violates unique constraint")
 }
 
+func (s *modelSuite) TestRoleUniqueGrantsQaFirecloudGroup() {
+	s.SetSelfSuperAdminForDB()
+	a := s.TestData.Role_TerraSuitableEngineer()
+	b := s.TestData.Role_TerraEngineer()
+	b.GrantsQaFirecloudGroup = a.GrantsQaFirecloudGroup
+	err := s.DB.Save(&b).Error
+	s.ErrorContains(err, "grants_qa_firecloud_group")
+	s.ErrorContains(err, "violates unique constraint")
+}
+
+func (s *modelSuite) TestRoleUniqueGrantsProdFirecloudGroup() {
+	s.SetSelfSuperAdminForDB()
+	a := s.TestData.Role_TerraSuitableEngineer()
+	b := s.TestData.Role_TerraEngineer()
+	b.GrantsProdFirecloudGroup = a.GrantsProdFirecloudGroup
+	err := s.DB.Save(&b).Error
+	s.ErrorContains(err, "grants_prod_firecloud_group")
+	s.ErrorContains(err, "violates unique constraint")
+}
+
 func (s *modelSuite) TestRoleUniqueGrantsDevAzureGroup() {
 	s.SetSelfSuperAdminForDB()
 	a := s.TestData.Role_TerraSuitableEngineer()
@@ -165,4 +189,68 @@ func (s *modelSuite) TestRoleUniqueGrantsDevAzureGroup() {
 	err := s.DB.Save(&b).Error
 	s.ErrorContains(err, "grants_dev_azure_group")
 	s.ErrorContains(err, "violates unique constraint")
+}
+
+func (s *modelSuite) TestRoleUniqueGrantsProdAzureGroup() {
+	s.SetSelfSuperAdminForDB()
+	a := s.TestData.Role_TerraSuitableEngineer()
+	b := s.TestData.Role_TerraEngineer()
+	b.GrantsProdAzureGroup = a.GrantsProdAzureGroup
+	err := s.DB.Save(&b).Error
+	s.ErrorContains(err, "grants_prod_azure_group")
+	s.ErrorContains(err, "violates unique constraint")
+}
+
+func TestRole_AssignmentsMap(t *testing.T) {
+	type fields struct {
+		Model          gorm.Model
+		PropagatedAt   sql.NullTime
+		Assignments    []*RoleAssignment
+		RoleFields     RoleFields
+		previousFields RoleFields
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   map[uint]RoleAssignment
+	}{
+		{
+			name:   "empty",
+			fields: fields{},
+			want:   map[uint]RoleAssignment{},
+		},
+		{
+			name: "non-empty",
+			fields: fields{
+				Assignments: []*RoleAssignment{
+					{
+						UserID: 1,
+					},
+					{
+						UserID: 2,
+					},
+				},
+			},
+			want: map[uint]RoleAssignment{
+				1: {
+					UserID: 1,
+				},
+				2: {
+					UserID: 2,
+				},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := &Role{
+				Model:          tt.fields.Model,
+				PropagatedAt:   tt.fields.PropagatedAt,
+				Assignments:    tt.fields.Assignments,
+				RoleFields:     tt.fields.RoleFields,
+				previousFields: tt.fields.previousFields,
+			}
+			assert.Equalf(t, tt.want, r.AssignmentsMap(), "AssignmentsMap()")
+		})
+	}
 }

@@ -53,3 +53,23 @@ model:
 self:
   overrideEmail: sherlock-test@broadinstitute.org
   overrideSubjectID: sherlock-test
+
+rolePropagation:
+  asynchronous: false
+  propagators:
+    devFirecloudGroupTestDisabled:
+      enable: false
+      workspaceDomain: test.firecloud.org
+
+    devFirecloudGroupTestDefault:
+      enable: true
+      workspaceDomain: test.firecloud.org
+
+    devFirecloudGroupTestConfig:
+      enable: true
+      workspaceDomain: test.firecloud.org
+      timeout: 10s
+      userEmailDomainsToReplace:
+        - broadinstitute.org
+      toleratedUsers:
+        - email: tolerated@test.firecloud.org

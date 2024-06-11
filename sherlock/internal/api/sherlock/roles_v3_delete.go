@@ -14,6 +14,7 @@ import (
 //	@summary		Delete a Role
 //	@description	Delete an individual Role.
 //	@description	Only super-admins may mutate Roles.
+//	@description	Propagation will NOT be triggered after this operation -- the grants will become un-managed by Sherlock and left as-is. Remove role assignments first to remove users from grants.
 //	@tags			Roles
 //	@produce		json
 //	@param			selector				path		string	true	"The selector of the Role, which can be either the numeric ID or the name"
