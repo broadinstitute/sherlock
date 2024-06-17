@@ -19,7 +19,7 @@ require (
 	github.com/jackc/pgx/v5 v5.6.0
 	github.com/jinzhu/copier v0.4.0
 	github.com/knadh/koanf v1.5.0
-	github.com/microsoftgraph/msgraph-sdk-go v1.44.0
+	github.com/microsoftgraph/msgraph-sdk-go v1.45.0
 	github.com/pact-foundation/pact-go/v2 v2.0.5
 	github.com/rs/zerolog v1.33.0
 	github.com/slack-go/slack v0.13.0
