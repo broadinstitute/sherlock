@@ -29,3 +29,5 @@ Sherlock is a multi-replica system, so we can't make database changes that would
 ## Submitting Changes
 
 PRs require a ticket in the title with CLIA risk and security impact description filled. The description must include a summary of the changes, an explanation of what testing was done (screenshots recommended), and a note on the risk of the change.
+
+PRs require two approvals. Dependabot PRs will be automatically approved and merged without human intervention (assuming tests succeed).
