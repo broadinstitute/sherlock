@@ -24,3 +24,8 @@ gha-creds-*.json
 
 # Ignore environment variable files
 .env
+
+# ignore misc vscode metadata folders
+target/
+project/
+.bsp/

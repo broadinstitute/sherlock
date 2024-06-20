@@ -4,10 +4,11 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"time"
+
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/rs/zerolog/log"
 	"gorm.io/datatypes"
-	"time"
 )
 
 // TestData offers convenience methods for example data for usage in testing.
@@ -60,6 +61,8 @@ type TestData interface {
 	Environment_Dev() Environment
 	Environment_Swatomation() Environment
 	Environment_Swatomation_TestBee() Environment
+	Environment_Swatomation_TestBee_Factory() Environment
+	Environment_Swatomation_TestBee_Factory_Min() Environment
 	Environment_Swatomation_DevBee() Environment
 	Environment_Swatomation_LongBee() Environment
 	Environment_DdpAzureProd() Environment
@@ -69,6 +72,7 @@ type TestData interface {
 	ChartRelease_LeonardoStaging() ChartRelease
 	ChartRelease_LeonardoDev() ChartRelease
 	ChartRelease_LeonardoSwatomation() ChartRelease
+	ChartRelease_LeonardoSwatomation_TestBee(environmentID uint) ChartRelease
 	ChartRelease_D2pDdpAzureProd() ChartRelease
 	ChartRelease_D2pDdpAzureDev() ChartRelease
 	ChartRelease_ExternalDnsTerraQaBees() ChartRelease
@@ -81,6 +85,8 @@ type TestData interface {
 	DatabaseInstance_LeonardoSwatomation() DatabaseInstance
 
 	Changeset_LeonardoDev_V1toV3() Changeset
+	Changeset_LeonardoSwatomation_TestBee_V1toV3(chartReleaseID uint) Changeset
+	Changeset_LeonardoSwatomation_TestBee_V3toV1_factory(chartReleaseID uint) Changeset
 	Changeset_LeonardoDev_V1toV2Superseded() Changeset
 
 	CiIdentifier_Chart_Leonardo() CiIdentifier
@@ -197,6 +203,7 @@ type testDataImpl struct {
 	databaseInstance_leonardoSwatomation DatabaseInstance
 
 	changeset_leonardoDev_v1toV3           Changeset
+	changeset_leonardoSwatomation_v1toV3   Changeset
 	changeset_leonardoDev_v1toV2Superseded Changeset
 
 	ciIdentifier_chart_leonardo               CiIdentifier
@@ -1063,6 +1070,31 @@ func (td *testDataImpl) ChartRelease_LeonardoSwatomation() ChartRelease {
 	return td.chartRelease_leonardoSwatomation
 }
 
+func (td *testDataImpl) ChartRelease_LeonardoSwatomation_TestBee(environmentID uint) ChartRelease {
+	if td.chartRelease_leonardoSwatomation.ID == 0 {
+		td.chartRelease_leonardoSwatomation = ChartRelease{
+			ChartID:         td.Chart_Leonardo().ID,
+			ClusterID:       utils.PointerTo(td.Cluster_TerraQaBees().ID),
+			DestinationType: "environment",
+			EnvironmentID:   &environmentID,
+			Name:            "leonardo-swatomation",
+			Namespace:       "terra-swatomation",
+			ChartReleaseVersion: ChartReleaseVersion{
+				AppVersionResolver:               utils.PointerTo("follow"),
+				AppVersionFollowChartReleaseID:   utils.PointerTo(td.ChartRelease_LeonardoDev().ID),
+				ChartVersionResolver:             utils.PointerTo("follow"),
+				ChartVersionFollowChartReleaseID: utils.PointerTo(td.ChartRelease_LeonardoDev().ID),
+			},
+			Subdomain: utils.PointerTo("leonardo"),
+			Protocol:  utils.PointerTo("https"),
+			Port:      utils.PointerTo[uint](443),
+		}
+		td.h.SetSuitableTestUserForDB()
+		td.create(&td.chartRelease_leonardoSwatomation)
+	}
+	return td.chartRelease_leonardoSwatomation
+}
+
 func (td *testDataImpl) ChartRelease_D2pDdpAzureProd() ChartRelease {
 	if td.chartRelease_d2pDdpAzureProd.ID == 0 {
 		td.chartRelease_d2pDdpAzureProd = ChartRelease{
@@ -1276,6 +1308,59 @@ func (td *testDataImpl) Changeset_LeonardoDev_V1toV3() Changeset {
 		}
 	}
 	return td.changeset_leonardoDev_v1toV3
+}
+
+func (td *testDataImpl) Changeset_LeonardoSwatomation_TestBee_V1toV3(chartReleaseID uint) Changeset {
+	if td.changeset_leonardoSwatomation_v1toV3.ID == 0 {
+		td.changeset_leonardoSwatomation_v1toV3 = Changeset{
+			ChartReleaseID: chartReleaseID,
+			From: ChartReleaseVersion{
+				ResolvedAt:           utils.PointerTo(time.Now().Add(-(24 * time.Hour))),
+				AppVersionResolver:   utils.PointerTo("exact"),
+				AppVersionExact:      utils.PointerTo(td.AppVersion_Leonardo_V1().AppVersion),
+				AppVersionBranch:     utils.PointerTo(td.AppVersion_Leonardo_V1().GitBranch),
+				AppVersionCommit:     utils.PointerTo(td.AppVersion_Leonardo_V1().GitCommit),
+				AppVersionID:         utils.PointerTo(td.AppVersion_Leonardo_V1().ID),
+				ChartVersionResolver: utils.PointerTo("latest"),
+				ChartVersionExact:    utils.PointerTo(td.ChartVersion_Leonardo_V1().ChartVersion),
+				ChartVersionID:       utils.PointerTo(td.ChartVersion_Leonardo_V1().ID),
+				HelmfileRef:          utils.PointerTo(fmt.Sprintf("charts/leonardo-%s", td.ChartVersion_Leonardo_V1().ChartVersion)),
+				HelmfileRefEnabled:   utils.PointerTo(false),
+			},
+			To: ChartReleaseVersion{
+				ResolvedAt:           utils.PointerTo(time.Now().Add(-(19 * time.Hour))),
+				AppVersionResolver:   utils.PointerTo("exact"),
+				AppVersionExact:      utils.PointerTo(td.AppVersion_Leonardo_V3().AppVersion),
+				AppVersionBranch:     utils.PointerTo(td.AppVersion_Leonardo_V3().GitBranch),
+				AppVersionCommit:     utils.PointerTo(td.AppVersion_Leonardo_V3().GitCommit),
+				AppVersionID:         utils.PointerTo(td.AppVersion_Leonardo_V3().ID),
+				ChartVersionResolver: utils.PointerTo("latest"),
+				ChartVersionExact:    utils.PointerTo(td.ChartVersion_Leonardo_V3().ChartVersion),
+				ChartVersionID:       utils.PointerTo(td.ChartVersion_Leonardo_V3().ID),
+				HelmfileRef:          utils.PointerTo(fmt.Sprintf("charts/leonardo-%s", td.ChartVersion_Leonardo_V3().ChartVersion)),
+				HelmfileRefEnabled:   utils.PointerTo(false),
+			},
+			AppliedAt:    utils.PointerTo(time.Now().Add(-(18 * time.Hour))),
+			SupersededAt: nil,
+			PlannedByID:  utils.PointerTo(td.User_Suitable().ID),
+			AppliedByID:  utils.PointerTo(td.User_Suitable().ID),
+		}
+		td.h.SetSuitableTestUserForDB()
+		td.create(&td.changeset_leonardoSwatomation_v1toV3)
+		// Reload from the database so we get data from hooks and everything
+		td.h.DB.Scopes(ReadChangesetScope).Take(&td.changeset_leonardoSwatomation_v1toV3, td.changeset_leonardoSwatomation_v1toV3.ID)
+		// We don't typically want to run assertions from the test data package, but if the hooks didn't work properly,
+		// you'll be in for a hell of a time debugging. We panic if any of the changelog entries aren't as expected
+		if len(td.changeset_leonardoSwatomation_v1toV3.NewAppVersions) != 2 ||
+			td.changeset_leonardoSwatomation_v1toV3.NewAppVersions[0].AppVersion != td.AppVersion_Leonardo_V2().AppVersion ||
+			td.changeset_leonardoSwatomation_v1toV3.NewAppVersions[1].AppVersion != td.AppVersion_Leonardo_V3().AppVersion ||
+			len(td.changeset_leonardoSwatomation_v1toV3.NewChartVersions) != 2 ||
+			td.changeset_leonardoSwatomation_v1toV3.NewChartVersions[0].ChartVersion != td.ChartVersion_Leonardo_V2().ChartVersion ||
+			td.changeset_leonardoSwatomation_v1toV3.NewChartVersions[1].ChartVersion != td.ChartVersion_Leonardo_V3().ChartVersion {
+			panic("Changeset's AfterCreate hook didn't work properly")
+		}
+	}
+	return td.changeset_leonardoSwatomation_v1toV3
 }
 
 func (td *testDataImpl) Changeset_LeonardoDev_V1toV2Superseded() Changeset {
