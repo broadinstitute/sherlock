@@ -5,7 +5,7 @@ go 1.21
 require (
 	cloud.google.com/go/cloudsqlconn v1.11.0
 	contrib.go.opencensus.io/exporter/prometheus v0.4.2
-	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.6.0
+	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.7.0
 	github.com/PagerDuty/go-pagerduty v1.8.0
 	github.com/broadinstitute/sherlock/go-shared v0.0.0
 	github.com/coreos/go-oidc v2.2.1+incompatible
