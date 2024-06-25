@@ -2,8 +2,11 @@ package models
 
 import (
 	"fmt"
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
+	"github.com/broadinstitute/sherlock/sherlock/internal/clients/slack"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/jinzhu/copier"
+	"github.com/sanity-io/litter"
 	"gorm.io/gorm"
 	"time"
 )
@@ -50,6 +53,33 @@ type RoleAssignmentOperation struct {
 
 func (ra *RoleAssignment) IsActive() bool {
 	return ra.Suspended != nil && !*ra.Suspended && (ra.ExpiresAt == nil || ra.ExpiresAt.After(time.Now()))
+}
+
+func (ra *RoleAssignment) Description(db *gorm.DB) string {
+	var role Role
+	var user User
+	var roleName, userName string
+	if ra.Role == nil {
+		db.Take(&role, ra.RoleID)
+	} else {
+		role = *ra.Role
+	}
+	if role.Name != nil {
+		roleName = *role.Name
+	} else {
+		roleName = fmt.Sprintf("Role %s", utils.UintToString(ra.RoleID))
+	}
+	if ra.User == nil {
+		db.Take(&user, ra.UserID)
+	} else {
+		user = *ra.User
+	}
+	if user.Email != "" {
+		userName = user.SlackReference(true)
+	} else {
+		userName = fmt.Sprintf("User %s", utils.UintToString(ra.UserID))
+	}
+	return fmt.Sprintf("%s in %s", userName, roleName)
 }
 
 func (ra *RoleAssignment) errorIfForbidden(tx *gorm.DB) error {
@@ -120,6 +150,13 @@ func (ra *RoleAssignment) AfterCreate(tx *gorm.DB) error {
 		To:        ra.RoleAssignmentFields,
 	}).Error; err != nil {
 		return fmt.Errorf("failed to create RoleAssignmentOperation: %w", err)
+	} else {
+		slack.SendPermissionChangeNotification(tx.Statement.Context, user.SlackReference(true), slack.PermissionChangeNotificationInputs{
+			Summary: fmt.Sprintf("created RoleAssignment for %s", ra.Description(tx)),
+			Results: []string{
+				"Fields: " + slack.EscapeText(litter.Sdump(ra.RoleAssignmentFields)),
+			},
+		})
 	}
 	return nil
 }
@@ -147,6 +184,14 @@ func (ra *RoleAssignment) AfterUpdate(tx *gorm.DB) error {
 		To:        ra.RoleAssignmentFields,
 	}).Error; err != nil {
 		return fmt.Errorf("failed to create RoleAssignmentOperation: %w", err)
+	} else {
+		slack.SendPermissionChangeNotification(tx.Statement.Context, user.SlackReference(true), slack.PermissionChangeNotificationInputs{
+			Summary: fmt.Sprintf("edited RoleAssignment for %s", ra.Description(tx)),
+			Results: []string{
+				"Old fields: " + slack.EscapeText(litter.Sdump(ra.RoleAssignmentFields)),
+				"New fields: " + slack.EscapeText(litter.Sdump(ra.RoleAssignmentFields)),
+			},
+		})
 	}
 	return nil
 }
@@ -167,6 +212,13 @@ func (ra *RoleAssignment) BeforeDelete(tx *gorm.DB) error {
 		From:      current.RoleAssignmentFields,
 	}).Error; err != nil {
 		return fmt.Errorf("failed to create RoleAssignmentOperation: %w", err)
+	} else {
+		slack.SendPermissionChangeNotification(tx.Statement.Context, user.SlackReference(true), slack.PermissionChangeNotificationInputs{
+			Summary: fmt.Sprintf("deleted RoleAssignment for %s", ra.Description(tx)),
+			Results: []string{
+				"Fields: " + slack.EscapeText(litter.Sdump(ra.RoleAssignmentFields)),
+			},
+		})
 	}
 	return nil
 }

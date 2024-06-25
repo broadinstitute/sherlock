@@ -3,8 +3,10 @@ package models
 import (
 	"database/sql"
 	"fmt"
+	"github.com/broadinstitute/sherlock/sherlock/internal/clients/slack"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models/advisory_locks"
 	"github.com/jinzhu/copier"
+	"github.com/sanity-io/litter"
 	"gorm.io/gorm"
 	"time"
 )
@@ -169,6 +171,13 @@ func (r *Role) AfterCreate(tx *gorm.DB) error {
 		To:        r.RoleFields,
 	}).Error; err != nil {
 		return fmt.Errorf("failed to create RoleOperation: %w", err)
+	} else {
+		slack.SendPermissionChangeNotification(tx.Statement.Context, user.SlackReference(true), slack.PermissionChangeNotificationInputs{
+			Summary: fmt.Sprintf("created Role %s", *r.Name),
+			Results: []string{
+				"Fields: " + slack.EscapeText(litter.Sdump(r.RoleFields)),
+			},
+		})
 	}
 	return nil
 }
@@ -197,6 +206,14 @@ func (r *Role) AfterUpdate(tx *gorm.DB) error {
 		To:        r.RoleFields,
 	}).Error; err != nil {
 		return fmt.Errorf("failed to create RoleOperation: %w", err)
+	} else {
+		slack.SendPermissionChangeNotification(tx.Statement.Context, user.SlackReference(true), slack.PermissionChangeNotificationInputs{
+			Summary: fmt.Sprintf("edited Role %s", *r.Name),
+			Results: []string{
+				"Old fields: " + slack.EscapeText(litter.Sdump(r.previousFields)),
+				"New fields: " + slack.EscapeText(litter.Sdump(r.RoleFields)),
+			},
+		})
 	}
 	return nil
 }
@@ -216,6 +233,13 @@ func (r *Role) BeforeDelete(tx *gorm.DB) error {
 		From:      current.RoleFields,
 	}).Error; err != nil {
 		return fmt.Errorf("failed to create RoleOperation: %w", err)
+	} else {
+		slack.SendPermissionChangeNotification(tx.Statement.Context, user.SlackReference(true), slack.PermissionChangeNotificationInputs{
+			Summary: fmt.Sprintf("deleted Role %s", *r.Name),
+			Results: []string{
+				"Fields: " + slack.EscapeText(litter.Sdump(r.RoleFields)),
+			},
+		})
 	}
 	return nil
 }

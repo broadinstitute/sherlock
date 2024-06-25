@@ -3,6 +3,7 @@ package models
 import (
 	"context"
 	"fmt"
+	"github.com/broadinstitute/sherlock/sherlock/internal/clients/slack"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/authentication/authentication_method"
@@ -125,6 +126,19 @@ func (u *User) BeforeUpdate(tx *gorm.DB) error {
 
 func (u *User) BeforeDelete(_ *gorm.DB) error {
 	return fmt.Errorf("(%s) users cannot be deleted", errors.Forbidden)
+}
+
+func (u *User) AfterCreate(db *gorm.DB) error {
+	var actor string
+	if dbUser, err := GetCurrentUserForDB(db); err == nil {
+		actor = dbUser.SlackReference(true)
+	} else {
+		actor = u.SlackReference(true)
+	}
+	slack.SendPermissionChangeNotification(db.Statement.Context, actor, slack.PermissionChangeNotificationInputs{
+		Summary: fmt.Sprintf("created User %s", u.SlackReference(true)),
+	})
+	return nil
 }
 
 func (u *User) AlphaNumericHyphenatedUsername() string {

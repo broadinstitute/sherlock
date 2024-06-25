@@ -40,6 +40,10 @@ slack:
       channels:
         - "channel 1"
         - "channel 2"
+    permissionChanges:
+      channels:
+        - "channel 2"
+        - "channel 3"
 
 pactbroker:
   enable: false

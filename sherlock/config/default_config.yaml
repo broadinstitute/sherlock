@@ -172,15 +172,27 @@ slack:
       statusCodes:
         # "Internal Server Error", sometimes used explicitly
         # but mainly Sherlock's default for when it appears
-        # that it is to blame instead of the client.
+        # that it is to blame for instead of the client.
         - 500
         # "Proxy Authentication Required", used if a request
         # seems not to have been processed by IAP. We notify
         # on it because it is highly unexpected and would
         # indicate a misconfiguration.
         - 407
+        # "Forbidden", if Sherlock rejects a request based on
+        # its RBAC. We notify as this is a security event.
+        - 403
       channels:
         - "#ap-k8s-monitor"
+        - "#dsp-devops-security-events"
+
+    # slack.behaviors.permissionChanges controls how Sherlock
+    # notifies on changes to User/Role permissions and
+    # propagation.
+    permissionChanges:
+      enable: true
+      channels:
+        - "#dsp-devops-security-events"
 
     reactToMentionsWithEmoji:
       enable: true
