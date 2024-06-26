@@ -2,8 +2,11 @@ package sherlock
 
 import (
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
+	"github.com/broadinstitute/sherlock/sherlock/internal/clients/slack"
+	"github.com/broadinstitute/sherlock/sherlock/internal/clients/slack/slack_mocks"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/gin-gonic/gin"
+	"github.com/stretchr/testify/mock"
 	"net/http"
 )
 
@@ -75,4 +78,21 @@ func (s *handlerSuite) TestRolesV3Edit_wipeUuid() {
 		}),
 		&got)
 	s.Equal(http.StatusOK, code)
+}
+
+func (s *handlerSuite) TestRolesV3Edit_alert() {
+	slack.UseMockedClient(s.T(), func(c *slack_mocks.MockMockableClient) {
+		c.EXPECT().SendMessageContext(mock.Anything, "#notification-channel", mock.Anything).Return("", "", "", nil).Once()
+		c.EXPECT().SendMessageContext(mock.Anything, "#permission-change-channel", mock.Anything).Return("", "", "", nil).Once()
+	}, func() {
+		role := s.TestData.Role_TerraSuitableEngineer()
+		var got RoleV3
+		code := s.HandleRequest(
+			s.NewSuperAdminRequest("PATCH", "/api/roles/v3/"+*role.Name, RoleV3Edit{
+				Name: utils.PointerTo("some-new-role-name"),
+			}),
+			&got)
+		s.Equal(http.StatusOK, code)
+		s.Equal("some-new-role-name", *got.Name)
+	})
 }

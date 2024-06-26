@@ -34,8 +34,8 @@ func TestSendPermissionChangeNotification(t *testing.T) {
 				},
 			},
 			mockConfig: func(c *slack_mocks.MockMockableClient) {
-				c.EXPECT().SendMessageContext(ctx, "channel 2", mock.Anything).Return("", "", "", nil).Once()
-				c.EXPECT().SendMessageContext(ctx, "channel 3", mock.Anything).Return("", "", "", nil).Once()
+				c.EXPECT().SendMessageContext(ctx, "#notification-channel", mock.Anything).Return("", "", "", nil).Once()
+				c.EXPECT().SendMessageContext(ctx, "#permission-change-channel", mock.Anything).Return("", "", "", nil).Once()
 			},
 		},
 		{
@@ -48,8 +48,8 @@ func TestSendPermissionChangeNotification(t *testing.T) {
 				},
 			},
 			mockConfig: func(c *slack_mocks.MockMockableClient) {
-				c.EXPECT().SendMessageContext(ctx, "channel 2", mock.Anything).Return("", "", "", nil).Once()
-				c.EXPECT().SendMessageContext(ctx, "channel 3", mock.Anything).Return("", "", "", nil).Once()
+				c.EXPECT().SendMessageContext(ctx, "#notification-channel", mock.Anything).Return("", "", "", nil).Once()
+				c.EXPECT().SendMessageContext(ctx, "#permission-change-channel", mock.Anything).Return("", "", "", nil).Once()
 			},
 		},
 		{
@@ -62,11 +62,11 @@ func TestSendPermissionChangeNotification(t *testing.T) {
 				},
 			},
 			mockConfig: func(c *slack_mocks.MockMockableClient) {
-				c.EXPECT().SendMessageContext(ctx, "channel 2", mock.Anything).Return("", "", "", fmt.Errorf("error")).Once()
-				c.EXPECT().SendMessageContext(ctx, "channel 3", mock.Anything).Return("", "", "", nil).Once()
+				c.EXPECT().SendMessageContext(ctx, "#notification-channel", mock.Anything).Return("", "", "", fmt.Errorf("error")).Once()
+				c.EXPECT().SendMessageContext(ctx, "#permission-change-channel", mock.Anything).Return("", "", "", nil).Once()
 				// error should be reported
-				c.EXPECT().SendMessageContext(ctx, "channel 1", mock.Anything, mock.Anything).Return("", "", "", nil).Once()
-				c.EXPECT().SendMessageContext(ctx, "channel 2", mock.Anything, mock.Anything).Return("", "", "", nil).Once()
+				c.EXPECT().SendMessageContext(ctx, "#error-channel", mock.Anything, mock.Anything).Return("", "", "", nil).Once()
+				c.EXPECT().SendMessageContext(ctx, "#notification-channel", mock.Anything, mock.Anything).Return("", "", "", nil).Once()
 			},
 		},
 		{
@@ -79,11 +79,11 @@ func TestSendPermissionChangeNotification(t *testing.T) {
 				},
 			},
 			mockConfig: func(c *slack_mocks.MockMockableClient) {
-				c.EXPECT().SendMessageContext(ctx, "channel 2", mock.Anything).Return("", "", "", fmt.Errorf("error 1")).Once()
-				c.EXPECT().SendMessageContext(ctx, "channel 3", mock.Anything).Return("", "", "", fmt.Errorf("error 2")).Once()
+				c.EXPECT().SendMessageContext(ctx, "#notification-channel", mock.Anything).Return("", "", "", fmt.Errorf("error 1")).Once()
+				c.EXPECT().SendMessageContext(ctx, "#permission-change-channel", mock.Anything).Return("", "", "", fmt.Errorf("error 2")).Once()
 				// error should be reported
-				c.EXPECT().SendMessageContext(ctx, "channel 1", mock.Anything, mock.Anything).Return("", "", "", nil).Once()
-				c.EXPECT().SendMessageContext(ctx, "channel 2", mock.Anything, mock.Anything).Return("", "", "", nil).Once()
+				c.EXPECT().SendMessageContext(ctx, "#error-channel", mock.Anything, mock.Anything).Return("", "", "", nil).Once()
+				c.EXPECT().SendMessageContext(ctx, "#notification-channel", mock.Anything, mock.Anything).Return("", "", "", nil).Once()
 			},
 		},
 	}
@@ -121,8 +121,8 @@ func TestSendPermissionChangeNotificationReturnError(t *testing.T) {
 				},
 			},
 			mockConfig: func(c *slack_mocks.MockMockableClient) {
-				c.EXPECT().SendMessageContext(ctx, "channel 2", mock.Anything).Return("", "", "", nil).Once()
-				c.EXPECT().SendMessageContext(ctx, "channel 3", mock.Anything).Return("", "", "", nil).Once()
+				c.EXPECT().SendMessageContext(ctx, "#notification-channel", mock.Anything).Return("", "", "", nil).Once()
+				c.EXPECT().SendMessageContext(ctx, "#permission-change-channel", mock.Anything).Return("", "", "", nil).Once()
 			},
 			wantErrs: 0,
 		},
@@ -136,8 +136,8 @@ func TestSendPermissionChangeNotificationReturnError(t *testing.T) {
 				},
 			},
 			mockConfig: func(c *slack_mocks.MockMockableClient) {
-				c.EXPECT().SendMessageContext(ctx, "channel 2", mock.Anything).Return("", "", "", nil).Once()
-				c.EXPECT().SendMessageContext(ctx, "channel 3", mock.Anything).Return("", "", "", nil).Once()
+				c.EXPECT().SendMessageContext(ctx, "#notification-channel", mock.Anything).Return("", "", "", nil).Once()
+				c.EXPECT().SendMessageContext(ctx, "#permission-change-channel", mock.Anything).Return("", "", "", nil).Once()
 			},
 			wantErrs: 0,
 		},
@@ -151,8 +151,8 @@ func TestSendPermissionChangeNotificationReturnError(t *testing.T) {
 				},
 			},
 			mockConfig: func(c *slack_mocks.MockMockableClient) {
-				c.EXPECT().SendMessageContext(ctx, "channel 2", mock.Anything).Return("", "", "", fmt.Errorf("error")).Once()
-				c.EXPECT().SendMessageContext(ctx, "channel 3", mock.Anything).Return("", "", "", nil).Once()
+				c.EXPECT().SendMessageContext(ctx, "#notification-channel", mock.Anything).Return("", "", "", fmt.Errorf("error")).Once()
+				c.EXPECT().SendMessageContext(ctx, "#permission-change-channel", mock.Anything).Return("", "", "", nil).Once()
 			},
 			wantErrs: 1,
 		},
@@ -166,8 +166,8 @@ func TestSendPermissionChangeNotificationReturnError(t *testing.T) {
 				},
 			},
 			mockConfig: func(c *slack_mocks.MockMockableClient) {
-				c.EXPECT().SendMessageContext(ctx, "channel 2", mock.Anything).Return("", "", "", fmt.Errorf("error 1")).Once()
-				c.EXPECT().SendMessageContext(ctx, "channel 3", mock.Anything).Return("", "", "", fmt.Errorf("error 2")).Once()
+				c.EXPECT().SendMessageContext(ctx, "#notification-channel", mock.Anything).Return("", "", "", fmt.Errorf("error 1")).Once()
+				c.EXPECT().SendMessageContext(ctx, "#permission-change-channel", mock.Anything).Return("", "", "", fmt.Errorf("error 2")).Once()
 			},
 			wantErrs: 2,
 		},

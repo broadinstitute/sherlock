@@ -41,10 +41,10 @@ func TestLogger(t *testing.T) {
 	})
 	t.Run("407 sends", func(t *testing.T) {
 		slack.UseMockedClient(t, func(c *slack_mocks.MockMockableClient) {
-			c.On("SendMessageContext", mock.Anything, "channel 1",
+			c.On("SendMessageContext", mock.Anything, "#error-channel",
 				mock.AnythingOfType("slack.MsgOption"),
 				mock.AnythingOfType("slack.MsgOption")).Return("", "", "", nil)
-			c.On("SendMessageContext", mock.Anything, "channel 2",
+			c.On("SendMessageContext", mock.Anything, "#notification-channel",
 				mock.AnythingOfType("slack.MsgOption"),
 				mock.AnythingOfType("slack.MsgOption")).Return("", "", "", nil)
 		}, func() {
@@ -57,10 +57,10 @@ func TestLogger(t *testing.T) {
 	})
 	t.Run("500 sends", func(t *testing.T) {
 		slack.UseMockedClient(t, func(c *slack_mocks.MockMockableClient) {
-			c.On("SendMessageContext", mock.Anything, "channel 1",
+			c.On("SendMessageContext", mock.Anything, "#error-channel",
 				mock.AnythingOfType("slack.MsgOption"),
 				mock.AnythingOfType("slack.MsgOption")).Return("", "", "", nil)
-			c.On("SendMessageContext", mock.Anything, "channel 2",
+			c.On("SendMessageContext", mock.Anything, "#notification-channel",
 				mock.AnythingOfType("slack.MsgOption"),
 				mock.AnythingOfType("slack.MsgOption")).Return("", "", "", nil)
 		}, func() {

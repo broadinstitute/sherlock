@@ -38,12 +38,12 @@ slack:
   behaviors:
     errors:
       channels:
-        - "channel 1"
-        - "channel 2"
+        - "#error-channel"
+        - "#notification-channel"
     permissionChanges:
       channels:
-        - "channel 2"
-        - "channel 3"
+        - "#notification-channel"
+        - "#permission-change-channel"
 
 pactbroker:
   enable: false
