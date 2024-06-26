@@ -2,7 +2,10 @@ package sherlock
 
 import (
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
+	"github.com/broadinstitute/sherlock/sherlock/internal/clients/slack"
+	"github.com/broadinstitute/sherlock/sherlock/internal/clients/slack/slack_mocks"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
+	"github.com/stretchr/testify/mock"
 	"net/http"
 	"time"
 )
@@ -98,4 +101,21 @@ func (s *handlerSuite) TestRoleAssignmentsV3Create_breakGlassAllowedExpiresIn() 
 	s.Equal(http.StatusCreated, code)
 	s.Equal(role.ID, got.RoleInfo.ID)
 	s.Equal(user.ID, got.UserInfo.ID)
+}
+
+func (s *handlerSuite) TestRoleAssignmentsV3Create_alert() {
+	slack.UseMockedClient(s.T(), func(c *slack_mocks.MockMockableClient) {
+		c.EXPECT().SendMessageContext(mock.Anything, "#notification-channel", mock.Anything).Return("", "", "", nil).Once()
+		c.EXPECT().SendMessageContext(mock.Anything, "#permission-change-channel", mock.Anything).Return("", "", "", nil).Once()
+	}, func() {
+		user := s.TestData.User_NonSuitable()
+		role := s.TestData.Role_SherlockSuperAdmin()
+		var got RoleAssignmentV3
+		code := s.HandleRequest(
+			s.NewSuperAdminRequest("POST", "/api/role-assignments/v3/"+utils.UintToString(role.ID)+"/"+utils.UintToString(user.ID), RoleAssignmentV3Edit{}),
+			&got)
+		s.Equal(http.StatusCreated, code)
+		s.Equal(role.ID, got.RoleInfo.ID)
+		s.Equal(user.ID, got.UserInfo.ID)
+	})
 }

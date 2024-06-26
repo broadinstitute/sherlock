@@ -4,6 +4,7 @@ import (
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/jinzhu/copier"
+	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
@@ -358,6 +359,88 @@ func TestRoleAssignment_IsActive(t *testing.T) {
 				previousFields:       tt.fields.previousFields,
 			}
 			assert.Equalf(t, tt.want, ra.IsActive(), "IsActive()")
+		})
+	}
+}
+
+func (s *modelSuite) TestRoleAssignment_Description() {
+	zerolog.SetGlobalLevel(zerolog.Disabled)
+	s.TestData.Role_TerraEngineer()
+	s.TestData.User_Suitable()
+	type fields struct {
+		Role                 *Role
+		RoleID               uint
+		User                 *User
+		UserID               uint
+		RoleAssignmentFields RoleAssignmentFields
+		previousFields       RoleAssignmentFields
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   string
+	}{
+		{
+			name:   "empty",
+			fields: fields{},
+			want:   "User 0 in Role 0",
+		},
+		{
+			name: "preloaded role",
+			fields: fields{
+				Role: utils.PointerTo(s.TestData.Role_TerraEngineer()),
+			},
+			want: "User 0 in terra-engineer",
+		},
+		{
+			name: "preloaded user",
+			fields: fields{
+				User: utils.PointerTo(s.TestData.User_Suitable()),
+			},
+			want: utils.PointerTo(s.TestData.User_Suitable()).SlackReference(true) + " in Role 0",
+		},
+		{
+			name: "preloaded role and user",
+			fields: fields{
+				Role: utils.PointerTo(s.TestData.Role_TerraEngineer()),
+				User: utils.PointerTo(s.TestData.User_Suitable()),
+			},
+			want: utils.PointerTo(s.TestData.User_Suitable()).SlackReference(true) + " in terra-engineer",
+		},
+		{
+			name: "fetch role",
+			fields: fields{
+				RoleID: s.TestData.Role_TerraEngineer().ID,
+			},
+			want: "User 0 in terra-engineer",
+		},
+		{
+			name: "fetch user",
+			fields: fields{
+				UserID: s.TestData.User_Suitable().ID,
+			},
+			want: utils.PointerTo(s.TestData.User_Suitable()).SlackReference(true) + " in Role 0",
+		},
+		{
+			name: "fetch role and user",
+			fields: fields{
+				RoleID: s.TestData.Role_TerraEngineer().ID,
+				UserID: s.TestData.User_Suitable().ID,
+			},
+			want: utils.PointerTo(s.TestData.User_Suitable()).SlackReference(true) + " in terra-engineer",
+		},
+	}
+	for _, tt := range tests {
+		s.Run(tt.name, func() {
+			ra := &RoleAssignment{
+				Role:                 tt.fields.Role,
+				RoleID:               tt.fields.RoleID,
+				User:                 tt.fields.User,
+				UserID:               tt.fields.UserID,
+				RoleAssignmentFields: tt.fields.RoleAssignmentFields,
+				previousFields:       tt.fields.previousFields,
+			}
+			s.Equalf(tt.want, ra.Description(s.DB), "Description()")
 		})
 	}
 }

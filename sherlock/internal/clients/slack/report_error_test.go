@@ -27,10 +27,10 @@ func TestReportError(t *testing.T) {
 			name: "normal case",
 			args: args{errs: []error{fmt.Errorf("some error")}},
 			mockConfig: func(c *slack_mocks.MockMockableClient) {
-				c.On("SendMessageContext", ctx, "channel 1",
+				c.On("SendMessageContext", ctx, "#error-channel",
 					mock.AnythingOfType("slack.MsgOption"),
 					mock.AnythingOfType("slack.MsgOption")).Return("", "", "", nil)
-				c.On("SendMessageContext", ctx, "channel 2",
+				c.On("SendMessageContext", ctx, "#notification-channel",
 					mock.AnythingOfType("slack.MsgOption"),
 					mock.AnythingOfType("slack.MsgOption")).Return("", "", "", nil)
 			},
@@ -39,9 +39,9 @@ func TestReportError(t *testing.T) {
 			name: "sends no errors",
 			args: args{errs: []error{}},
 			mockConfig: func(c *slack_mocks.MockMockableClient) {
-				c.On("SendMessageContext", ctx, "channel 1",
+				c.On("SendMessageContext", ctx, "#error-channel",
 					mock.AnythingOfType("slack.MsgOption")).Return("", "", "", nil)
-				c.On("SendMessageContext", ctx, "channel 2",
+				c.On("SendMessageContext", ctx, "#notification-channel",
 					mock.AnythingOfType("slack.MsgOption")).Return("", "", "", nil)
 			},
 		},
@@ -49,16 +49,16 @@ func TestReportError(t *testing.T) {
 			name: "sends multiple errors",
 			args: args{errs: []error{fmt.Errorf("some error"), fmt.Errorf("some second error")}},
 			mockConfig: func(c *slack_mocks.MockMockableClient) {
-				c.On("SendMessageContext", ctx, "channel 1",
+				c.On("SendMessageContext", ctx, "#error-channel",
 					mock.AnythingOfType("slack.MsgOption"),
 					mock.AnythingOfType("slack.MsgOption")).Return("", "", "", nil)
-				c.On("SendMessageContext", ctx, "channel 2",
+				c.On("SendMessageContext", ctx, "#notification-channel",
 					mock.AnythingOfType("slack.MsgOption"),
 					mock.AnythingOfType("slack.MsgOption")).Return("", "", "", nil)
-				c.On("SendMessageContext", ctx, "channel 1",
+				c.On("SendMessageContext", ctx, "#error-channel",
 					mock.AnythingOfType("slack.MsgOption"),
 					mock.AnythingOfType("slack.MsgOption")).Return("", "", "", nil)
-				c.On("SendMessageContext", ctx, "channel 2",
+				c.On("SendMessageContext", ctx, "#notification-channel",
 					mock.AnythingOfType("slack.MsgOption"),
 					mock.AnythingOfType("slack.MsgOption")).Return("", "", "", nil)
 			},
@@ -67,10 +67,10 @@ func TestReportError(t *testing.T) {
 			name: "sending on channel 1 errors",
 			args: args{errs: []error{fmt.Errorf("some error")}},
 			mockConfig: func(c *slack_mocks.MockMockableClient) {
-				c.On("SendMessageContext", ctx, "channel 1",
+				c.On("SendMessageContext", ctx, "#error-channel",
 					mock.AnythingOfType("slack.MsgOption"),
 					mock.AnythingOfType("slack.MsgOption")).Return("", "", "", fmt.Errorf("some send error"))
-				c.On("SendMessageContext", ctx, "channel 2",
+				c.On("SendMessageContext", ctx, "#notification-channel",
 					mock.AnythingOfType("slack.MsgOption"),
 					mock.AnythingOfType("slack.MsgOption")).Return("", "", "", nil)
 			},
@@ -79,10 +79,10 @@ func TestReportError(t *testing.T) {
 			name: "sending on channel 2 errors",
 			args: args{errs: []error{fmt.Errorf("some error")}},
 			mockConfig: func(c *slack_mocks.MockMockableClient) {
-				c.On("SendMessageContext", ctx, "channel 1",
+				c.On("SendMessageContext", ctx, "#error-channel",
 					mock.AnythingOfType("slack.MsgOption"),
 					mock.AnythingOfType("slack.MsgOption")).Return("", "", "", nil)
-				c.On("SendMessageContext", ctx, "channel 2",
+				c.On("SendMessageContext", ctx, "#notification-channel",
 					mock.AnythingOfType("slack.MsgOption"),
 					mock.AnythingOfType("slack.MsgOption")).Return("", "", "", fmt.Errorf("some send error"))
 			},

@@ -2,6 +2,8 @@ package role_propagation
 
 import (
 	"context"
+	"fmt"
+	"github.com/broadinstitute/sherlock/sherlock/internal/clients/slack"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/rs/zerolog/log"
@@ -131,6 +133,13 @@ func doNonConcurrentPropagation(ctx context.Context, role models.Role) {
 			log.Error().Errs("errors", errors).Strs("results", results).Msgf("%s propagation failed for role %s (%d)", p.Name(), *role.Name, role.ID)
 		} else {
 			log.Info().Strs("results", results).Msgf("%s propagation succeeded for role %s (%d)", p.Name(), *role.Name, role.ID)
+		}
+		if len(results) > 0 || len(errors) > 0 {
+			slack.SendPermissionChangeNotification(ctx, models.SelfUser.SlackReference(true), slack.PermissionChangeNotificationInputs{
+				Summary: fmt.Sprintf("\"%s\" propagation for Role \"%s\" made changes", p.Name(), *role.Name),
+				Results: results,
+				Errors:  errors,
+			})
 		}
 	}
 }
