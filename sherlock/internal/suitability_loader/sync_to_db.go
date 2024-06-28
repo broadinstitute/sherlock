@@ -9,6 +9,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
+	"strings"
 	"time"
 )
 
@@ -17,7 +18,7 @@ func KeepSuitabilitiesInDBUpdated(ctx context.Context, db *gorm.DB) {
 	for {
 		time.Sleep(interval)
 		if err := SyncSuitabilitiesToDB(ctx, db); err != nil {
-			log.Warn().Err(err).Msgf("failed to update suitability table")
+			log.Warn().Err(err).Msgf("failed to update suitability table: %v", err)
 		}
 	}
 }
@@ -29,6 +30,10 @@ func SyncSuitabilitiesToDB(ctx context.Context, db *gorm.DB) error {
 	}
 	suitabilitiesFromFirecloud, err := fromFirecloud(ctx)
 	if err != nil {
+		if strings.Contains(err.Error(), "dailyLimitExceeded") {
+			log.Warn().Err(err).Msgf("failed to load Firecloud data due to quota limit; absorbing error (see DDO-3765) and relying on existing suitability records")
+			return nil
+		}
 		return err
 	}
 	suitabilities := append(suitabilitiesFromConfig, suitabilitiesFromFirecloud...)
