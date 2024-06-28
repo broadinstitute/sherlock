@@ -65,10 +65,26 @@ func TestHeaders(t *testing.T) {
 
 		assert.Equal(t, 200, recorder.Code)
 	})
+	t.Run("accepted referer on another url", func(t *testing.T) {
+		recorder := httptest.NewRecorder()
+		request := httptest.NewRequest("DELETE", "/", nil)
+		request.Header.Set("Referer", "http://localhost:8080/blah/blah")
+		router.ServeHTTP(recorder, request)
+
+		assert.Equal(t, 200, recorder.Code)
+	})
 	t.Run("rejected referer", func(t *testing.T) {
 		recorder := httptest.NewRecorder()
 		request := httptest.NewRequest("DELETE", "/", nil)
 		request.Header.Set("Referer", "https://example.com")
+		router.ServeHTTP(recorder, request)
+
+		assert.Equal(t, 403, recorder.Code)
+	})
+	t.Run("rejected referer on another url", func(t *testing.T) {
+		recorder := httptest.NewRecorder()
+		request := httptest.NewRequest("DELETE", "/", nil)
+		request.Header.Set("Referer", "https://example.com/blah/blah")
 		router.ServeHTTP(recorder, request)
 
 		assert.Equal(t, 403, recorder.Code)

@@ -7,6 +7,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
+	"strings"
 )
 
 // CsrfProtection is a layer of defense against Cross-Site-Request-Forgery attacks.
@@ -37,11 +38,20 @@ func CsrfProtection() gin.HandlerFunc {
 				errors.AbortRequest(ctx, fmt.Errorf("(%s) origin not allowed; see logs for more details", errors.Forbidden))
 				return
 			}
-			if referer := ctx.GetHeader("Referer"); referer != "" && !utils.Contains(origins, referer) {
+			if referer := ctx.GetHeader("Referer"); referer != "" && !refererHasOriginAsPrefix(referer, origins) {
 				log.Warn().Str("referer", referer).Msgf("referer %s not allowed, rejecting request for CSRF protection", referer)
 				errors.AbortRequest(ctx, fmt.Errorf("(%s) referer not allowed; see logs for more details", errors.Forbidden))
 				return
 			}
 		}
 	}
+}
+
+func refererHasOriginAsPrefix(referer string, origins []string) bool {
+	for _, origin := range origins {
+		if strings.HasPrefix(referer, origin) {
+			return true
+		}
+	}
+	return false
 }
