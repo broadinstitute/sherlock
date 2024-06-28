@@ -20,6 +20,9 @@ log:
   caller: false
   level: debug
 
+cors:
+  allowOrigins: []
+
 db:
   # Can be "pgx" or "cloudsql-postgres". "cloudsql-postgres" won't work in debug mode.
   driver: pgx
