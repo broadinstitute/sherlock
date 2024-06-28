@@ -5,13 +5,11 @@
 #   It will use mock authentication and authorization.
 mode: debug
 
-hooks:
-  # If Sherlock should act on CiRun state transitions. Hooks are still subject
-  # to the third-party-specific flags elsewhere in this file.
-  enable: true
-  # If true, hooks will be run asynchronously after the initial call into the
-  # hooks package.
-  asynchronous: true
+# Origins is the list of allowed origins for requests (used for CORS and CSRF protection).
+# Each entry should include the scheme, like "https://example.com".
+# When empty, all origins will be allowed, which is only suitable for local development where
+# cross-origin requests with credentials aren't required.
+origins: []
 
 log:
   # Always true when mode="release"
@@ -19,9 +17,6 @@ log:
   # Always true when mode="release"
   caller: false
   level: debug
-
-cors:
-  allowOrigins: []
 
 db:
   # Can be "pgx" or "cloudsql-postgres". "cloudsql-postgres" won't work in debug mode.
@@ -95,6 +90,14 @@ auth:
   extraPermissions:
     #- email: example@dsp-tools-k8s.iam.gserviceaccount.com
     #  suitable: false
+
+hooks:
+  # If Sherlock should act on CiRun state transitions. Hooks are still subject
+  # to the third-party-specific flags elsewhere in this file.
+  enable: true
+  # If true, hooks will be run asynchronously after the initial call into the
+  # hooks package.
+  asynchronous: true
 
 metrics:
   v2:

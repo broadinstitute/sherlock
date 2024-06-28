@@ -13,6 +13,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/metrics"
 	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/authentication"
 	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/cors"
+	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/csrf_protection"
 	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/headers"
 	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/logger"
 	"github.com/gin-gonic/gin"
@@ -54,6 +55,7 @@ func BuildRouter(ctx context.Context, db *gorm.DB) *gin.Engine {
 		gin.Recovery(),
 		logger.Logger(),
 		cors.Cors(),
+		csrf_protection.CsrfProtection(),
 		headers.Headers())
 
 	// Replace Gin's standard fallback responses with our standard error format for friendlier client behavior

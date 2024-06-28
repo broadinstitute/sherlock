@@ -19,7 +19,7 @@ func Cors() gin.HandlerFunc {
 		// AJAX nature of the request so it can return a 401 rather than a 302.
 		// https://cloud.google.com/iap/docs/sessions-howto#understanding_the_response
 		"X-Requested-With")
-	if origins := config.Config.Strings("cors.allowOrigins"); len(origins) > 0 {
+	if origins := config.Config.Strings("origins"); len(origins) > 0 {
 		c.AllowCredentials = true
 		c.AllowOrigins = origins
 	} else {
