@@ -55,7 +55,6 @@ func BuildRouter(ctx context.Context, db *gorm.DB) *gin.Engine {
 		gin.Recovery(),
 		logger.Logger(),
 		cors.Cors(),
-		csrf_protection.CsrfProtection(),
 		headers.Headers())
 
 	// Replace Gin's standard fallback responses with our standard error format for friendlier client behavior
@@ -82,7 +81,9 @@ func BuildRouter(ctx context.Context, db *gorm.DB) *gin.Engine {
 	router.GET("", func(ctx *gin.Context) { ctx.Redirect(http.StatusMovedPermanently, "/swagger/index.html") })
 
 	// routes under /api require authentication and may use the database
-	apiRouter := router.Group("api", authentication.Middleware(db)...)
+	apiRouter := router.Group("api")
+	apiRouter.Use(csrf_protection.CsrfProtection())
+	apiRouter.Use(authentication.Middleware(db)...)
 
 	// refactored sherlock API, under /api/{type}/v3
 	sherlock.ConfigureRoutes(apiRouter)
