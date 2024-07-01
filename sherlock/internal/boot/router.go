@@ -12,6 +12,8 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/metrics"
 	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/authentication"
+	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/cors"
+	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/csrf_protection"
 	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/headers"
 	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/logger"
 	"github.com/gin-gonic/gin"
@@ -52,6 +54,7 @@ func BuildRouter(ctx context.Context, db *gorm.DB) *gin.Engine {
 	router.Use(
 		gin.Recovery(),
 		logger.Logger(),
+		cors.Cors(),
 		headers.Headers())
 
 	// Replace Gin's standard fallback responses with our standard error format for friendlier client behavior
@@ -78,7 +81,9 @@ func BuildRouter(ctx context.Context, db *gorm.DB) *gin.Engine {
 	router.GET("", func(ctx *gin.Context) { ctx.Redirect(http.StatusMovedPermanently, "/swagger/index.html") })
 
 	// routes under /api require authentication and may use the database
-	apiRouter := router.Group("api", authentication.Middleware(db)...)
+	apiRouter := router.Group("api")
+	apiRouter.Use(csrf_protection.CsrfProtection())
+	apiRouter.Use(authentication.Middleware(db)...)
 
 	// refactored sherlock API, under /api/{type}/v3
 	sherlock.ConfigureRoutes(apiRouter)
