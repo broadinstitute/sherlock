@@ -1,7 +1,7 @@
 ARG GO_VERSION='1.21'
 ARG ALPINE_VERSION='3.19'
 
-FROM golang:${GO_VERSION}-alpine${ALPINE_VERSION} as build
+FROM golang:${GO_VERSION}-alpine${ALPINE_VERSION} AS build
 ARG BUILD_VERSION='development'
 WORKDIR /build/sherlock
 ENV CGO_ENABLED=0
@@ -15,7 +15,7 @@ COPY sherlock ./
 RUN go build -buildvcs=false -ldflags="-X 'github.com/broadinstitute/sherlock/go-shared/pkg/version.BuildVersion=${BUILD_VERSION}'" -o /bin/sherlock ./cmd/...
 
 # FROM alpine:${ALPINE_VERSION} as runtime <-- use this if you hit issues
-FROM gcr.io/distroless/static:nonroot as runtime
+FROM gcr.io/distroless/static:nonroot AS runtime
 
 COPY --from=build /bin/sherlock /bin/sherlock
 ENTRYPOINT [ "/bin/sherlock" ]
