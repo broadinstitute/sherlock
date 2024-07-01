@@ -75,6 +75,20 @@ func (s *handlerSuite) TestRoleAssignmentsV3Create_breakGlassForbidden() {
 	s.Equal(errors.Forbidden, got.Type)
 }
 
+func (s *handlerSuite) TestRoleAssignmentsV3Create_breakGlassForbiddenMismatch() {
+	// Not the user we're making the request with!
+	user := s.TestData.User_NonSuitable()
+	role := s.TestData.Role_TerraGlassBrokenAdmin() // Suitable can break-glass non-suitable can't
+	var got errors.ErrorResponse
+	code := s.HandleRequest(
+		s.NewSuitableRequest("POST", "/api/role-assignments/v3/"+utils.UintToString(role.ID)+"/"+utils.UintToString(user.ID), RoleAssignmentV3Edit{
+			ExpiresAt: utils.PointerTo(time.Now().Add(time.Hour)),
+		}),
+		&got)
+	s.Equal(http.StatusForbidden, code)
+	s.Equal(errors.Forbidden, got.Type)
+}
+
 func (s *handlerSuite) TestRoleAssignmentsV3Create_breakGlassAllowed() {
 	user := s.TestData.User_Suitable()
 	role := s.TestData.Role_TerraGlassBrokenAdmin()
