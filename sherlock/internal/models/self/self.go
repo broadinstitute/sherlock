@@ -26,7 +26,7 @@ var (
 	Email = "sherlock-uninitialized@broadinstitute.org"
 	// GoogleID is Sherlock's own subject ID. This variable shouldn't be
 	// accessed until Load has been called.
-	GoogleID = "sherlock-uninitialized"
+	GoogleID = "accounts.google.com:sherlock-uninitialized"
 )
 
 func Load(ctx context.Context) error {
@@ -58,6 +58,10 @@ func Load(ctx context.Context) error {
 		return fmt.Errorf("failed to get self userinfo: %w", err)
 	}
 	Email = userinfo.Email
-	GoogleID = userinfo.Id
+	// Sherlock stores Google Subject IDs the way it observes them from IAP, which means with the leading
+	// "accounts.google.com:" prefix. There's no way to get that full prefixed ID from the userinfo endpoint,
+	// so we add it ourselves for consistency. Maybe a decade down the road Google will add other possible
+	// prefixes, but presumably they won't change the meaning of this field of this endpoint.
+	GoogleID = "accounts.google.com:" + userinfo.Id
 	return nil
 }

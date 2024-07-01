@@ -1,0 +1,11 @@
+-- See DDO-3769, ticket description follows:
+--
+-- Recently, we began having Sherlock represent itself inside its database with a User record. The problem is that
+-- because we create that record from Google’s UserInfo endpoint rather than IAP, we inherited an inconsistency in how
+-- Google represents IDs: UserInfo omits the `accounts.google.com:` prefix that IAP provides.
+--
+-- Since every single other user is guaranteed to be from IAP… we can actually just push through a code change and
+-- migration to fix this. We wouldn’t be able to cleanly revert that one migration without manual intervention, but I
+-- think that’s okay given the alternative of leaving the inconsistency forever or having to represent the migration in
+-- Sherlock’s application code forever.
+UPDATE users SET google_id = concat('accounts.google.com:', google_id) WHERE google_id NOT LIKE 'accounts.google.com:%';

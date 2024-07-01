@@ -1,0 +1,3 @@
+-- There's no backwards migration here because at the migration stage we're not sure who the self user is.
+-- Sherlock would error during startup and a human would need to manually remove the accounts.google.com: prefix
+-- from the self user's google_id in the database.
