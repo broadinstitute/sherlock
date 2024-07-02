@@ -13,7 +13,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/authentication/gha_oidc"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/role_propagation"
-	"github.com/broadinstitute/sherlock/sherlock/internal/suitability_loader"
+	"github.com/broadinstitute/sherlock/sherlock/internal/suitability_synchronization"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
@@ -81,10 +81,10 @@ func (a *Application) Start() {
 
 	if config.Config.MustString("mode") != "debug" {
 		log.Info().Msgf("BOOT | caching Firecloud accounts and config-based suitability...")
-		if err = suitability_loader.SyncSuitabilitiesToDB(ctx, a.gormDB); err != nil {
-			log.Fatal().Err(err).Msgf("suitabilityloader.SyncSuitabilitiesToDB() error")
+		if err = suitability_synchronization.LoadIntoDB(ctx, a.gormDB); err != nil {
+			log.Fatal().Err(err).Msgf("suitability_synchronization.LoadIntoDB() error")
 		}
-		go suitability_loader.KeepSuitabilitiesInDBUpdated(ctx, a.gormDB)
+		go suitability_synchronization.KeepLoadingIntoDB(ctx, a.gormDB)
 	}
 
 	log.Info().Msgf("BOOT | initializing GitHub Actions OIDC token verification...")

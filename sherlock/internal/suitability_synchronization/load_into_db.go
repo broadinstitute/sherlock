@@ -1,4 +1,4 @@
-package suitability_loader
+package suitability_synchronization
 
 import (
 	"context"
@@ -13,17 +13,27 @@ import (
 	"time"
 )
 
-func KeepSuitabilitiesInDBUpdated(ctx context.Context, db *gorm.DB) {
-	interval := time.Duration(config.Config.MustInt("auth.updateIntervalMinutes")) * time.Minute
-	for {
-		time.Sleep(interval)
-		if err := SyncSuitabilitiesToDB(ctx, db); err != nil {
-			log.Warn().Err(err).Msgf("failed to update suitability table: %v", err)
+func KeepLoadingIntoDB(ctx context.Context, db *gorm.DB) {
+	if config.Config.Bool("suitabilitySynchronization.enable") && config.Config.Bool("suitabilitySynchronization.behaviors.loadIntoDB.enable") {
+		interval := config.Config.MustDuration("suitabilitySynchronization.behaviors.loadIntoDB.interval")
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			default:
+				if err := LoadIntoDB(ctx, db); err != nil {
+					log.Warn().Err(err).Msgf("failed to update suitability table: %v", err)
+				}
+			}
+			time.Sleep(interval)
 		}
 	}
 }
 
-func SyncSuitabilitiesToDB(ctx context.Context, db *gorm.DB) error {
+func LoadIntoDB(ctx context.Context, db *gorm.DB) error {
+	if !config.Config.Bool("suitabilitySynchronization.enable") || !config.Config.Bool("suitabilitySynchronization.behaviors.loadIntoDB.enable") {
+		return nil
+	}
 	suitabilitiesFromConfig, err := fromConfig()
 	if err != nil {
 		return err
@@ -65,7 +75,7 @@ func SyncSuitabilitiesToDB(ctx context.Context, db *gorm.DB) error {
 	var removedSuitabilities []models.Suitability
 	if err = superUserDB.
 		Clauses(clause.Returning{}).
-		Where("updated_at < ?", time.Now().Add(time.Duration(config.Config.MustInt("auth.updateIntervalMinutes"))*time.Minute*-3).Format(time.RFC3339)).
+		Where("updated_at < ?", time.Now().Add(config.Config.MustDuration("suitabilitySynchronization.behaviors.loadIntoDB.interval")*-3).Format(time.RFC3339)).
 		Delete(&removedSuitabilities).Error; err != nil {
 		return fmt.Errorf("failed to find removed suitabilities: %w", err)
 	}
