@@ -12,6 +12,23 @@ import (
 )
 
 type RoleAssignmentFields struct {
+	// Suspended represents whether the RoleAssignment is active or not.
+	//
+	// This field is closely related to RoleFields.SuspendNonSuitableUsers. When that field is true,
+	// this field effectively becomes a computed field, managed entirely by Sherlock based on the
+	// Suitability of each User. This accomplishes effectively revoking a User's permissions when
+	// they become non-suitable.
+	//
+	// Why have a concept of suspension vs. just deleting the RoleAssignment? There's two reasons:
+	// 1. Some role grants, like a Firecloud.org account, actually have a concept of suspension.
+	//    When this is available, it's extremely useful: e.g. we can create and delete Firecloud.org
+	//    accounts based on presence of a RoleAssignment, and as suitability fluctuates we just
+	//    suspend it. If we deleted it, the Google subject ID would change, and people would need
+	//    to set their password and two-factor.
+	// 2. It allows the super-admins to manage role membership independent of suitability. We don't
+	//    need to wait for a new employee to actually become suitable before adding them to a bunch
+	//    of roles: the roles will just automatically not grant permissions until the user becomes
+	//    suitable.
 	Suspended *bool
 	ExpiresAt *time.Time
 }

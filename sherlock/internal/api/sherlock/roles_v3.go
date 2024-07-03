@@ -15,7 +15,7 @@ type RoleV3 struct {
 
 type RoleV3Edit struct {
 	Name                      *string   `json:"name" form:"name"`
-	SuspendNonSuitableUsers   *bool     `json:"suspendNonSuitableUsers,omitempty" form:"suspendNonSuitableUsers"`
+	SuspendNonSuitableUsers   *bool     `json:"suspendNonSuitableUsers,omitempty" form:"suspendNonSuitableUsers"` // When true, the "suspended" field on role assignments will be computed by Sherlock based on suitability instead of being a mutable API field
 	CanBeGlassBrokenByRole    *uint     `json:"canBeGlassBrokenByRole,omitempty" form:"canBeGlassBrokenByRole"`
 	DefaultGlassBreakDuration *Duration `json:"defaultGlassBreakDuration,omitempty" swaggertype:"string" form:"defaultGlassBreakDuration"`
 	GrantsSherlockSuperAdmin  *bool     `json:"grantsSherlockSuperAdmin,omitempty" form:"grantsSherlockSuperAdmin"`
