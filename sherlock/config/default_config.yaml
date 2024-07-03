@@ -262,6 +262,7 @@ beehive:
 # useful for testing or offline development to skip using ADC.
 self:
     overrideEmail:
+    # The subject ID should be prefixed with the standard "accounts.google.com:" prefix.
     overrideSubjectID:
 
 rolePropagation:

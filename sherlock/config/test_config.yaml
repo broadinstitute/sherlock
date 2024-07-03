@@ -59,7 +59,7 @@ model:
 
 self:
   overrideEmail: sherlock-test@broadinstitute.org
-  overrideSubjectID: sherlock-test
+  overrideSubjectID: accounts.google.com:sherlock-test
 
 rolePropagation:
   asynchronous: false
