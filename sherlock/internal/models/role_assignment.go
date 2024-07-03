@@ -105,6 +105,8 @@ func (ra *RoleAssignment) errorIfForbidden(tx *gorm.DB) error {
 	}
 	if targetRole.CanBeGlassBrokenByRoleID == nil {
 		return fmt.Errorf("(%s) role %s (%d) cannot be glass-broken and the caller is not a super-admin who can make non-glass-break assignments", errors.Forbidden, *targetRole.Name, current.RoleID)
+	} else if ra.UserID != user.ID {
+		return fmt.Errorf("(%s) a caller may only make break-glass assignments for themselves", errors.Forbidden)
 	} else if targetRole.DefaultGlassBreakDuration == nil {
 		return fmt.Errorf("role %s (%d) is misconfigured: it declares that it can be glass-broken but defines no default duration", *targetRole.Name, current.RoleID)
 	} else {

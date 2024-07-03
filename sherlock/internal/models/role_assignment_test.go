@@ -152,6 +152,22 @@ func (s *modelSuite) TestRoleAssignmentBreakGlassForbiddenSuspended() {
 	s.ErrorContains(err, "the break-glass assignment is suspended (break-glass and suspensions don't mix)")
 }
 
+func (s *modelSuite) TestRoleAssignmentBreakGlassForbiddenMismatch() {
+	s.TestData.RoleAssignment_Suitable_TerraSuitableEngineer()
+	breakGlassRoleAssignment := RoleAssignment{
+		RoleID: s.TestData.Role_TerraGlassBrokenAdmin().ID,
+		UserID: s.TestData.User_NonSuitable().ID,
+		RoleAssignmentFields: RoleAssignmentFields{
+			Suspended: utils.PointerTo(false),
+			ExpiresAt: utils.PointerTo(time.Now().Add(time.Hour)),
+		},
+	}
+	s.SetSuitableTestUserForDB(true)
+	err := s.DB.Create(&breakGlassRoleAssignment).Error
+	s.ErrorContains(err, errors.Forbidden)
+	s.ErrorContains(err, "a caller may only make break-glass assignments for themselves")
+}
+
 func (s *modelSuite) TestRoleAssignmentBreakGlassAllowed() {
 	s.TestData.RoleAssignment_Suitable_TerraSuitableEngineer()
 	breakGlassRoleAssignment := RoleAssignment{
