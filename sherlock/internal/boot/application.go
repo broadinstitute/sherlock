@@ -79,14 +79,6 @@ func (a *Application) Start() {
 	ctx, cancelCtx := context.WithCancel(context.Background())
 	a.cancelCtx = cancelCtx
 
-	if config.Config.MustString("mode") != "debug" {
-		log.Info().Msgf("BOOT | caching Firecloud accounts and config-based suitability...")
-		if err = suitability_synchronization.LoadIntoDB(ctx, a.gormDB); err != nil {
-			log.Fatal().Err(err).Msgf("suitability_synchronization.LoadIntoDB() error")
-		}
-		go suitability_synchronization.KeepLoadingIntoDB(ctx, a.gormDB)
-	}
-
 	log.Info().Msgf("BOOT | initializing GitHub Actions OIDC token verification...")
 	if err = gha_oidc.InitVerifier(ctx); err != nil {
 		log.Fatal().Err(err).Msgf("gha_oidc_auth.InitVerifier() error")
@@ -127,6 +119,21 @@ func (a *Application) Start() {
 			log.Fatal().Err(err).Msgf("role_propagation.Init() error")
 		}
 		go role_propagation.KeepPropagatingStale(ctx, a.gormDB)
+	}
+
+	if config.Config.Bool("suitabilitySynchronization.enable") {
+		log.Info().Msgf("BOOT | initializing suitability synchronization...")
+		if config.Config.MustString("mode") != "debug" && config.Config.Bool("suitabilitySynchronization.behaviors.loadIntoDB.enable") {
+			log.Info().Msgf("BOOT | loading suitability from external stores...")
+			if err = suitability_synchronization.LoadIntoDB(ctx, a.gormDB); err != nil {
+				log.Fatal().Err(err).Msgf("suitability_synchronization.LoadIntoDB() error")
+			}
+			go suitability_synchronization.KeepLoadingIntoDB(ctx, a.gormDB)
+		}
+		if config.Config.Bool("suitabilitySynchronization.behaviors.suspendRoleAssignments.enable") {
+			log.Info().Msgf("BOOT | beginning automatic role assignment suspension...")
+			go suitability_synchronization.KeepSuspendingRoleAssignments(ctx, a.gormDB)
+		}
 	}
 
 	log.Info().Msgf("BOOT | building Gin router...")

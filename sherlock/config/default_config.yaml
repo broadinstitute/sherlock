@@ -351,3 +351,6 @@ suitabilitySynchronization:
       extraPermissions:
         #- email: example@dsp-tools-k8s.iam.gserviceaccount.com
         #  suitable: false
+    suspendRoleAssignments:
+      enable: true
+      interval: 1m
