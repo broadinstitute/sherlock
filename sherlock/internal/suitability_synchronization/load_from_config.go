@@ -1,4 +1,4 @@
-package suitability_loader
+package suitability_synchronization
 
 import (
 	"fmt"
@@ -9,14 +9,14 @@ import (
 
 func fromConfig() ([]models.Suitability, error) {
 	var result []models.Suitability
-	for index, entry := range config.Config.Slices("auth.extraPermissions") {
+	for index, entry := range config.Config.Slices("suitabilitySynchronization.behaviors.loadIntoDB.extraPermissions") {
 		email := entry.String("email")
 		if email == "" {
-			return nil, fmt.Errorf("auth.extraPermissions[%d].email is required", index)
+			return nil, fmt.Errorf("suitabilitySynchronization.behaviors.loadIntoDB.extraPermissions.extraPermissions[%d].email is required", index)
 		}
 		result = append(result, models.Suitability{
 			Email:       &email,
-			Suitable:    utils.PointerTo(true),
+			Suitable:    utils.PointerTo(entry.Bool("suitable")),
 			Description: utils.PointerTo("suitability set via Sherlock configuration"),
 		})
 	}

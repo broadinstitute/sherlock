@@ -12,12 +12,13 @@ import (
 )
 
 func DoOnDemandPropagation(ctx context.Context, db *gorm.DB, roleID uint) {
-	if config.Config.Bool("rolePropagation.asynchronous") {
-		go waitToPropagate(ctx, db, roleID)
-	} else {
-		waitToPropagate(ctx, db, roleID)
+	if config.Config.Bool("rolePropagation.enable") {
+		if config.Config.Bool("rolePropagation.asynchronous") {
+			go waitToPropagate(ctx, db, roleID)
+		} else {
+			waitToPropagate(ctx, db, roleID)
+		}
 	}
-
 }
 
 // waitToPropagate is a blocking function that will forcibly run propagation for
@@ -56,14 +57,16 @@ func waitToPropagate(ctx context.Context, db *gorm.DB, roleID uint) {
 
 // KeepPropagatingStale runs tryToPropagateStale every 30 seconds.
 func KeepPropagatingStale(ctx context.Context, db *gorm.DB) {
-	for {
-		select {
-		case <-ctx.Done():
-			return
-		default:
-			tryToPropagateStale(ctx, db)
+	if config.Config.Bool("rolePropagation.enable") {
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			default:
+				tryToPropagateStale(ctx, db)
+			}
+			time.Sleep(30 * time.Second)
 		}
-		time.Sleep(30 * time.Second)
 	}
 }
 

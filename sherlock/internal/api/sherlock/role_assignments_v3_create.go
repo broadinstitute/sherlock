@@ -2,6 +2,7 @@ package sherlock
 
 import (
 	"fmt"
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/authentication"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
@@ -53,7 +54,7 @@ func roleAssignmentsV3Create(ctx *gin.Context) {
 		return
 	}
 	var role models.Role
-	if err = db.Where(&roleQuery).Select("id").First(&role).Error; err != nil {
+	if err = db.Where(&roleQuery).First(&role).Error; err != nil {
 		errors.AbortRequest(ctx, err)
 		return
 	}
@@ -65,11 +66,26 @@ func roleAssignmentsV3Create(ctx *gin.Context) {
 		return
 	}
 	var user models.User
-	if err = db.Where(&userQuery).Select("id").First(&user).Error; err != nil {
+	if err = db.Where(&userQuery).Preload("Suitability").First(&user).Error; err != nil {
 		errors.AbortRequest(ctx, err)
 		return
 	}
 	toCreate.UserID = user.ID
+
+	if role.SuspendNonSuitableUsers != nil && *role.SuspendNonSuitableUsers {
+		// If Role.SuspendNonSuitableUsers is true, we compute RoleAssignments.Suspended
+		shouldBeSuspended := user.Suitability == nil || !*user.Suitability.Suitable
+		if toCreate.Suspended != nil && *toCreate.Suspended != shouldBeSuspended {
+			errors.AbortRequest(ctx, fmt.Errorf("(%s) request manually set suspended to %v, but for this role it's a computed field and is expected to be %v (please omit setting it or set it to %v)",
+				errors.BadRequest, *toCreate.Suspended, shouldBeSuspended, shouldBeSuspended))
+			return
+		} else {
+			toCreate.Suspended = &shouldBeSuspended
+		}
+	} else if toCreate.Suspended == nil {
+		// If it's not a computed field but is empty, we default to false
+		toCreate.Suspended = utils.PointerTo(false)
+	}
 
 	if err = db.Create(&toCreate).Error; err != nil {
 		errors.AbortRequest(ctx, err)

@@ -5,6 +5,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/clients/slack"
 	"github.com/broadinstitute/sherlock/sherlock/internal/clients/slack/slack_mocks"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/mock"
 	"net/http"
@@ -112,4 +113,44 @@ func (s *handlerSuite) TestRoleAssignmentsV3Edit_alert() {
 		s.Equal(roleAssignment.UserID, got.UserInfo.ID)
 		s.True(*got.Suspended)
 	})
+}
+
+func (s *handlerSuite) TestRoleAssignmentV3Edit_calculateDisagreeSuspendedTrue() {
+	s.SetSelfSuperAdminForDB()
+	user := models.User{Email: "user1@example.com", GoogleID: "accounts.google.com:user1"}
+	s.NoError(s.DB.Create(&user).Error)
+	suitability := models.Suitability{Email: &user.Email, Suitable: utils.PointerTo(false), Description: utils.PointerTo("test")}
+	s.NoError(s.DB.Create(&suitability).Error)
+	role := models.Role{RoleFields: models.RoleFields{Name: utils.PointerTo("test-role"), SuspendNonSuitableUsers: utils.PointerTo(true)}}
+	s.NoError(s.DB.Create(&role).Error)
+	roleAssignment := models.RoleAssignment{RoleID: role.ID, UserID: user.ID, RoleAssignmentFields: models.RoleAssignmentFields{Suspended: utils.PointerTo(true)}}
+	s.NoError(s.DB.Create(&roleAssignment).Error)
+	var got errors.ErrorResponse
+	code := s.HandleRequest(
+		s.NewSuperAdminRequest("PATCH", "/api/role-assignments/v3/"+utils.UintToString(role.ID)+"/"+utils.UintToString(user.ID), RoleAssignmentV3Edit{
+			Suspended: utils.PointerTo(false),
+		}),
+		&got)
+	s.Equal(http.StatusBadRequest, code)
+	s.Contains(got.Message, "it's a computed field and is expected to be")
+}
+
+func (s *handlerSuite) TestRoleAssignmentV3Edit_calculateDisagreeSuspendedFalse() {
+	s.SetSelfSuperAdminForDB()
+	user := models.User{Email: "user1@example.com", GoogleID: "accounts.google.com:user1"}
+	s.NoError(s.DB.Create(&user).Error)
+	suitability := models.Suitability{Email: &user.Email, Suitable: utils.PointerTo(true), Description: utils.PointerTo("test")}
+	s.NoError(s.DB.Create(&suitability).Error)
+	role := models.Role{RoleFields: models.RoleFields{Name: utils.PointerTo("test-role"), SuspendNonSuitableUsers: utils.PointerTo(true)}}
+	s.NoError(s.DB.Create(&role).Error)
+	roleAssignment := models.RoleAssignment{RoleID: role.ID, UserID: user.ID, RoleAssignmentFields: models.RoleAssignmentFields{Suspended: utils.PointerTo(false)}}
+	s.NoError(s.DB.Create(&roleAssignment).Error)
+	var got errors.ErrorResponse
+	code := s.HandleRequest(
+		s.NewSuperAdminRequest("PATCH", "/api/role-assignments/v3/"+utils.UintToString(role.ID)+"/"+utils.UintToString(user.ID), RoleAssignmentV3Edit{
+			Suspended: utils.PointerTo(true),
+		}),
+		&got)
+	s.Equal(http.StatusBadRequest, code)
+	s.Contains(got.Message, "it's a computed field and is expected to be")
 }

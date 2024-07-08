@@ -48,7 +48,7 @@ func roleAssignmentsV3Edit(ctx *gin.Context) {
 		return
 	}
 	var role models.Role
-	if err = db.Where(&roleQuery).Select("id").First(&role).Error; err != nil {
+	if err = db.Where(&roleQuery).First(&role).Error; err != nil {
 		errors.AbortRequest(ctx, err)
 		return
 	}
@@ -59,7 +59,7 @@ func roleAssignmentsV3Edit(ctx *gin.Context) {
 		return
 	}
 	var user models.User
-	if err = db.Where(&userQuery).Select("id").First(&user).Error; err != nil {
+	if err = db.Where(&userQuery).Preload("Suitability").First(&user).Error; err != nil {
 		errors.AbortRequest(ctx, err)
 		return
 	}
@@ -68,6 +68,19 @@ func roleAssignmentsV3Edit(ctx *gin.Context) {
 	if err = db.Preload(clause.Associations).Where(&models.RoleAssignment{RoleID: role.ID, UserID: user.ID}).First(&toEdit).Error; err != nil {
 		errors.AbortRequest(ctx, err)
 		return
+	}
+
+	if edits.Suspended != nil && role.SuspendNonSuitableUsers != nil && *role.SuspendNonSuitableUsers {
+		// If Role.SuspendNonSuitableUsers is true and RoleAssignment.Suspended is being set, we make sure it matches the computation
+		// We do this just so we don't unnecessarily error if someone accidentally sends the field as a no-op in the request
+		shouldBeSuspended := user.Suitability == nil || !*user.Suitability.Suitable
+		if *edits.Suspended != shouldBeSuspended {
+			errors.AbortRequest(ctx, fmt.Errorf("(%s) request manually set suspended to %v, but for this role it's a computed field and is expected to be %v (please omit setting it or set it to %v)",
+				errors.BadRequest, *edits.Suspended, shouldBeSuspended, shouldBeSuspended))
+			return
+		}
+		// We don't bother actually setting RoleAssignment.Suspended here since we don't want to attribute an edit to the user that they didn't make
+		// Our cron that updates suspensions will make the update very soon and correctly attribute it to Sherlock itself
 	}
 
 	if err = db.Model(&toEdit).Omit(clause.Associations).Updates(&edits).Error; err != nil {

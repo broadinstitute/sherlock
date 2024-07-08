@@ -15,7 +15,7 @@ type RoleAssignmentV3 struct {
 }
 
 type RoleAssignmentV3Edit struct {
-	Suspended *bool      `json:"suspended,omitempty" form:"suspended" default:"false"`
+	Suspended *bool      `json:"suspended,omitempty" form:"suspended"` // If the assignment should be active. This field is only mutable through the API if the role doesn't automatically suspend non-suitable users
 	ExpiresAt *time.Time `json:"expiresAt,omitempty" form:"expiresAt" format:"date-time"`
 	ExpiresIn *string    `json:"expiresIn,omitempty" form:"expiresIn"` // A Go time.Duration string that will be added to the current time to attempt to set expiresAt (this may be more convenient than setting expiresAt directly)
 }

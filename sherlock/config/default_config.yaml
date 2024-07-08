@@ -70,26 +70,10 @@ db:
     level: warn
 
 auth:
-  updateIntervalMinutes: 15
-  broadinstitute:
-    domain: broadinstitute.org
-  firecloud:
-    domain: firecloud.org
-    groups:
-      fcAdmins: fc-admins@firecloud.org
-      firecloudProjectOwners: firecloud-project-owners@firecloud.org
   githubActionsOIDC:
     issuer: https://token.actions.githubusercontent.com
     allowedOrganizations:
       - broadinstitute
-
-  # extraPermissions can be used to grant an exact email address access to "suitable" actions inside Sherlock,
-  # regardless of that email correlating to a Firecloud account. This functionality should only be used for
-  # service accounts, and the justification for this functionality existing is that adding a service account
-  # here is better than actually giving the service account any actual permissions inside the Firecloud org.
-  extraPermissions:
-    #- email: example@dsp-tools-k8s.iam.gserviceaccount.com
-    #  suitable: false
 
 hooks:
   # If Sherlock should act on CiRun state transitions. Hooks are still subject
@@ -345,3 +329,29 @@ rolePropagation:
       # Sherlock users to Azure Entra ID users.
       userEmailSuffixesToReplace:
         - "@broadinstitute.org"
+
+suitabilitySynchronization:
+  enable: true
+  behaviors:
+    loadIntoDB:
+      enable: true
+      interval: 60m
+      firecloud:
+        domain: firecloud.org
+        groups:
+          fcAdmins: fc-admins@firecloud.org
+          firecloudProjectOwners: firecloud-project-owners@firecloud.org
+      # extraPermissions can be used to grant an exact email address access to "suitable" actions inside Sherlock,
+      # regardless of that email correlating to a Firecloud account. This functionality should only be used for
+      # service accounts, and the justification for this functionality existing is that adding a service account
+      # here is better than actually giving the service account any actual permissions inside the Firecloud org.
+      #
+      # This is almost always unnecessary, because a caller's suitability will be evaluated even from GitHub
+      # Actions. Great care needs to be taken using this capability, as access to the service account needs to
+      # otherwise be limited to only suitable individuals.
+      extraPermissions:
+        #- email: example@dsp-tools-k8s.iam.gserviceaccount.com
+        #  suitable: false
+    suspendRoleAssignments:
+      enable: true
+      interval: 1m

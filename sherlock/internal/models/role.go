@@ -16,6 +16,9 @@ type RoleFields struct {
 
 	// SuspendNonSuitableUsers instructs that any RoleAssignment between this Role and a User who is not suitable
 	// should be marked as suspended (and any of this Role's grants should be suspended accordingly).
+	//
+	// When this field is true, RoleAssignmentFields.Suspended becomes effectively a computed field that can't
+	// be set directly from the API.
 	SuspendNonSuitableUsers *bool
 
 	// CanBeGlassBrokenByRole indicates that any User with a RoleAssignment to the given Role can temporarily give
