@@ -6598,7 +6598,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "boolean",
-                        "default": false,
+                        "description": "If the assignment should be active. This field is only mutable through the API if the role doesn't automatically suspend non-suitable users",
                         "name": "suspended",
                         "in": "query"
                     },
@@ -7027,6 +7027,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "boolean",
+                        "description": "When true, the \"suspended\" field on role assignments will be computed by Sherlock based on suitability instead of being a mutable API field",
                         "name": "suspendNonSuitableUsers",
                         "in": "query"
                     },
@@ -9822,8 +9823,8 @@ const docTemplate = `{
                     "type": "object"
                 },
                 "suspended": {
-                    "type": "boolean",
-                    "default": false
+                    "description": "If the assignment should be active. This field is only mutable through the API if the role doesn't automatically suspend non-suitable users",
+                    "type": "boolean"
                 },
                 "userInfo": {
                     "type": "object"
@@ -9842,8 +9843,8 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "suspended": {
-                    "type": "boolean",
-                    "default": false
+                    "description": "If the assignment should be active. This field is only mutable through the API if the role doesn't automatically suspend non-suitable users",
+                    "type": "boolean"
                 }
             }
         },
@@ -9894,6 +9895,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "suspendNonSuitableUsers": {
+                    "description": "When true, the \"suspended\" field on role assignments will be computed by Sherlock based on suitability instead of being a mutable API field",
                     "type": "boolean"
                 },
                 "updatedAt": {
@@ -9933,6 +9935,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "suspendNonSuitableUsers": {
+                    "description": "When true, the \"suspended\" field on role assignments will be computed by Sherlock based on suitability instead of being a mutable API field",
                     "type": "boolean"
                 }
             }

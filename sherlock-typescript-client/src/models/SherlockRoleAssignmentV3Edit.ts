@@ -32,7 +32,7 @@ export interface SherlockRoleAssignmentV3Edit {
      */
     expiresIn?: string;
     /**
-     * 
+     * If the assignment should be active. This field is only mutable through the API if the role doesn't automatically suspend non-suitable users
      * @type {boolean}
      * @memberof SherlockRoleAssignmentV3Edit
      */

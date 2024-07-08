@@ -107,7 +107,10 @@ type GetAPIRolesV3Params struct {
 	*/
 	Offset *int64
 
-	// SuspendNonSuitableUsers.
+	/* SuspendNonSuitableUsers.
+
+	   When true, the "suspended" field on role assignments will be computed by Sherlock based on suitability instead of being a mutable API field
+	*/
 	SuspendNonSuitableUsers *bool
 
 	// UpdatedAt.

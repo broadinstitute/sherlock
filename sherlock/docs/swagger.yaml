@@ -1560,7 +1560,8 @@ definitions:
       roleInfo:
         type: object
       suspended:
-        default: false
+        description: If the assignment should be active. This field is only mutable
+          through the API if the role doesn't automatically suspend non-suitable users
         type: boolean
       userInfo:
         type: object
@@ -1576,7 +1577,8 @@ definitions:
           directly)
         type: string
       suspended:
-        default: false
+        description: If the assignment should be active. This field is only mutable
+          through the API if the role doesn't automatically suspend non-suitable users
         type: boolean
     type: object
   sherlock.RoleV3:
@@ -1611,6 +1613,9 @@ definitions:
       name:
         type: string
       suspendNonSuitableUsers:
+        description: When true, the "suspended" field on role assignments will be
+          computed by Sherlock based on suitability instead of being a mutable API
+          field
         type: boolean
       updatedAt:
         format: date-time
@@ -1637,6 +1642,9 @@ definitions:
       name:
         type: string
       suspendNonSuitableUsers:
+        description: When true, the "suspended" field on role assignments will be
+          computed by Sherlock based on suitability instead of being a mutable API
+          field
         type: boolean
     type: object
   sherlock.SlackDeployHookTestRunRequest:
@@ -6216,7 +6224,8 @@ paths:
         in: query
         name: expiresIn
         type: string
-      - default: false
+      - description: If the assignment should be active. This field is only mutable
+          through the API if the role doesn't automatically suspend non-suitable users
         in: query
         name: suspended
         type: boolean
@@ -6522,7 +6531,10 @@ paths:
       - in: query
         name: name
         type: string
-      - in: query
+      - description: When true, the "suspended" field on role assignments will be
+          computed by Sherlock based on suitability instead of being a mutable API
+          field
+        in: query
         name: suspendNonSuitableUsers
         type: boolean
       - format: date-time

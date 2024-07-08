@@ -60,7 +60,7 @@ type SherlockRoleV3 struct {
 	// name
 	Name string `json:"name,omitempty"`
 
-	// suspend non suitable users
+	// When true, the "suspended" field on role assignments will be computed by Sherlock based on suitability instead of being a mutable API field
 	SuspendNonSuitableUsers bool `json:"suspendNonSuitableUsers,omitempty"`
 
 	// updated at

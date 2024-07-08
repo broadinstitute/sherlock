@@ -26,8 +26,8 @@ type SherlockRoleAssignmentV3Edit struct {
 	// A Go time.Duration string that will be added to the current time to attempt to set expiresAt (this may be more convenient than setting expiresAt directly)
 	ExpiresIn string `json:"expiresIn,omitempty"`
 
-	// suspended
-	Suspended *bool `json:"suspended,omitempty"`
+	// If the assignment should be active. This field is only mutable through the API if the role doesn't automatically suspend non-suitable users
+	Suspended bool `json:"suspended,omitempty"`
 }
 
 // Validate validates this sherlock role assignment v3 edit

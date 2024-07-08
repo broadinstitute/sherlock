@@ -105,7 +105,7 @@ export interface SherlockRoleV3 {
      */
     name?: string;
     /**
-     * 
+     * When true, the "suspended" field on role assignments will be computed by Sherlock based on suitability instead of being a mutable API field
      * @type {boolean}
      * @memberof SherlockRoleV3
      */

@@ -83,7 +83,10 @@ type GetAPIRoleAssignmentsV3Params struct {
 	*/
 	Offset *int64
 
-	// Suspended.
+	/* Suspended.
+
+	   If the assignment should be active. This field is only mutable through the API if the role doesn't automatically suspend non-suitable users
+	*/
 	Suspended *bool
 
 	timeout    time.Duration
@@ -103,18 +106,7 @@ func (o *GetAPIRoleAssignmentsV3Params) WithDefaults() *GetAPIRoleAssignmentsV3P
 //
 // All values with no default are reset to their zero value.
 func (o *GetAPIRoleAssignmentsV3Params) SetDefaults() {
-	var (
-		suspendedDefault = bool(false)
-	)
-
-	val := GetAPIRoleAssignmentsV3Params{
-		Suspended: &suspendedDefault,
-	}
-
-	val.timeout = o.timeout
-	val.Context = o.Context
-	val.HTTPClient = o.HTTPClient
-	*o = val
+	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the get API role assignments v3 params

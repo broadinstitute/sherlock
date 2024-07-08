@@ -29,8 +29,8 @@ type SherlockRoleAssignmentV3 struct {
 	// role info
 	RoleInfo interface{} `json:"roleInfo,omitempty"`
 
-	// suspended
-	Suspended *bool `json:"suspended,omitempty"`
+	// If the assignment should be active. This field is only mutable through the API if the role doesn't automatically suspend non-suitable users
+	Suspended bool `json:"suspended,omitempty"`
 
 	// user info
 	UserInfo interface{} `json:"userInfo,omitempty"`
