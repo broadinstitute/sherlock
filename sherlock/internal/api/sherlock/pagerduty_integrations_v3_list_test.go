@@ -44,7 +44,7 @@ func (s *handlerSuite) TestPagerdutyIntegrationsV3List_badOffset() {
 }
 
 func (s *handlerSuite) TestPagerdutyIntegrationsV3List() {
-	s.SetSuitableTestUserForDB()
+	s.SetSelfSuperAdminForDB()
 	pdi1 := models.PagerdutyIntegration{
 		PagerdutyID: "some-pd-id-1",
 		Name:        utils.PointerTo("some-name-1"),

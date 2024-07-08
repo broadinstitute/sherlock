@@ -456,7 +456,7 @@ func (td *testDataImpl) PagerdutyIntegration_ManuallyTriggeredTerraIncident() Pa
 			Key:         utils.PointerTo("some secret key"),
 			Type:        utils.PointerTo("service"),
 		}
-		td.h.SetSuitableTestUserForDB()
+		td.h.SetSelfSuperAdminForDB()
 		td.create(&td.pagerdutyIntegration_manuallyTriggeredTerraIncident)
 	}
 	return td.pagerdutyIntegration_manuallyTriggeredTerraIncident

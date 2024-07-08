@@ -6,7 +6,7 @@ import (
 )
 
 func (s *modelSuite) TestPagerdutyIntegrationPagerdutyIDValidationSql() {
-	s.SetSuitableTestUserForDB()
+	s.SetSelfSuperAdminForDB()
 	err := s.DB.Create(&PagerdutyIntegration{
 		Name: utils.PointerTo("some-name"),
 		Key:  utils.PointerTo("some-key"),
@@ -16,7 +16,7 @@ func (s *modelSuite) TestPagerdutyIntegrationPagerdutyIDValidationSql() {
 }
 
 func (s *modelSuite) TestPagerdutyIntegrationNameValidationSql() {
-	s.SetSuitableTestUserForDB()
+	s.SetSelfSuperAdminForDB()
 	err := s.DB.Create(&PagerdutyIntegration{
 		PagerdutyID: "some-pagerduty-id",
 		Key:         utils.PointerTo("some-key"),
@@ -26,7 +26,7 @@ func (s *modelSuite) TestPagerdutyIntegrationNameValidationSql() {
 }
 
 func (s *modelSuite) TestPagerdutyIntegrationKeyValidationSql() {
-	s.SetSuitableTestUserForDB()
+	s.SetSelfSuperAdminForDB()
 	err := s.DB.Create(&PagerdutyIntegration{
 		PagerdutyID: "some-pagerduty-id",
 		Name:        utils.PointerTo("some-name"),
@@ -36,7 +36,7 @@ func (s *modelSuite) TestPagerdutyIntegrationKeyValidationSql() {
 }
 
 func (s *modelSuite) TestPagerdutyIntegrationTypeValidationSql() {
-	s.SetSuitableTestUserForDB()
+	s.SetSelfSuperAdminForDB()
 	err := s.DB.Create(&PagerdutyIntegration{
 		PagerdutyID: "some-pagerduty-id",
 		Name:        utils.PointerTo("some-name"),
@@ -76,7 +76,7 @@ func (s *modelSuite) TestPagerdutyIntegrationDeleteForbidden() {
 func (s *modelSuite) TestPagerdutyIntegrationDeleteWhileUsed() {
 	i := s.TestData.PagerdutyIntegration_ManuallyTriggeredTerraIncident()
 	s.TestData.Environment_Prod()
-	s.SetSuitableTestUserForDB()
+	s.SetSelfSuperAdminForDB()
 	s.ErrorContains(s.DB.
 		Delete(&i).
 		Error, errors.BadRequest)
@@ -84,7 +84,7 @@ func (s *modelSuite) TestPagerdutyIntegrationDeleteWhileUsed() {
 
 func (s *modelSuite) TestPagerdutyIntegrationUniqueness() {
 	pdi := s.TestData.PagerdutyIntegration_ManuallyTriggeredTerraIncident()
-	s.SetSuitableTestUserForDB()
+	s.SetSelfSuperAdminForDB()
 	s.ErrorContains(s.DB.Create(&PagerdutyIntegration{
 		PagerdutyID: pdi.PagerdutyID,
 		Name:        utils.PointerTo("some-name"),
