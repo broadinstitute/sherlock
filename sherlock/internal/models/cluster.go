@@ -39,7 +39,7 @@ func (c *Cluster) errorIfForbidden(tx *gorm.DB) error {
 	if err = user.ErrIfNotActiveInRole(tx, c.RequiredRoleID); err != nil {
 		return err
 	}
-	if c.RequiresSuitability == nil || *c.RequiresSuitability {
+	if c.RequiresSuitability != nil && *c.RequiresSuitability {
 		if err = user.ErrIfNotSuitable(); err != nil {
 			return fmt.Errorf("(%s) suitability required: %w", errors.Forbidden, err)
 		}

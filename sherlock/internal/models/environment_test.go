@@ -173,6 +173,25 @@ func (s *modelSuite) TestEnvironmentDeletionPropagateToDatabaseInstances() {
 	s.Empty(databaseInstances)
 }
 
+func (s *modelSuite) TestEnvironment_errorIfForbidden_nullRequiresSuitability() {
+	s.SetNonSuitableTestUserForDB()
+	environment := Environment{
+		Base:                      "live",
+		Lifecycle:                 "static",
+		Name:                      "prod",
+		ValuesName:                "prod",
+		AutoPopulateChartReleases: utils.PointerTo(false),
+		DefaultNamespace:          "terra-prod",
+		BaseDomain:                utils.PointerTo("dsde-prod.broadinstitute.org"),
+		NamePrefixesDomain:        utils.PointerTo(false),
+		HelmfileRef:               utils.PointerTo("HEAD"),
+		PreventDeletion:           utils.PointerTo(true),
+		Description:               utils.PointerTo("Terra's production environment"),
+		Offline:                   utils.PointerTo(false),
+	}
+	s.NoError(environment.errorIfForbidden(s.DB))
+}
+
 func (s *modelSuite) TestEnvironmentCreationForbidden() {
 	s.SetNonSuitableTestUserForDB()
 	environment := Environment{
