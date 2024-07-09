@@ -188,6 +188,20 @@ func (s *modelSuite) TestClusterCiIdentifiers() {
 	})
 }
 
+func (s *modelSuite) TestCluster_errorIfForbidden_nullRequiresSuitability() {
+	s.SetNonSuitableTestUserForDB()
+	cluster := Cluster{
+		Name:          "some-name",
+		Provider:      "google",
+		GoogleProject: "some-project",
+		Location:      "some-location",
+		Base:          utils.PointerTo("some base"),
+		Address:       utils.PointerTo("0.0.0.0"),
+		HelmfileRef:   utils.PointerTo("some-ref"),
+	}
+	s.NoError(cluster.errorIfForbidden(s.DB))
+}
+
 func (s *modelSuite) TestClusterCreationForbidden() {
 	s.SetNonSuitableTestUserForDB()
 	cluster := Cluster{
