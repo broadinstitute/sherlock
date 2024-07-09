@@ -158,6 +158,7 @@ func (s *handlerSuite) TestEnvironmentV3_toModel() {
 						DefaultCluster:              utils.PointerTo(defaultCluster.Name),
 						Owner:                       utils.PointerTo(owner.Email),
 						RequiresSuitability:         utils.PointerTo(true),
+						RequiredRole:                s.TestData.Role_TerraSuitableEngineer().Name,
 						BaseDomain:                  utils.PointerTo("base-domain"),
 						NamePrefixesDomain:          utils.PointerTo(true),
 						HelmfileRef:                 utils.PointerTo("HEAD"),
@@ -193,6 +194,7 @@ func (s *handlerSuite) TestEnvironmentV3_toModel() {
 				DefaultClusterID:          &defaultCluster.ID,
 				OwnerID:                   &owner.ID,
 				RequiresSuitability:       utils.PointerTo(true),
+				RequiredRoleID:            utils.PointerTo(s.TestData.Role_TerraSuitableEngineer().ID),
 				BaseDomain:                utils.PointerTo("base-domain"),
 				NamePrefixesDomain:        utils.PointerTo(true),
 				HelmfileRef:               utils.PointerTo("HEAD"),
@@ -345,6 +347,8 @@ func Test_environmentFromModel(t *testing.T) {
 				Owner:                     &models.User{Model: gorm.Model{ID: 5}, Email: "example@example.com"},
 				OwnerID:                   utils.PointerTo[uint](5),
 				RequiresSuitability:       utils.PointerTo(true),
+				RequiredRole:              &models.Role{Model: gorm.Model{ID: 999}, RoleFields: models.RoleFields{Name: utils.PointerTo("role-name")}},
+				RequiredRoleID:            utils.PointerTo[uint](999),
 				BaseDomain:                utils.PointerTo("base-domain"),
 				NamePrefixesDomain:        utils.PointerTo(true),
 				HelmfileRef:               utils.PointerTo("HEAD"),
@@ -376,6 +380,7 @@ func Test_environmentFromModel(t *testing.T) {
 				PagerdutyIntegrationInfo: &PagerdutyIntegrationV3{CommonFields: CommonFields{ID: 6}, PagerdutyID: "blah"},
 				OwnerInfo: &UserV3{CommonFields: CommonFields{ID: 5}, Email: "example@example.com", Suitable: utils.PointerTo(false),
 					SuitabilityDescription: utils.PointerTo("no matching suitability record found or loaded; assuming unsuitable")},
+				RequiredRoleInfo: &RoleV3{CommonFields: CommonFields{ID: 999}, RoleV3Edit: RoleV3Edit{Name: utils.PointerTo("role-name")}},
 				EnvironmentV3Create: EnvironmentV3Create{
 					Base:                      "base",
 					AutoPopulateChartReleases: utils.PointerTo(true),
@@ -389,6 +394,7 @@ func Test_environmentFromModel(t *testing.T) {
 						DefaultCluster:              utils.PointerTo("name-4"),
 						Owner:                       utils.PointerTo("example@example.com"),
 						RequiresSuitability:         utils.PointerTo(true),
+						RequiredRole:                utils.PointerTo("role-name"),
 						BaseDomain:                  utils.PointerTo("base-domain"),
 						NamePrefixesDomain:          utils.PointerTo(true),
 						HelmfileRef:                 utils.PointerTo("HEAD"),
@@ -416,6 +422,19 @@ func Test_environmentFromModel(t *testing.T) {
 				EnvironmentV3Create: EnvironmentV3Create{
 					EnvironmentV3Edit: EnvironmentV3Edit{
 						PagerdutyIntegration: utils.PointerTo("6"),
+					},
+				},
+			},
+		},
+		{
+			name: "role ID case",
+			args: args{model: models.Environment{
+				RequiredRoleID: utils.PointerTo[uint](999),
+			}},
+			want: EnvironmentV3{
+				EnvironmentV3Create: EnvironmentV3Create{
+					EnvironmentV3Edit: EnvironmentV3Edit{
+						RequiredRole: utils.PointerTo("999"),
 					},
 				},
 			},

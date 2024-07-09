@@ -18,6 +18,8 @@ type Cluster struct {
 	Base                *string
 	Address             *string
 	RequiresSuitability *bool
+	RequiredRole        *Role
+	RequiredRoleID      *uint
 	HelmfileRef         *string
 }
 
@@ -32,6 +34,9 @@ func (c *Cluster) GetCiIdentifier() CiIdentifier {
 func (c *Cluster) errorIfForbidden(tx *gorm.DB) error {
 	user, err := GetCurrentUserForDB(tx)
 	if err != nil {
+		return err
+	}
+	if err = user.ErrIfNotActiveInRole(tx, c.RequiredRoleID); err != nil {
 		return err
 	}
 	if c.RequiresSuitability == nil || *c.RequiresSuitability {

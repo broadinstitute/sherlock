@@ -172,6 +172,48 @@ func (s *modelSuite) TestUserGithubIdUniquenessSql() {
 	s.ErrorContains(err, "violates unique constraint")
 }
 
+func (s *modelSuite) TestUser_ErrIfNotActiveInRole_roleNotLoaded() {
+	user := User{
+		Assignments: []*RoleAssignment{
+			{
+				RoleID: s.TestData.Role_TerraEngineer().ID,
+			},
+		},
+	}
+	err := user.ErrIfNotActiveInRole(s.DB, utils.PointerTo(s.TestData.Role_TerraEngineer().ID))
+	s.ErrorContains(err, errors.InternalServerError)
+	s.ErrorContains(err, "issue loading required role")
+}
+
+func (s *modelSuite) TestUser_ErrIfNotActiveInRole_roleNameNotLoaded() {
+	user := User{
+		Assignments: []*RoleAssignment{
+			{
+				RoleID: s.TestData.Role_TerraEngineer().ID,
+				Role:   &Role{},
+			},
+		},
+	}
+	err := user.ErrIfNotActiveInRole(s.DB, utils.PointerTo(s.TestData.Role_TerraEngineer().ID))
+	s.ErrorContains(err, errors.InternalServerError)
+	s.ErrorContains(err, "issue loading required role")
+	s.ErrorContains(err, "name missing")
+}
+
+func (s *modelSuite) TestUser_ErrIfNotActiveInRole_notActive() {
+	roleAssignment := s.TestData.RoleAssignment_NonSuitable_TerraEngineer()
+	s.NoError(s.DB.Model(&roleAssignment).Update("suspended", true).Error)
+	var user User
+	s.NoError(s.DB.Scopes(ReadUserScope).First(&user, s.TestData.User_NonSuitable().ID).Error)
+	err := user.ErrIfNotActiveInRole(s.DB, utils.PointerTo(s.TestData.Role_TerraEngineer().ID))
+	s.ErrorContains(err, errors.Forbidden)
+	s.ErrorContains(err, "they're not active")
+}
+
+func (s *modelSuite) TestUser_ErrIfNotActiveInRole_superUser() {
+	s.NoError(SelfUser.ErrIfNotActiveInRole(s.DB, utils.PointerTo(s.TestData.Role_TerraEngineer().ID)))
+}
+
 func TestUser_SlackReference(t *testing.T) {
 	type args struct {
 		mention bool

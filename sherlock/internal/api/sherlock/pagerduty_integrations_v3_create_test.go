@@ -10,7 +10,7 @@ import (
 func (s *handlerSuite) TestPagerdutyIntegrationsV3Create_badBody() {
 	var got errors.ErrorResponse
 	code := s.HandleRequest(
-		s.NewRequest("POST", "/api/pagerduty-integrations/v3", gin.H{
+		s.NewSuperAdminRequest("POST", "/api/pagerduty-integrations/v3", gin.H{
 			"pagerdutyID": 123,
 		}),
 		&got)
@@ -22,7 +22,7 @@ func (s *handlerSuite) TestPagerdutyIntegrationsV3Create_badBody() {
 func (s *handlerSuite) TestPagerdutyIntegrationsV3Create_sqlValidation() {
 	var got errors.ErrorResponse
 	code := s.HandleRequest(
-		s.NewRequest("POST", "/api/pagerduty-integrations/v3", PagerdutyIntegrationV3Create{}),
+		s.NewSuperAdminRequest("POST", "/api/pagerduty-integrations/v3", PagerdutyIntegrationV3Create{}),
 		&got)
 	s.Equal(http.StatusBadRequest, code)
 	s.Equal(errors.BadRequest, got.Type)
@@ -47,7 +47,7 @@ func (s *handlerSuite) TestPagerdutyIntegrationsV3Create_suitability() {
 func (s *handlerSuite) TestPagerdutyIntegrationsV3Create() {
 	var got PagerdutyIntegrationV3
 	code := s.HandleRequest(
-		s.NewSuitableRequest("POST", "/api/pagerduty-integrations/v3", PagerdutyIntegrationV3Create{
+		s.NewSuperAdminRequest("POST", "/api/pagerduty-integrations/v3", PagerdutyIntegrationV3Create{
 			PagerdutyID: "pagerduty-id",
 			PagerdutyIntegrationV3Edit: PagerdutyIntegrationV3Edit{
 				Name: utils.PointerTo("pagerduty-integration-name"),
@@ -67,7 +67,7 @@ func (s *handlerSuite) TestPagerdutyIntegrationsV3Create_duplicate() {
 	pdi := s.TestData.PagerdutyIntegration_ManuallyTriggeredTerraIncident()
 	var got PagerdutyIntegrationV3
 	code := s.HandleRequest(
-		s.NewSuitableRequest("POST", "/api/pagerduty-integrations/v3", PagerdutyIntegrationV3Create{
+		s.NewSuperAdminRequest("POST", "/api/pagerduty-integrations/v3", PagerdutyIntegrationV3Create{
 			PagerdutyID: pdi.PagerdutyID,
 			PagerdutyIntegrationV3Edit: PagerdutyIntegrationV3Edit{
 				Name: utils.PointerTo("pagerduty-integration-name"),

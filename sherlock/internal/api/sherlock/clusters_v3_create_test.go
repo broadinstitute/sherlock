@@ -44,9 +44,6 @@ func (s *handlerSuite) TestClustersV3Create_defaults() {
 	s.Equal(http.StatusCreated, code)
 	s.Equal("cluster-name", got.Name)
 	s.Equal("us-central1-a", got.Location)
-	if s.NotNil(got.RequiresSuitability) {
-		s.False(*got.RequiresSuitability)
-	}
 	if s.NotNil(got.HelmfileRef) {
 		s.Equal("HEAD", *got.HelmfileRef)
 	}

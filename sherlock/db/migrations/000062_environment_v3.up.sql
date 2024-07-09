@@ -9,7 +9,8 @@ alter table environments
 
 alter table environments
     add constraint lifecycle_valid
-        check ((lifecycle = 'template' and template_environment_id is null) or
+        check ((lifecycle = 'template' and
+                template_environment_id is null) or
                (lifecycle = 'dynamic' and
                 template_environment_id is not null and
                 base is not null and base != '' and

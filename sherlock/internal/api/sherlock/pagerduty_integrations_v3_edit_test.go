@@ -11,7 +11,7 @@ import (
 func (s *handlerSuite) TestPagerdutyIntegrationV3Edit_badSelector() {
 	var got errors.ErrorResponse
 	code := s.HandleRequest(
-		s.NewRequest("PATCH", "/api/pagerduty-integrations/v3/something/with/slashes", nil),
+		s.NewSuperAdminRequest("PATCH", "/api/pagerduty-integrations/v3/something/with/slashes", nil),
 		&got)
 	s.Equal(http.StatusBadRequest, code)
 	s.Equal(errors.BadRequest, got.Type)
@@ -20,7 +20,7 @@ func (s *handlerSuite) TestPagerdutyIntegrationV3Edit_badSelector() {
 func (s *handlerSuite) TestPagerdutyIntegrationV3Edit_badBody() {
 	var got errors.ErrorResponse
 	code := s.HandleRequest(
-		s.NewRequest("PATCH", "/api/pagerduty-integrations/v3/123", gin.H{
+		s.NewSuperAdminRequest("PATCH", "/api/pagerduty-integrations/v3/123", gin.H{
 			"key": 123,
 		}),
 		&got)
@@ -31,7 +31,7 @@ func (s *handlerSuite) TestPagerdutyIntegrationV3Edit_badBody() {
 func (s *handlerSuite) TestPagerdutyIntegrationV3Edit_notFound() {
 	var got errors.ErrorResponse
 	code := s.HandleRequest(
-		s.NewRequest("PATCH", "/api/pagerduty-integrations/v3/pd-id/blahblahblah", PagerdutyIntegrationV3Edit{
+		s.NewSuperAdminRequest("PATCH", "/api/pagerduty-integrations/v3/pd-id/blahblahblah", PagerdutyIntegrationV3Edit{
 			Key: utils.PointerTo("pagerduty-integration-key"),
 		}),
 		&got)
@@ -43,7 +43,7 @@ func (s *handlerSuite) TestPagerdutyIntegrationV3Edit_sqlValidation() {
 	pdi := s.TestData.PagerdutyIntegration_ManuallyTriggeredTerraIncident()
 	var got errors.ErrorResponse
 	code := s.HandleRequest(
-		s.NewRequest("PATCH", fmt.Sprintf("/api/pagerduty-integrations/v3/%d", pdi.ID), PagerdutyIntegrationV3Edit{
+		s.NewSuperAdminRequest("PATCH", fmt.Sprintf("/api/pagerduty-integrations/v3/%d", pdi.ID), PagerdutyIntegrationV3Edit{
 			Key: utils.PointerTo(""),
 		}),
 		&got)
@@ -68,7 +68,7 @@ func (s *handlerSuite) TestPagerdutyIntegrationV3Edit() {
 	pdi := s.TestData.PagerdutyIntegration_ManuallyTriggeredTerraIncident()
 	var got PagerdutyIntegrationV3
 	code := s.HandleRequest(
-		s.NewSuitableRequest("PATCH", fmt.Sprintf("/api/pagerduty-integrations/v3/%d", pdi.ID), PagerdutyIntegrationV3Edit{
+		s.NewSuperAdminRequest("PATCH", fmt.Sprintf("/api/pagerduty-integrations/v3/%d", pdi.ID), PagerdutyIntegrationV3Edit{
 			Key:  utils.PointerTo("a key"),
 			Name: utils.PointerTo("a name"),
 		}),

@@ -1,13 +1,16 @@
 package sherlock
 
 import (
+	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
+	"gorm.io/gorm"
 )
 
 type ClusterV3 struct {
 	CommonFields
-	CiIdentifier *CiIdentifierV3 `json:"ciIdentifier,omitempty" form:"-"`
+	CiIdentifier     *CiIdentifierV3 `json:"ciIdentifier,omitempty" form:"-"`
+	RequiredRoleInfo *RoleV3         `json:"requiredRoleInfo,omitempty" form:"-"`
 	ClusterV3Create
 }
 
@@ -23,12 +26,13 @@ type ClusterV3Create struct {
 type ClusterV3Edit struct {
 	Base                *string `json:"base"  form:"base"`      // Required when creating
 	Address             *string `json:"address" form:"address"` // Required when creating
-	RequiresSuitability *bool   `json:"requiresSuitability" form:"requiresSuitability" default:"false"`
+	RequiresSuitability *bool   `json:"requiresSuitability" form:"requiresSuitability"`
+	RequiredRole        *string `json:"requiredRole" form:"requiredRole"` // If present, requires membership in the given role for mutations
 	HelmfileRef         *string `json:"helmfileRef" form:"helmfileRef" default:"HEAD"`
 }
 
-func (c ClusterV3) toModel() models.Cluster {
-	return models.Cluster{
+func (c ClusterV3) toModel(db *gorm.DB) (models.Cluster, error) {
+	ret := models.Cluster{
 		Model:               c.toGormModel(),
 		Name:                c.Name,
 		Provider:            c.Provider,
@@ -40,24 +44,34 @@ func (c ClusterV3) toModel() models.Cluster {
 		RequiresSuitability: c.RequiresSuitability,
 		HelmfileRef:         c.HelmfileRef,
 	}
+	if c.RequiredRole != nil && *c.RequiredRole != "" {
+		requiredRoleModel, err := roleModelFromSelector(*c.RequiredRole)
+		if err != nil {
+			return models.Cluster{}, err
+		}
+		var requiredRole models.Role
+		if err = db.Where(requiredRoleModel).Select("id").First(&requiredRole).Error; err != nil {
+			return models.Cluster{}, fmt.Errorf("required role '%s' not found: %w", *c.RequiredRole, err)
+		} else {
+			ret.RequiredRoleID = &requiredRole.ID
+		}
+	}
+	return ret, nil
 }
 
-func (c ClusterV3Create) toModel() models.Cluster {
-	return ClusterV3{ClusterV3Create: c}.toModel()
+func (c ClusterV3Create) toModel(db *gorm.DB) (models.Cluster, error) {
+	return ClusterV3{ClusterV3Create: c}.toModel(db)
 }
 
-func (c ClusterV3Edit) toModel() models.Cluster {
-	return ClusterV3Create{ClusterV3Edit: c}.toModel()
+func (c ClusterV3Edit) toModel(db *gorm.DB) (models.Cluster, error) {
+	return ClusterV3Create{ClusterV3Edit: c}.toModel(db)
 }
 
 func clusterFromModel(model models.Cluster) ClusterV3 {
-	var ciIdentifier *CiIdentifierV3
-	if model.CiIdentifier != nil {
-		ciIdentifier = utils.PointerTo(ciIdentifierFromModel(*model.CiIdentifier))
-	}
-	return ClusterV3{
-		CommonFields: commonFieldsFromGormModel(model.Model),
-		CiIdentifier: ciIdentifier,
+	ret := ClusterV3{
+		CommonFields:     commonFieldsFromGormModel(model.Model),
+		CiIdentifier:     utils.NilOrCall(ciIdentifierFromModel, model.CiIdentifier),
+		RequiredRoleInfo: utils.NilOrCall(roleFromModel, model.RequiredRole),
 		ClusterV3Create: ClusterV3Create{
 			Name:              model.Name,
 			Provider:          model.Provider,
@@ -72,4 +86,10 @@ func clusterFromModel(model models.Cluster) ClusterV3 {
 			},
 		},
 	}
+	if model.RequiredRole != nil && model.RequiredRole.Name != nil {
+		ret.RequiredRole = model.RequiredRole.Name
+	} else if model.RequiredRoleID != nil {
+		ret.RequiredRole = utils.PointerTo(utils.UintToString(*model.RequiredRoleID))
+	}
+	return ret
 }

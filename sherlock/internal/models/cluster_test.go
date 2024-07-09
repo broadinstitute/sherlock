@@ -140,21 +140,6 @@ func (s *modelSuite) TestClusterLocationValidationSqlMissing() {
 	s.ErrorContains(err, "location")
 }
 
-func (s *modelSuite) TestClusterRequiresSuitabilityValidationSqlMissing() {
-	s.SetSuitableTestUserForDB() // To actually prompt the SQL error we have to be suitable to get past the permissions
-	err := s.DB.Create(&Cluster{
-		Name:              "some-name",
-		Provider:          "google",
-		GoogleProject:     "some-project",
-		AzureSubscription: "some-subscription",
-		Location:          "some-location",
-		Base:              utils.PointerTo("some-base"),
-		Address:           utils.PointerTo("0.0.0.0"),
-		HelmfileRef:       utils.PointerTo("HEAD"),
-	}).Error
-	s.ErrorContains(err, "requires_suitability")
-}
-
 func (s *modelSuite) TestClusterHelmfileRefValidationSqlMissing() {
 	s.SetNonSuitableTestUserForDB()
 	err := s.DB.Create(&Cluster{

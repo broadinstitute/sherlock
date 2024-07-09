@@ -18,8 +18,8 @@ type PagerdutyIntegration struct {
 func (p *PagerdutyIntegration) errorIfForbidden(tx *gorm.DB) error {
 	if user, err := GetCurrentUserForDB(tx); err != nil {
 		return err
-	} else if err = user.ErrIfNotSuitable(); err != nil {
-		return fmt.Errorf("(%s) suitability required: %w", errors.Forbidden, err)
+	} else if err = user.ErrIfNotSuperAdmin(); err != nil {
+		return fmt.Errorf("(%s) super-admin required: %w", errors.Forbidden, err)
 	} else {
 		return nil
 	}
