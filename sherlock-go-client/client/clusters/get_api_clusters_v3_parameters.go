@@ -125,6 +125,12 @@ type GetAPIClustersV3Params struct {
 	// Default: "google"
 	Provider *string
 
+	/* RequiredRole.
+
+	   If present, requires membership in the given role for mutations
+	*/
+	RequiredRole *string
+
 	// RequiresSuitability.
 	RequiresSuitability *bool
 
@@ -156,15 +162,12 @@ func (o *GetAPIClustersV3Params) SetDefaults() {
 		locationDefault = string("us-central1-a")
 
 		providerDefault = string("google")
-
-		requiresSuitabilityDefault = bool(false)
 	)
 
 	val := GetAPIClustersV3Params{
-		HelmfileRef:         &helmfileRefDefault,
-		Location:            &locationDefault,
-		Provider:            &providerDefault,
-		RequiresSuitability: &requiresSuitabilityDefault,
+		HelmfileRef: &helmfileRefDefault,
+		Location:    &locationDefault,
+		Provider:    &providerDefault,
 	}
 
 	val.timeout = o.timeout
@@ -336,6 +339,17 @@ func (o *GetAPIClustersV3Params) WithProvider(provider *string) *GetAPIClustersV
 // SetProvider adds the provider to the get API clusters v3 params
 func (o *GetAPIClustersV3Params) SetProvider(provider *string) {
 	o.Provider = provider
+}
+
+// WithRequiredRole adds the requiredRole to the get API clusters v3 params
+func (o *GetAPIClustersV3Params) WithRequiredRole(requiredRole *string) *GetAPIClustersV3Params {
+	o.SetRequiredRole(requiredRole)
+	return o
+}
+
+// SetRequiredRole adds the requiredRole to the get API clusters v3 params
+func (o *GetAPIClustersV3Params) SetRequiredRole(requiredRole *string) {
+	o.RequiredRole = requiredRole
 }
 
 // WithRequiresSuitability adds the requiresSuitability to the get API clusters v3 params
@@ -567,6 +581,23 @@ func (o *GetAPIClustersV3Params) WriteToRequest(r runtime.ClientRequest, reg str
 		if qProvider != "" {
 
 			if err := r.SetQueryParam("provider", qProvider); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.RequiredRole != nil {
+
+		// query param requiredRole
+		var qrRequiredRole string
+
+		if o.RequiredRole != nil {
+			qrRequiredRole = *o.RequiredRole
+		}
+		qRequiredRole := qrRequiredRole
+		if qRequiredRole != "" {
+
+			if err := r.SetQueryParam("requiredRole", qRequiredRole); err != nil {
 				return err
 			}
 		}

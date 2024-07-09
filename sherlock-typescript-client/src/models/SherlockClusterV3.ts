@@ -13,6 +13,12 @@
  */
 
 import { mapValues } from '../runtime';
+import type { SherlockRoleV3 } from './SherlockRoleV3';
+import {
+    SherlockRoleV3FromJSON,
+    SherlockRoleV3FromJSONTyped,
+    SherlockRoleV3ToJSON,
+} from './SherlockRoleV3';
 import type { SherlockCiIdentifierV3 } from './SherlockCiIdentifierV3';
 import {
     SherlockCiIdentifierV3FromJSON,
@@ -93,6 +99,18 @@ export interface SherlockClusterV3 {
      */
     provider?: SherlockClusterV3ProviderEnum;
     /**
+     * If present, requires membership in the given role for mutations
+     * @type {string}
+     * @memberof SherlockClusterV3
+     */
+    requiredRole?: string;
+    /**
+     * 
+     * @type {SherlockRoleV3}
+     * @memberof SherlockClusterV3
+     */
+    requiredRoleInfo?: SherlockRoleV3;
+    /**
      * 
      * @type {boolean}
      * @memberof SherlockClusterV3
@@ -145,6 +163,8 @@ export function SherlockClusterV3FromJSONTyped(json: any, ignoreDiscriminator: b
         'location': json['location'] == null ? undefined : json['location'],
         'name': json['name'] == null ? undefined : json['name'],
         'provider': json['provider'] == null ? undefined : json['provider'],
+        'requiredRole': json['requiredRole'] == null ? undefined : json['requiredRole'],
+        'requiredRoleInfo': json['requiredRoleInfo'] == null ? undefined : SherlockRoleV3FromJSON(json['requiredRoleInfo']),
         'requiresSuitability': json['requiresSuitability'] == null ? undefined : json['requiresSuitability'],
         'updatedAt': json['updatedAt'] == null ? undefined : (new Date(json['updatedAt'])),
     };
@@ -167,6 +187,8 @@ export function SherlockClusterV3ToJSON(value?: SherlockClusterV3 | null): any {
         'location': value['location'],
         'name': value['name'],
         'provider': value['provider'],
+        'requiredRole': value['requiredRole'],
+        'requiredRoleInfo': SherlockRoleV3ToJSON(value['requiredRoleInfo']),
         'requiresSuitability': value['requiresSuitability'],
         'updatedAt': value['updatedAt'] == null ? undefined : ((value['updatedAt']).toISOString()),
     };

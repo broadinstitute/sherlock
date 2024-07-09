@@ -55,6 +55,7 @@ export interface ApiEnvironmentsV3GetRequest {
     pactIdentifier?: string;
     pagerdutyIntegration?: string;
     preventDeletion?: boolean;
+    requiredRole?: string;
     requiresSuitability?: boolean;
     templateEnvironment?: string;
     uniqueResourcePrefix?: string;
@@ -183,6 +184,10 @@ export class EnvironmentsApi extends runtime.BaseAPI {
 
         if (requestParameters['preventDeletion'] != null) {
             queryParameters['preventDeletion'] = requestParameters['preventDeletion'];
+        }
+
+        if (requestParameters['requiredRole'] != null) {
+            queryParameters['requiredRole'] = requestParameters['requiredRole'];
         }
 
         if (requestParameters['requiresSuitability'] != null) {

@@ -877,8 +877,12 @@ definitions:
         - google
         - azure
         type: string
+      requiredRole:
+        description: If present, requires membership in the given role for mutations
+        type: string
+      requiredRoleInfo:
+        $ref: '#/definitions/sherlock.RoleV3'
       requiresSuitability:
-        default: false
         type: boolean
       updatedAt:
         format: date-time
@@ -913,8 +917,10 @@ definitions:
         - google
         - azure
         type: string
+      requiredRole:
+        description: If present, requires membership in the given role for mutations
+        type: string
       requiresSuitability:
-        default: false
         type: boolean
     type: object
   sherlock.ClusterV3Edit:
@@ -928,8 +934,10 @@ definitions:
       helmfileRef:
         default: HEAD
         type: string
+      requiredRole:
+        description: If present, requires membership in the given role for mutations
+        type: string
       requiresSuitability:
-        default: false
         type: boolean
     type: object
   sherlock.DatabaseInstanceV3:
@@ -1081,8 +1089,12 @@ definitions:
         description: Used to protect specific BEEs from deletion (thelma checks this
           field)
         type: boolean
+      requiredRole:
+        description: If present, requires membership in the given role for mutations
+        type: string
+      requiredRoleInfo:
+        $ref: '#/definitions/sherlock.RoleV3'
       requiresSuitability:
-        default: false
         type: boolean
       templateEnvironment:
         description: Required for dynamic environments
@@ -1171,8 +1183,10 @@ definitions:
         description: Used to protect specific BEEs from deletion (thelma checks this
           field)
         type: boolean
+      requiredRole:
+        description: If present, requires membership in the given role for mutations
+        type: string
       requiresSuitability:
-        default: false
         type: boolean
       templateEnvironment:
         description: Required for dynamic environments
@@ -1239,8 +1253,10 @@ definitions:
         description: Used to protect specific BEEs from deletion (thelma checks this
           field)
         type: boolean
+      requiredRole:
+        description: If present, requires membership in the given role for mutations
+        type: string
       requiresSuitability:
-        default: false
         type: boolean
     type: object
   sherlock.GitCommitV3:
@@ -3900,8 +3916,11 @@ paths:
         in: query
         name: provider
         type: string
-      - default: false
+      - description: If present, requires membership in the given role for mutations
         in: query
+        name: requiredRole
+        type: string
+      - in: query
         name: requiresSuitability
         type: boolean
       - format: date-time
@@ -5182,8 +5201,11 @@ paths:
         in: query
         name: preventDeletion
         type: boolean
-      - default: false
+      - description: If present, requires membership in the given role for mutations
         in: query
+        name: requiredRole
+        type: string
+      - in: query
         name: requiresSuitability
         type: boolean
       - description: Required for dynamic environments

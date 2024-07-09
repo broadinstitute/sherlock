@@ -85,8 +85,11 @@ type SherlockEnvironmentV3Create struct {
 	// Used to protect specific BEEs from deletion (thelma checks this field)
 	PreventDeletion *bool `json:"preventDeletion,omitempty"`
 
+	// If present, requires membership in the given role for mutations
+	RequiredRole string `json:"requiredRole,omitempty"`
+
 	// requires suitability
-	RequiresSuitability *bool `json:"requiresSuitability,omitempty"`
+	RequiresSuitability bool `json:"requiresSuitability,omitempty"`
 
 	// Required for dynamic environments
 	TemplateEnvironment string `json:"templateEnvironment,omitempty"`

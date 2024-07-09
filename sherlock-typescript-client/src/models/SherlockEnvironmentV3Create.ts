@@ -146,6 +146,12 @@ export interface SherlockEnvironmentV3Create {
      */
     preventDeletion?: boolean;
     /**
+     * If present, requires membership in the given role for mutations
+     * @type {string}
+     * @memberof SherlockEnvironmentV3Create
+     */
+    requiredRole?: string;
+    /**
      * 
      * @type {boolean}
      * @memberof SherlockEnvironmentV3Create
@@ -209,6 +215,7 @@ export function SherlockEnvironmentV3CreateFromJSONTyped(json: any, ignoreDiscri
         'pactIdentifier': json['pactIdentifier'] == null ? undefined : json['pactIdentifier'],
         'pagerdutyIntegration': json['pagerdutyIntegration'] == null ? undefined : json['pagerdutyIntegration'],
         'preventDeletion': json['preventDeletion'] == null ? undefined : json['preventDeletion'],
+        'requiredRole': json['requiredRole'] == null ? undefined : json['requiredRole'],
         'requiresSuitability': json['requiresSuitability'] == null ? undefined : json['requiresSuitability'],
         'templateEnvironment': json['templateEnvironment'] == null ? undefined : json['templateEnvironment'],
         'uniqueResourcePrefix': json['uniqueResourcePrefix'] == null ? undefined : json['uniqueResourcePrefix'],
@@ -243,6 +250,7 @@ export function SherlockEnvironmentV3CreateToJSON(value?: SherlockEnvironmentV3C
         'pactIdentifier': value['pactIdentifier'],
         'pagerdutyIntegration': value['pagerdutyIntegration'],
         'preventDeletion': value['preventDeletion'],
+        'requiredRole': value['requiredRole'],
         'requiresSuitability': value['requiresSuitability'],
         'templateEnvironment': value['templateEnvironment'],
         'uniqueResourcePrefix': value['uniqueResourcePrefix'],

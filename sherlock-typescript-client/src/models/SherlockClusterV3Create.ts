@@ -68,6 +68,12 @@ export interface SherlockClusterV3Create {
      */
     provider?: SherlockClusterV3CreateProviderEnum;
     /**
+     * If present, requires membership in the given role for mutations
+     * @type {string}
+     * @memberof SherlockClusterV3Create
+     */
+    requiredRole?: string;
+    /**
      * 
      * @type {boolean}
      * @memberof SherlockClusterV3Create
@@ -111,6 +117,7 @@ export function SherlockClusterV3CreateFromJSONTyped(json: any, ignoreDiscrimina
         'location': json['location'] == null ? undefined : json['location'],
         'name': json['name'] == null ? undefined : json['name'],
         'provider': json['provider'] == null ? undefined : json['provider'],
+        'requiredRole': json['requiredRole'] == null ? undefined : json['requiredRole'],
         'requiresSuitability': json['requiresSuitability'] == null ? undefined : json['requiresSuitability'],
     };
 }
@@ -129,6 +136,7 @@ export function SherlockClusterV3CreateToJSON(value?: SherlockClusterV3Create | 
         'location': value['location'],
         'name': value['name'],
         'provider': value['provider'],
+        'requiredRole': value['requiredRole'],
         'requiresSuitability': value['requiresSuitability'],
     };
 }

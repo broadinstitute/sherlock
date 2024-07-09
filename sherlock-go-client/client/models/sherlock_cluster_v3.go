@@ -55,8 +55,14 @@ type SherlockClusterV3 struct {
 	// Enum: [google azure]
 	Provider *string `json:"provider,omitempty"`
 
+	// If present, requires membership in the given role for mutations
+	RequiredRole string `json:"requiredRole,omitempty"`
+
+	// required role info
+	RequiredRoleInfo *SherlockRoleV3 `json:"requiredRoleInfo,omitempty"`
+
 	// requires suitability
-	RequiresSuitability *bool `json:"requiresSuitability,omitempty"`
+	RequiresSuitability bool `json:"requiresSuitability,omitempty"`
 
 	// updated at
 	// Format: date-time
@@ -76,6 +82,10 @@ func (m *SherlockClusterV3) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateProvider(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateRequiredRoleInfo(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -162,6 +172,25 @@ func (m *SherlockClusterV3) validateProvider(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *SherlockClusterV3) validateRequiredRoleInfo(formats strfmt.Registry) error {
+	if swag.IsZero(m.RequiredRoleInfo) { // not required
+		return nil
+	}
+
+	if m.RequiredRoleInfo != nil {
+		if err := m.RequiredRoleInfo.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("requiredRoleInfo")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("requiredRoleInfo")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (m *SherlockClusterV3) validateUpdatedAt(formats strfmt.Registry) error {
 	if swag.IsZero(m.UpdatedAt) { // not required
 		return nil
@@ -182,6 +211,10 @@ func (m *SherlockClusterV3) ContextValidate(ctx context.Context, formats strfmt.
 		res = append(res, err)
 	}
 
+	if err := m.contextValidateRequiredRoleInfo(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -196,6 +229,22 @@ func (m *SherlockClusterV3) contextValidateCiIdentifier(ctx context.Context, for
 				return ve.ValidateName("ciIdentifier")
 			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("ciIdentifier")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *SherlockClusterV3) contextValidateRequiredRoleInfo(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.RequiredRoleInfo != nil {
+		if err := m.RequiredRoleInfo.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("requiredRoleInfo")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("requiredRoleInfo")
 			}
 			return err
 		}

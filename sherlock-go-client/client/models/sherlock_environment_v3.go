@@ -104,8 +104,14 @@ type SherlockEnvironmentV3 struct {
 	// Used to protect specific BEEs from deletion (thelma checks this field)
 	PreventDeletion *bool `json:"preventDeletion,omitempty"`
 
+	// If present, requires membership in the given role for mutations
+	RequiredRole string `json:"requiredRole,omitempty"`
+
+	// required role info
+	RequiredRoleInfo *SherlockRoleV3 `json:"requiredRoleInfo,omitempty"`
+
 	// requires suitability
-	RequiresSuitability *bool `json:"requiresSuitability,omitempty"`
+	RequiresSuitability bool `json:"requiresSuitability,omitempty"`
 
 	// Required for dynamic environments
 	TemplateEnvironment string `json:"templateEnvironment,omitempty"`
@@ -157,6 +163,10 @@ func (m *SherlockEnvironmentV3) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validatePagerdutyIntegrationInfo(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateRequiredRoleInfo(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -294,6 +304,25 @@ func (m *SherlockEnvironmentV3) validatePagerdutyIntegrationInfo(formats strfmt.
 	return nil
 }
 
+func (m *SherlockEnvironmentV3) validateRequiredRoleInfo(formats strfmt.Registry) error {
+	if swag.IsZero(m.RequiredRoleInfo) { // not required
+		return nil
+	}
+
+	if m.RequiredRoleInfo != nil {
+		if err := m.RequiredRoleInfo.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("requiredRoleInfo")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("requiredRoleInfo")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (m *SherlockEnvironmentV3) validateUpdatedAt(formats strfmt.Registry) error {
 	if swag.IsZero(m.UpdatedAt) { // not required
 		return nil
@@ -323,6 +352,10 @@ func (m *SherlockEnvironmentV3) ContextValidate(ctx context.Context, formats str
 	}
 
 	if err := m.contextValidatePagerdutyIntegrationInfo(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateRequiredRoleInfo(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -388,6 +421,22 @@ func (m *SherlockEnvironmentV3) contextValidatePagerdutyIntegrationInfo(ctx cont
 				return ve.ValidateName("pagerdutyIntegrationInfo")
 			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("pagerdutyIntegrationInfo")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *SherlockEnvironmentV3) contextValidateRequiredRoleInfo(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.RequiredRoleInfo != nil {
+		if err := m.RequiredRoleInfo.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("requiredRoleInfo")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("requiredRoleInfo")
 			}
 			return err
 		}

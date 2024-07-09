@@ -25,6 +25,12 @@ import {
     SherlockUserV3FromJSONTyped,
     SherlockUserV3ToJSON,
 } from './SherlockUserV3';
+import type { SherlockRoleV3 } from './SherlockRoleV3';
+import {
+    SherlockRoleV3FromJSON,
+    SherlockRoleV3FromJSONTyped,
+    SherlockRoleV3ToJSON,
+} from './SherlockRoleV3';
 import type { SherlockCiIdentifierV3 } from './SherlockCiIdentifierV3';
 import {
     SherlockCiIdentifierV3FromJSON,
@@ -207,6 +213,18 @@ export interface SherlockEnvironmentV3 {
      */
     preventDeletion?: boolean;
     /**
+     * If present, requires membership in the given role for mutations
+     * @type {string}
+     * @memberof SherlockEnvironmentV3
+     */
+    requiredRole?: string;
+    /**
+     * 
+     * @type {SherlockRoleV3}
+     * @memberof SherlockEnvironmentV3
+     */
+    requiredRoleInfo?: SherlockRoleV3;
+    /**
      * 
      * @type {boolean}
      * @memberof SherlockEnvironmentV3
@@ -288,6 +306,8 @@ export function SherlockEnvironmentV3FromJSONTyped(json: any, ignoreDiscriminato
         'pagerdutyIntegration': json['pagerdutyIntegration'] == null ? undefined : json['pagerdutyIntegration'],
         'pagerdutyIntegrationInfo': json['pagerdutyIntegrationInfo'] == null ? undefined : SherlockPagerdutyIntegrationV3FromJSON(json['pagerdutyIntegrationInfo']),
         'preventDeletion': json['preventDeletion'] == null ? undefined : json['preventDeletion'],
+        'requiredRole': json['requiredRole'] == null ? undefined : json['requiredRole'],
+        'requiredRoleInfo': json['requiredRoleInfo'] == null ? undefined : SherlockRoleV3FromJSON(json['requiredRoleInfo']),
         'requiresSuitability': json['requiresSuitability'] == null ? undefined : json['requiresSuitability'],
         'templateEnvironment': json['templateEnvironment'] == null ? undefined : json['templateEnvironment'],
         'templateEnvironmentInfo': json['templateEnvironmentInfo'] == null ? undefined : json['templateEnvironmentInfo'],
@@ -330,6 +350,8 @@ export function SherlockEnvironmentV3ToJSON(value?: SherlockEnvironmentV3 | null
         'pagerdutyIntegration': value['pagerdutyIntegration'],
         'pagerdutyIntegrationInfo': SherlockPagerdutyIntegrationV3ToJSON(value['pagerdutyIntegrationInfo']),
         'preventDeletion': value['preventDeletion'],
+        'requiredRole': value['requiredRole'],
+        'requiredRoleInfo': SherlockRoleV3ToJSON(value['requiredRoleInfo']),
         'requiresSuitability': value['requiresSuitability'],
         'templateEnvironment': value['templateEnvironment'],
         'templateEnvironmentInfo': value['templateEnvironmentInfo'],

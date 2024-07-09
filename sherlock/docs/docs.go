@@ -3146,8 +3146,13 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "description": "If present, requires membership in the given role for mutations",
+                        "name": "requiredRole",
+                        "in": "query"
+                    },
+                    {
                         "type": "boolean",
-                        "default": false,
                         "name": "requiresSuitability",
                         "in": "query"
                     },
@@ -5046,8 +5051,13 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "description": "If present, requires membership in the given role for mutations",
+                        "name": "requiredRole",
+                        "in": "query"
+                    },
+                    {
                         "type": "boolean",
-                        "default": false,
                         "name": "requiresSuitability",
                         "in": "query"
                     },
@@ -8917,9 +8927,15 @@ const docTemplate = `{
                         "azure"
                     ]
                 },
+                "requiredRole": {
+                    "description": "If present, requires membership in the given role for mutations",
+                    "type": "string"
+                },
+                "requiredRoleInfo": {
+                    "$ref": "#/definitions/sherlock.RoleV3"
+                },
                 "requiresSuitability": {
-                    "type": "boolean",
-                    "default": false
+                    "type": "boolean"
                 },
                 "updatedAt": {
                     "type": "string",
@@ -8966,9 +8982,12 @@ const docTemplate = `{
                         "azure"
                     ]
                 },
+                "requiredRole": {
+                    "description": "If present, requires membership in the given role for mutations",
+                    "type": "string"
+                },
                 "requiresSuitability": {
-                    "type": "boolean",
-                    "default": false
+                    "type": "boolean"
                 }
             }
         },
@@ -8987,9 +9006,12 @@ const docTemplate = `{
                     "type": "string",
                     "default": "HEAD"
                 },
+                "requiredRole": {
+                    "description": "If present, requires membership in the given role for mutations",
+                    "type": "string"
+                },
                 "requiresSuitability": {
-                    "type": "boolean",
-                    "default": false
+                    "type": "boolean"
                 }
             }
         },
@@ -9188,9 +9210,15 @@ const docTemplate = `{
                     "type": "boolean",
                     "default": false
                 },
+                "requiredRole": {
+                    "description": "If present, requires membership in the given role for mutations",
+                    "type": "string"
+                },
+                "requiredRoleInfo": {
+                    "$ref": "#/definitions/sherlock.RoleV3"
+                },
                 "requiresSuitability": {
-                    "type": "boolean",
-                    "default": false
+                    "type": "boolean"
                 },
                 "templateEnvironment": {
                     "description": "Required for dynamic environments",
@@ -9301,9 +9329,12 @@ const docTemplate = `{
                     "type": "boolean",
                     "default": false
                 },
+                "requiredRole": {
+                    "description": "If present, requires membership in the given role for mutations",
+                    "type": "string"
+                },
                 "requiresSuitability": {
-                    "type": "boolean",
-                    "default": false
+                    "type": "boolean"
                 },
                 "templateEnvironment": {
                     "description": "Required for dynamic environments",
@@ -9386,9 +9417,12 @@ const docTemplate = `{
                     "type": "boolean",
                     "default": false
                 },
+                "requiredRole": {
+                    "description": "If present, requires membership in the given role for mutations",
+                    "type": "string"
+                },
                 "requiresSuitability": {
-                    "type": "boolean",
-                    "default": false
+                    "type": "boolean"
                 }
             }
         },

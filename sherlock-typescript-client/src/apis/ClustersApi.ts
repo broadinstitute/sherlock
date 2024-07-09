@@ -42,6 +42,7 @@ export interface ApiClustersV3GetRequest {
     location?: string;
     name?: string;
     provider?: ApiClustersV3GetProviderEnum;
+    requiredRole?: string;
     requiresSuitability?: boolean;
     updatedAt?: Date;
     limit?: number;
@@ -115,6 +116,10 @@ export class ClustersApi extends runtime.BaseAPI {
 
         if (requestParameters['provider'] != null) {
             queryParameters['provider'] = requestParameters['provider'];
+        }
+
+        if (requestParameters['requiredRole'] != null) {
+            queryParameters['requiredRole'] = requestParameters['requiredRole'];
         }
 
         if (requestParameters['requiresSuitability'] != null) {

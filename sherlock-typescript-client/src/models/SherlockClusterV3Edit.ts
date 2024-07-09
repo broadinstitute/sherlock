@@ -38,6 +38,12 @@ export interface SherlockClusterV3Edit {
      */
     helmfileRef?: string;
     /**
+     * If present, requires membership in the given role for mutations
+     * @type {string}
+     * @memberof SherlockClusterV3Edit
+     */
+    requiredRole?: string;
+    /**
      * 
      * @type {boolean}
      * @memberof SherlockClusterV3Edit
@@ -65,6 +71,7 @@ export function SherlockClusterV3EditFromJSONTyped(json: any, ignoreDiscriminato
         'address': json['address'] == null ? undefined : json['address'],
         'base': json['base'] == null ? undefined : json['base'],
         'helmfileRef': json['helmfileRef'] == null ? undefined : json['helmfileRef'],
+        'requiredRole': json['requiredRole'] == null ? undefined : json['requiredRole'],
         'requiresSuitability': json['requiresSuitability'] == null ? undefined : json['requiresSuitability'],
     };
 }
@@ -78,6 +85,7 @@ export function SherlockClusterV3EditToJSON(value?: SherlockClusterV3Edit | null
         'address': value['address'],
         'base': value['base'],
         'helmfileRef': value['helmfileRef'],
+        'requiredRole': value['requiredRole'],
         'requiresSuitability': value['requiresSuitability'],
     };
 }

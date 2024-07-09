@@ -26,8 +26,11 @@ type SherlockClusterV3Edit struct {
 	// helmfile ref
 	HelmfileRef *string `json:"helmfileRef,omitempty"`
 
+	// If present, requires membership in the given role for mutations
+	RequiredRole string `json:"requiredRole,omitempty"`
+
 	// requires suitability
-	RequiresSuitability *bool `json:"requiresSuitability,omitempty"`
+	RequiresSuitability bool `json:"requiresSuitability,omitempty"`
 }
 
 // Validate validates this sherlock cluster v3 edit

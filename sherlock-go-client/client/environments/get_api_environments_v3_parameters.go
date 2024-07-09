@@ -195,6 +195,12 @@ type GetAPIEnvironmentsV3Params struct {
 	*/
 	PreventDeletion *bool
 
+	/* RequiredRole.
+
+	   If present, requires membership in the given role for mutations
+	*/
+	RequiredRole *string
+
 	// RequiresSuitability.
 	RequiresSuitability *bool
 
@@ -252,8 +258,6 @@ func (o *GetAPIEnvironmentsV3Params) SetDefaults() {
 		offlineDefault = bool(false)
 
 		preventDeletionDefault = bool(false)
-
-		requiresSuitabilityDefault = bool(false)
 	)
 
 	val := GetAPIEnvironmentsV3Params{
@@ -264,7 +268,6 @@ func (o *GetAPIEnvironmentsV3Params) SetDefaults() {
 		NamePrefixesDomain:        &namePrefixesDomainDefault,
 		Offline:                   &offlineDefault,
 		PreventDeletion:           &preventDeletionDefault,
-		RequiresSuitability:       &requiresSuitabilityDefault,
 	}
 
 	val.timeout = o.timeout
@@ -579,6 +582,17 @@ func (o *GetAPIEnvironmentsV3Params) WithPreventDeletion(preventDeletion *bool) 
 // SetPreventDeletion adds the preventDeletion to the get API environments v3 params
 func (o *GetAPIEnvironmentsV3Params) SetPreventDeletion(preventDeletion *bool) {
 	o.PreventDeletion = preventDeletion
+}
+
+// WithRequiredRole adds the requiredRole to the get API environments v3 params
+func (o *GetAPIEnvironmentsV3Params) WithRequiredRole(requiredRole *string) *GetAPIEnvironmentsV3Params {
+	o.SetRequiredRole(requiredRole)
+	return o
+}
+
+// SetRequiredRole adds the requiredRole to the get API environments v3 params
+func (o *GetAPIEnvironmentsV3Params) SetRequiredRole(requiredRole *string) {
+	o.RequiredRole = requiredRole
 }
 
 // WithRequiresSuitability adds the requiresSuitability to the get API environments v3 params
@@ -1064,6 +1078,23 @@ func (o *GetAPIEnvironmentsV3Params) WriteToRequest(r runtime.ClientRequest, reg
 		if qPreventDeletion != "" {
 
 			if err := r.SetQueryParam("preventDeletion", qPreventDeletion); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.RequiredRole != nil {
+
+		// query param requiredRole
+		var qrRequiredRole string
+
+		if o.RequiredRole != nil {
+			qrRequiredRole = *o.RequiredRole
+		}
+		qRequiredRole := qrRequiredRole
+		if qRequiredRole != "" {
+
+			if err := r.SetQueryParam("requiredRole", qRequiredRole); err != nil {
 				return err
 			}
 		}

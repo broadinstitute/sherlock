@@ -3142,8 +3142,13 @@
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "description": "If present, requires membership in the given role for mutations",
+                        "name": "requiredRole",
+                        "in": "query"
+                    },
+                    {
                         "type": "boolean",
-                        "default": false,
                         "name": "requiresSuitability",
                         "in": "query"
                     },
@@ -5042,8 +5047,13 @@
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "description": "If present, requires membership in the given role for mutations",
+                        "name": "requiredRole",
+                        "in": "query"
+                    },
+                    {
                         "type": "boolean",
-                        "default": false,
                         "name": "requiresSuitability",
                         "in": "query"
                     },
@@ -8913,9 +8923,15 @@
                         "azure"
                     ]
                 },
+                "requiredRole": {
+                    "description": "If present, requires membership in the given role for mutations",
+                    "type": "string"
+                },
+                "requiredRoleInfo": {
+                    "$ref": "#/definitions/sherlock.RoleV3"
+                },
                 "requiresSuitability": {
-                    "type": "boolean",
-                    "default": false
+                    "type": "boolean"
                 },
                 "updatedAt": {
                     "type": "string",
@@ -8962,9 +8978,12 @@
                         "azure"
                     ]
                 },
+                "requiredRole": {
+                    "description": "If present, requires membership in the given role for mutations",
+                    "type": "string"
+                },
                 "requiresSuitability": {
-                    "type": "boolean",
-                    "default": false
+                    "type": "boolean"
                 }
             }
         },
@@ -8983,9 +9002,12 @@
                     "type": "string",
                     "default": "HEAD"
                 },
+                "requiredRole": {
+                    "description": "If present, requires membership in the given role for mutations",
+                    "type": "string"
+                },
                 "requiresSuitability": {
-                    "type": "boolean",
-                    "default": false
+                    "type": "boolean"
                 }
             }
         },
@@ -9184,9 +9206,15 @@
                     "type": "boolean",
                     "default": false
                 },
+                "requiredRole": {
+                    "description": "If present, requires membership in the given role for mutations",
+                    "type": "string"
+                },
+                "requiredRoleInfo": {
+                    "$ref": "#/definitions/sherlock.RoleV3"
+                },
                 "requiresSuitability": {
-                    "type": "boolean",
-                    "default": false
+                    "type": "boolean"
                 },
                 "templateEnvironment": {
                     "description": "Required for dynamic environments",
@@ -9297,9 +9325,12 @@
                     "type": "boolean",
                     "default": false
                 },
+                "requiredRole": {
+                    "description": "If present, requires membership in the given role for mutations",
+                    "type": "string"
+                },
                 "requiresSuitability": {
-                    "type": "boolean",
-                    "default": false
+                    "type": "boolean"
                 },
                 "templateEnvironment": {
                     "description": "Required for dynamic environments",
@@ -9382,9 +9413,12 @@
                     "type": "boolean",
                     "default": false
                 },
+                "requiredRole": {
+                    "description": "If present, requires membership in the given role for mutations",
+                    "type": "string"
+                },
                 "requiresSuitability": {
-                    "type": "boolean",
-                    "default": false
+                    "type": "boolean"
                 }
             }
         },

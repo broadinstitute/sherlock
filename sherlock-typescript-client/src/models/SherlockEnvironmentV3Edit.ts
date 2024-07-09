@@ -116,6 +116,12 @@ export interface SherlockEnvironmentV3Edit {
      */
     preventDeletion?: boolean;
     /**
+     * If present, requires membership in the given role for mutations
+     * @type {string}
+     * @memberof SherlockEnvironmentV3Edit
+     */
+    requiredRole?: string;
+    /**
      * 
      * @type {boolean}
      * @memberof SherlockEnvironmentV3Edit
@@ -156,6 +162,7 @@ export function SherlockEnvironmentV3EditFromJSONTyped(json: any, ignoreDiscrimi
         'pactIdentifier': json['pactIdentifier'] == null ? undefined : json['pactIdentifier'],
         'pagerdutyIntegration': json['pagerdutyIntegration'] == null ? undefined : json['pagerdutyIntegration'],
         'preventDeletion': json['preventDeletion'] == null ? undefined : json['preventDeletion'],
+        'requiredRole': json['requiredRole'] == null ? undefined : json['requiredRole'],
         'requiresSuitability': json['requiresSuitability'] == null ? undefined : json['requiresSuitability'],
     };
 }
@@ -182,6 +189,7 @@ export function SherlockEnvironmentV3EditToJSON(value?: SherlockEnvironmentV3Edi
         'pactIdentifier': value['pactIdentifier'],
         'pagerdutyIntegration': value['pagerdutyIntegration'],
         'preventDeletion': value['preventDeletion'],
+        'requiredRole': value['requiredRole'],
         'requiresSuitability': value['requiresSuitability'],
     };
 }
