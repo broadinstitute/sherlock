@@ -140,6 +140,10 @@ func (s *handlerSuite) TestUserV3Upsert_maximal_sherlockName() {
 			Name:     "slack username",
 			RealName: "name from slack",
 		}, nil)
+
+		// Security alert
+		c.EXPECT().SendMessageContext(mock.Anything, "#notification-channel", mock.Anything).Return("", "", "", nil).Once()
+		c.EXPECT().SendMessageContext(mock.Anything, "#permission-change-channel", mock.Anything).Return("", "", "", nil).Once()
 	}, func() {
 		github.UseMockedClient(s.T(), func(c *github.MockClient) {
 			c.Users.EXPECT().Get(mock.Anything, "").Return(&github2.User{
@@ -188,6 +192,10 @@ func (s *handlerSuite) TestUserV3Upsert_maximal_slackName() {
 			Name:     "slack username",
 			RealName: "name from slack",
 		}, nil)
+
+		// Security alert
+		c.EXPECT().SendMessageContext(mock.Anything, "#notification-channel", mock.Anything).Return("", "", "", nil).Once()
+		c.EXPECT().SendMessageContext(mock.Anything, "#permission-change-channel", mock.Anything).Return("", "", "", nil).Once()
 	}, func() {
 		github.UseMockedClient(s.T(), func(c *github.MockClient) {
 			c.Users.EXPECT().Get(mock.Anything, "").Return(&github2.User{
@@ -233,6 +241,10 @@ func (s *handlerSuite) TestUserV3Upsert_maximal_githubName() {
 			Name:     "slack username",
 			RealName: "name from slack",
 		}, nil)
+
+		// Security alert
+		c.EXPECT().SendMessageContext(mock.Anything, "#notification-channel", mock.Anything).Return("", "", "", nil).Once()
+		c.EXPECT().SendMessageContext(mock.Anything, "#permission-change-channel", mock.Anything).Return("", "", "", nil).Once()
 	}, func() {
 		github.UseMockedClient(s.T(), func(c *github.MockClient) {
 			c.Users.EXPECT().Get(mock.Anything, "").Return(&github2.User{
@@ -353,6 +365,7 @@ func (s *handlerSuite) Test_processUserEdits() {
 		githubMockConfig  func(c *github.MockClient)
 		wantResultingUser *models.User
 		wantHasUpdates    bool
+		wantShouldNotify  bool
 	}{
 		{
 			name: "can do nothing",
@@ -365,15 +378,17 @@ func (s *handlerSuite) Test_processUserEdits() {
 			githubMockConfig:  func(c *github.MockClient) {},
 			wantResultingUser: &models.User{Email: s.TestData.User_Suitable().Email},
 			wantHasUpdates:    false,
+			wantShouldNotify:  false,
 		},
 	}
 	for _, tt := range tests {
 		s.Run(tt.name, func() {
 			slack.UseMockedClient(s.T(), tt.slackMockConfig, func() {
 				github.UseMockedClient(s.T(), tt.githubMockConfig, func() {
-					gotResultingUser, gotHasUpdates := processUserEdits(tt.args.callingUser, tt.args.directEdits, tt.args.userGithubToken)
+					gotResultingUser, gotHasUpdates, gotShouldNotify := processUserEdits(tt.args.callingUser, tt.args.directEdits, tt.args.userGithubToken)
 					assert.Equalf(s.T(), tt.wantResultingUser, gotResultingUser, "processUserEdits(%v, %v, %v)", tt.args.callingUser, tt.args.directEdits, tt.args.userGithubToken)
 					assert.Equalf(s.T(), tt.wantHasUpdates, gotHasUpdates, "processUserEdits(%v, %v, %v)", tt.args.callingUser, tt.args.directEdits, tt.args.userGithubToken)
+					assert.Equalf(s.T(), tt.wantShouldNotify, gotShouldNotify, "processUserEdits(%v, %v, %v)", tt.args.callingUser, tt.args.directEdits, tt.args.userGithubToken)
 				})
 			})
 		})

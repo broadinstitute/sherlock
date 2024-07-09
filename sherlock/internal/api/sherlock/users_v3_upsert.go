@@ -66,7 +66,7 @@ func usersV3Upsert(ctx *gin.Context) {
 		return
 	}
 
-	copiedUser, hasUpdates := processUserEdits(copiedUser, body.userDirectlyEditableFields, body.GithubAccessToken)
+	copiedUser, hasUpdates, shouldNotify := processUserEdits(copiedUser, body.userDirectlyEditableFields, body.GithubAccessToken)
 	var statusCode int
 	if hasUpdates {
 		if err = db.Omit(clause.Associations).Save(copiedUser).Error; err != nil {
@@ -83,10 +83,28 @@ func usersV3Upsert(ctx *gin.Context) {
 		errors.AbortRequest(ctx, err)
 		return
 	}
+
+	if shouldNotify {
+		lines := make([]string, 0, 3)
+		if result.Name != nil && result.NameFrom != nil {
+			lines = append(lines, fmt.Sprintf("Name: %s (from %s)", *result.Name, *result.NameFrom))
+		}
+		if result.GithubUsername != nil && result.GithubID != nil {
+			lines = append(lines, fmt.Sprintf("GitHub: %s (%s)", *result.GithubUsername, *result.GithubID))
+		}
+		if result.SlackUsername != nil && result.SlackID != nil {
+			lines = append(lines, fmt.Sprintf("Slack: %s (%s)", *result.SlackUsername, *result.SlackID))
+		}
+		slack.SendPermissionChangeNotification(ctx, callingUser.SlackReference(true), slack.PermissionChangeNotificationInputs{
+			Summary: fmt.Sprintf("updated account linking for User %s", result.SlackReference(true)),
+			Results: lines,
+		})
+	}
+
 	ctx.JSON(statusCode, userFromModel(result))
 }
 
-func processUserEdits(callingUser *models.User, directEdits userDirectlyEditableFields, userGithubToken *string) (resultingUser *models.User, hasUpdates bool) {
+func processUserEdits(callingUser *models.User, directEdits userDirectlyEditableFields, userGithubToken *string) (resultingUser *models.User, hasUpdates bool, shouldNotify bool) {
 	githubString := "github"
 	sherlockString := "sherlock"
 	slackString := "slack"
@@ -151,6 +169,7 @@ func processUserEdits(callingUser *models.User, directEdits userDirectlyEditable
 	if slackID != "" && (callingUser.SlackID == nil || slackID != *callingUser.SlackID) {
 		callingUser.SlackID = &slackID
 		hasUpdates = true
+		shouldNotify = true
 	}
 
 	// Set Slack username if we got it and it is different from what we already have
@@ -170,6 +189,7 @@ func processUserEdits(callingUser *models.User, directEdits userDirectlyEditable
 	if githubID != "" && (callingUser.GithubID == nil || githubID != *callingUser.GithubID) {
 		callingUser.GithubID = &githubID
 		hasUpdates = true
+		shouldNotify = true
 	}
 
 	// Set Github username if we got it and it is different from what we already have
@@ -184,5 +204,5 @@ func processUserEdits(callingUser *models.User, directEdits userDirectlyEditable
 		callingUser.NameFrom = &githubString
 		hasUpdates = true
 	}
-	return callingUser, hasUpdates
+	return callingUser, hasUpdates, shouldNotify
 }
