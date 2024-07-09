@@ -72,6 +72,16 @@ func (ra *RoleAssignment) IsActive() bool {
 	return ra.Suspended != nil && !*ra.Suspended && (ra.ExpiresAt == nil || ra.ExpiresAt.After(time.Now()))
 }
 
+func (ra *RoleAssignment) ErrIfNotActive() error {
+	if ra.Suspended != nil && *ra.Suspended {
+		return fmt.Errorf("(%s) role assignment is suspended", errors.Forbidden)
+	} else if ra.ExpiresAt != nil && ra.ExpiresAt.Before(time.Now()) {
+		return fmt.Errorf("(%s) role assignment has expired", errors.Forbidden)
+	} else {
+		return nil
+	}
+}
+
 func (ra *RoleAssignment) Description(db *gorm.DB) string {
 	var role Role
 	var user User

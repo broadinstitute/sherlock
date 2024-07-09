@@ -379,6 +379,91 @@ func TestRoleAssignment_IsActive(t *testing.T) {
 	}
 }
 
+func TestRoleAssignment_ErrIfNotActive(t *testing.T) {
+	type fields struct {
+		Role                 *Role
+		RoleID               uint
+		User                 *User
+		UserID               uint
+		RoleAssignmentFields RoleAssignmentFields
+		previousFields       RoleAssignmentFields
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		wantErr string
+	}{
+		{
+			name: "suspension nil",
+			fields: fields{
+				RoleAssignmentFields: RoleAssignmentFields{
+					Suspended: nil,
+					ExpiresAt: utils.PointerTo(time.Now().Add(time.Hour)),
+				},
+			},
+			wantErr: "",
+		},
+		{
+			name: "suspended",
+			fields: fields{
+				RoleAssignmentFields: RoleAssignmentFields{
+					Suspended: utils.PointerTo(true),
+					ExpiresAt: utils.PointerTo(time.Now().Add(time.Hour)),
+				},
+			},
+			wantErr: "assignment is suspended",
+		},
+		{
+			name: "expiresAt nil",
+			fields: fields{
+				RoleAssignmentFields: RoleAssignmentFields{
+					Suspended: utils.PointerTo(false),
+					ExpiresAt: nil,
+				},
+			},
+			wantErr: "",
+		},
+		{
+			name: "expiresAt future",
+			fields: fields{
+				RoleAssignmentFields: RoleAssignmentFields{
+					Suspended: utils.PointerTo(false),
+					ExpiresAt: utils.PointerTo(time.Now().Add(time.Hour)),
+				},
+			},
+			wantErr: "",
+		},
+		{
+			name: "expiresAt past",
+			fields: fields{
+				RoleAssignmentFields: RoleAssignmentFields{
+					Suspended: utils.PointerTo(false),
+					ExpiresAt: utils.PointerTo(time.Now().Add(-time.Hour)),
+				},
+			},
+			wantErr: "assignment has expired",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ra := &RoleAssignment{
+				Role:                 tt.fields.Role,
+				RoleID:               tt.fields.RoleID,
+				User:                 tt.fields.User,
+				UserID:               tt.fields.UserID,
+				RoleAssignmentFields: tt.fields.RoleAssignmentFields,
+				previousFields:       tt.fields.previousFields,
+			}
+			err := ra.ErrIfNotActive()
+			if tt.wantErr == "" {
+				assert.NoError(t, err)
+			} else {
+				assert.ErrorContains(t, err, tt.wantErr)
+			}
+		})
+	}
+}
+
 func (s *modelSuite) TestRoleAssignment_Description() {
 	zerolog.SetGlobalLevel(zerolog.Disabled)
 	s.TestData.Role_TerraEngineer()

@@ -35,6 +35,8 @@ type Environment struct {
 	OwnerID                     *uint
 	LegacyOwner                 *string
 	RequiresSuitability         *bool
+	RequiredRole                *Role
+	RequiredRoleID              *uint
 	BaseDomain                  *string
 	NamePrefixesDomain          *bool
 	HelmfileRef                 *string
@@ -63,6 +65,9 @@ func (e *Environment) GetCiIdentifier() CiIdentifier {
 func (e *Environment) errorIfForbidden(tx *gorm.DB) error {
 	user, err := GetCurrentUserForDB(tx)
 	if err != nil {
+		return err
+	}
+	if err = user.ErrIfNotActiveInRole(tx, e.RequiredRoleID); err != nil {
 		return err
 	}
 	if e.RequiresSuitability == nil || *e.RequiresSuitability {

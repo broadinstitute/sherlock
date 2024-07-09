@@ -38,7 +38,11 @@ func clustersV3Edit(ctx *gin.Context) {
 		return
 	}
 
-	edits := body.toModel()
+	edits, err := body.toModel(db)
+	if err != nil {
+		errors.AbortRequest(ctx, err)
+		return
+	}
 
 	var toEdit models.Cluster
 	if err = db.Preload(clause.Associations).Where(&query).First(&toEdit).Error; err != nil {

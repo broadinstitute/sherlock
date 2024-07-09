@@ -20,6 +20,7 @@ type EnvironmentV3 struct {
 	DefaultClusterInfo       *ClusterV3              `json:"defaultClusterInfo,omitempty" form:"-"`
 	PagerdutyIntegrationInfo *PagerdutyIntegrationV3 `json:"pagerdutyIntegrationInfo,omitempty" form:"-"`
 	OwnerInfo                *UserV3                 `json:"ownerInfo,omitempty" form:"-"`
+	RequiredRoleInfo         *RoleV3                 `json:"requiredRoleInfo,omitempty" form:"-"`
 	EnvironmentV3Create
 }
 
@@ -38,7 +39,8 @@ type EnvironmentV3Create struct {
 type EnvironmentV3Edit struct {
 	DefaultCluster              *string    `json:"defaultCluster" form:"defaultCluster"`
 	Owner                       *string    `json:"owner" form:"owner"` // When creating, will default to you
-	RequiresSuitability         *bool      `json:"requiresSuitability" form:"requiresSuitability" default:"false"`
+	RequiresSuitability         *bool      `json:"requiresSuitability" form:"requiresSuitability"`
+	RequiredRole                *string    `json:"requiredRole" form:"requiredRole"` // If present, requires membership in the given role for mutations
 	BaseDomain                  *string    `json:"baseDomain" form:"baseDomain" default:"bee.envs-terra.bio"`
 	NamePrefixesDomain          *bool      `json:"namePrefixesDomain" form:"namePrefixesDomain" default:"true"`
 	HelmfileRef                 *string    `json:"helmfileRef" form:"helmfileRef" default:"HEAD"`
@@ -140,6 +142,18 @@ func (e EnvironmentV3) toModel(db *gorm.DB) (models.Environment, error) {
 			ret.OwnerID = &owner.ID
 		}
 	}
+	if e.RequiredRole != nil && *e.RequiredRole != "" {
+		requiredRoleModel, err := roleModelFromSelector(*e.RequiredRole)
+		if err != nil {
+			return models.Environment{}, err
+		}
+		var requiredRole models.Role
+		if err = db.Where(&requiredRoleModel).Select("id").First(&requiredRole).Error; err != nil {
+			return models.Environment{}, fmt.Errorf("required role '%s' not found: %w", *e.RequiredRole, err)
+		} else {
+			ret.RequiredRoleID = &requiredRole.ID
+		}
+	}
 	return ret, nil
 }
 
@@ -161,6 +175,7 @@ func environmentFromModel(model models.Environment) EnvironmentV3 {
 		DefaultClusterInfo:       utils.NilOrCall(clusterFromModel, model.DefaultCluster),
 		PagerdutyIntegrationInfo: utils.NilOrCall(pagerdutyIntegrationFromModel, model.PagerdutyIntegration),
 		OwnerInfo:                utils.NilOrCall(userFromModel, model.Owner),
+		RequiredRoleInfo:         utils.NilOrCall(roleFromModel, model.RequiredRole),
 		EnvironmentV3Create: EnvironmentV3Create{
 			Base:                      model.Base,
 			AutoPopulateChartReleases: model.AutoPopulateChartReleases,
@@ -209,6 +224,11 @@ func environmentFromModel(model models.Environment) EnvironmentV3 {
 	if ret.OfflineScheduleEndTime, err = utils.ISO8601PtrToTime(model.OfflineScheduleEndTime); err != nil {
 		log.Error().Uint("environment", model.ID).Err(err).Msg("failed to parse offline schedule end time")
 		ret.OfflineScheduleEndTime = nil
+	}
+	if model.RequiredRole != nil && model.RequiredRole.Name != nil {
+		ret.RequiredRole = model.RequiredRole.Name
+	} else if model.RequiredRoleID != nil {
+		ret.RequiredRole = utils.PointerTo(utils.UintToString(*model.RequiredRoleID))
 	}
 	return ret
 }

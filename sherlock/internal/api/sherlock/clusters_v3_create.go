@@ -39,7 +39,11 @@ func clustersV3Create(ctx *gin.Context) {
 		return
 	}
 
-	toCreate := body.toModel()
+	toCreate, err := body.toModel(db)
+	if err != nil {
+		errors.AbortRequest(ctx, err)
+		return
+	}
 	if err = db.Create(&toCreate).Error; err != nil {
 		errors.AbortRequest(ctx, err)
 		return

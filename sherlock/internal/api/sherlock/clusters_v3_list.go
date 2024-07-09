@@ -33,7 +33,11 @@ func clustersV3List(ctx *gin.Context) {
 		errors.AbortRequest(ctx, err)
 		return
 	}
-	modelFilter := filter.toModel()
+	modelFilter, err := filter.toModel(db)
+	if err != nil {
+		errors.AbortRequest(ctx, err)
+		return
+	}
 
 	limit, err := utils.ParseInt(ctx.DefaultQuery("limit", "0"))
 	if err != nil {

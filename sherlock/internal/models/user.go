@@ -169,6 +169,43 @@ func (u *User) SlackReference(mention bool) string {
 	}
 }
 
+func (u *User) ErrIfNotActiveInRole(db *gorm.DB, roleID *uint) error {
+	// If a role ID isn't actually provided, no role is required, so we can short-circuit.
+	if roleID == nil {
+		return nil
+	}
+
+	// Search for matching assignment
+	for _, assignment := range u.Assignments {
+		if assignment.RoleID == *roleID {
+			if assignment.Role == nil {
+				return fmt.Errorf("(%s) issue loading required role %d for caller", errors.InternalServerError, *roleID)
+			} else if assignment.Role.Name == nil {
+				return fmt.Errorf("(%s) issue loading required role %d for caller (name missing)", errors.InternalServerError, *roleID)
+			} else if err := assignment.ErrIfNotActive(); err != nil {
+				return fmt.Errorf("(%s) caller is in required role '%s' but they're not active: %w", errors.Forbidden, *assignment.Role.Name, err)
+			} else {
+				return nil
+			}
+		}
+	}
+
+	// If no matching assignment, check if the caller is a super-admin
+	if err := u.ErrIfNotSuperAdmin(); err == nil {
+		return nil
+	}
+
+	// If no matching assignment, get the name for the error message
+	var role Role
+	if err := db.Select("name").Take(&role, roleID).Error; err != nil {
+		return fmt.Errorf("(%s) role %d required not found", errors.InternalServerError, *roleID)
+	} else if role.Name == nil {
+		return fmt.Errorf("(%s) caller is not in required role %d (name missing)", errors.InternalServerError, *roleID)
+	} else {
+		return fmt.Errorf("(%s) caller is not in required role '%s'", errors.Forbidden, *role.Name)
+	}
+}
+
 // ErrIfNotSuitable may be removed in the future: we'll want to be doing Sherlock's internal RBAC based on
 // Role and RoleAssignment instead of Suitability, and the only usage of Suitability *should* be for
 // suspending RoleAssignment entries. An error isn't really helpful for us there, so we may have no need
@@ -201,9 +238,13 @@ func (u *User) ErrIfNotSuperAdmin() error {
 	}
 	for _, assignment := range u.Assignments {
 		if assignment.Role.GrantsSherlockSuperAdmin != nil &&
-			*assignment.Role.GrantsSherlockSuperAdmin &&
-			assignment.IsActive() {
-			return nil
+			*assignment.Role.GrantsSherlockSuperAdmin {
+			// Only one Sherlock role can grant super admin, so we just check if the match is active
+			if err := assignment.ErrIfNotActive(); err != nil {
+				return fmt.Errorf("(%s) caller is in a role that grants super-admin but they're not active: %w", errors.Forbidden, err)
+			} else {
+				return nil
+			}
 		}
 	}
 	return fmt.Errorf("(%s) caller is not a super-admin", errors.Forbidden)

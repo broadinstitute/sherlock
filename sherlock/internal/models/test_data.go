@@ -646,6 +646,7 @@ func (td *testDataImpl) Cluster_TerraProd() Cluster {
 			Base:                utils.PointerTo("terra"),
 			Address:             utils.PointerTo("https://192.0.2.128"),
 			RequiresSuitability: utils.PointerTo(true),
+			RequiredRoleID:      utils.PointerTo(td.Role_TerraSuitableEngineer().ID),
 			HelmfileRef:         utils.PointerTo("HEAD"),
 		}
 		td.h.SetSuitableTestUserForDB()
@@ -718,6 +719,7 @@ func (td *testDataImpl) Cluster_DdpAksProd() Cluster {
 			Base:                utils.PointerTo("ddp"),
 			Address:             utils.PointerTo("https://192.0.2.132"),
 			RequiresSuitability: utils.PointerTo(true),
+			RequiredRoleID:      utils.PointerTo(td.Role_TerraSuitableEngineer().ID),
 			HelmfileRef:         utils.PointerTo("HEAD"),
 		}
 		td.h.SetSuitableTestUserForDB()
@@ -755,6 +757,7 @@ func (td *testDataImpl) Environment_Prod() Environment {
 			DefaultNamespace:          "terra-prod",
 			DefaultClusterID:          utils.PointerTo(td.Cluster_TerraProd().ID),
 			RequiresSuitability:       utils.PointerTo(true),
+			RequiredRoleID:            utils.PointerTo(td.Role_TerraSuitableEngineer().ID),
 			BaseDomain:                utils.PointerTo("dsde-prod.broadinstitute.org"),
 			NamePrefixesDomain:        utils.PointerTo(false),
 			HelmfileRef:               utils.PointerTo("HEAD"),
@@ -933,6 +936,7 @@ func (td *testDataImpl) Environment_DdpAzureProd() Environment {
 			DefaultNamespace:    "ddp-prod",
 			DefaultClusterID:    utils.PointerTo(td.Cluster_DdpAksProd().ID),
 			RequiresSuitability: utils.PointerTo(true),
+			RequiredRoleID:      utils.PointerTo(td.Role_TerraSuitableEngineer().ID),
 			HelmfileRef:         utils.PointerTo("HEAD"),
 			PreventDeletion:     utils.PointerTo(true),
 			Offline:             utils.PointerTo(false),
