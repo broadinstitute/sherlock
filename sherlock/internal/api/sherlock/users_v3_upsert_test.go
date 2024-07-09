@@ -140,6 +140,10 @@ func (s *handlerSuite) TestUserV3Upsert_maximal_sherlockName() {
 			Name:     "slack username",
 			RealName: "name from slack",
 		}, nil)
+
+		// Security alert
+		c.EXPECT().SendMessageContext(mock.Anything, "#notification-channel", mock.Anything).Return("", "", "", nil).Once()
+		c.EXPECT().SendMessageContext(mock.Anything, "#permission-change-channel", mock.Anything).Return("", "", "", nil).Once()
 	}, func() {
 		github.UseMockedClient(s.T(), func(c *github.MockClient) {
 			c.Users.EXPECT().Get(mock.Anything, "").Return(&github2.User{
@@ -188,6 +192,10 @@ func (s *handlerSuite) TestUserV3Upsert_maximal_slackName() {
 			Name:     "slack username",
 			RealName: "name from slack",
 		}, nil)
+
+		// Security alert
+		c.EXPECT().SendMessageContext(mock.Anything, "#notification-channel", mock.Anything).Return("", "", "", nil).Once()
+		c.EXPECT().SendMessageContext(mock.Anything, "#permission-change-channel", mock.Anything).Return("", "", "", nil).Once()
 	}, func() {
 		github.UseMockedClient(s.T(), func(c *github.MockClient) {
 			c.Users.EXPECT().Get(mock.Anything, "").Return(&github2.User{
@@ -233,6 +241,10 @@ func (s *handlerSuite) TestUserV3Upsert_maximal_githubName() {
 			Name:     "slack username",
 			RealName: "name from slack",
 		}, nil)
+
+		// Security alert
+		c.EXPECT().SendMessageContext(mock.Anything, "#notification-channel", mock.Anything).Return("", "", "", nil).Once()
+		c.EXPECT().SendMessageContext(mock.Anything, "#permission-change-channel", mock.Anything).Return("", "", "", nil).Once()
 	}, func() {
 		github.UseMockedClient(s.T(), func(c *github.MockClient) {
 			c.Users.EXPECT().Get(mock.Anything, "").Return(&github2.User{
