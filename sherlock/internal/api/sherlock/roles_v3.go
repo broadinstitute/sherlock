@@ -16,6 +16,7 @@ type RoleV3 struct {
 type RoleV3Edit struct {
 	Name                      *string   `json:"name" form:"name"`
 	SuspendNonSuitableUsers   *bool     `json:"suspendNonSuitableUsers,omitempty" form:"suspendNonSuitableUsers"` // When true, the "suspended" field on role assignments will be computed by Sherlock based on suitability instead of being a mutable API field
+	AutoAssignAllUsers        *bool     `json:"autoAssignAllUsers,omitempty" form:"autoAssignAllUsers"`           // When true, Sherlock will automatically assign all users to this role who do not already have a role assignment
 	CanBeGlassBrokenByRole    *uint     `json:"canBeGlassBrokenByRole,omitempty" form:"canBeGlassBrokenByRole"`
 	DefaultGlassBreakDuration *Duration `json:"defaultGlassBreakDuration,omitempty" swaggertype:"string" form:"defaultGlassBreakDuration"`
 	GrantsSherlockSuperAdmin  *bool     `json:"grantsSherlockSuperAdmin,omitempty" form:"grantsSherlockSuperAdmin"`
@@ -32,6 +33,7 @@ func (r RoleV3) toModel() models.Role {
 		RoleFields: models.RoleFields{
 			Name:                     r.Name,
 			SuspendNonSuitableUsers:  r.SuspendNonSuitableUsers,
+			AutoAssignAllUsers:       r.AutoAssignAllUsers,
 			CanBeGlassBrokenByRoleID: r.CanBeGlassBrokenByRole,
 			GrantsSherlockSuperAdmin: r.GrantsSherlockSuperAdmin,
 			GrantsDevFirecloudGroup:  r.GrantsDevFirecloudGroup,
@@ -58,6 +60,7 @@ func roleFromModel(model models.Role) RoleV3 {
 		RoleV3Edit: RoleV3Edit{
 			Name:                    model.Name,
 			SuspendNonSuitableUsers: model.SuspendNonSuitableUsers,
+			AutoAssignAllUsers:      model.AutoAssignAllUsers,
 			CanBeGlassBrokenByRole:  model.CanBeGlassBrokenByRoleID,
 			DefaultGlassBreakDuration: utils.NilOrCall(func(nanoseconds int64) Duration {
 				return Duration{time.Duration(nanoseconds)}

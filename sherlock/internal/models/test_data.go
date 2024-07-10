@@ -359,6 +359,7 @@ func (td *testDataImpl) Role_TerraSuitableEngineer() Role {
 			RoleFields: RoleFields{
 				Name:                     utils.PointerTo("terra-suitable-engineer"),
 				SuspendNonSuitableUsers:  utils.PointerTo(true),
+				AutoAssignAllUsers:       utils.PointerTo(false),
 				GrantsDevFirecloudGroup:  utils.PointerTo("terra-suitable-engineer-dev"),
 				GrantsQaFirecloudGroup:   utils.PointerTo("terra-suitable-engineer-qa"),
 				GrantsProdFirecloudGroup: utils.PointerTo("terra-suitable-engineer-prod"),

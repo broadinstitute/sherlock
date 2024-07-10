@@ -17,6 +17,7 @@ func (s *handlerSuite) Test_roleFromModel() {
 		RoleV3Edit: RoleV3Edit{
 			Name:                      model.Name,
 			SuspendNonSuitableUsers:   model.SuspendNonSuitableUsers,
+			AutoAssignAllUsers:        model.AutoAssignAllUsers,
 			CanBeGlassBrokenByRole:    model.CanBeGlassBrokenByRoleID,
 			DefaultGlassBreakDuration: nil,
 			GrantsSherlockSuperAdmin:  model.GrantsSherlockSuperAdmin,
