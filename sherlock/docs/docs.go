@@ -6980,6 +6980,12 @@ const docTemplate = `{
                 "summary": "List Roles matching a filter",
                 "parameters": [
                     {
+                        "type": "boolean",
+                        "description": "When true, Sherlock will automatically assign all users to this role who do not already have a role assignment",
+                        "name": "autoAssignAllUsers",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
                         "name": "canBeGlassBrokenByRole",
                         "in": "query"
@@ -9891,6 +9897,10 @@ const docTemplate = `{
                         "$ref": "#/definitions/sherlock.RoleAssignmentV3"
                     }
                 },
+                "autoAssignAllUsers": {
+                    "description": "When true, Sherlock will automatically assign all users to this role who do not already have a role assignment",
+                    "type": "boolean"
+                },
                 "canBeGlassBrokenByRole": {
                     "type": "integer"
                 },
@@ -9941,6 +9951,10 @@ const docTemplate = `{
         "sherlock.RoleV3Edit": {
             "type": "object",
             "properties": {
+                "autoAssignAllUsers": {
+                    "description": "When true, Sherlock will automatically assign all users to this role who do not already have a role assignment",
+                    "type": "boolean"
+                },
                 "canBeGlassBrokenByRole": {
                     "type": "integer"
                 },

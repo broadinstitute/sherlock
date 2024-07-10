@@ -1603,6 +1603,10 @@ definitions:
         items:
           $ref: '#/definitions/sherlock.RoleAssignmentV3'
         type: array
+      autoAssignAllUsers:
+        description: When true, Sherlock will automatically assign all users to this
+          role who do not already have a role assignment
+        type: boolean
       canBeGlassBrokenByRole:
         type: integer
       canBeGlassBrokenByRoleInfo:
@@ -1639,6 +1643,10 @@ definitions:
     type: object
   sherlock.RoleV3Edit:
     properties:
+      autoAssignAllUsers:
+        description: When true, Sherlock will automatically assign all users to this
+          role who do not already have a role assignment
+        type: boolean
       canBeGlassBrokenByRole:
         type: integer
       defaultGlassBreakDuration:
@@ -6519,6 +6527,11 @@ paths:
     get:
       description: List Roles matching a filter.
       parameters:
+      - description: When true, Sherlock will automatically assign all users to this
+          role who do not already have a role assignment
+        in: query
+        name: autoAssignAllUsers
+        type: boolean
       - in: query
         name: canBeGlassBrokenByRole
         type: integer

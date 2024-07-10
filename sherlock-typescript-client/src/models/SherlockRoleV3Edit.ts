@@ -20,6 +20,12 @@ import { mapValues } from '../runtime';
  */
 export interface SherlockRoleV3Edit {
     /**
+     * When true, Sherlock will automatically assign all users to this role who do not already have a role assignment
+     * @type {boolean}
+     * @memberof SherlockRoleV3Edit
+     */
+    autoAssignAllUsers?: boolean;
+    /**
      * 
      * @type {number}
      * @memberof SherlockRoleV3Edit
@@ -98,6 +104,7 @@ export function SherlockRoleV3EditFromJSONTyped(json: any, ignoreDiscriminator: 
     }
     return {
         
+        'autoAssignAllUsers': json['autoAssignAllUsers'] == null ? undefined : json['autoAssignAllUsers'],
         'canBeGlassBrokenByRole': json['canBeGlassBrokenByRole'] == null ? undefined : json['canBeGlassBrokenByRole'],
         'defaultGlassBreakDuration': json['defaultGlassBreakDuration'] == null ? undefined : json['defaultGlassBreakDuration'],
         'grantsDevAzureGroup': json['grantsDevAzureGroup'] == null ? undefined : json['grantsDevAzureGroup'],
@@ -117,6 +124,7 @@ export function SherlockRoleV3EditToJSON(value?: SherlockRoleV3Edit | null): any
     }
     return {
         
+        'autoAssignAllUsers': value['autoAssignAllUsers'],
         'canBeGlassBrokenByRole': value['canBeGlassBrokenByRole'],
         'defaultGlassBreakDuration': value['defaultGlassBreakDuration'],
         'grantsDevAzureGroup': value['grantsDevAzureGroup'],

@@ -29,6 +29,7 @@ import {
 } from '../models/index';
 
 export interface ApiRolesV3GetRequest {
+    autoAssignAllUsers?: boolean;
     canBeGlassBrokenByRole?: number;
     createdAt?: Date;
     defaultGlassBreakDuration?: string;
@@ -74,6 +75,10 @@ export class RolesApi extends runtime.BaseAPI {
      */
     async apiRolesV3GetRaw(requestParameters: ApiRolesV3GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockRoleV3>>> {
         const queryParameters: any = {};
+
+        if (requestParameters['autoAssignAllUsers'] != null) {
+            queryParameters['autoAssignAllUsers'] = requestParameters['autoAssignAllUsers'];
+        }
 
         if (requestParameters['canBeGlassBrokenByRole'] != null) {
             queryParameters['canBeGlassBrokenByRole'] = requestParameters['canBeGlassBrokenByRole'];

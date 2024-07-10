@@ -33,6 +33,12 @@ export interface SherlockRoleV3 {
      */
     assignments?: Array<SherlockRoleAssignmentV3>;
     /**
+     * When true, Sherlock will automatically assign all users to this role who do not already have a role assignment
+     * @type {boolean}
+     * @memberof SherlockRoleV3
+     */
+    autoAssignAllUsers?: boolean;
+    /**
      * 
      * @type {number}
      * @memberof SherlockRoleV3
@@ -136,6 +142,7 @@ export function SherlockRoleV3FromJSONTyped(json: any, ignoreDiscriminator: bool
     return {
         
         'assignments': json['assignments'] == null ? undefined : ((json['assignments'] as Array<any>).map(SherlockRoleAssignmentV3FromJSON)),
+        'autoAssignAllUsers': json['autoAssignAllUsers'] == null ? undefined : json['autoAssignAllUsers'],
         'canBeGlassBrokenByRole': json['canBeGlassBrokenByRole'] == null ? undefined : json['canBeGlassBrokenByRole'],
         'canBeGlassBrokenByRoleInfo': json['canBeGlassBrokenByRoleInfo'] == null ? undefined : json['canBeGlassBrokenByRoleInfo'],
         'createdAt': json['createdAt'] == null ? undefined : (new Date(json['createdAt'])),
@@ -160,6 +167,7 @@ export function SherlockRoleV3ToJSON(value?: SherlockRoleV3 | null): any {
     return {
         
         'assignments': value['assignments'] == null ? undefined : ((value['assignments'] as Array<any>).map(SherlockRoleAssignmentV3ToJSON)),
+        'autoAssignAllUsers': value['autoAssignAllUsers'],
         'canBeGlassBrokenByRole': value['canBeGlassBrokenByRole'],
         'canBeGlassBrokenByRoleInfo': value['canBeGlassBrokenByRoleInfo'],
         'createdAt': value['createdAt'] == null ? undefined : ((value['createdAt']).toISOString()),

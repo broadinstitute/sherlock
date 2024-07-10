@@ -60,6 +60,12 @@ func NewGetAPIRolesV3ParamsWithHTTPClient(client *http.Client) *GetAPIRolesV3Par
 */
 type GetAPIRolesV3Params struct {
 
+	/* AutoAssignAllUsers.
+
+	   When true, Sherlock will automatically assign all users to this role who do not already have a role assignment
+	*/
+	AutoAssignAllUsers *bool
+
 	// CanBeGlassBrokenByRole.
 	CanBeGlassBrokenByRole *int64
 
@@ -169,6 +175,17 @@ func (o *GetAPIRolesV3Params) WithHTTPClient(client *http.Client) *GetAPIRolesV3
 // SetHTTPClient adds the HTTPClient to the get API roles v3 params
 func (o *GetAPIRolesV3Params) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
+}
+
+// WithAutoAssignAllUsers adds the autoAssignAllUsers to the get API roles v3 params
+func (o *GetAPIRolesV3Params) WithAutoAssignAllUsers(autoAssignAllUsers *bool) *GetAPIRolesV3Params {
+	o.SetAutoAssignAllUsers(autoAssignAllUsers)
+	return o
+}
+
+// SetAutoAssignAllUsers adds the autoAssignAllUsers to the get API roles v3 params
+func (o *GetAPIRolesV3Params) SetAutoAssignAllUsers(autoAssignAllUsers *bool) {
+	o.AutoAssignAllUsers = autoAssignAllUsers
 }
 
 // WithCanBeGlassBrokenByRole adds the canBeGlassBrokenByRole to the get API roles v3 params
@@ -343,6 +360,23 @@ func (o *GetAPIRolesV3Params) WriteToRequest(r runtime.ClientRequest, reg strfmt
 		return err
 	}
 	var res []error
+
+	if o.AutoAssignAllUsers != nil {
+
+		// query param autoAssignAllUsers
+		var qrAutoAssignAllUsers bool
+
+		if o.AutoAssignAllUsers != nil {
+			qrAutoAssignAllUsers = *o.AutoAssignAllUsers
+		}
+		qAutoAssignAllUsers := swag.FormatBool(qrAutoAssignAllUsers)
+		if qAutoAssignAllUsers != "" {
+
+			if err := r.SetQueryParam("autoAssignAllUsers", qAutoAssignAllUsers); err != nil {
+				return err
+			}
+		}
+	}
 
 	if o.CanBeGlassBrokenByRole != nil {
 

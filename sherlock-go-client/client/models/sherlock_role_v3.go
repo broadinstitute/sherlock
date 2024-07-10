@@ -23,6 +23,9 @@ type SherlockRoleV3 struct {
 	// assignments
 	Assignments []*SherlockRoleAssignmentV3 `json:"assignments"`
 
+	// When true, Sherlock will automatically assign all users to this role who do not already have a role assignment
+	AutoAssignAllUsers bool `json:"autoAssignAllUsers,omitempty"`
+
 	// can be glass broken by role
 	CanBeGlassBrokenByRole int64 `json:"canBeGlassBrokenByRole,omitempty"`
 
