@@ -21,6 +21,11 @@ type RoleFields struct {
 	// be set directly from the API.
 	SuspendNonSuitableUsers *bool
 
+	// AutoAssignAllUsers instructs that all Users should be assigned to this Role. This doesn't mutate the
+	// RoleAssignments, it just checks that they exist. If it needs to create a RoleAssignment, it will check
+	// suitability for suspension status to abide by SuspendNonSuitableUsers.
+	AutoAssignAllUsers *bool
+
 	// CanBeGlassBrokenByRole indicates that any User with a RoleAssignment to the given Role can temporarily give
 	// themselves a RoleAssignment to this Role, which will be removed after DefaultGlassBreakDuration. Such a
 	// RoleAssignment can last longer if the User either re-glass-breaks (refreshing the duration) or if a

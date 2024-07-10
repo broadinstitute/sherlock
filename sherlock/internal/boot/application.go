@@ -136,6 +136,8 @@ func (a *Application) Start() {
 		}
 	}
 
+	go models.KeepAutoAssigningRoles(ctx, a.gormDB)
+
 	log.Info().Msgf("BOOT | building Gin router...")
 	gin.SetMode(gin.ReleaseMode) // gin.DebugMode can help resolve routing issues
 	a.server = &http.Server{
