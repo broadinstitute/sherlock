@@ -42,8 +42,8 @@ func doAutoAssignment(ctx context.Context, db *gorm.DB) {
 		var userIDs []uint
 		if err := db.Raw(`
 			SELECT users.id FROM users WHERE NOT EXISTS 
-	    		(SELECT * FROM role_assignments WHERE role_assignments.role_id = ? AND role_assignments.user_id = users.id)
-	    `, role.ID).Scan(&userIDs).Error; err != nil {
+				(SELECT * FROM role_assignments WHERE role_assignments.role_id = ? AND role_assignments.user_id = users.id)
+		`, role.ID).Scan(&userIDs).Error; err != nil {
 			slack.ReportError(ctx, fmt.Sprintf("failed to find users to auto-assign to role %s", *role.Name), err)
 			continue
 		}
