@@ -61,7 +61,7 @@ func doAutoAssignment(ctx context.Context, db *gorm.DB) {
 				RoleAssignmentFields: RoleAssignmentFields{
 					// "Suspend if the role automatically suspends non-suitable users and the user is not suitable"
 					Suspended: utils.PointerTo(role.SuspendNonSuitableUsers != nil && *role.SuspendNonSuitableUsers &&
-						(user.Suitability == nil || !*user.Suitability.Suitable)),
+						(user.Suitability == nil || user.Suitability.Suitable == nil || !*user.Suitability.Suitable)),
 				},
 			}).Error; err != nil {
 				slack.ReportError(ctx, fmt.Sprintf("failed to auto-assign user %d to role %q", userID, *role.Name), err)
