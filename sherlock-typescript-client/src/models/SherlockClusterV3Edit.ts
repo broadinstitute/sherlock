@@ -38,7 +38,7 @@ export interface SherlockClusterV3Edit {
      */
     helmfileRef?: string;
     /**
-     * If present, requires membership in the given role for mutations
+     * If present, requires membership in the given role for mutations. Set to an empty string to clear.
      * @type {string}
      * @memberof SherlockClusterV3Edit
      */

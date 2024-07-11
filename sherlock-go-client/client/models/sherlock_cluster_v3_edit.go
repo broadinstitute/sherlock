@@ -26,7 +26,7 @@ type SherlockClusterV3Edit struct {
 	// helmfile ref
 	HelmfileRef *string `json:"helmfileRef,omitempty"`
 
-	// If present, requires membership in the given role for mutations
+	// If present, requires membership in the given role for mutations. Set to an empty string to clear.
 	RequiredRole string `json:"requiredRole,omitempty"`
 
 	// requires suitability

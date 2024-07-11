@@ -3147,7 +3147,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "If present, requires membership in the given role for mutations",
+                        "description": "If present, requires membership in the given role for mutations. Set to an empty string to clear.",
                         "name": "requiredRole",
                         "in": "query"
                     },
@@ -5052,7 +5052,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "If present, requires membership in the given role for mutations",
+                        "description": "If present, requires membership in the given role for mutations. Set to an empty string to clear.",
                         "name": "requiredRole",
                         "in": "query"
                     },
@@ -8934,7 +8934,7 @@ const docTemplate = `{
                     ]
                 },
                 "requiredRole": {
-                    "description": "If present, requires membership in the given role for mutations",
+                    "description": "If present, requires membership in the given role for mutations. Set to an empty string to clear.",
                     "type": "string"
                 },
                 "requiredRoleInfo": {
@@ -8989,7 +8989,7 @@ const docTemplate = `{
                     ]
                 },
                 "requiredRole": {
-                    "description": "If present, requires membership in the given role for mutations",
+                    "description": "If present, requires membership in the given role for mutations. Set to an empty string to clear.",
                     "type": "string"
                 },
                 "requiresSuitability": {
@@ -9013,7 +9013,7 @@ const docTemplate = `{
                     "default": "HEAD"
                 },
                 "requiredRole": {
-                    "description": "If present, requires membership in the given role for mutations",
+                    "description": "If present, requires membership in the given role for mutations. Set to an empty string to clear.",
                     "type": "string"
                 },
                 "requiresSuitability": {
@@ -9217,7 +9217,7 @@ const docTemplate = `{
                     "default": false
                 },
                 "requiredRole": {
-                    "description": "If present, requires membership in the given role for mutations",
+                    "description": "If present, requires membership in the given role for mutations. Set to an empty string to clear.",
                     "type": "string"
                 },
                 "requiredRoleInfo": {
@@ -9336,7 +9336,7 @@ const docTemplate = `{
                     "default": false
                 },
                 "requiredRole": {
-                    "description": "If present, requires membership in the given role for mutations",
+                    "description": "If present, requires membership in the given role for mutations. Set to an empty string to clear.",
                     "type": "string"
                 },
                 "requiresSuitability": {
@@ -9424,7 +9424,7 @@ const docTemplate = `{
                     "default": false
                 },
                 "requiredRole": {
-                    "description": "If present, requires membership in the given role for mutations",
+                    "description": "If present, requires membership in the given role for mutations. Set to an empty string to clear.",
                     "type": "string"
                 },
                 "requiresSuitability": {

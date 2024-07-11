@@ -70,7 +70,7 @@ type SherlockEnvironmentV3Edit struct {
 	// Used to protect specific BEEs from deletion (thelma checks this field)
 	PreventDeletion *bool `json:"preventDeletion,omitempty"`
 
-	// If present, requires membership in the given role for mutations
+	// If present, requires membership in the given role for mutations. Set to an empty string to clear.
 	RequiredRole string `json:"requiredRole,omitempty"`
 
 	// requires suitability

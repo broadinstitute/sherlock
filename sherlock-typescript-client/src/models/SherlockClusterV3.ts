@@ -99,7 +99,7 @@ export interface SherlockClusterV3 {
      */
     provider?: SherlockClusterV3ProviderEnum;
     /**
-     * If present, requires membership in the given role for mutations
+     * If present, requires membership in the given role for mutations. Set to an empty string to clear.
      * @type {string}
      * @memberof SherlockClusterV3
      */

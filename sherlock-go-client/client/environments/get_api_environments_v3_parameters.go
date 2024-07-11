@@ -197,7 +197,7 @@ type GetAPIEnvironmentsV3Params struct {
 
 	/* RequiredRole.
 
-	   If present, requires membership in the given role for mutations
+	   If present, requires membership in the given role for mutations. Set to an empty string to clear.
 	*/
 	RequiredRole *string
 

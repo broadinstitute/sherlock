@@ -3143,7 +3143,7 @@
                     },
                     {
                         "type": "string",
-                        "description": "If present, requires membership in the given role for mutations",
+                        "description": "If present, requires membership in the given role for mutations. Set to an empty string to clear.",
                         "name": "requiredRole",
                         "in": "query"
                     },
@@ -5048,7 +5048,7 @@
                     },
                     {
                         "type": "string",
-                        "description": "If present, requires membership in the given role for mutations",
+                        "description": "If present, requires membership in the given role for mutations. Set to an empty string to clear.",
                         "name": "requiredRole",
                         "in": "query"
                     },
@@ -8930,7 +8930,7 @@
                     ]
                 },
                 "requiredRole": {
-                    "description": "If present, requires membership in the given role for mutations",
+                    "description": "If present, requires membership in the given role for mutations. Set to an empty string to clear.",
                     "type": "string"
                 },
                 "requiredRoleInfo": {
@@ -8985,7 +8985,7 @@
                     ]
                 },
                 "requiredRole": {
-                    "description": "If present, requires membership in the given role for mutations",
+                    "description": "If present, requires membership in the given role for mutations. Set to an empty string to clear.",
                     "type": "string"
                 },
                 "requiresSuitability": {
@@ -9009,7 +9009,7 @@
                     "default": "HEAD"
                 },
                 "requiredRole": {
-                    "description": "If present, requires membership in the given role for mutations",
+                    "description": "If present, requires membership in the given role for mutations. Set to an empty string to clear.",
                     "type": "string"
                 },
                 "requiresSuitability": {
@@ -9213,7 +9213,7 @@
                     "default": false
                 },
                 "requiredRole": {
-                    "description": "If present, requires membership in the given role for mutations",
+                    "description": "If present, requires membership in the given role for mutations. Set to an empty string to clear.",
                     "type": "string"
                 },
                 "requiredRoleInfo": {
@@ -9332,7 +9332,7 @@
                     "default": false
                 },
                 "requiredRole": {
-                    "description": "If present, requires membership in the given role for mutations",
+                    "description": "If present, requires membership in the given role for mutations. Set to an empty string to clear.",
                     "type": "string"
                 },
                 "requiresSuitability": {
@@ -9420,7 +9420,7 @@
                     "default": false
                 },
                 "requiredRole": {
-                    "description": "If present, requires membership in the given role for mutations",
+                    "description": "If present, requires membership in the given role for mutations. Set to an empty string to clear.",
                     "type": "string"
                 },
                 "requiresSuitability": {

@@ -878,7 +878,8 @@ definitions:
         - azure
         type: string
       requiredRole:
-        description: If present, requires membership in the given role for mutations
+        description: If present, requires membership in the given role for mutations.
+          Set to an empty string to clear.
         type: string
       requiredRoleInfo:
         $ref: '#/definitions/sherlock.RoleV3'
@@ -918,7 +919,8 @@ definitions:
         - azure
         type: string
       requiredRole:
-        description: If present, requires membership in the given role for mutations
+        description: If present, requires membership in the given role for mutations.
+          Set to an empty string to clear.
         type: string
       requiresSuitability:
         type: boolean
@@ -935,7 +937,8 @@ definitions:
         default: HEAD
         type: string
       requiredRole:
-        description: If present, requires membership in the given role for mutations
+        description: If present, requires membership in the given role for mutations.
+          Set to an empty string to clear.
         type: string
       requiresSuitability:
         type: boolean
@@ -1090,7 +1093,8 @@ definitions:
           field)
         type: boolean
       requiredRole:
-        description: If present, requires membership in the given role for mutations
+        description: If present, requires membership in the given role for mutations.
+          Set to an empty string to clear.
         type: string
       requiredRoleInfo:
         $ref: '#/definitions/sherlock.RoleV3'
@@ -1184,7 +1188,8 @@ definitions:
           field)
         type: boolean
       requiredRole:
-        description: If present, requires membership in the given role for mutations
+        description: If present, requires membership in the given role for mutations.
+          Set to an empty string to clear.
         type: string
       requiresSuitability:
         type: boolean
@@ -1254,7 +1259,8 @@ definitions:
           field)
         type: boolean
       requiredRole:
-        description: If present, requires membership in the given role for mutations
+        description: If present, requires membership in the given role for mutations.
+          Set to an empty string to clear.
         type: string
       requiresSuitability:
         type: boolean
@@ -3924,7 +3930,8 @@ paths:
         in: query
         name: provider
         type: string
-      - description: If present, requires membership in the given role for mutations
+      - description: If present, requires membership in the given role for mutations.
+          Set to an empty string to clear.
         in: query
         name: requiredRole
         type: string
@@ -5209,7 +5216,8 @@ paths:
         in: query
         name: preventDeletion
         type: boolean
-      - description: If present, requires membership in the given role for mutations
+      - description: If present, requires membership in the given role for mutations.
+          Set to an empty string to clear.
         in: query
         name: requiredRole
         type: string
