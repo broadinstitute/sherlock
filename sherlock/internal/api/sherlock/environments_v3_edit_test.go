@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"time"
@@ -116,6 +117,22 @@ func (s *handlerSuite) TestEnvironmentsV3Edit_suitabilityAfter() {
 		&got)
 	s.Equal(http.StatusForbidden, code)
 	s.Equal(errors.Forbidden, got.Type)
+}
+
+func (s *handlerSuite) TestEnvironmentsV3Edit_clearRequiredRole() {
+	toEdit := s.TestData.Environment_Prod()
+	s.NotNil(toEdit.RequiredRoleID)
+	var got EnvironmentV3
+	code := s.HandleRequest(
+		s.NewSuitableRequest("PATCH", fmt.Sprintf("/api/environments/v3/%d", toEdit.ID), EnvironmentV3Edit{
+			RequiredRole: utils.PointerTo(""),
+		}),
+		&got)
+	s.Equal(http.StatusOK, code)
+	s.Nil(got.RequiredRole)
+	var inDB models.Environment
+	s.NoError(s.DB.First(&inDB, toEdit.ID).Error)
+	s.Nil(inDB.RequiredRoleID)
 }
 
 func (s *handlerSuite) TestEnvironmentsV3Edit_deleteAfter() {

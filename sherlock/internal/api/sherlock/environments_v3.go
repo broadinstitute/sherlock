@@ -40,7 +40,7 @@ type EnvironmentV3Edit struct {
 	DefaultCluster              *string    `json:"defaultCluster" form:"defaultCluster"`
 	Owner                       *string    `json:"owner" form:"owner"` // When creating, will default to you
 	RequiresSuitability         *bool      `json:"requiresSuitability" form:"requiresSuitability"`
-	RequiredRole                *string    `json:"requiredRole" form:"requiredRole"` // If present, requires membership in the given role for mutations
+	RequiredRole                *string    `json:"requiredRole" form:"requiredRole"` // If present, requires membership in the given role for mutations. Set to an empty string to clear.
 	BaseDomain                  *string    `json:"baseDomain" form:"baseDomain" default:"bee.envs-terra.bio"`
 	NamePrefixesDomain          *bool      `json:"namePrefixesDomain" form:"namePrefixesDomain" default:"true"`
 	HelmfileRef                 *string    `json:"helmfileRef" form:"helmfileRef" default:"HEAD"`

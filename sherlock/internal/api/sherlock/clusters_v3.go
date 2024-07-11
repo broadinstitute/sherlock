@@ -27,7 +27,7 @@ type ClusterV3Edit struct {
 	Base                *string `json:"base"  form:"base"`      // Required when creating
 	Address             *string `json:"address" form:"address"` // Required when creating
 	RequiresSuitability *bool   `json:"requiresSuitability" form:"requiresSuitability"`
-	RequiredRole        *string `json:"requiredRole" form:"requiredRole"` // If present, requires membership in the given role for mutations
+	RequiredRole        *string `json:"requiredRole" form:"requiredRole"` // If present, requires membership in the given role for mutations. Set to an empty string to clear.
 	HelmfileRef         *string `json:"helmfileRef" form:"helmfileRef" default:"HEAD"`
 }
 
