@@ -171,3 +171,19 @@ func (s *handlerSuite) TestClustersV3Edit_suitabilityAfter() {
 	s.Equal(http.StatusForbidden, code)
 	s.Equal(errors.Forbidden, got.Type)
 }
+
+func (s *handlerSuite) TestClusterV3Edit_clearRequiredRole() {
+	toEdit := s.TestData.Cluster_TerraProd()
+	s.NotNil(toEdit.RequiredRoleID)
+	var got ClusterV3
+	code := s.HandleRequest(
+		s.NewSuitableRequest("PATCH", fmt.Sprintf("/api/clusters/v3/%d", toEdit.ID), ClusterV3Edit{
+			RequiredRole: utils.PointerTo(""),
+		}),
+		&got)
+	s.Equal(http.StatusOK, code)
+	s.Nil(got.RequiredRole)
+	var inDB models.Cluster
+	s.NoError(s.DB.First(&inDB, toEdit.ID).Error)
+	s.Nil(inDB.RequiredRoleID)
+}

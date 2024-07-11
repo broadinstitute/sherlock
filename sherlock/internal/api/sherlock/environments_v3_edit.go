@@ -55,5 +55,15 @@ func environmentsV3Edit(ctx *gin.Context) {
 		return
 	}
 
+	// Allow clearing requiredRole by setting an empty string
+	if body.RequiredRole != nil && *body.RequiredRole == "" && toEdit.RequiredRoleID != nil {
+		toEdit.RequiredRoleID = nil
+		toEdit.RequiredRole = nil
+		if err = db.Model(&toEdit).Omit(clause.Associations).Update("required_role_id", nil).Error; err != nil {
+			errors.AbortRequest(ctx, err)
+			return
+		}
+	}
+
 	ctx.JSON(http.StatusOK, environmentFromModel(toEdit))
 }
