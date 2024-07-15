@@ -1,7 +1,6 @@
 ARG GO_VERSION='1.22'
-ARG DEBIAN_VERSION='bookworm'
 
-FROM mcr.microsoft.com/oss/go/microsoft/golang:${GO_VERSION}-fips-${DEBIAN_VERSION} AS build
+FROM mcr.microsoft.com/oss/go/microsoft/golang:${GO_VERSION}-fips-cbl-mariner2.0
 ARG BUILD_VERSION='development'
 WORKDIR /build/sherlock
 ENV CGO_ENABLED=1
