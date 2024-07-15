@@ -1,6 +1,6 @@
 module github.com/broadinstitute/sherlock/sherlock
 
-go 1.21
+go 1.22
 
 require (
 	cloud.google.com/go/cloudsqlconn v1.11.0
