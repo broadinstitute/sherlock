@@ -315,11 +315,12 @@ func (e *Environment) setCreationDefaults(tx *gorm.DB) error {
 	}
 
 	if e.EnableJanitor == nil {
-		// BEEs may have been filled from templates already, but if not we default here
-		if e.Lifecycle == "dynamic" || e.Lifecycle == "template" {
-			e.EnableJanitor = utils.PointerTo(true)
-		} else {
+		// Yes there's a DB-level default but we don't want to rely on that for business logic
+		if e.Lifecycle == "static" {
 			e.EnableJanitor = utils.PointerTo(false)
+		} else {
+			// Templates, BEEs if somehow we missed them above
+			e.EnableJanitor = utils.PointerTo(true)
 		}
 	}
 
