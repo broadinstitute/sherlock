@@ -44,6 +44,12 @@ export interface SherlockEnvironmentV3Edit {
      */
     description?: string;
     /**
+     * If true, janitor resource cleanup will be enabled for this environment. BEEs default to template's value, templates default to true, and static/live environments default to false.
+     * @type {boolean}
+     * @memberof SherlockEnvironmentV3Edit
+     */
+    enableJanitor?: boolean;
+    /**
      * 
      * @type {string}
      * @memberof SherlockEnvironmentV3Edit
@@ -150,6 +156,7 @@ export function SherlockEnvironmentV3EditFromJSONTyped(json: any, ignoreDiscrimi
         'defaultCluster': json['defaultCluster'] == null ? undefined : json['defaultCluster'],
         'deleteAfter': json['deleteAfter'] == null ? undefined : (new Date(json['deleteAfter'])),
         'description': json['description'] == null ? undefined : json['description'],
+        'enableJanitor': json['enableJanitor'] == null ? undefined : json['enableJanitor'],
         'helmfileRef': json['helmfileRef'] == null ? undefined : json['helmfileRef'],
         'namePrefixesDomain': json['namePrefixesDomain'] == null ? undefined : json['namePrefixesDomain'],
         'offline': json['offline'] == null ? undefined : json['offline'],
@@ -177,6 +184,7 @@ export function SherlockEnvironmentV3EditToJSON(value?: SherlockEnvironmentV3Edi
         'defaultCluster': value['defaultCluster'],
         'deleteAfter': value['deleteAfter'] == null ? undefined : ((value['deleteAfter']).toISOString()),
         'description': value['description'],
+        'enableJanitor': value['enableJanitor'],
         'helmfileRef': value['helmfileRef'],
         'namePrefixesDomain': value['namePrefixesDomain'],
         'offline': value['offline'],

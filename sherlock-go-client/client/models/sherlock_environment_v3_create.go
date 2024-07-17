@@ -41,6 +41,9 @@ type SherlockEnvironmentV3Create struct {
 	// description
 	Description string `json:"description,omitempty"`
 
+	// If true, janitor resource cleanup will be enabled for this environment. BEEs default to template's value, templates default to true, and static/live environments default to false.
+	EnableJanitor bool `json:"enableJanitor,omitempty"`
+
 	// helmfile ref
 	HelmfileRef *string `json:"helmfileRef,omitempty"`
 

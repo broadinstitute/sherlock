@@ -107,6 +107,12 @@ type GetAPIEnvironmentsV3Params struct {
 	// Description.
 	Description *string
 
+	/* EnableJanitor.
+
+	   If true, janitor resource cleanup will be enabled for this environment. BEEs default to template's value, templates default to true, and static/live environments default to false.
+	*/
+	EnableJanitor *bool
+
 	// HelmfileRef.
 	//
 	// Default: "HEAD"
@@ -406,6 +412,17 @@ func (o *GetAPIEnvironmentsV3Params) WithDescription(description *string) *GetAP
 // SetDescription adds the description to the get API environments v3 params
 func (o *GetAPIEnvironmentsV3Params) SetDescription(description *string) {
 	o.Description = description
+}
+
+// WithEnableJanitor adds the enableJanitor to the get API environments v3 params
+func (o *GetAPIEnvironmentsV3Params) WithEnableJanitor(enableJanitor *bool) *GetAPIEnvironmentsV3Params {
+	o.SetEnableJanitor(enableJanitor)
+	return o
+}
+
+// SetEnableJanitor adds the enableJanitor to the get API environments v3 params
+func (o *GetAPIEnvironmentsV3Params) SetEnableJanitor(enableJanitor *bool) {
+	o.EnableJanitor = enableJanitor
 }
 
 // WithHelmfileRef adds the helmfileRef to the get API environments v3 params
@@ -806,6 +823,23 @@ func (o *GetAPIEnvironmentsV3Params) WriteToRequest(r runtime.ClientRequest, reg
 		if qDescription != "" {
 
 			if err := r.SetQueryParam("description", qDescription); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.EnableJanitor != nil {
+
+		// query param enableJanitor
+		var qrEnableJanitor bool
+
+		if o.EnableJanitor != nil {
+			qrEnableJanitor = *o.EnableJanitor
+		}
+		qEnableJanitor := swag.FormatBool(qrEnableJanitor)
+		if qEnableJanitor != "" {
+
+			if err := r.SetQueryParam("enableJanitor", qEnableJanitor); err != nil {
 				return err
 			}
 		}
