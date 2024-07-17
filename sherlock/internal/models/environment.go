@@ -52,6 +52,7 @@ type Environment struct {
 	OfflineScheduleEndTime      *string
 	OfflineScheduleEndWeekends  *bool
 	PactIdentifier              *uuid.UUID
+	EnableJanitor               *bool
 }
 
 func (e *Environment) GetCiIdentifier() CiIdentifier {
@@ -284,6 +285,10 @@ func (e *Environment) setCreationDefaults(tx *gorm.DB) error {
 			e.NamePrefixesDomain = template.NamePrefixesDomain
 		}
 
+		if e.EnableJanitor == nil {
+			e.EnableJanitor = template.EnableJanitor
+		}
+
 		if e.Name == "" {
 			if user, err := GetCurrentUserForDB(tx); err != nil {
 				return err
@@ -307,6 +312,15 @@ func (e *Environment) setCreationDefaults(tx *gorm.DB) error {
 
 	if e.DefaultNamespace == "" {
 		e.DefaultNamespace = fmt.Sprintf("terra-%s", e.Name)
+	}
+
+	if e.EnableJanitor == nil {
+		// BEEs may have been filled from templates already, but if not we default here
+		if e.Lifecycle == "dynamic" || e.Lifecycle == "template" {
+			e.EnableJanitor = utils.PointerTo(true)
+		} else {
+			e.EnableJanitor = utils.PointerTo(false)
+		}
 	}
 
 	// Below this point, the fields will almost always be empty, but could still theoretically be set by the requester
