@@ -55,7 +55,7 @@ type EnvironmentV3Edit struct {
 	OfflineScheduleEndEnabled   *bool      `json:"offlineScheduleEndEnabled,omitempty" form:"offlineScheduleEndEnabled"`                   // When enabled, the BEE will be slated to come online around the end time each weekday (each day if weekends enabled)
 	OfflineScheduleEndTime      *time.Time `json:"offlineScheduleEndTime,omitempty" form:"offlineScheduleEndTime"  format:"date-time"`     // Stored with timezone to determine day of the week
 	OfflineScheduleEndWeekends  *bool      `json:"offlineScheduleEndWeekends,omitempty" form:"offlineScheduleEndWeekends"`
-	EnableJanitor               *bool      `json:"enableJanitor,omitempty" form:"enableJanitor"` // If true, janitor resource cleanup will be enabled for this environment. BEEs default to template or true, templates default to true, and static live environments default to false.
+	EnableJanitor               *bool      `json:"enableJanitor,omitempty" form:"enableJanitor"` // If true, janitor resource cleanup will be enabled for this environment. BEEs default to template's value, templates default to true, and static/live environments default to false.
 }
 
 func (e EnvironmentV3) toModel(db *gorm.DB) (models.Environment, error) {
