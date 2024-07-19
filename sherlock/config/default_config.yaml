@@ -69,6 +69,40 @@ db:
     ignoreNotFoundWarning: true
     level: warn
 
+# Configures Sherlock's own OIDC provider, not to be confused with its capability to interpret tokens
+# from IAP or GitHub Actions.
+oidc:
+  enable: true
+  # The issuer URL of Sherlock itself. This should be scheme + host + "/oidc", because Sherlock
+  # serves its own OIDC provider at that sub-path. An example would be
+  # "https://sherlock.dsp-devops-prod.broadinstitute.org/oidc/".
+  issuerUrl: http://localhost:8080/oidc
+  # The key that Sherlock should use to AES-256 encrypt internal data it sends to clients. This is
+  # used in two places by the underlying OIDC library:
+  # 1. Encrypting "{Token.ID}:{User.ID}" to create access tokens returned to clients
+  # 2. Encrypting "{AuthRequest.ID}" to create authorization codes returned to clients
+  # This does need to be rotated but doing so is potentially disruptive; Sherlock will cease
+  # respecting access tokens or authorization codes it has issued.
+  #
+  # Sherlock will error on boot if this doesn't parse from a string to 32 bytes. You'll probably
+  # want to pass this in the environment with SHERLOCK_oidc_encryptionKey.
+  encryptionKey: replace-me-with-32-byte-key-----
+  # The duration that ID and access tokens vended to clients should be valid for.
+  tokenDuration: 15m
+  # The duration that refresh tokens vended to clients should be valid for.
+  refreshTokenDuration: 30m
+  # The duration that a particular signing key should be used before being rotated.
+  signingKeyPrimaryDuration: 4h
+  # The time after which a signing key should be deleted (and its signatures no longer accepted)
+  # after it has been rotated. This should be longer than all token durations so that we
+  # continue to respect our own signatures until they'd expire on their own.
+  signingKeyPostRotationDuration: 2h
+  # When passed, Sherlock will use Google Cloud KMS to symmetrically encrypt the private keys it
+  # stores in its own database. This is a defense-in-depth measure to prevent key leakage in the
+  # event of SQL injection or other database compromise.
+  signingKeyEncryptionKMSKeyName:
+
+
 auth:
   githubActionsOIDC:
     issuer: https://token.actions.githubusercontent.com
