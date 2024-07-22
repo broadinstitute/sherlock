@@ -303,7 +303,7 @@ func (s *storageImpl) GetClientByClientID(_ context.Context, clientID string) (o
 	if err != nil {
 		return nil, fmt.Errorf("failed to get client: %w", err)
 	}
-	return &client, nil
+	return wrapPossibleDevModeClient(client), nil
 }
 
 func (s *storageImpl) AuthorizeClientIDSecret(_ context.Context, clientID, clientSecret string) error {
