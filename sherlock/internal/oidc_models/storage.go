@@ -424,7 +424,8 @@ func (s *storageImpl) GetPrivateClaimsFromScopes(_ context.Context, userID, _ st
 }
 
 func (s *storageImpl) SignatureAlgorithms(_ context.Context) ([]jose.SignatureAlgorithm, error) {
-	return []jose.SignatureAlgorithm{jose.RS256}, nil
+	// See signing_key.go, this is hardcoded
+	return []jose.SignatureAlgorithm{jose.ES512}, nil
 }
 
 func (s *storageImpl) GetKeyByIDAndClientID(_ context.Context, _, _ string) (*jose.JSONWebKey, error) {
