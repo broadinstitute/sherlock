@@ -30,6 +30,9 @@ func initProvider(db *gorm.DB) error {
 	}
 	options := []op.Option{
 		op.WithCORSOptions(nil),
+		// If we expand our usage of the OIDC subsystem such that users need to connect to other endpoints,
+		// we may need to add custom URLs for those endpoints here.
+		op.WithCustomAuthEndpoint(op.NewEndpointWithURL("/authorize", config.Config.String("oidc.publicIssuerUrl")+"/authorize")),
 	}
 	if config.Config.String("mode") == "debug" {
 		options = append(options, op.WithAllowInsecure())
