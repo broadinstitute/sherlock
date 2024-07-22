@@ -15,10 +15,11 @@ type Token struct {
 	ID        uuid.UUID `gorm:"primaryKey"`
 	CreatedAt time.Time
 
-	RefreshToken   *RefreshToken
+	RefreshToken   *RefreshToken `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 	RefreshTokenID *uuid.UUID
 
-	ClientID string // AKA Audience, Application ID
+	Client   *Client `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	ClientID string  // AKA Audience, Application ID
 	Scopes   oidc.SpaceDelimitedArray
 	Expiry   time.Time
 

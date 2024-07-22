@@ -113,7 +113,7 @@ func (s *storageImpl) DeleteAuthRequest(_ context.Context, requestID string) err
 		return fmt.Errorf("failed to parse request UUID: %w", err)
 	}
 	// Auth codes deleted via foreign key cascade
-	err = s.db.Where(&AuthRequest{ID: validRequestUUID}).Omit(clause.Associations).Delete(&AuthRequest{}).Error
+	err = s.db.Omit(clause.Associations).Where(&AuthRequest{ID: validRequestUUID}).Delete(&AuthRequest{}).Error
 	if err != nil {
 		return fmt.Errorf("failed to delete auth request: %w", err)
 	}
@@ -279,7 +279,7 @@ func (s *storageImpl) GetRefreshTokenInfo(_ context.Context, clientID string, to
 
 func (s *storageImpl) SigningKey(_ context.Context) (op.SigningKey, error) {
 	var key SigningKey
-	err := s.db.Order("created_at desc").Omit(clause.Associations).First(&key).Error
+	err := s.db.Omit(clause.Associations).Order("created_at desc").First(&key).Error
 	if err != nil {
 		return nil, fmt.Errorf("failed to get signing key: %w", err)
 	}
@@ -288,7 +288,7 @@ func (s *storageImpl) SigningKey(_ context.Context) (op.SigningKey, error) {
 
 func (s *storageImpl) KeySet(_ context.Context) ([]op.Key, error) {
 	var keys []SigningKey
-	err := s.db.Order("created_at desc").Omit(clause.Associations).Find(&keys).Error
+	err := s.db.Omit(clause.Associations).Order("created_at desc").Find(&keys).Error
 	if err != nil {
 		return nil, fmt.Errorf("failed to get signing keys: %w", err)
 	}
@@ -299,7 +299,7 @@ func (s *storageImpl) KeySet(_ context.Context) ([]op.Key, error) {
 
 func (s *storageImpl) GetClientByClientID(_ context.Context, clientID string) (op.Client, error) {
 	var client Client
-	err := s.db.Where(&Client{ClientID: clientID}).Omit(clause.Associations).Take(&client).Error
+	err := s.db.Omit(clause.Associations).Where(&Client{ID: clientID}).Take(&client).Error
 	if err != nil {
 		return nil, fmt.Errorf("failed to get client: %w", err)
 	}
@@ -308,7 +308,7 @@ func (s *storageImpl) GetClientByClientID(_ context.Context, clientID string) (o
 
 func (s *storageImpl) AuthorizeClientIDSecret(_ context.Context, clientID, clientSecret string) error {
 	var client Client
-	err := s.db.Where(&Client{ClientID: clientID}).Omit(clause.Associations).Take(&client).Error
+	err := s.db.Omit(clause.Associations).Where(&Client{ID: clientID}).Take(&client).Error
 	if err != nil {
 		return fmt.Errorf("failed to get client: %w", err)
 	}

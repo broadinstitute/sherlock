@@ -84,9 +84,10 @@ oidc:
   # This does need to be rotated but doing so is potentially disruptive; Sherlock will cease
   # respecting access tokens or authorization codes it has issued.
   #
-  # Sherlock will error on boot if this doesn't parse from a string to 32 bytes. You'll probably
-  # want to pass this in the environment with SHERLOCK_oidc_encryptionKey.
-  encryptionKey: replace-me-with-32-byte-key-----
+  # Sherlock will error on boot if this doesn't parse from a hex string to 32 bytes. You'll probably
+  # want to pass this in the environment with SHERLOCK_oidc_encryptionKeyHex. It should be passed
+  # in hex format.
+  encryptionKeyHex: 7265706c6163652d6d652d776974682d33322d627974652d6b65792d2d2d2d2d # "replace-me-with-32-byte-key----"
   # The duration that ID and access tokens vended to clients should be valid for.
   tokenDuration: 15m
   # The duration that refresh tokens vended to clients should be valid for.

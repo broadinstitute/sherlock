@@ -21,7 +21,8 @@ type RefreshToken struct {
 
 	TokenHash []byte // SHA-512 hash
 
-	ClientID       string // AKA Audience, Application ID
+	Client         *Client `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	ClientID       string  // AKA Audience, Application ID
 	Scopes         oidc.SpaceDelimitedArray
 	OriginalAuthAt time.Time
 

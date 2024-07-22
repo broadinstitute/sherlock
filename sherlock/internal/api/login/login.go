@@ -8,6 +8,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/oidc_models"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"gorm.io/gorm/clause"
 	"net/http"
 	"time"
 )
@@ -41,9 +42,7 @@ func LoginGet(ctx *gin.Context) {
 		return
 	}
 
-	err = db.Where(&oidc_models.AuthRequest{
-		ID: parsedAuthRequestID,
-	}).Updates(&oidc_models.AuthRequest{
+	err = db.Omit(clause.Associations).Where(&oidc_models.AuthRequest{ID: parsedAuthRequestID}).Updates(&oidc_models.AuthRequest{
 		UserID: &user.ID,
 		DoneAt: sql.NullTime{Time: time.Now(), Valid: true},
 	}).Error
@@ -52,5 +51,5 @@ func LoginGet(ctx *gin.Context) {
 		return
 	}
 
-	ctx.Redirect(http.StatusFound, fmt.Sprintf("/oidc/callback?id=%s", authRequestID))
+	ctx.Redirect(http.StatusFound, fmt.Sprintf("/oidc/authorize/callback?id=%s", authRequestID))
 }

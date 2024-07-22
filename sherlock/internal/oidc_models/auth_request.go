@@ -18,7 +18,8 @@ type AuthRequest struct {
 	CreatedAt time.Time
 	DoneAt    sql.NullTime
 
-	ClientID     string // AKA Audience, Application ID
+	Client       *Client `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	ClientID     string  // AKA Audience, Application ID
 	Nonce        string
 	RedirectURI  string            // AKA CallbackURI
 	ResponseType oidc.ResponseType `gorm:"string"`

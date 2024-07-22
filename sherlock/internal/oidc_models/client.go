@@ -11,7 +11,7 @@ import (
 var _ op.Client = &Client{}
 
 type Client struct {
-	ClientID                     string                   `gorm:"primaryKey"`
+	ID                           string                   `gorm:"primaryKey"`
 	ClientSecretHash             []byte                   // PBKDF2 derived key, HMAC-SHA-512; should be empty for PKCE; Sherlock will derive the same number of bytes as the length of this field automatically
 	ClientSecretSalt             []byte                   // Salt for ClientSecretHash; should be empty for PKCE
 	ClientSecretIterations       int                      // Number of iterations for ClientSecretHash; should be empty for PKCE
@@ -25,7 +25,7 @@ type Client struct {
 }
 
 func (c *Client) GetID() string {
-	return c.ClientID
+	return c.ID
 }
 
 func (c *Client) RedirectURIs() []string {
