@@ -70,7 +70,14 @@ func (c *Client) DevMode() bool {
 }
 
 func (c *Client) IDTokenUserinfoClaimsAssertion() bool {
-	return false
+	// It technically violates spec to return userinfo claims in ID tokens when an access token is provided.
+	// The caller is expected to call the userinfo endpoint with the access token to get the userinfo data.
+	// But... Dex supports and actually expects these claims in the initial ID token. It can be configured
+	// to call the userinfo endpoint, but why make the extra roundtrip?
+	//
+	// In the future we could always have this be a bool field on Client itself to customize the behavior
+	// per client.
+	return true
 }
 
 func (c *Client) ClockSkew() time.Duration {
