@@ -73,9 +73,9 @@ func suspendRoleAssignments(ctx context.Context, db *gorm.DB) error {
 							Suspended: utils.PointerTo(false),
 						},
 					}).Error; err != nil {
-						errors = append(errors, fmt.Errorf("failed to un-suspend %s's assignment for %s: %w", assignment.User.NameOrEmailHandle(), *role.Name, err))
+						errors = append(errors, fmt.Errorf("failed to un-suspend %s's assignment for %s: %w", assignment.User.NameOrUsername(), *role.Name, err))
 					} else {
-						summaries = append(summaries, fmt.Sprintf("un-suspended %s's assignment for %s", assignment.User.NameOrEmailHandle(), *role.Name))
+						summaries = append(summaries, fmt.Sprintf("un-suspended %s's assignment for %s", assignment.User.NameOrUsername(), *role.Name))
 					}
 				} else if !suitable && (assignment.Suspended == nil || !*assignment.Suspended) {
 					roleIDsRequiringPropagation[roleID] = struct{}{}
@@ -84,9 +84,9 @@ func suspendRoleAssignments(ctx context.Context, db *gorm.DB) error {
 							Suspended: utils.PointerTo(true),
 						},
 					}).Error; err != nil {
-						errors = append(errors, fmt.Errorf("failed to suspend %s's assignment for %s: %w", assignment.User.NameOrEmailHandle(), *role.Name, err))
+						errors = append(errors, fmt.Errorf("failed to suspend %s's assignment for %s: %w", assignment.User.NameOrUsername(), *role.Name, err))
 					} else {
-						summaries = append(summaries, fmt.Sprintf("suspended %s's assignment for %s", assignment.User.NameOrEmailHandle(), *role.Name))
+						summaries = append(summaries, fmt.Sprintf("suspended %s's assignment for %s", assignment.User.NameOrUsername(), *role.Name))
 					}
 				}
 			}

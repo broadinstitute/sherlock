@@ -153,11 +153,11 @@ func (u *User) AlphaNumericHyphenatedUsername() string {
 	return string(ret)
 }
 
-func (u *User) NameOrEmailHandle() string {
+func (u *User) NameOrUsername() string {
 	if u.Name != nil {
 		return *u.Name
 	} else {
-		return strings.Split(u.Email, "@")[0]
+		return u.AlphaNumericHyphenatedUsername()
 	}
 }
 
@@ -165,7 +165,7 @@ func (u *User) SlackReference(mention bool) string {
 	if u.SlackID != nil && mention {
 		return fmt.Sprintf("<@%s>", *u.SlackID)
 	} else {
-		return fmt.Sprintf("<https://broad.io/beehive/r/user/%s|%s>", u.Email, u.NameOrEmailHandle())
+		return fmt.Sprintf("<https://broad.io/beehive/r/user/%s|%s>", u.Email, u.NameOrUsername())
 	}
 }
 

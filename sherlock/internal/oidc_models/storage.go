@@ -549,8 +549,8 @@ func (s *storageImpl) setUserinfo(userInfo *oidc.UserInfo, userID uint, scopes [
 			userInfo.Email = user.Email
 			userInfo.EmailVerified = true
 		case oidc.ScopeProfile:
+			userInfo.Nickname = user.NameOrUsername()
 			userInfo.PreferredUsername = user.AlphaNumericHyphenatedUsername()
-			userInfo.Nickname = user.NameOrEmailHandle()
 			userInfo.Locale = oidc.NewLocale(language.AmericanEnglish)
 			userInfo.UpdatedAt = oidc.FromTime(user.UpdatedAt)
 			if user.Name != nil {
