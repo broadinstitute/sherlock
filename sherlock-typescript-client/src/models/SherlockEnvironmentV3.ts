@@ -111,6 +111,12 @@ export interface SherlockEnvironmentV3 {
      */
     description?: string;
     /**
+     * If true, janitor resource cleanup will be enabled for this environment. BEEs default to template's value, templates default to true, and static/live environments default to false.
+     * @type {boolean}
+     * @memberof SherlockEnvironmentV3
+     */
+    enableJanitor?: boolean;
+    /**
      * 
      * @type {string}
      * @memberof SherlockEnvironmentV3
@@ -289,6 +295,7 @@ export function SherlockEnvironmentV3FromJSONTyped(json: any, ignoreDiscriminato
         'defaultNamespace': json['defaultNamespace'] == null ? undefined : json['defaultNamespace'],
         'deleteAfter': json['deleteAfter'] == null ? undefined : (new Date(json['deleteAfter'])),
         'description': json['description'] == null ? undefined : json['description'],
+        'enableJanitor': json['enableJanitor'] == null ? undefined : json['enableJanitor'],
         'helmfileRef': json['helmfileRef'] == null ? undefined : json['helmfileRef'],
         'id': json['id'] == null ? undefined : json['id'],
         'lifecycle': json['lifecycle'] == null ? undefined : json['lifecycle'],
@@ -333,6 +340,7 @@ export function SherlockEnvironmentV3ToJSON(value?: SherlockEnvironmentV3 | null
         'defaultNamespace': value['defaultNamespace'],
         'deleteAfter': value['deleteAfter'] == null ? undefined : ((value['deleteAfter']).toISOString()),
         'description': value['description'],
+        'enableJanitor': value['enableJanitor'],
         'helmfileRef': value['helmfileRef'],
         'id': value['id'],
         'lifecycle': value['lifecycle'],

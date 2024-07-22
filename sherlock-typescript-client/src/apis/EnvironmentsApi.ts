@@ -40,6 +40,7 @@ export interface ApiEnvironmentsV3GetRequest {
     defaultNamespace?: string;
     deleteAfter?: Date;
     description?: string;
+    enableJanitor?: boolean;
     helmfileRef?: string;
     id?: number;
     lifecycle?: string;
@@ -124,6 +125,10 @@ export class EnvironmentsApi extends runtime.BaseAPI {
 
         if (requestParameters['description'] != null) {
             queryParameters['description'] = requestParameters['description'];
+        }
+
+        if (requestParameters['enableJanitor'] != null) {
+            queryParameters['enableJanitor'] = requestParameters['enableJanitor'];
         }
 
         if (requestParameters['helmfileRef'] != null) {

@@ -4961,6 +4961,12 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "boolean",
+                        "description": "If true, janitor resource cleanup will be enabled for this environment. BEEs default to template's value, templates default to true, and static/live environments default to false.",
+                        "name": "enableJanitor",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "default": "HEAD",
                         "name": "helmfileRef",
@@ -9150,6 +9156,10 @@ const docTemplate = `{
                 "description": {
                     "type": "string"
                 },
+                "enableJanitor": {
+                    "description": "If true, janitor resource cleanup will be enabled for this environment. BEEs default to template's value, templates default to true, and static/live environments default to false.",
+                    "type": "boolean"
+                },
                 "helmfileRef": {
                     "type": "string",
                     "default": "HEAD"
@@ -9278,6 +9288,10 @@ const docTemplate = `{
                 "description": {
                     "type": "string"
                 },
+                "enableJanitor": {
+                    "description": "If true, janitor resource cleanup will be enabled for this environment. BEEs default to template's value, templates default to true, and static/live environments default to false.",
+                    "type": "boolean"
+                },
                 "helmfileRef": {
                     "type": "string",
                     "default": "HEAD"
@@ -9373,6 +9387,10 @@ const docTemplate = `{
                 },
                 "description": {
                     "type": "string"
+                },
+                "enableJanitor": {
+                    "description": "If true, janitor resource cleanup will be enabled for this environment. BEEs default to template's value, templates default to true, and static/live environments default to false.",
+                    "type": "boolean"
                 },
                 "helmfileRef": {
                     "type": "string",

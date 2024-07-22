@@ -2,8 +2,10 @@ module github.com/broadinstitute/sherlock/sherlock
 
 go 1.22
 
+toolchain go1.22.5
+
 require (
-	cloud.google.com/go/cloudsqlconn v1.11.0
+	cloud.google.com/go/cloudsqlconn v1.11.1
 	cloud.google.com/go/kms v1.18.3
 	contrib.go.opencensus.io/exporter/prometheus v0.4.2
 	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.7.0
@@ -22,11 +24,11 @@ require (
 	github.com/jackc/pgx/v5 v5.6.0
 	github.com/jinzhu/copier v0.4.0
 	github.com/knadh/koanf v1.5.0
-	github.com/microsoftgraph/msgraph-sdk-go v1.45.0
-	github.com/pact-foundation/pact-go/v2 v2.0.5
+	github.com/microsoftgraph/msgraph-sdk-go v1.46.0
+	github.com/pact-foundation/pact-go/v2 v2.0.6
 	github.com/rs/zerolog v1.33.0
 	github.com/sanity-io/litter v1.5.5
-	github.com/slack-go/slack v0.13.0
+	github.com/slack-go/slack v0.13.1
 	github.com/stretchr/testify v1.9.0
 	github.com/swaggo/files v1.0.1
 	github.com/swaggo/gin-swagger v1.6.0
@@ -41,7 +43,7 @@ require (
 	google.golang.org/api v0.188.0
 	gorm.io/datatypes v1.2.1
 	gorm.io/driver/postgres v1.5.9
-	gorm.io/gorm v1.25.10
+	gorm.io/gorm v1.25.11
 )
 
 replace github.com/broadinstitute/sherlock/go-shared => ../go-shared
@@ -54,8 +56,8 @@ require (
 	cloud.google.com/go/iam v1.1.10 // indirect
 	cloud.google.com/go/longrunning v0.5.9 // indirect
 	filippo.io/edwards25519 v1.1.0 // indirect
-	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.11.1 // indirect
-	github.com/Azure/azure-sdk-for-go/sdk/internal v1.8.0 // indirect
+	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.12.0 // indirect
+	github.com/Azure/azure-sdk-for-go/sdk/internal v1.9.0 // indirect
 	github.com/AzureAD/microsoft-authentication-library-for-go v1.2.2 // indirect
 	github.com/KyleBanks/depth v1.2.1 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
@@ -96,7 +98,7 @@ require (
 	github.com/gorilla/websocket v1.4.2 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
-	github.com/hashicorp/go-version v1.6.0 // indirect
+	github.com/hashicorp/go-version v1.7.0 // indirect
 	github.com/hashicorp/logutils v1.0.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
@@ -114,7 +116,7 @@ require (
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.4 // indirect
-	github.com/microsoft/kiota-abstractions-go v1.6.0 // indirect
+	github.com/microsoft/kiota-abstractions-go v1.6.1 // indirect
 	github.com/microsoft/kiota-authentication-azure-go v1.0.2 // indirect
 	github.com/microsoft/kiota-http-go v1.3.1 // indirect
 	github.com/microsoft/kiota-serialization-form-go v1.0.0 // indirect
@@ -141,9 +143,9 @@ require (
 	github.com/rs/cors v1.11.0 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/spf13/afero v1.11.0 // indirect
-	github.com/spf13/cobra v1.8.0 // indirect
+	github.com/spf13/cobra v1.8.1 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
-	github.com/std-uritemplate/std-uritemplate/go v0.0.55 // indirect
+	github.com/std-uritemplate/std-uritemplate/go v0.0.57 // indirect
 	github.com/stretchr/objx v0.5.2 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.12 // indirect
@@ -162,7 +164,7 @@ require (
 	golang.org/x/tools v0.21.1-0.20240508182429-e35e4ccd0d2d // indirect
 	google.golang.org/genproto v0.0.0-20240708141625-4ad9e859172b // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20240701130421-f6361c86f094 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20240708141625-4ad9e859172b // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20240709173604-40e1e62336c5 // indirect
 	google.golang.org/grpc v1.64.1 // indirect
 	google.golang.org/protobuf v1.34.2 // indirect
 	gopkg.in/square/go-jose.v2 v2.5.1 // indirect

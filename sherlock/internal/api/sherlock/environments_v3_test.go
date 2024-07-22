@@ -173,6 +173,7 @@ func (s *handlerSuite) TestEnvironmentV3_toModel() {
 						OfflineScheduleEndEnabled:   utils.PointerTo(true),
 						OfflineScheduleEndTime:      utils.PointerTo(now),
 						OfflineScheduleEndWeekends:  utils.PointerTo(true),
+						EnableJanitor:               utils.PointerTo(true),
 					},
 				},
 			},
@@ -212,6 +213,7 @@ func (s *handlerSuite) TestEnvironmentV3_toModel() {
 				OfflineScheduleEndTime:      utils.TimePtrToISO8601(&now),
 				OfflineScheduleEndWeekends:  utils.PointerTo(true),
 				PactIdentifier:              &pactUuid,
+				EnableJanitor:               utils.PointerTo(true),
 			},
 		},
 		{
@@ -249,6 +251,7 @@ func (s *handlerSuite) TestEnvironmentV3_toModel() {
 						OfflineScheduleEndEnabled:   utils.PointerTo(true),
 						OfflineScheduleEndTime:      utils.PointerTo(now),
 						OfflineScheduleEndWeekends:  utils.PointerTo(true),
+						EnableJanitor:               utils.PointerTo(true),
 					},
 				},
 			},
@@ -287,6 +290,7 @@ func (s *handlerSuite) TestEnvironmentV3_toModel() {
 				OfflineScheduleEndTime:      utils.TimePtrToISO8601(&now),
 				OfflineScheduleEndWeekends:  utils.PointerTo(true),
 				PactIdentifier:              &pactUuid,
+				EnableJanitor:               utils.PointerTo(true),
 			},
 		},
 	}
@@ -367,6 +371,7 @@ func Test_environmentFromModel(t *testing.T) {
 				OfflineScheduleEndTime:      utils.TimePtrToISO8601(&now),
 				OfflineScheduleEndWeekends:  utils.PointerTo(true),
 				PactIdentifier:              &pactUuid,
+				EnableJanitor:               utils.PointerTo(true),
 			}},
 			want: EnvironmentV3{
 				CommonFields: CommonFields{
@@ -409,6 +414,7 @@ func Test_environmentFromModel(t *testing.T) {
 						OfflineScheduleEndEnabled:   utils.PointerTo(true),
 						OfflineScheduleEndTime:      nowTimeParsedAgain,
 						OfflineScheduleEndWeekends:  utils.PointerTo(true),
+						EnableJanitor:               utils.PointerTo(true),
 					},
 				},
 			},

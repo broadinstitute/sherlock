@@ -1039,6 +1039,11 @@ definitions:
         type: string
       description:
         type: string
+      enableJanitor:
+        description: If true, janitor resource cleanup will be enabled for this environment.
+          BEEs default to template's value, templates default to true, and static/live
+          environments default to false.
+        type: boolean
       helmfileRef:
         default: HEAD
         type: string
@@ -1140,6 +1145,11 @@ definitions:
         type: string
       description:
         type: string
+      enableJanitor:
+        description: If true, janitor resource cleanup will be enabled for this environment.
+          BEEs default to template's value, templates default to true, and static/live
+          environments default to false.
+        type: boolean
       helmfileRef:
         default: HEAD
         type: string
@@ -1217,6 +1227,11 @@ definitions:
         type: string
       description:
         type: string
+      enableJanitor:
+        description: If true, janitor resource cleanup will be enabled for this environment.
+          BEEs default to template's value, templates default to true, and static/live
+          environments default to false.
+        type: boolean
       helmfileRef:
         default: HEAD
         type: string
@@ -5152,6 +5167,12 @@ paths:
       - in: query
         name: description
         type: string
+      - description: If true, janitor resource cleanup will be enabled for this environment.
+          BEEs default to template's value, templates default to true, and static/live
+          environments default to false.
+        in: query
+        name: enableJanitor
+        type: boolean
       - default: HEAD
         in: query
         name: helmfileRef
