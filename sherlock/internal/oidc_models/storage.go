@@ -549,12 +549,15 @@ func (s *storageImpl) setUserinfo(userInfo *oidc.UserInfo, userID uint, scopes [
 			userInfo.Email = user.Email
 			userInfo.EmailVerified = true
 		case oidc.ScopeProfile:
+			// Downstream systems expect consistent claims. We can get away with passing GivenName and FamilyName
+			// conditionally, but for Name it's worth it to always pass it, even if we potentially have to pass
+			// an ugly-looking email handle.
+			userInfo.Name = user.NameOrUsername()
 			userInfo.Nickname = user.NameOrUsername()
 			userInfo.PreferredUsername = user.AlphaNumericHyphenatedUsername()
 			userInfo.Locale = oidc.NewLocale(language.AmericanEnglish)
 			userInfo.UpdatedAt = oidc.FromTime(user.UpdatedAt)
 			if user.Name != nil {
-				userInfo.Name = *user.Name
 				nameParts := strings.Split(*user.Name, " ")
 				if len(nameParts) > 0 {
 					userInfo.GivenName = nameParts[0]
