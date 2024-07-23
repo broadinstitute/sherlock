@@ -14,7 +14,7 @@ type Client struct {
 	ID                           string                   `gorm:"primaryKey"`
 	ClientSecretHash             []byte                   // PBKDF2 derived key, HMAC-SHA-512; should be empty for PKCE; Sherlock will derive the same number of bytes as the length of this field automatically
 	ClientSecretSalt             []byte                   // Salt for ClientSecretHash; should be empty for PKCE
-	ClientSecretIterations       int                      // Number of iterations for ClientSecretHash; should be empty for PKCE
+	ClientSecretIterations       int                      // Number of iterations for ClientSecretHash; should be empty for PKCE. https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html#pbkdf2
 	ClientRedirectURIs           oidc.SpaceDelimitedArray // In dev mode, may include globs or use http
 	ClientPostLogoutRedirectURIs oidc.SpaceDelimitedArray // In dev mode, may include globs or use http
 	ClientApplicationType        op.ApplicationType       // "web", "user_agent", or "native"
