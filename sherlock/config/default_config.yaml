@@ -109,10 +109,14 @@ oidc:
   # after it has been rotated. This should be longer than all token durations so that we
   # continue to respect our own signatures until they'd expire on their own.
   signingKeyPostRotationDuration: 2h
-  # When passed, Sherlock will use Google Cloud KMS to symmetrically encrypt the private keys it
-  # stores in its own database. This is a defense-in-depth measure to prevent key leakage in the
-  # event of SQL injection or other database compromise.
-  signingKeyEncryptionKMSKeyName:
+  # When enabled, Sherlock will use Google Cloud KMS to symmetrically encrypt the private keys
+  # it stores in its own database. This is a defense-in-depth measure to prevent key leakage in
+  # the event of SQL injection or other database compromise.
+  #
+  # This must be true when mode is not "debug".
+  signingKeyEncryptionKMSEnable: false
+  # The fully-qualified name of the KMS key to use when signingKeyEncryptionKMSEnable is true.
+  signingKeyEncryptionKMSKeyName: projects/some-project/locations/some-location/keyRings/some-key-ring/cryptoKeys/some-key
 
 
 auth:

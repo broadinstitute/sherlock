@@ -17,9 +17,9 @@ var (
 )
 
 func Init(ctx context.Context, db *gorm.DB) error {
-	kmsKey = config.Config.String("oidc.signingKeyEncryptionKMSKeyName")
-	var err error
-	if kmsKey != "" {
+	if config.Config.Bool("oidc.signingKeyEncryptionKMSEnable") {
+		kmsKey = config.Config.String("oidc.signingKeyEncryptionKMSKeyName")
+		var err error
 		kmsClient, err = kms.NewKeyManagementClient(ctx)
 		if err != nil {
 			return fmt.Errorf("error creating KMS client: %w", err)
@@ -32,10 +32,14 @@ func Init(ctx context.Context, db *gorm.DB) error {
 		} else if response.Purpose != kmspb.CryptoKey_ENCRYPT_DECRYPT {
 			return fmt.Errorf("KMS key '%s' is not an encrypt/decrypt key", kmsKey)
 		}
+	} else if config.Config.String("mode") != "debug" {
+		return fmt.Errorf("oidc.signingKeyEncryptionKMSEnable is false, but mode is not debug")
 	}
-	if err = rotateSigningKeys(ctx, db); err != nil {
+
+	if err := rotateSigningKeys(ctx, db); err != nil {
 		return fmt.Errorf("error rotating oidc signing keys: %w", err)
 	}
+
 	return initProvider(db)
 }
 
