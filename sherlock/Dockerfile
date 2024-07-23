@@ -13,6 +13,11 @@ RUN go mod download && go mod verify
 COPY sherlock ./
 RUN go build -buildvcs=false -ldflags="-X 'github.com/broadinstitute/sherlock/go-shared/pkg/version.BuildVersion=${BUILD_VERSION}'" -o /bin/sherlock ./cmd/...
 
+# Check that the binary is FIPS-capable, fail if not
+RUN go get github.com/acardace/fips-detect && \
+    go run github.com/acardace/fips-detect /bin/sherlock \
+    | grep -E 'FIPS-capable Go binary.*Yes'
+
 # https://mcr.microsoft.com/en-us/product/cbl-mariner/distroless/minimal/about
 FROM mcr.microsoft.com/cbl-mariner/distroless/base:2.0-nonroot AS runtime
 
