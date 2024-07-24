@@ -267,6 +267,18 @@ argoCd:
   environmentUrlFormatString: https://argocd.dsp-devops-prod.broadinstitute.org/applications?showFavorites=false&proj=&sync=&health=&namespace=&cluster=&labels=env%%253D%s
 
 model:
+  roles:
+    # When set, Sherlock won't ever report an Environment/Cluster RequiredRole field as being null.
+    # Instead, it will substitute this value in its place (even though it won't be stored in the database).
+    # This can be useful in that it means downstream consumers don't need null handling like
+    # `requiredRole ?? "all-users"`. While that's simple, it's actually easier at a security/compliance
+    # level to say that Sherlock defines it and anything else uses it verbatim. (This was a specific
+    # request from appsec for this reason`.)
+    #
+    # Even if this is set, Sherlock will allow setting the field to empty to clear it out -- but will then
+    # respond in the API as if it's been set to this value. Note that the role set here needs to already
+    # exist or downstream consumers could have issues.
+    substituteEmptyRequiredRoleWithValue: all-users
   environments:
     templates:
       # Uses appVersionResolver = "none", chartVersionResolver = "latest", and helmfileRef = "HEAD"

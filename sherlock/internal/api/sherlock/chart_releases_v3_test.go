@@ -3,6 +3,7 @@ package sherlock
 import (
 	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
+	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/gorm"
@@ -411,8 +412,8 @@ func Test_chartReleaseFromModel(t *testing.T) {
 				},
 				CiIdentifier:             &CiIdentifierV3{CommonFields: CommonFields{ID: 2}},
 				ChartInfo:                &ChartV3{CommonFields: CommonFields{ID: 3}, ChartV3Create: ChartV3Create{Name: "leonardo"}},
-				ClusterInfo:              &ClusterV3{CommonFields: CommonFields{ID: 4}, ClusterV3Create: ClusterV3Create{Name: "terra-prod"}},
-				EnvironmentInfo:          &EnvironmentV3{CommonFields: CommonFields{ID: 5}, EnvironmentV3Create: EnvironmentV3Create{Name: "prod"}},
+				ClusterInfo:              &ClusterV3{CommonFields: CommonFields{ID: 4}, ClusterV3Create: ClusterV3Create{Name: "terra-prod", ClusterV3Edit: ClusterV3Edit{RequiredRole: utils.PointerTo(config.Config.String("model.roles.substituteEmptyRequiredRoleWithValue"))}}},
+				EnvironmentInfo:          &EnvironmentV3{CommonFields: CommonFields{ID: 5}, EnvironmentV3Create: EnvironmentV3Create{Name: "prod", EnvironmentV3Edit: EnvironmentV3Edit{RequiredRole: utils.PointerTo(config.Config.String("model.roles.substituteEmptyRequiredRoleWithValue"))}}},
 				AppVersionReference:      "leonardo/v1.0.0",
 				AppVersionInfo:           &AppVersionV3{CommonFields: CommonFields{ID: 8}, AppVersionV3Create: AppVersionV3Create{AppVersion: "v1.0.0"}},
 				ChartVersionReference:    "leonardo/2.0.0",

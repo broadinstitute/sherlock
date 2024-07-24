@@ -3,6 +3,7 @@ package sherlock
 import (
 	"database/sql"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
+	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
@@ -326,7 +327,13 @@ func Test_environmentFromModel(t *testing.T) {
 		{
 			name: "empty",
 			args: args{},
-			want: EnvironmentV3{},
+			want: EnvironmentV3{
+				EnvironmentV3Create: EnvironmentV3Create{
+					EnvironmentV3Edit: EnvironmentV3Edit{
+						RequiredRole: utils.PointerTo(config.Config.String("model.roles.substituteEmptyRequiredRoleWithValue")),
+					},
+				},
+			},
 		},
 		{
 			name: "full",
@@ -380,8 +387,8 @@ func Test_environmentFromModel(t *testing.T) {
 					UpdatedAt: now.Add(-time.Minute),
 				},
 				CiIdentifier:             &CiIdentifierV3{CommonFields: CommonFields{ID: 2}},
-				TemplateEnvironmentInfo:  &EnvironmentV3{CommonFields: CommonFields{ID: 3}, EnvironmentV3Create: EnvironmentV3Create{Name: "name-3"}},
-				DefaultClusterInfo:       &ClusterV3{CommonFields: CommonFields{ID: 4}, ClusterV3Create: ClusterV3Create{Name: "name-4"}},
+				TemplateEnvironmentInfo:  &EnvironmentV3{CommonFields: CommonFields{ID: 3}, EnvironmentV3Create: EnvironmentV3Create{Name: "name-3", EnvironmentV3Edit: EnvironmentV3Edit{RequiredRole: utils.PointerTo(config.Config.String("model.roles.substituteEmptyRequiredRoleWithValue"))}}},
+				DefaultClusterInfo:       &ClusterV3{CommonFields: CommonFields{ID: 4}, ClusterV3Create: ClusterV3Create{Name: "name-4", ClusterV3Edit: ClusterV3Edit{RequiredRole: utils.PointerTo(config.Config.String("model.roles.substituteEmptyRequiredRoleWithValue"))}}},
 				PagerdutyIntegrationInfo: &PagerdutyIntegrationV3{CommonFields: CommonFields{ID: 6}, PagerdutyID: "blah"},
 				OwnerInfo: &UserV3{CommonFields: CommonFields{ID: 5}, Email: "example@example.com", Suitable: utils.PointerTo(false),
 					SuitabilityDescription: utils.PointerTo("no matching suitability record found or loaded; assuming unsuitable")},
@@ -428,6 +435,7 @@ func Test_environmentFromModel(t *testing.T) {
 				EnvironmentV3Create: EnvironmentV3Create{
 					EnvironmentV3Edit: EnvironmentV3Edit{
 						PagerdutyIntegration: utils.PointerTo("6"),
+						RequiredRole:         utils.PointerTo(config.Config.String("model.roles.substituteEmptyRequiredRoleWithValue")),
 					},
 				},
 			},

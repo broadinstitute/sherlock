@@ -3,6 +3,7 @@ package sherlock
 import (
 	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
+	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/gin-gonic/gin"
@@ -182,7 +183,9 @@ func (s *handlerSuite) TestClusterV3Edit_clearRequiredRole() {
 		}),
 		&got)
 	s.Equal(http.StatusOK, code)
-	s.Nil(got.RequiredRole)
+	if s.NotNil(got.RequiredRole) {
+		s.Equal(config.Config.String("model.roles.substituteEmptyRequiredRoleWithValue"), *got.RequiredRole)
+	}
 	var inDB models.Cluster
 	s.NoError(s.DB.First(&inDB, toEdit.ID).Error)
 	s.Nil(inDB.RequiredRoleID)
