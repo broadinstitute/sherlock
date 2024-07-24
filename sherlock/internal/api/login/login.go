@@ -42,7 +42,7 @@ func LoginGet(ctx *gin.Context) {
 		return
 	}
 
-	err = db.Omit(clause.Associations).Where(&oidc_models.AuthRequest{ID: parsedAuthRequestID}).Updates(&oidc_models.AuthRequest{
+	err = db.Omit(clause.Associations).Where(&oidc_models.AuthRequest{ID: parsedAuthRequestID}).Where("done_at is null").Updates(&oidc_models.AuthRequest{
 		UserID: &user.ID,
 		DoneAt: sql.NullTime{Time: time.Now(), Valid: true},
 	}).Error
