@@ -278,7 +278,7 @@ model:
     # Even if this is set, Sherlock will allow setting the field to empty to clear it out -- but will then
     # respond in the API as if it's been set to this value. Note that the role set here needs to already
     # exist or downstream consumers could have issues.
-    substituteEmptyRequiredRoleWithValue: all-users
+    substituteEmptyRequiredRoleWithValue:
   environments:
     templates:
       # Uses appVersionResolver = "none", chartVersionResolver = "latest", and helmfileRef = "HEAD"
