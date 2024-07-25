@@ -311,6 +311,7 @@ func (s *handlerSuite) TestEnvironmentV3_toModel() {
 }
 
 func Test_environmentFromModel(t *testing.T) {
+	config.LoadTestConfig()
 	now := time.Now()
 	nowString := utils.TimePtrToISO8601(&now)
 	nowTimeParsedAgain, err := utils.ISO8601PtrToTime(nowString)

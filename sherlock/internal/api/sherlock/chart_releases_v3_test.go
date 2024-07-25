@@ -346,6 +346,7 @@ func (s *handlerSuite) TestChartReleaseV3_toModel() {
 }
 
 func Test_chartReleaseFromModel(t *testing.T) {
+	config.LoadTestConfig()
 	now := time.Now()
 	type args struct {
 		model models.ChartRelease

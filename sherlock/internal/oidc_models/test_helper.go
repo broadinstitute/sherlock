@@ -38,6 +38,9 @@ func (h TestClientHelper) GenerateClient(db *gorm.DB) (clientID string, clientSe
 
 	clientSecretSalt := make([]byte, 32)
 	_, err = rand.Read(clientSecretSalt)
+	if err != nil {
+		return "", "", err
+	}
 
 	testClientHashIterations := 1_000 // Low low low value!!! Needs to be 210_000+ in production, this just makes tests run faster
 	clientSecretHash := pbkdf2.Key([]byte(clientSecret), clientSecretSalt, testClientHashIterations, 32, sha512.New)
