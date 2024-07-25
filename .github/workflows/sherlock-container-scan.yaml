@@ -9,7 +9,6 @@ on:
         default: 'latest'
   schedule:
     - cron: '0 0 * * 0'
-  push:
 
 jobs:
   scan:
@@ -40,6 +39,6 @@ jobs:
   report-workflow:
     uses: ./.github/workflows/client-report-workflow.yaml
     with:
-      notify-slack-channels-upon-workflow-completion: "#trivy-weekly-scans-notblessedimages"
+      notify-slack-channels-upon-workflow-failure: "#trivy-weekly-scans-notblessedimages"
     permissions:
       id-token: write
