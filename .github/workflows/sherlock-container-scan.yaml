@@ -9,7 +9,6 @@ on:
         default: 'latest'
   schedule:
     - cron: '0 0 * * 0'
-  push: # temporary for testing
 
 jobs:
   scan:
