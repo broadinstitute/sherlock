@@ -44,6 +44,8 @@ pactbroker:
   enable: false
 
 model:
+  roles:
+    substituteEmptyRequiredRoleWithValue: all-users
   environments:
     templates:
       autoPopulateCharts:

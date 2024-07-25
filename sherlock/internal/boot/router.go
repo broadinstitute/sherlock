@@ -6,6 +6,7 @@ import (
 	"github.com/broadinstitute/sherlock/go-shared/pkg/version"
 	"github.com/broadinstitute/sherlock/sherlock/docs"
 	"github.com/broadinstitute/sherlock/sherlock/html"
+	"github.com/broadinstitute/sherlock/sherlock/internal/api/login"
 	"github.com/broadinstitute/sherlock/sherlock/internal/api/misc"
 	"github.com/broadinstitute/sherlock/sherlock/internal/api/sherlock"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
@@ -16,11 +17,13 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/csrf_protection"
 	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/headers"
 	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/logger"
+	"github.com/broadinstitute/sherlock/sherlock/internal/oidc_models"
 	"github.com/gin-gonic/gin"
 	swaggo_files "github.com/swaggo/files"
 	swaggo_gin "github.com/swaggo/gin-swagger"
 	"gorm.io/gorm"
 	"net/http"
+	"strings"
 )
 
 //	@title			Sherlock
@@ -57,6 +60,10 @@ func BuildRouter(ctx context.Context, db *gorm.DB) *gin.Engine {
 		cors.Cors(),
 		headers.Headers())
 
+	resourceMiddleware := make(gin.HandlersChain, 0)
+	resourceMiddleware = append(resourceMiddleware, csrf_protection.CsrfProtection())
+	resourceMiddleware = append(resourceMiddleware, authentication.Middleware(db)...)
+
 	// Replace Gin's standard fallback responses with our standard error format for friendlier client behavior
 	router.NoRoute(func(ctx *gin.Context) {
 		errors.AbortRequest(ctx, fmt.Errorf("(%s) no handler for %s found", errors.NotFound, ctx.Request.URL.Path))
@@ -80,16 +87,27 @@ func BuildRouter(ctx context.Context, db *gorm.DB) *gin.Engine {
 	}))
 	router.GET("", func(ctx *gin.Context) { ctx.Redirect(http.StatusMovedPermanently, "/swagger/index.html") })
 
+	if config.Config.Bool("oidc.enable") {
+		// delegate /oidc/* to OIDC library, trimming the path prefix because of how the library expects to receive requests
+		// https://broadinstitute.slack.com/archives/CQ6SL4N5T/p1721406732128199
+		router.Any("/oidc/*any", func(ctx *gin.Context) {
+			req := ctx.Request.Clone(ctx)
+			req.RequestURI = strings.TrimPrefix(req.RequestURI, "/oidc")
+			req.URL.Path = strings.TrimPrefix(req.URL.Path, "/oidc")
+			oidc_models.Provider.ServeHTTP(ctx.Writer, req)
+		})
+		// authenticate /login handler to complete OIDC auth requests
+		router.GET("/login", append(resourceMiddleware, login.LoginGet)...)
+	}
+
 	// routes under /api require authentication and may use the database
-	apiRouter := router.Group("api")
-	apiRouter.Use(csrf_protection.CsrfProtection())
-	apiRouter.Use(authentication.Middleware(db)...)
+	apiRouter := router.Group("/api", resourceMiddleware...)
 
 	// refactored sherlock API, under /api/{type}/v3
 	sherlock.ConfigureRoutes(apiRouter)
 
 	// special error for the removed "v2" API, under /api/v2/{type}
-	apiRouter.Any("v2/*path", func(ctx *gin.Context) {
+	apiRouter.Any("/v2/*path", func(ctx *gin.Context) {
 		errors.AbortRequest(ctx, fmt.Errorf("(%s) sherlock's v2 API has been removed; reach out to #dsp-devops-champions for help updating your client", errors.NotFound))
 	})
 

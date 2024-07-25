@@ -3,6 +3,7 @@ package sherlock
 import (
 	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
+	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"gorm.io/gorm"
 )
@@ -90,6 +91,8 @@ func clusterFromModel(model models.Cluster) ClusterV3 {
 		ret.RequiredRole = model.RequiredRole.Name
 	} else if model.RequiredRoleID != nil {
 		ret.RequiredRole = utils.PointerTo(utils.UintToString(*model.RequiredRoleID))
+	} else if substituteEmptyRole := config.Config.String("model.roles.substituteEmptyRequiredRoleWithValue"); substituteEmptyRole != "" {
+		ret.RequiredRole = &substituteEmptyRole
 	}
 	return ret
 }

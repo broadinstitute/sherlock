@@ -12,6 +12,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/metrics"
 	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/authentication/gha_oidc"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
+	"github.com/broadinstitute/sherlock/sherlock/internal/oidc_models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/role_propagation"
 	"github.com/broadinstitute/sherlock/sherlock/internal/suitability_synchronization"
 	"github.com/gin-gonic/gin"
@@ -134,6 +135,15 @@ func (a *Application) Start() {
 			log.Info().Msgf("BOOT | beginning automatic role assignment suspension...")
 			go suitability_synchronization.KeepSuspendingRoleAssignments(ctx, a.gormDB)
 		}
+	}
+
+	if config.Config.Bool("oidc.enable") {
+		log.Info().Msgf("BOOT | initializing OIDC provider...")
+		if err = oidc_models.Init(ctx, a.gormDB); err != nil {
+			log.Fatal().Err(err).Msgf("oidc_models.Init() error")
+		}
+		go oidc_models.KeepSigningKeysRotated(ctx, a.gormDB)
+		go oidc_models.KeepExpiringRefreshTokens(ctx, a.gormDB)
 	}
 
 	go models.KeepAutoAssigningRoles(ctx, a.gormDB)

@@ -112,6 +112,7 @@ func configureLogging(infoMessages ...string) {
 	// log messages using Go's built-in logging. We can at least format those messages
 	// correctly by redirecting that into zerolog, though it won't have proper leveling
 	// information
+	stdlog.SetFlags(0)
 	stdlog.SetOutput(log.Logger)
 
 	if logLevel := Config.String("log.level"); logLevel != "" {

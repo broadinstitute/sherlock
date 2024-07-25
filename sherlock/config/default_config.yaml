@@ -69,6 +69,56 @@ db:
     ignoreNotFoundWarning: true
     level: warn
 
+# Configures Sherlock's own OIDC provider, not to be confused with its capability to interpret tokens
+# from IAP or GitHub Actions.
+oidc:
+  enable: true
+  # The issuer URL of Sherlock itself. This should be scheme + host + "/oidc", because Sherlock
+  # serves its own OIDC provider at that sub-path. This should also generally be an in-cluster
+  # address, because the IAP in front of the public endpoints isn't in-spec. This is fine as long
+  # as we just use Sherlock as an in-cluster authorization service.
+  #
+  # An example is https://sherlock-api-service.sherlock.svc.cluster.local/oidc
+  issuerUrl: http://localhost:8080/oidc
+  # The *public* side of Sherlock's OIDC issuer. This should be a normally-accessible URL that should
+  # go to the same destination as issuerUrl above. This is automatically used in the OIDC discovery
+  # config to tell clients how to have *users* authenticate against Sherlock. The downstream system
+  # will talk to issuerUrl in-cluster, but end-users will need to talk to publicIssuerUrl.
+  #
+  # An example is https://sherlock.dsp-devops-prod.broadinstitute.org/oidc
+  publicIssuerUrl: http://localhost:8080/oidc
+
+  # The key that Sherlock should use to AES-256 encrypt internal data it sends to clients. This is
+  # used in two places by the underlying OIDC library:
+  # 1. Encrypting "{Token.ID}:{User.ID}" to create access tokens returned to clients
+  # 2. Encrypting "{AuthRequest.ID}" to create authorization codes returned to clients
+  # This does need to be rotated but doing so is potentially disruptive; Sherlock will cease
+  # respecting access tokens or authorization codes it has issued.
+  #
+  # Sherlock will error on boot if this doesn't parse from a hex string to 32 bytes. You'll probably
+  # want to pass this in the environment with SHERLOCK_oidc_encryptionKeyHex. It should be passed
+  # in hex format.
+  encryptionKeyHex: 7265706c6163652d6d652d776974682d33322d627974652d6b65792d2d2d2d2d # "replace-me-with-32-byte-key----"
+  # The duration that ID and access tokens vended to clients should be valid for.
+  tokenDuration: 15m
+  # The duration that refresh tokens vended to clients should be valid for.
+  refreshTokenDuration: 30m
+  # The duration that a particular signing key should be used before being rotated.
+  signingKeyPrimaryDuration: 4h
+  # The time after which a signing key should be deleted (and its signatures no longer accepted)
+  # after it has been rotated. This should be longer than all token durations so that we
+  # continue to respect our own signatures until they'd expire on their own.
+  signingKeyPostRotationDuration: 2h
+  # When enabled, Sherlock will use Google Cloud KMS to symmetrically encrypt the private keys
+  # it stores in its own database. This is a defense-in-depth measure to prevent key leakage in
+  # the event of SQL injection or other database compromise.
+  #
+  # This must be true when mode is not "debug".
+  signingKeyEncryptionKMSEnable: false
+  # The fully-qualified name of the KMS key to use when signingKeyEncryptionKMSEnable is true.
+  signingKeyEncryptionKMSKeyName: projects/some-project/locations/some-location/keyRings/some-key-ring/cryptoKeys/some-key
+
+
 auth:
   githubActionsOIDC:
     issuer: https://token.actions.githubusercontent.com
@@ -217,6 +267,18 @@ argoCd:
   environmentUrlFormatString: https://argocd.dsp-devops-prod.broadinstitute.org/applications?showFavorites=false&proj=&sync=&health=&namespace=&cluster=&labels=env%%253D%s
 
 model:
+  roles:
+    # When set, Sherlock won't ever report an Environment/Cluster RequiredRole field as being null.
+    # Instead, it will substitute this value in its place (even though it won't be stored in the database).
+    # This can be useful in that it means downstream consumers don't need null handling like
+    # `requiredRole ?? "all-users"`. While that's simple, it's actually easier at a security/compliance
+    # level to say that Sherlock defines it and anything else uses it verbatim. (This was a specific
+    # request from appsec for this reason`.)
+    #
+    # Even if this is set, Sherlock will allow setting the field to empty to clear it out -- but will then
+    # respond in the API as if it's been set to this value. Note that the role set here needs to already
+    # exist or downstream consumers could have issues.
+    substituteEmptyRequiredRoleWithValue:
   environments:
     templates:
       # Uses appVersionResolver = "none", chartVersionResolver = "latest", and helmfileRef = "HEAD"
