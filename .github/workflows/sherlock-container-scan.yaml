@@ -34,6 +34,9 @@ jobs:
       - name: Run Trivy vulnerability scanner
         uses: broadinstitute/dsp-appsec-trivy-action@v1
         with:
+          # sherlock-build.yaml pushes to both normal GAR and super-prod GAR. It pushes the same image. We pull
+          # from the normal one here so that we don't need to pull from the more private and secure one for this
+          # technically-non-prod usage.
           image: us-central1-docker.pkg.dev/dsp-artifact-registry/sherlock/sherlock:${{ inputs.tag || 'latest' }}
 
   report-workflow:
