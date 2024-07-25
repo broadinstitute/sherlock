@@ -1,0 +1,47 @@
+name: Standalone Sherlock Trivy Scan
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to scan'
+        required: false
+        type: string
+        default: 'latest'
+  schedule:
+    - cron: '0 0 * * 0'
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    steps:
+      - name: Auth to GCP
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          token_format: access_token
+          workload_identity_provider: projects/1038484894585/locations/global/workloadIdentityPools/github-wi-pool/providers/github-wi-provider
+          service_account: dsp-artifact-registry-push@dsp-artifact-registry.iam.gserviceaccount.com
+
+      - name: Login to GAR
+        uses: docker/login-action@v3
+        with:
+          registry: us-central1-docker.pkg.dev
+          username: oauth2accesstoken
+          password: ${{ steps.auth.outputs.access_token }}
+
+      - name: Run Trivy vulnerability scanner
+        uses: broadinstitute/dsp-appsec-trivy-action@v1
+        with:
+          # sherlock-build.yaml pushes to both normal GAR and super-prod GAR. It pushes the same image. We pull
+          # from the normal one here so that we don't need to pull from the more private and secure one for this
+          # technically-non-prod usage.
+          image: us-central1-docker.pkg.dev/dsp-artifact-registry/sherlock/sherlock:${{ inputs.tag || 'latest' }}
+
+  report-workflow:
+    uses: ./.github/workflows/client-report-workflow.yaml
+    with:
+      notify-slack-channels-upon-workflow-failure: "#trivy-weekly-scans-notblessedimages"
+    permissions:
+      id-token: write
