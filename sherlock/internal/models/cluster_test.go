@@ -203,17 +203,17 @@ func (s *modelSuite) TestCluster_errorIfForbidden_nullRequiresSuitability() {
 }
 
 func (s *modelSuite) TestClusterCreationForbidden() {
-	s.SetNonSuitableTestUserForDB()
 	cluster := Cluster{
-		Name:                "some-name",
-		Provider:            "google",
-		GoogleProject:       "some-project",
-		Location:            "some-location",
-		Base:                utils.PointerTo("some base"),
-		Address:             utils.PointerTo("0.0.0.0"),
-		RequiresSuitability: utils.PointerTo(true),
-		HelmfileRef:         utils.PointerTo("some-ref"),
+		Name:           "some-name",
+		Provider:       "google",
+		GoogleProject:  "some-project",
+		Location:       "some-location",
+		Base:           utils.PointerTo("some base"),
+		Address:        utils.PointerTo("0.0.0.0"),
+		RequiredRoleID: utils.PointerTo(s.TestData.Role_TerraSuitableEngineer().ID),
+		HelmfileRef:    utils.PointerTo("some-ref"),
 	}
+	s.SetNonSuitableTestUserForDB()
 	s.ErrorContains(s.DB.Create(&cluster).Error, errors.Forbidden)
 }
 
@@ -222,7 +222,7 @@ func (s *modelSuite) TestClusterEditEscalateForbidden() {
 	s.SetNonSuitableTestUserForDB()
 	s.ErrorContains(s.DB.
 		Model(&cluster).
-		Updates(&Cluster{RequiresSuitability: utils.PointerTo(true)}).
+		Updates(&Cluster{RequiredRoleID: utils.PointerTo(s.TestData.Role_TerraSuitableEngineer().ID)}).
 		Error, errors.Forbidden)
 }
 
@@ -231,7 +231,7 @@ func (s *modelSuite) TestClusterEditDeescalateForbidden() {
 	s.SetNonSuitableTestUserForDB()
 	s.ErrorContains(s.DB.
 		Model(&cluster).
-		Updates(&Cluster{RequiresSuitability: utils.PointerTo(false)}).
+		Updates(&Cluster{RequiredRoleID: utils.PointerTo(s.TestData.Role_TerraSuitableEngineer().ID)}).
 		Error, errors.Forbidden)
 }
 

@@ -193,7 +193,6 @@ func (s *modelSuite) TestEnvironment_errorIfForbidden_nullRequiresSuitability() 
 }
 
 func (s *modelSuite) TestEnvironmentCreationForbidden() {
-	s.SetNonSuitableTestUserForDB()
 	environment := Environment{
 		Base:                      "live",
 		Lifecycle:                 "static",
@@ -201,7 +200,7 @@ func (s *modelSuite) TestEnvironmentCreationForbidden() {
 		ValuesName:                "prod",
 		AutoPopulateChartReleases: utils.PointerTo(false),
 		DefaultNamespace:          "terra-prod",
-		RequiresSuitability:       utils.PointerTo(true),
+		RequiredRoleID:            utils.PointerTo(s.TestData.Role_TerraSuitableEngineer().ID),
 		BaseDomain:                utils.PointerTo("dsde-prod.broadinstitute.org"),
 		NamePrefixesDomain:        utils.PointerTo(false),
 		HelmfileRef:               utils.PointerTo("HEAD"),
@@ -209,6 +208,7 @@ func (s *modelSuite) TestEnvironmentCreationForbidden() {
 		Description:               utils.PointerTo("Terra's production environment"),
 		Offline:                   utils.PointerTo(false),
 	}
+	s.SetNonSuitableTestUserForDB()
 	s.ErrorContains(s.DB.Create(&environment).Error, errors.Forbidden)
 }
 
@@ -217,7 +217,7 @@ func (s *modelSuite) TestEnvironmentEditEscalateForbidden() {
 	s.SetNonSuitableTestUserForDB()
 	s.ErrorContains(s.DB.
 		Model(&environment).
-		Updates(&Environment{RequiresSuitability: utils.PointerTo(true)}).
+		Updates(&Environment{RequiredRoleID: utils.PointerTo(s.TestData.Role_TerraSuitableEngineer().ID)}).
 		Error, errors.Forbidden)
 }
 

@@ -51,14 +51,14 @@ func (s *handlerSuite) TestClusterV3Delete() {
 func (s *handlerSuite) TestClusterV3Delete_suitability() {
 	s.SetSuitableTestUserForDB()
 	s.NoError(s.DB.Create(&models.Cluster{
-		Name:                "some-name",
-		Provider:            "azure",
-		AzureSubscription:   "some-subscription",
-		Location:            "some-location",
-		Base:                utils.PointerTo("some base"),
-		Address:             utils.PointerTo("0.0.0.0"),
-		RequiresSuitability: utils.PointerTo(true),
-		HelmfileRef:         utils.PointerTo("some-ref"),
+		Name:              "some-name",
+		Provider:          "azure",
+		AzureSubscription: "some-subscription",
+		Location:          "some-location",
+		Base:              utils.PointerTo("some base"),
+		Address:           utils.PointerTo("0.0.0.0"),
+		RequiredRoleID:    utils.PointerTo(s.TestData.Role_TerraSuitableEngineer().ID),
+		HelmfileRef:       utils.PointerTo("some-ref"),
 	}).Error)
 
 	var got errors.ErrorResponse

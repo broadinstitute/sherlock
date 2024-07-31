@@ -85,10 +85,10 @@ func (s *handlerSuite) TestClustersV3Create_suitability() {
 			GoogleProject: "google-project",
 			Location:      "some location",
 			ClusterV3Edit: ClusterV3Edit{
-				Base:                utils.PointerTo("some-base"),
-				Address:             utils.PointerTo("0.0.0.0"),
-				RequiresSuitability: utils.PointerTo(true),
-				HelmfileRef:         utils.PointerTo("some-ref"),
+				Base:         utils.PointerTo("some-base"),
+				Address:      utils.PointerTo("0.0.0.0"),
+				RequiredRole: s.TestData.Role_TerraSuitableEngineer().Name,
+				HelmfileRef:  utils.PointerTo("some-ref"),
 			},
 		})),
 		&got)
