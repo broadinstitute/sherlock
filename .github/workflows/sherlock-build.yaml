@@ -177,6 +177,9 @@ jobs:
             BUILD_VERSION=${{ needs.generate-tag.outputs.tag }}
 
       - name: Run Trivy vulnerability scanner
+        # We only run Trivy here as dependabot, because otherwise we run it afterwards so as to not block an intentional
+        # build (so we can fix or work around Trivy issues)
+        if: ${{ github.actor == 'dependabot[bot]' }}
         uses: broadinstitute/dsp-appsec-trivy-action@v1
         with:
           image: us-central1-docker.pkg.dev/dsp-artifact-registry/sherlock/sherlock:${{ needs.generate-tag.outputs.tag }}
@@ -245,6 +248,16 @@ jobs:
           cache-to: type=gha,mode=max
           build-args: |
             BUILD_VERSION=${{ needs.generate-tag.outputs.tag }}
+
+  trivy-scan:
+    needs: [ generate-tag, build-and-publish ]
+    runs-on: ubuntu-latest
+    if: ${{ needs.generate-tag.outputs.tag != '' && github.actor != 'dependabot[bot]' }}
+    steps:
+        - name: Run Trivy vulnerability scanner
+          uses: broadinstitute/dsp-appsec-trivy-action@v1
+          with:
+            image: us-central1-docker.pkg.dev/dsp-artifact-registry/sherlock/sherlock:${{ needs.generate-tag.outputs.tag }}
 
   comment-published-image:
     needs: [ generate-tag, build-and-publish ]
