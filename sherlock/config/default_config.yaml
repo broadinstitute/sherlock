@@ -74,18 +74,30 @@ db:
 oidc:
   enable: true
   # The issuer URL of Sherlock itself. This should be scheme + host + "/oidc", because Sherlock
-  # serves its own OIDC provider at that sub-path. This should also generally be an in-cluster
-  # address, because the IAP in front of the public endpoints isn't in-spec. This is fine as long
-  # as we just use Sherlock as an in-cluster authorization service.
+  # serves its own OIDC provider at that sub-path.
+  #
+  # You can choose whether to provide a publicly addressable URL or not (e.g. a .svc.cluster.local address).
+  # If you provide an in-cluster address, that'll work only for stuff that's in the cluster. CLIs or other
+  # services won't be able to authenticate against Sherlock (at least not without /etc/hosts tweaks).
+  # If you provide a publicly addressable URL (presumably behind IAP), you may need to worry about services
+  # being able to get through IAP to contact it. For stuff in the same cluster you can use either hostAliases
+  # with a static clusterIP on Sherlock or a CoreDNS rewrite to make in-cluster clients route in-cluster and
+  # dodge IAP.
+  #
+  # (In either case, you can find yourself needing to tweak hostname resolution. Be careful that you don't
+  # accidentally set it up such that /api/* requests dodge IAP, because Sherlock will reject that outright.
+  # This is why the examples make use of sherlock-oidc as a subdomain and Sherlock supports multiple origins:
+  # you can use a separate hostname that goes to the same place as a way to more safely tweak resolution.)
   #
   # An example is https://sherlock-api-service.sherlock.svc.cluster.local/oidc
+  # Another example is https://sherlock-oidc.dsp-devops-prod.broadinstitute.org/oidc
   issuerUrl: http://localhost:8080/oidc
   # The *public* side of Sherlock's OIDC issuer. This should be a normally-accessible URL that should
   # go to the same destination as issuerUrl above. This is automatically used in the OIDC discovery
-  # config to tell clients how to have *users* authenticate against Sherlock. The downstream system
-  # will talk to issuerUrl in-cluster, but end-users will need to talk to publicIssuerUrl.
+  # config to tell clients how to have *users* authenticate against Sherlock. It's okay for this to be
+  # the same as the issuerUrl if that's publicly addressable.
   #
-  # An example is https://sherlock.dsp-devops-prod.broadinstitute.org/oidc
+  # An example is https://sherlock-oidc.dsp-devops-prod.broadinstitute.org/oidc
   publicIssuerUrl: http://localhost:8080/oidc
 
   # The key that Sherlock should use to AES-256 encrypt internal data it sends to clients. This is
