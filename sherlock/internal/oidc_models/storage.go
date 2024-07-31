@@ -5,6 +5,7 @@ import (
 	"context"
 	"crypto/rand"
 	"crypto/sha512"
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
@@ -467,12 +468,14 @@ func (s *storageImpl) createRefreshToken(clientID string, scopes []string, userI
 	if err != nil {
 		return nil, "", fmt.Errorf("failed to create UUID: %w", err)
 	}
-	refreshToken := make([]byte, 256)
-	_, err = rand.Read(refreshToken)
+	refreshTokenBytes := make([]byte, 256)
+	_, err = rand.Read(refreshTokenBytes)
 	if err != nil {
 		return nil, "", fmt.Errorf("failed to generate refresh token: %w", err)
 	}
-	hash := sha512.Sum512(refreshToken)
+	// b64 encode to make these safer to store in JSON/YAML files, which ArgoCD's CLI likes to do
+	refreshToken := base64.URLEncoding.EncodeToString(refreshTokenBytes)
+	hash := sha512.Sum512([]byte(refreshToken))
 	refreshTokenModel := &RefreshToken{
 		ID:             id,
 		TokenHash:      hash[:],
@@ -485,7 +488,7 @@ func (s *storageImpl) createRefreshToken(clientID string, scopes []string, userI
 	if err != nil {
 		return nil, "", fmt.Errorf("failed to create refresh token: %w", err)
 	}
-	return refreshTokenModel, string(refreshToken), nil
+	return refreshTokenModel, refreshToken, nil
 }
 
 func (s *storageImpl) revokeRefreshToken(refreshTokenID uuid.UUID) error {
