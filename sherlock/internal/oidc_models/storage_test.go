@@ -3,6 +3,7 @@ package oidc_models
 import (
 	"context"
 	"database/sql"
+	"encoding/base64"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/go-jose/go-jose/v4"
@@ -464,16 +465,20 @@ func (s *oidcModelsSuite) TestStorageImpl_Health() {
 func (s *oidcModelsSuite) TestStorageImpl_createRefreshToken() {
 	clientID, _, err := s.GenerateClient(s.DB)
 	s.NoError(err)
-	refreshToken, _, err := s.storage.createRefreshToken(clientID, []string{oidc.ScopeOpenID, oidc.ScopeProfile, oidc.ScopeEmail, groupsClaim}, s.TestData.User_Suitable().ID, time.Now())
+	refreshTokenModel, refreshTokenItself, err := s.storage.createRefreshToken(clientID, []string{oidc.ScopeOpenID, oidc.ScopeProfile, oidc.ScopeEmail, groupsClaim}, s.TestData.User_Suitable().ID, time.Now())
 	s.NoError(err)
-	s.NotEmpty(refreshToken.ID)
-	s.Equal(clientID, refreshToken.ClientID)
-	s.Equal(oidc.SpaceDelimitedArray{oidc.ScopeOpenID, oidc.ScopeProfile, oidc.ScopeEmail, groupsClaim}, refreshToken.Scopes)
-	s.Equal(s.TestData.User_Suitable().ID, refreshToken.UserID)
+	s.NotEmpty(refreshTokenModel.ID)
+	s.Equal(clientID, refreshTokenModel.ClientID)
+	s.Equal(oidc.SpaceDelimitedArray{oidc.ScopeOpenID, oidc.ScopeProfile, oidc.ScopeEmail, groupsClaim}, refreshTokenModel.Scopes)
+	s.Equal(s.TestData.User_Suitable().ID, refreshTokenModel.UserID)
 
 	var refreshTokens []RefreshToken
 	s.NoError(s.DB.Find(&refreshTokens).Error)
 	s.Len(refreshTokens, 1)
+
+	// Check that the refresh token itself is base64 encoded by checking that we can decode it
+	_, err = base64.URLEncoding.DecodeString(refreshTokenItself)
+	s.NoError(err)
 }
 
 func (s *oidcModelsSuite) TestStorageImpl_revokeRefreshToken() {
