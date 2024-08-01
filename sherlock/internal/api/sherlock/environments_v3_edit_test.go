@@ -113,7 +113,7 @@ func (s *handlerSuite) TestEnvironmentsV3Edit_suitabilityAfter() {
 	var got errors.ErrorResponse
 	code := s.HandleRequest(
 		s.UseNonSuitableUserFor(s.NewRequest("PATCH", fmt.Sprintf("/api/environments/v3/%d", edit.ID), EnvironmentV3Edit{
-			RequiresSuitability: utils.PointerTo(true),
+			RequiredRole: s.TestData.Role_TerraSuitableEngineer().Name,
 		})),
 		&got)
 	s.Equal(http.StatusForbidden, code)

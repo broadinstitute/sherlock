@@ -206,29 +206,6 @@ func (u *User) ErrIfNotActiveInRole(db *gorm.DB, roleID *uint) error {
 	}
 }
 
-// ErrIfNotSuitable may be removed in the future: we'll want to be doing Sherlock's internal RBAC based on
-// Role and RoleAssignment instead of Suitability, and the only usage of Suitability *should* be for
-// suspending RoleAssignment entries. An error isn't really helpful for us there, so we may have no need
-// for this method. For the moment, though, it offers a very similar logical interface to the now-removed
-// `User.Suitable().SuitableOrError()` method, so it makes sense for now.
-func (u *User) ErrIfNotSuitable() error {
-	if u.Email == self.Email && u.GoogleID == self.GoogleID && u.AuthenticationMethod == authentication_method.SHERLOCK_INTERNAL {
-		// Short-circuit to respect Sherlock's own user; see SelfUser.
-		// We only respect this with an internal authentication method as defense-in-depth (it should be impossible to
-		// actually make a request as Sherlock, but we don't want to find out).
-		return nil
-	}
-	if u.Suitability != nil && u.Suitability.Suitable != nil && u.Suitability.Description != nil {
-		if *u.Suitability.Suitable {
-			return nil
-		} else {
-			return fmt.Errorf("(%s) user is unsuitable: %s", errors.Forbidden, *u.Suitability.Description)
-		}
-	} else {
-		return fmt.Errorf("(%s) no matching suitability record found or loaded; assuming unsuitable", errors.Forbidden)
-	}
-}
-
 func (u *User) ErrIfNotSuperAdmin() error {
 	if u.Email == self.Email && u.GoogleID == self.GoogleID && u.AuthenticationMethod == authentication_method.SHERLOCK_INTERNAL {
 		// Short-circuit to respect Sherlock's own user; see SelfUser.

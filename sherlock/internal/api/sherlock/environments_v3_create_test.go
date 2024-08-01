@@ -142,7 +142,7 @@ func (s *handlerSuite) TestEnvironmentsV3Create_suitability() {
 			Lifecycle: "template",
 			Name:      "tempy-temp",
 			EnvironmentV3Edit: EnvironmentV3Edit{
-				RequiresSuitability: utils.PointerTo(true),
+				RequiredRole: s.TestData.Role_TerraSuitableEngineer().Name,
 			},
 		})),
 		&got)
