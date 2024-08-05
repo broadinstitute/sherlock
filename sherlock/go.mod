@@ -25,7 +25,7 @@ require (
 	github.com/jinzhu/copier v0.4.0
 	github.com/knadh/koanf v1.5.0
 	github.com/microsoftgraph/msgraph-sdk-go v1.46.0
-	github.com/pact-foundation/pact-go/v2 v2.0.6
+	github.com/pact-foundation/pact-go/v2 v2.0.7
 	github.com/rs/zerolog v1.33.0
 	github.com/sanity-io/litter v1.5.5
 	github.com/slack-go/slack v0.13.1
