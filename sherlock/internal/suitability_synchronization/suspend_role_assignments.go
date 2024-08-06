@@ -10,6 +10,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/role_propagation"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 	"time"
 )
 
@@ -68,7 +69,7 @@ func suspendRoleAssignments(ctx context.Context, db *gorm.DB) error {
 				suitable := assignment.User.Suitability != nil && assignment.User.Suitability.Suitable != nil && *assignment.User.Suitability.Suitable
 				if suitable && (assignment.Suspended == nil || *assignment.Suspended) {
 					roleIDsRequiringPropagation[roleID] = struct{}{}
-					if err := superUserDB.Model(&assignment).Updates(&models.RoleAssignment{
+					if err := superUserDB.Model(&assignment).Omit(clause.Associations).Updates(&models.RoleAssignment{
 						RoleAssignmentFields: models.RoleAssignmentFields{
 							Suspended: utils.PointerTo(false),
 						},
@@ -79,7 +80,7 @@ func suspendRoleAssignments(ctx context.Context, db *gorm.DB) error {
 					}
 				} else if !suitable && (assignment.Suspended == nil || !*assignment.Suspended) {
 					roleIDsRequiringPropagation[roleID] = struct{}{}
-					if err := superUserDB.Model(&assignment).Updates(&models.RoleAssignment{
+					if err := superUserDB.Model(&assignment).Omit(clause.Associations).Updates(&models.RoleAssignment{
 						RoleAssignmentFields: models.RoleAssignmentFields{
 							Suspended: utils.PointerTo(true),
 						},
