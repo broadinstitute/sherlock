@@ -23,6 +23,7 @@
         "version": "development"
     },
     "host": "sherlock.dsp-devops-prod.broadinstitute.org",
+    "basePath": "/",
     "paths": {
         "/api/app-versions/procedures/v3/changelog": {
             "get": {
