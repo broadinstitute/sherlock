@@ -5,6 +5,12 @@
 #   It will use mock authentication and authorization.
 mode: debug
 
+# The primary host name that Sherlock should document itself as running on, used in the
+# Swagger docs hosted dynamically. The Swagger page will work with this empty, but other
+# tools (like AppSec's scanners) that need a fully valid config will fail.
+# Example: "sherlock.dsp-devops-prod.broadinstitute.org"
+primaryHost:
+
 # Origins is the list of allowed origins for requests (used for CORS and CSRF protection).
 # Each entry should include the scheme, like "https://example.com".
 # When empty, all origins will be allowed, which is only suitable for local development where

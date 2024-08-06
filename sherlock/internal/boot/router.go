@@ -33,8 +33,8 @@ import (
 //	@schemes		https
 //	@accept			json
 //	@produce		json
-
-//	@host	sherlock.dsp-devops-prod.broadinstitute.org
+//	@host			sherlock.dsp-devops-prod.broadinstitute.org
+//	@BasePath		/
 
 //	@contact.name	DSP DevOps
 //	@contact.email	dsp-devops@broadinstitute.org
@@ -43,9 +43,11 @@ import (
 //	@license.url	https://github.com/broadinstitute/sherlock/blob/main/LICENSE.txt
 
 func BuildRouter(ctx context.Context, db *gorm.DB) *gin.Engine {
-	// At runtime, we want Sherlock's own hosted Swagger page to refer to itself, however/wherever it's deployed
-	// (setting the host to an empty string achieves that behavior, like if we didn't specify a host at all)
-	docs.SwaggerInfo.Host = ""
+	// primaryHost may be unset or empty, which means this could be an empty string. That's potentially
+	// okay, because the Swagger page itself will still work. In production, though, having this set
+	// is important to provide a fully valid config that other tools like security scanners can use.
+	// See default_config.yaml's primaryHost for more information.
+	docs.SwaggerInfo.Host = config.Config.String("primaryHost")
 	docs.SwaggerInfo.Version = version.BuildVersion
 	if config.Config.String("mode") == "debug" {
 		// When running locally, make the Swagger page have a scheme dropdown with http as the default

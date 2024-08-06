@@ -10191,7 +10191,7 @@ const docTemplate = `{
 var SwaggerInfo = &swag.Spec{
 	Version:          "development",
 	Host:             "sherlock.dsp-devops-prod.broadinstitute.org",
-	BasePath:         "",
+	BasePath:         "/",
 	Schemes:          []string{"https"},
 	Title:            "Sherlock",
 	Description:      "The Data Science Platform's source-of-truth service.\nNote: this API will try to load and return associations in responses, so clients won't need to make as many requests. This behavior isn't recursive, though, so associations of associations are *not* fully loaded (even if it might seem that way from looking at the data types).",
