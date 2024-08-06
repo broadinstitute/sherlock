@@ -33,8 +33,8 @@ import (
 //	@schemes		https
 //	@accept			json
 //	@produce		json
-
-//	@host	sherlock.dsp-devops-prod.broadinstitute.org
+//	@host			sherlock.dsp-devops-prod.broadinstitute.org
+//	@BasePath		/
 
 //	@contact.name	DSP DevOps
 //	@contact.email	dsp-devops@broadinstitute.org
