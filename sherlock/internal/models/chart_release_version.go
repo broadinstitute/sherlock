@@ -35,6 +35,24 @@ type ChartReleaseVersion struct {
 	HelmfileRefEnabled *bool
 }
 
+// ClearAppVersion sets the app version fields of this ChartReleaseVersion to nil.
+//
+// This is helpful for customizing a Changeset being passed to PlanChangesets. These fields being empty will cause
+// Changeset.fillEmptyToFieldsBasedOnFrom to fill them from the "From" side of the Changeset -- so there's no change.
+//
+// This function exists because we want to encapsulate the "clearing" of the fields within this package, rather than
+// relying on the caller to know which fields to clear.
+func (crv *ChartReleaseVersion) ClearAppVersion() {
+	crv.AppVersionResolver = nil
+	crv.AppVersionExact = nil
+	crv.AppVersionBranch = nil
+	crv.AppVersionCommit = nil
+	crv.AppVersionFollowChartRelease = nil
+	crv.AppVersionFollowChartReleaseID = nil
+	crv.AppVersion = nil
+	crv.AppVersionID = nil
+}
+
 // resolve uses what's currently in the ChartReleaseVersion to fill in as many of the rest of the fields as possible.
 // In other words, this function "figures out" the ChartReleaseVersion. This means it figures out the actual version
 // from a branch or commit, sets the right terra-helmfile ref, etc.

@@ -26,11 +26,12 @@ type ChangesetV3PlanRequestChartReleaseEntry struct {
 }
 
 type ChangesetV3PlanRequestEnvironmentEntry struct {
-	Environment                          string
+	Environment                          string   `json:"environment"`
 	UseExactVersionsFromOtherEnvironment *string  `json:"useExactVersionsFromOtherEnvironment"`
 	FollowVersionsFromOtherEnvironment   *string  `json:"followVersionsFromOtherEnvironment"`
 	IncludeCharts                        []string `json:"includeCharts"` // If omitted, will include all chart releases that haven't opted out of bulk updates
 	ExcludeCharts                        []string `json:"excludeCharts"`
+	FilterToMatchingBranches             *bool    `json:"filterToMatchingBranches"` // If true, chart releases app versions will only be updated if doing so wouldn't change the detected Git branch. This flag has no effect if the updated chart release has no app version branch.
 }
 
 // changesetsProceduresV3Plan godoc
@@ -247,6 +248,16 @@ func (r *ChangesetV3PlanRequest) parseEnvironmentEntries(db *gorm.DB) (changeset
 					changeset.To.AppVersionFollowChartReleaseID = &otherChartRelease.ID
 					changeset.To.ChartVersionResolver = utils.PointerTo("follow")
 					changeset.To.ChartVersionFollowChartReleaseID = &otherChartRelease.ID
+				}
+
+				// If we're filtering to matching branches only, clear the "to" app version fields if this targeted chart
+				// release has a branch and the value we're about to set has either a nil branch or a different one.
+				if environmentRequestEntry.FilterToMatchingBranches != nil &&
+					*environmentRequestEntry.FilterToMatchingBranches &&
+					targetedChartRelease.AppVersionBranch != nil &&
+					*targetedChartRelease.AppVersionBranch != "" &&
+					(changeset.To.AppVersionBranch == nil || *changeset.To.AppVersionBranch != *targetedChartRelease.AppVersionBranch) {
+					changeset.To.ClearAppVersion()
 				}
 			}
 			changesets = append(changesets, changeset)
