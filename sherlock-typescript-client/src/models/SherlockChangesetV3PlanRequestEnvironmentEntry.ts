@@ -32,6 +32,12 @@ export interface SherlockChangesetV3PlanRequestEnvironmentEntry {
      */
     excludeCharts?: Array<string>;
     /**
+     * If true, chart releases app versions will only be updated if doing so wouldn't change the detected Git branch. This flag has no effect if the updated chart release has no app version branch.
+     * @type {boolean}
+     * @memberof SherlockChangesetV3PlanRequestEnvironmentEntry
+     */
+    filterToMatchingBranches?: boolean;
+    /**
      * 
      * @type {string}
      * @memberof SherlockChangesetV3PlanRequestEnvironmentEntry
@@ -70,6 +76,7 @@ export function SherlockChangesetV3PlanRequestEnvironmentEntryFromJSONTyped(json
         
         'environment': json['environment'] == null ? undefined : json['environment'],
         'excludeCharts': json['excludeCharts'] == null ? undefined : json['excludeCharts'],
+        'filterToMatchingBranches': json['filterToMatchingBranches'] == null ? undefined : json['filterToMatchingBranches'],
         'followVersionsFromOtherEnvironment': json['followVersionsFromOtherEnvironment'] == null ? undefined : json['followVersionsFromOtherEnvironment'],
         'includeCharts': json['includeCharts'] == null ? undefined : json['includeCharts'],
         'useExactVersionsFromOtherEnvironment': json['useExactVersionsFromOtherEnvironment'] == null ? undefined : json['useExactVersionsFromOtherEnvironment'],
@@ -84,6 +91,7 @@ export function SherlockChangesetV3PlanRequestEnvironmentEntryToJSON(value?: She
         
         'environment': value['environment'],
         'excludeCharts': value['excludeCharts'],
+        'filterToMatchingBranches': value['filterToMatchingBranches'],
         'followVersionsFromOtherEnvironment': value['followVersionsFromOtherEnvironment'],
         'includeCharts': value['includeCharts'],
         'useExactVersionsFromOtherEnvironment': value['useExactVersionsFromOtherEnvironment'],

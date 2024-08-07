@@ -23,6 +23,9 @@ type SherlockChangesetV3PlanRequestEnvironmentEntry struct {
 	// exclude charts
 	ExcludeCharts []string `json:"excludeCharts"`
 
+	// If true, chart releases app versions will only be updated if doing so wouldn't change the detected Git branch. This flag has no effect if the updated chart release has no app version branch.
+	FilterToMatchingBranches bool `json:"filterToMatchingBranches,omitempty"`
+
 	// follow versions from other environment
 	FollowVersionsFromOtherEnvironment string `json:"followVersionsFromOtherEnvironment,omitempty"`
 

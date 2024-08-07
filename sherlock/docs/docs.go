@@ -8126,6 +8126,10 @@ const docTemplate = `{
                         "type": "string"
                     }
                 },
+                "filterToMatchingBranches": {
+                    "description": "If true, chart releases app versions will only be updated if doing so wouldn't change the detected Git branch. This flag has no effect if the updated chart release has no app version branch.",
+                    "type": "boolean"
+                },
                 "followVersionsFromOtherEnvironment": {
                     "type": "string"
                 },
