@@ -1,6 +1,11 @@
 package models
 
-import "github.com/broadinstitute/sherlock/go-shared/pkg/utils"
+import (
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
+	"github.com/stretchr/testify/assert"
+	"testing"
+	"time"
+)
 
 func (s *modelSuite) TestChartReleaseVersion_resolve_follow() {
 	s.SetSuitableTestUserForDB()
@@ -213,4 +218,99 @@ func (s *modelSuite) TestChartReleaseVersion_resolveChartVersion_followNoID() {
 	}
 	err := chartReleaseVersion.resolveChartVersion(s.DB, s.TestData.Chart_Leonardo())
 	s.ErrorContains(err, "chartVersionResolver was set to 'follow' but no chart release ID was given to follow")
+}
+
+func TestChartReleaseVersion_ClearAppVersion(t *testing.T) {
+	type fields struct {
+		ResolvedAt                       *time.Time
+		AppVersionResolver               *string
+		AppVersionExact                  *string
+		AppVersionBranch                 *string
+		AppVersionCommit                 *string
+		AppVersionFollowChartReleaseID   *uint
+		AppVersionID                     *uint
+		ChartVersionResolver             *string
+		ChartVersionExact                *string
+		ChartVersionFollowChartReleaseID *uint
+		ChartVersionID                   *uint
+		HelmfileRef                      *string
+		HelmfileRefEnabled               *bool
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   fields
+	}{
+		{
+			name: "all fields set",
+			fields: fields{
+				AppVersionResolver:               utils.PointerTo("exact"),
+				AppVersionExact:                  utils.PointerTo("v1.2.4"),
+				AppVersionBranch:                 utils.PointerTo("main"),
+				AppVersionCommit:                 utils.PointerTo("1234567"),
+				AppVersionFollowChartReleaseID:   utils.PointerTo(uint(1)),
+				AppVersionID:                     utils.PointerTo(uint(1)),
+				ChartVersionResolver:             utils.PointerTo("exact"),
+				ChartVersionExact:                utils.PointerTo("v1.2.4"),
+				ChartVersionFollowChartReleaseID: utils.PointerTo(uint(1)),
+				ChartVersionID:                   utils.PointerTo(uint(1)),
+				HelmfileRef:                      utils.PointerTo("v1.2.4"),
+				HelmfileRefEnabled:               utils.PointerTo(true),
+			},
+			want: fields{
+				AppVersionResolver:               nil,
+				AppVersionExact:                  nil,
+				AppVersionBranch:                 nil,
+				AppVersionCommit:                 nil,
+				AppVersionFollowChartReleaseID:   nil,
+				AppVersionID:                     nil,
+				ChartVersionResolver:             utils.PointerTo("exact"),
+				ChartVersionExact:                utils.PointerTo("v1.2.4"),
+				ChartVersionFollowChartReleaseID: utils.PointerTo(uint(1)),
+				ChartVersionID:                   utils.PointerTo(uint(1)),
+				HelmfileRef:                      utils.PointerTo("v1.2.4"),
+				HelmfileRefEnabled:               utils.PointerTo(true),
+			},
+		},
+		{
+			name:   "no fields set",
+			fields: fields{},
+			want:   fields{},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			crv := &ChartReleaseVersion{
+				ResolvedAt:                       tt.fields.ResolvedAt,
+				AppVersionResolver:               tt.fields.AppVersionResolver,
+				AppVersionExact:                  tt.fields.AppVersionExact,
+				AppVersionBranch:                 tt.fields.AppVersionBranch,
+				AppVersionCommit:                 tt.fields.AppVersionCommit,
+				AppVersionFollowChartReleaseID:   tt.fields.AppVersionFollowChartReleaseID,
+				AppVersionID:                     tt.fields.AppVersionID,
+				ChartVersionResolver:             tt.fields.ChartVersionResolver,
+				ChartVersionExact:                tt.fields.ChartVersionExact,
+				ChartVersionFollowChartReleaseID: tt.fields.ChartVersionFollowChartReleaseID,
+				ChartVersionID:                   tt.fields.ChartVersionID,
+				HelmfileRef:                      tt.fields.HelmfileRef,
+				HelmfileRefEnabled:               tt.fields.HelmfileRefEnabled,
+			}
+			crv.ClearAppVersion()
+			assert.Equal(t, &ChartReleaseVersion{
+				ResolvedAt:                       tt.want.ResolvedAt,
+				AppVersionResolver:               tt.want.AppVersionResolver,
+				AppVersionExact:                  tt.want.AppVersionExact,
+				AppVersionBranch:                 tt.want.AppVersionBranch,
+				AppVersionCommit:                 tt.want.AppVersionCommit,
+				AppVersionFollowChartReleaseID:   tt.want.AppVersionFollowChartReleaseID,
+				AppVersionID:                     tt.want.AppVersionID,
+				ChartVersionResolver:             tt.want.ChartVersionResolver,
+				ChartVersionExact:                tt.want.ChartVersionExact,
+				ChartVersionFollowChartReleaseID: tt.want.ChartVersionFollowChartReleaseID,
+				ChartVersionID:                   tt.want.ChartVersionID,
+				HelmfileRef:                      tt.want.HelmfileRef,
+				HelmfileRefEnabled:               tt.want.HelmfileRefEnabled,
+			}, crv)
+		})
+	}
 }

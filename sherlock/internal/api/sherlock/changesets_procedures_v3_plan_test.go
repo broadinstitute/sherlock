@@ -3,7 +3,9 @@ package sherlock
 import (
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm/clause"
 	"net/http"
 )
 
@@ -560,4 +562,75 @@ func (s *handlerSuite) TestChangesetV3PlanRequest_parseEnvironmentEntries_follow
 	s.Equal(s.TestData.ChartRelease_LeonardoDev().ID, *changesets[0].To.AppVersionFollowChartReleaseID)
 	s.Equal("follow", *changesets[0].To.AppVersionResolver)
 	s.Equal(s.TestData.ChartRelease_LeonardoDev().AppVersionExact, changesets[0].To.AppVersionExact)
+}
+
+func (s *handlerSuite) TestChangesetV3PlanRequest_parseEnvironmentEntries_filterToMatchingBranches() {
+	s.TestData.ChartRelease_LeonardoDev()
+	s.TestData.ChartRelease_LeonardoStaging()
+
+	// Put dev on a different branch
+	branchAppVersion := models.AppVersion{
+		ChartID:    s.TestData.Chart_Leonardo().ID,
+		AppVersion: "my-branch-version",
+		GitBranch:  "a branch",
+		GitCommit:  "acommitthatdoesntalreadyexist",
+	}
+	err := s.DB.Omit(clause.Associations).Create(&branchAppVersion).Error
+	s.NoError(err)
+	err = s.DB.Model(utils.PointerTo(s.TestData.ChartRelease_LeonardoDev())).Omit(clause.Associations).Updates(&models.ChartRelease{
+		ChartReleaseVersion: models.ChartReleaseVersion{
+			AppVersionResolver: utils.PointerTo("exact"),
+			AppVersionExact:    &branchAppVersion.AppVersion,
+			AppVersionBranch:   &branchAppVersion.GitBranch,
+			AppVersionCommit:   &branchAppVersion.GitCommit,
+			AppVersionID:       &branchAppVersion.ID,
+		},
+	}).Error
+	s.NoError(err)
+
+	// Try to bulk promote from dev to staging, leonardo staging's app version should not be updated
+	r := ChangesetV3PlanRequest{
+		Environments: []ChangesetV3PlanRequestEnvironmentEntry{
+			{
+				Environment:                          s.TestData.Environment_Staging().Name,
+				UseExactVersionsFromOtherEnvironment: utils.PointerTo(s.TestData.Environment_Dev().Name),
+				FilterToMatchingBranches:             utils.PointerTo(true),
+			},
+		},
+	}
+	changesets, err := r.parseEnvironmentEntries(s.DB)
+	s.NoError(err)
+	s.Len(changesets, 1)
+	s.Equal(s.TestData.ChartRelease_LeonardoStaging().ID, changesets[0].ChartReleaseID)
+	// App version empty
+	s.Nil(changesets[0].To.AppVersionResolver)
+	s.Nil(changesets[0].To.AppVersionExact)
+	s.Nil(changesets[0].To.AppVersionBranch)
+	s.Nil(changesets[0].To.AppVersionCommit)
+	// Chart version not, it copies
+	s.Equal("exact", *changesets[0].To.ChartVersionResolver)
+	s.Equal(*s.TestData.ChartRelease_LeonardoDev().ChartVersionExact, *changesets[0].To.ChartVersionExact)
+
+	// Try again without the filter, leonardo staging's app version should be updated
+	r = ChangesetV3PlanRequest{
+		Environments: []ChangesetV3PlanRequestEnvironmentEntry{
+			{
+				Environment:                          s.TestData.Environment_Staging().Name,
+				UseExactVersionsFromOtherEnvironment: utils.PointerTo(s.TestData.Environment_Dev().Name),
+				FilterToMatchingBranches:             utils.PointerTo(false),
+			},
+		},
+	}
+	changesets, err = r.parseEnvironmentEntries(s.DB)
+	s.NoError(err)
+	s.Len(changesets, 1)
+	s.Equal(s.TestData.ChartRelease_LeonardoStaging().ID, changesets[0].ChartReleaseID)
+	// App version is the branch version
+	s.Equal("exact", *changesets[0].To.AppVersionResolver)
+	s.Equal(branchAppVersion.AppVersion, *changesets[0].To.AppVersionExact)
+	s.Equal(branchAppVersion.GitBranch, *changesets[0].To.AppVersionBranch)
+	s.Equal(branchAppVersion.GitCommit, *changesets[0].To.AppVersionCommit)
+	// Chart version not, it copies
+	s.Equal("exact", *changesets[0].To.ChartVersionResolver)
+	s.Equal(*s.TestData.ChartRelease_LeonardoDev().ChartVersionExact, *changesets[0].To.ChartVersionExact)
 }
