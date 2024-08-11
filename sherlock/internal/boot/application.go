@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/boot/liveness"
+	"github.com/broadinstitute/sherlock/sherlock/internal/clients/bits_data_warehouse"
 	"github.com/broadinstitute/sherlock/sherlock/internal/clients/github"
 	"github.com/broadinstitute/sherlock/sherlock/internal/clients/slack"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
@@ -111,6 +112,14 @@ func (a *Application) Start() {
 		log.Info().Msgf("BOOT | initializing GitHub client...")
 		if err = github.Init(ctx); err != nil {
 			log.Fatal().Err(err).Msgf("github.Init() error")
+		}
+	}
+
+	if config.Config.Bool("bitsDataWarehouse.enable") {
+		log.Info().Msgf("BOOT | initializing BITS Data Warehouse connection...")
+		if err = bits_data_warehouse.Init(ctx); err != nil {
+			// Don't fail the boot if we can't connect
+			log.Warn().Err(err).Msgf("bits_data_warehouse.Init() error")
 		}
 	}
 

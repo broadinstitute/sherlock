@@ -435,3 +435,14 @@ suitabilitySynchronization:
     suspendRoleAssignments:
       enable: true
       interval: 1m
+
+# Configuration for Sherlock reading data from the BITS (Broad Information Technology Services) Data Warehouse.
+bitsDataWarehouse:
+  # If Sherlock should read data from the BITS Data Warehouse tables given below. Note that while Broad employees
+  # typically have access to the data warehouse, service accounts need to be granted specific access.
+  enable: false
+  # The full reference, in "<project>.<dataset>.<table>" format, to BITS's people data.
+  peopleTable:
+  # The interval at which Sherlock should update its cache of the people data. This can be long because the data
+  # updates pretty slowly (e.g. overnight). Queries do cost money and each replica maintains its own cache.
+  peopleUpdateInterval: 1h
