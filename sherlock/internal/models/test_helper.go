@@ -22,11 +22,12 @@ type TestSuiteHelper struct {
 // database and runs migrations.
 func (h *TestSuiteHelper) SetupSuite() {
 	config.LoadTestConfig()
-	sqlDB, err := db.Connect()
+	var err error
+	h.internalDB, err = db.Connect()
 	if err != nil {
 		panic(err)
 	}
-	h.internalDB, err = db.Configure(sqlDB)
+	err = db.Migrate(h.internalDB)
 	if err != nil {
 		panic(err)
 	}

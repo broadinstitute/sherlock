@@ -13,10 +13,10 @@ import (
 
 func TestServer_Lifecycle(t *testing.T) {
 	config.LoadTestConfig()
-	sqlDB, err := db.Connect()
+	gormDB, err := db.Connect()
 	assert.NoError(t, err)
 	server := &Server{}
-	go server.Start(sqlDB)
+	go server.Start(gormDB)
 	t.Run("online probe", func(t *testing.T) {
 		var livenessSucceeded bool
 		attemptsRemaining := 4 * 20
@@ -30,8 +30,6 @@ func TestServer_Lifecycle(t *testing.T) {
 		}
 		assert.True(t, livenessSucceeded)
 	})
-	err = sqlDB.Close()
-	assert.NoError(t, err)
 	t.Run("offline probe", func(t *testing.T) {
 		server.MakeAlwaysReturnOK()
 		resp, err := http.Get("http://localhost:8081")

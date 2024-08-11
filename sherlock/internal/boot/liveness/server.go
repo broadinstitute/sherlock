@@ -2,9 +2,10 @@ package liveness
 
 import (
 	"context"
-	"database/sql"
+	"errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/rs/zerolog/log"
+	"gorm.io/gorm"
 	"net/http"
 	"sync"
 	"time"
@@ -23,25 +24,37 @@ import (
 // during shutdown, it could potentially send another SIGTERM, but that's not really an issue. We'd already
 // be reacting to a SIGTERM, and the new one would have a longer deadline than the one we'd already be on.
 type Server struct {
-	sqlDB         *sql.DB
+	db            *gorm.DB
 	handler       *handler
 	server        *http.Server
 	pingCtx       context.Context
 	cancelPingCtx context.CancelFunc
 }
 
-func (s *Server) Start(sqlDB *sql.DB) {
-	s.sqlDB = sqlDB
+func evaluate(db *gorm.DB, ctx context.Context) bool {
+	if sqlDB, err := db.DB(); err != nil {
+		log.Error().Err(err).Msgf("LIVE | liveness.evaluate()...db.DB() error")
+		return false
+	} else if err = sqlDB.PingContext(ctx); err != nil {
+		log.Error().Err(err).Msgf("LIVE | liveness.evaluate()...sqlDB.PingContext() error")
+		return false
+	} else {
+		return true
+	}
+}
+
+func (s *Server) Start(db *gorm.DB) {
+	s.db = db
 	s.pingCtx, s.cancelPingCtx = context.WithCancel(context.Background())
 	s.handler = &handler{
-		returnOK: s.sqlDB.PingContext(s.pingCtx) == nil,
+		returnOK: evaluate(s.db, s.pingCtx),
 	}
 	s.server = &http.Server{
 		Addr:    ":8081",
 		Handler: s.handler,
 	}
 	go s.repeatedlyPingDatabase()
-	if err := s.server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+	if err := s.server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 		log.Fatal().Msgf("LIVE | liveness.Server.server.ListenAndServe() err: %v", err)
 	}
 }
@@ -49,14 +62,8 @@ func (s *Server) Start(sqlDB *sql.DB) {
 func (s *Server) repeatedlyPingDatabase() {
 	interval := config.Config.MustDuration("db.livenessPingInterval")
 	for {
-		err := s.sqlDB.PingContext(s.pingCtx)
 		s.handler.mutex.Lock()
-		if err == nil {
-			s.handler.returnOK = true
-		} else {
-			s.handler.returnOK = false
-			log.Error().Msgf("LIVE | liveness.Server.sqlDB.PingContext(liveness.Server.pingCtx) err: %v", err)
-		}
+		s.handler.returnOK = evaluate(s.db, s.pingCtx)
 		s.handler.mutex.Unlock()
 		select {
 		case <-time.After(interval):

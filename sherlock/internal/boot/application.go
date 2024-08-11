@@ -2,7 +2,6 @@ package boot
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/boot/liveness"
 	"github.com/broadinstitute/sherlock/sherlock/internal/clients/bits_data_warehouse"
@@ -26,13 +25,12 @@ import (
 
 type Application struct {
 	dbDriverCleanup func() error
-	sqlDB           *sql.DB
+	gormDB          *gorm.DB
 	livenessServer  *liveness.Server
 	// dbMigrationLock lets us manually protect database migrations by trying to block shutdown until it
 	// completes. If we drain the database connection pool while a migration is running, the migration
 	// could fail or it could be unable to make a new query to release its lock even if it succeeded.
 	dbMigrationLock sync.Mutex
-	gormDB          *gorm.DB
 	cancelCtx       context.CancelFunc
 	server          *http.Server
 
@@ -51,26 +49,24 @@ func (a *Application) Start() {
 	}
 
 	log.Info().Msgf("BOOT | connecting to database...")
-	if sqlDB, err := db.Connect(); err != nil {
+	if gormDB, err := db.Connect(); err != nil {
 		log.Fatal().Err(err).Msgf("db.Connect() error")
 	} else {
-		a.sqlDB = sqlDB
+		a.gormDB = gormDB
 	}
 
 	log.Info().Msgf("BOOT | starting liveness endpoint...")
 	a.livenessServer = &liveness.Server{}
-	go a.livenessServer.Start(a.sqlDB)
+	go a.livenessServer.Start(a.gormDB)
 
 	log.Info().Msgf("BOOT | migrating database and configuring Gorm...")
 	a.dbMigrationLock.Lock()
-	gormDB, err := db.Configure(a.sqlDB)
+	err := db.Migrate(a.gormDB)
 	a.dbMigrationLock.Unlock()
 	if err != nil {
 		log.Fatal().Err(err).Msgf("db.Configure() error")
-	} else if err = models.Init(gormDB); err != nil {
+	} else if err = models.Init(a.gormDB); err != nil {
 		log.Fatal().Err(err).Msgf("models.Init() error")
-	} else {
-		a.gormDB = gormDB
 	}
 
 	if a.runInsideDatabaseTransaction {
@@ -200,14 +196,16 @@ func (a *Application) Stop() {
 		log.Info().Msgf("BOOT | no liveness server reference, skipping making liveness endpoint not check database")
 	}
 
-	if a.sqlDB != nil {
+	if a.gormDB != nil {
 		log.Info().Msgf("BOOT | closing database connections...")
 		if wasUnlocked := a.dbMigrationLock.TryLock(); !wasUnlocked {
 			log.Info().Msgf("BOOT | detected database migration underway, attempting to wait until it completes...")
 			a.dbMigrationLock.Lock()
 			log.Info().Msgf("BOOT | database migration complete, proceeding with connection close...")
 		}
-		if err := a.sqlDB.Close(); err != nil {
+		if sqlDB, err := a.gormDB.DB(); err != nil {
+			log.Warn().Err(err).Msgf("BOOT | database error obtaining *sql.DB to shut down")
+		} else if err = sqlDB.Close(); err != nil {
 			log.Warn().Err(err).Msgf("BOOT | database connection close error")
 		}
 		a.dbMigrationLock.Unlock()

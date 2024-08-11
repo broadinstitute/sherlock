@@ -8,15 +8,14 @@ import (
 	"testing"
 )
 
-func TestConnectAndConfigure(t *testing.T) {
+func TestConnectAndMigrate(t *testing.T) {
 	config.LoadTestConfig()
-	sqlDB, err := Connect()
-	assert.NoError(t, err)
-	assert.NotNil(t, sqlDB)
-	gormDB, err := Configure(sqlDB)
+	gormDB, err := Connect()
 	assert.NoError(t, err)
 	assert.NotNil(t, gormDB)
-	sqlDB, err = gormDB.DB()
+	err = Migrate(gormDB)
+	assert.NoError(t, err)
+	sqlDB, err := gormDB.DB()
 	assert.NoError(t, err)
 	assert.NotNil(t, sqlDB)
 	err = sqlDB.Close()

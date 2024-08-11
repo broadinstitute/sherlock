@@ -5,6 +5,7 @@ go 1.22
 toolchain go1.22.5
 
 require (
+	cloud.google.com/go/bigquery v1.62.0
 	cloud.google.com/go/cloudsqlconn v1.11.1
 	cloud.google.com/go/kms v1.18.4
 	contrib.go.opencensus.io/exporter/prometheus v0.4.2
@@ -52,7 +53,6 @@ require (
 	cloud.google.com/go v0.115.0 // indirect
 	cloud.google.com/go/auth v0.7.3 // indirect
 	cloud.google.com/go/auth/oauth2adapt v0.2.3 // indirect
-	cloud.google.com/go/bigquery v1.62.0 // indirect
 	cloud.google.com/go/compute/metadata v0.5.0 // indirect
 	cloud.google.com/go/iam v1.1.12 // indirect
 	cloud.google.com/go/longrunning v0.5.11 // indirect

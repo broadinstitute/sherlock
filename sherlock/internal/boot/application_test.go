@@ -54,10 +54,10 @@ func (s *applicationSuite) TestApplication_StartStop() {
 }
 
 func (s *applicationSuite) TestApplication_dbMigrationLock() {
-	sqlDB, err := db.Connect()
+	gormDB, err := db.Connect()
 	s.NoError(err)
 	application := &Application{
-		sqlDB: sqlDB,
+		gormDB: gormDB,
 	}
 	// Pretend that a migration is ongoing
 	application.dbMigrationLock.Lock()
