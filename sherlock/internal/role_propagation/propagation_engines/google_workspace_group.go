@@ -16,10 +16,10 @@ type GoogleWorkspaceGroupIdentifier struct {
 	Email string `koanf:"email"`
 }
 
-func (f GoogleWorkspaceGroupIdentifier) EqualTo(other intermediary_user.Identifier) bool {
+func (g GoogleWorkspaceGroupIdentifier) EqualTo(other intermediary_user.Identifier) bool {
 	switch other := other.(type) {
 	case GoogleWorkspaceGroupIdentifier:
-		return f.Email == other.Email
+		return g.Email == other.Email
 	default:
 		return false
 	}
@@ -27,7 +27,7 @@ func (f GoogleWorkspaceGroupIdentifier) EqualTo(other intermediary_user.Identifi
 
 type GoogleWorkspaceGroupFields struct{}
 
-func (f GoogleWorkspaceGroupFields) EqualTo(other intermediary_user.Fields) bool {
+func (g GoogleWorkspaceGroupFields) EqualTo(other intermediary_user.Fields) bool {
 	switch other.(type) {
 	case GoogleWorkspaceGroupFields:
 		return true
@@ -42,17 +42,17 @@ type GoogleWorkspaceGroupEngine struct {
 	adminService               *admin.Service
 }
 
-func (f *GoogleWorkspaceGroupEngine) Init(ctx context.Context, k *koanf.Koanf) error {
-	f.workspaceDomain = k.String("workspaceDomain")
-	f.userEmailSuffixesToReplace = k.Strings("userEmailSuffixesToReplace")
+func (g *GoogleWorkspaceGroupEngine) Init(ctx context.Context, k *koanf.Koanf) error {
+	g.workspaceDomain = k.String("workspaceDomain")
+	g.userEmailSuffixesToReplace = k.Strings("userEmailSuffixesToReplace")
 	var err error
-	f.adminService, err = admin.NewService(ctx, option.WithScopes(admin.AdminDirectoryUserScope, admin.AdminDirectoryGroupMemberScope))
+	g.adminService, err = admin.NewService(ctx, option.WithScopes(admin.AdminDirectoryUserScope, admin.AdminDirectoryGroupMemberScope))
 	return err
 }
 
-func (f *GoogleWorkspaceGroupEngine) LoadCurrentState(ctx context.Context, grant string) ([]intermediary_user.IntermediaryUser[GoogleWorkspaceGroupIdentifier, GoogleWorkspaceGroupFields], error) {
+func (g *GoogleWorkspaceGroupEngine) LoadCurrentState(ctx context.Context, grant string) ([]intermediary_user.IntermediaryUser[GoogleWorkspaceGroupIdentifier, GoogleWorkspaceGroupFields], error) {
 	currentState := make([]intermediary_user.IntermediaryUser[GoogleWorkspaceGroupIdentifier, GoogleWorkspaceGroupFields], 0)
-	err := f.adminService.Members.List(grant).Pages(ctx, func(members *admin.Members) error {
+	err := g.adminService.Members.List(grant).Pages(ctx, func(members *admin.Members) error {
 		for _, member := range members.Members {
 			currentState = append(currentState, intermediary_user.IntermediaryUser[GoogleWorkspaceGroupIdentifier, GoogleWorkspaceGroupFields]{
 				Identifier: GoogleWorkspaceGroupIdentifier{Email: member.Email},
@@ -64,7 +64,7 @@ func (f *GoogleWorkspaceGroupEngine) LoadCurrentState(ctx context.Context, grant
 	return currentState, err
 }
 
-func (f *GoogleWorkspaceGroupEngine) GenerateDesiredState(ctx context.Context, roleAssignments map[uint]models.RoleAssignment) (map[uint]intermediary_user.IntermediaryUser[GoogleWorkspaceGroupIdentifier, GoogleWorkspaceGroupFields], error) {
+func (g *GoogleWorkspaceGroupEngine) GenerateDesiredState(ctx context.Context, roleAssignments map[uint]models.RoleAssignment) (map[uint]intermediary_user.IntermediaryUser[GoogleWorkspaceGroupIdentifier, GoogleWorkspaceGroupFields], error) {
 	desiredState := make(map[uint]intermediary_user.IntermediaryUser[GoogleWorkspaceGroupIdentifier, GoogleWorkspaceGroupFields])
 	for id, roleAssignment := range roleAssignments {
 		if !roleAssignment.IsActive() {
@@ -72,14 +72,14 @@ func (f *GoogleWorkspaceGroupEngine) GenerateDesiredState(ctx context.Context, r
 			continue
 		}
 
-		email := utils.SubstituteSuffix(roleAssignment.User.Email, f.userEmailSuffixesToReplace, "@"+f.workspaceDomain)
-		if !strings.HasSuffix(email, "@"+f.workspaceDomain) {
+		email := utils.SubstituteSuffix(roleAssignment.User.Email, g.userEmailSuffixesToReplace, "@"+g.workspaceDomain)
+		if !strings.HasSuffix(email, "@"+g.workspaceDomain) {
 			// We can short-circuit here, we know that the user is not in the workspace domain so we won't bother looking
 			continue
 		}
 
-		err := f.adminService.Users.List().
-			Domain(f.workspaceDomain).
+		err := g.adminService.Users.List().
+			Domain(g.workspaceDomain).
 			Query("email="+email).
 			Fields("users(primaryEmail)").
 			MaxResults(1).
@@ -101,8 +101,8 @@ func (f *GoogleWorkspaceGroupEngine) GenerateDesiredState(ctx context.Context, r
 	return desiredState, nil
 }
 
-func (f *GoogleWorkspaceGroupEngine) Add(ctx context.Context, grant string, identifier GoogleWorkspaceGroupIdentifier, _ GoogleWorkspaceGroupFields) (string, error) {
-	response, err := f.adminService.Members.Insert(grant, &admin.Member{
+func (g *GoogleWorkspaceGroupEngine) Add(ctx context.Context, grant string, identifier GoogleWorkspaceGroupIdentifier, _ GoogleWorkspaceGroupFields) (string, error) {
+	response, err := g.adminService.Members.Insert(grant, &admin.Member{
 		Role:  "MEMBER",
 		Email: identifier.Email,
 	}).Context(ctx).Do()
@@ -113,12 +113,12 @@ func (f *GoogleWorkspaceGroupEngine) Add(ctx context.Context, grant string, iden
 	}
 }
 
-func (f *GoogleWorkspaceGroupEngine) Update(_ context.Context, _ string, _ GoogleWorkspaceGroupIdentifier, _ GoogleWorkspaceGroupFields, _ GoogleWorkspaceGroupFields) (string, error) {
-	return "", fmt.Errorf("%T.Update not implemented; %T.EqualTo should always equal true", f, GoogleWorkspaceGroupFields{})
+func (g *GoogleWorkspaceGroupEngine) Update(_ context.Context, _ string, _ GoogleWorkspaceGroupIdentifier, _ GoogleWorkspaceGroupFields, _ GoogleWorkspaceGroupFields) (string, error) {
+	return "", fmt.Errorf("%T.Update not implemented; %T.EqualTo should always equal true", g, GoogleWorkspaceGroupFields{})
 }
 
-func (f *GoogleWorkspaceGroupEngine) Remove(ctx context.Context, grant string, identifier GoogleWorkspaceGroupIdentifier) (string, error) {
-	err := f.adminService.Members.Delete(grant, identifier.Email).Context(ctx).Do()
+func (g *GoogleWorkspaceGroupEngine) Remove(ctx context.Context, grant string, identifier GoogleWorkspaceGroupIdentifier) (string, error) {
+	err := g.adminService.Members.Delete(grant, identifier.Email).Context(ctx).Do()
 	if err != nil {
 		return "", fmt.Errorf("failed to remove %s from %s: %w", identifier.Email, grant, err)
 	} else {
