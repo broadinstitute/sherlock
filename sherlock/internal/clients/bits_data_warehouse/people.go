@@ -72,12 +72,13 @@ func calculatePersonColumns() {
 			personColumns += ", "
 		}
 		columnName, _ := strings.CutSuffix(typ.Field(i).Tag.Get("bigquery"), ",")
-		personColumns += columnName
+		personColumns += "`" + columnName + "`" // Escape with backticks to avoid error on "group" column
 	}
 }
 
 func updatePeopleCache(ctx context.Context) error {
-	query := client.Query("SELECT " + personColumns + " FROM " + config.Config.String("bitsDataWarehouse.peopleTable"))
+	queryString := "SELECT " + personColumns + " FROM " + config.Config.String("bitsDataWarehouse.peopleTable")
+	query := client.Query(queryString)
 	it, err := query.Read(ctx)
 	if err != nil {
 		return err
@@ -113,9 +114,18 @@ func keepPeopleCacheUpdated(ctx context.Context) {
 	}
 }
 
+// GetPerson retrieves a Person from the cache by email address. Since it's cached, there's no monetary cost
+// associated with calling this function. If the cache hasn't been initialized, an error will be returned.
+// The caller should handle this as the person being neither found nor not found.
+//
+// We disable linting here because we're just building functionality for later; we don't have an exact use
+// case we're shipping right now.
+//
+//nolint:unused
+//goland:noinspection GoUnusedExportedFunction,GoUnnecessarilyExportedIdentifiers
 func GetPerson(email string) (person Person, found bool, err error) {
 	if client == nil || len(cachedPeople) == 0 {
-		return person, false, errors.New("people cache not initialized")
+		return Person{}, false, errors.New("people cache not initialized")
 	} else {
 		person, found = cachedPeople[email]
 		return person, found, nil
