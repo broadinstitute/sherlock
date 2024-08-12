@@ -138,20 +138,20 @@ func parseFirecloudUser(workspaceUser *admin.User, fcAdminsGroupEmails []string,
 	if workspaceUser.PrimaryEmail == "" {
 		return false, "firecloud user doesn't appear to have a primary email? something's amiss, marking as not suitable"
 	} else if !workspaceUser.AgreedToTerms {
-		return false, fmt.Sprintf("firecloud user hasn't accepted Google Workspace terms (suggesting they've never logged in; they'll need to wait %d minutes after first login for Sherlock to pick it up)",
+		return false, fmt.Sprintf("firecloud user hasn't accepted Google Workspace terms (suggesting they've never logged in; the user will need to wait %s after first login for Sherlock to pick it up)",
 			config.Config.Duration("suitabilitySynchronization.behaviors.loadIntoDB.interval"))
 	} else if !workspaceUser.IsEnrolledIn2Sv {
 		return false, "firecloud user hasn't enrolled in two-factor authentication"
 	} else if workspaceUser.Suspended {
-		return false, fmt.Sprintf("firecloud user is suspended, probably due to inactivity (reach out to #dsp-devops-champions for help; they'll need to wait %d minutes after reactivation for Sherlock to pick it up)",
+		return false, fmt.Sprintf("firecloud user is suspended, probably due to inactivity (reach out to #dsp-devops-champions for help; the user will need to wait %s after reactivation for Sherlock to pick it up)",
 			config.Config.Duration("suitabilitySynchronization.behaviors.loadIntoDB.interval"))
 	} else if workspaceUser.Archived {
 		return false, "firecloud user is archived"
 	} else if !utils.Contains(fcAdminsGroupEmails, workspaceUser.PrimaryEmail) {
-		return false, fmt.Sprintf("firecloud user isn't in fc-admins group (reach out to #dsp-devops-champions for help; they'll need to wait %d minutes after being added for Sherlock to pick it up)",
+		return false, fmt.Sprintf("firecloud user isn't in fc-admins group (reach out to #dsp-devops-champions for help; the user will need to wait %s after being added for Sherlock to pick it up)",
 			config.Config.Duration("suitabilitySynchronization.behaviors.loadIntoDB.interval"))
 	} else if !utils.Contains(firecloudProjectOwnersGroupEmails, workspaceUser.PrimaryEmail) {
-		return false, fmt.Sprintf("firecloud user isn't in firecloud-project-owners group (reach out to #dsp-devops-champions for help; they'll need to wait %d minutes after being added for Sherlock to pick it up)",
+		return false, fmt.Sprintf("firecloud user isn't in firecloud-project-owners group (reach out to #dsp-devops-champions for help; the user will need to wait %s after being added for Sherlock to pick it up)",
 			config.Config.Duration("suitabilitySynchronization.behaviors.loadIntoDB.interval"))
 	} else {
 		return true, "firecloud user is suitable"

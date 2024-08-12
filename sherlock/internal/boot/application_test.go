@@ -54,10 +54,10 @@ func (s *applicationSuite) TestApplication_StartStop() {
 }
 
 func (s *applicationSuite) TestApplication_dbMigrationLock() {
-	sqlDB, err := db.Connect()
+	gormDB, cleanup, err := db.Connect()
 	s.NoError(err)
 	application := &Application{
-		sqlDB: sqlDB,
+		gormDB: gormDB,
 	}
 	// Pretend that a migration is ongoing
 	application.dbMigrationLock.Lock()
@@ -96,4 +96,12 @@ func (s *applicationSuite) TestApplication_dbMigrationLock() {
 	// Have to make the linter stand down
 	//nolint:staticcheck
 	completedMarker.Unlock()
+
+	sqlDB, err := gormDB.DB()
+	s.NoError(err)
+	s.NotNil(sqlDB)
+	err = sqlDB.Close()
+	s.NoError(err)
+	err = cleanup()
+	s.NoError(err)
 }
