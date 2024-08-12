@@ -84,3 +84,6 @@ suitabilitySynchronization:
           suitable: true
         - email: has-extra-permissions-non-suitable@example.com
           suitable: false
+
+bitsDataWarehouse:
+  enable: false
