@@ -103,6 +103,14 @@ func initializeConnPool() (connPool gorm.ConnPool, cleanup func() error, err err
 		pgxConfig.DialFunc = func(ctx context.Context, _, _ string) (net.Conn, error) {
 			return dialer.Dial(ctx, instanceConnectionName)
 		}
+		// When we use this dialer, the db.host is the instance connection name. This is fairly standard
+		// per the Cloud SQL Go connector's documentation -- it's what you do if you use the connector
+		// as the entire driver -- but for us, we're only using it as the dialer. The problem is that
+		// pgx will still try to resolve it to get an IP address (which we end up ignoring in our
+		// pgxConfig.DialFunc). The cleanest way to resolve this is to just set the host as far as
+		// pgx is concerned to "localhost". This cleanly resolves to a harmless IP that we can safely
+		// ignore.
+		pgxConfig.Host = "localhost"
 	}
 
 	if config.Config.Bool("db.preparedStatementCache") {
