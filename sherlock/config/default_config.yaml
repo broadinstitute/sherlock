@@ -440,7 +440,7 @@ suitabilitySynchronization:
 bitsDataWarehouse:
   # If Sherlock should read data from the BITS Data Warehouse tables given below. Note that while Broad employees
   # typically have access to the data warehouse, service accounts need to be granted specific access.
-  enable: true
+  enable: false
   # If set, use the given project to create BigQuery jobs to query the data warehouse. If unset or set to an
   # empty string, the library will attempt to auto-detect the project based on the credentials. This generally
   # doesn't work locally.
