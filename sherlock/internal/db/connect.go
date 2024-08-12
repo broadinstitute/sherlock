@@ -76,15 +76,18 @@ func parseGormLogLevel(logLevel string) (logger.LogLevel, error) {
 // Go connector if necessary and it's also responsible for setting the prepared statement
 // cache setting (since we must manually do so with the Cloud SQL Go connector).
 func initializeConnPool() (connPool gorm.ConnPool, cleanup func() error, err error) {
+	// To avoid a gotcha we provide a cleanup function so that's never nil
+	cleanup = func() error { return nil }
+
 	pgxConfig, err := pgx.ParseConfig(dbConnectionString())
 	if err != nil {
-		return nil, nil, err
+		return nil, cleanup, err
 	}
 
 	if config.Config.MustString("db.driver") == "cloudsql-postgres" {
 		instanceConnectionName := config.Config.String("db.host")
 		if instanceConnectionName == "" {
-			return nil, nil, errors.New("db.driver=cloudsql-postgres requires db.host to be set to the instance connection name")
+			return nil, cleanup, errors.New("db.driver=cloudsql-postgres requires db.host to be set to the instance connection name")
 		}
 
 		opts := make([]cloudsqlconn.Option, 0)
@@ -94,7 +97,7 @@ func initializeConnPool() (connPool gorm.ConnPool, cleanup func() error, err err
 		var dialer *cloudsqlconn.Dialer
 		dialer, err = cloudsqlconn.NewDialer(context.Background(), opts...)
 		if err != nil {
-			return nil, nil, err
+			return nil, cleanup, err
 		}
 		cleanup = dialer.Close
 		pgxConfig.DialFunc = func(ctx context.Context, _, _ string) (net.Conn, error) {
