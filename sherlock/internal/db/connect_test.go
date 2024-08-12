@@ -10,7 +10,7 @@ import (
 
 func TestConnectAndMigrate(t *testing.T) {
 	config.LoadTestConfig()
-	gormDB, err := Connect()
+	gormDB, cleanup, err := Connect()
 	assert.NoError(t, err)
 	assert.NotNil(t, gormDB)
 	err = Migrate(gormDB)
@@ -19,6 +19,8 @@ func TestConnectAndMigrate(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, sqlDB)
 	err = sqlDB.Close()
+	assert.NoError(t, err)
+	err = cleanup()
 	assert.NoError(t, err)
 }
 

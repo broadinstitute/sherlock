@@ -13,7 +13,7 @@ import (
 
 func TestServer_Lifecycle(t *testing.T) {
 	config.LoadTestConfig()
-	gormDB, err := db.Connect()
+	gormDB, cleanup, err := db.Connect()
 	assert.NoError(t, err)
 	server := &Server{}
 	go server.Start(gormDB)
@@ -37,6 +37,13 @@ func TestServer_Lifecycle(t *testing.T) {
 		assert.Equal(t, http.StatusOK, resp.StatusCode)
 	})
 	server.Stop()
+	sqlDB, err := gormDB.DB()
+	assert.NoError(t, err)
+	assert.NotNil(t, sqlDB)
+	err = sqlDB.Close()
+	assert.NoError(t, err)
+	err = cleanup()
+	assert.NoError(t, err)
 }
 
 func TestServer_MakeAlwaysReturnOK(t *testing.T) {

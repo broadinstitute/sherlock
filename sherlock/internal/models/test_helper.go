@@ -13,9 +13,10 @@ import (
 // help manage the database connection, test transaction,
 // and the Gorm instance's current user.
 type TestSuiteHelper struct {
-	DB         *gorm.DB
-	internalDB *gorm.DB
-	TestData   TestData
+	DB                *gorm.DB
+	internalDB        *gorm.DB
+	internalDBCleanup func() error
+	TestData          TestData
 }
 
 // SetupSuite runs once before all tests. It connects to the
@@ -23,7 +24,7 @@ type TestSuiteHelper struct {
 func (h *TestSuiteHelper) SetupSuite() {
 	config.LoadTestConfig()
 	var err error
-	h.internalDB, err = db.Connect()
+	h.internalDB, h.internalDBCleanup, err = db.Connect()
 	if err != nil {
 		panic(err)
 	}
@@ -102,6 +103,10 @@ func (h *TestSuiteHelper) TearDownSuite() {
 		panic(err)
 	}
 	err = sqlDB.Close()
+	if err != nil {
+		panic(err)
+	}
+	err = h.internalDBCleanup()
 	if err != nil {
 		panic(err)
 	}

@@ -24,9 +24,9 @@ import (
 )
 
 type Application struct {
-	dbDriverCleanup func() error
-	gormDB          *gorm.DB
-	livenessServer  *liveness.Server
+	dbCleanup      func() error
+	gormDB         *gorm.DB
+	livenessServer *liveness.Server
 	// dbMigrationLock lets us manually protect database migrations by trying to block shutdown until it
 	// completes. If we drain the database connection pool while a migration is running, the migration
 	// could fail or it could be unable to make a new query to release its lock even if it succeeded.
@@ -41,17 +41,11 @@ type Application struct {
 }
 
 func (a *Application) Start() {
-	log.Info().Msgf("BOOT | registering database driver...")
-	if dbDriverCleanup, err := db.RegisterDriver(); err != nil {
-		log.Fatal().Err(err).Msgf("db.RegisterDriver() error")
-	} else {
-		a.dbDriverCleanup = dbDriverCleanup
-	}
-
 	log.Info().Msgf("BOOT | connecting to database...")
-	if gormDB, err := db.Connect(); err != nil {
+	if gormDB, cleanup, err := db.Connect(); err != nil {
 		log.Fatal().Err(err).Msgf("db.Connect() error")
 	} else {
+		a.dbCleanup = cleanup
 		a.gormDB = gormDB
 	}
 
@@ -213,13 +207,13 @@ func (a *Application) Stop() {
 		log.Info().Msgf("BOOT | no SQL database reference, skipping closing database connections")
 	}
 
-	if a.dbDriverCleanup != nil {
-		log.Info().Msgf("BOOT | cleaning up database driver...")
-		if err := a.dbDriverCleanup(); err != nil {
-			log.Warn().Err(err).Msgf("BOOT | database driver clean up error")
+	if a.dbCleanup != nil {
+		log.Info().Msgf("BOOT | cleaning up database...")
+		if err := a.dbCleanup(); err != nil {
+			log.Warn().Err(err).Msgf("BOOT | database clean up error")
 		}
 	} else {
-		log.Info().Msgf("BOOT | no database driver cleanup function, skipping cleanup")
+		log.Info().Msgf("BOOT | no database cleanup function, skipping cleanup")
 	}
 
 	if a.livenessServer != nil {

@@ -1,31 +1,43 @@
 package db
 
 import (
+	"cloud.google.com/go/cloudsqlconn"
+	"context"
 	"database/sql"
 	"errors"
 	"fmt"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
+	"github.com/jackc/pgx/v5"
+	pgxstdlib "github.com/jackc/pgx/v5/stdlib"
 	"github.com/rs/zerolog/log"
 	gormpg "gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
+	"net"
 	"strings"
 	"time"
-
-	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
-func Connect() (*gorm.DB, error) {
+// Connect provides a *gorm.DB and a non-nil cleanup function.
+func Connect() (db *gorm.DB, cleanup func() error, err error) {
+	// To avoid a gotcha we provide a cleanup function so that's never nil
+	cleanup = func() error { return nil }
+
 	logLevel, err := parseGormLogLevel(config.Config.String("db.log.level"))
 	if err != nil {
-		return nil, err
+		return nil, cleanup, err
 	}
 
-	var db *gorm.DB
+	var connPool gorm.ConnPool
+	connPool, cleanup, err = initializeConnPool()
+	if err != nil {
+		return nil, cleanup, err
+	}
+
 	initialAttempts := config.Config.Int("db.retryConnection.times") + 1
 	attemptInterval := config.Config.Duration("db.retryConnection.interval")
 	for attemptsRemaining := initialAttempts; attemptsRemaining >= 0; attemptsRemaining-- {
-		db, err = initializeGorm(logLevel)
+		db, err = initializeGorm(connPool, logLevel)
 		if err == nil {
 			break
 		} else if attemptsRemaining > 0 {
@@ -34,23 +46,14 @@ func Connect() (*gorm.DB, error) {
 		}
 	}
 	if err != nil || db == nil {
-		return nil, fmt.Errorf("unable to connect to the database after %d attempts: %w", initialAttempts, err)
+		return nil, cleanup, fmt.Errorf("unable to connect to the database after %d attempts: %w", initialAttempts, err)
 	}
-
-	sqlDB, err := db.DB()
-	if err != nil {
-		return nil, err
-	}
-	sqlDB.SetMaxOpenConns(config.Config.MustInt("db.maxOpenConnections"))
-	sqlDB.SetMaxIdleConns(config.Config.MustInt("db.maxIdleConnections"))
-	sqlDB.SetConnMaxIdleTime(config.Config.Duration("db.connectionMaxIdleTime"))
-	sqlDB.SetConnMaxLifetime(config.Config.Duration("db.connectionMaxLifetime"))
 
 	if config.Config.MustString("mode") == "debug" {
-		panicIfLooksLikeCloudSQL(sqlDB)
+		panicIfLooksLikeCloudSQL(db)
 	}
 
-	return db, nil
+	return db, cleanup, nil
 }
 
 func parseGormLogLevel(logLevel string) (logger.LogLevel, error) {
@@ -68,18 +71,57 @@ func parseGormLogLevel(logLevel string) (logger.LogLevel, error) {
 	}
 }
 
+// initializeConnPool sets up a connection to the database but doesn't actually run it,
+// so it shouldn't need to be retried. This function will handle using the Cloud SQL
+// Go connector if necessary and it's also responsible for setting the prepared statement
+// cache setting (since we must manually do so with the Cloud SQL Go connector).
+func initializeConnPool() (connPool gorm.ConnPool, cleanup func() error, err error) {
+	pgxConfig, err := pgx.ParseConfig(dbConnectionString())
+	if err != nil {
+		return nil, nil, err
+	}
+
+	if config.Config.MustString("db.driver") == "cloudsql-postgres" {
+		instanceConnectionName := config.Config.String("db.host")
+		if instanceConnectionName == "" {
+			return nil, nil, errors.New("db.driver=cloudsql-postgres requires db.host to be set to the instance connection name")
+		}
+
+		opts := make([]cloudsqlconn.Option, 0)
+		if config.Config.Bool("db.cloudSql.automaticIamAuthEnabled") {
+			opts = append(opts, cloudsqlconn.WithIAMAuthN())
+		}
+		var dialer *cloudsqlconn.Dialer
+		dialer, err = cloudsqlconn.NewDialer(context.Background(), opts...)
+		if err != nil {
+			return nil, nil, err
+		}
+		cleanup = dialer.Close
+		pgxConfig.DialFunc = func(ctx context.Context, _, _ string) (net.Conn, error) {
+			return dialer.Dial(ctx, instanceConnectionName)
+		}
+	}
+
+	if config.Config.Bool("db.preparedStatementCache") {
+		pgxConfig.DefaultQueryExecMode = pgx.QueryExecModeCacheStatement
+	} else {
+		pgxConfig.DefaultQueryExecMode = pgx.QueryExecModeExec
+	}
+
+	sqlDB := pgxstdlib.OpenDB(*pgxConfig)
+	sqlDB.SetMaxOpenConns(config.Config.MustInt("db.maxOpenConnections"))
+	sqlDB.SetMaxIdleConns(config.Config.MustInt("db.maxIdleConnections"))
+	sqlDB.SetConnMaxIdleTime(config.Config.Duration("db.connectionMaxIdleTime"))
+	sqlDB.SetConnMaxLifetime(config.Config.Duration("db.connectionMaxLifetime"))
+
+	return sqlDB, cleanup, nil
+}
+
 // initializeGorm does what it says on the tin. It will automatically attempt to ping the
 // database, so it will fail if the database is offline.
-//
-// Gorm uses pgx under the hood to work with Postgres; RegisterDriver will have wired up driver
-// into pgx if necessary. We use Gorm to do the heavy lifting so our prepared statement cache
-// setting is respected; since that's a pgx thing if we set up a *sql.DB ourselves and just
-// hand it to Gorm the setting won't work.
-func initializeGorm(logLevel logger.LogLevel) (*gorm.DB, error) {
+func initializeGorm(conn gorm.ConnPool, logLevel logger.LogLevel) (*gorm.DB, error) {
 	return gorm.Open(gormpg.New(gormpg.Config{
-		DriverName:           config.Config.MustString("db.driver"),
-		DSN:                  dbConnectionString(),
-		PreferSimpleProtocol: !config.Config.Bool("db.preparedStatementCache"),
+		Conn: conn,
 	}), &gorm.Config{
 		// log.Logger is Zerolog's global logger that the rest of Sherlock uses
 		Logger: logger.New(&log.Logger, logger.Config{
@@ -118,10 +160,10 @@ func dbConnectionString() string {
 // panicIfLooksLikeCloudSQL does what it says on the tin -- it exits fast and hard if the database has a 'cloudsqladmin'
 // role in it. That's not something Sherlock's migration would ever add but it's there by default on Cloud SQL, so
 // it's an extra gate to make sure we don't accidentally run tests against a remote database.
-func panicIfLooksLikeCloudSQL(db *sql.DB) {
+func panicIfLooksLikeCloudSQL(db *gorm.DB) {
 	var cloudSqlAdminRoleExists bool
-	err := db.QueryRow("SELECT 1 FROM pg_roles WHERE rolname='cloudsqladmin'").Scan(&cloudSqlAdminRoleExists)
-	if err != nil && !errors.Is(err, sql.ErrNoRows) {
+	err := db.Raw("SELECT 1 FROM pg_roles WHERE rolname='cloudsqladmin'").Scan(&cloudSqlAdminRoleExists).Error
+	if err != nil && !errors.Is(err, sql.ErrNoRows) && !errors.Is(err, gorm.ErrRecordNotFound) {
 		panic(fmt.Errorf("failed to double-check that the database wasn't running in Cloud SQL: %w", err))
 	}
 	if cloudSqlAdminRoleExists {
