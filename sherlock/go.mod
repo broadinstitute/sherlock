@@ -7,7 +7,7 @@ toolchain go1.22.5
 require (
 	cloud.google.com/go/bigquery v1.62.0
 	cloud.google.com/go/cloudsqlconn v1.11.1
-	cloud.google.com/go/kms v1.18.4
+	cloud.google.com/go/kms v1.18.5
 	contrib.go.opencensus.io/exporter/prometheus v0.4.2
 	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.7.0
 	github.com/PagerDuty/go-pagerduty v1.8.0
@@ -25,7 +25,7 @@ require (
 	github.com/jackc/pgx/v5 v5.6.0
 	github.com/jinzhu/copier v0.4.0
 	github.com/knadh/koanf v1.5.0
-	github.com/microsoftgraph/msgraph-sdk-go v1.46.0
+	github.com/microsoftgraph/msgraph-sdk-go v1.47.0
 	github.com/pact-foundation/pact-go/v2 v2.0.7
 	github.com/rs/zerolog v1.33.0
 	github.com/sanity-io/litter v1.5.5
@@ -36,12 +36,12 @@ require (
 	github.com/swaggo/swag v1.16.3
 	github.com/zitadel/oidc/v3 v3.26.0
 	go.opencensus.io v0.24.0
-	golang.org/x/crypto v0.25.0
+	golang.org/x/crypto v0.26.0
 	golang.org/x/exp v0.0.0-20231110203233-9a3e6036ecaa
-	golang.org/x/net v0.27.0
+	golang.org/x/net v0.28.0
 	golang.org/x/oauth2 v0.22.0
-	golang.org/x/text v0.16.0
-	google.golang.org/api v0.190.0
+	golang.org/x/text v0.17.0
+	google.golang.org/api v0.191.0
 	gorm.io/datatypes v1.2.1
 	gorm.io/driver/postgres v1.5.9
 	gorm.io/gorm v1.25.11
@@ -51,14 +51,14 @@ replace github.com/broadinstitute/sherlock/go-shared => ../go-shared
 
 require (
 	cloud.google.com/go v0.115.0 // indirect
-	cloud.google.com/go/auth v0.7.3 // indirect
+	cloud.google.com/go/auth v0.8.0 // indirect
 	cloud.google.com/go/auth/oauth2adapt v0.2.3 // indirect
 	cloud.google.com/go/compute/metadata v0.5.0 // indirect
 	cloud.google.com/go/iam v1.1.12 // indirect
 	cloud.google.com/go/longrunning v0.5.11 // indirect
 	filippo.io/edwards25519 v1.1.0 // indirect
-	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.12.0 // indirect
-	github.com/Azure/azure-sdk-for-go/sdk/internal v1.9.0 // indirect
+	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.13.0 // indirect
+	github.com/Azure/azure-sdk-for-go/sdk/internal v1.10.0 // indirect
 	github.com/AzureAD/microsoft-authentication-library-for-go v1.2.2 // indirect
 	github.com/KyleBanks/depth v1.2.1 // indirect
 	github.com/apache/arrow/go/v15 v15.0.2 // indirect
@@ -122,12 +122,12 @@ require (
 	github.com/matttproud/golang_protobuf_extensions v1.0.4 // indirect
 	github.com/microsoft/kiota-abstractions-go v1.6.1 // indirect
 	github.com/microsoft/kiota-authentication-azure-go v1.0.2 // indirect
-	github.com/microsoft/kiota-http-go v1.3.1 // indirect
+	github.com/microsoft/kiota-http-go v1.4.1 // indirect
 	github.com/microsoft/kiota-serialization-form-go v1.0.0 // indirect
 	github.com/microsoft/kiota-serialization-json-go v1.0.7 // indirect
 	github.com/microsoft/kiota-serialization-multipart-go v1.0.0 // indirect
 	github.com/microsoft/kiota-serialization-text-go v1.0.0 // indirect
-	github.com/microsoftgraph/msgraph-sdk-go-core v1.1.0 // indirect
+	github.com/microsoftgraph/msgraph-sdk-go-core v1.2.0 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
@@ -165,9 +165,9 @@ require (
 	go.uber.org/atomic v1.10.0 // indirect
 	golang.org/x/arch v0.8.0 // indirect
 	golang.org/x/mod v0.18.0 // indirect
-	golang.org/x/sync v0.7.0 // indirect
-	golang.org/x/sys v0.22.0 // indirect
-	golang.org/x/time v0.5.0 // indirect
+	golang.org/x/sync v0.8.0 // indirect
+	golang.org/x/sys v0.23.0 // indirect
+	golang.org/x/time v0.6.0 // indirect
 	golang.org/x/tools v0.22.0 // indirect
 	golang.org/x/xerrors v0.0.0-20231012003039-104605ab7028 // indirect
 	google.golang.org/genproto v0.0.0-20240730163845-b1a4ccb954bf // indirect
