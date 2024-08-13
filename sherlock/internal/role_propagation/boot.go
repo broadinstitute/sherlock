@@ -40,6 +40,12 @@ func Init(ctx context.Context) error {
 			getGrant:  func(role models.Role) *string { return role.GrantsProdAzureGroup },
 			engine:    &propagation_engines.AzureGroupEngine{},
 		},
+
+		&propagatorImpl[string, propagation_engines.NonAdminGoogleGroupIdentifier, propagation_engines.NonAdminGoogleGroupFields]{
+			configKey: "broadInstituteGroup",
+			getGrant:  func(role models.Role) *string { return role.GrantsBroadInstituteGroup },
+			engine:    &propagation_engines.NonAdminGoogleGroupEngine{},
+		},
 	}
 	for _, p := range propagators {
 		if err := p.Init(ctx); err != nil {

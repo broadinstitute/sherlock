@@ -217,7 +217,7 @@ func (ra *RoleAssignment) AfterUpdate(tx *gorm.DB) error {
 		slack.SendPermissionChangeNotification(tx.Statement.Context, user.SlackReference(true), slack.PermissionChangeNotificationInputs{
 			Summary: fmt.Sprintf("edited RoleAssignment for %s", ra.Description(tx)),
 			Results: []string{
-				"Old fields: " + slack.EscapeText(litter.Sdump(ra.RoleAssignmentFields)),
+				"Old fields: " + slack.EscapeText(litter.Sdump(ra.previousFields)),
 				"New fields: " + slack.EscapeText(litter.Sdump(ra.RoleAssignmentFields)),
 			},
 		})

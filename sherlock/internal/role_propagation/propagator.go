@@ -50,7 +50,7 @@ type propagatorImpl[
 	configKey string
 
 	// getGrant reads the models.Role to tell us what we're trying to grant. See the Grant generic type for more info.
-	// A nil return value means the models.Role doesn't have anything for us to grant.
+	// A nil or empty return value means the models.Role doesn't have anything for us to grant.
 	getGrant func(role models.Role) *Grant
 
 	// engine is the implementation of the cloud-specific logic for introspecting and adjusting the grant's state.

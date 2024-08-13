@@ -26,6 +26,7 @@ func (s *handlerSuite) Test_roleFromModel() {
 			GrantsProdFirecloudGroup:  model.GrantsProdFirecloudGroup,
 			GrantsDevAzureGroup:       model.GrantsDevAzureGroup,
 			GrantsProdAzureGroup:      model.GrantsProdAzureGroup,
+			GrantsBroadInstituteGroup: model.GrantsBroadInstituteGroup,
 		},
 	}
 	role := roleFromModel(model)

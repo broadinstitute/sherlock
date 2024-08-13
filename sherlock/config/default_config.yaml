@@ -410,6 +410,9 @@ rolePropagation:
       userEmailSuffixesToReplace:
         - "@broadinstitute.org"
 
+    broadInstituteGroup:
+      enable: false
+
 suitabilitySynchronization:
   enable: true
   behaviors:

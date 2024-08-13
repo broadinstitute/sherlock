@@ -56,6 +56,10 @@ type RoleFields struct {
 	// GrantsProdAzureGroup, when not null, indicates that a User with an unsuspended RoleAssignment to this Role
 	// should have their Azure account (if they have one) added to this group.
 	GrantsProdAzureGroup *string
+
+	// GrantsBroadInstituteGroup, when not null, indicates that a User with an unsuspended RoleAssignment to this
+	// Role should have their Broad Institute account (assuming it is active) added to this group.
+	GrantsBroadInstituteGroup *string
 }
 
 type Role struct {

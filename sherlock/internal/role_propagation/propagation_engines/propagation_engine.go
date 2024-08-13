@@ -72,3 +72,24 @@ type PropagationEngine[
 	// It should return a string that will be logged as the result of the operation.
 	Remove(ctx context.Context, grant Grant, identifier Identifier) (string, error)
 }
+
+// ToleratedUserCalculator is an interface that a PropagationEngine may OPTIONALLY implement.
+// If implemented, CalculateToleratedUsers will be called after the engine's initialization to
+// load dynamic but non-grant-specific identities that should be globally tolerated by the
+// propagator.
+//
+// Put simply, if an engine implements this interface, it won't ever be asked to remove any of
+// the identities it returns from CalculateToleratedUsers. CalculateToleratedUsers is called
+// a single time when Sherlock boots.
+//
+// This is mainly helpful when Sherlock itself will show up in the current state of a grant.
+// We obviously don't want to remove Sherlock itself from a grant (i.e. for
+// NonAdminGoogleGroupEngine, this is how it actually has permissions to modify the group), but
+// it's a bit of a sharp edge to require us to hardcode Sherlock's identity into the config file
+// as a tolerated identity. This interface allows the engine to figure out its identity and add
+// it to that all-important list.
+type ToleratedUserCalculator[
+	Identifier intermediary_user.Identifier,
+] interface {
+	CalculateToleratedUsers(ctx context.Context) ([]Identifier, error)
+}

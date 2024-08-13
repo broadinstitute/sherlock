@@ -97,18 +97,27 @@ func Test_propagatorImpl_Init(t *testing.T) {
 }
 
 func Test_propagatorImpl_initTimeout(t *testing.T) {
-	type testCase[Grant any, Identifier intermediary_user.Identifier, Fields intermediary_user.Fields] struct {
-		name string
-		p    propagatorImpl[Grant, Identifier, Fields]
-	}
-	tests := []testCase[string, propagation_engines.GoogleWorkspaceGroupIdentifier, propagation_engines.GoogleWorkspaceGroupFields]{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			tt.p.initTimeout()
-		})
-	}
+	t.Run("custom", func(t *testing.T) {
+		k := koanf.New(".")
+		require.NoError(t, k.Set("timeout", "1s"))
+		p := propagatorImpl[string, intermediary_user.Identifier, intermediary_user.Fields]{
+			_config: k,
+		}
+
+		p.initTimeout()
+
+		assert.Equal(t, "1s", p._timeout.String())
+	})
+	t.Run("default", func(t *testing.T) {
+		k := koanf.New(".")
+		p := propagatorImpl[string, intermediary_user.Identifier, intermediary_user.Fields]{
+			_config: k,
+		}
+
+		p.initTimeout()
+
+		assert.Equal(t, config.Config.Duration("rolePropagation.defaultTimeout"), p._timeout)
+	})
 }
 
 type identifierWithInt struct {
@@ -136,5 +145,41 @@ func Test_propagatorImpl_initToleratedUsers_error(t *testing.T) {
 		_config: k,
 	}
 
-	assert.Errorf(t, p.initToleratedUsers(), "expected an error")
+	assert.Errorf(t, p.initToleratedUsers(context.Background()), "expected an error")
+}
+
+func Test_propagatorImpl_initToleratedUsers_calculator(t *testing.T) {
+	engine := propagation_engines_mocks.NewMockPropagationEngine[string, propagation_engines.GoogleWorkspaceGroupIdentifier, propagation_engines.GoogleWorkspaceGroupFields](t)
+	calculator := propagation_engines_mocks.NewMockToleratedUserCalculator[propagation_engines.GoogleWorkspaceGroupIdentifier](t)
+	calculatorEngine := struct {
+		propagation_engines.PropagationEngine[string, propagation_engines.GoogleWorkspaceGroupIdentifier, propagation_engines.GoogleWorkspaceGroupFields]
+		propagation_engines.ToleratedUserCalculator[propagation_engines.GoogleWorkspaceGroupIdentifier]
+	}{
+		PropagationEngine:       engine,
+		ToleratedUserCalculator: calculator,
+	}
+
+	k := koanf.New(".")
+	require.NoError(t, k.Set("toleratedUsers", []any{
+		map[string]any{
+			"email": "hardcoded@example.com",
+		},
+	}))
+
+	p := &propagatorImpl[string, propagation_engines.GoogleWorkspaceGroupIdentifier, propagation_engines.GoogleWorkspaceGroupFields]{
+		_config: k,
+		engine:  calculatorEngine,
+	}
+
+	ctx := context.Background()
+
+	calculator.EXPECT().CalculateToleratedUsers(ctx).Return([]propagation_engines.GoogleWorkspaceGroupIdentifier{
+		{Email: "dynamic@example.com"},
+	}, nil)
+
+	assert.NoError(t, p.initToleratedUsers(ctx))
+	assert.ElementsMatch(t, p._toleratedUsers, []propagation_engines.GoogleWorkspaceGroupIdentifier{
+		{Email: "hardcoded@example.com"},
+		{Email: "dynamic@example.com"},
+	})
 }
