@@ -77,6 +77,9 @@ type GetAPIRolesV3Params struct {
 	// DefaultGlassBreakDuration.
 	DefaultGlassBreakDuration *string
 
+	// GrantsBroadInstituteGroup.
+	GrantsBroadInstituteGroup *string
+
 	// GrantsDevAzureGroup.
 	GrantsDevAzureGroup *string
 
@@ -219,6 +222,17 @@ func (o *GetAPIRolesV3Params) WithDefaultGlassBreakDuration(defaultGlassBreakDur
 // SetDefaultGlassBreakDuration adds the defaultGlassBreakDuration to the get API roles v3 params
 func (o *GetAPIRolesV3Params) SetDefaultGlassBreakDuration(defaultGlassBreakDuration *string) {
 	o.DefaultGlassBreakDuration = defaultGlassBreakDuration
+}
+
+// WithGrantsBroadInstituteGroup adds the grantsBroadInstituteGroup to the get API roles v3 params
+func (o *GetAPIRolesV3Params) WithGrantsBroadInstituteGroup(grantsBroadInstituteGroup *string) *GetAPIRolesV3Params {
+	o.SetGrantsBroadInstituteGroup(grantsBroadInstituteGroup)
+	return o
+}
+
+// SetGrantsBroadInstituteGroup adds the grantsBroadInstituteGroup to the get API roles v3 params
+func (o *GetAPIRolesV3Params) SetGrantsBroadInstituteGroup(grantsBroadInstituteGroup *string) {
+	o.GrantsBroadInstituteGroup = grantsBroadInstituteGroup
 }
 
 // WithGrantsDevAzureGroup adds the grantsDevAzureGroup to the get API roles v3 params
@@ -424,6 +438,23 @@ func (o *GetAPIRolesV3Params) WriteToRequest(r runtime.ClientRequest, reg strfmt
 		if qDefaultGlassBreakDuration != "" {
 
 			if err := r.SetQueryParam("defaultGlassBreakDuration", qDefaultGlassBreakDuration); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.GrantsBroadInstituteGroup != nil {
+
+		// query param grantsBroadInstituteGroup
+		var qrGrantsBroadInstituteGroup string
+
+		if o.GrantsBroadInstituteGroup != nil {
+			qrGrantsBroadInstituteGroup = *o.GrantsBroadInstituteGroup
+		}
+		qGrantsBroadInstituteGroup := qrGrantsBroadInstituteGroup
+		if qGrantsBroadInstituteGroup != "" {
+
+			if err := r.SetQueryParam("grantsBroadInstituteGroup", qGrantsBroadInstituteGroup); err != nil {
 				return err
 			}
 		}

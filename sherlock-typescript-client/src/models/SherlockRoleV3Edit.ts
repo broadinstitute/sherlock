@@ -42,6 +42,12 @@ export interface SherlockRoleV3Edit {
      * @type {string}
      * @memberof SherlockRoleV3Edit
      */
+    grantsBroadInstituteGroup?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SherlockRoleV3Edit
+     */
     grantsDevAzureGroup?: string;
     /**
      * 
@@ -107,6 +113,7 @@ export function SherlockRoleV3EditFromJSONTyped(json: any, ignoreDiscriminator: 
         'autoAssignAllUsers': json['autoAssignAllUsers'] == null ? undefined : json['autoAssignAllUsers'],
         'canBeGlassBrokenByRole': json['canBeGlassBrokenByRole'] == null ? undefined : json['canBeGlassBrokenByRole'],
         'defaultGlassBreakDuration': json['defaultGlassBreakDuration'] == null ? undefined : json['defaultGlassBreakDuration'],
+        'grantsBroadInstituteGroup': json['grantsBroadInstituteGroup'] == null ? undefined : json['grantsBroadInstituteGroup'],
         'grantsDevAzureGroup': json['grantsDevAzureGroup'] == null ? undefined : json['grantsDevAzureGroup'],
         'grantsDevFirecloudGroup': json['grantsDevFirecloudGroup'] == null ? undefined : json['grantsDevFirecloudGroup'],
         'grantsProdAzureGroup': json['grantsProdAzureGroup'] == null ? undefined : json['grantsProdAzureGroup'],
@@ -127,6 +134,7 @@ export function SherlockRoleV3EditToJSON(value?: SherlockRoleV3Edit | null): any
         'autoAssignAllUsers': value['autoAssignAllUsers'],
         'canBeGlassBrokenByRole': value['canBeGlassBrokenByRole'],
         'defaultGlassBreakDuration': value['defaultGlassBreakDuration'],
+        'grantsBroadInstituteGroup': value['grantsBroadInstituteGroup'],
         'grantsDevAzureGroup': value['grantsDevAzureGroup'],
         'grantsDevFirecloudGroup': value['grantsDevFirecloudGroup'],
         'grantsProdAzureGroup': value['grantsProdAzureGroup'],

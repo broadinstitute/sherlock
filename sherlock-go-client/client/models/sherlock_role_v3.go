@@ -39,6 +39,9 @@ type SherlockRoleV3 struct {
 	// default glass break duration
 	DefaultGlassBreakDuration string `json:"defaultGlassBreakDuration,omitempty"`
 
+	// grants broad institute group
+	GrantsBroadInstituteGroup string `json:"grantsBroadInstituteGroup,omitempty"`
+
 	// grants dev azure group
 	GrantsDevAzureGroup string `json:"grantsDevAzureGroup,omitempty"`
 

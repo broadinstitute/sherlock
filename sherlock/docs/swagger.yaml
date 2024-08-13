@@ -1643,6 +1643,8 @@ definitions:
         type: string
       defaultGlassBreakDuration:
         type: string
+      grantsBroadInstituteGroup:
+        type: string
       grantsDevAzureGroup:
         type: string
       grantsDevFirecloudGroup:
@@ -1677,6 +1679,8 @@ definitions:
       canBeGlassBrokenByRole:
         type: integer
       defaultGlassBreakDuration:
+        type: string
+      grantsBroadInstituteGroup:
         type: string
       grantsDevAzureGroup:
         type: string
@@ -6576,6 +6580,9 @@ paths:
         type: string
       - in: query
         name: defaultGlassBreakDuration
+        type: string
+      - in: query
+        name: grantsBroadInstituteGroup
         type: string
       - in: query
         name: grantsDevAzureGroup

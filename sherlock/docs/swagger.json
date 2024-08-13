@@ -7006,6 +7006,11 @@
                     },
                     {
                         "type": "string",
+                        "name": "grantsBroadInstituteGroup",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "name": "grantsDevAzureGroup",
                         "in": "query"
                     },
@@ -9933,6 +9938,9 @@
                 "defaultGlassBreakDuration": {
                     "type": "string"
                 },
+                "grantsBroadInstituteGroup": {
+                    "type": "string"
+                },
                 "grantsDevAzureGroup": {
                     "type": "string"
                 },
@@ -9978,6 +9986,9 @@
                     "type": "integer"
                 },
                 "defaultGlassBreakDuration": {
+                    "type": "string"
+                },
+                "grantsBroadInstituteGroup": {
                     "type": "string"
                 },
                 "grantsDevAzureGroup": {

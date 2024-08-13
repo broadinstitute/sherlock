@@ -7009,6 +7009,11 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "grantsBroadInstituteGroup",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "name": "grantsDevAzureGroup",
                         "in": "query"
                     },
@@ -9936,6 +9941,9 @@ const docTemplate = `{
                 "defaultGlassBreakDuration": {
                     "type": "string"
                 },
+                "grantsBroadInstituteGroup": {
+                    "type": "string"
+                },
                 "grantsDevAzureGroup": {
                     "type": "string"
                 },
@@ -9981,6 +9989,9 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "defaultGlassBreakDuration": {
+                    "type": "string"
+                },
+                "grantsBroadInstituteGroup": {
                     "type": "string"
                 },
                 "grantsDevAzureGroup": {

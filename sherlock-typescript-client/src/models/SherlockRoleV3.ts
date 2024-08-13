@@ -67,6 +67,12 @@ export interface SherlockRoleV3 {
      * @type {string}
      * @memberof SherlockRoleV3
      */
+    grantsBroadInstituteGroup?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SherlockRoleV3
+     */
     grantsDevAzureGroup?: string;
     /**
      * 
@@ -147,6 +153,7 @@ export function SherlockRoleV3FromJSONTyped(json: any, ignoreDiscriminator: bool
         'canBeGlassBrokenByRoleInfo': json['canBeGlassBrokenByRoleInfo'] == null ? undefined : json['canBeGlassBrokenByRoleInfo'],
         'createdAt': json['createdAt'] == null ? undefined : (new Date(json['createdAt'])),
         'defaultGlassBreakDuration': json['defaultGlassBreakDuration'] == null ? undefined : json['defaultGlassBreakDuration'],
+        'grantsBroadInstituteGroup': json['grantsBroadInstituteGroup'] == null ? undefined : json['grantsBroadInstituteGroup'],
         'grantsDevAzureGroup': json['grantsDevAzureGroup'] == null ? undefined : json['grantsDevAzureGroup'],
         'grantsDevFirecloudGroup': json['grantsDevFirecloudGroup'] == null ? undefined : json['grantsDevFirecloudGroup'],
         'grantsProdAzureGroup': json['grantsProdAzureGroup'] == null ? undefined : json['grantsProdAzureGroup'],
@@ -172,6 +179,7 @@ export function SherlockRoleV3ToJSON(value?: SherlockRoleV3 | null): any {
         'canBeGlassBrokenByRoleInfo': value['canBeGlassBrokenByRoleInfo'],
         'createdAt': value['createdAt'] == null ? undefined : ((value['createdAt']).toISOString()),
         'defaultGlassBreakDuration': value['defaultGlassBreakDuration'],
+        'grantsBroadInstituteGroup': value['grantsBroadInstituteGroup'],
         'grantsDevAzureGroup': value['grantsDevAzureGroup'],
         'grantsDevFirecloudGroup': value['grantsDevFirecloudGroup'],
         'grantsProdAzureGroup': value['grantsProdAzureGroup'],

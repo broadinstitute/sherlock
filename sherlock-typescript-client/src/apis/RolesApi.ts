@@ -33,6 +33,7 @@ export interface ApiRolesV3GetRequest {
     canBeGlassBrokenByRole?: number;
     createdAt?: Date;
     defaultGlassBreakDuration?: string;
+    grantsBroadInstituteGroup?: string;
     grantsDevAzureGroup?: string;
     grantsDevFirecloudGroup?: string;
     grantsProdAzureGroup?: string;
@@ -90,6 +91,10 @@ export class RolesApi extends runtime.BaseAPI {
 
         if (requestParameters['defaultGlassBreakDuration'] != null) {
             queryParameters['defaultGlassBreakDuration'] = requestParameters['defaultGlassBreakDuration'];
+        }
+
+        if (requestParameters['grantsBroadInstituteGroup'] != null) {
+            queryParameters['grantsBroadInstituteGroup'] = requestParameters['grantsBroadInstituteGroup'];
         }
 
         if (requestParameters['grantsDevAzureGroup'] != null) {
