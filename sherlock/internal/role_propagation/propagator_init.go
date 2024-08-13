@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
+	"github.com/broadinstitute/sherlock/sherlock/internal/role_propagation/propagation_engines"
 	"github.com/knadh/koanf"
 )
 
@@ -17,12 +18,12 @@ func (p *propagatorImpl[Grant, Identifier, Fields]) Init(ctx context.Context) er
 
 	p.initTimeout()
 
-	if err := p.initToleratedUsers(); err != nil {
-		return err
-	}
-
 	if err := p.engine.Init(ctx, p._config); err != nil {
 		return fmt.Errorf("failed to initialize engine for propagator %s: %w", p.configKey, err)
+	}
+
+	if err := p.initToleratedUsers(ctx); err != nil {
+		return err
 	}
 
 	return nil
@@ -36,7 +37,7 @@ func (p *propagatorImpl[Grant, Identifier, Fields]) initTimeout() {
 	p._timeout = timeout
 }
 
-func (p *propagatorImpl[Grant, Identifier, Fields]) initToleratedUsers() error {
+func (p *propagatorImpl[Grant, Identifier, Fields]) initToleratedUsers(ctx context.Context) error {
 	if toleratedUsers := p._config.Slices("toleratedUsers"); len(toleratedUsers) > 0 {
 		p._toleratedUsers = make([]Identifier, 0, len(toleratedUsers))
 		for index, unparsed := range toleratedUsers {
@@ -47,5 +48,15 @@ func (p *propagatorImpl[Grant, Identifier, Fields]) initToleratedUsers() error {
 			p._toleratedUsers = append(p._toleratedUsers, tolerated)
 		}
 	}
+
+	if calculator, ok := p.engine.(propagation_engines.ToleratedUserCalculator[Identifier]); ok {
+		calculatedToleratedUsers, err := calculator.CalculateToleratedUsers(ctx)
+		if err != nil {
+			return fmt.Errorf("failed to calculate tolerated users for propagator %s: %w", p.configKey, err)
+		}
+
+		p._toleratedUsers = append(p._toleratedUsers, calculatedToleratedUsers...)
+	}
+
 	return nil
 }
