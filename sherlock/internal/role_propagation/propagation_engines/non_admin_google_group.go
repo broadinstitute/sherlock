@@ -123,6 +123,11 @@ func (n *NonAdminGoogleGroupEngine) Add(ctx context.Context, grant string, ident
 		PreferredMemberKey: &cloudidentity.EntityKey{
 			Id: identifier.Email,
 		},
+		Roles: []*cloudidentity.MembershipRole{
+			{
+				Name: "MEMBER",
+			},
+		},
 	}).Context(ctx).Do()
 	if err != nil {
 		return "", fmt.Errorf("failed to add %s to %s: %w", identifier.Email, grant, err)
