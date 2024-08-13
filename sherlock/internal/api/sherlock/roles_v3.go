@@ -25,22 +25,24 @@ type RoleV3Edit struct {
 	GrantsProdFirecloudGroup  *string   `json:"grantsProdFirecloudGroup,omitempty" form:"grantsProdFirecloudGroup"`
 	GrantsDevAzureGroup       *string   `json:"grantsDevAzureGroup,omitempty" form:"grantsDevAzureGroup"`
 	GrantsProdAzureGroup      *string   `json:"grantsProdAzureGroup,omitempty" form:"grantsProdAzureGroup"`
+	GrantsBroadInstituteGroup *string   `json:"grantsBroadInstituteGroup,omitempty" form:"grantsBroadInstituteGroup"`
 }
 
 func (r RoleV3) toModel() models.Role {
 	ret := models.Role{
 		Model: r.toGormModel(),
 		RoleFields: models.RoleFields{
-			Name:                     r.Name,
-			SuspendNonSuitableUsers:  r.SuspendNonSuitableUsers,
-			AutoAssignAllUsers:       r.AutoAssignAllUsers,
-			CanBeGlassBrokenByRoleID: r.CanBeGlassBrokenByRole,
-			GrantsSherlockSuperAdmin: r.GrantsSherlockSuperAdmin,
-			GrantsDevFirecloudGroup:  r.GrantsDevFirecloudGroup,
-			GrantsQaFirecloudGroup:   r.GrantsQaFirecloudGroup,
-			GrantsProdFirecloudGroup: r.GrantsProdFirecloudGroup,
-			GrantsDevAzureGroup:      r.GrantsDevAzureGroup,
-			GrantsProdAzureGroup:     r.GrantsProdAzureGroup,
+			Name:                      r.Name,
+			SuspendNonSuitableUsers:   r.SuspendNonSuitableUsers,
+			AutoAssignAllUsers:        r.AutoAssignAllUsers,
+			CanBeGlassBrokenByRoleID:  r.CanBeGlassBrokenByRole,
+			GrantsSherlockSuperAdmin:  r.GrantsSherlockSuperAdmin,
+			GrantsDevFirecloudGroup:   r.GrantsDevFirecloudGroup,
+			GrantsQaFirecloudGroup:    r.GrantsQaFirecloudGroup,
+			GrantsProdFirecloudGroup:  r.GrantsProdFirecloudGroup,
+			GrantsDevAzureGroup:       r.GrantsDevAzureGroup,
+			GrantsProdAzureGroup:      r.GrantsProdAzureGroup,
+			GrantsBroadInstituteGroup: r.GrantsBroadInstituteGroup,
 		},
 	}
 	if r.DefaultGlassBreakDuration != nil {
@@ -65,12 +67,13 @@ func roleFromModel(model models.Role) RoleV3 {
 			DefaultGlassBreakDuration: utils.NilOrCall(func(nanoseconds int64) Duration {
 				return Duration{time.Duration(nanoseconds)}
 			}, model.DefaultGlassBreakDuration),
-			GrantsSherlockSuperAdmin: model.GrantsSherlockSuperAdmin,
-			GrantsDevFirecloudGroup:  model.GrantsDevFirecloudGroup,
-			GrantsQaFirecloudGroup:   model.GrantsQaFirecloudGroup,
-			GrantsProdFirecloudGroup: model.GrantsProdFirecloudGroup,
-			GrantsDevAzureGroup:      model.GrantsDevAzureGroup,
-			GrantsProdAzureGroup:     model.GrantsProdAzureGroup,
+			GrantsSherlockSuperAdmin:  model.GrantsSherlockSuperAdmin,
+			GrantsDevFirecloudGroup:   model.GrantsDevFirecloudGroup,
+			GrantsQaFirecloudGroup:    model.GrantsQaFirecloudGroup,
+			GrantsProdFirecloudGroup:  model.GrantsProdFirecloudGroup,
+			GrantsDevAzureGroup:       model.GrantsDevAzureGroup,
+			GrantsProdAzureGroup:      model.GrantsProdAzureGroup,
+			GrantsBroadInstituteGroup: model.GrantsBroadInstituteGroup,
 		},
 	}
 	if len(model.Assignments) > 0 {
