@@ -9,6 +9,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/clients/slack"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/db"
+	"github.com/broadinstitute/sherlock/sherlock/internal/firecloud_account_manager"
 	"github.com/broadinstitute/sherlock/sherlock/internal/metrics"
 	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/authentication/gha_oidc"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
@@ -144,6 +145,12 @@ func (a *Application) Start() {
 		go oidc_models.KeepSigningKeysRotated(ctx, a.gormDB)
 		go oidc_models.KeepExpiringRefreshTokens(ctx, a.gormDB)
 	}
+
+	log.Info().Msgf("BOOT | initializing Firecloud Account Manager...")
+	if err = firecloud_account_manager.Init(ctx, a.gormDB); err != nil {
+		log.Fatal().Err(err).Msgf("firecloud_account_manager.Init() error")
+	}
+	go firecloud_account_manager.RunManagersHourly(ctx)
 
 	go models.KeepAutoAssigningRoles(ctx, a.gormDB)
 

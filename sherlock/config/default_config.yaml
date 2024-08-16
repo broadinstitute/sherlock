@@ -450,3 +450,28 @@ bitsDataWarehouse:
   # The interval at which Sherlock should update its cache of the people data. This can be long because the data
   # updates pretty slowly (e.g. overnight). Queries do cost money and each replica maintains its own cache.
   peopleUpdateInterval: 1h
+
+firecloudAccountManager:
+  # Example entry:
+  # ```yaml
+  # - domain: test.firecloud.org
+  #   # Flag for if to run this config or not. If false, the manager will not run for this domain.
+  #   enable: true
+  #   # Optional setting to disable the manager from actually making changes. If true, it will still send
+  #   # Slack messages if it would've made changes if not for this flag. That means the Slack message load
+  #   # can be pretty heavy (since it'll keep wanting to make changes, and do so per-replica) but this can
+  #   # be helpful for testing.
+  #   dryRun: false
+  #   # Optional list of emails to restrict the manager to affecting. If empty, all users could be affected
+  #   # (depending on neverAffectEmails).
+  #   onlyAffectEmails: []
+  #   # Optional list of emails to prevent the manager from ever affecting. If empty, all users could be
+  #   # affected (depending on onlyAffectEmails).
+  #   neverAffectEmails:
+  #     - "user-to-never-disable@test.firecloud.org"
+  #   # How long to allow a new account to exist without a login before it is disabled. We set this low
+  #   # to help make sure the invite emails Google Workspace sends aren't a security risk.
+  #   newAccountGracePeriod: 24h
+  #   # How long an account can go without a login before being disabled.
+  #   inactivityThreshold: 90d
+  # ```
