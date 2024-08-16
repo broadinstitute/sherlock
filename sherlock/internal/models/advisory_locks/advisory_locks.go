@@ -27,10 +27,10 @@ const (
 	// should be acquired before determining if a models.Role should be propagated.
 	ROLE_PROPAGATION
 
-	// FIRECLOUD_ACCOUNT_MANAGER locks a firecloud_account_manager instance entry while it is actively
-	// looking at the Google Workspace to suspend accounts. The "key2" argument should be 1 plus the
-	// index of the firecloud_account_manager.Config in actual config.Config. There can be multiple
-	// Firecloud account manager configs so we can manage multiple Fireclouds.
+	// FIRECLOUD_ACCOUNT_MANAGER locks a firecloud_account_manager instance while it is actively looking
+	// at the Google Workspace to suspend accounts. The "key2" argument should be 1 plus the index of the
+	// firecloud_account_manager configuration in actual config file. There can be multiple Firecloud
+	// account manager configs so we can manage multiple Fireclouds.
 	//
 	// This lock exists so that we don't try to suspend accounts in the same Firecloud concurrently.
 	// That could cause duplicate notifications. This lock should be acquired before determining what
