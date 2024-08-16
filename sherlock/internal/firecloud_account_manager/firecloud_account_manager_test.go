@@ -1,7 +1,6 @@
 package firecloud_account_manager
 
 import (
-	"fmt"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/gorm"
 	"testing"
@@ -119,7 +118,7 @@ func Test_firecloudAccountManager_validate(t *testing.T) {
 				InactivityThreshold:    tt.fields.InactivityThreshold,
 				workspaceClient:        tt.fields.workspaceClient,
 			}
-			tt.wantErr(t, m.validate(), fmt.Sprintf("validate()"))
+			tt.wantErr(t, m.validate(), "validate()")
 		})
 	}
 }
