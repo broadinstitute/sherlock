@@ -27,8 +27,8 @@ const (
 	// should be acquired before determining if a models.Role should be propagated.
 	ROLE_PROPAGATION
 
-	// FIRECLOUD_ACCOUNT_MANAGER locks a firecloud_account_manager.Config while that configuration is
-	// actively looking at the Google Workspace to suspend accounts. The "key2" argument 1 plus the
+	// FIRECLOUD_ACCOUNT_MANAGER locks a firecloud_account_manager instance entry while it is actively
+	// looking at the Google Workspace to suspend accounts. The "key2" argument should be 1 plus the
 	// index of the firecloud_account_manager.Config in actual config.Config. There can be multiple
 	// Firecloud account manager configs so we can manage multiple Fireclouds.
 	//
