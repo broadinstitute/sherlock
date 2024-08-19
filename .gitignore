@@ -24,3 +24,9 @@ gha-creds-*.json
 
 # Ignore environment variable files
 .env
+
+# Ignore generated CI files from the Python client library
+sherlock-python-client/.github/
+sherlock-python-client/.gitlab-ci.yml
+sherlock-python-client/.travis.yml
+sherlock-python-client/git_push.sh
