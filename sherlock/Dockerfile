@@ -1,5 +1,6 @@
 ARG GO_VERSION='1.22'
 
+# Non-root CBL-Mariner 2.0 runtime image
 # https://mcr.microsoft.com/en-us/product/cbl-mariner/distroless/minimal/about
 #
 # When building amd64 images for deployed use, we typically use appsec-blessed images,
@@ -9,7 +10,7 @@ ARG GO_VERSION='1.22'
 #
 # We do this swap because there aren't ARM-based blessed images (so for native local
 # dev, we need to use a non-blessed image). The key is that whatever image is set
-# here needs to be a non-root image.
+# here needs to be non-root and CBL-Mariner 2.0 with OpenSSL available.
 ARG RUNTIME_BASE_IMAGE='mcr.microsoft.com/cbl-mariner/distroless/base:2.0-nonroot'
 
 # https://github.com/microsoft/go-images/tree/microsoft/main
