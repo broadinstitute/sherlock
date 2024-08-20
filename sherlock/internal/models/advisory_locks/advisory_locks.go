@@ -15,7 +15,7 @@ package advisory_locks
 //nolint:unused
 //goland:noinspection GoUnusedConst
 const (
-	// none is a placeholder that should never be used. It exists so that the actual export constants
+	// none is a placeholder that should never be used. It exists so that the actual exported constants
 	// begin at 1, not 0. This helps limit blast radius if we accidentally use an unset integer as "key1",
 	// because then at least we won't be conflicting with any correct usages.
 	none int = iota
@@ -26,4 +26,14 @@ const (
 	// This lock exists so that we don't try to propagate the same models.Role concurrently. This lock
 	// should be acquired before determining if a models.Role should be propagated.
 	ROLE_PROPAGATION
+
+	// FIRECLOUD_ACCOUNT_MANAGER locks a firecloud_account_manager instance while it is actively looking
+	// at the Google Workspace to suspend accounts. The "key2" argument should be 1 plus the index of the
+	// firecloud_account_manager configuration in actual config file. There can be multiple Firecloud
+	// account manager configs so we can manage multiple Fireclouds.
+	//
+	// This lock exists so that we don't try to suspend accounts in the same Firecloud concurrently.
+	// That could cause duplicate notifications. This lock should be acquired before determining what
+	// accounts need to be suspended.
+	FIRECLOUD_ACCOUNT_MANAGER
 )
