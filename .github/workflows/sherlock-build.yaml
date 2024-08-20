@@ -29,8 +29,8 @@ on:
   workflow_dispatch:
 
 env:
-  # App-specific variables like versions of build tools:
   GO_SWAGGER_VERSION: v0.29.0
+  RUNTIME_BASE_IMAGE: us.gcr.io/broad-dsp-gcr-public/base/cbl-mariner:2.0-nonroot-fips
 
 concurrency:
   # Don't run this workflow concurrently on the same branch
@@ -175,6 +175,7 @@ jobs:
           cache-to: type=gha,mode=max
           build-args: |
             BUILD_VERSION=${{ needs.generate-tag.outputs.tag }}
+            RUNTIME_BASE_IMAGE=${{ env.RUNTIME_BASE_IMAGE }}
 
       - name: Run Trivy vulnerability scanner
         # We only run Trivy here as dependabot, because otherwise we run it afterwards so as to not block an intentional
@@ -248,6 +249,7 @@ jobs:
           cache-to: type=gha,mode=max
           build-args: |
             BUILD_VERSION=${{ needs.generate-tag.outputs.tag }}
+            RUNTIME_BASE_IMAGE=${{ env.RUNTIME_BASE_IMAGE }}
 
   trivy-scan:
     needs: [ generate-tag, build-and-publish ]

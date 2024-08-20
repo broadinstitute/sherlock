@@ -1,5 +1,16 @@
 ARG GO_VERSION='1.22'
 
+# https://mcr.microsoft.com/en-us/product/cbl-mariner/distroless/minimal/about
+#
+# When building amd64 images for deployed use, we typically use appsec-blessed images,
+# like us.gcr.io/broad-dsp-gcr-public/base/cbl-mariner:2.0-nonroot-fips, defined at
+# the time of building. See /.github/workflows/sherlock-build.yaml
+# https://github.com/broadinstitute/dsp-appsec-blessed-images/blob/main/cbl-mariner/Dockerfile.2.0-nonroot-fips
+#
+# We do this swap because there aren't ARM-based blessed images (so for native local
+# dev, we need to use a non-blessed image).
+ARG RUNTIME_BASE_IMAGE='mcr.microsoft.com/cbl-mariner/distroless/base:2.0-nonroot'
+
 # https://github.com/microsoft/go-images/tree/microsoft/main
 FROM mcr.microsoft.com/oss/go/microsoft/golang:${GO_VERSION}-fips-cbl-mariner2.0 AS build
 ARG BUILD_VERSION='development'
@@ -18,10 +29,7 @@ RUN go get github.com/acardace/fips-detect && \
     go run github.com/acardace/fips-detect /bin/sherlock \
     | grep -E 'FIPS-capable Go binary.*Yes'
 
-# https://mcr.microsoft.com/en-us/product/cbl-mariner/distroless/minimal/about
-#
-# Broad appsec-blessed image from https://github.com/broadinstitute/dsp-appsec-blessed-images/blob/main/cbl-mariner/Dockerfile.2.0-nonroot-fips
-FROM us.gcr.io/broad-dsp-gcr-public/base/cbl-mariner:2.0-nonroot-fips AS runtime
+FROM ${RUNTIME_BASE_IMAGE} AS runtime
 
 COPY --from=build /bin/sherlock /bin/sherlock
 ENTRYPOINT [ "/bin/sherlock" ]
