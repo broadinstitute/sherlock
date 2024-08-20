@@ -8,7 +8,8 @@ ARG GO_VERSION='1.22'
 # https://github.com/broadinstitute/dsp-appsec-blessed-images/blob/main/cbl-mariner/Dockerfile.2.0-nonroot-fips
 #
 # We do this swap because there aren't ARM-based blessed images (so for native local
-# dev, we need to use a non-blessed image).
+# dev, we need to use a non-blessed image). The key is that whatever image is set
+# here needs to be a non-root image.
 ARG RUNTIME_BASE_IMAGE='mcr.microsoft.com/cbl-mariner/distroless/base:2.0-nonroot'
 
 # https://github.com/microsoft/go-images/tree/microsoft/main
