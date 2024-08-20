@@ -3,6 +3,7 @@ package slack
 import (
 	"fmt"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
+	"github.com/rs/zerolog/log"
 	"github.com/slack-go/slack"
 	"golang.org/x/net/context"
 )
@@ -46,6 +47,9 @@ func SendPermissionChangeNotificationReturnError(ctx context.Context, actor stri
 	if inputs.Summary != "" {
 		headline += fmt.Sprintf(" %s", inputs.Summary)
 	}
+
+	log.Info().Strs("results", inputs.Results).Errs("errors", inputs.Errors).Msgf("SLCK | Sending permission change notification: `%s`", headline)
+
 	blocks = append(blocks, chunkLinesToSectionMrkdwnBlocks([]string{headline})...)
 	for _, err := range inputs.Errors {
 		blocks = append(blocks, chunkLinesToSectionMrkdwnBlocks([]string{fmt.Sprintf("- *Error:* %v", err)})...)

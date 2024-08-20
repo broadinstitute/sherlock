@@ -9,6 +9,7 @@ import (
 	"google.golang.org/api/iterator"
 	"reflect"
 	"strings"
+	"testing"
 	"time"
 )
 
@@ -124,10 +125,20 @@ func keepPeopleCacheUpdated(ctx context.Context) {
 //nolint:unused
 //goland:noinspection GoUnusedExportedFunction,GoUnnecessarilyExportedIdentifiers
 func GetPerson(email string) (person Person, found bool, err error) {
-	if client == nil || len(cachedPeople) == 0 {
+	if len(cachedPeople) == 0 {
 		return Person{}, false, errors.New("people cache not initialized")
 	} else {
 		person, found = cachedPeople[email]
 		return person, found, nil
 	}
+}
+
+func UseMockedGetPerson(t *testing.T, mockPeople map[string]Person, callback func()) {
+	if t == nil {
+		panic("UseMockedGetPerson must be called with a non-nil testing.T")
+	}
+	existingCache := cachedPeople
+	cachedPeople = mockPeople
+	callback()
+	cachedPeople = existingCache
 }

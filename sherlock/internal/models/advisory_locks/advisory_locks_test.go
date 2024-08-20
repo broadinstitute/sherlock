@@ -15,3 +15,7 @@ func Test_none(t *testing.T) {
 func Test_ROLE_PROPAGATION(t *testing.T) {
 	assert.Equal(t, 1, ROLE_PROPAGATION)
 }
+
+func Test_FIRECLOUD_ACCOUNT_MANAGER(t *testing.T) {
+	assert.Equal(t, 2, FIRECLOUD_ACCOUNT_MANAGER)
+}
