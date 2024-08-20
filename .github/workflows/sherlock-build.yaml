@@ -125,6 +125,29 @@ jobs:
         working-directory: sherlock-go-client
         run: go mod tidy
 
+      - name: Delete existing Python client library code
+        # Just delete code, not config, so that no-longer-generated files will disappear
+        run: rm -rf sherlock-python-client/docs sherlock-python-client/sherlock_python_client sherlock-python-client/test
+
+      - name: Generate Python client library
+        run: |
+          docker run --rm -v "${PWD}:/local" openapitools/openapi-generator-cli generate \
+            -i /local/sherlock/docs/swagger.json \
+            -g python \
+            -o /local/sherlock-python-client \
+            --git-user-id broadinstitute \
+            --git-repo-id sherlock \
+            --additional-properties=disallowAdditionalPropertiesIfNotPresent=false \
+            --additional-properties=packageName=sherlock_python_client \
+            --additional-properties=packageUrl='git+https://github.com/broadinstitute/sherlock#subdirectory=sherlock-python-client' \
+            --additional-properties=packageVersion=${{ needs.generate-tag.outputs.tag }}
+
+      - name: Fix Python documentation
+        run: | 
+          cat sherlock-python-client/README-header.md sherlock-python-client/README.md > temp
+          mv temp sherlock-python-client/README.md
+          cp sherlock-python-client/README.md sherlock-python-client/sherlock_python_client_README.md
+
       - name: Delete existing Typescript client library code
         # Just delete code, not config, so that no-longer-generated files will disappear
         run: rm -rf sherlock-typescript-client/src
