@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "sherlock_python_client"
-version = "v1.5.34"
+version = "v1.5.35"
 description = "Sherlock"
 authors = ["DSP DevOps <dsp-devops@broadinstitute.org>"]
 license = "BSD-3-Clause"
