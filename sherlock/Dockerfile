@@ -19,7 +19,9 @@ RUN go get github.com/acardace/fips-detect && \
     | grep -E 'FIPS-capable Go binary.*Yes'
 
 # https://mcr.microsoft.com/en-us/product/cbl-mariner/distroless/minimal/about
-FROM mcr.microsoft.com/cbl-mariner/distroless/base:2.0-nonroot AS runtime
+#
+# Broad appsec-blessed image from https://github.com/broadinstitute/dsp-appsec-blessed-images/blob/main/cbl-mariner/Dockerfile.2.0-nonroot-fips
+FROM us.gcr.io/broad-dsp-gcr-public/base/cbl-mariner:2.0-nonroot-fips AS runtime
 
 COPY --from=build /bin/sherlock /bin/sherlock
 ENTRYPOINT [ "/bin/sherlock" ]
