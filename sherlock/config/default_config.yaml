@@ -360,7 +360,7 @@ rolePropagation:
       enable: false
       # The domain of the Google Workspace, assumed to be the email domain of all members. This should
       # not contain a leading "@".
-      workspaceDomain: "qa.firecloud.org"
+      workspaceDomain: "quality.firecloud.org"
       # Suffixes of Sherlock users' emails that should be swapped out with "@"+workspaceDomain to match
       # Sherlock users to Google Workspace users. This must contain a "@".
       userEmailSuffixesToReplace:
