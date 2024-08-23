@@ -473,8 +473,10 @@ firecloudAccountManager:
   #   neverAffectEmails:
   #     - "user-to-never-disable@test.firecloud.org"
   #   # How long to allow a new account to exist without a login before it is disabled. We set this low
-  #   # to help make sure the invite emails Google Workspace sends aren't a security risk.
+  #   # to help make sure the invite emails Google Workspace sends aren't a security risk. This is parsed
+  #   # by Go's time.ParseDuration, so the largest unit is "h" for hours.
   #   newAccountGracePeriod: 24h
-  #   # How long an account can go without a login before being disabled.
-  #   inactivityThreshold: 90d
+  #   # How long an account can go without a login before being disabled. This is parsed by Go's
+  #   # time.ParseDuration, so the largest unit is "h" for hours.
+  #   inactivityThreshold: 2160h
   # ```
