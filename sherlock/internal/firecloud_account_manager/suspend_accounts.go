@@ -54,6 +54,11 @@ func (m *firecloudAccountManager) suspendAccounts(ctx context.Context) ([]string
 				continue
 			}
 
+			// If the user is already suspended, skip them.
+			if user.Suspended {
+				continue
+			}
+
 			// suspensionReason, if not empty, is why we should suspend the user. If it's empty that means
 			// there's no reason to. It starts empty and we'll fill it in as we go.
 			var suspensionReason string

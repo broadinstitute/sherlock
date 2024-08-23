@@ -92,6 +92,19 @@ func TestConfig_suspendAccounts(t *testing.T) {
 			wantErrs:    []string{},
 		},
 		{
+			name: "user already suspended",
+			manager: &firecloudAccountManager{
+				Domain: "test.firecloud.org",
+			},
+			workspaceMockConfig: func(c *firecloud_account_manager_mocks.MockMockableWorkspaceClient) {
+				c.EXPECT().GetCurrentUsers(ctx, "test.firecloud.org").Return([]*admin.User{
+					{PrimaryEmail: "already-suspended@test.firecloud.org", Suspended: true},
+				}, nil).Once()
+			},
+			wantResults: []string{},
+			wantErrs:    []string{},
+		},
+		{
 			name: "failed to parse new user account creation time",
 			manager: &firecloudAccountManager{
 				Domain:                "test.firecloud.org",
@@ -368,6 +381,7 @@ func TestConfig_suspendAccounts(t *testing.T) {
 			workspaceMockConfig: func(c *firecloud_account_manager_mocks.MockMockableWorkspaceClient) {
 				c.EXPECT().GetCurrentUsers(ctx, "test.firecloud.org").Return([]*admin.User{
 					{PrimaryEmail: "never-affect-me@test.firecloud.org"},
+					{PrimaryEmail: "already-suspended@test.firecloud.org", Suspended: true},
 					{PrimaryEmail: "invalid-creation-time-user@test.firecloud.org", CreationTime: "not-a-time"},
 					{PrimaryEmail: "never-logged-in-user@test.firecloud.org", CreationTime: time.Now().Add(-2 * 24 * time.Hour).Format(time.RFC3339)},
 					{PrimaryEmail: "never-logged-in-user-fail@test.firecloud.org", CreationTime: time.Now().Add(-2 * 24 * time.Hour).Format(time.RFC3339)},
@@ -428,6 +442,7 @@ func TestConfig_suspendAccounts(t *testing.T) {
 			workspaceMockConfig: func(c *firecloud_account_manager_mocks.MockMockableWorkspaceClient) {
 				c.EXPECT().GetCurrentUsers(ctx, "test.firecloud.org").Return([]*admin.User{
 					{PrimaryEmail: "never-affect-me@test.firecloud.org"},
+					{PrimaryEmail: "already-suspended@test.firecloud.org", Suspended: true},
 					{PrimaryEmail: "invalid-creation-time-user@test.firecloud.org", CreationTime: "not-a-time"},
 					{PrimaryEmail: "never-logged-in-user@test.firecloud.org", CreationTime: time.Now().Add(-2 * 24 * time.Hour).Format(time.RFC3339)},
 					{PrimaryEmail: "never-logged-in-user-fail@test.firecloud.org", CreationTime: time.Now().Add(-2 * 24 * time.Hour).Format(time.RFC3339)},
