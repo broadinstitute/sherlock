@@ -32,7 +32,7 @@ func (c *realWorkspaceClient) GetCurrentUsers(ctx context.Context, domain string
 }
 
 func (c *realWorkspaceClient) SuspendUser(ctx context.Context, email string) error {
-	_, err := c.adminService.Users.Patch(email, &admin.User{
+	_, err := c.adminService.Users.Update(email, &admin.User{
 		Suspended: true,
 	}).Context(ctx).Do()
 	return err
