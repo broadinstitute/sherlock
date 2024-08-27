@@ -483,6 +483,6 @@ firecloudAccountManager:
   #   # The largest unit that can be passed here is hours (so it's unambiguous about leap secs etc.)
   #   newAccountGracePeriod: 24h
   #   # How long an account can go without a login before being disabled.
-  #   # The largest unit that can be passed here is hours (so it's unambiguous about leap sends etc.)
+  #   # The largest unit that can be passed here is hours (so it's unambiguous about leap secs etc.)
   #   inactivityThreshold: 2160h
   # ```
