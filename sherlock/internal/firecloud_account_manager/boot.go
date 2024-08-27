@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/knadh/koanf"
 	admin "google.golang.org/api/admin/directory/v1"
 	"google.golang.org/api/option"
@@ -33,7 +34,9 @@ func Init(ctx context.Context, db *gorm.DB) error {
 			if manager.ImpersonateAccount != "" {
 				manager.NeverAffectEmails = append(manager.NeverAffectEmails, manager.ImpersonateAccount)
 				credentials, err := impersonate.NewCredentials(&impersonate.CredentialsOptions{
-					Subject: manager.ImpersonateAccount,
+					TargetPrincipal: models.SelfUser.Email,
+					Scopes:          []string{admin.AdminDirectoryUserScope},
+					Subject:         manager.ImpersonateAccount,
 				})
 				if err != nil {
 					return fmt.Errorf("failed to create impersonated credentials for %s for firecloudAccountManager[%d] (%s): %w",
