@@ -465,6 +465,12 @@ firecloudAccountManager:
   #   # can be pretty heavy (since it'll keep wanting to make changes, and do so per-replica) but this can
   #   # be helpful for testing.
   #   dryRun: false
+  #   # Optionally, specify an account to impersonate with domain-wide delegation for use with the API.
+  #   # When this is unset, Sherlock will use the API as itself. Even if you grant Sherlock's service
+  #   # account an admin role, it may not be able to suspend admin users. Letting Sherlock impersonate
+  #   # an admin user directly gets around this issue. This user will be automatically added to the
+  #   # neverAffectEmails list to avoid Sherlock breaking its own access.
+  #   impersonateAccount: "some-admin-user@test.firecloud.org"
   #   # Optional list of emails to restrict the manager to affecting. If empty, all users could be affected
   #   # (depending on neverAffectEmails).
   #   onlyAffectEmails: []
@@ -474,7 +480,9 @@ firecloudAccountManager:
   #     - "user-to-never-disable@test.firecloud.org"
   #   # How long to allow a new account to exist without a login before it is disabled. We set this low
   #   # to help make sure the invite emails Google Workspace sends aren't a security risk.
+  #   # The largest unit that can be passed here is hours (so it's unambiguous about leap secs etc.)
   #   newAccountGracePeriod: 24h
   #   # How long an account can go without a login before being disabled.
-  #   inactivityThreshold: 90d
+  #   # The largest unit that can be passed here is hours (so it's unambiguous about leap secs etc.)
+  #   inactivityThreshold: 2160h
   # ```

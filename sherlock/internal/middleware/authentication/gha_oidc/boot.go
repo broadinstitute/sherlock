@@ -6,7 +6,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/authentication/gha_oidc/gha_oidc_claims"
-	"github.com/coreos/go-oidc"
+	"github.com/coreos/go-oidc/v3/oidc"
 )
 
 // realVerifierImplementation wraps *oidc.IDTokenVerifier so we can make an actually
