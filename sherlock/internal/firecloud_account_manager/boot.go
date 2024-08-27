@@ -1,13 +1,13 @@
 package firecloud_account_manager
 
 import (
-	"cloud.google.com/go/auth/credentials/impersonate"
 	"context"
 	"fmt"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/knadh/koanf"
 	admin "google.golang.org/api/admin/directory/v1"
+	"google.golang.org/api/impersonate"
 	"google.golang.org/api/option"
 	"gorm.io/gorm"
 	"time"
@@ -33,16 +33,16 @@ func Init(ctx context.Context, db *gorm.DB) error {
 			adminServiceOptions := []option.ClientOption{option.WithScopes(admin.AdminDirectoryUserScope)}
 			if manager.ImpersonateAccount != "" {
 				manager.NeverAffectEmails = append(manager.NeverAffectEmails, manager.ImpersonateAccount)
-				credentials, err := impersonate.NewCredentials(&impersonate.CredentialsOptions{
+				ts, err := impersonate.CredentialsTokenSource(ctx, impersonate.CredentialsConfig{
 					TargetPrincipal: models.SelfUser.Email,
-					Scopes:          []string{admin.AdminDirectoryUserScope, "https://www.googleapis.com/auth/cloud-platform"},
+					Scopes:          []string{"https://www.googleapis.com/auth/cloud-platform"},
 					Subject:         manager.ImpersonateAccount,
 				})
 				if err != nil {
 					return fmt.Errorf("failed to create impersonated credentials for %s for firecloudAccountManager[%d] (%s): %w",
 						manager.ImpersonateAccount, index, manager.Domain, err)
 				}
-				adminServiceOptions = append(adminServiceOptions, option.WithAuthCredentials(credentials))
+				adminServiceOptions = append(adminServiceOptions, option.WithTokenSource(ts))
 			}
 			adminService, err := admin.NewService(ctx, adminServiceOptions...)
 			if err != nil {
