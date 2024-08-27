@@ -480,7 +480,7 @@ firecloudAccountManager:
   #     - "user-to-never-disable@test.firecloud.org"
   #   # How long to allow a new account to exist without a login before it is disabled. We set this low
   #   # to help make sure the invite emails Google Workspace sends aren't a security risk.
-  #   # The largest unit that can be passed here is hours (so it's unambiguous about leap sends etc.)
+  #   # The largest unit that can be passed here is hours (so it's unambiguous about leap secs etc.)
   #   newAccountGracePeriod: 24h
   #   # How long an account can go without a login before being disabled.
   #   # The largest unit that can be passed here is hours (so it's unambiguous about leap sends etc.)
