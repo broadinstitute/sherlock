@@ -35,7 +35,7 @@ func Init(ctx context.Context, db *gorm.DB) error {
 				manager.NeverAffectEmails = append(manager.NeverAffectEmails, manager.ImpersonateAccount)
 				ts, err := impersonate.CredentialsTokenSource(ctx, impersonate.CredentialsConfig{
 					TargetPrincipal: models.SelfUser.Email,
-					Scopes:          []string{"https://www.googleapis.com/auth/cloud-platform"},
+					Scopes:          []string{admin.AdminDirectoryUserScope},
 					Subject:         manager.ImpersonateAccount,
 				})
 				if err != nil {
