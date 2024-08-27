@@ -1,6 +1,7 @@
 package firecloud_account_manager
 
 import (
+	"cloud.google.com/go/auth/credentials/impersonate"
 	"context"
 	"fmt"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
@@ -20,18 +21,30 @@ func Init(ctx context.Context, db *gorm.DB) error {
 	rawConfigs := config.Config.Slices("firecloudAccountManager")
 
 	if len(rawConfigs) > 0 {
-		adminService, err := admin.NewService(ctx, option.WithScopes(admin.AdminDirectoryUserScope))
-		if err != nil {
-			return fmt.Errorf("failed to create admin service: %w", err)
-		}
-
 		for index, rawConfig := range rawConfigs {
 			var manager firecloudAccountManager
-			if err = rawConfig.UnmarshalWithConf("", &manager, koanf.UnmarshalConf{Tag: "firecloud_account_manager"}); err != nil {
+			if err := rawConfig.UnmarshalWithConf("", &manager, koanf.UnmarshalConf{Tag: "firecloud_account_manager"}); err != nil {
 				return fmt.Errorf("error parsing firecloudAccountManager[%d]: %w", index, err)
 			}
 			manager.indexPlusOneForLocking = index + 1
 			manager.dbForLocking = db
+
+			adminServiceOptions := []option.ClientOption{option.WithScopes(admin.AdminDirectoryUserScope)}
+			if manager.ImpersonateAccount != "" {
+				manager.NeverAffectEmails = append(manager.NeverAffectEmails, manager.ImpersonateAccount)
+				credentials, err := impersonate.NewCredentials(&impersonate.CredentialsOptions{
+					Subject: manager.ImpersonateAccount,
+				})
+				if err != nil {
+					return fmt.Errorf("failed to create impersonated credentials for %s for firecloudAccountManager[%d] (%s): %w",
+						manager.ImpersonateAccount, index, manager.Domain, err)
+				}
+				adminServiceOptions = append(adminServiceOptions, option.WithAuthCredentials(credentials))
+			}
+			adminService, err := admin.NewService(ctx, adminServiceOptions...)
+			if err != nil {
+				return fmt.Errorf("failed to create admin service: %w", err)
+			}
 			manager.workspaceClient = &realWorkspaceClient{adminService: adminService}
 
 			if err = manager.validate(); err != nil {

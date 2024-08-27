@@ -23,6 +23,7 @@ type firecloudAccountManager struct {
 	NeverAffectEmails     []string      `koanf:"neverAffectEmails"`
 	NewAccountGracePeriod time.Duration `koanf:"newAccountGracePeriod"`
 	InactivityThreshold   time.Duration `koanf:"inactivityThreshold"`
+	ImpersonateAccount    string        `koanf:"impersonateAccount"`
 
 	// The workspace client to use for this firecloudAccountManager. This exists to allow
 	// mocking.
