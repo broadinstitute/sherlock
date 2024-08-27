@@ -14,6 +14,13 @@ import (
 	"time"
 )
 
+// Google's API says that accounts that have never logged in actually have -- just at 1970-01-01T00:00:00.000Z.
+// To provide good output, we set a threshold of 30 years and detect accounts with a login time older than that
+// as never having logged in.
+// We're being permissive here because Google doesn't document this behavior and the time returned isn't a
+// Go zero-time.
+const thresholdForLastLoginToDetectNeverLoggedIn = 30 * 365 * 24 * time.Hour
+
 func (m *firecloudAccountManager) suspendAccounts(ctx context.Context) ([]string, []error) {
 	results := make([]string, 0)
 	errs := make([]error, 0)
@@ -63,18 +70,24 @@ func (m *firecloudAccountManager) suspendAccounts(ctx context.Context) ([]string
 			// there's no reason to. It starts empty and we'll fill it in as we go.
 			var suspensionReason string
 
-			if user.LastLoginTime == "" {
-				// If there's no last login time, this is a new account. Permit a grace period.
-				if creationTime, err := time.Parse(time.RFC3339, user.CreationTime); err != nil {
-					errs = append(errs, fmt.Errorf("failed to parse creation time %s for new account %s: %w", user.CreationTime, user.PrimaryEmail, err))
-				} else if time.Since(creationTime) > m.NewAccountGracePeriod {
+			// Check the user creation time. If it's so recent it's in the grace period, don't check inactivity for it.
+			if parsedCreationTime, creationTimeParseErr := time.Parse(time.RFC3339, user.CreationTime); creationTimeParseErr != nil {
+				errs = append(errs, fmt.Errorf("failed to parse creation time %s for %s: %w", user.CreationTime, user.PrimaryEmail, creationTimeParseErr))
+			} else if time.Since(parsedCreationTime) > m.NewAccountGracePeriod {
+
+				// If the user's out of the grace period, check log-in activity. We suspend in three cases: if we can't
+				// tell if the user's logged in, if their last login is past our threshold for "never logged in", or if
+				// they haven't logged in for the configured inactivity threshold.
+				//
+				// Why suspend if we can't parse the time? Because if we're here, we know that the user is out of the
+				// grace period. Google doesn't document what they return if the user has never logged in. As of 2024
+				// it seems to be 1970-01-01T00:00:00.000Z, but in case this turns into merely an empty string, we
+				// treat any errors as "has not logged in".
+				if parsedLastLoginTime, loginTimeParseErr := time.Parse(time.RFC3339, user.LastLoginTime); loginTimeParseErr != nil {
+					suspensionReason = fmt.Sprintf("due to being unable to parse the last login time (and the account is out of the grace period): %v", loginTimeParseErr)
+				} else if time.Since(parsedLastLoginTime) > thresholdForLastLoginToDetectNeverLoggedIn {
 					suspensionReason = "due to being new but not setting up their account"
-				}
-			} else {
-				// If the last login time is more than the threshold, suspend the user.
-				if lastLoginTime, err := time.Parse(time.RFC3339, user.LastLoginTime); err != nil {
-					errs = append(errs, fmt.Errorf("failed to parse last login time %s for %s: %w", user.LastLoginTime, user.PrimaryEmail, err))
-				} else if time.Since(lastLoginTime) > m.InactivityThreshold {
+				} else if time.Since(parsedLastLoginTime) > m.InactivityThreshold {
 					suspensionReason = "due to inactivity"
 				}
 			}
