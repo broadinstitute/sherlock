@@ -130,19 +130,18 @@ func tryToPropagateStale(ctx context.Context, db *gorm.DB) {
 // propagators could be used concurrently for different roles, so they can't be
 // naively stateful).
 func doNonConcurrentPropagation(ctx context.Context, role models.Role) {
+	results := make([]string, 0)
+	errors := make([]error, 0)
 	for _, p := range propagators {
-		results, errors := p.Propagate(ctx, role)
-		if len(errors) > 0 {
-			log.Error().Errs("errors", errors).Strs("results", results).Msgf("%s propagation failed for role %s (%d)", p.Name(), *role.Name, role.ID)
-		} else {
-			log.Info().Strs("results", results).Msgf("%s propagation succeeded for role %s (%d)", p.Name(), *role.Name, role.ID)
-		}
-		if len(results) > 0 || len(errors) > 0 {
-			slack.SendPermissionChangeNotification(ctx, models.SelfUser.SlackReference(true), slack.PermissionChangeNotificationInputs{
-				Summary: fmt.Sprintf("\"%s\" propagation for Role \"%s\" made changes", p.Name(), *role.Name),
-				Results: results,
-				Errors:  errors,
-			})
-		}
+		additionalResults, additionalErrors := p.Propagate(ctx, role)
+		results = append(results, additionalResults...)
+		errors = append(errors, additionalErrors...)
+	}
+	if len(results) > 0 || len(errors) > 0 {
+		slack.SendPermissionChangeNotification(ctx, models.SelfUser.SlackReference(true), slack.PermissionChangeNotificationInputs{
+			Summary: fmt.Sprintf("propagation for Role \"%s\" made changes", *role.Name),
+			Results: results,
+			Errors:  errors,
+		})
 	}
 }
