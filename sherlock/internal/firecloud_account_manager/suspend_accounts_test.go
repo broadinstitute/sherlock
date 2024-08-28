@@ -17,6 +17,8 @@ import (
 	"time"
 )
 
+var googleNeverLoggedInTime = time.Date(1970, 1, 1, 0, 0, 0, 0, time.UTC).Format(time.RFC3339)
+
 func TestConfig_suspendAccounts(t *testing.T) {
 	config.LoadTestConfig()
 	dbForLocking, cleanup, err := sherlockdb.Connect()
@@ -120,7 +122,7 @@ func TestConfig_suspendAccounts(t *testing.T) {
 				"invalid-creation-time-user@broadinstitute.org": {},
 			},
 			wantResults: []string{},
-			wantErrs:    []string{"failed to parse creation time not-a-time for new account invalid-creation-time-user@test.firecloud.org"},
+			wantErrs:    []string{"failed to parse creation time not-a-time for invalid-creation-time-user@test.firecloud.org"},
 		},
 		{
 			name: "user creation time more than a day ago",
@@ -131,7 +133,7 @@ func TestConfig_suspendAccounts(t *testing.T) {
 			},
 			workspaceMockConfig: func(c *firecloud_account_manager_mocks.MockMockableWorkspaceClient) {
 				c.EXPECT().GetCurrentUsers(ctx, "test.firecloud.org").Return([]*admin.User{
-					{PrimaryEmail: "never-logged-in-user@test.firecloud.org", CreationTime: time.Now().Add(-2 * 24 * time.Hour).Format(time.RFC3339)},
+					{PrimaryEmail: "never-logged-in-user@test.firecloud.org", CreationTime: time.Now().Add(-2 * 24 * time.Hour).Format(time.RFC3339), LastLoginTime: googleNeverLoggedInTime},
 				}, nil).Once()
 				c.EXPECT().SuspendUser(ctx, "never-logged-in-user@test.firecloud.org").Return(nil).Once()
 			},
@@ -153,7 +155,7 @@ func TestConfig_suspendAccounts(t *testing.T) {
 			},
 			workspaceMockConfig: func(c *firecloud_account_manager_mocks.MockMockableWorkspaceClient) {
 				c.EXPECT().GetCurrentUsers(ctx, "test.firecloud.org").Return([]*admin.User{
-					{PrimaryEmail: "never-logged-in-user@test.firecloud.org", CreationTime: time.Now().Add(-2 * 24 * time.Hour).Format(time.RFC3339)},
+					{PrimaryEmail: "never-logged-in-user@test.firecloud.org", CreationTime: time.Now().Add(-2 * 24 * time.Hour).Format(time.RFC3339), LastLoginTime: googleNeverLoggedInTime},
 				}, nil).Once()
 			},
 			bitsDataWarehouse: map[string]bits_data_warehouse.Person{
@@ -173,7 +175,7 @@ func TestConfig_suspendAccounts(t *testing.T) {
 			},
 			workspaceMockConfig: func(c *firecloud_account_manager_mocks.MockMockableWorkspaceClient) {
 				c.EXPECT().GetCurrentUsers(ctx, "test.firecloud.org").Return([]*admin.User{
-					{PrimaryEmail: "never-logged-in-user-fail@test.firecloud.org", CreationTime: time.Now().Add(-2 * 24 * time.Hour).Format(time.RFC3339)},
+					{PrimaryEmail: "never-logged-in-user-fail@test.firecloud.org", CreationTime: time.Now().Add(-2 * 24 * time.Hour).Format(time.RFC3339), LastLoginTime: googleNeverLoggedInTime},
 				}, nil).Once()
 				c.EXPECT().SuspendUser(ctx, "never-logged-in-user-fail@test.firecloud.org").Return(assert.AnError).Once()
 			},
@@ -194,14 +196,15 @@ func TestConfig_suspendAccounts(t *testing.T) {
 			},
 			workspaceMockConfig: func(c *firecloud_account_manager_mocks.MockMockableWorkspaceClient) {
 				c.EXPECT().GetCurrentUsers(ctx, "test.firecloud.org").Return([]*admin.User{
-					{PrimaryEmail: "invalid-login-time-user@test.firecloud.org", LastLoginTime: "not-a-time"},
+					{PrimaryEmail: "invalid-login-time-user@test.firecloud.org", CreationTime: time.Now().Add(-7 * 24 * time.Hour).Format(time.RFC3339), LastLoginTime: "not-a-time"},
 				}, nil).Once()
+				c.EXPECT().SuspendUser(ctx, "invalid-login-time-user@test.firecloud.org").Return(nil).Once()
 			},
 			bitsDataWarehouse: map[string]bits_data_warehouse.Person{
 				"invalid-login-time-user@broadinstitute.org": {},
 			},
-			wantResults: []string{},
-			wantErrs:    []string{"failed to parse last login time not-a-time for invalid-login-time-user@test.firecloud.org"},
+			wantResults: []string{"Suspended user invalid-login-time-user@test.firecloud.org (due to being unable to parse the last login time (and the account is out of the grace period):"},
+			wantErrs:    []string{},
 		},
 		{
 			name: "user last login time is more than 90 days ago",
@@ -212,7 +215,7 @@ func TestConfig_suspendAccounts(t *testing.T) {
 			},
 			workspaceMockConfig: func(c *firecloud_account_manager_mocks.MockMockableWorkspaceClient) {
 				c.EXPECT().GetCurrentUsers(ctx, "test.firecloud.org").Return([]*admin.User{
-					{PrimaryEmail: "inactive-user@test.firecloud.org", LastLoginTime: time.Now().Add(-91 * 24 * time.Hour).Format(time.RFC3339)},
+					{PrimaryEmail: "inactive-user@test.firecloud.org", CreationTime: time.Now().Add(-7 * 24 * time.Hour).Format(time.RFC3339), LastLoginTime: time.Now().Add(-91 * 24 * time.Hour).Format(time.RFC3339)},
 				}, nil).Once()
 				c.EXPECT().SuspendUser(ctx, "inactive-user@test.firecloud.org").Return(nil).Once()
 			},
@@ -234,7 +237,7 @@ func TestConfig_suspendAccounts(t *testing.T) {
 			},
 			workspaceMockConfig: func(c *firecloud_account_manager_mocks.MockMockableWorkspaceClient) {
 				c.EXPECT().GetCurrentUsers(ctx, "test.firecloud.org").Return([]*admin.User{
-					{PrimaryEmail: "inactive-user@test.firecloud.org", LastLoginTime: time.Now().Add(-91 * 24 * time.Hour).Format(time.RFC3339)},
+					{PrimaryEmail: "inactive-user@test.firecloud.org", CreationTime: time.Now().Add(-7 * 24 * time.Hour).Format(time.RFC3339), LastLoginTime: time.Now().Add(-91 * 24 * time.Hour).Format(time.RFC3339)},
 				}, nil).Once()
 			},
 			bitsDataWarehouse: map[string]bits_data_warehouse.Person{
@@ -254,7 +257,7 @@ func TestConfig_suspendAccounts(t *testing.T) {
 			},
 			workspaceMockConfig: func(c *firecloud_account_manager_mocks.MockMockableWorkspaceClient) {
 				c.EXPECT().GetCurrentUsers(ctx, "test.firecloud.org").Return([]*admin.User{
-					{PrimaryEmail: "inactive-user-fail-suspend@test.firecloud.org", LastLoginTime: time.Now().Add(-91 * 24 * time.Hour).Format(time.RFC3339)},
+					{PrimaryEmail: "inactive-user-fail-suspend@test.firecloud.org", CreationTime: time.Now().Add(-7 * 24 * time.Hour).Format(time.RFC3339), LastLoginTime: time.Now().Add(-91 * 24 * time.Hour).Format(time.RFC3339)},
 				}, nil).Once()
 				c.EXPECT().SuspendUser(ctx, "inactive-user-fail-suspend@test.firecloud.org").Return(assert.AnError).Once()
 			},
@@ -275,7 +278,7 @@ func TestConfig_suspendAccounts(t *testing.T) {
 			},
 			workspaceMockConfig: func(c *firecloud_account_manager_mocks.MockMockableWorkspaceClient) {
 				c.EXPECT().GetCurrentUsers(ctx, "test.firecloud.org").Return([]*admin.User{
-					{PrimaryEmail: "missing-user@test.firecloud.org", LastLoginTime: time.Now().Add(-30 * 24 * time.Hour).Format(time.RFC3339)},
+					{PrimaryEmail: "missing-user@test.firecloud.org", CreationTime: time.Now().Add(-7 * 24 * time.Hour).Format(time.RFC3339), LastLoginTime: time.Now().Add(-30 * 24 * time.Hour).Format(time.RFC3339)},
 				}, nil).Once()
 				c.EXPECT().SuspendUser(ctx, "missing-user@test.firecloud.org").Return(nil).Once()
 			},
@@ -297,7 +300,7 @@ func TestConfig_suspendAccounts(t *testing.T) {
 			},
 			workspaceMockConfig: func(c *firecloud_account_manager_mocks.MockMockableWorkspaceClient) {
 				c.EXPECT().GetCurrentUsers(ctx, "test.firecloud.org").Return([]*admin.User{
-					{PrimaryEmail: "missing-user@test.firecloud.org", LastLoginTime: time.Now().Add(-30 * 24 * time.Hour).Format(time.RFC3339)},
+					{PrimaryEmail: "missing-user@test.firecloud.org", CreationTime: time.Now().Add(-7 * 24 * time.Hour).Format(time.RFC3339), LastLoginTime: time.Now().Add(-30 * 24 * time.Hour).Format(time.RFC3339)},
 				}, nil).Once()
 			},
 			bitsDataWarehouse: map[string]bits_data_warehouse.Person{
@@ -317,7 +320,7 @@ func TestConfig_suspendAccounts(t *testing.T) {
 			},
 			workspaceMockConfig: func(c *firecloud_account_manager_mocks.MockMockableWorkspaceClient) {
 				c.EXPECT().GetCurrentUsers(ctx, "test.firecloud.org").Return([]*admin.User{
-					{PrimaryEmail: "missing-user-fail-suspend@test.firecloud.org", LastLoginTime: time.Now().Add(-30 * 24 * time.Hour).Format(time.RFC3339)},
+					{PrimaryEmail: "missing-user-fail-suspend@test.firecloud.org", CreationTime: time.Now().Add(-7 * 24 * time.Hour).Format(time.RFC3339), LastLoginTime: time.Now().Add(-30 * 24 * time.Hour).Format(time.RFC3339)},
 				}, nil).Once()
 				c.EXPECT().SuspendUser(ctx, "missing-user-fail-suspend@test.firecloud.org").Return(assert.AnError).Once()
 			},
@@ -338,7 +341,7 @@ func TestConfig_suspendAccounts(t *testing.T) {
 			},
 			workspaceMockConfig: func(c *firecloud_account_manager_mocks.MockMockableWorkspaceClient) {
 				c.EXPECT().GetCurrentUsers(ctx, "test.firecloud.org").Return([]*admin.User{
-					{PrimaryEmail: "no-one-in-bits-data@test.firecloud.org", LastLoginTime: time.Now().Add(-30 * 24 * time.Hour).Format(time.RFC3339)},
+					{PrimaryEmail: "no-one-in-bits-data@test.firecloud.org", CreationTime: time.Now().Add(-7 * 24 * time.Hour).Format(time.RFC3339), LastLoginTime: time.Now().Add(-30 * 24 * time.Hour).Format(time.RFC3339)},
 				}, nil).Once()
 			},
 			bitsDataWarehouse: map[string]bits_data_warehouse.Person{
@@ -358,7 +361,7 @@ func TestConfig_suspendAccounts(t *testing.T) {
 			},
 			workspaceMockConfig: func(c *firecloud_account_manager_mocks.MockMockableWorkspaceClient) {
 				c.EXPECT().GetCurrentUsers(ctx, "test.firecloud.org").Return([]*admin.User{
-					{PrimaryEmail: "valid-user@test.firecloud.org", LastLoginTime: time.Now().Add(-30 * 24 * time.Hour).Format(time.RFC3339)},
+					{PrimaryEmail: "valid-user@test.firecloud.org", CreationTime: time.Now().Add(-7 * 24 * time.Hour).Format(time.RFC3339), LastLoginTime: time.Now().Add(-30 * 24 * time.Hour).Format(time.RFC3339)},
 				}, nil).Once()
 			},
 			bitsDataWarehouse: map[string]bits_data_warehouse.Person{
@@ -383,16 +386,17 @@ func TestConfig_suspendAccounts(t *testing.T) {
 					{PrimaryEmail: "never-affect-me@test.firecloud.org"},
 					{PrimaryEmail: "already-suspended@test.firecloud.org", Suspended: true},
 					{PrimaryEmail: "invalid-creation-time-user@test.firecloud.org", CreationTime: "not-a-time"},
-					{PrimaryEmail: "never-logged-in-user@test.firecloud.org", CreationTime: time.Now().Add(-2 * 24 * time.Hour).Format(time.RFC3339)},
-					{PrimaryEmail: "never-logged-in-user-fail@test.firecloud.org", CreationTime: time.Now().Add(-2 * 24 * time.Hour).Format(time.RFC3339)},
-					{PrimaryEmail: "invalid-login-time-user@test.firecloud.org", LastLoginTime: "not-a-time"},
-					{PrimaryEmail: "inactive-user@test.firecloud.org", LastLoginTime: time.Now().Add(-91 * 24 * time.Hour).Format(time.RFC3339)},
-					{PrimaryEmail: "inactive-user-fail-suspend@test.firecloud.org", LastLoginTime: time.Now().Add(-91 * 24 * time.Hour).Format(time.RFC3339)},
-					{PrimaryEmail: "missing-user@test.firecloud.org", LastLoginTime: time.Now().Add(-30 * 24 * time.Hour).Format(time.RFC3339)},
-					{PrimaryEmail: "missing-user-fail-suspend@test.firecloud.org", LastLoginTime: time.Now().Add(-30 * 24 * time.Hour).Format(time.RFC3339)},
-					{PrimaryEmail: "valid-user@test.firecloud.org", LastLoginTime: time.Now().Add(-30 * 24 * time.Hour).Format(time.RFC3339)},
+					{PrimaryEmail: "never-logged-in-user@test.firecloud.org", CreationTime: time.Now().Add(-2 * 24 * time.Hour).Format(time.RFC3339), LastLoginTime: googleNeverLoggedInTime},
+					{PrimaryEmail: "never-logged-in-user-fail@test.firecloud.org", CreationTime: time.Now().Add(-2 * 24 * time.Hour).Format(time.RFC3339), LastLoginTime: googleNeverLoggedInTime},
+					{PrimaryEmail: "invalid-login-time-user@test.firecloud.org", CreationTime: time.Now().Add(-2 * 24 * time.Hour).Format(time.RFC3339), LastLoginTime: "not-a-time"},
+					{PrimaryEmail: "inactive-user@test.firecloud.org", CreationTime: time.Now().Add(-2 * 24 * time.Hour).Format(time.RFC3339), LastLoginTime: time.Now().Add(-91 * 24 * time.Hour).Format(time.RFC3339)},
+					{PrimaryEmail: "inactive-user-fail-suspend@test.firecloud.org", CreationTime: time.Now().Add(-2 * 24 * time.Hour).Format(time.RFC3339), LastLoginTime: time.Now().Add(-91 * 24 * time.Hour).Format(time.RFC3339)},
+					{PrimaryEmail: "missing-user@test.firecloud.org", CreationTime: time.Now().Add(-2 * 24 * time.Hour).Format(time.RFC3339), LastLoginTime: time.Now().Add(-30 * 24 * time.Hour).Format(time.RFC3339)},
+					{PrimaryEmail: "missing-user-fail-suspend@test.firecloud.org", CreationTime: time.Now().Add(-2 * 24 * time.Hour).Format(time.RFC3339), LastLoginTime: time.Now().Add(-30 * 24 * time.Hour).Format(time.RFC3339)},
+					{PrimaryEmail: "valid-user@test.firecloud.org", CreationTime: time.Now().Add(-2 * 24 * time.Hour).Format(time.RFC3339), LastLoginTime: time.Now().Add(-30 * 24 * time.Hour).Format(time.RFC3339)},
 				}, nil).Once()
 
+				c.EXPECT().SuspendUser(ctx, "invalid-login-time-user@test.firecloud.org").Return(nil).Once()
 				c.EXPECT().SuspendUser(ctx, "never-logged-in-user@test.firecloud.org").Return(nil).Once()
 				c.EXPECT().SuspendUser(ctx, "never-logged-in-user-fail@test.firecloud.org").Return(assert.AnError).Once()
 				c.EXPECT().SuspendUser(ctx, "inactive-user@test.firecloud.org").Return(nil).Once()
@@ -411,13 +415,13 @@ func TestConfig_suspendAccounts(t *testing.T) {
 			},
 			wantResults: []string{
 				"Suspended user never-logged-in-user@test.firecloud.org (due to being new but not setting up their account)",
+				"Suspended user invalid-login-time-user@test.firecloud.org (due to being unable to parse the last login time (and the account is out of the grace period):",
 				"Suspended user inactive-user@test.firecloud.org (due to inactivity)",
 				"Suspended user missing-user@test.firecloud.org (due to missing in BITS data)",
 			},
 			wantErrs: []string{
-				"failed to parse creation time not-a-time for new account invalid-creation-time-user@test.firecloud.org",
+				"failed to parse creation time not-a-time for invalid-creation-time-user@test.firecloud.org",
 				"failed to suspend user never-logged-in-user-fail@test.firecloud.org (due to being new but not setting up their account)",
-				"failed to parse last login time not-a-time for invalid-login-time-user@test.firecloud.org",
 				"failed to suspend user inactive-user-fail-suspend@test.firecloud.org (due to inactivity)",
 				"failed to suspend user missing-user-fail-suspend@test.firecloud.org (due to missing in BITS data)",
 			},
@@ -444,16 +448,17 @@ func TestConfig_suspendAccounts(t *testing.T) {
 					{PrimaryEmail: "never-affect-me@test.firecloud.org"},
 					{PrimaryEmail: "already-suspended@test.firecloud.org", Suspended: true},
 					{PrimaryEmail: "invalid-creation-time-user@test.firecloud.org", CreationTime: "not-a-time"},
-					{PrimaryEmail: "never-logged-in-user@test.firecloud.org", CreationTime: time.Now().Add(-2 * 24 * time.Hour).Format(time.RFC3339)},
-					{PrimaryEmail: "never-logged-in-user-fail@test.firecloud.org", CreationTime: time.Now().Add(-2 * 24 * time.Hour).Format(time.RFC3339)},
-					{PrimaryEmail: "invalid-login-time-user@test.firecloud.org", LastLoginTime: "not-a-time"},
-					{PrimaryEmail: "inactive-user@test.firecloud.org", LastLoginTime: time.Now().Add(-91 * 24 * time.Hour).Format(time.RFC3339)},
-					{PrimaryEmail: "inactive-user-fail-suspend@test.firecloud.org", LastLoginTime: time.Now().Add(-91 * 24 * time.Hour).Format(time.RFC3339)},
-					{PrimaryEmail: "missing-user@test.firecloud.org", LastLoginTime: time.Now().Add(-30 * 24 * time.Hour).Format(time.RFC3339)},
-					{PrimaryEmail: "missing-user-fail-suspend@test.firecloud.org", LastLoginTime: time.Now().Add(-30 * 24 * time.Hour).Format(time.RFC3339)},
-					{PrimaryEmail: "valid-user@test.firecloud.org", LastLoginTime: time.Now().Add(-30 * 24 * time.Hour).Format(time.RFC3339)},
+					{PrimaryEmail: "never-logged-in-user@test.firecloud.org", CreationTime: time.Now().Add(-2 * 24 * time.Hour).Format(time.RFC3339), LastLoginTime: googleNeverLoggedInTime},
+					{PrimaryEmail: "never-logged-in-user-fail@test.firecloud.org", CreationTime: time.Now().Add(-2 * 24 * time.Hour).Format(time.RFC3339), LastLoginTime: googleNeverLoggedInTime},
+					{PrimaryEmail: "invalid-login-time-user@test.firecloud.org", CreationTime: time.Now().Add(-2 * 24 * time.Hour).Format(time.RFC3339), LastLoginTime: "not-a-time"},
+					{PrimaryEmail: "inactive-user@test.firecloud.org", CreationTime: time.Now().Add(-2 * 24 * time.Hour).Format(time.RFC3339), LastLoginTime: time.Now().Add(-91 * 24 * time.Hour).Format(time.RFC3339)},
+					{PrimaryEmail: "inactive-user-fail-suspend@test.firecloud.org", CreationTime: time.Now().Add(-2 * 24 * time.Hour).Format(time.RFC3339), LastLoginTime: time.Now().Add(-91 * 24 * time.Hour).Format(time.RFC3339)},
+					{PrimaryEmail: "missing-user@test.firecloud.org", CreationTime: time.Now().Add(-2 * 24 * time.Hour).Format(time.RFC3339), LastLoginTime: time.Now().Add(-30 * 24 * time.Hour).Format(time.RFC3339)},
+					{PrimaryEmail: "missing-user-fail-suspend@test.firecloud.org", CreationTime: time.Now().Add(-2 * 24 * time.Hour).Format(time.RFC3339), LastLoginTime: time.Now().Add(-30 * 24 * time.Hour).Format(time.RFC3339)},
+					{PrimaryEmail: "valid-user@test.firecloud.org", CreationTime: time.Now().Add(-2 * 24 * time.Hour).Format(time.RFC3339), LastLoginTime: time.Now().Add(-30 * 24 * time.Hour).Format(time.RFC3339)},
 				}, nil).Once()
 
+				c.EXPECT().SuspendUser(ctx, "invalid-login-time-user@test.firecloud.org").Return(nil).Once()
 				c.EXPECT().SuspendUser(ctx, "inactive-user@test.firecloud.org").Return(nil).Once()
 				c.EXPECT().SuspendUser(ctx, "missing-user-fail-suspend@test.firecloud.org").Return(assert.AnError).Once()
 			},
@@ -467,10 +472,10 @@ func TestConfig_suspendAccounts(t *testing.T) {
 				"valid-user@broadinstitute.org":                 {},
 			},
 			wantResults: []string{
+				"Suspended user invalid-login-time-user@test.firecloud.org (due to being unable to parse the last login time (and the account is out of the grace period):",
 				"Suspended user inactive-user@test.firecloud.org (due to inactivity)",
 			},
 			wantErrs: []string{
-				"failed to parse last login time not-a-time for invalid-login-time-user@test.firecloud.org",
 				"failed to suspend user missing-user-fail-suspend@test.firecloud.org (due to missing in BITS data)",
 			},
 		},
