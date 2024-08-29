@@ -8,6 +8,19 @@ import (
 	"golang.org/x/net/context"
 )
 
+const permissionChangeSquelchContextKey = "sherlock-slack-permission-change-squelch"
+
+// SetContextToSquelchPermissionChangeNotifications should be used very very carefully. It creates a new
+// context that, if passed to SendPermissionChangeNotification or SendPermissionChangeNotificationReturnError,
+// will prevent a notification from actually being sent if there's no errors.
+//
+// This is useful when regular routines have multiple notifications (e.g. they send their own but the changes
+// to Role or RoleAssignment tables also trigger their own notifications). This can be used to stop inner
+// notifications from being sent if they don't have any errors to communicate.
+func SetContextToSquelchPermissionChangeNotifications(ctx context.Context) context.Context {
+	return context.WithValue(ctx, permissionChangeSquelchContextKey, true)
+}
+
 type PermissionChangeNotificationInputs struct {
 	Summary string
 	Results []string
@@ -46,6 +59,11 @@ func SendPermissionChangeNotificationReturnError(ctx context.Context, actor stri
 	}
 	if inputs.Summary != "" {
 		headline += fmt.Sprintf(" %s", inputs.Summary)
+	}
+
+	if squelch, ok := ctx.Value(permissionChangeSquelchContextKey).(bool); ok && squelch && len(inputs.Errors) == 0 {
+		log.Info().Strs("results", inputs.Results).Errs("errors", inputs.Errors).Msgf("SLCK | Squelching permission change notification: `%s`", headline)
+		return nil
 	}
 
 	log.Info().Strs("results", inputs.Results).Errs("errors", inputs.Errors).Msgf("SLCK | Sending permission change notification: `%s`", headline)

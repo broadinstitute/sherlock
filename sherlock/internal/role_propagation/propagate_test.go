@@ -46,7 +46,6 @@ func (s *propagateSuite) Test_waitToPropagate() {
 		c.EXPECT().Propagate(mock.Anything, mock.MatchedBy(func(r models.Role) bool {
 			return r.ID == roleID
 		})).Return(nil, nil)
-		c.EXPECT().Name().Return("mockedPropagator")
 	}, func() {
 		ctx := context.Background()
 		waitToPropagate(ctx, s.DB, roleID)
@@ -67,7 +66,6 @@ func (s *propagateSuite) Test_waitToPropagate() {
 			c.EXPECT().Propagate(mock.Anything, mock.MatchedBy(func(r models.Role) bool {
 				return r.ID == roleID
 			})).Return(nil, nil)
-			c.EXPECT().Name().Return("mockedPropagator")
 		}, func() {
 			ctx := context.Background()
 			waitToPropagate(ctx, s.DB, roleID)
@@ -90,7 +88,6 @@ func (s *propagateSuite) Test_tryToPropagateStale() {
 		c.EXPECT().Propagate(mock.Anything, mock.MatchedBy(func(r models.Role) bool {
 			return r.ID == roleID
 		})).Return(nil, nil)
-		c.EXPECT().Name().Return("mockedPropagator")
 	}, func() {
 		ctx := context.Background()
 		tryToPropagateStale(ctx, s.DB)

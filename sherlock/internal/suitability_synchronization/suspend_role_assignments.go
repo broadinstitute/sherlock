@@ -43,8 +43,12 @@ func suspendRoleAssignments(ctx context.Context, db *gorm.DB) error {
 	if len(roleIDsToSuspendAssignmentsFor) == 0 {
 		return nil
 	}
+
 	// Assume super-user privileges for this operation (required to edit RoleAssignments)
 	superUserDB := models.SetCurrentUserForDB(db, models.SelfUser)
+	// Squelch notifications where possible because we notify at the end
+	superUserDB = superUserDB.WithContext(slack.SetContextToSquelchPermissionChangeNotifications(ctx))
+
 	roleIDsRequiringPropagation := make(map[uint]struct{})
 	var summaries []string
 	var errors []error
@@ -74,9 +78,9 @@ func suspendRoleAssignments(ctx context.Context, db *gorm.DB) error {
 							Suspended: utils.PointerTo(false),
 						},
 					}).Error; err != nil {
-						errors = append(errors, fmt.Errorf("failed to un-suspend %s's assignment for %s: %w", assignment.User.NameOrUsername(), *role.Name, err))
+						errors = append(errors, fmt.Errorf("failed to un-suspend %s's assignment for %s: %w", assignment.User.SlackReference(true), *role.Name, err))
 					} else {
-						summaries = append(summaries, fmt.Sprintf("un-suspended %s's assignment for %s", assignment.User.NameOrUsername(), *role.Name))
+						summaries = append(summaries, fmt.Sprintf("Un-suspended %s's assignment for %s", assignment.User.SlackReference(true), *role.Name))
 					}
 				} else if !suitable && (assignment.Suspended == nil || !*assignment.Suspended) {
 					roleIDsRequiringPropagation[roleID] = struct{}{}
@@ -85,15 +89,15 @@ func suspendRoleAssignments(ctx context.Context, db *gorm.DB) error {
 							Suspended: utils.PointerTo(true),
 						},
 					}).Error; err != nil {
-						errors = append(errors, fmt.Errorf("failed to suspend %s's assignment for %s: %w", assignment.User.NameOrUsername(), *role.Name, err))
+						errors = append(errors, fmt.Errorf("failed to suspend %s's assignment for %s: %w", assignment.User.SlackReference(true), *role.Name, err))
 					} else {
-						summaries = append(summaries, fmt.Sprintf("suspended %s's assignment for %s", assignment.User.NameOrUsername(), *role.Name))
+						summaries = append(summaries, fmt.Sprintf("Suspended %s's assignment for %s", assignment.User.SlackReference(true), *role.Name))
 					}
 				}
 			}
 		}
 	}
-	if len(summaries) > 0 {
+	if len(summaries) > 0 || len(errors) > 0 {
 		slack.SendPermissionChangeNotification(ctx, models.SelfUser.SlackReference(true), slack.PermissionChangeNotificationInputs{
 			Summary: "modified role assignments based on suitability",
 			Results: summaries,

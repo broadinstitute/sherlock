@@ -40,9 +40,9 @@ func (p *propagatorImpl[Grant, Identifier, Fields]) Propagate(ctx context.Contex
 	for _, alignmentOperation := range alignmentOperations {
 		result, err := alignmentOperation()
 		if err != nil {
-			errors = append(errors, err)
+			errors = append(errors, fmt.Errorf("%s: %w", p.Name(), err))
 		} else {
-			results = append(results, result)
+			results = append(results, fmt.Sprintf("%s: %s", p.Name(), result))
 		}
 	}
 

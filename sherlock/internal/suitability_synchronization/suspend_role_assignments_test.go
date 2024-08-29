@@ -60,9 +60,8 @@ func (s *suspendRoleAssignmentsSuite) Test_suspendRoleAssignments() {
 	s.NoError(s.DB.Create(&assignment5).Error)
 
 	slack.UseMockedClient(s.T(), func(c *slack_mocks.MockMockableClient) {
-		// Two changes, two notifications in each channel each (one from this function and one from the RoleAssignment hook), = 4
-		c.EXPECT().SendMessageContext(mock.Anything, "#notification-channel", mock.Anything).Return("", "", "", nil).Times(4)
-		c.EXPECT().SendMessageContext(mock.Anything, "#permission-change-channel", mock.Anything).Return("", "", "", nil).Times(4)
+		c.EXPECT().SendMessageContext(mock.Anything, "#notification-channel", mock.Anything).Return("", "", "", nil).Once()
+		c.EXPECT().SendMessageContext(mock.Anything, "#permission-change-channel", mock.Anything).Return("", "", "", nil).Once()
 	}, func() {
 		s.NoError(suspendRoleAssignments(s.DB.Statement.Context, s.DB))
 	})

@@ -6,7 +6,6 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/clients/slack"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/jinzhu/copier"
-	"github.com/sanity-io/litter"
 	"gorm.io/gorm"
 	"time"
 )
@@ -31,6 +30,18 @@ type RoleAssignmentFields struct {
 	//    suitable.
 	Suspended *bool
 	ExpiresAt *time.Time
+}
+
+func (a *RoleAssignmentFields) String() string {
+	suspended := false
+	if a.Suspended != nil {
+		suspended = *a.Suspended
+	}
+	expiresAt := "(never)"
+	if a.ExpiresAt != nil {
+		expiresAt = a.ExpiresAt.Format(time.RFC3339)
+	}
+	return fmt.Sprintf("{Suspended: %t, ExpiresAt: %s}", suspended, expiresAt)
 }
 
 type RoleAssignment struct {
@@ -183,7 +194,7 @@ func (ra *RoleAssignment) AfterCreate(tx *gorm.DB) error {
 		slack.SendPermissionChangeNotification(tx.Statement.Context, user.SlackReference(true), slack.PermissionChangeNotificationInputs{
 			Summary: fmt.Sprintf("created RoleAssignment for %s", ra.Description(tx)),
 			Results: []string{
-				"Fields: " + slack.EscapeText(litter.Sdump(ra.RoleAssignmentFields)),
+				"Fields: " + slack.EscapeText(ra.RoleAssignmentFields.String()),
 			},
 		})
 	}
@@ -217,8 +228,8 @@ func (ra *RoleAssignment) AfterUpdate(tx *gorm.DB) error {
 		slack.SendPermissionChangeNotification(tx.Statement.Context, user.SlackReference(true), slack.PermissionChangeNotificationInputs{
 			Summary: fmt.Sprintf("edited RoleAssignment for %s", ra.Description(tx)),
 			Results: []string{
-				"Old fields: " + slack.EscapeText(litter.Sdump(ra.previousFields)),
-				"New fields: " + slack.EscapeText(litter.Sdump(ra.RoleAssignmentFields)),
+				"Old fields: " + slack.EscapeText(ra.previousFields.String()),
+				"New fields: " + slack.EscapeText(ra.RoleAssignmentFields.String()),
 			},
 		})
 	}
@@ -245,7 +256,7 @@ func (ra *RoleAssignment) BeforeDelete(tx *gorm.DB) error {
 		slack.SendPermissionChangeNotification(tx.Statement.Context, user.SlackReference(true), slack.PermissionChangeNotificationInputs{
 			Summary: fmt.Sprintf("deleted RoleAssignment for %s", ra.Description(tx)),
 			Results: []string{
-				"Fields: " + slack.EscapeText(litter.Sdump(ra.RoleAssignmentFields)),
+				"Fields: " + slack.EscapeText(ra.RoleAssignmentFields.String()),
 			},
 		})
 	}

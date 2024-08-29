@@ -10,6 +10,41 @@ import (
 	"testing"
 )
 
+func TestSetContextToSquelchPermissionChangeNotifications(t *testing.T) {
+	config.LoadTestConfig()
+	zerolog.SetGlobalLevel(zerolog.Disabled)
+	ctx := context.Background()
+	ctx = SetContextToSquelchPermissionChangeNotifications(ctx)
+	if ctx.Value(permissionChangeSquelchContextKey) == nil {
+		t.Errorf("SetContextToSquelchPermissionChangeNotifications() did not set the correct context key")
+	}
+
+	t.Run("shouldn't contact Slack if no errors", func(t *testing.T) {
+		UseMockedClient(t, func(c *slack_mocks.MockMockableClient) {
+			// Shouldn't touch Slack
+		}, func() {
+			SendPermissionChangeNotificationReturnError(ctx, "test", PermissionChangeNotificationInputs{
+				Summary: "summary",
+				Results: []string{"result"},
+				Errors:  []error{},
+			})
+		})
+	})
+
+	t.Run("should contact Slack if errors", func(t *testing.T) {
+		UseMockedClient(t, func(c *slack_mocks.MockMockableClient) {
+			c.EXPECT().SendMessageContext(ctx, "#notification-channel", mock.Anything).Return("", "", "", nil).Once()
+			c.EXPECT().SendMessageContext(ctx, "#permission-change-channel", mock.Anything).Return("", "", "", nil).Once()
+		}, func() {
+			SendPermissionChangeNotificationReturnError(ctx, "test", PermissionChangeNotificationInputs{
+				Summary: "summary",
+				Results: []string{"result"},
+				Errors:  []error{fmt.Errorf("error")},
+			})
+		})
+	})
+}
+
 func TestSendPermissionChangeNotification(t *testing.T) {
 	config.LoadTestConfig()
 	zerolog.SetGlobalLevel(zerolog.Disabled)
