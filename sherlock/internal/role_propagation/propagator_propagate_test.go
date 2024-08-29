@@ -173,6 +173,7 @@ func Test_propagatorImpl_Propagate(t *testing.T) {
 	engine.EXPECT().Add(mock.Anything, "string", propagation_engines.GoogleWorkspaceGroupIdentifier{Email: "c@example.com"}, propagation_engines.GoogleWorkspaceGroupFields{}).
 		Return("oh no", fmt.Errorf("failed to add c")).Once()
 	p := propagatorImpl[string, propagation_engines.GoogleWorkspaceGroupIdentifier, propagation_engines.GoogleWorkspaceGroupFields]{
+		configKey: "test-config-key",
 		getGrant: func(role models.Role) *string {
 			return role.GrantsDevFirecloudGroup
 		},
@@ -180,6 +181,7 @@ func Test_propagatorImpl_Propagate(t *testing.T) {
 		_enable:  true,
 		_timeout: time.Minute,
 	}
+	p.Name()
 	var results []string
 	var errors []error
 	assert.NotPanics(t, func() {
@@ -190,6 +192,6 @@ func Test_propagatorImpl_Propagate(t *testing.T) {
 		})
 	})
 	slices.Sort(results)
-	assert.Equal(t, []string{"added b", "removed a"}, results)
-	assert.Equal(t, []error{fmt.Errorf("failed to add c")}, errors)
+	assert.Equal(t, []string{"test-config-key: added b", "test-config-key: removed a"}, results)
+	assert.Equal(t, []error{fmt.Errorf("test-config-key: %w", fmt.Errorf("failed to add c"))}, errors)
 }

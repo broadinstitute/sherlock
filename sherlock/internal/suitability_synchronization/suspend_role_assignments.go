@@ -43,8 +43,12 @@ func suspendRoleAssignments(ctx context.Context, db *gorm.DB) error {
 	if len(roleIDsToSuspendAssignmentsFor) == 0 {
 		return nil
 	}
+
 	// Assume super-user privileges for this operation (required to edit RoleAssignments)
 	superUserDB := models.SetCurrentUserForDB(db, models.SelfUser)
+	// Squelch notifications where possible because we notify at the end
+	superUserDB = superUserDB.WithContext(slack.SetContextToSquelchPermissionChangeNotifications(ctx))
+
 	roleIDsRequiringPropagation := make(map[uint]struct{})
 	var summaries []string
 	var errors []error
