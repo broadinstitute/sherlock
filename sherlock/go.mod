@@ -41,7 +41,7 @@ require (
 	golang.org/x/net v0.28.0
 	golang.org/x/oauth2 v0.22.0
 	golang.org/x/text v0.17.0
-	google.golang.org/api v0.194.0
+	google.golang.org/api v0.195.0
 	gorm.io/datatypes v1.2.1
 	gorm.io/driver/postgres v1.5.9
 	gorm.io/gorm v1.25.11
