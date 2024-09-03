@@ -59,6 +59,8 @@ func (s *suspendRoleAssignmentsSuite) Test_suspendRoleAssignments() {
 	s.NoError(s.DB.Create(&assignment4).Error)
 	s.NoError(s.DB.Create(&assignment5).Error)
 
+	s.SetSuitableTestUserForDB() // Check that it elevates its own permissions properly
+
 	slack.UseMockedClient(s.T(), func(c *slack_mocks.MockMockableClient) {
 		c.EXPECT().SendMessageContext(mock.Anything, "#notification-channel", mock.Anything).Return("", "", "", nil).Once()
 		c.EXPECT().SendMessageContext(mock.Anything, "#permission-change-channel", mock.Anything).Return("", "", "", nil).Once()
