@@ -8,6 +8,7 @@ import (
 	"github.com/jinzhu/copier"
 	"github.com/sanity-io/litter"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 	"time"
 )
 
@@ -176,7 +177,7 @@ func (r *Role) BeforeCreate(tx *gorm.DB) error {
 func (r *Role) AfterCreate(tx *gorm.DB) error {
 	if user, err := GetCurrentUserForDB(tx); err != nil {
 		return err
-	} else if err = tx.Create(&RoleOperation{
+	} else if err = tx.Omit(clause.Associations).Create(&RoleOperation{
 		RoleID:    r.ID,
 		AuthorID:  user.ID,
 		Operation: "create",
@@ -210,7 +211,7 @@ func (r *Role) AfterUpdate(tx *gorm.DB) error {
 		return err
 	} else if err = user.ErrIfNotSuperAdmin(); err != nil {
 		return err
-	} else if err = tx.Create(&RoleOperation{
+	} else if err = tx.Omit(clause.Associations).Create(&RoleOperation{
 		RoleID:    r.ID,
 		AuthorID:  user.ID,
 		Operation: "update",
@@ -238,7 +239,7 @@ func (r *Role) BeforeDelete(tx *gorm.DB) error {
 		return err
 	} else if err = tx.First(&current, r.ID).Error; err != nil {
 		return fmt.Errorf("failed to find current Role: %w", err)
-	} else if err = tx.Create(&RoleOperation{
+	} else if err = tx.Omit(clause.Associations).Create(&RoleOperation{
 		RoleID:    r.ID,
 		AuthorID:  user.ID,
 		Operation: "delete",

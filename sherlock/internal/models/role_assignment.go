@@ -7,6 +7,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/jinzhu/copier"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 	"time"
 )
 
@@ -182,7 +183,7 @@ func (ra *RoleAssignment) AfterCreate(tx *gorm.DB) error {
 		return err
 	} else if err = ra.errorIfForbidden(tx); err != nil {
 		return err
-	} else if err = tx.Create(&RoleAssignmentOperation{
+	} else if err = tx.Omit(clause.Associations).Create(&RoleAssignmentOperation{
 		RoleID:    ra.RoleID,
 		UserID:    ra.UserID,
 		AuthorID:  user.ID,
@@ -215,7 +216,7 @@ func (ra *RoleAssignment) AfterUpdate(tx *gorm.DB) error {
 		return err
 	} else if err = ra.errorIfForbidden(tx); err != nil {
 		return err
-	} else if err = tx.Create(&RoleAssignmentOperation{
+	} else if err = tx.Omit(clause.Associations).Create(&RoleAssignmentOperation{
 		RoleID:    ra.RoleID,
 		UserID:    ra.UserID,
 		AuthorID:  user.ID,
@@ -244,7 +245,7 @@ func (ra *RoleAssignment) BeforeDelete(tx *gorm.DB) error {
 		return err
 	} else if err = tx.Where(&RoleAssignment{RoleID: ra.RoleID, UserID: ra.UserID}).First(&current).Error; err != nil {
 		return fmt.Errorf("failed to find current RoleAssignment: %w", err)
-	} else if err = tx.Create(&RoleAssignmentOperation{
+	} else if err = tx.Omit(clause.Associations).Create(&RoleAssignmentOperation{
 		RoleID:    ra.RoleID,
 		UserID:    ra.UserID,
 		AuthorID:  user.ID,
