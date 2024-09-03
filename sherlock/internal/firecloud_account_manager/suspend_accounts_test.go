@@ -2,6 +2,7 @@ package firecloud_account_manager
 
 import (
 	"context"
+	"fmt"
 	"github.com/broadinstitute/sherlock/sherlock/internal/clients/bits_data_warehouse"
 	"github.com/broadinstitute/sherlock/sherlock/internal/clients/slack"
 	"github.com/broadinstitute/sherlock/sherlock/internal/clients/slack/slack_mocks"
@@ -478,6 +479,66 @@ func TestConfig_suspendAccounts(t *testing.T) {
 			wantErrs: []string{
 				"failed to suspend user missing-user-fail-suspend@test.firecloud.org (due to missing in BITS data)",
 			},
+		},
+		{
+			name: "retries user query",
+			manager: &firecloudAccountManager{
+				Domain:                "test.firecloud.org",
+				NewAccountGracePeriod: 24 * time.Hour,
+				InactivityThreshold:   90 * 24 * time.Hour,
+			},
+			workspaceMockConfig: func(c *firecloud_account_manager_mocks.MockMockableWorkspaceClient) {
+				calls := 0
+				c.EXPECT().GetCurrentUsers(ctx, "test.firecloud.org").RunAndReturn(func(_ context.Context, _ string) ([]*admin.User, error) {
+					if calls == 0 {
+						calls += 1
+						return nil, fmt.Errorf("blah blah some sherlock retryable error")
+					} else if calls == 1 {
+						return []*admin.User{
+							{PrimaryEmail: "valid-user@test.firecloud.org", CreationTime: time.Now().Add(-7 * 24 * time.Hour).Format(time.RFC3339), LastLoginTime: time.Now().Add(-30 * 24 * time.Hour).Format(time.RFC3339)},
+						}, nil
+					} else {
+						panic("too many calls")
+					}
+				}).Times(2)
+			},
+			bitsDataWarehouse: map[string]bits_data_warehouse.Person{
+				"valid-user@broadinstitute.org": {},
+			},
+			wantResults: []string{},
+			wantErrs:    []string{},
+		},
+		{
+			name: "retries user suspension call",
+			manager: &firecloudAccountManager{
+				Domain:                "test.firecloud.org",
+				NewAccountGracePeriod: 24 * time.Hour,
+				InactivityThreshold:   90 * 24 * time.Hour,
+			},
+			workspaceMockConfig: func(c *firecloud_account_manager_mocks.MockMockableWorkspaceClient) {
+				c.EXPECT().GetCurrentUsers(ctx, "test.firecloud.org").Return([]*admin.User{
+					{PrimaryEmail: "missing-user@test.firecloud.org", CreationTime: time.Now().Add(-7 * 24 * time.Hour).Format(time.RFC3339), LastLoginTime: time.Now().Add(-30 * 24 * time.Hour).Format(time.RFC3339)},
+				}, nil).Once()
+
+				calls := 0
+				c.EXPECT().SuspendUser(ctx, "missing-user@test.firecloud.org").RunAndReturn(func(_ context.Context, _ string) error {
+					if calls == 0 {
+						calls += 1
+						return fmt.Errorf("blah blah some sherlock retryable error")
+					} else if calls == 1 {
+						return nil
+					} else {
+						panic("too many calls")
+					}
+				}).Times(2)
+			},
+			bitsDataWarehouse: map[string]bits_data_warehouse.Person{
+				"some-other-user@broadinstitute.org": {},
+			},
+			wantResults: []string{
+				"Suspended user missing-user@test.firecloud.org (due to missing in BITS data)",
+			},
+			wantErrs: []string{},
 		},
 	}
 

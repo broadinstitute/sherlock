@@ -156,6 +156,22 @@ metrics:
     enable: true
     updateIntervalMinutes: 5
 
+retries:
+  # The number of times Sherlock will attempt (many) third-party operations
+  # before giving up. Setting this to 1 will effectively disable retries.
+  # Setting this to 0 will cause Sherlock to retry indefinitely.
+  attempts: 3
+  # For an error to be retried it must match at least one of these regexes.
+  errorRegexesToRetry:
+    - "googleapi: Error 500"
+    - "googleapi: Error 503"
+  # The base interval between retries. This is fed into an exponential backoff
+  # algorithm.
+  baseAttemptInterval: 500ms
+  # The maximum interval between retries. This sets an upper bound on the
+  # exponential backoff algorithm.
+  maxAttemptInterval: 3s
+
 pagerduty:
   enable: false
 

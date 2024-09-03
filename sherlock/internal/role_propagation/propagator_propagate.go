@@ -3,7 +3,10 @@ package role_propagation
 import (
 	"context"
 	"fmt"
+	"github.com/avast/retry-go/v4"
+	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
+	"github.com/broadinstitute/sherlock/sherlock/internal/role_propagation/intermediary_user"
 )
 
 func (p *propagatorImpl[Grant, Identifier, Fields]) Propagate(ctx context.Context, role models.Role) (results []string, errors []error) {
@@ -25,12 +28,16 @@ func (p *propagatorImpl[Grant, Identifier, Fields]) Propagate(ctx context.Contex
 		return nil, nil
 	}
 
-	currentState, err := p.engine.LoadCurrentState(timeoutCtx, grant)
+	currentState, err := retry.DoWithData(func() ([]intermediary_user.IntermediaryUser[Identifier, Fields], error) {
+		return p.engine.LoadCurrentState(timeoutCtx, grant)
+	}, config.RetryOptions...)
 	if err != nil {
 		return nil, []error{fmt.Errorf("failed to load current state for grant %v: %w", grant, err)}
 	}
 
-	desiredState, err := p.engine.GenerateDesiredState(timeoutCtx, role.AssignmentsMap())
+	desiredState, err := retry.DoWithData(func() (map[uint]intermediary_user.IntermediaryUser[Identifier, Fields], error) {
+		return p.engine.GenerateDesiredState(timeoutCtx, role.AssignmentsMap())
+	}, config.RetryOptions...)
 	if err != nil {
 		return nil, []error{fmt.Errorf("failed to generate desired state for grant %v: %w", grant, err)}
 	}
@@ -38,7 +45,7 @@ func (p *propagatorImpl[Grant, Identifier, Fields]) Propagate(ctx context.Contex
 	alignmentOperations := p.consumeStatesToDiff(timeoutCtx, grant, currentState, desiredState)
 
 	for _, alignmentOperation := range alignmentOperations {
-		result, err := alignmentOperation()
+		result, err := retry.DoWithData(alignmentOperation, config.RetryOptions...)
 		if err != nil {
 			errors = append(errors, fmt.Errorf("%s: %w", p.Name(), err))
 		} else {

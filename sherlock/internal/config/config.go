@@ -50,6 +50,7 @@ func init() {
 	}
 
 	configureLogging(infoMessages...)
+	initRetryOptions()
 }
 
 // LoadTestConfig is an extra at-test-time-only configuration loading step. This package's init function will have
@@ -76,6 +77,7 @@ func LoadTestConfig() {
 	}
 
 	configureLogging()
+	initRetryOptions()
 }
 
 // configureLogging is abstracted init-like logic for updating global logging configuration.

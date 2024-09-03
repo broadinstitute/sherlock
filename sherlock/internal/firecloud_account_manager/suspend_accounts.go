@@ -3,12 +3,15 @@ package firecloud_account_manager
 import (
 	"context"
 	"fmt"
+	"github.com/avast/retry-go/v4"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/clients/bits_data_warehouse"
 	"github.com/broadinstitute/sherlock/sherlock/internal/clients/slack"
+	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models/advisory_locks"
 	"github.com/rs/zerolog/log"
+	admin "google.golang.org/api/admin/directory/v1"
 	"gorm.io/gorm"
 	"strings"
 	"time"
@@ -44,7 +47,9 @@ func (m *firecloudAccountManager) suspendAccounts(ctx context.Context) ([]string
 			return fmt.Errorf("failed to lock %T (%s) for suspension: %w", m, m.Domain, err)
 		}
 
-		currentUsers, err := m.workspaceClient.GetCurrentUsers(ctx, m.Domain)
+		currentUsers, err := retry.DoWithData(func() ([]*admin.User, error) {
+			return m.workspaceClient.GetCurrentUsers(ctx, m.Domain)
+		}, config.RetryOptions...)
 		if err != nil {
 			return fmt.Errorf("failed to get current users: %w", err)
 		}
@@ -110,7 +115,9 @@ func (m *firecloudAccountManager) suspendAccounts(ctx context.Context) ([]string
 				if m.DryRun {
 					results = append(results, fmt.Sprintf("Would've suspended user %s (%s) but dry run enabled", user.PrimaryEmail, suspensionReason))
 				} else {
-					if err := m.workspaceClient.SuspendUser(ctx, user.PrimaryEmail); err != nil {
+					if err := retry.Do(func() error {
+						return m.workspaceClient.SuspendUser(ctx, user.PrimaryEmail)
+					}, config.RetryOptions...); err != nil {
 						errs = append(errs, fmt.Errorf("failed to suspend user %s (%s): %w", user.PrimaryEmail, suspensionReason, err))
 					} else {
 						results = append(results, fmt.Sprintf("Suspended user %s (%s)", user.PrimaryEmail, suspensionReason))
