@@ -80,6 +80,6 @@ type propagatorImpl[
 	_toleratedUsers []Identifier
 }
 
-func (p propagatorImpl[Grant, Identifier, Fields]) Name() string {
+func (p *propagatorImpl[Grant, Identifier, Fields]) Name() string {
 	return p.configKey
 }
