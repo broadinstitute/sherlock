@@ -15,8 +15,8 @@ func Init(ctx context.Context) error {
 	propagators = []propagator{
 
 		&propagatorImpl[string, propagation_engines.GoogleWorkspaceGroupIdentifier, propagation_engines.GoogleWorkspaceGroupFields]{
-			configKey: "devFirecloudGroup",
-			getGrant:  func(role models.Role) *string { return role.GrantsDevFirecloudGroup },
+			configKey: "prodFirecloudGroup",
+			getGrant:  func(role models.Role) *string { return role.GrantsProdFirecloudGroup },
 			engine:    &propagation_engines.GoogleWorkspaceGroupEngine{},
 		},
 		&propagatorImpl[string, propagation_engines.GoogleWorkspaceGroupIdentifier, propagation_engines.GoogleWorkspaceGroupFields]{
@@ -25,19 +25,19 @@ func Init(ctx context.Context) error {
 			engine:    &propagation_engines.GoogleWorkspaceGroupEngine{},
 		},
 		&propagatorImpl[string, propagation_engines.GoogleWorkspaceGroupIdentifier, propagation_engines.GoogleWorkspaceGroupFields]{
-			configKey: "prodFirecloudGroup",
-			getGrant:  func(role models.Role) *string { return role.GrantsProdFirecloudGroup },
+			configKey: "devFirecloudGroup",
+			getGrant:  func(role models.Role) *string { return role.GrantsDevFirecloudGroup },
 			engine:    &propagation_engines.GoogleWorkspaceGroupEngine{},
 		},
 
 		&propagatorImpl[string, propagation_engines.AzureGroupIdentifier, propagation_engines.AzureGroupFields]{
-			configKey: "devAzureGroup",
-			getGrant:  func(role models.Role) *string { return role.GrantsDevAzureGroup },
+			configKey: "prodAzureGroup",
+			getGrant:  func(role models.Role) *string { return role.GrantsProdAzureGroup },
 			engine:    &propagation_engines.AzureGroupEngine{},
 		},
 		&propagatorImpl[string, propagation_engines.AzureGroupIdentifier, propagation_engines.AzureGroupFields]{
-			configKey: "prodAzureGroup",
-			getGrant:  func(role models.Role) *string { return role.GrantsProdAzureGroup },
+			configKey: "devAzureGroup",
+			getGrant:  func(role models.Role) *string { return role.GrantsDevAzureGroup },
 			engine:    &propagation_engines.AzureGroupEngine{},
 		},
 
