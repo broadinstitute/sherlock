@@ -13,8 +13,9 @@ import (
 // use a `var propagators []propagatorImpl[any, any]` because Go doesn't support covariance like that -- we call
 // it a `var propagators []propagator` instead.
 type propagator interface {
-	// Name is how the propagator should be referenced in logs and alerts.
-	Name() string
+	// LogPrefix will be added before any individual operation results or errors when written to logs or alerts.
+	// This is helpful to indicate which propagator did what.
+	LogPrefix() string
 	// Init loads configuration and initializes the engine (assuming the configuration doesn't say this
 	// propagator is disabled). It should be called once at startup, and an error here should abort startup.
 	Init(ctx context.Context) error
@@ -85,6 +86,6 @@ type propagatorImpl[
 	_toleratedUsers []Identifier
 }
 
-func (p *propagatorImpl[Grant, Identifier, Fields]) Name() string {
-	return p.configKey
+func (p *propagatorImpl[Grant, Identifier, Fields]) LogPrefix() string {
+	return p.configKey + ": "
 }

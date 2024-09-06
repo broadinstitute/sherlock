@@ -371,7 +371,6 @@ rolePropagation:
       # Sherlock users to Google Workspace users. This must contain a "@".
       userEmailSuffixesToReplace:
         - "@broadinstitute.org"
-
     qaFirecloudGroup:
       enable: false
       # The domain of the Google Workspace, assumed to be the email domain of all members. This should
@@ -381,8 +380,35 @@ rolePropagation:
       # Sherlock users to Google Workspace users. This must contain a "@".
       userEmailSuffixesToReplace:
         - "@broadinstitute.org"
-
     prodFirecloudGroup:
+      enable: false
+      # The domain of the Google Workspace, assumed to be the email domain of all members. This should
+      # not contain a leading "@".
+      workspaceDomain: "firecloud.org"
+      # Suffixes of Sherlock users' emails that should be swapped out with "@"+workspaceDomain to match
+      # Sherlock users to Google Workspace users. This must contain a "@".
+      userEmailSuffixesToReplace:
+        - "@broadinstitute.org"
+
+    devFirecloudFolderOwner:
+      enable: false
+      # The domain of the Google Workspace, assumed to be the email domain of all members. This should
+      # not contain a leading "@".
+      workspaceDomain: "test.firecloud.org"
+      # Suffixes of Sherlock users' emails that should be swapped out with "@"+workspaceDomain to match
+      # Sherlock users to Google Workspace users. This must contain a "@".
+      userEmailSuffixesToReplace:
+        - "@broadinstitute.org"
+    qaFirecloudFolderOwner:
+      enable: false
+      # The domain of the Google Workspace, assumed to be the email domain of all members. This should
+      # not contain a leading "@".
+      workspaceDomain: "quality.firecloud.org"
+      # Suffixes of Sherlock users' emails that should be swapped out with "@"+workspaceDomain to match
+      # Sherlock users to Google Workspace users. This must contain a "@".
+      userEmailSuffixesToReplace:
+        - "@broadinstitute.org"
+    prodFirecloudFolderOwner:
       enable: false
       # The domain of the Google Workspace, assumed to be the email domain of all members. This should
       # not contain a leading "@".
@@ -408,7 +434,6 @@ rolePropagation:
       # Sherlock users to Azure Entra ID users.
       userEmailSuffixesToReplace:
         - "@broadinstitute.org"
-
     prodAzureGroup:
       enable: false
       # The client ID of the Azure AD app to use for authentication.

@@ -136,10 +136,10 @@ func doNonConcurrentPropagation(ctx context.Context, role models.Role) {
 	for _, p := range propagators {
 		additionalResults, additionalErrors := p.Propagate(ctx, role)
 		results = append(results, utils.Map(additionalResults, func(result string) string {
-			return fmt.Sprintf("%s: %s", p.Name(), result)
+			return p.LogPrefix() + result
 		})...)
 		errors = append(errors, utils.Map(additionalErrors, func(err error) error {
-			return fmt.Errorf("%s: %w", p.Name(), err)
+			return fmt.Errorf("%s%w", p.LogPrefix(), err)
 		})...)
 	}
 	if len(results) > 0 || len(errors) > 0 {

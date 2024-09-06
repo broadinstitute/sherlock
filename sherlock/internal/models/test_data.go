@@ -357,15 +357,18 @@ func (td *testDataImpl) Role_TerraSuitableEngineer() Role {
 	if td.role_terraSuitableEngineer.ID == 0 {
 		td.role_terraSuitableEngineer = Role{
 			RoleFields: RoleFields{
-				Name:                      utils.PointerTo("terra-suitable-engineer"),
-				SuspendNonSuitableUsers:   utils.PointerTo(true),
-				AutoAssignAllUsers:        utils.PointerTo(false),
-				GrantsDevFirecloudGroup:   utils.PointerTo("terra-suitable-engineer-dev"),
-				GrantsQaFirecloudGroup:    utils.PointerTo("terra-suitable-engineer-qa"),
-				GrantsProdFirecloudGroup:  utils.PointerTo("terra-suitable-engineer-prod"),
-				GrantsDevAzureGroup:       utils.PointerTo("00000000-0000-0000-0000-000000000001"),
-				GrantsProdAzureGroup:      utils.PointerTo("00000000-0000-0000-0000-000000000002"),
-				GrantsBroadInstituteGroup: utils.PointerTo("terra-suitable-engineer-broadinstitute"),
+				Name:                           utils.PointerTo("terra-suitable-engineer"),
+				SuspendNonSuitableUsers:        utils.PointerTo(true),
+				AutoAssignAllUsers:             utils.PointerTo(false),
+				GrantsDevFirecloudGroup:        utils.PointerTo("terra-suitable-engineer-dev"),
+				GrantsQaFirecloudGroup:         utils.PointerTo("terra-suitable-engineer-qa"),
+				GrantsProdFirecloudGroup:       utils.PointerTo("terra-suitable-engineer-prod"),
+				GrantsDevFirecloudFolderOwner:  utils.PointerTo("folders/dev123"),
+				GrantsQaFirecloudFolderOwner:   utils.PointerTo("folders/qa456"),
+				GrantsProdFirecloudFolderOwner: utils.PointerTo("folders/prod789"),
+				GrantsDevAzureGroup:            utils.PointerTo("00000000-0000-0000-0000-000000000001"),
+				GrantsProdAzureGroup:           utils.PointerTo("00000000-0000-0000-0000-000000000002"),
+				GrantsBroadInstituteGroup:      utils.PointerTo("terra-suitable-engineer-broadinstitute"),
 			},
 		}
 		td.h.SetSelfSuperAdminForDB()
