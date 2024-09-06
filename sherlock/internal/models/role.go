@@ -43,23 +43,29 @@ type RoleFields struct {
 
 	// GrantsDevFirecloudGroup, when not null, indicates that a User with an unsuspended RoleAssignment to this
 	// Role should have their dev Firecloud account (if they have one) added to this group.
+	// Multiple values can be comma separated and whitespace will be trimmed.
 	GrantsDevFirecloudGroup *string
 	// GrantsQaFirecloudGroup, when not null, indicates that a User with an unsuspended RoleAssignment to this
 	// Role should have their qa Firecloud account (if they have one) added to this group.
+	// Multiple values can be comma separated and whitespace will be trimmed.
 	GrantsQaFirecloudGroup *string
 	// GrantsProdFirecloudGroup, when not null, indicates that a User with an unsuspended RoleAssignment to this
 	// Role should have their prod Firecloud account (if they have one) added to this group.
+	// Multiple values can be comma separated and whitespace will be trimmed.
 	GrantsProdFirecloudGroup *string
 
 	// GrantsDevAzureGroup, when not null, indicates that a User with an unsuspended RoleAssignment to this Role
 	// should have their Azure account (if they have one) added to this group.
+	// Multiple values can be comma separated and whitespace will be trimmed.
 	GrantsDevAzureGroup *string
 	// GrantsProdAzureGroup, when not null, indicates that a User with an unsuspended RoleAssignment to this Role
 	// should have their Azure account (if they have one) added to this group.
+	// Multiple values can be comma separated and whitespace will be trimmed.
 	GrantsProdAzureGroup *string
 
 	// GrantsBroadInstituteGroup, when not null, indicates that a User with an unsuspended RoleAssignment to this
 	// Role should have their Broad Institute account (assuming it is active) added to this group.
+	// Multiple values can be comma separated and whitespace will be trimmed.
 	GrantsBroadInstituteGroup *string
 }
 

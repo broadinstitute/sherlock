@@ -3,6 +3,7 @@ package role_propagation
 import (
 	"context"
 	"fmt"
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/clients/slack"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
@@ -134,8 +135,12 @@ func doNonConcurrentPropagation(ctx context.Context, role models.Role) {
 	errors := make([]error, 0)
 	for _, p := range propagators {
 		additionalResults, additionalErrors := p.Propagate(ctx, role)
-		results = append(results, additionalResults...)
-		errors = append(errors, additionalErrors...)
+		results = append(results, utils.Map(additionalResults, func(result string) string {
+			return fmt.Sprintf("%s: %s", p.Name(), result)
+		})...)
+		errors = append(errors, utils.Map(additionalErrors, func(err error) error {
+			return fmt.Errorf("%s: %w", p.Name(), err)
+		})...)
 	}
 	if len(results) > 0 || len(errors) > 0 {
 		slack.SendPermissionChangeNotification(ctx, models.SelfUser.SlackReference(true), slack.PermissionChangeNotificationInputs{

@@ -16,34 +16,34 @@ func Init(ctx context.Context) error {
 
 		&propagatorImpl[string, propagation_engines.GoogleWorkspaceGroupIdentifier, propagation_engines.GoogleWorkspaceGroupFields]{
 			configKey: "prodFirecloudGroup",
-			getGrant:  func(role models.Role) *string { return role.GrantsProdFirecloudGroup },
+			getGrants: func(role models.Role) []*string { return splitStringPointerOnCommas(role.GrantsProdFirecloudGroup) },
 			engine:    &propagation_engines.GoogleWorkspaceGroupEngine{},
 		},
 		&propagatorImpl[string, propagation_engines.GoogleWorkspaceGroupIdentifier, propagation_engines.GoogleWorkspaceGroupFields]{
 			configKey: "qaFirecloudGroup",
-			getGrant:  func(role models.Role) *string { return role.GrantsQaFirecloudGroup },
+			getGrants: func(role models.Role) []*string { return splitStringPointerOnCommas(role.GrantsQaFirecloudGroup) },
 			engine:    &propagation_engines.GoogleWorkspaceGroupEngine{},
 		},
 		&propagatorImpl[string, propagation_engines.GoogleWorkspaceGroupIdentifier, propagation_engines.GoogleWorkspaceGroupFields]{
 			configKey: "devFirecloudGroup",
-			getGrant:  func(role models.Role) *string { return role.GrantsDevFirecloudGroup },
+			getGrants: func(role models.Role) []*string { return splitStringPointerOnCommas(role.GrantsDevFirecloudGroup) },
 			engine:    &propagation_engines.GoogleWorkspaceGroupEngine{},
 		},
 
 		&propagatorImpl[string, propagation_engines.AzureGroupIdentifier, propagation_engines.AzureGroupFields]{
 			configKey: "prodAzureGroup",
-			getGrant:  func(role models.Role) *string { return role.GrantsProdAzureGroup },
+			getGrants: func(role models.Role) []*string { return splitStringPointerOnCommas(role.GrantsProdAzureGroup) },
 			engine:    &propagation_engines.AzureGroupEngine{},
 		},
 		&propagatorImpl[string, propagation_engines.AzureGroupIdentifier, propagation_engines.AzureGroupFields]{
 			configKey: "devAzureGroup",
-			getGrant:  func(role models.Role) *string { return role.GrantsDevAzureGroup },
+			getGrants: func(role models.Role) []*string { return splitStringPointerOnCommas(role.GrantsDevAzureGroup) },
 			engine:    &propagation_engines.AzureGroupEngine{},
 		},
 
 		&propagatorImpl[string, propagation_engines.NonAdminGoogleGroupIdentifier, propagation_engines.NonAdminGoogleGroupFields]{
 			configKey: "broadInstituteGroup",
-			getGrant:  func(role models.Role) *string { return role.GrantsBroadInstituteGroup },
+			getGrants: func(role models.Role) []*string { return splitStringPointerOnCommas(role.GrantsBroadInstituteGroup) },
 			engine:    &propagation_engines.NonAdminGoogleGroupEngine{},
 		},
 	}

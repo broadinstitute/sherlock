@@ -29,6 +29,8 @@ type propagatorImpl[
 	// likely case is that it could be a boolean, if the propagator were meant to grant an actual account or something.
 	//
 	// A good rule of thumb for understanding this type is that it's however the grant is stored on the models.Role.
+	// It's okay for a models.Role to store multiple grants (like a list of groups rather than just one) -- the
+	// propagation system will be called individually for each grant.
 	Grant any,
 	// Identifier is a struct containing how the engine identifies users on the cloud provider. The key thing is that
 	// the engine should be able to read this from the cloud provider, so that means "Sherlock user ID" should almost
@@ -49,11 +51,14 @@ type propagatorImpl[
 	// configKey is used in rolePropagation.propagators.<configKey> to load configuration for this propagatorImpl.
 	configKey string
 
-	// getGrant reads the models.Role to tell us what we're trying to grant. See the Grant generic type for more info.
-	// A nil or empty return value means the models.Role doesn't have anything for us to grant.
-	getGrant func(role models.Role) *Grant
+	// getGrants reads the models.Role to tell us what we're trying to grant. See the Grant generic type for more info.
+	//
+	// Nil or empty values in the return list will be filtered out, and then an empty list will indicate that we have
+	// nothing to grant.
+	getGrants func(role models.Role) []*Grant
 
 	// engine is the implementation of the cloud-specific logic for introspecting and adjusting the grant's state.
+	// If getGrants returns multiple grants, they'll each be given individually to the engine.
 	engine propagation_engines.PropagationEngine[Grant, Identifier, Fields]
 
 	// Fields below this point are used as state for the propagatorImpl, you're not meant to set them yourself.

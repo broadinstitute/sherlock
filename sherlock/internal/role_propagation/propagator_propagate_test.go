@@ -12,6 +12,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"slices"
+	"strings"
 	"testing"
 	"time"
 )
@@ -19,10 +20,38 @@ import (
 func Test_propagatorImpl_Propagate_panic(t *testing.T) {
 	config.LoadTestConfig()
 	engine := propagation_engines_mocks.NewMockPropagationEngine[string, propagation_engines.GoogleWorkspaceGroupIdentifier, propagation_engines.GoogleWorkspaceGroupFields](t)
+	engine.EXPECT().GenerateDesiredState(mock.Anything, mock.Anything).Panic("panic").Once()
+	p := propagatorImpl[string, propagation_engines.GoogleWorkspaceGroupIdentifier, propagation_engines.GoogleWorkspaceGroupFields]{
+		getGrants: func(role models.Role) []*string {
+			return []*string{role.GrantsDevFirecloudGroup}
+		},
+		engine:   engine,
+		_enable:  true,
+		_timeout: time.Minute,
+	}
+	var results []string
+	var errors []error
+	assert.NotPanics(t, func() {
+		results, errors = p.Propagate(context.Background(), models.Role{
+			RoleFields: models.RoleFields{
+				GrantsDevFirecloudGroup: utils.PointerTo("string"),
+			},
+		})
+	})
+	assert.Empty(t, results)
+	if assert.Len(t, errors, 1) {
+		assert.ErrorContains(t, errors[0], "panic")
+	}
+}
+
+func Test_propagatorImpl_Propagate_panicOnGrant(t *testing.T) {
+	config.LoadTestConfig()
+	engine := propagation_engines_mocks.NewMockPropagationEngine[string, propagation_engines.GoogleWorkspaceGroupIdentifier, propagation_engines.GoogleWorkspaceGroupFields](t)
+	engine.EXPECT().GenerateDesiredState(mock.Anything, mock.Anything).Return(nil, nil).Once()
 	engine.EXPECT().LoadCurrentState(mock.Anything, mock.Anything).Panic("panic").Once()
 	p := propagatorImpl[string, propagation_engines.GoogleWorkspaceGroupIdentifier, propagation_engines.GoogleWorkspaceGroupFields]{
-		getGrant: func(role models.Role) *string {
-			return role.GrantsDevFirecloudGroup
+		getGrants: func(role models.Role) []*string {
+			return []*string{role.GrantsDevFirecloudGroup}
 		},
 		engine:   engine,
 		_enable:  true,
@@ -60,8 +89,8 @@ func Test_propagatorImpl_Propagate_notEnabled(t *testing.T) {
 func Test_propagatorImpl_Propagate_shouldNotPropagate(t *testing.T) {
 	config.LoadTestConfig()
 	p := propagatorImpl[string, propagation_engines.GoogleWorkspaceGroupIdentifier, propagation_engines.GoogleWorkspaceGroupFields]{
-		getGrant: func(role models.Role) *string {
-			return role.GrantsDevFirecloudGroup
+		getGrants: func(role models.Role) []*string {
+			return []*string{role.GrantsDevFirecloudGroup}
 		},
 		_enable:  true,
 		_timeout: time.Minute,
@@ -95,11 +124,12 @@ func Test_propagatorImpl_Propagate_shouldNotPropagate(t *testing.T) {
 func Test_propagatorImpl_Propagate_failToLoadCurrent(t *testing.T) {
 	config.LoadTestConfig()
 	engine := propagation_engines_mocks.NewMockPropagationEngine[string, propagation_engines.GoogleWorkspaceGroupIdentifier, propagation_engines.GoogleWorkspaceGroupFields](t)
+	engine.EXPECT().GenerateDesiredState(mock.Anything, mock.Anything).Return(nil, nil).Once()
 	engine.EXPECT().LoadCurrentState(mock.Anything, mock.Anything).
 		Return(nil, assert.AnError).Once()
 	p := propagatorImpl[string, propagation_engines.GoogleWorkspaceGroupIdentifier, propagation_engines.GoogleWorkspaceGroupFields]{
-		getGrant: func(role models.Role) *string {
-			return role.GrantsDevFirecloudGroup
+		getGrants: func(role models.Role) []*string {
+			return []*string{role.GrantsDevFirecloudGroup}
 		},
 		engine:   engine,
 		_enable:  true,
@@ -123,13 +153,11 @@ func Test_propagatorImpl_Propagate_failToLoadCurrent(t *testing.T) {
 func Test_propagatorImpl_Propagate_failToGenerateDesired(t *testing.T) {
 	config.LoadTestConfig()
 	engine := propagation_engines_mocks.NewMockPropagationEngine[string, propagation_engines.GoogleWorkspaceGroupIdentifier, propagation_engines.GoogleWorkspaceGroupFields](t)
-	engine.EXPECT().LoadCurrentState(mock.Anything, mock.Anything).
-		Return(nil, nil).Once()
 	engine.EXPECT().GenerateDesiredState(mock.Anything, mock.Anything).
 		Return(nil, assert.AnError).Once()
 	p := propagatorImpl[string, propagation_engines.GoogleWorkspaceGroupIdentifier, propagation_engines.GoogleWorkspaceGroupFields]{
-		getGrant: func(role models.Role) *string {
-			return role.GrantsDevFirecloudGroup
+		getGrants: func(role models.Role) []*string {
+			return []*string{role.GrantsDevFirecloudGroup}
 		},
 		engine:   engine,
 		_enable:  true,
@@ -146,13 +174,13 @@ func Test_propagatorImpl_Propagate_failToGenerateDesired(t *testing.T) {
 	})
 	assert.Empty(t, results)
 	if assert.Len(t, errors, 1) {
-		assert.ErrorContains(t, errors[0], "failed to generate desired state for grant")
+		assert.ErrorContains(t, errors[0], "failed to generate desired state")
 	}
 }
 
 func Test_propagatorImpl_Propagate(t *testing.T) {
 	config.LoadTestConfig()
-	// consumeStatesToDiff is tested separately; we're not trying to exercise it here, just test that we
+	// calculateAlignmentOperations is tested separately; we're not trying to exercise it here, just test that we
 	// call and handle it correctly
 	engine := propagation_engines_mocks.NewMockPropagationEngine[string, propagation_engines.GoogleWorkspaceGroupIdentifier, propagation_engines.GoogleWorkspaceGroupFields](t)
 	loadCurrentStateCalls := 0
@@ -213,14 +241,13 @@ func Test_propagatorImpl_Propagate(t *testing.T) {
 		Return("oh no", fmt.Errorf("failed to add c")).Once()
 	p := propagatorImpl[string, propagation_engines.GoogleWorkspaceGroupIdentifier, propagation_engines.GoogleWorkspaceGroupFields]{
 		configKey: "test-config-key",
-		getGrant: func(role models.Role) *string {
-			return role.GrantsDevFirecloudGroup
+		getGrants: func(role models.Role) []*string {
+			return []*string{role.GrantsDevFirecloudGroup}
 		},
 		engine:   engine,
 		_enable:  true,
 		_timeout: time.Minute,
 	}
-	p.Name()
 	var results []string
 	var errors []error
 	assert.NotPanics(t, func() {
@@ -231,6 +258,84 @@ func Test_propagatorImpl_Propagate(t *testing.T) {
 		})
 	})
 	slices.Sort(results)
-	assert.Equal(t, []string{"test-config-key: added b", "test-config-key: removed a"}, results)
-	assert.Equal(t, []error{fmt.Errorf("test-config-key: %w", fmt.Errorf("failed to add c"))}, errors)
+	assert.Equal(t, []string{"added b", "removed a"}, results)
+	assert.Equal(t, []error{fmt.Errorf("failed to add c")}, errors)
+}
+
+func Test_propagatorImpl_Propagate_multi(t *testing.T) {
+
+	config.LoadTestConfig()
+	engine := propagation_engines_mocks.NewMockPropagationEngine[string, propagation_engines.GoogleWorkspaceGroupIdentifier, propagation_engines.GoogleWorkspaceGroupFields](t)
+
+	engine.EXPECT().GenerateDesiredState(mock.Anything, mock.Anything).Return(map[uint]intermediary_user.IntermediaryUser[propagation_engines.GoogleWorkspaceGroupIdentifier, propagation_engines.GoogleWorkspaceGroupFields]{
+		1: {
+			Identifier: propagation_engines.GoogleWorkspaceGroupIdentifier{Email: "user@example.com"},
+			Fields:     propagation_engines.GoogleWorkspaceGroupFields{},
+		},
+	}, nil).Once()
+
+	// group-that-user-isn't-in-but-should-be
+	engine.EXPECT().LoadCurrentState(mock.Anything, "group-that-user-isn't-in-but-should-be").
+		Return([]intermediary_user.IntermediaryUser[propagation_engines.GoogleWorkspaceGroupIdentifier, propagation_engines.GoogleWorkspaceGroupFields]{}, nil).
+		Once()
+	engine.EXPECT().Add(mock.Anything, "group-that-user-isn't-in-but-should-be",
+		propagation_engines.GoogleWorkspaceGroupIdentifier{Email: "user@example.com"},
+		propagation_engines.GoogleWorkspaceGroupFields{}).
+		Return("added", nil).Once()
+
+	// group-that-user-is-already-in
+	engine.EXPECT().LoadCurrentState(mock.Anything, "group-that-user-is-already-in").
+		Return([]intermediary_user.IntermediaryUser[propagation_engines.GoogleWorkspaceGroupIdentifier, propagation_engines.GoogleWorkspaceGroupFields]{
+			{
+				Identifier: propagation_engines.GoogleWorkspaceGroupIdentifier{Email: "user@example.com"},
+				Fields:     propagation_engines.GoogleWorkspaceGroupFields{},
+			},
+		}, nil).Once()
+
+	// group-that-another-user-needs-to-be-removed-from
+	engine.EXPECT().LoadCurrentState(mock.Anything, "group-that-another-user-needs-to-be-removed-from").
+		Return([]intermediary_user.IntermediaryUser[propagation_engines.GoogleWorkspaceGroupIdentifier, propagation_engines.GoogleWorkspaceGroupFields]{
+			{
+				Identifier: propagation_engines.GoogleWorkspaceGroupIdentifier{Email: "user@example.com"},
+				Fields:     propagation_engines.GoogleWorkspaceGroupFields{},
+			},
+			{
+				Identifier: propagation_engines.GoogleWorkspaceGroupIdentifier{Email: "user-2@example.com"},
+				Fields:     propagation_engines.GoogleWorkspaceGroupFields{},
+			},
+		}, nil).Once()
+	engine.EXPECT().Remove(mock.Anything, "group-that-another-user-needs-to-be-removed-from",
+		propagation_engines.GoogleWorkspaceGroupIdentifier{Email: "user-2@example.com"}).
+		Return("removed", nil).Once()
+
+	p := propagatorImpl[string, propagation_engines.GoogleWorkspaceGroupIdentifier, propagation_engines.GoogleWorkspaceGroupFields]{
+		configKey: "test-config-key",
+		getGrants: func(role models.Role) []*string {
+			if role.GrantsDevFirecloudGroup == nil {
+				return nil
+			} else {
+				return utils.Map(strings.Split(*role.GrantsDevFirecloudGroup, ", "), func(s string) *string {
+					return &s
+				})
+			}
+		},
+		engine:   engine,
+		_enable:  true,
+		_timeout: time.Minute,
+	}
+
+	var results []string
+	var errors []error
+
+	assert.NotPanics(t, func() {
+		results, errors = p.Propagate(context.Background(), models.Role{
+			RoleFields: models.RoleFields{
+				GrantsDevFirecloudGroup: utils.PointerTo("group-that-user-isn't-in-but-should-be, group-that-user-is-already-in, group-that-another-user-needs-to-be-removed-from"),
+			},
+		})
+	})
+
+	slices.Sort(results)
+	assert.Equal(t, []string{"added", "removed"}, results)
+	assert.Empty(t, errors)
 }
