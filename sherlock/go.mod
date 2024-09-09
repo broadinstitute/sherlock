@@ -1,13 +1,15 @@
 module github.com/broadinstitute/sherlock/sherlock
 
-go 1.22
+go 1.22.0
 
-toolchain go1.22.5
+toolchain go1.23.0
 
 require (
 	cloud.google.com/go/bigquery v1.62.0
 	cloud.google.com/go/cloudsqlconn v1.12.0
+	cloud.google.com/go/iam v1.2.0
 	cloud.google.com/go/kms v1.19.0
+	cloud.google.com/go/resourcemanager v1.10.0
 	contrib.go.opencensus.io/exporter/prometheus v0.4.2
 	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.7.0
 	github.com/PagerDuty/go-pagerduty v1.8.0
@@ -19,7 +21,7 @@ require (
 	github.com/gin-contrib/cors v1.7.2
 	github.com/gin-gonic/gin v1.10.0
 	github.com/go-jose/go-jose/v4 v4.0.4
-	github.com/golang-migrate/migrate/v4 v4.17.1
+	github.com/golang-migrate/migrate/v4 v4.18.1
 	github.com/google/go-cmp v0.6.0
 	github.com/google/go-github/v58 v58.0.0
 	github.com/google/uuid v1.6.0
@@ -39,7 +41,7 @@ require (
 	go.opencensus.io v0.24.0
 	golang.org/x/crypto v0.27.0
 	golang.org/x/exp v0.0.0-20240823005443-9b4947da3948
-	golang.org/x/net v0.28.0
+	golang.org/x/net v0.29.0
 	golang.org/x/oauth2 v0.23.0
 	golang.org/x/text v0.18.0
 	google.golang.org/api v0.195.0
@@ -55,9 +57,7 @@ require (
 	cloud.google.com/go/auth v0.9.1 // indirect
 	cloud.google.com/go/auth/oauth2adapt v0.2.4 // indirect
 	cloud.google.com/go/compute/metadata v0.5.0 // indirect
-	cloud.google.com/go/iam v1.2.0 // indirect
 	cloud.google.com/go/longrunning v0.6.0 // indirect
-	cloud.google.com/go/resourcemanager v1.10.0 // indirect
 	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.14.0 // indirect
 	github.com/Azure/azure-sdk-for-go/sdk/internal v1.10.0 // indirect
@@ -164,7 +164,7 @@ require (
 	go.opentelemetry.io/otel/trace v1.29.0 // indirect
 	go.uber.org/atomic v1.11.0 // indirect
 	golang.org/x/arch v0.9.0 // indirect
-	golang.org/x/mod v0.20.0 // indirect
+	golang.org/x/mod v0.21.0 // indirect
 	golang.org/x/sync v0.8.0 // indirect
 	golang.org/x/sys v0.25.0 // indirect
 	golang.org/x/time v0.6.0 // indirect
