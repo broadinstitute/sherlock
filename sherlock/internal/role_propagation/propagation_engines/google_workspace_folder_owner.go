@@ -174,6 +174,7 @@ func (g *GoogleWorkspaceFolderOwnerEngine) Remove(ctx context.Context, grant str
 					members = append(members, member)
 				}
 			}
+			binding.Members = members
 		}
 	}
 
