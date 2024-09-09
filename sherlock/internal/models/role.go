@@ -43,23 +43,48 @@ type RoleFields struct {
 
 	// GrantsDevFirecloudGroup, when not null, indicates that a User with an unsuspended RoleAssignment to this
 	// Role should have their dev Firecloud account (if they have one) added to this group.
+	// Multiple values can be comma separated and whitespace will be trimmed.
 	GrantsDevFirecloudGroup *string
 	// GrantsQaFirecloudGroup, when not null, indicates that a User with an unsuspended RoleAssignment to this
 	// Role should have their qa Firecloud account (if they have one) added to this group.
+	// Multiple values can be comma separated and whitespace will be trimmed.
 	GrantsQaFirecloudGroup *string
 	// GrantsProdFirecloudGroup, when not null, indicates that a User with an unsuspended RoleAssignment to this
 	// Role should have their prod Firecloud account (if they have one) added to this group.
+	// Multiple values can be comma separated and whitespace will be trimmed.
 	GrantsProdFirecloudGroup *string
+
+	// GrantsDevFirecloudFolderOwner, when not null, indicates that a User with an unsuspended RoleAssignment to this
+	// Role should have their dev Firecloud account (if they have one) granted the GCP IAM Owner role on this folder.
+	// The folder doesn't need to actually be within the dev Firecloud organization -- that just indicates what account
+	// will get the access.
+	// Multiple values can be comma separated and whitespace will be trimmed.
+	GrantsDevFirecloudFolderOwner *string
+	// GrantsQaFirecloudFolderOwner, when not null, indicates that a User with an unsuspended RoleAssignment to this
+	// Role should have their qa Firecloud account (if they have one) granted the GCP IAM Owner role on this folder.
+	// The folder doesn't need to actually be within the qa Firecloud organization -- that just indicates what account
+	// will get the access.
+	// Multiple values can be comma separated and whitespace will be trimmed.
+	GrantsQaFirecloudFolderOwner *string
+	// GrantsProdFirecloudFolderOwner, when not null, indicates that a User with an unsuspended RoleAssignment to this
+	// Role should have their prod Firecloud account (if they have one) granted the GCP IAM Owner role on this folder.
+	// The folder doesn't need to actually be within the prod Firecloud organization -- that just indicates what account
+	// will get the access.
+	// Multiple values can be comma separated and whitespace will be trimmed.
+	GrantsProdFirecloudFolderOwner *string
 
 	// GrantsDevAzureGroup, when not null, indicates that a User with an unsuspended RoleAssignment to this Role
 	// should have their Azure account (if they have one) added to this group.
+	// Multiple values can be comma separated and whitespace will be trimmed.
 	GrantsDevAzureGroup *string
 	// GrantsProdAzureGroup, when not null, indicates that a User with an unsuspended RoleAssignment to this Role
 	// should have their Azure account (if they have one) added to this group.
+	// Multiple values can be comma separated and whitespace will be trimmed.
 	GrantsProdAzureGroup *string
 
 	// GrantsBroadInstituteGroup, when not null, indicates that a User with an unsuspended RoleAssignment to this
 	// Role should have their Broad Institute account (assuming it is active) added to this group.
+	// Multiple values can be comma separated and whitespace will be trimmed.
 	GrantsBroadInstituteGroup *string
 }
 

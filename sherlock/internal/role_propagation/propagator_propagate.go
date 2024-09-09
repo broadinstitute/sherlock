@@ -7,6 +7,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/role_propagation/intermediary_user"
+	"sync"
 )
 
 func (p *propagatorImpl[Grant, Identifier, Fields]) Propagate(ctx context.Context, role models.Role) (results []string, errors []error) {
@@ -20,37 +21,70 @@ func (p *propagatorImpl[Grant, Identifier, Fields]) Propagate(ctx context.Contex
 		return nil, nil
 	}
 
-	timeoutCtx, cancel := context.WithTimeout(ctx, p._timeout)
-	defer cancel()
-
-	shouldPropagate, grant := p.shouldPropagate(role)
-	if !shouldPropagate {
+	grantsToPropagate := p.getAndFilterGrants(role)
+	if len(grantsToPropagate) == 0 {
 		return nil, nil
 	}
 
-	currentState, err := retry.DoWithData(func() ([]intermediary_user.IntermediaryUser[Identifier, Fields], error) {
-		return p.engine.LoadCurrentState(timeoutCtx, grant)
-	}, config.RetryOptions...)
-	if err != nil {
-		return nil, []error{fmt.Errorf("failed to load current state for grant %v: %w", grant, err)}
-	}
+	timeoutCtx, cancel := context.WithTimeout(ctx, p._timeout)
+	defer cancel()
+	retryOptionsWithTimeoutCtx := append(config.RetryOptions, retry.Context(timeoutCtx))
 
-	desiredState, err := retry.DoWithData(func() (map[uint]intermediary_user.IntermediaryUser[Identifier, Fields], error) {
+	// The desired state will be the same across all grants, so we generate it once
+	desiredState, desiredStateErr := retry.DoWithData(func() (map[uint]intermediary_user.IntermediaryUser[Identifier, Fields], error) {
 		return p.engine.GenerateDesiredState(timeoutCtx, role.AssignmentsMap())
-	}, config.RetryOptions...)
-	if err != nil {
-		return nil, []error{fmt.Errorf("failed to generate desired state for grant %v: %w", grant, err)}
+	}, retryOptionsWithTimeoutCtx...)
+	if desiredStateErr != nil {
+		return nil, []error{fmt.Errorf("failed to generate desired state: %w", desiredStateErr)}
 	}
 
-	alignmentOperations := p.consumeStatesToDiff(timeoutCtx, grant, currentState, desiredState)
+	// For each grant, the current state and the operations to match the desired state could be different, so
+	// we process them separately. We parallelize to avoid runtime scaling linearly with the number of grants
+	// (since we have a timeout in our context and there's nothing scaling that to our role that we're
+	// working with).
+	var wg sync.WaitGroup
+	resultsPerGrant := make([][]string, len(grantsToPropagate))
+	errorsPerGrant := make([][]error, len(grantsToPropagate))
+	for unsafeGrantIndex, unsafeGrant := range grantsToPropagate {
+		grantIndex := unsafeGrantIndex
+		grant := unsafeGrant
+		resultsPerGrant[grantIndex] = make([]string, 0)
+		errorsPerGrant[grantIndex] = make([]error, 0)
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			defer func() {
+				if r := recover(); r != nil {
+					errorsPerGrant[grantIndex] = append(errorsPerGrant[grantIndex], fmt.Errorf("panic in %T during propagation for grant %v: %v", p, grant, r))
+				}
+			}()
+			currentState, currentStateErr := retry.DoWithData(func() ([]intermediary_user.IntermediaryUser[Identifier, Fields], error) {
+				return p.engine.LoadCurrentState(timeoutCtx, grant)
+			}, retryOptionsWithTimeoutCtx...)
+			if currentStateErr != nil {
+				errorsPerGrant[grantIndex] = append(errorsPerGrant[grantIndex], fmt.Errorf("failed to load current state for grant %v: %w", grant, currentStateErr))
+				return
+			}
 
-	for _, alignmentOperation := range alignmentOperations {
-		result, err := retry.DoWithData(alignmentOperation, config.RetryOptions...)
-		if err != nil {
-			errors = append(errors, fmt.Errorf("%s: %w", p.Name(), err))
-		} else {
-			results = append(results, fmt.Sprintf("%s: %s", p.Name(), result))
-		}
+			alignmentOperations := p.calculateAlignmentOperations(timeoutCtx, grant, currentState, desiredState)
+
+			for _, alignmentOperation := range alignmentOperations {
+				operationResult, operationErr := retry.DoWithData(alignmentOperation, retryOptionsWithTimeoutCtx...)
+				if operationErr != nil {
+					errorsPerGrant[grantIndex] = append(errorsPerGrant[grantIndex], operationErr)
+				} else {
+					resultsPerGrant[grantIndex] = append(resultsPerGrant[grantIndex], operationResult)
+				}
+			}
+		}()
+	}
+	wg.Wait()
+
+	for _, resultsForGrant := range resultsPerGrant {
+		results = append(results, resultsForGrant...)
+	}
+	for _, errorsForGrant := range errorsPerGrant {
+		errors = append(errors, errorsForGrant...)
 	}
 
 	return results, errors

@@ -64,8 +64,8 @@ func (_c *MockPropagator_Init_Call) RunAndReturn(run func(context.Context) error
 	return _c
 }
 
-// Name provides a mock function with given fields:
-func (_m *MockPropagator) Name() string {
+// LogPrefix provides a mock function with given fields:
+func (_m *MockPropagator) LogPrefix() string {
 	ret := _m.Called()
 
 	var r0 string
@@ -78,29 +78,29 @@ func (_m *MockPropagator) Name() string {
 	return r0
 }
 
-// MockPropagator_Name_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Name'
-type MockPropagator_Name_Call struct {
+// MockPropagator_LogPrefix_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'LogPrefix'
+type MockPropagator_LogPrefix_Call struct {
 	*mock.Call
 }
 
-// Name is a helper method to define mock.On call
-func (_e *MockPropagator_Expecter) Name() *MockPropagator_Name_Call {
-	return &MockPropagator_Name_Call{Call: _e.mock.On("Name")}
+// LogPrefix is a helper method to define mock.On call
+func (_e *MockPropagator_Expecter) LogPrefix() *MockPropagator_LogPrefix_Call {
+	return &MockPropagator_LogPrefix_Call{Call: _e.mock.On("LogPrefix")}
 }
 
-func (_c *MockPropagator_Name_Call) Run(run func()) *MockPropagator_Name_Call {
+func (_c *MockPropagator_LogPrefix_Call) Run(run func()) *MockPropagator_LogPrefix_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		run()
 	})
 	return _c
 }
 
-func (_c *MockPropagator_Name_Call) Return(_a0 string) *MockPropagator_Name_Call {
+func (_c *MockPropagator_LogPrefix_Call) Return(_a0 string) *MockPropagator_LogPrefix_Call {
 	_c.Call.Return(_a0)
 	return _c
 }
 
-func (_c *MockPropagator_Name_Call) RunAndReturn(run func() string) *MockPropagator_Name_Call {
+func (_c *MockPropagator_LogPrefix_Call) RunAndReturn(run func() string) *MockPropagator_LogPrefix_Call {
 	_c.Call.Return(run)
 	return _c
 }
