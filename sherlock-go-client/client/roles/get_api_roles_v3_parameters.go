@@ -83,14 +83,23 @@ type GetAPIRolesV3Params struct {
 	// GrantsDevAzureGroup.
 	GrantsDevAzureGroup *string
 
+	// GrantsDevFirecloudFolderOwner.
+	GrantsDevFirecloudFolderOwner *string
+
 	// GrantsDevFirecloudGroup.
 	GrantsDevFirecloudGroup *string
 
 	// GrantsProdAzureGroup.
 	GrantsProdAzureGroup *string
 
+	// GrantsProdFirecloudFolderOwner.
+	GrantsProdFirecloudFolderOwner *string
+
 	// GrantsProdFirecloudGroup.
 	GrantsProdFirecloudGroup *string
+
+	// GrantsQaFirecloudFolderOwner.
+	GrantsQaFirecloudFolderOwner *string
 
 	// GrantsQaFirecloudGroup.
 	GrantsQaFirecloudGroup *string
@@ -246,6 +255,17 @@ func (o *GetAPIRolesV3Params) SetGrantsDevAzureGroup(grantsDevAzureGroup *string
 	o.GrantsDevAzureGroup = grantsDevAzureGroup
 }
 
+// WithGrantsDevFirecloudFolderOwner adds the grantsDevFirecloudFolderOwner to the get API roles v3 params
+func (o *GetAPIRolesV3Params) WithGrantsDevFirecloudFolderOwner(grantsDevFirecloudFolderOwner *string) *GetAPIRolesV3Params {
+	o.SetGrantsDevFirecloudFolderOwner(grantsDevFirecloudFolderOwner)
+	return o
+}
+
+// SetGrantsDevFirecloudFolderOwner adds the grantsDevFirecloudFolderOwner to the get API roles v3 params
+func (o *GetAPIRolesV3Params) SetGrantsDevFirecloudFolderOwner(grantsDevFirecloudFolderOwner *string) {
+	o.GrantsDevFirecloudFolderOwner = grantsDevFirecloudFolderOwner
+}
+
 // WithGrantsDevFirecloudGroup adds the grantsDevFirecloudGroup to the get API roles v3 params
 func (o *GetAPIRolesV3Params) WithGrantsDevFirecloudGroup(grantsDevFirecloudGroup *string) *GetAPIRolesV3Params {
 	o.SetGrantsDevFirecloudGroup(grantsDevFirecloudGroup)
@@ -268,6 +288,17 @@ func (o *GetAPIRolesV3Params) SetGrantsProdAzureGroup(grantsProdAzureGroup *stri
 	o.GrantsProdAzureGroup = grantsProdAzureGroup
 }
 
+// WithGrantsProdFirecloudFolderOwner adds the grantsProdFirecloudFolderOwner to the get API roles v3 params
+func (o *GetAPIRolesV3Params) WithGrantsProdFirecloudFolderOwner(grantsProdFirecloudFolderOwner *string) *GetAPIRolesV3Params {
+	o.SetGrantsProdFirecloudFolderOwner(grantsProdFirecloudFolderOwner)
+	return o
+}
+
+// SetGrantsProdFirecloudFolderOwner adds the grantsProdFirecloudFolderOwner to the get API roles v3 params
+func (o *GetAPIRolesV3Params) SetGrantsProdFirecloudFolderOwner(grantsProdFirecloudFolderOwner *string) {
+	o.GrantsProdFirecloudFolderOwner = grantsProdFirecloudFolderOwner
+}
+
 // WithGrantsProdFirecloudGroup adds the grantsProdFirecloudGroup to the get API roles v3 params
 func (o *GetAPIRolesV3Params) WithGrantsProdFirecloudGroup(grantsProdFirecloudGroup *string) *GetAPIRolesV3Params {
 	o.SetGrantsProdFirecloudGroup(grantsProdFirecloudGroup)
@@ -277,6 +308,17 @@ func (o *GetAPIRolesV3Params) WithGrantsProdFirecloudGroup(grantsProdFirecloudGr
 // SetGrantsProdFirecloudGroup adds the grantsProdFirecloudGroup to the get API roles v3 params
 func (o *GetAPIRolesV3Params) SetGrantsProdFirecloudGroup(grantsProdFirecloudGroup *string) {
 	o.GrantsProdFirecloudGroup = grantsProdFirecloudGroup
+}
+
+// WithGrantsQaFirecloudFolderOwner adds the grantsQaFirecloudFolderOwner to the get API roles v3 params
+func (o *GetAPIRolesV3Params) WithGrantsQaFirecloudFolderOwner(grantsQaFirecloudFolderOwner *string) *GetAPIRolesV3Params {
+	o.SetGrantsQaFirecloudFolderOwner(grantsQaFirecloudFolderOwner)
+	return o
+}
+
+// SetGrantsQaFirecloudFolderOwner adds the grantsQaFirecloudFolderOwner to the get API roles v3 params
+func (o *GetAPIRolesV3Params) SetGrantsQaFirecloudFolderOwner(grantsQaFirecloudFolderOwner *string) {
+	o.GrantsQaFirecloudFolderOwner = grantsQaFirecloudFolderOwner
 }
 
 // WithGrantsQaFirecloudGroup adds the grantsQaFirecloudGroup to the get API roles v3 params
@@ -477,6 +519,23 @@ func (o *GetAPIRolesV3Params) WriteToRequest(r runtime.ClientRequest, reg strfmt
 		}
 	}
 
+	if o.GrantsDevFirecloudFolderOwner != nil {
+
+		// query param grantsDevFirecloudFolderOwner
+		var qrGrantsDevFirecloudFolderOwner string
+
+		if o.GrantsDevFirecloudFolderOwner != nil {
+			qrGrantsDevFirecloudFolderOwner = *o.GrantsDevFirecloudFolderOwner
+		}
+		qGrantsDevFirecloudFolderOwner := qrGrantsDevFirecloudFolderOwner
+		if qGrantsDevFirecloudFolderOwner != "" {
+
+			if err := r.SetQueryParam("grantsDevFirecloudFolderOwner", qGrantsDevFirecloudFolderOwner); err != nil {
+				return err
+			}
+		}
+	}
+
 	if o.GrantsDevFirecloudGroup != nil {
 
 		// query param grantsDevFirecloudGroup
@@ -511,6 +570,23 @@ func (o *GetAPIRolesV3Params) WriteToRequest(r runtime.ClientRequest, reg strfmt
 		}
 	}
 
+	if o.GrantsProdFirecloudFolderOwner != nil {
+
+		// query param grantsProdFirecloudFolderOwner
+		var qrGrantsProdFirecloudFolderOwner string
+
+		if o.GrantsProdFirecloudFolderOwner != nil {
+			qrGrantsProdFirecloudFolderOwner = *o.GrantsProdFirecloudFolderOwner
+		}
+		qGrantsProdFirecloudFolderOwner := qrGrantsProdFirecloudFolderOwner
+		if qGrantsProdFirecloudFolderOwner != "" {
+
+			if err := r.SetQueryParam("grantsProdFirecloudFolderOwner", qGrantsProdFirecloudFolderOwner); err != nil {
+				return err
+			}
+		}
+	}
+
 	if o.GrantsProdFirecloudGroup != nil {
 
 		// query param grantsProdFirecloudGroup
@@ -523,6 +599,23 @@ func (o *GetAPIRolesV3Params) WriteToRequest(r runtime.ClientRequest, reg strfmt
 		if qGrantsProdFirecloudGroup != "" {
 
 			if err := r.SetQueryParam("grantsProdFirecloudGroup", qGrantsProdFirecloudGroup); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.GrantsQaFirecloudFolderOwner != nil {
+
+		// query param grantsQaFirecloudFolderOwner
+		var qrGrantsQaFirecloudFolderOwner string
+
+		if o.GrantsQaFirecloudFolderOwner != nil {
+			qrGrantsQaFirecloudFolderOwner = *o.GrantsQaFirecloudFolderOwner
+		}
+		qGrantsQaFirecloudFolderOwner := qrGrantsQaFirecloudFolderOwner
+		if qGrantsQaFirecloudFolderOwner != "" {
+
+			if err := r.SetQueryParam("grantsQaFirecloudFolderOwner", qGrantsQaFirecloudFolderOwner); err != nil {
 				return err
 			}
 		}

@@ -37,9 +37,12 @@ class SherlockRoleV3(BaseModel):
     default_glass_break_duration: Optional[StrictStr] = Field(default=None, alias="defaultGlassBreakDuration")
     grants_broad_institute_group: Optional[StrictStr] = Field(default=None, alias="grantsBroadInstituteGroup")
     grants_dev_azure_group: Optional[StrictStr] = Field(default=None, alias="grantsDevAzureGroup")
+    grants_dev_firecloud_folder_owner: Optional[StrictStr] = Field(default=None, alias="grantsDevFirecloudFolderOwner")
     grants_dev_firecloud_group: Optional[StrictStr] = Field(default=None, alias="grantsDevFirecloudGroup")
     grants_prod_azure_group: Optional[StrictStr] = Field(default=None, alias="grantsProdAzureGroup")
+    grants_prod_firecloud_folder_owner: Optional[StrictStr] = Field(default=None, alias="grantsProdFirecloudFolderOwner")
     grants_prod_firecloud_group: Optional[StrictStr] = Field(default=None, alias="grantsProdFirecloudGroup")
+    grants_qa_firecloud_folder_owner: Optional[StrictStr] = Field(default=None, alias="grantsQaFirecloudFolderOwner")
     grants_qa_firecloud_group: Optional[StrictStr] = Field(default=None, alias="grantsQaFirecloudGroup")
     grants_sherlock_super_admin: Optional[StrictBool] = Field(default=None, alias="grantsSherlockSuperAdmin")
     id: Optional[StrictInt] = None
@@ -47,7 +50,7 @@ class SherlockRoleV3(BaseModel):
     suspend_non_suitable_users: Optional[StrictBool] = Field(default=None, description="When true, the \"suspended\" field on role assignments will be computed by Sherlock based on suitability instead of being a mutable API field", alias="suspendNonSuitableUsers")
     updated_at: Optional[datetime] = Field(default=None, alias="updatedAt")
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["assignments", "autoAssignAllUsers", "canBeGlassBrokenByRole", "canBeGlassBrokenByRoleInfo", "createdAt", "defaultGlassBreakDuration", "grantsBroadInstituteGroup", "grantsDevAzureGroup", "grantsDevFirecloudGroup", "grantsProdAzureGroup", "grantsProdFirecloudGroup", "grantsQaFirecloudGroup", "grantsSherlockSuperAdmin", "id", "name", "suspendNonSuitableUsers", "updatedAt"]
+    __properties: ClassVar[List[str]] = ["assignments", "autoAssignAllUsers", "canBeGlassBrokenByRole", "canBeGlassBrokenByRoleInfo", "createdAt", "defaultGlassBreakDuration", "grantsBroadInstituteGroup", "grantsDevAzureGroup", "grantsDevFirecloudFolderOwner", "grantsDevFirecloudGroup", "grantsProdAzureGroup", "grantsProdFirecloudFolderOwner", "grantsProdFirecloudGroup", "grantsQaFirecloudFolderOwner", "grantsQaFirecloudGroup", "grantsSherlockSuperAdmin", "id", "name", "suspendNonSuitableUsers", "updatedAt"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -122,9 +125,12 @@ class SherlockRoleV3(BaseModel):
             "defaultGlassBreakDuration": obj.get("defaultGlassBreakDuration"),
             "grantsBroadInstituteGroup": obj.get("grantsBroadInstituteGroup"),
             "grantsDevAzureGroup": obj.get("grantsDevAzureGroup"),
+            "grantsDevFirecloudFolderOwner": obj.get("grantsDevFirecloudFolderOwner"),
             "grantsDevFirecloudGroup": obj.get("grantsDevFirecloudGroup"),
             "grantsProdAzureGroup": obj.get("grantsProdAzureGroup"),
+            "grantsProdFirecloudFolderOwner": obj.get("grantsProdFirecloudFolderOwner"),
             "grantsProdFirecloudGroup": obj.get("grantsProdFirecloudGroup"),
+            "grantsQaFirecloudFolderOwner": obj.get("grantsQaFirecloudFolderOwner"),
             "grantsQaFirecloudGroup": obj.get("grantsQaFirecloudGroup"),
             "grantsSherlockSuperAdmin": obj.get("grantsSherlockSuperAdmin"),
             "id": obj.get("id"),

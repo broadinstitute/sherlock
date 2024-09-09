@@ -7016,6 +7016,11 @@
                     },
                     {
                         "type": "string",
+                        "name": "grantsDevFirecloudFolderOwner",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "name": "grantsDevFirecloudGroup",
                         "in": "query"
                     },
@@ -7026,7 +7031,17 @@
                     },
                     {
                         "type": "string",
+                        "name": "grantsProdFirecloudFolderOwner",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "name": "grantsProdFirecloudGroup",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "grantsQaFirecloudFolderOwner",
                         "in": "query"
                     },
                     {
@@ -9944,13 +9959,22 @@
                 "grantsDevAzureGroup": {
                     "type": "string"
                 },
+                "grantsDevFirecloudFolderOwner": {
+                    "type": "string"
+                },
                 "grantsDevFirecloudGroup": {
                     "type": "string"
                 },
                 "grantsProdAzureGroup": {
                     "type": "string"
                 },
+                "grantsProdFirecloudFolderOwner": {
+                    "type": "string"
+                },
                 "grantsProdFirecloudGroup": {
+                    "type": "string"
+                },
+                "grantsQaFirecloudFolderOwner": {
                     "type": "string"
                 },
                 "grantsQaFirecloudGroup": {
@@ -9994,13 +10018,22 @@
                 "grantsDevAzureGroup": {
                     "type": "string"
                 },
+                "grantsDevFirecloudFolderOwner": {
+                    "type": "string"
+                },
                 "grantsDevFirecloudGroup": {
                     "type": "string"
                 },
                 "grantsProdAzureGroup": {
                     "type": "string"
                 },
+                "grantsProdFirecloudFolderOwner": {
+                    "type": "string"
+                },
                 "grantsProdFirecloudGroup": {
+                    "type": "string"
+                },
+                "grantsQaFirecloudFolderOwner": {
                     "type": "string"
                 },
                 "grantsQaFirecloudGroup": {

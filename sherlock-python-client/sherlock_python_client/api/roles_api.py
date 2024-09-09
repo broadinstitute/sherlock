@@ -51,9 +51,12 @@ class RolesApi:
         default_glass_break_duration: Optional[StrictStr] = None,
         grants_broad_institute_group: Optional[StrictStr] = None,
         grants_dev_azure_group: Optional[StrictStr] = None,
+        grants_dev_firecloud_folder_owner: Optional[StrictStr] = None,
         grants_dev_firecloud_group: Optional[StrictStr] = None,
         grants_prod_azure_group: Optional[StrictStr] = None,
+        grants_prod_firecloud_folder_owner: Optional[StrictStr] = None,
         grants_prod_firecloud_group: Optional[StrictStr] = None,
+        grants_qa_firecloud_folder_owner: Optional[StrictStr] = None,
         grants_qa_firecloud_group: Optional[StrictStr] = None,
         grants_sherlock_super_admin: Optional[StrictBool] = None,
         id: Optional[StrictInt] = None,
@@ -91,12 +94,18 @@ class RolesApi:
         :type grants_broad_institute_group: str
         :param grants_dev_azure_group:
         :type grants_dev_azure_group: str
+        :param grants_dev_firecloud_folder_owner:
+        :type grants_dev_firecloud_folder_owner: str
         :param grants_dev_firecloud_group:
         :type grants_dev_firecloud_group: str
         :param grants_prod_azure_group:
         :type grants_prod_azure_group: str
+        :param grants_prod_firecloud_folder_owner:
+        :type grants_prod_firecloud_folder_owner: str
         :param grants_prod_firecloud_group:
         :type grants_prod_firecloud_group: str
+        :param grants_qa_firecloud_folder_owner:
+        :type grants_qa_firecloud_folder_owner: str
         :param grants_qa_firecloud_group:
         :type grants_qa_firecloud_group: str
         :param grants_sherlock_super_admin:
@@ -142,9 +151,12 @@ class RolesApi:
             default_glass_break_duration=default_glass_break_duration,
             grants_broad_institute_group=grants_broad_institute_group,
             grants_dev_azure_group=grants_dev_azure_group,
+            grants_dev_firecloud_folder_owner=grants_dev_firecloud_folder_owner,
             grants_dev_firecloud_group=grants_dev_firecloud_group,
             grants_prod_azure_group=grants_prod_azure_group,
+            grants_prod_firecloud_folder_owner=grants_prod_firecloud_folder_owner,
             grants_prod_firecloud_group=grants_prod_firecloud_group,
+            grants_qa_firecloud_folder_owner=grants_qa_firecloud_folder_owner,
             grants_qa_firecloud_group=grants_qa_firecloud_group,
             grants_sherlock_super_admin=grants_sherlock_super_admin,
             id=id,
@@ -188,9 +200,12 @@ class RolesApi:
         default_glass_break_duration: Optional[StrictStr] = None,
         grants_broad_institute_group: Optional[StrictStr] = None,
         grants_dev_azure_group: Optional[StrictStr] = None,
+        grants_dev_firecloud_folder_owner: Optional[StrictStr] = None,
         grants_dev_firecloud_group: Optional[StrictStr] = None,
         grants_prod_azure_group: Optional[StrictStr] = None,
+        grants_prod_firecloud_folder_owner: Optional[StrictStr] = None,
         grants_prod_firecloud_group: Optional[StrictStr] = None,
+        grants_qa_firecloud_folder_owner: Optional[StrictStr] = None,
         grants_qa_firecloud_group: Optional[StrictStr] = None,
         grants_sherlock_super_admin: Optional[StrictBool] = None,
         id: Optional[StrictInt] = None,
@@ -228,12 +243,18 @@ class RolesApi:
         :type grants_broad_institute_group: str
         :param grants_dev_azure_group:
         :type grants_dev_azure_group: str
+        :param grants_dev_firecloud_folder_owner:
+        :type grants_dev_firecloud_folder_owner: str
         :param grants_dev_firecloud_group:
         :type grants_dev_firecloud_group: str
         :param grants_prod_azure_group:
         :type grants_prod_azure_group: str
+        :param grants_prod_firecloud_folder_owner:
+        :type grants_prod_firecloud_folder_owner: str
         :param grants_prod_firecloud_group:
         :type grants_prod_firecloud_group: str
+        :param grants_qa_firecloud_folder_owner:
+        :type grants_qa_firecloud_folder_owner: str
         :param grants_qa_firecloud_group:
         :type grants_qa_firecloud_group: str
         :param grants_sherlock_super_admin:
@@ -279,9 +300,12 @@ class RolesApi:
             default_glass_break_duration=default_glass_break_duration,
             grants_broad_institute_group=grants_broad_institute_group,
             grants_dev_azure_group=grants_dev_azure_group,
+            grants_dev_firecloud_folder_owner=grants_dev_firecloud_folder_owner,
             grants_dev_firecloud_group=grants_dev_firecloud_group,
             grants_prod_azure_group=grants_prod_azure_group,
+            grants_prod_firecloud_folder_owner=grants_prod_firecloud_folder_owner,
             grants_prod_firecloud_group=grants_prod_firecloud_group,
+            grants_qa_firecloud_folder_owner=grants_qa_firecloud_folder_owner,
             grants_qa_firecloud_group=grants_qa_firecloud_group,
             grants_sherlock_super_admin=grants_sherlock_super_admin,
             id=id,
@@ -325,9 +349,12 @@ class RolesApi:
         default_glass_break_duration: Optional[StrictStr] = None,
         grants_broad_institute_group: Optional[StrictStr] = None,
         grants_dev_azure_group: Optional[StrictStr] = None,
+        grants_dev_firecloud_folder_owner: Optional[StrictStr] = None,
         grants_dev_firecloud_group: Optional[StrictStr] = None,
         grants_prod_azure_group: Optional[StrictStr] = None,
+        grants_prod_firecloud_folder_owner: Optional[StrictStr] = None,
         grants_prod_firecloud_group: Optional[StrictStr] = None,
+        grants_qa_firecloud_folder_owner: Optional[StrictStr] = None,
         grants_qa_firecloud_group: Optional[StrictStr] = None,
         grants_sherlock_super_admin: Optional[StrictBool] = None,
         id: Optional[StrictInt] = None,
@@ -365,12 +392,18 @@ class RolesApi:
         :type grants_broad_institute_group: str
         :param grants_dev_azure_group:
         :type grants_dev_azure_group: str
+        :param grants_dev_firecloud_folder_owner:
+        :type grants_dev_firecloud_folder_owner: str
         :param grants_dev_firecloud_group:
         :type grants_dev_firecloud_group: str
         :param grants_prod_azure_group:
         :type grants_prod_azure_group: str
+        :param grants_prod_firecloud_folder_owner:
+        :type grants_prod_firecloud_folder_owner: str
         :param grants_prod_firecloud_group:
         :type grants_prod_firecloud_group: str
+        :param grants_qa_firecloud_folder_owner:
+        :type grants_qa_firecloud_folder_owner: str
         :param grants_qa_firecloud_group:
         :type grants_qa_firecloud_group: str
         :param grants_sherlock_super_admin:
@@ -416,9 +449,12 @@ class RolesApi:
             default_glass_break_duration=default_glass_break_duration,
             grants_broad_institute_group=grants_broad_institute_group,
             grants_dev_azure_group=grants_dev_azure_group,
+            grants_dev_firecloud_folder_owner=grants_dev_firecloud_folder_owner,
             grants_dev_firecloud_group=grants_dev_firecloud_group,
             grants_prod_azure_group=grants_prod_azure_group,
+            grants_prod_firecloud_folder_owner=grants_prod_firecloud_folder_owner,
             grants_prod_firecloud_group=grants_prod_firecloud_group,
+            grants_qa_firecloud_folder_owner=grants_qa_firecloud_folder_owner,
             grants_qa_firecloud_group=grants_qa_firecloud_group,
             grants_sherlock_super_admin=grants_sherlock_super_admin,
             id=id,
@@ -457,9 +493,12 @@ class RolesApi:
         default_glass_break_duration,
         grants_broad_institute_group,
         grants_dev_azure_group,
+        grants_dev_firecloud_folder_owner,
         grants_dev_firecloud_group,
         grants_prod_azure_group,
+        grants_prod_firecloud_folder_owner,
         grants_prod_firecloud_group,
+        grants_qa_firecloud_folder_owner,
         grants_qa_firecloud_group,
         grants_sherlock_super_admin,
         id,
@@ -523,6 +562,10 @@ class RolesApi:
             
             _query_params.append(('grantsDevAzureGroup', grants_dev_azure_group))
             
+        if grants_dev_firecloud_folder_owner is not None:
+            
+            _query_params.append(('grantsDevFirecloudFolderOwner', grants_dev_firecloud_folder_owner))
+            
         if grants_dev_firecloud_group is not None:
             
             _query_params.append(('grantsDevFirecloudGroup', grants_dev_firecloud_group))
@@ -531,9 +574,17 @@ class RolesApi:
             
             _query_params.append(('grantsProdAzureGroup', grants_prod_azure_group))
             
+        if grants_prod_firecloud_folder_owner is not None:
+            
+            _query_params.append(('grantsProdFirecloudFolderOwner', grants_prod_firecloud_folder_owner))
+            
         if grants_prod_firecloud_group is not None:
             
             _query_params.append(('grantsProdFirecloudGroup', grants_prod_firecloud_group))
+            
+        if grants_qa_firecloud_folder_owner is not None:
+            
+            _query_params.append(('grantsQaFirecloudFolderOwner', grants_qa_firecloud_folder_owner))
             
         if grants_qa_firecloud_group is not None:
             

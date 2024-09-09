@@ -35,9 +35,12 @@ export interface ApiRolesV3GetRequest {
     defaultGlassBreakDuration?: string;
     grantsBroadInstituteGroup?: string;
     grantsDevAzureGroup?: string;
+    grantsDevFirecloudFolderOwner?: string;
     grantsDevFirecloudGroup?: string;
     grantsProdAzureGroup?: string;
+    grantsProdFirecloudFolderOwner?: string;
     grantsProdFirecloudGroup?: string;
+    grantsQaFirecloudFolderOwner?: string;
     grantsQaFirecloudGroup?: string;
     grantsSherlockSuperAdmin?: boolean;
     id?: number;
@@ -101,6 +104,10 @@ export class RolesApi extends runtime.BaseAPI {
             queryParameters['grantsDevAzureGroup'] = requestParameters['grantsDevAzureGroup'];
         }
 
+        if (requestParameters['grantsDevFirecloudFolderOwner'] != null) {
+            queryParameters['grantsDevFirecloudFolderOwner'] = requestParameters['grantsDevFirecloudFolderOwner'];
+        }
+
         if (requestParameters['grantsDevFirecloudGroup'] != null) {
             queryParameters['grantsDevFirecloudGroup'] = requestParameters['grantsDevFirecloudGroup'];
         }
@@ -109,8 +116,16 @@ export class RolesApi extends runtime.BaseAPI {
             queryParameters['grantsProdAzureGroup'] = requestParameters['grantsProdAzureGroup'];
         }
 
+        if (requestParameters['grantsProdFirecloudFolderOwner'] != null) {
+            queryParameters['grantsProdFirecloudFolderOwner'] = requestParameters['grantsProdFirecloudFolderOwner'];
+        }
+
         if (requestParameters['grantsProdFirecloudGroup'] != null) {
             queryParameters['grantsProdFirecloudGroup'] = requestParameters['grantsProdFirecloudGroup'];
+        }
+
+        if (requestParameters['grantsQaFirecloudFolderOwner'] != null) {
+            queryParameters['grantsQaFirecloudFolderOwner'] = requestParameters['grantsQaFirecloudFolderOwner'];
         }
 
         if (requestParameters['grantsQaFirecloudGroup'] != null) {

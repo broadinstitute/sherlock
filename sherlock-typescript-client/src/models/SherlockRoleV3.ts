@@ -80,6 +80,12 @@ export interface SherlockRoleV3 {
      * @type {string}
      * @memberof SherlockRoleV3
      */
+    grantsDevFirecloudFolderOwner?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SherlockRoleV3
+     */
     grantsDevFirecloudGroup?: string;
     /**
      * 
@@ -92,7 +98,19 @@ export interface SherlockRoleV3 {
      * @type {string}
      * @memberof SherlockRoleV3
      */
+    grantsProdFirecloudFolderOwner?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SherlockRoleV3
+     */
     grantsProdFirecloudGroup?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SherlockRoleV3
+     */
+    grantsQaFirecloudFolderOwner?: string;
     /**
      * 
      * @type {string}
@@ -156,9 +174,12 @@ export function SherlockRoleV3FromJSONTyped(json: any, ignoreDiscriminator: bool
         'defaultGlassBreakDuration': json['defaultGlassBreakDuration'] == null ? undefined : json['defaultGlassBreakDuration'],
         'grantsBroadInstituteGroup': json['grantsBroadInstituteGroup'] == null ? undefined : json['grantsBroadInstituteGroup'],
         'grantsDevAzureGroup': json['grantsDevAzureGroup'] == null ? undefined : json['grantsDevAzureGroup'],
+        'grantsDevFirecloudFolderOwner': json['grantsDevFirecloudFolderOwner'] == null ? undefined : json['grantsDevFirecloudFolderOwner'],
         'grantsDevFirecloudGroup': json['grantsDevFirecloudGroup'] == null ? undefined : json['grantsDevFirecloudGroup'],
         'grantsProdAzureGroup': json['grantsProdAzureGroup'] == null ? undefined : json['grantsProdAzureGroup'],
+        'grantsProdFirecloudFolderOwner': json['grantsProdFirecloudFolderOwner'] == null ? undefined : json['grantsProdFirecloudFolderOwner'],
         'grantsProdFirecloudGroup': json['grantsProdFirecloudGroup'] == null ? undefined : json['grantsProdFirecloudGroup'],
+        'grantsQaFirecloudFolderOwner': json['grantsQaFirecloudFolderOwner'] == null ? undefined : json['grantsQaFirecloudFolderOwner'],
         'grantsQaFirecloudGroup': json['grantsQaFirecloudGroup'] == null ? undefined : json['grantsQaFirecloudGroup'],
         'grantsSherlockSuperAdmin': json['grantsSherlockSuperAdmin'] == null ? undefined : json['grantsSherlockSuperAdmin'],
         'id': json['id'] == null ? undefined : json['id'],
@@ -187,9 +208,12 @@ export function SherlockRoleV3FromJSONTyped(json: any, ignoreDiscriminator: bool
         'defaultGlassBreakDuration': value['defaultGlassBreakDuration'],
         'grantsBroadInstituteGroup': value['grantsBroadInstituteGroup'],
         'grantsDevAzureGroup': value['grantsDevAzureGroup'],
+        'grantsDevFirecloudFolderOwner': value['grantsDevFirecloudFolderOwner'],
         'grantsDevFirecloudGroup': value['grantsDevFirecloudGroup'],
         'grantsProdAzureGroup': value['grantsProdAzureGroup'],
+        'grantsProdFirecloudFolderOwner': value['grantsProdFirecloudFolderOwner'],
         'grantsProdFirecloudGroup': value['grantsProdFirecloudGroup'],
+        'grantsQaFirecloudFolderOwner': value['grantsQaFirecloudFolderOwner'],
         'grantsQaFirecloudGroup': value['grantsQaFirecloudGroup'],
         'grantsSherlockSuperAdmin': value['grantsSherlockSuperAdmin'],
         'id': value['id'],

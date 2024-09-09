@@ -1647,11 +1647,17 @@ definitions:
         type: string
       grantsDevAzureGroup:
         type: string
+      grantsDevFirecloudFolderOwner:
+        type: string
       grantsDevFirecloudGroup:
         type: string
       grantsProdAzureGroup:
         type: string
+      grantsProdFirecloudFolderOwner:
+        type: string
       grantsProdFirecloudGroup:
+        type: string
+      grantsQaFirecloudFolderOwner:
         type: string
       grantsQaFirecloudGroup:
         type: string
@@ -1684,11 +1690,17 @@ definitions:
         type: string
       grantsDevAzureGroup:
         type: string
+      grantsDevFirecloudFolderOwner:
+        type: string
       grantsDevFirecloudGroup:
         type: string
       grantsProdAzureGroup:
         type: string
+      grantsProdFirecloudFolderOwner:
+        type: string
       grantsProdFirecloudGroup:
+        type: string
+      grantsQaFirecloudFolderOwner:
         type: string
       grantsQaFirecloudGroup:
         type: string
@@ -6588,13 +6600,22 @@ paths:
         name: grantsDevAzureGroup
         type: string
       - in: query
+        name: grantsDevFirecloudFolderOwner
+        type: string
+      - in: query
         name: grantsDevFirecloudGroup
         type: string
       - in: query
         name: grantsProdAzureGroup
         type: string
       - in: query
+        name: grantsProdFirecloudFolderOwner
+        type: string
+      - in: query
         name: grantsProdFirecloudGroup
+        type: string
+      - in: query
+        name: grantsQaFirecloudFolderOwner
         type: string
       - in: query
         name: grantsQaFirecloudGroup
