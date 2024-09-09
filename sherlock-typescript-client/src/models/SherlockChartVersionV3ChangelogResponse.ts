@@ -18,6 +18,7 @@ import {
     SherlockChartVersionV3FromJSON,
     SherlockChartVersionV3FromJSONTyped,
     SherlockChartVersionV3ToJSON,
+    SherlockChartVersionV3ToJSONTyped,
 } from './SherlockChartVersionV3';
 
 /**
@@ -62,10 +63,15 @@ export function SherlockChartVersionV3ChangelogResponseFromJSONTyped(json: any, 
     };
 }
 
-export function SherlockChartVersionV3ChangelogResponseToJSON(value?: SherlockChartVersionV3ChangelogResponse | null): any {
+  export function SherlockChartVersionV3ChangelogResponseToJSON(json: any): SherlockChartVersionV3ChangelogResponse {
+      return SherlockChartVersionV3ChangelogResponseToJSONTyped(json, false);
+  }
+
+  export function SherlockChartVersionV3ChangelogResponseToJSONTyped(value?: SherlockChartVersionV3ChangelogResponse | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }
+
     return {
         
         'changelog': value['changelog'] == null ? undefined : ((value['changelog'] as Array<any>).map(SherlockChartVersionV3ToJSON)),

@@ -174,10 +174,15 @@ export function SherlockEnvironmentV3EditFromJSONTyped(json: any, ignoreDiscrimi
     };
 }
 
-export function SherlockEnvironmentV3EditToJSON(value?: SherlockEnvironmentV3Edit | null): any {
+  export function SherlockEnvironmentV3EditToJSON(json: any): SherlockEnvironmentV3Edit {
+      return SherlockEnvironmentV3EditToJSONTyped(json, false);
+  }
+
+  export function SherlockEnvironmentV3EditToJSONTyped(value?: SherlockEnvironmentV3Edit | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }
+
     return {
         
         'baseDomain': value['baseDomain'],

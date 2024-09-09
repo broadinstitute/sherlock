@@ -62,10 +62,15 @@ export function MiscVersionResponseFromJSONTyped(json: any, ignoreDiscriminator:
     };
 }
 
-export function MiscVersionResponseToJSON(value?: MiscVersionResponse | null): any {
+  export function MiscVersionResponseToJSON(json: any): MiscVersionResponse {
+      return MiscVersionResponseToJSONTyped(json, false);
+  }
+
+  export function MiscVersionResponseToJSONTyped(value?: MiscVersionResponse | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }
+
     return {
         
         'buildInfo': value['buildInfo'],

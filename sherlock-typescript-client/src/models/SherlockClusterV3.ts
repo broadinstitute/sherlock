@@ -18,12 +18,14 @@ import {
     SherlockRoleV3FromJSON,
     SherlockRoleV3FromJSONTyped,
     SherlockRoleV3ToJSON,
+    SherlockRoleV3ToJSONTyped,
 } from './SherlockRoleV3';
 import type { SherlockCiIdentifierV3 } from './SherlockCiIdentifierV3';
 import {
     SherlockCiIdentifierV3FromJSON,
     SherlockCiIdentifierV3FromJSONTyped,
     SherlockCiIdentifierV3ToJSON,
+    SherlockCiIdentifierV3ToJSONTyped,
 } from './SherlockCiIdentifierV3';
 
 /**
@@ -170,10 +172,15 @@ export function SherlockClusterV3FromJSONTyped(json: any, ignoreDiscriminator: b
     };
 }
 
-export function SherlockClusterV3ToJSON(value?: SherlockClusterV3 | null): any {
+  export function SherlockClusterV3ToJSON(json: any): SherlockClusterV3 {
+      return SherlockClusterV3ToJSONTyped(json, false);
+  }
+
+  export function SherlockClusterV3ToJSONTyped(value?: SherlockClusterV3 | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }
+
     return {
         
         'address': value['address'],

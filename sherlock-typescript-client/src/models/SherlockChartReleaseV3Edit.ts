@@ -76,10 +76,15 @@ export function SherlockChartReleaseV3EditFromJSONTyped(json: any, ignoreDiscrim
     };
 }
 
-export function SherlockChartReleaseV3EditToJSON(value?: SherlockChartReleaseV3Edit | null): any {
+  export function SherlockChartReleaseV3EditToJSON(json: any): SherlockChartReleaseV3Edit {
+      return SherlockChartReleaseV3EditToJSONTyped(json, false);
+  }
+
+  export function SherlockChartReleaseV3EditToJSONTyped(value?: SherlockChartReleaseV3Edit | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }
+
     return {
         
         'includedInBulkChangesets': value['includedInBulkChangesets'],

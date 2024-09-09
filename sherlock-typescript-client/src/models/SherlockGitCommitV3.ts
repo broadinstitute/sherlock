@@ -104,10 +104,15 @@ export function SherlockGitCommitV3FromJSONTyped(json: any, ignoreDiscriminator:
     };
 }
 
-export function SherlockGitCommitV3ToJSON(value?: SherlockGitCommitV3 | null): any {
+  export function SherlockGitCommitV3ToJSON(json: any): SherlockGitCommitV3 {
+      return SherlockGitCommitV3ToJSONTyped(json, false);
+  }
+
+  export function SherlockGitCommitV3ToJSONTyped(value?: SherlockGitCommitV3 | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }
+
     return {
         
         'committedAt': value['committedAt'],

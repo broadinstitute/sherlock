@@ -205,10 +205,15 @@ export function SherlockChartReleaseV3CreateFromJSONTyped(json: any, ignoreDiscr
     };
 }
 
-export function SherlockChartReleaseV3CreateToJSON(value?: SherlockChartReleaseV3Create | null): any {
+  export function SherlockChartReleaseV3CreateToJSON(json: any): SherlockChartReleaseV3Create {
+      return SherlockChartReleaseV3CreateToJSONTyped(json, false);
+  }
+
+  export function SherlockChartReleaseV3CreateToJSONTyped(value?: SherlockChartReleaseV3Create | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }
+
     return {
         
         'appVersionBranch': value['appVersionBranch'],

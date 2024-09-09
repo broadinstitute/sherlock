@@ -48,10 +48,15 @@ export function SherlockAppVersionV3EditFromJSONTyped(json: any, ignoreDiscrimin
     };
 }
 
-export function SherlockAppVersionV3EditToJSON(value?: SherlockAppVersionV3Edit | null): any {
+  export function SherlockAppVersionV3EditToJSON(json: any): SherlockAppVersionV3Edit {
+      return SherlockAppVersionV3EditToJSONTyped(json, false);
+  }
+
+  export function SherlockAppVersionV3EditToJSONTyped(value?: SherlockAppVersionV3Edit | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }
+
     return {
         
         'description': value['description'],

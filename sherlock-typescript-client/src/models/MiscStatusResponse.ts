@@ -48,10 +48,15 @@ export function MiscStatusResponseFromJSONTyped(json: any, ignoreDiscriminator: 
     };
 }
 
-export function MiscStatusResponseToJSON(value?: MiscStatusResponse | null): any {
+  export function MiscStatusResponseToJSON(json: any): MiscStatusResponse {
+      return MiscStatusResponseToJSONTyped(json, false);
+  }
+
+  export function MiscStatusResponseToJSONTyped(value?: MiscStatusResponse | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }
+
     return {
         
         'ok': value['ok'],

@@ -18,6 +18,7 @@ import {
     SherlockCiRunV3FromJSON,
     SherlockCiRunV3FromJSONTyped,
     SherlockCiRunV3ToJSON,
+    SherlockCiRunV3ToJSONTyped,
 } from './SherlockCiRunV3';
 
 /**
@@ -97,10 +98,15 @@ export function SherlockCiIdentifierV3FromJSONTyped(json: any, ignoreDiscriminat
     };
 }
 
-export function SherlockCiIdentifierV3ToJSON(value?: SherlockCiIdentifierV3 | null): any {
+  export function SherlockCiIdentifierV3ToJSON(json: any): SherlockCiIdentifierV3 {
+      return SherlockCiIdentifierV3ToJSONTyped(json, false);
+  }
+
+  export function SherlockCiIdentifierV3ToJSONTyped(value?: SherlockCiIdentifierV3 | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }
+
     return {
         
         'ciRuns': value['ciRuns'] == null ? undefined : ((value['ciRuns'] as Array<any>).map(SherlockCiRunV3ToJSON)),

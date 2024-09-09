@@ -83,10 +83,15 @@ export function SherlockSlackDeployHookV3CreateFromJSONTyped(json: any, ignoreDi
     };
 }
 
-export function SherlockSlackDeployHookV3CreateToJSON(value?: SherlockSlackDeployHookV3Create | null): any {
+  export function SherlockSlackDeployHookV3CreateToJSON(json: any): SherlockSlackDeployHookV3Create {
+      return SherlockSlackDeployHookV3CreateToJSONTyped(json, false);
+  }
+
+  export function SherlockSlackDeployHookV3CreateToJSONTyped(value?: SherlockSlackDeployHookV3Create | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }
+
     return {
         
         'mentionPeople': value['mentionPeople'],

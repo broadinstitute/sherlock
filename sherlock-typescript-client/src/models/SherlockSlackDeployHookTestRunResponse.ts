@@ -48,10 +48,15 @@ export function SherlockSlackDeployHookTestRunResponseFromJSONTyped(json: any, i
     };
 }
 
-export function SherlockSlackDeployHookTestRunResponseToJSON(value?: SherlockSlackDeployHookTestRunResponse | null): any {
+  export function SherlockSlackDeployHookTestRunResponseToJSON(json: any): SherlockSlackDeployHookTestRunResponse {
+      return SherlockSlackDeployHookTestRunResponseToJSONTyped(json, false);
+  }
+
+  export function SherlockSlackDeployHookTestRunResponseToJSONTyped(value?: SherlockSlackDeployHookTestRunResponse | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }
+
     return {
         
         'ok': value['ok'],

@@ -18,18 +18,21 @@ import {
     SherlockUserV3FromJSON,
     SherlockUserV3FromJSONTyped,
     SherlockUserV3ToJSON,
+    SherlockUserV3ToJSONTyped,
 } from './SherlockUserV3';
 import type { SherlockChartV3 } from './SherlockChartV3';
 import {
     SherlockChartV3FromJSON,
     SherlockChartV3FromJSONTyped,
     SherlockChartV3ToJSON,
+    SherlockChartV3ToJSONTyped,
 } from './SherlockChartV3';
 import type { SherlockCiIdentifierV3 } from './SherlockCiIdentifierV3';
 import {
     SherlockCiIdentifierV3FromJSON,
     SherlockCiIdentifierV3FromJSONTyped,
     SherlockCiIdentifierV3ToJSON,
+    SherlockCiIdentifierV3ToJSONTyped,
 } from './SherlockCiIdentifierV3';
 
 /**
@@ -158,10 +161,15 @@ export function SherlockAppVersionV3FromJSONTyped(json: any, ignoreDiscriminator
     };
 }
 
-export function SherlockAppVersionV3ToJSON(value?: SherlockAppVersionV3 | null): any {
+  export function SherlockAppVersionV3ToJSON(json: any): SherlockAppVersionV3 {
+      return SherlockAppVersionV3ToJSONTyped(json, false);
+  }
+
+  export function SherlockAppVersionV3ToJSONTyped(value?: SherlockAppVersionV3 | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }
+
     return {
         
         'appVersion': value['appVersion'],

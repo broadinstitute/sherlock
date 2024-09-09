@@ -48,10 +48,15 @@ export function MiscConnectionCheckResponseFromJSONTyped(json: any, ignoreDiscri
     };
 }
 
-export function MiscConnectionCheckResponseToJSON(value?: MiscConnectionCheckResponse | null): any {
+  export function MiscConnectionCheckResponseToJSON(json: any): MiscConnectionCheckResponse {
+      return MiscConnectionCheckResponseToJSONTyped(json, false);
+  }
+
+  export function MiscConnectionCheckResponseToJSONTyped(value?: MiscConnectionCheckResponse | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }
+
     return {
         
         'ok': value['ok'],
