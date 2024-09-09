@@ -97,10 +97,15 @@ export function SherlockIncidentV3FromJSONTyped(json: any, ignoreDiscriminator: 
     };
 }
 
-export function SherlockIncidentV3ToJSON(value?: SherlockIncidentV3 | null): any {
+  export function SherlockIncidentV3ToJSON(json: any): SherlockIncidentV3 {
+      return SherlockIncidentV3ToJSONTyped(json, false);
+  }
+
+  export function SherlockIncidentV3ToJSONTyped(value?: SherlockIncidentV3 | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }
+
     return {
         
         'createdAt': value['createdAt'] == null ? undefined : ((value['createdAt']).toISOString()),

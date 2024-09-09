@@ -18,6 +18,7 @@ import {
     SherlockAppVersionV3FromJSON,
     SherlockAppVersionV3FromJSONTyped,
     SherlockAppVersionV3ToJSON,
+    SherlockAppVersionV3ToJSONTyped,
 } from './SherlockAppVersionV3';
 
 /**
@@ -62,10 +63,15 @@ export function SherlockAppVersionV3ChangelogResponseFromJSONTyped(json: any, ig
     };
 }
 
-export function SherlockAppVersionV3ChangelogResponseToJSON(value?: SherlockAppVersionV3ChangelogResponse | null): any {
+  export function SherlockAppVersionV3ChangelogResponseToJSON(json: any): SherlockAppVersionV3ChangelogResponse {
+      return SherlockAppVersionV3ChangelogResponseToJSONTyped(json, false);
+  }
+
+  export function SherlockAppVersionV3ChangelogResponseToJSONTyped(value?: SherlockAppVersionV3ChangelogResponse | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }
+
     return {
         
         'changelog': value['changelog'] == null ? undefined : ((value['changelog'] as Array<any>).map(SherlockAppVersionV3ToJSON)),

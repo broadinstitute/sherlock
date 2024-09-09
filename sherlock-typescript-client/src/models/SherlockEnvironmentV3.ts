@@ -18,30 +18,35 @@ import {
     SherlockClusterV3FromJSON,
     SherlockClusterV3FromJSONTyped,
     SherlockClusterV3ToJSON,
+    SherlockClusterV3ToJSONTyped,
 } from './SherlockClusterV3';
 import type { SherlockUserV3 } from './SherlockUserV3';
 import {
     SherlockUserV3FromJSON,
     SherlockUserV3FromJSONTyped,
     SherlockUserV3ToJSON,
+    SherlockUserV3ToJSONTyped,
 } from './SherlockUserV3';
 import type { SherlockRoleV3 } from './SherlockRoleV3';
 import {
     SherlockRoleV3FromJSON,
     SherlockRoleV3FromJSONTyped,
     SherlockRoleV3ToJSON,
+    SherlockRoleV3ToJSONTyped,
 } from './SherlockRoleV3';
 import type { SherlockCiIdentifierV3 } from './SherlockCiIdentifierV3';
 import {
     SherlockCiIdentifierV3FromJSON,
     SherlockCiIdentifierV3FromJSONTyped,
     SherlockCiIdentifierV3ToJSON,
+    SherlockCiIdentifierV3ToJSONTyped,
 } from './SherlockCiIdentifierV3';
 import type { SherlockPagerdutyIntegrationV3 } from './SherlockPagerdutyIntegrationV3';
 import {
     SherlockPagerdutyIntegrationV3FromJSON,
     SherlockPagerdutyIntegrationV3FromJSONTyped,
     SherlockPagerdutyIntegrationV3ToJSON,
+    SherlockPagerdutyIntegrationV3ToJSONTyped,
 } from './SherlockPagerdutyIntegrationV3';
 
 /**
@@ -324,10 +329,15 @@ export function SherlockEnvironmentV3FromJSONTyped(json: any, ignoreDiscriminato
     };
 }
 
-export function SherlockEnvironmentV3ToJSON(value?: SherlockEnvironmentV3 | null): any {
+  export function SherlockEnvironmentV3ToJSON(json: any): SherlockEnvironmentV3 {
+      return SherlockEnvironmentV3ToJSONTyped(json, false);
+  }
+
+  export function SherlockEnvironmentV3ToJSONTyped(value?: SherlockEnvironmentV3 | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }
+
     return {
         
         'autoPopulateChartReleases': value['autoPopulateChartReleases'],

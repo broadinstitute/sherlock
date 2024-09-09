@@ -18,30 +18,35 @@ import {
     SherlockUserV3FromJSON,
     SherlockUserV3FromJSONTyped,
     SherlockUserV3ToJSON,
+    SherlockUserV3ToJSONTyped,
 } from './SherlockUserV3';
 import type { SherlockChartReleaseV3 } from './SherlockChartReleaseV3';
 import {
     SherlockChartReleaseV3FromJSON,
     SherlockChartReleaseV3FromJSONTyped,
     SherlockChartReleaseV3ToJSON,
+    SherlockChartReleaseV3ToJSONTyped,
 } from './SherlockChartReleaseV3';
 import type { SherlockChartVersionV3 } from './SherlockChartVersionV3';
 import {
     SherlockChartVersionV3FromJSON,
     SherlockChartVersionV3FromJSONTyped,
     SherlockChartVersionV3ToJSON,
+    SherlockChartVersionV3ToJSONTyped,
 } from './SherlockChartVersionV3';
 import type { SherlockAppVersionV3 } from './SherlockAppVersionV3';
 import {
     SherlockAppVersionV3FromJSON,
     SherlockAppVersionV3FromJSONTyped,
     SherlockAppVersionV3ToJSON,
+    SherlockAppVersionV3ToJSONTyped,
 } from './SherlockAppVersionV3';
 import type { SherlockCiIdentifierV3 } from './SherlockCiIdentifierV3';
 import {
     SherlockCiIdentifierV3FromJSON,
     SherlockCiIdentifierV3FromJSONTyped,
     SherlockCiIdentifierV3ToJSON,
+    SherlockCiIdentifierV3ToJSONTyped,
 } from './SherlockCiIdentifierV3';
 
 /**
@@ -352,10 +357,15 @@ export function SherlockChangesetV3FromJSONTyped(json: any, ignoreDiscriminator:
     };
 }
 
-export function SherlockChangesetV3ToJSON(value?: SherlockChangesetV3 | null): any {
+  export function SherlockChangesetV3ToJSON(json: any): SherlockChangesetV3 {
+      return SherlockChangesetV3ToJSONTyped(json, false);
+  }
+
+  export function SherlockChangesetV3ToJSONTyped(value?: SherlockChangesetV3 | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }
+
     return {
         
         'appliedAt': value['appliedAt'] == null ? undefined : ((value['appliedAt']).toISOString()),

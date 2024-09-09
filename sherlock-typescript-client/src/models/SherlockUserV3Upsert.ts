@@ -84,10 +84,15 @@ export function SherlockUserV3UpsertFromJSONTyped(json: any, ignoreDiscriminator
     };
 }
 
-export function SherlockUserV3UpsertToJSON(value?: SherlockUserV3Upsert | null): any {
+  export function SherlockUserV3UpsertToJSON(json: any): SherlockUserV3Upsert {
+      return SherlockUserV3UpsertToJSONTyped(json, false);
+  }
+
+  export function SherlockUserV3UpsertToJSONTyped(value?: SherlockUserV3Upsert | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }
+
     return {
         
         'githubAccessToken': value['githubAccessToken'],

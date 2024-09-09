@@ -48,10 +48,15 @@ export function SherlockGithubActionsDeployHookTestRunRequestFromJSONTyped(json:
     };
 }
 
-export function SherlockGithubActionsDeployHookTestRunRequestToJSON(value?: SherlockGithubActionsDeployHookTestRunRequest | null): any {
+  export function SherlockGithubActionsDeployHookTestRunRequestToJSON(json: any): SherlockGithubActionsDeployHookTestRunRequest {
+      return SherlockGithubActionsDeployHookTestRunRequestToJSONTyped(json, false);
+  }
+
+  export function SherlockGithubActionsDeployHookTestRunRequestToJSONTyped(value?: SherlockGithubActionsDeployHookTestRunRequest | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }
+
     return {
         
         'execute': value['execute'],

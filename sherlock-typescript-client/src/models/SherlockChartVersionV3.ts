@@ -18,18 +18,21 @@ import {
     SherlockUserV3FromJSON,
     SherlockUserV3FromJSONTyped,
     SherlockUserV3ToJSON,
+    SherlockUserV3ToJSONTyped,
 } from './SherlockUserV3';
 import type { SherlockChartV3 } from './SherlockChartV3';
 import {
     SherlockChartV3FromJSON,
     SherlockChartV3FromJSONTyped,
     SherlockChartV3ToJSON,
+    SherlockChartV3ToJSONTyped,
 } from './SherlockChartV3';
 import type { SherlockCiIdentifierV3 } from './SherlockCiIdentifierV3';
 import {
     SherlockCiIdentifierV3FromJSON,
     SherlockCiIdentifierV3FromJSONTyped,
     SherlockCiIdentifierV3ToJSON,
+    SherlockCiIdentifierV3ToJSONTyped,
 } from './SherlockCiIdentifierV3';
 
 /**
@@ -144,10 +147,15 @@ export function SherlockChartVersionV3FromJSONTyped(json: any, ignoreDiscriminat
     };
 }
 
-export function SherlockChartVersionV3ToJSON(value?: SherlockChartVersionV3 | null): any {
+  export function SherlockChartVersionV3ToJSON(json: any): SherlockChartVersionV3 {
+      return SherlockChartVersionV3ToJSONTyped(json, false);
+  }
+
+  export function SherlockChartVersionV3ToJSONTyped(value?: SherlockChartVersionV3 | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }
+
     return {
         
         'authoredBy': value['authoredBy'],

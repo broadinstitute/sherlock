@@ -230,10 +230,15 @@ export function SherlockEnvironmentV3CreateFromJSONTyped(json: any, ignoreDiscri
     };
 }
 
-export function SherlockEnvironmentV3CreateToJSON(value?: SherlockEnvironmentV3Create | null): any {
+  export function SherlockEnvironmentV3CreateToJSON(json: any): SherlockEnvironmentV3Create {
+      return SherlockEnvironmentV3CreateToJSONTyped(json, false);
+  }
+
+  export function SherlockEnvironmentV3CreateToJSONTyped(value?: SherlockEnvironmentV3Create | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }
+
     return {
         
         'autoPopulateChartReleases': value['autoPopulateChartReleases'],

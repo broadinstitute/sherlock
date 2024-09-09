@@ -55,10 +55,15 @@ export function SherlockGithubActionsDeployHookTestRunResponseFromJSONTyped(json
     };
 }
 
-export function SherlockGithubActionsDeployHookTestRunResponseToJSON(value?: SherlockGithubActionsDeployHookTestRunResponse | null): any {
+  export function SherlockGithubActionsDeployHookTestRunResponseToJSON(json: any): SherlockGithubActionsDeployHookTestRunResponse {
+      return SherlockGithubActionsDeployHookTestRunResponseToJSONTyped(json, false);
+  }
+
+  export function SherlockGithubActionsDeployHookTestRunResponseToJSONTyped(value?: SherlockGithubActionsDeployHookTestRunResponse | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }
+
     return {
         
         'ok': value['ok'],

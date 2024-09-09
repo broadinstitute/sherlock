@@ -18,12 +18,14 @@ import {
     SherlockChangesetV3PlanRequestEnvironmentEntryFromJSON,
     SherlockChangesetV3PlanRequestEnvironmentEntryFromJSONTyped,
     SherlockChangesetV3PlanRequestEnvironmentEntryToJSON,
+    SherlockChangesetV3PlanRequestEnvironmentEntryToJSONTyped,
 } from './SherlockChangesetV3PlanRequestEnvironmentEntry';
 import type { SherlockChangesetV3PlanRequestChartReleaseEntry } from './SherlockChangesetV3PlanRequestChartReleaseEntry';
 import {
     SherlockChangesetV3PlanRequestChartReleaseEntryFromJSON,
     SherlockChangesetV3PlanRequestChartReleaseEntryFromJSONTyped,
     SherlockChangesetV3PlanRequestChartReleaseEntryToJSON,
+    SherlockChangesetV3PlanRequestChartReleaseEntryToJSONTyped,
 } from './SherlockChangesetV3PlanRequestChartReleaseEntry';
 
 /**
@@ -75,10 +77,15 @@ export function SherlockChangesetV3PlanRequestFromJSONTyped(json: any, ignoreDis
     };
 }
 
-export function SherlockChangesetV3PlanRequestToJSON(value?: SherlockChangesetV3PlanRequest | null): any {
+  export function SherlockChangesetV3PlanRequestToJSON(json: any): SherlockChangesetV3PlanRequest {
+      return SherlockChangesetV3PlanRequestToJSONTyped(json, false);
+  }
+
+  export function SherlockChangesetV3PlanRequestToJSONTyped(value?: SherlockChangesetV3PlanRequest | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }
+
     return {
         
         'chartReleases': value['chartReleases'] == null ? undefined : ((value['chartReleases'] as Array<any>).map(SherlockChangesetV3PlanRequestChartReleaseEntryToJSON)),

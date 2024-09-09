@@ -55,10 +55,15 @@ export function PagerdutySendAlertResponseFromJSONTyped(json: any, ignoreDiscrim
     };
 }
 
-export function PagerdutySendAlertResponseToJSON(value?: PagerdutySendAlertResponse | null): any {
+  export function PagerdutySendAlertResponseToJSON(json: any): PagerdutySendAlertResponse {
+      return PagerdutySendAlertResponseToJSONTyped(json, false);
+  }
+
+  export function PagerdutySendAlertResponseToJSONTyped(value?: PagerdutySendAlertResponse | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }
+
     return {
         
         'message': value['message'],

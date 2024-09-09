@@ -76,10 +76,15 @@ export function SherlockRoleAssignmentV3FromJSONTyped(json: any, ignoreDiscrimin
     };
 }
 
-export function SherlockRoleAssignmentV3ToJSON(value?: SherlockRoleAssignmentV3 | null): any {
+  export function SherlockRoleAssignmentV3ToJSON(json: any): SherlockRoleAssignmentV3 {
+      return SherlockRoleAssignmentV3ToJSONTyped(json, false);
+  }
+
+  export function SherlockRoleAssignmentV3ToJSONTyped(value?: SherlockRoleAssignmentV3 | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }
+
     return {
         
         'expiresAt': value['expiresAt'] == null ? undefined : ((value['expiresAt']).toISOString()),

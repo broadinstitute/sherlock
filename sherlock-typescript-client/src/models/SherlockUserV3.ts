@@ -18,6 +18,7 @@ import {
     SherlockRoleAssignmentV3FromJSON,
     SherlockRoleAssignmentV3FromJSONTyped,
     SherlockRoleAssignmentV3ToJSON,
+    SherlockRoleAssignmentV3ToJSONTyped,
 } from './SherlockRoleAssignmentV3';
 
 /**
@@ -166,10 +167,15 @@ export function SherlockUserV3FromJSONTyped(json: any, ignoreDiscriminator: bool
     };
 }
 
-export function SherlockUserV3ToJSON(value?: SherlockUserV3 | null): any {
+  export function SherlockUserV3ToJSON(json: any): SherlockUserV3 {
+      return SherlockUserV3ToJSONTyped(json, false);
+  }
+
+  export function SherlockUserV3ToJSONTyped(value?: SherlockUserV3 | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }
+
     return {
         
         'assignments': value['assignments'] == null ? undefined : ((value['assignments'] as Array<any>).map(SherlockRoleAssignmentV3ToJSON)),

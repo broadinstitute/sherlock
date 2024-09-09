@@ -18,42 +18,49 @@ import {
     SherlockClusterV3FromJSON,
     SherlockClusterV3FromJSONTyped,
     SherlockClusterV3ToJSON,
+    SherlockClusterV3ToJSONTyped,
 } from './SherlockClusterV3';
 import type { SherlockChartVersionV3 } from './SherlockChartVersionV3';
 import {
     SherlockChartVersionV3FromJSON,
     SherlockChartVersionV3FromJSONTyped,
     SherlockChartVersionV3ToJSON,
+    SherlockChartVersionV3ToJSONTyped,
 } from './SherlockChartVersionV3';
 import type { SherlockChartV3 } from './SherlockChartV3';
 import {
     SherlockChartV3FromJSON,
     SherlockChartV3FromJSONTyped,
     SherlockChartV3ToJSON,
+    SherlockChartV3ToJSONTyped,
 } from './SherlockChartV3';
 import type { SherlockAppVersionV3 } from './SherlockAppVersionV3';
 import {
     SherlockAppVersionV3FromJSON,
     SherlockAppVersionV3FromJSONTyped,
     SherlockAppVersionV3ToJSON,
+    SherlockAppVersionV3ToJSONTyped,
 } from './SherlockAppVersionV3';
 import type { SherlockCiIdentifierV3 } from './SherlockCiIdentifierV3';
 import {
     SherlockCiIdentifierV3FromJSON,
     SherlockCiIdentifierV3FromJSONTyped,
     SherlockCiIdentifierV3ToJSON,
+    SherlockCiIdentifierV3ToJSONTyped,
 } from './SherlockCiIdentifierV3';
 import type { SherlockEnvironmentV3 } from './SherlockEnvironmentV3';
 import {
     SherlockEnvironmentV3FromJSON,
     SherlockEnvironmentV3FromJSONTyped,
     SherlockEnvironmentV3ToJSON,
+    SherlockEnvironmentV3ToJSONTyped,
 } from './SherlockEnvironmentV3';
 import type { SherlockPagerdutyIntegrationV3 } from './SherlockPagerdutyIntegrationV3';
 import {
     SherlockPagerdutyIntegrationV3FromJSON,
     SherlockPagerdutyIntegrationV3FromJSONTyped,
     SherlockPagerdutyIntegrationV3ToJSON,
+    SherlockPagerdutyIntegrationV3ToJSONTyped,
 } from './SherlockPagerdutyIntegrationV3';
 
 /**
@@ -346,10 +353,15 @@ export function SherlockChartReleaseV3FromJSONTyped(json: any, ignoreDiscriminat
     };
 }
 
-export function SherlockChartReleaseV3ToJSON(value?: SherlockChartReleaseV3 | null): any {
+  export function SherlockChartReleaseV3ToJSON(json: any): SherlockChartReleaseV3 {
+      return SherlockChartReleaseV3ToJSONTyped(json, false);
+  }
+
+  export function SherlockChartReleaseV3ToJSONTyped(value?: SherlockChartReleaseV3 | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }
+
     return {
         
         'appVersionBranch': value['appVersionBranch'],

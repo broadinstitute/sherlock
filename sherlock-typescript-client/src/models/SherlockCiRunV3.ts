@@ -18,6 +18,7 @@ import {
     SherlockCiIdentifierV3FromJSON,
     SherlockCiIdentifierV3FromJSONTyped,
     SherlockCiIdentifierV3ToJSON,
+    SherlockCiIdentifierV3ToJSONTyped,
 } from './SherlockCiIdentifierV3';
 
 /**
@@ -203,10 +204,15 @@ export function SherlockCiRunV3FromJSONTyped(json: any, ignoreDiscriminator: boo
     };
 }
 
-export function SherlockCiRunV3ToJSON(value?: SherlockCiRunV3 | null): any {
+  export function SherlockCiRunV3ToJSON(json: any): SherlockCiRunV3 {
+      return SherlockCiRunV3ToJSONTyped(json, false);
+  }
+
+  export function SherlockCiRunV3ToJSONTyped(value?: SherlockCiRunV3 | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }
+
     return {
         
         'argoWorkflowsName': value['argoWorkflowsName'],

@@ -83,10 +83,15 @@ export function SherlockChangesetV3PlanRequestEnvironmentEntryFromJSONTyped(json
     };
 }
 
-export function SherlockChangesetV3PlanRequestEnvironmentEntryToJSON(value?: SherlockChangesetV3PlanRequestEnvironmentEntry | null): any {
+  export function SherlockChangesetV3PlanRequestEnvironmentEntryToJSON(json: any): SherlockChangesetV3PlanRequestEnvironmentEntry {
+      return SherlockChangesetV3PlanRequestEnvironmentEntryToJSONTyped(json, false);
+  }
+
+  export function SherlockChangesetV3PlanRequestEnvironmentEntryToJSONTyped(value?: SherlockChangesetV3PlanRequestEnvironmentEntry | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }
+
     return {
         
         'environment': value['environment'],

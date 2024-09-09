@@ -69,10 +69,15 @@ export function SherlockChartVersionV3CreateFromJSONTyped(json: any, ignoreDiscr
     };
 }
 
-export function SherlockChartVersionV3CreateToJSON(value?: SherlockChartVersionV3Create | null): any {
+  export function SherlockChartVersionV3CreateToJSON(json: any): SherlockChartVersionV3Create {
+      return SherlockChartVersionV3CreateToJSONTyped(json, false);
+  }
+
+  export function SherlockChartVersionV3CreateToJSONTyped(value?: SherlockChartVersionV3Create | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }
+
     return {
         
         'chart': value['chart'],
