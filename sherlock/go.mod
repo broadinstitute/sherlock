@@ -11,6 +11,7 @@ require (
 	contrib.go.opencensus.io/exporter/prometheus v0.4.2
 	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.7.0
 	github.com/PagerDuty/go-pagerduty v1.8.0
+	github.com/avast/retry-go/v4 v4.6.0
 	github.com/broadinstitute/sherlock/go-shared v0.0.0
 	github.com/coreos/go-oidc/v3 v3.11.0
 	github.com/creasty/defaults v1.8.0
@@ -34,7 +35,7 @@ require (
 	github.com/swaggo/files v1.0.1
 	github.com/swaggo/gin-swagger v1.6.0
 	github.com/swaggo/swag v1.16.3
-	github.com/zitadel/oidc/v3 v3.28.2
+	github.com/zitadel/oidc/v3 v3.29.0
 	go.opencensus.io v0.24.0
 	golang.org/x/crypto v0.26.0
 	golang.org/x/exp v0.0.0-20240823005443-9b4947da3948
@@ -62,7 +63,6 @@ require (
 	github.com/AzureAD/microsoft-authentication-library-for-go v1.2.2 // indirect
 	github.com/KyleBanks/depth v1.2.1 // indirect
 	github.com/apache/arrow/go/v15 v15.0.2 // indirect
-	github.com/avast/retry-go/v4 v4.6.0 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/bmatcuk/doublestar/v4 v4.6.1 // indirect
 	github.com/bytedance/sonic v1.12.2 // indirect
@@ -144,7 +144,7 @@ require (
 	github.com/prometheus/common v0.55.0 // indirect
 	github.com/prometheus/procfs v0.15.1 // indirect
 	github.com/prometheus/statsd_exporter v0.27.1 // indirect
-	github.com/rs/cors v1.11.0 // indirect
+	github.com/rs/cors v1.11.1 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/spf13/afero v1.11.0 // indirect
 	github.com/spf13/cobra v1.8.1 // indirect
