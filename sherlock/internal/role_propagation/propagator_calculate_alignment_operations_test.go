@@ -3,6 +3,7 @@ package role_propagation
 import (
 	"context"
 	"github.com/broadinstitute/sherlock/sherlock/internal/role_propagation/intermediary_user"
+	"github.com/broadinstitute/sherlock/sherlock/internal/role_propagation/intermediary_user/intermediary_user_mocks"
 	"github.com/broadinstitute/sherlock/sherlock/internal/role_propagation/propagation_engines/propagation_engines_mocks"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -103,5 +104,43 @@ func Test_propagatorImpl_calculateAlignmentOperations_empty(t *testing.T) {
 		_, _ = alignmentOperation()
 	}
 
+	engine.AssertExpectations(t)
+}
+
+type testMayConsiderAsAlreadyRemovedIntermediaryUser = intermediary_user.IntermediaryUser[testIdentifier, *intermediary_user_mocks.MockMayBePresentWhileRemovedFields]
+
+func Test_propagatorImpl_calculateAlignmentOperations_mayConsiderAsAlreadyRemoved(t *testing.T) {
+	engine := propagation_engines_mocks.NewMockPropagationEngine[string, testIdentifier, *intermediary_user_mocks.MockMayBePresentWhileRemovedFields](t)
+	p := &propagatorImpl[string, testIdentifier, *intermediary_user_mocks.MockMayBePresentWhileRemovedFields]{
+		engine: engine,
+	}
+
+	ctx := context.Background()
+	grant := "grant"
+	currentState := make([]testMayConsiderAsAlreadyRemovedIntermediaryUser, 0)
+	desiredState := make(map[uint]testMayConsiderAsAlreadyRemovedIntermediaryUser)
+
+	// A user that should be removed
+	identifier1 := testIdentifier{"user1"}
+	fields1 := intermediary_user_mocks.NewMockMayBePresentWhileRemovedFields(t)
+	fields1.EXPECT().MayConsiderAsAlreadyRemoved().Return(false).Once()
+	currentState = append(currentState, testMayConsiderAsAlreadyRemovedIntermediaryUser{Identifier: identifier1, Fields: fields1})
+	engine.EXPECT().Remove(ctx, grant, identifier1).Return("", nil).Once()
+
+	// A user that should be considered as already removed -- expect no Remove to be called
+	identifier2 := testIdentifier{"user2"}
+	fields2 := intermediary_user_mocks.NewMockMayBePresentWhileRemovedFields(t)
+	fields2.EXPECT().MayConsiderAsAlreadyRemoved().Return(true).Once()
+	currentState = append(currentState, testMayConsiderAsAlreadyRemovedIntermediaryUser{Identifier: identifier2, Fields: fields2})
+
+	alignmentOperations := p.calculateAlignmentOperations(ctx, grant, currentState, desiredState)
+	for _, alignmentOperation := range alignmentOperations {
+		// These operations are pure mocks so there's no point to testing their return values,
+		// we're just calling the outputs so the mock observes the calls
+		_, _ = alignmentOperation()
+	}
+
+	fields1.AssertExpectations(t)
+	fields2.AssertExpectations(t)
 	engine.AssertExpectations(t)
 }

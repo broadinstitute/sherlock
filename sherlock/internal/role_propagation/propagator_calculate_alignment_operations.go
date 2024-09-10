@@ -58,7 +58,19 @@ currentlyGrantedUserLoop:
 			}
 		}
 
-		// No match in desiredState or toleratedUsers! Remove the grant from the currently granted user.
+		// No match in desiredState or toleratedUsers! Let's check if we may consider the user as being already
+		// effectively removed. We need to check two things:
+		// 1. If the fields are the *type* that may still be present while the user is effectively removed.
+		// 2. If those fields indicate *this user* can be considered as effectively already removed.
+		//
+		// (We can't type-assert on a type parameter, so we convert to the interface supertype and then assert on that.)
+		if mayBePresentWhileRemovedFields, ok := intermediary_user.Fields(currentlyGrantedUser.Fields).(intermediary_user.MayBePresentWhileRemovedFields); ok &&
+			mayBePresentWhileRemovedFields.MayConsiderAsAlreadyRemoved() {
+			continue currentlyGrantedUserLoop
+		}
+
+		// No match in desiredState or toleratedUsers, and our check if we could treat the user as being effectively
+		// already removed didn't pass. We remove the grant from the currently granted user.
 		alignmentOperations = append(alignmentOperations, func() (string, error) {
 			return p.engine.Remove(ctx, grant, currentlyGrantedUser.Identifier)
 		})
