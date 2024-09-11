@@ -36,7 +36,7 @@ func (p *parallelizingPropagator) LogPrefix() string {
 func (p *parallelizingPropagator) Init(ctx context.Context) error {
 	for _, inner := range p.parallelPropagators {
 		if err := inner.Init(ctx); err != nil {
-			return err
+			return fmt.Errorf("failed to initialize inner propagator: %s%w", inner.LogPrefix(), err)
 		}
 	}
 	return nil

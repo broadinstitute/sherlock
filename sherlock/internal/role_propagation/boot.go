@@ -2,6 +2,7 @@ package role_propagation
 
 import (
 	"context"
+	"fmt"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/role_propagation/propagation_engines"
 )
@@ -78,7 +79,7 @@ func Init(ctx context.Context) error {
 	}
 	for _, p := range propagators {
 		if err := p.Init(ctx); err != nil {
-			return err
+			return fmt.Errorf("failed to initialize propagator: %s%w", p.LogPrefix(), err)
 		}
 	}
 	return nil
