@@ -37,24 +37,24 @@ func Init(ctx context.Context) error {
 					engine:    &propagation_engines.GoogleWorkspaceGroupEngine{},
 				},
 
-				&propagatorImpl[string, propagation_engines.GoogleWorkspaceFolderOwnerIdentifier, propagation_engines.GoogleWorkspaceFolderOwnerFields]{
+				&propagatorImpl[string, propagation_engines.GoogleCloudFolderRoleIdentifier, propagation_engines.GoogleCloudFolderRoleFields]{
 					configKey: "devFirecloudFolderOwner",
 					getGrants: func(role models.Role) []*string {
 						return splitStringPointerOnCommas(role.GrantsDevFirecloudFolderOwner)
 					},
-					engine: &propagation_engines.GoogleWorkspaceFolderOwnerEngine{},
+					engine: &propagation_engines.GoogleCloudFolderRoleEngine{Role: propagation_engines.GoogleCloudOwnerRole},
 				},
-				&propagatorImpl[string, propagation_engines.GoogleWorkspaceFolderOwnerIdentifier, propagation_engines.GoogleWorkspaceFolderOwnerFields]{
+				&propagatorImpl[string, propagation_engines.GoogleCloudFolderRoleIdentifier, propagation_engines.GoogleCloudFolderRoleFields]{
 					configKey: "qaFirecloudFolderOwner",
 					getGrants: func(role models.Role) []*string { return splitStringPointerOnCommas(role.GrantsQaFirecloudFolderOwner) },
-					engine:    &propagation_engines.GoogleWorkspaceFolderOwnerEngine{},
+					engine:    &propagation_engines.GoogleCloudFolderRoleEngine{Role: propagation_engines.GoogleCloudOwnerRole},
 				},
-				&propagatorImpl[string, propagation_engines.GoogleWorkspaceFolderOwnerIdentifier, propagation_engines.GoogleWorkspaceFolderOwnerFields]{
+				&propagatorImpl[string, propagation_engines.GoogleCloudFolderRoleIdentifier, propagation_engines.GoogleCloudFolderRoleFields]{
 					configKey: "prodFirecloudFolderOwner",
 					getGrants: func(role models.Role) []*string {
 						return splitStringPointerOnCommas(role.GrantsProdFirecloudFolderOwner)
 					},
-					engine: &propagation_engines.GoogleWorkspaceFolderOwnerEngine{},
+					engine: &propagation_engines.GoogleCloudFolderRoleEngine{Role: propagation_engines.GoogleCloudOwnerRole},
 				},
 
 				&propagatorImpl[string, propagation_engines.AzureGroupIdentifier, propagation_engines.AzureGroupFields]{
