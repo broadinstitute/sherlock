@@ -364,6 +364,7 @@ rolePropagation:
 
     devFirecloudGroup:
       enable: false
+      dryRun: false
       # The domain of the Google Workspace, assumed to be the email domain of all members. This should
       # not contain a leading "@".
       workspaceDomain: "test.firecloud.org"
@@ -373,6 +374,7 @@ rolePropagation:
         - "@broadinstitute.org"
     qaFirecloudGroup:
       enable: false
+      dryRun: false
       # The domain of the Google Workspace, assumed to be the email domain of all members. This should
       # not contain a leading "@".
       workspaceDomain: "quality.firecloud.org"
@@ -382,6 +384,7 @@ rolePropagation:
         - "@broadinstitute.org"
     prodFirecloudGroup:
       enable: false
+      dryRun: false
       # The domain of the Google Workspace, assumed to be the email domain of all members. This should
       # not contain a leading "@".
       workspaceDomain: "firecloud.org"
@@ -392,6 +395,7 @@ rolePropagation:
 
     devFirecloudFolderOwner:
       enable: false
+      dryRun: false
       # The domain of the Google Workspace, assumed to be the email domain of all members. This should
       # not contain a leading "@".
       workspaceDomain: "test.firecloud.org"
@@ -401,6 +405,7 @@ rolePropagation:
         - "@broadinstitute.org"
     qaFirecloudFolderOwner:
       enable: false
+      dryRun: false
       # The domain of the Google Workspace, assumed to be the email domain of all members. This should
       # not contain a leading "@".
       workspaceDomain: "quality.firecloud.org"
@@ -410,6 +415,7 @@ rolePropagation:
         - "@broadinstitute.org"
     prodFirecloudFolderOwner:
       enable: false
+      dryRun: false
       # The domain of the Google Workspace, assumed to be the email domain of all members. This should
       # not contain a leading "@".
       workspaceDomain: "firecloud.org"
@@ -420,6 +426,7 @@ rolePropagation:
 
     devAzureGroup:
       enable: false
+      dryRun: false
       # The client ID of the Azure AD app to use for authentication.
       clientID:
       # The UUID of the Azure AD tenant to work with.
@@ -436,6 +443,7 @@ rolePropagation:
         - "@broadinstitute.org"
     prodAzureGroup:
       enable: false
+      dryRun: false
       # The client ID of the Azure AD app to use for authentication.
       clientID:
       # The UUID of the Azure AD tenant to work with.
@@ -453,6 +461,7 @@ rolePropagation:
 
     broadInstituteGroup:
       enable: false
+      dryRun: false
 
 suitabilitySynchronization:
   enable: true

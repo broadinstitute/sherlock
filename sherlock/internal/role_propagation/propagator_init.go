@@ -16,6 +16,8 @@ func (p *propagatorImpl[Grant, Identifier, Fields]) Init(ctx context.Context) er
 		return nil
 	}
 
+	p._dryRun = p._config.Bool("dryRun")
+
 	p.initTimeout()
 
 	if err := p.engine.Init(ctx, p._config); err != nil {

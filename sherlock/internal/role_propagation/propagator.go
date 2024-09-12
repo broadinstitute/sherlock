@@ -72,6 +72,10 @@ type propagatorImpl[
 	// rolePropagation.propagators.<configKey>.enabled.
 	_enable bool
 
+	// _dryRun stores whether this propagator is set to dry-run in the _config, from
+	// rolePropagation.propagators.<configKey>.dryRun.
+	_dryRun bool
+
 	// _timeout is the amount of time the propagator will be allowed to run during Propagate. It's read from the
 	// configuration at rolePropagation.propagators.<configKey>.timeout, with a default read from the config at
 	// rolePropagation.defaultTimeout.

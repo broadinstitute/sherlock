@@ -2,6 +2,7 @@ package role_propagation
 
 import (
 	"context"
+	"fmt"
 	"github.com/broadinstitute/sherlock/sherlock/internal/role_propagation/intermediary_user"
 )
 
@@ -40,7 +41,7 @@ currentlyGrantedUserLoop:
 				// added at the end.
 				if !currentlyGrantedUser.Fields.EqualTo(desiredUser.Fields) {
 					alignmentOperations = append(alignmentOperations, func() (string, error) {
-						return p.engine.Update(ctx, grant, desiredUser.Identifier, currentlyGrantedUser.Fields, desiredUser.Fields)
+						return p.updateOperation()(ctx, grant, desiredUser.Identifier, currentlyGrantedUser.Fields, desiredUser.Fields)
 					})
 				}
 
@@ -72,7 +73,7 @@ currentlyGrantedUserLoop:
 		// No match in desiredState or toleratedUsers, and our check if we could treat the user as being effectively
 		// already removed didn't pass. We remove the grant from the currently granted user.
 		alignmentOperations = append(alignmentOperations, func() (string, error) {
-			return p.engine.Remove(ctx, grant, currentlyGrantedUser.Identifier)
+			return p.removeOperation()(ctx, grant, currentlyGrantedUser.Identifier)
 		})
 	}
 
@@ -80,8 +81,35 @@ currentlyGrantedUserLoop:
 	for _, unsafeDesiredUser := range copyOfDesiredState {
 		desiredUser := unsafeDesiredUser
 		alignmentOperations = append(alignmentOperations, func() (string, error) {
-			return p.engine.Add(ctx, grant, desiredUser.Identifier, desiredUser.Fields)
+			return p.addOperation()(ctx, grant, desiredUser.Identifier, desiredUser.Fields)
 		})
 	}
 	return alignmentOperations
+}
+
+func (p *propagatorImpl[Grant, Identifier, Fields]) addOperation() func(ctx context.Context, grant Grant, identifier Identifier, fields Fields) (string, error) {
+	if p._dryRun {
+		return func(ctx context.Context, grant Grant, identifier Identifier, fields Fields) (string, error) {
+			return fmt.Sprintf("DRY-RUN: called for adding of %+v with fields %+v", identifier, fields), nil
+		}
+	}
+	return p.engine.Add
+}
+
+func (p *propagatorImpl[Grant, Identifier, Fields]) updateOperation() func(ctx context.Context, grant Grant, identifier Identifier, oldFields Fields, newFields Fields) (string, error) {
+	if p._dryRun {
+		return func(ctx context.Context, grant Grant, identifier Identifier, oldFields Fields, newFields Fields) (string, error) {
+			return fmt.Sprintf("DRY-RUN: called for update of %+v from %+v to %+v", identifier, oldFields, newFields), nil
+		}
+	}
+	return p.engine.Update
+}
+
+func (p *propagatorImpl[Grant, Identifier, Fields]) removeOperation() func(ctx context.Context, grant Grant, identifier Identifier) (string, error) {
+	if p._dryRun {
+		return func(ctx context.Context, grant Grant, identifier Identifier) (string, error) {
+			return fmt.Sprintf("DRY-RUN: called for removal of %+v", identifier), nil
+		}
+	}
+	return p.engine.Remove
 }

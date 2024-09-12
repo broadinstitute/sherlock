@@ -63,6 +63,19 @@ func Test_propagatorImpl_Init(t *testing.T) {
 			wantErr: true,
 		},
 		{
+			name: "dry run",
+			p: propagatorImpl[string, propagation_engines.GoogleWorkspaceGroupIdentifier, propagation_engines.GoogleWorkspaceGroupFields]{
+				configKey: "devFirecloudGroupTestDryRun",
+			},
+			engineFunc: func(c *propagation_engines_mocks.MockPropagationEngine[string, propagation_engines.GoogleWorkspaceGroupIdentifier, propagation_engines.GoogleWorkspaceGroupFields]) {
+				c.EXPECT().Init(ctx, mock.Anything).Return(nil)
+			},
+			extraAssertions: func(t *testing.T, p propagatorImpl[string, propagation_engines.GoogleWorkspaceGroupIdentifier, propagation_engines.GoogleWorkspaceGroupFields]) {
+				assert.True(t, p._dryRun)
+			},
+			wantErr: false,
+		},
+		{
 			name: "config",
 			p: propagatorImpl[string, propagation_engines.GoogleWorkspaceGroupIdentifier, propagation_engines.GoogleWorkspaceGroupFields]{
 				configKey: "devFirecloudGroupTestConfig",
