@@ -362,6 +362,94 @@ rolePropagation:
   driftAlignmentStaleThreshold: 5m
   propagators:
 
+    # devAzureAccount correlates to models.Role.GrantsDevAzureAccount.
+    devAzureAccount:
+      enable: false
+      dryRun: false
+      # The client ID of the Azure AD app to use for authentication.
+      clientID:
+      # The UUID of the Azure AD tenant to work with.
+      tenantID: fad90753-2022-4456-9b0a-c7e5b934e408 # azure.dev.envs-terra.bio
+      # The path on disk that Sherlock should expect to find a token for federated workload identity.
+      tokenFilePath: /azure-federation/projected-ksa-token.jwt
+      # The suffix of all accounts in the tenant that Sherlock should manage.
+      tenantEmailSuffix: "@test.firecloud.org"
+      # Suffixes of Sherlock users' emails that should be swapped out with the memberEmailSuffix to match
+      # Sherlock users to Azure Entra ID user emails.
+      userEmailSuffixesToReplace:
+        - "@broadinstitute.org"
+    # prodAzureAccount correlates to models.Role.GrantsProdAzureAccount.
+    prodAzureAccount:
+      enable: false
+      dryRun: false
+      # The client ID of the Azure AD app to use for authentication.
+      clientID:
+      # The UUID of the Azure AD tenant to work with.
+      tenantID: 66bb90ac-8857-4a8a-aa0a-be2186dfa5f9 # firecloud.org
+      # The path on disk that Sherlock should expect to find a token for federated workload identity.
+      tokenFilePath: /azure-federation/projected-ksa-token.jwt
+      # The suffix of all accounts in the tenant that Sherlock should manage.
+      memberEmailSuffix: "@firecloud.org"
+      # Suffixes of Sherlock users' emails that should be swapped out with the memberEmailSuffix to match
+      # Sherlock users to Azure Entra ID user emails.
+      userEmailSuffixesToReplace:
+        - "@broadinstitute.org"
+
+    # devAzureB2CAccount correlates to models.Role.GrantsDevAzureAccount. It invites the account
+    # provisioned by devAzureAccount.
+    devAzureInvitedB2CAccount:
+      enable: false
+      dryRun: false
+      # The client ID of the Azure AD app to use for authentication against the home tenant.
+      homeClientID:
+      # The UUID of the home Azure AD tenant to work with.
+      homeTenantID: fad90753-2022-4456-9b0a-c7e5b934e408 # azure.dev.envs-terra.bio
+      # The path on disk that Sherlock should expect to find a token for federated workload identity
+      # to use against the home tenant.
+      homeTokenFilePath: /azure-federation/projected-ksa-token.jwt
+      # The suffix of email addresses in the home tenant to invite to the invite tenant.
+      homeTenantEmailSuffix: "@test.firecloud.org"
+      # Suffixes of Sherlock users' emails that should be swapped out with the homeTenantEmailSuffix to match
+      # Sherlock users to Azure Entra ID user emails.
+      userEmailSuffixesToReplace:
+        - "@broadinstitute.org"
+      # The client ID of the Azure AD app to use for authentication against the tenant to invite to.
+      inviteClientID:
+      # The UUID of the Azure AD tenant to invite home tenant users to.
+      inviteTenantID: fd0bc0ef-1747-4ee6-ab3e-d4d6bb882d40 # terradevb2c.onmicrosoft.com
+      # The path on disk that Sherlock should expect to find a token for federated workload identity
+      # to use against the tenant to invite to.
+      inviteTokenFilePath: /azure-federation/projected-ksa-token.jwt
+      # The name of the tenant we're inviting users to, used in the invite emails themselves.
+      inviteTenantName: terradevb2c
+    # prodAzureB2CAccount correlates to models.Role.GrantsProdAzureAccount. It invites the account
+    # provisioned by prodAzureAccount.
+    prodAzureInvitedB2CAccount:
+      enable: false
+      dryRun: false
+      # The client ID of the Azure AD app to use for authentication against the home tenant.
+      homeClientID:
+      # The UUID of the home Azure AD tenant to work with.
+      homeTenantID: 66bb90ac-8857-4a8a-aa0a-be2186dfa5f9 # firecloud.org
+      # The path on disk that Sherlock should expect to find a token for federated workload identity
+      # to use against the home tenant.
+      homeTokenFilePath: /azure-federation/projected-ksa-token.jwt
+      # The suffix of email addresses in the home tenant to invite to the invite tenant.
+      homeTenantEmailSuffix: "@firecloud.org"
+      # Suffixes of Sherlock users' emails that should be swapped out with the homeTenantEmailSuffix to match
+      # Sherlock users to Azure Entra ID user emails.
+      userEmailSuffixesToReplace:
+        - "@broadinstitute.org"
+      # The client ID of the Azure AD app to use for authentication against the tenant to invite to.
+      inviteClientID:
+      # The UUID of the Azure AD tenant to invite home tenant users to.
+      inviteTenantID: 35ea5de9-1786-4bbb-89cf-25b88261643d # terraprodb2c.onmicrosoft.com
+      # The path on disk that Sherlock should expect to find a token for federated workload identity
+      # to use against the tenant to invite to.
+      inviteTokenFilePath: /azure-federation/projected-ksa-token.jwt
+      # The name of the tenant we're inviting users to, used in the invite emails themselves.
+      inviteTenantName: terraprodb2c
+
     devFirecloudGroup:
       enable: false
       dryRun: false
@@ -448,6 +536,47 @@ rolePropagation:
       clientID:
       # The UUID of the Azure AD tenant to work with.
       tenantID: 66bb90ac-8857-4a8a-aa0a-be2186dfa5f9 # firecloud.org
+      # The path on disk that Sherlock should expect to find a token for federated workload identity.
+      tokenFilePath: /azure-federation/projected-ksa-token.jwt
+      # The suffix of all member emails. This can be thought of as a filter for what Azure users Sherlock
+      # will attempt to propagate roles to. This may contain a "@" (especially useful for "#EXT#@" emails);
+      # if it does, then the userEmailSuffixesToReplace must as well.
+      memberEmailSuffix: "@firecloud.org"
+      # Suffixes of Sherlock users' emails that should be swapped out with the memberEmailSuffix to match
+      # Sherlock users to Azure Entra ID users.
+      userEmailSuffixesToReplace:
+        - "@broadinstitute.org"
+
+    # devAzureB2CReader correlates to models.Role.GrantsDevAzureDirectoryRoles. It's the only role we grant currently.
+    # Additional roles can be granted by correlating additional propagators with different instantiations and
+    # configurations to the same boolean field.
+    devAzureB2CReader:
+      enable: false
+      dryRun: false
+      # The client ID of the Azure AD app to use for authentication.
+      clientID:
+      # The UUID of the Azure AD tenant to work with.
+      tenantID: fd0bc0ef-1747-4ee6-ab3e-d4d6bb882d40 # terradevb2c.onmicrosoft.com
+      # The path on disk that Sherlock should expect to find a token for federated workload identity.
+      tokenFilePath: /azure-federation/projected-ksa-token.jwt
+      # The suffix of all member emails. This can be thought of as a filter for what Azure users Sherlock
+      # will attempt to propagate roles to. This may contain a "@" (especially useful for "#EXT#@" emails);
+      # if it does, then the userEmailSuffixesToReplace must as well.
+      memberEmailSuffix: "@test.firecloud.org"
+      # Suffixes of Sherlock users' emails that should be swapped out with the memberEmailSuffix to match
+      # Sherlock users to Azure Entra ID users.
+      userEmailSuffixesToReplace:
+        - "@broadinstitute.org"
+    # prodAzureB2CReader correlates to models.Role.GrantsDevAzureDirectoryRoles. It's the only role we grant currently.
+    # Additional roles can be granted by correlating additional propagators with different instantiations and
+    # configurations to the same boolean field.
+    prodAzureB2CReader:
+      enable: false
+      dryRun: false
+      # The client ID of the Azure AD app to use for authentication.
+      clientID:
+      # The UUID of the Azure AD tenant to work with.
+      tenantID: 35ea5de9-1786-4bbb-89cf-25b88261643d # terraprodb2c.onmicrosoft.com
       # The path on disk that Sherlock should expect to find a token for federated workload identity.
       tokenFilePath: /azure-federation/projected-ksa-token.jwt
       # The suffix of all member emails. This can be thought of as a filter for what Azure users Sherlock
