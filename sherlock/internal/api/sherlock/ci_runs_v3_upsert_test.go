@@ -634,11 +634,13 @@ func (s *handlerSuite) TestCiRunsV3Upsert_retryChannelInheritance() {
 				NotifySlackChannelsUponSuccess: []string{"#my-success-channel"},
 				NotifySlackChannelsUponFailure: []string{"#my-failure-channel"},
 				NotifySlackChannelsUponRetry:   []string{},
+				NotifySlackCustomIcon:          utils.PointerTo("url-of-first-icon"),
 			},
 		}),
 		&got)
 	s.Equal(http.StatusCreated, code)
 	s.Nil(got.NotifySlackChannelsUponRetry)
+	s.Equal("url-of-first-icon", *got.NotifySlackCustomIcon)
 
 	// Suppose a second attempt starts, has a retry channel
 	// No retry channels on the first yet, so we don't get any inherited
@@ -656,11 +658,13 @@ func (s *handlerSuite) TestCiRunsV3Upsert_retryChannelInheritance() {
 				NotifySlackChannelsUponSuccess: []string{"#my-success-channel"},
 				NotifySlackChannelsUponFailure: []string{"#my-failure-channel"},
 				NotifySlackChannelsUponRetry:   []string{"#my-second-attempt-retry-channel"},
+				NotifySlackCustomIcon:          utils.PointerTo("url-of-second-icon"),
 			},
 		}),
 		&got)
 	s.Equal(http.StatusCreated, code)
 	s.Equal([]string{"#my-second-attempt-retry-channel"}, got.NotifySlackChannelsUponRetry)
+	s.Equal("url-of-second-icon", *got.NotifySlackCustomIcon)
 
 	// Suppose the first workflow progresses more and now does add a retry channel
 	code = s.HandleRequest(
@@ -686,15 +690,17 @@ func (s *handlerSuite) TestCiRunsV3Upsert_retryChannelInheritance() {
 	// Now suppose we have a third workflow, marked as completed as soon as we hear about it. It should
 	// send Slack messages to the retry channels from the first and second attempts in addition to its
 	// own.
+	// Each of these should have a MsgOption for the blocks and one for the custom icon that we read from
+	// the previous runs.
 	slack.UseMockedClient(s.T(), func(c *slack_mocks.MockMockableClient) {
 		c.EXPECT().
-			SendMessageContext(mock.Anything, "#my-first-attempt-retry-channel", mock.AnythingOfType("slack.MsgOption")).
+			SendMessageContext(mock.Anything, "#my-first-attempt-retry-channel", mock.AnythingOfType("slack.MsgOption"), mock.AnythingOfType("slack.MsgOption")).
 			Return("", "", "", nil)
 		c.EXPECT().
-			SendMessageContext(mock.Anything, "#my-second-attempt-retry-channel", mock.AnythingOfType("slack.MsgOption")).
+			SendMessageContext(mock.Anything, "#my-second-attempt-retry-channel", mock.AnythingOfType("slack.MsgOption"), mock.AnythingOfType("slack.MsgOption")).
 			Return("", "", "", nil)
 		c.EXPECT().
-			SendMessageContext(mock.Anything, "#my-third-attempt-retry-channel", mock.AnythingOfType("slack.MsgOption")).
+			SendMessageContext(mock.Anything, "#my-third-attempt-retry-channel", mock.AnythingOfType("slack.MsgOption"), mock.AnythingOfType("slack.MsgOption")).
 			Return("", "", "", nil)
 	}, func() {
 		code = s.HandleRequest(
@@ -716,6 +722,7 @@ func (s *handlerSuite) TestCiRunsV3Upsert_retryChannelInheritance() {
 		s.Equal(http.StatusCreated, code)
 		slices.Sort(got.NotifySlackChannelsUponRetry)
 		s.Equal([]string{"#my-first-attempt-retry-channel", "#my-second-attempt-retry-channel", "#my-third-attempt-retry-channel"}, got.NotifySlackChannelsUponRetry)
+		s.Equal("url-of-second-icon", *got.NotifySlackCustomIcon)
 	})
 }
 
