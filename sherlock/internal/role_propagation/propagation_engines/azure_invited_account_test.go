@@ -184,6 +184,21 @@ func TestAzureInvitedAccountEngine_GenerateDesiredState_emailShortCircuit(t *tes
 	assert.Empty(t, desiredState)
 }
 
+func TestAzureInvitedAccountEngine_inviteMessageBody(t *testing.T) {
+	identifier := AzureInvitedAccountIdentifier{
+		Email: "example@example.com",
+	}
+	engine := &AzureInvitedAccountEngine{
+		inviteTenantName: "some-name",
+	}
+	body, identifyingString, err := engine.inviteMessageBody(identifier)
+	assert.NoError(t, err)
+	assert.Contains(t, body, engine.inviteTenantName)
+	assert.Contains(t, body, identifyingString)
+	assert.Contains(t, body, identifier.Email)
+	assert.Len(t, identifyingString, 16)
+}
+
 func TestAzureInvitedAccountEngine_Remove_errors(t *testing.T) {
 	engine := &AzureInvitedAccountEngine{}
 	_, err := engine.Remove(context.Background(), true, AzureInvitedAccountIdentifier{})
