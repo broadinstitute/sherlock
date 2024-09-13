@@ -193,6 +193,6 @@ func (g *GoogleCloudFolderRoleEngine) Remove(ctx context.Context, grant string, 
 	if err != nil {
 		return "", fmt.Errorf("failed to revoke %s's %s on %s: %w", identifier.Email, GoogleCloudOwnerRole, grant, err)
 	} else {
-		return fmt.Sprintf("revoke %s's %s on %s", identifier.Email, GoogleCloudOwnerRole, grant), nil
+		return fmt.Sprintf("revoked %s's %s on %s", identifier.Email, GoogleCloudOwnerRole, grant), nil
 	}
 }
