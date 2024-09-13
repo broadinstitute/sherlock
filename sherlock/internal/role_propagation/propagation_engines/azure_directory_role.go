@@ -9,12 +9,13 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/role_propagation/intermediary_user"
 	"github.com/knadh/koanf"
 	msgraphsdk "github.com/microsoftgraph/msgraph-sdk-go"
+	"github.com/microsoftgraph/msgraph-sdk-go/directoryroleswithroletemplateid"
 	graphmodels "github.com/microsoftgraph/msgraph-sdk-go/models"
 	"github.com/microsoftgraph/msgraph-sdk-go/users"
 	"strings"
 )
 
-const AzureGlobalReaderRole = "f2ef992c-3afb-46b9-b7cf-a126ee74c451"
+const AzureGlobalReaderRoleTemplateID = "f2ef992c-3afb-46b9-b7cf-a126ee74c451"
 
 type AzureDirectoryRoleIdentifier struct {
 	// ID is technically a UUID, but this is an intermediary type so we'd just be more brittle if we enforced that.
@@ -56,22 +57,23 @@ var _ PropagationEngine[bool, AzureDirectoryRoleIdentifier, AzureDirectoryRoleFi
 //
 // See below for why Role isn't configurable either.
 type AzureDirectoryRoleEngine struct {
-	// Role is defined in Sherlock's source code where this engine is instantiated, not in configuration.
-	// This is because it helps avoid a foot-gun with accidentally misconfiguring the engine. When this
-	// engine is pointed at a directory, it wants to "own" all members of the given role. It will remove
-	// members that don't correlate to Sherlock role assignments. If we allowed easy configuration of the
-	// role, it would be easy to accidentally cause problems by pointing this engine at a role that some
+	// RoleTemplateID is defined in Sherlock's source code where this engine is instantiated, not in
+	// configuration. This is because it helps avoid a foot-gun with accidentally misconfiguring the engine.
+	// When this engine is pointed at a directory, it wants to "own" all members of the given role. It will
+	// remove members that don't correlate to Sherlock role assignments. If we allowed easy configuration of
+	// the role, it would be easy to accidentally cause problems by pointing this engine at a role that some
 	// other system also wanted to manage or relied on.
-	Role string
+	RoleTemplateID string
 
+	directoryRoleID            string
 	memberEmailSuffix          string
 	userEmailSuffixesToReplace []string
 	client                     *msgraphsdk.GraphServiceClient
 }
 
-func (a *AzureDirectoryRoleEngine) Init(_ context.Context, k *koanf.Koanf) error {
-	if a.Role == "" {
-		return fmt.Errorf("role must be set")
+func (a *AzureDirectoryRoleEngine) Init(ctx context.Context, k *koanf.Koanf) error {
+	if a.RoleTemplateID == "" {
+		return fmt.Errorf("role template ID must be set")
 	}
 
 	a.memberEmailSuffix = k.String("memberEmailSuffix")
@@ -87,13 +89,29 @@ func (a *AzureDirectoryRoleEngine) Init(_ context.Context, k *koanf.Koanf) error
 	}
 
 	a.client, err = msgraphsdk.NewGraphServiceClientWithCredentials(credentials, nil)
+	if err != nil {
+		return fmt.Errorf("failed to instantiate MS Graph client: %w", err)
+	}
+
+	matchingDirectoryRoles, err := a.client.DirectoryRolesWithRoleTemplateId(&a.RoleTemplateID).Get(ctx, &directoryroleswithroletemplateid.DirectoryRolesWithRoleTemplateIdRequestBuilderGetRequestConfiguration{
+		QueryParameters: &directoryroleswithroletemplateid.DirectoryRolesWithRoleTemplateIdRequestBuilderGetQueryParameters{
+			Select: []string{"id"},
+		},
+	})
+	if err != nil {
+		return fmt.Errorf("failed to fetch directory role ID for role template ID %s: %w", a.RoleTemplateID, err)
+	} else if id := matchingDirectoryRoles.GetId(); id == nil {
+		return fmt.Errorf("no directory role found for role template ID %s (but no error returned either -- ID was nil)", a.RoleTemplateID)
+	} else {
+		a.directoryRoleID = *id
+	}
 
 	return nil
 }
 
 func (a *AzureDirectoryRoleEngine) LoadCurrentState(ctx context.Context, _ bool) ([]intermediary_user.IntermediaryUser[AzureDirectoryRoleIdentifier, AzureDirectoryRoleFields], error) {
 	currentState := make([]intermediary_user.IntermediaryUser[AzureDirectoryRoleIdentifier, AzureDirectoryRoleFields], 0)
-	roleMembersResponse, err := a.client.DirectoryRoles().ByDirectoryRoleId(a.Role).Members().Get(ctx, nil)
+	roleMembersResponse, err := a.client.DirectoryRoles().ByDirectoryRoleId(a.directoryRoleID).Members().Get(ctx, nil)
 	if err != nil {
 		return nil, err
 	} else {
@@ -149,11 +167,11 @@ func (a *AzureDirectoryRoleEngine) GenerateDesiredState(ctx context.Context, rol
 func (a *AzureDirectoryRoleEngine) Add(ctx context.Context, _ bool, identifier AzureDirectoryRoleIdentifier, _ AzureDirectoryRoleFields) (string, error) {
 	body := graphmodels.NewReferenceCreate()
 	body.SetOdataId(utils.PointerTo(fmt.Sprintf("https://graph.microsoft.com/v1.0/directoryObjects/%s", identifier.ID)))
-	err := a.client.DirectoryRoles().ByDirectoryRoleId(a.Role).Members().Ref().Post(ctx, body, nil)
+	err := a.client.DirectoryRoles().ByDirectoryRoleId(a.directoryRoleID).Members().Ref().Post(ctx, body, nil)
 	if err != nil {
-		return "", fmt.Errorf("failed to add user %s to role %s: %w", identifier.ID, a.Role, err)
+		return "", fmt.Errorf("failed to add user %s to role %s: %w", identifier.ID, a.directoryRoleID, err)
 	} else {
-		return fmt.Sprintf("added user %s to role %s", identifier.ID, a.Role), nil
+		return fmt.Sprintf("added user %s to role %s", identifier.ID, a.directoryRoleID), nil
 	}
 }
 
@@ -162,10 +180,10 @@ func (a *AzureDirectoryRoleEngine) Update(_ context.Context, _ bool, _ AzureDire
 }
 
 func (a *AzureDirectoryRoleEngine) Remove(ctx context.Context, _ bool, identifier AzureDirectoryRoleIdentifier) (string, error) {
-	err := a.client.DirectoryRoles().ByDirectoryRoleId(a.Role).Members().ByDirectoryObjectId(identifier.ID).Ref().Delete(ctx, nil)
+	err := a.client.DirectoryRoles().ByDirectoryRoleId(a.directoryRoleID).Members().ByDirectoryObjectId(identifier.ID).Ref().Delete(ctx, nil)
 	if err != nil {
-		return "", fmt.Errorf("failed to remove user %s from role %s: %w", identifier.ID, a.Role, err)
+		return "", fmt.Errorf("failed to remove user %s from role %s: %w", identifier.ID, a.directoryRoleID, err)
 	} else {
-		return fmt.Sprintf("removed user %s from role %s", identifier.ID, a.Role), nil
+		return fmt.Sprintf("removed user %s from role %s", identifier.ID, a.directoryRoleID), nil
 	}
 }
