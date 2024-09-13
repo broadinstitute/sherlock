@@ -538,7 +538,7 @@ func TestCiRun_IsDeploy(t *testing.T) {
 	}
 }
 
-func (s *modelSuite) TestCiRun_SlackCompletionTextt() {
+func (s *modelSuite) TestCiRun_SlackCompletionText() {
 	environment := s.TestData.Environment_Dev()
 	chartRelease := s.TestData.ChartRelease_LeonardoDev()
 
@@ -585,7 +585,7 @@ func (s *modelSuite) TestCiRun_SlackCompletionTextt() {
 					{ResourceType: "environment", ResourceID: environment.ID},
 				},
 			},
-			want: "repo's workflow workflow against <https://beehive.dsp-devops-prod.broadinstitute.org/r/chart-release/leonardo-dev|leonardo-dev>: <https://github.com/owner/repo/actions/runs/1/attempts/3|success>",
+			want: "repo's workflow workflow against <https://beehive.dsp-devops-prod.broadinstitute.org/r/chart-release/leonardo-dev|leonardo-dev> (attempt 3): <https://github.com/owner/repo/actions/runs/1/attempts/3|success>",
 		},
 		{
 			name: "environment",
@@ -594,7 +594,7 @@ func (s *modelSuite) TestCiRun_SlackCompletionTextt() {
 				GithubActionsOwner:         "owner",
 				GithubActionsRepo:          "repo",
 				GithubActionsRunID:         1,
-				GithubActionsAttemptNumber: 3,
+				GithubActionsAttemptNumber: 1,
 				GithubActionsWorkflowPath:  "workflow",
 				StartedAt:                  utils.PointerTo(time.Now().Add(-time.Minute)),
 				TerminalAt:                 utils.PointerTo(time.Now()),
@@ -603,7 +603,7 @@ func (s *modelSuite) TestCiRun_SlackCompletionTextt() {
 					{ResourceType: "environment", ResourceID: environment.ID},
 				},
 			},
-			want: "repo's workflow workflow against <https://beehive.dsp-devops-prod.broadinstitute.org/r/environment/dev|dev>: <https://github.com/owner/repo/actions/runs/1/attempts/3|success>",
+			want: "repo's workflow workflow against <https://beehive.dsp-devops-prod.broadinstitute.org/r/environment/dev|dev>: <https://github.com/owner/repo/actions/runs/1/attempts/1|success>",
 		},
 		{
 			name: "with jobs",
@@ -652,7 +652,7 @@ func (s *modelSuite) TestCiRun_SlackCompletionTextt() {
 					Response: &http.Response{StatusCode: http.StatusOK},
 				}, nil).Once()
 			},
-			want: "repo's workflow workflow against <https://beehive.dsp-devops-prod.broadinstitute.org/r/environment/dev|dev>: <https://github.com/owner/repo/actions/runs/1/attempts/3|success> (job3: <https://github.com/owner/repo/actions/runs/1/job/3|failure>)",
+			want: "repo's workflow workflow against <https://beehive.dsp-devops-prod.broadinstitute.org/r/environment/dev|dev> (attempt 3): <https://github.com/owner/repo/actions/runs/1/attempts/3|success> (job3: <https://github.com/owner/repo/actions/runs/1/job/3|failure>)",
 		},
 	}
 	for _, tt := range tests {

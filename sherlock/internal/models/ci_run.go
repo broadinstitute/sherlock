@@ -151,6 +151,10 @@ func (c *CiRun) SlackCompletionText(db *gorm.DB) (string, []error) {
 	if len(relatedResourceSummaryParts) > 0 {
 		against = fmt.Sprintf(" against %s", strings.Join(relatedResourceSummaryParts, ", "))
 	}
+	var attempt string
+	if c.GithubActionsAttemptNumber > 1 {
+		attempt = fmt.Sprintf(" (attempt %d)", c.GithubActionsAttemptNumber)
+	}
 	status := "unknown"
 	if c.Status != nil {
 		status = *c.Status
@@ -171,7 +175,7 @@ func (c *CiRun) SlackCompletionText(db *gorm.DB) (string, []error) {
 			status = fmt.Sprintf("%s (%s)", status, strings.Join(jobStatuses, ", "))
 		}
 	}
-	return fmt.Sprintf("%s%s: %s", c.Nickname(), against, status), errs
+	return fmt.Sprintf("%s%s%s: %s", c.Nickname(), against, attempt, status), errs
 }
 
 func (c *CiRun) WebURL() string {
