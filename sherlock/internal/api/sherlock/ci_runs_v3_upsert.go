@@ -122,6 +122,9 @@ func ciRunsV3Upsert(ctx *gin.Context) {
 			Where("github_actions_attempt_number < ? AND notify_slack_channels_upon_retry IS NOT NULL", body.GithubActionsAttemptNumber).
 			// Limit to the number of previous attempts there could've been, might as well get the speed boost
 			Limit(max(1, int(body.GithubActionsAttemptNumber)-1)).
+			// Order by the attempt number ascending so we iterate over more recent runs first
+			// (This matters for custom icon, where the first previous one we find takes precedence)
+			Order("github_actions_attempt_number DESC").
 			Find(&previousRuns).Error; recoverableErr != nil {
 
 			// If there was an error, just Slack it, no need to blow up
@@ -133,6 +136,11 @@ func ciRunsV3Upsert(ctx *gin.Context) {
 			// We dedupe later (for all fields of the body) so we don't worry about that here.
 			for _, previousRun := range previousRuns {
 				body.NotifySlackChannelsUponRetry = append(body.NotifySlackChannelsUponRetry, previousRun.NotifySlackChannelsUponRetry...)
+
+				// If a previous run had a custom icon and we don't have one so far, use the previous run's icon
+				if body.NotifySlackCustomIcon == nil && previousRun.NotifySlackCustomIcon != nil && *previousRun.NotifySlackCustomIcon != "" {
+					body.NotifySlackCustomIcon = previousRun.NotifySlackCustomIcon
+				}
 			}
 
 		}
