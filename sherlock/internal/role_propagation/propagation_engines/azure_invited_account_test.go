@@ -11,7 +11,7 @@ import (
 
 func TestAzureInvitedAccountIdentifier_EqualTo(t *testing.T) {
 	type fields struct {
-		Email string
+		UserPrincipalName string
 	}
 	type args struct {
 		other intermediary_user.Identifier
@@ -25,11 +25,11 @@ func TestAzureInvitedAccountIdentifier_EqualTo(t *testing.T) {
 		{
 			name: "equal",
 			fields: fields{
-				Email: "foo",
+				UserPrincipalName: "foo",
 			},
 			args: args{
 				other: AzureInvitedAccountIdentifier{
-					Email: "foo",
+					UserPrincipalName: "foo",
 				},
 			},
 			want: true,
@@ -37,11 +37,11 @@ func TestAzureInvitedAccountIdentifier_EqualTo(t *testing.T) {
 		{
 			name: "not equal",
 			fields: fields{
-				Email: "foo",
+				UserPrincipalName: "foo",
 			},
 			args: args{
 				other: AzureInvitedAccountIdentifier{
-					Email: "bar",
+					UserPrincipalName: "bar",
 				},
 			},
 			want: false,
@@ -49,7 +49,7 @@ func TestAzureInvitedAccountIdentifier_EqualTo(t *testing.T) {
 		{
 			name: "different type",
 			fields: fields{
-				Email: "foo",
+				UserPrincipalName: "foo",
 			},
 			args: args{
 				other: GoogleWorkspaceGroupIdentifier{
@@ -62,7 +62,7 @@ func TestAzureInvitedAccountIdentifier_EqualTo(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			a := AzureInvitedAccountIdentifier{
-				Email: tt.fields.Email,
+				UserPrincipalName: tt.fields.UserPrincipalName,
 			}
 			assert.Equalf(t, tt.want, a.EqualTo(tt.args.other), "EqualTo(%v)", tt.args.other)
 		})
@@ -71,7 +71,10 @@ func TestAzureInvitedAccountIdentifier_EqualTo(t *testing.T) {
 
 func TestAzureInvitedAccountFields_EqualTo(t *testing.T) {
 	type fields struct {
-		Name string
+		Email        string
+		DisplayName  string
+		MailNickname string
+		OtherMails   []string
 	}
 	type args struct {
 		other intermediary_user.Fields
@@ -85,34 +88,108 @@ func TestAzureInvitedAccountFields_EqualTo(t *testing.T) {
 		{
 			name: "equal",
 			fields: fields{
-				Name: "foo",
+				Email:        "foo",
+				DisplayName:  "bar",
+				MailNickname: "baz",
+				OtherMails:   []string{"qux"},
 			},
 			args: args{
 				other: AzureInvitedAccountFields{
-					Name: "foo",
+					Email:        "foo",
+					DisplayName:  "bar",
+					MailNickname: "baz",
+					OtherMails:   []string{"qux"},
 				},
 			},
 			want: true,
 		},
 		{
-			name: "not equal",
+			name: "smtp mail not equal",
 			fields: fields{
-				Name: "foo",
+				Email:        "foo",
+				DisplayName:  "bar",
+				MailNickname: "baz",
+				OtherMails:   []string{"qux"},
 			},
 			args: args{
 				other: AzureInvitedAccountFields{
-					Name: "bar",
+					Email:        "bar",
+					DisplayName:  "bar",
+					MailNickname: "baz",
+					OtherMails:   []string{"qux"},
 				},
 			},
 			want: false,
 		},
 		{
-			name: "different type",
+			name: "display name not equal",
 			fields: fields{
-				Name: "foo",
+				Email:        "foo",
+				DisplayName:  "bar",
+				MailNickname: "baz",
+				OtherMails:   []string{"qux"},
 			},
 			args: args{
-				other: GoogleWorkspaceGroupFields{},
+				other: AzureInvitedAccountFields{
+					Email:        "foo",
+					DisplayName:  "foo",
+					MailNickname: "baz",
+					OtherMails:   []string{"qux"},
+				},
+			},
+			want: false,
+		},
+		{
+			name: "mail nickname not equal",
+			fields: fields{
+				Email:        "foo",
+				DisplayName:  "bar",
+				MailNickname: "baz",
+				OtherMails:   []string{"qux"},
+			},
+			args: args{
+				other: AzureInvitedAccountFields{
+					Email:        "foo",
+					DisplayName:  "bar",
+					MailNickname: "foo",
+					OtherMails:   []string{"qux"},
+				},
+			},
+			want: false,
+		},
+		{
+			name: "other mails same length but not equal",
+			fields: fields{
+				Email:        "foo",
+				DisplayName:  "bar",
+				MailNickname: "baz",
+				OtherMails:   []string{"qux"},
+			},
+			args: args{
+				other: AzureInvitedAccountFields{
+					Email:        "foo",
+					DisplayName:  "bar",
+					MailNickname: "baz",
+					OtherMails:   []string{"foo"},
+				},
+			},
+			want: false,
+		},
+		{
+			name: "other mails not equal",
+			fields: fields{
+				Email:        "foo",
+				DisplayName:  "bar",
+				MailNickname: "baz",
+				OtherMails:   []string{"qux"},
+			},
+			args: args{
+				other: AzureInvitedAccountFields{
+					Email:        "foo",
+					DisplayName:  "bar",
+					MailNickname: "baz",
+					OtherMails:   []string{"qux", "foo"},
+				},
 			},
 			want: false,
 		},
@@ -120,7 +197,10 @@ func TestAzureInvitedAccountFields_EqualTo(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			a := AzureInvitedAccountFields{
-				Name: tt.fields.Name,
+				Email:        tt.fields.Email,
+				DisplayName:  tt.fields.DisplayName,
+				MailNickname: tt.fields.MailNickname,
+				OtherMails:   tt.fields.OtherMails,
 			}
 			assert.Equalf(t, tt.want, a.EqualTo(tt.args.other), "EqualTo(%v)", tt.args.other)
 		})
@@ -129,7 +209,10 @@ func TestAzureInvitedAccountFields_EqualTo(t *testing.T) {
 
 func TestAzureInvitedAccountFields_MayConsiderAsAlreadyRemoved(t *testing.T) {
 	type fields struct {
-		Name string
+		Email        string
+		DisplayName  string
+		MailNickname string
+		OtherMails   []string
 	}
 	tests := []struct {
 		name   string
@@ -137,16 +220,17 @@ func TestAzureInvitedAccountFields_MayConsiderAsAlreadyRemoved(t *testing.T) {
 		want   bool
 	}{
 		{
-			name: "empty name",
-			fields: fields{
-				Name: "",
-			},
-			want: true,
+			name:   "empty fields",
+			fields: fields{},
+			want:   true,
 		},
 		{
-			name: "not empty name",
+			name: "not empty fields",
 			fields: fields{
-				Name: "foo",
+				Email:        "foo",
+				DisplayName:  "bar",
+				MailNickname: "baz",
+				OtherMails:   []string{"qux"},
 			},
 			want: true,
 		},
@@ -154,7 +238,10 @@ func TestAzureInvitedAccountFields_MayConsiderAsAlreadyRemoved(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			a := AzureInvitedAccountFields{
-				Name: tt.fields.Name,
+				Email:        tt.fields.Email,
+				DisplayName:  tt.fields.DisplayName,
+				MailNickname: tt.fields.MailNickname,
+				OtherMails:   tt.fields.OtherMails,
 			}
 			assert.Equalf(t, tt.want, a.MayConsiderAsAlreadyRemoved(), "MayConsiderAsAlreadyRemoved()")
 		})
@@ -167,8 +254,8 @@ func TestAzureInvitedAccountFields_MayConsiderAsAlreadyRemoved(t *testing.T) {
 // See also utils.SubstituteSuffix
 func TestAzureInvitedAccountEngine_GenerateDesiredState_emailShortCircuit(t *testing.T) {
 	engine := &AzureInvitedAccountEngine{
-		homeTenantEmailSuffix:      "@example.com",
-		userEmailSuffixesToReplace: []string{"@example.org"},
+		homeTenantEmailDomain:     "example.com",
+		userEmailDomainsToReplace: []string{"example.org"},
 	}
 	desiredState, err := engine.GenerateDesiredState(context.Background(), map[uint]models.RoleAssignment{
 		1: {
@@ -186,16 +273,16 @@ func TestAzureInvitedAccountEngine_GenerateDesiredState_emailShortCircuit(t *tes
 
 func TestAzureInvitedAccountEngine_inviteMessageBody(t *testing.T) {
 	identifier := AzureInvitedAccountIdentifier{
-		Email: "example@example.com",
+		UserPrincipalName: "example@example.com",
 	}
 	engine := &AzureInvitedAccountEngine{
-		inviteTenantName: "some-name",
+		inviteTenantIdentityDomain: "some-domain.com",
 	}
 	body, identifyingString, err := engine.inviteMessageBody(identifier)
 	assert.NoError(t, err)
-	assert.Contains(t, body, engine.inviteTenantName)
+	assert.Contains(t, body, engine.inviteTenantIdentityDomain)
 	assert.Contains(t, body, identifyingString)
-	assert.Contains(t, body, identifier.Email)
+	assert.Contains(t, body, identifier.UserPrincipalName)
 	assert.Len(t, identifyingString, 16)
 }
 
@@ -203,4 +290,100 @@ func TestAzureInvitedAccountEngine_Remove_errors(t *testing.T) {
 	engine := &AzureInvitedAccountEngine{}
 	_, err := engine.Remove(context.Background(), true, AzureInvitedAccountIdentifier{})
 	assert.Error(t, err)
+}
+
+func TestAzureInvitedAccountEngine_describeDiff(t *testing.T) {
+	engine := &AzureInvitedAccountEngine{}
+	tests := []struct {
+		name      string
+		oldFields AzureInvitedAccountFields
+		newFields AzureInvitedAccountFields
+		want      string
+	}{
+		{
+			name: "no changes",
+			oldFields: AzureInvitedAccountFields{
+				Email:        "foo",
+				DisplayName:  "bar",
+				MailNickname: "baz",
+				OtherMails:   []string{"qux"},
+			},
+			newFields: AzureInvitedAccountFields{
+				Email:        "foo",
+				DisplayName:  "bar",
+				MailNickname: "baz",
+				OtherMails:   []string{"qux"},
+			},
+			want: "no changes",
+		},
+		{
+			name: "smtp mail",
+			oldFields: AzureInvitedAccountFields{
+				Email:        "foo",
+				DisplayName:  "bar",
+				MailNickname: "baz",
+				OtherMails:   []string{"qux"},
+			},
+			newFields: AzureInvitedAccountFields{
+				Email:        "bar",
+				DisplayName:  "bar",
+				MailNickname: "baz",
+				OtherMails:   []string{"qux"},
+			},
+			want: "update account email info",
+		},
+		{
+			name: "mail nickname",
+			oldFields: AzureInvitedAccountFields{
+				Email:        "foo",
+				DisplayName:  "bar",
+				MailNickname: "foo",
+				OtherMails:   []string{"qux"},
+			},
+			newFields: AzureInvitedAccountFields{
+				Email:        "foo",
+				DisplayName:  "bar",
+				MailNickname: "bar",
+				OtherMails:   []string{"qux"},
+			},
+			want: "update account email info",
+		},
+		{
+			name: "other mails",
+			oldFields: AzureInvitedAccountFields{
+				Email:        "foo",
+				DisplayName:  "bar",
+				MailNickname: "baz",
+				OtherMails:   []string{"foo"},
+			},
+			newFields: AzureInvitedAccountFields{
+				Email:        "foo",
+				DisplayName:  "bar",
+				MailNickname: "baz",
+				OtherMails:   []string{"bar"},
+			},
+			want: "update account email info",
+		},
+		{
+			name: "name change",
+			oldFields: AzureInvitedAccountFields{
+				Email:        "foo",
+				DisplayName:  "foo",
+				MailNickname: "baz",
+				OtherMails:   []string{"qux"},
+			},
+			newFields: AzureInvitedAccountFields{
+				Email:        "foo",
+				DisplayName:  "bar",
+				MailNickname: "baz",
+				OtherMails:   []string{"qux"},
+			},
+			want: "update display name from `foo` to `bar`",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equalf(t, tt.want, engine.describeDiff(tt.oldFields, tt.newFields), "describeDiff(%v, %v)", tt.oldFields, tt.newFields)
+		})
+	}
 }

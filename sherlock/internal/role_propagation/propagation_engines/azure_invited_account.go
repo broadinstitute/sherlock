@@ -13,30 +13,51 @@ import (
 	msgraphsdk "github.com/microsoftgraph/msgraph-sdk-go"
 	graphmodels "github.com/microsoftgraph/msgraph-sdk-go/models"
 	"github.com/microsoftgraph/msgraph-sdk-go/users"
+	"reflect"
 	"strings"
 )
 
 type AzureInvitedAccountIdentifier struct {
-	Email string `koanf:"email"`
+	UserPrincipalName string `koanf:"userPrincipalName"`
 }
 
 func (a AzureInvitedAccountIdentifier) EqualTo(other intermediary_user.Identifier) bool {
 	switch other := other.(type) {
 	case AzureInvitedAccountIdentifier:
-		return a.Email == other.Email
+		return a.UserPrincipalName == other.UserPrincipalName
 	default:
 		return false
 	}
 }
 
+// AzureInvitedAccountFields has a lot that we don't actually directly specify when inviting
+// a user. That's okay, because after we invite the user we update the account fields like
+// AzureAccountFields / AzureAccountEngine -- in other words, these fields are here to keep
+// the account updated after creation.
 type AzureInvitedAccountFields struct {
-	Name string
+	// Email controls the "mail" field of the user, which can technically be different from
+	// the "userPrincipalName". For this account type, the userPrincipalName is the email and
+	// should be the same as this field. We still have this as a field here so that Sherlock
+	// will correct it should it get out of sync somehow (it is mutable in the UI).
+	Email string
+	// DisplayName is the human-readable name of the user
+	DisplayName string
+	// MailNickname is the prefix of the UPN before the @ symbol. It's here so Sherlock
+	// can correct it if it gets mutated (and because we do have to set it during creation)
+	MailNickname string
+	// OtherMails is a list of other email addresses associated with the user. Critically,
+	// this list must include the user's Broad email address, as this is how invites end up
+	// reaching people.
+	OtherMails []string
 }
 
 func (a AzureInvitedAccountFields) EqualTo(other intermediary_user.Fields) bool {
 	switch other := other.(type) {
 	case AzureInvitedAccountFields:
-		return a.Name == other.Name
+		return a.Email == other.Email &&
+			a.DisplayName == other.DisplayName &&
+			a.MailNickname == other.MailNickname &&
+			reflect.DeepEqual(a.OtherMails, other.OtherMails)
 	default:
 		return false
 	}
@@ -53,18 +74,18 @@ func (a AzureInvitedAccountFields) MayConsiderAsAlreadyRemoved() bool {
 var _ PropagationEngine[bool, AzureInvitedAccountIdentifier, AzureInvitedAccountFields] = &AzureInvitedAccountEngine{}
 
 type AzureInvitedAccountEngine struct {
-	homeTenantEmailSuffix      string
-	userEmailSuffixesToReplace []string
-	inviteTenantName           string
+	homeTenantEmailDomain      string
+	inviteTenantIdentityDomain string
+	userEmailDomainsToReplace  []string
 
 	homeTenantClient   *msgraphsdk.GraphServiceClient
 	inviteTenantClient *msgraphsdk.GraphServiceClient
 }
 
 func (a *AzureInvitedAccountEngine) Init(_ context.Context, k *koanf.Koanf) error {
-	a.homeTenantEmailSuffix = k.String("homeTenantEmailSuffix")
-	a.userEmailSuffixesToReplace = k.Strings("userEmailSuffixesToReplace")
-	a.inviteTenantName = k.String("inviteTenantName")
+	a.homeTenantEmailDomain = k.String("homeTenantEmailDomain")
+	a.inviteTenantIdentityDomain = k.String("inviteTenantIdentityDomain")
+	a.userEmailDomainsToReplace = k.Strings("userEmailDomainsToReplace")
 
 	homeCredentials, err := azidentity.NewWorkloadIdentityCredential(&azidentity.WorkloadIdentityCredentialOptions{
 		ClientID:      k.String("homeTenantClientID"),
@@ -98,8 +119,8 @@ func (a *AzureInvitedAccountEngine) LoadCurrentState(ctx context.Context, _ bool
 	currentState := make([]intermediary_user.IntermediaryUser[AzureInvitedAccountIdentifier, AzureInvitedAccountFields], 0)
 	usersResponse, err := a.inviteTenantClient.Users().Get(ctx, &users.UsersRequestBuilderGetRequestConfiguration{
 		QueryParameters: &users.UsersRequestBuilderGetQueryParameters{
-			Select: []string{"userPrincipalName", "displayName"},
-			Filter: utils.PointerTo(fmt.Sprintf("endsWith(userPrincipalName, '%s') and creationType eq 'Invitation'", a.homeTenantEmailSuffix)),
+			Select: []string{"userPrincipalName", "accountEnabled", "mail", "displayName", "mailNickname", "otherMails"},
+			Filter: utils.PointerTo(fmt.Sprintf("endsWith(userPrincipalName, '%s#EXT#@%s') and creationType eq 'Invitation'", a.homeTenantEmailDomain, a.inviteTenantIdentityDomain)),
 		},
 	})
 	if err != nil {
@@ -108,11 +129,20 @@ func (a *AzureInvitedAccountEngine) LoadCurrentState(ctx context.Context, _ bool
 		for _, directoryObject := range usersResponse.GetValue() {
 			if userPrincipalName := directoryObject.GetUserPrincipalName(); userPrincipalName != nil {
 				var fields AzureInvitedAccountFields
-				if name := directoryObject.GetDisplayName(); name != nil {
-					fields.Name = *name
+				if mail := directoryObject.GetMail(); mail != nil {
+					fields.Email = *mail
+				}
+				if displayName := directoryObject.GetDisplayName(); displayName != nil {
+					fields.DisplayName = *displayName
+				}
+				if mailNickname := directoryObject.GetMailNickname(); mailNickname != nil {
+					fields.MailNickname = *mailNickname
+				}
+				if otherMails := directoryObject.GetOtherMails(); otherMails != nil {
+					fields.OtherMails = otherMails
 				}
 				currentState = append(currentState, intermediary_user.IntermediaryUser[AzureInvitedAccountIdentifier, AzureInvitedAccountFields]{
-					Identifier: AzureInvitedAccountIdentifier{Email: *userPrincipalName},
+					Identifier: AzureInvitedAccountIdentifier{UserPrincipalName: *userPrincipalName},
 					Fields:     fields,
 				})
 			}
@@ -130,8 +160,8 @@ func (a *AzureInvitedAccountEngine) GenerateDesiredState(ctx context.Context, ro
 		// ability to log in here too.
 		// We choose to still propagate the user here because we want to keep the user's name up to date in the invite tenant.
 
-		email := utils.SubstituteSuffix(roleAssignment.User.Email, a.userEmailSuffixesToReplace, a.homeTenantEmailSuffix)
-		if !strings.HasSuffix(email, a.homeTenantEmailSuffix) {
+		email := utils.SubstituteSuffix(roleAssignment.User.Email, a.userEmailDomainsToReplace, a.homeTenantEmailDomain)
+		if !strings.HasSuffix(email, a.homeTenantEmailDomain) {
 			// We can short-circuit here, we know that the user doesn't have an email suffix we'd expect in the home tenant
 			// so we won't bother looking
 			continue
@@ -149,9 +179,20 @@ func (a *AzureInvitedAccountEngine) GenerateDesiredState(ctx context.Context, ro
 		} else {
 			for _, user := range usersResponse.GetValue() {
 				if userPrincipalName := user.GetUserPrincipalName(); userPrincipalName != nil {
+					// The user principal name here is the UPN *from the home tenant*. For how we've got these
+					// tenants set up, it's the user's home email address. We'll need to format out our actual
+					// UPN as it'll look in the invite tenant.
+					upn := fmt.Sprintf("%s#EXT#@%s", strings.ReplaceAll(*userPrincipalName, "@", "_"), a.inviteTenantIdentityDomain)
 					desiredState[sherlockUserID] = intermediary_user.IntermediaryUser[AzureInvitedAccountIdentifier, AzureInvitedAccountFields]{
-						Identifier: AzureInvitedAccountIdentifier{Email: *userPrincipalName},
-						Fields:     AzureInvitedAccountFields{Name: roleAssignment.User.NameOrUsername()},
+						Identifier: AzureInvitedAccountIdentifier{
+							UserPrincipalName: upn,
+						},
+						Fields: AzureInvitedAccountFields{
+							Email:        email,
+							DisplayName:  roleAssignment.User.NameOrUsername(),
+							MailNickname: strings.Split(upn, "@")[0],
+							OtherMails:   []string{roleAssignment.User.Email},
+						},
 					}
 				}
 			}
@@ -167,19 +208,19 @@ func (a *AzureInvitedAccountEngine) Add(ctx context.Context, _ bool, identifier 
 	}
 
 	body := graphmodels.NewInvitation()
-	body.SetInvitedUserEmailAddress(utils.PointerTo(identifier.Email))
+	body.SetInvitedUserEmailAddress(utils.PointerTo(fields.Email))
 	body.SetInviteRedirectUrl(utils.PointerTo("https://portal.azure.com"))
 	body.SetInvitedUserType(utils.PointerTo("member"))
-	body.SetInvitedUserDisplayName(utils.PointerTo(fields.Name))
+	body.SetInvitedUserDisplayName(utils.PointerTo(fields.DisplayName))
 	body.SetSendInvitationMessage(utils.PointerTo(true))
 	invitedUserMessageInfo := graphmodels.NewInvitedUserMessageInfo()
 	invitedUserMessageInfo.SetCustomizedMessageBody(utils.PointerTo(inviteMessageBody))
 	body.SetInvitedUserMessageInfo(invitedUserMessageInfo)
 	_, err = a.inviteTenantClient.Invitations().Post(ctx, body, nil)
 	if err != nil {
-		return "", fmt.Errorf("failed to invite %s: %w", identifier.Email, err)
+		return "", fmt.Errorf("failed to invite %s: %w", identifier.UserPrincipalName, err)
 	} else {
-		return fmt.Sprintf("invited %s (invite email sent with identifying string `%s`)", identifier.Email, identifyingString), nil
+		return fmt.Sprintf("invited %s (invite email sent with identifying string `%s`)", identifier.UserPrincipalName, identifyingString), nil
 	}
 }
 
@@ -187,12 +228,12 @@ func (a *AzureInvitedAccountEngine) inviteMessageBody(identifier AzureInvitedAcc
 	randomBytes := make([]byte, 8)
 	_, err = rand.Read(randomBytes)
 	if err != nil {
-		return "", "", fmt.Errorf("failed to generate random identifying string for inviting %s: %w", identifier.Email, err)
+		return "", "", fmt.Errorf("failed to generate random identifying string for inviting %s: %w", identifier.UserPrincipalName, err)
 	}
 	identifyingString = hex.EncodeToString(randomBytes)
 
 	inviteMessageBody = "This invitation has been generated by the DSP DevOps platform via Microsoft Graph API. " +
-		fmt.Sprintf("This invitation is meant to grant your %s Microsoft account access to %s. ", identifier.Email, a.inviteTenantName) +
+		fmt.Sprintf("This invitation is meant to grant your %s Microsoft account access to %s. ", identifier.UserPrincipalName, a.inviteTenantIdentityDomain) +
 		"You should reach out to DevOps to confirm the origin of this message before clicking the link. " +
 		fmt.Sprintf("They can match this message to a security event with this identifying string: %s. ", identifyingString)
 
@@ -200,17 +241,28 @@ func (a *AzureInvitedAccountEngine) inviteMessageBody(identifier AzureInvitedAcc
 }
 
 func (a *AzureInvitedAccountEngine) Update(ctx context.Context, _ bool, identifier AzureInvitedAccountIdentifier, oldFields AzureInvitedAccountFields, newFields AzureInvitedAccountFields) (string, error) {
-	// We can't update an invitation (an email has already been sent), but if the fields are different that means the name has changed...
-	// and we can update that on the user's identity on the "invite" tenant we're controlling here.
-	// Our identifier doesn't have the user ID -- it has the email instead -- but again, if the fields are different, that means the
-	// email actually matches a user principal name in the invite tenant, so we can use that directly.
+	// We can't update an invitation (an email has already been sent), but if the fields are different that means fields (and thus the user)
+	// already exist on the remote.
 	body := graphmodels.NewUser()
-	body.SetDisplayName(utils.PointerTo(newFields.Name))
-	_, err := a.inviteTenantClient.Users().ByUserId(identifier.Email).Patch(ctx, body, nil)
+	body.SetMail(utils.PointerTo(newFields.Email))
+	body.SetDisplayName(utils.PointerTo(newFields.DisplayName))
+	body.SetMailNickname(utils.PointerTo(newFields.MailNickname))
+	body.SetOtherMails(newFields.OtherMails)
+	_, err := a.inviteTenantClient.Users().ByUserId(identifier.UserPrincipalName).Patch(ctx, body, nil)
 	if err != nil {
-		return "", fmt.Errorf("failed to update user %s's display name from `%s` to `%s`: %w", identifier.Email, oldFields.Name, newFields.Name, err)
+		return "", fmt.Errorf("failed to update user %s (%s): %w", identifier.UserPrincipalName, a.describeDiff(oldFields, newFields), err)
 	} else {
-		return fmt.Sprintf("updated user %s's display name from `%s` to `%s`", identifier.Email, oldFields.Name, newFields.Name), nil
+		return fmt.Sprintf("updated user %s (%s)", identifier.UserPrincipalName, a.describeDiff(oldFields, newFields)), nil
+	}
+}
+
+func (a *AzureInvitedAccountEngine) describeDiff(oldFields AzureInvitedAccountFields, newFields AzureInvitedAccountFields) string {
+	if oldFields.Email != newFields.Email || oldFields.MailNickname != newFields.MailNickname || !reflect.DeepEqual(oldFields.OtherMails, newFields.OtherMails) {
+		return "update account email info" // This is really, *really* unlikely to happen but we'll at least handle it
+	} else if oldFields.DisplayName != newFields.DisplayName {
+		return fmt.Sprintf("update display name from `%s` to `%s`", oldFields.DisplayName, newFields.DisplayName)
+	} else {
+		return "no changes"
 	}
 }
 
