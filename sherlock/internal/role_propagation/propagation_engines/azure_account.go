@@ -18,13 +18,13 @@ import (
 )
 
 type AzureAccountIdentifier struct {
-	Email string `koanf:"email"`
+	UserPrincipalName string `koanf:"userPrincipalName"`
 }
 
 func (a AzureAccountIdentifier) EqualTo(other intermediary_user.Identifier) bool {
 	switch other := other.(type) {
 	case AzureAccountIdentifier:
-		return a.Email == other.Email
+		return a.UserPrincipalName == other.UserPrincipalName
 	default:
 		return false
 	}
@@ -34,14 +34,15 @@ type AzureAccountFields struct {
 	// AccountEnabled controls whether this account can be signed in to (to access any tenant,
 	// home or invited)
 	AccountEnabled bool
-	// SmtpMail controls the "mail" field of the user, which can technically be different from
+	// Email controls the "mail" field of the user, which can technically be different from
 	// the "userPrincipalName". For this account type, the userPrincipalName is the email and
 	// should be the same as this field. We still have this as a field here so that Sherlock
 	// will correct it should it get out of sync somehow (it is mutable in the UI).
-	SmtpMail string
+	Email string
 	// DisplayName is the human-readable name of the user
 	DisplayName string
-	// MailNickname is the email prefix of the user
+	// MailNickname is the prefix of the UPN before the @ symbol. It's here so Sherlock
+	// can correct it if it gets mutated (and because we do have to set it during creation)
 	MailNickname string
 	// OtherMails is a list of other email addresses associated with the user. Critically,
 	// this list must include the user's Broad email address, as this is how invites end up
@@ -53,7 +54,7 @@ func (a AzureAccountFields) EqualTo(other intermediary_user.Fields) bool {
 	switch other := other.(type) {
 	case AzureAccountFields:
 		return a.AccountEnabled == other.AccountEnabled &&
-			a.SmtpMail == other.SmtpMail &&
+			a.Email == other.Email &&
 			a.DisplayName == other.DisplayName &&
 			a.MailNickname == other.MailNickname &&
 			reflect.DeepEqual(a.OtherMails, other.OtherMails)
@@ -110,7 +111,7 @@ func (a *AzureAccountEngine) LoadCurrentState(ctx context.Context, _ bool) ([]in
 					fields.AccountEnabled = *accountEnabled
 				}
 				if mail := directoryObject.GetMail(); mail != nil {
-					fields.SmtpMail = *mail
+					fields.Email = *mail
 				}
 				if displayName := directoryObject.GetDisplayName(); displayName != nil {
 					fields.DisplayName = *displayName
@@ -122,7 +123,7 @@ func (a *AzureAccountEngine) LoadCurrentState(ctx context.Context, _ bool) ([]in
 					fields.OtherMails = otherMails
 				}
 				currentState = append(currentState, intermediary_user.IntermediaryUser[AzureAccountIdentifier, AzureAccountFields]{
-					Identifier: AzureAccountIdentifier{Email: *userPrincipalName},
+					Identifier: AzureAccountIdentifier{UserPrincipalName: *userPrincipalName},
 					Fields:     fields,
 				})
 			}
@@ -141,12 +142,12 @@ func (a *AzureAccountEngine) GenerateDesiredState(_ context.Context, roleAssignm
 			continue
 		}
 		desiredState[sherlockUserID] = intermediary_user.IntermediaryUser[AzureAccountIdentifier, AzureAccountFields]{
-			Identifier: AzureAccountIdentifier{Email: email},
+			Identifier: AzureAccountIdentifier{UserPrincipalName: email},
 			Fields: AzureAccountFields{
 				AccountEnabled: roleAssignment.IsActive(),
-				SmtpMail:       email,
+				Email:          email,
 				DisplayName:    roleAssignment.User.NameOrUsername(),
-				MailNickname:   roleAssignment.User.AlphaNumericHyphenatedUsername(),
+				MailNickname:   strings.Split(email, "@")[0],
 				OtherMails:     []string{roleAssignment.User.Email},
 			},
 		}
@@ -162,7 +163,8 @@ func (a *AzureAccountEngine) Add(ctx context.Context, _ bool, identifier AzureAc
 	}
 
 	body := graphmodels.NewUser()
-	body.SetMail(utils.PointerTo(fields.SmtpMail))
+	body.SetUserPrincipalName(utils.PointerTo(identifier.UserPrincipalName))
+	body.SetMail(utils.PointerTo(fields.Email))
 	body.SetDisplayName(utils.PointerTo(fields.DisplayName))
 	body.SetMailNickname(utils.PointerTo(fields.MailNickname))
 	body.SetAccountEnabled(utils.PointerTo(fields.AccountEnabled))
@@ -175,24 +177,24 @@ func (a *AzureAccountEngine) Add(ctx context.Context, _ bool, identifier AzureAc
 
 	_, err = a.client.Users().Post(ctx, body, nil)
 	if err != nil {
-		return "", fmt.Errorf("failed to create user %s: %w", identifier.Email, err)
+		return "", fmt.Errorf("failed to create user %s: %w", identifier.UserPrincipalName, err)
 	} else {
-		return fmt.Sprintf("created user %s", identifier.Email), nil
+		return fmt.Sprintf("created user %s", identifier.UserPrincipalName), nil
 	}
 }
 
 func (a *AzureAccountEngine) Update(ctx context.Context, _ bool, identifier AzureAccountIdentifier, oldFields AzureAccountFields, newFields AzureAccountFields) (string, error) {
 	body := graphmodels.NewUser()
-	body.SetMail(utils.PointerTo(newFields.SmtpMail))
+	body.SetMail(utils.PointerTo(newFields.Email))
 	body.SetDisplayName(utils.PointerTo(newFields.DisplayName))
 	body.SetMailNickname(utils.PointerTo(newFields.MailNickname))
 	body.SetAccountEnabled(utils.PointerTo(newFields.AccountEnabled))
 	body.SetOtherMails(newFields.OtherMails)
-	_, err := a.client.Users().ByUserId(identifier.Email).Patch(ctx, body, nil)
+	_, err := a.client.Users().ByUserId(identifier.UserPrincipalName).Patch(ctx, body, nil)
 	if err != nil {
-		return "", fmt.Errorf("failed to update user %s (%s): %w", identifier.Email, a.describeDiff(oldFields, newFields), err)
+		return "", fmt.Errorf("failed to update user %s (%s): %w", identifier.UserPrincipalName, a.describeDiff(oldFields, newFields), err)
 	} else {
-		return fmt.Sprintf("updated user %s (%s)", identifier.Email, a.describeDiff(oldFields, newFields)), nil
+		return fmt.Sprintf("updated user %s (%s)", identifier.UserPrincipalName, a.describeDiff(oldFields, newFields)), nil
 	}
 }
 
@@ -201,7 +203,7 @@ func (a *AzureAccountEngine) describeDiff(oldFields AzureAccountFields, newField
 		return "disable account"
 	} else if !oldFields.AccountEnabled && newFields.AccountEnabled {
 		return "enable account"
-	} else if oldFields.SmtpMail != newFields.SmtpMail || oldFields.MailNickname != newFields.MailNickname || !reflect.DeepEqual(oldFields.OtherMails, newFields.OtherMails) {
+	} else if oldFields.Email != newFields.Email || oldFields.MailNickname != newFields.MailNickname || !reflect.DeepEqual(oldFields.OtherMails, newFields.OtherMails) {
 		return "update account email info" // This is really, *really* unlikely to happen but we'll at least handle it
 	} else if oldFields.DisplayName != newFields.DisplayName {
 		return fmt.Sprintf("update display name from `%s` to `%s`", oldFields.DisplayName, newFields.DisplayName)
@@ -213,10 +215,10 @@ func (a *AzureAccountEngine) describeDiff(oldFields AzureAccountFields, newField
 func (a *AzureAccountEngine) Remove(ctx context.Context, _ bool, identifier AzureAccountIdentifier) (string, error) {
 	body := graphmodels.NewUser()
 	body.SetAccountEnabled(utils.PointerTo(false))
-	_, err := a.client.Users().ByUserId(identifier.Email).Patch(ctx, body, nil)
+	_, err := a.client.Users().ByUserId(identifier.UserPrincipalName).Patch(ctx, body, nil)
 	if err != nil {
-		return "", fmt.Errorf("failed to disable user %s: %w", identifier.Email, err)
+		return "", fmt.Errorf("failed to disable user %s: %w", identifier.UserPrincipalName, err)
 	} else {
-		return fmt.Sprintf("disabled user %s", identifier.Email), nil
+		return fmt.Sprintf("disabled user %s", identifier.UserPrincipalName), nil
 	}
 }

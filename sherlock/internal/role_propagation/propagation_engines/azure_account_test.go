@@ -29,7 +29,7 @@ func TestAzureAccountIdentifier_EqualTo(t *testing.T) {
 			},
 			args: args{
 				other: AzureAccountIdentifier{
-					Email: "foo",
+					UserPrincipalName: "foo",
 				},
 			},
 			want: true,
@@ -41,7 +41,7 @@ func TestAzureAccountIdentifier_EqualTo(t *testing.T) {
 			},
 			args: args{
 				other: AzureAccountIdentifier{
-					Email: "bar",
+					UserPrincipalName: "bar",
 				},
 			},
 			want: false,
@@ -62,7 +62,7 @@ func TestAzureAccountIdentifier_EqualTo(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			a := AzureAccountIdentifier{
-				Email: tt.fields.Email,
+				UserPrincipalName: tt.fields.Email,
 			}
 			assert.Equalf(t, tt.want, a.EqualTo(tt.args.other), "EqualTo(%v)", tt.args.other)
 		})
@@ -72,7 +72,7 @@ func TestAzureAccountIdentifier_EqualTo(t *testing.T) {
 func TestAzureAccountFields_EqualTo(t *testing.T) {
 	type fields struct {
 		AccountEnabled bool
-		SmtpMail       string
+		Email          string
 		DisplayName    string
 		MailNickname   string
 		OtherMails     []string
@@ -90,7 +90,7 @@ func TestAzureAccountFields_EqualTo(t *testing.T) {
 			name: "equal",
 			fields: fields{
 				AccountEnabled: true,
-				SmtpMail:       "foo",
+				Email:          "foo",
 				DisplayName:    "bar",
 				MailNickname:   "baz",
 				OtherMails:     []string{"qux"},
@@ -98,7 +98,7 @@ func TestAzureAccountFields_EqualTo(t *testing.T) {
 			args: args{
 				other: AzureAccountFields{
 					AccountEnabled: true,
-					SmtpMail:       "foo",
+					Email:          "foo",
 					DisplayName:    "bar",
 					MailNickname:   "baz",
 					OtherMails:     []string{"qux"},
@@ -110,7 +110,7 @@ func TestAzureAccountFields_EqualTo(t *testing.T) {
 			name: "account enabled not equal",
 			fields: fields{
 				AccountEnabled: true,
-				SmtpMail:       "foo",
+				Email:          "foo",
 				DisplayName:    "bar",
 				MailNickname:   "baz",
 				OtherMails:     []string{"qux"},
@@ -118,7 +118,7 @@ func TestAzureAccountFields_EqualTo(t *testing.T) {
 			args: args{
 				other: AzureAccountFields{
 					AccountEnabled: false,
-					SmtpMail:       "foo",
+					Email:          "foo",
 					DisplayName:    "bar",
 					MailNickname:   "baz",
 					OtherMails:     []string{"qux"},
@@ -130,7 +130,7 @@ func TestAzureAccountFields_EqualTo(t *testing.T) {
 			name: "smtp mail not equal",
 			fields: fields{
 				AccountEnabled: true,
-				SmtpMail:       "foo",
+				Email:          "foo",
 				DisplayName:    "bar",
 				MailNickname:   "baz",
 				OtherMails:     []string{"qux"},
@@ -138,7 +138,7 @@ func TestAzureAccountFields_EqualTo(t *testing.T) {
 			args: args{
 				other: AzureAccountFields{
 					AccountEnabled: true,
-					SmtpMail:       "bar",
+					Email:          "bar",
 					DisplayName:    "bar",
 					MailNickname:   "baz",
 					OtherMails:     []string{"qux"},
@@ -150,7 +150,7 @@ func TestAzureAccountFields_EqualTo(t *testing.T) {
 			name: "display name not equal",
 			fields: fields{
 				AccountEnabled: true,
-				SmtpMail:       "foo",
+				Email:          "foo",
 				DisplayName:    "bar",
 				MailNickname:   "baz",
 				OtherMails:     []string{"qux"},
@@ -158,7 +158,7 @@ func TestAzureAccountFields_EqualTo(t *testing.T) {
 			args: args{
 				other: AzureAccountFields{
 					AccountEnabled: true,
-					SmtpMail:       "foo",
+					Email:          "foo",
 					DisplayName:    "foo",
 					MailNickname:   "baz",
 					OtherMails:     []string{"qux"},
@@ -170,7 +170,7 @@ func TestAzureAccountFields_EqualTo(t *testing.T) {
 			name: "mail nickname not equal",
 			fields: fields{
 				AccountEnabled: true,
-				SmtpMail:       "foo",
+				Email:          "foo",
 				DisplayName:    "bar",
 				MailNickname:   "baz",
 				OtherMails:     []string{"qux"},
@@ -178,7 +178,7 @@ func TestAzureAccountFields_EqualTo(t *testing.T) {
 			args: args{
 				other: AzureAccountFields{
 					AccountEnabled: true,
-					SmtpMail:       "foo",
+					Email:          "foo",
 					DisplayName:    "bar",
 					MailNickname:   "foo",
 					OtherMails:     []string{"qux"},
@@ -190,7 +190,7 @@ func TestAzureAccountFields_EqualTo(t *testing.T) {
 			name: "other mails same length but not equal",
 			fields: fields{
 				AccountEnabled: true,
-				SmtpMail:       "foo",
+				Email:          "foo",
 				DisplayName:    "bar",
 				MailNickname:   "baz",
 				OtherMails:     []string{"qux"},
@@ -198,7 +198,7 @@ func TestAzureAccountFields_EqualTo(t *testing.T) {
 			args: args{
 				other: AzureAccountFields{
 					AccountEnabled: true,
-					SmtpMail:       "foo",
+					Email:          "foo",
 					DisplayName:    "bar",
 					MailNickname:   "baz",
 					OtherMails:     []string{"foo"},
@@ -210,7 +210,7 @@ func TestAzureAccountFields_EqualTo(t *testing.T) {
 			name: "other mails not equal",
 			fields: fields{
 				AccountEnabled: true,
-				SmtpMail:       "foo",
+				Email:          "foo",
 				DisplayName:    "bar",
 				MailNickname:   "baz",
 				OtherMails:     []string{"qux"},
@@ -218,7 +218,7 @@ func TestAzureAccountFields_EqualTo(t *testing.T) {
 			args: args{
 				other: AzureAccountFields{
 					AccountEnabled: true,
-					SmtpMail:       "foo",
+					Email:          "foo",
 					DisplayName:    "bar",
 					MailNickname:   "baz",
 					OtherMails:     []string{"qux", "foo"},
@@ -231,7 +231,7 @@ func TestAzureAccountFields_EqualTo(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			a := AzureAccountFields{
 				AccountEnabled: tt.fields.AccountEnabled,
-				SmtpMail:       tt.fields.SmtpMail,
+				Email:          tt.fields.Email,
 				DisplayName:    tt.fields.DisplayName,
 				MailNickname:   tt.fields.MailNickname,
 				OtherMails:     tt.fields.OtherMails,
@@ -244,7 +244,7 @@ func TestAzureAccountFields_EqualTo(t *testing.T) {
 func TestAzureAccountFields_MayConsiderAsAlreadyRemoved(t *testing.T) {
 	type fields struct {
 		AccountEnabled bool
-		SmtpMail       string
+		Email          string
 		DisplayName    string
 		MailNickname   string
 		OtherMails     []string
@@ -273,7 +273,7 @@ func TestAzureAccountFields_MayConsiderAsAlreadyRemoved(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			a := AzureAccountFields{
 				AccountEnabled: tt.fields.AccountEnabled,
-				SmtpMail:       tt.fields.SmtpMail,
+				Email:          tt.fields.Email,
 				DisplayName:    tt.fields.DisplayName,
 				MailNickname:   tt.fields.MailNickname,
 				OtherMails:     tt.fields.OtherMails,
@@ -318,14 +318,14 @@ func TestAzureAccountEngine_describeDiff(t *testing.T) {
 			name: "no changes",
 			oldFields: AzureAccountFields{
 				AccountEnabled: true,
-				SmtpMail:       "foo",
+				Email:          "foo",
 				DisplayName:    "bar",
 				MailNickname:   "baz",
 				OtherMails:     []string{"qux"},
 			},
 			newFields: AzureAccountFields{
 				AccountEnabled: true,
-				SmtpMail:       "foo",
+				Email:          "foo",
 				DisplayName:    "bar",
 				MailNickname:   "baz",
 				OtherMails:     []string{"qux"},
@@ -336,14 +336,14 @@ func TestAzureAccountEngine_describeDiff(t *testing.T) {
 			name: "account enabled",
 			oldFields: AzureAccountFields{
 				AccountEnabled: false,
-				SmtpMail:       "foo",
+				Email:          "foo",
 				DisplayName:    "bar",
 				MailNickname:   "baz",
 				OtherMails:     []string{"qux"},
 			},
 			newFields: AzureAccountFields{
 				AccountEnabled: true,
-				SmtpMail:       "foo",
+				Email:          "foo",
 				DisplayName:    "bar",
 				MailNickname:   "baz",
 				OtherMails:     []string{"qux"},
@@ -354,14 +354,14 @@ func TestAzureAccountEngine_describeDiff(t *testing.T) {
 			name: "account disabled",
 			oldFields: AzureAccountFields{
 				AccountEnabled: true,
-				SmtpMail:       "foo",
+				Email:          "foo",
 				DisplayName:    "bar",
 				MailNickname:   "baz",
 				OtherMails:     []string{"qux"},
 			},
 			newFields: AzureAccountFields{
 				AccountEnabled: false,
-				SmtpMail:       "foo",
+				Email:          "foo",
 				DisplayName:    "bar",
 				MailNickname:   "baz",
 				OtherMails:     []string{"qux"},
@@ -372,14 +372,14 @@ func TestAzureAccountEngine_describeDiff(t *testing.T) {
 			name: "smtp mail",
 			oldFields: AzureAccountFields{
 				AccountEnabled: true,
-				SmtpMail:       "foo",
+				Email:          "foo",
 				DisplayName:    "bar",
 				MailNickname:   "baz",
 				OtherMails:     []string{"qux"},
 			},
 			newFields: AzureAccountFields{
 				AccountEnabled: true,
-				SmtpMail:       "bar",
+				Email:          "bar",
 				DisplayName:    "bar",
 				MailNickname:   "baz",
 				OtherMails:     []string{"qux"},
@@ -390,14 +390,14 @@ func TestAzureAccountEngine_describeDiff(t *testing.T) {
 			name: "mail nickname",
 			oldFields: AzureAccountFields{
 				AccountEnabled: true,
-				SmtpMail:       "foo",
+				Email:          "foo",
 				DisplayName:    "bar",
 				MailNickname:   "foo",
 				OtherMails:     []string{"qux"},
 			},
 			newFields: AzureAccountFields{
 				AccountEnabled: true,
-				SmtpMail:       "foo",
+				Email:          "foo",
 				DisplayName:    "bar",
 				MailNickname:   "bar",
 				OtherMails:     []string{"qux"},
@@ -408,14 +408,14 @@ func TestAzureAccountEngine_describeDiff(t *testing.T) {
 			name: "other mails",
 			oldFields: AzureAccountFields{
 				AccountEnabled: true,
-				SmtpMail:       "foo",
+				Email:          "foo",
 				DisplayName:    "bar",
 				MailNickname:   "baz",
 				OtherMails:     []string{"foo"},
 			},
 			newFields: AzureAccountFields{
 				AccountEnabled: true,
-				SmtpMail:       "foo",
+				Email:          "foo",
 				DisplayName:    "bar",
 				MailNickname:   "baz",
 				OtherMails:     []string{"bar"},
@@ -426,14 +426,14 @@ func TestAzureAccountEngine_describeDiff(t *testing.T) {
 			name: "name change",
 			oldFields: AzureAccountFields{
 				AccountEnabled: true,
-				SmtpMail:       "foo",
+				Email:          "foo",
 				DisplayName:    "foo",
 				MailNickname:   "baz",
 				OtherMails:     []string{"qux"},
 			},
 			newFields: AzureAccountFields{
 				AccountEnabled: true,
-				SmtpMail:       "foo",
+				Email:          "foo",
 				DisplayName:    "bar",
 				MailNickname:   "baz",
 				OtherMails:     []string{"qux"},
