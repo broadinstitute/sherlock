@@ -7,6 +7,8 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/role_propagation/intermediary_user"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 	"sync"
 )
 
@@ -86,6 +88,18 @@ func (p *propagatorImpl[Grant, Identifier, Fields]) Propagate(ctx context.Contex
 	for _, errorsForGrant := range errorsPerGrant {
 		errors = append(errors, errorsForGrant...)
 	}
+
+	var l *zerolog.Event
+	if len(errors) > 0 {
+		l = log.Error()
+	} else {
+		l = log.Info()
+	}
+	roleName := "(unknown role)"
+	if role.Name != nil {
+		roleName = *role.Name
+	}
+	l.Strs("results", results).Errs("errors", errors).Msgf("PROP | %s%s propagation had %d results and %d errors", p.LogPrefix(), roleName, len(results), len(errors))
 
 	return results, errors
 }
