@@ -10,7 +10,9 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/role_propagation/intermediary_user"
 	"github.com/knadh/koanf"
+	abstractions "github.com/microsoft/kiota-abstractions-go"
 	msgraphsdk "github.com/microsoftgraph/msgraph-sdk-go"
+	msgraphgocore "github.com/microsoftgraph/msgraph-sdk-go-core"
 	graphmodels "github.com/microsoftgraph/msgraph-sdk-go/models"
 	"github.com/microsoftgraph/msgraph-sdk-go/users"
 	"reflect"
@@ -95,40 +97,55 @@ func (a *AzureAccountEngine) Init(_ context.Context, k *koanf.Koanf) error {
 
 func (a *AzureAccountEngine) LoadCurrentState(ctx context.Context, _ bool) ([]intermediary_user.IntermediaryUser[AzureAccountIdentifier, AzureAccountFields], error) {
 	currentState := make([]intermediary_user.IntermediaryUser[AzureAccountIdentifier, AzureAccountFields], 0)
-	usersResponse, err := a.client.Users().Get(ctx, &users.UsersRequestBuilderGetRequestConfiguration{
+
+	headers := abstractions.NewRequestHeaders()
+	headers.Add("ConsistencyLevel", "eventual")
+	configuration := &users.UsersRequestBuilderGetRequestConfiguration{
+		Headers: headers,
 		QueryParameters: &users.UsersRequestBuilderGetQueryParameters{
 			Select: []string{"userPrincipalName", "accountEnabled", "mail", "displayName", "mailNickname", "otherMails"},
+			Filter: utils.PointerTo(fmt.Sprintf("endsWith(userPrincipalName, '%s')", a.tenantEmailSuffix)),
+			Count:  utils.PointerTo(true),
 		},
-	})
-	if err != nil {
-		return nil, err
-	} else {
-		for _, directoryObject := range usersResponse.GetValue() {
-			if userPrincipalName := directoryObject.GetUserPrincipalName(); userPrincipalName != nil && strings.HasSuffix(*userPrincipalName, a.tenantEmailSuffix) {
-				var fields AzureAccountFields
-				if accountEnabled := directoryObject.GetAccountEnabled(); accountEnabled != nil {
-					fields.AccountEnabled = *accountEnabled
-				}
-				if mail := directoryObject.GetMail(); mail != nil {
-					fields.Email = *mail
-				}
-				if displayName := directoryObject.GetDisplayName(); displayName != nil {
-					fields.DisplayName = *displayName
-				}
-				if mailNickname := directoryObject.GetMailNickname(); mailNickname != nil {
-					fields.MailNickname = *mailNickname
-				}
-				if otherMails := directoryObject.GetOtherMails(); otherMails != nil {
-					fields.OtherMails = otherMails
-				}
-				currentState = append(currentState, intermediary_user.IntermediaryUser[AzureAccountIdentifier, AzureAccountFields]{
-					Identifier: AzureAccountIdentifier{UserPrincipalName: *userPrincipalName},
-					Fields:     fields,
-				})
-			}
-		}
 	}
-	return currentState, nil
+
+	result, err := a.client.Users().Get(ctx, configuration)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get users: %w", err)
+	}
+
+	pageIterator, err := msgraphgocore.NewPageIterator[graphmodels.Userable](result, a.client.GetAdapter(), graphmodels.CreateUserCollectionResponseFromDiscriminatorValue)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create page iterator for users: %w", err)
+	}
+	pageIterator.SetHeaders(headers)
+
+	err = pageIterator.Iterate(ctx, func(pageItem graphmodels.Userable) bool {
+		if userPrincipalName := pageItem.GetUserPrincipalName(); userPrincipalName != nil && strings.HasSuffix(*userPrincipalName, a.tenantEmailSuffix) {
+			var fields AzureAccountFields
+			if accountEnabled := pageItem.GetAccountEnabled(); accountEnabled != nil {
+				fields.AccountEnabled = *accountEnabled
+			}
+			if mail := pageItem.GetMail(); mail != nil {
+				fields.Email = *mail
+			}
+			if displayName := pageItem.GetDisplayName(); displayName != nil {
+				fields.DisplayName = *displayName
+			}
+			if mailNickname := pageItem.GetMailNickname(); mailNickname != nil {
+				fields.MailNickname = *mailNickname
+			}
+			if otherMails := pageItem.GetOtherMails(); otherMails != nil {
+				fields.OtherMails = otherMails
+			}
+			currentState = append(currentState, intermediary_user.IntermediaryUser[AzureAccountIdentifier, AzureAccountFields]{
+				Identifier: AzureAccountIdentifier{UserPrincipalName: *userPrincipalName},
+				Fields:     fields,
+			})
+		}
+		return true
+	})
+	return currentState, err
 }
 
 func (a *AzureAccountEngine) GenerateDesiredState(_ context.Context, roleAssignments map[uint]models.RoleAssignment) (map[uint]intermediary_user.IntermediaryUser[AzureAccountIdentifier, AzureAccountFields], error) {
