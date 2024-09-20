@@ -8,7 +8,10 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/role_propagation/intermediary_user"
 	"github.com/knadh/koanf"
+	abstractions "github.com/microsoft/kiota-abstractions-go"
 	msgraphsdk "github.com/microsoftgraph/msgraph-sdk-go"
+	msgraphgocore "github.com/microsoftgraph/msgraph-sdk-go-core"
+	"github.com/microsoftgraph/msgraph-sdk-go/directoryroles"
 	"github.com/microsoftgraph/msgraph-sdk-go/directoryroleswithroletemplateid"
 	graphmodels "github.com/microsoftgraph/msgraph-sdk-go/models"
 	"github.com/microsoftgraph/msgraph-sdk-go/users"
@@ -111,20 +114,38 @@ func (a *AzureDirectoryRoleEngine) Init(ctx context.Context, k *koanf.Koanf) err
 
 func (a *AzureDirectoryRoleEngine) LoadCurrentState(ctx context.Context, _ bool) ([]intermediary_user.IntermediaryUser[AzureDirectoryRoleIdentifier, AzureDirectoryRoleFields], error) {
 	currentState := make([]intermediary_user.IntermediaryUser[AzureDirectoryRoleIdentifier, AzureDirectoryRoleFields], 0)
-	roleMembersResponse, err := a.client.DirectoryRoles().ByDirectoryRoleId(a.directoryRoleID).Members().Get(ctx, nil)
-	if err != nil {
-		return nil, err
-	} else {
-		for _, directoryObject := range roleMembersResponse.GetValue() {
-			if id := directoryObject.GetId(); id != nil {
-				currentState = append(currentState, intermediary_user.IntermediaryUser[AzureDirectoryRoleIdentifier, AzureDirectoryRoleFields]{
-					Identifier: AzureDirectoryRoleIdentifier{ID: *id},
-					Fields:     AzureDirectoryRoleFields{},
-				})
-			}
-		}
+
+	headers := abstractions.NewRequestHeaders()
+	configuration := &directoryroles.ItemMembersRequestBuilderGetRequestConfiguration{
+		Headers: headers,
+		QueryParameters: &directoryroles.ItemMembersRequestBuilderGetQueryParameters{
+			Select: []string{"id"},
+			Top:    utils.PointerTo[int32](25),
+		},
 	}
-	return currentState, nil
+
+	result, err := a.client.DirectoryRoles().ByDirectoryRoleId(a.directoryRoleID).Members().Get(ctx, configuration)
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch directory role members: %w", err)
+	}
+
+	pageIterator, err := msgraphgocore.NewPageIterator[graphmodels.DirectoryObjectable](result,
+		a.client.GetAdapter(), graphmodels.CreateDirectoryObjectCollectionResponseFromDiscriminatorValue)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create page iterator for directory role members: %w", err)
+	}
+	pageIterator.SetHeaders(headers)
+
+	err = pageIterator.Iterate(ctx, func(pageItem graphmodels.DirectoryObjectable) bool {
+		if id := pageItem.GetId(); id != nil {
+			currentState = append(currentState, intermediary_user.IntermediaryUser[AzureDirectoryRoleIdentifier, AzureDirectoryRoleFields]{
+				Identifier: AzureDirectoryRoleIdentifier{ID: *id},
+				Fields:     AzureDirectoryRoleFields{},
+			})
+		}
+		return true
+	})
+	return currentState, err
 }
 
 func (a *AzureDirectoryRoleEngine) GenerateDesiredState(ctx context.Context, roleAssignments map[uint]models.RoleAssignment) (map[uint]intermediary_user.IntermediaryUser[AzureDirectoryRoleIdentifier, AzureDirectoryRoleFields], error) {

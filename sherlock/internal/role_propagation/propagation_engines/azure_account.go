@@ -103,10 +103,29 @@ func (a *AzureAccountEngine) LoadCurrentState(ctx context.Context, _ bool) ([]in
 	configuration := &users.UsersRequestBuilderGetRequestConfiguration{
 		Headers: headers,
 		QueryParameters: &users.UsersRequestBuilderGetQueryParameters{
+			// Select a non-standard set of fields
 			Select: []string{"userPrincipalName", "accountEnabled", "mail", "displayName", "mailNickname", "otherMails"},
+			// This filter is efficient but is an advanced query, so needs an eventual consistency level header
+			// and the count query parameter
+			// https://learn.microsoft.com/en-us/graph/aad-advanced-queries?tabs=go
 			Filter: utils.PointerTo(fmt.Sprintf("endsWith(userPrincipalName, '%s')", a.tenantEmailSuffix)),
-			Count:  utils.PointerTo(true),
-			Top:    utils.PointerTo[int32](10), // testing!
+			// Count is needed because we're using filter. It provides the count in the response *in addition to*
+			// the rest of the response. It's a bit weird but I think it's to help guide you towards debugging
+			// issues with the eventual consistency level. Since Sherlock is doing a reconciliation loop of its
+			// own I'm making a blanket assumption that eventual consistency on the part of a cloud provider is
+			// okay.
+			Count: utils.PointerTo(true),
+			// We want to get all the users, so interestingly we need to explicitly say we want just the first
+			// N, and then that basically sets our page size for the page iterator we use below. At the time of
+			// writing this, when you don't set this you seem to get the first 30 entries only, but with either
+			// no @odata.nextLink property or one that the page iterator below doesn't understand -- and this
+			// behavior doesn't really seem documented. The docs on paging do mention that the API sometimes has
+			// a default page size, but it implies that an @odata.nextLink property will be present.
+			// Anyway, if you remove just this one parameter, even if you do the page iterator below you won't
+			// actually end up iterating over all the users.
+			// The value of 25 is arbitrary and doesn't really matter since we end up iterating over everything.
+			// It was picked as a non-30 number to try to differentiate from the discovered default.
+			Top: utils.PointerTo[int32](25),
 		},
 	}
 

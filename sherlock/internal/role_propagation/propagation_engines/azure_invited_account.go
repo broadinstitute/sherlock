@@ -10,7 +10,9 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/role_propagation/intermediary_user"
 	"github.com/knadh/koanf"
+	abstractions "github.com/microsoft/kiota-abstractions-go"
 	msgraphsdk "github.com/microsoftgraph/msgraph-sdk-go"
+	msgraphgocore "github.com/microsoftgraph/msgraph-sdk-go-core"
 	graphmodels "github.com/microsoftgraph/msgraph-sdk-go/models"
 	"github.com/microsoftgraph/msgraph-sdk-go/users"
 	"reflect"
@@ -117,39 +119,56 @@ func (a *AzureInvitedAccountEngine) Init(_ context.Context, k *koanf.Koanf) erro
 
 func (a *AzureInvitedAccountEngine) LoadCurrentState(ctx context.Context, _ bool) ([]intermediary_user.IntermediaryUser[AzureInvitedAccountIdentifier, AzureInvitedAccountFields], error) {
 	currentState := make([]intermediary_user.IntermediaryUser[AzureInvitedAccountIdentifier, AzureInvitedAccountFields], 0)
-	usersResponse, err := a.inviteTenantClient.Users().Get(ctx, &users.UsersRequestBuilderGetRequestConfiguration{
+
+	headers := abstractions.NewRequestHeaders()
+	configuration := &users.UsersRequestBuilderGetRequestConfiguration{
+		Headers: headers,
 		QueryParameters: &users.UsersRequestBuilderGetQueryParameters{
 			Select: []string{"userPrincipalName", "accountEnabled", "mail", "displayName", "mailNickname", "otherMails"},
+			// Since this is a B2C tenant, we can't do fancy filter things to also check the #EXT# thingy in the
+			// user principal name. The creation type does a very good job of cutting down the response so we can
+			// safely check the suffix as we iterate.
 			Filter: utils.PointerTo("creationType eq 'Invitation'"),
+			Top:    utils.PointerTo[int32](25),
 		},
-	})
-	if err != nil {
-		return nil, err
-	} else {
-		for _, directoryObject := range usersResponse.GetValue() {
-			if userPrincipalName := directoryObject.GetUserPrincipalName(); userPrincipalName != nil &&
-				strings.HasSuffix(*userPrincipalName, fmt.Sprintf("%s#EXT#@%s", a.homeTenantEmailDomain, a.inviteTenantIdentityDomain)) {
-				var fields AzureInvitedAccountFields
-				if mail := directoryObject.GetMail(); mail != nil {
-					fields.Email = *mail
-				}
-				if displayName := directoryObject.GetDisplayName(); displayName != nil {
-					fields.DisplayName = *displayName
-				}
-				if mailNickname := directoryObject.GetMailNickname(); mailNickname != nil {
-					fields.MailNickname = *mailNickname
-				}
-				if otherMails := directoryObject.GetOtherMails(); otherMails != nil {
-					fields.OtherMails = otherMails
-				}
-				currentState = append(currentState, intermediary_user.IntermediaryUser[AzureInvitedAccountIdentifier, AzureInvitedAccountFields]{
-					Identifier: AzureInvitedAccountIdentifier{UserPrincipalName: *userPrincipalName},
-					Fields:     fields,
-				})
-			}
-		}
 	}
-	return currentState, nil
+
+	result, err := a.inviteTenantClient.Users().Get(ctx, configuration)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get invited users: %w", err)
+	}
+
+	pageIterator, err := msgraphgocore.NewPageIterator[graphmodels.Userable](result,
+		a.inviteTenantClient.GetAdapter(), graphmodels.CreateUserCollectionResponseFromDiscriminatorValue)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create page iterator for invited users: %w", err)
+	}
+	pageIterator.SetHeaders(headers)
+
+	err = pageIterator.Iterate(ctx, func(pageItem graphmodels.Userable) bool {
+		if userPrincipalName := pageItem.GetUserPrincipalName(); userPrincipalName != nil &&
+			strings.HasSuffix(*userPrincipalName, fmt.Sprintf("%s#EXT#@%s", a.homeTenantEmailDomain, a.inviteTenantIdentityDomain)) {
+			var fields AzureInvitedAccountFields
+			if mail := pageItem.GetMail(); mail != nil {
+				fields.Email = *mail
+			}
+			if displayName := pageItem.GetDisplayName(); displayName != nil {
+				fields.DisplayName = *displayName
+			}
+			if mailNickname := pageItem.GetMailNickname(); mailNickname != nil {
+				fields.MailNickname = *mailNickname
+			}
+			if otherMails := pageItem.GetOtherMails(); otherMails != nil {
+				fields.OtherMails = otherMails
+			}
+			currentState = append(currentState, intermediary_user.IntermediaryUser[AzureInvitedAccountIdentifier, AzureInvitedAccountFields]{
+				Identifier: AzureInvitedAccountIdentifier{UserPrincipalName: *userPrincipalName},
+				Fields:     fields,
+			})
+		}
+		return true
+	})
+	return currentState, err
 }
 
 func (a *AzureInvitedAccountEngine) GenerateDesiredState(ctx context.Context, roleAssignments map[uint]models.RoleAssignment) (map[uint]intermediary_user.IntermediaryUser[AzureInvitedAccountIdentifier, AzureInvitedAccountFields], error) {
