@@ -106,6 +106,7 @@ func (a *AzureAccountEngine) LoadCurrentState(ctx context.Context, _ bool) ([]in
 			Select: []string{"userPrincipalName", "accountEnabled", "mail", "displayName", "mailNickname", "otherMails"},
 			Filter: utils.PointerTo(fmt.Sprintf("endsWith(userPrincipalName, '%s')", a.tenantEmailSuffix)),
 			Count:  utils.PointerTo(true),
+			Top:    utils.PointerTo[int32](10), // testing!
 		},
 	}
 
