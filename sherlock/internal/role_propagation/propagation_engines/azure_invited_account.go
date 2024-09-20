@@ -120,14 +120,15 @@ func (a *AzureInvitedAccountEngine) LoadCurrentState(ctx context.Context, _ bool
 	usersResponse, err := a.inviteTenantClient.Users().Get(ctx, &users.UsersRequestBuilderGetRequestConfiguration{
 		QueryParameters: &users.UsersRequestBuilderGetQueryParameters{
 			Select: []string{"userPrincipalName", "accountEnabled", "mail", "displayName", "mailNickname", "otherMails"},
-			Filter: utils.PointerTo(fmt.Sprintf("endsWith(userPrincipalName, '%s#EXT#@%s') and creationType eq 'Invitation'", a.homeTenantEmailDomain, a.inviteTenantIdentityDomain)),
+			Filter: utils.PointerTo("creationType eq 'Invitation'"),
 		},
 	})
 	if err != nil {
 		return nil, err
 	} else {
 		for _, directoryObject := range usersResponse.GetValue() {
-			if userPrincipalName := directoryObject.GetUserPrincipalName(); userPrincipalName != nil {
+			if userPrincipalName := directoryObject.GetUserPrincipalName(); userPrincipalName != nil &&
+				strings.HasSuffix(*userPrincipalName, fmt.Sprintf("%s#EXT#@%s", a.homeTenantEmailDomain, a.inviteTenantIdentityDomain)) {
 				var fields AzureInvitedAccountFields
 				if mail := directoryObject.GetMail(); mail != nil {
 					fields.Email = *mail

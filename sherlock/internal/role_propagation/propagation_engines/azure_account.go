@@ -10,7 +10,6 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/role_propagation/intermediary_user"
 	"github.com/knadh/koanf"
-	abstractions "github.com/microsoft/kiota-abstractions-go"
 	msgraphsdk "github.com/microsoftgraph/msgraph-sdk-go"
 	graphmodels "github.com/microsoftgraph/msgraph-sdk-go/models"
 	"github.com/microsoftgraph/msgraph-sdk-go/users"
@@ -96,20 +95,16 @@ func (a *AzureAccountEngine) Init(_ context.Context, k *koanf.Koanf) error {
 
 func (a *AzureAccountEngine) LoadCurrentState(ctx context.Context, _ bool) ([]intermediary_user.IntermediaryUser[AzureAccountIdentifier, AzureAccountFields], error) {
 	currentState := make([]intermediary_user.IntermediaryUser[AzureAccountIdentifier, AzureAccountFields], 0)
-	headers := abstractions.NewRequestHeaders()
-	headers.Add("ConsistencyLevel", "eventual")
 	usersResponse, err := a.client.Users().Get(ctx, &users.UsersRequestBuilderGetRequestConfiguration{
 		QueryParameters: &users.UsersRequestBuilderGetQueryParameters{
 			Select: []string{"userPrincipalName", "accountEnabled", "mail", "displayName", "mailNickname", "otherMails"},
-			Filter: utils.PointerTo(fmt.Sprintf("endsWith(userPrincipalName, '%s')", a.tenantEmailSuffix)),
 		},
-		Headers: headers,
 	})
 	if err != nil {
 		return nil, err
 	} else {
 		for _, directoryObject := range usersResponse.GetValue() {
-			if userPrincipalName := directoryObject.GetUserPrincipalName(); userPrincipalName != nil {
+			if userPrincipalName := directoryObject.GetUserPrincipalName(); userPrincipalName != nil && strings.HasSuffix(*userPrincipalName, a.tenantEmailSuffix) {
 				var fields AzureAccountFields
 				if accountEnabled := directoryObject.GetAccountEnabled(); accountEnabled != nil {
 					fields.AccountEnabled = *accountEnabled
