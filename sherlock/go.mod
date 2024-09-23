@@ -28,7 +28,7 @@ require (
 	github.com/jackc/pgx/v5 v5.7.1
 	github.com/jinzhu/copier v0.4.0
 	github.com/knadh/koanf v1.5.0
-	github.com/microsoftgraph/msgraph-sdk-go v1.47.0
+	github.com/microsoftgraph/msgraph-sdk-go v1.48.0
 	github.com/pact-foundation/pact-go/v2 v2.0.8
 	github.com/rs/zerolog v1.33.0
 	github.com/sanity-io/litter v1.5.5
@@ -120,7 +120,7 @@ require (
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
-	github.com/microsoft/kiota-abstractions-go v1.6.1 // indirect
+	github.com/microsoft/kiota-abstractions-go v1.7.0 // indirect
 	github.com/microsoft/kiota-authentication-azure-go v1.1.0 // indirect
 	github.com/microsoft/kiota-http-go v1.4.4 // indirect
 	github.com/microsoft/kiota-serialization-form-go v1.0.0 // indirect
