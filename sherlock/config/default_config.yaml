@@ -588,7 +588,7 @@ rolePropagation:
       # The suffix of all member emails. This can be thought of as a filter for what Azure users Sherlock
       # will attempt to propagate roles to. This may contain a "@" (especially useful for "#EXT#@" emails);
       # if it does, then the userEmailSuffixesToReplace must as well.
-      memberEmailSuffix: "@firecloud.org"
+      memberEmailSuffix: "_firecloud.org#EXT#@terraprodb2c.onmicrosoft.com"
       # Suffixes of Sherlock users' emails that should be swapped out with the memberEmailSuffix to match
       # Sherlock users to Azure Entra ID users.
       userEmailSuffixesToReplace:
