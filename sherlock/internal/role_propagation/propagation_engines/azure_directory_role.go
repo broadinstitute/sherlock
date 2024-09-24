@@ -120,7 +120,7 @@ func (a *AzureDirectoryRoleEngine) LoadCurrentState(ctx context.Context, _ bool)
 		Headers: headers,
 		QueryParameters: &directoryroles.ItemMembersRequestBuilderGetQueryParameters{
 			Select: []string{"id"},
-			Top:    utils.PointerTo[int32](25),
+			// No top because that's actually not supported here
 		},
 	}
 
