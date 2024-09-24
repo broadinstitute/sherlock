@@ -403,19 +403,19 @@ rolePropagation:
       enable: false
       dryRun: false
       # The client ID of the Azure AD app to use for authentication against the home tenant.
-      homeClientID:
+      homeTenantClientID:
       # The UUID of the home Azure AD tenant to work with.
       homeTenantID: fad90753-2022-4456-9b0a-c7e5b934e408 # azure.dev.envs-terra.bio
       # The path on disk that Sherlock should expect to find a token for federated workload identity
       # to use against the home tenant.
-      homeTokenFilePath: /azure-federation/projected-ksa-token.jwt
+      homeTenantTokenFilePath: /azure-federation/projected-ksa-token.jwt
       # The client ID of the Azure AD app to use for authentication against the tenant to invite to.
-      inviteClientID:
+      inviteTenantClientID:
       # The UUID of the Azure AD tenant to invite home tenant users to.
       inviteTenantID: fd0bc0ef-1747-4ee6-ab3e-d4d6bb882d40 # terradevb2c.onmicrosoft.com
       # The path on disk that Sherlock should expect to find a token for federated workload identity
       # to use against the tenant to invite to.
-      inviteTokenFilePath: /azure-federation/projected-ksa-token.jwt
+      inviteTenantTokenFilePath: /azure-federation/projected-ksa-token.jwt
       # The domain of the email addresses in the home tenant. Should match the user principal names in
       # the home tenant.
       homeTenantEmailDomain: "test.firecloud.org"
