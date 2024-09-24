@@ -165,6 +165,8 @@ retries:
   errorRegexesToRetry:
     - "googleapi: Error 500"
     - "googleapi: Error 503"
+    - "rpc error: code = Internal desc = Internal error encountered" # Another Google error
+    - "connection reset by peer" # Azure error
   # The base interval between retries. This is fed into an exponential backoff
   # algorithm.
   baseAttemptInterval: 500ms
