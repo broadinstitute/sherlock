@@ -8,9 +8,7 @@ import (
 
 func Test_parseFirecloudUser(t *testing.T) {
 	type args struct {
-		workspaceUser                     *admin.User
-		fcAdminsGroupEmails               []string
-		firecloudProjectOwnersGroupEmails []string
+		workspaceUser *admin.User
 	}
 	tests := []struct {
 		name                     string
@@ -75,37 +73,6 @@ func Test_parseFirecloudUser(t *testing.T) {
 			wantDescriptionSubstring: "is archived",
 		},
 		{
-			name: "not in fc-admins group",
-			args: args{
-				workspaceUser: &admin.User{
-					PrimaryEmail:    "foo@example.com",
-					AgreedToTerms:   true,
-					IsEnrolledIn2Sv: true,
-					Suspended:       false,
-					Archived:        false,
-				},
-				fcAdminsGroupEmails: []string{},
-			},
-			wantSuitable:             false,
-			wantDescriptionSubstring: "isn't in fc-admins group",
-		},
-		{
-			name: "not in firecloud-project-owners group",
-			args: args{
-				workspaceUser: &admin.User{
-					PrimaryEmail:    "foo@example.com",
-					AgreedToTerms:   true,
-					IsEnrolledIn2Sv: true,
-					Suspended:       false,
-					Archived:        false,
-				},
-				fcAdminsGroupEmails:               []string{"foo@example.com"},
-				firecloudProjectOwnersGroupEmails: []string{},
-			},
-			wantSuitable:             false,
-			wantDescriptionSubstring: "isn't in firecloud-project-owners group",
-		},
-		{
 			name: "suitable",
 			args: args{
 				workspaceUser: &admin.User{
@@ -115,8 +82,6 @@ func Test_parseFirecloudUser(t *testing.T) {
 					Suspended:       false,
 					Archived:        false,
 				},
-				fcAdminsGroupEmails:               []string{"foo@example.com"},
-				firecloudProjectOwnersGroupEmails: []string{"foo@example.com"},
 			},
 			wantSuitable:             true,
 			wantDescriptionSubstring: "is suitable",
@@ -124,9 +89,9 @@ func Test_parseFirecloudUser(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotSuitable, gotDescription := parseFirecloudUser(tt.args.workspaceUser, tt.args.fcAdminsGroupEmails, tt.args.firecloudProjectOwnersGroupEmails)
-			assert.Equalf(t, tt.wantSuitable, gotSuitable, "parseFirecloudUser(%v, %v, %v)", tt.args.workspaceUser, tt.args.fcAdminsGroupEmails, tt.args.firecloudProjectOwnersGroupEmails)
-			assert.Containsf(t, gotDescription, tt.wantDescriptionSubstring, "parseFirecloudUser(%v, %v, %v)", tt.args.workspaceUser, tt.args.fcAdminsGroupEmails, tt.args.firecloudProjectOwnersGroupEmails)
+			gotSuitable, gotDescription := parseFirecloudUser(tt.args.workspaceUser)
+			assert.Equalf(t, tt.wantSuitable, gotSuitable, "parseFirecloudUser(%v)", tt.args.workspaceUser)
+			assert.Containsf(t, gotDescription, tt.wantDescriptionSubstring, "parseFirecloudUser(%v)", tt.args.workspaceUser)
 		})
 	}
 }

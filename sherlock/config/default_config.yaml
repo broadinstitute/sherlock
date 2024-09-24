@@ -606,9 +606,6 @@ suitabilitySynchronization:
       interval: 60m
       firecloud:
         domain: firecloud.org
-        groups:
-          fcAdmins: fc-admins@firecloud.org
-          firecloudProjectOwners: firecloud-project-owners@firecloud.org
       # extraPermissions can be used to grant an exact email address access to "suitable" actions inside Sherlock,
       # regardless of that email correlating to a Firecloud account. This functionality should only be used for
       # service accounts, and the justification for this functionality existing is that adding a service account
