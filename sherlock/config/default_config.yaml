@@ -391,7 +391,7 @@ rolePropagation:
       # The path on disk that Sherlock should expect to find a token for federated workload identity.
       tokenFilePath: /azure-federation/projected-ksa-token.jwt
       # The suffix of all accounts in the tenant that Sherlock should manage.
-      memberEmailSuffix: "@firecloud.org"
+      tenantEmailSuffix: "@firecloud.org"
       # Suffixes of Sherlock users' emails that should be swapped out with the memberEmailSuffix to match
       # Sherlock users to Azure Entra ID user emails.
       userEmailSuffixesToReplace:
