@@ -196,3 +196,17 @@ func Test_propagatorImpl_initToleratedUsers_calculator(t *testing.T) {
 		{Email: "dynamic@example.com"},
 	})
 }
+
+func Test_propagatorImpl_initIgnoredUsers_error(t *testing.T) {
+	k := koanf.New(".")
+	require.NoError(t, k.Set("ignoredUsers", []any{
+		map[string]any{
+			"number": "definitely not a number",
+		},
+	}))
+	p := propagatorImpl[string, identifierWithInt, blankFields]{
+		_config: k,
+	}
+
+	assert.Errorf(t, p.initIgnoredUsers(context.Background()), "expected an error")
+}

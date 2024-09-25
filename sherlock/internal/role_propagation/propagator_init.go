@@ -28,6 +28,10 @@ func (p *propagatorImpl[Grant, Identifier, Fields]) Init(ctx context.Context) er
 		return err
 	}
 
+	if err := p.initIgnoredUsers(ctx); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -58,6 +62,21 @@ func (p *propagatorImpl[Grant, Identifier, Fields]) initToleratedUsers(ctx conte
 		}
 
 		p._toleratedUsers = append(p._toleratedUsers, calculatedToleratedUsers...)
+	}
+
+	return nil
+}
+
+func (p *propagatorImpl[Grant, Identifier, Fields]) initIgnoredUsers(ctx context.Context) error {
+	if ignoredUsers := p._config.Slices("ignoredUsers"); len(ignoredUsers) > 0 {
+		p._ignoredUsers = make([]Identifier, 0, len(ignoredUsers))
+		for index, unparsed := range ignoredUsers {
+			var ignored Identifier
+			if err := unparsed.UnmarshalWithConf("", &ignored, koanf.UnmarshalConf{Tag: "koanf"}); err != nil {
+				return fmt.Errorf("failed to unmarshal ignored user at rolePropagation.propagators.%s.ignoredUsers[%d]: %w", p.configKey, index, err)
+			}
+			p._ignoredUsers = append(p._ignoredUsers, ignored)
+		}
 	}
 
 	return nil

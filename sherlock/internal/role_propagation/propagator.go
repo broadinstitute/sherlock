@@ -88,6 +88,16 @@ type propagatorImpl[
 	// deactivated *everyone* except its equivalent of this list. Sherlock seeks to prevent such issues with the
 	// power of "writing tests" but we keep the guardrails that have worked in the past.)
 	_toleratedUsers []Identifier
+
+	// _ignoredUsers is a set of users that we won't Add, Remove, or Update on the remote for any reason. This
+	// can be helpful for cases where a particular user's account is problematic and we want to avoid having
+	// Sherlock interact with it.
+	//
+	// An example here is that there's technically a maximum number of Google Groups someone can be in. Because
+	// of how Terra works, some folks actually hit this limit. Sometimes those folks may deprioritize Sherlock's
+	// groups -- meaning they would want Sherlock to always skip them for a particular grant type -- so they can
+	// have as many groups as possible for other purposes.
+	_ignoredUsers []Identifier
 }
 
 func (p *propagatorImpl[Grant, Identifier, Fields]) LogPrefix() string {
