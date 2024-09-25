@@ -2,8 +2,6 @@ package propagation_engines
 
 import (
 	"context"
-	"crypto/rand"
-	"encoding/hex"
 	"fmt"
 	"github.com/Azure/azure-sdk-for-go/sdk/azidentity"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
@@ -15,6 +13,7 @@ import (
 	msgraphgocore "github.com/microsoftgraph/msgraph-sdk-go-core"
 	graphmodels "github.com/microsoftgraph/msgraph-sdk-go/models"
 	"github.com/microsoftgraph/msgraph-sdk-go/users"
+	"github.com/sethvargo/go-password/password"
 	"reflect"
 	"strings"
 )
@@ -77,6 +76,7 @@ type AzureAccountEngine struct {
 	tenantEmailSuffix          string
 	userEmailSuffixesToReplace []string
 	client                     *msgraphsdk.GraphServiceClient
+	passwordGenerator          *password.Generator
 }
 
 func (a *AzureAccountEngine) Init(_ context.Context, k *koanf.Koanf) error {
@@ -88,11 +88,20 @@ func (a *AzureAccountEngine) Init(_ context.Context, k *koanf.Koanf) error {
 		TokenFilePath: k.String("tokenFilePath"),
 	})
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to create workload identity credential: %w", err)
 	}
 
 	a.client, err = msgraphsdk.NewGraphServiceClientWithCredentials(credentials, nil)
-	return err
+	if err != nil {
+		return fmt.Errorf("failed to create graph service client: %w", err)
+	}
+
+	a.passwordGenerator, err = password.NewGenerator(nil)
+	if err != nil {
+		return fmt.Errorf("failed to create password generator: %w", err)
+	}
+
+	return nil
 }
 
 func (a *AzureAccountEngine) LoadCurrentState(ctx context.Context, _ bool) ([]intermediary_user.IntermediaryUser[AzureAccountIdentifier, AzureAccountFields], error) {
@@ -192,8 +201,7 @@ func (a *AzureAccountEngine) GenerateDesiredState(_ context.Context, roleAssignm
 }
 
 func (a *AzureAccountEngine) Add(ctx context.Context, _ bool, identifier AzureAccountIdentifier, fields AzureAccountFields) (string, error) {
-	randomBytes := make([]byte, 64)
-	_, err := rand.Read(randomBytes)
+	randomPassword, err := a.passwordGenerator.Generate(256, 32, 32, false, true)
 	if err != nil {
 		return "", fmt.Errorf("failed to generate random password: %w", err)
 	}
@@ -208,7 +216,7 @@ func (a *AzureAccountEngine) Add(ctx context.Context, _ bool, identifier AzureAc
 	passwordProfile := graphmodels.NewPasswordProfile()
 	passwordProfile.SetForceChangePasswordNextSignIn(utils.PointerTo(true))
 	// We don't send this password anywhere, forcing the user to go through the password reset flow.
-	passwordProfile.SetPassword(utils.PointerTo(hex.EncodeToString(randomBytes)))
+	passwordProfile.SetPassword(utils.PointerTo(randomPassword))
 	body.SetPasswordProfile(passwordProfile)
 
 	_, err = a.client.Users().Post(ctx, body, nil)
