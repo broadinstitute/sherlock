@@ -34,10 +34,6 @@ func LoadIntoDB(ctx context.Context, db *gorm.DB) error {
 	if !config.Config.Bool("suitabilitySynchronization.enable") || !config.Config.Bool("suitabilitySynchronization.behaviors.loadIntoDB.enable") {
 		return nil
 	}
-	suitabilitiesFromConfig, err := fromConfig()
-	if err != nil {
-		return err
-	}
 	suitabilitiesFromFirecloud, err := fromFirecloud(ctx)
 	if err != nil {
 		if strings.Contains(err.Error(), "dailyLimitExceeded") {
@@ -46,12 +42,11 @@ func LoadIntoDB(ctx context.Context, db *gorm.DB) error {
 		}
 		return err
 	}
-	suitabilities := append(suitabilitiesFromConfig, suitabilitiesFromFirecloud...)
 
 	// Assume super-user privileges for this operation (required to edit this table)
 	superUserDB := models.SetCurrentUserForDB(db, models.SelfUser)
 
-	for _, suitability := range suitabilities {
+	for _, suitability := range suitabilitiesFromFirecloud {
 		if err = superUserDB.
 			Where(&models.Suitability{
 				Email: suitability.Email,

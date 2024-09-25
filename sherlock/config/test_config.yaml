@@ -87,15 +87,5 @@ rolePropagation:
       toleratedUsers:
         - email: tolerated@test.firecloud.org
 
-suitabilitySynchronization:
-  behaviors:
-    loadIntoDB:
-      # These are for testing our handling of this config; tests run fully off-line
-      extraPermissions:
-        - email: has-extra-permissions-suitable@example.com
-          suitable: true
-        - email: has-extra-permissions-non-suitable@example.com
-          suitable: false
-
 bitsDataWarehouse:
   enable: false
