@@ -97,7 +97,7 @@ func (a *AzureGroupEngine) LoadCurrentState(ctx context.Context, grant string) (
 		}
 		return true
 	})
-	return currentState, nil
+	return currentState, err
 }
 
 func (a *AzureGroupEngine) GenerateDesiredState(ctx context.Context, roleAssignments map[uint]models.RoleAssignment) (map[uint]intermediary_user.IntermediaryUser[AzureGroupIdentifier, AzureGroupFields], error) {
