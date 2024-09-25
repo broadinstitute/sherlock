@@ -166,6 +166,7 @@ retries:
     - "googleapi: Error 500"
     - "googleapi: Error 503"
     - "rpc error: code = Internal desc = Internal error encountered" # Another Google error
+    - "googleapi: Error 400: Precondition check failed" # This appears to be an error that we should retry because it is transient
     - "connection reset by peer" # Azure error
   # The base interval between retries. This is fed into an exponential backoff
   # algorithm.
