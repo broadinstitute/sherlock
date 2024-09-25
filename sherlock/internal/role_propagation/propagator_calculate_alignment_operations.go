@@ -30,6 +30,14 @@ currentlyGrantedUserLoop:
 	for _, unsafeCurrentlyGrantedUser := range currentState {
 		currentlyGrantedUser := unsafeCurrentlyGrantedUser
 
+		// Let's first check if we're set to ignore the currently granted user completely.
+		for _, ignoredUser := range p._ignoredUsers {
+			if currentlyGrantedUser.Identifier.EqualTo(ignoredUser) {
+				// Match! Let's move on to the next currently granted user, we'll leave this one alone.
+				continue currentlyGrantedUserLoop
+			}
+		}
+
 		// Seek match from copyOfDesiredState
 		for unsafeDesiredSherlockUserID, unsafeDesiredUser := range copyOfDesiredState {
 			desiredSherlockUserID := unsafeDesiredSherlockUserID
@@ -78,8 +86,19 @@ currentlyGrantedUserLoop:
 	}
 
 	// If there are any desired users left, add them.
+desiredUserLoop:
 	for _, unsafeDesiredUser := range copyOfDesiredState {
 		desiredUser := unsafeDesiredUser
+
+		// Let's first check if we're set to ignore the desired user completely.
+		for _, ignoredUser := range p._ignoredUsers {
+			if desiredUser.Identifier.EqualTo(ignoredUser) {
+				// Match! Let's move on to the next desired user, we'll leave this one alone.
+				continue desiredUserLoop
+			}
+		}
+
+		// If we get here, we want to add the user.
 		alignmentOperations = append(alignmentOperations, func() (string, error) {
 			return p.addOperation()(ctx, grant, desiredUser.Identifier, desiredUser.Fields)
 		})

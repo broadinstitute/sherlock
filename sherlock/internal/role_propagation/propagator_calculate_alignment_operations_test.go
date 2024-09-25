@@ -75,6 +75,26 @@ func Test_propagatorImpl_calculateAlignmentOperations(t *testing.T) {
 	desiredState[6] = testIntermediaryUser{Identifier: identifier6, Fields: fields6}
 	engine.EXPECT().Add(ctx, grant, identifier6, fields6).Return("", nil).Once()
 
+	// User in both current and desired, fields differ, but in ignored, expect nothing to be called
+	identifier7 := testIdentifier{"user7"}
+	fields7 := testFields{"field7"}
+	fields7Desired := testFields{"field7Desired"}
+	currentState = append(currentState, testIntermediaryUser{Identifier: identifier7, Fields: fields7})
+	desiredState[7] = testIntermediaryUser{Identifier: identifier7, Fields: fields7Desired}
+	p._ignoredUsers = append(p._ignoredUsers, identifier7)
+
+	// User in current, not in desired, but in ignored, expect nothing to be called
+	identifier8 := testIdentifier{"user8"}
+	fields8 := testFields{"field8"}
+	currentState = append(currentState, testIntermediaryUser{Identifier: identifier8, Fields: fields8})
+	p._ignoredUsers = append(p._ignoredUsers, identifier8)
+
+	// User in desired, not in current, but in ignored, expect nothing to be called
+	identifier9 := testIdentifier{"user9"}
+	fields9 := testFields{"field9"}
+	desiredState[9] = testIntermediaryUser{Identifier: identifier9, Fields: fields9}
+	p._ignoredUsers = append(p._ignoredUsers, identifier9)
+
 	currentStateLen := len(currentState)
 	desiredStateLen := len(desiredState)
 
@@ -140,6 +160,26 @@ func Test_propagatorImpl_calculateAlignmentOperations_dryRun(t *testing.T) {
 	fields6 := testFields{"field6"}
 	desiredState[6] = testIntermediaryUser{Identifier: identifier6, Fields: fields6}
 	results = append(results, fmt.Sprintf("DRY-RUN: called for adding of %+v with fields %+v", identifier6, fields6))
+
+	// User in both current and desired, fields differ, but in ignored, expect nothing to be called
+	identifier7 := testIdentifier{"user7"}
+	fields7 := testFields{"field7"}
+	fields7Desired := testFields{"field7Desired"}
+	currentState = append(currentState, testIntermediaryUser{Identifier: identifier7, Fields: fields7})
+	desiredState[7] = testIntermediaryUser{Identifier: identifier7, Fields: fields7Desired}
+	p._ignoredUsers = append(p._ignoredUsers, identifier7)
+
+	// User in current, not in desired, but in ignored, expect nothing to be called
+	identifier8 := testIdentifier{"user8"}
+	fields8 := testFields{"field8"}
+	currentState = append(currentState, testIntermediaryUser{Identifier: identifier8, Fields: fields8})
+	p._ignoredUsers = append(p._ignoredUsers, identifier8)
+
+	// User in desired, not in current, but in ignored, expect nothing to be called
+	identifier9 := testIdentifier{"user9"}
+	fields9 := testFields{"field9"}
+	desiredState[9] = testIntermediaryUser{Identifier: identifier9, Fields: fields9}
+	p._ignoredUsers = append(p._ignoredUsers, identifier9)
 
 	currentStateLen := len(currentState)
 	desiredStateLen := len(desiredState)
