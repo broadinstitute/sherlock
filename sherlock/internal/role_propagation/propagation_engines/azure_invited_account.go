@@ -236,12 +236,22 @@ func (a *AzureInvitedAccountEngine) Add(ctx context.Context, _ bool, identifier 
 	invitedUserMessageInfo := graphmodels.NewInvitedUserMessageInfo()
 	invitedUserMessageInfo.SetCustomizedMessageBody(utils.PointerTo(inviteMessageBody))
 	body.SetInvitedUserMessageInfo(invitedUserMessageInfo)
-	_, err = a.inviteTenantClient.Invitations().Post(ctx, body, nil)
+	response, err := a.inviteTenantClient.Invitations().Post(ctx, body, nil)
 	if err != nil {
 		return "", fmt.Errorf("failed to invite %s: %w", identifier.UserPrincipalName, err)
-	} else {
-		return fmt.Sprintf("invited %s (invite email sent with identifying string `%s`)", identifier.UserPrincipalName, identifyingString), nil
+	} else if response.GetInvitedUser() == nil || response.GetInvitedUser().GetId() == nil {
+		return "", fmt.Errorf("failed to invite %s: no user ID returned", identifier.UserPrincipalName)
 	}
+	// Now we have to mutate the user that just got created to set their otherEmails field.
+	// This is key for making sure the invite email goes to the BI email.
+	postCreationEditBody := graphmodels.NewUser()
+	postCreationEditBody.SetOtherMails(fields.OtherMails)
+	_, err = a.inviteTenantClient.Users().ByUserId(*response.GetInvitedUser().GetId()).Patch(ctx, postCreationEditBody, nil)
+	if err != nil {
+		return "", fmt.Errorf("failed to set otherMails for newly invited user %s: %w", identifier.UserPrincipalName, err)
+	}
+
+	return fmt.Sprintf("invited %s (invite email sent with identifying string `%s`)", identifier.UserPrincipalName, identifyingString), nil
 }
 
 func (a *AzureInvitedAccountEngine) inviteMessageBody(identifier AzureInvitedAccountIdentifier) (inviteMessageBody string, identifyingString string, err error) {
