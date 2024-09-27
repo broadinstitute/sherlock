@@ -222,7 +222,7 @@ func (a *AzureInvitedAccountEngine) GenerateDesiredState(ctx context.Context, ro
 }
 
 func (a *AzureInvitedAccountEngine) Add(ctx context.Context, _ bool, identifier AzureInvitedAccountIdentifier, fields AzureInvitedAccountFields) (string, error) {
-	inviteMessageBody, identifyingString, err := a.inviteMessageBody(identifier)
+	_, identifyingString, err := a.inviteMessageBody(identifier)
 	if err != nil {
 		return "", err
 	}
@@ -233,9 +233,9 @@ func (a *AzureInvitedAccountEngine) Add(ctx context.Context, _ bool, identifier 
 	body.SetInvitedUserType(utils.PointerTo("member"))
 	body.SetInvitedUserDisplayName(utils.PointerTo(fields.DisplayName))
 	body.SetSendInvitationMessage(utils.PointerTo(true))
-	invitedUserMessageInfo := graphmodels.NewInvitedUserMessageInfo()
-	invitedUserMessageInfo.SetCustomizedMessageBody(utils.PointerTo(inviteMessageBody))
-	body.SetInvitedUserMessageInfo(invitedUserMessageInfo)
+	//invitedUserMessageInfo := graphmodels.NewInvitedUserMessageInfo()
+	//invitedUserMessageInfo.SetCustomizedMessageBody(utils.PointerTo(inviteMessageBody))
+	//body.SetInvitedUserMessageInfo(invitedUserMessageInfo)
 	response, err := a.inviteTenantClient.Invitations().Post(ctx, body, nil)
 	if err != nil {
 		return "", fmt.Errorf("failed to invite %s: %w", identifier.UserPrincipalName, err)
