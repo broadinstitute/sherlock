@@ -222,33 +222,46 @@ func (a *AzureInvitedAccountEngine) GenerateDesiredState(ctx context.Context, ro
 }
 
 func (a *AzureInvitedAccountEngine) Add(ctx context.Context, _ bool, identifier AzureInvitedAccountIdentifier, fields AzureInvitedAccountFields) (string, error) {
-	inviteMessageBody, identifyingString, err := a.inviteMessageBody(identifier)
-	if err != nil {
-		return "", err
-	}
-
-	body := graphmodels.NewInvitation()
-	body.SetInvitedUserEmailAddress(utils.PointerTo(fields.Email))
-	body.SetInviteRedirectUrl(utils.PointerTo("https://portal.azure.com"))
-	body.SetInvitedUserType(utils.PointerTo("member"))
-	body.SetInvitedUserDisplayName(utils.PointerTo(fields.DisplayName))
-	body.SetSendInvitationMessage(utils.PointerTo(true))
-	invitedUserMessageInfo := graphmodels.NewInvitedUserMessageInfo()
-	invitedUserMessageInfo.SetCustomizedMessageBody(utils.PointerTo(inviteMessageBody))
-	body.SetInvitedUserMessageInfo(invitedUserMessageInfo)
-	response, err := a.inviteTenantClient.Invitations().Post(ctx, body, nil)
+	// Step 1: create the invitation. We don't actually have it send an email yet.
+	createInitialInviteBody := graphmodels.NewInvitation()
+	createInitialInviteBody.SetInvitedUserEmailAddress(utils.PointerTo(fields.Email))
+	createInitialInviteBody.SetInviteRedirectUrl(utils.PointerTo("https://portal.azure.com"))
+	createInitialInviteBody.SetInvitedUserType(utils.PointerTo("member"))
+	createInitialInviteBody.SetInvitedUserDisplayName(utils.PointerTo(fields.DisplayName))
+	createInitialInviteBody.SetSendInvitationMessage(utils.PointerTo(false))
+	response, err := a.inviteTenantClient.Invitations().Post(ctx, createInitialInviteBody, nil)
 	if err != nil {
 		return "", fmt.Errorf("failed to invite %s: %w", identifier.UserPrincipalName, err)
 	} else if response.GetInvitedUser() == nil || response.GetInvitedUser().GetId() == nil {
 		return "", fmt.Errorf("failed to invite %s: no user ID returned", identifier.UserPrincipalName)
 	}
-	// Now we have to mutate the user that just got created to set their otherEmails field.
-	// This is key for making sure the invite email goes to the BI email.
+
+	// Step 2: edit the user object that got created to add the actually addressable email to the othermails
 	postCreationEditBody := graphmodels.NewUser()
 	postCreationEditBody.SetOtherMails(fields.OtherMails)
 	_, err = a.inviteTenantClient.Users().ByUserId(*response.GetInvitedUser().GetId()).Patch(ctx, postCreationEditBody, nil)
 	if err != nil {
 		return "", fmt.Errorf("failed to set otherMails for newly invited user %s: %w", identifier.UserPrincipalName, err)
+	}
+
+	// Step 3: resend the invitation, directing it to go to the actually addressable email. This keeps the UPN but
+	// sends the invite to the right email.
+	inviteMessageBody, identifyingString, err := a.inviteMessageBody(identifier)
+	if err != nil {
+		return "", err
+	}
+	postEditSendEmailBody := graphmodels.NewInvitation()
+	postEditSendEmailBody.SetInvitedUserEmailAddress(utils.PointerTo(fields.OtherMails[0]))
+	postEditSendEmailBody.SetInviteRedirectUrl(utils.PointerTo("https://portal.azure.com"))
+	postEditSendEmailBody.SetSendInvitationMessage(utils.PointerTo(true))
+	postEditSendEmailBody.SetResetRedemption(utils.PointerTo(true))
+	postEditSendEmailBody.SetInvitedUser(response.GetInvitedUser())
+	invitedUserMessageInfo := graphmodels.NewInvitedUserMessageInfo()
+	invitedUserMessageInfo.SetCustomizedMessageBody(utils.PointerTo(inviteMessageBody))
+	postEditSendEmailBody.SetInvitedUserMessageInfo(invitedUserMessageInfo)
+	_, err = a.inviteTenantClient.Invitations().Post(ctx, postEditSendEmailBody, nil)
+	if err != nil {
+		return "", fmt.Errorf("failed to send invite email to %s: %w", identifier.UserPrincipalName, err)
 	}
 
 	return fmt.Sprintf("invited %s (invite email sent with identifying string `%s`)", identifier.UserPrincipalName, identifyingString), nil
