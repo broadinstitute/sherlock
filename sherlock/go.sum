@@ -27,8 +27,8 @@ cloud.google.com/go/bigquery v1.7.0/go.mod h1://okPTzCYNXSlb24MZs83e2Do+h+VXtc4g
 cloud.google.com/go/bigquery v1.8.0/go.mod h1:J5hqkt3O0uAFnINi6JXValWIb1v0goeZM77hZzJN/fQ=
 cloud.google.com/go/bigquery v1.63.0 h1:yQFuJXdDukmBkiUUpjX0i1CtHLFU62HqPs/VDvSzaZo=
 cloud.google.com/go/bigquery v1.63.0/go.mod h1:TQto6OR4kw27bqjNTGkVk1Vo5PJlTgxvDJn6YEIZL/E=
-cloud.google.com/go/cloudsqlconn v1.12.0 h1:XMCISMxdDy6ILnV1LlSv7RVjua6ezXGbxr6RivsvaRI=
-cloud.google.com/go/cloudsqlconn v1.12.0/go.mod h1:mwITDdyZVTBICzSWHCgGo8aaB45GUHclhI+xbR0kq2k=
+cloud.google.com/go/cloudsqlconn v1.12.1 h1:crfkYy4TsYXx+n/wELlPthDYaAmDo2olHLv9DmRuJzY=
+cloud.google.com/go/cloudsqlconn v1.12.1/go.mod h1:Y8x/9e+QsjJNkvOj9mdJ8/ixhE95Ab2H/vsyy0mXWNc=
 cloud.google.com/go/compute/metadata v0.5.0 h1:Zr0eK8JbFv6+Wi4ilXAR8FJ3wyNdpxHKJNPos6LTZOY=
 cloud.google.com/go/compute/metadata v0.5.0/go.mod h1:aHnloV2TPI38yx4s9+wAZhHykWvVCfu7hQbF+9CWoiY=
 cloud.google.com/go/datacatalog v1.22.0 h1:7e5/0B2LYbNx0BcUJbiCT8K2wCtcB5993z/v1JeLIdc=
