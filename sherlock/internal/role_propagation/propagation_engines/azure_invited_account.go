@@ -287,7 +287,7 @@ func (a *AzureInvitedAccountEngine) invitationSlackMessageBody(fields AzureInvit
 	return fmt.Sprintf("Hi <@%s>, this is an automatic message from the DSP DevOps platform. ", slackID) +
 		fmt.Sprintf("You've been added to a role in Beehive that grants your %s Microsoft account access to %s. ", fields.Email, a.inviteTenantIdentityDomain) +
 		fmt.Sprintf("You'll need to click a redemption link and sign in with your %s Microsoft account to complete the process. ", fields.Email) +
-		fmt.Sprintf("That link may have been sent to you via email, but %s for your convenience.", slack.LinkHelper(redemptionURL, "here it is too")) +
+		fmt.Sprintf("*That link might've just been sent to you via email, but %s.* ", slack.LinkHelper(redemptionURL, "here it is too")) +
 		fmt.Sprintf("If you've never signed in to your %s Microsoft account before, you can follow the instructions %s. ", fields.Email, slack.LinkHelper(a.signInInstructionsLink, "here")) +
 		fmt.Sprintf("You can confirm that this isn't phishing by checking with DevOps about their security event with this identifying string: `%s`", messageIdentifierString)
 }
