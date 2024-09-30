@@ -15,7 +15,7 @@
 """  # noqa: E501
 
 
-__version__ = "v1.5.52"
+__version__ = "v1.5.53"
 
 # import apis into sdk package
 from sherlock_python_client.api.app_versions_api import AppVersionsApi
