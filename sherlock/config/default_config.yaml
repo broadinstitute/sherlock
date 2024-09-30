@@ -427,6 +427,8 @@ rolePropagation:
       # to match Sherlock users to Azure Entra ID user emails.
       userEmailDomainsToReplace:
         - "broadinstitute.org"
+      # Link to instructions for how users should sign in to their homeTenantEmailDomain account.
+      signInInstructionsLink: https://docs.google.com/document/d/1wW0OXFsSxtn4sXOJ5pvAJ_WQWH_aCBwY2cpwMJCSl90/edit
     # prodAzureB2CAccount correlates to models.Role.GrantsProdAzureAccount. It invites the account
     # provisioned by prodAzureAccount.
     prodAzureInvitedB2CAccount:
@@ -456,6 +458,8 @@ rolePropagation:
       # to match Sherlock users to Azure Entra ID user emails.
       userEmailDomainsToReplace:
         - "broadinstitute.org"
+      # Link to instructions for how users should sign in to their homeTenantEmailDomain account.
+      signInInstructionsLink: https://docs.google.com/document/d/1wW0OXFsSxtn4sXOJ5pvAJ_WQWH_aCBwY2cpwMJCSl90/edit
 
     devFirecloudGroup:
       enable: false

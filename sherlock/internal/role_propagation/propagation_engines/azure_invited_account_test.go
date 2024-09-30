@@ -271,19 +271,35 @@ func TestAzureInvitedAccountEngine_GenerateDesiredState_emailShortCircuit(t *tes
 	assert.Empty(t, desiredState)
 }
 
-func TestAzureInvitedAccountEngine_inviteMessageBody(t *testing.T) {
-	identifier := AzureInvitedAccountIdentifier{
-		UserPrincipalName: "example@example.com",
+func TestAzureInvitedAccountEngine_invitationEmailMessageBody(t *testing.T) {
+	fields := AzureInvitedAccountFields{
+		Email: "example@example.com",
 	}
 	engine := &AzureInvitedAccountEngine{
 		inviteTenantIdentityDomain: "some-domain.com",
 	}
-	body, identifyingString, err := engine.inviteMessageBody(identifier)
-	assert.NoError(t, err)
+	identifyingString := "some-identifying-string"
+	body := engine.invitationEmailMessageBody(fields, identifyingString)
 	assert.Contains(t, body, engine.inviteTenantIdentityDomain)
 	assert.Contains(t, body, identifyingString)
-	assert.Contains(t, body, identifier.UserPrincipalName)
-	assert.Len(t, identifyingString, 16)
+	assert.Contains(t, body, fields.Email)
+}
+
+func TestAzureInvitedAccountEngine_invitationSlackMessageBody(t *testing.T) {
+	fields := AzureInvitedAccountFields{
+		Email: "example@example.com",
+	}
+	engine := &AzureInvitedAccountEngine{
+		inviteTenantIdentityDomain: "some-domain.com",
+	}
+	slackID := "some-slack-id"
+	identifyingString := "some-identifying-string"
+	redemptionURL := "https://example.com"
+	body := engine.invitationSlackMessageBody(fields, slackID, identifyingString, redemptionURL)
+	assert.Contains(t, body, engine.inviteTenantIdentityDomain)
+	assert.Contains(t, body, identifyingString)
+	assert.Contains(t, body, fields.Email)
+	assert.Contains(t, body, slackID)
 }
 
 func TestAzureInvitedAccountEngine_Remove_errors(t *testing.T) {

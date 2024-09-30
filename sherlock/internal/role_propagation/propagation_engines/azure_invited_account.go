@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/Azure/azure-sdk-for-go/sdk/azidentity"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
+	"github.com/broadinstitute/sherlock/sherlock/internal/clients/slack"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/role_propagation/intermediary_user"
 	"github.com/knadh/koanf"
@@ -79,6 +80,7 @@ type AzureInvitedAccountEngine struct {
 	homeTenantEmailDomain      string
 	inviteTenantIdentityDomain string
 	userEmailDomainsToReplace  []string
+	signInInstructionsLink     string
 
 	homeTenantClient   *msgraphsdk.GraphServiceClient
 	inviteTenantClient *msgraphsdk.GraphServiceClient
@@ -88,6 +90,7 @@ func (a *AzureInvitedAccountEngine) Init(_ context.Context, k *koanf.Koanf) erro
 	a.homeTenantEmailDomain = k.String("homeTenantEmailDomain")
 	a.inviteTenantIdentityDomain = k.String("inviteTenantIdentityDomain")
 	a.userEmailDomainsToReplace = k.Strings("userEmailDomainsToReplace")
+	a.signInInstructionsLink = k.String("signInInstructionsLink")
 
 	homeCredentials, err := azidentity.NewWorkloadIdentityCredential(&azidentity.WorkloadIdentityCredentialOptions{
 		ClientID:      k.String("homeTenantClientID"),
@@ -222,52 +225,71 @@ func (a *AzureInvitedAccountEngine) GenerateDesiredState(ctx context.Context, ro
 }
 
 func (a *AzureInvitedAccountEngine) Add(ctx context.Context, _ bool, identifier AzureInvitedAccountIdentifier, fields AzureInvitedAccountFields) (string, error) {
-	_, identifyingString, err := a.inviteMessageBody(identifier)
+	// For phishing protection, we generate a random identifying string that we'll include in both logs and communications.
+	randomBytes := make([]byte, 8)
+	_, err := rand.Read(randomBytes)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("failed to generate random identifying string for inviting %s: %w", identifier.UserPrincipalName, err)
 	}
+	identifyingString := hex.EncodeToString(randomBytes)
 
-	body := graphmodels.NewInvitation()
-	body.SetInvitedUserEmailAddress(utils.PointerTo(fields.Email))
-	body.SetInviteRedirectUrl(utils.PointerTo("https://portal.azure.com"))
-	body.SetInvitedUserType(utils.PointerTo("member"))
-	body.SetInvitedUserDisplayName(utils.PointerTo(fields.DisplayName))
-	body.SetSendInvitationMessage(utils.PointerTo(true))
-	//invitedUserMessageInfo := graphmodels.NewInvitedUserMessageInfo()
-	//invitedUserMessageInfo.SetCustomizedMessageBody(utils.PointerTo(inviteMessageBody))
-	//body.SetInvitedUserMessageInfo(invitedUserMessageInfo)
-	response, err := a.inviteTenantClient.Invitations().Post(ctx, body, nil)
+	// First, we create an invite for the user. This creates a user record and in theory will send an email to the user
+	// with a redemption link.
+	invitation := graphmodels.NewInvitation()
+	invitation.SetInvitedUserEmailAddress(utils.PointerTo(fields.Email))
+	invitation.SetInviteRedirectUrl(utils.PointerTo("https://portal.azure.com"))
+	invitation.SetInvitedUserType(utils.PointerTo("member"))
+	invitation.SetInvitedUserDisplayName(utils.PointerTo(fields.DisplayName))
+	invitation.SetSendInvitationMessage(utils.PointerTo(true))
+	invitationMessage := graphmodels.NewInvitedUserMessageInfo()
+	invitationMessage.SetCustomizedMessageBody(utils.PointerTo(a.invitationEmailMessageBody(fields, identifyingString)))
+	invitation.SetInvitedUserMessageInfo(invitationMessage)
+	invitationResponse, err := a.inviteTenantClient.Invitations().Post(ctx, invitation, nil)
 	if err != nil {
 		return "", fmt.Errorf("failed to invite %s: %w", identifier.UserPrincipalName, err)
-	} else if response.GetInvitedUser() == nil || response.GetInvitedUser().GetId() == nil {
+	} else if invitationResponse.GetInvitedUser() == nil || invitationResponse.GetInvitedUser().GetId() == nil {
 		return "", fmt.Errorf("failed to invite %s: no user ID returned", identifier.UserPrincipalName)
-	}
-	// Now we have to mutate the user that just got created to set their otherEmails field.
-	// This is key for making sure the invite email goes to the BI email.
-	postCreationEditBody := graphmodels.NewUser()
-	postCreationEditBody.SetOtherMails(fields.OtherMails)
-	_, err = a.inviteTenantClient.Users().ByUserId(*response.GetInvitedUser().GetId()).Patch(ctx, postCreationEditBody, nil)
-	if err != nil {
-		return "", fmt.Errorf("failed to set otherMails for newly invited user %s: %w", identifier.UserPrincipalName, err)
+	} else if invitationResponse.GetInviteRedeemUrl() == nil {
+		return "", fmt.Errorf("failed to invite %s: no redemption URL returned", identifier.UserPrincipalName)
 	}
 
-	return fmt.Sprintf("invited %s (invite email sent with identifying string `%s`)", identifier.UserPrincipalName, identifyingString), nil
+	// Now we have to mutate the user that just got created to set their otherEmails field.
+	// In theory, this'll help the emailed invite go to the right place.
+	invitedUserEdits := graphmodels.NewUser()
+	invitedUserEdits.SetOtherMails(fields.OtherMails)
+	_, err = a.inviteTenantClient.Users().ByUserId(*invitationResponse.GetInvitedUser().GetId()).Patch(ctx, invitedUserEdits, nil)
+	if err != nil {
+		return "", fmt.Errorf("failed to set otherMails for newly invited user %s (message identifier `%s`): %w", identifier.UserPrincipalName, identifyingString, err)
+	}
+
+	// In reality though, the email often doesn't seem to get sent. So we do the next best thing: we Slack the user
+	// the redemption URL directly.
+	slackID, _, _, err := slack.GetUser(ctx, fields.OtherMails[0])
+	if err != nil {
+		return "", fmt.Errorf("invited %s (message identifier `%s`), but failed to get Slack ID for user so couldn't Slack them: %w", identifier.UserPrincipalName, identifyingString, err)
+	}
+	err = slack.SendMessageReturnError(ctx, slackID, a.invitationSlackMessageBody(fields, slackID, identifyingString, *invitationResponse.GetInviteRedeemUrl()), nil)
+	if err != nil {
+		return "", fmt.Errorf("invited %s (message identifier `%s`), but failed to Slack the user: %w", identifier.UserPrincipalName, identifyingString, err)
+	}
+
+	return fmt.Sprintf("invited %s (invite email and Slack message sent with identifying string `%s`)", identifier.UserPrincipalName, identifyingString), nil
 }
 
-func (a *AzureInvitedAccountEngine) inviteMessageBody(identifier AzureInvitedAccountIdentifier) (inviteMessageBody string, identifyingString string, err error) {
-	randomBytes := make([]byte, 8)
-	_, err = rand.Read(randomBytes)
-	if err != nil {
-		return "", "", fmt.Errorf("failed to generate random identifying string for inviting %s: %w", identifier.UserPrincipalName, err)
-	}
-	identifyingString = hex.EncodeToString(randomBytes)
-
-	inviteMessageBody = "This invitation has been generated by the DSP DevOps platform via Microsoft Graph API. " +
-		fmt.Sprintf("This invitation is meant to grant your %s Microsoft account access to %s. ", identifier.UserPrincipalName, a.inviteTenantIdentityDomain) +
+func (a *AzureInvitedAccountEngine) invitationEmailMessageBody(fields AzureInvitedAccountFields, messageIdentifierString string) string {
+	return "This invitation has been generated by the DSP DevOps platform via Microsoft Graph API. " +
+		fmt.Sprintf("This invitation is meant to grant your %s Microsoft account access to %s. ", fields.Email, a.inviteTenantIdentityDomain) +
 		"You should reach out to DevOps to confirm the origin of this message before clicking the link. " +
-		fmt.Sprintf("They can match this message to a security event with this identifying string: %s. ", identifyingString)
+		fmt.Sprintf("They can match this message to a security event with this identifying string: %s. ", messageIdentifierString)
+}
 
-	return inviteMessageBody, identifyingString, nil
+func (a *AzureInvitedAccountEngine) invitationSlackMessageBody(fields AzureInvitedAccountFields, slackID string, messageIdentifierString string, redemptionURL string) string {
+	return fmt.Sprintf("Hi <@%s>, this is an automatic message from the DSP DevOps platform. ", slackID) +
+		fmt.Sprintf("You've been added to a role in Beehive that grants your %s Microsoft account access to %s. ", fields.Email, a.inviteTenantIdentityDomain) +
+		fmt.Sprintf("You'll need to click a redemption link and sign in with your %s Microsoft account to complete the process. ", fields.Email) +
+		fmt.Sprintf("That link may have been sent to you via email, but %s for your convenience.", slack.LinkHelper(redemptionURL, "here it is too")) +
+		fmt.Sprintf("If you've never signed in to your %s Microsoft account before, you can follow the instructions %s. ", fields.Email, slack.LinkHelper(a.signInInstructionsLink, "here")) +
+		fmt.Sprintf("You can confirm that this isn't phishing by checking with DevOps about their security event with this identifying string: `%s`", messageIdentifierString)
 }
 
 func (a *AzureInvitedAccountEngine) Update(ctx context.Context, _ bool, identifier AzureInvitedAccountIdentifier, oldFields AzureInvitedAccountFields, newFields AzureInvitedAccountFields) (string, error) {
