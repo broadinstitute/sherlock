@@ -309,8 +309,12 @@ func (a *AzureInvitedAccountEngine) Update(ctx context.Context, _ bool, identifi
 }
 
 func (a *AzureInvitedAccountEngine) describeDiff(oldFields AzureInvitedAccountFields, newFields AzureInvitedAccountFields) string {
-	if oldFields.Email != newFields.Email || oldFields.MailNickname != newFields.MailNickname || !reflect.DeepEqual(oldFields.OtherMails, newFields.OtherMails) {
-		return "update account email info" // This is really, *really* unlikely to happen but we'll at least handle it
+	if oldFields.Email != newFields.Email {
+		return fmt.Sprintf("update email from `%s` to `%s`", oldFields.Email, newFields.Email)
+	} else if oldFields.MailNickname != newFields.MailNickname {
+		return fmt.Sprintf("update mail nickname from `%s` to `%s`", oldFields.MailNickname, newFields.MailNickname)
+	} else if !reflect.DeepEqual(oldFields.OtherMails, newFields.OtherMails) {
+		return fmt.Sprintf("update other emails from `%v` to `%v`", oldFields.OtherMails, newFields.OtherMails)
 	} else if oldFields.DisplayName != newFields.DisplayName {
 		return fmt.Sprintf("update display name from `%s` to `%s`", oldFields.DisplayName, newFields.DisplayName)
 	} else {

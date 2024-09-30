@@ -346,7 +346,7 @@ func TestAzureInvitedAccountEngine_describeDiff(t *testing.T) {
 				MailNickname: "baz",
 				OtherMails:   []string{"qux"},
 			},
-			want: "update account email info",
+			want: "update email from `foo` to `bar`",
 		},
 		{
 			name: "mail nickname",
@@ -362,7 +362,7 @@ func TestAzureInvitedAccountEngine_describeDiff(t *testing.T) {
 				MailNickname: "bar",
 				OtherMails:   []string{"qux"},
 			},
-			want: "update account email info",
+			want: "update mail nickname from `foo` to `bar`",
 		},
 		{
 			name: "other mails",
@@ -378,7 +378,7 @@ func TestAzureInvitedAccountEngine_describeDiff(t *testing.T) {
 				MailNickname: "baz",
 				OtherMails:   []string{"bar"},
 			},
-			want: "update account email info",
+			want: "update other emails from `[foo]` to `[bar]`",
 		},
 		{
 			name: "name change",
