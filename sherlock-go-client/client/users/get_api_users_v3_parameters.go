@@ -92,13 +92,6 @@ type GetAPIUsersV3Params struct {
 	// NameFrom.
 	NameFrom *string
 
-	/* NameInferredFromGithub.
-
-	     Controls whether Sherlock should automatically update the user's name based on a connected GitHub identity.
-	Will be set to true if the user account has no name and a GitHub account is linked.
-	*/
-	NameInferredFromGithub *bool
-
 	/* Offset.
 
 	   Control the offset for the returned Users (default 0)
@@ -278,17 +271,6 @@ func (o *GetAPIUsersV3Params) WithNameFrom(nameFrom *string) *GetAPIUsersV3Param
 // SetNameFrom adds the nameFrom to the get API users v3 params
 func (o *GetAPIUsersV3Params) SetNameFrom(nameFrom *string) {
 	o.NameFrom = nameFrom
-}
-
-// WithNameInferredFromGithub adds the nameInferredFromGithub to the get API users v3 params
-func (o *GetAPIUsersV3Params) WithNameInferredFromGithub(nameInferredFromGithub *bool) *GetAPIUsersV3Params {
-	o.SetNameInferredFromGithub(nameInferredFromGithub)
-	return o
-}
-
-// SetNameInferredFromGithub adds the nameInferredFromGithub to the get API users v3 params
-func (o *GetAPIUsersV3Params) SetNameInferredFromGithub(nameInferredFromGithub *bool) {
-	o.NameInferredFromGithub = nameInferredFromGithub
 }
 
 // WithOffset adds the offset to the get API users v3 params
@@ -513,23 +495,6 @@ func (o *GetAPIUsersV3Params) WriteToRequest(r runtime.ClientRequest, reg strfmt
 		if qNameFrom != "" {
 
 			if err := r.SetQueryParam("nameFrom", qNameFrom); err != nil {
-				return err
-			}
-		}
-	}
-
-	if o.NameInferredFromGithub != nil {
-
-		// query param nameInferredFromGithub
-		var qrNameInferredFromGithub bool
-
-		if o.NameInferredFromGithub != nil {
-			qrNameInferredFromGithub = *o.NameInferredFromGithub
-		}
-		qNameInferredFromGithub := swag.FormatBool(qrNameInferredFromGithub)
-		if qNameInferredFromGithub != "" {
-
-			if err := r.SetQueryParam("nameInferredFromGithub", qNameInferredFromGithub); err != nil {
 				return err
 			}
 		}

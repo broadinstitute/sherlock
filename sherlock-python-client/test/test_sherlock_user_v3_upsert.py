@@ -38,8 +38,7 @@ class TestSherlockUserV3Upsert(unittest.TestCase):
             return SherlockUserV3Upsert(
                 github_access_token = '',
                 name = '',
-                name_from = 'sherlock',
-                name_inferred_from_github = True
+                name_from = 'sherlock'
             )
         else:
             return SherlockUserV3Upsert(

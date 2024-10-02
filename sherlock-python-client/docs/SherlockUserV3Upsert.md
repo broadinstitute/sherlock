@@ -8,7 +8,6 @@ Name | Type | Description | Notes
 **github_access_token** | **str** | An access token for the GitHub account to associate with the calling user. The access token isn&#39;t stored. The design here ensures that an association is only built when someone controls both accounts (Google via IAP and GitHub via this access token). | [optional] 
 **name** | **str** |  | [optional] 
 **name_from** | **str** |  | [optional] 
-**name_inferred_from_github** | **bool** | Controls whether Sherlock should automatically update the user&#39;s name based on a connected GitHub identity. Will be set to true if the user account has no name and a GitHub account is linked. | [optional] 
 
 ## Example
 

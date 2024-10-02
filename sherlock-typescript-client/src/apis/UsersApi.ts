@@ -37,7 +37,6 @@ export interface ApiUsersV3GetRequest {
     id?: number;
     name?: string;
     nameFrom?: ApiUsersV3GetNameFromEnum;
-    nameInferredFromGithub?: boolean;
     slackID?: string;
     slackUsername?: string;
     suitabilityDescription?: string;
@@ -97,10 +96,6 @@ export class UsersApi extends runtime.BaseAPI {
 
         if (requestParameters['nameFrom'] != null) {
             queryParameters['nameFrom'] = requestParameters['nameFrom'];
-        }
-
-        if (requestParameters['nameInferredFromGithub'] != null) {
-            queryParameters['nameInferredFromGithub'] = requestParameters['nameInferredFromGithub'];
         }
 
         if (requestParameters['slackID'] != null) {

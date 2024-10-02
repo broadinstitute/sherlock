@@ -34,9 +34,13 @@ export interface ApiRolesV3GetRequest {
     createdAt?: Date;
     defaultGlassBreakDuration?: string;
     grantsBroadInstituteGroup?: string;
+    grantsDevAzureAccount?: boolean;
+    grantsDevAzureDirectoryRoles?: boolean;
     grantsDevAzureGroup?: string;
     grantsDevFirecloudFolderOwner?: string;
     grantsDevFirecloudGroup?: string;
+    grantsProdAzureAccount?: boolean;
+    grantsProdAzureDirectoryRoles?: boolean;
     grantsProdAzureGroup?: string;
     grantsProdFirecloudFolderOwner?: string;
     grantsProdFirecloudGroup?: string;
@@ -100,6 +104,14 @@ export class RolesApi extends runtime.BaseAPI {
             queryParameters['grantsBroadInstituteGroup'] = requestParameters['grantsBroadInstituteGroup'];
         }
 
+        if (requestParameters['grantsDevAzureAccount'] != null) {
+            queryParameters['grantsDevAzureAccount'] = requestParameters['grantsDevAzureAccount'];
+        }
+
+        if (requestParameters['grantsDevAzureDirectoryRoles'] != null) {
+            queryParameters['grantsDevAzureDirectoryRoles'] = requestParameters['grantsDevAzureDirectoryRoles'];
+        }
+
         if (requestParameters['grantsDevAzureGroup'] != null) {
             queryParameters['grantsDevAzureGroup'] = requestParameters['grantsDevAzureGroup'];
         }
@@ -110,6 +122,14 @@ export class RolesApi extends runtime.BaseAPI {
 
         if (requestParameters['grantsDevFirecloudGroup'] != null) {
             queryParameters['grantsDevFirecloudGroup'] = requestParameters['grantsDevFirecloudGroup'];
+        }
+
+        if (requestParameters['grantsProdAzureAccount'] != null) {
+            queryParameters['grantsProdAzureAccount'] = requestParameters['grantsProdAzureAccount'];
+        }
+
+        if (requestParameters['grantsProdAzureDirectoryRoles'] != null) {
+            queryParameters['grantsProdAzureDirectoryRoles'] = requestParameters['grantsProdAzureDirectoryRoles'];
         }
 
         if (requestParameters['grantsProdAzureGroup'] != null) {

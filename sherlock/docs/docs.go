@@ -7013,6 +7013,16 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "boolean",
+                        "name": "grantsDevAzureAccount",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "grantsDevAzureDirectoryRoles",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "name": "grantsDevAzureGroup",
                         "in": "query"
@@ -7025,6 +7035,16 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "name": "grantsDevFirecloudGroup",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "grantsProdAzureAccount",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "grantsProdAzureDirectoryRoles",
                         "in": "query"
                     },
                     {
@@ -7461,12 +7481,6 @@ const docTemplate = `{
                         ],
                         "type": "string",
                         "name": "nameFrom",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "description": "Controls whether Sherlock should automatically update the user's name based on a connected GitHub identity.\nWill be set to true if the user account has no name and a GitHub account is linked.",
-                        "name": "nameInferredFromGithub",
                         "in": "query"
                     },
                     {
@@ -9959,6 +9973,12 @@ const docTemplate = `{
                 "grantsBroadInstituteGroup": {
                     "type": "string"
                 },
+                "grantsDevAzureAccount": {
+                    "type": "boolean"
+                },
+                "grantsDevAzureDirectoryRoles": {
+                    "type": "boolean"
+                },
                 "grantsDevAzureGroup": {
                     "type": "string"
                 },
@@ -9967,6 +9987,12 @@ const docTemplate = `{
                 },
                 "grantsDevFirecloudGroup": {
                     "type": "string"
+                },
+                "grantsProdAzureAccount": {
+                    "type": "boolean"
+                },
+                "grantsProdAzureDirectoryRoles": {
+                    "type": "boolean"
                 },
                 "grantsProdAzureGroup": {
                     "type": "string"
@@ -10018,6 +10044,12 @@ const docTemplate = `{
                 "grantsBroadInstituteGroup": {
                     "type": "string"
                 },
+                "grantsDevAzureAccount": {
+                    "type": "boolean"
+                },
+                "grantsDevAzureDirectoryRoles": {
+                    "type": "boolean"
+                },
                 "grantsDevAzureGroup": {
                     "type": "string"
                 },
@@ -10026,6 +10058,12 @@ const docTemplate = `{
                 },
                 "grantsDevFirecloudGroup": {
                     "type": "string"
+                },
+                "grantsProdAzureAccount": {
+                    "type": "boolean"
+                },
+                "grantsProdAzureDirectoryRoles": {
+                    "type": "boolean"
                 },
                 "grantsProdAzureGroup": {
                     "type": "string"
@@ -10184,10 +10222,6 @@ const docTemplate = `{
                         "slack"
                     ]
                 },
-                "nameInferredFromGithub": {
-                    "description": "Controls whether Sherlock should automatically update the user's name based on a connected GitHub identity.\nWill be set to true if the user account has no name and a GitHub account is linked.",
-                    "type": "boolean"
-                },
                 "slackID": {
                     "type": "string"
                 },
@@ -10225,10 +10259,6 @@ const docTemplate = `{
                         "github",
                         "slack"
                     ]
-                },
-                "nameInferredFromGithub": {
-                    "description": "Controls whether Sherlock should automatically update the user's name based on a connected GitHub identity.\nWill be set to true if the user account has no name and a GitHub account is linked.",
-                    "type": "boolean"
                 }
             }
         }

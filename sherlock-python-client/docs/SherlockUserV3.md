@@ -14,7 +14,6 @@ Name | Type | Description | Notes
 **id** | **int** |  | [optional] 
 **name** | **str** |  | [optional] 
 **name_from** | **str** |  | [optional] 
-**name_inferred_from_github** | **bool** | Controls whether Sherlock should automatically update the user&#39;s name based on a connected GitHub identity. Will be set to true if the user account has no name and a GitHub account is linked. | [optional] 
 **slack_id** | **str** |  | [optional] 
 **slack_username** | **str** |  | [optional] 
 **suitability_description** | **str** | Available only in responses; describes the user&#39;s production-suitability | [optional] 

@@ -80,6 +80,12 @@ type GetAPIRolesV3Params struct {
 	// GrantsBroadInstituteGroup.
 	GrantsBroadInstituteGroup *string
 
+	// GrantsDevAzureAccount.
+	GrantsDevAzureAccount *bool
+
+	// GrantsDevAzureDirectoryRoles.
+	GrantsDevAzureDirectoryRoles *bool
+
 	// GrantsDevAzureGroup.
 	GrantsDevAzureGroup *string
 
@@ -88,6 +94,12 @@ type GetAPIRolesV3Params struct {
 
 	// GrantsDevFirecloudGroup.
 	GrantsDevFirecloudGroup *string
+
+	// GrantsProdAzureAccount.
+	GrantsProdAzureAccount *bool
+
+	// GrantsProdAzureDirectoryRoles.
+	GrantsProdAzureDirectoryRoles *bool
 
 	// GrantsProdAzureGroup.
 	GrantsProdAzureGroup *string
@@ -244,6 +256,28 @@ func (o *GetAPIRolesV3Params) SetGrantsBroadInstituteGroup(grantsBroadInstituteG
 	o.GrantsBroadInstituteGroup = grantsBroadInstituteGroup
 }
 
+// WithGrantsDevAzureAccount adds the grantsDevAzureAccount to the get API roles v3 params
+func (o *GetAPIRolesV3Params) WithGrantsDevAzureAccount(grantsDevAzureAccount *bool) *GetAPIRolesV3Params {
+	o.SetGrantsDevAzureAccount(grantsDevAzureAccount)
+	return o
+}
+
+// SetGrantsDevAzureAccount adds the grantsDevAzureAccount to the get API roles v3 params
+func (o *GetAPIRolesV3Params) SetGrantsDevAzureAccount(grantsDevAzureAccount *bool) {
+	o.GrantsDevAzureAccount = grantsDevAzureAccount
+}
+
+// WithGrantsDevAzureDirectoryRoles adds the grantsDevAzureDirectoryRoles to the get API roles v3 params
+func (o *GetAPIRolesV3Params) WithGrantsDevAzureDirectoryRoles(grantsDevAzureDirectoryRoles *bool) *GetAPIRolesV3Params {
+	o.SetGrantsDevAzureDirectoryRoles(grantsDevAzureDirectoryRoles)
+	return o
+}
+
+// SetGrantsDevAzureDirectoryRoles adds the grantsDevAzureDirectoryRoles to the get API roles v3 params
+func (o *GetAPIRolesV3Params) SetGrantsDevAzureDirectoryRoles(grantsDevAzureDirectoryRoles *bool) {
+	o.GrantsDevAzureDirectoryRoles = grantsDevAzureDirectoryRoles
+}
+
 // WithGrantsDevAzureGroup adds the grantsDevAzureGroup to the get API roles v3 params
 func (o *GetAPIRolesV3Params) WithGrantsDevAzureGroup(grantsDevAzureGroup *string) *GetAPIRolesV3Params {
 	o.SetGrantsDevAzureGroup(grantsDevAzureGroup)
@@ -275,6 +309,28 @@ func (o *GetAPIRolesV3Params) WithGrantsDevFirecloudGroup(grantsDevFirecloudGrou
 // SetGrantsDevFirecloudGroup adds the grantsDevFirecloudGroup to the get API roles v3 params
 func (o *GetAPIRolesV3Params) SetGrantsDevFirecloudGroup(grantsDevFirecloudGroup *string) {
 	o.GrantsDevFirecloudGroup = grantsDevFirecloudGroup
+}
+
+// WithGrantsProdAzureAccount adds the grantsProdAzureAccount to the get API roles v3 params
+func (o *GetAPIRolesV3Params) WithGrantsProdAzureAccount(grantsProdAzureAccount *bool) *GetAPIRolesV3Params {
+	o.SetGrantsProdAzureAccount(grantsProdAzureAccount)
+	return o
+}
+
+// SetGrantsProdAzureAccount adds the grantsProdAzureAccount to the get API roles v3 params
+func (o *GetAPIRolesV3Params) SetGrantsProdAzureAccount(grantsProdAzureAccount *bool) {
+	o.GrantsProdAzureAccount = grantsProdAzureAccount
+}
+
+// WithGrantsProdAzureDirectoryRoles adds the grantsProdAzureDirectoryRoles to the get API roles v3 params
+func (o *GetAPIRolesV3Params) WithGrantsProdAzureDirectoryRoles(grantsProdAzureDirectoryRoles *bool) *GetAPIRolesV3Params {
+	o.SetGrantsProdAzureDirectoryRoles(grantsProdAzureDirectoryRoles)
+	return o
+}
+
+// SetGrantsProdAzureDirectoryRoles adds the grantsProdAzureDirectoryRoles to the get API roles v3 params
+func (o *GetAPIRolesV3Params) SetGrantsProdAzureDirectoryRoles(grantsProdAzureDirectoryRoles *bool) {
+	o.GrantsProdAzureDirectoryRoles = grantsProdAzureDirectoryRoles
 }
 
 // WithGrantsProdAzureGroup adds the grantsProdAzureGroup to the get API roles v3 params
@@ -502,6 +558,40 @@ func (o *GetAPIRolesV3Params) WriteToRequest(r runtime.ClientRequest, reg strfmt
 		}
 	}
 
+	if o.GrantsDevAzureAccount != nil {
+
+		// query param grantsDevAzureAccount
+		var qrGrantsDevAzureAccount bool
+
+		if o.GrantsDevAzureAccount != nil {
+			qrGrantsDevAzureAccount = *o.GrantsDevAzureAccount
+		}
+		qGrantsDevAzureAccount := swag.FormatBool(qrGrantsDevAzureAccount)
+		if qGrantsDevAzureAccount != "" {
+
+			if err := r.SetQueryParam("grantsDevAzureAccount", qGrantsDevAzureAccount); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.GrantsDevAzureDirectoryRoles != nil {
+
+		// query param grantsDevAzureDirectoryRoles
+		var qrGrantsDevAzureDirectoryRoles bool
+
+		if o.GrantsDevAzureDirectoryRoles != nil {
+			qrGrantsDevAzureDirectoryRoles = *o.GrantsDevAzureDirectoryRoles
+		}
+		qGrantsDevAzureDirectoryRoles := swag.FormatBool(qrGrantsDevAzureDirectoryRoles)
+		if qGrantsDevAzureDirectoryRoles != "" {
+
+			if err := r.SetQueryParam("grantsDevAzureDirectoryRoles", qGrantsDevAzureDirectoryRoles); err != nil {
+				return err
+			}
+		}
+	}
+
 	if o.GrantsDevAzureGroup != nil {
 
 		// query param grantsDevAzureGroup
@@ -548,6 +638,40 @@ func (o *GetAPIRolesV3Params) WriteToRequest(r runtime.ClientRequest, reg strfmt
 		if qGrantsDevFirecloudGroup != "" {
 
 			if err := r.SetQueryParam("grantsDevFirecloudGroup", qGrantsDevFirecloudGroup); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.GrantsProdAzureAccount != nil {
+
+		// query param grantsProdAzureAccount
+		var qrGrantsProdAzureAccount bool
+
+		if o.GrantsProdAzureAccount != nil {
+			qrGrantsProdAzureAccount = *o.GrantsProdAzureAccount
+		}
+		qGrantsProdAzureAccount := swag.FormatBool(qrGrantsProdAzureAccount)
+		if qGrantsProdAzureAccount != "" {
+
+			if err := r.SetQueryParam("grantsProdAzureAccount", qGrantsProdAzureAccount); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.GrantsProdAzureDirectoryRoles != nil {
+
+		// query param grantsProdAzureDirectoryRoles
+		var qrGrantsProdAzureDirectoryRoles bool
+
+		if o.GrantsProdAzureDirectoryRoles != nil {
+			qrGrantsProdAzureDirectoryRoles = *o.GrantsProdAzureDirectoryRoles
+		}
+		qGrantsProdAzureDirectoryRoles := swag.FormatBool(qrGrantsProdAzureDirectoryRoles)
+		if qGrantsProdAzureDirectoryRoles != "" {
+
+			if err := r.SetQueryParam("grantsProdAzureDirectoryRoles", qGrantsProdAzureDirectoryRoles); err != nil {
 				return err
 			}
 		}

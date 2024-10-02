@@ -36,9 +36,13 @@ class SherlockRoleV3(BaseModel):
     created_at: Optional[datetime] = Field(default=None, alias="createdAt")
     default_glass_break_duration: Optional[StrictStr] = Field(default=None, alias="defaultGlassBreakDuration")
     grants_broad_institute_group: Optional[StrictStr] = Field(default=None, alias="grantsBroadInstituteGroup")
+    grants_dev_azure_account: Optional[StrictBool] = Field(default=None, alias="grantsDevAzureAccount")
+    grants_dev_azure_directory_roles: Optional[StrictBool] = Field(default=None, alias="grantsDevAzureDirectoryRoles")
     grants_dev_azure_group: Optional[StrictStr] = Field(default=None, alias="grantsDevAzureGroup")
     grants_dev_firecloud_folder_owner: Optional[StrictStr] = Field(default=None, alias="grantsDevFirecloudFolderOwner")
     grants_dev_firecloud_group: Optional[StrictStr] = Field(default=None, alias="grantsDevFirecloudGroup")
+    grants_prod_azure_account: Optional[StrictBool] = Field(default=None, alias="grantsProdAzureAccount")
+    grants_prod_azure_directory_roles: Optional[StrictBool] = Field(default=None, alias="grantsProdAzureDirectoryRoles")
     grants_prod_azure_group: Optional[StrictStr] = Field(default=None, alias="grantsProdAzureGroup")
     grants_prod_firecloud_folder_owner: Optional[StrictStr] = Field(default=None, alias="grantsProdFirecloudFolderOwner")
     grants_prod_firecloud_group: Optional[StrictStr] = Field(default=None, alias="grantsProdFirecloudGroup")
@@ -50,7 +54,7 @@ class SherlockRoleV3(BaseModel):
     suspend_non_suitable_users: Optional[StrictBool] = Field(default=None, description="When true, the \"suspended\" field on role assignments will be computed by Sherlock based on suitability instead of being a mutable API field", alias="suspendNonSuitableUsers")
     updated_at: Optional[datetime] = Field(default=None, alias="updatedAt")
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["assignments", "autoAssignAllUsers", "canBeGlassBrokenByRole", "canBeGlassBrokenByRoleInfo", "createdAt", "defaultGlassBreakDuration", "grantsBroadInstituteGroup", "grantsDevAzureGroup", "grantsDevFirecloudFolderOwner", "grantsDevFirecloudGroup", "grantsProdAzureGroup", "grantsProdFirecloudFolderOwner", "grantsProdFirecloudGroup", "grantsQaFirecloudFolderOwner", "grantsQaFirecloudGroup", "grantsSherlockSuperAdmin", "id", "name", "suspendNonSuitableUsers", "updatedAt"]
+    __properties: ClassVar[List[str]] = ["assignments", "autoAssignAllUsers", "canBeGlassBrokenByRole", "canBeGlassBrokenByRoleInfo", "createdAt", "defaultGlassBreakDuration", "grantsBroadInstituteGroup", "grantsDevAzureAccount", "grantsDevAzureDirectoryRoles", "grantsDevAzureGroup", "grantsDevFirecloudFolderOwner", "grantsDevFirecloudGroup", "grantsProdAzureAccount", "grantsProdAzureDirectoryRoles", "grantsProdAzureGroup", "grantsProdFirecloudFolderOwner", "grantsProdFirecloudGroup", "grantsQaFirecloudFolderOwner", "grantsQaFirecloudGroup", "grantsSherlockSuperAdmin", "id", "name", "suspendNonSuitableUsers", "updatedAt"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -124,9 +128,13 @@ class SherlockRoleV3(BaseModel):
             "createdAt": obj.get("createdAt"),
             "defaultGlassBreakDuration": obj.get("defaultGlassBreakDuration"),
             "grantsBroadInstituteGroup": obj.get("grantsBroadInstituteGroup"),
+            "grantsDevAzureAccount": obj.get("grantsDevAzureAccount"),
+            "grantsDevAzureDirectoryRoles": obj.get("grantsDevAzureDirectoryRoles"),
             "grantsDevAzureGroup": obj.get("grantsDevAzureGroup"),
             "grantsDevFirecloudFolderOwner": obj.get("grantsDevFirecloudFolderOwner"),
             "grantsDevFirecloudGroup": obj.get("grantsDevFirecloudGroup"),
+            "grantsProdAzureAccount": obj.get("grantsProdAzureAccount"),
+            "grantsProdAzureDirectoryRoles": obj.get("grantsProdAzureDirectoryRoles"),
             "grantsProdAzureGroup": obj.get("grantsProdAzureGroup"),
             "grantsProdFirecloudFolderOwner": obj.get("grantsProdFirecloudFolderOwner"),
             "grantsProdFirecloudGroup": obj.get("grantsProdFirecloudGroup"),

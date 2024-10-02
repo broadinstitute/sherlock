@@ -50,10 +50,6 @@ type SherlockUserV3 struct {
 	// Enum: [sherlock github slack]
 	NameFrom string `json:"nameFrom,omitempty"`
 
-	// Controls whether Sherlock should automatically update the user's name based on a connected GitHub identity.
-	// Will be set to true if the user account has no name and a GitHub account is linked.
-	NameInferredFromGithub bool `json:"nameInferredFromGithub,omitempty"`
-
 	// slack ID
 	SlackID string `json:"slackID,omitempty"`
 

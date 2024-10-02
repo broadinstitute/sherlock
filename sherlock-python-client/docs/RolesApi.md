@@ -12,7 +12,7 @@ Method | HTTP request | Description
 
 
 # **api_roles_v3_get**
-> List[SherlockRoleV3] api_roles_v3_get(auto_assign_all_users=auto_assign_all_users, can_be_glass_broken_by_role=can_be_glass_broken_by_role, created_at=created_at, default_glass_break_duration=default_glass_break_duration, grants_broad_institute_group=grants_broad_institute_group, grants_dev_azure_group=grants_dev_azure_group, grants_dev_firecloud_folder_owner=grants_dev_firecloud_folder_owner, grants_dev_firecloud_group=grants_dev_firecloud_group, grants_prod_azure_group=grants_prod_azure_group, grants_prod_firecloud_folder_owner=grants_prod_firecloud_folder_owner, grants_prod_firecloud_group=grants_prod_firecloud_group, grants_qa_firecloud_folder_owner=grants_qa_firecloud_folder_owner, grants_qa_firecloud_group=grants_qa_firecloud_group, grants_sherlock_super_admin=grants_sherlock_super_admin, id=id, name=name, suspend_non_suitable_users=suspend_non_suitable_users, updated_at=updated_at, limit=limit, offset=offset)
+> List[SherlockRoleV3] api_roles_v3_get(auto_assign_all_users=auto_assign_all_users, can_be_glass_broken_by_role=can_be_glass_broken_by_role, created_at=created_at, default_glass_break_duration=default_glass_break_duration, grants_broad_institute_group=grants_broad_institute_group, grants_dev_azure_account=grants_dev_azure_account, grants_dev_azure_directory_roles=grants_dev_azure_directory_roles, grants_dev_azure_group=grants_dev_azure_group, grants_dev_firecloud_folder_owner=grants_dev_firecloud_folder_owner, grants_dev_firecloud_group=grants_dev_firecloud_group, grants_prod_azure_account=grants_prod_azure_account, grants_prod_azure_directory_roles=grants_prod_azure_directory_roles, grants_prod_azure_group=grants_prod_azure_group, grants_prod_firecloud_folder_owner=grants_prod_firecloud_folder_owner, grants_prod_firecloud_group=grants_prod_firecloud_group, grants_qa_firecloud_folder_owner=grants_qa_firecloud_folder_owner, grants_qa_firecloud_group=grants_qa_firecloud_group, grants_sherlock_super_admin=grants_sherlock_super_admin, id=id, name=name, suspend_non_suitable_users=suspend_non_suitable_users, updated_at=updated_at, limit=limit, offset=offset)
 
 List Roles matching a filter
 
@@ -43,9 +43,13 @@ with sherlock_python_client.ApiClient(configuration) as api_client:
     created_at = '2013-10-20T19:20:30+01:00' # datetime |  (optional)
     default_glass_break_duration = 'default_glass_break_duration_example' # str |  (optional)
     grants_broad_institute_group = 'grants_broad_institute_group_example' # str |  (optional)
+    grants_dev_azure_account = True # bool |  (optional)
+    grants_dev_azure_directory_roles = True # bool |  (optional)
     grants_dev_azure_group = 'grants_dev_azure_group_example' # str |  (optional)
     grants_dev_firecloud_folder_owner = 'grants_dev_firecloud_folder_owner_example' # str |  (optional)
     grants_dev_firecloud_group = 'grants_dev_firecloud_group_example' # str |  (optional)
+    grants_prod_azure_account = True # bool |  (optional)
+    grants_prod_azure_directory_roles = True # bool |  (optional)
     grants_prod_azure_group = 'grants_prod_azure_group_example' # str |  (optional)
     grants_prod_firecloud_folder_owner = 'grants_prod_firecloud_folder_owner_example' # str |  (optional)
     grants_prod_firecloud_group = 'grants_prod_firecloud_group_example' # str |  (optional)
@@ -61,7 +65,7 @@ with sherlock_python_client.ApiClient(configuration) as api_client:
 
     try:
         # List Roles matching a filter
-        api_response = api_instance.api_roles_v3_get(auto_assign_all_users=auto_assign_all_users, can_be_glass_broken_by_role=can_be_glass_broken_by_role, created_at=created_at, default_glass_break_duration=default_glass_break_duration, grants_broad_institute_group=grants_broad_institute_group, grants_dev_azure_group=grants_dev_azure_group, grants_dev_firecloud_folder_owner=grants_dev_firecloud_folder_owner, grants_dev_firecloud_group=grants_dev_firecloud_group, grants_prod_azure_group=grants_prod_azure_group, grants_prod_firecloud_folder_owner=grants_prod_firecloud_folder_owner, grants_prod_firecloud_group=grants_prod_firecloud_group, grants_qa_firecloud_folder_owner=grants_qa_firecloud_folder_owner, grants_qa_firecloud_group=grants_qa_firecloud_group, grants_sherlock_super_admin=grants_sherlock_super_admin, id=id, name=name, suspend_non_suitable_users=suspend_non_suitable_users, updated_at=updated_at, limit=limit, offset=offset)
+        api_response = api_instance.api_roles_v3_get(auto_assign_all_users=auto_assign_all_users, can_be_glass_broken_by_role=can_be_glass_broken_by_role, created_at=created_at, default_glass_break_duration=default_glass_break_duration, grants_broad_institute_group=grants_broad_institute_group, grants_dev_azure_account=grants_dev_azure_account, grants_dev_azure_directory_roles=grants_dev_azure_directory_roles, grants_dev_azure_group=grants_dev_azure_group, grants_dev_firecloud_folder_owner=grants_dev_firecloud_folder_owner, grants_dev_firecloud_group=grants_dev_firecloud_group, grants_prod_azure_account=grants_prod_azure_account, grants_prod_azure_directory_roles=grants_prod_azure_directory_roles, grants_prod_azure_group=grants_prod_azure_group, grants_prod_firecloud_folder_owner=grants_prod_firecloud_folder_owner, grants_prod_firecloud_group=grants_prod_firecloud_group, grants_qa_firecloud_folder_owner=grants_qa_firecloud_folder_owner, grants_qa_firecloud_group=grants_qa_firecloud_group, grants_sherlock_super_admin=grants_sherlock_super_admin, id=id, name=name, suspend_non_suitable_users=suspend_non_suitable_users, updated_at=updated_at, limit=limit, offset=offset)
         print("The response of RolesApi->api_roles_v3_get:\n")
         pprint(api_response)
     except Exception as e:
@@ -80,9 +84,13 @@ Name | Type | Description  | Notes
  **created_at** | **datetime**|  | [optional] 
  **default_glass_break_duration** | **str**|  | [optional] 
  **grants_broad_institute_group** | **str**|  | [optional] 
+ **grants_dev_azure_account** | **bool**|  | [optional] 
+ **grants_dev_azure_directory_roles** | **bool**|  | [optional] 
  **grants_dev_azure_group** | **str**|  | [optional] 
  **grants_dev_firecloud_folder_owner** | **str**|  | [optional] 
  **grants_dev_firecloud_group** | **str**|  | [optional] 
+ **grants_prod_azure_account** | **bool**|  | [optional] 
+ **grants_prod_azure_directory_roles** | **bool**|  | [optional] 
  **grants_prod_azure_group** | **str**|  | [optional] 
  **grants_prod_firecloud_folder_owner** | **str**|  | [optional] 
  **grants_prod_firecloud_group** | **str**|  | [optional] 

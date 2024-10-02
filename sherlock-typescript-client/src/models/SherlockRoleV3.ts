@@ -71,6 +71,18 @@ export interface SherlockRoleV3 {
     grantsBroadInstituteGroup?: string;
     /**
      * 
+     * @type {boolean}
+     * @memberof SherlockRoleV3
+     */
+    grantsDevAzureAccount?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof SherlockRoleV3
+     */
+    grantsDevAzureDirectoryRoles?: boolean;
+    /**
+     * 
      * @type {string}
      * @memberof SherlockRoleV3
      */
@@ -87,6 +99,18 @@ export interface SherlockRoleV3 {
      * @memberof SherlockRoleV3
      */
     grantsDevFirecloudGroup?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof SherlockRoleV3
+     */
+    grantsProdAzureAccount?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof SherlockRoleV3
+     */
+    grantsProdAzureDirectoryRoles?: boolean;
     /**
      * 
      * @type {string}
@@ -173,9 +197,13 @@ export function SherlockRoleV3FromJSONTyped(json: any, ignoreDiscriminator: bool
         'createdAt': json['createdAt'] == null ? undefined : (new Date(json['createdAt'])),
         'defaultGlassBreakDuration': json['defaultGlassBreakDuration'] == null ? undefined : json['defaultGlassBreakDuration'],
         'grantsBroadInstituteGroup': json['grantsBroadInstituteGroup'] == null ? undefined : json['grantsBroadInstituteGroup'],
+        'grantsDevAzureAccount': json['grantsDevAzureAccount'] == null ? undefined : json['grantsDevAzureAccount'],
+        'grantsDevAzureDirectoryRoles': json['grantsDevAzureDirectoryRoles'] == null ? undefined : json['grantsDevAzureDirectoryRoles'],
         'grantsDevAzureGroup': json['grantsDevAzureGroup'] == null ? undefined : json['grantsDevAzureGroup'],
         'grantsDevFirecloudFolderOwner': json['grantsDevFirecloudFolderOwner'] == null ? undefined : json['grantsDevFirecloudFolderOwner'],
         'grantsDevFirecloudGroup': json['grantsDevFirecloudGroup'] == null ? undefined : json['grantsDevFirecloudGroup'],
+        'grantsProdAzureAccount': json['grantsProdAzureAccount'] == null ? undefined : json['grantsProdAzureAccount'],
+        'grantsProdAzureDirectoryRoles': json['grantsProdAzureDirectoryRoles'] == null ? undefined : json['grantsProdAzureDirectoryRoles'],
         'grantsProdAzureGroup': json['grantsProdAzureGroup'] == null ? undefined : json['grantsProdAzureGroup'],
         'grantsProdFirecloudFolderOwner': json['grantsProdFirecloudFolderOwner'] == null ? undefined : json['grantsProdFirecloudFolderOwner'],
         'grantsProdFirecloudGroup': json['grantsProdFirecloudGroup'] == null ? undefined : json['grantsProdFirecloudGroup'],
@@ -207,9 +235,13 @@ export function SherlockRoleV3FromJSONTyped(json: any, ignoreDiscriminator: bool
         'createdAt': value['createdAt'] == null ? undefined : ((value['createdAt']).toISOString()),
         'defaultGlassBreakDuration': value['defaultGlassBreakDuration'],
         'grantsBroadInstituteGroup': value['grantsBroadInstituteGroup'],
+        'grantsDevAzureAccount': value['grantsDevAzureAccount'],
+        'grantsDevAzureDirectoryRoles': value['grantsDevAzureDirectoryRoles'],
         'grantsDevAzureGroup': value['grantsDevAzureGroup'],
         'grantsDevFirecloudFolderOwner': value['grantsDevFirecloudFolderOwner'],
         'grantsDevFirecloudGroup': value['grantsDevFirecloudGroup'],
+        'grantsProdAzureAccount': value['grantsProdAzureAccount'],
+        'grantsProdAzureDirectoryRoles': value['grantsProdAzureDirectoryRoles'],
         'grantsProdAzureGroup': value['grantsProdAzureGroup'],
         'grantsProdFirecloudFolderOwner': value['grantsProdFirecloudFolderOwner'],
         'grantsProdFirecloudGroup': value['grantsProdFirecloudGroup'],

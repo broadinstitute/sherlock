@@ -82,13 +82,6 @@ export interface SherlockUserV3 {
      */
     nameFrom?: SherlockUserV3NameFromEnum;
     /**
-     * Controls whether Sherlock should automatically update the user's name based on a connected GitHub identity.
-     * Will be set to true if the user account has no name and a GitHub account is linked.
-     * @type {boolean}
-     * @memberof SherlockUserV3
-     */
-    nameInferredFromGithub?: boolean;
-    /**
      * 
      * @type {string}
      * @memberof SherlockUserV3
@@ -158,7 +151,6 @@ export function SherlockUserV3FromJSONTyped(json: any, ignoreDiscriminator: bool
         'id': json['id'] == null ? undefined : json['id'],
         'name': json['name'] == null ? undefined : json['name'],
         'nameFrom': json['nameFrom'] == null ? undefined : json['nameFrom'],
-        'nameInferredFromGithub': json['nameInferredFromGithub'] == null ? undefined : json['nameInferredFromGithub'],
         'slackID': json['slackID'] == null ? undefined : json['slackID'],
         'slackUsername': json['slackUsername'] == null ? undefined : json['slackUsername'],
         'suitabilityDescription': json['suitabilityDescription'] == null ? undefined : json['suitabilityDescription'],
@@ -187,7 +179,6 @@ export function SherlockUserV3FromJSONTyped(json: any, ignoreDiscriminator: bool
         'id': value['id'],
         'name': value['name'],
         'nameFrom': value['nameFrom'],
-        'nameInferredFromGithub': value['nameInferredFromGithub'],
         'slackID': value['slackID'],
         'slackUsername': value['slackUsername'],
         'suitabilityDescription': value['suitabilityDescription'],

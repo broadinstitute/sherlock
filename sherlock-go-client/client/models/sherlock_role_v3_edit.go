@@ -29,6 +29,12 @@ type SherlockRoleV3Edit struct {
 	// grants broad institute group
 	GrantsBroadInstituteGroup string `json:"grantsBroadInstituteGroup,omitempty"`
 
+	// grants dev azure account
+	GrantsDevAzureAccount bool `json:"grantsDevAzureAccount,omitempty"`
+
+	// grants dev azure directory roles
+	GrantsDevAzureDirectoryRoles bool `json:"grantsDevAzureDirectoryRoles,omitempty"`
+
 	// grants dev azure group
 	GrantsDevAzureGroup string `json:"grantsDevAzureGroup,omitempty"`
 
@@ -37,6 +43,12 @@ type SherlockRoleV3Edit struct {
 
 	// grants dev firecloud group
 	GrantsDevFirecloudGroup string `json:"grantsDevFirecloudGroup,omitempty"`
+
+	// grants prod azure account
+	GrantsProdAzureAccount bool `json:"grantsProdAzureAccount,omitempty"`
+
+	// grants prod azure directory roles
+	GrantsProdAzureDirectoryRoles bool `json:"grantsProdAzureDirectoryRoles,omitempty"`
 
 	// grants prod azure group
 	GrantsProdAzureGroup string `json:"grantsProdAzureGroup,omitempty"`

@@ -56,7 +56,6 @@ class TestSherlockChartVersionV3ChangelogResponse(unittest.TestCase):
                             id = 56, 
                             name = '', 
                             name_from = 'sherlock', 
-                            name_inferred_from_github = True, 
                             slack_id = '', 
                             slack_username = '', 
                             suitability_description = '', 

@@ -38,14 +38,13 @@ class SherlockUserV3(BaseModel):
     id: Optional[StrictInt] = None
     name: Optional[StrictStr] = None
     name_from: Optional[StrictStr] = Field(default=None, alias="nameFrom")
-    name_inferred_from_github: Optional[StrictBool] = Field(default=None, description="Controls whether Sherlock should automatically update the user's name based on a connected GitHub identity. Will be set to true if the user account has no name and a GitHub account is linked.", alias="nameInferredFromGithub")
     slack_id: Optional[StrictStr] = Field(default=None, alias="slackID")
     slack_username: Optional[StrictStr] = Field(default=None, alias="slackUsername")
     suitability_description: Optional[StrictStr] = Field(default=None, description="Available only in responses; describes the user's production-suitability", alias="suitabilityDescription")
     suitable: Optional[StrictBool] = Field(default=None, description="Available only in responses; indicates whether the user is production-suitable")
     updated_at: Optional[datetime] = Field(default=None, alias="updatedAt")
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["assignments", "createdAt", "email", "githubID", "githubUsername", "googleID", "id", "name", "nameFrom", "nameInferredFromGithub", "slackID", "slackUsername", "suitabilityDescription", "suitable", "updatedAt"]
+    __properties: ClassVar[List[str]] = ["assignments", "createdAt", "email", "githubID", "githubUsername", "googleID", "id", "name", "nameFrom", "slackID", "slackUsername", "suitabilityDescription", "suitable", "updatedAt"]
 
     @field_validator('name_from')
     def name_from_validate_enum(cls, value):
@@ -131,7 +130,6 @@ class SherlockUserV3(BaseModel):
             "id": obj.get("id"),
             "name": obj.get("name"),
             "nameFrom": obj.get("nameFrom"),
-            "nameInferredFromGithub": obj.get("nameInferredFromGithub"),
             "slackID": obj.get("slackID"),
             "slackUsername": obj.get("slackUsername"),
             "suitabilityDescription": obj.get("suitabilityDescription"),

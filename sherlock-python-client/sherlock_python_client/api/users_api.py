@@ -53,7 +53,6 @@ class UsersApi:
         id: Optional[StrictInt] = None,
         name: Optional[StrictStr] = None,
         name_from: Optional[StrictStr] = None,
-        name_inferred_from_github: Annotated[Optional[StrictBool], Field(description="Controls whether Sherlock should automatically update the user's name based on a connected GitHub identity. Will be set to true if the user account has no name and a GitHub account is linked.")] = None,
         slack_id: Optional[StrictStr] = None,
         slack_username: Optional[StrictStr] = None,
         suitability_description: Annotated[Optional[StrictStr], Field(description="Available only in responses; describes the user's production-suitability")] = None,
@@ -94,8 +93,6 @@ class UsersApi:
         :type name: str
         :param name_from:
         :type name_from: str
-        :param name_inferred_from_github: Controls whether Sherlock should automatically update the user's name based on a connected GitHub identity. Will be set to true if the user account has no name and a GitHub account is linked.
-        :type name_inferred_from_github: bool
         :param slack_id:
         :type slack_id: str
         :param slack_username:
@@ -141,7 +138,6 @@ class UsersApi:
             id=id,
             name=name,
             name_from=name_from,
-            name_inferred_from_github=name_inferred_from_github,
             slack_id=slack_id,
             slack_username=slack_username,
             suitability_description=suitability_description,
@@ -186,7 +182,6 @@ class UsersApi:
         id: Optional[StrictInt] = None,
         name: Optional[StrictStr] = None,
         name_from: Optional[StrictStr] = None,
-        name_inferred_from_github: Annotated[Optional[StrictBool], Field(description="Controls whether Sherlock should automatically update the user's name based on a connected GitHub identity. Will be set to true if the user account has no name and a GitHub account is linked.")] = None,
         slack_id: Optional[StrictStr] = None,
         slack_username: Optional[StrictStr] = None,
         suitability_description: Annotated[Optional[StrictStr], Field(description="Available only in responses; describes the user's production-suitability")] = None,
@@ -227,8 +222,6 @@ class UsersApi:
         :type name: str
         :param name_from:
         :type name_from: str
-        :param name_inferred_from_github: Controls whether Sherlock should automatically update the user's name based on a connected GitHub identity. Will be set to true if the user account has no name and a GitHub account is linked.
-        :type name_inferred_from_github: bool
         :param slack_id:
         :type slack_id: str
         :param slack_username:
@@ -274,7 +267,6 @@ class UsersApi:
             id=id,
             name=name,
             name_from=name_from,
-            name_inferred_from_github=name_inferred_from_github,
             slack_id=slack_id,
             slack_username=slack_username,
             suitability_description=suitability_description,
@@ -319,7 +311,6 @@ class UsersApi:
         id: Optional[StrictInt] = None,
         name: Optional[StrictStr] = None,
         name_from: Optional[StrictStr] = None,
-        name_inferred_from_github: Annotated[Optional[StrictBool], Field(description="Controls whether Sherlock should automatically update the user's name based on a connected GitHub identity. Will be set to true if the user account has no name and a GitHub account is linked.")] = None,
         slack_id: Optional[StrictStr] = None,
         slack_username: Optional[StrictStr] = None,
         suitability_description: Annotated[Optional[StrictStr], Field(description="Available only in responses; describes the user's production-suitability")] = None,
@@ -360,8 +351,6 @@ class UsersApi:
         :type name: str
         :param name_from:
         :type name_from: str
-        :param name_inferred_from_github: Controls whether Sherlock should automatically update the user's name based on a connected GitHub identity. Will be set to true if the user account has no name and a GitHub account is linked.
-        :type name_inferred_from_github: bool
         :param slack_id:
         :type slack_id: str
         :param slack_username:
@@ -407,7 +396,6 @@ class UsersApi:
             id=id,
             name=name,
             name_from=name_from,
-            name_inferred_from_github=name_inferred_from_github,
             slack_id=slack_id,
             slack_username=slack_username,
             suitability_description=suitability_description,
@@ -447,7 +435,6 @@ class UsersApi:
         id,
         name,
         name_from,
-        name_inferred_from_github,
         slack_id,
         slack_username,
         suitability_description,
@@ -517,10 +504,6 @@ class UsersApi:
         if name_from is not None:
             
             _query_params.append(('nameFrom', name_from))
-            
-        if name_inferred_from_github is not None:
-            
-            _query_params.append(('nameInferredFromGithub', name_inferred_from_github))
             
         if slack_id is not None:
             

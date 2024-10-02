@@ -10,7 +10,7 @@ Method | HTTP request | Description
 
 
 # **api_users_v3_get**
-> List[SherlockUserV3] api_users_v3_get(created_at=created_at, email=email, github_id=github_id, github_username=github_username, google_id=google_id, id=id, name=name, name_from=name_from, name_inferred_from_github=name_inferred_from_github, slack_id=slack_id, slack_username=slack_username, suitability_description=suitability_description, suitable=suitable, updated_at=updated_at, limit=limit, offset=offset)
+> List[SherlockUserV3] api_users_v3_get(created_at=created_at, email=email, github_id=github_id, github_username=github_username, google_id=google_id, id=id, name=name, name_from=name_from, slack_id=slack_id, slack_username=slack_username, suitability_description=suitability_description, suitable=suitable, updated_at=updated_at, limit=limit, offset=offset)
 
 List Users matching a filter
 
@@ -44,7 +44,6 @@ with sherlock_python_client.ApiClient(configuration) as api_client:
     id = 56 # int |  (optional)
     name = 'name_example' # str |  (optional)
     name_from = 'name_from_example' # str |  (optional)
-    name_inferred_from_github = True # bool | Controls whether Sherlock should automatically update the user's name based on a connected GitHub identity. Will be set to true if the user account has no name and a GitHub account is linked. (optional)
     slack_id = 'slack_id_example' # str |  (optional)
     slack_username = 'slack_username_example' # str |  (optional)
     suitability_description = 'suitability_description_example' # str | Available only in responses; describes the user's production-suitability (optional)
@@ -55,7 +54,7 @@ with sherlock_python_client.ApiClient(configuration) as api_client:
 
     try:
         # List Users matching a filter
-        api_response = api_instance.api_users_v3_get(created_at=created_at, email=email, github_id=github_id, github_username=github_username, google_id=google_id, id=id, name=name, name_from=name_from, name_inferred_from_github=name_inferred_from_github, slack_id=slack_id, slack_username=slack_username, suitability_description=suitability_description, suitable=suitable, updated_at=updated_at, limit=limit, offset=offset)
+        api_response = api_instance.api_users_v3_get(created_at=created_at, email=email, github_id=github_id, github_username=github_username, google_id=google_id, id=id, name=name, name_from=name_from, slack_id=slack_id, slack_username=slack_username, suitability_description=suitability_description, suitable=suitable, updated_at=updated_at, limit=limit, offset=offset)
         print("The response of UsersApi->api_users_v3_get:\n")
         pprint(api_response)
     except Exception as e:
@@ -77,7 +76,6 @@ Name | Type | Description  | Notes
  **id** | **int**|  | [optional] 
  **name** | **str**|  | [optional] 
  **name_from** | **str**|  | [optional] 
- **name_inferred_from_github** | **bool**| Controls whether Sherlock should automatically update the user&#39;s name based on a connected GitHub identity. Will be set to true if the user account has no name and a GitHub account is linked. | [optional] 
  **slack_id** | **str**|  | [optional] 
  **slack_username** | **str**|  | [optional] 
  **suitability_description** | **str**| Available only in responses; describes the user&#39;s production-suitability | [optional] 

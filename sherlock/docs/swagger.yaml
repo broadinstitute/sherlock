@@ -1645,12 +1645,20 @@ definitions:
         type: string
       grantsBroadInstituteGroup:
         type: string
+      grantsDevAzureAccount:
+        type: boolean
+      grantsDevAzureDirectoryRoles:
+        type: boolean
       grantsDevAzureGroup:
         type: string
       grantsDevFirecloudFolderOwner:
         type: string
       grantsDevFirecloudGroup:
         type: string
+      grantsProdAzureAccount:
+        type: boolean
+      grantsProdAzureDirectoryRoles:
+        type: boolean
       grantsProdAzureGroup:
         type: string
       grantsProdFirecloudFolderOwner:
@@ -1688,12 +1696,20 @@ definitions:
         type: string
       grantsBroadInstituteGroup:
         type: string
+      grantsDevAzureAccount:
+        type: boolean
+      grantsDevAzureDirectoryRoles:
+        type: boolean
       grantsDevAzureGroup:
         type: string
       grantsDevFirecloudFolderOwner:
         type: string
       grantsDevFirecloudGroup:
         type: string
+      grantsProdAzureAccount:
+        type: boolean
+      grantsProdAzureDirectoryRoles:
+        type: boolean
       grantsProdAzureGroup:
         type: string
       grantsProdFirecloudFolderOwner:
@@ -1801,11 +1817,6 @@ definitions:
         - github
         - slack
         type: string
-      nameInferredFromGithub:
-        description: |-
-          Controls whether Sherlock should automatically update the user's name based on a connected GitHub identity.
-          Will be set to true if the user account has no name and a GitHub account is linked.
-        type: boolean
       slackID:
         type: string
       slackUsername:
@@ -1836,11 +1847,6 @@ definitions:
         - github
         - slack
         type: string
-      nameInferredFromGithub:
-        description: |-
-          Controls whether Sherlock should automatically update the user's name based on a connected GitHub identity.
-          Will be set to true if the user account has no name and a GitHub account is linked.
-        type: boolean
     type: object
 host: sherlock.dsp-devops-prod.broadinstitute.org
 info:
@@ -6597,6 +6603,12 @@ paths:
         name: grantsBroadInstituteGroup
         type: string
       - in: query
+        name: grantsDevAzureAccount
+        type: boolean
+      - in: query
+        name: grantsDevAzureDirectoryRoles
+        type: boolean
+      - in: query
         name: grantsDevAzureGroup
         type: string
       - in: query
@@ -6605,6 +6617,12 @@ paths:
       - in: query
         name: grantsDevFirecloudGroup
         type: string
+      - in: query
+        name: grantsProdAzureAccount
+        type: boolean
+      - in: query
+        name: grantsProdAzureDirectoryRoles
+        type: boolean
       - in: query
         name: grantsProdAzureGroup
         type: string
@@ -6906,12 +6924,6 @@ paths:
         in: query
         name: nameFrom
         type: string
-      - description: |-
-          Controls whether Sherlock should automatically update the user's name based on a connected GitHub identity.
-          Will be set to true if the user account has no name and a GitHub account is linked.
-        in: query
-        name: nameInferredFromGithub
-        type: boolean
       - in: query
         name: slackID
         type: string

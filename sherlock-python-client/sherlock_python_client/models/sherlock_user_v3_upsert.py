@@ -18,7 +18,7 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictStr, field_validator
+from pydantic import BaseModel, ConfigDict, Field, StrictStr, field_validator
 from typing import Any, ClassVar, Dict, List, Optional
 from typing import Optional, Set
 from typing_extensions import Self
@@ -30,9 +30,8 @@ class SherlockUserV3Upsert(BaseModel):
     github_access_token: Optional[StrictStr] = Field(default=None, description="An access token for the GitHub account to associate with the calling user. The access token isn't stored. The design here ensures that an association is only built when someone controls both accounts (Google via IAP and GitHub via this access token).", alias="githubAccessToken")
     name: Optional[StrictStr] = None
     name_from: Optional[StrictStr] = Field(default=None, alias="nameFrom")
-    name_inferred_from_github: Optional[StrictBool] = Field(default=None, description="Controls whether Sherlock should automatically update the user's name based on a connected GitHub identity. Will be set to true if the user account has no name and a GitHub account is linked.", alias="nameInferredFromGithub")
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["githubAccessToken", "name", "nameFrom", "nameInferredFromGithub"]
+    __properties: ClassVar[List[str]] = ["githubAccessToken", "name", "nameFrom"]
 
     @field_validator('name_from')
     def name_from_validate_enum(cls, value):
@@ -104,8 +103,7 @@ class SherlockUserV3Upsert(BaseModel):
         _obj = cls.model_validate({
             "githubAccessToken": obj.get("githubAccessToken"),
             "name": obj.get("name"),
-            "nameFrom": obj.get("nameFrom"),
-            "nameInferredFromGithub": obj.get("nameInferredFromGithub")
+            "nameFrom": obj.get("nameFrom")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

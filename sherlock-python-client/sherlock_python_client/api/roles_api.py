@@ -50,9 +50,13 @@ class RolesApi:
         created_at: Optional[datetime] = None,
         default_glass_break_duration: Optional[StrictStr] = None,
         grants_broad_institute_group: Optional[StrictStr] = None,
+        grants_dev_azure_account: Optional[StrictBool] = None,
+        grants_dev_azure_directory_roles: Optional[StrictBool] = None,
         grants_dev_azure_group: Optional[StrictStr] = None,
         grants_dev_firecloud_folder_owner: Optional[StrictStr] = None,
         grants_dev_firecloud_group: Optional[StrictStr] = None,
+        grants_prod_azure_account: Optional[StrictBool] = None,
+        grants_prod_azure_directory_roles: Optional[StrictBool] = None,
         grants_prod_azure_group: Optional[StrictStr] = None,
         grants_prod_firecloud_folder_owner: Optional[StrictStr] = None,
         grants_prod_firecloud_group: Optional[StrictStr] = None,
@@ -92,12 +96,20 @@ class RolesApi:
         :type default_glass_break_duration: str
         :param grants_broad_institute_group:
         :type grants_broad_institute_group: str
+        :param grants_dev_azure_account:
+        :type grants_dev_azure_account: bool
+        :param grants_dev_azure_directory_roles:
+        :type grants_dev_azure_directory_roles: bool
         :param grants_dev_azure_group:
         :type grants_dev_azure_group: str
         :param grants_dev_firecloud_folder_owner:
         :type grants_dev_firecloud_folder_owner: str
         :param grants_dev_firecloud_group:
         :type grants_dev_firecloud_group: str
+        :param grants_prod_azure_account:
+        :type grants_prod_azure_account: bool
+        :param grants_prod_azure_directory_roles:
+        :type grants_prod_azure_directory_roles: bool
         :param grants_prod_azure_group:
         :type grants_prod_azure_group: str
         :param grants_prod_firecloud_folder_owner:
@@ -150,9 +162,13 @@ class RolesApi:
             created_at=created_at,
             default_glass_break_duration=default_glass_break_duration,
             grants_broad_institute_group=grants_broad_institute_group,
+            grants_dev_azure_account=grants_dev_azure_account,
+            grants_dev_azure_directory_roles=grants_dev_azure_directory_roles,
             grants_dev_azure_group=grants_dev_azure_group,
             grants_dev_firecloud_folder_owner=grants_dev_firecloud_folder_owner,
             grants_dev_firecloud_group=grants_dev_firecloud_group,
+            grants_prod_azure_account=grants_prod_azure_account,
+            grants_prod_azure_directory_roles=grants_prod_azure_directory_roles,
             grants_prod_azure_group=grants_prod_azure_group,
             grants_prod_firecloud_folder_owner=grants_prod_firecloud_folder_owner,
             grants_prod_firecloud_group=grants_prod_firecloud_group,
@@ -199,9 +215,13 @@ class RolesApi:
         created_at: Optional[datetime] = None,
         default_glass_break_duration: Optional[StrictStr] = None,
         grants_broad_institute_group: Optional[StrictStr] = None,
+        grants_dev_azure_account: Optional[StrictBool] = None,
+        grants_dev_azure_directory_roles: Optional[StrictBool] = None,
         grants_dev_azure_group: Optional[StrictStr] = None,
         grants_dev_firecloud_folder_owner: Optional[StrictStr] = None,
         grants_dev_firecloud_group: Optional[StrictStr] = None,
+        grants_prod_azure_account: Optional[StrictBool] = None,
+        grants_prod_azure_directory_roles: Optional[StrictBool] = None,
         grants_prod_azure_group: Optional[StrictStr] = None,
         grants_prod_firecloud_folder_owner: Optional[StrictStr] = None,
         grants_prod_firecloud_group: Optional[StrictStr] = None,
@@ -241,12 +261,20 @@ class RolesApi:
         :type default_glass_break_duration: str
         :param grants_broad_institute_group:
         :type grants_broad_institute_group: str
+        :param grants_dev_azure_account:
+        :type grants_dev_azure_account: bool
+        :param grants_dev_azure_directory_roles:
+        :type grants_dev_azure_directory_roles: bool
         :param grants_dev_azure_group:
         :type grants_dev_azure_group: str
         :param grants_dev_firecloud_folder_owner:
         :type grants_dev_firecloud_folder_owner: str
         :param grants_dev_firecloud_group:
         :type grants_dev_firecloud_group: str
+        :param grants_prod_azure_account:
+        :type grants_prod_azure_account: bool
+        :param grants_prod_azure_directory_roles:
+        :type grants_prod_azure_directory_roles: bool
         :param grants_prod_azure_group:
         :type grants_prod_azure_group: str
         :param grants_prod_firecloud_folder_owner:
@@ -299,9 +327,13 @@ class RolesApi:
             created_at=created_at,
             default_glass_break_duration=default_glass_break_duration,
             grants_broad_institute_group=grants_broad_institute_group,
+            grants_dev_azure_account=grants_dev_azure_account,
+            grants_dev_azure_directory_roles=grants_dev_azure_directory_roles,
             grants_dev_azure_group=grants_dev_azure_group,
             grants_dev_firecloud_folder_owner=grants_dev_firecloud_folder_owner,
             grants_dev_firecloud_group=grants_dev_firecloud_group,
+            grants_prod_azure_account=grants_prod_azure_account,
+            grants_prod_azure_directory_roles=grants_prod_azure_directory_roles,
             grants_prod_azure_group=grants_prod_azure_group,
             grants_prod_firecloud_folder_owner=grants_prod_firecloud_folder_owner,
             grants_prod_firecloud_group=grants_prod_firecloud_group,
@@ -348,9 +380,13 @@ class RolesApi:
         created_at: Optional[datetime] = None,
         default_glass_break_duration: Optional[StrictStr] = None,
         grants_broad_institute_group: Optional[StrictStr] = None,
+        grants_dev_azure_account: Optional[StrictBool] = None,
+        grants_dev_azure_directory_roles: Optional[StrictBool] = None,
         grants_dev_azure_group: Optional[StrictStr] = None,
         grants_dev_firecloud_folder_owner: Optional[StrictStr] = None,
         grants_dev_firecloud_group: Optional[StrictStr] = None,
+        grants_prod_azure_account: Optional[StrictBool] = None,
+        grants_prod_azure_directory_roles: Optional[StrictBool] = None,
         grants_prod_azure_group: Optional[StrictStr] = None,
         grants_prod_firecloud_folder_owner: Optional[StrictStr] = None,
         grants_prod_firecloud_group: Optional[StrictStr] = None,
@@ -390,12 +426,20 @@ class RolesApi:
         :type default_glass_break_duration: str
         :param grants_broad_institute_group:
         :type grants_broad_institute_group: str
+        :param grants_dev_azure_account:
+        :type grants_dev_azure_account: bool
+        :param grants_dev_azure_directory_roles:
+        :type grants_dev_azure_directory_roles: bool
         :param grants_dev_azure_group:
         :type grants_dev_azure_group: str
         :param grants_dev_firecloud_folder_owner:
         :type grants_dev_firecloud_folder_owner: str
         :param grants_dev_firecloud_group:
         :type grants_dev_firecloud_group: str
+        :param grants_prod_azure_account:
+        :type grants_prod_azure_account: bool
+        :param grants_prod_azure_directory_roles:
+        :type grants_prod_azure_directory_roles: bool
         :param grants_prod_azure_group:
         :type grants_prod_azure_group: str
         :param grants_prod_firecloud_folder_owner:
@@ -448,9 +492,13 @@ class RolesApi:
             created_at=created_at,
             default_glass_break_duration=default_glass_break_duration,
             grants_broad_institute_group=grants_broad_institute_group,
+            grants_dev_azure_account=grants_dev_azure_account,
+            grants_dev_azure_directory_roles=grants_dev_azure_directory_roles,
             grants_dev_azure_group=grants_dev_azure_group,
             grants_dev_firecloud_folder_owner=grants_dev_firecloud_folder_owner,
             grants_dev_firecloud_group=grants_dev_firecloud_group,
+            grants_prod_azure_account=grants_prod_azure_account,
+            grants_prod_azure_directory_roles=grants_prod_azure_directory_roles,
             grants_prod_azure_group=grants_prod_azure_group,
             grants_prod_firecloud_folder_owner=grants_prod_firecloud_folder_owner,
             grants_prod_firecloud_group=grants_prod_firecloud_group,
@@ -492,9 +540,13 @@ class RolesApi:
         created_at,
         default_glass_break_duration,
         grants_broad_institute_group,
+        grants_dev_azure_account,
+        grants_dev_azure_directory_roles,
         grants_dev_azure_group,
         grants_dev_firecloud_folder_owner,
         grants_dev_firecloud_group,
+        grants_prod_azure_account,
+        grants_prod_azure_directory_roles,
         grants_prod_azure_group,
         grants_prod_firecloud_folder_owner,
         grants_prod_firecloud_group,
@@ -558,6 +610,14 @@ class RolesApi:
             
             _query_params.append(('grantsBroadInstituteGroup', grants_broad_institute_group))
             
+        if grants_dev_azure_account is not None:
+            
+            _query_params.append(('grantsDevAzureAccount', grants_dev_azure_account))
+            
+        if grants_dev_azure_directory_roles is not None:
+            
+            _query_params.append(('grantsDevAzureDirectoryRoles', grants_dev_azure_directory_roles))
+            
         if grants_dev_azure_group is not None:
             
             _query_params.append(('grantsDevAzureGroup', grants_dev_azure_group))
@@ -569,6 +629,14 @@ class RolesApi:
         if grants_dev_firecloud_group is not None:
             
             _query_params.append(('grantsDevFirecloudGroup', grants_dev_firecloud_group))
+            
+        if grants_prod_azure_account is not None:
+            
+            _query_params.append(('grantsProdAzureAccount', grants_prod_azure_account))
+            
+        if grants_prod_azure_directory_roles is not None:
+            
+            _query_params.append(('grantsProdAzureDirectoryRoles', grants_prod_azure_directory_roles))
             
         if grants_prod_azure_group is not None:
             
