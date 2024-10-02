@@ -64,6 +64,7 @@ packages:
     interfaces:
       Identifier:
       Fields:
+      MayBePresentWhileRemovedFields:
   github.com/broadinstitute/sherlock/sherlock/internal/role_propagation/propagation_engines:
     interfaces:
       PropagationEngine:

@@ -10,9 +10,9 @@ import (
 	"time"
 )
 
-func TestGoogleWorkspaceFolderOwnerIdentifier_EqualTo(t *testing.T) {
+func TestAzureDirectoryRoleIdentifier_EqualTo(t *testing.T) {
 	type fields struct {
-		Email string
+		ID string
 	}
 	type args struct {
 		other intermediary_user.Identifier
@@ -26,11 +26,11 @@ func TestGoogleWorkspaceFolderOwnerIdentifier_EqualTo(t *testing.T) {
 		{
 			name: "equal",
 			fields: fields{
-				Email: "foo",
+				ID: "foo",
 			},
 			args: args{
-				other: GoogleWorkspaceFolderOwnerIdentifier{
-					Email: "foo",
+				other: AzureDirectoryRoleIdentifier{
+					ID: "foo",
 				},
 			},
 			want: true,
@@ -38,11 +38,11 @@ func TestGoogleWorkspaceFolderOwnerIdentifier_EqualTo(t *testing.T) {
 		{
 			name: "not equal",
 			fields: fields{
-				Email: "foo",
+				ID: "foo",
 			},
 			args: args{
-				other: GoogleWorkspaceFolderOwnerIdentifier{
-					Email: "bar",
+				other: AzureDirectoryRoleIdentifier{
+					ID: "bar",
 				},
 			},
 			want: false,
@@ -50,11 +50,11 @@ func TestGoogleWorkspaceFolderOwnerIdentifier_EqualTo(t *testing.T) {
 		{
 			name: "different type",
 			fields: fields{
-				Email: "foo",
+				ID: "foo",
 			},
 			args: args{
-				other: AzureGroupIdentifier{
-					ID: "foo",
+				other: GoogleWorkspaceGroupIdentifier{
+					Email: "foo",
 				},
 			},
 			want: false,
@@ -62,15 +62,15 @@ func TestGoogleWorkspaceFolderOwnerIdentifier_EqualTo(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			a := GoogleWorkspaceFolderOwnerIdentifier{
-				Email: tt.fields.Email,
+			a := AzureDirectoryRoleIdentifier{
+				ID: tt.fields.ID,
 			}
 			assert.Equalf(t, tt.want, a.EqualTo(tt.args.other), "EqualTo(%v)", tt.args.other)
 		})
 	}
 }
 
-func TestGoogleWorkspaceFolderOwnerFields_EqualTo(t *testing.T) {
+func TestAzureDirectoryRoleFields_EqualTo(t *testing.T) {
 	type args struct {
 		other intermediary_user.Fields
 	}
@@ -82,30 +82,30 @@ func TestGoogleWorkspaceFolderOwnerFields_EqualTo(t *testing.T) {
 		{
 			name: "same type",
 			args: args{
-				other: GoogleWorkspaceFolderOwnerFields{},
+				other: AzureDirectoryRoleFields{},
 			},
 			want: true,
 		},
 		{
 			name: "different type",
 			args: args{
-				other: AzureGroupFields{},
+				other: GoogleWorkspaceGroupFields{},
 			},
 			want: false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := GoogleWorkspaceFolderOwnerFields{}
-			assert.Equalf(t, tt.want, f.EqualTo(tt.args.other), "EqualTo(%v)", tt.args.other)
+			a := AzureDirectoryRoleFields{}
+			assert.Equalf(t, tt.want, a.EqualTo(tt.args.other), "EqualTo(%v)", tt.args.other)
 		})
 	}
 }
 
 // We can't easily test the actual cloud logic, but we can test that we short circuit correctly for
 // non-active role assignments.
-func TestGoogleWorkspaceFolderOwnerEngine_GenerateDesiredState_isActiveShortCircuit(t *testing.T) {
-	engine := &GoogleWorkspaceFolderOwnerEngine{}
+func TestAzureDirectoryRoleEngine_GenerateDesiredState_isActiveShortCircuit(t *testing.T) {
+	engine := &AzureDirectoryRoleEngine{}
 	desiredState, err := engine.GenerateDesiredState(context.Background(), map[uint]models.RoleAssignment{
 		1: {
 			RoleAssignmentFields: models.RoleAssignmentFields{
@@ -127,9 +127,9 @@ func TestGoogleWorkspaceFolderOwnerEngine_GenerateDesiredState_isActiveShortCirc
 // emails that aren't in the target domain.
 //
 // See also utils.SubstituteSuffix
-func TestGoogleWorkspaceFolderOwnerEngine_GenerateDesiredState_emailShortCircuit(t *testing.T) {
-	engine := &GoogleWorkspaceFolderOwnerEngine{
-		workspaceDomain:            "example.com",
+func TestAzureDirectoryRoleEngine_GenerateDesiredState_emailShortCircuit(t *testing.T) {
+	engine := &AzureDirectoryRoleEngine{
+		memberEmailSuffix:          "@example.com",
 		userEmailSuffixesToReplace: []string{"@example.org"},
 	}
 	desiredState, err := engine.GenerateDesiredState(context.Background(), map[uint]models.RoleAssignment{
@@ -146,8 +146,8 @@ func TestGoogleWorkspaceFolderOwnerEngine_GenerateDesiredState_emailShortCircuit
 	assert.Empty(t, desiredState)
 }
 
-func TestGoogleWorkspaceFolderOwnerEngine_Update_errors(t *testing.T) {
-	engine := &GoogleWorkspaceFolderOwnerEngine{}
-	_, err := engine.Update(context.Background(), "", GoogleWorkspaceFolderOwnerIdentifier{}, GoogleWorkspaceFolderOwnerFields{}, GoogleWorkspaceFolderOwnerFields{})
+func TestAzureDirectoryRoleEngine_Update_errors(t *testing.T) {
+	engine := &AzureDirectoryRoleEngine{}
+	_, err := engine.Update(context.Background(), true, AzureDirectoryRoleIdentifier{}, AzureDirectoryRoleFields{}, AzureDirectoryRoleFields{})
 	assert.Error(t, err)
 }

@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/rs/zerolog/log"
@@ -13,53 +12,10 @@ import (
 )
 
 func fromFirecloud(ctx context.Context) ([]models.Suitability, error) {
-	adminService, err := admin.NewService(ctx, option.WithScopes(admin.AdminDirectoryUserReadonlyScope, admin.AdminDirectoryGroupMemberReadonlyScope))
+	adminService, err := admin.NewService(ctx, option.WithScopes(admin.AdminDirectoryUserReadonlyScope))
 	if err != nil {
 		return nil, fmt.Errorf("failed to authenticate to Google Workspace: %w", err)
 	}
-
-	var fcAdminsGroupEmails []string
-	err = adminService.Members.List(config.Config.MustString("suitabilitySynchronization.behaviors.loadIntoDB.firecloud.groups.fcAdmins")).Pages(ctx, func(members *admin.Members) error {
-		if members == nil {
-			return fmt.Errorf("suitability synchronization got a nil %s member page from Google",
-				config.Config.MustString("suitabilitySynchronization.behaviors.loadIntoDB.firecloud.groups.fcAdmins"))
-		} else {
-			for _, member := range members.Members {
-				if member == nil {
-					return fmt.Errorf("suitability synchronization got a nil %s member from Google",
-						config.Config.MustString("suitabilitySynchronization.behaviors.loadIntoDB.firecloud.groups.fcAdmins"))
-				} else {
-					fcAdminsGroupEmails = append(fcAdminsGroupEmails, member.Email)
-				}
-			}
-		}
-		return nil
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	var firecloudProjectOwnersGroupEmails []string
-	err = adminService.Members.List(config.Config.MustString("suitabilitySynchronization.behaviors.loadIntoDB.firecloud.groups.firecloudProjectOwners")).Pages(ctx, func(members *admin.Members) error {
-		if members == nil {
-			return fmt.Errorf("suitability synchronization got a nil %s member page from Google",
-				config.Config.MustString("suitabilitySynchronization.behaviors.loadIntoDB.firecloud.groups.fcAdmins"))
-		} else {
-			for _, member := range members.Members {
-				if member == nil {
-					return fmt.Errorf("suitability synchronization got a nil %s member from Google",
-						config.Config.MustString("suitabilitySynchronization.behaviors.loadIntoDB.firecloud.groups.fcAdmins"))
-				} else {
-					firecloudProjectOwnersGroupEmails = append(firecloudProjectOwnersGroupEmails, member.Email)
-				}
-			}
-		}
-		return nil
-	})
-	if err != nil {
-		return nil, err
-	}
-
 	resultSet := make(map[string]models.Suitability)
 	err = adminService.Users.List().Domain(config.Config.MustString("suitabilitySynchronization.behaviors.loadIntoDB.firecloud.domain")).Pages(ctx, func(workspaceUsers *admin.Users) error {
 		if workspaceUsers == nil {
@@ -69,7 +25,7 @@ func fromFirecloud(ctx context.Context) ([]models.Suitability, error) {
 				if workspaceUser == nil {
 					return fmt.Errorf("suitability synchronization got a nil user from Google")
 				} else {
-					suitable, description := parseFirecloudUser(workspaceUser, fcAdminsGroupEmails, firecloudProjectOwnersGroupEmails)
+					suitable, description := parseFirecloudUser(workspaceUser)
 					if workspaceUser.PrimaryEmail != "" {
 						resultSet[workspaceUser.PrimaryEmail] = models.Suitability{
 							Email:       &workspaceUser.PrimaryEmail,
@@ -134,7 +90,7 @@ func fromFirecloud(ctx context.Context) ([]models.Suitability, error) {
 	return result, err
 }
 
-func parseFirecloudUser(workspaceUser *admin.User, fcAdminsGroupEmails []string, firecloudProjectOwnersGroupEmails []string) (suitable bool, description string) {
+func parseFirecloudUser(workspaceUser *admin.User) (suitable bool, description string) {
 	if workspaceUser.PrimaryEmail == "" {
 		return false, "firecloud user doesn't appear to have a primary email? something's amiss, marking as not suitable"
 	} else if !workspaceUser.AgreedToTerms {
@@ -147,12 +103,6 @@ func parseFirecloudUser(workspaceUser *admin.User, fcAdminsGroupEmails []string,
 			config.Config.Duration("suitabilitySynchronization.behaviors.loadIntoDB.interval"))
 	} else if workspaceUser.Archived {
 		return false, "firecloud user is archived"
-	} else if !utils.Contains(fcAdminsGroupEmails, workspaceUser.PrimaryEmail) {
-		return false, fmt.Sprintf("firecloud user isn't in fc-admins group (reach out to #dsp-devops-champions for help; the user will need to wait %s after being added for Sherlock to pick it up)",
-			config.Config.Duration("suitabilitySynchronization.behaviors.loadIntoDB.interval"))
-	} else if !utils.Contains(firecloudProjectOwnersGroupEmails, workspaceUser.PrimaryEmail) {
-		return false, fmt.Sprintf("firecloud user isn't in firecloud-project-owners group (reach out to #dsp-devops-champions for help; the user will need to wait %s after being added for Sherlock to pick it up)",
-			config.Config.Duration("suitabilitySynchronization.behaviors.loadIntoDB.interval"))
 	} else {
 		return true, "firecloud user is suitable"
 	}

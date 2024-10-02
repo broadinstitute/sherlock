@@ -63,6 +63,19 @@ func Test_propagatorImpl_Init(t *testing.T) {
 			wantErr: true,
 		},
 		{
+			name: "dry run",
+			p: propagatorImpl[string, propagation_engines.GoogleWorkspaceGroupIdentifier, propagation_engines.GoogleWorkspaceGroupFields]{
+				configKey: "devFirecloudGroupTestDryRun",
+			},
+			engineFunc: func(c *propagation_engines_mocks.MockPropagationEngine[string, propagation_engines.GoogleWorkspaceGroupIdentifier, propagation_engines.GoogleWorkspaceGroupFields]) {
+				c.EXPECT().Init(ctx, mock.Anything).Return(nil)
+			},
+			extraAssertions: func(t *testing.T, p propagatorImpl[string, propagation_engines.GoogleWorkspaceGroupIdentifier, propagation_engines.GoogleWorkspaceGroupFields]) {
+				assert.True(t, p._dryRun)
+			},
+			wantErr: false,
+		},
+		{
 			name: "config",
 			p: propagatorImpl[string, propagation_engines.GoogleWorkspaceGroupIdentifier, propagation_engines.GoogleWorkspaceGroupFields]{
 				configKey: "devFirecloudGroupTestConfig",
@@ -182,4 +195,18 @@ func Test_propagatorImpl_initToleratedUsers_calculator(t *testing.T) {
 		{Email: "hardcoded@example.com"},
 		{Email: "dynamic@example.com"},
 	})
+}
+
+func Test_propagatorImpl_initIgnoredUsers_error(t *testing.T) {
+	k := koanf.New(".")
+	require.NoError(t, k.Set("ignoredUsers", []any{
+		map[string]any{
+			"number": "definitely not a number",
+		},
+	}))
+	p := propagatorImpl[string, identifierWithInt, blankFields]{
+		_config: k,
+	}
+
+	assert.Errorf(t, p.initIgnoredUsers(context.Background()), "expected an error")
 }

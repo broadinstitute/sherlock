@@ -165,6 +165,9 @@ retries:
   errorRegexesToRetry:
     - "googleapi: Error 500"
     - "googleapi: Error 503"
+    - "rpc error: code = Internal desc = Internal error encountered" # Another Google error
+    - "googleapi: Error 400: Precondition check failed" # This appears to be an error that we should retry because it is transient
+    - "connection reset by peer" # Azure error
   # The base interval between retries. This is fed into an exponential backoff
   # algorithm.
   baseAttemptInterval: 500ms
@@ -362,8 +365,105 @@ rolePropagation:
   driftAlignmentStaleThreshold: 5m
   propagators:
 
+    # devAzureAccount correlates to models.Role.GrantsDevAzureAccount.
+    devAzureAccount:
+      enable: false
+      dryRun: false
+      # The client ID of the Azure AD app to use for authentication.
+      clientID:
+      # The UUID of the Azure AD tenant to work with.
+      tenantID: fad90753-2022-4456-9b0a-c7e5b934e408 # azure.dev.envs-terra.bio
+      # The path on disk that Sherlock should expect to find a token for federated workload identity.
+      tokenFilePath: /azure-federation/projected-ksa-token.jwt
+      # The suffix of all accounts in the tenant that Sherlock should manage.
+      tenantEmailSuffix: "@test.firecloud.org"
+      # Suffixes of Sherlock users' emails that should be swapped out with the memberEmailSuffix to match
+      # Sherlock users to Azure Entra ID user emails.
+      userEmailSuffixesToReplace:
+        - "@broadinstitute.org"
+    # prodAzureAccount correlates to models.Role.GrantsProdAzureAccount.
+    prodAzureAccount:
+      enable: false
+      dryRun: false
+      # The client ID of the Azure AD app to use for authentication.
+      clientID:
+      # The UUID of the Azure AD tenant to work with.
+      tenantID: 66bb90ac-8857-4a8a-aa0a-be2186dfa5f9 # firecloud.org
+      # The path on disk that Sherlock should expect to find a token for federated workload identity.
+      tokenFilePath: /azure-federation/projected-ksa-token.jwt
+      # The suffix of all accounts in the tenant that Sherlock should manage.
+      tenantEmailSuffix: "@firecloud.org"
+      # Suffixes of Sherlock users' emails that should be swapped out with the memberEmailSuffix to match
+      # Sherlock users to Azure Entra ID user emails.
+      userEmailSuffixesToReplace:
+        - "@broadinstitute.org"
+
+    # devAzureB2CAccount correlates to models.Role.GrantsDevAzureAccount. It invites the account
+    # provisioned by devAzureAccount.
+    devAzureInvitedB2CAccount:
+      enable: false
+      dryRun: false
+      # The client ID of the Azure AD app to use for authentication against the home tenant.
+      homeTenantClientID:
+      # The UUID of the home Azure AD tenant to work with.
+      homeTenantID: fad90753-2022-4456-9b0a-c7e5b934e408 # azure.dev.envs-terra.bio
+      # The path on disk that Sherlock should expect to find a token for federated workload identity
+      # to use against the home tenant.
+      homeTenantTokenFilePath: /azure-federation/projected-ksa-token.jwt
+      # The client ID of the Azure AD app to use for authentication against the tenant to invite to.
+      inviteTenantClientID:
+      # The UUID of the Azure AD tenant to invite home tenant users to.
+      inviteTenantID: fd0bc0ef-1747-4ee6-ab3e-d4d6bb882d40 # terradevb2c.onmicrosoft.com
+      # The path on disk that Sherlock should expect to find a token for federated workload identity
+      # to use against the tenant to invite to.
+      inviteTenantTokenFilePath: /azure-federation/projected-ksa-token.jwt
+      # The domain of the email addresses in the home tenant. Should match the user principal names in
+      # the home tenant.
+      homeTenantEmailDomain: "test.firecloud.org"
+      # The domain of the identities in the invite tenant. Should match the end of the user principal names
+      # in the invite tenant, so that they're like <prefix>_<homeTenantEmailDomain>#EXT#@<inviteTenantIdentityDomain>.
+      inviteTenantIdentityDomain: "terradevb2c.onmicrosoft.com"
+      # Domains of Sherlock users' emails that should be swapped out with the home tenant email domain
+      # to match Sherlock users to Azure Entra ID user emails.
+      userEmailDomainsToReplace:
+        - "broadinstitute.org"
+      # Link to instructions for how users should sign in to their homeTenantEmailDomain account.
+      signInInstructionsLink: https://docs.google.com/document/d/1wW0OXFsSxtn4sXOJ5pvAJ_WQWH_aCBwY2cpwMJCSl90/edit
+    # prodAzureB2CAccount correlates to models.Role.GrantsProdAzureAccount. It invites the account
+    # provisioned by prodAzureAccount.
+    prodAzureInvitedB2CAccount:
+      enable: false
+      dryRun: false
+      # The client ID of the Azure AD app to use for authentication against the home tenant.
+      homeTenantClientID:
+      # The UUID of the home Azure AD tenant to work with.
+      homeTenantID: 66bb90ac-8857-4a8a-aa0a-be2186dfa5f9 # firecloud.org
+      # The path on disk that Sherlock should expect to find a token for federated workload identity
+      # to use against the home tenant.
+      homeTenantTokenFilePath: /azure-federation/projected-ksa-token.jwt
+      # The client ID of the Azure AD app to use for authentication against the tenant to invite to.
+      inviteTenantClientID:
+      # The UUID of the Azure AD tenant to invite home tenant users to.
+      inviteTenantID: 35ea5de9-1786-4bbb-89cf-25b88261643d # terraprodb2c.onmicrosoft.com
+      # The path on disk that Sherlock should expect to find a token for federated workload identity
+      # to use against the tenant to invite to.
+      inviteTenantTokenFilePath: /azure-federation/projected-ksa-token.jwt
+      # The domain of the email addresses in the home tenant. Should match the user principal names in
+      # the home tenant.
+      homeTenantEmailDomain: "firecloud.org"
+      # The domain of the identities in the invite tenant. Should match the end of the user principal names
+      # in the invite tenant, so that they're like <prefix>_<homeTenantEmailDomain>#EXT#@<inviteTenantIdentityDomain>.
+      inviteTenantIdentityDomain: "terraprodb2c.onmicrosoft.com"
+      # Domains of Sherlock users' emails that should be swapped out with the home tenant email domain
+      # to match Sherlock users to Azure Entra ID user emails.
+      userEmailDomainsToReplace:
+        - "broadinstitute.org"
+      # Link to instructions for how users should sign in to their homeTenantEmailDomain account.
+      signInInstructionsLink: https://docs.google.com/document/d/1wW0OXFsSxtn4sXOJ5pvAJ_WQWH_aCBwY2cpwMJCSl90/edit
+
     devFirecloudGroup:
       enable: false
+      dryRun: false
       # The domain of the Google Workspace, assumed to be the email domain of all members. This should
       # not contain a leading "@".
       workspaceDomain: "test.firecloud.org"
@@ -373,6 +473,7 @@ rolePropagation:
         - "@broadinstitute.org"
     qaFirecloudGroup:
       enable: false
+      dryRun: false
       # The domain of the Google Workspace, assumed to be the email domain of all members. This should
       # not contain a leading "@".
       workspaceDomain: "quality.firecloud.org"
@@ -382,6 +483,7 @@ rolePropagation:
         - "@broadinstitute.org"
     prodFirecloudGroup:
       enable: false
+      dryRun: false
       # The domain of the Google Workspace, assumed to be the email domain of all members. This should
       # not contain a leading "@".
       workspaceDomain: "firecloud.org"
@@ -392,6 +494,7 @@ rolePropagation:
 
     devFirecloudFolderOwner:
       enable: false
+      dryRun: false
       # The domain of the Google Workspace, assumed to be the email domain of all members. This should
       # not contain a leading "@".
       workspaceDomain: "test.firecloud.org"
@@ -401,6 +504,7 @@ rolePropagation:
         - "@broadinstitute.org"
     qaFirecloudFolderOwner:
       enable: false
+      dryRun: false
       # The domain of the Google Workspace, assumed to be the email domain of all members. This should
       # not contain a leading "@".
       workspaceDomain: "quality.firecloud.org"
@@ -410,6 +514,7 @@ rolePropagation:
         - "@broadinstitute.org"
     prodFirecloudFolderOwner:
       enable: false
+      dryRun: false
       # The domain of the Google Workspace, assumed to be the email domain of all members. This should
       # not contain a leading "@".
       workspaceDomain: "firecloud.org"
@@ -420,6 +525,7 @@ rolePropagation:
 
     devAzureGroup:
       enable: false
+      dryRun: false
       # The client ID of the Azure AD app to use for authentication.
       clientID:
       # The UUID of the Azure AD tenant to work with.
@@ -436,6 +542,7 @@ rolePropagation:
         - "@broadinstitute.org"
     prodAzureGroup:
       enable: false
+      dryRun: false
       # The client ID of the Azure AD app to use for authentication.
       clientID:
       # The UUID of the Azure AD tenant to work with.
@@ -451,8 +558,50 @@ rolePropagation:
       userEmailSuffixesToReplace:
         - "@broadinstitute.org"
 
+    # devAzureB2CReader correlates to models.Role.GrantsDevAzureDirectoryRoles. It's the only role we grant currently.
+    # Additional roles can be granted by correlating additional propagators with different instantiations and
+    # configurations to the same boolean field.
+    devAzureB2CReader:
+      enable: false
+      dryRun: false
+      # The client ID of the Azure AD app to use for authentication.
+      clientID:
+      # The UUID of the Azure AD tenant to work with.
+      tenantID: fd0bc0ef-1747-4ee6-ab3e-d4d6bb882d40 # terradevb2c.onmicrosoft.com
+      # The path on disk that Sherlock should expect to find a token for federated workload identity.
+      tokenFilePath: /azure-federation/projected-ksa-token.jwt
+      # The suffix of all member emails. This can be thought of as a filter for what Azure users Sherlock
+      # will attempt to propagate roles to. This may contain a "@" (especially useful for "#EXT#@" emails);
+      # if it does, then the userEmailSuffixesToReplace must as well.
+      memberEmailSuffix: "_test.firecloud.org#EXT#@terradevb2c.onmicrosoft.com"
+      # Suffixes of Sherlock users' emails that should be swapped out with the memberEmailSuffix to match
+      # Sherlock users to Azure Entra ID users.
+      userEmailSuffixesToReplace:
+        - "@broadinstitute.org"
+    # prodAzureB2CReader correlates to models.Role.GrantsDevAzureDirectoryRoles. It's the only role we grant currently.
+    # Additional roles can be granted by correlating additional propagators with different instantiations and
+    # configurations to the same boolean field.
+    prodAzureB2CReader:
+      enable: false
+      dryRun: false
+      # The client ID of the Azure AD app to use for authentication.
+      clientID:
+      # The UUID of the Azure AD tenant to work with.
+      tenantID: 35ea5de9-1786-4bbb-89cf-25b88261643d # terraprodb2c.onmicrosoft.com
+      # The path on disk that Sherlock should expect to find a token for federated workload identity.
+      tokenFilePath: /azure-federation/projected-ksa-token.jwt
+      # The suffix of all member emails. This can be thought of as a filter for what Azure users Sherlock
+      # will attempt to propagate roles to. This may contain a "@" (especially useful for "#EXT#@" emails);
+      # if it does, then the userEmailSuffixesToReplace must as well.
+      memberEmailSuffix: "_firecloud.org#EXT#@terraprodb2c.onmicrosoft.com"
+      # Suffixes of Sherlock users' emails that should be swapped out with the memberEmailSuffix to match
+      # Sherlock users to Azure Entra ID users.
+      userEmailSuffixesToReplace:
+        - "@broadinstitute.org"
+
     broadInstituteGroup:
       enable: false
+      dryRun: false
 
 suitabilitySynchronization:
   enable: true
@@ -462,20 +611,6 @@ suitabilitySynchronization:
       interval: 60m
       firecloud:
         domain: firecloud.org
-        groups:
-          fcAdmins: fc-admins@firecloud.org
-          firecloudProjectOwners: firecloud-project-owners@firecloud.org
-      # extraPermissions can be used to grant an exact email address access to "suitable" actions inside Sherlock,
-      # regardless of that email correlating to a Firecloud account. This functionality should only be used for
-      # service accounts, and the justification for this functionality existing is that adding a service account
-      # here is better than actually giving the service account any actual permissions inside the Firecloud org.
-      #
-      # This is almost always unnecessary, because a caller's suitability will be evaluated even from GitHub
-      # Actions. Great care needs to be taken using this capability, as access to the service account needs to
-      # otherwise be limited to only suitable individuals.
-      extraPermissions:
-        #- email: example@dsp-tools-k8s.iam.gserviceaccount.com
-        #  suitable: false
     suspendRoleAssignments:
       enable: true
       interval: 1m

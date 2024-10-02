@@ -144,7 +144,7 @@ func doNonConcurrentPropagation(ctx context.Context, role models.Role) {
 	}
 	if len(results) > 0 || len(errors) > 0 {
 		slack.SendPermissionChangeNotification(ctx, models.SelfUser.SlackReference(true), slack.PermissionChangeNotificationInputs{
-			Summary: fmt.Sprintf("propagation for Role \"%s\" made changes", *role.Name),
+			Summary: fmt.Sprintf("propagation for Role \"%s\" reports:", *role.Name),
 			Results: results,
 			Errors:  errors,
 		})

@@ -360,6 +360,8 @@ func (td *testDataImpl) Role_TerraSuitableEngineer() Role {
 				Name:                           utils.PointerTo("terra-suitable-engineer"),
 				SuspendNonSuitableUsers:        utils.PointerTo(true),
 				AutoAssignAllUsers:             utils.PointerTo(false),
+				GrantsDevAzureAccount:          utils.PointerTo(true),
+				GrantsProdAzureAccount:         utils.PointerTo(true),
 				GrantsDevFirecloudGroup:        utils.PointerTo("terra-suitable-engineer-dev"),
 				GrantsQaFirecloudGroup:         utils.PointerTo("terra-suitable-engineer-qa"),
 				GrantsProdFirecloudGroup:       utils.PointerTo("terra-suitable-engineer-prod"),
@@ -368,6 +370,8 @@ func (td *testDataImpl) Role_TerraSuitableEngineer() Role {
 				GrantsProdFirecloudFolderOwner: utils.PointerTo("folders/prod789"),
 				GrantsDevAzureGroup:            utils.PointerTo("00000000-0000-0000-0000-000000000001"),
 				GrantsProdAzureGroup:           utils.PointerTo("00000000-0000-0000-0000-000000000002"),
+				GrantsDevAzureDirectoryRoles:   utils.PointerTo(true),
+				GrantsProdAzureDirectoryRoles:  utils.PointerTo(true),
 				GrantsBroadInstituteGroup:      utils.PointerTo("terra-suitable-engineer-broadinstitute"),
 			},
 		}

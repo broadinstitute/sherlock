@@ -8,7 +8,10 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/role_propagation/intermediary_user"
 	"github.com/knadh/koanf"
+	abstractions "github.com/microsoft/kiota-abstractions-go"
 	msgraphsdk "github.com/microsoftgraph/msgraph-sdk-go"
+	msgraphgocore "github.com/microsoftgraph/msgraph-sdk-go-core"
+	"github.com/microsoftgraph/msgraph-sdk-go/groups"
 	graphmodels "github.com/microsoftgraph/msgraph-sdk-go/models"
 	"github.com/microsoftgraph/msgraph-sdk-go/users"
 	"strings"
@@ -65,20 +68,36 @@ func (a *AzureGroupEngine) Init(_ context.Context, k *koanf.Koanf) error {
 
 func (a *AzureGroupEngine) LoadCurrentState(ctx context.Context, grant string) ([]intermediary_user.IntermediaryUser[AzureGroupIdentifier, AzureGroupFields], error) {
 	currentState := make([]intermediary_user.IntermediaryUser[AzureGroupIdentifier, AzureGroupFields], 0)
-	groupMembersResponse, err := a.client.Groups().ByGroupId(grant).Members().Get(ctx, nil)
-	if err != nil {
-		return nil, err
-	} else {
-		for _, directoryObject := range groupMembersResponse.GetValue() {
-			if id := directoryObject.GetId(); id != nil {
-				currentState = append(currentState, intermediary_user.IntermediaryUser[AzureGroupIdentifier, AzureGroupFields]{
-					Identifier: AzureGroupIdentifier{ID: *id},
-					Fields:     AzureGroupFields{},
-				})
-			}
-		}
+
+	headers := abstractions.NewRequestHeaders()
+	configuration := &groups.ItemMembersRequestBuilderGetRequestConfiguration{
+		Headers: headers,
+		QueryParameters: &groups.ItemMembersRequestBuilderGetQueryParameters{
+			Select: []string{"id"},
+			Top:    utils.PointerTo[int32](25),
+		},
 	}
-	return currentState, nil
+	result, err := a.client.Groups().ByGroupId(grant).Members().Get(ctx, configuration)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get groups: %w", err)
+	}
+
+	pageIterator, err := msgraphgocore.NewPageIterator[graphmodels.DirectoryObjectable](result, a.client.GetAdapter(), graphmodels.CreateDirectoryObjectCollectionResponseFromDiscriminatorValue)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create page iterator for members: %w", err)
+	}
+	pageIterator.SetHeaders(headers)
+
+	err = pageIterator.Iterate(ctx, func(pageItem graphmodels.DirectoryObjectable) bool {
+		if id := pageItem.GetId(); id != nil {
+			currentState = append(currentState, intermediary_user.IntermediaryUser[AzureGroupIdentifier, AzureGroupFields]{
+				Identifier: AzureGroupIdentifier{ID: *id},
+				Fields:     AzureGroupFields{},
+			})
+		}
+		return true
+	})
+	return currentState, err
 }
 
 func (a *AzureGroupEngine) GenerateDesiredState(ctx context.Context, roleAssignments map[uint]models.RoleAssignment) (map[uint]intermediary_user.IntermediaryUser[AzureGroupIdentifier, AzureGroupFields], error) {

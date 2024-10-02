@@ -60,7 +60,6 @@ func (s *handlerSuite) TestUserV3Upsert_name_minimal() {
 	s.Equal(s.TestData.User_Suitable().Email, got.Email)
 	s.Equal("a name", *got.Name)
 	s.Equal("sherlock", *got.NameFrom)
-	s.False(*got.NameInferredFromGithub)
 
 	s.Run("update name", func() {
 		code = s.HandleRequest(
@@ -74,62 +73,6 @@ func (s *handlerSuite) TestUserV3Upsert_name_minimal() {
 		s.Equal(s.TestData.User_Suitable().Email, got.Email)
 		s.Equal("a different name", *got.Name)
 		s.Equal("sherlock", *got.NameFrom)
-		s.False(*got.NameInferredFromGithub)
-	})
-}
-
-func (s *handlerSuite) TestUserV3Upsert_nameInferredFromGithub() {
-	var got UserV3
-	code := s.HandleRequest(
-		s.NewRequest("PUT", "/api/users/v3", UserV3Upsert{
-			userDirectlyEditableFields: userDirectlyEditableFields{
-				NameInferredFromGithub: utils.PointerTo(true),
-			},
-		}),
-		&got)
-	s.Equal(http.StatusCreated, code)
-	s.Equal(s.TestData.User_Suitable().Email, got.Email)
-	s.True(*got.NameInferredFromGithub)
-
-	s.Run("then doesn't update name", func() {
-		code = s.HandleRequest(
-			s.NewRequest("PUT", "/api/users/v3", UserV3Upsert{
-				userDirectlyEditableFields: userDirectlyEditableFields{
-					Name: utils.PointerTo("a different name"),
-				},
-			}),
-			&got)
-		s.Equal(http.StatusOK, code)
-		s.Equal(s.TestData.User_Suitable().Email, got.Email)
-		s.Nil(got.Name)
-		s.True(*got.NameInferredFromGithub)
-	})
-
-	s.Run("can set to false", func() {
-		code = s.HandleRequest(
-			s.NewRequest("PUT", "/api/users/v3", UserV3Upsert{
-				userDirectlyEditableFields: userDirectlyEditableFields{
-					NameInferredFromGithub: utils.PointerTo(false),
-				},
-			}),
-			&got)
-		s.Equal(http.StatusCreated, code)
-		s.Equal(s.TestData.User_Suitable().Email, got.Email)
-		s.False(*got.NameInferredFromGithub)
-
-		s.Run("then updates name", func() {
-			code = s.HandleRequest(
-				s.NewRequest("PUT", "/api/users/v3", UserV3Upsert{
-					userDirectlyEditableFields: userDirectlyEditableFields{
-						Name: utils.PointerTo("a different name"),
-					},
-				}),
-				&got)
-			s.Equal(http.StatusCreated, code)
-			s.Equal(s.TestData.User_Suitable().Email, got.Email)
-			s.Equal("a different name", *got.Name)
-			s.False(*got.NameInferredFromGithub)
-		})
 	})
 }
 

@@ -73,6 +73,19 @@ type RoleFields struct {
 	// Multiple values can be comma separated and whitespace will be trimmed.
 	GrantsProdFirecloudFolderOwner *string
 
+	// GrantsDevAzureAccount, when true, indicates that a User with a RoleAssignment to this Role should have an
+	// Azure account created for them in our dev environment. The account will be created in a "home" tenant and be
+	// invited to any other tenants associated with the environment. Specifics are defined in configuration and
+	// within the role propagation package because it is uniquely complex and high-risk to change. Suspension is
+	// handled by suspending the account itself.
+	GrantsDevAzureAccount *bool
+	// GrantsProdAzureAccount, when true, indicates that a User with a RoleAssignment to this Role should have an
+	// Azure account created for them in our prod environment. The account will be created in a "home" tenant and be
+	// invited to any other tenants associated with the environment. Specifics are defined in configuration and
+	// within the role propagation package because it is uniquely complex and high-risk to change. Suspension is
+	// handled by suspending the account itself.
+	GrantsProdAzureAccount *bool
+
 	// GrantsDevAzureGroup, when not null, indicates that a User with an unsuspended RoleAssignment to this Role
 	// should have their Azure account (if they have one) added to this group.
 	// Multiple values can be comma separated and whitespace will be trimmed.
@@ -81,6 +94,17 @@ type RoleFields struct {
 	// should have their Azure account (if they have one) added to this group.
 	// Multiple values can be comma separated and whitespace will be trimmed.
 	GrantsProdAzureGroup *string
+
+	// GrantsDevAzureDirectoryRoles, when true, indicates that a User with an unsuspended RoleAssignment to this Role
+	// should get certain directory-wide Azure roles in the environment. This is necessary when an Azure role can't
+	// be given to a group for usage with GrantsDevAzureGroup. Specifics are defined in configuration and within the
+	// role propagation package because it is uniquely complex and high-risk to change.
+	GrantsDevAzureDirectoryRoles *bool
+	// GrantsProdAzureDirectoryRoles, when true, indicates that a User with an unsuspended RoleAssignment to this Role
+	// should get certain directory-wide Azure roles in the environment. This is necessary when an Azure role can't
+	// be given to a group for usage with GrantsProdAzureGroup. Specifics are defined in configuration and within the
+	// role propagation package because it is uniquely complex and high-risk to change.
+	GrantsProdAzureDirectoryRoles *bool
 
 	// GrantsBroadInstituteGroup, when not null, indicates that a User with an unsuspended RoleAssignment to this
 	// Role should have their Broad Institute account (assuming it is active) added to this group.

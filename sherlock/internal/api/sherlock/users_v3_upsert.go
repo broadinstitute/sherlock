@@ -143,15 +143,6 @@ func processUserEdits(callingUser *models.User, directEdits userDirectlyEditable
 
 	wg.Wait()
 
-	// If nameFrom wasn't set but nameInferredFromGithub was, be compatible and convert it to nameFrom
-	if directEdits.NameFrom == nil && directEdits.NameInferredFromGithub != nil {
-		if *directEdits.NameInferredFromGithub {
-			directEdits.NameFrom = &githubString
-		} else {
-			directEdits.NameFrom = &sherlockString
-		}
-	}
-
 	// Set nameFrom if it was provided and is different from what we already have
 	if directEdits.NameFrom != nil && (callingUser.NameFrom == nil || *directEdits.NameFrom != *callingUser.NameFrom) {
 		callingUser.NameFrom = directEdits.NameFrom

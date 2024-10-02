@@ -69,6 +69,11 @@ rolePropagation:
       enable: false
       workspaceDomain: test.firecloud.org
 
+    devFirecloudGroupTestDryRun:
+      enable: true
+      workspaceDomain: test.firecloud.org
+      dryRun: true
+
     devFirecloudGroupTestDefault:
       enable: true
       workspaceDomain: test.firecloud.org
@@ -81,16 +86,6 @@ rolePropagation:
         - broadinstitute.org
       toleratedUsers:
         - email: tolerated@test.firecloud.org
-
-suitabilitySynchronization:
-  behaviors:
-    loadIntoDB:
-      # These are for testing our handling of this config; tests run fully off-line
-      extraPermissions:
-        - email: has-extra-permissions-suitable@example.com
-          suitable: true
-        - email: has-extra-permissions-non-suitable@example.com
-          suitable: false
 
 bitsDataWarehouse:
   enable: false

@@ -26,8 +26,12 @@ type RoleV3Edit struct {
 	GrantsDevFirecloudFolderOwner  *string   `json:"grantsDevFirecloudFolderOwner,omitempty" form:"grantsDevFirecloudFolderOwner"`
 	GrantsQaFirecloudFolderOwner   *string   `json:"grantsQaFirecloudFolderOwner,omitempty" form:"grantsQaFirecloudFolderOwner"`
 	GrantsProdFirecloudFolderOwner *string   `json:"grantsProdFirecloudFolderOwner,omitempty" form:"grantsProdFirecloudFolderOwner"`
+	GrantsDevAzureAccount          *bool     `json:"grantsDevAzureAccount,omitempty" form:"grantsDevAzureAccount"`
+	GrantsProdAzureAccount         *bool     `json:"grantsProdAzureAccount,omitempty" form:"grantsProdAzureAccount"`
 	GrantsDevAzureGroup            *string   `json:"grantsDevAzureGroup,omitempty" form:"grantsDevAzureGroup"`
 	GrantsProdAzureGroup           *string   `json:"grantsProdAzureGroup,omitempty" form:"grantsProdAzureGroup"`
+	GrantsDevAzureDirectoryRoles   *bool     `json:"grantsDevAzureDirectoryRoles,omitempty" form:"grantsDevAzureDirectoryRoles"`
+	GrantsProdAzureDirectoryRoles  *bool     `json:"grantsProdAzureDirectoryRoles,omitempty" form:"grantsProdAzureDirectoryRoles"`
 	GrantsBroadInstituteGroup      *string   `json:"grantsBroadInstituteGroup,omitempty" form:"grantsBroadInstituteGroup"`
 }
 
@@ -46,8 +50,12 @@ func (r RoleV3) toModel() models.Role {
 			GrantsDevFirecloudFolderOwner:  r.GrantsDevFirecloudFolderOwner,
 			GrantsQaFirecloudFolderOwner:   r.GrantsQaFirecloudFolderOwner,
 			GrantsProdFirecloudFolderOwner: r.GrantsProdFirecloudFolderOwner,
+			GrantsDevAzureAccount:          r.GrantsDevAzureAccount,
+			GrantsProdAzureAccount:         r.GrantsProdAzureAccount,
 			GrantsDevAzureGroup:            r.GrantsDevAzureGroup,
 			GrantsProdAzureGroup:           r.GrantsProdAzureGroup,
+			GrantsDevAzureDirectoryRoles:   r.GrantsDevAzureDirectoryRoles,
+			GrantsProdAzureDirectoryRoles:  r.GrantsProdAzureDirectoryRoles,
 			GrantsBroadInstituteGroup:      r.GrantsBroadInstituteGroup,
 		},
 	}
@@ -80,8 +88,12 @@ func roleFromModel(model models.Role) RoleV3 {
 			GrantsDevFirecloudFolderOwner:  model.GrantsDevFirecloudFolderOwner,
 			GrantsQaFirecloudFolderOwner:   model.GrantsQaFirecloudFolderOwner,
 			GrantsProdFirecloudFolderOwner: model.GrantsProdFirecloudFolderOwner,
+			GrantsDevAzureAccount:          model.GrantsDevAzureAccount,
+			GrantsProdAzureAccount:         model.GrantsProdAzureAccount,
 			GrantsDevAzureGroup:            model.GrantsDevAzureGroup,
 			GrantsProdAzureGroup:           model.GrantsProdAzureGroup,
+			GrantsDevAzureDirectoryRoles:   model.GrantsDevAzureDirectoryRoles,
+			GrantsProdAzureDirectoryRoles:  model.GrantsProdAzureDirectoryRoles,
 			GrantsBroadInstituteGroup:      model.GrantsBroadInstituteGroup,
 		},
 	}

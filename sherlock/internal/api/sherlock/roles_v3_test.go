@@ -27,8 +27,12 @@ func (s *handlerSuite) Test_roleFromModel() {
 			GrantsDevFirecloudFolderOwner:  model.GrantsDevFirecloudFolderOwner,
 			GrantsQaFirecloudFolderOwner:   model.GrantsQaFirecloudFolderOwner,
 			GrantsProdFirecloudFolderOwner: model.GrantsProdFirecloudFolderOwner,
+			GrantsDevAzureAccount:          model.GrantsDevAzureAccount,
+			GrantsProdAzureAccount:         model.GrantsProdAzureAccount,
 			GrantsDevAzureGroup:            model.GrantsDevAzureGroup,
 			GrantsProdAzureGroup:           model.GrantsProdAzureGroup,
+			GrantsDevAzureDirectoryRoles:   model.GrantsDevAzureDirectoryRoles,
+			GrantsProdAzureDirectoryRoles:  model.GrantsProdAzureDirectoryRoles,
 			GrantsBroadInstituteGroup:      model.GrantsBroadInstituteGroup,
 		},
 	}
