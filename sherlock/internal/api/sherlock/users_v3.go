@@ -20,11 +20,8 @@ type UserV3 struct {
 }
 
 type userDirectlyEditableFields struct {
-	Name *string `json:"name,omitempty" form:"name"`
-	// Controls whether Sherlock should automatically update the user's name based on a connected GitHub identity.
-	// Will be set to true if the user account has no name and a GitHub account is linked.
-	NameInferredFromGithub *bool   `json:"nameInferredFromGithub,omitempty" form:"nameInferredFromGithub"`
-	NameFrom               *string `json:"nameFrom,omitempty" form:"nameFrom" enums:"sherlock,github,slack" binding:"omitempty,oneof=sherlock github slack"`
+	Name     *string `json:"name,omitempty" form:"name"`
+	NameFrom *string `json:"nameFrom,omitempty" form:"nameFrom" enums:"sherlock,github,slack" binding:"omitempty,oneof=sherlock github slack"`
 }
 
 func (u UserV3) toModel() models.User {
@@ -38,15 +35,6 @@ func (u UserV3) toModel() models.User {
 		SlackID:        u.SlackID,
 		Name:           u.Name,
 		NameFrom:       u.NameFrom,
-	}
-	if u.NameFrom == nil && u.NameInferredFromGithub != nil {
-		if *u.NameInferredFromGithub {
-			githubString := "github"
-			ret.NameFrom = &githubString
-		} else {
-			sherlockString := "sherlock"
-			ret.NameFrom = &sherlockString
-		}
 	}
 	return ret
 }
@@ -77,15 +65,6 @@ func userFromModel(model models.User) UserV3 {
 		ret.Assignments = utils.Map(model.Assignments, func(ra *models.RoleAssignment) *RoleAssignmentV3 {
 			return utils.NilOrCall(roleAssignmentFromModel, ra)
 		})
-	}
-	if model.NameFrom != nil {
-		if *model.NameFrom == "github" {
-			trueBool := true
-			ret.NameInferredFromGithub = &trueBool
-		} else {
-			falseBool := false
-			ret.NameInferredFromGithub = &falseBool
-		}
 	}
 	return ret
 }
