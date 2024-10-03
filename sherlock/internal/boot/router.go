@@ -17,6 +17,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/csrf_protection"
 	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/headers"
 	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/logger"
+	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/security"
 	"github.com/broadinstitute/sherlock/sherlock/internal/oidc_models"
 	"github.com/gin-gonic/gin"
 	swaggo_files "github.com/swaggo/files"
@@ -60,7 +61,8 @@ func BuildRouter(ctx context.Context, db *gorm.DB) *gin.Engine {
 		gin.Recovery(),
 		logger.Logger(),
 		cors.Cors(),
-		headers.Headers())
+		headers.Headers(),
+		security.Security())
 
 	resourceMiddleware := make(gin.HandlersChain, 0)
 	resourceMiddleware = append(resourceMiddleware, csrf_protection.CsrfProtection())
