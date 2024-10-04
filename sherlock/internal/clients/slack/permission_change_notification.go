@@ -104,9 +104,11 @@ func SendPermissionChangeNotificationReturnError(ctx context.Context, actor stri
 				// message.
 				var err error
 				if timestamp == "" {
-					_, timestamp, _, err = client.SendMessageContext(ctx, channel, slack.MsgOptionBlocks(chunk...))
+					_, timestamp, _, err = client.SendMessageContext(ctx, channel,
+						slack.MsgOptionBlocks(chunk...))
 				} else {
-					_, _, _, err = client.SendMessageContext(ctx, channel, slack.MsgOptionTS(timestamp), slack.MsgOptionBlocks(chunk...))
+					_, _, _, err = client.SendMessageContext(ctx, channel,
+						slack.MsgOptionTS(timestamp), slack.MsgOptionBlocks(chunk...))
 				}
 
 				// If we got an error, we do some legwork to make debugging easier. Blocks are bytes and should be able
