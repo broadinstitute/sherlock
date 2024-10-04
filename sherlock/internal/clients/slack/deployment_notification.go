@@ -76,7 +76,7 @@ func SendDeploymentChangelogNotification(ctx context.Context, channel, timestamp
 	}
 	if isEnabled() && timestamp != "" && len(sections) > 0 && len(blocks) > 0 {
 		var chunks [][]slack.Block
-		for 50 < len(blocks) {
+		for len(blocks) > 50 {
 			blocks, chunks = blocks[50:], append(chunks, blocks[0:50:50])
 		}
 		for _, chunk := range append(chunks, blocks) {

@@ -1,11 +1,13 @@
 package slack
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/rs/zerolog/log"
 	"github.com/slack-go/slack"
 	"golang.org/x/net/context"
+	"math/rand"
 )
 
 const permissionChangeSquelchContextKey = "sherlock-slack-permission-change-squelch"
@@ -77,9 +79,50 @@ func SendPermissionChangeNotificationReturnError(ctx context.Context, actor stri
 	}
 	errs := make([]error, 0)
 	if isEnabled() && config.Config.Bool("slack.behaviors.permissionChanges.enable") && len(blocks) > 0 {
+		// We can't send more than 50 blocks in one message, so we do some madness to chunk them and send
+		// consecutive messages into a thread. Note that deployment_notification.go does something very similar
+		// but we don't abstract between them here because there's a few subtle differences in quantity of
+		// channels being handled and how the messages are threaded. An abstraction would just be needlessly
+		// complex.
+
+		// First we assemble chunks of 50. This fancy slice syntax and multiple slice assignment does that in
+		// chunks of 50 and then we append anything remaining after that.
+		var chunks [][]slack.Block
+		for len(blocks) > 50 {
+			blocks, chunks = blocks[50:], append(chunks, blocks[0:50:50])
+		}
+		chunks = append(chunks, blocks)
+
+		// The timestamp we'll use to thread is different per channel, so we have to send to each channel
+		// sequentially.
 		for _, channel := range config.Config.Strings("slack.behaviors.permissionChanges.channels") {
-			if _, _, _, err := client.SendMessageContext(ctx, channel, slack.MsgOptionBlocks(blocks...)); err != nil {
-				errs = append(errs, err)
+			var timestamp string
+			for _, chunk := range chunks {
+
+				// For each chunk, if we already have a timestamp (meaning that we've already successfully sent a
+				// message), we use that timestamp to thread the message. If we don't have a timestamp, we send a new
+				// message.
+				var err error
+				if timestamp == "" {
+					_, timestamp, _, err = client.SendMessageContext(ctx, channel, slack.MsgOptionBlocks(chunk...))
+				} else {
+					_, _, _, err = client.SendMessageContext(ctx, channel, slack.MsgOptionTS(timestamp), slack.MsgOptionBlocks(chunk...))
+				}
+
+				// If we got an error, we do some legwork to make debugging easier. Blocks are bytes and should be able
+				// to be marshalled to JSON. If we can do that, then we can safely include the blocks in a log message to
+				// help unpack whatever went wrong. We generate a random identifier to help correlate the error that gets
+				// reported to the log with the blocks that were sent.
+				if err != nil {
+					if bytes, jsonErr := json.Marshal(chunk); jsonErr != nil {
+						err = fmt.Errorf("(also failed to marshal chunk of blocks to JSON: %v) %v", jsonErr, err)
+					} else {
+						identifier := rand.Int()
+						log.Warn().Bytes("blocks", bytes).Int("identifier", identifier).Msgf("failed to send permission change notification chunk, embedding blocks in log (identifier %d)", identifier)
+						err = fmt.Errorf("(embedded chunk of blocks in log, seek identifier %d) %v", identifier, err)
+					}
+					errs = append(errs, err)
+				}
 			}
 		}
 	}
