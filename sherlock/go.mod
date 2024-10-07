@@ -41,7 +41,7 @@ require (
 	github.com/swaggo/files v1.0.1
 	github.com/swaggo/gin-swagger v1.6.1-0.20231210095754-aa92a0ac3f26
 	github.com/swaggo/swag v1.16.3
-	github.com/zitadel/oidc/v3 v3.30.0
+	github.com/zitadel/oidc/v3 v3.30.1
 	go.opencensus.io v0.24.0
 	golang.org/x/crypto v0.28.0
 	golang.org/x/exp v0.0.0-20240823005443-9b4947da3948
@@ -157,7 +157,7 @@ require (
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.12 // indirect
 	github.com/zeebo/xxh3 v1.0.2 // indirect
-	github.com/zitadel/logging v0.6.0 // indirect
+	github.com/zitadel/logging v0.6.1 // indirect
 	github.com/zitadel/schema v1.3.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.54.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.54.0 // indirect
