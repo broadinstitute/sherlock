@@ -19,6 +19,7 @@ type TestData interface {
 	User_SuperAdmin() User
 	User_Suitable() User
 	User_NonSuitable() User
+	User_Deactivated() User
 
 	Role_SherlockSuperAdmin() Role
 	Role_TerraEngineer() Role
@@ -135,6 +136,7 @@ type testDataImpl struct {
 	user_superAdmin  User
 	user_suitable    User
 	user_nonSuitable User
+	user_deactivated User
 
 	role_sherlockSuperAdmin    Role
 	role_terraEngineer         Role
@@ -323,6 +325,23 @@ func (td *testDataImpl) User_NonSuitable() User {
 		}
 	}
 	return td.user_nonSuitable
+}
+
+func (td *testDataImpl) User_Deactivated() User {
+	if td.user_deactivated.ID == 0 {
+		td.user_deactivated = User{
+			Email:         "deactivated-test-email@broadinstitute.org",
+			GoogleID:      "403403403",
+			DeactivatedAt: utils.PointerTo(time.Now().Add(-time.Hour)),
+		}
+		td.create(&td.user_deactivated)
+
+		// Reload user from the database so we get suitability and other records
+		if err := td.h.DB.Scopes(ReadUserScope).Take(&td.user_deactivated, td.user_deactivated.ID).Error; err != nil {
+			panic(err)
+		}
+	}
+	return td.user_deactivated
 }
 
 func (td *testDataImpl) Role_SherlockSuperAdmin() Role {

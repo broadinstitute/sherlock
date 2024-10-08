@@ -3,6 +3,7 @@ package sherlock
 import (
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
+	"time"
 )
 
 type UserV3 struct {
@@ -15,6 +16,7 @@ type UserV3 struct {
 	SlackID                *string             `json:"slackID,omitempty" form:"slackID"`
 	Suitable               *bool               `json:"suitable,omitempty" form:"suitable"`                             // Available only in responses; indicates whether the user is production-suitable
 	SuitabilityDescription *string             `json:"suitabilityDescription,omitempty" form:"suitabilityDescription"` // Available only in responses; describes the user's production-suitability
+	DeactivatedAt          *time.Time          `json:"deactivatedAt,omitempty" form:"deactivatedAt"`                   // Indicates that the user is currently deactivated
 	Assignments            []*RoleAssignmentV3 `json:"assignments,omitempty" form:"-"`
 	userDirectlyEditableFields
 }
@@ -35,6 +37,7 @@ func (u UserV3) toModel() models.User {
 		SlackID:        u.SlackID,
 		Name:           u.Name,
 		NameFrom:       u.NameFrom,
+		DeactivatedAt:  u.DeactivatedAt,
 	}
 	return ret
 }
@@ -54,6 +57,7 @@ func userFromModel(model models.User) UserV3 {
 		GithubID:               model.GithubID,
 		SlackUsername:          model.SlackUsername,
 		SlackID:                model.SlackID,
+		DeactivatedAt:          model.DeactivatedAt,
 		Suitable:               &suitable,
 		SuitabilityDescription: &suitabilityDescription,
 		userDirectlyEditableFields: userDirectlyEditableFields{

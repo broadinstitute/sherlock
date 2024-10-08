@@ -25,6 +25,7 @@ func Middleware(db *gorm.DB) gin.HandlersChain {
 	return gin.HandlersChain{
 		userWhoConnectedMiddleware,
 		setGithubClaimsAndEscalateUser(db),
+		forbidDeactivatedUsers(),
 		setDatabaseWithUser(db),
 	}
 }
@@ -35,6 +36,7 @@ func TestMiddleware(db *gorm.DB, td models.TestData) gin.HandlersChain {
 	return gin.HandlersChain{
 		setUserWhoConnected(db, test_users.MakeHeaderParser(td.User_SuperAdmin(), td.User_Suitable(), td.User_NonSuitable()), authentication_method.TEST),
 		setGithubClaimsAndEscalateUser(db),
+		forbidDeactivatedUsers(),
 		setDatabaseWithUser(db),
 	}
 }

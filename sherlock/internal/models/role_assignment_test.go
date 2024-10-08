@@ -36,6 +36,19 @@ func (s *modelSuite) TestRoleAssignmentForbiddenCreate() {
 	s.ErrorContains(err, errors.Forbidden)
 }
 
+func (s *modelSuite) TestRoleAssignmentDeactivatedCreate() {
+	roleAssignment := RoleAssignment{
+		RoleID: s.TestData.Role_SherlockSuperAdmin().ID,
+		UserID: s.TestData.User_Deactivated().ID,
+		RoleAssignmentFields: RoleAssignmentFields{
+			Suspended: utils.PointerTo(false),
+		},
+	}
+	s.SetSelfSuperAdminForDB()
+	err := s.DB.Create(&roleAssignment).Error
+	s.ErrorContains(err, errors.Forbidden)
+}
+
 func (s *modelSuite) TestRoleAssignmentAllowedCreate() {
 	roleAssignment := s.TestData.RoleAssignment_NonSuitable_TerraEngineer()
 	s.Run("journaled", func() {

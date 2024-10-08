@@ -178,10 +178,25 @@ func (ra *RoleAssignment) errorIfForbidden(tx *gorm.DB) error {
 	}
 }
 
+// errorIfUserDeactivated does what it says on the tin, but we don't want to call it often. We
+// only want to forbid creation of role assignments with deactivated users, because we want to
+// rely on
+func (ra *RoleAssignment) errorIfUserDeactivated(tx *gorm.DB) error {
+	var user User
+	if err := tx.First(&user, ra.UserID).Error; err != nil {
+		return fmt.Errorf("failed to find user to determine if it is deactivated: %w", err)
+	} else if user.DeactivatedAt != nil {
+		return fmt.Errorf("(%s) cannot create role assignment targeting deactivated user", errors.Forbidden)
+	}
+	return nil
+}
+
 func (ra *RoleAssignment) AfterCreate(tx *gorm.DB) error {
 	if user, err := GetCurrentUserForDB(tx); err != nil {
 		return err
 	} else if err = ra.errorIfForbidden(tx); err != nil {
+		return err
+	} else if err = ra.errorIfUserDeactivated(tx); err != nil {
 		return err
 	} else if err = tx.Omit(clause.Associations).Create(&RoleAssignmentOperation{
 		RoleID:    ra.RoleID,

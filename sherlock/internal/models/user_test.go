@@ -8,6 +8,7 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 	"testing"
+	"time"
 )
 
 func (s *modelSuite) TestUserRejectEditImmutableField() {
@@ -32,12 +33,30 @@ func (s *modelSuite) TestUserCatchBadEdit() {
 	s.ErrorContains(err, "user ID in BeforeEdit was nil, possibly a bad database call")
 }
 
+func (s *modelSuite) TestUserSelfEditDeactivatedAt() {
+	nonSuitable := s.SetNonSuitableTestUserForDB()
+	s.SetNonSuitableTestUserForDB()
+	err := s.DB.Model(nonSuitable).Omit(clause.Associations).Updates(&User{DeactivatedAt: utils.PointerTo(time.Now())}).Error
+	s.ErrorContains(err, errors.BadRequest)
+}
+
 func (s *modelSuite) TestUserOnlySelfEdit() {
 	nonSuitable := s.SetNonSuitableTestUserForDB()
 	s.SetSuitableTestUserForDB()
 	err := s.DB.Model(nonSuitable).Omit(clause.Associations).Updates(&User{Name: utils.PointerTo("new name")}).Error
 	s.ErrorContains(err, errors.Forbidden)
 	s.SetNonSuitableTestUserForDB()
+	err = s.DB.Model(nonSuitable).Omit(clause.Associations).Updates(&User{Name: utils.PointerTo("new name")}).Error
+	s.NoError(err)
+	s.Equal("new name", *nonSuitable.Name)
+}
+
+func (s *modelSuite) TestUserSuperAdminEdit() {
+	nonSuitable := s.SetNonSuitableTestUserForDB()
+	s.SetSuitableTestUserForDB()
+	err := s.DB.Model(nonSuitable).Omit(clause.Associations).Updates(&User{Name: utils.PointerTo("new name")}).Error
+	s.ErrorContains(err, errors.Forbidden)
+	s.SetUserForDB(utils.PointerTo(s.TestData.User_SuperAdmin()))
 	err = s.DB.Model(nonSuitable).Omit(clause.Associations).Updates(&User{Name: utils.PointerTo("new name")}).Error
 	s.NoError(err)
 	s.Equal("new name", *nonSuitable.Name)

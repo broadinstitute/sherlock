@@ -10,6 +10,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/models/self"
 	"gorm.io/gorm"
 	"strings"
+	"time"
 	"unicode"
 )
 
@@ -59,6 +60,14 @@ type User struct {
 	// NameFrom must be either "sherlock", "github", or "slack"
 	NameFrom *string
 
+	// DeactivatedAt is a nullable timestamp that, when not null, indicates that the User is deactivated.
+	// This is like a soft-delete but it has semantic meaning within Sherlock (the User can't authenticate
+	// and can't have any RoleAssignments but could have in the past and does still exist), unlike
+	// gorm.Model's DeletedAt which already has a meaning enforced by Gorm.
+	//
+	// Nothing uses this time -- it's essentially just for reference.
+	DeactivatedAt *time.Time
+
 	// Suitability is a potential reference to a matching Suitability record, which in turn
 	// potentially indicates that the User is "suitable" for production access. If this is
 	// nil the User should be assumed to be unsuitable.
@@ -102,20 +111,29 @@ func (u *User) BeforeUpdate(tx *gorm.DB) error {
 		// sense because of how intertwined it is with authentication.
 		return fmt.Errorf("(%s) email and google ID cannot be changed", errors.BadRequest)
 	}
+	if u.ID == 0 {
+		// We can smartly catch a coding error here.
+		// This is probably a result of doing something like db.Where().Updates() when you need to do
+		// db.Where().First() followed by db.Model().Updates().
+		// https://gorm.io/docs/update.html
+		return fmt.Errorf("(%s) user ID in BeforeEdit was nil, possibly a bad database call", errors.InternalServerError)
+	}
+
 	userMakingRequest, err := GetCurrentUserForDB(tx)
 	if err != nil {
 		return err
 	}
-	if userMakingRequest.ID != u.ID {
-		if u.ID == 0 {
-			// We can smartly catch a coding error here.
-			// This is probably a result of doing something like db.Where().Updates() when you need to do
-			// db.Where().First() followed by db.Model().Updates().
-			// https://gorm.io/docs/update.html
-			return fmt.Errorf("(%s) user ID in BeforeEdit was nil, possibly a bad database call", errors.InternalServerError)
-		}
-		return fmt.Errorf("(%s) users can only edit themselves", errors.Forbidden)
+
+	if tx.Statement.Changed("DeactivatedAt") && userMakingRequest.ID == u.ID {
+		// We shouldn't be able to hit this because anything that updates the deactivated_at field should
+		// also be checking this... but better safe than sorry.
+		return fmt.Errorf("(%s) users cannot deactivate themselves", errors.BadRequest)
 	}
+
+	if errWhenNotSuperAdmin := userMakingRequest.ErrIfNotSuperAdmin(); errWhenNotSuperAdmin != nil && userMakingRequest.ID != u.ID {
+		return fmt.Errorf("only super admins can edit other users: %w", errWhenNotSuperAdmin)
+	}
+
 	if (config.Config.MustString("mode") != "debug" && userMakingRequest.AuthenticationMethod != authentication_method.IAP) ||
 		(config.Config.MustString("mode") == "debug" && userMakingRequest.AuthenticationMethod != authentication_method.TEST && userMakingRequest.AuthenticationMethod != authentication_method.LOCAL) {
 		// For non-debug, require IAP to edit users. For debug, require TEST or LOCAL so we can still hit this error case if we really try.
