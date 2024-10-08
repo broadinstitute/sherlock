@@ -16,7 +16,7 @@ type UserV3 struct {
 	SlackID                *string             `json:"slackID,omitempty" form:"slackID"`
 	Suitable               *bool               `json:"suitable,omitempty" form:"suitable"`                             // Available only in responses; indicates whether the user is production-suitable
 	SuitabilityDescription *string             `json:"suitabilityDescription,omitempty" form:"suitabilityDescription"` // Available only in responses; describes the user's production-suitability
-	DeactivatedAt          *time.Time          `json:"deactivatedAt,omitempty" form:"deactivatedAt"`                   // Indicates that the user is currently deactivated
+	DeactivatedAt          *time.Time          `json:"deactivatedAt,omitempty" form:"deactivatedAt"`                   // If set, indicates that the user is currently deactivated
 	Assignments            []*RoleAssignmentV3 `json:"assignments,omitempty" form:"-"`
 	userDirectlyEditableFields
 }
