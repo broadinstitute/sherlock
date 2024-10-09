@@ -7445,6 +7445,12 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "If set, indicates that the user is currently deactivated",
+                        "name": "deactivatedAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "name": "email",
                         "in": "query"
                     },
@@ -7521,6 +7527,12 @@ const docTemplate = `{
                         "type": "integer",
                         "description": "Control the offset for the returned Users (default 0)",
                         "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Include deactivated users in the results (default false)",
+                        "name": "include-deactivated",
                         "in": "query"
                     }
                 ],
@@ -10195,6 +10207,10 @@ const docTemplate = `{
                 "createdAt": {
                     "type": "string",
                     "format": "date-time"
+                },
+                "deactivatedAt": {
+                    "description": "If set, indicates that the user is currently deactivated",
+                    "type": "string"
                 },
                 "email": {
                     "type": "string"

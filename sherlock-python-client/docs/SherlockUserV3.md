@@ -7,6 +7,7 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **assignments** | [**List[SherlockRoleAssignmentV3]**](SherlockRoleAssignmentV3.md) |  | [optional] 
 **created_at** | **datetime** |  | [optional] 
+**deactivated_at** | **str** | If set, indicates that the user is currently deactivated | [optional] 
 **email** | **str** |  | [optional] 
 **github_id** | **str** |  | [optional] 
 **github_username** | **str** |  | [optional] 

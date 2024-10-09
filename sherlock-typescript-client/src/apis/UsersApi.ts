@@ -30,6 +30,7 @@ import {
 
 export interface ApiUsersV3GetRequest {
     createdAt?: Date;
+    deactivatedAt?: string;
     email?: string;
     githubID?: string;
     githubUsername?: string;
@@ -44,6 +45,7 @@ export interface ApiUsersV3GetRequest {
     updatedAt?: Date;
     limit?: number;
     offset?: number;
+    includeDeactivated?: boolean;
 }
 
 export interface ApiUsersV3PutRequest {
@@ -68,6 +70,10 @@ export class UsersApi extends runtime.BaseAPI {
 
         if (requestParameters['createdAt'] != null) {
             queryParameters['createdAt'] = (requestParameters['createdAt'] as any).toISOString();
+        }
+
+        if (requestParameters['deactivatedAt'] != null) {
+            queryParameters['deactivatedAt'] = requestParameters['deactivatedAt'];
         }
 
         if (requestParameters['email'] != null) {
@@ -124,6 +130,10 @@ export class UsersApi extends runtime.BaseAPI {
 
         if (requestParameters['offset'] != null) {
             queryParameters['offset'] = requestParameters['offset'];
+        }
+
+        if (requestParameters['includeDeactivated'] != null) {
+            queryParameters['include-deactivated'] = requestParameters['includeDeactivated'];
         }
 
         const headerParameters: runtime.HTTPHeaders = {};

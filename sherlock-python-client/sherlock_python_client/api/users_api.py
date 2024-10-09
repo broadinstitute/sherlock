@@ -46,6 +46,7 @@ class UsersApi:
     def api_users_v3_get(
         self,
         created_at: Optional[datetime] = None,
+        deactivated_at: Annotated[Optional[StrictStr], Field(description="If set, indicates that the user is currently deactivated")] = None,
         email: Optional[StrictStr] = None,
         github_id: Optional[StrictStr] = None,
         github_username: Optional[StrictStr] = None,
@@ -60,6 +61,7 @@ class UsersApi:
         updated_at: Optional[datetime] = None,
         limit: Annotated[Optional[StrictInt], Field(description="Control how many Users are returned (default 0, no limit)")] = None,
         offset: Annotated[Optional[StrictInt], Field(description="Control the offset for the returned Users (default 0)")] = None,
+        include_deactivated: Annotated[Optional[StrictBool], Field(description="Include deactivated users in the results (default false)")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -79,6 +81,8 @@ class UsersApi:
 
         :param created_at:
         :type created_at: datetime
+        :param deactivated_at: If set, indicates that the user is currently deactivated
+        :type deactivated_at: str
         :param email:
         :type email: str
         :param github_id:
@@ -107,6 +111,8 @@ class UsersApi:
         :type limit: int
         :param offset: Control the offset for the returned Users (default 0)
         :type offset: int
+        :param include_deactivated: Include deactivated users in the results (default false)
+        :type include_deactivated: bool
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -131,6 +137,7 @@ class UsersApi:
 
         _param = self._api_users_v3_get_serialize(
             created_at=created_at,
+            deactivated_at=deactivated_at,
             email=email,
             github_id=github_id,
             github_username=github_username,
@@ -145,6 +152,7 @@ class UsersApi:
             updated_at=updated_at,
             limit=limit,
             offset=offset,
+            include_deactivated=include_deactivated,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -175,6 +183,7 @@ class UsersApi:
     def api_users_v3_get_with_http_info(
         self,
         created_at: Optional[datetime] = None,
+        deactivated_at: Annotated[Optional[StrictStr], Field(description="If set, indicates that the user is currently deactivated")] = None,
         email: Optional[StrictStr] = None,
         github_id: Optional[StrictStr] = None,
         github_username: Optional[StrictStr] = None,
@@ -189,6 +198,7 @@ class UsersApi:
         updated_at: Optional[datetime] = None,
         limit: Annotated[Optional[StrictInt], Field(description="Control how many Users are returned (default 0, no limit)")] = None,
         offset: Annotated[Optional[StrictInt], Field(description="Control the offset for the returned Users (default 0)")] = None,
+        include_deactivated: Annotated[Optional[StrictBool], Field(description="Include deactivated users in the results (default false)")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -208,6 +218,8 @@ class UsersApi:
 
         :param created_at:
         :type created_at: datetime
+        :param deactivated_at: If set, indicates that the user is currently deactivated
+        :type deactivated_at: str
         :param email:
         :type email: str
         :param github_id:
@@ -236,6 +248,8 @@ class UsersApi:
         :type limit: int
         :param offset: Control the offset for the returned Users (default 0)
         :type offset: int
+        :param include_deactivated: Include deactivated users in the results (default false)
+        :type include_deactivated: bool
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -260,6 +274,7 @@ class UsersApi:
 
         _param = self._api_users_v3_get_serialize(
             created_at=created_at,
+            deactivated_at=deactivated_at,
             email=email,
             github_id=github_id,
             github_username=github_username,
@@ -274,6 +289,7 @@ class UsersApi:
             updated_at=updated_at,
             limit=limit,
             offset=offset,
+            include_deactivated=include_deactivated,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -304,6 +320,7 @@ class UsersApi:
     def api_users_v3_get_without_preload_content(
         self,
         created_at: Optional[datetime] = None,
+        deactivated_at: Annotated[Optional[StrictStr], Field(description="If set, indicates that the user is currently deactivated")] = None,
         email: Optional[StrictStr] = None,
         github_id: Optional[StrictStr] = None,
         github_username: Optional[StrictStr] = None,
@@ -318,6 +335,7 @@ class UsersApi:
         updated_at: Optional[datetime] = None,
         limit: Annotated[Optional[StrictInt], Field(description="Control how many Users are returned (default 0, no limit)")] = None,
         offset: Annotated[Optional[StrictInt], Field(description="Control the offset for the returned Users (default 0)")] = None,
+        include_deactivated: Annotated[Optional[StrictBool], Field(description="Include deactivated users in the results (default false)")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -337,6 +355,8 @@ class UsersApi:
 
         :param created_at:
         :type created_at: datetime
+        :param deactivated_at: If set, indicates that the user is currently deactivated
+        :type deactivated_at: str
         :param email:
         :type email: str
         :param github_id:
@@ -365,6 +385,8 @@ class UsersApi:
         :type limit: int
         :param offset: Control the offset for the returned Users (default 0)
         :type offset: int
+        :param include_deactivated: Include deactivated users in the results (default false)
+        :type include_deactivated: bool
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -389,6 +411,7 @@ class UsersApi:
 
         _param = self._api_users_v3_get_serialize(
             created_at=created_at,
+            deactivated_at=deactivated_at,
             email=email,
             github_id=github_id,
             github_username=github_username,
@@ -403,6 +426,7 @@ class UsersApi:
             updated_at=updated_at,
             limit=limit,
             offset=offset,
+            include_deactivated=include_deactivated,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -428,6 +452,7 @@ class UsersApi:
     def _api_users_v3_get_serialize(
         self,
         created_at,
+        deactivated_at,
         email,
         github_id,
         github_username,
@@ -442,6 +467,7 @@ class UsersApi:
         updated_at,
         limit,
         offset,
+        include_deactivated,
         _request_auth,
         _content_type,
         _headers,
@@ -476,6 +502,10 @@ class UsersApi:
                 )
             else:
                 _query_params.append(('createdAt', created_at))
+            
+        if deactivated_at is not None:
+            
+            _query_params.append(('deactivatedAt', deactivated_at))
             
         if email is not None:
             
@@ -541,6 +571,10 @@ class UsersApi:
         if offset is not None:
             
             _query_params.append(('offset', offset))
+            
+        if include_deactivated is not None:
+            
+            _query_params.append(('include-deactivated', include_deactivated))
             
         # process the header parameters
         # process the form parameters

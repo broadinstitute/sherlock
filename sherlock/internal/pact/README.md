@@ -5,6 +5,7 @@
 - `User_SuperAdmin exists`
 - `User_Suitable exists`
 - `User_NonSuitable exists`
+- `User_Deactivated exists`
 - `Role_SherlockSuperAdmin exists`
 - `Role_TerraEngineer exists`
 - `Role_TerraSuitableEngineer exists`

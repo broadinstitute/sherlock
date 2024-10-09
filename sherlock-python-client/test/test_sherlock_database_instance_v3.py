@@ -55,6 +55,7 @@ class TestSherlockDatabaseInstanceV3(unittest.TestCase):
                                     user_info = sherlock_python_client.models.user_info.userInfo(), )
                                 ], 
                             created_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
+                            deactivated_at = '', 
                             email = '', 
                             github_id = '', 
                             github_username = '', 
@@ -251,6 +252,7 @@ class TestSherlockDatabaseInstanceV3(unittest.TestCase):
                         owner = '', 
                         owner_info = sherlock_python_client.models.sherlock/user_v3.sherlock.UserV3(
                             created_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
+                            deactivated_at = '', 
                             email = '', 
                             github_id = '', 
                             github_username = '', 

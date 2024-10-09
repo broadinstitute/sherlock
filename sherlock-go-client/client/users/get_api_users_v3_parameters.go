@@ -65,6 +65,12 @@ type GetAPIUsersV3Params struct {
 	// Format: date-time
 	CreatedAt *strfmt.DateTime
 
+	/* DeactivatedAt.
+
+	   If set, indicates that the user is currently deactivated
+	*/
+	DeactivatedAt *string
+
 	// Email.
 	Email *string
 
@@ -79,6 +85,12 @@ type GetAPIUsersV3Params struct {
 
 	// ID.
 	ID *int64
+
+	/* IncludeDeactivated.
+
+	   Include deactivated users in the results (default false)
+	*/
+	IncludeDeactivated *bool
 
 	/* Limit.
 
@@ -185,6 +197,17 @@ func (o *GetAPIUsersV3Params) SetCreatedAt(createdAt *strfmt.DateTime) {
 	o.CreatedAt = createdAt
 }
 
+// WithDeactivatedAt adds the deactivatedAt to the get API users v3 params
+func (o *GetAPIUsersV3Params) WithDeactivatedAt(deactivatedAt *string) *GetAPIUsersV3Params {
+	o.SetDeactivatedAt(deactivatedAt)
+	return o
+}
+
+// SetDeactivatedAt adds the deactivatedAt to the get API users v3 params
+func (o *GetAPIUsersV3Params) SetDeactivatedAt(deactivatedAt *string) {
+	o.DeactivatedAt = deactivatedAt
+}
+
 // WithEmail adds the email to the get API users v3 params
 func (o *GetAPIUsersV3Params) WithEmail(email *string) *GetAPIUsersV3Params {
 	o.SetEmail(email)
@@ -238,6 +261,17 @@ func (o *GetAPIUsersV3Params) WithID(id *int64) *GetAPIUsersV3Params {
 // SetID adds the id to the get API users v3 params
 func (o *GetAPIUsersV3Params) SetID(id *int64) {
 	o.ID = id
+}
+
+// WithIncludeDeactivated adds the includeDeactivated to the get API users v3 params
+func (o *GetAPIUsersV3Params) WithIncludeDeactivated(includeDeactivated *bool) *GetAPIUsersV3Params {
+	o.SetIncludeDeactivated(includeDeactivated)
+	return o
+}
+
+// SetIncludeDeactivated adds the includeDeactivated to the get API users v3 params
+func (o *GetAPIUsersV3Params) SetIncludeDeactivated(includeDeactivated *bool) {
+	o.IncludeDeactivated = includeDeactivated
 }
 
 // WithLimit adds the limit to the get API users v3 params
@@ -364,6 +398,23 @@ func (o *GetAPIUsersV3Params) WriteToRequest(r runtime.ClientRequest, reg strfmt
 		}
 	}
 
+	if o.DeactivatedAt != nil {
+
+		// query param deactivatedAt
+		var qrDeactivatedAt string
+
+		if o.DeactivatedAt != nil {
+			qrDeactivatedAt = *o.DeactivatedAt
+		}
+		qDeactivatedAt := qrDeactivatedAt
+		if qDeactivatedAt != "" {
+
+			if err := r.SetQueryParam("deactivatedAt", qDeactivatedAt); err != nil {
+				return err
+			}
+		}
+	}
+
 	if o.Email != nil {
 
 		// query param email
@@ -444,6 +495,23 @@ func (o *GetAPIUsersV3Params) WriteToRequest(r runtime.ClientRequest, reg strfmt
 		if qID != "" {
 
 			if err := r.SetQueryParam("id", qID); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.IncludeDeactivated != nil {
+
+		// query param include-deactivated
+		var qrIncludeDeactivated bool
+
+		if o.IncludeDeactivated != nil {
+			qrIncludeDeactivated = *o.IncludeDeactivated
+		}
+		qIncludeDeactivated := swag.FormatBool(qrIncludeDeactivated)
+		if qIncludeDeactivated != "" {
+
+			if err := r.SetQueryParam("include-deactivated", qIncludeDeactivated); err != nil {
 				return err
 			}
 		}

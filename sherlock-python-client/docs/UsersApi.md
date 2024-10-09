@@ -10,7 +10,7 @@ Method | HTTP request | Description
 
 
 # **api_users_v3_get**
-> List[SherlockUserV3] api_users_v3_get(created_at=created_at, email=email, github_id=github_id, github_username=github_username, google_id=google_id, id=id, name=name, name_from=name_from, slack_id=slack_id, slack_username=slack_username, suitability_description=suitability_description, suitable=suitable, updated_at=updated_at, limit=limit, offset=offset)
+> List[SherlockUserV3] api_users_v3_get(created_at=created_at, deactivated_at=deactivated_at, email=email, github_id=github_id, github_username=github_username, google_id=google_id, id=id, name=name, name_from=name_from, slack_id=slack_id, slack_username=slack_username, suitability_description=suitability_description, suitable=suitable, updated_at=updated_at, limit=limit, offset=offset, include_deactivated=include_deactivated)
 
 List Users matching a filter
 
@@ -37,6 +37,7 @@ with sherlock_python_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = sherlock_python_client.UsersApi(api_client)
     created_at = '2013-10-20T19:20:30+01:00' # datetime |  (optional)
+    deactivated_at = 'deactivated_at_example' # str | If set, indicates that the user is currently deactivated (optional)
     email = 'email_example' # str |  (optional)
     github_id = 'github_id_example' # str |  (optional)
     github_username = 'github_username_example' # str |  (optional)
@@ -51,10 +52,11 @@ with sherlock_python_client.ApiClient(configuration) as api_client:
     updated_at = '2013-10-20T19:20:30+01:00' # datetime |  (optional)
     limit = 56 # int | Control how many Users are returned (default 0, no limit) (optional)
     offset = 56 # int | Control the offset for the returned Users (default 0) (optional)
+    include_deactivated = True # bool | Include deactivated users in the results (default false) (optional)
 
     try:
         # List Users matching a filter
-        api_response = api_instance.api_users_v3_get(created_at=created_at, email=email, github_id=github_id, github_username=github_username, google_id=google_id, id=id, name=name, name_from=name_from, slack_id=slack_id, slack_username=slack_username, suitability_description=suitability_description, suitable=suitable, updated_at=updated_at, limit=limit, offset=offset)
+        api_response = api_instance.api_users_v3_get(created_at=created_at, deactivated_at=deactivated_at, email=email, github_id=github_id, github_username=github_username, google_id=google_id, id=id, name=name, name_from=name_from, slack_id=slack_id, slack_username=slack_username, suitability_description=suitability_description, suitable=suitable, updated_at=updated_at, limit=limit, offset=offset, include_deactivated=include_deactivated)
         print("The response of UsersApi->api_users_v3_get:\n")
         pprint(api_response)
     except Exception as e:
@@ -69,6 +71,7 @@ with sherlock_python_client.ApiClient(configuration) as api_client:
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **created_at** | **datetime**|  | [optional] 
+ **deactivated_at** | **str**| If set, indicates that the user is currently deactivated | [optional] 
  **email** | **str**|  | [optional] 
  **github_id** | **str**|  | [optional] 
  **github_username** | **str**|  | [optional] 
@@ -83,6 +86,7 @@ Name | Type | Description  | Notes
  **updated_at** | **datetime**|  | [optional] 
  **limit** | **int**| Control how many Users are returned (default 0, no limit) | [optional] 
  **offset** | **int**| Control the offset for the returned Users (default 0) | [optional] 
+ **include_deactivated** | **bool**| Include deactivated users in the results (default false) | [optional] 
 
 ### Return type
 

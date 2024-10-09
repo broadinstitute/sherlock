@@ -31,6 +31,7 @@ class SherlockUserV3(BaseModel):
     """ # noqa: E501
     assignments: Optional[List[SherlockRoleAssignmentV3]] = None
     created_at: Optional[datetime] = Field(default=None, alias="createdAt")
+    deactivated_at: Optional[StrictStr] = Field(default=None, description="If set, indicates that the user is currently deactivated", alias="deactivatedAt")
     email: Optional[StrictStr] = None
     github_id: Optional[StrictStr] = Field(default=None, alias="githubID")
     github_username: Optional[StrictStr] = Field(default=None, alias="githubUsername")
@@ -44,7 +45,7 @@ class SherlockUserV3(BaseModel):
     suitable: Optional[StrictBool] = Field(default=None, description="Available only in responses; indicates whether the user is production-suitable")
     updated_at: Optional[datetime] = Field(default=None, alias="updatedAt")
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["assignments", "createdAt", "email", "githubID", "githubUsername", "googleID", "id", "name", "nameFrom", "slackID", "slackUsername", "suitabilityDescription", "suitable", "updatedAt"]
+    __properties: ClassVar[List[str]] = ["assignments", "createdAt", "deactivatedAt", "email", "githubID", "githubUsername", "googleID", "id", "name", "nameFrom", "slackID", "slackUsername", "suitabilityDescription", "suitable", "updatedAt"]
 
     @field_validator('name_from')
     def name_from_validate_enum(cls, value):
@@ -123,6 +124,7 @@ class SherlockUserV3(BaseModel):
         _obj = cls.model_validate({
             "assignments": [SherlockRoleAssignmentV3.from_dict(_item) for _item in obj["assignments"]] if obj.get("assignments") is not None else None,
             "createdAt": obj.get("createdAt"),
+            "deactivatedAt": obj.get("deactivatedAt"),
             "email": obj.get("email"),
             "githubID": obj.get("githubID"),
             "githubUsername": obj.get("githubUsername"),

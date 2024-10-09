@@ -40,6 +40,12 @@ export interface SherlockUserV3 {
      */
     createdAt?: Date;
     /**
+     * If set, indicates that the user is currently deactivated
+     * @type {string}
+     * @memberof SherlockUserV3
+     */
+    deactivatedAt?: string;
+    /**
      * 
      * @type {string}
      * @memberof SherlockUserV3
@@ -144,6 +150,7 @@ export function SherlockUserV3FromJSONTyped(json: any, ignoreDiscriminator: bool
         
         'assignments': json['assignments'] == null ? undefined : ((json['assignments'] as Array<any>).map(SherlockRoleAssignmentV3FromJSON)),
         'createdAt': json['createdAt'] == null ? undefined : (new Date(json['createdAt'])),
+        'deactivatedAt': json['deactivatedAt'] == null ? undefined : json['deactivatedAt'],
         'email': json['email'] == null ? undefined : json['email'],
         'githubID': json['githubID'] == null ? undefined : json['githubID'],
         'githubUsername': json['githubUsername'] == null ? undefined : json['githubUsername'],
@@ -172,6 +179,7 @@ export function SherlockUserV3FromJSONTyped(json: any, ignoreDiscriminator: bool
         
         'assignments': value['assignments'] == null ? undefined : ((value['assignments'] as Array<any>).map(SherlockRoleAssignmentV3ToJSON)),
         'createdAt': value['createdAt'] == null ? undefined : ((value['createdAt']).toISOString()),
+        'deactivatedAt': value['deactivatedAt'],
         'email': value['email'],
         'githubID': value['githubID'],
         'githubUsername': value['githubUsername'],

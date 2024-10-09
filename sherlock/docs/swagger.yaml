@@ -1799,6 +1799,9 @@ definitions:
       createdAt:
         format: date-time
         type: string
+      deactivatedAt:
+        description: If set, indicates that the user is currently deactivated
+        type: string
       email:
         type: string
       githubID:
@@ -6899,6 +6902,10 @@ paths:
         in: query
         name: createdAt
         type: string
+      - description: If set, indicates that the user is currently deactivated
+        in: query
+        name: deactivatedAt
+        type: string
       - in: query
         name: email
         type: string
@@ -6950,6 +6957,10 @@ paths:
         in: query
         name: offset
         type: integer
+      - description: Include deactivated users in the results (default false)
+        in: query
+        name: include-deactivated
+        type: boolean
       produces:
       - application/json
       responses:

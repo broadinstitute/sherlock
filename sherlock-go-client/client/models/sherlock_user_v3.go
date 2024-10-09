@@ -28,6 +28,9 @@ type SherlockUserV3 struct {
 	// Format: date-time
 	CreatedAt strfmt.DateTime `json:"createdAt,omitempty"`
 
+	// If set, indicates that the user is currently deactivated
+	DeactivatedAt string `json:"deactivatedAt,omitempty"`
+
 	// email
 	Email string `json:"email,omitempty"`
 
