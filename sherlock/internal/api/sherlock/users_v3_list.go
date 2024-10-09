@@ -20,6 +20,7 @@ import (
 //	@param			filter					query		UserV3	false	"Filter the returned Users"
 //	@param			limit					query		int		false	"Control how many Users are returned (default 0, no limit)"
 //	@param			offset					query		int		false	"Control the offset for the returned Users (default 0)"
+//	@param			include-deactivated		query		bool	false	"Include deactivated users in the results (default false)"
 //	@success		200						{array}		UserV3
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/users/v3 [get]
@@ -44,10 +45,23 @@ func usersV3List(ctx *gin.Context) {
 		errors.AbortRequest(ctx, fmt.Errorf("(%s) %v", errors.BadRequest, err))
 		return
 	}
+	var includeDeactivated bool
+	if includeDeactivatedString := ctx.DefaultQuery("include-deactivated", "false"); includeDeactivatedString == "true" {
+		includeDeactivated = true
+	} else if includeDeactivatedString == "false" {
+		includeDeactivated = false
+	} else {
+		errors.AbortRequest(ctx, fmt.Errorf("(%s) couldn't parse 'include-deactivated' to a boolean", errors.BadRequest))
+		return
+	}
+
 	var results []models.User
 	chain := db.Where(&modelFilter)
 	if limit > 0 {
 		chain = chain.Limit(limit)
+	}
+	if !includeDeactivated {
+		chain = chain.Where("deactivated_at IS NULL")
 	}
 	if err = chain.
 		Offset(offset).

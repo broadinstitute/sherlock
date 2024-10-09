@@ -8,6 +8,38 @@ import (
 	"net/http"
 )
 
+func (s *handlerSuite) TestUsersV3List_includeDeactivated() {
+	var got []UserV3
+	code := s.HandleRequest(
+		s.NewRequest("GET", "/api/users/v3", nil),
+		&got)
+	s.Equal(http.StatusOK, code)
+	baseline := len(got)
+
+	s.TestData.User_Deactivated()
+	s.Run("default false", func() {
+		code = s.HandleRequest(
+			s.NewRequest("GET", "/api/users/v3", nil),
+			&got)
+		s.Equal(http.StatusOK, code)
+		s.Len(got, baseline) // no new users
+	})
+	s.Run("explicit false", func() {
+		code = s.HandleRequest(
+			s.NewRequest("GET", "/api/users/v3?include-deactivated=false", nil),
+			&got)
+		s.Equal(http.StatusOK, code)
+		s.Len(got, baseline) // no new users
+	})
+	s.Run("explicit true", func() {
+		code = s.HandleRequest(
+			s.NewRequest("GET", "/api/users/v3?include-deactivated=true", nil),
+			&got)
+		s.Equal(http.StatusOK, code)
+		s.Len(got, baseline+1) // one new user
+	})
+}
+
 func (s *handlerSuite) TestUsersV3List_minimal() {
 	var got []UserV3
 	code := s.HandleRequest(

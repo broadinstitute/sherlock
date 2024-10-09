@@ -8,8 +8,10 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 	"net/http"
 	"testing"
+	"time"
 )
 
 func (s *handlerSuite) TestUserV3Get_badSelector() {
@@ -28,6 +30,23 @@ func (s *handlerSuite) TestUserV3Get_notFound() {
 		&got)
 	s.Equal(http.StatusNotFound, code)
 	s.Equal(errors.NotFound, got.Type)
+}
+
+// TestUserV3Get_deactivated is more of a smoke test -- we actually test the code that powers this
+// where it's defined in the middleware package, and it technically applies across every single API
+// route in this package, but it's unnecessary to exhaustively test that. We just check here that
+// it's wired up correctly.
+func (s *handlerSuite) TestUserV3Get_deactivated() {
+	// Have to switch to super admin to make this user deactivated
+	s.SetUserForDB(utils.PointerTo(s.TestData.User_SuperAdmin()))
+	s.NoError(s.DB.Model(utils.PointerTo(s.TestData.User_NonSuitable())).Omit(clause.Associations).Update("deactivated_at", utils.PointerTo(time.Now())).Error)
+
+	var got errors.ErrorResponse
+	code := s.HandleRequest(
+		s.NewNonSuitableRequest("GET", "/api/users/v3/foo@example.com", nil),
+		&got)
+	s.Equal(http.StatusForbidden, code)
+	s.Equal(errors.Forbidden, got.Type)
 }
 
 func (s *handlerSuite) TestUsersV3Get_self() {

@@ -27,6 +27,7 @@ func (s *modelSuite) Test_doAutoAssignment() {
 	s.TestData.User_SuperAdmin()
 	s.TestData.User_Suitable()
 	s.TestData.User_NonSuitable()
+	s.TestData.User_Deactivated()
 
 	s.Run("check that there's no role assignments to begin with", func() {
 		s.NoError(s.DB.Scopes(ReadRoleScope).Take(&allUsers, allUsers.ID).Error)
@@ -37,42 +38,45 @@ func (s *modelSuite) Test_doAutoAssignment() {
 
 	doAutoAssignment(context.Background(), s.DB)
 
-	s.Run("check that all users have been assigned to the all-users role", func() {
-		s.Run("super admin", func() {
-			s.Run("all-users", func() {
-				var ra RoleAssignment
-				s.NoError(s.DB.Where("role_id = ? AND user_id = ?", allUsers.ID, s.TestData.User_SuperAdmin().ID).First(&ra).Error)
-				s.False(*ra.Suspended)
-			})
-			s.Run("all-users-suspend-nonsuitable", func() {
-				var ra RoleAssignment
-				s.NoError(s.DB.Where("role_id = ? AND user_id = ?", allUsersSuspendNonsuitable.ID, s.TestData.User_SuperAdmin().ID).First(&ra).Error)
-				s.True(*ra.Suspended) // super admin not actually suitable! but passes other checks based on being super admin
-			})
+	s.Run("super admin", func() {
+		s.Run("all-users", func() {
+			var ra RoleAssignment
+			s.NoError(s.DB.Where("role_id = ? AND user_id = ?", allUsers.ID, s.TestData.User_SuperAdmin().ID).First(&ra).Error)
+			s.False(*ra.Suspended)
 		})
-		s.Run("suitable user", func() {
-			s.Run("all-users", func() {
-				var ra RoleAssignment
-				s.NoError(s.DB.Where("role_id = ? AND user_id = ?", allUsers.ID, s.TestData.User_Suitable().ID).First(&ra).Error)
-				s.False(*ra.Suspended)
-			})
-			s.Run("all-users-suspend-nonsuitable", func() {
-				var ra RoleAssignment
-				s.NoError(s.DB.Where("role_id = ? AND user_id = ?", allUsersSuspendNonsuitable.ID, s.TestData.User_Suitable().ID).First(&ra).Error)
-				s.False(*ra.Suspended)
-			})
+		s.Run("all-users-suspend-nonsuitable", func() {
+			var ra RoleAssignment
+			s.NoError(s.DB.Where("role_id = ? AND user_id = ?", allUsersSuspendNonsuitable.ID, s.TestData.User_SuperAdmin().ID).First(&ra).Error)
+			s.True(*ra.Suspended) // super admin not actually suitable! but passes other checks based on being super admin
 		})
-		s.Run("non-suitable user", func() {
-			s.Run("all-users", func() {
-				var ra RoleAssignment
-				s.NoError(s.DB.Where("role_id = ? AND user_id = ?", allUsers.ID, s.TestData.User_NonSuitable().ID).First(&ra).Error)
-				s.False(*ra.Suspended)
-			})
-			s.Run("all-users-suspend-nonsuitable", func() {
-				var ra RoleAssignment
-				s.NoError(s.DB.Where("role_id = ? AND user_id = ?", allUsersSuspendNonsuitable.ID, s.TestData.User_NonSuitable().ID).First(&ra).Error)
-				s.True(*ra.Suspended)
-			})
+	})
+	s.Run("suitable user", func() {
+		s.Run("all-users", func() {
+			var ra RoleAssignment
+			s.NoError(s.DB.Where("role_id = ? AND user_id = ?", allUsers.ID, s.TestData.User_Suitable().ID).First(&ra).Error)
+			s.False(*ra.Suspended)
 		})
+		s.Run("all-users-suspend-nonsuitable", func() {
+			var ra RoleAssignment
+			s.NoError(s.DB.Where("role_id = ? AND user_id = ?", allUsersSuspendNonsuitable.ID, s.TestData.User_Suitable().ID).First(&ra).Error)
+			s.False(*ra.Suspended)
+		})
+	})
+	s.Run("non-suitable user", func() {
+		s.Run("all-users", func() {
+			var ra RoleAssignment
+			s.NoError(s.DB.Where("role_id = ? AND user_id = ?", allUsers.ID, s.TestData.User_NonSuitable().ID).First(&ra).Error)
+			s.False(*ra.Suspended)
+		})
+		s.Run("all-users-suspend-nonsuitable", func() {
+			var ra RoleAssignment
+			s.NoError(s.DB.Where("role_id = ? AND user_id = ?", allUsersSuspendNonsuitable.ID, s.TestData.User_NonSuitable().ID).First(&ra).Error)
+			s.True(*ra.Suspended)
+		})
+	})
+	s.Run("deactivated user", func() {
+		var ras []RoleAssignment
+		s.NoError(s.DB.Where("user_id = ?", s.TestData.User_Deactivated().ID).Find(&ras).Error)
+		s.Empty(ras)
 	})
 }

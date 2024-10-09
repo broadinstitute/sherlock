@@ -153,7 +153,7 @@ func (a *Application) Start() {
 	go firecloud_account_manager.RunManagersHourly(ctx)
 
 	go models.KeepAutoAssigningRoles(ctx, a.gormDB)
-	go models.KeepAutoExpiringRoleAssignments(ctx, a.gormDB, role_propagation.DoOnDemandPropagation)
+	go models.KeepAutoDeletingRoleAssignments(ctx, a.gormDB, role_propagation.DoOnDemandPropagation)
 
 	log.Info().Msgf("BOOT | building Gin router...")
 	gin.SetMode(gin.ReleaseMode) // gin.DebugMode can help resolve routing issues

@@ -268,3 +268,16 @@ func (s *handlerSuite) TestRoleAssignmentsV3Create_defaultFalseNoSuitability() {
 	s.Equal(http.StatusCreated, code)
 	s.False(*got.Suspended)
 }
+
+func (s *handlerSuite) TestRoleAssignmentsV3Create_deactivatedUser() {
+	s.SetSelfSuperAdminForDB()
+	user := s.TestData.User_Deactivated()
+	role := models.Role{RoleFields: models.RoleFields{Name: utils.PointerTo("test-role"), SuspendNonSuitableUsers: utils.PointerTo(false)}}
+	s.NoError(s.DB.Create(&role).Error)
+	var got errors.ErrorResponse
+	code := s.HandleRequest(
+		s.NewSuperAdminRequest("POST", "/api/role-assignments/v3/"+utils.UintToString(role.ID)+"/"+utils.UintToString(user.ID), nil),
+		&got)
+	s.Equal(http.StatusForbidden, code)
+	s.Equal(errors.Forbidden, got.Type)
+}

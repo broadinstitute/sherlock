@@ -90,6 +90,25 @@ func setGithubClaimsAndEscalateUser(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
+func forbidDeactivatedUsers() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		if user, err := ShouldUseUser(ctx); err != nil {
+			errors.AbortRequest(ctx, fmt.Errorf("failed to read user to check if deactivated: %w", err))
+			return
+		} else {
+			for user != nil {
+				// We technically check DeletedAt here too for completeness but kind of soft-deletion isn't
+				// implemented at the time of writing
+				if user.DeactivatedAt != nil || user.DeletedAt.Valid {
+					errors.AbortRequest(ctx, fmt.Errorf("(%s) user %s is deactivated within Sherlock", errors.Forbidden, user.Email))
+					return
+				}
+				user = user.Via
+			}
+		}
+	}
+}
+
 // ShouldUseUser returns a non-nil *models.User who made the request, or an error if that isn't possible.
 func ShouldUseUser(ctx *gin.Context) (*models.User, error) {
 	userValue, exists := ctx.Get(ctxUserFieldName)
