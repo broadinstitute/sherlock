@@ -2,6 +2,7 @@ package firecloud_account_manager
 
 import (
 	"fmt"
+	"github.com/broadinstitute/sherlock/sherlock/internal/clients/google_workspace"
 	"gorm.io/gorm"
 	"time"
 )
@@ -27,7 +28,7 @@ type firecloudAccountManager struct {
 
 	// The workspace client to use for this firecloudAccountManager. This exists to allow
 	// mocking.
-	workspaceClient mockableWorkspaceClient
+	workspaceClient google_workspace.WorkspaceClient
 }
 
 func (m *firecloudAccountManager) validate() error {

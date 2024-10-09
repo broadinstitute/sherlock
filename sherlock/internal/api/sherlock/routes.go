@@ -145,6 +145,7 @@ func ConfigureRoutes(apiRouter gin.IRoutes) {
 	apiRouter.PATCH("pagerduty-integrations/v3/*selector", pagerdutyIntegrationsV3Edit)
 	apiRouter.GET("pagerduty-integrations/v3/*selector", pagerdutyIntegrationsV3Get)
 
+	apiRouter.POST("users/procedures/v3/deactivate", usersProceduresV3Deactivate)
 	apiRouter.GET("users/v3", usersV3List)
 	apiRouter.PUT("users/v3", usersV3Upsert)
 	apiRouter.GET("users/v3/*selector", usersV3Get)
