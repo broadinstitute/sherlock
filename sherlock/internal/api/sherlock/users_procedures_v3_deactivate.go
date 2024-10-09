@@ -41,8 +41,8 @@ type UserV3DeactivateResponse struct {
 //	@tags			Users
 //	@accept			json
 //	@produce		json
-//	@param			users					body		UserV3OffboardRequest	true	"Information on the users to deactivate"
-//	@success		200						{object}	UserV3OffboardResponse
+//	@param			users					body		UserV3DeactivateRequest	true	"Information on the users to deactivate"
+//	@success		200						{object}	UserV3DeactivateResponse
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/users/procedures/v3/deactivate [post]
 func usersProceduresV3Deactivate(ctx *gin.Context) {
