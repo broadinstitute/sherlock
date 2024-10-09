@@ -148,6 +148,10 @@ func usersProceduresV3Deactivate(ctx *gin.Context) {
 		}
 		return nil
 	})
+	if err != nil {
+		errors.AbortRequest(ctx, fmt.Errorf("error deactivating users: %w", err))
+		return
+	}
 
 	slack.SendPermissionChangeNotification(ctx, callingUser.SlackReference(true), notification)
 
