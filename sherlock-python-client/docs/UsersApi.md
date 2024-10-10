@@ -4,10 +4,86 @@ All URIs are relative to *https://sherlock.dsp-devops-prod.broadinstitute.org*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
+[**api_users_procedures_v3_deactivate_post**](UsersApi.md#api_users_procedures_v3_deactivate_post) | **POST** /api/users/procedures/v3/deactivate | Deactivate Users
 [**api_users_v3_get**](UsersApi.md#api_users_v3_get) | **GET** /api/users/v3 | List Users matching a filter
 [**api_users_v3_put**](UsersApi.md#api_users_v3_put) | **PUT** /api/users/v3 | Update the calling User&#39;s information
 [**api_users_v3_selector_get**](UsersApi.md#api_users_v3_selector_get) | **GET** /api/users/v3/{selector} | Get an individual User
 
+
+# **api_users_procedures_v3_deactivate_post**
+> SherlockUserV3DeactivateResponse api_users_procedures_v3_deactivate_post(users)
+
+Deactivate Users
+
+Super-admin only method to deactivate users. Deactivated users will be removed from all roles and can't authenticate to Sherlock. This endpoint can optionally also attempt to suspend the same email handles across given Google Workspace domains, substituting email domains as necessary. It will do so by impersonating the caller in each given domain.
+
+### Example
+
+
+```python
+import sherlock_python_client
+from sherlock_python_client.models.sherlock_user_v3_deactivate_request import SherlockUserV3DeactivateRequest
+from sherlock_python_client.models.sherlock_user_v3_deactivate_response import SherlockUserV3DeactivateResponse
+from sherlock_python_client.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://sherlock.dsp-devops-prod.broadinstitute.org
+# See configuration.py for a list of all supported configuration parameters.
+configuration = sherlock_python_client.Configuration(
+    host = "https://sherlock.dsp-devops-prod.broadinstitute.org"
+)
+
+
+# Enter a context with an instance of the API client
+with sherlock_python_client.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = sherlock_python_client.UsersApi(api_client)
+    users = sherlock_python_client.SherlockUserV3DeactivateRequest() # SherlockUserV3DeactivateRequest | Information on the users to deactivate
+
+    try:
+        # Deactivate Users
+        api_response = api_instance.api_users_procedures_v3_deactivate_post(users)
+        print("The response of UsersApi->api_users_procedures_v3_deactivate_post:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling UsersApi->api_users_procedures_v3_deactivate_post: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **users** | [**SherlockUserV3DeactivateRequest**](SherlockUserV3DeactivateRequest.md)| Information on the users to deactivate | 
+
+### Return type
+
+[**SherlockUserV3DeactivateResponse**](SherlockUserV3DeactivateResponse.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | OK |  -  |
+**400** | Bad Request |  -  |
+**403** | Forbidden |  -  |
+**404** | Not Found |  -  |
+**407** | Proxy Authentication Required |  -  |
+**409** | Conflict |  -  |
+**500** | Internal Server Error |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **api_users_v3_get**
 > List[SherlockUserV3] api_users_v3_get(created_at=created_at, deactivated_at=deactivated_at, email=email, github_id=github_id, github_username=github_username, google_id=google_id, id=id, name=name, name_from=name_from, slack_id=slack_id, slack_username=slack_username, suitability_description=suitability_description, suitable=suitable, updated_at=updated_at, limit=limit, offset=offset, include_deactivated=include_deactivated)

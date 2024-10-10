@@ -82,6 +82,8 @@ docs/SherlockSlackDeployHookV3.md
 docs/SherlockSlackDeployHookV3Create.md
 docs/SherlockSlackDeployHookV3Edit.md
 docs/SherlockUserV3.md
+docs/SherlockUserV3DeactivateRequest.md
+docs/SherlockUserV3DeactivateResponse.md
 docs/SherlockUserV3Upsert.md
 docs/UsersApi.md
 git_push.sh
@@ -176,6 +178,8 @@ sherlock_python_client/models/sherlock_slack_deploy_hook_v3.py
 sherlock_python_client/models/sherlock_slack_deploy_hook_v3_create.py
 sherlock_python_client/models/sherlock_slack_deploy_hook_v3_edit.py
 sherlock_python_client/models/sherlock_user_v3.py
+sherlock_python_client/models/sherlock_user_v3_deactivate_request.py
+sherlock_python_client/models/sherlock_user_v3_deactivate_response.py
 sherlock_python_client/models/sherlock_user_v3_upsert.py
 sherlock_python_client/py.typed
 sherlock_python_client/rest.py
@@ -260,6 +264,8 @@ test/test_sherlock_slack_deploy_hook_v3.py
 test/test_sherlock_slack_deploy_hook_v3_create.py
 test/test_sherlock_slack_deploy_hook_v3_edit.py
 test/test_sherlock_user_v3.py
+test/test_sherlock_user_v3_deactivate_request.py
+test/test_sherlock_user_v3_deactivate_response.py
 test/test_sherlock_user_v3_upsert.py
 test/test_users_api.py
 tox.ini

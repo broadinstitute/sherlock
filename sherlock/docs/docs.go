@@ -7426,6 +7426,76 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/users/procedures/v3/deactivate": {
+            "post": {
+                "description": "Super-admin only method to deactivate users. Deactivated users will be removed from all roles and can't authenticate to Sherlock.\nThis endpoint can optionally also attempt to suspend the same email handles across given Google Workspace domains, substituting email domains as necessary.\nIt will do so by impersonating the caller in each given domain.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Deactivate Users",
+                "parameters": [
+                    {
+                        "description": "Information on the users to deactivate",
+                        "name": "users",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.UserV3DeactivateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.UserV3DeactivateResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/users/v3": {
             "get": {
                 "description": "List Users matching a filter. The results will include suitability and other information.\nNote that the suitability info can't directly be filtered for at this time.",
@@ -10255,6 +10325,51 @@ const docTemplate = `{
                 "updatedAt": {
                     "type": "string",
                     "format": "date-time"
+                }
+            }
+        },
+        "sherlock.UserV3DeactivateRequest": {
+            "type": "object",
+            "properties": {
+                "suspendEmailHandlesAcrossGoogleWorkspaceDomains": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "userEmailHomeDomain": {
+                    "description": "Domain of UserEmails that can be swapped out for the domains in SuspendEmailHandlesAcrossGoogleWorkspaceDomains",
+                    "type": "string",
+                    "default": "broadinstitute.org"
+                },
+                "userEmails": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "sherlock.UserV3DeactivateResponse": {
+            "type": "object",
+            "properties": {
+                "alreadyDeactivatedEmails": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "newlyDeactivatedEmails": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "notFoundEmails": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },

@@ -34,6 +34,8 @@ type ClientService interface {
 
 	GetAPIUsersV3Selector(params *GetAPIUsersV3SelectorParams, opts ...ClientOption) (*GetAPIUsersV3SelectorOK, error)
 
+	PostAPIUsersProceduresV3Deactivate(params *PostAPIUsersProceduresV3DeactivateParams, opts ...ClientOption) (*PostAPIUsersProceduresV3DeactivateOK, error)
+
 	PutAPIUsersV3(params *PutAPIUsersV3Params, opts ...ClientOption) (*PutAPIUsersV3OK, *PutAPIUsersV3Created, error)
 
 	SetTransport(transport runtime.ClientTransport)
@@ -117,6 +119,48 @@ func (a *Client) GetAPIUsersV3Selector(params *GetAPIUsersV3SelectorParams, opts
 	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for GetAPIUsersV3Selector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+  PostAPIUsersProceduresV3Deactivate deactivates users
+
+  Super-admin only method to deactivate users. Deactivated users will be removed from all roles and can't authenticate to Sherlock.
+This endpoint can optionally also attempt to suspend the same email handles across given Google Workspace domains, substituting email domains as necessary.
+It will do so by impersonating the caller in each given domain.
+*/
+func (a *Client) PostAPIUsersProceduresV3Deactivate(params *PostAPIUsersProceduresV3DeactivateParams, opts ...ClientOption) (*PostAPIUsersProceduresV3DeactivateOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewPostAPIUsersProceduresV3DeactivateParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "PostAPIUsersProceduresV3Deactivate",
+		Method:             "POST",
+		PathPattern:        "/api/users/procedures/v3/deactivate",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &PostAPIUsersProceduresV3DeactivateReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*PostAPIUsersProceduresV3DeactivateOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for PostAPIUsersProceduresV3Deactivate: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 

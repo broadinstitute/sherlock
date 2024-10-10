@@ -61,4 +61,6 @@ export * from './SherlockSlackDeployHookV3';
 export * from './SherlockSlackDeployHookV3Create';
 export * from './SherlockSlackDeployHookV3Edit';
 export * from './SherlockUserV3';
+export * from './SherlockUserV3DeactivateRequest';
+export * from './SherlockUserV3DeactivateResponse';
 export * from './SherlockUserV3Upsert';

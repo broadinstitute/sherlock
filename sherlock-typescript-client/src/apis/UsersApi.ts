@@ -17,6 +17,8 @@ import * as runtime from '../runtime';
 import type {
   ErrorsErrorResponse,
   SherlockUserV3,
+  SherlockUserV3DeactivateRequest,
+  SherlockUserV3DeactivateResponse,
   SherlockUserV3Upsert,
 } from '../models/index';
 import {
@@ -24,9 +26,17 @@ import {
     ErrorsErrorResponseToJSON,
     SherlockUserV3FromJSON,
     SherlockUserV3ToJSON,
+    SherlockUserV3DeactivateRequestFromJSON,
+    SherlockUserV3DeactivateRequestToJSON,
+    SherlockUserV3DeactivateResponseFromJSON,
+    SherlockUserV3DeactivateResponseToJSON,
     SherlockUserV3UpsertFromJSON,
     SherlockUserV3UpsertToJSON,
 } from '../models/index';
+
+export interface ApiUsersProceduresV3DeactivatePostRequest {
+    users: SherlockUserV3DeactivateRequest;
+}
 
 export interface ApiUsersV3GetRequest {
     createdAt?: Date;
@@ -60,6 +70,44 @@ export interface ApiUsersV3SelectorGetRequest {
  * 
  */
 export class UsersApi extends runtime.BaseAPI {
+
+    /**
+     * Super-admin only method to deactivate users. Deactivated users will be removed from all roles and can\'t authenticate to Sherlock. This endpoint can optionally also attempt to suspend the same email handles across given Google Workspace domains, substituting email domains as necessary. It will do so by impersonating the caller in each given domain.
+     * Deactivate Users
+     */
+    async apiUsersProceduresV3DeactivatePostRaw(requestParameters: ApiUsersProceduresV3DeactivatePostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SherlockUserV3DeactivateResponse>> {
+        if (requestParameters['users'] == null) {
+            throw new runtime.RequiredError(
+                'users',
+                'Required parameter "users" was null or undefined when calling apiUsersProceduresV3DeactivatePost().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/api/users/procedures/v3/deactivate`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: SherlockUserV3DeactivateRequestToJSON(requestParameters['users']),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => SherlockUserV3DeactivateResponseFromJSON(jsonValue));
+    }
+
+    /**
+     * Super-admin only method to deactivate users. Deactivated users will be removed from all roles and can\'t authenticate to Sherlock. This endpoint can optionally also attempt to suspend the same email handles across given Google Workspace domains, substituting email domains as necessary. It will do so by impersonating the caller in each given domain.
+     * Deactivate Users
+     */
+    async apiUsersProceduresV3DeactivatePost(requestParameters: ApiUsersProceduresV3DeactivatePostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SherlockUserV3DeactivateResponse> {
+        const response = await this.apiUsersProceduresV3DeactivatePostRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
 
     /**
      * List Users matching a filter. The results will include suitability and other information. Note that the suitability info can\'t directly be filtered for at this time.

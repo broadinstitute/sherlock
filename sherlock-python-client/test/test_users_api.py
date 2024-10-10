@@ -27,6 +27,13 @@ class TestUsersApi(unittest.TestCase):
     def tearDown(self) -> None:
         pass
 
+    def test_api_users_procedures_v3_deactivate_post(self) -> None:
+        """Test case for api_users_procedures_v3_deactivate_post
+
+        Deactivate Users
+        """
+        pass
+
     def test_api_users_v3_get(self) -> None:
         """Test case for api_users_v3_get
 

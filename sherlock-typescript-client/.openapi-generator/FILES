@@ -84,6 +84,8 @@ src/models/SherlockSlackDeployHookV3.ts
 src/models/SherlockSlackDeployHookV3Create.ts
 src/models/SherlockSlackDeployHookV3Edit.ts
 src/models/SherlockUserV3.ts
+src/models/SherlockUserV3DeactivateRequest.ts
+src/models/SherlockUserV3DeactivateResponse.ts
 src/models/SherlockUserV3Upsert.ts
 src/models/index.ts
 src/runtime.ts

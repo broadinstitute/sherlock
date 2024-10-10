@@ -15,7 +15,7 @@
 """  # noqa: E501
 
 
-__version__ = "v1.6.4"
+__version__ = "v1.6.5"
 
 # import apis into sdk package
 from sherlock_python_client.api.app_versions_api import AppVersionsApi
@@ -111,4 +111,6 @@ from sherlock_python_client.models.sherlock_slack_deploy_hook_v3 import Sherlock
 from sherlock_python_client.models.sherlock_slack_deploy_hook_v3_create import SherlockSlackDeployHookV3Create
 from sherlock_python_client.models.sherlock_slack_deploy_hook_v3_edit import SherlockSlackDeployHookV3Edit
 from sherlock_python_client.models.sherlock_user_v3 import SherlockUserV3
+from sherlock_python_client.models.sherlock_user_v3_deactivate_request import SherlockUserV3DeactivateRequest
+from sherlock_python_client.models.sherlock_user_v3_deactivate_response import SherlockUserV3DeactivateResponse
 from sherlock_python_client.models.sherlock_user_v3_upsert import SherlockUserV3Upsert
