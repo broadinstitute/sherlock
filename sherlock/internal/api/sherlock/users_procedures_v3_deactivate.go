@@ -22,7 +22,7 @@ import (
 
 type UserV3DeactivateRequest struct {
 	UserEmails                                      []string `json:"userEmails"`
-	UserEmailSubstitutableDomains                   []string `json:"userEmailSubstitutableDomains" default:"[\"broadinstitute.org\"]"` // Domains of UserEmails that should be swapped out to match Google Workspace domains
+	UserEmailHomeDomain                             string   `json:"userEmailHomeDomain" default:"broadinstitute.org"` // Domain of UserEmails that can be swapped out for the domains in SuspendEmailHandlesAcrossGoogleWorkspaceDomains
 	SuspendEmailHandlesAcrossGoogleWorkspaceDomains []string `json:"suspendEmailHandlesAcrossGoogleWorkspaceDomains"`
 }
 
@@ -103,7 +103,7 @@ func usersProceduresV3Deactivate(ctx *gin.Context) {
 			errors.AbortRequest(ctx, fmt.Errorf("(%s) empty Google Workspace domain provided", errors.BadRequest))
 			return
 		}
-		impersonateTarget := utils.SubstituteSuffix(callingUser.Email, body.UserEmailSubstitutableDomains, domain)
+		impersonateTarget := utils.SubstituteSuffix(callingUser.Email, []string{body.UserEmailHomeDomain}, domain)
 		if client, err := google_workspace.InitializeRealWorkspaceClient(ctx, impersonateTarget); err != nil {
 			errors.AbortRequest(ctx, fmt.Errorf("failed to initialize Google Workspace client as %s for domain %s: %w", impersonateTarget, domain, err))
 		} else {
@@ -163,7 +163,7 @@ func usersProceduresV3Deactivate(ctx *gin.Context) {
 			client := unsafeClient
 			go func() {
 				defer wg.Done()
-				processGoogleWorkspaceSuspensions(callingUser.SlackReference(true), domain, client, sliceOfDedupedEmailsToAttemptToDeactivate, body.UserEmailSubstitutableDomains)
+				processGoogleWorkspaceSuspensions(callingUser.SlackReference(true), domain, client, sliceOfDedupedEmailsToAttemptToDeactivate, body.UserEmailHomeDomain)
 			}()
 		}
 
@@ -180,7 +180,7 @@ func usersProceduresV3Deactivate(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, response)
 }
 
-func processGoogleWorkspaceSuspensions(actor string, domain string, client google_workspace.WorkspaceClient, emails []string, substitutableDomains []string) {
+func processGoogleWorkspaceSuspensions(actor string, domain string, client google_workspace.WorkspaceClient, emails []string, homeDomain string) {
 	notFoundRegex := regexp.MustCompile(`(?i)not\s*found`)
 	asyncCtx, cancelFunc := context.WithTimeout(context.Background(), 5*time.Minute)
 	defer cancelFunc()
@@ -188,7 +188,7 @@ func processGoogleWorkspaceSuspensions(actor string, domain string, client googl
 		Summary: fmt.Sprintf("suspended Google Workspace users in domain %s", domain),
 	}
 	for _, email := range emails {
-		target := utils.SubstituteSuffix(email, substitutableDomains, domain)
+		target := utils.SubstituteSuffix(email, []string{homeDomain}, domain)
 		if strings.HasSuffix(target, domain) {
 			if err := client.SuspendUser(asyncCtx, target); err != nil {
 				if notFoundRegex.MatchString(err.Error()) {

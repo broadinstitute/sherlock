@@ -141,10 +141,10 @@ func (s *handlerSuite) TestUsersProceduresV3Deactivate() {
 func Test_processGoogleWorkspaceSuspensions(t *testing.T) {
 	config.LoadTestConfig()
 	type args struct {
-		actor                string
-		domain               string
-		emails               []string
-		substitutableDomains []string
+		actor      string
+		domain     string
+		emails     []string
+		homeDomain string
 	}
 	tests := []struct {
 		name         string
@@ -154,19 +154,19 @@ func Test_processGoogleWorkspaceSuspensions(t *testing.T) {
 		{
 			name: "no emails",
 			args: args{
-				actor:                "actor",
-				domain:               "domain",
-				emails:               []string{},
-				substitutableDomains: []string{},
+				actor:      "actor",
+				domain:     "domain",
+				emails:     []string{},
+				homeDomain: "",
 			},
 		},
 		{
 			name: "suspend",
 			args: args{
-				actor:                "actor",
-				domain:               "target-domain",
-				emails:               []string{"email@home-domain"},
-				substitutableDomains: []string{"home-domain"},
+				actor:      "actor",
+				domain:     "target-domain",
+				emails:     []string{"email@home-domain"},
+				homeDomain: "home-domain",
 			},
 			clientConfig: func(c *google_workspace_mocks.MockWorkspaceClient) {
 				c.EXPECT().SuspendUser(mock.Anything, "email@target-domain").Return(nil).Once()
@@ -175,10 +175,10 @@ func Test_processGoogleWorkspaceSuspensions(t *testing.T) {
 		{
 			name: "suspend error",
 			args: args{
-				actor:                "actor",
-				domain:               "target-domain",
-				emails:               []string{"email@home-domain"},
-				substitutableDomains: []string{"home-domain"},
+				actor:      "actor",
+				domain:     "target-domain",
+				emails:     []string{"email@home-domain"},
+				homeDomain: "home-domain",
 			},
 			clientConfig: func(c *google_workspace_mocks.MockWorkspaceClient) {
 				c.EXPECT().SuspendUser(mock.Anything, "email@target-domain").Return(assert.AnError).Once()
@@ -187,19 +187,19 @@ func Test_processGoogleWorkspaceSuspensions(t *testing.T) {
 		{
 			name: "domain miss",
 			args: args{
-				actor:                "actor",
-				domain:               "target-domain",
-				emails:               []string{"email@home-domain"},
-				substitutableDomains: []string{"other-domain"},
+				actor:      "actor",
+				domain:     "target-domain",
+				emails:     []string{"email@home-domain"},
+				homeDomain: "other-domain",
 			},
 		},
 		{
 			name: "multiple",
 			args: args{
-				actor:                "actor",
-				domain:               "target-domain",
-				emails:               []string{"email-1@home-domain", "email-2@home-domain", "email-3@other-domain"},
-				substitutableDomains: []string{"home-domain"},
+				actor:      "actor",
+				domain:     "target-domain",
+				emails:     []string{"email-1@home-domain", "email-2@home-domain", "email-3@other-domain"},
+				homeDomain: "home-domain",
 			},
 			clientConfig: func(c *google_workspace_mocks.MockWorkspaceClient) {
 				c.EXPECT().SuspendUser(mock.Anything, "email-1@target-domain").Return(nil).Once()
@@ -217,7 +217,7 @@ func Test_processGoogleWorkspaceSuspensions(t *testing.T) {
 				c.EXPECT().SendMessageContext(mock.Anything, "#notification-channel", mock.Anything).Return("", "", "", nil).Once()
 				c.EXPECT().SendMessageContext(mock.Anything, "#permission-change-channel", mock.Anything).Return("", "", "", nil).Once()
 			}, func() {
-				processGoogleWorkspaceSuspensions(tt.args.actor, tt.args.domain, client, tt.args.emails, tt.args.substitutableDomains)
+				processGoogleWorkspaceSuspensions(tt.args.actor, tt.args.domain, client, tt.args.emails, tt.args.homeDomain)
 			})
 		})
 	}
