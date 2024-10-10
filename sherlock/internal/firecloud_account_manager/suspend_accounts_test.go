@@ -4,11 +4,11 @@ import (
 	"context"
 	"fmt"
 	"github.com/broadinstitute/sherlock/sherlock/internal/clients/bits_data_warehouse"
+	"github.com/broadinstitute/sherlock/sherlock/internal/clients/google_workspace/google_workspace_mocks"
 	"github.com/broadinstitute/sherlock/sherlock/internal/clients/slack"
 	"github.com/broadinstitute/sherlock/sherlock/internal/clients/slack/slack_mocks"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	sherlockdb "github.com/broadinstitute/sherlock/sherlock/internal/db"
-	"github.com/broadinstitute/sherlock/sherlock/internal/firecloud_account_manager/firecloud_account_manager_mocks"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -33,7 +33,7 @@ func TestConfig_suspendAccounts(t *testing.T) {
 	type testCase struct {
 		name                string
 		manager             *firecloudAccountManager
-		workspaceMockConfig func(c *firecloud_account_manager_mocks.MockMockableWorkspaceClient)
+		workspaceMockConfig func(c *google_workspace_mocks.MockWorkspaceClient)
 		bitsDataWarehouse   map[string]bits_data_warehouse.Person
 		wantResults         []string
 		wantErrs            []string
@@ -47,7 +47,7 @@ func TestConfig_suspendAccounts(t *testing.T) {
 				NewAccountGracePeriod: 24 * time.Hour,
 				InactivityThreshold:   90 * 24 * time.Hour,
 			},
-			workspaceMockConfig: func(c *firecloud_account_manager_mocks.MockMockableWorkspaceClient) {
+			workspaceMockConfig: func(c *google_workspace_mocks.MockWorkspaceClient) {
 				c.EXPECT().GetCurrentUsers(ctx, "test.firecloud.org").Return(nil, assert.AnError).Once()
 			},
 			wantResults: []string{},
@@ -60,7 +60,7 @@ func TestConfig_suspendAccounts(t *testing.T) {
 				NewAccountGracePeriod: 24 * time.Hour,
 				InactivityThreshold:   90 * 24 * time.Hour,
 			},
-			workspaceMockConfig: func(c *firecloud_account_manager_mocks.MockMockableWorkspaceClient) {
+			workspaceMockConfig: func(c *google_workspace_mocks.MockWorkspaceClient) {
 				c.EXPECT().GetCurrentUsers(ctx, "test.firecloud.org").Return([]*admin.User{}, nil).Once()
 			},
 			wantResults: []string{},
@@ -72,7 +72,7 @@ func TestConfig_suspendAccounts(t *testing.T) {
 				Domain:            "test.firecloud.org",
 				NeverAffectEmails: []string{"never-affect-me@test.firecloud.org"},
 			},
-			workspaceMockConfig: func(c *firecloud_account_manager_mocks.MockMockableWorkspaceClient) {
+			workspaceMockConfig: func(c *google_workspace_mocks.MockWorkspaceClient) {
 				c.EXPECT().GetCurrentUsers(ctx, "test.firecloud.org").Return([]*admin.User{
 					{PrimaryEmail: "never-affect-me@test.firecloud.org"},
 				}, nil).Once()
@@ -86,7 +86,7 @@ func TestConfig_suspendAccounts(t *testing.T) {
 				Domain:           "test.firecloud.org",
 				OnlyAffectEmails: []string{"only-affect-me@test.firecloud.org"},
 			},
-			workspaceMockConfig: func(c *firecloud_account_manager_mocks.MockMockableWorkspaceClient) {
+			workspaceMockConfig: func(c *google_workspace_mocks.MockWorkspaceClient) {
 				c.EXPECT().GetCurrentUsers(ctx, "test.firecloud.org").Return([]*admin.User{
 					{PrimaryEmail: "a-user@test.firecloud.org"},
 				}, nil).Once()
@@ -99,7 +99,7 @@ func TestConfig_suspendAccounts(t *testing.T) {
 			manager: &firecloudAccountManager{
 				Domain: "test.firecloud.org",
 			},
-			workspaceMockConfig: func(c *firecloud_account_manager_mocks.MockMockableWorkspaceClient) {
+			workspaceMockConfig: func(c *google_workspace_mocks.MockWorkspaceClient) {
 				c.EXPECT().GetCurrentUsers(ctx, "test.firecloud.org").Return([]*admin.User{
 					{PrimaryEmail: "already-suspended@test.firecloud.org", Suspended: true},
 				}, nil).Once()
@@ -114,7 +114,7 @@ func TestConfig_suspendAccounts(t *testing.T) {
 				NewAccountGracePeriod: 24 * time.Hour,
 				InactivityThreshold:   90 * 24 * time.Hour,
 			},
-			workspaceMockConfig: func(c *firecloud_account_manager_mocks.MockMockableWorkspaceClient) {
+			workspaceMockConfig: func(c *google_workspace_mocks.MockWorkspaceClient) {
 				c.EXPECT().GetCurrentUsers(ctx, "test.firecloud.org").Return([]*admin.User{
 					{PrimaryEmail: "invalid-creation-time-user@test.firecloud.org", CreationTime: "not-a-time"},
 				}, nil).Once()
@@ -132,7 +132,7 @@ func TestConfig_suspendAccounts(t *testing.T) {
 				NewAccountGracePeriod: 24 * time.Hour,
 				InactivityThreshold:   90 * 24 * time.Hour,
 			},
-			workspaceMockConfig: func(c *firecloud_account_manager_mocks.MockMockableWorkspaceClient) {
+			workspaceMockConfig: func(c *google_workspace_mocks.MockWorkspaceClient) {
 				c.EXPECT().GetCurrentUsers(ctx, "test.firecloud.org").Return([]*admin.User{
 					{PrimaryEmail: "never-logged-in-user@test.firecloud.org", CreationTime: time.Now().Add(-2 * 24 * time.Hour).Format(time.RFC3339), LastLoginTime: googleNeverLoggedInTime},
 				}, nil).Once()
@@ -154,7 +154,7 @@ func TestConfig_suspendAccounts(t *testing.T) {
 				InactivityThreshold:   90 * 24 * time.Hour,
 				DryRun:                true,
 			},
-			workspaceMockConfig: func(c *firecloud_account_manager_mocks.MockMockableWorkspaceClient) {
+			workspaceMockConfig: func(c *google_workspace_mocks.MockWorkspaceClient) {
 				c.EXPECT().GetCurrentUsers(ctx, "test.firecloud.org").Return([]*admin.User{
 					{PrimaryEmail: "never-logged-in-user@test.firecloud.org", CreationTime: time.Now().Add(-2 * 24 * time.Hour).Format(time.RFC3339), LastLoginTime: googleNeverLoggedInTime},
 				}, nil).Once()
@@ -174,7 +174,7 @@ func TestConfig_suspendAccounts(t *testing.T) {
 				NewAccountGracePeriod: 24 * time.Hour,
 				InactivityThreshold:   90 * 24 * time.Hour,
 			},
-			workspaceMockConfig: func(c *firecloud_account_manager_mocks.MockMockableWorkspaceClient) {
+			workspaceMockConfig: func(c *google_workspace_mocks.MockWorkspaceClient) {
 				c.EXPECT().GetCurrentUsers(ctx, "test.firecloud.org").Return([]*admin.User{
 					{PrimaryEmail: "never-logged-in-user-fail@test.firecloud.org", CreationTime: time.Now().Add(-2 * 24 * time.Hour).Format(time.RFC3339), LastLoginTime: googleNeverLoggedInTime},
 				}, nil).Once()
@@ -195,7 +195,7 @@ func TestConfig_suspendAccounts(t *testing.T) {
 				NewAccountGracePeriod: 24 * time.Hour,
 				InactivityThreshold:   90 * 24 * time.Hour,
 			},
-			workspaceMockConfig: func(c *firecloud_account_manager_mocks.MockMockableWorkspaceClient) {
+			workspaceMockConfig: func(c *google_workspace_mocks.MockWorkspaceClient) {
 				c.EXPECT().GetCurrentUsers(ctx, "test.firecloud.org").Return([]*admin.User{
 					{PrimaryEmail: "invalid-login-time-user@test.firecloud.org", CreationTime: time.Now().Add(-7 * 24 * time.Hour).Format(time.RFC3339), LastLoginTime: "not-a-time"},
 				}, nil).Once()
@@ -214,7 +214,7 @@ func TestConfig_suspendAccounts(t *testing.T) {
 				NewAccountGracePeriod: 24 * time.Hour,
 				InactivityThreshold:   90 * 24 * time.Hour,
 			},
-			workspaceMockConfig: func(c *firecloud_account_manager_mocks.MockMockableWorkspaceClient) {
+			workspaceMockConfig: func(c *google_workspace_mocks.MockWorkspaceClient) {
 				c.EXPECT().GetCurrentUsers(ctx, "test.firecloud.org").Return([]*admin.User{
 					{PrimaryEmail: "inactive-user@test.firecloud.org", CreationTime: time.Now().Add(-7 * 24 * time.Hour).Format(time.RFC3339), LastLoginTime: time.Now().Add(-91 * 24 * time.Hour).Format(time.RFC3339)},
 				}, nil).Once()
@@ -236,7 +236,7 @@ func TestConfig_suspendAccounts(t *testing.T) {
 				InactivityThreshold:   90 * 24 * time.Hour,
 				DryRun:                true,
 			},
-			workspaceMockConfig: func(c *firecloud_account_manager_mocks.MockMockableWorkspaceClient) {
+			workspaceMockConfig: func(c *google_workspace_mocks.MockWorkspaceClient) {
 				c.EXPECT().GetCurrentUsers(ctx, "test.firecloud.org").Return([]*admin.User{
 					{PrimaryEmail: "inactive-user@test.firecloud.org", CreationTime: time.Now().Add(-7 * 24 * time.Hour).Format(time.RFC3339), LastLoginTime: time.Now().Add(-91 * 24 * time.Hour).Format(time.RFC3339)},
 				}, nil).Once()
@@ -256,7 +256,7 @@ func TestConfig_suspendAccounts(t *testing.T) {
 				NewAccountGracePeriod: 24 * time.Hour,
 				InactivityThreshold:   90 * 24 * time.Hour,
 			},
-			workspaceMockConfig: func(c *firecloud_account_manager_mocks.MockMockableWorkspaceClient) {
+			workspaceMockConfig: func(c *google_workspace_mocks.MockWorkspaceClient) {
 				c.EXPECT().GetCurrentUsers(ctx, "test.firecloud.org").Return([]*admin.User{
 					{PrimaryEmail: "inactive-user-fail-suspend@test.firecloud.org", CreationTime: time.Now().Add(-7 * 24 * time.Hour).Format(time.RFC3339), LastLoginTime: time.Now().Add(-91 * 24 * time.Hour).Format(time.RFC3339)},
 				}, nil).Once()
@@ -277,7 +277,7 @@ func TestConfig_suspendAccounts(t *testing.T) {
 				NewAccountGracePeriod: 24 * time.Hour,
 				InactivityThreshold:   90 * 24 * time.Hour,
 			},
-			workspaceMockConfig: func(c *firecloud_account_manager_mocks.MockMockableWorkspaceClient) {
+			workspaceMockConfig: func(c *google_workspace_mocks.MockWorkspaceClient) {
 				c.EXPECT().GetCurrentUsers(ctx, "test.firecloud.org").Return([]*admin.User{
 					{PrimaryEmail: "missing-user@test.firecloud.org", CreationTime: time.Now().Add(-7 * 24 * time.Hour).Format(time.RFC3339), LastLoginTime: time.Now().Add(-30 * 24 * time.Hour).Format(time.RFC3339)},
 				}, nil).Once()
@@ -299,7 +299,7 @@ func TestConfig_suspendAccounts(t *testing.T) {
 				InactivityThreshold:   90 * 24 * time.Hour,
 				DryRun:                true,
 			},
-			workspaceMockConfig: func(c *firecloud_account_manager_mocks.MockMockableWorkspaceClient) {
+			workspaceMockConfig: func(c *google_workspace_mocks.MockWorkspaceClient) {
 				c.EXPECT().GetCurrentUsers(ctx, "test.firecloud.org").Return([]*admin.User{
 					{PrimaryEmail: "missing-user@test.firecloud.org", CreationTime: time.Now().Add(-7 * 24 * time.Hour).Format(time.RFC3339), LastLoginTime: time.Now().Add(-30 * 24 * time.Hour).Format(time.RFC3339)},
 				}, nil).Once()
@@ -319,7 +319,7 @@ func TestConfig_suspendAccounts(t *testing.T) {
 				NewAccountGracePeriod: 24 * time.Hour,
 				InactivityThreshold:   90 * 24 * time.Hour,
 			},
-			workspaceMockConfig: func(c *firecloud_account_manager_mocks.MockMockableWorkspaceClient) {
+			workspaceMockConfig: func(c *google_workspace_mocks.MockWorkspaceClient) {
 				c.EXPECT().GetCurrentUsers(ctx, "test.firecloud.org").Return([]*admin.User{
 					{PrimaryEmail: "missing-user-fail-suspend@test.firecloud.org", CreationTime: time.Now().Add(-7 * 24 * time.Hour).Format(time.RFC3339), LastLoginTime: time.Now().Add(-30 * 24 * time.Hour).Format(time.RFC3339)},
 				}, nil).Once()
@@ -340,7 +340,7 @@ func TestConfig_suspendAccounts(t *testing.T) {
 				NewAccountGracePeriod: 24 * time.Hour,
 				InactivityThreshold:   90 * 24 * time.Hour,
 			},
-			workspaceMockConfig: func(c *firecloud_account_manager_mocks.MockMockableWorkspaceClient) {
+			workspaceMockConfig: func(c *google_workspace_mocks.MockWorkspaceClient) {
 				c.EXPECT().GetCurrentUsers(ctx, "test.firecloud.org").Return([]*admin.User{
 					{PrimaryEmail: "no-one-in-bits-data@test.firecloud.org", CreationTime: time.Now().Add(-7 * 24 * time.Hour).Format(time.RFC3339), LastLoginTime: time.Now().Add(-30 * 24 * time.Hour).Format(time.RFC3339)},
 				}, nil).Once()
@@ -360,7 +360,7 @@ func TestConfig_suspendAccounts(t *testing.T) {
 				NewAccountGracePeriod: 24 * time.Hour,
 				InactivityThreshold:   90 * 24 * time.Hour,
 			},
-			workspaceMockConfig: func(c *firecloud_account_manager_mocks.MockMockableWorkspaceClient) {
+			workspaceMockConfig: func(c *google_workspace_mocks.MockWorkspaceClient) {
 				c.EXPECT().GetCurrentUsers(ctx, "test.firecloud.org").Return([]*admin.User{
 					{PrimaryEmail: "valid-user@test.firecloud.org", CreationTime: time.Now().Add(-7 * 24 * time.Hour).Format(time.RFC3339), LastLoginTime: time.Now().Add(-30 * 24 * time.Hour).Format(time.RFC3339)},
 				}, nil).Once()
@@ -382,7 +382,7 @@ func TestConfig_suspendAccounts(t *testing.T) {
 					"never-affect-but-not-current@test.firecloud.org",
 				},
 			},
-			workspaceMockConfig: func(c *firecloud_account_manager_mocks.MockMockableWorkspaceClient) {
+			workspaceMockConfig: func(c *google_workspace_mocks.MockWorkspaceClient) {
 				c.EXPECT().GetCurrentUsers(ctx, "test.firecloud.org").Return([]*admin.User{
 					{PrimaryEmail: "never-affect-me@test.firecloud.org"},
 					{PrimaryEmail: "already-suspended@test.firecloud.org", Suspended: true},
@@ -444,7 +444,7 @@ func TestConfig_suspendAccounts(t *testing.T) {
 					"valid-user@test.firecloud.org",
 				},
 			},
-			workspaceMockConfig: func(c *firecloud_account_manager_mocks.MockMockableWorkspaceClient) {
+			workspaceMockConfig: func(c *google_workspace_mocks.MockWorkspaceClient) {
 				c.EXPECT().GetCurrentUsers(ctx, "test.firecloud.org").Return([]*admin.User{
 					{PrimaryEmail: "never-affect-me@test.firecloud.org"},
 					{PrimaryEmail: "already-suspended@test.firecloud.org", Suspended: true},
@@ -487,7 +487,7 @@ func TestConfig_suspendAccounts(t *testing.T) {
 				NewAccountGracePeriod: 24 * time.Hour,
 				InactivityThreshold:   90 * 24 * time.Hour,
 			},
-			workspaceMockConfig: func(c *firecloud_account_manager_mocks.MockMockableWorkspaceClient) {
+			workspaceMockConfig: func(c *google_workspace_mocks.MockWorkspaceClient) {
 				calls := 0
 				c.EXPECT().GetCurrentUsers(ctx, "test.firecloud.org").RunAndReturn(func(_ context.Context, _ string) ([]*admin.User, error) {
 					if calls == 0 {
@@ -515,7 +515,7 @@ func TestConfig_suspendAccounts(t *testing.T) {
 				NewAccountGracePeriod: 24 * time.Hour,
 				InactivityThreshold:   90 * 24 * time.Hour,
 			},
-			workspaceMockConfig: func(c *firecloud_account_manager_mocks.MockMockableWorkspaceClient) {
+			workspaceMockConfig: func(c *google_workspace_mocks.MockWorkspaceClient) {
 				c.EXPECT().GetCurrentUsers(ctx, "test.firecloud.org").Return([]*admin.User{
 					{PrimaryEmail: "missing-user@test.firecloud.org", CreationTime: time.Now().Add(-7 * 24 * time.Hour).Format(time.RFC3339), LastLoginTime: time.Now().Add(-30 * 24 * time.Hour).Format(time.RFC3339)},
 				}, nil).Once()
@@ -547,7 +547,7 @@ func TestConfig_suspendAccounts(t *testing.T) {
 			tt.manager.indexPlusOneForLocking = 1
 			tt.manager.dbForLocking = dbForLocking
 
-			workspaceClient := firecloud_account_manager_mocks.NewMockMockableWorkspaceClient(t)
+			workspaceClient := google_workspace_mocks.NewMockWorkspaceClient(t)
 			tt.workspaceMockConfig(workspaceClient)
 			tt.manager.workspaceClient = workspaceClient
 

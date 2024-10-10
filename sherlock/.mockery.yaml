@@ -45,15 +45,15 @@ packages:
       mockableSecretScanningClient:
       mockableTeamsClient:
       mockableUsersClient:
+  github.com/broadinstitute/sherlock/sherlock/internal/clients/google_workspace:
+    interfaces:
+      WorkspaceClient:
   github.com/broadinstitute/sherlock/sherlock/internal/clients/slack:
     interfaces:
       mockableClient:
   github.com/broadinstitute/sherlock/sherlock/internal/clients/pact_broker:
     interfaces:
       mockablePactBroker:
-  github.com/broadinstitute/sherlock/sherlock/internal/firecloud_account_manager:
-    interfaces:
-      mockableWorkspaceClient:
   github.com/broadinstitute/sherlock/sherlock/internal/middleware/authentication/gha_oidc:
     interfaces:
       mockableVerifier:

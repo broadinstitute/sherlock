@@ -1,6 +1,8 @@
 package firecloud_account_manager
 
 import (
+	"github.com/broadinstitute/sherlock/sherlock/internal/clients/google_workspace"
+	"github.com/broadinstitute/sherlock/sherlock/internal/clients/google_workspace/google_workspace_mocks"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/gorm"
 	"testing"
@@ -8,6 +10,7 @@ import (
 )
 
 func Test_firecloudAccountManager_validate(t *testing.T) {
+	client := &google_workspace_mocks.MockWorkspaceClient{}
 	type fields struct {
 		indexPlusOneForLocking int
 		dbForLocking           *gorm.DB
@@ -18,7 +21,7 @@ func Test_firecloudAccountManager_validate(t *testing.T) {
 		NeverAffectEmails      []string
 		NewAccountGracePeriod  time.Duration
 		InactivityThreshold    time.Duration
-		workspaceClient        mockableWorkspaceClient
+		workspaceClient        google_workspace.WorkspaceClient
 	}
 	tests := []struct {
 		name    string
@@ -33,7 +36,7 @@ func Test_firecloudAccountManager_validate(t *testing.T) {
 				Domain:                 "domain",
 				NewAccountGracePeriod:  time.Hour,
 				InactivityThreshold:    24 * time.Hour,
-				workspaceClient:        &realWorkspaceClient{},
+				workspaceClient:        client,
 			},
 			wantErr: assert.NoError,
 		},
@@ -44,7 +47,7 @@ func Test_firecloudAccountManager_validate(t *testing.T) {
 				Domain:                "domain",
 				NewAccountGracePeriod: time.Hour,
 				InactivityThreshold:   24 * time.Hour,
-				workspaceClient:       &realWorkspaceClient{},
+				workspaceClient:       client,
 			},
 			wantErr: assert.Error,
 		},
@@ -55,7 +58,7 @@ func Test_firecloudAccountManager_validate(t *testing.T) {
 				Domain:                 "domain",
 				NewAccountGracePeriod:  time.Hour,
 				InactivityThreshold:    24 * time.Hour,
-				workspaceClient:        &realWorkspaceClient{},
+				workspaceClient:        client,
 			},
 			wantErr: assert.Error,
 		},
@@ -66,7 +69,7 @@ func Test_firecloudAccountManager_validate(t *testing.T) {
 				dbForLocking:           &gorm.DB{},
 				NewAccountGracePeriod:  time.Hour,
 				InactivityThreshold:    24 * time.Hour,
-				workspaceClient:        &realWorkspaceClient{},
+				workspaceClient:        client,
 			},
 			wantErr: assert.Error,
 		},
@@ -77,7 +80,7 @@ func Test_firecloudAccountManager_validate(t *testing.T) {
 				dbForLocking:           &gorm.DB{},
 				Domain:                 "domain",
 				InactivityThreshold:    24 * time.Hour,
-				workspaceClient:        &realWorkspaceClient{},
+				workspaceClient:        client,
 			},
 			wantErr: assert.Error,
 		},
@@ -88,7 +91,7 @@ func Test_firecloudAccountManager_validate(t *testing.T) {
 				dbForLocking:           &gorm.DB{},
 				Domain:                 "domain",
 				NewAccountGracePeriod:  time.Hour,
-				workspaceClient:        &realWorkspaceClient{},
+				workspaceClient:        client,
 			},
 			wantErr: assert.Error,
 		},
