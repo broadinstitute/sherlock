@@ -30,7 +30,7 @@ require (
 	github.com/jinzhu/copier v0.4.0
 	github.com/knadh/koanf v1.5.0
 	github.com/microsoft/kiota-abstractions-go v1.7.0
-	github.com/microsoftgraph/msgraph-sdk-go v1.49.0
+	github.com/microsoftgraph/msgraph-sdk-go v1.50.0
 	github.com/microsoftgraph/msgraph-sdk-go-core v1.2.1
 	github.com/pact-foundation/pact-go/v2 v2.0.8
 	github.com/rs/zerolog v1.33.0
