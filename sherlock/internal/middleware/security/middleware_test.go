@@ -24,6 +24,6 @@ func TestSecurity(t *testing.T) {
 		router.ServeHTTP(recorder, request)
 
 		assert.Contains(t, recorder.Header().Get("Content-Security-Policy"), "default-src 'self'; ")
-		assert.Contains(t, recorder.Header().Get("Content-Security-Policy"), "style-src 'self' 'unsafe-hashes' 'sha256-")
+		assert.Contains(t, recorder.Header().Get("Content-Security-Policy"), "style-src 'self' 'unsafe-inline'; ")
 	})
 }
