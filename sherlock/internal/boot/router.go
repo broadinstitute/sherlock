@@ -20,10 +20,13 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/security"
 	"github.com/broadinstitute/sherlock/sherlock/internal/oidc_models"
 	"github.com/gin-gonic/gin"
-	swaggo_files "github.com/swaggo/files"
+	swaggo_files "github.com/swaggo/files/v2"
 	swaggo_gin "github.com/swaggo/gin-swagger"
+	"golang.org/x/net/webdav"
 	"gorm.io/gorm"
+	"io/fs"
 	"net/http"
+	"os"
 	"strings"
 )
 
@@ -83,12 +86,16 @@ func BuildRouter(ctx context.Context, db *gorm.DB) *gin.Engine {
 
 	router.StaticFS("/static", http.FS(html.StaticHtmlFiles))
 
-	router.GET("/swagger/*any", swaggo_gin.WrapHandler(swaggo_files.Handler, func(c *swaggo_gin.Config) {
-		c.Title = "Sherlock Swagger UI"
-		c.URL = "/swagger/doc.json"
-		c.DefaultModelsExpandDepth = 2
-		c.DocExpansion = "none"
-	}))
+	router.GET("/swagger/*any", swaggo_gin.WrapHandler(
+		&webdav.Handler{
+			FileSystem: &webdavFilesystem{http.FS(swaggo_files.FS)},
+			LockSystem: webdav.NewMemLS(),
+		}, func(c *swaggo_gin.Config) {
+			c.Title = "Sherlock Swagger UI"
+			c.URL = "/swagger/doc.json"
+			c.DefaultModelsExpandDepth = 2
+			c.DocExpansion = "none"
+		}))
 	router.GET("", func(ctx *gin.Context) { ctx.Redirect(http.StatusMovedPermanently, "/swagger/index.html") })
 
 	if config.Config.Bool("oidc.enable") {
@@ -116,4 +123,57 @@ func BuildRouter(ctx context.Context, db *gorm.DB) *gin.Engine {
 	})
 
 	return router
+}
+
+// webdavFilesystem adapts a http.FileSystem to a webdav.FileSystem. This is unfortunately necessary because
+// swaggo_gin.WrapHandler expects a webdav.Handler that needs a webdav.FileSystem (even though we don't need
+// most of what webdav.FileSystem provides). There's actually a package online that does this but it's not
+// popular and this is so small I judge it makes sense to just write what we actually need ourselves.
+//
+// For context -- why does swaggo_gin.WrapHandler expect a webdav.Handler if swaggo_files.FS is a http.FileSystem?
+// Because we're using an updated version of swaggo_files to pull in a more recent non-vulnerable version of
+// swagger-ui. swaggo_gin never got an update to match, so we're stuck with this weirdness.
+type webdavFilesystem struct {
+	http.FileSystem
+}
+
+func (w *webdavFilesystem) Mkdir(_ context.Context, _ string, _ os.FileMode) error {
+	return os.ErrPermission
+}
+
+func (w *webdavFilesystem) RemoveAll(_ context.Context, _ string) error {
+	return os.ErrPermission
+}
+
+func (w *webdavFilesystem) Rename(_ context.Context, _, _ string) error {
+	return os.ErrPermission
+}
+
+func (w *webdavFilesystem) Stat(_ context.Context, name string) (os.FileInfo, error) {
+	if f, err := w.FileSystem.Open(name); err != nil {
+		return nil, err
+	} else {
+		defer func(f fs.File) {
+			_ = f.Close()
+		}(f)
+		return f.Stat()
+	}
+}
+
+func (w *webdavFilesystem) OpenFile(_ context.Context, name string, flag int, _ os.FileMode) (webdav.File, error) {
+	if flag != os.O_RDONLY {
+		return nil, os.ErrPermission
+	} else if f, err := w.FileSystem.Open(name); err != nil {
+		return nil, err
+	} else {
+		return &webdavFile{f}, nil
+	}
+}
+
+type webdavFile struct {
+	http.File
+}
+
+func (w *webdavFile) Write(_ []byte) (n int, err error) {
+	return 0, &os.PathError{Op: "write", Err: os.ErrPermission}
 }
