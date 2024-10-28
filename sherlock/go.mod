@@ -9,7 +9,7 @@ require (
 	cloud.google.com/go/cloudsqlconn v1.12.1
 	cloud.google.com/go/iam v1.2.1
 	cloud.google.com/go/kms v1.20.1
-	cloud.google.com/go/resourcemanager v1.10.1
+	cloud.google.com/go/resourcemanager v1.10.2
 	contrib.go.opencensus.io/exporter/prometheus v0.4.2
 	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.8.0
 	github.com/PagerDuty/go-pagerduty v1.8.0
