@@ -41,7 +41,7 @@ require (
 	github.com/swaggo/files/v2 v2.0.2-0.20240712141554-0590c09f83eb
 	github.com/swaggo/gin-swagger v1.6.1-0.20231210095754-aa92a0ac3f26
 	github.com/swaggo/swag v1.16.3
-	github.com/zitadel/oidc/v3 v3.30.1
+	github.com/zitadel/oidc/v3 v3.31.0
 	go.opencensus.io v0.24.0
 	golang.org/x/crypto v0.28.0
 	golang.org/x/exp v0.0.0-20240823005443-9b4947da3948
@@ -69,7 +69,7 @@ require (
 	github.com/KyleBanks/depth v1.2.1 // indirect
 	github.com/apache/arrow/go/v15 v15.0.2 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
-	github.com/bmatcuk/doublestar/v4 v4.6.1 // indirect
+	github.com/bmatcuk/doublestar/v4 v4.7.1 // indirect
 	github.com/bytedance/sonic v1.12.2 // indirect
 	github.com/bytedance/sonic/loader v0.2.0 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
