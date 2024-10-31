@@ -14,6 +14,11 @@ func (s *modelSuite) TestChartNameValidationSqlEmpty() {
 	s.ErrorContains(err, "name")
 }
 
+func (s *modelSuite) TestChartNameValidationSqlBadCharacters() {
+	err := s.DB.Create(&Chart{ChartRepo: utils.PointerTo("repo"), Name: "special characters!!!"}).Error
+	s.ErrorContains(err, "name")
+}
+
 func (s *modelSuite) TestChartRepoValidationSqlMissing() {
 	err := s.DB.Create(&Chart{Name: "name"}).Error
 	s.ErrorContains(err, "chart_repo")
