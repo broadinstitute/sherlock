@@ -662,3 +662,7 @@ firecloudAccountManager:
   #   # The largest unit that can be passed here is hours (so it's unambiguous about leap secs etc.)
   #   inactivityThreshold: 2160h
   # ```
+
+assetInventory:
+  enable: true
+  requiredRole: ""

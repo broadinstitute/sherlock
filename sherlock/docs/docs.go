@@ -433,6 +433,76 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/asset-inventory/procedures/v3/generate": {
+            "post": {
+                "description": "Update the given Google Sheet with the latest asset inventory data",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AssetInventory"
+                ],
+                "summary": "Generate an asset inventory",
+                "parameters": [
+                    {
+                        "description": "Configuration for the request",
+                        "name": "config",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.AssetInventoryV3GenerateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.AssetInventoryV3GenerateResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/changesets/procedures/v3/apply": {
             "post": {
                 "description": "Looks up and applies previously-planned version diffs given by the ID. Other stored plans against the same Chart Releases are marked as superseded.\nMultiple Changesets can be specified simply by passing multiple IDs in the list.",
@@ -8025,6 +8095,21 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        },
+        "sherlock.AssetInventoryV3GenerateRequest": {
+            "type": "object",
+            "properties": {
+                "googleSheetURL": {
+                    "type": "string"
+                },
+                "skipLeadingRows": {
+                    "type": "integer",
+                    "default": 1
+                }
+            }
+        },
+        "sherlock.AssetInventoryV3GenerateResponse": {
+            "type": "object"
         },
         "sherlock.ChangesetV3": {
             "type": "object",
