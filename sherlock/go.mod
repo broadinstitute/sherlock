@@ -5,7 +5,7 @@ go 1.22.0
 toolchain go1.23.0
 
 require (
-	cloud.google.com/go/bigquery v1.63.1
+	cloud.google.com/go/bigquery v1.64.0
 	cloud.google.com/go/cloudsqlconn v1.13.0
 	cloud.google.com/go/iam v1.2.2
 	cloud.google.com/go/kms v1.20.1
