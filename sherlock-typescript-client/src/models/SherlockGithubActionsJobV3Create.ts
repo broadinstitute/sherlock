@@ -104,11 +104,11 @@ export function SherlockGithubActionsJobV3CreateFromJSONTyped(json: any, ignoreD
     };
 }
 
-  export function SherlockGithubActionsJobV3CreateToJSON(json: any): SherlockGithubActionsJobV3Create {
-      return SherlockGithubActionsJobV3CreateToJSONTyped(json, false);
-  }
+export function SherlockGithubActionsJobV3CreateToJSON(json: any): SherlockGithubActionsJobV3Create {
+    return SherlockGithubActionsJobV3CreateToJSONTyped(json, false);
+}
 
-  export function SherlockGithubActionsJobV3CreateToJSONTyped(value?: SherlockGithubActionsJobV3Create | null, ignoreDiscriminator: boolean = false): any {
+export function SherlockGithubActionsJobV3CreateToJSONTyped(value?: SherlockGithubActionsJobV3Create | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }

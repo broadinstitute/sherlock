@@ -62,11 +62,11 @@ export function SherlockUserV3DeactivateResponseFromJSONTyped(json: any, ignoreD
     };
 }
 
-  export function SherlockUserV3DeactivateResponseToJSON(json: any): SherlockUserV3DeactivateResponse {
-      return SherlockUserV3DeactivateResponseToJSONTyped(json, false);
-  }
+export function SherlockUserV3DeactivateResponseToJSON(json: any): SherlockUserV3DeactivateResponse {
+    return SherlockUserV3DeactivateResponseToJSONTyped(json, false);
+}
 
-  export function SherlockUserV3DeactivateResponseToJSONTyped(value?: SherlockUserV3DeactivateResponse | null, ignoreDiscriminator: boolean = false): any {
+export function SherlockUserV3DeactivateResponseToJSONTyped(value?: SherlockUserV3DeactivateResponse | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }

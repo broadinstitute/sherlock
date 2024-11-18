@@ -62,11 +62,11 @@ export function SherlockUserV3DeactivateRequestFromJSONTyped(json: any, ignoreDi
     };
 }
 
-  export function SherlockUserV3DeactivateRequestToJSON(json: any): SherlockUserV3DeactivateRequest {
-      return SherlockUserV3DeactivateRequestToJSONTyped(json, false);
-  }
+export function SherlockUserV3DeactivateRequestToJSON(json: any): SherlockUserV3DeactivateRequest {
+    return SherlockUserV3DeactivateRequestToJSONTyped(json, false);
+}
 
-  export function SherlockUserV3DeactivateRequestToJSONTyped(value?: SherlockUserV3DeactivateRequest | null, ignoreDiscriminator: boolean = false): any {
+export function SherlockUserV3DeactivateRequestToJSONTyped(value?: SherlockUserV3DeactivateRequest | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }

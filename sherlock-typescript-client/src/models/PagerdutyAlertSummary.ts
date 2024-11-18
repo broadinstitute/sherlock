@@ -55,11 +55,11 @@ export function PagerdutyAlertSummaryFromJSONTyped(json: any, ignoreDiscriminato
     };
 }
 
-  export function PagerdutyAlertSummaryToJSON(json: any): PagerdutyAlertSummary {
-      return PagerdutyAlertSummaryToJSONTyped(json, false);
-  }
+export function PagerdutyAlertSummaryToJSON(json: any): PagerdutyAlertSummary {
+    return PagerdutyAlertSummaryToJSONTyped(json, false);
+}
 
-  export function PagerdutyAlertSummaryToJSONTyped(value?: PagerdutyAlertSummary | null, ignoreDiscriminator: boolean = false): any {
+export function PagerdutyAlertSummaryToJSONTyped(value?: PagerdutyAlertSummary | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }

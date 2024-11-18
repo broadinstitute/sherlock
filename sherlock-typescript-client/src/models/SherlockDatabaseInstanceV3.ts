@@ -112,11 +112,11 @@ export function SherlockDatabaseInstanceV3FromJSONTyped(json: any, ignoreDiscrim
     };
 }
 
-  export function SherlockDatabaseInstanceV3ToJSON(json: any): SherlockDatabaseInstanceV3 {
-      return SherlockDatabaseInstanceV3ToJSONTyped(json, false);
-  }
+export function SherlockDatabaseInstanceV3ToJSON(json: any): SherlockDatabaseInstanceV3 {
+    return SherlockDatabaseInstanceV3ToJSONTyped(json, false);
+}
 
-  export function SherlockDatabaseInstanceV3ToJSONTyped(value?: SherlockDatabaseInstanceV3 | null, ignoreDiscriminator: boolean = false): any {
+export function SherlockDatabaseInstanceV3ToJSONTyped(value?: SherlockDatabaseInstanceV3 | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }

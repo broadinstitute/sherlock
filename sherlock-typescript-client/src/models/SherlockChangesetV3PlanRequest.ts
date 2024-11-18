@@ -77,11 +77,11 @@ export function SherlockChangesetV3PlanRequestFromJSONTyped(json: any, ignoreDis
     };
 }
 
-  export function SherlockChangesetV3PlanRequestToJSON(json: any): SherlockChangesetV3PlanRequest {
-      return SherlockChangesetV3PlanRequestToJSONTyped(json, false);
-  }
+export function SherlockChangesetV3PlanRequestToJSON(json: any): SherlockChangesetV3PlanRequest {
+    return SherlockChangesetV3PlanRequestToJSONTyped(json, false);
+}
 
-  export function SherlockChangesetV3PlanRequestToJSONTyped(value?: SherlockChangesetV3PlanRequest | null, ignoreDiscriminator: boolean = false): any {
+export function SherlockChangesetV3PlanRequestToJSONTyped(value?: SherlockChangesetV3PlanRequest | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }

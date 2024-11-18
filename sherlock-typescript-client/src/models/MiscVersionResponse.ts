@@ -62,11 +62,11 @@ export function MiscVersionResponseFromJSONTyped(json: any, ignoreDiscriminator:
     };
 }
 
-  export function MiscVersionResponseToJSON(json: any): MiscVersionResponse {
-      return MiscVersionResponseToJSONTyped(json, false);
-  }
+export function MiscVersionResponseToJSON(json: any): MiscVersionResponse {
+    return MiscVersionResponseToJSONTyped(json, false);
+}
 
-  export function MiscVersionResponseToJSONTyped(value?: MiscVersionResponse | null, ignoreDiscriminator: boolean = false): any {
+export function MiscVersionResponseToJSONTyped(value?: MiscVersionResponse | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }

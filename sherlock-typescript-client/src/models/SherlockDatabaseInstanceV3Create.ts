@@ -76,11 +76,11 @@ export function SherlockDatabaseInstanceV3CreateFromJSONTyped(json: any, ignoreD
     };
 }
 
-  export function SherlockDatabaseInstanceV3CreateToJSON(json: any): SherlockDatabaseInstanceV3Create {
-      return SherlockDatabaseInstanceV3CreateToJSONTyped(json, false);
-  }
+export function SherlockDatabaseInstanceV3CreateToJSON(json: any): SherlockDatabaseInstanceV3Create {
+    return SherlockDatabaseInstanceV3CreateToJSONTyped(json, false);
+}
 
-  export function SherlockDatabaseInstanceV3CreateToJSONTyped(value?: SherlockDatabaseInstanceV3Create | null, ignoreDiscriminator: boolean = false): any {
+export function SherlockDatabaseInstanceV3CreateToJSONTyped(value?: SherlockDatabaseInstanceV3Create | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }

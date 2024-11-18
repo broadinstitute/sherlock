@@ -161,11 +161,11 @@ export function SherlockAppVersionV3FromJSONTyped(json: any, ignoreDiscriminator
     };
 }
 
-  export function SherlockAppVersionV3ToJSON(json: any): SherlockAppVersionV3 {
-      return SherlockAppVersionV3ToJSONTyped(json, false);
-  }
+export function SherlockAppVersionV3ToJSON(json: any): SherlockAppVersionV3 {
+    return SherlockAppVersionV3ToJSONTyped(json, false);
+}
 
-  export function SherlockAppVersionV3ToJSONTyped(value?: SherlockAppVersionV3 | null, ignoreDiscriminator: boolean = false): any {
+export function SherlockAppVersionV3ToJSONTyped(value?: SherlockAppVersionV3 | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }

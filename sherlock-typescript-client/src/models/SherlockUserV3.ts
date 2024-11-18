@@ -166,11 +166,11 @@ export function SherlockUserV3FromJSONTyped(json: any, ignoreDiscriminator: bool
     };
 }
 
-  export function SherlockUserV3ToJSON(json: any): SherlockUserV3 {
-      return SherlockUserV3ToJSONTyped(json, false);
-  }
+export function SherlockUserV3ToJSON(json: any): SherlockUserV3 {
+    return SherlockUserV3ToJSONTyped(json, false);
+}
 
-  export function SherlockUserV3ToJSONTyped(value?: SherlockUserV3 | null, ignoreDiscriminator: boolean = false): any {
+export function SherlockUserV3ToJSONTyped(value?: SherlockUserV3 | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }

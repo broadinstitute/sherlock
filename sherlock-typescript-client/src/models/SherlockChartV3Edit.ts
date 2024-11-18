@@ -111,11 +111,11 @@ export function SherlockChartV3EditFromJSONTyped(json: any, ignoreDiscriminator:
     };
 }
 
-  export function SherlockChartV3EditToJSON(json: any): SherlockChartV3Edit {
-      return SherlockChartV3EditToJSONTyped(json, false);
-  }
+export function SherlockChartV3EditToJSON(json: any): SherlockChartV3Edit {
+    return SherlockChartV3EditToJSONTyped(json, false);
+}
 
-  export function SherlockChartV3EditToJSONTyped(value?: SherlockChartV3Edit | null, ignoreDiscriminator: boolean = false): any {
+export function SherlockChartV3EditToJSONTyped(value?: SherlockChartV3Edit | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }

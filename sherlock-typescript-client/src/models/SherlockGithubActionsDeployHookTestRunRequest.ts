@@ -48,11 +48,11 @@ export function SherlockGithubActionsDeployHookTestRunRequestFromJSONTyped(json:
     };
 }
 
-  export function SherlockGithubActionsDeployHookTestRunRequestToJSON(json: any): SherlockGithubActionsDeployHookTestRunRequest {
-      return SherlockGithubActionsDeployHookTestRunRequestToJSONTyped(json, false);
-  }
+export function SherlockGithubActionsDeployHookTestRunRequestToJSON(json: any): SherlockGithubActionsDeployHookTestRunRequest {
+    return SherlockGithubActionsDeployHookTestRunRequestToJSONTyped(json, false);
+}
 
-  export function SherlockGithubActionsDeployHookTestRunRequestToJSONTyped(value?: SherlockGithubActionsDeployHookTestRunRequest | null, ignoreDiscriminator: boolean = false): any {
+export function SherlockGithubActionsDeployHookTestRunRequestToJSONTyped(value?: SherlockGithubActionsDeployHookTestRunRequest | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }

@@ -76,11 +76,11 @@ export function SherlockClusterV3EditFromJSONTyped(json: any, ignoreDiscriminato
     };
 }
 
-  export function SherlockClusterV3EditToJSON(json: any): SherlockClusterV3Edit {
-      return SherlockClusterV3EditToJSONTyped(json, false);
-  }
+export function SherlockClusterV3EditToJSON(json: any): SherlockClusterV3Edit {
+    return SherlockClusterV3EditToJSONTyped(json, false);
+}
 
-  export function SherlockClusterV3EditToJSONTyped(value?: SherlockClusterV3Edit | null, ignoreDiscriminator: boolean = false): any {
+export function SherlockClusterV3EditToJSONTyped(value?: SherlockClusterV3Edit | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }

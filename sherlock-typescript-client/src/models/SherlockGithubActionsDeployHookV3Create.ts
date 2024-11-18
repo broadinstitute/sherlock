@@ -123,11 +123,11 @@ export function SherlockGithubActionsDeployHookV3CreateFromJSONTyped(json: any, 
     };
 }
 
-  export function SherlockGithubActionsDeployHookV3CreateToJSON(json: any): SherlockGithubActionsDeployHookV3Create {
-      return SherlockGithubActionsDeployHookV3CreateToJSONTyped(json, false);
-  }
+export function SherlockGithubActionsDeployHookV3CreateToJSON(json: any): SherlockGithubActionsDeployHookV3Create {
+    return SherlockGithubActionsDeployHookV3CreateToJSONTyped(json, false);
+}
 
-  export function SherlockGithubActionsDeployHookV3CreateToJSONTyped(value?: SherlockGithubActionsDeployHookV3Create | null, ignoreDiscriminator: boolean = false): any {
+export function SherlockGithubActionsDeployHookV3CreateToJSONTyped(value?: SherlockGithubActionsDeployHookV3Create | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }

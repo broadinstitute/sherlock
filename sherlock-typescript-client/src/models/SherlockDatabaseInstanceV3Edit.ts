@@ -69,11 +69,11 @@ export function SherlockDatabaseInstanceV3EditFromJSONTyped(json: any, ignoreDis
     };
 }
 
-  export function SherlockDatabaseInstanceV3EditToJSON(json: any): SherlockDatabaseInstanceV3Edit {
-      return SherlockDatabaseInstanceV3EditToJSONTyped(json, false);
-  }
+export function SherlockDatabaseInstanceV3EditToJSON(json: any): SherlockDatabaseInstanceV3Edit {
+    return SherlockDatabaseInstanceV3EditToJSONTyped(json, false);
+}
 
-  export function SherlockDatabaseInstanceV3EditToJSONTyped(value?: SherlockDatabaseInstanceV3Edit | null, ignoreDiscriminator: boolean = false): any {
+export function SherlockDatabaseInstanceV3EditToJSONTyped(value?: SherlockDatabaseInstanceV3Edit | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }

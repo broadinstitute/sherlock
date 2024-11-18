@@ -48,11 +48,11 @@ export function MiscStatusResponseFromJSONTyped(json: any, ignoreDiscriminator: 
     };
 }
 
-  export function MiscStatusResponseToJSON(json: any): MiscStatusResponse {
-      return MiscStatusResponseToJSONTyped(json, false);
-  }
+export function MiscStatusResponseToJSON(json: any): MiscStatusResponse {
+    return MiscStatusResponseToJSONTyped(json, false);
+}
 
-  export function MiscStatusResponseToJSONTyped(value?: MiscStatusResponse | null, ignoreDiscriminator: boolean = false): any {
+export function MiscStatusResponseToJSONTyped(value?: MiscStatusResponse | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }

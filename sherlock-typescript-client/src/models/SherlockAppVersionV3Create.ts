@@ -83,11 +83,11 @@ export function SherlockAppVersionV3CreateFromJSONTyped(json: any, ignoreDiscrim
     };
 }
 
-  export function SherlockAppVersionV3CreateToJSON(json: any): SherlockAppVersionV3Create {
-      return SherlockAppVersionV3CreateToJSONTyped(json, false);
-  }
+export function SherlockAppVersionV3CreateToJSON(json: any): SherlockAppVersionV3Create {
+    return SherlockAppVersionV3CreateToJSONTyped(json, false);
+}
 
-  export function SherlockAppVersionV3CreateToJSONTyped(value?: SherlockAppVersionV3Create | null, ignoreDiscriminator: boolean = false): any {
+export function SherlockAppVersionV3CreateToJSONTyped(value?: SherlockAppVersionV3Create | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }

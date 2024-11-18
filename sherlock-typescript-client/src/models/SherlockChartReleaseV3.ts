@@ -353,11 +353,11 @@ export function SherlockChartReleaseV3FromJSONTyped(json: any, ignoreDiscriminat
     };
 }
 
-  export function SherlockChartReleaseV3ToJSON(json: any): SherlockChartReleaseV3 {
-      return SherlockChartReleaseV3ToJSONTyped(json, false);
-  }
+export function SherlockChartReleaseV3ToJSON(json: any): SherlockChartReleaseV3 {
+    return SherlockChartReleaseV3ToJSONTyped(json, false);
+}
 
-  export function SherlockChartReleaseV3ToJSONTyped(value?: SherlockChartReleaseV3 | null, ignoreDiscriminator: boolean = false): any {
+export function SherlockChartReleaseV3ToJSONTyped(value?: SherlockChartReleaseV3 | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }

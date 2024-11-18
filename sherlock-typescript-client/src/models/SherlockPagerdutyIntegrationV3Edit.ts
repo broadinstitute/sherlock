@@ -62,11 +62,11 @@ export function SherlockPagerdutyIntegrationV3EditFromJSONTyped(json: any, ignor
     };
 }
 
-  export function SherlockPagerdutyIntegrationV3EditToJSON(json: any): SherlockPagerdutyIntegrationV3Edit {
-      return SherlockPagerdutyIntegrationV3EditToJSONTyped(json, false);
-  }
+export function SherlockPagerdutyIntegrationV3EditToJSON(json: any): SherlockPagerdutyIntegrationV3Edit {
+    return SherlockPagerdutyIntegrationV3EditToJSONTyped(json, false);
+}
 
-  export function SherlockPagerdutyIntegrationV3EditToJSONTyped(value?: SherlockPagerdutyIntegrationV3Edit | null, ignoreDiscriminator: boolean = false): any {
+export function SherlockPagerdutyIntegrationV3EditToJSONTyped(value?: SherlockPagerdutyIntegrationV3Edit | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }

@@ -69,11 +69,11 @@ export function SherlockSlackDeployHookV3EditFromJSONTyped(json: any, ignoreDisc
     };
 }
 
-  export function SherlockSlackDeployHookV3EditToJSON(json: any): SherlockSlackDeployHookV3Edit {
-      return SherlockSlackDeployHookV3EditToJSONTyped(json, false);
-  }
+export function SherlockSlackDeployHookV3EditToJSON(json: any): SherlockSlackDeployHookV3Edit {
+    return SherlockSlackDeployHookV3EditToJSONTyped(json, false);
+}
 
-  export function SherlockSlackDeployHookV3EditToJSONTyped(value?: SherlockSlackDeployHookV3Edit | null, ignoreDiscriminator: boolean = false): any {
+export function SherlockSlackDeployHookV3EditToJSONTyped(value?: SherlockSlackDeployHookV3Edit | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }

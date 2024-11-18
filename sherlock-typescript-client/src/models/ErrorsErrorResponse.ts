@@ -62,11 +62,11 @@ export function ErrorsErrorResponseFromJSONTyped(json: any, ignoreDiscriminator:
     };
 }
 
-  export function ErrorsErrorResponseToJSON(json: any): ErrorsErrorResponse {
-      return ErrorsErrorResponseToJSONTyped(json, false);
-  }
+export function ErrorsErrorResponseToJSON(json: any): ErrorsErrorResponse {
+    return ErrorsErrorResponseToJSONTyped(json, false);
+}
 
-  export function ErrorsErrorResponseToJSONTyped(value?: ErrorsErrorResponse | null, ignoreDiscriminator: boolean = false): any {
+export function ErrorsErrorResponseToJSONTyped(value?: ErrorsErrorResponse | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }

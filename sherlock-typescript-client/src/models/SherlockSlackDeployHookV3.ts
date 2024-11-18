@@ -104,11 +104,11 @@ export function SherlockSlackDeployHookV3FromJSONTyped(json: any, ignoreDiscrimi
     };
 }
 
-  export function SherlockSlackDeployHookV3ToJSON(json: any): SherlockSlackDeployHookV3 {
-      return SherlockSlackDeployHookV3ToJSONTyped(json, false);
-  }
+export function SherlockSlackDeployHookV3ToJSON(json: any): SherlockSlackDeployHookV3 {
+    return SherlockSlackDeployHookV3ToJSONTyped(json, false);
+}
 
-  export function SherlockSlackDeployHookV3ToJSONTyped(value?: SherlockSlackDeployHookV3 | null, ignoreDiscriminator: boolean = false): any {
+export function SherlockSlackDeployHookV3ToJSONTyped(value?: SherlockSlackDeployHookV3 | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }

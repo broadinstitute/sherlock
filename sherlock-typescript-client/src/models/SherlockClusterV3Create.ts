@@ -122,11 +122,11 @@ export function SherlockClusterV3CreateFromJSONTyped(json: any, ignoreDiscrimina
     };
 }
 
-  export function SherlockClusterV3CreateToJSON(json: any): SherlockClusterV3Create {
-      return SherlockClusterV3CreateToJSONTyped(json, false);
-  }
+export function SherlockClusterV3CreateToJSON(json: any): SherlockClusterV3Create {
+    return SherlockClusterV3CreateToJSONTyped(json, false);
+}
 
-  export function SherlockClusterV3CreateToJSONTyped(value?: SherlockClusterV3Create | null, ignoreDiscriminator: boolean = false): any {
+export function SherlockClusterV3CreateToJSONTyped(value?: SherlockClusterV3Create | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }

@@ -132,11 +132,11 @@ export function SherlockChangesetV3PlanRequestChartReleaseEntryFromJSONTyped(jso
     };
 }
 
-  export function SherlockChangesetV3PlanRequestChartReleaseEntryToJSON(json: any): SherlockChangesetV3PlanRequestChartReleaseEntry {
-      return SherlockChangesetV3PlanRequestChartReleaseEntryToJSONTyped(json, false);
-  }
+export function SherlockChangesetV3PlanRequestChartReleaseEntryToJSON(json: any): SherlockChangesetV3PlanRequestChartReleaseEntry {
+    return SherlockChangesetV3PlanRequestChartReleaseEntryToJSONTyped(json, false);
+}
 
-  export function SherlockChangesetV3PlanRequestChartReleaseEntryToJSONTyped(value?: SherlockChangesetV3PlanRequestChartReleaseEntry | null, ignoreDiscriminator: boolean = false): any {
+export function SherlockChangesetV3PlanRequestChartReleaseEntryToJSONTyped(value?: SherlockChangesetV3PlanRequestChartReleaseEntry | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }

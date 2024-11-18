@@ -236,11 +236,11 @@ export function SherlockCiRunV3UpsertFromJSONTyped(json: any, ignoreDiscriminato
     };
 }
 
-  export function SherlockCiRunV3UpsertToJSON(json: any): SherlockCiRunV3Upsert {
-      return SherlockCiRunV3UpsertToJSONTyped(json, false);
-  }
+export function SherlockCiRunV3UpsertToJSON(json: any): SherlockCiRunV3Upsert {
+    return SherlockCiRunV3UpsertToJSONTyped(json, false);
+}
 
-  export function SherlockCiRunV3UpsertToJSONTyped(value?: SherlockCiRunV3Upsert | null, ignoreDiscriminator: boolean = false): any {
+export function SherlockCiRunV3UpsertToJSONTyped(value?: SherlockCiRunV3Upsert | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }

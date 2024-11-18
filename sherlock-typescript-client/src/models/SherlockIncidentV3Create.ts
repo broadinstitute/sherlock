@@ -76,11 +76,11 @@ export function SherlockIncidentV3CreateFromJSONTyped(json: any, ignoreDiscrimin
     };
 }
 
-  export function SherlockIncidentV3CreateToJSON(json: any): SherlockIncidentV3Create {
-      return SherlockIncidentV3CreateToJSONTyped(json, false);
-  }
+export function SherlockIncidentV3CreateToJSON(json: any): SherlockIncidentV3Create {
+    return SherlockIncidentV3CreateToJSONTyped(json, false);
+}
 
-  export function SherlockIncidentV3CreateToJSONTyped(value?: SherlockIncidentV3Create | null, ignoreDiscriminator: boolean = false): any {
+export function SherlockIncidentV3CreateToJSONTyped(value?: SherlockIncidentV3Create | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }

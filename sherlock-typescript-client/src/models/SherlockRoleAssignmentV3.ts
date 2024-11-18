@@ -76,11 +76,11 @@ export function SherlockRoleAssignmentV3FromJSONTyped(json: any, ignoreDiscrimin
     };
 }
 
-  export function SherlockRoleAssignmentV3ToJSON(json: any): SherlockRoleAssignmentV3 {
-      return SherlockRoleAssignmentV3ToJSONTyped(json, false);
-  }
+export function SherlockRoleAssignmentV3ToJSON(json: any): SherlockRoleAssignmentV3 {
+    return SherlockRoleAssignmentV3ToJSONTyped(json, false);
+}
 
-  export function SherlockRoleAssignmentV3ToJSONTyped(value?: SherlockRoleAssignmentV3 | null, ignoreDiscriminator: boolean = false): any {
+export function SherlockRoleAssignmentV3ToJSONTyped(value?: SherlockRoleAssignmentV3 | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }

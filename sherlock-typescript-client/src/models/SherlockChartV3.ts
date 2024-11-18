@@ -154,11 +154,11 @@ export function SherlockChartV3FromJSONTyped(json: any, ignoreDiscriminator: boo
     };
 }
 
-  export function SherlockChartV3ToJSON(json: any): SherlockChartV3 {
-      return SherlockChartV3ToJSONTyped(json, false);
-  }
+export function SherlockChartV3ToJSON(json: any): SherlockChartV3 {
+    return SherlockChartV3ToJSONTyped(json, false);
+}
 
-  export function SherlockChartV3ToJSONTyped(value?: SherlockChartV3 | null, ignoreDiscriminator: boolean = false): any {
+export function SherlockChartV3ToJSONTyped(value?: SherlockChartV3 | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }

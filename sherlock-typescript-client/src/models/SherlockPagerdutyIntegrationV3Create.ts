@@ -69,11 +69,11 @@ export function SherlockPagerdutyIntegrationV3CreateFromJSONTyped(json: any, ign
     };
 }
 
-  export function SherlockPagerdutyIntegrationV3CreateToJSON(json: any): SherlockPagerdutyIntegrationV3Create {
-      return SherlockPagerdutyIntegrationV3CreateToJSONTyped(json, false);
-  }
+export function SherlockPagerdutyIntegrationV3CreateToJSON(json: any): SherlockPagerdutyIntegrationV3Create {
+    return SherlockPagerdutyIntegrationV3CreateToJSONTyped(json, false);
+}
 
-  export function SherlockPagerdutyIntegrationV3CreateToJSONTyped(value?: SherlockPagerdutyIntegrationV3Create | null, ignoreDiscriminator: boolean = false): any {
+export function SherlockPagerdutyIntegrationV3CreateToJSONTyped(value?: SherlockPagerdutyIntegrationV3Create | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }

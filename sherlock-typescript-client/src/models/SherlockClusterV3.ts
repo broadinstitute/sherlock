@@ -172,11 +172,11 @@ export function SherlockClusterV3FromJSONTyped(json: any, ignoreDiscriminator: b
     };
 }
 
-  export function SherlockClusterV3ToJSON(json: any): SherlockClusterV3 {
-      return SherlockClusterV3ToJSONTyped(json, false);
-  }
+export function SherlockClusterV3ToJSON(json: any): SherlockClusterV3 {
+    return SherlockClusterV3ToJSONTyped(json, false);
+}
 
-  export function SherlockClusterV3ToJSONTyped(value?: SherlockClusterV3 | null, ignoreDiscriminator: boolean = false): any {
+export function SherlockClusterV3ToJSONTyped(value?: SherlockClusterV3 | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }

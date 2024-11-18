@@ -63,11 +63,11 @@ export function SherlockAppVersionV3ChangelogResponseFromJSONTyped(json: any, ig
     };
 }
 
-  export function SherlockAppVersionV3ChangelogResponseToJSON(json: any): SherlockAppVersionV3ChangelogResponse {
-      return SherlockAppVersionV3ChangelogResponseToJSONTyped(json, false);
-  }
+export function SherlockAppVersionV3ChangelogResponseToJSON(json: any): SherlockAppVersionV3ChangelogResponse {
+    return SherlockAppVersionV3ChangelogResponseToJSONTyped(json, false);
+}
 
-  export function SherlockAppVersionV3ChangelogResponseToJSONTyped(value?: SherlockAppVersionV3ChangelogResponse | null, ignoreDiscriminator: boolean = false): any {
+export function SherlockAppVersionV3ChangelogResponseToJSONTyped(value?: SherlockAppVersionV3ChangelogResponse | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }

@@ -48,11 +48,11 @@ export function MiscConnectionCheckResponseFromJSONTyped(json: any, ignoreDiscri
     };
 }
 
-  export function MiscConnectionCheckResponseToJSON(json: any): MiscConnectionCheckResponse {
-      return MiscConnectionCheckResponseToJSONTyped(json, false);
-  }
+export function MiscConnectionCheckResponseToJSON(json: any): MiscConnectionCheckResponse {
+    return MiscConnectionCheckResponseToJSONTyped(json, false);
+}
 
-  export function MiscConnectionCheckResponseToJSONTyped(value?: MiscConnectionCheckResponse | null, ignoreDiscriminator: boolean = false): any {
+export function MiscConnectionCheckResponseToJSONTyped(value?: MiscConnectionCheckResponse | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }

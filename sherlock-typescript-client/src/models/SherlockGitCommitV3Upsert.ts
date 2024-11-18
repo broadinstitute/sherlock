@@ -76,11 +76,11 @@ export function SherlockGitCommitV3UpsertFromJSONTyped(json: any, ignoreDiscrimi
     };
 }
 
-  export function SherlockGitCommitV3UpsertToJSON(json: any): SherlockGitCommitV3Upsert {
-      return SherlockGitCommitV3UpsertToJSONTyped(json, false);
-  }
+export function SherlockGitCommitV3UpsertToJSON(json: any): SherlockGitCommitV3Upsert {
+    return SherlockGitCommitV3UpsertToJSONTyped(json, false);
+}
 
-  export function SherlockGitCommitV3UpsertToJSONTyped(value?: SherlockGitCommitV3Upsert | null, ignoreDiscriminator: boolean = false): any {
+export function SherlockGitCommitV3UpsertToJSONTyped(value?: SherlockGitCommitV3Upsert | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }

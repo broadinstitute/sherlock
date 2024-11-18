@@ -109,11 +109,11 @@ export function SherlockGithubActionsDeployHookV3EditFromJSONTyped(json: any, ig
     };
 }
 
-  export function SherlockGithubActionsDeployHookV3EditToJSON(json: any): SherlockGithubActionsDeployHookV3Edit {
-      return SherlockGithubActionsDeployHookV3EditToJSONTyped(json, false);
-  }
+export function SherlockGithubActionsDeployHookV3EditToJSON(json: any): SherlockGithubActionsDeployHookV3Edit {
+    return SherlockGithubActionsDeployHookV3EditToJSONTyped(json, false);
+}
 
-  export function SherlockGithubActionsDeployHookV3EditToJSONTyped(value?: SherlockGithubActionsDeployHookV3Edit | null, ignoreDiscriminator: boolean = false): any {
+export function SherlockGithubActionsDeployHookV3EditToJSONTyped(value?: SherlockGithubActionsDeployHookV3Edit | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }

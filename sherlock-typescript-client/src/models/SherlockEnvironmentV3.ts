@@ -329,11 +329,11 @@ export function SherlockEnvironmentV3FromJSONTyped(json: any, ignoreDiscriminato
     };
 }
 
-  export function SherlockEnvironmentV3ToJSON(json: any): SherlockEnvironmentV3 {
-      return SherlockEnvironmentV3ToJSONTyped(json, false);
-  }
+export function SherlockEnvironmentV3ToJSON(json: any): SherlockEnvironmentV3 {
+    return SherlockEnvironmentV3ToJSONTyped(json, false);
+}
 
-  export function SherlockEnvironmentV3ToJSONTyped(value?: SherlockEnvironmentV3 | null, ignoreDiscriminator: boolean = false): any {
+export function SherlockEnvironmentV3ToJSONTyped(value?: SherlockEnvironmentV3 | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }

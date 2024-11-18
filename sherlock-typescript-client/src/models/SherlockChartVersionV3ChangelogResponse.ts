@@ -63,11 +63,11 @@ export function SherlockChartVersionV3ChangelogResponseFromJSONTyped(json: any, 
     };
 }
 
-  export function SherlockChartVersionV3ChangelogResponseToJSON(json: any): SherlockChartVersionV3ChangelogResponse {
-      return SherlockChartVersionV3ChangelogResponseToJSONTyped(json, false);
-  }
+export function SherlockChartVersionV3ChangelogResponseToJSON(json: any): SherlockChartVersionV3ChangelogResponse {
+    return SherlockChartVersionV3ChangelogResponseToJSONTyped(json, false);
+}
 
-  export function SherlockChartVersionV3ChangelogResponseToJSONTyped(value?: SherlockChartVersionV3ChangelogResponse | null, ignoreDiscriminator: boolean = false): any {
+export function SherlockChartVersionV3ChangelogResponseToJSONTyped(value?: SherlockChartVersionV3ChangelogResponse | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }

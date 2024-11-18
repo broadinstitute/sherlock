@@ -174,11 +174,11 @@ export function SherlockRoleV3EditFromJSONTyped(json: any, ignoreDiscriminator: 
     };
 }
 
-  export function SherlockRoleV3EditToJSON(json: any): SherlockRoleV3Edit {
-      return SherlockRoleV3EditToJSONTyped(json, false);
-  }
+export function SherlockRoleV3EditToJSON(json: any): SherlockRoleV3Edit {
+    return SherlockRoleV3EditToJSONTyped(json, false);
+}
 
-  export function SherlockRoleV3EditToJSONTyped(value?: SherlockRoleV3Edit | null, ignoreDiscriminator: boolean = false): any {
+export function SherlockRoleV3EditToJSONTyped(value?: SherlockRoleV3Edit | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }

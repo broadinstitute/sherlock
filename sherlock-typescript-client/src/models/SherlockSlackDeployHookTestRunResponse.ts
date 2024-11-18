@@ -48,11 +48,11 @@ export function SherlockSlackDeployHookTestRunResponseFromJSONTyped(json: any, i
     };
 }
 
-  export function SherlockSlackDeployHookTestRunResponseToJSON(json: any): SherlockSlackDeployHookTestRunResponse {
-      return SherlockSlackDeployHookTestRunResponseToJSONTyped(json, false);
-  }
+export function SherlockSlackDeployHookTestRunResponseToJSON(json: any): SherlockSlackDeployHookTestRunResponse {
+    return SherlockSlackDeployHookTestRunResponseToJSONTyped(json, false);
+}
 
-  export function SherlockSlackDeployHookTestRunResponseToJSONTyped(value?: SherlockSlackDeployHookTestRunResponse | null, ignoreDiscriminator: boolean = false): any {
+export function SherlockSlackDeployHookTestRunResponseToJSONTyped(value?: SherlockSlackDeployHookTestRunResponse | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }

@@ -357,11 +357,11 @@ export function SherlockChangesetV3FromJSONTyped(json: any, ignoreDiscriminator:
     };
 }
 
-  export function SherlockChangesetV3ToJSON(json: any): SherlockChangesetV3 {
-      return SherlockChangesetV3ToJSONTyped(json, false);
-  }
+export function SherlockChangesetV3ToJSON(json: any): SherlockChangesetV3 {
+    return SherlockChangesetV3ToJSONTyped(json, false);
+}
 
-  export function SherlockChangesetV3ToJSONTyped(value?: SherlockChangesetV3 | null, ignoreDiscriminator: boolean = false): any {
+export function SherlockChangesetV3ToJSONTyped(value?: SherlockChangesetV3 | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }
