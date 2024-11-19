@@ -64,13 +64,14 @@ class SherlockEnvironmentV3(BaseModel):
     required_role: Optional[StrictStr] = Field(default=None, description="If present, requires membership in the given role for mutations. Set to an empty string to clear.", alias="requiredRole")
     required_role_info: Optional[SherlockRoleV3] = Field(default=None, alias="requiredRoleInfo")
     requires_suitability: Optional[StrictBool] = Field(default=None, alias="requiresSuitability")
+    service_banner_bucket: Optional[StrictStr] = Field(default=None, alias="serviceBannerBucket")
     template_environment: Optional[StrictStr] = Field(default=None, description="Required for dynamic environments", alias="templateEnvironment")
     template_environment_info: Optional[Dict[str, Any]] = Field(default=None, alias="templateEnvironmentInfo")
     unique_resource_prefix: Optional[StrictStr] = Field(default=None, description="When creating, will be calculated if left empty", alias="uniqueResourcePrefix")
     updated_at: Optional[datetime] = Field(default=None, alias="updatedAt")
     values_name: Optional[StrictStr] = Field(default=None, description="When creating, defaults to template name or environment name", alias="valuesName")
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["autoPopulateChartReleases", "base", "baseDomain", "ciIdentifier", "createdAt", "defaultCluster", "defaultClusterInfo", "defaultNamespace", "deleteAfter", "description", "enableJanitor", "helmfileRef", "id", "lifecycle", "name", "namePrefixesDomain", "offline", "offlineScheduleBeginEnabled", "offlineScheduleBeginTime", "offlineScheduleEndEnabled", "offlineScheduleEndTime", "offlineScheduleEndWeekends", "owner", "ownerInfo", "pactIdentifier", "pagerdutyIntegration", "pagerdutyIntegrationInfo", "preventDeletion", "requiredRole", "requiredRoleInfo", "requiresSuitability", "templateEnvironment", "templateEnvironmentInfo", "uniqueResourcePrefix", "updatedAt", "valuesName"]
+    __properties: ClassVar[List[str]] = ["autoPopulateChartReleases", "base", "baseDomain", "ciIdentifier", "createdAt", "defaultCluster", "defaultClusterInfo", "defaultNamespace", "deleteAfter", "description", "enableJanitor", "helmfileRef", "id", "lifecycle", "name", "namePrefixesDomain", "offline", "offlineScheduleBeginEnabled", "offlineScheduleBeginTime", "offlineScheduleEndEnabled", "offlineScheduleEndTime", "offlineScheduleEndWeekends", "owner", "ownerInfo", "pactIdentifier", "pagerdutyIntegration", "pagerdutyIntegrationInfo", "preventDeletion", "requiredRole", "requiredRoleInfo", "requiresSuitability", "serviceBannerBucket", "templateEnvironment", "templateEnvironmentInfo", "uniqueResourcePrefix", "updatedAt", "valuesName"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -176,6 +177,7 @@ class SherlockEnvironmentV3(BaseModel):
             "requiredRole": obj.get("requiredRole"),
             "requiredRoleInfo": SherlockRoleV3.from_dict(obj["requiredRoleInfo"]) if obj.get("requiredRoleInfo") is not None else None,
             "requiresSuitability": obj.get("requiresSuitability"),
+            "serviceBannerBucket": obj.get("serviceBannerBucket"),
             "templateEnvironment": obj.get("templateEnvironment"),
             "templateEnvironmentInfo": obj.get("templateEnvironmentInfo"),
             "uniqueResourcePrefix": obj.get("uniqueResourcePrefix"),

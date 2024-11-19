@@ -164,6 +164,12 @@ export interface SherlockEnvironmentV3Create {
      */
     requiresSuitability?: boolean;
     /**
+     * 
+     * @type {string}
+     * @memberof SherlockEnvironmentV3Create
+     */
+    serviceBannerBucket?: string;
+    /**
      * Required for dynamic environments
      * @type {string}
      * @memberof SherlockEnvironmentV3Create
@@ -224,6 +230,7 @@ export function SherlockEnvironmentV3CreateFromJSONTyped(json: any, ignoreDiscri
         'preventDeletion': json['preventDeletion'] == null ? undefined : json['preventDeletion'],
         'requiredRole': json['requiredRole'] == null ? undefined : json['requiredRole'],
         'requiresSuitability': json['requiresSuitability'] == null ? undefined : json['requiresSuitability'],
+        'serviceBannerBucket': json['serviceBannerBucket'] == null ? undefined : json['serviceBannerBucket'],
         'templateEnvironment': json['templateEnvironment'] == null ? undefined : json['templateEnvironment'],
         'uniqueResourcePrefix': json['uniqueResourcePrefix'] == null ? undefined : json['uniqueResourcePrefix'],
         'valuesName': json['valuesName'] == null ? undefined : json['valuesName'],
@@ -265,6 +272,7 @@ export function SherlockEnvironmentV3CreateToJSONTyped(value?: SherlockEnvironme
         'preventDeletion': value['preventDeletion'],
         'requiredRole': value['requiredRole'],
         'requiresSuitability': value['requiresSuitability'],
+        'serviceBannerBucket': value['serviceBannerBucket'],
         'templateEnvironment': value['templateEnvironment'],
         'uniqueResourcePrefix': value['uniqueResourcePrefix'],
         'valuesName': value['valuesName'],

@@ -29,6 +29,7 @@ Name | Type | Description | Notes
 **prevent_deletion** | **bool** | Used to protect specific BEEs from deletion (thelma checks this field) | [optional] [default to False]
 **required_role** | **str** | If present, requires membership in the given role for mutations. Set to an empty string to clear. | [optional] 
 **requires_suitability** | **bool** |  | [optional] 
+**service_banner_bucket** | **str** |  | [optional] 
 **template_environment** | **str** | Required for dynamic environments | [optional] 
 **unique_resource_prefix** | **str** | When creating, will be calculated if left empty | [optional] 
 **values_name** | **str** | When creating, defaults to template name or environment name | [optional] 

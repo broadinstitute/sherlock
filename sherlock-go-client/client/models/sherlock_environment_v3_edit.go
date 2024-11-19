@@ -78,6 +78,9 @@ type SherlockEnvironmentV3Edit struct {
 
 	// requires suitability
 	RequiresSuitability bool `json:"requiresSuitability,omitempty"`
+
+	// service banner bucket
+	ServiceBannerBucket string `json:"serviceBannerBucket,omitempty"`
 }
 
 // Validate validates this sherlock environment v3 edit

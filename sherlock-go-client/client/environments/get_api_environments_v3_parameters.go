@@ -210,6 +210,9 @@ type GetAPIEnvironmentsV3Params struct {
 	// RequiresSuitability.
 	RequiresSuitability *bool
 
+	// ServiceBannerBucket.
+	ServiceBannerBucket *string
+
 	/* TemplateEnvironment.
 
 	   Required for dynamic environments
@@ -621,6 +624,17 @@ func (o *GetAPIEnvironmentsV3Params) WithRequiresSuitability(requiresSuitability
 // SetRequiresSuitability adds the requiresSuitability to the get API environments v3 params
 func (o *GetAPIEnvironmentsV3Params) SetRequiresSuitability(requiresSuitability *bool) {
 	o.RequiresSuitability = requiresSuitability
+}
+
+// WithServiceBannerBucket adds the serviceBannerBucket to the get API environments v3 params
+func (o *GetAPIEnvironmentsV3Params) WithServiceBannerBucket(serviceBannerBucket *string) *GetAPIEnvironmentsV3Params {
+	o.SetServiceBannerBucket(serviceBannerBucket)
+	return o
+}
+
+// SetServiceBannerBucket adds the serviceBannerBucket to the get API environments v3 params
+func (o *GetAPIEnvironmentsV3Params) SetServiceBannerBucket(serviceBannerBucket *string) {
+	o.ServiceBannerBucket = serviceBannerBucket
 }
 
 // WithTemplateEnvironment adds the templateEnvironment to the get API environments v3 params
@@ -1146,6 +1160,23 @@ func (o *GetAPIEnvironmentsV3Params) WriteToRequest(r runtime.ClientRequest, reg
 		if qRequiresSuitability != "" {
 
 			if err := r.SetQueryParam("requiresSuitability", qRequiresSuitability); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.ServiceBannerBucket != nil {
+
+		// query param serviceBannerBucket
+		var qrServiceBannerBucket string
+
+		if o.ServiceBannerBucket != nil {
+			qrServiceBannerBucket = *o.ServiceBannerBucket
+		}
+		qServiceBannerBucket := qrServiceBannerBucket
+		if qServiceBannerBucket != "" {
+
+			if err := r.SetQueryParam("serviceBannerBucket", qServiceBannerBucket); err != nil {
 				return err
 			}
 		}

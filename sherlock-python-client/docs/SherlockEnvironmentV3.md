@@ -36,6 +36,7 @@ Name | Type | Description | Notes
 **required_role** | **str** | If present, requires membership in the given role for mutations. Set to an empty string to clear. | [optional] 
 **required_role_info** | [**SherlockRoleV3**](SherlockRoleV3.md) |  | [optional] 
 **requires_suitability** | **bool** |  | [optional] 
+**service_banner_bucket** | **str** |  | [optional] 
 **template_environment** | **str** | Required for dynamic environments | [optional] 
 **template_environment_info** | **object** |  | [optional] 
 **unique_resource_prefix** | **str** | When creating, will be calculated if left empty | [optional] 

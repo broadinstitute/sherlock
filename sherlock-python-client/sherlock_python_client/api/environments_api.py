@@ -72,6 +72,7 @@ class EnvironmentsApi:
         prevent_deletion: Annotated[Optional[StrictBool], Field(description="Used to protect specific BEEs from deletion (thelma checks this field)")] = None,
         required_role: Annotated[Optional[StrictStr], Field(description="If present, requires membership in the given role for mutations. Set to an empty string to clear.")] = None,
         requires_suitability: Optional[StrictBool] = None,
+        service_banner_bucket: Optional[StrictStr] = None,
         template_environment: Annotated[Optional[StrictStr], Field(description="Required for dynamic environments")] = None,
         unique_resource_prefix: Annotated[Optional[StrictStr], Field(description="When creating, will be calculated if left empty")] = None,
         updated_at: Optional[datetime] = None,
@@ -147,6 +148,8 @@ class EnvironmentsApi:
         :type required_role: str
         :param requires_suitability:
         :type requires_suitability: bool
+        :param service_banner_bucket:
+        :type service_banner_bucket: str
         :param template_environment: Required for dynamic environments
         :type template_environment: str
         :param unique_resource_prefix: When creating, will be calculated if left empty
@@ -208,6 +211,7 @@ class EnvironmentsApi:
             prevent_deletion=prevent_deletion,
             required_role=required_role,
             requires_suitability=requires_suitability,
+            service_banner_bucket=service_banner_bucket,
             template_environment=template_environment,
             unique_resource_prefix=unique_resource_prefix,
             updated_at=updated_at,
@@ -269,6 +273,7 @@ class EnvironmentsApi:
         prevent_deletion: Annotated[Optional[StrictBool], Field(description="Used to protect specific BEEs from deletion (thelma checks this field)")] = None,
         required_role: Annotated[Optional[StrictStr], Field(description="If present, requires membership in the given role for mutations. Set to an empty string to clear.")] = None,
         requires_suitability: Optional[StrictBool] = None,
+        service_banner_bucket: Optional[StrictStr] = None,
         template_environment: Annotated[Optional[StrictStr], Field(description="Required for dynamic environments")] = None,
         unique_resource_prefix: Annotated[Optional[StrictStr], Field(description="When creating, will be calculated if left empty")] = None,
         updated_at: Optional[datetime] = None,
@@ -344,6 +349,8 @@ class EnvironmentsApi:
         :type required_role: str
         :param requires_suitability:
         :type requires_suitability: bool
+        :param service_banner_bucket:
+        :type service_banner_bucket: str
         :param template_environment: Required for dynamic environments
         :type template_environment: str
         :param unique_resource_prefix: When creating, will be calculated if left empty
@@ -405,6 +412,7 @@ class EnvironmentsApi:
             prevent_deletion=prevent_deletion,
             required_role=required_role,
             requires_suitability=requires_suitability,
+            service_banner_bucket=service_banner_bucket,
             template_environment=template_environment,
             unique_resource_prefix=unique_resource_prefix,
             updated_at=updated_at,
@@ -466,6 +474,7 @@ class EnvironmentsApi:
         prevent_deletion: Annotated[Optional[StrictBool], Field(description="Used to protect specific BEEs from deletion (thelma checks this field)")] = None,
         required_role: Annotated[Optional[StrictStr], Field(description="If present, requires membership in the given role for mutations. Set to an empty string to clear.")] = None,
         requires_suitability: Optional[StrictBool] = None,
+        service_banner_bucket: Optional[StrictStr] = None,
         template_environment: Annotated[Optional[StrictStr], Field(description="Required for dynamic environments")] = None,
         unique_resource_prefix: Annotated[Optional[StrictStr], Field(description="When creating, will be calculated if left empty")] = None,
         updated_at: Optional[datetime] = None,
@@ -541,6 +550,8 @@ class EnvironmentsApi:
         :type required_role: str
         :param requires_suitability:
         :type requires_suitability: bool
+        :param service_banner_bucket:
+        :type service_banner_bucket: str
         :param template_environment: Required for dynamic environments
         :type template_environment: str
         :param unique_resource_prefix: When creating, will be calculated if left empty
@@ -602,6 +613,7 @@ class EnvironmentsApi:
             prevent_deletion=prevent_deletion,
             required_role=required_role,
             requires_suitability=requires_suitability,
+            service_banner_bucket=service_banner_bucket,
             template_environment=template_environment,
             unique_resource_prefix=unique_resource_prefix,
             updated_at=updated_at,
@@ -658,6 +670,7 @@ class EnvironmentsApi:
         prevent_deletion,
         required_role,
         requires_suitability,
+        service_banner_bucket,
         template_environment,
         unique_resource_prefix,
         updated_at,
@@ -825,6 +838,10 @@ class EnvironmentsApi:
         if requires_suitability is not None:
             
             _query_params.append(('requiresSuitability', requires_suitability))
+            
+        if service_banner_bucket is not None:
+            
+            _query_params.append(('serviceBannerBucket', service_banner_bucket))
             
         if template_environment is not None:
             

@@ -54,7 +54,8 @@ class TestSherlockEnvironmentV3Edit(unittest.TestCase):
                 pagerduty_integration = '',
                 prevent_deletion = True,
                 required_role = '',
-                requires_suitability = True
+                requires_suitability = True,
+                service_banner_bucket = ''
             )
         else:
             return SherlockEnvironmentV3Edit(

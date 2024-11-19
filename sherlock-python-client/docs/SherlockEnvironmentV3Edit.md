@@ -24,6 +24,7 @@ Name | Type | Description | Notes
 **prevent_deletion** | **bool** | Used to protect specific BEEs from deletion (thelma checks this field) | [optional] [default to False]
 **required_role** | **str** | If present, requires membership in the given role for mutations. Set to an empty string to clear. | [optional] 
 **requires_suitability** | **bool** |  | [optional] 
+**service_banner_bucket** | **str** |  | [optional] 
 
 ## Example
 

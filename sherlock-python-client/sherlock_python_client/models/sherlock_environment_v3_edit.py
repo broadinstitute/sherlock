@@ -47,8 +47,9 @@ class SherlockEnvironmentV3Edit(BaseModel):
     prevent_deletion: Optional[StrictBool] = Field(default=False, description="Used to protect specific BEEs from deletion (thelma checks this field)", alias="preventDeletion")
     required_role: Optional[StrictStr] = Field(default=None, description="If present, requires membership in the given role for mutations. Set to an empty string to clear.", alias="requiredRole")
     requires_suitability: Optional[StrictBool] = Field(default=None, alias="requiresSuitability")
+    service_banner_bucket: Optional[StrictStr] = Field(default=None, alias="serviceBannerBucket")
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["baseDomain", "defaultCluster", "deleteAfter", "description", "enableJanitor", "helmfileRef", "namePrefixesDomain", "offline", "offlineScheduleBeginEnabled", "offlineScheduleBeginTime", "offlineScheduleEndEnabled", "offlineScheduleEndTime", "offlineScheduleEndWeekends", "owner", "pactIdentifier", "pagerdutyIntegration", "preventDeletion", "requiredRole", "requiresSuitability"]
+    __properties: ClassVar[List[str]] = ["baseDomain", "defaultCluster", "deleteAfter", "description", "enableJanitor", "helmfileRef", "namePrefixesDomain", "offline", "offlineScheduleBeginEnabled", "offlineScheduleBeginTime", "offlineScheduleEndEnabled", "offlineScheduleEndTime", "offlineScheduleEndWeekends", "owner", "pactIdentifier", "pagerdutyIntegration", "preventDeletion", "requiredRole", "requiresSuitability", "serviceBannerBucket"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -126,7 +127,8 @@ class SherlockEnvironmentV3Edit(BaseModel):
             "pagerdutyIntegration": obj.get("pagerdutyIntegration"),
             "preventDeletion": obj.get("preventDeletion") if obj.get("preventDeletion") is not None else False,
             "requiredRole": obj.get("requiredRole"),
-            "requiresSuitability": obj.get("requiresSuitability")
+            "requiresSuitability": obj.get("requiresSuitability"),
+            "serviceBannerBucket": obj.get("serviceBannerBucket")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

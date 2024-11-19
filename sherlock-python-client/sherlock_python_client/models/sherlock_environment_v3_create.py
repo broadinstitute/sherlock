@@ -52,11 +52,12 @@ class SherlockEnvironmentV3Create(BaseModel):
     prevent_deletion: Optional[StrictBool] = Field(default=False, description="Used to protect specific BEEs from deletion (thelma checks this field)", alias="preventDeletion")
     required_role: Optional[StrictStr] = Field(default=None, description="If present, requires membership in the given role for mutations. Set to an empty string to clear.", alias="requiredRole")
     requires_suitability: Optional[StrictBool] = Field(default=None, alias="requiresSuitability")
+    service_banner_bucket: Optional[StrictStr] = Field(default=None, alias="serviceBannerBucket")
     template_environment: Optional[StrictStr] = Field(default=None, description="Required for dynamic environments", alias="templateEnvironment")
     unique_resource_prefix: Optional[StrictStr] = Field(default=None, description="When creating, will be calculated if left empty", alias="uniqueResourcePrefix")
     values_name: Optional[StrictStr] = Field(default=None, description="When creating, defaults to template name or environment name", alias="valuesName")
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["autoPopulateChartReleases", "base", "baseDomain", "defaultCluster", "defaultNamespace", "deleteAfter", "description", "enableJanitor", "helmfileRef", "lifecycle", "name", "namePrefixesDomain", "offline", "offlineScheduleBeginEnabled", "offlineScheduleBeginTime", "offlineScheduleEndEnabled", "offlineScheduleEndTime", "offlineScheduleEndWeekends", "owner", "pactIdentifier", "pagerdutyIntegration", "preventDeletion", "requiredRole", "requiresSuitability", "templateEnvironment", "uniqueResourcePrefix", "valuesName"]
+    __properties: ClassVar[List[str]] = ["autoPopulateChartReleases", "base", "baseDomain", "defaultCluster", "defaultNamespace", "deleteAfter", "description", "enableJanitor", "helmfileRef", "lifecycle", "name", "namePrefixesDomain", "offline", "offlineScheduleBeginEnabled", "offlineScheduleBeginTime", "offlineScheduleEndEnabled", "offlineScheduleEndTime", "offlineScheduleEndWeekends", "owner", "pactIdentifier", "pagerdutyIntegration", "preventDeletion", "requiredRole", "requiresSuitability", "serviceBannerBucket", "templateEnvironment", "uniqueResourcePrefix", "valuesName"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -140,6 +141,7 @@ class SherlockEnvironmentV3Create(BaseModel):
             "preventDeletion": obj.get("preventDeletion") if obj.get("preventDeletion") is not None else False,
             "requiredRole": obj.get("requiredRole"),
             "requiresSuitability": obj.get("requiresSuitability"),
+            "serviceBannerBucket": obj.get("serviceBannerBucket"),
             "templateEnvironment": obj.get("templateEnvironment"),
             "uniqueResourcePrefix": obj.get("uniqueResourcePrefix"),
             "valuesName": obj.get("valuesName")

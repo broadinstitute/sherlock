@@ -58,6 +58,7 @@ export interface ApiEnvironmentsV3GetRequest {
     preventDeletion?: boolean;
     requiredRole?: string;
     requiresSuitability?: boolean;
+    serviceBannerBucket?: string;
     templateEnvironment?: string;
     uniqueResourcePrefix?: string;
     updatedAt?: Date;
@@ -197,6 +198,10 @@ export class EnvironmentsApi extends runtime.BaseAPI {
 
         if (requestParameters['requiresSuitability'] != null) {
             queryParameters['requiresSuitability'] = requestParameters['requiresSuitability'];
+        }
+
+        if (requestParameters['serviceBannerBucket'] != null) {
+            queryParameters['serviceBannerBucket'] = requestParameters['serviceBannerBucket'];
         }
 
         if (requestParameters['templateEnvironment'] != null) {

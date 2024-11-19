@@ -607,6 +607,7 @@ class TestSherlockChartReleaseV3(unittest.TestCase):
                         suspend_non_suitable_users = True, 
                         updated_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), ), 
                     requires_suitability = True, 
+                    service_banner_bucket = '', 
                     template_environment = '', 
                     template_environment_info = sherlock_python_client.models.template_environment_info.templateEnvironmentInfo(), 
                     unique_resource_prefix = '', 

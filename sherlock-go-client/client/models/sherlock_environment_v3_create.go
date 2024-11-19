@@ -94,6 +94,9 @@ type SherlockEnvironmentV3Create struct {
 	// requires suitability
 	RequiresSuitability bool `json:"requiresSuitability,omitempty"`
 
+	// service banner bucket
+	ServiceBannerBucket string `json:"serviceBannerBucket,omitempty"`
+
 	// Required for dynamic environments
 	TemplateEnvironment string `json:"templateEnvironment,omitempty"`
 

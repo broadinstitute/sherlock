@@ -242,6 +242,12 @@ export interface SherlockEnvironmentV3 {
      */
     requiresSuitability?: boolean;
     /**
+     * 
+     * @type {string}
+     * @memberof SherlockEnvironmentV3
+     */
+    serviceBannerBucket?: string;
+    /**
      * Required for dynamic environments
      * @type {string}
      * @memberof SherlockEnvironmentV3
@@ -321,6 +327,7 @@ export function SherlockEnvironmentV3FromJSONTyped(json: any, ignoreDiscriminato
         'requiredRole': json['requiredRole'] == null ? undefined : json['requiredRole'],
         'requiredRoleInfo': json['requiredRoleInfo'] == null ? undefined : SherlockRoleV3FromJSON(json['requiredRoleInfo']),
         'requiresSuitability': json['requiresSuitability'] == null ? undefined : json['requiresSuitability'],
+        'serviceBannerBucket': json['serviceBannerBucket'] == null ? undefined : json['serviceBannerBucket'],
         'templateEnvironment': json['templateEnvironment'] == null ? undefined : json['templateEnvironment'],
         'templateEnvironmentInfo': json['templateEnvironmentInfo'] == null ? undefined : json['templateEnvironmentInfo'],
         'uniqueResourcePrefix': json['uniqueResourcePrefix'] == null ? undefined : json['uniqueResourcePrefix'],
@@ -371,6 +378,7 @@ export function SherlockEnvironmentV3ToJSONTyped(value?: SherlockEnvironmentV3 |
         'requiredRole': value['requiredRole'],
         'requiredRoleInfo': SherlockRoleV3ToJSON(value['requiredRoleInfo']),
         'requiresSuitability': value['requiresSuitability'],
+        'serviceBannerBucket': value['serviceBannerBucket'],
         'templateEnvironment': value['templateEnvironment'],
         'templateEnvironmentInfo': value['templateEnvironmentInfo'],
         'uniqueResourcePrefix': value['uniqueResourcePrefix'],

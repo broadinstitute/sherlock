@@ -133,6 +133,12 @@ export interface SherlockEnvironmentV3Edit {
      * @memberof SherlockEnvironmentV3Edit
      */
     requiresSuitability?: boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof SherlockEnvironmentV3Edit
+     */
+    serviceBannerBucket?: string;
 }
 
 /**
@@ -171,6 +177,7 @@ export function SherlockEnvironmentV3EditFromJSONTyped(json: any, ignoreDiscrimi
         'preventDeletion': json['preventDeletion'] == null ? undefined : json['preventDeletion'],
         'requiredRole': json['requiredRole'] == null ? undefined : json['requiredRole'],
         'requiresSuitability': json['requiresSuitability'] == null ? undefined : json['requiresSuitability'],
+        'serviceBannerBucket': json['serviceBannerBucket'] == null ? undefined : json['serviceBannerBucket'],
     };
 }
 
@@ -204,6 +211,7 @@ export function SherlockEnvironmentV3EditToJSONTyped(value?: SherlockEnvironment
         'preventDeletion': value['preventDeletion'],
         'requiredRole': value['requiredRole'],
         'requiresSuitability': value['requiresSuitability'],
+        'serviceBannerBucket': value['serviceBannerBucket'],
     };
 }
 

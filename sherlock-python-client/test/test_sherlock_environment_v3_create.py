@@ -60,6 +60,7 @@ class TestSherlockEnvironmentV3Create(unittest.TestCase):
                 prevent_deletion = True,
                 required_role = '',
                 requires_suitability = True,
+                service_banner_bucket = '',
                 template_environment = '',
                 unique_resource_prefix = '',
                 values_name = ''

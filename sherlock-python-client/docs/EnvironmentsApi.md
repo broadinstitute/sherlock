@@ -12,7 +12,7 @@ Method | HTTP request | Description
 
 
 # **api_environments_v3_get**
-> List[SherlockEnvironmentV3] api_environments_v3_get(auto_populate_chart_releases=auto_populate_chart_releases, base=base, base_domain=base_domain, created_at=created_at, default_cluster=default_cluster, default_namespace=default_namespace, delete_after=delete_after, description=description, enable_janitor=enable_janitor, helmfile_ref=helmfile_ref, id=id, lifecycle=lifecycle, name=name, name_prefixes_domain=name_prefixes_domain, offline=offline, offline_schedule_begin_enabled=offline_schedule_begin_enabled, offline_schedule_begin_time=offline_schedule_begin_time, offline_schedule_end_enabled=offline_schedule_end_enabled, offline_schedule_end_time=offline_schedule_end_time, offline_schedule_end_weekends=offline_schedule_end_weekends, owner=owner, pact_identifier=pact_identifier, pagerduty_integration=pagerduty_integration, prevent_deletion=prevent_deletion, required_role=required_role, requires_suitability=requires_suitability, template_environment=template_environment, unique_resource_prefix=unique_resource_prefix, updated_at=updated_at, values_name=values_name, limit=limit, offset=offset)
+> List[SherlockEnvironmentV3] api_environments_v3_get(auto_populate_chart_releases=auto_populate_chart_releases, base=base, base_domain=base_domain, created_at=created_at, default_cluster=default_cluster, default_namespace=default_namespace, delete_after=delete_after, description=description, enable_janitor=enable_janitor, helmfile_ref=helmfile_ref, id=id, lifecycle=lifecycle, name=name, name_prefixes_domain=name_prefixes_domain, offline=offline, offline_schedule_begin_enabled=offline_schedule_begin_enabled, offline_schedule_begin_time=offline_schedule_begin_time, offline_schedule_end_enabled=offline_schedule_end_enabled, offline_schedule_end_time=offline_schedule_end_time, offline_schedule_end_weekends=offline_schedule_end_weekends, owner=owner, pact_identifier=pact_identifier, pagerduty_integration=pagerduty_integration, prevent_deletion=prevent_deletion, required_role=required_role, requires_suitability=requires_suitability, service_banner_bucket=service_banner_bucket, template_environment=template_environment, unique_resource_prefix=unique_resource_prefix, updated_at=updated_at, values_name=values_name, limit=limit, offset=offset)
 
 List Environments matching a filter
 
@@ -64,6 +64,7 @@ with sherlock_python_client.ApiClient(configuration) as api_client:
     prevent_deletion = False # bool | Used to protect specific BEEs from deletion (thelma checks this field) (optional) (default to False)
     required_role = 'required_role_example' # str | If present, requires membership in the given role for mutations. Set to an empty string to clear. (optional)
     requires_suitability = True # bool |  (optional)
+    service_banner_bucket = 'service_banner_bucket_example' # str |  (optional)
     template_environment = 'template_environment_example' # str | Required for dynamic environments (optional)
     unique_resource_prefix = 'unique_resource_prefix_example' # str | When creating, will be calculated if left empty (optional)
     updated_at = '2013-10-20T19:20:30+01:00' # datetime |  (optional)
@@ -73,7 +74,7 @@ with sherlock_python_client.ApiClient(configuration) as api_client:
 
     try:
         # List Environments matching a filter
-        api_response = api_instance.api_environments_v3_get(auto_populate_chart_releases=auto_populate_chart_releases, base=base, base_domain=base_domain, created_at=created_at, default_cluster=default_cluster, default_namespace=default_namespace, delete_after=delete_after, description=description, enable_janitor=enable_janitor, helmfile_ref=helmfile_ref, id=id, lifecycle=lifecycle, name=name, name_prefixes_domain=name_prefixes_domain, offline=offline, offline_schedule_begin_enabled=offline_schedule_begin_enabled, offline_schedule_begin_time=offline_schedule_begin_time, offline_schedule_end_enabled=offline_schedule_end_enabled, offline_schedule_end_time=offline_schedule_end_time, offline_schedule_end_weekends=offline_schedule_end_weekends, owner=owner, pact_identifier=pact_identifier, pagerduty_integration=pagerduty_integration, prevent_deletion=prevent_deletion, required_role=required_role, requires_suitability=requires_suitability, template_environment=template_environment, unique_resource_prefix=unique_resource_prefix, updated_at=updated_at, values_name=values_name, limit=limit, offset=offset)
+        api_response = api_instance.api_environments_v3_get(auto_populate_chart_releases=auto_populate_chart_releases, base=base, base_domain=base_domain, created_at=created_at, default_cluster=default_cluster, default_namespace=default_namespace, delete_after=delete_after, description=description, enable_janitor=enable_janitor, helmfile_ref=helmfile_ref, id=id, lifecycle=lifecycle, name=name, name_prefixes_domain=name_prefixes_domain, offline=offline, offline_schedule_begin_enabled=offline_schedule_begin_enabled, offline_schedule_begin_time=offline_schedule_begin_time, offline_schedule_end_enabled=offline_schedule_end_enabled, offline_schedule_end_time=offline_schedule_end_time, offline_schedule_end_weekends=offline_schedule_end_weekends, owner=owner, pact_identifier=pact_identifier, pagerduty_integration=pagerduty_integration, prevent_deletion=prevent_deletion, required_role=required_role, requires_suitability=requires_suitability, service_banner_bucket=service_banner_bucket, template_environment=template_environment, unique_resource_prefix=unique_resource_prefix, updated_at=updated_at, values_name=values_name, limit=limit, offset=offset)
         print("The response of EnvironmentsApi->api_environments_v3_get:\n")
         pprint(api_response)
     except Exception as e:
@@ -113,6 +114,7 @@ Name | Type | Description  | Notes
  **prevent_deletion** | **bool**| Used to protect specific BEEs from deletion (thelma checks this field) | [optional] [default to False]
  **required_role** | **str**| If present, requires membership in the given role for mutations. Set to an empty string to clear. | [optional] 
  **requires_suitability** | **bool**|  | [optional] 
+ **service_banner_bucket** | **str**|  | [optional] 
  **template_environment** | **str**| Required for dynamic environments | [optional] 
  **unique_resource_prefix** | **str**| When creating, will be calculated if left empty | [optional] 
  **updated_at** | **datetime**|  | [optional] 
