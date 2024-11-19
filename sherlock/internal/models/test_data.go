@@ -793,6 +793,7 @@ func (td *testDataImpl) Environment_Prod() Environment {
 			Description:               utils.PointerTo("Terra's production environment"),
 			PagerdutyIntegrationID:    utils.PointerTo(td.PagerdutyIntegration_ManuallyTriggeredTerraIncident().ID),
 			Offline:                   utils.PointerTo(false),
+			ServiceBannerBucket:       utils.PointerTo("firecloud-alerts"),
 		}
 		td.h.SetSuitableTestUserForDB()
 		td.create(&td.environment_prod)
@@ -817,6 +818,7 @@ func (td *testDataImpl) Environment_Staging() Environment {
 			PreventDeletion:           utils.PointerTo(true),
 			Description:               utils.PointerTo("Terra's staging environment"),
 			Offline:                   utils.PointerTo(false),
+			ServiceBannerBucket:       utils.PointerTo("firecloud-alerts-staging"),
 		}
 		td.h.SetSuitableTestUserForDB()
 		td.create(&td.environment_staging)
@@ -841,6 +843,7 @@ func (td *testDataImpl) Environment_Dev() Environment {
 			PreventDeletion:           utils.PointerTo(true),
 			Description:               utils.PointerTo("Terra's development environment"),
 			Offline:                   utils.PointerTo(false),
+			ServiceBannerBucket:       utils.PointerTo("firecloud-alerts-dev"),
 		}
 		td.h.SetSuitableTestUserForDB()
 		td.create(&td.environment_dev)
@@ -865,6 +868,7 @@ func (td *testDataImpl) Environment_Swatomation() Environment {
 			PreventDeletion:           utils.PointerTo(true),
 			Description:               utils.PointerTo("The software-automation testing template, with all of Terra"),
 			Offline:                   utils.PointerTo(false),
+			ServiceBannerBucket:       utils.PointerTo("firecloud-alerts-qa-bees"),
 		}
 		// Config defines honeycomb as being auto-populated in template environments
 		td.Chart_Honeycomb()

@@ -57,6 +57,7 @@ type EnvironmentV3Edit struct {
 	OfflineScheduleEndTime      *time.Time `json:"offlineScheduleEndTime,omitempty" form:"offlineScheduleEndTime"  format:"date-time"`     // Stored with timezone to determine day of the week
 	OfflineScheduleEndWeekends  *bool      `json:"offlineScheduleEndWeekends,omitempty" form:"offlineScheduleEndWeekends"`
 	EnableJanitor               *bool      `json:"enableJanitor,omitempty" form:"enableJanitor"` // If true, janitor resource cleanup will be enabled for this environment. BEEs default to template's value, templates default to true, and static/live environments default to false.
+	ServiceBannerBucket         *string    `json:"serviceBannerBucket" form:"serviceBannerBucket"`
 }
 
 func (e EnvironmentV3) toModel(db *gorm.DB) (models.Environment, error) {
@@ -83,6 +84,7 @@ func (e EnvironmentV3) toModel(db *gorm.DB) (models.Environment, error) {
 		OfflineScheduleEndWeekends:  e.OfflineScheduleEndWeekends,
 		PactIdentifier:              e.PactIdentifier,
 		EnableJanitor:               e.EnableJanitor,
+		ServiceBannerBucket:         e.ServiceBannerBucket,
 	}
 	if e.DeleteAfter != nil {
 		if *e.DeleteAfter == "" {
@@ -200,6 +202,7 @@ func environmentFromModel(model models.Environment) EnvironmentV3 {
 				OfflineScheduleEndEnabled:   model.OfflineScheduleEndEnabled,
 				OfflineScheduleEndWeekends:  model.OfflineScheduleEndWeekends,
 				EnableJanitor:               model.EnableJanitor,
+				ServiceBannerBucket:         model.ServiceBannerBucket,
 			},
 		},
 	}
