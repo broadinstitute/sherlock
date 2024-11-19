@@ -1111,8 +1111,6 @@ definitions:
         $ref: '#/definitions/sherlock.RoleV3'
       requiresSuitability:
         type: boolean
-      serviceBannerBucket:
-        type: string
       templateEnvironment:
         description: Required for dynamic environments
         type: string
@@ -1211,8 +1209,6 @@ definitions:
         type: string
       requiresSuitability:
         type: boolean
-      serviceBannerBucket:
-        type: string
       templateEnvironment:
         description: Required for dynamic environments
         type: string
@@ -1289,8 +1285,6 @@ definitions:
         type: string
       requiresSuitability:
         type: boolean
-      serviceBannerBucket:
-        type: string
     type: object
   sherlock.GitCommitV3:
     properties:
@@ -5313,9 +5307,6 @@ paths:
       - in: query
         name: requiresSuitability
         type: boolean
-      - in: query
-        name: serviceBannerBucket
-        type: string
       - description: Required for dynamic environments
         in: query
         name: templateEnvironment

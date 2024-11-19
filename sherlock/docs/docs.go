@@ -5069,11 +5069,6 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "name": "serviceBannerBucket",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
                         "description": "Required for dynamic environments",
                         "name": "templateEnvironment",
                         "in": "query"
@@ -9361,9 +9356,6 @@ const docTemplate = `{
                 "requiresSuitability": {
                     "type": "boolean"
                 },
-                "serviceBannerBucket": {
-                    "type": "string"
-                },
                 "templateEnvironment": {
                     "description": "Required for dynamic environments",
                     "type": "string"
@@ -9484,9 +9476,6 @@ const docTemplate = `{
                 "requiresSuitability": {
                     "type": "boolean"
                 },
-                "serviceBannerBucket": {
-                    "type": "string"
-                },
                 "templateEnvironment": {
                     "description": "Required for dynamic environments",
                     "type": "string"
@@ -9578,9 +9567,6 @@ const docTemplate = `{
                 },
                 "requiresSuitability": {
                     "type": "boolean"
-                },
-                "serviceBannerBucket": {
-                    "type": "string"
                 }
             }
         },

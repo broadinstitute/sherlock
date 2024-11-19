@@ -5066,11 +5066,6 @@
                     },
                     {
                         "type": "string",
-                        "name": "serviceBannerBucket",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
                         "description": "Required for dynamic environments",
                         "name": "templateEnvironment",
                         "in": "query"
@@ -9358,9 +9353,6 @@
                 "requiresSuitability": {
                     "type": "boolean"
                 },
-                "serviceBannerBucket": {
-                    "type": "string"
-                },
                 "templateEnvironment": {
                     "description": "Required for dynamic environments",
                     "type": "string"
@@ -9481,9 +9473,6 @@
                 "requiresSuitability": {
                     "type": "boolean"
                 },
-                "serviceBannerBucket": {
-                    "type": "string"
-                },
                 "templateEnvironment": {
                     "description": "Required for dynamic environments",
                     "type": "string"
@@ -9575,9 +9564,6 @@
                 },
                 "requiresSuitability": {
                     "type": "boolean"
-                },
-                "serviceBannerBucket": {
-                    "type": "string"
                 }
             }
         },
