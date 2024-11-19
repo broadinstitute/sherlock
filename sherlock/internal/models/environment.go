@@ -53,6 +53,7 @@ type Environment struct {
 	OfflineScheduleEndWeekends  *bool
 	PactIdentifier              *uuid.UUID
 	EnableJanitor               *bool
+	ServiceBannerBucket         *string
 }
 
 func (e *Environment) GetCiIdentifier() CiIdentifier {
@@ -298,6 +299,10 @@ func (e *Environment) setCreationDefaults(tx *gorm.DB) error {
 					e.Name = strings.TrimSuffix(e.Name[0:31], "-")
 				}
 			}
+		}
+
+		if e.ServiceBannerBucket == nil {
+			e.ServiceBannerBucket = template.ServiceBannerBucket
 		}
 	} else {
 		if e.ValuesName == "" {

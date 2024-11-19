@@ -456,3 +456,26 @@ func TestEnvironment_ArgoCdUrl(t *testing.T) {
 		})
 	}
 }
+
+func (s *modelSuite) TestEnvironmentLiveServiceBannerDefaultUnpopulated() {
+	ddpAzureProd := s.TestData.Environment_DdpAzureProd()
+	ddpAsureDev := s.TestData.Environment_DdpAzureDev()
+
+	s.Nil(ddpAsureDev.ServiceBannerBucket)
+	s.Nil(ddpAzureProd.ServiceBannerBucket)
+}
+
+func (s *modelSuite) TestEnvironmentLiveServiceBannerPopulated() {
+	dev := s.TestData.Environment_Dev()
+	prod := s.TestData.Environment_Prod()
+
+	s.Equal(*dev.ServiceBannerBucket, "firecloud-alerts-dev")
+	s.Equal(*prod.ServiceBannerBucket, "firecloud-alerts")
+}
+
+func (s *modelSuite) TestEnvironmentBeeServiceBannerDefaultPopulated() {
+	swatTpl := s.TestData.Environment_Swatomation()
+	bee := s.TestData.Environment_Swatomation_TestBee()
+
+	s.Equal(*bee.ServiceBannerBucket, *swatTpl.ServiceBannerBucket)
+}

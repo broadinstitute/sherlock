@@ -175,6 +175,7 @@ func (s *handlerSuite) TestEnvironmentV3_toModel() {
 						OfflineScheduleEndTime:      utils.PointerTo(now),
 						OfflineScheduleEndWeekends:  utils.PointerTo(true),
 						EnableJanitor:               utils.PointerTo(true),
+						ServiceBannerBucket: 		utils.PointerTo("firecloud-alerts-qa-bees"),
 					},
 				},
 			},
@@ -215,6 +216,7 @@ func (s *handlerSuite) TestEnvironmentV3_toModel() {
 				OfflineScheduleEndWeekends:  utils.PointerTo(true),
 				PactIdentifier:              &pactUuid,
 				EnableJanitor:               utils.PointerTo(true),
+				ServiceBannerBucket:         utils.PointerTo("firecloud-alerts-qa-bees"),
 			},
 		},
 		{
@@ -253,6 +255,7 @@ func (s *handlerSuite) TestEnvironmentV3_toModel() {
 						OfflineScheduleEndTime:      utils.PointerTo(now),
 						OfflineScheduleEndWeekends:  utils.PointerTo(true),
 						EnableJanitor:               utils.PointerTo(true),
+						ServiceBannerBucket:         utils.PointerTo("firecloud-alerts-qa-bees"),
 					},
 				},
 			},
@@ -292,6 +295,7 @@ func (s *handlerSuite) TestEnvironmentV3_toModel() {
 				OfflineScheduleEndWeekends:  utils.PointerTo(true),
 				PactIdentifier:              &pactUuid,
 				EnableJanitor:               utils.PointerTo(true),
+				ServiceBannerBucket:         utils.PointerTo("firecloud-alerts-qa-bees"),
 			},
 		},
 	}
@@ -380,6 +384,7 @@ func Test_environmentFromModel(t *testing.T) {
 				OfflineScheduleEndWeekends:  utils.PointerTo(true),
 				PactIdentifier:              &pactUuid,
 				EnableJanitor:               utils.PointerTo(true),
+				ServiceBannerBucket:         utils.PointerTo("firecloud-alerts-qa-bees"),
 			}},
 			want: EnvironmentV3{
 				CommonFields: CommonFields{
@@ -423,6 +428,7 @@ func Test_environmentFromModel(t *testing.T) {
 						OfflineScheduleEndTime:      nowTimeParsedAgain,
 						OfflineScheduleEndWeekends:  utils.PointerTo(true),
 						EnableJanitor:               utils.PointerTo(true),
+						ServiceBannerBucket:         utils.PointerTo("firecloud-alerts-qa-bees"),
 					},
 				},
 			},
