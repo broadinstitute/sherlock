@@ -204,3 +204,30 @@ func (s *handlerSuite) TestEnvironmentsV3Edit_deleteAfter_failToParse() {
 	s.Equal(errors.BadRequest, got.Type)
 	s.Contains(got.Message, "foobar")
 }
+
+func (s *handlerSuite) TestEnvironmentsV3Edit_clearExistingBannerBucket() {
+	edit := s.TestData.Environment_Swatomation_TestBee()
+	var got EnvironmentV3
+	code := s.HandleRequest(
+		s.NewRequest("PATCH", fmt.Sprintf("/api/environments/v3/%d", edit.ID), EnvironmentV3Edit{
+			ServiceBannerBucket: utils.PointerTo(""),
+		}),
+		&got)
+	s.Equal(http.StatusOK, code)
+	println(got.ServiceBannerBucket)
+	s.Nil(got.ServiceBannerBucket)
+}
+
+func (s *handlerSuite) TestEnvironmentsV3Edit_setMissingBannerBucket() {
+	edit := s.TestData.Environment_DdpAzureDev()
+	var got EnvironmentV3
+	code := s.HandleRequest(
+		s.NewRequest("PATCH", fmt.Sprintf("/api/environments/v3/%d", edit.ID), EnvironmentV3Edit{
+			ServiceBannerBucket: utils.PointerTo("firecloud-alerts-ddp-azure-dev"),
+		}),
+		&got)
+	s.Equal(http.StatusOK, code)
+	if s.NotNil(got.ServiceBannerBucket) {
+		s.Equal("firecloud-alerts-ddp-azure-dev", *got.ServiceBannerBucket)
+	}
+}

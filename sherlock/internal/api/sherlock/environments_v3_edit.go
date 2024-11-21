@@ -65,5 +65,14 @@ func environmentsV3Edit(ctx *gin.Context) {
 		}
 	}
 
+	// Allow clearing serviceBannerBucket by setting an empty string.
+	if body.ServiceBannerBucket != nil && *body.ServiceBannerBucket == "" {
+		toEdit.ServiceBannerBucket = nil
+		if err = db.Model(&toEdit).Omit(clause.Associations).Update("service_banner_bucket", nil).Error; err != nil {
+			errors.AbortRequest(ctx, err)
+			return
+		}
+	}
+
 	ctx.JSON(http.StatusOK, environmentFromModel(toEdit))
 }
