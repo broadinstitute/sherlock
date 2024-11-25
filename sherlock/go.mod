@@ -29,7 +29,7 @@ require (
 	github.com/jackc/pgx/v5 v5.7.1
 	github.com/jinzhu/copier v0.4.0
 	github.com/knadh/koanf v1.5.0
-	github.com/microsoft/kiota-abstractions-go v1.7.0
+	github.com/microsoft/kiota-abstractions-go v1.8.1
 	github.com/microsoftgraph/msgraph-sdk-go v1.51.0
 	github.com/microsoftgraph/msgraph-sdk-go-core v1.2.1
 	github.com/pact-foundation/pact-go/v2 v2.0.8
@@ -152,7 +152,7 @@ require (
 	github.com/spf13/afero v1.11.0 // indirect
 	github.com/spf13/cobra v1.8.1 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
-	github.com/std-uritemplate/std-uritemplate/go v1.0.5 // indirect
+	github.com/std-uritemplate/std-uritemplate/go/v2 v2.0.1 // indirect
 	github.com/stretchr/objx v0.5.2 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.12 // indirect
