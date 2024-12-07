@@ -110,6 +110,7 @@ func ConfigureRoutes(apiRouter gin.IRoutes) {
 
 	apiRouter.POST("environments/v3", environmentsV3Create)
 	apiRouter.GET("environments/v3", environmentsV3List)
+	apiRouter.PUT("environments/v3", environmentsV3Upsert)
 	apiRouter.DELETE("environments/v3/*selector", environmentsV3Delete)
 	apiRouter.PATCH("environments/v3/*selector", environmentsV3Edit)
 	apiRouter.GET("environments/v3/*selector", environmentsV3Get)
