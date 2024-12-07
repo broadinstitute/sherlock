@@ -48,6 +48,8 @@ func ConfigureRoutes(apiRouter gin.IRoutes) {
 	apiRouter.PATCH("app-versions/v3/*selector", appVersionsV3Edit)
 	apiRouter.GET("app-versions/v3/*selector", appVersionsV3Get)
 
+	apiRouter.POST("asset-inventory/procedures/v3/generate", assetInventoryProceduresV3Generate)
+
 	apiRouter.POST("changesets/procedures/v3/apply", changesetsProceduresV3Apply)
 	apiRouter.GET("changesets/procedures/v3/chart-release-history/*chart-release", changesetsProceduresV3ChartReleaseHistory)
 	apiRouter.POST("changesets/procedures/v3/plan", changesetsProceduresV3Plan)
