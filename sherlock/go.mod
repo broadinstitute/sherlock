@@ -43,11 +43,11 @@ require (
 	github.com/swaggo/swag v1.16.4
 	github.com/zitadel/oidc/v3 v3.33.1
 	go.opencensus.io v0.24.0
-	golang.org/x/crypto v0.29.0
+	golang.org/x/crypto v0.30.0
 	golang.org/x/exp v0.0.0-20240823005443-9b4947da3948
-	golang.org/x/net v0.31.0
+	golang.org/x/net v0.32.0
 	golang.org/x/oauth2 v0.24.0
-	golang.org/x/text v0.20.0
+	golang.org/x/text v0.21.0
 	google.golang.org/api v0.210.0
 	gorm.io/datatypes v1.2.4
 	gorm.io/driver/postgres v1.5.11
@@ -167,8 +167,8 @@ require (
 	go.uber.org/atomic v1.11.0 // indirect
 	golang.org/x/arch v0.9.0 // indirect
 	golang.org/x/mod v0.21.0 // indirect
-	golang.org/x/sync v0.9.0 // indirect
-	golang.org/x/sys v0.27.0 // indirect
+	golang.org/x/sync v0.10.0 // indirect
+	golang.org/x/sys v0.28.0 // indirect
 	golang.org/x/time v0.8.0 // indirect
 	golang.org/x/tools v0.24.0 // indirect
 	golang.org/x/xerrors v0.0.0-20240903120638-7835f813f4da // indirect
