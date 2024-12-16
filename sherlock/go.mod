@@ -43,7 +43,7 @@ require (
 	github.com/swaggo/swag v1.16.4
 	github.com/zitadel/oidc/v3 v3.33.1
 	go.opencensus.io v0.24.0
-	golang.org/x/crypto v0.30.0
+	golang.org/x/crypto v0.31.0
 	golang.org/x/exp v0.0.0-20240823005443-9b4947da3948
 	golang.org/x/net v0.32.0
 	golang.org/x/oauth2 v0.24.0
