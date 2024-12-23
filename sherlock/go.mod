@@ -8,7 +8,7 @@ require (
 	cloud.google.com/go/bigquery v1.65.0
 	cloud.google.com/go/cloudsqlconn v1.13.2
 	cloud.google.com/go/iam v1.3.0
-	cloud.google.com/go/kms v1.20.2
+	cloud.google.com/go/kms v1.20.3
 	cloud.google.com/go/resourcemanager v1.10.2
 	contrib.go.opencensus.io/exporter/prometheus v0.4.2
 	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.8.0
@@ -175,7 +175,7 @@ require (
 	google.golang.org/genproto v0.0.0-20241118233622-e639e219e697 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20241118233622-e639e219e697 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20241209162323-e6fa225c2576 // indirect
-	google.golang.org/grpc v1.67.1 // indirect
+	google.golang.org/grpc v1.67.3 // indirect
 	google.golang.org/protobuf v1.35.2 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
