@@ -8,7 +8,7 @@ require (
 	cloud.google.com/go/bigquery v1.65.0
 	cloud.google.com/go/cloudsqlconn v1.13.2
 	cloud.google.com/go/iam v1.3.0
-	cloud.google.com/go/kms v1.20.3
+	cloud.google.com/go/kms v1.20.5
 	cloud.google.com/go/resourcemanager v1.10.3
 	contrib.go.opencensus.io/exporter/prometheus v0.4.2
 	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.8.0
