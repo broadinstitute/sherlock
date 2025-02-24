@@ -21,7 +21,7 @@ require (
 	github.com/gin-contrib/cors v1.7.3
 	github.com/gin-contrib/secure v1.1.1
 	github.com/gin-gonic/gin v1.10.0
-	github.com/go-jose/go-jose/v4 v4.0.4
+	github.com/go-jose/go-jose/v4 v4.0.5
 	github.com/golang-migrate/migrate/v4 v4.18.1
 	github.com/google/go-cmp v0.6.0
 	github.com/google/go-github/v58 v58.0.0
@@ -43,7 +43,7 @@ require (
 	github.com/swaggo/swag v1.16.4
 	github.com/zitadel/oidc/v3 v3.34.0
 	go.opencensus.io v0.24.0
-	golang.org/x/crypto v0.31.0
+	golang.org/x/crypto v0.32.0
 	golang.org/x/exp v0.0.0-20240823005443-9b4947da3948
 	golang.org/x/net v0.33.0
 	golang.org/x/oauth2 v0.25.0
@@ -168,7 +168,7 @@ require (
 	golang.org/x/arch v0.12.0 // indirect
 	golang.org/x/mod v0.21.0 // indirect
 	golang.org/x/sync v0.10.0 // indirect
-	golang.org/x/sys v0.28.0 // indirect
+	golang.org/x/sys v0.29.0 // indirect
 	golang.org/x/time v0.8.0 // indirect
 	golang.org/x/tools v0.24.0 // indirect
 	golang.org/x/xerrors v0.0.0-20240903120638-7835f813f4da // indirect
