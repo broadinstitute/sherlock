@@ -15,7 +15,9 @@ Method | HTTP request | Description
 
 List GitHub info gleaned from CiRuns
 
-List info about GitHub repos and their workflow files as determined by CiRuns from the past 90 days. This is a useful proxy for figuring out what repos Sherlock probably has access to: workflows listed here can probably successfully called by a GitHub Actions deploy hook.
+List info about GitHub repos and their workflow files as determined by CiRuns from the past 90 days.
+This is a useful proxy for figuring out what repos Sherlock probably has access to: workflows listed
+here can probably successfully called by a GitHub Actions deploy hook.
 
 ### Example
 
@@ -84,7 +86,8 @@ No authorization required
 
 List CiRuns matching a filter
 
-List CiRuns matching a filter. The CiRuns would have to re-queried directly to load any related resources. Results are ordered by start time, starting at most recent.
+List CiRuns matching a filter. The CiRuns would have to re-queried directly to load any related resources.
+Results are ordered by start time, starting at most recent.
 
 ### Example
 
@@ -202,7 +205,12 @@ No authorization required
 
 Create or update a CiRun
 
-Create or update a CiRun with timing, status, and related resource information. This endpoint is idempotent. The fields for clusters, charts, chart releases, environments, etc. all accept selectors, and they will be smart about \"spreading\" to indirect relations. More info is available on the CiRunV3Upsert data type, but the gist is that specifying a changeset implies its chart release (and optionally app/chart versions), specifying or implying a chart release implies its environment/cluster, and specifying an environment/cluster implies all chart releases they contain.
+Create or update a CiRun with timing, status, and related resource information. This endpoint is idempotent.
+The fields for clusters, charts, chart releases, environments, etc. all accept selectors, and they will
+be smart about "spreading" to indirect relations. More info is available on the CiRunV3Upsert data type,
+but the gist is that specifying a changeset implies its chart release (and optionally app/chart versions),
+specifying or implying a chart release implies its environment/cluster, and specifying an environment/cluster
+implies all chart releases they contain.
 
 ### Example
 

@@ -78,7 +78,8 @@ No authorization required
 
 Get Sherlock's current status
 
-Get Sherlock's current status. Right now, this endpoint always returned OK (if the server is online). This endpoint is acceptable to use for a readiness check.
+Get Sherlock's current status. Right now, this endpoint always returned OK (if the server is online).
+This endpoint is acceptable to use for a readiness check.
 
 ### Example
 

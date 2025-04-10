@@ -14,7 +14,8 @@ Method | HTTP request | Description
 
 List GithubActionsJobs matching a filter
 
-List GithubActionsJobs matching a filter. Results are ordered by start time, starting at most recent.
+List GithubActionsJobs matching a filter.
+Results are ordered by start time, starting at most recent.
 
 ### Example
 

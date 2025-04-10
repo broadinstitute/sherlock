@@ -18,7 +18,8 @@ Method | HTTP request | Description
 
 Apply previously planned version changes to Chart Releases
 
-Looks up and applies previously-planned version diffs given by the ID. Other stored plans against the same Chart Releases are marked as superseded. Multiple Changesets can be specified simply by passing multiple IDs in the list.
+Looks up and applies previously-planned version diffs given by the ID. Other stored plans against the same Chart Releases are marked as superseded.
+Multiple Changesets can be specified simply by passing multiple IDs in the list.
 
 ### Example
 

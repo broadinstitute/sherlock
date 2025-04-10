@@ -136,7 +136,9 @@ No authorization required
 
 Create a Role
 
-Create an individual Role with no one assigned to it. Only super-admins may mutate Roles. Propagation will be triggered after this operation.
+Create an individual Role with no one assigned to it.
+Only super-admins may mutate Roles.
+Propagation will be triggered after this operation.
 
 ### Example
 
@@ -211,7 +213,9 @@ No authorization required
 
 Delete a Role
 
-Delete an individual Role. Only super-admins may mutate Roles. Propagation will NOT be triggered after this operation -- the grants will become un-managed by Sherlock and left as-is. Remove role assignments first to remove users from grants.
+Delete an individual Role.
+Only super-admins may mutate Roles.
+Propagation will NOT be triggered after this operation -- the grants will become un-managed by Sherlock and left as-is. Remove role assignments first to remove users from grants.
 
 ### Example
 
@@ -359,7 +363,9 @@ No authorization required
 
 Edit a Role
 
-Edit an individual Role. Only super-admins may mutate Roles. Propagation will be triggered after this operation.
+Edit an individual Role.
+Only super-admins may mutate Roles.
+Propagation will be triggered after this operation.
 
 ### Example
 

@@ -98,7 +98,9 @@ No authorization required
 
 Delete a RoleAssignment
 
-Delete the RoleAssignment between a given Role and User. Non-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role's default break-glass duration in the future. Propagation will be triggered after this operation.
+Delete the RoleAssignment between a given Role and User.
+Non-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role's default break-glass duration in the future.
+Propagation will be triggered after this operation.
 
 ### Example
 
@@ -246,7 +248,9 @@ No authorization required
 
 Edit a RoleAssignment
 
-Edit the RoleAssignment between a given Role and User. Non-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role's default break-glass duration in the future. Propagation will be triggered after this operation.
+Edit the RoleAssignment between a given Role and User.
+Non-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role's default break-glass duration in the future.
+Propagation will be triggered after this operation.
 
 ### Example
 
@@ -325,7 +329,9 @@ No authorization required
 
 Create a RoleAssignment
 
-Create the RoleAssignment between a given Role and User. Non-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role's default break-glass duration in the future. Propagation will be triggered after this operation.
+Create the RoleAssignment between a given Role and User.
+Non-super-admins may only mutate RoleAssignments for themselves, only for roles they can break-glass into, and only with an expiry no further than the role's default break-glass duration in the future.
+Propagation will be triggered after this operation.
 
 ### Example
 

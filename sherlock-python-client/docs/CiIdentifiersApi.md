@@ -13,7 +13,9 @@ Method | HTTP request | Description
 
 List CiIdentifiers matching a filter
 
-List CiIdentifiers matching a filter. The CiRuns would have to re-queried directly to load the CiRuns. This is mainly helpful for debugging and directly querying the existence of a CiIdentifier. Results are ordered by creation date, starting at most recent.
+List CiIdentifiers matching a filter. The CiRuns would have to re-queried directly to load the CiRuns.
+This is mainly helpful for debugging and directly querying the existence of a CiIdentifier. Results are
+ordered by creation date, starting at most recent.
 
 ### Example
 

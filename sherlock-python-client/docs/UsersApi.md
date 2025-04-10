@@ -15,7 +15,9 @@ Method | HTTP request | Description
 
 Deactivate Users
 
-Super-admin only method to deactivate users. Deactivated users will be removed from all roles and can't authenticate to Sherlock. This endpoint can optionally also attempt to suspend the same email handles across given Google Workspace domains, substituting email domains as necessary. It will do so by impersonating the caller in each given domain.
+Super-admin only method to deactivate users. Deactivated users will be removed from all roles and can't authenticate to Sherlock.
+This endpoint can optionally also attempt to suspend the same email handles across given Google Workspace domains, substituting email domains as necessary.
+It will do so by impersonating the caller in each given domain.
 
 ### Example
 
@@ -90,7 +92,8 @@ No authorization required
 
 List Users matching a filter
 
-List Users matching a filter. The results will include suitability and other information. Note that the suitability info can't directly be filtered for at this time.
+List Users matching a filter. The results will include suitability and other information.
+Note that the suitability info can't directly be filtered for at this time.
 
 ### Example
 
@@ -196,7 +199,9 @@ No authorization required
 
 Update the calling User's information
 
-Update the calling User's information. As with all authenticated Sherlock endpoints, newly-observed callers will have a User record added, meaning that this endpoint behaves like an upsert.
+Update the calling User's information. As with all authenticated Sherlock endpoints,
+newly-observed callers will have a User record added, meaning that this endpoint
+behaves like an upsert.
 
 ### Example
 
@@ -272,7 +277,7 @@ No authorization required
 
 Get an individual User
 
-Get an individual User. As a special case, \"me\" or \"self\" can be passed as the selector to get the current user.
+Get an individual User. As a special case, "me" or "self" can be passed as the selector to get the current user.
 
 ### Example
 
