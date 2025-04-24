@@ -7,7 +7,7 @@ toolchain go1.24.2
 require (
 	cloud.google.com/go/bigquery v1.66.2
 	cloud.google.com/go/cloudsqlconn v1.13.2
-	cloud.google.com/go/iam v1.5.0
+	cloud.google.com/go/iam v1.5.2
 	cloud.google.com/go/kms v1.21.2
 	cloud.google.com/go/resourcemanager v1.10.3
 	contrib.go.opencensus.io/exporter/prometheus v0.4.2
