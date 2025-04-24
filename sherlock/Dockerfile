@@ -1,4 +1,4 @@
-ARG GO_VERSION='1.22'
+ARG GO_VERSION='1.24'
 
 # Non-root CBL-Mariner 2.0 runtime image
 # https://mcr.microsoft.com/en-us/product/cbl-mariner/distroless/minimal/about
