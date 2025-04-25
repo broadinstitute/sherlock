@@ -27,7 +27,7 @@ func IsAlphaNumeric(selector string) bool {
 
 func IsLowerAlphaNumeric(selector string) bool {
 	for _, r := range selector {
-		if !unicode.IsDigit(r) && !(unicode.IsLetter(r) && unicode.IsLower(r)) { //nolint:QF1001
+		if !unicode.IsDigit(r) && !(unicode.IsLetter(r) && unicode.IsLower(r)) { // nolint:staticcheck // disables De Morgan's law check
 			return false
 		}
 	}
