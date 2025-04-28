@@ -13,7 +13,7 @@ require (
 	github.com/PagerDuty/go-pagerduty v1.8.0
 	github.com/avast/retry-go/v4 v4.6.0
 	github.com/broadinstitute/sherlock/go-shared v0.0.0
-	github.com/coreos/go-oidc/v3 v3.12.0
+	github.com/coreos/go-oidc/v3 v3.14.1
 	github.com/creasty/defaults v1.8.0
 	github.com/dustinkirkland/golang-petname v0.0.0-20240428194347-eebcea082ee0
 	github.com/gin-contrib/cors v1.7.3
