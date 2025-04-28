@@ -34,7 +34,7 @@ require (
 	github.com/rs/zerolog v1.33.0
 	github.com/sanity-io/litter v1.5.5
 	github.com/sethvargo/go-password v0.3.1
-	github.com/slack-go/slack v0.15.0
+	github.com/slack-go/slack v0.16.0
 	github.com/stretchr/testify v1.10.0
 	github.com/swaggo/files/v2 v2.0.2-0.20240712141554-0590c09f83eb
 	github.com/swaggo/gin-swagger v1.6.1-0.20231210095754-aa92a0ac3f26
