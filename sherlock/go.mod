@@ -34,7 +34,7 @@ require (
 	github.com/microsoftgraph/msgraph-sdk-go-core v1.3.2
 	github.com/pact-foundation/pact-go/v2 v2.0.8
 	github.com/rs/zerolog v1.33.0
-	github.com/sanity-io/litter v1.5.5
+	github.com/sanity-io/litter v1.5.8
 	github.com/sethvargo/go-password v0.3.1
 	github.com/slack-go/slack v0.16.0
 	github.com/stretchr/testify v1.10.0
