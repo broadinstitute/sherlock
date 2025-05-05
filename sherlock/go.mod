@@ -5,7 +5,7 @@ go 1.23.7
 toolchain go1.24.1
 
 require (
-	cloud.google.com/go/bigquery v1.66.2
+	cloud.google.com/go/bigquery v1.67.0
 	cloud.google.com/go/cloudsqlconn v1.13.2
 	cloud.google.com/go/iam v1.5.2
 	cloud.google.com/go/kms v1.21.2
@@ -166,11 +166,11 @@ require (
 	go.opentelemetry.io/otel/trace v1.35.0 // indirect
 	go.uber.org/atomic v1.11.0 // indirect
 	golang.org/x/arch v0.12.0 // indirect
-	golang.org/x/mod v0.22.0 // indirect
+	golang.org/x/mod v0.23.0 // indirect
 	golang.org/x/sync v0.13.0 // indirect
 	golang.org/x/sys v0.32.0 // indirect
 	golang.org/x/time v0.11.0 // indirect
-	golang.org/x/tools v0.29.0 // indirect
+	golang.org/x/tools v0.30.0 // indirect
 	golang.org/x/xerrors v0.0.0-20240903120638-7835f813f4da // indirect
 	google.golang.org/genproto v0.0.0-20250303144028-a0af3efb3deb // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20250414145226-207652e42e2e // indirect
