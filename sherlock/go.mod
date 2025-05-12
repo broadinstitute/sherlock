@@ -18,7 +18,7 @@ require (
 	github.com/coreos/go-oidc/v3 v3.14.1
 	github.com/creasty/defaults v1.8.0
 	github.com/dustinkirkland/golang-petname v0.0.0-20240428194347-eebcea082ee0
-	github.com/gin-contrib/cors v1.7.3
+	github.com/gin-contrib/cors v1.7.5
 	github.com/gin-contrib/secure v1.1.2
 	github.com/gin-gonic/gin v1.10.0
 	github.com/go-jose/go-jose/v4 v4.0.5
