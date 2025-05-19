@@ -11,7 +11,7 @@ require (
 	cloud.google.com/go/kms v1.21.2
 	cloud.google.com/go/resourcemanager v1.10.3
 	contrib.go.opencensus.io/exporter/prometheus v0.4.2
-	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.8.2
+	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.10.0
 	github.com/PagerDuty/go-pagerduty v1.8.0
 	github.com/avast/retry-go/v4 v4.6.0
 	github.com/broadinstitute/sherlock/go-shared v0.0.0
@@ -45,7 +45,7 @@ require (
 	go.opencensus.io v0.24.0
 	golang.org/x/crypto v0.38.0
 	golang.org/x/exp v0.0.0-20240823005443-9b4947da3948
-	golang.org/x/net v0.39.0
+	golang.org/x/net v0.40.0
 	golang.org/x/oauth2 v0.30.0
 	golang.org/x/text v0.25.0
 	google.golang.org/api v0.232.0
@@ -64,7 +64,7 @@ require (
 	cloud.google.com/go/longrunning v0.6.6 // indirect
 	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.18.0 // indirect
-	github.com/Azure/azure-sdk-for-go/sdk/internal v1.11.0 // indirect
+	github.com/Azure/azure-sdk-for-go/sdk/internal v1.11.1 // indirect
 	github.com/AzureAD/microsoft-authentication-library-for-go v1.4.2 // indirect
 	github.com/KyleBanks/depth v1.2.1 // indirect
 	github.com/apache/arrow/go/v15 v15.0.2 // indirect
