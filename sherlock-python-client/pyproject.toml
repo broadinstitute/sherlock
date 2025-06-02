@@ -1,6 +1,6 @@
 [project]
 name = "sherlock_python_client"
-version = "v1.6.35"
+version = "v1.6.36"
 description = "Sherlock"
 authors = [
   {name = "DSP DevOps",email = "dsp-devops@broadinstitute.org"},
