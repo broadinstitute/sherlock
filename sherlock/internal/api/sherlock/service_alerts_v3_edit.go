@@ -10,12 +10,22 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// serviceAlertV3Edit godoc~
+//
+//	@summary		Edit a service alert
+//	@description	Update a service alert with new information.
+//	@tags			ServiceAlert
+//	@produce		json
+//	@param			selector				path		string	true	"The selector of the ServiceAlert, which is the guid for a given alert"
+//	@success		200						{object}	ServiceAlertV3
+//	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
+//	@router			service-alerts/v3/{selector} [get]
 func serviceAlertV3Edit(ctx *gin.Context) {
 	db, err := authentication.MustUseDB(ctx)
 	if err != nil {
 		return
 	}
-	query, err := roleModelFromSelector(canonicalizeSelector(ctx.Param("selector")))
+	query, err := serviceAlertFromSelector(canonicalizeSelector(ctx.Param("selector")))
 	if err != nil {
 		errors.AbortRequest(ctx, err)
 		return
