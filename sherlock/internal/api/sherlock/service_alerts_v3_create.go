@@ -9,6 +9,16 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// serviceAlertV3Edit godoc~
+//
+//	@summary		Create a service alert
+//	@description	Create a service alert to be displayed within terra.
+//	@tags			ServiceAlert
+//	@produce		json
+//	@param			serviceAlert					body		ServiceAlertV3EditableFields	true	"The initial fields the ServiceAlert should have set"
+//	@success		200						{object}	ServiceAlertV3
+//	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
+//	@router			service-alerts/v3 [post]
 func serviceAlertV3Create(ctx *gin.Context) {
 	db, err := authentication.MustUseDB(ctx)
 	if err != nil {
