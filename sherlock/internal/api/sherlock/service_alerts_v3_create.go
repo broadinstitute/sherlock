@@ -4,9 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/broadinstitute/sherlock/sherlock/internal/authentication"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
-	"github.com/broadinstitute/sherlock/sherlock/internal/models"
+	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/authentication"
 	"github.com/gin-gonic/gin"
 )
 
@@ -28,7 +27,7 @@ func serviceAlertV3Create(ctx *gin.Context) {
 		return
 	}
 
-	if err = db.Scopes(models.ReadRoleScope).First(&toCreate, toCreate.ID).Error; err != nil {
+	if err = db.First(&toCreate, toCreate.ID).Error; err != nil {
 		errors.AbortRequest(ctx, err)
 		return
 	}
