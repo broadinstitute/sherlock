@@ -1,0 +1,46 @@
+package sherlock
+
+import (
+	"net/http"
+
+	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
+	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/authentication"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models"
+	"github.com/gin-gonic/gin"
+)
+
+// rolesV3Delete godoc
+//
+//	@summary		Delete a Role
+//	@description	Delete an individual Role.
+//	@description	Only super-admins may mutate Roles.
+//	@description	Propagation will NOT be triggered after this operation -- the grants will become un-managed by Sherlock and left as-is. Remove role assignments first to remove users from grants.
+//	@tags			Roles
+//	@produce		json
+//	@param			selector				path		string	true	"The selector of the Role, which can be either the numeric ID or the name"
+//	@success		200						{object}	RoleV3
+//	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
+//	@router			/api/roles/v3/{selector} [delete]
+func serviceAlertV3Delete(ctx *gin.Context) {
+	db, err := authentication.MustUseDB(ctx)
+	if err != nil {
+		return
+	}
+	query, err := serviceAlertFromSelector(canonicalizeSelector(ctx.Param("selector")))
+	if err != nil {
+		errors.AbortRequest(ctx, err)
+		return
+	}
+	var result models.ServiceAlert
+	if err = db.Where(&query).First(&result).Error; err != nil {
+		errors.AbortRequest(ctx, err)
+		return
+	}
+
+	if err = db.Delete(&result).Error; err != nil {
+		errors.AbortRequest(ctx, err)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, ServiceAlertFromModel(result))
+}
