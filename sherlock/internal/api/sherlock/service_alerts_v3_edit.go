@@ -8,7 +8,6 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/authentication"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm/clause"
 )
 
 func serviceAlertV3Edit(ctx *gin.Context) {
@@ -36,7 +35,7 @@ func serviceAlertV3Edit(ctx *gin.Context) {
 		return
 	}
 
-	if err = db.Model(&toEdit).Omit(clause.Associations).Updates(&edits).Error; err != nil {
+	if err = db.Model(&toEdit).Updates(&edits).Error; err != nil {
 		errors.AbortRequest(ctx, err)
 		return
 	}
