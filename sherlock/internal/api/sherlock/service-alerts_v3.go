@@ -9,8 +9,7 @@ import (
 
 type ServiceAlertV3 struct {
 	CommonFields
-	UUID          *uint
-	OnEnvironment *string `json:"onEnvironment,omitempty" form:"onEnvironment"`
+	UUID *uint
 	ServiceAlertV3EditableFields
 }
 
@@ -22,21 +21,22 @@ type ServiceAlertV3 struct {
 */
 
 type ServiceAlertV3EditableFields struct {
-	Title    *string `json:"title" form:"title"`
-	Message  *string `json:"message" form:"message"`
-	Link     *string `json:"link" form:"link"`
-	Severity *string `json:"severtiy" form:"severity"`
+	Title         *string `json:"title" form:"title"`
+	Message       *string `json:"message" form:"message"`
+	Link          *string `json:"link" form:"link"`
+	Severity      *string `json:"severtiy" form:"severity"`
+	OnEnvironment *string `json:"onEnvironment,omitempty" form:"onEnvironment"`
 }
 
-func (i ServiceAlertV3) toModel(db *gorm.DB) (models.ServiceAlert, err) {
+func (i ServiceAlertV3) toModel(db *gorm.DB) models.ServiceAlert {
 	if i.OnEnvironment != nil {
 		environmentQuery, err := environmentModelFromSelector(*i.OnEnvironment)
 		if err != nil {
-			return models.ServiceAlert{}, fmt.Errorf("error parsing environment selector '%s': %w", *i.OnEnvironment, err)
+			fmt.Errorf("error parsing environment selector '%s': %w", *i.OnEnvironment, err)
 		}
 		var result models.Environment
 		if err = db.Where(&environmentQuery).Select("id").First(&result).Error; err != nil {
-			return models.ServiceAlert{}, fmt.Errorf("error fetching environment '%s': %w", *i.OnEnvironment, err)
+			fmt.Errorf("error fetching environment '%s': %w", *i.OnEnvironment, err)
 		}
 		i.UUID = &result.ID
 	}
@@ -48,7 +48,7 @@ func (i ServiceAlertV3) toModel(db *gorm.DB) (models.ServiceAlert, err) {
 		Link:     i.Link,
 		Severity: i.Severity,
 		UUID:     i.UUID,
-	}, nil
+	}
 }
 
 func ServiceAlertFromModel(model models.ServiceAlert) ServiceAlertV3 {
