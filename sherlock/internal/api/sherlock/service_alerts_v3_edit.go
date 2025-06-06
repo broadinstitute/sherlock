@@ -19,7 +19,7 @@ import (
 //	@param			selector				path		string	true	"The selector of the ServiceAlert, which is the guid for a given alert"
 //	@success		200						{object}	ServiceAlertV3
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
-//	@router			service-alerts/v3/{selector} [get]
+//	@router			/api/service-alerts/v3/{selector} [patch]
 func serviceAlertV3Edit(ctx *gin.Context) {
 	db, err := authentication.MustUseDB(ctx)
 	if err != nil {

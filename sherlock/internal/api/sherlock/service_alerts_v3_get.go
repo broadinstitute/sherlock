@@ -11,6 +11,16 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// rolesV3Get godoc~
+//
+//	@summary		Get a Service Alert
+//	@description	Get an individual Service Alert and it's metadata.
+//	@tags			ServiceAlert
+//	@produce		json
+//	@param			selector				path		string	true	"The selector of the ServiceAlert, which is the guid for a given alert"
+//	@success		200						{object}	ServiceAlertV3
+//	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
+//	@router			/api/service-alerts/v3/{selector} [get]
 func serviceAlertV3Get(ctx *gin.Context) {
 	db, err := authentication.MustUseDB(ctx)
 	if err != nil {

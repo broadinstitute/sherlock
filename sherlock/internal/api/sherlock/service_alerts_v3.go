@@ -13,13 +13,6 @@ type ServiceAlertV3 struct {
 	ServiceAlertV3EditableFields
 }
 
-/*
-	type ServiceAlertV3Create struct {
-		OnEnvironment *string `json:"OnEnvironment,omitempty" form:"OnEnvironment"`
-		ServiceAlertV3Edit
-	}
-*/
-
 type ServiceAlertV3EditableFields struct {
 	Title         *string `json:"title" form:"title"`
 	Message       *string `json:"message" form:"message"`
