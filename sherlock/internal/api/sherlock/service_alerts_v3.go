@@ -19,7 +19,7 @@ type ServiceAlertV3EditableFields struct {
 	Title        *string `json:"title" form:"title"`
 	AlertMessage *string `json:"message" form:"message"`
 	Link         *string `json:"link" form:"link"`
-	Severity     *string `json:"severtiy" form:"severity"`
+	Severity     *string `json:"severity" form:"severity"`
 }
 
 func (i ServiceAlertV3) toModel(db *gorm.DB) models.ServiceAlert {
