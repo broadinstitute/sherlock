@@ -54,7 +54,7 @@ func serviceAlertsV3List(ctx *gin.Context) {
 	// change below to order by time or something? Need to see what's available
 	if err = chain.
 		Offset(offset).
-		Order("name asc").
+		Order("created_at asc").
 		Find(&results).Error; err != nil {
 		errors.AbortRequest(ctx, err)
 		return

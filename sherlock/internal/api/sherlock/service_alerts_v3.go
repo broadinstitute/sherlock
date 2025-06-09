@@ -3,25 +3,33 @@ package sherlock
 import (
 	"fmt"
 
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"gorm.io/gorm"
 )
 
 type ServiceAlertV3 struct {
 	CommonFields
-	UUID *uint
+	OnEnvironment *string `json:"onEnvironment,omitempty" form:"onEnvironment"`
+
 	ServiceAlertV3EditableFields
 }
 
 type ServiceAlertV3EditableFields struct {
-	Title         *string `json:"title" form:"title"`
-	Message       *string `json:"message" form:"message"`
-	Link          *string `json:"link" form:"link"`
-	Severity      *string `json:"severtiy" form:"severity"`
-	OnEnvironment *string `json:"onEnvironment,omitempty" form:"onEnvironment"`
+	Title        *string `json:"title" form:"title"`
+	AlertMessage *string `json:"message" form:"message"`
+	Link         *string `json:"link" form:"link"`
+	Severity     *string `json:"severtiy" form:"severity"`
 }
 
 func (i ServiceAlertV3) toModel(db *gorm.DB) models.ServiceAlert {
+	ret := models.ServiceAlert{
+		Model:        i.toGormModel(),
+		Title:        i.Title,
+		AlertMessage: i.AlertMessage,
+		Link:         i.Link,
+		Severity:     i.Severity,
+	}
 	if i.OnEnvironment != nil {
 		environmentQuery, err := environmentModelFromSelector(*i.OnEnvironment)
 		if err != nil {
@@ -31,28 +39,28 @@ func (i ServiceAlertV3) toModel(db *gorm.DB) models.ServiceAlert {
 		if err = db.Where(&environmentQuery).Select("id").First(&result).Error; err != nil {
 			fmt.Errorf("error fetching environment '%s': %w", *i.OnEnvironment, err)
 		}
-		i.UUID = &result.ID
+		ret.OnEnvironmentID = &result.ID
 	}
 
-	return models.ServiceAlert{
-		Model:    i.toGormModel(),
-		Title:    i.Title,
-		Message:  i.Message,
-		Link:     i.Link,
-		Severity: i.Severity,
-		UUID:     i.UUID,
-	}
+	return ret
 }
 
 func ServiceAlertFromModel(model models.ServiceAlert) ServiceAlertV3 {
+	var onEnvironment *string
+	if model.OnEnvironment != nil && model.OnEnvironment.Name != "" {
+		onEnvironment = &model.OnEnvironment.Name
+	} else if model.OnEnvironmentID != nil {
+		s := utils.UintToString(*model.OnEnvironmentID)
+		onEnvironment = &s
+	}
 	return ServiceAlertV3{
-		CommonFields: commonFieldsFromGormModel(model.Model),
-		UUID:         model.UUID,
+		CommonFields:  commonFieldsFromGormModel(model.Model),
+		OnEnvironment: onEnvironment,
 		ServiceAlertV3EditableFields: ServiceAlertV3EditableFields{
-			Title:    model.Title,
-			Message:  model.Message,
-			Link:     model.Link,
-			Severity: model.Severity,
+			Title:        model.Title,
+			AlertMessage: model.AlertMessage,
+			Link:         model.Link,
+			Severity:     model.Severity,
 		},
 	}
 }

@@ -9,6 +9,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/authentication"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm/clause"
 )
 
 // rolesV3Get godoc~
@@ -32,7 +33,7 @@ func serviceAlertV3Get(ctx *gin.Context) {
 		return
 	}
 	var result models.ServiceAlert
-	if err = db.Scopes(models.ReadRoleScope).Where(&query).First(&result).Error; err != nil {
+	if err = db.Preload(clause.Associations).Where(&query).First(&result).Error; err != nil {
 		errors.AbortRequest(ctx, err)
 		return
 	}
