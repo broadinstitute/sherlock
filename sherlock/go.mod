@@ -2,7 +2,7 @@ module github.com/broadinstitute/sherlock/sherlock
 
 go 1.23.7
 
-toolchain go1.24.1
+//toolchain go1.24.1
 
 require (
 	cloud.google.com/go/bigquery v1.69.0

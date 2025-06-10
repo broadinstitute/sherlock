@@ -10,8 +10,12 @@ import (
 
 type ServiceAlertV3 struct {
 	CommonFields
-	OnEnvironment *string `json:"onEnvironment,omitempty" form:"onEnvironment"`
+	UUID *string `json:"uuid,omitempty" form:"uuid"`
+	ServiceAlertV3Create
+}
 
+type ServiceAlertV3Create struct {
+	OnEnvironment *string `json:"onEnvironment,omitempty" form:"onEnvironment"`
 	ServiceAlertV3EditableFields
 }
 
@@ -54,13 +58,16 @@ func ServiceAlertFromModel(model models.ServiceAlert) ServiceAlertV3 {
 		onEnvironment = &s
 	}
 	return ServiceAlertV3{
-		CommonFields:  commonFieldsFromGormModel(model.Model),
-		OnEnvironment: onEnvironment,
-		ServiceAlertV3EditableFields: ServiceAlertV3EditableFields{
-			Title:        model.Title,
-			AlertMessage: model.AlertMessage,
-			Link:         model.Link,
-			Severity:     model.Severity,
+		CommonFields: commonFieldsFromGormModel(model.Model),
+		// UUID:          model.UUID, TODO
+		ServiceAlertV3Create: ServiceAlertV3Create{
+			OnEnvironment: onEnvironment,
+			ServiceAlertV3EditableFields: ServiceAlertV3EditableFields{
+				Title:        model.Title,
+				AlertMessage: model.AlertMessage,
+				Link:         model.Link,
+				Severity:     model.Severity,
+			},
 		},
 	}
 }
