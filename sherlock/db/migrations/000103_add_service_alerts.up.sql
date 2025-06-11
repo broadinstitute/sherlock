@@ -1,7 +1,6 @@
 create table if not exists service_alerts
 (
-    id                             bigserial
-        primary key,
+    id                             bigserial primary key,
     created_at                     timestamp with time zone,
     updated_at                     timestamp with time zone,
     deleted_at                     timestamp with time zone,
@@ -13,7 +12,8 @@ create table if not exists service_alerts
     title                           text not null,
 	alert_message                           text not null,
 	link                           text,
-    severity   text
+    severity   text,
+    uuid    uuid
 
 );
 
