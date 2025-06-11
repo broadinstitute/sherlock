@@ -3,10 +3,13 @@ package sherlock
 import (
 	"fmt"
 	"net/http"
+	"slices"
 
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/authentication"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 // serviceAlertV3Create godoc~
@@ -24,16 +27,19 @@ func serviceAlertV3Create(ctx *gin.Context) {
 	if err != nil {
 		return
 	}
-
 	var body ServiceAlertV3
 	if err = ctx.ShouldBindJSON(&body); err != nil {
 		errors.AbortRequest(ctx, fmt.Errorf("(%s) request validation error: %w", errors.BadRequest, err))
 		return
 	}
 
-	// TODO UUID generation
 	toCreate := body.toModel(db)
-
+	var severity_types = []string{"blocker", "critical", "minor"}
+	if !slices.Contains(severity_types, *toCreate.Severity) {
+		errors.AbortRequest(ctx, fmt.Errorf("(%s) invalid severity", errors.BadRequest))
+		return
+	}
+	toCreate.Uuid = utils.PointerTo(uuid.New())
 	if toCreate.OnEnvironmentID == nil {
 		errors.AbortRequest(ctx, fmt.Errorf("(%s) environment is required", errors.BadRequest))
 		return

@@ -5,12 +5,13 @@ import (
 
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
 type ServiceAlertV3 struct {
 	CommonFields
-	UUID *string `json:"uuid,omitempty" form:"uuid"`
+	Uuid *string `json:"uuid,omitempty" form:"uuid"`
 	ServiceAlertV3Create
 }
 
@@ -23,9 +24,10 @@ type ServiceAlertV3EditableFields struct {
 	Title        *string `json:"title" form:"title"`
 	AlertMessage *string `json:"message" form:"message"`
 	Link         *string `json:"link" form:"link"`
-	Severity     *string `json:"severity" form:"severity"`
+	Severity     *string `json:"severity" form:"severity" enums:"blocker, critical, minor"`
 }
 
+// TO And FROM, do conversion from / to string from/to UUID
 func (i ServiceAlertV3) toModel(db *gorm.DB) models.ServiceAlert {
 	ret := models.ServiceAlert{
 		Model:        i.toGormModel(),
@@ -34,6 +36,15 @@ func (i ServiceAlertV3) toModel(db *gorm.DB) models.ServiceAlert {
 		Link:         i.Link,
 		Severity:     i.Severity,
 	}
+
+	if i.Uuid != nil {
+		svc_alert_uuid, err := uuid.Parse(*i.Uuid)
+		if err != nil {
+			fmt.Errorf("error parsing service alert UUID '%s': %w", *i.Uuid, err)
+		}
+		ret.Uuid = &svc_alert_uuid
+	}
+
 	if i.OnEnvironment != nil {
 		environmentQuery, err := environmentModelFromSelector(*i.OnEnvironment)
 		if err != nil {
@@ -57,9 +68,14 @@ func ServiceAlertFromModel(model models.ServiceAlert) ServiceAlertV3 {
 		s := utils.UintToString(*model.OnEnvironmentID)
 		onEnvironment = &s
 	}
+	var alertUuidString *string
+	if model.Uuid != nil {
+		s := uuid.UUID.String(*model.Uuid)
+		alertUuidString = &s
+	}
 	return ServiceAlertV3{
 		CommonFields: commonFieldsFromGormModel(model.Model),
-		// UUID:          model.UUID, TODO
+		Uuid:         alertUuidString,
 		ServiceAlertV3Create: ServiceAlertV3Create{
 			OnEnvironment: onEnvironment,
 			ServiceAlertV3EditableFields: ServiceAlertV3EditableFields{
