@@ -4,10 +4,11 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"time"
+
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/rs/zerolog/log"
 	"gorm.io/datatypes"
-	"time"
 )
 
 // TestData offers convenience methods for example data for usage in testing.
@@ -117,6 +118,9 @@ type TestData interface {
 
 	GithubActionsJob_1() GithubActionsJob
 	GithubActionsJob_2() GithubActionsJob
+
+	ServiceAlert_1() ServiceAlert
+	ServiceAlert_2() ServiceAlert
 }
 
 // testDataImpl contains the caching for TestData and a (back-)reference to
@@ -234,6 +238,9 @@ type testDataImpl struct {
 
 	githubActionsJob_1 GithubActionsJob
 	githubActionsJob_2 GithubActionsJob
+
+	serviceAlert_1 ServiceAlert
+	serviceAlert_2 ServiceAlert
 }
 
 // create is a helper function for creating TestData entries in the database.
@@ -301,7 +308,7 @@ func (td *testDataImpl) User_Suitable() User {
 	return td.user_suitable
 }
 
-func (td *testDataImpl) User_NonSuitable() User {
+func (td *testDataImplz) User_NonSuitable() User {
 	if td.user_nonSuitable.ID == 0 {
 		td.user_nonSuitable = User{
 			Email:    "non-suitable-test-email@broadinstitute.org",
@@ -1729,4 +1736,32 @@ func (td *testDataImpl) GithubActionsJob_2() GithubActionsJob {
 		td.create(&td.githubActionsJob_2)
 	}
 	return td.githubActionsJob_2
+}
+
+func (td *testDataImpl) ServiceAlert_1() ServiceAlert {
+	if td.serviceAlert_1.ID == 0 {
+		td.serviceAlert_1 = ServiceAlert{
+			Title:           utils.PointerTo("title of alert"),
+			AlertMessage:    utils.PointerTo("alert message here"),
+			Link:            utils.PointerTo("NA"),
+			Severity:        utils.PointerTo("blocker"),
+			OnEnvironmentID: utils.PointerTo(td.Environment_Prod().ID),
+		}
+		td.create(&td.serviceAlert_1)
+	}
+	return td.serviceAlert_1
+}
+
+func (td *testDataImpl) ServiceAlert_2() ServiceAlert {
+	if td.serviceAlert_2.ID == 0 {
+		td.serviceAlert_2 = ServiceAlert{
+			Title:           utils.PointerTo("another test alert"),
+			AlertMessage:    utils.PointerTo("this is a test"),
+			Link:            utils.PointerTo("https://this-is-a-link-to-something-relevant.mp3"),
+			Severity:        utils.PointerTo("minor"),
+			OnEnvironmentID: utils.PointerTo(td.Environment_Prod().ID),
+		}
+		td.create(&td.serviceAlert_2)
+	}
+	return td.serviceAlert_2
 }
