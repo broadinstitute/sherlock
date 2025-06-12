@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
+	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"gorm.io/datatypes"
 )
@@ -1740,8 +1741,11 @@ func (td *testDataImpl) GithubActionsJob_2() GithubActionsJob {
 
 func (td *testDataImpl) ServiceAlert_1() ServiceAlert {
 	if td.serviceAlert_1.ID == 0 {
+		type svc_alert_uuid = uuid.UUID
+		test_uuid := svc_alert_uuid(uuid.New())
 		td.serviceAlert_1 = ServiceAlert{
 			Title:           utils.PointerTo("title of alert"),
+			Uuid:            utils.PointerTo(test_uuid),
 			AlertMessage:    utils.PointerTo("alert message here"),
 			Link:            utils.PointerTo("NA"),
 			Severity:        utils.PointerTo("blocker"),
