@@ -28,7 +28,7 @@ type ServiceAlertV3EditableFields struct {
 }
 
 // TO And FROM, do conversion from / to string from/to UUID
-func (i ServiceAlertV3) toModel(db *gorm.DB) models.ServiceAlert {
+func (i ServiceAlertV3) toModel(db *gorm.DB) (models.ServiceAlert, error) {
 	ret := models.ServiceAlert{
 		Model:        i.toGormModel(),
 		Title:        i.Title,
@@ -40,7 +40,7 @@ func (i ServiceAlertV3) toModel(db *gorm.DB) models.ServiceAlert {
 	if i.Uuid != nil {
 		svc_alert_uuid, err := uuid.Parse(*i.Uuid)
 		if err != nil {
-			fmt.Errorf("error parsing service alert UUID '%s': %w", *i.Uuid, err)
+			return models.ServiceAlert{}, fmt.Errorf("error parsing service alert UUID '%s': %w", *i.Uuid, err)
 		}
 		ret.Uuid = &svc_alert_uuid
 	}
@@ -48,16 +48,16 @@ func (i ServiceAlertV3) toModel(db *gorm.DB) models.ServiceAlert {
 	if i.OnEnvironment != nil {
 		environmentQuery, err := environmentModelFromSelector(*i.OnEnvironment)
 		if err != nil {
-			fmt.Errorf("error parsing environment selector '%s': %w", *i.OnEnvironment, err)
+			return models.ServiceAlert{}, fmt.Errorf("error parsing environment selector '%s': %w", *i.OnEnvironment, err)
 		}
 		var result models.Environment
 		if err = db.Where(&environmentQuery).Select("id").First(&result).Error; err != nil {
-			fmt.Errorf("error fetching environment '%s': %w", *i.OnEnvironment, err)
+			return models.ServiceAlert{}, fmt.Errorf("error fetching environment '%s': %w", *i.OnEnvironment, err)
 		}
 		ret.OnEnvironmentID = &result.ID
 	}
 
-	return ret
+	return ret, nil
 }
 
 func ServiceAlertFromModel(model models.ServiceAlert) ServiceAlertV3 {

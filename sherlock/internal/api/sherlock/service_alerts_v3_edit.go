@@ -38,7 +38,11 @@ func serviceAlertV3Edit(ctx *gin.Context) {
 		return
 	}
 
-	edits := body.toModel(db)
+	edits, err := body.toModel(db)
+	if err != nil {
+		errors.AbortRequest(ctx, err)
+		return
+	}
 
 	var toEdit models.ServiceAlert
 	if err = db.Where(&query).First(&toEdit).Error; err != nil {

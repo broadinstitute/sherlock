@@ -64,7 +64,9 @@ func (s *handlerSuite) TestServiceAlertV3ToModel(t *testing.T) {
 				Uuid:                 tt.fields.Uuid,
 				ServiceAlertV3Create: tt.fields.ServiceAlertV3Create,
 			}
-			assert.Equalf(t, tt.want, i.toModel(tt.args.db), "toModel()")
+			model, err := i.toModel(tt.args.db)
+			s.NoError(err)
+			assert.Equalf(t, tt.want, model, "toModel()")
 		})
 	}
 }

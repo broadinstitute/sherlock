@@ -24,7 +24,9 @@ import (
 //	@router			/api/service-alerts/v3 [post]
 func serviceAlertV3Create(ctx *gin.Context) {
 	db, err := authentication.MustUseDB(ctx)
+
 	if err != nil {
+		errors.AbortRequest(ctx, fmt.Errorf("(%s) Issue connecting to db", err))
 		return
 	}
 	var body ServiceAlertV3
@@ -33,7 +35,12 @@ func serviceAlertV3Create(ctx *gin.Context) {
 		return
 	}
 
-	toCreate := body.toModel(db)
+	toCreate, err := body.toModel(db)
+	if err != nil {
+		errors.AbortRequest(ctx, fmt.Errorf("(%s) Issue creating body", err))
+		return
+	}
+
 	var severity_types = []string{"blocker", "critical", "minor"}
 	if !slices.Contains(severity_types, *toCreate.Severity) {
 		errors.AbortRequest(ctx, fmt.Errorf("(%s) invalid severity", errors.BadRequest))

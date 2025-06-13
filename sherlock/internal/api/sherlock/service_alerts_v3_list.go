@@ -33,7 +33,12 @@ func serviceAlertsV3List(ctx *gin.Context) {
 		errors.AbortRequest(ctx, err)
 		return
 	}
-	modelFilter := filter.toModel(db)
+	modelFilter, err := filter.toModel(db)
+
+	if err != nil {
+		errors.AbortRequest(ctx, fmt.Errorf("(%s) %v", errors.BadRequest, err))
+		return
+	}
 
 	limit, err := utils.ParseInt(ctx.DefaultQuery("limit", "0"))
 	if err != nil {
