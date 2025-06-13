@@ -309,7 +309,7 @@ func (td *testDataImpl) User_Suitable() User {
 	return td.user_suitable
 }
 
-func (td *testDataImplz) User_NonSuitable() User {
+func (td *testDataImpl) User_NonSuitable() User {
 	if td.user_nonSuitable.ID == 0 {
 		td.user_nonSuitable = User{
 			Email:    "non-suitable-test-email@broadinstitute.org",
