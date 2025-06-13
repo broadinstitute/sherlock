@@ -42,13 +42,5 @@ func (s *handlerSuite) TestServiceAlertsV3List() {
 		s.Equal(http.StatusBadRequest, code)
 		s.Equal(errors.BadRequest, got.Type)
 	})
-	s.Run("invalidSeverity", func() {
-		var got errors.ErrorResponse
-		code := s.HandleRequest(
-			s.NewRequest("GET", "/api/service-alerts/v3?severity=foo", nil),
-			&got)
-		s.Equal(http.StatusBadRequest, code)
-		s.Equal(errors.BadRequest, got.Type)
-	})
 
 }

@@ -51,7 +51,7 @@ func serviceAlertFromSelector(selector string) (query models.ServiceAlert, err e
 	}
 	uuid_conversion, err := uuid.Parse(selector)
 	if err != nil {
-		return models.ServiceAlert{}, fmt.Errorf("(%s) selector must be valid uuid or numeric id", err)
+		return models.ServiceAlert{}, fmt.Errorf("(%s) selector must be valid uuid or numeric id", errors.BadRequest)
 	}
 	query.Uuid = &uuid_conversion
 	return query, err
