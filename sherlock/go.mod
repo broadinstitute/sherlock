@@ -11,7 +11,7 @@ require (
 	cloud.google.com/go/kms v1.22.0
 	cloud.google.com/go/resourcemanager v1.10.6
 	contrib.go.opencensus.io/exporter/prometheus v0.4.2
-	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.10.0
+	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.10.1
 	github.com/PagerDuty/go-pagerduty v1.8.0
 	github.com/avast/retry-go/v4 v4.6.1
 	github.com/broadinstitute/sherlock/go-shared v0.0.0
