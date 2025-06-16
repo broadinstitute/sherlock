@@ -48,7 +48,7 @@ jobs:
         run: make deploy-webhook-proxy
 
       - name: Commit and push changes
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v6
         with:
           commit_message: |
             [sherlock-deploy-webhook-proxy] generated from ${{ github.sha }}
