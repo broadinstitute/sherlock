@@ -18,7 +18,7 @@ import (
 //	@description	Create a service alert to be displayed within terra.
 //	@tags			ServiceAlert
 //	@produce		json
-//	@param			serviceAlert					body		ServiceAlertV3Create	true	"The initial fields the ServiceAlert should have set"
+//	@param			serviceAlert			body		ServiceAlertV3Create	true	"The initial fields the ServiceAlert should have set"
 //	@success		200						{object}	ServiceAlertV3
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/service-alerts/v3 [post]

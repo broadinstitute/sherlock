@@ -15,7 +15,7 @@
 """  # noqa: E501
 
 
-__version__ = "v1.6.40"
+__version__ = "v1.6.41"
 
 # Define package exports
 __all__ = [
@@ -37,6 +37,7 @@ __all__ = [
     "PagerdutyIntegrationsApi",
     "RoleAssignmentsApi",
     "RolesApi",
+    "ServiceAlertApi",
     "UsersApi",
     "ApiResponse",
     "ApiClient",
@@ -102,6 +103,9 @@ __all__ = [
     "SherlockRoleAssignmentV3Edit",
     "SherlockRoleV3",
     "SherlockRoleV3Edit",
+    "SherlockServiceAlertV3",
+    "SherlockServiceAlertV3Create",
+    "SherlockServiceAlertV3EditableFields",
     "SherlockSlackDeployHookTestRunRequest",
     "SherlockSlackDeployHookTestRunResponse",
     "SherlockSlackDeployHookV3",
@@ -132,6 +136,7 @@ from sherlock_python_client.api.misc_api import MiscApi as MiscApi
 from sherlock_python_client.api.pagerduty_integrations_api import PagerdutyIntegrationsApi as PagerdutyIntegrationsApi
 from sherlock_python_client.api.role_assignments_api import RoleAssignmentsApi as RoleAssignmentsApi
 from sherlock_python_client.api.roles_api import RolesApi as RolesApi
+from sherlock_python_client.api.service_alert_api import ServiceAlertApi as ServiceAlertApi
 from sherlock_python_client.api.users_api import UsersApi as UsersApi
 
 # import ApiClient
@@ -201,6 +206,9 @@ from sherlock_python_client.models.sherlock_role_assignment_v3 import SherlockRo
 from sherlock_python_client.models.sherlock_role_assignment_v3_edit import SherlockRoleAssignmentV3Edit as SherlockRoleAssignmentV3Edit
 from sherlock_python_client.models.sherlock_role_v3 import SherlockRoleV3 as SherlockRoleV3
 from sherlock_python_client.models.sherlock_role_v3_edit import SherlockRoleV3Edit as SherlockRoleV3Edit
+from sherlock_python_client.models.sherlock_service_alert_v3 import SherlockServiceAlertV3 as SherlockServiceAlertV3
+from sherlock_python_client.models.sherlock_service_alert_v3_create import SherlockServiceAlertV3Create as SherlockServiceAlertV3Create
+from sherlock_python_client.models.sherlock_service_alert_v3_editable_fields import SherlockServiceAlertV3EditableFields as SherlockServiceAlertV3EditableFields
 from sherlock_python_client.models.sherlock_slack_deploy_hook_test_run_request import SherlockSlackDeployHookTestRunRequest as SherlockSlackDeployHookTestRunRequest
 from sherlock_python_client.models.sherlock_slack_deploy_hook_test_run_response import SherlockSlackDeployHookTestRunResponse as SherlockSlackDeployHookTestRunResponse
 from sherlock_python_client.models.sherlock_slack_deploy_hook_v3 import SherlockSlackDeployHookV3 as SherlockSlackDeployHookV3

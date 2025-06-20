@@ -1736,6 +1736,65 @@ definitions:
           field
         type: boolean
     type: object
+  sherlock.ServiceAlertV3:
+    properties:
+      createdAt:
+        format: date-time
+        type: string
+      id:
+        type: integer
+      link:
+        type: string
+      message:
+        type: string
+      onEnvironment:
+        type: string
+      severity:
+        enum:
+        - blocker
+        - ' critical'
+        - ' minor'
+        type: string
+      title:
+        type: string
+      updatedAt:
+        format: date-time
+        type: string
+      uuid:
+        type: string
+    type: object
+  sherlock.ServiceAlertV3Create:
+    properties:
+      link:
+        type: string
+      message:
+        type: string
+      onEnvironment:
+        type: string
+      severity:
+        enum:
+        - blocker
+        - ' critical'
+        - ' minor'
+        type: string
+      title:
+        type: string
+    type: object
+  sherlock.ServiceAlertV3EditableFields:
+    properties:
+      link:
+        type: string
+      message:
+        type: string
+      severity:
+        enum:
+        - blocker
+        - ' critical'
+        - ' minor'
+        type: string
+      title:
+        type: string
+    type: object
   sherlock.SlackDeployHookTestRunRequest:
     properties:
       execute:
@@ -6932,6 +6991,266 @@ paths:
       summary: Edit a Role
       tags:
       - Roles
+  /api/service-alerts/v3:
+    get:
+      description: List ServiceAlerts matching a filter.
+      parameters:
+      - format: date-time
+        in: query
+        name: createdAt
+        type: string
+      - in: query
+        name: id
+        type: integer
+      - in: query
+        name: link
+        type: string
+      - in: query
+        name: message
+        type: string
+      - in: query
+        name: onEnvironment
+        type: string
+      - enum:
+        - blocker
+        - ' critical'
+        - ' minor'
+        in: query
+        name: severity
+        type: string
+      - in: query
+        name: title
+        type: string
+      - format: date-time
+        in: query
+        name: updatedAt
+        type: string
+      - in: query
+        name: uuid
+        type: string
+      - description: Control how many Service Alerts are returned (default 0, no limit)
+        in: query
+        name: limit
+        type: integer
+      - description: Control the offset for the returned Service Alerts (default 0)
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/sherlock.ServiceAlertV3'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: List ServiceAlerts matching a filter
+      tags:
+      - ServiceAlert
+    post:
+      description: Create a service alert to be displayed within terra.
+      parameters:
+      - description: The initial fields the ServiceAlert should have set
+        in: body
+        name: serviceAlert
+        required: true
+        schema:
+          $ref: '#/definitions/sherlock.ServiceAlertV3Create'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/sherlock.ServiceAlertV3'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Create a service alert
+      tags:
+      - ServiceAlert
+  /api/service-alerts/v3/{selector}:
+    delete:
+      description: Delete an individual ServiceAlert.
+      parameters:
+      - description: The selector of the ServiceAlert, ServiceAlert, which is the
+          guid for a given alert
+        in: path
+        name: selector
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/sherlock.ServiceAlertV3'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Delete a ServiceAlert
+      tags:
+      - ServiceAlert
+    get:
+      description: Get an individual Service Alert and it's metadata.
+      parameters:
+      - description: The selector of the ServiceAlert, which is the guid for a given
+          alert
+        in: path
+        name: selector
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/sherlock.ServiceAlertV3'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Get a Service Alert
+      tags:
+      - ServiceAlert
+    patch:
+      description: Update a service alert with new information.
+      parameters:
+      - description: The selector of the ServiceAlert, which is the guid for a given
+          alert
+        in: path
+        name: selector
+        required: true
+        type: string
+      - description: The edits to make to the ServiceAlert
+        in: body
+        name: service-alert
+        required: true
+        schema:
+          $ref: '#/definitions/sherlock.ServiceAlertV3EditableFields'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/sherlock.ServiceAlertV3'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "407":
+          description: Proxy Authentication Required
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.ErrorResponse'
+      summary: Edit a service alert
+      tags:
+      - ServiceAlert
   /api/users/procedures/v3/deactivate:
     post:
       consumes:

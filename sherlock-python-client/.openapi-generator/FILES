@@ -27,6 +27,7 @@ docs/PagerdutyIntegrationsApi.md
 docs/PagerdutySendAlertResponse.md
 docs/RoleAssignmentsApi.md
 docs/RolesApi.md
+docs/ServiceAlertApi.md
 docs/SherlockAppVersionV3.md
 docs/SherlockAppVersionV3ChangelogResponse.md
 docs/SherlockAppVersionV3Create.md
@@ -76,6 +77,9 @@ docs/SherlockRoleAssignmentV3.md
 docs/SherlockRoleAssignmentV3Edit.md
 docs/SherlockRoleV3.md
 docs/SherlockRoleV3Edit.md
+docs/SherlockServiceAlertV3.md
+docs/SherlockServiceAlertV3Create.md
+docs/SherlockServiceAlertV3EditableFields.md
 docs/SherlockSlackDeployHookTestRunRequest.md
 docs/SherlockSlackDeployHookTestRunResponse.md
 docs/SherlockSlackDeployHookV3.md
@@ -111,6 +115,7 @@ sherlock_python_client/api/misc_api.py
 sherlock_python_client/api/pagerduty_integrations_api.py
 sherlock_python_client/api/role_assignments_api.py
 sherlock_python_client/api/roles_api.py
+sherlock_python_client/api/service_alert_api.py
 sherlock_python_client/api/users_api.py
 sherlock_python_client/api_client.py
 sherlock_python_client/api_response.py
@@ -172,6 +177,9 @@ sherlock_python_client/models/sherlock_role_assignment_v3.py
 sherlock_python_client/models/sherlock_role_assignment_v3_edit.py
 sherlock_python_client/models/sherlock_role_v3.py
 sherlock_python_client/models/sherlock_role_v3_edit.py
+sherlock_python_client/models/sherlock_service_alert_v3.py
+sherlock_python_client/models/sherlock_service_alert_v3_create.py
+sherlock_python_client/models/sherlock_service_alert_v3_editable_fields.py
 sherlock_python_client/models/sherlock_slack_deploy_hook_test_run_request.py
 sherlock_python_client/models/sherlock_slack_deploy_hook_test_run_response.py
 sherlock_python_client/models/sherlock_slack_deploy_hook_v3.py
@@ -209,6 +217,7 @@ test/test_pagerduty_integrations_api.py
 test/test_pagerduty_send_alert_response.py
 test/test_role_assignments_api.py
 test/test_roles_api.py
+test/test_service_alert_api.py
 test/test_sherlock_app_version_v3.py
 test/test_sherlock_app_version_v3_changelog_response.py
 test/test_sherlock_app_version_v3_create.py
@@ -258,6 +267,9 @@ test/test_sherlock_role_assignment_v3.py
 test/test_sherlock_role_assignment_v3_edit.py
 test/test_sherlock_role_v3.py
 test/test_sherlock_role_v3_edit.py
+test/test_sherlock_service_alert_v3.py
+test/test_sherlock_service_alert_v3_create.py
+test/test_sherlock_service_alert_v3_editable_fields.py
 test/test_sherlock_slack_deploy_hook_test_run_request.py
 test/test_sherlock_slack_deploy_hook_test_run_response.py
 test/test_sherlock_slack_deploy_hook_v3.py

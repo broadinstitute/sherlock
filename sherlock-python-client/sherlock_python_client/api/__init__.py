@@ -19,5 +19,6 @@ from sherlock_python_client.api.misc_api import MiscApi
 from sherlock_python_client.api.pagerduty_integrations_api import PagerdutyIntegrationsApi
 from sherlock_python_client.api.role_assignments_api import RoleAssignmentsApi
 from sherlock_python_client.api.roles_api import RolesApi
+from sherlock_python_client.api.service_alert_api import ServiceAlertApi
 from sherlock_python_client.api.users_api import UsersApi
 

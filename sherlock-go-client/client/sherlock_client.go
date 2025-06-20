@@ -28,6 +28,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock-go-client/client/pagerduty_integrations"
 	"github.com/broadinstitute/sherlock/sherlock-go-client/client/role_assignments"
 	"github.com/broadinstitute/sherlock/sherlock-go-client/client/roles"
+	"github.com/broadinstitute/sherlock/sherlock-go-client/client/service_alert"
 	"github.com/broadinstitute/sherlock/sherlock-go-client/client/users"
 )
 
@@ -91,6 +92,7 @@ func New(transport runtime.ClientTransport, formats strfmt.Registry) *Sherlock {
 	cli.PagerdutyIntegrations = pagerduty_integrations.New(transport, formats)
 	cli.RoleAssignments = role_assignments.New(transport, formats)
 	cli.Roles = roles.New(transport, formats)
+	cli.ServiceAlert = service_alert.New(transport, formats)
 	cli.Users = users.New(transport, formats)
 	return cli
 }
@@ -172,6 +174,8 @@ type Sherlock struct {
 
 	Roles roles.ClientService
 
+	ServiceAlert service_alert.ClientService
+
 	Users users.ClientService
 
 	Transport runtime.ClientTransport
@@ -198,5 +202,6 @@ func (c *Sherlock) SetTransport(transport runtime.ClientTransport) {
 	c.PagerdutyIntegrations.SetTransport(transport)
 	c.RoleAssignments.SetTransport(transport)
 	c.Roles.SetTransport(transport)
+	c.ServiceAlert.SetTransport(transport)
 	c.Users.SetTransport(transport)
 }

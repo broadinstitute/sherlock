@@ -18,4 +18,5 @@ export * from './MiscApi';
 export * from './PagerdutyIntegrationsApi';
 export * from './RoleAssignmentsApi';
 export * from './RolesApi';
+export * from './ServiceAlertApi';
 export * from './UsersApi';

@@ -20,6 +20,7 @@ src/apis/MiscApi.ts
 src/apis/PagerdutyIntegrationsApi.ts
 src/apis/RoleAssignmentsApi.ts
 src/apis/RolesApi.ts
+src/apis/ServiceAlertApi.ts
 src/apis/UsersApi.ts
 src/apis/index.ts
 src/index.ts
@@ -78,6 +79,9 @@ src/models/SherlockRoleAssignmentV3.ts
 src/models/SherlockRoleAssignmentV3Edit.ts
 src/models/SherlockRoleV3.ts
 src/models/SherlockRoleV3Edit.ts
+src/models/SherlockServiceAlertV3.ts
+src/models/SherlockServiceAlertV3Create.ts
+src/models/SherlockServiceAlertV3EditableFields.ts
 src/models/SherlockSlackDeployHookTestRunRequest.ts
 src/models/SherlockSlackDeployHookTestRunResponse.ts
 src/models/SherlockSlackDeployHookV3.ts
