@@ -18,6 +18,9 @@ updates:
       interval: weekly
     commit-message:
       prefix: "[DDO-3654]"
+    ignore:
+      # DDO-4164
+      - dependency-name: "github.com/zitadel/oidc/v3"
   - package-ecosystem: gomod
     directory: /sherlock-go-client
     schedule:
