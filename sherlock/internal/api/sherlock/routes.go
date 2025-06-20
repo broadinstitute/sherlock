@@ -138,6 +138,13 @@ func ConfigureRoutes(apiRouter gin.IRoutes) {
 	apiRouter.PATCH("roles/v3/*selector", rolesV3Edit)
 	apiRouter.GET("roles/v3/*selector", rolesV3Get)
 
+	// service-alerts
+	apiRouter.POST("service-alerts/v3", serviceAlertV3Create)
+	apiRouter.GET("service-alerts/v3", serviceAlertsV3List)
+	apiRouter.DELETE("service-alerts/v3/*selector", serviceAlertV3Delete)
+	apiRouter.PATCH("service-alerts/v3/*selector", serviceAlertV3Edit)
+	apiRouter.GET("service-alerts/v3/*selector", serviceAlertV3Get)
+
 	apiRouter.POST("pagerduty-integrations/procedures/v3/trigger-incident/*selector", pagerdutyIntegrationsProceduresV3TriggerIncident)
 	apiRouter.POST("pagerduty-integrations/v3", pagerdutyIntegrationsV3Create)
 	apiRouter.GET("pagerduty-integrations/v3", pagerdutyIntegrationsV3List)
