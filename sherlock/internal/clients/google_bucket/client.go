@@ -2,6 +2,7 @@ package google_bucket
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 
@@ -13,7 +14,7 @@ type GcsClientActual struct {
 	GcsClient *storage.Client
 }
 
-func InitializeStorageClient(ctx context.Context, impersonateAccount ...string) (*storage.Client, error) {
+func InitializeStorageClient(ctx context.Context, impersonateAccount ...string) (*GcsClientActual, error) {
 	// Client uses xml google api's by default but docs reccomend using JSON - will become default behavior in later release
 	client, err := storage.NewClient(ctx, storage.WithJSONReads())
 	if err != nil {
@@ -22,7 +23,7 @@ func InitializeStorageClient(ctx context.Context, impersonateAccount ...string) 
 	return &GcsClientActual{GcsClient: client}, err
 }
 
-func (c *GcsClientActual) ListBlobs(ctx context.Context, bucket string) ([]*storage.ObjectAttrs, error) {
+func (c *GcsClientActual) ListBlobs(ctx context.Context, bucket *string) ([]*storage.ObjectAttrs, error) {
 	var bucket_objs []*storage.ObjectAttrs
 	query := &storage.Query{Prefix: ""}
 	client_bucket := c.GcsClient.Bucket(bucket)
@@ -43,7 +44,7 @@ func (c *GcsClientActual) ListBlobs(ctx context.Context, bucket string) ([]*stor
 
 func (c *GcsClientActual) ReadBlob(ctx context.Context, blob *storage.ObjectAttrs) ([]byte, error) {
 	reader_client, err := c.GcsClient.Bucket(blob.Bucket).Object(blob.Name).NewReader(ctx)
-	if err.Is(err, storage.ErrObjectNotExist) {
+	if errors.Is(err, storage.ErrObjectNotExist) {
 		return nil, fmt.Errorf("The object does not exist")
 	}
 	slurp, err := io.ReadAll(reader_client)
@@ -51,22 +52,24 @@ func (c *GcsClientActual) ReadBlob(ctx context.Context, blob *storage.ObjectAttr
 	if err != nil {
 		return nil, fmt.Errorf("Unable to read blob: %v", err)
 	}
-	// CONVERT to JSON
-	// var json_data map[string]interface{}
-	//if err := json.Unmarshal(slurp, &json_data); err != nil {
-	//		panic(err)
-	//	}
 	return slurp, nil
 }
 
 func (c *GcsClientActual) WriteBlob(ctx context.Context, gcs_bucket string, blob_name string, file_content []byte) error {
-	writer_client, err := c.GcsClient.Bucket(gcs_bucket).Object(blob_name).NewWriter(ctx)
-	if err != nil {
-		return fmt.Errorf("Error creating writer client: %v", err)
-	}
+	writer_client := c.GcsClient.Bucket(gcs_bucket).Object(blob_name).NewWriter(ctx)
+
 	writer_client.ContentType = "application/json"
 	if _, err := writer_client.Write(file_content); err != nil {
 		return fmt.Errorf("createFile: unable to write data to bucket: %v", err)
 	}
 	return nil
+}
+
+func (c *GcsClientActual) GetBlob(ctx context.Context, bucket_name string, blob_name string) (*storage.ObjectAttrs, error) {
+	attrs, err := c.GcsClient.Bucket(bucket_name).Object(blob_name).Attrs(ctx)
+	if errors.Is(err, storage.ErrObjectNotExist) {
+		fmt.Println("The object does not exist")
+		return nil, err
+	}
+	return attrs, nil
 }
