@@ -139,6 +139,7 @@ func ConfigureRoutes(apiRouter gin.IRoutes) {
 	apiRouter.GET("roles/v3/*selector", rolesV3Get)
 
 	// service-alerts
+	apiRouter.POST("service-alerts/procedures/v3/sync", syncServiceAlerts)
 	apiRouter.POST("service-alerts/v3", serviceAlertV3Create)
 	apiRouter.GET("service-alerts/v3", serviceAlertsV3List)
 	apiRouter.DELETE("service-alerts/v3/*selector", serviceAlertV3Delete)

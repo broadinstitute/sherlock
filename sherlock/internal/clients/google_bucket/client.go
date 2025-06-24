@@ -23,7 +23,7 @@ func InitializeStorageClient(ctx context.Context, impersonateAccount ...string) 
 	return &GcsClientActual{GcsClient: client}, err
 }
 
-func (c *GcsClientActual) ListBlobs(ctx context.Context, bucket *string) ([]*storage.ObjectAttrs, error) {
+func (c *GcsClientActual) ListBlobs(ctx context.Context, bucket string) ([]*storage.ObjectAttrs, error) {
 	var bucket_objs []*storage.ObjectAttrs
 	query := &storage.Query{Prefix: ""}
 	client_bucket := c.GcsClient.Bucket(bucket)
