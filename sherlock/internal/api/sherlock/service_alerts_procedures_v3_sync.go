@@ -73,11 +73,13 @@ func syncServiceAlerts(ctx *gin.Context) {
 	if add != nil || remove != nil || update != nil {
 		json_bytes, err := createSvcAlertJsonData(ctx, alerts)
 		if err != nil {
-			// handle error
+			errors.AbortRequest(ctx, fmt.Errorf("issue encountered creating json payload: %v", err))
+			return
 		}
 		// Upload file to bucket w/ new json
 		if err = gcsClient.WriteBlob(ctx, *gcs_bucket, "alerts.json", json_bytes); err != nil {
-			// handle error
+			errors.AbortRequest(ctx, fmt.Errorf("error writing updated alerts.json file: %v", err))
+			return
 		}
 	}
 }
