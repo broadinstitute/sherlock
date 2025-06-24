@@ -32,7 +32,7 @@ type ServiceAlertJsonData struct {
 	IncidentID string `json:"incident_id"`
 }
 
-// usersProceduresV3Deactivate godoc
+// serviceAlertsProceduresV3Sync godoc
 //
 //	@summary		Sync service alerts
 //	@description	Method to get all currently active service alerts from Sherlock's DB and ensure that the service alert json files placed in Google Buckets for Terra match.
