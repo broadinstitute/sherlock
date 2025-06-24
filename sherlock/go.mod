@@ -19,7 +19,7 @@ require (
 	github.com/coreos/go-oidc/v3 v3.14.1
 	github.com/creasty/defaults v1.8.0
 	github.com/dustinkirkland/golang-petname v0.0.0-20240428194347-eebcea082ee0
-	github.com/gin-contrib/cors v1.7.5
+	github.com/gin-contrib/cors v1.7.6
 	github.com/gin-contrib/secure v1.1.2
 	github.com/gin-gonic/gin v1.10.1
 	github.com/go-jose/go-jose/v4 v4.0.5
@@ -31,7 +31,7 @@ require (
 	github.com/jinzhu/copier v0.4.0
 	github.com/knadh/koanf v1.5.0
 	github.com/microsoft/kiota-abstractions-go v1.9.2
-	github.com/microsoftgraph/msgraph-sdk-go v1.73.0
+	github.com/microsoftgraph/msgraph-sdk-go v1.75.0
 	github.com/microsoftgraph/msgraph-sdk-go-core v1.3.2
 	github.com/pact-foundation/pact-go/v2 v2.4.1
 	github.com/rs/zerolog v1.34.0
@@ -42,14 +42,14 @@ require (
 	github.com/swaggo/files/v2 v2.0.2
 	github.com/swaggo/gin-swagger v1.6.1-0.20231210095754-aa92a0ac3f26
 	github.com/swaggo/swag v1.16.4
-	github.com/zitadel/oidc/v3 v3.39.0
+	github.com/zitadel/oidc/v3 v3.36.1
 	go.opencensus.io v0.24.0
 	golang.org/x/crypto v0.39.0
 	golang.org/x/exp v0.0.0-20240823005443-9b4947da3948
 	golang.org/x/net v0.41.0
 	golang.org/x/oauth2 v0.30.0
 	golang.org/x/text v0.26.0
-	google.golang.org/api v0.237.0
+	google.golang.org/api v0.238.0
 	gorm.io/datatypes v1.2.5
 	gorm.io/driver/postgres v1.6.0
 	gorm.io/gorm v1.30.0
@@ -76,7 +76,7 @@ require (
 	github.com/apache/arrow/go/v15 v15.0.2 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/bmatcuk/doublestar/v4 v4.8.1 // indirect
-	github.com/bytedance/sonic v1.13.2 // indirect
+	github.com/bytedance/sonic v1.13.3 // indirect
 	github.com/bytedance/sonic/loader v0.2.4 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/cloudwego/base64x v0.1.5 // indirect
@@ -86,8 +86,8 @@ require (
 	github.com/envoyproxy/protoc-gen-validate v1.2.1 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
-	github.com/gabriel-vasile/mimetype v1.4.8 // indirect
-	github.com/gin-contrib/sse v1.0.0 // indirect
+	github.com/gabriel-vasile/mimetype v1.4.9 // indirect
+	github.com/gin-contrib/sse v1.1.0 // indirect
 	github.com/go-chi/chi/v5 v5.2.2 // indirect
 	github.com/go-kit/log v0.2.1 // indirect
 	github.com/go-logfmt/logfmt v0.6.0 // indirect
@@ -145,7 +145,7 @@ require (
 	github.com/muhlemmer/gu v0.3.1 // indirect
 	github.com/muhlemmer/httpforwarded v0.1.0 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
-	github.com/pelletier/go-toml/v2 v2.2.3 // indirect
+	github.com/pelletier/go-toml/v2 v2.2.4 // indirect
 	github.com/pierrec/lz4/v4 v4.1.21 // indirect
 	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c // indirect
 	github.com/planetscale/vtprotobuf v0.6.1-0.20240319094008-0393e58bdf10 // indirect
@@ -164,8 +164,8 @@ require (
 	github.com/std-uritemplate/std-uritemplate/go/v2 v2.0.3 // indirect
 	github.com/stretchr/objx v0.5.2 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
-	github.com/ugorji/go/codec v1.2.12 // indirect
 	github.com/zeebo/errs v1.4.0 // indirect
+	github.com/ugorji/go/codec v1.3.0 // indirect
 	github.com/zeebo/xxh3 v1.0.2 // indirect
 	github.com/zitadel/logging v0.6.2 // indirect
 	github.com/zitadel/schema v1.3.1 // indirect
@@ -179,7 +179,7 @@ require (
 	go.opentelemetry.io/otel/sdk/metric v1.36.0 // indirect
 	go.opentelemetry.io/otel/trace v1.36.0 // indirect
 	go.uber.org/atomic v1.11.0 // indirect
-	golang.org/x/arch v0.16.0 // indirect
+	golang.org/x/arch v0.18.0 // indirect
 	golang.org/x/mod v0.25.0 // indirect
 	golang.org/x/sync v0.15.0 // indirect
 	golang.org/x/sys v0.33.0 // indirect
