@@ -56,37 +56,37 @@ func syncServiceAlerts(ctx *gin.Context) {
 		return
 	}
 	// Get alerts from DB and gcs bucket from environment
-	alerts, gcs_bucket := getAlerts(ctx, body, db)
+	alerts, gcsBucket := getAlerts(ctx, body, db)
 	if len(alerts) == 0 {
 		errors.AbortRequest(ctx, fmt.Errorf("(%s) No Alerts found for this environment", errors.BadRequest))
 		return
 	}
 	// set GCS client
-	var gcsClient, gc_err = google_bucket.InitializeStorageClient(ctx)
-	if gc_err != nil {
+	var gcsClient, googleClientError = google_bucket.InitializeStorageClient(ctx)
+	if googleClientError != nil {
 		return
 	}
 	// get alerts blob
-	alert_json_blob, read_err := gcsClient.GetBlob(ctx, *gcs_bucket, "alerts.json")
-	if read_err != nil {
-		errors.AbortRequest(ctx, fmt.Errorf("blob not found: %v", read_err))
+	alertJsonBlob, readErr := gcsClient.GetBlob(ctx, *gcsBucket, "alerts.json")
+	if readErr != nil {
+		errors.AbortRequest(ctx, fmt.Errorf("blob not found: %v", readErr))
 		return
 	}
 	// read data from blob & parse to JSON
-	json_data := getFileJson(ctx, gcsClient, alert_json_blob)
+	jsonData := getFileJson(ctx, gcsClient, alertJsonBlob)
 
-	if len(json_data) == 0 && len(alerts) == 0 {
+	if len(jsonData) == 0 && len(alerts) == 0 {
 		errors.AbortRequest(ctx, fmt.Errorf("(%s) Nothing to do, no active service alerts and nothing to modify", errors.NotFound))
 		return
 	}
 	// convert model data for service alerts to json formatted bytes to upload
-	json_bytes, err := createSvcAlertJsonData(ctx, alerts)
+	jsonBytes, err := createServiceAlertJsonData(ctx, alerts)
 	if err != nil {
 		errors.AbortRequest(ctx, fmt.Errorf("issue encountered creating json payload: %v", err))
 		return
 	}
 	// Upload file to bucket w/ latest info
-	if err = gcsClient.WriteBlob(ctx, *gcs_bucket, "alerts.json", json_bytes); err != nil {
+	if err = gcsClient.WriteBlob(ctx, *gcsBucket, "alerts.json", jsonBytes); err != nil {
 		errors.AbortRequest(ctx, fmt.Errorf("error writing updated alerts.json file: %v", err))
 		return
 	}
@@ -95,7 +95,7 @@ func syncServiceAlerts(ctx *gin.Context) {
 
 // Return non-deleted service alerts matching specified env
 func getAlerts(ctx *gin.Context, request ServiceAlertV3SyncRequest, db *gorm.DB) ([]models.ServiceAlert, *string) {
-	var env_result models.Environment
+	var envResult models.Environment
 	if request.OnEnvironment != nil {
 		// match env so that we can get gcs bucket
 		environmentQuery, err := environmentModelFromSelector(*request.OnEnvironment)
@@ -103,48 +103,49 @@ func getAlerts(ctx *gin.Context, request ServiceAlertV3SyncRequest, db *gorm.DB)
 			errors.AbortRequest(ctx, fmt.Errorf("error parsing environment selector '%s': %w", *request.OnEnvironment, err))
 			return nil, nil
 		}
-		if err = db.Where(&environmentQuery).Select("id").First(&env_result).Error; err != nil {
+		if err = db.Where(&environmentQuery).Select("id").First(&envResult).Error; err != nil {
 			errors.AbortRequest(ctx, fmt.Errorf("error fetching environment '%v'", err))
 			return nil, nil
 		}
 	}
 	var activeAlerts []models.ServiceAlert
 	// Only return service alerts that haven't been deleted for this environment
-	if err := db.Model(&models.ServiceAlert{}).Where("DeletedAt = '' AND OnEnvironmentID = '%v'", env_result.ID).Find(&activeAlerts).Error; err != nil {
+	if err := db.Model(&models.ServiceAlert{}).Where("DeletedAt = '' AND OnEnvironmentID = '%v'", envResult.ID).Find(&activeAlerts).Error; err != nil {
 		errors.AbortRequest(ctx, fmt.Errorf("(%s) error querying for Service Alerts: %w", errors.InternalServerError, err))
 		return nil, nil
 	}
-	return activeAlerts, env_result.ServiceBannerBucket
+	return activeAlerts, envResult.ServiceBannerBucket
 
 }
 
 // Read file from GCS, then parse JSON data and return []ServiceAlertJsonData struct
-func getFileJson(ctx *gin.Context, gcs_client *google_bucket.GcsClientActual, blob *storage.ObjectAttrs) []ServiceAlertJsonData {
-	byte_data, read_err := gcs_client.ReadBlob(ctx, blob)
-	if read_err != nil {
+func getFileJson(ctx *gin.Context, gcsClient *google_bucket.GcsClientActual, blob *storage.ObjectAttrs) []ServiceAlertJsonData {
+	byteData, readErr := gcsClient.ReadBlob(ctx, blob)
+	if readErr != nil {
 		// handle error
 		return nil
 	}
-	var json_data []ServiceAlertJsonData
-	err := json.Unmarshal(byte_data, &json_data)
+	var jsonData []ServiceAlertJsonData
+	err := json.Unmarshal(byteData, &jsonData)
 	if err != nil {
 		// handle error
 		return nil
 	}
-	return json_data
+	return jsonData
 }
 
-func createSvcAlertJsonData(ctx *gin.Context, active_alerts []models.ServiceAlert) ([]byte, error) {
+// Transform service alerts struct to json formatted byte data to write to GCS blob
+func createServiceAlertJsonData(ctx *gin.Context, activeAlerts []models.ServiceAlert) ([]byte, error) {
 	var alerts []ServiceAlertJsonData
-	for _, v := range active_alerts {
-		tmp_alert := ServiceAlertJsonData{
+	for _, v := range activeAlerts {
+		alertJsonStruct := ServiceAlertJsonData{
 			Title:      *v.Title,
 			Message:    *v.AlertMessage,
 			Link:       *v.Link,
 			Severity:   *v.Severity,
 			IncidentID: uuid.UUID.String(*v.Uuid),
 		}
-		alerts = append(alerts, tmp_alert)
+		alerts = append(alerts, alertJsonStruct)
 	}
 	data, err := json.Marshal(alerts)
 	return data, err
