@@ -74,24 +74,26 @@ func syncServiceAlerts(ctx *gin.Context) {
 	}
 	// read data from blob & parse to JSON
 	json_data := getFileJson(ctx, gcsClient, alert_json_blob)
-	// diff alerts from db and json data for currently live service alerts
-	add, remove, update := compareAlerts(ctx, json_data, alerts)
-	// if any changes then re-create file and upload to gcs bucket
-	if add != nil || remove != nil || update != nil {
-		// convert model data for service alerts to json formatted bytes to upload
-		json_bytes, err := createSvcAlertJsonData(ctx, alerts)
-		if err != nil {
-			errors.AbortRequest(ctx, fmt.Errorf("issue encountered creating json payload: %v", err))
-			return
-		}
-		// Upload file to bucket w/ latest info
-		if err = gcsClient.WriteBlob(ctx, *gcs_bucket, "alerts.json", json_bytes); err != nil {
-			errors.AbortRequest(ctx, fmt.Errorf("error writing updated alerts.json file: %v", err))
-			return
-		}
+
+	if len(json_data) == 0 && len(alerts) == 0 {
+		errors.AbortRequest(ctx, fmt.Errorf("(%s) Nothing to do, no active service alerts and nothing to modify", errors.NotFound))
+		return
 	}
+	// convert model data for service alerts to json formatted bytes to upload
+	json_bytes, err := createSvcAlertJsonData(ctx, alerts)
+	if err != nil {
+		errors.AbortRequest(ctx, fmt.Errorf("issue encountered creating json payload: %v", err))
+		return
+	}
+	// Upload file to bucket w/ latest info
+	if err = gcsClient.WriteBlob(ctx, *gcs_bucket, "alerts.json", json_bytes); err != nil {
+		errors.AbortRequest(ctx, fmt.Errorf("error writing updated alerts.json file: %v", err))
+		return
+	}
+
 }
 
+// Return non-deleted service alerts matching specified env
 func getAlerts(ctx *gin.Context, request ServiceAlertV3SyncRequest, db *gorm.DB) ([]models.ServiceAlert, *string) {
 	var env_result models.Environment
 	if request.OnEnvironment != nil {
@@ -116,6 +118,7 @@ func getAlerts(ctx *gin.Context, request ServiceAlertV3SyncRequest, db *gorm.DB)
 
 }
 
+// Read file from GCS, then parse JSON data and return []ServiceAlertJsonData struct
 func getFileJson(ctx *gin.Context, gcs_client *google_bucket.GcsClientActual, blob *storage.ObjectAttrs) []ServiceAlertJsonData {
 	byte_data, read_err := gcs_client.ReadBlob(ctx, blob)
 	if read_err != nil {
@@ -129,55 +132,6 @@ func getFileJson(ctx *gin.Context, gcs_client *google_bucket.GcsClientActual, bl
 		return nil
 	}
 	return json_data
-}
-
-func compareAlerts(ctx *gin.Context, json_slice []ServiceAlertJsonData, db_alerts []models.ServiceAlert) ([]ServiceAlertJsonData, []models.ServiceAlert, []ServiceAlertJsonData) {
-	// helper func, returns true if there are any differences between alert json and info from DB
-	alertsNeedUpdate := func(jsonAlert ServiceAlertJsonData, dbAlert models.ServiceAlert) bool {
-		return jsonAlert.Title != *dbAlert.Title ||
-			jsonAlert.Message != *dbAlert.AlertMessage ||
-			jsonAlert.Link != *dbAlert.Link ||
-			jsonAlert.Severity != *dbAlert.Severity
-	}
-
-	var active_alerts int = len(json_slice)
-	var alerts_in_db int = len(db_alerts)
-
-	if active_alerts == 0 && alerts_in_db == 0 {
-		errors.AbortRequest(ctx, fmt.Errorf("(%s) Nothing to do, no active service alerts and nothing to modify", errors.NotFound))
-		return nil, nil, nil
-	}
-
-	jsonMap := make(map[string]ServiceAlertJsonData)
-	dbMap := make(map[string]models.ServiceAlert)
-
-	var toAdd []ServiceAlertJsonData
-	var toRemove []models.ServiceAlert
-	var toUpdate []ServiceAlertJsonData
-	// Find alerts to add (in JSON but not in DB)
-	for incidentID, jsonAlert := range jsonMap {
-		if _, exists := dbMap[incidentID]; !exists {
-			toAdd = append(toAdd, jsonAlert)
-		}
-	}
-	// Find alerts to remove (in DB but not in JSON)
-	for incidentID, dbAlert := range dbMap {
-		if _, exists := jsonMap[incidentID]; !exists {
-			toRemove = append(toRemove, dbAlert)
-		}
-	}
-
-	// Find alerts to update (in both but different)
-	for incidentID, jsonAlert := range jsonMap {
-		if dbAlert, exists := dbMap[incidentID]; exists {
-			if alertsNeedUpdate(jsonAlert, dbAlert) {
-				toUpdate = append(toUpdate, jsonAlert)
-			}
-		}
-	}
-
-	return toAdd, toRemove, toUpdate
-
 }
 
 func createSvcAlertJsonData(ctx *gin.Context, active_alerts []models.ServiceAlert) ([]byte, error) {
