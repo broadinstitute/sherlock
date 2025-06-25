@@ -23,10 +23,10 @@ func InitializeStorageClient(ctx context.Context, impersonateAccount ...string) 
 	return &GcsClientActual{GcsClient: client}, err
 }
 
-func (c *GcsClientActual) ListBlobs(ctx context.Context, bucket string) ([]*storage.ObjectAttrs, error) {
+func (client *GcsClientActual) ListBlobs(ctx context.Context, bucket string) ([]*storage.ObjectAttrs, error) {
 	var bucket_objs []*storage.ObjectAttrs
 	query := &storage.Query{Prefix: ""}
-	client_bucket := c.GcsClient.Bucket(bucket)
+	client_bucket := client.GcsClient.Bucket(bucket)
 	it := client_bucket.Objects(ctx, query)
 	for {
 		attrs, err := it.Next()
@@ -34,7 +34,7 @@ func (c *GcsClientActual) ListBlobs(ctx context.Context, bucket string) ([]*stor
 			break
 		}
 		if err != nil {
-			return nil, fmt.Errorf("Issue obtaining bucket objects: %v\n", err)
+			return nil, fmt.Errorf("issue obtaining bucket objects: %v\n", err)
 		}
 		bucket_objs = append(bucket_objs, attrs)
 
@@ -42,21 +42,21 @@ func (c *GcsClientActual) ListBlobs(ctx context.Context, bucket string) ([]*stor
 	return bucket_objs, nil
 }
 
-func (c *GcsClientActual) ReadBlob(ctx context.Context, blob *storage.ObjectAttrs) ([]byte, error) {
-	reader_client, err := c.GcsClient.Bucket(blob.Bucket).Object(blob.Name).NewReader(ctx)
+func (client *GcsClientActual) ReadBlob(ctx context.Context, blob *storage.ObjectAttrs) ([]byte, error) {
+	reader_client, err := client.GcsClient.Bucket(blob.Bucket).Object(blob.Name).NewReader(ctx)
 	if errors.Is(err, storage.ErrObjectNotExist) {
-		return nil, fmt.Errorf("The object does not exist")
+		return nil, fmt.Errorf("the object does not exist")
 	}
 	slurp, err := io.ReadAll(reader_client)
 	reader_client.Close()
 	if err != nil {
-		return nil, fmt.Errorf("Unable to read blob: %v", err)
+		return nil, fmt.Errorf("unable to read blob: %v", err)
 	}
 	return slurp, nil
 }
 
-func (c *GcsClientActual) WriteBlob(ctx context.Context, gcs_bucket string, blob_name string, file_content []byte) error {
-	writer_client := c.GcsClient.Bucket(gcs_bucket).Object(blob_name).NewWriter(ctx)
+func (client *GcsClientActual) WriteBlob(ctx context.Context, gcs_bucket string, blob_name string, file_content []byte) error {
+	writer_client := client.GcsClient.Bucket(gcs_bucket).Object(blob_name).NewWriter(ctx)
 
 	writer_client.ContentType = "application/json"
 	if _, err := writer_client.Write(file_content); err != nil {
@@ -65,8 +65,8 @@ func (c *GcsClientActual) WriteBlob(ctx context.Context, gcs_bucket string, blob
 	return nil
 }
 
-func (c *GcsClientActual) GetBlob(ctx context.Context, bucket_name string, blob_name string) (*storage.ObjectAttrs, error) {
-	attrs, err := c.GcsClient.Bucket(bucket_name).Object(blob_name).Attrs(ctx)
+func (client *GcsClientActual) GetBlob(ctx context.Context, bucket_name string, blob_name string) (*storage.ObjectAttrs, error) {
+	attrs, err := client.GcsClient.Bucket(bucket_name).Object(blob_name).Attrs(ctx)
 	if errors.Is(err, storage.ErrObjectNotExist) {
 		fmt.Println("The object does not exist")
 		return nil, err
