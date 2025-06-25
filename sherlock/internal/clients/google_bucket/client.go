@@ -18,7 +18,7 @@ func InitializeStorageClient(ctx context.Context, impersonateAccount ...string) 
 	// Client uses xml google api's by default but docs reccomend using JSON - will become default behavior in later release
 	client, err := storage.NewClient(ctx, storage.WithJSONReads())
 	if err != nil {
-		return nil, fmt.Errorf("Failed to create storage client: %v\n", err)
+		return nil, fmt.Errorf("failed to create storage client: %v", err)
 	}
 	return &GcsClientActual{GcsClient: client}, err
 }
@@ -27,14 +27,14 @@ func (client *GcsClientActual) ListBlobs(ctx context.Context, bucket string) ([]
 	var bucket_objs []*storage.ObjectAttrs
 	query := &storage.Query{Prefix: ""}
 	client_bucket := client.GcsClient.Bucket(bucket)
-	it := client_bucket.Objects(ctx, query)
+	blobIterator := client_bucket.Objects(ctx, query)
 	for {
-		attrs, err := it.Next()
+		attrs, err := blobIterator.Next()
 		if err == iterator.Done {
 			break
 		}
 		if err != nil {
-			return nil, fmt.Errorf("issue obtaining bucket objects: %v\n", err)
+			return nil, fmt.Errorf("issue obtaining bucket objects: %v", err)
 		}
 		bucket_objs = append(bucket_objs, attrs)
 
