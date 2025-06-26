@@ -1,6 +1,7 @@
 dir: '{{ .InterfaceDir }}/{{ .SrcPackageName }}_mocks'
 structname: Mock{{ .InterfaceName | camelcase }}
 pkgname: '{{ .SrcPackageName }}_mocks'
+filename: "mock_{{ .InterfaceName | snakecase }}.go"
 template: testify
 template-data:
   unroll-variadic: true
