@@ -157,8 +157,12 @@ export class DeployHooksApi extends runtime.BaseAPI {
 
         headerParameters['Content-Type'] = 'application/json';
 
+
+        let urlPath = `/api/deploy-hooks/github-actions/procedures/v3/test/{selector}`;
+        urlPath = urlPath.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector'])));
+
         const response = await this.request({
-            path: `/api/deploy-hooks/github-actions/procedures/v3/test/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector']))),
+            path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
@@ -242,8 +246,11 @@ export class DeployHooksApi extends runtime.BaseAPI {
 
         const headerParameters: runtime.HTTPHeaders = {};
 
+
+        let urlPath = `/api/deploy-hooks/github-actions/v3`;
+
         const response = await this.request({
-            path: `/api/deploy-hooks/github-actions/v3`,
+            path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -279,8 +286,11 @@ export class DeployHooksApi extends runtime.BaseAPI {
 
         headerParameters['Content-Type'] = 'application/json';
 
+
+        let urlPath = `/api/deploy-hooks/github-actions/v3`;
+
         const response = await this.request({
-            path: `/api/deploy-hooks/github-actions/v3`,
+            path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
@@ -315,8 +325,12 @@ export class DeployHooksApi extends runtime.BaseAPI {
 
         const headerParameters: runtime.HTTPHeaders = {};
 
+
+        let urlPath = `/api/deploy-hooks/github-actions/v3/{selector}`;
+        urlPath = urlPath.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector'])));
+
         const response = await this.request({
-            path: `/api/deploy-hooks/github-actions/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector']))),
+            path: urlPath,
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
@@ -350,8 +364,12 @@ export class DeployHooksApi extends runtime.BaseAPI {
 
         const headerParameters: runtime.HTTPHeaders = {};
 
+
+        let urlPath = `/api/deploy-hooks/github-actions/v3/{selector}`;
+        urlPath = urlPath.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector'])));
+
         const response = await this.request({
-            path: `/api/deploy-hooks/github-actions/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector']))),
+            path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -394,8 +412,12 @@ export class DeployHooksApi extends runtime.BaseAPI {
 
         headerParameters['Content-Type'] = 'application/json';
 
+
+        let urlPath = `/api/deploy-hooks/github-actions/v3/{selector}`;
+        urlPath = urlPath.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector'])));
+
         const response = await this.request({
-            path: `/api/deploy-hooks/github-actions/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector']))),
+            path: urlPath,
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
@@ -439,8 +461,12 @@ export class DeployHooksApi extends runtime.BaseAPI {
 
         headerParameters['Content-Type'] = 'application/json';
 
+
+        let urlPath = `/api/deploy-hooks/slack/procedures/v3/test/{selector}`;
+        urlPath = urlPath.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector'])));
+
         const response = await this.request({
-            path: `/api/deploy-hooks/slack/procedures/v3/test/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector']))),
+            path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
@@ -512,8 +538,11 @@ export class DeployHooksApi extends runtime.BaseAPI {
 
         const headerParameters: runtime.HTTPHeaders = {};
 
+
+        let urlPath = `/api/deploy-hooks/slack/v3`;
+
         const response = await this.request({
-            path: `/api/deploy-hooks/slack/v3`,
+            path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -549,8 +578,11 @@ export class DeployHooksApi extends runtime.BaseAPI {
 
         headerParameters['Content-Type'] = 'application/json';
 
+
+        let urlPath = `/api/deploy-hooks/slack/v3`;
+
         const response = await this.request({
-            path: `/api/deploy-hooks/slack/v3`,
+            path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
@@ -585,8 +617,12 @@ export class DeployHooksApi extends runtime.BaseAPI {
 
         const headerParameters: runtime.HTTPHeaders = {};
 
+
+        let urlPath = `/api/deploy-hooks/slack/v3/{selector}`;
+        urlPath = urlPath.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector'])));
+
         const response = await this.request({
-            path: `/api/deploy-hooks/slack/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector']))),
+            path: urlPath,
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
@@ -620,8 +656,12 @@ export class DeployHooksApi extends runtime.BaseAPI {
 
         const headerParameters: runtime.HTTPHeaders = {};
 
+
+        let urlPath = `/api/deploy-hooks/slack/v3/{selector}`;
+        urlPath = urlPath.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector'])));
+
         const response = await this.request({
-            path: `/api/deploy-hooks/slack/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector']))),
+            path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -664,8 +704,12 @@ export class DeployHooksApi extends runtime.BaseAPI {
 
         headerParameters['Content-Type'] = 'application/json';
 
+
+        let urlPath = `/api/deploy-hooks/slack/v3/{selector}`;
+        urlPath = urlPath.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector'])));
+
         const response = await this.request({
-            path: `/api/deploy-hooks/slack/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector']))),
+            path: urlPath,
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,

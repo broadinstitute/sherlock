@@ -42,8 +42,11 @@ export class MiscApi extends runtime.BaseAPI {
 
         const headerParameters: runtime.HTTPHeaders = {};
 
+
+        let urlPath = `/connection-check`;
+
         const response = await this.request({
-            path: `/connection-check`,
+            path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -70,8 +73,11 @@ export class MiscApi extends runtime.BaseAPI {
 
         const headerParameters: runtime.HTTPHeaders = {};
 
+
+        let urlPath = `/status`;
+
         const response = await this.request({
-            path: `/status`,
+            path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -98,8 +104,11 @@ export class MiscApi extends runtime.BaseAPI {
 
         const headerParameters: runtime.HTTPHeaders = {};
 
+
+        let urlPath = `/version`;
+
         const response = await this.request({
-            path: `/version`,
+            path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,

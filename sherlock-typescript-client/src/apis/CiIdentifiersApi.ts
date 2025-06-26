@@ -89,8 +89,11 @@ export class CiIdentifiersApi extends runtime.BaseAPI {
 
         const headerParameters: runtime.HTTPHeaders = {};
 
+
+        let urlPath = `/api/ci-identifiers/v3`;
+
         const response = await this.request({
-            path: `/api/ci-identifiers/v3`,
+            path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -136,8 +139,12 @@ export class CiIdentifiersApi extends runtime.BaseAPI {
 
         const headerParameters: runtime.HTTPHeaders = {};
 
+
+        let urlPath = `/api/ci-identifiers/v3/{selector}`;
+        urlPath = urlPath.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector'])));
+
         const response = await this.request({
-            path: `/api/ci-identifiers/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector']))),
+            path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,

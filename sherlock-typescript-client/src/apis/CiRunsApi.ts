@@ -76,8 +76,11 @@ export class CiRunsApi extends runtime.BaseAPI {
 
         const headerParameters: runtime.HTTPHeaders = {};
 
+
+        let urlPath = `/api/ci-runs/procedures/v3/github-info`;
+
         const response = await this.request({
-            path: `/api/ci-runs/procedures/v3/github-info`,
+            path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -196,8 +199,11 @@ export class CiRunsApi extends runtime.BaseAPI {
 
         const headerParameters: runtime.HTTPHeaders = {};
 
+
+        let urlPath = `/api/ci-runs/v3`;
+
         const response = await this.request({
-            path: `/api/ci-runs/v3`,
+            path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -233,8 +239,11 @@ export class CiRunsApi extends runtime.BaseAPI {
 
         headerParameters['Content-Type'] = 'application/json';
 
+
+        let urlPath = `/api/ci-runs/v3`;
+
         const response = await this.request({
-            path: `/api/ci-runs/v3`,
+            path: urlPath,
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
@@ -269,8 +278,12 @@ export class CiRunsApi extends runtime.BaseAPI {
 
         const headerParameters: runtime.HTTPHeaders = {};
 
+
+        let urlPath = `/api/ci-runs/v3/{selector}`;
+        urlPath = urlPath.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector'])));
+
         const response = await this.request({
-            path: `/api/ci-runs/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector']))),
+            path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,

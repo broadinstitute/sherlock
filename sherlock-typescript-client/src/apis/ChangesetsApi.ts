@@ -123,8 +123,11 @@ export class ChangesetsApi extends runtime.BaseAPI {
 
         headerParameters['Content-Type'] = 'application/json';
 
+
+        let urlPath = `/api/changesets/procedures/v3/apply`;
+
         const response = await this.request({
-            path: `/api/changesets/procedures/v3/apply`,
+            path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
@@ -167,8 +170,12 @@ export class ChangesetsApi extends runtime.BaseAPI {
 
         const headerParameters: runtime.HTTPHeaders = {};
 
+
+        let urlPath = `/api/changesets/procedures/v3/chart-release-history/{chart-release}`;
+        urlPath = urlPath.replace(`{${"chart-release"}}`, encodeURIComponent(String(requestParameters['chartRelease'])));
+
         const response = await this.request({
-            path: `/api/changesets/procedures/v3/chart-release-history/{chart-release}`.replace(`{${"chart-release"}}`, encodeURIComponent(String(requestParameters['chartRelease']))),
+            path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -208,8 +215,11 @@ export class ChangesetsApi extends runtime.BaseAPI {
 
         headerParameters['Content-Type'] = 'application/json';
 
+
+        let urlPath = `/api/changesets/procedures/v3/plan-and-apply`;
+
         const response = await this.request({
-            path: `/api/changesets/procedures/v3/plan-and-apply`,
+            path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
@@ -250,8 +260,11 @@ export class ChangesetsApi extends runtime.BaseAPI {
 
         headerParameters['Content-Type'] = 'application/json';
 
+
+        let urlPath = `/api/changesets/procedures/v3/plan`;
+
         const response = await this.request({
-            path: `/api/changesets/procedures/v3/plan`,
+            path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
@@ -300,8 +313,14 @@ export class ChangesetsApi extends runtime.BaseAPI {
 
         const headerParameters: runtime.HTTPHeaders = {};
 
+
+        let urlPath = `/api/changesets/procedures/v3/version-history/{version-type}/{chart}/{version}`;
+        urlPath = urlPath.replace(`{${"version-type"}}`, encodeURIComponent(String(requestParameters['versionType'])));
+        urlPath = urlPath.replace(`{${"chart"}}`, encodeURIComponent(String(requestParameters['chart'])));
+        urlPath = urlPath.replace(`{${"version"}}`, encodeURIComponent(String(requestParameters['version'])));
+
         const response = await this.request({
-            path: `/api/changesets/procedures/v3/version-history/{version-type}/{chart}/{version}`.replace(`{${"version-type"}}`, encodeURIComponent(String(requestParameters['versionType']))).replace(`{${"chart"}}`, encodeURIComponent(String(requestParameters['chart']))).replace(`{${"version"}}`, encodeURIComponent(String(requestParameters['version']))),
+            path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -464,8 +483,11 @@ export class ChangesetsApi extends runtime.BaseAPI {
 
         const headerParameters: runtime.HTTPHeaders = {};
 
+
+        let urlPath = `/api/changesets/v3`;
+
         const response = await this.request({
-            path: `/api/changesets/v3`,
+            path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -499,8 +521,12 @@ export class ChangesetsApi extends runtime.BaseAPI {
 
         const headerParameters: runtime.HTTPHeaders = {};
 
+
+        let urlPath = `/api/changesets/v3/{id}`;
+        urlPath = urlPath.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id'])));
+
         const response = await this.request({
-            path: `/api/changesets/v3/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id']))),
+            path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,

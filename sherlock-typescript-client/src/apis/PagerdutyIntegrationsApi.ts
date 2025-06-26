@@ -100,8 +100,12 @@ export class PagerdutyIntegrationsApi extends runtime.BaseAPI {
 
         headerParameters['Content-Type'] = 'application/json';
 
+
+        let urlPath = `/api/pagerduty-integrations/procedures/v3/trigger-incident/{selector}`;
+        urlPath = urlPath.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector'])));
+
         const response = await this.request({
-            path: `/api/pagerduty-integrations/procedures/v3/trigger-incident/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector']))),
+            path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
@@ -161,8 +165,11 @@ export class PagerdutyIntegrationsApi extends runtime.BaseAPI {
 
         const headerParameters: runtime.HTTPHeaders = {};
 
+
+        let urlPath = `/api/pagerduty-integrations/v3`;
+
         const response = await this.request({
-            path: `/api/pagerduty-integrations/v3`,
+            path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -198,8 +205,11 @@ export class PagerdutyIntegrationsApi extends runtime.BaseAPI {
 
         headerParameters['Content-Type'] = 'application/json';
 
+
+        let urlPath = `/api/pagerduty-integrations/v3`;
+
         const response = await this.request({
-            path: `/api/pagerduty-integrations/v3`,
+            path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
@@ -234,8 +244,12 @@ export class PagerdutyIntegrationsApi extends runtime.BaseAPI {
 
         const headerParameters: runtime.HTTPHeaders = {};
 
+
+        let urlPath = `/api/pagerduty-integrations/v3/{selector}`;
+        urlPath = urlPath.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector'])));
+
         const response = await this.request({
-            path: `/api/pagerduty-integrations/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector']))),
+            path: urlPath,
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
@@ -269,8 +283,12 @@ export class PagerdutyIntegrationsApi extends runtime.BaseAPI {
 
         const headerParameters: runtime.HTTPHeaders = {};
 
+
+        let urlPath = `/api/pagerduty-integrations/v3/{selector}`;
+        urlPath = urlPath.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector'])));
+
         const response = await this.request({
-            path: `/api/pagerduty-integrations/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector']))),
+            path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -313,8 +331,12 @@ export class PagerdutyIntegrationsApi extends runtime.BaseAPI {
 
         headerParameters['Content-Type'] = 'application/json';
 
+
+        let urlPath = `/api/pagerduty-integrations/v3/{selector}`;
+        urlPath = urlPath.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector'])));
+
         const response = await this.request({
-            path: `/api/pagerduty-integrations/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector']))),
+            path: urlPath,
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,

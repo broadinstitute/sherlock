@@ -1,6 +1,6 @@
 [project]
 name = "sherlock_python_client"
-version = "v1.6.43"
+version = "v1.6.44"
 description = "Sherlock"
 authors = [
   {name = "DSP DevOps",email = "dsp-devops@broadinstitute.org"},
@@ -8,7 +8,7 @@ authors = [
 license = "BSD-3-Clause"
 readme = "README.md"
 keywords = ["OpenAPI", "OpenAPI-Generator", "Sherlock"]
-requires-python = "^3.9"
+requires-python = ">=3.9"
 
 dependencies = [
   "urllib3 (>=2.1.0,<3.0.0)",

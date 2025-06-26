@@ -89,8 +89,11 @@ export class UsersApi extends runtime.BaseAPI {
 
         headerParameters['Content-Type'] = 'application/json';
 
+
+        let urlPath = `/api/users/procedures/v3/deactivate`;
+
         const response = await this.request({
-            path: `/api/users/procedures/v3/deactivate`,
+            path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
@@ -186,8 +189,11 @@ export class UsersApi extends runtime.BaseAPI {
 
         const headerParameters: runtime.HTTPHeaders = {};
 
+
+        let urlPath = `/api/users/v3`;
+
         const response = await this.request({
-            path: `/api/users/v3`,
+            path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -216,8 +222,11 @@ export class UsersApi extends runtime.BaseAPI {
 
         headerParameters['Content-Type'] = 'application/json';
 
+
+        let urlPath = `/api/users/v3`;
+
         const response = await this.request({
-            path: `/api/users/v3`,
+            path: urlPath,
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
@@ -252,8 +261,12 @@ export class UsersApi extends runtime.BaseAPI {
 
         const headerParameters: runtime.HTTPHeaders = {};
 
+
+        let urlPath = `/api/users/v3/{selector}`;
+        urlPath = urlPath.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector'])));
+
         const response = await this.request({
-            path: `/api/users/v3/{selector}`.replace(`{${"selector"}}`, encodeURIComponent(String(requestParameters['selector']))),
+            path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,

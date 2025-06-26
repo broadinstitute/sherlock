@@ -92,8 +92,11 @@ export class RoleAssignmentsApi extends runtime.BaseAPI {
 
         const headerParameters: runtime.HTTPHeaders = {};
 
+
+        let urlPath = `/api/role-assignments/v3`;
+
         const response = await this.request({
-            path: `/api/role-assignments/v3`,
+            path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -134,8 +137,13 @@ export class RoleAssignmentsApi extends runtime.BaseAPI {
 
         const headerParameters: runtime.HTTPHeaders = {};
 
+
+        let urlPath = `/api/role-assignments/v3/{role-selector}/{user-selector}`;
+        urlPath = urlPath.replace(`{${"role-selector"}}`, encodeURIComponent(String(requestParameters['roleSelector'])));
+        urlPath = urlPath.replace(`{${"user-selector"}}`, encodeURIComponent(String(requestParameters['userSelector'])));
+
         const response = await this.request({
-            path: `/api/role-assignments/v3/{role-selector}/{user-selector}`.replace(`{${"role-selector"}}`, encodeURIComponent(String(requestParameters['roleSelector']))).replace(`{${"user-selector"}}`, encodeURIComponent(String(requestParameters['userSelector']))),
+            path: urlPath,
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
@@ -175,8 +183,13 @@ export class RoleAssignmentsApi extends runtime.BaseAPI {
 
         const headerParameters: runtime.HTTPHeaders = {};
 
+
+        let urlPath = `/api/role-assignments/v3/{role-selector}/{user-selector}`;
+        urlPath = urlPath.replace(`{${"role-selector"}}`, encodeURIComponent(String(requestParameters['roleSelector'])));
+        urlPath = urlPath.replace(`{${"user-selector"}}`, encodeURIComponent(String(requestParameters['userSelector'])));
+
         const response = await this.request({
-            path: `/api/role-assignments/v3/{role-selector}/{user-selector}`.replace(`{${"role-selector"}}`, encodeURIComponent(String(requestParameters['roleSelector']))).replace(`{${"user-selector"}}`, encodeURIComponent(String(requestParameters['userSelector']))),
+            path: urlPath,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -226,8 +239,13 @@ export class RoleAssignmentsApi extends runtime.BaseAPI {
 
         headerParameters['Content-Type'] = 'application/json';
 
+
+        let urlPath = `/api/role-assignments/v3/{role-selector}/{user-selector}`;
+        urlPath = urlPath.replace(`{${"role-selector"}}`, encodeURIComponent(String(requestParameters['roleSelector'])));
+        urlPath = urlPath.replace(`{${"user-selector"}}`, encodeURIComponent(String(requestParameters['userSelector'])));
+
         const response = await this.request({
-            path: `/api/role-assignments/v3/{role-selector}/{user-selector}`.replace(`{${"role-selector"}}`, encodeURIComponent(String(requestParameters['roleSelector']))).replace(`{${"user-selector"}}`, encodeURIComponent(String(requestParameters['userSelector']))),
+            path: urlPath,
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
@@ -278,8 +296,13 @@ export class RoleAssignmentsApi extends runtime.BaseAPI {
 
         headerParameters['Content-Type'] = 'application/json';
 
+
+        let urlPath = `/api/role-assignments/v3/{role-selector}/{user-selector}`;
+        urlPath = urlPath.replace(`{${"role-selector"}}`, encodeURIComponent(String(requestParameters['roleSelector'])));
+        urlPath = urlPath.replace(`{${"user-selector"}}`, encodeURIComponent(String(requestParameters['userSelector'])));
+
         const response = await this.request({
-            path: `/api/role-assignments/v3/{role-selector}/{user-selector}`.replace(`{${"role-selector"}}`, encodeURIComponent(String(requestParameters['roleSelector']))).replace(`{${"user-selector"}}`, encodeURIComponent(String(requestParameters['userSelector']))),
+            path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,

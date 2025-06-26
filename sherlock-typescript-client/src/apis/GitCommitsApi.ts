@@ -55,8 +55,11 @@ export class GitCommitsApi extends runtime.BaseAPI {
 
         headerParameters['Content-Type'] = 'application/json';
 
+
+        let urlPath = `/api/git-commits/v3`;
+
         const response = await this.request({
-            path: `/api/git-commits/v3`,
+            path: urlPath,
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
