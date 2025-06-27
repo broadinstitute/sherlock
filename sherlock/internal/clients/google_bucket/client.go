@@ -5,16 +5,26 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"testing"
 
 	"cloud.google.com/go/storage"
+	"github.com/broadinstitute/sherlock/sherlock/internal/clients/google_bucket/google_bucket_mocks"
 	"google.golang.org/api/iterator"
 )
+
+// wrapper interface for generating mocks
+type GcsClient interface {
+	ListBlobs(ctx context.Context, bucket string) ([]*storage.ObjectAttrs, error)
+	ReadBlob(ctx context.Context, blob *storage.ObjectAttrs) ([]byte, error)
+	WriteBlob(ctx context.Context, gcs_bucket string, blob_name string, file_content []byte) error
+	GetBlob(ctx context.Context, bucket_name string, blob_name string) (*storage.ObjectAttrs, error)
+}
 
 type GcsClientActual struct {
 	GcsClient *storage.Client
 }
 
-func InitializeStorageClient(ctx context.Context, impersonateAccount ...string) (*GcsClientActual, error) {
+func InitializeStorageClient(ctx context.Context) (GcsClient, error) {
 	// Client uses xml google api's by default but docs reccomend using JSON - will become default behavior in later release
 	client, err := storage.NewClient(ctx, storage.WithJSONReads())
 	if err != nil {
@@ -71,5 +81,27 @@ func (client *GcsClientActual) GetBlob(ctx context.Context, bucket_name string, 
 		fmt.Println("The object does not exist")
 		return nil, err
 	}
+	if err != nil {
+		return nil, fmt.Errorf("error encountered attempting to get blob: %v", err)
+	}
 	return attrs, nil
+}
+
+var (
+	// client is what functions in this package should use whenever possible.
+	client GcsClient
+)
+
+func UseMockedClient(t *testing.T, config func(c *google_bucket_mocks.MockgcsClient), callback func()) {
+	if config == nil {
+		callback()
+		return
+	}
+	c := google_bucket_mocks.NewMockgcsClient(t)
+	config(c)
+	temp := client
+	client = c
+	callback()
+	c.AssertExpectations(t)
+	client = temp
 }

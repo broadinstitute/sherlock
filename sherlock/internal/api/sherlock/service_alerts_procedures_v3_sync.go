@@ -3,8 +3,10 @@ package sherlock
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
 
 	"cloud.google.com/go/storage"
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/clients/google_bucket"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/authentication"
@@ -16,12 +18,6 @@ import (
 
 type ServiceAlertV3SyncRequest struct {
 	OnEnvironment *string `json:"onEnvironment,omitempty" form:"onEnvironment"`
-}
-
-type ServiceAlertV3SyncResponse struct {
-	AddedServiceAlerts   []string `json:"addedServiceAlerts"`
-	RemovedServiceAlerts []string `json:"removedServiceAlerts"`
-	UpdatedServiceAlerts []string `json:"updatedServiceAlerts"`
 }
 
 type ServiceAlertJsonData struct {
@@ -40,7 +36,7 @@ type ServiceAlertJsonData struct {
 //	@accept			json
 //	@produce		json
 //	@param			environment					body		ServiceAlertV3SyncRequest	true	"Information on Service Alert environment"
-//	@success		200						{array}		ServiceAlertV3SyncResponse
+//	@success		200						{array}		ServiceAlertV3
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/service-alerts/procedures/v3/sync [post]
 func syncServiceAlerts(ctx *gin.Context) {
@@ -53,17 +49,16 @@ func syncServiceAlerts(ctx *gin.Context) {
 	var body ServiceAlertV3SyncRequest
 	if err = ctx.ShouldBindJSON(&body); err != nil {
 		errors.AbortRequest(ctx, fmt.Errorf("(%s) request validation error: %w", errors.BadRequest, err))
-		return
 	}
 	// Get alerts from DB and gcs bucket from environment
 	alerts, gcsBucket := getAlerts(ctx, body, db)
 	if len(alerts) == 0 {
 		errors.AbortRequest(ctx, fmt.Errorf("(%s) No Alerts found for this environment", errors.BadRequest))
-		return
 	}
 	// set GCS client
-	var gcsClient, googleClientError = google_bucket.InitializeStorageClient(ctx)
+	gcsClient, googleClientError := google_bucket.InitializeStorageClient(ctx)
 	if googleClientError != nil {
+		errors.AbortRequest(ctx, fmt.Errorf("blob not found: %v", googleClientError))
 		return
 	}
 	// get alerts blob
@@ -91,6 +86,8 @@ func syncServiceAlerts(ctx *gin.Context) {
 		return
 	}
 
+	ctx.JSON(http.StatusOK, utils.Map(alerts, ServiceAlertFromModel))
+
 }
 
 // Return non-deleted service alerts matching specified env
@@ -110,7 +107,8 @@ func getAlerts(ctx *gin.Context, request ServiceAlertV3SyncRequest, db *gorm.DB)
 	}
 	var activeAlerts []models.ServiceAlert
 	// Only return service alerts that haven't been deleted for this environment
-	if err := db.Model(&models.ServiceAlert{}).Where("DeletedAt = '' AND OnEnvironmentID = '%v'", envResult.ID).Find(&activeAlerts).Error; err != nil {
+	//db.Where(&models.ServiceAlert{}).Select("id").Find(&existing).Error
+	if err := db.Where(&models.ServiceAlert{OnEnvironmentID: &envResult.ID}).Find(&activeAlerts).Error; err != nil {
 		errors.AbortRequest(ctx, fmt.Errorf("(%s) error querying for Service Alerts: %w", errors.InternalServerError, err))
 		return nil, nil
 	}
@@ -119,7 +117,7 @@ func getAlerts(ctx *gin.Context, request ServiceAlertV3SyncRequest, db *gorm.DB)
 }
 
 // Read file from GCS, then parse JSON data and return []ServiceAlertJsonData struct
-func getFileJson(ctx *gin.Context, gcsClient *google_bucket.GcsClientActual, blob *storage.ObjectAttrs) []ServiceAlertJsonData {
+func getFileJson(ctx *gin.Context, gcsClient google_bucket.GcsClient, blob *storage.ObjectAttrs) []ServiceAlertJsonData {
 	byteData, readErr := gcsClient.ReadBlob(ctx, blob)
 	if readErr != nil {
 		// handle error
@@ -131,6 +129,7 @@ func getFileJson(ctx *gin.Context, gcsClient *google_bucket.GcsClientActual, blo
 		// handle error
 		return nil
 	}
+
 	return jsonData
 }
 
