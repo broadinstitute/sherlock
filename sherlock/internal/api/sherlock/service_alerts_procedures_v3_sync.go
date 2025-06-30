@@ -100,7 +100,7 @@ func getAlerts(ctx *gin.Context, request ServiceAlertV3SyncRequest, db *gorm.DB)
 			errors.AbortRequest(ctx, fmt.Errorf("error parsing environment selector '%s': %w", *request.OnEnvironment, err))
 			return nil, nil
 		}
-		if err = db.Where(&environmentQuery).Select("id").First(&envResult).Error; err != nil {
+		if err = db.Where(&environmentQuery).First(&envResult).Error; err != nil {
 			errors.AbortRequest(ctx, fmt.Errorf("error fetching environment '%v'", err))
 			return nil, nil
 		}
