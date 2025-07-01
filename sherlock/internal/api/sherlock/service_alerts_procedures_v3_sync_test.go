@@ -14,13 +14,13 @@ import (
 
 func (test_handler *handlerSuite) TestSyncServiceAlerts_Success() {
 	test_handler.SetNonSuitableTestUserForDB()
-	env := s.TestData.Environment_Dev()
-	alert1 := s.TestData.ServiceAlert_1()
+	env := test_handler.TestData.Environment_Dev()
+	alert1 := test_handler.TestData.ServiceAlert_1()
 	alert1.OnEnvironmentID = &env.ID
 	test_handler.NoError(test_handler.DB.Save(&alert1).Error)
 
-	google_bucket.UseMockedClient(test_handler.T(), func(c *google_bucket_mocks.MockgcsClient) {
-		c.EXPECT().WriteBlob(mock.Anything, *env.ServiceBannerBucket, "alerts.json", mock.Anything).Return(nil).Once()
+	google_bucket.UseMockedClient(test_handler.T(), func(client *google_bucket_mocks.MockgcsClient) {
+		client.EXPECT().WriteBlob(mock.Anything, *env.ServiceBannerBucket, "alerts.json", mock.Anything).Return(nil).Once()
 	}, func() {
 		var got []ServiceAlertV3
 		code := test_handler.HandleRequest(
@@ -37,16 +37,16 @@ func (test_handler *handlerSuite) TestSyncServiceAlerts_Success() {
 // test to write blob
 func (test_handler *handlerSuite) TestSyncServiceAlerts_WriteBlobFails() {
 	test_handler.SetNonSuitableTestUserForDB()
-	env := s.TestData.Environment_Dev()
-	alert1 := s.TestData.ServiceAlert_1()
+	env := test_handler.TestData.Environment_Dev()
+	alert1 := test_handler.TestData.ServiceAlert_1()
 	alert1.OnEnvironmentID = &env.ID
 	test_handler.NoError(test_handler.DB.Save(&alert1).Error)
 
-	google_bucket.UseMockedClient(test_handler.T(), func(c *google_bucket_mocks.MockgcsClient) {
-		c.EXPECT().WriteBlob(mock.Anything, *env.ServiceBannerBucket, "alerts.json", mock.Anything).Return(fmt.Errorf("some GCS error")).Once()
+	google_bucket.UseMockedClient(test_handler.T(), func(client *google_bucket_mocks.MockgcsClient) {
+		client.EXPECT().WriteBlob(mock.Anything, *env.ServiceBannerBucket, "alerts.json", mock.Anything).Return(fmt.Errorf("some GCS error")).Once()
 	}, func() {
 		var got errors.ErrorResponse
-		code := s.HandleRequest(
+		code := test_handler.HandleRequest(
 			test_handler.NewRequest("POST", "/api/service-alerts/procedures/v3/sync", ServiceAlertV3SyncRequest{
 				OnEnvironment: env.Name,
 			}),
