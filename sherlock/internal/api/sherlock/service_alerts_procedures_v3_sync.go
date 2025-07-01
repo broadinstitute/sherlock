@@ -61,20 +61,7 @@ func syncServiceAlerts(ctx *gin.Context) {
 		errors.AbortRequest(ctx, fmt.Errorf("blob not found: %v", googleClientError))
 		return
 	}
-	// get alerts blob
-	//alertJsonBlob, readErr := gcsClient.GetBlob(ctx, *gcsBucket, "alerts.json")
-	//if readErr != nil {
-	//errors.AbortRequest(ctx, fmt.Errorf("blob not found: %v", readErr))
-	//return
-	//}
-	// read data from blob & parse to JSON
-	//	jsonData := getFileJson(ctx, gcsClient, alertJsonBlob)
 
-	//	if len(jsonData) == 0 && len(alerts) == 0 {
-	//		errors.AbortRequest(ctx, fmt.Errorf("(%s) Nothing to do, no active service alerts and nothing to modify", errors.NotFound))
-	//		return
-	//}
-	// convert model data for service alerts to json formatted bytes to upload
 	jsonBytes, err := createServiceAlertJsonData(alerts)
 	if err != nil {
 		errors.AbortRequest(ctx, fmt.Errorf("issue encountered creating json payload: %v", err))
