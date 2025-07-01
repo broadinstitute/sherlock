@@ -69,10 +69,6 @@ func (client *GcsClientActual) WriteBlob(ctx context.Context, gcs_bucket string,
 	writer_client := client.GcsClient.Bucket(gcs_bucket).Object(blob_name).NewWriter(ctx)
 	writer_client.ContentType = "application/json"
 
-	// Ensure the content ends with a newline
-	if len(file_content) > 0 && file_content[len(file_content)-1] != '\n' {
-		file_content = append(file_content, '\n')
-	}
 	if _, err := writer_client.Write(file_content); err != nil {
 		return fmt.Errorf("createFile: unable to write data to bucket: %v", err)
 	}
