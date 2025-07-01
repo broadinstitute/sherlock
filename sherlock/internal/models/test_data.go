@@ -801,7 +801,7 @@ func (td *testDataImpl) Environment_Prod() Environment {
 			Description:               utils.PointerTo("Terra's production environment"),
 			PagerdutyIntegrationID:    utils.PointerTo(td.PagerdutyIntegration_ManuallyTriggeredTerraIncident().ID),
 			Offline:                   utils.PointerTo(false),
-			ServiceBannerBucket:       utils.PointerTo("firecloud-alerts"),
+			ServiceBannerBucket:       utils.PointerTo("not-a-real-bucket"),
 		}
 		td.h.SetSuitableTestUserForDB()
 		td.create(&td.environment_prod)
@@ -826,7 +826,7 @@ func (td *testDataImpl) Environment_Staging() Environment {
 			PreventDeletion:           utils.PointerTo(true),
 			Description:               utils.PointerTo("Terra's staging environment"),
 			Offline:                   utils.PointerTo(false),
-			ServiceBannerBucket:       utils.PointerTo("firecloud-alerts-staging"),
+			ServiceBannerBucket:       utils.PointerTo("not-a-real-bucket-staging"),
 		}
 		td.h.SetSuitableTestUserForDB()
 		td.create(&td.environment_staging)
@@ -851,7 +851,7 @@ func (td *testDataImpl) Environment_Dev() Environment {
 			PreventDeletion:           utils.PointerTo(true),
 			Description:               utils.PointerTo("Terra's development environment"),
 			Offline:                   utils.PointerTo(false),
-			ServiceBannerBucket:       utils.PointerTo("firecloud-alerts-dev"),
+			ServiceBannerBucket:       utils.PointerTo("not-a-real-bucket-dev"),
 		}
 		td.h.SetSuitableTestUserForDB()
 		td.create(&td.environment_dev)
@@ -1749,7 +1749,7 @@ func (td *testDataImpl) ServiceAlert_1() ServiceAlert {
 			AlertMessage:    utils.PointerTo("alert message here"),
 			Link:            utils.PointerTo("NA"),
 			Severity:        utils.PointerTo("blocker"),
-			OnEnvironmentID: utils.PointerTo(td.Environment_Prod().ID),
+			OnEnvironmentID: utils.PointerTo(td.Environment_Dev().ID),
 		}
 		td.create(&td.serviceAlert_1)
 	}
@@ -1758,12 +1758,15 @@ func (td *testDataImpl) ServiceAlert_1() ServiceAlert {
 
 func (td *testDataImpl) ServiceAlert_2() ServiceAlert {
 	if td.serviceAlert_2.ID == 0 {
+		type svc_alert_uuid = uuid.UUID
+		test_uuid := svc_alert_uuid(uuid.New())
 		td.serviceAlert_2 = ServiceAlert{
 			Title:           utils.PointerTo("another test alert"),
+			Uuid:            utils.PointerTo(test_uuid),
 			AlertMessage:    utils.PointerTo("this is a test"),
 			Link:            utils.PointerTo("https://this-is-a-link-to-something-relevant.mp3"),
 			Severity:        utils.PointerTo("minor"),
-			OnEnvironmentID: utils.PointerTo(td.Environment_Prod().ID),
+			OnEnvironmentID: utils.PointerTo(td.Environment_Dev().ID),
 		}
 		td.create(&td.serviceAlert_2)
 	}
