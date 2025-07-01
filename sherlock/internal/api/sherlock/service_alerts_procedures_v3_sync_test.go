@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"cloud.google.com/go/storage"
 	"github.com/broadinstitute/sherlock/sherlock/internal/clients/google_bucket"
 	"github.com/broadinstitute/sherlock/sherlock/internal/clients/google_bucket/google_bucket_mocks"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
@@ -89,38 +88,4 @@ func (s *handlerSuite) TestCreateServiceAlertJsonData() {
 	s.Equal(alert1.Uuid.String(), got[0].IncidentID)
 	s.Equal(*alert2.Title, got[1].Title)
 	s.Equal(alert2.Uuid.String(), got[1].IncidentID)
-}
-
-func createFakeObjectAttrs(bucket, name string) *storage.ObjectAttrs {
-	return &storage.ObjectAttrs{
-		Bucket:      bucket,
-		Name:        name,
-		Size:        1024,
-		ContentType: "application/json",
-	}
-}
-
-func createMockAlertJsonData() []byte {
-	alerts := []ServiceAlertJsonData{
-		{
-			Title:      "Production Issue",
-			Message:    "Service experiencing high latency",
-			Link:       "https://status.example.com/incident/123",
-			Severity:   "high",
-			IncidentID: "incident-123",
-		},
-		{
-			Title:      "Maintenance Window",
-			Message:    "Scheduled maintenance tonight",
-			Link:       "https://status.example.com/maintenance/456",
-			Severity:   "medium",
-			IncidentID: "maintenance-456",
-		},
-	}
-	data, err := json.Marshal(alerts)
-	if err != nil {
-		return nil
-	}
-	// GCS client ensures a newline, so we add one here for comparisons
-	return append(data, '\n')
 }
