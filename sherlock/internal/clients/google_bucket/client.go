@@ -99,6 +99,14 @@ var (
 	client GcsClient
 )
 
+// GetClient returns the current client (either mocked or a new real client)
+func GetClient(ctx context.Context) (GcsClient, error) {
+	if client != nil {
+		return client, nil
+	}
+	return InitializeStorageClient(ctx)
+}
+
 func UseMockedClient(t *testing.T, config func(c *google_bucket_mocks.MockgcsClient), callback func()) {
 	if config == nil {
 		callback()

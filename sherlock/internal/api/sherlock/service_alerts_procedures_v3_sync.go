@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"cloud.google.com/go/storage"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/clients/google_bucket"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
@@ -17,7 +16,7 @@ import (
 )
 
 type ServiceAlertV3SyncRequest struct {
-	OnEnvironment *string `json:"onEnvironment,omitempty" form:"onEnvironment"`
+	OnEnvironment string `json:"onEnvironment,omitempty" form:"onEnvironment"`
 }
 
 type ServiceAlertJsonData struct {
@@ -54,28 +53,29 @@ func syncServiceAlerts(ctx *gin.Context) {
 	alerts, gcsBucket := getAlerts(ctx, body, db)
 	if len(alerts) == 0 {
 		errors.AbortRequest(ctx, fmt.Errorf("(%s) No Alerts found for this environment", errors.BadRequest))
+		return
 	}
 	// set GCS client
-	gcsClient, googleClientError := google_bucket.InitializeStorageClient(ctx)
+	gcsClient, googleClientError := google_bucket.GetClient(ctx)
 	if googleClientError != nil {
 		errors.AbortRequest(ctx, fmt.Errorf("blob not found: %v", googleClientError))
 		return
 	}
 	// get alerts blob
-	alertJsonBlob, readErr := gcsClient.GetBlob(ctx, *gcsBucket, "alerts.json")
-	if readErr != nil {
-		errors.AbortRequest(ctx, fmt.Errorf("blob not found: %v", readErr))
-		return
-	}
+	//alertJsonBlob, readErr := gcsClient.GetBlob(ctx, *gcsBucket, "alerts.json")
+	//if readErr != nil {
+	//errors.AbortRequest(ctx, fmt.Errorf("blob not found: %v", readErr))
+	//return
+	//}
 	// read data from blob & parse to JSON
-	jsonData := getFileJson(ctx, gcsClient, alertJsonBlob)
+	//	jsonData := getFileJson(ctx, gcsClient, alertJsonBlob)
 
-	if len(jsonData) == 0 && len(alerts) == 0 {
-		errors.AbortRequest(ctx, fmt.Errorf("(%s) Nothing to do, no active service alerts and nothing to modify", errors.NotFound))
-		return
-	}
+	//	if len(jsonData) == 0 && len(alerts) == 0 {
+	//		errors.AbortRequest(ctx, fmt.Errorf("(%s) Nothing to do, no active service alerts and nothing to modify", errors.NotFound))
+	//		return
+	//}
 	// convert model data for service alerts to json formatted bytes to upload
-	jsonBytes, err := createServiceAlertJsonData(ctx, alerts)
+	jsonBytes, err := createServiceAlertJsonData(alerts)
 	if err != nil {
 		errors.AbortRequest(ctx, fmt.Errorf("issue encountered creating json payload: %v", err))
 		return
@@ -93,11 +93,11 @@ func syncServiceAlerts(ctx *gin.Context) {
 // Return non-deleted service alerts matching specified env
 func getAlerts(ctx *gin.Context, request ServiceAlertV3SyncRequest, db *gorm.DB) ([]models.ServiceAlert, *string) {
 	var envResult models.Environment
-	if request.OnEnvironment != nil {
+	if request.OnEnvironment != "" {
 		// match env so that we can get gcs bucket
-		environmentQuery, err := environmentModelFromSelector(*request.OnEnvironment)
+		environmentQuery, err := environmentModelFromSelector(request.OnEnvironment)
 		if err != nil {
-			errors.AbortRequest(ctx, fmt.Errorf("error parsing environment selector '%s': %w", *request.OnEnvironment, err))
+			errors.AbortRequest(ctx, fmt.Errorf("error parsing environment selector '%s': %w", request.OnEnvironment, err))
 			return nil, nil
 		}
 		if err = db.Where(&environmentQuery).First(&envResult).Error; err != nil {
@@ -116,25 +116,8 @@ func getAlerts(ctx *gin.Context, request ServiceAlertV3SyncRequest, db *gorm.DB)
 
 }
 
-// Read file from GCS, then parse JSON data and return []ServiceAlertJsonData struct
-func getFileJson(ctx *gin.Context, gcsClient google_bucket.GcsClient, blob *storage.ObjectAttrs) []ServiceAlertJsonData {
-	byteData, readErr := gcsClient.ReadBlob(ctx, blob)
-	if readErr != nil {
-		// handle error
-		return nil
-	}
-	var jsonData []ServiceAlertJsonData
-	err := json.Unmarshal(byteData, &jsonData)
-	if err != nil {
-		// handle error
-		return nil
-	}
-
-	return jsonData
-}
-
 // Transform service alerts struct to json formatted byte data to write to GCS blob
-func createServiceAlertJsonData(ctx *gin.Context, activeAlerts []models.ServiceAlert) ([]byte, error) {
+func createServiceAlertJsonData(activeAlerts []models.ServiceAlert) ([]byte, error) {
 	var alerts []ServiceAlertJsonData
 	for _, v := range activeAlerts {
 		alertJsonStruct := ServiceAlertJsonData{
