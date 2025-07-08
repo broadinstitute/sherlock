@@ -94,7 +94,6 @@ func getAlerts(ctx *gin.Context, request ServiceAlertV3SyncRequest, db *gorm.DB)
 	}
 	var activeAlerts []models.ServiceAlert
 	// Only return service alerts that haven't been deleted for this environment
-	//db.Where(&models.ServiceAlert{}).Select("id").Find(&existing).Error
 	if err := db.Where(&models.ServiceAlert{OnEnvironmentID: &envResult.ID}).Find(&activeAlerts).Error; err != nil {
 		errors.AbortRequest(ctx, fmt.Errorf("(%s) error querying for Service Alerts: %w", errors.InternalServerError, err))
 		return nil, nil
