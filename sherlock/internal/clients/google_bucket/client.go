@@ -12,6 +12,11 @@ import (
 	"google.golang.org/api/iterator"
 )
 
+var (
+	// client is what functions in this package should use whenever possible.
+	client GcsClient
+)
+
 // wrapper interface for generating mocks
 type GcsClient interface {
 	ListBlobs(ctx context.Context, bucket string) ([]*storage.ObjectAttrs, error)
@@ -90,11 +95,6 @@ func (client *GcsClientActual) GetBlob(ctx context.Context, bucket_name string, 
 	return attrs, nil
 }
 
-var (
-	// client is what functions in this package should use whenever possible.
-	client GcsClient
-)
-
 // GetClient returns the current client (either mocked or a new real client)
 func GetClient(ctx context.Context) (GcsClient, error) {
 	if client != nil {
@@ -103,16 +103,16 @@ func GetClient(ctx context.Context) (GcsClient, error) {
 	return InitializeStorageClient(ctx)
 }
 
-func UseMockedClient(t *testing.T, config func(c *google_bucket_mocks.MockgcsClient), callback func()) {
+func UseMockedClient(t *testing.T, config func(mock_client *google_bucket_mocks.MockgcsClient), callback func()) {
 	if config == nil {
 		callback()
 		return
 	}
-	c := google_bucket_mocks.NewMockgcsClient(t)
-	config(c)
+	mock_client := google_bucket_mocks.NewMockgcsClient(t)
+	config(mock_client)
 	temp := client
-	client = c
+	client = mock_client
 	callback()
-	c.AssertExpectations(t)
+	mock_client.AssertExpectations(t)
 	client = temp
 }
