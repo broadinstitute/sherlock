@@ -4,12 +4,88 @@ All URIs are relative to *https://sherlock.dsp-devops-prod.broadinstitute.org*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
+[**api_service_alerts_procedures_v3_sync_post**](ServiceAlertApi.md#api_service_alerts_procedures_v3_sync_post) | **POST** /api/service-alerts/procedures/v3/sync | Sync service alerts
 [**api_service_alerts_v3_get**](ServiceAlertApi.md#api_service_alerts_v3_get) | **GET** /api/service-alerts/v3 | List ServiceAlerts matching a filter
 [**api_service_alerts_v3_post**](ServiceAlertApi.md#api_service_alerts_v3_post) | **POST** /api/service-alerts/v3 | Create a service alert
 [**api_service_alerts_v3_selector_delete**](ServiceAlertApi.md#api_service_alerts_v3_selector_delete) | **DELETE** /api/service-alerts/v3/{selector} | Delete a ServiceAlert
 [**api_service_alerts_v3_selector_get**](ServiceAlertApi.md#api_service_alerts_v3_selector_get) | **GET** /api/service-alerts/v3/{selector} | Get a Service Alert
 [**api_service_alerts_v3_selector_patch**](ServiceAlertApi.md#api_service_alerts_v3_selector_patch) | **PATCH** /api/service-alerts/v3/{selector} | Edit a service alert
 
+
+# **api_service_alerts_procedures_v3_sync_post**
+> List[SherlockServiceAlertV3] api_service_alerts_procedures_v3_sync_post(environment)
+
+Sync service alerts
+
+Method to get all currently active service alerts from Sherlock's DB and ensure that the service alert json files placed in Google Buckets for Terra match.
+
+### Example
+
+
+```python
+import sherlock_python_client
+from sherlock_python_client.models.sherlock_service_alert_v3 import SherlockServiceAlertV3
+from sherlock_python_client.models.sherlock_service_alert_v3_sync_request import SherlockServiceAlertV3SyncRequest
+from sherlock_python_client.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://sherlock.dsp-devops-prod.broadinstitute.org
+# See configuration.py for a list of all supported configuration parameters.
+configuration = sherlock_python_client.Configuration(
+    host = "https://sherlock.dsp-devops-prod.broadinstitute.org"
+)
+
+
+# Enter a context with an instance of the API client
+with sherlock_python_client.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = sherlock_python_client.ServiceAlertApi(api_client)
+    environment = sherlock_python_client.SherlockServiceAlertV3SyncRequest() # SherlockServiceAlertV3SyncRequest | Information on Service Alert environment
+
+    try:
+        # Sync service alerts
+        api_response = api_instance.api_service_alerts_procedures_v3_sync_post(environment)
+        print("The response of ServiceAlertApi->api_service_alerts_procedures_v3_sync_post:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling ServiceAlertApi->api_service_alerts_procedures_v3_sync_post: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **environment** | [**SherlockServiceAlertV3SyncRequest**](SherlockServiceAlertV3SyncRequest.md)| Information on Service Alert environment | 
+
+### Return type
+
+[**List[SherlockServiceAlertV3]**](SherlockServiceAlertV3.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | OK |  -  |
+**400** | Bad Request |  -  |
+**403** | Forbidden |  -  |
+**404** | Not Found |  -  |
+**407** | Proxy Authentication Required |  -  |
+**409** | Conflict |  -  |
+**500** | Internal Server Error |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **api_service_alerts_v3_get**
 > List[SherlockServiceAlertV3] api_service_alerts_v3_get(created_at=created_at, id=id, link=link, message=message, on_environment=on_environment, severity=severity, title=title, updated_at=updated_at, uuid=uuid, limit=limit, offset=offset)

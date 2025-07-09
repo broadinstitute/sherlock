@@ -7431,6 +7431,79 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/service-alerts/procedures/v3/sync": {
+            "post": {
+                "description": "Method to get all currently active service alerts from Sherlock's DB and ensure that the service alert json files placed in Google Buckets for Terra match.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ServiceAlert"
+                ],
+                "summary": "Sync service alerts",
+                "parameters": [
+                    {
+                        "description": "Information on Service Alert environment",
+                        "name": "environment",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/sherlock.ServiceAlertV3SyncRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/sherlock.ServiceAlertV3"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "407": {
+                        "description": "Proxy Authentication Required",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/service-alerts/v3": {
             "get": {
                 "description": "List ServiceAlerts matching a filter.",
@@ -10660,6 +10733,14 @@ const docTemplate = `{
                     ]
                 },
                 "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "sherlock.ServiceAlertV3SyncRequest": {
+            "type": "object",
+            "properties": {
+                "onEnvironment": {
                     "type": "string"
                 }
             }

@@ -19,6 +19,7 @@ import type {
   SherlockServiceAlertV3,
   SherlockServiceAlertV3Create,
   SherlockServiceAlertV3EditableFields,
+  SherlockServiceAlertV3SyncRequest,
 } from '../models/index';
 import {
     ErrorsErrorResponseFromJSON,
@@ -29,7 +30,13 @@ import {
     SherlockServiceAlertV3CreateToJSON,
     SherlockServiceAlertV3EditableFieldsFromJSON,
     SherlockServiceAlertV3EditableFieldsToJSON,
+    SherlockServiceAlertV3SyncRequestFromJSON,
+    SherlockServiceAlertV3SyncRequestToJSON,
 } from '../models/index';
+
+export interface ApiServiceAlertsProceduresV3SyncPostRequest {
+    environment: SherlockServiceAlertV3SyncRequest;
+}
 
 export interface ApiServiceAlertsV3GetRequest {
     createdAt?: Date;
@@ -66,6 +73,47 @@ export interface ApiServiceAlertsV3SelectorPatchRequest {
  * 
  */
 export class ServiceAlertApi extends runtime.BaseAPI {
+
+    /**
+     * Method to get all currently active service alerts from Sherlock\'s DB and ensure that the service alert json files placed in Google Buckets for Terra match.
+     * Sync service alerts
+     */
+    async apiServiceAlertsProceduresV3SyncPostRaw(requestParameters: ApiServiceAlertsProceduresV3SyncPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SherlockServiceAlertV3>>> {
+        if (requestParameters['environment'] == null) {
+            throw new runtime.RequiredError(
+                'environment',
+                'Required parameter "environment" was null or undefined when calling apiServiceAlertsProceduresV3SyncPost().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+
+        let urlPath = `/api/service-alerts/procedures/v3/sync`;
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: SherlockServiceAlertV3SyncRequestToJSON(requestParameters['environment']),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(SherlockServiceAlertV3FromJSON));
+    }
+
+    /**
+     * Method to get all currently active service alerts from Sherlock\'s DB and ensure that the service alert json files placed in Google Buckets for Terra match.
+     * Sync service alerts
+     */
+    async apiServiceAlertsProceduresV3SyncPost(requestParameters: ApiServiceAlertsProceduresV3SyncPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<SherlockServiceAlertV3>> {
+        const response = await this.apiServiceAlertsProceduresV3SyncPostRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
 
     /**
      * List ServiceAlerts matching a filter.

@@ -34,7 +34,7 @@ type ServiceAlertJsonData struct {
 //	@tags			ServiceAlert
 //	@accept			json
 //	@produce		json
-//	@param			environment					body		ServiceAlertV3SyncRequest	true	"Information on Service Alert environment"
+//	@param			environment				body		ServiceAlertV3SyncRequest	true	"Information on Service Alert environment"
 //	@success		200						{array}		ServiceAlertV3
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/service-alerts/procedures/v3/sync [post]

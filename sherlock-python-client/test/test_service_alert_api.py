@@ -27,6 +27,13 @@ class TestServiceAlertApi(unittest.TestCase):
     def tearDown(self) -> None:
         pass
 
+    def test_api_service_alerts_procedures_v3_sync_post(self) -> None:
+        """Test case for api_service_alerts_procedures_v3_sync_post
+
+        Sync service alerts
+        """
+        pass
+
     def test_api_service_alerts_v3_get(self) -> None:
         """Test case for api_service_alerts_v3_get
 

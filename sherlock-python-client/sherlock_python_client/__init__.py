@@ -15,7 +15,7 @@
 """  # noqa: E501
 
 
-__version__ = "v1.6.47"
+__version__ = "v1.6.48"
 
 # Define package exports
 __all__ = [
@@ -106,6 +106,7 @@ __all__ = [
     "SherlockServiceAlertV3",
     "SherlockServiceAlertV3Create",
     "SherlockServiceAlertV3EditableFields",
+    "SherlockServiceAlertV3SyncRequest",
     "SherlockSlackDeployHookTestRunRequest",
     "SherlockSlackDeployHookTestRunResponse",
     "SherlockSlackDeployHookV3",
@@ -209,6 +210,7 @@ from sherlock_python_client.models.sherlock_role_v3_edit import SherlockRoleV3Ed
 from sherlock_python_client.models.sherlock_service_alert_v3 import SherlockServiceAlertV3 as SherlockServiceAlertV3
 from sherlock_python_client.models.sherlock_service_alert_v3_create import SherlockServiceAlertV3Create as SherlockServiceAlertV3Create
 from sherlock_python_client.models.sherlock_service_alert_v3_editable_fields import SherlockServiceAlertV3EditableFields as SherlockServiceAlertV3EditableFields
+from sherlock_python_client.models.sherlock_service_alert_v3_sync_request import SherlockServiceAlertV3SyncRequest as SherlockServiceAlertV3SyncRequest
 from sherlock_python_client.models.sherlock_slack_deploy_hook_test_run_request import SherlockSlackDeployHookTestRunRequest as SherlockSlackDeployHookTestRunRequest
 from sherlock_python_client.models.sherlock_slack_deploy_hook_test_run_response import SherlockSlackDeployHookTestRunResponse as SherlockSlackDeployHookTestRunResponse
 from sherlock_python_client.models.sherlock_slack_deploy_hook_v3 import SherlockSlackDeployHookV3 as SherlockSlackDeployHookV3

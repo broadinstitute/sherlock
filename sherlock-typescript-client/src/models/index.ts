@@ -58,6 +58,7 @@ export * from './SherlockRoleV3Edit';
 export * from './SherlockServiceAlertV3';
 export * from './SherlockServiceAlertV3Create';
 export * from './SherlockServiceAlertV3EditableFields';
+export * from './SherlockServiceAlertV3SyncRequest';
 export * from './SherlockSlackDeployHookTestRunRequest';
 export * from './SherlockSlackDeployHookTestRunResponse';
 export * from './SherlockSlackDeployHookV3';

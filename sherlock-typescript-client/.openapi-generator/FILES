@@ -82,6 +82,7 @@ src/models/SherlockRoleV3Edit.ts
 src/models/SherlockServiceAlertV3.ts
 src/models/SherlockServiceAlertV3Create.ts
 src/models/SherlockServiceAlertV3EditableFields.ts
+src/models/SherlockServiceAlertV3SyncRequest.ts
 src/models/SherlockSlackDeployHookTestRunRequest.ts
 src/models/SherlockSlackDeployHookTestRunResponse.ts
 src/models/SherlockSlackDeployHookV3.ts

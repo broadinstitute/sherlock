@@ -38,6 +38,8 @@ type ClientService interface {
 
 	PatchAPIServiceAlertsV3Selector(params *PatchAPIServiceAlertsV3SelectorParams, opts ...ClientOption) (*PatchAPIServiceAlertsV3SelectorOK, error)
 
+	PostAPIServiceAlertsProceduresV3Sync(params *PostAPIServiceAlertsProceduresV3SyncParams, opts ...ClientOption) (*PostAPIServiceAlertsProceduresV3SyncOK, error)
+
 	PostAPIServiceAlertsV3(params *PostAPIServiceAlertsV3Params, opts ...ClientOption) (*PostAPIServiceAlertsV3OK, error)
 
 	SetTransport(transport runtime.ClientTransport)
@@ -200,6 +202,46 @@ func (a *Client) PatchAPIServiceAlertsV3Selector(params *PatchAPIServiceAlertsV3
 	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for PatchAPIServiceAlertsV3Selector: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+  PostAPIServiceAlertsProceduresV3Sync syncs service alerts
+
+  Method to get all currently active service alerts from Sherlock's DB and ensure that the service alert json files placed in Google Buckets for Terra match.
+*/
+func (a *Client) PostAPIServiceAlertsProceduresV3Sync(params *PostAPIServiceAlertsProceduresV3SyncParams, opts ...ClientOption) (*PostAPIServiceAlertsProceduresV3SyncOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewPostAPIServiceAlertsProceduresV3SyncParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "PostAPIServiceAlertsProceduresV3Sync",
+		Method:             "POST",
+		PathPattern:        "/api/service-alerts/procedures/v3/sync",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &PostAPIServiceAlertsProceduresV3SyncReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*PostAPIServiceAlertsProceduresV3SyncOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for PostAPIServiceAlertsProceduresV3Sync: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 
