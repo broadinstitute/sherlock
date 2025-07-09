@@ -3,12 +3,13 @@ package models
 import (
 	"database/sql"
 	"fmt"
+	"testing"
+	"time"
+
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/stretchr/testify/assert"
-	"testing"
-	"time"
 )
 
 func (s *modelSuite) TestEnvironmentUniqueResourcePrefixAssigning() {
@@ -469,8 +470,8 @@ func (s *modelSuite) TestEnvironmentLiveServiceBannerPopulated() {
 	dev := s.TestData.Environment_Dev()
 	prod := s.TestData.Environment_Prod()
 
-	s.Equal(*dev.ServiceBannerBucket, "firecloud-alerts-dev")
-	s.Equal(*prod.ServiceBannerBucket, "firecloud-alerts")
+	s.Equal(*dev.ServiceBannerBucket, "not-a-real-bucket-dev")
+	s.Equal(*prod.ServiceBannerBucket, "not-a-real-bucket")
 }
 
 func (s *modelSuite) TestEnvironmentBeeServiceBannerDefaultPopulated() {
