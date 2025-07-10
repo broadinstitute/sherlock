@@ -69,8 +69,8 @@ func (test_handler *handlerSuite) TestSyncServiceAlerts_NoAlerts() {
 			OnEnvironment: env.Name,
 		}),
 		&got)
-	test_handler.Equal(http.StatusBadRequest, code)
-	test_handler.Contains(got.Message, "No Alerts found for this environment")
+	test_handler.Equal(http.StatusOK, code)
+	test_handler.Len(got, 0)
 }
 
 // Ensure service alert model data can be transformed into json.
