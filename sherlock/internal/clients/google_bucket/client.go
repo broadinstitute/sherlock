@@ -71,7 +71,12 @@ func (client *GcsClientActual) ReadBlob(ctx context.Context, blob *storage.Objec
 }
 
 func (client *GcsClientActual) WriteBlob(ctx context.Context, gcs_bucket string, blob_name string, file_content []byte) error {
-	writer_client := client.GcsClient.Bucket(gcs_bucket).Object(blob_name).NewWriter(ctx)
+	blob := client.GcsClient.Bucket(gcs_bucket).Object(blob_name)
+	if err := blob.ACL().Set(ctx, storage.AllUsers, storage.RoleReader); err != nil {
+		return fmt.Errorf("issue granting read permissions to blob: %v", err)
+	}
+
+	writer_client := blob.NewWriter(ctx)
 	writer_client.ContentType = "application/json"
 
 	if _, err := writer_client.Write(file_content); err != nil {
