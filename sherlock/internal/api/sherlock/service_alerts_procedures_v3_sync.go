@@ -51,10 +51,7 @@ func syncServiceAlerts(ctx *gin.Context) {
 	}
 	// Get alerts from DB and gcs bucket from environment
 	alerts, gcsBucket := getAlerts(ctx, body, db)
-	if len(alerts) == 0 {
-		errors.AbortRequest(ctx, fmt.Errorf("(%s) No Alerts found for this environment", errors.BadRequest))
-		return
-	}
+
 	// set GCS client
 	gcsClient, googleClientError := google_bucket.GetClient(ctx)
 	if googleClientError != nil {
