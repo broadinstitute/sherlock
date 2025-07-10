@@ -63,14 +63,18 @@ func (test_handler *handlerSuite) TestSyncServiceAlerts_NoAlerts() {
 	// Ensure there are no alerts for this environment by clearing any existing ones
 	test_handler.NoError(test_handler.DB.Where("on_environment_id = ?", env.ID).Delete(&models.ServiceAlert{}).Error)
 
-	var got errors.ErrorResponse
-	code := test_handler.HandleRequest(
-		test_handler.NewRequest("POST", "/api/service-alerts/procedures/v3/sync", ServiceAlertV3SyncRequest{
-			OnEnvironment: env.Name,
-		}),
-		&got)
-	test_handler.Equal(http.StatusOK, code)
-	test_handler.Len(got, 0)
+	google_bucket.UseMockedClient(test_handler.T(), func(client *google_bucket_mocks.MockgcsClient) {
+		client.EXPECT().WriteBlob(mock.Anything, *env.ServiceBannerBucket, "alerts.json", mock.Anything).Return(nil).Once()
+	}, func() {
+		var got []ServiceAlertV3
+		code := test_handler.HandleRequest(
+			test_handler.NewRequest("POST", "/api/service-alerts/procedures/v3/sync", ServiceAlertV3SyncRequest{
+				OnEnvironment: env.Name,
+			}),
+			&got)
+		test_handler.Equal(http.StatusOK, code)
+		test_handler.Len(got, 0)
+	})
 }
 
 // Ensure service alert model data can be transformed into json.
