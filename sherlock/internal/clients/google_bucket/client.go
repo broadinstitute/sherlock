@@ -23,6 +23,7 @@ type GcsClient interface {
 	ReadBlob(ctx context.Context, blob *storage.ObjectAttrs) ([]byte, error)
 	WriteBlob(ctx context.Context, gcs_bucket string, blob_name string, file_content []byte) error
 	GetBlob(ctx context.Context, bucket_name string, blob_name string) (*storage.ObjectAttrs, error)
+	SetAcl(ctx context.Context, gcs_bucket string, blob_name string, acl_entity storage.ACLEntity, role storage.ACLRole) error
 }
 
 type GcsClientActual struct {
@@ -68,6 +69,15 @@ func (client *GcsClientActual) ReadBlob(ctx context.Context, blob *storage.Objec
 		return nil, fmt.Errorf("unable to read blob: %v", err)
 	}
 	return slurp, nil
+}
+
+func (client *GcsClientActual) SetAcl(ctx context.Context, gcs_bucket string, blob_name string, acl_entity storage.ACLEntity, role storage.ACLRole) error {
+	blob := client.GcsClient.Bucket(gcs_bucket).Object(blob_name)
+	if err := blob.ACL().Set(ctx, acl_entity, role); err != nil {
+		return fmt.Errorf("issue granting read permissions to blob: %v", err)
+	}
+	return nil
+
 }
 
 func (client *GcsClientActual) WriteBlob(ctx context.Context, gcs_bucket string, blob_name string, file_content []byte) error {
