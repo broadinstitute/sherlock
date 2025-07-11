@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"cloud.google.com/go/storage"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/clients/google_bucket"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
@@ -69,6 +70,11 @@ func syncServiceAlerts(ctx *gin.Context) {
 		errors.AbortRequest(ctx, fmt.Errorf("error writing updated alerts.json file: %v", err))
 		return
 	}
+	// set blob acl so that anyone can read alets json
+	if err = gcsClient.SetAcl(ctx, *gcsBucket, "alerts.json", storage.AllUsers, storage.RoleReader); err != nil {
+		errors.AbortRequest(ctx, fmt.Errorf("error updating blob acl: %v", err))
+		return
+	}
 
 	ctx.JSON(http.StatusOK, utils.Map(alerts, ServiceAlertFromModel))
 
@@ -102,16 +108,24 @@ func getAlerts(ctx *gin.Context, request ServiceAlertV3SyncRequest, db *gorm.DB)
 // Transform service alerts struct to json formatted byte data to write to GCS blob
 func createServiceAlertJsonData(activeAlerts []models.ServiceAlert) ([]byte, error) {
 	var alerts []ServiceAlertJsonData
-	for _, v := range activeAlerts {
-		alertJsonStruct := ServiceAlertJsonData{
-			Title:      *v.Title,
-			Message:    *v.AlertMessage,
-			Link:       *v.Link,
-			Severity:   *v.Severity,
-			IncidentID: uuid.UUID.String(*v.Uuid),
+	if len(activeAlerts) != 0 {
+		for _, v := range activeAlerts {
+			alertJsonStruct := ServiceAlertJsonData{
+				Title:      *v.Title,
+				Message:    *v.AlertMessage,
+				Link:       *v.Link,
+				Severity:   *v.Severity,
+				IncidentID: uuid.UUID.String(*v.Uuid),
+			}
+			alerts = append(alerts, alertJsonStruct)
 		}
-		alerts = append(alerts, alertJsonStruct)
+		data, err := json.Marshal(alerts)
+		return data, err
+	} else {
+		// creating zero len non-null slice to set empty service alert json to [] instead of null
+		emptySlice := []string{}
+		data, err := json.Marshal(emptySlice)
+		return data, err
 	}
-	data, err := json.Marshal(alerts)
-	return data, err
+
 }
