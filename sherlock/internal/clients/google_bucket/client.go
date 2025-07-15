@@ -5,10 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"testing"
 
 	"cloud.google.com/go/storage"
-	"github.com/broadinstitute/sherlock/sherlock/internal/clients/google_bucket/google_bucket_mocks"
 	"google.golang.org/api/iterator"
 )
 
@@ -17,13 +15,19 @@ var (
 	client GcsClient
 )
 
+// set blob details to include list of Acl info so that we can set multiple permission sets if provided
+type BlobDetails struct {
+	Bucket   string
+	BlobName string
+	AclAttrs []storage.ACLRule
+}
+
 // wrapper interface for generating mocks
 type GcsClient interface {
 	ListBlobs(ctx context.Context, bucket string) ([]*storage.ObjectAttrs, error)
 	ReadBlob(ctx context.Context, blob *storage.ObjectAttrs) ([]byte, error)
-	WriteBlob(ctx context.Context, gcs_bucket string, blob_name string, file_content []byte) error
+	WriteBlob(ctx context.Context, blobInfo BlobDetails, file_content []byte) error
 	GetBlob(ctx context.Context, bucket_name string, blob_name string) (*storage.ObjectAttrs, error)
-	SetAcl(ctx context.Context, gcs_bucket string, blob_name string, acl_entity storage.ACLEntity, role storage.ACLRole) error
 }
 
 type GcsClientActual struct {
@@ -71,20 +75,11 @@ func (client *GcsClientActual) ReadBlob(ctx context.Context, blob *storage.Objec
 	return slurp, nil
 }
 
-func (client *GcsClientActual) SetAcl(ctx context.Context, gcs_bucket string, blob_name string, acl_entity storage.ACLEntity, role storage.ACLRole) error {
-	blob := client.GcsClient.Bucket(gcs_bucket).Object(blob_name)
-	if err := blob.ACL().Set(ctx, acl_entity, role); err != nil {
-		return fmt.Errorf("issue granting read permissions to blob: %v", err)
+func (client *GcsClientActual) WriteBlob(ctx context.Context, blobInfo BlobDetails, file_content []byte) error {
+	if blobInfo.BlobName == "" || blobInfo.Bucket == "" {
+		return fmt.Errorf("unable to proceed without necessary information: blob name: %v \n bucket name: %v", blobInfo.BlobName, blobInfo.Bucket)
 	}
-	return nil
-
-}
-
-func (client *GcsClientActual) WriteBlob(ctx context.Context, gcs_bucket string, blob_name string, file_content []byte) error {
-	blob := client.GcsClient.Bucket(gcs_bucket).Object(blob_name)
-	if err := blob.ACL().Set(ctx, storage.AllUsers, storage.RoleReader); err != nil {
-		return fmt.Errorf("issue granting read permissions to blob: %v", err)
-	}
+	blob := client.GcsClient.Bucket(blobInfo.Bucket).Object(blobInfo.BlobName)
 
 	writer_client := blob.NewWriter(ctx)
 	writer_client.ContentType = "application/json"
@@ -92,9 +87,19 @@ func (client *GcsClientActual) WriteBlob(ctx context.Context, gcs_bucket string,
 	if _, err := writer_client.Write(file_content); err != nil {
 		return fmt.Errorf("createFile: unable to write data to bucket: %v", err)
 	}
+
 	if err := writer_client.Close(); err != nil {
 		return fmt.Errorf("got %v, want nil", err)
 	}
+
+	if len(blobInfo.AclAttrs) != 0 {
+		for _, v := range blobInfo.AclAttrs {
+			if err := blob.ACL().Set(ctx, v.Entity, v.Role); err != nil {
+				return fmt.Errorf("issue granting read permissions to blob: %v", err)
+			}
+		}
+	}
+
 	return nil
 }
 
@@ -118,16 +123,12 @@ func GetClient(ctx context.Context) (GcsClient, error) {
 	return InitializeStorageClient(ctx)
 }
 
-func UseMockedClient(t *testing.T, config func(mock_client *google_bucket_mocks.MockgcsClient), callback func()) {
-	if config == nil {
-		callback()
-		return
-	}
-	mock_client := google_bucket_mocks.NewMockgcsClient(t)
-	config(mock_client)
-	temp := client
-	client = mock_client
-	callback()
-	mock_client.AssertExpectations(t)
-	client = temp
+// SetClient sets the global client (used for testing)
+func SetClient(c GcsClient) {
+	client = c
+}
+
+// ResetClient resets the global client to nil
+func ResetClient() {
+	client = nil
 }
