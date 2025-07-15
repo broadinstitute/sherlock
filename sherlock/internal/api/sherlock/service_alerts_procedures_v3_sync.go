@@ -53,6 +53,10 @@ func syncServiceAlerts(ctx *gin.Context) {
 	// Get alerts from DB and gcs bucket from environment
 	alerts, gcsBucket := getAlerts(ctx, body, db)
 
+	if alerts == nil || gcsBucket == nil {
+		errors.AbortRequest(ctx, fmt.Errorf("issue obtaining alert or bucket information. alerts: %v \n bucket: %v", alerts, gcsBucket))
+		return
+	}
 	// set GCS client
 	gcsClient, googleClientError := google_bucket.GetClient(ctx)
 	if googleClientError != nil {
@@ -65,14 +69,21 @@ func syncServiceAlerts(ctx *gin.Context) {
 		errors.AbortRequest(ctx, fmt.Errorf("issue encountered creating json payload: %v", err))
 		return
 	}
-	// Upload file to bucket w/ latest info
-	if err = gcsClient.WriteBlob(ctx, *gcsBucket, "alerts.json", jsonBytes); err != nil {
-		errors.AbortRequest(ctx, fmt.Errorf("error writing updated alerts.json file: %v", err))
-		return
+	var permissionsList []storage.ACLRule
+	permissionsList = append(permissionsList,
+		storage.ACLRule{
+			Role:   storage.RoleReader,
+			Entity: storage.AllUsers,
+		})
+
+	blobDetails := google_bucket.BlobDetails{
+		Bucket:   *gcsBucket,
+		BlobName: "alerts.json",
+		AclAttrs: permissionsList,
 	}
-	// set blob acl so that anyone can read alets json
-	if err = gcsClient.SetAcl(ctx, *gcsBucket, "alerts.json", storage.AllUsers, storage.RoleReader); err != nil {
-		errors.AbortRequest(ctx, fmt.Errorf("error updating blob acl: %v", err))
+	// Upload file to bucket w/ latest info
+	if err = gcsClient.WriteBlob(ctx, blobDetails, jsonBytes); err != nil {
+		errors.AbortRequest(ctx, fmt.Errorf("error writing updated alerts.json file: %v", err))
 		return
 	}
 
@@ -91,14 +102,14 @@ func getAlerts(ctx *gin.Context, request ServiceAlertV3SyncRequest, db *gorm.DB)
 			return nil, nil
 		}
 		if err = db.Where(&environmentQuery).First(&envResult).Error; err != nil {
-			errors.AbortRequest(ctx, fmt.Errorf("error fetching environment '%v'", err))
+			errors.AbortRequest(ctx, fmt.Errorf("(%s) error fetching environment '%v'", errors.BadRequest, err))
 			return nil, nil
 		}
 	}
 	var activeAlerts []models.ServiceAlert
 	// Only return service alerts that haven't been deleted for this environment
 	if err := db.Where(&models.ServiceAlert{OnEnvironmentID: &envResult.ID}).Find(&activeAlerts).Error; err != nil {
-		errors.AbortRequest(ctx, fmt.Errorf("(%s) error querying for Service Alerts: %w", errors.InternalServerError, err))
+		errors.AbortRequest(ctx, fmt.Errorf("(%s) error querying for Service Alerts: %w", errors.BadRequest, err))
 		return nil, nil
 	}
 	return activeAlerts, envResult.ServiceBannerBucket
