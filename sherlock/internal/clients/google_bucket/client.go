@@ -20,6 +20,7 @@ type BlobDetails struct {
 	Bucket   string
 	BlobName string
 	AclAttrs []storage.ACLRule
+	ObjAttrs *storage.ObjectAttrsToUpdate
 }
 
 // wrapper interface for generating mocks
@@ -93,14 +94,37 @@ func (client *GcsClientActual) WriteBlob(ctx context.Context, blobInfo BlobDetai
 	}
 
 	if len(blobInfo.AclAttrs) != 0 {
-		for _, v := range blobInfo.AclAttrs {
-			if err := blob.ACL().Set(ctx, v.Entity, v.Role); err != nil {
-				return fmt.Errorf("issue granting read permissions to blob: %v", err)
-			}
+		if err := setBlobAcl(ctx, blob, blobInfo.AclAttrs); err != nil {
+			return err
+		}
+	}
+
+	if blobInfo.ObjAttrs != nil {
+		if err := setBlobAttrs(ctx, blob, blobInfo.ObjAttrs); err != nil {
+			return err
 		}
 	}
 
 	return nil
+}
+
+// internal func, set blob ACL
+func setBlobAcl(ctx context.Context, blob *storage.ObjectHandle, aclList []storage.ACLRule) error {
+	for _, v := range aclList {
+		if err := blob.ACL().Set(ctx, v.Entity, v.Role); err != nil {
+			return fmt.Errorf("issue granting read permissions to blob: %v", err)
+		}
+	}
+	return nil
+}
+
+// interrnal func, update blob Attrs
+func setBlobAttrs(ctx context.Context, blob *storage.ObjectHandle, objAttrs *storage.ObjectAttrsToUpdate) error {
+	if _, err := blob.Update(ctx, *objAttrs); err != nil {
+		return fmt.Errorf("issue updating object attrs %v \n blob: %v \n attrs: %v", err, blob, objAttrs)
+	} else {
+		return nil
+	}
 }
 
 func (client *GcsClientActual) GetBlob(ctx context.Context, bucket_name string, blob_name string) (*storage.ObjectAttrs, error) {
