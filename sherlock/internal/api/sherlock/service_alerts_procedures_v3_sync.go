@@ -122,27 +122,28 @@ func getAlerts(ctx *gin.Context, request ServiceAlertV3SyncRequest, db *gorm.DB)
 
 }
 
-// Transform service alerts struct to json formatted byte data to write to GCS blob
+// Transform service alerts struct to json formatted byte data to write to GCS blob.
 func createServiceAlertJsonData(activeAlerts []models.ServiceAlert) ([]byte, error) {
 	var alerts []ServiceAlertJsonData
-	if len(activeAlerts) != 0 {
-		for _, v := range activeAlerts {
-			alertJsonStruct := ServiceAlertJsonData{
-				Title:      *v.Title,
-				Message:    *v.AlertMessage,
-				Link:       *v.Link,
-				Severity:   *v.Severity,
-				IncidentID: uuid.UUID.String(*v.Uuid),
-			}
-			alerts = append(alerts, alertJsonStruct)
-		}
-		data, err := json.Marshal(alerts)
-		return data, err
-	} else {
+
+	// exit early w/ empty array if no activeAlerts exist
+	if len(activeAlerts) == 0 {
 		// creating zero len non-null slice to set empty service alert json to [] instead of null
 		emptySlice := []string{}
 		data, err := json.Marshal(emptySlice)
 		return data, err
 	}
 
+	for _, v := range activeAlerts {
+		alertJsonStruct := ServiceAlertJsonData{
+			Title:      *v.Title,
+			Message:    *v.AlertMessage,
+			Link:       *v.Link,
+			Severity:   *v.Severity,
+			IncidentID: uuid.UUID.String(*v.Uuid),
+		}
+		alerts = append(alerts, alertJsonStruct)
+	}
+	data, err := json.Marshal(alerts)
+	return data, err
 }
