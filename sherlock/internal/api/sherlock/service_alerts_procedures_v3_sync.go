@@ -76,10 +76,16 @@ func syncServiceAlerts(ctx *gin.Context) {
 			Entity: storage.AllUsers,
 		})
 
+	var objAttrsToUpdate = storage.ObjectAttrsToUpdate{
+		CacheControl: "no-store",
+	}
+
+	// ObjAttrs being set as pointer so we can check null value
 	blobDetails := google_bucket.BlobDetails{
 		Bucket:   *gcsBucket,
 		BlobName: "alerts.json",
 		AclAttrs: permissionsList,
+		ObjAttrs: &objAttrsToUpdate,
 	}
 	// Upload file to bucket w/ latest info
 	if err = gcsClient.WriteBlob(ctx, blobDetails, jsonBytes); err != nil {
