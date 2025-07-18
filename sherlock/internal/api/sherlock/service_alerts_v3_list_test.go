@@ -8,7 +8,7 @@ import (
 
 func (s *handlerSuite) TestServiceAlertsV3List() {
 	s.TestData.ServiceAlert_1()
-	s.TestData.ServiceAlert_2()
+	s.TestData.ServiceAlert_Prod()
 
 	s.Run("listAll", func() {
 		var got []ServiceAlertV3
