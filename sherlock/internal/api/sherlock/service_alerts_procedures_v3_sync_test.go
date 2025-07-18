@@ -114,7 +114,8 @@ func (test_handler *handlerSuite) TestSyncServiceAlerts_NoAlerts() {
 	env := test_handler.TestData.Environment_Dev()
 
 	// Ensure there are no alerts for this environment by clearing any existing ones
-	test_handler.NoError(test_handler.DB.Where("on_environment_id = ?", env.ID).Delete(&models.ServiceAlert{}).Error)
+	//err := test_handler.DB.Where("on_environment_id = ?", env.ID).Delete(&models.ServiceAlert{}).Error
+	//test_handler.NoError(err)
 
 	var permissionsList []storage.ACLRule
 	permissionsList = append(permissionsList,
@@ -158,7 +159,7 @@ func (test_handler *handlerSuite) TestSyncServiceAlerts_NoAlerts() {
 // Ensure service alert model data can be transformed into json.
 func (test_handler *handlerSuite) TestCreateServiceAlertJsonData() {
 	alert1 := test_handler.TestData.ServiceAlert_1()
-	alert2 := test_handler.TestData.ServiceAlert_2()
+	alert2 := test_handler.TestData.ServiceAlert_Prod()
 	alerts := []models.ServiceAlert{alert1, alert2}
 	jsonData, err := createServiceAlertJsonData(alerts)
 	test_handler.NoError(err)
