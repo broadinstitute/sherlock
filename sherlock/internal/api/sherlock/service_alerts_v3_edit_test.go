@@ -44,12 +44,14 @@ func (s *handlerSuite) TestServiceAlertV3Edit_notFound() {
 }
 
 func (s *handlerSuite) TestServiceAlertV3Edit() {
-	s.TestData.ServiceAlert_1()
+	testAlert := s.TestData.ServiceAlert_1()
+
 	edit := models.ServiceAlert{
-		Title:        utils.PointerTo("original title"),
-		AlertMessage: utils.PointerTo("original message"),
-		Link:         utils.PointerTo("link"),
-		Severity:     utils.PointerTo("minor"),
+		Title:           utils.PointerTo("original title"),
+		AlertMessage:    utils.PointerTo("original message"),
+		Link:            utils.PointerTo("link"),
+		Severity:        utils.PointerTo("minor"),
+		OnEnvironmentID: utils.PointerTo(*testAlert.OnEnvironmentID),
 	}
 	s.NoError(s.DB.Create(&edit).Error)
 
