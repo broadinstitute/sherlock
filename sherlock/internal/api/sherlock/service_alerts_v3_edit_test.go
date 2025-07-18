@@ -67,3 +67,26 @@ func (s *handlerSuite) TestServiceAlertV3Edit() {
 		s.Equal("updated message", *got.AlertMessage)
 	}
 }
+
+func (s *handlerSuite) TestServiceAlertV3EditNonSuitable() {
+	testAlert := s.TestData.ServiceAlert_Prod()
+
+	edit := models.ServiceAlert{
+		Title:           utils.PointerTo("original title"),
+		AlertMessage:    utils.PointerTo("original message"),
+		Link:            utils.PointerTo("link"),
+		Severity:        utils.PointerTo("minor"),
+		OnEnvironmentID: utils.PointerTo(*testAlert.OnEnvironmentID),
+	}
+	s.NoError(s.DB.Create(&edit).Error)
+
+	var got errors.ErrorResponse
+	code := s.HandleRequest(
+		s.UseNonSuitableUserFor(s.NewRequest("PATCH", fmt.Sprintf("/api/service-alerts/v3/%d", edit.ID), ServiceAlertV3EditableFields{
+			Title:        utils.PointerTo("a whole new title"),
+			AlertMessage: utils.PointerTo("updated message"),
+		})),
+		&got)
+	s.Equal(http.StatusForbidden, code)
+	s.Equal(errors.Forbidden, got.Type)
+}
