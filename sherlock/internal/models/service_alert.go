@@ -21,7 +21,7 @@ type ServiceAlert struct {
 
 func (s *ServiceAlert) errorIfForbidden(tx *gorm.DB) error {
 	if s.OnEnvironmentID == nil {
-		return fmt.Errorf("(%s) chart release wasn't properly loaded, wasn't able to check permissions", errors.InternalServerError)
+		return fmt.Errorf("(%s) service alert wasn't properly loaded, wasn't able to check permissions", errors.InternalServerError)
 	}
 	if s.OnEnvironmentID != nil {
 		var environment Environment
@@ -33,7 +33,6 @@ func (s *ServiceAlert) errorIfForbidden(tx *gorm.DB) error {
 		}
 	}
 	return nil
-
 }
 
 // BeforeCreate checks permissions
