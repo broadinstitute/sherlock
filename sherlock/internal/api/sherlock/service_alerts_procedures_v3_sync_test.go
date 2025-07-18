@@ -187,10 +187,14 @@ func (test_handler *handlerSuite) TestSyncServiceAlerts_ValidateJSONContent() {
 			Role:   storage.RoleReader,
 			Entity: storage.AllUsers,
 		})
+	var objAttrsToUpdate = storage.ObjectAttrsToUpdate{
+		CacheControl: "no-store",
+	}
 	blobDetails := google_bucket.BlobDetails{
 		BlobName: "alerts.json",
 		Bucket:   *env.ServiceBannerBucket,
 		AclAttrs: permissionsList,
+		ObjAttrs: &objAttrsToUpdate,
 	}
 
 	UseMockedClient(test_handler.T(), func(gcs_mock_client *google_bucket_mocks.MockgcsClient) {
