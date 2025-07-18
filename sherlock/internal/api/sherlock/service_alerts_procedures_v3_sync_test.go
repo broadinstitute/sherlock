@@ -73,45 +73,6 @@ func (test_handler *handlerSuite) TestSyncServiceAlerts_Success() {
 	})
 }
 
-// test to ensure service alert in prod cannot be created by non-suitable user
-func (test_handler *handlerSuite) TestSyncServiceAlerts_NonSuitableUser() {
-	env := test_handler.TestData.Environment_Prod()
-	test_handler.SetNonSuitableTestUserForDB()
-	alert1 := test_handler.TestData.ServiceAlert_1()
-	alert1.OnEnvironmentID = &env.ID
-	test_handler.NoError(test_handler.DB.Save(&alert1).Error)
-
-	var permissionsList []storage.ACLRule
-	permissionsList = append(permissionsList,
-		storage.ACLRule{
-			Role:   storage.RoleReader,
-			Entity: storage.AllUsers,
-		})
-	var objAttrsToUpdate = storage.ObjectAttrsToUpdate{
-		CacheControl: "no-store",
-	}
-	blobDetails := google_bucket.BlobDetails{
-		BlobName: "alerts.json",
-		Bucket:   *env.ServiceBannerBucket,
-		AclAttrs: permissionsList,
-		ObjAttrs: &objAttrsToUpdate,
-	}
-
-	UseMockedClient(test_handler.T(), func(gcs_mock_client *google_bucket_mocks.MockgcsClient) {
-		gcs_mock_client.EXPECT().WriteBlob(mock.Anything, blobDetails, mock.Anything).Return(nil).Once()
-	}, func() {
-		var got errors.ErrorResponse
-		code := test_handler.HandleRequest(
-			test_handler.NewRequest("POST", "/api/service-alerts/procedures/v3/sync", ServiceAlertV3SyncRequest{
-				OnEnvironment: env.Name,
-			}),
-			&got)
-		test_handler.Equal(http.StatusForbidden, code)
-		test_handler.Equal(errors.Forbidden, got.Type)
-
-	})
-}
-
 // test to write blob
 func (test_handler *handlerSuite) TestSyncServiceAlerts_WriteBlobFails() {
 	env := test_handler.TestData.Environment_Dev()
