@@ -11,7 +11,13 @@ import (
 
 type ServiceAlertV3 struct {
 	CommonFields
-	Uuid *string `json:"uuid,omitempty" form:"uuid"`
+	Uuid          *string `json:"uuid,omitempty" form:"uuid"`
+	CreatedBy     string  `json:"createdBy,omitempty" form:"createdBy"`
+	CreatedByInfo *UserV3 `json:"createdByInfo,omitempty" form:"-"`
+	UpdatedBy     string  `json:"updatedBy,omitempty" form:"updatedBy"`
+	UpdatedByInfo *UserV3 `json:"updatedByInfo,omitempty" form:"-"`
+	DeletedBy     string  `json:"deletedBy,omitempty" form:"deltedBy"`
+	DeletedByInfo *UserV3 `json:"deletedByInfo,omitempty" form:"-"`
 	ServiceAlertV3Create
 }
 
@@ -27,6 +33,19 @@ type ServiceAlertV3EditableFields struct {
 	Severity     *string `json:"severity" form:"severity" enums:"blocker, critical, minor"`
 }
 
+func doUserQuery(id string, db *gorm.DB) (uint, error) {
+	userQuery, err := userModelFromSelector(id)
+	if err != nil {
+		return 0, err
+	}
+	var userResult models.User
+	if err = db.Where(&userQuery).First(&userResult).Error; err != nil {
+		return 0, err
+	} else {
+		return userResult.ID, nil
+	}
+}
+
 // TO And FROM, do conversion from / to string from/to UUID
 func (i ServiceAlertV3) toModel(db *gorm.DB) (models.ServiceAlert, error) {
 	ret := models.ServiceAlert{
@@ -35,6 +54,30 @@ func (i ServiceAlertV3) toModel(db *gorm.DB) (models.ServiceAlert, error) {
 		AlertMessage: i.AlertMessage,
 		Link:         i.Link,
 		Severity:     i.Severity,
+	}
+
+	if i.CreatedBy != "" {
+		id, err := doUserQuery(i.CreatedBy, db)
+		if err != nil {
+			return models.ServiceAlert{}, err
+		}
+		ret.CreatedById = &id
+	}
+
+	if i.UpdatedBy != "" {
+		id, err := doUserQuery(i.UpdatedBy, db)
+		if err != nil {
+			return models.ServiceAlert{}, err
+		}
+		ret.UpdatedById = &id
+	}
+
+	if i.DeletedBy != "" {
+		id, err := doUserQuery(i.CreatedBy, db)
+		if err != nil {
+			return models.ServiceAlert{}, err
+		}
+		ret.DeletedById = &id
 	}
 
 	if i.Uuid != nil {
@@ -73,9 +116,43 @@ func ServiceAlertFromModel(model models.ServiceAlert) ServiceAlertV3 {
 		s := uuid.UUID.String(*model.Uuid)
 		alertUuidString = &s
 	}
+
+	var createdBy *UserV3
+	var createdByString string
+	if model.CreatedByUser != nil {
+		createdBy = utils.PointerTo(userFromModel(*model.CreatedByUser))
+		createdByString = model.CreatedByUser.Email
+	} else if model.CreatedById != nil {
+		createdByString = utils.UintToString(*model.CreatedById)
+	}
+
+	var updatedBy *UserV3
+	var updatedByString string
+	if model.UpdatedByUser != nil {
+		createdBy = utils.PointerTo(userFromModel(*model.UpdatedByUser))
+		createdByString = model.UpdatedByUser.Email
+	} else if model.UpdatedById != nil {
+		updatedByString = utils.UintToString(*model.UpdatedById)
+	}
+
+	var deletedBy *UserV3
+	var deletedByString string
+	if model.DeletedByUser != nil {
+		deletedBy = utils.PointerTo(userFromModel(*model.DeletedByUser))
+		deletedByString = model.DeletedByUser.Email
+	} else if model.DeletedById != nil {
+		updatedByString = utils.UintToString(*model.DeletedById)
+	}
+
 	return ServiceAlertV3{
-		CommonFields: commonFieldsFromGormModel(model.Model),
-		Uuid:         alertUuidString,
+		CommonFields:  commonFieldsFromGormModel(model.Model),
+		Uuid:          alertUuidString,
+		CreatedBy:     createdByString,
+		CreatedByInfo: createdBy,
+		UpdatedBy:     updatedByString,
+		UpdatedByInfo: updatedBy,
+		DeletedBy:     deletedByString,
+		DeletedByInfo: deletedBy,
 		ServiceAlertV3Create: ServiceAlertV3Create{
 			OnEnvironment: onEnvironment,
 			ServiceAlertV3EditableFields: ServiceAlertV3EditableFields{
