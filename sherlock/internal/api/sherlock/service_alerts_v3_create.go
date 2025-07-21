@@ -8,6 +8,7 @@ import (
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/authentication"
+	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
@@ -51,6 +52,13 @@ func serviceAlertV3Create(ctx *gin.Context) {
 		errors.AbortRequest(ctx, fmt.Errorf("(%s) environment is required", errors.BadRequest))
 		return
 	}
+
+	var user *models.User
+	if user, err = models.GetCurrentUserForDB(db); err != nil {
+		errors.AbortRequest(ctx, fmt.Errorf("unable to get current user for creating service alert: %w", err))
+		return
+	}
+	toCreate.CreatedById = &user.ID
 
 	if err = db.Create(&toCreate).Error; err != nil {
 		errors.AbortRequest(ctx, err)
