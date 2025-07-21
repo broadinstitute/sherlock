@@ -3,6 +3,7 @@ package db
 import (
 	"errors"
 	"fmt"
+
 	migrationFiles "github.com/broadinstitute/sherlock/sherlock/db"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/golang-migrate/migrate/v4"

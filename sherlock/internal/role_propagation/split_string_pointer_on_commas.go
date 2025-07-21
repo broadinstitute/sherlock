@@ -1,8 +1,9 @@
 package role_propagation
 
 import (
-	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"strings"
+
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 )
 
 // a convenience function helpful for handling grant fields on roles that we treat as comma-separated lists.

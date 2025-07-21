@@ -3,6 +3,7 @@ package propagation_engines
 import (
 	"context"
 	"fmt"
+
 	"github.com/broadinstitute/sherlock/sherlock/internal/clients/bits_data_warehouse"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models/self"

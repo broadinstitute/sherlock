@@ -2,10 +2,11 @@ package slack
 
 import (
 	"context"
+	"testing"
+
 	"github.com/broadinstitute/sherlock/sherlock/internal/clients/slack/slack_mocks"
 	"github.com/slack-go/slack"
 	"github.com/slack-go/slack/socketmode"
-	"testing"
 )
 
 // `make generate-mocks` from the root of the repo to regenerate (you'll need to `brew install mockery`)

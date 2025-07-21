@@ -3,6 +3,7 @@ package oidc_models
 import (
 	"encoding/hex"
 	"fmt"
+
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/zitadel/oidc/v3/pkg/op"
 	"golang.org/x/text/language"

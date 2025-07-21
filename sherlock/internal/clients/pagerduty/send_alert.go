@@ -3,10 +3,11 @@ package pagerduty
 import (
 	"context"
 	"fmt"
+	"time"
+
 	"github.com/PagerDuty/go-pagerduty"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/rs/zerolog/log"
-	"time"
 )
 
 type AlertSummary struct {

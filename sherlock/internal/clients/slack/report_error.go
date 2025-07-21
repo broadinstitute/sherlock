@@ -3,6 +3,7 @@ package slack
 import (
 	"context"
 	"fmt"
+
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/rs/zerolog/log"

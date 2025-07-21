@@ -2,12 +2,13 @@ package pact_broker
 
 import (
 	"fmt"
+	"net/http"
+	"testing"
+
 	"github.com/broadinstitute/sherlock/sherlock/internal/clients/pact_broker/pact_broker_mocks"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
-	"net/http"
-	"testing"
 )
 
 // ErrorResponse is a struct that represents the response from the Pact Broker

@@ -3,6 +3,11 @@ package boot
 import (
 	"context"
 	"fmt"
+	"io/fs"
+	"net/http"
+	"os"
+	"strings"
+
 	"github.com/broadinstitute/sherlock/go-shared/pkg/version"
 	"github.com/broadinstitute/sherlock/sherlock/docs"
 	"github.com/broadinstitute/sherlock/sherlock/html"
@@ -24,10 +29,6 @@ import (
 	swaggo_gin "github.com/swaggo/gin-swagger"
 	"golang.org/x/net/webdav"
 	"gorm.io/gorm"
-	"io/fs"
-	"net/http"
-	"os"
-	"strings"
 )
 
 //	@title			Sherlock

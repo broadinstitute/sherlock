@@ -3,6 +3,7 @@ package google_workspace
 import (
 	"context"
 	"fmt"
+
 	"github.com/broadinstitute/sherlock/sherlock/internal/models/self"
 	admin "google.golang.org/api/admin/directory/v1"
 	"google.golang.org/api/impersonate"

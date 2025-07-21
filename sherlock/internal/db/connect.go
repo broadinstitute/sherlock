@@ -1,11 +1,15 @@
 package db
 
 import (
-	"cloud.google.com/go/cloudsqlconn"
 	"context"
 	"database/sql"
 	"errors"
 	"fmt"
+	"net"
+	"strings"
+	"time"
+
+	"cloud.google.com/go/cloudsqlconn"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/jackc/pgx/v5"
 	pgxstdlib "github.com/jackc/pgx/v5/stdlib"
@@ -13,9 +17,6 @@ import (
 	gormpg "gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
-	"net"
-	"strings"
-	"time"
 )
 
 // Connect provides a *gorm.DB and a non-nil cleanup function.

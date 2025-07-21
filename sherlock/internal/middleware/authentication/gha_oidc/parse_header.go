@@ -2,6 +2,7 @@ package gha_oidc
 
 import (
 	"fmt"
+
 	"github.com/broadinstitute/sherlock/sherlock/internal/clients/slack"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/authentication/gha_oidc/gha_oidc_claims"

@@ -3,6 +3,8 @@ package propagation_engines
 import (
 	"context"
 	"fmt"
+	"strings"
+
 	"github.com/Azure/azure-sdk-for-go/sdk/azidentity"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
@@ -15,7 +17,6 @@ import (
 	"github.com/microsoftgraph/msgraph-sdk-go/directoryroleswithroletemplateid"
 	graphmodels "github.com/microsoftgraph/msgraph-sdk-go/models"
 	"github.com/microsoftgraph/msgraph-sdk-go/users"
-	"strings"
 )
 
 const AzureGlobalReaderRoleTemplateID = "f2ef992c-3afb-46b9-b7cf-a126ee74c451"

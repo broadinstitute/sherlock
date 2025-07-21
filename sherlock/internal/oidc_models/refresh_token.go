@@ -2,6 +2,8 @@ package oidc_models
 
 import (
 	"errors"
+	"time"
+
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
@@ -10,7 +12,6 @@ import (
 	"github.com/zitadel/oidc/v3/pkg/op"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
-	"time"
 )
 
 var _ op.RefreshTokenRequest = &RefreshToken{}

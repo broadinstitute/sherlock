@@ -2,12 +2,13 @@ package csrf_protection
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
-	"strings"
 )
 
 // CsrfProtection is a layer of defense against Cross-Site-Request-Forgery attacks.

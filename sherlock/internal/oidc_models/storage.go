@@ -8,6 +8,9 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"strings"
+	"time"
+
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
@@ -19,8 +22,6 @@ import (
 	"golang.org/x/text/language"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
-	"strings"
-	"time"
 )
 
 const groupsClaim = "groups"

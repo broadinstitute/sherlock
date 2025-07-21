@@ -2,10 +2,11 @@ package github
 
 import (
 	"context"
-	"github.com/broadinstitute/sherlock/sherlock/internal/clients/github/github_mocks"
-	"github.com/google/go-github/v58/github"
 	"net/http"
 	"testing"
+
+	"github.com/broadinstitute/sherlock/sherlock/internal/clients/github/github_mocks"
+	"github.com/google/go-github/v58/github"
 )
 
 // `make generate-mocks` from the root of the repo to regenerate (you'll need to `brew install mockery`)

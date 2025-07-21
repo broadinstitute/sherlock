@@ -1,8 +1,9 @@
 package sherlock
 
 import (
-	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"time"
+
+	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 )
 
 type CiRunV3 struct {

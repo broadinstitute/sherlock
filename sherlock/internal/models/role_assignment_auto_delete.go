@@ -3,10 +3,11 @@ package models
 import (
 	"context"
 	"errors"
+	"time"
+
 	"github.com/broadinstitute/sherlock/sherlock/internal/clients/slack"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
-	"time"
 )
 
 // KeepAutoDeletingRoleAssignments will periodically delete RoleAssignments that have expired.

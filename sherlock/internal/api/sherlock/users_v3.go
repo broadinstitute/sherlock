@@ -1,9 +1,10 @@
 package sherlock
 
 import (
+	"time"
+
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
-	"time"
 )
 
 type UserV3 struct {

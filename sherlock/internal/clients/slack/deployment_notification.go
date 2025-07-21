@@ -4,9 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"math/rand"
+
 	"github.com/rs/zerolog/log"
 	"github.com/slack-go/slack"
-	"math/rand"
 )
 
 type DeploymentNotificationInputs struct {

@@ -1,8 +1,9 @@
 package role_propagation
 
 import (
-	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"reflect"
+
+	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 )
 
 func (p *propagatorImpl[Grant, Identifier, Fields]) getAndFilterGrants(role models.Role) []Grant {

@@ -2,10 +2,11 @@ package sherlock
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"gorm.io/gorm"
-	"strings"
 )
 
 type AppVersionV3 struct {

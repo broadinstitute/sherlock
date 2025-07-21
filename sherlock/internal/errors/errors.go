@@ -3,11 +3,12 @@ package errors
 import (
 	"errors"
 	"fmt"
-	"github.com/rs/zerolog/log"
-	"gorm.io/gorm"
 	"net/http"
 	"strconv"
 	"strings"
+
+	"github.com/rs/zerolog/log"
+	"gorm.io/gorm"
 )
 
 // This package is designed to help influence the status code sent when an error is returned via an API.

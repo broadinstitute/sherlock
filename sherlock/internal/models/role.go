@@ -3,13 +3,14 @@ package models
 import (
 	"database/sql"
 	"fmt"
+	"time"
+
 	"github.com/broadinstitute/sherlock/sherlock/internal/clients/slack"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models/advisory_locks"
 	"github.com/jinzhu/copier"
 	"github.com/sanity-io/litter"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
-	"time"
 )
 
 type RoleFields struct {

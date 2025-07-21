@@ -3,6 +3,9 @@ package sherlock
 import (
 	"context"
 	"fmt"
+	"math"
+	"net/http"
+
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/metrics"
 	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/authentication"
@@ -11,8 +14,6 @@ import (
 	"github.com/rs/zerolog/log"
 	"go.opencensus.io/stats"
 	"go.opencensus.io/tag"
-	"math"
-	"net/http"
 )
 
 // githubActionsJobsV3Upsert godoc

@@ -4,11 +4,12 @@ import (
 	"crypto/rand"
 	"crypto/sha512"
 	"encoding/hex"
+	"time"
+
 	"github.com/zitadel/oidc/v3/pkg/oidc"
 	"github.com/zitadel/oidc/v3/pkg/op"
 	"golang.org/x/crypto/pbkdf2"
 	"gorm.io/gorm"
-	"time"
 )
 
 type TestClientHelper struct{}

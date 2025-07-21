@@ -3,6 +3,7 @@ package ci_hooks
 import (
 	"encoding/json"
 	"fmt"
+
 	"github.com/broadinstitute/sherlock/sherlock/internal/clients/github"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"

@@ -2,12 +2,13 @@ package sherlock
 
 import (
 	"fmt"
+	"net/http"
+
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/authentication"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm/clause"
-	"net/http"
 )
 
 // environmentsV3Edit godoc
@@ -16,8 +17,8 @@ import (
 //	@description	Edit an individual Environment.
 //	@tags			Environments
 //	@produce		json
-//	@param			selector				path		string			true	"The selector of the Environment, which can be either a numeric ID, the name, or 'resource-prefix' + / + the unique resource prefix."
-//	@param			environment					body		EnvironmentV3Edit	true	"The edits to make to the Environment"
+//	@param			selector				path		string				true	"The selector of the Environment, which can be either a numeric ID, the name, or 'resource-prefix' + / + the unique resource prefix."
+//	@param			environment				body		EnvironmentV3Edit	true	"The edits to make to the Environment"
 //	@success		200						{object}	EnvironmentV3
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/environments/v3/{selector} [patch]

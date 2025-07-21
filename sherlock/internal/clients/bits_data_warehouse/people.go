@@ -1,16 +1,17 @@
 package bits_data_warehouse
 
 import (
-	"cloud.google.com/go/bigquery"
 	"context"
 	"errors"
-	"github.com/broadinstitute/sherlock/sherlock/internal/config"
-	"github.com/rs/zerolog/log"
-	"google.golang.org/api/iterator"
 	"reflect"
 	"strings"
 	"testing"
 	"time"
+
+	"cloud.google.com/go/bigquery"
+	"github.com/broadinstitute/sherlock/sherlock/internal/config"
+	"github.com/rs/zerolog/log"
+	"google.golang.org/api/iterator"
 )
 
 type Person struct {

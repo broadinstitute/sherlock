@@ -3,14 +3,15 @@ package login
 import (
 	"database/sql"
 	"fmt"
+	"net/http"
+	"time"
+
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/authentication"
 	"github.com/broadinstitute/sherlock/sherlock/internal/oidc_models"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"gorm.io/gorm/clause"
-	"net/http"
-	"time"
 )
 
 // LoginGet is meant to handle redirects to /login?id=... from the OIDC subsystem,

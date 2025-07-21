@@ -3,8 +3,9 @@ package github
 import (
 	"context"
 	"fmt"
-	"github.com/google/go-github/v58/github"
 	"net/http"
+
+	"github.com/google/go-github/v58/github"
 )
 
 type JobPartial struct {

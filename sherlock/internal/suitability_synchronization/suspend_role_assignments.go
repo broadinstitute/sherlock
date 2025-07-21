@@ -3,6 +3,8 @@ package suitability_synchronization
 import (
 	"context"
 	"fmt"
+	"time"
+
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/clients/slack"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
@@ -11,7 +13,6 @@ import (
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
-	"time"
 )
 
 func KeepSuspendingRoleAssignments(ctx context.Context, db *gorm.DB) {

@@ -2,10 +2,11 @@ package pagerduty
 
 import (
 	"context"
+	"time"
+
 	"github.com/PagerDuty/go-pagerduty"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/rs/zerolog/log"
-	"time"
 )
 
 func SendChange(integrationKey string, summary string, sourceLink string) error {

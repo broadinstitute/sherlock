@@ -3,10 +3,11 @@ package models
 import (
 	goerrors "errors"
 	"fmt"
+	"time"
+
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"gorm.io/gorm"
-	"time"
 )
 
 // ChartReleaseVersion isn't stored in the database on its own, it is included as a part of a ChartRelease or

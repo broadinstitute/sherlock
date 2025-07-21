@@ -1,13 +1,15 @@
 package oidc_models
 
 import (
-	"cloud.google.com/go/kms/apiv1/kmspb"
 	"context"
 	"crypto/ecdsa"
 	"crypto/elliptic"
 	"crypto/rand"
 	"crypto/x509"
 	"fmt"
+	"time"
+
+	"cloud.google.com/go/kms/apiv1/kmspb"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/go-jose/go-jose/v4"
 	"github.com/google/uuid"
@@ -15,7 +17,6 @@ import (
 	"github.com/zitadel/oidc/v3/pkg/op"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
-	"time"
 )
 
 type SigningKey struct {

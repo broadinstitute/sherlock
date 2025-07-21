@@ -2,12 +2,13 @@ package pagerduty
 
 import (
 	"context"
+	"net/http"
+	"strconv"
+
 	"github.com/PagerDuty/go-pagerduty"
 	"github.com/broadinstitute/sherlock/sherlock/internal/metrics"
 	"go.opencensus.io/stats"
 	"go.opencensus.io/tag"
-	"net/http"
-	"strconv"
 )
 
 func recordMetrics(ctx context.Context, requestType string, err error) {

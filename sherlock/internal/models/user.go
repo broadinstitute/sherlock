@@ -3,15 +3,16 @@ package models
 import (
 	"context"
 	"fmt"
+	"strings"
+	"time"
+	"unicode"
+
 	"github.com/broadinstitute/sherlock/sherlock/internal/clients/slack"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/authentication/authentication_method"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models/self"
 	"gorm.io/gorm"
-	"strings"
-	"time"
-	"unicode"
 )
 
 // SelfUser is the User that Sherlock itself is conceptually running as, as derived from

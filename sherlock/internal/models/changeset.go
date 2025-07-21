@@ -4,12 +4,13 @@ import (
 	"cmp"
 	"context"
 	"fmt"
+	"strings"
+	"time"
+
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/clients/slack"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
-	"strings"
-	"time"
 )
 
 type Changeset struct {

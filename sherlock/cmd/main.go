@@ -2,12 +2,13 @@ package main
 
 import (
 	"context"
-	"github.com/broadinstitute/sherlock/sherlock/internal/boot"
-	"github.com/rs/zerolog/log"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+
+	"github.com/broadinstitute/sherlock/sherlock/internal/boot"
+	"github.com/rs/zerolog/log"
 )
 
 func main() {

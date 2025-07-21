@@ -1,10 +1,11 @@
 package config
 
 import (
+	"regexp"
+
 	"github.com/avast/retry-go/v4"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/rs/zerolog/log"
-	"regexp"
 )
 
 // RetryOptions are meant to be provided to Sherlock's calls to retry.Do or retry.DoWithData.

@@ -3,13 +3,14 @@ package propagation_engines
 import (
 	"context"
 	"fmt"
+	"strings"
+
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/role_propagation/intermediary_user"
 	"github.com/knadh/koanf"
 	admin "google.golang.org/api/admin/directory/v1"
 	"google.golang.org/api/option"
-	"strings"
 )
 
 type GoogleWorkspaceGroupIdentifier struct {

@@ -3,6 +3,7 @@ package role_propagation
 import (
 	"context"
 	"fmt"
+
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/role_propagation/propagation_engines"
 )

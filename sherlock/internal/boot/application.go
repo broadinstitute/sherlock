@@ -3,6 +3,10 @@ package boot
 import (
 	"context"
 	"errors"
+	"net/http"
+	"sync"
+	"time"
+
 	"github.com/broadinstitute/sherlock/sherlock/internal/boot/liveness"
 	"github.com/broadinstitute/sherlock/sherlock/internal/clients/bits_data_warehouse"
 	"github.com/broadinstitute/sherlock/sherlock/internal/clients/github"
@@ -19,9 +23,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
-	"net/http"
-	"sync"
-	"time"
 )
 
 type Application struct {

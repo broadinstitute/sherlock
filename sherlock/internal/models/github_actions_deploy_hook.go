@@ -2,9 +2,10 @@ package models
 
 import (
 	"encoding/json"
+	"reflect"
+
 	"gorm.io/datatypes"
 	"gorm.io/gorm"
-	"reflect"
 )
 
 type GithubActionsDeployHook struct {

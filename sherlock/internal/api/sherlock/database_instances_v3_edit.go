@@ -2,13 +2,14 @@ package sherlock
 
 import (
 	"fmt"
+	"net/http"
+
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/authentication"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"gorm.io/gorm/clause"
-	"net/http"
 )
 
 // databaseInstancesV3Edit godoc
@@ -17,8 +18,8 @@ import (
 //	@description	Edit an individual DatabaseInstance by its selector.
 //	@tags			DatabaseInstances
 //	@produce		json
-//	@param			selector				path		string				true	"The selector of the DatabaseInstance, which can be either a numeric ID or 'chart-release/' followed by a chart release selector."
-//	@param			databaseInstance			body		DatabaseInstanceV3Edit	true	"The edits to make to the DatabaseInstance"
+//	@param			selector				path		string					true	"The selector of the DatabaseInstance, which can be either a numeric ID or 'chart-release/' followed by a chart release selector."
+//	@param			databaseInstance		body		DatabaseInstanceV3Edit	true	"The edits to make to the DatabaseInstance"
 //	@success		200						{object}	DatabaseInstanceV3
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/database-instances/v3/{selector} [patch]

@@ -3,13 +3,14 @@ package role_propagation
 import (
 	"context"
 	"fmt"
+	"time"
+
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/clients/slack"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
-	"time"
 )
 
 func DoOnDemandPropagation(ctx context.Context, db *gorm.DB, roleID uint) {

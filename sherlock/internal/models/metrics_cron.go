@@ -3,13 +3,14 @@ package models
 import (
 	"context"
 	"fmt"
+	"time"
+
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/metrics"
 	"github.com/rs/zerolog/log"
 	"go.opencensus.io/stats"
 	"go.opencensus.io/tag"
 	"gorm.io/gorm"
-	"time"
 )
 
 var lastUpdateTime time.Time

@@ -1,14 +1,15 @@
 package oidc_models
 
 import (
-	kms "cloud.google.com/go/kms/apiv1"
-	"cloud.google.com/go/kms/apiv1/kmspb"
 	"context"
 	"fmt"
+	"time"
+
+	kms "cloud.google.com/go/kms/apiv1"
+	"cloud.google.com/go/kms/apiv1/kmspb"
 	"github.com/broadinstitute/sherlock/sherlock/internal/clients/slack"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"gorm.io/gorm"
-	"time"
 )
 
 var (

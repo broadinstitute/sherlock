@@ -2,9 +2,10 @@ package gha_oidc
 
 import (
 	"context"
+	"testing"
+
 	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/authentication/gha_oidc/gha_oidc_claims"
 	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/authentication/gha_oidc/gha_oidc_mocks"
-	"testing"
 )
 
 // `make generate-mocks` from the root of the repo to regenerate (you'll need to `brew install mockery`)

@@ -2,9 +2,10 @@ package firecloud_account_manager
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/broadinstitute/sherlock/sherlock/internal/clients/google_workspace"
 	"gorm.io/gorm"
-	"time"
 )
 
 type firecloudAccountManager struct {

@@ -2,9 +2,10 @@ package test_users
 
 import (
 	"fmt"
+	"strconv"
+
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/gin-gonic/gin"
-	"strconv"
 )
 
 const (

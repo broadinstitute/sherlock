@@ -1,9 +1,10 @@
 package metrics
 
 import (
+	"log"
+
 	"contrib.go.opencensus.io/exporter/prometheus"
 	"github.com/gin-gonic/gin"
-	"log"
 )
 
 // PrometheusHandler exposes registered Prometheus metrics

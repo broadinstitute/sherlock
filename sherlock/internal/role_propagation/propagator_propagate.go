@@ -3,13 +3,14 @@ package role_propagation
 import (
 	"context"
 	"fmt"
+	"sync"
+
 	"github.com/avast/retry-go/v4"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/role_propagation/intermediary_user"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
-	"sync"
 )
 
 func (p *propagatorImpl[Grant, Identifier, Fields]) Propagate(ctx context.Context, role models.Role) (results []string, errors []error) {

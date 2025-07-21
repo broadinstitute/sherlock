@@ -1,17 +1,18 @@
 package propagation_engines
 
 import (
-	"cloud.google.com/go/iam/apiv1/iampb"
-	resourcemanager "cloud.google.com/go/resourcemanager/apiv3"
 	"context"
 	"fmt"
+	"strings"
+
+	"cloud.google.com/go/iam/apiv1/iampb"
+	resourcemanager "cloud.google.com/go/resourcemanager/apiv3"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/role_propagation/intermediary_user"
 	"github.com/knadh/koanf"
 	admin "google.golang.org/api/admin/directory/v1"
 	"google.golang.org/api/option"
-	"strings"
 )
 
 const GoogleCloudOwnerRole = "roles/owner"

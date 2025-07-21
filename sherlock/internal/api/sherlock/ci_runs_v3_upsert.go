@@ -2,6 +2,8 @@ package sherlock
 
 import (
 	"fmt"
+	"net/http"
+
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/ci_hooks"
 	"github.com/broadinstitute/sherlock/sherlock/internal/clients/slack"
@@ -14,7 +16,6 @@ import (
 	"github.com/rs/zerolog/log"
 	"golang.org/x/exp/maps"
 	"gorm.io/gorm/clause"
-	"net/http"
 )
 
 type CiRunV3Upsert struct {

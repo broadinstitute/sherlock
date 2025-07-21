@@ -3,11 +3,12 @@ package firecloud_account_manager
 import (
 	"context"
 	"fmt"
+	"time"
+
 	"github.com/broadinstitute/sherlock/sherlock/internal/clients/google_workspace"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/knadh/koanf"
 	"gorm.io/gorm"
-	"time"
 )
 
 var managers []firecloudAccountManager

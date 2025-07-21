@@ -2,6 +2,9 @@ package models
 
 import (
 	"fmt"
+	"strings"
+	"time"
+
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/clients/github"
 	"github.com/broadinstitute/sherlock/sherlock/internal/clients/slack"
@@ -9,8 +12,6 @@ import (
 	"github.com/rs/zerolog/log"
 	"gorm.io/datatypes"
 	"gorm.io/gorm"
-	"strings"
-	"time"
 )
 
 // deployMatchers are partial CiRun structs, read out of config when Sherlock

@@ -2,6 +2,7 @@ package propagation_engines
 
 import (
 	"context"
+
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/role_propagation/intermediary_user"
 	"github.com/knadh/koanf"

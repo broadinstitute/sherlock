@@ -3,12 +3,13 @@ package sherlock
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
+
 	"github.com/broadinstitute/sherlock/sherlock/internal/clients/github"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/authentication"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 type GithubActionsDeployHookTestRunRequest struct {

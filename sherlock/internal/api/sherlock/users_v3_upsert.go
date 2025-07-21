@@ -3,6 +3,11 @@ package sherlock
 import (
 	"context"
 	"fmt"
+	"net/http"
+	"strings"
+	"sync"
+	"time"
+
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/clients/github"
 	"github.com/broadinstitute/sherlock/sherlock/internal/clients/slack"
@@ -14,10 +19,6 @@ import (
 	"github.com/jinzhu/copier"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm/clause"
-	"net/http"
-	"strings"
-	"sync"
-	"time"
 )
 
 type UserV3Upsert struct {

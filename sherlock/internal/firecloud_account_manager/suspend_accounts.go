@@ -3,6 +3,9 @@ package firecloud_account_manager
 import (
 	"context"
 	"fmt"
+	"strings"
+	"time"
+
 	"github.com/avast/retry-go/v4"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/clients/bits_data_warehouse"
@@ -13,8 +16,6 @@ import (
 	"github.com/rs/zerolog/log"
 	admin "google.golang.org/api/admin/directory/v1"
 	"gorm.io/gorm"
-	"strings"
-	"time"
 )
 
 // Google's API says that accounts that have never logged in actually have -- just at 1970-01-01T00:00:00.000Z.

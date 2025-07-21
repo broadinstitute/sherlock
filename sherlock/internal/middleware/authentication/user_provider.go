@@ -2,6 +2,7 @@ package authentication
 
 import (
 	"fmt"
+
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/authentication/authentication_method"
 	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/authentication/gha_oidc"

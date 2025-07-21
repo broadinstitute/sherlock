@@ -2,6 +2,11 @@ package config
 
 import (
 	"fmt"
+	stdlog "log"
+	"os"
+	"strings"
+	"time"
+
 	embeddedFiles "github.com/broadinstitute/sherlock/sherlock/config"
 	"github.com/knadh/koanf"
 	"github.com/knadh/koanf/parsers/yaml"
@@ -10,10 +15,6 @@ import (
 	"github.com/knadh/koanf/providers/fs"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
-	stdlog "log"
-	"os"
-	"strings"
-	"time"
 )
 
 // Config holds Sherlock's global configuration

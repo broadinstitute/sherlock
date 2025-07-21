@@ -1,13 +1,14 @@
 package sherlock
 
 import (
+	"net/http"
+
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/authentication"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/role_propagation"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm/clause"
-	"net/http"
 )
 
 // roleAssignmentsV3Delete godoc

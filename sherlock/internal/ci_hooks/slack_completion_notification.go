@@ -2,6 +2,7 @@ package ci_hooks
 
 import (
 	"context"
+
 	"github.com/broadinstitute/sherlock/sherlock/internal/clients/slack"
 )
 

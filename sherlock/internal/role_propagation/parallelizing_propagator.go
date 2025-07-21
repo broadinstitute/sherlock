@@ -3,9 +3,10 @@ package role_propagation
 import (
 	"context"
 	"fmt"
+	"sync"
+
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
-	"sync"
 )
 
 var _ propagator = &parallelizingPropagator{}

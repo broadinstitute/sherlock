@@ -2,6 +2,7 @@ package slack
 
 import (
 	"context"
+
 	"github.com/slack-go/slack"
 )
 

@@ -2,9 +2,10 @@ package oidc_models
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/zitadel/oidc/v3/pkg/oidc"
 	"github.com/zitadel/oidc/v3/pkg/op"
-	"time"
 )
 
 // "Client implements the op.Client interface"

@@ -3,6 +3,9 @@ package sherlock
 import (
 	"database/sql"
 	"fmt"
+	"strings"
+	"time"
+
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
@@ -10,8 +13,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
-	"strings"
-	"time"
 )
 
 type EnvironmentV3 struct {

@@ -3,10 +3,11 @@ package models
 import (
 	"context"
 	"fmt"
+	"time"
+
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/clients/slack"
 	"gorm.io/gorm"
-	"time"
 )
 
 // KeepAutoAssigningRoles will periodically add Users to Roles that are marked with

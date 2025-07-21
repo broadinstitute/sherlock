@@ -3,14 +3,15 @@ package suitability_synchronization
 import (
 	"context"
 	"fmt"
+	"strings"
+	"time"
+
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
-	"strings"
-	"time"
 )
 
 func KeepLoadingIntoDB(ctx context.Context, db *gorm.DB) {

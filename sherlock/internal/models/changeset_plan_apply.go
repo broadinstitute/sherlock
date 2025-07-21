@@ -3,6 +3,10 @@ package models
 import (
 	"context"
 	"fmt"
+	"runtime/debug"
+	"strings"
+	"time"
+
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/clients/pact_broker"
 	"github.com/broadinstitute/sherlock/sherlock/internal/clients/pagerduty"
@@ -12,9 +16,6 @@ import (
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
-	"runtime/debug"
-	"strings"
-	"time"
 )
 
 func PlanChangesets(db *gorm.DB, changesets []Changeset) (created []uint, err error) {

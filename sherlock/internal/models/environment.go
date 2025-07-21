@@ -4,6 +4,9 @@ import (
 	"database/sql"
 	goerrors "errors"
 	"fmt"
+	"strings"
+	"time"
+
 	"github.com/broadinstitute/sherlock/go-shared/pkg/resource_prefix"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/clients/slack"
@@ -12,8 +15,6 @@ import (
 	petname "github.com/dustinkirkland/golang-petname"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
-	"strings"
-	"time"
 )
 
 type Environment struct {

@@ -2,11 +2,12 @@ package slack
 
 import (
 	"context"
+	"strings"
+
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/rs/zerolog/log"
 	"github.com/slack-go/slack"
-	"strings"
 )
 
 type Attachment interface {

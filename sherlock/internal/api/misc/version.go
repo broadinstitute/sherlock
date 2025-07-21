@@ -1,9 +1,10 @@
 package misc
 
 import (
+	"net/http"
+
 	"github.com/broadinstitute/sherlock/go-shared/pkg/version"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 type VersionResponse struct {

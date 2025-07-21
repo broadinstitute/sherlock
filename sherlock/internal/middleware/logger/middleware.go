@@ -3,6 +3,9 @@ package logger
 import (
 	"context"
 	"fmt"
+	"strconv"
+	"time"
+
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/clients/slack"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
@@ -13,8 +16,6 @@ import (
 	"github.com/rs/zerolog/log"
 	"go.opencensus.io/stats"
 	"go.opencensus.io/tag"
-	"strconv"
-	"time"
 )
 
 func Logger() gin.HandlerFunc {

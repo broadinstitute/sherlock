@@ -3,6 +3,12 @@ package sherlock
 import (
 	"context"
 	"fmt"
+	"net/http"
+	"regexp"
+	"strings"
+	"sync"
+	"time"
+
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/clients/google_workspace"
 	"github.com/broadinstitute/sherlock/sherlock/internal/clients/slack"
@@ -13,11 +19,6 @@ import (
 	"github.com/creasty/defaults"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
-	"net/http"
-	"regexp"
-	"strings"
-	"sync"
-	"time"
 )
 
 type UserV3DeactivateRequest struct {

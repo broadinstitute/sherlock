@@ -2,10 +2,11 @@ package ci_hooks
 
 import (
 	"context"
+	"testing"
+
 	"github.com/broadinstitute/sherlock/sherlock/internal/ci_hooks/ci_hooks_mocks"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"gorm.io/gorm"
-	"testing"
 )
 
 type mockableDispatcher interface {

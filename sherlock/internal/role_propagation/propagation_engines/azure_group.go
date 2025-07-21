@@ -3,6 +3,8 @@ package propagation_engines
 import (
 	"context"
 	"fmt"
+	"strings"
+
 	"github.com/Azure/azure-sdk-for-go/sdk/azidentity"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
@@ -14,7 +16,6 @@ import (
 	"github.com/microsoftgraph/msgraph-sdk-go/groups"
 	graphmodels "github.com/microsoftgraph/msgraph-sdk-go/models"
 	"github.com/microsoftgraph/msgraph-sdk-go/users"
-	"strings"
 )
 
 type AzureGroupIdentifier struct {

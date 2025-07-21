@@ -2,11 +2,12 @@ package role_propagation
 
 import (
 	"context"
+	"time"
+
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/broadinstitute/sherlock/sherlock/internal/role_propagation/intermediary_user"
 	"github.com/broadinstitute/sherlock/sherlock/internal/role_propagation/propagation_engines"
 	"github.com/knadh/koanf"
-	"time"
 )
 
 // propagator is an interface sitting just on top of propagatorImpl. The only reason it exists is that we can't

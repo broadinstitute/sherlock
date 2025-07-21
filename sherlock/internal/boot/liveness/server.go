@@ -3,12 +3,13 @@ package liveness
 import (
 	"context"
 	"errors"
-	"github.com/broadinstitute/sherlock/sherlock/internal/config"
-	"github.com/rs/zerolog/log"
-	"gorm.io/gorm"
 	"net/http"
 	"sync"
 	"time"
+
+	"github.com/broadinstitute/sherlock/sherlock/internal/config"
+	"github.com/rs/zerolog/log"
+	"gorm.io/gorm"
 )
 
 // Server runs a liveness endpoint designed to integrate with Sherlock's lifecycle.

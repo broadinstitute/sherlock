@@ -2,10 +2,11 @@ package sherlock
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
-	"time"
 )
 
 type RoleAssignmentV3 struct {

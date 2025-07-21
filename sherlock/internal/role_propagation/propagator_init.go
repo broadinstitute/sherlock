@@ -3,6 +3,7 @@ package role_propagation
 import (
 	"context"
 	"fmt"
+
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/role_propagation/propagation_engines"
 	"github.com/knadh/koanf"

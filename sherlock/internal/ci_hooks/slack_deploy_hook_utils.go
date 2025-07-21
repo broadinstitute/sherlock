@@ -2,12 +2,13 @@ package ci_hooks
 
 import (
 	"fmt"
+	"regexp"
+	"strings"
+
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/clients/slack"
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
-	"regexp"
-	"strings"
 )
 
 var numericProgressRegex = regexp.MustCompile(`(\d+)(/| out of | of )(\d+)`)

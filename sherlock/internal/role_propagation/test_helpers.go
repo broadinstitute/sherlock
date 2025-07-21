@@ -1,8 +1,9 @@
 package role_propagation
 
 import (
-	"github.com/broadinstitute/sherlock/sherlock/internal/role_propagation/role_propagation_mocks"
 	"testing"
+
+	"github.com/broadinstitute/sherlock/sherlock/internal/role_propagation/role_propagation_mocks"
 )
 
 func UseMockedPropagator(t *testing.T, config func(c *role_propagation_mocks.MockPropagator), callback func()) {

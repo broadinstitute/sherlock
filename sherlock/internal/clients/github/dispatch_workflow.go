@@ -2,8 +2,9 @@ package github
 
 import (
 	"context"
-	"github.com/google/go-github/v58/github"
 	"strings"
+
+	"github.com/google/go-github/v58/github"
 )
 
 // DispatchWorkflow basically wraps client.Actions.CreateWorkflowDispatchEventByFileName.

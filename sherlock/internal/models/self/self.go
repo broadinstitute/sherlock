@@ -14,6 +14,7 @@ package self
 import (
 	"context"
 	"fmt"
+
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	oauth2google "golang.org/x/oauth2/google"
 	googleoauth "google.golang.org/api/oauth2/v2"

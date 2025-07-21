@@ -2,9 +2,10 @@ package github
 
 import (
 	"context"
+	"strconv"
+
 	"github.com/google/go-github/v58/github"
 	"golang.org/x/oauth2"
-	"strconv"
 )
 
 // GetCurrentUser gets the currently authenticated user's info. It is a bit weird because

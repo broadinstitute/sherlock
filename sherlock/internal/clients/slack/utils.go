@@ -2,10 +2,11 @@ package slack
 
 import (
 	"fmt"
-	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
-	"github.com/slack-go/slack"
 	"regexp"
 	"strings"
+
+	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
+	"github.com/slack-go/slack"
 )
 
 func LinkHelper(url string, text string) string {

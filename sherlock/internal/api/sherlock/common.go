@@ -1,8 +1,9 @@
 package sherlock
 
 import (
-	"gorm.io/gorm"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 type CommonFields struct {

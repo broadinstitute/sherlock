@@ -3,6 +3,9 @@ package propagation_engines
 import (
 	"context"
 	"fmt"
+	"reflect"
+	"strings"
+
 	"github.com/Azure/azure-sdk-for-go/sdk/azidentity"
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
@@ -14,8 +17,6 @@ import (
 	graphmodels "github.com/microsoftgraph/msgraph-sdk-go/models"
 	"github.com/microsoftgraph/msgraph-sdk-go/users"
 	"github.com/sethvargo/go-password/password"
-	"reflect"
-	"strings"
 )
 
 type AzureAccountIdentifier struct {

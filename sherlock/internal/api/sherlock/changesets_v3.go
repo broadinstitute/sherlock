@@ -2,11 +2,12 @@ package sherlock
 
 import (
 	"fmt"
+	"strings"
+	"time"
+
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"gorm.io/gorm"
-	"strings"
-	"time"
 )
 
 type ChangesetV3 struct {

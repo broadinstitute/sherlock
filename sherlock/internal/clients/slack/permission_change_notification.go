@@ -3,11 +3,12 @@ package slack
 import (
 	"encoding/json"
 	"fmt"
+	"math/rand"
+
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/rs/zerolog/log"
 	"github.com/slack-go/slack"
 	"golang.org/x/net/context"
-	"math/rand"
 )
 
 const permissionChangeSquelchContextKey = "sherlock-slack-permission-change-squelch"
