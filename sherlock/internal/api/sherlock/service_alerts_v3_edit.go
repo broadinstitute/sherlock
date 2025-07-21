@@ -50,6 +50,13 @@ func serviceAlertV3Edit(ctx *gin.Context) {
 		return
 	}
 
+	var user *models.User
+	if user, err = models.GetCurrentUserForDB(db); err != nil {
+		errors.AbortRequest(ctx, fmt.Errorf("unable to get current user for deleting service alert: %w", err))
+		return
+	}
+	toEdit.UpdatedById = &user.ID
+
 	if err = db.Model(&toEdit).Updates(&edits).Error; err != nil {
 		errors.AbortRequest(ctx, err)
 		return
