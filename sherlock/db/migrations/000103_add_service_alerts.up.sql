@@ -13,7 +13,16 @@ create table if not exists service_alerts
 	alert_message                           text not null,
 	link                           text,
     severity   text,
-    uuid    uuid
+    uuid    uuid, 
+    created_by bigint
+        constraint fk_service_alerts_created_by
+            references users, 
+    updated_by bigint
+        constraint fk_service_alerts_updated_by
+            references users, 
+    deleted_by bigint
+        constraint fk_service_alerts_deleted_by
+            references users
 
 );
 
