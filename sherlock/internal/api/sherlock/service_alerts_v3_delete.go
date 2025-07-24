@@ -41,7 +41,13 @@ func serviceAlertV3Delete(ctx *gin.Context) {
 		errors.AbortRequest(ctx, fmt.Errorf("unable to get current user for deleting service alert: %w", err))
 		return
 	}
-	result.DeletedById = &user.ID
+
+	var logDeletedBy models.ServiceAlert
+	logDeletedBy.DeletedBy = &user.Email
+	if err = db.Model(&result).Updates(&logDeletedBy).Error; err != nil {
+		errors.AbortRequest(ctx, err)
+		return
+	}
 
 	if err = db.Delete(&result).Error; err != nil {
 		errors.AbortRequest(ctx, err)

@@ -58,7 +58,7 @@ func serviceAlertV3Create(ctx *gin.Context) {
 		errors.AbortRequest(ctx, fmt.Errorf("unable to get current user for creating service alert: %w", err))
 		return
 	}
-	toCreate.CreatedById = &user.ID
+	toCreate.CreatedBy = &user.Email
 
 	if err = db.Create(&toCreate).Error; err != nil {
 		errors.AbortRequest(ctx, err)

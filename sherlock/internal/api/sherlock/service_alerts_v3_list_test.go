@@ -7,6 +7,7 @@ import (
 )
 
 func (s *handlerSuite) TestServiceAlertsV3List() {
+	s.SetSuitableTestUserForDB()
 	s.TestData.ServiceAlert_1()
 	s.TestData.ServiceAlert_Prod()
 

@@ -19,6 +19,7 @@ import (
 //	@tags			ServiceAlert
 //	@produce		json
 //	@param			selector				path		string	true	"The selector of the ServiceAlert, which is the guid for a given alert"
+//	@param			include-deleted			query		bool		false	"Control if only active Service Alerts are returned, set to true to return deleted Alerts (default false)"
 //	@success		200						{object}	ServiceAlertV3
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/service-alerts/v3/{selector} [get]
@@ -32,6 +33,12 @@ func serviceAlertV3Get(ctx *gin.Context) {
 		errors.AbortRequest(ctx, err)
 		return
 	}
+
+	// includes soft deleted items if set to true
+	if includeDeleted := ctx.DefaultQuery("include-deleted", "true"); includeDeleted == "true" {
+		db = db.Unscoped()
+	}
+
 	var result models.ServiceAlert
 	if err = db.Where(&query).First(&result).Error; err != nil {
 		errors.AbortRequest(ctx, err)
