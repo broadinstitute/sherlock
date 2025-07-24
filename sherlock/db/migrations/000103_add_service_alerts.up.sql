@@ -14,15 +14,9 @@ create table if not exists service_alerts
 	link                           text,
     severity   text,
     uuid    uuid, 
-    created_by bigint
-        constraint fk_service_alerts_created_by
-            references users, 
-    updated_by bigint
-        constraint fk_service_alerts_updated_by
-            references users, 
-    deleted_by bigint
-        constraint fk_service_alerts_deleted_by
-            references users
+    created_by text,
+    updated_by  text,
+    deleted_by text
 
 );
 
