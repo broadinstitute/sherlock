@@ -16,12 +16,9 @@ type ServiceAlert struct {
 	Severity        *string
 	OnEnvironmentID *uint
 	OnEnvironment   *Environment
-	CreatedById     *uint
-	CreatedByUser   *User
-	UpdatedById     *uint
-	UpdatedByUser   *User
-	DeletedById     *uint
-	DeletedByUser   *User
+	CreatedBy       *string
+	UpdatedBy       *string
+	DeletedBy       *string
 	Uuid            *uuid.UUID
 }
 
