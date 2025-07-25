@@ -26,7 +26,6 @@ func (s *handlerSuite) TestServiceAlertV3Delete_notFound() {
 }
 
 func (s *handlerSuite) TestServiceAlertV3Delete() {
-	s.SetNonSuitableTestUserForDB()
 	servicealert1 := s.TestData.ServiceAlert_1()
 
 	var got ServiceAlertV3
@@ -37,4 +36,15 @@ func (s *handlerSuite) TestServiceAlertV3Delete() {
 	if s.NotNil(got.AlertMessage) {
 		s.Equal(*servicealert1.AlertMessage, *got.AlertMessage)
 	}
+}
+
+func (s *handlerSuite) TestServiceAlertV3DeleteNonSuitable() {
+	servicealert := s.TestData.ServiceAlert_Prod()
+
+	var got errors.ErrorResponse
+	code := s.HandleRequest(
+		s.UseNonSuitableUserFor(s.NewRequest("DELETE", fmt.Sprintf("/api/service-alerts/v3/%d", servicealert.ID), nil)),
+		&got)
+	s.Equal(http.StatusForbidden, code)
+	s.Equal(errors.Forbidden, got.Type)
 }

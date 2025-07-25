@@ -11,7 +11,10 @@ import (
 
 type ServiceAlertV3 struct {
 	CommonFields
-	Uuid *string `json:"uuid,omitempty" form:"uuid"`
+	Uuid      *string `json:"uuid,omitempty" form:"uuid"`
+	CreatedBy *string `json:"createdBy,omitempty" form:"createdBy"`
+	UpdatedBy *string `json:"updatedBy,omitempty" form:"updatedBy"`
+	DeletedBy *string `json:"deletedBy,omitempty" form:"deltedBy"`
 	ServiceAlertV3Create
 }
 
@@ -35,6 +38,9 @@ func (i ServiceAlertV3) toModel(db *gorm.DB) (models.ServiceAlert, error) {
 		AlertMessage: i.AlertMessage,
 		Link:         i.Link,
 		Severity:     i.Severity,
+		CreatedBy:    i.CreatedBy,
+		UpdatedBy:    i.UpdatedBy,
+		DeletedBy:    i.DeletedBy,
 	}
 
 	if i.Uuid != nil {
@@ -61,6 +67,7 @@ func (i ServiceAlertV3) toModel(db *gorm.DB) (models.ServiceAlert, error) {
 }
 
 func ServiceAlertFromModel(model models.ServiceAlert) ServiceAlertV3 {
+
 	var onEnvironment *string
 	if model.OnEnvironment != nil && model.OnEnvironment.Name != "" {
 		onEnvironment = &model.OnEnvironment.Name
@@ -73,9 +80,13 @@ func ServiceAlertFromModel(model models.ServiceAlert) ServiceAlertV3 {
 		s := uuid.UUID.String(*model.Uuid)
 		alertUuidString = &s
 	}
+
 	return ServiceAlertV3{
 		CommonFields: commonFieldsFromGormModel(model.Model),
 		Uuid:         alertUuidString,
+		CreatedBy:    model.CreatedBy,
+		UpdatedBy:    model.UpdatedBy,
+		DeletedBy:    model.DeletedBy,
 		ServiceAlertV3Create: ServiceAlertV3Create{
 			OnEnvironment: onEnvironment,
 			ServiceAlertV3EditableFields: ServiceAlertV3EditableFields{

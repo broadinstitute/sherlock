@@ -8,6 +8,7 @@ import (
 	"context"
 
 	"cloud.google.com/go/storage"
+	"github.com/broadinstitute/sherlock/sherlock/internal/clients/google_bucket"
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -249,16 +250,16 @@ func (_c *MockgcsClient_ReadBlob_Call) RunAndReturn(run func(ctx context.Context
 }
 
 // WriteBlob provides a mock function for the type MockgcsClient
-func (_mock *MockgcsClient) WriteBlob(ctx context.Context, gcs_bucket string, blob_name string, file_content []byte) error {
-	ret := _mock.Called(ctx, gcs_bucket, blob_name, file_content)
+func (_mock *MockgcsClient) WriteBlob(ctx context.Context, blobInfo google_bucket.BlobDetails, file_content []byte) error {
+	ret := _mock.Called(ctx, blobInfo, file_content)
 
 	if len(ret) == 0 {
 		panic("no return value specified for WriteBlob")
 	}
 
 	var r0 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, string, string, []byte) error); ok {
-		r0 = returnFunc(ctx, gcs_bucket, blob_name, file_content)
+	if returnFunc, ok := ret.Get(0).(func(context.Context, google_bucket.BlobDetails, []byte) error); ok {
+		r0 = returnFunc(ctx, blobInfo, file_content)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -272,36 +273,30 @@ type MockgcsClient_WriteBlob_Call struct {
 
 // WriteBlob is a helper method to define mock.On call
 //   - ctx context.Context
-//   - gcs_bucket string
-//   - blob_name string
+//   - blobInfo google_bucket.BlobDetails
 //   - file_content []byte
-func (_e *MockgcsClient_Expecter) WriteBlob(ctx interface{}, gcs_bucket interface{}, blob_name interface{}, file_content interface{}) *MockgcsClient_WriteBlob_Call {
-	return &MockgcsClient_WriteBlob_Call{Call: _e.mock.On("WriteBlob", ctx, gcs_bucket, blob_name, file_content)}
+func (_e *MockgcsClient_Expecter) WriteBlob(ctx interface{}, blobInfo interface{}, file_content interface{}) *MockgcsClient_WriteBlob_Call {
+	return &MockgcsClient_WriteBlob_Call{Call: _e.mock.On("WriteBlob", ctx, blobInfo, file_content)}
 }
 
-func (_c *MockgcsClient_WriteBlob_Call) Run(run func(ctx context.Context, gcs_bucket string, blob_name string, file_content []byte)) *MockgcsClient_WriteBlob_Call {
+func (_c *MockgcsClient_WriteBlob_Call) Run(run func(ctx context.Context, blobInfo google_bucket.BlobDetails, file_content []byte)) *MockgcsClient_WriteBlob_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
 			arg0 = args[0].(context.Context)
 		}
-		var arg1 string
+		var arg1 google_bucket.BlobDetails
 		if args[1] != nil {
-			arg1 = args[1].(string)
+			arg1 = args[1].(google_bucket.BlobDetails)
 		}
-		var arg2 string
+		var arg2 []byte
 		if args[2] != nil {
-			arg2 = args[2].(string)
-		}
-		var arg3 []byte
-		if args[3] != nil {
-			arg3 = args[3].([]byte)
+			arg2 = args[2].([]byte)
 		}
 		run(
 			arg0,
 			arg1,
 			arg2,
-			arg3,
 		)
 	})
 	return _c
@@ -312,7 +307,7 @@ func (_c *MockgcsClient_WriteBlob_Call) Return(err error) *MockgcsClient_WriteBl
 	return _c
 }
 
-func (_c *MockgcsClient_WriteBlob_Call) RunAndReturn(run func(ctx context.Context, gcs_bucket string, blob_name string, file_content []byte) error) *MockgcsClient_WriteBlob_Call {
+func (_c *MockgcsClient_WriteBlob_Call) RunAndReturn(run func(ctx context.Context, blobInfo google_bucket.BlobDetails, file_content []byte) error) *MockgcsClient_WriteBlob_Call {
 	_c.Call.Return(run)
 	return _c
 }
