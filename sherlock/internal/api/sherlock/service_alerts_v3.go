@@ -30,19 +30,6 @@ type ServiceAlertV3EditableFields struct {
 	Severity     *string `json:"severity" form:"severity" enums:"blocker, critical, minor"`
 }
 
-func doUserQuery(id string, db *gorm.DB) (uint, error) {
-	userQuery, err := userModelFromSelector(id)
-	if err != nil {
-		return 0, err
-	}
-	var userResult models.User
-	if err = db.Where(&userQuery).First(&userResult).Error; err != nil {
-		return 0, err
-	} else {
-		return userResult.ID, nil
-	}
-}
-
 // TO And FROM, do conversion from / to string from/to UUID
 func (i ServiceAlertV3) toModel(db *gorm.DB) (models.ServiceAlert, error) {
 	ret := models.ServiceAlert{
