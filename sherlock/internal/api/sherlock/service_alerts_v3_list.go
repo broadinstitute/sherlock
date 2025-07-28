@@ -57,7 +57,7 @@ func serviceAlertsV3List(ctx *gin.Context) {
 		Where(&modelFilter)
 
 	// includes soft deleted items if set to true
-	if includeDeleted := ctx.DefaultQuery("include-deleted", "true"); includeDeleted == "true" {
+	if includeDeleted := ctx.DefaultQuery("include-deleted", "false"); includeDeleted == "true" {
 		chain = chain.Unscoped()
 	}
 
