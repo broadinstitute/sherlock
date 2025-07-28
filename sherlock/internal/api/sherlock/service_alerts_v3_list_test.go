@@ -1,6 +1,7 @@
 package sherlock
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
@@ -8,7 +9,8 @@ import (
 
 func (s *handlerSuite) TestServiceAlertsV3List() {
 	s.SetSuitableTestUserForDB()
-	s.TestData.ServiceAlert_1()
+	alert1 := s.TestData.ServiceAlert_1()
+	alertid := s.TestData.ServiceAlert_1().ID
 	s.TestData.ServiceAlert_Prod()
 
 	s.Run("listAll", func() {
@@ -42,6 +44,24 @@ func (s *handlerSuite) TestServiceAlertsV3List() {
 			&got)
 		s.Equal(http.StatusBadRequest, code)
 		s.Equal(errors.BadRequest, got.Type)
+	})
+	s.Run("deletedRecordWithoutFlag", func() {
+		var got []ServiceAlertV3
+		s.DB.Delete(&alert1)
+		code := s.HandleRequest(
+			s.NewRequest("GET", fmt.Sprintf("/api/service-alerts/v3?id=%d", alertid), nil),
+			&got)
+		s.Equal(http.StatusOK, code)
+		s.Len(got, 0)
+	})
+	s.Run("deletedRecordWithFlag", func() {
+		var got []ServiceAlertV3
+		s.DB.Delete(&alert1)
+		code := s.HandleRequest(
+			s.NewRequest("GET", fmt.Sprintf("/api/service-alerts/v3?id=%d&include-deleted=true", alertid), nil),
+			&got)
+		s.Equal(http.StatusOK, code)
+		s.Len(got, 1)
 	})
 
 }
