@@ -40,6 +40,8 @@ export interface ApiServiceAlertsProceduresV3SyncPostRequest {
 
 export interface ApiServiceAlertsV3GetRequest {
     createdAt?: Date;
+    createdBy?: string;
+    deltedBy?: string;
     id?: number;
     link?: string;
     message?: string;
@@ -47,9 +49,11 @@ export interface ApiServiceAlertsV3GetRequest {
     severity?: ApiServiceAlertsV3GetSeverityEnum;
     title?: string;
     updatedAt?: Date;
+    updatedBy?: string;
     uuid?: string;
     limit?: number;
     offset?: number;
+    includeDeleted?: boolean;
 }
 
 export interface ApiServiceAlertsV3PostRequest {
@@ -62,6 +66,7 @@ export interface ApiServiceAlertsV3SelectorDeleteRequest {
 
 export interface ApiServiceAlertsV3SelectorGetRequest {
     selector: string;
+    includeDeleted?: boolean;
 }
 
 export interface ApiServiceAlertsV3SelectorPatchRequest {
@@ -126,6 +131,14 @@ export class ServiceAlertApi extends runtime.BaseAPI {
             queryParameters['createdAt'] = (requestParameters['createdAt'] as any).toISOString();
         }
 
+        if (requestParameters['createdBy'] != null) {
+            queryParameters['createdBy'] = requestParameters['createdBy'];
+        }
+
+        if (requestParameters['deltedBy'] != null) {
+            queryParameters['deltedBy'] = requestParameters['deltedBy'];
+        }
+
         if (requestParameters['id'] != null) {
             queryParameters['id'] = requestParameters['id'];
         }
@@ -154,6 +167,10 @@ export class ServiceAlertApi extends runtime.BaseAPI {
             queryParameters['updatedAt'] = (requestParameters['updatedAt'] as any).toISOString();
         }
 
+        if (requestParameters['updatedBy'] != null) {
+            queryParameters['updatedBy'] = requestParameters['updatedBy'];
+        }
+
         if (requestParameters['uuid'] != null) {
             queryParameters['uuid'] = requestParameters['uuid'];
         }
@@ -164,6 +181,10 @@ export class ServiceAlertApi extends runtime.BaseAPI {
 
         if (requestParameters['offset'] != null) {
             queryParameters['offset'] = requestParameters['offset'];
+        }
+
+        if (requestParameters['includeDeleted'] != null) {
+            queryParameters['include-deleted'] = requestParameters['includeDeleted'];
         }
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -283,6 +304,10 @@ export class ServiceAlertApi extends runtime.BaseAPI {
         }
 
         const queryParameters: any = {};
+
+        if (requestParameters['includeDeleted'] != null) {
+            queryParameters['include-deleted'] = requestParameters['includeDeleted'];
+        }
 
         const headerParameters: runtime.HTTPHeaders = {};
 

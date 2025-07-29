@@ -18,7 +18,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 from typing_extensions import Annotated
 
 from datetime import datetime
-from pydantic import Field, StrictInt, StrictStr, field_validator
+from pydantic import Field, StrictBool, StrictInt, StrictStr, field_validator
 from typing import List, Optional
 from typing_extensions import Annotated
 from sherlock_python_client.models.sherlock_service_alert_v3 import SherlockServiceAlertV3
@@ -339,6 +339,8 @@ class ServiceAlertApi:
     def api_service_alerts_v3_get(
         self,
         created_at: Optional[datetime] = None,
+        created_by: Optional[StrictStr] = None,
+        delted_by: Optional[StrictStr] = None,
         id: Optional[StrictInt] = None,
         link: Optional[StrictStr] = None,
         message: Optional[StrictStr] = None,
@@ -346,9 +348,11 @@ class ServiceAlertApi:
         severity: Optional[StrictStr] = None,
         title: Optional[StrictStr] = None,
         updated_at: Optional[datetime] = None,
+        updated_by: Optional[StrictStr] = None,
         uuid: Optional[StrictStr] = None,
         limit: Annotated[Optional[StrictInt], Field(description="Control how many Service Alerts are returned (default 0, no limit)")] = None,
         offset: Annotated[Optional[StrictInt], Field(description="Control the offset for the returned Service Alerts (default 0)")] = None,
+        include_deleted: Annotated[Optional[StrictBool], Field(description="Control if only active Service Alerts are returned, set to true to return deleted Alerts (default false)")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -368,6 +372,10 @@ class ServiceAlertApi:
 
         :param created_at:
         :type created_at: datetime
+        :param created_by:
+        :type created_by: str
+        :param delted_by:
+        :type delted_by: str
         :param id:
         :type id: int
         :param link:
@@ -382,12 +390,16 @@ class ServiceAlertApi:
         :type title: str
         :param updated_at:
         :type updated_at: datetime
+        :param updated_by:
+        :type updated_by: str
         :param uuid:
         :type uuid: str
         :param limit: Control how many Service Alerts are returned (default 0, no limit)
         :type limit: int
         :param offset: Control the offset for the returned Service Alerts (default 0)
         :type offset: int
+        :param include_deleted: Control if only active Service Alerts are returned, set to true to return deleted Alerts (default false)
+        :type include_deleted: bool
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -412,6 +424,8 @@ class ServiceAlertApi:
 
         _param = self._api_service_alerts_v3_get_serialize(
             created_at=created_at,
+            created_by=created_by,
+            delted_by=delted_by,
             id=id,
             link=link,
             message=message,
@@ -419,9 +433,11 @@ class ServiceAlertApi:
             severity=severity,
             title=title,
             updated_at=updated_at,
+            updated_by=updated_by,
             uuid=uuid,
             limit=limit,
             offset=offset,
+            include_deleted=include_deleted,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -452,6 +468,8 @@ class ServiceAlertApi:
     def api_service_alerts_v3_get_with_http_info(
         self,
         created_at: Optional[datetime] = None,
+        created_by: Optional[StrictStr] = None,
+        delted_by: Optional[StrictStr] = None,
         id: Optional[StrictInt] = None,
         link: Optional[StrictStr] = None,
         message: Optional[StrictStr] = None,
@@ -459,9 +477,11 @@ class ServiceAlertApi:
         severity: Optional[StrictStr] = None,
         title: Optional[StrictStr] = None,
         updated_at: Optional[datetime] = None,
+        updated_by: Optional[StrictStr] = None,
         uuid: Optional[StrictStr] = None,
         limit: Annotated[Optional[StrictInt], Field(description="Control how many Service Alerts are returned (default 0, no limit)")] = None,
         offset: Annotated[Optional[StrictInt], Field(description="Control the offset for the returned Service Alerts (default 0)")] = None,
+        include_deleted: Annotated[Optional[StrictBool], Field(description="Control if only active Service Alerts are returned, set to true to return deleted Alerts (default false)")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -481,6 +501,10 @@ class ServiceAlertApi:
 
         :param created_at:
         :type created_at: datetime
+        :param created_by:
+        :type created_by: str
+        :param delted_by:
+        :type delted_by: str
         :param id:
         :type id: int
         :param link:
@@ -495,12 +519,16 @@ class ServiceAlertApi:
         :type title: str
         :param updated_at:
         :type updated_at: datetime
+        :param updated_by:
+        :type updated_by: str
         :param uuid:
         :type uuid: str
         :param limit: Control how many Service Alerts are returned (default 0, no limit)
         :type limit: int
         :param offset: Control the offset for the returned Service Alerts (default 0)
         :type offset: int
+        :param include_deleted: Control if only active Service Alerts are returned, set to true to return deleted Alerts (default false)
+        :type include_deleted: bool
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -525,6 +553,8 @@ class ServiceAlertApi:
 
         _param = self._api_service_alerts_v3_get_serialize(
             created_at=created_at,
+            created_by=created_by,
+            delted_by=delted_by,
             id=id,
             link=link,
             message=message,
@@ -532,9 +562,11 @@ class ServiceAlertApi:
             severity=severity,
             title=title,
             updated_at=updated_at,
+            updated_by=updated_by,
             uuid=uuid,
             limit=limit,
             offset=offset,
+            include_deleted=include_deleted,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -565,6 +597,8 @@ class ServiceAlertApi:
     def api_service_alerts_v3_get_without_preload_content(
         self,
         created_at: Optional[datetime] = None,
+        created_by: Optional[StrictStr] = None,
+        delted_by: Optional[StrictStr] = None,
         id: Optional[StrictInt] = None,
         link: Optional[StrictStr] = None,
         message: Optional[StrictStr] = None,
@@ -572,9 +606,11 @@ class ServiceAlertApi:
         severity: Optional[StrictStr] = None,
         title: Optional[StrictStr] = None,
         updated_at: Optional[datetime] = None,
+        updated_by: Optional[StrictStr] = None,
         uuid: Optional[StrictStr] = None,
         limit: Annotated[Optional[StrictInt], Field(description="Control how many Service Alerts are returned (default 0, no limit)")] = None,
         offset: Annotated[Optional[StrictInt], Field(description="Control the offset for the returned Service Alerts (default 0)")] = None,
+        include_deleted: Annotated[Optional[StrictBool], Field(description="Control if only active Service Alerts are returned, set to true to return deleted Alerts (default false)")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -594,6 +630,10 @@ class ServiceAlertApi:
 
         :param created_at:
         :type created_at: datetime
+        :param created_by:
+        :type created_by: str
+        :param delted_by:
+        :type delted_by: str
         :param id:
         :type id: int
         :param link:
@@ -608,12 +648,16 @@ class ServiceAlertApi:
         :type title: str
         :param updated_at:
         :type updated_at: datetime
+        :param updated_by:
+        :type updated_by: str
         :param uuid:
         :type uuid: str
         :param limit: Control how many Service Alerts are returned (default 0, no limit)
         :type limit: int
         :param offset: Control the offset for the returned Service Alerts (default 0)
         :type offset: int
+        :param include_deleted: Control if only active Service Alerts are returned, set to true to return deleted Alerts (default false)
+        :type include_deleted: bool
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -638,6 +682,8 @@ class ServiceAlertApi:
 
         _param = self._api_service_alerts_v3_get_serialize(
             created_at=created_at,
+            created_by=created_by,
+            delted_by=delted_by,
             id=id,
             link=link,
             message=message,
@@ -645,9 +691,11 @@ class ServiceAlertApi:
             severity=severity,
             title=title,
             updated_at=updated_at,
+            updated_by=updated_by,
             uuid=uuid,
             limit=limit,
             offset=offset,
+            include_deleted=include_deleted,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -673,6 +721,8 @@ class ServiceAlertApi:
     def _api_service_alerts_v3_get_serialize(
         self,
         created_at,
+        created_by,
+        delted_by,
         id,
         link,
         message,
@@ -680,9 +730,11 @@ class ServiceAlertApi:
         severity,
         title,
         updated_at,
+        updated_by,
         uuid,
         limit,
         offset,
+        include_deleted,
         _request_auth,
         _content_type,
         _headers,
@@ -717,6 +769,14 @@ class ServiceAlertApi:
                 )
             else:
                 _query_params.append(('createdAt', created_at))
+            
+        if created_by is not None:
+            
+            _query_params.append(('createdBy', created_by))
+            
+        if delted_by is not None:
+            
+            _query_params.append(('deltedBy', delted_by))
             
         if id is not None:
             
@@ -755,6 +815,10 @@ class ServiceAlertApi:
             else:
                 _query_params.append(('updatedAt', updated_at))
             
+        if updated_by is not None:
+            
+            _query_params.append(('updatedBy', updated_by))
+            
         if uuid is not None:
             
             _query_params.append(('uuid', uuid))
@@ -766,6 +830,10 @@ class ServiceAlertApi:
         if offset is not None:
             
             _query_params.append(('offset', offset))
+            
+        if include_deleted is not None:
+            
+            _query_params.append(('include-deleted', include_deleted))
             
         # process the header parameters
         # process the form parameters
@@ -1376,6 +1444,7 @@ class ServiceAlertApi:
     def api_service_alerts_v3_selector_get(
         self,
         selector: Annotated[StrictStr, Field(description="The selector of the ServiceAlert, which is the guid for a given alert")],
+        include_deleted: Annotated[Optional[StrictBool], Field(description="Control if only active Service Alerts are returned, set to true to return deleted Alerts (default false)")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1395,6 +1464,8 @@ class ServiceAlertApi:
 
         :param selector: The selector of the ServiceAlert, which is the guid for a given alert (required)
         :type selector: str
+        :param include_deleted: Control if only active Service Alerts are returned, set to true to return deleted Alerts (default false)
+        :type include_deleted: bool
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -1419,6 +1490,7 @@ class ServiceAlertApi:
 
         _param = self._api_service_alerts_v3_selector_get_serialize(
             selector=selector,
+            include_deleted=include_deleted,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -1449,6 +1521,7 @@ class ServiceAlertApi:
     def api_service_alerts_v3_selector_get_with_http_info(
         self,
         selector: Annotated[StrictStr, Field(description="The selector of the ServiceAlert, which is the guid for a given alert")],
+        include_deleted: Annotated[Optional[StrictBool], Field(description="Control if only active Service Alerts are returned, set to true to return deleted Alerts (default false)")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1468,6 +1541,8 @@ class ServiceAlertApi:
 
         :param selector: The selector of the ServiceAlert, which is the guid for a given alert (required)
         :type selector: str
+        :param include_deleted: Control if only active Service Alerts are returned, set to true to return deleted Alerts (default false)
+        :type include_deleted: bool
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -1492,6 +1567,7 @@ class ServiceAlertApi:
 
         _param = self._api_service_alerts_v3_selector_get_serialize(
             selector=selector,
+            include_deleted=include_deleted,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -1522,6 +1598,7 @@ class ServiceAlertApi:
     def api_service_alerts_v3_selector_get_without_preload_content(
         self,
         selector: Annotated[StrictStr, Field(description="The selector of the ServiceAlert, which is the guid for a given alert")],
+        include_deleted: Annotated[Optional[StrictBool], Field(description="Control if only active Service Alerts are returned, set to true to return deleted Alerts (default false)")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1541,6 +1618,8 @@ class ServiceAlertApi:
 
         :param selector: The selector of the ServiceAlert, which is the guid for a given alert (required)
         :type selector: str
+        :param include_deleted: Control if only active Service Alerts are returned, set to true to return deleted Alerts (default false)
+        :type include_deleted: bool
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -1565,6 +1644,7 @@ class ServiceAlertApi:
 
         _param = self._api_service_alerts_v3_selector_get_serialize(
             selector=selector,
+            include_deleted=include_deleted,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -1590,6 +1670,7 @@ class ServiceAlertApi:
     def _api_service_alerts_v3_selector_get_serialize(
         self,
         selector,
+        include_deleted,
         _request_auth,
         _content_type,
         _headers,
@@ -1614,6 +1695,10 @@ class ServiceAlertApi:
         if selector is not None:
             _path_params['selector'] = selector
         # process the query parameters
+        if include_deleted is not None:
+            
+            _query_params.append(('include-deleted', include_deleted))
+            
         # process the header parameters
         # process the form parameters
         # process the body parameter

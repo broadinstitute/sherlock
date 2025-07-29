@@ -29,6 +29,8 @@ class SherlockServiceAlertV3(BaseModel):
     SherlockServiceAlertV3
     """ # noqa: E501
     created_at: Optional[datetime] = Field(default=None, alias="createdAt")
+    created_by: Optional[StrictStr] = Field(default=None, alias="createdBy")
+    deleted_by: Optional[StrictStr] = Field(default=None, alias="deletedBy")
     id: Optional[StrictInt] = None
     link: Optional[StrictStr] = None
     message: Optional[StrictStr] = None
@@ -36,9 +38,10 @@ class SherlockServiceAlertV3(BaseModel):
     severity: Optional[StrictStr] = None
     title: Optional[StrictStr] = None
     updated_at: Optional[datetime] = Field(default=None, alias="updatedAt")
+    updated_by: Optional[StrictStr] = Field(default=None, alias="updatedBy")
     uuid: Optional[StrictStr] = None
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["createdAt", "id", "link", "message", "onEnvironment", "severity", "title", "updatedAt", "uuid"]
+    __properties: ClassVar[List[str]] = ["createdAt", "createdBy", "deletedBy", "id", "link", "message", "onEnvironment", "severity", "title", "updatedAt", "updatedBy", "uuid"]
 
     @field_validator('severity')
     def severity_validate_enum(cls, value):
@@ -109,6 +112,8 @@ class SherlockServiceAlertV3(BaseModel):
 
         _obj = cls.model_validate({
             "createdAt": obj.get("createdAt"),
+            "createdBy": obj.get("createdBy"),
+            "deletedBy": obj.get("deletedBy"),
             "id": obj.get("id"),
             "link": obj.get("link"),
             "message": obj.get("message"),
@@ -116,6 +121,7 @@ class SherlockServiceAlertV3(BaseModel):
             "severity": obj.get("severity"),
             "title": obj.get("title"),
             "updatedAt": obj.get("updatedAt"),
+            "updatedBy": obj.get("updatedBy"),
             "uuid": obj.get("uuid")
         })
         # store additional fields in additional_properties

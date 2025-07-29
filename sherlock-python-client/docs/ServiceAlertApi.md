@@ -88,7 +88,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **api_service_alerts_v3_get**
-> List[SherlockServiceAlertV3] api_service_alerts_v3_get(created_at=created_at, id=id, link=link, message=message, on_environment=on_environment, severity=severity, title=title, updated_at=updated_at, uuid=uuid, limit=limit, offset=offset)
+> List[SherlockServiceAlertV3] api_service_alerts_v3_get(created_at=created_at, created_by=created_by, delted_by=delted_by, id=id, link=link, message=message, on_environment=on_environment, severity=severity, title=title, updated_at=updated_at, updated_by=updated_by, uuid=uuid, limit=limit, offset=offset, include_deleted=include_deleted)
 
 List ServiceAlerts matching a filter
 
@@ -115,6 +115,8 @@ with sherlock_python_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = sherlock_python_client.ServiceAlertApi(api_client)
     created_at = '2013-10-20T19:20:30+01:00' # datetime |  (optional)
+    created_by = 'created_by_example' # str |  (optional)
+    delted_by = 'delted_by_example' # str |  (optional)
     id = 56 # int |  (optional)
     link = 'link_example' # str |  (optional)
     message = 'message_example' # str |  (optional)
@@ -122,13 +124,15 @@ with sherlock_python_client.ApiClient(configuration) as api_client:
     severity = 'severity_example' # str |  (optional)
     title = 'title_example' # str |  (optional)
     updated_at = '2013-10-20T19:20:30+01:00' # datetime |  (optional)
+    updated_by = 'updated_by_example' # str |  (optional)
     uuid = 'uuid_example' # str |  (optional)
     limit = 56 # int | Control how many Service Alerts are returned (default 0, no limit) (optional)
     offset = 56 # int | Control the offset for the returned Service Alerts (default 0) (optional)
+    include_deleted = True # bool | Control if only active Service Alerts are returned, set to true to return deleted Alerts (default false) (optional)
 
     try:
         # List ServiceAlerts matching a filter
-        api_response = api_instance.api_service_alerts_v3_get(created_at=created_at, id=id, link=link, message=message, on_environment=on_environment, severity=severity, title=title, updated_at=updated_at, uuid=uuid, limit=limit, offset=offset)
+        api_response = api_instance.api_service_alerts_v3_get(created_at=created_at, created_by=created_by, delted_by=delted_by, id=id, link=link, message=message, on_environment=on_environment, severity=severity, title=title, updated_at=updated_at, updated_by=updated_by, uuid=uuid, limit=limit, offset=offset, include_deleted=include_deleted)
         print("The response of ServiceAlertApi->api_service_alerts_v3_get:\n")
         pprint(api_response)
     except Exception as e:
@@ -143,6 +147,8 @@ with sherlock_python_client.ApiClient(configuration) as api_client:
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **created_at** | **datetime**|  | [optional] 
+ **created_by** | **str**|  | [optional] 
+ **delted_by** | **str**|  | [optional] 
  **id** | **int**|  | [optional] 
  **link** | **str**|  | [optional] 
  **message** | **str**|  | [optional] 
@@ -150,9 +156,11 @@ Name | Type | Description  | Notes
  **severity** | **str**|  | [optional] 
  **title** | **str**|  | [optional] 
  **updated_at** | **datetime**|  | [optional] 
+ **updated_by** | **str**|  | [optional] 
  **uuid** | **str**|  | [optional] 
  **limit** | **int**| Control how many Service Alerts are returned (default 0, no limit) | [optional] 
  **offset** | **int**| Control the offset for the returned Service Alerts (default 0) | [optional] 
+ **include_deleted** | **bool**| Control if only active Service Alerts are returned, set to true to return deleted Alerts (default false) | [optional] 
 
 ### Return type
 
@@ -331,7 +339,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **api_service_alerts_v3_selector_get**
-> SherlockServiceAlertV3 api_service_alerts_v3_selector_get(selector)
+> SherlockServiceAlertV3 api_service_alerts_v3_selector_get(selector, include_deleted=include_deleted)
 
 Get a Service Alert
 
@@ -358,10 +366,11 @@ with sherlock_python_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = sherlock_python_client.ServiceAlertApi(api_client)
     selector = 'selector_example' # str | The selector of the ServiceAlert, which is the guid for a given alert
+    include_deleted = True # bool | Control if only active Service Alerts are returned, set to true to return deleted Alerts (default false) (optional)
 
     try:
         # Get a Service Alert
-        api_response = api_instance.api_service_alerts_v3_selector_get(selector)
+        api_response = api_instance.api_service_alerts_v3_selector_get(selector, include_deleted=include_deleted)
         print("The response of ServiceAlertApi->api_service_alerts_v3_selector_get:\n")
         pprint(api_response)
     except Exception as e:
@@ -376,6 +385,7 @@ with sherlock_python_client.ApiClient(configuration) as api_client:
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **selector** | **str**| The selector of the ServiceAlert, which is the guid for a given alert | 
+ **include_deleted** | **bool**| Control if only active Service Alerts are returned, set to true to return deleted Alerts (default false) | [optional] 
 
 ### Return type
 

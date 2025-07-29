@@ -7522,6 +7522,16 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "name": "createdBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "deltedBy",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
                         "name": "id",
                         "in": "query"
@@ -7564,6 +7574,11 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "updatedBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "name": "uuid",
                         "in": "query"
                     },
@@ -7577,6 +7592,12 @@ const docTemplate = `{
                         "type": "integer",
                         "description": "Control the offset for the returned Service Alerts (default 0)",
                         "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Control if only active Service Alerts are returned, set to true to return deleted Alerts (default false)",
+                        "name": "include-deleted",
                         "in": "query"
                     }
                 ],
@@ -7711,6 +7732,12 @@ const docTemplate = `{
                         "name": "selector",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Control if only active Service Alerts are returned, set to true to return deleted Alerts (default false)",
+                        "name": "include-deleted",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -10658,6 +10685,12 @@ const docTemplate = `{
                     "type": "string",
                     "format": "date-time"
                 },
+                "createdBy": {
+                    "type": "string"
+                },
+                "deletedBy": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "integer"
                 },
@@ -10684,6 +10717,9 @@ const docTemplate = `{
                 "updatedAt": {
                     "type": "string",
                     "format": "date-time"
+                },
+                "updatedBy": {
+                    "type": "string"
                 },
                 "uuid": {
                     "type": "string"

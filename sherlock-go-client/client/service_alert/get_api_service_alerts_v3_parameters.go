@@ -65,8 +65,20 @@ type GetAPIServiceAlertsV3Params struct {
 	// Format: date-time
 	CreatedAt *strfmt.DateTime
 
+	// CreatedBy.
+	CreatedBy *string
+
+	// DeltedBy.
+	DeltedBy *string
+
 	// ID.
 	ID *int64
+
+	/* IncludeDeleted.
+
+	   Control if only active Service Alerts are returned, set to true to return deleted Alerts (default false)
+	*/
+	IncludeDeleted *bool
 
 	/* Limit.
 
@@ -99,6 +111,9 @@ type GetAPIServiceAlertsV3Params struct {
 	//
 	// Format: date-time
 	UpdatedAt *strfmt.DateTime
+
+	// UpdatedBy.
+	UpdatedBy *string
 
 	// UUID.
 	UUID *string
@@ -167,6 +182,28 @@ func (o *GetAPIServiceAlertsV3Params) SetCreatedAt(createdAt *strfmt.DateTime) {
 	o.CreatedAt = createdAt
 }
 
+// WithCreatedBy adds the createdBy to the get API service alerts v3 params
+func (o *GetAPIServiceAlertsV3Params) WithCreatedBy(createdBy *string) *GetAPIServiceAlertsV3Params {
+	o.SetCreatedBy(createdBy)
+	return o
+}
+
+// SetCreatedBy adds the createdBy to the get API service alerts v3 params
+func (o *GetAPIServiceAlertsV3Params) SetCreatedBy(createdBy *string) {
+	o.CreatedBy = createdBy
+}
+
+// WithDeltedBy adds the deltedBy to the get API service alerts v3 params
+func (o *GetAPIServiceAlertsV3Params) WithDeltedBy(deltedBy *string) *GetAPIServiceAlertsV3Params {
+	o.SetDeltedBy(deltedBy)
+	return o
+}
+
+// SetDeltedBy adds the deltedBy to the get API service alerts v3 params
+func (o *GetAPIServiceAlertsV3Params) SetDeltedBy(deltedBy *string) {
+	o.DeltedBy = deltedBy
+}
+
 // WithID adds the id to the get API service alerts v3 params
 func (o *GetAPIServiceAlertsV3Params) WithID(id *int64) *GetAPIServiceAlertsV3Params {
 	o.SetID(id)
@@ -176,6 +213,17 @@ func (o *GetAPIServiceAlertsV3Params) WithID(id *int64) *GetAPIServiceAlertsV3Pa
 // SetID adds the id to the get API service alerts v3 params
 func (o *GetAPIServiceAlertsV3Params) SetID(id *int64) {
 	o.ID = id
+}
+
+// WithIncludeDeleted adds the includeDeleted to the get API service alerts v3 params
+func (o *GetAPIServiceAlertsV3Params) WithIncludeDeleted(includeDeleted *bool) *GetAPIServiceAlertsV3Params {
+	o.SetIncludeDeleted(includeDeleted)
+	return o
+}
+
+// SetIncludeDeleted adds the includeDeleted to the get API service alerts v3 params
+func (o *GetAPIServiceAlertsV3Params) SetIncludeDeleted(includeDeleted *bool) {
+	o.IncludeDeleted = includeDeleted
 }
 
 // WithLimit adds the limit to the get API service alerts v3 params
@@ -266,6 +314,17 @@ func (o *GetAPIServiceAlertsV3Params) SetUpdatedAt(updatedAt *strfmt.DateTime) {
 	o.UpdatedAt = updatedAt
 }
 
+// WithUpdatedBy adds the updatedBy to the get API service alerts v3 params
+func (o *GetAPIServiceAlertsV3Params) WithUpdatedBy(updatedBy *string) *GetAPIServiceAlertsV3Params {
+	o.SetUpdatedBy(updatedBy)
+	return o
+}
+
+// SetUpdatedBy adds the updatedBy to the get API service alerts v3 params
+func (o *GetAPIServiceAlertsV3Params) SetUpdatedBy(updatedBy *string) {
+	o.UpdatedBy = updatedBy
+}
+
 // WithUUID adds the uuid to the get API service alerts v3 params
 func (o *GetAPIServiceAlertsV3Params) WithUUID(uuid *string) *GetAPIServiceAlertsV3Params {
 	o.SetUUID(uuid)
@@ -302,6 +361,40 @@ func (o *GetAPIServiceAlertsV3Params) WriteToRequest(r runtime.ClientRequest, re
 		}
 	}
 
+	if o.CreatedBy != nil {
+
+		// query param createdBy
+		var qrCreatedBy string
+
+		if o.CreatedBy != nil {
+			qrCreatedBy = *o.CreatedBy
+		}
+		qCreatedBy := qrCreatedBy
+		if qCreatedBy != "" {
+
+			if err := r.SetQueryParam("createdBy", qCreatedBy); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.DeltedBy != nil {
+
+		// query param deltedBy
+		var qrDeltedBy string
+
+		if o.DeltedBy != nil {
+			qrDeltedBy = *o.DeltedBy
+		}
+		qDeltedBy := qrDeltedBy
+		if qDeltedBy != "" {
+
+			if err := r.SetQueryParam("deltedBy", qDeltedBy); err != nil {
+				return err
+			}
+		}
+	}
+
 	if o.ID != nil {
 
 		// query param id
@@ -314,6 +407,23 @@ func (o *GetAPIServiceAlertsV3Params) WriteToRequest(r runtime.ClientRequest, re
 		if qID != "" {
 
 			if err := r.SetQueryParam("id", qID); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.IncludeDeleted != nil {
+
+		// query param include-deleted
+		var qrIncludeDeleted bool
+
+		if o.IncludeDeleted != nil {
+			qrIncludeDeleted = *o.IncludeDeleted
+		}
+		qIncludeDeleted := swag.FormatBool(qrIncludeDeleted)
+		if qIncludeDeleted != "" {
+
+			if err := r.SetQueryParam("include-deleted", qIncludeDeleted); err != nil {
 				return err
 			}
 		}
@@ -450,6 +560,23 @@ func (o *GetAPIServiceAlertsV3Params) WriteToRequest(r runtime.ClientRequest, re
 		if qUpdatedAt != "" {
 
 			if err := r.SetQueryParam("updatedAt", qUpdatedAt); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.UpdatedBy != nil {
+
+		// query param updatedBy
+		var qrUpdatedBy string
+
+		if o.UpdatedBy != nil {
+			qrUpdatedBy = *o.UpdatedBy
+		}
+		qUpdatedBy := qrUpdatedBy
+		if qUpdatedBy != "" {
+
+			if err := r.SetQueryParam("updatedBy", qUpdatedBy); err != nil {
 				return err
 			}
 		}

@@ -6,6 +6,8 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **created_at** | **datetime** |  | [optional] 
+**created_by** | **str** |  | [optional] 
+**deleted_by** | **str** |  | [optional] 
 **id** | **int** |  | [optional] 
 **link** | **str** |  | [optional] 
 **message** | **str** |  | [optional] 
@@ -13,6 +15,7 @@ Name | Type | Description | Notes
 **severity** | **str** |  | [optional] 
 **title** | **str** |  | [optional] 
 **updated_at** | **datetime** |  | [optional] 
+**updated_by** | **str** |  | [optional] 
 **uuid** | **str** |  | [optional] 
 
 ## Example

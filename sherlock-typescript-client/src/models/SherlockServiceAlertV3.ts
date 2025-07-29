@@ -27,6 +27,18 @@ export interface SherlockServiceAlertV3 {
     createdAt?: Date;
     /**
      * 
+     * @type {string}
+     * @memberof SherlockServiceAlertV3
+     */
+    createdBy?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SherlockServiceAlertV3
+     */
+    deletedBy?: string;
+    /**
+     * 
      * @type {number}
      * @memberof SherlockServiceAlertV3
      */
@@ -72,6 +84,12 @@ export interface SherlockServiceAlertV3 {
      * @type {string}
      * @memberof SherlockServiceAlertV3
      */
+    updatedBy?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SherlockServiceAlertV3
+     */
     uuid?: string;
 }
 
@@ -105,6 +123,8 @@ export function SherlockServiceAlertV3FromJSONTyped(json: any, ignoreDiscriminat
     return {
         
         'createdAt': json['createdAt'] == null ? undefined : (new Date(json['createdAt'])),
+        'createdBy': json['createdBy'] == null ? undefined : json['createdBy'],
+        'deletedBy': json['deletedBy'] == null ? undefined : json['deletedBy'],
         'id': json['id'] == null ? undefined : json['id'],
         'link': json['link'] == null ? undefined : json['link'],
         'message': json['message'] == null ? undefined : json['message'],
@@ -112,6 +132,7 @@ export function SherlockServiceAlertV3FromJSONTyped(json: any, ignoreDiscriminat
         'severity': json['severity'] == null ? undefined : json['severity'],
         'title': json['title'] == null ? undefined : json['title'],
         'updatedAt': json['updatedAt'] == null ? undefined : (new Date(json['updatedAt'])),
+        'updatedBy': json['updatedBy'] == null ? undefined : json['updatedBy'],
         'uuid': json['uuid'] == null ? undefined : json['uuid'],
     };
 }
@@ -128,6 +149,8 @@ export function SherlockServiceAlertV3ToJSONTyped(value?: SherlockServiceAlertV3
     return {
         
         'createdAt': value['createdAt'] == null ? undefined : ((value['createdAt']).toISOString()),
+        'createdBy': value['createdBy'],
+        'deletedBy': value['deletedBy'],
         'id': value['id'],
         'link': value['link'],
         'message': value['message'],
@@ -135,6 +158,7 @@ export function SherlockServiceAlertV3ToJSONTyped(value?: SherlockServiceAlertV3
         'severity': value['severity'],
         'title': value['title'],
         'updatedAt': value['updatedAt'] == null ? undefined : ((value['updatedAt']).toISOString()),
+        'updatedBy': value['updatedBy'],
         'uuid': value['uuid'],
     };
 }

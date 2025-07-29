@@ -14,6 +14,7 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
+	"github.com/go-openapi/swag"
 )
 
 // NewGetAPIServiceAlertsV3SelectorParams creates a new GetAPIServiceAlertsV3SelectorParams object,
@@ -58,6 +59,12 @@ func NewGetAPIServiceAlertsV3SelectorParamsWithHTTPClient(client *http.Client) *
    Typically these are written to a http.Request.
 */
 type GetAPIServiceAlertsV3SelectorParams struct {
+
+	/* IncludeDeleted.
+
+	   Control if only active Service Alerts are returned, set to true to return deleted Alerts (default false)
+	*/
+	IncludeDeleted *bool
 
 	/* Selector.
 
@@ -118,6 +125,17 @@ func (o *GetAPIServiceAlertsV3SelectorParams) SetHTTPClient(client *http.Client)
 	o.HTTPClient = client
 }
 
+// WithIncludeDeleted adds the includeDeleted to the get API service alerts v3 selector params
+func (o *GetAPIServiceAlertsV3SelectorParams) WithIncludeDeleted(includeDeleted *bool) *GetAPIServiceAlertsV3SelectorParams {
+	o.SetIncludeDeleted(includeDeleted)
+	return o
+}
+
+// SetIncludeDeleted adds the includeDeleted to the get API service alerts v3 selector params
+func (o *GetAPIServiceAlertsV3SelectorParams) SetIncludeDeleted(includeDeleted *bool) {
+	o.IncludeDeleted = includeDeleted
+}
+
 // WithSelector adds the selector to the get API service alerts v3 selector params
 func (o *GetAPIServiceAlertsV3SelectorParams) WithSelector(selector string) *GetAPIServiceAlertsV3SelectorParams {
 	o.SetSelector(selector)
@@ -136,6 +154,23 @@ func (o *GetAPIServiceAlertsV3SelectorParams) WriteToRequest(r runtime.ClientReq
 		return err
 	}
 	var res []error
+
+	if o.IncludeDeleted != nil {
+
+		// query param include-deleted
+		var qrIncludeDeleted bool
+
+		if o.IncludeDeleted != nil {
+			qrIncludeDeleted = *o.IncludeDeleted
+		}
+		qIncludeDeleted := swag.FormatBool(qrIncludeDeleted)
+		if qIncludeDeleted != "" {
+
+			if err := r.SetQueryParam("include-deleted", qIncludeDeleted); err != nil {
+				return err
+			}
+		}
+	}
 
 	// path param selector
 	if err := r.SetPathParam("selector", o.Selector); err != nil {

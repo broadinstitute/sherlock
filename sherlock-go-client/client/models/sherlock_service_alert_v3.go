@@ -24,6 +24,12 @@ type SherlockServiceAlertV3 struct {
 	// Format: date-time
 	CreatedAt strfmt.DateTime `json:"createdAt,omitempty"`
 
+	// created by
+	CreatedBy string `json:"createdBy,omitempty"`
+
+	// deleted by
+	DeletedBy string `json:"deletedBy,omitempty"`
+
 	// id
 	ID int64 `json:"id,omitempty"`
 
@@ -46,6 +52,9 @@ type SherlockServiceAlertV3 struct {
 	// updated at
 	// Format: date-time
 	UpdatedAt strfmt.DateTime `json:"updatedAt,omitempty"`
+
+	// updated by
+	UpdatedBy string `json:"updatedBy,omitempty"`
 
 	// uuid
 	UUID string `json:"uuid,omitempty"`
