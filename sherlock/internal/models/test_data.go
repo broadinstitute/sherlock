@@ -121,7 +121,7 @@ type TestData interface {
 	GithubActionsJob_2() GithubActionsJob
 
 	ServiceAlert_1() ServiceAlert
-	ServiceAlert_2() ServiceAlert
+	ServiceAlert_Prod() ServiceAlert
 }
 
 // testDataImpl contains the caching for TestData and a (back-)reference to
@@ -1756,7 +1756,7 @@ func (td *testDataImpl) ServiceAlert_1() ServiceAlert {
 	return td.serviceAlert_1
 }
 
-func (td *testDataImpl) ServiceAlert_2() ServiceAlert {
+func (td *testDataImpl) ServiceAlert_Prod() ServiceAlert {
 	if td.serviceAlert_2.ID == 0 {
 		type svc_alert_uuid = uuid.UUID
 		test_uuid := svc_alert_uuid(uuid.New())
@@ -1766,7 +1766,7 @@ func (td *testDataImpl) ServiceAlert_2() ServiceAlert {
 			AlertMessage:    utils.PointerTo("this is a test"),
 			Link:            utils.PointerTo("https://this-is-a-link-to-something-relevant.mp3"),
 			Severity:        utils.PointerTo("minor"),
-			OnEnvironmentID: utils.PointerTo(td.Environment_Dev().ID),
+			OnEnvironmentID: utils.PointerTo(td.Environment_Prod().ID),
 		}
 		td.create(&td.serviceAlert_2)
 	}

@@ -20,6 +20,7 @@ import (
 //	@param			filter					query		ServiceAlertV3	false	"Filter the returned Service Alerts"
 //	@param			limit					query		int				false	"Control how many Service Alerts are returned (default 0, no limit)"
 //	@param			offset					query		int				false	"Control the offset for the returned Service Alerts (default 0)"
+//	@param			include-deleted			query		bool		false	"Control if only active Service Alerts are returned, set to true to return deleted Alerts (default false)"
 //	@success		200						{array}		ServiceAlertV3
 //	@failure		400,403,404,407,409,500	{object}	errors.ErrorResponse
 //	@router			/api/service-alerts/v3 [get]
@@ -50,9 +51,16 @@ func serviceAlertsV3List(ctx *gin.Context) {
 		errors.AbortRequest(ctx, fmt.Errorf("(%s) %v", errors.BadRequest, err))
 		return
 	}
+
 	var results []models.ServiceAlert
 	chain := db.
 		Where(&modelFilter)
+
+	// includes soft deleted items if set to true
+	if includeDeleted := ctx.DefaultQuery("include-deleted", "false"); includeDeleted == "true" {
+		chain = chain.Unscoped()
+	}
+
 	if limit > 0 {
 		chain = chain.Limit(limit)
 	}

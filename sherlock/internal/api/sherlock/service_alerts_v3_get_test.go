@@ -44,6 +44,34 @@ func (s *handlerSuite) TestServiceAlertV3Get() {
 	}
 }
 
+func (s *handlerSuite) TestServiceAlertV3GetDeletedRecordWithoutFlag() {
+	s.SetNonSuitableTestUserForDB()
+	serviceAlert1 := s.TestData.ServiceAlert_1()
+	s.DB.Delete(&serviceAlert1)
+	var got errors.ErrorResponse
+	code := s.HandleRequest(
+		s.NewRequest("GET", fmt.Sprintf("/api/service-alerts/v3/%d", serviceAlert1.ID), nil),
+		&got)
+	s.Equal(http.StatusNotFound, code)
+	s.Equal(got.Message, "record not found")
+
+}
+
+func (s *handlerSuite) TestServiceAlertV3GetDeletedRecordWithFlag() {
+	s.SetNonSuitableTestUserForDB()
+	serviceAlert1 := s.TestData.ServiceAlert_1()
+	s.DB.Delete(&serviceAlert1)
+	var got ServiceAlertV3
+	code := s.HandleRequest(
+		s.NewRequest("GET", fmt.Sprintf("/api/service-alerts/v3/%d?include-deleted=true", serviceAlert1.ID), nil),
+		&got)
+	s.Equal(http.StatusOK, code)
+	if s.NotNil(got.AlertMessage) {
+		s.Equal(*serviceAlert1.AlertMessage, *got.AlertMessage)
+	}
+
+}
+
 func Test_serviceAlertModelFromSelector(t *testing.T) {
 	type args struct {
 		selector string

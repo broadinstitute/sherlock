@@ -1,6 +1,7 @@
 package sherlock
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/broadinstitute/sherlock/sherlock/internal/errors"
@@ -31,6 +32,19 @@ func serviceAlertV3Delete(ctx *gin.Context) {
 	}
 	var result models.ServiceAlert
 	if err = db.Where(&query).First(&result).Error; err != nil {
+		errors.AbortRequest(ctx, err)
+		return
+	}
+
+	var user *models.User
+	if user, err = models.GetCurrentUserForDB(db); err != nil {
+		errors.AbortRequest(ctx, fmt.Errorf("unable to get current user for deleting service alert: %w", err))
+		return
+	}
+
+	var logDeletedBy models.ServiceAlert
+	logDeletedBy.DeletedBy = &user.Email
+	if err = db.Model(&result).Updates(&logDeletedBy).Error; err != nil {
 		errors.AbortRequest(ctx, err)
 		return
 	}

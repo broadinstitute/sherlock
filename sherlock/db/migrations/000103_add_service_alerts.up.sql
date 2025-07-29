@@ -13,7 +13,10 @@ create table if not exists service_alerts
 	alert_message                           text not null,
 	link                           text,
     severity   text,
-    uuid    uuid
+    uuid    uuid, 
+    created_by text,
+    updated_by  text,
+    deleted_by text
 
 );
 
