@@ -41,7 +41,7 @@ require (
 	github.com/stretchr/testify v1.10.0
 	github.com/swaggo/files/v2 v2.0.2
 	github.com/swaggo/gin-swagger v1.6.1-0.20231210095754-aa92a0ac3f26
-	github.com/swaggo/swag v1.16.5
+	github.com/swaggo/swag v1.16.6
 	github.com/zitadel/oidc/v3 v3.36.1
 	go.opencensus.io v0.24.0
 	golang.org/x/crypto v0.40.0
