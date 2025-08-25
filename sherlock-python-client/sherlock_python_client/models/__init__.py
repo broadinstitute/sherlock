@@ -14,7 +14,84 @@
 """  # noqa: E501
 
 
-# import models into model package
+if __import__("typing").TYPE_CHECKING:
+    # import models into model package
+    from sherlock_python_client.models.errors_error_response import ErrorsErrorResponse
+    from sherlock_python_client.models.misc_connection_check_response import MiscConnectionCheckResponse
+    from sherlock_python_client.models.misc_status_response import MiscStatusResponse
+    from sherlock_python_client.models.misc_version_response import MiscVersionResponse
+    from sherlock_python_client.models.pagerduty_alert_summary import PagerdutyAlertSummary
+    from sherlock_python_client.models.pagerduty_send_alert_response import PagerdutySendAlertResponse
+    from sherlock_python_client.models.sherlock_app_version_v3 import SherlockAppVersionV3
+    from sherlock_python_client.models.sherlock_app_version_v3_changelog_response import SherlockAppVersionV3ChangelogResponse
+    from sherlock_python_client.models.sherlock_app_version_v3_create import SherlockAppVersionV3Create
+    from sherlock_python_client.models.sherlock_app_version_v3_edit import SherlockAppVersionV3Edit
+    from sherlock_python_client.models.sherlock_changeset_v3 import SherlockChangesetV3
+    from sherlock_python_client.models.sherlock_changeset_v3_plan_request import SherlockChangesetV3PlanRequest
+    from sherlock_python_client.models.sherlock_changeset_v3_plan_request_chart_release_entry import SherlockChangesetV3PlanRequestChartReleaseEntry
+    from sherlock_python_client.models.sherlock_changeset_v3_plan_request_environment_entry import SherlockChangesetV3PlanRequestEnvironmentEntry
+    from sherlock_python_client.models.sherlock_chart_release_v3 import SherlockChartReleaseV3
+    from sherlock_python_client.models.sherlock_chart_release_v3_create import SherlockChartReleaseV3Create
+    from sherlock_python_client.models.sherlock_chart_release_v3_edit import SherlockChartReleaseV3Edit
+    from sherlock_python_client.models.sherlock_chart_v3 import SherlockChartV3
+    from sherlock_python_client.models.sherlock_chart_v3_create import SherlockChartV3Create
+    from sherlock_python_client.models.sherlock_chart_v3_edit import SherlockChartV3Edit
+    from sherlock_python_client.models.sherlock_chart_version_v3 import SherlockChartVersionV3
+    from sherlock_python_client.models.sherlock_chart_version_v3_changelog_response import SherlockChartVersionV3ChangelogResponse
+    from sherlock_python_client.models.sherlock_chart_version_v3_create import SherlockChartVersionV3Create
+    from sherlock_python_client.models.sherlock_chart_version_v3_edit import SherlockChartVersionV3Edit
+    from sherlock_python_client.models.sherlock_ci_identifier_v3 import SherlockCiIdentifierV3
+    from sherlock_python_client.models.sherlock_ci_run_v3 import SherlockCiRunV3
+    from sherlock_python_client.models.sherlock_ci_run_v3_upsert import SherlockCiRunV3Upsert
+    from sherlock_python_client.models.sherlock_cluster_v3 import SherlockClusterV3
+    from sherlock_python_client.models.sherlock_cluster_v3_create import SherlockClusterV3Create
+    from sherlock_python_client.models.sherlock_cluster_v3_edit import SherlockClusterV3Edit
+    from sherlock_python_client.models.sherlock_database_instance_v3 import SherlockDatabaseInstanceV3
+    from sherlock_python_client.models.sherlock_database_instance_v3_create import SherlockDatabaseInstanceV3Create
+    from sherlock_python_client.models.sherlock_database_instance_v3_edit import SherlockDatabaseInstanceV3Edit
+    from sherlock_python_client.models.sherlock_environment_v3 import SherlockEnvironmentV3
+    from sherlock_python_client.models.sherlock_environment_v3_create import SherlockEnvironmentV3Create
+    from sherlock_python_client.models.sherlock_environment_v3_edit import SherlockEnvironmentV3Edit
+    from sherlock_python_client.models.sherlock_git_commit_v3 import SherlockGitCommitV3
+    from sherlock_python_client.models.sherlock_git_commit_v3_upsert import SherlockGitCommitV3Upsert
+    from sherlock_python_client.models.sherlock_github_actions_deploy_hook_test_run_request import SherlockGithubActionsDeployHookTestRunRequest
+    from sherlock_python_client.models.sherlock_github_actions_deploy_hook_test_run_response import SherlockGithubActionsDeployHookTestRunResponse
+    from sherlock_python_client.models.sherlock_github_actions_deploy_hook_v3 import SherlockGithubActionsDeployHookV3
+    from sherlock_python_client.models.sherlock_github_actions_deploy_hook_v3_create import SherlockGithubActionsDeployHookV3Create
+    from sherlock_python_client.models.sherlock_github_actions_deploy_hook_v3_edit import SherlockGithubActionsDeployHookV3Edit
+    from sherlock_python_client.models.sherlock_github_actions_job_v3 import SherlockGithubActionsJobV3
+    from sherlock_python_client.models.sherlock_github_actions_job_v3_create import SherlockGithubActionsJobV3Create
+    from sherlock_python_client.models.sherlock_incident_v3 import SherlockIncidentV3
+    from sherlock_python_client.models.sherlock_incident_v3_create import SherlockIncidentV3Create
+    from sherlock_python_client.models.sherlock_incident_v3_edit import SherlockIncidentV3Edit
+    from sherlock_python_client.models.sherlock_pagerduty_integration_v3 import SherlockPagerdutyIntegrationV3
+    from sherlock_python_client.models.sherlock_pagerduty_integration_v3_create import SherlockPagerdutyIntegrationV3Create
+    from sherlock_python_client.models.sherlock_pagerduty_integration_v3_edit import SherlockPagerdutyIntegrationV3Edit
+    from sherlock_python_client.models.sherlock_role_assignment_v3 import SherlockRoleAssignmentV3
+    from sherlock_python_client.models.sherlock_role_assignment_v3_edit import SherlockRoleAssignmentV3Edit
+    from sherlock_python_client.models.sherlock_role_v3 import SherlockRoleV3
+    from sherlock_python_client.models.sherlock_role_v3_edit import SherlockRoleV3Edit
+    from sherlock_python_client.models.sherlock_service_alert_v3 import SherlockServiceAlertV3
+    from sherlock_python_client.models.sherlock_service_alert_v3_create import SherlockServiceAlertV3Create
+    from sherlock_python_client.models.sherlock_service_alert_v3_editable_fields import SherlockServiceAlertV3EditableFields
+    from sherlock_python_client.models.sherlock_service_alert_v3_sync_request import SherlockServiceAlertV3SyncRequest
+    from sherlock_python_client.models.sherlock_slack_deploy_hook_test_run_request import SherlockSlackDeployHookTestRunRequest
+    from sherlock_python_client.models.sherlock_slack_deploy_hook_test_run_response import SherlockSlackDeployHookTestRunResponse
+    from sherlock_python_client.models.sherlock_slack_deploy_hook_v3 import SherlockSlackDeployHookV3
+    from sherlock_python_client.models.sherlock_slack_deploy_hook_v3_create import SherlockSlackDeployHookV3Create
+    from sherlock_python_client.models.sherlock_slack_deploy_hook_v3_edit import SherlockSlackDeployHookV3Edit
+    from sherlock_python_client.models.sherlock_user_v3 import SherlockUserV3
+    from sherlock_python_client.models.sherlock_user_v3_deactivate_request import SherlockUserV3DeactivateRequest
+    from sherlock_python_client.models.sherlock_user_v3_deactivate_response import SherlockUserV3DeactivateResponse
+    from sherlock_python_client.models.sherlock_user_v3_upsert import SherlockUserV3Upsert
+    
+else:
+    from lazy_imports import LazyModule, as_package, load
+
+    load(
+        LazyModule(
+            *as_package(__file__),
+            """# import models into model package
 from sherlock_python_client.models.errors_error_response import ErrorsErrorResponse
 from sherlock_python_client.models.misc_connection_check_response import MiscConnectionCheckResponse
 from sherlock_python_client.models.misc_status_response import MiscStatusResponse
@@ -83,3 +160,9 @@ from sherlock_python_client.models.sherlock_user_v3 import SherlockUserV3
 from sherlock_python_client.models.sherlock_user_v3_deactivate_request import SherlockUserV3DeactivateRequest
 from sherlock_python_client.models.sherlock_user_v3_deactivate_response import SherlockUserV3DeactivateResponse
 from sherlock_python_client.models.sherlock_user_v3_upsert import SherlockUserV3Upsert
+
+""",
+            name=__name__,
+            doc=__doc__,
+        )
+    )

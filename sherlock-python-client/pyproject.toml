@@ -1,6 +1,6 @@
 [project]
 name = "sherlock_python_client"
-version = "v1.6.57"
+version = "v1.6.58"
 description = "Sherlock"
 authors = [
   {name = "DSP DevOps",email = "dsp-devops@broadinstitute.org"},
@@ -14,7 +14,8 @@ dependencies = [
   "urllib3 (>=2.1.0,<3.0.0)",
   "python-dateutil (>=2.8.2)",
   "pydantic (>=2)",
-  "typing-extensions (>=4.7.1)"
+  "typing-extensions (>=4.7.1)",
+  "lazy-imports (>=1,<2)"
 ]
 
 [project.urls]

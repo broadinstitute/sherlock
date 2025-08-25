@@ -1,6 +1,35 @@
 # flake8: noqa
 
-# import apis into api package
+if __import__("typing").TYPE_CHECKING:
+    # import apis into api package
+    from sherlock_python_client.api.app_versions_api import AppVersionsApi
+    from sherlock_python_client.api.changesets_api import ChangesetsApi
+    from sherlock_python_client.api.chart_releases_api import ChartReleasesApi
+    from sherlock_python_client.api.chart_versions_api import ChartVersionsApi
+    from sherlock_python_client.api.charts_api import ChartsApi
+    from sherlock_python_client.api.ci_identifiers_api import CiIdentifiersApi
+    from sherlock_python_client.api.ci_runs_api import CiRunsApi
+    from sherlock_python_client.api.clusters_api import ClustersApi
+    from sherlock_python_client.api.database_instances_api import DatabaseInstancesApi
+    from sherlock_python_client.api.deploy_hooks_api import DeployHooksApi
+    from sherlock_python_client.api.environments_api import EnvironmentsApi
+    from sherlock_python_client.api.git_commits_api import GitCommitsApi
+    from sherlock_python_client.api.github_actions_jobs_api import GithubActionsJobsApi
+    from sherlock_python_client.api.incidents_api import IncidentsApi
+    from sherlock_python_client.api.misc_api import MiscApi
+    from sherlock_python_client.api.pagerduty_integrations_api import PagerdutyIntegrationsApi
+    from sherlock_python_client.api.role_assignments_api import RoleAssignmentsApi
+    from sherlock_python_client.api.roles_api import RolesApi
+    from sherlock_python_client.api.service_alert_api import ServiceAlertApi
+    from sherlock_python_client.api.users_api import UsersApi
+    
+else:
+    from lazy_imports import LazyModule, as_package, load
+
+    load(
+        LazyModule(
+            *as_package(__file__),
+            """# import apis into api package
 from sherlock_python_client.api.app_versions_api import AppVersionsApi
 from sherlock_python_client.api.changesets_api import ChangesetsApi
 from sherlock_python_client.api.chart_releases_api import ChartReleasesApi
@@ -22,3 +51,8 @@ from sherlock_python_client.api.roles_api import RolesApi
 from sherlock_python_client.api.service_alert_api import ServiceAlertApi
 from sherlock_python_client.api.users_api import UsersApi
 
+""",
+            name=__name__,
+            doc=__doc__,
+        )
+    )
