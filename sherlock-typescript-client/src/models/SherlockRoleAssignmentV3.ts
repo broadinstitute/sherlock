@@ -87,7 +87,7 @@ export function SherlockRoleAssignmentV3ToJSONTyped(value?: SherlockRoleAssignme
 
     return {
         
-        'expiresAt': value['expiresAt'] == null ? undefined : ((value['expiresAt']).toISOString()),
+        'expiresAt': value['expiresAt'] == null ? value['expiresAt'] : value['expiresAt'].toISOString(),
         'expiresIn': value['expiresIn'],
         'roleInfo': value['roleInfo'],
         'suspended': value['suspended'],

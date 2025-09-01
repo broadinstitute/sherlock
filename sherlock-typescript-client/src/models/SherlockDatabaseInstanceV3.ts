@@ -125,13 +125,13 @@ export function SherlockDatabaseInstanceV3ToJSONTyped(value?: SherlockDatabaseIn
         
         'chartRelease': value['chartRelease'],
         'chartReleaseInfo': SherlockChartReleaseV3ToJSON(value['chartReleaseInfo']),
-        'createdAt': value['createdAt'] == null ? undefined : ((value['createdAt']).toISOString()),
+        'createdAt': value['createdAt'] == null ? value['createdAt'] : value['createdAt'].toISOString(),
         'defaultDatabase': value['defaultDatabase'],
         'googleProject': value['googleProject'],
         'id': value['id'],
         'instanceName': value['instanceName'],
         'platform': value['platform'],
-        'updatedAt': value['updatedAt'] == null ? undefined : ((value['updatedAt']).toISOString()),
+        'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : value['updatedAt'].toISOString(),
     };
 }
 

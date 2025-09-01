@@ -232,7 +232,7 @@ export function SherlockRoleV3ToJSONTyped(value?: SherlockRoleV3 | null, ignoreD
         'autoAssignAllUsers': value['autoAssignAllUsers'],
         'canBeGlassBrokenByRole': value['canBeGlassBrokenByRole'],
         'canBeGlassBrokenByRoleInfo': value['canBeGlassBrokenByRoleInfo'],
-        'createdAt': value['createdAt'] == null ? undefined : ((value['createdAt']).toISOString()),
+        'createdAt': value['createdAt'] == null ? value['createdAt'] : value['createdAt'].toISOString(),
         'defaultGlassBreakDuration': value['defaultGlassBreakDuration'],
         'grantsBroadInstituteGroup': value['grantsBroadInstituteGroup'],
         'grantsDevAzureAccount': value['grantsDevAzureAccount'],
@@ -251,7 +251,7 @@ export function SherlockRoleV3ToJSONTyped(value?: SherlockRoleV3 | null, ignoreD
         'id': value['id'],
         'name': value['name'],
         'suspendNonSuitableUsers': value['suspendNonSuitableUsers'],
-        'updatedAt': value['updatedAt'] == null ? undefined : ((value['updatedAt']).toISOString()),
+        'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : value['updatedAt'].toISOString(),
     };
 }
 

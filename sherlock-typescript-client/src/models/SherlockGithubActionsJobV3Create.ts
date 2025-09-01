@@ -120,9 +120,9 @@ export function SherlockGithubActionsJobV3CreateToJSONTyped(value?: SherlockGith
         'githubActionsOwner': value['githubActionsOwner'],
         'githubActionsRepo': value['githubActionsRepo'],
         'githubActionsRunID': value['githubActionsRunID'],
-        'jobCreatedAt': value['jobCreatedAt'] == null ? undefined : ((value['jobCreatedAt']).toISOString()),
-        'jobStartedAt': value['jobStartedAt'] == null ? undefined : ((value['jobStartedAt']).toISOString()),
-        'jobTerminalAt': value['jobTerminalAt'] == null ? undefined : ((value['jobTerminalAt']).toISOString()),
+        'jobCreatedAt': value['jobCreatedAt'] == null ? value['jobCreatedAt'] : value['jobCreatedAt'].toISOString(),
+        'jobStartedAt': value['jobStartedAt'] == null ? value['jobStartedAt'] : value['jobStartedAt'].toISOString(),
+        'jobTerminalAt': value['jobTerminalAt'] == null ? value['jobTerminalAt'] : value['jobTerminalAt'].toISOString(),
         'status': value['status'],
     };
 }

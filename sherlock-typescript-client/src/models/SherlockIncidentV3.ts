@@ -108,14 +108,14 @@ export function SherlockIncidentV3ToJSONTyped(value?: SherlockIncidentV3 | null,
 
     return {
         
-        'createdAt': value['createdAt'] == null ? undefined : ((value['createdAt']).toISOString()),
+        'createdAt': value['createdAt'] == null ? value['createdAt'] : value['createdAt'].toISOString(),
         'description': value['description'],
         'id': value['id'],
         'remediatedAt': value['remediatedAt'],
         'reviewCompletedAt': value['reviewCompletedAt'],
         'startedAt': value['startedAt'],
         'ticket': value['ticket'],
-        'updatedAt': value['updatedAt'] == null ? undefined : ((value['updatedAt']).toISOString()),
+        'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : value['updatedAt'].toISOString(),
     };
 }
 

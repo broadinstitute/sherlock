@@ -187,7 +187,7 @@ export function SherlockClusterV3ToJSONTyped(value?: SherlockClusterV3 | null, i
         'azureSubscription': value['azureSubscription'],
         'base': value['base'],
         'ciIdentifier': SherlockCiIdentifierV3ToJSON(value['ciIdentifier']),
-        'createdAt': value['createdAt'] == null ? undefined : ((value['createdAt']).toISOString()),
+        'createdAt': value['createdAt'] == null ? value['createdAt'] : value['createdAt'].toISOString(),
         'googleProject': value['googleProject'],
         'helmfileRef': value['helmfileRef'],
         'id': value['id'],
@@ -197,7 +197,7 @@ export function SherlockClusterV3ToJSONTyped(value?: SherlockClusterV3 | null, i
         'requiredRole': value['requiredRole'],
         'requiredRoleInfo': SherlockRoleV3ToJSON(value['requiredRoleInfo']),
         'requiresSuitability': value['requiresSuitability'],
-        'updatedAt': value['updatedAt'] == null ? undefined : ((value['updatedAt']).toISOString()),
+        'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : value['updatedAt'].toISOString(),
     };
 }
 

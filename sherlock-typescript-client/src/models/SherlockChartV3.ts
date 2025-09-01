@@ -170,7 +170,7 @@ export function SherlockChartV3ToJSONTyped(value?: SherlockChartV3 | null, ignor
         'chartExposesEndpoint': value['chartExposesEndpoint'],
         'chartRepo': value['chartRepo'],
         'ciIdentifier': SherlockCiIdentifierV3ToJSON(value['ciIdentifier']),
-        'createdAt': value['createdAt'] == null ? undefined : ((value['createdAt']).toISOString()),
+        'createdAt': value['createdAt'] == null ? value['createdAt'] : value['createdAt'].toISOString(),
         'defaultPort': value['defaultPort'],
         'defaultProtocol': value['defaultProtocol'],
         'defaultSubdomain': value['defaultSubdomain'],
@@ -179,7 +179,7 @@ export function SherlockChartV3ToJSONTyped(value?: SherlockChartV3 | null, ignor
         'name': value['name'],
         'pactParticipant': value['pactParticipant'],
         'playbookURL': value['playbookURL'],
-        'updatedAt': value['updatedAt'] == null ? undefined : ((value['updatedAt']).toISOString()),
+        'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : value['updatedAt'].toISOString(),
     };
 }
 

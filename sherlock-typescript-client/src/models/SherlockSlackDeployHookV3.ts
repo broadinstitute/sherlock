@@ -115,7 +115,7 @@ export function SherlockSlackDeployHookV3ToJSONTyped(value?: SherlockSlackDeploy
 
     return {
         
-        'createdAt': value['createdAt'] == null ? undefined : ((value['createdAt']).toISOString()),
+        'createdAt': value['createdAt'] == null ? value['createdAt'] : value['createdAt'].toISOString(),
         'id': value['id'],
         'mentionPeople': value['mentionPeople'],
         'onChartRelease': value['onChartRelease'],
@@ -123,7 +123,7 @@ export function SherlockSlackDeployHookV3ToJSONTyped(value?: SherlockSlackDeploy
         'onFailure': value['onFailure'],
         'onSuccess': value['onSuccess'],
         'slackChannel': value['slackChannel'],
-        'updatedAt': value['updatedAt'] == null ? undefined : ((value['updatedAt']).toISOString()),
+        'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : value['updatedAt'].toISOString(),
     };
 }
 

@@ -94,12 +94,12 @@ export function SherlockPagerdutyIntegrationV3ToJSONTyped(value?: SherlockPagerd
 
     return {
         
-        'createdAt': value['createdAt'] == null ? undefined : ((value['createdAt']).toISOString()),
+        'createdAt': value['createdAt'] == null ? value['createdAt'] : value['createdAt'].toISOString(),
         'id': value['id'],
         'name': value['name'],
         'pagerdutyID': value['pagerdutyID'],
         'type': value['type'],
-        'updatedAt': value['updatedAt'] == null ? undefined : ((value['updatedAt']).toISOString()),
+        'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : value['updatedAt'].toISOString(),
     };
 }
 

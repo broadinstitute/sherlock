@@ -178,7 +178,7 @@ export function SherlockUserV3ToJSONTyped(value?: SherlockUserV3 | null, ignoreD
     return {
         
         'assignments': value['assignments'] == null ? undefined : ((value['assignments'] as Array<any>).map(SherlockRoleAssignmentV3ToJSON)),
-        'createdAt': value['createdAt'] == null ? undefined : ((value['createdAt']).toISOString()),
+        'createdAt': value['createdAt'] == null ? value['createdAt'] : value['createdAt'].toISOString(),
         'deactivatedAt': value['deactivatedAt'],
         'email': value['email'],
         'githubID': value['githubID'],
@@ -191,7 +191,7 @@ export function SherlockUserV3ToJSONTyped(value?: SherlockUserV3 | null, ignoreD
         'slackUsername': value['slackUsername'],
         'suitabilityDescription': value['suitabilityDescription'],
         'suitable': value['suitable'],
-        'updatedAt': value['updatedAt'] == null ? undefined : ((value['updatedAt']).toISOString()),
+        'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : value['updatedAt'].toISOString(),
     };
 }
 

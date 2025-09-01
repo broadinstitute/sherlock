@@ -381,7 +381,7 @@ export function SherlockChartReleaseV3ToJSONTyped(value?: SherlockChartReleaseV3
         'ciIdentifier': SherlockCiIdentifierV3ToJSON(value['ciIdentifier']),
         'cluster': value['cluster'],
         'clusterInfo': SherlockClusterV3ToJSON(value['clusterInfo']),
-        'createdAt': value['createdAt'] == null ? undefined : ((value['createdAt']).toISOString()),
+        'createdAt': value['createdAt'] == null ? value['createdAt'] : value['createdAt'].toISOString(),
         'destinationType': value['destinationType'],
         'environment': value['environment'],
         'environmentInfo': SherlockEnvironmentV3ToJSON(value['environmentInfo']),
@@ -395,9 +395,9 @@ export function SherlockChartReleaseV3ToJSONTyped(value?: SherlockChartReleaseV3
         'pagerdutyIntegrationInfo': SherlockPagerdutyIntegrationV3ToJSON(value['pagerdutyIntegrationInfo']),
         'port': value['port'],
         'protocol': value['protocol'],
-        'resolvedAt': value['resolvedAt'] == null ? undefined : ((value['resolvedAt']).toISOString()),
+        'resolvedAt': value['resolvedAt'] == null ? value['resolvedAt'] : value['resolvedAt'].toISOString(),
         'subdomain': value['subdomain'],
-        'updatedAt': value['updatedAt'] == null ? undefined : ((value['updatedAt']).toISOString()),
+        'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : value['updatedAt'].toISOString(),
     };
 }
 

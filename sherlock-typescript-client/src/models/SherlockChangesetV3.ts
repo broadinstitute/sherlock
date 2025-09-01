@@ -368,13 +368,13 @@ export function SherlockChangesetV3ToJSONTyped(value?: SherlockChangesetV3 | nul
 
     return {
         
-        'appliedAt': value['appliedAt'] == null ? undefined : ((value['appliedAt']).toISOString()),
+        'appliedAt': value['appliedAt'] == null ? value['appliedAt'] : value['appliedAt'].toISOString(),
         'appliedBy': value['appliedBy'],
         'appliedByInfo': SherlockUserV3ToJSON(value['appliedByInfo']),
         'chartRelease': value['chartRelease'],
         'chartReleaseInfo': SherlockChartReleaseV3ToJSON(value['chartReleaseInfo']),
         'ciIdentifier': SherlockCiIdentifierV3ToJSON(value['ciIdentifier']),
-        'createdAt': value['createdAt'] == null ? undefined : ((value['createdAt']).toISOString()),
+        'createdAt': value['createdAt'] == null ? value['createdAt'] : value['createdAt'].toISOString(),
         'fromAppVersionBranch': value['fromAppVersionBranch'],
         'fromAppVersionCommit': value['fromAppVersionCommit'],
         'fromAppVersionExact': value['fromAppVersionExact'],
@@ -387,13 +387,13 @@ export function SherlockChangesetV3ToJSONTyped(value?: SherlockChangesetV3 | nul
         'fromChartVersionResolver': value['fromChartVersionResolver'],
         'fromHelmfileRef': value['fromHelmfileRef'],
         'fromHelmfileRefEnabled': value['fromHelmfileRefEnabled'],
-        'fromResolvedAt': value['fromResolvedAt'] == null ? undefined : ((value['fromResolvedAt']).toISOString()),
+        'fromResolvedAt': value['fromResolvedAt'] == null ? value['fromResolvedAt'] : value['fromResolvedAt'].toISOString(),
         'id': value['id'],
         'newAppVersions': value['newAppVersions'] == null ? undefined : ((value['newAppVersions'] as Array<any>).map(SherlockAppVersionV3ToJSON)),
         'newChartVersions': value['newChartVersions'] == null ? undefined : ((value['newChartVersions'] as Array<any>).map(SherlockChartVersionV3ToJSON)),
         'plannedBy': value['plannedBy'],
         'plannedByInfo': SherlockUserV3ToJSON(value['plannedByInfo']),
-        'supersededAt': value['supersededAt'] == null ? undefined : ((value['supersededAt']).toISOString()),
+        'supersededAt': value['supersededAt'] == null ? value['supersededAt'] : value['supersededAt'].toISOString(),
         'toAppVersionBranch': value['toAppVersionBranch'],
         'toAppVersionCommit': value['toAppVersionCommit'],
         'toAppVersionExact': value['toAppVersionExact'],
@@ -406,8 +406,8 @@ export function SherlockChangesetV3ToJSONTyped(value?: SherlockChangesetV3 | nul
         'toChartVersionResolver': value['toChartVersionResolver'],
         'toHelmfileRef': value['toHelmfileRef'],
         'toHelmfileRefEnabled': value['toHelmfileRefEnabled'],
-        'toResolvedAt': value['toResolvedAt'] == null ? undefined : ((value['toResolvedAt']).toISOString()),
-        'updatedAt': value['updatedAt'] == null ? undefined : ((value['updatedAt']).toISOString()),
+        'toResolvedAt': value['toResolvedAt'] == null ? value['toResolvedAt'] : value['toResolvedAt'].toISOString(),
+        'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : value['updatedAt'].toISOString(),
     };
 }
 

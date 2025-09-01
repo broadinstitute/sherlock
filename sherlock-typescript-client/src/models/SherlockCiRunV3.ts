@@ -218,7 +218,7 @@ export function SherlockCiRunV3ToJSONTyped(value?: SherlockCiRunV3 | null, ignor
         'argoWorkflowsName': value['argoWorkflowsName'],
         'argoWorkflowsNamespace': value['argoWorkflowsNamespace'],
         'argoWorkflowsTemplate': value['argoWorkflowsTemplate'],
-        'createdAt': value['createdAt'] == null ? undefined : ((value['createdAt']).toISOString()),
+        'createdAt': value['createdAt'] == null ? value['createdAt'] : value['createdAt'].toISOString(),
         'githubActionsAttemptNumber': value['githubActionsAttemptNumber'],
         'githubActionsOwner': value['githubActionsOwner'],
         'githubActionsRepo': value['githubActionsRepo'],
@@ -235,8 +235,8 @@ export function SherlockCiRunV3ToJSONTyped(value?: SherlockCiRunV3 | null, ignor
         'startedAt': value['startedAt'],
         'status': value['status'],
         'terminalAt': value['terminalAt'],
-        'terminationHooksDispatchedAt': value['terminationHooksDispatchedAt'] == null ? undefined : ((value['terminationHooksDispatchedAt']).toISOString()),
-        'updatedAt': value['updatedAt'] == null ? undefined : ((value['updatedAt']).toISOString()),
+        'terminationHooksDispatchedAt': value['terminationHooksDispatchedAt'] == null ? value['terminationHooksDispatchedAt'] : value['terminationHooksDispatchedAt'].toISOString(),
+        'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : value['updatedAt'].toISOString(),
     };
 }
 

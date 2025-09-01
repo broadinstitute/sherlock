@@ -116,14 +116,14 @@ export function SherlockGitCommitV3ToJSONTyped(value?: SherlockGitCommitV3 | nul
     return {
         
         'committedAt': value['committedAt'],
-        'createdAt': value['createdAt'] == null ? undefined : ((value['createdAt']).toISOString()),
+        'createdAt': value['createdAt'] == null ? value['createdAt'] : value['createdAt'].toISOString(),
         'gitBranch': value['gitBranch'],
         'gitCommit': value['gitCommit'],
         'gitRepo': value['gitRepo'],
         'id': value['id'],
         'isMainBranch': value['isMainBranch'],
         'secSincePrev': value['secSincePrev'],
-        'updatedAt': value['updatedAt'] == null ? undefined : ((value['updatedAt']).toISOString()),
+        'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : value['updatedAt'].toISOString(),
     };
 }
 

@@ -155,7 +155,7 @@ export function SherlockGithubActionsDeployHookV3ToJSONTyped(value?: SherlockGit
 
     return {
         
-        'createdAt': value['createdAt'] == null ? undefined : ((value['createdAt']).toISOString()),
+        'createdAt': value['createdAt'] == null ? value['createdAt'] : value['createdAt'].toISOString(),
         'githubActionsDefaultRef': value['githubActionsDefaultRef'],
         'githubActionsOwner': value['githubActionsOwner'],
         'githubActionsRefBehavior': value['githubActionsRefBehavior'],
@@ -167,7 +167,7 @@ export function SherlockGithubActionsDeployHookV3ToJSONTyped(value?: SherlockGit
         'onEnvironment': value['onEnvironment'],
         'onFailure': value['onFailure'],
         'onSuccess': value['onSuccess'],
-        'updatedAt': value['updatedAt'] == null ? undefined : ((value['updatedAt']).toISOString()),
+        'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : value['updatedAt'].toISOString(),
     };
 }
 

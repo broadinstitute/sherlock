@@ -178,14 +178,14 @@ export function SherlockAppVersionV3ToJSONTyped(value?: SherlockAppVersionV3 | n
         'chart': value['chart'],
         'chartInfo': SherlockChartV3ToJSON(value['chartInfo']),
         'ciIdentifier': SherlockCiIdentifierV3ToJSON(value['ciIdentifier']),
-        'createdAt': value['createdAt'] == null ? undefined : ((value['createdAt']).toISOString()),
+        'createdAt': value['createdAt'] == null ? value['createdAt'] : value['createdAt'].toISOString(),
         'description': value['description'],
         'gitBranch': value['gitBranch'],
         'gitCommit': value['gitCommit'],
         'id': value['id'],
         'parentAppVersion': value['parentAppVersion'],
         'parentAppVersionInfo': value['parentAppVersionInfo'],
-        'updatedAt': value['updatedAt'] == null ? undefined : ((value['updatedAt']).toISOString()),
+        'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : value['updatedAt'].toISOString(),
     };
 }
 

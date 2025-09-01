@@ -164,12 +164,12 @@ export function SherlockChartVersionV3ToJSONTyped(value?: SherlockChartVersionV3
         'chartInfo': SherlockChartV3ToJSON(value['chartInfo']),
         'chartVersion': value['chartVersion'],
         'ciIdentifier': SherlockCiIdentifierV3ToJSON(value['ciIdentifier']),
-        'createdAt': value['createdAt'] == null ? undefined : ((value['createdAt']).toISOString()),
+        'createdAt': value['createdAt'] == null ? value['createdAt'] : value['createdAt'].toISOString(),
         'description': value['description'],
         'id': value['id'],
         'parentChartVersion': value['parentChartVersion'],
         'parentChartVersionInfo': value['parentChartVersionInfo'],
-        'updatedAt': value['updatedAt'] == null ? undefined : ((value['updatedAt']).toISOString()),
+        'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : value['updatedAt'].toISOString(),
     };
 }
 

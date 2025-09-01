@@ -110,12 +110,12 @@ export function SherlockCiIdentifierV3ToJSONTyped(value?: SherlockCiIdentifierV3
     return {
         
         'ciRuns': value['ciRuns'] == null ? undefined : ((value['ciRuns'] as Array<any>).map(SherlockCiRunV3ToJSON)),
-        'createdAt': value['createdAt'] == null ? undefined : ((value['createdAt']).toISOString()),
+        'createdAt': value['createdAt'] == null ? value['createdAt'] : value['createdAt'].toISOString(),
         'id': value['id'],
         'resourceID': value['resourceID'],
         'resourceStatus': value['resourceStatus'],
         'resourceType': value['resourceType'],
-        'updatedAt': value['updatedAt'] == null ? undefined : ((value['updatedAt']).toISOString()),
+        'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : value['updatedAt'].toISOString(),
     };
 }
 

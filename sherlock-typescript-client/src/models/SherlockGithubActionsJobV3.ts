@@ -136,18 +136,18 @@ export function SherlockGithubActionsJobV3ToJSONTyped(value?: SherlockGithubActi
 
     return {
         
-        'createdAt': value['createdAt'] == null ? undefined : ((value['createdAt']).toISOString()),
+        'createdAt': value['createdAt'] == null ? value['createdAt'] : value['createdAt'].toISOString(),
         'githubActionsAttemptNumber': value['githubActionsAttemptNumber'],
         'githubActionsJobID': value['githubActionsJobID'],
         'githubActionsOwner': value['githubActionsOwner'],
         'githubActionsRepo': value['githubActionsRepo'],
         'githubActionsRunID': value['githubActionsRunID'],
         'id': value['id'],
-        'jobCreatedAt': value['jobCreatedAt'] == null ? undefined : ((value['jobCreatedAt']).toISOString()),
-        'jobStartedAt': value['jobStartedAt'] == null ? undefined : ((value['jobStartedAt']).toISOString()),
-        'jobTerminalAt': value['jobTerminalAt'] == null ? undefined : ((value['jobTerminalAt']).toISOString()),
+        'jobCreatedAt': value['jobCreatedAt'] == null ? value['jobCreatedAt'] : value['jobCreatedAt'].toISOString(),
+        'jobStartedAt': value['jobStartedAt'] == null ? value['jobStartedAt'] : value['jobStartedAt'].toISOString(),
+        'jobTerminalAt': value['jobTerminalAt'] == null ? value['jobTerminalAt'] : value['jobTerminalAt'].toISOString(),
         'status': value['status'],
-        'updatedAt': value['updatedAt'] == null ? undefined : ((value['updatedAt']).toISOString()),
+        'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : value['updatedAt'].toISOString(),
     };
 }
 

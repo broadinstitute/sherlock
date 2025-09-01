@@ -148,7 +148,7 @@ export function SherlockServiceAlertV3ToJSONTyped(value?: SherlockServiceAlertV3
 
     return {
         
-        'createdAt': value['createdAt'] == null ? undefined : ((value['createdAt']).toISOString()),
+        'createdAt': value['createdAt'] == null ? value['createdAt'] : value['createdAt'].toISOString(),
         'createdBy': value['createdBy'],
         'deletedBy': value['deletedBy'],
         'id': value['id'],
@@ -157,7 +157,7 @@ export function SherlockServiceAlertV3ToJSONTyped(value?: SherlockServiceAlertV3
         'onEnvironment': value['onEnvironment'],
         'severity': value['severity'],
         'title': value['title'],
-        'updatedAt': value['updatedAt'] == null ? undefined : ((value['updatedAt']).toISOString()),
+        'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : value['updatedAt'].toISOString(),
         'updatedBy': value['updatedBy'],
         'uuid': value['uuid'],
     };
