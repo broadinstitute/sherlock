@@ -52,7 +52,7 @@ require (
 	google.golang.org/api v0.248.0
 	gorm.io/datatypes v1.2.6
 	gorm.io/driver/postgres v1.6.0
-	gorm.io/gorm v1.30.2
+	gorm.io/gorm v1.30.3
 )
 
 replace github.com/broadinstitute/sherlock/go-shared => ../go-shared
