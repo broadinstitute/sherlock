@@ -32,7 +32,7 @@ jobs:
 
       - name: "Generate GHA OIDC Token"
         id: 'gha_auth'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: core.setOutput('id_token', await core.getIDToken())
 
