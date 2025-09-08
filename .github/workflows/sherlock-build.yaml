@@ -89,7 +89,7 @@ jobs:
           go-version-file: sherlock/go.mod
 
       - name: Set up Node/NPM
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: 18
 
