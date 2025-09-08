@@ -1,6 +1,6 @@
 module github.com/broadinstitute/sherlock/sherlock
 
-go 1.23.7
+go 1.24.0
 
 toolchain go1.24.1
 
@@ -47,7 +47,7 @@ require (
 	golang.org/x/crypto v0.41.0
 	golang.org/x/exp v0.0.0-20240823005443-9b4947da3948
 	golang.org/x/net v0.43.0
-	golang.org/x/oauth2 v0.30.0
+	golang.org/x/oauth2 v0.31.0
 	golang.org/x/text v0.28.0
 	google.golang.org/api v0.248.0
 	gorm.io/datatypes v1.2.6
