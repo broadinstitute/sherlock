@@ -67,8 +67,8 @@ contrib.go.opencensus.io/exporter/prometheus v0.4.2/go.mod h1:dvEHbiKmgvbr5pjaF9
 dmitri.shuralyov.com/gpu/mtl v0.0.0-20190408044501-666a987793e9/go.mod h1:H6x//7gZCb22OMCxBHrMx7a5I7Hp++hsVxbQ4BYO7hU=
 filippo.io/edwards25519 v1.1.0 h1:FNf4tywRC1HmFuKW5xopWpigGjJKiJSV0Cqo0cJWDaA=
 filippo.io/edwards25519 v1.1.0/go.mod h1:BxyFTGdWcka3PhytdK4V28tE5sGfRvvvRV7EaN4VDT4=
-github.com/Azure/azure-sdk-for-go/sdk/azcore v1.18.2 h1:Hr5FTipp7SL07o2FvoVOX9HRiRH3CR3Mj8pxqCcdD5A=
-github.com/Azure/azure-sdk-for-go/sdk/azcore v1.18.2/go.mod h1:QyVsSSN64v5TGltphKLQ2sQxe4OBQg0J1eKRcVBnfgE=
+github.com/Azure/azure-sdk-for-go/sdk/azcore v1.19.0 h1:ci6Yd6nysBRLEodoziB6ah1+YOzZbZk+NYneoA6q+6E=
+github.com/Azure/azure-sdk-for-go/sdk/azcore v1.19.0/go.mod h1:QyVsSSN64v5TGltphKLQ2sQxe4OBQg0J1eKRcVBnfgE=
 github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.11.0 h1:MhRfI58HblXzCtWEZCO0feHs8LweePB3s90r7WaR1KU=
 github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.11.0/go.mod h1:okZ+ZURbArNdlJ+ptXoyHNuOETzOl1Oww19rm8I2WLA=
 github.com/Azure/azure-sdk-for-go/sdk/azidentity/cache v0.3.2 h1:yz1bePFlP5Vws5+8ez6T3HWXPmwOK7Yvq8QxDBD3SKY=
@@ -508,10 +508,10 @@ github.com/microsoft/go-mssqldb v1.9.2 h1:nY8TmFMQOHpm2qVWo6y4I2mAmVdZqlGiMGAYt6
 github.com/microsoft/go-mssqldb v1.9.2/go.mod h1:GBbW9ASTiDC+mpgWDGKdm3FnFLTUsLYN3iFL90lQ+PA=
 github.com/microsoft/kiota-abstractions-go v1.9.3 h1:cqhbqro+VynJ7kObmo7850h3WN2SbvoyhypPn8uJ1SE=
 github.com/microsoft/kiota-abstractions-go v1.9.3/go.mod h1:f06pl3qSyvUHEfVNkiRpXPkafx7khZqQEb71hN/pmuU=
-github.com/microsoft/kiota-authentication-azure-go v1.3.0 h1:PWH6PgtzhJjnmvR6N1CFjriwX09Kv7S5K3vL6VbPVrg=
-github.com/microsoft/kiota-authentication-azure-go v1.3.0/go.mod h1:l/MPGUVvD7xfQ+MYSdZaFPv0CsLDqgSOp8mXwVgArIs=
-github.com/microsoft/kiota-http-go v1.5.2 h1:xqvo4ssWwSvCJw2yuRocKFTxm3Y1iN+a4rrhuTYtBWg=
-github.com/microsoft/kiota-http-go v1.5.2/go.mod h1:L+5Ri+SzwELnUcNA0cpbFKp/pBbvypLh3Cd1PR6sjx0=
+github.com/microsoft/kiota-authentication-azure-go v1.3.1 h1:AGta92S6IL1E6ZMDb8YYB7NVNTIFUakbtLKUdY5RTuw=
+github.com/microsoft/kiota-authentication-azure-go v1.3.1/go.mod h1:26zylt2/KfKwEWZSnwHaMxaArpbyN/CuzkbotdYXF0g=
+github.com/microsoft/kiota-http-go v1.5.4 h1:wSUmL1J+bTQlAWHjbRkSwr+SPAkMVYeYxxB85Zw0KFs=
+github.com/microsoft/kiota-http-go v1.5.4/go.mod h1:L+5Ri+SzwELnUcNA0cpbFKp/pBbvypLh3Cd1PR6sjx0=
 github.com/microsoft/kiota-serialization-form-go v1.1.2 h1:SD6MATqNw+Dc5beILlsb/D87C36HKC/Zw7l+N9+HY2A=
 github.com/microsoft/kiota-serialization-form-go v1.1.2/go.mod h1:m4tY2JT42jAZmgbqFwPy3zGDF+NPJACuyzmjNXeuHio=
 github.com/microsoft/kiota-serialization-json-go v1.1.2 h1:eJrPWeQ665nbjO0gsHWJ0Bw6V/ZHHU1OfFPaYfRG39k=
@@ -522,8 +522,8 @@ github.com/microsoft/kiota-serialization-text-go v1.1.2 h1:7OfKFlzdjpPygca/+Otqa
 github.com/microsoft/kiota-serialization-text-go v1.1.2/go.mod h1:QNTcswkBPFY3QVBFmzfk00UMNViKQtV0AQKCrRw5ibM=
 github.com/microsoftgraph/msgraph-sdk-go v1.84.0 h1:XFxBxohWE3pJi6Rqau3nrP1jH4pLwJqIPoL4TjzQEtM=
 github.com/microsoftgraph/msgraph-sdk-go v1.84.0/go.mod h1:vZjQkQLX2vma7uMxvFHjSmy1edTOMkkWn6DhzVR55m8=
-github.com/microsoftgraph/msgraph-sdk-go-core v1.3.2 h1:5jCUSosTKaINzPPQXsz7wsHWwknyBmJSu8+ZWxx3kdQ=
-github.com/microsoftgraph/msgraph-sdk-go-core v1.3.2/go.mod h1:iD75MK3LX8EuwjDYCmh0hkojKXK6VKME33u4daCo3cE=
+github.com/microsoftgraph/msgraph-sdk-go-core v1.4.0 h1:0SrIoFl7TQnMRrsi5TFaeNe0q8KO5lRzRp4GSCCL2So=
+github.com/microsoftgraph/msgraph-sdk-go-core v1.4.0/go.mod h1:A1iXs+vjsRjzANxF6UeKv2ACExG7fqTwHHbwh1FL+EE=
 github.com/miekg/dns v1.1.26/go.mod h1:bPDLeHnStXmXAq1m/Ch/hvfNHr14JKNPMBo3VZKjuso=
 github.com/miekg/dns v1.1.41/go.mod h1:p6aan82bvRIyn+zDIv9xYNUpwa73JcSh9BKwknJysuI=
 github.com/mitchellh/cli v1.0.0/go.mod h1:hNIlj7HEI86fIcpObd7a0FcrxTWetlwJDGcceTlRvqc=

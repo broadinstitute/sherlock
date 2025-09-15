@@ -32,7 +32,7 @@ require (
 	github.com/knadh/koanf v1.5.0
 	github.com/microsoft/kiota-abstractions-go v1.9.3
 	github.com/microsoftgraph/msgraph-sdk-go v1.84.0
-	github.com/microsoftgraph/msgraph-sdk-go-core v1.3.2
+	github.com/microsoftgraph/msgraph-sdk-go-core v1.4.0
 	github.com/pact-foundation/pact-go/v2 v2.4.1
 	github.com/rs/zerolog v1.34.0
 	github.com/sanity-io/litter v1.5.8
@@ -66,7 +66,7 @@ require (
 	cloud.google.com/go/longrunning v0.6.7 // indirect
 	cloud.google.com/go/monitoring v1.24.2 // indirect
 	filippo.io/edwards25519 v1.1.0 // indirect
-	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.18.2 // indirect
+	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.19.0 // indirect
 	github.com/Azure/azure-sdk-for-go/sdk/internal v1.11.2 // indirect
 	github.com/AzureAD/microsoft-authentication-library-for-go v1.4.2 // indirect
 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.27.0 // indirect
@@ -131,8 +131,8 @@ require (
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
-	github.com/microsoft/kiota-authentication-azure-go v1.3.0 // indirect
-	github.com/microsoft/kiota-http-go v1.5.2 // indirect
+	github.com/microsoft/kiota-authentication-azure-go v1.3.1 // indirect
+	github.com/microsoft/kiota-http-go v1.5.4 // indirect
 	github.com/microsoft/kiota-serialization-form-go v1.1.2 // indirect
 	github.com/microsoft/kiota-serialization-json-go v1.1.2 // indirect
 	github.com/microsoft/kiota-serialization-multipart-go v1.1.2 // indirect
