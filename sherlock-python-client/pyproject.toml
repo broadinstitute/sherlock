@@ -1,11 +1,11 @@
 [project]
 name = "sherlock_python_client"
-version = "v1.6.61"
+version = "v1.6.62"
 description = "Sherlock"
 authors = [
   {name = "DSP DevOps",email = "dsp-devops@broadinstitute.org"},
 ]
-license = "BSD-3-Clause"
+license = { text = "BSD-3-Clause" }
 readme = "README.md"
 keywords = ["OpenAPI", "OpenAPI-Generator", "Sherlock"]
 requires-python = ">=3.9"
@@ -15,7 +15,6 @@ dependencies = [
   "python-dateutil (>=2.8.2)",
   "pydantic (>=2)",
   "typing-extensions (>=4.7.1)",
-  "lazy-imports (>=1,<2)"
 ]
 
 [project.urls]
