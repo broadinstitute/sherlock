@@ -1,6 +1,6 @@
 module github.com/broadinstitute/sherlock/sherlock
 
-go 1.23.7
+go 1.24.0
 
 toolchain go1.24.1
 
@@ -8,7 +8,7 @@ require (
 	cloud.google.com/go/bigquery v1.70.0
 	cloud.google.com/go/cloudsqlconn v1.18.1
 	cloud.google.com/go/iam v1.5.2
-	cloud.google.com/go/kms v1.22.0
+	cloud.google.com/go/kms v1.23.1
 	cloud.google.com/go/resourcemanager v1.10.6
 	cloud.google.com/go/storage v1.56.1
 	contrib.go.opencensus.io/exporter/prometheus v0.4.2
