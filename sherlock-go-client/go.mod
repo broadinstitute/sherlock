@@ -1,6 +1,6 @@
 module github.com/broadinstitute/sherlock/sherlock-go-client
 
-go 1.22
+go 1.24
 
 require (
 	github.com/go-openapi/errors v0.22.2
