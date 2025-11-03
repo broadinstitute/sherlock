@@ -1,6 +1,6 @@
 module github.com/broadinstitute/sherlock/sherlock
 
-go 1.23.7
+go 1.24
 
 toolchain go1.24.1
 
