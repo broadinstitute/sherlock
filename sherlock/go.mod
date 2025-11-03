@@ -44,9 +44,9 @@ require (
 	github.com/swaggo/swag v1.16.6
 	github.com/zitadel/oidc/v3 v3.36.1
 	go.opencensus.io v0.24.0
-	golang.org/x/crypto v0.42.0
+	golang.org/x/crypto v0.43.0
 	golang.org/x/exp v0.0.0-20240823005443-9b4947da3948
-	golang.org/x/net v0.44.0
+	golang.org/x/net v0.46.0
 	golang.org/x/oauth2 v0.30.0
 	golang.org/x/text v0.30.0
 	google.golang.org/api v0.248.0
@@ -181,7 +181,7 @@ require (
 	golang.org/x/arch v0.18.0 // indirect
 	golang.org/x/mod v0.28.0 // indirect
 	golang.org/x/sync v0.17.0 // indirect
-	golang.org/x/sys v0.36.0 // indirect
+	golang.org/x/sys v0.37.0 // indirect
 	golang.org/x/telemetry v0.0.0-20250908211612-aef8a434d053 // indirect
 	golang.org/x/time v0.12.0 // indirect
 	golang.org/x/tools v0.37.0 // indirect
