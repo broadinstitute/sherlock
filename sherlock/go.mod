@@ -33,7 +33,7 @@ require (
 	github.com/microsoft/kiota-abstractions-go v1.9.3
 	github.com/microsoftgraph/msgraph-sdk-go v1.84.0
 	github.com/microsoftgraph/msgraph-sdk-go-core v1.4.0
-	github.com/pact-foundation/pact-go/v2 v2.4.1
+	github.com/pact-foundation/pact-go/v2 v2.4.2
 	github.com/rs/zerolog v1.34.0
 	github.com/sanity-io/litter v1.5.8
 	github.com/sethvargo/go-password v0.3.1
@@ -157,9 +157,9 @@ require (
 	github.com/prometheus/statsd_exporter v0.27.1 // indirect
 	github.com/rs/cors v1.11.1 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
-	github.com/spf13/afero v1.12.0 // indirect
-	github.com/spf13/cobra v1.9.1 // indirect
-	github.com/spf13/pflag v1.0.6 // indirect
+	github.com/spf13/afero v1.15.0 // indirect
+	github.com/spf13/cobra v1.10.1 // indirect
+	github.com/spf13/pflag v1.0.9 // indirect
 	github.com/spiffe/go-spiffe/v2 v2.5.0 // indirect
 	github.com/std-uritemplate/std-uritemplate/go/v2 v2.0.3 // indirect
 	github.com/stretchr/objx v0.5.2 // indirect
