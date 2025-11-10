@@ -27,7 +27,7 @@ func IsAlphaNumeric(selector string) bool {
 
 func IsLowerAlphaNumeric(selector string) bool {
 	for _, r := range selector {
-		if !unicode.IsDigit(r) && !(unicode.IsLetter(r) && unicode.IsLower(r)) {
+		if !unicode.IsDigit(r) && !(unicode.IsLetter(r) && unicode.IsLower(r)) { //nolint:QF1001
 			return false
 		}
 	}
