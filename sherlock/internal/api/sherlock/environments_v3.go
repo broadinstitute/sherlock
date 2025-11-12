@@ -63,7 +63,7 @@ type EnvironmentV3Edit struct {
 
 func (e EnvironmentV3) toModel(db *gorm.DB) (models.Environment, error) {
 	ret := models.Environment{
-		Model:                       e.CommonFields.toGormModel(),
+		Model:                       e.toGormModel(),
 		Base:                        e.Base,
 		Lifecycle:                   e.Lifecycle,
 		Name:                        e.Name,

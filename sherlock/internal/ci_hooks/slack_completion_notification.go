@@ -9,7 +9,7 @@ import (
 // DispatchSlackCompletionNotification is pretty much a re-export of slack.SendMessageReturnError.
 // It encapsulates the call to the slack package so we don't need to reach into it when mocking
 // callers of this package.
-func (_ *dispatcherImpl) DispatchSlackCompletionNotification(ctx context.Context, channel string, text string, succeeded bool, icon *string) error {
+func (_ *dispatcherImpl) DispatchSlackCompletionNotification(ctx context.Context, channel string, text string, succeeded bool, icon *string) error { //nolint:staticcheck // ST1006
 	var attachment slack.Attachment
 	if succeeded {
 		attachment = slack.GreenBlock{Text: text}

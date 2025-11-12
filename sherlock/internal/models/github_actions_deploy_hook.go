@@ -48,7 +48,7 @@ func DeduplicateGithubActionsDeployHooks(hooks []GithubActionsDeployHook) []Gith
 					existingHook.GithubActionsDefaultRef != nil &&
 					existingHook.GithubActionsRefBehavior != nil {
 
-					basicFieldsDoNotMatch := !(*existingHook.GithubActionsOwner == *potentialNewHook.GithubActionsOwner &&
+					basicFieldsDoNotMatch := !(*existingHook.GithubActionsOwner == *potentialNewHook.GithubActionsOwner && //nolint:staticcheck // QF1001
 						*existingHook.GithubActionsRepo == *potentialNewHook.GithubActionsRepo &&
 						*existingHook.GithubActionsWorkflowPath == *potentialNewHook.GithubActionsWorkflowPath &&
 						*existingHook.GithubActionsDefaultRef == *potentialNewHook.GithubActionsDefaultRef &&

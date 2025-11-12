@@ -123,9 +123,10 @@ func (c *CiRun) SlackCompletionText(db *gorm.DB) (string, []error) {
 	var relatedResourceSummaryParts []string
 	var chartReleaseIDs, environmentIDs []uint
 	for _, identifier := range c.RelatedResources {
-		if identifier.ResourceType == "chart-release" {
+		switch identifier.ResourceType {
+		case "chart-release":
 			chartReleaseIDs = append(chartReleaseIDs, identifier.ResourceID)
-		} else if identifier.ResourceType == "environment" {
+		case "environment":
 			environmentIDs = append(environmentIDs, identifier.ResourceID)
 		}
 	}

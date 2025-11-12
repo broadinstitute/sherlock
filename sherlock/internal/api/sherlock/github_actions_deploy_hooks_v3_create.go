@@ -44,7 +44,7 @@ func githubActionsDeployHooksV3Create(ctx *gin.Context) {
 		return
 	}
 
-	trigger, err := body.DeployHookTriggerConfigV3.toModel(db)
+	trigger, err := body.toModel(db)
 	if err != nil {
 		errors.AbortRequest(ctx, err)
 		return

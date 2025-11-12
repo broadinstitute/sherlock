@@ -2,6 +2,10 @@ package sherlock
 
 import (
 	"fmt"
+	"net/http"
+	"slices"
+	"time"
+
 	"github.com/broadinstitute/sherlock/go-shared/pkg/utils"
 	"github.com/broadinstitute/sherlock/sherlock/internal/ci_hooks"
 	"github.com/broadinstitute/sherlock/sherlock/internal/ci_hooks/ci_hooks_mocks"
@@ -13,9 +17,6 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/middleware/authentication/gha_oidc/gha_oidc_mocks"
 	"github.com/broadinstitute/sherlock/sherlock/internal/models"
 	"github.com/stretchr/testify/mock"
-	"net/http"
-	"slices"
-	"time"
 )
 
 func (s *handlerSuite) TestCiRunsV3Upsert_error() {
@@ -169,9 +170,10 @@ func (s *handlerSuite) TestCiRunsV3Upsert_identifiers() {
 	err = s.DB.Scopes(models.ReadChangesetScope).Find(&changesets, createdIDs).Error
 	s.NoError(err)
 	for _, c := range changesets {
-		if c.ChartReleaseID == chartRelease.ID {
+		switch c.ChartReleaseID {
+		case chartRelease.ID:
 			changeset = c
-		} else if c.ChartReleaseID == templateChartRelease.ID {
+		case templateChartRelease.ID:
 			templateChangeset = c
 		}
 	}

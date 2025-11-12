@@ -77,7 +77,7 @@ func saveNewSigningKey(ctx context.Context, db *gorm.DB) (*SigningKey, error) {
 	}
 
 	// Store public key plaintext in database for easy access
-	keyModel.PublicKey = elliptic.MarshalCompressed(privateKey.PublicKey.Curve, privateKey.PublicKey.X, privateKey.PublicKey.Y)
+	keyModel.PublicKey = elliptic.MarshalCompressed(privateKey.PublicKey.Curve, privateKey.PublicKey.X, privateKey.PublicKey.Y) //nolint:staticcheck // QF1008
 
 	// Store private key, encrypting with KMS if configured
 	privateKeyBytes, err := x509.MarshalECPrivateKey(privateKey)

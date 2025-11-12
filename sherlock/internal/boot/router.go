@@ -151,7 +151,7 @@ func (w *webdavFilesystem) Rename(_ context.Context, _, _ string) error {
 }
 
 func (w *webdavFilesystem) Stat(_ context.Context, name string) (os.FileInfo, error) {
-	if f, err := w.FileSystem.Open(name); err != nil {
+	if f, err := w.Open(name); err != nil {
 		return nil, err
 	} else {
 		defer func(f fs.File) {
@@ -164,7 +164,7 @@ func (w *webdavFilesystem) Stat(_ context.Context, name string) (os.FileInfo, er
 func (w *webdavFilesystem) OpenFile(_ context.Context, name string, flag int, _ os.FileMode) (webdav.File, error) {
 	if flag != os.O_RDONLY {
 		return nil, os.ErrPermission
-	} else if f, err := w.FileSystem.Open(name); err != nil {
+	} else if f, err := w.Open(name); err != nil {
 		return nil, err
 	} else {
 		return &webdavFile{f}, nil
