@@ -74,7 +74,7 @@ func (client *GcsClientActual) ReadBlob(ctx context.Context, blob *storage.Objec
 	if client_err != nil {
 		return nil, fmt.Errorf("unable to close reader: %v", client_err)
 	}
-	
+
 	if read_err != nil {
 		return nil, fmt.Errorf("unable to read blob: %v", err)
 	}

@@ -12,7 +12,7 @@ import (
 	"gorm.io/gorm/clause"
 )
 
-func (_ *dispatcherImpl) DispatchSlackDeployHook(db *gorm.DB, hook models.SlackDeployHook, ciRun models.CiRun) error {  //nolint:staticcheck // ST1006
+func (_ *dispatcherImpl) DispatchSlackDeployHook(db *gorm.DB, hook models.SlackDeployHook, ciRun models.CiRun) error { //nolint:staticcheck // ST1006
 	if hook.SlackChannel == nil {
 		// Shouldn't ever hit this case, but better to error out than panic
 		return fmt.Errorf("slack channel was nil on SlackDeployHook %d, shouldn't be possible", hook.ID)
