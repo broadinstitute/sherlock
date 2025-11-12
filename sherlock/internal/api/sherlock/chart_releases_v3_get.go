@@ -96,7 +96,7 @@ func chartReleaseModelFromSelector(db *gorm.DB, selector string) (query models.C
 
 		// namespace
 		namespace := parts[1]
-		if !(utils.IsAlphaNumericWithHyphens(namespace) &&
+		if !(utils.IsAlphaNumericWithHyphens(namespace) && //nolint:staticcheck // QF1001
 			len(namespace) > 0 &&
 			utils.IsStartingWithLetter(namespace) &&
 			utils.IsEndingWithAlphaNumeric(namespace)) {
