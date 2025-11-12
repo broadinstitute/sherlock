@@ -138,7 +138,7 @@ type identifierWithInt struct {
 	Number int `koanf:"number"`
 }
 
-func (_ identifierWithInt) EqualTo(_ intermediary_user.Identifier) bool {
+func (_ identifierWithInt) EqualTo(_ intermediary_user.Identifier) bool { //nolint:staticcheck // ST1006
 	panic("shouldn't be called")
 }
 
