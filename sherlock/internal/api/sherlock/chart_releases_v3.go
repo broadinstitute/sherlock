@@ -56,7 +56,7 @@ type ChartReleaseV3Edit struct {
 
 func (c ChartReleaseV3) toModel(db *gorm.DB) (models.ChartRelease, error) {
 	ret := models.ChartRelease{
-		Model:           c.CommonFields.toGormModel(),
+		Model:           c.toGormModel(),
 		DestinationType: c.DestinationType,
 		Name:            c.Name,
 		Namespace:       c.Namespace,
