@@ -18,7 +18,7 @@ type SlackDeployHookFields struct {
 
 func (s SlackDeployHookV3) toModel(db *gorm.DB) (models.SlackDeployHook, error) {
 	ret := models.SlackDeployHook{
-		Model:         s.CommonFields.toGormModel(),
+		Model:         s.toGormModel(),
 		SlackChannel:  s.SlackChannel,
 		MentionPeople: s.MentionPeople,
 	}

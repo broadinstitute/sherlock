@@ -210,7 +210,7 @@ func (c *MockClient) toClient() *mockableClient {
 
 // assertExpectations spreads out over all the mocks in MockClient
 func (c *MockClient) assertExpectations(t *testing.T) {
-	c.MockMockableTopLevelClient.AssertExpectations(t)
+	c.AssertExpectations(t)
 	c.Actions.AssertExpectations(t)
 	c.Activity.AssertExpectations(t)
 	c.Admin.AssertExpectations(t)

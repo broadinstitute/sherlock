@@ -211,7 +211,7 @@ func (ra *RoleAssignment) AfterCreate(tx *gorm.DB) error {
 		slack.SendPermissionChangeNotification(tx.Statement.Context, user.SlackReference(true), slack.PermissionChangeNotificationInputs{
 			Summary: fmt.Sprintf("created RoleAssignment for %s", ra.Description(tx)),
 			Results: []string{
-				"Fields: " + slack.EscapeText(ra.RoleAssignmentFields.String()),
+				"Fields: " + slack.EscapeText(ra.String()),
 			},
 		})
 	}
@@ -246,7 +246,7 @@ func (ra *RoleAssignment) AfterUpdate(tx *gorm.DB) error {
 			Summary: fmt.Sprintf("edited RoleAssignment for %s", ra.Description(tx)),
 			Results: []string{
 				"Old fields: " + slack.EscapeText(ra.previousFields.String()),
-				"New fields: " + slack.EscapeText(ra.RoleAssignmentFields.String()),
+				"New fields: " + slack.EscapeText(ra.String()),
 			},
 		})
 	}
@@ -273,7 +273,7 @@ func (ra *RoleAssignment) BeforeDelete(tx *gorm.DB) error {
 		slack.SendPermissionChangeNotification(tx.Statement.Context, user.SlackReference(true), slack.PermissionChangeNotificationInputs{
 			Summary: fmt.Sprintf("deleted RoleAssignment for %s", ra.Description(tx)),
 			Results: []string{
-				"Fields: " + slack.EscapeText(ra.RoleAssignmentFields.String()),
+				"Fields: " + slack.EscapeText(ra.String()),
 			},
 		})
 	}

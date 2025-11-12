@@ -35,12 +35,12 @@ func (h TestUserHelper) UseNonSuitableUserFor(req *http.Request) *http.Request {
 	return h.selectUserForRequestBySuitability(req, false)
 }
 
-func (_ TestUserHelper) selectUserForRequestBySuperUser(req *http.Request, superUser bool) *http.Request {
+func (_ TestUserHelper) selectUserForRequestBySuperUser(req *http.Request, superUser bool) *http.Request { //nolint:staticcheck // ST1006
 	req.Header.Set(superAdminControlHeader, strconv.FormatBool(superUser))
 	return req
 }
 
-func (_ TestUserHelper) selectUserForRequestBySuitability(req *http.Request, suitable bool) *http.Request {
+func (_ TestUserHelper) selectUserForRequestBySuitability(req *http.Request, suitable bool) *http.Request { //nolint:staticcheck // ST1006
 	req.Header.Set(suitableControlHeader, strconv.FormatBool(suitable))
 	return req
 }

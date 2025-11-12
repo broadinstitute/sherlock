@@ -28,7 +28,7 @@ type DatabaseInstanceV3Edit struct {
 
 func (d DatabaseInstanceV3) toModel(db *gorm.DB) (models.DatabaseInstance, error) {
 	ret := models.DatabaseInstance{
-		Model:           d.CommonFields.toGormModel(),
+		Model:           d.toGormModel(),
 		Platform:        d.Platform,
 		GoogleProject:   d.GoogleProject,
 		InstanceName:    d.InstanceName,

@@ -66,7 +66,7 @@ func environmentModelFromSelector(selector string) (query models.Environment, er
 
 		// unique resource prefix
 		uniqueResourcePrefix := parts[1]
-		if !(utils.IsLowerAlphaNumeric(uniqueResourcePrefix) &&
+		if !(utils.IsLowerAlphaNumeric(uniqueResourcePrefix) && //nolint:staticcheck // QF1001
 			utils.IsStartingWithLetter(uniqueResourcePrefix) &&
 			utils.IsEndingWithAlphaNumeric(uniqueResourcePrefix) &&
 			len(uniqueResourcePrefix) == 4) {

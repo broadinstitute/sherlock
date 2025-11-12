@@ -3,6 +3,9 @@ package firecloud_account_manager
 import (
 	"context"
 	"fmt"
+	"testing"
+	"time"
+
 	"github.com/broadinstitute/sherlock/sherlock/internal/clients/bits_data_warehouse"
 	"github.com/broadinstitute/sherlock/sherlock/internal/clients/google_workspace/google_workspace_mocks"
 	"github.com/broadinstitute/sherlock/sherlock/internal/clients/slack"
@@ -14,8 +17,6 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 	admin "google.golang.org/api/admin/directory/v1"
-	"testing"
-	"time"
 )
 
 var googleNeverLoggedInTime = time.Date(1970, 1, 1, 0, 0, 0, 0, time.UTC).Format(time.RFC3339)
@@ -490,14 +491,15 @@ func TestConfig_suspendAccounts(t *testing.T) {
 			workspaceMockConfig: func(c *google_workspace_mocks.MockWorkspaceClient) {
 				calls := 0
 				c.EXPECT().GetCurrentUsers(ctx, "test.firecloud.org").RunAndReturn(func(_ context.Context, _ string) ([]*admin.User, error) {
-					if calls == 0 {
+					switch calls {
+					case 0:
 						calls += 1
 						return nil, fmt.Errorf("blah blah some sherlock retryable error")
-					} else if calls == 1 {
+					case 1:
 						return []*admin.User{
 							{PrimaryEmail: "valid-user@test.firecloud.org", CreationTime: time.Now().Add(-7 * 24 * time.Hour).Format(time.RFC3339), LastLoginTime: time.Now().Add(-30 * 24 * time.Hour).Format(time.RFC3339)},
 						}, nil
-					} else {
+					default:
 						panic("too many calls")
 					}
 				}).Times(2)
@@ -522,12 +524,13 @@ func TestConfig_suspendAccounts(t *testing.T) {
 
 				calls := 0
 				c.EXPECT().SuspendUser(ctx, "missing-user@test.firecloud.org").RunAndReturn(func(_ context.Context, _ string) error {
-					if calls == 0 {
+					switch calls {
+					case 0:
 						calls += 1
 						return fmt.Errorf("blah blah some sherlock retryable error")
-					} else if calls == 1 {
+					case 1:
 						return nil
-					} else {
+					default:
 						panic("too many calls")
 					}
 				}).Times(2)

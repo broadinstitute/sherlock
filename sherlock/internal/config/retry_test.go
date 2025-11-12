@@ -2,9 +2,10 @@ package config
 
 import (
 	"errors"
+	"testing"
+
 	"github.com/avast/retry-go/v4"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestRetryOptions(t *testing.T) {
@@ -13,13 +14,14 @@ func TestRetryOptions(t *testing.T) {
 	t.Run("retryable error", func(t *testing.T) {
 		functionCalls := 0
 		functionThatErrorsAtFirst := func() error {
-			if functionCalls == 0 {
+			switch functionCalls {
+			case 0:
 				functionCalls++
 				return errors.New("some sherlock retryable error: blah")
-			} else if functionCalls == 1 {
+			case 1:
 				functionCalls++
 				return nil
-			} else {
+			default:
 				panic("function called too many times!")
 			}
 		}
@@ -44,13 +46,14 @@ func TestRetryOptions(t *testing.T) {
 	t.Run("non-retryable error", func(t *testing.T) {
 		functionCalls := 0
 		functionThatErrorsAtFirst := func() error {
-			if functionCalls == 0 {
+			switch functionCalls {
+			case 0:
 				functionCalls++
 				return errors.New("some non-retryable error: blah")
-			} else if functionCalls == 1 {
+			case 1:
 				functionCalls++
 				return nil
-			} else {
+			default:
 				panic("function called too many times!")
 			}
 		}
@@ -63,13 +66,14 @@ func TestRetryOptions(t *testing.T) {
 	t.Run("unrecoverable error", func(t *testing.T) {
 		functionCalls := 0
 		functionThatErrorsAtFirst := func() error {
-			if functionCalls == 0 {
+			switch functionCalls {
+			case 0:
 				functionCalls++
 				return retry.Unrecoverable(errors.New("some sherlock retryable error: blah"))
-			} else if functionCalls == 1 {
+			case 1:
 				functionCalls++
 				return nil
-			} else {
+			default:
 				panic("function called too many times!")
 			}
 		}

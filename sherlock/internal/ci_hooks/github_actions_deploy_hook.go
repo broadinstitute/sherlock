@@ -11,7 +11,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func (_ *dispatcherImpl) DispatchGithubActionsDeployHook(db *gorm.DB, hook models.GithubActionsDeployHook, ciRun models.CiRun) error {
+func (_ *dispatcherImpl) DispatchGithubActionsDeployHook(db *gorm.DB, hook models.GithubActionsDeployHook, ciRun models.CiRun) error { //nolint:staticcheck // ST1006
 	if !config.Config.Bool("github.behaviors.deployHooks.enable") {
 		return nil
 	}

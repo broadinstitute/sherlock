@@ -109,11 +109,12 @@ func collectDeployHookCallbacks(db *gorm.DB, ciRun models.CiRun) (callbacks []fu
 		var deployHookTriggers []models.DeployHookTriggerConfig
 		for _, resourceIdentifier := range ciRun.RelatedResources {
 			var environmentFilter, chartReleaseFilter *uint
-			if resourceIdentifier.ResourceType == "environment" {
+			switch resourceIdentifier.ResourceType {
+			case "environment":
 				environmentFilter = &resourceIdentifier.ResourceID
-			} else if resourceIdentifier.ResourceType == "chart-release" {
+			case "chart-release":
 				chartReleaseFilter = &resourceIdentifier.ResourceID
-			} else {
+			default:
 				continue
 			}
 

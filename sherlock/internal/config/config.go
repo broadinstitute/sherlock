@@ -31,7 +31,7 @@ func init() {
 	}
 
 	if err := Config.Load(env.Provider("SHERLOCK_", ".", func(s string) string {
-		return strings.Replace(strings.ToLower(
+		return strings.Replace(strings.ToLower( //nolint:staticcheck // QF1004
 			strings.TrimPrefix(s, "SHERLOCK_")), "_", ".", -1)
 	}), nil); err != nil {
 		panic(fmt.Sprintf("failed to load config from environment, panicking due to likely runtime issue: %v", err))
@@ -41,7 +41,7 @@ func init() {
 	// Case-sensitive environment variables are ugly, but Koanf is case-sensitive and otherwise we can't set
 	// camelCase properties from the environment.
 	if err := Config.Load(env.Provider("SHERLOCK_", ".", func(s string) string {
-		return strings.Replace(strings.TrimPrefix(s, "SHERLOCK_"), "_", ".", -1)
+		return strings.Replace(strings.TrimPrefix(s, "SHERLOCK_"), "_", ".", -1) //nolint:staticcheck // QF1004
 	}), nil); err != nil {
 		panic(fmt.Sprintf("failed to load config from environment, panicking due to likely runtime issue: %v", err))
 	}
@@ -64,7 +64,7 @@ func LoadTestConfig() {
 	}
 
 	if err := Config.Load(env.Provider("TEST_SHERLOCK", ".", func(s string) string {
-		return strings.Replace(strings.ToLower(
+		return strings.Replace(strings.ToLower( //nolint:staticcheck // QF1004
 			strings.TrimPrefix(s, "TEST_SHERLOCK_")), "_", ".", -1)
 	}), nil); err != nil {
 		panic(fmt.Errorf("failed to load test configuration environment variables: %w", err))
@@ -72,7 +72,7 @@ func LoadTestConfig() {
 
 	// We handle environment variables both case-insensitively (transformed to lowercase) and -sensitively.
 	if err := Config.Load(env.Provider("TEST_SHERLOCK", ".", func(s string) string {
-		return strings.Replace(strings.TrimPrefix(s, "TEST_SHERLOCK_"), "_", ".", -1)
+		return strings.Replace(strings.TrimPrefix(s, "TEST_SHERLOCK_"), "_", ".", -1) //nolint:staticcheck // QF1004
 	}), nil); err != nil {
 		panic(fmt.Errorf("failed to load test configuration environment variables: %w", err))
 	}

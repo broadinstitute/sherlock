@@ -68,9 +68,14 @@ func (client *GcsClientActual) ReadBlob(ctx context.Context, blob *storage.Objec
 	if errors.Is(err, storage.ErrObjectNotExist) {
 		return nil, fmt.Errorf("the object does not exist")
 	}
-	slurp, err := io.ReadAll(reader_client)
-	reader_client.Close()
-	if err != nil {
+	slurp, read_err := io.ReadAll(reader_client)
+
+	client_err := reader_client.Close()
+	if client_err != nil {
+		return nil, fmt.Errorf("unable to close reader: %v", client_err)
+	}
+	
+	if read_err != nil {
 		return nil, fmt.Errorf("unable to read blob: %v", err)
 	}
 	return slurp, nil
