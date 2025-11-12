@@ -25,7 +25,7 @@ type GithubActionsDeployHookFields struct {
 
 func (g GithubActionsDeployHookV3) toModel(db *gorm.DB) (models.GithubActionsDeployHook, error) {
 	ret := models.GithubActionsDeployHook{
-		Model:                       g.CommonFields.toGormModel(),
+		Model:                       g.toGormModel(),
 		GithubActionsOwner:          g.GithubActionsOwner,
 		GithubActionsRepo:           g.GithubActionsRepo,
 		GithubActionsWorkflowPath:   g.GithubActionsWorkflowPath,

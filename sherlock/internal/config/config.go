@@ -72,7 +72,7 @@ func LoadTestConfig() {
 
 	// We handle environment variables both case-insensitively (transformed to lowercase) and -sensitively.
 	if err := Config.Load(env.Provider("TEST_SHERLOCK", ".", func(s string) string {
-		return strings.Replace(strings.TrimPrefix(s, "TEST_SHERLOCK_"), "_", ".", -1)
+		return strings.Replace(strings.TrimPrefix(s, "TEST_SHERLOCK_"), "_", ".", -1) //nolint:staticcheck // QF1004
 	}), nil); err != nil {
 		panic(fmt.Errorf("failed to load test configuration environment variables: %w", err))
 	}

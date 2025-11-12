@@ -2,6 +2,8 @@ package role_propagation
 
 import (
 	"context"
+	"testing"
+
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/broadinstitute/sherlock/sherlock/internal/role_propagation/intermediary_user"
 	"github.com/broadinstitute/sherlock/sherlock/internal/role_propagation/propagation_engines"
@@ -10,7 +12,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func Test_propagatorImpl_Init(t *testing.T) {
@@ -143,7 +144,7 @@ func (_ identifierWithInt) EqualTo(_ intermediary_user.Identifier) bool {
 
 type blankFields struct{}
 
-func (_ blankFields) EqualTo(_ intermediary_user.Fields) bool {
+func (_ blankFields) EqualTo(_ intermediary_user.Fields) bool { //nolint:staticcheck // ST1006
 	panic("shouldn't be called")
 }
 
