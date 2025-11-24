@@ -6,7 +6,7 @@ require (
 	github.com/GoogleCloudPlatform/functions-framework-go v1.9.2
 	github.com/broadinstitute/sherlock/go-shared v0.0.0
 	github.com/broadinstitute/sherlock/sherlock-go-client v0.0.0
-	github.com/go-openapi/runtime v0.29.1
+	github.com/go-openapi/runtime v0.29.2
 	github.com/go-openapi/strfmt v0.25.0
 	github.com/go-playground/webhooks/v6 v6.4.0
 )
