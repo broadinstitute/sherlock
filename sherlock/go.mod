@@ -6,7 +6,7 @@ toolchain go1.24.1
 
 require (
 	cloud.google.com/go/bigquery v1.70.0
-	cloud.google.com/go/cloudsqlconn v1.18.1
+	cloud.google.com/go/cloudsqlconn v1.19.0
 	cloud.google.com/go/iam v1.5.3
 	cloud.google.com/go/kms v1.23.2
 	cloud.google.com/go/resourcemanager v1.10.6
@@ -172,15 +172,15 @@ require (
 	github.com/zeebo/xxh3 v1.0.2 // indirect
 	github.com/zitadel/logging v0.6.2 // indirect
 	github.com/zitadel/schema v1.3.1 // indirect
-	go.opentelemetry.io/auto/sdk v1.1.0 // indirect
+	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
 	go.opentelemetry.io/contrib/detectors/gcp v1.36.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.61.0 // indirect
-	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.62.0 // indirect
-	go.opentelemetry.io/otel v1.37.0 // indirect
-	go.opentelemetry.io/otel/metric v1.37.0 // indirect
-	go.opentelemetry.io/otel/sdk v1.37.0 // indirect
-	go.opentelemetry.io/otel/sdk/metric v1.37.0 // indirect
-	go.opentelemetry.io/otel/trace v1.37.0 // indirect
+	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.63.0 // indirect
+	go.opentelemetry.io/otel v1.38.0 // indirect
+	go.opentelemetry.io/otel/metric v1.38.0 // indirect
+	go.opentelemetry.io/otel/sdk v1.38.0 // indirect
+	go.opentelemetry.io/otel/sdk/metric v1.38.0 // indirect
+	go.opentelemetry.io/otel/trace v1.38.0 // indirect
 	go.uber.org/mock v0.5.0 // indirect
 	golang.org/x/arch v0.20.0 // indirect
 	golang.org/x/mod v0.28.0 // indirect
