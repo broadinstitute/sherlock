@@ -3,7 +3,7 @@ module github.com/broadinstitute/sherlock/sherlock-go-client
 go 1.24.0
 
 require (
-	github.com/go-openapi/errors v0.22.4
+	github.com/go-openapi/errors v0.22.5
 	github.com/go-openapi/runtime v0.29.2
 	github.com/go-openapi/strfmt v0.25.0
 	github.com/go-openapi/swag v0.25.4
