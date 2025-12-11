@@ -42,7 +42,7 @@ require (
 	github.com/swaggo/files/v2 v2.0.2
 	github.com/swaggo/gin-swagger v1.6.1
 	github.com/swaggo/swag v1.16.6
-	github.com/zitadel/oidc/v3 v3.36.1
+	github.com/zitadel/oidc/v3 v3.39.0
 	go.opencensus.io v0.24.0
 	golang.org/x/crypto v0.43.0
 	golang.org/x/exp v0.0.0-20240823005443-9b4947da3948
