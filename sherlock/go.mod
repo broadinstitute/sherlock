@@ -1,8 +1,6 @@
 module github.com/broadinstitute/sherlock/sherlock
 
-go 1.24.0
-
-toolchain go1.24.1
+go 1.25
 
 require (
 	cloud.google.com/go/bigquery v1.70.0
@@ -37,7 +35,7 @@ require (
 	github.com/rs/zerolog v1.34.0
 	github.com/sanity-io/litter v1.5.8
 	github.com/sethvargo/go-password v0.3.1
-	github.com/slack-go/slack v0.17.3
+	github.com/slack-go/slack v0.23.1
 	github.com/stretchr/testify v1.11.1
 	github.com/swaggo/files/v2 v2.0.2
 	github.com/swaggo/gin-swagger v1.6.1
