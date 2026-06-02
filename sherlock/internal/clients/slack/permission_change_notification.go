@@ -8,7 +8,7 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/rs/zerolog/log"
 	"github.com/slack-go/slack"
-	"golang.org/x/net/context"
+	"context"
 )
 
 const permissionChangeSquelchContextKey = "sherlock-slack-permission-change-squelch"
