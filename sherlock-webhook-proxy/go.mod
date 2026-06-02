@@ -1,6 +1,6 @@
 module github.com/broadinstitute/sherlock/sherlock-webhook-proxy
 
-go 1.24.0
+go 1.25.0
 
 require (
 	github.com/GoogleCloudPlatform/functions-framework-go v1.9.2
@@ -17,6 +17,7 @@ replace github.com/broadinstitute/sherlock/sherlock-go-client => ../sherlock-go-
 
 require (
 	cloud.google.com/go/functions v1.19.3 // indirect
+	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/cloudevents/sdk-go/v2 v2.15.2 // indirect
 	github.com/go-logr/logr v1.4.3 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
@@ -47,9 +48,9 @@ require (
 	github.com/oklog/ulid v1.3.1 // indirect
 	go.mongodb.org/mongo-driver v1.17.6 // indirect
 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
-	go.opentelemetry.io/otel v1.38.0 // indirect
-	go.opentelemetry.io/otel/metric v1.38.0 // indirect
-	go.opentelemetry.io/otel/trace v1.38.0 // indirect
+	go.opentelemetry.io/otel v1.43.0 // indirect
+	go.opentelemetry.io/otel/metric v1.43.0 // indirect
+	go.opentelemetry.io/otel/trace v1.43.0 // indirect
 	go.uber.org/atomic v1.4.0 // indirect
 	go.uber.org/multierr v1.1.0 // indirect
 	go.uber.org/zap v1.10.0 // indirect

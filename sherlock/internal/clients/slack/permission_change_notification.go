@@ -8,10 +8,12 @@ import (
 	"github.com/broadinstitute/sherlock/sherlock/internal/config"
 	"github.com/rs/zerolog/log"
 	"github.com/slack-go/slack"
-	"golang.org/x/net/context"
+	"context"
 )
 
-const permissionChangeSquelchContextKey = "sherlock-slack-permission-change-squelch"
+type squelchContextKey struct{}
+
+var permissionChangeSquelchContextKey = squelchContextKey{}
 
 // SetContextToSquelchPermissionChangeNotifications should be used very very carefully. It creates a new
 // context that, if passed to SendPermissionChangeNotification or SendPermissionChangeNotificationReturnError,
