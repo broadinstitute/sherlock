@@ -11,7 +11,9 @@ import (
 	"context"
 )
 
-const permissionChangeSquelchContextKey = "sherlock-slack-permission-change-squelch"
+type squelchContextKey struct{}
+
+var permissionChangeSquelchContextKey = squelchContextKey{}
 
 // SetContextToSquelchPermissionChangeNotifications should be used very very carefully. It creates a new
 // context that, if passed to SendPermissionChangeNotification or SendPermissionChangeNotificationReturnError,
